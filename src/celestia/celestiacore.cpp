@@ -4197,13 +4197,16 @@ void CelestiaCore::initMovieCapture(MovieCapture* mc)
 
 void CelestiaCore::recordBegin()
 {
-    if (movieCapture != NULL)
+    if (movieCapture != NULL) {
         recording = true;
+        movieCapture->recordingStatus(true);
+    }
 }
 
 void CelestiaCore::recordPause()
 {
     recording = false;
+    if (movieCapture != NULL) movieCapture->recordingStatus(false);
 }
 
 void CelestiaCore::recordEnd()

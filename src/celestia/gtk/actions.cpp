@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.12 2006-01-22 17:59:51 suwalski Exp $
+ *  $Id: actions.cpp,v 1.13 2006-07-24 17:31:24 christey Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -32,6 +32,9 @@
 #include <celestia/imagecapture.h>
 #include <celestia/url.h>
 #include <celutil/filetype.h>
+#ifdef THEORA
+#include <celestia/oggtheoracapture.h>
+#endif
 
 #include "actions.h"
 #include "common.h"
@@ -53,6 +56,9 @@
 /* Declarations: Action Helpers */
 static void openScript(const char* filename, AppData* app);
 static void captureImage(const char* filename, AppData* app);
+#ifdef THEORA
+static void captureMovie(const char* filename, int aspect, float fps, float quality, AppData* app);
+#endif
 static void textInfoDialog(const char *txt, const char *title, AppData* app);
 static void setRenderFlag(AppData* a, int flag, gboolean state);
 static void setOrbitMask(AppData* a, int mask, gboolean state);
@@ -162,11 +168,114 @@ void actionCaptureImage(GtkAction*, AppData* app)
 	if (gtk_dialog_run(GTK_DIALOG(fs)) == GTK_RESPONSE_ACCEPT)
 	{
 		char* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(fs));
+		gtk_widget_destroy(fs);
+		for (int i=0; i < 10 && gtk_events_pending ();i++)
+			gtk_main_iteration ();
 		captureImage(filename, app);
 		g_free(filename);
 	}
+	else
+	{
+		gtk_widget_destroy(fs);
+	}
+}
 
-	gtk_widget_destroy(fs);
+/* File -> Capture Movie... */
+void actionCaptureMovie(GtkAction*, AppData* app)
+{
+#ifdef THEORA
+	// TODO: The menu item should be disable so that the user doesn't even
+	// have the opportunity to record two movies simultaneously; the only
+	// thing missing to make this happen is notification when recording
+	// is complete.
+	if (app->core->isCaptureActive())
+	{
+		GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+							   GTK_DIALOG_DESTROY_WITH_PARENT,
+							   GTK_MESSAGE_ERROR,
+							   GTK_BUTTONS_OK,
+							   "Stop current movie capture before starting another one.");
+		gtk_dialog_run(GTK_DIALOG(errBox));
+		gtk_widget_destroy(errBox);
+		return;
+	}
+
+	GtkWidget* fs = gtk_file_chooser_dialog_new("Save Ogg Theora Movie to File",
+	                                            GTK_WINDOW(app->mainWindow),
+	                                            GTK_FILE_CHOOSER_ACTION_SAVE,
+	                                            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+	                                            GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+	                                            NULL);
+
+	GtkFileFilter* filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(filter, "Ogg Files");
+	gtk_file_filter_add_pattern(filter, "*.ogg");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(fs), filter);
+
+	#if GTK_CHECK_VERSION(2, 7, 0)
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(fs), TRUE);
+	#endif /* GTK_CHECK_VERSION */
+	
+	gtk_dialog_set_default_response(GTK_DIALOG(fs), GTK_RESPONSE_ACCEPT);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(fs), g_get_home_dir());
+
+	GtkWidget* hbox = gtk_hbox_new(FALSE, CELSPACING); 
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
+
+	GtkWidget* rlabel = gtk_label_new("Aspect Ratio:");
+	gtk_box_pack_start(GTK_BOX(hbox), rlabel, TRUE, TRUE, 0);
+
+	GtkWidget* aspectmenubox = gtk_combo_box_new_text();
+	gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "4:3");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "16:9");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "Display");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(aspectmenubox), 0);
+	gtk_box_pack_start(GTK_BOX(hbox), aspectmenubox, FALSE, FALSE, 0);
+
+	GtkWidget* flabel = gtk_label_new("Frame Rate:");
+	gtk_box_pack_start(GTK_BOX(hbox), flabel, TRUE, TRUE, 0);
+
+	GtkWidget* fpsspin = gtk_spin_button_new_with_range(5.0, 30.0, 0.01);
+	gtk_box_pack_start(GTK_BOX(hbox), fpsspin, TRUE, TRUE, 0);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(fpsspin), 12.0);
+	gtk_spin_button_set_increments(GTK_SPIN_BUTTON(fpsspin), 0.01, 1.0);
+
+	GtkWidget* qlabel = gtk_label_new("Video Quality:");
+	gtk_box_pack_start(GTK_BOX(hbox), qlabel, TRUE, TRUE, 0);
+
+	GtkWidget* qspin = gtk_spin_button_new_with_range(0.0, 10.0, 1.0);
+	gtk_box_pack_start(GTK_BOX(hbox), qspin, TRUE, TRUE, 0);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(qspin), 10.0);
+
+	gtk_widget_show_all(hbox);
+	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(fs), hbox);
+
+	if (gtk_dialog_run(GTK_DIALOG(fs)) == GTK_RESPONSE_ACCEPT)
+	{
+		char* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(fs));
+		int aspect = gtk_combo_box_get_active(GTK_COMBO_BOX(aspectmenubox));
+		double fps = gtk_spin_button_get_value(GTK_SPIN_BUTTON(fpsspin));
+		double quality = gtk_spin_button_get_value(GTK_SPIN_BUTTON(qspin));
+
+		gtk_widget_destroy(fs);
+		for (int i=0; i < 10 && gtk_events_pending ();i++)
+			gtk_main_iteration ();
+		captureMovie(filename, aspect, fps, quality,  app);
+		g_free(filename);
+	}
+	else
+	{
+		gtk_widget_destroy(fs);
+	}
+#else
+	GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+						   GTK_DIALOG_DESTROY_WITH_PARENT,
+						   GTK_MESSAGE_ERROR,
+						   GTK_BUTTONS_OK,
+						   "Movie support was not included. To use re-build with --enable-theora.");
+	gtk_dialog_run(GTK_DIALOG(errBox));
+	gtk_widget_destroy(errBox);
+#endif
 }
 
 
@@ -609,6 +718,7 @@ void actionHelpAbout(GtkAction*, AppData* app)
 	                     "license", readFromFile("COPYING"),
 	                     "logo", logo,
 	                     NULL);
+	gdk_pixbuf_unref(logo);
 }
 
 
@@ -972,6 +1082,46 @@ static void captureImage(const char* filename, AppData* app)
 	}
 }
 
+/* Image capturing helper called by actionCaptureImage() */
+#ifdef THEORA
+static void captureMovie(const char* filename, int aspect, float fps, float quality, AppData* app)
+{
+	/* Get the dimensions of the current viewport */
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	MovieCapture* movieCapture = new OggTheoraCapture();
+	switch (aspect)
+	{
+	case 0:
+		movieCapture->setAspectRatio(4, 3);
+		break;
+	case 1:
+		movieCapture->setAspectRatio(16, 9);
+		break;
+	default:
+		movieCapture->setAspectRatio(viewport[2], viewport[3]);
+		break;
+	}
+	movieCapture->setQuality(quality);
+	
+	bool success = movieCapture->start(filename, viewport[2], viewport[3], fps);
+	if (success)
+		app->core->initMovieCapture(movieCapture);
+	else
+	{
+		delete movieCapture;
+
+		GtkWidget* errBox = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+		                                           GTK_DIALOG_DESTROY_WITH_PARENT,
+		                                           GTK_MESSAGE_ERROR,
+		                                           GTK_BUTTONS_OK,
+		                                           "Error initializing movie capture.");
+		gtk_dialog_run(GTK_DIALOG(errBox));
+		gtk_widget_destroy(errBox);
+	}
+}
+#endif
 
 /* Runs a dialog that displays text; should be replaced at some point with
    a more elegant solution. */

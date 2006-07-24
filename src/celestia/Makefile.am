@@ -53,7 +53,11 @@ if ENABLE_GLUT
 GLUTSOURCES = glutmain.cpp
 endif
 
-celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES)
+if ENABLE_THEORA
+THEORASOURCES = oggtheoracapture.cpp
+endif
+
+celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES) $(THEORASOURCES)
 
 EXTRA_DIST = \
 	Celestia.dsp \

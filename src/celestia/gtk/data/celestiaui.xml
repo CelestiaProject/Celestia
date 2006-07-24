@@ -6,6 +6,7 @@
       <separator/>
       <menuitem action='OpenScript'/>
       <menuitem action='CaptureImage'/>
+      <menuitem action='CaptureMovie'/>
       <separator/>
       <menuitem action='Quit'/>
     </menu>

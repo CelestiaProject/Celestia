@@ -155,7 +155,7 @@ Image::Image(int fmt, int w, int h, int mips) :
 
     pitch = pad(w * components);
     
-    size = 0;
+    size = 1;
     for (int i = 0; i < mipLevels; i++)
         size += calcMipLevelSize(fmt, w, h, i);
     pixels = new unsigned char[size];

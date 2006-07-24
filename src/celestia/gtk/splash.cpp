@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: splash.cpp,v 1.3 2006-01-09 19:02:54 suwalski Exp $
+ *  $Id: splash.cpp,v 1.4 2006-07-24 17:31:24 christey Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -177,6 +177,7 @@ static gboolean splashExpose(GtkWidget* win, GdkEventExpose *event, SplashData* 
 		                                  NULL, x, y, 0, 0, w, h);
 		gdk_draw_pixbuf(win->window, NULL, bg, 0, 0, 0, 0, w, h,
 		                GDK_RGB_DITHER_NONE, 0, 0);
+		gdk_pixbuf_unref(bg);
 	}
 	
 	/* Never redraw again */
