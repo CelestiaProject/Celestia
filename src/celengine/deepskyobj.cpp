@@ -146,8 +146,19 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
         setAbsoluteMagnitude((float) absMag);
 
     string infoURL;
-    if (params->getString("InfoURL", infoURL))
+    if (params->getString("InfoURL", infoURL)) 
+    {
+        if (infoURL.find(':') == string::npos) 
+        {
+            // Relative URL, the base directory is the current one,
+            // not the main installation directory
+            if (resPath[1] == ':')
+                // Absolute Windows path, file:/// is required
+                infoURL = "file:///" + resPath + "/" + infoURL;
+            else
+                infoURL = resPath + "/" + infoURL;
+        }
         setInfoURL(infoURL);
-
+    }
     return true;
 }
