@@ -489,4 +489,6 @@ if (test "$ui_gtk" = "yes" -o "$ui_gnome" = "yes"); then
 	AC_MSG_RESULT([Use Cairo: $enable_cairo]);
 fi
 
+AC_MSG_RESULT([Use Theora: $enable_theora]);
+
 AC_MSG_RESULT()
