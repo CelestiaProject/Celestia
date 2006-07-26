@@ -123,8 +123,15 @@ void OggTheoraCapture::setAspectRatio(int aspect_numerator, int aspect_denominat
         else
             b = b - a;
     }
-    video_an = aspect_numerator / a;
-    video_ad = aspect_denominator / a;
+    if (a > 1) {
+        video_an = aspect_numerator / a;
+        video_ad = aspect_denominator / a;
+    } 
+    else
+    {
+        video_an = aspect_numerator;
+        video_ad = aspect_denominator;
+    }
 }
 void OggTheoraCapture::setQuality(float quality)
 {
@@ -140,8 +147,7 @@ void OggTheoraCapture::setQuality(float quality)
 }
 bool OggTheoraCapture::start(const std::string& filename,
                  int w, int h,
-                 float fps,
-                 bool setAspectRatio)
+                 float fps)
 {
     if (capturing)
         return false;
@@ -194,6 +200,7 @@ bool OggTheoraCapture::start(const std::string& filename,
     /* scale the frame size up to the nearest /16 and calculate offsets */
     video_x=((frame_x + 15) >>4)<<4;
     video_y=((frame_y + 15) >>4)<<4;
+
     /* We force the offset to be even.
        This ensures that the chroma samples align properly with the luma
        samples. */
@@ -209,8 +216,8 @@ bool OggTheoraCapture::start(const std::string& filename,
     ti.offset_y=frame_y_offset;
     ti.fps_numerator=video_hzn;
     ti.fps_denominator=video_hzd;
-    ti.aspect_numerator=setAspectRatio?video_an:0;
-    ti.aspect_denominator=setAspectRatio?video_ad:0;
+    ti.aspect_numerator=video_an;
+    ti.aspect_denominator=video_ad;
     if (frame_x == 720 && frame_y == 576)
         ti.colorspace=OC_CS_ITU_REC_470BG; //OC_CS_UNSPECIFIED;
     else
@@ -270,6 +277,7 @@ bool OggTheoraCapture::start(const std::string& filename,
      */
     yuvframe[0]= new unsigned char[video_x*video_y*3];
     yuvframe[1]= new unsigned char[video_x*video_y*3];
+
     // Now the buffer for reading the GL RGB pixels
     rowStride = (frame_x * 3 + 3) & ~0x3;
     pixels = new unsigned char[rowStride*frame_y];
@@ -291,8 +299,10 @@ bool OggTheoraCapture::start(const std::string& filename,
     yuv.uv_height=video_y/2;
     yuv.uv_stride=video_x/2;
 
-    printf(_("OggTheoraCapture::start() - Theora video: %s aspect %d:%d %.2f(%d/%d) fps quality %d\n"),
+    printf(_("OggTheoraCapture::start() - Theora video: %s %d x %d [ %d x %d ] aspect %d:%d %.2f(%d/%d) fps quality %d\n"),
            filename.c_str(),
+           video_x, video_y,
+           frame_x, frame_y,
            video_an, video_ad,
            (double)video_hzn/(double)video_hzd,
            video_hzn,video_hzd,

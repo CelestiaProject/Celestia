@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.13 2006-07-24 17:31:24 christey Exp $
+ *  $Id: actions.cpp,v 1.14 2006-07-26 19:45:46 christey Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -226,6 +226,7 @@ void actionCaptureMovie(GtkAction*, AppData* app)
 	gtk_box_pack_start(GTK_BOX(hbox), rlabel, TRUE, TRUE, 0);
 
 	GtkWidget* aspectmenubox = gtk_combo_box_new_text();
+	gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "1:1");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "4:3");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "16:9");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(aspectmenubox), "Display");
@@ -1094,9 +1095,12 @@ static void captureMovie(const char* filename, int aspect, float fps, float qual
 	switch (aspect)
 	{
 	case 0:
-		movieCapture->setAspectRatio(4, 3);
+		movieCapture->setAspectRatio(1, 1);
 		break;
 	case 1:
+		movieCapture->setAspectRatio(4, 3);
+		break;
+	case 2:
 		movieCapture->setAspectRatio(16, 9);
 		break;
 	default:
