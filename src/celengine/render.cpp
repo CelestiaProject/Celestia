@@ -4068,10 +4068,7 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         textures[nTextures++] = ri.overlayTex;
     }
     
-    if (rings != NULL)
-#if 0
-        (renderFlags & ShowRingShadows) != 0)
-#endif
+    if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
     {
         Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
@@ -4094,7 +4091,8 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 
     if (atmosphere != NULL)
     {
-        if ((renderFlags & Renderer::ShowCloudMaps) != 0 /* && (renderFlags & ShowCloudShadows) != 0 */)
+        if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
+            (renderFlags & Renderer::ShowCloudShadows) != 0)
         {    
             Texture* cloudTex = NULL;
             if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
@@ -5357,7 +5355,8 @@ void Renderer::renderObject(Point3f pos,
     // Apply a scale factor which depends on the size of the planet and
     // its oblateness.  Since the oblateness is usually quite
     // small, the potentially nonuniform scale factor shouldn't mess up
-    // the lighting calculations enough to be noticeable.
+    // the lighting calculations enough to be noticeable (and we turn on
+    // renormalization anyhow, which most graphics cards support.)
     // TODO:  Figure out a better way to render ellipsoids than applying
     // a nonunifom scale factor to a sphere.
     float radius = obj.radius;
@@ -5828,8 +5827,8 @@ bool Renderer::testEclipse(const Body& receiver,
         // will produce obviously incorrect shadows.  Another assumption we
         // make is that the distance between the caster and receiver is much
         // less than the distance between the sun and the receiver.  This
-        // approximation works everywhere in the solar system, and likely
-        // works for any orbitally stable pair of objects orbiting a star.
+        // approximation works everywhere in the solar system, and is likely
+        // valid for any orbitally stable pair of objects orbiting a star.
         Point3d posReceiver = receiver.getHeliocentricPosition(now);
         Point3d posCaster = caster.getHeliocentricPosition(now);
 
@@ -5858,11 +5857,15 @@ bool Renderer::testEclipse(const Body& receiver,
         // singly capped cylinder is as simple as checking the distance
         // from the center of the receiver to the axis of the shadow cylinder.
         // If the distance is less than the sum of the caster's and receiver's
-        // radii, then we have an eclipse.
+        // radii, then we have an eclipse. We also need to verify that the
+        // receiver is behind the caster when seen from the light source.
         float R = receiver.getRadius() + shadowRadius;
+        Vec3d lightToCasterDir = posCaster - light.position;
+        Vec3d receiverToCasterDir = posReceiver - posCaster;
+        
         double dist = distance(posReceiver,
-                               Ray3d(posCaster, posCaster - light.position));
-        if (dist < R)
+                               Ray3d(posCaster, lightToCasterDir));
+        if (dist < R && lightToCasterDir * receiverToCasterDir > 0.0)
         {
             Vec3d sunDir = posCaster - light.position;
             sunDir.normalize();
