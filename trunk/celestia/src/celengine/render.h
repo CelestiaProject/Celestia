@@ -110,7 +110,8 @@ class Renderer
         ShowPartialTrajectories = 0x20000,
 	    ShowNebulae         = 0x40000,
 		ShowOpenClusters    = 0x80000,
-		ShowNewStars        = 0x100000,
+		ShowNewStars        = 0x100000, // temporary, for debugging new star code
+        ShowCloudShadows    = 0x200000,
     };
 
     enum StarStyle 
