@@ -11,7 +11,7 @@ public:
     OggTheoraCapture();
     virtual ~OggTheoraCapture();
 
-    bool start(const std::string& filename, int w, int h, float fps, bool setAspectRatio = true);
+    bool start(const std::string& filename, int w, int h, float fps);
     bool end();
     bool captureFrame();
 

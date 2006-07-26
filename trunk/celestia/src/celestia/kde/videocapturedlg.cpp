@@ -147,17 +147,13 @@ void VideoCaptureDlg::newAspectRatioSlot(int idx) {
         widths.push_back(320);
         heights.push_back(240);
 
-        imageSize->insertItem("VGA: 640 x 480");
+        imageSize->insertItem("VGA/NTSC: 640 x 480");
         widths.push_back(640);
         heights.push_back(480);
 
         imageSize->insertItem("PAL: 768 x 576");
         widths.push_back(768);
         heights.push_back(576);
-
-        imageSize->insertItem("NTSC: 700 x 525");
-        widths.push_back(700);
-        heights.push_back(525);
 
         imageSize->insertItem("SVGA: 800 x 600");
         widths.push_back(800);
@@ -195,7 +191,11 @@ void VideoCaptureDlg::newAspectRatioSlot(int idx) {
         widths.push_back(d);
         heights.push_back(currentHeight);
 
-        imageSize->insertItem("WVGA: 854 x 480");
+        imageSize->insertItem("WVGA/NTSC: 854 x 480");
+        widths.push_back(854);
+        heights.push_back(480);
+
+        imageSize->insertItem("PAL: 1024 x 576");
         widths.push_back(854);
         heights.push_back(480);
 
@@ -248,9 +248,9 @@ void VideoCaptureDlg::okSlot() {
     KGlobal::config()->writeEntry("CaptureVideoFrameRate", frameRate->value());
     KGlobal::config()->writeEntry("CaptureVideoQuality", videoQuality->value());
 
-    setAspectRatio(getWidth(), getHeight());
+    setAspectRatio(1, 1);
     setQuality(videoQuality->value());
-    bool success = start(fileUrl->url().latin1(), getWidth(), getHeight(), frameRate->value(), specifyAspectRatio->isChecked());
+    bool success = start(fileUrl->url().latin1(), getWidth(), getHeight(), frameRate->value());
     char dim[30];
     snprintf(dim, 30, "%d x %d", getWidth(), getHeight());
     statusBar->changeItem(dim, 1);
