@@ -116,6 +116,7 @@ static void initRenderFlagMap()
     RenderFlagMap["grid"] = Renderer::ShowCelestialSphere;
     RenderFlagMap["smoothlines"] = Renderer::ShowSmoothLines;
     RenderFlagMap["partialtrajectories"] = Renderer::ShowPartialTrajectories;
+    RenderFlagMap["cloudshadows"] = Renderer::ShowCloudShadows;
 }
 
 static void initLabelFlagMap()
