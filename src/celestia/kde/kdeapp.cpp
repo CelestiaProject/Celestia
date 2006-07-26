@@ -1363,7 +1363,7 @@ void KdeApp::slotCaptureVideo() {
         delete dialog;
     }
 #else
-    KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18n("Movie support was not included. To use re-build with --enable-theora."));
+    KMessageBox::queuedMessageBox(this, KMessageBox::Sorry, i18n("This version of Celestia was not built with support for movie recording."));
 #endif
 }
 

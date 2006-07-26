@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>443</width>
-            <height>390</height>
+            <height>360</height>
         </rect>
     </property>
     <property name="caption">
@@ -127,14 +127,6 @@
                             </property>
                         </widget>
                     </hbox>
-                </widget>
-                <widget class="QCheckBox">
-                    <property name="name">
-                        <cstring>specifyAspectRatio</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Specify aspect ratio (do not check for playing on desktop players)</string>
-                    </property>
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
