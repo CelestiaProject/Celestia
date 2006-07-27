@@ -1,9 +1,23 @@
 #!/usr/bin/perl
 
+################################################################
+#           Utility for i18n on Win32
+#
+#   Author: Christophe Teyssier <chris@teyssier.org>
+#   date: July 2006
+#
+# - Loads translations from the po files and produces translated .rc files in src/celestia/res
+# - Produces a dll with the translated resources for each po file in the locale/ dir
+# - Produces a list of unicode codepoints for each language in the current dir 
+#   (to generate txf font textures)
+# - Compiles .po files and installs catalogs under locale/
+#
+# Requirements:
+# - rc.exe link.exe and msgfmt.exe must be in the PATH
+################################################################
+
 use Encode;
 use File::Basename;
-# Produces a translated resource file in the src/celestia/res/ directory
-# from each po file in the current directory.
 
 my $dir = dirname $0;
 my $resource_file = "$dir/../src/celestia/res/celestia.rc";
@@ -44,17 +58,22 @@ uk => [ '422', 1251 ],
 
 mkdir "$dir\\..\\locale" if ! -d "$dir\\..\\locale";
 
+my %codepoints; # hash holds unicode codepoints used by language
+
 foreach my $po (@po_files) {
-    my $strings = load_po_strings($po);
+    my $strings = load_po_strings("$dir\\$po");
     my $res = $resource;
     my $lang = basename $po;
     $lang =~ s/\..*//o;
     mkdir "$dir\\..\\locale\\$lang" if ! -d "$dir\\..\\locale\\$lang";
     mkdir "$dir\\..\\locale\\$lang\\LC_MESSAGES" if ! -d "$dir\\..\\locale\\$lang\\LC_MESSAGES";
+
     while (my ($k, $v) = each %$strings) {
+        map { $codepoints{$lang}{$_} = 1; } map { sprintf '%04X', ord($_); } split //, Encode::decode_utf8($v);
         Encode::from_to($v, 'UTF-8', "CP$lang{$lang}[1]");
         $res =~ s/"\Q$k\E"/"$v"/g;
     }
+
     $res=~ s/\Q#pragma code_page(1252)\E/#pragma code_page($lang{$lang}[1])/;
     open OUT, "> $output_dir/celestia_$lang.rc";
     print OUT $res;
@@ -70,9 +89,24 @@ closedir DIR;
 foreach my $po (@po_files) {
     my $lang = basename $po;
     $lang =~ s/\..*//o;
+
+    my $strings = load_po_strings("$dir\\..\\po2\\$po");
+    while (my ($k, $v) = each %$strings) {
+        map { $codepoints{$lang}{$_} = 1; } map { sprintf '%04X', ord($_); } split //, Encode::decode_utf8($v);
+    }
+
     mkdir "$dir\\..\\locale\\$lang" if ! -d "$dir\\..\\locale\\$lang";
     mkdir "$dir\\..\\locale\\$lang\\LC_MESSAGES" if ! -d "$dir\\..\\locale\\$lang\\LC_MESSAGES";
     system qq{msgfmt $dir\\..\\po2\\$lang.po -o $dir\\..\\locale\\$lang\\LC_MESSAGES\\celestia_constellations.mo};
+}
+
+foreach my $lang (keys %codepoints) {
+    # list of unicode codepoints to generate font textures
+    my $chr;
+    map { $chr .= "$_ \n"; } sort keys %{$codepoints{$lang}};
+    open CHR, "> $dir/codepoints_$lang.txt";
+    print CHR $chr;
+    close CHR;
 }
 
 sub load_po_strings {
