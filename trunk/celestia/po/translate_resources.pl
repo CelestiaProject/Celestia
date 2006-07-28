@@ -71,6 +71,8 @@ foreach my $po (@po_files) {
     while (my ($k, $v) = each %$strings) {
         map { $codepoints{$lang}{$_} = 1; } map { sprintf '%04X', ord($_); } split //, Encode::decode_utf8($v);
         Encode::from_to($v, 'UTF-8', "CP$lang{$lang}[1]");
+        map { $c{ord($_)} = 1; } split //, Encode::decode("UTF-8", $v);
+        foreach my 
         $res =~ s/"\Q$k\E"/"$v"/g;
     }
 
