@@ -16,6 +16,7 @@
 #include <commctrl.h>
 #include <cstring>
 #include "winstarbrowser.h"
+#include "celutil/winutil.h"
 
 #include "res/resource.h"
 
@@ -64,16 +65,20 @@ bool InitStarBrowserColumns(HWND listView)
     for (i = 0; i < nColumns; i++)
         columns[i] = lvc;
 
-    columns[0].pszText = "Name";
+    bind_textdomain_codeset("celestia", CurrentCP());
+
+    columns[0].pszText = _("Name");
     columns[0].cx = 100;
-    columns[1].pszText = "Distance (ly)";
+    columns[1].pszText = _("Distance (ly)");
     columns[1].fmt = LVCFMT_RIGHT;
     columns[1].cx = 75;
-    columns[2].pszText = "App. mag";
+    columns[2].pszText = _("App. mag");
     columns[2].fmt = LVCFMT_RIGHT;
-    columns[3].pszText = "Abs. mag";
+    columns[3].pszText = _("Abs. mag");
     columns[3].fmt = LVCFMT_RIGHT;
-    columns[4].pszText = "Type";
+    columns[4].pszText = _("Type");
+
+    bind_textdomain_codeset("celestia", "UTF8");
 
     for (i = 0; i < nColumns; i++)
     {

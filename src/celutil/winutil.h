@@ -19,5 +19,6 @@ void SetMouseCursor(LPCTSTR lpCursor);
 void CenterWindow(HWND hParent, HWND hWnd);
 void RemoveButtonDefaultStyle(HWND hWnd);
 void AddButtonDefaultStyle(HWND hWnd);
+const char* CurrentCP();
 
 #endif
