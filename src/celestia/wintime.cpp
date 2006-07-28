@@ -16,6 +16,9 @@
 #include <time.h>
 #include "res/resource.h"
 #include <celengine/astro.h>
+#include "celutil/util.h"
+#include "celutil/winutil.h"
+
 
 
 class SetTimeDialog
@@ -89,8 +92,10 @@ SetTimeDialog::init(HWND _hDlg)
     jd = appCore->getSimulation()->getTime();
     useLocalTime = appCore->getTimeZoneBias() != 0;
 
-    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) "Universal Time");
+    bind_textdomain_codeset("celestia", CurrentCP());
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) _("Universal Time"));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) localTimeZoneName);
+    bind_textdomain_codeset("celestia", "UTF8");
     
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_SETCURSEL, useLocalTime ? 1 : 0, 0);
     
