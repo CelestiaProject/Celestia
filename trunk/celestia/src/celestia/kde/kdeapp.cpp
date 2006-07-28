@@ -270,16 +270,18 @@ void KdeWatcher::notifyChange(CelestiaCore * core, int property)
         static std::vector<KAction*> actions;
         if (kdeapp->appCore->getTextEnterMode() != CelestiaCore::KbNormal) {
             for (unsigned int n=0; n < kdeapp->getActionCollection()->count(); n++) {
-                if (kdeapp->getActionCollection()->action(n)->shortcut().count() > 0
-                    && (kdeapp->getActionCollection()->action(n)->shortcut().seq(0).key(0).modFlags()
-                    & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0 ) {
+                KAction* action = kdeapp->getActionCollection()->action(n);
+                if (action->shortcut().count() > 0
+                    && (action->shortcut().seq(0).key(0).modFlags()
+                        & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0 
+                    && action->isEnabled()) {
                     actions.push_back(kdeapp->getActionCollection()->action(n));
                     kdeapp->getActionCollection()->action(n)->setEnabled(false);
                 }
             }
         } else {
             for (std::vector<KAction*>::iterator n=actions.begin(); n<actions.end(); n++) {
-                 (*n)->setEnabled(true);
+                (*n)->setEnabled(true);
             }
             actions.clear();
         }
