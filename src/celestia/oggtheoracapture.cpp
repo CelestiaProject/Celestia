@@ -299,14 +299,13 @@ bool OggTheoraCapture::start(const std::string& filename,
     yuv.uv_height=video_y/2;
     yuv.uv_stride=video_x/2;
 
-    printf(_("OggTheoraCapture::start() - Theora video: %s %d x %d [ %d x %d ] aspect %d:%d %.2f(%d/%d) fps quality %d\n"),
+    printf(_("OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"),
            filename.c_str(),
-           video_x, video_y,
-           frame_x, frame_y,
-           video_an, video_ad,
            (double)video_hzn/(double)video_hzd,
            video_hzn,video_hzd,
-           video_q);
+           video_q,
+           video_x,video_y,
+           frame_x_offset,frame_y_offset);
 
     capturing = true;
     return true;
@@ -342,9 +341,9 @@ bool OggTheoraCapture::captureFrame()
     // We go ahead and build 4:4:4 frames
     for (int y=0; y<frame_y; y++)
     {
-        unsigned char *yptr = ybase + (video_x*(y+frame_y_offset-1))+frame_x_offset;
-        unsigned char *uptr = ubase + (video_x*(y+frame_y_offset-1))+frame_x_offset;
-        unsigned char *vptr = vbase + (video_x*(y+frame_y_offset-1))+frame_x_offset;
+        unsigned char *yptr = ybase + (video_x*(y+frame_y_offset))+frame_x_offset;
+        unsigned char *uptr = ubase + (video_x*(y+frame_y_offset))+frame_x_offset;
+        unsigned char *vptr = vbase + (video_x*(y+frame_y_offset))+frame_x_offset;
         unsigned char *rgb = pixels + ((frame_y-1-y)*rowStride); // The video is inverted
         for (int x=0; x<frame_x; x++)
         {
