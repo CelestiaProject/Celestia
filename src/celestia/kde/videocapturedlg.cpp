@@ -196,8 +196,8 @@ void VideoCaptureDlg::newAspectRatioSlot(int idx) {
         heights.push_back(480);
 
         imageSize->insertItem("PAL: 1024 x 576");
-        widths.push_back(854);
-        heights.push_back(480);
+        widths.push_back(1024);
+        heights.push_back(576);
 
         imageSize->insertItem("HD-720: 1280 x 720");
         widths.push_back(1280);
