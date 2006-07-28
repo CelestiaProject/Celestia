@@ -13,6 +13,8 @@
 #include <commctrl.h>
 #include "celutil/basictypes.h"
 #include "celengine/astro.h"
+#include "celutil/util.h"
+#include "celutil/winutil.h"
 
 
 // DatePicker is a Win32 control for setting the date. It replaces the
@@ -156,9 +158,11 @@ DatePicker::redraw(HDC hdc)
     char monthBuf[32];
     char yearBuf[32];
 
+    bind_textdomain_codeset("celestia", CurrentCP());
     sprintf(dayBuf, "%02d", date.day);
-    sprintf(monthBuf, "%s", Months[date.month - 1]);
+    sprintf(monthBuf, "%s", _(Months[date.month - 1]));
     sprintf(yearBuf, "%5d", date.year);
+    bind_textdomain_codeset("celestia", "UTF8");
 
     char* fieldText[NumFields];
     fieldText[DayField] = dayBuf;
