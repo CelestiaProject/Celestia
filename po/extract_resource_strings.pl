@@ -31,4 +31,7 @@ while (<>) {
         }
     }
 }
-print qq{_("WinLangID");\n};
+print qq{_("WinLangID");
+    _("Jan"), _("Feb"), _("Mar"), _("Apr"), _("May"), _("Jun"),
+    _("Jul"), _("Aug"), _("Sep"), _("Oct"), _("Nov"), _("Dec")
+};
