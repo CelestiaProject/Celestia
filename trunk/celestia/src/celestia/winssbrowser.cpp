@@ -16,6 +16,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "winssbrowser.h"
+#include "celutil/winutil.h"
 
 #include "res/resource.h"
 
@@ -34,16 +35,9 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
 #endif
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
  
-#pragma message("Fix i18n for Solar System browser")
     // Set the text of the item. 
-    int length = lstrlen(lpszItem);
-    LPWSTR wout = (wchar_t*)malloc(sizeof(wchar_t*)*(length+1));
-    LPSTR out = (char*)malloc(sizeof(char*)*(length+1));
-    int wlength = MultiByteToWideChar(CP_UTF8, 0, lpszItem, -1, wout, length+1);
-    WideCharToMultiByte(CP_ACP, 0, wout, -1, out, length+1, NULL, NULL);
-    tvi.pszText = out; 
-    tvi.cchTextMax = lstrlen(out); 
-    free(wout);
+    tvi.pszText = lpszItem; 
+    tvi.cchTextMax = lstrlen(lpszItem); 
 
     // Save the heading level in the item's application-defined 
     // data area. 
@@ -77,12 +71,14 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
 
 void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, HTREEITEM parent)
 {
+    bind_textdomain_codeset("celestia", CurrentCP());
+
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
         Body* world = sys->getBody(i);
         HTREEITEM item;
         item = AddItemToTree(treeView, 
-                             const_cast<char*>(world->getName(true).c_str()),
+                             const_cast<char*>(_(world->getName().c_str())),
                              level,
                              static_cast<void*>(world),
                              parent);
@@ -91,6 +87,7 @@ void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int lev
         if (satellites != NULL)
             AddPlanetarySystemToTree(satellites, treeView, level + 1, item);
     }
+    bind_textdomain_codeset("celestia", "UTF8");
 }
 
 

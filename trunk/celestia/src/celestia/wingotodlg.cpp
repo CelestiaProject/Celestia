@@ -89,7 +89,7 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
             Simulation* sim = gotoDlg->appCore->getSimulation();
             Selection sel;
             if (len > 0)
-                sel = sim->findObjectFromPath(buf);
+                sel = sim->findObjectFromPath(buf, true);
             
             if (!sel.empty())
             {
