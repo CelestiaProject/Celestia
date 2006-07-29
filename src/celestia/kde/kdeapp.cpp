@@ -315,6 +315,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showOpenClusters"))->setChecked(rFlags & Renderer::ShowOpenClusters);
     ((KToggleAction*)action("showDiagrams"))->setChecked(rFlags & Renderer::ShowDiagrams);
     ((KToggleAction*)action("showCloudMaps"))->setChecked(rFlags & Renderer::ShowCloudMaps);
+    ((KToggleAction*)action("showCloudShadows"))->setChecked(rFlags & Renderer::ShowCloudShadows);
     ((KToggleAction*)action("showOrbits"))->setChecked(rFlags & Renderer::ShowOrbits);
     ((KToggleAction*)action("showAsteroidOrbits"))->setChecked(orbitMask & Body::Asteroid);
     ((KToggleAction*)action("showCometOrbits"))->setChecked(orbitMask & Body::Comet);
@@ -535,7 +536,10 @@ void KdeApp::initActions()
     KToggleAction* showCloudMaps = new KToggleAction(i18n("Show CloudMaps"), Key_I, this, SLOT(slotShowCloudMaps()), actionCollection(), "showCloudMaps");
     showCloudMaps->setChecked(rFlags & Renderer::ShowCloudMaps);
 
-    KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
+    KToggleAction* showCloudShadows = new KToggleAction(i18n("Show Cloud Shadows"), 0, this, SLOT(slotShowCloudShadows()), actionCollection(), "showCloudShadows");
+    showCloudMaps->setChecked(rFlags & Renderer::ShowCloudShadows);
+
+KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
     showOrbits->setChecked(rFlags & Renderer::ShowOrbits);
 
     KToggleAction* showAsteroidOrbits = new KToggleAction(i18n("Show Asteroid Orbits"), 0, this, SLOT(slotShowAsteroidOrbits()), actionCollection(), "showAsteroidOrbits");
@@ -1025,6 +1029,11 @@ void KdeApp::slotShowDiagrams() {
 void KdeApp::slotShowCloudMaps() {
      appCore->getRenderer()->setRenderFlags(
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowCloudMaps);
+}
+
+void KdeApp::slotShowCloudShadows() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowCloudShadows);
 }
 
 void KdeApp::slotShowOrbits() {
