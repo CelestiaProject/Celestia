@@ -101,6 +101,10 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showCloudMaps")->connect(showCloudMapsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCloudMapsCheck->setChecked(renderFlags & Renderer::ShowCloudMaps);
 
+    QCheckBox* showCloudShadowsCheck = new QCheckBox(i18n("Cloud Shadows"), showGroup);
+    actionColl->action("showCloudShadows")->connect(showCloudShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showCloudShadowsCheck->setChecked(renderFlags & Renderer::ShowCloudShadows);
+
     QCheckBox* showNightMapsCheck = new QCheckBox(i18n("Night Side Lights"), showGroup);
     actionColl->action("showNightMaps")->connect(showNightMapsCheck, SIGNAL(clicked()), SLOT(activate()));
     showNightMapsCheck->setChecked(renderFlags & Renderer::ShowNightMaps);
