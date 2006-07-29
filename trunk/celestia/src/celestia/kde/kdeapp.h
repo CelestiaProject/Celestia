@@ -124,6 +124,7 @@ public slots:
     void slotShowPartialTrajectories();
     void slotShowDiagrams();
     void slotShowCloudMaps();
+    void slotShowCloudShadows();
 
     void slotShowOrbits();
     void slotShowAsteroidOrbits();
