@@ -81,7 +81,10 @@
 #include "eclipsefinderdlg.h"
 #include "selectionpopup.h"
 #include "celsplashscreen.h"
+
+#ifdef THEORA
 #include "videocapturedlg.h"
+#endif
 
 #include "celengine/glext.h"
 
