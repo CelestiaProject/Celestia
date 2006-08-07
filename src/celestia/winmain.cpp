@@ -2073,7 +2073,8 @@ void handleKey(WPARAM key, bool down)
         break;
     case 'A':
     case 'Z':
-        k = key;
+        if ((GetKeyState(VK_CONTROL) & 0x8000) == 0)
+            k = key;
         break;
     }
 
