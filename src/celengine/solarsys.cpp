@@ -394,6 +394,15 @@ static Body* CreatePlanet(PlanetarySystem* system,
                 atmosData->getColor("Upper", atmosphere->upperColor);
                 atmosData->getColor("Sky", atmosphere->skyColor);
                 atmosData->getColor("Sunset", atmosphere->sunsetColor);
+                
+                atmosData->getNumber("Mie", atmosphere->mieCoeff);
+                atmosData->getNumber("MieScaleHeight", atmosphere->mieScaleHeight);
+                atmosData->getNumber("MieAsymmetry", atmosphere->miePhaseAsymmetry);
+                atmosData->getVector("Rayleigh", atmosphere->rayleighCoeff);
+                //atmosData->getNumber("RayleighScaleHeight", atmosphere->rayleighScaleHeight);
+                atmosData->getVector("Absorption", atmosphere->absorptionCoeff);
+                
+                // Get the cloud map settings
                 atmosData->getNumber("CloudHeight", atmosphere->cloudHeight);
                 if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
                     atmosphere->cloudSpeed = degToRad(atmosphere->cloudSpeed);
