@@ -336,6 +336,7 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
         eyePosition          = vec3Param("eyePosition");
     }
 
+    opacity      = floatParam("opacity");
     ambientColor = vec3Param("ambientColor");
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
@@ -951,13 +952,14 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     else
     {
         source += "uniform vec3 ambientColor;\n";
+        source += "uniform float opacity;\n";
         source += "varying vec4 diff;\n";
         if (props.lightModel == ShaderProperties::SpecularModel)
         {
             source += "varying vec4 spec;\n";
             source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
         }
-    }
+    }    
         
     // Miscellaneous lighting values
     if (props.texUsage & ShaderProperties::NightTexture)
@@ -1025,7 +1027,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
     else
     {
-        source += "diff = vec4(ambientColor, 1.0);\n";
+        source += "diff = vec4(ambientColor, opacity);\n";
         if (props.hasSpecular())
             source += "spec = vec4(0.0, 0.0, 0.0, 0.0);\n";
     }
@@ -1174,7 +1176,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.usesTangentSpaceLighting())
     {
         source += "uniform vec3 ambientColor;\n";
-        source += "vec4 diff = vec4(ambientColor, 1.0);\n";
+        source += "uniform float opacity;\n";
+        source += "vec4 diff = vec4(ambientColor, opacity);\n";
         if (props.isViewDependent())
         {
             if (props.lightModel == ShaderProperties::SpecularModel)
@@ -1205,8 +1208,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
     {
         source += "uniform vec3 ambientColor;\n";
+        source += "uniform float opacity;\n";
         source += "varying vec4 diffFactors;\n";
-        source += "vec4 diff = vec4(ambientColor, 1.0);\n";
+        source += "vec4 diff = vec4(ambientColor, opacity);\n";
         source += "varying vec3 normal;\n";        
         source += "vec4 spec = vec4(0.0);\n";
         source += "uniform float shininess;\n";
@@ -1220,7 +1224,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     else if (props.usesShadows())
     {
         source += "uniform vec3 ambientColor;\n";
-        source += "vec4 diff = vec4(ambientColor, 1.0);\n";
+        source += "uniform float opacity;\n";
+        source += "vec4 diff = vec4(ambientColor, opacity);\n";
         source += "varying vec4 diffFactors;\n";
         if (props.lightModel == ShaderProperties::SpecularModel)
         {

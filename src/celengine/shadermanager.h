@@ -97,6 +97,7 @@ class CelestiaGLProgram
     Vec3ShaderParameter eyePosition;
     FloatShaderParameter shininess;
     Vec3ShaderParameter ambientColor;
+    FloatShaderParameter opacity;
 
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;

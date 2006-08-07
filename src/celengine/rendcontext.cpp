@@ -447,6 +447,7 @@ GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materia
     
     prog.eyePosition = lightingState.eyePos_obj;
     prog.ambientColor = lightingState.ambientColor;
+    prog.opacity = materialDiffuse.alpha();
 }
 
 
@@ -548,7 +549,8 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         specTex = GetTextureManager()->find(m.maps[Mesh::SpecularMap]);
         if (specTex == NULL)
         {
-            shaderProps.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
+            if (baseTex != NULL)
+                shaderProps.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
         }
         else
         {
