@@ -26,6 +26,7 @@ class ShaderProperties
     bool hasShadowsForLight(unsigned int) const;
     bool hasSharedTextureCoords() const;
     bool hasSpecular() const;
+    bool hasScattering() const;
     bool isViewDependent() const;
 
  enum
@@ -38,15 +39,19 @@ class ShaderProperties
      RingShadowTexture      = 0x20,
      OverlayTexture         = 0x40,
      CloudShadowTexture     = 0x80,
+     Scattering             = 0x2000,
      SharedTextureCoords    = 0x8000,
  };
 
  enum
  {
-     DiffuseModel     = 0,
-     SpecularModel    = 1,
-     RingIllumModel   = 2,
+     DiffuseModel          = 0,
+     SpecularModel         = 1,
+     RingIllumModel        = 2,
      PerPixelSpecularModel = 3,
+     OrenNayarModel        = 4,
+     LommelSeeligerModel   = 5,
+     AtmosphereModel       = 6,
  };
  
  public:
@@ -107,6 +112,36 @@ class CelestiaGLProgram
     // Control the night texture effect--set to 1 for a purely additive effect,
     // and 0 to show the night texture only in otherwise unilluminated regions.
     FloatShaderParameter nightTexMin;
+    
+    // Parameters for atmospheric scattering; all distances are normalized for
+    // a unit sphere.
+    FloatShaderParameter mieCoeff;
+    FloatShaderParameter mieScaleHeight;
+    // Value of k for Schlick approximation to Henyey-Greenstein phase function
+    // A value of 0 is isotropic, negative values a primarily backscattering,
+    // positive values are forward scattering.
+    FloatShaderParameter miePhaseAsymmetry;
+    
+    // Rayleigh scattering terms. There are three scattering coefficients: red,
+    // green, and blue light. To simulate Rayleigh scattering, the coefficients 
+    // should be in ratios that fit 1/wavelength^4, but other values may be used
+    // to simulate different types of wavelength dependent scattering.
+    Vec3ShaderParameter rayleighCoeff;
+    FloatShaderParameter rayleighScaleHeight;
+    
+    // Precomputed sum and inverse sum of Rayleigh and Mie scattering coefficients
+    Vec3ShaderParameter scatterCoeffSum;
+    Vec3ShaderParameter invScatterCoeffSum;
+    // Precomputed sum of absorption and scattering coefficients--identical to
+    // scatterCoeffSum when there is no absorption.
+    Vec3ShaderParameter extinctionCoeff;
+    
+    // Radius of sphere for atmosphere--should be significantly larger than
+    // scale height. Three components:
+    //    x = radius
+    //    y = radius^2
+    //    z = 1/radius
+    Vec3ShaderParameter atmosphereRadius;    
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderShadows];
     
