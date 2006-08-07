@@ -3343,6 +3343,7 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
     }
     
     prog.ambientColor = ls.ambientColor;
+    prog.opacity = materialDiffuse.alpha();
 }
 
 
