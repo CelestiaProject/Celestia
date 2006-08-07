@@ -122,16 +122,21 @@ ShaderProperties::hasSpecular() const
 
 
 bool
+ShaderProperties::hasScattering() const
+{
+    return (texUsage & Scattering) != 0;
+}
+
+
+bool
 ShaderProperties::isViewDependent() const
 {
     switch (lightModel)
     {
-    case SpecularModel:
-    case PerPixelSpecularModel:
-    case RingIllumModel:
-        return true;
+    case DiffuseModel:
+        return false;
     default:
-        return false;    
+        return true;
     }
 }
 
@@ -326,7 +331,7 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
         shininess            = floatParam("shininess");
     }
 
-    if (props.isViewDependent())        
+    if (props.isViewDependent() || props.hasScattering())        
     {
         eyePosition          = vec3Param("eyePosition");
     }
@@ -350,6 +355,19 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
     if ((props.texUsage & ShaderProperties::NightTexture) != 0)
     {
         nightTexMin          = floatParam("nightTexMin");
+    }
+    
+    if (props.hasScattering())
+    {
+        mieCoeff             = floatParam("mieCoeff");
+        mieScaleHeight       = floatParam("mieH");
+        miePhaseAsymmetry    = floatParam("mieK");
+        rayleighCoeff        = vec3Param("rayleighCoeff");
+        rayleighScaleHeight  = floatParam("rayleighH");        
+        atmosphereRadius     = vec3Param("atmosphereRadius");            
+        scatterCoeffSum      = vec3Param("scatterCoeffSum");
+        invScatterCoeffSum   = vec3Param("invScatterCoeffSum");
+        extinctionCoeff      = vec3Param("extinctionCoeff");
     }
 }
 
@@ -515,11 +533,12 @@ TexCoord2D(unsigned int i)
 }
 
 
+// Tangent space light direction
 static string
-LightDir(unsigned int i)
+LightDir_tan(unsigned int i)
 {
     char buf[32];
-    sprintf(buf, "lightDir%d", i);
+    sprintf(buf, "lightDir_tan_%d", i);
     return string(buf);
 }
 
@@ -547,58 +566,106 @@ TangentSpaceTransform(const string& dst, const string& src)
 
 
 static string
+AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
+{
+    if (props.usesShadows() || props.lightModel == ShaderProperties::PerPixelSpecularModel)
+        return SeparateDiffuse(lightIndex)  + " = ";
+    else
+        return string("diff.rgb += ");
+}
+
+
+// Values used in generated shaders:
+//    N - surface normal
+//    V - view vector: the normalized direction from vertex to eye
+//    L - light direction: normalized direction from vertex to light
+//    H - half vector for Blinn-Phong lighting: normalized, bisects L and V
+//    R - reflected light direction
+//    NL - dot product of light and normal vectors
+//    NV - dot product of light and view vectors
+//    NH - dot product of light and half vectors
+
+static string
 DirectionalLight(unsigned int i, const ShaderProperties& props)
 {
     string source;
 
-    source += "nDotVP = max(0.0, dot(gl_Normal, " +
+    source += "NL = max(0.0, dot(gl_Normal, " +
         LightProperty(i, "direction") + "));\n";
         
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
-        source += "hv = normalize(" + LightProperty(i, "direction") + " + normalize(eyePosition - gl_Vertex.xyz));\n";
-        source += "nDotHV = max(0.0, dot(gl_Normal, hv));\n";
+        source += "H = normalize(" + LightProperty(i, "direction") + " + normalize(eyePosition - gl_Vertex.xyz));\n";
+        source += "NH = max(0.0, dot(gl_Normal, H));\n";
   
         // The calculation below uses the infinite viewer approximation. It's slightly faster,
         // but results in less accurate rendering.
-        // source += "nDotHV = max(0.0, dot(gl_Normal, " + LightProperty(i, "halfVector") + "));\n";
+        // source += "NH = max(0.0, dot(gl_Normal, " + LightProperty(i, "halfVector") + "));\n";
     }
 
     if (props.usesTangentSpaceLighting())
     {
-        source += TangentSpaceTransform(LightDir(i), LightProperty(i, "direction"));
+        source += TangentSpaceTransform(LightDir_tan(i), LightProperty(i, "direction"));
         // Diffuse color is computed in the fragment shader
     }
     else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
     {
-        source += SeparateDiffuse(i) + " = nDotVP;\n";
+        source += SeparateDiffuse(i) + " = NL;\n";
         // Specular is computed in the fragment shader; half vectors are required
         // for the calculation
         source += LightHalfVector(i) + " = " + LightProperty(i, "direction") + " + eyeDir;\n";
+    }
+    else if (props.lightModel == ShaderProperties::OrenNayarModel)
+    {
+        source += "float cosAlpha = min(NV, NL);\n";
+        source += "float cosBeta = max(NV, NL);\n";
+        source += "float sinAlpha = sqrt(1.0 - cosAlpha * cosAlpha);\n";
+        source += "float sinBeta = sqrt(1.0 - cosBeta * cosBeta);\n";
+        source += "float tanBeta = sinBeta / cosBeta;\n";
+        source += "float cosAzimuth = dot(normalize(eye - gl_Normal * NV), normalize(light - gl_Normal * NL));\n";
+        // TODO: precalculate these constants; place them in uniform values
+        source += "float roughness2 = 0.7 * 0.7;\n";
+        source += "float A = 1.0f - (0.5f * roughness2) / (roughness2 + 0.33);\n";
+        source += "float B = (0.45f * roughness2) / (roughness2 + 0.09);\n";
+        // TODO: add normalization factor so that max brightness is always 1
+        // TODO: add gamma correction
+        source += "float d = NL * (A + B * sinAlpha * tanBeta * max(0.0, cosAzimuth));\n";
+        if (props.usesShadows())
+        {
+            source += SeparateDiffuse(i) += " = d;\n";            
+        }
+        else
+        {
+            source += "diff.rgb += " + LightProperty(i, "diffuse") + " * d;\n";
+        }
+    }
+    else if (props.lightModel == ShaderProperties::LommelSeeligerModel)
+    {
+        source += AssignDiffuse(i, props) + " NL / (max(NV, 0.001) + NL);\n";
     }
     else if (props.usesShadows())
     {
         // When there are shadows, we need to track the diffuse contributions
         // separately for each light.
-        source += SeparateDiffuse(i) + " = nDotVP;\n";
+        source += SeparateDiffuse(i) + " = NL;\n";
         if (props.hasSpecular())
         {
-            source += SeparateSpecular(i) + " = pow(nDotHV, shininess);\n";
-        }
+            source += SeparateSpecular(i) + " = pow(NH, shininess);\n";
+        }        
     }
     else
     {
-        source += "diff.rgb += " + LightProperty(i, "diffuse") + " * nDotVP;\n";
+        source += "diff.rgb += " + LightProperty(i, "diffuse") + " * NL;\n";
         if (props.hasSpecular())
         {
             source += "spec.rgb += " + LightProperty(i, "specular") +
-                " * (pow(nDotHV, shininess) * nDotVP);\n";
+                " * (pow(NH, shininess) * NL);\n";
         }
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        source += "totalLight += nDotVP;\n";
+        source += "totalLight += NL;\n";
     }
 
 
@@ -663,6 +730,90 @@ ShadowsForLightSource(const ShaderProperties& props, unsigned int light)
     for (unsigned int i = 0; i < props.getShadowCountForLight(light); i++)
         source += Shadow(light, i);
 
+    return source;
+}
+
+
+static string
+AtmosphericEffects(const ShaderProperties& props)
+{
+    string source;
+    
+    source += "{\n";
+    // Compute the intersection of the view direction and the cloud layer (currently assumed to be a sphere)            
+    source += "    float rq = dot(eyePosition, eyeDir);\n";
+    source += "    float qq = dot(eyePosition, eyePosition) - atmosphereRadius.y;\n";
+    source += "    float d = sqrt(rq * rq - qq);\n";
+    source += "    vec3 atmEnter = eyePosition + min(0.0, (-rq + d)) * eyeDir;\n";
+    source += "    vec3 atmLeave = gl_Vertex.xyz;\n";
+            
+    source += "    vec3 atmSamplePoint = (atmEnter + atmLeave) * 0.5;\n";
+    //source += "    vec3 atmSamplePoint = atmEnter * 0.2 + atmLeave * 0.8;\n";
+    
+    // Compute the distance through the atmosphere from the sample point to the sun
+    source += "    vec3 atmSamplePointSun = atmEnter * 0.5 + atmLeave * 0.5;\n";
+    source += "    rq = dot(atmSamplePointSun, " + LightProperty(0, "direction") + ");\n";
+    source += "    qq = dot(atmSamplePointSun, atmSamplePointSun) - atmosphereRadius.y;\n";
+    source += "    d = sqrt(rq * rq - qq);\n";
+    source += "    float distSun = -rq + d;\n";
+    source += "    float distAtm = length(atmEnter - atmLeave);\n";
+    
+    // Compute the density of the atmosphere at the sample point; it falls off exponentially
+    // with the height above the planet's surface.
+#if 0
+    source += "    float h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
+    source += "    float density = exp(-h * mieH);\n";
+#else        
+    source += "    float density = 0.0;\n";
+    source += "    atmSamplePoint = atmEnter * 0.333 + atmLeave * 0.667;\n";
+    source += "    float h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
+    source += "    density += exp(-h * mieH);\n";
+    source += "    atmSamplePoint = atmEnter * 0.667 + atmLeave * 0.333;\n";
+    source += "    h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
+    source += "    density += exp(-h * mieH);\n";
+#endif
+
+    bool hasAbsorption = true;
+    
+    if (hasAbsorption)
+    {
+        source += "    vec3 sunColor = exp(-extinctionCoeff * density * distSun);\n";
+        source += "    vec3 ex = exp(-extinctionCoeff * density * distAtm);\n";
+    }
+    else
+    {
+        source += "    vec3 sunColor = exp(-scatterCoeffSum * density * distSun);\n";
+        source += "    vec3 ex = exp(-scatterCoeffSum * density * distAtm);\n";
+    }
+    
+    // Evaluate the Mie and Rayleigh phase functions; both are functions of the cosine        
+    // of the angle between the view vector and light vector
+    source += "    float cosTheta = dot(eyeDir, " + LightProperty(0, "direction") + ");\n";
+    source += "    float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
+    //source += "    float phRayleigh = (1.0 + cosTheta * cosTheta);\n";
+    source += "    float phRayleigh = 1.0;\n";
+    
+    source += "    scatterEx = ex;\n";
+    
+    string scatter;
+    if (hasAbsorption)
+    {
+        scatter = "(1.0 - exp(-scatterCoeffSum * density * distAtm))";
+    }
+    else
+    {
+        // If there's no absorption, the extinction coefficients are just the scattering coefficients,
+        // so there's no need to recompute the scattering.
+        scatter = "(1.0 - ex)";
+    }
+    
+    source += "    scatterIn = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
+    
+    // Optional exposure control
+    //source += "    1.0 - (scatterIn * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
+        
+    source += "}\n";
+    
     return source;
 }
 
@@ -741,41 +892,53 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "uniform float shininess;\n";
 
     source += "uniform vec3 eyePosition;\n";
-
+    
     source += TextureCoordDeclarations(props);
     source += "uniform float textureOffset;\n";
 
+    if (props.hasScattering())
+    {
+        source += "uniform vec3 atmosphereRadius;\n";
+        source += "uniform float mieCoeff;\n";
+        source += "uniform float mieH;\n";
+        source += "uniform float mieK;\n";
+        source += "uniform vec3 rayleighCoeff;\n";
+        source += "uniform float rayleighH;\n";
+        source += "uniform vec3 scatterCoeffSum;\n";
+        source += "uniform vec3 invScatterCoeffSum;\n";
+        source += "uniform vec3 extinctionCoeff;\n";
+    }
+
+    if (props.isViewDependent() || props.hasScattering())
+    {
+        source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+        if (!props.usesTangentSpaceLighting())
+            source += "float NV = dot(gl_Normal, eyeDir);\n";
+    }
+    
     if (props.usesTangentSpaceLighting())
     {
         source += "attribute vec3 tangent;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "varying vec3 " + LightDir(i) + ";\n";
+            source += "varying vec3 " + LightDir_tan(i) + ";\n";
         }
 
-        if (props.hasSpecular())
+        if (props.isViewDependent() && 
+            props.lightModel != ShaderProperties::SpecularModel)
         {
-            if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
-            {
-                source += "vec3 eyeDirObj = normalize(eyePosition - gl_Vertex.xyz);\n";
-                source += "varying vec3 eyeDir;\n";
-            }
-            else
-            {
-                source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
-            }
+            source += "varying vec3 eyeDir_tan;\n";
         }
     }
     else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
     {
         source += "varying vec4 diffFactors;\n";
         source += "varying vec3 normal;\n";
-        source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             source += "varying vec3 " + LightHalfVector(i) + ";\n";
         }
-    }
+    }   
     else if (props.usesShadows())
     {
         source += "varying vec4 diffFactors;\n";
@@ -801,6 +964,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     {
         source += "varying float totalLight;\n";
         source += "uniform float nightTexMin;\n";
+    }
+
+    if (props.hasScattering())
+    {
+        source += "varying vec3 scatterIn;\n";
+        source += "varying vec3 scatterEx;\n";
     }    
 
     // Shadow parameters
@@ -826,11 +995,11 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
-    source += "float nDotVP;\n";
+    source += "float NL;\n";
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
-        source += "float nDotHV;\n";
-        source += "vec3 hv;\n";
+        source += "float NH;\n";
+        source += "vec3 H;\n";
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
@@ -841,9 +1010,10 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.usesTangentSpaceLighting())
     {
         source += "vec3 bitangent = cross(gl_Normal, tangent);\n";
-        if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+        if (props.isViewDependent() &&
+            props.lightModel != ShaderProperties::SpecularModel)
         {
-            source += TangentSpaceTransform("eyeDir", "eyeDirObj");
+            source += TangentSpaceTransform("eyeDir_tan", "eyeDir");
         }
     }
     else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
@@ -926,21 +1096,29 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             // for sun angle.
             //source += "    " + CloudShadowTexCoord(j) + " = vec2(diffTexCoord.x + cloudShadowTexOffset, diffTexCoord.y);\n";
 
-            // Compute the intersection of the sun direction and the cloud layer (currently assumed to be a sphere)
-            source += "    float s = 1.0 / (cloudHeight * cloudHeight);\n";
-            source += "    float invPi = 1.0f / 3.1415927;\n";
-            source += "    vec3 coeff;\n";
-            source += "    coeff.x = dot(" + LightProperty(j, "direction") + ", " + LightProperty(j, "direction") + ") * s;\n";
-            source += "    coeff.y = dot(" + LightProperty(j, "direction") + ", gl_Vertex.xyz) * s;\n";
-            source += "    coeff.z = dot(gl_Vertex.xyz, gl_Vertex.xyz) * s - 1.0;\n";
-            source += "    float disc = sqrt(coeff.y * coeff.y - coeff.x * coeff.z);\n";
-            source += "    vec3 cloudSpherePos = normalize(gl_Vertex.xyz + ((-coeff.y + disc) / coeff.x) * " + LightProperty(j, "direction") + ");\n";
+            // Compute the intersection of the sun direction and the cloud layer (currently assumed to be a sphere)            
+            source += "    float rq = dot(" + LightProperty(j, "direction") + ", gl_Vertex.xyz);\n";
+            source += "    float qq = dot(gl_Vertex.xyz, gl_Vertex.xyz) - cloudHeight * cloudHeight;\n";
+            source += "    float d = sqrt(rq * rq - qq);\n";
+            source += "    vec3 cloudSpherePos = (gl_Vertex.xyz + (-rq + d) * " + LightProperty(j, "direction") + ");\n";
+            //source += "    vec3 cloudSpherePos = gl_Vertex.xyz;\n";
             
             // Find the texture coordinates at this point on the sphere by converting from rectangular to spherical; this is an
             // expensive calculation to perform per vertex.
-            source += "    " + CloudShadowTexCoord(j) + " = vec2(cloudShadowTexOffset + fract(atan(cloudSpherePos.x, cloudSpherePos.z) * (invPi * 0.5) + 0.75), 0.5 - asin(cloudSpherePos.y) * invPi);\n";
+            source += "    float invPi = 1.0 / 3.1415927;\n";
+            source += "    " + CloudShadowTexCoord(j) + ".y = 0.5 - asin(cloudSpherePos.y) * invPi;\n";
+            source += "    float u = fract(atan(cloudSpherePos.x, cloudSpherePos.z) * (invPi * 0.5) + 0.75);\n";
+            source += "    if (diffTexCoord.x < 0.25 && u > 0.5) u -= 1.0;\n";
+            source += "    else if (diffTexCoord.x > 0.75 && u < 0.5) u += 1.0;\n";
+            source += "    " + CloudShadowTexCoord(j) + ".x = u + cloudShadowTexOffset;\n";
+                        
             source += "}\n";
         }
+    }
+    
+    if (props.hasScattering())
+    {
+        source += AtmosphericEffects(props);
     }
 
     if (props.texUsage & ShaderProperties::OverlayTexture)
@@ -997,21 +1175,26 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += "uniform vec3 ambientColor;\n";
         source += "vec4 diff = vec4(ambientColor, 1.0);\n";
-        if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+        if (props.isViewDependent())
         {
-            source += "varying vec3 eyeDir;\n";
-            source += "vec4 spec = vec4(0.0);\n";
-            source += "uniform float shininess;\n";
-        }
-        else if (props.lightModel == ShaderProperties::SpecularModel)
-        {
-            source += "varying vec4 specFactors;\n";
-            source += "vec4 spec = vec4(0.0);\n";
+            if (props.lightModel == ShaderProperties::SpecularModel)
+            {
+                // Specular model is sort of a hybrid: all the view-dependent lighting is
+                // handled in the vertex shader, and the fragment shader is view-independent
+                source += "varying vec4 specFactors;\n";
+                source += "vec4 spec = vec4(0.0);\n";
+            }
+            else
+            {
+                source += "varying vec3 eyeDir_tan;\n";  // tangent space eye vector
+                source += "vec4 spec = vec4(0.0);\n";
+                source += "uniform float shininess;\n";
+            }
         }
             
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "varying vec3 " + LightDir(i) + ";\n";
+            source += "varying vec3 " + LightDir_tan(i) + ";\n";
             source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
             if (props.hasSpecular())
             {
@@ -1065,6 +1248,12 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += "varying float totalLight;\n";    
     }
+
+    if (props.hasScattering())
+    {
+        source += "varying vec3 scatterIn;\n"; 
+        source += "varying vec3 scatterEx;\n"; 
+    }    
     
     // Declare shadow parameters
     if (props.shadowCounts != 0)
@@ -1133,20 +1322,40 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
         
         source += "float l;\n";
-        if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+        
+        if (props.isViewDependent())
         {
-            source += "vec3 eyeDirN = normalize(eyeDir);\n";
-            source += "vec3 hv;\n";
-            source += "float nDotHV;\n";
+            source += "vec3 V = normalize(eyeDir_tan);\n";
+        
+            if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
+            {
+                source += "vec3 H;\n";
+                source += "float NH;\n";
+            }
+            else if (props.lightModel == ShaderProperties::LommelSeeligerModel)
+            {
+                source += "float NV = dot(n, V);\n";
+            }
         }
+        
+        source += "float NL;\n";        
         
         for (unsigned i = 0; i < props.nLights; i++)
         {
             // Bump mapping with self shadowing
             // TODO: normalize the light direction (optionally--not as important for finely tesselated
             // geometry like planet spheres.)
-            // source += LightDir(i) + " = normalize(" + LightDir(i) + ");\n";
-            source += "l = max(0.0, dot(" + LightDir(i) + ", n)) * clamp(" + LightDir(i) + ".z * 8.0, 0.0, 1.0);\n";
+            // source += LightDir_tan(i) + " = normalize(" + LightDir(i)_tan + ");\n";
+            source += "NL = dot(" + LightDir_tan(i) + ", n);\n";
+            if (props.lightModel == ShaderProperties::LommelSeeligerModel)
+            {
+                source += "NL = max(0.0, NL);\n";
+                source += "l = (NL / (max(NV, 0.001) + NL)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
+            }
+            else
+            {
+                source += "l = max(0.0, dot(" + LightDir_tan(i) + ", n)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
+            }
 
             string illum;
             if (props.hasShadowsForLight(i))
@@ -1168,15 +1377,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             }
             else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
             {
-                source += "hv = normalize(eyeDir + " + LightDir(i) + ");\n";
-                source += "nDotHV = max(0.0, dot(n, hv));\n";
-                source += "spec.rgb += " + illum + " * pow(nDotHV, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
+                source += "H = normalize(eyeDir_tan + " + LightDir_tan(i) + ");\n";
+                source += "NH = max(0.0, dot(n, H));\n";
+                source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
             }
         }        
     }
     else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
     {
-        source += "float nDotHV;\n";
+        source += "float NH;\n";
         source += "vec3 n = normalize(normal);\n";
         
         // Sum the contributions from each light source
@@ -1193,8 +1402,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += ShadowsForLightSource(props, i);
 
             source += "diff.rgb += " + illum + " * " + FragLightProperty(i, "color") + ";\n";            
-            source += "nDotHV = max(0.0, dot(n, normalize(" + LightHalfVector(i) + ")));\n";
-            source += "spec.rgb += " + illum + " * pow(nDotHV, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
+            source += "NH = max(0.0, dot(n, normalize(" + LightHalfVector(i) + ")));\n";
+            source += "spec.rgb += " + illum + " * pow(NH, shininess) * " + FragLightProperty(i, "specColor") + ";\n";
         }
     }
     else if (props.usesShadows())
@@ -1247,6 +1456,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight;\n";
     }
+    
+    // Include the effect of atmospheric scattering. 
+    if (props.hasScattering())
+    {    
+        if (props.lightModel == ShaderProperties::AtmosphereModel)
+            source += "gl_FragColor = vec4(scatterIn, 1.0);\n";
+        else
+            source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + scatterIn;\n";
+    }
 
     source += "}\n";
 
@@ -1286,7 +1504,6 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     }
 
     source += "\nvoid main(void)\n{\n";
-    source += "float nDotVP;\n";
 
     // Get the normalized direction from the eye to the vertex
     source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
