@@ -31,7 +31,7 @@ template <class OBJ, class PREC> class OctreeProcessor
  public:
     OctreeProcessor()          {};
     virtual ~OctreeProcessor() {};
-    
+
     virtual void process(const OBJ& obj, PREC distance, float appMag) = 0;
 };
 
@@ -249,8 +249,11 @@ inline void DynamicOctree<OBJ, PREC>::sortIntoChildNodes()
     {
         const OBJ& obj    = *(*_objects)[i];
 
-        if (straddlingPredicate(cellCenterPos, obj, exclusionFactor) )
+        if (limitingFactorPredicate(obj, exclusionFactor) ||
+            straddlingPredicate(cellCenterPos, obj, exclusionFactor) )
+        {
             (*_objects)[nKeptInParent++] = (*_objects)[i];
+        }
         else
             this->getChild(obj, cellCenterPos)->add(obj);
     }
