@@ -110,6 +110,8 @@ static const Color compassColor(0.4f, 0.4f, 1.0f);
 
 static const float CoronaHeight = 0.2f;
 
+static const double AtmosphereExtinctionThreshold = 0.1;
+
 static bool buggyVertexProgramEmulation = true;
 
 struct SphericalCoordLabel
@@ -131,6 +133,7 @@ static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
 static const int MinSkySlices = 30;
 
+#if 0
 struct DisplayDevice
 {
     float faintestVisibleLevel;
@@ -151,7 +154,7 @@ Detector detector =
 {
     1.0f,
 };
-
+#endif
 
 // Some useful unit conversions
 inline float mmToInches(float mm)
@@ -199,6 +202,7 @@ Renderer::Renderer() :
     colorTemp(NULL)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
+            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
 	glareVertexBuffer = new PointStarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
@@ -1736,7 +1740,9 @@ void Renderer::render(const Observer& observer,
                 if (iter->body->getAtmosphere() != NULL)
                 {
                     cullRadius += iter->body->getAtmosphere()->height;
-                    cloudHeight = iter->body->getAtmosphere()->cloudHeight;
+                    //cloudHeight = iter->body->getAtmosphere()->cloudHeight;
+                    cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
+                                      iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
                 }
             }
             else if (iter->star != NULL)
@@ -3340,6 +3346,53 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
 }
 
 
+// Set the scattering and absoroption shader parameters for atmosphere simulation.
+// They are from standard units to the normalized system used by the shaders.
+// atmObjRadius - the radius in km of the planet with the atmosphere
+// objRadius - the radius in km of the object we're rendering
+static void setAtmosphereParameters_GLSL(CelestiaGLProgram& prog,                                            
+                                         const Atmosphere& atmosphere,
+                                         float atmPlanetRadius,
+                                         float objRadius)
+{
+    // Compute the radius of the atmosphere to render; the density falls off
+    // exponentially with height above the planet's surface, so the actual
+    // radius is infinite. That's a bit impractical, so well just render the
+    // portion out to the point where the density is 1/1000 of the surface
+    // density.
+    float atmosphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
+    
+    float mieCoeff        = atmosphere.mieCoeff * objRadius;
+    Vec3f rayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
+    Vec3f absorptionCoeff = atmosphere.absorptionCoeff * objRadius;
+    
+    float r = atmosphereRadius / objRadius;
+    prog.atmosphereRadius = Vec3f(r, r * r, atmPlanetRadius / objRadius);
+    
+    prog.mieCoeff = mieCoeff;
+    prog.mieScaleHeight = objRadius / atmosphere.mieScaleHeight;
+    
+    // The scattering shaders use the Schlick approximation to the
+    // Henyey-Greenstein phase function because it's slightly faster
+    // to compute. Convert the HG asymmetry parameter to the Schlick
+    // parameter.
+    float g = atmosphere.miePhaseAsymmetry;
+    prog.miePhaseAsymmetry = 1.55f * g - 0.55f * g * g * g;
+    
+    prog.rayleighCoeff = rayleighCoeff;
+    prog.rayleighScaleHeight = 0.0f; // TODO
+
+    // Precompute sum and inverse sum of scattering coefficients to save work
+    // in the vertex shader.
+    Vec3f scatterCoeffSum = Vec3f(rayleighCoeff.x + mieCoeff,
+                                  rayleighCoeff.y + mieCoeff,
+                                  rayleighCoeff.z + mieCoeff);
+    prog.scatterCoeffSum = scatterCoeffSum;
+    prog.invScatterCoeffSum = Vec3f(1.0f / scatterCoeffSum.x, 1.0f / scatterCoeffSum.y, 1.0f / scatterCoeffSum.z);
+    prog.extinctionCoeff = scatterCoeffSum + absorptionCoeff;
+}
+
+
 static void renderModelDefault(Model* model,
                                const RenderInfo& ri,
                                bool lit)
@@ -4042,6 +4095,12 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         textures[nTextures++] = ri.bumpTex;
     }
 
+#if 0    
+    // TODO: remove this testing hack
+    if (atmosphere == NULL)
+        shadprop.lightModel = ShaderProperties::LommelSeeligerModel;
+#endif        
+    
     if (ri.specularColor != Color::Black)
     {
         shadprop.lightModel = ShaderProperties::PerPixelSpecularModel;
@@ -4091,6 +4150,13 @@ static void renderSphere_GLSL(const RenderInfo& ri,
 
     if (atmosphere != NULL)
     {
+        if (renderFlags & Renderer::ShowAtmospheres)
+        {
+            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+            if (atmosphere->mieScaleHeight > 0.0f)
+                shadprop.texUsage |= ShaderProperties::Scattering;
+        }
+            
         if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
             (renderFlags & Renderer::ShowCloudShadows) != 0)
         {    
@@ -4101,11 +4167,9 @@ static void renderSphere_GLSL(const RenderInfo& ri,
             {
                 shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
                 textures[nTextures++] = cloudTex;
-#if 1            
                 glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
                 cloudTex->bind();
                 glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-#endif            
             }
         }
     }
@@ -4153,6 +4217,11 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     {
         prog->shadowTextureOffset = cloudTexOffset;
         prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
+    }
+    
+    if (shadprop.hasScattering())
+    {
+        setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, radius);
     }
 
     if (shadprop.shadowCounts != 0)    
@@ -4202,11 +4271,13 @@ static void renderModel_GLSL(Model* model,
 
 static void renderClouds_GLSL(const RenderInfo& ri,
                               const LightingState& ls,
+                              Atmosphere* atmosphere,
                               Texture* cloudTex,
                               float texOffset,
                               RingSystem* rings,
                               float radius,
                               unsigned int textureRes,
+                              int renderFlags,
                               const Mat4f& planetMat,
                               const Frustum& frustum,
                               const GLContext& context)
@@ -4246,6 +4317,16 @@ static void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
     }
+    
+    if (atmosphere != NULL)
+    {
+        if (renderFlags & Renderer::ShowAtmospheres)
+        {
+            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+            if (atmosphere->mieScaleHeight > 0.0f)
+                shadprop.texUsage |= ShaderProperties::Scattering;
+        }
+    }
 
     // Set the shadow information.
     // Track the total number of shadows; if there are too many, we'll have
@@ -4270,20 +4351,27 @@ static void renderClouds_GLSL(const RenderInfo& ri,
 
     setLightParameters_GLSL(*prog, shadprop, ls,
                             ri.color, ri.specularColor);
-
+    prog->eyePosition = ls.eyePos_obj;
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
                                ri.ambientColor.blue());
     prog->textureOffset = texOffset;
+
+    float cloudRadius = radius + atmosphere->cloudHeight;
+    
+    if (shadprop.hasScattering())
+    {
+        setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, cloudRadius);
+    }
     
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
     {
         float ringWidth = rings->outerRadius - rings->innerRadius;
-        prog->ringRadius = rings->innerRadius / radius;
-        prog->ringWidth = 1.0f / (ringWidth / radius);
+        prog->ringRadius = rings->innerRadius / cloudRadius;
+        prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
     }
 
     if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
+        setEclipseShadowShaderConstants(ls, cloudRadius, planetMat, *prog);
 
     unsigned int attributes = LODSphereMesh::Normals;
     lodSphere->render(context,
@@ -4297,6 +4385,73 @@ static void renderClouds_GLSL(const RenderInfo& ri,
 }
 
 
+static void
+renderAtmosphere_GLSL(const RenderInfo& ri,
+                      const LightingState& ls,
+                      Atmosphere* atmosphere,
+                      float radius,
+                      const Mat4f& planetMat,
+                      const Frustum& frustum,
+                      const GLContext& context)
+{
+    unsigned int nTextures = 0;
+
+    glDisable(GL_LIGHTING);
+
+    ShaderProperties shadprop;
+    shadprop.nLights = ls.nLights;
+    
+    shadprop.texUsage |= ShaderProperties::Scattering;
+    shadprop.lightModel = ShaderProperties::AtmosphereModel;
+
+    // Get a shader for the current rendering configuration
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
+    if (prog == NULL)
+        return;
+
+    prog->use();
+
+    setLightParameters_GLSL(*prog, shadprop, ls,
+                            ri.color, ri.specularColor);
+    prog->ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
+    
+    float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
+    float atmScale = atmosphereRadius / radius;
+    
+    prog->eyePosition = Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
+    setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, atmosphereRadius);
+    
+#if 0    
+    if (shadprop.shadowCounts != 0)    
+        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
+#endif        
+
+    glPushMatrix();
+    glScalef(atmScale, atmScale, atmScale);
+    glFrontFace(GL_CW);
+    glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    lodSphere->render(context,
+                      LODSphereMesh::Normals,
+                      frustum,
+                      ri.pixWidth,
+                      NULL);
+    
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+    glFrontFace(GL_CCW);                      
+    glPopMatrix();
+
+    
+    glx::glUseProgramObjectARB(0);
+    
+    //glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    //glEnable(GL_TEXTURE_2D);
+}
+
+                              
 static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
 {
     float f[4];
@@ -5583,36 +5738,44 @@ void Renderer::renderObject(Point3f pos,
             fade = 1.0f;
         }
 
+        
         if (fade > 0 && (renderFlags & ShowAtmospheres) != 0)
         {
-            glPushMatrix();
-            glLoadIdentity();
-            glDisable(GL_LIGHTING);
-            glDisable(GL_TEXTURE_2D);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+            // TODO: convert old style atmopshere parameters
+            if (context->getRenderPath() == GLContext::GLPath_GLSL &&
+                atmosphere->mieScaleHeight > 0.0f)
+            {
+                float atmScale = 1.0f + atmosphere->height / radius;
+                
+                renderAtmosphere_GLSL(ri, ls, 
+                                      atmosphere,
+                                      radius * atmScale,
+                                      planetMat,
+                                      viewFrustum,
+                                      *context);
+            }
+            else
+            {      
+                glPushMatrix();
+                glLoadIdentity();
+                glDisable(GL_LIGHTING);
+                glDisable(GL_TEXTURE_2D);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-#ifdef OLD_ATMOSPHERE
-            renderAtmosphere(*atmosphere,
-                             pos * (~cameraOrientation).toMatrix3(),
-                             radius,
-                             ri.sunDir_eye * (~cameraOrientation).toMatrix3(),
-                             ri.ambientColor,
-                             fade,
-                             lit);
-#else
-            glRotate(cameraOrientation);
-            renderEllipsoidAtmosphere(*atmosphere,
-                                      pos,
-                                      obj.orientation,
-                                      semiAxes,
-                                      ri.sunDir_eye,
-                                      ri.ambientColor,
-                                      thicknessInPixels,
-                                      lit);
-#endif // OLD_ATMOSPHERE
-            glEnable(GL_TEXTURE_2D);
-            glPopMatrix();
+                glRotate(cameraOrientation);
+                renderEllipsoidAtmosphere(*atmosphere,
+                                          pos,
+                                          obj.orientation,
+                                          semiAxes,
+                                          ri.sunDir_eye,
+                                          ri.ambientColor,
+                                          thicknessInPixels,
+                                          lit);
+                glEnable(GL_TEXTURE_2D);
+                glPopMatrix();
+            }
         }
 
         // If there's a cloud layer, we'll render it now.
@@ -5652,11 +5815,13 @@ void Renderer::renderObject(Point3f pos,
                 if (context->getRenderPath() == GLContext::GLPath_GLSL)
                 {
                     renderClouds_GLSL(ri, ls,
+                                      atmosphere,
                                       cloudTex,
                                       cloudTexOffset,
                                       obj.rings,
-                                      radius * cloudScale,
+                                      radius,
                                       textureResolution,
+                                      renderFlags,
                                       planetMat,
                                       viewFrustum,
                                       *context);
