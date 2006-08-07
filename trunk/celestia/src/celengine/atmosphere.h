@@ -12,6 +12,7 @@
 
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
+#include <celmath/vecmath.h>
 
 
 class Atmosphere
@@ -25,7 +26,14 @@ class Atmosphere
         sunsetColor(1.0f, 0.6f, 0.5f),
         cloudHeight(0.0f),
         cloudSpeed(0.0f),
-        cloudTexture() {};
+        cloudTexture(),
+        mieCoeff(0.0f),
+        mieScaleHeight(0.0f),
+        miePhaseAsymmetry(0.0f),
+        rayleighCoeff(0.0f, 0.0f, 0.0f),
+        rayleighScaleHeight(0.0f),
+        absorptionCoeff(0.0f, 0.0f, 0.0f)
+    {};
 
  public:
     float height;
@@ -33,9 +41,17 @@ class Atmosphere
     Color upperColor;
     Color skyColor;
     Color sunsetColor;
+        
     float cloudHeight;
     float cloudSpeed;
     MultiResTexture cloudTexture;
+    
+    float mieCoeff;
+    float mieScaleHeight;
+    float miePhaseAsymmetry;
+    Vec3f rayleighCoeff;
+    float rayleighScaleHeight;
+    Vec3f absorptionCoeff;
 };
 
 #endif // _ATMOSPHERE_H_
