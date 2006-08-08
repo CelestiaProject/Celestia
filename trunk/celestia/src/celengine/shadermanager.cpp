@@ -383,6 +383,11 @@ CelestiaGLProgram::initParameters(const ShaderProperties& props)
         invScatterCoeffSum   = vec3Param("invScatterCoeffSum");
         extinctionCoeff      = vec3Param("extinctionCoeff");
     }
+    
+    if (props.lightModel == ShaderProperties::LunarLambertModel)
+    {
+        lunarLambert         = floatParam("lunarLambert");
+    }
 }
 
 
@@ -657,6 +662,10 @@ DirectionalLight(unsigned int i, const ShaderProperties& props)
     {
         source += AssignDiffuse(i, props) + " NL / (max(NV, 0.001) + NL);\n";
     }
+    else if (props.lightModel == ShaderProperties::LunarLambertModel)
+    {
+        source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
+    }
     else if (props.usesShadows())
     {
         // When there are shadows, we need to track the diffuse contributions
@@ -832,6 +841,66 @@ AtmosphericEffects(const ShaderProperties& props)
 }
 
 
+#if 0
+// Integrate the atmosphere by summation--slow, but higher quality
+static string
+AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
+{
+    string source;
+    
+    source += "{\n";
+    // Compute the intersection of the view direction and the cloud layer (currently assumed to be a sphere)            
+    source += "    float rq = dot(eyePosition, eyeDir);\n";
+    source += "    float qq = dot(eyePosition, eyePosition) - atmosphereRadius.y;\n";
+    source += "    float d = sqrt(rq * rq - qq);\n";
+    source += "    vec3 atmEnter = eyePosition + min(0.0, (-rq + d)) * eyeDir;\n";
+    source += "    vec3 atmLeave = gl_Vertex.xyz;\n";
+            
+    source += "    vec3 step = (atmLeave - atmEnter) * (1.0 / 10.0);\n";
+    source += "    float stepLength = length(step);\n";
+    source += "    vec3 atmSamplePoint = atmEnter + step * 0.5;\n";
+    source += "    vec3 atmColor = 0.0;\n";
+    source += "    float density = 0.0;\n";
+    source += "    for (int i = 0; i < 10; ++i) {\n";
+    
+    // Compute the distance through the atmosphere from the sample point to the sun
+    source += "        rq = dot(atmSamplePoint, " + LightProperty(0, "direction") + ");\n";
+    source += "        qq = dot(atmSamplePoint, atmSamplePoint) - atmosphereRadius.y;\n";
+    source += "        d = sqrt(rq * rq - qq);\n";
+    source += "        float distSun = -rq + d;\n";
+    
+    // Compute the density of the atmosphere at the sample point; it falls off exponentially
+    // with the height above the planet's surface.
+    source += "        float h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
+    source += "        float d = exp(-h * mieH);\n";
+    source += "        density += d;\n";
+    source += "        vec3 sunColor = exp(-extinctionCoeff * d * distSun);\n";
+    source += "        vec3 ex = exp(-extinctionCoeff * density * stepLength);\n";
+    source += "    }\n";
+    
+    // Evaluate the Mie and Rayleigh phase functions; both are functions of the cosine        
+    // of the angle between the view vector and light vector
+    source += "    float cosTheta = dot(eyeDir, " + LightProperty(0, "direction") + ");\n";
+    source += "    float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
+    //source += "    float phRayleigh = (1.0 + cosTheta * cosTheta);\n";
+    source += "    float phRayleigh = 1.0;\n";
+    
+    source += "    scatterEx = ex;\n";
+    
+    string scatter = "(1.0 - exp(-scatterCoeffSum * density * distAtm))";
+    
+    source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
+    
+    // Optional exposure control
+    //source += "    1.0 - (" + VarScatterInVS() + " * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
+        
+    source += "}\n";
+    
+    return source;
+}
+#endif
+
+
 string
 TextureSamplerDeclarations(const ShaderProperties& props)
 {
@@ -972,7 +1041,16 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += "varying vec4 spec;\n";
             source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
         }
-    }    
+    }
+
+    // If this shader uses tangent space lighting, the diffuse term
+    // will be calculated in the fragment shader and we won't need
+    // the lunar-Lambert term here in the vertex shader.
+    if (!props.usesTangentSpaceLighting())
+    {
+        if (props.lightModel == ShaderProperties::LunarLambertModel)
+            source += "uniform float lunarLambert;\n";
+    }
         
     // Miscellaneous lighting values
     if (props.texUsage & ShaderProperties::NightTexture)
@@ -1207,7 +1285,10 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "uniform float shininess;\n";
             }
         }
-            
+
+        if (props.lightModel == ShaderProperties::LunarLambertModel)
+            source += "uniform float lunarLambert;\n";
+        
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             source += "varying vec3 " + LightDir_tan(i) + ";\n";
@@ -1227,6 +1308,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "varying vec3 normal;\n";        
         source += "vec4 spec = vec4(0.0);\n";
         source += "uniform float shininess;\n";
+            
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             source += "varying vec3 " + LightHalfVector(i) + ";\n";
@@ -1350,7 +1432,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "vec3 H;\n";
                 source += "float NH;\n";
             }
-            else if (props.lightModel == ShaderProperties::LommelSeeligerModel)
+            else if (props.lightModel == ShaderProperties::LommelSeeligerModel ||
+                      props.lightModel == ShaderProperties::LunarLambertModel)
             {
                 source += "float NV = dot(n, V);\n";
             }
@@ -1369,6 +1452,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             {
                 source += "NL = max(0.0, NL);\n";
                 source += "l = (NL / (max(NV, 0.001) + NL)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
+            }
+            else if (props.lightModel == ShaderProperties::LunarLambertModel)
+            {
+                source += "NL = max(0.0, NL);\n";
+                source += "l = mix(NL, (NL / (max(NV, 0.001) + NL)), lunarLambert) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
             }
             else
             {

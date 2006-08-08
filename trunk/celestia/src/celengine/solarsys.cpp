@@ -123,6 +123,7 @@ static void FillinSurface(Hash* surfaceData,
 {
     surfaceData->getColor("Color", surface->color);
 
+    // Haze is deprecated; used only in pre-OpenGL 2.0 render paths    
     Color hazeColor = surface->hazeColor;
     float hazeDensity = hazeColor.alpha();
     if (surfaceData->getColor("HazeColor", hazeColor) | surfaceData->getNumber("HazeDensity", hazeDensity))
@@ -134,6 +135,8 @@ static void FillinSurface(Hash* surfaceData,
     surfaceData->getColor("SpecularColor", surface->specularColor);
     surfaceData->getNumber("SpecularPower", surface->specularPower);
 
+    surfaceData->getNumber("LunarLambert", surface->lunarLambert);
+    
     string baseTexture;
     string bumpTexture;
     string nightTexture;
@@ -156,7 +159,7 @@ static void FillinSurface(Hash* surfaceData,
     
     float bumpHeight = 2.5f;
     surfaceData->getNumber("BumpHeight", bumpHeight);
-
+    
     bool blendTexture = false;
     surfaceData->getBoolean("BlendTexture", blendTexture);
 
