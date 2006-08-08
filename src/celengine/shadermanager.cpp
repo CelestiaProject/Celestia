@@ -300,6 +300,19 @@ CloudShadowTexCoord(unsigned int index)
 }
 
 
+static string
+VarScatterInVS()
+{
+    return string("gl_FrontSecondaryColor.rgb");
+}
+
+static string
+VarScatterInFS()
+{
+    return string("gl_SecondaryColor.rgb");
+}
+
+
 void
 CelestiaGLProgram::initParameters(const ShaderProperties& props)
 {
@@ -808,7 +821,7 @@ AtmosphericEffects(const ShaderProperties& props)
         scatter = "(1.0 - ex)";
     }
     
-    source += "    scatterIn = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
+    source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
     
     // Optional exposure control
     //source += "    1.0 - (scatterIn * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
@@ -970,7 +983,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.hasScattering())
     {
-        source += "varying vec3 scatterIn;\n";
+        //source += "varying vec3 scatterIn;\n";
         source += "varying vec3 scatterEx;\n";
     }    
 
@@ -1256,7 +1269,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 
     if (props.hasScattering())
     {
-        source += "varying vec3 scatterIn;\n"; 
+        //source += "varying vec3 scatterIn;\n"; 
         source += "varying vec3 scatterEx;\n"; 
     }    
     
@@ -1466,9 +1479,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.hasScattering())
     {    
         if (props.lightModel == ShaderProperties::AtmosphereModel)
-            source += "gl_FragColor = vec4(scatterIn, 1.0);\n";
+            source += "gl_FragColor = vec4(" + VarScatterInFS() + ", 1.0);\n";
         else
-            source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + scatterIn;\n";
+            source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + " + VarScatterInFS() + ";\n";
     }
 
     source += "}\n";
