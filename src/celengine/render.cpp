@@ -2510,6 +2510,7 @@ struct RenderInfo
     Point3f eyePos_obj;
     Color sunColor;
     Color ambientColor;
+    float lunarLambert;
     Quatf orientation;
     float pixWidth;
     bool useTexEnvCombine;
@@ -2529,6 +2530,7 @@ struct RenderInfo
                    eyePos_obj(0.0f, 0.0f, 0.0f),
                    sunColor(1.0f, 1.0f, 1.0f),
                    ambientColor(0.0f, 0.0f, 0.0f),
+                   lunarLambert(0.0f),
                    orientation(1.0f, 0.0f, 0.0f, 0.0f),
                    pixWidth(1.0f),
                    useTexEnvCombine(false)
@@ -3343,7 +3345,7 @@ static void setLightParameters_GLSL(CelestiaGLProgram& prog,
     }
     
     prog.ambientColor = ls.ambientColor;
-    prog.opacity = materialDiffuse.alpha();
+    prog.opacity = materialDiffuse.alpha();        
 }
 
 
@@ -4096,12 +4098,6 @@ static void renderSphere_GLSL(const RenderInfo& ri,
         textures[nTextures++] = ri.bumpTex;
     }
 
-#if 0    
-    // TODO: remove this testing hack
-    if (atmosphere == NULL)
-        shadprop.lightModel = ShaderProperties::LommelSeeligerModel;
-#endif        
-    
     if (ri.specularColor != Color::Black)
     {
         shadprop.lightModel = ShaderProperties::PerPixelSpecularModel;
@@ -4114,6 +4110,11 @@ static void renderSphere_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= ShaderProperties::SpecularTexture;
             textures[nTextures++] = ri.glossTex;
         }
+    }
+    else if (ri.lunarLambert != 0.0f)
+    {
+        // TODO: Lunar-Lambert model and specular color should not be mutually exclusive
+        shadprop.lightModel = ShaderProperties::LunarLambertModel;
     }
 
     if (ri.nightTex != NULL)
@@ -4201,6 +4202,8 @@ static void renderSphere_GLSL(const RenderInfo& ri,
     
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
+    if (shadprop.lightModel == ShaderProperties::LunarLambertModel)
+        prog->lunarLambert = ri.lunarLambert;
 
     if (ri.nightTex != NULL)
     {
@@ -5542,6 +5545,7 @@ void Renderer::renderObject(Point3f pos,
     ri.specularColor = obj.surface->specularColor;
     ri.specularPower = obj.surface->specularPower;
     ri.useTexEnvCombine = context->getRenderPath() != GLContext::GLPath_Basic;
+    ri.lunarLambert = obj.surface->lunarLambert;
 
     // See if the surface should be lit
     bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
