@@ -52,6 +52,7 @@ class ShaderProperties
      OrenNayarModel        = 4,
      LommelSeeligerModel   = 5,
      AtmosphereModel       = 6,
+     LunarLambertModel     = 7,
  };
  
  public:
@@ -101,6 +102,10 @@ class CelestiaGLProgram
 
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;
+    
+    // Mix of Lambertian and "lunar" (Lommel-Seeliger) photometric models.
+    // 0 = pure Lambertian, 1 = L-S
+    FloatShaderParameter lunarLambert;
 
     // Diffuse texture coordinate offset
     FloatShaderParameter textureOffset;
