@@ -419,13 +419,13 @@ GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materia
             shaderProps.lightModel == ShaderProperties::RingIllumModel)
         {
             prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
-                                           lightColor.y * diffuseColor.y,
-                                           lightColor.z * diffuseColor.z);
+                                            lightColor.y * diffuseColor.y,
+                                            lightColor.z * diffuseColor.z);
             if (shaderProps.hasSpecular())
             {
                 prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
-                                                   lightColor.y * specularColor.y,
-                                                   lightColor.z * specularColor.z);
+                                                  lightColor.y * specularColor.y,
+                                                  lightColor.z * specularColor.z);
             }
         }
         else
@@ -446,7 +446,9 @@ GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materia
     }
     
     prog.eyePosition = lightingState.eyePos_obj;
-    prog.ambientColor = lightingState.ambientColor;
+    prog.ambientColor = Vec3f(lightingState.ambientColor.x * diffuseColor.x,
+                              lightingState.ambientColor.y * diffuseColor.y,
+                              lightingState.ambientColor.z * diffuseColor.z);
     prog.opacity = materialDiffuse.alpha();
 }
 
