@@ -136,7 +136,9 @@ class GLSL_RenderContext : public RenderContext
     
     virtual void makeCurrent(const Mesh::Material&);
     virtual void setVertexArrays(const Mesh::VertexDescription& desc,
-				 void* vertexData);
+                                 void* vertexData);
+                 
+    virtual void setLunarLambert(float);                 
 
  private:
      void initLightingEnvironment();
@@ -148,6 +150,9 @@ class GLSL_RenderContext : public RenderContext
     bool blendOn;
     float objRadius;
     Mat4f xform;
+    
+    // extended material properties
+    float lunarLambert;
     
     ShaderProperties shaderProps;
 };
