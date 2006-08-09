@@ -60,6 +60,7 @@ class RenderContext
  public:
     RenderContext(const Mesh::Material*);
     RenderContext();
+    virtual ~RenderContext() {};
 
     virtual void makeCurrent(const Mesh::Material&) = 0;
     virtual void setVertexArrays(const Mesh::VertexDescription& desc,
@@ -131,6 +132,7 @@ class GLSL_RenderContext : public RenderContext
 {
  public:
     GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform);
+    virtual ~GLSL_RenderContext();
     
     virtual void makeCurrent(const Mesh::Material&);
     virtual void setVertexArrays(const Mesh::VertexDescription& desc,

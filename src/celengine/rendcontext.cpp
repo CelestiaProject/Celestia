@@ -344,7 +344,6 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     {
     case Mesh::Float3:
         glx::glEnableVertexAttribArrayARB(TangentAttributeIndex);
-        glEnableClientState(GL_NORMAL_ARRAY);
         glx::glVertexAttribPointerARB(TangentAttributeIndex,
                                       GLComponentCounts[(int) tangent.format],
                                       GLComponentTypes[(int) tangent.format],
@@ -366,6 +365,12 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius
     xform(_xform)
 {
     initLightingEnvironment();
+}
+
+
+GLSL_RenderContext::~GLSL_RenderContext()
+{    
+    glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
 }
 
 
