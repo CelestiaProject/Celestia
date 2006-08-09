@@ -362,7 +362,8 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius
     lightingState(ls),
     blendOn(false),
     objRadius(_objRadius),
-    xform(_xform)
+    xform(_xform),
+    lunarLambert(0.0f)
 {
     initLightingEnvironment();
 }
@@ -528,7 +529,11 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     Texture* emissiveTex = NULL;
 
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
-    shaderProps.lightModel = ShaderProperties::DiffuseModel;
+    
+    if (lunarLambert == 0.0f)
+        shaderProps.lightModel = ShaderProperties::DiffuseModel;
+    else
+        shaderProps.lightModel = ShaderProperties::LunarLambertModel;
     
     if (m.maps[Mesh::DiffuseMap] != InvalidResource)
     {
@@ -594,9 +599,12 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     if (shaderProps.shadowCounts != 0)    
         setShadowParameters(*prog);
 
-    prog->shininess = m.specularPower;
-    //prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(), ri.ambientColor.blue());
     // TODO: handle emissive color
+    prog->shininess = m.specularPower;   
+    if (shaderProps.lightModel == ShaderProperties::LunarLambertModel)
+    {
+        prog->lunarLambert = lunarLambert;
+    }
     
     if (emissiveTex != NULL)
     {
@@ -631,4 +639,12 @@ GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
 {
     setStandardVertexArrays(desc, vertexData);
     setExtendedVertexArrays(desc, vertexData);
+}
+
+
+// Extended material properties -- currently just lunarLambert term
+void
+GLSL_RenderContext::setLunarLambert(float l)
+{
+    lunarLambert = l;
 }

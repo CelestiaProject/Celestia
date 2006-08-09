@@ -4256,6 +4256,9 @@ static void renderModel_GLSL(Model* model,
     
     GLSL_RenderContext rc(ls, radius, planetMat);
     
+    // Handle extended material attributes (per model only, not per submesh)
+    rc.setLunarLambert(ri.lunarLambert);
+    
     // Handle material override; a texture specified in an ssc file will override
     // all materials specified in the model file.
     if (texOverride != InvalidResource)
