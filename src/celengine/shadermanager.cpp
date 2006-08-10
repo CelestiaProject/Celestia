@@ -397,6 +397,7 @@ CelestiaGLProgram::initSamplers(const ShaderProperties& props)
     program->use();
 
     unsigned int nSamplers = 0;
+    
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
         int slot = glx::glGetUniformLocationARB(program->getID(), "diffTex");
@@ -941,24 +942,31 @@ TextureCoordDeclarations(const ShaderProperties& props)
 {
     string source;
     
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    if (props.hasSharedTextureCoords())
     {
-        source += "varying vec2 diffTexCoord;\n";
+        // If the shared texture coords flag is set, use the diffuse texture
+        // coordinate for sampling all the texture maps.
+        if (props.texUsage & (ShaderProperties::DiffuseTexture  |
+                               ShaderProperties::NormalTexture   |
+                               ShaderProperties::SpecularTexture |
+                               ShaderProperties::NightTexture    |
+                               ShaderProperties::OverlayTexture))
+        {
+            source += "varying vec2 diffTexCoord;\n";            
+        }
     }
-
-    if (!props.hasSharedTextureCoords())
+    else
     {
-        if (props.texUsage & ShaderProperties::NormalTexture)
+        if (props.texUsage & ShaderProperties::DiffuseTexture)
+            source += "varying vec2 diffTexCoord;\n";
+        if (props.texUsage & ShaderProperties::NormalTexture)   
             source += "varying vec2 normTexCoord;\n";
         if (props.texUsage & ShaderProperties::SpecularTexture)
             source += "varying vec2 specTexCoord;\n";
         if (props.texUsage & ShaderProperties::NightTexture)
             source += "varying vec2 nightTexCoord;\n";
-    }
-    
-    if (props.texUsage & ShaderProperties::OverlayTexture)
-    {
-        source += "varying vec2 overlayTexCoord;\n";
+        if (props.texUsage & ShaderProperties::OverlayTexture)
+            source += "varying vec2 overlayTexCoord;\n";
     }
 
     return source;    
@@ -1137,33 +1145,49 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
 
     unsigned int nTexCoords = 0;
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    
+    if (props.hasSharedTextureCoords())
     {
-        source += "diffTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-        source += "diffTexCoord.x += textureOffset;\n";
-        nTexCoords++;
-    }
-
-    if (!props.hasSharedTextureCoords())
-    {
-        if (props.texUsage & ShaderProperties::NormalTexture)
+        if (props.texUsage & (ShaderProperties::DiffuseTexture  |
+                              ShaderProperties::NormalTexture   |
+                              ShaderProperties::SpecularTexture |
+                              ShaderProperties::NightTexture    |
+                              ShaderProperties::OverlayTexture))
         {
-            source += "normTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-            nTexCoords++;
-        }
-
-        if (props.texUsage & ShaderProperties::SpecularTexture)
-        {
-            source += "specTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-            nTexCoords++;
-        }
-
-        if (props.texUsage & ShaderProperties::NightTexture)
-        {
-            source += "nightTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-            nTexCoords++;
+            source += "diffTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+            source += "diffTexCoord.x += textureOffset;\n";
         }
     }
+    else
+    {
+        if (props.texUsage & ShaderProperties::DiffuseTexture)
+        {
+            source += "diffTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+            source += "diffTexCoord.x += textureOffset;\n";
+            nTexCoords++;
+        }
+
+        if (!props.hasSharedTextureCoords())
+        {
+            if (props.texUsage & ShaderProperties::NormalTexture)
+            {
+                source += "normTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                nTexCoords++;
+            }
+
+            if (props.texUsage & ShaderProperties::SpecularTexture)
+            {
+                source += "specTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                nTexCoords++;
+            }
+
+            if (props.texUsage & ShaderProperties::NightTexture)
+            {
+                source += "nightTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                nTexCoords++;
+            }
+        }
+    }    
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
@@ -1214,7 +1238,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += AtmosphericEffects(props);
     }
 
-    if (props.texUsage & ShaderProperties::OverlayTexture)
+    if (props.texUsage & ShaderProperties::OverlayTexture && !hasSharedTextureCoords())
     {
         source += "overlayTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
         nTexCoords++;
