@@ -1238,7 +1238,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += AtmosphericEffects(props);
     }
 
-    if (props.texUsage & ShaderProperties::OverlayTexture && !hasSharedTextureCoords())
+    if ((props.texUsage & ShaderProperties::OverlayTexture) && !props.hasSharedTextureCoords())
     {
         source += "overlayTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
         nTexCoords++;
