@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pt\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-06 12:56+0200\n"
+"POT-Creation-Date: 2006-08-12 12:54+0200\n"
 "PO-Revision-Date: 2005-03-29 12:40+0100\n"
 "Last-Translator: Andre Lourenço <andrelourenco@yahoo.com>\n"
 "Language-Team:  <pt@li.org>\n"
@@ -89,28 +89,28 @@ msgstr ""
 msgid "Error in .ssc file (line "
 msgstr ""
 
-#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
+#: src/celengine/solarsys.cpp:572 src/celengine/solarsys.cpp:630
 msgid "parent body '"
 msgstr ""
 
-#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
+#: src/celengine/solarsys.cpp:572 src/celengine/solarsys.cpp:630
 msgid "' of '"
 msgstr ""
 
-#: src/celengine/solarsys.cpp:560 src/celengine/solarsys.cpp:618
+#: src/celengine/solarsys.cpp:572 src/celengine/solarsys.cpp:630
 msgid "' not found.\n"
 msgstr ""
 
-#: src/celengine/solarsys.cpp:569
+#: src/celengine/solarsys.cpp:581
 msgid "warning duplicate definition of "
 msgstr ""
 
-#: src/celengine/solarsys.cpp:598
+#: src/celengine/solarsys.cpp:610
 #, fuzzy
 msgid "bad alternate surface"
 msgstr "&Superfícies Alternativas"
 
-#: src/celengine/solarsys.cpp:612
+#: src/celengine/solarsys.cpp:624
 #, fuzzy
 msgid "bad location"
 msgstr "Locais"
@@ -252,103 +252,103 @@ msgstr ""
 msgid "Invalid filetype"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:921 src/celestia/celestiacore.cpp:1655
-#: src/celestia/celestiacore.cpp:1671 src/celestia/celestiacore.cpp:1912
-#: src/celestia/celestiacore.cpp:1941
+#: src/celestia/celestiacore.cpp:921 src/celestia/celestiacore.cpp:1659
+#: src/celestia/celestiacore.cpp:1675 src/celestia/celestiacore.cpp:1916
+#: src/celestia/celestiacore.cpp:1945
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1304
+#: src/celestia/celestiacore.cpp:1308
 #, fuzzy
 msgid "Markers enabled"
 msgstr "Marcadores"
 
-#: src/celestia/celestiacore.cpp:1307
+#: src/celestia/celestiacore.cpp:1311
 #, fuzzy
 msgid "Markers disabled"
 msgstr "Marcadores"
 
-#: src/celestia/celestiacore.cpp:1317
+#: src/celestia/celestiacore.cpp:1321
 #, fuzzy
 msgid "Goto surface"
 msgstr "Ir Para Superficie"
 
-#: src/celestia/celestiacore.cpp:1326
+#: src/celestia/celestiacore.cpp:1330
 #, fuzzy
 msgid "Alt-azimuth mode"
 msgstr "Modo Alt-Azimute"
 
-#: src/celestia/celestiacore.cpp:1381
+#: src/celestia/celestiacore.cpp:1385
 msgid "Star style: fuzzy points"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1384
+#: src/celestia/celestiacore.cpp:1388
 msgid "Star style: points"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1387
+#: src/celestia/celestiacore.cpp:1391
 msgid "Star style: scaled discs"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1400
+#: src/celestia/celestiacore.cpp:1404
 #, fuzzy
 msgid "Comet tails enabled"
 msgstr "Cauda de Cometas"
 
-#: src/celestia/celestiacore.cpp:1403
+#: src/celestia/celestiacore.cpp:1407
 #, fuzzy
 msgid "Comet tails disabled"
 msgstr "Cauda de Cometas"
 
-#: src/celestia/celestiacore.cpp:1418
+#: src/celestia/celestiacore.cpp:1422
 msgid "Render path: Basic"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1421
+#: src/celestia/celestiacore.cpp:1425
 #, fuzzy
 msgid "Render path: Multitexture"
 msgstr "Multitexture"
 
-#: src/celestia/celestiacore.cpp:1424
+#: src/celestia/celestiacore.cpp:1428
 msgid "Render path: NVIDIA combiners"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1427
+#: src/celestia/celestiacore.cpp:1431
 msgid "Render path: OpenGL vertex program"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1430
+#: src/celestia/celestiacore.cpp:1434
 msgid "Render path: NVIDIA vertex program and combiners"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1433
+#: src/celestia/celestiacore.cpp:1437
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1436
+#: src/celestia/celestiacore.cpp:1440
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1439
+#: src/celestia/celestiacore.cpp:1443
 msgid "Render path: NVIDIA GeForce FX"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1442
+#: src/celestia/celestiacore.cpp:1446
 msgid "Render path: OpenGL 2.0"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1465
+#: src/celestia/celestiacore.cpp:1469
 #, fuzzy
 msgid "Auto-magnitude enabled"
 msgstr "Magnitudes Automáticas"
 
-#: src/celestia/celestiacore.cpp:1470
+#: src/celestia/celestiacore.cpp:1474
 #, fuzzy
 msgid "Auto-magnitude disabled"
 msgstr "Magnitudes Automáticas"
 
-#: src/celestia/celestiacore.cpp:1492 src/celestia/res/resource_strings.cpp:80
+#: src/celestia/celestiacore.cpp:1496 src/celestia/res/resource_strings.cpp:80
 #: src/celestia/res/resource_strings.cpp:92
 #: src/celestia/res/resource_strings.cpp:96
 #: src/celestia/res/resource_strings.cpp:124
@@ -361,261 +361,261 @@ msgstr "Magnitudes Automáticas"
 msgid "Cancel"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1530
+#: src/celestia/celestiacore.cpp:1534
 msgid "Time and script are paused"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1532
+#: src/celestia/celestiacore.cpp:1536
 msgid "Time is paused"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1536
+#: src/celestia/celestiacore.cpp:1540
 msgid "Resume"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1599
+#: src/celestia/celestiacore.cpp:1603
 #, fuzzy, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "Ignorar Velocidade da Luz"
 
-#: src/celestia/celestiacore.cpp:1608
+#: src/celestia/celestiacore.cpp:1612
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1611
+#: src/celestia/celestiacore.cpp:1615
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1630
+#: src/celestia/celestiacore.cpp:1634
 msgid "Light travel delay included"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1635
+#: src/celestia/celestiacore.cpp:1639
 msgid "Light travel delay switched off"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1641
+#: src/celestia/celestiacore.cpp:1645
 msgid "Light travel delay ignored"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1682
+#: src/celestia/celestiacore.cpp:1686
 msgid "Using normal surface textures."
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1686
+#: src/celestia/celestiacore.cpp:1690
 msgid "limit of knowledge"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1687
+#: src/celestia/celestiacore.cpp:1691
 msgid "Using limit of knowledge surface textures."
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1750
+#: src/celestia/celestiacore.cpp:1754
 #, fuzzy
 msgid "Follow"
 msgstr "&Seguir"
 
-#: src/celestia/celestiacore.cpp:1777
+#: src/celestia/celestiacore.cpp:1781
 #, fuzzy
 msgid "Time: Forward"
 msgstr "&Avançar"
 
-#: src/celestia/celestiacore.cpp:1779
+#: src/celestia/celestiacore.cpp:1783
 msgid "Time: Backward"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1790 src/celestia/celestiacore.cpp:1803
+#: src/celestia/celestiacore.cpp:1794 src/celestia/celestiacore.cpp:1807
 #, c-format
 msgid "Time rate: %.1f"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1840
+#: src/celestia/celestiacore.cpp:1844
 msgid "Low res textures"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1843
+#: src/celestia/celestiacore.cpp:1847
 msgid "Medium res textures"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1846
+#: src/celestia/celestiacore.cpp:1850
 msgid "High res textures"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1885
+#: src/celestia/celestiacore.cpp:1889
 #, fuzzy
 msgid "Sync Orbit"
 msgstr "&Sincronizar Órbita"
 
-#: src/celestia/celestiacore.cpp:1891
+#: src/celestia/celestiacore.cpp:1895
 msgid "Lock"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1897
+#: src/celestia/celestiacore.cpp:1901
 msgid "Chase"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1921 src/celestia/celestiacore.cpp:1950
+#: src/celestia/celestiacore.cpp:1925 src/celestia/celestiacore.cpp:1954
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1979 src/celestia/celestiacore.cpp:1989
+#: src/celestia/celestiacore.cpp:1983 src/celestia/celestiacore.cpp:1993
 msgid "Light gain"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2336
+#: src/celestia/celestiacore.cpp:2340
 msgid "GL error: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2383
+#: src/celestia/celestiacore.cpp:2387
 msgid "View too small to be split"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2386
+#: src/celestia/celestiacore.cpp:2390
 msgid "Added view"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2646
+#: src/celestia/celestiacore.cpp:2650
 msgid " days"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2648
+#: src/celestia/celestiacore.cpp:2652
 msgid " hours"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2650
+#: src/celestia/celestiacore.cpp:2654
 msgid " minutes"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2690
+#: src/celestia/celestiacore.cpp:2694
 msgid "Apparent diameter: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2705
+#: src/celestia/celestiacore.cpp:2709
 #, fuzzy
 msgid "Apparent magnitude: "
 msgstr "Magnitudes Automáticas"
 
-#: src/celestia/celestiacore.cpp:2709
+#: src/celestia/celestiacore.cpp:2713
 #, fuzzy
 msgid "Absolute magnitude: "
 msgstr "Magnitudes Automáticas"
 
-#: src/celestia/celestiacore.cpp:2742 src/celestia/celestiacore.cpp:2796
-#: src/celestia/celestiacore.cpp:2828 src/celestia/celestiacore.cpp:2880
+#: src/celestia/celestiacore.cpp:2746 src/celestia/celestiacore.cpp:2800
+#: src/celestia/celestiacore.cpp:2832 src/celestia/celestiacore.cpp:2884
 #: src/celestia/kde/selectionpopup.cpp:76
 msgid "Distance: "
 msgstr "Distância"
 
-#: src/celestia/celestiacore.cpp:2748
+#: src/celestia/celestiacore.cpp:2752
 msgid "Star system barycenter\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2752
+#: src/celestia/celestiacore.cpp:2756
 #, fuzzy, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Mag Abs (apx): "
 
-#: src/celestia/celestiacore.cpp:2758
+#: src/celestia/celestiacore.cpp:2762
 msgid "Luminosity: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2759 src/celestia/kde/selectionpopup.cpp:86
+#: src/celestia/celestiacore.cpp:2763 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
 msgstr "Classe: "
 
-#: src/celestia/celestiacore.cpp:2761
+#: src/celestia/celestiacore.cpp:2765
 msgid "Neutron star"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2763
+#: src/celestia/celestiacore.cpp:2767
 msgid "Black hole"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2773
+#: src/celestia/celestiacore.cpp:2777
 #, fuzzy
 msgid "Surface temp: "
 msgstr "Temp. Sup.: "
 
-#: src/celestia/celestiacore.cpp:2774
+#: src/celestia/celestiacore.cpp:2778
 #, fuzzy, c-format
 msgid "Radius: %.2f Rsun\n"
 msgstr "Raio: "
 
-#: src/celestia/celestiacore.cpp:2776
+#: src/celestia/celestiacore.cpp:2780
 msgid "Rotation period: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2783
+#: src/celestia/celestiacore.cpp:2787
 msgid "Planetary companions present\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2801
+#: src/celestia/celestiacore.cpp:2805
 #, fuzzy
 msgid "Distance from center: "
 msgstr "Distância"
 
-#: src/celestia/celestiacore.cpp:2805 src/celestia/celestiacore.cpp:2833
+#: src/celestia/celestiacore.cpp:2809 src/celestia/celestiacore.cpp:2837
 #: src/celestia/kde/selectionpopup.cpp:94
 msgid "Radius: "
 msgstr "Raio: "
 
-#: src/celestia/celestiacore.cpp:2842
+#: src/celestia/celestiacore.cpp:2846
 msgid "Day length: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2857
+#: src/celestia/celestiacore.cpp:2861
 msgid "Temperature: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2869
+#: src/celestia/celestiacore.cpp:2873
 #, c-format
 msgid "Apparent mag: %.2f\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3078 src/celestia/celestiacore.cpp:3092
+#: src/celestia/celestiacore.cpp:3082 src/celestia/celestiacore.cpp:3096
 msgid "  LT"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3088
+#: src/celestia/celestiacore.cpp:3092
 #, fuzzy
 msgid " UTC"
 msgstr "UTC"
 
-#: src/celestia/celestiacore.cpp:3104
+#: src/celestia/celestiacore.cpp:3108
 #, fuzzy
 msgid "Real time"
 msgstr "Hora Local"
 
-#: src/celestia/celestiacore.cpp:3106
+#: src/celestia/celestiacore.cpp:3110
 #, fuzzy
 msgid "-Real time"
 msgstr "Hora Local"
 
-#: src/celestia/celestiacore.cpp:3110
+#: src/celestia/celestiacore.cpp:3114
 msgid "Time stopped"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3114
+#: src/celestia/celestiacore.cpp:3118
 msgid " faster"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3118
+#: src/celestia/celestiacore.cpp:3122
 msgid " slower"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3124
+#: src/celestia/celestiacore.cpp:3128
 #, fuzzy
 msgid " (Paused)"
 msgstr "Parar Tempo"
 
-#: src/celestia/celestiacore.cpp:3139
+#: src/celestia/celestiacore.cpp:3143
 msgid "FPS: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3141
+#: src/celestia/celestiacore.cpp:3145
 #, fuzzy
 msgid ""
 "\n"
@@ -624,148 +624,148 @@ msgstr ""
 "\n"
 "Selecção: "
 
-#: src/celestia/celestiacore.cpp:3167
+#: src/celestia/celestiacore.cpp:3171
 msgid "Travelling "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3180
+#: src/celestia/celestiacore.cpp:3184
 msgid "Track "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3192
+#: src/celestia/celestiacore.cpp:3196
 #, fuzzy
 msgid "Follow "
 msgstr "&Seguir"
 
-#: src/celestia/celestiacore.cpp:3197
+#: src/celestia/celestiacore.cpp:3201
 #, fuzzy
 msgid "Sync Orbit "
 msgstr "&Sincronizar Órbita"
 
-#: src/celestia/celestiacore.cpp:3202
+#: src/celestia/celestiacore.cpp:3206
 msgid "Lock "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3211
+#: src/celestia/celestiacore.cpp:3215
 #, fuzzy
 msgid "Chase "
 msgstr "Classe: "
 
-#: src/celestia/celestiacore.cpp:3227
+#: src/celestia/celestiacore.cpp:3231
 msgid "FOV: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3329
+#: src/celestia/celestiacore.cpp:3333
 msgid "Target name: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3411
+#: src/celestia/celestiacore.cpp:3415
 msgid " at "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3412
+#: src/celestia/celestiacore.cpp:3416
 msgid " fps"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3414 src/celestia/kde/videocapturedlg.cpp:284
+#: src/celestia/celestiacore.cpp:3418 src/celestia/kde/videocapturedlg.cpp:284
 #, fuzzy
 msgid "  Recording"
 msgstr "Tipo de Render"
 
-#: src/celestia/celestiacore.cpp:3416 src/celestia/kde/videocapturedlg.cpp:66
+#: src/celestia/celestiacore.cpp:3420 src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:284
 msgid "  Paused"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3435
+#: src/celestia/celestiacore.cpp:3439
 msgid "F11 Start/Pause    F12 Stop"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3444 src/celestia/celestiacore.cpp:3447
+#: src/celestia/celestiacore.cpp:3448 src/celestia/celestiacore.cpp:3451
 msgid "Edit Mode"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3531
+#: src/celestia/celestiacore.cpp:3535
 msgid "Loading solar system catalog: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3572
+#: src/celestia/celestiacore.cpp:3576
 #, fuzzy
 msgid "Loading "
 msgstr "A carregar..."
 
-#: src/celestia/celestiacore.cpp:3582
+#: src/celestia/celestiacore.cpp:3586
 #, c-format
 msgid "Error reading star file: %s\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3608
+#: src/celestia/celestiacore.cpp:3612
 msgid "License file 'License.txt' is missing!"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3629
+#: src/celestia/celestiacore.cpp:3633
 msgid "Error reading configuration file."
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3668
+#: src/celestia/celestiacore.cpp:3672
 msgid "Cannot read star database."
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3687
+#: src/celestia/celestiacore.cpp:3691
 msgid "Error opening solar system catalog.\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3702
+#: src/celestia/celestiacore.cpp:3706
 msgid "Error opening test.xml\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3739
+#: src/celestia/celestiacore.cpp:3743
 msgid "Error reading deep sky file\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3746 src/celestia/celestiacore.cpp:3967
-#: src/celestia/celestiacore.cpp:3989
+#: src/celestia/celestiacore.cpp:3750 src/celestia/celestiacore.cpp:3971
+#: src/celestia/celestiacore.cpp:3993
 msgid "Error opening "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3790
+#: src/celestia/celestiacore.cpp:3794
 msgid "Error opening asterisms file."
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3805
+#: src/celestia/celestiacore.cpp:3809
 #, fuzzy
 msgid "Error opening constellation boundaries files."
 msgstr "Limites das Constelações"
 
-#: src/celestia/celestiacore.cpp:3869
+#: src/celestia/celestiacore.cpp:3873
 msgid "render path: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3880
+#: src/celestia/celestiacore.cpp:3884
 msgid "Failed to initialize renderer"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3896
+#: src/celestia/celestiacore.cpp:3900
 msgid "Error loading font; text will not be visible.\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3950
+#: src/celestia/celestiacore.cpp:3954
 msgid "Error reading cross index "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3952
+#: src/celestia/celestiacore.cpp:3956
 msgid "Loaded cross index "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3974
+#: src/celestia/celestiacore.cpp:3978
 msgid "Error reading star names file\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3997
+#: src/celestia/celestiacore.cpp:4001
 msgid "Error reading stars file\n"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:4024
+#: src/celestia/celestiacore.cpp:4028
 msgid "Error opening star catalog "
 msgstr ""
 
@@ -795,11 +795,86 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1328
+#: src/celestia/winmain.cpp:1338
 msgid "Windowed Mode"
 msgstr ""
 
-#: src/celestia/winmain.cpp:3142 src/celestia/winmain.cpp:3144
+#: src/celestia/winmain.cpp:1457 src/celestia/kde/kdepreferencesdialog.cpp:230
+#: src/celestia/res/resource_strings.cpp:151
+msgid "Asteroids"
+msgstr "Asteróides"
+
+#: src/celestia/winmain.cpp:1459 src/celestia/kde/kdepreferencesdialog.cpp:196
+#: src/celestia/res/resource_strings.cpp:172
+msgid "Comets"
+msgstr "Cometas"
+
+#: src/celestia/winmain.cpp:1461
+msgid "Invisibles"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1463 src/celestia/kde/kdepreferencesdialog.cpp:187
+#: src/celestia/res/resource_strings.cpp:155
+msgid "Moons"
+msgstr "Luas"
+
+#: src/celestia/winmain.cpp:1465 src/celestia/winmain.cpp:1603
+#: src/celestia/kde/kdepreferencesdialog.cpp:80
+#: src/celestia/kde/kdepreferencesdialog.cpp:178
+#: src/celestia/kde/selectionpopup.cpp:387
+#: src/celestia/res/resource_strings.cpp:147
+#: src/celestia/res/resource_strings.cpp:156
+msgid "Planets"
+msgstr "Planetas"
+
+#: src/celestia/winmain.cpp:1467 src/celestia/kde/celestialbrowser.cpp:189
+#: src/celestia/res/resource_strings.cpp:157
+msgid "Spacecraft"
+msgstr "Sonda"
+
+#: src/celestia/winmain.cpp:1558 src/celestia/winmain.cpp:1591
+#: src/celestia/winmain.cpp:1614 src/celestia/kde/eclipsefinderdlg.cpp:117
+#: src/celestia/kde/selectionpopup.cpp:312
+msgid "&Goto"
+msgstr "&Ir para"
+
+#: src/celestia/winmain.cpp:1559 src/celestia/winmain.cpp:1615
+#: src/celestia/kde/selectionpopup.cpp:313
+msgid "&Follow"
+msgstr "&Seguir"
+
+#: src/celestia/winmain.cpp:1560
+#, fuzzy
+msgid "S&ync Orbit"
+msgstr "&Sincronizar Órbita"
+
+#: src/celestia/winmain.cpp:1561 src/celestia/winmain.cpp:1592
+#: src/celestia/winmain.cpp:1616 src/celestia/kde/selectionpopup.cpp:315
+msgid "&Info"
+msgstr "&Info"
+
+#: src/celestia/winmain.cpp:1568
+#, fuzzy
+msgid "&Satellites"
+msgstr "Satélites"
+
+#: src/celestia/winmain.cpp:1578 src/celestia/kde/selectionpopup.cpp:347
+msgid "&Alternate Surfaces"
+msgstr "&Superfícies Alternativas"
+
+#: src/celestia/winmain.cpp:1601
+msgid "Orbiting Bodies"
+msgstr ""
+
+#: src/celestia/winmain.cpp:1628 src/celestia/kde/selectionpopup.cpp:319
+msgid "&Unmark"
+msgstr "&Limpar"
+
+#: src/celestia/winmain.cpp:1630 src/celestia/kde/selectionpopup.cpp:329
+msgid "&Mark"
+msgstr "&Marcar"
+
+#: src/celestia/winmain.cpp:3155 src/celestia/winmain.cpp:3157
 #: src/celestia/res/resource_strings.cpp:213
 msgid "WinLangID"
 msgstr "816"
@@ -830,51 +905,36 @@ msgstr "Inicio"
 msgid "Duration"
 msgstr "Diamante"
 
-#: src/celestia/wineclipses.cpp:131 src/celestia/wineclipses.cpp:145
-#: src/celestia/kde/kdepreferencesdialog.cpp:276
-#: src/celestia/res/resource_strings.cpp:160
-msgid "None"
-msgstr "Nenhum"
-
-#: src/celestia/wineclipses.cpp:286
-msgid "solar"
-msgstr ""
-
-#: src/celestia/wineclipses.cpp:287
-#, fuzzy
-msgid "moon"
-msgstr "Lua"
-
-#: src/celestia/wineclipses.cpp:291 src/celestia/kde/rc.cpp:97 data/data.cpp:3
+#: src/celestia/wineclipses.cpp:303 src/celestia/kde/rc.cpp:97 data/data.cpp:3
 #, no-c-format
 msgid "Earth"
 msgstr "Earth"
 
-#: src/celestia/wineclipses.cpp:292 src/celestia/kde/rc.cpp:100
+#: src/celestia/wineclipses.cpp:304 src/celestia/kde/rc.cpp:100
 #: data/data.cpp:8
 #, no-c-format
 msgid "Jupiter"
 msgstr "Jupiter"
 
-#: src/celestia/wineclipses.cpp:293 src/celestia/kde/rc.cpp:103
+#: src/celestia/wineclipses.cpp:305 src/celestia/kde/rc.cpp:103
 #: data/data.cpp:14
 #, no-c-format
 msgid "Saturn"
 msgstr "Saturn"
 
-#: src/celestia/wineclipses.cpp:294 src/celestia/kde/rc.cpp:106
+#: src/celestia/wineclipses.cpp:306 src/celestia/kde/rc.cpp:106
 #: data/data.cpp:28
 #, no-c-format
 msgid "Uranus"
 msgstr "Uranus"
 
-#: src/celestia/wineclipses.cpp:295 src/celestia/kde/rc.cpp:109
+#: src/celestia/wineclipses.cpp:307 src/celestia/kde/rc.cpp:109
 #: data/data.cpp:34
 #, no-c-format
 msgid "Neptune"
 msgstr "Neptune"
 
-#: src/celestia/wineclipses.cpp:296 src/celestia/kde/rc.cpp:112
+#: src/celestia/wineclipses.cpp:308 src/celestia/kde/rc.cpp:112
 #: data/data.cpp:39
 #, no-c-format
 msgid "Pluto"
@@ -931,11 +991,6 @@ msgstr "Asteróide"
 msgid "Comet"
 msgstr "Cometa"
 
-#: src/celestia/kde/celestialbrowser.cpp:189
-#: src/celestia/res/resource_strings.cpp:157
-msgid "Spacecraft"
-msgstr "Sonda"
-
 #: src/celestia/kde/celestialbrowser.cpp:193
 msgid "-"
 msgstr "-"
@@ -945,11 +1000,6 @@ msgstr "-"
 #, no-c-format
 msgid "Eclipse Finder"
 msgstr "Procurar Eclipses"
-
-#: src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:312
-msgid "&Goto"
-msgstr "&Ir para"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:164
 #, fuzzy
@@ -1485,14 +1535,6 @@ msgstr "Mostrar"
 msgid "Stars"
 msgstr "Estrelas"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:80
-#: src/celestia/kde/kdepreferencesdialog.cpp:178
-#: src/celestia/kde/selectionpopup.cpp:387
-#: src/celestia/res/resource_strings.cpp:147
-#: src/celestia/res/resource_strings.cpp:156
-msgid "Planets"
-msgstr "Planetas"
-
 #: src/celestia/kde/kdepreferencesdialog.cpp:84
 #: src/celestia/kde/kdepreferencesdialog.cpp:211
 #: src/celestia/res/resource_strings.cpp:143
@@ -1593,25 +1635,10 @@ msgstr "Órbitas / Nomes"
 msgid "Labels"
 msgstr "Nomes"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:187
-#: src/celestia/res/resource_strings.cpp:155
-msgid "Moons"
-msgstr "Luas"
-
-#: src/celestia/kde/kdepreferencesdialog.cpp:196
-#: src/celestia/res/resource_strings.cpp:172
-msgid "Comets"
-msgstr "Cometas"
-
 #: src/celestia/kde/kdepreferencesdialog.cpp:206
 #, fuzzy
 msgid "Constellations in Latin"
 msgstr "Constelações"
-
-#: src/celestia/kde/kdepreferencesdialog.cpp:230
-#: src/celestia/res/resource_strings.cpp:151
-msgid "Asteroids"
-msgstr "Asteróides"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:239
 msgid "Spacecrafts"
@@ -1638,6 +1665,11 @@ msgstr "Informação"
 #: src/celestia/kde/kdepreferencesdialog.cpp:274
 msgid "Level: "
 msgstr "Nível"
+
+#: src/celestia/kde/kdepreferencesdialog.cpp:276
+#: src/celestia/res/resource_strings.cpp:160
+msgid "None"
+msgstr "Nenhum"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:277
 #: src/celestia/res/resource_strings.cpp:161
@@ -1843,25 +1875,13 @@ msgstr "&Escolher"
 msgid "&Center"
 msgstr "&Centrar"
 
-#: src/celestia/kde/selectionpopup.cpp:313
-msgid "&Follow"
-msgstr "&Seguir"
-
 #: src/celestia/kde/selectionpopup.cpp:314
 msgid "S&ynch Orbit"
 msgstr "&Sincronizar Órbita"
 
-#: src/celestia/kde/selectionpopup.cpp:315
-msgid "&Info"
-msgstr "&Info"
-
 #: src/celestia/kde/selectionpopup.cpp:316
 msgid "Unmark &All"
 msgstr "Limpar &Todos "
-
-#: src/celestia/kde/selectionpopup.cpp:319
-msgid "&Unmark"
-msgstr "&Limpar"
 
 #: src/celestia/kde/selectionpopup.cpp:324
 msgid "Diamond"
@@ -1883,17 +1903,9 @@ msgstr "Mais"
 msgid "X"
 msgstr "X"
 
-#: src/celestia/kde/selectionpopup.cpp:329
-msgid "&Mark"
-msgstr "&Marcar"
-
 #: src/celestia/kde/selectionpopup.cpp:340
 msgid "Normal"
 msgstr "Normal"
-
-#: src/celestia/kde/selectionpopup.cpp:347
-msgid "&Alternate Surfaces"
-msgstr "&Superfícies Alternativas"
 
 #: src/celestia/kde/selectionpopup.cpp:365
 msgid "Satellites"
@@ -3016,6 +3028,10 @@ msgstr "Agora"
 #: src/celestia/res/resource_strings.cpp:215
 msgid "Dec"
 msgstr ""
+
+#, fuzzy
+#~ msgid "moon"
+#~ msgstr "Lua"
 
 #, fuzzy
 #~ msgid "Solar eclipses"
