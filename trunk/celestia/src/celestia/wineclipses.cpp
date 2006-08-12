@@ -121,14 +121,20 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
             
     case 1:
         {
-            nm->item.pszText = _(const_cast<char*>(eclipse->sattelite.c_str()));
+            if (!strcmp(eclipse->planete.c_str(),"None")) 
+            {
+                sprintf(callbackScratch,"");
+                nm->item.pszText = callbackScratch;
+            }
+            else
+                nm->item.pszText = _(const_cast<char*>(eclipse->sattelite.c_str()));
         }
         break;
 
     case 2:
         {
             astro::Date startDate(eclipse->startTime);
-            if (!strcmp(eclipse->planete.c_str(),_("None")))
+            if (!strcmp(eclipse->planete.c_str(),"None"))
                 sprintf(callbackScratch,"");
             else
                 sprintf(callbackScratch, "%2d %s %4d",
@@ -142,7 +148,7 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
     case 3:
         {
             astro::Date startDate(eclipse->startTime);
-            if (!strcmp(eclipse->planete.c_str(),_("None")))
+            if (!strcmp(eclipse->planete.c_str(),"None"))
                 sprintf(callbackScratch,"");
             else
             {
@@ -155,10 +161,18 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
 
     case 4:
         {
-            int minutes = (int) ((eclipse->endTime - eclipse->startTime) *
-                                 24 * 60);
-            sprintf(callbackScratch, "%02d:%02d", minutes / 60, minutes % 60);
-            nm->item.pszText = callbackScratch;
+            if (!strcmp(eclipse->planete.c_str(),"None")) 
+            {
+                sprintf(callbackScratch,"");
+                nm->item.pszText = callbackScratch;
+            }
+            else
+            {
+                int minutes = (int) ((eclipse->endTime - eclipse->startTime) *
+                                    24 * 60);
+                sprintf(callbackScratch, "%02d:%02d", minutes / 60, minutes % 60);
+                nm->item.pszText = callbackScratch;
+            }
         }
         break;
     }
@@ -283,9 +297,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
             bind_textdomain_codeset("celestia", CurrentCP());
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_ADDSTRING, 0, (LPARAM)_("solar"));
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_ADDSTRING, 0, (LPARAM)_("moon"));
-            SendDlgItemMessage(hDlg, IDC_ECLIPSETYPE, CB_SETCURSEL, 0, 0);
+            CheckRadioButton(hDlg, IDC_SOLARECLIPSE, IDC_LUNARECLIPSE, IDC_SOLARECLIPSE);
             efd->bSolar = true;
 
             SendDlgItemMessage(hDlg, IDC_ECLIPSETARGET, CB_ADDSTRING, 0, (LPARAM)_("Earth"));
@@ -379,19 +391,11 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 sim->gotoLocation(to, 2.5);
             }
             break;
-        case IDC_ECLIPSETYPE:
-            if(HIWORD(wParam) == CBN_SELCHANGE)
-            {
-                switch(SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0))
-                {
-                case 0:
-                    eclipseFinderDlg->bSolar = true;
-                    break;
-                case 1:
-                    eclipseFinderDlg->bSolar = false;
-                    break;
-                }
-            }
+        case IDC_SOLARECLIPSE:
+                eclipseFinderDlg->bSolar = true;
+            break;
+        case IDC_LUNARECLIPSE:
+                eclipseFinderDlg->bSolar = false;
             break;
         case IDC_ECLIPSETARGET:
             if(HIWORD(wParam) == CBN_SELCHANGE)

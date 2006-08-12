@@ -122,6 +122,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_LABELCONSTELLATIONS:
             renderer->setLabelMode(labelMode ^ Renderer::ConstellationLabels);
             break;
+        case IDC_LABELCONSTELLATIONSLATIN:
+            renderer->setLabelMode(labelMode ^ Renderer::I18nConstellationLabels);
+            break;
         case IDC_LABELGALAXIES:
             renderer->setLabelMode(labelMode ^ Renderer::GalaxyLabels);
             break;
@@ -293,6 +296,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowMarkers)? BST_CHECKED:BST_UNCHECKED, 0);
 
     dlgCheck(hDlg, IDC_LABELCONSTELLATIONS, labelMode, Renderer::ConstellationLabels);
+    SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONSLATIN, BM_SETCHECK,
+                       ((labelMode & Renderer::I18nConstellationLabels) == 0) ? BST_CHECKED : BST_UNCHECKED, 0);
     dlgCheck(hDlg, IDC_LABELGALAXIES,   labelMode, Renderer::GalaxyLabels);
 	dlgCheck(hDlg, IDC_LABELNEBULAE,    labelMode, Renderer::NebulaLabels);
 	dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
