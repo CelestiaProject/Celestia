@@ -1077,11 +1077,15 @@ void CelestiaCore::keyDown(int key, int modifiers)
     case Key_PageDown:
         if (showConsole)
             scrollConsole(console, ConsolePageRows);
+        else
+            back();
         break;
 
     case Key_PageUp:
         if (showConsole)
             scrollConsole(console, -ConsolePageRows);
+        else
+            forward();
         break;
     }
 
@@ -1160,9 +1164,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         wchar_t wc = NULL;
         UTF8Decode(c_p, 0, strlen(c_p), wc);
 #ifdef MACOSX
-        if ( wc && (isalpha(wc) || isdigit(wc) || ispunct(c) || c == ' ') )
+        if ( wc && (!iscntrl(wc)) )
 #else
-        if ( wc && (iswalpha(wc) || iswdigit(wc) || iswpunct(c) || c == ' ') )
+        if ( wc && (!iswcntrl(wc)) )
 #endif
         {
             typedText += string(c_p);
