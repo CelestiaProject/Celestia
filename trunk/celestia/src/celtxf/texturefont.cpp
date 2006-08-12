@@ -54,6 +54,7 @@ TextureFont::~TextureFont()
 void TextureFont::render(wchar_t ch) const
 {
     const Glyph* glyph = getGlyph(ch);
+    if (glyph == NULL) glyph = getGlyph((wchar_t)'?');
     if (glyph != NULL)
     {
         glBegin(GL_QUADS);
