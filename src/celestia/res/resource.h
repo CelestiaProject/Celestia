@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
-// Used by Celestia.rc
+// Microsoft Visual C++ generated include file.
+// Used by celestia.rc
 //
 #define VERSION_STRING                  "1.4.1"
 #define IDR_MENU1                       101
@@ -117,6 +117,8 @@
 #define IDC_COMETORBITS                 1073
 #define IDC_LABELNEBULAE                1074
 #define IDC_LABELOPENCLUSTERS           1075
+#define IDC_LABELCONSTLATIN             1076
+#define IDC_LABELCONSTELLATIONSLATIN    1076
 #define IDCOMPUTE                       1078
 #define IDC_DATEFROM                    1079
 #define IDC_ECLIPSEFROM                 1079
@@ -145,6 +147,8 @@
 #define IDC_EDIT_FEATURE_SIZE           1151
 #define IDC_CELESTIALINK                1152
 #define IDC_COMBOBOX_TIMEZONE           1153
+#define IDC_SOLARECLIPSE                1153
+#define IDC_LUNARECLIPSE                1154
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
@@ -216,7 +220,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         40083
-#define _APS_NEXT_CONTROL_VALUE         1153
+#define _APS_NEXT_CONTROL_VALUE         1155
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

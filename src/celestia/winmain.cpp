@@ -82,6 +82,7 @@ static bool bReady = false;
 static LPTSTR CelestiaRegKey = "Software\\Shatters.net\\Celestia";
 
 HINSTANCE appInstance;
+HMODULE hRes;
 HWND mainWindow = 0;
 
 static SolarSystemBrowser* solarSystemBrowser = NULL;
@@ -733,11 +734,14 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK)
         {
-            char buf[1024];
-            int len = GetDlgItemText(hDlg, IDC_FINDOBJECT_EDIT, buf, 1024);
+            char buf[1024], out[1024];
+            wchar_t wbuff[1024];
+            int len = GetDlgItemText(hDlg, IDC_FINDOBJECT_EDIT, buf, sizeof(buf));
             if (len > 0)
             {
-                Selection sel = appCore->getSimulation()->findObject(string(buf));
+                int wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
+                WideCharToMultiByte(CP_UTF8, 0, wbuff, wlen, out, sizeof(out), NULL, NULL);
+                Selection sel = appCore->getSimulation()->findObject(string(out), true);
                 if (!sel.empty())
                     appCore->getSimulation()->setSelection(sel);
             }
@@ -895,8 +899,10 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
             {
             case Selection::Type_Body:
                 {
+                    bind_textdomain_codeset("celestia", CurrentCP());
                     string name = sel.body()->getName();
-                    SetWindowText(hCtrl, (char*)name.c_str());
+                    SetWindowText(hCtrl, _((char*)name.c_str()));
+                    bind_textdomain_codeset("celestia", "UTF8");
                 }
                 break;
 
@@ -1016,7 +1022,7 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
         {
             if(hBookmarkTree = GetDlgItem(hDlg, IDC_BOOKMARK_FOLDERTREE))
             {
-                DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER),
+                DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER),
                           hDlg, AddBookmarkFolderProc);
             }
         }
@@ -1125,7 +1131,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
         if (hCtrl = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
         {
             HTREEITEM hParent;
-            if (hParent = PopulateBookmarksTree(hCtrl, appCore, appInstance))
+            if (hParent = PopulateBookmarksTree(hCtrl, appCore, hRes))
             {
                 // Expand bookmarks item
                 TreeView_Expand(hCtrl, hParent, TVE_EXPAND);
@@ -1153,7 +1159,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
             appCore->writeFavoritesFile();
 
             // Rebuild bookmarks menu
-            BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
+            BuildFavoritesMenu(menuBar, appCore, hRes, &odAppMenu);
 
             EndDialog(hDlg, 0);
             return TRUE;
@@ -1170,7 +1176,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
         {
             if (hBookmarkTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
             {
-                DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER), hDlg, AddBookmarkFolderProc);
+                DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER), hDlg, AddBookmarkFolderProc);
             }
         }
         else if (LOWORD(wParam) == IDC_ORGANIZE_BOOKMARKS_RENAME)
@@ -1187,7 +1193,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
                     tvItem.cchTextMax = sizeof(bookmarkName);
                     if (TreeView_GetItem(hBookmarkTree, &tvItem))
                     {
-                        DialogBox(appInstance,
+                        DialogBox(hRes,
                                   MAKEINTRESOURCE(IDD_RENAME_BOOKMARK),
                                   hDlg, RenameBookmarkProc);
                     }
@@ -1322,8 +1328,10 @@ BOOL APIENTRY SelectDisplayModeProc(HWND hDlg,
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_RESOLUTION);
 
             // Add windowed mode as the first item on the menu
+            bind_textdomain_codeset("celestia", CurrentCP());
             SendMessage(hwnd, CB_INSERTSTRING, -1,
-                        reinterpret_cast<LPARAM>("Windowed Mode"));
+                        reinterpret_cast<LPARAM>(_("Windowed Mode")));
+            bind_textdomain_codeset("celestia", "UTF8");
 
             for (vector<DEVMODE>::const_iterator iter= displayModes->begin();
                  iter != displayModes->end(); iter++)
@@ -1369,7 +1377,7 @@ BOOL APIENTRY SelectDisplayModeProc(HWND hDlg,
 
 HMENU CreateMenuBar()
 {
-    return LoadMenu(appInstance, MAKEINTRESOURCE(IDR_MAIN_MENU));
+    return LoadMenu(hRes, MAKEINTRESOURCE(IDR_MAIN_MENU));
 }
 
 static void setMenuItemCheck(int menuItem, bool checked)
@@ -1441,17 +1449,17 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
 
     // Add each vector of PlanetarySystem bodies to a vector to iterate over
     objects.push_back(asteroids);
-    menuNames.push_back("Asteroids");
+    menuNames.push_back(_("Asteroids"));
     objects.push_back(comets);
-    menuNames.push_back("Comets");
+    menuNames.push_back(_("Comets"));
     objects.push_back(invisibles);
-    menuNames.push_back("Invisibles");
+    menuNames.push_back(_("Invisibles"));
     objects.push_back(moons);
-    menuNames.push_back("Moons");
+    menuNames.push_back(_("Moons"));
     objects.push_back(planets);
-    menuNames.push_back("Planets");
+    menuNames.push_back(_("Planets"));
     objects.push_back(spacecraft);
-    menuNames.push_back("Spacecraft");
+    menuNames.push_back(_("Spacecraft"));
 
     // Now sort each vector and generate submenus
     IntStrPairComparePredicate pred;
@@ -1479,7 +1487,7 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
             if (obj->size() == 1)
             {
                 it=obj->begin();
-                AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
+                AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, _(it->second.c_str()));
             }
             else
             {
@@ -1492,15 +1500,15 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
                     // Add items to submenu
                     hSubMenu = CreatePopupMenu();
                     for(it=obj->begin(); it != obj->end(); it++)
-                        AppendMenu(hSubMenu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
+                        AppendMenu(hSubMenu, MF_STRING, MENU_CHOOSE_PLANET + it->first, _(it->second.c_str()));
 
-                    AppendMenu(menu, MF_POPUP | MF_STRING, (DWORD)hSubMenu, menuName->c_str());
+                    AppendMenu(menu, MF_POPUP | MF_STRING, (DWORD)hSubMenu, _(menuName->c_str()));
                 }
                 else
                 {
                     // Just add items to the popup
                     for(it=obj->begin(); it != obj->end(); it++)
-                        AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
+                        AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, _(it->second.c_str()));
                 }
             }
         }
@@ -1534,24 +1542,25 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     string name;
 
     hMenu = CreatePopupMenu();
+    bind_textdomain_codeset("celestia", CurrentCP());
     switch (sel.getType())
     {
     case Selection::Type_Body:
         {
             name = sel.body()->getName();
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, _(name.c_str()));
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, "S&ync Orbit");
-            AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, _("&Goto"));
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, _("&Follow"));
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, _("S&ync Orbit"));
+            AppendMenu(hMenu, MF_STRING, ID_INFO, _("&Info"));
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
             {
                 HMENU satMenu = CreatePlanetarySystemMenu(name, satellites);
                 AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
-                           "&Satellites");
+                           _("&Satellites"));
             }
 
             vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
@@ -1561,7 +1570,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
                 {
                     HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
                     AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) surfMenu,
-                               "&Alternate Surfaces");
+                               _("&Alternate Surfaces"));
                 }
                 delete altSurfaces;
             }
@@ -1574,8 +1583,8 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             name = sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star()));
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
-            AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, _("&Goto"));
+            AppendMenu(hMenu, MF_STRING, ID_INFO, _("&Info"));
 
             SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
             SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
@@ -1584,9 +1593,9 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
                 SolarSystem* solarSys = iter->second;
                 HMENU planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
                 if (name == "Sol")
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, "Orbiting Bodies");
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, _("Orbiting Bodies"));
                 else
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, "Planets");
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, _("Planets"));
             }
         }
         break;
@@ -1597,9 +1606,9 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             name = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, "&Goto");
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, "&Follow");
-            AppendMenu(hMenu, MF_STRING, ID_INFO, "&Info");
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, _("&Goto"));
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, _("&Follow"));
+            AppendMenu(hMenu, MF_STRING, ID_INFO, _("&Info"));
         }
         break;
 
@@ -1611,13 +1620,15 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     }
 
     if (appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
-        AppendMenu(hMenu, MF_STRING, ID_TOOLS_UNMARK, "&Unmark");
+        AppendMenu(hMenu, MF_STRING, ID_TOOLS_UNMARK, _("&Unmark"));
     else
-        AppendMenu(hMenu, MF_STRING, ID_TOOLS_MARK, "&Mark");
+        AppendMenu(hMenu, MF_STRING, ID_TOOLS_MARK, _("&Mark"));
 
     POINT point;
     point.x = (int) x;
     point.y = (int) y;
+
+    bind_textdomain_codeset("celestia", "UTF8");
 
     if (currentScreenMode == 0)
         ClientToScreen(hwnd, (LPPOINT) &point);
@@ -1861,7 +1872,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = appInstance;
-    wc.hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
+    wc.hIcon = LoadIcon(hRes, MAKEINTRESOURCE(IDI_CELESTIA_ICON));
     wc.hCursor = hDefaultCursor;
     wc.hbrBackground = NULL;
     wc.lpszMenuName = NULL;
@@ -2073,8 +2084,7 @@ void handleKey(WPARAM key, bool down)
         break;
     case 'A':
     case 'Z':
-        if ((GetKeyState(VK_CONTROL) & 0x8000) == 0)
-            k = key;
+        k = key;
         break;
     }
 
@@ -2986,7 +2996,6 @@ private:
     SplashWindow* splash;
 };
 
-
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPSTR     lpCmdLine,
@@ -3136,6 +3145,17 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
     textdomain("celestia");
 
+    // Loading localized resources
+    char res[255];
+    sprintf(res, "locale\\res%s.dll", _("WinLangID"));
+    int langID;
+    sscanf(_("WinLangID"), "%x", &langID);
+    SetThreadLocale(langID);
+    if ((hRes = LoadLibrary(res)) == NULL) {
+        cout << "Couldn't load localized resources: "<< res<< "\n";
+        hRes = hInstance;
+    }
+
     appCore->setAlerter(new WinAlerter());
 
     WinSplashProgressNotifier* progressNotifier = NULL;
@@ -3163,7 +3183,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->setStartURL(startURL);
 
     menuBar = CreateMenuBar();
-    acceleratorTable = LoadAccelerators(hInstance,
+    acceleratorTable = LoadAccelerators(hRes,
                                         MAKEINTRESOURCE(IDR_ACCELERATORS));
 
     if (appCore->getConfig() != NULL)
@@ -3171,9 +3191,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         if (!compareIgnoringCase(appCore->getConfig()->cursor, "arrow"))
             hDefaultCursor = LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW));
         else if (!compareIgnoringCase(appCore->getConfig()->cursor, "inverting crosshair"))
-            hDefaultCursor = LoadCursor(appInstance, MAKEINTRESOURCE(IDC_CROSSHAIR));
+            hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR));
         else
-            hDefaultCursor = LoadCursor(appInstance, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
+            hDefaultCursor = LoadCursor(hRes, MAKEINTRESOURCE(IDC_CROSSHAIR_OPAQUE));
     }
 
     cursorHandler = new WinCursorHandler(hDefaultCursor);
@@ -3646,14 +3666,43 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             int oldRenderFlags = r->getRenderFlags();
             int oldLabelMode = r->getLabelMode();
 
+            //  Convert charCode from current locale to UTF-8
+            char utf8CharCode[7];
+            memset(utf8CharCode, 0, sizeof(utf8CharCode));
+            WCHAR wCharCode;
+            MultiByteToWideChar(CP_THREAD_ACP, 0, (char*)&charCode, 1, &wCharCode, 1);
+            WideCharToMultiByte(CP_UTF8, 0, &wCharCode, 1, utf8CharCode, 7, 0, 0);
+
+            /*cerr << "Char input: (ANSI) " << (int)(unsigned char)charCode << " - UTF8 -> ";
+            for(int i=0; utf8CharCode[i] != '\0'; i++) cerr << (int)(unsigned char)(utf8CharCode[i]) << " ";
+            cerr << "[" << utf8CharCode << "]" << endl;*/
+
             Renderer::StarStyle oldStarStyle = r->getStarStyle();
-            appCore->charEntered(charCode, modifiers);
+            appCore->charEntered(utf8CharCode, modifiers);
             if (r->getRenderFlags() != oldRenderFlags ||
                 r->getLabelMode() != oldLabelMode ||
                 r->getStarStyle() != oldStarStyle)
             {
                 syncMenusWithRendererState();
             }
+        }
+        break;
+
+    case WM_IME_CHAR:
+        {
+            char ch[2];
+            char utf8CharCode[7];
+            memset(utf8CharCode, 0, sizeof(utf8CharCode));
+            WCHAR wCharCode;
+            ch[0] = (wParam >> 8);
+            ch[1] = (wParam & 0xff);
+            if (ch[0]) MultiByteToWideChar(CP_ACP, 0, ch, 2, &wCharCode, 1);
+            else MultiByteToWideChar(CP_ACP, 0, &ch[1], 1, &wCharCode, 1);
+            WideCharToMultiByte(CP_UTF8, 0, &wCharCode, 1, utf8CharCode, 7, 0, 0);
+            appCore->charEntered(utf8CharCode);
+            /*cerr << "IME input: (ANSI) " << (int)(unsigned char)ch[0] << " " << (int)(unsigned char)ch[1] << " - UTF8 -> ";
+            for(int i=0; utf8CharCode[i] != '\0'; i++) cerr << (int)(unsigned char)(utf8CharCode[i]) << " ";
+            cerr << "[" << utf8CharCode << "]" << endl;*/
         }
         break;
 
@@ -3739,11 +3788,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('H');
             break;
         case ID_NAVIGATION_SELECT:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
             break;
         case ID_NAVIGATION_GOTO_OBJECT:
             if (gotoObjectDlg == NULL)
-                gotoObjectDlg = new GotoObjectDialog(appInstance, hWnd, appCore);
+                gotoObjectDlg = new GotoObjectDialog(hRes, hWnd, appCore);
             break;
         case IDCLOSE:
             if (reinterpret_cast<LPARAM>(gotoObjectDlg) == lParam &&
@@ -3792,27 +3841,27 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_NAVIGATION_TOURGUIDE:
             if (tourGuide == NULL)
-                tourGuide = new TourGuide(appInstance, hWnd, appCore);
+                tourGuide = new TourGuide(hRes, hWnd, appCore);
             break;
 
         case ID_NAVIGATION_SSBROWSER:
             if (solarSystemBrowser == NULL)
-                solarSystemBrowser = new SolarSystemBrowser(appInstance, hWnd, appCore);
+                solarSystemBrowser = new SolarSystemBrowser(hRes, hWnd, appCore);
             break;
 
         case ID_NAVIGATION_STARBROWSER:
             if (starBrowser == NULL)
-                starBrowser = new StarBrowser(appInstance, hWnd, appCore);
+                starBrowser = new StarBrowser(hRes, hWnd, appCore);
             break;
 
         case ID_NAVIGATION_ECLIPSEFINDER:
             if (eclipseFinder == NULL)
-                eclipseFinder = new EclipseFinderDialog(appInstance, hWnd, appCore);
+                eclipseFinder = new EclipseFinderDialog(hRes, hWnd, appCore);
             break;
 
         case ID_RENDER_DISPLAYMODE:
             newScreenMode = currentScreenMode;
-            CreateDialogParam(appInstance,
+            CreateDialogParam(hRes,
                               MAKEINTRESOURCE(IDD_DISPLAYMODE),
                               hWnd,
                               SelectDisplayModeProc,
@@ -3828,12 +3877,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_RENDER_VIEWOPTIONS:
             if (viewOptionsDlg == NULL)
-                viewOptionsDlg = new ViewOptionsDialog(appInstance, hWnd, appCore);
+                viewOptionsDlg = new ViewOptionsDialog(hRes, hWnd, appCore);
             break;
 
         case ID_RENDER_LOCATIONS:
             if (locationsDlg == NULL)
-                locationsDlg = new LocationsDialog(appInstance, hWnd, appCore);
+                locationsDlg = new LocationsDialog(hRes, hWnd, appCore);
             break;
 
         case ID_RENDER_MORESTARS:
@@ -3905,7 +3954,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('J');
             break;
         case ID_TIME_SETTIME:
-            ShowSetTimeDialog(appInstance, hWnd, appCore);
+            ShowSetTimeDialog(hRes, hWnd, appCore);
             
             // Update the local time menu item--since the set time dialog handles setting the time zone,
             // should we just get rid of the menu item?
@@ -3953,11 +4002,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_BOOKMARKS_ADDBOOKMARK:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ADDBOOKMARK), hWnd, AddBookmarkProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK), hWnd, AddBookmarkProc);
             break;
 
         case ID_BOOKMARKS_ORGANIZE:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ORGANIZE_BOOKMARKS), hWnd, OrganizeBookmarksProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_ORGANIZE_BOOKMARKS), hWnd, OrganizeBookmarksProc);
             break;
 
         case ID_HELP_RUNDEMO:
@@ -3965,7 +4014,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_HELP_CONTROLS:
-            CreateDialogParam(appInstance,
+            CreateDialogParam(hRes,
                               MAKEINTRESOURCE(IDD_CONTROLSHELP),
                               hWnd,
                               ControlsHelpProc,
@@ -3973,15 +4022,15 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_HELP_ABOUT:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, AboutProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_ABOUT), hWnd, AboutProc);
             break;
 
         case ID_HELP_GLINFO:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_GLINFO), hWnd, GLInfoProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_GLINFO), hWnd, GLInfoProc);
             break;
 
         case ID_HELP_LICENSE:
-            DialogBox(appInstance, MAKEINTRESOURCE(IDD_LICENSE), hWnd, LicenseProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_LICENSE), hWnd, LicenseProc);
             break;
 
         case ID_INFO:

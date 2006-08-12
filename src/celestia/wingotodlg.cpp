@@ -11,6 +11,7 @@
 
 #include <windows.h>
 #include "wingotodlg.h"
+#include "celutil/winutil.h"
 
 #include "res/resource.h"
 
@@ -69,7 +70,9 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                 SetDialogFloat(hDlg, IDC_EDIT_DISTANCE, "%.1f", (float)distance);
                 SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, "%.5f", (float)longitude);
                 SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, "%.5f", (float)latitude);
-                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, (char*) sim->getSelection().body()->getName().c_str());
+                bind_textdomain_codeset("celestia", CurrentCP());
+                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, _((char*)sim->getSelection().body()->getName().c_str()));
+                bind_textdomain_codeset("celestia", "UTF8");
             }
 //            else if (sim->getSelection().star != NULL)
 //            {
@@ -84,12 +87,18 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
     case WM_COMMAND:
         if (LOWORD(wParam) == IDC_BUTTON_GOTO)
         {
-            char buf[1024];
+            char buf[1024], out[1024];
+            wchar_t wbuff[1024];
             int len = GetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, buf, sizeof buf);
+
             Simulation* sim = gotoDlg->appCore->getSimulation();
             Selection sel;
-            if (len > 0)
-                sel = sim->findObjectFromPath(buf, true);
+            if (len > 0) 
+            {
+                int wlen = MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuff, sizeof(wbuff));
+                WideCharToMultiByte(CP_UTF8, 0, wbuff, wlen, out, sizeof(out), NULL, NULL);
+                sel = sim->findObjectFromPath(string(out), true);
+            }
             
             if (!sel.empty())
             {

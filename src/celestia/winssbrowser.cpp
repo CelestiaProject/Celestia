@@ -71,8 +71,6 @@ HTREEITEM AddItemToTree(HWND hwndTV, LPSTR lpszItem, int nLevel, void* data,
 
 void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, HTREEITEM parent)
 {
-    bind_textdomain_codeset("celestia", CurrentCP());
-
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
         Body* world = sys->getBody(i);
@@ -87,7 +85,6 @@ void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int lev
         if (satellites != NULL)
             AddPlanetarySystemToTree(satellites, treeView, level + 1, item);
     }
-    bind_textdomain_codeset("celestia", "UTF8");
 }
 
 
@@ -109,6 +106,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
 
             HWND hwnd = GetDlgItem(hDlg, IDC_SSBROWSER_TREE);
             const SolarSystem* solarSys = browser->appCore->getSimulation()->getNearestSolarSystem();
+            bind_textdomain_codeset("celestia", CurrentCP());
             if (solarSys != NULL)
             {
                 HTREEITEM rootItem = AddItemToTree(hwnd, "Sun", 1, NULL,
@@ -119,6 +117,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
 
                 SendMessage(hwnd, TVM_EXPAND, TVE_EXPAND, (LPARAM) rootItem); 
             }
+            bind_textdomain_codeset("celestia", "UTF8");
         }
         return(TRUE);
 
