@@ -2877,7 +2877,7 @@ msgstr "Eclipse actief"
 
 #: src/celestia/res/resource_strings.cpp:210
 msgid "WinLangID"
-msgstr "WinLangID"
+msgstr "413"
 
 #: src/celestia/res/resource_strings.cpp:211
 msgid "Jan"
