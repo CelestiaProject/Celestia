@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Celestia-Japanese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-03 15:27+0100\n"
-"PO-Revision-Date: 2006-02-24 18:54+0900\n"
+"PO-Revision-Date: 2006-08-07 22:19+0900\n"
 "Last-Translator: Sui Ota <aqua@aqsp.net>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -19,359 +19,359 @@ msgstr ""
 "X-Poedit-Country: JAPAN\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: data/data.cpp:41
+#: data/constellations.cpp:1
 msgid "Andromeda"
 msgstr "アンドロメダ"
 
-#: data/data.cpp:42
+#: data/constellations.cpp:2
 msgid "Antlia"
 msgstr "ポンプ"
 
-#: data/data.cpp:43
+#: data/constellations.cpp:3
 msgid "Apus"
 msgstr "ふうちょう"
 
-#: data/data.cpp:44
+#: data/constellations.cpp:4
 msgid "Aquarius"
 msgstr "みずがめ"
 
-#: data/data.cpp:45
+#: data/constellations.cpp:5
 msgid "Aquila"
 msgstr "わし"
 
-#: data/data.cpp:46
+#: data/constellations.cpp:6
 msgid "Ara"
 msgstr "さいだん"
 
-#: data/data.cpp:47
+#: data/constellations.cpp:7
 msgid "Aries"
 msgstr "おひつじ"
 
-#: data/data.cpp:48
+#: data/constellations.cpp:8
 msgid "Auriga"
 msgstr "ぎょしゃ"
 
-#: data/data.cpp:49
-msgid "Bootes"
+#: data/constellations.cpp:9
+msgid "Boötes"
 msgstr "うしかい"
 
-#: data/data.cpp:50
+#: data/constellations.cpp:10
 msgid "Caelum"
 msgstr "ちょうこくぐ"
 
-#: data/data.cpp:51
+#: data/constellations.cpp:11
 msgid "Camelopardalis"
 msgstr "きりん"
 
-#: data/data.cpp:52
+#: data/constellations.cpp:12
 msgid "Cancer"
 msgstr "かに"
 
-#: data/data.cpp:53
+#: data/constellations.cpp:13
 msgid "Canes Venatici"
 msgstr "りょうけん"
 
-#: data/data.cpp:54
+#: data/constellations.cpp:14
 msgid "Canis Major"
 msgstr "おおいぬ"
 
-#: data/data.cpp:55
+#: data/constellations.cpp:15
 msgid "Canis Minor"
 msgstr "こいぬ"
 
-#: data/data.cpp:56
+#: data/constellations.cpp:16
 msgid "Capricornus"
 msgstr "やぎ"
 
-#: data/data.cpp:57
+#: data/constellations.cpp:17
 msgid "Carina"
 msgstr "りゅうこつ"
 
-#: data/data.cpp:58
+#: data/constellations.cpp:18
 msgid "Cassiopeia"
 msgstr "カシオペヤ"
 
-#: data/data.cpp:59
+#: data/constellations.cpp:19
 msgid "Centaurus"
 msgstr "ケンタウルス"
 
-#: data/data.cpp:60
+#: data/constellations.cpp:20
 msgid "Cepheus"
 msgstr "ケフェウス"
 
-#: data/data.cpp:61
+#: data/constellations.cpp:21
 msgid "Cetus"
 msgstr "くじら"
 
-#: data/data.cpp:62
+#: data/constellations.cpp:22
 msgid "Chamaeleon"
 msgstr "カメレオン"
 
-#: data/data.cpp:63
+#: data/constellations.cpp:23
 msgid "Circinus"
 msgstr "コンパス"
 
-#: data/data.cpp:64
+#: data/constellations.cpp:24
 msgid "Columba"
 msgstr "はと"
 
-#: data/data.cpp:65
+#: data/constellations.cpp:25
 msgid "Coma Berenices"
 msgstr "かみのけ"
 
-#: data/data.cpp:66
+#: data/constellations.cpp:26
 msgid "Corona Australis"
 msgstr "みなみのかんむり"
 
-#: data/data.cpp:67
+#: data/constellations.cpp:27
 msgid "Corona Borealis"
 msgstr "かんむり"
 
-#: data/data.cpp:68
+#: data/constellations.cpp:28
 msgid "Corvus"
 msgstr "からす"
 
-#: data/data.cpp:69
+#: data/constellations.cpp:29
 msgid "Crater"
 msgstr "コップ"
 
-#: data/data.cpp:70
+#: data/constellations.cpp:30
 msgid "Crux"
 msgstr "みなみじゅうじ"
 
-#: data/data.cpp:71
+#: data/constellations.cpp:31
 msgid "Cygnus"
 msgstr "はくちょう"
 
-#: data/data.cpp:72
+#: data/constellations.cpp:32
 msgid "Delphinus"
 msgstr "いるか"
 
-#: data/data.cpp:73
+#: data/constellations.cpp:33
 msgid "Dorado"
 msgstr "かじき"
 
-#: data/data.cpp:74
+#: data/constellations.cpp:34
 msgid "Draco"
 msgstr "りゅう"
 
-#: data/data.cpp:75
+#: data/constellations.cpp:35
 msgid "Equuleus"
 msgstr "こうま"
 
-#: data/data.cpp:76
+#: data/constellations.cpp:36
 msgid "Eridanus"
 msgstr "エリダヌス"
 
-#: data/data.cpp:77
+#: data/constellations.cpp:37
 msgid "Fornax"
 msgstr "ろ"
 
-#: data/data.cpp:78
+#: data/constellations.cpp:38
 msgid "Gemini"
 msgstr "ふたご"
 
-#: data/data.cpp:79
+#: data/constellations.cpp:39
 msgid "Grus"
 msgstr "つる"
 
-#: data/data.cpp:80
+#: data/constellations.cpp:40
 msgid "Hercules"
 msgstr "ヘルクレス"
 
-#: data/data.cpp:81
+#: data/constellations.cpp:41
 msgid "Horologium"
 msgstr "とけい"
 
-#: data/data.cpp:82
+#: data/constellations.cpp:42
 msgid "Hydra"
 msgstr "うみへび"
 
-#: data/data.cpp:83
+#: data/constellations.cpp:43
 msgid "Hydrus"
 msgstr "みずへび"
 
-#: data/data.cpp:84
+#: data/constellations.cpp:44
 msgid "Indus"
 msgstr "インディアン"
 
-#: data/data.cpp:85
+#: data/constellations.cpp:45
 msgid "Lacerta"
 msgstr "とかげ"
 
-#: data/data.cpp:86
+#: data/constellations.cpp:46
 msgid "Leo"
 msgstr "しし"
 
-#: data/data.cpp:87
+#: data/constellations.cpp:47
 msgid "Leo Minor"
 msgstr "こじし"
 
-#: data/data.cpp:88
+#: data/constellations.cpp:48
 msgid "Lepus"
 msgstr "うさぎ"
 
-#: data/data.cpp:89
+#: data/constellations.cpp:49
 msgid "Libra"
 msgstr "てんびん"
 
-#: data/data.cpp:90
+#: data/constellations.cpp:50
 msgid "Lupus"
 msgstr "おおかみ"
 
-#: data/data.cpp:91
+#: data/constellations.cpp:51
 msgid "Lynx"
 msgstr "やまねこ"
 
-#: data/data.cpp:92
+#: data/constellations.cpp:52
 msgid "Lyra"
 msgstr "こと"
 
-#: data/data.cpp:93
+#: data/constellations.cpp:53
 msgid "Mensa"
 msgstr "テーブルさん"
 
-#: data/data.cpp:94
+#: data/constellations.cpp:54
 msgid "Microscopium"
 msgstr "けんびきょう"
 
-#: data/data.cpp:95
+#: data/constellations.cpp:55
 msgid "Monoceros"
 msgstr "いっかくじゅう"
 
-#: data/data.cpp:96
+#: data/constellations.cpp:56
 msgid "Musca"
 msgstr "はえ"
 
-#: data/data.cpp:97
+#: data/constellations.cpp:57
 msgid "Norma"
 msgstr "じょうぎ"
 
-#: data/data.cpp:98
+#: data/constellations.cpp:58
 msgid "Octans"
-msgstr "はちぶんき"
+msgstr "はちぶんぎ"
 
-#: data/data.cpp:99
+#: data/constellations.cpp:59
 msgid "Ophiuchus"
 msgstr "へびつかい"
 
-#: data/data.cpp:100
+#: data/constellations.cpp:60
 msgid "Orion"
 msgstr "オリオン"
 
-#: data/data.cpp:101
+#: data/constellations.cpp:61
 msgid "Pavo"
 msgstr "くじゃく"
 
-#: data/data.cpp:102
+#: data/constellations.cpp:62
 msgid "Pegasus"
 msgstr "ペガスス"
 
-#: data/data.cpp:103
+#: data/constellations.cpp:63
 msgid "Perseus"
 msgstr "ペルセウス"
 
-#: data/data.cpp:104
+#: data/constellations.cpp:64
 msgid "Phoenix"
 msgstr "ほうおう"
 
-#: data/data.cpp:105
+#: data/constellations.cpp:65
 msgid "Pictor"
 msgstr "がか"
 
-#: data/data.cpp:106
+#: data/constellations.cpp:66
 msgid "Pisces"
 msgstr "うお"
 
-#: data/data.cpp:107
+#: data/constellations.cpp:67
 msgid "Piscis Austrinus"
 msgstr "みなみのうお"
 
-#: data/data.cpp:108
+#: data/constellations.cpp:68
 msgid "Puppis"
 msgstr "とも"
 
-#: data/data.cpp:109
+#: data/constellations.cpp:69
 msgid "Pyxis"
 msgstr "らしんばん"
 
-#: data/data.cpp:110
+#: data/constellations.cpp:70
 msgid "Reticulum"
 msgstr "レチクル"
 
-#: data/data.cpp:111
+#: data/constellations.cpp:71
 msgid "Sagitta"
 msgstr "や"
 
-#: data/data.cpp:112
+#: data/constellations.cpp:72
 msgid "Sagittarius"
 msgstr "いて"
 
-#: data/data.cpp:113
+#: data/constellations.cpp:73
 msgid "Scorpius"
 msgstr "さそり"
 
-#: data/data.cpp:114
+#: data/constellations.cpp:74
 msgid "Sculptor"
 msgstr "ちょうこくしつ"
 
-#: data/data.cpp:115
+#: data/constellations.cpp:75
 msgid "Scutum"
 msgstr "たて"
 
-#: data/data.cpp:116
+#: data/constellations.cpp:76
 msgid "Serpens Caput"
 msgstr "へび(頭)"
 
-#: data/data.cpp:117
+#: data/constellations.cpp:77
 msgid "Serpens Cauda"
 msgstr "へび(尾)"
 
-#: data/data.cpp:118
+#: data/constellations.cpp:78
 msgid "Sextans"
 msgstr "ろくぶんぎ"
 
-#: data/data.cpp:119
+#: data/constellations.cpp:79
 msgid "Taurus"
 msgstr "おうし"
 
-#: data/data.cpp:120
+#: data/constellations.cpp:80
 msgid "Telescopium"
 msgstr "ぼうえんきょう"
 
-#: data/data.cpp:121
+#: data/constellations.cpp:81
 msgid "Triangulum"
 msgstr "さんかく"
 
-#: data/data.cpp:122
+#: data/constellations.cpp:82
 msgid "Triangulum Australe"
 msgstr "みなみのさんかく"
 
-#: data/data.cpp:123
+#: data/constellations.cpp:83
 msgid "Tucana"
 msgstr "きょしちょう"
 
-#: data/data.cpp:124
+#: data/constellations.cpp:84
 msgid "Ursa Major"
 msgstr "おおぐま"
 
-#: data/data.cpp:125
+#: data/constellations.cpp:85
 msgid "Ursa Minor"
 msgstr "こぐま"
 
-#: data/data.cpp:126
+#: data/constellations.cpp:86
 msgid "Vela"
 msgstr "ほ"
 
-#: data/data.cpp:127
+#: data/constellations.cpp:87
 msgid "Virgo"
 msgstr "おとめ"
 
-#: data/data.cpp:128
+#: data/constellations.cpp:88
 msgid "Volans"
 msgstr "とびうお"
 
-#: data/data.cpp:129
+#: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "こぎつね"
 
