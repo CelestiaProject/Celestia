@@ -370,4 +370,3 @@ msgstr "Flygfisken"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Räven"
-
