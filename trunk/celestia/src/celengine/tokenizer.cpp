@@ -86,6 +86,18 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 sign = -1;
                 integerValue = 0;
             }
+            else if (nextChar == '+')
+            {
+                state = NumberState;
+                sign = +1;
+                integerValue = 0;
+            }
+            else if (nextChar == '.')
+            {
+                state = FractionState;
+                sign = +1;
+                integerValue = 0;
+            }
             else if (isalpha(nextChar) || nextChar == '_')
             {
                 state = NameState;
