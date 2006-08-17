@@ -80,7 +80,7 @@ foreach my $po (@po_files) {
     print OUT $res;
     close OUT;
     system qq{rc /l $lang{$lang}[0] /d "NDEBUG" /fo $dir\\..\\src\\celestia\\celestia_$lang.res /i "$dir\\..\\src\\celestia\\res" $dir\\..\\src\\celestia\\res\\celestia_$lang.rc};
-    system qq{link /nologo /noentry /dll /machine:I386 /out:$dir\\..\\locale\\res$lang{$lang}[0].dll $dir\\..\\src\\celestia\\celestia_$lang.res};
+    system qq{link /nologo /noentry /dll /machine:I386 /out:$dir\\..\\locale\\res_$lang.dll $dir\\..\\src\\celestia\\celestia_$lang.res};
     system qq{msgfmt $dir\\$lang.po -o $dir\\..\\locale\\$lang\\LC_MESSAGES\\celestia.mo};
 }
 

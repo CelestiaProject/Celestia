@@ -34,6 +34,7 @@
 
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2, int n);
+extern std::string LocaleFilename(const std::string & filename);
 
 class CompareIgnoringCasePredicate : public std::binary_function<std::string, std::string, bool>
 {

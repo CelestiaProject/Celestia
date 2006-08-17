@@ -10,6 +10,8 @@
 // of the License, or (at your option) any later version.
 
 #include "util.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -56,4 +58,25 @@ bool CompareIgnoringCasePredicate::operator()(const string& s1,
                                               const string& s2) const
 {
     return compareIgnoringCase(s1, s2) < 0;
+}
+
+
+string LocaleFilename(const string & filename)
+{
+    string localeFilename;
+    struct stat filestat;
+    string::size_type pos;
+
+    if ((pos = filename.rfind('.')) != string::npos)
+    {
+        localeFilename = filename.substr(0, pos) + '_' + _("LANGUAGE") + filename.substr(pos);
+    }
+    else
+    {
+        localeFilename = filename + '_' + _("LANGUAGE");
+    }
+    if (stat(localeFilename.c_str(), &filestat) != 0) {
+        localeFilename = filename;
+    }
+    return localeFilename;
 }
