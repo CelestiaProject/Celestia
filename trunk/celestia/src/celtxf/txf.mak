@@ -22,7 +22,7 @@ OBJS=\
 
 TARGETLIB = cel_txf.lib
 
-INCLUDEDIRS=/I ..
+INCLUDEDIRS=/I .. /I ../../inc/libintl
 
 !IF "$(CFG)" == "Release"
 CPP=cl.exe
