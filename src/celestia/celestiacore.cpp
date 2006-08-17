@@ -509,11 +509,12 @@ void CelestiaCore::runScript(CommandSequence* script)
 void CelestiaCore::runScript(const string& filename)
 {
     cancelScript();
-    ContentType type = DetermineFileType(filename);
+    string localeFilename = LocaleFilename(filename);
+    ContentType type = DetermineFileType(localeFilename);
 
     if (type == Content_CelestiaLegacyScript)
     {
-        ifstream scriptfile(filename.c_str());
+        ifstream scriptfile(localeFilename.c_str());
         if (!scriptfile.good())
         {
             if (alerter != NULL)
@@ -546,11 +547,11 @@ void CelestiaCore::runScript(const string& filename)
 #ifdef CELX
     else if (type == Content_CelestiaScript)
     {
-        ifstream scriptfile(filename.c_str());
+        ifstream scriptfile(localeFilename.c_str());
         if (!scriptfile.good())
         {
             char errMsg[1024];
-            sprintf(errMsg, _("Error opening script '%s'"), filename.c_str());
+            sprintf(errMsg, _("Error opening script '%s'"), localeFilename.c_str());
             if (alerter != NULL)
                 alerter->fatalError(errMsg);
             else
@@ -563,7 +564,7 @@ void CelestiaCore::runScript(const string& filename)
             celxScript->init(this);
         }
         
-        int status = celxScript->loadScript(scriptfile, filename);
+        int status = celxScript->loadScript(scriptfile, localeFilename);
         if (status != 0)
         {
             string errMsg = celxScript->getErrorMessage();
@@ -2622,11 +2623,11 @@ static void displayDistance(Overlay& overlay, double distance)
     }
     else if (abs(distance) >= astro::AUtoLightYears(1000.0f))
     {
-        units = "ly";
+        units = _("ly");
     }
     else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
     {
-        units = "au";
+        units = _("au");
         distance = astro::lightYearsToAU(distance);
     }
     else if (abs(distance) > astro::kilometersToLightYears(1.0f))

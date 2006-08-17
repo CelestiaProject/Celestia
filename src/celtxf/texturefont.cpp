@@ -20,6 +20,7 @@
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
 #include <celutil/utf8.h>
+#include <celutil/util.h>
 #include <celengine/gl.h>
 #include "texturefont.h"
 
@@ -437,7 +438,8 @@ TextureFont* TextureFont::load(istream& in)
 
 TextureFont* LoadTextureFont(const string& filename)
 {
-    ifstream in(filename.c_str(), ios::in | ios::binary);
+    string localeFilename = LocaleFilename(filename);
+    ifstream in(localeFilename.c_str(), ios::in | ios::binary);
     if (!in.good())
     {
         DPRINTF(0, "Could not open font file %s\n", filename.c_str());

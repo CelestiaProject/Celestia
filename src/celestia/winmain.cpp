@@ -2989,7 +2989,7 @@ public:
     
     virtual void update(const string& filename)
     {
-        splash->setMessage(string("Loading: ") + filename);
+        splash->setMessage(string(_("Loading: ")) + filename);
     }
     
 private:
@@ -3147,7 +3147,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     // Loading localized resources
     char res[255];
-    sprintf(res, "locale\\res%s.dll", _("WinLangID"));
+    sprintf(res, "locale\\res_%s.dll", _("LANGUAGE"));
     int langID;
     sscanf(_("WinLangID"), "%x", &langID);
     SetThreadLocale(langID);
@@ -3720,7 +3720,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
                     if (!urlString.substr(0,4).compare("cel:"))
                     {
-                        appCore->flash("Loading URL");
+                        appCore->flash(_("Loading URL"));
 						appCore->goToUrl(urlString);
                     }
                     else if (DetermineFileType(urlString) == Content_CelestiaScript)
@@ -3732,7 +3732,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         ifstream scriptfile(urlString.c_str());
                         if (!scriptfile.good())
                         {
-                            appCore->flash("Error opening script");
+                            appCore->flash(_("Error opening script"));
                         }
                         else
                         {
@@ -3751,12 +3751,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                 }
                                 else
                                 {
-                                    appCore->flash("Error loading script");
+                                    appCore->flash(_("Error loading script"));
                                 }
                             }
                             else
                             {
-                                appCore->flash("Running script");
+                                appCore->flash(_("Running script"));
                                 appCore->runScript(script);
                             }
                         }
