@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: celestia 1.4.1\n"
+"Project-Id-Version: celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-08-12 12:54+0200\n"
-"PO-Revision-Date: 2006-08-07 23:23+0100\n"
+"PO-Revision-Date: 2006-08-16 21:50+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -780,7 +780,7 @@ msgstr "Kometer"
 
 #: src/celestia/winmain.cpp:1461
 msgid "Invisibles"
-msgstr ""
+msgstr "Osynliga"
 
 #: src/celestia/winmain.cpp:1463 src/celestia/kde/kdepreferencesdialog.cpp:187
 #: src/celestia/res/resource_strings.cpp:155
@@ -813,7 +813,6 @@ msgid "&Follow"
 msgstr "&Följ"
 
 #: src/celestia/winmain.cpp:1560
-#, fuzzy
 msgid "S&ync Orbit"
 msgstr "S&ynkronisera omloppsbana"
 
@@ -823,9 +822,8 @@ msgid "&Info"
 msgstr "&Info"
 
 #: src/celestia/winmain.cpp:1568
-#, fuzzy
 msgid "&Satellites"
-msgstr "Satelliter"
+msgstr "&Satelliter"
 
 #: src/celestia/winmain.cpp:1578 src/celestia/kde/selectionpopup.cpp:347
 msgid "&Alternate Surfaces"
@@ -833,7 +831,7 @@ msgstr "&Alternativa ytor"
 
 #: src/celestia/winmain.cpp:1601
 msgid "Orbiting Bodies"
-msgstr ""
+msgstr "Himlakroppar i omloppsbana"
 
 #: src/celestia/winmain.cpp:1628 src/celestia/kde/selectionpopup.cpp:319
 msgid "&Unmark"
