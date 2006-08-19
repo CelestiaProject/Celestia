@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-17 16:49+0200\n"
+"POT-Creation-Date: 2006-08-19 14:56+0200\n"
 "PO-Revision-Date: 2006-08-17 22:48+0200\n"
 "Last-Translator: Steffen Schreiber <SchreiberSte@web.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -462,11 +462,11 @@ msgstr "Ansicht zu klein zum Aufteilen"
 msgid "Added view"
 msgstr "Ansicht hinzugefügt"
 
-#: src/celestia/celestiacore.cpp:2626
+#: src/celestia/celestiacore.cpp:2626 src/celestia/kde/selectionpopup.cpp:68
 msgid "ly"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2630
+#: src/celestia/celestiacore.cpp:2630 src/celestia/kde/selectionpopup.cpp:70
 #: src/celestia/res/resource_strings.cpp:122
 msgid "au"
 msgstr "au"
@@ -703,8 +703,8 @@ msgstr "Fehler beim Öffnen von test.xml\n"
 msgid "Error reading deep sky file\n"
 msgstr "Fehler beim Lesen der Deep-Sky Datei\n"
 
-#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3972
-#: src/celestia/celestiacore.cpp:3994
+#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3973
+#: src/celestia/celestiacore.cpp:3995
 msgid "Error opening "
 msgstr "Fehler beim Öffnen von "
 
@@ -716,35 +716,35 @@ msgstr "Fehler beim Öffnen der Asterismen Datei."
 msgid "Error opening constellation boundaries files."
 msgstr "Fehler beim Öffnen der Sternbildgrenzen Dateien."
 
-#: src/celestia/celestiacore.cpp:3874
+#: src/celestia/celestiacore.cpp:3875
 msgid "render path: "
 msgstr "Render-Pfad: "
 
-#: src/celestia/celestiacore.cpp:3885
+#: src/celestia/celestiacore.cpp:3886
 msgid "Failed to initialize renderer"
 msgstr "Initialisierung des Renderers fehlgeschlagen"
 
-#: src/celestia/celestiacore.cpp:3901
+#: src/celestia/celestiacore.cpp:3902
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Fehler beim Laden der Schriftdaten, keine Textanzeige möglich.\n"
 
-#: src/celestia/celestiacore.cpp:3955
+#: src/celestia/celestiacore.cpp:3956
 msgid "Error reading cross index "
 msgstr "Fehler beim Einlesen des Cross-Index "
 
-#: src/celestia/celestiacore.cpp:3957
+#: src/celestia/celestiacore.cpp:3958
 msgid "Loaded cross index "
 msgstr "Cross-Index eingelesen "
 
-#: src/celestia/celestiacore.cpp:3979
+#: src/celestia/celestiacore.cpp:3980
 msgid "Error reading star names file\n"
 msgstr "Fehler beim Einlesen der Sternnamen-Datei\n"
 
-#: src/celestia/celestiacore.cpp:4002
+#: src/celestia/celestiacore.cpp:4003
 msgid "Error reading stars file\n"
 msgstr "Fehler beim Einlesen der Stern-Datei\n"
 
-#: src/celestia/celestiacore.cpp:4029
+#: src/celestia/celestiacore.cpp:4030
 msgid "Error opening star catalog "
 msgstr "Fehler beim Öffnen des Sternkataloges "
 
@@ -1862,6 +1862,11 @@ msgstr "Abs. Mag. (app): "
 #: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "Oberflächentemp.:"
+
+#: src/celestia/kde/selectionpopup.cpp:95
+#, fuzzy
+msgid "Rsun"
+msgstr "Fortsetzen"
 
 #: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"

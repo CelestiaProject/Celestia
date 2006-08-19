@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-17 16:49+0200\n"
+"POT-Creation-Date: 2006-08-19 14:56+0200\n"
 "PO-Revision-Date: 2006-08-05 09:35+0100\n"
 "Last-Translator: Myckel Habets <myckel@sdf.lonestar.org>\n"
 "Language-Team: Dutch <LL@li.org>\n"
@@ -460,11 +460,11 @@ msgstr "Weergave te klein om gedeelt te worden"
 msgid "Added view"
 msgstr "Toegevoegde weergave"
 
-#: src/celestia/celestiacore.cpp:2626
+#: src/celestia/celestiacore.cpp:2626 src/celestia/kde/selectionpopup.cpp:68
 msgid "ly"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2630
+#: src/celestia/celestiacore.cpp:2630 src/celestia/kde/selectionpopup.cpp:70
 #: src/celestia/res/resource_strings.cpp:122
 msgid "au"
 msgstr "au"
@@ -701,8 +701,8 @@ msgstr "Fout tijdens openen van test.xml\n"
 msgid "Error reading deep sky file\n"
 msgstr "Fout tijdens lezen van diepe hemel bestand\n"
 
-#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3972
-#: src/celestia/celestiacore.cpp:3994
+#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3973
+#: src/celestia/celestiacore.cpp:3995
 msgid "Error opening "
 msgstr "Fout tijdens openen"
 
@@ -714,35 +714,35 @@ msgstr "Fout tijdens openen van niet-officiële sterrenbeelden bestand."
 msgid "Error opening constellation boundaries files."
 msgstr "Fout tijdens openen van bestanden met sterrebeeldgrenzingen."
 
-#: src/celestia/celestiacore.cpp:3874
+#: src/celestia/celestiacore.cpp:3875
 msgid "render path: "
 msgstr "3D Weergave methode:"
 
-#: src/celestia/celestiacore.cpp:3885
+#: src/celestia/celestiacore.cpp:3886
 msgid "Failed to initialize renderer"
 msgstr "Kon 3D weergave methode niet initialiseren"
 
-#: src/celestia/celestiacore.cpp:3901
+#: src/celestia/celestiacore.cpp:3902
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Fout tijdens laden van lettertype, tekst zal niet zichtbaar zijn.\n"
 
-#: src/celestia/celestiacore.cpp:3955
+#: src/celestia/celestiacore.cpp:3956
 msgid "Error reading cross index "
 msgstr "Fout tijdens lezen van cross-index"
 
-#: src/celestia/celestiacore.cpp:3957
+#: src/celestia/celestiacore.cpp:3958
 msgid "Loaded cross index "
 msgstr "Laden van cross-index"
 
-#: src/celestia/celestiacore.cpp:3979
+#: src/celestia/celestiacore.cpp:3980
 msgid "Error reading star names file\n"
 msgstr "Fout tijdens lezen van bestand met namen van sterren\n"
 
-#: src/celestia/celestiacore.cpp:4002
+#: src/celestia/celestiacore.cpp:4003
 msgid "Error reading stars file\n"
 msgstr "Fout tijdens lezen van bestand met sterren\n"
 
-#: src/celestia/celestiacore.cpp:4029
+#: src/celestia/celestiacore.cpp:4030
 msgid "Error opening star catalog "
 msgstr "Fout tijdens lezen van sterrencatalogus"
 
@@ -1861,6 +1861,11 @@ msgstr "Abs. (schijnb.) mag: "
 #: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "Oppervlaktetemp: "
+
+#: src/celestia/kde/selectionpopup.cpp:95
+#, fuzzy
+msgid "Rsun"
+msgstr "Hervatten"
 
 #: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"

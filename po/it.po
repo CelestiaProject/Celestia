@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-17 16:49+0200\n"
+"POT-Creation-Date: 2006-08-19 14:56+0200\n"
 "PO-Revision-Date: 2006-08-11 16:57+0100\n"
 "Last-Translator: Mauro Santandrea <mausan66@tiscali.it>\n"
 "Language-Team: italian <it@li.org>\n"
@@ -471,11 +471,11 @@ msgstr "Vista troppo piccola per poterla dividere"
 msgid "Added view"
 msgstr "Vista aggiunta"
 
-#: src/celestia/celestiacore.cpp:2626
+#: src/celestia/celestiacore.cpp:2626 src/celestia/kde/selectionpopup.cpp:68
 msgid "ly"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2630
+#: src/celestia/celestiacore.cpp:2630 src/celestia/kde/selectionpopup.cpp:70
 #: src/celestia/res/resource_strings.cpp:122
 msgid "au"
 msgstr "ua"
@@ -712,8 +712,8 @@ msgstr "Errore in apertura di test.xml\n"
 msgid "Error reading deep sky file\n"
 msgstr "Errore in lettura del file deep sky\n"
 
-#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3972
-#: src/celestia/celestiacore.cpp:3994
+#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3973
+#: src/celestia/celestiacore.cpp:3995
 msgid "Error opening "
 msgstr "Errore in apertura di "
 
@@ -725,35 +725,35 @@ msgstr "Errore in apertura del file asterismi."
 msgid "Error opening constellation boundaries files."
 msgstr "Errore in apertura file limiti delle costellazioni."
 
-#: src/celestia/celestiacore.cpp:3874
+#: src/celestia/celestiacore.cpp:3875
 msgid "render path: "
 msgstr "percorso render: "
 
-#: src/celestia/celestiacore.cpp:3885
+#: src/celestia/celestiacore.cpp:3886
 msgid "Failed to initialize renderer"
 msgstr "Inizializzazione del renderer fallita"
 
-#: src/celestia/celestiacore.cpp:3901
+#: src/celestia/celestiacore.cpp:3902
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Errore nel caricamento del font. Il testo non sarà visibile.\n"
 
-#: src/celestia/celestiacore.cpp:3955
+#: src/celestia/celestiacore.cpp:3956
 msgid "Error reading cross index "
 msgstr "Errore il lettura dell'indice incrociato "
 
-#: src/celestia/celestiacore.cpp:3957
+#: src/celestia/celestiacore.cpp:3958
 msgid "Loaded cross index "
 msgstr "Indice incrociato caricato "
 
-#: src/celestia/celestiacore.cpp:3979
+#: src/celestia/celestiacore.cpp:3980
 msgid "Error reading star names file\n"
 msgstr "Errore in lettura del file dei nomi delle stelle\n"
 
-#: src/celestia/celestiacore.cpp:4002
+#: src/celestia/celestiacore.cpp:4003
 msgid "Error reading stars file\n"
 msgstr "Errore in lettura del file delle stelle\n"
 
-#: src/celestia/celestiacore.cpp:4029
+#: src/celestia/celestiacore.cpp:4030
 msgid "Error opening star catalog "
 msgstr "Errore in apertura del catalogo delle stelle "
 
@@ -1873,6 +1873,11 @@ msgstr "Magnitudine assoluta (app.): "
 #: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "Temp. Superfice: "
+
+#: src/celestia/kde/selectionpopup.cpp:95
+#, fuzzy
+msgid "Rsun"
+msgstr "Riparti"
 
 #: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"
