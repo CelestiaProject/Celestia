@@ -83,7 +83,7 @@ UniversalCoord Selection::getPosition(double t) const
 }
 
 
-string Selection::getName() const
+string Selection::getName(bool i18n) const
 {
     switch (type)
     {
@@ -103,14 +103,14 @@ string Selection::getName() const
         
     case Type_Body:
         {
-            string name = body()->getName();
+            string name = body()->getName(i18n);
             PlanetarySystem* system = body()->getSystem();
             while (system != NULL)
             {
                 Body* parent = system->getPrimaryBody();
                 if (parent != NULL)
                 {
-                    name = parent->getName() + '/' + name;
+                    name = parent->getName(i18n) + '/' + name;
                     system = parent->getSystem();
                 }
                 else
@@ -131,12 +131,12 @@ string Selection::getName() const
     case Type_Location:
         if (location()->getParentBody() == NULL)
         {
-            return location()->getName();
+            return location()->getName(i18n);
         }
         else
         {
-            return Selection(location()->getParentBody()).getName() + '/' +
-                location()->getName();
+            return Selection(location()->getParentBody()).getName(i18n) + '/' +
+                location()->getName(i18n);
         }
 
     default:
