@@ -20,10 +20,10 @@ EclipseFinderDlg::EclipseFinderDlg( QWidget* parent, CelestiaCore *appCore)
     : EclipseFinderDlgBase( parent, i18n("Eclipse Finder") ),appCore(appCore)
 {  
     astro::Date date(appCore->getSimulation()->getTime());
-    fromYSpin->setValue(date.year);
+    fromYSpin->setValue(date.year-1);
     fromMSpin->setValue(date.month);
     fromDSpin->setValue(date.day);    
-    toYSpin->setValue(date.year);
+    toYSpin->setValue(date.year+1);
     toMSpin->setValue(date.month);
     toDSpin->setValue(date.day);    
     
@@ -99,8 +99,8 @@ void EclipseFinderDlg::search()
          sprintf(strEnd, "%02d:%02d:%02d", end.hour, end.minute, (int)end.seconds);
          
          new QListViewItem(listEclipses, 
-             QString(_((*i).planete.c_str())), 
-             QString(_((*i).sattelite.c_str())),
+             QString::fromUtf8(_((*i).planete.c_str())), 
+             QString::fromUtf8(_((*i).sattelite.c_str())),
              d,
              strStart,
              strEnd
@@ -119,7 +119,7 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
     int id=menu.exec(p);
     
     if (id == 1) {
-        Selection target = appCore->getSimulation()->findObjectFromPath(std::string(item->text(col == 1).latin1()), true);
+        Selection target = appCore->getSimulation()->findObjectFromPath(std::string(item->text(col == 1).utf8()), true);
 	Selection ref = target.body()->getSystem()->getStar();
 	appCore->getSimulation()->setFrame(FrameOfReference(astro::PhaseLock, target, ref));
 	QString date = item->text(2);
