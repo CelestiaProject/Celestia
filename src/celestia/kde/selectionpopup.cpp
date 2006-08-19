@@ -65,9 +65,9 @@ void SelectionPopup::init()
         ostringstream o;
 
         if (abs(distance) >= astro::AUtoLightYears(1000.0f))
-            sprintf(buff, "%.3f ly", distance);
+            sprintf(buff, "%.3f %s", distance, _("ly"));
         else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
-            sprintf(buff, "%.3f au", astro::lightYearsToAU(distance));
+            sprintf(buff, "%.3f %s", astro::lightYearsToAU(distance), _("au"));
         else if (abs(distance) > astro::kilometersToLightYears(1.0f))
             sprintf(buff, "%.3f km", astro::lightYearsToKilometers(distance));
         else
@@ -92,7 +92,7 @@ void SelectionPopup::init()
         o << buff << "\n";
 
         o << i18n("Radius: ");
-        sprintf(buff, "%.2f Rsun", sel.star()->getRadius() / 696000.0f);
+        sprintf(buff, "%.2f %s", sel.star()->getRadius() / 696000.0f, _("Rsun"));
         o << buff;
 
         QLabel *starDetails = new QLabel(QString(o.str().c_str()), this);
