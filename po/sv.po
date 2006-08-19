@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-19 14:56+0200\n"
+"POT-Creation-Date: 2006-08-19 15:31+0200\n"
 "PO-Revision-Date: 2006-08-19 11:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -510,6 +510,11 @@ msgstr "Abs (ungefärlig) mag: %.2f (%.2f)\n"
 #: src/celestia/celestiacore.cpp:2763
 msgid "Luminosity: "
 msgstr "Ljusstyrka: "
+
+#: src/celestia/celestiacore.cpp:2763
+#, fuzzy
+msgid "Sun"
+msgstr "Jun"
 
 #: src/celestia/celestiacore.cpp:2764 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "

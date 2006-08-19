@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-19 14:56+0200\n"
-"PO-Revision-Date: 2006-08-19 14:57+0200\n"
+"POT-Creation-Date: 2006-08-19 15:31+0200\n"
+"PO-Revision-Date: 2006-08-19 15:32+0200\n"
 "Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -515,6 +515,10 @@ msgstr "Mag.abs (app) : %.2f (%.2f)\n"
 #: src/celestia/celestiacore.cpp:2763
 msgid "Luminosity: "
 msgstr "Luminosité : "
+
+#: src/celestia/celestiacore.cpp:2763
+msgid "Sun"
+msgstr "Soleil"
 
 #: src/celestia/celestiacore.cpp:2764 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
