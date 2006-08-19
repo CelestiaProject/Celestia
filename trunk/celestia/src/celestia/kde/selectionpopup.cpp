@@ -18,6 +18,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 #include "selectionpopup.h"
 
@@ -32,8 +33,13 @@
 SelectionPopup::SelectionPopup(QWidget* parent, CelestiaCore* _appCore, Selection _sel)
 :KPopupMenu(parent),
  appCore(_appCore),
+ baseId(0),
  sel(_sel)
 {
+
+}
+
+SelectionPopup::~SelectionPopup() {
 
 }
 
@@ -53,7 +59,7 @@ void SelectionPopup::init()
     if (sel.body() != NULL)
     {
         insertTitle(QString::fromUtf8(sel.body()->getName(true).c_str()), 0, 0);
-        insert(this, sel, MENUMAXSIZE);
+        insert(this, sel);
     }
     else if (sel.star() != NULL)
     {
@@ -102,12 +108,12 @@ void SelectionPopup::init()
         insertTitle(QString::fromUtf8(ReplaceGreekLetterAbbr(name).c_str()), 0, 0);
         insertItem(starDetails);
         insertSeparator();
-        insert(this, sel, MENUMAXSIZE);
+        insert(this, sel);
     }
     else if (sel.deepsky() != NULL)
     {
         insertTitle(QString::fromUtf8(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str()), 0);
-        insert(this, sel, MENUMAXSIZE);
+        insert(this, sel);
     }
 
     if (sim->getUniverse() != NULL)
@@ -117,10 +123,10 @@ void SelectionPopup::init()
         {
             KPopupMenu *markMenu = new KPopupMenu(this);
             int j=1;
-            for (std::vector<Marker>::iterator i = markers->begin(); i < markers->end() && j < MENUMAXSIZE; i++)
+            for (std::vector<Marker>::iterator i = markers->begin(); i < markers->end(); i++)
             {
                 KPopupMenu *objMenu = new KPopupMenu(this);
-                insert(objMenu, (*i).getObject(), (2 * MENUMAXSIZE + j) * MENUMAXSIZE, false);
+                insert(objMenu, (*i).getObject(), false);
                 markMenu->insertItem(QString::fromUtf8(getSelectionName((*i).getObject())), objMenu);
                 j++;
             }
@@ -131,38 +137,12 @@ void SelectionPopup::init()
 
 void SelectionPopup::process(int id)
 {
+    if (id < 0) return;
+
     Simulation *sim = appCore->getSimulation();
 
-    int actionId = id;
-    actionId = id - (id / MENUMAXSIZE) * MENUMAXSIZE;
-
-    int subId = id;
-    int level = 1;
-    while (id > MENUMAXSIZE) {
-        id /= MENUMAXSIZE;
-        level *= MENUMAXSIZE;
-    }
-    subId -= id * level;
-
-    if (id == 1)
-    {
-        int selId = subId / MENUMAXSIZE;
-        sel = getSelectionFromId(sel, selId);
-    }
-    else if (id == 2) // marked objects sub-menu
-    {
-        int subsubId = subId;
-        int level = 1;
-        while (subId > MENUMAXSIZE) {
-            subId /= MENUMAXSIZE;
-            level *= MENUMAXSIZE;
-        }
-        subsubId -= subId * level;
-        MarkerList* markers = sim->getUniverse()->getMarkers();
-        sel = (*markers)[subId-1].getObject();
-        int selId = subsubId / MENUMAXSIZE;
-        sel = getSelectionFromId(sel, selId);
-    }
+    sel = getSelectionFromId(id);
+    int actionId = id - baseId;
 
     if (actionId == 1) {
         sim->setSelection(sel);
@@ -265,55 +245,35 @@ const char* SelectionPopup::getSelectionName(const Selection& sel) const
     return "";
 }
 
-Selection SelectionPopup::getSelectionFromId(Selection sel, int id) const
+Selection SelectionPopup::getSelectionFromId(int id)
 {
-    if (id == 0) return sel;
-
-    int subId = id;
-    int level = 1;
-    while (id > MENUMAXSIZE) {
-        id /= MENUMAXSIZE;
-        level *= MENUMAXSIZE;
-    }
-    subId -= id * level;
-    if (subId < 0) subId = 0;
-
-    if (sel.body() != NULL)
-    {
-        const PlanetarySystem* satellites = sel.body()->getSatellites();
-        if (satellites != NULL && satellites->getSystemSize() != 0)
-        {
-            Body* body = satellites->getBody(id - 1);
-            Selection satSel(body);
-            return getSelectionFromId(satSel, subId);
+    for(std::vector< std::pair<int, Selection> >::const_iterator i = baseIds.begin() + 1;
+        i != baseIds.end();
+        ++i) {
+        if ((*i).first > id) {
+            baseId = (*(i-1)).first;
+            return (*(i-1)).second;
         }
     }
-    else if (sel.star() != NULL)
-    {
-        Simulation *sim = appCore->getSimulation();
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
-        {
-            SolarSystem* solarSys = iter->second;
-            Body* body = solarSys->getPlanets()->getBody(id - 1);
-            Selection satSel(body);
-            return getSelectionFromId(satSel, subId);
-        }
-    }
-
-    return sel;
+    baseId = baseIds.back().first;
+    return baseIds.back().second;
 }
 
-void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool showSubObjects)
+void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObjects)
 {
+    baseIds.push_back(make_pair(baseId, sel));
+    int locBaseId = baseId;
+
     popup->insertItem(i18n("&Select"), baseId + 1);
     popup->insertItem(i18n("&Center"), baseId + 2);
     popup->insertItem(i18n("&Goto"), baseId + 3);
     popup->insertItem(i18n("&Follow"), baseId + 4);
-    popup->insertItem(i18n("S&ynch Orbit"), baseId + 5);
+    if (sel.star() == NULL && sel.deepsky() == NULL) 
+        popup->insertItem(i18n("S&ynch Orbit"), baseId + 5);
     popup->insertItem(i18n("&Info"), baseId + 6);
-    popup->insertItem(i18n("Unmark &All"), baseId + 8);
+    if (baseId == 0) 
+        popup->insertItem(i18n("Unmark &All"), baseId + 8);
+
     if (appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
     {
         popup->insertItem(i18n("&Unmark"), baseId + 7);
@@ -328,22 +288,24 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
         markMenu->insertItem(i18n("X"), baseId + 14);
         popup->insertItem(i18n("&Mark"), markMenu);
     }
+    baseId += 14;
 
     if (showSubObjects && sel.body() != NULL)
     {
         std::vector<std::string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
         if (altSurfaces != NULL)
         {
-            if (altSurfaces->size() != NULL)
+            if (!altSurfaces->empty())
             {
                 KPopupMenu *surfaces = new KPopupMenu(this);
-                surfaces->insertItem(i18n("Normal"), baseId + 20);
+                surfaces->insertItem(i18n("Normal"), locBaseId + 20);
                 int j=0;
                 for (std::vector<std::string>::const_iterator i = altSurfaces->begin();
-                     i < altSurfaces->end() && j < MENUMAXSIZE - 1; i++, j++)
+                     i < altSurfaces->end(); i++, j++)
                 {
-                    surfaces->insertItem(QString((*i).c_str()), baseId + 21 + j);
+                    surfaces->insertItem(QString((*i).c_str()), locBaseId + 21 + j);
                 }
+                baseId += 7 + j;
                 popup->insertItem(i18n("&Alternate Surfaces"), surfaces);
             }
             delete altSurfaces;
@@ -352,44 +314,145 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, int baseId, bool s
         const PlanetarySystem* satellites = sel.body()->getSatellites();
         if (satellites != NULL && satellites->getSystemSize() != 0)
         {
-            popup->insertSeparator();
-            KPopupMenu *planetaryMenu = new KPopupMenu(this);
-            for (int i = 0; i < satellites->getSystemSize() && i < MENUMAXSIZE; i++)
-            {
-                Body* body = satellites->getBody(i);
-                Selection satSel(body);
-                KPopupMenu *satMenu = new KPopupMenu(this);
-                insert(satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
-                planetaryMenu->insertItem(QString::fromUtf8(body->getName(true).c_str()), satMenu);
-            }
-            popup->insertItem(i18n("Satellites"), planetaryMenu);
+            insertPlanetaryMenu(popup, getSelectionName(sel), satellites);
         }
     }
     else if (showSubObjects && sel.star() != NULL)
     {
-        popup->setItemEnabled(baseId + 5, false);
         Simulation *sim = appCore->getSimulation();
         SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {
-            popup->insertSeparator();
             SolarSystem* solarSys = iter->second;
-            KPopupMenu* planetsMenu = new KPopupMenu(this);
-            for (int i = 0; i < solarSys->getPlanets()->getSystemSize() && i < MENUMAXSIZE; i++)
-            {
-                Body* body = solarSys->getPlanets()->getBody(i);
-                Selection satSel(body);
-                KPopupMenu *satMenu = new KPopupMenu(this);
-                insert(satMenu, satSel, baseId * MENUMAXSIZE + (i + 1) * MENUMAXSIZE);
-                planetsMenu->insertItem(QString::fromUtf8(body->getName(true).c_str()), satMenu);
-            }
-            popup->insertItem(i18n("Planets"), planetsMenu);
+            insertPlanetaryMenu(popup, getSelectionName(sel), solarSys->getPlanets());
         }
     }
-    else if (sel.deepsky() != NULL)
+}
+
+struct BodyComparePredicate
+{
+    bool operator()(Body* a, Body* b)
     {
-        popup->setItemEnabled(baseId + 5, false);
+        return (a->getName(true).compare(b->getName(true)) < 0);
+    }
+};
+
+
+void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parentName, const PlanetarySystem* psys) {
+    std::vector<Body*> asteroids;
+    std::vector<Body*> comets;
+    std::vector<Body*> invisibles;
+    std::vector<Body*> moons;
+    std::vector<Body*> planets;
+    std::vector<Body*> spacecraft;
+
+    std::vector<std::vector<Body*>* > objects;
+    std::vector<std::string> menuNames;
+
+    // Add each vector of PlanetarySystem bodies to a vector to iterate over
+    objects.push_back(&asteroids);
+    menuNames.push_back(QString::fromUtf8(_("Asteroids")));
+    objects.push_back(&comets);
+    menuNames.push_back(QString::fromUtf8(_("Comets")));
+    objects.push_back(&invisibles);
+    menuNames.push_back(QString::fromUtf8(_("Invisibles")));
+    objects.push_back(&moons);
+    menuNames.push_back(QString::fromUtf8(_("Moons")));
+    objects.push_back(&planets);
+    menuNames.push_back(QString::fromUtf8(_("Planets")));
+    objects.push_back(&spacecraft);
+    menuNames.push_back(QString::fromUtf8(_("Spacecraft")));
+
+    for (int i = 0; i < psys->getSystemSize(); i++) {
+        Body* body = psys->getBody(i);
+        switch(body->getClassification()) {
+        case Body::Asteroid:
+            asteroids.push_back(body);
+            break;
+        case Body::Comet:
+            comets.push_back(body);
+            break;
+        case Body::Invisible:
+            invisibles.push_back(body);
+            break;
+        case Body::Moon:
+            moons.push_back(body);
+            break;
+        case Body::Planet:
+            planets.push_back(body);
+            break;
+        case Body::Spacecraft:
+            spacecraft.push_back(body);
+            break;
+        }
+    }
+
+    // Count how many submenus we need to create
+
+    int numSubMenus = 0;
+    int nonEmpty = 0;
+    for (std::vector<std::vector<Body*>* >::const_iterator obj = objects.begin(); 
+         obj != objects.end(); 
+         ++obj) {
+        if ((*obj)->size() > 0) {
+            numSubMenus++;
+            nonEmpty = obj - objects.begin();
+        }
+    }
+
+    if (numSubMenus == 0) return;
+
+    KPopupMenu *submenu = new KPopupMenu(this);
+    popup->insertSeparator();
+
+    if (numSubMenus > 1) 
+        popup->insertItem(i18n("Orbiting Bodies"), submenu);
+    else
+        popup->insertItem(menuNames[nonEmpty], submenu);
+
+    std::vector<std::string>::const_iterator menuName = menuNames.begin();
+    BodyComparePredicate pred;
+
+    for (std::vector<std::vector<Body*>* >::const_iterator obj = objects.begin(); 
+         obj != objects.end(); 
+         ++obj) {
+        // Only generate a submenu if the vector is not empty
+        if ((*obj)->size() > 0) {
+            // Don't create a submenu for a single item
+            if ((*obj)->size() == 1) {
+                std::vector<Body*>::const_iterator it = (*obj)->begin();
+                Selection s(*it);
+                KPopupMenu *objMenu = new KPopupMenu(this);
+                insert(objMenu, s);
+                submenu->insertItem(QString::fromUtf8((*it)->getName(true).c_str()), objMenu);
+            } else {
+                // Skip sorting if we are dealing with the planets in our own Solar System.
+                 if (parentName != "Sol" || *menuName != QString::fromUtf8(_("Planets")))
+                     std::sort((*obj)->begin(), (*obj)->end(), pred);
+
+                if (numSubMenus > 1) {
+                    // Add items to submenu
+                    KPopupMenu* objMenu = new KPopupMenu(this);
+                    for(std::vector<Body*>::const_iterator it = (*obj)->begin(); it != (*obj)->end(); ++it) {
+                        Selection s(*it);
+                        KPopupMenu *menu = new KPopupMenu(this);
+                        insert(menu, s);
+                        objMenu->insertItem(QString::fromUtf8((*it)->getName(true).c_str()), menu);
+                    }
+                    submenu->insertItem(*menuName, objMenu);
+                } else {
+                    // Just add items to the popup
+                    for(std::vector<Body*>::const_iterator it = (*obj)->begin(); it != (*obj)->end(); ++it) {
+                        Selection s(*it);
+                        KPopupMenu *menu = new KPopupMenu(this);
+                        insert(menu, s);
+                        submenu->insertItem(QString::fromUtf8((*it)->getName(true).c_str()), menu);
+                    }
+                }
+            }
+        }
+        menuName++;
     }
 }
 

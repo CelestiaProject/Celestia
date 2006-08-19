@@ -25,22 +25,25 @@
 #include <config.h>
 #endif
 
-#define MENUMAXSIZE 100
-
+#include <vector>
 
 class SelectionPopup : public KPopupMenu {
 Q_OBJECT
 public:
     SelectionPopup(QWidget* parent, CelestiaCore* appCore, Selection sel);
+    ~SelectionPopup();
     void init();
     void process(int id);
 
 protected:
     CelestiaCore* appCore;
     const char* getSelectionName(const Selection& sel) const;
-    Selection getSelectionFromId(Selection sel, int id) const;
-    void insert(KPopupMenu* popup, Selection sel, int baseId, bool showSubObjects = true);
+    Selection getSelectionFromId(int id);
+    void insert(KPopupMenu* popup, Selection sel, bool showSubObjects = true);
     Selection sel;
+    std::vector< std::pair<int, Selection> > baseIds;
+    int baseId;
+    void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parentName, const PlanetarySystem* psys);
 };
 
 #endif // SELECTIONPOPUP_H
