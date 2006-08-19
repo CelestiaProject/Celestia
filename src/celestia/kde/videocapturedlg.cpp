@@ -108,7 +108,7 @@ void VideoCaptureDlg::newAspectRatioSlot(int idx) {
         heights.push_back(currentHeight);
 
         imageSize->insertItem("QCIF: 176 x 144");
-        widths.push_back(173);
+        widths.push_back(176);
         heights.push_back(144);
         
         imageSize->insertItem("CIF: 352 x 288");
@@ -236,12 +236,11 @@ void VideoCaptureDlg::okSlot() {
     mainWindowInitialWidth = parent->width();
     mainWindowInitialHeight = parent->height();
 
-    parent->setFixedSize(getWidth() + parent->width() - parent->getGlWidth(), getHeight() + parent->height() - parent->getGlHeight());
     parent->layout()->setResizeMode(QLayout::FreeResize);
+    parent->setFixedSize(getWidth() + parent->width() - parent->getGlWidth(), getHeight() + parent->height() - parent->getGlHeight());
     kapp->processEvents();
 
     parent->setFixedSize(getWidth() + parent->width() - parent->getGlWidth(), getHeight() + parent->height() - parent->getGlHeight());
-    parent->layout()->setResizeMode(QLayout::FreeResize);
     kapp->processEvents();
 
     KGlobal::config()->setGroup("Preferences");
