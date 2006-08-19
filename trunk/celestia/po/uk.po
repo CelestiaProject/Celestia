@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia 1.4.1\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-19 14:56+0200\n"
+"POT-Creation-Date: 2006-08-19 15:31+0200\n"
 "PO-Revision-Date: 2006-03-02 01:23+0200\n"
 "Last-Translator: Serhij Dubyk <dubyk@library.lviv.ua>\n"
 "Language-Team: \n"
@@ -508,6 +508,11 @@ msgstr " Абс. (відн.) величина: %.2f (%.2f)\n"
 #: src/celestia/celestiacore.cpp:2763
 msgid "Luminosity: "
 msgstr "Світимість: "
+
+#: src/celestia/celestiacore.cpp:2763
+#, fuzzy
+msgid "Sun"
+msgstr "Сатурн"
 
 #: src/celestia/celestiacore.cpp:2764 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "

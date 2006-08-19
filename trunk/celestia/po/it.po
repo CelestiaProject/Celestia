@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-19 14:56+0200\n"
+"POT-Creation-Date: 2006-08-19 15:31+0200\n"
 "PO-Revision-Date: 2006-08-11 16:57+0100\n"
 "Last-Translator: Mauro Santandrea <mausan66@tiscali.it>\n"
 "Language-Team: italian <it@li.org>\n"
@@ -522,6 +522,11 @@ msgstr "Magnitudine assoluta (app.): %.2f (%.2f)\n"
 #: src/celestia/celestiacore.cpp:2763
 msgid "Luminosity: "
 msgstr "Luminosità: "
+
+#: src/celestia/celestiacore.cpp:2763
+#, fuzzy
+msgid "Sun"
+msgstr "Giu"
 
 #: src/celestia/celestiacore.cpp:2764 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-19 14:56+0200\n"
+"POT-Creation-Date: 2006-08-19 15:31+0200\n"
 "PO-Revision-Date: 2005-02-27 15:44+0100\n"
 "Last-Translator: Aron Novak <aaron@szentimre.hu>\n"
 "Language-Team: Hungarian\n"
@@ -530,6 +530,11 @@ msgstr "Absz. (app) fény:"
 #: src/celestia/celestiacore.cpp:2763
 msgid "Luminosity: "
 msgstr ""
+
+#: src/celestia/celestiacore.cpp:2763
+#, fuzzy
+msgid "Sun"
+msgstr "Szaturnusz"
 
 #: src/celestia/celestiacore.cpp:2764 src/celestia/kde/selectionpopup.cpp:86
 msgid "Class: "
