@@ -1541,7 +1541,7 @@ LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
     }
     
     Selection selection = appCore->getSimulation()->getSelection();
-    QString objName(selection.getName().c_str());
+    QString objName(selection.getName(true).c_str());
     objEdit->setText(objName.mid(objName.findRev('/') + 1));
     
     latEdit->setText(QString("%1").arg(latitude, 0, 'f', 3));
@@ -1562,7 +1562,7 @@ void LongLatDialog::slotOk() {
 
 void LongLatDialog::slotApply() {
     Simulation* appSim = appCore->getSimulation();
-    Selection sel = appSim->findObjectFromPath(objEdit->text().latin1());
+    Selection sel = appSim->findObjectFromPath((const char*)objEdit->text().utf8(), true);
     if (!sel.empty())
     {
         appSim->setSelection(sel);
