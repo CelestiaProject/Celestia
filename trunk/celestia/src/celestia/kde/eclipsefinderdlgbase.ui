@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>468</width>
-            <height>461</height>
+            <width>452</width>
+            <height>450</height>
         </rect>
     </property>
     <property name="caption">
@@ -131,7 +131,10 @@
                                 <cstring>textLabel1_3</cstring>
                             </property>
                             <property name="text">
-                                <string>&lt;p align="right"&gt;On:&lt;/p&gt;</string>
+                                <string>On:</string>
+                            </property>
+                            <property name="alignment">
+                                <set>WordBreak|AlignVCenter|AlignRight</set>
                             </property>
                         </widget>
                         <widget class="KComboBox">
@@ -217,7 +220,10 @@
                                 <cstring>textLabel3_3</cstring>
                             </property>
                             <property name="text">
-                                <string>&lt;p align="right"&gt;To:&lt;/p&gt;</string>
+                                <string>To:</string>
+                            </property>
+                            <property name="alignment">
+                                <set>WordBreak|AlignVCenter|AlignRight</set>
                             </property>
                         </widget>
                         <widget class="KIntSpinBox">
@@ -274,7 +280,10 @@
                                 <cstring>textLabel2_3</cstring>
                             </property>
                             <property name="text">
-                                <string>&lt;p align="right"&gt;From:&lt;/p&gt;</string>
+                                <string>From:</string>
+                            </property>
+                            <property name="alignment">
+                                <set>WordBreak|AlignVCenter|AlignRight</set>
                             </property>
                         </widget>
                         <widget class="KIntSpinBox">
