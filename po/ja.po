@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia-Japanese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-17 16:49+0200\n"
+"POT-Creation-Date: 2006-08-19 14:56+0200\n"
 "PO-Revision-Date: 2006-08-09 12:18+0900\n"
 "Last-Translator: Sui Ota <aqua@aqsp.net>\n"
 "Language-Team: Japanese\n"
@@ -463,11 +463,11 @@ msgstr "画面が小さすぎます。"
 msgid "Added view"
 msgstr "画面を分割"
 
-#: src/celestia/celestiacore.cpp:2626
+#: src/celestia/celestiacore.cpp:2626 src/celestia/kde/selectionpopup.cpp:68
 msgid "ly"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2630
+#: src/celestia/celestiacore.cpp:2630 src/celestia/kde/selectionpopup.cpp:70
 #: src/celestia/res/resource_strings.cpp:122
 msgid "au"
 msgstr "AU"
@@ -704,8 +704,8 @@ msgstr "test.xmlのオープンでエラーが発生しました。\n"
 msgid "Error reading deep sky file\n"
 msgstr "深宇宙天体ファイルの読み込みでエラーが発生しました。\n"
 
-#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3972
-#: src/celestia/celestiacore.cpp:3994
+#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3973
+#: src/celestia/celestiacore.cpp:3995
 msgid "Error opening "
 msgstr "次のオープンでエラーが発生しました: "
 
@@ -717,35 +717,35 @@ msgstr "星座線ファイルのオープンでエラーが発生しました。
 msgid "Error opening constellation boundaries files."
 msgstr "星座境界線ファイルのオープンでエラーが発生しました。"
 
-#: src/celestia/celestiacore.cpp:3874
+#: src/celestia/celestiacore.cpp:3875
 msgid "render path: "
 msgstr "レンダリングパス: "
 
-#: src/celestia/celestiacore.cpp:3885
+#: src/celestia/celestiacore.cpp:3886
 msgid "Failed to initialize renderer"
 msgstr "レンダラーの初期化に失敗しました。"
 
-#: src/celestia/celestiacore.cpp:3901
+#: src/celestia/celestiacore.cpp:3902
 msgid "Error loading font; text will not be visible.\n"
 msgstr "フォントの読み込みでエラーが発生しました。テキストが表示されません。\n"
 
-#: src/celestia/celestiacore.cpp:3955
+#: src/celestia/celestiacore.cpp:3956
 msgid "Error reading cross index "
 msgstr "次のクロスインデックスファイルの読み込みでエラーが発生しました: "
 
-#: src/celestia/celestiacore.cpp:3957
+#: src/celestia/celestiacore.cpp:3958
 msgid "Loaded cross index "
 msgstr "次のクロスインデックスファイルを読み込みました: "
 
-#: src/celestia/celestiacore.cpp:3979
+#: src/celestia/celestiacore.cpp:3980
 msgid "Error reading star names file\n"
 msgstr "恒星名ファイルの読み込みでエラーが発生しました。\n"
 
-#: src/celestia/celestiacore.cpp:4002
+#: src/celestia/celestiacore.cpp:4003
 msgid "Error reading stars file\n"
 msgstr "恒星ファイルの読み込みでエラーが発生しました。\n"
 
-#: src/celestia/celestiacore.cpp:4029
+#: src/celestia/celestiacore.cpp:4030
 msgid "Error opening star catalog "
 msgstr "次の恒星カタログのオープンでエラーが発生しました: "
 
@@ -1860,6 +1860,11 @@ msgstr "絶対(視)等級: "
 #: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "表面温度: "
+
+#: src/celestia/kde/selectionpopup.cpp:95
+#, fuzzy
+msgid "Rsun"
+msgstr "再開"
 
 #: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"

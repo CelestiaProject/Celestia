@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ar \n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-17 16:49+0200\n"
+"POT-Creation-Date: 2006-08-19 14:56+0200\n"
 "PO-Revision-Date: 2006-06-05 22:00+0100\n"
 "Last-Translator: Ali Al-Khudair <saudilink@lycos.com>\n"
 "Language-Team: Arabic <ar@li.org>\n"
@@ -460,11 +460,11 @@ msgstr "العرض صغير جداً ليقسم"
 msgid "Added view"
 msgstr "العرض المضاف"
 
-#: src/celestia/celestiacore.cpp:2626
+#: src/celestia/celestiacore.cpp:2626 src/celestia/kde/selectionpopup.cpp:68
 msgid "ly"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2630
+#: src/celestia/celestiacore.cpp:2630 src/celestia/kde/selectionpopup.cpp:70
 #: src/celestia/res/resource_strings.cpp:122
 msgid "au"
 msgstr "وحدة قياس فضائية"
@@ -701,8 +701,8 @@ msgstr "خطأ في فتح test.xml\n"
 msgid "Error reading deep sky file\n"
 msgstr "خطأ في قراءة ملف عمق الفضاء\n"
 
-#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3972
-#: src/celestia/celestiacore.cpp:3994
+#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3973
+#: src/celestia/celestiacore.cpp:3995
 msgid "Error opening "
 msgstr "خطأ في الفتح "
 
@@ -714,35 +714,35 @@ msgstr "خطأ في فتح ملف الشكل النجمي."
 msgid "Error opening constellation boundaries files."
 msgstr "خطأ في فتح ملف حدود الابراج."
 
-#: src/celestia/celestiacore.cpp:3874
+#: src/celestia/celestiacore.cpp:3875
 msgid "render path: "
 msgstr "مسار التمثيل: "
 
-#: src/celestia/celestiacore.cpp:3885
+#: src/celestia/celestiacore.cpp:3886
 msgid "Failed to initialize renderer"
 msgstr "فشل في انشاء الممثل"
 
-#: src/celestia/celestiacore.cpp:3901
+#: src/celestia/celestiacore.cpp:3902
 msgid "Error loading font; text will not be visible.\n"
 msgstr "خطأ في تحميل الخط; النص سيكون غير مرئي.\n"
 
-#: src/celestia/celestiacore.cpp:3955
+#: src/celestia/celestiacore.cpp:3956
 msgid "Error reading cross index "
 msgstr "خطأ في قراءة الفهرس المتقاطع "
 
-#: src/celestia/celestiacore.cpp:3957
+#: src/celestia/celestiacore.cpp:3958
 msgid "Loaded cross index "
 msgstr "الفهرس المتقاطع محمل "
 
-#: src/celestia/celestiacore.cpp:3979
+#: src/celestia/celestiacore.cpp:3980
 msgid "Error reading star names file\n"
 msgstr "خطأ في قراءة ملف اسماء النجوم\n"
 
-#: src/celestia/celestiacore.cpp:4002
+#: src/celestia/celestiacore.cpp:4003
 msgid "Error reading stars file\n"
 msgstr "خطأ في قراءة ملف النجوم\n"
 
-#: src/celestia/celestiacore.cpp:4029
+#: src/celestia/celestiacore.cpp:4030
 msgid "Error opening star catalog "
 msgstr "خطأ في فتح دليل النجوم "
 
@@ -1862,6 +1862,11 @@ msgstr "Abs (app) mag: "
 #: src/celestia/kde/selectionpopup.cpp:90
 msgid "Surface Temp: "
 msgstr "حرارة السطح: "
+
+#: src/celestia/kde/selectionpopup.cpp:95
+#, fuzzy
+msgid "Rsun"
+msgstr "استئناف"
 
 #: src/celestia/kde/selectionpopup.cpp:127
 msgid "Marked objects"
