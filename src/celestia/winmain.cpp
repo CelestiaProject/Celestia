@@ -1420,6 +1420,8 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     vector<string> menuNames;
 
     // Place each body in the correct vector based on classification
+    // we use _(body->getName().c_str()) instead of body->getName(true) because
+    // of character table issues
     HMENU menu = CreatePopupMenu();
     for (int i = 0; i < psys->getSystemSize(); i++)
     {
@@ -1427,22 +1429,22 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
         switch(body->getClassification())
         {
         case Body::Asteroid:
-            asteroids.push_back(make_pair(i, body->getName()));
+            asteroids.push_back(make_pair(i, _(body->getName().c_str())));
             break;
         case Body::Comet:
-            comets.push_back(make_pair(i, body->getName()));
+            comets.push_back(make_pair(i, _(body->getName().c_str())));
             break;
         case Body::Invisible:
-            invisibles.push_back(make_pair(i, body->getName()));
+            invisibles.push_back(make_pair(i, _(body->getName().c_str())));
             break;
         case Body::Moon:
-            moons.push_back(make_pair(i, body->getName()));
+            moons.push_back(make_pair(i, _(body->getName().c_str())));
             break;
         case Body::Planet:
-            planets.push_back(make_pair(i, body->getName()));
+            planets.push_back(make_pair(i, _(body->getName().c_str())));
             break;
         case Body::Spacecraft:
-            spacecraft.push_back(make_pair(i, body->getName()));
+            spacecraft.push_back(make_pair(i, _(body->getName().c_str())));
             break;
         }
     }
@@ -1492,7 +1494,7 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
             else
             {
                 // Skip sorting if we are dealing with the planets in our own Solar System.
-                if (parentName != "Sol" || *menuName != "Planets")
+                if (parentName != "Sol" || *menuName != _("Planets"))
                     sort(obj->begin(), obj->end(), pred);
 
                 if (numSubMenus > 1)
@@ -1500,15 +1502,15 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
                     // Add items to submenu
                     hSubMenu = CreatePopupMenu();
                     for(it=obj->begin(); it != obj->end(); it++)
-                        AppendMenu(hSubMenu, MF_STRING, MENU_CHOOSE_PLANET + it->first, _(it->second.c_str()));
+                        AppendMenu(hSubMenu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
 
-                    AppendMenu(menu, MF_POPUP | MF_STRING, (DWORD)hSubMenu, _(menuName->c_str()));
+                    AppendMenu(menu, MF_POPUP | MF_STRING, (DWORD)hSubMenu, menuName->c_str());
                 }
                 else
                 {
                     // Just add items to the popup
                     for(it=obj->begin(); it != obj->end(); it++)
-                        AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, _(it->second.c_str()));
+                        AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
                 }
             }
         }
