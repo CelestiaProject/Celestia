@@ -2760,7 +2760,7 @@ static void displayStarInfo(Overlay& overlay,
                                       (float) distance));
 
     if (star.getLuminosity() > 1.0e-10f)
-        overlay << _("Luminosity: ") << SigDigitNum(star.getLuminosity(), 3) << "x Sun\n";
+        overlay << _("Luminosity: ") << SigDigitNum(star.getLuminosity(), 3) << "x " << _("Sun") << "\n";
     overlay << _("Class: ");
     if (star.getSpectralType()[0] == 'Q')
         overlay << _("Neutron star");
