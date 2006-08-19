@@ -3819,7 +3819,8 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     // Load destinations list
     if (config->destinationsFile != "")
     {
-        ifstream destfile(config->destinationsFile.c_str());
+        string localeDestinationsFile = LocaleFilename(config->destinationsFile);
+        ifstream destfile(localeDestinationsFile.c_str());
         if (destfile.good())
         {
             destinations = ReadDestinationList(destfile);
