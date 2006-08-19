@@ -110,7 +110,9 @@ void CelestialBrowser::slotRefresh()
     Point3f obsPos( (double)ucPos.x * 1e-6,
                     (double)ucPos.y * 1e-6,
                     (double)ucPos.z * 1e-6);    
-                    
+
+    setlocale(LC_NUMERIC, "");
+
     for (std::vector<const Star*>::iterator i = stars->begin(); 
          i != stars->end() ; 
          i++ )
@@ -124,7 +126,7 @@ void CelestialBrowser::slotRefresh()
         double dist = v.length();
 
         QString starClass(star->getSpectralType());
-        CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, "ly",
+        CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, _("ly"),
                 astro::absToAppMag(star->getAbsoluteMagnitude(), dist),
                 star->getAbsoluteMagnitude(), starClass);
         
@@ -143,7 +145,7 @@ void CelestialBrowser::slotRefresh()
                 double starBodyDist = bodyPos.distanceFromOrigin();
 
                 CelListViewItem *planetItem = new CelListViewItem(starItem, body->getName(true), 
-                                            starBodyDist / KM_PER_AU, "au",
+                                            starBodyDist / KM_PER_AU, _("au"),
                                             0, 0, getClassification(body->getClassification()));
                 
                 const PlanetarySystem* satellites = body->getSatellites();
@@ -165,6 +167,9 @@ void CelestialBrowser::slotRefresh()
             }
         }
     }
+
+    setlocale(LC_NUMERIC, "C");
+
     delete(stars);
 }
 
@@ -225,19 +230,19 @@ CelListViewItem::CelListViewItem( QListView * parent, std::string _name, double 
     QString label;
     this->setText(0, QString::fromUtf8(ReplaceGreekLetterAbbr(_name).c_str()));
 
-    sprintf(buf, " %.2f %s", _dist, _dist_unit);
-    label = buf;
+    sprintf(buf, " %'.2f %s", _dist, _dist_unit);
+    label = QString::fromUtf8(buf);
     this->setText(1, label);
 
     if (_app_mag != 0) {
-        sprintf(buf, " %.2f ", _app_mag);
-        label = buf;
+        sprintf(buf, " %'.2f ", _app_mag);
+        label = QString::fromUtf8(buf);
         this->setText(2, label);
     }
 
     if (_abs_mag != 0) {
-        sprintf(buf, " %.2f ", _abs_mag);
-        label = buf;
+        sprintf(buf, " %'.2f ", _abs_mag);
+        label = QString::fromUtf8(buf);
         this->setText(3, label);
     }
 
@@ -258,19 +263,19 @@ CelListViewItem::CelListViewItem( QListViewItem * parent, std::string _name, dou
 
     this->setText(0, QString::fromUtf8(ReplaceGreekLetterAbbr(_name).c_str()));
 
-    sprintf(buf, " %.2f %s", _dist, _dist_unit);
-    label = buf;
+    sprintf(buf, " %'.2f %s", _dist, _dist_unit);
+    label = QString::fromUtf8(buf);
     this->setText(1, label);
 
     if (_app_mag != 0) {
-        sprintf(buf, " %.2f ", _app_mag);
-        label = buf;
+        sprintf(buf, " %'.2f ", _app_mag);
+        label = QString::fromUtf8(buf);
         this->setText(2, label);
     }
 
     if (_abs_mag != 0) {
-        sprintf(buf, " %.2f ", _abs_mag);
-        label = buf;
+        sprintf(buf, " %'.2f ", _abs_mag);
+        label = QString::fromUtf8(buf);
         this->setText(3, label);
     }
 

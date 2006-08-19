@@ -69,37 +69,40 @@ void SelectionPopup::init()
         char buff[50];
 
         ostringstream o;
+        setlocale(LC_NUMERIC, "");
 
         if (abs(distance) >= astro::AUtoLightYears(1000.0f))
-            sprintf(buff, "%.3f %s", distance, _("ly"));
+            sprintf(buff, "%'.3f %s", distance, _("ly"));
         else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
-            sprintf(buff, "%.3f %s", astro::lightYearsToAU(distance), _("au"));
+            sprintf(buff, "%'.3f %s", astro::lightYearsToAU(distance), _("au"));
         else if (abs(distance) > astro::kilometersToLightYears(1.0f))
-            sprintf(buff, "%.3f km", astro::lightYearsToKilometers(distance));
+            sprintf(buff, "%'.3f km", astro::lightYearsToKilometers(distance));
         else
-            sprintf(buff, "%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
+            sprintf(buff, "%'.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
 
-        o << i18n("Distance: ") << buff << "\n";
+        o << i18n("Distance: ") << QString::fromUtf8(buff) << "\n";
 
         o << i18n("Abs (app) mag: ");
 
-        sprintf(buff, "%.2f (%.2f)",
+        sprintf(buff, "%'.2f (%.2f)",
                    sel.star()->getAbsoluteMagnitude(),
                    astro::absToAppMag(sel.star()->getAbsoluteMagnitude(),
                                       (float) distance));
-        o << buff << "\n";
+        o << QString::fromUtf8(buff) << "\n";
 
         o << i18n("Class: ");
         sprintf(buff, "%s", sel.star()->getSpectralType());
-        o << buff << "\n";
+        o << QString::fromUtf8(buff) << "\n";
 
         o << i18n("Surface Temp: ");
-        sprintf(buff, "%.0f K", sel.star()->getTemperature());
-        o << buff << "\n";
+        sprintf(buff, "%'.0f K", sel.star()->getTemperature());
+        o << QString::fromUtf8(buff) << "\n";
 
         o << i18n("Radius: ");
-        sprintf(buff, "%.2f %s", sel.star()->getRadius() / 696000.0f, _("Rsun"));
-        o << buff;
+        sprintf(buff, "%'.2f %s", sel.star()->getRadius() / 696000.0f, _("Rsun"));
+        o << QString::fromUtf8(buff);
+
+        setlocale(LC_NUMERIC, "C");
 
         QLabel *starDetails = new QLabel(QString(o.str().c_str()), this);
         starDetails->setPalette(pal);
