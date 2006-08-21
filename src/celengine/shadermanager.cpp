@@ -591,7 +591,7 @@ AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
     if (props.usesShadows() || props.lightModel == ShaderProperties::PerPixelSpecularModel)
         return SeparateDiffuse(lightIndex)  + " = ";
     else
-        return string("diff.rgb += ");
+        return string("diff.rgb += ") + LightProperty(lightIndex, "diffuse") + " * ";
 }
 
 
@@ -790,9 +790,11 @@ AtmosphericEffects(const ShaderProperties& props)
 #else        
     source += "    float density = 0.0;\n";
     source += "    atmSamplePoint = atmEnter * 0.333 + atmLeave * 0.667;\n";
+    //source += "    atmSamplePoint = atmEnter * 0.1 + atmLeave * 0.9;\n";
     source += "    float h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
     source += "    density += exp(-h * mieH);\n";
     source += "    atmSamplePoint = atmEnter * 0.667 + atmLeave * 0.333;\n";
+    //source += "    atmSamplePoint = atmEnter * 0.9 + atmLeave * 0.1;\n";
     source += "    h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
     source += "    density += exp(-h * mieH);\n";
 #endif
@@ -860,8 +862,9 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     source += "    vec3 step = (atmLeave - atmEnter) * (1.0 / 10.0);\n";
     source += "    float stepLength = length(step);\n";
     source += "    vec3 atmSamplePoint = atmEnter + step * 0.5;\n";
-    source += "    vec3 atmColor = 0.0;\n";
-    source += "    float density = 0.0;\n";
+    source += "    vec3 scatter = vec3(0.0, 0.0, 0.0);\n";
+    source += "    vec3 ex = vec3(1.0);\n";
+    source += "    float tau = 0.0;\n";
     source += "    for (int i = 0; i < 10; ++i) {\n";
     
     // Compute the distance through the atmosphere from the sample point to the sun
@@ -874,9 +877,11 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     // with the height above the planet's surface.
     source += "        float h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
     source += "        float d = exp(-h * mieH);\n";
-    source += "        density += d;\n";
+    source += "        tau += d * stepLength;\n";
     source += "        vec3 sunColor = exp(-extinctionCoeff * d * distSun);\n";
-    source += "        vec3 ex = exp(-extinctionCoeff * density * stepLength);\n";
+    source += "        ex = exp(-extinctionCoeff * tau);\n";
+    source += "        scatter += ex * sunColor * d * 0.1;\n";
+    source += "        atmSamplePoint += step;\n";
     source += "    }\n";
     
     // Evaluate the Mie and Rayleigh phase functions; both are functions of the cosine        
@@ -888,9 +893,7 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     
     source += "    scatterEx = ex;\n";
     
-    string scatter = "(1.0 - exp(-scatterCoeffSum * density * distAtm))";
-    
-    source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
+    source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * scatter;\n";
     
     // Optional exposure control
     //source += "    1.0 - (" + VarScatterInVS() + " * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
@@ -1591,7 +1594,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     if (props.hasScattering())
     {    
         if (props.lightModel == ShaderProperties::AtmosphereModel)
-            source += "gl_FragColor = vec4(" + VarScatterInFS() + ", 1.0);\n";
+            source += "gl_FragColor = vec4(" + VarScatterInFS() + ", dot(scatterEx, vec3(0.333, 0.333, 0.333)));\n";
         else
             source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + " + VarScatterInFS() + ";\n";
     }
