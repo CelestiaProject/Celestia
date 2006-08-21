@@ -60,6 +60,46 @@ bool readBinary(istream& in,
 }
 
 
+inline float sample(float samples[],
+                    unsigned int width,
+                    unsigned int height,
+                    float s,
+                    float t)
+{
+    float ssamp = (float) (width - 1) + 0.99f;
+    float tsamp = (float) (height - 1) + 0.99f;
+
+    return samples[(unsigned int) (t * tsamp) * width +
+                   (unsigned int) (s * ssamp)];
+}
+
+
+inline float sampleBilinear(float samples[],
+                            unsigned int width,
+                            unsigned int height,
+                            float s,
+                            float t)
+{
+    unsigned int x0 = (unsigned int) (s * width) % width;
+    unsigned int y0 = (unsigned int) (t * height) % height;
+    unsigned int x1 = (unsigned int) (x0 + 1) % width;
+    unsigned int y1 = (unsigned int) (y0 + 1) % height;
+
+    float tx = s * width - (float) (unsigned int) (s * width);
+    float ty = t * height - (float) (unsigned int) (t * height);
+
+    float s00 = samples[y0 * width + x0];
+    float s01 = samples[y0 * width + x1];
+    float s10 = samples[y1 * width + x0];
+    float s11 = samples[y1 * width + x1];
+
+    float s0 = (1.0f - tx) * s00 + tx * s01;
+    float s1 = (1.0f - tx) * s10 + tx * s11;
+
+    return (1.0f - ty) * s0 + ty * s1;
+}
+
+
 // subdiv is the number of rows in the triangle
 void triangleSection(unsigned int subdiv,
                      Vec3f v0, Vec3f v1, Vec3f v2)
@@ -82,28 +122,12 @@ void triangleSection(unsigned int subdiv,
 
             if (samples != NULL)
             {
-#if 0
-                float v = (float) i / (float) (latSamples - 1);
-                float u = (float) j / (float) longSamples;
-
-                float theta = pi * (0.5f - v);
-                float phi = pi * 2.0 * u;
-                float x = cos(phi) * cos(theta);
-                float y = sin(theta);
-                float z = sin(phi) * cos(theta);
-#endif
                 float theta = (float) acos(w.y);
                 float phi = (float) atan2(w.z, w.x);
                 float s = phi / (2.0f * pi) + 0.5f;
                 float t = theta / pi;
 
-                if (t * tsamp >= latSamples || s * ssamp >= longSamples)
-                {
-                    cout << t << ", " << s << "\n";
-                    exit(1);
-                }
-                float r = samples[(unsigned int) (t * tsamp) * longSamples +
-                                  (unsigned int) (s * ssamp)];
+                float r = sampleBilinear(samples, longSamples, latSamples, s, t);
 
                 w = w * r;
             }
