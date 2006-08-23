@@ -2991,7 +2991,9 @@ public:
     
     virtual void update(const string& filename)
     {
+        bind_textdomain_codeset("celestia", CurrentCP());
         splash->setMessage(string(_("Loading: ")) + filename);
+        bind_textdomain_codeset("celestia", "UTF8");
     }
     
 private:
