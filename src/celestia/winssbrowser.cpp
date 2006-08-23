@@ -109,7 +109,9 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
             bind_textdomain_codeset("celestia", CurrentCP());
             if (solarSys != NULL)
             {
-                HTREEITEM rootItem = AddItemToTree(hwnd, "Sun", 1, NULL,
+                Universe* u = browser->appCore->getSimulation()->getUniverse();
+                string starNameString = u->getStarCatalog()->getStarName(*(solarSys->getStar()));
+                HTREEITEM rootItem = AddItemToTree(hwnd, const_cast<char*>(starNameString.c_str()), 1, NULL,
                                                    (HTREEITEM) TVI_ROOT);
                 const PlanetarySystem* planets = solarSys->getPlanets();
                 if (planets != NULL)
