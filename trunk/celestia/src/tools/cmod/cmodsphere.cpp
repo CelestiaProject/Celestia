@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <cstdio>
 
 #include <io.h>
 #include <fcntl.h>
@@ -102,7 +103,8 @@ inline float sampleBilinear(float samples[],
 
 // subdiv is the number of rows in the triangle
 void triangleSection(unsigned int subdiv,
-                     Vec3f v0, Vec3f v1, Vec3f v2)
+                     Vec3f v0, Vec3f v1, Vec3f v2,
+                     Vec2f tex0, Vec2f tex1, Vec2f tex2)
 {
     float ssamp = (float) (longSamples - 1) + 0.99f;
     float tsamp = (float) (latSamples - 1) + 0.99f;
@@ -118,12 +120,15 @@ void triangleSection(unsigned int subdiv,
             Vec3f w1 = (1.0f - v) * v0 + v * v2;
             Vec3f w = (1.0f - u) * w0 + u * w1;
 
+            Vec2f t((1.0f - u) * tex1.x + u * tex2.x,
+                    (1.0f - v) * tex0.y + v * tex1.y);
+
             w.normalize();
 
             if (samples != NULL)
             {
                 float theta = (float) acos(w.y);
-                float phi = (float) atan2(w.z, w.x);
+                float phi = (float) atan2(-w.z, w.x);
                 float s = phi / (2.0f * pi) + 0.5f;
                 float t = theta / pi;
 
@@ -132,7 +137,8 @@ void triangleSection(unsigned int subdiv,
                 w = w * r;
             }
 
-            cout << w.x << " " << w.y << " " << w.z << "\n";
+            cout << w.x << " " << w.y << " " << w.z << " "
+                 << t.x << " " << t.y << "\n";
         }
     }
 }
@@ -163,8 +169,34 @@ void triangleMesh(unsigned int subdiv,
 }
 
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    // Get the command line arguments
+    if (argc != 4)
+    {
+        cerr << "Usage: cmodsphere <width> <height> <tessellation>\n";
+        return 1;
+    }
+
+    if (sscanf(argv[1], "%u", &longSamples) != 1)
+    {
+        cerr << "Invalid width\n";
+        return 1;
+    }
+
+    if (sscanf(argv[2], "%u", &latSamples) != 1)
+    {
+        cerr << "Invalid height\n";
+        return 1;
+    }
+
+    unsigned int subdiv = 0;
+    if (sscanf(argv[3], "%u", &subdiv) != 1)
+    {
+        cerr << "Invalid tessellation level\n";
+        return 1;
+    }
+
     samples = new float[latSamples * longSamples];
 
 #ifdef _WIN32
@@ -172,21 +204,29 @@ int main(void)
     _setmode(_fileno(stdin), _O_BINARY);
 #endif
 
+    // Read the height map
     readBinary(cin, latSamples, longSamples);
 
+    // Output the mesh header
     cout << "#celmodel__ascii\n";
+    cout << "\n";
 
     cout << "material\n";
     cout << "diffuse 0.8 0.8 0.8\n";
     cout << "end_material\n";
+    cout << "\n";
 
     cout << "mesh\n";
     cout << "vertexdesc\n";
     cout << "position f3\n";
+    cout << "texcoord0 f2\n";
     cout << "end_vertexdesc\n";
+    cout << "\n";
 
+    // Octahedral subdivision; the subdivison level for an a face
+    // is one fourth the overall tessellation level.
     unsigned int primitiveFaces = 8;
-    unsigned int subdiv = 180;
+    subdiv = subdiv / 4;
 
     unsigned int s1 = subdiv + 1;
     unsigned int verticesPerPrimFace = (s1 * s1 + s1) / 2;
@@ -199,36 +239,60 @@ int main(void)
     triangleSection(subdiv,
                     Vec3f(0.0f, 1.0f, 0.0f),
                     Vec3f(1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, -1.0f));
+                    Vec3f(0.0f, 0.0f, -1.0f),
+                    Vec2f(0.0f, 0.0f),
+                    Vec2f(0.00f, 0.5f),
+                    Vec2f(0.25f, 0.5f));
     triangleSection(subdiv,
                     Vec3f(0.0f, 1.0f, 0.0f),
                     Vec3f(0.0f, 0.0f, 1.0f),
-                    Vec3f(1.0f, 0.0f, 0.0f));
+                    Vec3f(1.0f, 0.0f, 0.0f),
+                    Vec2f(0.0f, 0.0f),
+                    Vec2f(0.75f, 0.5f),
+                    Vec2f(1.00f, 0.5f));;
     triangleSection(subdiv,
                     Vec3f(0.0f, 1.0f, 0.0f),
                     Vec3f(-1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, 1.0f));
+                    Vec3f(0.0f, 0.0f, 1.0f),
+                    Vec2f(0.0f, 0.0f),
+                    Vec2f(0.50f, 0.5f),
+                    Vec2f(0.75f, 0.5f));
     triangleSection(subdiv,
                     Vec3f(0.0f, 1.0f, 0.0f),
                     Vec3f(0.0f, 0.0f, -1.0f),
-                    Vec3f(-1.0f, 0.0f, 0.0f));
+                    Vec3f(-1.0f, 0.0f, 0.0f),
+                    Vec2f(0.0f, 0.0f),
+                    Vec2f(0.25f, 0.5f),
+                    Vec2f(0.50f, 0.5f));
 
     triangleSection(subdiv,
                     Vec3f(0.0f, -1.0f, 0.0f),
                     Vec3f(0.0f, 0.0f, -1.0f),
-                    Vec3f(1.0f, 0.0f, 0.0f));
+                    Vec3f(1.0f, 0.0f, 0.0f),
+                    Vec2f(0.0f, 1.0f),
+                    Vec2f(0.25f, 0.5f),
+                    Vec2f(0.00f, 0.5f));
     triangleSection(subdiv,
                     Vec3f(0.0f, -1.0f, 0.0f),
                     Vec3f(1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, 1.0f));
+                    Vec3f(0.0f, 0.0f, 1.0f),
+                    Vec2f(0.0f, 1.0f),
+                    Vec2f(1.00f, 0.5f),
+                    Vec2f(0.75f, 0.5f));
     triangleSection(subdiv,
                     Vec3f(0.0f, -1.0f, 0.0f),
                     Vec3f(0.0f, 0.0f, 1.0f),
-                    Vec3f(-1.0f, 0.0f, 0.0f));
+                    Vec3f(-1.0f, 0.0f, 0.0f),
+                    Vec2f(0.0f, 1.0f),
+                    Vec2f(0.75f, 0.5f),
+                    Vec2f(0.50f, 0.5f));
     triangleSection(subdiv,
                     Vec3f(0.0f, -1.0f, 0.0f),
                     Vec3f(-1.0f, 0.0f, 0.0f),
-                    Vec3f(0.0f, 0.0f, -1.0f));
+                    Vec3f(0.0f, 0.0f, -1.0f),
+                    Vec2f(0.0f, 1.0f),
+                    Vec2f(0.50f, 0.5f),
+                    Vec2f(0.25f, 0.5f));
 
     cout << "trilist 0 " << triangleCount * 3 << "\n";
 
