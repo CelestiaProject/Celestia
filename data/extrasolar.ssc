@@ -1,4 +1,4 @@
-# Catalog of 201 known extrasolar planets.
+# Catalog of 202 known extrasolar planets.
 #
 # Data compiled from the Extrasolar Planets Catalog at: http://exoplanet.eu/catalog.php
 #
@@ -1792,6 +1792,36 @@ AltSurface "limit of knowledge" "HD 69830/d"
 }
 
 AltSurface "limit of knowledge" "HD 160691/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"e" "HD 160691"   # Mu Ara
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       170     # M.sin(i) = 0.522 jupiters
+	Radius     56000
+	Oblateness 0.06
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+160691"
+
+	EllipticalOrbit {
+		Period          0.8502
+		SemiMajorAxis   0.921
+		Eccentricity    0.0666
+		ArgOfPericenter 187
+		MeanAnomaly     91
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 160691/e"
 {
 	Texture "extrasolar-lok.*"
 }
