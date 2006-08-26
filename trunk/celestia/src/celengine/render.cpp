@@ -38,6 +38,8 @@
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "render.h"
+#include "renderinfo.h"
+#include "renderglsl.h"
 
 using namespace std;
 
@@ -87,7 +89,8 @@ static const float MinFeatureSizeForLabel = 20.0f;
 
 static bool commonDataInitialized = false;
 
-static LODSphereMesh* lodSphere = NULL;
+
+LODSphereMesh* g_lodSphere = NULL;
 
 static Texture* normalizationTex = NULL;
 
@@ -109,8 +112,6 @@ static Texture* penumbraFunctionTexture = NULL;
 static const Color compassColor(0.4f, 0.4f, 1.0f);
 
 static const float CoronaHeight = 0.2f;
-
-static const double AtmosphereExtinctionThreshold = 0.1;
 
 static bool buggyVertexProgramEmulation = true;
 
@@ -202,7 +203,6 @@ Renderer::Renderer() :
     colorTemp(NULL)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
-            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
 	glareVertexBuffer = new PointStarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
@@ -514,7 +514,7 @@ bool Renderer::init(GLContext* _context,
     // Initialize static meshes and textures common to all instances of Renderer
     if (!commonDataInitialized)
     {
-        lodSphere = new LODSphereMesh();
+        g_lodSphere = new LODSphereMesh();
 
         starTex = CreateProceduralTexture(64, 64, GL_RGB, StarTextureEval);
 
@@ -1796,7 +1796,7 @@ void Renderer::render(const Observer& observer,
                         iter->farZ = iter->nearZ * 2.0f;
                     }
 
-                    if (cloudHeight > 0.0f && d < eradius + cloudHeight)
+                    if (cloudHeight > 0.0f)
                     {
                         // If there's a cloud layer, we need to move the 
                         // far plane out so that the clouds aren't clipped
@@ -2317,10 +2317,10 @@ static void renderBumpMappedMesh(const GLContext& context,
 
     // Render the base texture on the first pass . . .  The color
     // should have already been set up by the caller.
-    lodSphere->render(context,
-                      LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                      frustum, lod,
-                      &baseTexture);
+    g_lodSphere->render(context,
+                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                        frustum, lod,
+                        &baseTexture);
 
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
@@ -2384,10 +2384,10 @@ static void renderBumpMappedMesh(const GLContext& context,
     glMatrixMode(GL_MODELVIEW);
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
-    lodSphere->render(context,
-                      LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                      frustum, lod,
-                      &bumpTexture);
+    g_lodSphere->render(context,
+                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                        frustum, lod,
+                        &bumpTexture);
 
     // Reset the second texture unit
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -2475,10 +2475,10 @@ static void renderSmoothMesh(const GLContext& context,
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
     textures[0] = &baseTexture;
-    lodSphere->render(context,
-                      LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                      frustum, lod,
-                      textures, 1);
+    g_lodSphere->render(context,
+                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                        frustum, lod,
+                        textures, 1);
 
     // Reset the second texture unit
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -2491,51 +2491,6 @@ static void renderSmoothMesh(const GLContext& context,
 
     DisableCombiners();
 }
-
-
-struct RenderInfo
-{
-    Color color;
-    Texture* baseTex;
-    Texture* bumpTex;
-    Texture* nightTex;
-    Texture* glossTex;
-    Texture* overlayTex;
-    Color hazeColor;
-    Color specularColor;
-    float specularPower;
-    Vec3f sunDir_eye;
-    Vec3f sunDir_obj;
-    Vec3f eyeDir_obj;
-    Point3f eyePos_obj;
-    Color sunColor;
-    Color ambientColor;
-    float lunarLambert;
-    Quatf orientation;
-    float pixWidth;
-    bool useTexEnvCombine;
-
-    RenderInfo() : color(1.0f, 1.0f, 1.0f),
-                   baseTex(NULL),
-                   bumpTex(NULL),
-                   nightTex(NULL),
-                   glossTex(NULL),
-                   overlayTex(NULL),
-                   hazeColor(0.0f, 0.0f, 0.0f),
-                   specularColor(0.0f, 0.0f, 0.0f),
-                   specularPower(0.0f),
-                   sunDir_eye(0.0f, 0.0f, 1.0f),
-                   sunDir_obj(0.0f, 0.0f, 1.0f),
-                   eyeDir_obj(0.0f, 0.0f, 1.0f),
-                   eyePos_obj(0.0f, 0.0f, 0.0f),
-                   sunColor(1.0f, 1.0f, 1.0f),
-                   ambientColor(0.0f, 0.0f, 0.0f),
-                   lunarLambert(0.0f),
-                   orientation(1.0f, 0.0f, 0.0f, 0.0f),
-                   pixWidth(1.0f),
-                   useTexEnvCombine(false)
-    {};
-};
 
 
 // Used to sort light sources in order of decreasing irradiance
@@ -3189,64 +3144,6 @@ static void setupTexenvGlossMapAlpha()
 }
 
 
-static void
-setEclipseShadowShaderConstants(const LightingState& ls,
-                                float planetRadius,
-                                const Mat4f& planetMat,
-                                CelestiaGLProgram& prog)
-{
-    for (unsigned int li = 0;
-         li < min(ls.nLights, MaxShaderLights);
-         li++)
-    {
-        vector<EclipseShadow>* shadows = ls.shadows[li];
-
-        if (shadows != NULL)
-        {
-            unsigned int nShadows = min((size_t) MaxShaderShadows, 
-                                        shadows->size());
-
-            for (unsigned int i = 0; i < nShadows; i++)
-            {
-                EclipseShadow& shadow = shadows->at(i);
-                CelestiaGLProgramShadow& shadowParams = prog.shadows[li][i];
-
-                float R2 = 0.25f;
-                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-                umbra = umbra * umbra;
-                if (umbra < 0.0001f)
-                    umbra = 0.0001f;
-                else if (umbra > 0.99f)
-                    umbra = 0.99f;
-
-                float umbraRadius = R2 * umbra;
-                float penumbraRadius = R2;
-                float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
-                shadowParams.bias = shadowBias;
-                shadowParams.scale = -shadowBias / umbraRadius;
-
-                // Compute the transformation to use for generating texture
-                // coordinates from the object vertices.
-                Point3f origin = shadow.origin * planetMat;
-                Vec3f dir = shadow.direction * planetMat;
-                float scale = planetRadius / shadow.penumbraRadius;
-                Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-                float angle = (float) acos(Vec3f(0, 1, 0) * dir);
-                axis.normalize();
-                Mat4f mat = Mat4f::rotation(axis, -angle);
-                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
-
-                float sw = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
-                float tw = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
-                shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
-                shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
-            }
-        }
-    }
-}
-
-
 static void setLightParameters_VP(VertexProcessor& vproc,
                                   const LightingState& ls,
                                   Color materialDiffuse,
@@ -3287,112 +3184,6 @@ static void setLightParameters_VP(VertexProcessor& vproc,
             vproc.parameter(vp::SpecularColor1, specular);
         }
     }
-}
-
-
-static void setLightParameters_GLSL(CelestiaGLProgram& prog,
-                                    const ShaderProperties& shadprop,
-                                    const LightingState& ls,
-                                    Color materialDiffuse,
-                                    Color materialSpecular)
-{
-    unsigned int nLights = min(MaxShaderLights, ls.nLights);
-
-    Vec3f diffuseColor(materialDiffuse.red(),
-                       materialDiffuse.green(),
-                       materialDiffuse.blue());
-    Vec3f specularColor(materialSpecular.red(),
-                        materialSpecular.green(),
-                        materialSpecular.blue());
-    
-    for (unsigned int i = 0; i < nLights; i++)
-    {
-        const DirectionalLight& light = ls.lights[i];
-
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
-        prog.lights[i].direction = light.direction_obj;
-
-        if (shadprop.usesShadows() ||
-            shadprop.usesFragmentLighting() ||
-            shadprop.lightModel == ShaderProperties::RingIllumModel)
-        {
-            prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
-                                           lightColor.y * diffuseColor.y,
-                                           lightColor.z * diffuseColor.z);
-            if (shadprop.hasSpecular())
-            {
-                prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
-                                                   lightColor.y * specularColor.y,
-                                                   lightColor.z * specularColor.z);
-            }
-        }
-        else
-        {
-            prog.lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
-                                           lightColor.y * diffuseColor.y,
-                                           lightColor.z * diffuseColor.z);
-        }
-        prog.lights[i].specular = Vec3f(lightColor.x * specularColor.x,
-                                        lightColor.y * specularColor.y,
-                                        lightColor.z * specularColor.z);
-
-        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
-        if (halfAngle_obj.length() != 0.0f)
-            halfAngle_obj.normalize();
-        prog.lights[i].halfVector = halfAngle_obj;
-    }
-    
-    prog.ambientColor = ls.ambientColor;
-    prog.opacity = materialDiffuse.alpha();        
-}
-
-
-// Set the scattering and absoroption shader parameters for atmosphere simulation.
-// They are from standard units to the normalized system used by the shaders.
-// atmObjRadius - the radius in km of the planet with the atmosphere
-// objRadius - the radius in km of the object we're rendering
-static void setAtmosphereParameters_GLSL(CelestiaGLProgram& prog,                                            
-                                         const Atmosphere& atmosphere,
-                                         float atmPlanetRadius,
-                                         float objRadius)
-{
-    // Compute the radius of the atmosphere to render; the density falls off
-    // exponentially with height above the planet's surface, so the actual
-    // radius is infinite. That's a bit impractical, so well just render the
-    // portion out to the point where the density is 1/1000 of the surface
-    // density.
-    float atmosphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
-    
-    float mieCoeff        = atmosphere.mieCoeff * objRadius;
-    Vec3f rayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
-    Vec3f absorptionCoeff = atmosphere.absorptionCoeff * objRadius;
-    
-    float r = atmosphereRadius / objRadius;
-    prog.atmosphereRadius = Vec3f(r, r * r, atmPlanetRadius / objRadius);
-    
-    prog.mieCoeff = mieCoeff;
-    prog.mieScaleHeight = objRadius / atmosphere.mieScaleHeight;
-    
-    // The scattering shaders use the Schlick approximation to the
-    // Henyey-Greenstein phase function because it's slightly faster
-    // to compute. Convert the HG asymmetry parameter to the Schlick
-    // parameter.
-    float g = atmosphere.miePhaseAsymmetry;
-    prog.miePhaseAsymmetry = 1.55f * g - 0.55f * g * g * g;
-    
-    prog.rayleighCoeff = rayleighCoeff;
-    prog.rayleighScaleHeight = 0.0f; // TODO
-
-    // Precompute sum and inverse sum of scattering coefficients to save work
-    // in the vertex shader.
-    Vec3f scatterCoeffSum = Vec3f(rayleighCoeff.x + mieCoeff,
-                                  rayleighCoeff.y + mieCoeff,
-                                  rayleighCoeff.z + mieCoeff);
-    prog.scatterCoeffSum = scatterCoeffSum;
-    prog.invScatterCoeffSum = Vec3f(1.0f / scatterCoeffSum.x, 1.0f / scatterCoeffSum.y, 1.0f / scatterCoeffSum.z);
-    prog.extinctionCoeff = scatterCoeffSum + absorptionCoeff;
 }
 
 
@@ -3467,10 +3258,10 @@ static void renderSphereDefault(const RenderInfo& ri,
 
     glColor(ri.color);
 
-    lodSphere->render(context,
-                      LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                      frustum, ri.pixWidth,
-                      ri.baseTex);
+    g_lodSphere->render(context,
+                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                        frustum, ri.pixWidth,
+                        ri.baseTex);
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
@@ -3478,10 +3269,10 @@ static void renderSphereDefault(const RenderInfo& ri,
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glAmbientLightColor(Color::Black); // Disable ambient light
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.nightTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.nightTex);
         glAmbientLightColor(ri.ambientColor);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -3491,10 +3282,10 @@ static void renderSphereDefault(const RenderInfo& ri,
         ri.overlayTex->bind();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.overlayTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
 }
@@ -3544,7 +3335,7 @@ static void renderSphere_Combiners(const RenderInfo& ri,
     else
     {
         glEnable(GL_LIGHTING);
-        lodSphere->render(context, frustum, ri.pixWidth, NULL, 0);
+        g_lodSphere->render(context, frustum, ri.pixWidth, NULL, 0);
     }
 
     if (ri.nightTex != NULL)
@@ -3568,10 +3359,10 @@ static void renderSphere_Combiners(const RenderInfo& ri,
         ri.overlayTex->bind();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0, 
-                          frustum, ri.pixWidth,
-                          ri.overlayTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0, 
+                            frustum, ri.pixWidth,
+                            ri.overlayTex);
 #if 0
         renderSmoothMesh(context,
                          *(ri.overlayTex),
@@ -3628,20 +3419,20 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
 
             // Render the base texture modulated by the ambient color
             setupTexenvAmbient(ri.ambientColor);
-            lodSphere->render(context,
-                              LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
-                              frustum, ri.pixWidth,
-                              ri.baseTex);
+            g_lodSphere->render(context,
+                                LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
+                                frustum, ri.pixWidth,
+                                ri.baseTex);
 
             // Add the light from the sun
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE);
             setupBumpTexenv();
-            lodSphere->render(context,
-                              LODSphereMesh::Normals | LODSphereMesh::Tangents |
-                              LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
-                              frustum, ri.pixWidth,
-                              ri.bumpTex, ri.baseTex);
+            g_lodSphere->render(context,
+                                LODSphereMesh::Normals | LODSphereMesh::Tangents |
+                                LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
+                                frustum, ri.pixWidth,
+                                ri.bumpTex, ri.baseTex);
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
             glDisable(GL_BLEND);
         }
@@ -3652,11 +3443,11 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
             glx::glActiveTextureARB(GL_TEXTURE0_ARB);
             ri.bumpTex->bind();
             setupBumpTexenv();
-            lodSphere->render(context,
-                              LODSphereMesh::Normals | LODSphereMesh::Tangents |
-                              LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
-                              frustum, ri.pixWidth,
-                              ri.bumpTex, ri.baseTex);
+            g_lodSphere->render(context,
+                                LODSphereMesh::Normals | LODSphereMesh::Tangents |
+                                LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
+                                frustum, ri.pixWidth,
+                                ri.bumpTex, ri.baseTex);
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         }
     }
@@ -3667,11 +3458,11 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         else
             vproc->use(vp::diffuse);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
-                          LODSphereMesh::VertexProgParams,
-                          frustum, ri.pixWidth,
-                          ri.baseTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
+                            LODSphereMesh::VertexProgParams,
+                            frustum, ri.pixWidth,
+                            ri.baseTex);
     }
 
     // Render a specular pass; can't be done in one pass because
@@ -3687,10 +3478,10 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         else
             setupTexenvGlossMapAlpha();
 
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.glossTex != NULL ? ri.glossTex : ri.baseTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.glossTex != NULL ? ri.glossTex : ri.baseTex);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         glDisable(GL_BLEND);
@@ -3706,7 +3497,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        lodSphere->render(context,
+        g_lodSphere->render(context,
                           LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
                           frustum, ri.pixWidth,
                           ri.nightTex);
@@ -3719,10 +3510,10 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         vproc->use(vp::diffuse);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.overlayTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
 
@@ -3783,11 +3574,11 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::Tangents |
-                          LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
-                          frustum, ri.pixWidth,
-                          ri.baseTex, ri.bumpTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::Tangents |
+                            LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
+                            frustum, ri.pixWidth,
+                            ri.baseTex, ri.bumpTex);
         DisableCombiners();
 
         // Render a specular pass
@@ -3804,10 +3595,10 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
 
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
-            lodSphere->render(context,
-                              LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                              frustum, ri.pixWidth,
-                              textures, 1);
+            g_lodSphere->render(context,
+                                LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                                frustum, ri.pixWidth,
+                                textures, 1);
 
             // re-enable diffuse
             vproc->parameter(vp::DiffuseColor0, ri.sunColor * ri.color);
@@ -3827,9 +3618,9 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         SetupCombinersGlossMapWithFog(ri.glossTex != NULL ? GL_TEXTURE1_ARB : 0);
         unsigned int attributes = LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
             LODSphereMesh::VertexProgParams;
-        lodSphere->render(context,
-                          attributes, frustum, ri.pixWidth,
-                          ri.baseTex, ri.glossTex);
+        g_lodSphere->render(context,
+                            attributes, frustum, ri.pixWidth,
+                            ri.baseTex, ri.glossTex);
         DisableCombiners();
         glDisable(GL_COLOR_SUM_EXT);
     }
@@ -3850,11 +3641,11 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
                 vproc->use(vp::diffuse);
         }
 
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
-                          LODSphereMesh::VertexProgParams,
-                          frustum, ri.pixWidth,
-                          ri.baseTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
+                            LODSphereMesh::VertexProgParams,
+                            frustum, ri.pixWidth,
+                            ri.baseTex);
     }
 
     if (hazeDensity > 0.0f)
@@ -3870,10 +3661,10 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.nightTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -3883,10 +3674,10 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         vproc->use(vp::diffuse);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.overlayTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
 
@@ -3954,11 +3745,11 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
         else
             vproc->use(vp::diffuseBump);
         fproc->use(fp::texDiffuseBump);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::Tangents |
-                          LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
-                          frustum, ri.pixWidth,
-                          ri.baseTex, ri.bumpTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::Tangents |
+                            LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
+                            frustum, ri.pixWidth,
+                            ri.baseTex, ri.bumpTex);
         fproc->disable();
 
         // Render a specular pass
@@ -3975,10 +3766,10 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
             SetupCombinersGlossMap(ri.glossTex != NULL ? GL_TEXTURE0_ARB : 0);
 
             textures[0] = ri.glossTex != NULL ? ri.glossTex : ri.baseTex;
-            lodSphere->render(context,
-                              LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                              frustum, ri.pixWidth,
-                              textures, 1);
+            g_lodSphere->render(context,
+                                LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                                frustum, ri.pixWidth,
+                                textures, 1);
 
             // re-enable diffuse
             vproc->parameter(vp::DiffuseColor0, ri.sunColor * ri.color);
@@ -4010,9 +3801,9 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
         unsigned int attributes = LODSphereMesh::Normals |
                                   LODSphereMesh::TexCoords0 |
                                   LODSphereMesh::VertexProgParams;
-        lodSphere->render(context,
-                          attributes, frustum, ri.pixWidth,
-                          ri.baseTex, ri.glossTex);
+        g_lodSphere->render(context,
+                            attributes, frustum, ri.pixWidth,
+                            ri.baseTex, ri.glossTex);
         fproc->disable();
     }
     else
@@ -4023,11 +3814,11 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
         else
             vproc->use(vp::diffuse);
         fproc->use(fp::texDiffuse);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
-                          LODSphereMesh::VertexProgParams,
-                          frustum, ri.pixWidth,
-                          ri.baseTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0 |
+                            LODSphereMesh::VertexProgParams,
+                            frustum, ri.pixWidth,
+                            ri.baseTex);
         fproc->disable();
     }
 
@@ -4041,10 +3832,10 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.nightTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.nightTex);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -4054,10 +3845,10 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
         vproc->use(vp::diffuse);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.overlayTex);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.overlayTex);
         glBlendFunc(GL_ONE, GL_ONE);
     }
 
@@ -4065,400 +3856,6 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
 }
 
 
-static void renderSphere_GLSL(const RenderInfo& ri,
-                              const LightingState& ls,
-                              RingSystem* rings,
-                              Atmosphere* atmosphere,
-                              float cloudTexOffset,
-                              float radius,
-                              unsigned int textureRes,
-                              int renderFlags,
-                              const Mat4f& planetMat,
-                              const Frustum& frustum,
-                              const GLContext& context)
-{
-    Texture* textures[4] = { NULL, NULL, NULL, NULL };
-    unsigned int nTextures = 0;
-
-    glDisable(GL_LIGHTING);
-
-    ShaderProperties shadprop;
-    shadprop.nLights = min(ls.nLights, MaxShaderLights);
-
-    // Set up the textures used by this object
-    if (ri.baseTex != NULL)
-    {
-        shadprop.texUsage = ShaderProperties::DiffuseTexture;
-        textures[nTextures++] = ri.baseTex;
-    }
-
-    if (ri.bumpTex != NULL)
-    {
-        shadprop.texUsage |= ShaderProperties::NormalTexture;
-        textures[nTextures++] = ri.bumpTex;
-    }
-
-    if (ri.specularColor != Color::Black)
-    {
-        shadprop.lightModel = ShaderProperties::PerPixelSpecularModel;
-        if (ri.glossTex == NULL)
-        {
-            shadprop.texUsage |= ShaderProperties::SpecularInDiffuseAlpha;
-        }
-        else
-        {
-            shadprop.texUsage |= ShaderProperties::SpecularTexture;
-            textures[nTextures++] = ri.glossTex;
-        }
-    }
-    else if (ri.lunarLambert != 0.0f)
-    {
-        // TODO: Lunar-Lambert model and specular color should not be mutually exclusive
-        shadprop.lightModel = ShaderProperties::LunarLambertModel;
-    }
-
-    if (ri.nightTex != NULL)
-    {
-        shadprop.texUsage |= ShaderProperties::NightTexture;
-        textures[nTextures++] = ri.nightTex;
-    }
-
-    if (ri.overlayTex != NULL)
-    {
-        shadprop.texUsage |= ShaderProperties::OverlayTexture;
-        textures[nTextures++] = ri.overlayTex;
-    }
-    
-    if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
-    {
-        Texture* ringsTex = rings->texture.find(textureRes);
-        if (ringsTex != NULL)
-        {
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
-            ringsTex->bind();
-            nTextures++;
-
-            // Tweak the texture--set clamp to border and a border color with
-            // a zero alpha.
-            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                            GL_CLAMP_TO_BORDER_ARB);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-
-            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
-        }
-    }
-
-    if (atmosphere != NULL)
-    {
-        if (renderFlags & Renderer::ShowAtmospheres)
-        {
-            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            if (atmosphere->mieScaleHeight > 0.0f)
-                shadprop.texUsage |= ShaderProperties::Scattering;
-        }
-            
-        if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
-            (renderFlags & Renderer::ShowCloudShadows) != 0)
-        {    
-            Texture* cloudTex = NULL;
-            if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
-                cloudTex = atmosphere->cloudTexture.find(textureRes);
-            if (cloudTex != NULL)
-            {
-                shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
-                textures[nTextures++] = cloudTex;
-                glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
-                cloudTex->bind();
-                glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-            }
-        }
-    }
-
-    // Set the shadow information.
-    // Track the total number of shadows; if there are too many, we'll have
-    // to fall back to multipass.
-    unsigned int totalShadows = 0;
-    for (unsigned int li = 0; li < ls.nLights; li++)
-    {
-        if (ls.shadows[li] && !ls.shadows[li]->empty())
-        {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
-            shadprop.setShadowCountForLight(li, nShadows);
-            totalShadows += nShadows;
-        }
-    }
-
-    // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
-        return;
-
-    prog->use();
-
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
-    
-    prog->eyePosition = ls.eyePos_obj;
-    prog->shininess = ri.specularPower;
-    if (shadprop.lightModel == ShaderProperties::LunarLambertModel)
-        prog->lunarLambert = ri.lunarLambert;
-
-    if (ri.nightTex != NULL)
-    {
-        prog->nightTexMin = 0.0f;
-    }
-    
-    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
-    {
-        float ringWidth = rings->outerRadius - rings->innerRadius;
-        prog->ringRadius = rings->innerRadius / radius;
-        prog->ringWidth = radius / ringWidth;
-    }
-    
-    if (shadprop.texUsage & ShaderProperties::CloudShadowTexture)
-    {
-        prog->shadowTextureOffset = cloudTexOffset;
-        prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
-    }
-    
-    if (shadprop.hasScattering())
-    {
-        setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, radius);
-    }
-
-    if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
-
-    glColor(ri.color);
-
-    unsigned int attributes = LODSphereMesh::Normals;
-    if (ri.bumpTex != NULL)
-        attributes |= LODSphereMesh::Tangents;
-    lodSphere->render(context,
-                      attributes,
-                      frustum, ri.pixWidth,
-                      textures[0], textures[1], textures[2], textures[3]);
-
-    glx::glUseProgramObjectARB(0);
-}
-
-
-static void renderModel_GLSL(Model* model,
-                             const RenderInfo& ri,
-                             ResourceHandle texOverride,
-                             const LightingState& ls,
-                             float radius,
-                             const Mat4f& planetMat)
-{
-    glDisable(GL_LIGHTING);
-    
-    GLSL_RenderContext rc(ls, radius, planetMat);
-    
-    // Handle extended material attributes (per model only, not per submesh)
-    rc.setLunarLambert(ri.lunarLambert);
-    
-    // Handle material override; a texture specified in an ssc file will override
-    // all materials specified in the model file.
-    if (texOverride != InvalidResource)
-    {
-        Mesh::Material m;
-        m.diffuse = ri.color;
-        m.maps[Mesh::DiffuseMap] = texOverride;
-        rc.makeCurrent(m);
-        rc.lock();
-    }
-
-    model->render(rc);
-
-    glx::glUseProgramObjectARB(0);    
-}
-
-
-static void renderClouds_GLSL(const RenderInfo& ri,
-                              const LightingState& ls,
-                              Atmosphere* atmosphere,
-                              Texture* cloudTex,
-                              float texOffset,
-                              RingSystem* rings,
-                              float radius,
-                              unsigned int textureRes,
-                              int renderFlags,
-                              const Mat4f& planetMat,
-                              const Frustum& frustum,
-                              const GLContext& context)
-{
-    unsigned int nTextures = 0;
-
-    glDisable(GL_LIGHTING);
-
-    ShaderProperties shadprop;
-    shadprop.nLights = ls.nLights;
-
-    // Set up the textures used by this object
-    if (cloudTex != NULL)
-    {
-        shadprop.texUsage = ShaderProperties::DiffuseTexture;
-        nTextures++;
-    }
-
-    if (rings != NULL)
-        //(renderFlags & ShowRingShadows) != 0)
-    {
-        Texture* ringsTex = rings->texture.find(textureRes);
-        if (ringsTex != NULL)
-        {
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
-            ringsTex->bind();
-            nTextures++;
-
-            // Tweak the texture--set clamp to border and a border color with
-            // a zero alpha.
-            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                            GL_CLAMP_TO_BORDER_ARB);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-
-            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
-        }
-    }
-    
-    if (atmosphere != NULL)
-    {
-        if (renderFlags & Renderer::ShowAtmospheres)
-        {
-            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            if (atmosphere->mieScaleHeight > 0.0f)
-                shadprop.texUsage |= ShaderProperties::Scattering;
-        }
-    }
-
-    // Set the shadow information.
-    // Track the total number of shadows; if there are too many, we'll have
-    // to fall back to multipass.
-    unsigned int totalShadows = 0;
-    for (unsigned int li = 0; li < ls.nLights; li++)
-    {
-        if (ls.shadows[li] && !ls.shadows[li]->empty())
-        {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
-            shadprop.setShadowCountForLight(li, nShadows);
-            totalShadows += nShadows;
-        }
-    }
-
-    // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
-        return;
-
-    prog->use();
-
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
-    prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
-    prog->textureOffset = texOffset;
-
-    float cloudRadius = radius + atmosphere->cloudHeight;
-    
-    if (shadprop.hasScattering())
-    {
-        setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, cloudRadius);
-    }
-    
-    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
-    {
-        float ringWidth = rings->outerRadius - rings->innerRadius;
-        prog->ringRadius = rings->innerRadius / cloudRadius;
-        prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
-    }
-
-    if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, cloudRadius, planetMat, *prog);
-
-    unsigned int attributes = LODSphereMesh::Normals;
-    lodSphere->render(context,
-                      LODSphereMesh::Normals,
-                      frustum, ri.pixWidth,
-                      cloudTex);
-
-    prog->textureOffset = 0.0f;
-
-    glx::glUseProgramObjectARB(0);
-}
-
-
-static void
-renderAtmosphere_GLSL(const RenderInfo& ri,
-                      const LightingState& ls,
-                      Atmosphere* atmosphere,
-                      float radius,
-                      const Mat4f& planetMat,
-                      const Frustum& frustum,
-                      const GLContext& context)
-{
-    unsigned int nTextures = 0;
-
-    glDisable(GL_LIGHTING);
-
-    ShaderProperties shadprop;
-    shadprop.nLights = ls.nLights;
-    
-    shadprop.texUsage |= ShaderProperties::Scattering;
-    shadprop.lightModel = ShaderProperties::AtmosphereModel;
-
-    // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
-        return;
-
-    prog->use();
-
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
-    prog->ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
-    
-    float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
-    float atmScale = atmosphereRadius / radius;
-    
-    prog->eyePosition = Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
-    setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, atmosphereRadius);
-    
-#if 0    
-    if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
-#endif        
-
-    glPushMatrix();
-    glScalef(atmScale, atmScale, atmScale);
-    glFrontFace(GL_CW);
-    glEnable(GL_BLEND);
-    glDepthMask(GL_FALSE);
-    glBlendFunc(GL_ONE, GL_ONE);
-
-    lodSphere->render(context,
-                      LODSphereMesh::Normals,
-                      frustum,
-                      ri.pixWidth,
-                      NULL);
-    
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
-    glFrontFace(GL_CCW);                      
-    glPopMatrix();
-
-    
-    glx::glUseProgramObjectARB(0);
-    
-    //glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-    //glEnable(GL_TEXTURE_2D);
-}
-
-                              
 static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
 {
     float f[4];
@@ -4498,9 +3895,9 @@ static void renderShadowedModelDefault(Model* model,
 
     if (model == NULL)
     {
-        lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::Multipass,
-                          frustum, ri.pixWidth, NULL);
+        g_lodSphere->render(context,
+                            LODSphereMesh::Normals | LODSphereMesh::Multipass,
+                            frustum, ri.pixWidth, NULL);
     }
     else
     {
@@ -4535,9 +3932,9 @@ static void renderShadowedModelVertexShader(const RenderInfo& ri,
     vproc->parameter(vp::TexGen_T, tPlane);
     vproc->use(vp::shadowTexture);
 
-    lodSphere->render(context,
-                      LODSphereMesh::Normals | LODSphereMesh::Multipass, frustum,
-                      ri.pixWidth, NULL);
+    g_lodSphere->render(context,
+                        LODSphereMesh::Normals | LODSphereMesh::Multipass, frustum,
+                        ri.pixWidth, NULL);
 
     vproc->disable();
 }
@@ -4759,119 +4156,6 @@ static void renderRings(RingSystem& rings,
 
     if (vproc != NULL)
         vproc->disable();
-}
-
-
-static void renderRings_GLSL(RingSystem& rings,
-                             RenderInfo& ri,
-                             const LightingState& ls,
-                             float planetRadius,
-                             float planetOblateness,
-                             unsigned int textureResolution,
-                             bool renderShadow,
-                             unsigned int nSections)
-{
-    float inner = rings.innerRadius / planetRadius;
-    float outer = rings.outerRadius / planetRadius;
-    Texture* ringsTex = rings.texture.find(textureResolution);
-
-    ShaderProperties shadprop;
-    // Set up the shader properties for ring rendering
-    {
-        shadprop.lightModel = ShaderProperties::RingIllumModel;
-        shadprop.nLights = min(ls.nLights, MaxShaderLights);
-
-        if (renderShadow)
-        {
-            // Set one shadow (the planet's) per light
-            for (unsigned int li = 0; li < ls.nLights; li++)
-                shadprop.setShadowCountForLight(li, 1);
-        }
-
-        if (ringsTex)
-            shadprop.texUsage = ShaderProperties::DiffuseTexture;
-    }
-            
-
-    // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
-    if (prog == NULL)
-        return;
-
-    prog->use();
-
-    prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
-        
-    for (unsigned int li = 0; li < ls.nLights; li++)
-    {
-        const DirectionalLight& light = ls.lights[li];
-
-        // Compute the projection vectors based on the sun direction.
-        // I'm being a little careless here--if the sun direction lies
-        // along the y-axis, this will fail.  It's unlikely that a
-        // planet would ever orbit underneath its sun (an orbital
-        // inclination of 90 degrees), but this should be made
-        // more robust anyway.
-        Vec3f axis = Vec3f(0, 1, 0) ^ light.direction_obj;
-        float cosAngle = Vec3f(0.0f, 1.0f, 0.0f) * light.direction_obj;
-        float angle = (float) acos(cosAngle);
-        axis.normalize();
-
-        float tScale = 1.0f;
-        if (planetOblateness != 0.0f)
-        {
-            // For oblate planets, the size of the shadow volume will vary
-            // based on the light direction.
-
-            // A vertical slice of the planet is an ellipse
-            float a = 1.0f;                          // semimajor axis
-            float b = a * (1.0f - planetOblateness); // semiminor axis
-            float ecc2 = 1.0f - (b * b) / (a * a);   // square of eccentricity
-
-            // Calculate the radius of the ellipse at the incident angle of the
-            // light on the ring plane + 90 degrees.
-            float r = a * (float) sqrt((1.0f - ecc2) /
-                                       (1.0f - ecc2 * square(cosAngle)));
-            
-            tScale *= a / r;
-        }
-
-        // The s axis is perpendicular to the shadow axis in the plane of the
-        // of the rings, and the t axis completes the orthonormal basis.
-        Vec3f sAxis = axis * 0.5f;
-        Vec3f tAxis = (axis ^ light.direction_obj) * 0.5f * tScale;
-        Vec4f texGenS(sAxis.x, sAxis.y, sAxis.z, 0.5f);
-        Vec4f texGenT(tAxis.x, tAxis.y, tAxis.z, 0.5f);
-
-        float r0 = 0.24f;
-        float r1 = 0.25f;
-        float bias = 1.0f / (1.0f - r1 / r0);
-        float scale = -bias / r0;
-
-        prog->shadows[li][0].texGenS = texGenS;
-        prog->shadows[li][0].texGenT = texGenT;
-        prog->shadows[li][0].bias = bias;
-        prog->shadows[li][0].scale = -bias / r0;
-    }
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    if (ringsTex != NULL)
-        ringsTex->bind();
-    else
-        glDisable(GL_TEXTURE_2D);
-        
-    renderRingSystem(inner, outer, 0, (float) PI * 2.0f, nSections);
-    renderRingSystem(inner, outer, (float) PI * 2.0f, 0, nSections);
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-    glx::glUseProgramObjectARB(0);
 }
 
 
@@ -5128,10 +4412,10 @@ renderEclipseShadows_Shaders(Model* model,
 
     //vproc->parameter(vp::LightDirection0, lightDir);
 
-    lodSphere->render(context,
-                      LODSphereMesh::Normals | LODSphereMesh::Multipass,
-                      viewFrustum,
-                      ri.pixWidth, NULL);
+    g_lodSphere->render(context,
+                        LODSphereMesh::Normals | LODSphereMesh::Multipass,
+                        viewFrustum,
+                        ri.pixWidth, NULL);
 
     vproc->disable();
     fproc->disable();
@@ -5212,8 +4496,8 @@ renderRingShadowsVS(Model* model,
                      1.0f / (ringWidth / planetRadius),
                      0.0f, 0.5f);
     vproc->parameter(vp::TexGen_T, scale, 0, 0, 0);
-    lodSphere->render(context, LODSphereMesh::Multipass,
-                      viewFrustum, ri.pixWidth, NULL);
+    g_lodSphere->render(context, LODSphereMesh::Multipass,
+                        viewFrustum, ri.pixWidth, NULL);
     vproc->disable();
 
     // Restore the texture combiners
@@ -5850,11 +5134,11 @@ void Renderer::renderObject(Point3f pos,
                         setLightParameters_VP(*vproc, ls, ri.color, Color::Black);
                     }
 
-                    lodSphere->render(*context,
-                                      LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                                      viewFrustum,
-                                      ri.pixWidth,
-                                      cloudTex);
+                    g_lodSphere->render(*context,
+                                        LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                                        viewFrustum,
+                                        ri.pixWidth,
+                                        cloudTex);
 
                     if (vproc != NULL)
                         vproc->disable();
@@ -5863,11 +5147,11 @@ void Renderer::renderObject(Point3f pos,
             else
             {
                 glDisable(GL_LIGHTING);
-                lodSphere->render(*context,
-                                  LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                                  viewFrustum,
-                                  ri.pixWidth,
-                                  cloudTex);
+                g_lodSphere->render(*context,
+                                    LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                                    viewFrustum,
+                                    ri.pixWidth,
+                                    cloudTex);
                 glEnable(GL_LIGHTING);
             }
 

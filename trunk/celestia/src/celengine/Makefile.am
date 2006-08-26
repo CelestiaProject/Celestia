@@ -54,7 +54,8 @@ libcelengine_a_SOURCES = \
 	regcombine.cpp \
 	rendcontext.cpp \
 	render.cpp \
-        samporbit.cpp \
+    renderglsl.cpp \
+    samporbit.cpp \
 	selection.cpp \
 	shadermanager.cpp \
 	simulation.cpp \
