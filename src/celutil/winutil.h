@@ -14,11 +14,15 @@
 
 #include <windows.h>
 #include <commctrl.h>
+#include <string>
+
+using namespace std;
 
 void SetMouseCursor(LPCTSTR lpCursor);
 void CenterWindow(HWND hParent, HWND hWnd);
 void RemoveButtonDefaultStyle(HWND hWnd);
 void AddButtonDefaultStyle(HWND hWnd);
 const char* CurrentCP();
+string UTF8ToCurrentCP(const string& str);
 
 #endif

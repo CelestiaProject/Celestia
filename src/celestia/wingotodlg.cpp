@@ -70,9 +70,8 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                 SetDialogFloat(hDlg, IDC_EDIT_DISTANCE, "%.1f", (float)distance);
                 SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, "%.5f", (float)longitude);
                 SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, "%.5f", (float)latitude);
-                bind_textdomain_codeset("celestia", CurrentCP());
-                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, _((char*)sim->getSelection().body()->getName().c_str()));
-                bind_textdomain_codeset("celestia", "UTF8");
+                SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME,
+                 const_cast<char*>(UTF8ToCurrentCP(sim->getSelection().body()->getName(true)).c_str()));
             }
 //            else if (sim->getSelection().star != NULL)
 //            {

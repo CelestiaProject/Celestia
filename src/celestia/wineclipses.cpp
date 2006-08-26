@@ -102,7 +102,6 @@ bool InitEclipseFinderItems(HWND listView, const vector<Eclipse>& eclipses)
 static char callbackScratch[256];
 void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
 {
-    bind_textdomain_codeset("celestia", CurrentCP());
 
     Eclipse* eclipse = reinterpret_cast<Eclipse*>(nm->item.lParam);
     if (eclipse == NULL)
@@ -115,7 +114,8 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
     {
     case 0:
         {
-            nm->item.pszText = _(const_cast<char*>(eclipse->planete.c_str()));
+            strncpy(callbackScratch, UTF8ToCurrentCP(_(eclipse->planete.c_str())).c_str(), sizeof(callbackScratch) - 1);
+            nm->item.pszText = callbackScratch;
         }
         break;
             
@@ -127,12 +127,16 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
                 nm->item.pszText = callbackScratch;
             }
             else
-                nm->item.pszText = _(const_cast<char*>(eclipse->sattelite.c_str()));
+            {
+                strncpy(callbackScratch, UTF8ToCurrentCP(_(eclipse->sattelite.c_str())).c_str(), sizeof(callbackScratch) - 1);
+                nm->item.pszText = callbackScratch;
+            }
         }
         break;
 
     case 2:
         {
+            bind_textdomain_codeset("celestia", CurrentCP());
             astro::Date startDate(eclipse->startTime);
             if (!strcmp(eclipse->planete.c_str(),"None"))
                 sprintf(callbackScratch,"");
@@ -142,6 +146,7 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
                         _(MonthNames[startDate.month - 1]),
                         startDate.year);
             nm->item.pszText = callbackScratch;
+            bind_textdomain_codeset("celestia", "UTF8");
         }
         break;
             
@@ -176,7 +181,6 @@ void EclipseFinderDisplayItem(LPNMLVDISPINFOA nm)
         }
         break;
     }
-    bind_textdomain_codeset("celestia", "UTF8");
 }
 
 

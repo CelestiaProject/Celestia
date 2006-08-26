@@ -489,7 +489,7 @@ bool LoadItemTextFromFile(HWND hWnd,
             s += c;
     }
 
-    SetDlgItemText(hWnd, item, s.c_str());
+    SetDlgItemText(hWnd, item, UTF8ToCurrentCP(s).c_str());
 
     return true;
 }
@@ -540,7 +540,7 @@ BOOL APIENTRY ControlsHelpProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
-        LoadItemTextFromFile(hDlg, IDC_TEXT_CONTROLSHELP, "controls.txt");
+        LoadItemTextFromFile(hDlg, IDC_TEXT_CONTROLSHELP, const_cast<char*>(LocaleFilename("controls.txt").c_str()));
         return(TRUE);
 
     case WM_COMMAND:
@@ -564,7 +564,7 @@ BOOL APIENTRY LicenseProc(HWND hDlg,
     switch (message)
     {
     case WM_INITDIALOG:
-        LoadItemTextFromFile(hDlg, IDC_LICENSE_TEXT, "COPYING");
+        LoadItemTextFromFile(hDlg, IDC_LICENSE_TEXT, const_cast<char*>(LocaleFilename("COPYING").c_str()));
         return(TRUE);
 
     case WM_COMMAND:
@@ -594,17 +594,17 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
             char* version = (char*) glGetString(GL_VERSION);
             char* ext = (char*) glGetString(GL_EXTENSIONS);
             string s;
-            s += "Vendor: ";
+            s += UTF8ToCurrentCP(_("Vendor: "));
             if (vendor != NULL)
                 s += vendor;
             s += "\r\r\n";
 
-            s += "Renderer: ";
+            s += UTF8ToCurrentCP(_("Renderer: "));
             if (render != NULL)
                 s += render;
             s += "\r\r\n";
 
-            s += "Version: ";
+            s += UTF8ToCurrentCP(_("Version: "));
             if (version != NULL)
                 s += version;
             s += "\r\r\n";
@@ -613,23 +613,29 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
             GLint simTextures = 1;
             if (ExtensionSupported("GL_ARB_multitexture"))
                 glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
-            sprintf(buf, "Max simultaneous textures: %d\r\r\n",
+            sprintf(buf, "%s%d\r\r\n",
+                    UTF8ToCurrentCP(_("Max simultaneous textures: ")).c_str(),
                     simTextures);
             s += buf;
 
             GLint maxTextureSize = 0;
             glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-            sprintf(buf, "Max texture size: %d\r\r\n",
+            sprintf(buf, "%s%d\r\r\n",
+                    UTF8ToCurrentCP(_("Max texture size: ")).c_str(),
                     maxTextureSize);
             s += buf;
 
             GLfloat pointSizeRange[2];
             glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
-            sprintf(buf, "Point size range: %f - %f\r\r\n",
+            sprintf(buf, "%s%f - %f\r\r\n",
+                    UTF8ToCurrentCP(_("Point size range: ")).c_str(),
                     pointSizeRange[0], pointSizeRange[1]);
             s += buf;
 
-            s += "\r\r\nSupported Extensions:\r\r\n";
+            s += "\r\r\n";
+            s += UTF8ToCurrentCP(_("Supported Extensions:")).c_str();
+            s += "\r\r\n";
+
             if (ext != NULL)
             {
                 string extString(ext);
@@ -899,10 +905,8 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
             {
             case Selection::Type_Body:
                 {
-                    bind_textdomain_codeset("celestia", CurrentCP());
-                    string name = sel.body()->getName();
-                    SetWindowText(hCtrl, _((char*)name.c_str()));
-                    bind_textdomain_codeset("celestia", "UTF8");
+                    string name = UTF8ToCurrentCP(sel.body()->getName(true));
+                    SetWindowText(hCtrl, (char*)name.c_str());
                 }
                 break;
 
@@ -1420,8 +1424,6 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     vector<string> menuNames;
 
     // Place each body in the correct vector based on classification
-    // we use _(body->getName().c_str()) instead of body->getName(true) because
-    // of character table issues
     HMENU menu = CreatePopupMenu();
     for (int i = 0; i < psys->getSystemSize(); i++)
     {
@@ -1429,39 +1431,39 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
         switch(body->getClassification())
         {
         case Body::Asteroid:
-            asteroids.push_back(make_pair(i, _(body->getName().c_str())));
+            asteroids.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
             break;
         case Body::Comet:
-            comets.push_back(make_pair(i, _(body->getName().c_str())));
+            comets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
             break;
         case Body::Invisible:
-            invisibles.push_back(make_pair(i, _(body->getName().c_str())));
+            invisibles.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
             break;
         case Body::Moon:
-            moons.push_back(make_pair(i, _(body->getName().c_str())));
+            moons.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
             break;
         case Body::Planet:
-            planets.push_back(make_pair(i, _(body->getName().c_str())));
+            planets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
             break;
         case Body::Spacecraft:
-            spacecraft.push_back(make_pair(i, _(body->getName().c_str())));
+            spacecraft.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
             break;
         }
     }
 
     // Add each vector of PlanetarySystem bodies to a vector to iterate over
     objects.push_back(asteroids);
-    menuNames.push_back(_("Asteroids"));
+    menuNames.push_back(UTF8ToCurrentCP(_("Asteroids")));
     objects.push_back(comets);
-    menuNames.push_back(_("Comets"));
+    menuNames.push_back(UTF8ToCurrentCP(_("Comets")));
     objects.push_back(invisibles);
-    menuNames.push_back(_("Invisibles"));
+    menuNames.push_back(UTF8ToCurrentCP(_("Invisibles")));
     objects.push_back(moons);
-    menuNames.push_back(_("Moons"));
+    menuNames.push_back(UTF8ToCurrentCP(_("Moons")));
     objects.push_back(planets);
-    menuNames.push_back(_("Planets"));
+    menuNames.push_back(UTF8ToCurrentCP(_("Planets")));
     objects.push_back(spacecraft);
-    menuNames.push_back(_("Spacecraft"));
+    menuNames.push_back(UTF8ToCurrentCP(_("Spacecraft")));
 
     // Now sort each vector and generate submenus
     IntStrPairComparePredicate pred;
@@ -1489,12 +1491,12 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
             if (obj->size() == 1)
             {
                 it=obj->begin();
-                AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, _(it->second.c_str()));
+                AppendMenu(menu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
             }
             else
             {
                 // Skip sorting if we are dealing with the planets in our own Solar System.
-                if (parentName != "Sol" || *menuName != _("Planets"))
+                if (parentName != "Sol" || *menuName != UTF8ToCurrentCP(_("Planets")))
                     sort(obj->begin(), obj->end(), pred);
 
                 if (numSubMenus > 1)
@@ -1544,25 +1546,24 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     string name;
 
     hMenu = CreatePopupMenu();
-    bind_textdomain_codeset("celestia", CurrentCP());
     switch (sel.getType())
     {
     case Selection::Type_Body:
         {
-            name = sel.body()->getName();
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, _(name.c_str()));
+            name = sel.body()->getName(true);
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, UTF8ToCurrentCP(name).c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, _("&Goto"));
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, _("&Follow"));
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, _("S&ync Orbit"));
-            AppendMenu(hMenu, MF_STRING, ID_INFO, _("&Info"));
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, UTF8ToCurrentCP(_("&Goto")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, UTF8ToCurrentCP(_("&Follow")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, UTF8ToCurrentCP(_("S&ync Orbit")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
             {
                 HMENU satMenu = CreatePlanetarySystemMenu(name, satellites);
                 AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
-                           _("&Satellites"));
+                           UTF8ToCurrentCP(_("&Satellites")).c_str());
             }
 
             vector<string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
@@ -1572,7 +1573,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
                 {
                     HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
                     AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) surfMenu,
-                               _("&Alternate Surfaces"));
+                               UTF8ToCurrentCP(_("&Alternate Surfaces")).c_str());
                 }
                 delete altSurfaces;
             }
@@ -1583,10 +1584,10 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
         {
             Simulation* sim = appCore->getSimulation();
             name = sim->getUniverse()->getStarCatalog()->getStarName(*(sel.star()));
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, UTF8ToCurrentCP(name).c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, _("&Goto"));
-            AppendMenu(hMenu, MF_STRING, ID_INFO, _("&Info"));
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, UTF8ToCurrentCP(_("&Goto")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
 
             SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
             SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel.star()->getCatalogNumber());
@@ -1595,9 +1596,9 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
                 SolarSystem* solarSys = iter->second;
                 HMENU planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
                 if (name == "Sol")
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, _("Orbiting Bodies"));
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, UTF8ToCurrentCP(_("Orbiting Bodies")).c_str());
                 else
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, _("Planets"));
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, UTF8ToCurrentCP(_("Planets")).c_str());
             }
         }
         break;
@@ -1608,9 +1609,9 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             name = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, _("&Goto"));
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, _("&Follow"));
-            AppendMenu(hMenu, MF_STRING, ID_INFO, _("&Info"));
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, UTF8ToCurrentCP(_("&Goto")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, UTF8ToCurrentCP(_("&Follow")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
         }
         break;
 
@@ -1622,15 +1623,14 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
     }
 
     if (appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
-        AppendMenu(hMenu, MF_STRING, ID_TOOLS_UNMARK, _("&Unmark"));
+        AppendMenu(hMenu, MF_STRING, ID_TOOLS_UNMARK, UTF8ToCurrentCP(_("&Unmark")).c_str());
     else
-        AppendMenu(hMenu, MF_STRING, ID_TOOLS_MARK, _("&Mark"));
+        AppendMenu(hMenu, MF_STRING, ID_TOOLS_MARK, UTF8ToCurrentCP(_("&Mark")).c_str());
 
     POINT point;
     point.x = (int) x;
     point.y = (int) y;
 
-    bind_textdomain_codeset("celestia", "UTF8");
 
     if (currentScreenMode == 0)
         ClientToScreen(hwnd, (LPPOINT) &point);
@@ -3629,7 +3629,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
             {
                 CopyStateURLToClipboard();
-                appCore->flash("Copied URL");
+                appCore->flash(UTF8ToCurrentCP(_("Copied URL")));
             }
             break;
 
@@ -3724,7 +3724,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
                     if (!urlString.substr(0,4).compare("cel:"))
                     {
-                        appCore->flash(_("Loading URL"));
+                        appCore->flash(UTF8ToCurrentCP(_("Loading URL")));
 						appCore->goToUrl(urlString);
                     }
                     else if (DetermineFileType(urlString) == Content_CelestiaScript)
@@ -3736,7 +3736,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         ifstream scriptfile(urlString.c_str());
                         if (!scriptfile.good())
                         {
-                            appCore->flash(_("Error opening script"));
+                            appCore->flash(UTF8ToCurrentCP(_("Error opening script")));
                         }
                         else
                         {
@@ -3755,12 +3755,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                 }
                                 else
                                 {
-                                    appCore->flash(_("Error loading script"));
+                                    appCore->flash(UTF8ToCurrentCP(_("Error loading script")));
                                 }
                             }
                             else
                             {
-                                appCore->flash(_("Running script"));
+                                appCore->flash(UTF8ToCurrentCP(_("Running script")));
                                 appCore->runScript(script);
                             }
                         }
