@@ -173,10 +173,15 @@ class ShaderManager
 
  private:
     CelestiaGLProgram* buildProgram(const ShaderProperties&);
+    
     GLVertexShader* buildVertexShader(const ShaderProperties&);
     GLFragmentShader* buildFragmentShader(const ShaderProperties&);
+    
     GLVertexShader* buildRingsVertexShader(const ShaderProperties&);
     GLFragmentShader* buildRingsFragmentShader(const ShaderProperties&);
+    
+    GLVertexShader* buildAtmosphereVertexShader(const ShaderProperties&);
+    GLFragmentShader* buildAtmosphereFragmentShader(const ShaderProperties&);
 
     std::map<ShaderProperties, CelestiaGLProgram*> shaders;
 };
