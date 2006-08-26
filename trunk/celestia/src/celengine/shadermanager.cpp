@@ -573,6 +573,15 @@ LightHalfVector(unsigned int i)
 
 
 static string
+ScatteredColor(unsigned int i)
+{
+    char buf[32];
+    sprintf(buf, "scatteredColor%d", i);
+    return string(buf);
+}
+
+
+static string
 TangentSpaceTransform(const string& dst, const string& src)
 {
     string source;
@@ -759,6 +768,23 @@ ShadowsForLightSource(const ShaderProperties& props, unsigned int light)
 
 
 static string
+ScatteringPhaseFunctions(const ShaderProperties&)
+{
+    string source;
+    
+    // Evaluate the Mie and Rayleigh phase functions; both are functions of the cosine        
+    // of the angle between the view vector and light vector
+    source += "    float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
+    
+    // Ignore Rayleigh phase function and treat Rayleigh scattering as isotropic
+    // source += "    float phRayleigh = (1.0 + cosTheta * cosTheta);\n";
+    source += "    float phRayleigh = 1.0;\n";
+    
+    return source;
+}
+
+
+static string
 AtmosphericEffects(const ShaderProperties& props)
 {
     string source;
@@ -811,16 +837,7 @@ AtmosphericEffects(const ShaderProperties& props)
         source += "    vec3 sunColor = exp(-scatterCoeffSum * density * distSun);\n";
         source += "    vec3 ex = exp(-scatterCoeffSum * density * distAtm);\n";
     }
-    
-    // Evaluate the Mie and Rayleigh phase functions; both are functions of the cosine        
-    // of the angle between the view vector and light vector
-    source += "    float cosTheta = dot(eyeDir, " + LightProperty(0, "direction") + ");\n";
-    source += "    float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
-    //source += "    float phRayleigh = (1.0 + cosTheta * cosTheta);\n";
-    source += "    float phRayleigh = 1.0;\n";
-    
-    source += "    scatterEx = ex;\n";
-    
+
     string scatter;
     if (hasAbsorption)
     {
@@ -833,7 +850,23 @@ AtmosphericEffects(const ShaderProperties& props)
         scatter = "(1.0 - ex)";
     }
     
-    source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";
+    // If we're rendering the sky dome, compute the phase functions in the fragment shader
+    // rather than the vertex shader in order to avoid artifacts from coarse tessellation.
+    if (props.lightModel == ShaderProperties::AtmosphereModel)
+    {
+        source += "    scatterEx = ex;\n";
+        source += "    " + ScatteredColor(0) + " = sunColor * " + scatter + ";\n";
+    }
+    else
+    {
+        source += "    float cosTheta = dot(eyeDir, " + LightProperty(0, "direction") + ");\n";
+        source += ScatteringPhaseFunctions(props);
+        
+        source += "    scatterEx = ex;\n";
+        
+        source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * sunColor * " + scatter + ";\n";       
+    }
+            
     
     // Optional exposure control
     //source += "    1.0 - (scatterIn * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
@@ -884,17 +917,22 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     source += "        atmSamplePoint += step;\n";
     source += "    }\n";
     
-    // Evaluate the Mie and Rayleigh phase functions; both are functions of the cosine        
-    // of the angle between the view vector and light vector
-    source += "    float cosTheta = dot(eyeDir, " + LightProperty(0, "direction") + ");\n";
-    source += "    float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
-    //source += "    float phRayleigh = (1.0 + cosTheta * cosTheta);\n";
-    source += "    float phRayleigh = 1.0;\n";
-    
-    source += "    scatterEx = ex;\n";
-    
-    source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * scatter;\n";
-    
+    // If we're rendering the sky dome, compute the phase functions in the fragment shader
+    // rather than the vertex shader in order to avoid artifacts from coarse tessellation.
+    if (props.lightModel == ShaderProperties::AtmosphereModel)
+    {
+        source += "    scatterEx = ex;\n";
+        source += "    " + ScatteredColor(i) + " = scatter;\n";
+    }
+    else
+    {
+        source += "    float cosTheta = dot(eyeDir, " + LightProperty(0, "direction") + ");\n";
+        source += ScatteringPhaseFunctions(props);
+        
+        source += "    scatterEx = ex;\n";
+        
+        source += "    " + VarScatterInVS() + " = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * scatter;\n";
+    }
     // Optional exposure control
     //source += "    1.0 - (" + VarScatterInVS() + " * exp(-5.0 * max(scatterIn.x, max(scatterIn.y, scatterIn.z))));\n";
         
@@ -903,6 +941,25 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
     return source;
 }
 #endif
+
+
+string
+ScatteringConstantDeclarations(const ShaderProperties& props)
+{
+    string source;
+    
+    source += "uniform vec3 atmosphereRadius;\n";
+    source += "uniform float mieCoeff;\n";
+    source += "uniform float mieH;\n";
+    source += "uniform float mieK;\n";
+    source += "uniform vec3 rayleighCoeff;\n";
+    source += "uniform float rayleighH;\n";
+    source += "uniform vec3 scatterCoeffSum;\n";
+    source += "uniform vec3 invScatterCoeffSum;\n";
+    source += "uniform vec3 extinctionCoeff;\n";
+    
+    return source;
+}
 
 
 string
@@ -992,15 +1049,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.hasScattering())
     {
-        source += "uniform vec3 atmosphereRadius;\n";
-        source += "uniform float mieCoeff;\n";
-        source += "uniform float mieH;\n";
-        source += "uniform float mieK;\n";
-        source += "uniform vec3 rayleighCoeff;\n";
-        source += "uniform float rayleighH;\n";
-        source += "uniform vec3 scatterCoeffSum;\n";
-        source += "uniform vec3 invScatterCoeffSum;\n";
-        source += "uniform vec3 extinctionCoeff;\n";
+        source += ScatteringConstantDeclarations(props);
     }
 
     if (props.isViewDependent() || props.hasScattering())
@@ -1593,10 +1642,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     // Include the effect of atmospheric scattering. 
     if (props.hasScattering())
     {    
-        if (props.lightModel == ShaderProperties::AtmosphereModel)
-            source += "gl_FragColor = vec4(" + VarScatterInFS() + ", dot(scatterEx, vec3(0.333, 0.333, 0.333)));\n";
-        else
-            source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + " + VarScatterInFS() + ";\n";
+        source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + " + VarScatterInFS() + ";\n";
     }
 
     source += "}\n";
@@ -1773,6 +1819,107 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 }
 
 
+GLVertexShader*
+ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
+{
+    string source;
+
+    source += DeclareLights(props);
+    source += "uniform vec3 eyePosition;\n";
+    source += ScatteringConstantDeclarations(props);
+    for (unsigned int i = 0; i < props.nLights; i++)
+    {
+        source += "varying vec3 " + ScatteredColor(i) + ";\n";
+    }
+    
+    source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+    source += "float NV = dot(gl_Normal, eyeDir);\n";
+    
+    source += "varying vec3 scatterEx;\n";
+    source += "varying vec3 eyeDir_obj;\n";
+    
+    // Begin main() function
+    source += "\nvoid main(void)\n{\n";
+    source += "float NL;\n";
+
+    source += AtmosphericEffects(props);
+
+    source += "eyeDir_obj = eyeDir;\n";
+    source += "gl_Position = ftransform();\n";
+    source += "}\n";
+
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Vertex shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+
+    GLVertexShader* vs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return vs;
+}
+
+
+GLFragmentShader*
+ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
+{
+    string source;
+
+    source += "varying vec3 scatterEx;\n"; 
+    source += "varying vec3 eyeDir_obj;\n";
+    
+    // Scattering constants
+    source += "uniform float mieK;\n";    
+    source += "uniform float mieCoeff;\n";
+    source += "uniform vec3  rayleighCoeff;\n";
+    source += "uniform vec3  invScatterCoeffSum;\n";
+
+    unsigned int i;
+    for (i = 0; i < props.nLights; i++)
+    {
+        source += "uniform vec3 " + LightProperty(i, "direction") + ";\n";
+        source += "varying vec3 " + ScatteredColor(i) + ";\n";
+    }
+    
+    source += "\nvoid main(void)\n";
+    source += "{\n";
+    
+    // Sum the contributions from each light source
+    source += "vec3 color = vec3(0.0, 0.0, 0.0);\n";
+    source += "vec3 V = normalize(eyeDir_obj);\n";
+    
+    for (i = 0; i < props.nLights; i++)
+    {
+        source += "    float cosTheta = dot(V, " + LightProperty(i, "direction") + ");\n";
+        source += ScatteringPhaseFunctions(props);
+        
+        // TODO: Consider premultiplying by invScatterCoeffSum
+        source += "    color += (phRayleigh * rayleighCoeff + phMie * mieCoeff) * invScatterCoeffSum * " + ScatteredColor(i) + ";\n";
+    }
+    
+    source += "    gl_FragColor = vec4(color, dot(scatterEx, vec3(0.333, 0.333, 0.333)));\n";
+    source += "}\n";
+
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+    
+    GLFragmentShader* fs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return fs;
+}
+
+
 CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
 {
@@ -1786,6 +1933,11 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     {
         vs = buildRingsVertexShader(props);
         fs = buildRingsFragmentShader(props);
+    }
+    else if (props.lightModel == ShaderProperties::AtmosphereModel)
+    {
+        vs = buildAtmosphereVertexShader(props);
+        fs = buildAtmosphereFragmentShader(props);
     }
     else
     {
