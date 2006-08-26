@@ -59,8 +59,9 @@ OBJS=\
 	$(INTDIR)\parseobject.obj \
 	$(INTDIR)\parser.obj \
 	$(INTDIR)\regcombine.obj \
-	$(INTDIR)\render.obj \
 	$(INTDIR)\rendcontext.obj \
+	$(INTDIR)\render.obj \
+	$(INTDIR)\renderglsl.obj \
 	$(INTDIR)\samporbit.obj \
 	$(INTDIR)\selection.obj \
 	$(INTDIR)\shadermanager.obj \
