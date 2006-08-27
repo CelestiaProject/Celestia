@@ -970,3 +970,91 @@ Code:
   clicking a cel URL.
 * Removed several files from installation on Linux and MacOS, saving ~5M
   compressed.
+
+
+1.5.0
+* New translations: Ukrainian, Russian, Arabic, Dutch, Chinese
+* Updated translations
+* Separate i18n domain for constelation names
+* Windows: Added support for i18n
+* Fixed bugs with UTF-8 in object name completion
+* Enabled new star rendering path: uses point sprite extension, new Gaussian
+  glare textures
+* Added dynamic star labeling
+* Added support for non-power-of-two textures (newer graphics cards only;
+  on older cards the textures will be automatically rescaled to the nearest
+  power of two.)
+* Mac: i18n improvements and bug fixes
+* Mac: enabled support for hardware antialiasing
+* Fixed crashes that occurred when Lua script errors were reported
+* Made overlay textures work in GLSL path
+* KDE: accept relative dir/files in --conf, --dir, and --extrasdir command
+  line options
+* KDE: fixed by ing deep sky objects info url where the default url was
+  always used.
+* Implemented event handlers for celx scripts
+* Localized planet labels
+* New extrasolar planets:
+  - XO-1
+  - HD 69830 system
+  - HD 164922 b, HD 66428 b, HD 99109 b, HD 107148 b, HIP 14810 b
+  - HIP 14810 c, HD 185269 b, Gliese 849 b
+  - Mu Ara e
+* Revised orbits of some extrasolar planets to reflect new data
+* Added stars for new extrasolar planets: GSC 92941-01657
+* Mac: Show menu bar when moving mouse to top of screen in full screen
+* Mac: added Japanese translation
+* Fixed bug in cmod loader that caused binary cmod files to be read
+  incorrectly on 64-bit machines.
+* KDE: removed a dependency on STL support in Qt
+* Mac: added missing 'Hide Others' menu option
+* Fixed some depth sorting problems: coalescing of depth buckets was failing
+  when a merged object was clipped to the new plane.
+* Mac: cursor now changes on draggable view boundaries
+* Added Plutonian satellite names: S/2005 P1 -> Hydra, S/2005 P2 -> Nix
+* Added 9 new numbered Saturnian satellites
+* Fixed bug that caused time scale in celestiacore and simulation to get out
+  of sync.
+* Improved rendering of meshes in OpenGL 2.0 render path:
+  - Switched to local viewer model for better quality specular highlights
+  - Added support for specular and normal maps for meshes
+  - Enable rendering of eclipse shadows cast onto meshes
+* Added a ReverseMouseWheel option for configuration file
+* Enabled per-pixel specular lighting in OpenGL 2.0 path
+* Made specular lighting work properly with normal maps
+* Enabled separate specular color when rendering models in pre OpenGL 2.0
+  render paths
+* Fixed gcc 4.1.1 build errors caused by bad constructor declarations in Star
+  and CommandGotoLongLat classes
+* Fixed bad calculation of specular exponent when converting materials from
+  3DS files.
+* Implemented cloud shadows
+* Changed eclipse shadow shaders to use a single interpolant for all
+  shadows instead of one per shadow
+* Made relative InfoURL relative to current add-on directory instead of main
+  data directory.
+* KDE and GTK: added ogg/theora video capture
+* Fixed bug in eclipse shadow test; objects close to the surface of the lit
+  side of a planet were incorrectly rendered with shadows
+* Made OpenGL 2.0 render path respect the ring shadow render flag setting
+* Replaced Hubble Space Telescope made with Cham's much improved version
+* New RECONS data added to nearstars.stc
+* Windows: generate an accelerate command only when the 'a' key is pressed
+  without any modifiers.
+* Improved atmosphere rendering in OpenGL 2.0 path; uses new ssc parameters
+  to specify scattering and absorption coefficients
+* Added Lunar-Lambert photometric model (linear combination of Lambert and
+  Lommel-Seeliger) for much more realistic appearing dusty objects
+  (e.g. the Moon)
+* Modified eclipse finder dialog for i18n
+* Display a '?' when glyph is not found in a font texture
+* Fixed a bug in the octree culling code that was causing star culling errors
+* Fixed ambient light in OpenGL 2.0 render path to match other render paths
+* Updates to parser:
+  - Allow leading + (no effect, just symmetry with - )
+  - Allow numbers to begin with a decimal point (e.g. accept .12 as well
+    as 0.12)
+* KDE: improvements to popup menu--orbiting bodies are now sorted by type
+* Added cmodsphere, a utility for producing cmod meshes from height samples
+  regularly spaced in longitude and latitude.
+* COPYING, controls.txt, start script, and guide can all be localized
