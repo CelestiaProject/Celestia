@@ -132,6 +132,7 @@
 #define IDC_SHOWRINGSHADOWS             1088
 #define IDC_ECLIPSETYPE                 1089
 #define IDC_ECLIPSETARGET               1090
+#define IDC_SHOWCLOUDSHADOWS            1091
 #define IDC_SHOW_CITIES                 1100
 #define IDC_SHOW_OBSERVATORIES          1101
 #define IDC_SHOW_LANDING_SITES          1102
