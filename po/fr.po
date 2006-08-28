@@ -1049,7 +1049,7 @@ msgstr "Découvreur d'éclipses"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:164
 msgid "&Add Bookmark"
-msgstr "Ajouter un &signets"
+msgstr "Ajouter un &signet"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:171
 msgid "Add a bookmark for the current document"
@@ -2599,7 +2599,7 @@ msgstr "Ajouter un &signets"
 
 #: src/celestia/res/resource_strings.cpp:53
 msgid "&Organize Bookmarks..."
-msgstr "&Réaranger les signets..."
+msgstr "&Réarranger les signets..."
 
 #: src/celestia/res/resource_strings.cpp:54
 msgid "&Help"
