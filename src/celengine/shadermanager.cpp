@@ -34,6 +34,7 @@ static const char* errorFragmentShaderSource =
     "}\n";
 
 
+
 ShaderManager&
 GetShaderManager()
 {
@@ -205,42 +206,6 @@ ShaderManager::getShader(const ShaderProperties& props)
 }
 
 
-CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
-                                     const ShaderProperties& props) :
-    program(&_program)
-{
-    initParameters(props);
-    initSamplers(props);
-};
-
-
-CelestiaGLProgram::~CelestiaGLProgram()
-{
-    delete program;
-}
-
-
-FloatShaderParameter
-CelestiaGLProgram::floatParam(const string& paramName)
-{
-    return FloatShaderParameter(program->getID(), paramName.c_str());
-}
-
-
-Vec3ShaderParameter
-CelestiaGLProgram::vec3Param(const string& paramName)
-{
-    return Vec3ShaderParameter(program->getID(), paramName.c_str());
-}
-
-
-Vec4ShaderParameter
-CelestiaGLProgram::vec4Param(const string& paramName)
-{
-    return Vec4ShaderParameter(program->getID(), paramName.c_str());
-}
-
-
 static string
 LightProperty(unsigned int i, char* property)
 {
@@ -310,142 +275,6 @@ static string
 VarScatterInFS()
 {
     return string("gl_SecondaryColor.rgb");
-}
-
-
-void
-CelestiaGLProgram::initParameters(const ShaderProperties& props)
-{
-    for (unsigned int i = 0; i < props.nLights; i++)
-    {
-        lights[i].direction  = vec3Param(LightProperty(i, "direction"));
-        lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse"));
-        lights[i].specular   = vec3Param(LightProperty(i, "specular"));
-        lights[i].halfVector = vec3Param(LightProperty(i, "halfVector"));
-
-        fragLightColor[i] = vec3Param(FragLightProperty(i, "color"));
-        fragLightSpecColor[i] = vec3Param(FragLightProperty(i, "specColor"));
-
-        for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
-        {
-            shadows[i][j].texGenS =
-                vec4Param(IndexedParameter("shadowTexGenS", i, j));
-            shadows[i][j].texGenT =
-                vec4Param(IndexedParameter("shadowTexGenT", i, j));
-            shadows[i][j].scale =
-                floatParam(IndexedParameter("shadowScale", i, j));
-            shadows[i][j].bias =
-                floatParam(IndexedParameter("shadowBias", i, j));
-        }
-    }
-
-    if (props.hasSpecular())
-    {
-        shininess            = floatParam("shininess");
-    }
-
-    if (props.isViewDependent() || props.hasScattering())        
-    {
-        eyePosition          = vec3Param("eyePosition");
-    }
-
-    opacity      = floatParam("opacity");
-    ambientColor = vec3Param("ambientColor");
-
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
-    {
-        ringWidth            = floatParam("ringWidth");
-        ringRadius           = floatParam("ringRadius");
-    }
-
-    textureOffset = floatParam("textureOffset");
-    
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
-    {
-        cloudHeight         = floatParam("cloudHeight");
-        shadowTextureOffset = floatParam("cloudShadowTexOffset");
-    }
-    
-    if ((props.texUsage & ShaderProperties::NightTexture) != 0)
-    {
-        nightTexMin          = floatParam("nightTexMin");
-    }
-    
-    if (props.hasScattering())
-    {
-        mieCoeff             = floatParam("mieCoeff");
-        mieScaleHeight       = floatParam("mieH");
-        miePhaseAsymmetry    = floatParam("mieK");
-        rayleighCoeff        = vec3Param("rayleighCoeff");
-        rayleighScaleHeight  = floatParam("rayleighH");        
-        atmosphereRadius     = vec3Param("atmosphereRadius");            
-        scatterCoeffSum      = vec3Param("scatterCoeffSum");
-        invScatterCoeffSum   = vec3Param("invScatterCoeffSum");
-        extinctionCoeff      = vec3Param("extinctionCoeff");
-    }
-    
-    if (props.lightModel == ShaderProperties::LunarLambertModel)
-    {
-        lunarLambert         = floatParam("lunarLambert");
-    }
-}
-
-
-void
-CelestiaGLProgram::initSamplers(const ShaderProperties& props)
-{
-    program->use();
-
-    unsigned int nSamplers = 0;
-    
-    if (props.texUsage & ShaderProperties::DiffuseTexture)
-    {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "diffTex");
-        if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
-    }
-
-    if (props.texUsage & ShaderProperties::NormalTexture)
-    {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "normTex");
-        if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
-    }
-
-    if (props.texUsage & ShaderProperties::SpecularTexture)
-    {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "specTex");
-        if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
-    }
-
-    if (props.texUsage & ShaderProperties::NightTexture)
-    {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "nightTex");
-        if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
-    }
-
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
-    {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "ringTex");
-        if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
-    }
-    
-    if (props.texUsage & ShaderProperties::OverlayTexture)
-    {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
-        if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
-    }
-    
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
-    {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "cloudShadowTex");
-        if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
-    }
 }
 
 
@@ -615,7 +444,7 @@ AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
 //    NH - dot product of light and half vectors
 
 static string
-DirectionalLight(unsigned int i, const ShaderProperties& props)
+AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
 {
     string source;
 
@@ -1185,7 +1014,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        source += DirectionalLight(i, props);
+        source += AddDirectionalLightContrib(i, props);
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
@@ -1990,4 +1819,341 @@ ShaderManager::buildProgram(const ShaderProperties& props)
         return NULL;
     else
         return new CelestiaGLProgram(*prog, props);
+}
+
+
+CelestiaGLProgram::CelestiaGLProgram(GLProgram& _program,
+                                     const ShaderProperties& _props) :
+    program(&_program),
+    props(_props)
+{
+    initParameters();
+    initSamplers();
+};
+
+
+CelestiaGLProgram::~CelestiaGLProgram()
+{
+    delete program;
+}
+
+
+FloatShaderParameter
+CelestiaGLProgram::floatParam(const string& paramName)
+{
+    return FloatShaderParameter(program->getID(), paramName.c_str());
+}
+
+
+Vec3ShaderParameter
+CelestiaGLProgram::vec3Param(const string& paramName)
+{
+    return Vec3ShaderParameter(program->getID(), paramName.c_str());
+}
+
+
+Vec4ShaderParameter
+CelestiaGLProgram::vec4Param(const string& paramName)
+{
+    return Vec4ShaderParameter(program->getID(), paramName.c_str());
+}
+
+
+void
+CelestiaGLProgram::initParameters()
+{
+    for (unsigned int i = 0; i < props.nLights; i++)
+    {
+        lights[i].direction  = vec3Param(LightProperty(i, "direction"));
+        lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse"));
+        lights[i].specular   = vec3Param(LightProperty(i, "specular"));
+        lights[i].halfVector = vec3Param(LightProperty(i, "halfVector"));
+
+        fragLightColor[i] = vec3Param(FragLightProperty(i, "color"));
+        fragLightSpecColor[i] = vec3Param(FragLightProperty(i, "specColor"));
+
+        for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+        {
+            shadows[i][j].texGenS =
+                vec4Param(IndexedParameter("shadowTexGenS", i, j));
+            shadows[i][j].texGenT =
+                vec4Param(IndexedParameter("shadowTexGenT", i, j));
+            shadows[i][j].scale =
+                floatParam(IndexedParameter("shadowScale", i, j));
+            shadows[i][j].bias =
+                floatParam(IndexedParameter("shadowBias", i, j));
+        }
+    }
+
+    if (props.hasSpecular())
+    {
+        shininess            = floatParam("shininess");
+    }
+
+    if (props.isViewDependent() || props.hasScattering())        
+    {
+        eyePosition          = vec3Param("eyePosition");
+    }
+
+    opacity      = floatParam("opacity");
+    ambientColor = vec3Param("ambientColor");
+
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        ringWidth            = floatParam("ringWidth");
+        ringRadius           = floatParam("ringRadius");
+    }
+
+    textureOffset = floatParam("textureOffset");
+    
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        cloudHeight         = floatParam("cloudHeight");
+        shadowTextureOffset = floatParam("cloudShadowTexOffset");
+    }
+    
+    if ((props.texUsage & ShaderProperties::NightTexture) != 0)
+    {
+        nightTexMin          = floatParam("nightTexMin");
+    }
+    
+    if (props.hasScattering())
+    {
+        mieCoeff             = floatParam("mieCoeff");
+        mieScaleHeight       = floatParam("mieH");
+        miePhaseAsymmetry    = floatParam("mieK");
+        rayleighCoeff        = vec3Param("rayleighCoeff");
+        rayleighScaleHeight  = floatParam("rayleighH");        
+        atmosphereRadius     = vec3Param("atmosphereRadius");            
+        scatterCoeffSum      = vec3Param("scatterCoeffSum");
+        invScatterCoeffSum   = vec3Param("invScatterCoeffSum");
+        extinctionCoeff      = vec3Param("extinctionCoeff");
+    }
+    
+    if (props.lightModel == ShaderProperties::LunarLambertModel)
+    {
+        lunarLambert         = floatParam("lunarLambert");
+    }
+}
+
+
+void
+CelestiaGLProgram::initSamplers()
+{
+    program->use();
+
+    unsigned int nSamplers = 0;
+    
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "diffTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+
+    if (props.texUsage & ShaderProperties::NormalTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "normTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+
+    if (props.texUsage & ShaderProperties::SpecularTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "specTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+
+    if (props.texUsage & ShaderProperties::NightTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "nightTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "ringTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+    
+    if (props.texUsage & ShaderProperties::OverlayTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+    
+    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "cloudShadowTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+}
+
+
+void 
+CelestiaGLProgram::setLightParameters(const LightingState& ls,
+                                      Color materialDiffuse,
+                                      Color materialSpecular)
+{
+    unsigned int nLights = min(MaxShaderLights, ls.nLights);
+
+    Vec3f diffuseColor(materialDiffuse.red(),
+                       materialDiffuse.green(),
+                       materialDiffuse.blue());
+    Vec3f specularColor(materialSpecular.red(),
+                        materialSpecular.green(),
+                        materialSpecular.blue());
+    
+    for (unsigned int i = 0; i < nLights; i++)
+    {
+        const DirectionalLight& light = ls.lights[i];
+
+        Vec3f lightColor = Vec3f(light.color.red(),
+                                 light.color.green(),
+                                 light.color.blue()) * light.irradiance;
+        lights[i].direction = light.direction_obj;
+
+        if (props.usesShadows() ||
+            props.usesFragmentLighting() ||
+            props.lightModel == ShaderProperties::RingIllumModel)
+        {
+            fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
+                                      lightColor.y * diffuseColor.y,
+                                      lightColor.z * diffuseColor.z);
+            if (props.hasSpecular())
+            {
+                fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
+                                              lightColor.y * specularColor.y,
+                                              lightColor.z * specularColor.z);
+            }
+        }
+        else
+        {
+            lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
+                                      lightColor.y * diffuseColor.y,
+                                      lightColor.z * diffuseColor.z);
+        }
+        
+        lights[i].specular = Vec3f(lightColor.x * specularColor.x,
+                                   lightColor.y * specularColor.y,
+                                   lightColor.z * specularColor.z);
+
+        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
+        if (halfAngle_obj.length() != 0.0f)
+            halfAngle_obj.normalize();
+        lights[i].halfVector = halfAngle_obj;
+    }
+
+    eyePosition = ls.eyePos_obj;
+    ambientColor = Vec3f(ls.ambientColor.x * diffuseColor.x,
+                         ls.ambientColor.y * diffuseColor.y,
+                         ls.ambientColor.z * diffuseColor.z);
+    opacity = materialDiffuse.alpha();        
+}
+
+
+// Set GLSL shader constants for shadows from ellipsoid occluders; shadows from
+// irregular objects are not handled yet.
+void
+CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
+                                              float planetRadius,
+                                              const Mat4f& planetMat)
+{
+    for (unsigned int li = 0;
+         li < min(ls.nLights, MaxShaderLights);
+         li++)
+    {
+        if (shadows != NULL)
+        {
+            unsigned int nShadows = min((size_t) MaxShaderShadows, ls.shadows[li]->size());
+
+            for (unsigned int i = 0; i < nShadows; i++)
+            {
+                EclipseShadow& shadow = ls.shadows[li]->at(i);
+                CelestiaGLProgramShadow& shadowParams = shadows[li][i];
+
+                float R2 = 0.25f;
+                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+                umbra = umbra * umbra;
+                if (umbra < 0.0001f)
+                    umbra = 0.0001f;
+                else if (umbra > 0.99f)
+                    umbra = 0.99f;
+
+                float umbraRadius = R2 * umbra;
+                float penumbraRadius = R2;
+                float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
+                shadowParams.bias = shadowBias;
+                shadowParams.scale = -shadowBias / umbraRadius;
+
+                // Compute the transformation to use for generating texture
+                // coordinates from the object vertices.
+                Point3f origin = shadow.origin * planetMat;
+                Vec3f dir = shadow.direction * planetMat;
+                float scale = planetRadius / shadow.penumbraRadius;
+                Vec3f axis = Vec3f(0, 1, 0) ^ dir;
+                float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+                axis.normalize();
+                Mat4f mat = Mat4f::rotation(axis, -angle);
+                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
+                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+
+                float sw = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
+                float tw = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
+                shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
+                shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
+            }
+        }
+    }
+}
+
+
+// Set the scattering and absoroption shader parameters for atmosphere simulation.
+// They are from standard units to the normalized system used by the shaders.
+// atmPlanetRadius - the radius in km of the planet with the atmosphere
+// objRadius - the radius in km of the object we're rendering
+void
+CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
+                                           float atmPlanetRadius,
+                                           float objRadius)
+{
+    // Compute the radius of the sky sphere to render; the density of the atmosphere
+    // fallse off exponentially with height above the planet's surface, so the actual
+    // radius is infinite. That's a bit impractical, so well just render the portion
+    // out to the point where the density is some fraction of the surface density.
+    float skySphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
+    
+    float tMieCoeff        = atmosphere.mieCoeff * objRadius;
+    Vec3f tRayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
+    Vec3f tAbsorptionCoeff = atmosphere.absorptionCoeff * objRadius;
+    
+    float r = skySphereRadius / objRadius;
+    atmosphereRadius = Vec3f(r, r * r, atmPlanetRadius / objRadius);
+    
+    mieCoeff = tMieCoeff;
+    mieScaleHeight = objRadius / atmosphere.mieScaleHeight;
+    
+    // The scattering shaders use the Schlick approximation to the
+    // Henyey-Greenstein phase function because it's slightly faster
+    // to compute. Convert the HG asymmetry parameter to the Schlick
+    // parameter.
+    float g = atmosphere.miePhaseAsymmetry;
+    miePhaseAsymmetry = 1.55f * g - 0.55f * g * g * g;
+    
+    rayleighCoeff = tRayleighCoeff;
+    rayleighScaleHeight = 0.0f; // TODO
+
+    // Precompute sum and inverse sum of scattering coefficients to save work
+    // in the vertex shader.
+    Vec3f tScatterCoeffSum = Vec3f(tRayleighCoeff.x + tMieCoeff,
+                                   tRayleighCoeff.y + tMieCoeff,
+                                   tRayleighCoeff.z + tMieCoeff);
+    scatterCoeffSum = tScatterCoeffSum;
+    invScatterCoeffSum = Vec3f(1.0f / tScatterCoeffSum.x, 1.0f / tScatterCoeffSum.y, 1.0f / tScatterCoeffSum.z);
+    extinctionCoeff = tScatterCoeffSum + tAbsorptionCoeff;
 }

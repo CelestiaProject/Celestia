@@ -4971,7 +4971,7 @@ void Renderer::renderObject(Point3f pos,
             if (context->getRenderPath() == GLContext::GLPath_GLSL && lit)
             {
                 ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
-                renderModel_GLSL(model, ri, texOverride, ls, obj.radius, planetMat);
+                renderModel_GLSL(model, ri, texOverride, ls, obj.atmosphere, obj.radius, renderFlags, planetMat);
                 for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
                 {
                     glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);

@@ -9,13 +9,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-// Atmosphere density is modeled with a exp(-y/H) falloff, where
-// H is the scale height of the atmosphere. Thus atmospheres have
-// infinite extent, but we still need to choose some finite sphere
-// to render. The radius of the sphere is the height at which the
-// density of the atmosphere falls to the extinction threshold, i.e.
-// -H * ln(extinctionThreshold)
-extern const double AtmosphereExtinctionThreshold;
+#ifndef _CELENGINE_RENDERGLSL_H_
+#define _CELENGINE_RENDERGLSL_H_
+
+#include <celengine/lightenv.h>
 
 void renderSphere_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
@@ -33,7 +30,9 @@ void renderModel_GLSL(Model* model,
                       const RenderInfo& ri,
                       ResourceHandle texOverride,
                       const LightingState& ls,
+                      const Atmosphere* atmosphere,
                       float radius,
+                      int renderFlags,
                       const Mat4f& planetMat);
                       
 void renderClouds_GLSL(const RenderInfo& ri,
@@ -66,6 +65,7 @@ void renderRings_GLSL(RingSystem& rings,
                       bool renderShadow,
                       unsigned int nSections);
                            
+#endif // _CELENGINE_RENDERGLSL_H_
                        
 
 

@@ -13,6 +13,7 @@
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
 #include <celmath/vecmath.h>
+#include <celengine/multitexture.h>
 
 
 class Atmosphere
@@ -53,6 +54,14 @@ class Atmosphere
     float rayleighScaleHeight;
     Vec3f absorptionCoeff;
 };
+
+// Atmosphere density is modeled with a exp(-y/H) falloff, where
+// H is the scale height of the atmosphere. Thus atmospheres have
+// infinite extent, but we still need to choose some finite sphere
+// to render. The radius of the sphere is the height at which the
+// density of the atmosphere falls to the extinction threshold, i.e.
+// -H * ln(extinctionThreshold)
+extern const double AtmosphereExtinctionThreshold;
 
 #endif // _ATMOSPHERE_H_
 
