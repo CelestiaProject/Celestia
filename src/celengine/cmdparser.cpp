@@ -694,6 +694,10 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowCelestialSphere;
             else if (compareIgnoringCase(name, "partialtrajectories") == 0)
                 flags |= Renderer::ShowPartialTrajectories;
+            else if (compareIgnoringCase(name, "openclusters") == 0)
+                flags |= Renderer::ShowOpenClusters;
+            else if (compareIgnoringCase(name, "cloudshadows") == 0)
+                flags |= Renderer::ShowCloudShadows;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
@@ -742,6 +746,14 @@ int parseLabelFlags(string s)
                 flags |= Renderer::StarLabels;
 	    else if (compareIgnoringCase(name, "galaxies") == 0)
 		flags |= Renderer::GalaxyLabels;
+	    else if (compareIgnoringCase(name, "locations") == 0)
+		flags |= Renderer::LocationLabels;
+	    else if (compareIgnoringCase(name, "nebulae") == 0)
+		flags |= Renderer::NebulaLabels;
+	    else if (compareIgnoringCase(name, "openclusters") == 0)
+		flags |= Renderer::OpenClusterLabels;
+	    else if (compareIgnoringCase(name, "i18nconstellations") == 0)
+		flags |= Renderer::I18nConstellationLabels;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
