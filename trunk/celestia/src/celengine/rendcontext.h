@@ -1,6 +1,6 @@
 // rendcontext.h
 //
-// Copyright (C) 2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,47 +12,6 @@
 
 #include "mesh.h"
 #include "shadermanager.h"
-
-
-static const unsigned int MaxLights = 8;
-
-struct DirectionalLight
-{
-    Color color;
-    float irradiance;
-    Vec3f direction_eye;
-    Vec3f direction_obj;
-
-    // Required for eclipse shadows only--may be able to use
-    // distance instead of position.
-    Point3d position;
-    float apparentSize;
-};
-
-struct EclipseShadow
-{
-    Point3f origin;
-    Vec3f direction;
-    float penumbraRadius;
-    float umbraRadius;
-};
-
-struct LightingState
-{
-    LightingState() : nLights(0),
-                      eyeDir_obj(0.0f, 0.0f, -1.0f),
-                      eyePos_obj(0.0f, 0.0f, -1.0f)
-    { shadows[0] = NULL; };
-
-    unsigned int nLights;
-    DirectionalLight lights[MaxLights];
-    std::vector<EclipseShadow>* shadows[MaxLights];
-
-    Vec3f eyeDir_obj;
-    Point3f eyePos_obj;
-    
-    Vec3f ambientColor;
-};
 
 
 class RenderContext
@@ -138,7 +97,8 @@ class GLSL_RenderContext : public RenderContext
     virtual void setVertexArrays(const Mesh::VertexDescription& desc,
                                  void* vertexData);
                  
-    virtual void setLunarLambert(float);                 
+    virtual void setLunarLambert(float);
+    virtual void setAtmosphere(const Atmosphere*);
 
  private:
      void initLightingEnvironment();
@@ -147,6 +107,7 @@ class GLSL_RenderContext : public RenderContext
      
  private:
     const LightingState& lightingState;
+    const Atmosphere* atmosphere;
     bool blendOn;
     float objRadius;
     Mat4f xform;

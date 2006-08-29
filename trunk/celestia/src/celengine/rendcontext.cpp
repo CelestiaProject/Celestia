@@ -360,6 +360,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 
 GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform) :
     lightingState(ls),
+    atmosphere(NULL),
     blendOn(false),
     objRadius(_objRadius),
     xform(_xform),
@@ -402,6 +403,7 @@ GLSL_RenderContext::initLightingEnvironment()
 }
   
 
+// TODO: eliminate this and use CelestiaGLProgram::setLightingParameters instead
 void
 GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materialDiffuse, Color materialSpecular)
 {
@@ -462,6 +464,7 @@ GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materia
 }
 
 
+// TODO: eliminate this and use CelestiaGLProgram::setShadowParameters instead
 void
 GLSL_RenderContext::setShadowParameters(CelestiaGLProgram& prog)
 {
@@ -584,6 +587,13 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         }
     }
 
+    if (atmosphere != NULL)
+    {
+        // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+        if (atmosphere->mieScaleHeight > 0.0f)
+            shaderProps.texUsage |= ShaderProperties::Scattering;
+    }    
+    
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
     if (prog == NULL)
@@ -612,6 +622,11 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     if (emissiveTex != NULL)
     {
         prog->nightTexMin = 1.0f;
+    }
+    
+    if (shaderProps.hasScattering())
+    {
+        prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius);
     }
         
     bool blendOnNow = false;
@@ -644,6 +659,12 @@ GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     setExtendedVertexArrays(desc, vertexData);
 }
 
+
+void
+GLSL_RenderContext::setAtmosphere(const Atmosphere* _atmosphere)
+{
+    atmosphere = _atmosphere;
+}
 
 // Extended material properties -- currently just lunarLambert term
 void
