@@ -1,6 +1,6 @@
 // body.h
 //
-// Copyright (C) 2001-2004 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -99,6 +99,8 @@ class Body
     void setName(const std::string);
     Orbit* getOrbit() const;
     void setOrbit(Orbit*);
+    const Body* getOrbitBarycenter() const;
+    void setOrbitBarycenter(const Body*);
     astro::ReferencePlane getOrbitReferencePlane() const;
     void setOrbitReferencePlane(astro::ReferencePlane);
     RotationElements getRotationElements() const;
@@ -178,8 +180,11 @@ class Body
     std::string i18nName;
 
     PlanetarySystem* system;
+    
     Orbit* orbit;
+    const Body* orbitBarycenter;
     astro::ReferencePlane orbitRefPlane;
+    
     RotationElements rotationElements;
 
     float radius;
