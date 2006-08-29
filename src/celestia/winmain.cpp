@@ -2086,7 +2086,8 @@ void handleKey(WPARAM key, bool down)
         break;
     case 'A':
     case 'Z':
-        k = key;
+        if ((GetKeyState(VK_CONTROL) & 0x8000) == 0)
+            k = key;
         break;
     }
 
@@ -2991,9 +2992,7 @@ public:
     
     virtual void update(const string& filename)
     {
-        bind_textdomain_codeset("celestia", CurrentCP());
         splash->setMessage(string(_("Loading: ")) + filename);
-        bind_textdomain_codeset("celestia", "UTF8");
     }
     
 private:
@@ -3629,7 +3628,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
             {
                 CopyStateURLToClipboard();
-                appCore->flash(UTF8ToCurrentCP(_("Copied URL")));
+                appCore->flash(_("Copied URL"));
             }
             break;
 
@@ -3724,8 +3723,8 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
                     if (!urlString.substr(0,4).compare("cel:"))
                     {
-                        appCore->flash(UTF8ToCurrentCP(_("Loading URL")));
-						appCore->goToUrl(urlString);
+                        appCore->flash(_("Loading URL"));
+			appCore->goToUrl(urlString);
                     }
                     else if (DetermineFileType(urlString) == Content_CelestiaScript)
                     {
@@ -3736,7 +3735,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                         ifstream scriptfile(urlString.c_str());
                         if (!scriptfile.good())
                         {
-                            appCore->flash(UTF8ToCurrentCP(_("Error opening script")));
+                            appCore->flash(_("Error opening script"));
                         }
                         else
                         {
@@ -3755,12 +3754,12 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                 }
                                 else
                                 {
-                                    appCore->flash(UTF8ToCurrentCP(_("Error loading script")));
+                                    appCore->flash(_("Error loading script"));
                                 }
                             }
                             else
                             {
-                                appCore->flash(UTF8ToCurrentCP(_("Running script")));
+                                appCore->flash(_("Running script"));
                                 appCore->runScript(script);
                             }
                         }
