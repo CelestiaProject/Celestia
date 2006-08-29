@@ -116,6 +116,8 @@ static void initRenderFlagMap()
     RenderFlagMap["grid"] = Renderer::ShowCelestialSphere;
     RenderFlagMap["smoothlines"] = Renderer::ShowSmoothLines;
     RenderFlagMap["partialtrajectories"] = Renderer::ShowPartialTrajectories;
+    RenderFlagMap["nebulae"] = Renderer::ShowNebulae;
+    RenderFlagMap["openclusters"] = Renderer::ShowOpenClusters;
     RenderFlagMap["cloudshadows"] = Renderer::ShowCloudShadows;
 }
 
@@ -130,6 +132,9 @@ static void initLabelFlagMap()
     LabelFlagMap["stars"] = Renderer::StarLabels;
     LabelFlagMap["galaxies"] = Renderer::GalaxyLabels;
     LabelFlagMap["locations"] = Renderer::LocationLabels;
+    LabelFlagMap["nebulae"] = Renderer::NebulaLabels;
+    LabelFlagMap["openclusters"] = Renderer::OpenClusterLabels;
+    LabelFlagMap["i18nconstellations"] = Renderer::I18nConstellationLabels;
 }
 
 static void initBodyTypeMap()
