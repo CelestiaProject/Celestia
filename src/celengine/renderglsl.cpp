@@ -50,172 +50,7 @@ using namespace std;
 const double AtmosphereExtinctionThreshold = 0.05;
 
 
-static void setLightParameters_GLSL(CelestiaGLProgram& prog,
-                                    const ShaderProperties& shadprop,
-                                    const LightingState& ls,
-                                    Color materialDiffuse,
-                                    Color materialSpecular)
-{
-    unsigned int nLights = min(MaxShaderLights, ls.nLights);
-
-    Vec3f diffuseColor(materialDiffuse.red(),
-                       materialDiffuse.green(),
-                       materialDiffuse.blue());
-    Vec3f specularColor(materialSpecular.red(),
-                        materialSpecular.green(),
-                        materialSpecular.blue());
-    
-    for (unsigned int i = 0; i < nLights; i++)
-    {
-        const DirectionalLight& light = ls.lights[i];
-
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
-        prog.lights[i].direction = light.direction_obj;
-
-        if (shadprop.usesShadows() ||
-            shadprop.usesFragmentLighting() ||
-            shadprop.lightModel == ShaderProperties::RingIllumModel)
-        {
-            prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
-                                           lightColor.y * diffuseColor.y,
-                                           lightColor.z * diffuseColor.z);
-            if (shadprop.hasSpecular())
-            {
-                prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
-                                                   lightColor.y * specularColor.y,
-                                                   lightColor.z * specularColor.z);
-            }
-        }
-        else
-        {
-            prog.lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
-                                           lightColor.y * diffuseColor.y,
-                                           lightColor.z * diffuseColor.z);
-        }
-        prog.lights[i].specular = Vec3f(lightColor.x * specularColor.x,
-                                        lightColor.y * specularColor.y,
-                                        lightColor.z * specularColor.z);
-
-        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
-        if (halfAngle_obj.length() != 0.0f)
-            halfAngle_obj.normalize();
-        prog.lights[i].halfVector = halfAngle_obj;
-    }
-    
-    prog.ambientColor = ls.ambientColor;
-    prog.opacity = materialDiffuse.alpha();        
-}
-
-
-// Set GLSL shader constants for shadows from ellipsoid occluders; shadows from
-// irregular objects are not handled yet.
-static void
-setEclipseShadowShaderConstants(const LightingState& ls,
-                                float planetRadius,
-                                const Mat4f& planetMat,
-                                CelestiaGLProgram& prog)
-{
-    for (unsigned int li = 0;
-         li < min(ls.nLights, MaxShaderLights);
-         li++)
-    {
-        vector<EclipseShadow>* shadows = ls.shadows[li];
-
-        if (shadows != NULL)
-        {
-            unsigned int nShadows = min((size_t) MaxShaderShadows, 
-                                        shadows->size());
-
-            for (unsigned int i = 0; i < nShadows; i++)
-            {
-                EclipseShadow& shadow = shadows->at(i);
-                CelestiaGLProgramShadow& shadowParams = prog.shadows[li][i];
-
-                float R2 = 0.25f;
-                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-                umbra = umbra * umbra;
-                if (umbra < 0.0001f)
-                    umbra = 0.0001f;
-                else if (umbra > 0.99f)
-                    umbra = 0.99f;
-
-                float umbraRadius = R2 * umbra;
-                float penumbraRadius = R2;
-                float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
-                shadowParams.bias = shadowBias;
-                shadowParams.scale = -shadowBias / umbraRadius;
-
-                // Compute the transformation to use for generating texture
-                // coordinates from the object vertices.
-                Point3f origin = shadow.origin * planetMat;
-                Vec3f dir = shadow.direction * planetMat;
-                float scale = planetRadius / shadow.penumbraRadius;
-                Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-                float angle = (float) acos(Vec3f(0, 1, 0) * dir);
-                axis.normalize();
-                Mat4f mat = Mat4f::rotation(axis, -angle);
-                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
-
-                float sw = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
-                float tw = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
-                shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
-                shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
-            }
-        }
-    }
-}
-
-
-// Set the scattering and absoroption shader parameters for atmosphere simulation.
-// They are from standard units to the normalized system used by the shaders.
-// atmObjRadius - the radius in km of the planet with the atmosphere
-// objRadius - the radius in km of the object we're rendering
-static void setAtmosphereParameters_GLSL(CelestiaGLProgram& prog,                                            
-                                         const Atmosphere& atmosphere,
-                                         float atmPlanetRadius,
-                                         float objRadius)
-{
-    // Compute the radius of the atmosphere to render; the density falls off
-    // exponentially with height above the planet's surface, so the actual
-    // radius is infinite. That's a bit impractical, so well just render the
-    // portion out to the point where the density is 1/1000 of the surface
-    // density.
-    float atmosphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
-    
-    float mieCoeff        = atmosphere.mieCoeff * objRadius;
-    Vec3f rayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
-    Vec3f absorptionCoeff = atmosphere.absorptionCoeff * objRadius;
-    
-    float r = atmosphereRadius / objRadius;
-    prog.atmosphereRadius = Vec3f(r, r * r, atmPlanetRadius / objRadius);
-    
-    prog.mieCoeff = mieCoeff;
-    prog.mieScaleHeight = objRadius / atmosphere.mieScaleHeight;
-    
-    // The scattering shaders use the Schlick approximation to the
-    // Henyey-Greenstein phase function because it's slightly faster
-    // to compute. Convert the HG asymmetry parameter to the Schlick
-    // parameter.
-    float g = atmosphere.miePhaseAsymmetry;
-    prog.miePhaseAsymmetry = 1.55f * g - 0.55f * g * g * g;
-    
-    prog.rayleighCoeff = rayleighCoeff;
-    prog.rayleighScaleHeight = 0.0f; // TODO
-
-    // Precompute sum and inverse sum of scattering coefficients to save work
-    // in the vertex shader.
-    Vec3f scatterCoeffSum = Vec3f(rayleighCoeff.x + mieCoeff,
-                                  rayleighCoeff.y + mieCoeff,
-                                  rayleighCoeff.z + mieCoeff);
-    prog.scatterCoeffSum = scatterCoeffSum;
-    prog.invScatterCoeffSum = Vec3f(1.0f / scatterCoeffSum.x, 1.0f / scatterCoeffSum.y, 1.0f / scatterCoeffSum.z);
-    prog.extinctionCoeff = scatterCoeffSum + absorptionCoeff;
-}
-
-
+// Render a planet sphere with GLSL shaders
 void renderSphere_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
                        RingSystem* rings,
@@ -348,8 +183,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
 
     prog->use();
 
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor);
     
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
@@ -376,11 +210,11 @@ void renderSphere_GLSL(const RenderInfo& ri,
     
     if (shadprop.hasScattering())
     {
-        setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, radius);
+        prog->setAtmosphereParameters(*atmosphere, radius, radius);
     }
 
     if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
+        prog->setEclipseShadowParameters(ls, radius, planetMat);
 
     glColor(ri.color);
 
@@ -396,16 +230,24 @@ void renderSphere_GLSL(const RenderInfo& ri,
 }
 
 
+// Render a mesh object
 void renderModel_GLSL(Model* model,
                       const RenderInfo& ri,
                       ResourceHandle texOverride,
                       const LightingState& ls,
+                      const Atmosphere* atmosphere,
                       float radius,
+                      int renderFlags,
                       const Mat4f& planetMat)
 {
     glDisable(GL_LIGHTING);
     
     GLSL_RenderContext rc(ls, radius, planetMat);
+    
+    if (renderFlags & Renderer::ShowAtmospheres)
+    {
+        rc.setAtmosphere(atmosphere);
+    }
     
     // Handle extended material attributes (per model only, not per submesh)
     rc.setLunarLambert(ri.lunarLambert);
@@ -427,6 +269,7 @@ void renderModel_GLSL(Model* model,
 }
 
 
+// Render the cloud sphere for a world a cloud layer defined
 void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
                        Atmosphere* atmosphere,
@@ -507,8 +350,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     prog->use();
 
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor);
     prog->eyePosition = ls.eyePos_obj;
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
                                ri.ambientColor.blue());
@@ -518,7 +360,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     
     if (shadprop.hasScattering())
     {
-        setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, cloudRadius);
+        prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius);
     }
     
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
@@ -529,7 +371,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 
     if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, cloudRadius, planetMat, *prog);
+        prog->setEclipseShadowParameters(ls, cloudRadius, planetMat);
 
     unsigned int attributes = LODSphereMesh::Normals;
     g_lodSphere->render(context,
@@ -543,6 +385,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 }
 
 
+// Render the sky sphere for a world with an atmosphere
 void
 renderAtmosphere_GLSL(const RenderInfo& ri,
                       const LightingState& ls,
@@ -569,19 +412,19 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
 
     prog->use();
 
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor);
     prog->ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
     
     float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
     float atmScale = atmosphereRadius / radius;
     
     prog->eyePosition = Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
-    setAtmosphereParameters_GLSL(*prog, *atmosphere, radius, atmosphereRadius);
+    prog->setAtmosphereParameters(*atmosphere, radius, atmosphereRadius);
     
-#if 0    
+#if 0
+    // Currently eclipse shadows are ignored when rendering atmospheres    
     if (shadprop.shadowCounts != 0)    
-        setEclipseShadowShaderConstants(ls, radius, planetMat, *prog);
+        prog->setEclipseShadowParameters(ls, radius, planetMat);
 #endif        
 
     glPushMatrix();
@@ -634,6 +477,7 @@ static void renderRingSystem(float innerRadius,
 }
 
 
+// Render a planetary ring system
 void renderRings_GLSL(RingSystem& rings,
                       RenderInfo& ri,
                       const LightingState& ls,
@@ -675,8 +519,7 @@ void renderRings_GLSL(RingSystem& rings,
     prog->eyePosition = ls.eyePos_obj;
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
                                ri.ambientColor.blue());
-    setLightParameters_GLSL(*prog, shadprop, ls,
-                            ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor);
         
     for (unsigned int li = 0; li < ls.nLights; li++)
     {

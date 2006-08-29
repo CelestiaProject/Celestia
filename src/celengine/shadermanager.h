@@ -13,6 +13,8 @@
 #include <map>
 #include <iostream>
 #include <celengine/glshader.h>
+#include <celengine/lightenv.h>
+#include <celengine/atmosphere.h>
 
 class ShaderProperties
 {
@@ -91,6 +93,16 @@ class CelestiaGLProgram
 
     void use() const { program->use(); }
     
+    void setLightParameters(const LightingState& ls,
+                            Color materialDiffuse,
+                            Color materialSpecular);
+    void setEclipseShadowParameters(const LightingState& ls,
+                                    float planetRadius,
+                                    const Mat4f& planetMat);
+    void setAtmosphereParameters(const Atmosphere& atmosphere,
+                                 float atmPlanetRadius,
+                                 float objRadius);
+    
  public:
     CelestiaGLProgramLight lights[MaxShaderLights];
     Vec3ShaderParameter fragLightColor[MaxShaderLights];
@@ -152,14 +164,15 @@ class CelestiaGLProgram
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderShadows];
     
  private:
-    void initParameters(const ShaderProperties&);
-    void initSamplers(const ShaderProperties&);
+    void initParameters();
+    void initSamplers();
 
     FloatShaderParameter floatParam(const std::string&);
     Vec3ShaderParameter vec3Param(const std::string&);
     Vec4ShaderParameter vec4Param(const std::string&);
 
     GLProgram* program;
+    const ShaderProperties props;
 };
 
 
