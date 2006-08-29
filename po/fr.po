@@ -2599,7 +2599,7 @@ msgstr "&Signets"
 
 #: src/celestia/res/resource_strings.cpp:52
 msgid "&Add Bookmarks..."
-msgstr "Ajouter un &signets"
+msgstr "Ajouter un &signet"
 
 #: src/celestia/res/resource_strings.cpp:53
 msgid "&Organize Bookmarks..."
