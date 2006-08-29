@@ -241,7 +241,7 @@ const char* SelectionPopup::getSelectionName(const Selection& sel) const
     if (sel.body() != NULL)
         return sel.body()->getName(true).c_str();
     else if (sel.star() != NULL)
-        return appCore->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*(sel.star())).c_str();
+        return ReplaceGreekLetterAbbr(appCore->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*(sel.star()))).c_str();
     else if (sel.deepsky() != NULL)
         return appCore->getSimulation()->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str();
 
