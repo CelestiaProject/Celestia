@@ -412,7 +412,7 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
         if (count != 0)
             starNames   += " / ";
 
-        starNames   += ReplaceGreekLetterAbbr(_(iter->second.c_str()));
+        starNames   += ReplaceGreekLetterAbbr(iter->second.c_str());
         ++iter;
         ++count;
     }
@@ -1192,7 +1192,10 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                         length = next - startPos;
                         ++next;
                     }
-                    namesDB->add(catalogNumber, objName.substr(startPos, length));
+                    if (catalogNumber == 0 && objName.substr(startPos, length) == "Sun")
+                        namesDB->add(0, _("Sun"));
+                    else
+                        namesDB->add(catalogNumber, objName.substr(startPos, length));
                     startPos = next;
                 }
             }
