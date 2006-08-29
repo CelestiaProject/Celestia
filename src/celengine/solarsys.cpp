@@ -206,15 +206,76 @@ static void FillinSurface(Hash* surfaceData,
 }
 
 
+// Set up the orbit barycenter for a body. By default, it is the parent of the
+// object, but an alternate barycenter may be specified with the OrbitBarycenter
+// field.
+static Selection GetOrbitBarycenter(const string& name,
+                                    PlanetarySystem* system,
+                                    Universe& universe,
+                                    Hash* bodyData)
+{
+    // Use the orbit barycenter specified in the definition; otherwise default to the
+    // parent object.
+    string orbitBarycenterName;
+    Selection orbitBarycenter;
+    if (bodyData->getString("OrbitBarycenter", orbitBarycenterName))
+    {
+        // An explicit orbit barycenter was given . . .
+        orbitBarycenter = universe.findPath(orbitBarycenterName, NULL, 0);
+        
+        if (orbitBarycenter.empty())
+        {
+            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' not found.\n");
+            return Selection();
+        }
+        else if (orbitBarycenter.body() == NULL && orbitBarycenter.star() == NULL)
+        {
+            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' is not a star or planet.\n");       
+            return Selection();
+        }
+    }
+    else
+    {
+        // The default orbit barycenter is the parent object
+        Body* primary = system->getPrimaryBody();
+        if (primary != NULL)
+            orbitBarycenter = Selection(primary);
+        else
+            orbitBarycenter = Selection(system->getStar());
+    }    
+    
+    // The barycenter must be in the same star system as the object we're creating
+    if (orbitBarycenter.body())
+    {
+        if (system->getStar() != orbitBarycenter.body()->getSystem()->getStar())
+        {
+            cerr << "OrbitBarycenter" << _(" of ") << name << _(" must be in same star system\n");
+            return Selection();
+        }
+    }
+    else if (orbitBarycenter.star())
+    {
+        if (system->getStar() != orbitBarycenter.star())
+        {
+            cerr << "OrbitBarycenter" << _(" of ") << name << _(" must be in same star system\n");
+            return Selection();
+        }
+    }
+    
+    return orbitBarycenter;
+}
+
+
 // Create a body (planet or moon) using the values from a hash
 // The usePlanetsUnits flags specifies whether period and semi-major axis
 // are in years and AU rather than days and kilometers
-static Body* CreatePlanet(PlanetarySystem* system,
+static Body* CreatePlanet(const string& name,
+                          PlanetarySystem* system,
+                          Universe& universe,
                           Body* existingBody,
                           Hash* planetData,
                           const string& path,
-                          Disposition disposition,
-                          bool usePlanetUnits = true)
+                          Disposition disposition)
 {
     Body* body = NULL;
   
@@ -228,7 +289,26 @@ static Body* CreatePlanet(PlanetarySystem* system,
         body = new Body(system);
     }
 
-    Orbit* orbit = CreateOrbit(system, planetData, path, usePlanetUnits);
+    Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, planetData);
+    bool orbitsPlanet = false;
+    if (orbitBarycenter.body())
+    {
+        body->setOrbitBarycenter(orbitBarycenter.body());
+        orbitsPlanet = true;
+    }
+    else if (orbitBarycenter.star())
+    {
+        body->setOrbitBarycenter(NULL);
+    }
+    else
+    {
+        // Bad orbit barycenter specified
+        if (body != existingBody)
+            delete body;
+        return NULL;
+    }
+    
+    Orbit* orbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
 
     if (orbit != NULL)
     {
@@ -239,7 +319,8 @@ static Body* CreatePlanet(PlanetarySystem* system,
     {
         DPRINTF(0, "No valid orbit specified for object '%s'; skipping . . .\n",
                 body->getName().c_str());
-        delete body;
+        if (body != existingBody)
+            delete body;
         return NULL;
     }
 
@@ -470,6 +551,103 @@ static Body* CreatePlanet(PlanetarySystem* system,
 }
 
 
+// Create a barycenter object using the values from a hash
+static Body* CreateBarycenter(const string& name,
+                              PlanetarySystem* system,
+                              Universe& universe,
+                              Body* existingBody,
+                              Hash* barycenterData,
+                              const string& path,
+                              Disposition disposition)
+{
+    Body* body = NULL;
+  
+    if (disposition == ModifyObject)
+    {
+        body = existingBody;
+    }
+
+    if (body == NULL)
+    {
+        body = new Body(system);
+    }
+
+    body->setRadius(1.0f);
+    body->setClassification(Body::Invisible);
+#if 0    
+    // Use the orbit barycenter specified in the definition; otherwise default to the
+    // parent object.
+    string orbitBarycenterName;
+    Selection orbitBarycenter;
+    if (barycenterData->getString("OrbitBarycenter", orbitBarycenterName))
+    {
+        orbitBarycenter = universe.findPath(orbitBarycenterName, NULL, 0);
+        if (orbitBarycenter.body() == NULL && orbitBarycenter.star() == NULL)
+        {
+            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' not found.\n");
+            if (body != existingBody)
+                delete body;
+            return NULL;
+        }
+    }
+    else
+    {
+        // The default orbit barycenter is the parent object
+        orbitBarycenter = Selection(system->getPrimaryBody());
+    }    
+    
+    // The barycenter must be in the same star system as the object we're creating
+    bool orbitsPlanet = false;
+    if (orbitBarycenter.body())
+    {
+        if (system->getStar() != orbitBarycenter.body()->getSystem()->getStar())
+        {
+            cerr << "OrbitBarycenter" << _(" of ") << name << _(" must be in same star system\n");
+            if (body != existingBody)
+                delete body;
+            return NULL;
+        }
+        orbitsPlanet = true;
+    }
+#endif
+    Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, barycenterData);
+    bool orbitsPlanet = false;
+    if (orbitBarycenter.body())
+    {
+        body->setOrbitBarycenter(orbitBarycenter.body());
+        orbitsPlanet = true;
+    }
+    else if (orbitBarycenter.star())
+    {
+        body->setOrbitBarycenter(NULL);
+    }
+    else
+    {
+        // Bad orbit barycenter specified
+        if (body != existingBody)
+            delete body;
+        return NULL;
+    }
+    
+    Orbit* orbit = CreateOrbit(system, barycenterData, path, !orbitsPlanet);
+    if (orbit != NULL)
+    {
+        body->setOrbit(orbit);
+    }
+
+    if (body->getOrbit() == NULL)
+    {
+        DPRINTF(0, "No valid orbit specified for barycenter '%s'; skipping . . .\n",
+                name.c_str());
+        if (body != existingBody)        
+            delete body;
+        return NULL;
+    }
+    
+    return body;
+}                          
+
+
 bool LoadSolarSystemObjects(istream& in,
                             Universe& universe,
                             const std::string& directory)
@@ -539,9 +717,9 @@ bool LoadSolarSystemObjects(istream& in,
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
 
-        if (itemType == "Body")
+        if (itemType == "Body" || itemType == "Barycenter")
         {
-            bool orbitsPlanet = false;
+            //bool orbitsPlanet = false;
             if (parent.star() != NULL)
             {
                 SolarSystem* solarSystem = universe.getSolarSystem(parent.star());
@@ -564,7 +742,7 @@ bool LoadSolarSystemObjects(istream& in,
                     parentSystem = new PlanetarySystem(parent.body());
                     parent.body()->setSatellites(parentSystem);
                 }
-                orbitsPlanet = true;
+                //orbitsPlanet = true;
             }
             else
             {
@@ -582,7 +760,12 @@ bool LoadSolarSystemObjects(istream& in,
                         parentName << " " <<  name << '\n';
                 }
                 
-                Body* body = CreatePlanet(parentSystem, existingBody, objectData, directory, disposition, !orbitsPlanet);
+                Body* body;
+                if (itemType == "Barycenter")
+                    body = CreateBarycenter(name, parentSystem, universe, existingBody, objectData, directory, disposition);
+                else
+                    body = CreatePlanet(name, parentSystem, universe, existingBody, objectData, directory, disposition);
+                    
                 if (body != NULL)
                 {
                     body->setName(name);

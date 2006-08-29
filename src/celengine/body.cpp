@@ -1,6 +1,6 @@
 // body.cpp
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -20,9 +20,9 @@
 
 using namespace std;
 
-
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
+    orbitBarycenter(_system ? _system->getPrimaryBody() : NULL),
     orbitRefPlane(astro::BodyEquator),
     radius(10000.0f),
     mass(0.0f),
@@ -90,6 +90,21 @@ void Body::setOrbit(Orbit* _orbit)
     orbit = _orbit;
 }
 
+
+const Body* Body::getOrbitBarycenter() const
+{
+    return orbitBarycenter;
+}
+
+
+void Body::setOrbitBarycenter(const Body* barycenterBody)
+{
+    assert(barycenterBody == NULL || barycenterBody->getSystem()->getStar() == getSystem()->getStar());
+    if (barycenterBody != NULL)
+    {
+    }
+    orbitBarycenter = barycenterBody;
+}
 
 astro::ReferencePlane Body::getOrbitReferencePlane() const
 {
@@ -286,8 +301,8 @@ Mat4d Body::getLocalToHeliocentric(double when) const
     }
  
     // Recurse up the hierarchy . . .
-    if (system != NULL && system->getPrimaryBody() != NULL)
-        frame = frame * system->getPrimaryBody()->getLocalToHeliocentric(when);
+    if (orbitBarycenter != NULL)
+        frame = frame * orbitBarycenter->getLocalToHeliocentric(when);
 
     return frame;
 }
@@ -308,11 +323,11 @@ Quatd Body::getEclipticalToEquatorial(double when) const
     Quatd q =
         Quatd::xrotation(-rotationElements.obliquity) *
         Quatd::yrotation(-ascendingNode);
-
+        
     // Recurse up the hierarchy . . .
-    if (system != NULL && system->getPrimaryBody() != NULL)
-        q = q * system->getPrimaryBody()->getEclipticalToEquatorial(when);
-
+    if (orbitBarycenter != NULL)
+        q = q * orbitBarycenter->getEclipticalToEquatorial(when);
+        
     return q;
 }
 
