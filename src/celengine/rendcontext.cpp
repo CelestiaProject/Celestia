@@ -372,6 +372,7 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius
 
 GLSL_RenderContext::~GLSL_RenderContext()
 {    
+    glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
