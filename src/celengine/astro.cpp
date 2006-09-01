@@ -30,6 +30,49 @@ const double astro::LunarMass = 7.354e22;
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
 
+// Difference in seconds between Terrestrial Time and International
+// Atomic Time
+static const double dTA = 32.184;
+
+struct LeapSecondRecord
+{
+    int seconds;
+    double t;
+};
+
+
+// Table of leap second insertions. The leap second always
+// appears as the last second of the day immediately prior
+// to the date in the table.
+static const LeapSecondRecord LeapSeconds[] =
+{
+    { 10, 2441317.5 }, // 1 Jan 1972
+    { 11, 2441499.5 }, // 1 Jul 1972
+    { 12, 2441683.5 }, // 1 Jan 1973
+    { 13, 2442048.5 }, // 1 Jan 1974
+    { 14, 2442413.5 }, // 1 Jan 1975
+    { 15, 2442778.5 }, // 1 Jan 1976
+    { 16, 2443144.5 }, // 1 Jan 1977
+    { 17, 2443509.5 }, // 1 Jan 1978
+    { 18, 2443874.5 }, // 1 Jan 1979
+    { 19, 2444239.5 }, // 1 Jan 1980
+    { 20, 2444786.5 }, // 1 Jul 1981
+    { 21, 2445151.5 }, // 1 Jul 1982
+    { 22, 2445516.5 }, // 1 Jul 1983
+    { 23, 2446247.5 }, // 1 Jul 1985
+    { 24, 2447161.5 }, // 1 Jan 1988
+    { 25, 2447892.5 }, // 1 Jan 1990
+    { 26, 2448257.5 }, // 1 Jan 1991
+    { 27, 2448804.5 }, // 1 Jul 1992
+    { 28, 2449169.5 }, // 1 Jul 1993
+    { 29, 2449534.5 }, // 1 Jul 1994
+    { 30, 2450083.5 }, // 1 Jan 1996
+    { 31, 2450630.5 }, // 1 Jul 1997
+    { 32, 2451179.5 }, // 1 Jan 1999
+    { 33, 2453736.5 }, // 1 Jan 2006
+};
+
+
 static Mat3f equatorialToCelestial = Mat3f::xrotation(degToRad(23.4392911f));
 static Mat3d equatorialToCelestiald = Mat3d::xrotation(degToRad(23.4392911));
 
@@ -54,16 +97,6 @@ float astro::absMagToLum(float mag)
 float astro::appMagToLum(float mag, float lyrs)
 {
     return absMagToLum(appToAbsMag(mag, lyrs));
-}
-
-float astro::absToAppMag(float absMag, float lyrs)
-{
-    return (float) (absMag - 5 + 5 * log10(lyrs / LY_PER_PARSEC));
-}
-
-float astro::appToAbsMag(float appMag, float lyrs)
-{
-    return (float) (appMag + 5 - 5 * log10(lyrs / LY_PER_PARSEC));
 }
 
 float astro::lightYearsToParsecs(float ly)
@@ -114,11 +147,6 @@ float astro::lightYearsToAU(float ly)
 double astro::lightYearsToAU(double ly)
 {
     return ly * AU_PER_LY;
-}
-
-float astro::AUtoLightYears(float au)
-{
-    return au / (float) AU_PER_LY;
 }
 
 float astro::AUtoKilometers(float au)
@@ -322,6 +350,7 @@ double astro::meanEclipticObliquity(double jd)
     return 23.439292 - de;
 }
 
+
 astro::Date::Date()
 {
     year = 0;
@@ -363,8 +392,8 @@ astro::Date::Date(double jd)
 
     double dday = c - e - (int) (30.6001 * f) + ((jd + 0.5) - (int) (jd + 0.5));
 
-    /* This following used to be 14.0, but gcc was computing it incorrectly, so
-       it was changed to 14 */
+    // This following used to be 14.0, but gcc was computing it incorrectly, so
+    // it was changed to 14
     month = f - 1 - 12 * (int) (f / 14);
     year = d - 4715 - (int) ((7.0 + month) / 10.0);
     day = (int) dday;
@@ -403,6 +432,7 @@ astro::Date::operator double() const
 }
 
 
+// TODO: need option to parse UTC times (with leap seconds)
 bool astro::parseDate(const string& s, astro::Date& date)
 {
     int year = 0;
@@ -423,7 +453,7 @@ bool astro::parseDate(const string& s, astro::Date& date)
         if (hour > 23 || minute > 59 || second > 59)
             return false;
 
-        // Cheesy days/month calculation . . .
+        // Days / month calculation . . .
         int maxDay = 31 - ((0xa50 >> month) & 0x1);
         if (month == 2)
         {
@@ -433,7 +463,7 @@ bool astro::parseDate(const string& s, astro::Date& date)
             else
                 maxDay = 28;
         }
-        if (day > (unsigned int)maxDay || day < 1)
+        if (day > (unsigned int) maxDay || day < 1)
             return false;
 
         date.year = year;
@@ -459,4 +489,158 @@ ostream& operator<<(ostream& s, const astro::Date d)
     s << setw(2) << setfill('0') << (int) d.seconds;
     return s;
 }
+
+
+/********* Time scale conversion functions ***********/
+
+// Convert from Atomic Time to UTC
+astro::Date
+astro::TAItoUTC(double tai)
+{
+    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
+    double dAT = LeapSeconds[0].seconds;
+    double dD = 0.0;
+    int extraSecs = 0;
+
+    for (unsigned int i = nRecords - 1; i > 0; i--)
+    {
+        if (tai - LeapSeconds[i].seconds / 86400.0 >= LeapSeconds[i].t)
+        {
+            dAT = LeapSeconds[i].seconds;
+            break;
+        }
+        else if (tai - LeapSeconds[i - 1].seconds / 86400.0 >= LeapSeconds[i].t)
+        {
+            dAT = LeapSeconds[i].seconds;
+            extraSecs = LeapSeconds[i].seconds - LeapSeconds[i - 1].seconds;
+            break;
+        }
+    }
+
+    Date utcDate(tai - dAT / 86400.0);
+    utcDate.seconds += extraSecs;
+
+    return utcDate;
+}
+
+
+// Convert from UTC to Atomic Time
+double
+astro::UTCtoTAI(const astro::Date& utc)
+{
+    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
+    double dAT = LeapSeconds[0].seconds;
+    double utcjd = (double) Date(utc.year, utc.month, utc.day);
+
+    for (unsigned int i = nRecords - 1; i > 0; i--)
+    {
+        if (utcjd >= LeapSeconds[i].t)
+        {
+            dAT = LeapSeconds[i].seconds;
+            break;
+        }
+    }
+
+    double tai = utcjd + (utc.hour * 1440.0 + utc.minute * 60.0 + utc.seconds + dAT) / 86400.0;
+
+    return tai;
+}
+
+
+// Convert from Terrestrial Time to Atomic Time
+double
+astro::TTtoTAI(double tt)
+{
+    return tt - dTA / 86400.0;
+}
+
+
+// Convert from Atomic Time to Terrestrial TIme
+double
+astro::TAItoTT(double tai)
+{
+    return tai + dTA / 86400.0;
+}
+
+
+// Correction for converting from Terrestrial Time to Barycentric Dynamical
+// Time. Constants and algorithm from "Time Routines in CSPICE",
+// http://sohowww.nascom.nasa.gov/solarsoft/stereo/gen/exe/icy/doc/time.req
+static const double K  = 1.657e-3;
+static const double EB = 1.671e-2;
+static const double M0 = 6.239996;
+static const double M1 = 1.99096871e-7;
+
+double TDBcorrection(double tdb)
+{
+    // t is seconds from J2000.0
+    double t = (tdb - astro::J2000) * 86400.0; 
+
+    // Approximate calculation of Earth's mean anomaly
+    double M = M0 + M1 * t;                    
+
+    // Compute the eccentric anomaly
+    double E = M + EB * sin(M);
+
+    return K * sin(E);
+}
+
+
+// Convert from Terrestrial Time to Barycentric Dynamical Time
+double
+astro::TTtoTDB(double tt)
+{
+    return tt + TDBcorrection(tt);
+}
+
+
+// Convert from Barycentric Dynamical Time to Terrestrial Time
+double
+astro::TDBtoTT(double tdb)
+{
+    return tdb - TDBcorrection(tdb);
+}
+
+
+// Convert from TAI to Julian Date UTC. The Julian Date UTC functions should
+// generally be avoided because there's no provision for dealing with leap
+// seconds.
+double
+astro::JDUTCtoTAI(double utc)
+{
+    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
+    double dAT = LeapSeconds[0].seconds;
+
+    for (unsigned int i = nRecords - 1; i > 0; i--)
+    {
+        if (utc > LeapSeconds[i].t)
+        {
+            dAT = LeapSeconds[i].seconds;
+            break;
+        }
+    }
+
+    return utc + dAT / 86400.0;
+}
+
+
+// Convert from Julian Date UTC to TAI
+double
+astro::TAItoJDUTC(double tai)
+{
+    unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
+    double dAT = LeapSeconds[0].seconds;
+
+    for (unsigned int i = nRecords - 1; i > 0; i--)
+    {
+        if (tai - LeapSeconds[i - 1].seconds / 86400.0 > LeapSeconds[i].t)
+        {
+            dAT = LeapSeconds[i].seconds;
+            break;
+        }
+    }
+
+    return tai - dAT / 86400.0;
+}
+
 

@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <string>
+#include <cmath>
 #include <celmath/vecmath.h>
 #include <celengine/univcoord.h>
 
@@ -62,12 +63,45 @@ namespace astro
         Equator_J2000,
     };
 
+    // Time scale conversions
+    // UTC - Coordinated Universal Time
+    // TAI - International Atomic Time
+    // TT  - Terrestrial Time
+    // TCB - Barycentric Coordinate Time
+    // TDB - Barycentric Dynamical Time
+
+    // Convert to and from UTC dates
+    double UTCtoTAI(const astro::Date& utc);
+    astro::Date TAItoUTC(double tai);
+
+    // Convert among uniform time scales
+    double TTtoTAI(double tt);
+    double TAItoTT(double tai);
+    double TTtoTDB(double tt);
+    double TDBtoTT(double tdb);
+
+    // Conversions to and from Julian Date UTC--other time systems
+    // should be prefered.
+    double JDUTCtoTAI(double utc);
+    double TAItoJDUTC(double tai);
+
+    // Magnitude conversions
     float lumToAbsMag(float lum);
     float lumToAppMag(float lum, float lyrs);
     float absMagToLum(float mag);
     float appMagToLum(float mag, float lyrs);
-    float absToAppMag(float absMag, float lyrs);
-    float appToAbsMag(float appMag, float lyrs);
+
+    template<class T> T absToAppMag(T absMag, T lyrs)
+    {
+        return (T) (absMag - 5 + 5 * log10(lyrs / LY_PER_PARSEC));
+    }
+
+    template<class T> T appToAbsMag(T appMag, T lyrs)
+    {
+        return (T) (appMag + 5 - 5 * log10(lyrs / LY_PER_PARSEC));
+    }
+
+    // Distance conversions
     float lightYearsToParsecs(float);
     double lightYearsToParsecs(double);
     float parsecsToLightYears(float);
@@ -78,7 +112,13 @@ namespace astro
     double kilometersToLightYears(double);
     float lightYearsToAU(float);
     double lightYearsToAU(double);
-    float AUtoLightYears(float);
+
+    // TODO: templatize the rest of the conversion functions
+    template<class T> T AUtoLightYears(T ly)
+    {
+        return ly * (T) AU_PER_LY;
+    }
+
     float AUtoKilometers(float);
     double AUtoKilometers(double);
     float kilometersToAU(float);
