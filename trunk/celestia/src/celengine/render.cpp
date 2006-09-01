@@ -76,6 +76,8 @@ static const float RenderDistance       = 50.0f;
 
 static const float MaxScaledDiscStarSize = 8.0f;
 
+static const float MinRelativeOccluderRadius = 0.005f;
+
 
 // The minimum apparent size of an objects orbit in pixels before we display
 // a label for it.  This minimizes label clutter.
@@ -5279,7 +5281,7 @@ bool Renderer::testEclipse(const Body& receiver,
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
-    if (caster.getRadius() * 100 >= receiver.getRadius() &&
+    if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
         caster.getClassification() != Body::Invisible &&
         caster.extant(now) &&
         caster.getModel() == InvalidResource)
