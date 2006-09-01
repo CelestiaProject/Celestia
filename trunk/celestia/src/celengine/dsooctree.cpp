@@ -96,16 +96,16 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
     double minDistance = (obsPosition - cellCenterPos).length() - scale * DSOOctree::SQRT3;
 
     // Process the objects in this node
-    double dimmest     = minDistance > 0 ? astro::appToAbsMag(limitingFactor, minDistance) : 1000;
+    double dimmest     = minDistance > 0.0 ? astro::appToAbsMag((double) limitingFactor, minDistance) : 1000.0;
 
     for (unsigned int i=0; i<nObjects; ++i)
     {
         DeepSkyObject* _obj = _firstObject[i];
         float  absMag      = _obj->getAbsoluteMagnitude();
-        if ( absMag < dimmest)
+        if (absMag < dimmest)
         {
             double distance    = obsPosition.distanceTo(_obj->getPosition()) - _obj->getRadius();
-            float appMag = (distance >= 32.6167)? astro::absToAppMag(absMag, distance): absMag;
+            float appMag = (float) ((distance >= 32.6167) ? astro::absToAppMag((double) absMag, distance) : absMag);
 
             if ( appMag < limitingFactor)
                 processor.process(_obj, distance, absMag);
@@ -114,7 +114,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
 
     // See if any of the objects in child nodes are potentially included
     // that we need to recurse deeper.
-    if (minDistance <= 0 || astro::absToAppMag(exclusionFactor, minDistance) <= limitingFactor)
+    if (minDistance <= 0.0 || astro::absToAppMag((double) exclusionFactor, minDistance) <= limitingFactor)
         // Recurse into the child nodes
         if (_children != NULL)
             for (int i=0; i<8; ++i)
