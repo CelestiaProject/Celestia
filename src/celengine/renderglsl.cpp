@@ -258,6 +258,8 @@ void renderModel_GLSL(Model* model,
     {
         Mesh::Material m;
         m.diffuse = ri.color;
+        m.specular = ri.specularColor;
+        m.specularPower = ri.specularPower;
         m.maps[Mesh::DiffuseMap] = texOverride;
         rc.makeCurrent(m);
         rc.lock();
@@ -274,6 +276,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
                        Atmosphere* atmosphere,
                        Texture* cloudTex,
+                       Texture* cloudNormalMap,
                        float texOffset,
                        RingSystem* rings,
                        float radius,
@@ -283,6 +286,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        const Frustum& frustum,
                        const GLContext& context)
 {
+    Texture* textures[4] = { NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
 
     glDisable(GL_LIGHTING);
@@ -294,11 +298,16 @@ void renderClouds_GLSL(const RenderInfo& ri,
     if (cloudTex != NULL)
     {
         shadprop.texUsage = ShaderProperties::DiffuseTexture;
-        nTextures++;
+        textures[nTextures++] = cloudTex;
     }
 
-    if (rings != NULL)
-        //(renderFlags & ShowRingShadows) != 0)
+    if (cloudNormalMap != NULL)
+    {
+        shadprop.texUsage |= ShaderProperties::NormalTexture;
+        textures[nTextures++] = cloudNormalMap;
+    }
+    
+    if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
     {
         Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
@@ -374,10 +383,12 @@ void renderClouds_GLSL(const RenderInfo& ri,
         prog->setEclipseShadowParameters(ls, cloudRadius, planetMat);
 
     unsigned int attributes = LODSphereMesh::Normals;
+    if (cloudNormalMap != NULL)
+        attributes |= LODSphereMesh::Tangents;
     g_lodSphere->render(context,
-                        LODSphereMesh::Normals,
+                        attributes,
                         frustum, ri.pixWidth,
-                        cloudTex);
+                        textures[0], textures[1], textures[2], textures[3]);
 
     prog->textureOffset = 0.0f;
 

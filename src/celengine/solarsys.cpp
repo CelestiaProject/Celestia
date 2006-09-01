@@ -498,6 +498,14 @@ static Body* CreatePlanet(const string& name,
                                                         path,
                                                         TextureInfo::WrapTexture);
                 }
+                
+                string cloudNormalMap;
+                if (atmosData->getString("CloudNormalMap", cloudNormalMap))
+                {
+                    atmosphere->cloudNormalMap.setTexture(cloudNormalMap,
+                                                           path,
+                                                           TextureInfo::WrapTexture);
+                }
 
                 body->setAtmosphere(*atmosphere);
                 if (disposition != ModifyObject)
