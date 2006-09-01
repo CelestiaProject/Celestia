@@ -22,6 +22,9 @@
 
 using namespace std;
 
+
+
+
 Eclipse::Eclipse(int Y, int M, int D) :
     body(NULL)
 {
@@ -35,14 +38,17 @@ Eclipse::Eclipse(double JD) :
 }
 
 
+// TODO: share this constant and function with render.cpp
+static const float MinRelativeOccluderRadius = 0.005f;
+
 bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
-                 double now) const
+                                double now) const
 {
     // Ignore situations where the shadow casting body is much smaller than
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
-    if (caster.getRadius() * 100 >= receiver.getRadius() &&
+    if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
         caster.getModel() == InvalidResource)
     {
         // All of the eclipse related code assumes that both the caster
