@@ -28,6 +28,7 @@ class Atmosphere
         cloudHeight(0.0f),
         cloudSpeed(0.0f),
         cloudTexture(),
+        cloudNormalMap(),
         mieCoeff(0.0f),
         mieScaleHeight(0.0f),
         miePhaseAsymmetry(0.0f),
@@ -46,6 +47,7 @@ class Atmosphere
     float cloudHeight;
     float cloudSpeed;
     MultiResTexture cloudTexture;
+    MultiResTexture cloudNormalMap;
     
     float mieCoeff;
     float mieScaleHeight;

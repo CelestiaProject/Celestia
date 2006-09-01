@@ -1043,8 +1043,8 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     {
         if (props.texUsage & ShaderProperties::DiffuseTexture)
         {
-            source += "diffTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
-            source += "diffTexCoord.x += textureOffset;\n";
+            source += "diffTexCoord = " + TexCoord2D(nTexCoords) + " + vec2(textureOffset, 0.0);\n";
+            //source += "diffTexCoord.x += textureOffset;\n";
             nTexCoords++;
         }
 
@@ -1052,7 +1052,8 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         {
             if (props.texUsage & ShaderProperties::NormalTexture)
             {
-                source += "normTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                source += "normTexCoord = " + TexCoord2D(nTexCoords) + " + vec2(textureOffset, 0.0);\n";
+                //source += "normTexCoord.x += textureOffset;\n";
                 nTexCoords++;
             }
 
