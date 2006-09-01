@@ -4906,14 +4906,19 @@ void Renderer::renderObject(Point3f pos,
     }
     
     // Get cloud layer parameters
-    Texture* cloudTex = NULL;
-    float cloudTexOffset = 0.0f;
+    Texture* cloudTex       = NULL;
+    Texture* cloudNormalMap = NULL;
+    float cloudTexOffset    = 0.0f;
     if (obj.atmosphere != NULL)
     {
         Atmosphere* atmosphere = const_cast<Atmosphere*>(obj.atmosphere); // Ugly cast required because MultiResTexture::find() is non-const
-        if ((renderFlags & ShowCloudMaps) != 0 &&
-            atmosphere->cloudTexture.tex[textureResolution] != InvalidResource)
-            cloudTex = atmosphere->cloudTexture.find(textureResolution);
+        if ((renderFlags & ShowCloudMaps) != 0)
+        {
+            if (atmosphere->cloudTexture.tex[textureResolution] != InvalidResource)
+                cloudTex = atmosphere->cloudTexture.find(textureResolution);
+            if (atmosphere->cloudNormalMap.tex[textureResolution] != InvalidResource)
+                cloudNormalMap = atmosphere->cloudNormalMap.find(textureResolution);
+        }
         if (atmosphere->cloudSpeed != 0.0f)
             cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0));
     }
@@ -5109,6 +5114,7 @@ void Renderer::renderObject(Point3f pos,
                     renderClouds_GLSL(ri, ls,
                                       atmosphere,
                                       cloudTex,
+                                      cloudNormalMap,
                                       cloudTexOffset,
                                       obj.rings,
                                       radius,
