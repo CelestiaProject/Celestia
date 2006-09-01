@@ -71,6 +71,7 @@ class Texture
     int getDepth() const;
 
     bool hasAlpha() const { return alpha; }
+    bool isCompressed() const { return compressed; }
 
     enum AddressMode
     {
@@ -88,6 +89,7 @@ class Texture
 
  protected:
     bool alpha;
+    bool compressed;
 
  private:
     int width;

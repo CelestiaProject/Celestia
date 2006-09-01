@@ -342,7 +342,7 @@ static int CalcMipLevelCount(int w, int h)
 
 
 Texture::Texture(int w, int h, int d) :
-    width(w), height(h), depth(d), alpha(false)
+    width(w), height(h), depth(d), alpha(false), compressed(false)
 {
 }
 
@@ -466,6 +466,7 @@ ImageTexture::ImageTexture(Image& img,
     }
 
     alpha = img.hasAlpha();
+    compressed = img.isCompressed();
 }
 
 
@@ -519,6 +520,7 @@ TiledTexture::TiledTexture(Image& img,
     }
 
     alpha = img.hasAlpha();
+    compressed = img.isCompressed();
 
     bool mipmap = mipMapMode != NoMipMaps;
     bool precomputedMipMaps = false;

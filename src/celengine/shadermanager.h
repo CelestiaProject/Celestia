@@ -33,16 +33,17 @@ class ShaderProperties
 
  enum
  {
-     DiffuseTexture         = 0x01,
-     SpecularTexture        = 0x02,
-     NormalTexture          = 0x04,
-     NightTexture           = 0x08,
-     SpecularInDiffuseAlpha = 0x10,
-     RingShadowTexture      = 0x20,
-     OverlayTexture         = 0x40,
-     CloudShadowTexture     = 0x80,
-     Scattering             = 0x2000,
-     SharedTextureCoords    = 0x8000,
+     DiffuseTexture          =   0x01,
+     SpecularTexture         =   0x02,
+     NormalTexture           =   0x04,
+     NightTexture            =   0x08,
+     SpecularInDiffuseAlpha  =   0x10,
+     RingShadowTexture       =   0x20,
+     OverlayTexture          =   0x40,
+     CloudShadowTexture      =   0x80,
+     CompressedNormalTexture =  0x100,
+     Scattering              = 0x2000,
+     SharedTextureCoords     = 0x8000,
  };
 
  enum
