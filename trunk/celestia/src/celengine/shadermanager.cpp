@@ -1027,6 +1027,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     unsigned int nTexCoords = 0;
     
+    // Output the texture coordinates. Use just a single texture coordinate if all textures are mapped
+    // identically. The texture offset is added for cloud maps; specular and night texture are not offset
+    // because cloud layers never have these textures.
     if (props.hasSharedTextureCoords())
     {
         if (props.texUsage & (ShaderProperties::DiffuseTexture  |
@@ -1044,7 +1047,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         if (props.texUsage & ShaderProperties::DiffuseTexture)
         {
             source += "diffTexCoord = " + TexCoord2D(nTexCoords) + " + vec2(textureOffset, 0.0);\n";
-            //source += "diffTexCoord.x += textureOffset;\n";
             nTexCoords++;
         }
 
@@ -1053,7 +1055,6 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             if (props.texUsage & ShaderProperties::NormalTexture)
             {
                 source += "normTexCoord = " + TexCoord2D(nTexCoords) + " + vec2(textureOffset, 0.0);\n";
-                //source += "normTexCoord.x += textureOffset;\n";
                 nTexCoords++;
             }
 
@@ -1071,6 +1072,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         }
     }    
 
+    // Shadow texture coordinates are generated in the shader
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
         source += "vec3 ringShadowProj;\n";
@@ -1315,12 +1317,21 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         // Get the normal in tangent space. Ordinarily it comes from the normal texture, but if one
         // isn't provided, we'll simulate a smooth surface by using a constant (in tangent space)
         // normal of [ 0 0 1 ]
-        // TODO: normalizing the filtered normal texture value noticeably improves the appearance; add
-        // an option for this.
         if (props.texUsage & ShaderProperties::NormalTexture)
         {
-            //source += "vec3 n = normalize(texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0));\n";
-            source += "vec3 n = texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0);\n";
+            if (props.texUsage & ShaderProperties::CompressedNormalTexture)
+            {
+                source += "vec3 n;\n";
+                source += "n.xy = texture2D(normTex, " + normTexCoord + ".st).ga * 2.0 - vec2(1.0, 1.0);\n";
+                source += "n.z = sqrt(1.0 - n.x * n.x - n.y * n.y);\n";                
+            }
+            else
+            {
+                // TODO: normalizing the filtered normal texture value noticeably improves the appearance; add
+                // an option for this.
+                //source += "vec3 n = normalize(texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0));\n";
+                source += "vec3 n = texture2D(normTex, " + normTexCoord + ".st).xyz * 2.0 - vec3(1.0, 1.0, 1.0);\n";
+            }
         }
         else
         {

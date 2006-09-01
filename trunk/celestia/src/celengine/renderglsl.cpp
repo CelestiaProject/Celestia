@@ -82,6 +82,8 @@ void renderSphere_GLSL(const RenderInfo& ri,
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
         textures[nTextures++] = ri.bumpTex;
+        if (ri.bumpTex->isCompressed())
+            shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
 
     if (ri.specularColor != Color::Black)
@@ -305,6 +307,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
         textures[nTextures++] = cloudNormalMap;
+        if (cloudNormalMap->isCompressed())
+            shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
     
     if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
