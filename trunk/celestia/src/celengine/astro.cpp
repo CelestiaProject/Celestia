@@ -504,12 +504,12 @@ astro::TAItoUTC(double tai)
 
     for (unsigned int i = nRecords - 1; i > 0; i--)
     {
-        if (tai - LeapSeconds[i].seconds / 86400.0 >= LeapSeconds[i].t)
+        if (tai - secsToDays(LeapSeconds[i].seconds) >= LeapSeconds[i].t)
         {
             dAT = LeapSeconds[i].seconds;
             break;
         }
-        else if (tai - LeapSeconds[i - 1].seconds / 86400.0 >= LeapSeconds[i].t)
+        else if (tai - secsToDays(LeapSeconds[i - 1].seconds) >= LeapSeconds[i].t)
         {
             dAT = LeapSeconds[i].seconds;
             extraSecs = LeapSeconds[i].seconds - LeapSeconds[i - 1].seconds;
@@ -517,7 +517,7 @@ astro::TAItoUTC(double tai)
         }
     }
 
-    Date utcDate(tai - dAT / 86400.0);
+    Date utcDate(tai - secsToDays(dAT));
     utcDate.seconds += extraSecs;
 
     return utcDate;
@@ -541,7 +541,7 @@ astro::UTCtoTAI(const astro::Date& utc)
         }
     }
 
-    double tai = utcjd + (utc.hour * 1440.0 + utc.minute * 60.0 + utc.seconds + dAT) / 86400.0;
+    double tai = utcjd + secsToDays(utc.hour * 3600.0 + utc.minute * 60.0 + utc.seconds + dAT);
 
     return tai;
 }
@@ -551,7 +551,7 @@ astro::UTCtoTAI(const astro::Date& utc)
 double
 astro::TTtoTAI(double tt)
 {
-    return tt - dTA / 86400.0;
+    return tt - secsToDays(dTA);
 }
 
 
@@ -559,7 +559,7 @@ astro::TTtoTAI(double tt)
 double
 astro::TAItoTT(double tai)
 {
-    return tai + dTA / 86400.0;
+    return tai + secsToDays(dTA);
 }
 
 
@@ -571,10 +571,11 @@ static const double EB = 1.671e-2;
 static const double M0 = 6.239996;
 static const double M1 = 1.99096871e-7;
 
+// Input is a TDB Julian Date; result is in seconds
 double TDBcorrection(double tdb)
 {
     // t is seconds from J2000.0
-    double t = (tdb - astro::J2000) * 86400.0; 
+    double t = astro::daysToSecs(tdb - astro::J2000); 
 
     // Approximate calculation of Earth's mean anomaly
     double M = M0 + M1 * t;                    
@@ -590,7 +591,7 @@ double TDBcorrection(double tdb)
 double
 astro::TTtoTDB(double tt)
 {
-    return tt + TDBcorrection(tt);
+    return tt + secsToDays(TDBcorrection(tt));
 }
 
 
@@ -598,7 +599,23 @@ astro::TTtoTDB(double tt)
 double
 astro::TDBtoTT(double tdb)
 {
-    return tdb - TDBcorrection(tdb);
+    return tdb - secsToDays(TDBcorrection(tdb));
+}
+
+
+// Convert from Coordinated Universal time to Barycentric Dynamical Time
+astro::Date
+astro::TDBtoUTC(double tdb)
+{
+    return TAItoUTC(TTtoTAI(TDBtoTT(tdb)));
+}
+
+
+// Convert from Barycentric Dynamical Time to UTC
+double
+astro::UTCtoTDB(const astro::Date& utc)
+{
+    return TTtoTDB(TAItoTT(UTCtoTAI(utc)));
 }
 
 
@@ -620,7 +637,7 @@ astro::JDUTCtoTAI(double utc)
         }
     }
 
-    return utc + dAT / 86400.0;
+    return utc + secsToDays(dAT);
 }
 
 
@@ -633,14 +650,14 @@ astro::TAItoJDUTC(double tai)
 
     for (unsigned int i = nRecords - 1; i > 0; i--)
     {
-        if (tai - LeapSeconds[i - 1].seconds / 86400.0 > LeapSeconds[i].t)
+        if (tai - secsToDays(LeapSeconds[i - 1].seconds) > LeapSeconds[i].t)
         {
             dAT = LeapSeconds[i].seconds;
             break;
         }
     }
 
-    return tai - dAT / 86400.0;
+    return tai - secsToDays(dAT);
 }
 
 
