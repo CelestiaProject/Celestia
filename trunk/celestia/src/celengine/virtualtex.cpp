@@ -232,6 +232,12 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
 
     if (isPow2(img->getWidth()) && isPow2(img->getHeight()))
         tex = new ImageTexture(*img, EdgeClamp, mipMapMode);
+
+    // TODO: Virtual textures can have tiles in different formats, some
+    // compressed and some not. The compression flag doesn't make much
+    // sense for them.
+    compressed = img->isCompressed();
+
     delete img;
 
     return tex;
