@@ -4719,6 +4719,22 @@ setupObjectLighting(const vector<Renderer::LightSource>& suns,
     ls.eyeDir_obj = (Point3f(0.0f, 0.0f, 0.0f) - objPosition_eye) * m;
     ls.eyeDir_obj.normalize();
 
+    // When the camera is very far from the object, some view-dependent
+    // calculations in the shaders can exhibit precision problems. This
+    // occurs with atmospheres, where the scale height of the atmosphere
+    // is very small relative to the planet radius. To address the problem,
+    // we'll clamp the eye distance to some maximum value. The effect of the
+    // adjustment should be impercetible, since at large distances rays from
+    // the camera to object vertices are all nearly parallel to each other.
+    float eyeFromCenterDistance = ls.eyePos_obj.distanceFromOrigin();
+    if (eyeFromCenterDistance > 100.0f)
+    {
+        float s = 100.0f / eyeFromCenterDistance;
+        ls.eyePos_obj.x *= s;
+        ls.eyePos_obj.y *= s;
+        ls.eyePos_obj.z *= s;
+    }
+
     ls.ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
     
 #if 0
