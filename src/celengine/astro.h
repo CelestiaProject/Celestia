@@ -70,9 +70,21 @@ namespace astro
     // TCB - Barycentric Coordinate Time
     // TDB - Barycentric Dynamical Time
 
+    inline double secsToDays(double s)
+    {
+        return s * (1.0 / 86400.0);
+    }
+
+    inline double daysToSecs(double d)
+    {
+        return d * 86400.0;
+    }
+
     // Convert to and from UTC dates
     double UTCtoTAI(const astro::Date& utc);
     astro::Date TAItoUTC(double tai);
+    double UTCtoTDB(const astro::Date& utc);
+    astro::Date TDBtoUTC(double tdb);
 
     // Convert among uniform time scales
     double TTtoTAI(double tt);
@@ -81,7 +93,8 @@ namespace astro
     double TDBtoTT(double tdb);
 
     // Conversions to and from Julian Date UTC--other time systems
-    // should be prefered.
+    // should be preferred, since UTC Julian Dates aren't defined
+    // during leapseconds.
     double JDUTCtoTAI(double utc);
     double TAItoJDUTC(double tai);
 
