@@ -185,7 +185,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
 
     prog->use();
 
-    prog->setLightParameters(ls, ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
@@ -363,7 +363,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     prog->use();
 
-    prog->setLightParameters(ls, ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->eyePosition = ls.eyePos_obj;
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
                                ri.ambientColor.blue());
@@ -427,7 +427,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
 
     prog->use();
 
-    prog->setLightParameters(ls, ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
     
     float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
@@ -534,7 +534,7 @@ void renderRings_GLSL(RingSystem& rings,
     prog->eyePosition = ls.eyePos_obj;
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
                                ri.ambientColor.blue());
-    prog->setLightParameters(ls, ri.color, ri.specularColor);
+    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
         
     for (unsigned int li = 0; li < ls.nLights; li++)
     {
