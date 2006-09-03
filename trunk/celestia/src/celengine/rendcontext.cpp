@@ -402,125 +402,6 @@ GLSL_RenderContext::initLightingEnvironment()
     }
     
 }
-  
-
-// TODO: eliminate this and use CelestiaGLProgram::setLightingParameters instead
-void
-GLSL_RenderContext::setLightingParameters(CelestiaGLProgram& prog, Color materialDiffuse, Color materialSpecular)
-{
-    unsigned int nLights = min(MaxShaderLights, lightingState.nLights);
-
-    Vec3f diffuseColor(materialDiffuse.red(),
-                       materialDiffuse.green(),
-                       materialDiffuse.blue());
-    Vec3f specularColor(materialSpecular.red(),
-                        materialSpecular.green(),
-                        materialSpecular.blue());
-    
-    for (unsigned int i = 0; i < nLights; i++)
-    {
-        const DirectionalLight& light = lightingState.lights[i];
-
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
-        prog.lights[i].direction = light.direction_obj;
-
-        if (shaderProps.usesShadows() ||
-            shaderProps.usesFragmentLighting() ||
-            shaderProps.lightModel == ShaderProperties::RingIllumModel)
-        {
-            prog.fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
-                                            lightColor.y * diffuseColor.y,
-                                            lightColor.z * diffuseColor.z);
-            if (shaderProps.hasSpecular())
-            {
-                prog.fragLightSpecColor[i] = Vec3f(lightColor.x * specularColor.x,
-                                                  lightColor.y * specularColor.y,
-                                                  lightColor.z * specularColor.z);
-            }
-        }
-        else
-        {
-            prog.lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
-                                            lightColor.y * diffuseColor.y,
-                                            lightColor.z * diffuseColor.z);
-        }
-        
-        prog.lights[i].specular = Vec3f(lightColor.x * specularColor.x,
-                                         lightColor.y * specularColor.y,
-                                         lightColor.z * specularColor.z);
-
-        Vec3f halfAngle_obj = lightingState.eyeDir_obj + light.direction_obj;
-        if (halfAngle_obj.length() != 0.0f)
-            halfAngle_obj.normalize();
-        prog.lights[i].halfVector = halfAngle_obj;
-    }
-    
-    prog.eyePosition = lightingState.eyePos_obj;
-    prog.ambientColor = Vec3f(lightingState.ambientColor.x * diffuseColor.x,
-                              lightingState.ambientColor.y * diffuseColor.y,
-                              lightingState.ambientColor.z * diffuseColor.z);
-    prog.opacity = materialDiffuse.alpha();
-}
-
-
-// TODO: eliminate this and use CelestiaGLProgram::setShadowParameters instead
-void
-GLSL_RenderContext::setShadowParameters(CelestiaGLProgram& prog)
-{
-    // TODO: this code is largely a copy of some code in render.cpp; we should
-    // have just a single instance of the code.
-    for (unsigned int li = 0;
-         li < min(lightingState.nLights, MaxShaderLights);
-         li++)
-    {
-        vector<EclipseShadow>* shadows = lightingState.shadows[li];
-
-        if (shadows != NULL)
-        {
-            unsigned int nShadows = min((size_t) MaxShaderShadows, 
-                                        shadows->size());
-
-            for (unsigned int i = 0; i < nShadows; i++)
-            {
-                EclipseShadow& shadow = shadows->at(i);
-                CelestiaGLProgramShadow& shadowParams = prog.shadows[li][i];
-
-                float R2 = 0.25f;
-                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-                umbra = umbra * umbra;
-                if (umbra < 0.0001f)
-                    umbra = 0.0001f;
-                else if (umbra > 0.99f)
-                    umbra = 0.99f;
-
-                float umbraRadius = R2 * umbra;
-                float penumbraRadius = R2;
-                float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
-                shadowParams.bias = shadowBias;
-                shadowParams.scale = -shadowBias / umbraRadius;
-
-                // Compute the transformation to use for generating texture
-                // coordinates from the object vertices.
-                Point3f origin = shadow.origin * xform;
-                Vec3f dir = shadow.direction * xform;
-                float scale = objRadius / shadow.penumbraRadius;
-                Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-                float angle = (float) acos(Vec3f(0, 1, 0) * dir);
-                axis.normalize();
-                Mat4f mat = Mat4f::rotation(axis, -angle);
-                Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-                Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
-
-                float sw = (Point3f(0, 0, 0) - origin) * sAxis / objRadius + 0.5f;
-                float tw = (Point3f(0, 0, 0) - origin) * tAxis / objRadius + 0.5f;
-                shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
-                shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
-            }
-        }
-    }
-}
 
 
 void
@@ -609,9 +490,9 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         textures[i]->bind();
     }
     
-    setLightingParameters(*prog, m.diffuse, m.specular);
+    prog->setLightParameters(lightingState, m.diffuse, m.specular, m.emissive);
     if (shaderProps.shadowCounts != 0)    
-        setShadowParameters(*prog);
+        prog->setEclipseShadowParameters(lightingState, objRadius, xform);
 
     // TODO: handle emissive color
     prog->shininess = m.specularPower;   

@@ -46,7 +46,8 @@ ShaderProperties::ShaderProperties() :
     nLights(0),
     texUsage(0),
     lightModel(DiffuseModel),
-    shadowCounts(0)
+    shadowCounts(0),
+    effects(0)
 {
 }
 
@@ -164,6 +165,11 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
     if (p0.shadowCounts < p1.shadowCounts)
         return true;
     else if (p1.shadowCounts < p0.shadowCounts)
+        return false;
+        
+    if (p0.effects < p1.effects)
+        return true;
+    else if (p1.effects < p0.effects)
         return false;
 
     return (p0.lightModel < p1.lightModel);
@@ -496,10 +502,6 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         {
             source += "diff.rgb += " + LightProperty(i, "diffuse") + " * d;\n";
         }
-    }
-    else if (props.lightModel == ShaderProperties::LommelSeeligerModel)
-    {
-        source += AssignDiffuse(i, props) + " NL / (max(NV, 0.001) + NL);\n";
     }
     else if (props.lightModel == ShaderProperties::LunarLambertModel)
     {
@@ -922,7 +924,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
     else
     {
-        source += "uniform vec3 ambientColor;\n";
+        source += "uniform vec3 ambientColor;\n";        
         source += "uniform float opacity;\n";
         source += "varying vec4 diff;\n";
         if (props.lightModel == ShaderProperties::SpecularModel)
@@ -1349,8 +1351,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "vec3 H;\n";
                 source += "float NH;\n";
             }
-            else if (props.lightModel == ShaderProperties::LommelSeeligerModel ||
-                      props.lightModel == ShaderProperties::LunarLambertModel)
+            else if (props.lightModel == ShaderProperties::LunarLambertModel)
             {
                 source += "float NV = dot(n, V);\n";
             }
@@ -1365,12 +1366,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             // geometry like planet spheres.)
             // source += LightDir_tan(i) + " = normalize(" + LightDir(i)_tan + ");\n";
             source += "NL = dot(" + LightDir_tan(i) + ", n);\n";
-            if (props.lightModel == ShaderProperties::LommelSeeligerModel)
-            {
-                source += "NL = max(0.0, NL);\n";
-                source += "l = (NL / (max(NV, 0.001) + NL)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
-            }
-            else if (props.lightModel == ShaderProperties::LunarLambertModel)
+            if (props.lightModel == ShaderProperties::LunarLambertModel)
             {
                 source += "NL = max(0.0, NL);\n";
                 source += "l = mix(NL, (NL / (max(NV, 0.001) + NL)), lunarLambert) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
@@ -2010,7 +2006,8 @@ CelestiaGLProgram::initSamplers()
 void 
 CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                       Color materialDiffuse,
-                                      Color materialSpecular)
+                                      Color materialSpecular,
+                                      Color materialEmissive)
 {
     unsigned int nLights = min(MaxShaderLights, ls.nLights);
 
@@ -2062,9 +2059,9 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
     }
 
     eyePosition = ls.eyePos_obj;
-    ambientColor = Vec3f(ls.ambientColor.x * diffuseColor.x,
-                         ls.ambientColor.y * diffuseColor.y,
-                         ls.ambientColor.z * diffuseColor.z);
+    ambientColor = Vec3f(ls.ambientColor.x * diffuseColor.x + materialEmissive.red(),
+                         ls.ambientColor.y * diffuseColor.y + materialEmissive.green(),
+                         ls.ambientColor.z * diffuseColor.z + materialEmissive.blue());
     opacity = materialDiffuse.alpha();        
 }
 

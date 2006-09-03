@@ -53,18 +53,27 @@ class ShaderProperties
      RingIllumModel        = 2,
      PerPixelSpecularModel = 3,
      OrenNayarModel        = 4,
-     LommelSeeligerModel   = 5,
-     AtmosphereModel       = 6,
-     LunarLambertModel     = 7,
+     AtmosphereModel       = 5,
+     LunarLambertModel     = 6,
+ };
+ 
+ enum
+ {
+     VolumetricScatteringEffect      = 0x0001,
+     VolumetricAbsorptionEffect      = 0x0002,
+     VolumetricEmissionEffect        = 0x0004,
  };
  
  public:
     unsigned short nLights;
-    unsigned short texUsage;
+    unsigned short texUsage;    
     unsigned short lightModel;
 
     // Two bits per light, up to eight lights + three shadows per light
     unsigned short shadowCounts;
+    
+    // Effects that may be applied with any light model
+    unsigned short effects;
 };
 
 
@@ -96,7 +105,8 @@ class CelestiaGLProgram
     
     void setLightParameters(const LightingState& ls,
                             Color materialDiffuse,
-                            Color materialSpecular);
+                            Color materialSpecular,
+                            Color materialEmissive);
     void setEclipseShadowParameters(const LightingState& ls,
                                     float planetRadius,
                                     const Mat4f& planetMat);
