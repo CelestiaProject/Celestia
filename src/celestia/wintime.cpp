@@ -29,7 +29,7 @@ public:
 
     void init(HWND _hDlg);
     double getTime() const;
-    void setTime(const double _jd);
+    void setTime(const double _tdb);
     
     void updateControls();
     
@@ -39,7 +39,7 @@ public:
 private:
     HWND hDlg;
     CelestiaCore* appCore;
-    double jd;
+    double tdb;
     bool useLocalTime;
     char localTimeZoneAbbrev[64];
     char localTimeZoneName[64];
@@ -52,7 +52,7 @@ private:
 SetTimeDialog::SetTimeDialog(CelestiaCore* _appCore) :
     hDlg(0),
     appCore(_appCore),
-    jd(astro::J2000),
+    tdb(astro::J2000),
     useLocalTime(false),
     localTimeZoneBiasInSeconds(0)
 {
@@ -89,7 +89,7 @@ SetTimeDialog::init(HWND _hDlg)
     SetWindowLong(hDlg, DWL_USER, reinterpret_cast<LPARAM>(this));
     getLocalTimeZoneInfo();
     
-    jd = appCore->getSimulation()->getTime();
+    tdb = appCore->getSimulation()->getTime();
     useLocalTime = appCore->getTimeZoneBias() != 0;
 
     bind_textdomain_codeset("celestia", CurrentCP());
@@ -148,14 +148,14 @@ SetTimeDialog::getLocalTimeZoneInfo()
 double
 SetTimeDialog::getTime() const
 {
-    return jd;
+    return tdb;
 }
 
 
 void
-SetTimeDialog::setTime(double _jd)
+SetTimeDialog::setTime(double _tdb)
 {
-    jd = _jd;
+    tdb = _tdb;
 }
 
 
@@ -165,12 +165,12 @@ SetTimeDialog::updateControls()
     HWND timeItem = NULL;
     HWND dateItem = NULL;
     SYSTEMTIME sysTime;
-    double tzjd = jd;
+    double tztdb = tdb;
 
     if (useLocalTime)
-        tzjd += localTimeZoneBiasInSeconds / 86400.0;
+        tztdb += localTimeZoneBiasInSeconds / 86400.0;
         
-    astro::Date newTime(tzjd);
+    astro::Date newTime = astro::TDBtoUTC(tztdb);
     
     sysTime.wYear = newTime.year;
     sysTime.wMonth = newTime.month;
@@ -206,7 +206,7 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
     {
         case IDOK:
             appCore->tick();
-            appCore->getSimulation()->setTime(jd);
+            appCore->getSimulation()->setTime(tdb);
             appCore->setTimeZoneBias(useLocalTime ? 1 : 0);
             EndDialog(hDlg, 0);
             return TRUE;
@@ -239,7 +239,7 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
 LRESULT
 SetTimeDialog::notify(int id, const NMHDR& hdr)
 {
-    astro::Date newTime(jd);
+    astro::Date newTime(tdb);
     
     if (hdr.code == DTN_DATETIMECHANGE)
     {
@@ -259,9 +259,9 @@ SetTimeDialog::notify(int id, const NMHDR& hdr)
                 newTime.minute = sysTime.wMinute;
                 newTime.seconds = sysTime.wSecond + (double) sysTime.wMilliseconds / 1000.0;
                 
-                jd = (double) newTime;
+                tdb = astro::UTCtoTDB(newTime);
                 if (useLocalTime)
-                    jd -= localTimeZoneBiasInSeconds / 86400.0;                
+                    tdb -= localTimeZoneBiasInSeconds / 86400.0;
             }
         }
     }

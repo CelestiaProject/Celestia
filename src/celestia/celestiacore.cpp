@@ -1544,12 +1544,24 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '!':
         if (editMode)
+        {
             showSelectionInfo(sim->getSelection());
+        }    
         else
         {
-            double t = (double) time(NULL) / 86400.0 +
-                (double) astro::Date(1970, 1, 1);
-            sim->setTime(t);
+            time_t t = time(NULL);
+            struct tm *gmt = gmtime(&t);
+            if (gmt != NULL)
+            {
+                astro::Date d;
+                d.year = gmt->tm_year + 1900;
+                d.month = gmt->tm_mon + 1;
+                d.day = gmt->tm_mday;
+                d.hour = gmt->tm_hour;
+                d.minute = gmt->tm_min;
+                d.seconds = (int) gmt->tm_sec;
+                sim->setTime(astro::UTCtoTDB(d));
+            }
         }
         break;
 
@@ -3059,11 +3071,15 @@ void CelestiaCore::renderOverlay()
     	    lt = 0.0;
     	}
 
+        double tdb = sim->getTime();
+        
+        // TODO: Display of local time does not currently work correctly during leap seconds
+        double jdutc = astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb)));
         if (timeZoneBias != 0 &&
-            sim->getTime() < 2465442 &&
-            sim->getTime() > 2415733) 
+            jdutc < 2465442 &&
+            jdutc > 2415733) 
         {
-            time_t time = (int) astro::julianDateToSeconds(sim->getTime() - 2440587.5 + lt);
+            time_t time = (int) astro::julianDateToSeconds(jdutc - 2440587.5 + lt);
             struct tm *localt = localtime(&time);
             if (localt != NULL)
             {
@@ -3089,7 +3105,8 @@ void CelestiaCore::renderOverlay()
 	
         if (!time_displayed)
         {
-            *overlay << astro::Date(sim->getTime() + lt);
+            astro::Date utcDate = astro::TAItoUTC(astro::TTtoTAI(astro::TDBtoTT(tdb + lt)));
+            *overlay << utcDate;
             *overlay << _(" UTC");
             if (lightTravelFlag && lt > 0.0)
             {
@@ -3100,7 +3117,7 @@ void CelestiaCore::renderOverlay()
             *overlay << '\n';
         }
 
-         setlocale(LC_NUMERIC, "");
+        setlocale(LC_NUMERIC, "");
 
         {
             if (abs(abs(timeScale) - 1) < 1e-6)
