@@ -277,13 +277,19 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
 // Get a matrix which converts from local to heliocentric coordinates
 Mat4d Body::getLocalToHeliocentric(double when) const
 {
+    return getLocalToHeliocentric(when, orbitRefPlane);
+}
+
+
+Mat4d Body::getLocalToHeliocentric(double when, astro::ReferencePlane childRefPlane) const
+{
     double ascendingNode = (double) rotationElements.ascendingNode +
         rotationElements.precessionRate * (when - astro::J2000);
 
     Point3d pos = orbit->positionAtTime(when);
     Mat4d frame;
 
-    switch (orbitRefPlane)
+    switch (childRefPlane)
     {
     case astro::BodyEquator:
         frame = (Mat4d::xrotation(-rotationElements.obliquity) *
@@ -302,11 +308,10 @@ Mat4d Body::getLocalToHeliocentric(double when) const
  
     // Recurse up the hierarchy . . .
     if (orbitBarycenter != NULL)
-        frame = frame * orbitBarycenter->getLocalToHeliocentric(when);
+        frame = frame * orbitBarycenter->getLocalToHeliocentric(when, orbitRefPlane);
 
     return frame;
 }
-
 
 // Return the position of the center of the body in heliocentric coordinates
 Point3d Body::getHeliocentricPosition(double when) const

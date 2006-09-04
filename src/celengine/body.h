@@ -85,13 +85,16 @@ class Body
 
     enum
     {
-        Planet     = 0x01,
-        Moon       = 0x02,
-        Asteroid   = 0x04,
-        Comet      = 0x08,
-        Spacecraft = 0x10,
-        Invisible  = 0x20,
-        Unknown    = 0x10000,
+        Planet      =    0x01,
+        Moon        =    0x02,
+        Asteroid    =    0x04,
+        Comet       =    0x08,
+        Spacecraft  =    0x10,
+        Invisible   =    0x20,
+        Barycenter  =    0x40,
+        SmallBody   =    0x80,
+        DwarfPlanet =   0x100,
+        Unknown     = 0x10000,
     };
 
     PlanetarySystem* getSystem() const;
@@ -152,6 +155,7 @@ class Body
                                const Vec3d& viewerPosition) const;
 
     Mat4d getLocalToHeliocentric(double) const;
+    Mat4d getLocalToHeliocentric(double, astro::ReferencePlane) const;
     Point3d getHeliocentricPosition(double) const;
     Quatd getEquatorialToGeographic(double) const;
     Quatd getEclipticalToEquatorial(double) const;
