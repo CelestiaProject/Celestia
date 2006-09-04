@@ -413,6 +413,19 @@ static Body* CreatePlanet(const string& name,
         re.period = (float) body->getOrbit()->getPeriod();
     FillinRotationElements(planetData, re);
     body->setRotationElements(re);
+    
+    string orbitRefPlane;
+    if (planetData->getString("OrbitReferencePlane", orbitRefPlane))
+    {
+        if (orbitRefPlane == "equator")
+        {
+            body->setOrbitReferencePlane(astro::BodyEquator);
+        }
+        else if (orbitRefPlane == "ecliptic")
+        {
+            body->setOrbitReferencePlane(astro::Ecliptic_J2000);
+        }
+    }
 
     Surface surface;
     if (disposition == ModifyObject)
