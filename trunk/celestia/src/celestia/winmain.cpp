@@ -3301,8 +3301,23 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore->setContextMenuCallback(ContextMenu);
 
     bReady = true;
-    appCore->start((double) time(NULL) / 86400.0 +
-                   (double) astro::Date(1970, 1, 1));
+    
+    // Get the current time
+    time_t systime = time(NULL);
+    struct tm *gmt = gmtime(&systime);
+    double timeTDB = astro::J2000;
+    if (gmt != NULL)
+    {
+        astro::Date d;
+        d.year = gmt->tm_year + 1900;
+        d.month = gmt->tm_mon + 1;
+        d.day = gmt->tm_mday;
+        d.hour = gmt->tm_hour;
+        d.minute = gmt->tm_min;
+        d.seconds = (int) gmt->tm_sec;
+        timeTDB = astro::UTCtoTDB(d);
+    }
+    appCore->start(timeTDB);
 
     if (startURL != "")
     {
