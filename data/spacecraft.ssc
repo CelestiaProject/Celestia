@@ -54,7 +54,7 @@
 "Hubble" "Sol/Earth"
 {
 	Class "spacecraft"
-	Mesh "hubble.3ds"
+	Mesh "hubble.cmod"
 	Radius 0.007                  # 14 meters across
 	Beginning         2448007     # Deployed 25 April 1990
 	# Ending 2010?
