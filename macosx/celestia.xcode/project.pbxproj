@@ -1389,6 +1389,9 @@
 				E5E5ED5D095BC4A5003DC829,
 				E5E8FFA50965975B00A0A304,
 				E587027C09CD83B200AE4536,
+				E5E551B40AAB9696007CD5BB,
+				E5E551B60AAB9696007CD5BB,
+				E5E551B70AAB9696007CD5BB,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2378,6 +2381,7 @@
 				E5E5ED5E095BC4A5003DC829,
 				E5E8FFA60965975B00A0A304,
 				E587027B09CD83AA00AE4536,
+				E5E551B50AAB9696007CD5BB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4066,7 +4070,7 @@
 				E5C29C140982A6E300ED06B8,
 				E5C29C160982A6E300ED06B8,
 				E5C29C180982A6E300ED06B8,
-				E5C29C190982A6E300ED06B8,
+				E5E5516A0AAB960F007CD5BB,
 				E5C29C1A0982A6E300ED06B8,
 				E5C29C1C0982A6E300ED06B8,
 				E5C29C1F0982A6E300ED06B8,
@@ -4213,13 +4217,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = file;
 			path = halley.cmod;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		E5C29C190982A6E300ED06B8 = {
-			isa = PBXFileReference;
-			lastKnownFileType = file;
-			path = hubble.3ds;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4499,7 +4496,7 @@
 				E5C29CA60982AABA00ED06B8,
 				E5C29CA70982AABA00ED06B8,
 				E5C29CA80982AABA00ED06B8,
-				E5C29CA90982AABA00ED06B8,
+				E5E551AF0AAB9644007CD5BB,
 				E5C29CAA0982AABA00ED06B8,
 				E5C29CAB0982AABA00ED06B8,
 				E5C29CAC0982AABA00ED06B8,
@@ -4624,12 +4621,6 @@
 		};
 		E5C29CA80982AABA00ED06B8 = {
 			fileRef = E5C29C180982A6E300ED06B8;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		E5C29CA90982AABA00ED06B8 = {
-			fileRef = E5C29C190982A6E300ED06B8;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4966,6 +4957,79 @@
 		};
 		E5D471270778E33C007731C3 = {
 			fileRef = E5D471260778E33C007731C3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5E5516A0AAB960F007CD5BB = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = hubble.cmod;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5E551AF0AAB9644007CD5BB = {
+			fileRef = E5E5516A0AAB960F007CD5BB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5E551B00AAB9696007CD5BB = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = lightenv.h;
+			path = ../src/celengine/lightenv.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5E551B10AAB9696007CD5BB = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = renderglsl.cpp;
+			path = ../src/celengine/renderglsl.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5E551B20AAB9696007CD5BB = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = renderglsl.h;
+			path = ../src/celengine/renderglsl.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5E551B30AAB9696007CD5BB = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = renderinfo.h;
+			path = ../src/celengine/renderinfo.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5E551B40AAB9696007CD5BB = {
+			fileRef = E5E551B00AAB9696007CD5BB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5E551B50AAB9696007CD5BB = {
+			fileRef = E5E551B10AAB9696007CD5BB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5E551B60AAB9696007CD5BB = {
+			fileRef = E5E551B20AAB9696007CD5BB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5E551B70AAB9696007CD5BB = {
+			fileRef = E5E551B30AAB9696007CD5BB;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5363,6 +5427,10 @@
 		};
 		F51C6D52029596B4014901DC = {
 			children = (
+				E5E551B00AAB9696007CD5BB,
+				E5E551B10AAB9696007CD5BB,
+				E5E551B20AAB9696007CD5BB,
+				E5E551B30AAB9696007CD5BB,
 				E5AACCE00935FEB100136FCD,
 				E5AACCE10935FEB100136FCD,
 				E5AACCE20935FEB100136FCD,
