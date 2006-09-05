@@ -330,7 +330,7 @@ Source: "models\gaspra.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\geographos.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\golevka.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\halley.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\hubble.3ds";       DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\hubble.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\huygens.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\hyperion.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\ida.cmod";         DestDir: "{app}/models"; Flags: ignoreversion
