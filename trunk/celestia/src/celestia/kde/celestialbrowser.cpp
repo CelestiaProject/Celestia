@@ -123,7 +123,7 @@ void CelestialBrowser::slotRefresh()
         Vec3d v(starPos.x - obsPos.x, 
                 starPos.y - obsPos.y, 
                 starPos.z - obsPos.z);
-        double dist = v.length();
+        float dist = v.length();
 
         QString starClass(star->getSpectralType());
         CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, _("ly"),
