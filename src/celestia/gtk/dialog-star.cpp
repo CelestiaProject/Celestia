@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-star.cpp,v 1.2 2005-12-13 06:19:57 suwalski Exp $
+ *  $Id: dialog-star.cpp,v 1.3 2006-09-05 04:57:51 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -280,7 +280,7 @@ static void addStars(sbData* sb)
 		Vec3d v(pStar.x * 1e6 - (float)ucPos.x, 
 		        pStar.y * 1e6 - (float)ucPos.y, 
 		        pStar.z * 1e6 - (float)ucPos.z);
-		double d = v.length() * 1e-6;
+		float d = v.length() * 1e-6;
 
 		sprintf(buf, " %.3f ", d);
 		values[1] = g_strdup(buf);
