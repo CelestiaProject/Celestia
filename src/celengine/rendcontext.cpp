@@ -490,7 +490,11 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         textures[i]->bind();
     }
     
-    prog->setLightParameters(lightingState, m.diffuse, m.specular, m.emissive);
+    // setLightParameters() expects opacity in the alpha channel of the diffuse color
+    Color diffuse(m.diffuse.red(), m.diffuse.green(), m.diffuse.blue(), m.opacity);
+    
+    prog->setLightParameters(lightingState, diffuse, m.specular, m.emissive);
+    
     if (shaderProps.shadowCounts != 0)    
         prog->setEclipseShadowParameters(lightingState, objRadius, xform);
 
