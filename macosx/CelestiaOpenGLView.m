@@ -205,6 +205,12 @@
 
 - (void) mouseUp: (NSEvent*)theEvent
 {
+    if ( [theEvent modifierFlags] & NSAlternateKeyMask )
+    {
+        [self otherMouseUp: theEvent];
+        return;
+    }
+
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
@@ -249,6 +255,26 @@
 {
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
     [appCore mouseMove:NSMakePoint([theEvent deltaX], [theEvent deltaY]) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_RIGHT_BUTTON]];
+}
+
+- (void) otherMouseDown: (NSEvent *) theEvent
+{
+    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_MIDDLE_BUTTON]];
+}
+
+- (void) otherMouseUp: (NSEvent *) theEvent
+{
+    NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_MIDDLE_BUTTON]];    
+}
+
+- (void) otherMouseDragged: (NSEvent *) theEvent
+{
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    [appCore mouseMove:NSMakePoint([theEvent deltaX], [theEvent deltaY]) modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_MIDDLE_BUTTON]];
 }
 
 - (void) scrollWheel: (NSEvent*)theEvent
