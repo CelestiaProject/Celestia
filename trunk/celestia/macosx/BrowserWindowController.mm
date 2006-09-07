@@ -73,6 +73,7 @@ static CelestiaCore *appCore;
     starCount = nearStars->size();            
 //    if (nearStars == nil ) return 1;
     NSMutableDictionary* starDict = [NSMutableDictionary dictionaryWithCapacity: starCount+2];
+    NSMutableArray* starKeys = [NSMutableArray arrayWithCapacity: starCount+2];
     const Star *aStar;
     int i;
     for (i=0;i<starCount;i++)
@@ -80,8 +81,9 @@ static CelestiaCore *appCore;
         aStar = (*nearStars)[i];
         NSString* starName = [NSString  stringWithStdString: appCore->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*aStar) ];
         [starDict setObject: starName forKey: starName];
+        [starKeys addObject: starName];
     }
-    [starDict setObject: [[starDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
+    [starDict setObject: starKeys forKey: @"_keys" ];
     [starDict setObject: @"" forKey: @"_path" ];
     delete sb;
     delete nearStars;
