@@ -1,6 +1,6 @@
 // render.cpp
 //
-// Copyright (C) 2001-2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -70,7 +70,7 @@ static const float PixelOffset = 0.125f;
 // closer than MinNearPlaneDistance, and the far plane is set so that far/near
 // will not exceed MaxFarNearRatio.
 static const float MinNearPlaneDistance = 0.0001f; // km
-static const float MaxFarNearRatio      = 2000.0f;
+static const float MaxFarNearRatio      = 2000000.0f;
 
 static const float RenderDistance       = 50.0f;
 
@@ -135,6 +135,7 @@ static SphericalCoordLabel* coordLabels = NULL;
 static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
 static const int MinSkySlices = 30;
+
 
 #if 0
 struct DisplayDevice
@@ -462,47 +463,28 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
 
 #endif
 
+
+// Depth comparison function for render list entries
 bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 {
-    // This comparison functions tries to determine which of two objects is
-    // closer to the viewer.  Looking just at the distances of the centers
-    // is not enough, nor is comparing distances to the bounding spheres.
-    // Here we trace a ray from the viewer to the center of the smaller
-    // of the two objects and see which object it intersects first.  If the
-    // ray doesn't intersect the larger object at all, it's safe to use
-    // the distance to bounding sphere test.
-    if (a.radius < b.radius)
-    {
-        Vec3f dir = a.position - Point3f(0.0f, 0.0f, 0.0f);
-        float distance;
-        dir.normalize();
-        if (testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f), dir),
-                             Spheref(b.position, b.radius),
-                             distance))
-        {
-            return a.distance - a.radius < distance;
-        }
-    }
-    else
-    {
-        Vec3f dir = b.position - Point3f(0.0f, 0.0f, 0.0f);
-        float distance;
-        dir.normalize();
-        if (testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f), dir),
-                             Spheref(a.position, a.radius),
-                             distance))
-        {
-            return distance < b.distance - b.radius;
-        }
-    }
-
-    return a.distance - a.radius < b.distance - b.radius;
+    // Operation is reversed because -z axis points into the screen
+    return a.centerZ - a.radius > b.centerZ - b.radius;
 }
 
 
+// Depth comparison for labels
 bool operator<(const Renderer::Label& a, const Renderer::Label& b)
 {
+    // Operation is reversed because -z axis points into the screen
     return a.position.z > b.position.z;
+}
+
+
+// Depth comparison for orbit paths
+bool operator<(const Renderer::OrbitPathListEntry& a, const Renderer::OrbitPathListEntry& b)
+{
+    // Operation is reversed because -z axis points into the screen
+    return a.centerZ - a.radius > b.centerZ - b.radius;
 }
 
 
@@ -1003,10 +985,7 @@ public:
     
     void sample(double, const Point3d& p)
     {
-        glVertex3f(astro::kilometersToAU((float) p.x * 100),
-                   astro::kilometersToAU((float) p.y * 100),
-                   astro::kilometersToAU((float) p.z * 100));
-        
+        glVertex3f((float) p.x, (float) p.y, (float) p.z);
     };
 
 private:
@@ -1062,8 +1041,10 @@ void renderOrbitColor(const Body* body, bool selected)
 }
 
 
-void Renderer::renderOrbit(Body* body, double t)
+void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
 {
+    Body* body = orbitPath.body;
+    
     vector<OrbitSample>* trajectory = NULL;
     for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
          iter != orbitCache.end(); iter++)
@@ -1135,6 +1116,16 @@ void Renderer::renderOrbit(Body* body, double t)
             orbitCache.insert(orbitCache.end(), orbit);
     }
 
+    glPushMatrix();
+    glTranslate(orbitPath.origin);
+    if (body->getOrbitBarycenter() != NULL)
+    {
+        Quatd orientation = body->getOrbitBarycenter()->getEclipticalToEquatorial(t);
+        glRotate(~orientation);
+    }
+    
+    renderOrbitColor(body, false);
+    
     // Actually render the orbit
     if (body->getOrbit()->isPeriodic())
         glBegin(GL_LINE_LOOP);
@@ -1148,9 +1139,7 @@ void Renderer::renderOrbit(Body* body, double t)
         for (vector<OrbitSample>::const_iterator p = trajectory->begin();
              p != trajectory->end(); p++)
         {
-            glVertex3f(astro::kilometersToAU(p->pos.x),
-                       astro::kilometersToAU(p->pos.y),
-                       astro::kilometersToAU(p->pos.z));
+            glVertex3f(p->pos.x, p->pos.y, p->pos.z);
         }
     }
     else
@@ -1160,9 +1149,7 @@ void Renderer::renderOrbit(Body* body, double t)
         // Show the portion of the trajectory travelled up to this point
         for (p = trajectory->begin(); p != trajectory->end() && p->t < t; p++)
         {
-            glVertex3f(astro::kilometersToAU(p->pos.x),
-                       astro::kilometersToAU(p->pos.y),
-                       astro::kilometersToAU(p->pos.z));
+            glVertex3f(p->pos.x, p->pos.y, p->pos.z);
         }
 
         // If we're midway through a non-periodic trajectory, we will need
@@ -1170,78 +1157,13 @@ void Renderer::renderOrbit(Body* body, double t)
         if (p != trajectory->end())
         {
             Point3d pos = body->getOrbit()->positionAtTime(t);
-            glVertex3f((float) astro::kilometersToAU(pos.x),
-                       (float) astro::kilometersToAU(pos.y),
-                       (float) astro::kilometersToAU(pos.z));
+            glVertex3f((float) pos.x, (float) pos.y, (float) pos.z);
         }
     }
-
 
     glEnd();
-}
-
-
-void Renderer::renderOrbits(PlanetarySystem* planets,
-                            const Selection& sel,
-                            double t,
-                            const Point3d& observerPos,
-                            const Point3d& center)
-{
-    if (planets == NULL)
-        return;
-
-    double distance = (center - observerPos).length();
-
-    int nBodies = planets->getSystemSize();
-    for (int i = 0; i < nBodies; i++)
-    {
-        Body* body = planets->getBody(i);
-            
-        // Only show orbits for major bodies or selected objects
-        if ((body->getClassification() & orbitMask) != 0 || body == sel.body())
-        {
-            renderOrbitColor(body, body == sel.body());
-
-            float orbitRadiusInPixels =
-                (float) (body->getOrbit()->getBoundingRadius() /
-                         (distance * pixelSize));
-            if (orbitRadiusInPixels > minOrbitSize)
-            {
-                float farDistance = 
-                    (float) (body->getOrbit()->getBoundingRadius() + distance);
-                farDistance = astro::kilometersToAU(farDistance);
-
-                // Set up the projection matrix so that the far plane is
-                // distant enough that the orbit won't be clipped.
-                glMatrixMode(GL_PROJECTION);
-                glLoadIdentity();
-                gluPerspective(fov,
-                               (float) windowWidth / (float) windowHeight,
-                               max( farDistance * 1e-6f, (float)(1e-5/2./tan(fov*3.14159/360.0)) ),
-                               farDistance * 1.1f );
-                glMatrixMode(GL_MODELVIEW);
-                renderOrbit(body, t);
-
-                if (body->getSatellites() != NULL)
-                {
-                    Point3d localPos = body->getOrbit()->positionAtTime(t);
-                    Quatd rotation =
-                        Quatd::yrotation(body->getRotationElements().ascendingNode) *
-                        Quatd::xrotation(body->getRotationElements().obliquity);
-                    double scale = astro::kilometersToAU(1.0);
-                    glPushMatrix();
-                    glTranslated(localPos.x * scale,
-                                 localPos.y * scale,
-                                 localPos.z * scale);
-                    glRotate(rotation);
-                    renderOrbits(body->getSatellites(), sel, t,
-                                 observerPos,
-                                 body->getHeliocentricPosition(t));
-                    glPopMatrix();
-                }
-            }
-        }
-    }
+    
+    glPopMatrix();
 }
 
 
@@ -1256,64 +1178,6 @@ void transformOrbits(const PlanetarySystem *system)
             Quatd::xrotation(body->getRotationElements().obliquity);
         glRotate(rotation);      
     } 
-}
-
-
-void Renderer::renderForegroundOrbits(const PlanetarySystem* system,
-                                      const Point3f &center, // km
-                                      float distance, // km
-                                      float discSizeInPixels,
-                                      const Selection& sel,
-                                      double t)
-{
-    // Render orbit paths
-  
-    if ((renderFlags & ShowOrbits) == 0 || orbitMask == 0)
-        return;
-    if (system == NULL)
-        return;
-    if (discSizeInPixels < minOrbitSize)
-        return;
-
-    distance = astro::kilometersToAU(distance);
-    double scale = astro::kilometersToAU(1.0);
-    glPushMatrix();
-    glTranslated(center.x * scale,
-                 center.y * scale,
-                 center.z * scale);
-
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    if ((renderFlags & ShowSmoothLines) != 0)
-        enableSmoothLines();
-    transformOrbits(system);
-    
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(fov,
-                   (float) windowWidth / (float) windowHeight,
-                   max( distance * 1e-6f, 
-                        (float)(1e-5/2./tan(fov*3.14159/360.0)) ),
-                   distance);
-    
-    glMatrixMode(GL_MODELVIEW);
-
-    int nBodies = system->getSystemSize();
-    for (int i = 0; i < nBodies; i++)
-    {
-        Body* body = system->getBody(i);
-
-        // Only show orbits for major bodies or selected objects
-        if ((body->getClassification() & orbitMask) == 0 && 
-            body != sel.body())
-            continue;
-        renderOrbitColor(body, body == sel.body());
-        renderOrbit(body, t);
-    }
-
-    if ((renderFlags & ShowSmoothLines) != 0)
-        disableSmoothLines();
-    glPopMatrix();
 }
 
 
@@ -1449,6 +1313,7 @@ void Renderer::render(const Observer& observer,
     // large enough to have discernible surface detail are also placed in
     // renderList.
     renderList.clear();
+    orbitPathList.clear();
 
     // See if we want to use AutoMag.
     if ((renderFlags & ShowAutoMag) != 0)
@@ -1657,50 +1522,13 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
-    // Render orbit paths
+    // Clear the keep flag for all orbits in the cache; if they're not
+    // used when rendering this frame, they'll get marked for
+    // recycling.
     if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0)
     {
-        // Clear the keep flag for all orbits in the cache; if they're not
-        // used when rendering this frame, they'll get marked for
-        // recycling.
-        vector<CachedOrbit*>::const_iterator iter;
-        for (iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
+        for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
             (*iter)->keep = false;
-
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
-        if ((renderFlags & ShowSmoothLines) != 0)
-            enableSmoothLines();
-        
-        for (vector<const Star*>::const_iterator starIter = nearStars.begin();
-             starIter != nearStars.end(); starIter++)
-        {
-            const Star* sun = *starIter;
-            SolarSystem* solarSystem = universe.getSolarSystem(sun);
-
-            if (solarSystem != NULL)
-            {
-                Point3d obsPos = astrocentricPosition(observer.getPosition(),
-                                                      *sun, observer.getTime());
-                glPushMatrix();
-                glTranslatef((float) astro::kilometersToAU(-obsPos.x),
-                             (float) astro::kilometersToAU(-obsPos.y),
-                             (float) astro::kilometersToAU(-obsPos.z));
-                renderOrbits(solarSystem->getPlanets(), sel, now,
-                             obsPos, Point3d(0.0, 0.0, 0.0));
-                glPopMatrix();
-            }
-        }
-
-        if ((renderFlags & ShowSmoothLines) != 0)
-            disableSmoothLines();
-
-        // Mark for recycling all unused orbits in the cache
-        for (iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
-        {
-            if (!(*iter)->keep)
-                (*iter)->body = NULL;
-        }
     }
 
     renderLabels(FontNormal);
@@ -1764,7 +1592,7 @@ void Renderer::render(const Observer& observer,
                     ((float) windowHeight / maxSpan);
                 
                 if (nearZ > -MinNearPlaneDistance)
-                    iter->nearZ = -MinNearPlaneDistance;
+                    iter->nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
                 else
                     iter->nearZ = nearZ;
 
@@ -1816,201 +1644,237 @@ void Renderer::render(const Observer& observer,
         renderList.resize(notCulled - renderList.begin());
 
         // The calls to renderSolarSystem/renderStars filled renderList
-        // with visible planetary bodies.  Sort it by distance, then
-        // render each entry.
-        stable_sort(renderList.begin(), renderList.end());
+        // with visible planetary bodies.  Sort it front to back, then
+        // render each entry in reverse order (TODO: convenient, but not
+        // ideal for performance; should render opaque objects front to
+        // back, then translucent objects back to front. However, the
+        // amount of overdraw in Celestia is typically low.)
+        sort(renderList.begin(), renderList.end());
 
         // Sort the labels
         sort(depthSortedLabels.begin(), depthSortedLabels.end());
+        
+        // Sort the orbit paths
+        sort(orbitPathList.begin(), orbitPathList.end());
 
         int nEntries = renderList.size();
+        
 #define DEBUG_COALESCE 0
-        // Determine how to split up the depth buffer.  Typically, each body 
+        // Since we're rendering objects of a huge range of sizes spread over
+        // vast distances, we can't just rely on the hardware depth buffer to
+        // handle hidden surface removal without a little help. We'll partition
+        // the depth buffer into spans that can be rendered without running into
+        // terrible depth buffer precision problems. Typically, each body 
         // with an apparent size greater than one pixel is allocated its own
-        // depth buffer range.  However, this will not correctly handle
-        // overlapping objects.  If two objects overlap in depth, we attempt
-        // to coalesce their depth buckets.  Coalescing will succeed as long
-        // as the far / near plane ratio is not too large.  If it does exceed
-        // the limit, coaslescing fails and the objects may not be rendered
-        // correctly, though the result should be superior to throwing away
-        // depth buffer precision by allowing the far / near ratio to get too
-        // large.
-        int nDepthBuckets = 1;
+        // depth buffer partition. However, this will not correctly handle
+        // overlapping objects.  If two objects overlap in depth, we must assign
+        // them to the same partition.
+        
+        depthPartitions.clear();
+        int nPartitions = 0;
+        float prevNear = 0.0f;
+        if (nEntries > 0)
+            prevNear = renderList[nEntries - 1].farZ * 1.01f;
+            
         int i;
+            
+        // Completely partition the depth buffer. Scan from back to front through
+        // all the renderable items that passed the culling test.
+        for (i = nEntries - 1; i >= 0; i--)
         {
-            float lastNear = 0.0f;
-            float lastFar = 0.0f;
-            int firstCoalesced = 0;
-
-            for (i = 0; i < nEntries; i++)
+            // Only consider renderables that will occupy more than one pixel. The
+            if (renderList[i].discSizeInPixels > 1)
             {
-                // Don't worry about objects that are smaller than a pixel,
-                // as they'll just be rendered as points.
-                if (renderList[i].discSizeInPixels > 1)
+                if (nPartitions == 0 || renderList[i].farZ >= depthPartitions[nPartitions - 1].nearZ)
                 {
-                    if (nDepthBuckets == 1 || renderList[i].nearZ <= lastFar)
+                    // This object spans a depth region that's disjoint with the current span, so
+                    // create a new depth partition for it, and another partition to fill the gap
+                    // between the last partition.                    
+                    DepthBufferPartition partition;
+                    partition.index = nPartitions;
+                    partition.nearZ = renderList[i].farZ;
+                    partition.farZ = prevNear;
+                        
+                    // Omit null partitions
+                    // TODO: Is this necessary? Shouldn't the >= test prevent this?
+                    if (partition.nearZ != partition.farZ)
                     {
-                        // This object doesn't overlap any others in depth,
-                        // no need to coaslesce.
-                        nDepthBuckets++;
-                        firstCoalesced = i;
-                        lastNear = renderList[i].nearZ;
-                        lastFar = renderList[i].farZ;
+                        depthPartitions.push_back(partition);
+                        nPartitions++;
                     }
-                    else
-                    {
-                        // Consider coalescing this object with the previous
-                        // one.
-                        float farthest = min(lastFar, renderList[i].farZ);
-                        float nearest = max(lastNear, renderList[i].nearZ);
-#if DEBUG_COALESCE                        
-                        static int dbgCoalesceCount = 0;
-#endif                        
-
-                        // Need just a bit of slack in the farthest/nearest
-                        // ratio test.
-                        if (farthest / nearest < MaxFarNearRatio * 1.01f)
-                        {
-                            // Far/near ratio is acceptable, so coalesce
-                            // this object's depth bucket with the previous
-                            // one.
-                            for (int j = firstCoalesced; j <= i; j++)
-                            {
-                                renderList[j].farZ  = farthest;
-                                renderList[j].nearZ = nearest;
-                            }
-#if DEBUG_COALESCE
-                            clog << "Coalesce #" << i << ": " <<
-                                renderList[i].body->getName()  << ", " <<
-                                nearest << ", " << farthest << " -- " << dbgCoalesceCount++ << '\n';
-#endif
-                            lastNear = nearest;
-                            lastFar = farthest;
-                        }
-                        else
-                        {
-                            // Coalesce failed, so create a new depth bucket
-                            // for this object.
-                            nDepthBuckets++;
-                            firstCoalesced = i;
-                            lastNear = renderList[i].nearZ;
-                            lastFar = renderList[i].farZ;
-#if DEBUG_COALESCE
-                            clog << "Coalesce #" << i << ": " <<
-                                renderList[i].body->getName() << " failed! " <<
-                                nearest << ", " << farthest << " -- " << dbgCoalesceCount++ << '\n';
-#endif
-                        }
-                    }
-                    renderList[i].depthBucket = nDepthBuckets - 1;
+                    
+                    partition.index = nPartitions;
+                    partition.nearZ = renderList[i].nearZ;
+                    partition.farZ = renderList[i].farZ;
+                    depthPartitions.push_back(partition);
+                    nPartitions++;
+                    
+                    prevNear = partition.nearZ;
+                }
+                else
+                {
+                    // This object overlaps the current span; expand the span so that it completely
+                    // contains the object.
+                    DepthBufferPartition& partition = depthPartitions[nPartitions - 1];
+                    partition.nearZ = max(partition.nearZ, renderList[i].nearZ);                   
+                    partition.farZ = min(partition.farZ, renderList[i].farZ);
+                    prevNear = partition.nearZ;
                 }
             }
         }
         
-        float depthRange = 1.0f / (float) nDepthBuckets;
+        // Add one last partition for the span from 0 to the front of the nearest object
+        {
+            // TODO: closest object may not be at entry 0, since objects are sorted
+            // by far distance.
+            float closest = prevNear * 0.1f;
+            if (nEntries > 0)
+                closest = max(closest, renderList[0].nearZ);
+            
+            DepthBufferPartition partition;
+            partition.index = nPartitions;
+            partition.nearZ = closest;
+            partition.farZ = prevNear;
+            depthPartitions.push_back(partition);
+            
+            nPartitions++;
+        }
 
-        int depthBucket = nDepthBuckets - 1;
-        i = nEntries - 1;
-
-        // Set up the depth bucket.
-        glDepthRange(depthBucket * depthRange, (depthBucket + 1) * depthRange);
-
-        // Set the initial near and far plane distance; any reasonable choice
-        // for these will do, since different values will be chosen as soon
-        // as we need to render a body as a mesh.
-        float nearPlaneDistance = 1.0f;
-        float farPlaneDistance = 10.0f;
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(fov, (float) windowWidth / (float) windowHeight,
-                       nearPlaneDistance, farPlaneDistance);
-        glMatrixMode(GL_MODELVIEW);
+        // If orbits are enabled, adjust the farthest partition so that it can contain the
+        // orbit.
+        if (!orbitPathList.empty())
+        {
+            depthPartitions[0].farZ = min(depthPartitions[0].farZ,
+                                           orbitPathList[orbitPathList.size() - 1].centerZ - 
+                                           orbitPathList[orbitPathList.size() - 1].radius);
+        }
+        
+        // We want to avoid overpartitioning the depth buffer. In this stage, we coalesce
+        // partitions that have small spans in the depth buffer.
+        // TODO: Implement this step!
 
         vector<Label>::iterator label = depthSortedLabels.begin();
 
-        // Render all the bodies in the render list.
-        for (i = nEntries - 1; i >= 0; i--)
+        // Render everything that wasn't culled.
+        float partitionSize = 1.0f / (float) max(1, nPartitions); 
+        i = nEntries - 1;        
+        for (int partition = 0; partition < nPartitions; partition++)
         {
-            label = renderSortedLabels(label, -renderList[i].farZ, FontNormal);
+            float nearPlaneDistance = -depthPartitions[partition].nearZ;
+            float farPlaneDistance  = -depthPartitions[partition].farZ;
+            
+            // Set the depth range for this partition--each partition is allocated an
+            // equal section of the depth buffer.
+            glDepthRange(1.0f - (float) (partition + 1) * partitionSize, 1.0f - (float) partition * partitionSize);
+            
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluPerspective(fov,
+                           (float) windowWidth / (float) windowHeight,
+                           nearPlaneDistance,
+                           farPlaneDistance);
+            glMatrixMode(GL_MODELVIEW);
 
-            if (renderList[i].discSizeInPixels > 1)
+#ifdef DEBUG_COALESCE            
+            clog << "partition: " << partition <<
+                    ", near: " << -depthPartitions[partition].nearZ <<
+                    ", far: " << -depthPartitions[partition].farZ <<
+                    "\n";
+#endif                    
+            
+            while (i >= 0 && renderList[i].farZ < depthPartitions[partition].nearZ)
             {
-                depthBucket = renderList[i].depthBucket;
-                glDepthRange(depthBucket * depthRange, (depthBucket + 1) * depthRange);
+                // This partition should completely contain the item
+                // Unless it's just a point?
+                //assert(renderList[i].nearZ <= depthPartitions[partition].near);
                 
-                nearPlaneDistance = renderList[i].nearZ * -0.9f;
-                farPlaneDistance = renderList[i].farZ * -1.5f;
-                if (nearPlaneDistance < MinNearPlaneDistance)
-                    nearPlaneDistance = MinNearPlaneDistance;
-                if (farPlaneDistance / nearPlaneDistance > MaxFarNearRatio)
-                    farPlaneDistance = nearPlaneDistance * MaxFarNearRatio;
-
-                glMatrixMode(GL_PROJECTION);
-                glLoadIdentity();
-                gluPerspective(fov, (float) windowWidth / (float) windowHeight,
+                if (renderList[i].body != NULL)
+                {
+#ifdef DEBUG_COALESCE                
+                    if (renderList[i].discSizeInPixels > 1)
+                    {
+                        clog << renderList[i].body->getName() << "\n";
+                    }
+                    else
+                    {
+                        //clog << "point: " << renderList[i].body->getName() << "\n";
+                    }
+#endif
+                    
+                    if (renderList[i].isCometTail)
+                    {
+                        renderCometTail(*renderList[i].body,
+                                        renderList[i].position,
+                                        renderList[i].distance,
+                                        renderList[i].appMag,
+                                        now,
+                                        observer.getOrientation(),
+                                        lightSourceLists[renderList[i].solarSysIndex],
+                                        nearPlaneDistance, farPlaneDistance);
+                    }
+                    else
+                    {
+                        renderPlanet(*renderList[i].body,
+                                     renderList[i].position,
+                                     renderList[i].distance,
+                                     renderList[i].appMag,
+                                     now,
+                                     observer.getOrientation(),
+                                     lightSourceLists[renderList[i].solarSysIndex],
+                                     nearPlaneDistance, farPlaneDistance);
+                    }
+                }
+                else if (renderList[i].star != NULL)
+                {
+                    renderStar(*renderList[i].star,
+                               renderList[i].position,
+                               renderList[i].distance,
+                               renderList[i].appMag,
+                               observer.getOrientation(),
+                               now,
                                nearPlaneDistance, farPlaneDistance);
-                glMatrixMode(GL_MODELVIEW);
-            }
-
-            if (renderList[i].body != NULL)
-            {
-                if (renderList[i].isCometTail)
-                {
-                    renderCometTail(*renderList[i].body,
-                                    renderList[i].position,
-                                    renderList[i].distance,
-                                    renderList[i].appMag,
-                                    now,
-                                    observer.getOrientation(),
-                                    lightSourceLists[renderList[i].solarSysIndex],
-                                    nearPlaneDistance, farPlaneDistance);
                 }
-                else
+
+                i--;
+            }
+
+            if (!orbitPathList.empty())
+            {
+                glDisable(GL_LIGHTING);
+                glDisable(GL_TEXTURE_2D);
+                glEnable(GL_DEPTH_TEST);
+                if ((renderFlags & ShowSmoothLines) != 0)
+                    enableSmoothLines();
+            
+                // Scan through the list of orbits and render any that overlap this partition
+                for (vector<OrbitPathListEntry>::const_iterator orbitIter = orbitPathList.begin();
+                     orbitIter != orbitPathList.end(); orbitIter++)
                 {
-                    renderPlanet(*renderList[i].body,
-                                 renderList[i].position,
-                                 renderList[i].distance,
-                                 renderList[i].appMag,
-                                 now,
-                                 observer.getOrientation(),
-                                 lightSourceLists[renderList[i].solarSysIndex],
-                                 nearPlaneDistance, farPlaneDistance);
-
-                    renderForegroundOrbits(renderList[i].body->getSatellites(),
-                                           renderList[i].position,
-                                           renderList[i].distance,
-                                           renderList[i].discSizeInPixels,
-                                           sel,
-                                           now);
+                    // Test for overlap
+                    float nearZ = -orbitIter->centerZ - orbitIter->radius;
+                    float farZ = -orbitIter->centerZ + orbitIter->radius;
+                    if (nearZ < farPlaneDistance && farZ > nearPlaneDistance)
+                    {
+                        if (orbitIter->body->getName() == "Mercury")
+                            clog << "Mercury orbit\n";
+                        renderOrbit(*orbitIter, now);
+                    }
                 }
-            }
-            else if (renderList[i].star != NULL)
-            {
-                renderStar(*renderList[i].star,
-                           renderList[i].position,
-                           renderList[i].distance,
-                           renderList[i].appMag,
-                           observer.getOrientation(),
-                           now,
-                           nearPlaneDistance, farPlaneDistance);
-            }
 
-            // If this body is larger than a pixel, we rendered it as a mesh
-            // instead of just a particle.  We move to the next depth buffer 
-            // bucket before proceeding with further rendering.
-            if (renderList[i].discSizeInPixels > 1)
-            {
-                depthBucket--;
-                glDepthRange(depthBucket * depthRange, (depthBucket + 1) * depthRange);
+                if ((renderFlags & ShowSmoothLines) != 0)
+                    disableSmoothLines();
             }
+            
+            // Render labels in this partition
+            label = renderSortedLabels(label, -depthPartitions[partition].nearZ, FontNormal);                
+            glDisable(GL_DEPTH_TEST);
         }
-
-        renderSortedLabels(label, 0.0f, FontNormal);
-
+                
         // reset the depth range
-        glDepthRange(0, 1);
+        glDepthRange(0, 1);        
     }
 
+    // Pop camera orientation matrix
     glPopMatrix();
 
     glEnable(GL_TEXTURE_2D);
@@ -2020,11 +1884,13 @@ void Renderer::render(const Observer& observer,
     glPolygonMode(GL_FRONT, GL_FILL);
     glPolygonMode(GL_BACK, GL_FILL);
 
+    // Mark for recycling all unused orbits in the cache
+    if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0)
     {
-        Mat3f m = observer.getOrientation().toMatrix3();
-        for (int i = 0; i < (int) labels.size(); i++)
+        for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
         {
-            
+            if (!(*iter)->keep)
+                (*iter)->body = NULL;
         }
     }
 
@@ -2263,12 +2129,16 @@ void Renderer::renderObjectAsPoint(Point3f position,
 
 		alpha *= fade;
 		
+#if 0        
         float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
 
         Point3f center(position.x * posScale,
                        position.y * posScale,
                        position.z * posScale);
+#endif
+        Point3f center = position;
 
+        glEnable(GL_DEPTH_TEST);
 		glEnable(GL_POINT_SPRITE_ARB);
 		glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
 		
@@ -2301,6 +2171,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
         }
 		
 		glDisable(GL_POINT_SPRITE_ARB);
+        glDisable(GL_DEPTH_TEST);
     }
 }
 
@@ -5052,8 +4923,7 @@ void Renderer::renderObject(Point3f pos,
         {
             fade = 1.0f;
         }
-
-        
+       
         if (fade > 0 && (renderFlags & ShowAtmospheres) != 0)
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
@@ -5197,8 +5067,6 @@ void Renderer::renderObject(Point3f pos,
         (obj.surface->appearanceFlags & Surface::Emissive) == 0 &&
         context->getRenderPath() != GLContext::GLPath_GLSL)
     {
-#if 1
-        // renderEclipseShadows_Shaders() still needs some more work.
         if (context->getVertexProcessor() != NULL &&
             context->getFragmentProcessor() != NULL)
         {
@@ -5209,7 +5077,6 @@ void Renderer::renderObject(Point3f pos,
                                          *context);
         }
         else
-#endif
         {
             renderEclipseShadows(model,
                                  *ls.shadows[0],
@@ -5966,6 +5833,8 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     Point3f starPos = sun.getPosition();
     Point3d observerPos = astrocentricPosition(observer.getPosition(),
                                                sun, now);
+    Mat3f viewMat = observer.getOrientation().toMatrix3();
+    Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
     int nBodies = solSystem.getSystemSize();
     for (int i = 0; i < nBodies; i++)
@@ -5974,7 +5843,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         if (!body->extant(now))
             continue;
 
-        Point3d localPos = body->getOrbit()->positionAtTime(now);
         Point3d bodyPos = body->getHeliocentricPosition(now);
         
         // We now have the positions of the observer and the planet relative
@@ -6011,6 +5879,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             rle.position = Point3f(pos.x, pos.y, pos.z);
             rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
             rle.distance = (float) distanceFromObserver;
+            rle.centerZ = pos * viewMatZ;
             rle.radius = body->getRadius();
             rle.discSizeInPixels = discSize;
             rle.appMag = appMag;
@@ -6095,6 +5964,35 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                 }
             }
         }
+        
+        // Only show orbits for major bodies or selected objects
+        if ((renderFlags & ShowOrbits) != 0 &&
+            (body->getClassification() & orbitMask) != 0) // || body == sel.body())
+        {
+            Point3d orbitOrigin(0.0, 0.0, 0.0);
+            if (body->getOrbitBarycenter())
+                orbitOrigin = body->getOrbitBarycenter()->getHeliocentricPosition(now);
+
+            // Calculate the origin of the orbit relative to the observer    
+            Vec3d relOrigin = orbitOrigin - observerPos;
+            Vec3f origf((float) relOrigin.x, (float) relOrigin.y, (float) relOrigin.z);
+
+            // Compute the size of the orbit in pixels
+            double originDistance = posd.length();
+            double boundingRadius = body->getOrbit()->getBoundingRadius();            
+            float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
+            
+            if (orbitRadiusInPixels > minOrbitSize)
+            {
+                // Add the orbit of this body to the list of orbits to be rendered
+                OrbitPathListEntry path;
+                path.body = body;
+                path.centerZ = origf * viewMatZ;
+                path.radius = (float) boundingRadius;
+                path.origin = Point3f(origf.x, origf.y, origf.z);
+                orbitPathList.push_back(path);
+            }
+        }
 
         if (appMag < faintestPlanetMag)
         {
@@ -6107,8 +6005,6 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         }
     }
 }
-
-
 
 
 template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<OBJ, PREC>

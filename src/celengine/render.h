@@ -29,6 +29,7 @@ struct RenderListEntry
     Vec3f sun;
     float distance;
     float radius;
+    float centerZ;
     float nearZ;
     float farZ;
     float discSizeInPixels;
@@ -157,18 +158,28 @@ class Renderer
 
     void loadTextures(Body*);
 
+    // Label related methods
     static const int MaxLabelLength = 32;
-    typedef struct {
+    struct Label
+    {
         char text[MaxLabelLength];
         Color color;
         Point3f position;
-    } Label;
-
+    };
+    
     void addLabel(const char* text, Color, const Point3f&, float depth = -1);
     void addLabel(const std::string&, Color, const Point3f&, float depth = -1);
     void addSortedLabel(const std::string&, Color, const Point3f&);
     void clearLabels();
 	void clearSortedLabels();
+    
+    struct OrbitPathListEntry
+    {
+        float centerZ;
+        float radius;
+        Body* body;
+        Point3f origin;
+    };        
 
     enum FontStyle
     {
@@ -320,6 +331,13 @@ class Renderer
 
     typedef ObjectLabel<Star>          StarLabel;
     typedef ObjectLabel<DeepSkyObject> DSOLabel;    // currently not used
+    
+    struct DepthBufferPartition
+    {
+        int index;
+        float nearZ;
+        float farZ;
+    };
 
  private:
     void setFieldOfView(float);
@@ -426,7 +444,7 @@ class Renderer
                        const Quatf& orientation,
                        double jd);
 
-    void renderOrbit(Body*, double);
+    void renderOrbit(const OrbitPathListEntry&, double);
     void renderOrbits(PlanetarySystem*, const Selection&, double,
                       const Point3d&, const Point3d&);
     void renderForegroundOrbits(const PlanetarySystem* system,
@@ -471,9 +489,11 @@ class Renderer
     PointStarVertexBuffer* pointStarVertexBuffer;
 	PointStarVertexBuffer* glareVertexBuffer;
     std::vector<RenderListEntry> renderList;
+    std::vector<DepthBufferPartition> depthPartitions;
     std::vector<Particle> glareParticles;
     std::vector<Label> labels;
     std::vector<Label> depthSortedLabels;
+    std::vector<OrbitPathListEntry> orbitPathList;
     std::vector<EclipseShadow> eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;
 
