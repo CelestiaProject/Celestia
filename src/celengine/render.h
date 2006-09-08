@@ -178,6 +178,7 @@ class Renderer
         float centerZ;
         float radius;
         Body* body;
+        const Star* star;
         Point3f origin;
     };        
 
@@ -351,12 +352,15 @@ class Renderer
                               const Observer&,
                               float faintestMagNight);
     void renderCelestialSphere(const Observer& observer);
-    void renderPlanetarySystem(const Star& sun,
-                               const PlanetarySystem& solSystem,
-                               const Observer& observer,
-                               double now,
-                               unsigned int solarSysIndex,
-                               bool showLabels = false);
+    void buildRenderLists(const Star& sun,
+                          const PlanetarySystem* solSystem,
+                          const Observer& observer,
+                          double now,
+                          unsigned int solarSysIndex,
+                          bool showLabels = false);
+    void addStarOrbitToRenderList(const Star& star,
+                                  const Observer& observer,
+                                  double now);
 
     void renderObject(Point3f pos,
                       float distance,
@@ -445,14 +449,6 @@ class Renderer
                        double jd);
 
     void renderOrbit(const OrbitPathListEntry&, double);
-    void renderOrbits(PlanetarySystem*, const Selection&, double,
-                      const Point3d&, const Point3d&);
-    void renderForegroundOrbits(const PlanetarySystem* system,
-                                const Point3f &center,
-                                float distance,
-                                float discSizeInPixels,
-                                const Selection& sel, 
-                                double t);
 
  private:
     GLContext* context;
@@ -539,6 +535,8 @@ class Renderer
     SkyContourPoint* skyContour;
 
     const ColorTemperatureTable* colorTemp;
+    
+    Selection highlightObject;
 };
 
 #endif // _RENDER_H_

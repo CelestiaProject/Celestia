@@ -212,6 +212,7 @@ public:
 
     // Return the exact position of the star, accounting for its orbit
     UniversalCoord getPosition(double t) const;
+    UniversalCoord getOrbitBarycenterPosition(double t) const;
 
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);

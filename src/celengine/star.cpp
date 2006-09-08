@@ -901,6 +901,26 @@ Star::getPosition(double t) const
 }
 
 
+UniversalCoord
+Star::getOrbitBarycenterPosition(double t) const
+{
+    const Star* barycenter = getOrbitBarycenter();
+
+    if (barycenter == NULL)
+    {
+        Point3d barycenterPos(position.x * 1.0e6,
+                              position.y * 1.0e6,
+                              position.z * 1.0e6);
+
+        return UniversalCoord(barycenterPos);
+    }
+    else
+    {
+        return barycenter->getPosition(t);
+    }
+}
+
+
 MultiResTexture
 Star::getTexture() const
 {

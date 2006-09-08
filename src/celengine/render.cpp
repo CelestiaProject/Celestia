@@ -1009,7 +1009,7 @@ public:
 };
 
 
-void renderOrbitColor(const Body* body, bool selected)
+void renderOrbitColor(int classification, bool selected)
 {
     if (selected)
     {
@@ -1018,7 +1018,7 @@ void renderOrbitColor(const Body* body, bool selected)
     }
     else
     {
-        switch (body->getClassification())
+        switch (classification)
         {
         case Body::Moon:
             glColor4f(0.0f, 0.2f, 0.5f, 1.0f);
@@ -1045,11 +1045,13 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
 {
     Body* body = orbitPath.body;
     
+    // Ugly cast here because orbit cache needs to be rewritten to use an STL map
+    Body* cacheKey = body != NULL ? body : reinterpret_cast<Body*>(const_cast<Star*>(orbitPath.star));
     vector<OrbitSample>* trajectory = NULL;
     for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
          iter != orbitCache.end(); iter++)
     {
-        if ((*iter)->body == body)
+        if ((*iter)->body == cacheKey)
         {
             (*iter)->keep = true;
             trajectory = &((*iter)->trajectory);
@@ -1057,10 +1059,16 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
         }
     }
 
+    const Orbit* orbit = NULL;
+    if (body != NULL)
+        orbit = body->getOrbit();
+    else
+        orbit = orbitPath.star->getOrbit();
+    
     // If it's not in the cache already
     if (trajectory == NULL)
     {
-        CachedOrbit* orbit = NULL;
+        CachedOrbit* cachedOrbit = NULL;
 
         // Search the cache an see if we can reuse an old orbit
         for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
@@ -1068,72 +1076,78 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
         {
             if ((*iter)->body == NULL)
             {
-                orbit = *iter;
-                orbit->trajectory.clear();
+                cachedOrbit = *iter;
+                cachedOrbit->trajectory.clear();
                 break;
             }
         }
 
         // If we can't reuse an old orbit, allocate a new one.
         bool reuse = true;
-        if (orbit == NULL)
+        if (cachedOrbit == NULL)
         {
-            orbit = new CachedOrbit();
+            cachedOrbit = new CachedOrbit();
             reuse = false;
         }
 
         double startTime = t;
         int nSamples = detailOptions.orbitPathSamplePoints;
-
+            
         // Adjust the number of samples used for aperiodic orbits--these aren't
         // true orbits, but are sampled trajectories, generally of spacecraft.
         // Better control is really needed--some sort of adaptive sampling would
         // be ideal.
-        if (!body->getOrbit()->isPeriodic())
+        if (!orbit->isPeriodic())
         {
             double begin = 0.0, end = 0.0;
-            body->getOrbit()->getValidRange(begin, end);
+            orbit->getValidRange(begin, end);
 
             if (begin != end)
             {
                 startTime = begin;
-                nSamples = (int) (body->getOrbit()->getPeriod() * 100.0);
+                nSamples = (int) (orbit->getPeriod() * 100.0);
                 nSamples = max(min(nSamples, 1000), 100);
             }
         }
 
-        orbit->body = body;
-        orbit->keep = true;
-        OrbitSampler sampler(&orbit->trajectory);
-        body->getOrbit()->sample(startTime,
-                                 body->getOrbit()->getPeriod(),
-                                 nSamples,
-                                 sampler);
-        trajectory = &orbit->trajectory;
+        cachedOrbit->body = cacheKey;
+        cachedOrbit->keep = true;
+        OrbitSampler sampler(&cachedOrbit->trajectory);
+        orbit->sample(startTime,
+                       orbit->getPeriod(),
+                       nSamples,
+                       sampler);
+        trajectory = &cachedOrbit->trajectory;
 
         // If the orbit is new, put it back in the cache
         if (!reuse)
-            orbitCache.insert(orbitCache.end(), orbit);
+            orbitCache.insert(orbitCache.end(), cachedOrbit);
     }
 
     glPushMatrix();
     glTranslate(orbitPath.origin);
-    if (body->getOrbitBarycenter() != NULL)
+    if (body != NULL &&
+        body->getOrbitBarycenter() != NULL &&
+        body->getOrbitReferencePlane() == astro::BodyEquator)
     {
         Quatd orientation = body->getOrbitBarycenter()->getEclipticalToEquatorial(t);
         glRotate(~orientation);
     }
     
-    renderOrbitColor(body, false);
+    bool highlight;
+    if (body != NULL)
+        highlight = highlightObject.body() == body;
+    else
+        highlight = highlightObject.star() == orbitPath.star;        
+    renderOrbitColor(body != NULL ? body->getClassification() : Body::Planet, highlight);
     
     // Actually render the orbit
-    if (body->getOrbit()->isPeriodic())
+    if (orbit->isPeriodic())
         glBegin(GL_LINE_LOOP);
     else
         glBegin(GL_LINE_STRIP);
 
-    if ((renderFlags & ShowPartialTrajectories) == 0 ||
-        body->getOrbit()->isPeriodic())
+    if ((renderFlags & ShowPartialTrajectories) == 0 || orbit->isPeriodic())
     {
         // Show the complete trajectory
         for (vector<OrbitSample>::const_iterator p = trajectory->begin();
@@ -1156,7 +1170,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
         // to render a partial orbit segment.
         if (p != trajectory->end())
         {
-            Point3d pos = body->getOrbit()->positionAtTime(t);
+            Point3d pos = orbit->positionAtTime(t);
             glVertex3f((float) pos.x, (float) pos.y, (float) pos.z);
         }
     }
@@ -1293,6 +1307,9 @@ void Renderer::render(const Observer& observer,
         useNewStarRendering = false;
     }
     
+    // Highlight the selected object
+    highlightObject = sel;
+    
     // Set up the camera
     Point3f observerPos = (Point3f) observer.getPosition();
     observerPos.x *= 1e-6f;
@@ -1343,14 +1360,16 @@ void Renderer::render(const Observer& observer,
             {
                 setupLightSources(nearStars, *sun, now,
                                   lightSourceLists[solarSysIndex]);
-                renderPlanetarySystem(*sun,
-                                      *solarSystem->getPlanets(),
-                                      observer,
-                                      now,
-                                      solarSysIndex,
-                                      (labelMode & (BodyLabelMask)) != 0);
+                buildRenderLists(*sun,
+                                 solarSystem->getPlanets(),
+                                 observer,
+                                 now,
+                                 solarSysIndex,
+                                 (labelMode & (BodyLabelMask)) != 0);
                 solarSysIndex++;
             }
+            
+            addStarOrbitToRenderList(*sun, observer, now);
         }
         starTex->bind();
     }
@@ -1767,6 +1786,8 @@ void Renderer::render(const Observer& observer,
             // equal section of the depth buffer.
             glDepthRange(1.0f - (float) (partition + 1) * partitionSize, 1.0f - (float) partition * partitionSize);
             
+            // Set up a perspective projection using the current partition's near and
+            // far clip planes.
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             gluPerspective(fov,
@@ -1775,7 +1796,7 @@ void Renderer::render(const Observer& observer,
                            farPlaneDistance);
             glMatrixMode(GL_MODELVIEW);
 
-#ifdef DEBUG_COALESCE            
+#if DEBUG_COALESCE            
             clog << "partition: " << partition <<
                     ", near: " << -depthPartitions[partition].nearZ <<
                     ", far: " << -depthPartitions[partition].farZ <<
@@ -1790,7 +1811,7 @@ void Renderer::render(const Observer& observer,
                 
                 if (renderList[i].body != NULL)
                 {
-#ifdef DEBUG_COALESCE                
+#if DEBUG_COALESCE                
                     if (renderList[i].discSizeInPixels > 1)
                     {
                         clog << renderList[i].body->getName() << "\n";
@@ -1855,8 +1876,6 @@ void Renderer::render(const Observer& observer,
                     float farZ = -orbitIter->centerZ + orbitIter->radius;
                     if (nearZ < farPlaneDistance && farZ > nearPlaneDistance)
                     {
-                        if (orbitIter->body->getName() == "Mercury")
-                            clog << "Mercury orbit\n";
                         renderOrbit(*orbitIter, now);
                     }
                 }
@@ -2065,14 +2084,14 @@ void Renderer::renderObjectAsPoint(Point3f position,
     float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
     float discSize = 1.0f;
-	bool useScaledDiscs = starStyle == ScaledDiscStars;
+    bool useScaledDiscs = starStyle == ScaledDiscStars;
 
     if (discSizeInPixels < maxBlendDiscSize || useHaloes)
     {
         float alpha = 1.0f;
         float fade = 1.0f;
-		float size = 4.0f;
-		float satPoint = _faintestMag - (1.0f - brightnessBias) / (brightnessScale * 2); // TODO: precompute this value
+        float size = 4.0f;
+        float satPoint = _faintestMag - (1.0f - brightnessBias) / (brightnessScale * 2); // TODO: precompute this value
 
 
         if (discSizeInPixels > maxDiscSize)
@@ -2093,9 +2112,9 @@ void Renderer::renderObjectAsPoint(Point3f position,
         // just hack to accomplish this.  There are cases where it will fail
         // and a more robust method should be implemented.
 
-		float pointSize = size;
-		float glareSize = 0.0f;
-		float glareAlpha = 0.0f;
+        float pointSize = size;
+        float glareSize = 0.0f;
+        float glareAlpha = 0.0f;
 		if (useScaledDiscs)
 		{
 			if (alpha < 0.0f)
@@ -5823,12 +5842,14 @@ void Renderer::renderCometTail(const Body& body,
 }
 
 
-void Renderer::renderPlanetarySystem(const Star& sun,
-                                     const PlanetarySystem& solSystem,
-                                     const Observer& observer,
-                                     double now,
-                                     unsigned int solarSysIndex,
-                                     bool showLabels)
+// Add solar system bodies, orbits, and labels to the render list. Stars
+// are handled by other methods.
+void Renderer::buildRenderLists(const Star& sun,
+                                const PlanetarySystem* solSystem,
+                                const Observer& observer,
+                                double now,
+                                unsigned int solarSysIndex,
+                                bool showLabels)
 {
     Point3f starPos = sun.getPosition();
     Point3d observerPos = astrocentricPosition(observer.getPosition(),
@@ -5836,10 +5857,10 @@ void Renderer::renderPlanetarySystem(const Star& sun,
     Mat3f viewMat = observer.getOrientation().toMatrix3();
     Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
-    int nBodies = solSystem.getSystemSize();
+    int nBodies = solSystem != NULL ? solSystem->getSystemSize() : 0;
     for (int i = 0; i < nBodies; i++)
     {
-        Body* body = solSystem.getBody(i);
+        Body* body = solSystem->getBody(i);
         if (!body->extant(now))
             continue;
 
@@ -5967,7 +5988,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
         
         // Only show orbits for major bodies or selected objects
         if ((renderFlags & ShowOrbits) != 0 &&
-            (body->getClassification() & orbitMask) != 0) // || body == sel.body())
+            (body->getClassification() & orbitMask) != 0 || body == highlightObject.body())
         {
             Point3d orbitOrigin(0.0, 0.0, 0.0);
             if (body->getOrbitBarycenter())
@@ -5987,6 +6008,7 @@ void Renderer::renderPlanetarySystem(const Star& sun,
                 // Add the orbit of this body to the list of orbits to be rendered
                 OrbitPathListEntry path;
                 path.body = body;
+                path.star = NULL;
                 path.centerZ = origf * viewMatZ;
                 path.radius = (float) boundingRadius;
                 path.origin = Point3f(origf.x, origf.y, origf.z);
@@ -5999,8 +6021,48 @@ void Renderer::renderPlanetarySystem(const Star& sun,
             const PlanetarySystem* satellites = body->getSatellites();
             if (satellites != NULL)
             {
-                renderPlanetarySystem(sun, *satellites, observer,
-                                      now, solarSysIndex, showLabels);
+                buildRenderLists(sun, satellites, observer,
+                                 now, solarSysIndex, showLabels);
+            }
+        }
+    }
+}
+
+
+// Add a star orbit to the render list
+void Renderer::addStarOrbitToRenderList(const Star& star,
+                                        const Observer& observer,
+                                        double now)
+{
+    // If the star isn't fixed, add its orbit to the render list
+    if ((renderFlags & ShowOrbits) != 0 && (orbitMask & Body::Planet) != 0)
+    {
+        Mat3f viewMat = observer.getOrientation().toMatrix3();
+        Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+    
+        if (star.getOrbit() != NULL)
+        {
+            // Get orbit origin relative to the observer
+            Vec3d orbitOrigin = star.getOrbitBarycenterPosition(now) - observer.getPosition();
+            orbitOrigin *= astro::microLightYearsToKilometers(1.0);
+            
+            Vec3f origf((float) orbitOrigin.x, (float) orbitOrigin.y, (float) orbitOrigin.z);
+
+            // Compute the size of the orbit in pixels
+            double originDistance = orbitOrigin.length();
+            double boundingRadius = star.getOrbit()->getBoundingRadius();            
+            float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
+            
+            if (orbitRadiusInPixels > minOrbitSize)
+            {
+                // Add the orbit of this body to the list of orbits to be rendered
+                OrbitPathListEntry path;
+                path.star = &star;
+                path.body = NULL;
+                path.centerZ = origf * viewMatZ;
+                path.radius = (float) boundingRadius;
+                path.origin = Point3f(origf.x, origf.y, origf.z);
+                orbitPathList.push_back(path);
             }
         }
     }
