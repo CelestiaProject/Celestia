@@ -59,6 +59,15 @@
 	AppMag 11.3
 }
 
+1028113549 "TrES-2 (parent star)"
+{
+	RA 286.80848
+	Dec 49.31641
+	Distance 820      # From spectral class and visual magnitude
+	SpectralType "G0V"
+	AppMag 11.41
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
@@ -351,7 +360,7 @@ Barycenter "PSR 1620-26:PSR B1620-26:PSR J1623-2631"
 	RotationPeriod 0.000003076  # 0.011076 sec
 }
 
-"PSR 1620-26 B:PSR B1620-26 B:PSR J1623-2631 B"
+"WD J1623-266:PSR 1620-26 B:PSR B1620-26 B:PSR J1623-2631 B"
 {
 	OrbitBarycenter "PSR 1620-26"
 	SpectralType "D"  # white dwarf
