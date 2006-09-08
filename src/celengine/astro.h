@@ -129,9 +129,9 @@ namespace astro
     double lightYearsToAU(double);
 
     // TODO: templatize the rest of the conversion functions
-    template<class T> T AUtoLightYears(T ly)
+    template<class T> T AUtoLightYears(T au)
     {
-        return ly * (T) AU_PER_LY;
+        return au / (T) AU_PER_LY;
     }
 
     float AUtoKilometers(float);
