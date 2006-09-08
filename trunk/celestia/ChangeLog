@@ -1000,7 +1000,7 @@ Code:
   - HD 164922 b, HD 66428 b, HD 99109 b, HD 107148 b, HIP 14810 b
   - HIP 14810 c, HD 185269 b, Gliese 849 b
   - Mu Ara e
-* Revised orbits of some extrasolar planets to reflect new data
+* Revised orbits of many extrasolar planets to reflect new data
 * Added stars for new extrasolar planets: GSC 92941-01657
 * Mac: Show menu bar when moving mouse to top of screen in full screen
 * Mac: added Japanese translation
@@ -1058,3 +1058,25 @@ Code:
 * Added cmodsphere, a utility for producing cmod meshes from height samples
   regularly spaced in longitude and latitude.
 * COPYING, controls.txt, start script, and guide can all be localized
+* cel and celx scripting: 
+  - added openclusters and cloudshadows render flags
+  - added location, nebulae, openclusers, and i18nconsteallations label flags
+* Established Barycentric Dynamical Time (TDB) as the time scale used
+  internally by Celestia
+  - Convert to UTC when displaying the time
+  - Modified Set Time dialog to convert from UTC to TDB
+* Added normal maps for cloud layers
+* Allow smaller objects to cast eclipse shadows (e.g. can now see eclipse
+  shadows from Miranda on Uranus)
+* Added support for compressed normal maps (DXT5nm)
+* Added capability to use different reference planes for orbits. Previously
+  orbits were always referred to the equatorial plane of their parent body.
+  Now, the J2000 ecliptic plane is also an option.
+* Implemented a new depth sorting algorithm that fixes many depth sorting
+  bugs.
+* Rewrote orbit path rendering; orbits are now properly depth sorted
+* Mac: middle mouse button implemented (option-click on one button mice)
+* Mac: show nearest and brightest stars properly sorted in star browser
+* Added spectrum2rgb tool for generating RGB asteroid colors from SMASS
+  spectra
+* Made star orbit paths visible
