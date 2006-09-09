@@ -55,7 +55,8 @@ static CelestiaCore *appCore;
         {
             name = [NSString stringWithStdString:
                 catalog->getDSOName(obj)];
-            [newDict setObject: name forKey: name];
+            [newDict setObject: name
+                        forKey: [NSString stringWithFormat: @"%@ (%s)", name, obj->getType()]];
         }
     }
 
