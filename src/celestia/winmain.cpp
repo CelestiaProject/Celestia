@@ -2992,7 +2992,7 @@ public:
     
     virtual void update(const string& filename)
     {
-        splash->setMessage(string(_("Loading: ")) + filename);
+        splash->setMessage(UTF8ToCurrentCP(_("Loading: ")) + filename);
     }
     
 private:
