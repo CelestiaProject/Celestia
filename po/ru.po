@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia 1.4.1 (ru)\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2006-08-26 17:50+0200\n"
+"POT-Creation-Date: 2006-09-09 16:42+0200\n"
 "PO-Revision-Date: 2006-08-20 13:20+0200\n"
 "Last-Translator: Sergey Leonov <leserg@ua.fm>\n"
 "Language-Team: Russian <leserg@ua.fm>\n"
@@ -89,27 +89,46 @@ msgstr "%s"
 msgid "Error in .ssc file (line "
 msgstr "Ошибка в .ssc файле (строка "
 
-#: src/celengine/solarsys.cpp:572 src/celengine/solarsys.cpp:630
-msgid "parent body '"
-msgstr "главный объект '"
-
-#: src/celengine/solarsys.cpp:572 src/celengine/solarsys.cpp:630
+#: src/celengine/solarsys.cpp:228 src/celengine/solarsys.cpp:233
+#: src/celengine/solarsys.cpp:608 src/celengine/solarsys.cpp:771
+#: src/celengine/solarsys.cpp:834
 msgid "' of '"
 msgstr "' из '"
 
-#: src/celengine/solarsys.cpp:572 src/celengine/solarsys.cpp:630
+#: src/celengine/solarsys.cpp:228 src/celengine/solarsys.cpp:608
+#: src/celengine/solarsys.cpp:771 src/celengine/solarsys.cpp:834
 msgid "' not found.\n"
 msgstr "' не найдена.\n"
 
-#: src/celengine/solarsys.cpp:581
+#: src/celengine/solarsys.cpp:233
+#, fuzzy
+msgid "' is not a star or planet.\n"
+msgstr " это не PNG файл.\n"
+
+#: src/celengine/solarsys.cpp:252 src/celengine/solarsys.cpp:260
+#: src/celengine/solarsys.cpp:626
+#, fuzzy
+msgid " of "
+msgstr "' из '"
+
+#: src/celengine/solarsys.cpp:252 src/celengine/solarsys.cpp:260
+#: src/celengine/solarsys.cpp:626
+msgid " must be in same star system\n"
+msgstr ""
+
+#: src/celengine/solarsys.cpp:771 src/celengine/solarsys.cpp:834
+msgid "parent body '"
+msgstr "главный объект '"
+
+#: src/celengine/solarsys.cpp:780
 msgid "warning duplicate definition of "
 msgstr "Предупреждение: дублирование для "
 
-#: src/celengine/solarsys.cpp:610
+#: src/celengine/solarsys.cpp:814
 msgid "bad alternate surface"
 msgstr "неверная дополнительная поверхность"
 
-#: src/celengine/solarsys.cpp:624
+#: src/celengine/solarsys.cpp:828
 msgid "bad location"
 msgstr "неверное местоположение"
 
@@ -181,6 +200,10 @@ msgstr "Неверный объект: отсутствие расстояния
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Неверный объект: отсутствие величины.\n"
 
+#: src/celengine/stardb.cpp:1196
+msgid "Sun"
+msgstr "Солнце"
+
 #: src/celengine/vertexprog.cpp:108
 msgid "Loading NV vertex program: "
 msgstr "Загрузка NV шейдера: "
@@ -250,9 +273,9 @@ msgstr "Ошибка инициализации сценария"
 msgid "Invalid filetype"
 msgstr "Неверный тип файла"
 
-#: src/celestia/celestiacore.cpp:922 src/celestia/celestiacore.cpp:1660
-#: src/celestia/celestiacore.cpp:1676 src/celestia/celestiacore.cpp:1917
-#: src/celestia/celestiacore.cpp:1946
+#: src/celestia/celestiacore.cpp:922 src/celestia/celestiacore.cpp:1672
+#: src/celestia/celestiacore.cpp:1688 src/celestia/celestiacore.cpp:1929
+#: src/celestia/celestiacore.cpp:1958
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "Предельная величина: %.2f"
@@ -362,255 +385,256 @@ msgstr "Время приостановлено"
 msgid "Resume"
 msgstr "Резюме"
 
-#: src/celestia/celestiacore.cpp:1604
+#: src/celestia/celestiacore.cpp:1616
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "Световое запаздывание:  %.4f г "
 
-#: src/celestia/celestiacore.cpp:1613
+#: src/celestia/celestiacore.cpp:1625
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Световое запаздывание:  %d мин  %.1f с"
 
-#: src/celestia/celestiacore.cpp:1616
+#: src/celestia/celestiacore.cpp:1628
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Световое запаздывание:  %d ч  %d мин  %.1f с"
 
-#: src/celestia/celestiacore.cpp:1635
+#: src/celestia/celestiacore.cpp:1647
 msgid "Light travel delay included"
 msgstr "Световое запаздывание включено"
 
-#: src/celestia/celestiacore.cpp:1640
+#: src/celestia/celestiacore.cpp:1652
 msgid "Light travel delay switched off"
 msgstr "Световое запаздывание отключено"
 
-#: src/celestia/celestiacore.cpp:1646
+#: src/celestia/celestiacore.cpp:1658
 msgid "Light travel delay ignored"
 msgstr "Световое запаздывание не учитывается"
 
-#: src/celestia/celestiacore.cpp:1687
+#: src/celestia/celestiacore.cpp:1699
 msgid "Using normal surface textures."
 msgstr "Использование нормальных текстур поверхности."
 
-#: src/celestia/celestiacore.cpp:1691
+#: src/celestia/celestiacore.cpp:1703
 msgid "limit of knowledge"
 msgstr "ограниченные текстуры"
 
-#: src/celestia/celestiacore.cpp:1692
+#: src/celestia/celestiacore.cpp:1704
 msgid "Using limit of knowledge surface textures."
 msgstr "Использование ограниченных текстур."
 
-#: src/celestia/celestiacore.cpp:1755
+#: src/celestia/celestiacore.cpp:1767
 msgid "Follow"
 msgstr "Наблюдение"
 
-#: src/celestia/celestiacore.cpp:1782
+#: src/celestia/celestiacore.cpp:1794
 msgid "Time: Forward"
 msgstr "Время: вперед"
 
-#: src/celestia/celestiacore.cpp:1784
+#: src/celestia/celestiacore.cpp:1796
 msgid "Time: Backward"
 msgstr "Время: назад"
 
-#: src/celestia/celestiacore.cpp:1795 src/celestia/celestiacore.cpp:1808
+#: src/celestia/celestiacore.cpp:1807 src/celestia/celestiacore.cpp:1820
 #, c-format
 msgid "Time rate: %.1f"
 msgstr "Множитель времени: %.1f"
 
-#: src/celestia/celestiacore.cpp:1845
+#: src/celestia/celestiacore.cpp:1857
 msgid "Low res textures"
 msgstr "Текстуры низкого разрешения"
 
-#: src/celestia/celestiacore.cpp:1848
+#: src/celestia/celestiacore.cpp:1860
 msgid "Medium res textures"
 msgstr "Текстуры среднего разрешения"
 
-#: src/celestia/celestiacore.cpp:1851
+#: src/celestia/celestiacore.cpp:1863
 msgid "High res textures"
 msgstr "Текстуры высокого разрешения"
 
-#: src/celestia/celestiacore.cpp:1890
+#: src/celestia/celestiacore.cpp:1902
 msgid "Sync Orbit"
 msgstr "Синхронная орбита"
 
-#: src/celestia/celestiacore.cpp:1896
+#: src/celestia/celestiacore.cpp:1908
 msgid "Lock"
 msgstr "Захват"
 
-#: src/celestia/celestiacore.cpp:1902
+#: src/celestia/celestiacore.cpp:1914
 msgid "Chase"
 msgstr "Сопровождение"
 
-#: src/celestia/celestiacore.cpp:1926 src/celestia/celestiacore.cpp:1955
+#: src/celestia/celestiacore.cpp:1938 src/celestia/celestiacore.cpp:1967
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Предел автовеличины при 45 FOV:  %.2f"
 
-#: src/celestia/celestiacore.cpp:1984 src/celestia/celestiacore.cpp:1994
+#: src/celestia/celestiacore.cpp:1996 src/celestia/celestiacore.cpp:2006
 msgid "Light gain"
 msgstr "Светимость галактик"
 
-#: src/celestia/celestiacore.cpp:2341
+#: src/celestia/celestiacore.cpp:2353
 msgid "GL error: "
 msgstr "GL ошибка: "
 
-#: src/celestia/celestiacore.cpp:2388
+#: src/celestia/celestiacore.cpp:2400
 msgid "View too small to be split"
 msgstr "Изображение слишком мало для разделения"
 
-#: src/celestia/celestiacore.cpp:2391
+#: src/celestia/celestiacore.cpp:2403
 msgid "Added view"
 msgstr "Добавленный вид"
 
-#: src/celestia/celestiacore.cpp:2626
+#: src/celestia/celestiacore.cpp:2638
 #: src/celestia/kde/celestialbrowser.cpp:129
 #: src/celestia/kde/selectionpopup.cpp:75
 msgid "ly"
 msgstr "свет. лет"
 
-#: src/celestia/celestiacore.cpp:2630
+#: src/celestia/celestiacore.cpp:2642
 #: src/celestia/kde/celestialbrowser.cpp:148
 #: src/celestia/kde/selectionpopup.cpp:77
 #: src/celestia/res/resource_strings.cpp:122
 msgid "au"
 msgstr "а.е."
 
-#: src/celestia/celestiacore.cpp:2651
+#: src/celestia/celestiacore.cpp:2663
 msgid " days"
 msgstr " дней"
 
-#: src/celestia/celestiacore.cpp:2653
+#: src/celestia/celestiacore.cpp:2665
 msgid " hours"
 msgstr " часов"
 
-#: src/celestia/celestiacore.cpp:2655
+#: src/celestia/celestiacore.cpp:2667
 msgid " minutes"
 msgstr " минут"
 
-#: src/celestia/celestiacore.cpp:2695
+#: src/celestia/celestiacore.cpp:2707
 msgid "Apparent diameter: "
 msgstr "Видимый диаметр: "
 
-#: src/celestia/celestiacore.cpp:2710
+#: src/celestia/celestiacore.cpp:2722
 msgid "Apparent magnitude: "
 msgstr "Видимая величина: "
 
-#: src/celestia/celestiacore.cpp:2714
+#: src/celestia/celestiacore.cpp:2726
 msgid "Absolute magnitude: "
 msgstr "Абсолютная величина: "
 
-#: src/celestia/celestiacore.cpp:2747 src/celestia/celestiacore.cpp:2801
-#: src/celestia/celestiacore.cpp:2833 src/celestia/celestiacore.cpp:2885
+#: src/celestia/celestiacore.cpp:2759 src/celestia/celestiacore.cpp:2813
+#: src/celestia/celestiacore.cpp:2845 src/celestia/celestiacore.cpp:2897
 #: src/celestia/kde/selectionpopup.cpp:83
 msgid "Distance: "
 msgstr "Расстояние: "
 
-#: src/celestia/celestiacore.cpp:2753
+#: src/celestia/celestiacore.cpp:2765
 msgid "Star system barycenter\n"
 msgstr "Центр тяжести звездной системы\n"
 
-#: src/celestia/celestiacore.cpp:2757
+#: src/celestia/celestiacore.cpp:2769
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Абс. (вид.) величина: %.2f (%.2f)\n"
 
-#: src/celestia/celestiacore.cpp:2763
+#: src/celestia/celestiacore.cpp:2775
 msgid "Luminosity: "
 msgstr "Светимость: "
 
-#: src/celestia/celestiacore.cpp:2763
-msgid "Sun"
+#: src/celestia/celestiacore.cpp:2775
+#, fuzzy
+msgid "x Sun"
 msgstr "Солнце"
 
-#: src/celestia/celestiacore.cpp:2764 src/celestia/kde/selectionpopup.cpp:93
+#: src/celestia/celestiacore.cpp:2776 src/celestia/kde/selectionpopup.cpp:93
 msgid "Class: "
 msgstr "Класс: "
 
-#: src/celestia/celestiacore.cpp:2766
+#: src/celestia/celestiacore.cpp:2778
 msgid "Neutron star"
 msgstr "Нейтронная звезда"
 
-#: src/celestia/celestiacore.cpp:2768
+#: src/celestia/celestiacore.cpp:2780
 msgid "Black hole"
 msgstr "Черная дыра"
 
-#: src/celestia/celestiacore.cpp:2778
+#: src/celestia/celestiacore.cpp:2790
 msgid "Surface temp: "
 msgstr "Темп. поверхности: "
 
-#: src/celestia/celestiacore.cpp:2779
+#: src/celestia/celestiacore.cpp:2791
 #, c-format
 msgid "Radius: %.2f Rsun\n"
 msgstr "Радиус: %.2f Rсолн\n"
 
-#: src/celestia/celestiacore.cpp:2781
+#: src/celestia/celestiacore.cpp:2793
 msgid "Rotation period: "
 msgstr "Период вращения: "
 
-#: src/celestia/celestiacore.cpp:2788
+#: src/celestia/celestiacore.cpp:2800
 msgid "Planetary companions present\n"
 msgstr "Присутствует планетарная система\n"
 
-#: src/celestia/celestiacore.cpp:2806
+#: src/celestia/celestiacore.cpp:2818
 msgid "Distance from center: "
 msgstr "Расстояние от центра: "
 
-#: src/celestia/celestiacore.cpp:2810 src/celestia/celestiacore.cpp:2838
+#: src/celestia/celestiacore.cpp:2822 src/celestia/celestiacore.cpp:2850
 #: src/celestia/kde/selectionpopup.cpp:101
 msgid "Radius: "
 msgstr "Радиус: "
 
-#: src/celestia/celestiacore.cpp:2847
+#: src/celestia/celestiacore.cpp:2859
 msgid "Day length: "
 msgstr "Продолжительность дня: "
 
-#: src/celestia/celestiacore.cpp:2862
+#: src/celestia/celestiacore.cpp:2874
 msgid "Temperature: "
 msgstr "Температура: "
 
-#: src/celestia/celestiacore.cpp:2874
+#: src/celestia/celestiacore.cpp:2886
 #, c-format
 msgid "Apparent mag: %.2f\n"
 msgstr "Видимая величина: %.2f\n"
 
-#: src/celestia/celestiacore.cpp:3083 src/celestia/celestiacore.cpp:3097
+#: src/celestia/celestiacore.cpp:3099 src/celestia/celestiacore.cpp:3114
 msgid "  LT"
 msgstr "  LT"
 
-#: src/celestia/celestiacore.cpp:3093
+#: src/celestia/celestiacore.cpp:3110
 msgid " UTC"
 msgstr " UTC"
 
-#: src/celestia/celestiacore.cpp:3109
+#: src/celestia/celestiacore.cpp:3126
 msgid "Real time"
 msgstr "Реальное время"
 
-#: src/celestia/celestiacore.cpp:3111
+#: src/celestia/celestiacore.cpp:3128
 msgid "-Real time"
 msgstr "Обратный ход времени"
 
-#: src/celestia/celestiacore.cpp:3115
+#: src/celestia/celestiacore.cpp:3132
 msgid "Time stopped"
 msgstr "Время остановлено"
 
-#: src/celestia/celestiacore.cpp:3119
+#: src/celestia/celestiacore.cpp:3136
 msgid " faster"
 msgstr " раз быстрее"
 
-#: src/celestia/celestiacore.cpp:3123
+#: src/celestia/celestiacore.cpp:3140
 msgid " slower"
 msgstr " раз медленее"
 
-#: src/celestia/celestiacore.cpp:3129
+#: src/celestia/celestiacore.cpp:3146
 msgid " (Paused)"
 msgstr " (Приостановлено)"
 
-#: src/celestia/celestiacore.cpp:3144
+#: src/celestia/celestiacore.cpp:3161
 msgid "FPS: "
 msgstr "FPS: "
 
-#: src/celestia/celestiacore.cpp:3146
+#: src/celestia/celestiacore.cpp:3163
 msgid ""
 "\n"
 "Speed: "
@@ -618,142 +642,142 @@ msgstr ""
 "\n"
 "Скорость: "
 
-#: src/celestia/celestiacore.cpp:3172
+#: src/celestia/celestiacore.cpp:3189
 msgid "Travelling "
 msgstr "Путешествие "
 
-#: src/celestia/celestiacore.cpp:3185
+#: src/celestia/celestiacore.cpp:3202
 msgid "Track "
 msgstr "Слежение "
 
-#: src/celestia/celestiacore.cpp:3197
+#: src/celestia/celestiacore.cpp:3214
 msgid "Follow "
 msgstr "Наблюдение "
 
-#: src/celestia/celestiacore.cpp:3202
+#: src/celestia/celestiacore.cpp:3219
 msgid "Sync Orbit "
 msgstr "Синх. орбита "
 
-#: src/celestia/celestiacore.cpp:3207
+#: src/celestia/celestiacore.cpp:3224
 msgid "Lock "
 msgstr "Захват "
 
-#: src/celestia/celestiacore.cpp:3216
+#: src/celestia/celestiacore.cpp:3233
 msgid "Chase "
 msgstr "Сопровождение "
 
-#: src/celestia/celestiacore.cpp:3232
+#: src/celestia/celestiacore.cpp:3249
 msgid "FOV: "
 msgstr "FOV: "
 
-#: src/celestia/celestiacore.cpp:3334
+#: src/celestia/celestiacore.cpp:3351
 msgid "Target name: "
 msgstr "Имя цели: "
 
-#: src/celestia/celestiacore.cpp:3416
+#: src/celestia/celestiacore.cpp:3433
 msgid " at "
 msgstr " при "
 
-#: src/celestia/celestiacore.cpp:3417
+#: src/celestia/celestiacore.cpp:3434
 msgid " fps"
 msgstr " fps"
 
-#: src/celestia/celestiacore.cpp:3419 src/celestia/kde/videocapturedlg.cpp:283
+#: src/celestia/celestiacore.cpp:3436 src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
 msgstr "  Запись"
 
-#: src/celestia/celestiacore.cpp:3421 src/celestia/kde/videocapturedlg.cpp:66
+#: src/celestia/celestiacore.cpp:3438 src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
 msgstr "  Приостановлено"
 
-#: src/celestia/celestiacore.cpp:3440
+#: src/celestia/celestiacore.cpp:3457
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Пуск/Пауза    F12 Стоп"
 
-#: src/celestia/celestiacore.cpp:3449 src/celestia/celestiacore.cpp:3452
+#: src/celestia/celestiacore.cpp:3466 src/celestia/celestiacore.cpp:3469
 msgid "Edit Mode"
 msgstr "Режим правки"
 
-#: src/celestia/celestiacore.cpp:3536
+#: src/celestia/celestiacore.cpp:3553
 msgid "Loading solar system catalog: "
 msgstr "Загрузка каталога системы: "
 
-#: src/celestia/celestiacore.cpp:3577
+#: src/celestia/celestiacore.cpp:3594
 msgid "Loading "
 msgstr "Загрузка "
 
-#: src/celestia/celestiacore.cpp:3587
+#: src/celestia/celestiacore.cpp:3604
 #, c-format
 msgid "Error reading star file: %s\n"
 msgstr "Ошибка чтения файла звезд: %s\n"
 
-#: src/celestia/celestiacore.cpp:3613
+#: src/celestia/celestiacore.cpp:3630
 msgid "License file 'License.txt' is missing!"
 msgstr "Файл лицензии 'License.txt' отсутствует!"
 
-#: src/celestia/celestiacore.cpp:3634
+#: src/celestia/celestiacore.cpp:3651
 msgid "Error reading configuration file."
 msgstr "Ошибка чтения файла настройки."
 
-#: src/celestia/celestiacore.cpp:3673
+#: src/celestia/celestiacore.cpp:3690
 msgid "Cannot read star database."
 msgstr "Ошибка чтения базы данных звезд."
 
-#: src/celestia/celestiacore.cpp:3692
+#: src/celestia/celestiacore.cpp:3709
 msgid "Error opening solar system catalog.\n"
 msgstr "Ошибка открытия каталога системы.\n"
 
-#: src/celestia/celestiacore.cpp:3707
+#: src/celestia/celestiacore.cpp:3724
 msgid "Error opening test.xml\n"
 msgstr "Ошибка открытия test.xml\n"
 
-#: src/celestia/celestiacore.cpp:3744
+#: src/celestia/celestiacore.cpp:3761
 msgid "Error reading deep sky file\n"
 msgstr "Ошибка открытия файла пространства\n"
 
-#: src/celestia/celestiacore.cpp:3751 src/celestia/celestiacore.cpp:3973
-#: src/celestia/celestiacore.cpp:3995
+#: src/celestia/celestiacore.cpp:3768 src/celestia/celestiacore.cpp:3990
+#: src/celestia/celestiacore.cpp:4012
 msgid "Error opening "
 msgstr "Ошибка открытия "
 
-#: src/celestia/celestiacore.cpp:3795
+#: src/celestia/celestiacore.cpp:3812
 msgid "Error opening asterisms file."
 msgstr "Ошибка открытия файла asterisms."
 
-#: src/celestia/celestiacore.cpp:3810
+#: src/celestia/celestiacore.cpp:3827
 msgid "Error opening constellation boundaries files."
 msgstr "Ошибка открытия файла границ созвездий."
 
-#: src/celestia/celestiacore.cpp:3875
+#: src/celestia/celestiacore.cpp:3892
 msgid "render path: "
 msgstr "рендеринг: "
 
-#: src/celestia/celestiacore.cpp:3886
+#: src/celestia/celestiacore.cpp:3903
 msgid "Failed to initialize renderer"
 msgstr "Ошибка инициализации рендеринга"
 
-#: src/celestia/celestiacore.cpp:3902
+#: src/celestia/celestiacore.cpp:3919
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Ошибка загрузки шрифта; текст не будет отображаться.\n"
 
-#: src/celestia/celestiacore.cpp:3956
+#: src/celestia/celestiacore.cpp:3973
 msgid "Error reading cross index "
 msgstr "Ошибка чтения индексов "
 
-#: src/celestia/celestiacore.cpp:3958
+#: src/celestia/celestiacore.cpp:3975
 msgid "Loaded cross index "
 msgstr "Загружены индексы "
 
-#: src/celestia/celestiacore.cpp:3980
+#: src/celestia/celestiacore.cpp:3997
 msgid "Error reading star names file\n"
 msgstr "Ошибка чтения названия в файле звезд\n"
 
-#: src/celestia/celestiacore.cpp:4003
+#: src/celestia/celestiacore.cpp:4020
 msgid "Error reading stars file\n"
 msgstr "Ошибка чтения файла звезд\n"
 
-#: src/celestia/celestiacore.cpp:4030
+#: src/celestia/celestiacore.cpp:4047
 msgid "Error opening star catalog "
 msgstr "Ошибка открытия каталога звезд "
 
@@ -901,33 +925,33 @@ msgstr "М&аркировка"
 msgid "Loading: "
 msgstr "Loading: "
 
-#: src/celestia/winmain.cpp:3166 src/celutil/util.cpp:72
+#: src/celestia/winmain.cpp:3165 src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
 msgstr "ru"
 
-#: src/celestia/winmain.cpp:3168 src/celestia/res/resource_strings.cpp:213
+#: src/celestia/winmain.cpp:3167 src/celestia/res/resource_strings.cpp:213
 msgid "WinLangID"
 msgstr "WinLangID"
 
-#: src/celestia/winmain.cpp:3644
+#: src/celestia/winmain.cpp:3658
 #, fuzzy
 msgid "Copied URL"
 msgstr "Копировать URL"
 
-#: src/celestia/winmain.cpp:3767
+#: src/celestia/winmain.cpp:3781
 msgid "Loading URL"
 msgstr "Загрузка URL"
 
-#: src/celestia/winmain.cpp:3779
+#: src/celestia/winmain.cpp:3793
 msgid "Error opening script"
 msgstr "Ошибка открытия сценария"
 
-#: src/celestia/winmain.cpp:3798
+#: src/celestia/winmain.cpp:3812
 msgid "Error loading script"
 msgstr "Ошибка загрузки сценария"
 
-#: src/celestia/winmain.cpp:3803
+#: src/celestia/winmain.cpp:3817
 msgid "Running script"
 msgstr "Запуск сценария"
 
@@ -1467,58 +1491,58 @@ msgstr "Показать панель закладок"
 msgid "OpenGL Info"
 msgstr "Информация OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:1292
+#: src/celestia/kde/kdeapp.cpp:1293
 #: src/celestia/kde/kdepreferencesdialog.cpp:359
 #: src/celestia/kde/kdepreferencesdialog.cpp:370
 msgid "UTC"
 msgstr "UTC"
 
-#: src/celestia/kde/kdeapp.cpp:1387
+#: src/celestia/kde/kdeapp.cpp:1388
 msgid ""
 "This version of Celestia was not built with support for movie recording."
 msgstr "Эта версия Celestia не поддерживает захват видео."
 
-#: src/celestia/kde/kdeapp.cpp:1412
+#: src/celestia/kde/kdeapp.cpp:1413
 msgid "Enter URL"
 msgstr "Ввести URL"
 
-#: src/celestia/kde/kdeapp.cpp:1508
+#: src/celestia/kde/kdeapp.cpp:1509
 msgid "Object: "
 msgstr "Объект: "
 
-#: src/celestia/kde/kdeapp.cpp:1513
+#: src/celestia/kde/kdeapp.cpp:1514
 msgid "Longitude: "
 msgstr "Долгота: "
 
-#: src/celestia/kde/kdeapp.cpp:1519
+#: src/celestia/kde/kdeapp.cpp:1520
 msgid "East"
 msgstr "Восток"
 
-#: src/celestia/kde/kdeapp.cpp:1520
+#: src/celestia/kde/kdeapp.cpp:1521
 msgid "West"
 msgstr "Запад"
 
-#: src/celestia/kde/kdeapp.cpp:1522
+#: src/celestia/kde/kdeapp.cpp:1523
 msgid "Latitude: "
 msgstr "Широта: "
 
-#: src/celestia/kde/kdeapp.cpp:1528
+#: src/celestia/kde/kdeapp.cpp:1529
 msgid "North"
 msgstr "Север"
 
-#: src/celestia/kde/kdeapp.cpp:1529
+#: src/celestia/kde/kdeapp.cpp:1530
 msgid "South"
 msgstr "Юг"
 
-#: src/celestia/kde/kdeapp.cpp:1531
+#: src/celestia/kde/kdeapp.cpp:1532
 msgid "Altitude: "
 msgstr "Высота: "
 
-#: src/celestia/kde/kdeapp.cpp:1536 src/celestia/res/resource_strings.cpp:120
+#: src/celestia/kde/kdeapp.cpp:1537 src/celestia/res/resource_strings.cpp:120
 msgid "km"
 msgstr "км"
 
-#: src/celestia/kde/kdeapp.cpp:1606
+#: src/celestia/kde/kdeapp.cpp:1607
 msgid "Celestia encountered an error while processing your script"
 msgstr "Ошибка при обработке Вашего сценария"
 
@@ -1830,27 +1854,27 @@ msgstr "Не учитывать световое запаздывание "
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:503
+#: src/celestia/kde/kdepreferencesdialog.cpp:504
 msgid "Key Bindings"
 msgstr "Привязка клавиш"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:717
+#: src/celestia/kde/kdepreferencesdialog.cpp:718
 msgid "<b>Unextended OpenGL 1.1</b>"
 msgstr "<b>Unextended OpenGL 1.1</b>"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:720
+#: src/celestia/kde/kdepreferencesdialog.cpp:721
 msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
 msgstr "<b>Multiple textures and the ARB_texenv_combine extension</b>"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:723
+#: src/celestia/kde/kdepreferencesdialog.cpp:724
 msgid "<b>NVIDIA combiners, no vertex programs</b>"
 msgstr "<b>NVIDIA combiners, no vertex programs</b>"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:726
+#: src/celestia/kde/kdepreferencesdialog.cpp:727
 msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
 msgstr "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:729
+#: src/celestia/kde/kdepreferencesdialog.cpp:730
 msgid ""
 "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
 "mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
@@ -1862,11 +1886,11 @@ msgstr ""
 "graphics card, though NvCombiner ARBVP is a slightly better option for "
 "Geforce users"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:735
+#: src/celestia/kde/kdepreferencesdialog.cpp:736
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
 msgstr "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:738
+#: src/celestia/kde/kdepreferencesdialog.cpp:739
 msgid ""
 "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
 "advanced effects on Geforce FX and Radeon 9700 cards"
@@ -1874,11 +1898,11 @@ msgstr ""
 "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
 "advanced effects on Geforce FX and Radeon 9700 cards"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:742
+#: src/celestia/kde/kdepreferencesdialog.cpp:743
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
 msgstr "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:745
+#: src/celestia/kde/kdepreferencesdialog.cpp:746
 msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
