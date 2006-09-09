@@ -1,376 +1,377 @@
-# Japanese translations for PACKAGE package.
-# Copyright (C) 2006 Chris Laurel
+# translation of celestia-kde.po to Korean
 # This file is distributed under the same license as the PACKAGE package.
-# Sui Ota <aqua@aqsp.net>, 2006.
-#
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Jacob Lee <jacoblee@freechal.com>, 2006.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: Celestia-Japanese\n"
+"Project-Id-Version: ko\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: 2006-08-07 22:19+0900\n"
-"Last-Translator: Sui Ota <aqua@aqsp.net>\n"
-"Language-Team: Japanese\n"
+"PO-Revision-Date: 2006-03-21 11:18+0900\n"
+"Last-Translator: Jacob Lee <jacoblee@freechal.com>\n"
+"Language-Team: Korean<ko@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Poedit-Language: Japanese\n"
-"X-Poedit-Country: JAPAN\n"
+"X-Poedit-Language: Korean\n"
+"X-Poedit-Country: KOREA\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: data/constellations.cpp:1
 msgid "Andromeda"
-msgstr "アンドロメダ"
+msgstr "안드로메다"
 
 #: data/constellations.cpp:2
 msgid "Antlia"
-msgstr "ポンプ"
+msgstr "공기펌프"
 
 #: data/constellations.cpp:3
 msgid "Apus"
-msgstr "ふうちょう"
+msgstr "극락조"
 
 #: data/constellations.cpp:4
 msgid "Aquarius"
-msgstr "みずがめ"
+msgstr "물병"
 
 #: data/constellations.cpp:5
 msgid "Aquila"
-msgstr "わし"
+msgstr "독수리"
 
 #: data/constellations.cpp:6
 msgid "Ara"
-msgstr "さいだん"
+msgstr "제단"
 
 #: data/constellations.cpp:7
 msgid "Aries"
-msgstr "おひつじ"
+msgstr "양"
 
 #: data/constellations.cpp:8
 msgid "Auriga"
-msgstr "ぎょしゃ"
+msgstr "마차부"
 
 #: data/constellations.cpp:9
+#, fuzzy
 msgid "Boötes"
-msgstr "うしかい"
+msgstr "목자"
 
 #: data/constellations.cpp:10
 msgid "Caelum"
-msgstr "ちょうこくぐ"
+msgstr "조각도"
 
 #: data/constellations.cpp:11
 msgid "Camelopardalis"
-msgstr "きりん"
+msgstr "기린"
 
 #: data/constellations.cpp:12
 msgid "Cancer"
-msgstr "かに"
+msgstr "게"
 
 #: data/constellations.cpp:13
 msgid "Canes Venatici"
-msgstr "りょうけん"
+msgstr "사냥개"
 
 #: data/constellations.cpp:14
 msgid "Canis Major"
-msgstr "おおいぬ"
+msgstr "큰개"
 
 #: data/constellations.cpp:15
 msgid "Canis Minor"
-msgstr "こいぬ"
+msgstr "작은개"
 
 #: data/constellations.cpp:16
 msgid "Capricornus"
-msgstr "やぎ"
+msgstr "염소"
 
 #: data/constellations.cpp:17
 msgid "Carina"
-msgstr "りゅうこつ"
+msgstr "용골"
 
 #: data/constellations.cpp:18
 msgid "Cassiopeia"
-msgstr "カシオペヤ"
+msgstr "카시오페이아"
 
 #: data/constellations.cpp:19
 msgid "Centaurus"
-msgstr "ケンタウルス"
+msgstr "센타우루스"
 
 #: data/constellations.cpp:20
 msgid "Cepheus"
-msgstr "ケフェウス"
+msgstr "케페우스"
 
 #: data/constellations.cpp:21
 msgid "Cetus"
-msgstr "くじら"
+msgstr "고래"
 
 #: data/constellations.cpp:22
 msgid "Chamaeleon"
-msgstr "カメレオン"
+msgstr "카멜레온"
 
 #: data/constellations.cpp:23
 msgid "Circinus"
-msgstr "コンパス"
+msgstr "컴퍼스"
 
 #: data/constellations.cpp:24
 msgid "Columba"
-msgstr "はと"
+msgstr "비둘기"
 
 #: data/constellations.cpp:25
 msgid "Coma Berenices"
-msgstr "かみのけ"
+msgstr "머리털"
 
 #: data/constellations.cpp:26
 msgid "Corona Australis"
-msgstr "みなみのかんむり"
+msgstr "남쪽왕관"
 
 #: data/constellations.cpp:27
 msgid "Corona Borealis"
-msgstr "かんむり"
+msgstr "북쪽왕관"
 
 #: data/constellations.cpp:28
 msgid "Corvus"
-msgstr "からす"
+msgstr "까마귀"
 
 #: data/constellations.cpp:29
 msgid "Crater"
-msgstr "コップ"
+msgstr "컵"
 
 #: data/constellations.cpp:30
 msgid "Crux"
-msgstr "みなみじゅうじ"
+msgstr "남십자"
 
 #: data/constellations.cpp:31
 msgid "Cygnus"
-msgstr "はくちょう"
+msgstr "백조"
 
 #: data/constellations.cpp:32
 msgid "Delphinus"
-msgstr "いるか"
+msgstr "돌고래"
 
 #: data/constellations.cpp:33
 msgid "Dorado"
-msgstr "かじき"
+msgstr "황새치"
 
 #: data/constellations.cpp:34
 msgid "Draco"
-msgstr "りゅう"
+msgstr "용"
 
 #: data/constellations.cpp:35
 msgid "Equuleus"
-msgstr "こうま"
+msgstr "조랑말"
 
 #: data/constellations.cpp:36
 msgid "Eridanus"
-msgstr "エリダヌス"
+msgstr "에리다누스"
 
 #: data/constellations.cpp:37
 msgid "Fornax"
-msgstr "ろ"
+msgstr "화학로"
 
 #: data/constellations.cpp:38
 msgid "Gemini"
-msgstr "ふたご"
+msgstr "쌍둥이"
 
 #: data/constellations.cpp:39
 msgid "Grus"
-msgstr "つる"
+msgstr "두루미"
 
 #: data/constellations.cpp:40
 msgid "Hercules"
-msgstr "ヘルクレス"
+msgstr "헤라클레스"
 
 #: data/constellations.cpp:41
 msgid "Horologium"
-msgstr "とけい"
+msgstr "시계"
 
 #: data/constellations.cpp:42
 msgid "Hydra"
-msgstr "うみへび"
+msgstr "바다뱀"
 
 #: data/constellations.cpp:43
 msgid "Hydrus"
-msgstr "みずへび"
+msgstr "물뱀"
 
 #: data/constellations.cpp:44
 msgid "Indus"
-msgstr "インディアン"
+msgstr "인도인"
 
 #: data/constellations.cpp:45
 msgid "Lacerta"
-msgstr "とかげ"
+msgstr "도마뱀"
 
 #: data/constellations.cpp:46
 msgid "Leo"
-msgstr "しし"
+msgstr "사자"
 
 #: data/constellations.cpp:47
 msgid "Leo Minor"
-msgstr "こじし"
+msgstr "작은사자"
 
 #: data/constellations.cpp:48
 msgid "Lepus"
-msgstr "うさぎ"
+msgstr "토끼"
 
 #: data/constellations.cpp:49
 msgid "Libra"
-msgstr "てんびん"
+msgstr "천칭"
 
 #: data/constellations.cpp:50
 msgid "Lupus"
-msgstr "おおかみ"
+msgstr "이리"
 
 #: data/constellations.cpp:51
 msgid "Lynx"
-msgstr "やまねこ"
+msgstr "삵괭이"
 
 #: data/constellations.cpp:52
 msgid "Lyra"
-msgstr "こと"
+msgstr "거문고"
 
 #: data/constellations.cpp:53
 msgid "Mensa"
-msgstr "テーブルさん"
+msgstr "테이블산"
 
 #: data/constellations.cpp:54
 msgid "Microscopium"
-msgstr "けんびきょう"
+msgstr "현미경"
 
 #: data/constellations.cpp:55
 msgid "Monoceros"
-msgstr "いっかくじゅう"
+msgstr "외뿔소"
 
 #: data/constellations.cpp:56
 msgid "Musca"
-msgstr "はえ"
+msgstr "파리"
 
 #: data/constellations.cpp:57
 msgid "Norma"
-msgstr "じょうぎ"
+msgstr "직각자"
 
 #: data/constellations.cpp:58
 msgid "Octans"
-msgstr "はちぶんぎ"
+msgstr "팔분의"
 
 #: data/constellations.cpp:59
 msgid "Ophiuchus"
-msgstr "へびつかい"
+msgstr "뱀주인"
 
 #: data/constellations.cpp:60
 msgid "Orion"
-msgstr "オリオン"
+msgstr "오리온"
 
 #: data/constellations.cpp:61
 msgid "Pavo"
-msgstr "くじゃく"
+msgstr "공작"
 
 #: data/constellations.cpp:62
 msgid "Pegasus"
-msgstr "ペガスス"
+msgstr "페가수스"
 
 #: data/constellations.cpp:63
 msgid "Perseus"
-msgstr "ペルセウス"
+msgstr "페르세우스"
 
 #: data/constellations.cpp:64
 msgid "Phoenix"
-msgstr "ほうおう"
+msgstr "봉황새"
 
 #: data/constellations.cpp:65
 msgid "Pictor"
-msgstr "がか"
+msgstr "이젤"
 
 #: data/constellations.cpp:66
 msgid "Pisces"
-msgstr "うお"
+msgstr "물고기"
 
 #: data/constellations.cpp:67
 msgid "Piscis Austrinus"
-msgstr "みなみのうお"
+msgstr "남쪽물고기"
 
 #: data/constellations.cpp:68
 msgid "Puppis"
-msgstr "とも"
+msgstr "고물"
 
 #: data/constellations.cpp:69
 msgid "Pyxis"
-msgstr "らしんばん"
+msgstr "나침반"
 
 #: data/constellations.cpp:70
 msgid "Reticulum"
-msgstr "レチクル"
+msgstr "그물"
 
 #: data/constellations.cpp:71
 msgid "Sagitta"
-msgstr "や"
+msgstr "화살"
 
 #: data/constellations.cpp:72
 msgid "Sagittarius"
-msgstr "いて"
+msgstr "궁수"
 
 #: data/constellations.cpp:73
 msgid "Scorpius"
-msgstr "さそり"
+msgstr "전갈"
 
 #: data/constellations.cpp:74
 msgid "Sculptor"
-msgstr "ちょうこくしつ"
+msgstr "조각실"
 
 #: data/constellations.cpp:75
 msgid "Scutum"
-msgstr "たて"
+msgstr "방패"
 
 #: data/constellations.cpp:76
 msgid "Serpens Caput"
-msgstr "へび(頭)"
+msgstr "뱀머리"
 
 #: data/constellations.cpp:77
 msgid "Serpens Cauda"
-msgstr "へび(尾)"
+msgstr "뱀꼬리"
 
 #: data/constellations.cpp:78
 msgid "Sextans"
-msgstr "ろくぶんぎ"
+msgstr "육분의"
 
 #: data/constellations.cpp:79
 msgid "Taurus"
-msgstr "おうし"
+msgstr "황소"
 
 #: data/constellations.cpp:80
 msgid "Telescopium"
-msgstr "ぼうえんきょう"
+msgstr "망원경"
 
 #: data/constellations.cpp:81
 msgid "Triangulum"
-msgstr "さんかく"
+msgstr "삼각형"
 
 #: data/constellations.cpp:82
 msgid "Triangulum Australe"
-msgstr "みなみのさんかく"
+msgstr "남쪽삼각형자리"
 
 #: data/constellations.cpp:83
 msgid "Tucana"
-msgstr "きょしちょう"
+msgstr "큰부리새"
 
 #: data/constellations.cpp:84
 msgid "Ursa Major"
-msgstr "おおぐま"
+msgstr "큰곰"
 
 #: data/constellations.cpp:85
 msgid "Ursa Minor"
-msgstr "こぐま"
+msgstr "작은곰"
 
 #: data/constellations.cpp:86
 msgid "Vela"
-msgstr "ほ"
+msgstr "돛"
 
 #: data/constellations.cpp:87
 msgid "Virgo"
-msgstr "おとめ"
+msgstr "처녀"
 
 #: data/constellations.cpp:88
 msgid "Volans"
-msgstr "とびうお"
+msgstr "날치"
 
 #: data/constellations.cpp:89
 msgid "Vulpecula"
-msgstr "こぎつね"
+msgstr "여우"
