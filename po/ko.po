@@ -929,11 +929,11 @@ msgstr "로딩중: "
 #: src/celestia/winmain.cpp:3165 src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
-msgstr ""
+msgstr "ko"
 
 #: src/celestia/winmain.cpp:3167 src/celestia/res/resource_strings.cpp:213
 msgid "WinLangID"
-msgstr ""
+msgstr "412"
 
 #: src/celestia/winmain.cpp:3658
 #, fuzzy
