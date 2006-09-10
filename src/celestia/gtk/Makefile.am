@@ -2,8 +2,7 @@ SUBDIRS = data
 
 INCLUDES = -I../..
 
-localedir = $(datadir)/locale
-DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
 
 GTK_SOURCES = \
 	actions.cpp \

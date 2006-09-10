@@ -23,8 +23,7 @@ KDE_SOURCES = \
 
 EXTRA_DIST = celestialbrowserbase.ui eclipsefinderdlgbase.ui videocapturedlgbase.ui $(KDE_SOURCES)
 
-localedir = $(datadir)/locale
-DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
 
 if ENABLE_KDE
 

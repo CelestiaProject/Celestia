@@ -3,8 +3,7 @@ SUBDIRS = res
 bin_PROGRAMS = celestia
 INCLUDES = -I..
 
-localedir = $(datadir)/locale
-DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
 
 if ENABLE_KDE
 SUBDIRS += kde
