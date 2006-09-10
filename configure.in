@@ -382,7 +382,7 @@ AC_ARG_WITH([lua],
             AC_HELP_STRING([--with-lua],
                            [Use Lua for Celestia Extension Language support]),
             enable_lua="$withval",
-            enable_lua="no")
+            enable_lua="auto")
 
 if (test "$enable_lua" != "no"); then
 	PKG_CHECK_MODULES(LUA, lua, enable_lua="yes",
