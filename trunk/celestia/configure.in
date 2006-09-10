@@ -246,6 +246,7 @@ if (test "x$ac_cv_lib_GLU_gluLookAt" = "xno"); then
 	             [AC_MSG_ERROR([GLU library was not found])])
 fi
 
+PKG_PROG_PKG_CONFIG
 
 if (test "$ui_glut" = "yes"); then
 	dnl Check for GLUT headers first.
@@ -263,8 +264,6 @@ dnl (this is a silly trick to make configure behave)
 AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x" = "y")
 
 if (test "$ui_gtk" != "no"); then
-	PKG_PROG_PKG_CONFIG
-
 	dnl GNOME is an extension to the GTK options
 	if (test "$ui_gnome" = "yes"); then
 		PKG_CHECK_MODULES(GTK, libgnomeui-2.0 gtk+-2.0 >= 2.6 gtkglext-1.0)
@@ -328,7 +327,6 @@ if (test "$check_theora" = "yes"); then
 	dnl Check for theora. Default to trying yes. Want this structure to not
 	dnl fail when not found if not explicitly enabled.
 	if (test "x$enable_theora" != "xno"); then
-                PKG_PROG_PKG_CONFIG
 		PKG_CHECK_MODULES(THEORA, theora, enable_theora="yes",
 		                  if (test "x$enable_theora" = "xauto"); then
 		                      enable_theora="no"
@@ -381,44 +379,23 @@ AM_CONDITIONAL(ENABLE_HIPPARCOS, test "x$enable_hipparcos" = "xyes")
 
 
 AC_ARG_WITH([lua],
-            AC_HELP_STRING([--with-lua[=DIR]],
+            AC_HELP_STRING([--with-lua],
                            [Use Lua for Celestia Extension Language support]),
             enable_lua="$withval",
             enable_lua="no")
-			
-AC_ARG_WITH([lua-inc],
-            AC_HELP_STRING([--with-lua-includes[=DIR]],
-                           [Specify location of Lua headers]),
-            lua_includes="$withval",
-            lua_includes="no")
-			
-AC_ARG_WITH([lua-lib],
-            AC_HELP_STRING([--with-lua-libs[=DIR]],
-                           [Specify location of Lua libs]),
-            lua_libs="$withval",
-            lua_libs="no")
 
-AC_MSG_CHECKING([whether to enable Celestia Extension Language])
 if (test "$enable_lua" != "no"); then
-	CXXFLAGS="$CXXFLAGS -DCELX"
-	LDFLAGS="$LDFLAGS -llualib -llua"
-	
-	if (test "$lua_includes" != "no"); then
-		CXXFLAGS="$CXXFLAGS -I$lua_includes"
-	fi
-	
-	if (test "$lua_libs" != "no"); then
-		LIBS="$LIBS -L$lua_libs"
-	fi
-	AC_MSG_RESULT(yes)
-	
-	if (test "$enable_lua" != "yes"); then
-		CXXFLAGS="$CXXFLAGS -I$enable_lua/include"
-		LIBS="$LIBS  -L$enable_lua/lib"
-	fi
-else
-	AC_MSG_RESULT(no)
+	PKG_CHECK_MODULES(LUA, lua, enable_lua="yes",
+	                  if (test "x$enable_lua" != "xno"); then
+	                      AC_ERROR([Lua not found (explicitly enabled)!])
+	                  fi)
 fi
+
+if (test "$enable_lua" = "yes"); then
+	CXXFLAGS="$CXXFLAGS $LUA_CFLAGS -DCELX"
+	LIBS="$LIBS $LUA_LIBS"
+fi
+
 AM_CONDITIONAL(ENABLE_CELX, test "$enable_lua" != "no")
 
 
@@ -478,6 +455,7 @@ if (test "$ui_gtk" = "yes" -o "$ui_gnome" = "yes"); then
 	AC_MSG_RESULT([Use Cairo: $enable_cairo]);
 fi
 
+AC_MSG_RESULT([Use Lua: $enable_lua]);
 AC_MSG_RESULT([Use Theora: $enable_theora]);
 
 AC_MSG_RESULT()
