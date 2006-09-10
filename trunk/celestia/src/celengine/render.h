@@ -35,7 +35,7 @@ struct RenderListEntry
     float discSizeInPixels;
     float appMag;
     bool isCometTail;
-    int depthBucket;
+    bool isOpaque;
     int solarSysIndex;
 };
 
@@ -428,6 +428,12 @@ class Renderer
                          const Point3f& position,
                          const Quatf& orientation,
                          float scale);
+                   
+    // Render an item from the render list                   
+    void renderItem(const RenderListEntry& rle,
+                    const Observer& observer,
+                    float nearPlaneDistance,
+                    float farPlaneDistance);
 
     bool testEclipse(const Body& receiver,
                      const Body& caster,

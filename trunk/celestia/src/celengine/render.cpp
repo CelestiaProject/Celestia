@@ -1270,6 +1270,50 @@ setupLightSources(const vector<const Star*>& nearStars,
 }
 
 
+// Render an item from the render list
+void Renderer::renderItem(const RenderListEntry& rle,
+                          const Observer& observer,
+                          float nearPlaneDistance,
+                          float farPlaneDistance)
+{
+    if (rle.body != NULL)
+    {                    
+        if (rle.isCometTail)
+        {
+            renderCometTail(*rle.body,
+                            rle.position,
+                            rle.distance,
+                            rle.appMag,
+                            observer.getTime(),
+                            observer.getOrientation(),
+                            lightSourceLists[rle.solarSysIndex],
+                            nearPlaneDistance, farPlaneDistance);
+        }
+        else
+        {
+            renderPlanet(*rle.body,
+                         rle.position,
+                         rle.distance,
+                         rle.appMag,
+                         observer.getTime(),
+                         observer.getOrientation(),
+                         lightSourceLists[rle.solarSysIndex],
+                         nearPlaneDistance, farPlaneDistance);
+        }
+    }
+    else if (rle.star != NULL)
+    {
+        renderStar(*rle.star,
+                   rle.position,
+                   rle.distance,
+                   rle.appMag,
+                   observer.getOrientation(),
+                   observer.getTime(),
+                   nearPlaneDistance, farPlaneDistance);
+    }
+}
+
+
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
@@ -1802,16 +1846,18 @@ void Renderer::render(const Observer& observer,
                     ", far: " << -depthPartitions[partition].farZ <<
                     "\n";
 #endif                    
+            int firstInPartition = i;
             
+            // Render just the opaque objects in the first pass
             while (i >= 0 && renderList[i].farZ < depthPartitions[partition].nearZ)
             {
                 // This partition should completely contain the item
                 // Unless it's just a point?
                 //assert(renderList[i].nearZ <= depthPartitions[partition].near);
                 
+#if DEBUG_COALESCE                
                 if (renderList[i].body != NULL)
                 {
-#if DEBUG_COALESCE                
                     if (renderList[i].discSizeInPixels > 1)
                     {
                         clog << renderList[i].body->getName() << "\n";
@@ -1820,45 +1866,17 @@ void Renderer::render(const Observer& observer,
                     {
                         //clog << "point: " << renderList[i].body->getName() << "\n";
                     }
+                }
 #endif
-                    
-                    if (renderList[i].isCometTail)
-                    {
-                        renderCometTail(*renderList[i].body,
-                                        renderList[i].position,
-                                        renderList[i].distance,
-                                        renderList[i].appMag,
-                                        now,
-                                        observer.getOrientation(),
-                                        lightSourceLists[renderList[i].solarSysIndex],
-                                        nearPlaneDistance, farPlaneDistance);
-                    }
-                    else
-                    {
-                        renderPlanet(*renderList[i].body,
-                                     renderList[i].position,
-                                     renderList[i].distance,
-                                     renderList[i].appMag,
-                                     now,
-                                     observer.getOrientation(),
-                                     lightSourceLists[renderList[i].solarSysIndex],
-                                     nearPlaneDistance, farPlaneDistance);
-                    }
-                }
-                else if (renderList[i].star != NULL)
-                {
-                    renderStar(*renderList[i].star,
-                               renderList[i].position,
-                               renderList[i].distance,
-                               renderList[i].appMag,
-                               observer.getOrientation(),
-                               now,
-                               nearPlaneDistance, farPlaneDistance);
-                }
+                // Treat objects that are smaller than one pixel as transparent and render
+                // them in the second pass.
+                if (renderList[i].isOpaque && renderList[i].discSizeInPixels > 1.0f)
+                    renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance);
 
                 i--;
             }
 
+            // Render orbit paths
             if (!orbitPathList.empty())
             {
                 glDisable(GL_LIGHTING);
@@ -1884,6 +1902,16 @@ void Renderer::render(const Observer& observer,
                     disableSmoothLines();
             }
             
+            // Render transparent objects in the second pass
+            i = firstInPartition;
+            while (i >= 0 && renderList[i].farZ < depthPartitions[partition].nearZ)
+            {
+                if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
+                    renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance);
+
+                i--;
+            }
+                        
             // Render labels in this partition
             label = renderSortedLabels(label, -depthPartitions[partition].nearZ, FontNormal);                
             glDisable(GL_DEPTH_TEST);
@@ -5897,6 +5925,9 @@ void Renderer::buildRenderLists(const Star& sun,
             rle.body = body;
             rle.star = NULL;
             rle.isCometTail = false;
+            // Treat all mesh objects as potentially transparent.
+            // TODO: implement a better test for this
+            rle.isOpaque = body->getModel() == InvalidResource;
             rle.position = Point3f(pos.x, pos.y, pos.z);
             rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
             rle.distance = (float) distanceFromObserver;
@@ -5919,6 +5950,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.body = body;
                 rle.star = NULL;
                 rle.isCometTail = true;
+                rle.isOpaque = false;
                 rle.position = Point3f(pos.x, pos.y, pos.z);
                 rle.radius = radius;
                 rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
@@ -6304,6 +6336,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             rle.star = &star;
             rle.body = NULL;
             rle.isCometTail = false;
+            rle.isOpaque = true;
             
             // Objects in the render list are always rendered relative to
             // a viewer at the origin--this is different than for distant
