@@ -5988,7 +5988,7 @@ void Renderer::buildRenderLists(const Star& sun,
         
         // Only show orbits for major bodies or selected objects
         if ((renderFlags & ShowOrbits) != 0 &&
-            (body->getClassification() & orbitMask) != 0 || body == highlightObject.body())
+            ((body->getClassification() & orbitMask) != 0 || body == highlightObject.body()))
         {
             Point3d orbitOrigin(0.0, 0.0, 0.0);
             if (body->getOrbitBarycenter())
@@ -6035,7 +6035,8 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
                                         double now)
 {
     // If the star isn't fixed, add its orbit to the render list
-    if ((renderFlags & ShowOrbits) != 0 && (orbitMask & Body::Planet) != 0)
+    if ((renderFlags & ShowOrbits) != 0 &&
+        ((orbitMask & Body::Planet) != 0 || highlightObject.star() == &star))
     {
         Mat3f viewMat = observer.getOrientation().toMatrix3();
         Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
