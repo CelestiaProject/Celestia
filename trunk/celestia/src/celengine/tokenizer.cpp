@@ -181,6 +181,11 @@ Tokenizer::TokenType Tokenizer::nextToken()
             {
                 state = StringEscapeState;
             }
+            else if (nextChar == char_traits<char>::eof())
+            {
+                newToken = TokenError;
+                syntaxError("Unterminated string");
+            }
             else
             {
                 state = StringState;
