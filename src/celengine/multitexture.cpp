@@ -62,18 +62,36 @@ void MultiResTexture::setTexture(const string& source, const string& path,
 Texture* MultiResTexture::find(unsigned int resolution)
 {
     TextureManager* texMan = GetTextureManager();
+
     Texture* res = texMan->find(tex[resolution]);
     if (res != NULL)
         return res;
-    if(resolution == lores)
-        tex[resolution] = tex[resolution +1];
-    else
-        tex[resolution] = tex[resolution -1];
+    
+    // Preferred resolution isn't available; try the second choice
+    unsigned int secondChoice;
+    unsigned int lastResort;
+    switch (resolution)
+    {
+    case lores:
+        secondChoice = medres;
+        lastResort = hires;
+        break;
+    case medres:
+        secondChoice = lores;
+        lastResort = hires;
+        break;
+    case hires:
+        secondChoice = medres;
+        lastResort = lores;
+        break;
+    }
+
+    tex[resolution] = tex[secondChoice];
     res = texMan->find(tex[resolution]);
-    if(res != NULL)
+    if (res != NULL)
         return res;
-    if(resolution == hires)
-    return texMan->find(tex[lores]);
-    else
-        return texMan->find(tex[hires]);
+
+    tex[resolution] = tex[lastResort];
+
+    return texMan->find(tex[resolution]);
 }
