@@ -137875,6 +137875,7 @@ Galaxy "IC 5382:ESO 78-13"
 Galaxy "Milky Way"
 {
         Type  "SBc"
+        CustomTemplate "MilkyWay.png"
         RA           17.7500
         Dec         -28.9300
         Distance   2.772e+04
