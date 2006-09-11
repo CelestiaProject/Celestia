@@ -308,13 +308,14 @@ Source: "shaders\texphong_alpha_nv.fp";  DestDir: "{app}/shaders"; Flags: ignore
 
 
 ; Models
-Source: "models\S0.pts";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\Sa.pts";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\Sb.pts";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\Sc.pts";          DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\SBa.pts";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\SBb.pts";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\SBc.pts";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\S0.png";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\Sa.png";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\Sb.png";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\Sc.png";          DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\SBa.png";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\SBb.png";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\SBc.png";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\MilkyWay.png";    DestDir: "{app}/models"; Flags: ignoreversion
 
 Source: "models\amalthea.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\asteroid.cms";     DestDir: "{app}/models"; Flags: ignoreversion
