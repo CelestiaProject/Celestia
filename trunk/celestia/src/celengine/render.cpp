@@ -6748,7 +6748,8 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                            (float)(dsoPos.z - obsPos.z));
 
     Point3d center = Point3d(0.0f, 0.0f, 0.0f) + relPos * orientationMatrix;
-
+    float appMag = astro::absToAppMag(absMag, (float) distanceToDSO);
+    
     // Test the object's bounding sphere against the view frustum. If we
     // avoid this stage, overcrowded octree cells may hit performance badly:
     // each object (even if it's not visible) would be sent to the OpenGL
@@ -6778,8 +6779,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             // note: 10.0 / log(10.0) = 4.3429448
             if (distanceToDSO < 0)
             	distanceToDSO = 0;
-            double brightness = (distanceToDSO  >= pc10)?
-                a - b * astro::absToAppMag(absMag, (float) distanceToDSO): r + close;    
+            double brightness = (distanceToDSO  >= pc10)? a - b * appMag: r + close;    
             brightness = 2.3 * brightness * (faintestMag - 4.75)/renderer->getFaintestAM45deg();
             if (brightness < 0.0)
                 brightness = 0.0;
@@ -6829,20 +6829,19 @@ void DSORenderer::process(DeepSkyObject* const & dso,
         } // frustum test
     } // renderFlags check
 
-    // avoid label overlap by pixelSize-controlled apparent magnitude cut-off!
-    // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
-    // Label appearance is sorted according to apparent galaxy brightness!
     // Only render those labels that are in front of the camera:
+    // Place labels for DSOs brighter than the specified label threshold brightness
 
-    float relDistanceToScreen = REF_DISTANCE_TO_SCREEN * pixelSize * renderer->getScreenDpi() / 25.4f; 
-    // = 1.0 initially, after startup
-    if ((dso->getLabelMask() & labelMode)
-        && astro::absToAppMag(absMag, (float) distanceToDSO) < faintestMag * (1.0f - 0.5f * log10(relDistanceToScreen)) 
-        && dot(relPos, viewNormal) > 0)
+    if ((dso->getLabelMask() & labelMode)  && appMag < labelThresholdMag && dot(relPos, viewNormal) > 0)
     {
-        renderer->addLabel(dsoDB->getDSOName(dso),
-                            Color(0.1f, 0.85f, 0.85f, 1.0f),
-                            Point3f(relPos.x, relPos.y, relPos.z));
+        // introduce distance dependent label transparency.
+		float distr = labelThresholdMag/(faintestMag  * (float)log10(1.0f + 1.2e-6f * distanceToDSO));
+        if (distr > 1.0f)
+        	distr = 1.0f; 
+        
+    	renderer->addLabel(dsoDB->getDSOName(dso),
+                           Color(0.1f, 0.85f, 0.85f, distr),
+                           Point3f(relPos.x, relPos.y, relPos.z));          
     }
 }
 
@@ -6885,7 +6884,12 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     dsoRenderer.frustum = Frustum(degToRad(fov),
                         (float) windowWidth / (float) windowHeight,
                         MinNearPlaneDistance);
-
+    // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.    
+    // = 1.0 at startup 
+    float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
+    
+    dsoRenderer.labelThresholdMag = 1.6f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
+    
     // Render any line primitives with smooth lines
     // (mostly to make graticules look good.)
     if ((renderFlags & ShowSmoothLines) != 0)
@@ -6898,7 +6902,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
                            observer.getOrientation(),
                            degToRad(fov),
                            (float) windowWidth / (float) windowHeight,
-                           2*faintestMagNight);
+                           2 * faintestMagNight);
 
     if ((renderFlags & ShowSmoothLines) != 0)
         disableSmoothLines();
