@@ -244,7 +244,7 @@ void EpochConvert(double jdFrom, double jdTo,
 {
     double T = (jdFrom - astro::J2000) / 36525.0;
     double t = (jdTo - jdFrom) / 36525.0;
-            
+
     double zeta = (2306.2181 + 1.39656 * T - 0.000139 * T * T) * t +
         (0.30188 - 0.000344 * T) * t * t + 0.017998 * t * t * t;
     double z = (2306.2181 + 1.39656 * T - 0.000139 * T * T) * t +
@@ -273,7 +273,7 @@ double meanAnomalySun(double t)
 	t2 = t*t;
 	a = 9.999736042e1*t;
 	b = 360*(a - (int)a);
-	
+
     return degToRad(3.5847583e2 - (1.5e-4 + 3.3e-6*t)*t2 + b);
 }
 
@@ -381,6 +381,9 @@ void ComputeGalileanElements(double t,
 
 class MercuryOrbit : public CachingOrbit
 {
+ public:
+    virtual ~MercuryOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 0;  //Planet 0
@@ -443,6 +446,9 @@ class MercuryOrbit : public CachingOrbit
 
 class VenusOrbit : public CachingOrbit
 {
+ public:
+    virtual ~VenusOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 1;  //Planet 1
@@ -513,6 +519,9 @@ class VenusOrbit : public CachingOrbit
 
 class EarthOrbit : public CachingOrbit
 {
+ public:
+    virtual ~EarthOrbit() {};
+
     Point3d computePosition(double jd) const
     {
    	double t, t2;
@@ -558,7 +567,7 @@ class EarthOrbit : public CachingOrbit
 
         // Correction for internal coordinate system
         eclLong += PI;
-        
+
         return Point3d(-cos(eclLong) * distance,
                        0,
                        sin(eclLong) * distance);
@@ -577,6 +586,9 @@ class EarthOrbit : public CachingOrbit
 
 class LunarOrbit : public CachingOrbit
 {
+ public:
+    virtual ~LunarOrbit() {};
+
     Point3d computePosition(double jd) const
     {
 	double jd19, t, t2;
@@ -708,7 +720,7 @@ class LunarOrbit : public CachingOrbit
         EclipticToEquatorial(t, eclLat, eclLon, RA, dec);
 
         // RA and Dec are referred to the equinox of date; we want to use
-        // the J2000 equinox instead.  A better idea would be to directly 
+        // the J2000 equinox instead.  A better idea would be to directly
         // compute the position of the Moon in this coordinate system, but
         // this was easier.
         EpochConvert(jd, astro::J2000, RA, dec, RA, dec);
@@ -735,6 +747,9 @@ class LunarOrbit : public CachingOrbit
 
 class MarsOrbit : public CachingOrbit
 {
+ public:
+    virtual ~MarsOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 2;  //Planet 2
@@ -816,6 +831,9 @@ class MarsOrbit : public CachingOrbit
 
 class JupiterOrbit : public CachingOrbit
 {
+ public:
+    virtual ~JupiterOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 3;  //Planet 3
@@ -924,6 +942,9 @@ class JupiterOrbit : public CachingOrbit
 
 class SaturnOrbit : public CachingOrbit
 {
+ public:
+    virtual ~SaturnOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 4;  //Planet 4
@@ -1059,6 +1080,9 @@ class SaturnOrbit : public CachingOrbit
 
 class UranusOrbit : public CachingOrbit
 {
+ public:
+    virtual ~UranusOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 5;  //Planet 5
@@ -1149,6 +1173,9 @@ class UranusOrbit : public CachingOrbit
 
 class NeptuneOrbit : public CachingOrbit
 {
+ public:
+    virtual ~NeptuneOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 6;  //Planet 6
@@ -1229,6 +1256,9 @@ class NeptuneOrbit : public CachingOrbit
 
 class PlutoOrbit : public CachingOrbit
 {
+ public:
+    virtual ~PlutoOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     const int p = 7;  //Planet 7
@@ -1290,6 +1320,9 @@ static Point3d ellipsePosition(double a, double e, double M)
 
 class PhobosOrbit : public CachingOrbit
 {
+ public:
+    virtual ~PhobosOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         double epoch = 2433283.0 - 0.5; // 00:00 1 Jan 1950
@@ -1341,7 +1374,7 @@ class PhobosOrbit : public CachingOrbit
 
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
-    
+
     double getPeriod() const
     {
         return 0.319;
@@ -1356,6 +1389,9 @@ class PhobosOrbit : public CachingOrbit
 
 class DeimosOrbit : public CachingOrbit
 {
+ public:
+    virtual ~DeimosOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         double epoch = 2433283.0 - 0.5;
@@ -1436,7 +1472,7 @@ class DeimosOrbit : public CachingOrbit
 
         // Compute the mean anomaly
         double M = L - P;
-        
+
         // Solve Kepler's equation--for a low eccentricity orbit, just a few
         // iterations is enough.
         double E = M;
@@ -1495,6 +1531,9 @@ static const double JupAscendingNode = degToRad(22.203);
 
 class IoOrbit : public CachingOrbit
 {
+ public:
+    virtual ~IoOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
@@ -1573,6 +1612,9 @@ class IoOrbit : public CachingOrbit
 
 class EuropaOrbit : public CachingOrbit
 {
+ public:
+    virtual ~EuropaOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     // Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
@@ -1662,6 +1704,9 @@ class EuropaOrbit : public CachingOrbit
 
 class GanymedeOrbit : public CachingOrbit
 {
+ public:
+    virtual ~GanymedeOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
@@ -1754,6 +1799,9 @@ class GanymedeOrbit : public CachingOrbit
 
 class CallistoOrbit : public CachingOrbit
 {
+ public:
+    virtual ~CallistoOrbit() {};
+
     Point3d computePosition(double jd) const
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
@@ -1860,7 +1908,7 @@ class CallistoOrbit : public CachingOrbit
         - 8.9e-6    * cos(l4 - LPEJ -G)
         - 6.2e-6    * cos(l4 + p4 - 2*LPEJ - 3*G)
         + 4.8e-6    * cos(2*(l4 - w4));
-    
+
     R = 26.36273 * JupiterRadius * (1 + R);
 
     T = (jd - 2433282.423) / 36525.0;
@@ -1986,6 +2034,9 @@ static void OuterSaturnMoonParams(double a, double e, double i,
 
 class MimasOrbit : public CachingOrbit
 {
+ public:
+    virtual ~MimasOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2025,6 +2076,9 @@ class MimasOrbit : public CachingOrbit
 
 class EnceladusOrbit : public CachingOrbit
 {
+ public:
+    virtual ~EnceladusOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2063,6 +2117,9 @@ class EnceladusOrbit : public CachingOrbit
 
 class TethysOrbit : public CachingOrbit
 {
+ public:
+    virtual ~TethysOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2097,6 +2154,9 @@ class TethysOrbit : public CachingOrbit
 
 class DioneOrbit : public CachingOrbit
 {
+ public:
+    virtual ~DioneOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2136,6 +2196,9 @@ class DioneOrbit : public CachingOrbit
 
 class RheaOrbit : public CachingOrbit
 {
+ public:
+    virtual ~RheaOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2182,6 +2245,9 @@ class RheaOrbit : public CachingOrbit
 
 class TitanOrbit : public CachingOrbit
 {
+ public:
+    virtual ~TitanOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2247,6 +2313,9 @@ class TitanOrbit : public CachingOrbit
 
 class HyperionOrbit : public CachingOrbit
 {
+ public:
+    virtual ~HyperionOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2286,7 +2355,7 @@ class HyperionOrbit : public CachingOrbit
             0.3573 * sinD(zeta - eta) -
             12.872 * sinD(zeta) +
             1.668 * sinD(2 * zeta) -
-            0.2419 * sinD(3 * zeta) - 
+            0.2419 * sinD(3 * zeta) -
             0.07 * sinD(phi);
         double lam_ = 177.047 +
             16.91993829 * t6 +
@@ -2327,6 +2396,9 @@ class HyperionOrbit : public CachingOrbit
 
 class IapetusOrbit : public CachingOrbit
 {
+ public:
+    virtual ~IapetusOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
@@ -2378,7 +2450,7 @@ class IapetusOrbit : public CachingOrbit
             0.01632 * sinD(l + u2) +
             0.03547 * sinD(u4);
         double p = om0 + W / e_;
-        double lam_ = mu - 
+        double lam_ = mu -
             0.04299 * sinD(u2) -
             0.00789 * sinD(u1) -
             0.06312 * sinD(ls) -
@@ -2416,6 +2488,9 @@ class IapetusOrbit : public CachingOrbit
 
 class PhoebeOrbit : public CachingOrbit
 {
+ public:
+    virtual ~PhoebeOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         double t = jd - 2433282.5;
@@ -2449,7 +2524,7 @@ class PhoebeOrbit : public CachingOrbit
 
 class UranianSatelliteOrbit : public CachingOrbit
 {
-private:
+ private:
     double a;
     double n;
     double L0;
@@ -2461,7 +2536,7 @@ private:
     double *zeta_k, *zeta_theta, *zeta_phi;
     int zetaTerms;
 
-public:
+ public:
     UranianSatelliteOrbit(double _a,
                           double _n,
                           double _L0, double _L1,
@@ -2478,7 +2553,8 @@ public:
     {
     };
 
-public:
+    virtual ~UranianSatelliteOrbit() {};
+
     double getPeriod() const
     {
         return 2 * PI / n;
@@ -2572,7 +2648,7 @@ static double uran_L_phi[5][3] = {
 { 1.32, 2.64, 0 },
 { 1.32, 0, 0 },
 { 0, 0, 0 },
-{ 0, 0, 0 },   
+{ 0, 0, 0 },
 };
 static double uran_z_k[5][5] = {
 { 1.31238e-3, -1.2331e-4, -1.9410e-4, 0, 0 },
@@ -2635,6 +2711,9 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
 
 class TritonOrbit : public CachingOrbit
 {
+ public:
+    virtual ~TritonOrbit() {};
+
     Point3d computePosition(double jd) const
     {
         // Pole of the fixed reference plane
@@ -2681,7 +2760,7 @@ class TritonOrbit : public CachingOrbit
 
         return RNept_eq * (Rrefplane * (Rorbit * p));
     }
-    
+
     double getPeriod() const
     {
         return 5.877;
@@ -2696,7 +2775,7 @@ class TritonOrbit : public CachingOrbit
 
 class JPLEphOrbit : public CachingOrbit
 {
-public:
+ public:
     JPLEphOrbit(const JPLEphemeris& e, JPLEphemItem item,
                 double _period, double _boundingRadius) :
         ephem(e),
@@ -2705,6 +2784,8 @@ public:
         boundingRadius(_boundingRadius)
     {
     };
+
+    virtual ~JPLEphOrbit() {};
 
     double getPeriod() const
     {
@@ -2735,7 +2816,7 @@ public:
                        -heliocentricPos.y);
     }
 
-private:
+ private:
     const JPLEphemeris& ephem;
     JPLEphemItem body;
     double period;

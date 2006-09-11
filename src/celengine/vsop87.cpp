@@ -17493,7 +17493,7 @@ static double SumSeries(const VSOPSeries& series, double t)
 
 class VSOP87Orbit : public CachingOrbit
 {
-private:
+ private:
     VSOPSeries* vsL;
     int nL;
     VSOPSeries* vsB;
@@ -17503,7 +17503,7 @@ private:
     double period;
     double boundingRadius;
 
-public:
+ public:
     VSOP87Orbit(VSOPSeries* _vsL, int _nL,
                 VSOPSeries* _vsB, int _nB,
                 VSOPSeries* _vsR, int _nR,
@@ -17516,6 +17516,7 @@ public:
         boundingRadius(_boundingRadius)
     {
     };
+    virtual ~VSOP87Orbit() {};
 
     double getPeriod() const
     {
@@ -17536,7 +17537,7 @@ public:
         double l = 0.0; // longitude
         double b = 0.0; // latitude
         double r = 0.0; // radius
-        
+
         int i;
         double T;
 
@@ -17563,7 +17564,7 @@ public:
             r += SumSeries(vsR[i], t) * T;
             T = t * T;
         }
-#if 0        
+#if 0
         // l and b are in units of 1e+8 radians
         l *= 1.0e-8;
         b *= 1.0e-8;
