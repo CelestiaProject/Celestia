@@ -1,13 +1,14 @@
 pkgdatadir = @datadir@/@PACKAGE@/models
 
 pkgdata_DATA = \
-	S0.pts \
-	Sa.pts \
-	Sb.pts \
-	Sc.pts \
-	SBa.pts \
-	SBb.pts \
-	SBc.pts \
+	S0.png \
+	Sa.png \
+	Sb.png \
+	Sc.png \
+	SBa.png \
+	SBb.png \
+	SBc.png \
+	MilkyWay.png\
 	amalthea.cmod \
 	asteroid.cms \
 	bacchus.cmod \
