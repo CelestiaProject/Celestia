@@ -20,6 +20,7 @@ class ExecutionEnvironment
 {
  public:
     ExecutionEnvironment() {};
+    virtual ~ExecutionEnvironment() {};
 
     virtual inline Simulation* getSimulation() const = 0;
     virtual inline Renderer* getRenderer() const = 0;
