@@ -1080,3 +1080,19 @@ Code:
 * Added spectrum2rgb tool for generating RGB asteroid colors from SMASS
   spectra
 * Made star orbit paths visible
+* galaxies:
+  -changed galaxy template format to standard (grayscale) PNG 
+  -allow a custom template for each galaxy in deepsky.dsc
+  -new approach to thickness of galaxy (arms): assumed proportional to read-in
+   brightness values 
+  -emulate dust lanes around galactic plane (y=0)
+  -considerable improvement of Milky Way appearance as seen from Earth 
+  -implement galaxy labels of transparency increasing with distance, thus
+   providing a neat 3d effect
+* galaxy templates:
+  -designed an entirely new set of PNG templates using a uniform multi-layer
+   technique
+  -provided a custom Milky Way template including all known arms with correct
+   location of the Sun. Supply adapted deepsky.dsc
+      
+      
