@@ -25,8 +25,8 @@
 
 using namespace std;
 
+static int width = 128, height = 128;
 static Color colorTable[256];
-
 static const unsigned int GALAXY_POINTS  = 7000;
 
 static bool formsInitialized = false;
@@ -35,12 +35,18 @@ static GalacticForm** spiralForms     = NULL;
 static GalacticForm** ellipticalForms = NULL;
 static GalacticForm*  irregularForm   = NULL;
 
+
 static Texture* galaxyTex = NULL;
 
 static void InitializeForms();
+static GalacticForm* buildGalacticForms(const std::string& filename);
 
 float Galaxy::lightGain  = 0.0f;
 
+bool operator < (const Blob& b1, const Blob& b2)
+{
+  return (b1.position.distanceFromOrigin() < b2.position.distanceFromOrigin());
+}
 
 struct GalaxyTypeName
 {
@@ -69,10 +75,9 @@ static GalaxyTypeName GalaxyTypeNames[] =
 };
 
 
-static void GalaxyTextureEval(float u, float v, float w,
-                              unsigned char *pixel)
+static void GalaxyTextureEval(float u, float v, float w, unsigned char *pixel)
 {
-    float r = 0.9f - (float) sqrt(u * u + v * v);
+    float r = 0.9f - (float) sqrt(u * u + v * v );
     if (r < 0)
         r = 0;
 
@@ -86,6 +91,7 @@ static void GalaxyTextureEval(float u, float v, float w,
 
 Galaxy::Galaxy() :
     detail(1.0f),
+	customTmpName(NULL),
     form(NULL)
 {
 }
@@ -99,9 +105,24 @@ float Galaxy::getDetail() const
 
 void Galaxy::setDetail(float d)
 {
-    detail = d;
+	detail = d;
 }
 
+
+void Galaxy::setCustomTmpName(const string& tmpNameStr)
+{
+	if (customTmpName == NULL)
+        customTmpName = new string(tmpNameStr);
+    else
+        *customTmpName = tmpNameStr;
+}
+string Galaxy::getCustomTmpName() const
+{
+	if (customTmpName == NULL)
+        return "";
+    else
+        return *customTmpName;
+} 
 
 const char* Galaxy::getType() const
 {
@@ -122,32 +143,40 @@ void Galaxy::setType(const string& typeStr)
 
     if (!formsInitialized)
         InitializeForms();
-    switch (type)
-    {
-    case S0:
-    case Sa:
-    case Sb:
-    case Sc:
-    case SBa:
-    case SBb:
-    case SBc:
-        form = spiralForms[type - S0];
-        break;
-    case E0:
-    case E1:
-    case E2:
-    case E3:
-    case E4:
-    case E5:
-    case E6:
-    case E7:
-        form = ellipticalForms[type - E0];
-        //form = NULL;
-        break;
-    case Irr:
-        form = irregularForm;
-        break;    
-    }
+   
+	if (customTmpName != NULL)   
+	{
+			form = buildGalacticForms("models/" + *customTmpName);
+	}
+	else
+	{
+		switch (type)
+		{ 
+		case S0:
+		case Sa:
+		case Sb:
+		case Sc:
+		case SBa:
+		case SBb:
+		case SBc:
+			form = spiralForms[type - S0];
+			break;
+		case E0:
+		case E1:
+		case E2:
+		case E3:
+		case E4:
+		case E5:
+		case E6:
+		case E7:
+			form = ellipticalForms[type - E0];
+			//form = NULL;
+			break;
+		case Irr:
+			form = irregularForm;
+			break;    
+		}
+	}
 } 
 
 
@@ -170,6 +199,10 @@ bool Galaxy::load(AssociativeArray* params, const string& resPath)
     double detail = 1.0;
     params->getNumber("Detail", detail);
     setDetail((float) detail);
+    
+	string customTmpName;
+	if(params->getString("CustomTemplate",customTmpName))
+		setCustomTmpName(customTmpName);
 
     string typeName;
     params->getString("Type", typeName);
@@ -203,7 +236,7 @@ void Galaxy::renderGalaxyPointSprites(const GLContext& context,
 
     if (galaxyTex == NULL)
     {
-        galaxyTex = CreateProceduralTexture(128, 128, GL_RGBA,
+        galaxyTex = CreateProceduralTexture(width, height, GL_RGBA,
                                             GalaxyTextureEval);
     }
     assert(galaxyTex != NULL);
@@ -222,7 +255,7 @@ void Galaxy::renderGalaxyPointSprites(const GLContext& context,
         distanceToDSO = 0;
 
     float minimumFeatureSize = pixelSize * distanceToDSO;
-
+    
     //Mat4f m = (getOrientation().toMatrix4() *
     //           Mat4f::scaling(form->scale) *
     //           Mat4f::scaling(getRadius()));
@@ -238,7 +271,6 @@ void Galaxy::renderGalaxyPointSprites(const GLContext& context,
 
     vector<Blob>* points = form->blobs;
     unsigned int nPoints = (unsigned int) (points->size() * clamp(getDetail()));
-
     // corrections to avoid excessive brightening if viewed e.g. edge-on
 
     float brightness_corr = 1.0f;
@@ -252,43 +284,34 @@ void Galaxy::renderGalaxyPointSprites(const GLContext& context,
         if (brightness_corr < 0.2f)
             brightness_corr = 0.2f;
     }
-
     if (type > E3) // only elliptics with higher ellipticities
     {
         cosi = Vec3f(1,0,0) * getOrientation().toMatrix3()
                             * offset/offset.length();
-        brightness_corr = brightness_corr * (float) sqrt(abs((cosi)));
-        if (brightness_corr < 0.65f)
-            brightness_corr = 0.65f;
+        brightness_corr = brightness_corr * (float) abs((cosi));
+        if (brightness_corr < 0.45f)
+            brightness_corr = 0.45f;
     }
-
     glBegin(GL_QUADS);
     for (unsigned int i = 0; i < nPoints; ++i)
     {
-        Blob    b    = (*points)[i];
-        Point3f p    = b.position * m;            
-        float   br   = b.brightness;
-
-        // Reddening for elliptical galaxies
-
-        b.colorIndex = type < E0 ? b.colorIndex : (unsigned int) ceil(0.3f*b.colorIndex);
-        Color   c    = colorTable[b.colorIndex];     // lookup static color table
-          
+        Blob    b  = (*points)[i];
+        Point3f p  = b.position * m;            
+        float   br = b.brightness / 255.0f;
+        
+        Color   c      = colorTable[b.colorIndex];     // lookup static color table  
         Point3f relPos = p + offset;
-  
         if ((i & pow2) != 0)
         {
             pow2 <<= 1;
-            size /= 1.57f;
+            size /= 1.5f;
             if (size < minimumFeatureSize)
                 break;
         }          
-            
         float screenFrac = size / relPos.distanceFromOrigin();
-          
         if (screenFrac < 0.1f)
         {
-            float a  = 3.5f * (0.1f - screenFrac) * brightness_corr * brightness * br;
+            float a  = 3.25f * (0.1f - screenFrac) * brightness_corr * brightness * br;
             
             glColor4f(c.red(), c.green(), c.blue(), (4.0f*lightGain + 1.0f)*a);
               
@@ -318,7 +341,7 @@ void Galaxy::renderGalaxyEllipsoid(const GLContext& context,
     if (vproc == NULL)
         return;
 
-    int e = min(max((int) type - (int) E0, 0), 7);
+    //int e = min(max((int) type - (int) E0, 0), 7);
     Vec3f scale = Vec3f(1.0f, 0.9f, 1.0f) * getRadius();
     Vec3f eyePos_obj = -offset * (~getOrientation()).toMatrix3();
 
@@ -464,64 +487,111 @@ void Galaxy::hsv2rgb( float *r, float *g, float *b, float h, float s, float v )
 
 GalacticForm* buildGalacticForms(const std::string& filename)
 {
-    unsigned int galaxySize = GALAXY_POINTS;
     Blob b;    
     vector<Blob>* galacticPoints = new vector<Blob>;
-    galacticPoints->reserve(galaxySize);
 
-    ifstream inFile(filename.c_str());    
-    while (inFile.good())
-    {
-        float x, y, z, br;
-        inFile >> x;
-        inFile >> y;
-        inFile >> z;
-        inFile >> br;
-      
-        b.position    = Point3f(x, y, z);
-        b.brightness  = br;
-        b.colorIndex  = (unsigned int) (b.position.distanceFromOrigin() * 255);
-      
-        galacticPoints->push_back(b);
-    }          
+    // Load templates in standard .png format
+    int width, height, rgb, j = 0;
+    unsigned char value;
+    Image* img = LoadPNGImage(filename);
+    width  = img->getWidth();
+    height = img->getHeight();
+    rgb    = img->getComponents();
     
-    GalacticForm* galacticForm  = new GalacticForm();
+    for (int i = 0; i < width * height; i++)
+    {
+        value = img->getPixels()[rgb * i];
+        if (value > 10) 
+        {
+            float x, y, z, r2, R = 0.45f;
+        	z  = floor(i /(float) width);
+        	x  = (i - width * z - 0.5f * (width - 1)) / (float) width;
+        	z  = (0.5f * (height - 1) - z) / (float) height;
+       		r2 = x * x + z * z;
+       		if ( strcmp ( filename.c_str(), "models/S0.png") == 0 )
+       		{
+            	y = (r2 <= 0.25f)? 0.25f * Mathf::sfrand() * sqrt(0.25f - r2): 0.0f;    
+       		}
+    		else
+    		{   
+    		    if (r2 <= R * R)
+    		    {
+    		        float yval = 0.03f * (float)value/(float)256;
+    		        float yy, prob;
+      		    	do 
+    		    	{
+    		    		// generate "thickness" y of spirals with emulation of a dust lane
+    		    		// in galctic plane (y=0)
+    		    		yy = Mathf::sfrand();
+    		    		prob = (1.0f - exp(-4.5f * yy * yy));
+    		    	} while (Mathf::frand() > prob);
+    		    	y = yy * yval;
+    		    }
+    		    else	
+    				y = 0.02f * Mathf::sfrand() * (float) exp(-6.5f * r2);
+    			
+    			
+       		}	
+        	x  += Mathf::sfrand() * 0.015f;
+        	z  += Mathf::sfrand() * 0.015f;
+        	         		
+        	b.position    = Point3f(x, y, z);
+        	b.brightness  = value;
+            unsigned int rr =  (unsigned int) (b.position.distanceFromOrigin() * 511);
+        	b.colorIndex  = rr < 256? rr: 255;
+			galacticPoints->push_back(b);
+            j++;
+         }
+    }          
+    galacticPoints->reserve(j);
+    
+    // sort to start with the galaxy center region (x^2 + y^2 + z^2 ~ 0), such that
+    // the biggest (brightest) sprites will be localized there!
+    
+    sort(galacticPoints->begin(), galacticPoints->end());
+    
+    // reshuffle the galaxy points randomly...except the first 8 in the center!
+    // the higher that number the stronger the central "glow"
+    random_shuffle( galacticPoints->begin() + 10, galacticPoints->end());
+    random_shuffle( galacticPoints->begin(), galacticPoints->begin() + 5);
+    
+    GalacticForm* galacticForm  = new GalacticForm(); 
     galacticForm->blobs         = galacticPoints;
     galacticForm->scale         = Vec3f(1.0f, 1.0f, 1.0f);
     
     return galacticForm;
-};
+}
 
 
 void InitializeForms()
 {
-    unsigned int i = 0;
-
     // build color table:
-    for (i = 0; i < 256; ++i)
+
+    for (unsigned int i = 0; i < 256; i++)
     {
-        float rr,gg,bb;
-        float rho  = (float) i / 255.0f;
+        float rr, gg, bb;
+        //
         // generic Hue profile as deduced from true-color imaging for spirals
-        float h = 30.0f * (float) tanh(15.68 * (0.1086 - rho));
-        if (rho > 0.1086f)
-            h += 260.0f;
+        // Hue in degrees
+        
+        float hue = (i < 28)? 25 * tanh(0.0615f * (27 - i)): 25 * tanh(0.0615f * (27 - i)) + 220;
+        
         //convert Hue to RGB
-        Galaxy::hsv2rgb( &rr, &gg, &bb, h , 0.15f, 1.0f);
-        colorTable[i]  = Color( rr,gg,bb);
+        
+        Galaxy::hsv2rgb(&rr, &gg, &bb, hue, 0.20f, 1.0f);
+        colorTable[i]  = Color(rr, gg, bb);
     }
     // Spiral Galaxies, 7 classical Hubble types
     
     spiralForms   = new GalacticForm*[7];
 	
-    spiralForms[Galaxy::S0]   = buildGalacticForms("models/S0.pts");
-    spiralForms[Galaxy::Sa]   = buildGalacticForms("models/Sa.pts");
-    spiralForms[Galaxy::Sb]   = buildGalacticForms("models/Sb.pts");
-    spiralForms[Galaxy::Sc]   = buildGalacticForms("models/Sc.pts");
-    spiralForms[Galaxy::SBa]  = buildGalacticForms("models/SBa.pts");
-
-    spiralForms[Galaxy::SBb]  = buildGalacticForms("models/SBb.pts");
-    spiralForms[Galaxy::SBc]  = buildGalacticForms("models/SBc.pts");
+    spiralForms[Galaxy::S0]   = buildGalacticForms("models/S0.png");
+    spiralForms[Galaxy::Sa]   = buildGalacticForms("models/Sa.png");
+    spiralForms[Galaxy::Sb]   = buildGalacticForms("models/Sb.png");
+    spiralForms[Galaxy::Sc]   = buildGalacticForms("models/Sc.png");
+    spiralForms[Galaxy::SBa]  = buildGalacticForms("models/SBa.png");
+    spiralForms[Galaxy::SBb]  = buildGalacticForms("models/SBb.png");
+    spiralForms[Galaxy::SBc]  = buildGalacticForms("models/SBc.png");
 
     // Elliptical Galaxies , 8 classical Hubble types, E0..E7,
     //
@@ -534,22 +604,29 @@ void InitializeForms()
     {
         float ell = 1.0f - (float) eform / 8.0f;
         ellipticalForms[eform] = new GalacticForm();
-        ellipticalForms[eform]->blobs = spiralForms[Galaxy::S0]->blobs;
+
         // note the correct x,y-alignment of 'ell' scaling!!
-        ellipticalForms[eform]->scale = Vec3f(ell, 3.8*ell, 1.0f);
+   		// 'blow up' S0 template into En (elliptical) ones
+   		ellipticalForms[eform]->blobs = spiralForms[Galaxy::S0]->blobs;
+   		ellipticalForms[eform]->scale = Vec3f(ell, 4.0f * ell, 1.0f);
+        
+        // account for reddening of ellipticals rel.to spirals
+        unsigned int nPoints = (unsigned int) (ellipticalForms[eform]->blobs->size());
+		for (unsigned int i = 0; i < nPoints; ++i)
+    	{
+            (*ellipticalForms[eform]->blobs)[i].colorIndex = (unsigned int) ceil(0.76f * (*ellipticalForms[eform]->blobs)[i].colorIndex);
+        }     
     }
 
     //Irregular Galaxies
-    unsigned int galaxySize = GALAXY_POINTS;
+    unsigned int galaxySize = GALAXY_POINTS, ip = 0;
     Blob b;    
     Point3f p;    
-    
     
     vector<Blob>* irregularPoints = new vector<Blob>;
     irregularPoints->reserve(galaxySize);
     
-    i = 0;
-    while (i < galaxySize)
+    while (ip < galaxySize)
     {
         p        = Point3f(Mathf::sfrand(), Mathf::sfrand(), Mathf::sfrand());
         float r  = p.distanceFromOrigin();
@@ -559,10 +636,11 @@ void InitializeForms()
             if (Mathf::frand() < prob)
             {
                 b.position   = p;
-                b.brightness = 1.0f;  
-                b.colorIndex = (unsigned int) (r*255);
+                b.brightness = 255u;  
+                unsigned int rr =  (unsigned int) (r * 511);
+        	    b.colorIndex  = rr < 256? rr: 255;                
                 irregularPoints->push_back(b);
-                ++i;
+                ++ip;
             }
         }
     }
