@@ -71,7 +71,9 @@ class Model
 
     class MeshComparator
     {
-    public:
+     public:
+        virtual ~MeshComparator() {};
+
         virtual bool operator()(const Mesh&, const Mesh&) const = 0;
     };
 
@@ -89,12 +91,13 @@ class Model
      */
     class OpacityComparator : public MeshComparator
     {
-    public:
+     public:
         OpacityComparator(const Model&);
+        virtual ~OpacityComparator() {};
 
         virtual bool operator()(const Mesh&, const Mesh&) const;
 
-    private:
+     private:
         float getOpacity(const Mesh& mesh) const;
 
         const Model& model;

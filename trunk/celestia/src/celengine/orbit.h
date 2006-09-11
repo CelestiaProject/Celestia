@@ -17,7 +17,9 @@ class OrbitSampleProc;
 
 class Orbit
 {
-public:
+ public:
+    virtual ~Orbit() {};
+
     virtual Point3d positionAtTime(double) const = 0;
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
@@ -33,9 +35,10 @@ public:
 
 class EllipticalOrbit : public Orbit
 {
-public:
+ public:
     EllipticalOrbit(double, double, double, double, double, double, double,
                     double _epoch = 2451545.0);
+    virtual ~EllipticalOrbit() {};
 
     // Compute the orbit for a specified Julian date
     Point3d positionAtTime(double) const;
@@ -43,7 +46,7 @@ public:
     double getBoundingRadius() const;
     virtual void sample(double, double, int, OrbitSampleProc&) const;
 
-private:
+ private:
     double eccentricAnomaly(double) const;
     Point3d positionAtE(double) const;
 
@@ -61,6 +64,8 @@ private:
 class OrbitSampleProc
 {
  public:
+    virtual ~OrbitSampleProc() {};
+
     virtual void sample(double t, const Point3d&) = 0;
 };
 
@@ -75,8 +80,9 @@ class OrbitSampleProc
  */
 class CachingOrbit : public Orbit
 {
-public:
+ public:
     CachingOrbit() : lastTime(1.0e-30) {};
+    virtual ~CachingOrbit() {};
 
     virtual Point3d computePosition(double jd) const = 0;
     virtual double getPeriod() const = 0;
@@ -86,7 +92,7 @@ public:
 
     virtual void sample(double, double, int, OrbitSampleProc& proc) const;
 
-private:
+ private:
     mutable Point3d lastPosition;
     mutable double lastTime;
 };
