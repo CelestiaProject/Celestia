@@ -22,9 +22,13 @@ class ExecutionEnvironment
     ExecutionEnvironment() {};
     virtual ~ExecutionEnvironment() {};
 
-    virtual inline Simulation* getSimulation() const = 0;
-    virtual inline Renderer* getRenderer() const = 0;
-    virtual inline CelestiaCore* getCelestiaCore() const = 0;
+    // These three methods should be defined inline in derived classes,
+    // although the compiler may need some extra context to not
+    // treat them as ordinary out-of-line virtual calls:
+    virtual Simulation* getSimulation() const = 0;
+    virtual Renderer* getRenderer() const = 0;
+    virtual CelestiaCore* getCelestiaCore() const = 0;
+
     virtual void showText(std::string, int, int, int, int, double) = 0;
 };
 
