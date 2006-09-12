@@ -1,8 +1,14 @@
+# All asteroid colors (except for Dactyl) are derivced from SMASS spectra
+# and converted to RGB values using Matt Wronkiewicz's spectrum2rgb utility
+# that is distributed with the Celestia source package.
+
 # A few main belt asteroids . . 
 "Ceres" "Sol" 
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
+	Color [ 1.000 0.944 0.972 ]
+	BlendTexture true
 	Radius 487.5        # 975x909km
 	Oblateness 0.068    # Thomas et al, Nature, 8 Sep 2005
 
@@ -31,6 +37,8 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
+	Color [ 1.000 0.951 0.993 ]
+	BlendTexture true
 	Radius 263 
 
 	EllipticalOrbit 
@@ -57,6 +65,8 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
+	Color [ 1.000 0.909 0.921 ]
+	BlendTexture true
 	Radius 130 
 
 	EllipticalOrbit 
@@ -83,6 +93,8 @@
 	Class "asteroid" 
 	Mesh   "vesta.cmod" 
 	Texture "asteroid.jpg" 
+	Color [ 1.000 0.929 0.944 ]
+	BlendTexture true
 	Radius    279 # maximum semi-axis
 	MeshCenter [ 0.77 3.424 -0.554 ]
 
@@ -117,7 +129,8 @@
 	Class "asteroid"
 	Mesh "gaspra.cmod"
 	Texture "gaspramosaic.*" # Phil Stooke
-	Color   [ 0.52 0.47 0.42 ]
+	Color [ 1.000 0.885 0.862 ]
+	BlendTexture true
 	Radius    9.1 # maximum semi-axis
 	MeshCenter [ 1.540 -0.064 -0.118 ]
 
@@ -145,8 +158,9 @@
 {
 	Class "asteroid"
 	Mesh "ida.cmod"
-	#Texture "asteroid.jpg"
 	Texture "idamosaic.*" # Phil Stooke
+	Color [ 1.000 0.899 0.904 ]
+	BlendTexture true
 	Radius    28.9 # maximum semi-axis
 	MeshCenter [ -1.424 -0.417 0.115 ]
 
@@ -180,6 +194,9 @@
 
 	Class "asteroid"
 	Texture "asteroid.jpg"
+	# Use the same color as for Ida--uncertain if this is correct
+	Color [ 1.000 0.899 0.904 ]
+	BlendTexture true
 	Mesh "roughsphere.cms"
 	Radius   0.7
 
@@ -207,8 +224,7 @@
 	Mesh   "eros.cmod"
 	Texture "eros.*"
 	# NormalMap "erosbump2k.jpg"
-	# Color sampled from true color photo taken by NEAR
-	Color   [ 0.52 0.47 0.42 ]
+	Color [ 1.000 0.878 0.853 ]
 	BlendTexture true
 	Radius 16.3 # maximum semi-axis
 	MeshCenter [ -1.262 0.168 -0.164 ]
@@ -240,8 +256,7 @@
 	Class "asteroid"
 	Mesh   "toutatis.cmod"
 	Texture "asteroid.jpg"
-	# We'll just use the same color as Eros
-	Color   [ 0.52 0.47 0.42 ]
+	Color [ 1.000 0.909 0.919 ]
 	BlendTexture true
 	Radius  2.3 # maximum semi-axis
 	MeshCenter [ 0.0313 0.2171 0.0064 ]
@@ -272,8 +287,7 @@
 	Class "asteroid"
 	Mesh   "geographos.cmod"
 	Texture "asteroid.jpg"
-	# We'll just use the same color as Eros
-	Color   [ 0.52 0.47 0.42 ]
+	Color [ 1.000 0.899 0.892 ]
 	BlendTexture true
 	Radius  2.53 # maximum semi-axis
 	MeshCenter [ 0.154 -0.002 -0.026 ]
@@ -304,6 +318,8 @@
 	Class "asteroid"
 	Mesh   "kleopatra.cmod"
 	Texture "asteroid.jpg"
+	Color [ 1.000 0.931 0.977 ]
+	BlendTexture true
 	Radius  110 # maximum semi-axis
 	MeshCenter [ -3.049 2.379 1.429 ]
 
@@ -363,8 +379,7 @@
 	Class "asteroid"
 	Mesh   "bacchus.cmod"
 	Texture "asteroid.jpg"
-	# We'll just use the same color as Eros
-	Color   [ 0.52 0.47 0.42 ]
+	Color [ 1.000 0.897 0.868 ]
 	BlendTexture true
 	Radius  0.55 # maximum semi-axis
 	MeshCenter [ -0.00936 -0.00610 0.00289 ]
@@ -395,6 +410,8 @@
 	Class "asteroid"
 	Mesh   "golevka.cmod"
 	Texture "asteroid.jpg"
+	Color [ 1.000 0.871 0.840 ]
+	BlendTexture true
 	Radius  0.34 # maximum semi-axis
 	MeshCenter [ -0.0289 -0.0111 -0.0331 ]
 
@@ -424,8 +441,6 @@
 	Class "asteroid"
 	Mesh   "castalia.cmod"
 	Texture "asteroid.jpg"
-	# We'll just use the same color as Eros
-	Color   [ 0.52 0.47 0.42 ]
 	BlendTexture true
 	Radius  0.81 # maximum semi-axis
 	MeshCenter [ -0.0456 -0.0347 -0.0178 ]
@@ -456,6 +471,8 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
+	Color [ 0.993 0.959 1.000 ]
+	BlendTexture true
 	Radius 144 
 
 	EllipticalOrbit 
