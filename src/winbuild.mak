@@ -9,6 +9,8 @@ OUTDIR=Release
 OUTDIR=Debug
 !ENDIF
 
+#SPICE=enable
+
 LIBUTIL=celutil\$(OUTDIR)\cel_utils.lib
 LIBMATH=celmath\$(OUTDIR)\cel_math.lib
 LIB3DS=cel3ds\$(OUTDIR)\cel_3ds.lib
@@ -67,10 +69,10 @@ $(LIBTXF): always
 
 $(LIBCEL): always
 	cd celengine
-	nmake /NOLOGO engine.mak MFLAGS=-MD CFG=$(CFG)
+	nmake /NOLOGO engine.mak MFLAGS=-MD CFG=$(CFG) SPICE=$(SPICE)
 	cd ..
 
 $(APPCELESTIA): $(LIBS)
 	cd celestia
-	nmake /NOLOGO celestia.mak MFLAGS=-MD CFG=$(CFG)
+	nmake /NOLOGO celestia.mak MFLAGS=-MD CFG=$(CFG) SPICE=$(SPICE)
 	cd ..
