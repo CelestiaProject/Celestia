@@ -193,7 +193,8 @@ static unsigned char alphabet[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 BigFix::BigFix(const std::string& val)
 {
     static char inalphabet[256], decoder[256];
-    int i, bits, c, char_count, errors = 0;
+    int i, bits, c, char_count;
+    /*int errors = 0;   Unused*/;
 
     for (i = (sizeof alphabet) - 1; i >= 0 ; i--)
     {
