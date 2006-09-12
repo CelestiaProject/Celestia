@@ -2546,10 +2546,12 @@ class UranianSatelliteOrbit : public CachingOrbit
                           double* _zeta_k, double* _zeta_theta,
                           double* _zeta_phi) :
         a(_a), n(_n), L0(_L0), L1(_L1),
-        LTerms(_LTerms), zTerms(_zTerms), zetaTerms(_zetaTerms),
         L_k(_L_k), L_theta(_L_theta), L_phi(_L_phi),
+        LTerms(_LTerms),
         z_k(_z_k), z_theta(_z_theta), z_phi(_z_phi),
-        zeta_k(_zeta_k), zeta_theta(_zeta_theta), zeta_phi(_zeta_phi)
+        zTerms(_zTerms),
+        zeta_k(_zeta_k), zeta_theta(_zeta_theta), zeta_phi(_zeta_phi),
+        zetaTerms(_zetaTerms)
     {
     };
 
