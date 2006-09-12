@@ -376,10 +376,12 @@ static VSOPTerm mercury_R4[] = {
     // 0 terms retained
 };
 
+#if 0
 static VSOPTerm mercury_R5[] = {
     { 0, 0, 0 },
     // 0 terms retained
 };
+#endif
 
 static VSOPTerm venus_L0[] = {
     { 3.17614666774, 0, 0 },
@@ -592,10 +594,12 @@ static VSOPTerm venus_R4[] = {
     // 1 terms retained
 };
 
+#if 0
 static VSOPTerm venus_R5[] = {
     { 0, 0, 0 },
     // 0 terms retained
 };
+#endif
 
 static VSOPTerm earth_L0[] = {
     { 1.75347045673, 0, 0 },
@@ -778,22 +782,28 @@ static VSOPTerm earth_B2[] = {
     // 4 terms retained
 };
 
+#if 0
 static VSOPTerm earth_B3[] = {
     { 2.75993e-06, 0.59480097092, 6283.07584999 },
     { 1.7034e-07, 3.14159265359, 0 },
     { 3.617e-08, 0.11750575325, 12566.1517 },
     // 3 terms retained
 };
+#endif
 
+#if 0
 static VSOPTerm earth_B4[] = {
     { 5.745e-08, 2.26734029843, 6283.07584999 },
     // 1 terms retained
 };
+#endif
 
+#if 0
 static VSOPTerm earth_B5[] = {
     { 0, 0, 0 },
     // 0 terms retained
 };
+#endif
 
 static VSOPTerm earth_R0[] = {
     { 1.00013988784, 0, 0 },

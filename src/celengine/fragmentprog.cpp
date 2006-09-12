@@ -69,7 +69,7 @@ static string* ReadTextFromFile(const string& filename)
     return s;
 }
 
-
+#if 0
 static int findLineNumber(const string& s, unsigned int index)
 {
     if (index >= s.length())
@@ -84,6 +84,7 @@ static int findLineNumber(const string& s, unsigned int index)
 
     return lineno;
 }
+#endif
 
 
 static bool LoadNvFragmentProgram(const string& filename, unsigned int& id)
@@ -163,7 +164,7 @@ void FragmentProcessor::parameter(fp::Parameter param, const Vec3f& v)
 {
     parameter(param, v.x, v.y, v.z, 0.0f);
 }
-                            
+
 void FragmentProcessor::parameter(fp::Parameter param, const Point3f& p)
 {
     parameter(param, p.x, p.y, p.z, 0.0f);

@@ -19,7 +19,7 @@ using namespace std;
 
 static Mesh::Material defaultMaterial;
 
-static GLenum GLPrimitiveModes[Mesh::PrimitiveTypeMax] = 
+static GLenum GLPrimitiveModes[Mesh::PrimitiveTypeMax] =
 {
     GL_TRIANGLES,
     GL_TRIANGLE_STRIP,
@@ -29,7 +29,7 @@ static GLenum GLPrimitiveModes[Mesh::PrimitiveTypeMax] =
     GL_POINTS
 };
 
-static GLenum GLComponentTypes[Mesh::FormatMax] = 
+static GLenum GLComponentTypes[Mesh::FormatMax] =
 {
      GL_FLOAT,          // Float1
      GL_FLOAT,          // Float2
@@ -78,9 +78,11 @@ RenderContext::RenderContext(const Mesh::Material* _material)
 }
 
 
+#if 0
 static void setVertexArrays(const Mesh::VertexDescription& desc)
 {
 }
+#endif
 
 
 void
@@ -371,7 +373,7 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius
 
 
 GLSL_RenderContext::~GLSL_RenderContext()
-{    
+{
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
@@ -400,7 +402,7 @@ GLSL_RenderContext::initLightingEnvironment()
             totalShadows += nShadows;
         }
     }
-    
+
 }
 
 
@@ -417,12 +419,12 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     Texture* emissiveTex = NULL;
 
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
-    
+
     if (lunarLambert == 0.0f)
         shaderProps.lightModel = ShaderProperties::DiffuseModel;
     else
         shaderProps.lightModel = ShaderProperties::LunarLambertModel;
-    
+
     if (m.maps[Mesh::DiffuseMap] != InvalidResource)
     {
         baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
@@ -474,8 +476,8 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
         if (atmosphere->mieScaleHeight > 0.0f)
             shaderProps.texUsage |= ShaderProperties::Scattering;
-    }    
-    
+    }
+
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
     if (prog == NULL)
@@ -489,32 +491,32 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }
-    
+
     // setLightParameters() expects opacity in the alpha channel of the diffuse color
     Color diffuse(m.diffuse.red(), m.diffuse.green(), m.diffuse.blue(), m.opacity);
-    
+
     prog->setLightParameters(lightingState, diffuse, m.specular, m.emissive);
-    
-    if (shaderProps.shadowCounts != 0)    
+
+    if (shaderProps.shadowCounts != 0)
         prog->setEclipseShadowParameters(lightingState, objRadius, xform);
 
     // TODO: handle emissive color
-    prog->shininess = m.specularPower;   
+    prog->shininess = m.specularPower;
     if (shaderProps.lightModel == ShaderProperties::LunarLambertModel)
     {
         prog->lunarLambert = lunarLambert;
     }
-    
+
     if (emissiveTex != NULL)
     {
         prog->nightTexMin = 1.0f;
     }
-    
+
     if (shaderProps.hasScattering())
     {
         prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius);
     }
-        
+
     bool blendOnNow = false;
     if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
         blendOnNow = true;

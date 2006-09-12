@@ -234,7 +234,7 @@ FragLightProperty(unsigned int i, const char* property)
     return string(buf);
 }
 
-
+#if 0
 static string
 IndexedParameter(const char* name, unsigned int index)
 {
@@ -242,7 +242,7 @@ IndexedParameter(const char* name, unsigned int index)
     sprintf(buf, "%s%d", name, index);
     return string(buf);
 }
-
+#endif
 
 static string
 IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
