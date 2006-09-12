@@ -100,7 +100,7 @@ CreateEllipticalOrbit(Hash* orbitData,
     {
         semiMajorAxis = astro::AUtoKilometers(semiMajorAxis);
         pericenterDistance = astro::AUtoKilometers(pericenterDistance);
-        period = period * 365.25f;
+        period = period * 365.25;
     }
 
     // If we read the semi-major axis, use it to compute the pericenter
@@ -160,12 +160,18 @@ CreateSpiceOrbit(Hash* orbitData,
     double period = 0.0;
     orbitData->getNumber("Period", period);
 
+    if (usePlanetUnits)
+    {
+        boundingRadius = astro::AUtoKilometers(boundingRadius);
+        period = period * 365.25;
+    }
+
     SpiceOrbit* orbit = new SpiceOrbit(kernelFileName,
                                        targetBodyName,
                                        originName,
                                        boundingRadius,
                                        period);
-    if (!orbit->init())
+    if (!orbit->init(path))
     {
         // Error using SPICE library; destroy the orbit; hopefully a
         // fallback is defined in the SSC file.

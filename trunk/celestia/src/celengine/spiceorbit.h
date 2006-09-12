@@ -25,7 +25,7 @@ class SpiceOrbit : public CachingOrbit
                double _boundingRadius);
     virtual ~SpiceOrbit();
 
-    bool init();
+    bool init(const std::string& path);
 
     double getPeriod() const
     {
