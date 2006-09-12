@@ -79,7 +79,7 @@ void CommandGoto::process(ExecutionEnvironment& env)
 
 
 ////////////////
-// GotoLongLat command: go to the selected body and hover over 
+// GotoLongLat command: go to the selected body and hover over
 
 CommandGotoLongLat::CommandGotoLongLat(double t,
                                        double dist,
@@ -189,7 +189,7 @@ void CommandSynchronous::process(ExecutionEnvironment& env)
 
 
 ////////////////
-// Chase command: 
+// Chase command:
 
 CommandChase::CommandChase()
 {
@@ -202,7 +202,7 @@ void CommandChase::process(ExecutionEnvironment& env)
 
 
 ////////////////
-// Track command: 
+// Track command:
 
 CommandTrack::CommandTrack()
 {
@@ -445,7 +445,7 @@ void CommandSetOrientation::process(ExecutionEnvironment& env)
 ////////////////
 // Look back command: reverse observer orientation
 
-CommandLookBack::CommandLookBack() 
+CommandLookBack::CommandLookBack()
 {
 }
 
@@ -689,7 +689,7 @@ void CommandCapture::process(ExecutionEnvironment& env)
     // Get the dimensions of the current viewport
     int viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    
+
     if (compareIgnoringCase(type, "jpeg") == 0)
     {
         success = CaptureGLBufferToJPEG(filename,
@@ -731,8 +731,8 @@ void CommandRenderPath::process(ExecutionEnvironment& env)
 
 RepeatCommand::RepeatCommand(CommandSequence* _body, int _repeatCount) :
     body(_body),
-    repeatCount(_repeatCount),
     bodyDuration(0.0),
+    repeatCount(_repeatCount),
     execution(NULL)
 {
     for (CommandSequence::const_iterator iter = body->begin();

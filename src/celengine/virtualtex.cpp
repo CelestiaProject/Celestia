@@ -58,8 +58,8 @@ VirtualTexture::VirtualTexture(const string& _tilePath,
                                const string& _tileType) :
     Texture(_tileSize << (_baseSplit + 1), _tileSize << _baseSplit),
     tilePath(_tilePath),
-    baseSplit(_baseSplit),
     tilePrefix(_tilePrefix),
+    baseSplit(_baseSplit),
     tileSize(_tileSize),
     ticks(0),
     nResolutionLevels(0)
@@ -85,8 +85,8 @@ const TextureTile VirtualTexture::getTile(int lod, int u, int v)
 #endif
 
     lod += baseSplit;
-    
-    if (lod < 0 || (uint) lod >= nResolutionLevels || 
+
+    if (lod < 0 || (uint) lod >= nResolutionLevels ||
         u < 0 || u >= (2 << lod) ||
         v < 0 || v >= (1 << lod))
     {
@@ -215,10 +215,10 @@ ImageTexture* VirtualTexture::loadTileTexture(uint lod, uint u, uint v)
     lod >>= baseSplit;
 
     assert(lod < (unsigned)MaxResolutionLevels);
-    
+
     char filename[64];
     sprintf(filename, "level%d/%s%d_%d", lod, tilePrefix.c_str(), u, v);
-    
+
     string pathname = tilePath + filename + tileExt;
     Image* img = LoadImageFromFile(pathname);
     if (img == NULL)
@@ -281,7 +281,7 @@ void VirtualTexture::populateTileTree()
                 maxLevel = i + baseSplit;
                 int uLimit = 2 << maxLevel;
                 int vLimit = 1 << maxLevel;
-                
+
                 string filename;
                 while (dir->nextFile(filename))
                 {
@@ -395,7 +395,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const string& path)
     }
 
     Hash* texParams = texParamsValue->getHash();
-    
+
     return CreateVirtualTexture(texParams, path);
 }
 

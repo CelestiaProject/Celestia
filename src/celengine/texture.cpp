@@ -266,7 +266,7 @@ static void LoadMipmapSet(Image& img, GLenum target)
     {
         uint mipWidth  = max((uint) img.getWidth() >> mip, 1u);
         uint mipHeight = max((uint) img.getHeight() >> mip, 1u);
-            
+
         if (img.isCompressed())
         {
             glx::glCompressedTexImage2DARB(target,
@@ -342,7 +342,7 @@ static int CalcMipLevelCount(int w, int h)
 
 
 Texture::Texture(int w, int h, int d) :
-    width(w), height(h), depth(d), alpha(false), compressed(false)
+    alpha(false), compressed(false), width(w), height(h), depth(d)
 {
 }
 
@@ -409,23 +409,23 @@ ImageTexture::ImageTexture(Image& img,
     glGenTextures(1, (GLuint*) &glName);
     glBindTexture(GL_TEXTURE_2D, glName);
 
-    
+
     bool mipmap = mipMapMode != NoMipMaps;
     bool precomputedMipMaps = false;
 
     // Use precomputed mipmaps only if a complete set is supplied
     int mipLevelCount = img.getMipLevelCount();
     if (mipmap && mipLevelCount == CalcMipLevelCount(img.getWidth(), img.getHeight()))
-    {    
+    {
         precomputedMipMaps = true;
-    }    
+    }
 
     // We can't automatically generate mipmaps for compressed textures.
     // If a precomputed mipmap set isn't provided, turn off mipmapping entirely.
     if (!precomputedMipMaps && img.isCompressed())
     {
         mipmap = false;
-    }    
+    }
 
     GLenum texAddress = GetGLTexAddressMode(addressMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texAddress);
@@ -433,7 +433,7 @@ ImageTexture::ImageTexture(Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-            
+
     if (mipMapMode == AutoMipMaps)
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
@@ -505,7 +505,7 @@ void ImageTexture::setBorderColor(Color borderColor)
 }
 
 
-TiledTexture::TiledTexture(Image& img, 
+TiledTexture::TiledTexture(Image& img,
                            int _uSplit, int _vSplit,
                            MipMapMode mipMapMode) :
     Texture(img.getWidth(), img.getHeight()),
@@ -656,7 +656,7 @@ TiledTexture::TiledTexture(Image& img,
             }
         }
     }
-            
+
     delete tile;
 }
 
@@ -708,7 +708,7 @@ int TiledTexture::getVTileCount(int) const
 const TextureTile TiledTexture::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u >= uSplit || u < 0 || v >= vSplit || v < 0)
-        return TextureTile(0); 
+        return TextureTile(0);
     else
     {
         return TextureTile(glNames[v * uSplit + u]);
