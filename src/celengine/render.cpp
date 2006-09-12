@@ -5936,13 +5936,13 @@ void Renderer::buildRenderLists(const Star& sun,
             rle.discSizeInPixels = discSize;
             rle.appMag = appMag;
             rle.solarSysIndex = solarSysIndex;
-            renderList.insert(renderList.end(), rle);
+            renderList.push_back(rle);
         }
 
         if (body->getClassification() == Body::Comet &&
             (renderFlags & ShowCometTails) != 0)
         {
-            float radius = 10000000.0f; // body->getRadius() * 1000000.0f;
+            float radius = 10000000.0f;
             discSize = (radius / (float) distanceFromObserver) / pixelSize;
             if (discSize > 1)
             {
@@ -5955,11 +5955,12 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.radius = radius;
                 rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
                 rle.distance = (float) distanceFromObserver;
+                rle.centerZ = pos * viewMatZ;
                 rle.radius = radius;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
                 rle.solarSysIndex = solarSysIndex;
-                renderList.insert(renderList.end(), rle);
+                renderList.push_back(rle);
             }
         }
 
@@ -6332,6 +6333,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
+            Mat3f viewMat = observer->getOrientation().toMatrix3();
+            Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+            
             RenderListEntry rle;
             rle.star = &star;
             rle.body = NULL;
@@ -6343,6 +6347,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // stars.
             float scale = astro::lightYearsToKilometers(1.0f);
             rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
+            rle.centerZ = Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
             rle.distance = rle.position.distanceFromOrigin();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
@@ -6514,6 +6519,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
+            Mat3f viewMat = observer->getOrientation().toMatrix3();
+            Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+            
             RenderListEntry rle;
             rle.star = &star;
             rle.body = NULL;
@@ -6524,6 +6532,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             // stars.
             float scale = astro::lightYearsToKilometers(1.0f);
             rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
+            rle.centerZ = Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
             rle.distance = rle.position.distanceFromOrigin();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
