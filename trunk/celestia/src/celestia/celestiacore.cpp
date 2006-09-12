@@ -1,5 +1,5 @@
 // celestiacore.cpp
-// 
+//
 // Platform-independent UI handling and initialization for Celestia.
 // winmain, gtkmain, and glutmain are thin, platform-specific modules
 // that sit directly on top of CelestiaCore and feed it mouse and
@@ -109,7 +109,7 @@ public:
 
     CelestiaCore* getCelestiaCore() const
     {
-        return &core;         
+        return &core;
     }
 
     void showText(string s, int horig, int vorig, int hoff, int voff,
@@ -139,7 +139,7 @@ float ComputeRotationCoarseness(Simulation& sim)
         UniversalCoord selectionPosition = selection.getPosition(t);
         double distance = astro::microLightYearsToKilometers(observerPosition.distanceTo(selectionPosition));
         double altitude = distance - radius;
-        if (altitude > 0.0 && altitude < radius)                        
+        if (altitude > 0.0 && altitude < radius)
         {
             coarseness *= (float) max(0.01, altitude / radius);
         }
@@ -427,7 +427,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     fav->parentFolder = parentFolder;
     fav->selectionName = sim->getSelection().getName();
     fav->coordSys = sim->getFrame().coordSys;
-    
+
     favorites->insert(pos, fav);
 }
 
@@ -441,7 +441,7 @@ void CelestiaCore::addFavoriteFolder(string name, FavoritesList::iterator* iter)
     FavoritesEntry* fav = new FavoritesEntry();
     fav->name = name;
     fav->isFolder = true;
-    
+
     favorites->insert(pos, fav);
 }
 
@@ -563,7 +563,7 @@ void CelestiaCore::runScript(const string& filename)
             celxScript = new LuaState();
             celxScript->init(this);
         }
-        
+
         int status = celxScript->loadScript(scriptfile, localeFilename);
         if (status != 0)
         {
@@ -618,20 +618,20 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
     mouseMotion = 0.0f;
 
-#ifdef CELX    
+#ifdef CELX
     if (celxScript != NULL)
     {
         if (celxScript->handleMouseButtonEvent(x, y, button, true))
             return;
     }
-#endif    
+#endif
 
     if (views.size() > 1)
     {
         // To select the clicked into view before a drag.
         pickView(x, y);
     }
-    
+
     if (views.size() > 1 && button == LeftButton) // look if click is near a view border
     {
         View *v1 = 0, *v2 = 0;
@@ -686,14 +686,14 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         resizeSplit = 0;
         return;
     }
-    
-#ifdef CELX    
+
+#ifdef CELX
     if (celxScript != NULL)
     {
         if (celxScript->handleMouseButtonEvent(x, y, button, false))
             return;
     }
-#endif    
+#endif
 
     // If the mouse hasn't moved much since it was pressed, treat this
     // as a selection or context menu event.  Otherwise, assume that the
@@ -703,7 +703,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         if (button == LeftButton)
         {
             pickView(x, y);
-            
+
             float pickX, pickY;
             float aspectRatio = ((float) width / (float) height);
             views[activeView]->mapWindowToView((float) x / (float) width,
@@ -781,8 +781,8 @@ void CelestiaCore::mouseMove(float x, float y)
 {
     if (views.size() > 1 && cursorHandler != NULL)
     {
-        View* v1 = 0;
-        View* v2 = 0;
+        /*View* v1 = 0;     Unused*/
+        /*View* v2 = 0;     Unused*/
 
         for (vector<View*>::iterator i = views.begin(); i != views.end(); i++)
         {
@@ -797,18 +797,18 @@ void CelestiaCore::mouseMove(float x, float y)
             {
                 cursorHandler->setCursorShape(CelestiaCore::SizeVerCursor);
                 return;
-            } 
-            else if (vy >=0 && vy <= 1 && (abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)) 
+            }
+            else if (vy >=0 && vy <= 1 && (abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2))
             {
                 cursorHandler->setCursorShape(CelestiaCore::SizeHorCursor);
                 return;
-            } 
+            }
         }
         cursorHandler->setCursorShape(defaultCursorShape);
     }
     return;
 }
-    
+
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
     if (resizeSplit != 0)
@@ -932,7 +932,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             {
                 coarseness = radToDeg(sim->getActiveObserver()->getFOV()) / 30.0f;
             }
-            else 
+            else
             {
                 // If right dragging to rotate, adjust the rotation rate
                 // based on the distance from the reference object.
@@ -1117,7 +1117,7 @@ void CelestiaCore::keyUp(int key, int)
 static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
 {
     unsigned int length = strlen(c);
-    
+
     // Translate control characters
     if (length == 1 && c[0] >= '\001' && c[0] <= '\032')
     {
@@ -1131,7 +1131,7 @@ static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
             return false;
         strcpy(keyName, c);
     }
-    
+
     return true;
 }
 
@@ -1196,7 +1196,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                     // We remove bytes like b10xxx xxxx at the end of typeText
                     // these are guarantied to not be the first byte of a UTF-8 char
                     while (typedText.size() && ((typedText[typedText.size() - 1] & 0xC0) == 0x80)) {
-                        typedText = string(typedText, 0, typedText.size() - 1);                                            
+                        typedText = string(typedText, 0, typedText.size() - 1);
                     }
                     // We then remove the first byte of the last UTF-8 char of typedText.
                     typedText = string(typedText, 0, typedText.size() - 1);
@@ -1268,13 +1268,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if (c != '\033')
         {
             char keyName[8];
-            getKeyName(c_p, keyName, sizeof(keyName));            
+            getKeyName(c_p, keyName, sizeof(keyName));
             if (celxScript->handleKeyEvent(keyName))
                 return;
         }
     }
 #endif
-    
+
     char C = toupper(c);
     switch (C)
     {
@@ -1521,7 +1521,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             {
                 if (scriptState == ScriptRunning)
                     scriptState = ScriptPaused;
-            }        
+            }
             else
             {
                 if (scriptState == ScriptPaused)
@@ -1546,7 +1546,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if (editMode)
         {
             showSelectionInfo(sim->getSelection());
-        }    
+        }
         else
         {
             time_t t = time(NULL);
@@ -1609,20 +1609,20 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             int hours, mins;
             float secs;
             char buf[128];
-	    if (astro::microLightYearsToKilometers(v.length()) >= 
-                86400.0 * astro::speedOfLight) 
+	    if (astro::microLightYearsToKilometers(v.length()) >=
+                86400.0 * astro::speedOfLight)
 	    {
 	        // Light travel time in years, if >= 1day
-	        sprintf(buf, _("Light travel time:  %.4f yr "), 
+	        sprintf(buf, _("Light travel time:  %.4f yr "),
                         v.length() * 1.0e-6);
                 flash(buf, 2.0);
-	    } 
+	    }
 	    else
 	    {
 	        // If Light travel delay < 1 day, display in [ hr : min : sec ]
                 getLightTravelDelay(v.length(), hours, mins, secs);
                 if (hours == 0)
-                    sprintf(buf, _("Light travel time:  %d min  %.1f s"), 
+                    sprintf(buf, _("Light travel time:  %d min  %.1f s"),
                             mins, secs);
                 else
 		    sprintf(buf, _("Light travel time:  %d h  %d min  %.1f s")
@@ -1632,7 +1632,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         break;
 
-    case '-': 
+    case '-':
         addToHistory();
 
         if (sim->getSelection().body() &&
@@ -2017,37 +2017,37 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         // Obsolete?
         //editMode = !editMode;
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNewStars);
-        notifyWatchers(RenderFlagsChanged);        
+        notifyWatchers(RenderFlagsChanged);
         break;
     }
 }
 
 
-void CelestiaCore::getLightTravelDelay(double distance, int& hours, int& mins, 
+void CelestiaCore::getLightTravelDelay(double distance, int& hours, int& mins,
                                     float& secs)
 {
     // light travel time in hours
     double lt = astro::microLightYearsToKilometers(distance)/
 	        (3600.0 * astro::speedOfLight);
     hours = (int) lt;
-    double mm    = (lt - hours) * 60;  
+    double mm    = (lt - hours) * 60;
     mins = (int) mm;
     secs = (float) ((mm  - mins) * 60);
-} 
+}
 
 void CelestiaCore::setLightTravelDelay(double distance)
 {
     // light travel time in days
     double lt = astro::microLightYearsToKilometers(distance)/
 	        (86400.0 * astro::speedOfLight);
-    sim->setTime(sim->getTime() - lt);    
+    sim->setTime(sim->getTime() - lt);
 }
 
 void CelestiaCore::start(double t)
 {
     if (config->initScriptFile != "")
     {
-        // using the KdeAlerter in runScript would create an infinite loop, 
+        // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
         string filename = config->initScriptFile;
         config->initScriptFile = "";
@@ -2064,14 +2064,14 @@ void CelestiaCore::start(double t)
         goToUrl(startURL);
 }
 
-void CelestiaCore::setStartURL(string url) 
+void CelestiaCore::setStartURL(string url)
 {
-    if (!url.substr(0,4).compare("cel:")) 
+    if (!url.substr(0,4).compare("cel:"))
     {
         startURL = url;
         config->initScriptFile = "";
-    } 
-    else 
+    }
+    else
     {
         config->initScriptFile = url;
     }
@@ -2110,7 +2110,7 @@ void CelestiaCore::tick()
     {
         double span = 0.1;
         double fraction;
-                
+
         if (currentTime - zoomTime >= span)
             fraction = (zoomTime + span) - (currentTime - dt);
         else
@@ -2126,7 +2126,7 @@ void CelestiaCore::tick()
     {
         double span = 0.1;
         double fraction;
-                
+
         if (currentTime - dollyTime >= span)
             fraction = (dollyTime + span) - (currentTime - dt);
         else
@@ -2174,9 +2174,9 @@ void CelestiaCore::tick()
                 Vec3d upd = sim->getObserver().getPosition() -
                     frame.refObject.getPosition(sim->getTime());
                 upd.normalize();
-                
+
                 Vec3f up((float) upd.x, (float) upd.y, (float) upd.z);
-                
+
                 Vec3f v = up * (float) (KeyRotationAccel * dt);
                 v = v * (~orientation).toMatrix3();
 
@@ -2332,7 +2332,7 @@ void CelestiaCore::draw()
         console.render(ConsolePageRows);
         console.end();
     }
-        
+
 
     if (movieCapture != NULL && recording)
         movieCapture->captureFrame();
@@ -2421,7 +2421,7 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
         w2 = av->width;
         h1 = av->height * splitPos;
         h2 = av->height - h1;
-    }        
+    }
 
     View* split = new View(type,
                            0,
@@ -2492,7 +2492,7 @@ void CelestiaCore::singleView(View* av)
     }
 
     av->x = 0.0f;
-    av->y = 0.0f; 
+    av->y = 0.0f;
     av->width = 1.0f;
     av->height = 1.0f;
     av->parent = 0;
@@ -2817,7 +2817,7 @@ static void displayDSOinfo(Overlay& overlay, const DeepSkyObject& dso, double di
     {
         overlay << _("Distance from center: ");
         displayDistance(overlay, distance + dso.getRadius());
-     }   	
+     }
     overlay << '\n';
     overlay << _("Radius: ");
     displayDistance(overlay, dso.getRadius());
@@ -2859,7 +2859,7 @@ static void displayPlanetInfo(Overlay& overlay,
         overlay << _("Day length: ");
         displayDuration(overlay, body.getRotationElements().period);
         overlay << '\n';
-        
+
         PlanetarySystem* system = body.getSystem();
         if (system != NULL)
         {
@@ -2867,14 +2867,14 @@ static void displayPlanetInfo(Overlay& overlay,
             if (sun != NULL)
             {
                 double distFromSun = body.getHeliocentricPosition(t).distanceFromOrigin();
-                float planetTemp = sun->getTemperature() * 
+                float planetTemp = sun->getTemperature() *
                     (float) (::pow(1.0 - body.getAlbedo(), 0.25) *
                              sqrt(sun->getRadius() / (2.0 * distFromSun)));
                 overlay << setprecision(0);
                 overlay << _("Temperature: ") << planetTemp << " K\n";
                 overlay << setprecision(3);
             }
-            
+
 #if 0
             // Code to display apparent magnitude.  Disabled because it's not very
             // accurate.  Too many simplifications are used when computing the amount
@@ -3057,14 +3057,14 @@ void CelestiaCore::renderOverlay()
         if (sim->getSelection().getType() == Selection::Type_Body &&
             (sim->getTargetSpeed() < 0.99 *
              astro::kilometersToMicroLightYears(astro::speedOfLight)))
-        {                   
-    	    if (lightTravelFlag) 
+        {
+    	    if (lightTravelFlag)
     	    {
     	        Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
                               sim->getObserver().getPosition();
     	        // light travel time in days
                 lt = astro::microLightYearsToKilometers(v.length()) / (86400.0 * astro::speedOfLight);
-    	    }            
+    	    }
     	}
         else
     	{
@@ -3072,12 +3072,12 @@ void CelestiaCore::renderOverlay()
     	}
 
         double tdb = sim->getTime();
-        
+
         // TODO: Display of local time does not currently work correctly during leap seconds
         double jdutc = astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb)));
         if (timeZoneBias != 0 &&
             jdutc < 2465442 &&
-            jdutc > 2415733) 
+            jdutc > 2415733)
         {
             time_t time = (int) astro::julianDateToSeconds(jdutc - 2440587.5 + lt);
             struct tm *localt = localtime(&time);
@@ -3101,8 +3101,8 @@ void CelestiaCore::renderOverlay()
                 }
                 *overlay << '\n';
             }
-        } 
-	
+        }
+
         if (!time_displayed)
         {
             astro::Date utcDate = astro::TAItoUTC(astro::TTtoTAI(astro::TDBtoTT(tdb + lt)));
@@ -3146,7 +3146,7 @@ void CelestiaCore::renderOverlay()
                 *overlay << _(" (Paused)");
             }
         }
-    
+
         overlay->endText();
         glPopMatrix();
 
@@ -3179,7 +3179,7 @@ void CelestiaCore::renderOverlay()
 
         // Field of view and camera mode in lower right corner
         glPushMatrix();
-        glTranslatef((float) (width - emWidth * 15), 
+        glTranslatef((float) (width - emWidth * 15),
                      (float) (fontHeight * 3 + 5), 0.0f);
         overlay->beginText();
         glColor4f(0.6f, 0.6f, 1.0f, 1);
@@ -3204,7 +3204,7 @@ void CelestiaCore::renderOverlay()
                                  *sim->getUniverse());
         }
         *overlay << '\n';
-        
+
         {
             FrameOfReference frame = sim->getFrame();
 
@@ -3426,7 +3426,7 @@ void CelestiaCore::renderOverlay()
         glColor4f(1, 0, 0, 1);
         overlay->rect((float) ((width - movieWidth) / 2 - 1),
                       (float) ((height - movieHeight) / 2 - 1),
-                      (float) (movieWidth + 1), 
+                      (float) (movieWidth + 1),
                       (float) (movieHeight + 1), false);
         glTranslatef((float) ((width - movieWidth) / 2),
                      (float) ((height + movieHeight) / 2 + 2), 0.0f);
@@ -3475,7 +3475,7 @@ void CelestiaCore::renderOverlay()
         UIElement::RenderContext rc;
         rc.windowWidth = (float) width;
         rc.windowHeight = (float) height;
-        
+
         for (vector<UIElement*>::iterator iter = uiElements.begin();
               iter != uiElements.end(); iter++)
         {
@@ -3486,7 +3486,7 @@ void CelestiaCore::renderOverlay()
             }
         }
     }
-#endif    
+#endif
 
     // Show logo at start
     if (logoTexture != NULL)
@@ -3553,7 +3553,7 @@ class SolarSystemLoader : public EnumFilesHandler
             clog << _("Loading solar system catalog: ") << fullname << '\n';
             if (notifier)
                 notifier->update(filename);
-                
+
             ifstream solarSysFile(fullname.c_str(), ios::in);
             if (solarSysFile.good())
             {
@@ -3594,7 +3594,7 @@ public:
             clog << _("Loading ") << typeDesc << " catalog: " << fullname << '\n';
             if (notifier)
                 notifier->update(filename);
-                
+
             ifstream catalogFile(fullname.c_str(), ios::in);
             if (catalogFile.good())
             {
@@ -3665,7 +3665,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         for (vector<string>::const_iterator iter = extrasDirs->begin();
              iter != extrasDirs->end(); iter++)
         {
-            if (find(config->extrasDirs.begin(), config->extrasDirs.end(), *iter) == 
+            if (find(config->extrasDirs.begin(), config->extrasDirs.end(), *iter) ==
                 config->extrasDirs.end())
             {
                 config->extrasDirs.push_back(*iter);
@@ -3702,7 +3702,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         {
             if (progressNotifier)
                 progressNotifier->update(*iter);
-            
+
             ifstream solarSysFile(iter->c_str(), ios::in);
             if (!solarSysFile.good())
             {
@@ -3751,10 +3751,10 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     if (config->deepSkyCatalog != "")
     {
         ifstream dsoFile(config->deepSkyCatalog.c_str(), ios::in);
-        
+
         if (progressNotifier)
             progressNotifier->update(config->deepSkyCatalog);
-            
+
 #if 0 //TODO: define a binary file format for DSOs !!
         if (!dsoDB->loadBinary(deepSkyFile))
         {
@@ -3776,7 +3776,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             return false;
         }
     }
-    
+
     // TODO:add support for additional catalogs declared in the config file.
 
     // Next, read all the deep sky files in the extras directories
@@ -3787,7 +3787,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             if (*iter != "")
             {
                 Directory* dir = OpenDirectory(*iter);
-     
+
                 DeepSkyLoader loader(dsoDB,
                                      "deep sky object",
                                      Content_CelestiaDeepSkyCatalog,
@@ -3818,7 +3818,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             universe->setAsterisms(asterisms);
         }
     }
-    
+
     if (config->boundariesFile != "")
     {
         ifstream boundariesFile(config->boundariesFile.c_str(), ios::in);
@@ -3851,16 +3851,16 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     View* view = new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
     views.insert(views.end(), view);
 
-    if (!compareIgnoringCase(getConfig()->cursor, "inverting crosshair")) 
+    if (!compareIgnoringCase(getConfig()->cursor, "inverting crosshair"))
     {
         defaultCursorShape = CelestiaCore::InvertedCrossCursor;
     }
-    
-    if (!compareIgnoringCase(getConfig()->cursor, "arrow")) 
+
+    if (!compareIgnoringCase(getConfig()->cursor, "arrow"))
     {
         defaultCursorShape = CelestiaCore::ArrowCursor;
     }
-    
+
     if (cursorHandler != NULL)
     {
         cursorHandler->setCursorShape(defaultCursorShape);
@@ -3896,7 +3896,7 @@ bool CelestiaCore::initRenderer()
     detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
     detailOptions.shadowTextureSize = config->shadowTextureSize;
     detailOptions.eclipseTextureSize = config->eclipseTextureSize;
-    
+
     // Prepare the scene for rendering.
     if (!renderer->init(context, (int) width, (int) height, detailOptions))
     {
@@ -3948,14 +3948,14 @@ bool CelestiaCore::initRenderer()
             renderer->setFont(Renderer::FontNormal, labelFont);
         }
     }
-    
+
     renderer->setFont(Renderer::FontLarge, titleFont);
 
     if (config->logoTextureFile != "")
     {
         logoTexture = LoadTextureFromFile(string("textures") + "/" + config->logoTextureFile);
     }
-    
+
     return true;
 }
 
@@ -3983,7 +3983,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
 {
     StarDetails::InitializeStarTextures();
 
-        
+
     ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
     if (!starNamesFile.good())
     {
@@ -4005,7 +4005,7 @@ bool CelestiaCore::readStars(const CelestiaConfig& cfg,
     {
         if (progressNotifier)
             progressNotifier->update(cfg.starDatabaseFile);
-            
+
         ifstream starFile(cfg.starDatabaseFile.c_str(), ios::in | ios::binary);
         if (!starFile.good())
         {
@@ -4081,7 +4081,7 @@ void CelestiaCore::setFaintest(float magnitude)
     sim->setFaintestVisible(magnitude);
 }
 
-/// Set faintest visible star magnitude and saturation magnitude 
+/// Set faintest visible star magnitude and saturation magnitude
 /// for a given field of view;
 /// adjust the renderer's brightness parameters appropriately.
 void CelestiaCore::setFaintestAutoMag()
