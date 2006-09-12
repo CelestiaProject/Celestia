@@ -146,7 +146,7 @@ static int calcMipLevelSize(int fmt, int w, int h, int mip)
 Image::Image(int fmt, int w, int h, int mips) :
     width(w),
     height(h),
-    mipLevels(mips), 
+    mipLevels(mips),
     format(fmt),
     pixels(NULL)
 {
@@ -154,7 +154,7 @@ Image::Image(int fmt, int w, int h, int mips) :
     assert(components != 0);
 
     pitch = pad(w * components);
-    
+
     size = 1;
     for (int i = 0; i < mipLevels; i++)
         size += calcMipLevelSize(fmt, w, h, i);
@@ -219,7 +219,7 @@ unsigned char* Image::getPixels()
 
 unsigned char* Image::getPixelRow(int mip, int row)
 {
-    int w = max(width >> mip, 1);
+    /*int w = max(width >> mip, 1); Unused*/
     int h = max(height >> mip, 1);
     if (mip >= mipLevels || row >= h)
         return NULL;
@@ -328,7 +328,7 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
                 {
                     i0++;
                     i1++;
-                }   
+                }
             }
             if (j1 < 0)
             {
@@ -346,7 +346,7 @@ Image* Image::computeNormalMap(float scale, bool wrap) const
             int h00 = (int) pixels[i0 * pitch + j0 * components];
             int h10 = (int) pixels[i0 * pitch + j1 * components];
             int h01 = (int) pixels[i1 * pitch + j0 * components];
-            
+
             float dx = (float) (h10 - h00) * (1.0f / 255.0f) * scale;
             float dy = (float) (h01 - h00) * (1.0f / 255.0f) * scale;
 
@@ -552,7 +552,7 @@ Image* LoadJPEGImage(const string& filename, int channels)
     // warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 
     return img;
-    
+
 #elif MACOSX
 
     Image* img = NULL;
@@ -575,7 +575,7 @@ Image* LoadJPEGImage(const string& filename, int channels)
         delete cgJpegImage;
         return NULL;
     }
-    
+
     cgJpegImage->Render();
 
     img_w = (size_t) cgJpegImage->image_size.width;
@@ -607,17 +607,17 @@ Image* LoadJPEGImage(const string& filename, int channels)
         if ( (i % (img_w * img_d)) == 0 ) bin -= 2*(img_w * img_d);
 
 #ifndef MACOSX_ALPHA_JPEGS
-        if (( (img_d != 1) && !((i&3)^3) )) // skip extra byte 
+        if (( (img_d != 1) && !((i&3)^3) )) // skip extra byte
         {
             ++bin;
-        } else 
-#endif // !MACOSX_ALPHA_JPEGS         
+        } else
+#endif // !MACOSX_ALPHA_JPEGS
 
         *bout++ = *bin++;
-    }    
+    }
     delete cgJpegImage;
     return img;
-    
+
 #else
     return NULL;
 #endif // JPEG_SUPPORT
@@ -653,7 +653,7 @@ Image* LoadPNGImage(const string& filename)
         clog << _("Error opening image file ") << filename << '\n';
         return NULL;
     }
-   
+
     fread(header, 1, sizeof(header), fp);
     if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
@@ -677,7 +677,7 @@ Image* LoadPNGImage(const string& filename)
         png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
         return NULL;
     }
-   
+
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         fclose(fp);
@@ -897,7 +897,7 @@ static Image* LoadBMPImage(ifstream& in)
                 }
             }
             break;
-            
+
         case 24:
             {
                 for (int x = 0; x < imageHeader.width; x++)

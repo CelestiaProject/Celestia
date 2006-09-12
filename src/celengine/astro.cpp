@@ -397,7 +397,7 @@ astro::Date::Date(double jd)
     month = f - 1 - 12 * (int) (f / 14);
     year = d - 4715 - (int) ((7.0 + month) / 10.0);
     day = (int) dday;
-    
+
     double dhour = (dday - day) * 24;
     hour = (int) dhour;
 
@@ -499,7 +499,7 @@ astro::TAItoUTC(double tai)
 {
     unsigned int nRecords = sizeof(LeapSeconds) / sizeof(LeapSeconds[0]);
     double dAT = LeapSeconds[0].seconds;
-    double dD = 0.0;
+    /*double dD = 0.0;  Unused*/
     int extraSecs = 0;
 
     for (unsigned int i = nRecords - 1; i > 0; i--)
@@ -575,10 +575,10 @@ static const double M1 = 1.99096871e-7;
 double TDBcorrection(double tdb)
 {
     // t is seconds from J2000.0
-    double t = astro::daysToSecs(tdb - astro::J2000); 
+    double t = astro::daysToSecs(tdb - astro::J2000);
 
     // Approximate calculation of Earth's mean anomaly
-    double M = M0 + M1 * t;                    
+    double M = M0 + M1 * t;
 
     // Compute the eccentric anomaly
     double E = M + EB * sin(M);

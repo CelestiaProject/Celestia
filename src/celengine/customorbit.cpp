@@ -2209,7 +2209,7 @@ class RheaOrbit : public CachingOrbit
         ComputeSaturnianElements(jd,
                                  t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11,
                                  W0, W1, W2, W3, W4, W5, W6, W7, W8);
-        double e1 = 0.05589 - 0.000346 * t7;
+        /*double e1 = 0.05589 - 0.000346 * t7;  Unused*/
 
         double p_ = 342.7 + 10.057 * t2;
         double a1 = 0.000265 * sinD(p_) + 0.01 * sinD(W4);
@@ -2730,7 +2730,7 @@ class TritonOrbit : public CachingOrbit
         double nepPole_Dec = degToRad(43.46);
 
         double a = 354800;
-        double e = 0.0000;
+        /*double e = 0.0000;    Unused*/
         double n = degToRad(61.2588532);
         double L0 = degToRad(200.913);
         double L  = L0 + n * t;

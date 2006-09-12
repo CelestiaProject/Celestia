@@ -129,7 +129,7 @@ private:
                        uint32 nVertices,
                        uint32 stride,
                        const Mesh::VertexDescription& desc);
-    
+
     ostream& out;
 };
 
@@ -171,7 +171,7 @@ private:
                        uint32 nVertices,
                        uint32 stride,
                        const Mesh::VertexDescription& desc);
-    
+
     ostream& out;
 };
 
@@ -193,7 +193,7 @@ ModelLoader::reportError(const string& msg)
 }
 
 
-const string& 
+const string&
 ModelLoader::getErrorMessage() const
 {
     return errorMessage;
@@ -363,7 +363,7 @@ AsciiModelLoader::loadMaterial()
             Color colorVal;
             if (nValues == 3)
                 colorVal = Color((float) data[0], (float) data[1], (float) data[2]);
-            
+
             if (property == "diffuse")
                 material->diffuse = colorVal;
             else if (property == "specular")
@@ -375,7 +375,7 @@ AsciiModelLoader::loadMaterial()
             else if (property == "specpower")
                 material->specularPower = (float) data[0];
         }
-    }    
+    }
 
     if (tok.getTokenType() != Tokenizer::TokenName)
     {
@@ -445,7 +445,7 @@ AsciiModelLoader::loadVertexDescription()
             return NULL;
         }
 
-        Mesh::VertexAttributeFormat format = 
+        Mesh::VertexAttributeFormat format =
             Mesh::parseVertexAttributeFormat(formatName);
         if (format == Mesh::InvalidFormat)
         {
@@ -522,7 +522,7 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
         for (uint32 attr = 0; attr < vertexDesc.nAttributes; attr++)
         {
             Mesh::VertexAttributeFormat fmt = vertexDesc.attributes[attr].format;
-            uint32 nBytes = Mesh::getVertexAttributeSize(fmt);
+            /*uint32 nBytes = Mesh::getVertexAttributeSize(fmt);    Unused*/
             int readCount = 0;
             switch (fmt)
             {
@@ -577,7 +577,7 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
     return vertexData;
 }
 
-                               
+
 Mesh*
 AsciiModelLoader::loadMesh()
 {
@@ -587,7 +587,7 @@ AsciiModelLoader::loadMesh()
         reportError("Mesh definition expected");
         return NULL;
     }
-    
+
     Mesh::VertexDescription* vertexDesc = loadVertexDescription();
     if (vertexDesc == NULL)
         return NULL;
@@ -634,7 +634,7 @@ AsciiModelLoader::loadMesh()
         }
 
         uint32 indexCount = (uint32) tok.getNumberValue();
-        
+
         uint32* indices = new uint32[indexCount];
         if (indices == NULL)
         {
@@ -742,7 +742,7 @@ AsciiModelLoader::load()
             return NULL;
         }
     }
-     
+
     return model;
 }
 
@@ -800,7 +800,7 @@ AsciiModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
     default:
         return;
     }
-    
+
     out << ' ' << group.materialIndex << ' ' << group.nIndices << '\n';
 
     // Print the indices, twelve per line
@@ -1019,7 +1019,7 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
             default:
                 assert(0);
             }
-            
+
             out << " \"" << texInfo->source << "\"\n";
         }
     }
@@ -1256,7 +1256,7 @@ BinaryModelLoader::load()
             return NULL;
         }
     }
-     
+
     return model;
 }
 
@@ -1348,11 +1348,11 @@ BinaryModelLoader::loadMaterial()
                 }
 
                 ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(texfile, getTexturePath(), TextureInfo::WrapTexture));
-                
+
                 material->maps[texType] = tex;
             }
             break;
-            
+
         case CMOD_EndMaterial:
             return material;
 
@@ -1385,7 +1385,7 @@ BinaryModelLoader::loadVertexDescription()
     for (;;)
     {
         int16 tok = readInt16(in);
-        
+
         if (tok == CMOD_EndVertexDesc)
         {
             break;
@@ -1410,7 +1410,7 @@ BinaryModelLoader::loadVertexDescription()
 
                 attributes[nAttributes].semantic =
                     static_cast<Mesh::VertexAttributeSemantic>(tok);
-                attributes[nAttributes].format = 
+                attributes[nAttributes].format =
                     static_cast<Mesh::VertexAttributeFormat>(fmt);
                 attributes[nAttributes].offset = offset;
 
@@ -1456,7 +1456,7 @@ BinaryModelLoader::loadMesh()
     for (;;)
     {
         int16 tok = readInt16(in);
-        
+
         if (tok == CMOD_EndMesh)
         {
             break;
@@ -1530,7 +1530,7 @@ BinaryModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
         {
             uint32 base = offset + vertexDesc.attributes[attr].offset;
             Mesh::VertexAttributeFormat fmt = vertexDesc.attributes[attr].format;
-            int readCount = 0;
+            /*int readCount = 0;    Unused*/
             switch (fmt)
             {
             case Mesh::Float1:
