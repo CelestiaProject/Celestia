@@ -2981,6 +2981,7 @@ static void setupBumpTexenv()
 }
 
 
+#if 0
 static void setupBumpTexenvAmbient(Color ambientColor)
 {
     float texenvConst[4];
@@ -3026,6 +3027,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
 
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 }
+#endif
 
 
 static void setupTexenvAmbient(Color ambientColor)
@@ -5614,6 +5616,7 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
     glVertex(v.point);
 }
 
+#if 0
 static void ProcessCometTailVertex(const CometTailVertex& v,
                                    const Point3f& cameraPos)
 {
@@ -5623,8 +5626,9 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
     glColor4f(0.0f, 0.5f, 1.0f, shade);
     glVertex(v.point);
 }
+#endif
 
-
+#if 0
 static void ProcessCometTailVertex(const CometTailVertex& v,
                                    const Point3f& eyePos_obj,
                                    float b,
@@ -5671,6 +5675,7 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
     glColor4f(0.0f, 0.5f, 1.0f, shade);
     glVertex(v.point);
 }
+#endif
 
 
 void Renderer::renderCometTail(const Body& body,

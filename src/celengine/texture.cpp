@@ -954,12 +954,12 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
     return tex;
 }
 
-
+#if 0
 static bool isPow2(int x)
 {
     return ((x & (x - 1)) == 0);
 }
-
+#endif
 
 static Texture* CreateTextureFromImage(Image& img,
                                        Texture::AddressMode addressMode,

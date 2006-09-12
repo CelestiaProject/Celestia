@@ -1115,6 +1115,7 @@ void CelestiaCore::keyUp(int key, int)
     shiftKeysPressed[key] = false;
 }
 
+#if 0
 static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
 {
     unsigned int length = strlen(c);
@@ -1135,6 +1136,7 @@ static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
 
     return true;
 }
+#endif
 
 void CelestiaCore::charEntered(char c, int modifiers)
 {
