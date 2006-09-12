@@ -98,9 +98,9 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
             texCoords[n * 2 + 1] = 1.0f - (float) i / (float) (nRings - 1);
 
             // Compute the tangent--required for bump mapping
-            float tx = (sin(phi) * sin(theta));
-            float ty = -cos(phi);
-            float tz = (sin(phi) * cos(theta));
+            float tx = (float) (sin(phi) * sin(theta));
+            float ty = (float) -cos(phi);
+            float tz = (float) (sin(phi) * cos(theta));
             tangents[n * 3]      = tx;
             tangents[n * 3 + 1]  = ty;
             tangents[n * 3 + 2]  = tz;
