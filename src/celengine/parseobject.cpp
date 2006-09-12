@@ -13,6 +13,7 @@
 #include <celutil/debug.h>
 #include "parseobject.h"
 #include "customorbit.h"
+#include "spiceorbit.h"
 #include "trajmanager.h"
 
 
@@ -118,6 +119,67 @@ CreateEllipticalOrbit(Hash* orbitData,
 }
 
 
+static SpiceOrbit*
+CreateSpiceOrbit(Hash* orbitData,
+                 const string& path,
+                 bool usePlanetUnits)
+{
+#ifdef USE_SPICE
+    string targetBodyName;
+    string originName;
+    string kernelFileName;
+    if (!orbitData->getString("Kernel", kernelFileName))
+    {
+        cout << "Kernel filename missing from SPICE orbit\n";
+        return NULL;
+    }
+
+    if (!orbitData->getString("Target", targetBodyName))
+    {
+        cout << "Target name missing from SPICE orbit\n";
+        return NULL;
+    }
+
+    if (!orbitData->getString("Origin", originName))
+    {
+        cout << "Origin name missing from SPICE orbit\n";
+        return NULL;
+    }
+
+    // A bounding radius for culling is required for SPICE orbits
+    double boundingRadius = 0.0;
+    if (!orbitData->getNumber("BoundingRadius", boundingRadius))
+    {
+        cout << "Bounding Radius missing from SPICE orbit\n";
+        return NULL;
+    }
+
+    // The period of the orbit may be specified if appropriate; a vakye
+    // of zero for the period (the default), means that the orbit will
+    // be considered aperiodic.
+    double period = 0.0;
+    orbitData->getNumber("Period", period);
+
+    SpiceOrbit* orbit = new SpiceOrbit(kernelFileName,
+                                       targetBodyName,
+                                       originName,
+                                       boundingRadius,
+                                       period);
+    if (!orbit->init())
+    {
+        // Error using SPICE library; destroy the orbit; hopefully a
+        // fallback is defined in the SSC file.
+        delete orbit;
+        orbit = NULL;
+    }
+
+    return orbit;
+#else
+    return NULL;
+#endif    
+}
+
+
 Orbit*
 CreateOrbit(PlanetarySystem* system,
             Hash* planetData,
@@ -136,6 +198,26 @@ CreateOrbit(PlanetarySystem* system,
         }
         DPRINTF(0, "Could not find custom orbit named '%s'\n",
                 customOrbitName.c_str());
+    }
+
+    Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit");
+    if (spiceOrbitDataValue != NULL)
+    {
+        if (spiceOrbitDataValue->getType() != Value::HashType)
+        {
+            DPRINTF(0, "Object has incorrect spice orbit syntax.\n");
+            return NULL;
+        }
+        else
+        {
+            orbit = CreateSpiceOrbit(spiceOrbitDataValue->getHash(), path, usePlanetUnits);
+            if (orbit != NULL)
+            {
+                return orbit;
+            }
+            clog << "Bad spice orbit\n";
+            DPRINTF(0, "Could not load SPICE orbit\n");
+        }
     }
 
     string sampOrbitFile;
