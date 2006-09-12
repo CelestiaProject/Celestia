@@ -38,11 +38,12 @@ SpiceOrbit::~SpiceOrbit()
 
 
 bool
-SpiceOrbit::init()
+SpiceOrbit::init(const std::string& path)
 {
     // TODO: convert body name strings to id codes
 
-    furnsh_c(kernelFile.c_str());
+    string filepath = path + string("/data/") + kernelFile;
+    furnsh_c(filepath.c_str());
 
     // If there was an error loading the kernel, flag an error
     // and don't bother calling SPICE to compute the orbit.
@@ -52,7 +53,13 @@ SpiceOrbit::init()
         char errMsg[1024];
         getmsg_c("long", sizeof(errMsg), errMsg);
         clog << errMsg << "\n";
+
+        // Reset the SPICE error state so that future calls to
+        // SPICE can still succeed.
+        reset_c();
     }
+
+    // TODO: get coverage window
 
     return !spiceErr;
 }
@@ -72,6 +79,8 @@ SpiceOrbit::computePosition(double jd) const
         double state[6];    // State is position and velocity
         double lt;          // One way light travel time
 
+        // TODO: use spkgps_c instead of spkezr as it should
+        // be faster.
         spkezr_c(targetBodyName.c_str(),
                  t,
                  "eclipj2000",
@@ -84,10 +93,13 @@ SpiceOrbit::computePosition(double jd) const
         // to try and catch errors earlier.
         if (failed_c())
         {
+            // Print the error message
             char errMsg[1024];
             getmsg_c("long", sizeof(errMsg), errMsg);
             clog << errMsg << "\n";
-            //spiceErr = true;
+            
+            // Reset the error state
+            reset_c();
         }
 
         // Transform into Celestia's coordinate system

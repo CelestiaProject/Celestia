@@ -81,7 +81,7 @@ class OrbitSampleProc
 class CachingOrbit : public Orbit
 {
  public:
-    CachingOrbit() : lastTime(1.0e-30) {};
+    CachingOrbit() : lastTime(-1.0e30) {};
     virtual ~CachingOrbit() {};
 
     virtual Point3d computePosition(double jd) const = 0;
