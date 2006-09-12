@@ -127,7 +127,7 @@ static float tempT[10] =
 // Gaps in the tables from unused spectral classes were filled in with linear
 // interpolation--not accurate, but these shouldn't appear in real catalog
 // data anyway.
-static float bmag_correctionO[3][10] = 
+static float bmag_correctionO[3][10] =
 {
     // Lum class V (main sequence)
     {
@@ -146,7 +146,7 @@ static float bmag_correctionO[3][10] =
     }
 };
 
-static float bmag_correctionB[3][10] = 
+static float bmag_correctionB[3][10] =
 {
     // Lum class V (main sequence)
     {
@@ -165,7 +165,7 @@ static float bmag_correctionB[3][10] =
     }
 };
 
-static float bmag_correctionA[3][10] = 
+static float bmag_correctionA[3][10] =
 {
     // Lum class V (main sequence)
     {
@@ -184,7 +184,7 @@ static float bmag_correctionA[3][10] =
     }
 };
 
-static float bmag_correctionF[3][10] = 
+static float bmag_correctionF[3][10] =
 {
     // Lum class V (main sequence)
     {
@@ -203,7 +203,7 @@ static float bmag_correctionF[3][10] =
     }
 };
 
-static float bmag_correctionG[3][10] = 
+static float bmag_correctionG[3][10] =
 {
     // Lum class V (main sequence)
     {
@@ -222,7 +222,7 @@ static float bmag_correctionG[3][10] =
     }
 };
 
-static float bmag_correctionK[3][10] = 
+static float bmag_correctionK[3][10] =
 {
     // Lum class V (main sequence)
     {
@@ -241,7 +241,7 @@ static float bmag_correctionK[3][10] =
     }
 };
 
-static float bmag_correctionM[3][10] = 
+static float bmag_correctionM[3][10] =
 {
     // Lum class V (main sequence)
     {
@@ -262,12 +262,12 @@ static float bmag_correctionM[3][10] =
 
 // Brown dwarf data from Grant Hutchison
 static float bmag_correctionL[10] =
-{ 
+{
     -4.6f, -4.9f, -5.0f, -5.2f, -5.4f, -5.9f, -6.1f, -6.7f, -7.4f, -8.2f,
 };
 
 static float bmag_correctionT[10] =
-{ 
+{
     -8.9f, -9.6f, -10.8f, -11.9f, -13.1f, -14.4f, -16.1f, -17.9f, -19.6f, -19.6f,
 };
 
@@ -339,20 +339,20 @@ static float rotperiod_M[3][10] =
 };
 
 
-char* LumClassNames[StellarClass::Lum_Count] = {
+const char* LumClassNames[StellarClass::Lum_Count] = {
     "I-a0", "I-a", "I-b", "II", "III", "IV", "V", "VI", ""
 };
 
-char* SubclassNames[11] = {
+const char* SubclassNames[11] = {
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ""
 };
 
-char* SpectralClassNames[StellarClass::NormalClassCount] = {
+const char* SpectralClassNames[StellarClass::NormalClassCount] = {
     "O", "B", "A", "F", "G", "K", "M", "R",
     "S", "N", "WC", "WN", "?", "L", "T", "C",
 };
 
-char* WDSpectralClassNames[StellarClass::WDClassCount] = {
+const char* WDSpectralClassNames[StellarClass::WDClassCount] = {
     "DA", "DB", "DC", "DO", "DQ", "DZ", "D", "DX",
 };
 
@@ -366,7 +366,7 @@ StarDetails::GetStarDetails(const StellarClass& sc)
         return GetNormalStarDetails(sc.getSpectralClass(),
                                     sc.getSubclass(),
                                     sc.getLuminosityClass());
-                                    
+
     case StellarClass::WhiteDwarf:
         return GetWhiteDwarfDetails(sc.getSpectralClass(),
                                     sc.getSubclass());
@@ -384,7 +384,7 @@ StarDetails*
 StarDetails::CreateStandardStarType(const std::string& specTypeName,
                                     float _temperature,
                                     float _rotationPeriod)
-                                    
+
 {
     StarDetails* details = new StarDetails();
 
@@ -406,7 +406,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
 {
     if (normalStarDetails == NULL)
     {
-        unsigned int nTypes = StellarClass::Spectral_Count * 11 * 
+        unsigned int nTypes = StellarClass::Spectral_Count * 11 *
             StellarClass::Lum_Count;
         normalStarDetails = new StarDetails*[nTypes];
         for (unsigned int i = 0; i < nTypes; i++)
@@ -579,7 +579,7 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
 
         normalStarDetails[index] = CreateStandardStarType(name, temp, period);
         normalStarDetails[index]->setBolometricCorrection(bmagCorrection);
-        
+
         if (specClass == StellarClass::Spectral_L ||
             specClass == StellarClass::Spectral_T)
         {
@@ -605,7 +605,7 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
 
     if (whiteDwarfDetails == NULL)
     {
-        unsigned int nTypes = 
+        unsigned int nTypes =
             StellarClass::WDClassCount * StellarClass::SubclassCount;
         whiteDwarfDetails = new StarDetails*[nTypes];
         for (unsigned int i = 0; i < nTypes; i++)
@@ -634,7 +634,7 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
         // Assign white dwarfs a rotation period of half an hour; very
         // rough, as white rotation rates vary a lot.
         float period = 1.0f / 48.0f;
-        
+
         whiteDwarfDetails[index] = CreateStandardStarType(name, temp, period);
         whiteDwarfDetails[index]->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
     }
@@ -839,7 +839,7 @@ float Star::getRadius() const
 {
     if (details->getKnowledge(StarDetails::KnowRadius))
         return details->getRadius();
-        
+
 #ifdef NO_BOLOMETRIC_MAGNITUDE_CORRECTION
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
