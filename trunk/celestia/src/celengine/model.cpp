@@ -17,7 +17,7 @@ using namespace std;
 
 
 #if 0
-static GLenum GLPrimitiveModes[MaxPrimitiveType] = 
+static GLenum GLPrimitiveModes[MaxPrimitiveType] =
 {
     GL_TRIANGLES,
     GL_TRIANGLE_STRIP,
@@ -28,7 +28,8 @@ static GLenum GLPrimitiveModes[MaxPrimitiveType] =
 };
 #endif
 
-static size_t VertexAttributeFormatSizes[Mesh::FormatMax] = 
+#if 0
+static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
 {
      4,  // Float1
      8,  // Float2
@@ -36,6 +37,7 @@ static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
      16, // Float4,
      4,  // UByte4
 };
+#endif
 
 
 Model::Model()
@@ -122,7 +124,7 @@ Model::pick(const Ray3d& r, double& distance) const
         double d = maxDistance;
         if ((*iter)->pick(r, d) && d < closest)
             closest = d;
-    }    
+    }
 
     if (closest != maxDistance)
     {
