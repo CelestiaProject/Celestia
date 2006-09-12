@@ -85,16 +85,25 @@ OBJS=\
 	$(INTDIR)\virtualtex.obj \
 	$(INTDIR)\vsop87.obj
 
+!IF "$(SPICE)" == "enable"
+OBJS=$(OBJS) $(INTDIR)\spiceinterface.obj $(INTDIR)\spiceorbit.obj
+SPICEINC=/I ../../inc/spice
+EXTRADEFS=/D "USE_SPICE"
+!ELSE
+SPICEINC=
+EXTRADEFS=
+!ENDIF
+
 TARGETLIB = cel_engine.lib
 
-INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc /I ../../inc/libintl
+INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc /I ../../inc/libintl $(SPICEINC)
 
 !IF "$(CFG)" == "Release"
 CPP=cl.exe
-CPPFLAGS=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /Fp"$(INTDIR)\celestia.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c $(INCLUDEDIRS)
+CPPFLAGS=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /Fp"$(INTDIR)\celestia.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c $(EXTRADEFS) $(INCLUDEDIRS)
 !ELSE
 CPP=cl.exe
-CPPFLAGS=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /Fp"$(INTDIR)\celestia.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c $(INCLUDEDIRS)
+CPPFLAGS=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /Fp"$(INTDIR)\celestia.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c $(EXTRADEFS) $(INCLUDEDIRS)
 !ENDIF
 
 .c{$(INTDIR)}.obj::

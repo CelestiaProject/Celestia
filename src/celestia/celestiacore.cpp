@@ -38,6 +38,7 @@
 #include <celengine/cmdparser.h>
 // #include <celengine/solarsysxml.h>
 #include <celengine/multitexture.h>
+#include <celengine/spiceinterface.h>
 #include "favorites.h"
 #include "celestiacore.h"
 #include <celutil/debug.h>
@@ -3651,6 +3652,14 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         fatalError(_("Error reading configuration file."));
         return false;
     }
+
+#ifdef USE_SPICE
+    if (!InitializeSpice())
+    {
+        fatalError(_("Initialization of SPICE library failed."));
+        return false;
+    }
+#endif
 
     // Insert additional extras directories into the configuration. These
     // additional directories typically come from the command line. It may
