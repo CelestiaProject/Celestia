@@ -107,7 +107,7 @@ static bool parseSimpleCatalogNumber(const string& name,
 }
 
 
-static bool parseHIPPARCOSCatalogNumber(const string& name, 
+static bool parseHIPPARCOSCatalogNumber(const string& name,
                                         uint32* catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
@@ -116,7 +116,7 @@ static bool parseHIPPARCOSCatalogNumber(const string& name,
 }
 
 
-static bool parseHDCatalogNumber(const string& name, 
+static bool parseHDCatalogNumber(const string& name,
                                  uint32* catalogNumber)
 {
     return parseSimpleCatalogNumber(name,
@@ -318,7 +318,7 @@ static void catalogNumberToString(uint32 catalogNumber, char* buf, unsigned int 
     {
         buf[0] = '\0';
     }
-    
+
     if (catalogNumber < 1000000)
     {
         sprintf(buf, "HIP %d", catalogNumber);
@@ -369,7 +369,7 @@ string StarDatabase::getStarName(const Star& star) const
       else
     */
     catalogNumberToString(catalogNumber, buf, sizeof(buf));
-    
+
     return string(buf);
 }
 
@@ -379,7 +379,7 @@ string StarDatabase::getStarName(const Star& star) const
 void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int bufferSize) const
 {
     assert(bufferSize != 0);
-    
+
     uint32 catalogNumber = star.getCatalogNumber();
 
     if (namesDB != NULL)
@@ -492,7 +492,7 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
         planeNormals[i] = planeNormals[i] * rot;
         frustumPlanes[i] = Planef(planeNormals[i], position);
     }
-    
+
     octreeRoot->processVisibleObjects(starHandler,
                                       position,
                                       frustumPlanes,
@@ -606,7 +606,7 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
         Star* newStars = new Star[requiredCapacity];
         if (newStars == NULL)
             return false;
-        
+
         if (stars != NULL)
         {
             copy(stars, stars + nStars, newStars);
@@ -617,7 +617,7 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
 
         capacity = requiredCapacity;
     }
-    
+
     uint32 throwOut = 0;
     uint32 fixUp = 0;
     unsigned int totalStars = nStars + nStarsInFile;
@@ -667,7 +667,7 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
 	star->setAbsoluteMagnitude((float) (appMag / 256.0 + 5 -
 					    5 * log10(distance / 3.26)));
 
-        
+
         StarDetails* details = NULL;
         StellarClass sc;
         if (sc.unpack(spectralType))
@@ -678,7 +678,7 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
             cerr << _("Bad spectral type in star database, star #\n");
             return false;
         }
-        
+
         star->setDetails(details);
         star->setCatalogNumber(catNo);
 
@@ -740,7 +740,7 @@ bool StarDatabase::loadBinary(istream& in)
         Star* newStars = new Star[requiredCapacity];
         if (newStars == NULL)
             return false;
-        
+
         if (stars != NULL)
         {
             copy(stars, stars + nStars, newStars);
@@ -751,7 +751,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         capacity = requiredCapacity;
     }
-    
+
     unsigned int totalStars = nStars + nStarsInFile;
 
     while (((unsigned int) nStars) < totalStars)
@@ -868,7 +868,7 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
 
     // Get the magnitude and spectral type; if the star is actually
     // a barycenter placeholder, these fields are ignored.
-    double magnitude = 0.0;
+    /*double magnitude = 0.0;   Unused*/
     if (isBarycenter)
     {
         details = StarDetails::GetBarycenterDetails();
@@ -977,10 +977,10 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
                     if (nStars > 0)
                     {
                         uint32 starIndex = nStars;
-                        do 
+                        do
                         {
                             starIndex--;
-                            if (stars[starIndex].getCatalogNumber() == 
+                            if (stars[starIndex].getCatalogNumber() ==
                                 barycenterCatNo)
                             {
                                 hasBarycenter = true;
@@ -1124,7 +1124,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             objName    = tokenizer.getStringValue();
             tokenizer.nextToken();
         }
-        
+
         tokenizer.pushBack();
 
         Value* starDataValue = parser.readValue();
@@ -1182,7 +1182,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                 // Iterate through the string for names delimited
                 // by ':', and insert them into the star database.
                 // Note that db->add() will skip empty namesDB.
-                string::size_type startPos = 0; 
+                string::size_type startPos = 0;
                 while (startPos != string::npos)
                 {
                     string::size_type next    = objName.find(':', startPos);

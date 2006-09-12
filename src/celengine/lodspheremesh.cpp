@@ -1,5 +1,5 @@
 // lodspheremesh.cpp
-// 
+//
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -218,10 +218,10 @@ void LODSphereMesh::render(const GLContext& context,
     int minSplit = 1;
     for (i = 0; i < nTextures; i++)
     {
-        float pixelsPerTexel = pixWidth * 2.0f / 
+        float pixelsPerTexel = pixWidth * 2.0f /
             ((float) tex[i]->getWidth() / 2.0f);
         double l = log(pixelsPerTexel) / log(2.0);
-        
+
         ri.texLOD[i] = max(min(tex[i]->getLODCount() - 1, (int) l), 0);
         if (tex[i]->getUTileCount(ri.texLOD[i]) > minSplit)
             minSplit = tex[i]->getUTileCount(ri.texLOD[i]);
@@ -274,7 +274,7 @@ void LODSphereMesh::render(const GLContext& context,
             glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
             glx::glGenBuffersARB(1, &indexBuffer);
-            
+
             useVertexBuffers = true;
 
             // HACK: delete the user arrays--we shouldn't need to allocate
@@ -290,7 +290,7 @@ void LODSphereMesh::render(const GLContext& context,
         glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[currentVB]);
     }
 
-    // Set up the mesh vertices 
+    // Set up the mesh vertices
     int nRings = phiExtent / ri.step;
     int nSlices = thetaExtent / ri.step;
 
@@ -347,7 +347,7 @@ void LODSphereMesh::render(const GLContext& context,
     else
     {
         // Render the sphere section by section.
-        int reject = 0;
+        /*int reject = 0;   Unused*/
 
         // Compute the vertices of the view frustum.  These will be used for
         // culling patches.
@@ -529,7 +529,7 @@ void LODSphereMesh::render(const GLContext& context,
 }
 
 
-int LODSphereMesh::renderPatches(int phi0, int theta0, 
+int LODSphereMesh::renderPatches(int phi0, int theta0,
                                  int extent,
                                  int level,
                                  const RenderInfo& ri)
@@ -669,8 +669,8 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     int phiExtent = extent / 2;
     int theta1 = theta0 + thetaExtent;
     int phi1 = phi0 + phiExtent;
-    int n3 = 0;
-    int n2 = 0;
+    /*int n3 = 0;   Unused*/
+    /*int n2 = 0;   Unused*/
 
     float du[MAX_SPHERE_MESH_TEXTURES];
     float dv[MAX_SPHERE_MESH_TEXTURES];

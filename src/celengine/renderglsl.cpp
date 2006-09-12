@@ -116,7 +116,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
         shadprop.texUsage |= ShaderProperties::OverlayTexture;
         textures[nTextures++] = ri.overlayTex;
     }
-    
+
     if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
     {
         Texture* ringsTex = rings->texture.find(textureRes);
@@ -146,10 +146,10 @@ void renderSphere_GLSL(const RenderInfo& ri,
             if (atmosphere->mieScaleHeight > 0.0f)
                 shadprop.texUsage |= ShaderProperties::Scattering;
         }
-            
+
         if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
             (renderFlags & Renderer::ShowCloudShadows) != 0)
-        {    
+        {
             Texture* cloudTex = NULL;
             if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
                 cloudTex = atmosphere->cloudTexture.find(textureRes);
@@ -186,7 +186,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
     prog->use();
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-    
+
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
     if (shadprop.lightModel == ShaderProperties::LunarLambertModel)
@@ -196,26 +196,26 @@ void renderSphere_GLSL(const RenderInfo& ri,
     {
         prog->nightTexMin = 0.0f;
     }
-    
+
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
     {
         float ringWidth = rings->outerRadius - rings->innerRadius;
         prog->ringRadius = rings->innerRadius / radius;
         prog->ringWidth = radius / ringWidth;
     }
-    
+
     if (shadprop.texUsage & ShaderProperties::CloudShadowTexture)
     {
         prog->shadowTextureOffset = cloudTexOffset;
         prog->cloudHeight = 1.0f + atmosphere->cloudHeight / radius;
     }
-    
+
     if (shadprop.hasScattering())
     {
         prog->setAtmosphereParameters(*atmosphere, radius, radius);
     }
 
-    if (shadprop.shadowCounts != 0)    
+    if (shadprop.shadowCounts != 0)
         prog->setEclipseShadowParameters(ls, radius, planetMat);
 
     glColor(ri.color);
@@ -243,17 +243,17 @@ void renderModel_GLSL(Model* model,
                       const Mat4f& planetMat)
 {
     glDisable(GL_LIGHTING);
-    
+
     GLSL_RenderContext rc(ls, radius, planetMat);
-    
+
     if (renderFlags & Renderer::ShowAtmospheres)
     {
         rc.setAtmosphere(atmosphere);
     }
-    
+
     // Handle extended material attributes (per model only, not per submesh)
     rc.setLunarLambert(ri.lunarLambert);
-    
+
     // Handle material override; a texture specified in an ssc file will override
     // all materials specified in the model file.
     if (texOverride != InvalidResource)
@@ -269,7 +269,7 @@ void renderModel_GLSL(Model* model,
 
     model->render(rc);
 
-    glx::glUseProgramObjectARB(0);    
+    glx::glUseProgramObjectARB(0);
 }
 
 
@@ -310,7 +310,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         if (cloudNormalMap->isCompressed())
             shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
-    
+
     if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
     {
         Texture* ringsTex = rings->texture.find(textureRes);
@@ -331,7 +331,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
     }
-    
+
     if (atmosphere != NULL)
     {
         if (renderFlags & Renderer::ShowAtmospheres)
@@ -370,12 +370,12 @@ void renderClouds_GLSL(const RenderInfo& ri,
     prog->textureOffset = texOffset;
 
     float cloudRadius = radius + atmosphere->cloudHeight;
-    
+
     if (shadprop.hasScattering())
     {
         prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius);
     }
-    
+
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
     {
         float ringWidth = rings->outerRadius - rings->innerRadius;
@@ -383,7 +383,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
     }
 
-    if (shadprop.shadowCounts != 0)    
+    if (shadprop.shadowCounts != 0)
         prog->setEclipseShadowParameters(ls, cloudRadius, planetMat);
 
     unsigned int attributes = LODSphereMesh::Normals;
@@ -410,13 +410,13 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                       const Frustum& frustum,
                       const GLContext& context)
 {
-    unsigned int nTextures = 0;
+    /*unsigned int nTextures = 0;   Unused*/
 
     glDisable(GL_LIGHTING);
 
     ShaderProperties shadprop;
     shadprop.nLights = ls.nLights;
-    
+
     shadprop.texUsage |= ShaderProperties::Scattering;
     shadprop.lightModel = ShaderProperties::AtmosphereModel;
 
@@ -429,18 +429,18 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
-    
+
     float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
     float atmScale = atmosphereRadius / radius;
-    
+
     prog->eyePosition = Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
     prog->setAtmosphereParameters(*atmosphere, radius, atmosphereRadius);
-    
+
 #if 0
-    // Currently eclipse shadows are ignored when rendering atmospheres    
-    if (shadprop.shadowCounts != 0)    
+    // Currently eclipse shadows are ignored when rendering atmospheres
+    if (shadprop.shadowCounts != 0)
         prog->setEclipseShadowParameters(ls, radius, planetMat);
-#endif        
+#endif
 
     glPushMatrix();
     glScalef(atmScale, atmScale, atmScale);
@@ -454,15 +454,15 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                         frustum,
                         ri.pixWidth,
                         NULL);
-    
+
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-    glFrontFace(GL_CCW);                      
+    glFrontFace(GL_CCW);
     glPopMatrix();
 
-    
+
     glx::glUseProgramObjectARB(0);
-    
+
     //glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     //glEnable(GL_TEXTURE_2D);
 }
@@ -522,7 +522,7 @@ void renderRings_GLSL(RingSystem& rings,
         if (ringsTex)
             shadprop.texUsage = ShaderProperties::DiffuseTexture;
     }
-            
+
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
@@ -535,7 +535,7 @@ void renderRings_GLSL(RingSystem& rings,
     prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
                                ri.ambientColor.blue());
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-        
+
     for (unsigned int li = 0; li < ls.nLights; li++)
     {
         const DirectionalLight& light = ls.lights[li];
@@ -548,7 +548,7 @@ void renderRings_GLSL(RingSystem& rings,
         // more robust anyway.
         Vec3f axis = Vec3f(0, 1, 0) ^ light.direction_obj;
         float cosAngle = Vec3f(0.0f, 1.0f, 0.0f) * light.direction_obj;
-        float angle = (float) acos(cosAngle);
+        /*float angle = (float) acos(cosAngle);     Unused*/
         axis.normalize();
 
         float tScale = 1.0f;
@@ -566,7 +566,7 @@ void renderRings_GLSL(RingSystem& rings,
             // light on the ring plane + 90 degrees.
             float r = a * (float) sqrt((1.0f - ecc2) /
                                        (1.0f - ecc2 * square(cosAngle)));
-            
+
             tScale *= a / r;
         }
 
@@ -582,7 +582,7 @@ void renderRings_GLSL(RingSystem& rings,
         float r0 = 0.24f;
         float r1 = 0.25f;
         float bias = 1.0f / (1.0f - r1 / r0);
-        float scale = -bias / r0;
+        /*float scale = -bias / r0;     Unused*/
 
         prog->shadows[li][0].texGenS = texGenS;
         prog->shadows[li][0].texGenT = texGenT;
@@ -597,7 +597,7 @@ void renderRings_GLSL(RingSystem& rings,
         ringsTex->bind();
     else
         glDisable(GL_TEXTURE_2D);
-        
+
     renderRingSystem(inner, outer, 0, (float) PI * 2.0f, nSections);
     renderRingSystem(inner, outer, (float) PI * 2.0f, 0, nSections);
 
