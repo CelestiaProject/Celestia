@@ -5041,7 +5041,17 @@ void Renderer::renderObject(Point3f pos,
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glColor4f(1, 1, 1, 1);
-
+            
+            // Cloud layers can be trouble for the depth buffer, since they tend
+            // to be very close to the surface of a planet relative to the radius
+            // of the planet. We'll help out by offsetting the cloud layer toward
+            // the viewer.
+            if (distance > radius * 1.1f)
+            {
+                glEnable(GL_POLYGON_OFFSET_FILL);
+                glPolygonOffset(-1.0f, -1.0f);
+            }
+            
             if (lit)
             {
                 if (context->getRenderPath() == GLContext::GLPath_GLSL)
@@ -5096,6 +5106,8 @@ void Renderer::renderObject(Point3f pos,
                 glEnable(GL_LIGHTING);
             }
 
+            glDisable(GL_POLYGON_OFFSET_FILL);
+            
             // Reset the texture matrix
             glMatrixMode(GL_TEXTURE);
             glLoadIdentity();
@@ -5441,7 +5453,7 @@ void Renderer::renderPlanet(Body& body,
 
             if ((renderFlags & ShowSmoothLines) != 0)
                 enableSmoothLines();
-            renderCompass(pos, qf, semiAxes, pixelSize / rp.radius);
+            //renderCompass(pos, qf, semiAxes, pixelSize / rp.radius);
             if ((renderFlags & ShowSmoothLines) != 0)
                 disableSmoothLines();
 
