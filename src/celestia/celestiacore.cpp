@@ -1115,7 +1115,7 @@ void CelestiaCore::keyUp(int key, int)
     shiftKeysPressed[key] = false;
 }
 
-#if 0
+#ifdef CELX
 static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
 {
     unsigned int length = strlen(c);
