@@ -1165,7 +1165,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     if (textEnterMode & KbAutoComplete)
     {
-        wchar_t wc = NULL;
+        wchar_t wc = 0; // Null wide character
         UTF8Decode(c_p, 0, strlen(c_p), wc);
 #ifdef MACOSX
         if ( wc && (!iscntrl(wc)) )
