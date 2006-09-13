@@ -463,6 +463,8 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
         case StellarClass::Lum_Unknown:
             lumIndex = 0;
             break;
+
+        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
         }
 
         float temp = 0.0f;
@@ -514,6 +516,8 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
         case StellarClass::Spectral_T:
             temp = tempT[subclass];
             break;
+
+        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
         }
 
         float bmagCorrection = 0.0f;
@@ -575,6 +579,8 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
             period = 0.2f;
             bmagCorrection = bmag_correctionT[subclass];
             break;
+
+        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
         }
 
         normalStarDetails[index] = CreateStandardStarType(name, temp, period);

@@ -255,7 +255,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 state = FractionState;
                 fractionValue = fractionValue * 10 + nextChar - (int) '0';
                 fracExp *= 10;
-            } 
+            }
             else if (nextChar == 'e' || nextChar == 'E')
             {
                 state = ExponentFirstState;
@@ -350,7 +350,10 @@ Tokenizer::TokenType Tokenizer::nextToken()
                 syntaxError("Bad Unicode escape in string");
             }
             break;
-        }
+
+        case ErrorState:    break;  // Prevent GCC4 warnings; do nothing
+
+        } // Switch
 
         if (newToken == TokenBegin)
         {
