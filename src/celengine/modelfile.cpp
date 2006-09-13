@@ -1079,8 +1079,10 @@ static int32 readUint(istream& in)
 
 static float readFloat(istream& in)
 {
-    uint32 i = readUint(in);
-    return *((float*) &i);
+    float f;
+    in.read((char*) &f, sizeof(float));
+    LE_TO_CPU_FLOAT(f, f);
+    return f; 
 }
 
 
