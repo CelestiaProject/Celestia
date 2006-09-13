@@ -29,8 +29,9 @@ class MovieCapture
     virtual int getWidth() const = 0;
     virtual int getHeight() const = 0;
     virtual float getFrameRate() const = 0;
-    virtual void setAspectRatio(int aspect_numerator, int aspect_denominator) {aspect_numerator/aspect_denominator;};
-    virtual void setQuality(float quality) {quality;};
+
+    virtual void setAspectRatio(int aspect_numerator, int aspect_denominator) {};
+    virtual void setQuality(float quality) {};
     virtual void recordingStatus(bool started) {}; /* to update UI recording status indicator */
 };
 
