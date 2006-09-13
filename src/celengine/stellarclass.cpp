@@ -116,6 +116,8 @@ char* StellarClass::str(char* buf, unsigned int buflen) const
 	case StellarClass::Lum_VI:
 	    s2 = " VI";
 	    break;
+
+        default: break;  // Do nothing, but prevent GCC4 warnings (Beware: potentially dangerous)
 	}
     }
     else
@@ -327,11 +329,11 @@ StellarClass::parse(const string& st)
             case 'O':
                 specClass = StellarClass::Spectral_O;
                 state = NormalStarSubclassState;
-                break;               
+                break;
             case 'B':
                 specClass = StellarClass::Spectral_B;
                 state = NormalStarSubclassState;
-                break;               
+                break;
             case 'A':
                 specClass = StellarClass::Spectral_A;
                 state = NormalStarSubclassState;
