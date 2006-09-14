@@ -13,10 +13,11 @@
 #include "glext.h"
 #include <cassert>
 #include <iostream>
+
 using namespace std;
 
 
-static size_t VertexAttributeFormatSizes[Mesh::FormatMax] = 
+static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
 {
      4,  // Float1
      8,  // Float2
@@ -54,7 +55,7 @@ Mesh::Material::Material() :
 {
     for (int i = 0; i < TextureSemanticMax; i++)
         maps[i] = InvalidResource;
-        
+
 }
 
 
@@ -188,8 +189,10 @@ Mesh::~Mesh()
         delete *iter;
     }
 
+    // TODO: this is just to cast away void* and shut up GCC warnings;
+    // should probably be static_cast<VertexList::VertexPart*>
     if (vertices != NULL)
-        delete vertices;
+        delete[] static_cast<char*>(vertices);
 
     if (vbObject != 0)
     {
@@ -253,7 +256,7 @@ Mesh::addGroup(PrimitiveGroupType prim,
     g->materialIndex = materialIndex;
     g->nIndices = nIndices;
     g->indices = indices;
-    
+
     return addGroup(g);
 }
 
@@ -334,7 +337,7 @@ Mesh::pick(const Ray3d& ray, double& distance) const
             uint32 i0 = (*iter)->indices[0];
             uint32 i1 = (*iter)->indices[1];
             uint32 i2 = (*iter)->indices[2];
-            
+
             // Iterate over the triangles in the primitive group
             do
             {
@@ -501,7 +504,7 @@ Mesh::getBoundingBox() const
         return bbox;
 
     char* vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(Position).offset;
-    
+
     for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
         bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
 
