@@ -1,6 +1,8 @@
 # The largest Edgeworth-Kuiper belt objects
 
-"2003 UB313" "Sol" { 
+#136199 Eris (2003 UB313)
+"Eris" "Sol" {
+ 
 # Higher albedo and lower radius than first reported. 
 # Data from HST results by Brown et al. ApJ 2006:
 # http://www.gps.caltech.edu/~mbrown/papers/ps/xsize.pdf
@@ -28,7 +30,8 @@
 	RotationPeriod     48.0   # guess
 }
 
-"2005 (2003 UB313) 1" "Sol/2003 UB313" { 
+#136199 Eris I (2005 (2003 UB313) 1)
+"Dysnomia" "Sol/Eris" {
 
 	Class "asteroid" 
 	Mesh	"asteroid.cms"
