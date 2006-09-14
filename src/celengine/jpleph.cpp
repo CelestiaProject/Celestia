@@ -49,13 +49,13 @@ static double readDouble(istream& in)
 {
     unsigned char buf[8];
     char c;
-    
+
     in.read((char*)buf, 8);
     c = buf[0]; buf[0] = buf[7]; buf[7] = c;
     c = buf[1]; buf[1] = buf[6]; buf[6] = c;
     c = buf[2]; buf[2] = buf[5]; buf[5] = c;
     c = buf[3]; buf[3] = buf[4]; buf[4] = c;
-	
+
     return *((double*) buf);
 }
 
@@ -100,8 +100,9 @@ Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double t) const
 	t = startDate;
     else if (t > endDate)
 	t = endDate;
-    
-    int recNo = (int) ((t - startDate) / daysPerInterval);
+
+    // recNo is always >= 0:
+    unsigned int recNo = (unsigned int) ((t - startDate) / daysPerInterval);
     // Make sure we don't go past the end of the array if t == endDate
     if (recNo >= records.size())
         recNo = records.size() - 1;
@@ -115,7 +116,9 @@ Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double t) const
     // coeffs is a pointer to the Chebyshev coefficients
     double u = 0.0;
     double* coeffs = NULL;
-    if (coeffInfo[planet].nGranules == -1)
+
+    // nGranules is unsigned int so it will be compared against FFFFFFFF:
+    if (coeffInfo[planet].nGranules == (unsigned int) -1)
     {
 	coeffs = rec->coeffs + coeffInfo[planet].offset;
 	u = 2.0 * (t - rec->t0) / daysPerInterval - 1.0;
@@ -124,13 +127,13 @@ Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double t) const
     {
 	double daysPerGranule = daysPerInterval / coeffInfo[planet].nGranules;
 	int granule = (int) ((t - rec->t0) / daysPerGranule);
-	double granuleStartDate = rec->t0 + 
+	double granuleStartDate = rec->t0 +
 	    daysPerGranule * (double) granule;
 	coeffs = rec->coeffs + coeffInfo[planet].offset +
 	    granule * coeffInfo[planet].nCoeffs * 3;
 	u = 2.0 * (t - granuleStartDate) / daysPerGranule - 1.0;
     }
-    
+
     double sum[3];
     double cc[MaxChebyshevCoeffs];
     unsigned int nCoeffs = coeffInfo[planet].nCoeffs;
@@ -235,7 +238,7 @@ JPLEphemeris* JPLEphemeris::load(istream& in)
 	return NULL;
     }
 
-    unsigned int nRecords = (unsigned int) ((eph->endDate - eph->startDate) / 
+    unsigned int nRecords = (unsigned int) ((eph->endDate - eph->startDate) /
 					    eph->daysPerInterval);
     eph->records.resize(nRecords);
     for (i = 0; i < nRecords; i++)
