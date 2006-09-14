@@ -370,6 +370,7 @@ void DSODatabase::finish()
             DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
     }
     */
+    clog << _("Loaded ") << nDSOs << _(" deep space objects") << '\n';
 }
 
 
@@ -386,6 +387,9 @@ void DSODatabase::buildOctree()
     DPRINTF(1, "Spatially sorting DSOs for improved locality of reference . . .\n");
     DeepSkyObject** sortedDSOs    = new DeepSkyObject*[nDSOs];
     DeepSkyObject** firstDSO      = sortedDSOs;
+
+    // The spatial sorting part is useless for DSOs since we
+    // are storing pointers to objects and not the objects themselves:
     root->rebuildAndSort(octreeRoot, firstDSO);
 
     DPRINTF(1, "%d DSOs total\n", (int) (firstDSO - sortedDSOs));
