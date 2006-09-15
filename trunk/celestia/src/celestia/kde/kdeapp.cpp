@@ -68,7 +68,7 @@
 #include <kcelbookmarkmanager.h>
 #include <kdeversion.h>
 
-#if KDE_VERSION >= 0x030200 
+#if KDE_VERSION >= 0x030200
 #include <ksplashscreen.h>
 #endif
 
@@ -120,7 +120,7 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
                 images.append(*i + *j);
             }
         }
-        
+
         if (images.size() > 0) {
             int index = (int)(random()*1./RAND_MAX*images.size());
             splash = new CelSplashScreen(images[index], this);
@@ -199,7 +199,7 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
         delete splash;
     }
 #endif
-    
+
     // We use a timer with a null timeout value
     // to add appCore->tick to Qt's event loop
     QTimer *t = new QTimer( dynamic_cast<QObject *>(this) );
@@ -212,7 +212,7 @@ void KdeApp::setStartURL(KURL url) {
     if (url.protocol() == "cel") {
         appCore->setStartURL(url.url().latin1());
     }
-    if (url.protocol() == "file") { 
+    if (url.protocol() == "file") {
         appCore->setStartURL(url.path().latin1());
     }
 }
@@ -222,7 +222,7 @@ void KdeApp::goToURL(const KURL& url) {
         appCore->addToHistory();
         appCore->goToUrl(url.prettyURL().latin1());
     }
-    if (url.protocol() == "file") { 
+    if (url.protocol() == "file") {
         appCore->addToHistory();
         slotOpenFileURL(url);
     }
@@ -276,7 +276,7 @@ void KdeWatcher::notifyChange(CelestiaCore * core, int property)
                 KAction* action = kdeapp->getActionCollection()->action(n);
                 if (action->shortcut().count() > 0
                     && (action->shortcut().seq(0).key(0).modFlags()
-                        & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0 
+                        & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0
                     && action->isEnabled()) {
                     actions.push_back(kdeapp->getActionCollection()->action(n));
                     kdeapp->getActionCollection()->action(n)->setEnabled(false);
@@ -304,7 +304,7 @@ void KdeApp::resyncHistory() {
         action("go_back")->setEnabled(false);
     } else {
         action("go_back")->setEnabled(true);
-    } 
+    }
 }
 
 void KdeApp::resyncMenus() {
@@ -512,7 +512,7 @@ void KdeApp::initActions()
 
     if (KGlobal::config()->hasKey("TimeZoneBias"))
         isLocal = (KGlobal::config()->readNumEntry("TimeZoneBias") != 0);
-    
+
     /////////////////////////////////////////
     // Render Flags
     KToggleAction* showStars = new KToggleAction(i18n("Show Stars"), 0, this, SLOT(slotShowStars()), actionCollection(), "showStars");
@@ -540,7 +540,7 @@ void KdeApp::initActions()
     showCloudMaps->setChecked(rFlags & Renderer::ShowCloudMaps);
 
     KToggleAction* showCloudShadows = new KToggleAction(i18n("Show Cloud Shadows"), 0, this, SLOT(slotShowCloudShadows()), actionCollection(), "showCloudShadows");
-    showCloudMaps->setChecked(rFlags & Renderer::ShowCloudShadows);
+    showCloudShadows->setChecked(rFlags & Renderer::ShowCloudShadows);
 
 KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
     showOrbits->setChecked(rFlags & Renderer::ShowOrbits);
@@ -604,7 +604,7 @@ KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, 
     showMoonLabels->setChecked(lMode & Renderer::MoonLabels);
 
     KToggleAction* showCometLabels = new KToggleAction(i18n("Show Comet Labels"), SHIFT + Key_W, this, SLOT(slotShowCometLabels()), actionCollection(), "showCometLabels");
-    showMoonLabels->setChecked(lMode & Renderer::CometLabels);
+    showCometLabels->setChecked(lMode & Renderer::CometLabels);
 
     KToggleAction* showConstellationLabels = new KToggleAction(i18n("Show Constellation Labels"), Key_Equal, this, SLOT(slotShowConstellationLabels()), actionCollection(), "showConstellationLabels");
     showConstellationLabels->setChecked(lMode & Renderer::ConstellationLabels);
@@ -702,17 +702,17 @@ KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, 
         SLOT(slotShowBookmarkBar()), actionCollection(), "showBookmarkBar");
 
     createGUI();
-    
+
     bookmarkBarActionCollection = new KActionCollection( this );
     bookmarkBarActionCollection->setHighlightingEnabled( true );
 
     bookmarkBar = 0;
-    initBookmarkBar();    
+    initBookmarkBar();
 }
 
 void KdeApp::initBookmarkBar() {
     KToolBar *bar = new KToolBar(this, QMainWindow::Top, true, "bookmarkBar");
-    
+
     if (bookmarkBar) delete bookmarkBar;
     bookmarkBar = new KBookmarkBar( KCelBookmarkManager::self(), this, bar, bookmarkBarActionCollection, 0, "bookmarkBar");
     if (bar->count() == 0) bar->hide();
@@ -724,7 +724,7 @@ void KdeApp::initBookmarkBar() {
 }
 
 
-bool KdeApp::queryExit() { 
+bool KdeApp::queryExit() {
     KConfig* conf = kapp->config();
     saveMainWindowSettings(conf, "MainWindow");
     conf->setGroup("MainWindow");
@@ -775,7 +775,7 @@ void KdeApp::slotFullScreen() {
     } else {
         showFullScreen();
         action("fullScreen")->setIcon("window_nofullscreen");
-    }             
+    }
     isFullScreen = !isFullScreen;
 }
 
@@ -1236,7 +1236,7 @@ void KdeApp::slotShowOtherLocations() {
 }
 
 void KdeApp::slotMinFeatureSize(int size) {
-    appCore->getRenderer()->setMinimumFeatureSize((float)size);  
+    appCore->getRenderer()->setMinimumFeatureSize((float)size);
 }
 
 void KdeApp::slotSplitH() {
@@ -1430,13 +1430,13 @@ void KdeApp::dropEvent(QDropEvent* event) {
 }
 
 void KdeApp::slotBackAboutToShow() {
-    int i; 
+    int i;
     KPopupMenu* menu = backAction->popupMenu();
     std::vector<Url>::size_type current = appCore->getHistoryCurrent();
     int pos;
-    std::vector<Url> history = appCore->getHistory(); 
+    std::vector<Url> history = appCore->getHistory();
 
-    menu->clear(); 
+    menu->clear();
     for (i=0, pos = current - 1 ; pos >= 0 && i < 15 ; pos--, i++) {
         menu->insertItem(QString(history[pos].getName().c_str()), pos);
     }
@@ -1520,17 +1520,17 @@ LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
     latSign = new QComboBox( grid );
     latSign->insertItem(i18n("North", "N"));
     latSign->insertItem(i18n("South", "S"));
-    
+
     QLabel* altLab = new QLabel(i18n("Altitude: "), grid);
     altLab->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     altEdit = new QLineEdit(grid);
     altEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     altEdit->setValidator(new QDoubleValidator(altEdit));
     new QLabel(i18n("km"), grid);
-    
+
     double distance, longitude, latitude;
     appCore->getSimulation()->getSelectionLongLat(distance, longitude, latitude);
-    
+
     if (longitude < 0) {
         longitude = -longitude;
         longSign->setCurrentItem(1);
@@ -1539,11 +1539,11 @@ LongLatDialog::LongLatDialog(QWidget* parent, CelestiaCore* appCore) :
         latitude = -latitude;
         latSign->setCurrentItem(1);
     }
-    
+
     Selection selection = appCore->getSimulation()->getSelection();
     QString objName(selection.getName(true).c_str());
     objEdit->setText(objName.mid(objName.findRev('/') + 1));
-    
+
     latEdit->setText(QString("%1").arg(latitude, 0, 'f', 3));
     longEdit->setText(QString("%1").arg(longitude, 0, 'f', 3));
     altEdit->setText(QString("%1").arg(distance - selection.radius(), 0, 'f', 0));
