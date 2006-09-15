@@ -37,7 +37,7 @@ class OverlayStreamBuf : public std::streambuf
 
  private:
     Overlay* overlay;
-    
+
     UTF8DecodeState decodeState;
     wchar_t decodedChar;
     unsigned int decodeShift;
@@ -63,8 +63,13 @@ class Overlay : public std::ostream
     void print(wchar_t);
     void print(char);
     void print(char*);
+#ifndef _WIN32
+    // Disable GCC format attribute specification requests. Only
+    // the format string will be checked:
+    void oprintf(const char*, ...) __attribute__ ((__format__ (__printf__, 2, 0)));
+#else
     void oprintf(const char*, ...);
-    
+#endif
 
  private:
     int windowWidth;
