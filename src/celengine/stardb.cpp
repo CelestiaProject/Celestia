@@ -152,7 +152,7 @@ static bool parseCelestiaCatalogNumber(const string& name,
     if (name[0] == '#')
     {
         unsigned int num;
-        if (sscanf(name.c_str(), "#%u %c", &num, &extra) == 1)
+        if (sscanf(name.c_str(), "#%u %c", &num, extra) == 1)
         {
             *catalogNumber = (uint32) num;
             return true;
