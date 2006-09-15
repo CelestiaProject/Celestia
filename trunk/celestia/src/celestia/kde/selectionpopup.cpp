@@ -228,7 +228,7 @@ void SelectionPopup::process(int id)
     }
     if (actionId > 20) {
         std::vector<std::string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
-        if (altSurfaces != NULL && altSurfaces->size() > actionId - 21)
+        if (altSurfaces != NULL && (int) altSurfaces->size() > actionId - 21)
         {
             sim->getActiveObserver()->setDisplayedSurface((*altSurfaces)[actionId - 21]);
         }
