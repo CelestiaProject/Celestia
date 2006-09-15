@@ -30,13 +30,12 @@
 
 #include "celutil/utf8.h"
 
-SelectionPopup::SelectionPopup(QWidget* parent, CelestiaCore* _appCore, Selection _sel)
-:KPopupMenu(parent),
+SelectionPopup::SelectionPopup(QWidget* parent, CelestiaCore* _appCore, Selection _sel):
+KPopupMenu(parent),
  appCore(_appCore),
- baseId(0),
- sel(_sel)
+ sel(_sel),
+ baseId(0)
 {
-
 }
 
 SelectionPopup::~SelectionPopup() {
@@ -193,7 +192,7 @@ void SelectionPopup::process(int id)
         else if (sel.deepsky() != NULL)
         {
             url = QString(sel.deepsky()->getInfoURL().c_str());
-            if (url == "") 
+            if (url == "")
                 url = QString("http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident=%1")
                       .arg(sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky()).c_str());
         }
@@ -271,10 +270,10 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
     popup->insertItem(i18n("&Center"), baseId + 2);
     popup->insertItem(i18n("&Goto"), baseId + 3);
     popup->insertItem(i18n("&Follow"), baseId + 4);
-    if (sel.star() == NULL && sel.deepsky() == NULL) 
+    if (sel.star() == NULL && sel.deepsky() == NULL)
         popup->insertItem(i18n("S&ynch Orbit"), baseId + 5);
     popup->insertItem(i18n("&Info"), baseId + 6);
-    if (baseId == 0) 
+    if (baseId == 0)
         popup->insertItem(i18n("Unmark &All"), baseId + 8);
 
     if (appCore->getSimulation()->getUniverse()->isMarked(sel, 1))
@@ -395,8 +394,8 @@ void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parent
 
     int numSubMenus = 0;
     int nonEmpty = 0;
-    for (std::vector<std::vector<Body*>* >::const_iterator obj = objects.begin(); 
-         obj != objects.end(); 
+    for (std::vector<std::vector<Body*>* >::const_iterator obj = objects.begin();
+         obj != objects.end();
          ++obj) {
         if ((*obj)->size() > 0) {
             numSubMenus++;
@@ -409,7 +408,7 @@ void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parent
     KPopupMenu *submenu = new KPopupMenu(this);
     popup->insertSeparator();
 
-    if (numSubMenus > 1) 
+    if (numSubMenus > 1)
         popup->insertItem(i18n("Orbiting Bodies"), submenu);
     else
         popup->insertItem(menuNames[nonEmpty], submenu);
@@ -417,8 +416,8 @@ void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parent
     std::vector<std::string>::const_iterator menuName = menuNames.begin();
     BodyComparePredicate pred;
 
-    for (std::vector<std::vector<Body*>* >::const_iterator obj = objects.begin(); 
-         obj != objects.end(); 
+    for (std::vector<std::vector<Body*>* >::const_iterator obj = objects.begin();
+         obj != objects.end();
          ++obj) {
         // Only generate a submenu if the vector is not empty
         if ((*obj)->size() > 0) {
