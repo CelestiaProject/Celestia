@@ -66,10 +66,12 @@ Texture* MultiResTexture::find(unsigned int resolution)
     Texture* res = texMan->find(tex[resolution]);
     if (res != NULL)
         return res;
-    
+
     // Preferred resolution isn't available; try the second choice
-    unsigned int secondChoice;
-    unsigned int lastResort;
+    // Set these to some defaults to avoid GCC complaints
+    // about possible uninitialized variable usage:
+    unsigned int secondChoice   = medres;
+    unsigned int lastResort     = hires;
     switch (resolution)
     {
     case lores:
