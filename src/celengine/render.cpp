@@ -5697,7 +5697,8 @@ void Renderer::renderCometTail(const Body& body,
     /*int nSteps = MaxCometTailPoints;  Unused*/
     /*float dt = 10000000.0f / (nSteps * (float) vd.length() * 100.0f);     Unused*/
     float distanceFromSun, irradiance_max = 0.0f;
-    unsigned int li_eff;
+    unsigned int li_eff = 0;    // Select the first sun as default to
+                                // shut up compiler warnings
 
     // Find the sun with the largest irrradiance of light onto the comet
     // as function of the comet's position;
