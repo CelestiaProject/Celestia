@@ -24,7 +24,7 @@ bool dsoAbsoluteMagnitudePredicate(DeepSkyObject* const & _dso, const float absM
 }
 
 
-bool dsoStraddlesNodesPredicate(const Point3d& cellCenterPos, DeepSkyObject* const & _dso, const float absMag)
+bool dsoStraddlesNodesPredicate(const Point3d& cellCenterPos, DeepSkyObject* const & _dso, const float)
 {
     //checks if this dso's radius straddles child nodes
     float dsoRadius    = _dso->getRadius();
@@ -32,7 +32,7 @@ bool dsoStraddlesNodesPredicate(const Point3d& cellCenterPos, DeepSkyObject* con
     Point3d dsoPos     = _dso->getPosition();
 
     return abs(dsoPos.x - cellCenterPos.x) < dsoRadius    ||
-             abs(dsoPos.y - cellCenterPos.y) < dsoRadius    ||
+           abs(dsoPos.y - cellCenterPos.y) < dsoRadius    ||
            abs(dsoPos.z - cellCenterPos.z) < dsoRadius;
 }
 

@@ -23,7 +23,8 @@ class Orbit
     virtual Point3d positionAtTime(double) const = 0;
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
-    virtual void sample(double, double, int, OrbitSampleProc&) const = 0;
+    virtual void sample(double start, double t,
+                        int nSamples, OrbitSampleProc& proc) const = 0;
     virtual bool isPeriodic() const { return true; };
 
     // Return the time range over which the orbit is valid; if the orbit
@@ -113,7 +114,8 @@ class MixedOrbit : public Orbit
     Point3d positionAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
-    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
+    virtual void sample(double t0, double t1,
+                        int nSamples, OrbitSampleProc& proc) const;
 
  private:
     Orbit* primary;

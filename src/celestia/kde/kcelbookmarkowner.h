@@ -25,7 +25,7 @@ class KCelBookmarkOwner : virtual public KBookmarkOwner {
 
 public:
     virtual QString currentIcon() const { return QString::null; };
-    virtual Url currentUrl(Url::UrlType type=Url::Absolute) const { return Url(); };
+    virtual Url currentUrl(Url::UrlType /*type*/=Url::Absolute) const { return Url(); };
 };
 
 #endif
