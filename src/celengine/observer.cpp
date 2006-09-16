@@ -152,7 +152,7 @@ RigidTransform Observer::getSituation() const
 {
     return frame.toUniversal(situation, getTime());
 }
-                        
+
 
 
 void Observer::setSituation(const RigidTransform& xform)
@@ -174,15 +174,15 @@ Vec3d toUniversal(const Vec3d& v,
             Quatf q = observer.getOrientation();
             Quatd qd(q.w, q.x, q.y, q.z);
             return v * qd.toMatrix3();
-        }                        
+        }
 
-        
+
     case astro::Geographic:
         if (sel.getType() != Selection::Type_Body)
             return v;
         else
             return v * sel.body()->getGeographicToHeliocentric(t);
-        
+
     case astro::Equatorial:
         if (sel.getType() != Selection::Type_Body)
             return v;
@@ -332,7 +332,7 @@ void Observer::update(double dt, double timeScale)
                     Quatd q1(journey.rotation1.w, journey.rotation1.x,
                              journey.rotation1.y, journey.rotation1.z);
                     p = origin + v0 * Quatd::slerp(q0, q1, t).toMatrix3();
-                                              
+
                     p = frame.fromUniversal(RigidTransform(p, Quatf(1.0f)),
                                             simTime).translation;
                 }
@@ -716,7 +716,7 @@ void Observer::computeCenterCOParameters(const Selection& destination,
     jparams.to = centerPos + ((getPosition() - centerPos) * qd.toMatrix3());
     jparams.initialOrientation = getOrientation();
     jparams.finalOrientation = getOrientation() * q;
-    
+
     jparams.startInterpolation = 0.0;
     jparams.endInterpolation = 1.0;
 
@@ -873,7 +873,7 @@ void Observer::changeOrbitDistance(const Selection& selection, float d)
     if (!center.empty())
     {
         UniversalCoord focusPosition = center.getPosition(getTime());
-        
+
         double size = center.radius();
 
         // Somewhat arbitrary parameters to chosen to give the camera movement
@@ -1026,8 +1026,8 @@ void Observer::gotoSelection(const Selection& selection,
 // through the middle of a planet.
 void Observer::gotoSelectionGC(const Selection& selection,
                                double gotoTime,
-                               double startInter,
-                               double endInter,
+                               double /*startInter*/,       //TODO: remove parameter??
+                               double /*endInter*/,         //TODO: remove parameter??
                                Vec3f up,
                                astro::CoordinateSystem upFrame)
 {
@@ -1141,13 +1141,13 @@ void Observer::gotoLocation(const RigidTransform& transform,
 {
     journey.startTime = realTime;
     journey.duration = duration;
-    
+
     RigidTransform from(getPosition(), getOrientation());
     from = frame.fromUniversal(from, getTime());
     journey.from = from.translation;
     journey.initialOrientation= Quatf((float) from.rotation.w, (float) from.rotation.x,
                                       (float) from.rotation.y, (float) from.rotation.z);
-    
+
     journey.to = transform.translation;
     journey.finalOrientation = Quatf((float) transform.rotation.w,
                                      (float) transform.rotation.x,
@@ -1208,7 +1208,7 @@ void Observer::gotoSurface(const Selection& sel, double duration)
     else
     {
     }
-    
+
     FrameOfReference frame(astro::Geographic, sel);
     RigidTransform rt = frame.fromUniversal(RigidTransform(getPosition(), q),
                                             getTime());
