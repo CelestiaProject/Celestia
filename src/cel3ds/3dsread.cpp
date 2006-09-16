@@ -1,5 +1,5 @@
 // 3dsread.cpp
-// 
+//
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ static uint16 readUshort(ifstream& in)
     LE_TO_CPU_INT16(ret, ret);
     return ret;
 }
- 
+
 static float readFloat(ifstream& in)
 {
     float f;
@@ -115,7 +115,7 @@ void indent()
         cout << "  ";
 }
 
-void logChunk(uint16 chunkType, int chunkSize)
+void logChunk(uint16 chunkType/*, int chunkSize*/)
 {
     const char* name = NULL;
 
@@ -217,8 +217,8 @@ int read3DSChunk(ifstream& in,
     unsigned short chunkType = readUshort(in);
     int32 chunkSize = readInt(in);
     int contentSize = chunkSize - 6;
-        
-    logChunk(chunkType, chunkSize);
+
+    //logChunk(chunkType/*, chunkSize*/);
     bool chunkWasRead = chunkFunc(in, chunkType, contentSize, obj);
 
     if (!chunkWasRead)
@@ -243,12 +243,12 @@ int read3DSChunks(ifstream& in,
     logIndent--;
 
     if (bytesRead != nBytes)
-        cout << "Expected " << nBytes << " bytes but read " << bytesRead << '\n'; 
+        cout << "Expected " << nBytes << " bytes but read " << bytesRead << '\n';
     return bytesRead;
 }
 
 
-M3DColor readColor(ifstream& in, int nBytes)
+M3DColor readColor(ifstream& in/*, int nBytes*/)
 {
     unsigned char r = (unsigned char) readChar(in);
     unsigned char g = (unsigned char) readChar(in);
@@ -260,7 +260,7 @@ M3DColor readColor(ifstream& in, int nBytes)
 }
 
 
-M3DColor readFloatColor(ifstream& in, int nBytes)
+M3DColor readFloatColor(ifstream& in/*, int nBytes*/)
 {
     float r = readFloat(in);
     float g = readFloat(in);
@@ -272,7 +272,7 @@ M3DColor readFloatColor(ifstream& in, int nBytes)
 }
 
 
-Mat4f readMeshMatrix(ifstream& in, int nBytes)
+Mat4f readMeshMatrix(ifstream& in/*, int nBytes*/)
 {
     float m00 = readFloat(in);
     float m01 = readFloat(in);
@@ -301,10 +301,10 @@ Mat4f readMeshMatrix(ifstream& in, int nBytes)
 }
 
 
-bool stubProcessChunk(ifstream& in,
-                      unsigned short chunkType,
-                      int contentSize,
-                      void* obj)
+bool stubProcessChunk(/* ifstream& in,
+                         unsigned short chunkType,
+                         int contentSize,
+                         void* obj */)
 {
     return false;
 }
@@ -339,7 +339,7 @@ void readTextureCoordArray(ifstream& in, M3DTriangleMesh* triMesh)
 
 bool processFaceArrayChunk(ifstream& in,
                            unsigned short chunkType,
-                           int contentSize,
+                           int /*contentSize*/,
                            void* obj)
 {
     M3DTriangleMesh* triMesh = (M3DTriangleMesh*) obj;
@@ -351,7 +351,7 @@ bool processFaceArrayChunk(ifstream& in,
         // the mesh.
         string materialName = readString(in);
         uint16 nFaces = readUshort(in);
-        
+
         for (uint16 i = 0; i < nFaces; i++)
         {
             readUshort(in);
@@ -364,7 +364,7 @@ bool processFaceArrayChunk(ifstream& in,
     else if (chunkType == M3DCHUNK_MESH_SMOOTH_GROUP)
     {
         uint16 nFaces = triMesh->getFaceCount();
-        
+
         for (uint16 i = 0; i < nFaces; i++)
         {
             uint32 groups = (uint32) readInt(in);
@@ -400,7 +400,7 @@ void readFaceArray(ifstream& in, M3DTriangleMesh* triMesh, int contentSize)
                       bytesLeft,
                       processFaceArrayChunk,
                       (void*) triMesh);
-    }        
+    }
 }
 
 
@@ -428,7 +428,7 @@ bool processTriMeshChunk(ifstream& in,
     }
     else if (chunkType == M3DCHUNK_MESH_MATRIX)
     {
-        triMesh->setMatrix(readMeshMatrix(in, contentSize));
+        triMesh->setMatrix(readMeshMatrix(in/*, contentSize*/));
         return true;
     }
     else
@@ -461,19 +461,19 @@ bool processModelChunk(ifstream& in,
 
 bool processColorChunk(ifstream& in,
                        unsigned short chunkType,
-                       int contentSize,
+                       int /*contentSize*/,
                        void* obj)
 {
     M3DColor* color = (M3DColor*) obj;
 
     if (chunkType == M3DCHUNK_COLOR_24)
     {
-        *color = readColor(in, contentSize);
+        *color = readColor(in/*, contentSize*/);
         return true;
     }
     else if (chunkType == (M3DCHUNK_COLOR_FLOAT))
     {
-        *color = readFloatColor(in, contentSize);
+        *color = readFloatColor(in/*, contentSize*/);
         return true;
     }
     else
@@ -485,7 +485,7 @@ bool processColorChunk(ifstream& in,
 
 static bool processPercentageChunk(ifstream& in,
                                    unsigned short chunkType,
-                                   int contentSize,
+                                   int /*contentSize*/,
                                    void* obj)
 {
     float* percent = (float*) obj;
@@ -509,7 +509,7 @@ static bool processPercentageChunk(ifstream& in,
 
 static bool processTexmapChunk(ifstream& in,
                                unsigned short chunkType,
-                               int contentSize,
+                               int /*contentSize*/,
                                void* obj)
 {
     M3DMaterial* material = (M3DMaterial*) obj;
@@ -671,7 +671,7 @@ M3DScene* Read3DSFile(ifstream& in)
         DPRINTF(0, "Read3DSFile: Error reading 3DS file.\n");
         return NULL;
     }
-    
+
     DPRINTF(1, "3DS file, %d bytes\n", chunkSize);
 
     M3DScene* scene = new M3DScene();
