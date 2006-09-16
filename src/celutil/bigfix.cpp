@@ -144,12 +144,6 @@ BigFix operator-(BigFix a, BigFix b)
 }
 
 
-BigFix operator*(BigFix, BigFix)
-{
-    return BigFix();
-}
-
-
 bool operator==(BigFix a, BigFix b)
 {
     for (int i = 0; i < N_WORDS; i++)

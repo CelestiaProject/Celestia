@@ -33,7 +33,6 @@ public:
 
 	friend BigFix operator+(BigFix, BigFix);
 	friend BigFix operator-(BigFix, BigFix);
-	friend BigFix operator*(BigFix, BigFix);
 	friend bool operator==(BigFix, BigFix);
 	friend bool operator!=(BigFix, BigFix);
 
