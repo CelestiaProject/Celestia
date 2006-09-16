@@ -30,7 +30,7 @@ CommandWait::~CommandWait()
 {
 }
 
-void CommandWait::process(ExecutionEnvironment& env, double t, double dt)
+void CommandWait::process(ExecutionEnvironment&, double, double)
 {
 }
 
@@ -304,7 +304,7 @@ CommandClearScreen::CommandClearScreen()
 {
 }
 
-void CommandClearScreen::process(ExecutionEnvironment& env)
+void CommandClearScreen::process(ExecutionEnvironment&)
 {
 }
 
@@ -316,7 +316,7 @@ CommandExit::CommandExit()
 {
 }
 
-void CommandExit::process(ExecutionEnvironment& env)
+void CommandExit::process(ExecutionEnvironment&)
 {
     exit(0);
 }
@@ -357,7 +357,7 @@ CommandChangeDistance::CommandChangeDistance(double _duration, double _rate) :
 {
 }
 
-void CommandChangeDistance::process(ExecutionEnvironment& env, double t, double dt)
+void CommandChangeDistance::process(ExecutionEnvironment& env, double, double dt)
 {
     env.getSimulation()->changeOrbitDistance((float) (rate * dt));
 }
@@ -372,7 +372,7 @@ CommandOrbit::CommandOrbit(double _duration, const Vec3f& axis, float rate) :
 {
 }
 
-void CommandOrbit::process(ExecutionEnvironment& env, double t, double dt)
+void CommandOrbit::process(ExecutionEnvironment& env, double, double dt)
 {
     float v = spin.length();
     if (v != 0.0f)
@@ -390,7 +390,7 @@ CommandRotate::CommandRotate(double _duration, const Vec3f& axis, float rate) :
 {
 }
 
-void CommandRotate::process(ExecutionEnvironment& env, double t, double dt)
+void CommandRotate::process(ExecutionEnvironment& env, double, double dt)
 {
     float v = spin.length();
     if (v != 0.0f)
@@ -408,7 +408,7 @@ CommandMove::CommandMove(double _duration, const Vec3d& _velocity) :
 {
 }
 
-void CommandMove::process(ExecutionEnvironment& env, double t, double dt)
+void CommandMove::process(ExecutionEnvironment& env, double, double dt)
 {
     env.getSimulation()->setObserverPosition(env.getSimulation()->getObserver().getPosition() + (velocity * dt));
 }
@@ -681,7 +681,7 @@ CommandCapture::CommandCapture(const std::string& _type,
 {
 }
 
-void CommandCapture::process(ExecutionEnvironment& env)
+void CommandCapture::process(ExecutionEnvironment&)
 {
     bool success = false;
 #ifndef MACOSX

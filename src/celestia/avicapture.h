@@ -30,6 +30,11 @@ class AVICapture : public MovieCapture
     float getFrameRate() const;
     int getFrameCount() const;
 
+    // These are unused for now:
+    virtual void setAspectRatio(int, int) {};
+    virtual void setQuality(float) {};
+    virtual void recordingStatus(bool) {};
+
  private:
     void cleanup();
 
