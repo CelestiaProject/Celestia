@@ -235,18 +235,19 @@ void FragmentProcessorARB::disable()
     //glDisable(GL_FRAGMENT_PROGRAM_ARB);
 }
 
-void FragmentProcessorARB::use(unsigned int prog)
+void FragmentProcessorARB::use(unsigned int /*prog*/)
 {
     //glx::glBindProgramARB(GL_VERTEX_PROGRAM_ARB, prog);
 }
 
-void FragmentProcessorARB::parameter(fp::Parameter param,
-                                   float x, float y, float z, float w)
+void FragmentProcessorARB::parameter(fp::Parameter /*param*/,
+                                     float /*x*/, float /*y*/,
+                                     float /*z*/, float /*w*/)
 {
     //glx::glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, param, x, y, z, w);
 }
 
-void FragmentProcessorARB::parameter(fp::Parameter param, const float* fv)
+void FragmentProcessorARB::parameter(fp::Parameter /*param*/, const float* /*fv*/)
 {
     //glx::glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, param, fv);
 }

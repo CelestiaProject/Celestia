@@ -1,5 +1,5 @@
 // regcombine.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // Some functions for setting up the nVidia register combiners
@@ -223,7 +223,7 @@ void SetupCombinersSmooth(Texture& baseTexture,
 
 // Normal map should be bound as texture 1 and the base map should be bound
 // as texture 0.
-void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
+void SetupCombinersDecalAndBumpMap(Texture& /*bumpTexture*/,
                                    Color ambientColor,
                                    Color diffuseColor)
 {
@@ -255,7 +255,7 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
     glx::glCombinerInputNV(GL_COMBINER0_NV, GL_RGB,
                            GL_VARIABLE_D_NV, GL_CONSTANT_COLOR1_NV,
                            GL_UNSIGNED_IDENTITY_NV, GL_RGB);
-    
+
     // Compute N dot L in spare0 and diffuse * decal texture in spare1
     glx::glCombinerOutputNV(GL_COMBINER0_NV, GL_RGB,
                             GL_SPARE0_NV, GL_SPARE1_NV, GL_DISCARD_NV,
@@ -294,7 +294,7 @@ void SetupCombinersDecalAndBumpMap(Texture& bumpTexture,
     glx::glCombinerOutputNV(GL_COMBINER1_NV, GL_RGB,
                             GL_DISCARD_NV, GL_DISCARD_NV, GL_SPARE0_NV,
                             GL_NONE, GL_NONE, GL_FALSE, GL_FALSE, GL_FALSE);
-    
+
     // E = SPARE0 = fragment brightness, including ambient, diffuse, and
     // self shadowing.
     glx::glFinalCombinerInputNV(GL_VARIABLE_E_NV,
