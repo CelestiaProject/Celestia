@@ -12,6 +12,8 @@
 
 #ifdef _WIN32
 
+#define snprintf _snprintf
+
 #if _MSC_VER >= 1000
 // Make VC shut up about long variable names from templates
 #pragma warning(disable : 4786)
@@ -34,6 +36,8 @@
 #include <config.h>
 #endif /* MACOSX_PB */
 #endif /* _WIN32 */
+
+
 
 #endif // _CELESTIA_H_
 

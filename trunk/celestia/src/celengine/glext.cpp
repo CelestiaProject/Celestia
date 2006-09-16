@@ -334,7 +334,7 @@ FUNCS osxGetProcAddress(const GLubyte *procName) {
         return NULL;
     }
     strcpy(myProcName,"_");
-    
+
     /* sanity check */
     if (strlen((char *)procName)>125) return NULL;
     strcat(myProcName,(char *)procName);
@@ -351,7 +351,7 @@ FUNCS osxGetProcAddress(const GLubyte *procName) {
 #endif /* MACOSX */
 
 
-void Alert(const char *szFormat, ...)
+void Alert(const char /* *szFormat*/, ...)
 {
 }
 
