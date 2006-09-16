@@ -252,7 +252,7 @@ ClosestStarFinder::ClosestStarFinder(float _maxDistance) :
 {
 }
 
-void ClosestStarFinder::process(const Star& star, float distance, float appMag)
+void ClosestStarFinder::process(const Star& star, float distance, float)
 {
     if (distance < closestDistance)
     {
@@ -281,7 +281,7 @@ NearStarFinder::NearStarFinder(float _maxDistance,
 {
 }
 
-void NearStarFinder::process(const Star& star, float distance, float appMag)
+void NearStarFinder::process(const Star& star, float distance, float)
 {
     if (distance < maxDistance)
         nearStars.push_back(&star);
@@ -425,7 +425,7 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
                                const UniversalCoord& origin,
                                const Vec3f& direction,
                                double when,
-                               float faintestMag,
+                               float /*faintestMag*/,
                                float tolerance)
 {
     double sinTol2 = (sin(tolerance/2.0) >  ANGULAR_RES ?
@@ -528,7 +528,7 @@ StarPicker::StarPicker(const Point3f& _pickOrigin,
 {
 }
 
-void StarPicker::process(const Star& star, float distance, float appMag)
+void StarPicker::process(const Star& star, float, float)
 {
     Vec3f relativeStarPos = star.getPosition() - pickOrigin;
     Vec3f starDir = relativeStarPos;
@@ -611,7 +611,7 @@ CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
 
 void CloseStarPicker::process(const Star& star,
                               float lowPrecDistance,
-                              float appMag)
+                              float)
 {
     if (lowPrecDistance > maxDistance)
         return;
@@ -743,7 +743,7 @@ DSOPicker::DSOPicker(const Point3d& pickOrigin,
 }
 
 
-void DSOPicker::process(DeepSkyObject* const & dso, double distance, float appMag)
+void DSOPicker::process(DeepSkyObject* const & dso, double, float)
 {
     Vec3d relativeDSOPos = dso->getPosition() - pickOrigin;
     Vec3d dsoDir = relativeDSOPos;
@@ -795,8 +795,8 @@ public:
 
 CloseDSOPicker::CloseDSOPicker(const Point3d& pos,
                                const Vec3d& dir,
-                               double                maxDistance,
-                               float angle) :
+                               double maxDistance,
+                               float) :
     pickOrigin      (pos),
     pickDir         (dir),
     maxDistance     (maxDistance),
@@ -808,9 +808,8 @@ CloseDSOPicker::CloseDSOPicker(const Point3d& pos,
 
 void CloseDSOPicker::process(DeepSkyObject* const & dso,
                              double distance,
-                             float appMag)
+                             float)
 {
-
     if (distance > maxDistance)
         return;
 
