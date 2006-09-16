@@ -241,7 +241,7 @@ Renderer::DetailOptions::DetailOptions() :
 }
 
 
-static void StarTextureEval(float u, float v, float w,
+static void StarTextureEval(float u, float v, float,
                             unsigned char *pixel)
 {
     float r = 1 - (float) sqrt(u * u + v * v);
@@ -258,7 +258,7 @@ static void StarTextureEval(float u, float v, float w,
     pixel[2] = pixVal;
 }
 
-static void GlareTextureEval(float u, float v, float w,
+static void GlareTextureEval(float u, float v, float,
                              unsigned char *pixel)
 {
     float r = 0.9f - (float) sqrt(u * u + v * v);
@@ -272,7 +272,7 @@ static void GlareTextureEval(float u, float v, float w,
     pixel[3] = pixVal;
 }
 
-static void ShadowTextureEval(float u, float v, float w,
+static void ShadowTextureEval(float u, float v, float,
                               unsigned char *pixel)
 {
     float r = (float) sqrt(u * u + v * v);
@@ -290,7 +290,7 @@ static void ShadowTextureEval(float u, float v, float w,
 //! Lookup function for eclipse penumbras--the input is the amount of overlap
 //  between the occluder and sun disc, and the output is the fraction of
 //  full brightness.
-static void PenumbraFunctionEval(float u, float v, float w,
+static void PenumbraFunctionEval(float u, float, float,
                                  unsigned char *pixel)
 {
     u = (u + 1.0f) * 0.5f;
@@ -312,7 +312,7 @@ public:
     float umbra;
 };
 
-void ShadowTextureFunction::operator()(float u, float v, float w,
+void ShadowTextureFunction::operator()(float u, float v, float,
                                        unsigned char* pixel)
 {
     float r = (float) sqrt(u * u + v * v);
@@ -347,7 +347,7 @@ public:
     float dummy;
 };
 
-void ShadowMaskTextureFunction::operator()(float u, float v, float w,
+void ShadowMaskTextureFunction::operator()(float u, float, float,
                                            unsigned char* pixel)
 {
     unsigned char a = u > 0.0f ? 255 : 0;
@@ -2100,13 +2100,14 @@ void Renderer::renderBodyAsParticle(Point3f position,
 // jarring, however . . . so we'll blend in the particle view of the
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
+// TODO: Remove unused parameters??
 void Renderer::renderObjectAsPoint(Point3f position,
                                    float appMag,
                                    float _faintestMag,
                                    float discSizeInPixels,
                                    Color color,
-                                   const Quatf& orientation,
-                                   float renderZ,
+                                   const Quatf& /*orientation*/,
+                                   float /*renderZ*/,
                                    bool useHaloes)
 {
     float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
@@ -2574,7 +2575,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                                          const Quatf& orientation,
                                          Vec3f semiAxes,
                                          const Vec3f& sunDirection,
-                                         Color ambientColor,
+                                         Color /*ambientColor*/,
                                          float pixSize,
                                          bool lit)
 {
@@ -4349,13 +4350,13 @@ renderEclipseShadows_Shaders(Model* model,
 
 
 static void
-renderRingShadowsVS(Model* model,
+renderRingShadowsVS(Model* /*model*/,           //TODO: Remove unused parameters??
                     const RingSystem& rings,
-                    const Vec3f& sunDir,
+                    const Vec3f& /*sunDir*/,
                     RenderInfo& ri,
                     float planetRadius,
-                    float oblateness,
-                    Mat4f& planetMat,
+                    float /*oblateness*/,
+                    Mat4f& /*planetMat*/,
                     Frustum& viewFrustum,
                     const GLContext& context)
 {
@@ -5677,16 +5678,16 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
 }
 #endif
 
-
+// TODO: Remove unused parameters??
 void Renderer::renderCometTail(const Body& body,
                                Point3f pos,
-                               float distance,
-                               float appMag,
+                               float /*distance*/,
+                               float /*appMag*/,
                                double now,
-                               Quatf orientation,
+                               Quatf /*orientation*/,
                                const vector<LightSource>& lightSources,
-                               float nearPlaneDistance,
-                               float farPlaneDistance)
+                               float /*nearPlaneDistance*/,
+                               float /*farPlaneDistance*/)
 {
     Point3f cometPoints[MaxCometTailPoints];
     Point3d pos0 = body.getOrbit()->positionAtTime(now);
