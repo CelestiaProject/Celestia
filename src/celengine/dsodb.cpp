@@ -351,8 +351,9 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 }
 
 
-bool DSODatabase::loadBinary(istream& in)
+bool DSODatabase::loadBinary(istream&)
 {
+    // TODO: define a binary dso file format
     return true;
 }
 

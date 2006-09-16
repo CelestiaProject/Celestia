@@ -25,7 +25,7 @@ bool starAbsoluteMagnitudePredicate(const Star& star, const float absMag)
 }
 
 
-bool starOrbitStraddlesNodesPredicate(const Point3f& cellCenterPos, const Star& star, const float absMag)
+bool starOrbitStraddlesNodesPredicate(const Point3f& cellCenterPos, const Star& star, const float)
 {
     //checks if this star's orbit straddles child nodes
     float orbitalRadius    = star.getOrbitalRadius();
@@ -35,7 +35,7 @@ bool starOrbitStraddlesNodesPredicate(const Point3f& cellCenterPos, const Star& 
     Point3f starPos    = star.getPosition();
 
     return  abs(starPos.x - cellCenterPos.x) < orbitalRadius    ||
-             abs(starPos.y - cellCenterPos.y) < orbitalRadius    ||
+            abs(starPos.y - cellCenterPos.y) < orbitalRadius    ||
             abs(starPos.z - cellCenterPos.z) < orbitalRadius;
 }
 

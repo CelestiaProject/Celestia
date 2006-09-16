@@ -107,7 +107,7 @@ Model* ModelInfo::load(const string& filename)
     {
         cerr << _("Error loading model '") << filename << "'\n";
     }
- 
+
     return model;
 }
 
@@ -180,9 +180,9 @@ Model* LoadCelestiaMesh(const string& filename)
     }
 
     Hash* meshDef = meshDefValue->getHash();
-    
+
     NoiseMeshParameters params;
-    
+
     params.size = Vec3f(1, 1, 1);
     params.offset = Vec3f(10, 10, 10);
     params.featureHeight = 0.0f;
@@ -229,7 +229,7 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
     if (nTexCoords == nVertices)
         parts |= VertexList::TexCoord0;
     VertexList* vl = new VertexList(parts);
-    
+
     Vec3f* faceNormals = new Vec3f[nFaces];
     Vec3f* vertexNormals = new Vec3f[nFaces * 3];
     int* faceCounts = new int[nVertices];
@@ -361,7 +361,7 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
                     M3DColor specular = material->getSpecularColor();
                     vl->setSpecularColor(Color(specular.red, specular.green, specular.blue));
                     float shininess = material->getShininess();
-                    
+
                     // Map the 3DS file's shininess from percentage (0-100) to
                     // range that OpenGL uses for the specular exponent. The
                     // current equation is just a guess at the mapping that
@@ -405,7 +405,9 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
 
 
 static Mesh*
-ConvertVertexListToMesh(VertexList* vlist, const string& texPath, uint32 material)
+ConvertVertexListToMesh(VertexList* vlist,
+                        const string& /*texPath*/,      //TODO: remove parameter??
+                        uint32 material)
 {
     Mesh::VertexAttribute attributes[8];
     uint32 nAttributes = 0;
