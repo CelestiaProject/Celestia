@@ -144,7 +144,7 @@ BigFix operator-(BigFix a, BigFix b)
 }
 
 
-BigFix operator*(BigFix a, BigFix b)
+BigFix operator*(BigFix, BigFix)
 {
     return BigFix();
 }
