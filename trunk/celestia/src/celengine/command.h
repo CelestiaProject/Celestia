@@ -35,7 +35,7 @@ class InstantaneousCommand : public Command
     virtual ~InstantaneousCommand() {};
     virtual double getDuration() const { return 0.0; };
     virtual void process(ExecutionEnvironment&) = 0;
-    void process(ExecutionEnvironment& env, double t, double dt)
+    void process(ExecutionEnvironment& env, double /*t*/, double /*dt*/)
     {
         process(env);
     };
