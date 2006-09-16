@@ -18,13 +18,12 @@
 #include <celengine/deepskyobj.h>
 
 
-
 struct Blob
 {
     Point3f        position;
-    unsigned int   colorIndex; 
+    unsigned int   colorIndex;
     float          brightness;
-};  
+};
 
 struct GalacticForm
 {
@@ -39,7 +38,7 @@ class Galaxy : public DeepSkyObject
     virtual const char* getType() const;
     virtual void setType(const std::string&);
     virtual size_t getDescription(char* buf, size_t bufLength) const;
-	virtual std::string getCustomTmpName() const;
+    virtual std::string getCustomTmpName() const;
     virtual void setCustomTmpName(const std::string&);
 
     float getDetail() const;
@@ -88,16 +87,16 @@ class Galaxy : public DeepSkyObject
         E1   =  8,
         E2   =  9,
         E3   = 10,
-        E4   = 11, 
+        E4   = 11,
         E5   = 12,
         E6   = 13,
         E7   = 14,
         Irr  = 15
     };
-        
- private:    
+
+ private:
     float detail;
-	std::string* customTmpName;
+    std::string* customTmpName;
     //    float brightness;
     GalaxyType type;
     GalacticForm* form;

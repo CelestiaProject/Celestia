@@ -34,15 +34,14 @@ const char* OpenCluster::getType() const
 }
 
 
-void OpenCluster::setType(const std::string& typeStr)
+void OpenCluster::setType(const std::string& /*typeStr*/)
 {
 }
 
 
 size_t OpenCluster::getDescription(char* buf, size_t bufLength) const
 {
-    // Should use snprintf, but it's not available on Windows
-    return sprintf(buf, _("%s"), getType());
+    return snprintf(buf, bufLength, _("%s"), getType());
 }
 
 
@@ -55,15 +54,15 @@ bool OpenCluster::load(AssociativeArray* params, const string& resPath)
 
 
 void OpenCluster::render(const GLContext&,
-                         const Vec3f& offset,
-                         const Quatf& viewerOrientation,
-                         float brightness,
-                         float pixelSize)
+                         const Vec3f&,
+                         const Quatf&,
+                         float,
+                         float)
 {
     // Nothing to do right now; open clusters are only visible as their
     // constituent stars and a label when labels are turned on.  A good idea
     // would be to add an 'sky chart' mode, in which clusters are rendered as
-    // circles.  
+    // circles.
 }
 
 

@@ -36,15 +36,14 @@ const char* Nebula::getType() const
 }
 
 
-void Nebula::setType(const string& typeStr)
+void Nebula::setType(const string& /*typeStr*/)
 {
 }
 
 
 size_t Nebula::getDescription(char* buf, size_t bufLength) const
 {
-    // Should use snprintf, but it's not available on Windows
-    return sprintf(buf, _("%s"), getType());
+    return snprintf(buf, bufLength, _("%s"), getType());
 }
 
 
@@ -68,16 +67,16 @@ bool Nebula::load(AssociativeArray* params, const string& resPath)
             GetModelManager()->getHandle(ModelInfo(model, resPath));
         setModel(modelHandle);
     }
-    
+
     return DeepSkyObject::load(params, resPath);
 }
 
 
 void Nebula::render(const GLContext&,
-                    const Vec3f& offset,
-                    const Quatf& viewerOrientation,
-                    float brightness,
-                    float pixelSize)
+                    const Vec3f&,
+                    const Quatf&,
+                    float,
+                    float)
 {
     Model* m = NULL;
     if (model != InvalidResource)
