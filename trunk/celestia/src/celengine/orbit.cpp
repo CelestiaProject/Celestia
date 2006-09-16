@@ -201,7 +201,7 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
     double meanMotion = 2.0 * PI / period;
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
     double E = eccentricAnomaly(meanAnomaly);
-    
+
     return positionAtE(E);
 }
 
@@ -219,7 +219,7 @@ double EllipticalOrbit::getBoundingRadius() const
 }
 
 
-void EllipticalOrbit::sample(double start, double t, int nSamples,
+void EllipticalOrbit::sample(double, double t, int nSamples,
                              OrbitSampleProc& proc) const
 {
     double dE = 2 * PI / (double) nSamples;
@@ -279,7 +279,7 @@ static EllipticalOrbit* StateVectorToOrbit(const Point3d& position,
     // Compute the mean anomaly
     double E = atan2(ey, ex);
     double M = E - e * sin(E);
-    
+
     // Compute the inclination
     double cosi = L * Vec3d(0, 1.0, 0);
     double i = 0.0;
@@ -327,7 +327,7 @@ MixedOrbit::MixedOrbit(Orbit* orbit, double t0, double t1, double mass) :
 {
     assert(t1 > t0);
     assert(orbit != NULL);
-    
+
     double dt = 1.0 / 1440.0; // 1 minute
     Point3d p0 = orbit->positionAtTime(t0);
     Point3d p1 = orbit->positionAtTime(t1);

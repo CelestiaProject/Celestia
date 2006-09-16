@@ -200,8 +200,8 @@ double astro::degMinSecToDecimal(int hours, int minutes, double seconds)
 
 // Compute the fraction of a sphere which is illuminated and visible
 // to a viewer.  The source of illumination is assumed to be at (0, 0, 0)
-float astro::sphereIlluminationFraction(Point3d spherePos,
-                                        Point3d viewerPos)
+float astro::sphereIlluminationFraction(Point3d,
+                                        Point3d)
 {
     return 1.0f;
 }
