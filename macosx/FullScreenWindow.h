@@ -10,4 +10,7 @@
 @interface FullScreenWindow : NSWindow
 
 - (id) initWithScreen: (NSScreen *) screen;
+- (void) fadeOutScreen;
+- (void) restoreScreen;
+
 @end

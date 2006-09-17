@@ -32,10 +32,10 @@
     return YES;
 }
 
-- (void)makeKeyAndOrderFront: (id) sender
+- (void) fadeOutScreen
 {
     CGDirectDisplayID displayID = (CGDirectDisplayID)[[[[self screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
-
+    
     // Fade to black
     CGGammaValue redMin, redMax, redGamma, greenMin, greenMax, greenGamma, blueMin, blueMax, blueGamma;
     double fadeValue;
@@ -51,8 +51,11 @@
                                       greenMin, fadeValue*greenMax, greenGamma,
                                       blueMin, fadeValue*blueMax, blueGamma);
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow: 0.05]];
-    }
+    }    
+}
 
-    [super makeKeyAndOrderFront: sender];
+- (void) restoreScreen
+{
+    CGDisplayRestoreColorSyncSettings();
 }
 @end
