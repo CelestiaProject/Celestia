@@ -17,7 +17,11 @@
     {
         NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
         NSString *shortVersion = [infoDict objectForKey: @"CFBundleShortVersionString"];
-        if (infoDict && shortVersion && [shortVersion length]>0)
+#if DEBUG
+        if (shortVersion == nil) shortVersion = @"";
+        shortVersion = [shortVersion stringByAppendingString: @" DEBUG BUILD"];
+#endif
+        if (shortVersion && [shortVersion length]>0)
             [version setStringValue: shortVersion];
     }
 }
