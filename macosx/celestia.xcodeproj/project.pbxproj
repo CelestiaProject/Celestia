@@ -235,13 +235,6 @@
 		E5D766900982B4660099DBBD /* prometheus.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7665D0982B3300099DBBD /* prometheus.cmod */; };
 		E5D766910982B4660099DBBD /* proteus.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7665F0982B3300099DBBD /* proteus.cmod */; };
 		E5D766920982B4660099DBBD /* roughsphere.cms in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766610982B3300099DBBD /* roughsphere.cms */; };
-		E5D766930982B4660099DBBD /* S0.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766620982B3300099DBBD /* S0.pts */; };
-		E5D766940982B4660099DBBD /* Sa.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766630982B3300099DBBD /* Sa.pts */; };
-		E5D766950982B4660099DBBD /* Sb.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766640982B3300099DBBD /* Sb.pts */; };
-		E5D766960982B4660099DBBD /* SBa.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766650982B3300099DBBD /* SBa.pts */; };
-		E5D766970982B4660099DBBD /* SBb.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766660982B3300099DBBD /* SBb.pts */; };
-		E5D766980982B4660099DBBD /* SBc.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766670982B3300099DBBD /* SBc.pts */; };
-		E5D766990982B4660099DBBD /* Sc.pts in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766680982B3300099DBBD /* Sc.pts */; };
 		E5D7669A0982B4660099DBBD /* skylab.3ds in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D766690982B3300099DBBD /* skylab.3ds */; };
 		E5D7669B0982B4660099DBBD /* toutatis.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7666B0982B3300099DBBD /* toutatis.cmod */; };
 		E5D7669C0982B4660099DBBD /* vesta.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D7666D0982B3310099DBBD /* vesta.cmod */; };
@@ -250,6 +243,14 @@
 		E5D767FF0982B7930099DBBD /* lores in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D767530982B71D0099DBBD /* lores */; };
 		E5D768000982B7930099DBBD /* medres in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D767540982B71D0099DBBD /* medres */; };
 		E5D956E00966520700CB02B2 /* SplashWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E5D956DF096651DF00CB02B2 /* SplashWindowController.m */; };
+		E5D969AC0ABCC7CC00F43225 /* MilkyWay.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969A40ABCC76C00F43225 /* MilkyWay.png */; };
+		E5D969AD0ABCC7CC00F43225 /* S0.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969A50ABCC76C00F43225 /* S0.png */; };
+		E5D969AE0ABCC7CC00F43225 /* Sa.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969A60ABCC76C00F43225 /* Sa.png */; };
+		E5D969AF0ABCC7CC00F43225 /* Sb.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969A70ABCC76C00F43225 /* Sb.png */; };
+		E5D969B00ABCC7CC00F43225 /* SBa.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969A80ABCC76C00F43225 /* SBa.png */; };
+		E5D969B10ABCC7CC00F43225 /* SBb.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969A90ABCC76C00F43225 /* SBb.png */; };
+		E5D969B20ABCC7CC00F43225 /* SBc.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969AA0ABCC76C00F43225 /* SBc.png */; };
+		E5D969B30ABCC7CC00F43225 /* Sc.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D969AB0ABCC76C00F43225 /* Sc.png */; };
 		E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = E5E365AB095C11B500B14224 /* SplashScreen.m */; };
 		E5E365AF095C123E00B14224 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = E5E365AE095C123E00B14224 /* splash.png */; };
 		E5F8C9690795232900D1DAF2 /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
@@ -465,16 +466,17 @@
 				E5D766900982B4660099DBBD /* prometheus.cmod in CopyFiles */,
 				E5D766910982B4660099DBBD /* proteus.cmod in CopyFiles */,
 				E5D766920982B4660099DBBD /* roughsphere.cms in CopyFiles */,
-				E5D766930982B4660099DBBD /* S0.pts in CopyFiles */,
-				E5D766940982B4660099DBBD /* Sa.pts in CopyFiles */,
-				E5D766950982B4660099DBBD /* Sb.pts in CopyFiles */,
-				E5D766960982B4660099DBBD /* SBa.pts in CopyFiles */,
-				E5D766970982B4660099DBBD /* SBb.pts in CopyFiles */,
-				E5D766980982B4660099DBBD /* SBc.pts in CopyFiles */,
-				E5D766990982B4660099DBBD /* Sc.pts in CopyFiles */,
 				E5D7669A0982B4660099DBBD /* skylab.3ds in CopyFiles */,
 				E5D7669B0982B4660099DBBD /* toutatis.cmod in CopyFiles */,
 				E5D7669C0982B4660099DBBD /* vesta.cmod in CopyFiles */,
+				E5D969AC0ABCC7CC00F43225 /* MilkyWay.png in CopyFiles */,
+				E5D969AD0ABCC7CC00F43225 /* S0.png in CopyFiles */,
+				E5D969AE0ABCC7CC00F43225 /* Sa.png in CopyFiles */,
+				E5D969AF0ABCC7CC00F43225 /* Sb.png in CopyFiles */,
+				E5D969B00ABCC7CC00F43225 /* SBa.png in CopyFiles */,
+				E5D969B10ABCC7CC00F43225 /* SBb.png in CopyFiles */,
+				E5D969B20ABCC7CC00F43225 /* SBc.png in CopyFiles */,
+				E5D969B30ABCC7CC00F43225 /* Sc.png in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -656,13 +658,6 @@
 		E5D7665D0982B3300099DBBD /* prometheus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = prometheus.cmod; sourceTree = "<group>"; };
 		E5D7665F0982B3300099DBBD /* proteus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = proteus.cmod; sourceTree = "<group>"; };
 		E5D766610982B3300099DBBD /* roughsphere.cms */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = roughsphere.cms; sourceTree = "<group>"; };
-		E5D766620982B3300099DBBD /* S0.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = S0.pts; sourceTree = "<group>"; };
-		E5D766630982B3300099DBBD /* Sa.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sa.pts; sourceTree = "<group>"; };
-		E5D766640982B3300099DBBD /* Sb.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sb.pts; sourceTree = "<group>"; };
-		E5D766650982B3300099DBBD /* SBa.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SBa.pts; sourceTree = "<group>"; };
-		E5D766660982B3300099DBBD /* SBb.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SBb.pts; sourceTree = "<group>"; };
-		E5D766670982B3300099DBBD /* SBc.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SBc.pts; sourceTree = "<group>"; };
-		E5D766680982B3300099DBBD /* Sc.pts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sc.pts; sourceTree = "<group>"; };
 		E5D766690982B3300099DBBD /* skylab.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = skylab.3ds; sourceTree = "<group>"; };
 		E5D7666B0982B3300099DBBD /* toutatis.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = toutatis.cmod; sourceTree = "<group>"; };
 		E5D7666D0982B3310099DBBD /* vesta.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = vesta.cmod; sourceTree = "<group>"; };
@@ -672,6 +667,14 @@
 		E5D767540982B71D0099DBBD /* medres */ = {isa = PBXFileReference; lastKnownFileType = folder; path = medres; sourceTree = "<group>"; };
 		E5D956DE096651DF00CB02B2 /* SplashWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashWindowController.h; sourceTree = "<group>"; };
 		E5D956DF096651DF00CB02B2 /* SplashWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashWindowController.m; sourceTree = "<group>"; };
+		E5D969A40ABCC76C00F43225 /* MilkyWay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MilkyWay.png; sourceTree = "<group>"; };
+		E5D969A50ABCC76C00F43225 /* S0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = S0.png; sourceTree = "<group>"; };
+		E5D969A60ABCC76C00F43225 /* Sa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sa.png; sourceTree = "<group>"; };
+		E5D969A70ABCC76C00F43225 /* Sb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sb.png; sourceTree = "<group>"; };
+		E5D969A80ABCC76C00F43225 /* SBa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SBa.png; sourceTree = "<group>"; };
+		E5D969A90ABCC76C00F43225 /* SBb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SBb.png; sourceTree = "<group>"; };
+		E5D969AA0ABCC76C00F43225 /* SBc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SBc.png; sourceTree = "<group>"; };
+		E5D969AB0ABCC76C00F43225 /* Sc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sc.png; sourceTree = "<group>"; };
 		E5E365AA095C11B500B14224 /* SplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashScreen.h; sourceTree = "<group>"; };
 		E5E365AB095C11B500B14224 /* SplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashScreen.m; sourceTree = "<group>"; };
 		E5E365AE095C123E00B14224 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash.png; path = ../splash.png; sourceTree = "<group>"; };
@@ -1164,6 +1167,14 @@
 		E5D766250982B3300099DBBD /* models */ = {
 			isa = PBXGroup;
 			children = (
+				E5D969A40ABCC76C00F43225 /* MilkyWay.png */,
+				E5D969A50ABCC76C00F43225 /* S0.png */,
+				E5D969A60ABCC76C00F43225 /* Sa.png */,
+				E5D969A70ABCC76C00F43225 /* Sb.png */,
+				E5D969A80ABCC76C00F43225 /* SBa.png */,
+				E5D969A90ABCC76C00F43225 /* SBb.png */,
+				E5D969AA0ABCC76C00F43225 /* SBc.png */,
+				E5D969AB0ABCC76C00F43225 /* Sc.png */,
 				E5D766270982B3300099DBBD /* amalthea.cmod */,
 				E5D766280982B3300099DBBD /* apollo.3ds */,
 				E5D766290982B3300099DBBD /* asteroid.cms */,
@@ -1199,13 +1210,6 @@
 				E5D7665D0982B3300099DBBD /* prometheus.cmod */,
 				E5D7665F0982B3300099DBBD /* proteus.cmod */,
 				E5D766610982B3300099DBBD /* roughsphere.cms */,
-				E5D766620982B3300099DBBD /* S0.pts */,
-				E5D766630982B3300099DBBD /* Sa.pts */,
-				E5D766640982B3300099DBBD /* Sb.pts */,
-				E5D766650982B3300099DBBD /* SBa.pts */,
-				E5D766660982B3300099DBBD /* SBb.pts */,
-				E5D766670982B3300099DBBD /* SBc.pts */,
-				E5D766680982B3300099DBBD /* Sc.pts */,
 				E5D766690982B3300099DBBD /* skylab.3ds */,
 				E5D7666B0982B3300099DBBD /* toutatis.cmod */,
 				E5D7666D0982B3310099DBBD /* vesta.cmod */,
