@@ -336,6 +336,16 @@ NSString* fatalErrorMessage;
     }
 }
 
+- (void)applicationDidHide:(NSNotification *)aNotification
+{
+    ready = NO;
+}
+
+- (void)applicationWillUnhide:(NSNotification *)aNotification
+{
+    ready = YES;
+}
+
 -(BOOL)applicationShouldTerminate:(id)sender
 {
    if (  NSRunAlertPanel(NSLocalizedString(@"Quit Celestia?",@""),
