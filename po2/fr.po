@@ -12,13 +12,13 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: 2006-02-03 15:38+0100\n"
+"PO-Revision-Date: 2006-09-17 15:30+0200\n"
 "Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: data/constellations.cpp:1
 msgid "Andromeda"
@@ -326,7 +326,7 @@ msgstr "La tête du Serpent"
 
 #: data/constellations.cpp:77
 msgid "Serpens Cauda"
-msgstr "Le queue du Serpent"
+msgstr "La queue du Serpent"
 
 #: data/constellations.cpp:78
 msgid "Sextans"
@@ -375,3 +375,4 @@ msgstr "Le Poisson volant"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Le Renard"
+
