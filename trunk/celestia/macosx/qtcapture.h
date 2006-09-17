@@ -29,6 +29,10 @@ class QTCapture : public MovieCapture
     float getFrameRate() const;
     int getFrameCount() const;
 
+    void setAspectRatio(int aspectNumerator, int aspectDenominator);
+    void setQuality(float);
+    void recordingStatus(bool started);
+
  private:
     void cleanup();
 

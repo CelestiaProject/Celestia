@@ -103,3 +103,15 @@ int QTCapture::getFrameCount() const
 {
     return frameCounter;
 }
+
+void QTCapture::setAspectRatio(int aspectNumerator, int aspectDenominator)
+{
+}
+
+void QTCapture::setQuality(float)
+{
+}
+
+void QTCapture::recordingStatus(bool started)
+{
+}
