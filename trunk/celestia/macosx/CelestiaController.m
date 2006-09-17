@@ -356,7 +356,7 @@ NSString* fatalErrorMessage;
    {
        return NO;
    }
-    
+
     if (timer != nil) {
         [timer invalidate];
         [timer release];
@@ -548,6 +548,7 @@ NSString* fatalErrorMessage;
     [fullScreenView setMenu: [glView menu]];    // context menu
 
     FullScreenWindow *fullScreenWindow = [[FullScreenWindow alloc] initWithScreen: screen];
+    [fullScreenWindow fadeOutScreen];
 
     [fullScreenWindow setBackgroundColor: [NSColor blackColor]];
     [fullScreenWindow setReleasedWhenClosed: YES];
@@ -574,8 +575,8 @@ NSString* fatalErrorMessage;
     [glView update];
     [glView display];
 
-    CGDisplayRestoreColorSyncSettings();
     [fullScreenWindow makeMainWindow];
+    [fullScreenWindow restoreScreen];
     isFullScreen = YES;
 }
 
