@@ -226,7 +226,7 @@ Point3d SampledOrbit::computePosition(double jd) const
 }
 
 
-void SampledOrbit::sample(double start, double t, int nSamples,
+void SampledOrbit::sample(double start, double t, int,
                           OrbitSampleProc& proc) const
 {
     double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
