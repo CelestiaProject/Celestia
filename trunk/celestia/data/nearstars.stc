@@ -2,7 +2,7 @@
 # to Celestia's stars.dat.
 
 # Data are mainly derived from the RECONS survey tabulation at
-# http://joy.chara.gsu.edu/RECONS/TOP100.htm. In particular, the distances
+# http://www.chara.gsu.edu/RECONS/TOP100.htm. In particular, the distances
 # given are derived from RECONS's weighted average parallaxes, rather than
 # pure Hipparcos data.
 
@@ -17,7 +17,7 @@
 # For a few orbits the nature of the node is known - these are
 # marked with the phrase "fully specified orientation".
 # Barycenters positions are mainly based on mass estimates from RECONS:
-# the figures used are added as comments belows.
+# the figures used are added as comments below.
 
 0 "Sol:Sun"
 {
