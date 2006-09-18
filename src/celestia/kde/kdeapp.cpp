@@ -254,7 +254,7 @@ QString KdeApp::currentIcon() const {
     return iconName;
 }
 
-void KdeWatcher::notifyChange(CelestiaCore * core, int property)
+void KdeWatcher::notifyChange(CelestiaCore*, int property)
 {
     if ((property & (CelestiaCore::RenderFlagsChanged|
                      CelestiaCore::LabelFlagsChanged|
