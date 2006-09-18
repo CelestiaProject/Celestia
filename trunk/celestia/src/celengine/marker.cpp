@@ -136,5 +136,61 @@ void Marker::render() const
         glVertex3f(  -s, -s, 0.0f);
         glEnd();
         break;
+
+    case RightArrow:
+        glBegin(GL_POLYGON);
+        glVertex3f(-3*s, float(s/3), 0.0f);
+        glVertex3f(-3*s, float(-s/3), 0.0f);
+        glVertex3f(-2*s, float(-s/4), 0.0f);
+        glVertex3f(-2*s, float(s/4), 0.0f);
+        glEnd();
+        glBegin(GL_POLYGON);
+        glVertex3f(-2*s, float(2*s/3), 0.0f);
+        glVertex3f(-2*s, float(-2*s/3), 0.0f);
+        glVertex3f(-s, 0.0f, 0.0f);
+        glEnd();
+        break;
+       
+    case LeftArrow:
+        glBegin(GL_POLYGON);
+        glVertex3f(3*s, float(-s/3), 0.0f);
+        glVertex3f(3*s, float(s/3), 0.0f);
+        glVertex3f(2*s, float(s/4), 0.0f);
+        glVertex3f(2*s, float(-s/4), 0.0f);
+        glEnd();
+        glBegin(GL_POLYGON);
+        glVertex3f(2*s, float(-2*s/3), 0.0f);
+        glVertex3f(2*s, float(2*s/3), 0.0f);
+        glVertex3f(s, 0.0f, 0.0f);
+        glEnd();
+        break;
+
+    case UpArrow:
+        glBegin(GL_POLYGON);
+        glVertex3f(float(-s/3), -3*s, 0.0f);
+        glVertex3f(float(s/3), -3*s, 0.0f);
+        glVertex3f(float(s/4), -2*s, 0.0f);
+        glVertex3f(float(-s/4), -2*s, 0.0f);
+        glEnd();
+        glBegin(GL_POLYGON);
+        glVertex3f(float(-2*s/3), -2*s, 0.0f);
+        glVertex3f(float(2*s/3), -2*s, 0.0f);
+        glVertex3f( 0.0f, -s, 0.0f);
+        glEnd();
+        break;
+
+    case DownArrow:
+        glBegin(GL_POLYGON);
+        glVertex3f(float(s/3), 3*s, 0.0f);
+        glVertex3f(float(-s/3), 3*s, 0.0f);
+        glVertex3f(float(-s/4), 2*s, 0.0f);
+        glVertex3f(float(s/4), 2*s, 0.0f);
+        glEnd();
+        glBegin(GL_POLYGON);
+        glVertex3f(float(2*s/3), 2*s, 0.0f);
+        glVertex3f(float(-2*s/3), 2*s, 0.0f);
+        glVertex3f( 0.0f, s, 0.0f);
+        glEnd();
+        break;
     }
 }

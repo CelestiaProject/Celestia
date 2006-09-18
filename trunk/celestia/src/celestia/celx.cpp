@@ -1102,6 +1102,14 @@ static Marker::Symbol parseMarkerSymbol(const string& name)
         return Marker::Plus;
     else if (compareIgnoringCase(name, "x") == 0)
         return Marker::X;
+    else if (compareIgnoringCase(name, "leftarrow") == 0)
+        return Marker::LeftArrow;
+    else if (compareIgnoringCase(name, "rightarrow") == 0)
+        return Marker::RightArrow;
+    else if (compareIgnoringCase(name, "uparrow") == 0)
+        return Marker::UpArrow;
+    else if (compareIgnoringCase(name, "downarrow") == 0)
+        return Marker::DownArrow;
     else
         return Marker::Diamond;
 }
