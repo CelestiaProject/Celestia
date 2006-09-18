@@ -52,7 +52,7 @@ public:
 
     void write(ostream&);
     void analyze();
-  
+
     uint32 HIPCatalogNumber;
     uint32 HDCatalogNumber;
     float ascension;
@@ -310,7 +310,7 @@ StellarClass ParseStellarClass(char *starType)
     case 'K':
         specClass = StellarClass::Spectral_K;
         break;
-    case 'M':      
+    case 'M':
         specClass = StellarClass::Spectral_M;
         break;
     case 'R':
@@ -414,7 +414,7 @@ HipparcosStar TheSun()
 }
 
 
-StellarClass guessSpectralType(float colorIndex, float absMag)
+StellarClass guessSpectralType(float colorIndex, float /*absMag*/)
 {
     StellarClass::SpectralClass specClass = StellarClass::Spectral_Unknown;
     float subclass = 0.0f;
@@ -478,7 +478,7 @@ bool CheckStarRecord(istream& in)
 
     in.read(buf, TycStarRecordLength);
     lineno++;
-    
+
     if (sscanf(buf + 210, "%d", &star.HIPCatalogNumber) != 1)
     {
         // Not in Hipparcos, skip it.
@@ -518,7 +518,7 @@ bool CheckStarRecord(istream& in)
     {
         cout << "Huge BTmag error for HIP " << star.HIPCatalogNumber << " from Line " << lineno << " ." << endl;
     }
-    
+
     if (sscanf(buf + 41, "%f", &star.appMag) != 1)
     {
         if (verbose>0)
@@ -541,7 +541,7 @@ bool CheckStarRecord(istream& in)
         else
             star.parallaxError = (int8) (parallaxError / star.parallax * 200);
     }
-    
+
     if (sscanf(buf + 79, "%f", &star.parallax) != 1)
     {
         if (verbose>0)
@@ -616,7 +616,7 @@ bool CheckStarRecord(istream& in)
         else
         {
             star.ascension = hh + (float) mm / 60.0f + (float) seconds / 3600.0f;
-        
+
             char decSign;
             int deg;
             if (sscanf(buf + 29, "%c%d %d %f", &decSign, &deg, &mm, &seconds) != 4)
@@ -680,7 +680,7 @@ bool ReadStarRecord(istream& in)
     char buf[HipStarRecordLength];
 
     in.read(buf, HipStarRecordLength);
-    
+
     if (sscanf(buf + 8, "%d", &star.HIPCatalogNumber) != 1)
     {
         cout << "Error reading catalog number.\n";
@@ -730,7 +730,7 @@ bool ReadStarRecord(istream& in)
             return false;
         }
         star.ascension = hh + (float) mm / 60.0f + (float) seconds / 3600.0f;
-    
+
         char decSign;
         int deg;
         if (sscanf(buf + 29, "%c%d %d %f", &decSign, &deg, &mm, &seconds) != 4)
@@ -784,7 +784,7 @@ bool ReadStarRecord(istream& in)
         else
             star.parallaxError = (int8) (parallaxError / star.parallax * 200);
     }
-    
+
     if (sscanf(buf + 105, "%f", &star.e_RA) != 1)
     {
             /* no standard Error givenfor Right Ascension , give it a large
@@ -805,7 +805,7 @@ bool ReadStarRecord(istream& in)
     {
         cout << "Huge DE error for HIP " << star.HIPCatalogNumber << " from Line " << lineno << " ." << endl;
     }
-    
+
     if (sscanf(buf + 224, "%f", &star.e_Mag) != 1)
         // No error in HIPPARCOS for VMag, use error on BTmag instead.
     {
@@ -816,7 +816,7 @@ bool ReadStarRecord(istream& in)
     {
         cout << "Huge BTmag error for HIP " << star.HIPCatalogNumber << " from Line " << lineno << " ." << endl;
     }
-    
+
     stars.insert(stars.end(), star);
 
     return true;
@@ -1004,7 +1004,7 @@ void CreateCompanionList()
                 HipparcosStar star;
 
                 star.HDCatalogNumber = NullCatalogNumber;
-                star.HIPCatalogNumber = iter->star->HIPCatalogNumber | 
+                star.HIPCatalogNumber = iter->star->HIPCatalogNumber |
                     (componentNumber << 25);
 
                 star.ascension = iter->ascension;
@@ -1175,7 +1175,7 @@ int main(int argc, char* argv[])
         random_shuffle(starIndex.begin(), starIndex.end());
         sort(starIndex.begin(), starIndex.end(), pred);
     }
-        
+
     // Read component records
     {
         ifstream componentDatabase(ComponentDatabaseFile.c_str(),
@@ -1197,7 +1197,7 @@ int main(int argc, char* argv[])
     if (verbose>=0)
         cout << "Read " << components.size() << " components.\n";
 
-    {    
+    {
         int aComp = 0, bComp = 0, cComp = 0, dComp = 0, eComp = 0, otherComp = 0;
         int bvComp = 0;
         for (unsigned int i = 0; i < components.size(); i++)
@@ -1220,7 +1220,7 @@ int main(int argc, char* argv[])
             if (components[i].hasBV && components[i].componentID != 'A')
                 bvComp++;
         }
-        
+
         if (verbose>=0)
         {
             cout << "A:" << aComp << "  B:" << bComp << "  C:" << cComp << "  D:" << dComp << "  E:" << eComp << '\n';
@@ -1231,7 +1231,7 @@ int main(int argc, char* argv[])
     if (verbose>=0)
         cout << "Building catalog of multiple star systems.\n";
     BuildMultistarSystemCatalog();
-    
+
     int nMultipleSystems = starSystems.size();
     if (verbose>=0)
         cout << "Stars in multiple star systems: " << nMultipleSystems << '\n';
@@ -1296,7 +1296,7 @@ int main(int argc, char* argv[])
 
 #if 0
     char* hdOutputFile = "hdxref.dat";
-    
+
     cout << "Writing out HD cross reference to " << hdOutputFile << '\n';
     ofstream hdout(hdOutputFile, ios::out | ios::binary);
     if (!out.good())
@@ -1316,7 +1316,7 @@ int main(int argc, char* argv[])
         binwrite(hdout, nHD);
 
         cout << nHD << " stars have HD numbers.\n";
-        
+
         for (iter = stars.begin(); iter != stars.end(); iter++)
         {
             if (iter->HDCatalogNumber != NullCatalogNumber)
@@ -1324,7 +1324,7 @@ int main(int argc, char* argv[])
                 binwrite(hdout, iter->HDCatalogNumber);
                 binwrite(hdout, iter->HIPCatalogNumber);
             }
-        }        
+        }
     }
 #endif
 
