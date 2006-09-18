@@ -1146,7 +1146,7 @@ void CelestiaCore::charEntered(char c, int modifiers)
     charEntered(C, modifiers);
 }
 
-void CelestiaCore::charEntered(const char *c_p, int modifiers)
+void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 {
     Observer* observer = sim->getActiveObserver();
 
@@ -2841,7 +2841,7 @@ static void displayPlanetInfo(Overlay& overlay,
                               Body& body,
                               double t,
                               double distance,
-                              Vec3d viewVec)
+                              Vec3d /*viewVec*/)
 {
     double kmDistance = astro::lightYearsToKilometers(distance);
 

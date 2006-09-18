@@ -69,7 +69,7 @@ VideoCaptureDlg::VideoCaptureDlg(QWidget* p, const QString &dir):
 }
 
 VideoCaptureDlg::~VideoCaptureDlg()
-{ 
+{
     statusBar->removeItem(0);
     statusBar->removeItem(1);
     statusBar->removeItem(2);
@@ -110,23 +110,23 @@ void VideoCaptureDlg::newAspectRatioSlot(int idx) {
         imageSize->insertItem("QCIF: 176 x 144");
         widths.push_back(176);
         heights.push_back(144);
-        
+
         imageSize->insertItem("CIF: 352 x 288");
         widths.push_back(352);
         heights.push_back(288);
-        
+
         imageSize->insertItem("4CIF: 704 x 576");
         widths.push_back(704);
         heights.push_back(576);
-        
+
         imageSize->insertItem("9CIF: 1056 x 864");
         widths.push_back(1056);
         heights.push_back(864);
-        
+
         imageSize->insertItem("16CIF: 1408 x 1152");
         widths.push_back(1408);
         heights.push_back(1152);
-        
+
         break;
     case 2: // 4:3
         d = currentWidth * 3 / 4;
@@ -287,7 +287,7 @@ void VideoCaptureDlg::filenameSlot(const QString& name) {
     statusBar->changeItem(name, 4);
 }
 
-void VideoCaptureDlg::newMainWindowSizeSlot(int w, int h) {
+void VideoCaptureDlg::newMainWindowSizeSlot(int, int) {
     if (accepted) return;
 
     currentWidth = parent->getGlWidth();
