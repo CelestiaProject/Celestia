@@ -406,7 +406,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                       const LightingState& ls,
                       Atmosphere* atmosphere,
                       float radius,
-                      const Mat4f& planetMat,
+                      const Mat4f& /*planetMat*/,
                       const Frustum& frustum,
                       const GLContext& context)
 {
