@@ -63,9 +63,18 @@
 {
 	RA 286.80848
 	Dec 49.31641
-	Distance 820      # From spectral class and visual magnitude
+	Distance 750
 	SpectralType "G0V"
 	AppMag 11.41
+}
+
+"HAT-P-1:SAO 72884"
+{
+	RA 344.445104
+	Dec 38.674953
+	Distance 453
+	SpectralType "G0V"
+	AppMag 10.4
 }
 
 Barycenter "TAU Boo:4 Boo"
