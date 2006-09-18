@@ -1,4 +1,4 @@
-# Catalog of 205 known extrasolar planets.
+# Catalog of 206 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1302,6 +1302,48 @@ AltSurface "limit of knowledge" "HD 102195/b"
 }
 
 AltSurface "limit of knowledge" "HD 217014/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HAT-P-1"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.9 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.36 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       170     # M.sin(i) = 0.53 jupiters
+	Radius     95200
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT--P-1"
+
+	EllipticalOrbit {
+		Period          0.0122
+		SemiMajorAxis   0.0551
+		Eccentricity    0.09
+		Inclination     70.4
+		AscendingNode   340.1
+		ArgOfPericenter 217
+		MeanAnomaly     251
+	}
+
+	Obliquity             70 # guess, to match inclination
+	EquatorAscendingNode  340 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HAT-P-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
