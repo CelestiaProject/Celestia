@@ -775,7 +775,7 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int nSamples)
 
 
 string
-ScatteringConstantDeclarations(const ShaderProperties& props)
+ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
 {
     string source;
 
