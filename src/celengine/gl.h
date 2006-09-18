@@ -4,7 +4,7 @@
 // windows.h before including the GL headers, even though GL is a
 // cross-platform API.  So, we encapsulate the resulting #ifdef nonsense
 // in this file.
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -30,7 +30,9 @@
 #endif
 
 #ifndef MACOSX
+#ifndef GL_ARB_multitexture
 #define GL_ARB_multitexture
+#endif
 #include <GL/gl.h>
 #undef GL_ARB_multitexture
 #include <GL/glu.h>
