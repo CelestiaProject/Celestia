@@ -36,11 +36,15 @@ class Marker
 
     enum Symbol
     {
-        Diamond  = 0,
-        Triangle = 1,
-        Square   = 2,
-        Plus     = 3,
-        X        = 4
+        Diamond    = 0,
+        Triangle   = 1,
+        Square     = 2,
+        Plus       = 3,
+        X          = 4,
+        LeftArrow  = 5,
+        RightArrow = 6,
+        UpArrow    = 7,
+        DownArrow  = 8,
     };
 
     Symbol getSymbol() const;

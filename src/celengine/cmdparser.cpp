@@ -591,6 +591,14 @@ Command* CommandParser::parseCommand()
                 symbol = Marker::Plus;
             else if (compareIgnoringCase(symbolString, "x") == 0)
                 symbol = Marker::X;
+            else if (compareIgnoringCase(symbolString, "leftarrow") == 0)
+                symbol = Marker::LeftArrow;
+            else if (compareIgnoringCase(symbolString, "rightarrow") == 0)
+                symbol = Marker::RightArrow;
+            else if (compareIgnoringCase(symbolString, "uparrow") == 0)
+                symbol = Marker::UpArrow;
+            else if (compareIgnoringCase(symbolString, "downarrow") == 0)
+                symbol = Marker::DownArrow;
         }
         
         cmd = new CommandMark(object, color, (float) size, symbol);
