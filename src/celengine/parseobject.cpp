@@ -119,12 +119,12 @@ CreateEllipticalOrbit(Hash* orbitData,
 }
 
 
+#ifdef USE_SPICE
 static SpiceOrbit*
 CreateSpiceOrbit(Hash* orbitData,
                  const string& path,
                  bool usePlanetUnits)
 {
-#ifdef USE_SPICE
     string targetBodyName;
     string originName;
     string kernelFileName;
@@ -180,10 +180,8 @@ CreateSpiceOrbit(Hash* orbitData,
     }
 
     return orbit;
-#else
-    return NULL;
-#endif    
 }
+#endif
 
 
 Orbit*
@@ -206,6 +204,7 @@ CreateOrbit(PlanetarySystem* system,
                 customOrbitName.c_str());
     }
 
+#ifdef USE_SPICE
     Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit");
     if (spiceOrbitDataValue != NULL)
     {
@@ -225,6 +224,7 @@ CreateOrbit(PlanetarySystem* system,
             DPRINTF(0, "Could not load SPICE orbit\n");
         }
     }
+#endif
 
     string sampOrbitFile;
     if (planetData->getString("SampledOrbit", sampOrbitFile))
