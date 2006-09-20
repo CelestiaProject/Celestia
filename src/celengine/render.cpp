@@ -978,21 +978,6 @@ static void disableSmoothLines()
 }
 
 
-class OrbitRenderer : public OrbitSampleProc
-{
-public:
-    OrbitRenderer() {};
-
-    void sample(double, const Point3d& p)
-    {
-        glVertex3f((float) p.x, (float) p.y, (float) p.z);
-    };
-
-private:
-    int dummy;
-};
-
-
 class OrbitSampler : public OrbitSampleProc
 {
 public:
@@ -1004,7 +989,7 @@ public:
         Renderer::OrbitSample samp;
         samp.pos = Point3f((float) p.x, (float) p.y, (float) p.z);
         samp.t = t;
-        samples->insert(samples->end(), samp);
+        samples->push_back(samp);
     };
 };
 
@@ -1617,25 +1602,35 @@ void Renderer::render(const Observer& observer,
             float radius = 1.0f;
             float cullRadius = 1.0f;
             float cloudHeight = 0.0f;
+            
             if (iter->body != NULL)
             {
-                radius = iter->body->getBoundingRadius();
-                if (iter->body->getRings() != NULL)
+                if (iter->isCometTail)
                 {
-                    radius = iter->body->getRings()->outerRadius;
+                    radius = iter->radius;
+                    cullRadius = radius;
                     convex = false;
                 }
-
-                if (iter->body->getModel() != InvalidResource)
-                    convex = false;
-
-                cullRadius = radius;
-                if (iter->body->getAtmosphere() != NULL)
+                else
                 {
-                    cullRadius += iter->body->getAtmosphere()->height;
-                    //cloudHeight = iter->body->getAtmosphere()->cloudHeight;
-                    cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
-                                      iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
+                    radius = iter->body->getBoundingRadius();
+                    if (iter->body->getRings() != NULL)
+                    {
+                        radius = iter->body->getRings()->outerRadius;
+                        convex = false;
+                    }
+
+                    if (iter->body->getModel() != InvalidResource)
+                        convex = false;
+
+                    cullRadius = radius;
+                    if (iter->body->getAtmosphere() != NULL)
+                    {
+                        cullRadius += iter->body->getAtmosphere()->height;
+                        //cloudHeight = iter->body->getAtmosphere()->cloudHeight;
+                        cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
+                                          iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
+                    }
                 }
             }
             else if (iter->star != NULL)
@@ -5972,7 +5967,6 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.isCometTail = true;
                 rle.isOpaque = false;
                 rle.position = Point3f(pos.x, pos.y, pos.z);
-                rle.radius = radius;
                 rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
                 rle.distance = (float) distanceFromObserver;
                 rle.centerZ = pos * viewMatZ;
@@ -6069,7 +6063,7 @@ void Renderer::buildRenderLists(const Star& sun,
             }
         }
 
-        if (appMag < faintestPlanetMag)
+        if (appMag < faintestPlanetMag || (body->getClassification() & Body::Invisible) != 0)
         {
             const PlanetarySystem* satellites = body->getSatellites();
             if (satellites != NULL)
