@@ -10,6 +10,10 @@ EXTRA_DIST = \
 
 INCLUDES = -I..
 
+if ENABLE_SPICE
+SPICESOURCES = spiceinterface.cpp spiceorbit.cpp
+endif
+
 libcelengine_a_SOURCES = \
 	asterism.cpp \
 	astro.cpp \
@@ -77,5 +81,6 @@ libcelengine_a_SOURCES = \
 	vertexlist.cpp \
 	vertexprog.cpp \
 	virtualtex.cpp \
-        vsop87.cpp
+        vsop87.cpp\
+	$(SPICESOURCES)
 

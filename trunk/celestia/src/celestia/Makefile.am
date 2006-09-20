@@ -70,7 +70,8 @@ celestia_LDADD = \
 	../celtxf/libceltxf.a \
 	../cel3ds/libcel3ds.a \
 	../celmath/libcelmath.a \
-	../celutil/libcelutil.a
+	../celutil/libcelutil.a \
+	$(SPICELIB)
 
 noinst_HEADERS = $(wildcard *.h)
 noinst_DATA = ../../celestia
