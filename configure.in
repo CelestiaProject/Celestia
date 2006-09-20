@@ -171,6 +171,19 @@ AC_ARG_WITH([glut-inc],
             CELESTIAFLAGS="$CELESTIAFLAGS -I$withval")
 
 
+dnl
+dnl SPICE lib
+dnl
+
+AC_ARG_WITH([cspice-dir],
+            AC_HELP_STRING([--with-cspice-dir=DIR], [Specify SPICE directory location]),
+            CELESTIAFLAGS="$CELESTIAFLAGS -I$withval/include -DUSE_SPICE"; 
+            SPICELIB="$withval/lib/cspice.a")
+
+AC_SUBST(SPICELIB)
+AM_CONDITIONAL(ENABLE_SPICE, test "$SPICELIB" != "")
+
+
 LIBS="$LIBS -lm"
 
 dnl Use Gtk if requested
