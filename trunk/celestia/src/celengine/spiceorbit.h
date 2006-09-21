@@ -27,17 +27,17 @@ class SpiceOrbit : public CachingOrbit
 
     bool init(const std::string& path);
 
-    double getPeriod() const
-    {
-        return period;
-    }
+    virtual bool isPeriodic() const;
+    virtual double getPeriod() const;
 
-    double getBoundingRadius() const
+    virtual double getBoundingRadius() const
     {
         return boundingRadius;
     }
 
     Point3d computePosition(double jd) const;
+
+    virtual void getValidRange(double& begin, double& end) const;
 
  private:
     const std::string kernelFile;
@@ -46,6 +46,13 @@ class SpiceOrbit : public CachingOrbit
     double period;
     double boundingRadius;
     bool spiceErr;
+
+    // NAIF ID codes for the target body and origin body
+    int targetID;
+    int originID;
+
+    double validIntervalBegin;
+    double validIntervalEnd;
 };
 
 #endif // _CELENGINE_SPICEORBIT_H_
