@@ -10,12 +10,15 @@
 // of the License, or (at your option) any later version.
 
 #include <iostream>
+#include <cstdio>
 #include "SpiceUsr.h"
 #include "astro.h"
 #include "spiceorbit.h"
 
 using namespace std;
 
+
+static bool getNAIFID(const string& name, int* id);
 
 SpiceOrbit::SpiceOrbit(const std::string& _kernelFile,
                        const std::string& _targetBodyName,
@@ -38,10 +41,29 @@ SpiceOrbit::~SpiceOrbit()
 
 
 bool
+SpiceOrbit::isPeriodic() const
+{
+    return period != 0.0;
+};
+
+
+double
+SpiceOrbit::getPeriod() const
+{
+    if (isPeriodic())
+    {
+        return period;
+    }
+    else
+    {
+        return validIntervalEnd - validIntervalBegin;
+    }
+}
+
+
+bool
 SpiceOrbit::init(const std::string& path)
 {
-    // TODO: convert body name strings to id codes
-
     string filepath = path + string("/data/") + kernelFile;
     furnsh_c(filepath.c_str());
 
@@ -59,8 +81,56 @@ SpiceOrbit::init(const std::string& path)
         reset_c();
     }
 
-    // TODO: get coverage window
+    // Get the ID codes for the target
+    if (!getNAIFID(targetBodyName, &targetID))
+    {
+        clog << "Couldn't find SPICE ID for " << targetBodyName << "\n";
+        return false;
+    }
 
+    if (!getNAIFID(originName, &originID))
+    {
+        clog << "Couldn't find SPICE ID for " << originName << "\n";
+        return false;
+    }
+
+    // Get coverage window
+    const int MaxIntervals = 10;
+
+    SPICEDOUBLE_CELL ( cover, MaxIntervals * 2 );
+    spkcov_c(filepath.c_str(), targetID, &cover);
+    
+    // First check the coverage window of the target. Only consider the
+    // first interval in the window.
+    // TODO: consider supporting noncontiguous coverage
+    SpiceInt nIntervals = card_c(&cover) / 2;
+    SpiceDouble beginning = 0.0;
+    SpiceDouble ending = 0.0;
+    if (nIntervals > 0)
+    {
+        wnfetd_c(&cover, 0, &beginning, &ending);
+        validIntervalBegin = astro::secsToDays(beginning + 0.001) + astro::J2000;
+        validIntervalEnd = astro::secsToDays(ending - 0.001) + astro::J2000;
+    }
+    else
+    {
+        // No valid coverage window for target; use the coverage of the
+        // origin.
+        spkcov_c(filepath.c_str(), originID, &cover);
+        nIntervals = card_c(&cover) / 2;
+        if (nIntervals > 0)
+        {
+            wnfetd_c(&cover, 0, &beginning, &ending);
+            validIntervalBegin = astro::secsToDays(beginning + 0.001) + astro::J2000;
+            validIntervalEnd = astro::secsToDays(ending - 0.001) + astro::J2000;
+        }
+        else
+        {
+            // No coverage window defined
+            validIntervalBegin = validIntervalEnd = astro::J2000;
+        }
+    }
+    
     return !spiceErr;
 }
 
@@ -68,6 +138,11 @@ SpiceOrbit::init(const std::string& path)
 Point3d
 SpiceOrbit::computePosition(double jd) const
 {
+    if (jd < validIntervalBegin)
+        jd = validIntervalBegin;
+    else if (jd > validIntervalEnd)
+        jd = validIntervalEnd;
+
     if (spiceErr)
     {
         return Point3d(0.0, 0.0, 0.0);
@@ -108,3 +183,37 @@ SpiceOrbit::computePosition(double jd) const
 }
 
 
+void SpiceOrbit::getValidRange(double& begin, double& end) const
+{
+    begin = validIntervalBegin;
+    end = validIntervalEnd;
+}
+
+
+bool getNAIFID(const string& name, int* id)
+{
+    SpiceInt spiceID = 0;
+    SpiceBoolean found = SPICEFALSE;
+    
+    // Don't call bodn2c on an empty string because SPICE generates
+    // an error if we do.
+    if (!name.empty())
+    {
+        bodn2c_c(name.c_str(), &spiceID, &found);
+        if (found)
+        {
+            *id = (int) spiceID;
+        }
+        else
+        {
+            // Is it a numeric ID?
+            if (sscanf(name.c_str(), " %d", &spiceID) == 1)
+            {
+                *id = (int) spiceID;
+                found = SPICETRUE;
+            }
+        }
+    }
+
+    return found == SPICETRUE;
+}

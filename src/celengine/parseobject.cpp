@@ -169,8 +169,8 @@ CreateSpiceOrbit(Hash* orbitData,
     SpiceOrbit* orbit = new SpiceOrbit(kernelFileName,
                                        targetBodyName,
                                        originName,
-                                       boundingRadius,
-                                       period);
+                                       period,
+                                       boundingRadius);
     if (!orbit->init(path))
     {
         // Error using SPICE library; destroy the orbit; hopefully a
