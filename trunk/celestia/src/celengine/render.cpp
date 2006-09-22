@@ -1166,20 +1166,6 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
 }
 
 
-void transformOrbits(const PlanetarySystem *system)
-{
-    if (system->getPrimaryBody())
-    {
-        const Body *body = system->getPrimaryBody();
-        transformOrbits(body->getSystem());
-        Quatd rotation =
-            Quatd::yrotation(body->getRotationElements().ascendingNode) *
-            Quatd::xrotation(body->getRotationElements().obliquity);
-        glRotate(rotation);
-    }
-}
-
-
 // Convert a position in the universal coordinate system to astrocentric
 // coordinates, taking into account possible orbital motion of the star.
 static Point3d astrocentricPosition(const UniversalCoord& pos,
@@ -1627,7 +1613,6 @@ void Renderer::render(const Observer& observer,
                     if (iter->body->getAtmosphere() != NULL)
                     {
                         cullRadius += iter->body->getAtmosphere()->height;
-                        //cloudHeight = iter->body->getAtmosphere()->cloudHeight;
                         cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
                                           iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
                     }
@@ -1672,10 +1657,7 @@ void Renderer::render(const Observer& observer,
 
                     if (d > eradius)
                     {
-                        // Multiply by a factor to eliminate overaggressive
-                        // clipping due to limited floating point precision
-                        iter->farZ = (float) (sqrt(square(d) -
-                                                   square(eradius)) * -1.1);
+                        iter->farZ = iter->centerZ - iter->radius;
                     }
                     else
                     {
@@ -1740,14 +1722,14 @@ void Renderer::render(const Observer& observer,
         // all the renderable items that passed the culling test.
         for (i = nEntries - 1; i >= 0; i--)
         {
-            // Only consider renderables that will occupy more than one pixel. The
+            // Only consider renderables that will occupy more than one pixel.
             if (renderList[i].discSizeInPixels > 1)
             {
                 if (nPartitions == 0 || renderList[i].farZ >= depthPartitions[nPartitions - 1].nearZ)
                 {
                     // This object spans a depth region that's disjoint with the current span, so
-                    // create a new depth partition for it, and another partition to fill the gap
-                    // between the last partition.
+                    // create a new depth interval for it, and another partition to fill the gap
+                    // between the last interval.
                     DepthBufferPartition partition;
                     partition.index = nPartitions;
                     partition.nearZ = renderList[i].farZ;
@@ -1859,7 +1841,7 @@ void Renderer::render(const Observer& observer,
                     }
                     else
                     {
-                        //clog << "point: " << renderList[i].body->getName() << "\n";
+                        clog << "point: " << renderList[i].body->getName() << "\n";
                     }
                 }
 #endif
