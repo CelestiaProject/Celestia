@@ -85,52 +85,107 @@ SpiceOrbit::init(const std::string& path)
     if (!getNAIFID(targetBodyName, &targetID))
     {
         clog << "Couldn't find SPICE ID for " << targetBodyName << "\n";
+        spiceErr = true;
         return false;
     }
 
     if (!getNAIFID(originName, &originID))
     {
         clog << "Couldn't find SPICE ID for " << originName << "\n";
+        spiceErr = true;
         return false;
     }
 
-    // Get coverage window
+    // Get coverage window for target and origin object
     const int MaxIntervals = 10;
-
     SPICEDOUBLE_CELL ( cover, MaxIntervals * 2 );
-    spkcov_c(filepath.c_str(), targetID, &cover);
-    
-    // First check the coverage window of the target. Only consider the
-    // first interval in the window.
-    // TODO: consider supporting noncontiguous coverage
-    SpiceInt nIntervals = card_c(&cover) / 2;
-    SpiceDouble beginning = 0.0;
-    SpiceDouble ending = 0.0;
-    if (nIntervals > 0)
+
+    // First check the coverage window of the target. No interval
+    // is required for ID 0 (the solar system barycenter) which is
+    // always at (0, 0, 0).
+    SpiceDouble targetBeginning = -1.0e50;
+    SpiceDouble targetEnding    = +1.0e50;
+    if (targetID != 0)
     {
-        wnfetd_c(&cover, 0, &beginning, &ending);
-        validIntervalBegin = astro::secsToDays(beginning + 0.001) + astro::J2000;
-        validIntervalEnd = astro::secsToDays(ending - 0.001) + astro::J2000;
+        spkcov_c(filepath.c_str(), targetID, &cover);
+
+        SpiceInt nIntervals = 0;
+        if (!failed_c())
+            nIntervals = card_c(&cover) / 2;
+
+        // Only consider the first interval in the window.
+        // TODO: consider supporting noncontiguous coverage
+        if (nIntervals <= 0)
+        {
+            clog << "Couldn't find object " << targetBodyName << " in SPICE kernel " << kernelFile << "\n";
+            spiceErr = true;
+            if (failed_c())
+            {
+                reset_c();
+            }
+            return false;
+        }
+
+        wnfetd_c(&cover, 0, &targetBeginning, &targetEnding);
     }
-    else
+
+    // Check the coverage for the origin 
+    SpiceDouble originBeginning = -1.0e50;
+    SpiceDouble originEnding    = +1.0e50;
+    if (originID != 0)
     {
-        // No valid coverage window for target; use the coverage of the
-        // origin.
         spkcov_c(filepath.c_str(), originID, &cover);
-        nIntervals = card_c(&cover) / 2;
-        if (nIntervals > 0)
+
+        SpiceInt nIntervals = 0;
+        if (!failed_c())
+            nIntervals = card_c(&cover) / 2;
+
+        if (nIntervals <= 0)
         {
-            wnfetd_c(&cover, 0, &beginning, &ending);
-            validIntervalBegin = astro::secsToDays(beginning + 0.001) + astro::J2000;
-            validIntervalEnd = astro::secsToDays(ending - 0.001) + astro::J2000;
+            clog << "Couldn't find object " << originName << " in SPICE kernel " << kernelFile << "\n";
+            spiceErr = true;
+            if (failed_c())
+            {
+                reset_c();
+            }
+            return false;
         }
-        else
-        {
-            // No coverage window defined
-            validIntervalBegin = validIntervalEnd = astro::J2000;
-        }
+
+        wnfetd_c(&cover, 0, &originBeginning, &originEnding);
     }
-    
+
+    SpiceDouble beginning = max(targetBeginning, originBeginning);
+    SpiceDouble ending    = min(targetEnding,    originEnding);
+    if (beginning >= ending)
+    {
+        clog << "No overlapping coverage for SPICE target and origin objects\n";
+        spiceErr = true;
+        return false;
+    }
+
+    // Add a very small offset to the beginning and ending of the interval
+    // so that roundoff error won't cause us to sample slightly outside the
+    // valid time interval.
+    validIntervalBegin = astro::secsToDays(beginning + 0.001) + astro::J2000;
+    validIntervalEnd = astro::secsToDays(ending - 0.001) + astro::J2000;
+
+    // Test getting the position of the object to make sure that there's
+    // adequate data in the kernel.
+    double position[3];
+    double lt;
+    spkgps_c(targetID, beginning, "eclipj2000", originID,
+             position, &lt);
+    if (failed_c())
+    {
+        // Print the error message
+        char errMsg[1024];
+        getmsg_c("long", sizeof(errMsg), errMsg);
+        clog << errMsg << "\n";
+        spiceErr = true;
+
+        reset_c();
+    }
+
     return !spiceErr;
 }
 
@@ -151,21 +206,18 @@ SpiceOrbit::computePosition(double jd) const
     {
         // Input time for SPICE is seconds after J2000
         double t = astro::daysToSecs(jd - astro::J2000);
-        double state[6];    // State is position and velocity
+        double position[3];
         double lt;          // One way light travel time
 
-        // TODO: use spkgps_c instead of spkezr as it should
-        // be faster.
-        spkezr_c(targetBodyName.c_str(),
+        spkgps_c(targetID,
                  t,
                  "eclipj2000",
-                 "none",
-                 originName.c_str(),
-                 state,
+                 originID,
+                 position,
                  &lt);
 
-        // TODO: test calculating the orbit at initialization time
-        // to try and catch errors earlier.
+        // This shouldn't happen, since we've already computed the valid
+        // coverage interval.
         if (failed_c())
         {
             // Print the error message
@@ -178,7 +230,7 @@ SpiceOrbit::computePosition(double jd) const
         }
 
         // Transform into Celestia's coordinate system
-        return Point3d(state[0], state[2], -state[1]);
+        return Point3d(position[0], position[2], -position[1]);
     }
 }
 
