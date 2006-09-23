@@ -12,6 +12,7 @@ PARAM  lightDir      = program.env[0];
 PARAM  texgen_s      = program.env[10];
 PARAM  texgen_t      = program.env[11];
 PARAM  halfW         = { 0, 0, 0, 0.5 };
+PARAM  one           = 1;
 OUTPUT oPos          = result.position;
 OUTPUT oTex0         = result.texcoord[0];
 OUTPUT oTex1         = result.texcoord[1];
@@ -25,6 +26,7 @@ DP4   oPos.z, mvp[2], iPos;
 DP4   oPos.w, mvp[3], iPos;
 
 # Generate texture coordinates
+MOV   oTex0, one;
 DP4   oTex0.x, texgen_s, iPos;
 DP4   oTex0.y, texgen_t, iPos;
 

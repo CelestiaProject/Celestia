@@ -14,7 +14,7 @@ PARAM  diffuse       = program.env[2];
 PARAM  ringSize      = program.env[10];
 PARAM  rcpSunY       = program.env[11];
 PARAM  zero          = 0;
-PARAM  half          = 0.5;
+PARAM  half          = { 0.5, 0.5, 0.5, 1.0 };
 OUTPUT oPos          = result.position;
 OUTPUT oColor        = result.color;
 OUTPUT oTex0         = result.texcoord[0];
@@ -48,7 +48,7 @@ MUL   s.x, s.x, ringSize.y;
 # Now we have our s coordinate . . .
 MOV   oTex0.x, s.x;
 # The t coordinate is always 0.5
-MOV   oTex0.y, half;
+MOV   oTex0.yzw, half;
 
 MOV   oColor, diffuse;
 
