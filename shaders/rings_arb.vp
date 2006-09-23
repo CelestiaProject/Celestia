@@ -47,6 +47,7 @@ MOV   oTex0, iTex0;
 
 # The second texture is the shadow; we need to compute the
 # it from the vertex coordinate.
+MOV   oTex1, one;
 DP4   oTex1.x, texgen_s, iPos;
 DP4   oTex1.y, texgen_t, iPos;
 
