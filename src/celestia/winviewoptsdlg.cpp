@@ -68,6 +68,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWCLOUDS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowCloudMaps);
             break;
+        case IDC_SHOWCLOUDSHADOWS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowCloudShadows);
+            break;
         case IDC_SHOWCONSTELLATIONS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowDiagrams);
             break;
@@ -266,6 +269,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowCelestialSphere)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCLOUDS, BM_SETCHECK,
         (renderFlags & Renderer::ShowCloudMaps)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWCLOUDSHADOWS, BM_SETCHECK,
+        (renderFlags & Renderer::ShowCloudShadows)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCONSTELLATIONS, BM_SETCHECK,
         (renderFlags & Renderer::ShowDiagrams)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWECLIPSESHADOWS, BM_SETCHECK,
