@@ -440,9 +440,9 @@ bool astro::parseDate(const string& s, astro::Date& date)
     unsigned int day = 1;
     unsigned int hour = 0;
     unsigned int minute = 0;
-    unsigned int second = 0;
+    double second = 0.0;
 
-    if (sscanf(s.c_str(), " %d %u %u %u:%u:%u ",
+    if (sscanf(s.c_str(), " %d %u %u %u:%u:%lf ",
                &year, &month, &day, &hour, &minute, &second) == 6 ||
         sscanf(s.c_str(), " %d %u %u %u:%u ",
                &year, &month, &day, &hour, &minute) == 5 ||
@@ -450,7 +450,7 @@ bool astro::parseDate(const string& s, astro::Date& date)
     {
         if (month < 1 || month > 12)
             return false;
-        if (hour > 23 || minute > 59 || second > 59)
+        if (hour > 23 || minute > 59 || second >= 60.0 || second < 0.0)
             return false;
 
         // Days / month calculation . . .
