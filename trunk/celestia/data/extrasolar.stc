@@ -77,6 +77,24 @@
 	AppMag 10.4
 }
 
+"WASP-1"
+{
+	RA 5.167083
+	Dec 31.990000
+	Distance 1200
+	SpectralType "F7V"
+	AppMag 11.79
+}
+
+"WASP-2"
+{
+	RA 307.725417
+	Dec 6.429444
+	Distance 470
+	SpectralType "K1V"
+	AppMag 11.98
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
