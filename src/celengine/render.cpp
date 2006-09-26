@@ -2013,17 +2013,16 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // and a more robust method should be implemented.
 
         float size = discSize * pixelSize * 1.6f * renderZ / corrFac;
-        float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
-
-        Point3f center(position.x * posScale,
-                       position.y * posScale,
-                       position.z * posScale);
+        Point3f center = position;
+        
         Mat3f m = orientation.toMatrix3();
         Vec3f v0 = Vec3f(-1, -1, 0) * m;
         Vec3f v1 = Vec3f( 1, -1, 0) * m;
         Vec3f v2 = Vec3f( 1,  1, 0) * m;
         Vec3f v3 = Vec3f(-1,  1, 0) * m;
 
+        glEnable(GL_DEPTH_TEST);
+        
         starTex->bind();
         glColor(color, a);
         glBegin(GL_QUADS);
@@ -2067,6 +2066,8 @@ void Renderer::renderBodyAsParticle(Point3f position,
             glVertex(center + (v3 * size));
             glEnd();
         }
+        
+        glDisable(GL_DEPTH_TEST);        
     }
 }
 
