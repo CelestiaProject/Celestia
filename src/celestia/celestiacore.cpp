@@ -4345,6 +4345,7 @@ void CelestiaCore::back()
 
 void CelestiaCore::forward()
 {
+    if (history.size() == 0) return;
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
     history[historyCurrent].goTo();
