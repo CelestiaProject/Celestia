@@ -166,7 +166,7 @@ Tokenizer::TokenType Tokenizer::nextToken()
             break;
 
         case CommentState:
-            if (nextChar == '\n' || nextChar == '\r')
+            if (nextChar == '\n' || nextChar == '\r' || nextChar == char_traits<char>::eof())
                 state = StartState;
             break;
 
