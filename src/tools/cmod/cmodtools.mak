@@ -47,6 +47,9 @@ CEL_LIBS=\
 	..\..\celtxf\$(CFG)\cel_txf.lib \
 	..\..\celengine\$(CFG)\cel_engine.lib
 
+EXTRA_LIBS=\
+	..\..\..\lib\intl.lib
+
 WIN_LIBS=\
 	kernel32.lib \
 	user32.lib \
@@ -126,16 +129,16 @@ $(OUTDIR)\xtocmod.exe : $(OUTDIR) $(XTOCMOD_OBJS) $(LIBS) $(RESOURCES)
 
 
 $(OUTDIR)\3dstocmod.exe : $(OUTDIR) $(TDSTOCMOD_OBJS) $(CEL_LIBS) $(RESOURCES)
-	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\3dstocmod.exe $(TDSTOCMOD_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS)
+	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\3dstocmod.exe $(TDSTOCMOD_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS) $(EXTRA_LIBS)
 
 
 $(OUTDIR)\cmodfix.exe : $(OUTDIR) $(CMODFIX_OBJS) $(CEL_LIBS) $(RESOURCES)
-	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\cmodfix.exe $(CMODFIX_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS) $(STRIPLIBS)
+	$(LINK32) $(LINK32_FLAGS) /out:$(OUTDIR)\cmodfix.exe $(CMODFIX_OBJS) $(RESOURCES) $(OGLLIBS) $(IMGLIBS) $(CEL_LIBS) $(STRIPLIBS) $(EXTRA_LIBS)
 
 
 $(OUTDIR)\cmodtangents.exe : $(OUTDIR) $(CMODTANGENT_OBJS) $(CEL_LIBS) $(RESOURCES)
 	$(LINK32) @<<
-        $(LINK32_FLAGS) /out:$(OUTDIR)\cmodtangents.exe $(CMODTANGENT_OBJS) $(RESOURCES) $(CEL_LIBS)
+        $(LINK32_FLAGS) /out:$(OUTDIR)\cmodtangents.exe $(CMODTANGENT_OBJS) $(RESOURCES) $(CEL_LIBS) $(EXTRA_LIBS)
 <<
 
 
