@@ -2002,20 +2002,13 @@ void Renderer::renderBodyAsParticle(Point3f position,
         a = clamp(a) * fade;
 
         // We scale up the particle by a factor of 1.6 (at fov = 45deg)
-        // so that it's more
-        // visible--the texture we use has fuzzy edges, and if we render it
-        // in just one pixel, it's likely to disappear.  Also, the render
-        // distance is scaled by a factor of 0.1 so that we're rendering in
-        // front of any mesh that happens to be sharing this depth bucket.
-        // What we really want is to render the particle with the frontmost
-        // z value in this depth bucket, and scaling the render distance is
-        // just hack to accomplish this.  There are cases where it will fail
-        // and a more robust method should be implemented.
-
-        float size = discSize * pixelSize * 1.6f * renderZ / corrFac;
-        Point3f center = position;
-        
+        // so that it's more visible--the texture we use has fuzzy edges,
+        // and if we render it in just one pixel, it's likely to disappear.
         Mat3f m = orientation.toMatrix3();
+        Point3f center = position;
+        float centerZ = (center * m.transpose()).z;
+        float size = discSize * pixelSize * 1.6f * centerZ / corrFac;
+        
         Vec3f v0 = Vec3f(-1, -1, 0) * m;
         Vec3f v1 = Vec3f( 1, -1, 0) * m;
         Vec3f v2 = Vec3f( 1,  1, 0) * m;
