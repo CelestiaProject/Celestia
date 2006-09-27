@@ -286,7 +286,7 @@ Convert3DSMesh(Model& model,
                 material->specular = Color(specular.red, specular.green, specular.blue);
                 // Map the shininess from the 3DS file into the 0-128
                 // range that OpenGL uses for the specular exponent.
-                float specPow = (float) pow(2, 10.0 * material3ds->getShininess());
+                float specPow = (float) pow(2.0, 1.0 + 0.1 * material3ds->getShininess());
                 if (specPow > 128.0f)
                     specPow = 128.0f;
                 material->specularPower = specPow;
