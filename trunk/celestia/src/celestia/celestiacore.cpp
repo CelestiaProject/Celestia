@@ -3929,7 +3929,10 @@ bool CelestiaCore::initRenderer()
     {
         cout << _("Error loading font; text will not be visible.\n");
     }
-    font->buildTexture();
+    else
+    {
+        font->buildTexture();
+    }
 
     if (config->titleFont != "")
         titleFont = LoadTextureFont(string("fonts") + "/" + config->titleFont);
