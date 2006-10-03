@@ -32,9 +32,6 @@
 
 #include "celx.h"
 #include "celestiacore.h"
-extern "C" {
-#include "lualib.h"
-}
 
 using namespace std;
 
@@ -624,7 +621,11 @@ bool LuaState::charEntered(const char* c_p)
         int stackTop = lua_gettop(costate);
         if (strcmp(c_p, "y") == 0)
         {
+#if LUA_VER >= 0x050100
+            luaL_openlibs(costate);
+#else
             lua_iolibopen(costate);
+#endif
             ioMode = IOAllowed;
         }
         else
@@ -4823,10 +4824,14 @@ bool LuaState::init(CelestiaCore* appCore)
     initMaps();
 
     // Import the base and math libraries
+#if LUA_VER >= 0x050100
+    luaL_openlibs(state);
+#else
     lua_baselibopen(state);
     lua_mathlibopen(state);
     lua_tablibopen(state);
     lua_strlibopen(state);
+#endif
 
     // Add an easy to use wait function, so that script writers can
     // live in ignorance of coroutines.  There will probably be a significant
