@@ -43,7 +43,7 @@ protected:
     Selection sel;
     std::vector< std::pair<int, Selection> > baseIds;
     int baseId;
-    void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parentName, const PlanetarySystem* psys);
+    void insertPlanetaryMenu(KPopupMenu* popup, const string& parentName, const PlanetarySystem* psys);
 };
 
 #endif // SELECTIONPOPUP_H
