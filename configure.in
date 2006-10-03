@@ -398,12 +398,24 @@ AC_ARG_WITH([lua],
             enable_lua="auto")
 
 if (test "$enable_lua" != "no"); then
-	PKG_CHECK_MODULES(LUA, lua, enable_lua="yes",
-	                  if (test "x$enable_lua" != "xauto"); then
-	                      AC_ERROR([Lua not found (explicitly enabled)!])
-	                  else
-	                      enable_lua="no"
-	                  fi)
+	LUA_VER=0
+	PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1.0, LUA_VER=0x050100,
+		[ PKG_CHECK_MODULES(LUA, lua >= 5.1.0, LUA_VER=0x050100, 
+		  [ PKG_CHECK_MODULES(LUA, lualib50 lua50 >= 5.0.0, LUA_VER=0x050000, 
+		    [ PKG_CHECK_MODULES(LUA, lualib lua >= 5.0.0, LUA_VER=0x050000) ] 
+		    ) ] 
+		) ]
+	)
+	if (test "$LUA_VER" = "0"); then
+		if (test "x$enable_lua" != "xauto"); then
+			AC_ERROR([Lua not found (explicitly enabled)!])
+		else
+			enable_lua="no"
+		fi
+	else
+		enable_lua="yes"
+		CXXFLAGS="$CXXFLAGS -DLUA_VER=$LUA_VER"
+	fi
 fi
 
 if (test "$enable_lua" = "yes"); then
