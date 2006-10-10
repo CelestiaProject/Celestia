@@ -399,13 +399,18 @@ AC_ARG_WITH([lua],
 
 if (test "$enable_lua" != "no"); then
 	LUA_VER=0
-	PKG_CHECK_MODULES(LUA, lualib50 lua50 >= 5.0.0 lua50 < 5.1.0, LUA_VER=0x050000,
-		[ PKG_CHECK_MODULES(LUA, lualib lua >= 5.0.0 lua < 5.1.0, LUA_VER=0x050000, 
+	PKG_CHECK_MODULES(LUA, lua50 >= 5.0.0 lua50 < 5.1.0, LUA_VER=0x050000,
+		[ PKG_CHECK_MODULES(LUA, lua >= 5.0.0 lua < 5.1.0, LUA_VER=0x050000, 
 		  [ PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1.0, LUA_VER=0x050100, 
 		    [ PKG_CHECK_MODULES(LUA, lua >= 5.1.0, LUA_VER=0x050100) ] 
 		    ) ] 
 		) ]
 	)
+	if (test "$LUA_VER" = "0x050000"); then
+		PKG_CHECK_MODULES(LUALIB, lualib50 >= 5.0.0 lualib50 < 5.1.0, ,
+			[ PKG_CHECK_MODULES(LUALIB, lualib >= 5.0.0 lualib < 5.1.0, , AC_MSG_RESULT([no])) ]
+			)
+	fi
 	if (test "$LUA_VER" = "0"); then
 		if (test "x$enable_lua" != "xauto"); then
 			AC_ERROR([Lua not found (explicitly enabled)!])
@@ -418,8 +423,8 @@ if (test "$enable_lua" != "no"); then
 fi
 
 if (test "$enable_lua" = "yes"); then
-	CXXFLAGS="$CXXFLAGS $LUA_CFLAGS -DLUA_VER=$LUA_VER -DCELX"
-	LIBS="$LIBS $LUA_LIBS"
+	CXXFLAGS="$CXXFLAGS $LUA_CFLAGS $LUALIB_CFLAGS -DLUA_VER=$LUA_VER -DCELX"
+	LIBS="$LIBS $LUA_LIBS $LUALIB_LIBS"
 fi
 
 AM_CONDITIONAL(ENABLE_CELX, test "$enable_lua" != "no")
