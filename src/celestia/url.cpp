@@ -215,13 +215,13 @@ Url::Url(CelestiaCore* core, UrlType type)
         }
     }
 
-    char date_str[30];
+    char date_str[50];
     date = astro::Date(sim->getTime());
     char buff[255];
 
     switch (type) {
     case Absolute:
-        sprintf(date_str, "%04d-%02d-%02dT%02d:%02d:%08.5f",
+        snprintf(date_str, sizeof(date_str), "%04d-%02d-%02dT%02d:%02d:%08.5f",
             date.year, date.month, date.day, date.hour, date.minute, date.seconds);
 
         coord = sim->getObserver().getPosition();
@@ -481,7 +481,7 @@ std::string Url::decode_string(const std::string& str)
         b = str.find("%", a);
     }
     out += str.substr(a);
-                      
+
     return out;
 }
 
