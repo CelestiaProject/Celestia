@@ -487,6 +487,13 @@ if (test "$ui_gtk" = "yes" -o "$ui_gnome" = "yes"); then
 fi
 
 AC_MSG_RESULT([Use Lua: $enable_lua]);
+
+if (test "$LUA_VER" = "0x050100"); then
+	AC_MSG_RESULT([    Warning: Lua 5.0 is not available on your system, Lua 5.1 will be used
+    instead but it may not be fully compatible with existing CELX scripts. 
+    It is recommanded that you install Lua 5.0 and rerun configure.]);
+fi
+
 AC_MSG_RESULT([Use Theora: $enable_theora]);
 
 AC_MSG_RESULT()
