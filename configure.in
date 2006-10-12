@@ -402,7 +402,7 @@ if (test "$enable_lua" != "no"); then
 	PKG_CHECK_MODULES(LUA, lua50 >= 5.0.0 lua50 < 5.1.0, LUA_VER=0x050000,
 		[ PKG_CHECK_MODULES(LUA, lua >= 5.0.0 lua < 5.1.0, LUA_VER=0x050000, 
 		  [ PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1.0, LUA_VER=0x050100, 
-		    [ PKG_CHECK_MODULES(LUA, lua >= 5.1.0, LUA_VER=0x050100) ] 
+		    [ PKG_CHECK_MODULES(LUA, lua >= 5.1.0, LUA_VER=0x050100, AC_MSG_RESULT([no])) ] 
 		    ) ] 
 		) ]
 	)
