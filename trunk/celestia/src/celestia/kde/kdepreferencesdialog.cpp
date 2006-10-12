@@ -407,7 +407,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QLabel* spacer3 = new QLabel(" ", timeFrame);
     timeFrame->setStretchFactor(spacer3, 2);
 
-    setTime(appCore->getSimulation()->getTime());
+    setTime(astro::TDBtoUTC(appCore->getSimulation()->getTime()));
     connect(YSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
     connect(MSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
     connect(DSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
@@ -497,6 +497,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QTextEdit* edit = new QTextEdit(openGL);
     edit->append(((KdeApp*)parent)->getOpenGLInfo());
     edit->setFocusPolicy(QWidget::NoFocus);
+    edit->setCursorPosition(0, 0);
 
 
     // Key bindings page
@@ -650,7 +651,7 @@ void KdePreferencesDialog::slotApply() {
         date.hour=hSpin->value();
         date.minute=mSpin->value();
         date.seconds=float(sSpin->value());
-        appCore->getSimulation()->setTime((double) date);
+        appCore->getSimulation()->setTime(astro::UTCtoTDB((double) date));
         appCore->getSimulation()->update(0.0);
       } else {
         struct tm time;
@@ -660,7 +661,7 @@ void KdePreferencesDialog::slotApply() {
         time.tm_hour = hSpin->value();
         time.tm_min = mSpin->value();
         time.tm_sec = sSpin->value();
-        appCore->getSimulation()->setTime(astro::secondsToJulianDate(mktime(&time)) + (double) astro::Date(1970, 1, 1));
+        appCore->getSimulation()->setTime(astro::UTCtoTDB(astro::secondsToJulianDate(mktime(&time)) + (double) astro::Date(1970, 1, 1)));
         appCore->getSimulation()->update(0.0);
       }
     }
