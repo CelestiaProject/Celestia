@@ -899,17 +899,17 @@ QString KdeApp::getOpenGLInfo() {
     char* version = (char*) glGetString(GL_VERSION);
     char* ext = (char*) glGetString(GL_EXTENSIONS);
     QString s;
-    s = "Vendor : ";
+    s = i18n("Vendor: ");
     if (vendor != NULL)
         s += vendor;
     s += "\n";
 
-    s += "Renderer : ";
+    s += i18n("Renderer: ");
     if (render != NULL)
         s += render;
     s += "\n";
 
-    s += "Version : ";
+    s += i18n("Version: ");
     if (version != NULL)
         s += version;
     s += "\n";
@@ -918,15 +918,22 @@ QString KdeApp::getOpenGLInfo() {
     GLint simTextures = 1;
     if (ExtensionSupported("GL_ARB_multitexture"))
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
-    sprintf(buf, "Max simultaneous textures: %d\n", simTextures);
+    sprintf(buf, "%s%d\n", _("Max simultaneous textures: "), simTextures);
     s += buf;
 
     GLint maxTextureSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    sprintf(buf, "Max texture size: %d\n\n", maxTextureSize);
+    sprintf(buf, "%s%d\n\n", _("Max texture size: "), maxTextureSize);
     s += buf;
 
-    s += "Supported Extensions:\n    ";
+    GLfloat pointSizeRange[2];
+    glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
+    sprintf(buf, "%s%f - %f\n",
+            _("Point size range: "),
+            pointSizeRange[0], pointSizeRange[1]);
+    s += buf;
+
+    s += i18n("Supported Extensions:") + "\n    ";
     if (ext != NULL)
     {
         QString extString(ext);
@@ -947,6 +954,7 @@ void KdeApp::slotOpenGLInfo() {
     QTextEdit edit(&dlg);
     edit.append(getOpenGLInfo());
     edit.setFocusPolicy(QWidget::NoFocus);
+    edit.setCursorPosition(0, 0);
     dlg.setMainWidget(&edit);
     dlg.resize(400,430);
     dlg.exec();
@@ -990,7 +998,7 @@ void KdeApp::slotSlowDownTime() {
 
 void KdeApp::slotSetTimeNow() {
     time_t curtime=time(NULL);
-    appCore->getSimulation()->setTime((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+    appCore->getSimulation()->setTime(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
     appCore->getSimulation()->update(0.0);
 }
 

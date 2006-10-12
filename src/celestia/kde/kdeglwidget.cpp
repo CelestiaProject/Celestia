@@ -105,7 +105,7 @@ void KdeGlWidget::initializeGL()
     }
 
     time_t curtime=time(NULL);
-    appCore->start((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1));
+    appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
     localtime(&curtime); /* Only doing this to set timezone as a side effect*/
     appCore->setTimeZoneBias(-timezone+3600*daylight);
     appCore->setTimeZoneName(tzname[daylight?0:1]);
