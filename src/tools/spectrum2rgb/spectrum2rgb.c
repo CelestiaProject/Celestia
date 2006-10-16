@@ -173,12 +173,13 @@ int main(const int argc, const char* const* const argv) {
         char* read_ptr = fgets(line, 256, input);
         if (read_ptr == NULL)
             break;
-            const int wave = strtof(read_ptr, &read_ptr)*10000;
+        const float wave_f = strtod(read_ptr, &read_ptr);
+        const int wave = wave_f > 10?wave_f:wave_f*10000;
         if (wave == 0)
             continue;
         if (wave < 3600 || wave > 8300)
             continue;
-        const float intensity = strtof(read_ptr, NULL);
+        const float intensity = strtod(read_ptr, NULL);
         spectrum[(wave - 3600 + 25)/50].samples++;
         spectrum[(wave - 3600 + 25)/50].intensity += intensity;
         if (first_wave == 0) {
@@ -188,13 +189,21 @@ int main(const int argc, const char* const* const argv) {
     }
     fclose(input);
     FILE* const sol_input = fopen(argv[1], "r");
+    if (sol_input == NULL) {
+	fprintf(stderr, "Couldn't open solar spectrum\n");
+	return -1;
+    }
     while (1) {
         char line[256];
         char* read_ptr = fgets(line, 256, sol_input);
         if (read_ptr == NULL)
             break;
-        const int wave = strtof(read_ptr, &read_ptr);
-        const float intensity = strtof(read_ptr, NULL);
+        const int wave = strtod(read_ptr, &read_ptr);
+	if (wave == 0)
+	    continue;
+	if (wave > 830)
+	    continue;
+        const float intensity = strtod(read_ptr, NULL);
         solar_spectrum[(wave - 360)/5] = intensity;
     }
     fclose(sol_input);
@@ -212,6 +221,7 @@ int main(const int argc, const char* const* const argv) {
             intensity = spectrum[tblI].intensity/spectrum[tblI].samples;
         /* Convert reflective value to emissive */
         intensity *= solar_spectrum[tblI];
+        /*printf("%d %.3f\n", w, intensity);*/
         /* The color perception table has been trimmed to 1/5th its original
          * size. Scale the values accordingly. */
         intensity *= 5;
@@ -224,9 +234,9 @@ int main(const int argc, const char* const* const argv) {
     Y /= 100.0f;
     Z /= 100.0f;
     /* Convert the XYZ colors into RGB */
-    float r = X*3.24f - Y*1.54f - Z*0.5f;
+    float r = X*3.24f - Y*1.54f - Z*0.50f;
     float g = -X*0.97f + Y*1.88f + Z*0.04f;
-    float b = X*0.06f - Y*0.02f + Z*1.06f;
+    float b = X*0.06f - Y*0.20f + Z*1.06f;
     
     /* Gamma correction */
     /* I am not sure that this is necessary or correct. It has the effect of de-saturating
@@ -246,3 +256,4 @@ int main(const int argc, const char* const* const argv) {
     printf("\tColor [ %.3f %.3f %.3f ]\n", r, g, b);
     return 0;
 }
+
