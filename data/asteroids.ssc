@@ -1,4 +1,4 @@
-# All asteroid colors (except for Dactyl) are derivced from SMASS spectra
+# All asteroid colors (except for Dactyl) are derived from SMASS spectra
 # and converted to RGB values using Matt Wronkiewicz's spectrum2rgb utility
 # that is distributed with the Celestia source package.
 
@@ -7,7 +7,7 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Color [ 1.000 0.944 0.972 ]
+	Color [ 1.000 0.945 0.881 ]
 	BlendTexture true
 	Radius 487.5        # 975x909km
 	Oblateness 0.068    # Thomas et al, Nature, 8 Sep 2005
@@ -37,7 +37,7 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Color [ 1.000 0.951 0.993 ]
+	Color [ 1.000 0.952 0.903 ]
 	BlendTexture true
 	Radius 263 
 
@@ -65,7 +65,7 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Color [ 1.000 0.909 0.921 ]
+        Color [ 1.000 0.912 0.833 ]
 	BlendTexture true
 	Radius 130 
 
@@ -93,7 +93,7 @@
 	Class "asteroid" 
 	Mesh   "vesta.cmod" 
 	Texture "asteroid.jpg" 
-	Color [ 1.000 0.929 0.944 ]
+        Color [ 1.000 0.923 0.851 ]
 	BlendTexture true
 	Radius    279 # maximum semi-axis
 	MeshCenter [ 0.77 3.424 -0.554 ]
@@ -129,7 +129,7 @@
 	Class "asteroid"
 	Mesh "gaspra.cmod"
 	Texture "gaspramosaic.*" # Phil Stooke
-	Color [ 1.000 0.885 0.862 ]
+	Color [ 1.000 0.883 0.769 ]
 	BlendTexture true
 	Radius    9.1 # maximum semi-axis
 	MeshCenter [ 1.540 -0.064 -0.118 ]
@@ -159,7 +159,7 @@
 	Class "asteroid"
 	Mesh "ida.cmod"
 	Texture "idamosaic.*" # Phil Stooke
-	Color [ 1.000 0.899 0.904 ]
+        Color [ 1.000 0.901 0.815 ]
 	BlendTexture true
 	Radius    28.9 # maximum semi-axis
 	MeshCenter [ -1.424 -0.417 0.115 ]
@@ -195,7 +195,7 @@
 	Class "asteroid"
 	Texture "asteroid.jpg"
 	# Use the same color as for Ida--uncertain if this is correct
-	Color [ 1.000 0.899 0.904 ]
+        Color [ 1.000 0.901 0.815 ]
 	BlendTexture true
 	Mesh "roughsphere.cms"
 	Radius   0.7
@@ -224,8 +224,9 @@
 	Mesh   "eros.cmod"
 	Texture "eros.*"
 	# NormalMap "erosbump2k.jpg"
-	Color [ 1.000 0.878 0.853 ]
-	BlendTexture true
+        Color [ 1.000 0.880 0.764 ]
+        # The texture is already tinted with the asteroid color
+	#BlendTexture true
 	Radius 16.3 # maximum semi-axis
 	MeshCenter [ -1.262 0.168 -0.164 ]
 
@@ -256,7 +257,7 @@
 	Class "asteroid"
 	Mesh   "toutatis.cmod"
 	Texture "asteroid.jpg"
-	Color [ 1.000 0.909 0.919 ]
+        Color [ 1.000 0.904 0.803 ]
 	BlendTexture true
 	Radius  2.3 # maximum semi-axis
 	MeshCenter [ 0.0313 0.2171 0.0064 ]
@@ -287,7 +288,7 @@
 	Class "asteroid"
 	Mesh   "geographos.cmod"
 	Texture "asteroid.jpg"
-	Color [ 1.000 0.899 0.892 ]
+        Color [ 1.000 0.901 0.802 ]
 	BlendTexture true
 	Radius  2.53 # maximum semi-axis
 	MeshCenter [ 0.154 -0.002 -0.026 ]
@@ -318,7 +319,7 @@
 	Class "asteroid"
 	Mesh   "kleopatra.cmod"
 	Texture "asteroid.jpg"
-	Color [ 1.000 0.931 0.977 ]
+        Color [ 1.000 0.932 0.888 ]
 	BlendTexture true
 	Radius  110 # maximum semi-axis
 	MeshCenter [ -3.049 2.379 1.429 ]
@@ -379,7 +380,7 @@
 	Class "asteroid"
 	Mesh   "bacchus.cmod"
 	Texture "asteroid.jpg"
-	Color [ 1.000 0.897 0.868 ]
+        Color [ 1.000 0.899 0.777 ]
 	BlendTexture true
 	Radius  0.55 # maximum semi-axis
 	MeshCenter [ -0.00936 -0.00610 0.00289 ]
@@ -410,7 +411,7 @@
 	Class "asteroid"
 	Mesh   "golevka.cmod"
 	Texture "asteroid.jpg"
-	Color [ 1.000 0.871 0.840 ]
+        Color [ 1.000 0.856 0.747 ]
 	BlendTexture true
 	Radius  0.34 # maximum semi-axis
 	MeshCenter [ -0.0289 -0.0111 -0.0331 ]
@@ -471,7 +472,7 @@
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Color [ 0.993 0.959 1.000 ]
+        Color [ 1.000 0.960 0.919 ]
 	BlendTexture true
 	Radius 144 
 
@@ -491,3 +492,4 @@
 
 	Albedo 0.048 
 }
+
