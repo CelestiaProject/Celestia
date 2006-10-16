@@ -584,6 +584,7 @@ class EarthOrbit : public CachingOrbit
     };
 };
 
+
 class LunarOrbit : public CachingOrbit
 {
  public:
@@ -716,6 +717,7 @@ class LunarOrbit : public CachingOrbit
         // Now compute distance using horizontal parallax.
         distance = 6378.14 / sin(horzPar);
 
+#if 1
         // Finally convert eclLat, eclLon to RA, Dec.
         EclipticToEquatorial(t, eclLat, eclLon, RA, dec);
 
@@ -732,6 +734,14 @@ class LunarOrbit : public CachingOrbit
         return Point3d(cos(RA) * sin(dec) * distance,
                        cos(dec) * distance,
                        -sin(RA) * sin(dec) * distance);
+#else
+        // Skip the conversion and return ecliptical coordinates
+        double x = distance * cos(eclLat) * cos(eclLon);
+        double y = distance * cos(eclLat) * sin(eclLon);
+        double z = distance * sin(eclLat);
+
+        return Point3d(x, z, -y);
+#endif
     };
 
     double getPeriod() const
@@ -744,6 +754,7 @@ class LunarOrbit : public CachingOrbit
         return 405504 * BoundingRadiusSlack;
     };
 };
+
 
 class MarsOrbit : public CachingOrbit
 {
@@ -2778,10 +2789,13 @@ class TritonOrbit : public CachingOrbit
 class JPLEphOrbit : public CachingOrbit
 {
  public:
-    JPLEphOrbit(const JPLEphemeris& e, JPLEphemItem item,
+    JPLEphOrbit(const JPLEphemeris& e,
+                JPLEphemItem _target,
+                JPLEphemItem _center,
                 double _period, double _boundingRadius) :
         ephem(e),
-        body(item),
+        target(_target),
+        center(_center),
         period(_period),
         boundingRadius(_boundingRadius)
     {
@@ -2799,38 +2813,62 @@ class JPLEphOrbit : public CachingOrbit
         return boundingRadius;
     }
 
-    Point3d computePosition(double jd) const
+    Point3d computePosition(double tjd) const
     {
-        Point3d baryPos = ephem.getPlanetPosition(body, jd);
+        // Get the position relative to the Earth (for the Moon) or
+        // the solar system barycenter.
+        Point3d pos = ephem.getPlanetPosition(target, tjd);
 
-        // Convert from solar system barycentric position to heliocentric
-        // position.
-        Point3d sunPos = ephem.getPlanetPosition(JPLEph_Sun, jd);
-        Point3d heliocentricPos = Point3d(0.0, 0.0, 0.0) + (baryPos - sunPos);
+        if (center == JPLEph_SSB && target != JPLEph_Moon)
+        {
+            // No translation necessary
+        }
+        else if (center == JPLEph_Earth && target == JPLEph_Moon)
+        {
+            // No translation necessary
+        }
+        else
+        {
+            Point3d centerPos = ephem.getPlanetPosition(center, tjd);
+            if (target == JPLEph_Moon)
+            {
+                pos += (ephem.getPlanetPosition(JPLEph_Earth, tjd) - Point3d(0.0, 0.0, 0.0));
+            }
+            if (center == JPLEph_Moon)
+            {
+                centerPos += (ephem.getPlanetPosition(JPLEph_Earth, tjd) - Point3d(0.0, 0.0, 0.0));
+            }
+
+            // Compute the position of target relative to the center
+            pos = Point3d(pos.x - centerPos.x,
+                          pos.y - centerPos.y,
+                          pos.z - centerPos.z);
+        }
 
         // Rotate from the J2000 mean equator to the ecliptic
         // 23 deg 26' 21".448
         double J2000_equator = degToRad(23.4392911);
-        heliocentricPos = heliocentricPos * Mat3d::xrotation(J2000_equator);
+        pos = pos * Mat3d::xrotation(J2000_equator);
 
-        return Point3d(heliocentricPos.x,
-                       heliocentricPos.z,
-                       -heliocentricPos.y);
+        // Convert to Celestia's coordinate system
+        return Point3d(pos.x, pos.z, -pos.y);
     }
 
  private:
     const JPLEphemeris& ephem;
-    JPLEphemItem body;
+    JPLEphemItem target;
+    JPLEphemItem center;
     double period;
     double boundingRadius;
 };
 
 
-static Orbit* CreateJPLEphOrbit(JPLEphemItem body,
+static Orbit* CreateJPLEphOrbit(JPLEphemItem target,
+                                JPLEphemItem center,
                                 double period,
                                 double boundingRadius)
 {
-    Orbit* o = new JPLEphOrbit(*jpleph, body, period, boundingRadius);
+    Orbit* o = new JPLEphOrbit(*jpleph, target, center, period, boundingRadius);
     return new MixedOrbit(o,
                           jpleph->getStartDate(),
                           jpleph->getEndDate(),
@@ -2883,26 +2921,64 @@ Orbit* GetCustomOrbit(const string& name)
         return new MixedOrbit(new NeptuneOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
     if (name == "pluto")
         return new MixedOrbit(new PlutoOrbit(), yearToJD(-4000), yearToJD(4000), astro::SolarMass);
-    if (name == "mercury-jpl")
-        return CreateJPLEphOrbit(JPLEph_Mercury,  0.2408  * 365.25, 6.0e7);
-    if (name == "venus-jpl")
-        return CreateJPLEphOrbit(JPLEph_Venus,    0.6152  * 365.25, 1.0e8);
-    if (name == "earth-jpl")
-        return CreateJPLEphOrbit(JPLEph_EarthMoonBary,      365.25, 1.6e8);
-    if (name == "mars-jpl")
-        return CreateJPLEphOrbit(JPLEph_Mars,      1.8809 * 365.25, 2.4e8);
-    if (name == "jupiter-jpl")
-        return CreateJPLEphOrbit(JPLEph_Jupiter,  11.86   * 365.25, 8.0e8);
-    if (name == "saturn-jpl")
-        return CreateJPLEphOrbit(JPLEph_Saturn,   29.4577 * 365.25, 1.5e9);
-    if (name == "uranus-jpl")
-        return CreateJPLEphOrbit(JPLEph_Uranus,   84.0139 * 365.25, 3.0e9);
-    if (name == "neptune-jpl")
-        return CreateJPLEphOrbit(JPLEph_Neptune, 164.793  * 365.25, 4.7e9);
-    if (name == "pluto-jpl")
-        return CreateJPLEphOrbit(JPLEph_Pluto,   248.54   * 365.25, 6.0e9);
-    if (name == "moon-jpl")
-        return CreateJPLEphOrbit(JPLEph_Moon,     27.321661,        5.0e5);
+
+    // Two styles of custom orbit name are permitted for JPL ephemeris orbits.
+    // The preferred is <ephemeris>-<object>, e.g. jpl-mercury. But the reverse
+    // form is still supported for backward compatibility.
+    if (name == "jpl-mercury-sun" || name == "mercury-jpl")
+        return CreateJPLEphOrbit(JPLEph_Mercury, JPLEph_Sun,  0.2408  * 365.25, 6.0e7);
+    if (name == "jpl-venus-sun" || name == "venus-jpl")
+        return CreateJPLEphOrbit(JPLEph_Venus,   JPLEph_Sun,  0.6152  * 365.25, 1.0e8);
+    if (name == "jpl-earth-sun" || name == "earth-jpl")
+        return CreateJPLEphOrbit(JPLEph_Earth,   JPLEph_Sun,            365.25, 1.6e8);
+    if (name == "jpl-mars-sun" || name == "mars-jpl")
+        return CreateJPLEphOrbit(JPLEph_Mars,    JPLEph_Sun,  1.8809 * 365.25, 2.4e8);
+    if (name == "jpl-jupiter-sun" || name == "jupiter-jpl")
+        return CreateJPLEphOrbit(JPLEph_Jupiter, JPLEph_Sun, 11.86   * 365.25, 8.0e8);
+    if (name == "jpl-saturn-sun" || name == "saturn-jpl")
+        return CreateJPLEphOrbit(JPLEph_Saturn,  JPLEph_Sun, 29.4577 * 365.25, 1.5e9);
+    if (name == "jpl-uranus-sun" || name == "uranus-jpl")
+        return CreateJPLEphOrbit(JPLEph_Uranus,  JPLEph_Sun, 84.0139 * 365.25, 3.0e9);
+    if (name == "jpl-neptune-sun" || name == "neptune-jpl")
+        return CreateJPLEphOrbit(JPLEph_Neptune, JPLEph_Sun, 164.793  * 365.25, 4.7e9);
+    if (name == "jpl-pluto-sun" || name == "pluto-jpl")
+        return CreateJPLEphOrbit(JPLEph_Pluto,   JPLEph_Sun, 248.54   * 365.25, 6.0e9);
+
+    if (name == "jpl-mercury-ssb")
+        return CreateJPLEphOrbit(JPLEph_Mercury, JPLEph_SSB,  0.2408  * 365.25, 6.0e7);
+    if (name == "jpl-venus-ssb")
+        return CreateJPLEphOrbit(JPLEph_Venus,   JPLEph_SSB,  0.6152  * 365.25, 1.0e8);
+    if (name == "jpl-earth-ssb")
+        return CreateJPLEphOrbit(JPLEph_Earth,   JPLEph_SSB,            365.25, 1.6e8);
+    if (name == "jpl-mars-ssb")
+        return CreateJPLEphOrbit(JPLEph_Mars,    JPLEph_SSB,  1.8809 * 365.25, 2.4e8);
+    if (name == "jpl-jupiter-ssb")
+        return CreateJPLEphOrbit(JPLEph_Jupiter, JPLEph_SSB, 11.86   * 365.25, 8.0e8);
+    if (name == "jpl-saturn-ssb")
+        return CreateJPLEphOrbit(JPLEph_Saturn,  JPLEph_SSB, 29.4577 * 365.25, 1.5e9);
+    if (name == "jpl-uranus-ssb")
+        return CreateJPLEphOrbit(JPLEph_Uranus,  JPLEph_SSB, 84.0139 * 365.25, 3.0e9);
+    if (name == "jpl-neptune-ssb")
+        return CreateJPLEphOrbit(JPLEph_Neptune, JPLEph_SSB, 164.793  * 365.25, 4.7e9);
+    if (name == "jpl-pluto-ssb")
+        return CreateJPLEphOrbit(JPLEph_Pluto,   JPLEph_SSB, 248.54   * 365.25, 6.0e9);
+
+
+    // JPL ephemerides for Earth-Moon system
+    if (name == "jpl-emb-sun") // Earth-Moon barycenter, heliocentric
+        return CreateJPLEphOrbit(JPLEph_EarthMoonBary, JPLEph_Sun,      365.25, 1.6e8);
+    if (name == "jpl-emb-ssb") // Earth-Moon barycenter, relative to ssb
+        return CreateJPLEphOrbit(JPLEph_EarthMoonBary, JPLEph_SSB,      365.25, 1.6e8);
+    if (name == "jpl-moon-emb") // Moon, barycentric
+        return CreateJPLEphOrbit(JPLEph_Moon, JPLEph_EarthMoonBary,      27.321661,        5.0e5);
+    if (name == "jpl-moon-earth") // Moon, geocentric
+        return CreateJPLEphOrbit(JPLEph_Moon,    JPLEph_Earth,           27.321661,        5.0e5);
+    if (name == "jpl-earth-emb") // Earth, barycentric
+        return CreateJPLEphOrbit(JPLEph_Earth,   JPLEph_EarthMoonBary,   27.321,           1.0e5);
+                                 
+    if (name == "jpl-sun-ssb")   // Position of Sun relative to SSB
+        return CreateJPLEphOrbit(JPLEph_Sun,     JPLEph_SSB,             11.861773 * 365.25, 2000000);
+
     if (name == "phobos")
         return new PhobosOrbit();
     if (name == "deimos")
