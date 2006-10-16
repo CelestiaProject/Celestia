@@ -31,6 +31,8 @@ enum JPLEphemItem
     JPLEph_Pluto         =  8,
     JPLEph_Moon          =  9,
     JPLEph_Sun           = 10,
+    JPLEph_Earth         = 11,
+    JPLEph_SSB           = 12,
 };
 
 
@@ -80,7 +82,7 @@ private:
     double daysPerInterval;
 
     double au;
-    double emrat;
+    double earthMoonMassRatio;
 
     unsigned int DENum;       // ephemeris version
     unsigned int recordSize;  // number of doubles per record
