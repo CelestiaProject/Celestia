@@ -17,6 +17,10 @@
 #include <iostream>
 #include <functional>
 
+// A little trickery to get something like a compile time assert in C++
+#define COMPILE_TIME_ASSERT(pred) \
+    switch(0){case 0: case pred:;}
+
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
