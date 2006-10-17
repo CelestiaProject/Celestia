@@ -16,6 +16,8 @@
 #endif /* MACOSX_PB */
 #endif /* _WIN32 */
 
+#include <celutil/util.h>
+
 /* Use the system byteswap.h definitions if we have them */
 #ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>
@@ -31,6 +33,27 @@ static unsigned int bswap_32(unsigned int val) {
 }
 #endif
 
+inline double bswap_double(double d)
+{
+    COMPILE_TIME_ASSERT(sizeof(double) == 8)
+
+    union DoubleBytes
+    {
+        char bytes[8];
+        double d;
+    };
+    DoubleBytes db;
+    db.d = d;
+
+    char c;
+    c = db.bytes[0]; db.bytes[0] = db.bytes[7]; db.bytes[7] = c;
+    c = db.bytes[1]; db.bytes[1] = db.bytes[6]; db.bytes[6] = c;
+    c = db.bytes[2]; db.bytes[2] = db.bytes[5]; db.bytes[5] = c;
+    c = db.bytes[3]; db.bytes[3] = db.bytes[4]; db.bytes[4] = c;
+
+    return db.d;
+}
+
 #define SWAP_FLOAT(x, y) do { *(unsigned int *)&x = bswap_32( *(unsigned int *)&y ); } while (0)
 
 #if defined(WORDS_BIGENDIAN) || defined(__BIG_ENDIAN__)
@@ -41,11 +64,15 @@ static unsigned int bswap_32(unsigned int val) {
 
 #define LE_TO_CPU_FLOAT(ret, val) SWAP_FLOAT(ret, val)
 
+#define LE_TO_CPU_DOUBLE(ret, val) (ret = bswap_double(d))
+
 #define BE_TO_CPU_INT16(ret, val) (ret = val)
 
 #define BE_TO_CPU_INT32(ret, val) (ret = val)
 
 #define BE_TO_CPU_FLOAT(ret, val) (ret = val)
+
+#define BE_TO_CPU_DOUBLE(ret, val) (ret = val)
 
 #else
 
@@ -55,11 +82,15 @@ static unsigned int bswap_32(unsigned int val) {
 
 #define BE_TO_CPU_FLOAT(ret, val) SWAP_FLOAT(ret, val)
 
+#define BE_TO_CPU_DOUBLE(ret, val) (ret = bswap_double(d))
+
 #define LE_TO_CPU_INT16(ret, val) (ret = val)
 
 #define LE_TO_CPU_INT32(ret, val) (ret = val)
 
 #define LE_TO_CPU_FLOAT(ret, val) (ret = val)
+
+#define LE_TO_CPU_DOUBLE(ret, val) (ret = val)
 
 #endif
 
