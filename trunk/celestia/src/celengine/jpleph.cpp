@@ -41,22 +41,14 @@ static int32 readUint(istream& in)
     return (uint32) ret;
 }
 
-// TODO: This assumes that we've got to reverse endianness--won't work on
-// platforms that actually are big-endian.
 // Read a big-endian 64-bit IEEE double--if the native double format isn't
 // IEEE 754, there will be troubles.
 static double readDouble(istream& in)
 {
-    unsigned char buf[8];
-    char c;
-
-    in.read((char*)buf, 8);
-    c = buf[0]; buf[0] = buf[7]; buf[7] = c;
-    c = buf[1]; buf[1] = buf[6]; buf[6] = c;
-    c = buf[2]; buf[2] = buf[5]; buf[5] = c;
-    c = buf[3]; buf[3] = buf[4]; buf[4] = c;
-
-    return *((double*) buf);
+    double d;
+    in.read((char*) &d, sizeof(double));
+    BE_TO_CPU_DOUBLE(d, d);
+    return d;
 }
 
 
@@ -156,6 +148,7 @@ Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
 	u = 2.0 * (tjd - granuleStartDate) / daysPerGranule - 1.0;
     }
 
+    // Evaluate the Chebyshev polynomials
     double sum[3];
     double cc[MaxChebyshevCoeffs];
     unsigned int nCoeffs = coeffInfo[planet].nCoeffs;
