@@ -2868,6 +2868,9 @@ static Orbit* CreateJPLEphOrbit(JPLEphemItem target,
                                 double period,
                                 double boundingRadius)
 {
+    if (jpleph == NULL)
+        return NULL;
+
     Orbit* o = new JPLEphOrbit(*jpleph, target, center, period, boundingRadius);
     return new MixedOrbit(o,
                           jpleph->getStartDate(),
