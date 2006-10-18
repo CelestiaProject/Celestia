@@ -22,7 +22,9 @@ class SpiceOrbit : public CachingOrbit
                const std::string& _targetBodyName,
                const std::string& _originName,
                double _period,
-               double _boundingRadius);
+               double _boundingRadius,
+               double _beginning,
+               double _ending);
     virtual ~SpiceOrbit();
 
     bool init(const std::string& path);

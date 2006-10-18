@@ -24,13 +24,17 @@ SpiceOrbit::SpiceOrbit(const std::string& _kernelFile,
                        const std::string& _targetBodyName,
                        const std::string& _originName,
                        double _period,
-                       double _boundingRadius) :
+                       double _boundingRadius,
+                       double _beginning,
+                       double _ending) :
     kernelFile(_kernelFile),
     targetBodyName(_targetBodyName),
     originName(_originName),
     period(_period),
     boundingRadius(_boundingRadius),
-    spiceErr(false)
+    spiceErr(false),
+    validIntervalBegin(_beginning),
+    validIntervalEnd(_ending)
 {
 }
 
@@ -81,6 +85,8 @@ SpiceOrbit::init(const std::string& path)
         reset_c();
     }
 
+    clog << "Loaded SPK file " << filepath << "\n";
+
     // Get the ID codes for the target
     if (!getNAIFID(targetBodyName, &targetID))
     {
@@ -96,6 +102,15 @@ SpiceOrbit::init(const std::string& path)
         return false;
     }
 
+#if 0
+    for (handles)
+    {
+        dafbfs();
+        daffna();
+    }
+#endif
+
+#if 0
     // Get coverage window for target and origin object
     const int MaxIntervals = 10;
     SPICEDOUBLE_CELL ( cover, MaxIntervals * 2 );
@@ -113,6 +128,8 @@ SpiceOrbit::init(const std::string& path)
         if (!failed_c())
             nIntervals = card_c(&cover) / 2;
 
+        clog << "nIntervals = " << nIntervals << "\n";
+
         // Only consider the first interval in the window.
         // TODO: consider supporting noncontiguous coverage
         if (nIntervals <= 0)
@@ -127,6 +144,8 @@ SpiceOrbit::init(const std::string& path)
         }
 
         wnfetd_c(&cover, 0, &targetBeginning, &targetEnding);
+        clog << astro::secsToDays(targetBeginning) << ", " <<
+            astro::secsToDays(targetEnding) << "\n";
     }
 
     // Check the coverage for the origin 
@@ -162,12 +181,17 @@ SpiceOrbit::init(const std::string& path)
         spiceErr = true;
         return false;
     }
+#else
+    double beginning = astro::daysToSecs(validIntervalBegin - astro::J2000) + 0.001;
+#endif
 
+#if 0
     // Add a very small offset to the beginning and ending of the interval
     // so that roundoff error won't cause us to sample slightly outside the
     // valid time interval.
     validIntervalBegin = astro::secsToDays(beginning + 0.001) + astro::J2000;
     validIntervalEnd = astro::secsToDays(ending - 0.001) + astro::J2000;
+#endif
 
     // Test getting the position of the object to make sure that there's
     // adequate data in the kernel.
