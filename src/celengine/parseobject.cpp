@@ -130,19 +130,33 @@ CreateSpiceOrbit(Hash* orbitData,
     string kernelFileName;
     if (!orbitData->getString("Kernel", kernelFileName))
     {
-        cout << "Kernel filename missing from SPICE orbit\n";
+        clog << "Kernel filename missing from SPICE orbit\n";
         return NULL;
     }
 
     if (!orbitData->getString("Target", targetBodyName))
     {
-        cout << "Target name missing from SPICE orbit\n";
+        clog << "Target name missing from SPICE orbit\n";
         return NULL;
     }
 
     if (!orbitData->getString("Origin", originName))
     {
-        cout << "Origin name missing from SPICE orbit\n";
+        clog << "Origin name missing from SPICE orbit\n";
+        return NULL;
+    }
+
+    double beginningTDBJD = 0.0;
+    if (!ParseDate(orbitData, "Beginning", beginningTDBJD))
+    {
+        clog << "Beginning date missing from SPICE orbit\n";
+        return NULL;
+    }
+
+    double endingTDBJD = 0.0;
+    if (!ParseDate(orbitData, "Ending", endingTDBJD))
+    {
+        clog << "Ending date missing from SPICE orbit\n";
         return NULL;
     }
 
@@ -150,11 +164,11 @@ CreateSpiceOrbit(Hash* orbitData,
     double boundingRadius = 0.0;
     if (!orbitData->getNumber("BoundingRadius", boundingRadius))
     {
-        cout << "Bounding Radius missing from SPICE orbit\n";
+        clog << "Bounding Radius missing from SPICE orbit\n";
         return NULL;
     }
 
-    // The period of the orbit may be specified if appropriate; a vakye
+    // The period of the orbit may be specified if appropriate; a value
     // of zero for the period (the default), means that the orbit will
     // be considered aperiodic.
     double period = 0.0;
@@ -170,7 +184,9 @@ CreateSpiceOrbit(Hash* orbitData,
                                        targetBodyName,
                                        originName,
                                        period,
-                                       boundingRadius);
+                                       boundingRadius,
+                                       beginningTDBJD,
+                                       endingTDBJD);
     if (!orbit->init(path))
     {
         // Error using SPICE library; destroy the orbit; hopefully a
@@ -278,6 +294,268 @@ CreateOrbit(PlanetarySystem* system,
 }
 
 
+static UniformRotationModel*
+CreateUniformRotationModel(Hash* rotationData,
+                           float syncRotationPeriod)
+{
+    // Default to synchronous rotation
+    float period = syncRotationPeriod;
+    if (rotationData->getNumber("Period", period))
+    {
+        period = period / 24.0f;
+    }
+
+    float offset = 0.0f;
+    if (rotationData->getNumber("Offset", offset))
+    {
+        offset = degToRad(offset);
+    }
+
+    double epoch = astro::J2000;
+    ParseDate(rotationData, "Epoch", epoch);
+
+    float inclination = 0.0f;
+    if (rotationData->getNumber("Inclination", inclination))
+    {
+        inclination = degToRad(inclination);
+    }
+
+    float ascendingNode = 0.0f;
+    if (rotationData->getNumber("AscendingNode", ascendingNode))
+    {
+        ascendingNode = degToRad(ascendingNode);
+    }
+
+    return new UniformRotationModel(period,
+                                    offset,
+                                    epoch,
+                                    inclination,
+                                    ascendingNode);
+}
+
+
+static PrecessingRotationModel*
+CreatePrecessingRotationModel(Hash* rotationData,
+                              float syncRotationPeriod)
+{
+    // Default to synchronous rotation
+    float period = syncRotationPeriod;
+    if (rotationData->getNumber("Period", period))
+    {
+        period = period / 24.0f;
+    }
+
+    float offset = 0.0f;
+    if (rotationData->getNumber("Offset", offset))
+    {
+        offset = degToRad(offset);
+    }
+
+    double epoch = astro::J2000;
+    ParseDate(rotationData, "Epoch", epoch);
+
+    float inclination = 0.0f;
+    if (rotationData->getNumber("Inclination", inclination))
+    {
+        inclination = degToRad(inclination);
+    }
+
+    float ascendingNode = 0.0f;
+    if (rotationData->getNumber("AscendingNode", ascendingNode))
+    {
+        ascendingNode = degToRad(ascendingNode);
+    }
+
+    // The default value of 0 is handled specially, interpreted to indicate
+    // that there's no precession.
+    float precessionPeriod = 0.0f;
+    if (rotationData->getNumber("PrecessionPeriod", precessionPeriod))
+    {
+        // The precession period is specified in the ssc file in units
+        // of years, but internally Celestia uses days.
+        precessionPeriod = precessionPeriod * 365.25f;
+    }
+
+    return new PrecessingRotationModel(period,
+                                       offset,
+                                       epoch,
+                                       inclination,
+                                       ascendingNode,
+                                       precessionPeriod);
+}
+
+
+// Parse rotation information. Unfortunately, Celestia didn't originally have
+// RotationModel objects, so information about the rotation of the object isn't
+// grouped into a single subobject--the ssc fields relevant for rotation just
+// appear in the top level structure.
+RotationModel*
+CreateRotationModel(PlanetarySystem* system,
+                    Hash* planetData,
+                    const string& path,
+                    float syncRotationPeriod)
+{
+    RotationModel* rotationModel = NULL;
+
+    // If more than one rotation model is specified, the following precedence
+    // is used to determine which one should be used:
+    //   CustomRotation
+    //   SPICE C-Kernel
+    //   SampledOrientation
+    //   PrecessingRotation
+    //   UniformRotation
+    //   legacy rotation parameters
+
+    string customRotationModelName;
+    if (planetData->getString("CustomRotationModel", customRotationModelName))
+    {
+        //rotationModel = GetCustomRotationModel(customRotationModelName);
+        rotationModel = NULL;
+        if (rotationModel != NULL)
+        {
+            return rotationModel;
+        }
+        DPRINTF(0, "Could not find custom rotation model named '%s'\n",
+                customRotationModelName.c_str());
+    }
+
+#ifdef USE_SPICE
+    // TODO: implement SPICE frame based rotations
+#endif
+
+#if 0
+    string sampOrientationFile;
+    if (planetData->getString("SampledOrientation", sampOrientationFile))
+    {
+        DPRINTF(1, "Attempting to load orientation file '%s'\n",
+                sampOrientationFile.c_str());
+        ResourceHandle orientationHandle =
+            GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
+        orbit = GetTrajectoryManager()->find(orientationHandle);
+        if (orbit != NULL)
+        {
+            return orbit;
+        }
+        DPRINTF(0, "Could not load sampled orbit file '%s'\n",
+                sampOrbitFile.c_str());
+    }
+#endif
+
+    Value* precessingRotationValue = planetData->getValue("PrecessingRotation");
+    if (precessingRotationValue != NULL)
+    {
+        if (precessingRotationValue->getType() != Value::HashType)
+        {
+            DPRINTF(0, "Object has incorrect syntax for precessing rotation.\n");
+            return NULL;
+        }
+        else
+        {
+            return CreatePrecessingRotationModel(precessingRotationValue->getHash(),
+                                                 syncRotationPeriod);
+        }
+    }
+
+    Value* uniformRotationValue = planetData->getValue("UniformRotation");
+    if (uniformRotationValue != NULL)
+    {
+        if (uniformRotationValue->getType() != Value::HashType)
+        {
+            DPRINTF(0, "Object has incorrect uniform rotation syntax.\n");
+            return NULL;
+        }
+        else
+        {
+            return CreateUniformRotationModel(uniformRotationValue->getHash(),
+                                              syncRotationPeriod);
+        }
+    }
+
+    // For backward compatibility we need to support rotation parameters
+    // that appear in the main block of the object definition.
+    // Default to synchronous rotation
+    bool specified = false;
+    float period = syncRotationPeriod;
+    if (planetData->getNumber("RotationPeriod", period))
+    {
+        specified = true;
+        period = period / 24.0f;
+    }
+
+    float offset = 0.0f;
+    if (planetData->getNumber("RotationOffset", offset))
+    {
+        specified = true;
+        offset = degToRad(offset);
+    }
+
+    double epoch = astro::J2000;
+    if (ParseDate(planetData, "RotationEpoch", epoch))
+    {
+        specified = true;
+    }
+
+    float inclination = 0.0f;
+    if (planetData->getNumber("Obliquity", inclination))
+    {
+        specified = true;
+        inclination = degToRad(inclination);
+    }
+
+    float ascendingNode = 0.0f;
+    if (planetData->getNumber("EquatorAscendingNode", ascendingNode))
+    {
+        specified = true;
+        ascendingNode = degToRad(ascendingNode);
+    }
+
+    float precessionRate = 0.0f;
+    if (planetData->getNumber("PrecessionRate", precessionRate))
+    {
+        specified = true;
+    }
+
+    if (specified)
+    {
+        RotationModel* rm = NULL;
+        if (precessionRate == 0.0f)
+        {
+            rm = new UniformRotationModel(period,
+                                          offset,
+                                          epoch,
+                                          inclination,
+                                          ascendingNode);
+        }
+        else
+        {
+            rm = new PrecessingRotationModel(period,
+                                             offset,
+                                             epoch,
+                                             inclination,
+                                             ascendingNode,
+                                             -360.0f / precessionRate);
+        }
+
+        return rm;
+    }
+    else
+    {
+        // No rotation fields specified
+        return NULL;
+    }
+}
+
+
+RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
+{
+    return new UniformRotationModel((float) syncRotationPeriod,
+                                    0.0f,
+                                    astro::J2000,
+                                    0.0f,
+                                    0.0f);
+}
+
+
 void
 FillinRotationElements(Hash* rotationData, RotationElements& re)
 {
@@ -289,7 +567,8 @@ FillinRotationElements(Hash* rotationData, RotationElements& re)
     if (rotationData->getNumber("RotationOffset", offset))
         re.offset = degToRad(offset);
 
-    rotationData->getNumber("RotationEpoch", re.epoch);
+    re.epoch = astro::J2000;
+    ParseDate(rotationData, "RotationEpoch", re.epoch);
 
     float obliquity = 0.0f;
     if (rotationData->getNumber("Obliquity", obliquity))

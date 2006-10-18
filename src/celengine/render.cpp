@@ -5307,25 +5307,9 @@ void Renderer::renderPlanet(Body& body,
         rp.model = body.getModel();
 
         // Compute the orientation of the planet before axial rotation
-        Quatd q = body.getEclipticalToEquatorial(now);
-
-        double rotation = 0.0;
-        // Watch out for the precision limits of floats when computing
-        // rotation . . .
-        {
-            RotationElements re = body.getRotationElements();
-            double rotations = (now - re.epoch) / (double) re.period;
-            double wholeRotations = floor(rotations);
-            double remainder = rotations - wholeRotations;
-
-            // Add an extra half rotation because of the convention in all
-            // planet texture maps where zero deg long. is in the middle of
-            // the texture.
-            remainder += 0.5;
-
-            rotation = remainder * 2 * PI + re.offset;
-        }
-        q.yrotate(-rotation);
+        Quatd q = body.getRotationModel()->spin(now) *
+            body.getEclipticalToEquatorial(now);
+        
         rp.orientation = body.getOrientation() *
             Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
@@ -5953,7 +5937,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 renderList.push_back(rle);
             }
         }
-
+             
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
             float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;

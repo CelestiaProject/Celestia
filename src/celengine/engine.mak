@@ -62,6 +62,7 @@ OBJS=\
 	$(INTDIR)\rendcontext.obj \
 	$(INTDIR)\render.obj \
 	$(INTDIR)\renderglsl.obj \
+	$(INTDIR)\rotation.obj \
 	$(INTDIR)\samporbit.obj \
 	$(INTDIR)\selection.obj \
 	$(INTDIR)\shadermanager.obj \
