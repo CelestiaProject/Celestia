@@ -261,7 +261,7 @@ static Selection GetOrbitBarycenter(const string& name,
             return Selection();
         }
     }
-    
+
     return orbitBarycenter;
 }
 
@@ -309,7 +309,6 @@ static Body* CreatePlanet(const string& name,
     }
     
     Orbit* orbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
-
     if (orbit != NULL)
     {
         body->setOrbit(orbit);
@@ -348,7 +347,7 @@ static Body* CreatePlanet(const string& name,
 
     if (classification == Body::Unknown)
     {
-        //Try to guess the type
+        // Try to guess the type
         if (system->getPrimaryBody() != NULL)
         {
             if(radius > 0.1)
@@ -408,11 +407,28 @@ static Body* CreatePlanet(const string& name,
     if (planetData->getRotation("Orientation", orientation))
         body->setOrientation(orientation);
 
-    RotationElements re = body->getRotationElements();
-    if (disposition != ModifyObject)
-        re.period = (float) body->getOrbit()->getPeriod();
-    FillinRotationElements(planetData, re);
-    body->setRotationElements(re);
+    // Get the rotation model for this body
+    float syncRotationPeriod = (float) body->getOrbit()->getPeriod();
+    RotationModel* rm = CreateRotationModel(system, planetData, path,
+                                            syncRotationPeriod);
+    if (rm != NULL)
+    {
+        // TODO: Free old rotation model and replace it with the new one;
+        // should reference count rotation model objects.
+        body->setRotationModel(rm);
+    }
+    else
+    {
+        // If no rotation model is provided, use a default rotation model--
+        // a uniform rotation that's synchronous with the orbit (appropriate
+        // for nearly all natural satellites in the solar system.) If the
+        // disposition is modify, we do not want to replace the existing
+        // rotation model with a default one.
+        if (disposition != ModifyObject)
+        {
+            body->setRotationModel(CreateDefaultRotationModel(syncRotationPeriod));
+        }
+    }    
     
     string orbitRefPlane;
     if (planetData->getString("OrbitReferencePlane", orbitRefPlane))
@@ -595,42 +611,7 @@ static Body* CreateBarycenter(const string& name,
 
     body->setRadius(1.0f);
     body->setClassification(Body::Invisible);
-#if 0    
-    // Use the orbit barycenter specified in the definition; otherwise default to the
-    // parent object.
-    string orbitBarycenterName;
-    Selection orbitBarycenter;
-    if (barycenterData->getString("OrbitBarycenter", orbitBarycenterName))
-    {
-        orbitBarycenter = universe.findPath(orbitBarycenterName, NULL, 0);
-        if (orbitBarycenter.body() == NULL && orbitBarycenter.star() == NULL)
-        {
-            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' not found.\n");
-            if (body != existingBody)
-                delete body;
-            return NULL;
-        }
-    }
-    else
-    {
-        // The default orbit barycenter is the parent object
-        orbitBarycenter = Selection(system->getPrimaryBody());
-    }    
-    
-    // The barycenter must be in the same star system as the object we're creating
-    bool orbitsPlanet = false;
-    if (orbitBarycenter.body())
-    {
-        if (system->getStar() != orbitBarycenter.body()->getSystem()->getStar())
-        {
-            cerr << "OrbitBarycenter" << _(" of ") << name << _(" must be in same star system\n");
-            if (body != existingBody)
-                delete body;
-            return NULL;
-        }
-        orbitsPlanet = true;
-    }
-#endif
+
     Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, barycenterData);
     bool orbitsPlanet = false;
     if (orbitBarycenter.body())
@@ -664,6 +645,8 @@ static Body* CreateBarycenter(const string& name,
             delete body;
         return NULL;
     }
+
+    body->setRotationModel(new ConstantOrientation(Quatd(1.0)));
     
     return body;
 }                          

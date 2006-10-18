@@ -415,7 +415,7 @@ Point3d SynchronousOrbit::positionAtTime(double jd) const
 
 double SynchronousOrbit::getPeriod() const
 {
-    return body.getRotationElements().period;
+    return body.getRotationModel()->getPeriod();
 }
 
 

@@ -24,6 +24,7 @@ Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     orbitBarycenter(_system ? _system->getPrimaryBody() : NULL),
     orbitRefPlane(astro::BodyEquator),
+    rotationModel(NULL),
     radius(10000.0f),
     mass(0.0f),
     oblateness(0),
@@ -131,8 +132,8 @@ void Body::setRadius(float _radius)
 
 
 // For an irregular object, the radius is defined to be the largest semi-axis
-// of the axis-aligned bounding box.  The radius of the smallest sphere containing
-// the object is potentially larger by a factor of sqrt(3)
+// of the axis-aligned bounding box.  The radius of the smallest sphere
+// containing the object is potentially larger by a factor of sqrt(3)
 float Body::getBoundingRadius() const
 {
     if (model == InvalidResource)
@@ -190,15 +191,14 @@ void Body::setOrientation(const Quatf& q)
 }
 
 
-RotationElements Body::getRotationElements() const
+const RotationModel* Body::getRotationModel() const
 {
-    return rotationElements;
+    return rotationModel;
 }
 
-
-void Body::setRotationElements(const RotationElements& re)
+void Body::setRotationModel(const RotationModel* rm)
 {
-    rotationElements = re;
+    rotationModel = rm;
 }
 
 
@@ -281,20 +281,16 @@ Mat4d Body::getLocalToHeliocentric(double when) const
 }
 
 
-Mat4d Body::getLocalToHeliocentric(double when, astro::ReferencePlane childRefPlane) const
+Mat4d Body::getLocalToHeliocentric(double tjd, astro::ReferencePlane childRefPlane) const
 {
-    double ascendingNode = (double) rotationElements.ascendingNode +
-        rotationElements.precessionRate * (when - astro::J2000);
-
-    Point3d pos = orbit->positionAtTime(when);
+    Point3d pos = orbit->positionAtTime(tjd);
     Mat4d frame;
 
     switch (childRefPlane)
     {
     case astro::BodyEquator:
-        frame = (Mat4d::xrotation(-rotationElements.obliquity) *
-                 Mat4d::yrotation(-ascendingNode) *
-                 Mat4d::translation(pos));
+        frame = getRotationModel()->equatorOrientationAtTime(tjd).toMatrix4() *
+                Mat4d::translation(pos);
         break;
     case astro::Ecliptic_J2000:
         frame = Mat4d::translation(pos);
@@ -308,7 +304,7 @@ Mat4d Body::getLocalToHeliocentric(double when, astro::ReferencePlane childRefPl
  
     // Recurse up the hierarchy . . .
     if (orbitBarycenter != NULL)
-        frame = frame * orbitBarycenter->getLocalToHeliocentric(when, orbitRefPlane);
+        frame = frame * orbitBarycenter->getLocalToHeliocentric(tjd, orbitRefPlane);
 
     return frame;
 }
@@ -320,18 +316,13 @@ Point3d Body::getHeliocentricPosition(double when) const
 }
 
 
-Quatd Body::getEclipticalToEquatorial(double when) const
+Quatd Body::getEclipticalToEquatorial(double tjd) const
 {
-    double ascendingNode = (double) rotationElements.ascendingNode +
-        rotationElements.precessionRate * (when - astro::J2000);
-
-    Quatd q =
-        Quatd::xrotation(-rotationElements.obliquity) *
-        Quatd::yrotation(-ascendingNode);
+    Quatd q = getRotationModel()->equatorOrientationAtTime(tjd);
         
     // Recurse up the hierarchy . . .
     if (orbitBarycenter != NULL)
-        q = q * orbitBarycenter->getEclipticalToEquatorial(when);
+        q = q * orbitBarycenter->getEclipticalToEquatorial(tjd);
         
     return q;
 }
@@ -350,19 +341,7 @@ Quatd Body::getEclipticalToGeographic(double when) const
 // to a point on the surface of the body.
 Quatd Body::getEquatorialToGeographic(double when) const
 {
-    double t = when - rotationElements.epoch;
-    double rotations = t / (double) rotationElements.period;
-    double wholeRotations = floor(rotations);
-    double remainder = rotations - wholeRotations;
-
-    // Add an extra half rotation because of the convention in all
-    // planet texture maps where zero deg long. is in the middle of
-    // the texture.
-    remainder += 0.5;
-    
-    Quatd q(1);
-    q.yrotate(-remainder * 2 * PI - rotationElements.offset);
-    return q;
+    return rotationModel->spin(when);
 }
 
 
