@@ -15,6 +15,7 @@
 #include "customorbit.h"
 #include "spiceorbit.h"
 #include "trajmanager.h"
+#include "rotationmanager.h"
 
 
 using namespace std;
@@ -423,23 +424,22 @@ CreateRotationModel(PlanetarySystem* system,
     // TODO: implement SPICE frame based rotations
 #endif
 
-#if 0
     string sampOrientationFile;
     if (planetData->getString("SampledOrientation", sampOrientationFile))
     {
         DPRINTF(1, "Attempting to load orientation file '%s'\n",
                 sampOrientationFile.c_str());
         ResourceHandle orientationHandle =
-            GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
-        orbit = GetTrajectoryManager()->find(orientationHandle);
-        if (orbit != NULL)
+            GetRotationModelManager()->getHandle(RotationModelInfo(sampOrientationFile, path));
+        rotationModel = GetRotationModelManager()->find(orientationHandle);
+        if (rotationModel != NULL)
         {
-            return orbit;
+            return rotationModel;
         }
-        DPRINTF(0, "Could not load sampled orbit file '%s'\n",
-                sampOrbitFile.c_str());
+
+        DPRINTF(0, "Could not load rotation model file '%s'\n",
+                sampOrientationFile.c_str());
     }
-#endif
 
     Value* precessingRotationValue = planetData->getValue("PrecessingRotation");
     if (precessingRotationValue != NULL)

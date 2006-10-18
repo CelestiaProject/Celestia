@@ -58,8 +58,11 @@ libcelengine_a_SOURCES = \
 	regcombine.cpp \
 	rendcontext.cpp \
 	render.cpp \
-    renderglsl.cpp \
-    samporbit.cpp \
+	renderglsl.cpp \
+	rotation.cpp \
+	rotationmanager.cpp \
+	samporbit.cpp \
+	samporient.cpp \
 	selection.cpp \
 	shadermanager.cpp \
 	simulation.cpp \
