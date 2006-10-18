@@ -106,8 +106,8 @@ class Body
     void setOrbitBarycenter(const Body*);
     astro::ReferencePlane getOrbitReferencePlane() const;
     void setOrbitReferencePlane(astro::ReferencePlane);
-    RotationElements getRotationElements() const;
-    void setRotationElements(const RotationElements&);
+    const RotationModel* getRotationModel() const;
+    void setRotationModel(const RotationModel*);
     float getRadius() const;
     void setRadius(float);
     float getMass() const;
@@ -189,7 +189,7 @@ class Body
     const Body* orbitBarycenter;
     astro::ReferencePlane orbitRefPlane;
     
-    RotationElements rotationElements;
+    const RotationModel* rotationModel;
 
     float radius;
     float mass;
