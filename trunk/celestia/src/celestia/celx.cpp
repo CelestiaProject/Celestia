@@ -2423,13 +2423,10 @@ static int object_getinfo(lua_State* l)
         lua_pushstring(l, "hasRings");
         lua_pushboolean(l, body->getRings() != NULL);
         lua_settable(l, -3);
-        RotationElements re = body->getRotationElements();
-        setTable(l, "rotationPeriod", (double)re.period);
-        setTable(l, "rotationOffset", (double)re.offset);
-        setTable(l, "rotationEpoch", re.epoch);
-        setTable(l, "rotationObliquity", (double)re.obliquity);
-        setTable(l, "rotationAscendingNode", (double)re.ascendingNode);
-        setTable(l, "rotationPrecessionRate", (double)re.precessionRate);
+
+        const RotationModel* rm = body->getRotationModel();
+        setTable(l, "rotationPeriod", (double) rm->getPeriod());
+
         Orbit* orbit = body->getOrbit();
         setTable(l, "orbitPeriod", orbit->getPeriod());
         Atmosphere* atmosphere = body->getAtmosphere();
