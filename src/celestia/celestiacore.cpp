@@ -2859,9 +2859,12 @@ static void displayPlanetInfo(Overlay& overlay,
 
     if (detail > 1)
     {
-        overlay << _("Day length: ");
-        displayDuration(overlay, body.getRotationElements().period);
-        overlay << '\n';
+        if (body.getRotationModel()->isPeriodic())
+        {
+            overlay << _("Day length: ");
+            displayDuration(overlay, body.getRotationModel()->getPeriod());
+            overlay << '\n';
+        }
 
         PlanetarySystem* system = body.getSystem();
         if (system != NULL)
