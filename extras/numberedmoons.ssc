@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# Version 1.25 (2006 June 29)
+# Version 1.26 (2006 October 19)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -1535,6 +1535,26 @@
 	Albedo 0.06
 }
 
+"Daphnis" "Sol/Saturn"
+{
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 3.5
+
+	EllipticalOrbit
+	{
+	Period          0.5998503
+	SemiMajorAxis	136500     # Fit to Celestia's Keeler Gap
+#	Eccentricity      0.004827 # Fit to Celestia's Keeler Gap
+	Inclination       0.000950
+	AscendingNode   191.701
+	ArgOfPericenter 281.908
+	MeanAnomaly       0.000
+	}
+
+	Albedo 0.5
+}
+
 "2006S1" "Sol/Saturn" # MPEC 2006-M45
 {
 	Texture	 	"asteroid.jpg"
@@ -1673,7 +1693,7 @@
 	Albedo 0.06
 }
 
-"2006S7" "Sol/Saturn" # MPEC 2006-M45
+"2006S7" "Sol/Saturn" # MPEC 2006-N06
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1682,13 +1702,13 @@
 	EllipticalOrbit
 	{
 	Epoch		2453800.5	# 2006 Mar 6
-	Period		1238.57
-	SemiMajorAxis	22243600
-	Eccentricity	0.3679795
-	Inclination	169.476
-	AscendingNode	 58.175
-	ArgOfPericenter 329.067     
-	MeanAnomaly      50.799              
+	Period		1242.36
+	SemiMajorAxis	22288900
+	Eccentricity	0.3688000
+	Inclination	169.482
+	AscendingNode	 58.170
+	ArgOfPericenter 329.289     
+	MeanAnomaly      50.553              
 	}
 
 	RotationPeriod  10   # Guess
@@ -1808,6 +1828,72 @@
 	RotationPeriod  10   # Guess
 
 	Albedo 0.07
+}
+
+"Perdita" "Sol/Uranus"
+{
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 10
+
+	EllipticalOrbit
+	{
+	Period            0.63877
+	SemiMajorAxis   76462
+	Eccentricity      0.01160
+	Inclination       0.470
+	AscendingNode   150.095
+	ArgOfPericenter 199.193
+	MeanAnomaly     270.068
+	}
+
+	RotationPeriod  10   # guess
+
+	Albedo 0.07  # guess
+}
+
+"Mab" "Sol/Uranus"
+{
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 5
+
+	EllipticalOrbit
+	{
+	Period          0.92362
+	SemiMajorAxis   97771
+	Eccentricity      0.00242
+	Inclination       0.133
+	AscendingNode   224.525
+	ArgOfPericenter 123.862
+	MeanAnomaly     255.590
+	}
+
+	RotationPeriod  10   # guess
+
+	Albedo 0.07   # guess
+}
+
+"Cupid" "Sol/Uranus"
+{
+	Texture "asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 5
+
+	EllipticalOrbit
+	{
+	Period          0.61359
+	SemiMajorAxis   74439
+	Eccentricity      0.000884
+	Inclination       0.0991
+	AscendingNode    79.496
+	ArgOfPericenter 106.781
+	MeanAnomaly     123.625
+	}
+
+	RotationPeriod  10   # guess
+
+	Albedo 0.07   # guess
 }
 
 
@@ -1975,4 +2061,3 @@
 
 	Albedo 0.35 # estimate, based on Charon
 }
-
