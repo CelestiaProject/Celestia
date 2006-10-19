@@ -28,26 +28,66 @@ struct OrientationSample
     Quatf q;
 };
 
+/*!
+ * Sampled orientation files are ASCII text files containing a sequence of
+ * time stamped quaternion keys. Each record in the file has the form:
+ *
+ *   <time> <qw> <qx> <qy> <qz>
+ *  
+ * Where (qw qx qy qz) is a unit quaternion representing a rotation of
+ *   theta = acos(qw)*2 radians about the axis (qx, qy, qz)*sin(theta/2).
+ * The time values are Julian days in Barycentric Dynamical Time. The records
+ * in the orientation file should be ordered so that their times are
+ * monotonically increasing.
+ *
+ * A very simple example file:
+ *
+ *   2454025 1     0     0     0
+ *   2454026 0.707 0.707 0     0
+ *   2454027 0     0     1     0
+ *
+ * Note that while each record of this example file is on a separate line,
+ * all whitespace is treated identically, so the entire file could be one
+ * a single line.
+ */
+
+// 90 degree rotation about x-axis to convert orientation to Celestia's
+// coordinate system.
+static Quatf coordSysCorrection = Quatf::xrotation((float) (PI / 2.0));
+
+
 bool operator<(const OrientationSample& a, const OrientationSample& b)
 {
     return a.t < b.t;
 }
 
+/*! SampledOrientation is a rotation model that interpolates a sequence
+ *  of quaternion keyframes. Typically, an instance of SampledRotation will
+ *  be created from a file with LoadSampledOrientation().
+ */
 class SampledOrientation : public RotationModel
 {
 public:
     SampledOrientation();
     virtual ~SampledOrientation();
 
+    /*! Add another quaternion key to the sampled orientation. The keys
+     *  should have monotonically increasing time values.
+     */
     void addSample(double tjd, Quatf q);
-    Quatf getOrientation(double tjd) const;
 
+    /*! The orientation of a sampled rotation model is entirely due
+     *  to spin (i.e. there's no notion of an equatorial frame.)
+     */
     virtual Quatd spin(double tjd) const;
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
 
     virtual void getValidRange(double& begin, double& end) const;
+
+private:
+    Quatf getOrientation(double tjd) const;
 
 private:
     vector<OrientationSample> samples;
@@ -80,7 +120,7 @@ void SampledOrientation::addSample(double t, Quatf q)
     // TODO: add a check for out of sequence samples
     OrientationSample samp;
     samp.t = t;
-    samp.q = q;
+    samp.q = q * coordSysCorrection;
     samples.push_back(samp);
 }
 
@@ -177,8 +217,6 @@ Quatf SampledOrientation::getOrientation(double tjd) const
         }
     }
 
-    // TODO: Transform to Celestia's coordinate system
-    
     return orientation;
 }
 
