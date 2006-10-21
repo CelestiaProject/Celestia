@@ -391,8 +391,7 @@ CreatePrecessingRotationModel(Hash* rotationData,
 // grouped into a single subobject--the ssc fields relevant for rotation just
 // appear in the top level structure.
 RotationModel*
-CreateRotationModel(PlanetarySystem* system,
-                    Hash* planetData,
+CreateRotationModel(Hash* planetData,
                     const string& path,
                     float syncRotationPeriod)
 {
@@ -554,33 +553,3 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
                                     0.0f,
                                     0.0f);
 }
-
-
-void
-FillinRotationElements(Hash* rotationData, RotationElements& re)
-{
-    float period = 0.0f;
-    if (rotationData->getNumber("RotationPeriod", period))
-        re.period = period / 24.0f;
-
-    float offset = 0.0f;
-    if (rotationData->getNumber("RotationOffset", offset))
-        re.offset = degToRad(offset);
-
-    re.epoch = astro::J2000;
-    ParseDate(rotationData, "RotationEpoch", re.epoch);
-
-    float obliquity = 0.0f;
-    if (rotationData->getNumber("Obliquity", obliquity))
-        re.obliquity = degToRad(obliquity);
-
-    float ascendingNode = 0.0f;
-    if (rotationData->getNumber("EquatorAscendingNode", ascendingNode))
-        re.ascendingNode = degToRad(ascendingNode);
-
-    float precessionRate = 0.0f;
-    if (rotationData->getNumber("PrecessionRate", precessionRate))
-        re.precessionRate = degToRad(precessionRate);
-}
-
-
