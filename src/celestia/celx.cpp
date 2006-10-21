@@ -1111,6 +1111,8 @@ static Marker::Symbol parseMarkerSymbol(const string& name)
         return Marker::UpArrow;
     else if (compareIgnoringCase(name, "downarrow") == 0)
         return Marker::DownArrow;
+    else if (compareIgnoringCase(name, "circle") == 0)
+        return Marker::Circle;
     else
         return Marker::Diamond;
 }
@@ -2497,7 +2499,7 @@ static int object_absmag(lua_State* l)
 
 static int object_mark(lua_State* l)
 {
-    checkArgs(l, 1, 4, "No arguments expected to function object:mark");
+    checkArgs(l, 1, 5, "Need 0 to 4 arguments for object:mark");
 
     Selection* sel = this_object(l);
     CelestiaCore* appCore = getAppCore(l, AllErrors);
@@ -2517,10 +2519,19 @@ static int object_mark(lua_State* l)
         markSize = 1.0f;
     else if (markSize > 10000.0f)
         markSize = 10000.0f;
+        
+    float markAlpha = (float)safeGetNumber(l, 5, WrongType, "Fourth arg to object:mark must be a number", 0.9);
+    if (markAlpha < 0.0f)
+        markAlpha = 0.0f;
+    else if (markAlpha > 1.0f)
+        markAlpha = 1.0f;
+
+    Color markColorAlpha(0.0f, 1.0f, 0.0f, 0.9f);
+    markColorAlpha = Color::Color(markColor, markAlpha);
 
     Simulation* sim = appCore->getSimulation();
     sim->getUniverse()->markObject(*sel, markSize,
-                                   markColor, markSymbol, 1);
+                                   markColorAlpha, markSymbol, 1);
 
     return 0;
 }

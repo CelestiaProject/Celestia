@@ -45,6 +45,7 @@ class Marker
         RightArrow = 6,
         UpArrow    = 7,
         DownArrow  = 8,
+        Circle = 9
     };
 
     Symbol getSymbol() const;
