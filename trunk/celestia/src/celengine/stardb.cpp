@@ -894,9 +894,8 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
     bool hasTexture = starData->getString("Texture", textureName);
     bool hasModel = starData->getString("Mesh", modelName);
 
-    RotationElements re = details->getRotationElements();
-    FillinRotationElements(starData, re);
-    bool hasRotationElements = !(re == details->getRotationElements());
+    RotationModel* rm = CreateRotationModel(starData, path, 1.0f);
+    bool hasRotationModel = (rm != NULL);
 
     Vec3d semiAxes;
     bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
@@ -913,7 +912,7 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
         orbit != NULL   ||
         hasSemiAxes     ||
         hasRadius       ||
-        hasRotationElements)
+        hasRotationModel)
     {
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
@@ -999,8 +998,8 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
             }
         }
 
-        if (hasRotationElements)
-            details->setRotationElements(re);
+        if (hasRotationModel)
+            details->setRotationModel(rm);
     }
 
     Star* star = new Star();

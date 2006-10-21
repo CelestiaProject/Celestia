@@ -42,7 +42,7 @@ class StarDetails
     inline float getBolometricCorrection() const;
     inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
-    inline const RotationElements& getRotationElements() const;
+    inline const RotationModel* getRotationModel() const;
     inline Vec3f getEllipsoidSemiAxes() const;
 
     void setRadius(float);
@@ -56,7 +56,7 @@ class StarDetails
     void setOrbitalRadius(float);
     void computeOrbitalRadius();
     void setVisibility(bool);
-    void setRotationElements(const RotationElements&);
+    void setRotationModel(const RotationModel*);
     void setEllipsoidSemiAxes(const Vec3f&);
     
     enum
@@ -85,7 +85,7 @@ class StarDetails
     float orbitalRadius;
     Star* barycenter;
 
-    RotationElements rotationElements;
+    const RotationModel* rotationModel;
 
     Vec3f semiAxes;
 
@@ -185,10 +185,10 @@ StarDetails::getVisibility() const
     return visible;
 }
 
-const RotationElements&
-StarDetails::getRotationElements() const
+const RotationModel*
+StarDetails::getRotationModel() const
 {
-    return rotationElements;
+    return rotationModel;
 }
 
 Vec3f
@@ -224,7 +224,7 @@ public:
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();
 
-    void setRotationElements(const RotationElements&);
+    void setRotationModel(const RotationModel*);
 
     // Accessor methods that delegate to StarDetails
     float getRadius() const;
@@ -238,7 +238,7 @@ public:
     inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
     inline uint32 getKnowledge() const;
-    inline const RotationElements& getRotationElements() const;
+    inline const RotationModel* getRotationModel() const;
     inline Vec3f getEllipsoidSemiAxes() const;
 
     enum {
@@ -327,10 +327,10 @@ Star::getVisibility() const
     return details->getVisibility();
 }
 
-const RotationElements&
-Star::getRotationElements() const
+const RotationModel*
+Star::getRotationModel() const
 {
-    return details->getRotationElements();
+    return details->getRotationModel();
 }
 
 Vec3f

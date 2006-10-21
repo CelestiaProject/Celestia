@@ -5502,26 +5502,7 @@ void Renderer::renderStar(const Star& star,
         else
             rp.atmosphere = NULL;
 
-        const RotationElements& re = star.getRotationElements();
-        Quatd q = re.eclipticalToEquatorial(now);
-
-        double rotation = 0.0;
-        // Watch out for the precision limits of floats when computing
-        // rotation . . .
-        {
-            const RotationElements& re = star.getRotationElements();
-            double rotations = (now - re.epoch) / (double) re.period;
-            double wholeRotations = floor(rotations);
-            double remainder = rotations - wholeRotations;
-
-            // Add an extra half rotation because of the convention in all
-            // planet texture maps where zero deg long. is in the middle of
-            // the texture.
-            remainder += 0.5;
-
-            rotation = remainder * 2 * PI + re.offset;
-        }
-        q.yrotate(-rotation);
+        Quatd q = star.getRotationModel()->orientationAtTime(now);
         rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
         renderObject(pos, distance, now,

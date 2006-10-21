@@ -2793,11 +2793,14 @@ static void displayStarInfo(Overlay& overlay,
         overlay << _("Surface temp: ") << SigDigitNum(star.getTemperature(), 3) << " K\n";
         overlay.oprintf(_("Radius: %.2f Rsun\n"), star.getRadius() / 696000.0f);
 
-        overlay << _("Rotation period: ");
-        float period = star.getRotationElements().period;
-        displayDuration(overlay, period);
-        overlay << '\n';
-
+        if (star.getRotationModel()->isPeriodic())
+        {
+            overlay << _("Rotation period: ");
+            float period = (float) star.getRotationModel()->getPeriod();
+            displayDuration(overlay, period);
+            overlay << '\n';
+        }
+        
         SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
             overlay << _("Planetary companions present\n");
