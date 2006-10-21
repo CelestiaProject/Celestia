@@ -342,7 +342,12 @@ static int CalcMipLevelCount(int w, int h)
 
 
 Texture::Texture(int w, int h, int d) :
-    alpha(false), compressed(false), width(w), height(h), depth(d)
+    alpha(false),
+    compressed(false),
+    width(w),
+    height(h),
+    depth(d),
+    formatOptions(0)
 {
 }
 
@@ -398,6 +403,17 @@ int Texture::getDepth() const
     return depth;
 }
 
+
+unsigned int Texture::getFormatOptions() const
+{
+    return formatOptions;
+}
+
+
+void Texture::setFormatOptions(unsigned int opts)
+{
+    formatOptions = opts;
+}
 
 
 ImageTexture::ImageTexture(Image& img,
@@ -1020,7 +1036,9 @@ Texture* LoadTextureFromFile(const string& filename,
                              Texture::MipMapMode mipMode)
 {
     // Check for a Celestia texture--these need to be handled specially.
-    if (DetermineFileType(filename) == Content_CelestiaTexture)
+    ContentType contentType = DetermineFileType(filename);
+
+    if (contentType == Content_CelestiaTexture)
         return LoadVirtualTexture(filename);
 
     // All other texture types are handled by first loading an image, then
@@ -1030,6 +1048,19 @@ Texture* LoadTextureFromFile(const string& filename,
         return NULL;
 
     Texture* tex = CreateTextureFromImage(*img, addressMode, mipMode);
+
+    if (contentType == Content_DXT5NormalMap)
+    {
+        // If the texture came from a .dxt5nm file then mark it as a dxt5
+        // compressed normal map. There's no separate OpenGL format for dxt5
+        // normal maps, so the file extension is the only thing that
+        // distinguishes it from a plain old dxt5 texture.
+        if (img->getFormat() == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+        {
+            tex->setFormatOptions(Texture::DXT5NormalMap);
+        }
+    }
+
     delete img;
 
     return tex;

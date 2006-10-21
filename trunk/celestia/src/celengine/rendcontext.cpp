@@ -441,6 +441,10 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         if (bumpTex != NULL)
         {
             shaderProps.texUsage |= ShaderProperties::NormalTexture;
+            if (bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
+            {
+                shaderProps.texUsage |= ShaderProperties::CompressedNormalTexture;
+            }
             textures[nTextures++] = bumpTex;
         }
     }

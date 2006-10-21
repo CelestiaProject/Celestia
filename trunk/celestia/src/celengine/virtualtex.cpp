@@ -15,6 +15,7 @@
 #include <cstdio>
 #include "celutil/debug.h"
 #include "celutil/directory.h"
+#include "celutil/filetype.h"
 #include "virtualtex.h"
 #include "gl.h"
 #include "parser.h"
@@ -69,6 +70,9 @@ VirtualTexture::VirtualTexture(const string& _tilePath,
     tileTree[1] = new TileQuadtreeNode();
     tileExt = string(".") + _tileType;
     populateTileTree();
+
+    if (DetermineFileType(tileExt) == Content_DXT5NormalMap)
+        setFormatOptions(Texture::DXT5NormalMap);
 }
 
 

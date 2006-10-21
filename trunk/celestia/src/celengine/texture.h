@@ -73,6 +73,16 @@ class Texture
     bool hasAlpha() const { return alpha; }
     bool isCompressed() const { return compressed; }
 
+    /*! Identical formats may need to be treated in slightly different
+     *  fashions. One (and currently the only) example is the DXT5 compressed
+     *  normal map format, which is an ordinary DXT5 texture but requires some
+     *  shader tricks to be used correctly.
+     */
+    unsigned int getFormatOptions() const;
+    
+    //! Set the format options.
+    void setFormatOptions(unsigned int opts);
+
     enum AddressMode
     {
         Wrap        = 0,
@@ -87,6 +97,11 @@ class Texture
         AutoMipMaps    = 2,
     };
 
+    // Format option flags
+    enum {
+        DXT5NormalMap = 1
+    };
+
  protected:
     bool alpha;
     bool compressed;
@@ -95,6 +110,8 @@ class Texture
     int width;
     int height;
     int depth;
+
+    unsigned int formatOptions;
 };
 
 
