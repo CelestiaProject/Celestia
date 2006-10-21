@@ -384,6 +384,7 @@ Image* LoadImageFromFile(const string& filename)
         img = LoadPNGImage(filename);
         break;
     case Content_DDS:
+    case Content_DXT5NormalMap:
         img = LoadDDSImage(filename);
         break;
     default:

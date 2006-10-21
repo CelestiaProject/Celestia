@@ -3206,7 +3206,10 @@ static void renderSphere_Combiners(const RenderInfo& ri,
 
     glColor(ri.color * ri.sunColor);
 
-    if (ri.bumpTex != NULL)
+    // Don't use a normal map if it's a dxt5nm map--only the GLSL path
+    // can handle them.
+    if (ri.bumpTex != NULL &&
+        (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap) == 0)
     {
         renderBumpMappedMesh(context,
                              *(ri.baseTex),
@@ -3299,7 +3302,11 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
     vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
 
-    if (ri.bumpTex != NULL && ri.baseTex != NULL)
+    // Don't use a normal map if it's a dxt5nm map--only the GLSL path
+    // can handle them.
+    if (ri.bumpTex != NULL &&
+        (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap) == 0 &&
+        ri.baseTex != NULL)
     {
         // We don't yet handle the case where there's a bump map but no
         // base texture.
@@ -3460,7 +3467,10 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
     vproc->parameter(vp::HazeColor, ri.hazeColor);
 
-    if (ri.bumpTex != NULL)
+    // Don't use a normal map if it's a dxt5nm map--only the GLSL path
+    // can handle them.
+    if (ri.bumpTex != NULL &&
+        (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap) == 0)
     {
         if (hazeDensity > 0.0f)
             vproc->use(vp::diffuseBumpHaze);
