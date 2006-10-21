@@ -1,6 +1,6 @@
 // frame.cpp
 // 
-// Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2003-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
             rotation = refObject.body()->getEclipticalToGeographic(t);
             break;
         case Selection::Type_Star:
-            rotation = refObject.star()->getRotationElements().eclipticalToPlanetographic(t);
+            rotation = refObject.star()->getRotationModel()->orientationAtTime(t);
             break;
         case Selection::Type_Location:
             if (refObject.location()->getParentBody() != NULL)
@@ -62,7 +62,7 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
         case Selection::Type_Star:
             {
                 Star* star = refObject.star();
-                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationElements().eclipticalToEquatorial(t).toMatrix3();
+                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationModel()->equatorOrientationAtTime(t).toMatrix3();
                 Vec3d v = axisDir ^ lookDir;
                 v.normalize();
                 Vec3d u = lookDir ^ v;
@@ -129,7 +129,7 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
             rotation = refObject.body()->getEclipticalToGeographic(t);
             break;
         case Selection::Type_Star:
-            rotation = refObject.star()->getRotationElements().eclipticalToPlanetographic(t);
+            rotation = refObject.star()->getRotationModel()->orientationAtTime(t);
             break;
         case Selection::Type_Location:
             if (refObject.location()->getParentBody() != NULL)
@@ -165,7 +165,7 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
         case Selection::Type_Star:
             {
                 Star* star = refObject.star();
-                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationElements().eclipticalToEquatorial(t).toMatrix3();
+                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationModel()->equatorOrientationAtTime(t).toMatrix3();
                 Vec3d v = axisDir ^ lookDir;
                 v.normalize();
                 Vec3d u = lookDir ^ v;

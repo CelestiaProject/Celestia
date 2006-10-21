@@ -409,7 +409,7 @@ static Body* CreatePlanet(const string& name,
 
     // Get the rotation model for this body
     float syncRotationPeriod = (float) body->getOrbit()->getPeriod();
-    RotationModel* rm = CreateRotationModel(system, planetData, path,
+    RotationModel* rm = CreateRotationModel(planetData, path,
                                             syncRotationPeriod);
     if (rm != NULL)
     {
