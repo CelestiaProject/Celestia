@@ -1324,7 +1324,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             if (props.texUsage & ShaderProperties::CompressedNormalTexture)
             {
                 source += "vec3 n;\n";
-                source += "n.xy = texture2D(normTex, " + normTexCoord + ".st).ga * 2.0 - vec2(1.0, 1.0);\n";
+                source += "n.xy = texture2D(normTex, " + normTexCoord + ".st).ag * 2.0 - vec2(1.0, 1.0);\n";
                 source += "n.z = sqrt(1.0 - n.x * n.x - n.y * n.y);\n";
             }
             else
