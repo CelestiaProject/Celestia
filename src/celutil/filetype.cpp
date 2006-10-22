@@ -29,6 +29,7 @@ static const string CelestiaStarCatalogExt(".stc");
 static const string CelestiaDeepSkyCatalogExt(".dsc");
 static const string AVIExt(".avi");
 static const string DDSExt(".dds");
+static const string DXT5NormalMapExt(".dxt5nm");
 static const string CelestiaLegacyScriptExt(".cel");
 static const string CelestiaScriptExt(".clx");
 static const string CelestiaScriptExt2(".celx");
@@ -75,6 +76,8 @@ ContentType DetermineFileType(const string& filename)
         return Content_CelestiaScript;
     else if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
         return Content_CelestiaModel;
+    else if (compareIgnoringCase(DXT5NormalMapExt, ext) == 0)
+        return Content_DXT5NormalMap;
     else
         return Content_Unknown;
 }
