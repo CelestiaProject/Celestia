@@ -57,6 +57,12 @@ static string resolveWildcard(const string& filename)
         if (in.good())
             return ddsfile;
     }
+    string dxt5file = base + "dxt5nm";
+    {
+        ifstream in(dxt5file.c_str());
+        if (in.good())
+            return dxt5file;
+    }
     string ctxfile = base + "ctx";
     {
         ifstream in(ctxfile.c_str());

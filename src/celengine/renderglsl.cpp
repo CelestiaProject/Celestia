@@ -82,7 +82,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
         textures[nTextures++] = ri.bumpTex;
-        if (ri.bumpTex->isCompressed())
+        if (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap)
             shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
 
@@ -307,7 +307,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     {
         shadprop.texUsage |= ShaderProperties::NormalTexture;
         textures[nTextures++] = cloudNormalMap;
-        if (cloudNormalMap->isCompressed())
+        if (cloudNormalMap->getFormatOptions() & Texture::DXT5NormalMap)
             shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
 
