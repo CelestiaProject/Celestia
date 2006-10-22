@@ -210,7 +210,7 @@ void SelectionPopup::process(int id)
         sim->getUniverse()->unmarkAll();
         return;
     }
-    if (actionId >= 10 && actionId <= 14)
+    if (actionId >= 10 && actionId < 30)
     {
         if (sim->getUniverse() != NULL)
         {
@@ -222,15 +222,15 @@ void SelectionPopup::process(int id)
         }
         return;
     }
-    if (actionId == 20) {
+    if (actionId == 30) {
         sim->getActiveObserver()->setDisplayedSurface("");
         return;
     }
-    if (actionId > 20) {
+    if (actionId > 30) {
         std::vector<std::string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
-        if (altSurfaces != NULL && (int) altSurfaces->size() > actionId - 21)
+        if (altSurfaces != NULL && (int) altSurfaces->size() > actionId - 31)
         {
-            sim->getActiveObserver()->setDisplayedSurface((*altSurfaces)[actionId - 21]);
+            sim->getActiveObserver()->setDisplayedSurface((*altSurfaces)[actionId - 31]);
         }
     }
 }
@@ -288,9 +288,14 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
         markMenu->insertItem(i18n("Square"), baseId + 12);
         markMenu->insertItem(i18n("Plus"), baseId + 13);
         markMenu->insertItem(i18n("X"), baseId + 14);
+        markMenu->insertItem(i18n("Left Arrow"), baseId + 15);
+        markMenu->insertItem(i18n("Right Arrow"), baseId + 16);
+        markMenu->insertItem(i18n("Up Arrow"), baseId + 17);
+        markMenu->insertItem(i18n("Down Arrow"), baseId + 18);
+        markMenu->insertItem(i18n("Circle"), baseId + 19);
         popup->insertItem(i18n("&Mark"), markMenu);
     }
-    baseId += 14;
+    baseId += 30;
 
     if (showSubObjects && sel.body() != NULL)
     {
@@ -300,12 +305,12 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
             if (!altSurfaces->empty())
             {
                 KPopupMenu *surfaces = new KPopupMenu(this);
-                surfaces->insertItem(i18n("Normal"), locBaseId + 20);
+                surfaces->insertItem(i18n("Normal"), locBaseId + 30);
                 int j=0;
                 for (std::vector<std::string>::const_iterator i = altSurfaces->begin();
                      i < altSurfaces->end(); i++, j++)
                 {
-                    surfaces->insertItem(QString((*i).c_str()), locBaseId + 21 + j);
+                    surfaces->insertItem(QString((*i).c_str()), locBaseId + 31 + j);
                 }
                 baseId += 7 + j;
                 popup->insertItem(i18n("&Alternate Surfaces"), surfaces);
