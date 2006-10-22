@@ -29,6 +29,7 @@ enum ContentType {
     Content_CelestiaScript         = 14,
     Content_CelestiaLegacyScript   = 15,
     Content_CelestiaModel          = 16,
+    Content_DXT5NormalMap          = 17,
     Content_Unknown                = -1,
 };
 
