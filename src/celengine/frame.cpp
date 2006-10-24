@@ -216,3 +216,128 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
                               xform.rotation);
     }
 }
+
+
+/*** ReferenceFrame ***/
+
+ReferenceFrame::ReferenceFrame(Selection center) :
+    centerObject(center)
+{
+}
+
+
+UniversalCoord
+ReferenceFrame::convertFrom(const UniversalCoord& uc, double tjd) const
+{
+    UniversalCoord center = centerObject.getPosition(tjd);
+    Vec3d relative = uc - center;
+
+    return center + getOrientation(tjd).toMatrix3() * relative;
+}
+
+
+Point3d
+ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
+{
+    Point3d center;
+    if (centerObject.getType() == Selection::Type_Body)
+    {
+        Point3d center = centerObject.body()->getHeliocentricPosition(tjd);
+        Vec3d relative = p - center;
+        return p + getOrientation(tjd).toMatrix3() * relative;
+    }
+    else if (centerObject.getType() == Selection::Type_Star)
+    {
+        return getOrientation(tjd).toMatrix3() * p;
+    }
+    else
+    {
+        // bad if the center object is a galaxy
+        // what about locations?
+        return Point3d(0.0, 0.0, 0.0);
+    }
+}
+
+
+UniversalCoord
+ReferenceFrame::convertTo(const UniversalCoord& uc, double tjd) const
+{
+    UniversalCoord center = centerObject.getPosition(tjd);
+    Vec3d relative = uc - center;
+
+    return center + conjugate(getOrientation(tjd)).toMatrix3() * relative;
+}
+
+
+
+/*** J2000EclipticFrame ***/
+
+J2000EclipticFrame::J2000EclipticFrame(Selection center) :
+    ReferenceFrame(center)
+{
+}
+
+
+/*** J2000EquatorFrame ***/
+
+J2000EquatorFrame::J2000EquatorFrame(Selection center) :
+    ReferenceFrame(center)
+{
+}
+
+
+Quatd
+J2000EquatorFrame::getOrientation(double /* tjd */) const
+{
+    return Quatd::xrotation(23.4392911);
+}
+
+
+/*** BodyFixedFrame ***/
+
+BodyFixedFrame::BodyFixedFrame(Selection center, Selection obj) :
+    ReferenceFrame(center),
+    fixObject(obj)
+{
+}
+
+
+Quatd
+BodyFixedFrame::getOrientation(double tjd) const
+{
+    switch (fixObject.getType())
+    {
+    case Selection::Type_Body:
+        return fixObject.body()->getRotationModel()->orientationAtTime(tjd);
+    case Selection::Type_Star:
+        return fixObject.star()->getRotationModel()->orientationAtTime(tjd);
+    default:
+        return Quatd(1.0);
+    }
+}
+
+
+/*** BodyMeanEquatorFrame ***/
+
+BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center, Selection obj) :
+    ReferenceFrame(center),
+    equatorObject(obj)
+{
+}
+
+Quatd
+BodyMeanEquatorFrame::getOrientation(double tjd) const
+{
+    switch (equatorObject.getType())
+    {
+    case Selection::Type_Body:
+        return equatorObject.body()->getRotationModel()->equatorOrientationAtTime(tjd);
+    case Selection::Type_Star:
+        return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(tjd);
+    default:
+        return Quatd(1.0);
+    }
+}
+
+
+
