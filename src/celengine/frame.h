@@ -55,4 +55,102 @@ struct FrameOfReference
     Selection targetObject;
 };
 
+
+// class RefCountedObject
+
+/*!
+Frame
+{
+   Center "Sol"
+   # Orientation "J2000"
+   # Orientation "J2000Ecliptic"
+   TwoAxis
+   {
+       Primary
+       {
+          Axis "+X"
+          Observer "Earth"
+          Target "Sun"
+       }
+
+       Secondary
+       {
+           Axis "+Y"
+       }
+   }
+}
+*/
+
+
+class ReferenceFrame
+{
+ public:
+    ReferenceFrame(Selection center);
+    
+    UniversalCoord convertFrom(const UniversalCoord& uc, double tjd) const;
+    UniversalCoord convertTo(const UniversalCoord& uc, double tjd) const;
+
+    Point3d convertFromAstrocentric(const Point3d& p, double tjd) const;
+
+    virtual Quatd getOrientation(double tjd) const = 0;
+
+ private:
+    Selection centerObject;
+};
+
+
+//! J2000.0 Earth ecliptic frame
+class J2000EclipticFrame : public ReferenceFrame
+{
+ public:
+    J2000EclipticFrame(Selection center);
+
+    Quatd getOrientation(double /* tjd */) const
+    {
+        return Quatd(1.0);
+    }
+};
+
+
+//! J2000.0 Earth Mean Equator
+class J2000EquatorFrame : public ReferenceFrame
+{
+ public:
+    J2000EquatorFrame(Selection center);
+    Quatd getOrientation(double tjd) const;
+};
+
+
+class BodyFixedFrame : public ReferenceFrame
+{
+ public:
+    BodyFixedFrame(Selection center, Selection obj);
+    Quatd getOrientation(double tjd) const;
+
+ private:
+    Selection fixObject;
+};
+
+
+
+class BodyMeanEquatorFrame : public ReferenceFrame
+{
+ public:
+    BodyMeanEquatorFrame(Selection center, Selection obj);
+    Quatd getOrientation(double tjd) const;
+
+ private:
+    Selection equatorObject;
+};
+
+
+
+
+#if 0
+class TwoVectorFrame : public ReferenceFrame
+{
+};
+#endif
+
+
 #endif // _CELENGINE_FRAME_H_
