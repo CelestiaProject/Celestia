@@ -86,6 +86,7 @@ class ReferenceFrame
 {
  public:
     ReferenceFrame(Selection center);
+    virtual ~ReferenceFrame() {};
     
     UniversalCoord convertFrom(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertTo(const UniversalCoord& uc, double tjd) const;
@@ -104,6 +105,7 @@ class J2000EclipticFrame : public ReferenceFrame
 {
  public:
     J2000EclipticFrame(Selection center);
+    virtual ~J2000EclipticFrame() {};
 
     Quatd getOrientation(double /* tjd */) const
     {
@@ -117,6 +119,7 @@ class J2000EquatorFrame : public ReferenceFrame
 {
  public:
     J2000EquatorFrame(Selection center);
+    virtual ~J2000EquatorFrame() {};
     Quatd getOrientation(double tjd) const;
 };
 
@@ -125,6 +128,7 @@ class BodyFixedFrame : public ReferenceFrame
 {
  public:
     BodyFixedFrame(Selection center, Selection obj);
+    virtual ~BodyFixedFrame() {};
     Quatd getOrientation(double tjd) const;
 
  private:
@@ -137,6 +141,7 @@ class BodyMeanEquatorFrame : public ReferenceFrame
 {
  public:
     BodyMeanEquatorFrame(Selection center, Selection obj);
+    virtual ~BodyMeanEquatorFrame() {};
     Quatd getOrientation(double tjd) const;
 
  private:
