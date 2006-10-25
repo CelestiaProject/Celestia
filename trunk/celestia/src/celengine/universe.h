@@ -65,11 +65,11 @@ class Universe
     Selection find(const std::string& s,
                    Selection* contexts = NULL,
                    int nContexts = 0,
-                   bool i18n = false);
+                   bool i18n = false) const;
     Selection findPath(const std::string& s,
                        Selection* contexts = NULL,
                        int nContexts = 0,
-                       bool i18n = false);
+                       bool i18n = false) const;
     Selection findChildObject(const Selection& sel,
                               const string& name,
                               bool i18n = false) const;
