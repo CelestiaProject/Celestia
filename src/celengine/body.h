@@ -20,7 +20,6 @@
 #include <celengine/star.h>
 #include <celengine/location.h>
 #include <celengine/rotation.h>
-#include <celengine/frame.h>
 
 class ReferenceFrame;
 class Body;
