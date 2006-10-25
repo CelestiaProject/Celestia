@@ -14,8 +14,10 @@
 #include "parseobject.h"
 #include "customorbit.h"
 #include "spiceorbit.h"
+#include "frame.h"
 #include "trajmanager.h"
 #include "rotationmanager.h"
+#include "universe.h"
 
 
 using namespace std;
@@ -274,6 +276,26 @@ CreateOrbit(PlanetarySystem* system,
         }
     }
 
+    // Create an 'orbit' that places the object at a fixed point in its
+    // reference frame.
+    Vec3d fixedPosition(0.0, 0.0, 0.0);
+    if (planetData->getVector("FixedPosition", fixedPosition))
+    {
+        // Convert to Celestia's coordinate system
+        fixedPosition = Vec3d(fixedPosition.x,
+                              fixedPosition.z,
+                              -fixedPosition.y);
+
+        if (usePlanetUnits)
+            fixedPosition = fixedPosition * astro::AUtoKilometers(1.0);
+
+        return new FixedOrbit(Point3d(0.0, 0.0, 0.0) + fixedPosition);
+    }
+
+    // LongLat will make an object fixed relative to the surface of its parent
+    // object. This is done by creating an orbit with a period equal to the
+    // rotation rate of the parent object. A body-fixed reference frame is a
+    // much better way to accomplish this.
     Vec3d longlat(0.0, 0.0, 0.0);
     if (planetData->getVector("LongLat", longlat) && system != NULL)
     {
@@ -552,4 +574,106 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
                                     astro::J2000,
                                     0.0f,
                                     0.0f);
+}
+
+
+// Get the center object of a frame definition. Return an empty selection
+// if it's missing or refers to an object that doesn't exist.
+static Selection
+getFrameCenter(const Universe& universe, Hash* frameData)
+{
+    string centerName;
+    if (!frameData->getString("Center", centerName))
+    {
+        cerr << "No center specified for reference frame.\n";
+        return Selection();
+    }
+
+    Selection centerObject = universe.findPath(centerName, NULL, 0);
+    if (centerObject.empty())
+    {
+        cerr << "Center object '" << centerName << "' of reference frame not found.\n";
+        return Selection();
+    }
+
+    // Should verify that center object is a star or planet, and
+    // that it is a member of the same star system as the body in which
+    // the frame will be used.
+    
+    return centerObject;
+}
+
+
+static BodyFixedFrame*
+CreateBodyFixedFrame(const Universe& universe,
+                     Hash* frameData)
+{
+    Selection center = getFrameCenter(universe, frameData);
+    if (center.empty())
+        return NULL;
+    else
+        return new BodyFixedFrame(center, center);
+}
+
+
+static J2000EclipticFrame*
+CreateJ2000EclipticFrame(const Universe& universe,
+                         Hash* frameData)
+{
+    return NULL;
+}
+
+
+static J2000EquatorFrame*
+CreateJ2000EquatorFrame(const Universe& universe,
+                        Hash* frameData)
+{
+    return NULL;
+}
+
+
+static ReferenceFrame*
+CreateComplexFrame(const Universe& universe, Hash* frameData)
+{
+    Value* value = frameData->getValue("BodyFixed");
+    if (value != NULL)
+    {
+        if (value->getType() != Value::HashType)
+        {
+            DPRINTF(0, "Object has incorrect body-fixed frame syntax.\n");
+            return NULL;
+        }
+        else
+        {
+            return CreateBodyFixedFrame(universe, value->getHash());
+        }
+    }
+
+    DPRINTF("Frame definition does not have a valid frame type.\n");
+
+    return NULL;
+}
+
+
+ReferenceFrame* CreateReferenceFrame(const Universe& universe,
+                                     Value* frameValue)
+{
+    if (frameValue->getType() == Value::StringType)
+    {
+#if 0
+        string frameName = frameValue->getString();
+        if (frameName == "ecliptic-j2000")
+            return J2000EclipticFrame();
+#endif
+        return NULL;
+    }
+    else if (frameValue->getType() == Value::HashType)
+    {
+        return CreateComplexFrame(universe, frameValue->getHash());
+    }
+    else
+    {
+        DPRINTF("Invalid syntax for frame definition.\n");
+        return NULL;
+    }
 }
