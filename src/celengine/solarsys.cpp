@@ -452,6 +452,14 @@ static Body* CreatePlanet(const string& name,
             body->setOrbitFrame(frame);
     }
 
+    Value* bodyFrameValue = planetData->getValue("BodyFrame");
+    if (bodyFrameValue != NULL)
+    {
+        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue);
+        if (frame != NULL)
+            body->setBodyFrame(frame);
+    }
+
     Surface surface;
     if (disposition == ModifyObject)
     {
