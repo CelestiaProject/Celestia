@@ -20,8 +20,9 @@
 #include <celengine/star.h>
 #include <celengine/location.h>
 #include <celengine/rotation.h>
+#include <celengine/frame.h>
 
-
+class ReferenceFrame;
 class Body;
 
 class PlanetarySystem
@@ -106,6 +107,12 @@ class Body
     void setOrbitBarycenter(const Body*);
     astro::ReferencePlane getOrbitReferencePlane() const;
     void setOrbitReferencePlane(astro::ReferencePlane);
+
+    const ReferenceFrame* getOrbitFrame() const;
+    void setOrbitFrame(const ReferenceFrame* f);
+    const ReferenceFrame* getBodyFrame() const;
+    void setBodyFrame(const ReferenceFrame* f);
+
     const RotationModel* getRotationModel() const;
     void setRotationModel(const RotationModel*);
     float getRadius() const;
@@ -188,6 +195,8 @@ class Body
     Orbit* orbit;
     const Body* orbitBarycenter;
     astro::ReferencePlane orbitRefPlane;
+    const ReferenceFrame* orbitFrame;
+    const ReferenceFrame* bodyFrame;
     
     const RotationModel* rotationModel;
 

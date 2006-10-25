@@ -24,6 +24,8 @@ Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     orbitBarycenter(_system ? _system->getPrimaryBody() : NULL),
     orbitRefPlane(astro::BodyEquator),
+    orbitFrame(NULL),
+    bodyFrame(NULL),
     rotationModel(NULL),
     radius(10000.0f),
     mass(0.0f),
@@ -116,6 +118,32 @@ astro::ReferencePlane Body::getOrbitReferencePlane() const
 void Body::setOrbitReferencePlane(astro::ReferencePlane refPlane)
 {
     orbitRefPlane = refPlane;
+}
+
+
+const ReferenceFrame* Body::getOrbitFrame() const
+{
+    return orbitFrame;
+}
+
+
+void
+Body::setOrbitFrame(const ReferenceFrame* f)
+{
+    orbitFrame = f;
+}
+
+
+const ReferenceFrame* Body::getBodyFrame() const
+{
+    return bodyFrame;
+}
+
+
+void
+Body::setBodyFrame(const ReferenceFrame* f)
+{
+    bodyFrame = f;
 }
 
 
@@ -284,29 +312,37 @@ Mat4d Body::getLocalToHeliocentric(double when) const
 Mat4d Body::getLocalToHeliocentric(double tjd, astro::ReferencePlane childRefPlane) const
 {
     Point3d pos = orbit->positionAtTime(tjd);
-    Mat4d frame;
 
-    switch (childRefPlane)
+    if (orbitFrame != NULL)
     {
-    case astro::BodyEquator:
-        frame = getRotationModel()->equatorOrientationAtTime(tjd).toMatrix4() *
-                Mat4d::translation(pos);
-        break;
-    case astro::Ecliptic_J2000:
-        frame = Mat4d::translation(pos);
-        break;
-    case astro::Equator_J2000:
-        frame = Mat4d::translation(pos);
-        break;
-    default:
-        assert(0);
+        Point3d p = orbitFrame->convertFromAstrocentric(pos, tjd);
+        return Mat4d::translation(p);
     }
- 
-    // Recurse up the hierarchy . . .
-    if (orbitBarycenter != NULL)
-        frame = frame * orbitBarycenter->getLocalToHeliocentric(tjd, orbitRefPlane);
+    else
+    {
+        Mat4d frame;
 
-    return frame;
+        switch (childRefPlane)
+        {
+        case astro::BodyEquator:
+            frame = getRotationModel()->equatorOrientationAtTime(tjd).toMatrix4() *
+                Mat4d::translation(pos);
+            break;
+        case astro::Ecliptic_J2000:
+            frame = Mat4d::translation(pos);
+            break;
+        case astro::Equator_J2000:
+            frame = Mat4d::translation(pos);
+            break;
+        default:
+            assert(0);
+        }
+
+        // Recurse up the hierarchy . . .
+        if (orbitBarycenter != NULL)
+            frame = frame * orbitBarycenter->getLocalToHeliocentric(tjd, orbitRefPlane);
+        return frame;
+    }
 }
 
 // Return the position of the center of the body in heliocentric coordinates
