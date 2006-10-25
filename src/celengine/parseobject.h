@@ -18,6 +18,9 @@
 #include "body.h"
 #include "parser.h"
 
+class ReferenceFrame;
+class Universe;
+
 bool ParseDate(Hash* hash, const string& name, double& jd);
 
 Orbit* CreateOrbit(PlanetarySystem* system,
@@ -30,5 +33,8 @@ RotationModel* CreateRotationModel(Hash* rotationData,
                                    float syncRotationPeriod);
 
 RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
+
+ReferenceFrame* CreateReferenceFrame(const Universe& universe,
+                                     Value* frameValue);
 
 #endif // _CELENGINE_PARSEOBJECT_H_
