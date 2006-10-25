@@ -226,13 +226,25 @@ ReferenceFrame::ReferenceFrame(Selection center) :
 }
 
 
+// TODO: Not correct; requires BigFix * double multiplication
 UniversalCoord
 ReferenceFrame::convertFrom(const UniversalCoord& uc, double tjd) const
 {
     UniversalCoord center = centerObject.getPosition(tjd);
     Vec3d relative = uc - center;
 
-    return center + getOrientation(tjd).toMatrix3() * relative;
+    return center + relative * getOrientation(tjd).toMatrix3();
+}
+
+
+// TODO: Not correct; requires BigFix * double multiplication
+UniversalCoord
+ReferenceFrame::convertTo(const UniversalCoord& uc, double tjd) const
+{
+    UniversalCoord center = centerObject.getPosition(tjd);
+    Vec3d relative = uc - center;
+
+    return center + relative * conjugate(getOrientation(tjd)).toMatrix3();
 }
 
 
@@ -243,29 +255,19 @@ ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
     if (centerObject.getType() == Selection::Type_Body)
     {
         Point3d center = centerObject.body()->getHeliocentricPosition(tjd);
-        Vec3d relative = p - center;
-        return p + getOrientation(tjd).toMatrix3() * relative;
+        return center + p * getOrientation(tjd).toMatrix3();
     }
     else if (centerObject.getType() == Selection::Type_Star)
     {
-        return getOrientation(tjd).toMatrix3() * p;
+        return p * getOrientation(tjd).toMatrix3();
     }
     else
     {
+        // TODO:
         // bad if the center object is a galaxy
         // what about locations?
         return Point3d(0.0, 0.0, 0.0);
     }
-}
-
-
-UniversalCoord
-ReferenceFrame::convertTo(const UniversalCoord& uc, double tjd) const
-{
-    UniversalCoord center = centerObject.getPosition(tjd);
-    Vec3d relative = uc - center;
-
-    return center + conjugate(getOrientation(tjd)).toMatrix3() * relative;
 }
 
 
@@ -305,6 +307,7 @@ BodyFixedFrame::BodyFixedFrame(Selection center, Selection obj) :
 Quatd
 BodyFixedFrame::getOrientation(double tjd) const
 {
+    // TODO: Need to consider the reference frame of the object
     switch (fixObject.getType())
     {
     case Selection::Type_Body:
@@ -324,6 +327,7 @@ BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center, Selection obj) :
     equatorObject(obj)
 {
 }
+
 
 Quatd
 BodyMeanEquatorFrame::getOrientation(double tjd) const
