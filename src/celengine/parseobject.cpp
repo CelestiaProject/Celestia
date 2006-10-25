@@ -357,6 +357,35 @@ CreateUniformRotationModel(Hash* rotationData,
 }
 
 
+static ConstantOrientation*
+CreateFixedRotationModel(Hash* rotationData)
+{
+    double offset = 0.0;
+    if (rotationData->getNumber("Offset", offset))
+    {
+        offset = degToRad(offset);
+    }
+
+    double inclination = 0.0;
+    if (rotationData->getNumber("Inclination", inclination))
+    {
+        inclination = degToRad(inclination);
+    }
+
+    double ascendingNode = 0.0;
+    if (rotationData->getNumber("AscendingNode", ascendingNode))
+    {
+        ascendingNode = degToRad(ascendingNode);
+    }
+
+    Quatd q = Quatd::yrotation(-PI - offset) *
+              Quatd::xrotation(-inclination) *
+              Quatd::yrotation(-ascendingNode);
+
+    return new ConstantOrientation(q);
+}
+
+
 static PrecessingRotationModel*
 CreatePrecessingRotationModel(Hash* rotationData,
                               float syncRotationPeriod)
@@ -492,6 +521,20 @@ CreateRotationModel(Hash* planetData,
         }
     }
 
+    Value* fixedRotationValue = planetData->getValue("FixedRotation");
+    if (fixedRotationValue != NULL)
+    {
+        if (fixedRotationValue->getType() != Value::HashType)
+        {
+            DPRINTF(0, "Object has incorrect fixed rotation syntax.\n");
+            return NULL;
+        }
+        else
+        {
+            return CreateFixedRotationModel(fixedRotationValue->getHash());
+        }
+    }
+    
     // For backward compatibility we need to support rotation parameters
     // that appear in the main block of the object definition.
     // Default to synchronous rotation
