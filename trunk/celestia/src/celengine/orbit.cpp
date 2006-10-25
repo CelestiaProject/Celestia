@@ -20,6 +20,7 @@
 using namespace std;
 
 
+
 EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
                                  double _eccentricity,
                                  double _inclination,
@@ -391,7 +392,60 @@ void MixedOrbit::sample(double t0, double t1, int nSamples,
 }
 
 
+/*** FixedOrbit ***/
 
+FixedOrbit::FixedOrbit(const Point3d& pos) :
+    position(pos)
+{
+}
+
+
+FixedOrbit::~FixedOrbit()
+{
+}
+
+
+Point3d
+FixedOrbit::positionAtTime(double tjd) const
+{
+    return position;
+}
+
+
+bool
+FixedOrbit::isPeriodic() const
+{
+    return false;
+}
+
+
+double
+FixedOrbit::getPeriod() const
+{
+    return 1.0;
+}
+
+
+double
+FixedOrbit::getBoundingRadius() const
+{
+    return 1.0;
+}
+
+
+void
+FixedOrbit::sample(double, double t, int nSamples,
+                   OrbitSampleProc& proc) const
+{
+    /*
+    for (int i = 0; i < nSamples; i++)
+        proc.sample(t, position);
+    */
+}
+
+
+/*** SynchronousOrbit ***/
+// TODO: eliminate this class once body-fixed reference frames are implemented
 SynchronousOrbit::SynchronousOrbit(const Body& _body,
                                    const Point3d& _position) :
     body(_body),
@@ -429,3 +483,5 @@ void SynchronousOrbit::sample(double, double, int, OrbitSampleProc&) const
 {
     // Empty method--we never want to show a synchronous orbit.
 }
+
+
