@@ -1,14 +1,14 @@
 // orbit.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _ORBIT_H_
-#define _ORBIT_H_
+#ifndef _CELENGINE_ORBIT_H_
+#define _CELENGINE_ORBIT_H_
 
 #include <celmath/vecmath.h>
 
@@ -20,7 +20,16 @@ class Orbit
  public:
     virtual ~Orbit() {};
 
-    virtual Point3d positionAtTime(double) const = 0;
+    /*! Return the position in the orbit's reference frame at the specified
+     * time (TDB). Units are kilometers.
+     */
+    virtual Point3d positionAtTime(double jd) const = 0;
+
+    /*! Return the orbital velocity in the orbit's reference frame at the
+     * specified time (TDB). Units are kilometers per day.
+     */
+    //virtual Vec3d velocityAtTime(double) const = 0;
+
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
     virtual void sample(double start, double t,
@@ -42,7 +51,8 @@ class EllipticalOrbit : public Orbit
     virtual ~EllipticalOrbit() {};
 
     // Compute the orbit for a specified Julian date
-    Point3d positionAtTime(double) const;
+    virtual Point3d positionAtTime(double) const;
+    //virtual Vec3d velocityAtTime(double) const;
     double getPeriod() const;
     double getBoundingRadius() const;
     virtual void sample(double, double, int, OrbitSampleProc&) const;
@@ -86,6 +96,7 @@ class CachingOrbit : public Orbit
     virtual ~CachingOrbit() {};
 
     virtual Point3d computePosition(double jd) const = 0;
+    //virtual Vec3d computeVelocity(double jd) const = 0;
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
 
@@ -111,7 +122,8 @@ class MixedOrbit : public Orbit
     MixedOrbit(Orbit* orbit, double t0, double t1, double mass);
     virtual ~MixedOrbit();
 
-    Point3d positionAtTime(double jd) const;
+    virtual Point3d positionAtTime(double jd) const;
+    //virtual Vec3d velocityAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
     virtual void sample(double t0, double t1,
@@ -129,6 +141,7 @@ class MixedOrbit : public Orbit
 
 class Body;
 
+// TODO: eliminate this once body-fixed reference frames are implemented
 /*! An object in a synchronous orbit will always hover of the same spot on
  *  the surface of the body it orbits.  Only equatorial orbits of a certain
  *  radius are stable in the real world.  In Celestia, synchronous orbits are
@@ -140,7 +153,7 @@ class SynchronousOrbit : public Orbit
     SynchronousOrbit(const Body& _body, const Point3d& _position);
     virtual ~SynchronousOrbit();
 
-    Point3d positionAtTime(double jd) const;
+    virtual Point3d positionAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
     virtual void sample(double, double, int, OrbitSampleProc& proc) const;
@@ -151,4 +164,25 @@ class SynchronousOrbit : public Orbit
 };
 
 
-#endif // _ORBIT_H_
+/*! A FixedOrbit is used for an object that remains at a constant
+ *  position within its reference frame.
+ */
+class FixedOrbit : public Orbit
+{
+ public:
+    FixedOrbit(const Point3d& pos);
+    virtual ~FixedOrbit();
+
+    virtual Point3d positionAtTime(double) const;
+    //virtual Vec3d velocityAtTime(double) const;
+    virtual double getPeriod() const;
+    virtual bool isPeriodic() const;
+    virtual double getBoundingRadius() const;
+    virtual void sample(double, double, int, OrbitSampleProc&) const;
+
+ private:
+    Point3d position;
+};
+
+
+#endif // _CELENGINE_ORBIT_H_
