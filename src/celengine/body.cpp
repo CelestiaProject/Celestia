@@ -17,6 +17,7 @@
 #include "mesh.h"
 #include "meshmanager.h"
 #include "body.h"
+#include "frame.h"
 
 using namespace std;
 
