@@ -1042,7 +1042,7 @@ Selection Universe::findObjectInContext(const Selection& sel,
 Selection Universe::find(const string& s,
                          Selection* contexts,
                          int nContexts,
-                         bool i18n)
+                         bool i18n) const
 {
     if (starCatalog != NULL)
     {
@@ -1078,7 +1078,7 @@ Selection Universe::find(const string& s,
 Selection Universe::findPath(const string& s,
                              Selection contexts[],
                              int nContexts,
-                             bool i18n)
+                             bool i18n) const
 {
     string::size_type pos = s.find('/', 0);
 
