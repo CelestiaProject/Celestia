@@ -22,13 +22,14 @@
 #include <celengine/gl.h>
 #include "imagecapture.h"
 
-// Ugh . . . the C++ standard says that stringstream should be in
-// sstream, but the GNU C++ compiler uses strstream instead.
-#ifdef HAVE_SSTREAM
+// Older gcc versions used <strstream> instead of <sstream>.
+// This has been corrected in GCC 3.2, but name clashing must
+// be avoided
+#ifdef __GNUC__
+#undef min
+#undef max
+#endif
 #include <sstream>
-#else
-#include <strstream>
-#endif // HAVE_SSTREAM
 
 #include "celx.h"
 #include "celestiacore.h"
@@ -75,7 +76,7 @@ static const char* TickHandler       = "tick";
 static const char* MouseDownHandler  = "mousedown";
 static const char* MouseUpHandler    = "mouseup";
 
-typedef map<string, uint32> FlagMap; 
+typedef map<string, uint32> FlagMap;
 
 static FlagMap RenderFlagMap;
 static FlagMap LabelFlagMap;
@@ -196,7 +197,7 @@ static void getField(lua_State* l, int index, const char* key)
     // When we move to Lua 5.1, this will be replaced by:
     // lua_getfield(l, index, key);
     lua_pushstring(l, key);
-   
+
     if (index != LUA_GLOBALSINDEX && index != LUA_REGISTRYINDEX)
         lua_gettable(l, index - 1);
     else
@@ -208,7 +209,7 @@ static void getField(lua_State* l, int index, const char* key)
 class CelScriptWrapper : public ExecutionEnvironment
 {
  public:
-    CelScriptWrapper(CelestiaCore& appCore, istream& scriptfile): 
+    CelScriptWrapper(CelestiaCore& appCore, istream& scriptfile):
         script(NULL),
         core(appCore),
         cmdSequence(NULL),
@@ -230,7 +231,7 @@ class CelScriptWrapper : public ExecutionEnvironment
                 errorMessage = "Error while parsing CEL-script.";
         }
     }
-    
+
     virtual ~CelScriptWrapper()
     {
         if (script != NULL)
@@ -238,12 +239,12 @@ class CelScriptWrapper : public ExecutionEnvironment
         if (cmdSequence != NULL)
             delete cmdSequence;
     }
-    
+
     string getErrorMessage() const
     {
         return errorMessage;
     }
-    
+
     // tick the CEL-script. t is in seconds and doesn't have to start with zero
     bool tick(double t)
     {
@@ -255,7 +256,7 @@ class CelScriptWrapper : public ExecutionEnvironment
         }
         double dt = t - tickTime;
         tickTime = t;
-        return script->tick(dt);        
+        return script->tick(dt);
     }
 
     Simulation* getSimulation() const
@@ -270,7 +271,7 @@ class CelScriptWrapper : public ExecutionEnvironment
 
     CelestiaCore* getCelestiaCore() const
     {
-        return &core;         
+        return &core;
     }
 
     void showText(string s, int horig, int vorig, int hoff, int voff,
@@ -431,7 +432,7 @@ double LuaState::getTime() const
 
 // Check if the running script has exceeded its allowed timeslice
 // and terminate it if it has:
-static void checkTimeslice(lua_State *l, lua_Debug *ar)
+static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
 {
     lua_pushstring(l, "celestia-luastate");
     lua_gettable(l, LUA_REGISTRYINDEX);
@@ -533,7 +534,7 @@ bool LuaState::timesliceExpired()
 {
     if (timeout < getTime())
     {
-        // timeslice expired, make every instruction (including pcall) fail: 
+        // timeslice expired, make every instruction (including pcall) fail:
         lua_sethook(costate, checkTimeslice, LUA_MASKCOUNT, 1);
         return true;
     }
@@ -585,7 +586,7 @@ struct ReadChunkInfo
     istream* in;
 };
 
-static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
+static const char* readStreamChunk(lua_State*, void* udata, size_t* size)
 {
     assert(udata != NULL);
     if (udata == NULL)
@@ -613,7 +614,7 @@ static const char* readStreamChunk(lua_State* state, void* udata, size_t* size)
 
 
 // Callback for CelestiaCore::charEntered.
-// Returns true if keypress has been consumed 
+// Returns true if keypress has been consumed
 bool LuaState::charEntered(const char* c_p)
 {
     if (ioMode == Asking && getTime() > timeout)
@@ -685,13 +686,13 @@ bool LuaState::charEntered(const char* c_p)
 
 // Returns true if a handler is registered for the key
 bool LuaState::handleKeyEvent(const char* key)
-{   
+{
     CelestiaCore* appCore = getAppCore(costate, NoErrors);
     if (appCore == NULL)
     {
         return false;
     }
-    
+
     // get the registered event table
     getField(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
@@ -700,18 +701,18 @@ bool LuaState::handleKeyEvent(const char* key)
         lua_pop(costate, 1);
         return false;
     }
-    
-    bool handled = false;    
+
+    bool handled = false;
     getField(costate, -1, KeyHandler);
     if (lua_isfunction(costate, -1))
     {
         lua_remove(costate, -2);        // remove the key event table from the stack
-        
+
         lua_newtable(costate);
         lua_pushstring(costate, "char");
         lua_pushstring(costate, key);   // the default key handler accepts the key name as an argument
         lua_settable(costate, -3);
-        
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
@@ -727,20 +728,20 @@ bool LuaState::handleKeyEvent(const char* key)
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
 
 
 // Returns true if a handler is registered for the button event
 bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
-{   
+{
     CelestiaCore* appCore = getAppCore(costate, NoErrors);
     if (appCore == NULL)
     {
         return false;
     }
-    
+
     // get the registered event table
     getField(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
@@ -749,13 +750,13 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
         lua_pop(costate, 1);
         return false;
     }
-    
-    bool handled = false;    
+
+    bool handled = false;
     getField(costate, -1, down ? MouseDownHandler : MouseUpHandler);
     if (lua_isfunction(costate, -1))
     {
         lua_remove(costate, -2);        // remove the key event table from the stack
-        
+
         lua_newtable(costate);
         lua_pushstring(costate, "button");
         lua_pushnumber(costate, button);
@@ -766,7 +767,7 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
         lua_pushstring(costate, "y");
         lua_pushnumber(costate, y);
         lua_settable(costate, -3);
-        
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
@@ -782,20 +783,20 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
 
 
 // Returns true if a handler is registered for the tick event
 bool LuaState::handleTickEvent(double dt)
-{   
+{
     CelestiaCore* appCore = getAppCore(costate, NoErrors);
     if (appCore == NULL)
     {
         return false;
     }
-    
+
     // get the registered event table
     getField(costate, LUA_REGISTRYINDEX, EventHandlers);
     if (!lua_istable(costate, -1))
@@ -804,18 +805,18 @@ bool LuaState::handleTickEvent(double dt)
         lua_pop(costate, 1);
         return false;
     }
-    
-    bool handled = false;    
+
+    bool handled = false;
     getField(costate, -1, TickHandler);
     if (lua_isfunction(costate, -1))
     {
         lua_remove(costate, -2);        // remove the key event table from the stack
-        
+
         lua_newtable(costate);
         lua_pushstring(costate, "dt");
         lua_pushnumber(costate, dt);   // the default key handler accepts the key name as an argument
         lua_settable(costate, -3);
-        
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
@@ -831,7 +832,7 @@ bool LuaState::handleTickEvent(double dt)
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
 
@@ -860,11 +861,7 @@ int LuaState::loadScript(istream& in, const string& streamname)
 
 int LuaState::loadScript(const string& s)
 {
-#ifdef HAVE_SSTREAM
     istringstream in(s);
-#else
-    istrstream in(s.c_str());
-#endif
     return loadScript(in, "string");
 }
 
@@ -947,12 +944,12 @@ bool LuaState::tick(double dt)
     // Workaround: check if we are alive, return true(!) when we aren't anymore
     // this way the script isn't deleted after the second enter, but only
     // when we return from the first enter. OMG.
-    
+
     // better Solution: defer showing the error-alterter to CelestiaCore, using
     // getErrorMessage()
     if (!isAlive())
         return false;
-        
+
     if (ioMode == Asking)
     {
         CelestiaCore* appCore = getAppCore(costate, NoErrors);
@@ -1001,7 +998,7 @@ bool LuaState::tick(double dt)
 
     if (dt == 0 || scriptAwakenTime > getTime())
         return false;
-   
+
     int nArgs = resume();
     if (!isAlive())
     {
@@ -1058,7 +1055,7 @@ void LuaState::requestIO()
 }
 
 // Check if the number of arguments on the stack matches
-// the allowed range [minArgs, maxArgs]. Cause an error if not. 
+// the allowed range [minArgs, maxArgs]. Cause an error if not.
 static void checkArgs(lua_State* l,
                       int minArgs, int maxArgs, const char* errorMessage)
 {
@@ -1139,7 +1136,7 @@ LuaState* getLuaStateObject(lua_State* l)
 }
 
 
-// Map the observer to its View. Return NULL if no view exists 
+// Map the observer to its View. Return NULL if no view exists
 // for this observer (anymore).
 View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
 {
@@ -1564,7 +1561,7 @@ static int rotation_mult(lua_State* l)
     checkArgs(l, 2, 2, "Need two operands for multiplication");
     Quatd* r1 = NULL;
     Quatd* r2 = NULL;
-    Vec3d* v = NULL;
+    //Vec3d* v = NULL;
     lua_Number s = 0.0;
     if (istype(l, 1, _Rotation) && istype(l, 2, _Rotation))
     {
@@ -2165,21 +2162,21 @@ static int frame_getcoordinatesystem(lua_State* l)
     string coordsys;
     switch (frame->coordSys)
     {
-    case astro::Universal: 
+    case astro::Universal:
         coordsys = "universal"; break;
-    case astro::Ecliptical: 
+    case astro::Ecliptical:
         coordsys = "ecliptic"; break;
-    case astro::Equatorial: 
+    case astro::Equatorial:
         coordsys = "equatorial"; break;
-    case astro::Geographic: 
+    case astro::Geographic:
         coordsys = "planetographic"; break;
-    case astro::ObserverLocal: 
+    case astro::ObserverLocal:
         coordsys = "observer"; break;
-    case astro::PhaseLock: 
+    case astro::PhaseLock:
         coordsys = "lock"; break;
-    case astro::Chase: 
+    case astro::Chase:
         coordsys = "chase"; break;
-    default: 
+    default:
         coordsys = "invalid";
     }
     lua_pushstring(l, coordsys.c_str());
@@ -2519,7 +2516,7 @@ static int object_mark(lua_State* l)
         markSize = 1.0f;
     else if (markSize > 10000.0f)
         markSize = 10000.0f;
-        
+
     float markAlpha = (float)safeGetNumber(l, 5, WrongType, "Fourth arg to object:mark must be a number", 0.9);
     if (markAlpha < 0.0f)
         markAlpha = 0.0f;
@@ -3488,11 +3485,8 @@ static void CreateObserverMetaTable(lua_State* l)
 // create a CelScriptWrapper from a string:
 static int celscript_from_string(lua_State* l, string& script_text)
 {
-#ifdef HAVE_SSTREAM
     istringstream scriptfile(script_text);
-#else
-    istrstream scriptfile(script_text.c_str());
-#endif
+
     CelestiaCore* appCore = getAppCore(l, AllErrors);
     CelScriptWrapper* celscript = new CelScriptWrapper(*appCore, scriptfile);
     if (celscript->getErrorMessage() != "")
@@ -3673,7 +3667,7 @@ static int celestia_hide(lua_State* l)
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings"); 
+        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings");
         if (renderFlag == "lightdelay")
             appCore->setLightDelayActive(false);
         else
@@ -3790,7 +3784,7 @@ static int celestia_showlabel(lua_State* l)
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings"); 
+        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings");
         if (LabelFlagMap.count(labelFlag) > 0)
             flags |= LabelFlagMap[labelFlag];
     }
@@ -3811,7 +3805,7 @@ static int celestia_hidelabel(lua_State* l)
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings"); 
+        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings");
         if (LabelFlagMap.count(labelFlag) > 0)
             flags |= LabelFlagMap[labelFlag];
     }
@@ -4371,11 +4365,11 @@ static int celestia_getstarstyle(lua_State* l)
         Renderer::StarStyle starStyle = renderer->getStarStyle();
         switch (starStyle)
         {
-        case Renderer::FuzzyPointStars: 
+        case Renderer::FuzzyPointStars:
             lua_pushstring(l, "fuzzy"); break;
-        case Renderer::PointStars: 
+        case Renderer::PointStars:
             lua_pushstring(l, "point"); break;
-        case Renderer::ScaledDiscStars: 
+        case Renderer::ScaledDiscStars:
             lua_pushstring(l, "disc"); break;
         default:
             lua_pushstring(l, "invalid starstyle");
@@ -4414,7 +4408,7 @@ static int celestia_setstarstyle(lua_State* l)
             doError(l, "Invalid starstyle");
         }
         appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
-        
+
     }
     return 0;
 }
@@ -4603,18 +4597,18 @@ static int celestia_requestkeyboard(lua_State* l)
 static int celestia_registereventhandler(lua_State* l)
 {
     checkArgs(l, 3, 3, "Two arguments required for celestia:registereventhandler");
-    CelestiaCore* appCore = this_celestia(l);
-    
+    //CelestiaCore* appCore = this_celestia(l);
+
     if (!lua_isstring(l, 2))
     {
         doError(l, "First argument for celestia:registereventhandler must be a string");
     }
-    
+
     if (!lua_isfunction(l, 3) && !lua_isnil(l, 3))
     {
         doError(l, "Second argument for celestia:registereventhandler must be a function or nil");
     }
-    
+
     lua_pushstring(l, EventHandlers);
     lua_gettable(l, LUA_REGISTRYINDEX);
     if (lua_isnil(l, -1))
@@ -4623,25 +4617,25 @@ static int celestia_registereventhandler(lua_State* l)
         // state is initialized.
         doError(l, "Event handler table not created");
     }
-    
+
     lua_pushvalue(l, 2);
     lua_pushvalue(l, 3);
-    
+
     lua_settable(l, -3);
-    
+
     return 0;
 }
 
 static int celestia_geteventhandler(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for celestia:registereventhandler");
-    CelestiaCore* appCore = this_celestia(l);
-    
+    //CelestiaCore* appCore = this_celestia(l);
+
     if (!lua_isstring(l, 2))
     {
         doError(l, "Argument to celestia:geteventhandler must be a string");
     }
-    
+
     lua_pushstring(l, EventHandlers);
     lua_gettable(l, LUA_REGISTRYINDEX);
     if (lua_isnil(l, -1))
@@ -4650,10 +4644,10 @@ static int celestia_geteventhandler(lua_State* l)
         // state is initialized.
         doError(l, "Event handler table not created");
     }
-    
+
     lua_pushvalue(l, 2);
     lua_gettable(l, -2);
-        
+
     return 1;
 }
 
@@ -4669,7 +4663,7 @@ static int celestia_takescreenshot(lua_State* l)
     if (filetype == NULL)
         filetype = "png";
 
-    // Let the script safely contribute one part of the filename: 
+    // Let the script safely contribute one part of the filename:
     const char* fileid_ptr = safeGetString(l, 3, WrongType, "Second argument to celestia:takescreenshot must be a string");
     if (fileid_ptr == NULL)
         fileid_ptr = "";
@@ -4679,8 +4673,8 @@ static int celestia_takescreenshot(lua_State* l)
     for (unsigned int i = 0; i < fileid.length(); i++)
     {
         char ch = fileid[i];
-        if (!((ch >= 'a' && ch <= 'z') || 
-              (fileid[i] >= 'A' && ch <= 'Z') || 
+        if (!((ch >= 'a' && ch <= 'z') ||
+              (fileid[i] >= 'A' && ch <= 'Z') ||
               (ch >= '0' && ch <= '9') ) )
             fileid[i] = '_';
     }
@@ -4691,8 +4685,8 @@ static int celestia_takescreenshot(lua_State* l)
         fileid.append("-");
 
     string path = appCore->getConfig()->scriptScreenshotDirectory;
-    if (path.length() > 0 && 
-        path[path.length()-1] != '/' && 
+    if (path.length() > 0 &&
+        path[path.length()-1] != '/' &&
         path[path.length()-1] != '\\')
 
         path.append("/");
@@ -4875,7 +4869,7 @@ bool LuaState::init(CelestiaCore* appCore)
     lua_pushstring(state, "celestia-luastate");
     lua_pushlightuserdata(state, static_cast<void*>(this));
     lua_settable(state, LUA_REGISTRYINDEX);
-    
+
     lua_pushstring(state, EventHandlers);
     lua_newtable(state);
     lua_settable(state, LUA_REGISTRYINDEX);
