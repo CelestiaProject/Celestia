@@ -13,13 +13,15 @@
 #include <cstdio>
 
 #include "celestia.h"
-// Ugh . . . the C++ standard says that stringstream should be in
-// sstream, but the GNU C++ compiler uses strstream instead.
-#ifdef HAVE_SSTREAM
+
+// Older gcc versions used <strstream> instead of <sstream>.
+// This has been corrected in GCC 3.2, but name clashing must
+// be avoided
+#ifdef __GNUC__
+#undef min
+#undef max
+#endif
 #include <sstream>
-#else
-#include <strstream>
-#endif // HAVE_SSTREAM
 
 #include <celutil/util.h>
 #include <celutil/debug.h>
@@ -144,7 +146,7 @@ Command* CommandParser::parseCommand()
     }
 
     string commandName = tokenizer->getStringValue();
-    
+
     Value* paramListValue = parser->readValue();
     if (paramListValue == NULL || paramListValue->getType() != Value::HashType)
     {
@@ -604,7 +606,7 @@ Command* CommandParser::parseCommand()
             else if (compareIgnoringCase(symbolString, "circle") == 0)
                 symbol = Marker::Circle;
         }
-        
+
         cmd = new CommandMark(object, color, (float) size, symbol);
     }
     else if (commandName == "unmark")
@@ -622,7 +624,7 @@ Command* CommandParser::parseCommand()
         string type, filename;
         paramList->getString("type", type);
         paramList->getString("filename", filename);
-		
+
         cmd = new CommandCapture(type, filename);
     }
     else if (commandName == "renderpath")
@@ -641,7 +643,7 @@ Command* CommandParser::parseCommand()
             glcpath = GLContext::GLPath_NvCombiner_ARBVP;
         else if (compareIgnoringCase(path, "glsl") == 0)
             glcpath = GLContext::GLPath_GLSL;
-	
+
         cmd = new CommandRenderPath(glcpath);
     }
     else
@@ -658,11 +660,8 @@ Command* CommandParser::parseCommand()
 
 int parseRenderFlags(string s)
 {
-#ifdef HAVE_SSTREAM    
     istringstream in(s);
-#else
-    istrstream in(s.c_str());
-#endif
+
     Tokenizer tokenizer(&in);
     int flags = 0;
 
@@ -728,11 +727,8 @@ int parseRenderFlags(string s)
 
 int parseLabelFlags(string s)
 {
-#ifdef HAVE_SSTREAM
     istringstream in(s);
-#else
-    istrstream in(s.c_str());
-#endif
+
     Tokenizer tokenizer(&in);
     int flags = 0;
 
@@ -784,11 +780,8 @@ int parseLabelFlags(string s)
 
 int parseOrbitFlags(string s)
 {
-#ifdef HAVE_SSTREAM    
     istringstream in(s);
-#else
-    istrstream in(s.c_str());
-#endif
+
     Tokenizer tokenizer(&in);
     int flags = 0;
 
