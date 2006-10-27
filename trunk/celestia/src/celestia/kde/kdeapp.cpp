@@ -51,7 +51,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <qtextedit.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 
 #include <qdatetime.h>
 #include <kshortcut.h>
@@ -402,10 +402,10 @@ void KdeApp::initActions()
     new KAction(i18n("Go to &Long/Lat..."), 0, ALT + Key_L, this, SLOT(slotGoToLongLat()), actionCollection(), "go_to_long_lat");
 
     backAction = new KToolBarPopupAction( i18n("&Back"), "back",
-                                           KStdAccel::key(KStdAccel::Back), this, SLOT( slotBack() ),
+                                           KStdAccel::shortcut(KStdAccel::Back), this, SLOT( slotBack() ),
                                            actionCollection(), KStdAction::stdName( KStdAction::Back ) );
     forwardAction = new KToolBarPopupAction( i18n("&Forward"), "forward",
-                                           KStdAccel::key(KStdAccel::Forward), this, SLOT( slotForward() ),
+                                           KStdAccel::shortcut(KStdAccel::Forward), this, SLOT( slotForward() ),
                                            actionCollection(), KStdAction::stdName( KStdAction::Forward ) );
     connect( backAction->popupMenu(), SIGNAL( aboutToShow() ), SLOT( slotBackAboutToShow() ) );
     connect( backAction->popupMenu(), SIGNAL( activated( int ) ), SLOT( slotBackActivated( int ) ) );
@@ -542,7 +542,7 @@ void KdeApp::initActions()
     KToggleAction* showCloudShadows = new KToggleAction(i18n("Show Cloud Shadows"), 0, this, SLOT(slotShowCloudShadows()), actionCollection(), "showCloudShadows");
     showCloudShadows->setChecked(rFlags & Renderer::ShowCloudShadows);
 
-KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
+    KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, SLOT(slotShowOrbits()), actionCollection(), "showOrbits");
     showOrbits->setChecked(rFlags & Renderer::ShowOrbits);
 
     KToggleAction* showAsteroidOrbits = new KToggleAction(i18n("Show Asteroid Orbits"), 0, this, SLOT(slotShowAsteroidOrbits()), actionCollection(), "showAsteroidOrbits");
@@ -696,7 +696,9 @@ KToggleAction* showOrbits = new KToggleAction(i18n("Show Orbits"), Key_O, this, 
                       actionCollection(), "opengl_info");
 
     toggleMenubar=KStdAction::showMenubar(this, SLOT(slotToggleMenubar()), actionCollection());
+    //NOTE: this one is deprecated, but it looks nicer than the alternative:
     toggleToolbar=KStdAction::showToolbar(this, SLOT(slotToggleToolbar()), actionCollection());
+    //setStandardToolBarMenuEnabled(true);
 
     new KToggleAction(i18n("Show Bookmark Toolbar"), 0, this,
         SLOT(slotShowBookmarkBar()), actionCollection(), "showBookmarkBar");
@@ -1410,11 +1412,12 @@ void KdeApp::slotCopyUrl() {
 }
 
 void KdeApp::slotGoTo() {
-    KLineEditDlg dlg(i18n("Enter URL"), "", this);
+    bool ok;
+    QString url = KInputDialog::getText(i18n("Go to URL"), i18n("Enter URL"), "", &ok, this);
 
-    if (dlg.exec()) {
+    if (ok) {
         appCore->addToHistory();
-        appCore->goToUrl(dlg.text().latin1());
+        appCore->goToUrl(url.latin1());
     }
 }
 
