@@ -659,6 +659,41 @@ CreateBodyFixedFrame(const Universe& universe,
 }
 
 
+static BodyMeanEquatorFrame*
+CreateMeanEquatorFrame(const Universe& universe,
+                       Hash* frameData)
+{
+    Selection center = getFrameCenter(universe, frameData);
+    if (center.empty())
+        return NULL;
+
+    Selection obj = center;
+    string objName;
+    if (frameData->getString("Object", objName))
+    {
+        obj = universe.findPath(objName, NULL, 0);
+        if (obj.empty())
+        {
+            DPRINTF(0, "Object '%s' for mean equator frame not found\n",
+                    objName.c_str());
+            return NULL;
+        }
+    }
+
+    clog << "CreateMeanEquatorFrame " << center.getName() << ", " << obj.getName << "\n";
+
+    double freezeEpoch = 0.0;
+    if (ParseDate(frameData, "Freeze", freezeEpoch))
+    {
+        return new BodyMeanEquatorFrame(center, obj, freezeEpoch);
+    }
+    else
+    {
+        return new BodyMeanEquatorFrame(center, obj);
+    }
+}
+
+
 static J2000EclipticFrame*
 CreateJ2000EclipticFrame(const Universe& universe,
                          Hash* frameData)
@@ -689,6 +724,20 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         else
         {
             return CreateBodyFixedFrame(universe, value->getHash());
+        }
+    }
+
+    value = frameData->getValue("MeanEquator");
+    if (value != NULL)
+    {
+        if (value->getType() != Value::HashType)
+        {
+            DPRINTF(0, "Object has incorrect mean equator frame syntax.\n");
+            return NULL;
+        }
+        else
+        {
+            return CreateMeanEquatorFrame(universe, value->getHash());
         }
     }
 

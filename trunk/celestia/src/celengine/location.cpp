@@ -188,7 +188,7 @@ Point3d Location::getPlanetocentricPosition(double t) const
     if (parent == NULL)
         return Point3d(position.x, position.y, position.z);
 
-    Quatd q = parent->getEclipticalToGeographic(t);
+    Quatd q = parent->getEclipticalToBodyFixed(t);
     return Point3d(position.x, position.y, position.z) * q.toMatrix3();
 }
 

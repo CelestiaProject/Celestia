@@ -24,14 +24,14 @@ RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
         switch (refObject.getType())
         {
         case Selection::Type_Body:
-            rotation = refObject.body()->getEclipticalToGeographic(t);
+            rotation = refObject.body()->getEclipticalToBodyFixed(t);
             break;
         case Selection::Type_Star:
             rotation = refObject.star()->getRotationModel()->orientationAtTime(t);
             break;
         case Selection::Type_Location:
             if (refObject.location()->getParentBody() != NULL)
-                rotation = refObject.location()->getParentBody()->getEclipticalToGeographic(t);
+                rotation = refObject.location()->getParentBody()->getEclipticalToBodyFixed(t);
             break;
         default:
             break;
@@ -126,14 +126,14 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
         switch (refObject.getType())
         {
         case Selection::Type_Body:
-            rotation = refObject.body()->getEclipticalToGeographic(t);
+            rotation = refObject.body()->getEclipticalToBodyFixed(t);
             break;
         case Selection::Type_Star:
             rotation = refObject.star()->getRotationModel()->orientationAtTime(t);
             break;
         case Selection::Type_Location:
             if (refObject.location()->getParentBody() != NULL)
-                rotation = refObject.location()->getParentBody()->getEclipticalToGeographic(t);
+                rotation = refObject.location()->getParentBody()->getEclipticalToBodyFixed(t);
             break;
         default:
             break;
@@ -307,24 +307,41 @@ BodyFixedFrame::BodyFixedFrame(Selection center, Selection obj) :
 Quatd
 BodyFixedFrame::getOrientation(double tjd) const
 {
-    // TODO: Need to consider the reference frame of the object
+    // Rotation of 180 degrees about the y axis is required
+    // TODO: this rotation could go in getEclipticalToBodyFixed()
+    Quatd yrot180 = Quatd(0.0, 0.0, 1.0, 0.0);
+
     switch (fixObject.getType())
     {
     case Selection::Type_Body:
-        return fixObject.body()->getRotationModel()->orientationAtTime(tjd);
+        return yrot180 * fixObject.body()->getEclipticalToBodyFixed(tjd);
     case Selection::Type_Star:
-        return fixObject.star()->getRotationModel()->orientationAtTime(tjd);
+        return yrot180 * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
     default:
-        return Quatd(1.0);
+        return yrot180;
     }
 }
 
 
 /*** BodyMeanEquatorFrame ***/
 
-BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center, Selection obj) :
+BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center,
+                                           Selection obj) :
     ReferenceFrame(center),
-    equatorObject(obj)
+    equatorObject(obj),
+    freezeEpoch(0.0),
+    isFrozen(false)
+{
+}
+
+
+BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center,
+                                           Selection obj,
+                                           double freeze) :
+    ReferenceFrame(center),
+    equatorObject(obj),
+    freezeEpoch(freeze),
+    isFrozen(true)
 {
 }
 
@@ -332,12 +349,14 @@ BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center, Selection obj) :
 Quatd
 BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
+    double t = isFrozen ? tjd : freezeEpoch;
+
     switch (equatorObject.getType())
     {
     case Selection::Type_Body:
-        return equatorObject.body()->getRotationModel()->equatorOrientationAtTime(tjd);
+        return equatorObject.body()->getRotationModel()->equatorOrientationAtTime(t);
     case Selection::Type_Star:
-        return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(tjd);
+        return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
         return Quatd(1.0);
     }

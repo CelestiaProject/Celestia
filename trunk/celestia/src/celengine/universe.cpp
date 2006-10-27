@@ -379,7 +379,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // Transform rotate the pick ray into object coordinates
             Quatf qf = body->getOrientation();
             Quatd qd(qf.w, qf.x, qf.y, qf.z);
-            Mat3d m = conjugate(qd * body->getEclipticalToGeographic(pickInfo->jd)).toMatrix3();
+            Mat3d m = conjugate(qd * body->getEclipticalToBodyFixed(pickInfo->jd)).toMatrix3();
             Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
                     pickInfo->pickRay.direction);
             r = r * m;
