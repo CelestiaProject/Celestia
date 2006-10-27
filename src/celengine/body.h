@@ -163,10 +163,10 @@ class Body
     Mat4d getLocalToHeliocentric(double) const;
     Mat4d getLocalToHeliocentric(double, astro::ReferencePlane) const;
     Point3d getHeliocentricPosition(double) const;
-    Quatd getEquatorialToGeographic(double) const;
+    Quatd getEquatorialToBodyFixed(double) const;
     Quatd getEclipticalToEquatorial(double) const;
-    Quatd getEclipticalToGeographic(double) const;
-    Mat4d getGeographicToHeliocentric(double) const;
+    Quatd getEclipticalToBodyFixed(double) const;
+    Mat4d getBodyFixedToHeliocentric(double) const;
 
     Vec3f planetocentricToCartesian(float lon, float lat, float alt) const;
     Vec3f planetocentricToCartesian(const Vec3f& lonLatAlt) const;
