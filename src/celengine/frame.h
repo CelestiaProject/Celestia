@@ -124,6 +124,12 @@ class J2000EquatorFrame : public ReferenceFrame
 };
 
 
+/*! A BodyFixed frame is a coordinate system with the x-axis pointing
+ *  from the body center through the intersection of the prime meridian
+ *  and the equator, and the z-axis aligned with the north pole. The
+ *  y-axis is the cross product of x and z, and points toward the 90
+ *  meridian.
+ */
 class BodyFixedFrame : public ReferenceFrame
 {
  public:
@@ -136,19 +142,19 @@ class BodyFixedFrame : public ReferenceFrame
 };
 
 
-
 class BodyMeanEquatorFrame : public ReferenceFrame
 {
  public:
+    BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
     virtual ~BodyMeanEquatorFrame() {};
     Quatd getOrientation(double tjd) const;
 
  private:
     Selection equatorObject;
+    double freezeEpoch;
+    bool isFrozen;
 };
-
-
 
 
 #if 0

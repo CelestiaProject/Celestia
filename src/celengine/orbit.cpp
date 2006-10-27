@@ -429,7 +429,7 @@ FixedOrbit::getPeriod() const
 double
 FixedOrbit::getBoundingRadius() const
 {
-    return 1.0;
+    return position.distanceFromOrigin() * 1.1;
 }
 
 
@@ -461,8 +461,7 @@ SynchronousOrbit::~SynchronousOrbit()
 
 Point3d SynchronousOrbit::positionAtTime(double jd) const
 {
-    //Quatd q = body.getEclipticalToGeographic(jd);
-    Quatd q = body.getEquatorialToGeographic(jd);
+    Quatd q = body.getEquatorialToBodyFixed(jd);
     return position * q.toMatrix3();
 }
 

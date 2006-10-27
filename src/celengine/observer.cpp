@@ -1,6 +1,6 @@
 // observer.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -181,7 +181,7 @@ Vec3d toUniversal(const Vec3d& v,
         if (sel.getType() != Selection::Type_Body)
             return v;
         else
-            return v * sel.body()->getGeographicToHeliocentric(t);
+            return v * sel.body()->getBodyFixedToHeliocentric(t);
 
     case astro::Equatorial:
         if (sel.getType() != Selection::Type_Body)

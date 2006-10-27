@@ -357,34 +357,39 @@ Quatd Body::getEclipticalToEquatorial(double tjd) const
 {
     Quatd q = getRotationModel()->equatorOrientationAtTime(tjd);
         
-    // Recurse up the hierarchy . . .
-    if (orbitBarycenter != NULL)
-        q = q * orbitBarycenter->getEclipticalToEquatorial(tjd);
+    if (bodyFrame != NULL)
+    {
+        return q * bodyFrame->getOrientation(tjd);
+    }
+    else
+    {
+        // Recurse up the hierarchy . . .
+        if (orbitBarycenter != NULL)
+            q = q * orbitBarycenter->getEclipticalToEquatorial(tjd);
+    }
         
     return q;
 }
 
 
-Quatd Body::getEclipticalToGeographic(double when) const
+Quatd Body::getEclipticalToBodyFixed(double when) const
 {
-    return getEquatorialToGeographic(when) * getEclipticalToEquatorial(when);
+    return getEquatorialToBodyFixed(when) * getEclipticalToEquatorial(when);
 }
 
 
-// The geographic coordinate system has an origin at the center of the
+// The body-fixed coordinate system has an origin at the center of the
 // body, y-axis parallel to the rotation axis, x-axis through the prime
-// meridian, and z-axis at a right angle the xy plane.  An object with
-// constant geographic coordinates will thus remain fixed with respect
-// to a point on the surface of the body.
-Quatd Body::getEquatorialToGeographic(double when) const
+// meridian, and z-axis at a right angle the xy plane.
+Quatd Body::getEquatorialToBodyFixed(double when) const
 {
     return rotationModel->spin(when);
 }
 
 
-Mat4d Body::getGeographicToHeliocentric(double when) const
+Mat4d Body::getBodyFixedToHeliocentric(double when) const
 {
-    return getEquatorialToGeographic(when).toMatrix4() *
+    return getEquatorialToBodyFixed(when).toMatrix4() *
         getLocalToHeliocentric(when);
 }
 
