@@ -680,7 +680,7 @@ CreateMeanEquatorFrame(const Universe& universe,
         }
     }
 
-    clog << "CreateMeanEquatorFrame " << center.getName() << ", " << obj.getName << "\n";
+    clog << "CreateMeanEquatorFrame " << center.getName() << ", " << obj.getName() << "\n";
 
     double freezeEpoch = 0.0;
     if (ParseDate(frameData, "Freeze", freezeEpoch))
