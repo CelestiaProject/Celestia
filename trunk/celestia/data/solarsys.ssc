@@ -1127,6 +1127,10 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Texture "asteroid.jpg"
 	Radius   170
 
+	# Figure of 11.52 +/- 0.14 hours from Grav, T. et al. (2003)
+        # "The Short Rotation Period of Nereid", ApJ 591
+	RotationPeriod 11.52	
+
 	EllipticalOrbit
 	{
 	Epoch		2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
