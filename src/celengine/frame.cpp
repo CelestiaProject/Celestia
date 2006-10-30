@@ -7,7 +7,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <celengine/frame.h>
+
+using namespace std;
 
 
 RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
@@ -363,4 +366,227 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 }
 
 
+/*** TwoVectorFrame ***/
 
+// Minimum angle permitted between primary and secondary axes of
+// a two-vector frame.
+const double TwoVectorFrame::Tolerance = 1.0e-6;
+
+TwoVectorFrame::TwoVectorFrame(Selection center,
+                               const FrameVector& prim,
+                               int primAxis,
+                               const FrameVector& sec,
+                               int secAxis) :
+    ReferenceFrame(center),
+    primaryVector(prim),
+    primaryAxis(primAxis),
+    secondaryVector(sec),
+    secondaryAxis(secAxis)
+{
+    // Verify that primary and secondary axes are valid
+    assert(primaryAxis != 0 && secondaryAxis != 0);
+    assert(abs(primaryAxis) <= 3 && abs(secondaryAxis) <= 3);
+    // Verify that the primary and secondary axes aren't collinear
+    assert(abs(primaryAxis) != abs(secondaryAxis));
+
+    // The tertiary axis is the cross product of the primary and
+    // secondary axes.
+    int tertiarySign = sign(primaryAxis * secondaryAxis);
+    if ((abs(primaryAxis) != 1 && abs(secondaryAxis) != 1))
+    {
+        tertiaryAxis = 1 * tertiarySign;
+    }
+    else if (abs(primaryAxis) != 2 && abs(secondaryAxis) != 2)
+    {
+        tertiaryAxis = 2 * tertiarySign;
+    }
+    else
+    {
+        tertiaryAxis = 3 * tertiarySign;
+    }
+}
+
+
+// Create a quaternion from a rotation matrix
+Quatd mat2quat(const Mat3d& m)
+{
+    double trace = m[0][0] + m[1][1] + m[2][2] + 1;
+    double root;
+
+    if (trace > 0)
+    {
+        clog << "fast case\n";
+        root = (double) sqrt(trace);
+        double w = (double) 0.5 * root;
+        root = (double) 0.5 / root;
+        double x = (m[2][1] - m[1][2]) * root;
+        double y = (m[0][2] - m[2][0]) * root;
+        double z = (m[1][0] - m[0][1]) * root;
+        return Quatd(w, x, y, z);
+    }
+    else
+    {
+        clog << "slow case\n";
+        int i = 0;
+        if (m[1][1] > m[i][i])
+            i = 1;
+        if (m[2][2] > m[i][i])
+            i = 2;
+        int j = (i == 2) ? 0 : i + 1;
+        int k = (j == 2) ? 0 : j + 1;
+
+        double w, x, y, z;
+        root = (double) sqrt(m[i][i] - m[j][j] - m[k][k] + 1);
+        double* xyz[3] = { &x, &y, &z };
+        *xyz[i] = (double) 0.5 * root;
+        root = (double) 0.5 / root;
+        w = (m[k][j] - m[j][k]) * root;
+        *xyz[j] = (m[j][i] + m[i][j]) * root;
+        *xyz[k] = (m[k][i] + m[i][k]) * root;
+        
+        return Quatd(w, x, y, z);
+    }
+}
+
+
+Quatd
+TwoVectorFrame::getOrientation(double tjd) const
+{
+    Vec3d v0 = primaryVector.direction(tjd);
+    Vec3d v1 = secondaryVector.direction(tjd);
+    
+    // TODO: verify that v0 and v1 aren't zero length
+    v0.normalize();
+    v1.normalize();
+
+    Vec3d v2 = v0 ^ v1;
+
+    // Check for degenerate case when the primary and secondary vectors
+    // are collinear. A well-chosen two vector frame should never have this
+    // problem.
+    double length = v2.length();
+    if (length < Tolerance)
+    {
+        // Just return identity . . .
+        return Quatd(1.0);
+    }
+    else
+    {
+        v2 = v2 / length;
+        Vec3d v[3];
+
+        // Set the rotation matrix axes
+        if (primaryAxis > 0)
+            v[abs(primaryAxis) - 1] = v0;
+        else
+            v[abs(primaryAxis) - 1] = -v0;
+
+        if (secondaryAxis > 0)
+            v[abs(secondaryAxis) - 1] = v2 ^ v0;
+        else
+            v[abs(secondaryAxis) - 1] = v0 ^ v2;
+    
+        if (tertiaryAxis > 0)
+            v[abs(tertiaryAxis) - 1] = v2;
+        else
+            v[abs(tertiaryAxis) - 1] = -v2;
+
+        // The axes are the rows of a rotation matrix. The getOrientation
+        // method must return the quaternion representation of the 
+        // orientation, so convert the rotation matrix to a quaternion now.
+        Quatd q = Quatd(Mat3d(v[0], v[1], v[2]));
+
+        return q;
+    }
+}
+
+
+// Copy constructor
+FrameVector::FrameVector(const FrameVector& fv) :
+    vecType(fv.vecType),
+    observer(fv.observer),
+    target(fv.target),
+    vec(fv.vec)
+{
+}
+
+
+// Assignment operator (since we have a copy constructor)
+FrameVector&
+FrameVector::operator=(const FrameVector& fv)
+{
+    vecType = fv.vecType;
+    observer = fv.observer;
+    target = fv.target;
+    vec = fv.vec;
+
+    return *this;
+}
+
+
+
+FrameVector::FrameVector(FrameVectorType t) :
+    vecType(t),
+    observer(),
+    target(),
+    vec(0.0, 0.0, 0.0)
+{
+}
+
+
+FrameVector
+FrameVector::createRelativePositionVector(const Selection& _observer,
+                                          const Selection& _target)
+{
+    FrameVector fv(RelativePosition);
+    fv.observer = _observer;
+    fv.target = _target;
+
+    return fv;
+}
+
+
+FrameVector
+FrameVector::createRelativeVelocityVector(const Selection& _observer,
+                                          const Selection& _target)
+{
+    FrameVector fv(RelativeVelocity);
+    fv.observer = _observer;
+    fv.target = _target;
+
+    return fv;
+}
+
+
+Vec3d
+FrameVector::direction(double tjd) const
+{
+    Vec3d v;
+
+    switch (vecType)
+    {
+    case RelativePosition:
+        v = target.getPosition(tjd) - observer.getPosition(tjd);
+        break;
+
+    case RelativeVelocity:
+        // TODO: add getVelocity() method to selection
+        {
+            Vec3d v0 = observer.getPosition(tjd) - observer.getPosition(tjd - 1.0 / 1440.0);
+            Vec3d v1 = target.getPosition(tjd) - target.getPosition(tjd - 1.0 / 1440.0);
+            v = v1 - v0;
+        }
+        break;
+
+    case ConstantVector:
+        v = vec;
+        break;
+
+    default:
+        // unhandled vector type
+        v = Vec3d(0.0, 0.0, 0.0);
+        break;
+    }
+
+    return v;
+}
