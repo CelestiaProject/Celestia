@@ -366,6 +366,32 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 }
 
 
+/*** CachingFrame ***/
+
+CachingFrame::CachingFrame(Selection _center) :
+    ReferenceFrame(_center),
+    lastTime(-1.0e50),
+    lastOrientation(1.0)
+{
+}
+
+
+Quatd
+CachingFrame::getOrientation(double tjd) const
+{
+    if (tjd == lastTime)
+    {
+        return lastOrientation;
+    }
+    else
+    {
+        lastTime = tjd;
+        lastOrientation = computeOrientation(tjd);
+        return lastOrientation;
+    }
+}
+
+
 /*** TwoVectorFrame ***/
 
 // Minimum angle permitted between primary and secondary axes of
@@ -377,7 +403,7 @@ TwoVectorFrame::TwoVectorFrame(Selection center,
                                int primAxis,
                                const FrameVector& sec,
                                int secAxis) :
-    ReferenceFrame(center),
+    CachingFrame(center),
     primaryVector(prim),
     primaryAxis(primAxis),
     secondaryVector(sec),
@@ -398,7 +424,7 @@ TwoVectorFrame::TwoVectorFrame(Selection center,
     }
     else if (abs(primaryAxis) != 2 && abs(secondaryAxis) != 2)
     {
-        tertiaryAxis = 2 * tertiarySign;
+        tertiaryAxis = 2 * -tertiarySign;
     }
     else
     {
@@ -407,50 +433,8 @@ TwoVectorFrame::TwoVectorFrame(Selection center,
 }
 
 
-// Create a quaternion from a rotation matrix
-Quatd mat2quat(const Mat3d& m)
-{
-    double trace = m[0][0] + m[1][1] + m[2][2] + 1;
-    double root;
-
-    if (trace > 0)
-    {
-        clog << "fast case\n";
-        root = (double) sqrt(trace);
-        double w = (double) 0.5 * root;
-        root = (double) 0.5 / root;
-        double x = (m[2][1] - m[1][2]) * root;
-        double y = (m[0][2] - m[2][0]) * root;
-        double z = (m[1][0] - m[0][1]) * root;
-        return Quatd(w, x, y, z);
-    }
-    else
-    {
-        clog << "slow case\n";
-        int i = 0;
-        if (m[1][1] > m[i][i])
-            i = 1;
-        if (m[2][2] > m[i][i])
-            i = 2;
-        int j = (i == 2) ? 0 : i + 1;
-        int k = (j == 2) ? 0 : j + 1;
-
-        double w, x, y, z;
-        root = (double) sqrt(m[i][i] - m[j][j] - m[k][k] + 1);
-        double* xyz[3] = { &x, &y, &z };
-        *xyz[i] = (double) 0.5 * root;
-        root = (double) 0.5 / root;
-        w = (m[k][j] - m[j][k]) * root;
-        *xyz[j] = (m[j][i] + m[i][j]) * root;
-        *xyz[k] = (m[k][i] + m[i][k]) * root;
-        
-        return Quatd(w, x, y, z);
-    }
-}
-
-
 Quatd
-TwoVectorFrame::getOrientation(double tjd) const
+TwoVectorFrame::computeOrientation(double tjd) const
 {
     Vec3d v0 = primaryVector.direction(tjd);
     Vec3d v1 = secondaryVector.direction(tjd);
@@ -495,6 +479,12 @@ TwoVectorFrame::getOrientation(double tjd) const
         // method must return the quaternion representation of the 
         // orientation, so convert the rotation matrix to a quaternion now.
         Quatd q = Quatd(Mat3d(v[0], v[1], v[2]));
+
+        // A rotation matrix will have a determinant of 1; if the matrix also
+        // includes a reflection, the determinant will be -1, indicating that
+        // there's a bug and there's a reversed cross-product or sign error
+        // somewhere.
+        // assert(Mat3d(v[0], v[1], v[2]).determinant() > 0);
 
         return q;
     }
