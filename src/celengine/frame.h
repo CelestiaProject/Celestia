@@ -193,6 +193,21 @@ class FrameVector
 };
 
 
+class CachingFrame : public ReferenceFrame
+{
+ public:
+    CachingFrame(Selection _center);
+    virtual ~CachingFrame() {};
+
+    Quatd getOrientation(double tjd) const;
+    virtual Quatd computeOrientation(double tjd) const = 0;
+
+ private:
+    mutable double lastTime;
+    mutable Quatd lastOrientation;
+};
+
+
 /*! A two vector frame is a coordinate system defined by a primary and
  *  secondary vector. The primary axis points in the direction of the
  *  primary vector. The secondary axis points in the direction of the
@@ -200,7 +215,7 @@ class FrameVector
  *  vector. The third axis is the cross product of the primary and
  *  secondary axis.
  */
-class TwoVectorFrame : public ReferenceFrame
+class TwoVectorFrame : public CachingFrame
 {
  public:
     /*! primAxis and secAxis are the labels of the axes defined by
@@ -214,7 +229,7 @@ class TwoVectorFrame : public ReferenceFrame
                    int secAxis);
     virtual ~TwoVectorFrame() {};
 
-    Quatd getOrientation(double tjd) const;
+    Quatd computeOrientation(double tjd) const;
 
     //! The sine of minimum angle between the primary and secondary vectors
     static const double Tolerance;

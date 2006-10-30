@@ -752,6 +752,22 @@ getAxis(Hash* vectorData)
         DPRINTF(0, "Bad two-vector frame: vector has invalid axis label.\n");
     }
 
+    // Permute axis labels to match non-standard Celestia coordinate
+    // conventions: y <- z, z <- -y
+    switch (axis)
+    {
+    case 2:
+        return 3;
+    case -2:
+        return -3;
+    case 3:
+        return -2;
+    case -3:
+        return 2;
+    default:
+        return axis;
+    }
+
     return axis;
 }
 
