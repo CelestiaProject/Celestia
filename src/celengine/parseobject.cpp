@@ -10,6 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cassert>
 #include <celutil/debug.h>
 #include "parseobject.h"
 #include "customorbit.h"
@@ -18,7 +19,6 @@
 #include "trajmanager.h"
 #include "rotationmanager.h"
 #include "universe.h"
-
 
 using namespace std;
 
@@ -57,7 +57,7 @@ CreateEllipticalOrbit(Hash* orbitData,
     {
         if (!orbitData->getNumber("PericenterDistance", pericenterDistance))
         {
-            DPRINTF(0, "SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n");
+            clog << "SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n";
             return NULL;
         }
     }
@@ -65,7 +65,7 @@ CreateEllipticalOrbit(Hash* orbitData,
     double period = 0.0;
     if (!orbitData->getNumber("Period", period))
     {
-        DPRINTF(0, "Period missing!  Skipping planet . . .\n");
+        clog << "Period missing!  Skipping planet . . .\n";
         return NULL;
     }
 
@@ -219,8 +219,8 @@ CreateOrbit(PlanetarySystem* system,
         {
             return orbit;
         }
-        DPRINTF(0, "Could not find custom orbit named '%s'\n",
-                customOrbitName.c_str());
+        clog << "Could not find custom orbit named '" << customOrbitName <<
+            "'\n";
     }
 
 #ifdef USE_SPICE
@@ -229,7 +229,7 @@ CreateOrbit(PlanetarySystem* system,
     {
         if (spiceOrbitDataValue->getType() != Value::HashType)
         {
-            DPRINTF(0, "Object has incorrect spice orbit syntax.\n");
+            clog << "Object has incorrect spice orbit syntax.\n";
             return NULL;
         }
         else
@@ -257,8 +257,8 @@ CreateOrbit(PlanetarySystem* system,
         {
             return orbit;
         }
-        DPRINTF(0, "Could not load sampled orbit file '%s'\n",
-                sampOrbitFile.c_str());
+        clog << "Could not load sampled orbit file '" <<
+            sampOrbitFile << "'\n";
     }
 
     Value* orbitDataValue = planetData->getValue("EllipticalOrbit");
@@ -266,7 +266,7 @@ CreateOrbit(PlanetarySystem* system,
     {
         if (orbitDataValue->getType() != Value::HashType)
         {
-            DPRINTF(0, "Object has incorrect elliptical orbit syntax.\n");
+            clog << "Object has incorrect elliptical orbit syntax.\n";
             return NULL;
         }
         else
@@ -466,8 +466,8 @@ CreateRotationModel(Hash* planetData,
         {
             return rotationModel;
         }
-        DPRINTF(0, "Could not find custom rotation model named '%s'\n",
-                customRotationModelName.c_str());
+        clog << "Could not find custom rotation model named '" <<
+            customRotationModelName << "'\n";
     }
 
 #ifdef USE_SPICE
@@ -487,8 +487,8 @@ CreateRotationModel(Hash* planetData,
             return rotationModel;
         }
 
-        DPRINTF(0, "Could not load rotation model file '%s'\n",
-                sampOrientationFile.c_str());
+        clog << "Could not load rotation model file '" <<
+            sampOrientationFile << "'\n";
     }
 
     Value* precessingRotationValue = planetData->getValue("PrecessingRotation");
@@ -496,7 +496,7 @@ CreateRotationModel(Hash* planetData,
     {
         if (precessingRotationValue->getType() != Value::HashType)
         {
-            DPRINTF(0, "Object has incorrect syntax for precessing rotation.\n");
+            clog << "Object has incorrect syntax for precessing rotation.\n";
             return NULL;
         }
         else
@@ -511,7 +511,7 @@ CreateRotationModel(Hash* planetData,
     {
         if (uniformRotationValue->getType() != Value::HashType)
         {
-            DPRINTF(0, "Object has incorrect uniform rotation syntax.\n");
+            clog << "Object has incorrect uniform rotation syntax.\n";
             return NULL;
         }
         else
@@ -526,7 +526,7 @@ CreateRotationModel(Hash* planetData,
     {
         if (fixedRotationValue->getType() != Value::HashType)
         {
-            DPRINTF(0, "Object has incorrect fixed rotation syntax.\n");
+            clog << "Object has incorrect fixed rotation syntax.\n";
             return NULL;
         }
         else
@@ -674,8 +674,7 @@ CreateMeanEquatorFrame(const Universe& universe,
         obj = universe.findPath(objName, NULL, 0);
         if (obj.empty())
         {
-            DPRINTF(0, "Object '%s' for mean equator frame not found\n",
-                    objName.c_str());
+            clog << "Object '" << objName << "' for mean equator frame not found.\n";
             return NULL;
         }
     }
@@ -691,6 +690,229 @@ CreateMeanEquatorFrame(const Universe& universe,
     {
         return new BodyMeanEquatorFrame(center, obj);
     }
+}
+
+
+// Convert a string to an axis label. Permitted axis labels are
+// x, y, z, -x, -y, and -z. +x, +y, and +z are allowed as synonyms for
+// x, y, z. Case is ignored.
+static int
+parseAxisLabel(const std::string& label)
+{
+    if (compareIgnoringCase(label, "x") == 0 ||
+        compareIgnoringCase(label, "+x") == 0)
+    {
+        return 1;
+    }
+
+    if (compareIgnoringCase(label, "y") == 0 ||
+        compareIgnoringCase(label, "+y") == 0)
+    {
+        return 2;
+    }
+
+    if (compareIgnoringCase(label, "z") == 0 ||
+        compareIgnoringCase(label, "+z") == 0)
+    {
+        return 3;
+    }
+
+    if (compareIgnoringCase(label, "-x") == 0)
+    {
+        return -1;
+    }
+
+    if (compareIgnoringCase(label, "-y") == 0)
+    {
+        return -2;
+    }
+    
+    if (compareIgnoringCase(label, "-z") == 0)
+    {
+        return -3;
+    }
+
+    return 0;
+}
+
+
+static int
+getAxis(Hash* vectorData)
+{
+    string axisLabel;
+    if (!vectorData->getString("Axis", axisLabel))
+    {
+        DPRINTF(0, "Bad two-vector frame: missing axis label for vector.\n");
+        return 0;
+    }
+
+    int axis = parseAxisLabel(axisLabel);
+    if (axis == 0)
+    {
+        DPRINTF(0, "Bad two-vector frame: vector has invalid axis label.\n");
+    }
+
+    return axis;
+}
+
+
+// Get the target object of a direction vector definition. Return an
+// empty selection if it's missing or refers to an object that doesn't exist.
+static Selection
+getVectorTarget(const Universe& universe, Hash* vectorData)
+{
+    string targetName;
+    if (!vectorData->getString("Target", targetName))
+    {
+        clog << "Bad two-vector frame: no target specified for vector.\n";
+        return Selection();
+    }
+
+    Selection targetObject = universe.findPath(targetName, NULL, 0);
+    if (targetObject.empty())
+    {
+        clog << "Bad two-vector frame: target object '" << targetObject.getName() << "' of vector not found.\n";
+        return Selection();
+    }
+
+    return targetObject;
+}
+
+
+// Get the observer object of a direction vector definition. Return an
+// empty selection if it's missing or refers to an object that doesn't exist.
+static Selection
+getVectorObserver(const Universe& universe, Hash* vectorData)
+{
+    string obsName;
+    if (!vectorData->getString("Observer", obsName))
+    {
+        clog << "Bad two-vector frame: no observer specified for vector.\n";
+        return Selection();
+    }
+
+    Selection obsObject = universe.findPath(obsName, NULL, 0);
+    if (obsObject.empty())
+    {
+        clog << "Bad two-vector frame: observer object '" << obsObject.getName() << "' of vector not found.\n";
+        return Selection();
+    }
+
+    return obsObject;
+}
+
+
+static FrameVector*
+CreateFrameVector(const Universe& universe, Hash* vectorData)
+{
+    string vectorType;
+    if (!vectorData->getString("Type", vectorType))
+    {
+        clog << "Bad two-vector frame: missing type for vector.\n";
+        return NULL;
+    }
+
+    if (compareIgnoringCase(vectorType, "RelativePosition") == 0)
+    {
+        Selection observer = getVectorObserver(universe, vectorData);
+        Selection target = getVectorTarget(universe, vectorData);
+        if (observer.empty() || target.empty())
+            return NULL;
+        else
+            return new FrameVector(FrameVector::createRelativePositionVector(observer, target));
+    }
+    else if (compareIgnoringCase(vectorType, "RelativeVelocity") == 0)
+    {
+        Selection observer = getVectorObserver(universe, vectorData);
+        Selection target = getVectorTarget(universe, vectorData);
+        if (observer.empty() || target.empty())
+            return NULL;
+        else
+            return new FrameVector(FrameVector::createRelativeVelocityVector(observer, target));
+    }
+    else if (compareIgnoringCase(vectorType, "ConstantVector") == 0)
+    {
+        // TODO: not yet implemented
+        clog << "Constant vectors for two-vector frames not yet implemented.\n";
+        return NULL;
+    }
+    else
+    {
+        clog << "Bad two-vector frame: unknown vector type '" << vectorType << "'.\n";
+        return NULL;
+    }
+}
+
+
+static TwoVectorFrame*
+CreateTwoVectorFrame(const Universe& universe,
+                     Hash* frameData)
+{
+    Selection center = getFrameCenter(universe, frameData);
+    if (center.empty())
+        return NULL;
+
+    // Primary and secondary vector definitions are required
+    Value* primaryValue = frameData->getValue("Primary");
+    if (!primaryValue)
+    {
+        clog << "Primary axis missing from two-vector frame.\n";
+        return NULL;
+    }
+
+    Hash* primaryData = primaryValue->getHash();
+    if (!primaryData)
+    {
+        clog << "Bad syntax for primary axis of two-vector frame.\n";
+        return NULL;
+    }
+
+    Value* secondaryValue = frameData->getValue("Secondary");
+    if (!secondaryValue)
+    {
+        clog << "Secondary axis missing from two-vector frame.\n";
+        return NULL;
+    }
+
+    Hash* secondaryData = secondaryValue->getHash();
+    if (!secondaryData)
+    {
+        clog << "Bad syntax for secondary axis of two-vector frame.\n";
+        return NULL;
+    }
+
+    // Get and validate the axes for the direction vectors
+    int primaryAxis = getAxis(primaryData);
+    int secondaryAxis = getAxis(secondaryData);
+
+    assert(abs(primaryAxis) <= 3);
+    assert(abs(secondaryAxis) <= 3);
+    if (primaryAxis == 0 || secondaryAxis == 0)
+    {
+        return NULL;
+    }
+
+    if (abs(primaryAxis) == abs(secondaryAxis))
+    {
+        clog << "Bad two-vector frame: axes for vectors are collinear.\n";
+        return NULL;
+    }
+
+    FrameVector* primaryVector = CreateFrameVector(universe, primaryData);
+    FrameVector* secondaryVector = CreateFrameVector(universe, secondaryData);
+
+    TwoVectorFrame* frame = NULL;
+    if (primaryVector != NULL && secondaryVector != NULL)
+    {
+        frame = new TwoVectorFrame(center,
+                                   *primaryVector, primaryAxis,
+                                   *secondaryVector, secondaryAxis);
+    }
+    
+    delete primaryVector;
+    delete secondaryVector;
+
+    return frame;
 }
 
 
@@ -718,7 +940,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
     {
         if (value->getType() != Value::HashType)
         {
-            DPRINTF(0, "Object has incorrect body-fixed frame syntax.\n");
+            clog << "Object has incorrect body-fixed frame syntax.\n";
             return NULL;
         }
         else
@@ -732,7 +954,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
     {
         if (value->getType() != Value::HashType)
         {
-            DPRINTF(0, "Object has incorrect mean equator frame syntax.\n");
+            clog << "Object has incorrect mean equator frame syntax.\n";
             return NULL;
         }
         else
@@ -741,7 +963,21 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         }
     }
 
-    DPRINTF("Frame definition does not have a valid frame type.\n");
+    value = frameData->getValue("TwoVector");
+    if (value != NULL)
+    {
+        if (value->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect two-vector frame syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            return CreateTwoVectorFrame(universe, value->getHash());
+        }
+    }
+
+    clog << "Frame definition does not have a valid frame type.\n";
 
     return NULL;
 }
@@ -765,7 +1001,7 @@ ReferenceFrame* CreateReferenceFrame(const Universe& universe,
     }
     else
     {
-        DPRINTF("Invalid syntax for frame definition.\n");
+        clog << "Invalid syntax for frame definition.\n";
         return NULL;
     }
 }

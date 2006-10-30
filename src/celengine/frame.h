@@ -157,11 +157,75 @@ class BodyMeanEquatorFrame : public ReferenceFrame
 };
 
 
-#if 0
+/*! FrameVectors are used to define the axes for TwoVector frames
+ */
+class FrameVector
+{
+ public:
+    FrameVector(const FrameVector& fv);
+    FrameVector& operator=(const FrameVector&);
+
+    Vec3d direction(double tjd) const;
+
+    enum FrameVectorType
+    {
+        RelativePosition,
+        RelativeVelocity,
+        ConstantVector,
+    };
+    
+    static FrameVector createRelativePositionVector(const Selection& _observer,
+                                                    const Selection& _target);
+    static FrameVector createRelativeVelocityVector(const Selection& _observer,
+                                                    const Selection& _target);
+    static FrameVector createConstantVector();
+
+ private:
+    /*! Type-only constructor is private. Code outside the class should
+     *  use create*Vector methods to create new FrameVectors.
+     */
+    FrameVector(FrameVectorType t);
+
+    FrameVectorType vecType;
+    Selection observer;
+    Selection target;
+    Vec3d vec;
+};
+
+
+/*! A two vector frame is a coordinate system defined by a primary and
+ *  secondary vector. The primary axis points in the direction of the
+ *  primary vector. The secondary axis points in the direction of the
+ *  component of the secondary vector that is orthogonal to the primary
+ *  vector. The third axis is the cross product of the primary and
+ *  secondary axis.
+ */
 class TwoVectorFrame : public ReferenceFrame
 {
+ public:
+    /*! primAxis and secAxis are the labels of the axes defined by
+     *  the primary and secondary vectors:
+     *  1 = x, 2 = y, 3 = z, -1 = -x, -2 = -y, -3 = -z
+     */
+    TwoVectorFrame(Selection center, 
+                   const FrameVector& prim,
+                   int primAxis,
+                   const FrameVector& sec,
+                   int secAxis);
+    virtual ~TwoVectorFrame() {};
+
+    Quatd getOrientation(double tjd) const;
+
+    //! The sine of minimum angle between the primary and secondary vectors
+    static const double Tolerance;
+
+ private:
+    FrameVector primaryVector;
+    int primaryAxis;
+    FrameVector secondaryVector;
+    int secondaryAxis;
+    int tertiaryAxis;
 };
-#endif
 
 
 #endif // _CELENGINE_FRAME_H_
