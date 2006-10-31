@@ -936,7 +936,11 @@ static J2000EclipticFrame*
 CreateJ2000EclipticFrame(const Universe& universe,
                          Hash* frameData)
 {
-    return NULL;
+    Selection center = getFrameCenter(universe, frameData);
+    if (center.empty())
+        return NULL;
+    else
+        return new J2000EclipticFrame(center);
 }
 
 
@@ -944,7 +948,11 @@ static J2000EquatorFrame*
 CreateJ2000EquatorFrame(const Universe& universe,
                         Hash* frameData)
 {
-    return NULL;
+    Selection center = getFrameCenter(universe, frameData);
+    if (center.empty())
+        return NULL;
+    else
+        return new J2000EquatorFrame(center);
 }
 
 
@@ -990,6 +998,34 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         else
         {
             return CreateTwoVectorFrame(universe, value->getHash());
+        }
+    }
+
+    value = frameData->getValue("EclipticJ2000");
+    if (value != NULL)
+    {
+        if (value->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect J2000 ecliptic frame syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            return CreateJ2000EclipticFrame(universe, value->getHash());
+        }
+    }
+
+    value = frameData->getValue("EquatorJ2000");
+    if (value != NULL)
+    {
+        if (value->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect J2000 equator frame syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            return CreateJ2000EquatorFrame(universe, value->getHash());
         }
     }
 
