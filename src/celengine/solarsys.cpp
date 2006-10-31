@@ -289,6 +289,7 @@ static Body* CreatePlanet(const string& name,
         body = new Body(system);
     }
 
+    // TODO: OrbitBarycenter field is replaced by reference frames
     Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, planetData);
     bool orbitsPlanet = false;
     if (orbitBarycenter.body())
@@ -307,7 +308,33 @@ static Body* CreatePlanet(const string& name,
             delete body;
         return NULL;
     }
-    
+
+    // Set the reference frame of the orbit
+    Value* frameValue = planetData->getValue("OrbitFrame");
+    if (frameValue != NULL)
+    {
+        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue);
+        if (frame != NULL)
+        {
+            body->setOrbitFrame(frame);
+
+            // If the center of the is a star, orbital element units are
+            // in AU; otherwise, use kilometers.
+            if (frame->getCenter().star() != NULL)
+                orbitsPlanet = false;
+            else
+                orbitsPlanet = true;
+        }
+    }
+
+    Value* bodyFrameValue = planetData->getValue("BodyFrame");
+    if (bodyFrameValue != NULL)
+    {
+        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue);
+        if (frame != NULL)
+            body->setBodyFrame(frame);
+    }
+
     Orbit* orbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
     if (orbit != NULL)
     {
@@ -430,36 +457,6 @@ static Body* CreatePlanet(const string& name,
         }
     }    
     
-    string orbitRefPlane;
-    if (planetData->getString("OrbitReferencePlane", orbitRefPlane))
-    {
-        if (orbitRefPlane == "equator")
-        {
-            body->setOrbitReferencePlane(astro::BodyEquator);
-        }
-        else if (orbitRefPlane == "ecliptic")
-        {
-            body->setOrbitReferencePlane(astro::Ecliptic_J2000);
-        }
-    }
-
-    // Set the reference frame of the orbit
-    Value* frameValue = planetData->getValue("OrbitFrame");
-    if (frameValue != NULL)
-    {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue);
-        if (frame != NULL)
-            body->setOrbitFrame(frame);
-    }
-
-    Value* bodyFrameValue = planetData->getValue("BodyFrame");
-    if (bodyFrameValue != NULL)
-    {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue);
-        if (frame != NULL)
-            body->setBodyFrame(frame);
-    }
-
     Surface surface;
     if (disposition == ModifyObject)
     {
