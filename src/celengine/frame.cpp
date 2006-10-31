@@ -274,6 +274,13 @@ ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
 }
 
 
+Selection
+ReferenceFrame::getCenter() const
+{
+    return centerObject;
+}
+
+
 
 /*** J2000EclipticFrame ***/
 

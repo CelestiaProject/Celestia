@@ -92,6 +92,8 @@ class ReferenceFrame
     UniversalCoord convertTo(const UniversalCoord& uc, double tjd) const;
 
     Point3d convertFromAstrocentric(const Point3d& p, double tjd) const;
+    
+    Selection getCenter() const;
 
     virtual Quatd getOrientation(double tjd) const = 0;
 
