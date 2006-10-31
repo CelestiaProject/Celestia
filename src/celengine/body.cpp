@@ -24,7 +24,6 @@ using namespace std;
 Body::Body(PlanetarySystem* _system) :
     orbit(NULL),
     orbitBarycenter(_system ? _system->getPrimaryBody() : NULL),
-    orbitRefPlane(astro::BodyEquator),
     orbitFrame(NULL),
     bodyFrame(NULL),
     rotationModel(NULL),
@@ -109,18 +108,6 @@ void Body::setOrbitBarycenter(const Body* barycenterBody)
     }
     orbitBarycenter = barycenterBody;
 }
-
-astro::ReferencePlane Body::getOrbitReferencePlane() const
-{
-    return orbitRefPlane;
-}
-
-
-void Body::setOrbitReferencePlane(astro::ReferencePlane refPlane)
-{
-    orbitRefPlane = refPlane;
-}
-
 
 const ReferenceFrame* Body::getOrbitFrame() const
 {
@@ -304,13 +291,7 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
 
 
 // Get a matrix which converts from local to heliocentric coordinates
-Mat4d Body::getLocalToHeliocentric(double when) const
-{
-    return getLocalToHeliocentric(when, orbitRefPlane);
-}
-
-
-Mat4d Body::getLocalToHeliocentric(double tjd, astro::ReferencePlane childRefPlane) const
+Mat4d Body::getLocalToHeliocentric(double tjd) const
 {
     Point3d pos = orbit->positionAtTime(tjd);
 
@@ -323,25 +304,12 @@ Mat4d Body::getLocalToHeliocentric(double tjd, astro::ReferencePlane childRefPla
     {
         Mat4d frame;
 
-        switch (childRefPlane)
-        {
-        case astro::BodyEquator:
-            frame = getRotationModel()->equatorOrientationAtTime(tjd).toMatrix4() *
-                Mat4d::translation(pos);
-            break;
-        case astro::Ecliptic_J2000:
-            frame = Mat4d::translation(pos);
-            break;
-        case astro::Equator_J2000:
-            frame = Mat4d::translation(pos);
-            break;
-        default:
-            assert(0);
-        }
+        frame = getRotationModel()->equatorOrientationAtTime(tjd).toMatrix4() *
+            Mat4d::translation(pos);
 
         // Recurse up the hierarchy . . .
         if (orbitBarycenter != NULL)
-            frame = frame * orbitBarycenter->getLocalToHeliocentric(tjd, orbitRefPlane);
+            frame = frame * orbitBarycenter->getLocalToHeliocentric(tjd);
         return frame;
     }
 }
