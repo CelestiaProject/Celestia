@@ -1111,11 +1111,17 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
 
     glPushMatrix();
     glTranslate(orbitPath.origin);
-    if (body != NULL &&
-        body->getOrbitBarycenter() != NULL &&
-        body->getOrbitReferencePlane() == astro::BodyEquator)
+    if (body != NULL)
     {
-        Quatd orientation = body->getOrbitBarycenter()->getEclipticalToEquatorial(t);
+        Quatd orientation(1.0);
+        if (body->getOrbitFrame() != NULL)
+        {
+            orientation = body->getOrbitFrame()->getOrientation(t);
+        }
+        else if (body->getOrbitBarycenter() != NULL)
+        {
+            orientation = body->getOrbitBarycenter()->getEclipticalToEquatorial(t);
+        }
         glRotate(~orientation);
     }
 
@@ -5989,8 +5995,16 @@ void Renderer::buildRenderLists(const Star& sun,
             ((body->getClassification() & orbitMask) != 0 || body == highlightObject.body()))
         {
             Point3d orbitOrigin(0.0, 0.0, 0.0);
-            if (body->getOrbitBarycenter())
+            if (body->getOrbitFrame())
+            {
+                Body* centralBody = body->getOrbitFrame()->getCenter().body();
+                if (centralBody != NULL)
+                    orbitOrigin = centralBody->getHeliocentricPosition(now);
+            }
+            else if (body->getOrbitBarycenter())
+            {
                 orbitOrigin = body->getOrbitBarycenter()->getHeliocentricPosition(now);
+            }
 
             // Calculate the origin of the orbit relative to the observer
             Vec3d relOrigin = orbitOrigin - observerPos;
