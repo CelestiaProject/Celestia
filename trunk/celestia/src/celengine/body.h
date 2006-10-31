@@ -104,8 +104,6 @@ class Body
     void setOrbit(Orbit*);
     const Body* getOrbitBarycenter() const;
     void setOrbitBarycenter(const Body*);
-    astro::ReferencePlane getOrbitReferencePlane() const;
-    void setOrbitReferencePlane(astro::ReferencePlane);
 
     const ReferenceFrame* getOrbitFrame() const;
     void setOrbitFrame(const ReferenceFrame* f);
@@ -193,7 +191,6 @@ class Body
     
     Orbit* orbit;
     const Body* orbitBarycenter;
-    astro::ReferencePlane orbitRefPlane;
     const ReferenceFrame* orbitFrame;
     const ReferenceFrame* bodyFrame;
     
