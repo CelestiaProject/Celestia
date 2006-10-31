@@ -294,7 +294,7 @@ J2000EquatorFrame::J2000EquatorFrame(Selection center) :
 Quatd
 J2000EquatorFrame::getOrientation(double /* tjd */) const
 {
-    return Quatd::xrotation(23.4392911);
+    return Quatd::xrotation(degToRad(23.4392911));
 }
 
 
