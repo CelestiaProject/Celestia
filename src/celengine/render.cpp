@@ -2121,38 +2121,38 @@ void Renderer::renderObjectAsPoint(Point3f position,
         float pointSize = size;
         float glareSize = 0.0f;
         float glareAlpha = 0.0f;
-		if (useScaledDiscs)
-		{
-			if (alpha < 0.0f)
-			{
-				alpha = 0.0f;
-			}
-			else if (alpha > 1.0f)
-			{
-				float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
-				pointSize *= discScale;
+        if (useScaledDiscs)
+        {
+            if (alpha < 0.0f)
+            {
+                alpha = 0.0f;
+            }
+            else if (alpha > 1.0f)
+            {
+                float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
+                pointSize *= discScale;
+                
+                glareAlpha = min(0.5f, discScale / 4.0f);
+                glareSize = pointSize * 3.0f;
+                
+                alpha = 1.0f;
+            }
+        }
+        else
+        {
+            if (alpha < 0.0f)
+            {
+                alpha = 0.0f;
+            }
+            else if (alpha > 1.0f)
+            {
+                float discScale = min(100.0f, satPoint - appMag + 2.0f);
+                glareAlpha = min(0.3f, (discScale - 2.0f) / 4.0f);
+                glareSize = pointSize * discScale * 2.0f;
+            }
+        }
 
-				glareAlpha = min(0.5f, discScale / 4.0f);
-				glareSize = pointSize * 3.0f;
-
-				alpha = 1.0f;
-			}
-		}
-		else
-		{
-			if (alpha < 0.0f)
-			{
-				alpha = 0.0f;
-			}
-			else if (alpha > 1.0f)
-			{
-				float discScale = min(100.0f, satPoint - appMag + 2.0f);
-				glareAlpha = min(0.3f, (discScale - 2.0f) / 4.0f);
-				glareSize = pointSize * discScale * 2.0f;
-			}
-		}
-
-		alpha *= fade;
+        alpha *= fade;
 
 #if 0
         float posScale = abs(renderZ / (position * conjugate(orientation).toMatrix3()).z);
@@ -4815,11 +4815,49 @@ void Renderer::renderObject(Point3f pos,
                    planetMat *
                    Mat4f::scaling(1.0f / radius));
 
+    // The sphere rendering code uses the view frustum to determine which
+    // patches are visible. In order to avoid rendering patches that can't
+    // be seen, make the far plane of the frustum as close to the viewer
+    // as possible.
+    float frustumFarPlane = farPlaneDistance;
+    if (obj.model == InvalidResource)
+    {
+        // Only adjust the far plane for ellipsoidal objects
+        float d = pos.distanceFromOrigin();
+        
+        // Account for oblateness
+        float eradius = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
+
+        if (d > eradius)
+        {
+            // Include a fudge factor to eliminate overaggressive clipping
+            // due to limited floating point precision
+            frustumFarPlane = (float) sqrt(square(d) - square(eradius)) * 1.1f;
+        }
+        else
+        {
+            // We're inside the bounding sphere; leave the far plane alone
+        }
+
+        if (obj.atmosphere != NULL)
+        {
+            float cloudHeight = obj.atmosphere->cloudHeight;
+            if (cloudHeight > 0.0f && d < eradius + cloudHeight)
+            {
+                // If there's a cloud layer, we need to move the far plane
+                // out so that the clouds aren't clipped.
+                float cloudLayerRadius = eradius + cloudHeight;
+                frustumFarPlane += (float) sqrt(square(cloudLayerRadius) - 
+                                                square(eradius));
+            }
+        }
+    }
+
     // Transform the frustum into object coordinates using the
     // inverse model/view matrix.
     Frustum viewFrustum(degToRad(fov),
                         (float) windowWidth / (float) windowHeight,
-                        nearPlaneDistance, farPlaneDistance);
+                        nearPlaneDistance, frustumFarPlane);
     viewFrustum.transform(invMV);
 
     // Temporary hack until we fix culling for ringed planets; prevents
