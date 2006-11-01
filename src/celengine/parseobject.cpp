@@ -848,9 +848,28 @@ CreateFrameVector(const Universe& universe, Hash* vectorData)
     }
     else if (compareIgnoringCase(vectorType, "ConstantVector") == 0)
     {
-        // TODO: not yet implemented
-        clog << "Constant vectors for two-vector frames not yet implemented.\n";
-        return NULL;
+        Vec3d vec(0.0, 0.0, 1.0);
+        vectorData->getVector("Vector", vec);
+        if (vec.length() == 0.0)
+        {
+            clog << "Bad two-vector frame: constant vector has length zero\n";
+            return NULL;
+        }
+        vec.normalize();
+        vec = Vec3d(vec.x, vec.z, -vec.y);
+
+        // The frame for the vector is optional; a NULL frame indicates
+        // J2000 ecliptic.
+        ReferenceFrame* f = NULL;
+        Value* frameValue = vectorData->getValue("Frame");
+        if (frameValue != NULL)
+        {
+            f = CreateReferenceFrame(universe, frameValue);
+            if (f == NULL)
+                return NULL;
+        }
+
+        return new FrameVector(FrameVector::createConstantVector(vec, f));
     }
     else
     {
@@ -1040,11 +1059,7 @@ ReferenceFrame* CreateReferenceFrame(const Universe& universe,
 {
     if (frameValue->getType() == Value::StringType)
     {
-#if 0
-        string frameName = frameValue->getString();
-        if (frameName == "ecliptic-j2000")
-            return J2000EclipticFrame();
-#endif
+        // TODO: handle named frames
         return NULL;
     }
     else if (frameValue->getType() == Value::HashType)
