@@ -57,6 +57,11 @@ Body::~Body()
     // clean up orbit, atmosphere, etc.
     if (system != NULL)
         system->removeBody(this);
+
+    if (orbitFrame != NULL)
+        orbitFrame->release();
+    if (bodyFrame != NULL)
+        bodyFrame->release();
 }
 
 
@@ -94,6 +99,7 @@ void Body::setOrbit(Orbit* _orbit)
 }
 
 
+// TODO: orbitBarycenter is superceded by frames and should be removed.
 const Body* Body::getOrbitBarycenter() const
 {
     return orbitBarycenter;
@@ -118,6 +124,12 @@ const ReferenceFrame* Body::getOrbitFrame() const
 void
 Body::setOrbitFrame(const ReferenceFrame* f)
 {
+    // Update reference counts
+    if (f != NULL)
+        f->addRef();
+    if (orbitFrame != NULL)
+        orbitFrame->release();
+
     orbitFrame = f;
 }
 
@@ -131,6 +143,12 @@ const ReferenceFrame* Body::getBodyFrame() const
 void
 Body::setBodyFrame(const ReferenceFrame* f)
 {
+    // Update reference counts
+    if (f != NULL)
+        f->addRef();
+    if (bodyFrame != NULL)
+        bodyFrame->release();
+
     bodyFrame = f;
 }
 

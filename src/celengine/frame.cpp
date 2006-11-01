@@ -224,8 +224,28 @@ RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
 /*** ReferenceFrame ***/
 
 ReferenceFrame::ReferenceFrame(Selection center) :
-    centerObject(center)
+    centerObject(center),
+    refCount(0)
 {
+}
+
+
+int
+ReferenceFrame::addRef() const
+{
+    return ++refCount;
+}
+
+
+int
+ReferenceFrame::release() const
+{
+    --refCount;
+    assert(refCount >= 0);
+    if (refCount <= 0)
+        delete this;
+
+    return refCount;
 }
 
 
@@ -361,6 +381,7 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
     double t = isFrozen ? tjd : freezeEpoch;
 
+    // TODO: need to consider frame of object
     switch (equatorObject.getType())
     {
     case Selection::Type_Body:
@@ -503,8 +524,11 @@ FrameVector::FrameVector(const FrameVector& fv) :
     vecType(fv.vecType),
     observer(fv.observer),
     target(fv.target),
-    vec(fv.vec)
+    vec(fv.vec),
+    frame(fv.frame)
 {
+    if (frame != NULL)
+        frame->addRef();
 }
 
 
@@ -517,6 +541,12 @@ FrameVector::operator=(const FrameVector& fv)
     target = fv.target;
     vec = fv.vec;
 
+    if (frame != NULL)
+        frame->release();
+    frame = fv.frame;
+    if (frame != NULL)
+        frame->addRef();
+    
     return *this;
 }
 
@@ -526,8 +556,16 @@ FrameVector::FrameVector(FrameVectorType t) :
     vecType(t),
     observer(),
     target(),
-    vec(0.0, 0.0, 0.0)
+    vec(0.0, 0.0, 0.0),
+    frame(NULL)
 {
+}
+
+
+FrameVector::~FrameVector()
+{
+    if (frame != NULL)
+        frame->release();
 }
 
 
@@ -555,6 +593,19 @@ FrameVector::createRelativeVelocityVector(const Selection& _observer,
 }
 
 
+FrameVector
+FrameVector::createConstantVector(const Vec3d& _vec,
+                                  const ReferenceFrame* _frame)
+{
+    FrameVector fv(ConstantVector);
+    fv.vec = _vec;
+    fv.frame = _frame;
+    if (fv.frame != NULL)
+        fv.frame->addRef();
+    return fv;
+}
+
+
 Vec3d
 FrameVector::direction(double tjd) const
 {
@@ -576,7 +627,10 @@ FrameVector::direction(double tjd) const
         break;
 
     case ConstantVector:
-        v = vec;
+        if (frame == NULL)
+            v = vec;
+        else
+            v = vec * frame->getOrientation(tjd).toMatrix3();
         break;
 
     default:
