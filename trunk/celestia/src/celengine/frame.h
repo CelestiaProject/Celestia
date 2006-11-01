@@ -87,6 +87,9 @@ class ReferenceFrame
  public:
     ReferenceFrame(Selection center);
     virtual ~ReferenceFrame() {};
+
+    int addRef() const;
+    int release() const;
     
     UniversalCoord convertFrom(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertTo(const UniversalCoord& uc, double tjd) const;
@@ -99,6 +102,25 @@ class ReferenceFrame
 
  private:
     Selection centerObject;
+    mutable int refCount;
+};
+
+
+/*! Base class for complex frames where there may be some benefit
+ *  to caching the last calculated orientation.
+ */
+class CachingFrame : public ReferenceFrame
+{
+ public:
+    CachingFrame(Selection _center);
+    virtual ~CachingFrame() {};
+
+    Quatd getOrientation(double tjd) const;
+    virtual Quatd computeOrientation(double tjd) const = 0;
+
+ private:
+    mutable double lastTime;
+    mutable Quatd lastOrientation;
 };
 
 
@@ -165,6 +187,7 @@ class FrameVector
 {
  public:
     FrameVector(const FrameVector& fv);
+    ~FrameVector();
     FrameVector& operator=(const FrameVector&);
 
     Vec3d direction(double tjd) const;
@@ -180,7 +203,8 @@ class FrameVector
                                                     const Selection& _target);
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
                                                     const Selection& _target);
-    static FrameVector createConstantVector();
+    static FrameVector createConstantVector(const Vec3d& _vec,
+                                            const ReferenceFrame* _frame);
 
  private:
     /*! Type-only constructor is private. Code outside the class should
@@ -191,22 +215,8 @@ class FrameVector
     FrameVectorType vecType;
     Selection observer;
     Selection target;
-    Vec3d vec;
-};
-
-
-class CachingFrame : public ReferenceFrame
-{
- public:
-    CachingFrame(Selection _center);
-    virtual ~CachingFrame() {};
-
-    Quatd getOrientation(double tjd) const;
-    virtual Quatd computeOrientation(double tjd) const = 0;
-
- private:
-    mutable double lastTime;
-    mutable Quatd lastOrientation;
+    Vec3d vec;                   // constant vector
+    const ReferenceFrame* frame; // frame for constant vector
 };
 
 
