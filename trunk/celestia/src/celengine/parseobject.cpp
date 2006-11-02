@@ -803,7 +803,8 @@ getVectorObserver(const Universe& universe, Hash* vectorData)
     string obsName;
     if (!vectorData->getString("Observer", obsName))
     {
-        clog << "Bad two-vector frame: no observer specified for vector.\n";
+        // Omission of observer is permitted; it will default to the
+        // frame center.
         return Selection();
     }
 
@@ -819,37 +820,50 @@ getVectorObserver(const Universe& universe, Hash* vectorData)
 
 
 static FrameVector*
-CreateFrameVector(const Universe& universe, Hash* vectorData)
+CreateFrameVector(const Universe& universe,
+                  const Selection& center,
+                  Hash* vectorData)
 {
-    string vectorType;
-    if (!vectorData->getString("Type", vectorType))
-    {
-        clog << "Bad two-vector frame: missing type for vector.\n";
-        return NULL;
-    }
+    Value* value = NULL;
 
-    if (compareIgnoringCase(vectorType, "RelativePosition") == 0)
+    value = vectorData->getValue("RelativePosition");
+    if (value != NULL && value->getHash() != NULL)
     {
-        Selection observer = getVectorObserver(universe, vectorData);
-        Selection target = getVectorTarget(universe, vectorData);
+        Hash* relPosData = value->getHash();
+        Selection observer = getVectorObserver(universe, relPosData);
+        Selection target = getVectorTarget(universe, relPosData);
+        // Default observer is the frame center
+        if (observer.empty())
+            observer = center;
+
         if (observer.empty() || target.empty())
             return NULL;
         else
             return new FrameVector(FrameVector::createRelativePositionVector(observer, target));
     }
-    else if (compareIgnoringCase(vectorType, "RelativeVelocity") == 0)
+
+    value = vectorData->getValue("RelativeVelocity");
+    if (value != NULL && value->getHash() != NULL)
     {
-        Selection observer = getVectorObserver(universe, vectorData);
-        Selection target = getVectorTarget(universe, vectorData);
+        Hash* relVData = value->getHash();
+        Selection observer = getVectorObserver(universe, relVData);
+        Selection target = getVectorTarget(universe, relVData);
+        // Default observer is the frame center
+        if (observer.empty())
+            observer = center;
+
         if (observer.empty() || target.empty())
             return NULL;
         else
             return new FrameVector(FrameVector::createRelativeVelocityVector(observer, target));
     }
-    else if (compareIgnoringCase(vectorType, "ConstantVector") == 0)
+
+    value = vectorData->getValue("ConstantVector");
+    if (value != NULL && value->getHash() != NULL)
     {
+        Hash* constVecData = value->getHash();
         Vec3d vec(0.0, 0.0, 1.0);
-        vectorData->getVector("Vector", vec);
+        constVecData->getVector("Vector", vec);
         if (vec.length() == 0.0)
         {
             clog << "Bad two-vector frame: constant vector has length zero\n";
@@ -861,7 +875,7 @@ CreateFrameVector(const Universe& universe, Hash* vectorData)
         // The frame for the vector is optional; a NULL frame indicates
         // J2000 ecliptic.
         ReferenceFrame* f = NULL;
-        Value* frameValue = vectorData->getValue("Frame");
+        Value* frameValue = constVecData->getValue("Frame");
         if (frameValue != NULL)
         {
             f = CreateReferenceFrame(universe, frameValue);
@@ -873,7 +887,7 @@ CreateFrameVector(const Universe& universe, Hash* vectorData)
     }
     else
     {
-        clog << "Bad two-vector frame: unknown vector type '" << vectorType << "'.\n";
+        clog << "Bad two-vector frame: unknown vector type\n";
         return NULL;
     }
 }
@@ -933,8 +947,12 @@ CreateTwoVectorFrame(const Universe& universe,
         return NULL;
     }
 
-    FrameVector* primaryVector = CreateFrameVector(universe, primaryData);
-    FrameVector* secondaryVector = CreateFrameVector(universe, secondaryData);
+    FrameVector* primaryVector = CreateFrameVector(universe,
+                                                   center,
+                                                   primaryData);
+    FrameVector* secondaryVector = CreateFrameVector(universe,
+                                                     center,
+                                                     secondaryData);
 
     TwoVectorFrame* frame = NULL;
     if (primaryVector != NULL && secondaryVector != NULL)
