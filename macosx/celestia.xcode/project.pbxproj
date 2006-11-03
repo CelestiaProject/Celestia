@@ -1392,6 +1392,8 @@
 				E5E551B40AAB9696007CD5BB,
 				E5E551B60AAB9696007CD5BB,
 				E5E551B70AAB9696007CD5BB,
+				E57D43360AFAC0970060CFEC,
+				E57D43370AFAC0970060CFEC,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2382,6 +2384,9 @@
 				E5E8FFA60965975B00A0A304,
 				E587027B09CD83AA00AE4536,
 				E5E551B50AAB9696007CD5BB,
+				E57D43350AFAC0970060CFEC,
+				E57D43380AFAC0970060CFEC,
+				E57D43390AFAC0970060CFEC,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3482,6 +3487,81 @@
 		};
 		E57283AE0793FC7E00C1F239 = {
 			fileRef = E57283AD0793FC7300C1F239;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57D43300AFAC0970060CFEC = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = samporient.cpp;
+			path = ../src/celengine/samporient.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E57D43310AFAC0970060CFEC = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = samporient.h;
+			path = ../src/celengine/samporient.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E57D43320AFAC0970060CFEC = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = rotationmanager.h;
+			path = ../src/celengine/rotationmanager.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E57D43330AFAC0970060CFEC = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = rotationmanager.cpp;
+			path = ../src/celengine/rotationmanager.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E57D43340AFAC0970060CFEC = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = rotation.cpp;
+			path = ../src/celengine/rotation.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E57D43350AFAC0970060CFEC = {
+			fileRef = E57D43300AFAC0970060CFEC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57D43360AFAC0970060CFEC = {
+			fileRef = E57D43310AFAC0970060CFEC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57D43370AFAC0970060CFEC = {
+			fileRef = E57D43320AFAC0970060CFEC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57D43380AFAC0970060CFEC = {
+			fileRef = E57D43330AFAC0970060CFEC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E57D43390AFAC0970060CFEC = {
+			fileRef = E57D43340AFAC0970060CFEC;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5435,6 +5515,11 @@
 		};
 		F51C6D52029596B4014901DC = {
 			children = (
+				E57D43300AFAC0970060CFEC,
+				E57D43310AFAC0970060CFEC,
+				E57D43330AFAC0970060CFEC,
+				E57D43320AFAC0970060CFEC,
+				E57D43340AFAC0970060CFEC,
 				E5E551B00AAB9696007CD5BB,
 				E5E551B10AAB9696007CD5BB,
 				E5E551B20AAB9696007CD5BB,
