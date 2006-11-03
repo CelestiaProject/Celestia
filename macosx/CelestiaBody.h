@@ -25,7 +25,7 @@
 -(void)setOblateness:(NSNumber*)o;
 -(void)setAlbedo:(NSNumber*)a;
 -(CelestiaVector*)heliocentricPosition:(NSNumber*)n;
--(CelestiaVector*)equatorialToGeographic:(NSNumber*)n;
+-(CelestiaVector*)equatorialToBodyFixed:(NSNumber*)n;
 -(CelestiaVector*)eclipticalToEquatorial:(NSNumber*)n;
--(CelestiaVector*)eclipticalToGeographic:(NSNumber*)n;
+-(CelestiaVector*)eclipticalToBodyFixed:(NSNumber*)n;
 @end

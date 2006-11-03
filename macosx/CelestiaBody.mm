@@ -24,6 +24,7 @@
 }
 @end
 
+
 @implementation CelestiaBody
 -(void)dealloc
 {
@@ -110,53 +111,16 @@
 {
     return [CelestiaVector vectorWithPoint3d:[self body]->getHeliocentricPosition([n doubleValue])];
 }
--(CelestiaVector*)equatorialToGeographic:(NSNumber*)n
+-(CelestiaVector*)equatorialToBodyFixed:(NSNumber*)n
 {
-    return [CelestiaVector vectorWithQuatd:[self body]->getEquatorialToGeographic([n doubleValue])];
+    return [CelestiaVector vectorWithQuatd:[self body]->getEquatorialToBodyFixed([n doubleValue])];
 }
 -(CelestiaVector*)eclipticalToEquatorial:(NSNumber*)n
 {
     return [CelestiaVector vectorWithQuatd:[self body]->getEclipticalToEquatorial([n doubleValue])];
 }
--(CelestiaVector*)eclipticalToGeographic:(NSNumber*)n
+-(CelestiaVector*)eclipticalToBodyFixed:(NSNumber*)n
 {
-    return [CelestiaVector vectorWithQuatd:[self body]->getEclipticalToGeographic([n doubleValue])];
+    return [CelestiaVector vectorWithQuatd:[self body]->getEclipticalToBodyFixed([n doubleValue])];
 }
-/*
-    Body(PlanetarySystem*);
-
-    PlanetarySystem* getSystem() const;
-    Orbit* getOrbit() const;
-    void setOrbit(Orbit*);
-    RotationElements getRotationElements() const;
-    void setRotationElements(const RotationElements&);
-    void setClassification(int);
-
-    PlanetarySystem* getSatellites() const;
-    void setSatellites(PlanetarySystem*);
-
-    RingSystem* getRings() const;
-    void setRings(const RingSystem&);
-    const Atmosphere* getAtmosphere() const;
-    Atmosphere* getAtmosphere();
-    void setAtmosphere(const Atmosphere&);
-
-    void setMesh(ResourceHandle);
-    ResourceHandle getMesh() const;
-    void setSurface(const Surface&);
-    const Surface& getSurface() const;
-    Surface& getSurface();
-
-    float getLuminosity(const Star& sun,
-                        float distanceFromSun) const;
-    float getApparentMagnitude(const Star& sun,
-                               float distanceFromSun,
-                               float distanceFromViewer) const;
-    float getApparentMagnitude(const Star& sun,
-                               const Vec3d& sunPosition,
-                               const Vec3d& viewerPosition) const;
-
-    Mat4d getLocalToHeliocentric(double) const;
-    Mat4d getGeographicToHeliocentric(double);
-*/
 @end

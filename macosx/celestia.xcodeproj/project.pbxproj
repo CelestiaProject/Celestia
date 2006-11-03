@@ -127,6 +127,9 @@
 		E564315E0776D5C800E2C4A3 /* parseobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56431500776D5C800E2C4A3 /* parseobject.cpp */; };
 		E56431600776D5C800E2C4A3 /* rendcontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56431520776D5C800E2C4A3 /* rendcontext.cpp */; };
 		E56431630776D5C800E2C4A3 /* starcolors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56431550776D5C800E2C4A3 /* starcolors.cpp */; };
+		E56457520AF8FD6A00F2D9FA /* samporient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E564574D0AF8FD6A00F2D9FA /* samporient.cpp */; };
+		E56457550AF8FD6A00F2D9FA /* rotationmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56457500AF8FD6A00F2D9FA /* rotationmanager.cpp */; };
+		E56457560AF8FD6A00F2D9FA /* rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56457510AF8FD6A00F2D9FA /* rotation.cpp */; };
 		E567F072099112EC00D05031 /* asterisms.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = E567EF6A09910E8F00D05031 /* asterisms.dat */; };
 		E567F073099112EC00D05031 /* asteroids.ssc in CopyFiles */ = {isa = PBXBuildFile; fileRef = E567EF6B09910E8F00D05031 /* asteroids.ssc */; };
 		E567F074099112EC00D05031 /* boundaries.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = E567EF6C09910E8F00D05031 /* boundaries.dat */; };
@@ -260,56 +263,6 @@
 		E5F8C9E80795239600D1DAF2 /* liblualib.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5F8C9E40795235E00D1DAF2 /* liblualib.dylib */; };
 		E5F8C9E90795239600D1DAF2 /* libpng.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXBuildStyle section */
-		4A9504CCFFE6A4B311CA0CBA /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"WORDS_BIGENDIAN=1",
-					"MACOSX=1",
-					"MACOSX_PB=1",
-					PNG_SUPPORT,
-					CELX,
-					"DEBUG=1",
-				);
-				PREBINDING = NO;
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		E55E8C0C078FD40200E0A11C /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					NDEBUG,
-					"WORDS_BIGENDIAN=1",
-					"MACOSX=1",
-					"MACOSX_PB=1",
-					PNG_SUPPORT,
-					CELX,
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				PREBINDING = YES;
-				UNSTRIPPED_PRODUCT = YES;
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		E5CC205909AA8C7100CFFF2C /* PBXContainerItemProxy */ = {
@@ -536,6 +489,11 @@
 		E56431540776D5C800E2C4A3 /* rotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rotation.h; path = ../src/celengine/rotation.h; sourceTree = SOURCE_ROOT; };
 		E56431550776D5C800E2C4A3 /* starcolors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = starcolors.cpp; path = ../src/celengine/starcolors.cpp; sourceTree = SOURCE_ROOT; };
 		E56431560776D5C800E2C4A3 /* starcolors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = starcolors.h; path = ../src/celengine/starcolors.h; sourceTree = SOURCE_ROOT; };
+		E564574D0AF8FD6A00F2D9FA /* samporient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = samporient.cpp; path = ../src/celengine/samporient.cpp; sourceTree = SOURCE_ROOT; };
+		E564574E0AF8FD6A00F2D9FA /* samporient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = samporient.h; path = ../src/celengine/samporient.h; sourceTree = SOURCE_ROOT; };
+		E564574F0AF8FD6A00F2D9FA /* rotationmanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rotationmanager.h; path = ../src/celengine/rotationmanager.h; sourceTree = SOURCE_ROOT; };
+		E56457500AF8FD6A00F2D9FA /* rotationmanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotationmanager.cpp; path = ../src/celengine/rotationmanager.cpp; sourceTree = SOURCE_ROOT; };
+		E56457510AF8FD6A00F2D9FA /* rotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotation.cpp; path = ../src/celengine/rotation.cpp; sourceTree = SOURCE_ROOT; };
 		E567EF6A09910E8F00D05031 /* asterisms.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asterisms.dat; sourceTree = "<group>"; };
 		E567EF6B09910E8F00D05031 /* asteroids.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asteroids.ssc; sourceTree = "<group>"; };
 		E567EF6C09910E8F00D05031 /* boundaries.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = boundaries.dat; sourceTree = "<group>"; };
@@ -1346,6 +1304,11 @@
 		F51C6D52029596B4014901DC /* celengine */ = {
 			isa = PBXGroup;
 			children = (
+				E564574D0AF8FD6A00F2D9FA /* samporient.cpp */,
+				E564574E0AF8FD6A00F2D9FA /* samporient.h */,
+				E56457500AF8FD6A00F2D9FA /* rotationmanager.cpp */,
+				E564574F0AF8FD6A00F2D9FA /* rotationmanager.h */,
+				E56457510AF8FD6A00F2D9FA /* rotation.cpp */,
 				E56B96520AAB22AA0097DDFE /* lightenv.h */,
 				E56B96530AAB22AA0097DDFE /* renderglsl.cpp */,
 				E56B96540AAB22AA0097DDFE /* renderglsl.h */,
@@ -1627,26 +1590,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				GCC_PREFIX_HEADER = Util.h;
-				GCC_USE_GCC3_PFE_SUPPORT = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../src;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = Frameworks;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fpermissive",
-				);
-				PRODUCT_NAME = Celestia;
-				WRAPPER_EXTENSION = app;
-			};
 			dependencies = (
 				E5CC205A09AA8C7100CFFF2C /* PBXTargetDependency */,
 			);
@@ -1664,22 +1607,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = POConverter;
-				ZERO_LINK = YES;
-			};
 			dependencies = (
 			);
 			name = POConverter;
@@ -1693,12 +1620,6 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = E532F41D0933316100D7D5B3 /* Build configuration list for PBXProject "celestia" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				4A9504CCFFE6A4B311CA0CBA /* Development */,
-				E55E8C0C078FD40200E0A11C /* Deployment */,
-			);
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1902,6 +1823,9 @@
 				E5D956E00966520700CB02B2 /* SplashWindowController.m in Sources */,
 				E5CC203609AA836700CFFF2C /* POSupport.m in Sources */,
 				E56B96570AAB22AA0097DDFE /* renderglsl.cpp in Sources */,
+				E56457520AF8FD6A00F2D9FA /* samporient.cpp in Sources */,
+				E56457550AF8FD6A00F2D9FA /* rotationmanager.cpp in Sources */,
+				E56457560AF8FD6A00F2D9FA /* rotation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2344,7 +2268,7 @@
 				E532F41C0933316100D7D5B3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Universal_Release;
 		};
 		E532F41D0933316100D7D5B3 /* Build configuration list for PBXProject "celestia" */ = {
 			isa = XCConfigurationList;
@@ -2356,7 +2280,7 @@
 				E532F4200933316100D7D5B3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Universal_Release;
 		};
 		E5CC202B09AA829B00CFFF2C /* Build configuration list for PBXNativeTarget "POConverter" */ = {
 			isa = XCConfigurationList;
@@ -2368,7 +2292,7 @@
 				E5CC203009AA829B00CFFF2C /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Universal_Release;
 		};
 /* End XCConfigurationList section */
 	};
