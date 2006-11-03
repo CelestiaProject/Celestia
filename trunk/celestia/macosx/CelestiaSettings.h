@@ -96,6 +96,9 @@
 -(BOOL) showRingShadows ;
 -(void) setShowRingShadows: (BOOL) value ; 
 
+-(BOOL) showCloudShadows ;
+-(void) setShowCloudShadows: (BOOL) value ;
+
 -(BOOL) showBoundaries ;
 -(void) setShowBoundaries: (BOOL) value ; 
 
