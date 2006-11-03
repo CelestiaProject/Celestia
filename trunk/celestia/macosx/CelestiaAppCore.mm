@@ -283,10 +283,7 @@ static NSMutableDictionary* tagDict;
         return _sharedCelestiaAppCore;
     }
     self = [super init];
-    appCore = new CelestiaCore();
-    appCore->setAlerter(new MacOSXAlerter());
-    appCore->setCursorHandler(new MacOSXCursorHandler());
-    
+    appCore = NULL;
     contextMenuCallbackInvocation = NULL;
     _destinations = nil;
     return self;
@@ -325,6 +322,8 @@ static NSMutableDictionary* tagDict;
     
 -(BOOL)initSimulation
 {
+    BOOL result = NO;
+    appCore = new CelestiaCore();
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSString *confFileSetting;
     std::string confFile;
@@ -418,9 +417,12 @@ static NSMutableDictionary* tagDict;
             extrasDirs.push_back([extrasDir stdString]);
     }
 
-    return (BOOL)appCore->initSimulation(!confFile.empty() ? &confFile : nil,
-                                         extrasDirsSetting ? &extrasDirs : nil,
-                                         &progressNotifier);
+    appCore->setAlerter(new MacOSXAlerter());
+    appCore->setCursorHandler(new MacOSXCursorHandler());
+    result = appCore->initSimulation(!confFile.empty() ? &confFile : nil,
+                                     extrasDirsSetting ? &extrasDirs : nil,
+                                     &progressNotifier);
+    return result;
 }
 
 -(BOOL)initRenderer
