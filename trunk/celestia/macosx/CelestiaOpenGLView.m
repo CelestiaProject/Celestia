@@ -9,6 +9,9 @@
 #import "CelestiaAppCore.h"
 #import <OpenGL/gl.h>
 #import <OpenGL/glext.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+#import <OpenGL/CGLTypes.h>
+#endif
 
 #ifndef ATI_FSAA_LEVEL
 #define ATI_FSAA_LEVEL  510
@@ -46,6 +49,16 @@
             [self setPixelFormat: pixFmt] ;
             [pixFmt release];
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+            if (kCGLNoError == CGLEnable([[self openGLContext] CGLContextObj], kCGLCEMPEngine))
+            {
+                NSLog(@"Multithreaded OpenGL enabled.");
+            }
+            else
+            {
+                NSLog(@"Multithreaded OpenGL not supported on your system.");
+            }
+#endif
             swapInterval = 1 ;
 
             [[self openGLContext]
@@ -103,6 +116,16 @@
 
                 if (context)
                 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+                    if (kCGLNoError == CGLEnable([context CGLContextObj], kCGLCEMPEngine))
+                    {
+                        NSLog(@"Multithreaded OpenGL enabled.");
+                    }
+                    else
+                    {
+                        NSLog(@"Multithreaded OpenGL not supported on your system.");
+                    }
+#endif                    
                     long swapInterval = 1;
                     [context setValues: &swapInterval
                           forParameter: NSOpenGLCPSwapInterval];
