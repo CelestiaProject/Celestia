@@ -106,6 +106,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(409,@"showSmoothLines")
         TAGDEF(410,@"showEclipseShadows")
         TAGDEF(412,@"showRingShadows")
+        TAGDEF(419,@"showCloudShadows")
 //        TAGDEF(411,@"showStarsAsPoints")
         TAGDEF(414,@"showAutoMag")
         TAGDEF(406,@"showCelestialSphere")
@@ -179,12 +180,6 @@ static NSMutableDictionary* tagMap;
     
 
     return self;
-}
-
--(void)addWatcher: (CelestiaController*) control
-{
-     MacOSXWatcher* theWatcher = new MacOSXWatcher(appCore,self);
-     appCore->addWatcher(theWatcher);
 }
 
 -(void) setControl: (CelestiaController*) _control
@@ -421,6 +416,7 @@ RENDERMETHODS(PartialTrajectories)
 RENDERMETHODS(SmoothLines)
 RENDERMETHODS(EclipseShadows)
 RENDERMETHODS(RingShadows)
+RENDERMETHODS(CloudShadows)
 RENDERMETHODS(AutoMag)
 RENDERMETHODS(CelestialSphere)
 RENDERMETHODS(Nebulae)
