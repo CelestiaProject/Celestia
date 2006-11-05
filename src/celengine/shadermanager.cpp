@@ -1980,16 +1980,16 @@ CelestiaGLProgram::initSamplers()
             glx::glUniform1iARB(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    if (props.texUsage & ShaderProperties::OverlayTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "ringTex");
+        int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
 
-    if (props.texUsage & ShaderProperties::OverlayTexture)
+    if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
+        int slot = glx::glGetUniformLocationARB(program->getID(), "ringTex");
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
