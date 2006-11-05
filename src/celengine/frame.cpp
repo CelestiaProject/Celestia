@@ -448,15 +448,23 @@ TwoVectorFrame::TwoVectorFrame(Selection center,
     int tertiarySign = sign(primaryAxis * secondaryAxis);
     if ((abs(primaryAxis) != 1 && abs(secondaryAxis) != 1))
     {
+        // Order and signs of the primary and secondary determine the sign of
+        // the tertiary axis.
         tertiaryAxis = 1 * tertiarySign;
+        if (abs(primaryAxis) != 3)
+            tertiaryAxis = -tertiaryAxis;
     }
     else if (abs(primaryAxis) != 2 && abs(secondaryAxis) != 2)
     {
-        tertiaryAxis = 2 * -tertiarySign;
+        tertiaryAxis = 2 * tertiarySign;
+        if (abs(primaryAxis) != 1)
+            tertiaryAxis = -tertiaryAxis;
     }
     else
     {
         tertiaryAxis = 3 * tertiarySign;
+        if (abs(primaryAxis) != 2)
+            tertiaryAxis = -tertiaryAxis;
     }
 }
 
@@ -494,9 +502,9 @@ TwoVectorFrame::computeOrientation(double tjd) const
             v[abs(primaryAxis) - 1] = -v0;
 
         if (secondaryAxis > 0)
-            v[abs(secondaryAxis) - 1] = v2 ^ v0;
-        else
             v[abs(secondaryAxis) - 1] = v0 ^ v2;
+        else
+            v[abs(secondaryAxis) - 1] = v2 ^ v0;
     
         if (tertiaryAxis > 0)
             v[abs(tertiaryAxis) - 1] = v2;
