@@ -757,13 +757,13 @@ getAxis(Hash* vectorData)
     switch (axis)
     {
     case 2:
-        return 3;
-    case -2:
         return -3;
+    case -2:
+        return 3;
     case 3:
-        return -2;
-    case -3:
         return 2;
+    case -3:
+        return -2;
     default:
         return axis;
     }
