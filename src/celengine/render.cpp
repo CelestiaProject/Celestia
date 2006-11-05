@@ -129,7 +129,7 @@ struct SphericalCoordLabel
     }
 };
 
-static int nCoordLabels = 32;
+static int nCoordLabels = 38;
 static SphericalCoordLabel* coordLabels = NULL;
 
 static const int MaxSkyRings = 32;
@@ -585,20 +585,26 @@ bool Renderer::init(GLContext* _context,
                 coordLabels[i].label = string(buf);
             }
 
-            coordLabels[12] = SphericalCoordLabel(0, -75);
-            coordLabels[13] = SphericalCoordLabel(0, -60);
-            coordLabels[14] = SphericalCoordLabel(0, -45);
-            coordLabels[15] = SphericalCoordLabel(0, -30);
-            coordLabels[16] = SphericalCoordLabel(0, -15);
-            coordLabels[17] = SphericalCoordLabel(0,  15);
-            coordLabels[18] = SphericalCoordLabel(0,  30);
-            coordLabels[19] = SphericalCoordLabel(0,  45);
-            coordLabels[20] = SphericalCoordLabel(0,  60);
-            coordLabels[21] = SphericalCoordLabel(0,  75);
-            for (i = 22; i < nCoordLabels; i++)
+            coordLabels[12] = SphericalCoordLabel(0, -80);
+            coordLabels[13] = SphericalCoordLabel(0, -70);
+            coordLabels[14] = SphericalCoordLabel(0, -60);
+            coordLabels[15] = SphericalCoordLabel(0, -50);
+            coordLabels[16] = SphericalCoordLabel(0, -40);
+            coordLabels[17] = SphericalCoordLabel(0, -30);
+            coordLabels[18] = SphericalCoordLabel(0, -20);
+            coordLabels[19] = SphericalCoordLabel(0, -10);
+            coordLabels[20] = SphericalCoordLabel(0,  10);
+            coordLabels[21] = SphericalCoordLabel(0,  20);
+            coordLabels[22] = SphericalCoordLabel(0,  30);
+            coordLabels[23] = SphericalCoordLabel(0,  40);
+            coordLabels[24] = SphericalCoordLabel(0,  50);
+            coordLabels[25] = SphericalCoordLabel(0,  60);
+            coordLabels[26] = SphericalCoordLabel(0,  70);
+            coordLabels[27] = SphericalCoordLabel(0,  80);
+            for (i = 28; i < nCoordLabels; i++)
             {
                 coordLabels[i].ra = 12;
-                coordLabels[i].dec = coordLabels[i - 10].dec;
+                coordLabels[i].dec = coordLabels[i - 16].dec;
             }
 
             for (i = 12; i < nCoordLabels; i++)
@@ -6971,10 +6977,13 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 }
 
 
+// TODO: Rewrite this function to use a pregenerated vertex buffer and to
+// be more general so that it can display the equatorial coordinate grid
+// for any planet.
 void Renderer::renderCelestialSphere(const Observer& observer)
 {
-    int raDivisions = 12;
-    int decDivisions = 12;
+    int raDivisions = 24;
+    int decDivisions = 18;
     int nSections = 60;
     float radius = 10.0f;
 
@@ -7004,12 +7013,13 @@ void Renderer::renderCelestialSphere(const Observer& observer)
         glEnd();
     }
 
+    Mat3f m = conjugate(observer.getOrientation()).toMatrix3();
     for (i = 0; i < nCoordLabels; i++)
     {
         Point3f pos = astro::equatorialToCelestialCart(coordLabels[i].ra,
                                                        coordLabels[i].dec,
                                                        radius);
-        if ((pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+        if ((pos * m).z < 0)
         {
             addLabel(coordLabels[i].label, Color(0.3f, 0.7f, 0.7f, 0.85f), pos);
         }
