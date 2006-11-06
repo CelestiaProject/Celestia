@@ -679,37 +679,11 @@ void Observer::computeCenterCOParameters(const Selection& destination,
     Vec3d w(wf.x, wf.y, wf.z);
     v.normalize();
 
-    Vec3d n = w ^ v;
-    double nl = n.length();
-    double angle = 0.0;
-    if (nl > 0.0)
-    {
-        double cosAngle = w * v;
-        if (cosAngle < 1.0 - 1e-8)
-        {
-            if (cosAngle > 1e-8 - 1.0)
-                angle = acos(cosAngle);
-            else
-                angle = PI;
-        }
-        else
-        {
-            angle = 0.0;
-        }
-
-        n = n / nl;
-    }
-    else
-    {
-        n = Vec3d(1.0, 0.0, 0.0);
-    }
-
     Selection centerObj = frame.refObject;
     UniversalCoord centerPos = centerObj.getPosition(getTime());
     UniversalCoord targetPosition = destination.getPosition(getTime());
 
-    Quatd qd;
-    qd.setAxisAngle(n, -angle);
+    Quatd qd = Quatd::vecToVecRotation(v, w);
     Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
 
     jparams.from = getPosition();
