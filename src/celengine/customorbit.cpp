@@ -2846,9 +2846,7 @@ class JPLEphOrbit : public CachingOrbit
         }
 
         // Rotate from the J2000 mean equator to the ecliptic
-        // 23 deg 26' 21".448
-        double J2000_equator = degToRad(23.4392911);
-        pos = pos * Mat3d::xrotation(J2000_equator);
+        pos = pos * Mat3d::xrotation(astro::J2000Obliquity);
 
         // Convert to Celestia's coordinate system
         return Point3d(pos.x, pos.z, -pos.y);

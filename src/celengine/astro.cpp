@@ -1,6 +1,6 @@
 // astro.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,6 +26,11 @@ const double astro::G = 6.672e-11; // N m^2 / kg^2
 const double astro::SolarMass = 1.989e30;
 const double astro::EarthMass = 5.976e24;
 const double astro::LunarMass = 7.354e22;
+
+// Angle between J2000 mean equator and the ecliptic plane.
+// 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
+// Astronomical Almanac_ (1992), eqn 3.222-1.
+const double astro::J2000Obliquity = degToRad(23.4392911);
 
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
@@ -73,8 +78,8 @@ static const LeapSecondRecord LeapSeconds[] =
 };
 
 
-static Mat3f equatorialToCelestial = Mat3f::xrotation(degToRad(23.4392911f));
-static Mat3d equatorialToCelestiald = Mat3d::xrotation(degToRad(23.4392911));
+static Mat3d equatorialToCelestiald = Mat3d::xrotation(astro::J2000Obliquity);
+static Mat3f equatorialToCelestial = Mat3f::xrotation((float) astro::J2000Obliquity);
 
 
 float astro::lumToAbsMag(float lum)
@@ -339,6 +344,10 @@ void astro::anomaly(double meanAnomaly, double eccentricity,
 }
 
 
+/*! Return the angle between the mean ecliptic plane and mean equator at
+ *  the specified Julian date.
+ */
+// TODO: replace this with a better precession model
 double astro::meanEclipticObliquity(double jd)
 {
     double t, de;
@@ -347,7 +356,7 @@ double astro::meanEclipticObliquity(double jd)
     t = jd / 36525;
     de = (46.815 * t + 0.0006 * t * t - 0.00181 * t * t * t) / 3600;
 
-    return 23.439292 - de;
+    return J2000Obliquity - de;
 }
 
 
