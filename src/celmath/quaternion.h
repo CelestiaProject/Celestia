@@ -60,6 +60,8 @@ public:
     Matrix3<T> toMatrix3() const;
 
     static Quaternion<T> slerp(Quaternion<T>, Quaternion<T>, T);
+    static Quaternion<T> vecToVecRotation(const Vector3<T>& v0,
+                                          const Vector3<T>& v1);
 
     void rotate(Vector3<T> axis, T angle);
     void xrotate(T angle);
@@ -73,41 +75,7 @@ public:
     static Quaternion<T> xrotation(T);
     static Quaternion<T> yrotation(T);
     static Quaternion<T> zrotation(T);
-#if 0
-    // This code is disabled until I can 
-#ifndef BROKEN_FRIEND_TEMPLATES
-    // This just rocks . . .  MSVC 6.0 doesn't parse this correctly,
-    // so template friend functions need to be declared in the standard
-    // conforming way for GNU C and a non-conforming way for MSVC.
-    friend Quaternion<T> operator+ <>(Quaternion<T>, Quaternion<T>);
-    friend Quaternion<T> operator- <>(Quaternion<T>, Quaternion<T>);
-    friend Quaternion<T> operator* <>(Quaternion<T>, Quaternion<T>);
-    friend Quaternion<T> operator* <>(T, Quaternion<T>);
-    friend Quaternion<T> operator* <>(Vector3<T>, Quaternion<T>);
 
-    friend bool operator== <>(Quaternion<T>, Quaternion<T>);
-    friend bool operator!= <>(Quaternion<T>, Quaternion<T>);
-
-    friend T real<>(Quaternion<T>);
-    friend Vector3<T> imag<>(Quaternion<T>);
-#else
-    friend Quaternion<T> operator+(Quaternion<T>, Quaternion<T>);
-    friend Quaternion<T> operator-(Quaternion<T>, Quaternion<T>);
-    friend Quaternion<T> operator*(Quaternion<T>, Quaternion<T>);
-    friend Quaternion<T> operator*(T, Quaternion<T>);
-    friend Quaternion<T> operator*(Vector3<T>, Quaternion<T>);
-
-    friend bool operator==(Quaternion<T>, Quaternion<T>);
-    friend bool operator!=(Quaternion<T>, Quaternion<T>);
-
-    friend T real(Quaternion<T>);
-    friend Vector3<T> imag(Quaternion<T>);
-#endif // BROKEN_FRIEND_TEMPLATES
-
-#endif
-
-    // Until friend templates are working . . .
-    // private:
     T w, x, y, z;
 };
 
@@ -152,7 +120,7 @@ template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
     T trace = m[0][0] + m[1][1] + m[2][2];
     T root;
 
-    if (trace > 0)
+    if (trace >= -1)
     {
         root = (T) sqrt(trace + 1);
         w = (T) 0.5 * root;
@@ -574,6 +542,7 @@ template<class T> T dot(Quaternion<T> a, Quaternion<T> b)
 }
 
 
+//! Spherical interpolation of two unit quaternions
 template<class T> Quaternion<T> Quaternion<T>::slerp(Quaternion<T> q0,
                                                      Quaternion<T> q1,
                                                      T t)
@@ -599,8 +568,45 @@ template<class T> Quaternion<T> Quaternion<T>::slerp(Quaternion<T> q0,
 }
 
 
-// Assuming that this is a unit quaternion representing an orientation,
-// apply a rotation of angle radians about the specfied axis
+/*! Return a unit quaternion that representing a rotation that will
+ *  rotation v0 to v1 about the axis perpendicular to them both. If the
+ *  vectors point in opposite directions, there is no unique axis and
+ *  (arbitrarily) a rotation about the x axis will be chosen.
+ */
+template<class T> Quaternion<T> Quaternion<T>::vecToVecRotation(const Vector3<T>& v0,
+                                                                const Vector3<T>& v1)
+{
+    // We need sine and cosine of half the angle between v0 and v1, so
+    // compute the vector halfway between v0 and v1. The cross product of
+    // half and v1 gives the imaginary part of the quaternion
+    // (axis * sin(angle/2)), and the dot product of half and v1 gives
+    // the real part.
+    Vector3<T> half = (v0 + v1) * (T) 0.5;
+
+    T hl = half.length();
+    if (hl > (T) 0.0)
+    {
+        half = half / hl; // normalize h
+
+        // The magnitude of rotAxis is the sine of half the angle between
+        // v0 and v1.
+        Vector3<T> rotAxis = half ^ v1;
+        double cosAngle = half * v1;
+        return Quaternion<T>(cosAngle, rotAxis.x, rotAxis.y, rotAxis.z);
+    }
+    else
+    {
+        // The vectors point in exactly opposite directions, so there is
+        // no unique axis of rotation. Rotating v0 180 degrees about any
+        // axis will map it to v1; we'll choose the x-axis.
+        return Quaternion<T>((T) 0.0, (T) 1.0, (T) 0.0, (T) 0.0);
+    }
+}
+
+
+/*! Assuming that this is a unit quaternion representing an orientation,
+ *  apply a rotation of angle radians about the specfied axis
+ */
 template<class T> void Quaternion<T>::rotate(Vector3<T> axis, T angle)
 {
     Quaternion q;
