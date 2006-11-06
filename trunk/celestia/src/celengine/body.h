@@ -159,7 +159,6 @@ class Body
                                const Vec3d& viewerPosition) const;
 
     Mat4d getLocalToHeliocentric(double) const;
-    Mat4d getLocalToHeliocentric(double, astro::ReferencePlane) const;
     Point3d getHeliocentricPosition(double) const;
     Quatd getEquatorialToBodyFixed(double) const;
     Quatd getEclipticalToEquatorial(double) const;
