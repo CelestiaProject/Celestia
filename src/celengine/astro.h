@@ -1,14 +1,14 @@
 // astro.h
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _ASTRO_H_
-#define _ASTRO_H_
+#ifndef _CELENGINE_ASTRO_H_
+#define _CELENGINE_ASTRO_H_
 
 #include <iostream>
 #include <string>
@@ -56,13 +56,6 @@ namespace astro
         ObserverLocal   = 4,
         PhaseLock       = 5,
         Chase           = 6,
-    };
-
-    enum ReferencePlane
-    {
-        BodyEquator,        // planet equator if moon, ecliptic if planet
-        Ecliptic_J2000,
-        Equator_J2000,
     };
 
     // Time scale conversions
@@ -177,11 +170,13 @@ namespace astro
     extern const double SolarMass;
     extern const double EarthMass;
     extern const double LunarMass;
+
+    extern const double J2000Obliquity;
 };
 
 // Convert a date structure to a Julian date
 
 std::ostream& operator<<(std::ostream& s, const astro::Date);
 
-#endif // _ASTRO_H_
+#endif // _CELENGINE_ASTRO_H_
 
