@@ -5710,6 +5710,19 @@ static void ProcessCometTailVertex(const CometTailVertex& v,
 }
 #endif
 
+
+// Compute a rough estimate of the visible length of the dust tail.
+// TODO: This is old code that needs to be rewritten. For one thing,
+// the length is inversely proportional to the distance from the sun,
+// whereas the 1/distance^2 is probably more realistic. There should
+// also be another parameter that specifies how active the comet is.
+static float cometDustTailLength(float distanceToSun,
+                                 float radius)
+{
+    return (1.0e8f / distanceToSun) * (radius / 5.0f) * 1.0e7f;
+}
+
+
 // TODO: Remove unused parameters??
 void Renderer::renderCometTail(const Body& body,
                                Point3f pos,
@@ -5775,10 +5788,8 @@ void Renderer::renderCometTail(const Body& body,
         t -= dt;
     }
 #endif
-    // Compute a rough estimate of the visible length of the dust tail
 
-    float dustTailLength = (1.0e8f / (float) pos0.distanceFromOrigin()) *
-        (body.getRadius() / 5.0f) * 1.0e7f;
+    float dustTailLength = cometDustTailLength((float) pos0.distanceFromOrigin(), body.getRadius());
     float dustTailRadius = dustTailLength * 0.1f;
     /*float comaRadius = dustTailRadius * 0.5f;     Unused*/
 
@@ -5994,7 +6005,8 @@ void Renderer::buildRenderLists(const Star& sun,
         if (body->getClassification() == Body::Comet &&
             (renderFlags & ShowCometTails) != 0)
         {
-            float radius = 10000000.0f;
+            Vec3f sunPos = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
+            float radius = cometDustTailLength(sunPos.length(), body->getRadius());
             discSize = (radius / (float) distanceFromObserver) / pixelSize;
             if (discSize > 1)
             {
@@ -6004,7 +6016,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.isCometTail = true;
                 rle.isOpaque = false;
                 rle.position = Point3f(pos.x, pos.y, pos.z);
-                rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
+                rle.sun = sunPos;
                 rle.distance = (float) distanceFromObserver;
                 rle.centerZ = pos * viewMatZ;
                 rle.radius = radius;
