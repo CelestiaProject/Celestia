@@ -19,6 +19,8 @@
 
 class Value;
 
+typedef map<string, Value*>::const_iterator HashIterator;
+
 class AssociativeArray
 {
  public:
@@ -37,6 +39,9 @@ class AssociativeArray
     bool getVector(const std::string&, Vec3f&) const;
     bool getRotation(const std::string&, Quatf&) const;
     bool getColor(const std::string&, Color&) const;
+
+    HashIterator begin();
+    HashIterator end();
     
  private:
     map<string, Value*> assoc;
