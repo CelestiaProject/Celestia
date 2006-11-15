@@ -409,3 +409,17 @@ bool AssociativeArray::getColor(const string& key, Color& val) const
 
     return true;
 }
+
+
+HashIterator
+AssociativeArray::begin()
+{
+    return assoc.begin();
+}
+
+
+HashIterator
+AssociativeArray::end()
+{
+    return assoc.end();
+}
