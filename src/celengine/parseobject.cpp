@@ -15,6 +15,7 @@
 #include "parseobject.h"
 #include "customorbit.h"
 #include "spiceorbit.h"
+#include "scriptorbit.h"
 #include "frame.h"
 #include "trajmanager.h"
 #include "rotationmanager.h"
@@ -203,6 +204,42 @@ CreateSpiceOrbit(Hash* orbitData,
 #endif
 
 
+static ScriptedOrbit*
+CreateScriptedOrbit(Hash* orbitData,
+                    const string& path)
+{
+#if !defined(CELX)
+    clog << "ScriptedOrbit not useable without scripting support.\n";
+    return NULL;
+#else
+
+    // Function name is required
+    string funcName;
+    if (!orbitData->getString("Function", funcName))
+    {
+        clog << "Function name missing from script orbit definition.\n";
+        return NULL;
+    }
+
+    // Module name is optional
+    string moduleName;
+    orbitData->getString("Module", moduleName);
+
+    ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
+    if (scriptedOrbit != NULL)
+    {
+        if (!scriptedOrbit->initialize(moduleName, funcName, orbitData))
+        {
+            delete scriptedOrbit;
+            scriptedOrbit = NULL;
+        }
+    }
+
+    return scriptedOrbit;
+#endif
+}
+
+
 Orbit*
 CreateOrbit(PlanetarySystem* system,
             Hash* planetData,
@@ -244,6 +281,22 @@ CreateOrbit(PlanetarySystem* system,
         }
     }
 #endif
+
+    Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit");
+    if (scriptedOrbitValue != NULL)
+    {
+        if (scriptedOrbitValue->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect scripted orbit syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            orbit = CreateScriptedOrbit(scriptedOrbitValue->getHash(), path);
+            if (orbit != NULL)
+                return orbit;
+        }
+    }
 
     string sampOrbitFile;
     if (planetData->getString("SampledOrbit", sampOrbitFile))
