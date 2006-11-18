@@ -41,7 +41,7 @@ class RotationModel
      *  spin * equator. If there is no primary axis of rotation, equator = 1
      *  and orientation = spin.
      */
-    virtual Quatd equatorOrientationAtTime(double tjd) const
+    virtual Quatd equatorOrientationAtTime(double /*tjd*/) const
     {
         return Quatd(1.0, 0.0, 0.0, 0.0);
     }
@@ -59,7 +59,7 @@ class RotationModel
 
     virtual bool isPeriodic() const
     {
-        return false; 
+        return false;
     };
 
     // Return the time range over which the orientation model is valid;
@@ -140,7 +140,7 @@ class PrecessingRotationModel : public RotationModel
     double epoch;
     float inclination;   // tilt of rotation axis w.r.t. reference plane
     float ascendingNode; // longitude of ascending node of equator on the refernce plane
-    
+
     float precessionPeriod; // period of precession (in Julian days)
 };
 

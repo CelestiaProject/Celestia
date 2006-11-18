@@ -206,7 +206,7 @@ CreateSpiceOrbit(Hash* orbitData,
 
 static ScriptedOrbit*
 CreateScriptedOrbit(Hash* orbitData,
-                    const string& path)
+                    const string& /*path*/)
 {
 #if !defined(CELX)
     clog << "ScriptedOrbit not useable without scripting support.\n";
@@ -587,7 +587,7 @@ CreateRotationModel(Hash* planetData,
             return CreateFixedRotationModel(fixedRotationValue->getHash());
         }
     }
-    
+
     // For backward compatibility we need to support rotation parameters
     // that appear in the main block of the object definition.
     // Default to synchronous rotation
@@ -695,7 +695,7 @@ getFrameCenter(const Universe& universe, Hash* frameData)
     // Should verify that center object is a star or planet, and
     // that it is a member of the same star system as the body in which
     // the frame will be used.
-    
+
     return centerObject;
 }
 
@@ -779,7 +779,7 @@ parseAxisLabel(const std::string& label)
     {
         return -2;
     }
-    
+
     if (compareIgnoringCase(label, "-z") == 0)
     {
         return -3;
@@ -1014,7 +1014,7 @@ CreateTwoVectorFrame(const Universe& universe,
                                    *primaryVector, primaryAxis,
                                    *secondaryVector, secondaryAxis);
     }
-    
+
     delete primaryVector;
     delete secondaryVector;
 
