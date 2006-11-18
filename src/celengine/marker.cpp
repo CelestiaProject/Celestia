@@ -150,7 +150,7 @@ void Marker::render() const
         glVertex3f(-s, 0.0f, 0.0f);
         glEnd();
         break;
-       
+
     case LeftArrow:
         glBegin(GL_POLYGON);
         glVertex3f(3*s, float(-s/3), 0.0f);
@@ -195,11 +195,11 @@ void Marker::render() const
 
     case Circle:
         if (s < 1.0f)
-            s = 1.0f; //  0 and negative values are not allowed in the case of circle markers. 
+            s = 1.0f; //  0 and negative values are not allowed in the case of circle markers.
         else if (s > 1024.0f)
             s = 1024.0f; //  Bigger values would give a too high number of segments in the circle markers.
-        glBegin(GL_LINE_LOOP);            
-        float step = (float) 60/sqrt(s);
+        glBegin(GL_LINE_LOOP);
+        int step = (int) (60.0f/sqrt(s));
         for (int i=0; i < 360; i=i+step)
         {
             float degInRad = (float) i*3.14159/180;
