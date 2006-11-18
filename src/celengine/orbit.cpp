@@ -406,7 +406,7 @@ FixedOrbit::~FixedOrbit()
 
 
 Point3d
-FixedOrbit::positionAtTime(double tjd) const
+FixedOrbit::positionAtTime(double /*tjd*/) const
 {
     return position;
 }
@@ -434,8 +434,7 @@ FixedOrbit::getBoundingRadius() const
 
 
 void
-FixedOrbit::sample(double, double t, int nSamples,
-                   OrbitSampleProc& proc) const
+FixedOrbit::sample(double, double, int, OrbitSampleProc&) const
 {
     /*
     for (int i = 0; i < nSamples; i++)
