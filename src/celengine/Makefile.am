@@ -63,6 +63,7 @@ libcelengine_a_SOURCES = \
 	rotationmanager.cpp \
 	samporbit.cpp \
 	samporient.cpp \
+	scriptorbit.cpp \
 	selection.cpp \
 	shadermanager.cpp \
 	simulation.cpp \
