@@ -1,5 +1,5 @@
 // scriptorbit.cpp
-// 
+//
 // Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
 //
 // Interface for a Celestia trajectory implemented via a Lua script.
@@ -28,7 +28,7 @@ extern "C" {
 
 using namespace std;
 
-static char* ScriptedOrbitNamePrefix = "cel_script_orbit_";
+static const char* ScriptedOrbitNamePrefix = "cel_script_orbit_";
 static unsigned int ScriptedOrbitNameIndex = 1;
 
 // global script context for scripted orbits and rotations
@@ -96,7 +96,7 @@ safeGetLuaNumber(lua_State* state,
     return v;
 }
 
-/*! Initialize the script orbit. 
+/*! Initialize the script orbit.
  *  moduleName is the name of a module that contains the orbit factory
  *  function. The module will be loaded with Lua's require function before
  *  creating the Lua orbit object.
@@ -161,7 +161,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
 
     if (lua_isfunction(luaState, -1) == 0)
     {
-        // No function with the requested name; pop whatever value we 
+        // No function with the requested name; pop whatever value we
         // did receive along with the table of arguments.
         lua_pop(luaState, 1);
         clog << "No Lua function named " << funcName << " found.\n";
@@ -206,7 +206,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
         clog << "Error calling ScriptedOrbit generator function: " <<
             lua_tostring(luaState, -1) << "\n";
         lua_pop(luaState, 1);
-        return NULL;
+        return false;
     }
 
     if (lua_istable(luaState, -1) == 0)
@@ -215,7 +215,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
         // stack and report failure.
         clog << "ScriptedOrbit generator function returned bad value.\n";
         lua_pop(luaState, 1);
-        return NULL;
+        return false;
     }
 
     // Generate a unique name for this script orbit object so that
@@ -309,11 +309,11 @@ ScriptedOrbit::computePosition(double tjd) const
     {
         // The script orbit object disappeared. OOPS.
     }
-    
+
     // Pop the script orbit object
     lua_pop(luaState, 1);
 
-    // Convert to Celestia's internal coordinate system 
+    // Convert to Celestia's internal coordinate system
     return Point3d(pos.x, pos.z, -pos.y);
 }
 
