@@ -276,7 +276,7 @@ void KdeWatcher::notifyChange(CelestiaCore*, int property)
                 KAction* action = kdeapp->getActionCollection()->action(n);
                 if (action->shortcut().count() > 0
                     && (action->shortcut().seq(0).key(0).modFlags()
-                        & (KKey::CTRL | KKey::ALT | KKey::WIN )) == 0
+                        & ( KKey::ALT | KKey::WIN )) == 0
                     && action->isEnabled()) {
                     actions.push_back(kdeapp->getActionCollection()->action(n));
                     kdeapp->getActionCollection()->action(n)->setEnabled(false);
