@@ -399,15 +399,8 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
     case Key_BackTab:
         appCore->charEntered(CelestiaCore::Key_BackTab);
         break;
-    case Key_Q:
-        if( e->state() == ControlButton )
-        {
-            parentWidget()->close();
-        }
-        // Intentional fallthrough if *not* Ctrl-Q
-
     default:
-        if (appCore->getTextEnterMode() != CelestiaCore::KbNormal || !handleSpecialKey(e, true))
+        if (!handleSpecialKey(e, true) || appCore->getTextEnterMode() != CelestiaCore::KbNormal)
         {
             if ((e->text() != 0) && (e->text() != ""))
             {
