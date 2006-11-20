@@ -89,5 +89,5 @@ libcelengine_a_SOURCES = \
 	vertexprog.cpp \
 	virtualtex.cpp \
         vsop87.cpp\
-	$(SPICESOURCES)
+	$(SPICESOURCES)\
 	$(SCRIPT_OBJ_SOURCES)
