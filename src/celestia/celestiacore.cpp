@@ -38,12 +38,15 @@
 #include <celengine/cmdparser.h>
 #include <celengine/multitexture.h>
 #include <celengine/spiceinterface.h>
-#include <celengine/scriptobject.h>
 #include "favorites.h"
 #include "celestiacore.h"
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
 #include "url.h"
+
+#ifdef CELX
+#include <celengine/scriptobject.h>
+#endif
 
 using namespace std;
 
