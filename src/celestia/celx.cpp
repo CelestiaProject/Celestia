@@ -5506,7 +5506,13 @@ static int celestia_loadtexture(lua_State* l)
 {
     checkArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
     string s = safeGetString(l, 2, AllErrors, "Argument to celestia:loadtexture() must be a string");
-    Texture* t = LoadTextureFromFile(s);
+    lua_Debug ar;
+    lua_getstack(l, 1, &ar);
+    lua_getinfo(l, "S", &ar);
+    string base_dir = ar.source; // Lua file from which we are called
+    if (base_dir[0] == '@') base_dir = base_dir.substr(1);
+    base_dir = base_dir.substr(0, base_dir.rfind(PATH_SEP)) + PATH_SEP;
+    Texture* t = LoadTextureFromFile(base_dir + s);
     if (t == NULL) return 0;
     texture_new(l, t);
 
