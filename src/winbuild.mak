@@ -9,7 +9,7 @@ OUTDIR=Release
 OUTDIR=Debug
 !ENDIF
 
-SPICE=enable
+#SPICE=enable
 CELX=enable
 
 # Automatically set the Lua version to 5.1 if we detect Lua 5.1 include
