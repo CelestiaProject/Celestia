@@ -12,16 +12,18 @@
 
 #include <string>
 #include <vector>
+#include <celengine/parser.h>
 
-struct CelestiaConfig
+
+class CelestiaConfig
 {
+public:
     std::string starDatabaseFile;
     std::string starNamesFile;
     std::vector<std::string> solarSystemFiles;
     std::vector<std::string> starCatalogFiles;
     std::vector<std::string> extrasDirs;
     std::string deepSkyCatalog;
-    std::vector<std::string> labelledStars;
     std::string asterismsFile;
     std::string boundariesFile;
     float faintestVisible;
@@ -40,6 +42,10 @@ struct CelestiaConfig
     bool  reverseMouseWheel;
     std::string scriptScreenshotDirectory;
     std::string scriptSystemAccessPolicy;
+#ifdef CELX
+    std::string luaHook;
+    Hash* configParams;
+#endif
 
     std::string HDCrossIndexFile;
     std::string SAOCrossIndexFile;
@@ -54,8 +60,12 @@ struct CelestiaConfig
     unsigned int aaSamples;
 
     bool hdr;
+    
+    Hash* params;
+    
+    float getFloatValue(const std::string& name);
+    const std::string getStringValue(const std::string& name);
 };
-
 
 CelestiaConfig* ReadCelestiaConfig(std::string filename, CelestiaConfig* config = NULL);
 

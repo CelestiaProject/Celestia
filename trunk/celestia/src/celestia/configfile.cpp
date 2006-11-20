@@ -14,7 +14,6 @@
 #include <celutil/directory.h>
 #include <celutil/util.h>
 #include <celengine/celestia.h>
-#include <celengine/parser.h>
 #include "configfile.h"
 
 using namespace std;
@@ -67,7 +66,13 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
 
     Hash* configParams = configParamsValue->getHash();
 
-    if (config == NULL) config = new CelestiaConfig();
+#ifdef CELX
+    if (config == NULL)
+        config = new CelestiaConfig();
+    config->configParams = configParams;  
+    configParams->getString("LuaHook", config->luaHook);    
+    config->luaHook = WordExp(config->luaHook);             
+#endif
 
     config->faintestVisible = 6.0f;
     configParams->getNumber("FaintestVisibleMagnitude", config->faintestVisible);
@@ -100,8 +105,6 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     configParams->getString("TitleFont", config->titleFont);
     configParams->getString("LogoTexture", config->logoTextureFile);
     configParams->getString("Cursor", config->cursor);
-    // configParams->getNumber("LogoWidth", config->logoWidth);
-    // configParams->getNumber("LogoHeight", config->logoHeight);
 
     double aaSamples = 1;
     configParams->getNumber("AntialiasingSamples", aaSamples);
@@ -222,35 +225,6 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
         }
     }
 
-    Value* labelledStarsVal = configParams->getValue("LabelledStars");
-    if (labelledStarsVal != NULL)
-    {
-        if (labelledStarsVal->getType() != Value::ArrayType)
-        {
-            DPRINTF(0, "%s: LabelledStars must be an array.\n", filename.c_str());
-        }
-        else
-        {
-            Array* labelledStars = labelledStarsVal->getArray();
-            // assert(labelledStars != NULL);
-
-            for (Array::iterator iter = labelledStars->begin(); iter != labelledStars->end(); iter++)
-            {
-                Value* starNameVal = *iter;
-                // assert(starNameVal != NULL);
-                if (starNameVal->getType() == Value::StringType)
-                {
-                    config->labelledStars.insert(config->labelledStars.end(),
-                                                 starNameVal->getString());
-                }
-                else
-                {
-                    DPRINTF(0, "%s: Star name must be a string.\n", filename.c_str());
-                }
-            }
-        }
-    }
-
     Value* ignoreExtVal = configParams->getValue("IgnoreGLExtensions");
     if (ignoreExtVal != NULL)
     {
@@ -275,7 +249,37 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
         }
     }
 
-    delete configParamsValue;
+    // TODO: not cleaning up properly here--we're just saving the hash, not the instance of Value
+    config->params = configParams;
+
+#ifndef CELX
+     delete configParamsValue;
+#endif
 
     return config;
+}
+
+
+float
+CelestiaConfig::getFloatValue(const string& name)
+{
+    assert(params != NULL);
+    
+    double x = 0.0;
+    params->getNumber(name, x);
+    
+    return (float) x;
+}
+
+
+const string
+CelestiaConfig::getStringValue(const string& name)
+{
+    assert(params != NULL);
+    
+    Value* v = params->getValue(name);
+    if (v == NULL || v->getType() != Value::StringType)
+        return string("");
+
+    return v->getString();
 }

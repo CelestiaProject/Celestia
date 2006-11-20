@@ -64,6 +64,14 @@ public:
     bool handleKeyEvent(const char* key);
     bool handleMouseButtonEvent(float x, float y, int button, bool down);
     bool handleTickEvent(double dt);
+
+	void LuaState::setLuaPath(const string& s);   // HWR
+	void LuaState::allowSystemAccess(); // HWR
+	bool LuaState::callLuaHook( void* obj, const char* method);    // HWR
+	bool LuaState::callLuaHook( void* obj, const char* method, const char ch);    // HWR
+	bool LuaState::callLuaHook( void* obj, const char* method, float x, float y); // HWR
+	bool LuaState::callLuaHook( void* obj, const char* method, float x, float y, int b); // HWR
+        bool LuaState::callLuaHook(void* obj, const char* method, double dt);
     
     enum IOMode {
         NoIO = 1,
