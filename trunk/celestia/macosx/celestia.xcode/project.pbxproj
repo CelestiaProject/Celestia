@@ -1394,6 +1394,7 @@
 				E5E551B70AAB9696007CD5BB,
 				E57D43360AFAC0970060CFEC,
 				E57D43370AFAC0970060CFEC,
+				E5B899F90B109CD900675F57,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2387,6 +2388,7 @@
 				E57D43350AFAC0970060CFEC,
 				E57D43380AFAC0970060CFEC,
 				E57D43390AFAC0970060CFEC,
+				E5B899F80B109CD900675F57,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4118,6 +4120,36 @@
 			settings = {
 			};
 		};
+		E5B899F60B109CD900675F57 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = scriptorbit.cpp;
+			path = ../src/celengine/scriptorbit.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5B899F70B109CD900675F57 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = scriptorbit.h;
+			path = ../src/celengine/scriptorbit.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5B899F80B109CD900675F57 = {
+			fileRef = E5B899F60B109CD900675F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5B899F90B109CD900675F57 = {
+			fileRef = E5B899F70B109CD900675F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E5BF7F47096DA07B00DB7C65 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -5515,6 +5547,8 @@
 		};
 		F51C6D52029596B4014901DC = {
 			children = (
+				E5B899F60B109CD900675F57,
+				E5B899F70B109CD900675F57,
 				E57D43300AFAC0970060CFEC,
 				E57D43310AFAC0970060CFEC,
 				E57D43330AFAC0970060CFEC,
