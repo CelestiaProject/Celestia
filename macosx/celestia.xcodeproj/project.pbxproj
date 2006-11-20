@@ -130,6 +130,7 @@
 		E56457520AF8FD6A00F2D9FA /* samporient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E564574D0AF8FD6A00F2D9FA /* samporient.cpp */; };
 		E56457550AF8FD6A00F2D9FA /* rotationmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56457500AF8FD6A00F2D9FA /* rotationmanager.cpp */; };
 		E56457560AF8FD6A00F2D9FA /* rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56457510AF8FD6A00F2D9FA /* rotation.cpp */; };
+		E56529680B108D7F0049925D /* scriptorbit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E56529660B108D7F0049925D /* scriptorbit.cpp */; };
 		E567F072099112EC00D05031 /* asterisms.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = E567EF6A09910E8F00D05031 /* asterisms.dat */; };
 		E567F073099112EC00D05031 /* asteroids.ssc in CopyFiles */ = {isa = PBXBuildFile; fileRef = E567EF6B09910E8F00D05031 /* asteroids.ssc */; };
 		E567F074099112EC00D05031 /* boundaries.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = E567EF6C09910E8F00D05031 /* boundaries.dat */; };
@@ -494,6 +495,8 @@
 		E564574F0AF8FD6A00F2D9FA /* rotationmanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rotationmanager.h; path = ../src/celengine/rotationmanager.h; sourceTree = SOURCE_ROOT; };
 		E56457500AF8FD6A00F2D9FA /* rotationmanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotationmanager.cpp; path = ../src/celengine/rotationmanager.cpp; sourceTree = SOURCE_ROOT; };
 		E56457510AF8FD6A00F2D9FA /* rotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotation.cpp; path = ../src/celengine/rotation.cpp; sourceTree = SOURCE_ROOT; };
+		E56529660B108D7F0049925D /* scriptorbit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptorbit.cpp; path = ../src/celengine/scriptorbit.cpp; sourceTree = SOURCE_ROOT; };
+		E56529670B108D7F0049925D /* scriptorbit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scriptorbit.h; path = ../src/celengine/scriptorbit.h; sourceTree = SOURCE_ROOT; };
 		E567EF6A09910E8F00D05031 /* asterisms.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asterisms.dat; sourceTree = "<group>"; };
 		E567EF6B09910E8F00D05031 /* asteroids.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asteroids.ssc; sourceTree = "<group>"; };
 		E567EF6C09910E8F00D05031 /* boundaries.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = boundaries.dat; sourceTree = "<group>"; };
@@ -1304,6 +1307,8 @@
 		F51C6D52029596B4014901DC /* celengine */ = {
 			isa = PBXGroup;
 			children = (
+				E56529660B108D7F0049925D /* scriptorbit.cpp */,
+				E56529670B108D7F0049925D /* scriptorbit.h */,
 				E564574D0AF8FD6A00F2D9FA /* samporient.cpp */,
 				E564574E0AF8FD6A00F2D9FA /* samporient.h */,
 				E56457500AF8FD6A00F2D9FA /* rotationmanager.cpp */,
@@ -1826,6 +1831,7 @@
 				E56457520AF8FD6A00F2D9FA /* samporient.cpp in Sources */,
 				E56457550AF8FD6A00F2D9FA /* rotationmanager.cpp in Sources */,
 				E56457560AF8FD6A00F2D9FA /* rotation.cpp in Sources */,
+				E56529680B108D7F0049925D /* scriptorbit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
