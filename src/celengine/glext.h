@@ -965,6 +965,7 @@ namespace glx
 
 #ifndef GL_ARB_shading_language_100
 #define GL_ARB_shading_language_100 1
+#define GL_SHADING_LANGUAGE_VERSION_ARB   0x8B8C
 #endif
 
 namespace glx
