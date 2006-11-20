@@ -107,6 +107,7 @@ static JOYCAPS joystickCaps;
 static HCURSOR hDefaultCursor = 0;
 bool cursorVisible = true;
 static POINT saveCursorPos;
+static POINT lastMouseMove;
 class WinCursorHandler;
 WinCursorHandler* cursorHandler = NULL;
 
@@ -589,10 +590,10 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
     {
     case WM_INITDIALOG:
         {
-            char* vendor = (char*) glGetString(GL_VENDOR);
-            char* render = (char*) glGetString(GL_RENDERER);
-            char* version = (char*) glGetString(GL_VERSION);
-            char* ext = (char*) glGetString(GL_EXTENSIONS);
+            const char* vendor = (char*) glGetString(GL_VENDOR);
+            const char* render = (char*) glGetString(GL_RENDERER);
+            const char* version = (char*) glGetString(GL_VERSION);
+            const char* ext = (char*) glGetString(GL_EXTENSIONS);
             string s;
             s += UTF8ToCurrentCP(_("Vendor: "));
             if (vendor != NULL)
@@ -609,7 +610,18 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
                 s += version;
             s += "\r\r\n";
 
-            char buf[100];
+            if (ExtensionSupported("GL_ARB_shading_language_100"))
+            {
+                const char* versionString = (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION_ARB);
+                if (versionString != NULL)
+                {
+                    s += UTF8ToCurrentCP(_("GLSL version: "));
+                    s += versionString;
+                    s += "\r\r\n";
+                }
+            }
+
+            char buf[1024];
             GLint simTextures = 1;
             if (ExtensionSupported("GL_ARB_multitexture"))
                 glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
@@ -3487,95 +3499,105 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 	    int x, y;
 	    x = LOWORD(lParam);
 	    y = HIWORD(lParam);
-            appCore->mouseMove((float) x, (float) y);
 
-            if ((wParam & (MK_LBUTTON | MK_RBUTTON)) != 0)
+            bool reallyMoved = x != lastMouseMove.x || y != lastMouseMove.y;
+            lastMouseMove.x = x;
+            lastMouseMove.y = y;
+
+            if (reallyMoved)
             {
+                appCore->mouseMove((float) x, (float) y);
+
+                if ((wParam & (MK_LBUTTON | MK_RBUTTON)) != 0)
+                {
 #ifdef INFINITE_MOUSE
-                // A bit of mouse tweaking here . . .  we want to allow the
-                // user to rotate and zoom continuously, without having to
-                // pick up the mouse every time it leaves the window.  So,
-                // once we start dragging, we'll hide the mouse and reset
-                // its position every time it's moved.
-                POINT pt;
-                pt.x = lastX;
-                pt.y = lastY;
-                ClientToScreen(hWnd, &pt);
+                    // A bit of mouse tweaking here . . .  we want to allow the
+                    // user to rotate and zoom continuously, without having to
+                    // pick up the mouse every time it leaves the window.  So,
+                    // once we start dragging, we'll hide the mouse and reset
+                    // its position every time it's moved.
+                    POINT pt;
+                    pt.x = lastX;
+                    pt.y = lastY;
+                    ClientToScreen(hWnd, &pt);
 
-                // If the cursor is still visible, this is the first mouse
-                // move message of this drag.  Hide the cursor and set the
-                // cursor position to the center of the window.  Once the
-                // drag is complete, we'll restore the cursor position and
-                // make it visible again.
-                if (ignoreNextMoveEvent)
-                {
-                    // This hack is required because there's a move event
-                    // right after canceling a context menu by clicking
-                    // outside of it.  Because it was canceled by clicking,
-                    // the mouse button down bits are set, and the infinite
-                    // mouse code gets confused.
-                    ignoreNextMoveEvent = false;
-                }
-                else if (cursorVisible)
-                {
-                    // Hide the cursor
-                    ShowCursor(FALSE);
-                    cursorVisible = false;
+                    // If the cursor is still visible, this is the first mouse
+                    // move message of this drag.  Hide the cursor and set the
+                    // cursor position to the center of the window.  Once the
+                    // drag is complete, we'll restore the cursor position and
+                    // make it visible again.
+                    if (ignoreNextMoveEvent)
+                    {
+                        // This hack is required because there's a move event
+                        // right after canceling a context menu by clicking
+                        // outside of it.  Because it was canceled by clicking,
+                        // the mouse button down bits are set, and the infinite
+                        // mouse code gets confused.
+                        ignoreNextMoveEvent = false;
+                    }
+                    else if (cursorVisible)
+                    {
+                        // Hide the cursor
+                        ShowCursor(FALSE);
+                        cursorVisible = false;
 
-                    // Save the cursor position
-                    saveCursorPos = pt;
+                        // Save the cursor position
+                        saveCursorPos = pt;
 
-                    // Compute the center point of the client area
-                    RECT rect;
-                    GetClientRect(hWnd, &rect);
-                    POINT center;
-                    center.x = (rect.right - rect.left) / 2;
-                    center.y = (rect.bottom - rect.top) / 2;
+                        // Compute the center point of the client area
+                        RECT rect;
+                        GetClientRect(hWnd, &rect);
+                        POINT center;
+                        center.x = (rect.right - rect.left) / 2;
+                        center.y = (rect.bottom - rect.top) / 2;
 
-                    // Set the cursor position to the center of the window
-                    x = center.x + (x - lastX);
-                    y = center.y + (y - lastY);
-                    lastX = center.x;
-                    lastY = center.y;
+                        // Set the cursor position to the center of the window
+                        x = center.x + (x - lastX);
+                        y = center.y + (y - lastY);
+                        lastX = center.x;
+                        lastY = center.y;
 
-                    ClientToScreen(hWnd, &center);
-                    SetCursorPos(center.x, center.y);
-                }
-                else
-                {
-                    if (x - lastX != 0 || y - lastY != 0)
-                        SetCursorPos(pt.x, pt.y);
-                }
+                        ClientToScreen(hWnd, &center);
+                        SetCursorPos(center.x, center.y);
+                    }
+                    else
+                    {
+                        if (x - lastX != 0 || y - lastY != 0)
+                            SetCursorPos(pt.x, pt.y);
+                    }
 #else
-                lastX = x;
-                lastY = y;
+                    lastX = x;
+                    lastY = y;
 #endif // INFINITE_MOUSE
-            }
-
-            int buttons = 0;
-            if ((wParam & MK_LBUTTON) != 0)
-                buttons |= CelestiaCore::LeftButton;
-            if ((wParam & MK_RBUTTON) != 0)
-                buttons |= CelestiaCore::RightButton;
-            if ((wParam & MK_MBUTTON) != 0)
-                buttons |= CelestiaCore::MiddleButton;
-            if ((wParam & MK_SHIFT) != 0)
-                buttons |= CelestiaCore::ShiftKey;
-            if ((wParam & MK_CONTROL) != 0)
-                buttons |= CelestiaCore::ControlKey;
-            appCore->mouseMove((float) (x - lastX), (float) (y - lastY), buttons);
-
-            if (currentScreenMode != 0)
-            {
-                if (hideMenuBar && y < 10)
-                {
-                    SetMenu(mainWindow, menuBar);
-                    hideMenuBar = false;
                 }
-                else if (!hideMenuBar && y >= 10)
+
+                int buttons = 0;
+                if ((wParam & MK_LBUTTON) != 0)
+                    buttons |= CelestiaCore::LeftButton;
+                if ((wParam & MK_RBUTTON) != 0)
+                    buttons |= CelestiaCore::RightButton;
+                if ((wParam & MK_MBUTTON) != 0)
+                    buttons |= CelestiaCore::MiddleButton;
+                if ((wParam & MK_SHIFT) != 0)
+                    buttons |= CelestiaCore::ShiftKey;
+                if ((wParam & MK_CONTROL) != 0)
+                    buttons |= CelestiaCore::ControlKey;
+                appCore->mouseMove((float) (x - lastX),
+                                   (float) (y - lastY),
+                                   buttons);
+
+                if (currentScreenMode != 0)
                 {
-                    SetMenu(mainWindow, NULL);
-                    hideMenuBar = true;
+                    if (hideMenuBar && y < 10)
+                    {
+                        SetMenu(mainWindow, menuBar);
+                        hideMenuBar = false;
+                    }
+                    else if (!hideMenuBar && y >= 10)
+                    {
+                        SetMenu(mainWindow, NULL);
+                        hideMenuBar = true;
+                    }
                 }
             }
         }
