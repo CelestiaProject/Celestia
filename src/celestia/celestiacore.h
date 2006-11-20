@@ -324,7 +324,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void renderOverlay();
     void fatalError(const std::string&);
 #ifdef CELX
-    bool CelestiaCore::initLuaHook(ProgressNotifier*);
+    bool initLuaHook(ProgressNotifier*);
 #endif // CELX
 
  private:
