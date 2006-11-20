@@ -9,7 +9,17 @@ OUTDIR=Release
 OUTDIR=Debug
 !ENDIF
 
-#SPICE=enable
+SPICE=enable
+CELX=enable
+
+# Automatically set the Lua version to 5.1 if we detect Lua 5.1 include
+# files.
+!IF EXIST(..\inc\lua-5.1)
+LUA_VER=0x050100
+!ELSE
+LUA_VER=0x050000
+!ENDIF
+
 
 LIBUTIL=celutil\$(OUTDIR)\cel_utils.lib
 LIBMATH=celmath\$(OUTDIR)\cel_math.lib
@@ -69,10 +79,10 @@ $(LIBTXF): always
 
 $(LIBCEL): always
 	cd celengine
-	nmake /NOLOGO engine.mak MFLAGS=-MD CFG=$(CFG) SPICE=$(SPICE)
+	nmake /NOLOGO engine.mak MFLAGS=-MD CFG=$(CFG) SPICE=$(SPICE) CELX=$(CELX) LUA_VER=$(LUA_VER)
 	cd ..
 
 $(APPCELESTIA): $(LIBS)
 	cd celestia
-	nmake /NOLOGO celestia.mak MFLAGS=-MD CFG=$(CFG) SPICE=$(SPICE)
+	nmake /NOLOGO celestia.mak MFLAGS=-MD CFG=$(CFG) SPICE=$(SPICE) CELX=$(CELX) LUA_VER=$(LUA_VER)
 	cd ..
