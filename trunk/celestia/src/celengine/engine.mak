@@ -88,18 +88,30 @@ OBJS=\
 	$(INTDIR)\virtualtex.obj \
 	$(INTDIR)\vsop87.obj
 
+!IF "$(CELX)" == "enable"
+EXTRADEFS=/D "CELX" /D "LUA_VER=$(LUA_VER)"
+OBJS=$(OBJS) $(INTDIR)\scriptobject.obj $(INTDIR)\scriptorbit.obj $(INTDIR)\scriptrotation.obj
+!IF "$(LUA_VER)" == "0x050100"
+LUAINC=/I ../../inc/lua-5.1
+!ELSE
+LUAINC=/I ../../inc/lua
+!ENDIF
+!ELSE
+LUAINC=
+EXTRADEFS=
+!ENDIF
+
 !IF "$(SPICE)" == "enable"
 OBJS=$(OBJS) $(INTDIR)\spiceinterface.obj $(INTDIR)\spiceorbit.obj
 SPICEINC=/I ../../inc/spice
-EXTRADEFS=/D "USE_SPICE"
+EXTRADEFS=$(EXTRADEFS) /D "USE_SPICE"
 !ELSE
 SPICEINC=
-EXTRADEFS=
 !ENDIF
 
 TARGETLIB = cel_engine.lib
 
-INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc /I ../../inc/libintl $(SPICEINC)
+INCLUDEDIRS=/I .. /I ../../inc/libjpeg /I ../../inc/libpng /I ../../inc/libz /I ../../inc /I ../../inc/libintl $(SPICEINC) $(LUAINC)
 
 !IF "$(CFG)" == "Release"
 CPP=cl.exe
