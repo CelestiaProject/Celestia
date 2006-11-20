@@ -66,9 +66,10 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
 
     Hash* configParams = configParamsValue->getHash();
 
-#ifdef CELX
     if (config == NULL)
         config = new CelestiaConfig();
+
+#ifdef CELX
     config->configParams = configParams;  
     configParams->getString("LuaHook", config->luaHook);    
     config->luaHook = WordExp(config->luaHook);             
