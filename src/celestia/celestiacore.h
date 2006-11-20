@@ -323,6 +323,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     bool readStars(const CelestiaConfig&, ProgressNotifier*);
     void renderOverlay();
     void fatalError(const std::string&);
+#ifdef CELX
+    bool CelestiaCore::initLuaHook(ProgressNotifier*);
+#endif // CELX
 
  private:
     CelestiaConfig* config;
@@ -367,6 +370,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
 #ifdef CELX
     LuaState* celxScript;
+    LuaState* luaHook;
 #endif // CELX
 
     enum ScriptState
@@ -435,6 +439,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);
     friend void getObservers(CelestiaCore*, std::vector<Observer*>&);
+    friend TextureFont* getTitleFont(CelestiaCore*);
 #endif
 };
 

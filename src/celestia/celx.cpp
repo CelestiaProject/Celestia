@@ -47,6 +47,9 @@ static const char* ClassNames[] =
     "class_position",
     "class_frame",
     "class_celscript",
+    "class_font",
+    "class_image",
+    "class_texture",
 };
 
 static const int _Celestia = 0;
@@ -58,6 +61,9 @@ static const int _Rotation = 5;
 static const int _Position = 6;
 static const int _Frame    = 7;
 static const int _CelScript= 8;
+static const int _Font     = 9;
+static const int _Image    = 10;
+static const int _Texture  = 11;
 
 #define CLASS(i) ClassNames[(i)]
 
@@ -178,6 +184,21 @@ static void initLocationFlagMap()
     LocationFlagMap["farrum"] = Location::Farrum;
     LocationFlagMap["other"] = Location::Other;
 }
+
+
+#if LUA_VER >= 0x050100
+// Load a Lua library--in Lua 5.1, the luaopen_* functions cannot be called
+// directly. They most be invoked through the Lua state.
+static void openLuaLibrary(lua_State* l,
+                           const char* name, 
+                           lua_CFunction func)
+{
+    lua_pushcfunction(l, func);
+    lua_pushstring(l, name);
+    lua_call(l, 1, 0);
+}
+#endif
+
 
 static void initMaps()
 {
@@ -545,23 +566,24 @@ bool LuaState::timesliceExpired()
 }
 
 
-static int auxresume(lua_State *L, lua_State *co, int narg)
+static int resumeLuaThread(lua_State *L, lua_State *co, int narg)
 {
     int status;
-#if 0
-    if (!lua_checkstack(co, narg))
-        luaL_error(L, "too many arguments to resume");
-#endif
+
+    //if (!lua_checkstack(co, narg))
+    //   luaL_error(L, "too many arguments to resume");
     lua_xmove(L, co, narg);
 
     status = lua_resume(co, narg);
+#if LUA_VER >= 0x050100
+    if (status == 0 || status == LUA_YIELD)
+#else
     if (status == 0)
+#endif
     {
         int nres = lua_gettop(co);
-#if 0
-        if (!lua_checkstack(L, narg))
-              luaL_error(L, "too many results to resume");
-#endif
+        //if (!lua_checkstack(L, narg))
+        //   luaL_error(L, "too many results to resume");
         lua_xmove(co, L, nres);  // move yielded values
         return nres;
     }
@@ -623,7 +645,8 @@ bool LuaState::charEntered(const char* c_p)
         if (strcmp(c_p, "y") == 0)
         {
 #if LUA_VER >= 0x050100
-            luaL_openlibs(costate);
+            openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
+            openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
 #else
             lua_iolibopen(costate);
 #endif
@@ -675,7 +698,7 @@ bool LuaState::charEntered(const char* c_p)
     {
         if (lua_isboolean(costate, -1))
         {
-            result = static_cast<bool>(lua_toboolean(costate, -1));
+            result = (lua_toboolean(costate, -1) != 0);
         }
     }
     // cleanup stack - is this necessary?
@@ -865,6 +888,8 @@ int LuaState::loadScript(const string& s)
     return loadScript(in, "string");
 }
 
+
+// Resume a thread; if the thread completes, the status is set to !alive
 int LuaState::resume()
 {
     assert(costate != NULL);
@@ -877,20 +902,25 @@ int LuaState::resume()
         return false;
 
     timeout = getTime() + MaxTimeslice;
-    int nArgs = auxresume(state, co, 0);
+    int nArgs = resumeLuaThread(state, co, 0);
     if (nArgs < 0)
     {
         alive = false;
 
         const char* errorMessage = lua_tostring(state, -1);
+        if (errorMessage == NULL)
+            errorMessage = "Unknown script error";
 
-        // This is a nasty and hopefully temporary hack . . .  We continue
-        // to resume the script until we get an error.  The
-        // 'cannot resume dead coroutine' error appears when there were
-        // no other errors, and execution terminates normally.  There
-        // should be a better way to figure out whether the script ended
-        // normally . . .
+#if LUA_VER < 0x050100
+        // This is a nasty hack required in Lua 5.0, where there's no
+        // way to distinguish between a thread returning because it completed
+        // or yielded. Thus, we continue to resume the script until we get
+        // an error.  The 'cannot resume dead coroutine' error appears when
+        // there were no other errors, and execution terminates normally.
+        // In Lua 5.1, we can simply check the thread status to find out
+        // if it's done executing.
         if (strcmp(errorMessage, "cannot resume dead coroutine") != 0)
+#endif
         {
             cout << "Error: " << errorMessage << '\n';
             CelestiaCore* appCore = getAppCore(co);
@@ -911,6 +941,14 @@ int LuaState::resume()
             // later allow response to avoid accidental activation
             timeout = getTime() + 1.0;
         }
+
+#if LUA_VER >= 0x050100
+        // The thread status is zero if it has terminated normally
+        if (lua_status(co) == 0)
+        {
+            alive = false;
+        }
+#endif
 
         return nArgs; // arguments from yield
     }
@@ -1158,6 +1196,7 @@ void getObservers(CelestiaCore* appCore, vector<Observer*>& list)
         list.push_back(appCore->views[i]->observer);
     }
 }
+
 
 // ==================== Helpers ====================
 
@@ -3388,7 +3427,7 @@ static int observer_setlocationflags(lua_State* l)
         }
         if (lua_isboolean(l, -1))
         {
-            value = lua_toboolean(l, -1);
+            value = lua_toboolean(l, -1) != 0;
         }
         else
         {
@@ -3707,7 +3746,7 @@ static int celestia_setrenderflags(lua_State* l)
         }
         if (lua_isboolean(l, -1))
         {
-            value = lua_toboolean(l, -1);
+            value = lua_toboolean(l, -1) != 0;
         }
         else
         {
@@ -3842,7 +3881,7 @@ static int celestia_setlabelflags(lua_State* l)
         }
         if (lua_isboolean(l, -1))
         {
-            value = lua_toboolean(l, -1);
+            value = lua_toboolean(l, -1) != 0;
         }
         else
         {
@@ -3915,7 +3954,7 @@ static int celestia_setorbitflags(lua_State* l)
         }
         if (lua_isboolean(l, -1))
         {
-            value = lua_toboolean(l, -1);
+            value = lua_toboolean(l, -1) != 0;
         }
         else
         {
@@ -4157,7 +4196,7 @@ static int celestia_settime(lua_State* l)
     checkArgs(l, 2, 2, "One argument expected to function celestia:settime");
 
     CelestiaCore* appCore = this_celestia(l);
-    double t = safeGetNumber(l, 2, AllErrors, "Second arg to celestia:settime must be a number");
+    double t = safeGetNumber(l, 2, AllErrors, "First arg to celestia:settime must be a number");
     appCore->getSimulation()->setTime(t);
 
     return 0;
@@ -4820,14 +4859,19 @@ static void CreateCelestiaMetaTable(lua_State* l)
     lua_pop(l, 1);
 }
 
+static void loadLuaLibs(lua_State* state);
+
 // ==================== Initialization ====================
 bool LuaState::init(CelestiaCore* appCore)
 {
     initMaps();
 
-    // Import the base and math libraries
+    // Import the base, table, string, and math libraries
 #if LUA_VER >= 0x050100
-    luaL_openlibs(state);
+    openLuaLibrary(state, "", luaopen_base);
+    openLuaLibrary(state, LUA_MATHLIBNAME, luaopen_math);
+    openLuaLibrary(state, LUA_TABLIBNAME, luaopen_table);
+    openLuaLibrary(state, LUA_STRLIBNAME, luaopen_string);
 #else
     lua_baselibopen(state);
     lua_mathlibopen(state);
@@ -4842,20 +4886,19 @@ bool LuaState::init(CelestiaCore* appCore)
     // parsing the whole text of the library every time a script is launched
     if (loadScript("wait = function(x) coroutine.yield(x) end") != 0)
         return false;
-    lua_pcall(state, 0, 0, 0); // execute it
+
+    // Execute the script fragment to define the wait function
+    if (lua_pcall(state, 0, 0, 0) != 0)
+    {
+        cout << "Error running script initialization fragment.\n";
+        return false;
+    }
 
     lua_pushstring(state, "KM_PER_MICROLY");
     lua_pushnumber(state, (lua_Number)KM_PER_LY/1e6);
     lua_settable(state, LUA_GLOBALSINDEX);
 
-    CreateObjectMetaTable(state);
-    CreateObserverMetaTable(state);
-    CreateCelestiaMetaTable(state);
-    CreatePositionMetaTable(state);
-    CreateVectorMetaTable(state);
-    CreateRotationMetaTable(state);
-    CreateFrameMetaTable(state);
-    CreateCelscriptMetaTable(state);
+    loadLuaLibs(state);
 
     // Create the celestia object
     lua_pushstring(state, "celestia");
@@ -4890,4 +4933,961 @@ bool LuaState::init(CelestiaCore* appCore)
 #endif
 
     return true;
+}
+
+
+void LuaState::setLuaPath(const string& s)
+{
+    lua_pushstring(state, "LUA_PATH");
+    lua_pushstring(state, s.c_str());
+    lua_settable(state, LUA_GLOBALSINDEX);
+}
+
+
+// ==================== OpenGL ====================
+
+static int glu_LookAt(lua_State* l)
+{
+    checkArgs(l, 9, 9, "Nine arguments expected for glu.LookAt()");
+    float ix = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Frustum must be a number", 0.0);
+    float iy = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Frustum must be a number", 0.0);
+    float iz = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Frustum must be a number", 0.0);
+    float cx = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
+    float cy = (float)safeGetNumber(l, 5, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
+    float cz = (float)safeGetNumber(l, 6, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
+    float ux = (float)safeGetNumber(l, 7, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
+    float uy = (float)safeGetNumber(l, 8, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
+    float uz = (float)safeGetNumber(l, 9, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
+	gluLookAt(ix,iy,iz,cx,cy,cz,ux,uy,uz);
+    return 0;
+}
+
+static int gl_Frustum(lua_State* l)
+{
+    checkArgs(l, 6, 6, "Six arguments expected for gl.Frustum()");
+    float ll = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Frustum must be a number", 0.0);
+    float r = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Frustum must be a number", 0.0);
+    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Frustum must be a number", 0.0);
+    float t = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
+    float n = (float)safeGetNumber(l, 5, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
+    float f = (float)safeGetNumber(l, 6, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
+	glFrustum(ll,r,b,t,n,f);
+    return 0;
+}
+
+static int gl_Ortho(lua_State* l)
+{
+    checkArgs(l, 6, 6, "Six arguments expected for gl.Ortho()");
+    float ll = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Ortho must be a number", 0.0);
+    float r = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Ortho must be a number", 0.0);
+    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Ortho must be a number", 0.0);
+    float t = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Ortho must be a number", 0.0);
+    float n = (float)safeGetNumber(l, 5, WrongType, "argument 5 to gl.Ortho must be a number", 0.0);
+    float f = (float)safeGetNumber(l, 6, WrongType, "argument 6 to gl.Ortho must be a number", 0.0);
+	glOrtho(ll,r,b,t,n,f);
+    return 0;
+}
+
+static int glu_Ortho2D(lua_State* l)
+{
+    checkArgs(l, 4, 4, "Six arguments expected for gl.Ortho2D()");
+    float ll = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Ortho must be a number", 0.0);
+    float r = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Ortho must be a number", 0.0);
+    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Ortho must be a number", 0.0);
+    float t = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Ortho must be a number", 0.0);
+	gluOrtho2D(ll,r,b,t);
+    return 0;
+}
+
+static int gl_TexCoord(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Two arguments expected for gl.TexCoord()");
+    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.TexCoord must be a number", 0.0);
+    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.TexCoord must be a number", 0.0);
+	glTexCoord2f(x,y);
+    return 0;
+}
+
+static int gl_TexParameter(lua_State* l)
+{
+    checkArgs(l, 3, 3, "Three arguments expected for gl.TexParameter()");
+
+    // TODO: Need to ensure that these values are integers, or better yet use
+    // names.
+    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.TexParameter must be a number", 0.0);
+    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.TexParameter must be a number", 0.0);
+    float z = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.TexParameter must be a number", 0.0);
+    glTexParameteri((GLint) x, (GLenum) y, (GLenum) z);
+    return 0;
+}
+
+static int gl_Vertex(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Two arguments expected for gl.Vertex()");
+    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Vertex must be a number", 0.0);
+    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Vertex must be a number", 0.0);
+	glVertex2f(x,y);
+    return 0;
+}
+
+static int gl_Color(lua_State* l)
+{
+    checkArgs(l, 4, 4, "Four arguments expected for gl.Color()");
+    float r = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Color must be a number", 0.0);
+    float g = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Color must be a number", 0.0);
+    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Color must be a number", 0.0);
+    float a = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Color must be a number", 0.0);
+	glColor4f(r,g,b,a);
+//	glColor4f(0.8f, 0.5f, 0.5f, 1.0f);
+    return 0;
+}
+
+static int gl_Translate(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Two arguments expected for gl.Translate()");
+    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Translate must be a number", 0.0);
+    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Translate must be a number", 0.0);
+	glTranslatef(x,y,0.0f);
+    return 0;
+}
+
+static int gl_BlendFunc(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Two arguments expected for gl.BlendFunc()");
+    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.BlendFunc must be a number", 0.0);
+    int j = (int)safeGetNumber(l, 2, WrongType, "argument 2 to gl.BlendFunc must be a number", 0.0);
+	glBlendFunc(i,j);
+    return 0;
+}
+
+static int gl_Begin(lua_State* l)
+{
+    checkArgs(l, 1, 1, "One argument expected for gl.Begin()");
+    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Begin must be a number", 0.0);
+	glBegin(i);
+    return 0;
+}
+
+static int gl_End(lua_State* l)
+{
+    checkArgs(l, 0, 0, "No arguments expected for gl.PopMatrix()");
+    glEnd();
+    return 0;
+}
+
+static int gl_Enable(lua_State* l)
+{
+    checkArgs(l, 1, 1, "One argument expected for gl.Enable()");
+    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Enable must be a number", 0.0);
+	glEnable(i);
+    return 0;
+}
+
+static int gl_Disable(lua_State* l)
+{
+    checkArgs(l, 1, 1, "One argument expected for gl.Disable()");
+    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Disable must be a number", 0.0);
+	glDisable(i);
+    return 0;
+}
+
+static int gl_MatrixMode(lua_State* l)
+{
+    checkArgs(l, 1, 1, "One argument expected for gl.MatrixMode()");
+    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.MatrixMode must be a number", 0.0);
+	glMatrixMode(i);
+    return 0;
+}
+
+static int gl_PopMatrix(lua_State* l)
+{
+    checkArgs(l, 0, 0, "No arguments expected for gl.PopMatrix()");
+    glPopMatrix();
+    return 0;
+}
+
+static int gl_LoadIdentity(lua_State* l)
+{
+    checkArgs(l, 0, 0, "No arguments expected for gl.LoadIdentity()");
+    glLoadIdentity();
+    return 0;
+}
+
+static int gl_PushMatrix(lua_State* l)
+{
+    checkArgs(l, 0, 0, "No arguments expected for gl.PushMatrix()");
+    glPushMatrix();
+    return 0;
+}
+
+static void RegisterValue(lua_State* l, const char* name, float n)
+{
+	lua_pushstring(l, name);
+	lua_pushnumber(l, n);
+	lua_settable(l, -3);
+}
+
+static void gl_loadlib(lua_State* l)
+{
+    lua_pushstring(l, "gl");
+    lua_newtable(l);
+	
+    RegisterMethod(l, "Frustum", gl_Frustum);
+    RegisterMethod(l, "Ortho", gl_Ortho);
+    RegisterMethod(l, "Color", gl_Color);
+    RegisterMethod(l, "TexCoord", gl_TexCoord);
+    RegisterMethod(l, "TexParameter", gl_TexParameter);
+    RegisterMethod(l, "Vertex", gl_Vertex);
+    RegisterMethod(l, "Translate", gl_Translate);
+    RegisterMethod(l, "BlendFunc", gl_BlendFunc);
+    RegisterMethod(l, "Begin", gl_Begin);
+    RegisterMethod(l, "End", gl_End);
+    RegisterMethod(l, "Enable", gl_Enable);
+    RegisterMethod(l, "Disable", gl_Disable);
+    RegisterMethod(l, "MatrixMode", gl_MatrixMode);
+    RegisterMethod(l, "PopMatrix", gl_PopMatrix);
+    RegisterMethod(l, "LoadIdentity", gl_LoadIdentity);
+    RegisterMethod(l, "PushMatrix", gl_PushMatrix);
+	
+    RegisterValue(l, "QUADS", GL_QUADS);
+    RegisterValue(l, "LIGHTING", GL_LIGHTING);
+    RegisterValue(l, "LINE_LOOP", GL_LINE_LOOP);
+    RegisterValue(l, "POLYGON", GL_POLYGON);
+    RegisterValue(l, "PROJECTION", GL_PROJECTION);
+    RegisterValue(l, "MODELVIEW", GL_MODELVIEW);
+    RegisterValue(l, "BLEND", GL_BLEND);
+    RegisterValue(l, "TEXTURE_2D", GL_TEXTURE_2D);
+    RegisterValue(l, "TEXTURE_MAG_FILTER", GL_TEXTURE_MAG_FILTER);
+    RegisterValue(l, "TEXTURE_MIN_FILTER", GL_TEXTURE_MIN_FILTER);
+    RegisterValue(l, "LINEAR", GL_LINEAR);
+    RegisterValue(l, "NEAREST", GL_NEAREST);
+    RegisterValue(l, "SRC_ALPHA", GL_SRC_ALPHA);
+    RegisterValue(l, "ONE_MINUS_SRC_ALPHA", GL_ONE_MINUS_SRC_ALPHA);
+    lua_settable(l, LUA_GLOBALSINDEX);
+
+    lua_pushstring(l, "glu");
+    lua_newtable(l);
+    RegisterMethod(l, "LookAt", glu_LookAt);
+    RegisterMethod(l, "Ortho2D", glu_Ortho2D);
+    lua_settable(l, LUA_GLOBALSINDEX);
+}
+
+// ==================== Font Object ====================
+
+static int font_new(lua_State* l, TextureFont* f)
+{
+    TextureFont** ud = static_cast<TextureFont**>(lua_newuserdata(l, sizeof(TextureFont*)));
+    *ud = f;
+
+    SetClass(l, _Font);
+
+    return 1;
+}
+
+static TextureFont* to_font(lua_State* l, int index)
+{
+    TextureFont** f = static_cast<TextureFont**>(lua_touserdata(l, index));
+
+    // Check if pointer is valid
+    if (f != NULL )
+    {
+            return *f;
+    }
+    return NULL;
+}
+
+static TextureFont* this_font(lua_State* l)
+{
+    TextureFont* f = to_font(l, 1);
+    if (f == NULL)
+    {
+        doError(l, "Bad font object!");
+    }
+
+    return f;
+}
+
+
+static int font_bind(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for font:bind()");
+
+    TextureFont* font = this_font(l);
+    font->bind();
+    return 0;
+}
+
+static int font_render(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for font:render");
+
+    const char* s = safeGetString(l, 2, AllErrors, "First argument to font:render must be a string");
+    TextureFont* font = this_font(l);
+	font->render(s);
+
+    return 0;
+}
+
+static int font_getheight(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for font:getheight()");
+
+    TextureFont* font = this_font(l);
+    lua_pushnumber(l, font->getHeight());
+    return 1;
+}
+
+static int font_tostring(lua_State* l)
+{
+    // TODO: print out the actual information about the font
+    lua_pushstring(l, "[Font]");
+
+    return 1;
+}
+
+static void CreateFontMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Font);
+
+    RegisterMethod(l, "__tostring", font_tostring);
+    RegisterMethod(l, "bind", font_bind);
+    RegisterMethod(l, "render", font_render);
+    RegisterMethod(l, "getheight", font_getheight);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
+// ==================== Image =============================================
+
+static int image_new(lua_State* l, Image* i)
+{
+    Image** ud = static_cast<Image**>(lua_newuserdata(l, sizeof(Image*)));
+    *ud = i;
+
+    SetClass(l, _Image);
+
+    return 1;
+}
+
+static Image* to_image(lua_State* l, int index)
+{
+    Image** image = static_cast<Image**>(lua_touserdata(l, index));
+
+    // Check if pointer is valid
+    if (image != NULL )
+    {
+            return *image;
+    }
+    return NULL;
+}
+
+static Image* this_image(lua_State* l)
+{
+    Image* image = to_image(l,1);
+    if (image == NULL)
+    {
+        doError(l, "Bad image object!");
+    }
+
+    return image;
+}
+
+static int image_getheight(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for image:getheight()");
+
+    Image* image = this_image(l);
+    lua_pushnumber(l, image->getHeight());
+    return 1;
+}
+
+static int image_getwidth(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for image:getwidth()");
+
+    Image* image = this_image(l);
+    lua_pushnumber(l, image->getWidth());
+    return 1;
+}
+
+static int image_tostring(lua_State* l)
+{
+    // TODO: print out the actual information about the image
+    lua_pushstring(l, "[Image]");
+
+    return 1;
+}
+
+static void CreateImageMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Image);
+
+    RegisterMethod(l, "__tostring", image_tostring);
+    RegisterMethod(l, "getheight", image_getheight);
+    RegisterMethod(l, "getwidth", image_getwidth);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
+// ==================== Texture ============================================
+
+static int texture_new(lua_State* l, Texture* t)
+{
+    Texture** ud = static_cast<Texture**>(lua_newuserdata(l, sizeof(Texture*)));
+    *ud = t;
+
+    SetClass(l, _Texture);
+
+    return 1;
+}
+
+static Texture* to_texture(lua_State* l, int index)
+{
+    Texture** texture = static_cast<Texture**>(lua_touserdata(l, index));
+
+    // Check if pointer is valid
+    if (texture != NULL )
+    {
+            return *texture;
+    }
+    return NULL;
+}
+
+static Texture* this_texture(lua_State* l)
+{
+    Texture* texture = to_texture(l,1);
+    if (texture == NULL)
+    {
+        doError(l, "Bad texture object!");
+    }
+
+    return texture;
+}
+
+static int texture_bind(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for texture:bind()");
+
+    Texture* texture = this_texture(l);
+    texture->bind();
+    return 0;
+}
+
+static int texture_getheight(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for texture:getheight()");
+
+    Texture* texture = this_texture(l);
+    lua_pushnumber(l, texture->getHeight());
+    return 1;
+}
+
+static int texture_getwidth(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for texture:getwidth()");
+
+    Texture* texture = this_texture(l);
+    lua_pushnumber(l, texture->getWidth());
+    return 1;
+}
+
+static int texture_tostring(lua_State* l)
+{
+    // TODO: print out the actual information about the texture
+    lua_pushstring(l, "[Texture]");
+
+    return 1;
+}
+
+static void CreateTextureMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Texture);
+
+    RegisterMethod(l, "__tostring", texture_tostring);
+    RegisterMethod(l, "getheight", texture_getheight);
+    RegisterMethod(l, "getwidth", texture_getwidth);
+    RegisterMethod(l, "bind", texture_bind);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+
+// ==================== object extensions ====================
+
+// TODO: This should be replaced by an actual Atmosphere object
+static int object_setatmosphere(lua_State* l)
+{
+    checkArgs(l, 23, 23, "22 arguments (!) expected to function object:setatmosphere");
+
+    Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    if (sel->body() != NULL)
+    {
+        Body* body = sel->body();
+        Atmosphere* atmosphere = body->getAtmosphere();
+        if (atmosphere != NULL)
+        {
+            float r = (float) safeGetNumber(l, 2, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            float g = (float) safeGetNumber(l, 3, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            float b = (float) safeGetNumber(l, 4, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            //			Color testColor(0.0f, 1.0f, 0.0f);
+            Color testColor(r, g, b);
+            atmosphere->lowerColor = testColor;
+            r = (float) safeGetNumber(l, 5, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            g = (float) safeGetNumber(l, 6, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            b = (float) safeGetNumber(l, 7, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            atmosphere->upperColor = Color(r, g, b);
+            r = (float) safeGetNumber(l, 8, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            g = (float) safeGetNumber(l, 9, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            b = (float) safeGetNumber(l, 10, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            atmosphere->skyColor = Color(r, g, b);
+            r = (float) safeGetNumber(l, 11, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            g = (float) safeGetNumber(l, 12, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            b = (float) safeGetNumber(l, 13, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            atmosphere->sunsetColor = Color(r, g, b);
+            r = (float) safeGetNumber(l, 14, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            g = (float) safeGetNumber(l, 15, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            b = (float) safeGetNumber(l, 16, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            //HWR			atmosphere->rayleighCoeff = Vector3(r, g, b);
+            r = (float) safeGetNumber(l, 17, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            g = (float) safeGetNumber(l, 18, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            b = (float) safeGetNumber(l, 19, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            //HWR			atmosphere->absorptionCoeff = Vector3(r, g, b);
+            b = (float) safeGetNumber(l, 20, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            atmosphere->mieCoeff = b;
+            b = (float) safeGetNumber(l, 21, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            atmosphere->mieScaleHeight = b;
+            b = (float) safeGetNumber(l, 22, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            atmosphere->miePhaseAsymmetry = b;
+            b = (float) safeGetNumber(l, 23, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
+            atmosphere->rayleighScaleHeight = b;
+            
+            body->setAtmosphere(*atmosphere);
+            cout << "set atmosphere\n";
+        }
+    }
+
+    return 0;
+}
+
+static void ExtendObjectMetaTable(lua_State* l)
+{
+    PushClass(l, _Object);
+    lua_rawget(l, LUA_REGISTRYINDEX);
+    if (lua_type(l, -1) != LUA_TTABLE)
+        cout << "Metatable for " << ClassNames[_Object] << " not found!\n";
+   RegisterMethod(l, "setatmosphere", object_setatmosphere);
+	lua_pop(l, 1);
+}
+// ==================== celestia extensions ====================
+
+static int celestia_log(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to function celestia:log");
+
+    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:log must be a string");
+	clog << s << "\n"; clog.flush();
+	return 0;
+}
+
+static int celestia_getparamstring(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to celestia:getparamstring()");
+    CelestiaCore* appCore = this_celestia(l);
+    const char* s = safeGetString(l, 2, AllErrors, "Argument to celestia:getparamstring must be a string");
+    std::string paramString; // HWR
+    CelestiaConfig* config = appCore->getConfig();
+    config->configParams->getString(s, paramString);
+    lua_pushstring(l,paramString.c_str());
+    return 1;
+}
+
+static int celestia_loadtexture(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
+    string s = safeGetString(l, 2, AllErrors, "Argument to celestia:loadtexture() must be a string");
+    Texture* t = LoadTextureFromFile(s);
+    if (t == NULL) return 0;
+    texture_new(l, t);
+
+    return 1;
+}
+
+static int celestia_loadfont(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
+    string s = safeGetString(l, 2, AllErrors, "Argument to celestia:loadfont() must be a string");
+    TextureFont* font = LoadTextureFont(s);
+    if (font == NULL) return 0;
+	font->buildTexture();
+	font_new(l, font);
+    return 1;
+}
+
+TextureFont* getTitleFont(CelestiaCore* appCore)
+{
+	return appCore->titleFont;
+}
+
+static int celestia_gettitlefont(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
+
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+	TextureFont* font = getTitleFont(appCore);
+    if (font == NULL) return 0;
+	font_new(l, font);
+    return 1;
+}
+
+
+static int celestia_settimeslice(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for celestia:settimeslice");
+    CelestiaCore* appCore = this_celestia(l);
+        
+    if (!lua_isnumber(l, 2) && !lua_isnil(l, 2))
+    {
+        doError(l, "Argument for celestia:settimeslice must be a number");
+    }
+    double timeslice = safeGetNumber(l, 2, AllErrors, "Argument to celestia:settimeslice must be a number");
+	if (timeslice == 0.0) timeslice = 0.1;
+	
+	LuaState* luastate = getLuaStateObject(l);
+	luastate->timeout = luastate->getTime() + timeslice;
+
+    return 0;
+}
+
+static int celestia_setluahook(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for celestia:setluahook");
+    CelestiaCore* appCore = this_celestia(l);
+        
+    if (!lua_istable(l, 2) && !lua_isnil(l, 2))
+    {
+        doError(l, "Argument for celestia:setluahook must be a table or nil");
+    }
+	
+    lua_pushlightuserdata(l, appCore);
+    lua_pushvalue(l, -2);
+    lua_settable(l, LUA_REGISTRYINDEX);
+    return 0;
+}
+
+static void ExtendCelestiaMetaTable(lua_State* l)
+{
+    PushClass(l, _Celestia);
+    lua_rawget(l, LUA_REGISTRYINDEX);
+    if (lua_type(l, -1) != LUA_TTABLE)
+        cout << "Metatable for " << ClassNames[_Celestia] << " not found!\n";
+    RegisterMethod(l, "log", celestia_log);
+    RegisterMethod(l, "settimeslice", celestia_settimeslice);
+    RegisterMethod(l, "setluahook", celestia_setluahook);
+    RegisterMethod(l, "getparamstring", celestia_getparamstring);
+    RegisterMethod(l, "gettitlefont", celestia_gettitlefont);
+    RegisterMethod(l, "loadtexture", celestia_loadtexture);
+    RegisterMethod(l, "loadfont", celestia_loadfont);
+    lua_pop(l, 1);
+}
+
+// ==================== loadlib =====================================================
+/*
+* This is an implementation of loadlib based on the dlfcn interface.
+* The dlfcn interface is available in Linux, SunOS, Solaris, IRIX, FreeBSD,
+* NetBSD, AIX 4.2, HPUX 11, and  probably most other Unix flavors, at least
+* as an emulation layer on top of native functions.
+*/
+
+#ifndef _WIN32
+extern "C" {
+#include <lualib.h>
+/* #include <lauxlib.h.h> */
+#include <dlfcn.h>
+}
+
+static int x_loadlib(lua_State *L)
+{
+/* temp -- don't have lauxlib
+ const char *path=luaL_checkstring(L,1);
+ const char *init=luaL_checkstring(L,2);
+*/
+cout << "loading lua lib\n"; cout.flush();
+
+ const char *path=lua_tostring(L,1);
+ const char *init=lua_tostring(L,2);
+ 
+ void *lib=dlopen(path,RTLD_NOW);
+ if (lib!=NULL)
+ {
+  lua_CFunction f=(lua_CFunction) dlsym(lib,init);
+  if (f!=NULL)
+  {
+   lua_pushlightuserdata(L,lib);
+   lua_pushcclosure(L,f,1);
+   return 1;
+  }
+ }
+ /* else return appropriate error messages */
+ lua_pushnil(L);
+ lua_pushstring(L,dlerror());
+ lua_pushstring(L,(lib!=NULL) ? "init" : "open");
+ if (lib!=NULL) dlclose(lib);
+ return 3;
+}
+#endif
+
+// ==================== Load Libraries ================================================
+
+static void loadLuaLibs(lua_State* state)
+{	
+#if LUA_VER >= 0x050100
+    openLuaLibrary(state, LUA_DBLIBNAME, luaopen_debug);
+#else
+    luaopen_debug(state);
+#endif
+
+    // TODO: Not required with Lua 5.1
+#if 0
+#ifndef _WIN32
+    lua_pushstring(state, "xloadlib");
+    lua_pushcfunction(state, x_loadlib);
+    lua_settable(state, LUA_GLOBALSINDEX);
+#endif 
+#endif
+
+    CreateObjectMetaTable(state);
+    CreateObserverMetaTable(state);
+    CreateCelestiaMetaTable(state);
+    CreatePositionMetaTable(state);
+    CreateVectorMetaTable(state);
+    CreateRotationMetaTable(state);
+    CreateFrameMetaTable(state);
+    CreateCelscriptMetaTable(state);
+    CreateFontMetaTable(state);
+    CreateImageMetaTable(state);
+    CreateTextureMetaTable(state);
+    ExtendCelestiaMetaTable(state);
+    ExtendObjectMetaTable(state);
+		
+    gl_loadlib(state);
+}
+
+
+void LuaState::allowSystemAccess()
+{
+#if LUA_VER >= 0x050100
+    openLuaLibrary(state, LUA_LOADLIBNAME, luaopen_package);
+    openLuaLibrary(state, LUA_IOLIBNAME, luaopen_io);
+#else
+    luaopen_io(state);
+#endif
+    ioMode = IOAllowed;
+}
+
+
+// ==================== Lua Hook Methods ================================================
+
+bool LuaState::callLuaHook(void* obj, const char* method)
+{
+    lua_pushlightuserdata(costate, obj);
+    lua_gettable(costate, LUA_REGISTRYINDEX);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    bool handled = false;    
+
+    lua_pushstring(costate, method);
+    lua_gettable(costate, -2);
+    if (lua_isfunction(costate, -1))
+    {
+        lua_pushvalue(costate, -2);          // push the Lua object the stack
+        lua_remove(costate, -3);        // remove the Lua object from the stack
+                
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 1, 1, 0) != 0)
+        {
+            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+        }
+        else
+        {
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+        }
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
+    
+    return handled;
+}
+
+
+bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
+{
+    lua_pushlightuserdata(costate, obj);
+    lua_gettable(costate, LUA_REGISTRYINDEX);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    bool handled = false;    
+
+    lua_pushstring(costate, method);
+    lua_gettable(costate, -2);
+    if (lua_isfunction(costate, -1))
+    {
+        lua_pushvalue(costate, -2);          // push the Lua object onto the stack
+        lua_remove(costate, -3);        // remove the Lua object from the stack
+
+        lua_pushlstring(costate, &ch, 1);          // push the char onto the stack
+                
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 2, 1, 0) != 0)
+        {
+            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+        }
+        else
+        {
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+        }
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
+    
+    return handled;
+}
+
+
+bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
+{
+    lua_pushlightuserdata(costate, obj);
+	lua_gettable(costate, LUA_REGISTRYINDEX);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    bool handled = false;    
+
+    lua_pushstring(costate, method);
+    lua_gettable(costate, -2);
+    if (lua_isfunction(costate, -1))
+    {
+        lua_pushvalue(costate, -2);          // push the Lua object onto the stack
+        lua_remove(costate, -3);        // remove the Lua object from the stack
+
+        lua_pushnumber(costate, x);          // push x onto the stack
+        lua_pushnumber(costate, y);          // push y onto the stack
+                
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 3, 1, 0) != 0)
+        {
+            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+        }
+        else
+        {
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+        }
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
+    
+    return handled;
+}
+
+
+bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int b)
+{
+    lua_pushlightuserdata(costate, obj);
+	lua_gettable(costate, LUA_REGISTRYINDEX);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    bool handled = false;    
+
+    lua_pushstring(costate, method);
+	lua_gettable(costate, -2);
+    if (lua_isfunction(costate, -1))
+    {
+        lua_pushvalue(costate, -2);          // push the Lua object onto the stack
+        lua_remove(costate, -3);        // remove the Lua object from the stack
+
+        lua_pushnumber(costate, x);          // push x onto the stack
+        lua_pushnumber(costate, y);          // push y onto the stack
+        lua_pushnumber(costate, b);          // push b onto the stack
+                
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 4, 1, 0) != 0)
+        {
+            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+        }
+        else
+        {
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+        }
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
+    
+    return handled;
+}
+
+
+bool LuaState::callLuaHook(void* obj, const char* method, double dt)
+{
+    lua_pushlightuserdata(costate, obj);
+    lua_gettable(costate, LUA_REGISTRYINDEX);
+    if (!lua_istable(costate, -1))
+    {
+        cerr << "Missing event handler table";
+        lua_pop(costate, 1);
+        return false;
+    }
+    bool handled = false;    
+
+    lua_pushstring(costate, method);
+    lua_gettable(costate, -2);
+    if (lua_isfunction(costate, -1))
+    {
+        lua_pushvalue(costate, -2);          // push the Lua object onto the stack
+        lua_remove(costate, -3);             // remove the Lua object from the stack
+        lua_pushnumber(costate, dt);
+                
+        timeout = getTime() + 1.0;
+        if (lua_pcall(costate, 2, 1, 0) != 0)
+        {
+            cerr << "Error while executing Lua Hook: " << lua_tostring(costate, -1) << "\n";
+        }
+        else
+        {
+           handled = lua_toboolean(costate, -1) == 1 ? true : false;
+        }
+        lua_pop(costate, 1);             // pop the return value
+    }
+    else
+    {
+        lua_pop(costate, 2);
+    }
+    
+    return handled;
 }
