@@ -60,18 +60,20 @@ public:
     double getTime() const;
     int screenshotCount;
     double timeout;
-    
+
+    // Celx script event handlers
     bool handleKeyEvent(const char* key);
     bool handleMouseButtonEvent(float x, float y, int button, bool down);
     bool handleTickEvent(double dt);
 
-	void LuaState::setLuaPath(const string& s);   // HWR
-	void LuaState::allowSystemAccess(); // HWR
-	bool LuaState::callLuaHook( void* obj, const char* method);    // HWR
-	bool LuaState::callLuaHook( void* obj, const char* method, const char ch);    // HWR
-	bool LuaState::callLuaHook( void* obj, const char* method, float x, float y); // HWR
-	bool LuaState::callLuaHook( void* obj, const char* method, float x, float y, int b); // HWR
-        bool LuaState::callLuaHook(void* obj, const char* method, double dt);
+    // Lua hook handling
+    void setLuaPath(const string& s);
+    void allowSystemAccess();
+    bool callLuaHook(void* obj, const char* method);
+    bool callLuaHook(void* obj, const char* method, const char ch);
+    bool callLuaHook(void* obj, const char* method, float x, float y);
+    bool callLuaHook(void* obj, const char* method, float x, float y, int b);
+    bool callLuaHook(void* obj, const char* method, double dt);
     
     enum IOMode {
         NoIO = 1,
