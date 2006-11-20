@@ -16,6 +16,7 @@
 #include "customorbit.h"
 #include "spiceorbit.h"
 #include "scriptorbit.h"
+#include "scriptrotation.h"
 #include "frame.h"
 #include "trajmanager.h"
 #include "rotationmanager.h"
@@ -209,7 +210,7 @@ CreateScriptedOrbit(Hash* orbitData,
                     const string& /*path*/)
 {
 #if !defined(CELX)
-    clog << "ScriptedOrbit not useable without scripting support.\n";
+    clog << "ScriptedOrbit not usable without scripting support.\n";
     return NULL;
 #else
 
@@ -490,6 +491,42 @@ CreatePrecessingRotationModel(Hash* rotationData,
 }
 
 
+static ScriptedRotation*
+CreateScriptedRotation(Hash* rotationData,
+                       const string& /*path*/)
+{
+#if !defined(CELX)
+    clog << "ScriptedRotation not usable without scripting support.\n";
+    return NULL;
+#else
+
+    // Function name is required
+    string funcName;
+    if (!rotationData->getString("Function", funcName))
+    {
+        clog << "Function name missing from scripted rotation definition.\n";
+        return NULL;
+    }
+
+    // Module name is optional
+    string moduleName;
+    rotationData->getString("Module", moduleName);
+
+    ScriptedRotation* scriptedRotation = new ScriptedRotation();
+    if (scriptedRotation != NULL)
+    {
+        if (!scriptedRotation->initialize(moduleName, funcName, rotationData))
+        {
+            delete scriptedRotation;
+            scriptedRotation = NULL;
+        }
+    }
+
+    return scriptedRotation;
+#endif
+}
+
+
 // Parse rotation information. Unfortunately, Celestia didn't originally have
 // RotationModel objects, so information about the rotation of the object isn't
 // grouped into a single subobject--the ssc fields relevant for rotation just
@@ -526,6 +563,22 @@ CreateRotationModel(Hash* planetData,
 #ifdef USE_SPICE
     // TODO: implement SPICE frame based rotations
 #endif
+
+    Value* scriptedRotationValue = planetData->getValue("ScriptedRotation");
+    if (scriptedRotationValue != NULL)
+    {
+        if (scriptedRotationValue->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect scripted rotation syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            rotationModel = CreateScriptedRotation(scriptedRotationValue->getHash(), path);
+            if (rotationModel != NULL)
+                return rotationModel;
+        }
+    }
 
     string sampOrientationFile;
     if (planetData->getString("SampledOrientation", sampOrientationFile))
