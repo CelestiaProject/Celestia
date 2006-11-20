@@ -11,42 +11,10 @@
 
 #include <cstdio>
 #include <cassert>
+#include "scriptobject.h"
 #include "scriptorbit.h"
 
-#ifndef LUA_VER
-#define LUA_VER 0x050000
-#endif
-
-#if LUA_VER >= 0x050100
-#include "lua.hpp"
-#else
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-}
-#endif
-
 using namespace std;
-
-static const char* ScriptedOrbitNamePrefix = "cel_script_orbit_";
-static unsigned int ScriptedOrbitNameIndex = 1;
-
-// global script context for scripted orbits and rotations
-static lua_State* scriptOrbitLuaState = NULL;
-
-
-void
-SetScriptedOrbitContext(lua_State* l)
-{
-    scriptOrbitLuaState = l;
-}
-
-
-lua_State*
-GetScriptedOrbitContext()
-{
-    return scriptOrbitLuaState;
-}
 
 
 ScriptedOrbit::ScriptedOrbit() :
@@ -63,38 +31,6 @@ ScriptedOrbit::~ScriptedOrbit()
 {
 }
 
-
-// Helper function to retrieve an entry from a table and leave
-// it on the top of the stack.
-static void
-getTableEntry(lua_State* state,
-              int tableIndex,
-              const string& key)
-{
-    lua_pushvalue(state, tableIndex);
-    lua_pushstring(state, key.c_str());
-    lua_gettable(state, -2);
-    lua_remove(state, -2);
-}
-
-
-// Helper function to retrieve a number value from a table; returns
-// the specified default value if the key doesn't exist in the table.
-static double
-safeGetLuaNumber(lua_State* state,
-                 int tableIndex,
-                 const string& key,
-                 double defaultValue)
-{
-    double v = defaultValue;
-
-    getTableEntry(state, tableIndex, key);
-    if (lua_isnumber(state, -1))
-        v = lua_tonumber(state, -1);
-    lua_pop(state, 1);
-
-    return v;
-}
 
 /*! Initialize the script orbit.
  *  moduleName is the name of a module that contains the orbit factory
@@ -128,7 +64,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     if (parameters == NULL)
         return false;
 
-    luaState = GetScriptedOrbitContext();
+    luaState = GetScriptedObjectContext();
     if (luaState == NULL)
     {
         clog << "ScriptedOrbits are currently disabled.\n";
@@ -218,12 +154,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
         return false;
     }
 
-    // Generate a unique name for this script orbit object so that
-    // we can refer to it later.
-    char buf[64];
-    sprintf(buf, "%s%u", ScriptedOrbitNamePrefix, ScriptedOrbitNameIndex);
-    ScriptedOrbitNameIndex++;
-    luaOrbitObjectName = string(buf);
+    luaOrbitObjectName = GenerateScriptObjectName();
 
     // Attach the name to the script orbit
     lua_pushstring(luaState, luaOrbitObjectName.c_str());
@@ -245,9 +176,9 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     lua_pop(luaState, 1);
 
     // Get the rest of the orbit parameters; they are all optional.
-    period          = safeGetLuaNumber(luaState, -1, "period", 0.0);
-    validRangeBegin = safeGetLuaNumber(luaState, -1, "begin", 0.0);
-    validRangeEnd   = safeGetLuaNumber(luaState, -1, "end", 0.0);
+    period          = SafeGetLuaNumber(luaState, -1, "period", 0.0);
+    validRangeBegin = SafeGetLuaNumber(luaState, -1, "begin", 0.0);
+    validRangeEnd   = SafeGetLuaNumber(luaState, -1, "end", 0.0);
 
     // Pop the orbit object off the stack
     lua_pop(luaState, 1);

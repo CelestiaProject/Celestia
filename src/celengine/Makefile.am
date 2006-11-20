@@ -14,6 +14,10 @@ if ENABLE_SPICE
 SPICESOURCES = spiceinterface.cpp spiceorbit.cpp
 endif
 
+if ENABLE_CELX
+SCRIPT_OBJ_SOURCES = scriptobject.cpp scriptorbit.cpp scriptrotation.cpp
+endif
+
 libcelengine_a_SOURCES = \
 	asterism.cpp \
 	astro.cpp \
@@ -63,7 +67,6 @@ libcelengine_a_SOURCES = \
 	rotationmanager.cpp \
 	samporbit.cpp \
 	samporient.cpp \
-	scriptorbit.cpp \
 	selection.cpp \
 	shadermanager.cpp \
 	simulation.cpp \
@@ -87,4 +90,4 @@ libcelengine_a_SOURCES = \
 	virtualtex.cpp \
         vsop87.cpp\
 	$(SPICESOURCES)
-
+	$(SCRIPT_OBJ_SOURCES)
