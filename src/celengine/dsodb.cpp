@@ -245,7 +245,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
         {
             autoGenCatalogNumber   = false;
-            objCatalogNumber          = (uint32) tokenizer.getNumberValue();
+            objCatalogNumber       = (uint32) tokenizer.getNumberValue();
             tokenizer.nextToken();
         }
 
@@ -283,6 +283,8 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
         if (obj != NULL && obj->load(objParams, resourcePath))
         {
+            delete objParamsValue;
+
             // Ensure that the DSO array is large enough
             if (nDSOs == capacity)
             {
@@ -342,8 +344,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         else
         {
             DPRINTF(1, "Bad Deep Sky Object definition--will continue parsing file.\n");
-            if (objParamsValue != NULL)
-                delete objParamsValue;
+            delete objParamsValue;
             return false;
         }
     }
