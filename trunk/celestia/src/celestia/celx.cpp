@@ -5511,7 +5511,7 @@ static int celestia_loadtexture(lua_State* l)
     lua_getinfo(l, "S", &ar);
     string base_dir = ar.source; // Lua file from which we are called
     if (base_dir[0] == '@') base_dir = base_dir.substr(1);
-    base_dir = base_dir.substr(0, base_dir.rfind(PATH_SEP)) + PATH_SEP;
+    base_dir = base_dir.substr(0, base_dir.rfind('/')) + '/';
     Texture* t = LoadTextureFromFile(base_dir + s);
     if (t == NULL) return 0;
     texture_new(l, t);
