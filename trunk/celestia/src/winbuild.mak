@@ -9,8 +9,13 @@ OUTDIR=Release
 OUTDIR=Debug
 !ENDIF
 
-#SPICE=enable
+
 CELX=enable
+
+# Automatically build with SPICE if we detect SPICE include files
+!if EXIST(..\inc\spice)
+SPICE=enable
+!ENDIF
 
 # Automatically set the Lua version to 5.1 if we detect Lua 5.1 include
 # files.
