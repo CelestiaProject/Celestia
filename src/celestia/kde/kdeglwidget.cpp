@@ -399,14 +399,11 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
         appCore->charEntered(CelestiaCore::Key_BackTab);
         break;
     default:
+        if (!handleSpecialKey(e, true))
         {
-            bool specialKey = handleSpecialKey(e, true);
-            if ( !specialKey && appCore->getTextEnterMode() != CelestiaCore::KbAutoComplete)
+            if ((e->text() != 0) && (e->text() != ""))
             {
-                if ((e->text() != 0) && (e->text() != ""))
-                {
-                    appCore->charEntered(e->text().utf8().data());
-                }
+                appCore->charEntered(e->text().utf8().data());
             }
         }
     }
