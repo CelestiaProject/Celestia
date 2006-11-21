@@ -79,6 +79,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
             DPRINTF(0, "Error parsing asterism %s\n", name.c_str());
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete asterisms;
+            delete chainsValue;
             return NULL;
         }
 
@@ -99,7 +100,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
                             chain->insert(chain->end(), star->getPosition());
                     }
                 }
-                
+
                 ast->addChain(*chain);
             }
         }
