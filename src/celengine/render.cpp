@@ -1351,7 +1351,7 @@ void Renderer::render(const Observer& observer,
     glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
 
     clearLabels();
-	clearSortedLabels();
+    clearSortedLabels();
 
     // Put all solar system bodies into the render list.  Stars close and
     // large enough to have discernible surface detail are also placed in
@@ -1715,59 +1715,60 @@ void Renderer::render(const Observer& observer,
         // Since we're rendering objects of a huge range of sizes spread over
         // vast distances, we can't just rely on the hardware depth buffer to
         // handle hidden surface removal without a little help. We'll partition
-        // the depth buffer into spans that can be rendered without running into
-        // terrible depth buffer precision problems. Typically, each body
+        // the depth buffer into spans that can be rendered without running
+        // into terrible depth buffer precision problems. Typically, each body
         // with an apparent size greater than one pixel is allocated its own
-        // depth buffer partition. However, this will not correctly handle
-        // overlapping objects.  If two objects overlap in depth, we must assign
-        // them to the same partition.
+        // depth buffer interval. However, this will not correctly handle
+        // overlapping objects.  If two objects overlap in depth, we must
+        // assign them to the same interval.
 
         depthPartitions.clear();
-        int nPartitions = 0;
+        int nIntervals = 0;
         float prevNear = 0.0f;
         if (nEntries > 0)
             prevNear = renderList[nEntries - 1].farZ * 1.01f;
 
         int i;
 
-        // Completely partition the depth buffer. Scan from back to front through
-        // all the renderable items that passed the culling test.
+        // Completely partition the depth buffer. Scan from back to front
+        // through all the renderable items that passed the culling test.
         for (i = nEntries - 1; i >= 0; i--)
         {
             // Only consider renderables that will occupy more than one pixel.
             if (renderList[i].discSizeInPixels > 1)
             {
-                if (nPartitions == 0 || renderList[i].farZ >= depthPartitions[nPartitions - 1].nearZ)
+                if (nIntervals == 0 || renderList[i].farZ >= depthPartitions[nIntervals - 1].nearZ)
                 {
-                    // This object spans a depth region that's disjoint with the current span, so
-                    // create a new depth interval for it, and another partition to fill the gap
-                    // between the last interval.
+                    // This object spans a depth interval that's disjoint with
+                    // the current interval, so create a new one for it, and
+                    // another interval to fill the gap between the last
+                    // interval.
                     DepthBufferPartition partition;
-                    partition.index = nPartitions;
+                    partition.index = nIntervals;
                     partition.nearZ = renderList[i].farZ;
                     partition.farZ = prevNear;
 
-                    // Omit null partitions
+                    // Omit null intervals
                     // TODO: Is this necessary? Shouldn't the >= test prevent this?
                     if (partition.nearZ != partition.farZ)
                     {
                         depthPartitions.push_back(partition);
-                        nPartitions++;
+                        nIntervals++;
                     }
 
-                    partition.index = nPartitions;
+                    partition.index = nIntervals;
                     partition.nearZ = renderList[i].nearZ;
                     partition.farZ = renderList[i].farZ;
                     depthPartitions.push_back(partition);
-                    nPartitions++;
+                    nIntervals++;
 
                     prevNear = partition.nearZ;
                 }
                 else
                 {
-                    // This object overlaps the current span; expand the span so that it completely
-                    // contains the object.
-                    DepthBufferPartition& partition = depthPartitions[nPartitions - 1];
+                    // This object overlaps the current span; expand the
+                    // interval so that it completely contains the object.
+                    DepthBufferPartition& partition = depthPartitions[nIntervals - 1];
                     partition.nearZ = max(partition.nearZ, renderList[i].nearZ);
                     partition.farZ = min(partition.farZ, renderList[i].farZ);
                     prevNear = partition.nearZ;
@@ -1775,21 +1776,24 @@ void Renderer::render(const Observer& observer,
             }
         }
 
-        // Add one last partition for the span from 0 to the front of the nearest object
+        // Add one last interval for the span from 0 to the front of the
+        // nearest object
         {
-            // TODO: closest object may not be at entry 0, since objects are sorted
-            // by far distance.
+            // TODO: closest object may not be at entry 0, since objects are
+            // sorted by far distance.
+            // TODO: The factor of 0.1 needs to be adjusted to avoid clipping
+            // problems.
             float closest = prevNear * 0.1f;
             if (nEntries > 0)
                 closest = max(closest, renderList[0].nearZ);
 
             DepthBufferPartition partition;
-            partition.index = nPartitions;
+            partition.index = nIntervals;
             partition.nearZ = closest;
             partition.farZ = prevNear;
             depthPartitions.push_back(partition);
 
-            nPartitions++;
+            nIntervals++;
         }
 
         // If orbits are enabled, adjust the farthest partition so that it can contain the
@@ -1808,18 +1812,19 @@ void Renderer::render(const Observer& observer,
         vector<Label>::iterator label = depthSortedLabels.begin();
 
         // Render everything that wasn't culled.
-        float partitionSize = 1.0f / (float) max(1, nPartitions);
+        float intervalSize = 1.0f / (float) max(1, nIntervals);
         i = nEntries - 1;
-        for (int partition = 0; partition < nPartitions; partition++)
+        for (int interval = 0; interval < nIntervals; interval++)
         {
-            float nearPlaneDistance = -depthPartitions[partition].nearZ;
-            float farPlaneDistance  = -depthPartitions[partition].farZ;
+            float nearPlaneDistance = -depthPartitions[interval].nearZ;
+            float farPlaneDistance  = -depthPartitions[interval].farZ;
 
-            // Set the depth range for this partition--each partition is allocated an
+            // Set the depth range for this interval--each interval is allocated an
             // equal section of the depth buffer.
-            glDepthRange(1.0f - (float) (partition + 1) * partitionSize, 1.0f - (float) partition * partitionSize);
+            glDepthRange(1.0f - (float) (interval + 1) * intervalSize,
+                         1.0f - (float) interval * intervalSize);
 
-            // Set up a perspective projection using the current partition's near and
+            // Set up a perspective projection using the current interval's near and
             // far clip planes.
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -1830,19 +1835,19 @@ void Renderer::render(const Observer& observer,
             glMatrixMode(GL_MODELVIEW);
 
 #if DEBUG_COALESCE
-            clog << "partition: " << partition <<
-                    ", near: " << -depthPartitions[partition].nearZ <<
-                    ", far: " << -depthPartitions[partition].farZ <<
+            clog << "interval: " << interval <<
+                    ", near: " << -depthPartitions[interval].nearZ <<
+                    ", far: " << -depthPartitions[interval].farZ <<
                     "\n";
 #endif
-            int firstInPartition = i;
+            int firstInInterval = i;
 
             // Render just the opaque objects in the first pass
-            while (i >= 0 && renderList[i].farZ < depthPartitions[partition].nearZ)
+            while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
             {
-                // This partition should completely contain the item
+                // This interval should completely contain the item
                 // Unless it's just a point?
-                //assert(renderList[i].nearZ <= depthPartitions[partition].near);
+                //assert(renderList[i].nearZ <= depthPartitions[interval].near);
 
 #if DEBUG_COALESCE
                 if (renderList[i].body != NULL)
@@ -1872,9 +1877,11 @@ void Renderer::render(const Observer& observer,
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_DEPTH_TEST);
                 if ((renderFlags & ShowSmoothLines) != 0)
+                {
                     enableSmoothLines();
+                }
 
-                // Scan through the list of orbits and render any that overlap this partition
+                // Scan through the list of orbits and render any that overlap this interval
                 for (vector<OrbitPathListEntry>::const_iterator orbitIter = orbitPathList.begin();
                      orbitIter != orbitPathList.end(); orbitIter++)
                 {
@@ -1892,8 +1899,8 @@ void Renderer::render(const Observer& observer,
             }
 
             // Render transparent objects in the second pass
-            i = firstInPartition;
-            while (i >= 0 && renderList[i].farZ < depthPartitions[partition].nearZ)
+            i = firstInInterval;
+            while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
             {
                 if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
                     renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance);
@@ -1901,8 +1908,8 @@ void Renderer::render(const Observer& observer,
                 i--;
             }
 
-            // Render labels in this partition
-            label = renderSortedLabels(label, -depthPartitions[partition].nearZ, FontNormal);
+            // Render labels in this interval
+            label = renderSortedLabels(label, -depthPartitions[interval].nearZ, FontNormal);
             glDisable(GL_DEPTH_TEST);
         }
 
@@ -6243,9 +6250,13 @@ class StarRenderer : public ObjectRenderer<Star, float>
     Renderer::StarVertexBuffer*      starVertexBuffer;
     Renderer::PointStarVertexBuffer* pointStarVertexBuffer;
 
+    const StarDatabase* starDB;
+
     bool   useScaledDiscs;
     GLenum starPrimitive;
     float  maxDiscSize;
+
+    float cosFOV;
 
     const ColorTemperatureTable* colorTemp;
 };
@@ -6257,6 +6268,7 @@ StarRenderer::StarRenderer() :
     pointStarVertexBuffer(NULL),
     useScaledDiscs       (false),
     maxDiscSize          (1.0f),
+    cosFOV               (1.0f),
     colorTemp            (NULL)
 {
 }
@@ -6318,6 +6330,22 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             float radius = star.getRadius();
             discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
             ++nClose;
+        }
+
+        // Place labels for stars brighter than the specified label threshold brightness
+        if ((labelMode & Renderer::StarLabels) && appMag < labelThresholdMag)
+        {
+            Vec3f starDir = relPos;
+            starDir.normalize();
+            if (dot(starDir, viewNormal) > cosFOV)
+            {
+                char nameBuffer[Renderer::MaxLabelLength];
+                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
+                renderer->addLabel(nameBuffer,
+                                   Color(0.5f, 0.5f, 1.0f, 1.0f),
+                                   Point3f(relPos.x, relPos.y, relPos.z));
+                nLabelled++;
+            }
         }
 
         if (discSizeInPixels <= 1)
@@ -6441,7 +6469,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
 
     vector<RenderListEntry>*         renderList;
     Renderer::PointStarVertexBuffer* starVertexBuffer;
-	Renderer::PointStarVertexBuffer* glareVertexBuffer;
+    Renderer::PointStarVertexBuffer* glareVertexBuffer;
 
     const StarDatabase* starDB;
 
@@ -6620,6 +6648,17 @@ static Point3f microLYToLY(const Point3f& p)
 }
 
 
+// Calculate the maximum field of view (from top left corner to bottom right) of
+// a frustum with the specified aspect ratio (width/height) and vertical field of
+// view. We follow the convention used elsewhere and use units of degrees for
+// the field of view angle.
+static double calcMaxFOV(double fovY_degrees, double aspectRatio)
+{
+    double l = 1.0 / tan(degToRad(fovY_degrees / 2.0));
+    return radToDeg(atan(sqrt(aspectRatio * aspectRatio + 1.0) / l)) * 2.0;
+}
+
+
 void Renderer::renderStars(const StarDatabase& starDB,
                            float faintestMagNight,
                            const Observer& observer)
@@ -6628,6 +6667,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
     Point3f obsPos = microLYToLY((Point3f) observer.getPosition());
 
     starRenderer.context          = context;
+    starRenderer.renderer         = this;
+    starRenderer.starDB           = &starDB;
     starRenderer.observer         = &observer;
     starRenderer.obsPos           = obsPos;
     starRenderer.viewNormal       = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
@@ -6636,6 +6677,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.starVertexBuffer = starVertexBuffer;
     starRenderer.pointStarVertexBuffer = pointStarVertexBuffer;
     starRenderer.fov              = fov;
+    starRenderer.cosFOV            = (float) cos(degToRad(calcMaxFOV(fov, (float) windowWidth / (float) windowHeight)) / 2.0f);
 
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     starRenderer.size             = pixelSize * 1.6f / corrFac;
@@ -6646,6 +6688,10 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.faintestMagNight = faintestMagNight;
     starRenderer.saturationMag    = saturationMag;
     starRenderer.distanceLimit    = distanceLimit;
+
+    // = 1.0 at startup
+    float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
+    starRenderer.labelThresholdMag = max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
     if (starStyle == PointStars || useNewStarRendering)
     {
@@ -6705,16 +6751,6 @@ void Renderer::renderStars(const StarDatabase& starDB,
     renderParticles(glareParticles, observer.getOrientation());
 }
 
-
-// Calculate the maximum field of view (from top left corner to bottom right) of
-// a frustum with the specified aspect ratio (width/height) and vertical field of
-// view. We follow the convention used elsewhere and use units of degrees for
-// the field of view angle.
-static double calcMaxFOV(double fovY_degrees, double aspectRatio)
-{
-    double l = 1.0 / tan(degToRad(fovY_degrees / 2.0));
-    return radToDeg(atan(sqrt(aspectRatio * aspectRatio + 1.0) / l)) * 2.0;
-}
 
 void Renderer::renderPointStars(const StarDatabase& starDB,
                                 float faintestMagNight,
