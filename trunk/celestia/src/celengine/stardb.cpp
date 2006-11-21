@@ -1141,6 +1141,8 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         Hash* starData = starDataValue->getHash();
 
         Star* star   = createStar(catalogNumber, starData, resourcePath, !isStar);
+        delete starDataValue;
+
         if (star != NULL)
         {
             // Ensure that the star array is large enough
