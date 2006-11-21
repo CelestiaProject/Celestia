@@ -88,6 +88,7 @@ static FlagMap RenderFlagMap;
 static FlagMap LabelFlagMap;
 static FlagMap LocationFlagMap;
 static FlagMap BodyTypeMap;
+static FlagMap OverlayElementMap;
 static bool mapsInitialized = false;
 
 // select which type of error will be fatal (call lua_error) and
@@ -185,6 +186,13 @@ static void initLocationFlagMap()
     LocationFlagMap["other"] = Location::Other;
 }
 
+static void initOverlayElementMap()
+{
+    OverlayElementMap["Time"] = CelestiaCore::ShowTime;
+    OverlayElementMap["Velocity"] = CelestiaCore::ShowVelocity;
+    OverlayElementMap["Selection"] = CelestiaCore::ShowSelection;
+    OverlayElementMap["Frame"] = CelestiaCore::ShowFrame;
+}
 
 #if LUA_VER >= 0x050100
 // Load a Lua library--in Lua 5.1, the luaopen_* functions cannot be called
@@ -208,6 +216,7 @@ static void initMaps()
         initLabelFlagMap();
         initBodyTypeMap();
         initLocationFlagMap();
+        initOverlayElementMap();
     }
     mapsInitialized = true;
 }
@@ -4000,6 +4009,77 @@ static int celestia_getorbitflags(lua_State* l)
     return 1;
 }
 
+static int celestia_setoverlayelements(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:setoverlayelements()");
+    CelestiaCore* appCore = this_celestia(l);
+    if (!lua_istable(l, 2))
+    {
+        doError(l, "Argument to celestia:setoverlayelements() must be a table");
+    }
+
+    int overlayElements = appCore->getOverlayElements();
+    lua_pushnil(l);
+    while (lua_next(l, -2) != 0)
+    {
+        string key;
+        bool value = false;
+        if (lua_isstring(l, -2))
+        {
+            key = lua_tostring(l, -2);
+        }
+        else
+        {
+            doError(l, "Keys in table-argument to celestia:setoverlayelements() must be strings");
+        }
+        if (lua_isboolean(l, -1))
+        {
+            value = lua_toboolean(l, -1);
+        }
+        else
+        {
+            doError(l, "Values in table-argument to celestia:setoverlayelements() must be boolean");
+        }
+        if (OverlayElementMap.count(key) == 0)
+        {
+            cerr << "Unknown key: " << key << "\n";
+        }
+        else
+        {
+            int element = OverlayElementMap[key];
+            if (value)
+            {
+                overlayElements |= element;
+            }
+            else
+            {
+                overlayElements &= ~element;
+            }
+        }
+        lua_pop(l,1);
+    }
+    appCore->setOverlayElements(overlayElements);
+    return 0;
+}
+
+static int celestia_getoverlayelements(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getoverlayelements()");
+    CelestiaCore* appCore = this_celestia(l);
+    lua_newtable(l);
+    FlagMap::const_iterator it = OverlayElementMap.begin();
+    const int overlayElements = appCore->getOverlayElements();
+    while (it != OverlayElementMap.end())
+    {
+        string key = it->first;
+        lua_pushstring(l, key.c_str());
+        lua_pushboolean(l, (it->second & overlayElements) != 0);
+        lua_settable(l,-3);
+        it++;
+    }
+    return 1;
+}
+
 static int celestia_setfaintestvisible(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
@@ -4815,6 +4895,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
     RegisterMethod(l, "getorbitflags", celestia_getorbitflags);
     RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
+    RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
+    RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
     RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
     RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
     RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
@@ -5228,6 +5310,15 @@ static int font_render(lua_State* l)
     return 0;
 }
 
+static int font_getwidth(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for font:getwidth");
+    const char* s = safeGetString(l, 2, AllErrors, "Argument to font:getwidth must be a string");
+    TextureFont* font = this_font(l);
+    lua_pushnumber(l, font->getWidth(s));
+    return 1;
+}
+
 static int font_getheight(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for font:getheight()");
@@ -5252,6 +5343,7 @@ static void CreateFontMetaTable(lua_State* l)
     RegisterMethod(l, "__tostring", font_tostring);
     RegisterMethod(l, "bind", font_bind);
     RegisterMethod(l, "render", font_render);
+    RegisterMethod(l, "getwidth", font_getwidth);
     RegisterMethod(l, "getheight", font_getheight);
 
     lua_pop(l, 1); // remove metatable from stack
@@ -5515,7 +5607,6 @@ static int celestia_loadtexture(lua_State* l)
     Texture* t = LoadTextureFromFile(base_dir + s);
     if (t == NULL) return 0;
     texture_new(l, t);
-
     return 1;
 }
 
@@ -5527,6 +5618,22 @@ static int celestia_loadfont(lua_State* l)
     if (font == NULL) return 0;
 	font->buildTexture();
 	font_new(l, font);
+    return 1;
+}
+
+TextureFont* getFont(CelestiaCore* appCore)
+{
+       return appCore->font;
+}
+
+static int celestia_getfont(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
+
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+       TextureFont* font = getFont(appCore);
+    if (font == NULL) return 0;
+       font_new(l, font);
     return 1;
 }
 
@@ -5545,7 +5652,6 @@ static int celestia_gettitlefont(lua_State* l)
 	font_new(l, font);
     return 1;
 }
-
 
 static int celestia_settimeslice(lua_State* l)
 {
@@ -5591,6 +5697,7 @@ static void ExtendCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "settimeslice", celestia_settimeslice);
     RegisterMethod(l, "setluahook", celestia_setluahook);
     RegisterMethod(l, "getparamstring", celestia_getparamstring);
+    RegisterMethod(l, "getfont", celestia_getfont);
     RegisterMethod(l, "gettitlefont", celestia_gettitlefont);
     RegisterMethod(l, "loadtexture", celestia_loadtexture);
     RegisterMethod(l, "loadfont", celestia_loadfont);
