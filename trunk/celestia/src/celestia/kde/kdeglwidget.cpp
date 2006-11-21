@@ -390,7 +390,6 @@ bool KdeGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
 
 void KdeGlWidget::keyPressEvent( QKeyEvent* e )
 {
-//    static bool inputMode = false;        //Unused
     switch (e->key())
     {
     case Key_Escape:
@@ -400,11 +399,14 @@ void KdeGlWidget::keyPressEvent( QKeyEvent* e )
         appCore->charEntered(CelestiaCore::Key_BackTab);
         break;
     default:
-        if (!handleSpecialKey(e, true) || appCore->getTextEnterMode() != CelestiaCore::KbNormal)
         {
-            if ((e->text() != 0) && (e->text() != ""))
+            bool specialKey = handleSpecialKey(e, true);
+            if ( !specialKey && appCore->getTextEnterMode() != CelestiaCore::KbAutoComplete)
             {
-                appCore->charEntered(e->text().utf8().data());
+                if ((e->text() != 0) && (e->text() != ""))
+                {
+                    appCore->charEntered(e->text().utf8().data());
+                }
             }
         }
     }
