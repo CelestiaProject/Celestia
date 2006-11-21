@@ -374,8 +374,6 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
                               (unsigned int) tileSize,
                               tilePrefix,
                               tileType);
-
-    return NULL;
 }
 
 
@@ -395,12 +393,16 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const string& path)
     if (texParamsValue == NULL || texParamsValue->getType() != Value::HashType)
     {
         DPRINTF(0, "Error parsing virtual texture\n");
+        delete texParamsValue;
         return NULL;
     }
 
     Hash* texParams = texParamsValue->getHash();
 
-    return CreateVirtualTexture(texParams, path);
+    VirtualTexture* virtualTex  = CreateVirtualTexture(texParams, path);
+    delete texParamsValue;
+
+    return virtualTex;
 }
 
 
