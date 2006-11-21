@@ -187,6 +187,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
         KbPassToScript   = 2,
     };        
 
+    enum
+    {
+        ShowNoElement   = 0x001,
+        ShowTime = 0x002,
+        ShowVelocity  = 0x004,
+        ShowSelection    = 0x008,
+        ShowFrame   = 0x010,
+    };
+
     typedef void (*ContextMenuFunc)(float, float, Selection);
 
  public:
@@ -266,6 +275,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int getHudDetail();
     void setHudDetail(int);
+    int getOverlayElements() const;
+    void setOverlayElements(int);
 
     void setContextMenuCallback(ContextMenuFunc);
 
@@ -356,6 +367,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int typedTextCompletionIdx;
     int textEnterMode;
     int hudDetail;
+    int overlayElements;
     bool wireframe;
     bool editMode;
     bool altAzimuthMode;
@@ -439,6 +451,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #ifdef CELX
     friend View* getViewByObserver(CelestiaCore*, Observer*);
     friend void getObservers(CelestiaCore*, std::vector<Observer*>&);
+    friend TextureFont* getFont(CelestiaCore*);
     friend TextureFont* getTitleFont(CelestiaCore*);
 #endif
 };
