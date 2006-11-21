@@ -303,6 +303,7 @@ CelestiaCore::CelestiaCore() :
     typedTextCompletionIdx(-1),
     textEnterMode(KbNormal),
     hudDetail(1),
+    overlayElements(ShowTime | ShowVelocity | ShowSelection | ShowFrame),
     wireframe(false),
     editMode(false),
     altAzimuthMode(false),
@@ -3087,7 +3088,9 @@ void CelestiaCore::renderOverlay()
         }
     }
 
-    if (hudDetail > 0)
+    setlocale(LC_NUMERIC, "");
+
+    if (hudDetail > 0 && (overlayElements & ShowTime))
     {
         // Time and date
         glPushMatrix();
@@ -3163,8 +3166,6 @@ void CelestiaCore::renderOverlay()
             *overlay << '\n';
         }
 
-        setlocale(LC_NUMERIC, "");
-
         {
             if (abs(abs(timeScale) - 1) < 1e-6)
             {
@@ -3195,7 +3196,10 @@ void CelestiaCore::renderOverlay()
 
         overlay->endText();
         glPopMatrix();
-
+    }
+      
+    if (hudDetail > 0 && (overlayElements & ShowVelocity))
+    {
         // Speed
         glPushMatrix();
         glTranslatef(0.0f, (float) (fontHeight * 2 + 5), 0.0f);
@@ -3222,7 +3226,10 @@ void CelestiaCore::renderOverlay()
 
         overlay->endText();
         glPopMatrix();
+    }
 
+    if (hudDetail > 0 && (overlayElements & ShowFrame))
+    {
         // Field of view and camera mode in lower right corner
         glPushMatrix();
         glTranslatef((float) (width - emWidth * 15),
@@ -3302,7 +3309,7 @@ void CelestiaCore::renderOverlay()
 
     // Selection info
     Selection sel = sim->getSelection();
-    if (!sel.empty() && hudDetail > 0)
+    if (!sel.empty() && hudDetail > 0 && (overlayElements & ShowSelection))
     {
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
@@ -4254,6 +4261,15 @@ void CelestiaCore::setHudDetail(int newHudDetail)
     notifyWatchers(VerbosityLevelChanged);
 }
 
+int CelestiaCore::getOverlayElements() const
+{
+    return overlayElements;
+}
+
+void CelestiaCore::setOverlayElements(int _overlayElements)
+{
+    overlayElements = _overlayElements;
+}
 
 void CelestiaCore::initMovieCapture(MovieCapture* mc)
 {
