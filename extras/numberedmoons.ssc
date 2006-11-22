@@ -2013,7 +2013,7 @@
 # "Orbits and photometry of Pluto's satellites: Charon, S/2005 P1
 # and S/2005 P2" Buie et al. http://arxiv.org/abs/astro-ph/0512491
 
-"Hydra" "Sol/Pluto"
+"Hydra" "Sol/Pluto-Charon"
 {
 	Texture	 	"asteroid.jpg" # "spectrally neutral"
 	Mesh		"asteroid.cms"
@@ -2021,22 +2021,27 @@
 	
 	InfoURL "http://www.boulder.swri.edu/plutonews/"
 
+	# Elements from Buie et al. referenced to J2000 Earth equator
+	OrbitFrame {
+		EquatorJ2000 { Center "Sol/Pluto-Charon" }
+	}	
+
 	EllipticalOrbit
 	{
 	Epoch		2452600.5	# 2002 Nov 22
 	Period		38.2065
 	SemiMajorAxis	64780
 	Eccentricity	0.0052
-	Inclination	0.25
-	AscendingNode	13
-	ArgOfPericenter	336.9
-	MeanAnomaly     122.6
+	Inclination       96.36
+        AscendingNode    223.173
+	LongOfPericenter 200.1
+	MeanLongitude    322.71
 	}
 
 	Albedo 0.35 # estimate, based on Charon
 }
 
-"Nix" "Sol/Pluto"
+"Nix" "Sol/Pluto-Charon"
 {
 	Texture	 	"asteroid.jpg"
 #	Color   [ 0.65 0.45 0.35 ] 	# reddish shade initially reported, 
@@ -2047,16 +2052,21 @@
 	
 	InfoURL "http://www.boulder.swri.edu/plutonews/"
 
+	# Elements from Buie et al. referenced to J2000 Earth equator
+	OrbitFrame {
+		EquatorJ2000 { Center "Sol/Pluto-Charon" }
+	}	
+
 	EllipticalOrbit
 	{
 	Epoch		2452600.5	# 2002 Nov 22
 	Period		24.8562
 	SemiMajorAxis	48675
 	Eccentricity	0.0023
-	Inclination	0.1
-	AscendingNode	13
-	ArgOfPericenter	352.9
-	MeanAnomaly     267.1
+	Inclination       96.18
+	AscendingNode    223.14
+	LongOfPericenter 216
+	MeanLongitude    123.14
 	}
 
 	Albedo 0.35 # estimate, based on Charon
