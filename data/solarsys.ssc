@@ -74,15 +74,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	
 	# SpecularTexture "earth-spec.*"
 	Color [ 0.85 0.85 1.0 ]
-	SpecularColor [ 0.5 0.5 0.55 ]
+	SpecularColor [ 0.8 0.8 0.85 ]
 	SpecularPower 25.0
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.3
 	Radius 6378.140  # equatorial
 	# Oblateness 0.0034
-
-	# BumpMap "earthbump.*"
-	# BumpHeight 4.5
 
 	Atmosphere {
 		Height 60
@@ -90,10 +87,14 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 		Upper [ 0.26 0.47 0.84 ]
 		Sky [ 0.40 0.6 1.0 ]
 		Sunset [ 1.0 0.6 0.2 ]
-		# Sunset [ 0.3 1.0 0.5 ]
 		CloudHeight 7
 		CloudSpeed 65
 		CloudMap "earth-clouds.*"
+
+		Mie 0.001
+		MieAsymmetry -0.25
+		Rayleigh [ 0.001 0.0025 0.006 ]
+		MieScaleHeight 12
 	}
 
 	CustomOrbit "vsop87-earth"
@@ -107,12 +108,22 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	        MeanLongitude   100.464
 	}
 
+#       Very approximate precession for Earth
+#	PrecessingRotation
+#	{
+#		Period           23.9344694 # 23.93419
+#		Inclination     -23.4392911
+#		Offset          280.5    # offset at default epoch J2000
+#		PrecessionPeriod 26000
+#	}
+
 	RotationPeriod   23.9344694 # 23.93419
-	Obliquity        -23.45
+	Obliquity        -23.4392911
 	RotationOffset   280.5    # offset at default epoch J2000
 
 	Albedo            0.30
 }
+
 
 "Moon" "Sol/Earth"
 {
@@ -132,12 +143,22 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 		Inclination      5.15
 	}
 
-	Obliquity		23.45 # mean axis
-	EquatorAscendingNode	 0.0  # mean axis
-	RotationOffset 		38
+	OrbitFrame {
+		EquatorJ2000 { Center "Sol/Earth" }
+	}
+
+	UniformRotation
+	{
+	    Inclination        23.45
+            AscendingNode       0.0
+            RotationOffset     38
+	}
+
+	LunarLambert 1.0
 
 	Albedo           0.12
 }
+
 
 "Mars" "Sol"
 {
@@ -145,6 +166,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Texture "mars8k.dds"
 	BumpMap "marsbump.*"
 	BumpHeight 2.5
+	
 	Color   [ 1 0.75 0.7 ]
 	HazeColor [ 1 1 1 ]
 	HazeDensity 0.45
@@ -159,6 +181,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
                 Sunset [ 0.7 0.7 0.8 ] 
                 # Slightly bluish sunset, as seen in true color pictures
                 # from Pathfinder
+
+		Mie 0.0024
+		MieAsymmetry -0.15
+		Rayleigh [ 0.0010 0.0006 0.0003 ]
+		Absorption [ 0 0 0 ]
+		MieScaleHeight 20
 	}
 
 	CustomOrbit "vsop87-mars"
@@ -181,12 +209,11 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Albedo            0.150
 }
 
+
 "Phobos" "Sol/Mars"
 {
 	Mesh "phobos.cmod"
 	Texture "phobos.*"
-	# BumpMap "phobosbump.jpg"
-	# BumpHeight 5
 	Radius 13.0 # maximum semi-axis
 	MeshCenter [ -0.233 -0.156 -0.168 ]
 
@@ -690,18 +717,18 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 "Titan" "Sol/Saturn"
 {
 	Texture  "titan.*"
-        Color              [ 0.8 0.2 0.45 ]
+        Color                [ 0.8 0.2 0.45 ]
         # HazeColor          [ 0.781 0.629 0.975 ]
 	HazeDensity        0.6
 	Radius          2575
 
 	Atmosphere {
-		Height      200
-                Lower       [ 0.477 0.367 0.211 ]
-                Upper       [ 0.96 0.805 0.461 ]
-                Sky         [ 0.3 0 0 ]
+		Height     200
+		Lower      [ 0.477 0.367 0.211 ]
+		Upper      [ 0.96 0.805 0.461 ]
+		Sky        [ 0.3 0 0 ]
 		CloudHeight   3
-		CloudSpeed   65
+		CloudSpeed 65
 		CloudMap "titan-clouds.*"
 	}
 
@@ -847,6 +874,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 		Texture "uranus-rings.png"
 	}
 }
+
 
 "Miranda" "Sol/Uranus"
 {
@@ -1146,38 +1174,46 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Albedo          0.155
 }
 
+Point "Pluto-Charon" "Sol"
+{
+    CustomOrbit "pluto"
+}
+
 "Pluto" "Sol"
 {
-	Texture "pluto-lok.*"
-	SpecularTexture "pluto-lok-spec.*"
+    Texture "pluto-lok.*"
+    SpecularTexture "pluto-lok-spec.*"
     SpecularColor            [ 0.135 0.12 0.08 ]
     SpecularPower             9.5
 
-	Radius 1151
+    Radius 1151
 
-	CustomOrbit "pluto"
-	EllipticalOrbit
-	{
-	Period            248.54
-	SemiMajorAxis     39.48168677
-	Eccentricity       0.24880766
-	Inclination       17.14175
-	AscendingNode    110.30347
-	LongOfPericenter 224.06776
-    MeanLongitude    238.92881
-	}
+    OrbitFrame {
+        EclipticJ2000 { Center "Sol/Pluto-Charon" }
+    }
 
-	RotationPeriod		153.293904
-	Obliquity		115.60
-	EquatorAscendingNode	228.34
-	RotationOffset		320.75
+    EllipticalOrbit
+    {
+        Period           6.387246
+        SemiMajorAxis    2411      # mass ratio of 0.123
+        Eccentricity     0.0002
+        Inclination      115.602
+        AscendingNode    228.328
+        ArgOfPericenter  47.314
+        MeanAnomaly      93.440
+    }
+
+    RotationPeriod       153.293904
+    Obliquity            115.60
+    EquatorAscendingNode 228.34
+    RotationOffset       320.75
 	
-	Albedo           0.55
+    Albedo           0.55
 }
 
 AltSurface "limit of knowledge" "Sol/Pluto"
 {
-	Texture "pluto-lok.*"
+    Texture "pluto-lok.*"
     SpecularTexture "pluto-lok-spec.*"
     SpecularColor            [ 0.135 0.12 0.08 ]
     SpecularPower             9.5
@@ -1185,30 +1221,35 @@ AltSurface "limit of knowledge" "Sol/Pluto"
 
 "Charon" "Sol/Pluto"
 {
-	Texture "charon-lok.*"
+    Texture "charon-lok.*"
     SpecularTexture "charon-lok-spec.*"
     SpecularColor            [ 0.135 0.12 0.08 ]
     SpecularPower             9.5
-	Radius   593
+    Radius   593
 
-	InfoURL "http://www.nineplanets.org/pluto.html#Charon"
+    InfoURL "http://www.nineplanets.org/pluto.html#Charon"
 
-	EllipticalOrbit
-	{
-	Period		6.387246
-	SemiMajorAxis	19636
-	Eccentricity	0.0002
-	Inclination	0.0048
-	AscendingNode	273.5582
-	ArgOfPericenter	313.7606
-	MeanAnomaly	93.4395
-	}
+    OrbitFrame {
+        EclipticJ2000 { Center "Sol/Pluto-Charon" }
+    }
 
-	Obliquity		  1.0
-	EquatorAscendingNode	287.6
-	RotationOffset	 	213.3
+    EllipticalOrbit
+    {
+        Period          6.3872304
+        SemiMajorAxis   17906
+        Eccentricity    0.0002
+        Inclination     115.602
+        AscendingNode   228.328
+        ArgOfPericenter 227.314
+        MeanAnomaly     93.440
+    }
+
+    RotationPeriod       153.293904
+    Obliquity            115.9
+    EquatorAscendingNode 227.3
+    RotationOffset       140.4
 	
-	Albedo          0.35
+    Albedo               0.35
 }
 
 AltSurface "limit of knowledge" "Sol/Pluto/Charon"
@@ -1218,3 +1259,4 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         SpecularColor            [ 0.135 0.12 0.08 ]
         SpecularPower             9.5
 }
+
