@@ -64,17 +64,17 @@ UniversalCoord Selection::getPosition(double t) const
         
     case Type_Location:
         {
-            Point3f sunPos(0.0f, 0.0f, 0.0f);
             Body* body = location()->getParentBody();
+            const Star* sun = NULL;
             if (body != NULL && body->getSystem() != NULL)
             {
-                const Star* sun = body->getSystem()->getStar();
-                if (sun != NULL)
-                    sunPos = sun->getPosition();
+                sun = body->getSystem()->getStar();
             }
 
-            return astro::universalPosition(location()->getHeliocentricPosition(t),
-                                            sunPos);
+            if (sun != NULL)
+                return astro::universalPosition(location()->getHeliocentricPosition(t), sun->getPosition(t));
+            else
+                return astro::universalPosition(location()->getHeliocentricPosition(t), Point3f(0.0f, 0.0f, 0.0f));
         }
 
     default:
