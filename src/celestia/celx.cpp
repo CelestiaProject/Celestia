@@ -4034,7 +4034,7 @@ static int celestia_setoverlayelements(lua_State* l)
         }
         if (lua_isboolean(l, -1))
         {
-            value = lua_toboolean(l, -1);
+            value = lua_toboolean(l, -1) != 0;
         }
         else
         {
@@ -4339,6 +4339,60 @@ static int celestia_fromjulianday(lua_State* l)
 
     return 1;
 }
+
+
+// Convert a UTC Julian date to a TDB Julian day
+// TODO: also support a single table argument of the form output by
+// celestia_tdbtoutc.
+static int celestia_utctotdb(lua_State* l)
+{
+    checkArgs(l, 2, 7, "Wrong number of arguments to function celestia:utctotdb");
+
+    // for error checking only:
+    this_celestia(l);
+
+    int year = (int) safeGetNumber(l, 2, AllErrors, "First arg to celestia:utctotdb must be a number", 0.0);
+    int month = (int) safeGetNumber(l, 3, WrongType, "Second arg to celestia:utctotdb must be a number", 1.0);
+    int day = (int) safeGetNumber(l, 4, WrongType, "Third arg to celestia:utctotdb must be a number", 1.0);
+    int hour = (int)safeGetNumber(l, 5, WrongType, "Fourth arg to celestia:utctotdb must be a number", 0.0);
+    int minute = (int)safeGetNumber(l, 6, WrongType, "Fifth arg to celestia:utctotdb must be a number", 0.0);
+    double seconds = safeGetNumber(l, 7, WrongType, "Sixth arg to celestia:utctotdb must be a number", 0.0);
+
+    astro::Date date(year, month, day);
+    date.hour = hour;
+    date.minute = minute;
+    date.seconds = seconds;
+
+    double jd = astro::UTCtoTDB(date);
+
+    lua_pushnumber(l, jd);
+
+    return 1;
+}
+
+
+// Convert a TDB Julian day to a UTC Julian date (table format)
+static int celestia_tdbtoutc(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Wrong number of arguments to function celestia:tdbtoutc");
+
+    // for error checking only:
+    this_celestia(l);
+
+    double jd = safeGetNumber(l, 2, AllErrors, "First arg to celestia:tdbtoutc must be a number", 0.0);
+    astro::Date date = astro::TDBtoUTC(jd);
+
+    lua_newtable(l);
+    setTable(l, "year", (double)date.year);
+    setTable(l, "month", (double)date.month);
+    setTable(l, "day", (double)date.day);
+    setTable(l, "hour", (double)date.hour);
+    setTable(l, "minute", (double)date.minute);
+    setTable(l, "seconds", date.seconds);
+
+    return 1;
+}
+
 
 static int celestia_unmarkall(lua_State* l)
 {
@@ -4923,6 +4977,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
     RegisterMethod(l, "tojulianday", celestia_tojulianday);
     RegisterMethod(l, "fromjulianday", celestia_fromjulianday);
+    RegisterMethod(l, "utctotdb", celestia_utctotdb);
+    RegisterMethod(l, "tdbtoutc", celestia_tdbtoutc);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
     RegisterMethod(l, "getstar", celestia_getstar);
     RegisterMethod(l, "newframe", celestia_newframe);
@@ -5704,7 +5760,9 @@ static void ExtendCelestiaMetaTable(lua_State* l)
     lua_pop(l, 1);
 }
 
-// ==================== loadlib =====================================================
+
+#if LUA_VER < 0x050100
+// ======================== loadlib ===================================
 /*
 * This is an implementation of loadlib based on the dlfcn interface.
 * The dlfcn interface is available in Linux, SunOS, Solaris, IRIX, FreeBSD,
@@ -5749,6 +5807,7 @@ cout << "loading lua lib\n"; cout.flush();
  return 3;
 }
 #endif
+#endif // LUA_VER < 0x050100
 
 // ==================== Load Libraries ================================================
 
