@@ -383,7 +383,7 @@ CreateUniformRotationModel(Hash* rotationData,
     }
 
     float offset = 0.0f;
-    if (rotationData->getNumber("Offset", offset))
+    if (rotationData->getNumber("MeridianAngle", offset))
     {
         offset = degToRad(offset);
     }
@@ -415,7 +415,7 @@ static ConstantOrientation*
 CreateFixedRotationModel(Hash* rotationData)
 {
     double offset = 0.0;
-    if (rotationData->getNumber("Offset", offset))
+    if (rotationData->getNumber("MeridianAngle", offset))
     {
         offset = degToRad(offset);
     }
@@ -452,7 +452,7 @@ CreatePrecessingRotationModel(Hash* rotationData,
     }
 
     float offset = 0.0f;
-    if (rotationData->getNumber("Offset", offset))
+    if (rotationData->getNumber("MeridianAngle", offset))
     {
         offset = degToRad(offset);
     }
