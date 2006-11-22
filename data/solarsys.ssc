@@ -151,7 +151,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	{
 	    Inclination        23.45
             AscendingNode       0.0
-            RotationOffset     38
+            MeridianAngle      38
 	}
 
 	LunarLambert 1.0
@@ -1192,6 +1192,10 @@ Point "Pluto-Charon" "Sol"
         EclipticJ2000 { Center "Sol/Pluto-Charon" }
     }
 
+    BodyFrame {
+        EclipticJ2000 { Center "Sol/Pluto-Charon" }
+    }
+
     EllipticalOrbit
     {
         Period           6.387246
@@ -1233,10 +1237,14 @@ AltSurface "limit of knowledge" "Sol/Pluto"
         EclipticJ2000 { Center "Sol/Pluto-Charon" }
     }
 
+    BodyFrame {
+        EclipticJ2000 { Center "Sol/Pluto-Charon" }
+    }
+
     EllipticalOrbit
     {
-        Period          6.3872304
-        SemiMajorAxis   17906
+        Period          6.387246
+        SemiMajorAxis   17188   # mass ratio of 0.123
         Eccentricity    0.0002
         Inclination     115.602
         AscendingNode   228.328
