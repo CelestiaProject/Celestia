@@ -735,7 +735,7 @@ bool LoadSolarSystemObjects(istream& in,
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
 
-        if (itemType == "Body" || itemType == "Barycenter")
+        if (itemType == "Body" || itemType == "Point")
         {
             //bool orbitsPlanet = false;
             if (parent.star() != NULL)
@@ -779,7 +779,7 @@ bool LoadSolarSystemObjects(istream& in,
                 }
                 
                 Body* body;
-                if (itemType == "Barycenter")
+                if (itemType == "Point")
                     body = CreateBarycenter(name, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
                     body = CreatePlanet(name, parentSystem, universe, existingBody, objectData, directory, disposition);
