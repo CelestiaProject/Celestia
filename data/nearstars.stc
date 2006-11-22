@@ -19,11 +19,18 @@
 # Barycenters positions are mainly based on mass estimates from RECONS:
 # the figures used are added as comments below.
 
-0 "Sol:Sun"
+Barycenter "Solar System Barycenter:SSB"
 {
 	RA 0
 	Dec 0
-	Distance 0.00326167 
+	Distance 0
+}
+
+0 "Sol:Sun"
+{
+	OrbitBarycenter "Solar System Barycenter"
+	CustomOrbit "vsop87-sun"
+
 	SpectralType "G2V"
 	AbsMag 4.83
 
