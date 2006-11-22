@@ -1508,12 +1508,12 @@ void Renderer::render(const Observer& observer,
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != NULL)
-	{
-		if (useNewStarRendering)
-			renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
-		else
-			renderStars(*universe.getStarCatalog(), faintestMag, observer);
-	}
+    {
+        if (useNewStarRendering)
+            renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
+        else
+            renderStars(*universe.getStarCatalog(), faintestMag, observer);
+    }
 
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
@@ -6688,6 +6688,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.faintestMagNight = faintestMagNight;
     starRenderer.saturationMag    = saturationMag;
     starRenderer.distanceLimit    = distanceLimit;
+    starRenderer.labelMode        = labelMode;
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
