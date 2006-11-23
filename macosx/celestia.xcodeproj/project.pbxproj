@@ -193,6 +193,8 @@
 		E589B6DF078AC511005B8DD9 /* shadermanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6DB078AC511005B8DD9 /* shadermanager.cpp */; };
 		E599A78E097CAB390079C254 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E599A78C097CAB390079C254 /* Credits.rtf */; };
 		E59AD8160AAB361400E2841D /* hubble.cmod in CopyFiles */ = {isa = PBXBuildFile; fileRef = E59AD8150AAB361400E2841D /* hubble.cmod */; };
+		E5A994750B1482FE009F40FA /* scriptrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994710B1482FE009F40FA /* scriptrotation.cpp */; };
+		E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994730B1482FE009F40FA /* scriptobject.cpp */; };
 		E5B615070777307F001BB2BF /* celestia.icns in Resources */ = {isa = PBXBuildFile; fileRef = E5B615060777307F001BB2BF /* celestia.icns */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5C9B478084909E40071B1EE /* README for Mac OS X.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */; };
@@ -563,6 +565,10 @@
 		E59FE8FD0934DC66000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		E59FE8FE0934DC7C000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E59FE90E0934E27B000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E5A994700B1482FE009F40FA /* scriptrotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scriptrotation.h; path = ../src/celengine/scriptrotation.h; sourceTree = SOURCE_ROOT; };
+		E5A994710B1482FE009F40FA /* scriptrotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptrotation.cpp; path = ../src/celengine/scriptrotation.cpp; sourceTree = SOURCE_ROOT; };
+		E5A994720B1482FE009F40FA /* scriptobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scriptobject.h; path = ../src/celengine/scriptobject.h; sourceTree = SOURCE_ROOT; };
+		E5A994730B1482FE009F40FA /* scriptobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptobject.cpp; path = ../src/celengine/scriptobject.cpp; sourceTree = SOURCE_ROOT; };
 		E5B615060777307F001BB2BF /* celestia.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = celestia.icns; sourceTree = "<group>"; };
 		E5B61B2C077737A6001BB2BF /* lua.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lua.h; sourceTree = "<group>"; };
 		E5B61B2D077737A6001BB2BF /* lualib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lualib.h; sourceTree = "<group>"; };
@@ -1307,6 +1313,10 @@
 		F51C6D52029596B4014901DC /* celengine */ = {
 			isa = PBXGroup;
 			children = (
+				E5A994710B1482FE009F40FA /* scriptrotation.cpp */,
+				E5A994700B1482FE009F40FA /* scriptrotation.h */,
+				E5A994730B1482FE009F40FA /* scriptobject.cpp */,
+				E5A994720B1482FE009F40FA /* scriptobject.h */,
 				E56529660B108D7F0049925D /* scriptorbit.cpp */,
 				E56529670B108D7F0049925D /* scriptorbit.h */,
 				E564574D0AF8FD6A00F2D9FA /* samporient.cpp */,
@@ -1832,6 +1842,8 @@
 				E56457550AF8FD6A00F2D9FA /* rotationmanager.cpp in Sources */,
 				E56457560AF8FD6A00F2D9FA /* rotation.cpp in Sources */,
 				E56529680B108D7F0049925D /* scriptorbit.cpp in Sources */,
+				E5A994750B1482FE009F40FA /* scriptrotation.cpp in Sources */,
+				E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1395,6 +1395,8 @@
 				E57D43360AFAC0970060CFEC,
 				E57D43370AFAC0970060CFEC,
 				E5B899F90B109CD900675F57,
+				E5D1CD120B15A0200032B0D5,
+				E5D1CD140B15A0200032B0D5,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2389,6 +2391,8 @@
 				E57D43380AFAC0970060CFEC,
 				E57D43390AFAC0970060CFEC,
 				E5B899F80B109CD900675F57,
+				E5D1CD130B15A0200032B0D5,
+				E5D1CD150B15A0200032B0D5,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5003,6 +5007,66 @@
 			settings = {
 			};
 		};
+		E5D1CD0E0B15A0200032B0D5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = scriptrotation.h;
+			path = ../src/celengine/scriptrotation.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5D1CD0F0B15A0200032B0D5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = scriptrotation.cpp;
+			path = ../src/celengine/scriptrotation.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5D1CD100B15A0200032B0D5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = scriptobject.h;
+			path = ../src/celengine/scriptobject.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5D1CD110B15A0200032B0D5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = scriptobject.cpp;
+			path = ../src/celengine/scriptobject.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5D1CD120B15A0200032B0D5 = {
+			fileRef = E5D1CD0E0B15A0200032B0D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D1CD130B15A0200032B0D5 = {
+			fileRef = E5D1CD0F0B15A0200032B0D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D1CD140B15A0200032B0D5 = {
+			fileRef = E5D1CD100B15A0200032B0D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D1CD150B15A0200032B0D5 = {
+			fileRef = E5D1CD110B15A0200032B0D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E5D446640777291700A1577D = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -5547,6 +5611,10 @@
 		};
 		F51C6D52029596B4014901DC = {
 			children = (
+				E5D1CD0F0B15A0200032B0D5,
+				E5D1CD0E0B15A0200032B0D5,
+				E5D1CD110B15A0200032B0D5,
+				E5D1CD100B15A0200032B0D5,
 				E5B899F60B109CD900675F57,
 				E5B899F70B109CD900675F57,
 				E57D43300AFAC0970060CFEC,
