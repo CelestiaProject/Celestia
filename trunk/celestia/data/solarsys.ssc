@@ -1174,7 +1174,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Albedo          0.155
 }
 
-Point "Pluto-Charon" "Sol"
+ReferencePoint "Pluto-Charon" "Sol"
 {
     CustomOrbit "pluto"
 }
