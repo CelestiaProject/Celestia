@@ -661,7 +661,7 @@ static Body* CreateBarycenter(const string& name,
     }
 
     body->setRotationModel(new ConstantOrientation(Quatd(1.0)));
-    
+
     return body;
 }                          
 
@@ -735,7 +735,7 @@ bool LoadSolarSystemObjects(istream& in,
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
 
-        if (itemType == "Body" || itemType == "Point")
+        if (itemType == "Body" || itemType == "ReferencePoint")
         {
             //bool orbitsPlanet = false;
             if (parent.star() != NULL)
@@ -779,7 +779,7 @@ bool LoadSolarSystemObjects(istream& in,
                 }
                 
                 Body* body;
-                if (itemType == "Point")
+                if (itemType == "ReferencePoint")
                     body = CreateBarycenter(name, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
                     body = CreatePlanet(name, parentSystem, universe, existingBody, objectData, directory, disposition);
