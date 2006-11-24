@@ -3732,63 +3732,17 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 
     universe = new Universe();
 
+
+    /***** Load star catalogs *****/
+
     if (!readStars(*config, progressNotifier))
     {
         fatalError(_("Cannot read star database."));
         return false;
     }
 
-    // First read the solar system files listed individually in the
-    // config file.
-    {
-        SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
-        universe->setSolarSystemCatalog(solarSystemCatalog);
-        for (vector<string>::const_iterator iter = config->solarSystemFiles.begin();
-             iter != config->solarSystemFiles.end();
-             iter++)
-        {
-            if (progressNotifier)
-                progressNotifier->update(*iter);
 
-            ifstream solarSysFile(iter->c_str(), ios::in);
-            if (!solarSysFile.good())
-            {
-                warning(_("Error opening solar system catalog.\n"));
-            }
-            else
-            {
-                LoadSolarSystemObjects(solarSysFile, *universe, "");
-            }
-        }
-    }
-
-#if 0
-    // XML support not ready yet
-    {
-        bool success = LoadSolarSystemObjectsXML("data/test.xml",
-                                                 *universe);
-        if (!success)
-            warning(_("Error opening test.xml\n"));
-    }
-#endif
-
-    // Next, read all the solar system files in the extras directories
-    {
-        for (vector<string>::const_iterator iter = config->extrasDirs.begin();
-             iter != config->extrasDirs.end(); iter++)
-        {
-            if (*iter != "")
-            {
-                Directory* dir = OpenDirectory(*iter);
-
-                SolarSystemLoader loader(universe, progressNotifier);
-                loader.pushDir(*iter);
-                dir->enumFiles(loader, true);
-
-                delete dir;
-            }
-        }
-    }
+    /***** Load the deep sky catalogs *****/
 
     DSONameDatabase* dsoNameDB  = new DSONameDatabase;
     DSODatabase*     dsoDB      = new DSODatabase;
@@ -3849,6 +3803,50 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 
     dsoDB->finish();
     universe->setDSOCatalog(dsoDB);
+
+
+    /***** Load the solar system catalogs *****/
+    // First read the solar system files listed individually in the
+    // config file.
+    {
+        SolarSystemCatalog* solarSystemCatalog = new SolarSystemCatalog();
+        universe->setSolarSystemCatalog(solarSystemCatalog);
+        for (vector<string>::const_iterator iter = config->solarSystemFiles.begin();
+             iter != config->solarSystemFiles.end();
+             iter++)
+        {
+            if (progressNotifier)
+                progressNotifier->update(*iter);
+
+            ifstream solarSysFile(iter->c_str(), ios::in);
+            if (!solarSysFile.good())
+            {
+                warning(_("Error opening solar system catalog.\n"));
+            }
+            else
+            {
+                LoadSolarSystemObjects(solarSysFile, *universe, "");
+            }
+        }
+    }
+
+    // Next, read all the solar system files in the extras directories
+    {
+        for (vector<string>::const_iterator iter = config->extrasDirs.begin();
+             iter != config->extrasDirs.end(); iter++)
+        {
+            if (*iter != "")
+            {
+                Directory* dir = OpenDirectory(*iter);
+
+                SolarSystemLoader loader(universe, progressNotifier);
+                loader.pushDir(*iter);
+                dir->enumFiles(loader, true);
+
+                delete dir;
+            }
+        }
+    }
 
     // Load asterisms:
     if (config->asterismsFile != "")
