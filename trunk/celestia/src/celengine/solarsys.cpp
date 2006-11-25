@@ -123,7 +123,7 @@ static void FillinSurface(Hash* surfaceData,
 {
     surfaceData->getColor("Color", surface->color);
 
-    // Haze is deprecated; used only in pre-OpenGL 2.0 render paths    
+    // Haze is deprecated; used only in pre-OpenGL 2.0 render paths
     Color hazeColor = surface->hazeColor;
     float hazeDensity = hazeColor.alpha();
     if (surfaceData->getColor("HazeColor", hazeColor) | surfaceData->getNumber("HazeDensity", hazeDensity))
@@ -136,7 +136,7 @@ static void FillinSurface(Hash* surfaceData,
     surfaceData->getNumber("SpecularPower", surface->specularPower);
 
     surfaceData->getNumber("LunarLambert", surface->lunarLambert);
-    
+
     string baseTexture;
     string bumpTexture;
     string nightTexture;
@@ -156,10 +156,10 @@ static void FillinSurface(Hash* surfaceData,
     unsigned int bumpFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     unsigned int nightFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
     unsigned int specularFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
-    
+
     float bumpHeight = 2.5f;
     surfaceData->getNumber("BumpHeight", bumpHeight);
-    
+
     bool blendTexture = false;
     surfaceData->getBoolean("BlendTexture", blendTexture);
 
@@ -222,7 +222,7 @@ static Selection GetOrbitBarycenter(const string& name,
     {
         // An explicit orbit barycenter was given . . .
         orbitBarycenter = universe.findPath(orbitBarycenterName, NULL, 0);
-        
+
         if (orbitBarycenter.empty())
         {
             cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' not found.\n");
@@ -230,7 +230,7 @@ static Selection GetOrbitBarycenter(const string& name,
         }
         else if (orbitBarycenter.body() == NULL && orbitBarycenter.star() == NULL)
         {
-            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' is not a star or planet.\n");       
+            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' is not a star or planet.\n");
             return Selection();
         }
     }
@@ -242,8 +242,8 @@ static Selection GetOrbitBarycenter(const string& name,
             orbitBarycenter = Selection(primary);
         else
             orbitBarycenter = Selection(system->getStar());
-    }    
-    
+    }
+
     // The barycenter must be in the same star system as the object we're creating
     if (orbitBarycenter.body())
     {
@@ -278,7 +278,7 @@ static Body* CreatePlanet(const string& name,
                           Disposition disposition)
 {
     Body* body = NULL;
-  
+
     if (disposition == ModifyObject)
     {
         body = existingBody;
@@ -403,9 +403,9 @@ static Body* CreatePlanet(const string& name,
     body->setLifespan(beginning, ending);
 
     string infoURL;
-    if (planetData->getString("InfoURL", infoURL)) 
+    if (planetData->getString("InfoURL", infoURL))
     {
-        if (infoURL.find(':') == string::npos) 
+        if (infoURL.find(':') == string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory
@@ -417,7 +417,7 @@ static Body* CreatePlanet(const string& name,
         }
         body->setInfoURL(infoURL);
     }
-    
+
     double albedo = 0.5;
     if (planetData->getNumber("Albedo", albedo))
         body->setAlbedo((float) albedo);
@@ -425,7 +425,7 @@ static Body* CreatePlanet(const string& name,
     double oblateness = 0.0;
     if (planetData->getNumber("Oblateness", oblateness))
         body->setOblateness((float) oblateness);
-    
+
     double mass = 0.0;
     if (planetData->getNumber("Mass", mass))
         body->setMass((float) mass);
@@ -455,8 +455,8 @@ static Body* CreatePlanet(const string& name,
         {
             body->setRotationModel(CreateDefaultRotationModel(syncRotationPeriod));
         }
-    }    
-    
+    }
+
     Surface surface;
     if (disposition == ModifyObject)
     {
@@ -500,7 +500,7 @@ static Body* CreatePlanet(const string& name,
             {
                 Hash* atmosData = atmosDataValue->getHash();
                 assert(atmosData != NULL);
-                
+
                 Atmosphere* atmosphere = NULL;
                 if (disposition == ModifyObject)
                 {
@@ -521,14 +521,14 @@ static Body* CreatePlanet(const string& name,
                 atmosData->getColor("Upper", atmosphere->upperColor);
                 atmosData->getColor("Sky", atmosphere->skyColor);
                 atmosData->getColor("Sunset", atmosphere->sunsetColor);
-                
+
                 atmosData->getNumber("Mie", atmosphere->mieCoeff);
                 atmosData->getNumber("MieScaleHeight", atmosphere->mieScaleHeight);
                 atmosData->getNumber("MieAsymmetry", atmosphere->miePhaseAsymmetry);
                 atmosData->getVector("Rayleigh", atmosphere->rayleighCoeff);
                 //atmosData->getNumber("RayleighScaleHeight", atmosphere->rayleighScaleHeight);
                 atmosData->getVector("Absorption", atmosphere->absorptionCoeff);
-                
+
                 // Get the cloud map settings
                 atmosData->getNumber("CloudHeight", atmosphere->cloudHeight);
                 if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
@@ -541,7 +541,7 @@ static Body* CreatePlanet(const string& name,
                                                         path,
                                                         TextureInfo::WrapTexture);
                 }
-                
+
                 string cloudNormalMap;
                 if (atmosData->getString("CloudNormalMap", cloudNormalMap))
                 {
@@ -554,8 +554,6 @@ static Body* CreatePlanet(const string& name,
                 if (disposition != ModifyObject)
                     delete atmosphere;
             }
-
-            delete atmosDataValue;
         }
     }
 
@@ -593,8 +591,6 @@ static Body* CreatePlanet(const string& name,
 
                 body->setRings(rings);
             }
-
-            delete ringsDataValue;
         }
     }
 
@@ -612,7 +608,7 @@ static Body* CreateBarycenter(const string& name,
                               Disposition disposition)
 {
     Body* body = NULL;
-  
+
     if (disposition == ModifyObject)
     {
         body = existingBody;
@@ -644,7 +640,7 @@ static Body* CreateBarycenter(const string& name,
             delete body;
         return NULL;
     }
-    
+
     Orbit* orbit = CreateOrbit(system, barycenterData, path, !orbitsPlanet);
     if (orbit != NULL)
     {
@@ -655,7 +651,7 @@ static Body* CreateBarycenter(const string& name,
     {
         DPRINTF(0, "No valid orbit specified for barycenter '%s'; skipping . . .\n",
                 name.c_str());
-        if (body != existingBody)        
+        if (body != existingBody)
             delete body;
         return NULL;
     }
@@ -663,14 +659,14 @@ static Body* CreateBarycenter(const string& name,
     body->setRotationModel(new ConstantOrientation(Quatd(1.0)));
 
     return body;
-}                          
+}
 
 
 bool LoadSolarSystemObjects(istream& in,
                             Universe& universe,
                             const std::string& directory)
 {
-    Tokenizer tokenizer(&in); 
+    Tokenizer tokenizer(&in);
     Parser parser(&tokenizer);
 
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
@@ -728,6 +724,7 @@ bool LoadSolarSystemObjects(istream& in,
         if (objectDataValue->getType() != Value::HashType)
         {
             sscError(tokenizer, "{ expected");
+            delete objectDataValue;
             return false;
         }
         Hash* objectData = objectDataValue->getHash();
@@ -777,13 +774,13 @@ bool LoadSolarSystemObjects(istream& in,
                     cerr << _("warning duplicate definition of ") <<
                         parentName << " " <<  name << '\n';
                 }
-                
+
                 Body* body;
                 if (itemType == "ReferencePoint")
                     body = CreateBarycenter(name, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
                     body = CreatePlanet(name, parentSystem, universe, existingBody, objectData, directory, disposition);
-                    
+
                 if (body != NULL)
                 {
                     body->setName(name);
@@ -791,7 +788,7 @@ bool LoadSolarSystemObjects(istream& in,
                     {
                         parentSystem->replaceBody(existingBody, body);
                         delete existingBody;
-                    } 
+                    }
                     else if (disposition == AddObject)
                     {
                         parentSystem->addBody(body);
@@ -831,6 +828,7 @@ bool LoadSolarSystemObjects(istream& in,
                 cerr << _("parent body '") << parentName << _("' of '") << name << _("' not found.\n");
             }
         }
+        delete objectDataValue;
     }
 
     // TODO: Return some notification if there's an error parsing the file
