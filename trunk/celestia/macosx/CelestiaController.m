@@ -599,30 +599,17 @@ NSString* fatalErrorMessage;
     [appCore runScript: lastScript];       
 }
 
-- (void) openPanelDidEnd:(NSOpenPanel*)openPanel returnCode: (int) rc contextInfo: (void *) ci
-{
-    if (rc == NSOKButton )
-    {
-        NSString *path;
-        path = [openPanel filename];
-        [self runScript: path];       
-    }
-}
-
 - (IBAction) openScript: (id) sender
 {
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-//    if (!lastScript) lastScript = [[NSHomeDirectory() stringByAppendingString: @"/"]  retain];
-
-    [ panel beginSheetForDirectory: nil //[lastScript stringByDeletingLastPathComponent]
-                              file: nil//[lastScript lastPathComponent]
-                             types: [dc fileExtensionsFromType:@"Celestia Script"]//[NSArray arrayWithObjects: @"cel", @"celx", nil ]
-                    modalForWindow: [glView window]
-                     modalDelegate: self
-                    didEndSelector: @selector(openPanelDidEnd:returnCode:contextInfo:)
-                       contextInfo: nil
-    ];
+    int result = [panel runModalForTypes: [dc fileExtensionsFromType:@"Celestia Script"]];
+    if (result == NSOKButton)
+    {
+        NSString *path;
+        path = [panel filename];
+        [self runScript: path];       
+    }
 }
 
 - (IBAction) rerunScript: (id) sender
