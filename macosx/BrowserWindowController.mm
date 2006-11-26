@@ -16,6 +16,9 @@
 #include "selection.h"
 #include "starbrowser.h"
 
+#define BROWSER_MAX_DSO_COUNT   500
+#define BROWSER_MAX_STAR_COUNT  100
+
 @implementation BrowserWindowController
 
 static CelestiaCore *appCore;
@@ -44,8 +47,8 @@ static CelestiaCore *appCore;
     NSString *name;
 
     objCount = catalog->size();
-    if (objCount > 100)
-        objCount = 100;
+    if (objCount > BROWSER_MAX_DSO_COUNT)
+        objCount = BROWSER_MAX_DSO_COUNT;
     newDict = [NSMutableDictionary dictionaryWithCapacity: objCount];
 
     for (; i < objCount; ++i)
@@ -68,9 +71,9 @@ static CelestiaCore *appCore;
 - (NSDictionary*) starDict: (int) kind
 {
     std::vector<const Star*>* nearStars;
-    int starCount = 100;
+    int starCount = 0;
     StarBrowser* sb = new StarBrowser(appCore->getSimulation(),kind);
-    nearStars = sb->listStars( starCount );
+    nearStars = sb->listStars( BROWSER_MAX_STAR_COUNT );
     starCount = nearStars->size();            
 //    if (nearStars == nil ) return 1;
     NSMutableDictionary* starDict = [NSMutableDictionary dictionaryWithCapacity: starCount+2];
@@ -338,14 +341,52 @@ static CelestiaCore *appCore;
 
 - (void) browser: (NSBrowser*) sender willDisplayCell: (id) cell atRow: (int) row column: (int) column
 {
-    
-    NSDictionary*  colDict = [self dictForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
+    NSDictionary* colDict = [self dictForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
     NSArray* colKeys = [colDict objectForKey: @"_keys"];
+    BOOL isLeaf = YES;
     NSString* itemName = [colKeys objectAtIndex: row];
-    if (!itemName) itemName = @"????";
-    [cell setTitle: itemName ];
-    [cell setLeaf: [self isLeaf: [colDict objectForKey: itemName ] ] ];
-    return;
+    if (!itemName)
+        itemName = @"????";
+    else
+        isLeaf = [self isLeaf: [colDict objectForKey: itemName ] ];
+
+    NSRange rightParenRange = {NSNotFound, 0};
+    NSRange leftParenRange  = {NSNotFound, 0};
+    NSRange parenRange      = {NSNotFound, 0};
+
+    if (isLeaf)
+    {
+        rightParenRange = [itemName rangeOfString:@")"
+                                          options:NSBackwardsSearch];
+        if (rightParenRange.length == 1)
+        {
+            leftParenRange = NSMakeRange(0, rightParenRange.location - 1);
+            parenRange = [itemName rangeOfString:@"("
+                                         options:NSBackwardsSearch
+                                           range:leftParenRange];
+            if (parenRange.length == 1)
+            {
+                parenRange.length = rightParenRange.location - parenRange.location + 1;
+            }
+        }
+    }
+
+    if (parenRange.location != NSNotFound)
+    {
+        NSDictionary *parenAttr = [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSColor grayColor], NSForegroundColorAttributeName,
+            nil];
+        NSMutableAttributedString *attrStr = [[[NSMutableAttributedString alloc] initWithString: itemName] autorelease];
+        [attrStr setAttributes:parenAttr range:parenRange];
+
+        [cell setAttributedStringValue:attrStr];
+    }
+    else
+    {
+        [cell setTitle: itemName ];
+    }
+
+    [cell setLeaf: isLeaf];
 }
 
 - (IBAction) go: (id) sender
