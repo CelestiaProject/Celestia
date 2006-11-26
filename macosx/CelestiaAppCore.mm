@@ -561,7 +561,7 @@ static NSMutableDictionary* tagDict;
 -(void)setTimeZone:(NSTimeZone *)timeZone withDate:(NSDate *)date
 {
     appCore->setTimeZoneBias([timeZone secondsFromGMTForDate:date]);
-    appCore->setTimeZoneName([[timeZone abbreviationForDate:date] cString]);
+    appCore->setTimeZoneName([[timeZone abbreviationForDate:date] stdString]);
 }
 
 -(int)textEnterMode
@@ -644,7 +644,7 @@ static NSMutableDictionary* tagDict;
 
 -(void)runScript:(NSString *)fileName
 {
-    appCore->runScript([fileName cString]);
+    appCore->runScript([fileName stdString]);
 }
 
 - (void) showInfoURL
@@ -720,7 +720,7 @@ static NSMutableDictionary* tagDict;
 {
     MovieCapture* movieCapture = new QTCapture();
 
-    bool success = movieCapture->start([filename cString], width, height, framerate);
+    bool success = movieCapture->start([filename stdString], width, height, framerate);
     if (success)
         appCore->initMovieCapture(movieCapture);
     else
