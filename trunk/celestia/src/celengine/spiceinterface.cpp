@@ -18,7 +18,7 @@ InitializeSpice()
 {
     // Set the error behavior to the RETURN action, so that
     // Celestia do its own handling of SPICE errors.
-    erract_c("SET", 0, "RETURN");
+    erract_c("SET", 0, (SpiceChar*)"RETURN");
 
     return true;
 }
