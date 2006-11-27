@@ -198,7 +198,7 @@ static void initOverlayElementMap()
 // Load a Lua library--in Lua 5.1, the luaopen_* functions cannot be called
 // directly. They most be invoked through the Lua state.
 static void openLuaLibrary(lua_State* l,
-                           const char* name, 
+                           const char* name,
                            lua_CFunction func)
 {
     lua_pushcfunction(l, func);
@@ -5282,7 +5282,7 @@ static void gl_loadlib(lua_State* l)
 {
     lua_pushstring(l, "gl");
     lua_newtable(l);
-	
+
     RegisterMethod(l, "Frustum", gl_Frustum);
     RegisterMethod(l, "Ortho", gl_Ortho);
     RegisterMethod(l, "Color", gl_Color);
@@ -5299,7 +5299,7 @@ static void gl_loadlib(lua_State* l)
     RegisterMethod(l, "PopMatrix", gl_PopMatrix);
     RegisterMethod(l, "LoadIdentity", gl_LoadIdentity);
     RegisterMethod(l, "PushMatrix", gl_PushMatrix);
-	
+
     RegisterValue(l, "QUADS", GL_QUADS);
     RegisterValue(l, "LIGHTING", GL_LIGHTING);
     RegisterValue(l, "LINE_LOOP", GL_LINE_LOOP);
@@ -5419,7 +5419,7 @@ static void CreateFontMetaTable(lua_State* l)
 }
 
 // ==================== Image =============================================
-
+#if 0
 static int image_new(lua_State* l, Image* i)
 {
     Image** ud = static_cast<Image**>(lua_newuserdata(l, sizeof(Image*)));
@@ -5429,6 +5429,7 @@ static int image_new(lua_State* l, Image* i)
 
     return 1;
 }
+#endif
 
 static Image* to_image(lua_State* l, int index)
 {
@@ -5580,7 +5581,7 @@ static int object_setatmosphere(lua_State* l)
     checkArgs(l, 23, 23, "22 arguments (!) expected to function object:setatmosphere");
 
     Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    //CelestiaCore* appCore = getAppCore(l, AllErrors);
 
     if (sel->body() != NULL)
     {
@@ -5622,7 +5623,7 @@ static int object_setatmosphere(lua_State* l)
             atmosphere->miePhaseAsymmetry = b;
             b = (float) safeGetNumber(l, 23, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
             atmosphere->rayleighScaleHeight = b;
-            
+
             body->setAtmosphere(*atmosphere);
             cout << "set atmosphere\n";
         }
@@ -5725,15 +5726,15 @@ static int celestia_gettitlefont(lua_State* l)
 static int celestia_settimeslice(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument required for celestia:settimeslice");
-    CelestiaCore* appCore = this_celestia(l);
-        
+    //CelestiaCore* appCore = this_celestia(l);
+
     if (!lua_isnumber(l, 2) && !lua_isnil(l, 2))
     {
         doError(l, "Argument for celestia:settimeslice must be a number");
     }
     double timeslice = safeGetNumber(l, 2, AllErrors, "Argument to celestia:settimeslice must be a number");
 	if (timeslice == 0.0) timeslice = 0.1;
-	
+
 	LuaState* luastate = getLuaStateObject(l);
 	luastate->timeout = luastate->getTime() + timeslice;
 
@@ -5744,12 +5745,12 @@ static int celestia_setluahook(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument required for celestia:setluahook");
     CelestiaCore* appCore = this_celestia(l);
-        
+
     if (!lua_istable(l, 2) && !lua_isnil(l, 2))
     {
         doError(l, "Argument for celestia:setluahook must be a table or nil");
     }
-	
+
     lua_pushlightuserdata(l, appCore);
     lua_pushvalue(l, -2);
     lua_settable(l, LUA_REGISTRYINDEX);
@@ -5790,6 +5791,7 @@ extern "C" {
 #include <dlfcn.h>
 }
 
+#if 0
 static int x_loadlib(lua_State *L)
 {
 /* temp -- don't have lauxlib
@@ -5800,7 +5802,7 @@ cout << "loading lua lib\n"; cout.flush();
 
  const char *path=lua_tostring(L,1);
  const char *init=lua_tostring(L,2);
- 
+
  void *lib=dlopen(path,RTLD_NOW);
  if (lib!=NULL)
  {
@@ -5820,12 +5822,13 @@ cout << "loading lua lib\n"; cout.flush();
  return 3;
 }
 #endif
+#endif // _WIN32
 #endif // LUA_VER < 0x050100
 
 // ==================== Load Libraries ================================================
 
 static void loadLuaLibs(lua_State* state)
-{	
+{
 #if LUA_VER >= 0x050100
     openLuaLibrary(state, LUA_DBLIBNAME, luaopen_debug);
 #else
@@ -5838,7 +5841,7 @@ static void loadLuaLibs(lua_State* state)
     lua_pushstring(state, "xloadlib");
     lua_pushcfunction(state, x_loadlib);
     lua_settable(state, LUA_GLOBALSINDEX);
-#endif 
+#endif
 #endif
 
     CreateObjectMetaTable(state);
@@ -5854,7 +5857,7 @@ static void loadLuaLibs(lua_State* state)
     CreateTextureMetaTable(state);
     ExtendCelestiaMetaTable(state);
     ExtendObjectMetaTable(state);
-		
+
     gl_loadlib(state);
 }
 
@@ -5884,7 +5887,7 @@ bool LuaState::callLuaHook(void* obj, const char* method)
         lua_pop(costate, 1);
         return false;
     }
-    bool handled = false;    
+    bool handled = false;
 
     lua_pushstring(costate, method);
     lua_gettable(costate, -2);
@@ -5892,7 +5895,7 @@ bool LuaState::callLuaHook(void* obj, const char* method)
     {
         lua_pushvalue(costate, -2);          // push the Lua object the stack
         lua_remove(costate, -3);        // remove the Lua object from the stack
-                
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 1, 1, 0) != 0)
         {
@@ -5908,7 +5911,7 @@ bool LuaState::callLuaHook(void* obj, const char* method)
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
 
@@ -5923,7 +5926,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
         lua_pop(costate, 1);
         return false;
     }
-    bool handled = false;    
+    bool handled = false;
 
     lua_pushstring(costate, method);
     lua_gettable(costate, -2);
@@ -5933,7 +5936,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
         lua_remove(costate, -3);        // remove the Lua object from the stack
 
         lua_pushlstring(costate, &ch, 1);          // push the char onto the stack
-                
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 2, 1, 0) != 0)
         {
@@ -5949,7 +5952,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
 
@@ -5964,7 +5967,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
         lua_pop(costate, 1);
         return false;
     }
-    bool handled = false;    
+    bool handled = false;
 
     lua_pushstring(costate, method);
     lua_gettable(costate, -2);
@@ -5975,7 +5978,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
 
         lua_pushnumber(costate, x);          // push x onto the stack
         lua_pushnumber(costate, y);          // push y onto the stack
-                
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 3, 1, 0) != 0)
         {
@@ -5991,7 +5994,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
 
@@ -6006,7 +6009,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
         lua_pop(costate, 1);
         return false;
     }
-    bool handled = false;    
+    bool handled = false;
 
     lua_pushstring(costate, method);
 	lua_gettable(costate, -2);
@@ -6018,7 +6021,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
         lua_pushnumber(costate, x);          // push x onto the stack
         lua_pushnumber(costate, y);          // push y onto the stack
         lua_pushnumber(costate, b);          // push b onto the stack
-                
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 4, 1, 0) != 0)
         {
@@ -6034,7 +6037,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
 
@@ -6049,7 +6052,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, double dt)
         lua_pop(costate, 1);
         return false;
     }
-    bool handled = false;    
+    bool handled = false;
 
     lua_pushstring(costate, method);
     lua_gettable(costate, -2);
@@ -6058,7 +6061,7 @@ bool LuaState::callLuaHook(void* obj, const char* method, double dt)
         lua_pushvalue(costate, -2);          // push the Lua object onto the stack
         lua_remove(costate, -3);             // remove the Lua object from the stack
         lua_pushnumber(costate, dt);
-                
+
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 2, 1, 0) != 0)
         {
@@ -6074,6 +6077,6 @@ bool LuaState::callLuaHook(void* obj, const char* method, double dt)
     {
         lua_pop(costate, 2);
     }
-    
+
     return handled;
 }
