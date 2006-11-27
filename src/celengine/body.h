@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <celutil/utf8.h>
 #include <celmath/quaternion.h>
 #include <celengine/surface.h>
 #include <celengine/atmosphere.h>
@@ -47,13 +48,17 @@ class PlanetarySystem
     typedef bool (*TraversalFunc)(Body*, void*);
 
     bool traverse(TraversalFunc, void*) const;
-    Body* find(std::string, bool deepSearch = false, bool i18n = false) const;
+    Body* find(const std::string&, bool deepSearch = false, bool i18n = false) const;
     std::vector<std::string> getCompletion(const std::string& _name, bool rec = true) const;
+
+ private:
+    typedef std::map<std::string, Body*, UTF8StringOrderingPredicate> ObjectIndex;
 
  private:
     Star* star;
     Body* primary;
     std::vector<Body*> satellites;
+    ObjectIndex objectIndex;  // index of bodies by name
 };
 
 
