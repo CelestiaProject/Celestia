@@ -654,6 +654,7 @@ PlanetarySystem::PlanetarySystem(Star* _star) :
 void PlanetarySystem::addBody(Body* body)
 {
     satellites.insert(satellites.end(), body);
+    objectIndex.insert(make_pair(body->getName(), body));
 }
 
 
@@ -665,6 +666,17 @@ void PlanetarySystem::removeBody(Body* body)
         if (*iter == body)
         {
             satellites.erase(iter);
+            break;
+        }
+    }
+
+    // Erase the object from the object index
+    for (ObjectIndex::iterator iter = objectIndex.begin();
+         iter != objectIndex.end(); iter++)
+    {
+        if (iter->second == body)
+        {
+            objectIndex.erase(iter);
             break;
         }
     }
@@ -682,23 +694,46 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
             break;
         }
     }
+
+    // Erase the object from the object index
+    for (ObjectIndex::iterator iter = objectIndex.begin();
+         iter != objectIndex.end(); iter++)
+    {
+        if (iter->second == oldBody)
+        {
+            objectIndex.erase(iter);
+            break;
+        }
+    }
+
+    // Add the replacement to the object index
+    objectIndex.insert(make_pair(newBody->getName(), newBody));
 }
 
 
-Body* PlanetarySystem::find(string _name, bool deepSearch, bool i18n) const
+Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    for (vector<Body*>::const_iterator iter = satellites.begin();
-         iter != satellites.end(); iter++)
+    ObjectIndex::const_iterator firstMatch = objectIndex.find(_name);
+    if (firstMatch != objectIndex.end())
     {
-        if (UTF8StringCompare((*iter)->getName(i18n), _name) == 0)
+        return firstMatch->second;
+    }
+
+    if (deepSearch)
+    {
+        for (vector<Body*>::const_iterator iter = satellites.begin();
+             iter != satellites.end(); iter++)
         {
-            return *iter;
-        }
-        else if (deepSearch && (*iter)->getSatellites() != NULL)
-        {
-            Body* body = (*iter)->getSatellites()->find(_name, deepSearch, i18n);
-            if (body != NULL)
-                return body;
+            if (UTF8StringCompare((*iter)->getName(i18n), _name) == 0)
+            {
+                return *iter;
+            }
+            else if (deepSearch && (*iter)->getSatellites() != NULL)
+            {
+                Body* body = (*iter)->getSatellites()->find(_name, deepSearch, i18n);
+                if (body != NULL)
+                    return body;
+            }
         }
     }
 
