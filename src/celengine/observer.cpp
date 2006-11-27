@@ -398,6 +398,9 @@ void Observer::update(double dt, double timeScale)
     {
         double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
         Vec3d v = getVelocity() * (1.0 - t) + targetVelocity * t;
+
+        // At some threshold, we just set the velocity to zero; otherwise,
+        // we'll end up with ridiculous velocities like 10^-40 m/s.
         if (v.length() < 1.0e-12)
             v = Vec3d(0.0, 0.0, 0.0);
         setVelocity(v);
