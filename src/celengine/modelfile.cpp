@@ -622,7 +622,7 @@ AsciiModelLoader::loadMesh()
 
         uint32 materialIndex;
         if (tok.getNumberValue() == -1.0)
-            materialIndex = ~0;
+            materialIndex = ~0u;
         else
             materialIndex = (uint32) tok.getNumberValue();
 
@@ -1082,7 +1082,7 @@ static float readFloat(istream& in)
     float f;
     in.read((char*) &f, sizeof(float));
     LE_TO_CPU_FLOAT(f, f);
-    return f; 
+    return f;
 }
 
 

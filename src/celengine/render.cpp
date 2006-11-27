@@ -202,7 +202,7 @@ Renderer::Renderer() :
     minOrbitSize(MinOrbitSizeForLabel),
     distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
-    locationFilter(~0),
+    locationFilter(~0u),
     colorTemp(NULL)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
@@ -1600,7 +1600,7 @@ void Renderer::render(const Observer& observer,
             float radius = 1.0f;
             float cullRadius = 1.0f;
             float cloudHeight = 0.0f;
-            
+
             if (iter->body != NULL)
             {
                 if (iter->isCometTail)
@@ -2027,14 +2027,14 @@ void Renderer::renderBodyAsParticle(Point3f position,
         Point3f center = position;
         float centerZ = (center * m.transpose()).z;
         float size = discSize * pixelSize * 1.6f * centerZ / corrFac;
-        
+
         Vec3f v0 = Vec3f(-1, -1, 0) * m;
         Vec3f v1 = Vec3f( 1, -1, 0) * m;
         Vec3f v2 = Vec3f( 1,  1, 0) * m;
         Vec3f v3 = Vec3f(-1,  1, 0) * m;
 
         glEnable(GL_DEPTH_TEST);
-        
+
         starTex->bind();
         glColor(color, a);
         glBegin(GL_QUADS);
@@ -2078,8 +2078,8 @@ void Renderer::renderBodyAsParticle(Point3f position,
             glVertex(center + (v3 * size));
             glEnd();
         }
-        
-        glDisable(GL_DEPTH_TEST);        
+
+        glDisable(GL_DEPTH_TEST);
     }
 }
 
@@ -2136,10 +2136,10 @@ void Renderer::renderObjectAsPoint(Point3f position,
             {
                 float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
                 pointSize *= discScale;
-                
+
                 glareAlpha = min(0.5f, discScale / 4.0f);
                 glareSize = pointSize * 3.0f;
-                
+
                 alpha = 1.0f;
             }
         }
@@ -4873,7 +4873,7 @@ void Renderer::renderObject(Point3f pos,
     {
         // Only adjust the far plane for ellipsoidal objects
         float d = pos.distanceFromOrigin();
-        
+
         // Account for oblateness
         float eradius = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
 
@@ -4896,7 +4896,7 @@ void Renderer::renderObject(Point3f pos,
                 // If there's a cloud layer, we need to move the far plane
                 // out so that the clouds aren't clipped.
                 float cloudLayerRadius = eradius + cloudHeight;
-                frustumFarPlane += (float) sqrt(square(cloudLayerRadius) - 
+                frustumFarPlane += (float) sqrt(square(cloudLayerRadius) -
                                                 square(eradius));
             }
         }
@@ -5412,7 +5412,7 @@ void Renderer::renderPlanet(Body& body,
         // Compute the orientation of the planet before axial rotation
         Quatd q = body.getRotationModel()->spin(now) *
             body.getEclipticalToEquatorial(now);
-        
+
         rp.orientation = body.getOrientation() *
             Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
@@ -6033,7 +6033,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 renderList.push_back(rle);
             }
         }
-             
+
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
             float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;
@@ -6591,7 +6591,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 {
                     float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
                     discSize *= discScale;
-                    
+
                     float glareAlpha = min(0.5f, discScale / 4.0f);
                     glareVertexBuffer->addStar(starPos, Color(starColor, glareAlpha), discSize * 3.0f);
 

@@ -1,5 +1,5 @@
 // mesh.cpp
-// 
+//
 // Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -76,7 +76,7 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
     nIndices = (nRings - 1) * (nSlices + 1) * 2;
     indices = new unsigned short[nIndices];
     tangents = new float[nVertices * 3];
-    
+
     int i;
     for (i = 0; i < nRings; i++)
     {
@@ -384,8 +384,8 @@ Mesh* SphereMesh::convertToMesh() const
             indexData[j * 2 + 1] = (i + 1) * (nSlices + 1) + j;
         }
 
-        mesh->addGroup(Mesh::TriStrip, ~0, (nSlices + 1) * 2, indexData);
+        mesh->addGroup(Mesh::TriStrip, ~0u, (nSlices + 1) * 2, indexData);
     }
-    
+
     return mesh;
 }

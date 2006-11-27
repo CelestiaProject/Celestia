@@ -473,7 +473,7 @@ Mesh::render(const std::vector<const Material*>& materials,
         rc.setVertexArrays(vertexDesc, vertices);
     }
 
-    uint32 lastMaterial = ~0;
+    uint32 lastMaterial = ~0u;
 
     // Iterate over all primitive groups in the mesh
     for (vector<PrimitiveGroup*>::const_iterator iter = groups.begin();
