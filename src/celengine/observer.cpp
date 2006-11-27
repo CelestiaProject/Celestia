@@ -50,7 +50,7 @@ Observer::Observer() :
     trackingOrientation(1.0f, 0.0f, 0.0f, 0.0f),
     fov((float) (PI / 4.0)),
     reverseFlag(false),
-    locationFilter(~0)
+    locationFilter(~0u)
 {
 }
 
