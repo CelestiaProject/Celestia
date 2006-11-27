@@ -1086,8 +1086,14 @@ void LuaState::requestIO()
         string policy = appCore->getConfig()->scriptSystemAccessPolicy;
         if (policy == "allow")
         {
-            //lua_iolibopen(costate);
-            luaopen_io(costate);
+#if LUA_VER >= 0x050100
+            openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
+            openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
+            openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
+#else
+            lua_iolibopen(costate);
+#endif
+            //luaopen_io(costate);
             ioMode = IOAllowed;
         }
         else if (policy == "deny")
@@ -5076,9 +5082,16 @@ bool LuaState::init(CelestiaCore* appCore)
 
 void LuaState::setLuaPath(const string& s)
 {
+#if LUA_VER >= 0x050100
+    lua_getfield(state, LUA_GLOBALSINDEX, "package");
+    lua_pushstring(state, s.c_str());
+    lua_setfield(state, -2, "path");
+    lua_pop(state, 1);
+#else
     lua_pushstring(state, "LUA_PATH");
     lua_pushstring(state, s.c_str());
     lua_settable(state, LUA_GLOBALSINDEX);
+#endif
 }
 
 
@@ -5851,6 +5864,7 @@ void LuaState::allowSystemAccess()
 #if LUA_VER >= 0x050100
     openLuaLibrary(state, LUA_LOADLIBNAME, luaopen_package);
     openLuaLibrary(state, LUA_IOLIBNAME, luaopen_io);
+    openLuaLibrary(state, LUA_OSLIBNAME, luaopen_os);
 #else
     luaopen_io(state);
 #endif
