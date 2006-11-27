@@ -397,7 +397,10 @@ void Observer::update(double dt, double timeScale)
     if (getVelocity() != targetVelocity)
     {
         double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
-        setVelocity(getVelocity() * (1.0 - t) + targetVelocity * t);
+        Vec3d v = getVelocity() * (1.0 - t) + targetVelocity * t;
+        if (v.length() < 1.0e-12)
+            v = Vec3d(0.0, 0.0, 0.0);
+        setVelocity(v);
     }
 
     // Update the position
