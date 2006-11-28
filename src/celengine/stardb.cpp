@@ -1136,6 +1136,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         if (starDataValue->getType() != Value::HashType)
         {
             DPRINTF(0, "Bad star definition.\n");
+            delete starDataValue;
             return false;
         }
         Hash* starData = starDataValue->getHash();
@@ -1173,6 +1174,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                 stars = newStars;
             }
             stars[nStars++] = *star;
+            delete star;
 
             if (namesDB != NULL && !objName.empty())
             {
