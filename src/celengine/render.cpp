@@ -4890,13 +4890,14 @@ void Renderer::renderObject(Point3f pos,
 
         if (obj.atmosphere != NULL)
         {
-            float cloudHeight = obj.atmosphere->cloudHeight;
-            if (cloudHeight > 0.0f && d < eradius + cloudHeight)
+            float atmosphereHeight = max(obj.atmosphere->cloudHeight,
+                                         obj.atmosphere->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
+            if (atmosphereHeight > 0.0f && d < eradius + atmosphereHeight)
             {
-                // If there's a cloud layer, we need to move the far plane
-                // out so that the clouds aren't clipped.
-                float cloudLayerRadius = eradius + cloudHeight;
-                frustumFarPlane += (float) sqrt(square(cloudLayerRadius) -
+                // If there's an atmosphere, we need to move the far plane
+                // out so that the clouds and atmosphere shell aren't clipped.
+                float atmosphereRadius = eradius + atmosphereHeight;
+                frustumFarPlane += (float) sqrt(square(atmosphereRadius) - 
                                                 square(eradius));
             }
         }
@@ -7175,8 +7176,8 @@ void Renderer::renderLabels(FontStyle fs)
         glTranslatef((int) labels[i].position.x + PixelOffset + 2.0f,
                      (int) labels[i].position.y + PixelOffset,
                      0.0f);
-		// EK TODO: Check where to replace (see '_(' above)
-		font[fs]->render(labels[i].text);
+        // EK TODO: Check where to replace (see '_(' above)
+        font[fs]->render(labels[i].text);
         glPopMatrix();
     }
 
