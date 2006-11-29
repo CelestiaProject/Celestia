@@ -1,6 +1,6 @@
 // quaternion.h
 // 
-// Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2000-2006, Chris Laurel <claurel@shatters.net>
 //
 // Template-ized quaternion math library.
 //
@@ -16,22 +16,6 @@
 #include <celmath/vecmath.h>
 
 
-#if 0
-// Forward declarations needed to make friend templates work . . .
-// Disabled until I can get this to work on every compiler.
-template<class T> class Quaternion;
-
-template<class T> Quaternion<T> operator+(Quaternion<T>, Quaternion<T>);
-template<class T> Quaternion<T> operator-(Quaternion<T>, Quaternion<T>);
-template<class T> Quaternion<T> operator*(Quaternion<T>, Quaternion<T>);
-template<class T> Quaternion<T> operator*(T, Quaternion<T>);
-template<class T> Quaternion<T> operator*(Vector3<T>, Quaternion<T>);
-template<class T> bool operator==(Quaternion<T>, Quaternion<T>);
-template<class T> bool operator!=(Quaternion<T>, Quaternion<T>);
-template<class T> T real(Quaternion<T>);
-template<class T> Vector3<T> imag(Quaternion<T>);
-#endif
-
 template<class T> class Quaternion
 {
 public:
@@ -42,7 +26,7 @@ public:
     inline Quaternion(T, const Vector3<T>&);
     inline Quaternion(T, T, T, T);
 
-    Quaternion(const Matrix3<T>&);
+    inline Quaternion(const Matrix3<T>&);
 
     inline Quaternion& operator+=(Quaternion);
     inline Quaternion& operator-=(Quaternion);
@@ -62,6 +46,7 @@ public:
     static Quaternion<T> slerp(Quaternion<T>, Quaternion<T>, T);
     static Quaternion<T> vecToVecRotation(const Vector3<T>& v0,
                                           const Vector3<T>& v1);
+    static Quaternion<T> matrixToQuaternion(const Matrix3<T>& m);
 
     void rotate(Vector3<T> axis, T angle);
     void xrotate(T angle);
@@ -77,6 +62,9 @@ public:
     static Quaternion<T> zrotation(T);
 
     T w, x, y, z;
+
+ private:
+    inline static T M2QEpsilon();
 };
 
 
@@ -115,12 +103,14 @@ template<class T> Quaternion<T>::Quaternion(T _w, T _x, T _y, T _z) :
 }
 
 // Create a quaternion from a rotation matrix
+// TODO: purge this from code--it is replaced by the matrixToQuaternion()
+// function.
 template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
 {
     T trace = m[0][0] + m[1][1] + m[2][2];
     T root;
 
-    if (trace >= -1)
+    if (trace >= (T) -1.0 + 1.0e-4f) //M2QEpsilon - 1)
     {
         root = (T) sqrt(trace + 1);
         w = (T) 0.5 * root;
@@ -131,6 +121,7 @@ template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
     }
     else
     {
+        // Identify the largest element of the diagonal
         int i = 0;
         if (m[1][1] > m[i][i])
             i = 1;
@@ -148,7 +139,6 @@ template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
         *xyz[k] = (m[k][i] + m[i][k]) * root;
     }
 }
-
 
 template<class T> Quaternion<T>& Quaternion<T>::operator+=(Quaternion<T> a)
 {
@@ -602,6 +592,51 @@ template<class T> Quaternion<T> Quaternion<T>::vecToVecRotation(const Vector3<T>
         return Quaternion<T>((T) 0.0, (T) 1.0, (T) 0.0, (T) 0.0);
     }
 }
+
+
+/*! Create a quaternion from a rotation matrix
+ */
+template<class T> Quaternion<T> Quaternion<T>::matrixToQuaternion(const Matrix3<T>& m)
+{
+    Quaternion<T> q;
+    T trace = m[0][0] + m[1][1] + m[2][2];
+    T root;
+
+    if (trace >= M2QEpsilon() - 1)
+    {
+        root = (T) sqrt(trace + 1);
+        q.w = (T) 0.5 * root;
+        root = (T) 0.5 / root;
+        q.x = (m[2][1] - m[1][2]) * root;
+        q.y = (m[0][2] - m[2][0]) * root;
+        q.z = (m[1][0] - m[0][1]) * root;
+    }
+    else
+    {
+        // Set i to the largest element of the diagonal
+        int i = 0;
+        if (m[1][1] > m[i][i])
+            i = 1;
+        if (m[2][2] > m[i][i])
+            i = 2;
+        int j = (i == 2) ? 0 : i + 1;
+        int k = (j == 2) ? 0 : j + 1;
+
+        root = (T) sqrt(m[i][i] - m[j][j] - m[k][k] + 1);
+        T* xyz[3] = { &q.x, &q.y, &q.z };
+        *xyz[i] = (T) 0.5 * root;
+        root = (T) 0.5 / root;
+        q.w = (m[k][j] - m[j][k]) * root;
+        *xyz[j] = (m[j][i] + m[i][j]) * root;
+        *xyz[k] = (m[k][i] + m[i][k]) * root;
+    }
+
+    return q;
+}
+
+// Precision threshold for matrixToQuaternion
+float Quaternion<float>::M2QEpsilon() { return 1.0e-4f; }
+double Quaternion<double>::M2QEpsilon() { return 1.0e-10; }
 
 
 /*! Assuming that this is a unit quaternion representing an orientation,
