@@ -514,7 +514,7 @@ TwoVectorFrame::computeOrientation(double tjd) const
         // The axes are the rows of a rotation matrix. The getOrientation
         // method must return the quaternion representation of the 
         // orientation, so convert the rotation matrix to a quaternion now.
-        Quatd q = Quatd(Mat3d(v[0], v[1], v[2]));
+        Quatd q = Quatd::matrixToQuaternion(Mat3d(v[0], v[1], v[2]));
 
         // A rotation matrix will have a determinant of 1; if the matrix also
         // includes a reflection, the determinant will be -1, indicating that
