@@ -204,14 +204,22 @@ Vec3d toUniversal(const Vec3d& v,
 }
 
 
-static Quatf lookAt(Point3f from, Point3f to, Vec3f up)
+/*! Determine an orientation that will make the negative z-axis point from
+ *  from the observer to the target, with the y-axis pointing in direction
+ *  of the component of 'up' that is orthogonal to the z-axis.
+ */
+// TODO: This is a generally useful function that should be moved to
+// the celmath package.
+template<class T> static Quaternion<T> 
+lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
 {
-    Vec3f n = to - from;
+    Vector3<T> n = to - from;
     n.normalize();
-    Vec3f v = n ^ up;
+    Vector3<T> v = n ^ up;
     v.normalize();
-    Vec3f u = v ^ n;
-    return Quatf(Mat3f(v, u, -n));
+    Vector3<T> u = v ^ n;
+
+    return Quaternion<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
 }
 
 
@@ -422,9 +430,11 @@ void Observer::update(double dt, double timeScale)
     if (!trackObject.empty())
     {
         Vec3f up = Vec3f(0, 1, 0) * getOrientation().toMatrix3();
-        Vec3d vn = trackObject.getPosition(getTime()) - getPosition();
-        Point3f to((float) vn.x, (float) vn.y, (float) vn.z);
-        setOrientation(lookAt(Point3f(0, 0, 0), to, up));
+        Vec3d viewDir = trackObject.getPosition(getTime()) - getPosition();
+        
+        setOrientation(lookAt(Point3d(0, 0, 0),
+                              Point3d(viewDir.x, viewDir.y, viewDir.z),
+                              Vec3d(up.x, up.y, up.z)));
     }
 }
 
