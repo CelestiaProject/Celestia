@@ -12,6 +12,7 @@
 #ifndef _QUATERNION_H_
 #define _QUATERNION_H_
 
+#include <limits>
 #include <celmath/mathlib.h>
 #include <celmath/vecmath.h>
 
@@ -62,9 +63,6 @@ public:
     static Quaternion<T> zrotation(T);
 
     T w, x, y, z;
-
- private:
-    inline static T M2QEpsilon();
 };
 
 
@@ -110,7 +108,7 @@ template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
     T trace = m[0][0] + m[1][1] + m[2][2];
     T root;
 
-    if (trace >= (T) -1.0 + 1.0e-4f) //M2QEpsilon - 1)
+    if (trace >= (T) -1.0 + 1.0e-4f)
     {
         root = (T) sqrt(trace + 1);
         w = (T) 0.5 * root;
@@ -601,8 +599,9 @@ template<class T> Quaternion<T> Quaternion<T>::matrixToQuaternion(const Matrix3<
     Quaternion<T> q;
     T trace = m[0][0] + m[1][1] + m[2][2];
     T root;
+    T epsilon = std::numeric_limits<T>::epsilon() * (T) 1e3;
 
-    if (trace >= M2QEpsilon() - 1)
+    if (trace >= epsilon - 1)
     {
         root = (T) sqrt(trace + 1);
         q.w = (T) 0.5 * root;
@@ -633,10 +632,6 @@ template<class T> Quaternion<T> Quaternion<T>::matrixToQuaternion(const Matrix3<
 
     return q;
 }
-
-// Precision threshold for matrixToQuaternion
-float Quaternion<float>::M2QEpsilon() { return 1.0e-4f; }
-double Quaternion<double>::M2QEpsilon() { return 1.0e-10; }
 
 
 /*! Assuming that this is a unit quaternion representing an orientation,
