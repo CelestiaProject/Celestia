@@ -949,7 +949,7 @@ Code:
 * Mac: Added bona fide English and French help menu
 * Mac: Cleaned up README in general
 * Added Phoebe textures in medres and lores directories from recent published 
-  Cyclops cylindrical maps
+  Ciclops cylindrical maps
 * Updated  Titan and Iapetus textures in lores directory
 * Windows: save and restore the last used GL render path
 * Removed the GeForce FX render path; GLSL path is preferred
@@ -973,9 +973,9 @@ Code:
 
 
 1.5.0
-* New translations: Ukrainian, Russian, Arabic, Dutch, Chinese
+* New translations: Ukrainian, Russian, Arabic, Dutch, Chinese, Korean
 * Updated translations
-* Separate i18n domain for constelation names
+* Separate i18n domain for constellation names
 * Windows: Added support for i18n
 * Fixed bugs with UTF-8 in object name completion
 * Enabled new star rendering path: uses point sprite extension, new Gaussian
@@ -1069,9 +1069,9 @@ Code:
 * Allow smaller objects to cast eclipse shadows (e.g. can now see eclipse
   shadows from Miranda on Uranus)
 * Added support for compressed normal maps (DXT5nm)
-* Added capability to use different reference planes for orbits. Previously
-  orbits were always referred to the equatorial plane of their parent body.
-  Now, the J2000 ecliptic plane is also an option.
+* Added new solar system object type ReferencePoint, for defining reference
+  frame centers.
+* Added generalized reference frames for positioning and orienting bodies
 * Implemented a new depth sorting algorithm that fixes many depth sorting
   bugs.
 * Rewrote orbit path rendering; orbits are now properly depth sorted
@@ -1094,5 +1094,35 @@ Code:
    technique
   -provided a custom Milky Way template including all known arms with correct
    location of the Sun. Supply adapted deepsky.dsc
-      
-      
+* Moved origin of coordinate system to the solar system barycenter
+* Added VSOP87 CustomOrbit for the Sun about the solar system barycenter
+* Improved custom orbits based on JPL ephemerides:
+  - Support big endian platforms
+  - Fixed Moon orbit
+  - Added orbits for Earth-Moon barycenter and sun
+  - Added heliocentric and solar system barycentric orbits
+  - Added Moon and Earth orbits relative to Earth-Moon barycenter
+  - Guarded against crash when the JPL ephemeris file can't be found
+* Generalized rotations
+  - Clear syntax for ssc files
+  - UniformRotation 
+  - PrecessingOrientation
+  - SampledOrientation - interpolated sequence of quaternion key frames
+* Scripting improvements	
+  - New celx scripting commands:
+    - utctotdb and tdbtoutc
+    - gl commands
+  - Lua hooks for script extensions to Celestia
+  - Script interfaces for orbits and rotation models (ScriptedOrbit and 
+    ScriptedRotation)
+  - Support Lua 5.1 (5.0 compatibility retained)
+  - Made celestia:loadtexture use relative file names
+* Accelerated loading of large catalog files with an improved name index
+  (over 100x performance increase for 100k+ object catalogs)
+* Fixed bug that causes locations to work improperly in multi-star systems
+* Moved solar system barycenter to origin of universal coordinate system
+* Improved vecToVec rotation and quaternion-to-matrix functions
+* Added moons Daphnis, Perdita, Mab, and Cupid to numberedmoons.ssc
+* Added FixedPosition trajectory type for making an object stationary within
+  its reference frame
+* Added FixedRotation rotation model
