@@ -893,7 +893,7 @@ getVectorTarget(const Universe& universe, Hash* vectorData)
     Selection targetObject = universe.findPath(targetName, NULL, 0);
     if (targetObject.empty())
     {
-        clog << "Bad two-vector frame: target object '" << targetObject.getName() << "' of vector not found.\n";
+        clog << "Bad two-vector frame: target object '" << targetName << "' of vector not found.\n";
         return Selection();
     }
 
