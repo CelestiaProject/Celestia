@@ -1,6 +1,6 @@
 // mesh.cpp
 //
-// Copyright (C) 2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,6 +13,7 @@
 #include "glext.h"
 #include <cassert>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -171,6 +172,29 @@ Mesh::PrimitiveGroup::~PrimitiveGroup()
 }
 
 
+uint32
+Mesh::PrimitiveGroup::getPrimitiveCount() const
+{
+    switch (prim)
+    {
+    case TriList:
+        return nIndices / 3;
+    case TriStrip:
+    case TriFan:
+        return nIndices - 2;
+    case LineList:
+        return nIndices / 2;
+    case LineStrip:
+        return nIndices - 2;
+    case PointList:
+        return nIndices;
+    default:
+        // Invalid value
+        return 0;
+    }
+}
+
+
 Mesh::Mesh() :
     vertexDesc(0, 0, NULL),
     nVertices(0),
@@ -261,6 +285,13 @@ Mesh::addGroup(PrimitiveGroupType prim,
 }
 
 
+uint32
+Mesh::getGroupCount() const
+{
+    return groups.size();
+}
+
+
 void
 Mesh::clearGroups()
 {
@@ -303,6 +334,37 @@ Mesh::remapIndices(const vector<uint32>& indexMap)
 }
 
 
+void
+Mesh::remapMaterials(const vector<uint32>& materialMap)
+{
+    for (vector<PrimitiveGroup*>::iterator iter = groups.begin();
+         iter != groups.end(); iter++)
+    {
+        (*iter)->materialIndex = materialMap[(*iter)->materialIndex];
+    }
+}
+
+
+class PrimitiveGroupComparator : public std::binary_function<const Mesh::PrimitiveGroup*, const Mesh::PrimitiveGroup*, bool>
+{
+public:
+    bool operator()(const Mesh::PrimitiveGroup* g0, const Mesh::PrimitiveGroup* g1) const
+    {
+        return g0->materialIndex < g1->materialIndex;
+    }
+
+private:
+    int unused;
+};
+
+
+void
+Mesh::aggregateByMaterial()
+{
+    sort(groups.begin(), groups.end(), PrimitiveGroupComparator());
+}
+
+
 bool
 Mesh::pick(const Ray3d& ray, double& distance) const
 {
@@ -327,7 +389,7 @@ Mesh::pick(const Ray3d& ray, double& distance) const
         Mesh::PrimitiveGroupType primType = (*iter)->prim;
         uint32 nIndices = (*iter)->nIndices;
 
-        // Only attempt to compute the intersection of the ray with triangl
+        // Only attempt to compute the intersection of the ray with triangle
         // groups.
         if ((primType == TriList || primType == TriStrip || primType == TriFan) &&
             (nIndices >= 3) &&
@@ -526,6 +588,21 @@ Mesh::transform(Vec3f translation, float scale)
         reinterpret_cast<float*>(vdata)[1] = tv.y;
         reinterpret_cast<float*>(vdata)[2] = tv.z;
     }
+}
+
+
+uint32
+Mesh::getPrimitiveCount() const
+{
+    uint32 count = 0;
+
+    for (vector<PrimitiveGroup*>::const_iterator iter = groups.begin();
+         iter != groups.end(); iter++)
+    {
+        count += (*iter)->getPrimitiveCount();
+    }
+
+    return count;
 }
 
 

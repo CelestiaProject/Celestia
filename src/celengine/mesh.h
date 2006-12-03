@@ -1,6 +1,6 @@
 // mesh.h
 //
-// Copyright (C) 2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -142,6 +142,8 @@ class Mesh
     public:
         PrimitiveGroup();
         ~PrimitiveGroup();
+
+        uint32 getPrimitiveCount() const;
         
         PrimitiveGroupType prim;
         uint32 materialIndex;
@@ -162,8 +164,17 @@ class Mesh
                     uint32 materialIndex,
                     uint32 nIndices,
                     uint32* indices);
+    uint32 getGroupCount() const;
     void remapIndices(const std::vector<uint32>& indexMap);
     void clearGroups();
+
+    void remapMaterials(const std::vector<uint32>& materialMap);
+
+    /*! Reorder primitive groups so that groups with identical materials
+     *  appear sequentially in the primitive group list. This will reduce
+     *  the number of graphics state changes at render time.
+     */
+    void aggregateByMaterial();
 
     const std::string& getName() const;
     void setName(const std::string&);
@@ -178,6 +189,7 @@ class Mesh
     const void* getVertexData() const { return vertices; }
     uint32 getVertexCount() const { return nVertices; }
     uint32 getVertexStride() const { return vertexDesc.stride; }
+    uint32 getPrimitiveCount() const;
 
     static PrimitiveGroupType      parsePrimitiveGroupType(const std::string&);
     static VertexAttributeSemantic parseVertexAttributeSemantic(const std::string&);
