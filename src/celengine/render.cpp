@@ -6950,14 +6950,15 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 
     // Only render those labels that are in front of the camera:
     // Place labels for DSOs brighter than the specified label threshold brightness
-
-    if ((dso->getLabelMask() & labelMode)  && appMag < labelThresholdMag && dot(relPos, viewNormal) > 0)
+    //
+    if ((dso->getLabelMask() & labelMode) && appMag < labelThresholdMag  && dot(relPos, viewNormal) > 0)
     {
         // introduce distance dependent label transparency.
-		float distr = labelThresholdMag/(faintestMag  * (float)log10(1.0f + 1.2e-6f * distanceToDSO));
+		float distr = 6.0f * (labelThresholdMag - appMag)/labelThresholdMag;
+		//(float)log10(1.0f + 1.2e-6f * distanceToDSO);
         if (distr > 1.0f)
         	distr = 1.0f;
-
+        	
     	renderer->addLabel(dsoDB->getDSOName(dso),
                            Color(0.1f, 0.85f, 0.85f, distr),
                            Point3f(relPos.x, relPos.y, relPos.z));
@@ -7007,7 +7008,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
-    dsoRenderer.labelThresholdMag = 1.6f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
+    dsoRenderer.labelThresholdMag = 1.8f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
     // Render any line primitives with smooth lines
     // (mostly to make graticules look good.)
@@ -7177,8 +7178,8 @@ void Renderer::renderLabels(FontStyle fs)
         glTranslatef((int) labels[i].position.x + PixelOffset + 2.0f,
                      (int) labels[i].position.y + PixelOffset,
                      0.0f);
-        // EK TODO: Check where to replace (see '_(' above)
-        font[fs]->render(labels[i].text);
+		// EK TODO: Check where to replace (see '_(' above)
+		font[fs]->render(labels[i].text);
         glPopMatrix();
     }
 
