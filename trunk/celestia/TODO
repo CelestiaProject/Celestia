@@ -7,17 +7,13 @@ USER INTERFACE
 * Dialog box for displaying detailed information about a star or planet
 * Star browser: flag stars with planetary systems
 * Solar system browser: add icons
-* Popup H-R diagram window
 * Use a slider widget for controlling ambient light level
 * Allow precise control of FOV
 
 VISUALS
-* Non-Lambertian illumination functions for planets
 * Comets with dust and ion tails
-* Bump mapped cloud layers
 * Render dark dust bands in galaxies
 * Add textures to Mir model
-* Cloud shadows
 
 POLISH
 * Tutorial mode
@@ -26,27 +22,15 @@ POLISH
 * Add a demo mode that visits random targets
 * Compute accurate altitude above oblate planets/stars using point-to-ellipsoid
   distance function.
-* Load add-ons from subdirectories of extras
 
 SIMULATION ACCURACY
 * Fix apparent magnitude calculation for planets
-* Figure out a way to estimate gas giant's radius given its mass
 * Model the chaotic rotation of Hyperion
 * Account for the finite speed of light
 * Use more intuitive/standard fields in galaxies file--instead of axis/angle
   orientations, use 'angle from face on' etc.
-* Fix moon orbit bug: http://shatters.net/forum/posting.php?mode=reply&t=4966
-
-BUGS
-* Investigate possible visual anomalies with ring shadows on ATI Rage cards
-* Fix slowdowns with ring shadows and night textures on ATI Rage cards
-
-OPTIMIZATION
-* Add option to force 16-bit textures
 
 CODE
-* Make parser more robust (and fix that EOF problem)
-* Change random printfs to DPRINTFs and Logs
 * Finish assert-ing the code
 
 MISC
