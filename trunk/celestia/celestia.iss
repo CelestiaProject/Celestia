@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.4.1
+AppVerName=Celestia 1.5.0pre1
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -295,6 +295,7 @@ Source: "shaders\haze2_arb.vp";          DestDir: "{app}/shaders"; Flags: ignore
 Source: "shaders\night2_arb.vp";         DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\specular2_arb.vp";      DestDir: "{app}/shaders"; Flags: ignoreversion
 Source: "shaders\ell_galaxy_arb.vp";     DestDir: "{app}/shaders"; Flags: ignoreversion
+Source: "shaders\star_arb.vp";           DestDir: "{app}/shaders"; Flags: ignoreversion
 
 
 ; Shaders (NV pixel)
