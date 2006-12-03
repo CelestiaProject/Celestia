@@ -1126,3 +1126,9 @@ Code:
 * Added FixedPosition trajectory type for making an object stationary within
   its reference frame
 * Added FixedRotation rotation model
+* Added logging of mesh statistics
+* Improved load time mesh conditioning: eliminated duplicate materials and
+  sort submeshes by material to reduce graphics state changes.
+* Switched to improved version of Cassini model from Cham
+
+
