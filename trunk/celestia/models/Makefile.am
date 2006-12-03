@@ -1,6 +1,7 @@
 pkgdatadir = @datadir@/@PACKAGE@/models
 
 pkgdata_DATA = \
+	E0.png \
 	S0.png \
 	Sa.png \
 	Sb.png \
