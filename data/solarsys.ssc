@@ -717,21 +717,27 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 "Titan" "Sol/Saturn"
 {
 	Texture  "titan.*"
-        Color                [ 0.8 0.2 0.45 ]
-        # HazeColor          [ 0.781 0.629 0.975 ]
-	HazeDensity        0.6
-	Radius          2575
+        Color      [ 0.8 0.2 0.45 ]
+        # HazeColor [ 0.781 0.629 0.975 ]
+	HazeDensity          0.6
+	Radius            2575
 
-	Atmosphere {
-		Height     200
-		Lower      [ 0.477 0.367 0.211 ]
-		Upper      [ 0.96 0.805 0.461 ]
-		Sky        [ 0.3 0 0 ]
-		CloudHeight   3
-		CloudSpeed 65
-		CloudMap "titan-clouds.*"
-	}
-
+    Atmosphere {
+        Height         500.0
+      	Lower      [ 0.477 0.367 0.211 ]
+	  	Upper      [ 0.96 0.805 0.461 ]
+	  	Sky        [ 0.3 0 0 ]
+      
+      	Mie              0.0001
+      	MieAsymmetry    -0.55
+      	Rayleigh   [ 0.0 0.0 0.00017 ]
+      	Absorption [ 0.000075 0.00030 0.00025 ]
+      	MieScaleHeight 220.0 
+      	CloudHeight    220.0
+      	CloudSpeed      65.0
+      	CloudMap "titan-clouds.*"
+    }
+    
 	CustomOrbit "titan"
 	EllipticalOrbit
 	{
