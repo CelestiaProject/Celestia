@@ -1,6 +1,6 @@
 // model.h
 //
-// Copyright (C) 2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2006, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,18 @@ class Model
      *  return value is the number of materials in the model.
      */
     uint32 addMaterial(const Mesh::Material*);
+
+    /*! Return the number of materials in the model
+     */
+    uint32 getMaterialCount() const;
+
+    /*! Return the total number of vertices in the model
+     */
+    uint32 getVertexCount() const;
+
+    /*! Return the total number of primitives in the model
+     */
+    uint32 getPrimitiveCount() const;
 
     /*! Return the mesh with the specified index, or NULL if the
      *  index is out of range.
@@ -80,6 +92,9 @@ class Model
     /*! Sort the model's meshes in place. */
     void sortMeshes(const MeshComparator&);
 
+    /*! Optimize the model by eliminating all duplicated materials */
+    void uniquifyMaterials();
+
     /*! This comparator will roughly sort the model's meshes by
      *  opacity so that transparent meshes are rendered last.  It's far
      *  from perfect, but covers a lot of cases.  A better method of
@@ -87,20 +102,22 @@ class Model
      *  even better at the triangle level.
      *
      *  Standard usage for this class is:
-     *     model->sortMeshes(Model::OpacityComparator(*model));
+     *     model->sortMeshes(Model::OpacityComparator());
+     *
+     *  uniquifyMaterials() should be used before sortMeshes(), since
+     *  the opacity comparison depends on material indices being ordered
+     *  by opacity.
      */
     class OpacityComparator : public MeshComparator
     {
      public:
-        OpacityComparator(const Model&);
+        OpacityComparator();
         virtual ~OpacityComparator() {};
 
         virtual bool operator()(const Mesh&, const Mesh&) const;
 
      private:
-        float getOpacity(const Mesh& mesh) const;
-
-        const Model& model;
+        int unused;
     };
 
  private:
