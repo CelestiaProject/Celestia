@@ -178,7 +178,7 @@ BEGIN
     LTEXT           "Toti",IDC_STATIC,160,102,100,9
     LTEXT           "Da Woon Jung",IDC_STATIC,160,112,100,9
     LTEXT           "Hank Ramsey",IDC_STATIC,160,122,100,9
-    LTEXT           "Bob Ippolito",IDC_STATIC,160,132,100,9
+    LTEXT           "Bob Ippolito",IDC_STATIC,160,132,100,9    LTEXT           "Vincent Gian",IDC_STATIC,160,142,100,9
 END
 
 IDD_FINDOBJECT DIALOGEX 100, 50, 162, 54
@@ -634,12 +634,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", " "
             VALUE "FileDescription", "celestia"
-            VALUE "FileVersion", "1, 4, 1, 0"
+            VALUE "FileVersion", "1, 5, 0, 0"
             VALUE "InternalName", "celestia"
             VALUE "LegalCopyright", "Copyright  2001-2006, Chris Laurel"
             VALUE "OriginalFilename", "celestia.exe"
             VALUE "ProductName", "  celestia"
-            VALUE "ProductVersion", "1, 4, 1, 0"
+            VALUE "ProductVersion", "1, 5, 0, 0"
         END
     END
     BLOCK "VarFileInfo"
