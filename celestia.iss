@@ -44,6 +44,9 @@ Source: "demo.cel";     DestDir: "{app}"; Flags: ignoreversion
 Source: "guide.cel";    DestDir: "{app}"; Flags: ignoreversion
 Source: "libpng1.dll";  DestDir: "{app}"; Flags: ignoreversion
 Source: "zlib.dll";     DestDir: "{app}"; Flags: ignoreversion
+Source: "intl.dll";     DestDir: "{app}"; Flags: ignoreversion
+Source: "iconv.dll";    DestDir: "{app}"; Flags: ignoreversion
+Source: "lua5.1.dll";   DestDir: "{app}"; Flags: ignoreversion
 Source: "controls.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "COPYING";      DestDir: "{app}"; Flags: ignoreversion
 Source: "README";       DestDir: "{app}"; Flags: ignoreversion isreadme;   DestName: "README.txt"
@@ -52,6 +55,26 @@ Source: "TRANSLATORS";  DestDir: "{app}"; Flags: ignoreversion;            DestN
 Source: "ChangeLog";    DestDir: "{app}"; Flags: ignoreversion;            DestName: "ChangeLog.txt"
 Source: "KbdMouseJoyControls.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "splash.png";   DestDir: "{app}"; Flags: ignoreversion
+
+
+; Languages
+Source: "locale\res_ar.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_de.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_el.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_es.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_fr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_gl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_hu.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_it.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_ja.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_ko.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_nl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_pt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_pt_br.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_ru.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_sv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_uk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_zh.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 
 
 ; Data
