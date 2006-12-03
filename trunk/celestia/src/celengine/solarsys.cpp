@@ -1,6 +1,6 @@
 // solarsys.cpp
 //
-// Copyright (C) 2001-2004 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
 //
 // Solar system catalog parser.
 //
@@ -599,13 +599,13 @@ static Body* CreatePlanet(const string& name,
 
 
 // Create a barycenter object using the values from a hash
-static Body* CreateBarycenter(const string& name,
-                              PlanetarySystem* system,
-                              Universe& universe,
-                              Body* existingBody,
-                              Hash* barycenterData,
-                              const string& path,
-                              Disposition disposition)
+static Body* CreateReferencePoint(const string& name,
+                                  PlanetarySystem* system,
+                                  Universe& universe,
+                                  Body* existingBody,
+                                  Hash* barycenterData,
+                                  const string& path,
+                                  Disposition disposition)
 {
     Body* body = NULL;
 
@@ -777,7 +777,7 @@ bool LoadSolarSystemObjects(istream& in,
 
                 Body* body;
                 if (itemType == "ReferencePoint")
-                    body = CreateBarycenter(name, parentSystem, universe, existingBody, objectData, directory, disposition);
+                    body = CreateReferencePoint(name, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
                     body = CreatePlanet(name, parentSystem, universe, existingBody, objectData, directory, disposition);
 
