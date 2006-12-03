@@ -1012,7 +1012,7 @@ void renderOrbitColor(int classification, bool selected)
         switch (classification)
         {
         case Body::Moon:
-            glColor4f(0.0f, 0.2f, 0.5f, 1.0f);
+            glColor4f(0.3f, 0.2f, 0.4f, 1.0f);
             break;
         case Body::Asteroid:
             glColor4f(0.35f, 0.2f, 0.0f, 1.0f);
@@ -4892,7 +4892,7 @@ void Renderer::renderObject(Point3f pos,
         {
             float atmosphereHeight = max(obj.atmosphere->cloudHeight,
                                          obj.atmosphere->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
-            if (atmosphereHeight > 0.0f && d < eradius + atmosphereHeight)
+            if (atmosphereHeight > 0.0f)
             {
                 // If there's an atmosphere, we need to move the far plane
                 // out so that the clouds and atmosphere shell aren't clipped.
