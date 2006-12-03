@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by celestia.rc
 //
-#define VERSION_STRING                  "1.4.1"
+#define VERSION_STRING                  "1.5.0"
 #define IDR_MENU1                       101
 #define IDD_ABOUT                       102
 #define IDI_CELESTIA_ICON               103
