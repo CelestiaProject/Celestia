@@ -2045,10 +2045,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         break;
 
     case '@':
-        // Obsolete?
-        //editMode = !editMode;
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNewStars);
-        notifyWatchers(RenderFlagsChanged);
+        // TODO: 'Edit mode' should be eliminated; it can be done better
+        // with a Lua script.
+        editMode = !editMode;
         break;
     }
 }

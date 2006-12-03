@@ -83,8 +83,8 @@ class Renderer
         SpacecraftLabels    = 0x040,
         LocationLabels      = 0x080,
         CometLabels         = 0x100,
-		NebulaLabels        = 0x200,
-		OpenClusterLabels   = 0x400,
+        NebulaLabels        = 0x200,
+        OpenClusterLabels   = 0x400,
         I18nConstellationLabels = 0x800,
         BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
@@ -109,9 +109,8 @@ class Renderer
         ShowCometTails      = 0x8000,
         ShowMarkers         = 0x10000,
         ShowPartialTrajectories = 0x20000,
-	    ShowNebulae         = 0x40000,
-		ShowOpenClusters    = 0x80000,
-		ShowNewStars        = 0x100000, // temporary, for debugging new star code
+        ShowNebulae         = 0x40000,
+        ShowOpenClusters    = 0x80000,
         ShowCloudShadows    = 0x200000,
     };
 

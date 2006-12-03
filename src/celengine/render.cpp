@@ -1023,6 +1023,9 @@ void renderOrbitColor(int classification, bool selected)
         case Body::Spacecraft:
             glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
             break;
+        case Body::Stellar:
+            glColor4f(0.5f, 0.5f, 0.8f, 1.0f);
+            break;
         case Body::Planet:
         default:
             glColor4f(0.0f, 0.4f, 1.0f, 1.0f);
@@ -1136,7 +1139,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
         highlight = highlightObject.body() == body;
     else
         highlight = highlightObject.star() == orbitPath.star;
-    renderOrbitColor(body != NULL ? body->getClassification() : Body::Planet, highlight);
+    renderOrbitColor(body != NULL ? body->getClassification() : Body::Stellar, highlight);
 
     // Actually render the orbit
     if (orbit->isPeriodic())
@@ -1323,9 +1326,7 @@ void Renderer::render(const Observer& observer,
 
     locationFilter = observer.getLocationFilter();
 
-    if ((renderFlags & ShowNewStars) != 0 &&
-         usePointSprite &&
-         getGLContext()->getVertexProcessor() != NULL)
+    if (usePointSprite && getGLContext()->getVertexProcessor() != NULL)
     {
         useNewStarRendering = true;
     }
