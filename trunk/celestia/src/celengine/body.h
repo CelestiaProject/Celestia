@@ -99,6 +99,7 @@ class Body
         Barycenter  =    0x40,
         SmallBody   =    0x80,
         DwarfPlanet =   0x100,
+        Stellar     =   0x200, // only used for orbit mask
         Unknown     = 0x10000,
     };
 
