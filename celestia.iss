@@ -332,6 +332,7 @@ Source: "shaders\texphong_alpha_nv.fp";  DestDir: "{app}/shaders"; Flags: ignore
 
 
 ; Models
+Source: "models\E0.png";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\S0.png";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\Sa.png";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\Sb.png";          DestDir: "{app}/models"; Flags: ignoreversion
