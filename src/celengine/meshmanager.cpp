@@ -1,6 +1,6 @@
 // meshmanager.cpp
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -96,12 +96,28 @@ Model* ModelInfo::load(const string& filename)
         model = LoadCelestiaMesh(filename);
     }
 
+    // Condition the model for optimal rendering
     if (model != NULL)
     {
+        // Many models tend to have a lot of duplicate materials; eliminate
+        // them, since unnecessarily setting material parameters can adversely
+        // impact rendering performance. Ideally uniquification of materials
+        // would be performed just once when the model was created, but
+        // that's not the case.
+        uint32 originalMaterialCount = model->getMaterialCount();
+        model->uniquifyMaterials();
+
         // Sort the submeshes roughly by opacity.  This will eliminate a
         // good number of the errors caused when translucent triangles are
         // rendered before geometry that they cover.
-        model->sortMeshes(Model::OpacityComparator(*model));
+        model->sortMeshes(Model::OpacityComparator());
+
+        // Display some statics for the model
+        clog << "   Model statistics: "
+             << model->getVertexCount() << " vertices, "
+             << model->getPrimitiveCount() << " primitives, "
+             << originalMaterialCount << " materials "
+             << "(" << model->getMaterialCount() << " unique)\n";
     }
     else
     {
@@ -139,6 +155,7 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
 }
 
 
+// TODO: The Celestia mesh format is deprecated
 Model* LoadCelestiaMesh(const string& filename)
 {
     ifstream meshFile(filename.c_str(), ios::in);
@@ -367,6 +384,8 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
                     // current equation is just a guess at the mapping that
                     // 3DS actually uses.
                     shininess = (float) pow(2.0, 1.0 + 0.1 * shininess);
+                    //shininess = 2.0f + shininess;
+                    //clog << materialName << ": shininess=" << shininess << ", color=" << specular.red << "," << specular.green << "," << specular.blue << '\n';
                     if (shininess > 128.0f)
                         shininess = 128.0f;
                     vl->setShininess(shininess);
