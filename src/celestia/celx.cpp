@@ -2380,6 +2380,24 @@ static int object_name(lua_State* l)
     return 1;
 }
 
+static int object_localname(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to function object:localname");
+
+    Selection* sel = this_object(l);
+    switch (sel->getType())
+    {
+    case Selection::Type_Body:
+        lua_pushstring(l, sel->body()->getName(true).c_str());
+        break;
+    default:
+        lua_pushstring(l, "?");
+        break;
+    }
+
+    return 1;
+}
+
 static int object_spectraltype(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:spectraltype");
@@ -2692,6 +2710,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "getinfo", object_getinfo);
     RegisterMethod(l, "absmag", object_absmag);
     RegisterMethod(l, "name", object_name);
+    RegisterMethod(l, "localname", object_localname);
     RegisterMethod(l, "mark", object_mark);
     RegisterMethod(l, "unmark", object_unmark);
     RegisterMethod(l, "getposition", object_getposition);
