@@ -261,6 +261,9 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     //           Mat4f::scaling(getRadius()));
 
     float  size  = 2 * getRadius();
+
+
+    
     Mat3f m =
         Mat3f::scaling(form->scale)*getOrientation().toMatrix3()*Mat3f::scaling(size);
 
@@ -304,14 +307,14 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
         if ((i & pow2) != 0)
         {
             pow2 <<= 1;
-            size /= 1.5f;
+           	size /= 1.55f;            
             if (size < minimumFeatureSize)
                 break;
         }
         float screenFrac = size / relPos.distanceFromOrigin();
         if (screenFrac < 0.1f)
         {
-            float a  = 3.25f * (0.1f - screenFrac) * brightness_corr * brightness * br;
+            float a  = 5.0f * (0.1f - screenFrac) * brightness_corr * brightness * br;
 
             glColor4f(c.red(), c.green(), c.blue(), (4.0f*lightGain + 1.0f)*a);
 
@@ -487,79 +490,94 @@ void Galaxy::hsv2rgb( float *r, float *g, float *b, float h, float s, float v )
 
 GalacticForm* buildGalacticForms(const std::string& filename)
 {
-    Blob b;
-    vector<Blob>* galacticPoints = new vector<Blob>;
+	Blob b;
+	vector<Blob>* galacticPoints = new vector<Blob>;
 
-    // Load templates in standard .png format
-    int width, height, rgb, j = 0;
-    unsigned char value;
-    Image* img = LoadPNGImage(filename);
-    width  = img->getWidth();
-    height = img->getHeight();
-    rgb    = img->getComponents();
+	// Load templates in standard .png format
+	int width, height, rgb, j = 0, kmin = 9;
+	unsigned char value;
+	float h = 0.75f;	
+	Image* img;
+	img = LoadPNGImage(filename);
+	if (img == NULL)
+	{
+	cout<<"\nThe galaxy template *** "<<filename<<" *** could not be loaded!\n\n";
+	return NULL;
+	}
+	width  = img->getWidth();
+	height = img->getHeight();
+	rgb    = img->getComponents();
 
-    for (int i = 0; i < width * height; i++)
-    {
-        value = img->getPixels()[rgb * i];
-        if (value > 10)
-        {
-            float x, y, z, r2, R = 0.45f;
-        	z  = floor(i /(float) width);
-        	x  = (i - width * z - 0.5f * (width - 1)) / (float) width;
-        	z  = (0.5f * (height - 1) - z) / (float) height;
-       		r2 = x * x + z * z;
-       		if ( strcmp ( filename.c_str(), "models/S0.png") == 0 )
-       		{
-            	y = (r2 <= 0.25f)? 0.25f * Mathf::sfrand() * sqrt(0.25f - r2): 0.0f;
-       		}
-    		else
-    		{
-    		    if (r2 <= R * R)
-    		    {
-    		        float yval = 0.03f * (float)value/(float)256;
-    		        float yy, prob;
-      		    	do
-    		    	{
-    		    		// generate "thickness" y of spirals with emulation of a dust lane
-    		    		// in galctic plane (y=0)
-    		    		yy = Mathf::sfrand();
-    		    		prob = (1.0f - exp(-4.5f * yy * yy));
-    		    	} while (Mathf::frand() > prob);
-    		    	y = yy * yval;
-    		    }
-    		    else
-    				y = 0.02f * Mathf::sfrand() * (float) exp(-6.5f * r2);
+		for (int i = 0; i < width * height; i++)
+		{
+			value = img->getPixels()[rgb * i];
+			if (value > 10)
+			{    
+				float x, y, z, r2, yy, prob;
+				z  = floor(i /(float) width);
+				x  = (i - width * z - 0.5f * (width - 1)) / (float) width;
+				z  = (0.5f * (height - 1) - z) / (float) height;
+				x  += Mathf::sfrand() * 0.008f;
+				z  += Mathf::sfrand() * 0.008f;
+				r2 = x * x + z * z;
+					
+				if ( strcmp ( filename.c_str(), "models/E0.png") != 0 )
+				{
+					float y0 = 0.03f * sqrt((float)value/256.0f) * exp(- 5.0f * r2);
+					float B, yr;
+					B = (r2 > 0.35f)? 1.0f: 0.75f; // the darkness of the "dust lane", 0 < B < 1
+					float p0 = 1.0f - B * exp(-h * h); // the uniform reference probability, envelopping prob*p0.
+					do
+					{
+						// generate "thickness" y of spirals with emulation of a dust lane
+						// in galctic plane (y=0)
 
+						yr =  Mathf::sfrand() * h;
+						prob = (1.0f - B * exp(-yr * yr))/p0;
+						
+					} while (Mathf::frand() > prob); 
+					b.brightness  = value * prob;
+					y = y0 * yr / h;
+				}
+				else
+				{   
+					// generate spherically symmetric distribution from E0.png
+					do
+					{
+						yy = Mathf::sfrand();
+						float ry2 = 1.0f - yy * yy;
+						prob = ry2 > 0? sqrt(ry2): 0.0f;
+					} while (Mathf::frand() > prob); 
+					y = yy * sqrt(0.25f - r2) ;
+					b.brightness  = value; 
+					kmin = 12;
+				}	
+				
+				b.position    = Point3f(x, y, z);
+				unsigned int rr =  (unsigned int) (b.position.distanceFromOrigin() * 511);
+				b.colorIndex  = rr < 256? rr: 255;
+				galacticPoints->push_back(b);
+				j++; 
+			 }
+		}
+		
+	galacticPoints->reserve(j);
 
-       		}
-        	x  += Mathf::sfrand() * 0.015f;
-        	z  += Mathf::sfrand() * 0.015f;
+	// sort to start with the galaxy center region (x^2 + y^2 + z^2 ~ 0), such that
+	// the biggest (brightest) sprites will be localized there!
 
-        	b.position    = Point3f(x, y, z);
-        	b.brightness  = value;
-            unsigned int rr =  (unsigned int) (b.position.distanceFromOrigin() * 511);
-        	b.colorIndex  = rr < 256? rr: 255;
-			galacticPoints->push_back(b);
-            j++;
-         }
-    }
-    galacticPoints->reserve(j);
+	sort(galacticPoints->begin(), galacticPoints->end());
 
-    // sort to start with the galaxy center region (x^2 + y^2 + z^2 ~ 0), such that
-    // the biggest (brightest) sprites will be localized there!
+	// reshuffle the galaxy points randomly...except the first kmin+1 in the center!
+	// the higher that number the stronger the central "glow"
+	
+	random_shuffle( galacticPoints->begin() + kmin, galacticPoints->end());
 
-    sort(galacticPoints->begin(), galacticPoints->end());
+	GalacticForm* galacticForm  = new GalacticForm();
+	galacticForm->blobs         = galacticPoints;
+	galacticForm->scale         = Vec3f(1.0f, 1.0f, 1.0f);
 
-    // reshuffle the galaxy points randomly...except the first 8 in the center!
-    // the higher that number the stronger the central "glow"
-    random_shuffle( galacticPoints->begin() + 10, galacticPoints->end());
-    random_shuffle( galacticPoints->begin(), galacticPoints->begin() + 5);
-
-    GalacticForm* galacticForm  = new GalacticForm();
-    galacticForm->blobs         = galacticPoints;
-    galacticForm->scale         = Vec3f(1.0f, 1.0f, 1.0f);
-
-    return galacticForm;
+	return galacticForm;
 }
 
 
@@ -599,25 +617,28 @@ void InitializeForms()
     // via rescaling by (1.0f, 3.8f, 1.0f).
 
     ellipticalForms = new GalacticForm*[8];
-
     for (unsigned int eform  = 0; eform <= 7; ++eform)
     {
         float ell = 1.0f - (float) eform / 8.0f;
         ellipticalForms[eform] = new GalacticForm();
 
         // note the correct x,y-alignment of 'ell' scaling!!
-   		// 'blow up' S0 template into En (elliptical) ones
-   		ellipticalForms[eform]->blobs = spiralForms[Galaxy::S0]->blobs;
-   		ellipticalForms[eform]->scale = Vec3f(ell, 4.0f * ell, 1.0f);
-
+   		// build all elliptical templates from rescaling E0
+   		  
+   		ellipticalForms[eform] = buildGalacticForms("models/E0.png");
+   		if (*ellipticalForms)
+   			ellipticalForms[eform]->scale = Vec3f(ell, ell, 1.0f);
+         
         // account for reddening of ellipticals rel.to spirals
-        unsigned int nPoints = (unsigned int) (ellipticalForms[eform]->blobs->size());
-		for (unsigned int i = 0; i < nPoints; ++i)
-    	{
-            (*ellipticalForms[eform]->blobs)[i].colorIndex = (unsigned int) ceil(0.76f * (*ellipticalForms[eform]->blobs)[i].colorIndex);
+        if (*ellipticalForms)
+        {
+        	unsigned int nPoints = (unsigned int) (ellipticalForms[eform]->blobs->size());
+			for (unsigned int i = 0; i < nPoints; ++i)
+    		{
+            	(*ellipticalForms[eform]->blobs)[i].colorIndex = (unsigned int) ceil(0.76f * (*ellipticalForms[eform]->blobs)[i].colorIndex);
+        	}
         }
     }
-
     //Irregular Galaxies
     unsigned int galaxySize = GALAXY_POINTS, ip = 0;
     Blob b;
@@ -646,7 +667,7 @@ void InitializeForms()
     }
     irregularForm        = new GalacticForm();
     irregularForm->blobs = irregularPoints;
-    irregularForm->scale = Vec3f(1.0f, 0.1f, 1.0f);
+    irregularForm->scale = Vec3f(0.5f, 0.05f, 0.5f);
 
     formsInitialized = true;
 }
