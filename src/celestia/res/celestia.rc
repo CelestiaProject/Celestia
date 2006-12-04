@@ -178,7 +178,7 @@ BEGIN
     LTEXT           "Toti",IDC_STATIC,160,102,100,9
     LTEXT           "Da Woon Jung",IDC_STATIC,160,112,100,9
     LTEXT           "Hank Ramsey",IDC_STATIC,160,122,100,9
-    LTEXT           "Bob Ippolito",IDC_STATIC,160,132,100,9    LTEXT           "Vincent Gian",IDC_STATIC,160,142,100,9
+    LTEXT           "Bob Ippolito",IDC_STATIC,160,132,100,9    LTEXT           "Vincent Giangiulio",IDC_STATIC,160,142,100,9
 END
 
 IDD_FINDOBJECT DIALOGEX 100, 50, 162, 54
