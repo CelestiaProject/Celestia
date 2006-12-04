@@ -28,7 +28,7 @@ using namespace std;
 
 static int width = 128, height = 128;
 static Color colorTable[256];
-static const unsigned int GALAXY_POINTS  = 7000;
+static const unsigned int GALAXY_POINTS  = 3500;
 
 static bool formsInitialized = false;
 
@@ -657,7 +657,7 @@ void InitializeForms()
             if (Mathf::frand() < prob)
             {
                 b.position   = p;
-                b.brightness = 255u;
+                b.brightness = 64u;
                 unsigned int rr =  (unsigned int) (r * 511);
         	    b.colorIndex  = rr < 256? rr: 255;
                 irregularPoints->push_back(b);
