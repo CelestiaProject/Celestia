@@ -1130,5 +1130,11 @@ Code:
 * Improved load time mesh conditioning: eliminated duplicate materials and
   sort submeshes by material to reduce graphics state changes.
 * Switched to improved version of Cassini model from Cham
-
+* Added various improvements to the MilkyWay & other galaxy template display.
+* Added E0.png galaxy template that allows for better En, n=1..7 elliptical
+  shapes.  
+* Fixed sizes of irregular galaxies (factor of 2!).
+* Prevented galaxy code from crashing if a template is missing.
+* Added new code featuring varying label transparency for galaxies.
+* Added new parameter set for Mie atmosphere display of Titan.
 
