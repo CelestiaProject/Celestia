@@ -717,7 +717,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 "Titan" "Sol/Saturn"
 {
 	Texture  "titan.*"
-        Color      [ 0.8 0.2 0.45 ]
+        Color      [0.96 0.805 0.461 ]
         # HazeColor [ 0.781 0.629 0.975 ]
 	HazeDensity          0.6
 	Radius            2575
