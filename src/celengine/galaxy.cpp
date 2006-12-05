@@ -314,7 +314,8 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
         float screenFrac = size / relPos.distanceFromOrigin();
         if (screenFrac < 0.1f)
         {
-            float a  = 5.0f * (0.1f - screenFrac) * brightness_corr * brightness * br;
+            float btot = ((type > SBc) && (type < Irr))? 2.5f: 5.0f;
+            float a  = btot * (0.1f - screenFrac) * brightness_corr * brightness * br;
 
             glColor4f(c.red(), c.green(), c.blue(), (4.0f*lightGain + 1.0f)*a);
 
