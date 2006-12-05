@@ -17,6 +17,7 @@
 #include "astro.h"
 #include "3dsmesh.h"
 #include "meshmanager.h"
+#include "render.h"
 #include "universe.h"
 
 #define ANGULAR_RES 3.5e-6
@@ -718,25 +719,29 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 class DSOPicker : public DSOHandler
 {
 public:
-    DSOPicker(const Point3d&, const Vec3d&, float);
+    DSOPicker(const Point3d&, const Vec3d&, int, float);
     ~DSOPicker() {};
 
     void process(DeepSkyObject* const &, double, float);
 
 public:
-    const DeepSkyObject* pickedDSO;
     Point3d pickOrigin;
     Vec3d   pickDir;
+    int     renderFlags;
+
+    const DeepSkyObject* pickedDSO;
     double  sinAngle2Closest;
 };
 
 
 DSOPicker::DSOPicker(const Point3d& pickOrigin,
                      const Vec3d&   pickDir,
+                     int   renderFlags,
                      float angle) :
-    pickedDSO       (NULL),
     pickOrigin      (pickOrigin),
     pickDir         (pickDir),
+    renderFlags     (renderFlags),
+    pickedDSO       (NULL),
     sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) :
                                                     ANGULAR_RES )
 {
@@ -745,6 +750,9 @@ DSOPicker::DSOPicker(const Point3d& pickOrigin,
 
 void DSOPicker::process(DeepSkyObject* const & dso, double, float)
 {
+    if (!(dso->getRenderMask() & renderFlags))
+        return;
+
     Vec3d relativeDSOPos = dso->getPosition() - pickOrigin;
     Vec3d dsoDir = relativeDSOPos;
     dsoDir.normalize();
@@ -778,16 +786,19 @@ class CloseDSOPicker : public DSOHandler
 public:
     CloseDSOPicker(const Point3d& pos,
                    const Vec3d& dir,
+                   int    renderFlags,
                    double maxDistance,
-                   float angle);
+                   float);
     ~CloseDSOPicker() {};
 
     void process(DeepSkyObject* const & dso, double distance, float appMag);
 
 public:
-    Point3d              pickOrigin;
-    Vec3d                pickDir;
-    double maxDistance;
+    Point3d pickOrigin;
+    Vec3d   pickDir;
+    int     renderFlags;
+    double  maxDistance;
+
     const DeepSkyObject* closestDSO;
     double closestDistance;
 };
@@ -795,10 +806,12 @@ public:
 
 CloseDSOPicker::CloseDSOPicker(const Point3d& pos,
                                const Vec3d& dir,
+                               int    renderFlags,
                                double maxDistance,
                                float) :
     pickOrigin      (pos),
     pickDir         (dir),
+    renderFlags     (renderFlags),
     maxDistance     (maxDistance),
     closestDSO      (NULL),
     closestDistance(1.0e32)
@@ -810,7 +823,7 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
                              double distance,
                              float)
 {
-    if (distance > maxDistance)
+    if (distance > maxDistance || !(dso->getRenderMask() & renderFlags))
         return;
 
     double  distance2  = 0.0;
@@ -831,6 +844,7 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
 
 Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
                                       const Vec3f& direction,
+                                      int   renderFlags,
                                       float faintestMag,
                                       float tolerance)
 {
@@ -841,7 +855,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
 
     Vec3d dir   = Vec3d(direction.x, direction.y, direction.z);
 
-    CloseDSOPicker closePicker(orig, dir, 1e9, tolerance);
+    CloseDSOPicker closePicker(orig, dir, renderFlags, 1e9, tolerance);
 
     dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
     if (closePicker.closestDSO != NULL)
@@ -869,7 +883,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
         rotation.setAxisAngle(axis, (float) (2.0 * asin(sinAngle2)));
     }
 
-    DSOPicker picker(orig, dir, tolerance);
+    DSOPicker picker(orig, dir, renderFlags, tolerance);
     dsoCatalog->findVisibleDSOs(picker,
                                 orig,
                                 rotation,
@@ -886,26 +900,30 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
 Selection Universe::pick(const UniversalCoord& origin,
                          const Vec3f& direction,
                          double when,
-                         float faintestMag,
-                         float tolerance)
+                         int    renderFlags,
+                         float  faintestMag,
+                         float  tolerance)
 {
     Selection sel;
 
-    closeStars.clear();
-    getNearStars(origin, 1.0f, closeStars);
-    for (vector<const Star*>::const_iterator iter = closeStars.begin();
-         iter != closeStars.end(); iter++)
+    if (renderFlags & Renderer::ShowPlanets)
     {
-        SolarSystem* solarSystem = getSolarSystem(*iter);
-        if (solarSystem != NULL)
+        closeStars.clear();
+        getNearStars(origin, 1.0f, closeStars);
+        for (vector<const Star*>::const_iterator iter = closeStars.begin();
+            iter != closeStars.end(); iter++)
         {
-            sel = pickPlanet(*solarSystem,
-                             origin, direction,
-                             when,
-                             faintestMag,
-                             tolerance);
-            if (!sel.empty())
-                break;
+            SolarSystem* solarSystem = getSolarSystem(*iter);
+            if (solarSystem != NULL)
+            {
+                sel = pickPlanet(*solarSystem,
+                                origin, direction,
+                                when,
+                                faintestMag,
+                                tolerance);
+                if (!sel.empty())
+                    break;
+            }
         }
     }
 
@@ -921,11 +939,11 @@ Selection Universe::pick(const UniversalCoord& origin,
     }
 #endif
 
-    if (sel.empty())
+    if (sel.empty() && (renderFlags & Renderer::ShowStars))
         sel = pickStar(origin, direction, when, faintestMag, tolerance);
 
     if (sel.empty())
-        sel = pickDeepSkyObject(origin, direction, faintestMag, tolerance);
+        sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
 
     return sel;
 }
