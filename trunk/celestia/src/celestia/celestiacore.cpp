@@ -718,7 +718,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
             Selection oldSel = sim->getSelection();
-            Selection newSel = sim->pickObject(pickRay, pickTolerance);
+            Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
             addToHistory();
             sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
@@ -734,7 +734,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             Vec3f pickRay =
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
-            Selection sel = sim->pickObject(pickRay, pickTolerance);
+            Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
             if (!sel.empty())
             {
                 if (contextMenuCallback != NULL)

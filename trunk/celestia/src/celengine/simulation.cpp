@@ -1,5 +1,5 @@
 // simulation.cpp
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // The core of Celestia--tracks an observer moving through a
@@ -160,11 +160,12 @@ void Simulation::setTrackedObject(const Selection& sel)
 }
 
 
-Selection Simulation::pickObject(Vec3f pickRay, float tolerance)
+Selection Simulation::pickObject(Vec3f pickRay, int renderFlags, float tolerance)
 {
     return universe->pick(activeObserver->getPosition(),
                           pickRay * activeObserver->getOrientation().toMatrix4(),
                           activeObserver->getTime(),
+                          renderFlags,
                           faintestVisible,
                           tolerance);
 }
@@ -280,7 +281,7 @@ float Simulation::getTargetSpeed()
     return activeObserver->getTargetSpeed();
 }
 
-void Simulation::gotoSelection(double gotoTime, 
+void Simulation::gotoSelection(double gotoTime,
                                Vec3f up,
                                astro::CoordinateSystem upFrame)
 {
