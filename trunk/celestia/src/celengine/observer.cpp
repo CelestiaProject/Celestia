@@ -240,7 +240,11 @@ void Observer::update(double dt, double timeScale)
 
     if (observerMode == Travelling)
     {
-        float t = (float) clamp((realTime - journey.startTime) / journey.duration);
+        // Compute the fraction of the trip that has elapsed; handle zero
+        // durations correctly by skipping directly to the destination.
+        float t = 1.0;
+        if (journey.duration > 0)
+            t = (float) clamp((realTime - journey.startTime) / journey.duration);
 
         Vec3d jv = journey.to - journey.from;
         UniversalCoord p;
