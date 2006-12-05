@@ -1,5 +1,5 @@
 // universe.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -48,17 +48,19 @@ class Universe
     Selection pick(const UniversalCoord& origin,
                    const Vec3f& direction,
                    double when,
+                   int   renderFlags,
                    float faintestMag,
                    float tolerance = 0.0f);
 
-    Selection pickStar(const UniversalCoord&,
-                       const Vec3f&,
+    Selection pickStar(const UniversalCoord& origin,
+                       const Vec3f& direction,
                        double when,
                        float faintest,
                        float tolerance = 0.0f);
 
-    Selection pickDeepSkyObject(const UniversalCoord&,
-                                const Vec3f&,
+    Selection pickDeepSkyObject(const UniversalCoord& origin,
+                                const Vec3f& direction,
+                                int   renderFlags,
                                 float faintest,
                                 float tolerance = 0.0f);
 
