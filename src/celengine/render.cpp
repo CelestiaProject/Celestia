@@ -2117,7 +2117,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
         if (discSizeInPixels > maxDiscSize)
         {
             fade = (maxBlendDiscSize - discSizeInPixels) /
-                (maxBlendDiscSize - maxDiscSize - 1.0f);
+                (maxBlendDiscSize - maxDiscSize);
             if (fade > 1)
                 fade = 1;
         }
@@ -2159,6 +2159,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
         }
 
         alpha *= fade;
+        glareAlpha *= fade;
 
         // TODO: Should offset this so that it lies in front of the
         // object, e.g. center = position * ((distance - radius) / distance)
