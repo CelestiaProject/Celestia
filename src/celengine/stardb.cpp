@@ -1059,12 +1059,23 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
         {
             if (!starData->getNumber("AppMag", magnitude))
             {
-                cerr << _("Invalid star: missing magnitude.\n");
-                magnitude = 30.0;
+                clog << _("Invalid star: missing magnitude.\n");
+                delete star;
+                return NULL;
             }
             else
             {
                 float distance = star->getPosition().distanceFromOrigin();
+
+                // We can't compute the intrinsic brightness of the star from
+                // the apparent magnitude if the star is within a few AU of the
+                // origin.
+                if (distance < 1e-5f)
+                {
+                    clog << _("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n");
+                    delete star;
+                    return NULL;
+                }
                 magnitude = astro::appToAbsMag((float) magnitude, distance);
             }
         }
