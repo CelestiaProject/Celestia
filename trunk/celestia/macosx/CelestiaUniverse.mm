@@ -8,9 +8,11 @@
 
 #import "CelestiaUniverse.h"
 #import "CelestiaUniverse_PrivateAPI.h"
+/*
 #import "CelestiaVector_PrivateAPI.h"
 #import "CelestiaUniversalCoord_PrivateAPI.h"
 #import "CelestiaSelection_PrivateAPI.h"
+*/
 
 
 @implementation CelestiaUniverse(PrivateAPI)
@@ -35,6 +37,7 @@
     }
     [super dealloc];
 }
+/*
 -(CelestiaSelection*)pick:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction when:(NSNumber*)when faintestMag:(NSNumber*)faintestMag tolerance:(NSNumber*)tolerance
 {
     return [[[CelestiaSelection alloc] initWithSelection:[self universe]->pick([origin universalCoord],[direction vec3f],[when floatValue],[faintestMag floatValue],[tolerance floatValue])] autorelease];
@@ -47,34 +50,6 @@
 {
     return [[[CelestiaSelection alloc] initWithSelection:[self universe]->pickStar([origin universalCoord],[direction vec3f],[faintestMag floatValue],[tolerance floatValue])] autorelease];
 }
-/*
--(CelestiaSelection*)pickStar:(CelestiaUniversalCoord*)origin direction:(CelestiaVector*)direction faintestMag:(NSNumber*)faintestMag
-{
-    return [[[CelestiaSelection alloc] initWithSelection:[self universe]->pickStar([origin universalCoord],[direction vec3f],[faintestMag floatValue])] autorelease];
-}
 */
 
-/*
-    StarDatabase* getStarCatalog() const;
-    void setStarCatalog(StarDatabase*);
-    SolarSystemCatalog* getSolarSystemCatalog() const;
-    void setSolarSystemCatalog(SolarSystemCatalog*);
-    GalaxyList* getGalaxyCatalog() const;
-    void setGalaxyCatalog(GalaxyList*);
-    AsterismList* getAsterisms() const;
-    void setAsterisms(AsterismList*);
-    //ConstellationBoundaries* getBoundaries() const;
-    //void setBoundaries(ConstellationBoundaries*);
-
-    Selection find(const std::string& s,
-                   PlanetarySystem** solarSystems = NULL,
-                   int nSolarSystems = 0);
-    Selection findPath(const std::string& s,
-                       PlanetarySystem** solarSystems = NULL,
-                       int nSolarSystems = 0);
-
-    SolarSystem* getNearestSolarSystem(const UniversalCoord& position) const;
-    SolarSystem* getSolarSystem(const Star* star) const;
-    SolarSystem* createSolarSystem(Star* star) const;
-*/
 @end
