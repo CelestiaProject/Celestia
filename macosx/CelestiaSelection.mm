@@ -16,7 +16,6 @@
 #import "CelestiaAppCore.h"
 #import "CelestiaUniverse_PrivateAPI.h"
 
-#include <celengine/universe.h>
 
 @implementation CelestiaSelection(PrivateAPI)
 -(CelestiaSelection *)initWithSelection:(Selection)selection
