@@ -189,6 +189,7 @@
 		E572839C0793F84000C1F239 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = E57283990793F82A00C1F239 /* ChangeLog */; };
 		E572839D0793F84000C1F239 /* COPYING in CopyFiles */ = {isa = PBXBuildFile; fileRef = E572839A0793F82A00C1F239 /* COPYING */; };
 		E57283AE0793FC7E00C1F239 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = E57283AD0793FC7300C1F239 /* README */; };
+		E585E9790B27864300812512 /* E0.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E585E9780B27864300812512 /* E0.png */; };
 		E589B6DD078AC511005B8DD9 /* glshader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6D9078AC511005B8DD9 /* glshader.cpp */; };
 		E589B6DF078AC511005B8DD9 /* shadermanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6DB078AC511005B8DD9 /* shadermanager.cpp */; };
 		E599A78E097CAB390079C254 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E599A78C097CAB390079C254 /* Credits.rtf */; };
@@ -425,6 +426,7 @@
 				E5D7669A0982B4660099DBBD /* skylab.3ds in CopyFiles */,
 				E5D7669B0982B4660099DBBD /* toutatis.cmod in CopyFiles */,
 				E5D7669C0982B4660099DBBD /* vesta.cmod in CopyFiles */,
+				E585E9790B27864300812512 /* E0.png in CopyFiles */,
 				E5D969AC0ABCC7CC00F43225 /* MilkyWay.png in CopyFiles */,
 				E5D969AD0ABCC7CC00F43225 /* S0.png in CopyFiles */,
 				E5D969AE0ABCC7CC00F43225 /* Sa.png in CopyFiles */,
@@ -556,6 +558,7 @@
 		E57283AD0793FC7300C1F239 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../README; sourceTree = SOURCE_ROOT; };
 		E579D3130A1A1949008F3BC8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = ja; path = ja.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E57E350E0892A42A008E2F7F /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		E585E9780B27864300812512 /* E0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = E0.png; sourceTree = "<group>"; };
 		E589B6D9078AC511005B8DD9 /* glshader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glshader.cpp; path = ../src/celengine/glshader.cpp; sourceTree = SOURCE_ROOT; };
 		E589B6DA078AC511005B8DD9 /* glshader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glshader.h; path = ../src/celengine/glshader.h; sourceTree = SOURCE_ROOT; };
 		E589B6DB078AC511005B8DD9 /* shadermanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shadermanager.cpp; path = ../src/celengine/shadermanager.cpp; sourceTree = SOURCE_ROOT; };
@@ -1134,6 +1137,7 @@
 		E5D766250982B3300099DBBD /* models */ = {
 			isa = PBXGroup;
 			children = (
+				E585E9780B27864300812512 /* E0.png */,
 				E5D969A40ABCC76C00F43225 /* MilkyWay.png */,
 				E5D969A50ABCC76C00F43225 /* S0.png */,
 				E5D969A60ABCC76C00F43225 /* Sa.png */,
