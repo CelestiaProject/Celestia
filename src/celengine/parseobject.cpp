@@ -356,9 +356,8 @@ CreateOrbit(PlanetarySystem* system,
         Body* parent = system->getPrimaryBody();
         if (parent != NULL)
         {
-            Vec3f pos = parent->planetocentricToCartesian((float) longlat.x, (float) longlat.y, (float) longlat.z);
-            Point3d posd(pos.x, pos.y, pos.z);
-            return new SynchronousOrbit(*parent, posd);
+            Vec3d pos = parent->planetocentricToCartesian(longlat.x, longlat.y, longlat.z);
+            return new SynchronousOrbit(*parent, Point3d(pos.x, pos.y, pos.z));
         }
         else
         {
