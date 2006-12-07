@@ -96,10 +96,10 @@ static Location* CreateLocation(Hash* locationData,
     Vec3d longlat(0.0, 0.0, 0.0);
     locationData->getVector("LongLat", longlat);
 
-    Vec3f position = body->planetocentricToCartesian((float) longlat.x,
-                                                     (float) longlat.y,
-                                                     (float) longlat.z);
-    location->setPosition(position);
+    Vec3d position = body->planetocentricToCartesian(longlat.x,
+                                                     longlat.y,
+                                                     longlat.z);
+    location->setPosition(Vec3f((float) position.x, (float) position.y, (float) position.z));
 
     double size = 1.0;
     locationData->getNumber("Size", size);

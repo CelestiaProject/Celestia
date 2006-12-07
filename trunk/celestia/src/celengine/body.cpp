@@ -380,34 +380,34 @@ Mat4d Body::getBodyFixedToHeliocentric(double when) const
 }
 
 
-Vec3f Body::planetocentricToCartesian(float lon, float lat, float alt) const
+Vec3d Body::planetocentricToCartesian(double lon, double lat, double alt) const
 {
-    float phi = -degToRad(lat) + (float) PI / 2;
-    float theta = degToRad(lon) - (float) PI;
+    double phi = -degToRad(lat) + PI / 2;
+    double theta = degToRad(lon) - PI;
 
-    Vec3f pos((float) (cos(theta) * sin(phi)),
-              (float) (cos(phi)),
-              (float) (-sin(theta) * sin(phi)));
+    Vec3d pos(cos(theta) * sin(phi),
+              cos(phi),
+              -sin(theta) * sin(phi));
 
     return pos * (getRadius() + alt);
 }
 
 
-Vec3f Body::planetocentricToCartesian(const Vec3f& lonLatAlt) const
+Vec3d Body::planetocentricToCartesian(const Vec3d& lonLatAlt) const
 {
     return planetocentricToCartesian(lonLatAlt.x, lonLatAlt.y, lonLatAlt.z);
 }
 
 
-Vec3f Body::cartesianToPlanetocentric(const Vec3f& v) const
+Vec3d Body::cartesianToPlanetocentric(const Vec3d& v) const
 {
-    Vec3f w = v;
+    Vec3d w = v;
     w.normalize();
 
-    double lat = (float) PI / 2.0f - acos(w.y);
+    double lat = PI / 2.0 - acos(w.y);
     double lon = atan2(w.z, -w.x);
 
-    return Vec3f((float) lon, (float) lat, v.length() - getRadius());
+    return Vec3d(lon, lat, v.length() - getRadius());
 }
 
 
