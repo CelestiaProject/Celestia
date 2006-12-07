@@ -171,9 +171,9 @@ class Body
     Quatd getEclipticalToBodyFixed(double) const;
     Mat4d getBodyFixedToHeliocentric(double) const;
 
-    Vec3f planetocentricToCartesian(float lon, float lat, float alt) const;
-    Vec3f planetocentricToCartesian(const Vec3f& lonLatAlt) const;
-    Vec3f cartesianToPlanetocentric(const Vec3f& v) const;
+    Vec3d planetocentricToCartesian(double lon, double lat, double alt) const;
+    Vec3d planetocentricToCartesian(const Vec3d& lonLatAlt) const;
+    Vec3d cartesianToPlanetocentric(const Vec3d& v) const;
 
     bool extant(double) const;
     void setLifespan(double, double);

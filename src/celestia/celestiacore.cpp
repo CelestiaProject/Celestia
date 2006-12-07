@@ -2944,7 +2944,8 @@ static void displayLocationInfo(Overlay& overlay,
     Body* body = location.getParentBody();
     if (body != NULL)
     {
-        Vec3f lonLatAlt = body->cartesianToPlanetocentric(location.getPosition());
+        Vec3f locPos = location.getPosition();
+        Vec3d lonLatAlt = body->cartesianToPlanetocentric(Vec3d(locPos.x, locPos.y, locPos.z));
         char ewHemi = ' ';
         char nsHemi = ' ';
         float lon = 0.0f;
@@ -2964,8 +2965,8 @@ static void displayLocationInfo(Overlay& overlay,
             else if (lonLatAlt.x > 0.0f)
                 ewHemi = 'E';
 
-            lon = abs(radToDeg(lonLatAlt.x));
-            lat = abs(radToDeg(lonLatAlt.y));
+            lon = (float) abs(radToDeg(lonLatAlt.x));
+            lat = (float) abs(radToDeg(lonLatAlt.y));
         }
         else
         {
@@ -2983,10 +2984,10 @@ static void displayLocationInfo(Overlay& overlay,
             else
                 ewHemi = 'W';
 
-            lon = -radToDeg(lonLatAlt.x);
+            lon = (float) -radToDeg(lonLatAlt.x);
             if (lon < 0.0f)
                 lon += 360.0f;
-            lat = abs(radToDeg(lonLatAlt.y));
+            lat = (float) abs(radToDeg(lonLatAlt.y));
         }
 
         overlay << body->getName(true).c_str() << " ";
