@@ -387,81 +387,80 @@ static void IllumMapEval(float x, float y, float z,
     pixel[2] = 128 + (int) (127 * u.z);
 }
 
-#if 1
+
 static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
-							          unsigned int log2size,
-							          float fwhm,
-							          float power)
+                                      unsigned int log2size,
+                                      float fwhm,
+                                      float power)
 {
-	unsigned int size = 1 << log2size;
-	float sigma = fwhm / 2.3548f;
-	float isig2 = 1.0f / (2.0f * sigma * sigma);
-	float s = 1.0f / (sigma * (float) sqrt(2.0 * PI));
+    unsigned int size = 1 << log2size;
+    float sigma = fwhm / 2.3548f;
+    float isig2 = 1.0f / (2.0f * sigma * sigma);
+    float s = 1.0f / (sigma * (float) sqrt(2.0 * PI));
 
-	for (unsigned int i = 0; i < size; i++)
-	{
-		float y = (float) i - size / 2;
-		for (unsigned int j = 0; j < size; j++)
-		{
-			float x = (float) j - size / 2;
-			float r2 = x * x + y * y;
-			float f = s * (float) exp(-r2 * isig2) * power;
-
-			mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
-		}
-	}
+    for (unsigned int i = 0; i < size; i++)
+    {
+        float y = (float) i - size / 2;
+        for (unsigned int j = 0; j < size; j++)
+        {
+            float x = (float) j - size / 2;
+            float r2 = x * x + y * y;
+            float f = s * (float) exp(-r2 * isig2) * power;
+            
+            mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
+        }
+    }
 }
+
 
 static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 {
-	unsigned int size = 1 << log2size;
-	Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
+    unsigned int size = 1 << log2size;
+    Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
 
-	for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
-	{
-		float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
-		BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
-						          log2size - mipLevel,
-						          fwhm,
-						          (float) pow(2.0f, (float) (log2size - mipLevel)));
-	}
+    for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
+    {
+        float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
+        BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
+                                  log2size - mipLevel,
+                                  fwhm,
+                                  (float) pow(2.0f, (float) (log2size - mipLevel)));
+    }
 
-	ImageTexture* texture = new ImageTexture(*img,
-											 Texture::BorderClamp,
-											 Texture::DefaultMipMaps);
-	texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
+    ImageTexture* texture = new ImageTexture(*img,
+                                             Texture::BorderClamp,
+                                             Texture::DefaultMipMaps);
+    texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
 
-	delete img;
+    delete img;
 
-	return texture;
+    return texture;
 }
 
 
 static Texture* BuildGaussianGlareTexture(unsigned int log2size)
 {
-	unsigned int size = 1 << log2size;
-	Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
+    unsigned int size = 1 << log2size;
+    Image* img = new Image(GL_LUMINANCE, size, size, log2size + 1);
 
-	for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
-	{
-		float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
-		BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
-						          log2size - mipLevel,
-						          fwhm,
-						          (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.25f);
-	}
+    for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
+    {
+        float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
+        BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
+                                  log2size - mipLevel,
+                                  fwhm,
+                                  (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.25f);
+    }
 
-	ImageTexture* texture = new ImageTexture(*img,
-											 Texture::BorderClamp,
-											 Texture::DefaultMipMaps);
-	texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
+    ImageTexture* texture = new ImageTexture(*img,
+                                             Texture::BorderClamp,
+                                             Texture::DefaultMipMaps);
+    texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
+    
+    delete img;
 
-	delete img;
-
-	return texture;
+    return texture;
 }
-
-#endif
 
 
 // Depth comparison function for render list entries
@@ -617,6 +616,22 @@ bool Renderer::init(GLContext* _context,
 
         commonDataInitialized = true;
     }
+
+#if 0
+    if (context->extensionSupported("GL_ARB_multisample"))
+    {
+        int nSamples = 0;
+        int sampleBuffers = 0;
+        int enabled = (int) glIsEnabled(GL_MULTISAMPLE_ARB);
+        glGetIntegerv(GL_SAMPLE_BUFFERS_ARB, &sampleBuffers);
+        glGetIntegerv(GL_SAMPLES_ARB, &nSamples);
+        clog << "AA samples: " << nSamples
+             << ", enabled=" << (int) enabled
+             << ", sample buffers=" << (sampleBuffers)
+             << "\n";
+        glEnable(GL_MULTISAMPLE_ARB);
+    }
+#endif
 
     if (context->extensionSupported("GL_EXT_rescale_normal"))
     {
@@ -1257,8 +1272,13 @@ setupLightSources(const vector<const Star*>& nearStars,
 
 
 // Render an item from the render list
+// TODO: change the way the observer class works so that it is more efficient;
+// we should only have to recompute the position and attitude in universal
+// coordinates once per time step. Then, we wouldn't have to resort to passing
+// the camera orientation in order to avoid extra calculation.
 void Renderer::renderItem(const RenderListEntry& rle,
                           const Observer& observer,
+                          const Quatf& cameraOrientation,
                           float nearPlaneDistance,
                           float farPlaneDistance)
 {
@@ -1271,7 +1291,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
                             rle.distance,
                             rle.appMag,
                             observer.getTime(),
-                            observer.getOrientation(),
+                            cameraOrientation,
                             lightSourceLists[rle.solarSysIndex],
                             nearPlaneDistance, farPlaneDistance);
         }
@@ -1281,8 +1301,8 @@ void Renderer::renderItem(const RenderListEntry& rle,
                          rle.position,
                          rle.distance,
                          rle.appMag,
-                         observer.getTime(),
-                         observer.getOrientation(),
+                         observer,
+                         cameraOrientation,
                          lightSourceLists[rle.solarSysIndex],
                          nearPlaneDistance, farPlaneDistance);
         }
@@ -1293,7 +1313,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
                    rle.position,
                    rle.distance,
                    rle.appMag,
-                   observer.getOrientation(),
+                   cameraOrientation,
                    observer.getTime(),
                    nearPlaneDistance, farPlaneDistance);
     }
@@ -1338,13 +1358,16 @@ void Renderer::render(const Observer& observer,
     // Highlight the selected object
     highlightObject = sel;
 
-    // Set up the camera
-    Point3f observerPos = (Point3f) observer.getPosition();
-    observerPos.x *= 1e-6f;
-    observerPos.y *= 1e-6f;
-    observerPos.z *= 1e-6f;
+    Quatf cameraOrientation = observer.getOrientation();
+
+    // Set up the camera for star rendering; the units of this phase
+    // are light years.
+    Point3f observerPosLY = (Point3f) observer.getPosition();
+    observerPosLY.x *= 1e-6f;
+    observerPosLY.y *= 1e-6f;
+    observerPosLY.z *= 1e-6f;
     glPushMatrix();
-    glRotate(observer.getOrientation());
+    glRotate(cameraOrientation);
 
     // Get the model matrix *before* translation.  We'll use this for
     // positioning star and planet labels.
@@ -1505,7 +1528,7 @@ void Renderer::render(const Observer& observer,
 
     // Translate the camera before rendering the stars
     glPushMatrix();
-    glTranslatef(-observerPos.x, -observerPos.y, -observerPos.z);
+    glTranslatef(-observerPosLY.x, -observerPosLY.y, -observerPosLY.z);
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != NULL)
@@ -1866,7 +1889,7 @@ void Renderer::render(const Observer& observer,
                 // Treat objects that are smaller than one pixel as transparent and render
                 // them in the second pass.
                 if (renderList[i].isOpaque && renderList[i].discSizeInPixels > 1.0f)
-                    renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance);
+                    renderItem(renderList[i], observer, cameraOrientation, nearPlaneDistance, farPlaneDistance);
 
                 i--;
             }
@@ -1904,7 +1927,7 @@ void Renderer::render(const Observer& observer,
             while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
             {
                 if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
-                    renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance);
+                    renderItem(renderList[i], observer, cameraOrientation, nearPlaneDistance, farPlaneDistance);
 
                 i--;
             }
@@ -4477,8 +4500,8 @@ renderRingShadowsVS(Model* /*model*/,           //TODO: Remove unused parameters
 
 void Renderer::renderLocations(const vector<Location*>& locations,
                                const Quatf& cameraOrientation,
-                               const Point3f& positionf,
-                               const Quatf& orientation,
+                               const Point3d& bodyPosition,
+                               const Quatd& bodyOrientation,
                                float scale)
 {
     if (font[FontNormal] == NULL)
@@ -4497,8 +4520,28 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 
     double modelview[16];
     double projection[16];
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
     glGetDoublev(GL_PROJECTION_MATRIX, projection);
+
+    // Get the camera matrix GL-style for gluProject
+    {
+        Mat3f cameraMatrix = cameraOrientation.toMatrix3();
+        modelview[0]  = cameraMatrix[0][0];
+        modelview[1]  = cameraMatrix[1][0];
+        modelview[2]  = cameraMatrix[2][0];
+        modelview[3]  = 0.0f;
+        modelview[4]  = cameraMatrix[0][1];
+        modelview[5]  = cameraMatrix[1][1];
+        modelview[6]  = cameraMatrix[2][1];
+        modelview[7]  = 0.0f;
+        modelview[8]  = cameraMatrix[0][2];
+        modelview[9]  = cameraMatrix[1][2];
+        modelview[10] = cameraMatrix[2][2];
+        modelview[11] = 0.0;
+        modelview[12] = 0.0;
+        modelview[13] = 0.0;
+        modelview[14] = 0.0;
+        modelview[15] = 1.0;
+    }
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
@@ -4521,13 +4564,12 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     glTranslatef(GLfloat((int) (windowWidth / 2)),
                  GLfloat((int) (windowHeight / 2)), -0.999f);
 
-    Point3d position(positionf.x, positionf.y, positionf.z);
     Point3d origin(0.0, 0.0, 0.0);
 
-    Ellipsoidd ellipsoid(position, Vec3d(scale, scale, scale));
+    Ellipsoidd ellipsoid(bodyPosition, Vec3d(scale, scale, scale));
 
     float iScale = 1.0f / scale;
-    Mat3f mat = orientation.toMatrix3();
+    Mat3d mat = bodyOrientation.toMatrix3();
 
     for (vector<Location*>::const_iterator iter = locations.begin();
          iter != locations.end(); iter++)
@@ -4536,13 +4578,13 @@ void Renderer::renderLocations(const vector<Location*>& locations,
         {
             // Get the position of the label with respect to the planet center
             Vec3f ppos = (*iter)->getPosition();
-            // Get the rotated position
-            Vec3f pposRotated = ppos * mat;
-            // Double precision required for stable intersection calculations
-            Vec3d pposd(pposRotated.x, pposRotated.y, pposRotated.z);
+
+            // Compute the body-centric position of the location
+            Vec3d locPos = Vec3d(ppos.x, ppos.y, ppos.z) * mat;
+
             // Get the position in camera space.  Add a slight scale factor
             // to keep the point from being exactly on the surface.
-            Point3d cpos(position + pposd * 1.0001);
+            Point3d cpos(bodyPosition + locPos * 1.0000001);
 
             float effSize = (*iter)->getImportance();
             if (effSize < 0.0f)
@@ -4552,9 +4594,9 @@ void Renderer::renderLocations(const vector<Location*>& locations,
             if (pixSize > minFeatureSize &&
                 (cpos - origin) * viewNormald > 0.0)
             {
-                double r = pposd.length();
+                double r = locPos.length();
                 if (r < scale * 0.99)
-                    cpos = position + pposd * (scale * 1.01 / r);
+                    cpos = bodyPosition + locPos * (scale * 1.01 / r);
 
                 double t = 0.0f;
 
@@ -4567,7 +4609,9 @@ void Renderer::renderLocations(const vector<Location*>& locations,
                                             ellipsoid, t);
                 if (!hit || t >= 1.0)
                 {
-                    if (gluProject(ppos.x * iScale, ppos.y * iScale, ppos.z * iScale,
+                    if (gluProject(bodyPosition.x + locPos.x,
+                                   bodyPosition.y + locPos.y,
+                                   bodyPosition.z + locPos.z,
                                    modelview,
                                    projection,
                                    (const GLint*) view,
@@ -5279,12 +5323,6 @@ void Renderer::renderObject(Point3f pos,
     for (i = 0; i < ls.nLights; i++)
         glDisable(GL_LIGHT0 + i);
 
-
-    if (obj.locations != NULL && (labelMode & LocationLabels) != 0)
-        renderLocations(*obj.locations,
-                        cameraOrientation,
-                        pos, obj.orientation, radius);
-
     glPopMatrix();
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -5382,12 +5420,14 @@ void Renderer::renderPlanet(Body& body,
                             Point3f pos,
                             float distance,
                             float appMag,
-                            double now,
-                            Quatf orientation,
+                            const Observer& observer,
+                            const Quatf& cameraOrientation,
                             const vector<LightSource>& lightSources,
                             float nearPlaneDistance,
                             float farPlaneDistance)
 {
+    double now = observer.getTime();
+
     float altitude = distance - body.getRadius();
     float discSizeInPixels = body.getRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
@@ -5496,34 +5536,27 @@ void Renderer::renderPlanet(Body& body,
         }
 
         renderObject(pos, distance, now,
-                     orientation, nearPlaneDistance, farPlaneDistance,
+                     cameraOrientation, nearPlaneDistance, farPlaneDistance,
                      rp, lights);
 
-        // Render the horizon compass for spherical and ellipsoidal bodies
-        if ((renderFlags & ShowCelestialSphere) != 0 &&
-            rp.model == InvalidResource &&
-            discSizeInPixels > 100.0f)
+        if (body.getLocations() != NULL && (labelMode & LocationLabels) != 0)
         {
-            glPushMatrix();
-            glLoadIdentity();
-            glDisable(GL_TEXTURE_2D);
-            glRotate(orientation);
+            glEnable(GL_DEPTH_TEST);
+            glDepthMask(GL_FALSE);
+            glDisable(GL_BLEND);
 
-            Vec3f semiAxes = rp.semiAxes * rp.radius;
+            // We need a double precision body-relative position of the
+            // observer, otherwise location labels will tend to jitter.
+            Vec3d posd = (Selection(&body).getPosition(observer.getTime()) - 
+                          observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
+            renderLocations(*body.getLocations(),
+                            cameraOrientation,
+                            Point3d(posd.x, posd.y, posd.z),
+                            q,
+                            rp.radius);
 
-            // Compute the orientation of the planet before axial rotation
-            Quatd q = body.getEclipticalToEquatorial(now);
-            Quatf qf = Quatf((float) q.w, (float) q.x, (float) q.y,
-                             (float) q.z);
-
-            if ((renderFlags & ShowSmoothLines) != 0)
-                enableSmoothLines();
-            //renderCompass(pos, qf, semiAxes, pixelSize / rp.radius);
-            if ((renderFlags & ShowSmoothLines) != 0)
-                disableSmoothLines();
-
-            glEnable(GL_TEXTURE_2D);
-            glPopMatrix();
+            glDisable(GL_DEPTH_TEST);
+            glEnable(GL_BLEND);
         }
     }
 
@@ -5538,7 +5571,7 @@ void Renderer::renderPlanet(Body& body,
                             faintestPlanetMag,
                             discSizeInPixels,
                             body.getSurface().color,
-                            orientation,
+                            cameraOrientation,
                             (nearPlaneDistance + farPlaneDistance) / 2.0f,
                             false);
     }
@@ -5549,7 +5582,7 @@ void Renderer::renderPlanet(Body& body,
                              faintestPlanetMag,
                              discSizeInPixels,
                              body.getSurface().color,
-                             orientation,
+                             cameraOrientation,
                              (nearPlaneDistance + farPlaneDistance) / 2.0f,
                              false);
     }
