@@ -14,8 +14,8 @@
 #include <string>
 #include <iostream>
 #include <celutil/basictypes.h>
-#include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
+#include <celmath/ray.h>
 #include <celengine/glcontext.h>
 #include <celengine/parser.h>
 
@@ -56,8 +56,10 @@ class DeepSkyObject
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
+    virtual bool pick(const Ray3d& ray,
+                      double& distanceToPicker,
+                      double& distanceToBoundCenter) const = 0;
     virtual bool load(AssociativeArray*, const std::string& resPath);
-
     virtual void render(const GLContext& context,
                         const Vec3f& offset,
                         const Quatf& viewerOrientation,
