@@ -14,6 +14,7 @@
 #include "celestia.h"
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
+#include <celmath/intersect.h>
 #include "astro.h"
 #include "galaxy.h"
 #include <celutil/util.h>
@@ -35,7 +36,6 @@ static bool formsInitialized = false;
 static GalacticForm** spiralForms     = NULL;
 static GalacticForm** ellipticalForms = NULL;
 static GalacticForm*  irregularForm   = NULL;
-
 
 static Texture* galaxyTex = NULL;
 
@@ -118,6 +118,7 @@ void Galaxy::setCustomTmpName(const string& tmpNameStr)
         *customTmpName = tmpNameStr;
 }
 
+
 string Galaxy::getCustomTmpName() const
 {
     if (customTmpName == NULL)
@@ -126,10 +127,12 @@ string Galaxy::getCustomTmpName() const
         return *customTmpName;
 }
 
+
 const char* Galaxy::getType() const
 {
     return GalaxyTypeNames[(int) type].name;
 }
+
 
 void Galaxy::setType(const string& typeStr)
 {
@@ -191,6 +194,31 @@ size_t Galaxy::getDescription(char* buf, size_t bufLength) const
 GalacticForm* Galaxy::getForm() const
 {
     return form;
+}
+
+
+// TODO: This value is just a guess.
+// To be optimal, it should actually be computed:
+static const float RADIUS_CORRECTION    = 0.025f;
+
+bool Galaxy::pick(const Ray3d& ray,
+                  double& distanceToPicker,
+                  double& distanceToBoundCenter) const
+{
+    // The ellipsoid should be slightly larger to compensate for the fact
+    // that blobs are considered points when galaxies are built, but have size
+    // when they are drawn.
+    Vec3d ellipsoidAxes(getRadius()*(form->scale.x + RADIUS_CORRECTION),
+                        getRadius()*(form->scale.y + RADIUS_CORRECTION),
+                        getRadius()*(form->scale.z + RADIUS_CORRECTION));
+
+    Quatf qf= getOrientation();
+    Quatd qd(qf.w, qf.x, qf.y, qf.z);
+
+    return testIntersection(Ray3d(Point3d() + (ray.origin - getPosition()), ray.direction) * conjugate(qd).toMatrix3(),
+                            Ellipsoidd(ellipsoidAxes),
+                            distanceToPicker,
+                            distanceToBoundCenter);
 }
 
 
@@ -263,7 +291,7 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     float  size  = 2 * getRadius();
 
 
-    
+
     Mat3f m =
         Mat3f::scaling(form->scale)*getOrientation().toMatrix3()*Mat3f::scaling(size);
 
@@ -307,7 +335,7 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
         if ((i & pow2) != 0)
         {
             pow2 <<= 1;
-           	size /= 1.55f;            
+           	size /= 1.55f;
             if (size < minimumFeatureSize)
                 break;
         }
@@ -481,7 +509,8 @@ void Galaxy::hsv2rgb( float *r, float *g, float *b, float h, float s, float v )
      *g = p;
      *b = v;
      break;
-   default:              *r = v;
+   default:
+     *r = v;
      *g = p;
      *b = q;
      break;
@@ -497,7 +526,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 	// Load templates in standard .png format
 	int width, height, rgb, j = 0, kmin = 9;
 	unsigned char value;
-	float h = 0.75f;	
+	float h = 0.75f;
 	Image* img;
 	img = LoadPNGImage(filename);
 	if (img == NULL)
@@ -513,7 +542,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 		{
 			value = img->getPixels()[rgb * i];
 			if (value > 10)
-			{    
+			{
 				float x, y, z, r2, yy, prob;
 				z  = floor(i /(float) width);
 				x  = (i - width * z - 0.5f * (width - 1)) / (float) width;
@@ -521,7 +550,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 				x  += Mathf::sfrand() * 0.008f;
 				z  += Mathf::sfrand() * 0.008f;
 				r2 = x * x + z * z;
-					
+
 				if ( strcmp ( filename.c_str(), "models/E0.png") != 0 )
 				{
 					float y0 = 0.03f * sqrt((float)value/256.0f) * exp(- 5.0f * r2);
@@ -535,33 +564,33 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 
 						yr =  Mathf::sfrand() * h;
 						prob = (1.0f - B * exp(-yr * yr))/p0;
-						
-					} while (Mathf::frand() > prob); 
+
+					} while (Mathf::frand() > prob);
 					b.brightness  = value * prob;
 					y = y0 * yr / h;
 				}
 				else
-				{   
+				{
 					// generate spherically symmetric distribution from E0.png
 					do
 					{
 						yy = Mathf::sfrand();
 						float ry2 = 1.0f - yy * yy;
 						prob = ry2 > 0? sqrt(ry2): 0.0f;
-					} while (Mathf::frand() > prob); 
+					} while (Mathf::frand() > prob);
 					y = yy * sqrt(0.25f - r2) ;
-					b.brightness  = value; 
+					b.brightness  = value;
 					kmin = 12;
-				}	
-				
+				}
+
 				b.position    = Point3f(x, y, z);
 				unsigned int rr =  (unsigned int) (b.position.distanceFromOrigin() * 511);
 				b.colorIndex  = rr < 256? rr: 255;
 				galacticPoints->push_back(b);
-				j++; 
+				j++;
 			 }
 		}
-		
+
 	galacticPoints->reserve(j);
 
 	// sort to start with the galaxy center region (x^2 + y^2 + z^2 ~ 0), such that
@@ -571,7 +600,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 
 	// reshuffle the galaxy points randomly...except the first kmin+1 in the center!
 	// the higher that number the stronger the central "glow"
-	
+
 	random_shuffle( galacticPoints->begin() + kmin, galacticPoints->end());
 
 	GalacticForm* galacticForm  = new GalacticForm();
@@ -625,11 +654,11 @@ void InitializeForms()
 
         // note the correct x,y-alignment of 'ell' scaling!!
    		// build all elliptical templates from rescaling E0
-   		  
+
    		ellipticalForms[eform] = buildGalacticForms("models/E0.png");
    		if (*ellipticalForms)
    			ellipticalForms[eform]->scale = Vec3f(ell, ell, 1.0f);
-         
+
         // account for reddening of ellipticals rel.to spirals
         if (*ellipticalForms)
         {

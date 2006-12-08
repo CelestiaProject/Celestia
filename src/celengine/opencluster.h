@@ -10,11 +10,6 @@
 #ifndef CELENGINE_OPENCLUSTER_H_
 #define CELENGINE_OPENCLUSTER_H_
 
-#include <vector>
-#include <string>
-#include <iostream>
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
 #include <celutil/reshandle.h>
 #include <celengine/deepskyobj.h>
 
@@ -28,6 +23,9 @@ class OpenCluster : public DeepSkyObject
     virtual void setType(const std::string&);
     virtual size_t getDescription(char* buf, size_t bufLength) const;
 
+    virtual bool pick(const Ray3d& ray,
+                      double& distanceToPicker,
+                      double& distanceToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
                         const Vec3f& offset,

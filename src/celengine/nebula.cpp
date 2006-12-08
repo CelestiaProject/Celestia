@@ -52,9 +52,19 @@ ResourceHandle Nebula::getModel() const
     return model;
 }
 
+
 void Nebula::setModel(ResourceHandle _model)
 {
     model = _model;
+}
+
+
+bool Nebula::pick(const Ray3d& ray,
+                  double& distanceToPicker,
+                  double& distanceToBoundCenter) const
+{
+    // The preconditional sphere-ray intersection test is enough for now:
+    return DeepSkyObject::pick(ray, distanceToPicker, distanceToBoundCenter);
 }
 
 
@@ -85,7 +95,6 @@ void Nebula::render(const GLContext&,
         return;
 
     glDisable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
     glScalef(getRadius(), getRadius(), getRadius());
     glRotate(getOrientation());
 

@@ -45,6 +45,15 @@ size_t OpenCluster::getDescription(char* buf, size_t bufLength) const
 }
 
 
+bool OpenCluster::pick(const Ray3d& ray,
+                       double& distanceToPicker,
+                       double& distanceToBoundCenter) const
+{
+    // The preconditional sphere-ray intersection test is enough for now:
+    return DeepSkyObject::pick(ray, distanceToPicker, distanceToBoundCenter);
+}
+
+
 bool OpenCluster::load(AssociativeArray* params, const string& resPath)
 {
     // No parameters specific to open cluster, though a list of member stars
