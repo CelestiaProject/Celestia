@@ -18,6 +18,7 @@
 #include "opencluster.h"
 #include <celutil/util.h>
 #include <celutil/debug.h>
+#include <celmath/intersect.h>
 
 using namespace std;
 
@@ -107,6 +108,15 @@ void DeepSkyObject::setInfoURL(const string& s)
         *infoURL = s;
 }
 
+
+bool DeepSkyObject::pick(const Ray3d& ray,
+                         double& distanceToPicker,
+                         double& distanceToBoundCenter) const
+{
+    return testIntersection(ray, Sphered(position, (double) radius), distanceToPicker, distanceToBoundCenter);
+}
+
+
 bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
 {
     // Get position
@@ -136,7 +146,7 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     q.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                    (float) degToRad(angle));
     setOrientation(q);
-    
+
     double radius = 1.0;
     params->getNumber("Radius", radius);
     setRadius((float) radius);
@@ -146,9 +156,9 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
         setAbsoluteMagnitude((float) absMag);
 
     string infoURL;
-    if (params->getString("InfoURL", infoURL)) 
+    if (params->getString("InfoURL", infoURL))
     {
-        if (infoURL.find(':') == string::npos) 
+        if (infoURL.find(':') == string::npos)
         {
             // Relative URL, the base directory is the current one,
             // not the main installation directory

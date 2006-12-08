@@ -10,7 +10,6 @@
 // of the License, or (at your option) any later version.
 
 #include <celmath/mathlib.h>
-#include <celmath/vecmath.h>
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
 #include <cassert>
@@ -826,17 +825,16 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
     if (distance > maxDistance || !(dso->getRenderMask() & renderFlags))
         return;
 
-    double  distance2  = 0.0;
-    if (testIntersection(Ray3d(pickOrigin, pickDir),
-                         Sphered(dso->getPosition(), (double) dso->getRadius()),
-                         distance2))
+    double  distanceToPicker       = 0.0;
+    double  distanceToBoundCenter  = 0.0;
+    if (dso->pick(Ray3d(pickOrigin, pickDir), distanceToPicker, distanceToBoundCenter))
     {
         // Don't select the object the observer is currently in:
         if (pickOrigin.distanceTo(dso->getPosition()) > dso->getRadius() &&
-            distance2 < closestDistance)
+            distanceToBoundCenter < closestDistance)
         {
-            closestDSO = dso;
-            closestDistance  = distance2;
+            closestDSO       = dso;
+            closestDistance  = distanceToBoundCenter;
         }
     }
 }
