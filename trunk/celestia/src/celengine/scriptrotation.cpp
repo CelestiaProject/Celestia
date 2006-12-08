@@ -177,6 +177,7 @@ ScriptedRotation::spin(double tjd) const
                     lastOrientation.y = lua_tonumber(luaState, -2);
                     lastOrientation.z = lua_tonumber(luaState, -1);
                     lua_pop(luaState, 4);
+                    lastTime = tjd;
                 }
                 else
                 {
