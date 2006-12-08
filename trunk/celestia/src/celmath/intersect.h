@@ -29,7 +29,7 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
     T disc = b * b - a * c;
     if (disc < 0.0)
         return false;
- 
+
     disc = (T) sqrt(disc);
     T sol0 = (-b + disc) / a;
     T sol1 = (-b - disc) / a;
@@ -55,6 +55,20 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
 
 
 template<class T> bool testIntersection(const Ray3<T>& ray,
+                                        const Sphere<T>& sphere,
+                                        T& distanceToTester,
+                                        T& distanceToCenter)
+{
+    if (testIntersection(ray, sphere, distanceToTester))
+    {
+        distanceToCenter  = (sphere.center - ray.origin - ray.direction*distanceToTester).length();
+        return true;
+    }
+    return false;
+}
+
+
+template<class T> bool testIntersection(const Ray3<T>& ray,
                                         const Ellipsoid<T>& e,
                                         T& distance)
 {
@@ -72,7 +86,7 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
     T disc = b * b - a * c;
     if (disc < 0.0)
         return false;
- 
+
     disc = (T) sqrt(disc);
     T sol0 = (-b + disc) / a;
     T sol1 = (-b - disc) / a;
@@ -94,6 +108,20 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
     {
         return false;
     }
+}
+
+
+template<class T> bool testIntersection(const Ray3<T>& ray,
+                                        const Ellipsoid<T>& ellipsoid,
+                                        T& distanceToTester,
+                                        T& distanceToCenter)
+{
+    if (testIntersection(ray, ellipsoid, distanceToTester))
+    {
+        distanceToCenter  = (ellipsoid.center - ray.origin - ray.direction*distanceToTester).length();
+        return true;
+    }
+    return false;
 }
 
 #endif // _CELMATH_INTERSECT_H_
