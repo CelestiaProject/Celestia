@@ -374,8 +374,8 @@ class Renderer
                       Point3f pos,
                       float distance,
                       float appMag,
-                      double now,
-                      Quatf orientation,
+                      const Observer& observer,
+                      const Quatf& cameraOrientation,
                       const vector<LightSource>& lightSources,
                       float, float);
 
@@ -424,13 +424,14 @@ class Renderer
 
     void renderLocations(const vector<Location*>& locations,
                          const Quatf& cameraOrientation,
-                         const Point3f& position,
-                         const Quatf& orientation,
+                         const Point3d& bodyPosition,
+                         const Quatd& bodyOrientation,
                          float scale);
                    
     // Render an item from the render list                   
     void renderItem(const RenderListEntry& rle,
                     const Observer& observer,
+                    const Quatf& cameraOrientation,
                     float nearPlaneDistance,
                     float farPlaneDistance);
 
