@@ -199,7 +199,8 @@ GalacticForm* Galaxy::getForm() const
 
 // TODO: This value is just a guess.
 // To be optimal, it should actually be computed:
-static const float RADIUS_CORRECTION    = 0.025f;
+static const float RADIUS_CORRECTION     = 0.025f;
+static const float MAX_SPIRAL_THICKNESS  = 0.06f;
 
 bool Galaxy::pick(const Ray3d& ray,
                   double& distanceToPicker,
@@ -208,8 +209,9 @@ bool Galaxy::pick(const Ray3d& ray,
     // The ellipsoid should be slightly larger to compensate for the fact
     // that blobs are considered points when galaxies are built, but have size
     // when they are drawn.
+    float yscale = (type < E0 )? MAX_SPIRAL_THICKNESS: form->scale.y + RADIUS_CORRECTION;  		
     Vec3d ellipsoidAxes(getRadius()*(form->scale.x + RADIUS_CORRECTION),
-                        getRadius()*(form->scale.y + RADIUS_CORRECTION),
+                        getRadius()* yscale,
                         getRadius()*(form->scale.z + RADIUS_CORRECTION));
 
     Quatf qf= getOrientation();
@@ -553,7 +555,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 
 				if ( strcmp ( filename.c_str(), "models/E0.png") != 0 )
 				{
-					float y0 = 0.03f * sqrt((float)value/256.0f) * exp(- 5.0f * r2);
+					float y0 = 0.5f * MAX_SPIRAL_THICKNESS * sqrt((float)value/256.0f) * exp(- 5.0f * r2);
 					float B, yr;
 					B = (r2 > 0.35f)? 1.0f: 0.75f; // the darkness of the "dust lane", 0 < B < 1
 					float p0 = 1.0f - B * exp(-h * h); // the uniform reference probability, envelopping prob*p0.
