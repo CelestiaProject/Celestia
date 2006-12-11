@@ -2013,7 +2013,7 @@
 # "Orbits and photometry of Pluto's satellites: Charon, S/2005 P1
 # and S/2005 P2" Buie et al. http://arxiv.org/abs/astro-ph/0512491
 
-"Hydra" "Sol/Pluto-Charon"
+"Hydra" "Sol/Pluto"
 {
 	Texture	 	"asteroid.jpg" # "spectrally neutral"
 	Mesh		"asteroid.cms"
@@ -2041,7 +2041,7 @@
 	Albedo 0.35 # estimate, based on Charon
 }
 
-"Nix" "Sol/Pluto-Charon"
+"Nix" "Sol/Pluto"
 {
 	Texture	 	"asteroid.jpg"
 #	Color   [ 0.65 0.45 0.35 ] 	# reddish shade initially reported, 
