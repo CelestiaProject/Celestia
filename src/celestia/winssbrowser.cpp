@@ -74,16 +74,19 @@ void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int lev
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
         Body* world = sys->getBody(i);
-        HTREEITEM item;
-        item = AddItemToTree(treeView, 
-                             const_cast<char*>(UTF8ToCurrentCP(world->getName(true)).c_str()),
-                             level,
-                             static_cast<void*>(world),
-                             parent);
+        if (world != NULL && world->getClassification() != Body::Invisible)
+        {
+            HTREEITEM item;
+            item = AddItemToTree(treeView, 
+                                 const_cast<char*>(UTF8ToCurrentCP(world->getName(true)).c_str()),
+                                 level,
+                                 static_cast<void*>(world),
+                                 parent);
 
-        const PlanetarySystem* satellites = world->getSatellites();
-        if (satellites != NULL)
-            AddPlanetarySystemToTree(satellites, treeView, level + 1, item);
+            const PlanetarySystem* satellites = world->getSatellites();
+            if (satellites != NULL)
+                AddPlanetarySystemToTree(satellites, treeView, level + 1, item);
+        }
     }
 }
 
