@@ -350,6 +350,8 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showSpacecraftLabels"))->setChecked(lMode & Renderer::SpacecraftLabels);
     ((KToggleAction*)action("showLocationLabels"))->setChecked(lMode & Renderer::LocationLabels);
 
+    ((KToggleAction*)action("toggleVideoSync"))->setChecked(renderer->getVideoSync());
+
     switch (renderer->getGLContext()->getRenderPath()) {
     case GLContext::GLPath_Basic:
         ((KToggleAction*)action("renderPathBasic"))->setChecked(true);
@@ -689,6 +691,11 @@ void KdeApp::initActions()
     renderPath->setExclusiveGroup("renderPath");
     new KAction(i18n("Cycle OpenGL Render Path"), "reload", CTRL + Key_V, this, SLOT(slotCycleRenderPath()), actionCollection(), "cycleRenderPath");
 
+    KToggleAction *videoSync = new KToggleAction(i18n("Sync framerate to video refresh rate"), 0, this, SLOT(slotToggleVideoSync()), actionCollection(), "toggleVideoSync");
+    if (KGlobal::config()->hasKey("VideoSync"))
+        appCore->getRenderer()->setVideoSync(KGlobal::config()->readBoolEntry("VideoSync"));
+    videoSync->setChecked(appCore->getRenderer()->getVideoSync());
+
     new KAction(i18n("Grab Image"), "filesave", Key_F10, this, SLOT(slotGrabImage()), actionCollection(), "grabImage");
     new KAction(i18n("Capture Video"), "filesave", Key_F11, this, SLOT(slotCaptureVideo()), actionCollection(), "captureVideo");
 
@@ -746,6 +753,7 @@ bool KdeApp::queryExit() {
     conf->writeEntry("DistanceToScreen", appCore->getDistanceToScreen());
     conf->writeEntry("LocationFilter", appCore->getSimulation()->getActiveObserver()->getLocationFilter());
     conf->writeEntry("MinFeatureSize", appCore->getRenderer()->getMinimumFeatureSize());
+    conf->writeEntry("VideoSync", appCore->getRenderer()->getVideoSync());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
@@ -1346,6 +1354,10 @@ void KdeApp::slotSetRenderPathNV30() {
 void KdeApp::slotSetRenderPathGLSL() {
     if (appCore->getRenderer()->getGLContext()->getRenderPath() != GLContext::GLPath_GLSL)
         appCore->getRenderer()->getGLContext()->setRenderPath(GLContext::GLPath_GLSL);
+}
+
+void KdeApp::slotToggleVideoSync() {
+    appCore->getRenderer()->setVideoSync(!appCore->getRenderer()->getVideoSync());
 }
 
 void KdeApp::slotCycleRenderPath() {

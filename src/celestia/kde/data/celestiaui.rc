@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="celestia" version="22">
+<kpartgui name="celestia" version="23">
 <MenuBar noMerge="0">
   <Menu name="file">
     <Action name="grabImage"/>
@@ -69,6 +69,8 @@
          <Action name="renderPathARBFPARBVP"/>
          <Action name="renderPathNV30"/>
 	 <Action name="renderPathGLSL"/>
+         <Separator />
+         <Action name="toggleVideoSync"/>
      </Menu>
   </Menu>
   <Menu name="time" icon="kalarm"><text>Time</text>

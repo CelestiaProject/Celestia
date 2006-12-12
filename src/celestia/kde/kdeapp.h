@@ -190,6 +190,7 @@ public slots:
     void slotSetRenderPathNV30();
     void slotSetRenderPathGLSL();
     void slotCycleRenderPath();
+    void slotToggleVideoSync();
 
     void slotCelestialBrowser();
     void slotEclipseFinder();
