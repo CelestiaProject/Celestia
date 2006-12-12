@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: ui.h,v 1.5 2006-07-24 17:31:24 christey Exp $
+ *  $Id: ui.h,v 1.6 2006-12-12 00:31:01 suwalski Exp $
  */
 
 #ifndef GTK_UI_H
@@ -66,6 +66,7 @@ static const GtkActionEntry actionsPlain[] = {
 		/* "Ambient Light" in radio actions */
 	{ "StarsMore", NULL, "_More Stars Visible", "bracketright", NULL, G_CALLBACK(actionStarsMore) },
 	{ "StarsFewer", NULL, "_Fewer Stars Visible", "bracketleft", NULL, G_CALLBACK(actionStarsFewer) },
+	/* "VideoSync" in toggle actions */
 	
 	{ "WindowMenu", NULL, "_Window", NULL, NULL, NULL },
 	{ "ViewerSize", GTK_STOCK_ZOOM_FIT, "Set Window Size...", NULL, NULL, G_CALLBACK(actionViewerSize) },
@@ -102,6 +103,7 @@ static const GtkToggleActionEntry actionsToggle[] = {
 	{ "MultiShowFrames", NULL, "Show _Frames", NULL, NULL, G_CALLBACK(actionMultiShowFrames), FALSE },
 	{ "MultiShowActive", NULL, "Active Frame Highlighted", NULL, NULL, G_CALLBACK(actionMultiShowActive), FALSE },
 	{ "MultiSyncTime", NULL, "Synchronize _Time", NULL, NULL, G_CALLBACK(actionMultiSyncTime), FALSE },
+	{ "VideoSync", NULL, "_Limit Frame Rate", NULL, NULL, G_CALLBACK(actionVideoSync), TRUE },
 };
 
 

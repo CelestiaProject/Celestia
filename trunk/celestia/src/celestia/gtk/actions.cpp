@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.14 2006-07-26 19:45:46 christey Exp $
+ *  $Id: actions.cpp,v 1.15 2006-12-12 00:31:01 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -565,6 +565,16 @@ void actionStarsFewer(GtkAction*, AppData* app)
 
 	#ifdef GNOME
 	gconf_client_set_float(app->client, "/apps/celestia/visualMagnitude", app->simulation->getFaintestVisible(), NULL);
+	#endif
+}
+
+
+void actionVideoSync(GtkToggleAction* action, AppData* app)
+{
+	app->renderer->setVideoSync(gtk_toggle_action_get_active(action));
+
+	#ifdef GNOME
+	gconf_client_set_bool(app->client, "/apps/celestia/videoSync", app->renderer->getVideoSync(), NULL);
 	#endif
 }
 
