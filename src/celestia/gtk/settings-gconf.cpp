@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: settings-gconf.cpp,v 1.1 2005-12-06 03:19:36 suwalski Exp $
+ *  $Id: settings-gconf.cpp,v 1.2 2006-12-12 00:31:01 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -37,6 +37,7 @@ static void confVerbosity(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confFullScreen(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confStarStyle(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confAltSurfaceName(GConfClient*, guint, GConfEntry* e, AppData* app);
+static void confVideoSync(GConfClient*, guint, GConfEntry* e, AppData* app);
 
 /* Definitions: Helpers */
 static int readGConfRender(GConfClient* client);
@@ -72,6 +73,7 @@ void initSettingsGConfNotifiers(AppData* app)
 	gconf_client_notify_add (app->client, "/apps/celestia/fullScreen", (GConfClientNotifyFunc)confFullScreen, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/starStyle", (GConfClientNotifyFunc)confStarStyle, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/altSurfaceName", (GConfClientNotifyFunc)confAltSurfaceName, app, NULL, NULL);
+	gconf_client_notify_add (app->client, "/apps/celestia/videoSync", (GConfClientNotifyFunc)confVideoSync, app, NULL, NULL);
 }
 
 
@@ -106,6 +108,8 @@ void applySettingsGConfMain(AppData* app, GConfClient* client)
 	setSaneAltSurface(app, gconf_client_get_string(client, "/apps/celestia/altSurfaceName", NULL));
 	
 	app->showLocalTime = gconf_client_get_bool(client, "/apps/celestia/showLocalTime", NULL);
+
+	app->renderer->setVideoSync(gconf_client_get_bool(client, "/apps/celestia/videoSync", NULL));
 	
 	/* Render Flags */
 	rf = readGConfRender(app->client);
@@ -384,6 +388,18 @@ static void confAltSurfaceName(GConfClient*, guint, GConfEntry* e, AppData* app)
 		return;
 	
 	setSaneAltSurface(app, (char*)value);
+}
+
+
+/* GCONF CALLBACK: Sets video framerate sync when changed */
+static void confVideoSync(GConfClient*, guint, GConfEntry* e, AppData* app)
+{
+	gboolean value = gconf_value_get_bool(e->value);
+	
+	if (value == app->renderer->getVideoSync())
+		return;
+	
+	app->renderer->setVideoSync(value);
 }
 
 
