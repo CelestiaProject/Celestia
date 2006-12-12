@@ -1130,6 +1130,9 @@ Code:
 * Improved load time mesh conditioning: eliminated duplicate materials and
   sort submeshes by material to reduce graphics state changes.
 * Switched to improved version of Cassini model from Cham
+* Added SpiceOrbit interface to trajectories defined in SPICE kernel files
+* Added asteroid RGB colors integrated from spectra
+* Corrected kilometers per light year constant
 * Added various improvements to the MilkyWay & other galaxy template display.
 * Added E0.png galaxy template that allows for better En, n=1..7 elliptical
   shapes.  
@@ -1138,4 +1141,9 @@ Code:
 * Improved selection of galaxies by taking into account their 3d shape
 * Added new code featuring varying label transparency for galaxies.
 * Added new parameter set for Mie atmosphere display of Titan.
-
+* Added handling zero duration goto object commands
+* Fixed too aggressive rounding in time rate display
+* Changed Windows solar system browser to ignore invisible objects
+* Fixed precision problems in code to display location labels (that were
+  causing jittering and disappearing labels.)
+* Improved precision of LongLat object locations
