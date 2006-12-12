@@ -527,7 +527,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
         {
             LPNMHDR hdr = (LPNMHDR) lParam;
 
-            if(hdr->idFrom == IDC_STARBROWSER_LIST)
+            if (hdr->idFrom == IDC_STARBROWSER_LIST && browser != NULL)
             {
                 switch(hdr->code)
                 {
