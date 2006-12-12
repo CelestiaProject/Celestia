@@ -1835,7 +1835,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             if (!paused)
                 sim->setTimeScale(timeScale);
             char buf[128];
-            sprintf(buf, _("Time rate: %.1f"), timeScale);
+            sprintf(buf, _("Time rate: %g"), timeScale);
             flash(buf);
         }
         break;
@@ -1848,7 +1848,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             if (!paused)
                 sim->setTimeScale(timeScale);
             char buf[128];
-            sprintf(buf, _("Time rate: %.1f"), timeScale);
+            sprintf(buf, _("Time rate: %g"), timeScale);
             flash(buf);
         }
         break;
