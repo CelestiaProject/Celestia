@@ -456,6 +456,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QVBox* openGL = addVBoxPage(i18n("OpenGL"), i18n("OpenGL"),
         KGlobal::iconLoader()->loadIcon("misc", KIcon::NoGroup));
 
+
     renderPathCombo = new QComboBox(openGL);
     savedRenderPath = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Basic))
@@ -493,6 +494,12 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     renderPathLabel = new QLabel(openGL);
     renderPathLabel->setTextFormat(Qt::RichText);
     setRenderPathLabel();
+
+    QCheckBox* videoSyncCheck = new QCheckBox(i18n("Sync framerate to video refresh rate"), openGL);
+    actionColl->action("toggleVideoSync")->connect(videoSyncCheck, SIGNAL(clicked()), SLOT(activate()));
+    savedVideoSync = appCore->getRenderer()->getVideoSync();
+    videoSyncCheck->setChecked(savedVideoSync);
+
 
     QTextEdit* edit = new QTextEdit(openGL);
     edit->append(((KdeApp*)parent)->getOpenGLInfo());
@@ -621,6 +628,7 @@ void KdePreferencesDialog::slotCancel() {
     appCore->setDistanceToScreen(savedDistanceToScreen);
     appCore->getSimulation()->getActiveObserver()->setLocationFilter(savedLocationFilter);
     appCore->getRenderer()->setMinimumFeatureSize(savedMinFeatureSize);
+    appCore->getRenderer()->setVideoSync(savedVideoSync);
     reject();
 }
 
@@ -635,6 +643,7 @@ void KdePreferencesDialog::slotApply() {
     savedDistanceToScreen = appCore->getDistanceToScreen();
     savedLocationFilter = appCore->getSimulation()->getActiveObserver()->getLocationFilter();
     savedMinFeatureSize = (int)appCore->getRenderer()->getMinimumFeatureSize();
+    savedVideoSync = appCore->getRenderer()->getVideoSync();
 
     keyChooser->commitChanges();
 

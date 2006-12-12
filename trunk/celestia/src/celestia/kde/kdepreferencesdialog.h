@@ -64,6 +64,7 @@ protected:
     int savedDistanceToScreen;
     uint32 savedLocationFilter;
     int savedMinFeatureSize;
+    bool savedVideoSync;
 
     bool timeHasChanged;
 
