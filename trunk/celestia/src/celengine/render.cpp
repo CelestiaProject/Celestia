@@ -1177,6 +1177,8 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
     if ((renderFlags & ShowPartialTrajectories) == 0 || orbit->isPeriodic())
     {
         // Show the complete trajectory
+        // TODO: for much greater efficiency, use vertex arrays rather than
+        // immediate commands to draw orbit paths.
         for (vector<OrbitSample>::const_iterator p = trajectory->begin();
              p != trajectory->end(); p++)
         {
@@ -1812,14 +1814,30 @@ void Renderer::render(const Observer& observer,
             }
         }
 
+        // Scan the list of orbit paths and find the closest one. We'll need
+        // adjust the nearest interval to accommodate it.
+        float orbitPathNear = prevNear;
+        for (i = 0; i < (int) orbitPathList.size(); i++)
+        {
+            const OrbitPathListEntry& o = orbitPathList[i];
+            float minNearDistance = min(-o.radius * 0.0001f, o.centerZ + o.radius);
+            if (minNearDistance > orbitPathNear)
+                orbitPathNear = minNearDistance;
+        }
+
+        // If the nearest orbit path distance wasn't set, nothing should appear
+        // in the frontmost depth buffer interval (so we can set the near plane
+        // of the front interval to whatever we want as long as it's less than
+        // the far plane distance.
+        if (orbitPathNear == prevNear)
+            orbitPathNear = 0.0f;
+
         // Add one last interval for the span from 0 to the front of the
         // nearest object
         {
             // TODO: closest object may not be at entry 0, since objects are
             // sorted by far distance.
-            // TODO: The factor of 0.1 needs to be adjusted to avoid clipping
-            // problems.
-            float closest = prevNear * 0.1f;
+            float closest = orbitPathNear;
             if (nEntries > 0)
                 closest = max(closest, renderList[0].nearZ);
 
@@ -1832,8 +1850,8 @@ void Renderer::render(const Observer& observer,
             nIntervals++;
         }
 
-        // If orbits are enabled, adjust the farthest partition so that it can contain the
-        // orbit.
+        // If orbits are enabled, adjust the farthest partition so that it
+        // can contain the orbit.
         if (!orbitPathList.empty())
         {
             depthPartitions[0].farZ = min(depthPartitions[0].farZ,
@@ -1912,6 +1930,7 @@ void Renderer::render(const Observer& observer,
                 glDisable(GL_LIGHTING);
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_DEPTH_TEST);
+                glDepthMask(GL_TRUE);
                 if ((renderFlags & ShowSmoothLines) != 0)
                 {
                     enableSmoothLines();
@@ -1932,6 +1951,7 @@ void Renderer::render(const Observer& observer,
 
                 if ((renderFlags & ShowSmoothLines) != 0)
                     disableSmoothLines();
+                glDepthMask(GL_FALSE);
             }
 
             // Render transparent objects in the second pass
