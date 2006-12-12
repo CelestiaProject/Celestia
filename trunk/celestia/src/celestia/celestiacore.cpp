@@ -623,7 +623,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
         if (celxScript->handleMouseButtonEvent(x, y, button, true))
             return;
     }
- 
+
     if (luaHook && luaHook->callLuaHook(this, "mousebuttondown", x, y, button))
         return;
 #endif
@@ -695,7 +695,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         if (celxScript->handleMouseButtonEvent(x, y, button, false))
             return;
     }
- 
+
     if (luaHook && luaHook->callLuaHook(this,"mousebuttonup", x, y, button))
         return;
 #endif
@@ -842,7 +842,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         setFOVFromZoom();
         return;
     }
-	
+
 #ifdef CELX
 	if (luaHook &&
             luaHook->callLuaHook(this,"mousebuttonmove", dx, dy, modifiers))
@@ -1042,7 +1042,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
     {
         return;
     }
-#endif    
+#endif
     switch (key)
     {
     case Key_F1:
@@ -1183,7 +1183,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             return;
         }
     }
- 
+
 #endif
 
     if (textEnterMode & KbAutoComplete)
@@ -2834,7 +2834,7 @@ static void displayStarInfo(Overlay& overlay,
             displayDuration(overlay, period);
             overlay << '\n';
         }
-        
+
         SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
             overlay << _("Planetary companions present\n");
@@ -3180,7 +3180,8 @@ void CelestiaCore::renderOverlay()
             }
             else if (abs(timeScale) > 1.0)
             {
-                *overlay << SigDigitNum(timeScale, 1) << UTF8_MULTIPLICATION_SIGN << _(" faster");
+                *overlay << FormattedNumber(timeScale, 0, FormattedNumber::GroupThousands)
+                         << UTF8_MULTIPLICATION_SIGN << _(" faster");
             }
             else
             {
@@ -3197,7 +3198,7 @@ void CelestiaCore::renderOverlay()
         overlay->endText();
         glPopMatrix();
     }
-      
+
     if (hudDetail > 0 && (overlayElements & ShowVelocity))
     {
         // Speed
@@ -4443,7 +4444,7 @@ class LuaPathFinder : public EnumFilesHandler
                     string newPatt = getPath()+"/?.lua;";
                     extPos = luaPath.rfind(newPatt);
                     if (extPos < 0)
-                    {				
+                    {
                         luaPath = luaPath + newPatt;
                     }
                 }
@@ -4473,7 +4474,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 
         if (progressNotifier)
             progressNotifier->update(config->luaHook);
-	
+
         luaHook = new LuaState();
         luaHook->init(this);
 
@@ -4485,7 +4486,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
         luaHook->allowSystemAccess();
 
 	string LuaPath = "?.lua;celxx/?.lua;";
-	
+
         // Find the path for lua files in the extras directories
         {
             for (vector<string>::const_iterator iter = config->extrasDirs.begin();
@@ -4498,7 +4499,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
                     LuaPathFinder loader("");
                     loader.pushDir(*iter);
                     dir->enumFiles(loader, true);
-                    LuaPath += loader.luaPath;		
+                    LuaPath += loader.luaPath;
                     delete dir;
                 }
             }
@@ -4535,7 +4536,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
                 luaHook = NULL;
             }
             if (luaHook)
-            { 
+            {
                 while (!luaHook->tick(0.1)) ;
             }
         }
