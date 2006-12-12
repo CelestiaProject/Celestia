@@ -125,6 +125,16 @@
         <short>Alternate surface description.</short>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/celestia/videoSync</key>
+      <applyto>/apps/celestia/videoSync</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Sync framerate to video refresh rate.</short>
+      </locale>
+    </schema>
 
 
     <!-- RENDER OPTIONS -->

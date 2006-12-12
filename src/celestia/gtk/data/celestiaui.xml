@@ -96,6 +96,8 @@
       <separator/>
       <menuitem action='StarsMore'/>
       <menuitem action='StarsFewer'/>
+      <separator/>
+      <menuitem action='VideoSync'/>
     </menu>
     <menu action='WindowMenu'>
       <menuitem action='ViewerSize'/>

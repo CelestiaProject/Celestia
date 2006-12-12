@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: settings-file.cpp,v 1.2 2005-12-06 04:15:07 suwalski Exp $
+ *  $Id: settings-file.cpp,v 1.3 2006-12-12 00:31:01 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -91,7 +91,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	int errors, verbosity, starStyle, rf, om, lm;
 		
 	/* See comment in applySettingsFilePrefs() */
-	e= NULL;
+	e = NULL;
 	ambientLight = (float)g_key_file_get_integer(file, "Main", "ambientLight", &e) / 1000.0;
 	if (e != NULL) ambientLight = -1.0;
 	
@@ -111,9 +111,13 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	starStyle = g_key_file_get_integer(file, "Main", "starStyle", &e);
 	if (e != NULL) starStyle = -1;
 		
-	e= NULL;
+	e = NULL;
 	app->showLocalTime = g_key_file_get_boolean(file, "Main", "localTime", &e);
 	if (e != NULL) app->showLocalTime = FALSE;
+
+	e = NULL;
+	app->renderer->setVideoSync(g_key_file_get_integer(file, "Main", "starStyle", &e));
+	if (e != NULL) app->renderer->setVideoSync(TRUE);
 	
 	/* All settings that need sanity checks get them */
 	setSaneAmbientLight(app, ambientLight);
@@ -210,6 +214,9 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_integer(file, "Main", "starStyle", app->renderer->getStarStyle());
 	g_key_file_set_comment(file, "Main", "starStyle", "Style of star rendering. 0=Fuzzy Points, 1=Points, 2=Scaled Discs", NULL);
 	g_key_file_set_string(file, "Main", "altSurfaceName", app->simulation->getActiveObserver()->getDisplayedSurface().c_str());
+	g_key_file_set_boolean(file, "Main", "localTime", app->showLocalTime);
+	g_key_file_set_boolean(file, "Main", "videoSync", app->renderer->getVideoSync());
+	g_key_file_set_comment(file, "Main", "videoSync", "Sync Framerate to Video Refresh", NULL);
 	
 	g_key_file_set_integer(file, "Window", "width", getWinWidth(app));
 	g_key_file_set_integer(file, "Window", "height", getWinHeight(app));
