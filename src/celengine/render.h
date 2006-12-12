@@ -140,6 +140,8 @@ class Renderer
     void setScreenDpi(int);
     const ColorTemperatureTable* getStarColorTable() const;
     void setStarColorTable(const ColorTemperatureTable*);
+    bool getVideoSync() const;
+    void setVideoSync(bool);
 
     bool getFragmentShaderEnabled() const;
     void setFragmentShaderEnabled(bool);
@@ -543,6 +545,8 @@ class Renderer
     const ColorTemperatureTable* colorTemp;
     
     Selection highlightObject;
+
+    bool videoSync;
 };
 
 #endif // _RENDER_H_
