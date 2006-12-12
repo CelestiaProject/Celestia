@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: main.cpp,v 1.7 2006-12-12 00:31:01 suwalski Exp $
+ *  $Id: main.cpp,v 1.8 2006-12-12 04:21:19 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -37,7 +37,6 @@
 #include <celengine/galaxy.h>
 #include <celengine/simulation.h>
 #include <celestia/celestiacore.h>
-#include <celutil/celstream.h>
 #include <celutil/debug.h>
 
 /* Includes for the GNOME front-end */
@@ -265,33 +264,6 @@ static void initRealize(GtkWidget* widget, AppData* app)
 	gdk_window_set_cursor(widget->window, gdk_cursor_new(GDK_CROSSHAIR));
 }
 
-class GtkFileErrorNotifier : public FileErrorNotifier
-{
-public:
-	GtkFileErrorNotifier(AppData* _app);
-//	virtual ~GtkSplashProgressNotifier();
-
-	virtual void ShowError(const char* message);
-
-private:
-	AppData* app;
-};
-
-
-GtkFileErrorNotifier::GtkFileErrorNotifier(AppData* _app) :
-        app(_app) {};
-
-void GtkFileErrorNotifier::ShowError(const char* message)
-{
-	GtkWidget* m = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
-	                                      GTK_DIALOG_MODAL,
-	                                      GTK_MESSAGE_ERROR,
-	                                      GTK_BUTTONS_OK,
-	                                      message);
-	gtk_widget_show(m);
-}
-
-
 
 /* MAIN */
 int main(int argc, char* argv[])
@@ -517,16 +489,6 @@ int main(int argc, char* argv[])
 
 	/* Unload the splash screen */
 	splashEnd(ss);
-
-	//GtkCelStream *cs = CelStream::Instance();
-	//cs->Open("/tmp/test");
-	//CelStream::setNotifier(5);
-
-	GtkFileErrorNotifier* nott = new GtkFileErrorNotifier(app);
-	GtkFileErrorNotifier::setNotifier(nott);
-	celofstream foo("/test");
-	//celofstream foo;
-	//foo.open("/test");
 
 	gtk_widget_show_all(app->mainWindow);
 
