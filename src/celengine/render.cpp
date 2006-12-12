@@ -203,7 +203,8 @@ Renderer::Renderer() :
     distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
     locationFilter(~0u),
-    colorTemp(NULL)
+    colorTemp(NULL),
+    videoSync(false)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
@@ -818,6 +819,17 @@ void
 Renderer::setStarColorTable(const ColorTemperatureTable* ct)
 {
     colorTemp = ct;
+}
+
+
+bool Renderer::getVideoSync() const
+{
+    return videoSync;
+}
+
+void Renderer::setVideoSync(bool sync)
+{
+    videoSync = sync;
 }
 
 
@@ -1980,6 +1992,13 @@ void Renderer::render(const Observer& observer,
         cout << "glError: " << (char*) gluErrorString(errCode) << '\n';
     }
 #endif
+
+    if (videoSync && glx::glXWaitVideoSyncSGI != NULL)
+    {
+        unsigned int count;
+        glx::glXGetVideoSyncSGI(&count);
+        glx::glXWaitVideoSyncSGI(2, (count+1) & 1, &count);
+    }
 }
 
 

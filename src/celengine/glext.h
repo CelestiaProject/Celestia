@@ -1275,6 +1275,19 @@ namespace glx
 #endif
 
 
+/* SGI Video Sync from glxext.h, for refresh-rate syncing. */
+namespace glx
+{
+    typedef int ( * PFNGLXGETVIDEOSYNCSGIPROC) (unsigned int *count);
+    typedef int ( * PFNGLXWAITVIDEOSYNCSGIPROC) (int divisor, int remainder, unsigned int *count);
+    typedef int ( * PFNGLXGETREFRESHRATESGIPROC) (unsigned int *);
+
+    extern PFNGLXGETVIDEOSYNCSGIPROC glXGetVideoSyncSGI;
+    extern PFNGLXWAITVIDEOSYNCSGIPROC glXWaitVideoSyncSGI;
+    extern PFNGLXGETREFRESHRATESGIPROC glXGetRefreshRateSGI;
+};
+
+
 extern void InitExtension(const char* ext);
 extern bool ExtensionSupported(const char *ext);
 

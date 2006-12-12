@@ -130,6 +130,11 @@ glx::PFNGLBLENDEQUATIONEXTPROC glx::glBlendEquationEXT;
 glx::PFNWGLSWAPINTERVALEXTPROC glx::wglSwapIntervalEXT;
 glx::PFNWGLGETSWAPINTERVALEXTPROC glx::wglGetSwapIntervalEXT;
 
+// GLX_SGI_video_sync command function pointers
+glx::PFNGLXGETVIDEOSYNCSGIPROC glx::glXGetVideoSyncSGI;
+glx::PFNGLXWAITVIDEOSYNCSGIPROC glx::glXWaitVideoSyncSGI;
+glx::PFNGLXGETREFRESHRATESGIPROC glx::glXGetRefreshRateSGI;
+
 // ARB_vertex_program function pointers
 glx::PFNGLBINDPROGRAMARBPROC glx::glBindProgramARB;
 glx::PFNGLDELETEPROGRAMSARBPROC glx::glDeleteProgramsARB;
@@ -650,6 +655,14 @@ static void InitExt_EXT_swap_control()
 }
 
 
+static void InitExt_GLX_SGI_video_sync()
+{
+    glx::glXGetVideoSyncSGI = (glx::PFNGLXGETVIDEOSYNCSGIPROC) GET_GL_PROC_ADDRESS("glXGetVideoSyncSGI");
+    glx::glXWaitVideoSyncSGI = (glx::PFNGLXWAITVIDEOSYNCSGIPROC) GET_GL_PROC_ADDRESS("glXWaitVideoSyncSGI");
+    glx::glXGetRefreshRateSGI = (glx::PFNGLXGETREFRESHRATESGIPROC) GET_GL_PROC_ADDRESS("glXGetRefreshRateSGI");
+}
+
+
 static void InitExt_NV_fragment_program()
 {
 #if defined(GET_GL_PROC_ADDRESS)
@@ -840,6 +853,9 @@ void InitExtension(const char* ext)
         InitExt_ARB_vertex_shader();
     else if (!strcmp(ext, "WGL_EXT_swap_control"))
         InitExt_EXT_swap_control();
+    else if (!strcmp(ext, "GLX_SGI_video_sync"))
+        InitExt_GLX_SGI_video_sync();
+
 }
 
 

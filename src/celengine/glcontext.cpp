@@ -109,6 +109,9 @@ void GLContext::init(const vector<string>& ignoreExt)
             fpNV = fp::initNV();
         fragmentProc = fpNV;
     }
+
+    // Initialize GLX_SGI_video_sync blindly. At most, it will be null.
+    InitExtension("GLX_SGI_video_sync");
 }
 
 
