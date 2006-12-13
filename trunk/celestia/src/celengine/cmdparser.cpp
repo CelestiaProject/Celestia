@@ -587,10 +587,12 @@ Command* CommandParser::parseCommand()
         {
             if (compareIgnoringCase(symbolString, "diamond") == 0)
                 symbol = Marker::Diamond;
-            else if (compareIgnoringCase(symbolString, "square") == 0)
-                symbol = Marker::Square;
             else if (compareIgnoringCase(symbolString, "triangle") == 0)
                 symbol = Marker::Triangle;
+            else if (compareIgnoringCase(symbolString, "square") == 0)
+                symbol = Marker::Square;
+            else if (compareIgnoringCase(symbolString, "filledsquare") == 0)
+                symbol = Marker::FilledSquare;
             else if (compareIgnoringCase(symbolString, "plus") == 0)
                 symbol = Marker::Plus;
             else if (compareIgnoringCase(symbolString, "x") == 0)
@@ -605,6 +607,8 @@ Command* CommandParser::parseCommand()
                 symbol = Marker::DownArrow;
             else if (compareIgnoringCase(symbolString, "circle") == 0)
                 symbol = Marker::Circle;
+            else if (compareIgnoringCase(symbolString, "disk") == 0)
+                symbol = Marker::Disk;
         }
 
         cmd = new CommandMark(object, color, (float) size, symbol);
