@@ -122,6 +122,10 @@ void Marker::render() const
 
     case Square:
         glBegin(GL_LINE_LOOP);
+
+    case FilledSquare:
+        glBegin(GL_POLYGON);
+
         glVertex3f(-s, -s, 0.0f);
         glVertex3f( s, -s, 0.0f);
         glVertex3f( s,  s, 0.0f);
@@ -194,17 +198,23 @@ void Marker::render() const
         break;
 
     case Circle:
+        glBegin(GL_LINE_LOOP);
+        
+    case Disk:
+        glBegin(GL_POLYGON);
+
         if (s < 1.0f)
             s = 1.0f; //  0 and negative values are not allowed in the case of circle markers.
         else if (s > 1024.0f)
             s = 1024.0f; //  Bigger values would give a too high number of segments in the circle markers.
-        glBegin(GL_LINE_LOOP);
+
         int step = (int) (60.0f/sqrt(s));
         for (int i=0; i < 360; i=i+step)
         {
             float degInRad = (float) i*3.14159/180;
             glVertex3f((float) cos(degInRad)*s, (float) sin(degInRad)*s, 0.0f);
         }
+        
         glEnd();
         break;
     }

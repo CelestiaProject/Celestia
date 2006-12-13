@@ -1149,6 +1149,8 @@ static Marker::Symbol parseMarkerSymbol(const string& name)
         return Marker::Triangle;
     else if (compareIgnoringCase(name, "square") == 0)
         return Marker::Square;
+    else if (compareIgnoringCase(name, "filledsquare") == 0)
+        return Marker::FilledSquare;
     else if (compareIgnoringCase(name, "plus") == 0)
         return Marker::Plus;
     else if (compareIgnoringCase(name, "x") == 0)
@@ -1163,6 +1165,8 @@ static Marker::Symbol parseMarkerSymbol(const string& name)
         return Marker::DownArrow;
     else if (compareIgnoringCase(name, "circle") == 0)
         return Marker::Circle;
+    else if (compareIgnoringCase(name, "disk") == 0)
+        return Marker::Disk;
     else
         return Marker::Diamond;
 }
