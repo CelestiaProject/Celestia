@@ -472,6 +472,15 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
+float Body::getApparentMagnitude(float sunLuminosity,
+                                 float distanceFromSun,
+                                 float distanceFromViewer) const
+{
+    return astro::lumToAppMag(getLuminosity(sunLuminosity, distanceFromSun),
+                              astro::kilometersToLightYears(distanceFromViewer));
+}
+
+
 // Return the apparent magnitude of the body, corrected for the phase.
 float Body::getApparentMagnitude(const Star& sun,
                                  const Vec3d& sunPosition,

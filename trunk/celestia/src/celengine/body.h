@@ -154,12 +154,29 @@ class Body
                         float distanceFromSun) const;
     float getLuminosity(float sunLuminosity,
                         float distanceFromSun) const;
+
+    /*! Get the apparent magnitude of the body, neglecting the phase (as if
+     *  the body was at opposition.
+     */
     float getApparentMagnitude(const Star& sun,
                                float distanceFromSun,
                                float distanceFromViewer) const;
+
+    /*! Get the apparent magnitude of the body, neglecting the phase (as if
+     *  the body was at opposition.
+     */
+    float getApparentMagnitude(float sunLuminosity,
+                               float distanceFromSun,
+                               float distanceFromViewer) const;
+
+    /*! Get the apparent magnitude of the body, corrected for its phase.
+     */
     float getApparentMagnitude(const Star& sun,
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
+
+    /*! Get the apparent magnitude of the body, corrected for the phase.
+     */
     float getApparentMagnitude(float sunLuminosity,
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
