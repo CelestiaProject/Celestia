@@ -1763,8 +1763,8 @@ void Renderer::render(const Observer& observer,
 
         renderList.resize(notCulled - renderList.begin());
 
-        // The calls to renderSolarSystem/renderStars filled renderList
-        // with visible planetary bodies.  Sort it front to back, then
+        // The calls to buildRenderLists/renderStars filled renderList
+        // with visible bodies.  Sort it front to back, then
         // render each entry in reverse order (TODO: convenient, but not
         // ideal for performance; should render opaque objects front to
         // back, then translucent objects back to front. However, the
@@ -6097,23 +6097,25 @@ void Renderer::buildRenderLists(const Star& sun,
         // relative to the observer.
         Vec3d posd = bodyPos - observerPos;
 
+        // Compute the size of the planet/moon disc in pixels
+        double distanceFromObserver = posd.length();
+        float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
+
         vector<LightSource>& lightSources = lightSourceLists[solarSysIndex];
 
         // Compute the apparent magnitude; instead of summing the reflected
         // light from all nearby stars, we just consider the one with the
         // highest apparent brightness.
         float appMag = 100.0f;
+        float oppositionMag = 100.0f;
         for (unsigned int li = 0; li < lightSources.size(); li++)
         {
             Vec3d sunPos = bodyPos - lightSources[li].position;
             appMag = min(appMag, body->getApparentMagnitude(lightSources[li].luminosity, sunPos, posd));
+            oppositionMag = min(oppositionMag, body->getApparentMagnitude(lightSources[li].luminosity, (float) sunPos.length(), (float) distanceFromObserver));
         }
 
         Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
-
-        // Compute the size of the planet/moon disc in pixels
-        double distanceFromObserver = posd.length();
-        float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
 
         // if (discSize > 1 || appMag < 1.0f / brightnessScale)
         if ((discSize > 1 || appMag < faintestPlanetMag) &&
@@ -6255,7 +6257,11 @@ void Renderer::buildRenderLists(const Star& sun,
             }
         }
 
-        if (appMag < faintestPlanetMag || (body->getClassification() & Body::Invisible) != 0)
+        // Only render the satellites of bodies brighter than the threshold
+        // magnitude. Ignore the phase and use the opposition magnitude so
+        // that satellites don't disappear unexpectedly (during a solar transit
+        // for example.)
+        if (oppositionMag < faintestPlanetMag || (body->getClassification() & Body::Invisible) != 0)
         {
             const PlanetarySystem* satellites = body->getSatellites();
             if (satellites != NULL)
