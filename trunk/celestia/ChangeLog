@@ -1147,3 +1147,6 @@ Code:
 * Fixed precision problems in code to display location labels (that were
   causing jittering and disappearing labels.)
 * Improved precision of LongLat object locations
+* Made selection only work for currently visible (enabled) objects
+* Windows: Fixed crash that occurred when star browser was closed
+* Fixed bug that made moons disappear as a planet approached stellar transit
