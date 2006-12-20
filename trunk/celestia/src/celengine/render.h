@@ -403,17 +403,18 @@ class Renderer
                               float _faintestMag,
                               float discSizeInPixels,
                               Color color,
-                              const Quatf& orientation,
+                              const Quatf& cameraOrientation,
                               float renderDistance,
-                              bool useHaloes);
+                              bool useHalos);
     void renderObjectAsPoint(Point3f center,
+                             float radius,
                              float appMag,
                              float _faintestMag,
                              float discSizeInPixels,
                              Color color,
-                             const Quatf& orientation,
-                             float renderDistance,
-                             bool useHaloes);
+                             const Quatf& cameraOrientation,
+                             bool useHalos,
+                             bool emissive);
 
     void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                                    Point3f center,
