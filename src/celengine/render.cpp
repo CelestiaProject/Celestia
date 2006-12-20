@@ -75,6 +75,7 @@ static const float MaxFarNearRatio      = 2000000.0f;
 static const float RenderDistance       = 50.0f;
 
 static const float MaxScaledDiscStarSize = 8.0f;
+static const float GlareOpacity = 0.65f;
 
 static const float MinRelativeOccluderRadius = 0.005f;
 
@@ -193,7 +194,7 @@ Renderer::Renderer() :
     starStyle(FuzzyPointStars),
     starVertexBuffer(NULL),
     pointStarVertexBuffer(NULL),
-	glareVertexBuffer(NULL),
+    glareVertexBuffer(NULL),
     useVertexPrograms(false),
     useRescaleNormal(false),
     usePointSprite(false),
@@ -208,7 +209,7 @@ Renderer::Renderer() :
 {
     starVertexBuffer = new StarVertexBuffer(2048);
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
-	glareVertexBuffer = new PointStarVertexBuffer(2048);
+    glareVertexBuffer = new PointStarVertexBuffer(2048);
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
     skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
@@ -414,6 +415,27 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
 }
 
 
+static void BuildGlareMipLevel(unsigned char* mipPixels,
+                               unsigned int log2size,
+                               float scale,
+                               float base)
+{
+    unsigned int size = 1 << log2size;
+
+    for (unsigned int i = 0; i < size; i++)
+    {
+        float y = (float) i - size / 2;
+        for (unsigned int j = 0; j < size; j++)
+        {
+            float x = (float) j - size / 2;
+            float r = (float) sqrt(x * x + y * y);
+            float f = (float) pow(base, r * scale);
+            mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
+        }
+    }
+}
+
+
 static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 {
     unsigned int size = 1 << log2size;
@@ -446,11 +468,19 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
-        float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
+        /*
+        // Optional gaussian glare
+        float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
+        float power = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
         BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
                                   log2size - mipLevel,
                                   fwhm,
-                                  (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.25f);
+                                  power);
+        */
+        BuildGlareMipLevel(img->getMipLevel(mipLevel),
+                           log2size - mipLevel,
+                           25.0f / (float) pow(2.0f, (float) (log2size - mipLevel)),
+                           0.66f);
     }
 
     ImageTexture* texture = new ImageTexture(*img,
@@ -529,10 +559,10 @@ bool Renderer::init(GLContext* _context,
                                             shadowTexAddress, shadowTexMip);
         shadowTex->setBorderColor(Color::White);
 
-		if (gaussianDiscTex == NULL)
-			gaussianDiscTex = BuildGaussianDiscTexture(8);
-		if (gaussianGlareTex == NULL)
-			gaussianGlareTex = BuildGaussianGlareTexture(9);
+        if (gaussianDiscTex == NULL)
+            gaussianDiscTex = BuildGaussianDiscTexture(8);
+        if (gaussianGlareTex == NULL)
+            gaussianGlareTex = BuildGaussianGlareTexture(9);
 
         // Create the eclipse shadow textures
         {
@@ -2059,13 +2089,13 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     Color color,
                                     const Quatf& orientation,
                                     float renderZ,
-                                    bool useHaloes)
+                                    bool useHalos)
 {
     float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
     float discSize = 1.0f;
 
-    if (discSizeInPixels < maxBlendDiscSize || useHaloes)
+    if (discSizeInPixels < maxBlendDiscSize || useHalos)
     {
         float a = 1;
         float fade = 1.0f;
@@ -2114,13 +2144,10 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // If the object is brighter than magnitude 1, add a halo around it to
         // make it appear more brilliant.  This is a hack to compensate for the
         // limited dynamic range of monitors.
-        //
-        // TODO: Currently, this is extremely broken.  Stars look fine,
-        // but planets look ridiculous with bright haloes.
-        if (useHaloes && appMag < saturationMag)
+        if (useHalos && appMag < saturationMag)
         {
-            a = 0.4f * clamp((appMag - saturationMag) * -0.8f);
-            float s = renderZ * 0.001f * (3 - (appMag - saturationMag)) * 2;
+            a = GlareOpacity * clamp((appMag - saturationMag) * -0.8f);
+            float s = center.distanceFromOrigin() * 0.001f * (3 - (appMag - saturationMag)) * 2;
             if (s > size * 3)
 	        size = s * 2.0f/(1.0f +FOV/fov);
             else
@@ -2128,7 +2155,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
             float realSize = discSizeInPixels * pixelSize * renderZ;
             if (size < realSize * 10)
                 size = realSize * 10;
-            glareTex->bind();
+            gaussianGlareTex->bind();
             glColor(color, a);
             glBegin(GL_QUADS);
             glTexCoord2f(0, 1);
@@ -2153,28 +2180,26 @@ void Renderer::renderBodyAsParticle(Point3f position,
 // jarring, however . . . so we'll blend in the particle view of the
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
-// TODO: Remove unused parameters??
 void Renderer::renderObjectAsPoint(Point3f position,
+                                   float radius,
                                    float appMag,
                                    float _faintestMag,
                                    float discSizeInPixels,
                                    Color color,
                                    const Quatf& cameraOrientation,
-                                   float /*renderZ*/,
-                                   bool useHaloes)
+                                   bool useHalos,
+                                   bool emissive)
 {
     float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
-    /*float discSize = 1.0f;    unused*/
     bool useScaledDiscs = starStyle == ScaledDiscStars;
 
-    if (discSizeInPixels < maxBlendDiscSize || useHaloes)
+    if (discSizeInPixels < maxBlendDiscSize || useHalos)
     {
         float alpha = 1.0f;
         float fade = 1.0f;
         float size = 4.0f;
-        float satPoint = _faintestMag - (1.0f - brightnessBias) / (brightnessScale * 2); // TODO: precompute this value
-
+        float satPoint = _faintestMag - (1.0f - brightnessBias) / (brightnessScale * 2);
 
         if (discSizeInPixels > maxDiscSize)
         {
@@ -2197,7 +2222,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
             }
             else if (alpha > 1.0f)
             {
-                float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
+                float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
                 pointSize *= discScale;
 
                 glareAlpha = min(0.5f, discScale / 4.0f);
@@ -2215,24 +2240,36 @@ void Renderer::renderObjectAsPoint(Point3f position,
             else if (alpha > 1.0f)
             {
                 float discScale = min(100.0f, satPoint - appMag + 2.0f);
-                glareAlpha = min(0.3f, (discScale - 2.0f) / 4.0f);
+                glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
                 glareSize = pointSize * discScale * 2.0f ;
+                if (emissive)
+                    glareSize = max(glareSize, pointSize * discSizeInPixels * 3.0f);
             }
         }
 
         alpha *= fade;
-        glareAlpha *= fade;
+        if (!emissive)
+        {
+            glareSize = max(glareSize, pointSize * discSizeInPixels * 3.0f);
+            glareAlpha *= fade;
+        }
 
-        // TODO: Should offset this so that it lies in front of the
-        // object, e.g. center = position * ((distance - radius) / distance)
+        Mat3f m = cameraOrientation.toMatrix3();
         Point3f center = position;
+
+        // Offset the glare sprite so that it lies in front of the object
+        Vec3f direction(center.x, center.y, center.z);
+        direction.normalize();
+
+        // Position the sprite on the the line between the viewer and the
+        // object, and on a plane normal to the view direction.
+        center = center + direction * (radius / ((Vec3f(0, 0, 1.0f) * m) * direction));
 
         glEnable(GL_DEPTH_TEST);
 #if !defined(NO_MAX_POINT_SIZE)
         // TODO: OpenGL appears to limit the max point size unless we
         // actually set up a shader that writes the pointsize values. To get
         // around this, we'll use billboards.
-        Mat3f m = cameraOrientation.toMatrix3();
         Vec3f v0 = Vec3f(-1, -1, 0) * m;
         Vec3f v1 = Vec3f( 1, -1, 0) * m;
         Vec3f v2 = Vec3f( 1,  1, 0) * m;
@@ -2259,7 +2296,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
         // limited dynamic range of monitors.
         //
         // TODO: Stars look fine but planets look unrealistically bright
-        // with haloes.
+        // with halos.
         if (glareAlpha > 0.0f)
         {
             gaussianGlareTex->bind();
@@ -2295,8 +2332,8 @@ void Renderer::renderObjectAsPoint(Point3f position,
         // limited dynamic range of monitors.
         //
         // TODO: Stars look fine but planets look unrealistically bright
-        // with haloes.
-        if (/*useHaloes*/1 && glareAlpha > 0.0f)
+        // with halos.
+        if (/*useHalos*/1 && glareAlpha > 0.0f)
         {
             gaussianGlareTex->bind();
 
@@ -5606,13 +5643,13 @@ void Renderer::renderPlanet(Body& body,
     if (useNewStarRendering)
     {
     	renderObjectAsPoint(pos,
+                            body.getRadius(),
                             appMag,
                             faintestPlanetMag,
                             discSizeInPixels,
                             body.getSurface().color,
                             cameraOrientation,
-                            (nearPlaneDistance + farPlaneDistance) / 2.0f,
-                            false);
+                            false, false);
     }
     else
     {
@@ -5632,7 +5669,7 @@ void Renderer::renderStar(const Star& star,
                           Point3f pos,
                           float distance,
                           float appMag,
-                          Quatf orientation,
+                          Quatf cameraOrientation,
                           double now,
                           float nearPlaneDistance,
                           float farPlaneDistance)
@@ -5640,7 +5677,6 @@ void Renderer::renderStar(const Star& star,
     if (!star.getVisibility())
         return;
 
-    //Color color = star.getStellarClass().getApparentColor();
     Color color = colorTemp->lookupColor(star.getTemperature());
     float radius = star.getRadius();
     float discSizeInPixels = radius / (distance * pixelSize);
@@ -5671,38 +5707,55 @@ void Renderer::renderStar(const Star& star,
         rp.model = star.getModel();
 
         Atmosphere atmosphere;
+        Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
         atmosphere.height = radius * CoronaHeight;
-        atmosphere.lowerColor = color;
-        atmosphere.upperColor = color;
-        atmosphere.skyColor = color;
+        atmosphere.lowerColor = atmColor;
+        atmosphere.upperColor = atmColor;
+        atmosphere.skyColor = atmColor;
+
+#if 0
+        // Atmosphere effect may be use to give stars a fuzzy fringe,
+        // but this doesn't seem to be an improvement.
         if (rp.model == InvalidResource)
             rp.atmosphere = &atmosphere;
         else
             rp.atmosphere = NULL;
+#endif
 
         Quatd q = star.getRotationModel()->orientationAtTime(now);
         rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
         renderObject(pos, distance, now,
-                     orientation, nearPlaneDistance, farPlaneDistance,
+                     cameraOrientation, nearPlaneDistance, farPlaneDistance,
                      rp, LightingState());
 
         glEnable(GL_TEXTURE_2D);
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-#if 0
-    renderBodyAsParticle(pos,
-#else
-    renderObjectAsPoint(pos,
-#endif
-                         appMag,
-                         faintestMag,
-                         discSizeInPixels,
-                         color,
-                         orientation,
-                         (nearPlaneDistance + farPlaneDistance) / 2.0f,
-                         true);
+
+    if (useNewStarRendering)
+    {
+        renderObjectAsPoint(pos,
+                            star.getRadius(),
+                            appMag,
+                            faintestMag,
+                            discSizeInPixels,
+                            color,
+                            cameraOrientation,
+                            true, true);
+    }
+    else
+    {
+        renderBodyAsParticle(pos,
+                             appMag,
+                             faintestPlanetMag,
+                             discSizeInPixels,
+                             color,
+                             cameraOrientation,
+                             (nearPlaneDistance + farPlaneDistance) / 2.0f,
+                             true);
+    }
 }
 
 
@@ -6473,24 +6526,12 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                 p.size = size;
                 p.color = Color(starColor, alpha);
 
-                alpha = 0.4f * clamp((appMag - saturationMag) * -0.8f);
-#if 0
-                s = (3 - (appMag - saturationMag)) * 2;
-
-                if (1 || starPrimitive != GL_POINTS)
-                {
-                    s *= 0.001f;
-                    if (s > p.size * 3 )
-                        p.size = s * 2.0f/(1.0f +FOV/fov);
-                    else
-                        p.size = p.size * 3;
-                    p.size *= renderDistance;
-                }
-#else
+                alpha = GlareOpacity * clamp((appMag - saturationMag) * -0.8f);
                 s = renderDistance * 0.001f * (3 - (appMag - saturationMag)) * 2;
-                if (s > p.size * 3 )
-		        	p.size = s * 2.0f/(1.0f + FOV/fov);
-#endif
+                if (s > p.size * 3)
+                {
+                    p.size = s * 2.0f/(1.0f + FOV/fov);
+                }
                 else
                 {
                     if (s > p.size * 3)
@@ -6664,7 +6705,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 }
                 else if (alpha > 1.0f)
                 {
-                    float discScale = min(256.0f, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
+                    float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
                     discSize *= discScale;
 
                     float glareAlpha = min(0.5f, discScale / 4.0f);
@@ -6683,7 +6724,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 else if (alpha > 1.0f)
                 {
                     float discScale = min(100.0f, satPoint - appMag + 2.0f);
-                    float glareAlpha = min(0.3f, (discScale - 2.0f) / 4.0f);
+                    float glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
                     glareVertexBuffer->addStar(starPos, Color(starColor, glareAlpha), 2.0f * discScale * size);
                 }
                 starVertexBuffer->addStar(starPos, Color(starColor, alpha), size);
@@ -6823,7 +6864,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     else
         starRenderer.starVertexBuffer->finish();
 
-    glareTex->bind();
+    gaussianGlareTex->bind();
     renderParticles(glareParticles, observer.getOrientation());
 }
 
