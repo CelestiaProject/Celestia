@@ -74,6 +74,8 @@ static const float MaxFarNearRatio      = 2000000.0f;
 
 static const float RenderDistance       = 50.0f;
 
+// Star disc size in pixels
+static const float BaseStarDiscSize      = 5.0f;
 static const float MaxScaledDiscStarSize = 8.0f;
 static const float GlareOpacity = 0.65f;
 
@@ -436,6 +438,32 @@ static void BuildGlareMipLevel(unsigned char* mipPixels,
 }
 
 
+// An alternate glare function, based roughly on results in Spencer, G. et al,
+// 1995, "Physically-Based Glare Effects for Digital Images"
+static void BuildGlareMipLevel2(unsigned char* mipPixels,
+                                unsigned int log2size,
+                                float scale)
+{
+    unsigned int size = 1 << log2size;
+
+    for (unsigned int i = 0; i < size; i++)
+    {
+        float y = (float) i - size / 2;
+        for (unsigned int j = 0; j < size; j++)
+        {
+            float x = (float) j - size / 2;
+            float r = (float) sqrt(x * x + y * y);
+            float f = 0.3f / (0.3f + r * r * scale * scale * 100);
+            /*
+            if (i == 0 || j == 0 || i == size - 1 || j == size - 1)
+                f = 1.0f;
+            */
+            mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
+        }
+    }
+}
+
+
 static Texture* BuildGaussianDiscTexture(unsigned int log2size)
 {
     unsigned int size = 1 << log2size;
@@ -481,6 +509,11 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
                            log2size - mipLevel,
                            25.0f / (float) pow(2.0f, (float) (log2size - mipLevel)),
                            0.66f);
+        /*
+        BuildGlareMipLevel2(img->getMipLevel(mipLevel),
+                            log2size - mipLevel,
+                            1.0f / (float) pow(2.0f, (float) (log2size - mipLevel)));
+        */
     }
 
     ImageTexture* texture = new ImageTexture(*img,
@@ -2198,8 +2231,8 @@ void Renderer::renderObjectAsPoint(Point3f position,
     {
         float alpha = 1.0f;
         float fade = 1.0f;
-        float size = 4.0f;
-        float satPoint = _faintestMag - (1.0f - brightnessBias) / (brightnessScale * 2);
+        float size = BaseStarDiscSize;
+        float satPoint = _faintestMag - (1.0f - brightnessBias) / brightnessScale;
 
         if (discSizeInPixels > maxDiscSize)
         {
@@ -2276,20 +2309,32 @@ void Renderer::renderObjectAsPoint(Point3f position,
         Vec3f v3 = Vec3f(-1,  1, 0) * m;
         float distanceAdjust = pixelSize * center.distanceFromOrigin() * 0.5f;
 
-        gaussianDiscTex->bind();
+        if (starStyle == PointStars)
+        {
+            glDisable(GL_TEXTURE_2D);
+            glBegin(GL_POINTS);
+            glColor(color, alpha);
+            glVertex(center);
+            glEnd();
+            glEnable(GL_TEXTURE_2D);
+        }
+        else
+        {
+            gaussianDiscTex->bind();
 
-        pointSize *= distanceAdjust;
-        glBegin(GL_QUADS);
-        glColor(color, alpha);
-        glTexCoord2f(0, 1);
-        glVertex(center + (v0 * pointSize));
-        glTexCoord2f(1, 1);
-        glVertex(center + (v1 * pointSize));
-        glTexCoord2f(1, 0);
-        glVertex(center + (v2 * pointSize));
-        glTexCoord2f(0, 0);
-        glVertex(center + (v3 * pointSize));
-        glEnd();
+            pointSize *= distanceAdjust;
+            glBegin(GL_QUADS);
+            glColor(color, alpha);
+            glTexCoord2f(0, 1);
+            glVertex(center + (v0 * pointSize));
+            glTexCoord2f(1, 1);
+            glVertex(center + (v1 * pointSize));
+            glTexCoord2f(1, 0);
+            glVertex(center + (v2 * pointSize));
+            glTexCoord2f(0, 0);
+            glVertex(center + (v3 * pointSize));
+            glEnd();
+        }
 
         // If the object is brighter than magnitude 1, add a halo around it to
         // make it appear more brilliant.  This is a hack to compensate for the
@@ -2297,7 +2342,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
         //
         // TODO: Stars look fine but planets look unrealistically bright
         // with halos.
-        if (glareAlpha > 0.0f)
+        if (useHalos && glareAlpha > 0.0f)
         {
             gaussianGlareTex->bind();
 
@@ -2333,7 +2378,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
         //
         // TODO: Stars look fine but planets look unrealistically bright
         // with halos.
-        if (/*useHalos*/1 && glareAlpha > 0.0f)
+        if (useHalos && glareAlpha > 0.0f)
         {
             gaussianGlareTex->bind();
 
@@ -6907,7 +6952,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
     starRenderer.labelThresholdMag = max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
-    starRenderer.size          = 4.0f;
+    starRenderer.size          = BaseStarDiscSize;
     if (starStyle == ScaledDiscStars)
     {
         starRenderer.useScaledDiscs = true;
@@ -6916,7 +6961,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     }
     else if (starStyle == FuzzyPointStars)
     {
-        starRenderer.brightnessScale *= 2.0f;
+        starRenderer.brightnessScale *= 1.0f;
     }
 
     starRenderer.colorTemp = colorTemp;
