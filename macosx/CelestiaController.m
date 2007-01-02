@@ -14,6 +14,7 @@
 #import "SplashScreen.h"
 #import "SplashWindowController.h"
 #import <Carbon/Carbon.h>
+#import <OpenGL/gl.h>
 #import "CGLInfo.h"
 
 #include <float.h>
@@ -41,13 +42,19 @@ NSString* fatalErrorMessage;
     }
 
     if (firstInstance == nil ) firstInstance = self;
+    int cpuCount = 0;
+    size_t cpuCountSize = sizeof cpuCount;
+    if (0 == sysctlbyname("hw.ncpu", &cpuCount, &cpuCountSize, NULL, 0))
+    {
+        threaded = (cpuCount > 1);
+    }
     ready = NO;
     isDirty = YES;
     isFullScreen = NO;
     appCore = nil;
     fatalErrorMessage = nil;
     lastScript = nil;
-	
+
     [self setupResourceDirectory];
 
     //  hide main window until ready
@@ -65,16 +72,18 @@ NSString* fatalErrorMessage;
     
     startupCondition = [[NSConditionLock alloc] initWithCondition: 0];
 
-    // start initialization thread
-#ifdef USE_THREADEDLOAD
-    [NSThread detachNewThreadSelector: @selector(startInitialization) toTarget: self
-    withObject: nil];
-
-    // wait for completion
-    [self performSelectorOnMainThread: @selector(waitWhileLoading:) withObject: nil waitUntilDone: NO ];
-#else
-    [self performSelector:@selector(startInitialization) withObject:nil afterDelay:0];
-#endif
+    if (threaded)
+    {
+        // start initialization thread
+        [NSThread detachNewThreadSelector: @selector(startInitialization) toTarget: self
+        withObject: nil];
+        // wait for completion
+        [self performSelectorOnMainThread: @selector(waitWhileLoading:) withObject: nil waitUntilDone: NO ];
+    }
+    else
+    {
+        [self performSelector:@selector(startInitialization) withObject:nil afterDelay:0];
+    }
 }
 
 
@@ -132,13 +141,9 @@ NSString* fatalErrorMessage;
 
 - (void)startInitialization
 {
-#ifdef DEBUG
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-#endif
-#ifndef USE_THREADEDLOAD
-    [splashWindowController showWindow];
-#endif
-    // initialize simulator in separate thread to allow loading indicator window while waiting
+
+    if (!threaded) [splashWindowController showWindow];
 #ifdef DEBUG
     NSDate *t = [NSDate date];
 #endif
@@ -150,11 +155,10 @@ NSString* fatalErrorMessage;
         [pool release];
 #endif
         [self fatalError: NSLocalizedString(@"Error loading data files. Celestia will now quit.",@"")];
-#ifndef USE_THREADEDLOAD
-        [self fatalError: nil];
-#else
-        [NSThread exit];
-#endif
+        if (!threaded)
+            [self fatalError: nil];
+        else
+            [NSThread exit];
         return;
     }
 
@@ -163,16 +167,15 @@ NSString* fatalErrorMessage;
 #endif
     [startupCondition lock];
     [startupCondition unlockWithCondition: 1];
-#ifndef USE_THREADEDLOAD
-    [splashWindowController close];
-    // complete startup
-    [self fatalError: nil];
-    [self finishInitialization];
-#endif
+    if (!threaded)
+    {
+        [splashWindowController close];
+        // complete startup
+        [self fatalError: nil];
+        [self finishInitialization];
+    }
 
-#ifdef DEBUG
     [pool release];
-#endif
 }
 
 
@@ -194,17 +197,17 @@ NSString* fatalErrorMessage;
 - (void) waitWhileLoading: (id) obj
 {
     // display loading indicator window while loading
-    
+
     static NSModalSession session = nil;
 
     if ( [startupCondition condition] == 0 ) 
     {
         if ( session != nil )
             return;
-//        [loadingIndicator startAnimation: nil];
-        // begin modal session for loading panel
+        // beginModalSession also displays the window, but the centering
+        // is wrong so do the display and centering beforehand
+        [splashWindowController showWindow];
         session = [NSApp beginModalSessionForWindow: [splashWindowController window]];
-        // modal session runloop
         for (;;) 
         {
             if ( fatalErrorMessage != nil )
@@ -214,7 +217,6 @@ NSString* fatalErrorMessage;
             if ( [startupCondition condition] != 0 )
                 break;
         }
-        // terminate modal session for loading panel
         [NSApp endModalSession:session];
     }
     // check for fatal error in loading thread
@@ -252,6 +254,73 @@ NSString* fatalErrorMessage;
 
 - (void)finishInitialization
 {
+#ifndef NO_VP_WORKAROUND
+    NSString *VP_PROBLEM_EXT  = @"GL_ARB_vertex_program";
+    NSString *VP_PATCH_SCRIPT = @"vp_patch.sh";
+    NSString *VP_PATCH_SHELL  = @"/bin/zsh";
+    NSString *CELESTIA_CFG    = @"celestia.cfg";
+
+    const char *VP_PROBLEM_RENDERERS[] = { "ATI Radeon 9200" };
+    const char *glRenderer = (const char *) glGetString(GL_RENDERER);
+    BOOL shouldWorkaround = NO;
+    size_t i = 0;
+
+    if (glRenderer)
+    {
+        for (; i < (sizeof VP_PROBLEM_RENDERERS)/sizeof(char *); ++i)
+        {
+            if (strstr(glRenderer, VP_PROBLEM_RENDERERS[i]))
+            {
+                shouldWorkaround = YES;
+                break;
+            }
+        }
+    }
+
+    if (shouldWorkaround && ![appCore glExtensionIgnored: VP_PROBLEM_EXT])
+    {
+        if (NSRunAlertPanel([NSString stringWithFormat: NSLocalizedString(@"It appears you are running Celestia on %s hardware. Do you wish to install a workaround?",nil), VP_PROBLEM_RENDERERS[i]],
+                            [NSString stringWithFormat: NSLocalizedString(@"A shell script will be run to modify your %@, adding an IgnoreGLExtensions directive. This can prevent freezing issues.",nil), CELESTIA_CFG],
+                            NSLocalizedString(@"Yes",nil),
+                            NSLocalizedString(@"No",nil),
+                            nil) == NSAlertDefaultReturn)
+        {
+            // Install it
+            NSFileManager *fm = [NSFileManager defaultManager];
+            NSString *cfgPath = [[fm currentDirectoryPath] stringByAppendingPathComponent: CELESTIA_CFG];
+            NSString *toolPath = [[NSBundle mainBundle] pathForResource: VP_PATCH_SCRIPT ofType: @""];
+            BOOL patchInstalled = NO;
+
+            if ([fm isWritableFileAtPath: cfgPath] && toolPath)
+            {
+                NSArray *taskArgs = [NSArray arrayWithObjects:
+                    toolPath, cfgPath, nil];
+                NSTask *theTask = [NSTask launchedTaskWithLaunchPath: VP_PATCH_SHELL
+                                                           arguments: taskArgs];
+                if (theTask)
+                {
+                    [theTask waitUntilExit];
+                    patchInstalled = ([theTask terminationStatus] == 0);
+                }
+            }
+
+            if (patchInstalled)
+            {
+                // Have to apply same patch to config already loaded in memory
+                [appCore setGLExtensionIgnored: VP_PROBLEM_EXT];
+                NSRunAlertPanel(NSLocalizedString(@"Workaround successfully installed.",nil),
+                                [NSString stringWithFormat: NSLocalizedString(@"Your original %@ has been backed up.",nil), CELESTIA_CFG],
+                                nil, nil, nil);
+            }
+            else
+            {
+                [[CelestiaController shared] fatalError: NSLocalizedString(@"There was a problem installing the workaround. You may be running from a disk image, which is write-protected. Please try copying the CelestiaResources folder to your home directory as described in the README. You can also attempt to perform the workaround manually by following the instructions in the README.",nil)];
+                [[CelestiaController shared] fatalError: nil];
+            }
+        }
+    }
+#endif NO_VP_WORKAROUND
+
     [glView setAASamples: [appCore aaSamples]];
     [appCore initRenderer];
 
