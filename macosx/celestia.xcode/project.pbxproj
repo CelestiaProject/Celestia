@@ -378,6 +378,75 @@
 			settings = {
 			};
 		};
+		E516B0980B4A89F000D354F8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = CelestiaDSO.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E516B0990B4A89F000D354F8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = CelestiaLocation.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E516B09A0B4A89F000D354F8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CelestiaLocation.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E516B09B0B4A89F000D354F8 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CelestiaDSO.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E516B09C0B4A89F000D354F8 = {
+			fileRef = E516B0980B4A89F000D354F8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E516B09D0B4A89F000D354F8 = {
+			fileRef = E516B0990B4A89F000D354F8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E516B09E0B4A89F000D354F8 = {
+			fileRef = E516B09A0B4A89F000D354F8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E516B09F0B4A89F000D354F8 = {
+			fileRef = E516B09B0B4A89F000D354F8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E516B0EB0B4A8B3200D354F8 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.png;
+			path = E0.png;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E516B1890B4A8C8200D354F8 = {
+			fileRef = E516B0EB0B4A8B3200D354F8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		E52E1021099199DB00621C3D = {
 			children = (
 				E52E1022099199DB00621C3D,
@@ -1397,6 +1466,8 @@
 				E5B899F90B109CD900675F57,
 				E5D1CD120B15A0200032B0D5,
 				E5D1CD140B15A0200032B0D5,
+				E516B09E0B4A89F000D354F8,
+				E516B09F0B4A89F000D354F8,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2393,6 +2464,8 @@
 				E5B899F80B109CD900675F57,
 				E5D1CD130B15A0200032B0D5,
 				E5D1CD150B15A0200032B0D5,
+				E516B09C0B4A89F000D354F8,
+				E516B09D0B4A89F000D354F8,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4171,6 +4244,7 @@
 		E5C29BFD0982A6E200ED06B8 = {
 			children = (
 				E5C938D30ABCD64E0085CFA1,
+				E516B0EB0B4A8B3200D354F8,
 				E5C938D40ABCD64E0085CFA1,
 				E5C938D50ABCD64E0085CFA1,
 				E5C938D60ABCD64E0085CFA1,
@@ -4541,6 +4615,7 @@
 			dstPath = Celestia/CelestiaResources/models;
 			dstSubfolderSpec = 16;
 			files = (
+				E516B1890B4A8C8200D354F8,
 				E5C29C990982AABA00ED06B8,
 				E5C29C9A0982AABA00ED06B8,
 				E5C29C9B0982AABA00ED06B8,
@@ -6950,8 +7025,10 @@
 				F51FB0E102AF0C820100020A,
 				F55A246202B2AE6E0100020A,
 				F55F042102B155E00100020A,
+				E516B0980B4A89F000D354F8,
 				F55F042702B1596A0100020A,
 				F58102A502B3269F0100020A,
+				E516B0990B4A89F000D354F8,
 				F55F044602B175120100020A,
 				F55F041602B149370100020A,
 				F55F043702B159E00100020A,
@@ -6964,8 +7041,10 @@
 				F51FB0E002AF0C820100020A,
 				F55A246102B2AE6E0100020A,
 				F55F042202B155E00100020A,
+				E516B09B0B4A89F000D354F8,
 				F55F042B02B1596A0100020A,
 				F58102A702B3269F0100020A,
+				E516B09A0B4A89F000D354F8,
 				F55F044502B175120100020A,
 				F55F042D02B1596A0100020A,
 				F55F043802B159E00100020A,
