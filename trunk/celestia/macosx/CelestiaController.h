@@ -22,6 +22,7 @@
 {
     CelestiaSettings* settings;
     CelestiaAppCore* appCore;
+    BOOL threaded;
     BOOL ready;
     BOOL isDirty;
     BOOL isFullScreen;
@@ -35,8 +36,6 @@
     BrowserWindowController *browserWindowController;
     NSWindowController *helpWindowController;
     NSTimer* timer;
-    volatile NSThread *computeThread;
-    volatile BOOL computeThreadShouldTerminate;
 
     NSConditionLock* startupCondition;
     int keyCode, keyTime;
