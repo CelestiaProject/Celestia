@@ -9,6 +9,8 @@
 #import "CelestiaStar.h"
 #import "CelestiaStar_PrivateAPI.h"
 #import "CelestiaVector_PrivateAPI.h"
+#import "CelestiaAppCore.h"
+#import "CelestiaAppCore_PrivateAPI.h"
 #import "NSString_ObjCPlusPlus.h"
 
 @implementation CelestiaStar(PrivateAPI)
@@ -88,5 +90,10 @@
 -(void)setLuminosity:(NSNumber*)m
 {
     [self star]->setLuminosity([m floatValue]);
+}
+
+-(NSString *)name
+{
+    return [NSString stringWithStdString:[[CelestiaAppCore sharedAppCore] appCore]->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*[self star])];
 }
 @end

@@ -24,4 +24,5 @@
 -(NSNumber*)rotationPeriod;
 -(void)setAbsoluteMagnitude:(NSNumber*)m;
 -(void)setLuminosity:(NSNumber*)m;
+-(NSString *)name;
 @end
