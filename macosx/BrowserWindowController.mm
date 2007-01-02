@@ -10,6 +10,10 @@
 #import "BrowserWindowController.h"
 #import "NSString_ObjCPlusPlus.h"
 #import "CelestiaAppCore.h"
+#import "CelestiaStar_PrivateAPI.h"
+#import "CelestiaBody_PrivateAPI.h"
+#import "CelestiaDSO.h"
+#import "CelestiaLocation.h"
 
 #include "celestiacore.h"
 #include "celestia.h"
@@ -18,6 +22,114 @@
 
 #define BROWSER_MAX_DSO_COUNT   500
 #define BROWSER_MAX_STAR_COUNT  100
+
+
+@interface BrowserItem : NSObject
+{
+    id data;
+    NSMutableDictionary *children;
+}
+- (id)initWithCelestiaDSO:      (CelestiaDSO *)aDSO;
+- (id)initWithCelestiaStar:     (CelestiaStar *)aStar;
+- (id)initWithCelestiaBody:     (CelestiaBody *)aBody;
+- (id)initWithCelestiaLocation: (CelestiaLocation *)aLocation;
+- (id)initWithName:             (NSString *)aName;
+- (id)initWithName:             (NSString *)aName
+          children:             (NSDictionary *)aChildren;
+
+- (NSString *)name;
+- (id)body;
+- (void)addChild: (BrowserItem *)aChild;
+- (id)childNamed: (NSString *)aName;
+- (NSArray *)allChildNames;
+- (unsigned)childCount;
+@end
+
+@implementation BrowserItem
+- (id)initWithCelestiaDSO: (CelestiaDSO *)aDSO
+{
+    self = [super init];
+    if (self) data = [aDSO retain];
+    return self;
+}
+- (id)initWithCelestiaStar: (CelestiaStar *)aStar
+{
+    self = [super init];
+    if (self) data = [aStar retain];
+    return self;
+}
+- (id)initWithCelestiaBody: (CelestiaBody *)aBody
+{
+    self = [super init];
+    if (self) data = [aBody retain];
+    return self;
+}
+- (id)initWithCelestiaLocation: (CelestiaLocation *)aLocation
+{
+    self = [super init];
+    if (self) data = [aLocation retain];
+    return self;
+}
+- (id)initWithName: (NSString *)aName
+{
+    self = [super init];
+    if (self) data = [aName retain];
+    return self;
+}
+- (id)initWithName: (NSString *)aName
+          children: (NSDictionary *)aChildren
+{
+    self = [super init];
+    if (self)
+    {
+        data = [aName retain];
+        if (nil == children)
+            children = [[NSMutableDictionary alloc] initWithDictionary: aChildren];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [children release];
+    [data release];
+    [super dealloc];
+}
+
+- (NSString *)name
+{
+    return ([data respondsToSelector:@selector(name)]) ? [data name] : data;
+}
+
+- (id)body
+{
+    return ([data isKindOfClass: [NSString class]]) ? nil : data;
+}
+
+- (void)addChild: (BrowserItem *)aChild
+{
+    if (nil == children)
+        children = [[NSMutableDictionary alloc] init];
+
+    [children setObject: aChild forKey: [aChild name]];
+}
+
+- (id)childNamed: (NSString *)aName
+{
+    return [children objectForKey: aName];
+}
+
+- (NSArray *)allChildNames
+{
+    return (nil==children) ? nil : [[children allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+}
+
+- (unsigned)childCount
+{
+    return [children count];
+}
+@end
+
 
 @implementation BrowserWindowController
 
@@ -37,13 +149,14 @@ static CelestiaCore *appCore;
 
 //--------------------------------------------------------------
 
-- (NSDictionary*) deepSkyDict
+- (NSDictionary *) deepSkyObjects
 {
     int objCount;
     NSMutableDictionary* newDict;
     int i = 0;
     DSODatabase* catalog = appCore->getSimulation()->getUniverse()->getDSOCatalog();
     DeepSkyObject *obj;
+    CelestiaDSO *dsoWrapper;
     NSString *name;
 
     objCount = catalog->size();
@@ -58,246 +171,248 @@ static CelestiaCore *appCore;
         {
             name = [NSString stringWithStdString:
                 catalog->getDSOName(obj)];
-            [newDict setObject: name
-                        forKey: [NSString stringWithFormat: @"%@ (%s)", name, obj->getType()]];
+            dsoWrapper = [[[CelestiaDSO alloc] initWithDSO: obj] autorelease];
+            [newDict setObject: [[[BrowserItem alloc] initWithCelestiaDSO: dsoWrapper] autorelease]
+                        forKey: [NSString stringWithFormat: @"%@ (%@)", name, [dsoWrapper type]]];
         }
     }
 
-    [newDict setObject: [[newDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-    [newDict setObject: @"" forKey: @"_path" ];
     return newDict;       
 }
 
-- (NSDictionary*) starDict: (int) kind
+- (BrowserItem *) sol
+{
+    Selection sol = appCore->getSimulation()->getUniverse()->find("Sol");
+    return [[[BrowserItem alloc] initWithCelestiaStar: [[[CelestiaStar alloc] initWithStar: sol.star()] autorelease]] autorelease];
+}
+
+- (NSDictionary *) starsOfKind: (int) kind
 {
     std::vector<const Star*>* nearStars;
     int starCount = 0;
-    StarBrowser* sb = new StarBrowser(appCore->getSimulation(),kind);
+    Simulation *sim = appCore->getSimulation();
+    StarBrowser* sb = new StarBrowser(sim,kind);
     nearStars = sb->listStars( BROWSER_MAX_STAR_COUNT );
+    if (nearStars == nil ) return [NSDictionary dictionary];
     starCount = nearStars->size();            
-//    if (nearStars == nil ) return 1;
     NSMutableDictionary* starDict = [NSMutableDictionary dictionaryWithCapacity: starCount+2];
-    NSMutableArray* starKeys = [NSMutableArray arrayWithCapacity: starCount+2];
     const Star *aStar;
+    NSString *starName;
     int i;
     for (i=0;i<starCount;i++)
     {
         aStar = (*nearStars)[i];
-        NSString* starName = [NSString  stringWithStdString: appCore->getSimulation()->getUniverse()->getStarCatalog()->getStarName(*aStar) ];
-        [starDict setObject: starName forKey: starName];
-        [starKeys addObject: starName];
+        starName = [NSString  stringWithStdString: sim->getUniverse()->getStarCatalog()->getStarName(*aStar) ];
+        [starDict setObject:
+            [[[BrowserItem alloc] initWithCelestiaStar: [[[CelestiaStar alloc] initWithStar: aStar] autorelease]] autorelease]
+                     forKey: starName];
     }
-    [starDict setObject: starKeys forKey: @"_keys" ];
-    [starDict setObject: @"" forKey: @"_path" ];
+
     delete sb;
     delete nearStars;
-    return starDict;       
+    return starDict;
 }
 
--(id) rootDict
-{    // creates root dictionary for browser
-    static NSDictionary* staticRootDict = NULL;
+-(BrowserItem *) root
+{
+    static BrowserItem *staticRootItem = nil;
 
-    if (staticRootDict!=NULL) return staticRootDict;
-    int rootSize = 4;
-    NSMutableDictionary* newDict;
-    newDict = [NSMutableDictionary dictionaryWithCapacity: rootSize];
-    
-    [newDict setObject: @"Sol" forKey: NSLocalizedString(@"Home (Sol)",@"")];
+    if (staticRootItem) return staticRootItem;
+    BrowserItem *rootItem = [[BrowserItem alloc] initWithName: @""];
 
-    [newDict setObject: [self starDict: StarBrowser::NearestStars ] forKey: NSLocalizedString(@"Nearest Stars",@"")];
-    [newDict setObject: [self starDict: StarBrowser::BrighterStars ] forKey: NSLocalizedString(@"Brightest Stars",@"")];
-    [newDict setObject: [self starDict: StarBrowser::StarsWithPlanets ] forKey: NSLocalizedString(@"Stars With Planets",@"")];
-    [newDict setObject: [self deepSkyDict ] forKey: NSLocalizedString(@"Deep Sky Objects",@"")];
+    [rootItem addChild: [self sol]];
+    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Nearest Stars",@"") children: [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
+    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Brightest Stars",@"") children: [self starsOfKind: StarBrowser::BrighterStars]] autorelease]];
+    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Stars With Planets",@"") children: [self starsOfKind: StarBrowser::StarsWithPlanets]] autorelease]];
+    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Deep Sky Objects",@"") children: [self deepSkyObjects]] autorelease]];
 
-    [newDict setObject: [[newDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-    [newDict setObject: @"" forKey: @"_path" ];
-    staticRootDict = [newDict retain];
-    return newDict;
+    staticRootItem = rootItem;
+    return staticRootItem;
 }
 
--(id) newDictForPath: (NSString*) objPath
-{   // creates browser dictionary for star or planet
-    NSMutableDictionary* newDict = NULL;
-    PlanetarySystem* sys = nil;
-    Selection sel = appCore->getSimulation()->findObjectFromPath([objPath stdString], true);
-    if ( sel.getType() == Selection::Type_Body )
-    {
-        sys = sel.body()->getSatellites();
-    }
-    else if ( sel.getType() == Selection::Type_Star )
-    {
-        sys = appCore->getSimulation()->getUniverse()->getSolarSystem(sel.star())->getPlanets();
-    }
-    
+-(void) addChildrenForBody: (BrowserItem *) aBody
+{
+    PlanetarySystem* sys = [(CelestiaBody *)[aBody body] body]->getSatellites();
+
     if (sys)
     { 
-    int sysSize = sys->getSystemSize();
-    if (!newDict) newDict = [NSMutableDictionary dictionaryWithCapacity: sysSize+2];
-    NSMutableDictionary* subDict;
-    NSMutableDictionary* minorMoonDict = NULL;
-    NSMutableDictionary* asteroidDict = NULL;
-    NSMutableDictionary* cometDict = NULL;
-    NSMutableDictionary* spacecraftDict = NULL;
-    int i;
-    for ( i=0; i<sysSize; i++)
-    {
-        Body* body = sys->getBody(i);
-        NSString* bodName = [NSString stringWithStdString: body->getName(true)];
-        NSString* bodPath = [[objPath stringByAppendingString: @"/"] stringByAppendingString: bodName];
-        subDict = newDict;
-        int bodyClass  = body->getClassification();
-        if (bodyClass==Body::Asteroid && sel.getType() == Selection::Type_Body) bodyClass = Body::Moon;
-        switch (bodyClass)
+        int sysSize = sys->getSystemSize();
+        BrowserItem *subItem = nil;
+        BrowserItem *minorMoons = nil;
+        BrowserItem *comets = nil;
+        BrowserItem *spacecrafts = nil;
+        int i;
+        for ( i=0; i<sysSize; i++)
         {
-            case Body::Planet:
-                break;
-            case Body::Moon:
-                if (body->getRadius() < 100)
-                {
-                    if (!minorMoonDict)
-                        minorMoonDict = [NSMutableDictionary dictionaryWithCapacity: 10];
-                    subDict = minorMoonDict;
-                }
-                break;
-            case Body::Asteroid:
-                if (!asteroidDict)
-                    asteroidDict = [NSMutableDictionary dictionaryWithCapacity: 10];
-                subDict = asteroidDict;
-                break;
-            case Body::Comet:
-                if (!cometDict)
-                    cometDict = [NSMutableDictionary dictionaryWithCapacity: 10];
-                subDict = cometDict;
-                break;
-            case Body::Spacecraft:
-                if (!spacecraftDict)
-                    spacecraftDict = [NSMutableDictionary dictionaryWithCapacity: 10];
-                subDict = spacecraftDict;
-                break;
-        }
-        [subDict setObject: bodPath forKey: bodName];
-    }
-    
-    if (minorMoonDict)
-    {
-        if ([newDict count] == 0)
-            newDict = minorMoonDict;
-        else
-        {
-            [minorMoonDict setObject: [[minorMoonDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-            [minorMoonDict setObject: @"" forKey: @"_path" ];
-            [newDict setObject: minorMoonDict forKey: NSLocalizedString(@"Minor Moons",@"")];
-        }
-    }
-    if (asteroidDict)
-    {
-        [asteroidDict setObject: [[asteroidDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-        [asteroidDict setObject: @"" forKey: @"_path" ];
-        [newDict setObject: asteroidDict forKey: NSLocalizedString(@"Asteroids",@"")];
-    }
-    if (cometDict)
-    {
-        [cometDict setObject: [[cometDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-        [cometDict setObject: @"" forKey: @"_path" ];
-        [newDict setObject: cometDict forKey: NSLocalizedString(@"Comets",@"")];
-    }
-    if (spacecraftDict)
-    {
-        if ([newDict count] == 0)
-            newDict = spacecraftDict;
-        else
-        {
-            [spacecraftDict setObject: [[spacecraftDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-            [spacecraftDict setObject: @"" forKey: @"_path" ];
-            [newDict setObject: spacecraftDict forKey: NSLocalizedString(@"Spacecrafts",@"")];
-        }
-    }
-    }
-    
-    if ( sel.getType() == Selection::Type_Body )
-    {
-        std::vector<Location*>* locations = sel.body()->getLocations();
-        if (locations != NULL)
-        {
-            NSMutableDictionary* locationDict = [NSMutableDictionary dictionaryWithCapacity: 100];
-            if (!newDict) newDict = [NSMutableDictionary dictionaryWithCapacity: 1];
-            for (vector<Location*>::const_iterator iter = locations->begin();
-                iter != locations->end(); iter++)
-            {
-                NSString* locName = [NSString stringWithStdString: (*iter)->getName(true)];
-                NSString* locPath = [[objPath stringByAppendingString: @"/"] stringByAppendingString: locName];
-                [locationDict setObject: locPath forKey: locName];
-            }
-            if ([newDict count] == 0)
-                newDict = locationDict;
-            else
-            {
-                [locationDict setObject: [[locationDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-                [locationDict setObject: @"" forKey: @"_path" ];
-                [newDict setObject: locationDict forKey: NSLocalizedString(@"Locations",@"")];
-            }
-        }
-    }
+            Body* body = sys->getBody(i);
+            BrowserItem *item = [[[BrowserItem alloc] initWithCelestiaBody:
+                [[[CelestiaBody alloc] initWithBody: body] autorelease]] autorelease];
+            int bodyClass  = body->getClassification();
+            if (bodyClass==Body::Asteroid) bodyClass = Body::Moon;
 
-    if (!newDict) return NULL;
-    [newDict setObject: [[newDict allKeys]sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] forKey: @"_keys" ];
-    [newDict setObject: objPath forKey: @"_path" ];
-    return newDict;
+            switch (bodyClass)
+            {
+                case Body::Invisible:
+                    continue;
+                case Body::Moon:
+                    if (body->getRadius() < 100.0f)
+                    {
+                        if (!minorMoons)
+                            minorMoons = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")] autorelease];
+                        subItem = minorMoons;
+                    }
+                    else
+                    {
+                        subItem = aBody;
+                    }
+                    break;
+                case Body::Comet:
+                    if (!comets)
+                        comets = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Comets",@"")] autorelease];
+                    subItem = comets;
+                    break;
+                case Body::Spacecraft:
+                    if (!spacecrafts)
+                        spacecrafts = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")] autorelease];
+                    subItem = spacecrafts;
+                    break;
+                default:
+                    subItem = aBody;
+                    break;
+            }
+            [subItem addChild: item];
+        }
+        
+        if (minorMoons)  [aBody addChild: minorMoons];
+        if (comets)      [aBody addChild: comets];
+        if (spacecrafts) [aBody addChild: spacecrafts];
+    }
+    
+    std::vector<Location*>* locations = [(CelestiaBody *)[aBody body] body]->getLocations();
+    if (locations != NULL)
+    {
+        BrowserItem *locationItems = [[BrowserItem alloc] initWithName: NSLocalizedString(@"Locations",@"")];
+        for (vector<Location*>::const_iterator iter = locations->begin();
+             iter != locations->end(); iter++)
+        {
+            [locationItems addChild: [[[BrowserItem alloc] initWithCelestiaLocation: [[[CelestiaLocation alloc] initWithLocation: *iter] autorelease]] autorelease]];
+        }
+        [aBody addChild: locationItems];
+    }
 }
 
-- (NSDictionary*) dictForPathArray: (NSArray*) pathNames
-{	//returns dictionary for path array
-    NSMutableDictionary* lastDict = [self rootDict];
-    id nextDict = lastDict;
-    NSString* lastKey = nil;
+-(void) addChildrenForStar: (BrowserItem *) aStar
+{
+    SolarSystem *ss = appCore->getSimulation()->getUniverse()->getSolarSystem([((CelestiaStar *)[aStar body]) star]);
+    PlanetarySystem* sys = NULL;
+    if (ss) sys = ss->getPlanets();
+    
+    if (sys)
+    {
+        int sysSize = sys->getSystemSize();
+        BrowserItem *subItem = nil;
+        BrowserItem *minorMoons = nil;
+        BrowserItem *asteroids = nil;
+        BrowserItem *comets = nil;
+        BrowserItem *spacecrafts = nil;
+        int i;
+        for ( i=0; i<sysSize; i++)
+        {
+            Body* body = sys->getBody(i);
+            BrowserItem *item = [[[BrowserItem alloc] initWithCelestiaBody:
+                [[[CelestiaBody alloc] initWithBody: body] autorelease]] autorelease];
+            int bodyClass  = body->getClassification();
+            switch (bodyClass)
+            {
+                case Body::Invisible:
+                    continue;
+                case Body::Moon:
+                    if (body->getRadius() < 100.0f)
+                    {
+                        if (!minorMoons)
+                            minorMoons = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")] autorelease];
+                        subItem = minorMoons;
+                    }
+                    else
+                    {
+                        subItem = aStar;
+                    }
+                    break;
+                case Body::Asteroid:
+                    if (!asteroids)
+                        asteroids = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Asteroids",@"")] autorelease];
+                    subItem = asteroids;
+                    break;
+                case Body::Comet:
+                    if (!comets)
+                        comets = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Comets",@"")] autorelease];
+                    subItem = comets;
+                    break;
+                case Body::Spacecraft:
+                    if (!spacecrafts)
+                        spacecrafts = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Spacecrafts",@"")] autorelease];
+                    subItem = spacecrafts;
+                    break;
+                default:
+                    subItem = aStar;
+                    break;
+            }
+            [subItem addChild: item];
+        }
+        
+        if (minorMoons)  [aStar addChild: minorMoons];
+        if (asteroids)   [aStar addChild: asteroids];
+        if (comets)      [aStar addChild: comets];
+        if (spacecrafts) [aStar addChild: spacecrafts];
+    }
+}
+
+- (BrowserItem *) itemForPathArray: (NSArray*) pathNames
+{
+    BrowserItem *lastItem = [self root];
+    BrowserItem *nextItem = lastItem;
+    NSString *lastKey = nil;
+    id body;
     unsigned i;
     for (i=1;i<[pathNames count];i++)
     {
-	lastKey = [pathNames objectAtIndex: i];
-        nextDict = [lastDict objectForKey: lastKey];
-        if (!nextDict||![nextDict isKindOfClass: [NSDictionary class]]) break;
-        lastDict = nextDict;
+        lastKey = [pathNames objectAtIndex: i];
+        nextItem = [lastItem childNamed: lastKey];
+        if (nil==nextItem) break;
+        lastItem = nextItem;
     }
-    if ([nextDict isKindOfClass: [NSString class]])
-    {
-        NSDictionary* newDict = [self newDictForPath: (NSString*) nextDict ];
-        if (newDict) [lastDict setObject: newDict forKey: lastKey ];
-        nextDict = newDict;
-    }
-    if (![nextDict isKindOfClass: [NSDictionary class]]) nextDict = NULL;
-    return nextDict;
-}
 
-- (id) infoForPathArray: (NSArray*) pathNames
-{
-    NSDictionary* nextDict = [self rootDict];
-    unsigned i;
-    for (i=1;i<[pathNames count];i++)
+    if (nextItem)
     {
-        NSString* key = [pathNames objectAtIndex: i];
-        nextDict = [nextDict objectForKey: key];
-        if (!nextDict) break;
-    }
-    return nextDict;
-}
-
-- (Selection) selFromPathArray: (NSArray*) pathNames
-{
-    NSString* objPath = nil;    
-    id obj = [self infoForPathArray: pathNames];
-
-    if ([obj isKindOfClass: [NSDictionary class]])
-    {
-        objPath = (NSString*)[((NSDictionary*)obj) objectForKey: @"_path"];
-    }
-    else if ([obj isKindOfClass: [NSString class]])
-    {
-        objPath = (NSString*)obj;
+        body = [nextItem body];
+        if (body)
+        {
+            if      ([body respondsToSelector: @selector(star)])
+                [self addChildrenForStar: nextItem];
+            else if ([body respondsToSelector: @selector(body)])
+                [self addChildrenForBody: nextItem];
+        }
     }
     
-    Selection sel = appCore->getSimulation()->findObjectFromPath(objPath ? [objPath stdString] : std::string(), true);
+    return lastItem;
+}
 
+- (Selection *) selFromPathArray: (NSArray*) pathNames
+{
+    Selection *sel = NULL;
+    BrowserItem *item = [self itemForPathArray: pathNames];
+    id body = [item body];
+    if (body)
+    {
+        if      ([body respondsToSelector: @selector(star)])
+            sel = new Selection([(CelestiaStar *)body star]);
+        else if ([body respondsToSelector: @selector(body)])
+            sel = new Selection([(CelestiaBody *)body body]);
+        else if ([body respondsToSelector: @selector(DSO)])
+            sel = new Selection([(CelestiaDSO *)body DSO]);
+        else if ([body respondsToSelector: @selector(location)])
+            sel = new Selection([(CelestiaLocation *)body location]);
+    }
 //    if (sel == nil) NSLog([NSString stringWithFormat: @"obj %@ not found", objPath]);
     return sel;
 }
@@ -311,44 +426,43 @@ static CelestiaCore *appCore;
         if ([browser respondsToSelector:@selector(setColumnResizingType:)])
             [browser setColumnResizingType: 2];
         [browser setMinColumnWidth: 80];
-//        [browser setMaxVisibleColumns: 1];
         [browser setDoubleAction:@selector(doubleClick:)];
-//        [browser setAction:@selector(click:)];
     }
 
-    NSDictionary*  colDict = [self dictForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
-    NSArray* colKeys = [colDict objectForKey: @"_keys"];
-    return [colKeys count];
+    BrowserItem *itemForColumn = [self itemForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
+    return [itemForColumn childCount];
 }
 
-- (BOOL) isLeaf: (id)  obj
+- (BOOL) isLeaf: (BrowserItem *) aItem
 {
-    if ([obj isKindOfClass: [NSDictionary class]]) return NO;
-    if ([obj isKindOfClass: [NSString class]])
+    if ([aItem childCount] > 0) return NO;
+    id body = [aItem body];
+    if (body)
     {
-        Selection sel = appCore->getSimulation()->findObjectFromPath([obj stdString], true);
-        if ( sel.getType() == Selection::Type_Body )
+        if      ([body respondsToSelector: @selector(star)])
         {
-            if ( sel.body()->getSatellites() || sel.body()->getLocations()) return NO;
+            if (appCore->getSimulation()->getUniverse()->getSolarSystem([(CelestiaStar *)body star]))
+                return NO;
         }
-        else if ( sel.getType() == Selection::Type_Star )
+        else if ([body respondsToSelector: @selector(body)])
         {
-            if (appCore->getSimulation()->getUniverse()->getSolarSystem(sel.star())) return NO;
+            if ([(CelestiaBody *)body body]->getSatellites() || [(CelestiaBody *)body body]->getLocations())
+                return NO;
         }
     }
-     return YES;
+    return YES;
 }
 
 - (void) browser: (NSBrowser*) sender willDisplayCell: (id) cell atRow: (int) row column: (int) column
 {
-    NSDictionary* colDict = [self dictForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
-    NSArray* colKeys = [colDict objectForKey: @"_keys"];
+    BrowserItem *itemForColumn = [self itemForPathArray: [[sender pathToColumn: column ] componentsSeparatedByString: [sender pathSeparator] ] ];
+    NSArray* colKeys = [itemForColumn allChildNames];
     BOOL isLeaf = YES;
     NSString* itemName = [colKeys objectAtIndex: row];
     if (!itemName)
         itemName = @"????";
     else
-        isLeaf = [self isLeaf: [colDict objectForKey: itemName ] ];
+        isLeaf = [self isLeaf: [itemForColumn childNamed: itemName ]];
 
     NSRange rightParenRange = {NSNotFound, 0};
     NSRange leftParenRange  = {NSNotFound, 0};
@@ -391,48 +505,26 @@ static CelestiaCore *appCore;
 
 - (IBAction) go: (id) sender
 {
-    Selection sel = [self selFromPathArray: [[browser path] componentsSeparatedByString: [browser pathSeparator] ]];
-    appCore->getSimulation()->setSelection(sel);
-    if ([sender tag]!=0) appCore->charEntered([sender tag]);
-}
-
-/*
-static int firstVisibleColumn = 0;
-
--(void) adjustColumns: (id) sender
-{
-    // eliminate empty columns
-    int lastColumn = [browser selectedColumn]+1;
-    if ([[browser selectedCell] isLeaf]) lastColumn--;
-    firstVisibleColumn = max(0,lastColumn + 1 - [browser numberOfVisibleColumns]);
-    [browser setMaxVisibleColumns: lastColumn+1];
-    [browser scrollColumnToVisible: firstVisibleColumn];
-    [browser scrollColumnToVisible: lastColumn];
-    firstVisibleColumn = [browser firstVisibleColumn];
-}
-
-- (IBAction) click: (id) sender
-{
-    if ([browser firstVisibleColumn]!=firstVisibleColumn &&
-    ![[browser selectedCell] isLeaf] && ([browser selectedColumn]==([browser firstVisibleColumn]+[browser numberOfVisibleColumns]-2)))
+    Selection *sel = [self selFromPathArray: [[browser path] componentsSeparatedByString: [browser pathSeparator] ]];
+    if (sel)
     {
-        // revert column autoscroll to allow double click
-        [browser scrollColumnsRightBy: 1];
-     }
-     // delay column adjustment to allow double click
-    [self performSelector: @selector(adjustColumns:) withObject: nil afterDelay: 0.3 ];
+        appCore->getSimulation()->setSelection(*sel);
+        if ([sender tag]!=0) appCore->charEntered([sender tag]);
+        delete sel;
+    }
 }
-*/
-
 
 - (IBAction) doubleClick: (id) sender
 {
-    Selection sel = [self selFromPathArray: [[browser path] componentsSeparatedByString: [browser pathSeparator] ]];
-    appCore->getSimulation()->setSelection(sel);
-    appCore->charEntered('g');
+    Selection *sel = [self selFromPathArray: [[browser path] componentsSeparatedByString: [browser pathSeparator] ]];
+    if (sel)
+    {
+        appCore->getSimulation()->setSelection(*sel);
+        appCore->charEntered('g');
     // adjust columns immediately
 //    [self adjustColumns: nil];
+        delete sel;
+    }
 }
-
 
 @end
