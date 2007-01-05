@@ -57,11 +57,11 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
 template<class T> bool testIntersection(const Ray3<T>& ray,
                                         const Sphere<T>& sphere,
                                         T& distanceToTester,
-                                        T& distanceToCenter)
+                                        T& cosToCenter)
 {
     if (testIntersection(ray, sphere, distanceToTester))
     {
-        distanceToCenter  = (sphere.center - ray.origin - ray.direction*distanceToTester).length();
+        cosToCenter    = (sphere.center - ray.origin)*ray.direction/(sphere.center - ray.origin).length();
         return true;
     }
     return false;
@@ -114,11 +114,11 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
 template<class T> bool testIntersection(const Ray3<T>& ray,
                                         const Ellipsoid<T>& ellipsoid,
                                         T& distanceToTester,
-                                        T& distanceToCenter)
+                                        T& cosToCenter)
 {
     if (testIntersection(ray, ellipsoid, distanceToTester))
     {
-        distanceToCenter  = (ellipsoid.center - ray.origin - ray.direction*distanceToTester).length();
+        cosToCenter  = (ellipsoid.center - ray.origin)*ray.direction/(ellipsoid.center - ray.origin).length();
         return true;
     }
     return false;
