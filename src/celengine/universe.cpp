@@ -799,7 +799,7 @@ public:
     double  maxDistance;
 
     const DeepSkyObject* closestDSO;
-    double closestDistance;
+    double largestCos;
 };
 
 
@@ -808,12 +808,12 @@ CloseDSOPicker::CloseDSOPicker(const Point3d& pos,
                                int    renderFlags,
                                double maxDistance,
                                float) :
-    pickOrigin      (pos),
-    pickDir         (dir),
-    renderFlags     (renderFlags),
-    maxDistance     (maxDistance),
-    closestDSO      (NULL),
-    closestDistance(1.0e32)
+    pickOrigin   (pos),
+    pickDir      (dir),
+    renderFlags  (renderFlags),
+    maxDistance  (maxDistance),
+    closestDSO   (NULL),
+    largestCos   (-2.0)
 {
 }
 
@@ -825,16 +825,16 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
     if (distance > maxDistance || !(dso->getRenderMask() & renderFlags))
         return;
 
-    double  distanceToPicker       = 0.0;
-    double  distanceToBoundCenter  = 0.0;
-    if (dso->pick(Ray3d(pickOrigin, pickDir), distanceToPicker, distanceToBoundCenter))
+    double  distanceToPicker    = 0.0;
+    double  cosToBoundCenter  = 0.0;
+    if (dso->pick(Ray3d(pickOrigin, pickDir), distanceToPicker, cosToBoundCenter))
     {
         // Don't select the object the observer is currently in:
         if (pickOrigin.distanceTo(dso->getPosition()) > dso->getRadius() &&
-            distanceToBoundCenter < closestDistance)
+            cosToBoundCenter > largestCos)
         {
-            closestDSO       = dso;
-            closestDistance  = distanceToBoundCenter;
+            closestDSO  = dso;
+            largestCos  = cosToBoundCenter;
         }
     }
 }

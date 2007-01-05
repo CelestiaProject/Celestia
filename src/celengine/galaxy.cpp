@@ -204,12 +204,12 @@ static const float MAX_SPIRAL_THICKNESS  = 0.06f;
 
 bool Galaxy::pick(const Ray3d& ray,
                   double& distanceToPicker,
-                  double& distanceToBoundCenter) const
+                  double& cosToBoundCenter) const
 {
     // The ellipsoid should be slightly larger to compensate for the fact
     // that blobs are considered points when galaxies are built, but have size
     // when they are drawn.
-    float yscale = (type < E0 )? MAX_SPIRAL_THICKNESS: form->scale.y + RADIUS_CORRECTION;  		
+    float yscale = (type < E0 )? MAX_SPIRAL_THICKNESS: form->scale.y + RADIUS_CORRECTION;
     Vec3d ellipsoidAxes(getRadius()*(form->scale.x + RADIUS_CORRECTION),
                         getRadius()* yscale,
                         getRadius()*(form->scale.z + RADIUS_CORRECTION));
@@ -220,7 +220,7 @@ bool Galaxy::pick(const Ray3d& ray,
     return testIntersection(Ray3d(Point3d() + (ray.origin - getPosition()), ray.direction) * conjugate(qd).toMatrix3(),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
-                            distanceToBoundCenter);
+                            cosToBoundCenter);
 }
 
 
