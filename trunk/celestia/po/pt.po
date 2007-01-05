@@ -3050,7 +3050,7 @@ msgstr "Calcular"
 
 #: src/celestia/res/resource_strings.cpp:205
 msgid "Set Date and Go to Planet"
-msgstr "Definir Data e Ir para Planeta\""
+msgstr "Definir Data e Ir para Planeta"
 
 #: src/celestia/res/resource_strings.cpp:212
 msgid "Lunar Eclipses"
