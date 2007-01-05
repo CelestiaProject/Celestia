@@ -410,7 +410,7 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
             float x = (float) j - size / 2;
             float r2 = x * x + y * y;
             float f = s * (float) exp(-r2 * isig2) * power;
-            
+
             mipPixels[i * size + j] = (unsigned char) (255.99f * min(f, 1.0f));
         }
     }
@@ -520,7 +520,7 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
                                              Texture::BorderClamp,
                                              Texture::DefaultMipMaps);
     texture->setBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
-    
+
     delete img;
 
     return texture;
@@ -4692,7 +4692,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 
     Ellipsoidd ellipsoid(bodyPosition, Vec3d(scale, scale, scale));
 
-    float iScale = 1.0f / scale;
+    //float iScale = 1.0f / scale;
     Mat3d mat = bodyOrientation.toMatrix3();
 
     for (vector<Location*>::const_iterator iter = locations.begin();
@@ -5067,7 +5067,7 @@ void Renderer::renderObject(Point3f pos,
                 // If there's an atmosphere, we need to move the far plane
                 // out so that the clouds and atmosphere shell aren't clipped.
                 float atmosphereRadius = eradius + atmosphereHeight;
-                frustumFarPlane += (float) sqrt(square(atmosphereRadius) - 
+                frustumFarPlane += (float) sqrt(square(atmosphereRadius) -
                                                 square(eradius));
             }
         }
@@ -5671,7 +5671,7 @@ void Renderer::renderPlanet(Body& body,
 
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
-            Vec3d posd = (Selection(&body).getPosition(observer.getTime()) - 
+            Vec3d posd = (Selection(&body).getPosition(observer.getTime()) -
                           observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
             renderLocations(*body.getLocations(),
                             cameraOrientation,
@@ -7126,7 +7126,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 		//(float)log10(1.0f + 1.2e-6f * distanceToDSO);
         if (distr > 1.0f)
         	distr = 1.0f;
-        	
+
     	renderer->addLabel(dsoDB->getDSOName(dso),
                            Color(0.1f, 0.85f, 0.85f, distr),
                            Point3f(relPos.x, relPos.y, relPos.z));
