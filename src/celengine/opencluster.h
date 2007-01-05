@@ -25,7 +25,7 @@ class OpenCluster : public DeepSkyObject
 
     virtual bool pick(const Ray3d& ray,
                       double& distanceToPicker,
-                      double& distanceToBoundCenter) const;
+                      double& cosToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
                         const Vec3f& offset,
