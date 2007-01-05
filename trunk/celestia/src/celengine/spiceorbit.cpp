@@ -148,7 +148,7 @@ SpiceOrbit::init(const std::string& path)
             astro::secsToDays(targetEnding) << "\n";
     }
 
-    // Check the coverage for the origin 
+    // Check the coverage for the origin
     SpiceDouble originBeginning = -1.0e50;
     SpiceDouble originEnding    = +1.0e50;
     if (originID != 0)
@@ -248,7 +248,7 @@ SpiceOrbit::computePosition(double jd) const
             char errMsg[1024];
             getmsg_c("long", sizeof(errMsg), errMsg);
             clog << errMsg << "\n";
-            
+
             // Reset the error state
             reset_c();
         }
@@ -270,7 +270,7 @@ bool getNAIFID(const string& name, int* id)
 {
     SpiceInt spiceID = 0;
     SpiceBoolean found = SPICEFALSE;
-    
+
     // Don't call bodn2c on an empty string because SPICE generates
     // an error if we do.
     if (!name.empty())
@@ -280,12 +280,14 @@ bool getNAIFID(const string& name, int* id)
         {
             *id = (int) spiceID;
         }
-        else
+        else   // Is it a numeric ID?
         {
-            // Is it a numeric ID?
-            if (sscanf(name.c_str(), " %d", &spiceID) == 1)
+            // SpiceInt maps to an int on those architectures where sizeof(long) != sizeof(double)/2.
+            // Otherwise it maps to a long. This avoids GCC complaints about type mismatches:
+            long spiceIDlng;
+            if (sscanf(name.c_str(), " %ld", &spiceIDlng) == 1)
             {
-                *id = (int) spiceID;
+                *id = (int) spiceIDlng;
                 found = SPICETRUE;
             }
         }
