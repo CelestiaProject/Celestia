@@ -3316,10 +3316,13 @@ static void renderModelDefault(Model* model,
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
         rc.setRenderPass(RenderContext::EmissivePass);
         rc.setMaterial(NULL);
 
         model->render(rc);
+
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
     // Reset the material
