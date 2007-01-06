@@ -438,6 +438,7 @@ static void BuildGlareMipLevel(unsigned char* mipPixels,
 }
 
 
+#if 0
 // An alternate glare function, based roughly on results in Spencer, G. et al,
 // 1995, "Physically-Based Glare Effects for Digital Images"
 static void BuildGlareMipLevel2(unsigned char* mipPixels,
@@ -462,6 +463,7 @@ static void BuildGlareMipLevel2(unsigned char* mipPixels,
         }
     }
 }
+#endif
 
 
 static Texture* BuildGaussianDiscTexture(unsigned int log2size)
