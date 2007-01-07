@@ -61,10 +61,10 @@ void Nebula::setModel(ResourceHandle _model)
 
 bool Nebula::pick(const Ray3d& ray,
                   double& distanceToPicker,
-                  double& cosToBoundCenter) const
+                  double& cosAngleToBoundCenter) const
 {
     // The preconditional sphere-ray intersection test is enough for now:
-    return DeepSkyObject::pick(ray, distanceToPicker, cosToBoundCenter);
+    return DeepSkyObject::pick(ray, distanceToPicker, cosAngleToBoundCenter);
 }
 
 
