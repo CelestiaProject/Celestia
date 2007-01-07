@@ -111,9 +111,9 @@ void DeepSkyObject::setInfoURL(const string& s)
 
 bool DeepSkyObject::pick(const Ray3d& ray,
                          double& distanceToPicker,
-                         double& cosToBoundCenter) const
+                         double& cosAngleToBoundCenter) const
 {
-    return testIntersection(ray, Sphered(position, (double) radius), distanceToPicker, cosToBoundCenter);
+    return testIntersection(ray, Sphered(position, (double) radius), distanceToPicker, cosAngleToBoundCenter);
 }
 
 

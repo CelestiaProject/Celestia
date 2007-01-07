@@ -204,7 +204,7 @@ static const float MAX_SPIRAL_THICKNESS  = 0.06f;
 
 bool Galaxy::pick(const Ray3d& ray,
                   double& distanceToPicker,
-                  double& cosToBoundCenter) const
+                  double& cosAngleToBoundCenter) const
 {
     // The ellipsoid should be slightly larger to compensate for the fact
     // that blobs are considered points when galaxies are built, but have size
@@ -220,7 +220,7 @@ bool Galaxy::pick(const Ray3d& ray,
     return testIntersection(Ray3d(Point3d() + (ray.origin - getPosition()), ray.direction) * conjugate(qd).toMatrix3(),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
-                            cosToBoundCenter);
+                            cosAngleToBoundCenter);
 }
 
 
