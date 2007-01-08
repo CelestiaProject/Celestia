@@ -99,18 +99,16 @@ msgid "' not found.\n"
 msgstr "' nicht gefunden.\n"
 
 #: src/celengine/solarsys.cpp:233
-#, fuzzy
 msgid "' is not a star or planet.\n"
-msgstr " ist keine PNG Datei.\n"
+msgstr " ist kein Stern oder Planet.\n"
 
 #: src/celengine/solarsys.cpp:252 src/celengine/solarsys.cpp:260
-#, fuzzy
 msgid " of "
 msgstr "' von '"
 
 #: src/celengine/solarsys.cpp:252 src/celengine/solarsys.cpp:260
 msgid " must be in same star system\n"
-msgstr ""
+msgstr " muss im gleichen Sternensystem sein\n"
 
 #: src/celengine/solarsys.cpp:754 src/celengine/solarsys.cpp:817
 msgid "parent body '"
@@ -539,9 +537,8 @@ msgid "Luminosity: "
 msgstr "Leuchtkraft: "
 
 #: src/celestia/celestiacore.cpp:2778
-#, fuzzy
 msgid "x Sun"
-msgstr "Sonne"
+msgstr "x Sonne"
 
 #: src/celestia/celestiacore.cpp:2779 src/celestia/kde/selectionpopup.cpp:92
 msgid "Class: "
@@ -718,7 +715,7 @@ msgstr "Fehler beim Einlesen der Konfigurationsdatei."
 
 #: src/celestia/celestiacore.cpp:3667
 msgid "Initialization of SPICE library failed."
-msgstr ""
+msgstr "Initialisierung der SPICE-Bibliothek ist fehlgeschlagen."
 
 #: src/celestia/celestiacore.cpp:3707
 msgid "Cannot read star database."
@@ -811,33 +808,31 @@ msgstr "Einstellungen"
 
 #: src/celestia/winmain.cpp:597 src/celestia/kde/kdeapp.cpp:902
 msgid "Vendor: "
-msgstr ""
+msgstr "Anbieter: "
 
 #: src/celestia/winmain.cpp:602 src/celestia/kde/kdeapp.cpp:907
-#, fuzzy
 msgid "Renderer: "
-msgstr "Darstellung"
+msgstr "Renderer: "
 
 #: src/celestia/winmain.cpp:607 src/celestia/kde/kdeapp.cpp:912
 msgid "Version: "
-msgstr ""
+msgstr "Version: "
 
 #: src/celestia/winmain.cpp:617 src/celestia/kde/kdeapp.cpp:921
-#, fuzzy
 msgid "Max simultaneous textures: "
-msgstr "Texturen mit mittlerer Auflösung"
+msgstr "Maximale Anzahl simultaner Texturen: "
 
 #: src/celestia/winmain.cpp:624 src/celestia/kde/kdeapp.cpp:926
 msgid "Max texture size: "
-msgstr ""
+msgstr "Maximale Texturgröße: "
 
 #: src/celestia/winmain.cpp:631 src/celestia/kde/kdeapp.cpp:932
 msgid "Point size range: "
-msgstr ""
+msgstr "Bereich der Punktgröße: "
 
 #: src/celestia/winmain.cpp:636 src/celestia/kde/kdeapp.cpp:936
 msgid "Supported Extensions:"
-msgstr ""
+msgstr "Unterstützte Erweiterungen:"
 
 #: src/celestia/winmain.cpp:1349
 msgid "Windowed Mode"
@@ -935,9 +930,8 @@ msgid "WinLangID"
 msgstr "407"
 
 #: src/celestia/winmain.cpp:3658
-#, fuzzy
 msgid "Copied URL"
-msgstr "Kopiere URL"
+msgstr "URL kopiert"
 
 #: src/celestia/winmain.cpp:3781
 msgid "Loading URL"
@@ -1980,23 +1974,23 @@ msgstr "X"
 
 #: src/celestia/kde/selectionpopup.cpp:291
 msgid "Left Arrow"
-msgstr ""
+msgstr "Pfeil nach links"
 
 #: src/celestia/kde/selectionpopup.cpp:292
 msgid "Right Arrow"
-msgstr ""
+msgstr "Pfeil nach rechts"
 
 #: src/celestia/kde/selectionpopup.cpp:293
 msgid "Up Arrow"
-msgstr ""
+msgstr "Pfeil nach oben"
 
 #: src/celestia/kde/selectionpopup.cpp:294
 msgid "Down Arrow"
-msgstr ""
+msgstr "Pfeil nach unten"
 
 #: src/celestia/kde/selectionpopup.cpp:295
 msgid "Circle"
-msgstr ""
+msgstr "Kreis"
 
 #: src/celestia/kde/selectionpopup.cpp:308
 msgid "Normal"
