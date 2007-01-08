@@ -58,7 +58,7 @@ class DeepSkyObject
 
     virtual bool pick(const Ray3d& ray,
                       double& distanceToPicker,
-                      double& cosToBoundCenter) const = 0;
+                      double& cosAngleToBoundCenter) const = 0;
     virtual bool load(AssociativeArray*, const std::string& resPath);
     virtual void render(const GLContext& context,
                         const Vec3f& offset,
