@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia-pt\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-30 01:41-0000\n"
+"PO-Revision-Date: 2007-01-09 09:45-0000\n"
 "Last-Translator: José Raeiro <zeraeiro@gmail.com>\n"
 "Language-Team: Portuguese <zeraeiro@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -103,7 +103,7 @@ msgstr "' não encontrado.\n"
 
 #: src/celengine/solarsys.cpp:233
 msgid "' is not a star or planet.\n"
-msgstr " não é uma estrelas nem um planeta.\n"
+msgstr " não é uma estrela nem um planeta.\n"
 
 #: src/celengine/solarsys.cpp:252
 #: src/celengine/solarsys.cpp:260
@@ -118,7 +118,7 @@ msgstr " tem que ser no mesmo sistema estelar\n"
 #: src/celengine/solarsys.cpp:754
 #: src/celengine/solarsys.cpp:817
 msgid "parent body '"
-msgstr "corpo parente '"
+msgstr "corpo pai '"
 
 #: src/celengine/solarsys.cpp:763
 msgid "warning duplicate definition of "
@@ -206,16 +206,16 @@ msgstr "Sol"
 
 #: src/celengine/vertexprog.cpp:108
 msgid "Loading NV vertex program: "
-msgstr "A carregar o programa de vértices NV: \""
+msgstr "A carregar o programa de vértices NV: "
 
 #: src/celengine/vertexprog.cpp:113
 msgid "Error loading NV vertex program: "
-msgstr "Erro ao carregar o programa de vértices NV: \""
+msgstr "Erro ao carregar o programa de vértices NV: "
 
 #: src/celengine/vertexprog.cpp:130
 #: src/celengine/vertexprog.cpp:189
 msgid "Error in vertex program "
-msgstr "Erro no programa de vértices"
+msgstr "Erro no programa de vértices "
 
 #: src/celengine/vertexprog.cpp:157
 msgid "Loading ARB vertex program: "
@@ -227,7 +227,7 @@ msgstr "Erro ao carregar o programa de vértices ARB: "
 
 #: src/celengine/vertexprog.cpp:190
 msgid ", line "
-msgstr ", linha"
+msgstr ", linha "
 
 #: src/celengine/vertexprog.cpp:202
 msgid "Initializing NV vertex programs . . .\n"
@@ -339,7 +339,7 @@ msgstr "Caminho de Renderização: programa de vértices OpenGL"
 
 #: src/celestia/celestiacore.cpp:1438
 msgid "Render path: NVIDIA vertex program and combiners"
-msgstr "Caminho de Renderização: programs de vértices e combiners NVIDIA"
+msgstr "Caminho de Renderização: programa de vértices e combiners NVIDIA"
 
 #: src/celestia/celestiacore.cpp:1441
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
@@ -407,31 +407,26 @@ msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Tempo de viagem da luz: %d h %d min %.1f s"
 
 #: src/celestia/celestiacore.cpp:1650
-#, fuzzy
 msgid "Light travel delay included"
 msgstr "Atraso da viagem da luz incluído"
 
 #: src/celestia/celestiacore.cpp:1655
-#, fuzzy
 msgid "Light travel delay switched off"
 msgstr "Atraso da viagem da luz desligado"
 
 #: src/celestia/celestiacore.cpp:1661
-#, fuzzy
 msgid "Light travel delay ignored"
 msgstr "Atraso da viagem da luz ignorado"
 
 #: src/celestia/celestiacore.cpp:1702
 msgid "Using normal surface textures."
-msgstr "Usando texturas de superfície normais"
+msgstr "Usando texturas de superfície normais."
 
 #: src/celestia/celestiacore.cpp:1706
-#, fuzzy
 msgid "limit of knowledge"
 msgstr "limite do conhecimento"
 
 #: src/celestia/celestiacore.cpp:1707
-#, fuzzy
 msgid "Using limit of knowledge surface textures."
 msgstr "Usando texturas de superfície do limite do conhecimento"
 
@@ -467,7 +462,7 @@ msgstr "Texturas de alta res"
 
 #: src/celestia/celestiacore.cpp:1905
 msgid "Sync Orbit"
-msgstr "Órbita geoestacionária"
+msgstr "Órbita Geoest."
 
 #: src/celestia/celestiacore.cpp:1911
 msgid "Lock"
@@ -497,9 +492,8 @@ msgid "View too small to be split"
 msgstr "Vista demasiado pequena para ser dividida"
 
 #: src/celestia/celestiacore.cpp:2406
-#, fuzzy
 msgid "Added view"
-msgstr "Vista acrescentada"
+msgstr "Panorama acrescentado"
 
 #: src/celestia/celestiacore.cpp:2641
 #: src/celestia/kde/celestialbrowser.cpp:129
@@ -553,7 +547,7 @@ msgstr "Baricentro do sistema estelar\n"
 #: src/celestia/celestiacore.cpp:2772
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "mag abs (apa): %.2f (%.2f)\n"
+msgstr "Mag abs (apa): %.2f (%.2f)\n"
 
 #: src/celestia/celestiacore.cpp:2778
 msgid "Luminosity: "
@@ -675,7 +669,7 @@ msgstr "Seguir "
 
 #: src/celestia/celestiacore.cpp:3228
 msgid "Sync Orbit "
-msgstr "Órbita geoestacionária "
+msgstr "Órbita Geoest. "
 
 #: src/celestia/celestiacore.cpp:3233
 msgid "Lock "
@@ -686,9 +680,8 @@ msgid "Chase "
 msgstr "Seguir "
 
 #: src/celestia/celestiacore.cpp:3258
-#, fuzzy
 msgid "FOV: "
-msgstr "CDV: "
+msgstr "FOV: "
 
 #: src/celestia/celestiacore.cpp:3360
 msgid "Target name: "
@@ -935,7 +928,7 @@ msgstr "&Seguir"
 
 #: src/celestia/winmain.cpp:1570
 msgid "S&ync Orbit"
-msgstr "Ó&rbita geoestacionária"
+msgstr "Ó&rbita Geoest."
 
 #: src/celestia/winmain.cpp:1571
 #: src/celestia/winmain.cpp:1602
@@ -1093,7 +1086,7 @@ msgstr "Mag abs."
 
 #: src/celestia/winstarbrowser.cpp:79
 #: src/celestia/kde/rc.cpp:46
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Type"
 msgstr "Tipo"
 
@@ -1242,39 +1235,32 @@ msgid "Reverse Time"
 msgstr "Inverter o Tempo"
 
 #: src/celestia/kde/kdeapp.cpp:447
-#, fuzzy
 msgid "Split View Vertically"
-msgstr "Dividir a Vista/Panorama Verticalmente"
+msgstr "Dividir o Panorama Verticalmente"
 
 #: src/celestia/kde/kdeapp.cpp:448
-#, fuzzy
 msgid "Split View Horizontally"
-msgstr "\"Dividir a Vista/Panorama Horizontalmente"
+msgstr "Dividir o Panorama Horizontalmente"
 
 #: src/celestia/kde/kdeapp.cpp:449
-#, fuzzy
 msgid "Cycle View"
-msgstr "Alternar a Vista/Panorama"
+msgstr "Alternar o Panorama"
 
 #: src/celestia/kde/kdeapp.cpp:450
-#, fuzzy
 msgid "Single View"
-msgstr "Vista/Panorama individual"
+msgstr "Panorama individual"
 
 #: src/celestia/kde/kdeapp.cpp:451
-#, fuzzy
 msgid "Delete View"
-msgstr "Apagar Vista/Panorama"
+msgstr "Apagar Panorama"
 
 #: src/celestia/kde/kdeapp.cpp:452
-#, fuzzy
 msgid "Frames Visible"
-msgstr "Enquadramentos Visíveis"
+msgstr "Bordas Visíveis"
 
 #: src/celestia/kde/kdeapp.cpp:465
-#, fuzzy
 msgid "Active Frame Visible"
-msgstr "Enquadramento Activo Visível"
+msgstr "Borda Activa Visível"
 
 #: src/celestia/kde/kdeapp.cpp:477
 msgid "Synchronize Time"
@@ -1282,7 +1268,7 @@ msgstr "Sincronizar Hora"
 
 #: src/celestia/kde/kdeapp.cpp:489
 msgid "Alt-Azimuth Mode"
-msgstr "Modo Altazimulta"
+msgstr "Modo Altazimultal"
 
 #: src/celestia/kde/kdeapp.cpp:490
 msgid "Go To Surface"
@@ -1374,7 +1360,7 @@ msgstr "Mostrar Sombras dos Eclipses"
 
 #: src/celestia/kde/kdeapp.cpp:581
 msgid "Cycle Star Mode"
-msgstr "Alternar o Modo Estelar"
+msgstr "Alterar o Modo Estelar"
 
 #: src/celestia/kde/kdeapp.cpp:583
 msgid "Show Ring Shadows"
@@ -1455,7 +1441,7 @@ msgstr "Mostrar a Localização de Observatórios"
 
 #: src/celestia/kde/kdeapp.cpp:644
 msgid "Show Landing Sites Locations"
-msgstr "Mostrar a Localização de Sítios de Aterrisagem"
+msgstr "Mostrar a Localização de Sítios de Aterragem"
 
 #: src/celestia/kde/kdeapp.cpp:647
 msgid "Show Crater Locations"
@@ -2008,11 +1994,11 @@ msgstr "&Centrar"
 
 #: src/celestia/kde/selectionpopup.cpp:274
 msgid "S&ynch Orbit"
-msgstr "Órbita G&eoestacionária"
+msgstr "Órbita G&eoest."
 
 #: src/celestia/kde/selectionpopup.cpp:277
 msgid "Unmark &All"
-msgstr "Desmaracar &Todos"
+msgstr "Desmarcar &Todos"
 
 #: src/celestia/kde/selectionpopup.cpp:286
 msgid "Diamond"
@@ -2114,14 +2100,14 @@ msgid "OpenGL Render Path"
 msgstr "Caminho de renderização OpenGL"
 
 #: src/celestia/kde/rc.cpp:18
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Time"
-msgstr "Tempo/Hora"
+msgstr "Hora"
 
 #: src/celestia/kde/rc.cpp:21
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "MultiView"
-msgstr "Multivista/panorama"
+msgstr "Multipanorama"
 
 #: src/celestia/kde/rc.cpp:24
 #, no-c-format
@@ -2548,10 +2534,9 @@ msgstr "&Seguir a Selecção\tF"
 
 #: src/celestia/res/resource_strings.cpp:14
 msgid "S&ync Orbit Selection\tY"
-msgstr "Ó&rbita Geoestacionário à volta da Selecção\tY"
+msgstr "Ó&rbita Geoest. à volta da Selecção\tY"
 
 #: src/celestia/res/resource_strings.cpp:15
-#, fuzzy
 msgid "&Track Selection\tT"
 msgstr "&Seguir a trajectória da Selecção\tT"
 
@@ -2568,9 +2553,8 @@ msgid "&Eclipse Finder"
 msgstr "&Buscador de Eclipses"
 
 #: src/celestia/res/resource_strings.cpp:19
-#, fuzzy
 msgid "&Time"
-msgstr "&Tempo/Hora"
+msgstr "&Hora"
 
 #: src/celestia/res/resource_strings.cpp:20
 msgid "10x &Faster\tL"
@@ -2669,9 +2653,8 @@ msgid "Antialiasing\tCtrl+X"
 msgstr "Anti-serrilhado\tCtrl+X"
 
 #: src/celestia/res/resource_strings.cpp:44
-#, fuzzy
 msgid "&View"
-msgstr "&Vista/Panorama"
+msgstr "&Panorama"
 
 #: src/celestia/res/resource_strings.cpp:45
 msgid "Split &Horizontally\tCtrl+R"
@@ -2682,17 +2665,14 @@ msgid "Split &Vertically\tCtrl+U"
 msgstr "Dividir &Verticalmente\tCtrl+U"
 
 #: src/celestia/res/resource_strings.cpp:47
-#, fuzzy
 msgid "&Delete Active View\tDEL"
-msgstr "&Apagar Vista/Panorama Activo\rDEL"
+msgstr "&Apagar Panorama Activo\rDEL"
 
 #: src/celestia/res/resource_strings.cpp:48
-#, fuzzy
 msgid "&Single View\tCtrl+D"
-msgstr "Vista/Panorama &Individual\tCtrl+D"
+msgstr "Panorama &Individual\tCtrl+D"
 
 #: src/celestia/res/resource_strings.cpp:49
-#, fuzzy
 msgid "Show &Frames"
 msgstr "Mostrar as &Bordas"
 
