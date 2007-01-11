@@ -5,52 +5,108 @@ Location "Kepler Dorsum" "Sol/Mars/Phobos"
     Type "DO"
 }
 
+Location "Clustril" "Sol/Mars/Phobos"
+{
+    LongLat [ -91 60 0 ]
+    Size 3.4
+    Type "AA"
+}
+
 Location "D'Arrest" "Sol/Mars/Phobos"
 {
-    LongLat [ -172 -41 0 ]
-    Size 0.5
+    LongLat [ -179 -39 0 ]
+    Size 2.1
+    Type "AA"
+}
+
+Location "Drunlo" "Sol/Mars/Phobos"
+{
+    LongLat [ -92 36.5 0 ]
+    Size 4.2
+    Type "AA"
+}
+
+Location "Flimnap" "Sol/Mars/Phobos"
+{
+    LongLat [ -350 60 0 ]
+    Size 1.5
+    Type "AA"
+}
+
+Location "Grildrig" "Sol/Mars/Phobos"
+{
+    LongLat [ -195 81 0 ]
+    Size 2.6
+    Type "AA"
+}
+
+Location "Gulliver" "Sol/Mars/Phobos"
+{
+    LongLat [ -163 62 0 ]
+    Size 5.5
     Type "AA"
 }
 
 Location "Hall" "Sol/Mars/Phobos"
 {
-    LongLat [ -225 -75 0 ]
-    Size 3
+    LongLat [ -210 -80 0 ]
+    Size 5.4
+    Type "AA"
+}
+
+Location "Limtoc" "Sol/Mars/Phobos"
+{
+    LongLat [ -54 -11 0 ]
+    Size 2.0
+    Type "AA"
+}
+
+Location "Reldresal" "Sol/Mars/Phobos"
+{
+    LongLat [ -39 41 0 ]
+    Size 2.9
     Type "AA"
 }
 
 Location "Roche" "Sol/Mars/Phobos"
 {
-    LongLat [ -192 52 0 ]
-    Size 1
+    LongLat [ -183 53 0 ]
+    Size 2.3
     Type "AA"
 }
 
 Location "Sharpless" "Sol/Mars/Phobos"
 {
-    LongLat [ -156 -26 0 ]
-    Size 1
+    LongLat [ -154 -27.5 0 ]
+    Size 1.8
+    Type "AA"
+}
+
+Location "Skyresh" "Sol/Mars/Phobos"
+{
+    LongLat [ -320 52.5 0 ]
+    Size 1.5
     Type "AA"
 }
 
 Location "Stickney" "Sol/Mars/Phobos"
 {
-    LongLat [ -55 5 0 ]
-    Size 5
+    LongLat [ -49 1 0 ]
+    Size 9.0
     Type "AA"
 }
 
 Location "Todd" "Sol/Mars/Phobos"
 {
-    LongLat [ -153 -8 0 ]
-    Size 1
+    LongLat [ -153 -9 0 ]
+    Size 2.6
     Type "AA"
 }
 
 Location "Wendell" "Sol/Mars/Phobos"
 {
-    LongLat [ -134 -1 0 ]
-    Size 0.5
+    LongLat [ -132 -1 0 ]
+    Size 1.7
     Type "AA"
 }
 
