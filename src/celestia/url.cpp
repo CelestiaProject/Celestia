@@ -21,6 +21,8 @@
 #include "celengine/astro.h"
 #include "url.h"
 
+static const unsigned int CurrentCelestiaURLVersion = 2;
+
 Url::Url()
 {};
 
@@ -33,6 +35,7 @@ Url::Url(const std::string& str, CelestiaCore *core)
     Simulation *sim = appCore->getSimulation();
     std::map<std::string, std::string> params = parseUrlParams(urlStr);
 
+    
     if (urlStr.substr(0, 6) != "cel://")
     {
         urlStr = "";
@@ -81,6 +84,14 @@ Url::Url(const std::string& str, CelestiaCore *core)
     {
         urlStr = "";
         return; // Mode not recognized
+    }
+
+    // Version labelling of cel URLs was only added in Celestia 1.5, cel URL
+    // version 2. Assume any URL without a version is version 1.
+    unsigned int version = 1;
+    if (params["ver"] != "")
+    {
+        sscanf(params["ver"].c_str(), "%u", &version);
     }
 
     endPrevious = pos;
@@ -194,6 +205,7 @@ Url::Url(const std::string& str, CelestiaCore *core)
     evalName();
 }
 
+
 Url::Url(CelestiaCore* core, UrlType type)
 {
     appCore = core;
@@ -255,7 +267,7 @@ Url::Url(CelestiaCore* core, UrlType type)
         if (selectedStr != "") urlStr += "&select=" + selectedStr;
 
         fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
-        timeScale = sim->getTimeScale();
+        timeScale = (float) sim->getTimeScale();
         lightTimeDelay = appCore->getLightDelayActive();
         sprintf(buff, "&fov=%f&ts=%f&ltd=%c&", fieldOfView,
             timeScale, lightTimeDelay?'1':'0');
@@ -268,18 +280,31 @@ Url::Url(CelestiaCore* core, UrlType type)
         break;
     }
 
+    // Append the Celestia URL version
+    {
+        char buf[32];
+        sprintf(buf, "&ver=%u", CurrentCelestiaURLVersion);
+        urlStr += buf;
+    }
+
     evalName();
 }
 
-std::string Url::getAsString() const {
+
+std::string Url::getAsString() const
+{
     return urlStr;
 }
 
-std::string Url::getName() const {
+
+std::string Url::getName() const
+{
     return name;
 }
 
-void Url::evalName() {
+
+void Url::evalName()
+{
     char buff[50];
     double lo = longitude, la = latitude;
     char los = 'E';
@@ -305,7 +330,9 @@ void Url::evalName() {
     }
 }
 
-std::string Url::getBodyShortName(const std::string& body) const {
+
+std::string Url::getBodyShortName(const std::string& body) const
+{
     std::string::size_type pos;
     if (body != "") {
         pos = body.rfind(":");
@@ -315,7 +342,9 @@ std::string Url::getBodyShortName(const std::string& body) const {
     return "";
 }
 
-std::map<std::string, std::string> Url::parseUrlParams(const std::string& url) const{
+
+std::map<std::string, std::string> Url::parseUrlParams(const std::string& url) const
+{
     std::string::size_type pos, startName, startValue;
     std::map<std::string, std::string> params;
 
@@ -335,6 +364,7 @@ std::map<std::string, std::string> Url::parseUrlParams(const std::string& url) c
 
     return params;
 }
+
 
 std::string Url::getCoordSysName(astro::CoordinateSystem mode) const
 {
@@ -401,8 +431,9 @@ std::string Url::getSelectionName(const Selection& selection) const
     }
 }
 
+
 void Url::goTo()
-    {
+{
     Selection sel;
 
     if (urlStr == "")
@@ -453,16 +484,18 @@ void Url::goTo()
         sim->setObserverOrientation(orientation);
         break;
     case Relative:
-        sim->gotoSelectionLongLat(0, astro::kilometersToLightYears(distance), longitude * PI / 180, latitude * PI / 180, Vec3f(0, 1, 0));
+        sim->gotoSelectionLongLat(0, astro::kilometersToLightYears(distance), (float) (longitude * PI / 180), (float) (latitude * PI / 180), Vec3f(0, 1, 0));
         break;
     case Settings:
         break;
     }
 }
 
+
 Url::~Url()
 {
 }
+
 
 std::string Url::decode_string(const std::string& str)
 {
