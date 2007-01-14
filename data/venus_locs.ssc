@@ -14963,3 +14963,109 @@ Location "Yuvkha Valles" "Sol/Venus"
 }
 
 
+# Update 2007 Jan 14, Grant Hutchison
+# -----------------------------------
+
+Location "Lindgren Patera" "Sol/Venus"
+{
+	LongLat [ -241.4 -28.1 0 ]
+	Size 110
+	Importance 46.11
+	Type "PE"
+}
+
+Location "Chanum Coronae" "Sol/Venus"
+{
+	LongLat [ -245.5 29.2 0 ]
+	Size 330
+	Importance 66.42
+	Type "CR"
+}
+
+Location "Witte Patera" "Sol/Venus"
+{
+	LongLat [ -247.6 25.8 0 ]
+	Size 35
+	Importance 35.86
+	Type "PE"
+}
+
+Location "Azimua Tholi" "Sol/Venus"
+{
+	LongLat [ -249.4 34. 0 ]
+	Size 40
+	Importance 36.70
+	Type "TH"
+}
+
+Location "Otohime Tholus" "Sol/Venus"
+{
+	LongLat [ -268.2 32. 0 ]
+	Size 20
+	Importance 33.04
+	Type "TH"
+}
+
+Location "Anjea Corona" "Sol/Venus"
+{
+	LongLat [ -282.8 29. 0 ]
+	Size 145
+	Importance 49.93
+	Type "CR"
+}
+
+Location "Durga Corona" "Sol/Venus"
+{
+	LongLat [ -286.2 31.1 0 ]
+	Size 227
+	Importance 57.80
+	Type "CR"
+}
+
+Location "Hutash Corona" "Sol/Venus"
+{
+	LongLat [ -275.7 34.3 0 ]
+	Size 91
+	Importance 43.85
+	Type "CR"
+}
+
+Location "Ikas Coronae" "Sol/Venus"
+{
+	LongLat [ -288.6 40.7 0 ]
+	Size 225
+	Importance 57.62
+	Type "CR"
+}
+
+Location "Orbona Corona" "Sol/Venus"
+{
+	LongLat [ -293.2 47.8 0 ]
+	Size 150
+	Importance 50.45
+	Type "CR"
+}
+
+Location "Partula Corona" "Sol/Venus"
+{
+	LongLat [ -289.2 49.7 0 ]
+	Size 145
+	Importance 49.93
+	Type "CR"
+}
+
+Location "Parvati Corona" "Sol/Venus"
+{
+	LongLat [ -276.7 36. 0 ]
+	Size 173
+	Importance 52.76
+	Type "CR"
+}
+
+Location "Ezili Tholus" "Sol/Venus"
+{
+	LongLat [ -91.3 -23.7 0 ]
+	Size 150
+	Importance 50.45
+	Type "TH"
+}
