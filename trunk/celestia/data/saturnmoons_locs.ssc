@@ -438,159 +438,404 @@ Location "Telemachus" "Sol/Saturn/Tethys"
 # 20 records, 8269 lines read.
 Location "Ahmad" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -305.4 57.4 0 ]
-    Size 17
-    Type "AA"
+	LongLat [ -308.9 58.6 0 ]
+	Size 18.7
+	Type "AA"
 }
 
 Location "Aladdin" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -16.9 63.1 0 ]
-    Size 34
-    Type "AA"
+	LongLat [ -24.7 60.7 0 ]
+	Size 37.4
+	Type "AA"
 }
 
 Location "Ali Baba" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -12 57.2 0 ]
-    Size 35
-    Type "AA"
-}
-
-Location "Bassorah Fossa" "Sol/Saturn/Enceladus"
-{
-    LongLat [ -6.3 45.4 0 ]
-    Size 131
-    Type "FO"
+	LongLat [ -19.1 54.8 0 ]
+	Size 39.2
+	Type "AA"
 }
 
 Location "Dalilah" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -246.4 52.9 0 ]
-    Size 14
-    Type "AA"
-}
-
-Location "Daryabar Fossa" "Sol/Saturn/Enceladus"
-{
-    LongLat [ -359.1 9.7 0 ]
-    Size 201
-    Type "FO"
-}
-
-Location "Diyar Planitia" "Sol/Saturn/Enceladus"
-{
-    LongLat [ -239.7 0.5 0 ]
-    Size 311
-    Type "PL"
+	LongLat [ -244.8 52. 0 ]
+	Size 16
+	Type "AA"
 }
 
 Location "Duban" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -277.5 58.3 0 ]
-    Size 23
-    Type "AA"
+	LongLat [ -277.1 57.8 0 ]
+	Size 19
+	Type "AA"
 }
 
 Location "Dunyazad" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -196.5 42.6 0 ]
-    Size 30
-    Type "AA"
+	LongLat [ -197.8 41.7 0 ]
+	Size 30.9
+	Type "AA"
 }
 
 Location "Gharib" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -251.7 81.3 0 ]
-    Size 20
-    Type "AA"
-}
-
-Location "Harran Sulci" "Sol/Saturn/Enceladus"
-{
-    LongLat [ -237.6 26.7 0 ]
-    Size 276
-    Type "SU"
-}
-
-Location "Isbanir Fossa" "Sol/Saturn/Enceladus"
-{
-    LongLat [ -354 12.6 0 ]
-    Size 132
-    Type "FO"
+	LongLat [ -239.8 81.2 0 ]
+	Size 26
+	Type "AA"
 }
 
 Location "Julnar" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -342 54.2 0 ]
-    Size 20
-    Type "AA"
+	LongLat [ -345.5 53.6 0 ]
+	Size 19
+	Type "AA"
 }
 
 Location "Musa" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -6.5 73.8 0 ]
-    Size 22
-    Type "AA"
+	LongLat [ -18.1 72. 0 ]
+	Size 25
+	Type "AA"
 }
 
 Location "Peri-Banu" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -317.9 63.1 0 ]
-    Size 18
-    Type "AA"
+	LongLat [ -319.6 65.6 0 ]
+	Size 18
+	Type "AA"
 }
 
 Location "Salih" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -0 -6.5 0 ]
-    Size 4
-    Type "AA"
+	LongLat [ -2.1 -5.9 0 ]
+	Size 4
+	Type "AA"
 }
 
 Location "Samad" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -355.1 62.3 0 ]
-    Size 16
-    Type "AA"
-}
-
-Location "Samarkand Sulci" "Sol/Saturn/Enceladus"
-{
-    LongLat [ -326.8 30.5 0 ]
-    Size 383
-    Type "SU"
-}
-
-Location "Sarandib Planitia" "Sol/Saturn/Enceladus"
-{
-    LongLat [ -298 4.4 0 ]
-    Size 200
-    Type "PL"
+	LongLat [ -1.6 59.9 0 ]
+	Size 16.3
+	Type "AA"
 }
 
 Location "Shahrazad" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -195.1 48.2 0 ]
-    Size 20
-    Type "AA"
+	LongLat [ -197.6 46.8 0 ]
+	Size 20
+	Type "AA"
 }
 
 Location "Shahryar" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -225 59.7 0 ]
-    Size 21
-    Type "AA"
+	LongLat [ -224.3 58.5 0 ]
+	Size 24
+	Type "AA"
 }
 
 Location "Sindbad" "Sol/Saturn/Enceladus"
 {
-    LongLat [ -211.4 68.9 0 ]
-    Size 23
-    Type "AA"
+	LongLat [ -208.1 67. 0 ]
+	Size 29.1
+	Type "AA"
 }
 
-# 22 records, 8269 lines read.
+Location "Bassorah Fossa" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -19.9 39.8 0 ]
+	Size 75
+	Type "FO"
+}
+
+Location "Daryabar Fossa" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -359.6 9.2 0 ]
+	Size 200
+	Type "FO"
+}
+
+Location "Isbanir Fossa" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -356. 17.2 0 ]
+	Size 170
+	Type "FO"
+}
+
+Location "Diyar Planitia" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -250.2 -15.7 0 ]
+	Size 325
+	Type "PL"
+}
+
+Location "Sarandib Planitia" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -305.2 4.9 0 ]
+	Size 180
+	Type "PL"
+}
+
+Location "Harran Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -242.2 26.3 0 ]
+	Size 291
+	Type "SU"
+}
+
+Location "Samarkand Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -326. 30. 0 ]
+	Size 360
+	Type "SU"
+}
+
+Location "Al-Bakbuk" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -188.4 6.5 0 ]
+	Size 9
+	Type "AA"
+}
+
+Location "Sharrkan" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -298.2 16.4 0 ]
+	Size 3.7
+	Type "AA"
+}
+
+Location "Al-Haddar" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -197.1 50.6 0 ]
+	Size 14
+	Type "AA"
+}
+
+Location "Al-Kuz" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -174.7 -18.5 0 ]
+	Size 9.3
+	Type "AA"
+}
+
+Location "Al-Mustazi" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -198.3 -20.8 0 ]
+	Size 10.3
+	Type "AA"
+}
+
+Location "Ayyub" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -291.7 38.4 0 ]
+	Size 18
+	Type "AA"
+}
+
+Location "Aziz" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -345.3 16.7 0 ]
+	Size 11
+	Type "AA"
+}
+
+Location "Rayya" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -174.8 -32.3 0 ]
+	Size 9
+	Type "AA"
+}
+
+Location "Fitnah" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -287.3 45.1 0 ]
+	Size 16.5
+	Type "AA"
+}
+
+Location "Ghanim" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -278.1 38.7 0 ]
+	Size 13.9
+	Type "AA"
+}
+
+Location "Hassan" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -184.7 -31.2 0 ]
+	Size 14.5
+	Type "AA"
+}
+
+Location "Jansha" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -154.7 -30.5 0 ]
+	Size 9.8
+	Type "AA"
+}
+
+Location "Khusrau" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -182.4 -2.9 0 ]
+	Size 12.3
+	Type "AA"
+}
+
+Location "Marjanah" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -300. 38.3 0 ]
+	Size 14.5
+	Type "AA"
+}
+
+Location "Omar" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -270.8 17.8 0 ]
+	Size 12
+	Type "AA"
+}
+
+Location "Otbah" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -156.2 -39.8 0 ]
+	Size 9.4
+	Type "AA"
+}
+
+Location "Behram" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -177.6 -15. 0 ]
+	Size 13.7
+	Type "AA"
+}
+
+Location "Shakashik" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -177.5 -16.9 0 ]
+	Size 8.5
+	Type "AA"
+}
+
+Location "Shirin" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -169.2 -1.5 0 ]
+	Size 8.7
+	Type "AA"
+}
+
+Location "Al-Fakik" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -303.8 35.6 0 ]
+	Size 16.5
+	Type "AA"
+}
+
+Location "Zumurrud" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -178.2 -21.7 0 ]
+	Size 21
+	Type "AA"
+}
+
+Location "Cufa Dorsa" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -283.3 3.4 0 ]
+	Size 90
+	Type "DO"
+}
+
+Location "Ebony Dorsum" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -277.6 6.2 0 ]
+	Size 70
+	Type "DO"
+}
+
+Location "Anbar Fossae" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -318.8 -11.6 0 ]
+	Size 165
+	Type "FO"
+}
+
+Location "Khorasan Fossa" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -234.5 -24.6 0 ]
+	Size 290
+	Type "FO"
+}
+
+Location "Alexandria Sulcus" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -129.6 -75.6 0 ]
+	Size 111
+	Type "SU"
+}
+
+Location "Baghdad Sulcus" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -301.7 -89.1 0 ]
+	Size 176
+	Type "SU"
+}
+
+Location "Cairo Sulcus" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -127.6 -82.8 0 ]
+	Size 165
+	Type "SU"
+}
+
+Location "Camphor Sulcus" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -144. -71.1 0 ]
+	Size 77
+	Type "SU"
+}
+
+Location "Cashmere Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -288.2 -49.8 0 ]
+	Size 260
+	Type "SU"
+}
+
+Location "Damascus Sulcus" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -291.7 -80.8 0 ]
+	Size 125
+	Type "SU"
+}
+
+Location "Hamah Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -302.7 27.6 0 ]
+	Size 164
+	Type "SU"
+}
+
+Location "Labtayt Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -283.2 -28. 0 ]
+	Size 162
+	Type "SU"
+}
+
+Location "Láhej Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -300. -10. 0 ]
+	Size 150
+	Type "SU"
+}
+
+Location "Mosul Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -332.9 -57.7 0 ]
+	Size 60
+	Type "SU"
+}
+
+
 Location "Adrastus" "Sol/Saturn/Dione"
 {
     LongLat [ -45.9 -61.7 0 ]
@@ -1170,11 +1415,25 @@ Location "Yu-Ti" "Sol/Saturn/Rhea"
 
 # 50 records, 8269 lines read.
 
-Location "AARU" "Sol/Saturn/Titan"
+Location "Ksa" "Sol/Saturn/Titan"
 {
-	LongLat [ -340 10 0 ]
-	Size 500 # estimate
-	Type "AL"
+	LongLat [ -65.4 14. 0 ]
+	Size 29
+	Type "AA"
+}
+
+Location "Menrva" "Sol/Saturn/Titan"
+{
+	LongLat [ -87.2 20.1 0 ]
+	Size 392
+	Type "AA"
+}
+
+Location "Sinlap" "Sol/Saturn/Titan"
+{
+	LongLat [ -16. 11.3 0 ]
+	Size 80
+	Type "AA"
 }
 
 Location "ADIRI" "Sol/Saturn/Titan"
@@ -1256,35 +1515,21 @@ Location "TSEGIHI" "Sol/Saturn/Titan"
 
 Location "XANADU" "Sol/Saturn/Titan"
 {
-	LongLat [ -100 -15 0 ]
+	LongLat [ -100. -15. 0 ]
 	Size 3400
 	Type "AL"
 }
 
 Location "Hotei Arcus" "Sol/Saturn/Titan"
 {
-	LongLat [ -79 -28 0 ]
+	LongLat [ -79. -28. 0 ]
 	Size 600
 	Type "AR"
 }
 
-Location "Menrva" "Sol/Saturn/Titan"
-{
-	LongLat [ -87.2 20.1 0 ]
-	Size 392
-	Type "AA"
-}
-
-Location "Sinlap" "Sol/Saturn/Titan"
-{
-	LongLat [ -16 11.3 0 ]
-	Size 80
-	Type "AA"
-}
-
 Location "Antilia Faculae" "Sol/Saturn/Titan"
 {
-	LongLat [ -187 -11 0 ]
+	LongLat [ -187. -11. 0 ]
 	Size 260
 	Type "FA"
 }
@@ -1319,7 +1564,7 @@ Location "Elba Facula" "Sol/Saturn/Titan"
 
 Location "Kerguelen Facula" "Sol/Saturn/Titan"
 {
-	LongLat [ -151 -5.4 0 ]
+	LongLat [ -151. -5.4 0 ]
 	Size 135
 	Type "FA"
 }
@@ -1333,14 +1578,14 @@ Location "Mindanao Facula" "Sol/Saturn/Titan"
 
 Location "Nicobar Faculae" "Sol/Saturn/Titan"
 {
-	LongLat [ -159 2 0 ]
+	LongLat [ -159. 2. 0 ]
 	Size 575
 	Type "FA"
 }
 
 Location "Oahu Facula" "Sol/Saturn/Titan"
 {
-	LongLat [ -166.7 5 0 ]
+	LongLat [ -166.7 5. 0 ]
 	Size 465
 	Type "FA"
 }
@@ -1382,14 +1627,14 @@ Location "Tortola Facula" "Sol/Saturn/Titan"
 
 Location "Vis Facula" "Sol/Saturn/Titan"
 {
-	LongLat [ -138.4 7 0 ]
+	LongLat [ -138.4 7. 0 ]
 	Size 215
 	Type "FA"
 }
 
 Location "Ontario Lacus" "Sol/Saturn/Titan"
 {
-	LongLat [ -183 -72 0 ]
+	LongLat [ -183. -72. 0 ]
 	Size 235
 	Type "LC"
 }
@@ -1410,28 +1655,28 @@ Location "Nath" "Sol/Saturn/Titan"
 
 Location "Veles" "Sol/Saturn/Titan"
 {
-	LongLat [ -137.3 2 0 ]
+	LongLat [ -137.3 2. 0 ]
 	Size 45
 	Type "LG"
 }
 
 Location "Eir Macula" "Sol/Saturn/Titan"
 {
-	LongLat [ -114.7 -24 0 ]
+	LongLat [ -114.7 -24. 0 ]
 	Size 145
 	Type "MA"
 }
 
 Location "Elpis Macula" "Sol/Saturn/Titan"
 {
-	LongLat [ -27 31.2 0 ]
+	LongLat [ -27. 31.2 0 ]
 	Size 500
 	Type "MA"
 }
 
 Location "Ganesa Macula" "Sol/Saturn/Titan"
 {
-	LongLat [ -87.3 50 0 ]
+	LongLat [ -87.3 50. 0 ]
 	Size 160
 	Type "MA"
 }
@@ -1445,47 +1690,46 @@ Location "Omacatl Macula" "Sol/Saturn/Titan"
 
 Location "TUI REGIO" "Sol/Saturn/Titan"
 {
-	LongLat [ -130 -20 0 ]
+	LongLat [ -130. -20. 0 ]
 	Size 500 # estimate
 	Type "RE"
 }
 
 Location "Bacab Virgae" "Sol/Saturn/Titan"
 {
-	LongLat [ -151 -19 0 ]
+	LongLat [ -151. -19. 0 ]
 	Size 485
 	Type "VI"
 }
 
 Location "Hobal Virga" "Sol/Saturn/Titan"
 {
-	LongLat [ -166 -35 0 ]
+	LongLat [ -166. -35. 0 ]
 	Size 1075
 	Type "VI"
 }
 
 Location "Kalseru Virga" "Sol/Saturn/Titan"
 {
-	LongLat [ -137 -36 0 ]
+	LongLat [ -137. -36. 0 ]
 	Size 630
 	Type "VI"
 }
 
 Location "Perkunas Virgae" "Sol/Saturn/Titan"
 {
-	LongLat [ -162 -27 0 ]
+	LongLat [ -162. -27. 0 ]
 	Size 980
 	Type "VI"
 }
 
 Location "Shiwanni Virgae" "Sol/Saturn/Titan"
 {
-	LongLat [ -32 -25 0 ]
+	LongLat [ -32. -25. 0 ]
 	Size 1400
 	Type "VI"
 }
 
-# 0 records, 8269 lines read.
 # (Hyperion coordinates taken from Phil Stooke's
 # shape model and texture)
 Location "Bahloo" "Sol/Saturn/Hyperion"
@@ -1872,10 +2116,3 @@ LongLat [ 137 -20.0 0 ]
 Size 29.0
 Type "AA"
 }
-
-
-
-
-
-
-
