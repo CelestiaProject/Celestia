@@ -3637,10 +3637,9 @@ public:
                 bool success = objDB->load(catalogFile, getPath());
                 if (!success)
                 {
-                    DPRINTF(0, _("Error reading star file: %s\n"),
-                            fullname.c_str());
-                }
+                    //DPRINTF(0, _("Error reading star file: %s\n"), fullname.c_str());
                     DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), fullname.c_str());
+                }
             }
         }
         return true;
@@ -3801,7 +3800,6 @@ bool CelestiaCore::initSimulation(const string* configFileName,
             }
         }
     }
-
     dsoDB->finish();
     universe->setDSOCatalog(dsoDB);
 
