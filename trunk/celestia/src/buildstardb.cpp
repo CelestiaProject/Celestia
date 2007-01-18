@@ -537,9 +537,9 @@ bool CheckStarRecord(istream& in)
     if (sscanf(buf + 119, "%f", &parallaxError) != 0)
     {
         if (star.parallax < 0.0f || parallaxError / star.parallax > 1.0f)
-            star.parallaxError = (int8) 255;
+            star.parallaxError = 255u;
         else
-            star.parallaxError = (int8) (parallaxError / star.parallax * 200);
+            star.parallaxError = (uint8) (parallaxError / star.parallax * 200);
     }
 
     if (sscanf(buf + 79, "%f", &star.parallax) != 1)
@@ -780,9 +780,9 @@ bool ReadStarRecord(istream& in)
     if (sscanf(buf + 119, "%f", &parallaxError) != 0)
     {
         if (star.parallax < 0.0f || parallaxError / star.parallax > 1.0f)
-            star.parallaxError = (int8) 254;
+            star.parallaxError = 255u;
         else
-            star.parallaxError = (int8) (parallaxError / star.parallax * 200);
+            star.parallaxError = (uint8) (parallaxError / star.parallax * 200);
     }
 
     if (sscanf(buf + 105, "%f", &star.e_RA) != 1)
