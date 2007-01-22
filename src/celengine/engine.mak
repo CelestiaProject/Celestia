@@ -88,9 +88,18 @@ OBJS=\
 	$(INTDIR)\virtualtex.obj \
 	$(INTDIR)\vsop87.obj
 
+SCRIPTOBJS=\
+	$(INTDIR)\scriptobject.obj \
+	$(INTDIR)\scriptorbit.obj \
+	$(INTDIR)\scriptrotation.obj
+
+SPICEOBJS=\
+	$(INTDIR)\spiceinterface.obj \
+	$(INTDIR)\spiceorbit.obj
+
 !IF "$(CELX)" == "enable"
 EXTRADEFS=/D "CELX" /D "LUA_VER=$(LUA_VER)"
-OBJS=$(OBJS) $(INTDIR)\scriptobject.obj $(INTDIR)\scriptorbit.obj $(INTDIR)\scriptrotation.obj
+OBJS=$(OBJS) $(SCRIPTOBJS)
 !IF "$(LUA_VER)" == "0x050100"
 LUAINC=/I ../../inc/lua-5.1
 !ELSE
@@ -102,7 +111,7 @@ EXTRADEFS=
 !ENDIF
 
 !IF "$(SPICE)" == "enable"
-OBJS=$(OBJS) $(INTDIR)\spiceinterface.obj $(INTDIR)\spiceorbit.obj
+OBJS=$(OBJS) $(SPICEOBJS)
 SPICEINC=/I ../../inc/spice
 EXTRADEFS=$(EXTRADEFS) /D "USE_SPICE"
 !ELSE
@@ -140,4 +149,4 @@ $(OUTDIR)\$(TARGETLIB) : $(OUTDIR) $(OBJS)
 	if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 clean:
-	-@del $(OUTDIR)\$(TARGETLIB) $(OBJS)
+	-@del $(OUTDIR)\$(TARGETLIB) $(OBJS) $(SCRIPTOBJS) $(SPICEOBJS)
