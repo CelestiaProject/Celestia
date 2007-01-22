@@ -247,17 +247,17 @@ operator<(const Mesh::Material& m0, const Mesh::Material& m1)
 
     if (m0.diffuse < m1.diffuse)
         return true;
-    else if (m0.diffuse != m1.diffuse)
+    else if (m1.diffuse < m0.diffuse)
         return false;
 
     if (m0.emissive < m1.emissive)
         return true;
-    else if (m0.emissive != m1.emissive)
+    else if (m1.emissive < m0.emissive)
         return false;
 
     if (m0.specular < m1.specular)
         return true;
-    else if (m0.specular != m1.specular)
+    else if (m1.specular < m0.specular)
         return false;
 
     if (m0.specularPower < m1.specularPower)
