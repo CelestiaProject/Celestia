@@ -435,7 +435,7 @@ static Body* CreatePlanet(const string& name,
         body->setOrientation(orientation);
 
     // Get the rotation model for this body
-    float syncRotationPeriod = (float) body->getOrbit()->getPeriod();
+    double syncRotationPeriod = body->getOrbit()->getPeriod();
     RotationModel* rm = CreateRotationModel(planetData, path,
                                             syncRotationPeriod);
     if (rm != NULL)

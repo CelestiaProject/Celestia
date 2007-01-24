@@ -38,7 +38,7 @@ ConstantOrientation::spin(double) const
 
 /***** UniformRotationModel implementation *****/
 
-UniformRotationModel::UniformRotationModel(float _period,
+UniformRotationModel::UniformRotationModel(double _period,
                                            float _offset,
                                            double _epoch,
                                            float _inclination,
@@ -74,7 +74,7 @@ UniformRotationModel::getPeriod() const
 Quatd
 UniformRotationModel::spin(double tjd) const
 {
-    double rotations = (tjd - epoch) / (double) period;
+    double rotations = (tjd - epoch) / period;
     double wholeRotations = floor(rotations);
     double remainder = rotations - wholeRotations;
 
@@ -98,12 +98,12 @@ UniformRotationModel::equatorOrientationAtTime(double) const
 
 /***** PrecessingRotationModel implementation *****/
 
-PrecessingRotationModel::PrecessingRotationModel(float _period,
+PrecessingRotationModel::PrecessingRotationModel(double _period,
                                                  float _offset,
                                                  double _epoch,
                                                  float _inclination,
                                                  float _ascendingNode,
-                                                 float _precPeriod) :
+                                                 double _precPeriod) :
     period(_period),
     offset(_offset),
     epoch(_epoch),
@@ -136,7 +136,7 @@ PrecessingRotationModel::getPeriod() const
 Quatd
 PrecessingRotationModel::spin(double tjd) const
 {
-    double rotations = (tjd - epoch) / (double) period;
+    double rotations = (tjd - epoch) / period;
     double wholeRotations = floor(rotations);
     double remainder = rotations - wholeRotations;
 

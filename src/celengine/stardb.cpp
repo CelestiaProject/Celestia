@@ -894,7 +894,7 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
     bool hasTexture = starData->getString("Texture", textureName);
     bool hasModel = starData->getString("Mesh", modelName);
 
-    RotationModel* rm = CreateRotationModel(starData, path, 1.0f);
+    RotationModel* rm = CreateRotationModel(starData, path, 1.0);
     bool hasRotationModel = (rm != NULL);
 
     Vec3d semiAxes;

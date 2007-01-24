@@ -30,7 +30,7 @@ Orbit* CreateOrbit(PlanetarySystem* system,
 
 RotationModel* CreateRotationModel(Hash* rotationData,
                                    const string& path,
-                                   float syncRotationPeriod);
+                                   double syncRotationPeriod);
 
 RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
 
