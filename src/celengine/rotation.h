@@ -94,7 +94,7 @@ class ConstantOrientation : public RotationModel
 class UniformRotationModel : public RotationModel
 {
  public:
-    UniformRotationModel(float _period,
+    UniformRotationModel(double _period,
                          float _offset,
                          double _epoch,
                          float _inclination,
@@ -107,7 +107,7 @@ class UniformRotationModel : public RotationModel
     virtual Quatd spin(double tjd) const;
 
  private:
-    float period;        // sidereal rotation period
+    double period;       // sidereal rotation period
     float offset;        // rotation at epoch
     double epoch;
     float inclination;   // tilt of rotation axis w.r.t. reference plane
@@ -121,12 +121,12 @@ class UniformRotationModel : public RotationModel
 class PrecessingRotationModel : public RotationModel
 {
  public:
-    PrecessingRotationModel(float _period,
+    PrecessingRotationModel(double _period,
                             float _offset,
                             double _epoch,
                             float _inclination,
                             float _ascendingNode,
-                            float _precPeriod);
+                            double _precPeriod);
     virtual ~PrecessingRotationModel();
 
     virtual bool isPeriodic() const;
@@ -135,13 +135,13 @@ class PrecessingRotationModel : public RotationModel
     virtual Quatd spin(double tjd) const;
 
  private:
-    float period;        // sidereal rotation period (in Julian days)
+    double period;       // sidereal rotation period (in Julian days)
     float offset;        // rotation at epoch
     double epoch;
     float inclination;   // tilt of rotation axis w.r.t. reference plane
     float ascendingNode; // longitude of ascending node of equator on the refernce plane
 
-    float precessionPeriod; // period of precession (in Julian days)
+    double precessionPeriod; // period of precession (in Julian days)
 };
 
 #endif // _CELENGINE_ROTATION_H_

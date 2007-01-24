@@ -372,13 +372,13 @@ CreateOrbit(PlanetarySystem* system,
 
 static UniformRotationModel*
 CreateUniformRotationModel(Hash* rotationData,
-                           float syncRotationPeriod)
+                           double syncRotationPeriod)
 {
     // Default to synchronous rotation
-    float period = syncRotationPeriod;
+    double period = syncRotationPeriod;
     if (rotationData->getNumber("Period", period))
     {
-        period = period / 24.0f;
+        period = period / 24.0;
     }
 
     float offset = 0.0f;
@@ -441,13 +441,13 @@ CreateFixedRotationModel(Hash* rotationData)
 
 static PrecessingRotationModel*
 CreatePrecessingRotationModel(Hash* rotationData,
-                              float syncRotationPeriod)
+                              double syncRotationPeriod)
 {
     // Default to synchronous rotation
-    float period = syncRotationPeriod;
+    double period = syncRotationPeriod;
     if (rotationData->getNumber("Period", period))
     {
-        period = period / 24.0f;
+        period = period / 24.0;
     }
 
     float offset = 0.0f;
@@ -473,12 +473,12 @@ CreatePrecessingRotationModel(Hash* rotationData,
 
     // The default value of 0 is handled specially, interpreted to indicate
     // that there's no precession.
-    float precessionPeriod = 0.0f;
+    double precessionPeriod = 0.0;
     if (rotationData->getNumber("PrecessionPeriod", precessionPeriod))
     {
         // The precession period is specified in the ssc file in units
         // of years, but internally Celestia uses days.
-        precessionPeriod = precessionPeriod * 365.25f;
+        precessionPeriod = precessionPeriod * 365.25;
     }
 
     return new PrecessingRotationModel(period,
@@ -533,7 +533,7 @@ CreateScriptedRotation(Hash* rotationData,
 RotationModel*
 CreateRotationModel(Hash* planetData,
                     const string& path,
-                    float syncRotationPeriod)
+                    double syncRotationPeriod)
 {
     RotationModel* rotationModel = NULL;
 
@@ -644,7 +644,7 @@ CreateRotationModel(Hash* planetData,
     // that appear in the main block of the object definition.
     // Default to synchronous rotation
     bool specified = false;
-    float period = syncRotationPeriod;
+    double period = syncRotationPeriod;
     if (planetData->getNumber("RotationPeriod", period))
     {
         specified = true;
@@ -717,7 +717,7 @@ CreateRotationModel(Hash* planetData,
 
 RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
 {
-    return new UniformRotationModel((float) syncRotationPeriod,
+    return new UniformRotationModel(syncRotationPeriod,
                                     0.0f,
                                     astro::J2000,
                                     0.0f,
