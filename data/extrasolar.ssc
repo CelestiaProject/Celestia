@@ -1,4 +1,4 @@
-# Catalog of 209 known extrasolar planets.
+# Catalog of 211 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -5201,6 +5201,36 @@ AltSurface "limit of knowledge" "HD 45350/b"
 }
 
 
+"b" "HD 159868"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       540     # M.sin(i) = 1.7 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+159868"
+
+	EllipticalOrbit {
+		Period          2.6995
+		SemiMajorAxis   2
+		Eccentricity    0.69
+		ArgOfPericenter 93
+		MeanAnomaly     309
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 159868/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 81040"
 {
 	Texture "exo-class1.*"
@@ -5555,6 +5585,36 @@ AltSurface "limit of knowledge" "HD 2039/b"
 }
 
 AltSurface "limit of knowledge" "HD 136118/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 23127"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       480     # M.sin(i) = 1.5 jupiters
+	Radius     70000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+23127"
+
+	EllipticalOrbit {
+		Period          3.3238
+		SemiMajorAxis   2.4
+		Eccentricity    0.44
+		ArgOfPericenter 286
+		MeanAnomaly     97
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 23127/b"
 {
 	Texture "extrasolar-lok.*"
 }
