@@ -121,6 +121,13 @@ static float tempT[10] =
     1425, 1350, 1275, 1200, 1140, 1080, 1020, 900, 800, 750
 };
 
+// White dwarf temperaturs
+static float tempWD[10] =
+{
+    100000.0f, 50400.0f, 25200.0f, 16800.0f, 12600.0f,
+    10080.0f, 8400.0f, 7200.0f, 6300.0f, 5600.0f,
+};
+
 
 // Tables with adjustments for estimating absolute bolometric magnitude from
 // visual magnitude, from Lang's "Astrophysical Data: Planets and Stars".
@@ -270,6 +277,15 @@ static float bmag_correctionT[10] =
 {
     -8.9f, -9.6f, -10.8f, -11.9f, -13.1f, -14.4f, -16.1f, -17.9f, -19.6f, -19.6f,
 };
+
+// White dwarf data from Grant Hutchison; value for hypothetical
+// 0 subclass is just duplicated from subclass 1.
+static float bmag_correctionWD[10] = 
+{
+    -4.15f, -4.15f, -2.22f, -1.24f, -0.67f,
+    -0.32f, -0.13f, -0.04f, -0.03f, -0.09f,
+};
+
 
 // Stellar rotation by spectral and luminosity class.
 // Tables from Grant Hutchison:
@@ -632,12 +648,18 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
                 SubclassNames[subclass]);
 
         float temp;
-        if (subclass == 0)
-            temp = 100000.0f;
-        if (subclass == StellarClass::Subclass_Unknown)
-            temp = 10080.0f;  // Treat unknown as subclass 5
+        float bmagCorrection;
+        if (subclass >= 0 && subclass <= 9)
+        {
+            temp = tempWD[subclass];
+            bmagCorrection = bmag_correctionWD[subclass];
+        }
         else
-            temp = 50400.0f / subclass;
+        {
+            // Treat unknown as subclass 5
+            temp = tempWD[subclass];
+            bmagCorrection = bmag_correctionWD[5];
+        }
 
         // Assign white dwarfs a rotation period of half an hour; very
         // rough, as white rotation rates vary a lot.
@@ -645,6 +667,7 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
 
         whiteDwarfDetails[index] = CreateStandardStarType(name, temp, period);
         whiteDwarfDetails[index]->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
+        whiteDwarfDetails[index]->setBolometricCorrection(bmagCorrection);
     }
 
     return whiteDwarfDetails[index];
