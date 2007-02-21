@@ -1,4 +1,4 @@
-# Catalog of 211 known extrasolar planets.
+# Catalog of 212 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1183,6 +1183,33 @@ AltSurface "limit of knowledge" "HD 75289/b"
 }
 
 AltSurface "limit of knowledge" "HD 209458/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 219828"
+{
+	Texture "venuslike.*"
+	NightTexture "venuslikenight.*"
+
+	Mass      21     # M.sin(i) = 21 earths
+	Radius     17500
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+219828"
+
+	EllipticalOrbit {
+		Period          0.0105
+		SemiMajorAxis   0.052
+		Eccentricity    0
+		ArgOfPericenter 88
+		MeanAnomaly     13
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 219828/b"
 {
 	Texture "extrasolar-lok.*"
 }
