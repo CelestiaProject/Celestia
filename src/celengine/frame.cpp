@@ -443,28 +443,17 @@ TwoVectorFrame::TwoVectorFrame(Selection center,
     // Verify that the primary and secondary axes aren't collinear
     assert(abs(primaryAxis) != abs(secondaryAxis));
 
-    // The tertiary axis is the cross product of the primary and
-    // secondary axes.
-    int tertiarySign = sign(primaryAxis * secondaryAxis);
     if ((abs(primaryAxis) != 1 && abs(secondaryAxis) != 1))
     {
-        // Order and signs of the primary and secondary determine the sign of
-        // the tertiary axis.
-        tertiaryAxis = 1 * tertiarySign;
-        if (abs(primaryAxis) != 3)
-            tertiaryAxis = -tertiaryAxis;
+        tertiaryAxis = 1;
     }
     else if (abs(primaryAxis) != 2 && abs(secondaryAxis) != 2)
     {
-        tertiaryAxis = 2 * tertiarySign;
-        if (abs(primaryAxis) != 1)
-            tertiaryAxis = -tertiaryAxis;
+        tertiaryAxis = 2;
     }
     else
     {
-        tertiaryAxis = 3 * tertiarySign;
-        if (abs(primaryAxis) != 2)
-            tertiaryAxis = -tertiaryAxis;
+        tertiaryAxis = 3;
     }
 }
 
@@ -474,10 +463,15 @@ TwoVectorFrame::computeOrientation(double tjd) const
 {
     Vec3d v0 = primaryVector.direction(tjd);
     Vec3d v1 = secondaryVector.direction(tjd);
-    
+
     // TODO: verify that v0 and v1 aren't zero length
     v0.normalize();
     v1.normalize();
+
+    if (primaryAxis < 0)
+        v0 = -v0;
+    if (secondaryAxis < 0)
+        v1 = -v1;
 
     Vec3d v2 = v0 ^ v1;
 
@@ -493,23 +487,30 @@ TwoVectorFrame::computeOrientation(double tjd) const
     else
     {
         v2 = v2 / length;
-        Vec3d v[3];
+
+        // Determine whether the primary and secondary axes are in
+        // right hand order.
+        int rhAxis = abs(primaryAxis) + 1;
+        if (rhAxis > 3)
+            rhAxis = 1;
+        bool rhOrder = rhAxis == abs(secondaryAxis);
 
         // Set the rotation matrix axes
-        if (primaryAxis > 0)
-            v[abs(primaryAxis) - 1] = v0;
-        else
-            v[abs(primaryAxis) - 1] = -v0;
+        Vec3d v[3];
+        v[abs(primaryAxis) - 1] = v0;
 
-        if (secondaryAxis > 0)
-            v[abs(secondaryAxis) - 1] = v0 ^ v2;
-        else
+        // Reverse the cross products if the axes are not in right
+        // hand order.
+        if (rhOrder)
+        {
             v[abs(secondaryAxis) - 1] = v2 ^ v0;
-    
-        if (tertiaryAxis > 0)
             v[abs(tertiaryAxis) - 1] = v2;
+        }
         else
+        {
+            v[abs(secondaryAxis) - 1] = v0 ^ -v2;
             v[abs(tertiaryAxis) - 1] = -v2;
+        }
 
         // The axes are the rows of a rotation matrix. The getOrientation
         // method must return the quaternion representation of the 
