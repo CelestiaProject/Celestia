@@ -40,7 +40,8 @@ static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
 #endif
 
 
-Model::Model()
+Model::Model() :
+    opaque(true)
 {
     for (int i = 0; i < Mesh::TextureSemanticMax; i++)
         textureUsage[i] = false;
@@ -349,6 +350,22 @@ Model::uniquifyMaterials()
     }
 
     materials = uniqueMaterials;
+}
+
+
+void
+Model::determineOpacity()
+{
+    for (unsigned int i = 0; i < materials.size(); i++)
+    {
+        if (materials[i]->opacity > 0.01f && materials[i]->opacity < 1.0f)
+        {
+            opaque = false;
+            return;
+        }
+    }
+
+    opaque = true;
 }
 
 

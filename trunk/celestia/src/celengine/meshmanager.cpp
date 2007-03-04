@@ -112,6 +112,8 @@ Model* ModelInfo::load(const string& filename)
         // rendered before geometry that they cover.
         model->sortMeshes(Model::OpacityComparator());
 
+        model->determineOpacity();
+
         // Display some statics for the model
         clog << "   Model statistics: "
              << model->getVertexCount() << " vertices, "
