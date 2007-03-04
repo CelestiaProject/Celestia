@@ -81,6 +81,16 @@ class Model
      */
     bool usesTextureType(Mesh::TextureSemantic) const;
 
+    /*! Return true if the model has no translucent components. */
+    bool isOpaque() const
+    {
+        return opaque;
+    }
+
+    /*! Set the opacity flag based on material usage within the model */
+    void determineOpacity();
+
+
     class MeshComparator
     {
      public:
@@ -125,6 +135,7 @@ class Model
     std::vector<Mesh*> meshes;
 
     bool textureUsage[Mesh::TextureSemanticMax];
+    bool opaque;
 };
 
 #endif // !_CELENGINE_MODEL_H_
