@@ -678,7 +678,7 @@ CreateRotationModel(Hash* planetData,
         ascendingNode = degToRad(ascendingNode);
     }
 
-    float precessionRate = 0.0f;
+    double precessionRate = 0.0f;
     if (planetData->getNumber("PrecessionRate", precessionRate))
     {
         specified = true;
@@ -687,7 +687,7 @@ CreateRotationModel(Hash* planetData,
     if (specified)
     {
         RotationModel* rm = NULL;
-        if (precessionRate == 0.0f)
+        if (precessionRate == 0.0)
         {
             rm = new UniformRotationModel(period,
                                           offset,
@@ -702,7 +702,7 @@ CreateRotationModel(Hash* planetData,
                                              epoch,
                                              inclination,
                                              ascendingNode,
-                                             -360.0f / precessionRate);
+                                             -360.0 / precessionRate);
         }
 
         return rm;
