@@ -1104,7 +1104,7 @@ void renderOrbitColor(int classification, bool selected)
         switch (classification)
         {
         case Body::Moon:
-            glColor4f(0.3f, 0.2f, 0.4f, 1.0f);
+            glColor4f(0.0f, 0.4f, 0.5f, 1.0f);
             break;
         case Body::Asteroid:
             glColor4f(0.35f, 0.2f, 0.0f, 1.0f);
@@ -1194,15 +1194,24 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
                 nSamples = (int) (orbit->getPeriod() * 100.0);
                 nSamples = max(min(nSamples, 1000), 100);
             }
+            else
+            {
+                // If the orbit is aperiodic and doesn't have a
+                // finite duration, we don't render it. A compromise
+                // would be to pick some time window centered at the
+                // current time, but we'd have to pick some arbitrary
+                // duration.
+                nSamples = 0;
+            }
         }
 
         cachedOrbit->body = cacheKey;
         cachedOrbit->keep = true;
         OrbitSampler sampler(&cachedOrbit->trajectory);
         orbit->sample(startTime,
-                       orbit->getPeriod(),
-                       nSamples,
-                       sampler);
+                      orbit->getPeriod(),
+                      nSamples,
+                      sampler);
         trajectory = &cachedOrbit->trajectory;
 
         // If the orbit is new, put it back in the cache
@@ -1610,6 +1619,7 @@ void Renderer::render(const Observer& observer,
     glTranslatef(-observerPosLY.x, -observerPosLY.y, -observerPosLY.z);
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != NULL)
     {
         if (useNewStarRendering)
@@ -1996,6 +2006,7 @@ void Renderer::render(const Observer& observer,
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_DEPTH_TEST);
                 glDepthMask(GL_TRUE);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 if ((renderFlags & ShowSmoothLines) != 0)
                 {
                     enableSmoothLines();
@@ -2360,7 +2371,6 @@ void Renderer::renderObjectAsPoint(Point3f position,
             glTexCoord2f(0, 0);
             glVertex(center + (v3 * glareSize));
             glEnd();
-
         }
 #else
         // Disabled because of point size limits
@@ -6177,7 +6187,19 @@ void Renderer::buildRenderLists(const Star& sun,
             rle.isCometTail = false;
             // Treat all mesh objects as potentially transparent.
             // TODO: implement a better test for this
-            rle.isOpaque = body->getModel() == InvalidResource;
+            //rle.isOpaque = body->getModel() == InvalidResource;
+            if (body->getModel() != InvalidResource && discSize > 1)
+            {
+                Model* model = GetModelManager()->find(body->getModel());
+                if (model == NULL)
+                    rle.isOpaque = true;
+                else
+                    rle.isOpaque = model->isOpaque();
+            }
+            else
+            {
+                rle.isOpaque = true;
+            }
             rle.position = Point3f(pos.x, pos.y, pos.z);
             rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
             rle.distance = (float) distanceFromObserver;
