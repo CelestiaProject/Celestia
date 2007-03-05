@@ -11136,6 +11136,11 @@ class VSOP87OrbitRect : public CachingOrbit
         return period;
     }
 
+    virtual bool isPeriodic() const
+    {
+        return period != 0.0;
+    }
+
     double getBoundingRadius() const
     {
         return boundingRadius;
@@ -11277,7 +11282,7 @@ Orbit* CreateVSOP87Orbit(const string& name)
         Orbit* o = new VSOP87OrbitRect(sun_X, 5,
                                        sun_Y, 5,
                                        sun_Z, 3,
-                                       11.861773 * 365.25,
+                                       0.0,
                                        2000000);
         return new MixedOrbit(o, yearToJD(-4000), yearToJD(6000),
                               astro::SolarMass);
