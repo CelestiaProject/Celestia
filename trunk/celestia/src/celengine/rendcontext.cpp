@@ -148,6 +148,15 @@ FixedFunctionRenderContext::FixedFunctionRenderContext(const Mesh::Material* _ma
 }
 
 
+FixedFunctionRenderContext::~FixedFunctionRenderContext()
+{
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+
 void
 FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 {
