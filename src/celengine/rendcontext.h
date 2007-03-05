@@ -52,6 +52,7 @@ class FixedFunctionRenderContext : public RenderContext
  public:
     FixedFunctionRenderContext(const Mesh::Material*);
     FixedFunctionRenderContext();
+    virtual ~FixedFunctionRenderContext();
 
     virtual void makeCurrent(const Mesh::Material&);
     virtual void setVertexArrays(const Mesh::VertexDescription& desc,
