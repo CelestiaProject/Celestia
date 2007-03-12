@@ -657,7 +657,7 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
         else
         {
             // Treat unknown as subclass 5
-            temp = tempWD[subclass];
+            temp = tempWD[5];
             bmagCorrection = bmag_correctionWD[5];
         }
 
