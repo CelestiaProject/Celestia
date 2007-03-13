@@ -2518,6 +2518,9 @@ static int object_getinfo(lua_State* l)
         DeepSkyObject* deepsky = sel->deepsky();
         setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
                            ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
+        setTable(l, "catalogNumber", deepsky->getCatalogNumber());
+        setTable(l, "hubbleType", deepsky->getHubbleType().c_str());
+        setTable(l, "absoluteMagnitude", (lua_Number)deepsky->getAbsoluteMagnitude());
         setTable(l, "radius", (lua_Number)deepsky->getRadius());
     }
     else if (sel->location() != NULL)
@@ -4445,6 +4448,17 @@ static int celestia_getstarcount(lua_State* l)
     return 1;
 }
 
+static int celestia_getdsocount(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to function celestia:getdsocount");
+
+    CelestiaCore* appCore = this_celestia(l);
+    Universe* u = appCore->getSimulation()->getUniverse();
+    lua_pushnumber(l, u->getDSOCatalog()->size());
+
+    return 1;
+}
+
 static int celestia_setambient(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected in celestia:setambient");
@@ -4627,6 +4641,22 @@ static int celestia_getstar(lua_State* l)
         lua_pushnil(l);
     else
         object_new(l, Selection(star));
+
+    return 1;
+}
+
+static int celestia_getdso(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to function celestia:getdso");
+
+    CelestiaCore* appCore = this_celestia(l);
+    double dsoIndex = safeGetNumber(l, 2, AllErrors, "First arg to celestia:getdso must be a number");
+    Universe* u = appCore->getSimulation()->getUniverse();
+    DeepSkyObject* dso = u->getDSOCatalog()->getDSO((uint32) dsoIndex);
+    if (dso == NULL)
+        lua_pushnil(l);
+    else
+        object_new(l, Selection(dso));
 
     return 1;
 }
@@ -5009,7 +5039,9 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "utctotdb", celestia_utctotdb);
     RegisterMethod(l, "tdbtoutc", celestia_tdbtoutc);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
+    RegisterMethod(l, "getdsocount", celestia_getdsocount);   
     RegisterMethod(l, "getstar", celestia_getstar);
+    RegisterMethod(l, "getdso", celestia_getdso);
     RegisterMethod(l, "newframe", celestia_newframe);
     RegisterMethod(l, "newvector", celestia_newvector);
     RegisterMethod(l, "newposition", celestia_newposition);
