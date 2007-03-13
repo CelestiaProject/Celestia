@@ -53,6 +53,9 @@ class DeepSkyObject
     float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
 
+    std::string getHubbleType() const;
+    void setHubbleType(const std::string&);
+
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
@@ -80,6 +83,7 @@ class DeepSkyObject
     Quatf        orientation;
     float        radius;
     float        absMag;
+    std::string* hubbleType;
     std::string* infoURL;
 };
 
