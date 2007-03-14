@@ -4448,6 +4448,56 @@ static int celestia_getstarcount(lua_State* l)
     return 1;
 }
 
+
+// Stars iterator function; two upvalues expected
+static int celestia_stars_iter(lua_State* l)
+{
+    CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
+    if (appCore == NULL)
+    {
+        doError(l, "Bad celestia object!");
+        return 0;
+    }
+   
+    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
+    Universe* u = appCore->getSimulation()->getUniverse();
+    
+    if (i < u->getStarCatalog()->size())
+    {
+        // Increment the counter
+        lua_pushnumber(l, i + 1);
+        lua_replace(l, lua_upvalueindex(2));
+
+        Star* star = u->getStarCatalog()->getStar(i);
+        if (star == NULL)
+            lua_pushnil(l);
+        else
+            object_new(l, Selection(star));
+
+        return 1;
+    }
+    else
+    {
+        // Return nil when we've enumerated all the stars
+        return 0;
+    }
+}
+
+
+static int celestia_stars(lua_State* l)
+{
+    CelestiaCore* appCore = this_celestia(l);
+    
+    // Push a closure with two upvalues: the celestia object and a
+    // counter.
+    lua_pushvalue(l, 1);    // Celestia object
+    lua_pushnumber(l, 0);   // counter
+    lua_pushcclosure(l, celestia_stars_iter, 2);
+
+    return 1;
+}
+
+
 static int celestia_getdsocount(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function celestia:getdsocount");
@@ -4458,6 +4508,7 @@ static int celestia_getdsocount(lua_State* l)
 
     return 1;
 }
+
 
 static int celestia_setambient(lua_State* l)
 {
@@ -4660,6 +4711,7 @@ static int celestia_getdso(lua_State* l)
 
     return 1;
 }
+
 
 static int celestia_newvector(lua_State* l)
 {
@@ -5054,6 +5106,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "getscriptpath", celestia_getscriptpath);
     RegisterMethod(l, "registereventhandler", celestia_registereventhandler);
     RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
+    RegisterMethod(l, "stars", celestia_stars);
 
     lua_pop(l, 1);
 }
