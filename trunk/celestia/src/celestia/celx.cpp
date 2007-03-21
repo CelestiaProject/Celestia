@@ -2517,9 +2517,15 @@ static int object_getinfo(lua_State* l)
         setTable(l, "type", "deepsky");
         DeepSkyObject* deepsky = sel->deepsky();
         setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
-                           ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
+                           ->getDSOCatalog()->getDSOName(deepsky).c_str());
         setTable(l, "catalogNumber", deepsky->getCatalogNumber());
-        setTable(l, "hubbleType", deepsky->getHubbleType().c_str());
+        
+        string hubbleType = deepsky->getHubbleType(); 
+        if (hubbleType != "") 
+        { 
+            setTable(l, "hubbleType", hubbleType.c_str()); 
+        } 
+        
         setTable(l, "absoluteMagnitude", (lua_Number)deepsky->getAbsoluteMagnitude());
         setTable(l, "radius", (lua_Number)deepsky->getRadius());
     }
