@@ -1,0 +1,320 @@
+{
+# ... Skriptets början
+
+#****************************************************************************
+#                                                                           *
+#                 START.CEL - Uppstartskript för Celestia                   *
+#                             (version 2.1)                                 *
+#                                                                           *
+#---------------------------------------------------------------------------*
+#                                                                           *
+#  Det här skriptet körs automatiskt varje gång du startar Celestia.        *
+#                                                                           *
+#  NOTERA: Ta inte bort klammerparenteserna som står i början och slutet av *
+#  denna fil. De definierar filen som ett CEL-skript.                       *
+#                                                                           *
+#  Du kan modifiera detta skript på många sätt så att det passar dina egna  *
+#  behov. Detta gör du genom att helt enkelt avkommentera en eller flera    *
+#  av raderna här nedan.                                                    *
+#  Varje sträng eller kodsektion innehåller kommentarer som beskriver vad   *
+#  den gör. Ta bort tecket "#" i början av textsträngen om du vill          *
+#  AVkommentera den raden.                                                  *
+#                                                                           *
+#  Om du bestämmer dig för att modifiera det här skriptet så se först till  *
+#  att göra en säkerhetskopia så att du har något att referera till senare. *
+#                                                                           *
+#****************************************************************************
+
+  preloadtex { object "Sol/Earth" }
+  preloadtex { object "Sol/Earth/Moon" }
+
+  select {object "Sol"}
+  goto   {time 3.0 distance 30}
+  wait   {duration 3.0}
+
+  select {object "Sol/Earth"}
+  follow {}
+  goto   {time 3.0  distance 6.0}
+  wait   {duration 2.0}
+
+  print  {text "Välkommen till Celestia!"  row -3  column 1  duration 3}
+  wait   {duration 3.0}
+
+#****************************************************************************
+#  Kodsträngarna här ovan innehåller hela uppstartskriptet. Här nedanför    *
+#  finns en beskrivning av vad varje kommando har för uppgift. Först så     *
+#  reser vi till solen, när vi sedan reser vidare till jorden så kommer     *
+#  denna att visas från sin solsida oberoende av din lokala tidzon...       *
+#                                                                           *
+#  preloadtex: Säger åt Celestia att ladda texturer för det namngivna       *
+#          objektet. I annat fall så skulle Celestia ladda texturen när     *
+#          objektet kom i bild vilket skulle märkas som en kort fördröjning.*
+#                                                                           *
+#  select: Talar om vilket objekt (planet, måne, rymdfarkost, etc.) som     *
+#          Celestia ska ha som aktuellt valt objekt. "Sol" definierar vårt  *
+#          solsystem medan symbolen "/" bara är en avskiljare i hierarkin.  *
+#          Jorden är det objekt som vi har valt. Om du istället hade velat  *
+#          välja månen så hade kommandot 'select' sett ut så här:           *
+#            select {object "Sol/Earth/Moon"}                               *
+#                                                                           *
+#  goto:   Säger åt Celestia att gå till det valda objektet, på samma sätt  *
+#          som när man trycker ner tangenten "G" på tangentbordet.          *
+#          Parametern 'time' talar om hur många sekunder det ska ta att     *
+#          resa till objektet. Parametern 'distance' bestämmer hur långt    *
+#          ifrån objektet man vill stanna, detta avstånd uttrycks genom     *
+#          objektets radie plus 1. Exempel, om objektets radie är 10 000 km,*
+#          och du sätter distansen till 6.0, så kommer du att hamna 50 000  *
+#          km från objektets centrum.                                       *
+#                                                                           *
+#  wait:   Eftersom kommandot 'goto' säger till Celestia att ta en viss tid *
+#          på sig för att göra något så måste vi även ge Celestia samma tid *
+#          för att faktiskt utföra uppgiften. När vi reser mot solen så     *
+#          säger kommandot 'wait' till Celestia att ta en paus i tre        *
+#          sekunder medan 'goto' urförs (i tre sekunder). Parametern        *
+#          'duration's värde är i normala fall detsamma som tidsparametern  *
+#          i kommandot 'goto'. Det finns dock alltid undantag (flina).      *
+#                                                                           *
+#          När vi beger oss mot jorden så lägger kommandot 'wait', efter    *
+#          kommandot 'goto', in en tvåsekunders paus. Nästa kommando är ett *
+#          'print'-kommando som visar lite text på skärmen innan ännu ett   *
+#          'wait' följer. Detta lägger in ytterligare tre sekunders paus.   *
+#          Det hela är bara en fråga om tajming.                            *
+#          Kommandot 'goto' tillåter oss att visa text på skärmen MEDAN     *
+#          kommandot utförs. Det enda vi behöver göra är alltså att se till *
+#          att den totala väntetiden, angiven efter ett 'goto', är MINST    *
+#          lika stor som värdet som angetts i 'goto'-kommandot. Värdet kan  *
+#          dock vara större om så önskas.                                   *
+#                                                                           *
+#  follow: Säger till Celestia att följa det valda objektet genom rymden på *
+#          samma sätt som när man trycker ner tangenten "F" på              *
+#          tangentbordet. Du kan ersätta kommandot follow {} med            *
+#          synchronous {}, vilket håller kvar dig i en stationär, eller     *
+#          geosynkron bana över det valda objektet.                         *
+#                                                                           *
+#   print: Säger till Celestia att visa (skriva ut) text på skärmen.        *
+#          Parametern 'text' preciserar vilken text som ska skrivas ut.     *
+#          Parametern 'row' bestämmer hur många rader från fönstrets        *
+#          nederkant som texten ska börja visas. Parametern 'column'        *
+#          bestämmer hur många kolumner från skärmens vänstra kant som      *
+#          texten ska börja visas. Parametern 'duration' bestämmer hur      *
+#          många sekunder som texten ska visas. Denna följs sedan av        *
+#          kommandot 'wait' som beskrivs ovan.                              *
+#****************************************************************************
+
+
+#****************************************************************************
+# Om du vill placeras ovanför din egen plats på jorden så ska du använda    *
+# kommandot 'gotolonglat' som visas nedan. Här följer                       *
+# steg-för-steg-instruktioner...                                            *
+#                                                                           *
+#  * Kopiera hela kodsträngen.                                              *
+#                                                                           *
+#  * Klistra in den nedanför "goto"-kommandot här ovan.                     *
+#                                                                           *
+#  * Ta bort tecknet "#" i början av raden. Detta avkommenterar koden så    *
+#    att den kommer att köras.                                              *
+#                                                                           *
+#  * Lägg till tecknet "#"  i början av det ursprungliga 'goto'-kommandot.  *
+#    Detta förvandlar kodsträngen till en kommentar så att den INTE kommer  *
+#    att köras.                                                             *
+#                                                                           *
+#  * Ändra longitud- och latitudvärdena så att de stämmer med din plats.    *
+#                                                                           *
+#  * Eftersom du reser till en specifik plats på jorden så kan det hända    *
+#    att det inte råder dag där, då kan du kommentera bort följande         *
+#    kodsträngar genom att lägga till tecknet "#" i början av varje rad...  *
+#      select {object "Sol"}                                                *
+#      goto   {time 3.0 distance 30}                                        *
+#      wait   {duration 3.0}                                                *
+#    Om du VILL visa din plats i dagsljus så kan du använda kommandot       *
+#    'time' som vi beskriver härnäst.                                       *
+#****************************************************************************
+
+#  gotolonglat {time 5.0  distance 4.0  longitude 0.0  latitude 0.0}
+
+
+#****************************************************************************
+#  If you would like Celestia to always start at a specific date/time, use  *
+#  the time command, as shown below.                                        *
+#                                                                           *
+#  WARNING: Starting Celestia with a pre-determined date/time requires that *
+#           you physically press the "!" (exclamation mark) key in order to *
+#           RESET the time to "current time", whenever you want to do some  *
+#           exploring -- IF the actual time makes a difference.             *
+#                                                                           *
+#  Step-by-step instructions...                                             *
+#                                                                           *
+#  * Determine if you want to set the date via a calendar UTC date/time     *
+#    string, or a Julian day (see below).                                   *
+#                                                                           *
+#  * Copy the one line of code with the time command you want to use.       *
+#                                                                           *
+#  * Paste it above the "goto" command above (top of file).                 *
+#                                                                           *
+#  * Remove the "#" character at the beginning of the line. This UNcomments *
+#    the line of code so it will be executed.                               *
+#                                                                           *
+#  * Change the date/time value to YOUR required date/time.                 *
+#****************************************************************************
+
+# Set the time via a calendar UTC date/time string...
+#  time { utc "2003-08-11T09:29:24.0000" }
+#              YYYY-MM-DDTHH:MM:SS.SSSS
+#  Note the "T" .........^ ... (this is required)
+
+# Set the time via a Julian day value...
+#  time { jd JulianDate }
+#    U.S. Navy Calendar Date/Time to Julian Date/Time converter:
+#    http://aa.usno.navy.mil/data/docs/JulianDate.html
+
+
+#****************************************************************************
+#  The commands listed below allow you to define several of Celestia's      *
+#  settings, that will be set every time you start Celestia. Modify any of  *
+#  the settings you want to.                                                *
+#****************************************************************************
+
+# Field of View (UNcomment / modify to meet your needs)...
+# Default is 25 degrees, at a screen resolution of 1024 x 768
+#  set {name "FOV" value 25.0}
+
+
+# Ambient light level (UNcomment / modify to meet your needs)...
+# 0.0 to 0.5 is a good Lo-Hi range
+#  set {name "AmbientLightLevel" value 0.1}
+
+
+# Faintest visible star magnitude (brightness)...
+# (UNcomment / modify to meet your needs)
+# Celestia UI: 0.8 to 15.2, default is 6.0
+#
+#  setvisibilitylimit {magnitude 6.0}
+
+
+# Faintest auto-magnitude brightness, at 45 degrees, Default is 8.5...
+# (UNcomment / modify to meet your needs)
+#  setfaintestautomag45deg {magnitude 8.5}
+
+
+# Items to be displayed (rendered):
+# Do NOT render the following objects (UNcomment to suit your needs)...
+#  renderflags {clear "atmospheres"}
+#  renderflags {clear "automag"}
+#  renderflags {clear "boundaries"}
+#  renderflags {clear "cloudmaps"}
+#  renderflags {clear "comettails"}
+#  renderflags {clear "constellations"}
+#  renderflags {clear "eclipseshadows"}
+#  renderflags {clear "galaxies"}
+#  renderflags {clear "grid"}
+#  renderflags {clear "markers"}
+#  renderflags {clear "nightmaps"}
+#  renderflags {clear "orbits"}
+#  renderflags {clear "planets"}
+#  renderflags {clear "pointstars"}
+#  renderflags {clear "ringshadows"}
+#  renderflags {clear "stars"}
+#  renderflags {clear "partialtrajectories"}
+
+
+# Items to be displayed (rendered):
+# DO render the following objects (UNcomment to suit your needs)...
+#  renderflags {set "atmospheres"}
+#  renderflags {set "automag"}
+#  renderflags {set "boundaries"}
+#  renderflags {set "cloudmaps"}
+#  renderflags {set "comettails"}
+#  renderflags {set "constellations"}
+#  renderflags {set "eclipseshadows"}
+#  renderflags {set "galaxies"}
+#  renderflags {set "grid"}
+#  renderflags {set "markers"}
+#  renderflags {set "nightmaps"}
+#  renderflags {set "orbits"}
+#  renderflags {set "planets"}
+#  renderflags {set "pointstars"}
+#  renderflags {set "ringshadows"}
+#  renderflags {set "stars"}
+#  renderflags {set "partialtrajectories"}
+
+
+# Text labels:
+# Do NOT label the following objects (UNcomment to suit your needs)...
+#  labels {clear "asteroids"}
+#  labels {clear "constellations"}
+#  labels {clear "galaxies"}
+#  labels {clear "moons"}
+#  labels {clear "planets"}
+#  labels {clear "spacecraft"}
+#  labels {clear "stars"}
+
+
+# Text labels:
+# DO label the following objects (UNcomment to suit your needs)...
+#  labels {set "asteroids"}
+#  labels {set "constellations"}
+#  labels {set "galaxies"}
+#  labels {set "moons"}
+#  labels {set "planets"}
+#  labels {set "spacecraft"}
+#  labels {set "stars"}
+
+
+# Marker control:
+# Unmark any objects that are currently Marked and disable Marker display...
+# (UNcomment to suit your needs)
+#  unmarkall { }
+
+
+# Minimum orbit diameter to be rendered (in pixels)...
+# (UNcomment / modify  to suit your needs)
+#  set {name "MinOrbitSize"  value 1.0}
+
+
+# Furthest visible star distance, default is 1000000...
+# (UNcomment / modify to suit your needs)
+#  set {name "StarDistanceLimit"  value 1000000}
+
+
+# Time rate (1x, 100x, 1000x, etc.)...
+# (UNcomment / modify to suit your needs)
+#    Negative value = Reverse Time
+#               0   = Pause Time
+#               1.0 = Real Time (default)
+#            1000.0 = Good moon orbit motion
+#
+#  timerate {rate 1.0}
+
+
+#****************************************************************************
+#  If you are using large textures, you can have Celestia pre-load them     *
+#  into your graphics card memory by listing them below.                    *
+#****************************************************************************
+# Examples...
+#  preloadtex {object "earth.*"}
+#  preloadtex {object "earth.png"}
+
+
+#****************************************************************************
+#  orbit is a fun command to play with. The axis is specified in [X Y Z]    *
+#  order, and each axis can be either 0 or 1. rate = how fast, duration =   *
+#  number of seconds. Just make sure you have an object selected.           *
+#****************************************************************************
+#  orbit {axis [0 1 0]  rate 10.0  duration 7.0}
+
+
+#****************************************************************************
+#  To learn more about scripting in Celestia, visit:                        *
+#                                                                           *
+#   * Scripting forum: (http://www.shatters.net/forum/viewforum.php?f=9)    *
+#   * Don G's Celestia page: (http://www.donandcarla.com/Celestia/)         *
+#   * Harald's Celestia page: (http://www.h-schmidt.net/celestia/)          *
+#                                                                           *
+#  Don G's page includes a guide for CEL scripting. Harald's page includes  *
+#  a guide for CELX (Lua) scripting. Both also have example scripts and     *
+#  other goodies.                                                           *
+#****************************************************************************
+
+
+# End of script...
+}

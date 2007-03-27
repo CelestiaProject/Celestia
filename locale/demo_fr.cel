@@ -1,0 +1,162 @@
+# Script de démonstration de Celestia
+# traduction française : Vincent
+# contact : vince.gian@free.fr
+
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Début de la démo...\nPressez [Echap] pour l'arrêter." origin "center" column -10 duration 2 }
+	wait { duration 2.0 }
+
+	print { text "Démarrons tout près de chez nous..." row -5 column 2}
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 26500 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 3.0 }
+	follow {}
+
+	print { text "Nous sommes en orbite autour de\nla Terre à une altitude d'environ 20 000 km." row -5 column 2 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "C'est encore mieux avec des nuages." row -5 column 2}
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+	wait { duration 3 }
+
+	print { text "Étape suivante : la Lune." row -5 column 2 }
+	select { object "Moon" }
+	goto { time 5 distance 5 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "La Terre et le Soleil sont visibles en arrière plan." row -5 column 2}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Direction : le Soleil" row -5 column 2}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "À cette distance, nous pouvons\napercevoir les taches solaires à sa surface." row -5 column 2}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Prenons du recul pour avoir une vue\nd'ensemble du système solaire interne." row -5 column 2}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 5.0 rate 1.0 }
+	
+	print { text "Affichons les noms des planètes..." row -5 column 2}
+	labels { set "planets" }
+	wait { duration 3.0 }
+	print { text "Accélérons le temps pour\nobserver le mouvement des planètes." row -5 column 2}
+	timerate { rate 2592000 }
+	wait { duration 4.0 }
+	print { text "Chaque seconde correspond à un mois." row -5 column 2}
+	wait { duration 7.0 }
+	timerate { rate 1 }
+	print { text "Revenons en temps réel." row -5 column 2}
+	wait { duration 1.0 }
+	print { text "Prochaine destination : Saturne." row -5 column 2}
+	select { object "Saturn" }
+	center { time 2 }
+	renderflags { clear "orbits" }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	labels { clear "planets" }
+	print { text "Les points brillants dans le voisinage\ndes anneaux sont des lunes de Saturne." row -5 column 2 duration 5}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "Mimas est l'une des nombreuses lunes de Saturne.\nSon site le plus remarquable est le cratère Herschel." row -5 column 2 duration 9 }
+	labels { set "locations" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+	labels { clear "locations" }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "À cette distance, le Soleil nous semble bien loin." row -5 column 2 }
+	wait { duration 5 }
+
+	print { text "Intéressons-nous aux étoiles qui nous entourent." row -5 column 2 duration 3 }
+	wait { duration 5 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "Nous sommes centrés sur Polaris, l'étoile Polaire." row -5 column 2}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Polaris fait partie de la constellation de la Petite Ourse." row -5 column 2}
+	wait { duration 3 }
+	
+	print { text "Affichons les limites des constellations..." row -5 column 2}
+	renderflags { set "constellations" }
+	wait { duration 3 }
+	print { text "...ainsi que leurs noms..." row -5 column 2}
+	labels { clear "i18nconstellations" }
+	labels { set "constellations" }
+	wait { duration 3 }
+	print { text "...en français." row -5 column 2}
+	labels { set "i18nconstellations" }
+	wait { duration 4 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Voici la constellation d'Orion." row -5 column 2 duration 3 }
+	wait { duration 6 }
+	
+	select { object "Alioth" }
+	center { time 2 }
+	print { text "Les habitants de l'hémisphère nord\nreconnaîtrons la Grande Ourse." row -5 column 2 duration 4 }
+	wait { duration 6 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "La croix du sud est plus familière\naux habitants de l'hémisphère sud." row -5 column 2 duration 4 }
+	wait { duration 6 }
+
+	print { text "En arrière plan, nous pouvons apercevoir d'autres galaxies..." row -5 column 2 duration 4 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Approchons nous d'Antarès,\nune étoile de la constellation du Scorpion." row -5 column 2 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 7 }
+	wait { duration 5.0 }
+	print { text "Antarès est une géante rouge. Elle est\npresque 500 fois plus grosse que notre Soleil !" row -5 column 2}
+	wait { duration 4.0 }
+
+	print { text "Sortons des limites de notre galaxie..." row -5 column 2}
+	changedistance { duration 10.5 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Voici la Voie Lactée dans sa totalité.\nC'est là que nous habitons." row -5 column 2 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Il est temps de rentrer à la maison.\nEn avant toute, distorsion 2" row -5 column 2}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	timerate { rate 1000 }
+	print { text "La démo est terminée." row -5 column 2}
+	wait { duration 3.0 }
+	
+}
