@@ -1,0 +1,133 @@
+{
+	Name   "Jupiter"
+	Target "Sol/Jupiter"
+	Description "Jupiter, la 5ème planète, est la plus grande de notre
+système solaire. Comme les autres grandes planètes
+externes, Jupiter est une géante gazeuse, sans
+surface solide.  La grande tâche rouge est le plus
+vaste et le plus ancien des ouragans de l'atmosphère
+turbulente de Jupiter; Cette tempête de la taille de la
+Terre dure depuis au moins 300 ans."
+}
+
+{
+	Name "Pluton et Charon"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "Pluton tourne autour du soleil à une distance
+moyenne de près de six milliards de kilomètres.
+Charon, sa principale lune, est si grande que le
+couple a souvent été considéré comme un système
+de 'planètes doubles'."
+}
+
+{
+	Name "Eros"
+	Target "Sol/Eros"
+	Description "Eros est un astéroïde de forme patatoïde d'environ
+33 km de long. Grace à la sonde 'NEAR Shoemaker',
+on en sait plus sur lui que sur tout autre astéroïde.
+Le 14 Février 2001 'NEAR' est descendue sur Eros,
+devenant ainsi la première sonde de l'histoire à
+'atterrir' sur un astéroïde."
+}
+
+{
+	Name "Alpha du Centaure"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "Alpha du Centaure A et B sont, avec Proxima du
+Centaure, nos plus proches étoiles. Alpha Cen A
+est très similaire à notre soleil, quoiqu'un peu plus
+vieille et plus brillante. Alpha Cen B est plus pâle et
+plus rouge. Quant à la lueur de Proxima, elle est si
+faible qu'elle n'est pas visible à l'oeil nu, même
+si elle est l'étoile la plus proche de notre soleil."
+}
+
+{
+	Name "Les Pléïades"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "Le groupe des Pleiades est composé d'étoiles
+brillantes récemment formées. 'Pleiades' est le nom
+donné à sept soeurs de la mythologie grecque.
+Cependant, les télescopes ont révélés qu'il y avait
+beaucoup plus que sept étoiles dans cet ensemble."
+}
+
+{
+	Name "Les Hyades"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "Les Hyades forment le groupement d'étoiles le plus
+visible de notre ciel nocturne. 'Hyades' était le nom
+donné aux cinq filles d'Atlas et d'Aethra. On estime
+que l'age des étoiles qui composent le groupe des
+Hyades est d'environ 660 millions d'années, soit
+plus de 6 fois plus vieilles que l'étoile la plus chaude
+et bleue des Pleiades qui apparait dans notre ciel
+nocturne."
+
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b est une exoplanète qui tourne autour
+d'une naine rouge. Son orbite est en résonnance 2:1
+avec une autre planète connue de ce système."
+}
+
+{
+	Name "Ida et Dactyl"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "La sonde Galileo a photographié l'astéroïde Ida 243
+lors de son voyage vers Jupiter en 1993. Les photos
+ont révélé qu'Ida avait un petit satellite appelé
+Dactyl. Depuis, on a découvert que plusieurs autres
+astéroïdes avaient aussi des satellites."
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "51 Pegasi b a été la première planète découverte
+tournant autour d'une étoile 'normale' autre que notre
+soleil. C'est une géante gazeuse dont l'orbite est très
+proche de son soleil : moins d'un cinquième de la
+distance entre Mercure et notre soleil. Qu'une géante
+gazeuse puisse exister si près d'une étoile a forcé les
+astronomes à sérieusement revoir leurs théories sur la
+formation des systèmes solaires."
+}
+
+{
+	Name "Albireo"
+	Target "Albireo"
+	Distance 0.6
+	Description "A cause du contraste entre les couleurs orange et
+blanc-bleu des étoiles qui le composent, le système
+double d'Albireo est considéré comme le plus beau
+couple de notre ciel nocturne. L'étoile orange est une
+géante de type K, et sa compagne une étoile naine
+de type B."
+}
+
+{
+	Name "Comète Borrelly"
+	Target "Sol/Borrelly"
+	Description "Le 22 Septembre 2001, la comète Borrelly est
+devenue la deuxième comète photographiée de près
+par une sonde. Bien que son vol n'ait pas été prévu
+pour cela, Deep Space 1 s'est approchée à
+seulement 2200 kilomètres du noyau de Borrelly,
+nous offrant ainsi les premières images haute
+résolution du noyau d'une comète."
+}
