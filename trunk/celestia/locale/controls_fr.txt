@@ -1,0 +1,149 @@
+Commandes de contrôle Souris/Clavier pour Celestia
+
+Commandes de contrôle Souris :
+
+Clique-gauche maintenu avec déplacement :    orienter la caméra
+Clique-droit maintenu avec déplacement :    orbiter l'objet sélectionné
+Roulette :    ajuster la distance par rapport à la sélection
+Clique-droit + Clique-gauche maintenus avec déplacement :    ajuster la
+                                                      distance par rapport à la sélection
+Ctrl  + Clique-gauche maintenu avec déplacement :   ajuster la distance
+                                                                   par rapport à la sélection
+Maj + Clique-gauche maintenu avec déplacement :   changer le champ
+                                                       de vue (ex. => vue télescopique)
+Clique-roulette :  basculer le champ de vue entre 45 degrés et le champ
+                                                    précédent (ex. => vue télescopique)
+Clique-gauche :    sélectionner un objet
+Double clique-gauche :    centrer la sélection
+Clique-droit :    afficher le menu contextuel
+
+
+Commandes de contrôle (raccourcis) Clavier :
+
+Navigation :
+H :    Sélectionner le Soleil (Home)
+C :    Centrer l'objet sélectionné (Center)
+G :    Aller à l'objet sélectionné (Goto)
+F :    Suivre l'objet sélectionné (Follow)
+Y :    Se mettre en orbite synchrone par rapport à l'objet sélectionné
+:  :    Verrouiller l'objet sélectionné
+"  :    Chasser l'objet sélectionné (l'orientation est basée sur la vitesse de la
+        sélection)
+T :    Pister l'objet sélectionné (garder l'objet sélectionné centré sur l'écran)
+DEBUT :    Se rapprocher d'un objet
+*  :    Vue à 180° (regarder en arrière)
+FIN :    S'éloigner d'un objet
+Echap :    Annuler un déplacement ou un script
+Maj+C :    Centrer/orbiter -- centrer l'objet sélectionné sans changer la position
+               de l'object de référence.
+Flèches directionnelles Gauche / Droite :    Pivoter la caméra dans le plan de
+                                                               l'écran
+Flèches directionnelles Haut / Bas :    Pivoter la caméra dans un plan vertical
+Maj+Flèches :    Orbiter un objet
+1-9 :    Sélectionner les planètes présentes autour d'une étoile
+
+Temps :
+Espace :    Arrêter le temps
+L :    Accélérer le temps > 10x plus vite
+K :    Rallentir le temps > 10x moins vite
+J :    Inverser le temps
+! :    Régler le temps sur la date actuelle 
+? :    Afficher le temps de trajet de la lumière entre l'observateur et l'objet
+       sélectionné
+- :    Activer / Désactiver l'inclusion du temps de trajet de la lumière dans
+       la date de simulation actuelle.
+
+Affichage des Noms et Repères :
+= :    Activer / Désactiver l'affichage du nom des constellations
+B :    Activer / Désactiver l'affichage du nom des étoiles
+E :    Activer / Désactiver l'affichage du nom des galaxies
+M :    Activer / Désactiver l'affichage du nom des lunes
+W :    Activer / Désactiver l'affichage du nom des comètes et astéroïdes
+N :    Activer / Désactiver l'affichage du nom des astronefs
+P :    Activer / Désactiver l'affichage du nom des planètes
+& :    Activer / Désactiver l'affichage du nom des repères
+
+V :    Basculer entre les différents niveaux d'affichage du texte d'information
+
+Options de rendu :
+I :     Activer / Désactiver l'affichage des textures de nuages
+U :    Activer / Désactiver l'affichage des galaxies
+O :    Activer / Désactiver l'affichage des orbites des planètes
+/ :    Activer / Désactiver l'affichage des constellations
+^ :    Activer / Désactiver l'affichage des nébuleuses
+% :    Basculer entre les différentes tables de couleur des étoiles
+; :    Activer / Désactiver l'affichage de la grille céleste
+[ :    Si Magnitudes Automatiques DESACTIVÉES : baisser la magnitude limite
+       (moins d'étoiles visibles)
+       Si Magnitudes Automatiques ACTIVÉES : baisser la magnitude limite à 45°
+] :    Si Magnitudes Automatiques DESACTIVÉES : augmenter la magnitude limite
+       (plus d'étoiles visibles)
+       Si Magnitudes Automatiques ACTIVÉES : augmenter la magnitude limite à 45°
+{ :    Diminuer l'intensité de la lumière ambiante
+} :    Augmenter l'intensité de la lumière ambiante
+( :    Diminuer la luminosité des galaxies indépendemment de celle des étoiles
+) :    Augmenter la luminosité des galaxies indépendemment de celle des étoiles
+, :    Réduire le champ de vue
+. :    Élargir le champ de vue
+Retour arrière :    Annuler la sélection courante
+Ctrl+A :    Activer / Désactiver l'affichage des atmosphères
+Ctrl+B :    Activer / Désactiver l'affichage des limites des constellations
+Ctrl+E :    Activer / Désactiver l'affichage du rendu des ombres des éclipses
+Ctrl+K :    Activer / Désactiver l'affichage des marqueurs
+Ctrl+L :    Activer / Désactiver l'affichage des textures nocturnes
+Ctrl+P :    Activer / Désactiver le marquage de l'objet sélectionné
+Ctrl+S :    Basculer entre les différents styles de rendu des étoiles : 
+               points flous, points, échelles de disques
+Ctrl+T :    Activer / Désactiver l'affichage du rendu des queues des comètes
+Ctrl+V :    Basculer entre les différents chemins de rendu supportés
+Ctrl+W :    Activer / Désactiver l'affichage en mode "fil de fer"
+Ctrl+X :    Activer / Désactiver l'anticrénelage
+Ctrl+Y :    Activer / Désactiver les Magnitudes automatiques = adaptation
+               automatique de la visibilité des étoiles en fonction du champ de vue
+r R :    Diminuer ou augmenter la résolution des textures
++  :    Basculer entre les textures "artistique" et "monde connu" des planètes
+
+Vues multiples :
+Ctrl+R : Scinder la vue verticalement
+Ctrl+U : Scinder la vue horizontalement
+TAB    : Basculer entre les différentes vues actives
+DEL    : Supprimer la vue active
+Ctrl+D    : Supprimer toutes les vues sauf la vue active
+
+Voyage spatial :
+F1 :    S'arrêter 
+F2 :    Régler la vitesse sur 1 km/s
+F3 :    Régler la vitesse 1,000 km/s
+F4 :    Régler la vitesse sur celle de la lumière
+F5 :    Régler la vitesse sur 10x la vitesse de la lumière
+F6 :    Régler la vitesse 1 ua/s
+F7 :    Régler la vitesse 1 al/s
+A  :    Augmenter la vitesse
+Z  :    Diminuer la vitesse
+Q  :    Inverser la direction du déplacement
+X  :    Régler la direction du déplacement vers le centre de l'écran
+
+Clavier numérique :
+4  : Virer à gauche
+6  : Virer à droite
+8  : Pivoter vers le bas
+2  : Pivoter vers le haut
+7  : Pivoter vers la gauche
+9  : Pivoter vers la droite
+5  : Arrêter la rotation
+
+Manette de jeu :
+axe X  : Pivoter horizontalement
+axe Y : Pivoter verticalement
+bouton de gauche :    Pivoter vers la gauche
+bouton de droite :    Pivoter vers la droite
+bouton 1 :    Plus lentement
+bouton 2 :    Plus vite
+
+Autres :
+D :    Lancer la démo
+F8 :    Activer / Désactiver l'utilisation de la manette de jeu
+F10 :    Effectuer une capture d'image
+` :    Afficher le nombre d'images rendues par seconde
+Entrée :    Sélectionner un objet en tapant son nom
+Ctrl+C, Ctrl+Inser :    Copier une URL dans le Presse-Papier

@@ -1,0 +1,150 @@
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Startar demo . . .\nTryck ESC för att avsluta." origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "Let's start near home . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "Vi kretsar nu ungefär 12 500 km ovanför jorden." row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Jorden ser mycket mer bekant ut med moln." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Nästa stopp: Månen." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Titta efter jorden och solen medan vi kretsar runt månen." row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Mot solen!" row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "På det här avståndet så kan vi de de mörka solfläckarna på solens yta." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Låt oss zooma ut så att vi får en överblick över det inre solsystemet." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Aktiverar planetetiketter . . ." row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "Genom att accelerera tiden så kan vi se planeterna röra sig runt solen." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "För varje sekund som går så passerar en månad i simuleringen." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Nu har tiden helt stannat." row -3}
+
+	wait { duration 1.0 }
+	print { text "Vår nästa destination är Saturnus." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Flera av Saturnus månar är synliga som ljusa prickar." row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "Den mest framträdande formationen på Saturnusmånen Mimas är den enorma nedslagskratern Herschel." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Se hur svag solen är på det här avståndet." row -3 }
+	wait { duration 2 }
+
+	print { text "Låt oss nu ta en titt på himlens stjärnor." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Invånare på norra halvklotet bör känna igen Karlavagnen i stjärnbilden Stora Björnen." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "WE'RE NOW CENTERED ON Polaris, nordstjärnan." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Polaris är en del av den  asterism som vanligtvis kallas Lilla Björnen." row -3}
+	wait { duration 2 }
+	print { text "För att hjälpa oss med orienteringen på himlavalvet så kan Celestia rita upp diagram över sjärnbilderna . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . och visa stjärnbildernas namn." row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orion är himlens mest framträdande stjärnbild." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Det södra korset är en välkänd syn på södra halvklotets himmel." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Låt oss aktivera visningen av galaxer så att vi kan se Vintergatan." row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Nu ska vi resa till Antares, en röd jättestjärna i Skorpionen." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "Trots att vi nu befinner oss tio gånger längre bort från Antares än vad\njorden är från solen så tornar denna massiva, röda jätte ändå upp sig på himlen." row -3}
+	wait { duration 4.0 }
+
+	print { text "Nu zoomar vi ut så att vi kan se helheten . . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Vi ser nu hela Vintergatan." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Dags att åka hem . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Demo avslutad." row -3}
+	wait { duration 3.0 }
+}

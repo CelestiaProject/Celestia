@@ -1,0 +1,81 @@
+# Translation to Portuguese of guide.cel
+# Translator: José Raeiro
+# Contact: zeraeiro@gmail.com
+
+
+{
+	Name   "Jupiter"
+	Target "Sol/Jupiter"
+	Description "Júpiter é o maior planeta no Sistema Solar e o quinto a contar do Sol. Como os outros planetas exteriores grandes, Júpiter é um gigantes gasoso, sem superfície sólida. A Grande Mancha Vermelha é a tempestade maior e mais antiga entre muitas da atmosfera turbulenta de Júpiter; esta tempestade do tamanho da Terra existe há pelo menos 300 anos."
+}
+
+{
+	Name "Pluto and Charon"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "Plutão orbita o nosso Sol a uma distância média de quase seis mil milhões de quilómetros. A sua Lua principal, Caronte, é tão grande, que os dois normalmente são apelidados de planetóide duplo."
+}
+
+{
+	Name "Eros"
+	Target "Sol/Eros"
+	Description "Eros é um asteróide near-Earth em forma de batata com cerca de 33 km de comprimento. Graças à sonda NEAR Shoemaker, sabe-se mais acerca de Eros do que qualquer outro asteróide. Em 14 de Fev de 2001, a NEAR aterrou em Eros e tornou-se a primeira sonda a ter aterrado num asteróide."
+}
+
+{
+	Name "Alpha Centauri"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "As Alfa do Centauro A e B formam, juntamente com a Próxima do Centauro, o sistema estelar mais próximo de nós. A Alfa do Cen A é muito parecida com o nosso Sol, apesar de ligeiramente mais velha e brilhante. A B é mais ténue e mais avermelhada, e a Próxima é tão ténue que não pode ser vista a olho nu apesar de ser a estrela mais próxima do Sol."
+}
+
+{
+	Name "Pleiades"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "O enxame estelar das Plêiades é um grupo de estrelas brilhantes recentemente formadas. As Plêiades foram baptizadas em honra das sete irmãs da mitologia grega, apesar dos telescópios terem revelado que existe consideravelmente um maior número de estrelas no enxame."
+}
+
+{
+	Name "Hyades"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "Baptizado em honra das cinco filhas de Atlas e de Aethra, as Híades são um dos enxames abertos mais proeminentes do céu. Estima-se que as estrelas das Híades têm aproximadamente  660 milhões de anos de idade--seis vezes mais velhas que as estrelas das Plêiades, mais quentes e azuis, que aparecem próximas no nosso céu nocturno."
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "O Gliese 876 b é um planeta gigante a orbitar uma estrela anã-vermelha. Está em ressonância orbital 2:1 com o outro planeta conhecido no sistema."
+}
+
+{
+	Name "Ida and Dactyl"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "A Sonda Galileo fotografou o asteróide 243 Ida em 1993 na sua viagem para Júpiter. Estas fotografias revelaram que Ida tinha um pequeno satélite que foi posteriormente baptizado por Dactyl. Vários outros asteróides com satélites foram posteriormente descobertos."
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "51 do Pégaso b foi o primeiro planeta a ser descoberto a orbitar uma estrela que não o Sol. É um planeta gigante gasoso e orbita extremamente próximo da sua esterla mãe--menos que um quinto da distância entre Mercúrio e o nosso Sol. O facto de ser possível existir um gigante gasoso tão próximo de uma estrela obrigou os astrónomos a rever seriamente as teorias acerca da formação do Sistema Solar."
+}
+
+{
+	Name "Albireo"
+	Target "Albireo"
+	Distance 0.6
+	Description "Por causa das cores contrastantes de laranja e azul-claro das suas estrelas componentes, o sistema estelar duplo de Albireu é considerado um dos mais belos pares do céu. A estrela laranja é uma gigante de Classe K, e a sua companheira é uma anã de Classe B."
+}
+
+{
+	Name "Comet Borrelly"
+	Target "Sol/Borrelly"
+	Description "Em 22 de Setembro de 2001, o Cometa Borrely tornou-se o segundo cometa a ser fotografado de perto por uma sonda. Apesar de não ter sido desenhada para sobrevooar um cometa, a Deep Space 1 aproximou-se a 2200 quilómetros do núcleo do Borrely e enviou de volta as fotografias de maior resolução que temos do núcleo de um cometa."
+}

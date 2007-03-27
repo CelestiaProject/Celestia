@@ -1,0 +1,76 @@
+{
+	Name   "목성"
+	Target "Sol/Jupiter"
+	Description "Jupiter is the largest planet in our solar system and the fifth from the sun.  Like the other large outer planets, Jupiter is a gas giant, with no solid surface.  The Great Red Spot is the biggest and longest-lived of the many storms in Jupiter's turbulent atmosphere; this Earth-sized tempest has been around for at least 300 years."
+}
+
+{
+	Name "명왕성과 카론"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "Pluto orbits our sun at a average distance of nearly six billion kilometers.  Its single known moon Charon is so large, that the two are often referred to as a 'double planet'."
+}
+
+{
+	Name "에로스"
+	Target "Sol/Eros"
+	Description "Eros is a potato-shaped near-Earth asteroid about 33 km long.  Thanks to the NEAR Shoemaker spacecraft, more is known about Eros than any other Asteroid.  On Feb 14, 2001 NEAR descended on Eros and became the first spacecraft ever to land on an asteroid."
+}
+
+{
+	Name "켄타우루스 자리의 알파(α)별"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "Alpha Centauri A and B are together with Proxima Centauri, the nearest star system to us.  Alpha Cen A is very similar to our own Sun, though slightly older and brighter.  B is dimmer and redder, and Proxima is so dim that it is can't be seen by the naked eye even though it is the star nearest to the Sun."
+}
+
+{
+	Name "플레이아데스"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "The Pleiades star cluster is a group of bright recently-formed stars.  The Pleiades are named for the seven sisters from Greek mythology, though telescopes have revealed that there are considerable more than seven stars in the cluster."
+}
+
+{
+	Name "히아데스"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "Named for the five daughters of Atlas and Aethra, the Hyades is one of the most prominent open star clusters in the sky.  It is estimated that the stars of the Hyades are approximately 660 million years old--over six times older than the hotter, bluer Pleiades stars which appear nearby in our night sky."
+}
+
+{
+	Name "글리스 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b is a giant planet orbiting a red dwarf star.  It is in a 2:1 orbital resonance with the other known planet in the system."
+}
+
+{
+	Name "이다와 다크릴"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "The Galileo spacecraft photographed the asteroid 243 Ida in 1993 on its way to Jupiter.  These pictures revealed that Ida had a tiny satellite that was later named Dactyl.  Several other asteroids have since been discovered also to have satellites."
+}
+
+{
+	Name "페가수스 자리 51번항성 b"
+	Target "51 Peg/b"
+	Description "51 Pegasi b was the first planet discovered orbiting a normal star other than our Sun.  It is a gas giant planet and orbits extremely close to its parent star--less than one fifth the distance between Mercury and our sun.  That a gas giant could exist so close to a star has forced astronomers to seriously revise their theories of solar system formation."
+}
+
+{
+	Name "알비레오"
+	Target "Albireo"
+	Distance 0.6
+	Description "Because of the contrasting orange and blue-white colors of its component stars, the Albireo double star system is considered one of the most beautiful pairs in the sky.  The orange star is a Type K giant, and its companion is a B dwarf."
+}
+
+{
+	Name "보렐리 혜성"
+	Target "Sol/Borrelly"
+	Description "One September 22, 2001, Comet Borrelly became the second comet to be imaged at close range by a spacecraft.  Despite not being designed for a comet flyby, Deep Space 1 approached within 2200 kilometers of the Borrelly's nucleus to return the highest resolution pictures we have of a cometary core."
+}

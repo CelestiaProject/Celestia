@@ -1,0 +1,139 @@
+Mus- och tangentbordskontroller för Celestia
+
+Musfunktioner:
+
+Vänsterdrag:         flytta kameran
+Högerdrag:           kretsa runt det markerade objektet i valfri riktning
+Mushjul:             ändra avståndet till markerat objekt
+Höger + vänsterdrag: ändra avståndet till markerat objekt
+Ctrl  + vänsterdrag: ändra avståndet till markerat objekt
+Skift + vänsterdrag: ändra synfält (t.ex. => teleskopvy)
+Hjulklick (mittenknappen):  växla mellan 45-graders synfält och 
+                            och det föregående synfälktet(t.ex. teleskopvy)
+Vänster - klick:     markera objekt 
+Vänster dubbelklick: centrera markering
+Höger - klick:       visa snabbvalsmeny
+
+Tangentbordskommandon:
+
+Navigering:
+H    : Markera solen (Hem)
+C    : Centrera markerat objekt
+G    : Gå till markerat objekt
+F    : Följ markerat objekt
+Y    : Kretsa runt ett markerat objekt i en hastighet som är 
+       synkroniserad med objektets rotation
+:    : Lås på markerat objekt
+"    : Jaga markerat objekt (orientering är baserad på markeringens hastighet)
+T    : Spåra markerat objekt (behåll markerat objekt centrerad i synfältet)
+HOME : Flytta närmare objektet
+*    : Se bakåt
+END  : Flytta längre bort från objektet
+ESC  : Avbryt rörelse eller skript
+Skift+C : Centrera/kretsa--centrera markerat objekt utan att ändra
+          positionen för referensobjektet.
+Vänster/högerpilar : Vrid kamera
+Upp/nedpilar       : Ändra kameravinkel
+Skift+piltangenter : Kretsa runt objekt
+1-9                : Markera planeter runt närliggande sol
+
+Tid:
+Blanksteg : stoppa tiden
+L         : Tid 10x snabbare
+K         : Tid 10x långsammare
+J         : Omvänd tid
+!         : Ställ in tid till nutid
+?         : Visa ljusförskjutning mellan observatör och markerat objekt
+-         : Räkna bort ljusförskjutning från aktuell simulerad tid
+
+Etiketter:
+=  : Växla etiketter för stjärnbilder
+B  : Växla etiketter för stjärnor
+E  : Växla etiketter för galaxer
+M  : Växla etiketter för månar
+W  : Växla etiketter för asteroid- och komet
+N  : Växla etiketter för rymdfarkoster
+P  : Växla etiketter för planeter
+&  : Växla etiketter för geografiska platser
+
+V  : Växla informationsnivå för text
+
+Alternativ:
+I  : Växla molntexturer
+U  : Växla visning av galaxer
+O  : Växla planeternas omloppsbanor
+/  : Växla diagram över stjärnbilder
+^  : Växla visning av nebulosor
+%  : Växla färgtabeller för stjärnor
+;  : Visa en jordbaserad ekvatorial koordinatsfär
+[  : Om autoMag är AV : Minska magnitud (färre antal stjärnor synliga)
+     Om autoMag är PÅ : Minska magnitud vid ett synfält om 45 grader
+]  : Om autoMag är AV : Öka magnitud (fler antal stjärnor synliga)
+     Om autoMag är PÅ : Öka magnitud vid ett synfält om 45 grader
+{  : Minska omgivande ljus
+}  : Öka omgivande ljus
+(  : Minska galaxers ljusstyrka oberoende av stjärnors ljusstyrka
+)  : Öka galaxers ljusstyrka oberoende av stjärnors ljusstyrka
+,  : Minska synfältet
+.  : Öka synfälet
+Backsteg: Cancel current selection
+Ctrl+A  : Vaxla atmosfärer
+Ctrl+B  : Vaxla stjärnbildernas gränser
+Ctrl+E  : Vaxla förmörkelseskuggor
+Ctrl+K  : Vaxla visning av markeringar
+Ctrl+L  : Vaxla nattljus
+Ctrl+P  : Markera valt objekt
+Ctrl+S  : Växla stjärnor som punkter, skivor eller suddiga punkter
+Ctrl+T  : Vaxla visning av kometsvansar
+Ctrl+V  : Växla mellan olika OpenGL-metoder som stöds
+Ctrl+W  : Vaxla trådmodellsläge
+Ctrl+X  : Vaxla kantutjämning
+Ctrl+Y  : Vaxla autoMag = automatisk anpassning av mängden synliga stjärnor
+          i synfältet
+r R: minska eller öka texturupplösning
++  : Växla mellan artistiska eller kunskapsbegränsade planettexturer
+
+Multivy:
+Ctrl+R : Dela vy vertikalt
+Ctrl+U : Dela vy horisonelltSplit view horizontally
+TAB    : Växla mellan aktiva vyer
+DEL    : Ta bort aktiv vy
+Ctrl+D : Ta bort alla vyer förutom den aktiva
+
+Rymdfärd:
+F1 : Stanna 
+F2 : Ställ in hastighet till 1 km/s
+F3 : Ställ in hastighet till 1000 km/s
+F4 : Ställ in hastighet till ljusets hastighet
+F5 : Ställ in hastighet till 10x ljusets hastighet.
+F6 : Ställ in hastighet till 1 ae/s
+F7 : Ställ in hastighet till 1 ly/s
+A  : Öka hastighet
+Z  : Minska hastighet
+Q  : Backa
+X  : Ställ in rörelseriktningen mot skärmens centrum
+
+Numeriska tangentbordet:
+4  : Gira vänster
+6  : Gira höger
+8  : Luta nedåt
+2  : Luta uppåt
+7  : Rotera vänster
+9  : Rotera höger
+5  : Stoppa rotering
+
+Styrspak:
+X-axel : gira
+Y-axel : lutning
+V avtryckare : rotera åt vänster
+H avtryckare : rotera åt höger
+Knapp 1 : långsammare
+Knapp 2 : snabbare
+
+Övrigt:
+D     : Kör demonstration
+F8    : Aktivera styrspak
+F10   : Fånga bild till fil
+`     : Visa antalet utritade bilder per sekund
+ENTER : Markera en stjärna eller planet genom att ange dess namn
+Ctrl+C, Ctrl+INS : Kopiera platsens url till urklipp
