@@ -1,4 +1,4 @@
-# Catalog of 215 known extrasolar planets.
+# Catalog of 216 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -3915,6 +3915,36 @@ AltSurface "limit of knowledge" "HD 40979/b"
 }
 
 AltSurface "limit of knowledge" "HD 150706/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 73108"   # Pi2 UMa
+{
+	Texture "exo-class4.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       2260     # M.sin(i) = 7.1 jupiters
+	Radius     84000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=4+Uma"
+
+	EllipticalOrbit {
+		Period          0.7373
+		SemiMajorAxis   0.87
+		Eccentricity    0.432
+		ArgOfPericenter 227
+		MeanAnomaly     232
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 73108/b"
 {
 	Texture "extrasolar-lok.*"
 }
