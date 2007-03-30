@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# Version 1.26 (2006 October 19)
+# Version 1.29 (2007 Mar 28)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -1670,7 +1670,7 @@
 	Albedo 0.06
 }
 
-"2006S6" "Sol/Saturn" # MPEC 2006-M45
+"2006S6" "Sol/Saturn" # MPEC 2007-D79
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1678,14 +1678,14 @@
 
 	EllipticalOrbit
 	{
-	Epoch		2453800.5	# 2006 Mar 6
-	Period		943.78
-	SemiMajorAxis	18556900
-	Eccentricity	0.1917531
-	Inclination	163.871
-	AscendingNode	231.969
-	ArgOfPericenter 249.876     
-	MeanAnomaly     269.166              
+	Epoch		2454200.5	# 2007 Apr 10
+	Period		978.75
+	SemiMajorAxis	19012500
+	Eccentricity	0.1929545
+	Inclination	164.138
+	AscendingNode	232.487
+	ArgOfPericenter 234.702     
+	MeanAnomaly      70.074
 	}
 
 	RotationPeriod  10   # Guess
@@ -1899,7 +1899,7 @@
 
 # Additional moons of Neptune
 
-"2002N1" "Sol/Neptune"
+"Halimede" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1921,7 +1921,7 @@
 	Albedo 0.155
 }
 
-"2002N2" "Sol/Neptune"
+"Sao" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1943,7 +1943,7 @@
 	Albedo 0.155
 }
 
-"2002N3" "Sol/Neptune"
+"Laomedeia" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1965,7 +1965,7 @@
 	Albedo 0.155
 }
 
-"2002N4" "Sol/Neptune"
+"Neso" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -2071,3 +2071,4 @@
 
 	Albedo 0.35 # estimate, based on Charon
 }
+
