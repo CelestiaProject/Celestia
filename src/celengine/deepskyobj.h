@@ -53,11 +53,10 @@ class DeepSkyObject
     float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
 
-    std::string getHubbleType() const;
-    void setHubbleType(const std::string&);
-
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
+
+    virtual const char* getObjTypeName() const = 0;
 
     virtual bool pick(const Ray3d& ray,
                       double& distanceToPicker,
@@ -83,7 +82,6 @@ class DeepSkyObject
     Quatf        orientation;
     float        radius;
     float        absMag;
-    std::string* hubbleType;
     std::string* infoURL;
 };
 

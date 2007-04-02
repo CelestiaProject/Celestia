@@ -32,7 +32,6 @@ DeepSkyObject::DeepSkyObject() :
     orientation(1),
     radius(1),
     absMag(DSO_DEFAULT_ABS_MAGNITUDE),
-    hubbleType(NULL),
     infoURL(NULL)
 {
 }
@@ -91,22 +90,6 @@ size_t DeepSkyObject::getDescription(char* buf, size_t bufLength) const
     if (bufLength > 0)
         buf[0] = '\0';
     return 0;
-}
-
-string DeepSkyObject::getHubbleType() const
-{
-    if (hubbleType == NULL)
-        return "";
-    else
-        return *hubbleType;
-}
-
-void DeepSkyObject::setHubbleType(const string& s)
-{
-    if (hubbleType == NULL)
-        hubbleType = new string(s);
-    else
-        *hubbleType = s;
 }
 
 string DeepSkyObject::getInfoURL() const
@@ -172,10 +155,6 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     if (params->getNumber("AbsMag", absMag))
         setAbsoluteMagnitude((float) absMag);
 
-   string hubbleType;
-    if (params->getString("Type", hubbleType))
-        setHubbleType(hubbleType);
- 
     string infoURL;
     if (params->getString("InfoURL", infoURL))
     {

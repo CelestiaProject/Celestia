@@ -2337,8 +2337,7 @@ static int object_type(lua_State* l)
         break;
 
     case Selection::Type_DeepSky:
-        // TODO: return cluster, galaxy, or nebula as appropriate
-        tname = "deepsky";
+        tname = sel->deepsky()->getObjTypeName();
         break;
 
     case Selection::Type_Location:
@@ -2514,17 +2513,16 @@ static int object_getinfo(lua_State* l)
     }
     else if (sel->deepsky() != NULL)
     {
-        setTable(l, "type", "deepsky");
         DeepSkyObject* deepsky = sel->deepsky();
+        const char* objTypeName = deepsky->getObjTypeName();
+        setTable(l, "type", objTypeName);
+
         setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
                            ->getDSOCatalog()->getDSOName(deepsky).c_str());
         setTable(l, "catalogNumber", deepsky->getCatalogNumber());
-        
-        string hubbleType = deepsky->getHubbleType(); 
-        if (hubbleType != "") 
-        { 
-            setTable(l, "hubbleType", hubbleType.c_str()); 
-        } 
+
+        if (objTypeName == "galaxy")
+            setTable(l, "hubbleType", deepsky->getType());
         
         setTable(l, "absoluteMagnitude", (lua_Number)deepsky->getAbsoluteMagnitude());
         setTable(l, "radius", (lua_Number)deepsky->getRadius());
