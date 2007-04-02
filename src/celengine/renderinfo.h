@@ -27,6 +27,7 @@ struct RenderInfo
     float lunarLambert;
     Quatf orientation;
     float pixWidth;
+    float pointScale;
     bool useTexEnvCombine;
 
     RenderInfo() : color(1.0f, 1.0f, 1.0f),

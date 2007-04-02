@@ -4977,6 +4977,7 @@ void Renderer::renderObject(Point3f pos,
     ri.orientation = cameraOrientation;
 
     ri.pixWidth = discSizeInPixels;
+    ri.pointScale = obj.radius / pixelSize;
 
     // Set up the colors
     if (ri.baseTex == NULL ||
