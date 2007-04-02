@@ -251,11 +251,13 @@ void renderModel_GLSL(Model* model,
         rc.setAtmosphere(atmosphere);
     }
 
+    rc.setPointScale(ri.pointScale);
+
     // Handle extended material attributes (per model only, not per submesh)
     rc.setLunarLambert(ri.lunarLambert);
 
-    // Handle material override; a texture specified in an ssc file will override
-    // all materials specified in the model file.
+    // Handle material override; a texture specified in an ssc file will
+    // override all materials specified in the model file.
     if (texOverride != InvalidResource)
     {
         Mesh::Material m;

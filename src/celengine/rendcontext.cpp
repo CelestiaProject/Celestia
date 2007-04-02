@@ -26,7 +26,8 @@ static GLenum GLPrimitiveModes[Mesh::PrimitiveTypeMax] =
     GL_TRIANGLE_FAN,
     GL_LINES,
     GL_LINE_STRIP,
-    GL_POINTS
+    GL_POINTS,
+    GL_POINTS,
 };
 
 static GLenum GLComponentTypes[Mesh::FormatMax] =
@@ -50,6 +51,7 @@ static int GLComponentCounts[Mesh::FormatMax] =
 
 enum {
     TangentAttributeIndex = 6,
+    PointSizeAttributeIndex = 7,
 };
 
 
@@ -64,7 +66,10 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 RenderContext::RenderContext() :
     material(&defaultMaterial),
     locked(false),
-    renderPass(PrimaryPass)
+    usePointSize(false),
+    useNormals(true),
+    renderPass(PrimaryPass),
+    pointScale(1.0f)
 {
 }
 
@@ -83,6 +88,13 @@ static void setVertexArrays(const Mesh::VertexDescription& desc)
 {
 }
 #endif
+
+
+const Mesh::Material*
+RenderContext::getMaterial() const
+{
+    return material;
+}
 
 
 void
@@ -115,6 +127,20 @@ RenderContext::setMaterial(const Mesh::Material* newMaterial)
 
 
 void
+RenderContext::setPointScale(float _pointScale)
+{
+    pointScale = _pointScale;
+}
+
+
+float
+RenderContext::getPointScale() const
+{
+    return pointScale;
+}
+
+
+void
 RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 {
     // Skip rendering if this is the emissive pass but there's no
@@ -125,10 +151,21 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
         return;
     }
 
+    if (group.prim == Mesh::SpriteList)
+    {
+        glEnable(GL_POINT_SPRITE_ARB);
+        glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+    }
+
     glDrawElements(GLPrimitiveModes[(int) group.prim],
                    group.nIndices,
                    GL_UNSIGNED_INT,
                    group.indices);
+
+    if (group.prim == Mesh::SpriteList)
+    {
+        glDisable(GL_POINT_SPRITE_ARB);
+    }
 }
 
 
@@ -176,11 +213,6 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
             t->bind();
         }
 
-        glColor4f(m.diffuse.red(),
-                  m.diffuse.green(),
-                  m.diffuse.blue(),
-                  m.opacity);
-
         bool blendOnNow = false;
         if (m.opacity != 1.0f || (t != NULL && t->hasAlpha()))
             blendOnNow = true;
@@ -204,31 +236,56 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
             }
         }
 
-        if (m.specular == Color::Black)
+        if (useNormals)
         {
-            float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-            float zero = 0.0f;
-            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-            glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
-            specularOn = false;
+            glColor4f(m.diffuse.red(),
+                      m.diffuse.green(),
+                      m.diffuse.blue(),
+                      m.opacity);
+
+            if (m.specular == Color::Black)
+            {
+                float matSpecular[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+                float zero = 0.0f;
+                glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+                glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+                specularOn = false;
+            }
+            else
+            {
+                float matSpecular[4] = { m.specular.red(),
+                                         m.specular.green(),
+                                         m.specular.blue(),
+                                         0.0f };
+                glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+                glMaterialfv(GL_FRONT, GL_SHININESS, &m.specularPower);
+                specularOn = true;
+            }
+            
+            {
+                float matEmissive[4] = { m.emissive.red(),
+                                         m.emissive.green(),
+                                         m.emissive.blue(),
+                                         0.0f };
+                glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
+            }
         }
         else
         {
-            float matSpecular[4] = { m.specular.red(),
-                                     m.specular.green(),
-                                     m.specular.blue(),
-                                     0.0f };
-            glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
-            glMaterialfv(GL_FRONT, GL_SHININESS, &m.specularPower);
-            specularOn = true;
-        }
-
-        {
-            float matEmissive[4] = { m.emissive.red(),
-                                     m.emissive.green(),
-                                     m.emissive.blue(),
-                                     0.0f };
-            glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
+            // When lighting without normals, we'll just merge everything
+            // into the emissive color. This makes normal-less lighting work
+            // more like it does in the GLSL path, though it's not very
+            // useful without shadows.
+            float matBlack[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, matBlack);
+            glMaterialfv(GL_FRONT, GL_SPECULAR, matBlack);
+            {
+                float matEmissive[4] = { m.emissive.red() + m.diffuse.red(),
+                                         m.emissive.green() + m.diffuse.green(),
+                                         m.emissive.blue() + m.diffuse.blue(),
+                                         m.opacity };
+                glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
+            }
         }
     }
     else if (getRenderPass() == EmissivePass)
@@ -253,6 +310,17 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 void
 FixedFunctionRenderContext::setVertexArrays(const Mesh::VertexDescription& desc, void* vertexData)
 {
+    // Update the material if normals appear or disappear in the vertex
+    // description.
+    bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
+
+    if (useNormalsNow != useNormals)
+    {
+        useNormals = useNormalsNow;
+        if (getMaterial() != NULL)
+            makeCurrent(*getMaterial());
+    }
+
     setStandardVertexArrays(desc, vertexData);
 }
 
@@ -366,6 +434,23 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
         glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
         break;
     }
+
+    const Mesh::VertexAttribute& pointsize = desc.getAttribute(Mesh::PointSize);
+    switch (pointsize.format)
+    {
+    case Mesh::Float1:
+        glx::glEnableVertexAttribArrayARB(PointSizeAttributeIndex);
+        glx::glVertexAttribPointerARB(PointSizeAttributeIndex,
+                                      GLComponentCounts[(int) pointsize.format],
+                                      GLComponentTypes[(int) pointsize.format],
+                                      GL_FALSE,
+                                      desc.stride,
+                                      vertices + pointsize.offset);
+        break;
+    default:
+        glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+        break;
+    }
 }
 
 
@@ -388,6 +473,7 @@ GLSL_RenderContext::~GLSL_RenderContext()
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
+    glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
 }
 
 
@@ -429,10 +515,19 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
 
-    if (lunarLambert == 0.0f)
-        shaderProps.lightModel = ShaderProperties::DiffuseModel;
+    if (useNormals)
+    {
+        if (lunarLambert == 0.0f)
+            shaderProps.lightModel = ShaderProperties::DiffuseModel;
+        else
+            shaderProps.lightModel = ShaderProperties::LunarLambertModel;
+    }
     else
-        shaderProps.lightModel = ShaderProperties::LunarLambertModel;
+    {
+        // "particle diffuse" lighting is the only type that doesn't
+        // depend on having a surface normal.
+        shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
+    }
 
     if (m.maps[Mesh::DiffuseMap] != InvalidResource)
     {
@@ -458,7 +553,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         }
     }
 
-    if (m.specular != Color::Black)
+    if (m.specular != Color::Black && useNormals)
     {
         shaderProps.lightModel = ShaderProperties::PerPixelSpecularModel;
         specTex = GetTextureManager()->find(m.maps[Mesh::SpecularMap]);
@@ -483,6 +578,9 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
             textures[nTextures++] = emissiveTex;
         }
     }
+
+    if (usePointSize)
+        shaderProps.texUsage |= ShaderProperties::PointSprite;
 
     if (atmosphere != NULL)
     {
@@ -530,6 +628,11 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius);
     }
 
+    if ((shaderProps.texUsage & ShaderProperties::PointSprite) != 0)
+    {
+        prog->pointScale = getPointScale();
+    }
+
     bool blendOnNow = false;
     if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
         blendOnNow = true;
@@ -554,10 +657,26 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
 void
 GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
-                                     void* vertexData)
+                                    void* vertexData)
 {
     setStandardVertexArrays(desc, vertexData);
     setExtendedVertexArrays(desc, vertexData);
+
+    // Normally, the shader that will be used depends only on the material.
+    // But the presence of point size and normals can also affect the
+    // shader, so force an update of the material if those attributes appear
+    // or disappear in the new set of vertex arrays.
+    bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
+    bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
+
+    if (usePointSizeNow != usePointSize ||
+        useNormalsNow != useNormals)
+    {
+        usePointSize = usePointSizeNow;
+        useNormals = useNormalsNow;
+        if (getMaterial() != NULL)
+            makeCurrent(*getMaterial());
+    }
 }
 
 

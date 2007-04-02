@@ -35,7 +35,8 @@ class Mesh
         Texture1     = 6,
         Texture2     = 7,
         Texture3     = 8,
-        SemanticMax  = 9,
+        PointSize    = 9,
+        SemanticMax  = 10,
         InvalidSemantic  = -1,
     };
 
@@ -133,7 +134,8 @@ class Mesh
         LineList   = 3,
         LineStrip  = 4,
         PointList  = 5,
-        PrimitiveTypeMax = 6,
+        SpriteList = 6,
+        PrimitiveTypeMax = 7,
         InvalidPrimitiveGroupType = -1
     };
 
@@ -212,33 +214,6 @@ class Mesh
 
     std::string name;
 };
-
-
-#if 0
-#include <celmath/frustum.h>
-#include <celmath/ray.h>
-
-
-class Mesh
-{
- public:
-    virtual ~Mesh() {};
-    virtual void render(float lod) = 0;
-    virtual void render(unsigned int attributes, float lod) = 0;
-    virtual void render(unsigned int attributes, const Frustum&, float lod) = 0;
-    virtual bool pick(const Ray3d&, double&) { return false; };
-
-    enum {
-        Normals    = 0x01,
-        Tangents   = 0x02,
-        Colors     = 0x04,
-        TexCoords0 = 0x08,
-        TexCoords1 = 0x10,
-        VertexProgParams = 0x1000,
-        Multipass  = 0x10000000,
-    };
-};
-#endif
 
 #endif // !_CELMESH_MESH_H_
 

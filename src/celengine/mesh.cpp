@@ -187,6 +187,7 @@ Mesh::PrimitiveGroup::getPrimitiveCount() const
     case LineStrip:
         return nIndices - 2;
     case PointList:
+    case SpriteList:
         return nIndices;
     default:
         // Invalid value
@@ -621,6 +622,8 @@ Mesh::parsePrimitiveGroupType(const string& name)
         return LineStrip;
     else if (name == "points")
         return PointList;
+    else if (name == "sprites")
+        return SpriteList;
     else
         return InvalidPrimitiveGroupType;
 }
@@ -647,6 +650,8 @@ Mesh::parseVertexAttributeSemantic(const string& name)
         return Texture2;
     else if (name == "texcoord3")
         return Texture3;
+    else if (name == "pointsize")
+        return PointSize;
     else
         return InvalidSemantic;
 }
