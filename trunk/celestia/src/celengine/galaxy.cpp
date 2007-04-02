@@ -196,6 +196,11 @@ GalacticForm* Galaxy::getForm() const
     return form;
 }
 
+const char* Galaxy::getObjTypeName() const
+{
+    return "galaxy";
+}
+
 
 // TODO: This value is just a guess.
 // To be optimal, it should actually be computed:

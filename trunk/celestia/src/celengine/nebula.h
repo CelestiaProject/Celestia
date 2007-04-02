@@ -38,6 +38,8 @@ class Nebula : public DeepSkyObject
 
     void setModel(ResourceHandle);
     ResourceHandle getModel() const;
+    
+    virtual const char* getObjTypeName() const;
 
  public:
     enum NebulaType

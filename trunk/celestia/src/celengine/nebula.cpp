@@ -58,6 +58,11 @@ void Nebula::setModel(ResourceHandle _model)
     model = _model;
 }
 
+const char* Nebula::getObjTypeName() const
+{
+    return "nebula";
+}
+
 
 bool Nebula::pick(const Ray3d& ray,
                   double& distanceToPicker,
