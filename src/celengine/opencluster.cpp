@@ -44,6 +44,11 @@ size_t OpenCluster::getDescription(char* buf, size_t bufLength) const
     return snprintf(buf, bufLength, _("%s"), getType());
 }
 
+const char* OpenCluster::getObjTypeName() const
+{
+    return "opencluster";
+}
+
 
 bool OpenCluster::pick(const Ray3d& ray,
                        double& distanceToPicker,
