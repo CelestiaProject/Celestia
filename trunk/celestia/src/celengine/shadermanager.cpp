@@ -136,6 +136,7 @@ ShaderProperties::isViewDependent() const
     switch (lightModel)
     {
     case DiffuseModel:
+    case ParticleDiffuseModel:
         return false;
     default:
         return true;
@@ -454,8 +455,18 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
 {
     string source;
 
-    source += "NL = max(0.0, dot(gl_Normal, " +
-        LightProperty(i, "direction") + "));\n";
+    if (props.lightModel == ShaderProperties::ParticleDiffuseModel)
+    {
+        // The ParticleDiffuse model doesn't use a surface normal; vertices
+        // are lit as if they were infinitesimal spherical particles,
+        // unaffected by light direction except when considering shadows.
+        source += "NL = 1.0;\n";
+    }
+    else
+    {
+        source += "NL = max(0.0, dot(gl_Normal, " +
+            LightProperty(i, "direction") + "));\n";
+    }
 
     if (props.lightModel == ShaderProperties::SpecularModel)
     {
@@ -890,6 +901,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += "float NV = dot(gl_Normal, eyeDir);\n";
     }
 
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += "uniform float pointScale;\n";
+        source += "attribute float pointSize;\n";
+    }
+
     if (props.usesTangentSpaceLighting())
     {
         source += "attribute vec3 tangent;\n";
@@ -1133,6 +1150,11 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.shadowCounts != 0)
     {
         source += "position_obj = gl_Vertex.xyz;\n";
+    }
+
+    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+    {
+        source += "gl_PointSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n";
     }
 
     source += "gl_Position = ftransform();\n";
@@ -1793,6 +1815,13 @@ ShaderManager::buildProgram(const ShaderProperties& props)
                 // someplace)
                 glx::glBindAttribLocationARB(prog->getID(), 6, "tangent");
             }
+
+            if (props.texUsage & ShaderProperties::PointSprite)
+            {
+                // Point size is always in attribute 7
+                glx::glBindAttribLocationARB(prog->getID(), 7, "pointSize");
+            }
+
             status = prog->link();
         }
     }
@@ -1941,6 +1970,11 @@ CelestiaGLProgram::initParameters()
     if (props.lightModel == ShaderProperties::LunarLambertModel)
     {
         lunarLambert         = floatParam("lunarLambert");
+    }
+
+    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+    {
+        pointScale           = floatParam("pointScale");
     }
 }
 

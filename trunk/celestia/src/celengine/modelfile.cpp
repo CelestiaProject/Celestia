@@ -74,7 +74,8 @@ defined here--they have the obvious definitions.
 <vertex_attribute>    ::= <vertex_semantic> <vertex_format>
 
 <vertex_semantic>     ::= position | normal | color0 | color1 | tangent |
-                          texcoord0 | texcoord1 | texcoord2 | texcoord3
+                          texcoord0 | texcoord1 | texcoord2 | texcoord3 |
+                          pointsize
 
 <vertex_format>       ::= f1 | f2 | f3 | f4 | ub4
 
@@ -87,7 +88,8 @@ defined here--they have the obvious definitions.
                           { <unsigned_int> }
 
 <prim_group_type>     ::= trilist | tristrip | trifan |
-                          linelist | linestrip | points
+                          linelist | linestrip | points |
+                          sprites
 
 <material_index>      :: <unsigned_int> | -1
 \endcode
@@ -797,6 +799,8 @@ AsciiModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
         out << "linestrip"; break;
     case Mesh::PointList:
         out << "points"; break;
+    case Mesh::SpriteList:
+        out << "sprites"; break;
     default:
         return;
     }
@@ -927,6 +931,9 @@ AsciiModelWriter::writeVertexDescription(const Mesh::VertexDescription& desc)
             break;
         case Mesh::Texture3:
             out << "texcoord3";
+            break;
+        case Mesh::PointSize:
+            out << "pointsize";
             break;
         default:
             assert(0);

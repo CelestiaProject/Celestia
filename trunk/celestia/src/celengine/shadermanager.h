@@ -43,6 +43,7 @@ class ShaderProperties
      CloudShadowTexture      =   0x80,
      CompressedNormalTexture =  0x100,
      Scattering              = 0x2000,
+     PointSprite             = 0x4000,
      SharedTextureCoords     = 0x8000,
  };
 
@@ -55,6 +56,7 @@ class ShaderProperties
      OrenNayarModel        = 4,
      AtmosphereModel       = 5,
      LunarLambertModel     = 6,
+     ParticleDiffuseModel  = 7,
  };
  
  enum
@@ -170,7 +172,10 @@ class CelestiaGLProgram
     //    x = radius
     //    y = radius^2
     //    z = 1/radius
-    Vec3ShaderParameter atmosphereRadius;    
+    Vec3ShaderParameter atmosphereRadius;
+
+    // Scale factor for point sprites
+    FloatShaderParameter pointScale;
 
     CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderShadows];
     

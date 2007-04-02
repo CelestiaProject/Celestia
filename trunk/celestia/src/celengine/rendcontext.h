@@ -26,6 +26,7 @@ class RenderContext
                                  void* vertexData) = 0;
     virtual void drawGroup(const Mesh::PrimitiveGroup& group);
 
+    const Mesh::Material* getMaterial() const;
     void setMaterial(const Mesh::Material*);
     void lock() { locked = true; }
     void unlock() { locked = false; }
@@ -39,11 +40,19 @@ class RenderContext
 
     RenderPass getRenderPass() const { return renderPass; }
     void setRenderPass(RenderPass rp) { renderPass = rp; }
+
+    void setPointScale(float);
+    float getPointScale() const;
     
  private:
     const Mesh::Material* material;
     bool locked;
     RenderPass renderPass;
+    float pointScale;
+
+ protected:
+    bool usePointSize;
+    bool useNormals;
 };
 
 
