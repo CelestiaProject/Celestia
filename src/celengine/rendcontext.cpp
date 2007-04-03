@@ -172,7 +172,8 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 FixedFunctionRenderContext::FixedFunctionRenderContext() :
     RenderContext(),
     blendOn(false),
-    specularOn(false)
+    specularOn(false),
+    lightingEnabled(true)
 {
 }
 
@@ -180,7 +181,8 @@ FixedFunctionRenderContext::FixedFunctionRenderContext() :
 FixedFunctionRenderContext::FixedFunctionRenderContext(const Mesh::Material* _material) :
     RenderContext(_material),
     blendOn(false),
-    specularOn(false)
+    specularOn(false),
+    lightingEnabled(true)
 {
 }
 
@@ -236,7 +238,7 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
             }
         }
 
-        if (useNormals)
+        if (useNormals || !lightingEnabled)
         {
             glColor4f(m.diffuse.red(),
                       m.diffuse.green(),
@@ -277,8 +279,10 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
             // more like it does in the GLSL path, though it's not very
             // useful without shadows.
             float matBlack[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            float zero = 0.0f;
             glMaterialfv(GL_FRONT, GL_DIFFUSE, matBlack);
             glMaterialfv(GL_FRONT, GL_SPECULAR, matBlack);
+            glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
             {
                 float matEmissive[4] = { m.emissive.red() + m.diffuse.red(),
                                          m.emissive.green() + m.diffuse.green(),
@@ -322,6 +326,17 @@ FixedFunctionRenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     }
 
     setStandardVertexArrays(desc, vertexData);
+}
+
+
+void
+FixedFunctionRenderContext::setLighting(bool enabled)
+{
+    lightingEnabled = enabled;
+    if (lightingEnabled)
+        glEnable(GL_LIGHTING);
+    else
+        glDisable(GL_LIGHTING);
 }
 
 
