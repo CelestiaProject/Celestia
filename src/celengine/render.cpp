@@ -3302,10 +3302,7 @@ static void renderModelDefault(Model* model,
     FixedFunctionRenderContext rc;
     //rc.makeCurrent();
 
-    if (lit)
-        glEnable(GL_LIGHTING);
-    else
-        glDisable(GL_LIGHTING);
+    rc.setLighting(lit);
 
     if (ri.baseTex == NULL)
     {

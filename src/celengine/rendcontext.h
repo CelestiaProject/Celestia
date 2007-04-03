@@ -66,10 +66,12 @@ class FixedFunctionRenderContext : public RenderContext
     virtual void makeCurrent(const Mesh::Material&);
     virtual void setVertexArrays(const Mesh::VertexDescription& desc,
                                  void* vertexData);
+    void setLighting(bool);
 
  private:
     bool blendOn;
     bool specularOn;
+    bool lightingEnabled;
 };
 
 

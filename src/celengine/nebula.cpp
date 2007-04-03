@@ -99,11 +99,11 @@ void Nebula::render(const GLContext&,
     if (m == NULL)
         return;
 
-    glDisable(GL_LIGHTING);
     glScalef(getRadius(), getRadius(), getRadius());
     glRotate(getOrientation());
 
     FixedFunctionRenderContext rc;
+    rc.setLighting(false);
     m->render(rc);
 
     // Reset the material
