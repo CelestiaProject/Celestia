@@ -95,6 +95,15 @@
 	AppMag 11.98
 }
 
+1000370197 # HD 70573
+{
+	RA 125.7083
+	Dec 1.8594
+	Distance 149
+	SpectralType "G1V"
+	AppMag 8.70
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
