@@ -1,4 +1,4 @@
-# Catalog of 216 known extrasolar planets.
+# Catalog of 218 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1452,6 +1452,32 @@ AltSurface "limit of knowledge" "HD 217014/b"
 }
 
 AltSurface "limit of knowledge" "HAT-P-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "Gliese 674"
+{
+	Texture "venuslike.*"
+
+	Mass      12     # M.sin(i) = 12 earths
+	Radius     14700
+
+	InfoURL "http://exoplanet.eu/star.php?st=GJ+674"
+
+	EllipticalOrbit {
+		Period          0.0129
+		SemiMajorAxis   0.039
+		Eccentricity    0.2
+		ArgOfPericenter 137
+		MeanAnomaly     296
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Gliese 674/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -5163,6 +5189,38 @@ AltSurface "limit of knowledge" "HD 186427/b"
 }
 
 AltSurface "limit of knowledge" "HD 4208/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 0197-0037-1"   # HD 70573
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       1940     # M.sin(i) = 6.1 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+70573"
+
+	EllipticalOrbit {
+		Period          2.3321
+		SemiMajorAxis   1.76
+		Eccentricity    0.4
+		ArgOfPericenter 127
+		MeanAnomaly     123
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "TYC 0197-0037-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
