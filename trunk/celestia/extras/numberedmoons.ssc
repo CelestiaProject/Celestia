@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# Version 1.29 (2007 Mar 28)
+# Version 1.30 (2007 Apr 6)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -586,7 +586,7 @@
 	Albedo 0.04
 }
 
-"2003J14" "Sol/Jupiter"
+"Kore" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1259,7 +1259,7 @@
 	Albedo 0.06
 }
 
-"2004S8" "Sol/Saturn" # MPEC 2006-C74
+"Fornjot" "Sol/Saturn" # MPEC 2006-C74
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1282,7 +1282,7 @@
 	Albedo 0.06
 }
 
-"2004S9" "Sol/Saturn" # MPEC 2006-C72
+"Farbauti" "Sol/Saturn" # MPEC 2006-C72
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1305,7 +1305,7 @@
 	Albedo 0.06
 }
 
-"2004S10" "Sol/Saturn" # MPEC 2006-C55
+"Aegir" "Sol/Saturn" # MPEC 2006-C55
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1328,7 +1328,7 @@
 	Albedo 0.06
 }
 
-"2004S11" "Sol/Saturn" # MPEC 2006-C55
+"Bebhionn" "Sol/Saturn" # MPEC 2006-C55
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1397,7 +1397,7 @@
 	Albedo 0.06
 }
 
-"2004S14" "Sol/Saturn" # MPEC 2006-C74
+"Hati" "Sol/Saturn" # MPEC 2006-C74
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1420,7 +1420,7 @@
 	Albedo 0.06
 }
 
-"2004S15" "Sol/Saturn" # MPEC 2006-C55
+"Bergelmir" "Sol/Saturn" # MPEC 2006-C55
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1443,7 +1443,7 @@
 	Albedo 0.06
 }
 
-"2004S16" "Sol/Saturn" # MPEC 2006-C72
+"Fenrir" "Sol/Saturn" # MPEC 2006-C72
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1489,7 +1489,7 @@
 	Albedo 0.06
 }
 
-"2004S18" "Sol/Saturn" # MPEC 2006-C55
+"Bestla" "Sol/Saturn" # MPEC 2006-C55
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1512,7 +1512,7 @@
 	Albedo 0.06
 }
 
-"2004S19" "Sol/Saturn" # MPEC 2006-M44
+"Hyrokkin" "Sol/Saturn" # MPEC 2006-M44
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1578,7 +1578,7 @@
 	Albedo 0.06
 }
 
-"2006S2" "Sol/Saturn" # MPEC 2006-M48
+"Kari" "Sol/Saturn" # MPEC 2006-M48
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1647,7 +1647,7 @@
 	Albedo 0.06
 }
 
-"2006S5" "Sol/Saturn" # MPEC 2006-M48
+"Loge" "Sol/Saturn" # MPEC 2006-M48
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1693,7 +1693,7 @@
 	Albedo 0.06
 }
 
-"2006S7" "Sol/Saturn" # MPEC 2006-N06
+"Surtur" "Sol/Saturn" # MPEC 2006-N06
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1716,7 +1716,7 @@
 	Albedo 0.06
 }
 
-"2006S8" "Sol/Saturn" # MPEC 2006-M48
+"Skoll" "Sol/Saturn" # MPEC 2006-M48
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
