@@ -3260,6 +3260,16 @@ static int observer_track(lua_State* l)
     return 0;
 }
 
+static int observer_gettrackedobject(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to observer:gettrackedobject");
+
+    Observer* o = this_observer(l);
+    object_new(l, o->getTrackedObject());
+
+    return 1;
+}
+
 // Return true if the observer is still moving as a result of a goto, center,
 // or similar command.
 static int observer_travelling(lua_State* l)
@@ -3546,6 +3556,7 @@ static void CreateObserverMetaTable(lua_State* l)
     RegisterMethod(l, "chase", observer_chase);
     RegisterMethod(l, "lock", observer_lock);
     RegisterMethod(l, "track", observer_track);
+    RegisterMethod(l, "gettrackedobject", observer_gettrackedobject);
     RegisterMethod(l, "travelling", observer_travelling);
     RegisterMethod(l, "getframe", observer_getframe);
     RegisterMethod(l, "setframe", observer_setframe);
