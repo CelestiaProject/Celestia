@@ -5651,9 +5651,19 @@ void Renderer::renderPlanet(Body& body,
                 {
                     // The body is a moon.  Check for eclipse shadows from
                     // the parent planet and all satellites in the system.
+                    // Traverse up the hierarchy so that any parent objects
+                    // of the parent are also considered (TODO: their child
+                    // objects will not be checked for shadows.)
                     Body* planet = system->getPrimaryBody();
-                    testEclipse(body, *planet, lights.lights[li],
-                                now, *lights.shadows[li]);
+                    while (planet != NULL)
+                    {
+                        testEclipse(body, *planet, lights.lights[li],
+                                    now, *lights.shadows[li]);
+                        if (planet->getSystem() != NULL)
+                            planet = planet->getSystem()->getPrimaryBody();
+                        else
+                            planet = NULL;
+                    }
 
                     int nSatellites = system->getSystemSize();
                     for (int i = 0; i < nSatellites; i++)
