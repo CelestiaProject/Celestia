@@ -199,6 +199,8 @@ msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr ""
+"Unültiger Stern: Absolute (nicht scheinbare) Magnitude für Stern nahe dem "
+"Ursprung benötigt\n"
 
 #: src/celengine/stardb.cpp:1210
 msgid "Sun"
@@ -437,9 +439,8 @@ msgid "Time: Backward"
 msgstr "Zeit: Rückwärts"
 
 #: src/celestia/celestiacore.cpp:1838 src/celestia/celestiacore.cpp:1851
-#, fuzzy, c-format
 msgid "Time rate: %g"
-msgstr "Zeitrate: %.1f"
+msgstr "Zeitrate: %g"
 
 #: src/celestia/celestiacore.cpp:1888
 msgid "Low res textures"
@@ -816,9 +817,8 @@ msgid "Version: "
 msgstr "Version: "
 
 #: src/celestia/winmain.cpp:618
-#, fuzzy
 msgid "GLSL version: "
-msgstr "Version: "
+msgstr "GLSL-Version: "
 
 #: src/celestia/winmain.cpp:629 src/celestia/kde/kdeapp.cpp:931
 msgid "Max simultaneous textures: "
@@ -1471,7 +1471,7 @@ msgstr "OpenGL Render Pfad wechseln"
 #: src/celestia/kde/kdeapp.cpp:694
 #: src/celestia/kde/kdepreferencesdialog.cpp:498
 msgid "Sync framerate to video refresh rate"
-msgstr ""
+msgstr "Berechnung mit Bildwiederholrate synchronisieren"
 
 #: src/celestia/kde/kdeapp.cpp:699
 msgid "Grab Image"
@@ -1507,9 +1507,8 @@ msgstr ""
 "erstellt."
 
 #: src/celestia/kde/kdeapp.cpp:1428
-#, fuzzy
 msgid "Go to URL"
-msgstr "Gehe zu &URL..."
+msgstr "Gehe zu URL"
 
 #: src/celestia/kde/kdeapp.cpp:1428
 msgid "Enter URL"
@@ -1893,7 +1892,7 @@ msgstr ""
 "<b>NVIDIA Combiners, NV_vertex_program Erweiterung</b><br> Erlaubt die "
 "Darstellung mit Bump-Mapping, Ring-Schatten und Glanzlichtern auf jeder "
 "Geforce oder ATI Radeon Grafikkarte. NvCombiner ARBVP ist allerdings eine "
-"etwas bessere Option fürGeforce Benutzer"
+"etwas bessere Option für Geforce Benutzer"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:745
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
