@@ -1,6 +1,6 @@
 // render.cpp
 //
-// Copyright (C) 2001-2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2007, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -80,6 +80,8 @@ static const float MaxScaledDiscStarSize = 8.0f;
 static const float GlareOpacity = 0.65f;
 
 static const float MinRelativeOccluderRadius = 0.005f;
+
+static const float CubeCornerToCenterDistance = (float) sqrt(3.0);
 
 
 // The minimum apparent size of an objects orbit in pixels before we display
@@ -5168,10 +5170,30 @@ void Renderer::renderObject(Point3f pos,
 
         if (model != NULL)
         {
-            if (context->getRenderPath() == GLContext::GLPath_GLSL && lit)
+            if (context->getRenderPath() == GLContext::GLPath_GLSL)
             {
                 ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
-                renderModel_GLSL(model, ri, texOverride, ls, obj.atmosphere, obj.radius, renderFlags, planetMat);
+                if (lit)
+                {
+                    renderModel_GLSL(model,
+                                     ri,
+                                     texOverride,
+                                     ls,
+                                     obj.atmosphere,
+                                     obj.radius,
+                                     renderFlags,
+                                     planetMat);
+                }
+                else
+                {
+                    renderModel_GLSL_Unlit(model,
+                                           ri,
+                                           texOverride,
+                                           obj.radius,
+                                           renderFlags,
+                                           planetMat);
+                }
+
                 for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
                 {
                     glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
@@ -7110,7 +7132,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                 // matrix, since that could be expensive with large galaxy
                 // catalogs.
                 float nearZ = (float) (distanceToDSO / 2);
-                float farZ  = (float) (distanceToDSO + dsoRadius * 2);
+                float farZ  = (float) (distanceToDSO + dsoRadius * 2 * CubeCornerToCenterDistance);
                 if (nearZ < dsoRadius * 0.001)
                 {
                     nearZ = (float) (dsoRadius * 0.001);
