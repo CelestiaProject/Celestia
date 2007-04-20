@@ -2,7 +2,7 @@
 //
 // Functions for rendering objects using dynamically generated GLSL shaders.
 //
-// Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2007, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -255,6 +255,39 @@ void renderModel_GLSL(Model* model,
 
     // Handle extended material attributes (per model only, not per submesh)
     rc.setLunarLambert(ri.lunarLambert);
+
+    // Handle material override; a texture specified in an ssc file will
+    // override all materials specified in the model file.
+    if (texOverride != InvalidResource)
+    {
+        Mesh::Material m;
+        m.diffuse = ri.color;
+        m.specular = ri.specularColor;
+        m.specularPower = ri.specularPower;
+        m.maps[Mesh::DiffuseMap] = texOverride;
+        rc.makeCurrent(m);
+        rc.lock();
+    }
+
+    model->render(rc);
+
+    glx::glUseProgramObjectARB(0);
+}
+
+
+// Render a mesh object unlit
+void renderModel_GLSL_Unlit(Model* model,
+                            const RenderInfo& ri,
+                            ResourceHandle texOverride,
+                            float radius,
+                            int renderFlags,
+                            const Mat4f& planetMat)
+{
+    glDisable(GL_LIGHTING);
+
+    GLSLUnlit_RenderContext rc(radius);
+
+    rc.setPointScale(ri.pointScale);
 
     // Handle material override; a texture specified in an ssc file will
     // override all materials specified in the model file.

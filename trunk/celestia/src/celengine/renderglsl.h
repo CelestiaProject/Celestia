@@ -2,7 +2,7 @@
 //
 // Functions for rendering objects using dynamically generated GLSL shaders.
 //
-// Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2007, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -65,6 +65,14 @@ void renderRings_GLSL(RingSystem& rings,
                       unsigned int textureResolution,
                       bool renderShadow,
                       unsigned int nSections);
+
+void renderModel_GLSL_Unlit(Model* model,
+                            const RenderInfo& ri,
+                            ResourceHandle texOverride,
+                            float radius,
+                            int renderFlags,
+                            const Mat4f& planetMat);
+
                            
 #endif // _CELENGINE_RENDERGLSL_H_
                        
