@@ -137,6 +137,7 @@ ShaderProperties::isViewDependent() const
     {
     case DiffuseModel:
     case ParticleDiffuseModel:
+    case EmissiveModel:
         return false;
     default:
         return true;
@@ -875,6 +876,13 @@ TextureCoordDeclarations(const ShaderProperties& props)
 }
 
 
+string
+PointSizeCalculation()
+{
+    return string("gl_PointSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n");
+}
+
+
 GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
 {
@@ -1006,7 +1014,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::NightTexture)
     {
         source += "totalLight = 0.0;\n";
-	}
+    }
 
     if (props.usesTangentSpaceLighting())
     {
@@ -1153,9 +1161,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
 
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
-    {
-        source += "gl_PointSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n";
-    }
+        source += PointSizeCalculation();
 
     source += "gl_Position = ftransform();\n";
     source += "}\n";
@@ -1465,9 +1471,16 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     }
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
-        source += "color = texture2D(diffTex, " + diffTexCoord + ".st);\n";
+    {
+        if (props.texUsage & ShaderProperties::PointSprite)
+            source += "color = texture2D(diffTex, gl_TexCoord[0].st);\n";
+        else
+            source += "color = texture2D(diffTex, " + diffTexCoord + ".st);\n";
+    }
     else
+    {
         source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
+    }
 
     // Mix in the overlay color with the base color
     if (props.texUsage & ShaderProperties::OverlayTexture)
@@ -1779,6 +1792,113 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 }
 
 
+// The emissive shader ignores all lighting and uses the diffuse color
+// as the final fragment color.
+GLVertexShader*
+ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
+{
+    string source;
+
+    source += "uniform float opacity;\n";
+
+    // There are no light sources used for the emissive light model, but
+    // we still need the diffuse property of light 0. For other lighting
+    // models, the material color is premultiplied with the light color.
+    // Emissive shaders interoperate better with other shaders if they also
+    // take the color from light source 0.
+#ifndef USE_GLSL_STRUCTS
+    source += string("uniform vec3 light0_diffuse;\n");
+#else
+    source += string("uniform struct {\n   vec3 diffuse;\n} lights[1];\n");
+#endif
+
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += "uniform float pointScale;\n";
+        source += "attribute float pointSize;\n";
+    }
+
+    // Begin main() function
+    source += "\nvoid main(void)\n{\n";
+
+    // Optional texture coordinates (generated automatically for point
+    // sprites.)
+    if ((props.texUsage & ShaderProperties::DiffuseTexture) &&
+        !(props.texUsage & ShaderProperties::PointSprite))
+    {
+        source += "    gl_TexCoord[0].st = " + TexCoord2D(0) + ";\n";
+    }
+
+    // Set the color. 
+    source += "    gl_FrontColor = vec4(" + LightProperty(0, "diffuse") + ", opacity);\n";
+
+    // Optional point size
+    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+        source += PointSizeCalculation();
+
+    source += "    gl_Position = ftransform();\n";
+
+    source += "}\n";
+    // End of main()
+
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Vertex shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+
+    GLVertexShader* vs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return vs;
+}
+
+
+GLFragmentShader*
+ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
+{
+    string source;
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    {
+        source += "uniform sampler2D diffTex;\n";
+    }
+
+    // Begin main()
+    source += "\nvoid main(void)\n";
+    source += "{\n";
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    {
+        source += "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0]);\n";
+    }
+    else
+    {
+        source += "    gl_FragColor = gl_Color;\n";
+    }
+
+    source += "}\n";
+    // End of main()
+
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+
+    GLFragmentShader* fs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return fs;
+}
+
+
 CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
 {
@@ -1797,6 +1917,11 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     {
         vs = buildAtmosphereVertexShader(props);
         fs = buildAtmosphereFragmentShader(props);
+    }
+    else if (props.lightModel == ShaderProperties::EmissiveModel)
+    {
+        vs = buildEmissiveVertexShader(props);
+        fs = buildEmissiveFragmentShader(props);
     }
     else
     {
