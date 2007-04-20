@@ -130,5 +130,28 @@ class GLSL_RenderContext : public RenderContext
     ShaderProperties shaderProps;
 };
 
+
+class GLSLUnlit_RenderContext : public RenderContext
+{
+ public:
+    GLSLUnlit_RenderContext(float _objRadius);
+    virtual ~GLSLUnlit_RenderContext();
+    
+    virtual void makeCurrent(const Mesh::Material&);
+    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
+                                 void* vertexData);
+
+ private:
+     void initLightingEnvironment();
+     void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
+     
+ private:
+    bool blendOn;
+    float objRadius;
+    
+    ShaderProperties shaderProps;
+};
+
+
 #endif // _CELENGINE_RENDCONTEXT_H_
 
