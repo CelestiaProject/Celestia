@@ -154,6 +154,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
     if (group.prim == Mesh::SpriteList)
     {
         glEnable(GL_POINT_SPRITE_ARB);
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
         glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
     }
 
@@ -469,6 +470,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 }
 
 
+/***** GLSL render context ******/
+
 GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform) :
     lightingState(ls),
     atmosphere(NULL),
@@ -706,4 +709,132 @@ void
 GLSL_RenderContext::setLunarLambert(float l)
 {
     lunarLambert = l;
+}
+
+
+/***** GLSL-Unlit render context ******/
+
+GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(float _objRadius) :
+    blendOn(false),
+    objRadius(_objRadius)
+{
+    initLightingEnvironment();
+}
+
+
+GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext()
+{
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
+    glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+}
+
+
+void
+GLSLUnlit_RenderContext::initLightingEnvironment()
+{
+    // Set the light and shadow environment, which is constant for the entire model.
+    // The material properties will be set per mesh.
+    shaderProps.nLights = 1;
+}
+
+
+void
+GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
+{
+    Texture* textures[4] = { NULL, NULL, NULL, NULL };
+    unsigned int nTextures = 0;
+
+    // Set up the textures used by this object
+    Texture* baseTex = NULL;
+    Texture* bumpTex = NULL;
+    Texture* specTex = NULL;
+    Texture* emissiveTex = NULL;
+
+    shaderProps.lightModel = ShaderProperties::EmissiveModel;
+    shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
+
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+    {
+        baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
+        if (baseTex != NULL)
+        {
+            shaderProps.texUsage |= ShaderProperties::DiffuseTexture;
+            textures[nTextures++] = baseTex;
+        }
+    }
+    if (usePointSize)
+        shaderProps.texUsage |= ShaderProperties::PointSprite;
+
+    // Get a shader for the current rendering configuration
+    CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
+    if (prog == NULL)
+        return;
+
+    prog->use();
+
+    for (unsigned int i = 0; i < nTextures; i++)
+    {
+        glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glEnable(GL_TEXTURE_2D);
+        textures[i]->bind();
+    }
+
+    prog->lights[0].diffuse = Vec3f(m.diffuse.red(),
+                                    m.diffuse.green(),
+                                    m.diffuse.blue());
+    prog->opacity = m.opacity;
+
+    if ((shaderProps.texUsage & ShaderProperties::PointSprite) != 0)
+    {
+        prog->pointScale = getPointScale();
+    }
+
+    bool blendOnNow = false;
+    if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
+        blendOnNow = true;
+
+    if (blendOnNow != blendOn)
+    {
+        blendOn = blendOnNow;
+        if (blendOn)
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDepthMask(GL_FALSE);
+        }
+        else
+        {
+            glDisable(GL_BLEND);
+            glDepthMask(GL_TRUE);
+        }
+    }
+}
+
+
+void
+GLSLUnlit_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
+                                         void* vertexData)
+{
+    setStandardVertexArrays(desc, vertexData);
+    setExtendedVertexArrays(desc, vertexData);
+
+    // Normally, the shader that will be used depends only on the material.
+    // But the presence of point size and normals can also affect the
+    // shader, so force an update of the material if those attributes appear
+    // or disappear in the new set of vertex arrays.
+    bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
+    bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
+
+    if (usePointSizeNow != usePointSize ||
+        useNormalsNow != useNormals)
+    {
+        usePointSize = usePointSizeNow;
+        useNormals = useNormalsNow;
+        if (getMaterial() != NULL)
+            makeCurrent(*getMaterial());
+    }
 }
