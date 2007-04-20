@@ -57,6 +57,7 @@ class ShaderProperties
      AtmosphereModel       = 5,
      LunarLambertModel     = 6,
      ParticleDiffuseModel  = 7,
+     EmissiveModel         = 8,
  };
  
  enum
@@ -211,6 +212,9 @@ class ShaderManager
     
     GLVertexShader* buildAtmosphereVertexShader(const ShaderProperties&);
     GLFragmentShader* buildAtmosphereFragmentShader(const ShaderProperties&);
+
+    GLVertexShader* buildEmissiveVertexShader(const ShaderProperties&);
+    GLFragmentShader* buildEmissiveFragmentShader(const ShaderProperties&);
 
     std::map<ShaderProperties, CelestiaGLProgram*> shaders;
 };
