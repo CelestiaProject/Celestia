@@ -18,6 +18,7 @@
 #include "meshmanager.h"
 #include "rendcontext.h"
 #include "gl.h"
+#include "glext.h"
 #include "vecgl.h"
 #include "render.h"
 
@@ -87,11 +88,11 @@ bool Nebula::load(AssociativeArray* params, const string& resPath)
 }
 
 
-void Nebula::render(const GLContext&,
+void Nebula::render(const GLContext& glcontext,
                     const Vec3f&,
                     const Quatf&,
                     float,
-                    float)
+                    float pixelSize)
 {
     Model* m = NULL;
     if (model != InvalidResource)
@@ -102,17 +103,27 @@ void Nebula::render(const GLContext&,
     glScalef(getRadius(), getRadius(), getRadius());
     glRotate(getOrientation());
 
-    FixedFunctionRenderContext rc;
-    rc.setLighting(false);
-    m->render(rc);
+    if (glcontext.getRenderPath() == GLContext::GLPath_GLSL)
+    {
+        GLSLUnlit_RenderContext rc(getRadius());
+        rc.setPointScale(getRadius() / pixelSize);
+        m->render(rc);
+        glx::glUseProgramObjectARB(0);
+    }
+    else
+    {
+        FixedFunctionRenderContext rc;
+        rc.setLighting(false);
+        m->render(rc);
 
-    // Reset the material
-    float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    float zero = 0.0f;
-    glColor4fv(black);
-    glMaterialfv(GL_FRONT, GL_EMISSION, black);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, black);
-    glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+        // Reset the material
+        float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        float zero = 0.0f;
+        glColor4fv(black);
+        glMaterialfv(GL_FRONT, GL_EMISSION, black);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+        glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
+    }
 
     glEnable(GL_BLEND);
 }
