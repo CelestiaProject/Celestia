@@ -100,13 +100,15 @@ void Nebula::render(const GLContext& glcontext,
     if (m == NULL)
         return;
 
+    glDisable(GL_BLEND);
+
     glScalef(getRadius(), getRadius(), getRadius());
     glRotate(getOrientation());
 
     if (glcontext.getRenderPath() == GLContext::GLPath_GLSL)
     {
         GLSLUnlit_RenderContext rc(getRadius());
-        rc.setPointScale(getRadius() / pixelSize);
+        rc.setPointScale(0.5f * getRadius() / pixelSize);
         m->render(rc);
         glx::glUseProgramObjectARB(0);
     }
