@@ -172,7 +172,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 
 FixedFunctionRenderContext::FixedFunctionRenderContext() :
     RenderContext(),
-    blendOn(false),
+    blendMode(Mesh::InvalidBlend),
     specularOn(false),
     lightingEnabled(true)
 {
@@ -181,7 +181,7 @@ FixedFunctionRenderContext::FixedFunctionRenderContext() :
 
 FixedFunctionRenderContext::FixedFunctionRenderContext(const Mesh::Material* _material) :
     RenderContext(_material),
-    blendOn(false),
+    blendMode(Mesh::InvalidBlend),
     specularOn(false),
     lightingEnabled(true)
 {
@@ -216,26 +216,31 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
             t->bind();
         }
 
-        bool blendOnNow = false;
+        Mesh::BlendMode newBlendMode = Mesh::InvalidBlend;
         if (m.opacity != 1.0f || (t != NULL && t->hasAlpha()))
-            blendOnNow = true;
-
-        if (blendOnNow != blendOn)
         {
-            blendOn = blendOnNow;
-            if (blendOn)
+            newBlendMode = m.blend;
+        }
+
+        if (newBlendMode != blendMode)
+        {
+            blendMode = newBlendMode;
+            switch (blendMode)
             {
+            case Mesh::NormalBlend:
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glDepthMask(GL_FALSE);
-                //glEnable(GL_ALPHA_TEST);
-                //glAlphaFunc(GL_GEQUAL, 0.01f);
-            }
-            else
-            {
+                break;
+            case Mesh::AdditiveBlend:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                glDepthMask(GL_FALSE);
+                break;
+            default:
                 glDisable(GL_BLEND);
                 glDepthMask(GL_TRUE);
-                //glDisable(GL_ALPHA_TEST);
+                break;
             }
         }
 
@@ -475,7 +480,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform) :
     lightingState(ls),
     atmosphere(NULL),
-    blendOn(false),
+    blendMode(Mesh::InvalidBlend),
     objRadius(_objRadius),
     xform(_xform),
     lunarLambert(0.0f)
@@ -651,23 +656,31 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         prog->pointScale = getPointScale();
     }
 
-    bool blendOnNow = false;
+    Mesh::BlendMode newBlendMode = Mesh::InvalidBlend;
     if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
-        blendOnNow = true;
-
-    if (blendOnNow != blendOn)
     {
-        blendOn = blendOnNow;
-        if (blendOn)
+        newBlendMode = m.blend;
+    }
+
+    if (newBlendMode != blendMode)
+    {
+        blendMode = newBlendMode;
+        switch (blendMode)
         {
+        case Mesh::NormalBlend:
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(GL_FALSE);
-        }
-        else
-        {
+            break;
+        case Mesh::AdditiveBlend:
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDepthMask(GL_FALSE);
+            break;
+        default:
             glDisable(GL_BLEND);
             glDepthMask(GL_TRUE);
+            break;
         }
     }
 }
@@ -715,7 +728,7 @@ GLSL_RenderContext::setLunarLambert(float l)
 /***** GLSL-Unlit render context ******/
 
 GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(float _objRadius) :
-    blendOn(false),
+    blendMode(Mesh::InvalidBlend),
     objRadius(_objRadius)
 {
     initLightingEnvironment();
@@ -793,23 +806,31 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
         prog->pointScale = getPointScale();
     }
 
-    bool blendOnNow = false;
+    Mesh::BlendMode newBlendMode = Mesh::InvalidBlend;
     if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
-        blendOnNow = true;
-
-    if (blendOnNow != blendOn)
     {
-        blendOn = blendOnNow;
-        if (blendOn)
+        newBlendMode = m.blend;
+    }
+
+    if (newBlendMode != blendMode)
+    {
+        blendMode = newBlendMode;
+        switch (blendMode)
         {
+        case Mesh::NormalBlend:
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glDepthMask(GL_FALSE);
-        }
-        else
-        {
+            break;
+        case Mesh::AdditiveBlend:
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDepthMask(GL_FALSE);
+            break;
+        default:
             glDisable(GL_BLEND);
             glDepthMask(GL_TRUE);
+            break;
         }
     }
 }
