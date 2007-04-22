@@ -26,6 +26,7 @@ static Color DefaultSpecular(0.0f, 0.0f, 0.0f);
 static Color DefaultEmissive(0.0f, 0.0f, 0.0f);
 static float DefaultSpecularPower = 1.0f;
 static float DefaultOpacity = 1.0f;
+static Mesh::BlendMode DefaultBlend = Mesh::NormalBlend;
 
 
 /*!
@@ -55,11 +56,14 @@ defined here--they have the obvious definitions.
                           emissive <color>  |
                           specpower <float> |
                           opacity <float>   |
+                          blend <blendmode> |
                           <texture>
 
 <color>               ::= <float> <float> <float>
 
 <string>              ::= """ { letter } """
+
+<blendmode>           ::= normal | add
 
 <mesh_definition>     ::= mesh
                           <vertex_description>
@@ -341,6 +345,28 @@ AsciiModelLoader::loadMaterial()
             ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(tok.getStringValue(), getTexturePath(), TextureInfo::WrapTexture));
 
             material->maps[texType] = tex;
+        }
+        else if (property == "blend")
+        {
+            Mesh::BlendMode blendMode = Mesh::InvalidBlend;
+
+            if (tok.nextToken() == Tokenizer::TokenName)
+            {
+                string blendModeName = tok.getNameValue();
+                if (blendModeName == "normal")
+                    blendMode = Mesh::NormalBlend;
+                else if (blendModeName == "add")
+                    blendMode = Mesh::AdditiveBlend;
+            }
+
+            if (blendMode == Mesh::InvalidBlend)
+            {
+                reportError("Bad blend mode in material");
+                delete material;
+                return NULL;
+            }
+
+            material->blend = blendMode;
         }
         else
         {
@@ -1004,6 +1030,24 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
     if (material.opacity != DefaultOpacity)
         out << "opacity " << material.opacity << '\n';
 
+    if (material.blend != DefaultBlend)
+    {
+        out << "blend ";
+        switch (material.blend)
+        {
+        case Mesh::NormalBlend:
+            out << "normal";
+            break;
+        case Mesh::AdditiveBlend:
+            out << "add";
+            break;
+        default:
+            assert(0);
+            break;
+        }
+        out << "\n";
+    }
+
     for (int i = 0; i < Mesh::TextureSemanticMax; i++)
     {
         const TextureInfo* texInfo = GetTextureManager()->getResourceInfo(material.maps[i]);
@@ -1328,6 +1372,19 @@ BinaryModelLoader::loadMaterial()
                 reportError("Float expected for opacity");
                 delete material;
                 return NULL;
+            }
+            break;
+
+        case CMOD_Blend:
+            {
+                int16 blendMode = readInt16(in);
+                if (blendMode < 0 || blendMode >= Mesh::BlendMax)
+                {
+                    reportError("Bad blend mode");
+                    delete material;
+                    return NULL;
+                }
+                material->blend = (Mesh::BlendMode) blendMode;
             }
             break;
 
@@ -1788,6 +1845,12 @@ BinaryModelWriter::writeMaterial(const Mesh::Material& material)
     {
         writeToken(out, CMOD_Opacity);
         writeTypeFloat1(out, material.opacity);
+    }
+
+    if (material.blend != DefaultBlend)
+    {
+        writeToken(out, CMOD_Blend);
+        writeInt16(out, (int16) material.blend);
     }
 
     for (int i = 0; i < Mesh::TextureSemanticMax; i++)

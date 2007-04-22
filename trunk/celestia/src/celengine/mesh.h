@@ -113,6 +113,14 @@ class Mesh
         InvalidTextureSemantic = -1,
     };
 
+    enum BlendMode
+    {
+        NormalBlend            = 0,
+        AdditiveBlend          = 1,
+        BlendMax               = 2,
+        InvalidBlend           = -1,
+    };
+
     class Material
     {
     public:
@@ -123,6 +131,7 @@ class Mesh
         Color specular;
         float specularPower;
         float opacity;
+        BlendMode blend;
         ResourceHandle maps[TextureSemanticMax];
     };
 

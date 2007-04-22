@@ -52,7 +52,8 @@ Mesh::Material::Material() :
     emissive(0.0f, 0.0f, 0.0f),
     specular(0.0f, 0.0f, 0.0f),
     specularPower(1.0f),
-    opacity(1.0f)
+    opacity(1.0f),
+    blend(NormalBlend)
 {
     for (int i = 0; i < TextureSemanticMax; i++)
         maps[i] = InvalidResource;

@@ -74,6 +74,7 @@ enum ModelFileToken
     CMOD_EndVertexDesc  = 1012,
     CMOD_Vertices       = 1013,
     CMOD_Emissive       = 1014,
+    CMOD_Blend          = 1015,
 };
 
 enum ModelFileType
