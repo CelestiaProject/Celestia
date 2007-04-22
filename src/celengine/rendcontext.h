@@ -69,7 +69,7 @@ class FixedFunctionRenderContext : public RenderContext
     void setLighting(bool);
 
  private:
-    bool blendOn;
+    Mesh::BlendMode blendMode;
     bool specularOn;
     bool lightingEnabled;
 };
@@ -120,7 +120,7 @@ class GLSL_RenderContext : public RenderContext
  private:
     const LightingState& lightingState;
     const Atmosphere* atmosphere;
-    bool blendOn;
+    Mesh::BlendMode blendMode;
     float objRadius;
     Mat4f xform;
     
@@ -146,7 +146,7 @@ class GLSLUnlit_RenderContext : public RenderContext
      void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
      
  private:
-    bool blendOn;
+    Mesh::BlendMode blendMode;
     float objRadius;
     
     ShaderProperties shaderProps;
