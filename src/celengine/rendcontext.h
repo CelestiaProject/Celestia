@@ -53,6 +53,7 @@ class RenderContext
  protected:
     bool usePointSize;
     bool useNormals;
+    bool useColors;
 };
 
 
