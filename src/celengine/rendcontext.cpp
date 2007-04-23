@@ -217,7 +217,9 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
         }
 
         Mesh::BlendMode newBlendMode = Mesh::InvalidBlend;
-        if (m.opacity != 1.0f || (t != NULL && t->hasAlpha()))
+        if (m.opacity != 1.0f ||
+            m.blend == Mesh::AdditiveBlend ||
+            (t != NULL && t->hasAlpha()))
         {
             newBlendMode = m.blend;
         }
@@ -657,7 +659,9 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     }
 
     Mesh::BlendMode newBlendMode = Mesh::InvalidBlend;
-    if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
+    if (m.opacity != 1.0f ||
+        m.blend == Mesh::AdditiveBlend ||
+        (baseTex != NULL && baseTex->hasAlpha()))
     {
         newBlendMode = m.blend;
     }
@@ -807,7 +811,9 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
     }
 
     Mesh::BlendMode newBlendMode = Mesh::InvalidBlend;
-    if (m.opacity != 1.0f || (baseTex != NULL && baseTex->hasAlpha()))
+    if (m.opacity != 1.0f ||
+        m.blend == Mesh::AdditiveBlend ||
+        (baseTex != NULL && baseTex->hasAlpha()))
     {
         newBlendMode = m.blend;
     }

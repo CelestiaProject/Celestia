@@ -246,6 +246,14 @@ operator<(const Mesh::Material& m0, const Mesh::Material& m1)
     else if (m0.opacity > m1.opacity)
         return false;
 
+    // Reverse sense of comparison here--additive blending is 1, normal
+    // blending is 0, and we'd prefer to render additively blended submeshes
+    // last.
+    if (m0.blend > m1.blend)
+        return true;
+    else if (m0.blend < m1.blend)
+        return false;
+
     if (m0.diffuse < m1.diffuse)
         return true;
     else if (m1.diffuse < m0.diffuse)
