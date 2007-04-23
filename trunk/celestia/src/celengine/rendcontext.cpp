@@ -66,10 +66,11 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 RenderContext::RenderContext() :
     material(&defaultMaterial),
     locked(false),
+    renderPass(PrimaryPass),
+    pointScale(1.0f),
     usePointSize(false),
     useNormals(true),
-    renderPass(PrimaryPass),
-    pointScale(1.0f)
+    useColors(false)
 {
 }
 
@@ -329,6 +330,14 @@ FixedFunctionRenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     if (useNormalsNow != useNormals)
     {
         useNormals = useNormalsNow;
+        if (getMaterial() != NULL)
+            makeCurrent(*getMaterial());
+    }
+
+    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
+    if (useColorsNow != useColors)
+    {
+        useColors = useColorsNow;
         if (getMaterial() != NULL)
             makeCurrent(*getMaterial());
     }
@@ -703,12 +712,15 @@ GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     // or disappear in the new set of vertex arrays.
     bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
     bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
+    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
 
     if (usePointSizeNow != usePointSize ||
-        useNormalsNow != useNormals)
+        useNormalsNow   != useNormals   ||
+        useColorsNow    != useColors)
     {
         usePointSize = usePointSizeNow;
         useNormals = useNormalsNow;
+        useColors = useColorsNow;
         if (getMaterial() != NULL)
             makeCurrent(*getMaterial());
     }
@@ -783,8 +795,11 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
             textures[nTextures++] = baseTex;
         }
     }
+
     if (usePointSize)
         shaderProps.texUsage |= ShaderProperties::PointSprite;
+    if (useColors)
+        shaderProps.texUsage |= ShaderProperties::VertexColors;
 
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shaderProps);
@@ -855,12 +870,15 @@ GLSLUnlit_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     // or disappear in the new set of vertex arrays.
     bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
     bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
+    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
 
     if (usePointSizeNow != usePointSize ||
-        useNormalsNow != useNormals)
+        useNormalsNow   != useNormals   ||
+        useColorsNow    != useColors)
     {
         usePointSize = usePointSizeNow;
         useNormals = useNormalsNow;
+        useColors = useColorsNow;
         if (getMaterial() != NULL)
             makeCurrent(*getMaterial());
     }

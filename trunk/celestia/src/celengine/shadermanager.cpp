@@ -1830,7 +1830,13 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     }
 
     // Set the color. 
-    source += "    gl_FrontColor = vec4(" + LightProperty(0, "diffuse") + ", opacity);\n";
+    string colorSource;
+    if (props.texUsage & ShaderProperties::VertexColors)
+        colorSource = "gl_Color.rgb";
+    else
+        colorSource = LightProperty(0, "diffuse");
+
+    source += "    gl_FrontColor = vec4(" + colorSource + ", opacity);\n";
 
     // Optional point size
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)

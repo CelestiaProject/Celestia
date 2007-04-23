@@ -42,6 +42,7 @@ class ShaderProperties
      OverlayTexture          =   0x40,
      CloudShadowTexture      =   0x80,
      CompressedNormalTexture =  0x100,
+     VertexColors            = 0x1000,
      Scattering              = 0x2000,
      PointSprite             = 0x4000,
      SharedTextureCoords     = 0x8000,
