@@ -399,10 +399,10 @@ AC_ARG_WITH([lua],
 
 if (test "$enable_lua" != "no"); then
 	LUA_VER=0
-	PKG_CHECK_MODULES(LUA, lua50 >= 5.0.0 lua50 < 5.1.0, LUA_VER=0x050000,
-		[ PKG_CHECK_MODULES(LUA, lua >= 5.0.0 lua < 5.1.0, LUA_VER=0x050000, 
-		  [ PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1.0, LUA_VER=0x050100, 
-		    [ PKG_CHECK_MODULES(LUA, lua >= 5.1.0, LUA_VER=0x050100, AC_MSG_RESULT([no])) ] 
+	PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1.0, LUA_VER=0x050100, 
+		[ PKG_CHECK_MODULES(LUA, lua >= 5.1.0, LUA_VER=0x050100, 
+		  [ PKG_CHECK_MODULES(LUA, lua50 >= 5.0.0 lua50 < 5.1.0, LUA_VER=0x050000,
+		    [ PKG_CHECK_MODULES(LUA, lua >= 5.0.0 lua < 5.1.0, LUA_VER=0x050000, AC_MSG_RESULT([no])) ] 
 		    ) ] 
 		) ]
 	)
@@ -489,8 +489,8 @@ fi
 
 AC_MSG_RESULT([Use Lua: $enable_lua]);
 
-if (test "$LUA_VER" = "0x050100"); then
-	AC_MSG_RESULT([    Warning: Lua 5.0 is not available on your system, Lua 5.1 will be used
+if (test "$LUA_VER" = "0x050000"); then
+	AC_MSG_RESULT([    Warning: Lua 5.1 is not available on your system, Lua 5.0 will be used
     instead but it may not be fully compatible with existing CELX scripts. 
     It is recommanded that you install Lua 5.0 and rerun configure.]);
 fi
