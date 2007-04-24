@@ -366,7 +366,8 @@ Model::determineOpacity()
 {
     for (unsigned int i = 0; i < materials.size(); i++)
     {
-        if (materials[i]->opacity > 0.01f && materials[i]->opacity < 1.0f)
+        if ((materials[i]->opacity > 0.01f && materials[i]->opacity < 1.0f) ||
+            materials[i]->blend == Mesh::AdditiveBlend)
         {
             opaque = false;
             return;
