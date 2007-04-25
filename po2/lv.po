@@ -373,4 +373,3 @@ msgstr "Lidojošā Zivs"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Lapsiņa"
-
