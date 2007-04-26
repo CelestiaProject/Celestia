@@ -569,8 +569,28 @@ Mesh::getBoundingBox() const
 
     char* vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(Position).offset;
 
-    for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
-        bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
+    if (vertexDesc.getAttribute(PointSize).format == Float1)
+    {
+        // Handle bounding box calculation for point sprites. Unlike other
+        // primitives, point sprite vertices have a non-zero size.
+        int pointSizeOffset = (int) vertexDesc.getAttribute(PointSize).offset -
+            (int) vertexDesc.getAttribute(Position).offset;
+        
+        for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
+        {
+            Point3f center = Point3f(reinterpret_cast<float*>(vdata));
+            float pointSize = (reinterpret_cast<float*>(vdata + pointSizeOffset))[0];
+            Vec3f offsetVec(pointSize, pointSize, pointSize);
+
+            AxisAlignedBox pointbox(center - offsetVec, center + offsetVec);
+            bbox.include(pointbox);
+        }
+    }
+    else
+    {
+        for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
+            bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
+    }
 
     return bbox;
 }
