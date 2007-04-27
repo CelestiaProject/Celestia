@@ -191,7 +191,7 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 
 	EllipticalOrbit {
 		Period          0.0053
-		SemiMajorAxis   0.0208
+		SemiMajorAxis   0.020807
 		Eccentricity    0
 		ArgOfPericenter 69
 		MeanAnomaly     66
@@ -1636,7 +1636,7 @@ AltSurface "limit of knowledge" "HD 109749/b"
 {
 	Texture "venuslike.*"
 
-	Mass      15     # M.sin(i) = 15 earths
+	Mass      16     # M.sin(i) = 16 earths
 	Radius     16100
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
@@ -1644,8 +1644,9 @@ AltSurface "limit of knowledge" "HD 109749/b"
 	EllipticalOrbit {
 		Period          0.0147
 		SemiMajorAxis   0.041
-		Eccentricity    0
-		MeanLongitude   321
+		Eccentricity    0.02
+		ArgOfPericenter 233
+		MeanAnomaly     70
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1662,15 +1663,16 @@ AltSurface "limit of knowledge" "Gliese 581/b"
 	Texture "asteroid.*"
 
 	Mass      5     # M.sin(i) = 5 earths
-	Radius     10500
+	Radius     11200
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
 	EllipticalOrbit {
-		Period          0.0353
+		Period          0.0354
 		SemiMajorAxis   0.073
-		Eccentricity    0
-		MeanLongitude   107
+		Eccentricity    0.16
+		ArgOfPericenter 227
+		MeanAnomaly     0
 	}
 
 	# likely to be in captured synchronous rotation
@@ -1692,11 +1694,11 @@ AltSurface "limit of knowledge" "Gliese 581/c"
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
 	EllipticalOrbit {
-		Period          0.2311
+		Period          0.2289
 		SemiMajorAxis   0.25
 		Eccentricity    0.2
-		ArgOfPericenter 309
-		MeanAnomaly     189
+		ArgOfPericenter 255
+		MeanAnomaly     94
 	}
 
 	# likely to be in captured synchronous rotation
