@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# Version 1.31 (2007 Apr 14)
+# Version 1.32 (2007 May 05)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -1755,6 +1755,52 @@
 	AscendingNode	 16.099
 	ArgOfPericenter  65.594     
 	MeanAnomaly     126.537
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2007S2" "Sol/Saturn" # MPEC 2007-J09
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		3
+
+	EllipticalOrbit
+	{
+	Epoch		2454200.5	# 2007 Apr 10
+	Period		792.96
+	SemiMajorAxis	16523160
+	Eccentricity	0.2181375
+	Inclination	170.320
+	AscendingNode	314.099
+	ArgOfPericenter  62.038     
+	MeanAnomaly     184.606
+	}
+
+	RotationPeriod  10   # Guess
+
+	Albedo 0.06
+}
+
+"2007S3" "Sol/Saturn" # MPEC 2007-J09
+{
+	Texture	 	"asteroid.jpg"
+	Mesh		"asteroid.cms"
+	Radius		2.5
+
+	EllipticalOrbit
+	{
+	Epoch		2454200.5	# 2007 Apr 10
+	Period		991.66
+	SemiMajorAxis	19179340
+	Eccentricity	0.1506156
+	Inclination	171.507
+	AscendingNode	337.152
+	ArgOfPericenter 284.032     
+	MeanAnomaly     199.246
 	}
 
 	RotationPeriod  10   # Guess
