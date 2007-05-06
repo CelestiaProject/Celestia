@@ -195,7 +195,7 @@ bool CaptureGLBufferToPNG(const string& filename,
     png_write_end(png_ptr, info_ptr);
 
     // Clean up everything . . .
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
     delete[] row_pointers;
     delete[] pixels;
     fclose(out);
