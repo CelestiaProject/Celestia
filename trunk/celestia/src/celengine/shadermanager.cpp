@@ -1879,7 +1879,7 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0]);\n";
+        source += "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0].st);\n";
     }
     else
     {
