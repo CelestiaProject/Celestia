@@ -133,6 +133,7 @@
 
 @implementation BrowserWindowController
 
+static BrowserItem *staticRootItem;
 static CelestiaCore *appCore;
 
 - (id) init
@@ -215,8 +216,6 @@ static CelestiaCore *appCore;
 
 -(BrowserItem *) root
 {
-    static BrowserItem *staticRootItem = nil;
-
     if (staticRootItem) return staticRootItem;
     BrowserItem *rootItem = [[BrowserItem alloc] initWithName: @""];
 
@@ -527,4 +526,20 @@ static CelestiaCore *appCore;
     }
 }
 
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+    if ([aNotification object] == [self window] && staticRootItem)
+    {
+        [staticRootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Nearest Stars",@"") children: [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
+
+        // Immediately synch browser display with reloaded star list,
+        // but only if star list is showing
+        NSArray *selection = [[browser path] componentsSeparatedByString: [browser pathSeparator]];
+        if ([selection count]>1 && [[selection objectAtIndex: 1] isEqualToString: NSLocalizedString(@"Nearest Stars",@"")])
+        {
+            for (int i=1; i<[browser numberOfVisibleColumns]; ++i)
+                [browser reloadColumn: i];
+        }
+    }
+}
 @end
