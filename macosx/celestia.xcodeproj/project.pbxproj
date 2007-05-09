@@ -672,15 +672,10 @@
 		F5040B0F02A484DA014901DC /* CelestiaController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CelestiaController.m; sourceTree = "<group>"; };
 		F505BFFA02CA9DAE0100020A /* CGLInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CGLInfo.m; sourceTree = "<group>"; };
 		F505BFFB02CA9DAE0100020A /* CGLInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CGLInfo.h; sourceTree = "<group>"; };
-		F51C6D390295962D014901DC /* buildstardb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = buildstardb.cpp; path = ../src/buildstardb.cpp; sourceTree = SOURCE_ROOT; };
-		F51C6D3A0295962D014901DC /* packdb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = packdb.cpp; path = ../src/packdb.cpp; sourceTree = SOURCE_ROOT; };
-		F51C6D3B0295962D014901DC /* packnames.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = packnames.cpp; path = ../src/packnames.cpp; sourceTree = SOURCE_ROOT; };
-		F51C6D3C0295962D014901DC /* readstars.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = readstars.cpp; path = ../src/readstars.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6D450295968D014901DC /* 3dsmodel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = 3dsmodel.cpp; path = ../src/cel3ds/3dsmodel.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6D460295968D014901DC /* 3dsmodel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = 3dsmodel.h; path = ../src/cel3ds/3dsmodel.h; sourceTree = SOURCE_ROOT; };
 		F51C6D470295968D014901DC /* 3dsread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = 3dsread.cpp; path = ../src/cel3ds/3dsread.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6D480295968D014901DC /* 3dsread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = 3dsread.h; path = ../src/cel3ds/3dsread.h; sourceTree = SOURCE_ROOT; };
-		F51C6D540295987B014901DC /* buildstardb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = buildstardb.cpp; path = ../src/tools/buildstardb.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6D550295987B014901DC /* basictypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = basictypes.h; path = ../src/celutil/basictypes.h; sourceTree = SOURCE_ROOT; };
 		F51C6D560295987B014901DC /* bigfix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = bigfix.cpp; path = ../src/celutil/bigfix.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6D570295987B014901DC /* bigfix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bigfix.h; path = ../src/celutil/bigfix.h; sourceTree = SOURCE_ROOT; };
@@ -1210,17 +1205,12 @@
 		F51C6D38029595BA014901DC /* Celestia Main */ = {
 			isa = PBXGroup;
 			children = (
-				F51C6D5302959823014901DC /* tools */,
 				F51C6D4E029596B4014901DC /* celutil */,
 				F51C6D4F029596B4014901DC /* celtxf */,
 				F51C6D50029596B4014901DC /* celmath */,
 				F51C6D51029596B4014901DC /* celestia */,
 				F51C6D52029596B4014901DC /* celengine */,
 				F51C6D430295967D014901DC /* cel3ds */,
-				F51C6D390295962D014901DC /* buildstardb.cpp */,
-				F51C6D3A0295962D014901DC /* packdb.cpp */,
-				F51C6D3B0295962D014901DC /* packnames.cpp */,
-				F51C6D3C0295962D014901DC /* readstars.cpp */,
 			);
 			name = "Celestia Main";
 			sourceTree = "<group>";
@@ -1484,14 +1474,6 @@
 				F57B5A37057AB65E01000002 /* fragmentprog.h */,
 			);
 			name = celengine;
-			sourceTree = "<group>";
-		};
-		F51C6D5302959823014901DC /* tools */ = {
-			isa = PBXGroup;
-			children = (
-				F51C6D540295987B014901DC /* buildstardb.cpp */,
-			);
-			name = tools;
 			sourceTree = "<group>";
 		};
 		F55A246702B2D4FF0100020A /* Wrappers */ = {
