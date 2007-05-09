@@ -1,4 +1,4 @@
-# Catalog of 229 known extrasolar planets.
+# Catalog of 232 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -512,6 +512,44 @@ AltSurface "limit of knowledge" "WASP-1/b"
 }
 
 AltSurface "limit of knowledge" "HD 73256/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 3413-0005-1"   # XO-2
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at >88.58 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.97 jupiters.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       180     # M.sin(i) = 0.57 jupiters
+	Radius     67900
+
+	InfoURL "http://exoplanet.eu/star.php?st=XO-2"
+
+	EllipticalOrbit {
+		Period          0.0072
+		SemiMajorAxis   0.0369
+		Inclination     100.9
+		AscendingNode   114.2
+		MeanLongitude   120
+	}
+
+	Obliquity             101 # guess, to match inclination
+	EquatorAscendingNode  114 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 3413-0005-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -1705,6 +1743,41 @@ AltSurface "limit of knowledge" "Gliese 581/c"
 }
 
 AltSurface "limit of knowledge" "Gliese 581/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 147506"   # HAT-P-2
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       2600     # M.sin(i) = 8.17 jupiters
+	Radius     82600
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+147506"
+
+	EllipticalOrbit {
+		Period          0.0154
+		SemiMajorAxis   0.0685
+		Eccentricity    0.507
+		Inclination     99.6
+		AscendingNode   247
+		ArgOfPericenter 337
+		MeanAnomaly     115
+	}
+
+	Obliquity             100 # guess, to match inclination
+	EquatorAscendingNode  247 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 147506/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -4322,6 +4395,38 @@ AltSurface "limit of knowledge" "HD 192699/b"
 }
 
 
+"b" "TYC 3304-0101-1"   # HD 17092
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       1460     # M.sin(i) = 4.6 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+17092"
+
+	EllipticalOrbit {
+		Period          0.9854
+		SemiMajorAxis   1.29
+		Eccentricity    0.166
+		ArgOfPericenter 133
+		MeanAnomaly     15
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "TYC 3304-0101-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 28185"
 {
 	Texture "exo-class2.*"
@@ -5574,10 +5679,10 @@ AltSurface "limit of knowledge" "HD 114386/b"
 
 "b" "HD 41004"   # HD 41004 A
 {
-	Texture "exo-class2.*"
+	Texture "exo-class1.*"
 
-	Color  [0.98 0.97 1]
-	Albedo 0.75
+	Color  [0.96 0.96 1]
+	Albedo 0.5
 
 	Mass       810     # M.sin(i) = 2.56 jupiters
 	Radius     70000
