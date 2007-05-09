@@ -59,6 +59,15 @@
 	AppMag 11.3
 }
 
+1000053413 "XO-2"
+{
+	RA 117.0292
+	Dec 50.2258
+	Distance 486
+	SpectralType "K0V"
+	AppMag 11.18
+}
+
 1028113549 "TrES-2 (parent star)"
 {
 	RA 286.80848
@@ -102,6 +111,15 @@
 	Distance 149
 	SpectralType "G1V"
 	AppMag 8.70
+}
+
+1001013304 # HD 17092
+{
+	RA 41.5917
+	Dec 49.6531
+	Distance 355
+	SpectralType "K0III"
+	AppMag 7.73
 }
 
 Barycenter "TAU Boo:4 Boo"
