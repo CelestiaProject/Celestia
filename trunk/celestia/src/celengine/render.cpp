@@ -5092,16 +5092,6 @@ void Renderer::renderObject(Point3f pos,
                         nearPlaneDistance, frustumFarPlane);
     viewFrustum.transform(invMV);
 
-    // Temporary hack until we fix culling for ringed planets; prevents
-    // over-tesselation of ringed planet surfaces. The amount of tesselation
-    // should be based on the screen width of the planet sphere, not including
-    // the rings.
-    if (obj.rings != NULL)
-    {
-        if (ri.pixWidth > 5000)
-            ri.pixWidth = 5000;
-    }
-
     // Get cloud layer parameters
     Texture* cloudTex       = NULL;
     Texture* cloudNormalMap = NULL;
@@ -7101,7 +7091,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     	double  dsoRadius = dso->getRadius();
         if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
         {
-        	// display looks satisfactory for 0.2 < brightness < O(1.0)
+            // display looks satisfactory for 0.2 < brightness < O(1.0)
             // Ansatz: brightness = a - b*appMag(distanceToDSO), emulates eye sensitivity...
             // determine a,b such that
             // a-b*absMag = absMag/avgAbsMag ~ 1; a-b*faintestMag = 0.2
@@ -7173,13 +7163,14 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     // Only render those labels that are in front of the camera:
     // Place labels for DSOs brighter than the specified label threshold brightness
     //
+
     if ((dso->getLabelMask() & labelMode) && appMag < labelThresholdMag  && dot(relPos, viewNormal) > 0)
     {
         // introduce distance dependent label transparency.
-		float distr = 6.0f * (labelThresholdMag - appMag)/labelThresholdMag;
-		//(float)log10(1.0f + 1.2e-6f * distanceToDSO);
+        float distr = 6.0f * (labelThresholdMag - appMag)/labelThresholdMag;
+        //(float)log10(1.0f + 1.2e-6f * distanceToDSO);
         if (distr > 1.0f)
-        	distr = 1.0f;
+            distr = 1.0f;
 
     	renderer->addLabel(dsoDB->getDSOName(dso),
                            Color(0.1f, 0.85f, 0.85f, distr),
