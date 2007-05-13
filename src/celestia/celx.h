@@ -69,6 +69,8 @@ public:
     // Lua hook handling
     void setLuaPath(const string& s);
     void allowSystemAccess();
+    void allowLuaPackageAccess();
+    void setLuaHookEventHandlerEnabled(bool);
     bool callLuaHook(void* obj, const char* method);
     bool callLuaHook(void* obj, const char* method, const char ch);
     bool callLuaHook(void* obj, const char* method, float x, float y);
@@ -89,6 +91,7 @@ private:
     Timer* timer;
     double scriptAwakenTime;
     IOMode ioMode;
+    bool eventHandlerEnabled;
 };
 
 View* getViewByObserver(CelestiaCore*, Observer*);

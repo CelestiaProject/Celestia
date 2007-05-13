@@ -382,7 +382,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
 #ifdef CELX
     LuaState* celxScript;
-    LuaState* luaHook;
+    LuaState* luaHook;     // Lua hook context
+    LuaState* luaSandbox;  // Safe Lua context for ssc scripts
 #endif // CELX
 
     enum ScriptState
