@@ -430,7 +430,8 @@ LuaState::LuaState() :
     alive(false),
     timer(NULL),
     scriptAwakenTime(0.1),
-    ioMode(NoIO)
+    ioMode(NoIO),
+    eventHandlerEnabled(false)
 {
     state = lua_open();
     timer = CreateTimer();
@@ -5905,10 +5906,11 @@ static int celestia_settimeslice(lua_State* l)
         doError(l, "Argument for celestia:settimeslice must be a number");
     }
     double timeslice = safeGetNumber(l, 2, AllErrors, "Argument to celestia:settimeslice must be a number");
-	if (timeslice == 0.0) timeslice = 0.1;
+    if (timeslice == 0.0)
+        timeslice = 0.1;
 
-	LuaState* luastate = getLuaStateObject(l);
-	luastate->timeout = luastate->getTime() + timeslice;
+    LuaState* luastate = getLuaStateObject(l);
+    luastate->timeout = luastate->getTime() + timeslice;
 
     return 0;
 }
@@ -5921,11 +5923,19 @@ static int celestia_setluahook(lua_State* l)
     if (!lua_istable(l, 2) && !lua_isnil(l, 2))
     {
         doError(l, "Argument for celestia:setluahook must be a table or nil");
+        return 0;
+    }
+
+    LuaState* luastate = getLuaStateObject(l);
+    if (luastate != NULL)
+    {
+        luastate->setLuaHookEventHandlerEnabled(lua_istable(l, 2));
     }
 
     lua_pushlightuserdata(l, appCore);
     lua_pushvalue(l, -2);
     lua_settable(l, LUA_REGISTRYINDEX);
+
     return 0;
 }
 
@@ -6047,15 +6057,39 @@ void LuaState::allowSystemAccess()
 }
 
 
+// Permit access to the package library, but prohibit use of the loadlib
+// function.
+void LuaState::allowLuaPackageAccess()
+{
+#if LUA_VER >= 0x050100
+    openLuaLibrary(state, LUA_LOADLIBNAME, luaopen_package);
+
+    // Disallow loadlib
+    lua_getfield(state, LUA_GLOBALSINDEX, "package");
+    lua_pushnil(state);
+    lua_setfield(state, -2, "loadlib");
+    lua_pop(state, 1);
+#endif
+}
+
+
 // ==================== Lua Hook Methods ================================================
+
+void LuaState::setLuaHookEventHandlerEnabled(bool enable)
+{
+    eventHandlerEnabled = enable;
+}
+
 
 bool LuaState::callLuaHook(void* obj, const char* method)
 {
+    if (!eventHandlerEnabled)
+        return false;
+
     lua_pushlightuserdata(costate, obj);
     lua_gettable(costate, LUA_REGISTRYINDEX);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
         lua_pop(costate, 1);
         return false;
     }
@@ -6090,11 +6124,13 @@ bool LuaState::callLuaHook(void* obj, const char* method)
 
 bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
 {
+    if (!eventHandlerEnabled)
+        return false;
+
     lua_pushlightuserdata(costate, obj);
     lua_gettable(costate, LUA_REGISTRYINDEX);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
         lua_pop(costate, 1);
         return false;
     }
@@ -6131,11 +6167,13 @@ bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
 
 bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
 {
+    if (!eventHandlerEnabled)
+        return false;
+
     lua_pushlightuserdata(costate, obj);
 	lua_gettable(costate, LUA_REGISTRYINDEX);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
         lua_pop(costate, 1);
         return false;
     }
@@ -6173,11 +6211,13 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
 
 bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int b)
 {
+    if (!eventHandlerEnabled)
+        return false;
+
     lua_pushlightuserdata(costate, obj);
 	lua_gettable(costate, LUA_REGISTRYINDEX);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
         lua_pop(costate, 1);
         return false;
     }
@@ -6216,11 +6256,13 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
 
 bool LuaState::callLuaHook(void* obj, const char* method, double dt)
 {
+    if (!eventHandlerEnabled)
+        return false;
+
     lua_pushlightuserdata(costate, obj);
     lua_gettable(costate, LUA_REGISTRYINDEX);
     if (!lua_istable(costate, -1))
     {
-        cerr << "Missing event handler table";
         lua_pop(costate, 1);
         return false;
     }

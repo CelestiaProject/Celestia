@@ -316,6 +316,7 @@ CelestiaCore::CelestiaCore() :
 #ifdef CELX
     celxScript(NULL),
     luaHook(NULL),
+    luaSandbox(NULL),
 #endif // CELX
     scriptState(ScriptCompleted),
     timeZoneBias(0),
@@ -376,7 +377,20 @@ CelestiaCore::~CelestiaCore()
 {
     if (movieCapture != NULL)
         recordEnd();
+
+#ifdef CELX
+    // Clean up all scripts
+    if (celxScript != NULL)
+        delete celxScript;
+    if (luaHook != NULL)
+        delete luaHook;
+    if (luaSandbox != NULL)
+        delete luaSandbox;
+#endif
+
     delete execEnv;
+
+
 }
 
 void CelestiaCore::readFavoritesFile()
@@ -4452,65 +4466,92 @@ class LuaPathFinder : public EnumFilesHandler
     };
 };
 
+
+// Initialize the Lua hook table as well as the Lua state for scripted
+// objects. The Lua hook operates in a different Lua state than user loaded
+// scripts. It always has file system access via the IO package. If the script
+// system access policy is "allow", then scripted objects will run in the same
+// Lua context as the Lua hook. Sharing state between scripted objects and the
+// hook can be very useful, but it gives system access to scripted objects,
+// and therefore must be restricted based on the system access policy.
 bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 {
-    if (config->luaHook == "")
-        return false;
+    luaHook = new LuaState();
+    luaHook->init(this);
 
+    string LuaPath = "?.lua;celxx/?.lua;";
+
+    // Find the path for lua files in the extras directories
+    {
+        for (vector<string>::const_iterator iter = config->extrasDirs.begin();
+             iter != config->extrasDirs.end(); iter++)
+        {
+            if (*iter != "")
+            {
+                Directory* dir = OpenDirectory(*iter);
+
+                LuaPathFinder loader("");
+                loader.pushDir(*iter);
+                dir->enumFiles(loader, true);
+                LuaPath += loader.luaPath;
+                delete dir;
+            }
+        }
+    }
+
+    // Always grant access for the Lua hook
+    luaHook->allowSystemAccess();
+
+    luaHook->setLuaPath(LuaPath);
+
+    int status = 0;
+
+    // Execute the Lua hook initialization script
+    if (config->luaHook != "")
     {
         string filename = config->luaHook;
         ifstream scriptfile(filename.c_str());
         if (!scriptfile.good())
         {
-           char errMsg[1024];
-           sprintf(errMsg, "Error opening LuaHook '%s'",  filename.c_str());
-           if (alerter != NULL)
-               alerter->fatalError(errMsg);
-           else
-               flash(errMsg);
+            char errMsg[1024];
+            sprintf(errMsg, "Error opening LuaHook '%s'",  filename.c_str());
+            if (alerter != NULL)
+                alerter->fatalError(errMsg);
+            else
+                flash(errMsg);
         }
 
         if (progressNotifier)
             progressNotifier->update(config->luaHook);
+            
+        status = luaHook->loadScript(scriptfile, filename);
+    }
+    else
+    {
+        status = luaHook->loadScript("");
+    }
 
-        luaHook = new LuaState();
-        luaHook->init(this);
-
-        SetScriptedObjectContext(luaHook->getState());
-
-        // Always grant access for the Lua hook
-        // TODO: however, this also lets scripted orbits and rotations use
-        // system functions. Is this OK?
-        luaHook->allowSystemAccess();
-
-	string LuaPath = "?.lua;celxx/?.lua;";
-
-        // Find the path for lua files in the extras directories
+    if (status != 0)
+    {
+        cout << "lua hook load failed\n";
+        string errMsg = luaHook->getErrorMessage();
+        if (errMsg.empty())
+            errMsg = "Unknown error loading hook script";
+        if (alerter != NULL)
+            alerter->fatalError(errMsg);
+        else
+            flash(errMsg);
+        delete luaHook;
+        luaHook = NULL;
+    }
+    else
+    {
+        // Coroutine execution; control may be transferred between the
+        // script and Celestia's event loop
+        if (!luaHook->createThread())
         {
-            for (vector<string>::const_iterator iter = config->extrasDirs.begin();
-                 iter != config->extrasDirs.end(); iter++)
-            {
-                if (*iter != "")
-                {
-                    Directory* dir = OpenDirectory(*iter);
-
-                    LuaPathFinder loader("");
-                    loader.pushDir(*iter);
-                    dir->enumFiles(loader, true);
-                    LuaPath += loader.luaPath;
-                    delete dir;
-                }
-            }
-        }
-        luaHook->setLuaPath(LuaPath);
-
-        int status = luaHook->loadScript(scriptfile, filename);
-        if (status != 0)
-        {
-            cout << "lua hook load failed\n";
-            string errMsg = luaHook->getErrorMessage();
-            if (errMsg.empty())
-                errMsg = "Unknown error loading hook script";
+            const char* errMsg = "Script coroutine initialization failed";
+            cout << "hook thread failed\n";
             if (alerter != NULL)
                 alerter->fatalError(errMsg);
             else
@@ -4518,27 +4559,40 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
             delete luaHook;
             luaHook = NULL;
         }
-        else
+
+        if (luaHook)
         {
-            // Coroutine execution; control may be transferred between the
-            // script and Celestia's event loop
-            if (!luaHook->createThread())
-            {
-                const char* errMsg = "Script coroutine initialization failed";
-                cout << "hook thread failed\n";
-                if (alerter != NULL)
-                    alerter->fatalError(errMsg);
-                else
-                    flash(errMsg);
-                delete luaHook;
-                luaHook = NULL;
-            }
-            if (luaHook)
-            {
-                while (!luaHook->tick(0.1)) ;
-            }
+            while (!luaHook->tick(0.1)) ;
         }
     }
+
+    // Set up the script context; if the system access policy is allow,
+    // it will share the same context as the Lua hook. Otherwise, we
+    // create a private context.
+    if (config->scriptSystemAccessPolicy == "allow")
+    {
+        SetScriptedObjectContext(luaHook->getState());
+    }
+    else
+    {
+        luaSandbox = new LuaState();
+        luaSandbox->init(this);
+
+        // Allow access to functions in package because we need 'require'
+        // But, loadlib is prohibited.
+        luaSandbox->allowLuaPackageAccess();
+        luaSandbox->setLuaPath(LuaPath);
+
+        status = luaSandbox->loadScript("");
+        if (status != 0)
+        {
+            delete luaSandbox;
+            luaSandbox = NULL;
+        }
+
+        SetScriptedObjectContext(luaSandbox->getState());
+    }
+
     return true;
 }
 #endif
