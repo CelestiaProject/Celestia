@@ -36,7 +36,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     ifstream configFile(filename.c_str());
     if (!configFile.good())
     {
-        DPRINTF(0, "Error opening config file.");
+        DPRINTF(0, "Error opening config file '%s'.\n", filename.c_str());
         return config;
     }
 
