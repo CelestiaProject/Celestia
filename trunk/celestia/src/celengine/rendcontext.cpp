@@ -84,13 +84,6 @@ RenderContext::RenderContext(const Mesh::Material* _material)
 }
 
 
-#if 0
-static void setVertexArrays(const Mesh::VertexDescription& desc)
-{
-}
-#endif
-
-
 const Mesh::Material*
 RenderContext::getMaterial() const
 {
@@ -157,6 +150,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
         glEnable(GL_POINT_SPRITE_ARB);
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
         glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
     }
 
     glDrawElements(GLPrimitiveModes[(int) group.prim],
@@ -167,6 +161,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
     if (group.prim == Mesh::SpriteList)
     {
         glDisable(GL_POINT_SPRITE_ARB);
+        glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
     }
 }
 
