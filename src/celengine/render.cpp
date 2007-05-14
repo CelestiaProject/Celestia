@@ -177,6 +177,15 @@ inline float inchesToMm(float in)
 }
 
 
+// Fade function for objects that shouldn't be shown when they're too small
+// on screen such as orbit paths and some object labels. The will fade linearly
+// from invisible at minSize pixels to full visibility at opaqueScale*minSize.
+inline float sizeFade(float screenSize, float minScreenSize, float opaqueScale)
+{
+    return min(1.0f, (screenSize - minScreenSize) / (minScreenSize * (opaqueScale - 1)));
+}
+
+
 Renderer::Renderer() :
     context(0),
     windowWidth(0),
@@ -1094,35 +1103,35 @@ public:
 };
 
 
-void renderOrbitColor(int classification, bool selected)
+void renderOrbitColor(int classification, bool selected, float opacity)
 {
     if (selected)
     {
         // Highlight the orbit of the selected object in red
-        glColor4f(1, 0, 0, 1);
+        glColor4f(1, 0, 0, opacity);
     }
     else
     {
         switch (classification)
         {
         case Body::Moon:
-            glColor4f(0.0f, 0.4f, 0.5f, 1.0f);
+            glColor4f(0.0f, 0.4f, 0.5f, opacity);
             break;
         case Body::Asteroid:
-            glColor4f(0.35f, 0.2f, 0.0f, 1.0f);
+            glColor4f(0.35f, 0.2f, 0.0f, opacity);
             break;
         case Body::Comet:
-            glColor4f(0.0f, 0.5f, 0.5f, 1.0f);
+            glColor4f(0.0f, 0.5f, 0.5f, opacity);
             break;
         case Body::Spacecraft:
-            glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
+            glColor4f(0.4f, 0.4f, 0.4f, opacity);
             break;
         case Body::Stellar:
-            glColor4f(0.5f, 0.5f, 0.8f, 1.0f);
+            glColor4f(0.5f, 0.5f, 0.8f, opacity);
             break;
         case Body::Planet:
         default:
-            glColor4f(0.0f, 0.4f, 1.0f, 1.0f);
+            glColor4f(0.0f, 0.4f, 1.0f, opacity);
             break;
         }
     }
@@ -1242,7 +1251,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
         highlight = highlightObject.body() == body;
     else
         highlight = highlightObject.star() == orbitPath.star;
-    renderOrbitColor(body != NULL ? body->getClassification() : Body::Stellar, highlight);
+    renderOrbitColor(body != NULL ? body->getClassification() : Body::Stellar, highlight, orbitPath.opacity);
 
     // Actually render the orbit
     if (orbit->isPeriodic())
@@ -2007,7 +2016,7 @@ void Renderer::render(const Observer& observer,
                 glDisable(GL_LIGHTING);
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_DEPTH_TEST);
-                glDepthMask(GL_TRUE);
+                glDepthMask(GL_FALSE);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 if ((renderFlags & ShowSmoothLines) != 0)
                 {
@@ -4976,7 +4985,7 @@ void Renderer::renderObject(Point3f pos,
     ri.orientation = cameraOrientation;
 
     ri.pixWidth = discSizeInPixels;
-    ri.pointScale = 0.5f * obj.radius / pixelSize;
+    ri.pointScale = 2.0f * obj.radius / pixelSize;
 
     // Set up the colors
     if (ri.baseTex == NULL ||
@@ -6263,41 +6272,43 @@ void Renderer::buildRenderLists(const Star& sun,
             {
                 Color labelColor;
                 bool showLabel = false;
+                float opacity = sizeFade(boundingRadiusSize, minOrbitSize, 2.0f);
+
 
                 switch (body->getClassification())
                 {
                 case Body::Planet:
                     if ((labelMode & PlanetLabels) != 0)
                     {
-                        labelColor = Color(0.0f, 1.0f, 0.0f);
+                        labelColor = Color(0.0f, 1.0f, 0.0f, opacity);
                         showLabel = true;
                     }
                     break;
                 case Body::Moon:
                     if ((labelMode & MoonLabels) != 0)
                     {
-                        labelColor = Color(0.0f, 0.65f, 0.0f);
+                        labelColor = Color(0.0f, 0.65f, 0.0f, opacity);
                         showLabel = true;
                     }
                     break;
                 case Body::Asteroid:
                     if ((labelMode & AsteroidLabels) != 0)
                     {
-                        labelColor = Color(0.7f, 0.4f, 0.0f);
+                        labelColor = Color(0.7f, 0.4f, 0.0f, opacity);
                         showLabel = true;
                     }
                     break;
                 case Body::Comet:
                     if ((labelMode & CometLabels) != 0)
                     {
-                        labelColor = Color(0.0f, 1.0f, 1.0f);
+                        labelColor = Color(0.0f, 1.0f, 1.0f, opacity);
                         showLabel = true;
                     }
                     break;
                 case Body::Spacecraft:
                     if ((labelMode & SpacecraftLabels) != 0)
                     {
-                        labelColor = Color(0.6f, 0.6f, 0.6f);
+                        labelColor = Color(0.6f, 0.6f, 0.6f, opacity);
                         showLabel = true;
                     }
                     break;
@@ -6345,6 +6356,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 path.centerZ = origf * viewMatZ;
                 path.radius = (float) boundingRadius;
                 path.origin = Point3f(origf.x, origf.y, origf.z);
+                path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
                 orbitPathList.push_back(path);
             }
         }
@@ -6400,6 +6412,7 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
                 path.centerZ = origf * viewMatZ;
                 path.radius = (float) boundingRadius;
                 path.origin = Point3f(origf.x, origf.y, origf.z);
+                path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
                 orbitPathList.push_back(path);
             }
         }

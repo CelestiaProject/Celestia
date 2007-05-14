@@ -181,6 +181,7 @@ class Renderer
         Body* body;
         const Star* star;
         Point3f origin;
+        float opacity;
     };        
 
     enum FontStyle
