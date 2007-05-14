@@ -414,7 +414,10 @@ Model::OpacityComparator::OpacityComparator()
 static uint32
 getMeshMaterialIndex(const Mesh& mesh)
 {
-    return mesh.getGroup(mesh.getGroupCount() - 1)->materialIndex;
+    if (mesh.getGroupCount() == 0)
+        return 0;
+    else
+        return mesh.getGroup(mesh.getGroupCount() - 1)->materialIndex;
 }
 
 
