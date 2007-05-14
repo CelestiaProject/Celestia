@@ -153,7 +153,21 @@ void renderSphere_GLSL(const RenderInfo& ri,
             Texture* cloudTex = NULL;
             if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
                 cloudTex = atmosphere->cloudTexture.find(textureRes);
-            if (cloudTex != NULL)
+
+            // The current implementation of cloud shadows is not compatible
+            // with virtual or split textures.
+            bool allowCloudShadows = true;
+            for (unsigned int i = 0; i < nTextures; i++)
+            {
+                if (textures[i]->getLODCount() > 1 ||
+                    textures[i]->getUTileCount(0) > 1 ||
+                    textures[i]->getVTileCount(0) > 1)
+                {
+                    allowCloudShadows = false;
+                }
+            }
+
+            if (cloudTex != NULL && allowCloudShadows)
             {
                 shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
                 textures[nTextures++] = cloudTex;
