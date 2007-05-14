@@ -1,6 +1,6 @@
 // lodspheremesh.cpp
 //
-// Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2000-2007, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@ using namespace std;
 
 //#define SHOW_PATCH_VISIBILITY
 //#define SHOW_FRUSTUM
+//#define VERTEX_BUFFER_OBJECTS_ENABLED
 
 static bool trigArraysInitialized = false;
 static int maxDivisions = 16384;
@@ -680,6 +681,15 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     if (useVertexBuffers)
     {
+        // Calling glBufferDataARB() with NULL before mapping the buffer
+        // is a hint to OpenGL that previous contents of vertex buffer will
+        // be discarded and overwritten. It enables renaming in the driver,
+        // hopefully resulting in performance gains.
+        glx::glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                             maxVertices * vertexSize * sizeof(float),
+                             NULL,
+                             GL_STREAM_DRAW_ARB);
+
         vertices = reinterpret_cast<float*>(glx::glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
         if (vertices == NULL)
             return;
@@ -822,4 +832,3 @@ void LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffers[currentVB]);
     }
 }
-
