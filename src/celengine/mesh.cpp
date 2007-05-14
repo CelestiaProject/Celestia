@@ -603,12 +603,23 @@ Mesh::transform(Vec3f translation, float scale)
         return;
 
     char* vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(Position).offset;
-    for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
+    uint32 i;
+
+    // Scale and translate the vertex positions
+    for (i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
     {
         Vec3f tv = (Vec3f(reinterpret_cast<float*>(vdata)) + translation) * scale;
         reinterpret_cast<float*>(vdata)[0] = tv.x;
         reinterpret_cast<float*>(vdata)[1] = tv.y;
         reinterpret_cast<float*>(vdata)[2] = tv.z;
+    }
+
+    // Point sizes need to be scaled as well
+    if (vertexDesc.getAttribute(PointSize).format == Float1)
+    {
+        vdata = reinterpret_cast<char*>(vertices) + vertexDesc.getAttribute(PointSize).offset;
+        for (i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
+            reinterpret_cast<float*>(vdata)[0] *= scale;
     }
 }
 
