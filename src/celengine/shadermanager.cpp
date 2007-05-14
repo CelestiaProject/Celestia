@@ -1,6 +1,6 @@
 // shadermanager.cpp
 //
-// Copyright (C) 2001-2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2007, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@ static const char* errorFragmentShaderSource =
     "}\n";
 
 
+static const string CommonHeader("#version 110\n");
 
 ShaderManager&
 GetShaderManager()
@@ -886,7 +887,7 @@ PointSizeCalculation()
 GLVertexShader*
 ShaderManager::buildVertexShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     source += DeclareLights(props);
     if (props.lightModel == ShaderProperties::SpecularModel)
@@ -1185,7 +1186,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildFragmentShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     string diffTexCoord("diffTexCoord");
     string specTexCoord("specTexCoord");
@@ -1538,7 +1539,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     source += DeclareLights(props);
     source += "uniform vec3 eyePosition;\n";
@@ -1600,7 +1601,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     source += "uniform vec3 ambientColor;\n";
     source += "vec4 diff = vec4(ambientColor, 1.0);\n";
@@ -1694,7 +1695,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     source += DeclareLights(props);
     source += "uniform vec3 eyePosition;\n";
@@ -1739,7 +1740,7 @@ ShaderManager::buildAtmosphereVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     source += "varying vec3 scatterEx;\n";
     source += "varying vec3 eyeDir_obj;\n";
@@ -1797,7 +1798,7 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     source += "uniform float opacity;\n";
 
@@ -1866,7 +1867,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 {
-    string source;
+    string source = CommonHeader;
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
