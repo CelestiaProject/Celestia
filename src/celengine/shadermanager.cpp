@@ -1123,8 +1123,18 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
             // A cheap way to calculate cloud shadow texture coordinates that doesn't correctly account
             // for sun angle.
-            //source += "    " + CloudShadowTexCoord(j) + " = vec2(diffTexCoord.x + cloudShadowTexOffset, diffTexCoord.y);\n";
+            source += "    " + CloudShadowTexCoord(j) + " = vec2(diffTexCoord.x + cloudShadowTexOffset, diffTexCoord.y);\n";
 
+            // Disabled: there are too many problems with this approach,
+            // though it should theoretically work. The inverse trig
+            // approximations produced by the shader compiler are crude
+            // enough that visual anomalies are apparent. And in the current
+            // GeForce 8800 driver, this shader produces an internal compiler
+            // error. Cloud shadows are trivial if the cloud texture is a cube
+            // map. Also, DX10 capable hardware could efficiently perform
+            // the rect-to-spherical conversion in the pixel shader with an
+            // fp32 texture serving as a lookup table.
+#if 0
             // Compute the intersection of the sun direction and the cloud layer (currently assumed to be a sphere)
             source += "    float rq = dot(" + LightProperty(j, "direction") + ", gl_Vertex.xyz);\n";
             source += "    float qq = dot(gl_Vertex.xyz, gl_Vertex.xyz) - cloudHeight * cloudHeight;\n";
@@ -1140,6 +1150,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             source += "    if (diffTexCoord.x < 0.25 && u > 0.5) u -= 1.0;\n";
             source += "    else if (diffTexCoord.x > 0.75 && u < 0.5) u += 1.0;\n";
             source += "    " + CloudShadowTexCoord(j) + ".x = u + cloudShadowTexOffset;\n";
+#endif
 
             source += "}\n";
         }
