@@ -219,11 +219,6 @@ void renderSphere_GLSL(const RenderInfo& ri,
     if (shadprop.lightModel == ShaderProperties::LunarLambertModel)
         prog->lunarLambert = ri.lunarLambert;
 
-    if (ri.nightTex != NULL)
-    {
-        prog->nightTexMin = 0.0f;
-    }
-
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
     {
         float ringWidth = rings->outerRadius - rings->innerRadius;

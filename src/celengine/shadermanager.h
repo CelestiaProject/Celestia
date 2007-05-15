@@ -42,6 +42,7 @@ class ShaderProperties
      OverlayTexture          =   0x40,
      CloudShadowTexture      =   0x80,
      CompressedNormalTexture =  0x100,
+     EmissiveTexture         =  0x200,
      VertexColors            = 0x1000,
      Scattering              = 0x2000,
      PointSprite             = 0x4000,
@@ -141,10 +142,6 @@ class CelestiaGLProgram
     // Height of cloud layer above planet, in units of object radius
     FloatShaderParameter cloudHeight;
     FloatShaderParameter shadowTextureOffset;
-    
-    // Control the night texture effect--set to 1 for a purely additive effect,
-    // and 0 to show the night texture only in otherwise unilluminated regions.
-    FloatShaderParameter nightTexMin;
     
     // Parameters for atmospheric scattering; all distances are normalized for
     // a unit sphere.

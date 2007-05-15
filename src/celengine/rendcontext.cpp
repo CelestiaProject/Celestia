@@ -603,7 +603,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         emissiveTex = GetTextureManager()->find(m.maps[Mesh::EmissiveMap]);
         if (emissiveTex != NULL)
         {
-            shaderProps.texUsage |= ShaderProperties::NightTexture;
+            shaderProps.texUsage |= ShaderProperties::EmissiveTexture;
             textures[nTextures++] = emissiveTex;
         }
     }
@@ -645,11 +645,6 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     if (shaderProps.lightModel == ShaderProperties::LunarLambertModel)
     {
         prog->lunarLambert = lunarLambert;
-    }
-
-    if (emissiveTex != NULL)
-    {
-        prog->nightTexMin = 1.0f;
     }
 
     if (shaderProps.hasScattering())
