@@ -353,9 +353,6 @@ static string
 SeparateDiffuse(unsigned int i)
 {
     // Used for packing multiple diffuse factors into the diffuse color.
-    // It's probably better to use separate float interpolants.  I'll switch
-    // to this once I verify that shader compilers are smart enough to pack
-    // multiple scalars into a single vector interpolant.
     char buf[32];
     sprintf(buf, "diffFactors.%c", "xyzw"[i & 3]);
     return string(buf);
@@ -433,12 +430,30 @@ TangentSpaceTransform(const string& dst, const string& src)
 
 
 static string
+NightTextureBlend()
+{
+    // Output the blend factor for night lights textures
+    return string("totalLight = 1.0 - totalLight;\n"
+                  "totalLight = totalLight * totalLight * totalLight * totalLight;\n");
+}
+
+
+// Return true if the color sum from all light sources should be computed in
+// the vertex shader, and false if it will be done by the pixel shader.
+static bool
+VSComputesColorSum(const ShaderProperties& props)
+{
+    return !props.usesShadows() && props.lightModel != ShaderProperties::PerPixelSpecularModel;
+}
+
+
+static string
 AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
 {
-    if (props.usesShadows() || props.lightModel == ShaderProperties::PerPixelSpecularModel)
-        return SeparateDiffuse(lightIndex)  + " = ";
-    else
+    if (VSComputesColorSum(props))
         return string("diff.rgb += ") + LightProperty(lightIndex, "diffuse") + " * ";
+    else
+        return SeparateDiffuse(lightIndex)  + " = ";
 }
 
 
@@ -540,7 +555,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         }
     }
 
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
         source += "totalLight += NL;\n";
     }
@@ -832,6 +847,11 @@ TextureSamplerDeclarations(const ShaderProperties& props)
         source += "uniform sampler2D nightTex;\n";
     }
 
+    if (props.texUsage & ShaderProperties::EmissiveTexture)
+    {
+        source += "uniform sampler2D emissiveTex;\n";
+    }
+
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
         source += "uniform sampler2D overlayTex;\n";
@@ -851,10 +871,11 @@ TextureCoordDeclarations(const ShaderProperties& props)
         // If the shared texture coords flag is set, use the diffuse texture
         // coordinate for sampling all the texture maps.
         if (props.texUsage & (ShaderProperties::DiffuseTexture  |
-                               ShaderProperties::NormalTexture   |
-                               ShaderProperties::SpecularTexture |
-                               ShaderProperties::NightTexture    |
-                               ShaderProperties::OverlayTexture))
+                              ShaderProperties::NormalTexture   |
+                              ShaderProperties::SpecularTexture |
+                              ShaderProperties::NightTexture    |
+                              ShaderProperties::EmissiveTexture |
+                              ShaderProperties::OverlayTexture))
         {
             source += "varying vec2 diffTexCoord;\n";
         }
@@ -869,6 +890,8 @@ TextureCoordDeclarations(const ShaderProperties& props)
             source += "varying vec2 specTexCoord;\n";
         if (props.texUsage & ShaderProperties::NightTexture)
             source += "varying vec2 nightTexCoord;\n";
+        if (props.texUsage & ShaderProperties::EmissiveTexture)
+            source += "varying vec2 emissiveTexCoord;\n";
         if (props.texUsage & ShaderProperties::OverlayTexture)
             source += "varying vec2 overlayTexCoord;\n";
     }
@@ -970,10 +993,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
 
     // Miscellaneous lighting values
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
         source += "varying float totalLight;\n";
-        source += "uniform float nightTexMin;\n";
     }
 
     if (props.hasScattering())
@@ -1012,7 +1034,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += "vec3 H;\n";
     }
 
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
         source += "totalLight = 0.0;\n";
     }
@@ -1045,12 +1067,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         source += AddDirectionalLightContrib(i, props);
     }
 
-    if (props.texUsage & ShaderProperties::NightTexture)
+    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
-        // Output the blend factor for night lights textures
-        source += "totalLight = 1.0 - totalLight;\n";
-        source += "totalLight = totalLight * totalLight * totalLight * totalLight;\n";
-        source += "totalLight = max(totalLight, nightTexMin);\n";
+        source += NightTextureBlend();
     }
 
     unsigned int nTexCoords = 0;
@@ -1064,6 +1083,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
                               ShaderProperties::NormalTexture   |
                               ShaderProperties::SpecularTexture |
                               ShaderProperties::NightTexture    |
+                              ShaderProperties::EmissiveTexture |
                               ShaderProperties::OverlayTexture))
         {
             source += "diffTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
@@ -1095,6 +1115,12 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
             if (props.texUsage & ShaderProperties::NightTexture)
             {
                 source += "nightTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
+                nTexCoords++;
+            }
+
+            if (props.texUsage & ShaderProperties::EmissiveTexture)
+            {
+                source += "emissiveTexCoord = " + TexCoord2D(nTexCoords) + ";\n";
                 nTexCoords++;
             }
         }
@@ -1202,12 +1228,14 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     string diffTexCoord("diffTexCoord");
     string specTexCoord("specTexCoord");
     string nightTexCoord("nightTexCoord");
+    string emissiveTexCoord("emissiveTexCoord");
     string normTexCoord("normTexCoord");
     if (props.hasSharedTextureCoords())
     {
-        specTexCoord  = diffTexCoord;
-        nightTexCoord = diffTexCoord;
-        normTexCoord  = diffTexCoord;
+        specTexCoord     = diffTexCoord;
+        nightTexCoord    = diffTexCoord;
+        normTexCoord     = diffTexCoord;
+        emissiveTexCoord = diffTexCoord;
     }
 
     source += TextureSamplerDeclarations(props);
@@ -1293,16 +1321,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
     }
 
-    // Miscellaneous lighting values
-    if (props.texUsage & ShaderProperties::NightTexture)
-    {
-        source += "varying float totalLight;\n";
-    }
-
     if (props.hasScattering())
     {
         //source += "varying vec3 scatterIn;\n";
         source += "varying vec3 scatterEx;\n";
+    }
+
+    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
+    {
+        source += "varying float totalLight;\n";
     }
 
     // Declare shadow parameters
@@ -1520,7 +1547,31 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     // TODO: support a constant emissive color, not just an emissive texture
     if (props.texUsage & ShaderProperties::NightTexture)
     {
+        // If the night texture blend factor wasn't computed in the vertex
+        // shader, we need to do so now.
+        if (!VSComputesColorSum(props))
+        {
+            source += "float totalLight = ";
+        
+            if (props.nLights == 0)
+            {
+                source += "0.0f\n";
+            }
+            else
+            {
+                for (int k = 0; k < props.nLights - 1; k++)
+                    source += SeparateDiffuse(k) + " + ";
+                source += SeparateDiffuse(k) + ";\n";
+                source += NightTextureBlend();
+            }
+        }
+
         source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight;\n";
+    }
+
+    if (props.texUsage & ShaderProperties::EmissiveTexture)
+    {
+        source += "gl_FragColor += texture2D(emissiveTex, " + emissiveTexCoord + ".st);\n";
     }
 
     // Include the effect of atmospheric scattering.
@@ -2092,11 +2143,6 @@ CelestiaGLProgram::initParameters()
         shadowTextureOffset = floatParam("cloudShadowTexOffset");
     }
 
-    if ((props.texUsage & ShaderProperties::NightTexture) != 0)
-    {
-        nightTexMin          = floatParam("nightTexMin");
-    }
-
     if (props.hasScattering())
     {
         mieCoeff             = floatParam("mieCoeff");
@@ -2153,6 +2199,13 @@ CelestiaGLProgram::initSamplers()
     if (props.texUsage & ShaderProperties::NightTexture)
     {
         int slot = glx::glGetUniformLocationARB(program->getID(), "nightTex");
+        if (slot != -1)
+            glx::glUniform1iARB(slot, nSamplers++);
+    }
+
+    if (props.texUsage & ShaderProperties::EmissiveTexture)
+    {
+        int slot = glx::glGetUniformLocationARB(program->getID(), "emissiveTex");
         if (slot != -1)
             glx::glUniform1iARB(slot, nSamplers++);
     }
