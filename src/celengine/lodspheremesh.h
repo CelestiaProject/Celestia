@@ -17,7 +17,7 @@
 #include <celengine/glcontext.h>
 
 
-#define MAX_SPHERE_MESH_TEXTURES 4
+#define MAX_SPHERE_MESH_TEXTURES 6
 #define NUM_SPHERE_VERTEX_BUFFERS 2
 
 class LODSphereMesh

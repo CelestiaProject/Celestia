@@ -63,7 +63,8 @@ void renderSphere_GLSL(const RenderInfo& ri,
                        const Frustum& frustum,
                        const GLContext& context)
 {
-    Texture* textures[4] = { NULL, NULL, NULL, NULL };
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES] = 
+        { NULL, NULL, NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
 
     glDisable(GL_LIGHTING);
@@ -159,9 +160,21 @@ void renderSphere_GLSL(const RenderInfo& ri,
             bool allowCloudShadows = true;
             for (unsigned int i = 0; i < nTextures; i++)
             {
-                if (textures[i]->getLODCount() > 1 ||
-                    textures[i]->getUTileCount(0) > 1 ||
-                    textures[i]->getVTileCount(0) > 1)
+                if (textures[i] != NULL &&
+                    (textures[i]->getLODCount() > 1 ||
+                     textures[i]->getUTileCount(0) > 1 ||
+                     textures[i]->getVTileCount(0) > 1))
+                {
+                    allowCloudShadows = false;
+                }
+            }
+
+            // Split cloud shadows can't cast shadows
+            if (cloudTex != NULL)
+            {
+                if (cloudTex->getLODCount() > 1 ||
+                    cloudTex->getUTileCount(0) > 1 ||
+                    cloudTex->getVTileCount(0) > 1)
                 {
                     allowCloudShadows = false;
                 }
@@ -337,7 +350,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        const Frustum& frustum,
                        const GLContext& context)
 {
-    Texture* textures[4] = { NULL, NULL, NULL, NULL };
+    Texture* textures[MAX_SPHERE_MESH_TEXTURES] = 
+        { NULL, NULL, NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
 
     glDisable(GL_LIGHTING);
