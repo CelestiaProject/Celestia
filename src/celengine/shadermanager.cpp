@@ -1559,7 +1559,8 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             }
             else
             {
-                for (int k = 0; k < props.nLights - 1; k++)
+                int k;
+                for (k = 0; k < props.nLights - 1; k++)
                     source += SeparateDiffuse(k) + " + ";
                 source += SeparateDiffuse(k) + ";\n";
                 source += NightTextureBlend();
