@@ -1443,6 +1443,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "l = max(0.0, dot(" + LightDir_tan(i) + ", n)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
             }
 
+            if ((props.texUsage & ShaderProperties::NightTexture) &&
+                !VSComputesColorSum(props))
+            {
+                if (i == 0)
+                    source += "float totalLight = l;\n";
+                else
+                    source += "totalLight += l;\n";
+            }
+
             string illum;
             if (props.hasShadowsForLight(i))
                 illum = string("l * shadow");
@@ -1551,20 +1560,24 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         // shader, we need to do so now.
         if (!VSComputesColorSum(props))
         {
-            source += "float totalLight = ";
-        
-            if (props.nLights == 0)
+            if (!props.usesTangentSpaceLighting())
             {
-                source += "0.0f\n";
+                source += "float totalLight = ";
+                
+                if (props.nLights == 0)
+                {
+                    source += "0.0f\n";
+                }
+                else
+                {
+                    int k;
+                    for (k = 0; k < props.nLights - 1; k++)
+                        source += SeparateDiffuse(k) + " + ";
+                    source += SeparateDiffuse(k) + ";\n";
+                }
             }
-            else
-            {
-                int k;
-                for (k = 0; k < props.nLights - 1; k++)
-                    source += SeparateDiffuse(k) + " + ";
-                source += SeparateDiffuse(k) + ";\n";
-                source += NightTextureBlend();
-            }
+
+            source += NightTextureBlend();
         }
 
         source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight;\n";
