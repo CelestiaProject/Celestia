@@ -6580,8 +6580,11 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
                 starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
-                renderer->addLabel(nameBuffer,
-                                   Color(0.5f, 0.5f, 1.0f, 1.0f),
+				float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
+				if (distr > 1.0f)
+        			distr = 1.0f; 								              
+				renderer->addLabel(nameBuffer,
+                                   Color(0.5f, 0.5f, 1.0f, distr),
                                    Point3f(relPos.x, relPos.y, relPos.z));
                 nLabelled++;
             }
@@ -6795,8 +6798,11 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
                 starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
-                renderer->addLabel(nameBuffer,
-                                   Color(0.5f, 0.5f, 1.0f, 1.0f),
+				float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
+				if (distr > 1.0f)
+        			distr = 1.0f; 								              
+				renderer->addLabel(nameBuffer,
+                                   Color(0.5f, 0.5f, 1.0f, distr),
                                    Point3f(relPos.x, relPos.y, relPos.z));
                 nLabelled++;
             }
