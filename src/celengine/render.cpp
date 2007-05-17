@@ -1848,7 +1848,7 @@ void Renderer::render(const Observer& observer,
 
         depthPartitions.clear();
         int nIntervals = 0;
-        float prevNear = 0.0f;
+        float prevNear = -1e12f;  // ~ 1 light year
         if (nEntries > 0)
             prevNear = renderList[nEntries - 1].farZ * 1.01f;
 
@@ -1910,6 +1910,10 @@ void Renderer::render(const Observer& observer,
             if (minNearDistance > orbitPathNear)
                 orbitPathNear = minNearDistance;
         }
+
+#if DEBUG_COALESCE
+        clog << "nEntries: " << nEntries << ",   orbitPathNear: " << orbitPathNear << ",   prevNear: " << prevNear << "\n";
+#endif
 
         // If the nearest orbit path distance wasn't set, nothing should appear
         // in the frontmost depth buffer interval (so we can set the near plane
@@ -2030,9 +2034,23 @@ void Renderer::render(const Observer& observer,
                     // Test for overlap
                     float nearZ = -orbitIter->centerZ - orbitIter->radius;
                     float farZ = -orbitIter->centerZ + orbitIter->radius;
-                    if (nearZ < farPlaneDistance && farZ > nearPlaneDistance)
+
+                    // Don't render orbits when they're completely outside this
+                    // depth interval. Also, don't render an orbit in this
+                    // interval if it is vastly larger than the interval
+                    // range; otherwise, the GPU will have precision troubles
+                    // when clipping, producing visual artifacts. The factor
+                    // of 1e5 may need some tuning.
+                    if (nearZ < farPlaneDistance && farZ > nearPlaneDistance &&
+                        orbitIter->radius < 1.0e5f * (farPlaneDistance - nearPlaneDistance))
                     {
                         renderOrbit(*orbitIter, now);
+#if DEBUG_COALESCE
+                        if (highlightObject.body() == orbitIter->body)
+                        {
+                            clog << "orbit, radius=" << orbitIter->radius << "\n";
+                        }
+#endif
                     }
                 }
 
