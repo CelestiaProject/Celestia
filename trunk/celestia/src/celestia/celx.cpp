@@ -3730,6 +3730,36 @@ static int celestia_gettextwidth(lua_State* l)
     return 1;
 }
 
+static int celestia_getaltazimuthmode(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getaltazimuthmode()");
+
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushboolean(l, appCore->getAltAzimuthMode());
+
+    return 1;
+}
+
+static int celestia_setaltazimuthmode(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to function celestia:setaltazimuthmode");
+    bool enable = false;
+    if (lua_isboolean(l, -1))
+     {
+        enable = lua_toboolean(l, -1) != 0;
+    }
+    else
+    {
+        doError(l, "Argument for celestia:setaltazimuthmode must be a boolean");
+    }
+
+    CelestiaCore* appCore = this_celestia(l);
+    appCore->setAltAzimuthMode(enable);
+    lua_pop(l, 1);
+
+    return 0;
+}
+
 static int celestia_show(lua_State* l)
 {
     checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
@@ -5114,6 +5144,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "print", celestia_print);
     RegisterMethod(l, "gettextwidth", celestia_gettextwidth);
     RegisterMethod(l, "show", celestia_show);
+    RegisterMethod(l, "setaltazimuthmode", celestia_setaltazimuthmode);
+    RegisterMethod(l, "getaltazimuthmode", celestia_getaltazimuthmode);
     RegisterMethod(l, "hide", celestia_hide);
     RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
     RegisterMethod(l, "setrenderflags", celestia_setrenderflags);
