@@ -2100,10 +2100,16 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowMarkers) != 0)
     {
+        if ((renderFlags & ShowSmoothLines) != 0)
+            enableSmoothLines();
+
         renderMarkers(*universe.getMarkers(),
                       observer.getPosition(),
                       observer.getOrientation(),
                       now);
+                      
+        if ((renderFlags & ShowSmoothLines) != 0)
+            disableSmoothLines();
     }
 
     glDisable(GL_BLEND);
