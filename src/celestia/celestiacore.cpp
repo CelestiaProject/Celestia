@@ -1373,9 +1373,14 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         break;
 
     case '\006': // Ctrl+F
-        flash(_("Alt-azimuth mode"));
         addToHistory();
         altAzimuthMode = !altAzimuthMode;
+        if (altAzimuthMode)
+        {
+            flash(_("Alt-azimuth mode enabled"));
+        }
+        else
+            flash(_("Alt-azimuth mode disabled"));
         break;
 
     case 127: // Delete
@@ -2085,6 +2090,16 @@ void CelestiaCore::setLightTravelDelay(double distance)
     double lt = astro::microLightYearsToKilometers(distance)/
 	        (86400.0 * astro::speedOfLight);
     sim->setTime(sim->getTime() - lt);
+}
+
+bool CelestiaCore::getAltAzimuthMode() const
+{
+    return altAzimuthMode;
+}
+
+void CelestiaCore::setAltAzimuthMode(bool enable)
+{
+    altAzimuthMode = enable;
 }
 
 void CelestiaCore::start(double t)

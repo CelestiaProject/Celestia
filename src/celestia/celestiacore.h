@@ -295,6 +295,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void setActiveFrameVisible(bool);
     bool getLightDelayActive() const;
     void setLightDelayActive(bool);
+    bool getAltAzimuthMode() const;
+    void setAltAzimuthMode(bool);
     int getScreenDpi() const;
     void setScreenDpi(int);
     int getDistanceToScreen() const;
