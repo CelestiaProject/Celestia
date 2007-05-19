@@ -35,6 +35,8 @@ Name: "{app}\textures"
 Name: "{app}\textures\hires"
 Name: "{app}\textures\medres"
 Name: "{app}\textures\lores"
+Name: "{app}\tools\binaries"
+Name: "{app}\tools\galaxies"
 
 [Files]
 Source: "celestia.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -393,6 +395,11 @@ Source: "fonts\sansbold20.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 
 ; Standard extras
 Source: "extras\minormoons.ssc"; DestDir: "{app}/extras"; Flags: ignoreversion
+
+; Data extraction scripts (PERL)
+Source: "src\tools\binaries\spectbins.pl";   DestDir" "{app}/tools/binaries"; Flags: ignoreversion
+Source: "src\tools\binaries\visualbins.pl";  DestDir" "{app}/tools/binaries"; Flags: ignoreversion
+Source: "src\tools\galaxies\deepsky.pl";     DestDir" "{app}/tools/galaxies"; Flags: ignoreversion
 
 [INI]
 Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.shatters.net/celestia/"
