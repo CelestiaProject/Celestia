@@ -1157,4 +1157,5 @@ Code:
 * Added the PERL scripts used for extraction of galaxy and binary orbit data
   from scientific sources. They both are useful tools and a concise 
   documentation of Celestia's data
-* updated binary orbit data (visualbins.stc and spectbins.stc)
+* updated binary orbit data (visualbins.stc and spectbins.stc) along with
+  respective PERL scripts (visualbins.pl and spectbins.pl)
