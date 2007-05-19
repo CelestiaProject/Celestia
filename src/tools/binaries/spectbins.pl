@@ -4,7 +4,7 @@ use Math::Libm ':all';
 
 open(ELMTS, ">spectbins.stc") || die "Can not create spectbins.stc\n";
 # boilerplate
-($ver = "Revision: 1.20 ") =~ s/\$//g;
+($ver = "Revision: 1.40 ") =~ s/\$//g;
 ($me = $0) =~ s/.*\///;
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime;
 $year += 1900;
@@ -30,142 +30,181 @@ $count = 0;
 
 open(HIP,"<stars.txt")|| die "Can not read stars.txt\n";
 while (<HIP>){
-chop();
-$line = $_;
-($hipnr1,$tmp) = split (/  /);
+	chop();
+	$line = $_;
+	($hipnr1,$tmp) = split (/  /);
 
-# squeeze out all spaces and use as a key
+	# squeeze out all spaces and use as a key
 
-$hipnr1 =~ s/ //g;
-$stars{$hipnr1} = $line;
+	$hipnr1 =~ s/ //g;
+	$stars{$hipnr1} = $line;
 
-#print STDOUT "$stars{$hipnr1}\n";
+	#print STDOUT "$stars{$hipnr1}\n";
 }
 close (HIP);
 
+#
+# merge with corrections in revised.stc
+#
+open(HIPREV,"<revised.stc")|| die "Can not read revised.stc\n";
+while (<HIPREV>){
+	next if (/^#/);
+	if (/(^\d+)/){
+		$hiprev = $1; 
+		($h,$c1,$c2,$dd,$magapp,$color) = split(/[ \t]+/,$stars{$hiprev});
+		print "ORG: HIP $hiprev $c1 $c2 $dd $magapp $color\n";
+		next;
+	}
+	next if(/^\{/);
+	if(/RA\b\s+([\d.]+)/){$c1 = $1; next;} 
+	if(/Dec\b\s+([\d.]+)/){$c2 = $1; next;}
+	if(/Distance\b\s+([\d.]+)/){$dd = $1; next;}
+	if(/SpectralType\b\s+\"(.*)\"/){$color = $1; next;}
+	if(/AppMag\b\s+([\d.]+)/){$magapp = $1; next;}
+	if (/^\}/){
+		$stars{$hiprev} = join (" ",$hiprev,$c1,$c2,$dd,$magapp,$color);
+    	print "REV: HIP $hiprev $c1 $c2 $dd $magapp $color\n\n";
+	}	
+}
+close (HIPREV);
+
 open(BINDAT1,"<Pourbaix-stars.txt")|| die "Can not read Pourbaix-stars.txt\n";
 while (<BINDAT1>){
-chop();
-next if (/^#/);
-$line = $_;
-($hipnr,$tmp) = split (/\|/);
+	chop();
+	next if (/^#/);
+	$line = $_;
+	($hipnr,$tmp) = split (/\|/);
 
-# squeeze out all spaces and use as a key
+	# squeeze out all spaces and use as a key
 
-$hipnr =~ s/_| //g;
-$spects{$hipnr} = $line;
+	$hipnr =~ s/_| //g;
+	$spects{$hipnr} = $line;
 }
 close (BINDAT1);
 
 open(BINDAT2,"<Pourbaix-orbits.txt")|| die "Can not read Pourbaix-orbits.txt\n";
 while (<BINDAT2>) {
-chop();
-next if (/^#/);
-($hip,$a,$i,$omega,$OMEGA,$e,$Per,$T,$v0,$plx,$kappa,$MA,$MB) = split (/\|/,$_);
-# squeeze out all superfluous spaces
-$hip=~s/_| //g;
-$a=~s/_| //g;
-$i=~s/_| //g;
-$omega=~s/_| //g;
-$OMEGA=~s/_| //g;
-$e=~s/_| //g;
-$Per=~s/_| //g;
-$T=~s/_| //g;
-$plx=~s/_| //g;
-$kappa=~s/_| //g;
-$MA=~s/_| //g;
-$MB=~s/_| //g;
-#print STDOUT "$hip $a $i $omega $OMEGA $e $Per $T  $plx $kappa $MA $MB\n";
-#exit
-next if($plx eq "");
-$d=1000/($ly2AU*$plx)*3600/$pi*180; # d in [ly]; $plx in [mas]
-$q= $MB/$MA;
-$a2 = $d*$c*$a/(1.0 + $q); # a2 [ly]
-$a1 = $a2*$q;              # a1 [ly]
-#
-next if ($stars{$hip} eq "");
-($h,$c1,$c2,$dd,$magapp,$color) = split(/[ \t]+/,$stars{$hip});
-# coordinates in decimal-degrees
+	chop();
+	next if (/^#/);
+	($hip,$a,$i,$omega,$OMEGA,$e,$Per,$T,$v0,$plx,$kappa,$MA,$MB) = split (/\|/,$_);
+	# squeeze out all superfluous spaces
+	$hip=~s/_| //g;
+	$a=~s/_| //g;
+	$i=~s/_| //g;
+	$omega=~s/_| //g;
+	$OMEGA=~s/_| //g;
+	$e=~s/_| //g;
+	$Per=~s/_| //g;
+	$T=~s/_| //g;
+	$plx=~s/_| //g;
+	$kappa=~s/_| //g;
+	$MA=~s/_| //g;
+	$MB=~s/_| //g;
+	#print STDOUT "$hip $a $i $omega $OMEGA $e $Per $T  $plx $kappa $MA $MB\n";
+	#exit
+	next if($plx eq "");
+	$d=1000/($ly2AU*$plx)*3600/$pi*180; # d in [ly]; $plx in [mas]
+	$q= $MB/$MA;
+	$a2 = $d*$c*$a/(1.0 + $q); # a2 [ly]
+	$a1 = $a2*$q;              # a1 [ly]
+	#
+	next if ($stars{$hip} eq "");
+	($h,$c1,$c2,$dd,$magapp,$color) = split(/[ \t]+/,$stars{$hip});
 
-$c1 =~ s/ //g;
-$c2 =~ s/ //g;
+	# coordinates in decimal-degrees
 
-($hip2,$name,$hd,$mvA,$colorA,$mvB,$colorB,$type,$ref) = split(/\|/,$spects{$hip});
+	$c1 =~ s/ //g;
+	$c2 =~ s/ //g;
 
-$name=~s/_//g;
-$mvA=~s/_| //g;
-$colorA=~s/_| //g;
-$colorA=$colorA eq ""?"?":"$colorA";
-$mvB=~s/_| //g;
-$mvB=$mvB eq ""?"5.0":"$mvB";
-$colorB=~s/_| //g;
-$colorB=$colorB eq ""?"?":"$colorB";
-#print STDOUT "$hip $name $mvA $colorA $mvB $colorB\n";
-next if($plx eq "");
-$d=1000/($ly2AU*$plx)*3600/$pi*180; # d in [ly]; $plx in [mas]
-$q= $MB/$MA;
-# $a is in mas! $a1, $a2 in arc_secs
-$a2 = 0.001*$d*$c*$a/(1.0 + $q); # a2 [ly]
-$a1 = $a2*$q;              # a1 [ly]
-#
-$alt{$hip,'A'} = $name ne ""?"$name A":"HIP$hip A";
-$alt{$hip,'B'} = $name ne ""?"\"$name B\"":"HIP$hip B";
-$alt{$hip,'AB'} = $name ne ""?"$name":"HIP$hip";
-if ($hip == 71683){
-$alt{$hip,'B'} = "71681 \"$name B\""; $mvB = 1.34; $colorB = "K0V"; }
+	($hip2,$name,$hd,$mvA,$colorA,$mvB,$colorB,$type,$ref) = split(/\|/,$spects{$hip});
 
-# eliminate certain binaries that are already included in
-# Grant Hutchison's 'nearstars.stc' file
-next if ($hip =~ /71683/); # ALF Cen
-next if ($hip =~ /88601/); # 70 Oph
+	$name=~s/_//g;
+	$mvA=~s/_| //g;
+	$colorA=~s/_| //g;
+	$colorA=$colorA eq ""?"?":"$colorA";
+	$mvB=~s/_| //g;
+	$mvB=$mvB eq ""?"5.0":"$mvB";
+	$colorB=~s/_| //g;
+	$colorB=$colorB eq ""?"?":"$colorB";
+	#print STDOUT "$hip $name $mvA $colorA $mvB $colorB\n";
+	next if($plx eq "");
+	$d=1000/($ly2AU*$plx)*3600/$pi*180; # d in [ly]; $plx in [mas]
+	$q= $MB/$MA;
+	# $a is in mas! $a1, $a2 in arc_secs
+	$a2 = 0.001*$d*$c*$a/(1.0 + $q); # a2 [ly]
+	$a1 = $a2*$q;              # a1 [ly]
+	#
+	$alt{$hip,'A'} = $name ne ""?"$name A":"HIP$hip A";
+	$alt{$hip,'B'} = $name ne ""?"\"$name B\"":"HIP$hip B";
+	$alt{$hip,'AB'} = $name ne ""?"$name":"HIP$hip";
+	if ($hip == 71683){
+		$alt{$hip,'B'} = "71681 \"$name B\""; $mvB = 1.34; $colorB = "K0V"; }
 
-#print STDOUT "$hip $c1 $c2 $d $a $i $omega $OMEGA $e $Per $T  $plx $kappa $MA $MB $name $mvA $colorA $mvB $colorB\n";
+	# eliminate certain binaries that are already included in
+	# Grant Hutchison's 'nearstars.stc' file
+	next if ($hip =~ /71683/); # ALF Cen
+	next if ($hip =~ /88601/); # 70 Oph
+	#
+	# extract distance [ly] from 'stars.txt & revised stc'
+	# use it to compile absolute magnitude
+	#
+	
+	$epsrel = 0;	
+	if($d){ $epsrel = 100 * ($dd - $d)/$d;}
+	if($epsrel > 10){
+		print STDOUT "Distance mismatch of $epsrel % with (revised) stars.txt for HIP $hip\n";	    
+	} else {
+		$d = $dd;
+	}	
 
-&RotOrbits($c1,$c2,$Per,$a,$i,$OMEGA,$T,$e,$omega,$d);
-print  ELMTS "Barycenter \"$alt{$hip,'AB'}\"\n";
-print  ELMTS "{\n";
-printf ELMTS "RA       %10.6f\n", $c1;
-printf ELMTS "Dec      %10.6f\n",$c2;
-printf ELMTS "Distance %10.6f\n",$d;
-print  ELMTS "}\n\n";
-print  ELMTS "\n";
-print  ELMTS "$hip \"$alt{$hip,'A'}\" \n";
-print  ELMTS "{\n";
-print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
-print  ELMTS "SpectralType \"$colorA\"\n";
-print  ELMTS "AppMag $mvA\n";
-print  ELMTS "\n";
-print  ELMTS "        EllipticalOrbit {\n";
-printf ELMTS "                Period          %10.3f\n",$Period;
-printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a1,$MA,$MB;
-printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
-printf ELMTS "                Inclination     %10.3f\n",$Inclination;
-printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
-$ArgOfPeri1 = $ArgOfPeri - 180;
-if ($ArgOfPeri1 < 0.0) { $ArgOfPeri1 = $ArgOfPeri + 180; }
-printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri1;
-printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
-print  ELMTS "        }\n";
-print  ELMTS "}\n\n";
-print  ELMTS "$alt{$hip,'B'}\n";
-print  ELMTS "{\n";
-print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
-print  ELMTS "SpectralType \"$colorB\"\n";
-print  ELMTS "AppMag $mvB\n";
-print  ELMTS "\n";
-print  ELMTS "        EllipticalOrbit {\n";
-printf ELMTS "                Period          %10.3f\n",$Period;
-printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a2,$MA,$MB;
-printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
-printf ELMTS "                Inclination     %10.3f\n",$Inclination;
-printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
-printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri;
-printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
-printf ELMTS "        }\n";
-print  ELMTS "}\n\n";
+	#print STDOUT "$hip $c1 $c2 $d $a $i $omega $OMEGA $e $Per $T  $plx $kappa $MA $MB $name $mvA $colorA $mvB $colorB\n";
+
+	&RotOrbits($c1,$c2,$Per,$a,$i,$OMEGA,$T,$e,$omega,$d);
+		
+	print  ELMTS "Barycenter \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "{\n";
+	printf ELMTS "RA       %10.6f\n", $c1;
+	printf ELMTS "Dec      %10.6f\n",$c2;
+	printf ELMTS "Distance %10.6f\n",$d;
+	print  ELMTS "}\n\n";
+	print  ELMTS "\n";
+	print  ELMTS "$hip \"$alt{$hip,'A'}\" \n";
+	print  ELMTS "{\n";
+	print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "SpectralType \"$colorA\"\n";
+	print  ELMTS "AppMag $mvA\n";
+	print  ELMTS "\n";
+	print  ELMTS "        EllipticalOrbit {\n";
+	printf ELMTS "                Period          %10.3f\n",$Period;
+	printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a1,$MA,$MB;
+	printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
+	printf ELMTS "                Inclination     %10.3f\n",$Inclination;
+	printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
+	$ArgOfPeri1 = $ArgOfPeri - 180;
+	if ($ArgOfPeri1 < 0.0) { $ArgOfPeri1 = $ArgOfPeri + 180; }
+	printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri1;
+	printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
+	print  ELMTS "        }\n";
+	print  ELMTS "}\n\n";
+	print  ELMTS "$alt{$hip,'B'}\n";
+	print  ELMTS "{\n";
+	print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "SpectralType \"$colorB\"\n";
+	print  ELMTS "AppMag $mvB\n";
+	print  ELMTS "\n";
+	print  ELMTS "        EllipticalOrbit {\n";
+	printf ELMTS "                Period          %10.3f\n",$Period;
+	printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a2,$MA,$MB;
+	printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
+	printf ELMTS "                Inclination     %10.3f\n",$Inclination;
+	printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
+	printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri;
+	printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
+	printf ELMTS "        }\n";
+	print  ELMTS "}\n\n";
     $count++;
 }
-print "$count\n";
+print "\nNumber of spectroscopic binaries: $count\n";
 close (BINDAT2);
 
 sub RotOrbits {
