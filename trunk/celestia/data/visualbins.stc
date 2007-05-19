@@ -1,14 +1,14 @@
-# Celestia binary orbit elements: visualbins.pl Revision: 1.2 
-# generated from S. Söderhjelm,
+# Celestia binary orbit elements: visualbins.pl Revision: 1.4 
+# generated from S. Sï¿½erhjelm,
 # Astronomy and Astrophysics, v.341, p.121-140 (1999)
 # http://adsabs.harvard.edu/cgi-bin/nph-bib_query?1999A%26A...341..121S
 # RA, Dec & primary's spectral classes from the Hipparcos catalog (stars.txt)
-# cross reference index from table6 of Söderhjelm(1999)
+# cross reference index from table6 of Sï¿½erhjelm(1999)
 # For the time being: approximate standard visual magnitude (V_Johnson) by Hp,
 # the Hipparcos visual magnitude
 # Blundly assume unknown secondary spectral classes to be G2V.
 # Just to have something there, until respective analysis is finished
-# Processed 2005-11-12 19:21:42 UTC
+# Processed 2007-5-19 15:28:37 UTC
 # by Dr. Fridger Schrempp, fridger.schrempp@desy.de
 # ------------------------------------------------------ 
 
@@ -686,16 +686,16 @@ AppMag 5.9
 
 Barycenter "HIP84140"
 {
-RA       258.031746
+RA       258.031740
 Dec       45.669842
-Distance  20.621290
+Distance  20.621294
 }
 
 
 84140 "HIP84140 A" # component A
 {
 OrbitBarycenter "HIP84140"
-SpectralType "K5"
+SpectralType "M3V"
 AppMag  9.93
 
         EllipticalOrbit {
@@ -894,48 +894,6 @@ AppMag 7.73
         }
 }
 
-Barycenter "DEL Equ"
-{
-RA       318.619970
-Dec       10.007718
-Distance  60.278506
-}
-
-
-104858 "DEL Equ A" # component A
-{
-OrbitBarycenter "DEL Equ"
-SpectralType "F5V+..."
-AppMag  5.31
-
-        EllipticalOrbit {
-                Period               5.713
-                SemiMajorAxis        2.061 # mass ratio 1.21 : 1.14
-                Eccentricity         0.440
-                Inclination        122.477
-                AscendingNode      114.619
-                ArgOfPericenter     55.919
-                MeanAnomaly         90.551
-        }
-}
-
-"DEL Equ B" # component B
-{
-OrbitBarycenter "DEL Equ"
-SpectralType "?"
-AppMag 5.39
-
-        EllipticalOrbit {
-                Period               5.713
-                SemiMajorAxis        2.192 # mass ratio 1.21 : 1.14
-                Eccentricity         0.440
-                Inclination        122.477
-                AscendingNode      114.619
-                ArgOfPericenter    235.919
-                MeanAnomaly         90.551
-        }
-}
-
 Barycenter "KAP Peg"
 {
 RA       326.161250
@@ -1107,8 +1065,8 @@ AppMag 8.68
 Barycenter "85 Peg"
 {
 RA         0.540188
-Dec       27.084489
-Distance 1203.568250
+Dec       27.084490
+Distance  40.452314
 }
 
 
@@ -1122,7 +1080,7 @@ AppMag  5.93
                 Period              26.280
                 SemiMajorAxis        3.926 # mass ratio 0.91 : 0.58
                 Eccentricity         0.380
-                Inclination        138.566
+                Inclination        138.567
                 AscendingNode      336.981
                 ArgOfPericenter    357.077
                 MeanAnomaly        145.205
@@ -1139,7 +1097,7 @@ AppMag 9.05
                 Period              26.280
                 SemiMajorAxis        6.135 # mass ratio 0.91 : 0.58
                 Eccentricity         0.380
-                Inclination        138.566
+                Inclination        138.567
                 AscendingNode      336.981
                 ArgOfPericenter    177.077
                 MeanAnomaly        145.205
@@ -3250,7 +3208,7 @@ Barycenter "HIP20916"
 {
 RA        67.248824
 Dec       16.159153
-Distance 158.487370
+Distance 133.127951
 }
 
 
@@ -3922,7 +3880,7 @@ Barycenter "HIP40239"
 {
 RA       123.285870
 Dec      -13.915797
-Distance  70.583641
+Distance  61.540279
 }
 
 
@@ -4930,7 +4888,7 @@ Barycenter "HIP71914"
 {
 RA       220.640860
 Dec       19.480156
-Distance  84.455466
+Distance  69.249146
 }
 
 
@@ -5262,6 +5220,48 @@ AppMag 5.62
         }
 }
 
+Barycenter "KSI Sco"
+{
+RA       241.092450
+Dec       92.529645
+Distance   4.160160
+}
+
+
+78727 "KSI Sco A" # component A
+{
+OrbitBarycenter "KSI Sco"
+SpectralType ""
+AppMag  5.05
+
+        EllipticalOrbit {
+                Period              45.680
+                SemiMajorAxis        8.959 # mass ratio 1.38 : 1.38
+                Eccentricity         0.750
+                Inclination        124.679
+                AscendingNode       21.047
+                ArgOfPericenter    324.218
+                MeanAnomaly         23.643
+        }
+}
+
+"KSI Sco B" # component B
+{
+OrbitBarycenter "KSI Sco"
+SpectralType "?"
+AppMag 5.07
+
+        EllipticalOrbit {
+                Period              45.680
+                SemiMajorAxis        8.959 # mass ratio 1.38 : 1.38
+                Eccentricity         0.750
+                Inclination        124.679
+                AscendingNode       21.047
+                ArgOfPericenter    144.218
+                MeanAnomaly         23.643
+        }
+}
+
 Barycenter "c Her"
 {
 RA       257.008670
@@ -5348,16 +5348,16 @@ AppMag 3.47
 
 Barycenter "HIP84123"
 {
-RA       257.969061
+RA       257.969060
 Dec       -1.850972
-Distance  35.230830
+Distance  35.230827
 }
 
 
 84123 "HIP84123 A" # component A
 {
 OrbitBarycenter "HIP84123"
-SpectralType "G"
+SpectralType "M3V"
 AppMag 12.13
 
         EllipticalOrbit {
@@ -5392,7 +5392,7 @@ Barycenter "HIP85582"
 {
 RA       262.334200
 Dec       29.392614
-Distance 524.384260
+Distance  79.358511
 }
 
 
