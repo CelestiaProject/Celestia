@@ -1,8 +1,8 @@
 # Celestia binary orbit elements for spectroscopic binaries:
-# generated with Perl extraction script: spectbins.pl Revision: 1.20 
+# generated with Perl extraction script: spectbins.pl Revision: 1.40 
 # from D. Poubaix, Astron. Astrophys. Suppl. Ser. 145, 2000, 215-222
 # http://www.edpsciences.org/journal/index.cfm?v_url=aas/full/2000/14/ds9259/ds9259.html
-# Processed 2005-11-12 19:21:46 UTC
+# Processed 2007-5-19 15:28:24 UTC
 # by Dr. Fridger Schrempp, fridger.schrempp@desy.de
 # ------------------------------------------------------ 
 
@@ -10,7 +10,7 @@ Barycenter "ALF And"
 {
 RA         2.096533
 Dec       29.090828
-Distance  98.837418
+Distance  97.073516
 }
 
 
@@ -52,7 +52,7 @@ Barycenter "ADS 520"
 {
 RA         9.332446
 Dec      -24.767225
-Distance  49.418709
+Distance  50.662786
 }
 
 
@@ -94,7 +94,7 @@ Barycenter "ETA And"
 {
 RA        14.301783
 Dec       23.417761
-Distance 248.979756
+Distance 242.683790
 }
 
 
@@ -136,7 +136,7 @@ Barycenter "Kui 7"
 {
 RA        24.406489
 Dec       -9.404052
-Distance 120.801289
+Distance 124.729260
 }
 
 
@@ -178,7 +178,7 @@ Barycenter "BET Ari"
 {
 RA        28.659788
 Dec       20.808300
-Distance  57.121450
+Distance  59.584763
 }
 
 
@@ -220,7 +220,7 @@ Barycenter "BET Tri"
 {
 RA        32.385507
 Dec       34.987392
-Distance 134.778298
+Distance 124.301450
 }
 
 
@@ -304,7 +304,7 @@ Barycenter "SIG 248"
 {
 RA        35.265287
 Dec       42.774185
-Distance 191.860871
+Distance 199.368570
 }
 
 
@@ -346,7 +346,7 @@ Barycenter "EPS Cet"
 {
 RA        39.890549
 Dec      -11.871582
-Distance  93.189566
+Distance  88.177071
 }
 
 
@@ -388,7 +388,7 @@ Barycenter "12 Per"
 {
 RA        40.562203
 Dec       40.194386
-Distance  78.216662
+Distance  80.495310
 }
 
 
@@ -472,7 +472,7 @@ Barycenter "51 Tau"
 {
 RA        64.596426
 Dec       21.579376
-Distance 186.379131
+Distance 178.721640
 }
 
 
@@ -514,7 +514,7 @@ Barycenter "Fin 342"
 {
 RA        66.405222
 Dec       15.941080
-Distance 155.315943
+Distance 151.917560
 }
 
 
@@ -555,8 +555,8 @@ AppMag 5.0
 Barycenter "ALF Aur"
 {
 RA        79.172065
-Dec       45.999029
-Distance  43.488464
+Dec       45.999031
+Distance  42.200414
 }
 
 
@@ -598,7 +598,7 @@ Barycenter "BET Aur"
 {
 RA        89.882369
 Dec       44.947433
-Distance  80.138447
+Distance  82.116563
 }
 
 
@@ -640,7 +640,7 @@ Barycenter "9 Pup"
 {
 RA       117.943100
 Dec      -13.897190
-Distance  52.607013
+Distance  54.379294
 }
 
 
@@ -682,7 +682,7 @@ Barycenter "Fin 347Aa"
 {
 RA       138.074430
 Dec       14.995441
-Distance  66.024996
+Distance  66.796434
 }
 
 
@@ -724,7 +724,7 @@ Barycenter "HR 3750"
 {
 RA       141.945480
 Dec       -6.071029
-Distance 116.486957
+Distance 101.895350
 }
 
 
@@ -766,7 +766,7 @@ Barycenter "93 Leo"
 {
 RA       176.996780
 Dec       20.218941
-Distance 245.235699
+Distance 226.504870
 }
 
 
@@ -808,7 +808,7 @@ Barycenter "ZET UMa"
 {
 RA       200.980910
 Dec       54.925415
-Distance  81.540870
+Distance  78.161276
 }
 
 
@@ -850,7 +850,7 @@ Barycenter "ETA CrB A"
 {
 RA       230.800950
 Dec       30.288240
-Distance  59.410470
+Distance  60.738733
 }
 
 
@@ -892,7 +892,7 @@ Barycenter "SIG 2173"
 {
 RA       262.599450
 Dec       -1.062504
-Distance  53.469423
+Distance  53.645889
 }
 
 
@@ -934,7 +934,7 @@ Barycenter "HR 6697"
 {
 RA       269.309720
 Dec       23.995710
-Distance  88.152292
+Distance  93.137349
 }
 
 
@@ -976,7 +976,7 @@ Barycenter "CHI Dra"
 {
 RA       275.259730
 Dec       72.733696
-Distance  26.734711
+Distance  26.280477
 }
 
 
@@ -1060,7 +1060,7 @@ Barycenter "Gl 762.1"
 {
 RA       292.785620
 Dec       58.586975
-Distance  55.281946
+Distance  54.506517
 }
 
 
@@ -1102,7 +1102,7 @@ Barycenter "PHI Cyg"
 {
 RA       294.844180
 Dec       30.153233
-Distance 229.692592
+Distance 250.897690
 }
 
 
@@ -1144,7 +1144,7 @@ Barycenter "Gl 773.3"
 {
 RA       299.947870
 Dec       -9.957284
-Distance 296.512255
+Distance  80.040982
 }
 
 
@@ -1186,7 +1186,7 @@ Barycenter "ADS 13461"
 {
 RA       302.555490
 Dec       43.945381
-Distance 181.201933
+Distance 167.695110
 }
 
 
@@ -1270,7 +1270,7 @@ Barycenter "Gl 815AB"
 {
 RA       315.020310
 Dec       40.070881
-Distance  72.480773
+Distance  49.262499
 }
 
 
@@ -1312,7 +1312,7 @@ Barycenter "DEL Equ"
 {
 RA       318.619970
 Dec       10.007718
-Distance  59.302451
+Distance  60.278506
 }
 
 
@@ -1354,7 +1354,7 @@ Barycenter "ALF Equ"
 {
 RA       318.955820
 Dec        5.248074
-Distance 181.201933
+Distance 186.274700
 }
 
 
@@ -1438,7 +1438,7 @@ Barycenter "Gl 862.1"
 {
 RA       337.825930
 Dec       -6.554885
-Distance  85.832495
+Distance  83.248340
 }
 
 
@@ -1480,7 +1480,7 @@ Barycenter "ADS 16098"
 {
 RA       338.927510
 Dec       53.203896
-Distance 245.235699
+Distance 236.695940
 }
 
 
@@ -1522,7 +1522,7 @@ Barycenter "ADS 16591"
 {
 RA       348.160660
 Dec        2.686579
-Distance 195.307473
+Distance 214.442470
 }
 
 
