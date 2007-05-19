@@ -704,7 +704,7 @@ void InitializeForms()
     }
     irregularForm        = new GalacticForm();
     irregularForm->blobs = irregularPoints;
-    irregularForm->scale = Vec3f(0.5f, 0.05f, 0.5f);
+    irregularForm->scale = Vec3f(0.5f, 0.5f, 0.5f);
 
     formsInitialized = true;
 }
