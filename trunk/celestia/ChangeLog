@@ -1150,3 +1150,10 @@ Code:
 * Made selection only work for currently visible (enabled) objects
 * Windows: Fixed crash that occurred when star browser was closed
 * Fixed bug that made moons disappear as a planet approached stellar transit
+* Added a major update of the galaxy database such that close to 100% of the
+  galaxies now involve distance measurements 
+* Included the complete local group of galaxies 
+* Added varying label transparency also for stars
+* Added the PERL scripts used for extraction of galaxy and binary orbit data
+  from scientific sources. They both are useful tools and a concise 
+  documentation of Celestia's data
