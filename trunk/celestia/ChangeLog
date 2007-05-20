@@ -1000,6 +1000,8 @@ Code:
   - HD 164922 b, HD 66428 b, HD 99109 b, HD 107148 b, HIP 14810 b
   - HIP 14810 c, HD 185269 b, Gliese 849 b
   - Mu Ara e
+  - Gliese 581 c & d, HD 175541 b, HD 210702 b, HD192699 b
+  - HD 47536 c, XO-2 b, HD 147506 (HAT-P-2), HD 17092 b  
 * Revised orbits of many extrasolar planets to reflect new data
 * Added stars for new extrasolar planets: GSC 92941-01657
 * Mac: Show menu bar when moving mouse to top of screen in full screen
@@ -1012,7 +1014,6 @@ Code:
   when a merged object was clipped to the new plane.
 * Mac: cursor now changes on draggable view boundaries
 * Added Plutonian satellite names: S/2005 P1 -> Hydra, S/2005 P2 -> Nix
-* Added 9 new numbered Saturnian satellites
 * Fixed bug that caused time scale in celestiacore and simulation to get out
   of sync.
 * Improved rendering of meshes in OpenGL 2.0 render path:
@@ -1112,11 +1113,16 @@ Code:
   - New celx scripting commands:
     - utctotdb and tdbtoutc
     - gl commands
+    - celestia:getdsocount, celestia:getdsocount
+    - iterators: celestia:stars and celestia:dsos
+    - get/setaltazimuthmode
   - Lua hooks for script extensions to Celestia
   - Script interfaces for orbits and rotation models (ScriptedOrbit and 
     ScriptedRotation)
   - Support Lua 5.1 (5.0 compatibility retained)
   - Made celestia:loadtexture use relative file names
+  - new properties for object:getinfo: catalogNUmber, hubbleType, and
+    absoluteMagnitude
 * Accelerated loading of large catalog files with an improved name index
   (over 100x performance increase for 100k+ object catalogs)
 * Fixed bug that causes locations to work improperly in multi-star systems
@@ -1159,3 +1165,26 @@ Code:
   documentation of Celestia's data
 * updated binary orbit data (visualbins.stc and spectbins.stc) along with
   respective PERL scripts (visualbins.pl and spectbins.pl)
+* Defined a lighting model to use for models that don't have normals (also
+  prevents crash on Mac OS X version)
+* Fade out orbits labels as their onscreen size shrinks
+* Changed color of moon orbits
+* cmod mesh format enhancements:
+  - added point sprite primitive type (currently OpenGL 2.0 only)
+  - added blend mode for materials
+  - eliminated bug that caused a crash when loading submeshes with no primitive
+    groups
+* Improved conformance of generated GLSL shaders
+* Mac OS X: star browser is now refreshed when it beomes active
+* Fixed bug that limited virtual texture resolution on ringed planets
+* Fixed bug with PNG image capture
+* Minor moons:
+  - Added new numbered Saturnian satellites
+  - New IAU names for small satellites of Jupiter, Saturn, and Neptune
+- Updated rotation rate of Nereid based on photometry
+- Added new IAU names for features on Titan, Enceladus, Mars, and Venus;
+  revisions to Mercury features
+- Enabled line smoothing for markers
+- Switched to double precision for rotation and precession periods--keeps
+  synchronous rotations from drifting out of sync
+
