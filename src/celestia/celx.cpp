@@ -4557,7 +4557,7 @@ static int celestia_getdsocount(lua_State* l)
 
 
 // DSOs iterator function; two upvalues expected
-static int celestia_dso_iter(lua_State* l)
+static int celestia_dsos_iter(lua_State* l)
 {
     CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
     if (appCore == NULL)
@@ -4591,7 +4591,7 @@ static int celestia_dso_iter(lua_State* l)
 }
 
 
-static int celestia_dso(lua_State* l)
+static int celestia_dsos(lua_State* l)
 {
     CelestiaCore* appCore = this_celestia(l);
     
@@ -4599,7 +4599,7 @@ static int celestia_dso(lua_State* l)
     // counter.
     lua_pushvalue(l, 1);    // Celestia object
     lua_pushnumber(l, 0);   // counter
-    lua_pushcclosure(l, celestia_dso_iter, 2);
+    lua_pushcclosure(l, celestia_dsos_iter, 2);
 
     return 1;
 }
@@ -5203,7 +5203,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "registereventhandler", celestia_registereventhandler);
     RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
     RegisterMethod(l, "stars", celestia_stars);
-    RegisterMethod(l, "dso", celestia_dso);
+    RegisterMethod(l, "dsos", celestia_dsos);
 
     lua_pop(l, 1);
 }
