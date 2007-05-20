@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.5.0pre1
+AppVerName=Celestia 1.5.0pre3
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -70,13 +70,51 @@ Source: "locale\res_hu.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_it.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_ja.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_ko.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_lv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_nl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_pt.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_pt_br.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_ru.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_sv.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_uk.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_zh.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_zh_CN.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
+
+Source: "locale\ar\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\ar\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\de\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/de/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\de\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/de/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\el\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/el/LC_MESSAGES"; Flags: ignoreversion
+; no translation available yet -- Source: "locale\el\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/el/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\es\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/es/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\es\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/es/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\fr\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/fr/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\fr\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/fr/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\gl\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/gl/LC_MESSAGES"; Flags: ignoreversion
+; no translation available yet -- Source: "locale\gl\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/gl/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\hu\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/hu/LC_MESSAGES"; Flags: ignoreversion
+; no translation available yet -- Source: "locale\hu\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/hu/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\it\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/it/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\it\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/it/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\ja\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/ja/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\ja\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/ja/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\ko\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/ko/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\ko\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/ko/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\lv\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/lv/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\lv\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/lv/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\nl\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/nl/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\nl\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/nl/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\pt\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/pt/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\pt\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/pt/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\pt_br\LC_MESSAGES\celestia.mo";                   DestDir: "{app}/locale/pt_br/LC_MESSAGES"; Flags: ignoreversion
+; no translation available yet -- Source: "locale\pt_br\LC_MESSAGES\celestia_constellations.mo";    DestDir: "{app}/locale/pt_br/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\ru\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/ru/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\ru\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/ru/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\sv\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/sv/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\sv\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/sv/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\uk\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/uk/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\uk\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/uk/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\zh_CN\LC_MESSAGES\celestia.mo";                   DestDir: "{app}/locale/zh_CN/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\zh_CN\LC_MESSAGES\celestia_constellations.mo";    DestDir: "{app}/locale/zh_CN/LC_MESSAGES"; Flags: ignoreversion
 
 
 ; Data
@@ -397,9 +435,9 @@ Source: "fonts\sansbold20.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "extras\minormoons.ssc"; DestDir: "{app}/extras"; Flags: ignoreversion
 
 ; Data extraction scripts (PERL)
-Source: "src\tools\binaries\spectbins.pl";   DestDir" "{app}/tools/binaries"; Flags: ignoreversion
-Source: "src\tools\binaries\visualbins.pl";  DestDir" "{app}/tools/binaries"; Flags: ignoreversion
-Source: "src\tools\galaxies\deepsky.pl";     DestDir" "{app}/tools/galaxies"; Flags: ignoreversion
+Source: "src\tools\binaries\spectbins.pl";   DestDir: "{app}/tools/binaries"; Flags: ignoreversion
+Source: "src\tools\binaries\visualbins.pl";  DestDir: "{app}/tools/binaries"; Flags: ignoreversion
+Source: "src\tools\galaxies\deepsky.pl";     DestDir: "{app}/tools/galaxies"; Flags: ignoreversion
 
 [INI]
 Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.shatters.net/celestia/"
