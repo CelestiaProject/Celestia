@@ -28,6 +28,8 @@
 {
     id data;
     NSMutableDictionary *children;
+    NSArray *childNames;
+    BOOL childrenChanged;
 }
 - (id)initWithCelestiaDSO:      (CelestiaDSO *)aDSO;
 - (id)initWithCelestiaStar:     (CelestiaStar *)aStar;
@@ -36,6 +38,7 @@
 - (id)initWithName:             (NSString *)aName;
 - (id)initWithName:             (NSString *)aName
           children:             (NSDictionary *)aChildren;
+- (void)dealloc;
 
 - (NSString *)name;
 - (id)body;
@@ -84,13 +87,17 @@
     {
         data = [aName retain];
         if (nil == children)
+        {
             children = [[NSMutableDictionary alloc] initWithDictionary: aChildren];
+            childrenChanged = YES;
+        }
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [childNames release];
     [children release];
     [data release];
     [super dealloc];
@@ -112,6 +119,7 @@
         children = [[NSMutableDictionary alloc] init];
 
     [children setObject: aChild forKey: [aChild name]];
+    childrenChanged = YES;
 }
 
 - (id)childNamed: (NSString *)aName
@@ -121,7 +129,18 @@
 
 - (NSArray *)allChildNames
 {
-    return (nil==children) ? nil : [[children allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+    if (childrenChanged)
+    {
+        [childNames release]; childNames = nil;
+    }
+
+    if (nil == childNames)
+    {
+        childNames = [[[children allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] retain];
+        childrenChanged = NO;
+    }
+
+    return childNames;
 }
 
 - (unsigned)childCount
@@ -290,7 +309,7 @@ static CelestiaCore *appCore;
     std::vector<Location*>* locations = [(CelestiaBody *)[aBody body] body]->getLocations();
     if (locations != NULL)
     {
-        BrowserItem *locationItems = [[BrowserItem alloc] initWithName: NSLocalizedString(@"Locations",@"")];
+        BrowserItem *locationItems = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Locations",@"")] autorelease];
         for (vector<Location*>::const_iterator iter = locations->begin();
              iter != locations->end(); iter++)
         {
