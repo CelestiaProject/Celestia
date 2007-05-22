@@ -62,6 +62,7 @@ DSODatabase::DSODatabase():
     capacity             (0),
     DSOs                 (NULL),
     namesDB              (NULL),
+    catalogNumberIndex   (NULL),
     octreeRoot           (NULL),
     nextAutoCatalogNumber(0xfffffffe),
     avgAbsMag            (0)
