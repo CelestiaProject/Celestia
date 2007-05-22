@@ -1,0 +1,118 @@
+function get_distance(obj_pos, ref_pos)
+   -- Returns distance Earth-object in Mpc.
+   distance = ref_pos:distanceto(obj_pos) * km2Mpc
+   return distance
+end
+
+function get_z(distance)
+   -- Returns redshift z.
+   -- Hubble constant = 73.2 (km/s)/Mpc, WMAP 3years, best
+   -- http://map.gsfc.nasa.gov/m_mm/tp_links.html
+   local H0 = 73.2
+   local c = 299792.458
+   z0 = (H0 * distance)/c
+   z = z0*(1 - z0/4)/(1 - z0/2)^2
+   -- d <= 2 * c/H0
+   return z
+end
+
+function rgb2hex(r,g,b)
+   -- Converts color code from RGB to Hex
+   local hex = string.format("#%.2x%.2x%.2x", r,g,b)
+   return hex
+end
+
+function get_color(z_rel)
+   -- Returns Hex color code from z_rel
+   if z_rel > 1 then
+       z_rel = 1
+   end
+   --local green = 255 * (1 - z_rel)/(1 + math.sqrt(z_rel))
+   local green = 255 * (1 - z_rel)^2
+   local red   = 255 
+   local blue  = 255* math.sqrt(green/255)
+   hex_color   = rgb2hex(red, green, blue)
+   return hex_color
+end
+   
+function mark_galaxies(sel_pos)
+   zz = z_max(sel_pos)
+   for dso in celestia:dsos() do
+      if dso:type() == "galaxy" then
+         dso_pos = dso:getposition()
+         local d = get_distance(dso_pos,sel_pos)
+         local z_rel = get_z(d)/zz
+         local hex_color = get_color(z_rel)
+         dso:mark( hex_color, "disk", 1, 1 )
+      end
+   end
+end
+
+function z_max(ref_pos)
+   -- determine maximal redshift in catalog wrto ref_pos
+   z_old = 0
+   for dso in celestia:dsos() do
+      if dso:type() == "galaxy" then
+         dso_pos = dso:getposition()
+         local d = get_distance(dso_pos, ref_pos)
+         local z = get_z(d)
+         if z > z_old then
+             z_max = z
+             z_old = z_max
+             dsomax = dso
+         end    
+      end
+   end
+   return z_max
+end
+
+----------
+-- main -- 
+----------
+celestia:unmarkall()
+
+celestia:show("markers")
+km2Mpc = 1/3.08568025e19
+MW = celestia:find("Milky Way")
+MW_pos = MW:getposition()
+--
+-- select and specially mark Milky Way
+--
+celestia:select(MW)
+celestia:mark(MW)
+--
+-- color encode all other galaxies according to their redshift
+-- relative to Milky Way
+--
+mark_galaxies(MW_pos)
+--
+-- move observer to a distance of 1000 Mpc from Milky Way
+--
+observer = celestia:getobserver()
+observer:gotodistance(MW, 1000/km2Mpc,5)
+
+sel_old = MW
+   
+while true do   
+   sel = celestia:getselection()
+   --
+   -- specially mark possible new selection, unmark the old one
+   --
+   if sel ~= sel_old then
+       sel:unmark()
+       sel_old:unmark()
+       sel:mark("#00FF00","disk",10,1)
+       sel_old = sel
+   end    
+   
+   sel_pos = sel:getposition()
+   
+   -- obs_pos = observer:getposition()
+   
+   if sel:type() == "galaxy" then
+      local d = get_distance(MW_pos,sel_pos)
+      local z = get_z(d)
+      celestia:print(sel:name()..": "..string.format("redshift z = %5.3f,  distance = %5.2f  Mpc", z,d).."\nmax. redshift: "..dsomax:name(),5,-1,-1,0,6)
+   end
+   wait(0)
+end
