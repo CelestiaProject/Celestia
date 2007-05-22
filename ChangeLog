@@ -1187,4 +1187,6 @@ Code:
 - Enabled line smoothing for markers
 - Switched to double precision for rotation and precession periods--keeps
   synchronous rotations from drifting out of sync
-
+* Celx scripts:
+  - Added script for marking & red-shift coloring all 10000+ galaxies
+  - Added script for marking all member galaxies of the local group
