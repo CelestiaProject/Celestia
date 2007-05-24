@@ -1,5 +1,5 @@
 /*
-** $Id: lualib.h,v 1.2 2006-01-15 14:02:23 dirkpitt2050 Exp $
+** $Id: lualib.h,v 1.3 2007-05-24 23:45:56 dirkpitt2050 Exp $
 ** Lua standard libraries
 ** See Copyright Notice in lua.h
 */
@@ -11,46 +11,43 @@
 #include "lua.h"
 
 
-#ifndef LUALIB_API
-#define LUALIB_API	LUA_API
-#endif
+/* Key to file-handle type */
+#define LUA_FILEHANDLE		"FILE*"
 
 
 #define LUA_COLIBNAME	"coroutine"
-LUALIB_API int luaopen_base (lua_State *L);
+LUALIB_API int (luaopen_base) (lua_State *L);
 
 #define LUA_TABLIBNAME	"table"
-LUALIB_API int luaopen_table (lua_State *L);
+LUALIB_API int (luaopen_table) (lua_State *L);
 
 #define LUA_IOLIBNAME	"io"
+LUALIB_API int (luaopen_io) (lua_State *L);
+
 #define LUA_OSLIBNAME	"os"
-LUALIB_API int luaopen_io (lua_State *L);
+LUALIB_API int (luaopen_os) (lua_State *L);
 
 #define LUA_STRLIBNAME	"string"
-LUALIB_API int luaopen_string (lua_State *L);
+LUALIB_API int (luaopen_string) (lua_State *L);
 
 #define LUA_MATHLIBNAME	"math"
-LUALIB_API int luaopen_math (lua_State *L);
+LUALIB_API int (luaopen_math) (lua_State *L);
 
 #define LUA_DBLIBNAME	"debug"
-LUALIB_API int luaopen_debug (lua_State *L);
+LUALIB_API int (luaopen_debug) (lua_State *L);
+
+#define LUA_LOADLIBNAME	"package"
+LUALIB_API int (luaopen_package) (lua_State *L);
 
 
-LUALIB_API int luaopen_loadlib (lua_State *L);
+/* open all previous libraries */
+LUALIB_API void (luaL_openlibs) (lua_State *L); 
 
 
-/* to help testing the libraries */
+
 #ifndef lua_assert
-#define lua_assert(c)		/* empty */
+#define lua_assert(x)	((void)0)
 #endif
 
-
-/* compatibility code */
-#define lua_baselibopen	luaopen_base
-#define lua_tablibopen	luaopen_table
-#define lua_iolibopen	luaopen_io
-#define lua_strlibopen	luaopen_string
-#define lua_mathlibopen	luaopen_math
-#define lua_dblibopen	luaopen_debug
 
 #endif

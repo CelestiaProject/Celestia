@@ -134,7 +134,6 @@
 		1058C7A0FEA54F0111CA2CBB = {
 			children = (
 				E5F8C9E30795235E00D1DAF2,
-				E5F8C9E40795235E00D1DAF2,
 				E5D471260778E33C007731C3,
 				1058C7A1FEA54F0111CA2CBB,
 				F5040B0602A47B91014901DC,
@@ -237,7 +236,10 @@
 		29B97315FDCFA39411CA2CEA = {
 			children = (
 				E5B61B2C077737A6001BB2BF,
+				E5B6C90E0C05F63A00D7A569,
 				E5B61B2D077737A6001BB2BF,
+				E5B6C90D0C05F63A00D7A569,
+				E5B6C90F0C05F63A00D7A569,
 				E5B61B2E077737A6001BB2BF,
 				E5B61B2F077737A6001BB2BF,
 				29B97316FDCFA39411CA2CEA,
@@ -347,7 +349,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX DEBUG=1 TARGET_CELESTIA";
+				GCC_PREPROCESSOR_DEFINITIONS = "WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX LUA_USE_MACOSX LUA_VER=0x050100 DEBUG=1 TARGET_CELESTIA";
 				PREBINDING = NO;
 				ZERO_LINK = NO;
 			};
@@ -1233,7 +1235,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX TARGET_CELESTIA";
+				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG WORDS_BIGENDIAN=1 MACOSX=1 MACOSX_PB=1 PNG_SUPPORT CELX LUA_USE_MACOSX LUA_VER=0x050100 TARGET_CELESTIA";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				PREBINDING = YES;
@@ -1468,6 +1470,9 @@
 				E5D1CD140B15A0200032B0D5,
 				E516B09E0B4A89F000D354F8,
 				E516B09F0B4A89F000D354F8,
+				E5B6C9100C05F63A00D7A569,
+				E5B6C9110C05F63A00D7A569,
+				E5B6C9120C05F63A00D7A569,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3082,7 +3087,6 @@
 				E5D471270778E33C007731C3,
 				E5F8C9690795232900D1DAF2,
 				E5F8C9E50795235E00D1DAF2,
-				E5F8C9E60795235E00D1DAF2,
 				E5C9ADE10848FFEF0071B1EE,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -3361,7 +3365,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				E5F8C9E70795239600D1DAF2,
-				E5F8C9E80795239600D1DAF2,
 				E5F8C9E90795239600D1DAF2,
 			);
 			isa = PBXCopyFilesBuildPhase;
@@ -3780,7 +3783,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "for po in $SRCROOT/../po/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj\n    cp -R $SRCROOT/$s.lproj $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/celestia_constellations.strings\n    cp -R $SRCROOT/$s.lproj $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\ndone";
+			shellScript = "for po in $SRCROOT/../po/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/po.strings\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    cp $SRCROOT/$s.lproj/po.strings $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/celestia_constellations.strings\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    cp $SRCROOT/$s.lproj/celestia_constellations.strings $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\ndone";
 		};
 		E589B6D9078AC511005B8DD9 = {
 			fileEncoding = 4;
@@ -4193,6 +4196,48 @@
 		};
 		E5B61B33077737A6001BB2BF = {
 			fileRef = E5B61B2F077737A6001BB2BF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5B6C90D0C05F63A00D7A569 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = lauxlib.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5B6C90E0C05F63A00D7A569 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.h;
+			path = lua.hpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5B6C90F0C05F63A00D7A569 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = luaconf.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5B6C9100C05F63A00D7A569 = {
+			fileRef = E5B6C90D0C05F63A00D7A569;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5B6C9110C05F63A00D7A569 = {
+			fileRef = E5B6C90E0C05F63A00D7A569;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5B6C9120C05F63A00D7A569 = {
+			fileRef = E5B6C90F0C05F63A00D7A569;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5401,34 +5446,14 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		E5F8C9E40795235E00D1DAF2 = {
-			isa = PBXFileReference;
-			lastKnownFileType = "compiled.mach-o.dylib";
-			name = liblualib.dylib;
-			path = Frameworks/liblualib.dylib;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		E5F8C9E50795235E00D1DAF2 = {
 			fileRef = E5F8C9E30795235E00D1DAF2;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		E5F8C9E60795235E00D1DAF2 = {
-			fileRef = E5F8C9E40795235E00D1DAF2;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		E5F8C9E70795239600D1DAF2 = {
 			fileRef = E5F8C9E30795235E00D1DAF2;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		E5F8C9E80795239600D1DAF2 = {
-			fileRef = E5F8C9E40795235E00D1DAF2;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5503,54 +5528,17 @@
 		};
 		F51C6D38029595BA014901DC = {
 			children = (
-				F51C6D5302959823014901DC,
 				F51C6D4E029596B4014901DC,
 				F51C6D4F029596B4014901DC,
 				F51C6D50029596B4014901DC,
 				F51C6D51029596B4014901DC,
 				F51C6D52029596B4014901DC,
 				F51C6D430295967D014901DC,
-				F51C6D390295962D014901DC,
-				F51C6D3A0295962D014901DC,
-				F51C6D3B0295962D014901DC,
-				F51C6D3C0295962D014901DC,
 			);
 			isa = PBXGroup;
 			name = "Celestia Main";
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		F51C6D390295962D014901DC = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = buildstardb.cpp;
-			path = ../src/buildstardb.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F51C6D3A0295962D014901DC = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = packdb.cpp;
-			path = ../src/packdb.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F51C6D3B0295962D014901DC = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = packnames.cpp;
-			path = ../src/packnames.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F51C6D3C0295962D014901DC = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = readstars.cpp;
-			path = ../src/readstars.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
 		};
 		F51C6D430295967D014901DC = {
 			children = (
@@ -5600,7 +5588,6 @@
 			children = (
 				E5D446640777291700A1577D,
 				E5D446650777291700A1577D,
-				F5D0860302A5832D014901DC,
 				F51C6D560295987B014901DC,
 				F51C6D590295987B014901DC,
 				F51C6D5B0295987B014901DC,
@@ -5850,23 +5837,6 @@
 			name = celengine;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		F51C6D5302959823014901DC = {
-			children = (
-				F51C6D540295987B014901DC,
-			);
-			isa = PBXGroup;
-			name = tools;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		F51C6D540295987B014901DC = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = buildstardb.cpp;
-			path = ../src/tools/buildstardb.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
 		};
 		F51C6D550295987B014901DC = {
 			isa = PBXFileReference;
@@ -7789,14 +7759,6 @@
 			);
 			isa = PBXGroup;
 			name = "Mac Specific";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		F5D0860302A5832D014901DC = {
-			children = (
-			);
-			isa = PBXGroup;
-			name = "Non Mac";
 			refType = 4;
 			sourceTree = "<group>";
 		};
