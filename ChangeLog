@@ -1190,3 +1190,5 @@ Code:
 * Celx scripts:
   - Added script for marking & red-shift coloring all 10000+ galaxies
   - Added script for marking all member galaxies of the local group
+* Fixed crash when deepsky.dsc was empty
+* Increased max draw distance to 100 Gly
