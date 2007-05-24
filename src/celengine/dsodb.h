@@ -23,6 +23,8 @@
 
 static const unsigned int MAX_DSO_NAMES = 10;
 
+extern const float DSO_OCTREE_ROOT_SIZE;
+
 //NOTE: this one and starDatabase should be derived from a common base class since they share lots of code and functionality.
 class DSODatabase
 {
