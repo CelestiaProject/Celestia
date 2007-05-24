@@ -53,7 +53,6 @@ using namespace std;
 #endif
 
 static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
-static const double DSO_DISTANCE_LIMIT   = 1.8e9;
 static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
 // Distance from the Sun at which comet tails will start to fade out
@@ -7103,7 +7102,7 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
 
 
 DSORenderer::DSORenderer() :
-    ObjectRenderer<DeepSkyObject*, double>(DSO_DISTANCE_LIMIT),
+    ObjectRenderer<DeepSkyObject*, double>(DSO_OCTREE_ROOT_SIZE),
     frustum(degToRad(45.0f), 1.0f, 1.0f)
 {
 }

@@ -36,8 +36,10 @@
 using namespace std;
 
 
-static const float DSO_OCTREE_ROOT_SIZE   = 1.8e9f;
-static const float DSO_OCTREE_MAGNITUDE   = 12.0f;
+// 100 Gly - on the order of the current size of the universe
+const float DSO_OCTREE_ROOT_SIZE   = 1.0e11f;
+
+static const float DSO_OCTREE_MAGNITUDE   = 8.0f;
 static const float DSO_EXTRA_ROOM         = 0.01f; // Reserve 1% capacity for extra DSOs
                                                    // (useful as a complement of binary loaded DSOs)
 
@@ -381,7 +383,11 @@ void DSODatabase::buildOctree()
 {
     DPRINTF(1, "Sorting DSOs into octree . . .\n");
     float absMag             = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
-    DynamicDSOOctree* root   = new DynamicDSOOctree(Point3d(1000, 1000, 1000), absMag);        //TODO: center??
+
+    // TODO: investigate using a different center--it's possible that more
+    // objects end up straddling the base level nodes when the center of the
+    // octree is at the origin.
+    DynamicDSOOctree* root   = new DynamicDSOOctree(Point3d(0, 0, 0), absMag);
     for (int i = 0; i < nDSOs; ++i)
     {
         root->insertObject(DSOs[i], DSO_OCTREE_ROOT_SIZE);
