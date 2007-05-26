@@ -13,10 +13,9 @@
 				E5D4467407772B6C00A1577D,
 				F505BFFA02CA9DAE0100020A,
 				E54343150783C42500053094,
-				F57F9FD402B94A0B01000006,
+				E5D84E0C0C070864000A3AD2,
 				F57FA4F002B9AB8601000006,
 				F578B7B402B3E4DB0100020A,
-				E56A5AEB0848F92200A21D7E,
 				E56A3DB70848C19800A21D7E,
 				F55C817602AF55890100020A,
 				F565A8B202EB418701000006,
@@ -29,10 +28,9 @@
 				E5D4467307772B6C00A1577D,
 				F505BFFB02CA9DAE0100020A,
 				E54343140783C42500053094,
-				F57F9FD302B94A0B01000006,
+				E5D84E0B0C070864000A3AD2,
 				F57FA4EF02B9AB8601000006,
 				F578B7B302B3E4DB0100020A,
-				E56A5AEA0848F92200A21D7E,
 				F55C817702AF55890100020A,
 				F565A8B102EB418701000006,
 				F5EDC6B90456666601000002,
@@ -273,6 +271,7 @@
 				F578B7AE02B3E35F0100020A,
 				29B97318FDCFA39411CA2CEA,
 				E54343100783C3F200053094,
+				E5D84E0F0C0709C8000A3AD2,
 				E5C29C920982A8EC00ED06B8,
 				089C165CFE840E0CC02AAC07,
 				E5C5B24C0A0FF75C0078C6ED,
@@ -1473,6 +1472,8 @@
 				E5B6C9100C05F63A00D7A569,
 				E5B6C9110C05F63A00D7A569,
 				E5B6C9120C05F63A00D7A569,
+				E5D84E0A0C0707A1000A3AD2,
+				E5D84E0D0C070864000A3AD2,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2319,6 +2320,7 @@
 				E5C3C423097DBA1D0048AF44,
 				E5C29C940982A8EC00ED06B8,
 				E5C5B24E0A0FF75C0078C6ED,
+				E5D84E110C0709C8000A3AD2,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2471,6 +2473,8 @@
 				E5D1CD150B15A0200032B0D5,
 				E516B09C0B4A89F000D354F8,
 				E516B09D0B4A89F000D354F8,
+				E5D84E090C0707A1000A3AD2,
+				E5D84E0E0C070864000A3AD2,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5265,6 +5269,106 @@
 			settings = {
 			};
 		};
+		E5D84E070C0707A1000A3AD2 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = eclipsefinder.cpp;
+			path = ../src/celestia/eclipsefinder.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5D84E080C0707A1000A3AD2 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = eclipsefinder.h;
+			path = ../src/celestia/eclipsefinder.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		E5D84E090C0707A1000A3AD2 = {
+			fileRef = E5D84E070C0707A1000A3AD2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D84E0A0C0707A1000A3AD2 = {
+			fileRef = E5D84E080C0707A1000A3AD2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D84E0B0C070864000A3AD2 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = EclipseFinderController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5D84E0C0C070864000A3AD2 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = EclipseFinderController.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5D84E0D0C070864000A3AD2 = {
+			fileRef = E5D84E0B0C070864000A3AD2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D84E0E0C070864000A3AD2 = {
+			fileRef = E5D84E0C0C070864000A3AD2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D84E0F0C0709C8000A3AD2 = {
+			children = (
+				E5D84E100C0709C8000A3AD2,
+				E5D84E120C070AB9000A3AD2,
+				E5D84E130C070ACB000A3AD2,
+			);
+			isa = PBXVariantGroup;
+			name = EclipseFinder.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5D84E100C0709C8000A3AD2 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = English.lproj/EclipseFinder.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5D84E110C0709C8000A3AD2 = {
+			fileRef = E5D84E0F0C0709C8000A3AD2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5D84E120C070AB9000A3AD2 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = fr;
+			path = fr.lproj/EclipseFinder.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		E5D84E130C070ACB000A3AD2 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = es;
+			path = es.lproj/EclipseFinder.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		E5E5516A0AAB960F007CD5BB = {
 			isa = PBXFileReference;
 			lastKnownFileType = file;
@@ -5654,6 +5758,7 @@
 				E56431450776D52D00E2C4A3,
 				F51C6D8C02959960014901DC,
 				F51C6D8D02959960014901DC,
+				E5D84E070C0707A1000A3AD2,
 				F51C6D8E02959960014901DC,
 				0C76BFCF08537EDB00D31A90,
 				F53036BB03D908CE01000002,
@@ -5661,6 +5766,7 @@
 				E56431460776D52D00E2C4A3,
 				F51C6D9B02959960014901DC,
 				F51C6D9C02959960014901DC,
+				E5D84E080C0707A1000A3AD2,
 				F51C6D9D02959960014901DC,
 				0C76BFC0085215B100D31A90,
 				0C76BFD008537EDB00D31A90,
@@ -7490,11 +7596,15 @@
 		};
 		F578B79D02B3E2AD0100020A = {
 			children = (
+				F57F9FD402B94A0B01000006,
+				E56A5AEB0848F92200A21D7E,
 				F578B79E02B3E2DD0100020A,
 				F56FFFAA02C571280100020A,
 				F578B7A102B3E2DD0100020A,
 				F578B7A002B3E2DD0100020A,
 				F55F041E02B152180100020A,
+				F57F9FD302B94A0B01000006,
+				E56A5AEA0848F92200A21D7E,
 				F578B7A202B3E2DD0100020A,
 				F56FFFA902C571280100020A,
 				F578B7A302B3E2DD0100020A,

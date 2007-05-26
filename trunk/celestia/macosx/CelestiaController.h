@@ -17,6 +17,7 @@
 @class CelestiaOpenGLView;
 @class SplashWindow;
 @class SplashWindowController;
+@class EclipseFinderController;
 
 @interface CelestiaController : NSWindowController 
 {
@@ -34,6 +35,7 @@
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;
     BrowserWindowController *browserWindowController;
+    EclipseFinderController *eclipseFinderController;
     NSWindowController *helpWindowController;
     NSTimer* timer;
 
