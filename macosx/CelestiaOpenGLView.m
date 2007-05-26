@@ -30,7 +30,7 @@
     {
         NSOpenGLPFADoubleBuffer,
         NSOpenGLPFADepthSize,
-        (NSOpenGLPixelFormatAttribute)24,
+        (NSOpenGLPixelFormatAttribute)32,
         nil
     } ;
 
@@ -92,7 +92,7 @@
             {
                 NSOpenGLPFADoubleBuffer,
                 NSOpenGLPFADepthSize,
-                (NSOpenGLPixelFormatAttribute)24,
+                (NSOpenGLPixelFormatAttribute)32,
                 NSOpenGLPFASampleBuffers,
                 (NSOpenGLPixelFormatAttribute)1,
                 NSOpenGLPFASamples,
