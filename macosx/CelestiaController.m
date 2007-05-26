@@ -13,6 +13,7 @@
 #import "FullScreenWindow.h"
 #import "SplashScreen.h"
 #import "SplashWindowController.h"
+#import "EclipseFinderController.h"
 #import <Carbon/Carbon.h>
 #import <OpenGL/gl.h>
 #import "CGLInfo.h"
@@ -440,6 +441,7 @@ NSString* fatalErrorMessage;
     [settings storeUserDefaults];
 
     [lastScript release];
+    [eclipseFinderController release];
     [browserWindowController release];
     [helpWindowController release];
 
@@ -792,6 +794,10 @@ NSString* fatalErrorMessage;
         case 0:
             if (!browserWindowController) browserWindowController = [[BrowserWindowController alloc] init];
             [browserWindowController showWindow: self];
+            break;
+        case 1:
+            if (!eclipseFinderController) eclipseFinderController = [[EclipseFinderController alloc] init];
+            [eclipseFinderController showWindow: self];
             break;
     }
 }

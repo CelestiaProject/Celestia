@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
+		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
+		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
+		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
 		E532F4F10933331800D7D5B3 /* dsodb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4E80933331800D7D5B3 /* dsodb.cpp */; settings = {COMPILER_FLAGS = "-DDPRINTF=//"; }; };
 		E532F4F30933331800D7D5B3 /* dsoname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EA0933331800D7D5B3 /* dsoname.cpp */; };
 		E532F4F50933331800D7D5B3 /* dsooctree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EC0933331800D7D5B3 /* dsooctree.cpp */; };
@@ -469,6 +472,13 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
+		E50CCA380C065BF900E9C76A /* eclipsefinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eclipsefinder.h; path = ../src/celestia/eclipsefinder.h; sourceTree = SOURCE_ROOT; };
+		E50CCA540C065F0100E9C76A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
+		E50CCA5C0C065F4000E9C76A /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
+		E50CCA5D0C065F4300E9C76A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
+		E50CCA670C06632A00E9C76A /* EclipseFinderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EclipseFinderController.h; sourceTree = "<group>"; };
+		E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EclipseFinderController.mm; sourceTree = "<group>"; };
 		E5323E3B0C05E84400401D3B /* lauxlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lauxlib.h; sourceTree = "<group>"; };
 		E5323E3C0C05E84400401D3B /* lua.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lua.hpp; sourceTree = "<group>"; };
 		E5323E3D0C05E84400401D3B /* luaconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = luaconf.h; sourceTree = "<group>"; };
@@ -948,10 +958,9 @@
 				E5D4467407772B6C00A1577D /* CelestiaSettings.mm */,
 				F505BFFA02CA9DAE0100020A /* CGLInfo.m */,
 				E54343150783C42500053094 /* BrowserWindowController.mm */,
-				F57F9FD402B94A0B01000006 /* ContextOutlineView.m */,
+				E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */,
 				F57FA4F002B9AB8601000006 /* FavoriteInfoWindowController.m */,
 				F578B7B402B3E4DB0100020A /* FavoritesDrawerController.m */,
-				E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */,
 				E56A3DB70848C19800A21D7E /* MacDirectory.mm */,
 				F55C817602AF55890100020A /* GotoWindowController.m */,
 				F565A8B202EB418701000006 /* RenderPanelController.m */,
@@ -964,10 +973,9 @@
 				E5D4467307772B6C00A1577D /* CelestiaSettings.h */,
 				F505BFFB02CA9DAE0100020A /* CGLInfo.h */,
 				E54343140783C42500053094 /* BrowserWindowController.h */,
-				F57F9FD302B94A0B01000006 /* ContextOutlineView.h */,
+				E50CCA670C06632A00E9C76A /* EclipseFinderController.h */,
 				F57FA4EF02B9AB8601000006 /* FavoriteInfoWindowController.h */,
 				F578B7B302B3E4DB0100020A /* FavoritesDrawerController.h */,
-				E56A5AEA0848F92200A21D7E /* FullScreenWindow.h */,
 				F55C817702AF55890100020A /* GotoWindowController.h */,
 				F565A8B102EB418701000006 /* RenderPanelController.h */,
 				F5EDC6B90456666601000002 /* SetTimeWindowController.h */,
@@ -1056,6 +1064,7 @@
 				F578B7AE02B3E35F0100020A /* Celestia Data */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				E54343100783C3F200053094 /* BrowserWindow.nib */,
+				E50CCA530C065F0100E9C76A /* EclipseFinder.nib */,
 				E5D7660E0982B1860099DBBD /* HelpWindow.nib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				E5CC204509AA843300CFFF2C /* Localizable.strings */,
@@ -1301,6 +1310,7 @@
 				E56431450776D52D00E2C4A3 /* celx.cpp */,
 				F51C6D8C02959960014901DC /* configfile.cpp */,
 				F51C6D8D02959960014901DC /* destination.cpp */,
+				E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */,
 				F51C6D8E02959960014901DC /* favorites.cpp */,
 				0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */,
 				F53036BB03D908CE01000002 /* url.cpp */,
@@ -1308,6 +1318,7 @@
 				E56431460776D52D00E2C4A3 /* celx.h */,
 				F51C6D9B02959960014901DC /* configfile.h */,
 				F51C6D9C02959960014901DC /* destination.h */,
+				E50CCA380C065BF900E9C76A /* eclipsefinder.h */,
 				F51C6D9D02959960014901DC /* favorites.h */,
 				0C76BFC0085215B100D31A90 /* moviecapture.h */,
 				0C76BFD008537EDB00D31A90 /* qtcapture.h */,
@@ -1539,11 +1550,15 @@
 		F578B79D02B3E2AD0100020A /* Cocoa Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				F57F9FD402B94A0B01000006 /* ContextOutlineView.m */,
+				E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */,
 				F578B79E02B3E2DD0100020A /* ImageAndTextCell.m */,
 				F56FFFAA02C571280100020A /* MyTree.m */,
 				F578B7A102B3E2DD0100020A /* NSArray_Extensions.m */,
 				F578B7A002B3E2DD0100020A /* NSOutlineView_Extensions.m */,
 				F55F041E02B152180100020A /* NSString_ObjCPlusPlus.mm */,
+				F57F9FD302B94A0B01000006 /* ContextOutlineView.h */,
+				E56A5AEA0848F92200A21D7E /* FullScreenWindow.h */,
 				F578B7A202B3E2DD0100020A /* ImageAndTextCell.h */,
 				F56FFFA902C571280100020A /* MyTree.h */,
 				F578B7A302B3E2DD0100020A /* NSArray_Extensions.h */,
@@ -1665,6 +1680,7 @@
 				E599A78E097CAB390079C254 /* Credits.rtf in Resources */,
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
 				E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */,
+				E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1841,6 +1857,8 @@
 				E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */,
 				E561FB600B46164000668CFE /* CelestiaDSO.mm in Sources */,
 				E561FC300B47910800668CFE /* CelestiaLocation.mm in Sources */,
+				E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */,
+				E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1883,6 +1901,16 @@
 				E5EAAE530A1A0B3000848446 /* ja */,
 			);
 			name = MainMenu.nib;
+			sourceTree = "<group>";
+		};
+		E50CCA530C065F0100E9C76A /* EclipseFinder.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E50CCA540C065F0100E9C76A /* English */,
+				E50CCA5C0C065F4000E9C76A /* fr */,
+				E50CCA5D0C065F4300E9C76A /* es */,
+			);
+			name = EclipseFinder.nib;
 			sourceTree = "<group>";
 		};
 		E54343100783C3F200053094 /* BrowserWindow.nib */ = {

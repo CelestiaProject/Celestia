@@ -3,12 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>IBDocumentLocation</key>
-	<string>48 140 356 240 0 0 1280 832 </string>
+	<string>20 46 356 240 0 0 1280 832 </string>
 	<key>IBFramework Version</key>
 	<string>446.1</string>
+	<key>IBOldestOS</key>
+	<integer>2</integer>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>16</integer>
+		<integer>52</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>8P135</string>
