@@ -122,6 +122,20 @@ class Renderer
         StarStyleCount   = 3,
     };
 
+    // constants
+    static const int DefaultRenderFlags = Renderer::ShowStars          |
+                                          Renderer::ShowPlanets        |
+                                          Renderer::ShowGalaxies       |
+                                          Renderer::ShowCloudMaps      |
+                                          Renderer::ShowAtmospheres    |
+                                          Renderer::ShowEclipseShadows |
+                                          Renderer::ShowRingShadows    |
+                                          Renderer::ShowCometTails     |
+                                          Renderer::ShowNebulae        |
+                                          Renderer::ShowOpenClusters   |
+                                          Renderer::ShowAutoMag        |
+                                          Renderer::ShowSmoothLines;
+
     int getRenderFlags() const;
     void setRenderFlags(int);
     int getLabelMode() const;
