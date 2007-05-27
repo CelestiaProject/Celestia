@@ -111,11 +111,17 @@ static POINT lastMouseMove;
 class WinCursorHandler;
 WinCursorHandler* cursorHandler = NULL;
 
-static int MovieSizes[5][2] = { { 160, 120 },
+static int MovieSizes[8][2] = {
+                                { 160, 120 },
                                 { 320, 240 },
                                 { 640, 480 },
                                 { 720, 480 },
-                                { 720, 576 } };
+                                { 720, 576 },
+                                { 1024, 768 },
+                                { 1280, 720 },
+                                { 1920, 1080 }
+                              };
+
 static float MovieFramerates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
 
 static int movieSize = 1;
@@ -3089,11 +3095,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.ambientLight = 0.1f;  // Low
     prefs.labelMode = 0;
     prefs.orbitMask = Body::Planet | Body::Moon;
-    prefs.renderFlags = Renderer::ShowAtmospheres | Renderer::ShowStars |
-                        Renderer::ShowPlanets     | Renderer::ShowSmoothLines |
-                        Renderer::ShowCometTails  | Renderer::ShowRingShadows |
-						Renderer::ShowCloudMaps   | Renderer::ShowEclipseShadows |
-						Renderer::ShowNebulae     | Renderer::ShowGalaxies;
+    prefs.renderFlags = Renderer::DefaultRenderFlags;
+
     prefs.visualMagnitude = 6.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
     prefs.hudDetail = 1;
@@ -3285,27 +3288,18 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             ShowUniversalTime(appCore);
         appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
         appCore->getRenderer()->setResolution(prefs.textureResolution);
-		if (prefs.renderPathSet)
-		{
-			GLContext* glContext = appCore->getRenderer()->getGLContext();
-			if (glContext->renderPathSupported(prefs.renderPath))
-				glContext->setRenderPath(prefs.renderPath);
-		}
+        if (prefs.renderPathSet)
+        {
+            GLContext* glContext = appCore->getRenderer()->getGLContext();
+            if (glContext->renderPathSupported(prefs.renderPath))
+                glContext->setRenderPath(prefs.renderPath);
+        }
     }
-	else
-	{
-		// Set default render flags for a new installation
-		appCore->getRenderer()->setRenderFlags(Renderer::ShowStars   |
-		                                        Renderer::ShowPlanets |
-												Renderer::ShowGalaxies |
-												Renderer::ShowCloudMaps |
-												Renderer::ShowAtmospheres |
-												Renderer::ShowEclipseShadows |
-												Renderer::ShowRingShadows |
-												Renderer::ShowCometTails |
-												Renderer::ShowNebulae |
-												Renderer::ShowOpenClusters);
-	}
+    else
+    {
+        // Set default render flags for a new installation
+        appCore->getRenderer()->setRenderFlags(Renderer::DefaultRenderFlags);
+    }
     
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
     syncMenusWithRendererState();
