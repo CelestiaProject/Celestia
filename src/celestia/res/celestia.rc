@@ -1,703 +1,2085 @@
 // Microsoft Visual C++ generated resource script.
 //
+
+
 #include "resource.h"
 
+
 #define APSTUDIO_READONLY_SYMBOLS
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
+
+
 #include "afxres.h"
 
 /////////////////////////////////////////////////////////////////////////////
+
+
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+
 #ifdef _WIN32
+
+
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+
 #pragma code_page(1252)
+
+
 #endif //_WIN32
 
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // RT_MANIFEST
+
+
 //
+
+
+
+
 
 1                       RT_MANIFEST             "celestia.exe.manifest"
 
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Menu
+
+
 //
+
+
+
+
 
 IDR_MAIN_MENU MENU 
+
+
 BEGIN
+
+
     POPUP "&File"
+
+
     BEGIN
+
+
         MENUITEM "&Open Script...",             ID_FILE_OPENSCRIPT
+
+        POPUP "Scripts"
+	BEGIN
+	MENUITEM "Placeholder",                 ID_FIRST_SCRIPT
+	END
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "Capture &Image...\tF10",      ID_FILE_CAPTUREIMAGE
+
+
         MENUITEM "Capture &Movie...\tShift+F10", ID_FILE_CAPTUREMOVIE
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "E&xit",                       ID_FILE_EXIT
+
+
     END
+
+
     POPUP "&Navigation"
+
+
     BEGIN
+
+
         MENUITEM "Select &Sol\tH",              ID_NAVIGATION_HOME
+
+
         MENUITEM "Tour G&uide...",              ID_NAVIGATION_TOURGUIDE
+
+
         MENUITEM "Select &Object...",           ID_NAVIGATION_SELECT
+
+
         MENUITEM "Goto Object...",              ID_NAVIGATION_GOTO_OBJECT
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "&Center Selection\tC",        ID_NAVIGATION_CENTER
+
+
         MENUITEM "&Go to Selection\tG",         ID_NAVIGATION_GOTO
+
+
         MENUITEM "&Follow Selection\tF",        ID_NAVIGATION_FOLLOW
+
+
         MENUITEM "S&ync Orbit Selection\tY",    ID_NAVIGATION_SYNCORBIT
+
+
         MENUITEM "&Track Selection\tT",         ID_NAVIGATION_TRACK
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "Solar System &Browser...",    ID_NAVIGATION_SSBROWSER
+
+
         MENUITEM "Star B&rowser...",            ID_NAVIGATION_STARBROWSER
+
+
         MENUITEM "&Eclipse Finder",             ID_NAVIGATION_ECLIPSEFINDER
+
+
     END
+
+
     POPUP "&Time"
+
+
     BEGIN
+
+
         MENUITEM "10x &Faster\tL",              ID_TIME_FASTER
+
+
         MENUITEM "10x &Slower\tK",              ID_TIME_SLOWER
+
+
         MENUITEM "Free&ze\tSpace",              ID_TIME_FREEZE
+
+
         MENUITEM "&Real Time\t\\",              ID_TIME_REALTIME
+
+
         MENUITEM "Re&verse Time\tJ",            ID_TIME_REVERSE
+
+
         MENUITEM "Set &Time...",                ID_TIME_SETTIME
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "Show Local Time",             ID_TIME_SHOWLOCAL
+
+
     END
+
+
     POPUP "&Render"
+
+
     BEGIN
+
+
         MENUITEM "Select Display Mode...",      ID_RENDER_DISPLAYMODE
+
+
         MENUITEM "Toggle Full Screen\tAlt+Enter", ID_RENDER_FULLSCREEN
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "View Options...",             ID_RENDER_VIEWOPTIONS
+
+
         MENUITEM "Locations...",                ID_RENDER_LOCATIONS
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "More Stars Visible\t]",       ID_RENDER_MORESTARS
+
+
         MENUITEM "Fewer Stars Visible\t[",      ID_RENDER_FEWERSTARS
+
+
         MENUITEM "Auto Magnitude\tCtrl+Y",      ID_RENDER_AUTOMAG
+
+
         POPUP "Star St&yle"
+
+
         BEGIN
+
+
             MENUITEM "&Fuzzy Points",               ID_RENDER_STARSTYLE_FUZZY, CHECKED
+
+
             MENUITEM "&Points",                     ID_RENDER_STARSTYLE_POINTS
+
+
             MENUITEM "Scaled &Discs",               ID_RENDER_STARSTYLE_DISCS
+
+
         END
+
+
         MENUITEM SEPARATOR
+
+
         POPUP "&Ambient Light"
+
+
         BEGIN
+
+
             MENUITEM "&None",                       ID_RENDER_AMBIENTLIGHT_NONE
+
+
             MENUITEM "&Low",                        ID_RENDER_AMBIENTLIGHT_LOW, CHECKED
+
+
             MENUITEM "&Medium",                     ID_RENDER_AMBIENTLIGHT_MEDIUM
+
+
         END
+
+
         MENUITEM "Antialiasing\tCtrl+X",        ID_RENDER_ANTIALIASING
+
+
     END
+
+
     POPUP "&View"
+
+
     BEGIN
+
+
         MENUITEM "Split &Horizontally\tCtrl+R", ID_VIEW_HSPLIT
+
+
         MENUITEM "Split &Vertically\tCtrl+U",   ID_VIEW_VSPLIT
+
+
         MENUITEM "&Delete Active View\tDEL",    ID_VIEW_DELETE_ACTIVE
+
+
         MENUITEM "&Single View\tCtrl+D",        ID_VIEW_SINGLE
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "Show &Frames",                ID_VIEW_SHOW_FRAMES
+
+
         MENUITEM "Synchronize &Time",           ID_VIEW_SYNC_TIME
+
+
     END
+
+
     POPUP "&Bookmarks"
+
+
     BEGIN
+
+
         MENUITEM "&Add Bookmarks...",           ID_BOOKMARKS_ADDBOOKMARK
+
+
         MENUITEM "&Organize Bookmarks...",      ID_BOOKMARKS_ORGANIZE
+
+
     END
+
+
     POPUP "&Help"
+
+
     BEGIN
+
+
         MENUITEM "Run &Demo",                   ID_HELP_RUNDEMO
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "&Controls",                   ID_HELP_CONTROLS
+
+
         MENUITEM "&OpenGL Info",                ID_HELP_GLINFO
+
+
         MENUITEM "&License",                    ID_HELP_LICENSE
+
+
         MENUITEM SEPARATOR
+
+
         MENUITEM "&About Celestia",             ID_HELP_ABOUT
+
+
     END
+
+
 END
 
 
+
+
+
+
+
+
 #ifdef APSTUDIO_INVOKED
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // TEXTINCLUDE
+
+
 //
+
+
+
+
 
 1 TEXTINCLUDE 
+
+
 BEGIN
+
+
     "resource.h\0"
+
+
 END
+
+
+
+
 
 2 TEXTINCLUDE 
+
+
 BEGIN
+
+
     "#include ""afxres.h""\r\n"
+
+
     "\0"
+
+
 END
+
+
+
+
 
 3 TEXTINCLUDE 
+
+
 BEGIN
+
+
     "\r\n"
+
+
     "\0"
+
+
 END
+
+
+
+
 
 #endif    // APSTUDIO_INVOKED
 
 
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Dialog
+
+
 //
+
+
+
+
 
 IDD_ABOUT DIALOGEX 100, 50, 310, 200
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "About Celestia"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     DEFPUSHBUTTON   "OK",IDOK,131,175,50,14
+
+
     LTEXT           "Celestia",IDC_STATIC,56,17,30,9
+
+
     LTEXT           VERSION_STRING,IDC_STATIC,90,17,40,9
+
+
     LTEXT           "Copyright (C) 2001-2006, Chris Laurel",IDC_STATIC,56,26,150,9
+
+
     LTEXT           "http://www.shatters.net/celestia",IDC_CELESTIALINK,56,43,150,9
+
+
     LTEXT           "Celestia is free software and comes with absolutely no warranty.",IDC_STATIC,56,66,247,17
+
+
     LTEXT           "Authors",IDC_STATIC,56,90,100,9
+
+
     LTEXT           "Chris Laurel",IDC_STATIC,56,102,100,9
+
+
     LTEXT           "Clint Weisbrod",IDC_STATIC,56,112,100,9
+
+
     LTEXT           "Fridger Schrempp",IDC_STATIC,56,122,100,9
+
+
     LTEXT           "Christophe Teyssier",IDC_STATIC,56,132,100,9
+
+
     LTEXT           "Grant Hutchison",IDC_STATIC,56,142,100,9
+
+
     LTEXT           "Pat Suwalski",IDC_STATIC,56,152,100,9
+
+
     LTEXT           "Toti",IDC_STATIC,160,102,100,9
+
+
     LTEXT           "Da Woon Jung",IDC_STATIC,160,112,100,9
+
+
     LTEXT           "Hank Ramsey",IDC_STATIC,160,122,100,9
-    LTEXT           "Bob Ippolito",IDC_STATIC,160,132,100,9    LTEXT           "Vincent Giangiulio",IDC_STATIC,160,142,100,9
+
+
+    LTEXT           "Bob Ippolito",IDC_STATIC,160,132,100,9
+    LTEXT           "Vincent Giangiulio",IDC_STATIC,160,142,100,9
+
+
 END
+
+
+
+
 
 IDD_FINDOBJECT DIALOGEX 100, 50, 162, 54
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Select Object"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     EDITTEXT        IDC_FINDOBJECT_EDIT,77,9,78,12,ES_AUTOHSCROLL
+
+
     DEFPUSHBUTTON   "OK",IDOK,23,33,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,85,33,50,14
+
+
     RTEXT           "Object Name",IDC_STATIC,5,11,68,8
+
+
 END
+
+
+
+
 
 IDD_LICENSE DIALOG  100, 50, 286, 249
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "License"
+
+
 FONT 8, "MS Sans Serif"
+
+
 BEGIN
+
+
     DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+
+
     EDITTEXT        IDC_LICENSE_TEXT,7,7,272,213,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+
+
 END
+
+
+
+
 
 IDD_CONTROLSHELP DIALOG  100, 50, 286, 249
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Celestia Controls"
+
+
 FONT 8, "MS Sans Serif"
+
+
 BEGIN
+
+
     DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+
+
     EDITTEXT        IDC_TEXT_CONTROLSHELP,7,7,272,213,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+
+
 END
+
+
+
+
 
 IDD_GLINFO DIALOG  100, 50, 286, 249
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "OpenGL Driver Info"
+
+
 FONT 8, "MS Sans Serif"
+
+
 BEGIN
+
+
     DEFPUSHBUTTON   "OK",IDOK,117,228,50,14
+
+
     EDITTEXT        IDC_GLINFO_TEXT,7,7,272,213,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+
+
 END
+
+
+
+
 
 IDD_SETTIME DIALOGEX 200, 100, 165, 110
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Set Simulation Time"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x1
+
+
 BEGIN
+
+
     LTEXT           "Time Zone: ",IDC_STATIC,7,10,58,10
+
+
     COMBOBOX        IDC_COMBOBOX_TIMEZONE,65,7,93,90,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+
+
     CONTROL         "DateTimePicker3",IDC_DATEPICKER,"CelestiaDatePicker",WS_TABSTOP | 0x20,7,27,151,15
+
+
     CONTROL         "DateTimePicker2",IDC_TIMEPICKER,"SysDateTimePick32",DTS_RIGHTALIGN | DTS_UPDOWN | DTS_APPCANPARSE | WS_TABSTOP | 0x8,7,44,151,15
+
+
     PUSHBUTTON      "Set To Current Time",IDC_SETCURRENTTIME,15,67,135,14
+
+
     DEFPUSHBUTTON   "OK",IDOK,15,87,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,100,87,50,14
+
+
 END
+
+
+
+
 
 IDD_ADDBOOKMARK DIALOGEX 100, 50, 215, 134
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Add Bookmark"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x1
+
+
 BEGIN
+
+
     EDITTEXT        IDC_BOOKMARK_EDIT,6,21,116,12,ES_AUTOHSCROLL
+
+
     RTEXT           "Name",IDC_STATIC,2,11,22,8
+
+
     DEFPUSHBUTTON   "OK",IDOK,130,6,77,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,130,24,77,14
+
+
     PUSHBUTTON      "Create in >>",IDC_BOOKMARK_CREATEIN,130,42,77,14
+
+
     CONTROL         "Tree1",IDC_BOOKMARK_FOLDERTREE,"SysTreeView32",TVS_HASLINES | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,5,64,117,64,WS_EX_CLIENTEDGE
+
+
     PUSHBUTTON      "New Folder...",IDC_BOOKMARK_NEWFOLDER,130,65,77,14
+
+
 END
+
+
+
+
 
 IDD_SSBROWSER DIALOGEX 0, 0, 235, 194
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Solar System Browser"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     DEFPUSHBUTTON   "OK",IDOK,168,154,60,14
+
+
     CONTROL         "Solar System",IDC_SSBROWSER_TREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | WS_BORDER | WS_TABSTOP,7,26,153,161
+
+
     PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,168,26,60,14
+
+
     PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,168,44,60,14
+
+
     LTEXT           "Solar System Objects",IDC_STATIC,7,13,74,8
+
+
 END
+
+
+
+
 
 IDD_STARBROWSER DIALOGEX 0, 0, 338, 218
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Star Browser"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x1
+
+
 BEGIN
+
+
     CONTROL         "List3",IDC_STARBROWSER_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,7,7,253,148,WS_EX_CLIENTEDGE
+
+
     EDITTEXT        IDC_MAXSTARS_EDIT,142,173,26,12,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER
+
+
     CONTROL         "Slider1",IDC_MAXSTARS_SLIDER,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,17,190,158,14
+
+
     CONTROL         "Nearest",IDC_RADIO_NEAREST,"Button",BS_AUTORADIOBUTTON | WS_GROUP,186,168,70,10
+
+
     CONTROL         "Brightest",IDC_RADIO_BRIGHTEST,"Button",BS_AUTORADIOBUTTON,186,182,73,10
+
+
     CONTROL         "With planets",IDC_RADIO_WITHPLANETS,"Button",BS_AUTORADIOBUTTON,186,196,73,10
+
+
     PUSHBUTTON      "&Center",IDC_BUTTON_CENTER,271,7,60,14
+
+
     PUSHBUTTON      "&Go To",IDC_BUTTON_GOTO,271,26,60,14
+
+
     PUSHBUTTON      "&Refresh",IDC_BUTTON_REFRESH,271,55,60,14
+
+
     DEFPUSHBUTTON   "OK",IDOK,271,141,60,14
+
+
     GROUPBOX        "Star Search Criteria",IDC_STATIC,9,158,251,53
+
+
     LTEXT           "Maximum Stars Displayed in List",IDC_STATIC,13,175,126,8
+
+
 END
+
+
+
+
 
 IDD_TOURGUIDE DIALOGEX 0, 0, 240, 145
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Tour Guide"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     DEFPUSHBUTTON   "OK",IDOK,173,124,60,14
+
+
     PUSHBUTTON      "Go To",IDC_BUTTON_GOTO,173,23,60,14
+
+
     COMBOBOX        IDC_COMBO_TOURGUIDE,7,24,131,90,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+
+
     LTEXT           "Select your destination:",IDC_STATIC,7,9,147,8
+
+
     LTEXT           "",IDC_TEXT_DESCRIPTION,7,47,167,91
+
+
 END
+
+
+
+
 
 IDD_GOTO_OBJECT DIALOGEX 100, 100, 208, 94
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Go to Object"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     EDITTEXT        IDC_EDIT_OBJECTNAME,46,11,150,12,ES_AUTOHSCROLL
+
+
     EDITTEXT        IDC_EDIT_LATITUDE,46,29,56,12,ES_AUTOHSCROLL
+
+
     EDITTEXT        IDC_EDIT_LONGITUDE,140,29,56,12,ES_AUTOHSCROLL
+
+
     EDITTEXT        IDC_EDIT_DISTANCE,46,47,56,12,ES_AUTOHSCROLL
+
+
     CONTROL         "km",IDC_RADIO_KM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,107,50,25,10
+
+
     CONTROL         "radii",IDC_RADIO_RADII,"Button",BS_AUTORADIOBUTTON,134,50,29,10
+
+
     CONTROL         "au",IDC_RADIO_AU,"Button",BS_AUTORADIOBUTTON,168,50,22,10
+
+
     DEFPUSHBUTTON   "Go To",IDC_BUTTON_GOTO,54,69,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,112,69,50,14
+
+
     RTEXT           "Object",IDC_STATIC,5,13,37,9
+
+
     RTEXT           "Long.",IDC_STATIC,102,31,32,9
+
+
     RTEXT           "Lat.",IDC_STATIC,2,31,40,9
+
+
     RTEXT           "Distance",IDC_STATIC,4,49,38,9
+
+
 END
+
+
+
+
 
 IDD_MOVIE_PARAMS_CHOOSER DIALOG  20, 20, 280, 22
+
+
 STYLE DS_SETFONT | DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS
+
+
 FONT 8, "MS Sans Serif"
+
+
 BEGIN
+
+
     LTEXT           "Size:",IDC_STATIC,6,4,40,8
+
+
     COMBOBOX        IDC_COMBO_MOVIE_SIZE,54,2,54,90,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+
     RTEXT           "Frame rate:",IDC_STATIC,124,4,40,8
+
+
     COMBOBOX        IDC_COMBO_MOVIE_FRAMERATE,169,2,40,90,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+
 END
+
+
+
+
 
 IDD_DISPLAYMODE DIALOGEX 0, 0, 174, 65
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Select Display Mode"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     COMBOBOX        IDC_COMBO_RESOLUTION,57,18,110,90,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+
+
     RTEXT           "Resolution",IDC_STATIC,7,21,43,8
+
+
     DEFPUSHBUTTON   "OK",IDOK,27,44,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,87,44,50,14
+
+
 END
+
+
+
+
 
 IDD_VIEWOPTIONS DIALOGEX 0, 0, 305, 264
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "View Options"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     CONTROL         "Atmospheres",IDC_SHOWATMOSPHERES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,18,94,10
+
+
     CONTROL         "Celestial Grid",IDC_SHOWCELESTIALGRID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,31,94,10
-    CONTROL         "Clouds",IDC_SHOWCLOUDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,44,94,10    CONTROL         "Cloud Shadows",IDC_SHOWCLOUDSHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,57,94,10
+
+
+    CONTROL         "Clouds",IDC_SHOWCLOUDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,44,94,10
+
+    CONTROL         "Cloud Shadows",IDC_SHOWCLOUDSHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,57,94,10
+
+
     CONTROL         "Comet Tails",IDC_SHOWCOMETTAILS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,70,94,10
+
+
     CONTROL         "Constellation Borders",IDC_SHOWCONSTELLATIONBORDERS,
+
+
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,83,94,10
+
+
     CONTROL         "Constellations",IDC_SHOWCONSTELLATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,99,10
+
+
     CONTROL         "Eclipse Shadows",IDC_SHOWECLIPSESHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,30,99,10
+
+
     CONTROL         "Galaxies",IDC_SHOWGALAXIES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,44,99,10
+
+
     CONTROL         "Nebulae",IDC_SHOWNEBULAE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,57,99,10
+
+
     CONTROL         "Night Side Lights",IDC_SHOWNIGHTSIDELIGHTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,70,99,10
+
+
     CONTROL         "Orbits",IDC_SHOWORBITS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,18,85,10
+
+
     CONTROL         "Planets",IDC_SHOWPLANETS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,31,85,10
+
+
     CONTROL         "Ring Shadows",IDC_SHOWRINGSHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,44,85,10
+
+
     CONTROL         "Stars",IDC_SHOWSTARS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,57,85,10
+
+
     CONTROL         "Markers",IDC_SHOWMARKERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,70,85,10
+
+
     CONTROL         "Asteroids",IDC_LABELASTEROIDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,124,71,10
+
+
     CONTROL         "Constellations",IDC_LABELCONSTELLATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,150,72,10
+
+
     CONTROL         "Galaxies",IDC_LABELGALAXIES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,163,74,10
+
+
     CONTROL         "Open Clusters",IDC_LABELOPENCLUSTERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,176,87,10
+
+
     CONTROL         "Moons",IDC_LABELMOONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,124,63,10
+
+
     CONTROL         "Planets",IDC_LABELPLANETS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,137,65,10
+
+
     CONTROL         "Spacecraft",IDC_LABELSPACECRAFT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,150,64,10
+
+
     CONTROL         "Stars",IDC_LABELSTARS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,163,65,10
+
+
     CONTROL         "Nebulae",IDC_LABELNEBULAE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,176,66,10
+
+
     CONTROL         "None",IDC_INFOTEXT0,"Button",BS_AUTORADIOBUTTON,213,115,85,10
+
+
     CONTROL         "Terse",IDC_INFOTEXT1,"Button",BS_AUTORADIOBUTTON,213,128,85,10
+
+
     CONTROL         "Verbose",IDC_INFOTEXT2,"Button",BS_AUTORADIOBUTTON,213,141,85,10
+
+
     CONTROL         "Slider1",IDC_SLIDER_FILTER_DISTANCE,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,73,219,60,14
+
+
     EDITTEXT        IDC_EDIT_FILTER_DISTANCE,139,220,44,12,ES_AUTOHSCROLL
+
+
     DEFPUSHBUTTON   "OK",IDOK,74,245,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,139,245,50,14
+
+
     LTEXT           "Distance",IDC_STATIC,17,221,56,8
+
+
     GROUPBOX        "Show",IDC_STATIC,7,5,291,95
+
+
     GROUPBOX        "Orbits / Labels",IDC_STATIC,6,103,183,99
+
+
     GROUPBOX        "Information Text",IDC_STATIC,204,103,94,55
+
+
     GROUPBOX        "Filter Stars",IDC_STATIC,7,207,183,32
+
+
     LTEXT           "Orbit / Label",IDC_STATIC,12,114,72,8
+
+
     LTEXT           "Orbit / Label",IDC_STATIC,102,114,77,8
+
+
     CONTROL         " ",IDC_ASTEROIDORBITS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,124,14,10
+
+
     CONTROL         " ",IDC_MOONORBITS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,106,124,14,10
+
+
     CONTROL         " ",IDC_PLANETORBITS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,106,137,14,10
+
+
     CONTROL         " ",IDC_SPACECRAFTORBITS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,106,150,14,10
+
+
     CONTROL         "Comets",IDC_LABELCOMETS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,137,71,10
+
+
     CONTROL         " ",IDC_COMETORBITS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,137,14,10
+
+
     CONTROL         "Constellations in Latin",IDC_LABELCONSTELLATIONSLATIN,
+
+
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,189,149,10
+
+
 END
+
+
+
+
 
 IDD_LOCATIONS DIALOGEX 0, 0, 252, 226
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Locations"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     CONTROL         "Cities",IDC_SHOW_CITIES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,18,100,10
+
+
     CONTROL         "Observatories",IDC_SHOW_OBSERVATORIES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,31,100,10
+
+
     CONTROL         "Landing Sites",IDC_SHOW_LANDING_SITES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,44,100,10
+
+
     CONTROL         "Montes (Mountains)",IDC_SHOW_MONTES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,57,100,10
+
+
     CONTROL         "Maria (Seas)",IDC_SHOW_MARIA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,70,100,10
+
+
     CONTROL         "Craters",IDC_SHOW_CRATERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,18,121,10
+
+
     CONTROL         "Valles (Valleys)",IDC_SHOW_VALLES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,31,119,10
+
+
     CONTROL         "Terrae (Land masses)",IDC_SHOW_TERRAE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,44,121,10
+
+
     CONTROL         "Other features",IDC_SHOW_OTHERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,57,121,10
+
+
     CONTROL         "Slider1",IDC_SLIDER_FEATURE_SIZE,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,10,173,100,14
+
+
     CONTROL         "Label Features",IDC_LABELFEATURES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,103,142,10
+
+
     CONTROL         "Mark Features",IDC_MARKFEATURES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,116,147,10
+
+
     EDITTEXT        IDC_EDIT_FEATURE_SIZE,117,175,44,12,ES_AUTOHSCROLL | ES_READONLY
+
+
     DEFPUSHBUTTON   "OK",IDOK,74,203,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,128,203,50,14
+
+
     GROUPBOX        "Show Features",IDC_STATIC,6,5,239,82
+
+
     GROUPBOX        "",IDC_STATIC,6,90,162,68
+
+
     GROUPBOX        "Minimum Labeled Feature Size",IDC_STATIC,6,162,162,32
+
+
 END
+
+
+
+
 
 IDD_ADDBOOKMARK_FOLDER DIALOGEX 0, 0, 167, 62
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Add New Bookmark Folder"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     EDITTEXT        IDC_BOOKMARKFOLDER,76,13,84,12,ES_AUTOHSCROLL
+
+
     DEFPUSHBUTTON   "OK",IDOK,29,41,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,89,41,50,14
+
+
     RTEXT           "Folder Name",IDC_STATIC,3,15,66,8
+
+
 END
+
+
+
+
 
 IDD_ORGANIZE_BOOKMARKS DIALOGEX 100, 50, 199, 118
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Organize Bookmarks"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x1
+
+
 BEGIN
+
+
     CONTROL         "Tree1",IDC_ORGANIZE_BOOKMARK_TREE,"SysTreeView32",TVS_HASBUTTONS | TVS_HASLINES | TVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,5,7,115,107,WS_EX_CLIENTEDGE
+
+
     DEFPUSHBUTTON   "OK",IDOK,126,7,66,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,126,24,66,14
+
+
     PUSHBUTTON      "New Folder...",IDC_ORGANIZE_BOOKMARKS_NEWFOLDER,126,51,66,14
+
+
     PUSHBUTTON      "Rename...",IDC_ORGANIZE_BOOKMARKS_RENAME,126,68,66,14
+
+
     PUSHBUTTON      "Delete",IDC_ORGANIZE_BOOKMARKS_DELETE,126,85,66,14
+
+
 END
+
+
+
+
 
 IDD_RENAME_BOOKMARK DIALOGEX 0, 0, 168, 62
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Rename Bookmark or Folder"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x0
+
+
 BEGIN
+
+
     EDITTEXT        IDC_NEWBOOKMARK,69,13,84,12,ES_AUTOHSCROLL
+
+
     DEFPUSHBUTTON   "OK",IDOK,27,41,50,14
+
+
     PUSHBUTTON      "Cancel",IDCANCEL,90,41,50,14
+
+
     RTEXT           "New Name",IDC_STATIC,4,15,59,8
+
+
 END
 
+
+
+
+
 IDD_ECLIPSEFINDER DIALOGEX 0, 0, 212, 246
+
+
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+
+
 CAPTION "Eclipse Finder"
+
+
 FONT 8, "MS Sans Serif", 0, 0, 0x1
+
+
 BEGIN
+
+
     CONTROL         "List2",IDC_ECLIPSES_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,5,7,201,146,WS_EX_CLIENTEDGE
+
+
     COMBOBOX        IDC_ECLIPSETARGET,32,192,54,74,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+
     CONTROL         "DateTimePicker3",IDC_ECLIPSEFROM,"SysDateTimePick32",DTS_RIGHTALIGN | WS_TABSTOP,131,164,65,12
+
+
     CONTROL         "DateTimePicker3",IDC_ECLIPSETO,"SysDateTimePick32",DTS_RIGHTALIGN | WS_TABSTOP,131,179,65,12
+
+
     DEFPUSHBUTTON   "Compute",IDCOMPUTE,5,211,82,14
+
+
     PUSHBUTTON      "Set Date and Go to Planet",IDSETDATEANDGO,5,227,201,14
+
+
     PUSHBUTTON      "Close",IDCLOSE,124,211,82,14
+
+
     RTEXT           "From:",IDC_STATIC,95,166,32,8
+
+
     RTEXT           "To:",IDC_STATIC,98,181,29,8
+
+
     RTEXT           "On:",IDC_STATIC,3,194,27,8
+
+
     GROUPBOX        "Search parameters",IDC_STATIC,5,154,201,54
+
+
     CONTROL         "Solar Eclipses",IDC_SOLARECLIPSE,"Button",BS_AUTORADIOBUTTON,11,166,85,10
+
+
     CONTROL         "Lunar Eclipses",IDC_LUNARECLIPSE,"Button",BS_AUTORADIOBUTTON,11,179,85,10
+
+
 END
+
+
+
+
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // DESIGNINFO
+
+
 //
+
+
+
+
 
 #ifdef APSTUDIO_INVOKED
+
+
 GUIDELINES DESIGNINFO 
+
+
 BEGIN
+
+
     IDD_ABOUT, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 6
+
+
         RIGHTMARGIN, 303
+
+
         TOPMARGIN, 7
+
+
         BOTTOMMARGIN, 90
+
+
     END
+
+
+
+
 
     IDD_FINDOBJECT, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 7
+
+
         RIGHTMARGIN, 155
+
+
         TOPMARGIN, 7
+
+
         BOTTOMMARGIN, 47
+
+
     END
+
+
+
+
 
     IDD_LICENSE, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 7
+
+
         RIGHTMARGIN, 279
+
+
         TOPMARGIN, 7
+
+
         BOTTOMMARGIN, 242
+
+
     END
+
+
+
+
 
     IDD_SETTIME, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 7
+
+
         RIGHTMARGIN, 158
+
+
         VERTGUIDE, 15
+
+
         VERTGUIDE, 150
+
+
         TOPMARGIN, 7
+
+
         BOTTOMMARGIN, 101
+
+
     END
+
+
+
+
 
     IDD_ADDBOOKMARK, DIALOG
+
+
     BEGIN
+
+
         RIGHTMARGIN, 207
+
+
         VERTGUIDE, 122
+
+
         VERTGUIDE, 130
+
+
         BOTTOMMARGIN, 128
+
+
     END
+
+
+
+
 
     IDD_SSBROWSER, DIALOG
+
+
     BEGIN
+
+
         RIGHTMARGIN, 228
+
+
     END
+
+
+
+
 
     IDD_STARBROWSER, DIALOG
+
+
     BEGIN
+
+
         RIGHTMARGIN, 331
+
+
         BOTTOMMARGIN, 211
+
+
     END
+
+
+
+
 
     IDD_GOTO_OBJECT, DIALOG
+
+
     BEGIN
+
+
         VERTGUIDE, 42
+
+
         VERTGUIDE, 46
+
+
         VERTGUIDE, 196
+
+
         BOTTOMMARGIN, 91
+
+
     END
+
+
+
+
 
     IDD_VIEWOPTIONS, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 7
+
+
         RIGHTMARGIN, 298
+
+
         VERTGUIDE, 189
+
+
         TOPMARGIN, 7
+
+
         BOTTOMMARGIN, 246
+
+
     END
+
+
+
+
 
     IDD_ADDBOOKMARK_FOLDER, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 7
+
+
         RIGHTMARGIN, 160
+
+
         TOPMARGIN, 7
+
+
         BOTTOMMARGIN, 55
+
+
         HORZGUIDE, 13
+
+
     END
+
+
+
+
 
     IDD_ORGANIZE_BOOKMARKS, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 7
+
+
         RIGHTMARGIN, 192
+
+
         VERTGUIDE, 126
+
+
         TOPMARGIN, 7
+
+
         BOTTOMMARGIN, 111
+
+
     END
+
+
+
+
 
     IDD_RENAME_BOOKMARK, DIALOG
+
+
     BEGIN
+
+
         LEFTMARGIN, 7
+
+
         RIGHTMARGIN, 161
+
+
         TOPMARGIN, 13
+
+
         BOTTOMMARGIN, 55
+
+
     END
 
+
+
+
+
     IDD_ECLIPSEFINDER, DIALOG
+
+
     BEGIN
+
+
         VERTGUIDE, 5
+
+
         VERTGUIDE, 206
+
+
         BOTTOMMARGIN, 240
+
+
         HORZGUIDE, 208
+
+
     END
+
+
 END
+
+
 #endif    // APSTUDIO_INVOKED
 
 
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Icon
+
+
 //
+
+
+
+
 
 // Icon with lowest ID value placed first to ensure application icon
+
+
 // remains consistent on all systems.
+
+
 IDI_CELESTIA_ICON       ICON                    "Celestia.ico"
+
+
 IDI_BOOKMARK            ICON                    "Location.ico"
+
+
 IDI_CLOSEDFOLDER        ICON                    "Clsdfolder.ico"
+
+
 IDI_OPENFOLDER          ICON                    "Openfolder.ico"
+
+
 IDI_ROOTFOLDER          ICON                    "Rootfolder.ico"
 
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Accelerator
+
+
 //
+
+
+
+
 
 IDR_ACCELERATORS ACCELERATORS 
+
+
 BEGIN
+
+
     "H",            ID_NAVIGATION_HOME,     VIRTKEY, CONTROL, NOINVERT
+
+
     "O",            ID_NAVIGATION_SELECT,   VIRTKEY, CONTROL, NOINVERT
+
+
     VK_F4,          ID_FILE_EXIT,           VIRTKEY, ALT, NOINVERT
+
+
     VK_F10,         ID_FILE_CAPTUREIMAGE,   VIRTKEY, NOINVERT
+
+
     VK_F10,         ID_FILE_CAPTUREMOVIE,   VIRTKEY, SHIFT, NOINVERT
+
+
     VK_RETURN,      ID_RENDER_FULLSCREEN,   VIRTKEY, ALT, NOINVERT
+
+
 END
 
 
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Version
+
+
 //
+
+
+
+
 
 VS_VERSION_INFO VERSIONINFO
+
+
  FILEVERSION 1,4,1,0
+
+
  PRODUCTVERSION 1,4,1,0
+
+
  FILEFLAGSMASK 0x3fL
+
+
 #ifdef _DEBUG
+
+
  FILEFLAGS 0x1L
+
+
 #else
+
+
  FILEFLAGS 0x0L
+
+
 #endif
+
+
  FILEOS 0x40004L
+
+
  FILETYPE 0x1L
+
+
  FILESUBTYPE 0x0L
+
+
 BEGIN
+
+
     BLOCK "StringFileInfo"
+
+
     BEGIN
+
+
         BLOCK "040904b0"
+
+
         BEGIN
+
+
             VALUE "CompanyName", " "
+
+
             VALUE "FileDescription", "celestia"
+
+
             VALUE "FileVersion", "1, 5, 0, 0"
+
+
             VALUE "InternalName", "celestia"
+
+
             VALUE "LegalCopyright", "Copyright  2001-2006, Chris Laurel"
+
+
             VALUE "OriginalFilename", "celestia.exe"
+
+
             VALUE "ProductName", "  celestia"
+
+
             VALUE "ProductVersion", "1, 5, 0, 0"
+
+
         END
+
+
     END
+
+
     BLOCK "VarFileInfo"
+
+
     BEGIN
+
+
         VALUE "Translation", 0x409, 1200
+
+
     END
+
+
 END
 
 
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Bitmap
+
+
 //
+
+
+
+
 
 IDB_FOLDERCLOSED        BITMAP                  "folderclosed2.bmp"
+
+
 IDB_FOLDEROPENED        BITMAP                  "folderopened2.bmp"
+
+
 IDB_BOOKMARK            BITMAP                  "location2.bmp"
+
+
 IDB_CAMERA              BITMAP                  "camera2.bmp"
+
+
 IDB_CAMCORDER           BITMAP                  "camcorder2.bmp"
+
+
 IDB_SCRIPT              BITMAP                  "script2.bmp"
+
+
 IDB_CLOCK               BITMAP                  "clock2.bmp"
+
+
 IDB_STOP                BITMAP                  "stop.bmp"
+
+
 IDB_EXIT                BITMAP                  "exit.bmp"
+
+
 IDB_ABOUT               BITMAP                  "about.bmp"
+
+
 IDB_CONFIG              BITMAP                  "config.bmp"
+
+
 IDB_SUNGLASSES          BITMAP                  "sunglasses.bmp"
+
+
 IDB_GLOBE               BITMAP                  "globe.bmp"
 
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Cursor
+
+
 //
+
+
+
+
 
 IDC_CROSSHAIR           CURSOR                  "crosshair.cur"
+
+
 IDC_CROSSHAIR_OPAQUE    CURSOR                  "crosshair-opaque.cur"
 
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // String Table
+
+
 //
+
+
+
+
 
 STRINGTABLE 
+
+
 BEGIN
+
+
     ID_FILE_EXIT            "Alt+F4"
+
+
 END
 
+
+
+
+
 #endif    // English (U.S.) resources
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
 
 
 
 #ifndef APSTUDIO_INVOKED
+
+
 /////////////////////////////////////////////////////////////////////////////
+
+
 //
+
+
 // Generated from the TEXTINCLUDE 3 resource.
+
+
 //
 
 
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
 
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+#endif    // not APSTUDIO_INVOKED
