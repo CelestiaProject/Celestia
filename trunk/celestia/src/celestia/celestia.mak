@@ -28,6 +28,7 @@ OBJS=\
 	$(INTDIR)\favorites.obj \
 	$(INTDIR)\imagecapture.obj \
 	$(INTDIR)\ODMenu.obj \
+	$(INTDIR)\scriptmenu.obj \
 	$(INTDIR)\url.obj \
 	$(INTDIR)\wglext.obj \
 	$(INTDIR)\wineclipses.obj \
