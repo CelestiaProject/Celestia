@@ -1,3 +1,5 @@
+-- Title: Show Redshifts of Galaxies
+
 function get_distance(obj_pos, ref_pos)
    -- Returns distance Earth-object in Mpc.
    distance = ref_pos:distanceto(obj_pos) * km2Mpc
