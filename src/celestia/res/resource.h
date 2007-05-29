@@ -209,11 +209,13 @@
 #define ID_VIEW_SINGLE                  40070
 #define ID_VIEW_SHOW_FRAMES             40071
 #define ID_VIEW_SYNC_TIME               40072
+#define ID_FILE_SCRIPTS                 40073
 #define ID_RENDER_STARSTYLE             40079
 #define ID_RENDER_STARSTYLE_FUZZY       40080
 #define ID_RENDER_STARSTYLE_POINTS      40081
 #define ID_RENDER_STARSTYLE_DISCS       40082
 #define ID_BOOKMARKS_FIRSTBOOKMARK      41000
+#define ID_FIRST_SCRIPT                 42000
 
 // Next default values for new objects
 // 

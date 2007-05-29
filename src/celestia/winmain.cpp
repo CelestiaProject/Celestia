@@ -1,6 +1,6 @@
 // winmain.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2007, Chris Laurel <claurel@shatters.net>
 //
 // Windows front end for Celestia.
 //
@@ -53,6 +53,7 @@
 #include "wintime.h"
 #include "winsplash.h"
 #include "odmenu.h"
+#include "scriptmenu.h"
 
 #include "res/resource.h"
 #include "wglext.h"
@@ -140,6 +141,10 @@ static const WPARAM ID_GOTO_URL = 62000;
 HWND hBookmarkTree;
 char bookmarkName[33];
 
+static const string ScriptsDirectory = "scripts";
+static vector<ScriptMenuItem>* ScriptMenuItems = NULL;
+
+
 static LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                        UINT uMsg,
                                        WPARAM wParam, LPARAM lParam);
@@ -167,8 +172,8 @@ struct AppPreferences
     string altSurfaceName;
     uint32 textureResolution;
     Renderer::StarStyle starStyle;
-	GLContext::GLRenderPath renderPath;
-	bool renderPathSet;
+    GLContext::GLRenderPath renderPath;
+    bool renderPathSet;
 };
 
 void ChangeDisplayMode()
@@ -642,6 +647,16 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
                     UTF8ToCurrentCP(_("Max texture size: ")).c_str(),
                     maxTextureSize);
             s += buf;
+
+            if (ExtensionSupported("GL_EXT_texture_cube_map"))
+            {
+                GLint maxCubeMapSize = 0;
+                glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT, &maxCubeMapSize);
+                sprintf(buf, "%s%d\r\r\n",
+                        UTF8ToCurrentCP(_("Max cube map size: ")).c_str(),
+                        maxTextureSize);
+                s += buf;
+            }
 
             GLfloat pointSizeRange[2];
             glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
@@ -2118,6 +2133,45 @@ void handleKey(WPARAM key, bool down)
     }
 }
 
+
+static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
+{
+    HMENU fileMenu = GetSubMenu(menuBar, 0);
+
+    if (ScriptMenuItems != NULL)
+        delete ScriptMenuItems;
+
+    ScriptMenuItems = ScanScriptsDirectory(scriptsDir, false);
+    if (ScriptMenuItems == NULL || ScriptMenuItems->size() == 0)
+    {
+        EnableMenuItem(fileMenu, ID_FILE_SCRIPTS, MF_GRAYED);
+        return;
+    }
+    
+    MENUITEMINFO info;
+    memset(&info, sizeof(info), 0);
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_SUBMENU;
+
+    BOOL result = GetMenuItemInfo(fileMenu, 1, TRUE, &info);
+
+    if (result)
+    {
+        HMENU scriptMenu = info.hSubMenu;
+
+        // Remove the old menu items
+        int count = GetMenuItemCount(scriptMenu);
+        while (count-- > 0)
+            DeleteMenu(scriptMenu, 0, MF_BYPOSITION);
+
+        for (unsigned int i = 0; i < ScriptMenuItems->size(); i++)
+        {
+            AppendMenu(scriptMenu, MF_STRING, ID_FIRST_SCRIPT + i, (*ScriptMenuItems)[i].title.c_str());
+        }
+    }
+}
+
+
 static void syncMenusWithRendererState()
 {
     int renderFlags = appCore->getRenderer()->getRenderFlags();
@@ -3302,6 +3356,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     }
     
     BuildFavoritesMenu(menuBar, appCore, appInstance, &odAppMenu);
+    BuildScriptsMenu(menuBar, ScriptsDirectory);
     syncMenusWithRendererState();
 
     appCore->setContextMenuCallback(ContextMenu);
@@ -4180,6 +4235,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                             delete surfNames;
                         }
                     }
+                }
+                else if (LOWORD(wParam) >= ID_FIRST_SCRIPT &&
+                         LOWORD(wParam) <  ID_FIRST_SCRIPT + ScriptMenuItems->size())
+                {
+                    // Handle the script menu
+                    unsigned int scriptIndex = LOWORD(wParam) - ID_FIRST_SCRIPT;
+                    appCore->runScript(ScriptsDirectory + "/" + (*ScriptMenuItems)[scriptIndex].filename);
                 }
             }
             break;
