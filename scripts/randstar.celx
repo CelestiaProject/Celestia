@@ -1,3 +1,5 @@
+-- Title: Travel to Randomly Picked Stars
+
 obs = celestia:getobserver()
 while 1 do
     nstars = celestia:getstarcount()

@@ -1,3 +1,5 @@
+-- Title: Mark Local Group Galaxies
+
 function mark_LG_galaxies()
 --
 -- tables with the member galaxies of the Local Group
