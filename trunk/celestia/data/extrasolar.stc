@@ -122,6 +122,15 @@
 	AppMag 7.73
 }
 
+"TrES-3 (parent star)"
+{
+	RA 268.02917
+	Dec 37.54611
+	Distance 940       # from inferred spectrum
+	SpectralType "G5V" # from inferred mass and temp
+	AppMag 12.4
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
