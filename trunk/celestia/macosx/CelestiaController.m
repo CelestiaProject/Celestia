@@ -145,6 +145,7 @@ NSString* fatalErrorMessage;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     if (!threaded) [splashWindowController showWindow];
+    [[glView openGLContext] makeCurrentContext];
 #ifdef DEBUG
     NSDate *t = [NSDate date];
 #endif
@@ -489,7 +490,7 @@ NSString* fatalErrorMessage;
                keyTime --;
        }    
 }
- 
+
 // Display Update Management Methods ----------------------------------------------------------
 
 - (void)setDirty
@@ -810,4 +811,25 @@ NSString* fatalErrorMessage;
     [helpWindowController showWindow: self];
 }
 
+@end
+
+#pragma mark -
+
+// Solution for keyDown sent but keyUp not sent for Cmd key combos.
+// Fixes the infamous Cmd+arrow "infinite spin"
+@interface CelestiaApplication : NSApplication
+@end
+
+@implementation CelestiaApplication
+- (void)sendEvent: (NSEvent *)aEvent
+{
+    if ([aEvent type] == NSKeyUp)
+    {
+        [[[self mainWindow] firstResponder] tryToPerform: @selector(keyUp:)
+                                                    with: aEvent];
+        return;
+    }
+    
+    [super sendEvent: aEvent];
+}
 @end
