@@ -56,6 +56,6 @@
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>CelestiaApplication</string>
 </dict>
 </plist>
