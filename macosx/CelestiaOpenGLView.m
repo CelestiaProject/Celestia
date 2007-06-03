@@ -151,15 +151,15 @@
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 
     [appCore charEntered: 8 withModifiers:0];
-    [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
-    [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
+    [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
+    [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
 
     selection = [[appCore simulation] selection];
     selectionName = [[[appCore simulation] selection] briefName];
     if ([selectionName isEqualToString: @""])
     {
-        [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
-        [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers:NULL buttons:CEL_LEFT_BUTTON]];
+        [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
+        [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
         selection = [[appCore simulation] selection];
         selectionName = [[[appCore simulation] selection] name];
     } 
