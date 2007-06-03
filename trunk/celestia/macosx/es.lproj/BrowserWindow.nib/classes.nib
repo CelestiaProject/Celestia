@@ -4,6 +4,7 @@
             ACTIONS = {go = id; }; 
             CLASS = BrowserWindowController; 
             LANGUAGE = ObjC; 
+            OUTLETS = {tabView = NSTabView; }; 
             SUPERCLASS = NSWindowController; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }

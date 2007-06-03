@@ -8,7 +8,9 @@
 
 @interface BrowserWindowController : NSWindowController
 {
+    IBOutlet NSTabView *tabView;
     NSBrowser* browser;
+    NSString * rootId;
 }
 
 - (IBAction) go: (id) sender;
