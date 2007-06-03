@@ -150,15 +150,27 @@
 @end
 
 
+@interface BrowserWindowController(Private)
+- (NSDictionary *) deepSkyObjects;
+- (NSDictionary *) starsOfKind: (int) kind;
+- (BrowserItem *) sol;
+-(void) addChildrenForBody: (BrowserItem *) aBody;
+-(void) addChildrenForStar: (BrowserItem *) aStar;
+@end
+
 @implementation BrowserWindowController
 
-static BrowserItem *staticRootItem;
+static NSDictionary *rootItems;
 static CelestiaCore *appCore;
 
 - (id) init
 {
     self = [super initWithWindowNibName: @"BrowserWindow" ];
-    appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
+    if (self)
+    {
+        appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
+        rootId = @"solarSystem";
+    }
     return self;
 }
 
@@ -172,32 +184,80 @@ static CelestiaCore *appCore;
 - (NSDictionary *) deepSkyObjects
 {
     int objCount;
-    NSMutableDictionary* newDict;
     int i = 0;
+    NSMutableDictionary *result;
+    NSMutableDictionary *tempDict;
+    NSDictionary *typeMap;
+    NSMutableDictionary *group;
     DSODatabase* catalog = appCore->getSimulation()->getUniverse()->getDSOCatalog();
     DeepSkyObject *obj;
     CelestiaDSO *dsoWrapper;
     NSString *name;
+    NSString *type;
 
     objCount = catalog->size();
     if (objCount > BROWSER_MAX_DSO_COUNT)
         objCount = BROWSER_MAX_DSO_COUNT;
-    newDict = [NSMutableDictionary dictionaryWithCapacity: objCount];
+    typeMap = [[NSDictionary alloc] initWithObjectsAndKeys:
+        NSLocalizedString(@"Galaxies (Barred Spiral)",@""), @"SB",
+        NSLocalizedString(@"Galaxies (Spiral)",@""),        @"S",
+        NSLocalizedString(@"Galaxies (Elliptical)",@""),    @"E",
+        NSLocalizedString(@"Galaxies (Irregular)",@""),     @"Irr",
+        NSLocalizedString(@"Nebulae",@""),                  @"Neb",
+        NSLocalizedString(@"Open Clusters",@""),            @"Clust",
+        NSLocalizedString(@"Other",@""),                    @"Other",
+        nil];
+    tempDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+        [NSMutableDictionary dictionary], @"SB",
+        [NSMutableDictionary dictionary], @"S",
+        [NSMutableDictionary dictionary], @"E",
+        [NSMutableDictionary dictionary], @"Irr",
+        [NSMutableDictionary dictionary], @"Neb",
+        [NSMutableDictionary dictionary], @"Clust",
+        [NSMutableDictionary dictionary], @"Other",
+        nil];
+    result = [NSMutableDictionary dictionaryWithCapacity: [tempDict count]];
 
     for (; i < objCount; ++i)
     {
         obj = catalog->getDSO(i);
         if (obj)
         {
-            name = [NSString stringWithStdString:
-                catalog->getDSOName(obj)];
             dsoWrapper = [[[CelestiaDSO alloc] initWithDSO: obj] autorelease];
-            [newDict setObject: [[[BrowserItem alloc] initWithCelestiaDSO: dsoWrapper] autorelease]
-                        forKey: [NSString stringWithFormat: @"%@ (%@)", name, [dsoWrapper type]]];
+            name = [NSString stringWithStdString: catalog->getDSOName(obj)];
+            type = [dsoWrapper type];
+            if ([type hasPrefix: @"SB"])
+                group = [tempDict objectForKey: @"SB"];
+            else if ([type hasPrefix: @"S"])
+                group = [tempDict objectForKey: @"S"];
+            else if ([type hasPrefix: @"E"])
+                group = [tempDict objectForKey: @"E"];
+            else if ([type hasPrefix: @"Irr"])
+                group = [tempDict objectForKey: @"Irr"];
+            else if ([type hasPrefix: @"Neb"])
+                group = [tempDict objectForKey: @"Neb"];
+            else if ([type hasPrefix: @"Clust"])
+                group = [tempDict objectForKey: @"Clust"];
+            else
+                group = [tempDict objectForKey: @"Other"];
+
+            [group setObject: [[[BrowserItem alloc] initWithCelestiaDSO: dsoWrapper] autorelease]
+                      forKey: name];
         }
     }
 
-    return newDict;       
+    NSEnumerator *tempEnum = [tempDict keyEnumerator];
+    while ((type = [tempEnum nextObject]))
+    {
+        if ([[tempDict objectForKey: type] count] > 0)
+        {
+            [result setObject: [[[BrowserItem alloc] initWithName: [typeMap objectForKey: type] children: [tempDict objectForKey: type]] autorelease]
+                       forKey: [typeMap objectForKey: type]];
+        }
+    }
+
+    [typeMap release];
+    return result;       
 }
 
 - (BrowserItem *) sol
@@ -235,17 +295,37 @@ static CelestiaCore *appCore;
 
 -(BrowserItem *) root
 {
-    if (staticRootItem) return staticRootItem;
-    BrowserItem *rootItem = [[BrowserItem alloc] initWithName: @""];
+    if (rootItems) return [rootItems objectForKey: rootId];
 
-    [rootItem addChild: [self sol]];
-    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Nearest Stars",@"") children: [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
-    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Brightest Stars",@"") children: [self starsOfKind: StarBrowser::BrighterStars]] autorelease]];
-    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Stars With Planets",@"") children: [self starsOfKind: StarBrowser::StarsWithPlanets]] autorelease]];
-    [rootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Deep Sky Objects",@"") children: [self deepSkyObjects]] autorelease]];
+    BrowserItem *sol;
+    BrowserItem *stars;
+    BrowserItem *dsos;
 
-    staticRootItem = rootItem;
-    return staticRootItem;
+    sol = [self sol];
+    [self addChildrenForStar: sol];
+
+    stars = [[BrowserItem alloc] initWithName: @""];
+    [stars addChild: [[[BrowserItem alloc] initWithName:
+        NSLocalizedString(@"Nearest Stars",@"")      children:
+        [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
+    [stars addChild: [[[BrowserItem alloc] initWithName:
+        NSLocalizedString(@"Brightest Stars",@"")    children:
+        [self starsOfKind: StarBrowser::BrighterStars]] autorelease]];
+    [stars addChild: [[[BrowserItem alloc] initWithName:
+        NSLocalizedString(@"Stars With Planets",@"") children:
+        [self starsOfKind: StarBrowser::StarsWithPlanets]] autorelease]];
+
+    dsos = [[BrowserItem alloc] initWithName: @"" children: [self deepSkyObjects]];
+
+    rootItems = [[NSDictionary alloc] initWithObjectsAndKeys:
+        sol,   @"solarSystem",
+        stars, @"star",
+        dsos,  @"dso",
+        nil];
+
+    [stars release];
+    [dsos  release];
+    return [rootItems objectForKey: rootId];
 }
 
 -(void) addChildrenForBody: (BrowserItem *) aBody
@@ -329,6 +409,7 @@ static CelestiaCore *appCore;
     {
         int sysSize = sys->getSystemSize();
         BrowserItem *subItem = nil;
+        BrowserItem *planets = nil;
         BrowserItem *minorMoons = nil;
         BrowserItem *asteroids = nil;
         BrowserItem *comets = nil;
@@ -344,6 +425,11 @@ static CelestiaCore *appCore;
             {
                 case Body::Invisible:
                     continue;
+                case Body::Planet:
+                    if (!planets)
+                        planets = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Planets",@"")] autorelease];
+                    subItem = planets;
+                    break;
                 case Body::Moon:
                     if (body->getRadius() < 100.0f)
                     {
@@ -378,6 +464,7 @@ static CelestiaCore *appCore;
             [subItem addChild: item];
         }
         
+        if (planets)     [aStar addChild: planets];
         if (minorMoons)  [aStar addChild: minorMoons];
         if (asteroids)   [aStar addChild: asteroids];
         if (comets)      [aStar addChild: comets];
@@ -422,7 +509,7 @@ static CelestiaCore *appCore;
     id body = [item body];
     if (body)
     {
-        if      ([body respondsToSelector: @selector(star)])
+        if ([body respondsToSelector: @selector(star)])
             sel = new Selection([(CelestiaStar *)body star]);
         else if ([body respondsToSelector: @selector(body)])
             sel = new Selection([(CelestiaBody *)body body]);
@@ -431,19 +518,18 @@ static CelestiaCore *appCore;
         else if ([body respondsToSelector: @selector(location)])
             sel = new Selection([(CelestiaLocation *)body location]);
     }
-//    if (sel == nil) NSLog([NSString stringWithFormat: @"obj %@ not found", objPath]);
     return sel;
 }
 
 
 - (int) browser: (NSBrowser*) sender numberOfRowsInColumn: (int) column
 {
-    if (browser==nil) 
+    if (browser != sender)
     {
-        browser = sender;        
-        if ([browser respondsToSelector:@selector(setColumnResizingType:)])
-            [browser setColumnResizingType: 2];
-        [browser setMinColumnWidth: 80];
+        browser = sender;
+//        if ([browser respondsToSelector:@selector(setColumnResizingType:)])
+//            [browser setColumnResizingType: 2];
+//        [browser setMinColumnWidth: 80];
         [browser setDoubleAction:@selector(doubleClick:)];
     }
 
@@ -532,32 +618,47 @@ static CelestiaCore *appCore;
     }
 }
 
-- (IBAction) doubleClick: (id) sender
+- (void) doubleClick: (id) sender
 {
-    Selection *sel = [self selFromPathArray: [[browser path] componentsSeparatedByString: [browser pathSeparator] ]];
+    browser = sender;
+    NSArray *pathArray = [[browser path] componentsSeparatedByString: [browser pathSeparator]];
+    Selection *sel = [self selFromPathArray: pathArray];
     if (sel)
     {
         appCore->getSimulation()->setSelection(*sel);
         appCore->charEntered('g');
-    // adjust columns immediately
-//    [self adjustColumns: nil];
         delete sel;
     }
 }
 
+- (void)tabView: (NSTabView *)aTabView didSelectTabViewItem: (NSTabViewItem *)aTabViewItem
+{
+    rootId = [aTabViewItem identifier];
+}
+
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
-    if ([aNotification object] == [self window] && staticRootItem)
+    if ([aNotification object] == [self window])
     {
-        [staticRootItem addChild: [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Nearest Stars",@"") children: [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
+        NSTabViewItem *curTab = [tabView selectedTabViewItem];
+        if (nil == curTab) return;
+        rootId = [curTab identifier];
 
-        // Immediately synch browser display with reloaded star list,
-        // but only if star list is showing
-        NSArray *selection = [[browser path] componentsSeparatedByString: [browser pathSeparator]];
-        if ([selection count]>1 && [[selection objectAtIndex: 1] isEqualToString: NSLocalizedString(@"Nearest Stars",@"")])
+        if (browser && [rootId isEqualToString: @"star"])
         {
-            for (int i=1; i<[browser numberOfVisibleColumns]; ++i)
-                [browser reloadColumn: i];
+            BrowserItem *rootItem = [self root];
+            [rootItem addChild: [[[BrowserItem alloc] initWithName:
+                NSLocalizedString(@"Nearest Stars",@"")   children:
+                [self starsOfKind: StarBrowser::NearestStars]] autorelease]];
+
+            // Immediately synch browser display with reloaded star list,
+            // but only if star list is showing
+            NSArray *selection = [[browser path] componentsSeparatedByString: [browser pathSeparator]];
+            if ([selection count]>1 && [[selection objectAtIndex: 1] isEqualToString: NSLocalizedString(@"Nearest Stars",@"")])
+            {
+                for (int i=1; i<[browser numberOfVisibleColumns]; ++i)
+                    [browser reloadColumn: i];
+            }
         }
     }
 }
