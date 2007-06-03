@@ -629,7 +629,12 @@ static NSMutableDictionary* tagDict;
                 NSURL *theURL = [NSURL URLWithString: escUrl];
 
                 if (theURL != nil)
-                    [[NSWorkspace sharedWorkspace] openURL: theURL];
+                {
+                    if (nil == [theURL scheme])
+                        theURL = [NSURL fileURLWithPath: unescUrl];
+                    if (theURL)
+                        [[NSWorkspace sharedWorkspace] openURL: theURL];
+                }
             }
 
             [escUrl release];
