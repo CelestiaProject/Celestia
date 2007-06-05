@@ -2,9 +2,9 @@
 # to Celestia's stars.dat.
 
 # Data are mainly derived from the RECONS survey tabulation at
-# http://www.chara.gsu.edu/RECONS/TOP100.htm. In particular, the distances
-# given are derived from RECONS's weighted average parallaxes, rather than
-# pure Hipparcos data.
+# http://www.chara.gsu.edu/RECONS/TOP100.posted.htm. In particular, the 
+# distances given are derived from RECONS's weighted average parallaxes,
+# rather than pure Hipparcos data.
 
 # Orbits are obtained largely from the Sixth Catalog of Orbits of Visual
 # Binary Stars (http://ad.usno.navy.mil/wds/orb6.html) and the Ninth
