@@ -1,11 +1,8 @@
 // samporbit.cpp
 //
-// Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2002-2007, Chris Laurel <claurel@shatters.net>
 //
-// Implementation of the VSOP87 theory for the the orbits of the
-// major planets.  The data is a truncated version of the complete
-// data set available here:
-// ftp://ftp.bdl.fr/pub/ephem/planets/vsop87/
+// Trajectories based on unevenly spaced cartesian positions.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -54,6 +51,10 @@ public:
     double getPeriod() const;
     double getBoundingRadius() const;
     Point3d computePosition(double jd) const;
+#if 0
+    // Not yet implemented
+    Vec3d computeVelocity(double jd) const;
+#endif
 
     bool isPeriodic() const;
     void getValidRange(double& begin, double& end) const;
@@ -129,14 +130,27 @@ double SampledOrbit::getBoundingRadius() const
 }
 
 
-static Point3d cubicInterpolate(Point3d& p0, Vec3d& v0,
-                                Point3d& p1, Vec3d& v1,
+static Point3d cubicInterpolate(const Point3d& p0, const Vec3d& v0,
+                                const Point3d& p1, const Vec3d& v1,
                                 double t)
 {
     return p0 + (((2.0 * (p0 - p1) + v1 + v0) * (t * t * t)) +
                  ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (t * t)) +
                  (v0 * t));
 }
+
+
+#if 0
+// Not yet required
+static Vec3d cubicInterpolateVelocity(const Point3d& p0, const Vec3d& v0,
+                                      const Point3d& p1, const Vec3d& v1,
+                                      double t)
+{
+    return ((2.0 * (p0 - p1) + v1 + v0) * (3.0 * t * t)) +
+           ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (2.0 * t)) +
+           v0;
+}
+#endif
 
 
 Point3d SampledOrbit::computePosition(double jd) const
@@ -156,12 +170,16 @@ Point3d SampledOrbit::computePosition(double jd) const
         samp.t = jd;
         int n = lastSample;
 
-        if (n < 1 || jd < samples[n - 1].t || jd > samples[n].t)
+        if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
         {
             vector<Sample>::const_iterator iter = lower_bound(samples.begin(),
                                                               samples.end(),
                                                               samp);
-            n = iter - samples.begin();
+            if (iter == samples.end())
+                n = samples.size();
+            else
+                n = iter - samples.begin();
+
             lastSample = n;
         }
 
@@ -222,8 +240,94 @@ Point3d SampledOrbit::computePosition(double jd) const
         }
     }
 
+    // Add correction for Celestia's coordinate system
     return Point3d(pos.x, pos.z, -pos.y);
 }
+
+
+#if 0
+// Not yet required
+Vec3d SampledOrbit::computeVelocity(double jd) const
+{
+    Vec3d vel;
+
+    if (samples.size() < 2)
+    {
+        vel = Vec3d(0.0, 0.0, 0.0);
+    }
+    else
+    {
+        Sample samp;
+        samp.t = jd;
+        int n = lastSample;
+
+        if (n < 1 || jd < samples[n - 1].t || jd > samples[n].t)
+        {
+            vector<Sample>::const_iterator iter = lower_bound(samples.begin(),
+                                                              samples.end(),
+                                                              samp);
+            n = iter - samples.begin();
+            lastSample = n;
+        }
+
+        if (n == 0)
+        {
+            vel = Vec3d(0.0, 0.0, 0.0);
+        }
+        else if (n < (int) samples.size())
+        {
+            if (interpolation == Linear)
+            {
+                Sample s0 = samples[n - 1];
+                Sample s1 = samples[n];
+
+                double dt = (s1.t - s0.t);
+                return (Vec3d(s1.x, s1.y, s1.z) - Vec3d(s0.x, s0.y, s0.z)) * (1.0 / dt);
+            }
+            else if (interpolation == Cubic)
+            {
+                Sample s0, s1, s2, s3;
+                if (n > 1)
+                    s0 = samples[n - 2];
+                else
+                    s0 = samples[n - 1];
+                s1 = samples[n - 1];
+                s2 = samples[n];
+                if (n < (int) samples.size() - 1)
+                    s3 = samples[n + 1];
+                else
+                    s3 = samples[n];
+
+                double t = (jd - s1.t) / (s2.t - s1.t);
+                Point3d p0(s1.x, s1.y, s1.z);
+                Point3d p1(s2.x, s2.y, s2.z);
+
+                Vec3d v0((double) s2.x - (double) s0.x,
+                         (double) s2.y - (double) s0.y,
+                         (double) s2.z - (double) s0.z);
+                Vec3d v1((double) s3.x - (double) s1.x,
+                         (double) s3.y - (double) s1.y,
+                         (double) s3.z - (double) s1.z);
+                v0 *= (s2.t - s1.t) / (s2.t - s0.t);
+                v1 *= (s2.t - s1.t) / (s3.t - s1.t);
+                
+                vel = cubicInterpolateVelocity(p0, v0, p1, v1, t);
+            }
+            else
+            {
+                // Unknown interpolation type
+                vel = Vec3d(0.0, 0.0, 0.0);
+            }
+        }
+        else
+        {
+            vel = Vec3d(0.0, 0.0, 0.0);
+        }
+    }
+
+    return Vec3d(vel.x, vel.z, -vel.y);
+}
+#endif
 
 
 void SampledOrbit::sample(double start, double t, int,
@@ -305,9 +409,12 @@ Orbit* LoadSampledOrbit(const string& filename)
             // Not quite correct--doesn't account for leap years
             jd = (double) astro::Date(year, 1, 1) + 365.0 * frac;
         }
-
-        orbit->addSample(jd, x, y, z);
-        nSamples++;
+        
+        //if (in.good())
+        {
+            orbit->addSample(jd, x, y, z);
+            nSamples++;
+        }
     }
 
     return orbit;
