@@ -45,7 +45,7 @@ public:
             if (in.good())
             {
                 ScriptMenuItem item;
-                item.filename = filename;
+                item.filename = filepath;
 
                 // Read the first line, handling various newline conventions
                 char firstLineBuf[512];
