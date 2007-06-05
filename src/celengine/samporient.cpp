@@ -1,6 +1,6 @@
 // samporient.cpp
 //
-// Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2007, Chris Laurel <claurel@shatters.net>
 //
 // The SampledOrientation class models orientation of a body by interpolating
 // a sequence of key frames.
@@ -172,7 +172,7 @@ Quatf SampledOrientation::getOrientation(double tjd) const
         // Do a binary search to find the samples that define the orientation
         // at the current time. Cache the previous sample used and avoid
         // the search if the covers the requested time.
-        if (n < 1 || tjd < samples[n - 1].t || tjd > samples[n].t)
+        if (n < 1 || n >= (int) samples.size() || tjd < samples[n - 1].t || tjd > samples[n].t)
         {
             vector<OrientationSample>::const_iterator iter = lower_bound(samples.begin(),
                                                               samples.end(),
