@@ -15,6 +15,8 @@
 		E532F4F30933331800D7D5B3 /* dsoname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EA0933331800D7D5B3 /* dsoname.cpp */; };
 		E532F4F50933331800D7D5B3 /* dsooctree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EC0933331800D7D5B3 /* dsooctree.cpp */; };
 		E532F4F80933331800D7D5B3 /* staroctree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EF0933331800D7D5B3 /* staroctree.cpp */; };
+		E53E619B0C0CA105003CD767 /* scriptmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E53E61990C0CA105003CD767 /* scriptmenu.cpp */; };
+		E53E61AD0C0CA444003CD767 /* ScriptsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E53E61AB0C0CA444003CD767 /* ScriptsController.mm */; };
 		E54343120783C3F200053094 /* BrowserWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = E54343100783C3F200053094 /* BrowserWindow.nib */; };
 		E54343170783C42500053094 /* BrowserWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E54343150783C42500053094 /* BrowserWindowController.mm */; };
 		E54742D009631D3600E89E09 /* defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = E54742CF09631D3600E89E09 /* defaults.plist */; };
@@ -491,6 +493,10 @@
 		E532F4EE0933331800D7D5B3 /* name.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = name.h; path = ../src/celengine/name.h; sourceTree = SOURCE_ROOT; };
 		E532F4EF0933331800D7D5B3 /* staroctree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = staroctree.cpp; path = ../src/celengine/staroctree.cpp; sourceTree = SOURCE_ROOT; };
 		E532F4F00933331800D7D5B3 /* staroctree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = staroctree.h; path = ../src/celengine/staroctree.h; sourceTree = SOURCE_ROOT; };
+		E53E61990C0CA105003CD767 /* scriptmenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptmenu.cpp; path = ../src/celestia/scriptmenu.cpp; sourceTree = SOURCE_ROOT; };
+		E53E619A0C0CA105003CD767 /* scriptmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scriptmenu.h; path = ../src/celestia/scriptmenu.h; sourceTree = SOURCE_ROOT; };
+		E53E61AA0C0CA444003CD767 /* ScriptsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptsController.h; sourceTree = "<group>"; };
+		E53E61AB0C0CA444003CD767 /* ScriptsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScriptsController.mm; sourceTree = "<group>"; };
 		E54343110783C3F200053094 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E54343140783C42500053094 /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserWindowController.h; sourceTree = "<group>"; };
 		E54343150783C42500053094 /* BrowserWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserWindowController.mm; sourceTree = "<group>"; };
@@ -964,6 +970,7 @@
 				E56A3DB70848C19800A21D7E /* MacDirectory.mm */,
 				F55C817602AF55890100020A /* GotoWindowController.m */,
 				F565A8B202EB418701000006 /* RenderPanelController.m */,
+				E53E61AB0C0CA444003CD767 /* ScriptsController.mm */,
 				F5EDC6BA0456666601000002 /* SetTimeWindowController.m */,
 				E5E365AB095C11B500B14224 /* SplashScreen.m */,
 				E5D956DF096651DF00CB02B2 /* SplashWindowController.m */,
@@ -978,6 +985,7 @@
 				F578B7B302B3E4DB0100020A /* FavoritesDrawerController.h */,
 				F55C817702AF55890100020A /* GotoWindowController.h */,
 				F565A8B102EB418701000006 /* RenderPanelController.h */,
+				E53E61AA0C0CA444003CD767 /* ScriptsController.h */,
 				F5EDC6B90456666601000002 /* SetTimeWindowController.h */,
 				E5E365AA095C11B500B14224 /* SplashScreen.h */,
 				E5D956DE096651DF00CB02B2 /* SplashWindowController.h */,
@@ -1313,6 +1321,7 @@
 				E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */,
 				F51C6D8E02959960014901DC /* favorites.cpp */,
 				0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */,
+				E53E61990C0CA105003CD767 /* scriptmenu.cpp */,
 				F53036BB03D908CE01000002 /* url.cpp */,
 				F51C6D9A02959960014901DC /* celestiacore.h */,
 				E56431460776D52D00E2C4A3 /* celx.h */,
@@ -1322,6 +1331,7 @@
 				F51C6D9D02959960014901DC /* favorites.h */,
 				0C76BFC0085215B100D31A90 /* moviecapture.h */,
 				0C76BFD008537EDB00D31A90 /* qtcapture.h */,
+				E53E619A0C0CA105003CD767 /* scriptmenu.h */,
 				F53036BC03D908CE01000002 /* url.h */,
 			);
 			name = celestia;
@@ -1859,6 +1869,8 @@
 				E561FC300B47910800668CFE /* CelestiaLocation.mm in Sources */,
 				E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */,
 				E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */,
+				E53E619B0C0CA105003CD767 /* scriptmenu.cpp in Sources */,
+				E53E61AD0C0CA444003CD767 /* ScriptsController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

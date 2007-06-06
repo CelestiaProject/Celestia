@@ -18,6 +18,7 @@
 @class SplashWindow;
 @class SplashWindowController;
 @class EclipseFinderController;
+@class ScriptsController;
 
 @interface CelestiaController : NSWindowController 
 {
@@ -34,6 +35,7 @@
     NSWindow *origWindow;
     IBOutlet FavoritesDrawerController *favoritesDrawerController;
     IBOutlet RenderPanelController *renderPanelController;
+    IBOutlet ScriptsController *scriptsController;
     BrowserWindowController *browserWindowController;
     EclipseFinderController *eclipseFinderController;
     NSWindowController *helpWindowController;
