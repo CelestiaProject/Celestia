@@ -14,6 +14,7 @@
 #import "SplashScreen.h"
 #import "SplashWindowController.h"
 #import "EclipseFinderController.h"
+#import "ScriptsController.h"
 #import <Carbon/Carbon.h>
 #import <OpenGL/gl.h>
 #import "CGLInfo.h"
@@ -57,6 +58,7 @@ NSString* fatalErrorMessage;
     lastScript = nil;
 
     [self setupResourceDirectory];
+    [scriptsController buildScriptMenu];
 
     //  hide main window until ready
     [[glView window] setAlphaValue: 0.0f];  //  not  [[glView window] orderOut: nil];
