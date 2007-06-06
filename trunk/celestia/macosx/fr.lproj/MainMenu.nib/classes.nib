@@ -27,6 +27,7 @@
                 glInfoPanel = NSPanel; 
                 glView = NSOpenGLView; 
                 renderPanelController = RenderPanelController; 
+                scriptsController = ScriptsController; 
                 splashWindowController = SplashWindowController; 
             }; 
             SUPERCLASS = NSWindowController; 
@@ -83,6 +84,12 @@
             LANGUAGE = ObjC; 
             OUTLETS = {renderPathCautionIcon = NSImageView; renderPathWarning = NSTextField; }; 
             SUPERCLASS = NSWindowController; 
+        }, 
+        {
+            CLASS = ScriptsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {scriptMenu = NSMenu; }; 
+            SUPERCLASS = NSObject; 
         }, 
         {
             ACTIONS = {setTime = id; showWindow = id; }; 
