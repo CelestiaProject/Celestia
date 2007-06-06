@@ -4241,7 +4241,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 {
                     // Handle the script menu
                     unsigned int scriptIndex = LOWORD(wParam) - ID_FIRST_SCRIPT;
-                    appCore->runScript(ScriptsDirectory + "/" + (*ScriptMenuItems)[scriptIndex].filename);
+                    appCore->runScript((*ScriptMenuItems)[scriptIndex].filename);
                 }
             }
             break;
