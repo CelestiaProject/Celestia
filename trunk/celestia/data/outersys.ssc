@@ -27,7 +27,10 @@
 
 	Albedo 0.86
 
-	RotationPeriod     48.0   # guess
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
 }
 
 #136199 Eris I (2005 (2003 UB313) 1)
@@ -64,7 +67,10 @@
 		MeanAnomaly      213.919 
    	} 
 
-	RotationPeriod     48.0   # guess
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
 }
 
 "2003 EL61" "Sol" { 
@@ -86,7 +92,10 @@
 		MeanAnomaly      198.075 
    	} 
 
-	RotationPeriod     3.9152
+	UniformRotation
+	{
+	Period     3.9152
+	}
 }
 
 "2005 (2003 EL61) 1" "Sol/2003 EL61" { 
@@ -156,7 +165,10 @@
 
 	Albedo 0.09
 
-	RotationPeriod     48.0   # guess
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
 
 }
 
@@ -179,7 +191,10 @@
 		MeanAnomaly      268.060 
 	} 
 
-	RotationPeriod     48.0   # guess
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
 }
 
 # 50000 Quaoar (2002 LM60)
@@ -207,7 +222,10 @@
 
 	Albedo 0.12
 
-	RotationPeriod     17.6788 # for a double-peaked light curve
+	UniformRotation
+	{
+	Period     17.6788 # for a double-peaked light curve
+	}
 }
 
 
@@ -235,7 +253,10 @@
 
 	Albedo 0.04 
 
-	RotationPeriod 30.0 
+	UniformRotation
+	{
+	Period 30.0 
+	}
 }
 
 # 20000 Varuna (2000 WR106)
@@ -263,7 +284,10 @@
 
 	Albedo 0.07 
 
-	RotationPeriod 6.3442 # for a double-peaked light curve 
+	UniformRotation
+	{
+	Period 6.3442 # for a double-peaked light curve 
+	}
 } 
 
 # 55565 (2002 AW197)
@@ -289,7 +313,10 @@
 
 	Albedo 0.10
 
-	RotationPeriod     48.0   # guess
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
 }
 
 
@@ -319,5 +346,8 @@
 
 	Albedo 0.05 
 
-	RotationPeriod 10 # (much shorter than previously thought)
+	UniformRotation
+	{
+	Period 10 # (much shorter than previously thought)
+	}
 } 

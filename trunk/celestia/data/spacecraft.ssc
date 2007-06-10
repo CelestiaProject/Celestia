@@ -18,9 +18,12 @@
 		MeanAnomaly      63.6005
 	}
 
-	Obliquity             51.6461
-	RotationOffset       180
-	EquatorAscendingNode  83.8459
+	UniformRotation
+	{
+	Inclination             51.6461
+	MeridianAngle       180
+	AscendingNode  83.8459
+	}
 
 	Albedo 	      0.10
 }
@@ -44,9 +47,12 @@
 		Epoch           2452028.18381755
 	}
 
-	Obliquity 51.5684 	      #
-	RotationOffset 90  	      #orientation corrections by Matt McIrvin
-	EquatorAscendingNode 343.1518 #
+	UniformRotation
+	{
+	Inclination    51.5684 	      #
+	MeridianAngle  90  	      # orientation corrections by Matt McIrvin
+	AscendingNode 343.1518        #
+	}
 
 	Albedo        0.10
 }
@@ -96,7 +102,8 @@
 	TrueAnomaly    -66.619
 	}
 
-	RotationPeriod    1.0e9  # Essentially no rotation . . .
+	FixedRotation { }
+
 	Orientation     [ 90 0 1 0 ]
 
 	Albedo         0.50
@@ -114,7 +121,7 @@
 
 	SampledOrbit	"cassini.xyz"
 
-	RotationPeriod 1e9
+	FixedRotation { }
 }
 
 
@@ -129,13 +136,10 @@
 	Beginning 2450736.893877314 # 1997 Oct 15 09:27:11
 	Ending    2453364.5847      # 2004 Dec 25 02:01:58
 
-	EllipticalOrbit {
-		SemiMajorAxis 0.0013
-		Period 1e9
-		Inclination 5
-		AscendingNode 270
-		MeanAnomaly 270
-	}
+	OrbitFrame { BodyFixed { Center "Sol/Cassini" } }
+	BodyFrame { BodyFixed { Center "Sol/Cassini" } }
+	FixedPosition [ -0.0013 0 -0.0002 ]
+	FixedRotation { }
 }
 
 "Huygens (free flight)" "Sol" 
@@ -152,6 +156,10 @@
 	SampledOrbit "huygens.xyz"
 
 	Orientation [ 90 0 0 1 ]
-	Obliquity 70
-	RotationPeriod 0.01
+
+	UniformRotation
+	{
+	Inclination 70
+	Period 0.01
+	}
 }
