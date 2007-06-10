@@ -24,11 +24,14 @@
 	MeanAnomaly     232.067 
 	} 
 
-	RotationPeriod         9.075 
-	RotationEpoch    2449249.91125 # 1993 Sep 19 09:52:12UT 
-	Obliquity             11 
-	EquatorAscendingNode  29 
-	RotationOffset       339.85 
+	UniformRotation
+	{
+	Period         9.075 
+	Epoch    2449249.91125 # 1993 Sep 19 09:52:12UT 
+	Inclination             11 
+	AscendingNode  29 
+	MeridianAngle       339.85 
+	}
 
 	Albedo 0.113 
 } 
@@ -53,10 +56,13 @@
 	MeanAnomaly     218.057 
 	} 
 
-	RotationPeriod         7.81323264 
-	Obliquity            102 
-	EquatorAscendingNode 162 
-	RotationOffset       352.77 
+	UniformRotation
+	{
+	Period         7.81323264 
+	Inclination            102 
+	AscendingNode 162 
+	MeridianAngle       352.77 
+	}
 
 	Albedo 0.159 
 } 
@@ -81,9 +87,12 @@
 	MeanAnomaly     119.146 
 	} 
 
-	RotationPeriod         7.811 
-	Obliquity             56 
-	EquatorAscendingNode 196 
+	UniformRotation
+	{
+	Period         7.811 
+	Inclination             56 
+	AscendingNode 196 
+	}
 
 	Albedo 0.238 
 } 
@@ -112,11 +121,14 @@
 	MeanAnomaly     104.980 
 	} 
 
-	RotationPeriod         5.342 
-	RotationEpoch    2450124.90833 # 1996 May 11 09:48UT 
-	Obliquity             40 
-	EquatorAscendingNode  91 
-	RotationOffset       325.77 
+	UniformRotation
+	{
+	Period         5.342 
+	Epoch    2450124.90833 # 1996 May 11 09:48UT 
+	Inclination             40 
+	AscendingNode  91 
+	MeridianAngle       325.77 
+	}
 
 	Albedo 0.423 
 } 
@@ -146,10 +158,13 @@
 	MeanAnomaly     280.769206 # at epoch
 	}
 
-	RotationPeriod         7.042073
-	Obliquity             69.28
-	EquatorAscendingNode 109.59
-	RotationOffset        58.865
+	UniformRotation
+	{
+	Period         7.042073
+	Inclination             69.28
+	AscendingNode 109.59
+	MeridianAngle        58.865
+	}
 
 	Albedo 0.1
 }
@@ -176,10 +191,13 @@
         MeanAnomaly     131.594945 # at epoch
 	}
 
-	RotationPeriod         4.633632
-	Obliquity	     156.96
-	EquatorAscendingNode 352.77
-	RotationOffset       359.46
+	UniformRotation
+	{
+	Period         4.633632
+	Inclination	     156.96
+	AscendingNode 352.77
+	MeridianAngle       359.46
+	}
 
 	Albedo 0.24
 }
@@ -212,7 +230,10 @@
 	Inclination        8       # estimated at 7-9 degrees (Petit et al.)
 	}
 
-	RotationOffset   123       # place prime meridian facing Ida
+	UniformRotation
+	{
+	MeridianAngle   123       # place prime meridian facing Ida
+	}
 
 	Albedo 0.2
 }
@@ -242,10 +263,13 @@
 	MeanAnomaly     208.403434 # at epoch
 	}
 
-	RotationPeriod         5.270
-	Obliquity             78.70
-	EquatorAscendingNode 107.23
-	RotationOffset       338.165
+	UniformRotation
+	{
+	Period                5.270
+	Inclination          78.70
+	AscendingNode 	    107.23
+	MeridianAngle       338.165
+	}
 
 	Albedo 0.16
 }
@@ -276,9 +300,12 @@
         MeanAnomaly      86.28120
 	}
 
-	RotationPeriod  129.6         # 5.41 days
-	Obliquity       145
-	PrecessionRate  -48.98        # 7.35 day period
+	PrecessingRotation
+	{
+	Period  129.6         # 5.41 days
+	Inclination       145
+	PrecessionPeriod  -49.67        # 7.35 day period
+	}
 
 	Albedo 0.16
 }
@@ -307,9 +334,12 @@
         MeanAnomaly     180.595
 	}
 
-	RotationPeriod         5.223 
-	Obliquity            136 
-	EquatorAscendingNode 145 
+	UniformRotation
+	{
+	Period         5.223 
+	Inclination            136 
+	AscendingNode 145 
+	}
 
 	Albedo 0.326 
 }
@@ -338,9 +368,12 @@
         MeanAnomaly     225.804
 	}
 
-	RotationPeriod         5.385
-	Obliquity             63 
-	EquatorAscendingNode 162    
+	UniformRotation
+	{
+	Period         5.385
+	Inclination             63 
+	AscendingNode 162    
+	}
 
 	Albedo 0.16
 	# Class M
@@ -369,7 +402,10 @@
         MeanAnomaly     356.6879717
 	}
 
-	RotationPeriod 0.178
+	UniformRotation
+	{
+	Period 0.178
+	}
 
 	Albedo 0.15
 
@@ -399,9 +435,12 @@
         MeanAnomaly     229.8627955
 	}
 
-	RotationPeriod        14.90 
-	Obliquity            116 
-	EquatorAscendingNode 114 
+	UniformRotation
+	{
+	Period        14.90 
+	Inclination            116 
+	AscendingNode 114 
+	}
 
 	Albedo 0.15
 }
@@ -430,9 +469,12 @@
         MeanAnomaly     159.8983670
 	}
 
-	RotationPeriod         6.0289 
-	Obliquity            135 
-	EquatorAscendingNode 292 
+	UniformRotation
+	{
+	Period         6.0289 
+	Inclination            135 
+	AscendingNode 292 
+	}
     
 	Albedo 0.15 
 }
@@ -460,9 +502,12 @@
         MeanAnomaly     152.5186007
 	}
 
-	RotationPeriod         4.095 
-	Obliquity            146 
-	EquatorAscendingNode 325 
+	UniformRotation
+	{
+	Period         4.095 
+	Inclination            146 
+	AscendingNode 325 
+	}
 
 	Albedo 0.15 
 }
@@ -488,7 +533,10 @@
 	MeanAnomaly      349.983669 
 	} 
 
-	RotationPeriod 5.918 
+	UniformRotation
+	{
+	Period 5.918 
+	}
 
 	Albedo 0.048 
 }

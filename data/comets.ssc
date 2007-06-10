@@ -22,10 +22,12 @@
 	# chaotic rotation, imperfectly defined: 
 	# this version from "The New Solar System", 4th Edition; Eds.
 	# JK Beatty, CC Petersen, A Chaikin 
-
-	RotationPeriod 170          # 7.1 day axial rotation period 
-	Obliquity       66    
-	PrecessionRate  97          # 3.7 day precession period 
+	PrecessingRotation
+	{
+	Period             170          # 7.1 day axial rotation period 
+	Inclination         66    
+	PrecessionPeriod    98.72       # 3.7 day precession period 
+	}
 
 	Albedo 0.04 
 } 
@@ -51,9 +53,12 @@
 	MeanAnomaly      358.956091 
 	} 
 
-	RotationPeriod        25 
-	Obliquity             90 
-	EquatorAscendingNode 315 
+	UniformRotation
+	{
+	Period         25 
+	Inclination    90 
+	AscendingNode 315 
+	}
 
 	Albedo 0.04 
 } 
@@ -78,7 +83,11 @@
 
 	# These are all made up (copied from Halley)
 	Radius           7.5 
-	RotationPeriod 170 
+
+	UniformRotation
+	{
+	Period 170 
+	}
 
 	Albedo 0.04 
 } 

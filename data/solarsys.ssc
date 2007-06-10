@@ -16,10 +16,13 @@
         MeanLongitude   252.251
 	}
 
-	RotationPeriod 1407.509405
-	Obliquity         7.01
-	EquatorAscendingNode 48.42
-	RotationOffset 291.20
+	UniformRotation
+	{
+	    Period 1407.509405
+	    Inclination         7.01
+	    AscendingNode 48.42
+	    MeridianAngle 291.20
+	}
 
 	Albedo            0.06
 }
@@ -59,10 +62,13 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	        MeanLongitude    181.979
 	}
 
-	RotationPeriod  5832.479839
-	Obliquity       178.78
-	EquatorAscendingNode 300.22
-	RotationOffset       137.45
+	UniformRotation
+	{
+	Period  5832.479839
+	Inclination       178.78
+	AscendingNode 300.22
+	MeridianAngle       137.45
+	}
 
 	Albedo            0.77
 }
@@ -111,15 +117,18 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 #       Very approximate precession for Earth
 #	PrecessingRotation
 #	{
-#		Period           23.9344694 # 23.93419
+#		Period           23.9344694
 #		Inclination     -23.4392911
 #		Offset          280.5    # offset at default epoch J2000
 #		PrecessionPeriod 26000
 #	}
 
-	RotationPeriod   23.9344694 # 23.93419
-	Obliquity        -23.4392911
-	RotationOffset   280.5    # offset at default epoch J2000
+	UniformRotation
+	{
+	Period              23.9344694
+	Inclination        -23.4392911
+	MeridianAngle      280.5    # offset at default epoch J2000
+	}
 
 	Albedo            0.30
 }
@@ -201,10 +210,13 @@ AltSurface "limit of knowledge" "Sol/Mercury"
         MeanLongitude    355.453
 	}
 
-	RotationPeriod    	 24.622962
-	Obliquity         	 26.72
-	EquatorAscendingNode	 82.91
-	RotationOffset    	136.005
+	UniformRotation
+	{
+	Period    	 24.622962
+	Inclination         	 26.72
+	AscendingNode	 82.91
+	MeridianAngle    	136.005
+	}
 
 	Albedo            0.150
 }
@@ -228,8 +240,11 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly    191.771   # J2000
 	}
 
-	Obliquity		  0.0
-	RotationOffset	      	354.2
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle	      	354.2
+	}
 
 	Albedo         0.07
 }
@@ -252,9 +267,12 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly     344.128
 	}
 
-	Obliquity		  0.9
-	EquatorAscendingNode	183.0
-	RotationOffset		214.7
+	UniformRotation
+	{
+	Inclination		  0.9
+	AscendingNode	183.0
+	MeridianAngle		214.7
+	}
 
 	Albedo         0.08
 }
@@ -288,13 +306,16 @@ AltSurface "limit of knowledge" "Sol/Mercury"
                 Sunset [ 1.0 0.6 0.2 ]
 	}
 
-	RotationPeriod         9.927953 # System II (for GRS)
-	# RotationPeriod       9.92425  # System III (radio emissions)
-	Obliquity              2.222461 # 1.82246 # 2.22246
-	EquatorAscendingNode -22.203    # -1.87785 # -22.203
-	RotationOffset        12        # for correct location of GRS 
+	UniformRotation
+	{
+	Period         9.927953 # System II (for GRS)
+	# Period       9.92425  # System III (radio emissions)
+	Inclination              2.222461 # 1.82246 # 2.22246
+	AscendingNode -22.203    # -1.87785 # -22.203
+	MeridianAngle        12        # for correct location of GRS 
 	                                # (equal to 101 minus current W longitude of GRS)
-	# RotationOffset     305.40     # correct System III prime meridian
+	# MeridianAngle     305.40     # correct System III prime meridian
+	}
 
 	Albedo 0.51
 }
@@ -320,8 +341,11 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly     315.352094   # at epoch
 	}
 
-	Obliquity		  0.0
-	RotationOffset		252.1
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle		252.1
+	}
 
 	Albedo          0.06
 }
@@ -344,8 +368,11 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanLongitude    106.724
 	}
 
-	Obliquity		  0.0
-	RotationOffset		220.8
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle		220.8
+	}
 
 	Albedo         0.61
 }
@@ -374,8 +401,11 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Io"
 	MeanLongitude    176.377
 	}
 
-	Obliquity		  0.0
-	RotationOffset 		 56.2
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle 		 56.2
+	}
 
 	Albedo         0.64
 }
@@ -404,9 +434,12 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
 	MeanLongitude    121.206
 	}
 
-	Obliquity		  0.1
-	EquatorAscendingNode	161.6
-	RotationOffset		262.1
+	UniformRotation
+	{
+	Inclination		  0.1
+	AscendingNode	161.6
+	MeridianAngle		262.1
+	}
 
 	Albedo         0.42
 }
@@ -435,9 +468,12 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
 	MeanLongitude     85.091
 	}
 
-	Obliquity		  0.4
-	EquatorAscendingNode	160.6
-	RotationOffset		120.1
+	UniformRotation
+	{
+	Inclination		  0.4
+	AscendingNode	160.6
+	MeridianAngle		120.1
+	}
 
 	Albedo         0.20
 }
@@ -476,10 +512,13 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 		Sky [ 0.8 0.8 0.5 ]
 	}
 
-	RotationPeriod        10.65622 # System III (magnetic field)
-	Obliquity             28.049   # 28.052   # old value: 26.73
-	EquatorAscendingNode 169.530   # 168.8112 # 169.53
-        RotationOffset       358.922   # correct System III prime meridian
+	UniformRotation
+	{	
+	Period        10.65622 # System III (magnetic field)
+	Inclination             28.049   # 28.052   # old value: 26.73
+	AscendingNode 169.530   # 168.8112 # 169.53
+        MeridianAngle       358.922   # correct System III prime meridian
+	}
 
 	Albedo            0.50
 
@@ -509,8 +548,11 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	MeanLongitude	266.2144
 	}
 
-	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
-	RotationOffset  	86
+	UniformRotation
+	{
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	MeridianAngle  	86
+	}
 
 	Albedo 0.6
 }
@@ -534,8 +576,11 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	MeanLongitude	212.6961     
 	}
 
-	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
-	RotationOffset          33
+	UniformRotation
+	{
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	MeridianAngle          33
+	}
 
 	Albedo 0.5
 }
@@ -559,8 +604,11 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	MeanLongitude	306.0531
 	}
 
-	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
-	RotationOffset  	126
+	UniformRotation
+	{
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	MeridianAngle  	126
+	}
 
 	Albedo 0.5
 }
@@ -589,8 +637,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	MeanLongitude	131.5137
 	}
 
-	RotationEpoch		2453005.5   # 2004 Jan 1 00:00UT
-	RotationOffset  	312
+	UniformRotation
+	{
+	Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	MeridianAngle  	312
+	}
 
 	Albedo 0.6
 }
@@ -615,9 +666,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	MeanAnomaly    23
 	}
 
-	Obliquity		  1.5 #J2000.0
-	EquatorAscendingNode	137.8 #J2000.0
-	RotationOffset		190.7 #J2000.0
+	UniformRotation
+	{
+	Inclination		  1.5 #J2000.0
+	AscendingNode	137.8 #J2000.0
+	MeridianAngle		190.7 #J2000.0
+	}
 
 	Albedo         0.5
 }
@@ -645,8 +699,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	MeanAnomaly    215
 	}
 
-	Obliquity		  0.0
-	RotationOffset		322.9
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle		322.9
+	}
 
 	Albedo         0.99
 }
@@ -666,8 +723,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	MeanAnomaly    98
 	}
 
-	Obliquity		  0.0
-	RotationOffset		330.6
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle		330.6
+	}
 
 	Albedo         0.9
 }
@@ -687,8 +747,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	MeanAnomaly    310
 	}
 
-	Obliquity		  0.0
-	RotationOffset		317.1
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle		317.1
+	}
 
 	Albedo         0.7
 }
@@ -708,8 +771,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	MeanAnomaly    190
 	}
 
-	Obliquity		  0.0
-	RotationOffset 		195.0
+	UniformRotation
+	{
+	Inclination		  0.0
+	MeridianAngle 		195.0
+	}
 
 	Albedo         0.7
 }
@@ -748,9 +814,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	MeanAnomaly      120
 	}
 
-	Obliquity		  0.6
-	EquatorAscendingNode	186.6
-	RotationOffset		318.9
+	UniformRotation
+	{
+	Inclination		  0.6
+	AscendingNode	186.6
+	MeridianAngle		318.9
+	}
 
 	Albedo                    0.21
 }
@@ -775,11 +844,13 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	# The rotation of Hyperion is chaotic; we don't attempt to model
 	# the rotation exactly, but instead use non-zero precession rate to
 	# make the rotation appear somewhat irregular.
-
-	Obliquity       	 61    # pole at time of 
-	EquatorAscendingNode	145    # Voyager 2 encounter
-	RotationPeriod  	120    # 5-day best-fit rotation
-	PrecessionRate  	 51.43 # 7-day wobble in light curve
+	PrecessingRotation
+	{
+	Inclination       61    # pole at time of 
+	AscendingNode    145    # Voyager 2 encounter
+	Period  	 120    # 5-day best-fit rotation
+	PrecessionPeriod   0.0192 # 7-day wobble in light curve
+	}
 
 	Albedo         0.3
 }
@@ -804,9 +875,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	MeanAnomaly    245
 	}
 
-	Obliquity		 15.5
-	EquatorAscendingNode	213.7
-	RotationOffset		 14.9
+	UniformRotation
+	{
+	Inclination		 15.5
+	AscendingNode	213.7
+	MeridianAngle		 14.9
+	}
 
 	Albedo         0.2
 }
@@ -829,10 +903,13 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	MeanAnomaly      31.776215      # at epoch
 	}
     
-    RotationPeriod          9.2735 # Bauer et al, Astrophysical Journal 2004; 610(2): L57-L60 
-    Obliquity               8.7    # Porco et al, Science 2005; 307: 1237-42 
-    EquatorAscendingNode  245.3    # Porco et al, Science 2005; 307: 1237-42 
-    RotationOffset        135.0    # approximate, from encounter images 
+	UniformRotation
+	{
+	Period          9.2735 # Bauer et al, Astrophysical Journal 2004; 610(2): L57-L60 
+	Inclination               8.7    # Porco et al, Science 2005; 307: 1237-42 
+	AscendingNode  245.3    # Porco et al, Science 2005; 307: 1237-42 
+	MeridianAngle        135.0    # approximate, from encounter images 
+	}
 
 	Albedo         0.05
 }
@@ -867,10 +944,13 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 
 	}
 
-	RotationPeriod        17.24 # System III (magnetic field)
-	Obliquity             97.81
-	EquatorAscendingNode 167.76
-	RotationOffset       331.18 # correct System III prime meridian
+	UniformRotation
+	{
+	Period        17.24 # System III (magnetic field)
+	Inclination             97.81
+	AscendingNode 167.76
+	MeridianAngle       331.18 # correct System III prime meridian
+	}
 
 	Albedo            0.66
 
@@ -897,9 +977,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	MeanAnomaly    120
 	}
 
-	RotationPeriod		 33.92350159 # enforce sync rotation
-	Obliquity		  0.0
-	RotationOffset 		144.3
+	UniformRotation
+	{
+	Period		 33.92350159 # enforce sync rotation
+	Inclination		  0.0
+	MeridianAngle 		144.3
+	}
 
 	Albedo         0.32
 }
@@ -925,9 +1008,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Miranda"
 	MeanAnomaly    56
 	}
 
-	RotationPeriod		 60.48909292 # enforce sync rotation
-	Obliquity		  0.0
-	RotationOffset 		 18.8
+	UniformRotation
+	{
+	Period		 60.48909292 # enforce sync rotation
+	Inclination		  0.0
+	MeridianAngle 		 18.8
+	}
 
 	Albedo         0.39
 }
@@ -953,9 +1039,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	MeanAnomaly    280
 	}
 
-	RotationPeriod		 99.46022991 # enforce sync rotation
-	Obliquity		  0.0
-	RotationOffset 		 66.9
+	UniformRotation
+	{
+	Period		 99.46022991 # enforce sync rotation
+	Inclination		  0.0
+	MeridianAngle 		 66.9
+	}
 
 	Albedo         0.21
 }
@@ -981,9 +1070,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Umbriel"
 	MeanAnomaly    30
 	}
 
-	RotationPeriod		208.94077099 # enforce sync rotation
-	Obliquity		  0.0
-	RotationOffset 		 97.2
+	UniformRotation
+	{
+	Period		208.94077099 # enforce sync rotation
+	Inclination		  0.0
+	MeridianAngle 		 97.2
+	}
 
 	Albedo         0.27
 }
@@ -1009,9 +1101,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Titania"
 	MeanAnomaly    150
 	}
 
-	RotationPeriod		323.117567539 # enforce sync rotation
-	Obliquity		  0.0
-	RotationOffset 		168.2
+	UniformRotation
+	{
+	Period		323.117567539 # enforce sync rotation
+	Inclination		  0.0
+	MeridianAngle 		168.2
+	}
 
 	Albedo         0.23
 }
@@ -1051,10 +1146,13 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 		Sky [ 0.5 0.7 0.9 ]
 	}
 
-	RotationPeriod        16.11 # System III (magnetic field)
-	Obliquity             28.03
-	EquatorAscendingNode  49.235
-	RotationOffset       228.65 # correct System III prime meridian
+	UniformRotation
+	{
+	Period        16.11 # System III (magnetic field)
+	Inclination             28.03
+	AscendingNode  49.235
+	MeridianAngle       228.65 # correct System III prime meridian
+	}
 
 	Albedo                 0.62
 
@@ -1083,9 +1181,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	MeanAnomaly     157.543	#
 	}
 
-	Obliquity              	  0.1
-	EquatorAscendingNode 	349.1
-	RotationOffset          165.8
+	UniformRotation
+	{
+	Inclination              	  0.1
+	AscendingNode 	349.1
+	MeridianAngle          165.8
+	}
 
 	Albedo 0.056
 }
@@ -1109,9 +1210,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	MeanAnomaly	213.916   # at epoch 
 	}
 
-	Obliquity              	  0.6
-	EquatorAscendingNode 	331.0
-	RotationOffset       	 97.8
+	UniformRotation
+	{
+	Inclination              	  0.6
+	AscendingNode 	331.0
+	MeridianAngle       	 97.8
+	}
 
 	Albedo         0.061
 }
@@ -1141,10 +1245,13 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	MeanAnomaly	315.726316 # at epoch
 	}
 
-	RotationEpoch	    2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
-	Obliquity		156.8 # at epoch
-	EquatorAscendingNode	147.9 # at epoch
-	RotationOffset		 71.5 # at epoch
+	UniformRotation
+	{
+	Epoch	    2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
+	Inclination		156.8 # at epoch
+	AscendingNode	147.9 # at epoch
+	MeridianAngle		 71.5 # at epoch
+	}
 
 	Albedo         0.756
 }
@@ -1161,9 +1268,12 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Texture "asteroid.jpg"
 	Radius   170
 
+	UniformRotation
+	{
 	# Figure of 11.52 +/- 0.14 hours from Grav, T. et al. (2003)
         # "The Short Rotation Period of Nereid", ApJ 591
-	RotationPeriod 11.52	
+	Period 11.52	
+	}
 
 	EllipticalOrbit
 	{
@@ -1213,10 +1323,13 @@ ReferencePoint "Pluto-Charon" "Sol"
         MeanAnomaly      93.440
     }
 
-    RotationPeriod       153.293904
-    Obliquity            115.60
-    EquatorAscendingNode 228.34
-    RotationOffset       320.75
+    UniformRotation
+    {
+    Period       153.293904
+    Inclination            115.60
+    AscendingNode 228.34
+    MeridianAngle       320.75
+    }
 	
     Albedo           0.55
 }
@@ -1258,10 +1371,13 @@ AltSurface "limit of knowledge" "Sol/Pluto"
         MeanAnomaly     93.440
     }
 
-    RotationPeriod       153.293904
-    Obliquity            115.9
-    EquatorAscendingNode 227.3
-    RotationOffset       140.4
+    UniformRotation
+    {
+    Period              153.293904
+    Inclination         115.9
+    AscendingNode       227.3
+    MeridianAngle       140.4
+    }
 	
     Albedo               0.35
 }
