@@ -265,6 +265,8 @@
 		E5D969B10ABCC7CC00F43225 /* SBb.png in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D969A90ABCC76C00F43225 /* SBb.png */; };
 		E5D969B20ABCC7CC00F43225 /* SBc.png in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D969AA0ABCC76C00F43225 /* SBc.png */; };
 		E5D969B30ABCC7CC00F43225 /* Sc.png in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D969AB0ABCC76C00F43225 /* Sc.png */; };
+		E5E198A20C1D9BB90094D8BB /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = E5E198960C1D9BB90094D8BB /* scripts */; };
+		E5E198B00C1D9C2E0094D8BB /* scripts in Copy Misc */ = {isa = PBXBuildFile; fileRef = E5E198960C1D9BB90094D8BB /* scripts */; };
 		E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = E5E365AB095C11B500B14224 /* SplashScreen.m */; };
 		E5E365AF095C123E00B14224 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = E5E365AE095C123E00B14224 /* splash.png */; };
 		E5F8C9690795232900D1DAF2 /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
@@ -368,6 +370,7 @@
 				E572837D0793A03800C1F239 /* demo.cel in Copy Misc */,
 				E572837F0793A03800C1F239 /* fonts in Copy Misc */,
 				E57283800793A03800C1F239 /* guide.cel in Copy Misc */,
+				E5E198B00C1D9C2E0094D8BB /* scripts in Copy Misc */,
 				E57283830793A03800C1F239 /* shaders in Copy Misc */,
 				E57283840793A03800C1F239 /* start.cel in Copy Misc */,
 				E572837C0793A02800C1F239 /* celestia.cfg in Copy Misc */,
@@ -674,6 +677,7 @@
 		E5D969A90ABCC76C00F43225 /* SBb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SBb.png; sourceTree = "<group>"; };
 		E5D969AA0ABCC76C00F43225 /* SBc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SBc.png; sourceTree = "<group>"; };
 		E5D969AB0ABCC76C00F43225 /* Sc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sc.png; sourceTree = "<group>"; };
+		E5E198960C1D9BB90094D8BB /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scripts; path = ../scripts; sourceTree = SOURCE_ROOT; };
 		E5E365AA095C11B500B14224 /* SplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplashScreen.h; sourceTree = "<group>"; };
 		E5E365AB095C11B500B14224 /* SplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplashScreen.m; sourceTree = "<group>"; };
 		E5E365AE095C123E00B14224 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash.png; path = ../splash.png; sourceTree = "<group>"; };
@@ -1585,6 +1589,7 @@
 				E567EFE309910F0D00D05031 /* extras */,
 				F5626A0402A49B8B014901DC /* fonts */,
 				E5D766250982B3300099DBBD /* models */,
+				E5E198960C1D9BB90094D8BB /* scripts */,
 				F5626A0702A49B8B014901DC /* shaders */,
 				E5D766A30982B6DF0099DBBD /* textures */,
 				F5626A0002A49B8B014901DC /* celestia.cfg */,
@@ -1691,6 +1696,7 @@
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
 				E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */,
 				E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */,
+				E5E198A20C1D9BB90094D8BB /* scripts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
