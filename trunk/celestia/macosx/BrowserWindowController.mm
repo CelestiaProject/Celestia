@@ -205,7 +205,7 @@ static CelestiaCore *appCore;
         NSLocalizedString(@"Galaxies (Irregular)",@""),     @"Irr",
         NSLocalizedString(@"Nebulae",@""),                  @"Neb",
         NSLocalizedString(@"Open Clusters",@""),            @"Clust",
-        NSLocalizedString(@"Other",@""),                    @"Other",
+        NSLocalizedString(@"Unknown",@""),                  @"Unknown",
         nil];
     tempDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
         [NSMutableDictionary dictionary], @"SB",
@@ -214,7 +214,7 @@ static CelestiaCore *appCore;
         [NSMutableDictionary dictionary], @"Irr",
         [NSMutableDictionary dictionary], @"Neb",
         [NSMutableDictionary dictionary], @"Clust",
-        [NSMutableDictionary dictionary], @"Other",
+        [NSMutableDictionary dictionary], @"Unknown",
         nil];
     result = [NSMutableDictionary dictionaryWithCapacity: [tempDict count]];
 
@@ -239,7 +239,7 @@ static CelestiaCore *appCore;
             else if ([type hasPrefix: @"Clust"])
                 group = [tempDict objectForKey: @"Clust"];
             else
-                group = [tempDict objectForKey: @"Other"];
+                group = [tempDict objectForKey: @"Unknown"];
 
             [group setObject: [[[BrowserItem alloc] initWithCelestiaDSO: dsoWrapper] autorelease]
                       forKey: name];
