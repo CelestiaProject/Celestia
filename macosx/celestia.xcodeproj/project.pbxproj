@@ -265,7 +265,6 @@
 		E5D969B10ABCC7CC00F43225 /* SBb.png in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D969A90ABCC76C00F43225 /* SBb.png */; };
 		E5D969B20ABCC7CC00F43225 /* SBc.png in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D969AA0ABCC76C00F43225 /* SBc.png */; };
 		E5D969B30ABCC7CC00F43225 /* Sc.png in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D969AB0ABCC76C00F43225 /* Sc.png */; };
-		E5E198A20C1D9BB90094D8BB /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = E5E198960C1D9BB90094D8BB /* scripts */; };
 		E5E198B00C1D9C2E0094D8BB /* scripts in Copy Misc */ = {isa = PBXBuildFile; fileRef = E5E198960C1D9BB90094D8BB /* scripts */; };
 		E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = E5E365AB095C11B500B14224 /* SplashScreen.m */; };
 		E5E365AF095C123E00B14224 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = E5E365AE095C123E00B14224 /* splash.png */; };
@@ -1696,7 +1695,6 @@
 				E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */,
 				E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */,
 				E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */,
-				E5E198A20C1D9BB90094D8BB /* scripts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
