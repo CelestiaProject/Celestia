@@ -323,6 +323,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showAsteroidOrbits"))->setChecked(orbitMask & Body::Asteroid);
     ((KToggleAction*)action("showCometOrbits"))->setChecked(orbitMask & Body::Comet);
     ((KToggleAction*)action("showMoonOrbits"))->setChecked(orbitMask & Body::Moon);
+    ((KToggleAction*)action("showStarOrbits"))->setChecked(orbitMask & Body::Stellar);
     ((KToggleAction*)action("showPlanetOrbits"))->setChecked(orbitMask & Body::Planet);
     ((KToggleAction*)action("showSpacecraftOrbits"))->setChecked(orbitMask & Body::Spacecraft);
     ((KToggleAction*)action("showCelestialSphere"))->setChecked(rFlags & Renderer::ShowCelestialSphere);
@@ -555,6 +556,9 @@ void KdeApp::initActions()
 
     KToggleAction* showMoonOrbits = new KToggleAction(i18n("Show Moon Orbits"), 0, this, SLOT(slotShowMoonOrbits()), actionCollection(), "showMoonOrbits");
     showMoonOrbits->setChecked(oMask & Body::Moon);
+
+    KToggleAction* showStarOrbits = new KToggleAction(i18n("Show Star Orbits"), 0, this, SLOT(slotShowStarOrbits()), actionCollection(), "showStarOrbits");
+    showStarOrbits->setChecked(oMask & Body::Stellar);
 
     KToggleAction* showPlanetOrbits = new KToggleAction(i18n("Show Planet Orbits"), 0, this, SLOT(slotShowPlanetOrbits()), actionCollection(), "showPlanetOrbits");
     showPlanetOrbits->setChecked(oMask & Body::Planet);
@@ -1075,6 +1079,11 @@ void KdeApp::slotShowCometOrbits() {
 void KdeApp::slotShowMoonOrbits() {
      appCore->getRenderer()->setOrbitMask(
             appCore->getRenderer()->getOrbitMask() ^ Body::Moon);
+}
+
+void KdeApp::slotShowStarOrbits() {
+     appCore->getRenderer()->setOrbitMask(
+            appCore->getRenderer()->getOrbitMask() ^ Body::Stellar);
 }
 
 void KdeApp::slotShowPlanetOrbits() {
