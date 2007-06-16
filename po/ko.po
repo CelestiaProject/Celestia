@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ko\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2007-03-21 22:26+0100\n"
+"POT-Creation-Date: 2007-06-16 10:34+0200\n"
 "PO-Revision-Date: 2006-03-21 11:18+0900\n"
 "Last-Translator: Jacob Lee <jacoblee@freechal.com>\n"
 "Language-Team: Korean<ko@li.org>\n"
@@ -80,7 +80,7 @@ msgstr "모델 읽는 중: "
 msgid "Error loading model '"
 msgstr "모델 읽기 오류: "
 
-#: src/celengine/nebula.cpp:46 src/celengine/opencluster.cpp:44
+#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
 #, c-format
 msgid "%s"
 msgstr ""
@@ -248,396 +248,402 @@ msgstr "ARB vertex programs을 초기화 합니다.\n"
 msgid "All ARB vertex programs loaded successfully.\n"
 msgstr "모든 ARB vertex programs을 읽었습니다.\n"
 
-#: src/celestia/celestiacore.cpp:394
+#: src/celestia/celestiacore.cpp:408
 msgid "Error reading favorites file."
 msgstr "북마크 파일 읽는 중 오류가 발생하였습니다."
 
-#: src/celestia/celestiacore.cpp:478
+#: src/celestia/celestiacore.cpp:492
 msgid "Orientation: "
 msgstr "방향: "
 
-#: src/celestia/celestiacore.cpp:525 src/celestia/celestiacore.cpp:527
+#: src/celestia/celestiacore.cpp:539 src/celestia/celestiacore.cpp:541
 msgid "Error opening script file."
 msgstr "스크립트 파일 여는 중 오류가 발생하였습니다."
 
-#: src/celestia/celestiacore.cpp:558
+#: src/celestia/celestiacore.cpp:572
 #, c-format
 msgid "Error opening script '%s'"
 msgstr "스크립트 파일'%s'에서 에러가 발생했습니다."
 
-#: src/celestia/celestiacore.cpp:576
+#: src/celestia/celestiacore.cpp:590
 msgid "Unknown error opening script"
 msgstr "스크립트 파일 여는 중 알수없는 오류가 발생하였습니다."
 
-#: src/celestia/celestiacore.cpp:588
+#: src/celestia/celestiacore.cpp:602
 msgid "Script coroutine initialization failed"
 msgstr "스크립트 coroutine의 초기화에 실패하였습니다."
 
-#: src/celestia/celestiacore.cpp:604 src/celestia/celestiacore.cpp:606
+#: src/celestia/celestiacore.cpp:618 src/celestia/celestiacore.cpp:620
 msgid "Invalid filetype"
 msgstr "잘못된 파일형식"
 
-#: src/celestia/celestiacore.cpp:936 src/celestia/celestiacore.cpp:1703
-#: src/celestia/celestiacore.cpp:1719 src/celestia/celestiacore.cpp:1960
-#: src/celestia/celestiacore.cpp:1989
+#: src/celestia/celestiacore.cpp:950 src/celestia/celestiacore.cpp:1722
+#: src/celestia/celestiacore.cpp:1738 src/celestia/celestiacore.cpp:1979
+#: src/celestia/celestiacore.cpp:2008
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "한계등급: %.2f"
 
-#: src/celestia/celestiacore.cpp:1340
+#: src/celestia/celestiacore.cpp:1354
 msgid "Markers enabled"
 msgstr "마커: ON"
 
-#: src/celestia/celestiacore.cpp:1343
+#: src/celestia/celestiacore.cpp:1357
 msgid "Markers disabled"
 msgstr "마커: OFF"
 
-#: src/celestia/celestiacore.cpp:1353
+#: src/celestia/celestiacore.cpp:1367
 msgid "Goto surface"
 msgstr "천체 표면으로 이동"
 
-#: src/celestia/celestiacore.cpp:1362
-msgid "Alt-azimuth mode"
+#: src/celestia/celestiacore.cpp:1380
+#, fuzzy
+msgid "Alt-azimuth mode enabled"
 msgstr "고도각·방위각 모드"
 
-#: src/celestia/celestiacore.cpp:1417
+#: src/celestia/celestiacore.cpp:1383
+#, fuzzy
+msgid "Alt-azimuth mode disabled"
+msgstr "고도각·방위각 모드"
+
+#: src/celestia/celestiacore.cpp:1436
 msgid "Star style: fuzzy points"
 msgstr "항성표시: 희미한 점"
 
-#: src/celestia/celestiacore.cpp:1420
+#: src/celestia/celestiacore.cpp:1439
 msgid "Star style: points"
 msgstr "항성표시: 점"
 
-#: src/celestia/celestiacore.cpp:1423
+#: src/celestia/celestiacore.cpp:1442
 msgid "Star style: scaled discs"
 msgstr "항성표시: 등급에 따른 원"
 
-#: src/celestia/celestiacore.cpp:1436
+#: src/celestia/celestiacore.cpp:1455
 msgid "Comet tails enabled"
 msgstr "혜성꼬리: ON"
 
-#: src/celestia/celestiacore.cpp:1439
+#: src/celestia/celestiacore.cpp:1458
 msgid "Comet tails disabled"
 msgstr "혜성꼬리: OFF"
 
-#: src/celestia/celestiacore.cpp:1454
+#: src/celestia/celestiacore.cpp:1473
 msgid "Render path: Basic"
 msgstr "렌더링 패스 :Basic"
 
-#: src/celestia/celestiacore.cpp:1457
+#: src/celestia/celestiacore.cpp:1476
 msgid "Render path: Multitexture"
 msgstr "렌더링 패스: Multitexture"
 
-#: src/celestia/celestiacore.cpp:1460
+#: src/celestia/celestiacore.cpp:1479
 msgid "Render path: NVIDIA combiners"
 msgstr "렌더링 패스: NVIDIA combiners"
 
-#: src/celestia/celestiacore.cpp:1463
+#: src/celestia/celestiacore.cpp:1482
 msgid "Render path: OpenGL vertex program"
 msgstr "렌더링 패스: OpenGL vertex program"
 
-#: src/celestia/celestiacore.cpp:1466
+#: src/celestia/celestiacore.cpp:1485
 msgid "Render path: NVIDIA vertex program and combiners"
 msgstr "렌더링 패스: NVIDIA vertex program and combiners"
 
-#: src/celestia/celestiacore.cpp:1469
+#: src/celestia/celestiacore.cpp:1488
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
 msgstr "렌더링 패스: OpenGL vertex program/NVIDIA combiners"
 
-#: src/celestia/celestiacore.cpp:1472
+#: src/celestia/celestiacore.cpp:1491
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
 msgstr "렌더링 패스: OpenGL 1.5 vertex/fragment program"
 
-#: src/celestia/celestiacore.cpp:1475
+#: src/celestia/celestiacore.cpp:1494
 msgid "Render path: NVIDIA GeForce FX"
 msgstr "렌더링 패스: NVIDIA GeForce FX"
 
-#: src/celestia/celestiacore.cpp:1478
+#: src/celestia/celestiacore.cpp:1497
 msgid "Render path: OpenGL 2.0"
 msgstr "렌더링 패스: OpenGL 2.0"
 
-#: src/celestia/celestiacore.cpp:1501
+#: src/celestia/celestiacore.cpp:1520
 msgid "Auto-magnitude enabled"
 msgstr "자동 한계등급 조정: ON"
 
-#: src/celestia/celestiacore.cpp:1506
+#: src/celestia/celestiacore.cpp:1525
 msgid "Auto-magnitude disabled"
 msgstr "자동 한계등급 조정: OFF"
 
-#: src/celestia/celestiacore.cpp:1528 src/celestia/res/resource_strings.cpp:80
-#: src/celestia/res/resource_strings.cpp:92
-#: src/celestia/res/resource_strings.cpp:96
-#: src/celestia/res/resource_strings.cpp:124
-#: src/celestia/res/resource_strings.cpp:134
-#: src/celestia/res/resource_strings.cpp:164
-#: src/celestia/res/resource_strings.cpp:186
-#: src/celestia/res/resource_strings.cpp:191
+#: src/celestia/celestiacore.cpp:1547 src/celestia/res/resource_strings.cpp:82
+#: src/celestia/res/resource_strings.cpp:94
+#: src/celestia/res/resource_strings.cpp:98
+#: src/celestia/res/resource_strings.cpp:126
+#: src/celestia/res/resource_strings.cpp:136
+#: src/celestia/res/resource_strings.cpp:167
+#: src/celestia/res/resource_strings.cpp:190
 #: src/celestia/res/resource_strings.cpp:195
-#: src/celestia/res/resource_strings.cpp:201
+#: src/celestia/res/resource_strings.cpp:199
+#: src/celestia/res/resource_strings.cpp:205
 msgid "Cancel"
 msgstr "취소"
 
-#: src/celestia/celestiacore.cpp:1566
+#: src/celestia/celestiacore.cpp:1585
 msgid "Time and script are paused"
 msgstr "시간·스크립트: 정지"
 
-#: src/celestia/celestiacore.cpp:1568
+#: src/celestia/celestiacore.cpp:1587
 msgid "Time is paused"
 msgstr "시간: 정지"
 
-#: src/celestia/celestiacore.cpp:1572
+#: src/celestia/celestiacore.cpp:1591
 msgid "Resume"
 msgstr "계속"
 
-#: src/celestia/celestiacore.cpp:1647
+#: src/celestia/celestiacore.cpp:1666
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "광속도달시간: %.4f 년"
 
-#: src/celestia/celestiacore.cpp:1656
+#: src/celestia/celestiacore.cpp:1675
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "광속도달시간: %d 분  %.1f 초"
 
-#: src/celestia/celestiacore.cpp:1659
+#: src/celestia/celestiacore.cpp:1678
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "광속도달시간: %d 시간  %d 분  %.1f 초"
 
-#: src/celestia/celestiacore.cpp:1678
+#: src/celestia/celestiacore.cpp:1697
 msgid "Light travel delay included"
 msgstr "광속고려: ON"
 
-#: src/celestia/celestiacore.cpp:1683
+#: src/celestia/celestiacore.cpp:1702
 msgid "Light travel delay switched off"
 msgstr "광속고려: OFF"
 
-#: src/celestia/celestiacore.cpp:1689
+#: src/celestia/celestiacore.cpp:1708
 msgid "Light travel delay ignored"
 msgstr "광속고려는 무시됩니다."
 
-#: src/celestia/celestiacore.cpp:1730
+#: src/celestia/celestiacore.cpp:1749
 msgid "Using normal surface textures."
 msgstr "Normal texture를 사용"
 
-#: src/celestia/celestiacore.cpp:1734
+#: src/celestia/celestiacore.cpp:1753
 msgid "limit of knowledge"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:1735
+#: src/celestia/celestiacore.cpp:1754
 msgid "Using limit of knowledge surface textures."
 msgstr "limit of knowledge texture를 사용"
 
-#: src/celestia/celestiacore.cpp:1798
+#: src/celestia/celestiacore.cpp:1817
 msgid "Follow"
 msgstr "춘분점 동기"
 
-#: src/celestia/celestiacore.cpp:1825
+#: src/celestia/celestiacore.cpp:1844
 msgid "Time: Forward"
 msgstr "시간흐름: 순방향"
 
-#: src/celestia/celestiacore.cpp:1827
+#: src/celestia/celestiacore.cpp:1846
 msgid "Time: Backward"
 msgstr "시간흐름: 역방향"
 
-#: src/celestia/celestiacore.cpp:1838 src/celestia/celestiacore.cpp:1851
+#: src/celestia/celestiacore.cpp:1857 src/celestia/celestiacore.cpp:1870
 #, fuzzy, c-format
 msgid "Time rate: %g"
 msgstr "시간속도: %.1f 배"
 
-#: src/celestia/celestiacore.cpp:1888
+#: src/celestia/celestiacore.cpp:1907
 msgid "Low res textures"
 msgstr "Texture해상도: 낮음"
 
-#: src/celestia/celestiacore.cpp:1891
+#: src/celestia/celestiacore.cpp:1910
 msgid "Medium res textures"
 msgstr "Texture해상도: 중간"
 
-#: src/celestia/celestiacore.cpp:1894
+#: src/celestia/celestiacore.cpp:1913
 msgid "High res textures"
 msgstr "Texture해상도: 높음"
 
-#: src/celestia/celestiacore.cpp:1933
+#: src/celestia/celestiacore.cpp:1952
 msgid "Sync Orbit"
 msgstr "자전 동기"
 
-#: src/celestia/celestiacore.cpp:1939
+#: src/celestia/celestiacore.cpp:1958
 msgid "Lock"
 msgstr "2천체 참조 동기"
 
-#: src/celestia/celestiacore.cpp:1945
+#: src/celestia/celestiacore.cpp:1964
 msgid "Chase"
 msgstr "공전 동기"
 
-#: src/celestia/celestiacore.cpp:1969 src/celestia/celestiacore.cpp:1998
+#: src/celestia/celestiacore.cpp:1988 src/celestia/celestiacore.cpp:2017
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "시야 45°에서의 한계 등급: %.2f"
 
-#: src/celestia/celestiacore.cpp:2027 src/celestia/celestiacore.cpp:2037
+#: src/celestia/celestiacore.cpp:2046 src/celestia/celestiacore.cpp:2056
 msgid "Light gain"
 msgstr "광도 이득"
 
-#: src/celestia/celestiacore.cpp:2386
+#: src/celestia/celestiacore.cpp:2415
 msgid "GL error: "
 msgstr "GL에러: "
 
-#: src/celestia/celestiacore.cpp:2437
+#: src/celestia/celestiacore.cpp:2466
 msgid "View too small to be split"
 msgstr "화면이 너무 작습니다."
 
-#: src/celestia/celestiacore.cpp:2440
+#: src/celestia/celestiacore.cpp:2469
 msgid "Added view"
 msgstr "화면 분할"
 
-#: src/celestia/celestiacore.cpp:2675
+#: src/celestia/celestiacore.cpp:2704
 #: src/celestia/kde/celestialbrowser.cpp:129
 #: src/celestia/kde/selectionpopup.cpp:74
 msgid "ly"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2679
+#: src/celestia/celestiacore.cpp:2708
 #: src/celestia/kde/celestialbrowser.cpp:148
 #: src/celestia/kde/selectionpopup.cpp:76
-#: src/celestia/res/resource_strings.cpp:122
+#: src/celestia/res/resource_strings.cpp:124
 msgid "au"
 msgstr "AU"
 
-#: src/celestia/celestiacore.cpp:2700
+#: src/celestia/celestiacore.cpp:2729
 msgid " days"
 msgstr " 일"
 
-#: src/celestia/celestiacore.cpp:2702
+#: src/celestia/celestiacore.cpp:2731
 msgid " hours"
 msgstr " 시간"
 
-#: src/celestia/celestiacore.cpp:2704
+#: src/celestia/celestiacore.cpp:2733
 msgid " minutes"
 msgstr " 분"
 
-#: src/celestia/celestiacore.cpp:2744
+#: src/celestia/celestiacore.cpp:2773
 msgid "Apparent diameter: "
 msgstr "시직경: "
 
-#: src/celestia/celestiacore.cpp:2759
+#: src/celestia/celestiacore.cpp:2788
 msgid "Apparent magnitude: "
 msgstr "겉보기 등급: "
 
-#: src/celestia/celestiacore.cpp:2763
+#: src/celestia/celestiacore.cpp:2792
 msgid "Absolute magnitude: "
 msgstr "절대등급: "
 
-#: src/celestia/celestiacore.cpp:2796 src/celestia/celestiacore.cpp:2853
-#: src/celestia/celestiacore.cpp:2885 src/celestia/celestiacore.cpp:2940
+#: src/celestia/celestiacore.cpp:2825 src/celestia/celestiacore.cpp:2882
+#: src/celestia/celestiacore.cpp:2914 src/celestia/celestiacore.cpp:2969
 #: src/celestia/kde/selectionpopup.cpp:82
 msgid "Distance: "
 msgstr "거리: "
 
-#: src/celestia/celestiacore.cpp:2802
+#: src/celestia/celestiacore.cpp:2831
 msgid "Star system barycenter\n"
 msgstr "중심\n"
 
-#: src/celestia/celestiacore.cpp:2806
+#: src/celestia/celestiacore.cpp:2835
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "절대등급: %.2f 겉보기 등급: %.2f\n"
 
-#: src/celestia/celestiacore.cpp:2812
+#: src/celestia/celestiacore.cpp:2841
 msgid "Luminosity: "
 msgstr "밝기: "
 
-#: src/celestia/celestiacore.cpp:2812
+#: src/celestia/celestiacore.cpp:2841
 msgid "x Sun"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2813 src/celestia/kde/selectionpopup.cpp:92
+#: src/celestia/celestiacore.cpp:2842 src/celestia/kde/selectionpopup.cpp:92
 msgid "Class: "
 msgstr "분광형: "
 
-#: src/celestia/celestiacore.cpp:2815
+#: src/celestia/celestiacore.cpp:2844
 msgid "Neutron star"
 msgstr "중성자 별"
 
-#: src/celestia/celestiacore.cpp:2817
+#: src/celestia/celestiacore.cpp:2846
 msgid "Black hole"
 msgstr "블랙홀"
 
-#: src/celestia/celestiacore.cpp:2827
+#: src/celestia/celestiacore.cpp:2856
 msgid "Surface temp: "
 msgstr "표면온도: "
 
-#: src/celestia/celestiacore.cpp:2828
+#: src/celestia/celestiacore.cpp:2857
 #, c-format
 msgid "Radius: %.2f Rsun\n"
 msgstr "태양직경의 %.2f배\n"
 
-#: src/celestia/celestiacore.cpp:2832
+#: src/celestia/celestiacore.cpp:2861
 msgid "Rotation period: "
 msgstr "자전주기: "
 
-#: src/celestia/celestiacore.cpp:2840
+#: src/celestia/celestiacore.cpp:2869
 msgid "Planetary companions present\n"
 msgstr "행성 존재\n"
 
-#: src/celestia/celestiacore.cpp:2858
+#: src/celestia/celestiacore.cpp:2887
 msgid "Distance from center: "
 msgstr "중심에서의 거리: "
 
-#: src/celestia/celestiacore.cpp:2862 src/celestia/celestiacore.cpp:2890
+#: src/celestia/celestiacore.cpp:2891 src/celestia/celestiacore.cpp:2919
 #: src/celestia/kde/selectionpopup.cpp:100
 msgid "Radius: "
 msgstr "반지름: "
 
-#: src/celestia/celestiacore.cpp:2901
+#: src/celestia/celestiacore.cpp:2930
 msgid "Day length: "
 msgstr "낮의 길이: "
 
-#: src/celestia/celestiacore.cpp:2917
+#: src/celestia/celestiacore.cpp:2946
 msgid "Temperature: "
 msgstr "온도: "
 
-#: src/celestia/celestiacore.cpp:2929
+#: src/celestia/celestiacore.cpp:2958
 #, c-format
 msgid "Apparent mag: %.2f\n"
 msgstr "겉보기 등급: %.2f\n"
 
-#: src/celestia/celestiacore.cpp:3149 src/celestia/celestiacore.cpp:3164
+#: src/celestia/celestiacore.cpp:3178 src/celestia/celestiacore.cpp:3193
 msgid "  LT"
 msgstr "광속"
 
-#: src/celestia/celestiacore.cpp:3160
+#: src/celestia/celestiacore.cpp:3189
 msgid " UTC"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3174
+#: src/celestia/celestiacore.cpp:3203
 msgid "Real time"
 msgstr "실시간"
 
-#: src/celestia/celestiacore.cpp:3176
+#: src/celestia/celestiacore.cpp:3205
 msgid "-Real time"
 msgstr "-실시간"
 
-#: src/celestia/celestiacore.cpp:3180
+#: src/celestia/celestiacore.cpp:3209
 msgid "Time stopped"
 msgstr "시간멈춤"
 
-#: src/celestia/celestiacore.cpp:3185
+#: src/celestia/celestiacore.cpp:3214
 msgid " faster"
 msgstr " 배속"
 
-#: src/celestia/celestiacore.cpp:3189
+#: src/celestia/celestiacore.cpp:3218
 msgid " slower"
 msgstr " 분의 1배속"
 
-#: src/celestia/celestiacore.cpp:3195
+#: src/celestia/celestiacore.cpp:3224
 msgid " (Paused)"
 msgstr "(멈춤)"
 
-#: src/celestia/celestiacore.cpp:3213
+#: src/celestia/celestiacore.cpp:3242
 msgid "FPS: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3215
+#: src/celestia/celestiacore.cpp:3244
 msgid ""
 "\n"
 "Speed: "
@@ -645,137 +651,137 @@ msgstr ""
 "\n"
 "속도: "
 
-#: src/celestia/celestiacore.cpp:3244
+#: src/celestia/celestiacore.cpp:3273
 msgid "Travelling "
 msgstr "이동중 "
 
-#: src/celestia/celestiacore.cpp:3257
+#: src/celestia/celestiacore.cpp:3286
 msgid "Track "
 msgstr "화면중앙에 유지: "
 
-#: src/celestia/celestiacore.cpp:3269
+#: src/celestia/celestiacore.cpp:3298
 msgid "Follow "
 msgstr "춘분점 동기: "
 
-#: src/celestia/celestiacore.cpp:3274
+#: src/celestia/celestiacore.cpp:3303
 msgid "Sync Orbit "
 msgstr "자전 동기: "
 
-#: src/celestia/celestiacore.cpp:3279
+#: src/celestia/celestiacore.cpp:3308
 msgid "Lock "
 msgstr "2천체 참조 동기: "
 
-#: src/celestia/celestiacore.cpp:3288
+#: src/celestia/celestiacore.cpp:3317
 msgid "Chase "
 msgstr "공전 동기: "
 
-#: src/celestia/celestiacore.cpp:3304
+#: src/celestia/celestiacore.cpp:3333
 msgid "FOV: "
 msgstr "시야: "
 
-#: src/celestia/celestiacore.cpp:3406
+#: src/celestia/celestiacore.cpp:3435
 msgid "Target name: "
 msgstr "천체명을 입력하세요: "
 
-#: src/celestia/celestiacore.cpp:3488
+#: src/celestia/celestiacore.cpp:3517
 msgid " at "
 msgstr " "
 
-#: src/celestia/celestiacore.cpp:3489
+#: src/celestia/celestiacore.cpp:3518
 msgid " fps"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3491 src/celestia/kde/videocapturedlg.cpp:283
+#: src/celestia/celestiacore.cpp:3520 src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
 msgstr " 동영상 저장중"
 
-#: src/celestia/celestiacore.cpp:3493 src/celestia/kde/videocapturedlg.cpp:66
+#: src/celestia/celestiacore.cpp:3522 src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
 msgstr " 멈춤"
 
-#: src/celestia/celestiacore.cpp:3512
+#: src/celestia/celestiacore.cpp:3541
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 녹화시작/일시정지    F12 정지"
 
-#: src/celestia/celestiacore.cpp:3521 src/celestia/celestiacore.cpp:3524
+#: src/celestia/celestiacore.cpp:3550 src/celestia/celestiacore.cpp:3553
 msgid "Edit Mode"
 msgstr "편집 모드"
 
-#: src/celestia/celestiacore.cpp:3590
+#: src/celestia/celestiacore.cpp:3619
 msgid "Loading solar system catalog: "
 msgstr "항성계 카탈로그 로딩중: "
 
-#: src/celestia/celestiacore.cpp:3631
+#: src/celestia/celestiacore.cpp:3660
 msgid "Loading "
 msgstr "로딩중: "
 
-#: src/celestia/celestiacore.cpp:3666
+#: src/celestia/celestiacore.cpp:3695
 msgid "License file 'License.txt' is missing!"
 msgstr "라이센스 파일'License.txt'이 없습니다!"
 
-#: src/celestia/celestiacore.cpp:3687
+#: src/celestia/celestiacore.cpp:3716
 msgid "Error reading configuration file."
 msgstr "설정 파일 읽는 중 오류가 발생했습니다."
 
-#: src/celestia/celestiacore.cpp:3694
+#: src/celestia/celestiacore.cpp:3723
 msgid "Initialization of SPICE library failed."
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3741
+#: src/celestia/celestiacore.cpp:3770
 msgid "Cannot read star database."
 msgstr "항성 데이타베이스를 읽을 수 없습니다."
 
-#: src/celestia/celestiacore.cpp:3763
+#: src/celestia/celestiacore.cpp:3792
 msgid "Error reading deep sky file\n"
 msgstr "딥 스카이 파일 여는 중 오류 발생.\n"
 
-#: src/celestia/celestiacore.cpp:3770 src/celestia/celestiacore.cpp:4038
-#: src/celestia/celestiacore.cpp:4060
+#: src/celestia/celestiacore.cpp:3799 src/celestia/celestiacore.cpp:4067
+#: src/celestia/celestiacore.cpp:4089
 msgid "Error opening "
 msgstr "파일 열기 오류: "
 
-#: src/celestia/celestiacore.cpp:3824
+#: src/celestia/celestiacore.cpp:3853
 msgid "Error opening solar system catalog.\n"
 msgstr "항성계 카탈로그의 여는 중 오류 발생.\n"
 
-#: src/celestia/celestiacore.cpp:3857
+#: src/celestia/celestiacore.cpp:3886
 msgid "Error opening asterisms file."
 msgstr "별자리 파일 여는 중 오류가 발생했습니다."
 
-#: src/celestia/celestiacore.cpp:3872
+#: src/celestia/celestiacore.cpp:3901
 msgid "Error opening constellation boundaries files."
 msgstr "별자리 경계선 파일을 여는 중 오류가 발생"
 
-#: src/celestia/celestiacore.cpp:3937
+#: src/celestia/celestiacore.cpp:3966
 msgid "render path: "
 msgstr "렌더링 패스: "
 
-#: src/celestia/celestiacore.cpp:3948
+#: src/celestia/celestiacore.cpp:3977
 msgid "Failed to initialize renderer"
 msgstr "렌더러 초기화 실패"
 
-#: src/celestia/celestiacore.cpp:3964
+#: src/celestia/celestiacore.cpp:3993
 msgid "Error loading font; text will not be visible.\n"
 msgstr "폰트 읽기 에러, 텍스트가 표시되지 않습니다.\n"
 
-#: src/celestia/celestiacore.cpp:4021
+#: src/celestia/celestiacore.cpp:4050
 msgid "Error reading cross index "
 msgstr "크로스 인덱스 파일 읽기 에러: "
 
-#: src/celestia/celestiacore.cpp:4023
+#: src/celestia/celestiacore.cpp:4052
 msgid "Loaded cross index "
 msgstr "크로스 인덱스 파일 읽음: "
 
-#: src/celestia/celestiacore.cpp:4045
+#: src/celestia/celestiacore.cpp:4074
 msgid "Error reading star names file\n"
 msgstr "항성이름 파일 읽는 중 에러\n"
 
-#: src/celestia/celestiacore.cpp:4068
+#: src/celestia/celestiacore.cpp:4097
 msgid "Error reading stars file\n"
 msgstr "항성 파일 읽는 중 에러\n"
 
-#: src/celestia/celestiacore.cpp:4095
+#: src/celestia/celestiacore.cpp:4124
 msgid "Error opening star catalog "
 msgstr "항성 카탈로그 파일 읽는 중 에러: "
 
@@ -805,160 +811,164 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/celestia/winmain.cpp:598 src/celestia/kde/kdeapp.cpp:912
+#: src/celestia/winmain.cpp:609 src/celestia/kde/kdeapp.cpp:916
 msgid "Vendor: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:603 src/celestia/kde/kdeapp.cpp:917
+#: src/celestia/winmain.cpp:614 src/celestia/kde/kdeapp.cpp:921
 #, fuzzy
 msgid "Renderer: "
 msgstr "표시(&R)"
 
-#: src/celestia/winmain.cpp:608 src/celestia/kde/kdeapp.cpp:922
+#: src/celestia/winmain.cpp:619 src/celestia/kde/kdeapp.cpp:926
 msgid "Version: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:618
+#: src/celestia/winmain.cpp:629
 #, fuzzy
 msgid "GLSL version: "
 msgstr "GL에러: "
 
-#: src/celestia/winmain.cpp:629 src/celestia/kde/kdeapp.cpp:931
+#: src/celestia/winmain.cpp:640 src/celestia/kde/kdeapp.cpp:935
 #, fuzzy
 msgid "Max simultaneous textures: "
 msgstr "Texture해상도: 중간"
 
-#: src/celestia/winmain.cpp:636 src/celestia/kde/kdeapp.cpp:936
+#: src/celestia/winmain.cpp:647 src/celestia/kde/kdeapp.cpp:940
 msgid "Max texture size: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:643 src/celestia/kde/kdeapp.cpp:942
+#: src/celestia/winmain.cpp:656
+msgid "Max cube map size: "
+msgstr ""
+
+#: src/celestia/winmain.cpp:664 src/celestia/kde/kdeapp.cpp:946
 msgid "Point size range: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:648 src/celestia/kde/kdeapp.cpp:946
+#: src/celestia/winmain.cpp:669 src/celestia/kde/kdeapp.cpp:950
 msgid "Supported Extensions:"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1361
+#: src/celestia/winmain.cpp:1382
 msgid "Windowed Mode"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1480 src/celestia/kde/kdepreferencesdialog.cpp:230
+#: src/celestia/winmain.cpp:1501 src/celestia/kde/kdepreferencesdialog.cpp:234
 #: src/celestia/kde/selectionpopup.cpp:362
-#: src/celestia/res/resource_strings.cpp:151
+#: src/celestia/res/resource_strings.cpp:154
 msgid "Asteroids"
 msgstr "소행성"
 
-#: src/celestia/winmain.cpp:1482 src/celestia/kde/kdepreferencesdialog.cpp:196
+#: src/celestia/winmain.cpp:1503 src/celestia/kde/kdepreferencesdialog.cpp:200
 #: src/celestia/kde/selectionpopup.cpp:364
-#: src/celestia/res/resource_strings.cpp:172
+#: src/celestia/res/resource_strings.cpp:175
 msgid "Comets"
 msgstr "혜성"
 
-#: src/celestia/winmain.cpp:1484 src/celestia/kde/selectionpopup.cpp:366
+#: src/celestia/winmain.cpp:1505 src/celestia/kde/selectionpopup.cpp:366
 msgid "Invisibles"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1486 src/celestia/kde/kdepreferencesdialog.cpp:187
+#: src/celestia/winmain.cpp:1507 src/celestia/kde/kdepreferencesdialog.cpp:191
 #: src/celestia/kde/selectionpopup.cpp:368
-#: src/celestia/res/resource_strings.cpp:155
+#: src/celestia/res/resource_strings.cpp:158
 msgid "Moons"
 msgstr "위성"
 
-#: src/celestia/winmain.cpp:1488 src/celestia/winmain.cpp:1523
-#: src/celestia/winmain.cpp:1625 src/celestia/kde/kdepreferencesdialog.cpp:80
-#: src/celestia/kde/kdepreferencesdialog.cpp:178
+#: src/celestia/winmain.cpp:1509 src/celestia/winmain.cpp:1544
+#: src/celestia/winmain.cpp:1646 src/celestia/kde/kdepreferencesdialog.cpp:80
+#: src/celestia/kde/kdepreferencesdialog.cpp:182
 #: src/celestia/kde/selectionpopup.cpp:370
 #: src/celestia/kde/selectionpopup.cpp:438
-#: src/celestia/res/resource_strings.cpp:147
-#: src/celestia/res/resource_strings.cpp:156
+#: src/celestia/res/resource_strings.cpp:150
+#: src/celestia/res/resource_strings.cpp:159
 msgid "Planets"
 msgstr "행성"
 
-#: src/celestia/winmain.cpp:1490 src/celestia/kde/celestialbrowser.cpp:194
+#: src/celestia/winmain.cpp:1511 src/celestia/kde/celestialbrowser.cpp:194
 #: src/celestia/kde/selectionpopup.cpp:372
-#: src/celestia/res/resource_strings.cpp:157
+#: src/celestia/res/resource_strings.cpp:160
 msgid "Spacecraft"
 msgstr "우주선"
 
-#: src/celestia/winmain.cpp:1580 src/celestia/winmain.cpp:1613
-#: src/celestia/winmain.cpp:1636 src/celestia/kde/eclipsefinderdlg.cpp:117
+#: src/celestia/winmain.cpp:1601 src/celestia/winmain.cpp:1634
+#: src/celestia/winmain.cpp:1657 src/celestia/kde/eclipsefinderdlg.cpp:117
 #: src/celestia/kde/selectionpopup.cpp:271
 msgid "&Goto"
 msgstr "이동(&G)"
 
-#: src/celestia/winmain.cpp:1581 src/celestia/winmain.cpp:1637
+#: src/celestia/winmain.cpp:1602 src/celestia/winmain.cpp:1658
 #: src/celestia/kde/selectionpopup.cpp:272
 msgid "&Follow"
 msgstr "춘분점동기(&F)"
 
-#: src/celestia/winmain.cpp:1582
+#: src/celestia/winmain.cpp:1603
 #, fuzzy
 msgid "S&ync Orbit"
 msgstr "자전 동기(&Y)"
 
-#: src/celestia/winmain.cpp:1583 src/celestia/winmain.cpp:1614
-#: src/celestia/winmain.cpp:1638 src/celestia/kde/selectionpopup.cpp:275
+#: src/celestia/winmain.cpp:1604 src/celestia/winmain.cpp:1635
+#: src/celestia/winmain.cpp:1659 src/celestia/kde/selectionpopup.cpp:275
 msgid "&Info"
 msgstr "천체정보(&I)"
 
-#: src/celestia/winmain.cpp:1590
+#: src/celestia/winmain.cpp:1611
 #, fuzzy
 msgid "&Satellites"
 msgstr "위성"
 
-#: src/celestia/winmain.cpp:1600 src/celestia/kde/selectionpopup.cpp:316
+#: src/celestia/winmain.cpp:1621 src/celestia/kde/selectionpopup.cpp:316
 msgid "&Alternate Surfaces"
 msgstr "표면 교체(&A)"
 
-#: src/celestia/winmain.cpp:1623 src/celestia/kde/selectionpopup.cpp:417
+#: src/celestia/winmain.cpp:1644 src/celestia/kde/selectionpopup.cpp:417
 msgid "Orbiting Bodies"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1650 src/celestia/kde/selectionpopup.cpp:281
+#: src/celestia/winmain.cpp:1671 src/celestia/kde/selectionpopup.cpp:281
 msgid "&Unmark"
 msgstr "마커 해제(&U)"
 
-#: src/celestia/winmain.cpp:1652 src/celestia/kde/selectionpopup.cpp:296
+#: src/celestia/winmain.cpp:1673 src/celestia/kde/selectionpopup.cpp:296
 msgid "&Mark"
 msgstr "마커(&M)"
 
-#: src/celestia/winmain.cpp:3019
+#: src/celestia/winmain.cpp:3079
 #, fuzzy
 msgid "Loading: "
 msgstr "로딩중: "
 
-#: src/celestia/winmain.cpp:3177 src/celutil/util.cpp:72
+#: src/celestia/winmain.cpp:3234 src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
 msgstr "ko"
 
-#: src/celestia/winmain.cpp:3179 src/celestia/res/resource_strings.cpp:213
+#: src/celestia/winmain.cpp:3236 src/celestia/res/resource_strings.cpp:217
 msgid "WinLangID"
 msgstr "412"
 
-#: src/celestia/winmain.cpp:3680
+#: src/celestia/winmain.cpp:3729
 #, fuzzy
 msgid "Copied URL"
 msgstr "URL 복사"
 
-#: src/celestia/winmain.cpp:3803
+#: src/celestia/winmain.cpp:3852
 #, fuzzy
 msgid "Loading URL"
 msgstr "로딩중: "
 
-#: src/celestia/winmain.cpp:3815
+#: src/celestia/winmain.cpp:3864
 #, fuzzy
 msgid "Error opening script"
 msgstr "스크립트 파일'%s'에서 에러가 발생했습니다."
 
-#: src/celestia/winmain.cpp:3834
+#: src/celestia/winmain.cpp:3883
 #, fuzzy
 msgid "Error loading script"
 msgstr "스크립트 파일'%s'에서 에러가 발생했습니다."
 
-#: src/celestia/winmain.cpp:3839
+#: src/celestia/winmain.cpp:3888
 msgid "Running script"
 msgstr ""
 
@@ -1024,7 +1034,7 @@ msgid "Pluto"
 msgstr "명왕성"
 
 #: src/celestia/winstarbrowser.cpp:70 src/celestia/kde/rc.cpp:34
-#: src/celestia/res/resource_strings.cpp:94
+#: src/celestia/res/resource_strings.cpp:96
 #, no-c-format
 msgid "Name"
 msgstr "이름"
@@ -1054,7 +1064,7 @@ msgstr "분광형"
 msgid "Universal Time"
 msgstr "시간흐름을 반대로"
 
-#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:494
+#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:495
 #: src/celestia/kde/rc.cpp:30
 #, no-c-format
 msgid "Celestial Browser"
@@ -1078,8 +1088,8 @@ msgstr "혜성"
 msgid "-"
 msgstr ""
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:495
-#: src/celestia/kde/rc.cpp:70 src/celestia/res/resource_strings.cpp:203
+#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:496
+#: src/celestia/kde/rc.cpp:70 src/celestia/res/resource_strings.cpp:207
 #, no-c-format
 msgid "Eclipse Finder"
 msgstr "식 찾기"
@@ -1138,440 +1148,445 @@ msgstr ""
 "데이터를 읽지 못할 수 있습니다. 정상적으로 설치가 되었는지 확인하시기 바랍니"
 "다. 계속 진행합니다."
 
-#: src/celestia/kde/kdeapp.cpp:403
+#: src/celestia/kde/kdeapp.cpp:404
 msgid "Go to &URL..."
 msgstr "URL로 이동(&U)..."
 
-#: src/celestia/kde/kdeapp.cpp:404
+#: src/celestia/kde/kdeapp.cpp:405
 msgid "Go to &Long/Lat..."
 msgstr "경위도 이동(&L)..."
 
-#: src/celestia/kde/kdeapp.cpp:406
+#: src/celestia/kde/kdeapp.cpp:407
 msgid "&Back"
 msgstr "뒤로(&B)"
 
-#: src/celestia/kde/kdeapp.cpp:409
+#: src/celestia/kde/kdeapp.cpp:410
 msgid "&Forward"
 msgstr "앞으로(&F)"
 
-#: src/celestia/kde/kdeapp.cpp:416
+#: src/celestia/kde/kdeapp.cpp:417
 msgid "Home"
 msgstr "홈"
 
-#: src/celestia/kde/kdeapp.cpp:423
+#: src/celestia/kde/kdeapp.cpp:424
 msgid "Bookmarks"
 msgstr "북마크"
 
-#: src/celestia/kde/kdeapp.cpp:435
+#: src/celestia/kde/kdeapp.cpp:436
 msgid "Full Screen"
 msgstr "전체화면"
 
-#: src/celestia/kde/kdeapp.cpp:439
+#: src/celestia/kde/kdeapp.cpp:440
 msgid "Copy URL"
 msgstr "URL 복사"
 
-#: src/celestia/kde/kdeapp.cpp:442
+#: src/celestia/kde/kdeapp.cpp:443
 msgid "Set Time..."
 msgstr "시간 설정..."
 
-#: src/celestia/kde/kdeapp.cpp:443
+#: src/celestia/kde/kdeapp.cpp:444
 msgid "Set Time to Now"
 msgstr "현재시간으로 설정"
 
-#: src/celestia/kde/kdeapp.cpp:444
+#: src/celestia/kde/kdeapp.cpp:445
 msgid "Accelerate Time"
 msgstr "시간을 빠르게"
 
-#: src/celestia/kde/kdeapp.cpp:445
+#: src/celestia/kde/kdeapp.cpp:446
 msgid "Decelerate Time"
 msgstr "시간을 느리게"
 
-#: src/celestia/kde/kdeapp.cpp:446
+#: src/celestia/kde/kdeapp.cpp:447
 msgid "Pause Time"
 msgstr "시간 멈춤"
 
-#: src/celestia/kde/kdeapp.cpp:447
+#: src/celestia/kde/kdeapp.cpp:448
 msgid "Reverse Time"
 msgstr "시간흐름을 반대로"
 
-#: src/celestia/kde/kdeapp.cpp:449
+#: src/celestia/kde/kdeapp.cpp:450
 msgid "Split View Vertically"
 msgstr "수직분할"
 
-#: src/celestia/kde/kdeapp.cpp:450
+#: src/celestia/kde/kdeapp.cpp:451
 msgid "Split View Horizontally"
 msgstr "수평분할"
 
-#: src/celestia/kde/kdeapp.cpp:451
+#: src/celestia/kde/kdeapp.cpp:452
 msgid "Cycle View"
 msgstr "화면 전환"
 
-#: src/celestia/kde/kdeapp.cpp:452
+#: src/celestia/kde/kdeapp.cpp:453
 msgid "Single View"
 msgstr "단일창"
 
-#: src/celestia/kde/kdeapp.cpp:453
+#: src/celestia/kde/kdeapp.cpp:454
 msgid "Delete View"
 msgstr "활성창 닫기"
 
-#: src/celestia/kde/kdeapp.cpp:454
+#: src/celestia/kde/kdeapp.cpp:455
 msgid "Frames Visible"
 msgstr "분할선 보기"
 
-#: src/celestia/kde/kdeapp.cpp:467
+#: src/celestia/kde/kdeapp.cpp:468
 msgid "Active Frame Visible"
 msgstr "활성창 분할선 보기"
 
-#: src/celestia/kde/kdeapp.cpp:479
+#: src/celestia/kde/kdeapp.cpp:480
 msgid "Synchronize Time"
 msgstr "시간 동기화"
 
-#: src/celestia/kde/kdeapp.cpp:491
+#: src/celestia/kde/kdeapp.cpp:492
 msgid "Alt-Azimuth Mode"
 msgstr "고도각·방위각 모드"
 
-#: src/celestia/kde/kdeapp.cpp:492
+#: src/celestia/kde/kdeapp.cpp:493
 msgid "Go To Surface"
 msgstr "천체 표면으로 이동"
 
-#: src/celestia/kde/kdeapp.cpp:520
+#: src/celestia/kde/kdeapp.cpp:521
 msgid "Show Stars"
 msgstr "항성 보기"
 
-#: src/celestia/kde/kdeapp.cpp:523
+#: src/celestia/kde/kdeapp.cpp:524
 msgid "Show Planets"
 msgstr "행성 보기"
 
-#: src/celestia/kde/kdeapp.cpp:526
+#: src/celestia/kde/kdeapp.cpp:527
 msgid "Show Galaxies"
 msgstr "은하 보기"
 
-#: src/celestia/kde/kdeapp.cpp:529
+#: src/celestia/kde/kdeapp.cpp:530
 msgid "Show Partial Trajectories"
 msgstr "커스텀 궤도 보기"
 
-#: src/celestia/kde/kdeapp.cpp:532
+#: src/celestia/kde/kdeapp.cpp:533
 msgid "Show Nebulae"
 msgstr "성운 보기"
 
-#: src/celestia/kde/kdeapp.cpp:535
+#: src/celestia/kde/kdeapp.cpp:536
 msgid "Show Open Clusters"
 msgstr "산개성단 보기"
 
-#: src/celestia/kde/kdeapp.cpp:538
+#: src/celestia/kde/kdeapp.cpp:539
 msgid "Show Constellations"
 msgstr "별자리 보기"
 
-#: src/celestia/kde/kdeapp.cpp:541
+#: src/celestia/kde/kdeapp.cpp:542
 msgid "Show CloudMaps"
 msgstr "구름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:544
+#: src/celestia/kde/kdeapp.cpp:545
 #, fuzzy
 msgid "Show Cloud Shadows"
 msgstr "구름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:547
+#: src/celestia/kde/kdeapp.cpp:548
 msgid "Show Orbits"
 msgstr "궤도 보기"
 
-#: src/celestia/kde/kdeapp.cpp:550
+#: src/celestia/kde/kdeapp.cpp:551
 msgid "Show Asteroid Orbits"
 msgstr "소행성궤도 보기"
 
-#: src/celestia/kde/kdeapp.cpp:553
+#: src/celestia/kde/kdeapp.cpp:554
 msgid "Show Comet Orbits"
 msgstr "혜성궤도 보기"
 
-#: src/celestia/kde/kdeapp.cpp:556
+#: src/celestia/kde/kdeapp.cpp:557
 msgid "Show Moon Orbits"
 msgstr "위성궤도 보기"
 
-#: src/celestia/kde/kdeapp.cpp:559
+#: src/celestia/kde/kdeapp.cpp:560
+#, fuzzy
+msgid "Show Star Orbits"
+msgstr "궤도 보기"
+
+#: src/celestia/kde/kdeapp.cpp:563
 msgid "Show Planet Orbits"
 msgstr "행성궤도 보기"
 
-#: src/celestia/kde/kdeapp.cpp:562
+#: src/celestia/kde/kdeapp.cpp:566
 msgid "Show Spacecraft Orbits"
 msgstr "우주선 궤도 보기 "
 
-#: src/celestia/kde/kdeapp.cpp:565
+#: src/celestia/kde/kdeapp.cpp:569
 msgid "Show Celestial Grid"
 msgstr "천구좌표 보기"
 
-#: src/celestia/kde/kdeapp.cpp:568
+#: src/celestia/kde/kdeapp.cpp:572
 msgid "Show Night Side Lights"
 msgstr "야간맵 보기"
 
-#: src/celestia/kde/kdeapp.cpp:571
+#: src/celestia/kde/kdeapp.cpp:575
 msgid "Show Markers"
 msgstr "마커 보기"
 
-#: src/celestia/kde/kdeapp.cpp:574
+#: src/celestia/kde/kdeapp.cpp:578
 msgid "Show Atmospheres"
 msgstr "대기 보기"
 
-#: src/celestia/kde/kdeapp.cpp:577
+#: src/celestia/kde/kdeapp.cpp:581
 msgid "Show Smooth Orbit Lines"
 msgstr "부드러운 궤도선 보기"
 
-#: src/celestia/kde/kdeapp.cpp:580
+#: src/celestia/kde/kdeapp.cpp:584
 msgid "Show Eclipse Shadows"
 msgstr "식 그림자 보기"
 
-#: src/celestia/kde/kdeapp.cpp:583
+#: src/celestia/kde/kdeapp.cpp:587
 msgid "Cycle Star Mode"
 msgstr "항성 표시방법 전환"
 
-#: src/celestia/kde/kdeapp.cpp:585
+#: src/celestia/kde/kdeapp.cpp:589
 msgid "Show Ring Shadows"
 msgstr "고리 그림자 보기"
 
-#: src/celestia/kde/kdeapp.cpp:588
+#: src/celestia/kde/kdeapp.cpp:592
 msgid "Show Boundaries"
 msgstr "별자리 경계선 보기"
 
-#: src/celestia/kde/kdeapp.cpp:591
+#: src/celestia/kde/kdeapp.cpp:595
 #: src/celestia/kde/kdepreferencesdialog.cpp:76
 msgid "Auto Magnitudes"
 msgstr "자동 등급 조정"
 
-#: src/celestia/kde/kdeapp.cpp:594
+#: src/celestia/kde/kdeapp.cpp:598
 msgid "Show Comet Tails"
 msgstr "혜성꼬리 보기"
 
-#: src/celestia/kde/kdeapp.cpp:597
+#: src/celestia/kde/kdeapp.cpp:601
 msgid "Show Star Labels"
 msgstr "항성 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:602
+#: src/celestia/kde/kdeapp.cpp:606
 msgid "Show Planet Labels"
 msgstr "행성 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:605
+#: src/celestia/kde/kdeapp.cpp:609
 msgid "Show Moon Labels"
 msgstr "위성 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:608
+#: src/celestia/kde/kdeapp.cpp:612
 msgid "Show Comet Labels"
 msgstr "혜성 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:611
+#: src/celestia/kde/kdeapp.cpp:615
 msgid "Show Constellation Labels"
 msgstr "별자리 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:614
+#: src/celestia/kde/kdeapp.cpp:618
 msgid "Constellation Labels in Latin"
 msgstr "별자리명 라틴어 표시"
 
-#: src/celestia/kde/kdeapp.cpp:617
+#: src/celestia/kde/kdeapp.cpp:621
 msgid "Show Galaxy Labels"
 msgstr "은하 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:620
+#: src/celestia/kde/kdeapp.cpp:624
 msgid "Show Nebula Labels"
 msgstr "성운 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:623
+#: src/celestia/kde/kdeapp.cpp:627
 msgid "Show Open Cluster Labels"
 msgstr "산개성단 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:626
+#: src/celestia/kde/kdeapp.cpp:630
 msgid "Show Asteroid Labels"
 msgstr "소행성 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:629
+#: src/celestia/kde/kdeapp.cpp:633
 msgid "Show Spacecraft Labels"
 msgstr "우주선 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:632
+#: src/celestia/kde/kdeapp.cpp:636
 msgid "Show Location Labels"
 msgstr "지명 이름 보기"
 
-#: src/celestia/kde/kdeapp.cpp:635
+#: src/celestia/kde/kdeapp.cpp:639
 msgid "Display Local Time"
 msgstr "현지 시간 표시"
 
-#: src/celestia/kde/kdeapp.cpp:640
+#: src/celestia/kde/kdeapp.cpp:644
 msgid "Show City Locations"
 msgstr "도시 보기"
 
-#: src/celestia/kde/kdeapp.cpp:643
+#: src/celestia/kde/kdeapp.cpp:647
 msgid "Show Observatory Locations"
 msgstr "천문대 보기"
 
-#: src/celestia/kde/kdeapp.cpp:646
+#: src/celestia/kde/kdeapp.cpp:650
 msgid "Show Landing Sites Locations"
 msgstr "착륙지점 보기"
 
-#: src/celestia/kde/kdeapp.cpp:649
+#: src/celestia/kde/kdeapp.cpp:653
 msgid "Show Crater Locations"
 msgstr "크레이터 보기"
 
-#: src/celestia/kde/kdeapp.cpp:652
+#: src/celestia/kde/kdeapp.cpp:656
 msgid "Show Mons Locations"
 msgstr "산 보기"
 
-#: src/celestia/kde/kdeapp.cpp:655
+#: src/celestia/kde/kdeapp.cpp:659
 msgid "Show Terra Locations"
 msgstr "육지 보기"
 
-#: src/celestia/kde/kdeapp.cpp:658
+#: src/celestia/kde/kdeapp.cpp:662
 msgid "Show Vallis Locations"
 msgstr "계곡 보기"
 
-#: src/celestia/kde/kdeapp.cpp:661
+#: src/celestia/kde/kdeapp.cpp:665
 msgid "Show Mare Locations"
 msgstr "바다 보기"
 
-#: src/celestia/kde/kdeapp.cpp:664
+#: src/celestia/kde/kdeapp.cpp:668
 msgid "Show Other Locations"
 msgstr "기타 보기"
 
-#: src/celestia/kde/kdeapp.cpp:668
+#: src/celestia/kde/kdeapp.cpp:672
 msgid "Wireframe Mode"
 msgstr "와이어 프레임 모드"
 
-#: src/celestia/kde/kdeapp.cpp:670
+#: src/celestia/kde/kdeapp.cpp:674
 msgid "Center on Orbit"
 msgstr "궤도의 중심에"
 
-#: src/celestia/kde/kdeapp.cpp:674
-#: src/celestia/kde/kdepreferencesdialog.cpp:463
-msgid "Basic"
-msgstr ""
-
-#: src/celestia/kde/kdeapp.cpp:676
-#: src/celestia/kde/kdepreferencesdialog.cpp:465
-msgid "Multitexture"
-msgstr ""
-
 #: src/celestia/kde/kdeapp.cpp:678
 #: src/celestia/kde/kdepreferencesdialog.cpp:467
-msgid "NvCombiners"
+msgid "Basic"
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:680
 #: src/celestia/kde/kdepreferencesdialog.cpp:469
-msgid "DOT3 ARBVP"
+msgid "Multitexture"
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:682
 #: src/celestia/kde/kdepreferencesdialog.cpp:471
-msgid "NvCombiner NvVP"
+msgid "NvCombiners"
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:684
 #: src/celestia/kde/kdepreferencesdialog.cpp:473
-msgid "NvCombiner ARBVP"
+msgid "DOT3 ARBVP"
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:686
 #: src/celestia/kde/kdepreferencesdialog.cpp:475
-msgid "ARBFP ARBVP"
+msgid "NvCombiner NvVP"
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:688
 #: src/celestia/kde/kdepreferencesdialog.cpp:477
-msgid "NV30"
+msgid "NvCombiner ARBVP"
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:690
 #: src/celestia/kde/kdepreferencesdialog.cpp:479
-msgid "OpenGL 2.0"
+msgid "ARBFP ARBVP"
 msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:692
+#: src/celestia/kde/kdepreferencesdialog.cpp:481
+msgid "NV30"
+msgstr ""
+
+#: src/celestia/kde/kdeapp.cpp:694
+#: src/celestia/kde/kdepreferencesdialog.cpp:483
+msgid "OpenGL 2.0"
+msgstr ""
+
+#: src/celestia/kde/kdeapp.cpp:696
 msgid "Cycle OpenGL Render Path"
 msgstr "렌더링 패스 전환"
 
-#: src/celestia/kde/kdeapp.cpp:694
-#: src/celestia/kde/kdepreferencesdialog.cpp:498
+#: src/celestia/kde/kdeapp.cpp:698
+#: src/celestia/kde/kdepreferencesdialog.cpp:502
 msgid "Sync framerate to video refresh rate"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:699
+#: src/celestia/kde/kdeapp.cpp:703
 msgid "Grab Image"
 msgstr "이미지 캡춰"
 
-#: src/celestia/kde/kdeapp.cpp:700
+#: src/celestia/kde/kdeapp.cpp:704
 msgid "Capture Video"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:702
+#: src/celestia/kde/kdeapp.cpp:706
 msgid "OpenGL info"
 msgstr "OpenGL정보"
 
-#: src/celestia/kde/kdeapp.cpp:710
+#: src/celestia/kde/kdeapp.cpp:714
 msgid "Show Bookmark Toolbar"
 msgstr "북마크 툴바 보기"
 
-#: src/celestia/kde/kdeapp.cpp:963
+#: src/celestia/kde/kdeapp.cpp:967
 msgid "OpenGL Info"
 msgstr "OpenGL정보"
 
-#: src/celestia/kde/kdeapp.cpp:1303
-#: src/celestia/kde/kdepreferencesdialog.cpp:359
-#: src/celestia/kde/kdepreferencesdialog.cpp:370
+#: src/celestia/kde/kdeapp.cpp:1312
+#: src/celestia/kde/kdepreferencesdialog.cpp:363
+#: src/celestia/kde/kdepreferencesdialog.cpp:374
 msgid "UTC"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1402
+#: src/celestia/kde/kdeapp.cpp:1411
 msgid ""
 "This version of Celestia was not built with support for movie recording."
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1428
+#: src/celestia/kde/kdeapp.cpp:1437
 #, fuzzy
 msgid "Go to URL"
 msgstr "URL로 이동(&U)..."
 
-#: src/celestia/kde/kdeapp.cpp:1428
+#: src/celestia/kde/kdeapp.cpp:1437
 msgid "Enter URL"
 msgstr "URL을 입력하세요"
 
-#: src/celestia/kde/kdeapp.cpp:1524
+#: src/celestia/kde/kdeapp.cpp:1533
 msgid "Object: "
 msgstr "천체이름: "
 
-#: src/celestia/kde/kdeapp.cpp:1529
+#: src/celestia/kde/kdeapp.cpp:1538
 msgid "Longitude: "
 msgstr "위도: "
 
-#: src/celestia/kde/kdeapp.cpp:1535
+#: src/celestia/kde/kdeapp.cpp:1544
 msgid "East"
 msgstr "동경"
 
-#: src/celestia/kde/kdeapp.cpp:1536
+#: src/celestia/kde/kdeapp.cpp:1545
 msgid "West"
 msgstr "서경"
 
-#: src/celestia/kde/kdeapp.cpp:1538
+#: src/celestia/kde/kdeapp.cpp:1547
 msgid "Latitude: "
 msgstr "위도: "
 
-#: src/celestia/kde/kdeapp.cpp:1544
+#: src/celestia/kde/kdeapp.cpp:1553
 msgid "North"
 msgstr "북위"
 
-#: src/celestia/kde/kdeapp.cpp:1545
+#: src/celestia/kde/kdeapp.cpp:1554
 msgid "South"
 msgstr "남위"
 
-#: src/celestia/kde/kdeapp.cpp:1547
+#: src/celestia/kde/kdeapp.cpp:1556
 msgid "Altitude: "
 msgstr "고도: "
 
-#: src/celestia/kde/kdeapp.cpp:1552 src/celestia/res/resource_strings.cpp:120
+#: src/celestia/kde/kdeapp.cpp:1561 src/celestia/res/resource_strings.cpp:122
 msgid "km"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1622
+#: src/celestia/kde/kdeapp.cpp:1631
 msgid "Celestia encountered an error while processing your script"
 msgstr "스크립트 실행중 에러 발생"
 
 #: src/celestia/kde/kdemain.cpp:25 src/celestia/kde/kdemain.cpp:43
-#: src/celestia/res/resource_strings.cpp:62
+#: src/celestia/res/resource_strings.cpp:64
 msgid "Celestia"
 msgstr ""
 
@@ -1616,70 +1631,71 @@ msgid "Rendering"
 msgstr "렌더링"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:70
-#: src/celestia/res/resource_strings.cpp:166
+#: src/celestia/res/resource_strings.cpp:169
 msgid "Show"
 msgstr "표시"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:72
-#: src/celestia/kde/kdepreferencesdialog.cpp:168
-#: src/celestia/res/resource_strings.cpp:149
-#: src/celestia/res/resource_strings.cpp:158
+#: src/celestia/kde/kdepreferencesdialog.cpp:172
+#: src/celestia/res/resource_strings.cpp:152
+#: src/celestia/res/resource_strings.cpp:161
 msgid "Stars"
 msgstr "항성"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:84
-#: src/celestia/kde/kdepreferencesdialog.cpp:211
-#: src/celestia/res/resource_strings.cpp:143
-#: src/celestia/res/resource_strings.cpp:153
+#: src/celestia/kde/kdepreferencesdialog.cpp:215
+#: src/celestia/res/resource_strings.cpp:146
+#: src/celestia/res/resource_strings.cpp:156
 msgid "Galaxies"
 msgstr "은하"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:88
-#: src/celestia/kde/kdepreferencesdialog.cpp:216
-#: src/celestia/res/resource_strings.cpp:144
-#: src/celestia/res/resource_strings.cpp:159
+#: src/celestia/kde/kdepreferencesdialog.cpp:220
+#: src/celestia/res/resource_strings.cpp:147
+#: src/celestia/res/resource_strings.cpp:162
 msgid "Nebulae"
 msgstr "성운"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:92
-#: src/celestia/kde/kdepreferencesdialog.cpp:221
-#: src/celestia/res/resource_strings.cpp:154
+#: src/celestia/kde/kdepreferencesdialog.cpp:225
+#: src/celestia/res/resource_strings.cpp:157
 msgid "Open Clusters"
 msgstr "산개성단"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:96
-#: src/celestia/res/resource_strings.cpp:136
+#: src/celestia/res/resource_strings.cpp:138
 msgid "Atmospheres"
 msgstr "대기"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:100
-#: src/celestia/res/resource_strings.cpp:138
+#: src/celestia/res/resource_strings.cpp:140
 msgid "Clouds"
 msgstr "구름"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:104
+#: src/celestia/res/resource_strings.cpp:141
 #, fuzzy
 msgid "Cloud Shadows"
 msgstr "식 그림자"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:108
-#: src/celestia/res/resource_strings.cpp:145
+#: src/celestia/res/resource_strings.cpp:148
 msgid "Night Side Lights"
 msgstr "야간맵"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:112
-#: src/celestia/res/resource_strings.cpp:142
+#: src/celestia/res/resource_strings.cpp:145
 msgid "Eclipse Shadows"
 msgstr "식 그림자"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:116
-#: src/celestia/res/resource_strings.cpp:139
+#: src/celestia/res/resource_strings.cpp:142
 msgid "Comet Tails"
 msgstr "혜성꼬리"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:120
 #: src/celestia/kde/kdepreferencesdialog.cpp:163
-#: src/celestia/res/resource_strings.cpp:146
+#: src/celestia/res/resource_strings.cpp:149
 msgid "Orbits"
 msgstr "궤도"
 
@@ -1692,24 +1708,24 @@ msgid "Smooth Orbit Lines"
 msgstr "부드러운 궤도선"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:132
-#: src/celestia/res/resource_strings.cpp:137
+#: src/celestia/res/resource_strings.cpp:139
 msgid "Celestial Grid"
 msgstr "천구좌표"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:136
-#: src/celestia/kde/kdepreferencesdialog.cpp:201
-#: src/celestia/res/resource_strings.cpp:141
-#: src/celestia/res/resource_strings.cpp:152
+#: src/celestia/kde/kdepreferencesdialog.cpp:205
+#: src/celestia/res/resource_strings.cpp:144
+#: src/celestia/res/resource_strings.cpp:155
 msgid "Constellations"
 msgstr "별자리"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:140
-#: src/celestia/res/resource_strings.cpp:150
+#: src/celestia/res/resource_strings.cpp:153
 msgid "Markers"
 msgstr "마커"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:144
-#: src/celestia/res/resource_strings.cpp:148
+#: src/celestia/res/resource_strings.cpp:151
 msgid "Ring Shadows"
 msgstr "고리 그림자"
 
@@ -1718,7 +1734,7 @@ msgid "Constellation Boundaries"
 msgstr "별자리 경계선"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:159
-#: src/celestia/res/resource_strings.cpp:167
+#: src/celestia/res/resource_strings.cpp:170
 msgid "Orbits / Labels"
 msgstr "궤도 / 이름"
 
@@ -1727,139 +1743,140 @@ msgstr "궤도 / 이름"
 msgid "Labels"
 msgstr "이름"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:206
+#: src/celestia/kde/kdepreferencesdialog.cpp:210
+#: src/celestia/res/resource_strings.cpp:176
 msgid "Constellations in Latin"
 msgstr "별자리 라틴어 표시"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:239
+#: src/celestia/kde/kdepreferencesdialog.cpp:243
 msgid "Spacecrafts"
 msgstr "우주선"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:244
-#: src/celestia/kde/kdepreferencesdialog.cpp:296
-#: src/celestia/res/resource_strings.cpp:173
+#: src/celestia/kde/kdepreferencesdialog.cpp:248
+#: src/celestia/kde/kdepreferencesdialog.cpp:300
+#: src/celestia/res/resource_strings.cpp:177
 msgid "Locations"
 msgstr "지명"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:253
+#: src/celestia/kde/kdepreferencesdialog.cpp:257
 msgid "Ambient Light"
 msgstr "주변빛"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:264
+#: src/celestia/kde/kdepreferencesdialog.cpp:268
 msgid "Limiting Magnitude"
 msgstr "등급 제한"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:273
+#: src/celestia/kde/kdepreferencesdialog.cpp:277
 msgid "Info Text"
 msgstr "천체 정보"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:274
+#: src/celestia/kde/kdepreferencesdialog.cpp:278
 msgid "Level: "
 msgstr "상세도"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:276
-#: src/celestia/res/resource_strings.cpp:160
+#: src/celestia/kde/kdepreferencesdialog.cpp:280
+#: src/celestia/res/resource_strings.cpp:163
 msgid "None"
 msgstr "없음"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:277
-#: src/celestia/res/resource_strings.cpp:161
+#: src/celestia/kde/kdepreferencesdialog.cpp:281
+#: src/celestia/res/resource_strings.cpp:164
 msgid "Terse"
 msgstr "보통"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:278
-#: src/celestia/res/resource_strings.cpp:162
+#: src/celestia/kde/kdepreferencesdialog.cpp:282
+#: src/celestia/res/resource_strings.cpp:165
 msgid "Verbose"
 msgstr "많이"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:283
+#: src/celestia/kde/kdepreferencesdialog.cpp:287
 msgid "Automatic FOV"
 msgstr "자동 시야 조정"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:284
+#: src/celestia/kde/kdepreferencesdialog.cpp:288
 msgid "Screen DPI: "
 msgstr "스크린 해상도: "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:286
+#: src/celestia/kde/kdepreferencesdialog.cpp:290
 msgid "Viewing Distance (cm): "
 msgstr "시점 거리(cm)"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:302
-#: src/celestia/res/resource_strings.cpp:174
+#: src/celestia/kde/kdepreferencesdialog.cpp:306
+#: src/celestia/res/resource_strings.cpp:178
 msgid "Cities"
 msgstr "도시"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:306
-#: src/celestia/res/resource_strings.cpp:175
+#: src/celestia/kde/kdepreferencesdialog.cpp:310
+#: src/celestia/res/resource_strings.cpp:179
 msgid "Observatories"
 msgstr "관측소·천문대"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:310
-#: src/celestia/res/resource_strings.cpp:176
+#: src/celestia/kde/kdepreferencesdialog.cpp:314
+#: src/celestia/res/resource_strings.cpp:180
 msgid "Landing Sites"
 msgstr "착륙지점"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:314
-#: src/celestia/res/resource_strings.cpp:179
+#: src/celestia/kde/kdepreferencesdialog.cpp:318
+#: src/celestia/res/resource_strings.cpp:183
 msgid "Craters"
 msgstr "크레이터"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:318
+#: src/celestia/kde/kdepreferencesdialog.cpp:322
 msgid "Mons"
 msgstr "산지"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:322
+#: src/celestia/kde/kdepreferencesdialog.cpp:326
 msgid "Terra"
 msgstr "육지"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:326
+#: src/celestia/kde/kdepreferencesdialog.cpp:330
 msgid "Vallis"
 msgstr "협곡"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:330
+#: src/celestia/kde/kdepreferencesdialog.cpp:334
 msgid "Mare"
 msgstr "바다"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:334
+#: src/celestia/kde/kdepreferencesdialog.cpp:338
 msgid "Other"
 msgstr "기타"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:338
+#: src/celestia/kde/kdepreferencesdialog.cpp:342
 msgid "Minimum Feature Size"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:352
+#: src/celestia/kde/kdepreferencesdialog.cpp:356
 msgid "Date/Time"
 msgstr "날짜/시각"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:356
+#: src/celestia/kde/kdepreferencesdialog.cpp:360
 msgid "Display"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:357
-#: src/celestia/kde/kdepreferencesdialog.cpp:368
+#: src/celestia/kde/kdepreferencesdialog.cpp:361
+#: src/celestia/kde/kdepreferencesdialog.cpp:372
 msgid "Timezone: "
 msgstr "시간대: "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:360
-#: src/celestia/kde/kdepreferencesdialog.cpp:371
+#: src/celestia/kde/kdepreferencesdialog.cpp:364
+#: src/celestia/kde/kdepreferencesdialog.cpp:375
 msgid "Local Time"
 msgstr "현지 시간"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:365
+#: src/celestia/kde/kdepreferencesdialog.cpp:369
 msgid "Set"
 msgstr "설정"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:366
+#: src/celestia/kde/kdepreferencesdialog.cpp:370
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
 msgstr "현지 시간은 1902년부터 2037년간만 지원됩니다.\n"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:419 src/celestia/kde/rc.cpp:27
+#: src/celestia/kde/kdepreferencesdialog.cpp:423 src/celestia/kde/rc.cpp:27
 #, no-c-format
 msgid "Now"
 msgstr "현재"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:440
+#: src/celestia/kde/kdepreferencesdialog.cpp:444
 msgid ""
 "\n"
 "Selection: "
@@ -1867,39 +1884,39 @@ msgstr ""
 "\n"
 "선택: "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:447
+#: src/celestia/kde/kdepreferencesdialog.cpp:451
 msgid "Include Light Travel Time"
 msgstr "광속에 의한 지연을 고려"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:449
+#: src/celestia/kde/kdepreferencesdialog.cpp:453
 msgid "Ignore Light Travel Time "
 msgstr "광속에 의한 지연을 무시"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:456
+#: src/celestia/kde/kdepreferencesdialog.cpp:460
 msgid "OpenGL"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:511
+#: src/celestia/kde/kdepreferencesdialog.cpp:515
 msgid "Key Bindings"
 msgstr "키 바인딩"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:727
+#: src/celestia/kde/kdepreferencesdialog.cpp:731
 msgid "<b>Unextended OpenGL 1.1</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:730
+#: src/celestia/kde/kdepreferencesdialog.cpp:734
 msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:733
+#: src/celestia/kde/kdepreferencesdialog.cpp:737
 msgid "<b>NVIDIA combiners, no vertex programs</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:736
+#: src/celestia/kde/kdepreferencesdialog.cpp:740
 msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:739
+#: src/celestia/kde/kdepreferencesdialog.cpp:743
 msgid ""
 "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
 "mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
@@ -1911,11 +1928,11 @@ msgstr ""
 "이 됩니다만 , NvCombiner ARBVP는 Geforce사용자에게만 조금 좋게하는 옵션입니"
 "다. "
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:745
+#: src/celestia/kde/kdepreferencesdialog.cpp:749
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:748
+#: src/celestia/kde/kdepreferencesdialog.cpp:752
 msgid ""
 "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
 "advanced effects on Geforce FX and Radeon 9700 cards"
@@ -1923,11 +1940,11 @@ msgstr ""
 "<b>ARB_fragment_program과 ARB_vertex_program extensions은</b><br> Geforce FX"
 "와 Radeon 9700에서 더 좋은 성능이 있습니다."
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:752
+#: src/celestia/kde/kdepreferencesdialog.cpp:756
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:755
+#: src/celestia/kde/kdepreferencesdialog.cpp:759
 msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr ""
 
@@ -1966,8 +1983,8 @@ msgid "&Select"
 msgstr "천체 선택(&S)"
 
 #: src/celestia/kde/selectionpopup.cpp:270
-#: src/celestia/res/resource_strings.cpp:102
-#: src/celestia/res/resource_strings.cpp:109
+#: src/celestia/res/resource_strings.cpp:104
+#: src/celestia/res/resource_strings.cpp:111
 msgid "&Center"
 msgstr "가운데로(&C)"
 
@@ -2059,7 +2076,7 @@ msgstr ""
 msgid "Error initializing movie capture."
 msgstr ""
 
-#: src/celestia/kde/rc.cpp:3 src/celestia/res/resource_strings.cpp:6
+#: src/celestia/kde/rc.cpp:3 src/celestia/res/resource_strings.cpp:8
 #, no-c-format
 msgid "&Navigation"
 msgstr "네비게이션(&N)"
@@ -2124,7 +2141,7 @@ msgstr "밝은 순서(절대 등급)"
 msgid "Brightest (App.)"
 msgstr "밝은 순서(실시등급)"
 
-#: src/celestia/kde/rc.cpp:58 src/celestia/res/resource_strings.cpp:106
+#: src/celestia/kde/rc.cpp:58 src/celestia/res/resource_strings.cpp:108
 #, no-c-format
 msgid "Nearest"
 msgstr "거리순"
@@ -2149,17 +2166,17 @@ msgstr "새로고침"
 msgid "End"
 msgstr "종료"
 
-#: src/celestia/kde/rc.cpp:88 src/celestia/res/resource_strings.cpp:210
+#: src/celestia/kde/rc.cpp:88 src/celestia/res/resource_strings.cpp:214
 #, no-c-format
 msgid "Search parameters"
 msgstr "파라미터 검색"
 
-#: src/celestia/kde/rc.cpp:91 src/celestia/res/resource_strings.cpp:211
+#: src/celestia/kde/rc.cpp:91 src/celestia/res/resource_strings.cpp:215
 #, no-c-format
 msgid "Solar Eclipses"
 msgstr "일식"
 
-#: src/celestia/kde/rc.cpp:94 src/celestia/res/resource_strings.cpp:209
+#: src/celestia/kde/rc.cpp:94 src/celestia/res/resource_strings.cpp:213
 #, no-c-format
 msgid "On:"
 msgstr ""
@@ -2174,17 +2191,17 @@ msgstr "월식"
 msgid "Search"
 msgstr "검색"
 
-#: src/celestia/kde/rc.cpp:121 src/celestia/res/resource_strings.cpp:208
+#: src/celestia/kde/rc.cpp:121 src/celestia/res/resource_strings.cpp:212
 #, no-c-format
 msgid "To:"
 msgstr ""
 
-#: src/celestia/kde/rc.cpp:124 src/celestia/res/resource_strings.cpp:207
+#: src/celestia/kde/rc.cpp:124 src/celestia/res/resource_strings.cpp:211
 #, fuzzy, no-c-format
 msgid "From:"
 msgstr "기간:"
 
-#: src/celestia/kde/rc.cpp:127 src/celestia/res/resource_strings.cpp:206
+#: src/celestia/kde/rc.cpp:127 src/celestia/res/resource_strings.cpp:210
 #, no-c-format
 msgid "Close"
 msgstr "닫기"
@@ -2463,600 +2480,610 @@ msgid "&Open Script..."
 msgstr "스크립트 열기(&O)..."
 
 #: src/celestia/res/resource_strings.cpp:3
+#, fuzzy
+msgid "Scripts"
+msgstr "궤도"
+
+#: src/celestia/res/resource_strings.cpp:4
+#, fuzzy
+msgid "Placeholder"
+msgstr "블랙홀"
+
+#: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
 msgstr "이미지 캡춰(&I)...\tF10"
 
-#: src/celestia/res/resource_strings.cpp:4
+#: src/celestia/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
 msgstr "동영상 캡춰(&M)...\tShift+F10"
 
-#: src/celestia/res/resource_strings.cpp:5
+#: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "종료(&X)"
 
-#: src/celestia/res/resource_strings.cpp:7
+#: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
 msgstr "태양 선택(&S)\tH"
 
-#: src/celestia/res/resource_strings.cpp:8
+#: src/celestia/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
 msgstr "길잡이(&G)..."
 
-#: src/celestia/res/resource_strings.cpp:9
+#: src/celestia/res/resource_strings.cpp:11
 msgid "Select &Object..."
 msgstr "천체 선택(&O)"
 
-#: src/celestia/res/resource_strings.cpp:10
+#: src/celestia/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "천체로 이동"
 
-#: src/celestia/res/resource_strings.cpp:11
+#: src/celestia/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
 msgstr "선택한 천체를 가운데로(&C)\tC"
 
-#: src/celestia/res/resource_strings.cpp:12
+#: src/celestia/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
 msgstr "선택한 천체로 이동(&G)\tG"
 
-#: src/celestia/res/resource_strings.cpp:13
+#: src/celestia/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
 msgstr "선택한 천체를 춘분점에 맞춰 추척(&F)\tF"
 
-#: src/celestia/res/resource_strings.cpp:14
+#: src/celestia/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
 msgstr "선택한 천체의 자전에 맞춰 추척(&Y)\tY"
 
-#: src/celestia/res/resource_strings.cpp:15
+#: src/celestia/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
 msgstr "선택한 천체를 화면 가운데 유지(&T)\tT"
 
-#: src/celestia/res/resource_strings.cpp:16
+#: src/celestia/res/resource_strings.cpp:18
 msgid "Solar System &Browser..."
 msgstr "태양계 브라우저(&B)"
 
-#: src/celestia/res/resource_strings.cpp:17
+#: src/celestia/res/resource_strings.cpp:19
 msgid "Star B&rowser..."
 msgstr "항성 브라우저(&R)"
 
-#: src/celestia/res/resource_strings.cpp:18
+#: src/celestia/res/resource_strings.cpp:20
 msgid "&Eclipse Finder"
 msgstr "식(일식,월식) 찾기(&E)"
 
-#: src/celestia/res/resource_strings.cpp:19
+#: src/celestia/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "시간(&T)"
 
-#: src/celestia/res/resource_strings.cpp:20
+#: src/celestia/res/resource_strings.cpp:22
 msgid "10x &Faster\tL"
 msgstr "10x 빠르게(&F)\tL"
 
-#: src/celestia/res/resource_strings.cpp:21
+#: src/celestia/res/resource_strings.cpp:23
 msgid "10x &Slower\tK"
 msgstr "10x 느리게(&S)\tK"
 
-#: src/celestia/res/resource_strings.cpp:22
+#: src/celestia/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
 msgstr "멈춤(&Z)\tSpace"
 
-#: src/celestia/res/resource_strings.cpp:23
+#: src/celestia/res/resource_strings.cpp:25
 msgid "&Real Time\t\\"
 msgstr "실시간에 맞춤(&R)\t\\"
 
-#: src/celestia/res/resource_strings.cpp:24
+#: src/celestia/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
 msgstr "시간 반전(&V)\tJ"
 
-#: src/celestia/res/resource_strings.cpp:25
+#: src/celestia/res/resource_strings.cpp:27
 msgid "Set &Time..."
 msgstr "시간 설정(&T)"
 
-#: src/celestia/res/resource_strings.cpp:26
+#: src/celestia/res/resource_strings.cpp:28
 msgid "Show Local Time"
 msgstr "지역시간 보기"
 
-#: src/celestia/res/resource_strings.cpp:27
+#: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
 msgstr "표시(&R)"
 
-#: src/celestia/res/resource_strings.cpp:28
+#: src/celestia/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
 msgstr "화면모드 선택"
 
-#: src/celestia/res/resource_strings.cpp:29
+#: src/celestia/res/resource_strings.cpp:31
 msgid "Toggle Full Screen\tAlt+Enter"
 msgstr "전체화면\tAlt+Enter"
 
-#: src/celestia/res/resource_strings.cpp:30
+#: src/celestia/res/resource_strings.cpp:32
 msgid "View Options..."
 msgstr "보기설정"
 
-#: src/celestia/res/resource_strings.cpp:31
+#: src/celestia/res/resource_strings.cpp:33
 msgid "Locations..."
 msgstr "지명"
 
-#: src/celestia/res/resource_strings.cpp:32
+#: src/celestia/res/resource_strings.cpp:34
 msgid "More Stars Visible\t]"
 msgstr "항성을 많이 보이게\t]"
 
-#: src/celestia/res/resource_strings.cpp:33
+#: src/celestia/res/resource_strings.cpp:35
 msgid "Fewer Stars Visible\t["
 msgstr "항성을 적게 보이게\t["
 
-#: src/celestia/res/resource_strings.cpp:34
+#: src/celestia/res/resource_strings.cpp:36
 msgid "Auto Magnitude\tCtrl+Y"
 msgstr "자동 등급 조정\tCtrl+Y"
 
-#: src/celestia/res/resource_strings.cpp:35
+#: src/celestia/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "항성 모양(&Y)"
 
-#: src/celestia/res/resource_strings.cpp:36
+#: src/celestia/res/resource_strings.cpp:38
 msgid "&Fuzzy Points"
 msgstr "희미한 점(&F)"
 
-#: src/celestia/res/resource_strings.cpp:37
+#: src/celestia/res/resource_strings.cpp:39
 msgid "&Points"
 msgstr "점(&P)"
 
-#: src/celestia/res/resource_strings.cpp:38
+#: src/celestia/res/resource_strings.cpp:40
 msgid "Scaled &Discs"
 msgstr "등급에 따른 원(&D)"
 
-#: src/celestia/res/resource_strings.cpp:39
+#: src/celestia/res/resource_strings.cpp:41
 msgid "&Ambient Light"
 msgstr "주변빛(&A)"
 
-#: src/celestia/res/resource_strings.cpp:40
+#: src/celestia/res/resource_strings.cpp:42
 msgid "&None"
 msgstr "없음(&N)"
 
-#: src/celestia/res/resource_strings.cpp:41
+#: src/celestia/res/resource_strings.cpp:43
 msgid "&Low"
 msgstr "낮음(&L)"
 
-#: src/celestia/res/resource_strings.cpp:42
+#: src/celestia/res/resource_strings.cpp:44
 msgid "&Medium"
 msgstr "중간(&M)"
 
-#: src/celestia/res/resource_strings.cpp:43
+#: src/celestia/res/resource_strings.cpp:45
 msgid "Antialiasing\tCtrl+X"
 msgstr "앤티앨리어싱\tCtrl+X"
 
-#: src/celestia/res/resource_strings.cpp:44
+#: src/celestia/res/resource_strings.cpp:46
 msgid "&View"
 msgstr "창(&V)"
 
-#: src/celestia/res/resource_strings.cpp:45
+#: src/celestia/res/resource_strings.cpp:47
 msgid "Split &Horizontally\tCtrl+R"
 msgstr "수평분할(&H)\tCtrl+R"
 
-#: src/celestia/res/resource_strings.cpp:46
+#: src/celestia/res/resource_strings.cpp:48
 msgid "Split &Vertically\tCtrl+U"
 msgstr "수직분할(&V)\tCtrl+U"
 
-#: src/celestia/res/resource_strings.cpp:47
+#: src/celestia/res/resource_strings.cpp:49
 msgid "&Delete Active View\tDEL"
 msgstr "활성창 닫기(&D)\tDEL"
 
-#: src/celestia/res/resource_strings.cpp:48
+#: src/celestia/res/resource_strings.cpp:50
 msgid "&Single View\tCtrl+D"
 msgstr "단일 창(&S)\tCtrl+D"
 
-#: src/celestia/res/resource_strings.cpp:49
+#: src/celestia/res/resource_strings.cpp:51
 msgid "Show &Frames"
 msgstr "분할선 보기(&F)"
 
-#: src/celestia/res/resource_strings.cpp:50
+#: src/celestia/res/resource_strings.cpp:52
 msgid "Synchronize &Time"
 msgstr "시간 동기화(&T)"
 
-#: src/celestia/res/resource_strings.cpp:51
+#: src/celestia/res/resource_strings.cpp:53
 msgid "&Bookmarks"
 msgstr "북마크(&B)"
 
-#: src/celestia/res/resource_strings.cpp:52
+#: src/celestia/res/resource_strings.cpp:54
 msgid "&Add Bookmarks..."
 msgstr "북마크 추가(&A)"
 
-#: src/celestia/res/resource_strings.cpp:53
+#: src/celestia/res/resource_strings.cpp:55
 msgid "&Organize Bookmarks..."
 msgstr "북마크 구성(&O)"
 
-#: src/celestia/res/resource_strings.cpp:54
+#: src/celestia/res/resource_strings.cpp:56
 msgid "&Help"
 msgstr "도움말(&H)"
 
-#: src/celestia/res/resource_strings.cpp:55
+#: src/celestia/res/resource_strings.cpp:57
 msgid "Run &Demo"
 msgstr "데모 실행(&D)"
 
-#: src/celestia/res/resource_strings.cpp:56
+#: src/celestia/res/resource_strings.cpp:58
 msgid "&Controls"
 msgstr "사용법(&C)"
 
-#: src/celestia/res/resource_strings.cpp:57
+#: src/celestia/res/resource_strings.cpp:59
 msgid "&OpenGL Info"
 msgstr "OpenGL정보(&O)"
 
-#: src/celestia/res/resource_strings.cpp:58
+#: src/celestia/res/resource_strings.cpp:60
 msgid "&License"
 msgstr "라이센스(&L)"
 
-#: src/celestia/res/resource_strings.cpp:59
+#: src/celestia/res/resource_strings.cpp:61
 msgid "&About Celestia"
 msgstr "Celestia 정보(&A)"
 
-#: src/celestia/res/resource_strings.cpp:60
+#: src/celestia/res/resource_strings.cpp:62
 msgid "About Celestia"
 msgstr "Celestia 정보"
 
-#: src/celestia/res/resource_strings.cpp:61
-#: src/celestia/res/resource_strings.cpp:79
-#: src/celestia/res/resource_strings.cpp:83
+#: src/celestia/res/resource_strings.cpp:63
+#: src/celestia/res/resource_strings.cpp:81
 #: src/celestia/res/resource_strings.cpp:85
 #: src/celestia/res/resource_strings.cpp:87
-#: src/celestia/res/resource_strings.cpp:91
-#: src/celestia/res/resource_strings.cpp:95
-#: src/celestia/res/resource_strings.cpp:100
-#: src/celestia/res/resource_strings.cpp:112
-#: src/celestia/res/resource_strings.cpp:116
-#: src/celestia/res/resource_strings.cpp:133
-#: src/celestia/res/resource_strings.cpp:163
-#: src/celestia/res/resource_strings.cpp:185
-#: src/celestia/res/resource_strings.cpp:190
+#: src/celestia/res/resource_strings.cpp:89
+#: src/celestia/res/resource_strings.cpp:93
+#: src/celestia/res/resource_strings.cpp:97
+#: src/celestia/res/resource_strings.cpp:102
+#: src/celestia/res/resource_strings.cpp:114
+#: src/celestia/res/resource_strings.cpp:118
+#: src/celestia/res/resource_strings.cpp:135
+#: src/celestia/res/resource_strings.cpp:166
+#: src/celestia/res/resource_strings.cpp:189
 #: src/celestia/res/resource_strings.cpp:194
-#: src/celestia/res/resource_strings.cpp:200
+#: src/celestia/res/resource_strings.cpp:198
+#: src/celestia/res/resource_strings.cpp:204
 msgid "OK"
 msgstr "확인"
 
-#: src/celestia/res/resource_strings.cpp:63
-msgid "1.4.1"
-msgstr ""
-
-#: src/celestia/res/resource_strings.cpp:64
+#: src/celestia/res/resource_strings.cpp:65
 msgid "Copyright (C) 2001-2006, Chris Laurel"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:65
+#: src/celestia/res/resource_strings.cpp:66
 msgid "http://www.shatters.net/celestia"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:66
+#: src/celestia/res/resource_strings.cpp:67
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr "Celestia는 공개소프트이며, 보증을 제공하지 않습니다."
 
-#: src/celestia/res/resource_strings.cpp:67
+#: src/celestia/res/resource_strings.cpp:68
 msgid "Authors"
 msgstr "저자"
 
-#: src/celestia/res/resource_strings.cpp:68
+#: src/celestia/res/resource_strings.cpp:69
 msgid "Chris Laurel"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:69
+#: src/celestia/res/resource_strings.cpp:70
 msgid "Clint Weisbrod"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:70
+#: src/celestia/res/resource_strings.cpp:71
 msgid "Fridger Schrempp"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:71
+#: src/celestia/res/resource_strings.cpp:72
 msgid "Christophe Teyssier"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:72
+#: src/celestia/res/resource_strings.cpp:73
 msgid "Grant Hutchison"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:73
+#: src/celestia/res/resource_strings.cpp:74
 msgid "Pat Suwalski"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:74
+#: src/celestia/res/resource_strings.cpp:75
 msgid "Toti"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:75
+#: src/celestia/res/resource_strings.cpp:76
 msgid "Da Woon Jung"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:76
+#: src/celestia/res/resource_strings.cpp:77
 msgid "Hank Ramsey"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:77
+#: src/celestia/res/resource_strings.cpp:78
 msgid "Bob Ippolito"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:78
+#: src/celestia/res/resource_strings.cpp:79
+msgid "Vincent Giangiulio"
+msgstr ""
+
+#: src/celestia/res/resource_strings.cpp:80
 msgid "Select Object"
 msgstr "천체 선택"
 
-#: src/celestia/res/resource_strings.cpp:81
+#: src/celestia/res/resource_strings.cpp:83
 msgid "Object Name"
 msgstr "천체 이름"
 
-#: src/celestia/res/resource_strings.cpp:82
+#: src/celestia/res/resource_strings.cpp:84
 msgid "License"
 msgstr "라이센스"
 
-#: src/celestia/res/resource_strings.cpp:84
+#: src/celestia/res/resource_strings.cpp:86
 msgid "Celestia Controls"
 msgstr "Celestia 사용법"
 
-#: src/celestia/res/resource_strings.cpp:86
+#: src/celestia/res/resource_strings.cpp:88
 msgid "OpenGL Driver Info"
 msgstr "OpenGL 드라이버 정보"
 
-#: src/celestia/res/resource_strings.cpp:88
+#: src/celestia/res/resource_strings.cpp:90
 msgid "Set Simulation Time"
 msgstr "시간 설정"
 
-#: src/celestia/res/resource_strings.cpp:89
+#: src/celestia/res/resource_strings.cpp:91
 msgid "Time Zone: "
 msgstr "시간대: "
 
-#: src/celestia/res/resource_strings.cpp:90
+#: src/celestia/res/resource_strings.cpp:92
 msgid "Set To Current Time"
 msgstr "현재시간으로 설정"
 
-#: src/celestia/res/resource_strings.cpp:93
+#: src/celestia/res/resource_strings.cpp:95
 msgid "Add Bookmark"
 msgstr "북마크 추가"
 
-#: src/celestia/res/resource_strings.cpp:97
+#: src/celestia/res/resource_strings.cpp:99
 msgid "Create in >>"
 msgstr "위치지정 >>"
 
-#: src/celestia/res/resource_strings.cpp:98
-#: src/celestia/res/resource_strings.cpp:196
+#: src/celestia/res/resource_strings.cpp:100
+#: src/celestia/res/resource_strings.cpp:200
 msgid "New Folder..."
 msgstr "새폴더..."
 
-#: src/celestia/res/resource_strings.cpp:99
+#: src/celestia/res/resource_strings.cpp:101
 msgid "Solar System Browser"
 msgstr "태양계 브라우저"
 
-#: src/celestia/res/resource_strings.cpp:101
+#: src/celestia/res/resource_strings.cpp:103
 msgid "Solar System"
 msgstr "태양계"
 
-#: src/celestia/res/resource_strings.cpp:103
-#: src/celestia/res/resource_strings.cpp:110
+#: src/celestia/res/resource_strings.cpp:105
+#: src/celestia/res/resource_strings.cpp:112
 msgid "&Go To"
 msgstr "이동(&G)"
 
-#: src/celestia/res/resource_strings.cpp:104
+#: src/celestia/res/resource_strings.cpp:106
 msgid "Solar System Objects"
 msgstr "천체 이름"
 
-#: src/celestia/res/resource_strings.cpp:105
+#: src/celestia/res/resource_strings.cpp:107
 msgid "Star Browser"
 msgstr "항성 브라우저"
 
-#: src/celestia/res/resource_strings.cpp:107
+#: src/celestia/res/resource_strings.cpp:109
 msgid "Brightest"
 msgstr "등급순"
 
-#: src/celestia/res/resource_strings.cpp:108
+#: src/celestia/res/resource_strings.cpp:110
 msgid "With planets"
 msgstr "행성존재"
 
-#: src/celestia/res/resource_strings.cpp:111
+#: src/celestia/res/resource_strings.cpp:113
 msgid "&Refresh"
 msgstr "새로고침(&R)"
 
-#: src/celestia/res/resource_strings.cpp:113
+#: src/celestia/res/resource_strings.cpp:115
 msgid "Star Search Criteria"
 msgstr "항성 검색 기준"
 
-#: src/celestia/res/resource_strings.cpp:114
+#: src/celestia/res/resource_strings.cpp:116
 msgid "Maximum Stars Displayed in List"
 msgstr "표시 항성수"
 
-#: src/celestia/res/resource_strings.cpp:115
+#: src/celestia/res/resource_strings.cpp:117
 msgid "Tour Guide"
 msgstr "길잡이"
 
-#: src/celestia/res/resource_strings.cpp:117
-#: src/celestia/res/resource_strings.cpp:123
+#: src/celestia/res/resource_strings.cpp:119
+#: src/celestia/res/resource_strings.cpp:125
 msgid "Go To"
 msgstr "이동"
 
-#: src/celestia/res/resource_strings.cpp:118
+#: src/celestia/res/resource_strings.cpp:120
 msgid "Select your destination:"
 msgstr "목적지를 선택하세요:"
 
-#: src/celestia/res/resource_strings.cpp:119
+#: src/celestia/res/resource_strings.cpp:121
 msgid "Go to Object"
 msgstr "천체로 이동"
 
-#: src/celestia/res/resource_strings.cpp:121
+#: src/celestia/res/resource_strings.cpp:123
 msgid "radii"
 msgstr "반경"
 
-#: src/celestia/res/resource_strings.cpp:125
+#: src/celestia/res/resource_strings.cpp:127
 msgid "Object"
 msgstr "천체이름"
 
-#: src/celestia/res/resource_strings.cpp:126
+#: src/celestia/res/resource_strings.cpp:128
 msgid "Long."
 msgstr "경도"
 
-#: src/celestia/res/resource_strings.cpp:127
+#: src/celestia/res/resource_strings.cpp:129
 msgid "Lat."
 msgstr "위도"
 
-#: src/celestia/res/resource_strings.cpp:128
-#: src/celestia/res/resource_strings.cpp:165
+#: src/celestia/res/resource_strings.cpp:130
+#: src/celestia/res/resource_strings.cpp:168
 msgid "Distance"
 msgstr "거리"
 
-#: src/celestia/res/resource_strings.cpp:129
+#: src/celestia/res/resource_strings.cpp:131
 msgid "Size:"
 msgstr "동영상 크기:"
 
-#: src/celestia/res/resource_strings.cpp:130
+#: src/celestia/res/resource_strings.cpp:132
 msgid "Frame rate:"
 msgstr "초당 프레임수:"
 
-#: src/celestia/res/resource_strings.cpp:131
+#: src/celestia/res/resource_strings.cpp:133
 msgid "Select Display Mode"
 msgstr "화면모드 선택"
 
-#: src/celestia/res/resource_strings.cpp:132
+#: src/celestia/res/resource_strings.cpp:134
 msgid "Resolution"
 msgstr "해상도"
 
-#: src/celestia/res/resource_strings.cpp:135
+#: src/celestia/res/resource_strings.cpp:137
 msgid "View Options"
 msgstr "보기설정"
 
-#: src/celestia/res/resource_strings.cpp:140
+#: src/celestia/res/resource_strings.cpp:143
 msgid "Constellation Borders"
 msgstr "별자리 경계선"
 
-#: src/celestia/res/resource_strings.cpp:168
+#: src/celestia/res/resource_strings.cpp:171
 msgid "Information Text"
 msgstr "천체 정보 표시"
 
-#: src/celestia/res/resource_strings.cpp:169
+#: src/celestia/res/resource_strings.cpp:172
 msgid "Filter Stars"
 msgstr "항성 표시 조정"
 
-#: src/celestia/res/resource_strings.cpp:170
-#: src/celestia/res/resource_strings.cpp:171
+#: src/celestia/res/resource_strings.cpp:173
+#: src/celestia/res/resource_strings.cpp:174
 msgid "Orbit / Label"
 msgstr "궤도 / 이름"
 
-#: src/celestia/res/resource_strings.cpp:177
+#: src/celestia/res/resource_strings.cpp:181
 msgid "Montes (Mountains)"
 msgstr "산"
 
-#: src/celestia/res/resource_strings.cpp:178
+#: src/celestia/res/resource_strings.cpp:182
 msgid "Maria (Seas)"
 msgstr "바다"
 
-#: src/celestia/res/resource_strings.cpp:180
+#: src/celestia/res/resource_strings.cpp:184
 msgid "Valles (Valleys)"
 msgstr "계곡"
 
-#: src/celestia/res/resource_strings.cpp:181
+#: src/celestia/res/resource_strings.cpp:185
 msgid "Terrae (Land masses)"
 msgstr "육지"
 
-#: src/celestia/res/resource_strings.cpp:182
+#: src/celestia/res/resource_strings.cpp:186
 msgid "Other features"
 msgstr "기타"
 
-#: src/celestia/res/resource_strings.cpp:183
+#: src/celestia/res/resource_strings.cpp:187
 msgid "Label Features"
 msgstr "지명 보기"
 
-#: src/celestia/res/resource_strings.cpp:184
+#: src/celestia/res/resource_strings.cpp:188
 msgid "Mark Features"
 msgstr "마커 보기"
 
-#: src/celestia/res/resource_strings.cpp:187
+#: src/celestia/res/resource_strings.cpp:191
 msgid "Show Features"
 msgstr "지명 보기"
 
-#: src/celestia/res/resource_strings.cpp:188
+#: src/celestia/res/resource_strings.cpp:192
 msgid "Minimum Labeled Feature Size"
 msgstr "최소표시"
 
-#: src/celestia/res/resource_strings.cpp:189
+#: src/celestia/res/resource_strings.cpp:193
 msgid "Add New Bookmark Folder"
 msgstr "새 폴더 만들기"
 
-#: src/celestia/res/resource_strings.cpp:192
+#: src/celestia/res/resource_strings.cpp:196
 msgid "Folder Name"
 msgstr "폴더 이름"
 
-#: src/celestia/res/resource_strings.cpp:193
+#: src/celestia/res/resource_strings.cpp:197
 msgid "Organize Bookmarks"
 msgstr "북마크 구성"
 
-#: src/celestia/res/resource_strings.cpp:197
+#: src/celestia/res/resource_strings.cpp:201
 msgid "Rename..."
 msgstr "이름 바꾸기"
 
-#: src/celestia/res/resource_strings.cpp:198
+#: src/celestia/res/resource_strings.cpp:202
 msgid "Delete"
 msgstr "삭제"
 
-#: src/celestia/res/resource_strings.cpp:199
+#: src/celestia/res/resource_strings.cpp:203
 msgid "Rename Bookmark or Folder"
 msgstr "북마크, 폴더 이름 바꾸기"
 
-#: src/celestia/res/resource_strings.cpp:202
+#: src/celestia/res/resource_strings.cpp:206
 msgid "New Name"
 msgstr "새 이름"
 
-#: src/celestia/res/resource_strings.cpp:204
+#: src/celestia/res/resource_strings.cpp:208
 msgid "Compute"
 msgstr "계산"
 
-#: src/celestia/res/resource_strings.cpp:205
+#: src/celestia/res/resource_strings.cpp:209
 msgid "Set Date and Go to Planet"
 msgstr "시간 설정 및 이동"
 
-#: src/celestia/res/resource_strings.cpp:212
+#: src/celestia/res/resource_strings.cpp:216
 #, fuzzy
 msgid "Lunar Eclipses"
 msgstr "일식"
 
-#: src/celestia/res/resource_strings.cpp:214
+#: src/celestia/res/resource_strings.cpp:218
 #, fuzzy
 msgid "Jan"
 msgstr "야누스"
 
-#: src/celestia/res/resource_strings.cpp:214
+#: src/celestia/res/resource_strings.cpp:218
 msgid "Feb"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:214
+#: src/celestia/res/resource_strings.cpp:218
 #, fuzzy
 msgid "Mar"
 msgstr "화성"
 
-#: src/celestia/res/resource_strings.cpp:214
+#: src/celestia/res/resource_strings.cpp:218
 msgid "Apr"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:214
+#: src/celestia/res/resource_strings.cpp:218
 msgid "May"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:214
+#: src/celestia/res/resource_strings.cpp:218
 msgid "Jun"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:215
+#: src/celestia/res/resource_strings.cpp:219
 msgid "Jul"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:215
+#: src/celestia/res/resource_strings.cpp:219
 msgid "Aug"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:215
+#: src/celestia/res/resource_strings.cpp:219
 #, fuzzy
 msgid "Sep"
 msgstr "설정"
 
-#: src/celestia/res/resource_strings.cpp:215
+#: src/celestia/res/resource_strings.cpp:219
 #, fuzzy
 msgid "Oct"
 msgstr "천체이름"
 
-#: src/celestia/res/resource_strings.cpp:215
+#: src/celestia/res/resource_strings.cpp:219
 #, fuzzy
 msgid "Nov"
 msgstr "현재"
 
-#: src/celestia/res/resource_strings.cpp:215
+#: src/celestia/res/resource_strings.cpp:219
 msgid "Dec"
 msgstr ""
 
