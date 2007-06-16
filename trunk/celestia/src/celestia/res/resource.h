@@ -125,6 +125,7 @@
 #define IDC_DATETO                      1080
 #define IDC_ECLIPSETO                   1080
 #define IDSETDATEANDGO                  1081
+#define IDC_STARORBITS                  1082
 #define IDC_EDIT_FILTER_DISTANCE        1084
 #define IDC_SLIDER_FILTER_DISTANCE      1085
 #define IDC_SHOWCOMETTAILS              1086

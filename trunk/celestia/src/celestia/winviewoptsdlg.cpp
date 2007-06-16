@@ -92,6 +92,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_PLANETORBITS:
             renderer->setOrbitMask(orbitMask ^ Body::Planet);
             break;
+        case IDC_STARORBITS:
+            renderer->setOrbitMask(orbitMask ^ Body::Stellar);
+            break;
         case IDC_MOONORBITS:
             renderer->setOrbitMask(orbitMask ^ Body::Moon);
             break;
@@ -287,6 +290,7 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     dlgCheck(hDlg, IDC_ASTEROIDORBITS,   orbitMask,   Body::Asteroid);
     dlgCheck(hDlg, IDC_COMETORBITS,      orbitMask,   Body::Comet);
     dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask,   Body::Spacecraft);
+    dlgCheck(hDlg, IDC_STARORBITS,       orbitMask,   Body::Stellar);
     SendDlgItemMessage(hDlg, IDC_SHOWPLANETS, BM_SETCHECK,
         (renderFlags & Renderer::ShowPlanets)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWSTARS, BM_SETCHECK,
