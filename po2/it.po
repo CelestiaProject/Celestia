@@ -53,7 +53,7 @@ msgstr "Auriga"
 
 #: data/constellations.cpp:9
 msgid "Boötes"
-msgstr "Bovaro"
+msgstr "Boötes"
 
 #: data/constellations.cpp:10
 msgid "Caelum"
