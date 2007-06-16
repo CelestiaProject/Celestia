@@ -165,6 +165,10 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QLabel* labelsLabel = new QLabel(i18n("Labels"), labelGroup);
     labelGroupLayout->addWidget(labelsLabel, 0, 1);
 
+    QCheckBox* showStarOrbitsCheck = new QCheckBox("", labelGroup);
+    actionColl->action("showStarOrbits")->connect(showStarOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
+    showStarOrbitsCheck->setChecked(orbitMask & Body::Stellar);
+    labelGroupLayout->addWidget(showStarOrbitsCheck, 1, 0, Qt::AlignHCenter);
     QCheckBox* showStarLabelsCheck = new QCheckBox(i18n("Stars"), labelGroup);
     actionColl->action("showStarLabels")->connect(showStarLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showStarLabelsCheck->setChecked(labelMode & Renderer::StarLabels);

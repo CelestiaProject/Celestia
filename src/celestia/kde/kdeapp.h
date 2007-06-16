@@ -130,6 +130,7 @@ public slots:
     void slotShowAsteroidOrbits();
     void slotShowCometOrbits();
     void slotShowMoonOrbits();
+    void slotShowStarOrbits();
     void slotShowPlanetOrbits();
     void slotShowSpacecraftOrbits();
     void slotShowCelestialSphere();
