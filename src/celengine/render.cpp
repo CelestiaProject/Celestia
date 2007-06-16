@@ -196,7 +196,7 @@ Renderer::Renderer() :
     renderMode(GL_FILL),
     labelMode(NoLabels),
     renderFlags(ShowStars | ShowPlanets),
-    orbitMask(Body::Planet | Body::Moon),
+    orbitMask(Body::Planet | Body::Moon | Body::Stellar),
     ambientLightLevel(0.1f),
     fragmentShaderEnabled(false),
     vertexShaderEnabled(false),
@@ -6408,7 +6408,7 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
 {
     // If the star isn't fixed, add its orbit to the render list
     if ((renderFlags & ShowOrbits) != 0 &&
-        ((orbitMask & Body::Planet) != 0 || highlightObject.star() == &star))
+        ((orbitMask & Body::Stellar) != 0 || highlightObject.star() == &star))
     {
         Mat3f viewMat = observer.getOrientation().toMatrix3();
         Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
