@@ -150,6 +150,7 @@ static void initBodyTypeMap()
     BodyTypeMap["Comet"] = Body::Comet;
     BodyTypeMap["Spacecraft"] = Body::Spacecraft;
     BodyTypeMap["Invisible"] = Body::Invisible;
+    BodyTypeMap["Star"] = Body::Stellar;
     BodyTypeMap["Unknown"] = Body::Unknown;
 }
 
