@@ -7,9 +7,15 @@
 //
 
 #import "CelestiaController.h"
+
+@class MacInputWatcher;
+@class TextWindowController;
+
 @interface CelestiaOpenGLView : NSOpenGLView
 {
     IBOutlet CelestiaController *controller;
+    MacInputWatcher *inputWatcher;
+    TextWindowController *textWindow;
 }
 - (void)setAASamples: (unsigned int)aaSamples;
 @end
