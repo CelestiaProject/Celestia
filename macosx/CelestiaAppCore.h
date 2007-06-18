@@ -31,6 +31,7 @@ class CelestiaCore;
 -(BOOL)initRenderer;
 -(void)start:(NSDate *)date withTimeZone:(NSTimeZone *)timeZone;
 -(void)charEntered:(char)c withModifiers:(int)modifiers;
+-(void)charEntered:(NSString *)string;
 -(void)keyDown:(int)c;
 -(void)keyUp:(int)c;
 -(void)mouseWheel:(float)motion modifiers:(int)modifiers;

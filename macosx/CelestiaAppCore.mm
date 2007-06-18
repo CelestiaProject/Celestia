@@ -23,6 +23,33 @@
 #include "qtcapture.h"
 #import <Carbon/Carbon.h>
 
+class MacSettingsWatcher : public CelestiaWatcher
+{
+private:
+    CelestiaSettings *settings;
+
+public:
+    MacSettingsWatcher(CelestiaAppCore *_appCore,
+                       CelestiaSettings* _settings) :
+        CelestiaWatcher(*[_appCore appCore]), settings(_settings)
+    {};
+
+    void notifyChange(CelestiaCore *, int flags)
+    {
+        if ( 0 != (flags & (
+              CelestiaCore::LabelFlagsChanged
+            | CelestiaCore::RenderFlagsChanged
+            | CelestiaCore::VerbosityLevelChanged
+            | CelestiaCore::TimeZoneChanged
+            | CelestiaCore::AmbientLightChanged
+            | CelestiaCore::FaintestChanged
+            )) )
+        {
+            [settings validateItems];
+        }
+    };
+};
+
 class MacOSXAlerter : public CelestiaCore::Alerter
 {
 public:
@@ -259,14 +286,14 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     return cModifiers;
 }
 
-static NSMutableDictionary* tagDict;
+//static NSMutableDictionary* tagDict;
 
 +(void)initialize
 {
     _sharedCelestiaAppCore = nil;
     contextMenuCallbackInvocation = nil;
     appCore = NULL;
-    tagDict = [[ NSMutableDictionary dictionaryWithCapacity: 100 ] retain];
+//    tagDict = [[ NSMutableDictionary dictionaryWithCapacity: 100 ] retain];
 }
 
 +(CelestiaAppCore *)sharedAppCore
@@ -349,6 +376,12 @@ static NSMutableDictionary* tagDict;
     result = appCore->initSimulation(!confFile.empty() ? &confFile : nil,
                                      extrasDirsSetting ? &extrasDirs : nil,
                                      &progressNotifier);
+    if (result)
+    {
+        CelestiaSettings *settings = [CelestiaSettings shared];
+        new MacSettingsWatcher(self, settings); // adds itself to the appCore
+    }
+
     return result;
 }
 
@@ -367,6 +400,11 @@ static NSMutableDictionary* tagDict;
 {
 // moved to CelestiaOpenGLView...    if (c == 127) c = 8; 
     appCore->charEntered(c, modifiers);
+}
+
+-(void)charEntered:(NSString *)string
+{
+    appCore->charEntered([string UTF8String]);
 }
 
 -(void)keyDown:(int)c

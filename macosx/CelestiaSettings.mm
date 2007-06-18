@@ -74,15 +74,12 @@ static NSMutableDictionary* tagMap;
         [[super init] release];
         return sharedInstance;
     }
-    
-    self = [super init];
-    
-    tagMap = [[ NSMutableDictionary dictionaryWithCapacity: 100 ] retain];
-    
-    appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
 
-     MacOSXWatcher* theWatcher = new MacOSXWatcher(appCore,self);
-     appCore->addWatcher(theWatcher);
+    self = [super init];
+
+    tagMap = [[ NSMutableDictionary dictionaryWithCapacity: 100 ] retain];
+
+    appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
 
     tagDict = [[NSDictionary dictionaryWithObjectsAndKeys:
 //        TAGDEF(101,@"time")
@@ -182,7 +179,7 @@ static NSMutableDictionary* tagMap;
     return self;
 }
 
--(void) setControl: (CelestiaController*) _control
+-(void) setControl: (id) _control
 {
     control = _control;
 }

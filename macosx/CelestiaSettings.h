@@ -204,7 +204,7 @@
 
 // GUI Methods
 
-- (void) addSurfaceMenu: (id) contextMenu;
+- (void) addSurfaceMenu: (NSMenu*) contextMenu;
 - (void) actionForItem: (id) item;
 - (BOOL) validateItem: (id) item;
 - (void) validateItems;
