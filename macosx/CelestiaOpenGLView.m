@@ -7,6 +7,8 @@
 //
 #import "CelestiaOpenGLView.h"
 #import "CelestiaAppCore.h"
+#import "MacInputWatcher.h"
+#import "TextWindowController.h"
 #import <OpenGL/gl.h>
 #import <OpenGL/glext.h>
 #import <OpenGL/CGLTypes.h>
@@ -19,8 +21,6 @@
 #define CEL_MIDDLE_BUTTON 2
 #define CEL_RIGHT_BUTTON 4
 
-//static CelestiaAppCore* appCore = nil;
-//static NSPoint lastLoc = NSMakePoint(0.0, 0.0);
 
 @implementation CelestiaOpenGLView
 
@@ -138,7 +138,7 @@
 - (BOOL) isFlipped {return YES;}
 
 - (void) viewDidMoveToWindow
-{
+{    
     [[self window] setAcceptsMouseMovedEvents: YES];
 }
 
@@ -171,9 +171,29 @@
     return [self menu];
 }
 
+- (void) textEnterModeChanged
+{
+    CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    if ([appCore textEnterMode] & 1)
+    {
+        if (textWindow == nil)
+            textWindow = [[TextWindowController alloc] init];
+
+        [textWindow makeActiveWithDelegate: inputWatcher];
+    }
+    else if (0 == ([appCore textEnterMode] & 1))
+    {
+        [[textWindow window] orderOut: nil];
+        [[self window] makeFirstResponder: self];
+    }
+}
+
 - (void) keyDown: (NSEvent*)theEvent
 {
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
+    if (inputWatcher == nil)
+        inputWatcher = [[MacInputWatcher alloc] initWithWatched: self];
+
     NSString *eventChars = [theEvent characters];
     if (!eventChars || [eventChars length] == 0)
     {
@@ -184,16 +204,18 @@
     unichar key = [eventChars characterAtIndex: 0];
     int modifiers = [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0];
 
-        if (key == 127)
-        key = 8; // delete = backspace
+    if ( key == NSDeleteCharacter )
+        key = NSBackspaceCharacter; // delete = backspace
     else if ( key == NSDeleteFunctionKey || key == NSClearLineFunctionKey )
-           key = 127; // del = delete
-    
+        key = NSDeleteCharacter; // del = delete
+    else if ( key == NSBackTabCharacter )
+        key = 127;
+
     if ( (key<128) && ((key < '0') || (key>'9') || !([theEvent modifierFlags] & NSNumericPadKeyMask)) )
         [ appCore charEntered: key
                 withModifiers: modifiers];
 
-        [ appCore keyDown: [appCore toCelestiaKey: theEvent] 
+    [ appCore keyDown: [appCore toCelestiaKey: theEvent] 
         withModifiers: modifiers  ];
 }
 
@@ -202,8 +224,8 @@
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
 //    if ( [[theEvent characters] characterAtIndex: 0] >= 128 )
 //        [ appCore keyUp: [appCore toCelestiaKey: theEvent] ];
-        [ appCore keyUp: [appCore toCelestiaKey: theEvent] 
-            withModifiers: [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0]  ];
+    [ appCore keyUp: [appCore toCelestiaKey: theEvent] 
+            withModifiers: [appCore toCelestiaModifiers: [theEvent modifierFlags] buttons: 0] ];
 //    NSLog(@"keyUp: %@",theEvent);
 }
 
@@ -299,19 +321,16 @@
 
 - (BOOL) acceptsFirstResponder: (NSEvent*)theEvent
 {
-//    NSLog(@"CelestiaOpenGLView acceptsFirstResponder" );
     return YES;
 }
 
 - (BOOL) becomeFirstResponder
 {
-//    NSLog(@"CelestiaOpenGLView becomeFirstResponder" );
     return YES;
 }
 
 - (BOOL) resignFirstResponder
 {
-//    NSLog(@"CelestiaOpenGLView resignFirstResponder" );
     return YES;
 }
 
@@ -352,15 +371,12 @@
     NSString *value = nil;
     NSString *type = [pb availableTypeFromArray:
         [NSArray arrayWithObjects: NSURLPboardType, NSFilenamesPboardType, NSStringPboardType, nil ]];
-//NSLog(@"read paste");
     if ( type != nil )
     {
         CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
-//        value = [ pb stringForType: NSURLPboardType ];
-          value = [ pb stringForType: NSStringPboardType ];
+        value = [ pb stringForType: NSStringPboardType ];
         if (value != nil )
         {
-            NSLog(value);
             if ( [value rangeOfString:@"cel:" options: (NSCaseInsensitiveSearch|NSAnchoredSearch) ].location == 0 )
                 [appCore goToUrl: value ];
             else
@@ -369,7 +385,6 @@
         else
         {
             value = [[NSURL URLWithString: (NSString*) [((NSArray*)[ pb propertyListForType: type ]) objectAtIndex: 0 ]] path];
-            NSLog(value);
             [controller runScript: value ];
         
             return NO;
@@ -378,7 +393,6 @@
                 value = [ pb stringForType: NSFilenamesPboardType ];
                 if (value != nil )
                 {
-                    NSLog(value);
                     [controller runScript: value ];
                 }
             }
@@ -392,7 +406,6 @@
     NSPasteboard *pb = [sender draggingPasteboard];
     NSString *type = [pb availableTypeFromArray:
         [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, nil ]];
-//    NSLog(@"dragentered");
     if ( type != nil )
     {
         return NSDragOperationCopy;
