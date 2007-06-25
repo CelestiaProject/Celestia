@@ -1,8 +1,8 @@
 "Andromeda"
 [
+[ "Beta And"  "Upsilon And" "Almach" ]
 [ "Beta And" "Delta And" "Alpha And" ]
 [ "Beta And"  "Mu And" "Nu And" ]
-[ "Beta And"  "Upsilon And" "Almach" ]
 [ "Upsilon And" "51 And" ]
 ]
 
@@ -126,7 +126,7 @@
 
 "Circinus"
 [
-[ "Gamma Cir" "Alpha Cir" "Beta Cir" ]
+[ "Beta Cir" "Alpha Cir" "Gamma Cir" ]
 ]
 
 "Columba"
@@ -207,8 +207,8 @@
 
 "Gemini"
 [
-[ "1 Gem" "Eta Gem" "Mu Gem" "Epsilon Gem" "Tau Gem" "Rho Gem" "Alpha Gem" ] 
 [ "Beta Gem" "Upsilon Gem" "Delta Gem" "Zeta Gem" "Gamma Gem" ]
+[ "1 Gem" "Eta Gem" "Mu Gem" "Epsilon Gem" "Tau Gem" "Rho Gem" "Alpha Gem" ] 
 [ "Delta Gem" "Lambda Gem" "51 Gem" "Xi Gem"]
 [ "Nu Gem" "Epsilon Gem" ]
 [ "Tau Gem" "Theta Gem" ]
@@ -224,10 +224,10 @@
 
 "Hercules"
 [
+[ "Pi Her" "Epsilon Her" "Zeta Her" ]
 [ "Phi Her" "Sigma Her" "Eta Her" "Zeta Her" "Beta Her" "Gamma Her" ]
 [ "Beta Her" "Alpha Her" ]
 [ "Iota Her" "Theta Her" "Rho Her" "Pi Her" "Eta Her" ]
-[ "Pi Her" "Epsilon Her" "Zeta Her" ]
 [ "Epsilon Her" "Delta Her" "Lambda Her" "Mu Her" "Xi Her" "Omicron Her" "Nu Her" ]
 [ "Omicron Her" "109 Her" "110 Her" "111 Her" ]
 [ "109 Her" "102 Her" ]
@@ -240,7 +240,9 @@
 
 "Hydra"
 [
-[ "Pi Hya" "Gamma Hya" "Beta Hya" "Xi Hya" "Nu Hya" "Mu Hya" "Lambda Hya" "Upsilon2 Hya" "Upsilon1 Hya" "Alpha Hya" "Iota Hya" "Theta Hya" "Zeta Hya" "Eta Hya" "Sigma Hya" "Delta Hya" "Epsilon Hya" "Zeta Hya" ]
+[ "Gamma Hya" "Beta Hya" "Xi Hya" ]
+[ "Pi Hya" "Gamma Hya" ]
+[ "Xi Hya" "Nu Hya" "Mu Hya" "Lambda Hya" "Upsilon2 Hya" "Upsilon1 Hya" "Alpha Hya" "Iota Hya" "Theta Hya" "Zeta Hya" "Eta Hya" "Sigma Hya" "Delta Hya" "Epsilon Hya" "Zeta Hya" ]
 ]
 
 "Hydrus"
@@ -280,8 +282,8 @@
 
 "Libra"
 [
-[ "48 Lib" "Theta Lib" "Eta Lib" "Gamma Lib" "Beta Lib" "Alpha2 Lib" "Sigma Lib" "Upsilon Lib" "Tau Lib" ]
 [ "Sigma Lib" "Beta Lib" ]
+[ "48 Lib" "Theta Lib" "Eta Lib" "Gamma Lib" "Beta Lib" "Alpha2 Lib" "Sigma Lib" "Upsilon Lib" "Tau Lib" ]
 ]
 
 "Lupus"
@@ -335,15 +337,16 @@
 
 "Ophiuchus"
 [
-[ "45 Oph" "Theta Oph" "44 Oph" "Xi Oph" "Eta Oph" "Zeta Oph" "Epsilon Oph" "Delta Oph" "Kappa Oph" "Alpha Oph" "Beta Oph" "Eta Oph" ]
+[ "Kappa Oph" "Alpha Oph" "Beta Oph" "Eta Oph" ]
+[ "45 Oph" "Theta Oph" "44 Oph" "Xi Oph" "Eta Oph" "Zeta Oph" "Epsilon Oph" "Delta Oph" "Kappa Oph" ]
 [ "Beta Oph" "Gamma Oph" "67 Oph" "70 Oph" ]
 [ "Gamma Oph" "Nu Oph" ]
 ]
 
 "Orion"
 [
-[ "Chi2 Ori" "Nu Ori" "Xi Ori" "68 Ori" ]
 [ "Xi Ori" "Mu Ori" "Alpha Ori" "Zeta Ori" "Kappa Ori" "Beta Ori" "Delta Ori" "Gamma Ori" "Lambda Ori" "Alpha Ori" ]
+[ "Chi2 Ori" "Nu Ori" "Xi Ori" "68 Ori" ]
 [ "Gamma Ori" "Pi3 Ori" "Pi4 Ori" "Pi5 Ori" "Pi6 Ori" ]
 [ "Pi3 Ori" "Pi2 Ori" "Pi1 Ori" ]
 ]
@@ -414,6 +417,7 @@
 
 "Sagittarius"
 [
+[ "Phi Sgr" "Delta Sgr" ]
 [ "Beta2 Sgr" "Iota Sgr" "Alpha Sgr" ]
 [ "Iota Sgr" "Theta1 Sgr" "Theta2 Sgr" "62 Sgr" "59 Sgr" "52 Sgr" "Psi Sgr" "Tau Sgr" "Zeta Sgr" "Phi Sgr" "Sigma Sgr" "Tau Sgr" ]
 [ "Sigma Sgr" "Omicron Sgr" "Pi Sgr" "53 Sgr" "Rho1 Sgr" ]
@@ -422,13 +426,12 @@
 [ "Lambda Sgr" "Delta Sgr" "Epsilon Sgr" "Eta Sgr" ]
 [ "Delta Sgr" "Gamma Sgr" "3 Sgr" ]
 [ "Zeta Sgr" "Epsilon Sgr" "Gamma Sgr" ]
-[ "Phi Sgr" "Delta Sgr" ]
 ]
 
 "Scorpius"
 [
-[ "Beta2 Sco" "Omega1 Sco" "Nu Sco" "11 Sco" "Beta2 Sco" "Delta Sco" "Pi Sco" "Rho Sco" ]
 [ "Delta Sco" "Sigma Sco" "Alpha Sco" "Tau Sco" "Epsilon Sco" "Mu Sco" "Zeta Sco" "Eta Sco" "Theta Sco" "Iota1 Sco" "Kappa Sco" "Lambda Sco" ]
+[ "Beta2 Sco" "Omega1 Sco" "Nu Sco" "11 Sco" "Beta2 Sco" "Delta Sco" "Pi Sco" "Rho Sco" ]
 [ "Iota1 Sco" "G Sco" ]
 ]
 
@@ -450,7 +453,8 @@
 
 "Serpens Cauda"
 [
-[ "Theta Ser" "Eta Ser" "Omicron Ser" "Xi Ser" "Nu Ser" ]
+[ "Nu Ser" "Xi Ser" "Omicron Ser" ]
+[ "Omicron Ser" "Eta Ser" "Theta Ser" ]
 ]
 
 "Sextans"
@@ -468,7 +472,8 @@
 
 "Telescopium"
 [
-[ "Epsilon Tel" "Alpha Tel" "Zeta Tel" ]
+[ "Zeta Tel" "Alpha Tel" ]
+[ "Alpha Tel" "Epsilon Tel" ]
 ]
 
 "Triangulum"
@@ -478,7 +483,7 @@
 
 "Triangulum Australe"
 [
-[ "Alpha TrA" "Beta TrA" "Epsilon TrA" "Gamma TrA" "Alpha TrA" ]
+[ "Beta TrA" "Epsilon TrA" "Gamma TrA" "Alpha TrA" "Beta TrA" ]
 ]
 
 "Tucana"
