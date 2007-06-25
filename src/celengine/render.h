@@ -208,6 +208,13 @@ class Renderer
     void setFont(FontStyle, TextureFont*);
     TextureFont* getFont(FontStyle) const;
 
+    enum LabelAlignment
+    {
+        AlignCenter,
+        AlignLeft,
+        AlignRight
+    };
+
  public:
     // Internal types
     // TODO: Figure out how to make these private.  Even with a friend
@@ -463,7 +470,7 @@ class Renderer
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
                          Quatf orientation);
-    void renderLabels(FontStyle fs);
+    void renderLabels(FontStyle fs, LabelAlignment la);
     std::vector<Label>::iterator renderSortedLabels(std::vector<Label>::iterator,
                                                      float depth,
                                                      FontStyle fs);
