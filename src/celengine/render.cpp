@@ -1679,13 +1679,13 @@ void Renderer::render(const Observer& observer,
             disableSmoothLines();
     }
 
-    renderLabels(FontNormal);
+    renderLabels(FontNormal, AlignLeft);
     clearLabels();
 
     if ((labelMode & ConstellationLabels) != 0 && universe.getAsterisms() != NULL)
     {
         labelConstellations(*universe.getAsterisms(), observer);
-        renderLabels(FontLarge);
+        renderLabels(FontLarge, AlignCenter);
         clearLabels();
     }
 
@@ -1700,7 +1700,7 @@ void Renderer::render(const Observer& observer,
             (*iter)->keep = false;
     }
 
-    renderLabels(FontNormal);
+    renderLabels(FontNormal, AlignLeft);
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
     glPolygonMode(GL_BACK, (GLenum) renderMode);
@@ -7405,7 +7405,7 @@ void Renderer::renderParticles(const vector<Particle>& particles,
 }
 
 
-void Renderer::renderLabels(FontStyle fs)
+void Renderer::renderLabels(FontStyle fs, LabelAlignment la)
 {
     if (font[fs] == NULL)
         return;
@@ -7430,9 +7430,21 @@ void Renderer::renderLabels(FontStyle fs)
     {
         glColor(labels[i].color);
         glPushMatrix();
-        glTranslatef((int) labels[i].position.x + PixelOffset + 2.0f,
-                     (int) labels[i].position.y + PixelOffset,
-                     0.0f);
+
+        int labelOffset = 2;
+        if (la == AlignCenter)
+        {
+            int labelwidth = (font[fs]->getWidth(labels[i].text));
+            labelOffset = (int) -labelwidth/2;
+        }
+        else if (la == AlignRight)
+        {
+            int labelwidth = (font[fs]->getWidth(labels[i].text));
+            labelOffset = (int) -(labelwidth + 2);
+        }
+
+        glTranslatef((int) labels[i].position.x + GLfloat((int) labelOffset) + PixelOffset,
+                     (int) labels[i].position.y + PixelOffset, 0.0f);
 		// EK TODO: Check where to replace (see '_(' above)
 		font[fs]->render(labels[i].text);
         glPopMatrix();
