@@ -59,7 +59,7 @@ Color::Color(unsigned char r, unsigned char g, unsigned char b)
 }
 
 
-Color::Color(Color& color, float alpha)
+Color::Color(const Color& color, float alpha)
 {
     *this = color;
     c[Alpha] = (unsigned char) (clamp(alpha) * 255.99f);
