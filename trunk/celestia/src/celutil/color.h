@@ -17,7 +17,7 @@ class Color
     Color(float, float, float);
     Color(float, float, float, float);
     Color(unsigned char, unsigned char, unsigned char);
-    Color(Color&, float);
+    Color(const Color&, float);
 
     enum {
         Red    = 0,
