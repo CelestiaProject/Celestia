@@ -30,6 +30,9 @@
 	UniformRotation
 	{
 	Period     48.0   # guess
+	
+	Inclination	79.8   # spin axis assumed to match
+	AscendingNode	144    # orbit of Dysnomia
 	}
 }
 
@@ -39,15 +42,23 @@
 	Class "asteroid" 
 	Mesh	"asteroid.cms"
 	Texture "asteroid.jpg" 
-	Radius  180             # ~2% of system brightness
+	Radius  100             # ~0.2% of Eris brightness
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/planetlila/moon/"
-#	Orbit from Brown ME et al: http://www.gps.caltech.edu/%7Embrown/papers/ps/gab.pdf
+	# Orbit from Brown ME, Schaller EL: Science 2007; 316: 1585
 
-	EllipticalOrbit {
-		Period            14 
-		SemiMajorAxis  36000       
-   	} 
+	OrbitFrame {
+		EquatorJ2000 { Center "Sol/Eris" }
+	}	
+	EllipticalOrbit
+	{
+	Epoch		2453979.0    # 2006 Aug 31 12:00UT
+	Period		15.772
+	SemiMajorAxis	37430
+	Inclination	61.3
+	AscendingNode	139
+	MeanAnomaly	328.6
+	}
 }
 
 "2005 FY9" "Sol" { 
@@ -351,3 +362,4 @@
 	Period 10 # (much shorter than previously thought)
 	}
 } 
+
