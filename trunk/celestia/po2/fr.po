@@ -262,7 +262,7 @@ msgstr "Orion"
 
 #: data/constellations.cpp:61
 msgid "Pavo"
-msgstr "La Paon"
+msgstr "Le Paon"
 
 #: data/constellations.cpp:62
 msgid "Pegasus"
@@ -298,7 +298,7 @@ msgstr "La Boussole"
 
 #: data/constellations.cpp:70
 msgid "Reticulum"
-msgstr "La Réticule"
+msgstr "Le Réticule"
 
 #: data/constellations.cpp:71
 msgid "Sagitta"
