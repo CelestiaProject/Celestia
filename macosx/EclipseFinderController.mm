@@ -236,7 +236,7 @@ static CelestiaBody *eclipseBody;
 
             [eclipses addObject:
                 [NSDictionary dictionaryWithObjectsAndKeys:
-                    eclipseName, @"caster",
+                    NSLocalizedStringFromTable(eclipseName,@"po",@""), @"caster",
                     eclipseDate, @"date",
                     [[[CelestiaBody alloc] initWithBody: eclipse->body] autorelease], @"body",
                     [NSNumber numberWithDouble: eclipse->startTime], @"start",
