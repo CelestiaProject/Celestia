@@ -2311,6 +2311,36 @@ static int object_radius(lua_State* l)
     return 1;
 }
 
+static int object_setradius(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to object:setradius()");
+
+    Selection* sel = this_object(l);
+    if (sel->body() != NULL)
+    {
+        Body* body = sel->body();
+        float iradius = body->getRadius();
+        double radius = safeGetNumber(l, 2, AllErrors, "Argument to object:setradius() must be a number");
+        if ((radius > 0))
+        {
+            body->setRadius((float) radius);
+        }
+
+        if (body->getRings() != NULL)
+        {
+            RingSystem rings(0.0f, 0.0f);
+            rings = *body->getRings();
+            float inner = rings.innerRadius;
+            float outer = rings.outerRadius;
+            rings.innerRadius = inner * (float) radius / iradius;
+            rings.outerRadius = outer * (float) radius / iradius;
+            body->setRings(rings);
+        }
+    }
+
+    return 0;
+}
+
 static int object_type(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:type");
@@ -2718,6 +2748,7 @@ static void CreateObjectMetaTable(lua_State* l)
 
     RegisterMethod(l, "__tostring", object_tostring);
     RegisterMethod(l, "radius", object_radius);
+    RegisterMethod(l, "setradius", object_setradius);
     RegisterMethod(l, "type", object_type);
     RegisterMethod(l, "spectraltype", object_spectraltype);
     RegisterMethod(l, "getinfo", object_getinfo);
