@@ -131,6 +131,24 @@
 	AppMag 12.4
 }
 
+1021565409 "NGC 2423 3"
+{
+	RA 114.2875
+	Dec -13.90667
+	Distance 2500
+	SpectralType "GIV"
+	AppMag 9.45
+}
+
+"Gliese 317"
+{
+	RA 130.24583
+	Dec -23.45639
+	Distance 29.9
+	SpectralType "M3.5V"
+	AppMag 12.0
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
