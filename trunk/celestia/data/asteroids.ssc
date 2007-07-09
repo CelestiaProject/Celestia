@@ -26,10 +26,10 @@
 
 	UniformRotation
 	{
-	Period         9.075 
-	Epoch    2449249.91125 # 1993 Sep 19 09:52:12UT 
+	Period         9.074170 # Icarus 2007,188(2):451 
+	Epoch    2449249.91125  # 1993 Sep 19 09:52:12UT 
 	Inclination             11 
-	AscendingNode  29 
+	AscendingNode  		29 
 	MeridianAngle       339.85 
 	}
 
