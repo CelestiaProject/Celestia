@@ -149,6 +149,43 @@
 	AppMag 12.0
 }
 
+
+1014500458 # HD 171028
+{
+	RA 206.094167
+	Dec 6.94583
+	Distance 290
+	SpectralType "G0"
+	AppMag 8.31
+}
+
+"HAT-P-3"
+{
+	RA 206.094167
+	Dec 48.028611
+	Distance 460
+	SpectralType "K0V" # from temp and luminosity
+	AbsMag 5.86
+}
+
+"Cha Hα 8:Cha Ha 8"
+{
+	RA 166.949167
+	Dec -77.668889
+	Distance 520
+	SpectralType "M6.5V"
+	AppMag 20.1
+}
+
+"TrES-4 (parent star)"
+{
+	RA 268.304375
+	Dec 37.211833
+	Distance 1430
+	SpectralType "G0IV" # from inferred mass, radius and temp
+	AbsMag 3.36
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
@@ -250,7 +287,7 @@ Barycenter "UPS And:50 And"
 	RA 32.600829       # from measured separation 
 	Dec -50.825444     # position angle
 	Distance 35.596
-	SpectralType "DC9" # "cool white dwarf, 5000�500K"
+	SpectralType "DC9" # "cool white dwarf, 5000±500K"
 	AbsMag 14.5        # typical for class
 }
 
