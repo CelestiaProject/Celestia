@@ -248,12 +248,30 @@ NSString* fatalErrorMessage;
     [[glView window] setFrameUsingName: @"Celestia"];
     [[glView window] setAlphaValue: 1.0f];
     [[glView window] setFrameAutosaveName: @"Celestia"];
-    [[glView window] makeMainWindow ];
+    if ([[glView window] canBecomeMainWindow])
+        [[glView window] makeMainWindow ];
     [[glView window] makeFirstResponder: glView ];
     [[glView window] makeKeyAndOrderFront: glView ];
     [glView registerForDraggedTypes:
         [NSArray arrayWithObjects: NSStringPboardType, NSFilenamesPboardType, NSURLPboardType, nil]];
     [glView setNeedsDisplay:YES];
+}
+
+- (void)startRender
+{
+    [self startGLView];
+
+    if (isFullScreen)
+    {
+        isFullScreen = NO;
+        [self toggleFullScreen: self];
+    }
+
+    // workaround for fov problem
+    if (pendingUrl) [appCore goToUrl: pendingUrl];
+
+    if ([startupCondition tryLockWhenCondition: 1])
+        [startupCondition unlockWithCondition:  2];
 }
 
 - (void)finishInitialization
@@ -337,9 +355,6 @@ NSString* fatalErrorMessage;
 
     // load settings
     [settings loadUserDefaults];
-    // Have to delay going full screen until after view is started
-    BOOL shouldGoFullScreen = isFullScreen;
-    isFullScreen = NO;
 
     // paste URL if pending
     if (pendingUrl != nil )
@@ -354,19 +369,17 @@ NSString* fatalErrorMessage;
     timer = [[NSTimer timerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:YES] retain];
     [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
 
-    [self startGLView];
+    // Threaded startup can allow app to be hidden during startup
+    // When this happens delay rendering until first unhide
+    // to prevent all sorts of problems
+    if (![NSApp isHidden])
+        [self startRender];
 
-    if (shouldGoFullScreen)
-        [self toggleFullScreen: self];
-
-    // run script if pending
+    // run script if pending (scripts can run without rendering)
     if (pendingScript != nil )
     {
         [self runScript: pendingScript ];
-    }
-
-    // workaround for fov problem
-    if (pendingUrl) [appCore goToUrl: pendingUrl];
+    }    
 }
 
 // Application Event Handler Methods ----------------------------------------------------------
@@ -417,6 +430,15 @@ NSString* fatalErrorMessage;
 - (void)applicationWillUnhide:(NSNotification *)aNotification
 {
     ready = YES;
+}
+
+- (void)applicationDidUnhide:(NSNotification *)aNotification
+{
+    if ( [startupCondition tryLockWhenCondition: 1] )
+    {
+        [startupCondition unlock];
+        [self startRender];
+    }
 }
 
 -(BOOL)applicationShouldTerminate:(id)sender
