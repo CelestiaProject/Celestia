@@ -429,6 +429,7 @@ NSString* fatalErrorMessage;
 
 - (void)applicationWillUnhide:(NSNotification *)aNotification
 {
+    if ( [startupCondition condition] == 0 ) return;
     ready = YES;
 }
 
