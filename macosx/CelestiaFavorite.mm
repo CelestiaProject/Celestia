@@ -126,7 +126,13 @@
     fav->name = [name stdString];
     fav->isFolder = false;
     fav->parentFolder = [parentFolder stdString];
-    fav->selectionName = sim->getSelection().getName();
+
+    Selection sel = sim->getSelection();
+    if (sel.deepsky() != NULL)
+        fav->selectionName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+    else
+        fav->selectionName = sel.getName();
+
     fav->coordSys = sim->getFrame().coordSys;
     self = [self initWithFavorite:fav];
     _freeWhenDone = YES;
