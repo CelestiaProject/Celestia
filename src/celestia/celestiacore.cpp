@@ -445,7 +445,13 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     fav->name = name;
     fav->isFolder = false;
     fav->parentFolder = parentFolder;
-    fav->selectionName = sim->getSelection().getName();
+    
+    Selection sel = sim->getSelection();
+    if (sel.deepsky() != NULL)
+        fav->selectionName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+    else
+        fav->selectionName = sel.getName();
+
     fav->coordSys = sim->getFrame().coordSys;
 
     favorites->insert(pos, fav);
