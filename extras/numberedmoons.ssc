@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# Version 1.32 (2007 May 05)
+# Version 1.33 (2007 Sep 25)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -1624,7 +1624,7 @@
 	Albedo 0.06
 }
 
-"2006S4" "Sol/Saturn" # MPEC 2006-M45
+"Greip" "Sol/Saturn" # MPEC 2006-M45
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1670,7 +1670,7 @@
 	Albedo 0.06
 }
 
-"2006S6" "Sol/Saturn" # MPEC 2007-D79
+"Jarnsaxa" "Sol/Saturn" # MPEC 2007-D79
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -1739,7 +1739,7 @@
 	Albedo 0.06
 }
 
-"2007S1" "Sol/Saturn" # MPEC 2007-G38
+"Tarqeq" "Sol/Saturn" # MPEC 2007-G38
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
