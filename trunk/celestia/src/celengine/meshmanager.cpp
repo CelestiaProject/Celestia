@@ -115,11 +115,11 @@ Model* ModelInfo::load(const string& filename)
         model->determineOpacity();
 
         // Display some statics for the model
-        clog << "   Model statistics: "
-             << model->getVertexCount() << " vertices, "
-             << model->getPrimitiveCount() << " primitives, "
-             << originalMaterialCount << " materials "
-             << "(" << model->getMaterialCount() << " unique)\n";
+        clog << _("   Model statistics: ")
+             << model->getVertexCount() << _(" vertices, ")
+             << model->getPrimitiveCount() << _(" primitives, ")
+             << originalMaterialCount << _(" materials ")
+             << "(" << model->getMaterialCount() << _(" unique)\n");
     }
     else
     {
