@@ -186,6 +186,15 @@
 	AbsMag 3.36
 }
 
+"V391 Peg"
+{
+	RA 331.05083
+	Dec 26.41889
+	Distance 4600
+	SpectralType "B0" # from effective temperature, gives correct radius
+	AppMag 14.57
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
