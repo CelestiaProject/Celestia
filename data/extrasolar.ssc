@@ -1,4 +1,4 @@
-# Catalog of 245 known extrasolar planets.
+# Catalog of 248 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -2377,6 +2377,35 @@ AltSurface "limit of knowledge" "HD 160691/e"
 }
 
 
+"b" "HD 285968"   # Gliese 176
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       20     # M.sin(i) = 0.0757 jupiters
+	Radius     56000
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+285968"
+
+	EllipticalOrbit {
+		Period          0.028
+		SemiMajorAxis   0.0727
+		Eccentricity    0.23
+		ArgOfPericenter 12
+		MeanAnomaly     286
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 285968/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 130322"
 {
 	Texture "exo-class3.*"
@@ -3071,25 +3100,55 @@ AltSurface "limit of knowledge" "HD 74156/b"
 }
 
 
-"c" "HD 74156"
+"d" "HD 74156"
 {
 	Texture "exo-class2.*"
 
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       1910     # M.sin(i) = 6.00 jupiters
+	Mass       130     # M.sin(i) = 0.4 jupiters
+	Radius     56000
+	Oblateness 0.08
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+74156"
+
+	EllipticalOrbit {
+		Period          0.9489
+		SemiMajorAxis   1.04
+		Eccentricity    0.25
+		ArgOfPericenter 28
+		MeanAnomaly     180
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 74156/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 74156"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       2550     # M.sin(i) = 8.03 jupiters
 	Radius     70000
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+74156"
 
 	EllipticalOrbit {
-		Period          5.5441
-		SemiMajorAxis   3.35
-		Eccentricity    0.583
-		ArgOfPericenter 104
-		MeanAnomaly     114
+		Period          6.7789
+		SemiMajorAxis   3.85
+		Eccentricity    0.43
+		ArgOfPericenter 123
+		MeanAnomaly     86
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -6595,6 +6654,37 @@ AltSurface "limit of knowledge" "HD 2039/b"
 }
 
 
+"b" "V391 Peg"
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       1020     # M.sin(i) = 3.2 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=V391+Peg"
+
+	EllipticalOrbit {
+		Period          3.2033
+		SemiMajorAxis   1.7
+		Eccentricity    0
+		MeanLongitude   166
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "V391 Peg/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 136118"
 {
 	Texture "browndwarf.*"
@@ -7532,3 +7622,5 @@ AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
 	Texture "extrasolar-lok.*"
 }
+
+
