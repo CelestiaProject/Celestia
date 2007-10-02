@@ -7,7 +7,7 @@
 		<key>altSurface</key>
 		<integer>0</integer>
 		<key>ambientLightLevel</key>
-		<real>0.1</real>
+		<real>0.10000000000000001</real>
 		<key>faintestVisible</key>
 		<real>7</real>
 		<key>fullScreenMode</key>
@@ -74,9 +74,9 @@
 		<integer>1</integer>
 		<key>showGalaxyLabels</key>
 		<integer>0</integer>
-		<key>showLatinConstellationLabels</key>
-		<integer>1</integer>
 		<key>showLandingSiteLabels</key>
+		<integer>1</integer>
+		<key>showLatinConstellationLabels</key>
 		<integer>1</integer>
 		<key>showLineaLabels</key>
 		<integer>1</integer>
@@ -141,6 +141,8 @@
 		<key>showStarLabels</key>
 		<integer>0</integer>
 		<key>showStars</key>
+		<integer>1</integer>
+		<key>showStellarOrbits</key>
 		<integer>1</integer>
 		<key>showTerraLabels</key>
 		<integer>1</integer>

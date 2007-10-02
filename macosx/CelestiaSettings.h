@@ -163,8 +163,11 @@
 -(BOOL) showCometOrbits ;
 -(void) setShowCometOrbits: (BOOL) value ; 
 
--(BOOL) showSpacecraftOrbits ; 
--(void) setShowSpacecraftOrbits: (BOOL) value    ; 
+-(BOOL) showSpacecraftOrbits ;
+-(void) setShowSpacecraftOrbits: (BOOL) value ;
+
+-(BOOL) showStellarOrbits ;
+-(void) setShowStellarOrbits: (BOOL) value ;
 
 -(float) minimumOrbitSize ;
 -(void)  setMinimumOrbitSize: (float) value ; 

@@ -133,6 +133,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(702,@"showAsteroidOrbits")
         TAGDEF(704,@"showSpacecraftOrbits")
         TAGDEF(703,@"showCometOrbits")
+        TAGDEF(705,@"showStellarOrbits")
         // feature labels
         TAGDEF(903,@"minimumFeatureSize")
         TAGDEF(800,@"showCityLabels")
@@ -451,6 +452,7 @@ ORBITMETHODS(Moon)
 ORBITMETHODS(Asteroid)
 ORBITMETHODS(Spacecraft)
 ORBITMETHODS(Comet)
+ORBITMETHODS(Stellar)
 
 
 -(float) minimumOrbitSize { return appCore->getRenderer()->getMinimumOrbitSize(); }
