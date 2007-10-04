@@ -16,6 +16,10 @@
 #import "CelestiaSimulation.h"
 #import "CelestiaSimulation_PrivateAPI.h"
 
+#ifdef URL_FAVORITES
+#include "url.h"
+#endif
+
 @implementation CelestiaFavorite(PrivateAPI)
 -(CelestiaFavorite *)initWithFavorite:(FavoritesEntry *)fav 
 {
@@ -88,7 +92,12 @@
 }
 -(void)activate
 {
-    [[CelestiaAppCore sharedAppCore] activateFavorite:self];
+#ifdef URL_FAVORITES
+    if (url)
+        [[CelestiaAppCore sharedAppCore] goToUrl: url];
+    else
+#endif
+        [[CelestiaAppCore sharedAppCore] activateFavorite:self];
 }
 -(id)initWithName:(NSString*)name
 {
@@ -109,6 +118,9 @@
     fav->parentFolder = [parentFolder stdString];
     self = [self initWithFavorite:fav];
     _freeWhenDone = YES;
+#ifdef URL_FAVORITES
+    [self setName: name];
+#endif
     return self;
 }
 -(id)initWithName:(NSString*)name parentFolder:(CelestiaFavorite*)folder
@@ -136,14 +148,31 @@
     fav->coordSys = sim->getFrame().coordSys;
     self = [self initWithFavorite:fav];
     _freeWhenDone = YES;
+#ifdef URL_FAVORITES
+    Url currentUrl = Url([[CelestiaAppCore sharedAppCore] appCore], Url::Absolute);
+    [self setUrl:  [NSString stringWithStdString: currentUrl.getAsString()]];
+    [self setName: [NSString stringWithStdString: currentUrl.getName()]];
+    if (_name == nil)
+        [self setName: [[[[CelestiaAppCore sharedAppCore] simulation] selection] name]];
+    if (_name == nil)
+        [self setName: [[[[CelestiaAppCore sharedAppCore] simulation] julianDate] description]];
+#endif
     return self;
 }
 -(unsigned)hash
 {
+#ifdef URL_FAVORITES
+    if (url)
+        return [url hash];
+#endif
     return (unsigned)[_data pointerValue];
 }
 -(void)dealloc
 {
+#ifdef URL_FAVORITES
+    [url release];   url = nil;
+    [_name release]; _name = nil;
+#endif
     if (_data != nil) {
         if (_freeWhenDone) {
             FavoritesEntry* fav = [self favorite];
@@ -176,7 +205,19 @@
 {
     if ([self isFolder])
         return [NSDictionary dictionaryWithObjectsAndKeys:[self name],@"name",[NSNumber numberWithBool:YES],@"isFolder",nil,nil];
-    return [NSDictionary dictionaryWithObjectsAndKeys:[self name],@"name",[self parentFolder],@"parentFolder",[self selectionName],@"selectionName",[NSArray arrayWithArray:[self orientation]],@"orientation",[[self position] data],@"position",[self jd],@"jd",[NSNumber numberWithBool:NO],@"isFolder",[self coordinateSystem],@"coordinateSystem",nil,nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        [self name], @"name",
+        [self parentFolder], @"parentFolder",
+        [self selectionName], @"selectionName",
+        [NSArray arrayWithArray:[self orientation]], @"orientation",
+        [[self position] data], @"position",
+        [self jd], @"jd",
+        [NSNumber numberWithBool:NO], @"isFolder",
+        [self coordinateSystem], @"coordinateSystem",
+#ifdef URL_FAVORITES
+        url, @"url",
+#endif
+        nil];
 }
 -(id)initWithDictionary:(NSDictionary*)dict
 {
@@ -198,6 +239,9 @@
     [self setPosition:[[[CelestiaUniversalCoord alloc] initWithData:[dict objectForKey:@"position"]] autorelease]];
     [self setJd:[dict objectForKey:@"jd"]];
     [self setCoordinateSystem:[dict objectForKey:@"coordinateSystem"]];
+#ifdef URL_FAVORITES
+    [self setUrl: [dict objectForKey: @"url"]];
+#endif
     return self;
 }
 -(NSString*)description
@@ -208,7 +252,11 @@
 {
     if (name == nil)
         name = @"";
+#ifdef URL_FAVORITES
+    _name = [name retain];
+#else
     [self favorite]->name = [name stdString];
+#endif
 }
 -(void)setParentFolder:(NSString*)parentFolder
 {
@@ -218,7 +266,11 @@
 }
 -(NSString*)name
 {
+#ifdef URL_FAVORITES
+    return [[_name retain] autorelease];
+#else
     return [NSString stringWithStdString:[self favorite]->name];
+#endif
 }
 -(NSString*)selectionName
 {
@@ -248,4 +300,14 @@
 {
     return [Astro stringWithCoordinateSystem:[NSNumber numberWithInt:(int)[self favorite]->coordSys]];
 }
+#ifdef URL_FAVORITES
+-(NSString*)url
+{
+    return url;
+}
+-(void)setUrl:(NSString *)aUrl
+{
+    url = [aUrl retain];
+}
+#endif
 @end
