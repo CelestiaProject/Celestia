@@ -8,9 +8,15 @@
 
 #import "CelestiaUniversalCoord.h"
 
+#define URL_FAVORITES
+
 // parentFolder is totally vestigal crap
 
 @interface CelestiaFavorite : NSObject <NSCoding> {
+#ifdef URL_FAVORITES
+    NSString *_name;
+    NSString *url;
+#endif
     NSValue* _data;
     BOOL _freeWhenDone;
 }
@@ -37,7 +43,10 @@
 -(BOOL)isEqual:(id)obj;
 //-(NSDictionary*)dictionaryRepresentation;
 -(NSString*)description;
--(void)setName:(NSString*)name;
 -(NSString*)selectionName;
 -(NSString*)coordinateSystem;
+#ifdef URL_FAVORITES
+-(NSString*)url;
+-(void)setUrl:(NSString *)aUrl;
+#endif
 @end
