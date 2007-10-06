@@ -253,6 +253,7 @@
     if (name == nil)
         name = @"";
 #ifdef URL_FAVORITES
+    [_name release];
     _name = [name retain];
 #else
     [self favorite]->name = [name stdString];
