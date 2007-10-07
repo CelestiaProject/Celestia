@@ -1305,7 +1305,7 @@ ReferencePoint "Pluto-Charon" "Sol"
     Radius 1151
 
     OrbitFrame {
-        EclipticJ2000 { Center "Sol/Pluto-Charon" }
+        EquatorJ2000 { Center "Sol/Pluto-Charon" }
     }
 
     BodyFrame {
@@ -1317,10 +1317,10 @@ ReferencePoint "Pluto-Charon" "Sol"
         Period           6.387246
         SemiMajorAxis    2411      # mass ratio of 0.123
         Eccentricity     0.0002
-        Inclination      115.602
-        AscendingNode    228.328
-        ArgOfPericenter  47.314
-        MeanAnomaly      93.440
+        Inclination      96.177
+        AscendingNode   223.052
+        ArgOfPericenter 314.540
+        MeanAnomaly     169.750
     }
 
     UniformRotation
@@ -1353,7 +1353,7 @@ AltSurface "limit of knowledge" "Sol/Pluto"
     InfoURL "http://www.nineplanets.org/pluto.html#Charon"
 
     OrbitFrame {
-        EclipticJ2000 { Center "Sol/Pluto-Charon" }
+        EquatorJ2000 { Center "Sol/Pluto-Charon" }
     }
 
     BodyFrame {
@@ -1365,10 +1365,10 @@ AltSurface "limit of knowledge" "Sol/Pluto"
         Period          6.387246
         SemiMajorAxis   17188   # mass ratio of 0.123
         Eccentricity    0.0002
-        Inclination     115.602
-        AscendingNode   228.328
-        ArgOfPericenter 227.314
-        MeanAnomaly     93.440
+        Inclination      96.177
+        AscendingNode   223.052
+        ArgOfPericenter 134.540
+        MeanAnomaly     169.750
     }
 
     UniformRotation
