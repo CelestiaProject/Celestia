@@ -195,6 +195,15 @@
 	AppMag 14.57
 }
 
+1015992569 "HAT-P-4"
+{
+	RA 229.99125
+	Dec 36.229722
+	Distance 1010
+	SpectralType "F9V" # from temperature and radius
+	AppMag 11.2
+}
+
 Barycenter "TAU Boo:4 Boo"
 {
 	RA 206.815676
