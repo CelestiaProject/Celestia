@@ -1,4 +1,4 @@
-# Catalog of 248 known extrasolar planets.
+# Catalog of 249 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -70,7 +70,7 @@
 	Color  [0 0.36 1]
 	Albedo 0.05
 
-	Mass       190     # M.sin(i) = 0.61 jupiters
+	Mass       190     # M.sin(i) = 0.599 jupiters
 	Radius     62300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-3"
@@ -962,6 +962,47 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 }
 
 
+"b" "TYC 2569-1599-1"   # HAT-P-4
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.9 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.27 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       220     # M.sin(i) = 0.68 jupiters
+	Radius     88900
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-4"
+
+	EllipticalOrbit {
+		Period          0.0084
+		SemiMajorAxis   0.0446
+		Eccentricity    0
+		Inclination     104.9
+		AscendingNode   232.3
+		MeanLongitude   281
+	}
+
+	Obliquity             105 # guess, to match inclination
+	EquatorAscendingNode  232 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 2569-1599-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 179949"
 {
 	Texture "exo-class4.*"
@@ -970,17 +1011,17 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 	Color  [0 0.36 1]
 	Albedo 0.05
 
-	Mass       290     # M.sin(i) = 0.916 jupiters
+	Mass       300     # M.sin(i) = 0.95 jupiters
 	Radius     98000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+179949"
 
 	EllipticalOrbit {
 		Period          0.0085
-		SemiMajorAxis   0.0443
+		SemiMajorAxis   0.045
 		Eccentricity    0.022
-		ArgOfPericenter 209
-		MeanAnomaly     169
+		ArgOfPericenter 200
+		MeanAnomaly     176
 	}
 
 	# likely to be in captured synchronous rotation
@@ -2796,9 +2837,14 @@ AltSurface "limit of knowledge" "HD 102117/b"
 		Period          0.058
 		SemiMajorAxis   0.15
 		Eccentricity    0.67
-		ArgOfPericenter 278
-		MeanAnomaly     183
+		Inclination     74.7
+		AscendingNode   43.7
+		ArgOfPericenter 266
+		MeanAnomaly     191
 	}
+
+	Obliquity             75 # guess, to match inclination
+	EquatorAscendingNode  44 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -7622,5 +7668,3 @@ AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
 	Texture "extrasolar-lok.*"
 }
-
-
