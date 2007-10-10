@@ -4225,6 +4225,24 @@ static int celestia_getfaintestvisible(lua_State* l)
     return 1;
 }
 
+static int celestia_setgalaxylightgain(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected for celestia:setgalaxylightgain()");
+    float lightgain = (float)safeGetNumber(l, 2, AllErrors, "Argument to celestia:setgalaxylightgain() must be a number");
+    lightgain = min(1.0f, max(0.0f, lightgain));
+    Galaxy::setLightGain(lightgain);
+
+    return 0;
+}
+
+static int celestia_getgalaxylightgain(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected for celestia:getgalaxylightgain()");
+    lua_pushnumber(l, Galaxy::getLightGain());
+
+    return 1;
+}
+
 static int celestia_setminfeaturesize(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for celestia:setminfeaturesize()");
@@ -5192,6 +5210,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
     RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
     RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
+    RegisterMethod(l, "getgalaxylightgain", celestia_getgalaxylightgain);
+    RegisterMethod(l, "setgalaxylightgain", celestia_setgalaxylightgain);
     RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
     RegisterMethod(l, "getminfeaturesize", celestia_getminfeaturesize);
     RegisterMethod(l, "getobserver", celestia_getobserver);
