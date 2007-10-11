@@ -13,7 +13,7 @@
 #include "formatnum.h"
 
 // HACK: MS Visual C++ has _snprintf declared in stdio.h but not snprintf
-#ifdef WIN32
+#ifdef _WIN32
 #define snprintf _snprintf
 #endif
 
