@@ -570,6 +570,33 @@ class Renderer
     Selection highlightObject;
 
     bool videoSync;
+
+ public:
+    // Colors for all lines and labels
+    static Color Renderer::StarLabelColor;
+    static Color Renderer::PlanetLabelColor;
+    static Color Renderer::MoonLabelColor;
+    static Color Renderer::AsteroidLabelColor;
+    static Color Renderer::CometLabelColor;
+    static Color Renderer::SpacecraftLabelColor;
+    static Color Renderer::LocationLabelColor;
+    static Color Renderer::GalaxyLabelColor;
+    static Color Renderer::NebulaLabelColor;
+    static Color Renderer::OpenClusterLabelColor;
+    static Color Renderer::ConstellationLabelColor;
+    static Color Renderer::EquatorialGridLabelColor;
+
+    static Color Renderer::StarOrbitColor;
+    static Color Renderer::PlanetOrbitColor;
+    static Color Renderer::MoonOrbitColor;
+    static Color Renderer::AsteroidOrbitColor;
+    static Color Renderer::CometOrbitColor;
+    static Color Renderer::SpacecraftOrbitColor;
+    static Color Renderer::SelectionOrbitColor;
+
+    static Color Renderer::ConstellationColor;
+    static Color Renderer::BoundaryColor;
+    static Color Renderer::EquatorialGridColor;
 };
 
 #endif // _RENDER_H_

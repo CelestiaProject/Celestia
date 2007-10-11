@@ -91,6 +91,12 @@ static const float MinOrbitSizeForLabel = 20.0f;
 // a label for it.
 static const float MinFeatureSizeForLabel = 20.0f;
 
+// Maximum size of a solar system in light years. Features beyond this distance
+// will not necessarily be rendered correctly. This limit is used for
+// visibility culling of solar systems.
+static const float MaxSolarSystemSize = 1.0f;
+
+
 // Static meshes and textures used by all instances of Simulation
 
 static bool commonDataInitialized = false;
@@ -133,13 +139,37 @@ struct SphericalCoordLabel
     }
 };
 
-static int nCoordLabels = 38;
+static int nCoordLabels = 44;
 static SphericalCoordLabel* coordLabels = NULL;
 
 static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
 static const int MinSkySlices = 30;
 
+Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
+Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
+Color Renderer::MoonLabelColor          (0.231f, 0.733f, 0.792f);
+Color Renderer::AsteroidLabelColor      (0.596f, 0.305f, 0.164f);
+Color Renderer::CometLabelColor         (0.768f, 0.607f, 0.227f);
+Color Renderer::SpacecraftLabelColor    (0.93f,  0.93f,  0.93f);
+Color Renderer::LocationLabelColor      (0.24f,  0.89f,  0.43f);
+Color Renderer::GalaxyLabelColor        (0.0f,   0.45f,  0.5f);
+Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
+Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
+Color Renderer::ConstellationLabelColor (0.125f, 0.167f, 0.2f);
+Color Renderer::EquatorialGridLabelColor(0.095f, 0.196f, 0.096f);
+
+Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
+Color Renderer::PlanetOrbitColor        (0.3f,   0.323f, 0.833f);
+Color Renderer::MoonOrbitColor          (0.08f,  0.407f, 0.392f);
+Color Renderer::AsteroidOrbitColor      (0.58f,  0.152f, 0.08f);
+Color Renderer::CometOrbitColor         (0.639f, 0.487f, 0.168f);
+Color Renderer::SpacecraftOrbitColor    (0.4f,   0.4f,   0.4f);
+Color Renderer::SelectionOrbitColor     (1.0f,   0.0f,   0.0f);
+
+Color Renderer::ConstellationColor      (0.0f,   0.12f,  0.18f);
+Color Renderer::BoundaryColor           (0.1f,   0.006f, 0.066f);
+Color Renderer::EquatorialGridColor     (0.071f, 0.114f, 0.073f);
 
 #if 0
 struct DisplayDevice
@@ -1104,36 +1134,40 @@ public:
 
 void renderOrbitColor(int classification, bool selected, float opacity)
 {
+    Color orbitColor;
+
     if (selected)
     {
         // Highlight the orbit of the selected object in red
-        glColor4f(1, 0, 0, opacity);
+        orbitColor = Renderer::SelectionOrbitColor;
     }
     else
     {
         switch (classification)
         {
         case Body::Moon:
-            glColor4f(0.0f, 0.4f, 0.5f, opacity);
+            orbitColor = Renderer::MoonOrbitColor;
             break;
         case Body::Asteroid:
-            glColor4f(0.35f, 0.2f, 0.0f, opacity);
+            orbitColor = Renderer::AsteroidOrbitColor;
             break;
         case Body::Comet:
-            glColor4f(0.0f, 0.5f, 0.5f, opacity);
+            orbitColor = Renderer::CometOrbitColor;
             break;
         case Body::Spacecraft:
-            glColor4f(0.4f, 0.4f, 0.4f, opacity);
+            orbitColor = Renderer::SpacecraftOrbitColor;
             break;
         case Body::Stellar:
-            glColor4f(0.5f, 0.5f, 0.8f, opacity);
+            orbitColor = Renderer::StarOrbitColor;
             break;
         case Body::Planet:
         default:
-            glColor4f(0.0f, 0.4f, 1.0f, opacity);
+            orbitColor = Renderer::PlanetOrbitColor;
             break;
         }
     }
+
+    glColor(orbitColor, opacity * orbitColor.alpha());
 }
 
 
@@ -1610,7 +1644,7 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowCelestialSphere) != 0)
     {
-        glColor4f(0.3f, 0.7f, 0.7f, 0.55f);
+        glColor(EquatorialGridColor);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -1641,7 +1675,7 @@ void Renderer::render(const Observer& observer,
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
     {
-        glColor4f(0.28f, 0.0f, 0.66f, 0.96f);
+        glColor(ConstellationColor);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -1669,7 +1703,7 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowBoundaries) != 0)
     {
-        glColor4f(0.8f, 0.33f, 0.63f, 0.35f);
+        glColor(BoundaryColor);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -2004,6 +2038,17 @@ void Renderer::render(const Observer& observer,
                         clog << "point: " << renderList[i].body->getName() << "\n";
                     }
                 }
+                else if (renderList[i].star != NULL)
+                {
+                    if (renderList[i].discSizeInPixels > 1)
+                    {
+                        clog << "Star\n";
+                    }
+                    else
+                    {
+                        clog << "point: " << "Star" << "\n";
+                    }
+                }
 #endif
                 // Treat objects that are smaller than one pixel as transparent and render
                 // them in the second pass.
@@ -2171,7 +2216,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     float renderZ,
                                     bool useHalos)
 {
-    float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
+    float maxDiscSize = 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
     float discSize = 1.0f;
 
@@ -2272,6 +2317,7 @@ void Renderer::renderObjectAsPoint(Point3f position,
 {
     float maxDiscSize = (starStyle == ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
+
     bool useScaledDiscs = starStyle == ScaledDiscStars;
 
     if (discSizeInPixels < maxBlendDiscSize || useHalos)
@@ -4767,7 +4813,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 
                 double t = 0.0f;
 
-                // Test for a intersection of the eye-to-location ray with
+                // Test for an intersection of the eye-to-location ray with
                 // the planet ellipsoid.  If we hit the planet first, then
                 // the label is obscured by the planet.  An exact calculation
                 // for irregular objects would be too expensive, and the
@@ -4784,7 +4830,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
                                    (const GLint*) view,
                                    &winX, &winY, &winZ) != GL_FALSE)
                     {
-                        glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+                        glColor(LocationLabelColor);
                         glPushMatrix();
                         glTranslatef((int) winX + PixelOffset,
                                      (int) winY + PixelOffset,
@@ -5844,6 +5890,7 @@ void Renderer::renderStar(const Star& star,
         glEnable(GL_TEXTURE_2D);
     }
 
+    glEnable(GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     if (useNewStarRendering)
@@ -6297,45 +6344,49 @@ void Renderer::buildRenderLists(const Star& sun,
                 bool showLabel = false;
                 float opacity = sizeFade(boundingRadiusSize, minOrbitSize, 2.0f);
 
-
                 switch (body->getClassification())
                 {
                 case Body::Planet:
                     if ((labelMode & PlanetLabels) != 0)
                     {
-                        labelColor = Color(0.0f, 1.0f, 0.0f, opacity);
+                        labelColor = PlanetLabelColor;
                         showLabel = true;
                     }
                     break;
                 case Body::Moon:
                     if ((labelMode & MoonLabels) != 0)
                     {
-                        labelColor = Color(0.0f, 0.65f, 0.0f, opacity);
+                        labelColor = MoonLabelColor;
                         showLabel = true;
                     }
                     break;
                 case Body::Asteroid:
                     if ((labelMode & AsteroidLabels) != 0)
                     {
-                        labelColor = Color(0.7f, 0.4f, 0.0f, opacity);
+                        labelColor = AsteroidLabelColor;
                         showLabel = true;
                     }
                     break;
                 case Body::Comet:
                     if ((labelMode & CometLabels) != 0)
                     {
-                        labelColor = Color(0.0f, 1.0f, 1.0f, opacity);
+                        labelColor = CometLabelColor;
                         showLabel = true;
                     }
                     break;
                 case Body::Spacecraft:
                     if ((labelMode & SpacecraftLabels) != 0)
                     {
-                        labelColor = Color(0.6f, 0.6f, 0.6f, opacity);
+                        labelColor = SpacecraftLabelColor;
                         showLabel = true;
                     }
                     break;
+                default:
+                    labelColor = Color::Black;
+                    break;
                 }
+
+                labelColor = Color(labelColor, opacity * labelColor.alpha());
 
                 if (showLabel)
                 {
@@ -6603,17 +6654,20 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
                 starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
-				float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
-				if (distr > 1.0f)
-        			distr = 1.0f; 								              
-				renderer->addLabel(nameBuffer,
-                                   Color(0.5f, 0.5f, 1.0f, distr),
+                float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
+                if (distr > 1.0f)
+                    distr = 1.0f; 								              
+                renderer->addLabel(nameBuffer,
+                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
                                    Point3f(relPos.x, relPos.y, relPos.z));
                 nLabelled++;
             }
         }
 
-        if (discSizeInPixels <= 1)
+        // Stars closer than the maximum solar system size are actually
+        // added to the render list and depth sorted, since they may occlude
+        // planets.
+        if (distance > MaxSolarSystemSize)
         {
             float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
             float pointSize;
@@ -6821,17 +6875,20 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
                 starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
-				float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
-				if (distr > 1.0f)
-        			distr = 1.0f; 								              
-				renderer->addLabel(nameBuffer,
-                                   Color(0.5f, 0.5f, 1.0f, distr),
+                float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
+                if (distr > 1.0f)
+                    distr = 1.0f; 								              
+                renderer->addLabel(nameBuffer,
+                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
                                    Point3f(relPos.x, relPos.y, relPos.z));
                 nLabelled++;
             }
         }
 
-        if (discSizeInPixels <= 1)
+        // Stars closer than the maximum solar system size are actually
+        // added to the render list and depth sorted, since they may occlude
+        // planets.
+        if (distance > MaxSolarSystemSize)
         {
             float satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale; // TODO: precompute this value
             float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
@@ -7205,18 +7262,52 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     // Only render those labels that are in front of the camera:
     // Place labels for DSOs brighter than the specified label threshold brightness
     //
+    unsigned int labelMask = dso->getLabelMask();
 
-    if ((dso->getLabelMask() & labelMode) && appMag < labelThresholdMag  && dot(relPos, viewNormal) > 0)
+    if ((labelMask & labelMode) && dot(relPos, viewNormal) > 0)
     {
-        // introduce distance dependent label transparency.
-        float distr = 6.0f * (labelThresholdMag - appMag)/labelThresholdMag;
-        //(float)log10(1.0f + 1.2e-6f * distanceToDSO);
-        if (distr > 1.0f)
-            distr = 1.0f;
+        Color labelColor;
+        float appMagEff = 6.0f;
+        float step = 6.0f;
 
-    	renderer->addLabel(dsoDB->getDSOName(dso),
-                           Color(0.1f, 0.85f, 0.85f, distr),
-                           Point3f(relPos.x, relPos.y, relPos.z));
+        // Use magnitude based fading for galaxies, and distance based
+        // fading for nebulae and open clusters.
+        switch (labelMask)
+        {
+        case Renderer::NebulaLabels:
+            labelColor = Renderer::NebulaLabelColor;
+            appMagEff = astro::absToAppMag(-7.5f, (float) distanceToDSO);
+            step = 6.0f;
+            break;
+        case Renderer::OpenClusterLabels:
+            labelColor = Renderer::OpenClusterLabelColor;
+            appMagEff = astro::absToAppMag(-6.0f, (float) distanceToDSO);
+            step = 4.0f;
+            break;
+        case Renderer::GalaxyLabels:
+            labelColor = Renderer::GalaxyLabelColor;
+            appMagEff = appMag;
+            step = 6.0f;
+            break;
+        default:
+            // Unrecognized object class
+            labelColor = Color::White;
+            appMagEff = appMag;
+            step = 6.0f;
+            break;
+        }
+
+        if (appMagEff < labelThresholdMag)
+        {
+            // introduce distance dependent label transparency.
+            float distr = step * (labelThresholdMag - appMagEff) / labelThresholdMag;
+            if (distr > 1.0f)
+                distr = 1.0f;
+
+            renderer->addLabel(dsoDB->getDSOName(dso),
+                               Color(labelColor, distr * labelColor.alpha()),
+                               Point3f(relPos.x, relPos.y, relPos.z));
+        }
     }
 }
 
@@ -7328,7 +7419,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
                                                        radius);
         if ((pos * m).z < 0)
         {
-            addLabel(coordLabels[i].label, Color(0.3f, 0.7f, 0.7f, 0.85f), pos);
+            addLabel(coordLabels[i].label, EquatorialGridLabelColor, pos);
         }
     }
 }
@@ -7363,7 +7454,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                 if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
                 {
                     addLabel(ast->getName((labelMode & I18nConstellationLabels) != 0),
-                             Color(0.5f, 0.0f, 1.0f, 1.0f),
+                             ConstellationLabelColor,
                              Point3f(rpos.x, rpos.y, rpos.z));
                 }
             }
