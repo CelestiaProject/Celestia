@@ -1420,12 +1420,9 @@ void Renderer::renderItem(const RenderListEntry& rle,
         {
             renderCometTail(*rle.body,
                             rle.position,
-                            rle.distance,
-                            rle.appMag,
                             observer.getTime(),
-                            cameraOrientation,
                             lightSourceLists[rle.solarSysIndex],
-                            nearPlaneDistance, farPlaneDistance);
+                            rle.discSizeInPixels);
         }
         else
         {
@@ -5918,8 +5915,8 @@ void Renderer::renderStar(const Star& star,
 }
 
 
-static const int MaxCometTailPoints = 20;
-static const int CometTailSlices = 16;
+static const int MaxCometTailPoints = 120;
+static const int CometTailSlices = 48;
 struct CometTailVertex
 {
     Point3f point;
@@ -6020,13 +6017,9 @@ static float cometDustTailLength(float distanceToSun,
 // TODO: Remove unused parameters??
 void Renderer::renderCometTail(const Body& body,
                                Point3f pos,
-                               float /*distance*/,
-                               float /*appMag*/,
                                double now,
-                               Quatf /*orientation*/,
                                const vector<LightSource>& lightSources,
-                               float /*nearPlaneDistance*/,
-                               float /*farPlaneDistance*/)
+                               float discSizeInPixels)
 {
     Point3f cometPoints[MaxCometTailPoints];
     Point3d pos0 = body.getOrbit()->positionAtTime(now);
@@ -6039,6 +6032,12 @@ void Renderer::renderCometTail(const Body& body,
     float distanceFromSun, irradiance_max = 0.0f;
     unsigned int li_eff = 0;    // Select the first sun as default to
                                 // shut up compiler warnings
+
+    // Adjust the amount of triangles used for the comet tail based on
+    // the screen size of the comet.
+    float lod = min(1.0f, max(0.2f, discSizeInPixels / 1000.0f));
+    int nTailPoints = (int) (MaxCometTailPoints * lod);
+    int nTailSlices = (int) (CometTailSlices * lod);
 
     // Find the sun with the largest irrradiance of light onto the comet
     // as function of the comet's position;
@@ -6089,9 +6088,9 @@ void Renderer::renderCometTail(const Body& body,
 
     Point3f origin(0, 0, 0);
     origin -= sunDir * (body.getRadius() * 100);
-    for (i = 0; i < MaxCometTailPoints; i++)
+    for (i = 0; i < nTailPoints; i++)
     {
-        float alpha = (float) i / (float) MaxCometTailPoints;
+        float alpha = (float) i / (float) nTailPoints;
         alpha = alpha * alpha;
         cometPoints[i] = origin + sunDir * (dustTailLength * alpha);
     }
@@ -6125,12 +6124,12 @@ void Renderer::renderCometTail(const Body& body,
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    for (i = 0; i < MaxCometTailPoints; i++)
+    for (i = 0; i < nTailPoints; i++)
     {
-        float brightness = 1.0f - (float) i / (float) (MaxCometTailPoints - 1);
+        float brightness = 1.0f - (float) i / (float) (nTailPoints - 1);
         Vec3f v0, v1;
         float sectionLength;
-        if (i != 0 && i != MaxCometTailPoints - 1)
+        if (i != 0 && i != nTailPoints - 1)
         {
             v0 = cometPoints[i] - cometPoints[i - 1];
             v1 = cometPoints[i + 1] - cometPoints[i];
@@ -6165,19 +6164,19 @@ void Renderer::renderCometTail(const Body& body,
             v1 = v0;
         }
 
-        float radius = (float) i / (float) MaxCometTailPoints *
+        float radius = (float) i / (float) nTailPoints *
             dustTailRadius;
-        float dr = (dustTailRadius / (float) MaxCometTailPoints) /
+        float dr = (dustTailRadius / (float) nTailPoints) /
             sectionLength;
         float w0 = (float) atan(dr);
         float w1 = (float) sqrt(1.0f - square(w0));
 
-        for (int j = 0; j < CometTailSlices; j++)
+        for (int j = 0; j < nTailSlices; j++)
         {
-            float theta = (float) (2 * PI * (float) j / CometTailSlices);
+            float theta = (float) (2 * PI * (float) j / nTailSlices);
             float s = (float) sin(theta);
             float c = (float) cos(theta);
-            CometTailVertex* vtx = &cometTailVertices[i * CometTailSlices + j];
+            CometTailVertex* vtx = &cometTailVertices[i * nTailSlices + j];
             vtx->normal = u * (s * w1) + w * (c * w1) + v * w0;
             s *= radius;
             c *= radius;
@@ -6195,25 +6194,25 @@ void Renderer::renderCometTail(const Body& body,
     viewDir.normalize();
 
     glDisable(GL_CULL_FACE);
-    for (i = 0; i < MaxCometTailPoints - 1; i++)
+    for (i = 0; i < nTailPoints - 1; i++)
     {
         glBegin(GL_QUAD_STRIP);
-        int n = i * CometTailSlices;
-        for (int j = 0; j < CometTailSlices; j++)
+        int n = i * nTailSlices;
+        for (int j = 0; j < nTailSlices; j++)
         {
             ProcessCometTailVertex(cometTailVertices[n + j], viewDir, fadeDistance);
-            ProcessCometTailVertex(cometTailVertices[n + j + CometTailSlices],
+            ProcessCometTailVertex(cometTailVertices[n + j + nTailSlices],
                                    viewDir, fadeDistance);
         }
         ProcessCometTailVertex(cometTailVertices[n], viewDir, fadeDistance);
-        ProcessCometTailVertex(cometTailVertices[n + CometTailSlices],
+        ProcessCometTailVertex(cometTailVertices[n + nTailSlices],
                                viewDir, fadeDistance);
         glEnd();
     }
     glEnable(GL_CULL_FACE);
 
     glBegin(GL_LINE_STRIP);
-    for (i = 0; i < MaxCometTailPoints; i++)
+    for (i = 0; i < nTailPoints; i++)
     {
         glVertex(cometPoints[i]);
     }
