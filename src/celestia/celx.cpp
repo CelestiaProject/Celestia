@@ -83,12 +83,15 @@ static const char* MouseDownHandler  = "mousedown";
 static const char* MouseUpHandler    = "mouseup";
 
 typedef map<string, uint32> FlagMap;
+typedef map<string, Color*> ColorMap;
 
 static FlagMap RenderFlagMap;
 static FlagMap LabelFlagMap;
 static FlagMap LocationFlagMap;
 static FlagMap BodyTypeMap;
 static FlagMap OverlayElementMap;
+static ColorMap LineColorMap;
+static ColorMap LabelColorMap;
 static bool mapsInitialized = false;
 
 // select which type of error will be fatal (call lua_error) and
@@ -195,6 +198,37 @@ static void initOverlayElementMap()
     OverlayElementMap["Frame"] = CelestiaCore::ShowFrame;
 }
 
+
+static void initLabelColorMap()
+{
+    LabelColorMap["stars"]          = &Renderer::StarLabelColor;
+    LabelColorMap["planets"]        = &Renderer::PlanetLabelColor;
+    LabelColorMap["moons"]          = &Renderer::MoonLabelColor;
+    LabelColorMap["asteroids"]      = &Renderer::AsteroidLabelColor;
+    LabelColorMap["comets"]         = &Renderer::CometLabelColor;
+    LabelColorMap["spacecraft"]     = &Renderer::SpacecraftLabelColor;
+    LabelColorMap["locations"]      = &Renderer::LocationLabelColor;
+    LabelColorMap["galaxies"]       = &Renderer::GalaxyLabelColor;
+    LabelColorMap["nebulae"]        = &Renderer::NebulaLabelColor;
+    LabelColorMap["openclusters"]   = &Renderer::OpenClusterLabelColor;
+    LabelColorMap["constellations"] = &Renderer::ConstellationLabelColor;
+    LabelColorMap["equatorialgrid"] = &Renderer::EquatorialGridLabelColor;
+}
+
+static void initLineColorMap()
+{
+    LineColorMap["starorbits"]       = &Renderer::StarOrbitColor;
+    LineColorMap["planetorbits"]     = &Renderer::PlanetOrbitColor;
+    LineColorMap["moonorbits"]       = &Renderer::MoonOrbitColor;
+    LineColorMap["asteroidorbits"]   = &Renderer::AsteroidOrbitColor;
+    LineColorMap["cometorbits"]      = &Renderer::CometOrbitColor;
+    LineColorMap["spacecraftorbits"] = &Renderer::SpacecraftOrbitColor;
+    LineColorMap["constellations"]   = &Renderer::ConstellationColor;
+    LineColorMap["boundaries"]       = &Renderer::BoundaryColor;
+    LineColorMap["equatorialgrid"]   = &Renderer::EquatorialGridColor;
+}
+
+
 #if LUA_VER >= 0x050100
 // Load a Lua library--in Lua 5.1, the luaopen_* functions cannot be called
 // directly. They most be invoked through the Lua state.
@@ -218,6 +252,8 @@ static void initMaps()
         initBodyTypeMap();
         initLocationFlagMap();
         initOverlayElementMap();
+        initLabelColorMap();
+        initLineColorMap();
     }
     mapsInitialized = true;
 }
@@ -4190,6 +4226,80 @@ static int celestia_getoverlayelements(lua_State* l)
     return 1;
 }
 
+static int celestia_setlabelcolor(lua_State* l)
+{
+    checkArgs(l, 5, 5, "Four arguments expected for celestia:setlabelcolor()");
+    CelestiaCore* appCore = this_celestia(l);
+    if (!lua_isstring(l, 2))
+    {
+        doError(l, "First argument to celestia:setlabelstyle() must be a string");
+    }
+
+    Color* color = NULL;
+    string key;
+    key = lua_tostring(l, 2);
+    if (LabelColorMap.count(key) == 0)
+    {
+        cerr << "Unknown label style: " << key << "\n";
+    }
+    else
+    {
+        color = LabelColorMap[key];
+    }
+
+    double red     = safeGetNumber(l, 3, AllErrors, "setlabelcolor: color values must be numbers");
+    double green   = safeGetNumber(l, 4, AllErrors, "setlabelcolor: color values must be numbers");
+    double blue    = safeGetNumber(l, 5, AllErrors, "setlabelcolor: color values must be numbers");
+    
+    // opacity currently not settable
+    double opacity = 1.0;
+
+    if (color != NULL)
+    {
+        *color = Color((float) red, (float) green, (float) blue, (float) opacity);
+    }
+
+    return 1;
+}
+
+
+static int celestia_setlinecolor(lua_State* l)
+{
+    checkArgs(l, 5, 5, "Four arguments expected for celestia:setlinecolor()");
+    CelestiaCore* appCore = this_celestia(l);
+    if (!lua_isstring(l, 2))
+    {
+        doError(l, "First argument to celestia:setlinecolor() must be a string");
+    }
+
+    Color* color = NULL;
+    string key;
+    key = lua_tostring(l, 2);
+    if (LineColorMap.count(key) == 0)
+    {
+        cerr << "Unknown line style: " << key << "\n";
+    }
+    else
+    {
+        color = LineColorMap[key];
+    }
+
+    double red     = safeGetNumber(l, 3, AllErrors, "setlinecolor: color values must be numbers");
+    double green   = safeGetNumber(l, 4, AllErrors, "setlinecolor: color values must be numbers");
+    double blue    = safeGetNumber(l, 5, AllErrors, "setlinecolor: color values must be numbers");
+    
+    // opacity currently not settable
+    double opacity = 1.0;
+
+    if (color != NULL)
+    {
+        *color = Color((float) red, (float) green, (float) blue, (float) opacity);
+    }
+
+    return 1;
+}
+
+
 static int celestia_setfaintestvisible(lua_State* l)
 {
     checkArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
@@ -5206,6 +5316,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
     RegisterMethod(l, "getorbitflags", celestia_getorbitflags);
     RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
+    RegisterMethod(l, "setlabelcolor", celestia_setlabelcolor);
+    RegisterMethod(l, "setlinecolor",  celestia_setlinecolor);
     RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
     RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
     RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
