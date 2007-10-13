@@ -570,30 +570,30 @@ class Renderer
 
  public:
     // Colors for all lines and labels
-    static Color Renderer::StarLabelColor;
-    static Color Renderer::PlanetLabelColor;
-    static Color Renderer::MoonLabelColor;
-    static Color Renderer::AsteroidLabelColor;
-    static Color Renderer::CometLabelColor;
-    static Color Renderer::SpacecraftLabelColor;
-    static Color Renderer::LocationLabelColor;
-    static Color Renderer::GalaxyLabelColor;
-    static Color Renderer::NebulaLabelColor;
-    static Color Renderer::OpenClusterLabelColor;
-    static Color Renderer::ConstellationLabelColor;
-    static Color Renderer::EquatorialGridLabelColor;
+    static Color StarLabelColor;
+    static Color PlanetLabelColor;
+    static Color MoonLabelColor;
+    static Color AsteroidLabelColor;
+    static Color CometLabelColor;
+    static Color SpacecraftLabelColor;
+    static Color LocationLabelColor;
+    static Color GalaxyLabelColor;
+    static Color NebulaLabelColor;
+    static Color OpenClusterLabelColor;
+    static Color ConstellationLabelColor;
+    static Color EquatorialGridLabelColor;
 
-    static Color Renderer::StarOrbitColor;
-    static Color Renderer::PlanetOrbitColor;
-    static Color Renderer::MoonOrbitColor;
-    static Color Renderer::AsteroidOrbitColor;
-    static Color Renderer::CometOrbitColor;
-    static Color Renderer::SpacecraftOrbitColor;
-    static Color Renderer::SelectionOrbitColor;
+    static Color StarOrbitColor;
+    static Color PlanetOrbitColor;
+    static Color MoonOrbitColor;
+    static Color AsteroidOrbitColor;
+    static Color CometOrbitColor;
+    static Color SpacecraftOrbitColor;
+    static Color SelectionOrbitColor;
 
-    static Color Renderer::ConstellationColor;
-    static Color Renderer::BoundaryColor;
-    static Color Renderer::EquatorialGridColor;
+    static Color ConstellationColor;
+    static Color BoundaryColor;
+    static Color EquatorialGridColor;
 };
 
 #endif // _RENDER_H_
