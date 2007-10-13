@@ -127,20 +127,19 @@ static const float CoronaHeight = 0.2f;
 
 static bool buggyVertexProgramEmulation = true;
 
-struct SphericalCoordLabel
-{
-    string label;
-    float ra;
-    float dec;
 
-    SphericalCoordLabel() : ra(0), dec(0) {};
-    SphericalCoordLabel(float _ra, float _dec) : ra(_ra), dec(_dec)
-    {
-    }
-};
+// Controls for the number of circles displayed on celestial coordinate spheres
+static const unsigned int CoordSphereRADivisions = 24;
+static const unsigned int CoordSphereDecDivisions = 18;
 
-static int nCoordLabels = 44;
-static SphericalCoordLabel* coordLabels = NULL;
+// Celestial grid labels
+static const float RALabelSpacing = 1.0f;  // hours between each RA label
+static const float DecLabelSpacing = 10.0f;  // degrees between each declination labels
+static const float DecLabelRASpacing = 6.0f; // hours between meridians with declination labels
+static const unsigned int RALabelCount = (unsigned int) (24.0f / RALabelSpacing);
+static const unsigned int DecLabelCount = (unsigned int) ((int) (90.0f / DecLabelSpacing) - 1) * 2 + 1;
+static string* RACoordLabels;
+static string* DecCoordLabels;
 
 static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
@@ -677,47 +676,28 @@ bool Renderer::init(GLContext* _context,
         }
 
         // Create labels for celestial sphere
+        RACoordLabels = new string[RALabelCount];
+        DecCoordLabels = new string[DecLabelCount];
+
+        unsigned int i;
+        for (i = 0; i < RALabelCount; i++)
         {
-            char buf[10];
-            int i;
+            float ra = i * RALabelSpacing;
+            char buf[32];
 
-            coordLabels = new SphericalCoordLabel[nCoordLabels];
-            for (i = 0; i < 12; i++)
-            {
-                coordLabels[i].ra = float(i * 2);
-                coordLabels[i].dec = 0;
-                sprintf(buf, "%dh", i * 2);
-                coordLabels[i].label = string(buf);
-            }
+            int hours = (int) ra;
+            int minutes = (int) ((ra - hours) * 60);
+            
+            sprintf(buf, "%dh %dm", hours, minutes);
+            RACoordLabels[i] = string(buf);
+        }
 
-            coordLabels[12] = SphericalCoordLabel(0, -80);
-            coordLabels[13] = SphericalCoordLabel(0, -70);
-            coordLabels[14] = SphericalCoordLabel(0, -60);
-            coordLabels[15] = SphericalCoordLabel(0, -50);
-            coordLabels[16] = SphericalCoordLabel(0, -40);
-            coordLabels[17] = SphericalCoordLabel(0, -30);
-            coordLabels[18] = SphericalCoordLabel(0, -20);
-            coordLabels[19] = SphericalCoordLabel(0, -10);
-            coordLabels[20] = SphericalCoordLabel(0,  10);
-            coordLabels[21] = SphericalCoordLabel(0,  20);
-            coordLabels[22] = SphericalCoordLabel(0,  30);
-            coordLabels[23] = SphericalCoordLabel(0,  40);
-            coordLabels[24] = SphericalCoordLabel(0,  50);
-            coordLabels[25] = SphericalCoordLabel(0,  60);
-            coordLabels[26] = SphericalCoordLabel(0,  70);
-            coordLabels[27] = SphericalCoordLabel(0,  80);
-            for (i = 28; i < nCoordLabels; i++)
-            {
-                coordLabels[i].ra = 12;
-                coordLabels[i].dec = coordLabels[i - 16].dec;
-            }
-
-            for (i = 12; i < nCoordLabels; i++)
-            {
-                char buf[10];
-                sprintf(buf, "%d", (int) coordLabels[i].dec);
-                coordLabels[i].label = string(buf);
-            }
+        for (i = 0; i < DecLabelCount; i++)
+        {
+            float dec = ((int) i - (int) DecLabelCount / 2) * DecLabelSpacing;
+            char buf[32];
+            sprintf(buf, "%g%s", dec, UTF8_DEGREE_SIGN);
+            DecCoordLabels[i] = string(buf);
         }
 
         commonDataInitialized = true;
@@ -1959,7 +1939,17 @@ void Renderer::render(const Observer& observer,
             // sorted by far distance.
             float closest = orbitPathNear;
             if (nEntries > 0)
+            {
                 closest = max(closest, renderList[0].nearZ);
+
+                // Setting a the near plane distance to zero results in unreliable rendering, even
+                // if we don't care about the depth buffer. Compromise and set the near plane
+                // distance to a small fraction of distance to the nearest object.
+                if (closest == 0.0f)
+                {
+                    closest = renderList[0].nearZ * 0.01f;
+                }
+            }
 
             DepthBufferPartition partition;
             partition.index = nIntervals;
@@ -7379,15 +7369,13 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 // for any planet.
 void Renderer::renderCelestialSphere(const Observer& observer)
 {
-    int raDivisions = 24;
-    int decDivisions = 18;
     int nSections = 60;
     float radius = 10.0f;
 
-    int i;
-    for (i = 0; i < raDivisions; i++)
+    unsigned int i;
+    for (i = 0; i < CoordSphereRADivisions; i++)
     {
-        float ra = (float) i / (float) raDivisions * 24.0f;
+        float ra = (float) i / (float) CoordSphereRADivisions * 24.0f;
 
         glBegin(GL_LINE_STRIP);
         for (int j = 0; j <= nSections; j++)
@@ -7398,9 +7386,9 @@ void Renderer::renderCelestialSphere(const Observer& observer)
         glEnd();
     }
 
-    for (i = 1; i < decDivisions; i++)
+    for (i = 1; i < CoordSphereDecDivisions; i++)
     {
-        float dec = (float) i / (float) decDivisions * 180 - 90;
+        float dec = (float) i / (float) CoordSphereDecDivisions * 180 - 90;
         glBegin(GL_LINE_LOOP);
         for (int j = 0; j < nSections; j++)
         {
@@ -7411,15 +7399,29 @@ void Renderer::renderCelestialSphere(const Observer& observer)
     }
 
     Mat3f m = conjugate(observer.getOrientation()).toMatrix3();
-    for (i = 0; i < nCoordLabels; i++)
+
+    // Show the declination labels
+    for (i = 0; i < DecLabelCount; i++)
     {
-        Point3f pos = astro::equatorialToCelestialCart(coordLabels[i].ra,
-                                                       coordLabels[i].dec,
-                                                       radius);
-        if ((pos * m).z < 0)
+        float dec = ((int) i - (int) DecLabelCount / 2) * DecLabelSpacing;
+        if (dec != 0.0f)
         {
-            addLabel(coordLabels[i].label, EquatorialGridLabelColor, pos);
+            for (float ra = 0.0f; ra < 24.0f; ra += DecLabelRASpacing)
+            {
+                Point3f pos = astro::equatorialToCelestialCart(ra, dec, radius);
+                if ((pos * m).z < 0)
+                    addLabel(DecCoordLabels[i], EquatorialGridLabelColor, pos);
+            }
         }
+    }
+
+    // Show the right ascension labels
+    for (i = 0; i < RALabelCount; i++)
+    {
+        float ra = i * RALabelSpacing;
+        Point3f pos = astro::equatorialToCelestialCart(ra, 0.0f, radius);
+        if ((pos * m).z < 0)
+            addLabel(RACoordLabels[i], EquatorialGridLabelColor, pos);
     }
 }
 
