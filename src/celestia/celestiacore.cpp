@@ -2922,6 +2922,11 @@ static void displayPlanetInfo(Overlay& overlay,
     displayDistance(overlay, distance);
     overlay << '\n';
 
+    if (body.getClassification() == Body::Invisible)
+    {
+        return;
+    }
+
     overlay << _("Radius: ");
     distance = astro::kilometersToLightYears(body.getRadius());
     displayDistance(overlay, distance);
