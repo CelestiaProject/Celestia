@@ -2007,22 +2007,22 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         if((renderer->getRenderFlags() & Renderer::ShowAutoMag) == 0)
         {
             if (sim->getFaintestVisible() < 15.0f)
-	    {
-	        setFaintest(sim->getFaintestVisible() + 0.2f);
+	          {
+	              setFaintest(sim->getFaintestVisible() + 0.2f);
                 notifyWatchers(FaintestChanged);
                 char buf[128];
-		sprintf(buf, _("Magnitude limit: %.2f"),sim->getFaintestVisible());
+		            sprintf(buf, _("Magnitude limit: %.2f"),sim->getFaintestVisible());
                 flash(buf);
             }
         }
-	else if (renderer->getFaintestAM45deg() < 12.0f)
-	{
-	    renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() + 0.1f);
-	    setFaintestAutoMag();
-	    char buf[128];
-	    sprintf(buf, _("Auto magnitude limit at 45 degrees:  %.2f"),renderer->getFaintestAM45deg());
-	    flash(buf);
-	}
+        else if (renderer->getFaintestAM45deg() < 12.0f)
+        {
+            renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() + 0.1f);
+            setFaintestAutoMag();
+            char buf[128];
+            sprintf(buf, _("Auto magnitude limit at 45 degrees:  %.2f"),renderer->getFaintestAM45deg());
+            flash(buf);
+        }
         break;
 
     case '`':
@@ -2030,19 +2030,29 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         break;
 
     case '{':
-        if (renderer->getAmbientLightLevel() > 0.05f)
-            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
-        else
-            renderer->setAmbientLightLevel(0.0f);
-        notifyWatchers(AmbientLightChanged);
+        {
+            if (renderer->getAmbientLightLevel() > 0.05f)
+                renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
+            else
+                renderer->setAmbientLightLevel(0.0f);
+            notifyWatchers(AmbientLightChanged);
+            char buf[128];
+            sprintf(buf, _("Ambient light level:  %.2f"),renderer->getAmbientLightLevel());
+	          flash(buf);
+	      }
         break;
 
     case '}':
-        if (renderer->getAmbientLightLevel() < 0.95f)
-            renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
-        else
-            renderer->setAmbientLightLevel(1.0f);
-        notifyWatchers(AmbientLightChanged);
+        {
+            if (renderer->getAmbientLightLevel() < 0.95f)
+                renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
+            else
+                renderer->setAmbientLightLevel(1.0f);
+            notifyWatchers(AmbientLightChanged);
+            char buf[128];
+            sprintf(buf, _("Ambient light level:  %.2f"),renderer->getAmbientLightLevel());
+	          flash(buf);
+	      }
         break;
 
     case '(':
