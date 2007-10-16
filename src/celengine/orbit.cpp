@@ -223,9 +223,35 @@ double EllipticalOrbit::getBoundingRadius() const
 void EllipticalOrbit::sample(double, double t, int nSamples,
                              OrbitSampleProc& proc) const
 {
-    double dE = 2 * PI / (double) nSamples;
-    for (int i = 0; i < nSamples; i++)
-        proc.sample(t, positionAtE(dE * i));
+    if (eccentricity >= 1.0)
+    {
+        double dE = 1 * PI / (double) nSamples;
+        for (int i = 0; i < nSamples; i++)
+            proc.sample(t, positionAtE(dE * i));
+    }
+    else
+    {
+        // Adaptive sampling of the orbit; more samples in regions of high curvature.
+        // nSamples is the number of samples that will be used for a perfectly circular
+        // orbit. Elliptical orbits will have regions of higher curvature thar require
+        // additional sample points.
+        double E = 0.0;
+        double dE = 2 * PI / (double) nSamples;
+        double w = (1 - square(eccentricity));
+
+        while (E < 2 * PI)
+        {
+            proc.sample(t, positionAtE(E));
+
+            // Compute the curvature
+            double k = w * pow(square(sin(E)) + w * w * square(cos(E)), -1.5);
+
+            // Step amount based on curvature--constrain it so that we don't end up
+            // taking too many samples anywhere. Clamping the curvature to 20 effectively
+            // limits the numbers of samples to 3*nSamples
+            E += dE / max(min(k, 20.0), 1.0);
+        }
+    }
 }
 
 
