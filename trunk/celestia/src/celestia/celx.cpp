@@ -5562,6 +5562,14 @@ static int gl_Color(lua_State* l)
     return 0;
 }
 
+static int gl_LineWidth(lua_State* l)
+{
+    checkArgs(l, 1, 1, "One argument expected for gl.LineWidth()");
+    float n = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.LineWidth must be a number", 1.0);
+		glLineWidth(n);
+    return 0;
+}
+
 static int gl_Translate(lua_State* l)
 {
     checkArgs(l, 2, 2, "Two arguments expected for gl.Translate()");
@@ -5655,6 +5663,7 @@ static void gl_loadlib(lua_State* l)
     RegisterMethod(l, "Frustum", gl_Frustum);
     RegisterMethod(l, "Ortho", gl_Ortho);
     RegisterMethod(l, "Color", gl_Color);
+    RegisterMethod(l, "LineWidth", gl_LineWidth);
     RegisterMethod(l, "TexCoord", gl_TexCoord);
     RegisterMethod(l, "TexParameter", gl_TexParameter);
     RegisterMethod(l, "Vertex", gl_Vertex);
