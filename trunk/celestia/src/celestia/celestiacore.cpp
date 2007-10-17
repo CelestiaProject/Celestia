@@ -2870,7 +2870,19 @@ static void displayStarInfo(Overlay& overlay,
     if (detail > 1)
     {
         overlay << _("Surface temp: ") << SigDigitNum(star.getTemperature(), 3) << " K\n";
-        overlay.oprintf(_("Radius: %.2f Rsun\n"), star.getRadius() / 696000.0f);
+        float radius = star.getRadius();
+        float solarRadii = star.getRadius() / 6.96e5f;
+
+        overlay << _("Radius: ");
+        if (solarRadii > 0.01f)
+        {
+            overlay << SigDigitNum(star.getRadius() / 696000.0f, 2) << " Rsun"
+                    << "  (" << SigDigitNum(star.getRadius(), 3) << " km" << ")\n";
+        }
+        else
+        {
+            overlay << SigDigitNum(star.getRadius(), 3) << " km\n";
+        }
 
         if (star.getRotationModel()->isPeriodic())
         {
