@@ -2876,7 +2876,7 @@ static void displayStarInfo(Overlay& overlay,
         overlay << _("Radius: ");
         if (solarRadii > 0.01f)
         {
-            overlay << SigDigitNum(star.getRadius() / 696000.0f, 2) << " Rsun"
+            overlay << SigDigitNum(star.getRadius() / 696000.0f, 2) << " " << _("Rsun")
                     << "  (" << SigDigitNum(star.getRadius(), 3) << " km" << ")\n";
         }
         else
@@ -3186,6 +3186,7 @@ void CelestiaCore::renderOverlay()
 
         // TODO: Display of local time does not currently work correctly during leap seconds
         double jdutc = astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb)));
+cerr << jdutc << endl;
         if (timeZoneBias != 0 &&
             jdutc < 2465442 &&
             jdutc > 2415733)
