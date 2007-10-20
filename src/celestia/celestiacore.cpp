@@ -3186,7 +3186,6 @@ void CelestiaCore::renderOverlay()
 
         // TODO: Display of local time does not currently work correctly during leap seconds
         double jdutc = astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb)));
-cerr << jdutc << endl;
         if (timeZoneBias != 0 &&
             jdutc < 2465442 &&
             jdutc > 2415733)
