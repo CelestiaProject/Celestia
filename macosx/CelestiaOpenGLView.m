@@ -72,6 +72,13 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [inputWatcher release];
+    [textWindow release];
+    [super dealloc];
+}
+
 - (void)setAASamples: (unsigned int)aaSamples
 {
     if (aaSamples > 1)
