@@ -936,18 +936,16 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             float maxFOV = MaximumFOV;
             float fov = sim->getActiveObserver()->getFOV();
 
-            if (fov < minFOV)
-                fov = minFOV;
-
             // In order for the zoom to have the right feel, it should be
             // exponential.
             float newFOV = minFOV + (float) exp(log(fov - minFOV) + amount * 4);
-            if (newFOV < minFOV)
-                newFOV = minFOV;
-            else if (newFOV > maxFOV)
+            if (newFOV > maxFOV)
                 newFOV = maxFOV;
-            sim->getActiveObserver()->setFOV(newFOV);
-            setZoomFromFOV();
+            if (newFOV > minFOV)
+            {
+                sim->getActiveObserver()->setFOV(newFOV);
+                setZoomFromFOV();
+            }
 
 	    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
 	    {
