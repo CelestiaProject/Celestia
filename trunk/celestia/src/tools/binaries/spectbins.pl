@@ -4,7 +4,7 @@ use Math::Libm ':all';
 
 open(ELMTS, ">spectbins.stc") || die "Can not create spectbins.stc\n";
 # boilerplate
-($ver = "Revision: 1.40 ") =~ s/\$//g;
+($ver = "Revision: 1.50 ") =~ s/\$//g;
 ($me = $0) =~ s/.*\///;
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime;
 $year += 1900;
@@ -142,8 +142,32 @@ while (<BINDAT2>) {
 
 	# eliminate certain binaries that are already included in
 	# Grant Hutchison's 'nearstars.stc' file
-	next if ($hip =~ /71683/); # ALF Cen
-	next if ($hip =~ /88601/); # 70 Oph
+	$onoff = "";
+	$onoff = "# " if ($hip =~ /71683/); # ALF Cen
+	$onoff = "# " if ($hip =~ /88601/); # 70 Oph
+	# eliminate certain binaries that are already in visualbins.stc
+	# List due to Martin Charest
+	$onoff = "# " if ($hip =~ /89937/); # Chi Dra
+	$onoff = "# " if ($hip =~ /12390/); # Eps Cet
+	$onoff = "# " if ($hip =~ /20087/); #  51 Tau
+	$onoff = "# " if ($hip =~ /38382/); #   9 Pup
+	$onoff = "# " if ($hip =~ /7580/);  # Kui 7  
+	$onoff = "# " if ($hip =~ /20661/); # Fin 342
+	$onoff = "# " if ($hip =~ /2941/);  # ADS 520
+	$onoff = "# " if ($hip =~ /111528/);# ADS 16098
+	$onoff = "# " if ($hip =~ /45170/); # Fin 347Aa 
+	if ($hip =~ /75312/){ # ETA CrB	A
+		$onoff = "# ";
+		$alt{$hip,'AB'} = "ETA CrB";
+		$alt{$hip,'A'}  = "ETA CrB A";
+		$alt{$hip,'B'}  = "ETA CrB B";
+	} 
+	$onoff = "# " if ($hip =~ /85667/); # SIG 2173
+	$onoff = "# " if ($hip =~ /87895/); # HR 6697
+	$onoff = "# " if ($hip =~ /95995/); # Gl 762.1
+	$onoff = "# " if ($hip =~ /98416/); # Gl 773.3
+	$onoff = "# " if ($hip =~ /99376/); # ADS 13461
+	
 	#
 	# extract distance [ly] from 'stars.txt & revised stc'
 	# use it to compile absolute magnitude
@@ -156,52 +180,58 @@ while (<BINDAT2>) {
 	} else {
 		$d = $dd;
 	}	
-
+    $alt{$hip,'AB'} =~s/KHI/CHI/g;
+	$alt{$hip,'A'}  =~s/KHI/CHI/g;
+	$alt{$hip,'B'}  =~s/KHI/CHI/g;
+	$alt{$hip,'AB'} =~s/KSI/XI/g;
+	$alt{$hip,'A'}  =~s/KSI/XI/g;
+	$alt{$hip,'B'}  =~s/KSI/XI/g;
+	
 	#print STDOUT "$hip $c1 $c2 $d $a $i $omega $OMEGA $e $Per $T  $plx $kappa $MA $MB $name $mvA $colorA $mvB $colorB\n";
 
 	&RotOrbits($c1,$c2,$Per,$a,$i,$OMEGA,$T,$e,$omega,$d);
 		
-	print  ELMTS "Barycenter \"$alt{$hip,'AB'}\"\n";
-	print  ELMTS "{\n";
-	printf ELMTS "RA       %10.6f\n", $c1;
-	printf ELMTS "Dec      %10.6f\n",$c2;
-	printf ELMTS "Distance %10.6f\n",$d;
-	print  ELMTS "}\n\n";
-	print  ELMTS "\n";
-	print  ELMTS "$hip \"$alt{$hip,'A'}\" \n";
-	print  ELMTS "{\n";
-	print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
-	print  ELMTS "SpectralType \"$colorA\"\n";
-	print  ELMTS "AppMag $mvA\n";
-	print  ELMTS "\n";
-	print  ELMTS "        EllipticalOrbit {\n";
-	printf ELMTS "                Period          %10.3f\n",$Period;
-	printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a1,$MA,$MB;
-	printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
-	printf ELMTS "                Inclination     %10.3f\n",$Inclination;
-	printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
+	print  ELMTS "$onoff Barycenter $hip \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "$onoff {\n";
+	printf ELMTS "$onoff RA       %10.6f\n", $c1;
+	printf ELMTS "$onoff Dec      %10.6f\n",$c2;
+	printf ELMTS "$onoff Distance %10.6f\n",$d;
+	print  ELMTS "$onoff }\n\n";
+	print  ELMTS "$onoff \n";
+	print  ELMTS "$onoff \"$alt{$hip,'A'}\" \n";
+	print  ELMTS "$onoff {\n";
+	print  ELMTS "$onoff OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "$onoff SpectralType \"$colorA\"\n";
+	print  ELMTS "$onoff AppMag $mvA\n";
+	print  ELMTS "$onoff \n";
+	print  ELMTS "$onoff        EllipticalOrbit {\n";
+	printf ELMTS "$onoff                Period          %10.3f\n",$Period;
+	printf ELMTS "$onoff                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a1,$MA,$MB;
+	printf ELMTS "$onoff                Eccentricity    %10.3f\n",$Eccentricity;
+	printf ELMTS "$onoff                Inclination     %10.3f\n",$Inclination;
+	printf ELMTS "$onoff                AscendingNode   %10.3f\n",$AscendingNode;
 	$ArgOfPeri1 = $ArgOfPeri - 180;
 	if ($ArgOfPeri1 < 0.0) { $ArgOfPeri1 = $ArgOfPeri + 180; }
-	printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri1;
-	printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
-	print  ELMTS "        }\n";
-	print  ELMTS "}\n\n";
-	print  ELMTS "$alt{$hip,'B'}\n";
-	print  ELMTS "{\n";
-	print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
-	print  ELMTS "SpectralType \"$colorB\"\n";
-	print  ELMTS "AppMag $mvB\n";
-	print  ELMTS "\n";
-	print  ELMTS "        EllipticalOrbit {\n";
-	printf ELMTS "                Period          %10.3f\n",$Period;
-	printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a2,$MA,$MB;
-	printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
-	printf ELMTS "                Inclination     %10.3f\n",$Inclination;
-	printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
-	printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri;
-	printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
-	printf ELMTS "        }\n";
-	print  ELMTS "}\n\n";
+	printf ELMTS "$onoff                ArgOfPericenter %10.3f\n",$ArgOfPeri1;
+	printf ELMTS "$onoff                MeanAnomaly     %10.3f\n",$MeanAnomaly;
+	print  ELMTS "$onoff        }\n";
+	print  ELMTS "$onoff}\n\n";
+	print  ELMTS "$onoff $alt{$hip,'B'}\n";
+	print  ELMTS "$onoff {\n";
+	print  ELMTS "$onoff OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "$onoff SpectralType \"$colorB\"\n";
+	print  ELMTS "$onoff AppMag $mvB\n";
+	print  ELMTS "$onoff \n";
+	print  ELMTS "$onoff        EllipticalOrbit {\n";
+	printf ELMTS "$onoff                Period          %10.3f\n",$Period;
+	printf ELMTS "$onoff                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a2,$MA,$MB;
+	printf ELMTS "$onoff                Eccentricity    %10.3f\n",$Eccentricity;
+	printf ELMTS "$onoff                Inclination     %10.3f\n",$Inclination;
+	printf ELMTS "$onoff                AscendingNode   %10.3f\n",$AscendingNode;
+	printf ELMTS "$onoff                ArgOfPericenter %10.3f\n",$ArgOfPeri;
+	printf ELMTS "$onoff                MeanAnomaly     %10.3f\n",$MeanAnomaly;
+	printf ELMTS "$onoff        }\n";
+	print  ELMTS "$onoff }\n\n";
     $count++;
 }
 print "\nNumber of spectroscopic binaries: $count\n";
