@@ -634,7 +634,7 @@ static Body* CreateReferencePoint(const string& name,
                                   PlanetarySystem* system,
                                   Universe& universe,
                                   Body* existingBody,
-                                  Hash* barycenterData,
+                                  Hash* refPointData,
                                   const string& path,
                                   Disposition disposition)
 {
@@ -653,7 +653,7 @@ static Body* CreateReferencePoint(const string& name,
     body->setRadius(1.0f);
     body->setClassification(Body::Invisible);
 
-    Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, barycenterData);
+    Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, refPointData);
     bool orbitsPlanet = false;
     if (orbitBarycenter.body())
     {
@@ -672,7 +672,34 @@ static Body* CreateReferencePoint(const string& name,
         return NULL;
     }
 
-    Orbit* orbit = CreateOrbit(system, barycenterData, path, !orbitsPlanet);
+   // Set the reference frame of the orbit
+    Value* frameValue = refPointData->getValue("OrbitFrame");
+    if (frameValue != NULL)
+    {
+        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue);
+        if (frame != NULL)
+        {
+            body->setOrbitFrame(frame);
+
+            // If the center of the is a star, orbital element units are
+            // in AU; otherwise, use kilometers.
+            if (frame->getCenter().star() != NULL)
+                orbitsPlanet = false;
+            else
+                orbitsPlanet = true;
+        }
+    }
+
+    if (body->getOrbitFrame() != NULL)
+    {
+        if (isFrameCircular(*body->getOrbitFrame()))
+        {
+            clog << "Orbit frame for " << body->getName() << " is nested too deep (probably circular)\n";
+            body->setOrbitFrame(NULL);
+        }
+    }
+
+    Orbit* orbit = CreateOrbit(system, refPointData, path, !orbitsPlanet);
     if (orbit != NULL)
     {
         body->setOrbit(orbit);
