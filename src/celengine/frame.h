@@ -100,10 +100,17 @@ class ReferenceFrame
 
     virtual Quatd getOrientation(double tjd) const = 0;
 
-    unsigned int nestingDepth(unsigned int maxDepth) const;
+    enum FrameType
+    {
+        PositionFrame = 1,
+        OrientationFrame = 2,
+    };
+
+    unsigned int nestingDepth(unsigned int maxDepth, FrameType) const;
 
     virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth) const = 0;
+                                      unsigned int maxDepth,
+                                      FrameType frameType) const = 0;
 
  private:
     Selection centerObject;
@@ -142,7 +149,8 @@ class J2000EclipticFrame : public ReferenceFrame
     }
 
     virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth) const;
+                                      unsigned int maxDepth,
+                                      FrameType frameType) const;
 };
 
 
@@ -154,7 +162,8 @@ class J2000EquatorFrame : public ReferenceFrame
     virtual ~J2000EquatorFrame() {};
     Quatd getOrientation(double tjd) const;
     virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth) const;
+                                      unsigned int maxDepth,
+                                      FrameType frameType) const;
 };
 
 
@@ -171,7 +180,8 @@ class BodyFixedFrame : public ReferenceFrame
     virtual ~BodyFixedFrame() {};
     Quatd getOrientation(double tjd) const;
     virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth) const;
+                                      unsigned int maxDepth,
+                                      FrameType frameType) const;
 
  private:
     Selection fixObject;
@@ -186,7 +196,8 @@ class BodyMeanEquatorFrame : public ReferenceFrame
     virtual ~BodyMeanEquatorFrame() {};
     Quatd getOrientation(double tjd) const;
     virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth) const;
+                                      unsigned int maxDepth,
+                                      FrameType frameType) const;
 
  private:
     Selection equatorObject;
@@ -264,7 +275,8 @@ class TwoVectorFrame : public CachingFrame
 
     Quatd computeOrientation(double tjd) const;
     virtual unsigned int nestingDepth(unsigned int depth,
-                                      unsigned int maxDepth) const;
+                                      unsigned int maxDepth,
+                                      FrameType frameType) const;
 
     //! The sine of minimum angle between the primary and secondary vectors
     static const double Tolerance;
