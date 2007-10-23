@@ -6,7 +6,7 @@ open(BINDAT,"<doubles99.txt")|| die "Can not read doubles99.txt\n";
 open(ELMTS, ">visualbins.stc") || die "Can not create visualbins.stc\n";
 
 # boilerplate
-($ver = "Revision: 1.4 ") =~ s/\$//g;
+($ver = "Revision: 1.5 ") =~ s/\$//g;
 ($me = $0) =~ s/.*\///;
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime;
 $year += 1900;
@@ -45,9 +45,9 @@ while (<CROSS>){
 
 	$hipnmb =~ s/ //g;
 	$cross =~ s/\s*$//g;
-	$alt{$hipnmb,'A'} = $cross ne ""?"$cross A":"HIP$hipnmb A";
-	$alt{$hipnmb,'B'} = $cross ne ""?"$cross B":"HIP$hipnmb B";
-	$alt{$hipnmb,'AB'} = $cross ne ""?"$cross":"HIP$hipnmb";
+	$alt{$hipnmb,'A'}  = $cross ne ""?"$cross A":"HIP $hipnmb A";
+	$alt{$hipnmb,'B'}  = $cross ne ""?"$cross B":"HIP $hipnmb B";
+	$alt{$hipnmb,'AB'} = $cross ne ""?"$cross"  :"HIP $hipnmb";
 	#print STDOUT "$alt{$hipnmb}\n";
 }
 close (CROSS);
@@ -82,7 +82,7 @@ while (<HIPREV>){
 	}
 	next if(/^\{/);
 	if(/RA\b\s+([\d.]+)/){$c1 = $1; next;} 
-	if(/Dec\b\s+([\d.]+)/){$c2 = $1; next;}
+	if(/Dec\b\s+([-\d.]+)/){$c2 = $1; next;}
 	if(/Distance\b\s+([\d.]+)/){$dd = $1; next;}
 	if(/SpectralType\b\s+\"(.*)\"/){$color = $1; next;}
 	if(/AppMag\b\s+([\d.]+)/){$magapp = $1; next;}
@@ -117,16 +117,17 @@ while (<BINDAT>) {
 
 	# eliminate certain binaries that are already included in
 	# Grant Hutchison's 'nearstars.stc' file
-	next if ($hip =~ /110893/);
-	next if ($hip =~/71683/); # ALF Cen
-	next if ($hip =~/72659/);
-	next if ($hip =~/88601/); # 70 Oph
-	next if ($hip =~/30920/);
-	next if ($hip =~/84709/);
-	next if ($hip =~/82817/);
-	next if ($hip =~/87409/);
+    $onoff = "";		
+	$onoff = "# " if ($hip =~/110893/);
+	$onoff = "# " if ($hip =~/71683/); # ALF Cen
+	$onoff = "# " if ($hip =~/72659/);
+	$onoff = "# " if ($hip =~/88601/); # 70 Oph
+	$onoff = "# " if ($hip =~/30920/);
+	$onoff = "# " if ($hip =~/84709/);
+	$onoff = "# " if ($hip =~/82817/);
+	$onoff = "# " if ($hip =~/87409/);
 	# use the (presumably) better data for del Equ = HIP 104858 in spectbins.stc 
-	next if ($hip =~ /104858/);
+	$onoff = "# " if ($hip =~ /104858/);
 	#
 	# extract distance [ly] from 'stars.txt & revised stc'
 	# use it to compile absolute magnitude
@@ -145,50 +146,66 @@ while (<BINDAT>) {
 	$c1 =~ s/ //g;
 	$c2 =~ s/ //g;
 	$color =~ s/ //g;
+	$alt{$hip,'AB'} =~s/KSI/XI/g;
+	$alt{$hip,'A'}  =~s/KSI/XI/g;
+	$alt{$hip,'B'}  =~s/KSI/XI/g;
+	    
+	if ($hip =~ /75411/){		
+		$alt{$hip,'AB'} =~s/MU./MU1/g ;
+		$alt{$hip,'A'}  =~s/MU./MU1/g ;
+		$alt{$hip,'B'}  =~s/MU./MU1/g ;
+	}
+		
+	if ($hip =~ /75415/){	
+		$alt{$hip,'AB'} =~s/MU./MU2/g;
+		$alt{$hip,'A'}  =~s/MU./MU2/g;
+		$alt{$hip,'B'}  =~s/MU./MU2/g;
+	}
+		
 	#print STDOUT "$Period $SemiMajorAxis $Eccentricity $Inclination $AscendingNode $ArgOfPeri $MeanAnomaly\n";
 	&RotOrbits($c1,$c2,$Per,$a,$i,$OMEGA,$T,$e,$omega,$d);
-	print  ELMTS "Barycenter \"$alt{$hip,'AB'}\"\n";
-	print  ELMTS "{\n";
-	printf ELMTS "RA       %10.6f\n", $c1;
-	printf ELMTS "Dec      %10.6f\n",$c2;
-	printf ELMTS "Distance %10.6f\n",$d;
-	print  ELMTS "}\n\n";
-	print  ELMTS "\n";
-	print  ELMTS "$hip \"$alt{$hip,'A'}\" \# component A\n";
-	print  ELMTS "{\n";
-	print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
-	print  ELMTS "SpectralType \"$color\"\n";
-	print  ELMTS "AppMag $Hp1\n";
-	print  ELMTS "\n";
-	print  ELMTS "        EllipticalOrbit {\n";
-	printf ELMTS "                Period          %10.3f\n",$Period;
-	printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a1,$m1,$m2;
-	printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
-	printf ELMTS "                Inclination     %10.3f\n",$Inclination;
-	printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
+	print  ELMTS "$onoff Barycenter $hip \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "$onoff {\n";
+	printf ELMTS "$onoff RA       %10.6f\n", $c1;
+	printf ELMTS "$onoff Dec      %10.6f\n",$c2;
+	printf ELMTS "$onoff Distance %10.6f\n",$d;
+	print  ELMTS "$onoff }\n\n";
+	print  ELMTS "$onoff \n";
+	print  ELMTS "$onoff \"$alt{$hip,'A'}\" \# component A\n";
+	print  ELMTS "$onoff {\n";
+	print  ELMTS "$onoff OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "$onoff SpectralType \"$color\"\n";
+	print  ELMTS "$onoff AppMag $Hp1\n";
+	print  ELMTS "$onoff \n";
+	print  ELMTS "$onoff        EllipticalOrbit {\n";
+	printf ELMTS "$onoff                Period          %10.3f\n",$Period;
+	printf ELMTS "$onoff                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a1,$m1,$m2;
+	printf ELMTS "$onoff                Eccentricity    %10.3f\n",$Eccentricity;
+	printf ELMTS "$onoff                Inclination     %10.3f\n",$Inclination;
+	printf ELMTS "$onoff                AscendingNode   %10.3f\n",$AscendingNode;
 	$ArgOfPeri1 = $ArgOfPeri - 180;
 	if ($ArgOfPeri1 < 0.0) { $ArgOfPeri1 = $ArgOfPeri + 180; }
-	printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri1;
-	printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
-	print  ELMTS "        }\n";
-	print  ELMTS "}\n\n";
-	print  ELMTS "\"$alt{$hip,'B'}\" \# component B\n";
-	print  ELMTS "{\n";
-	print  ELMTS "OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
-	print  ELMTS "SpectralType \"?\"\n";
+	printf ELMTS "$onoff                ArgOfPericenter %10.3f\n",$ArgOfPeri1;
+	printf ELMTS "$onoff                MeanAnomaly     %10.3f\n",$MeanAnomaly;
+	print  ELMTS "$onoff        }\n";
+	print  ELMTS "$onoff }\n\n";
+	print  ELMTS "$onoff \"$alt{$hip,'B'}\" \# component B\n";
+	print  ELMTS "$onoff {\n";
+	print  ELMTS "$onoff OrbitBarycenter \"$alt{$hip,'AB'}\"\n";
+	print  ELMTS "$onoff SpectralType \"?\"\n";
 	$Hp2 = $Hp1 + $m2_m1;
-	print  ELMTS "AppMag $Hp2\n";
-	print  ELMTS "\n";
-	print  ELMTS "        EllipticalOrbit {\n";
-	printf ELMTS "                Period          %10.3f\n",$Period;
-	printf ELMTS "                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a2,$m1,$m2;
-	printf ELMTS "                Eccentricity    %10.3f\n",$Eccentricity;
-	printf ELMTS "                Inclination     %10.3f\n",$Inclination;
-	printf ELMTS "                AscendingNode   %10.3f\n",$AscendingNode;
-	printf ELMTS "                ArgOfPericenter %10.3f\n",$ArgOfPeri;
-	printf ELMTS "                MeanAnomaly     %10.3f\n",$MeanAnomaly;
-	printf ELMTS "        }\n";
-	print  ELMTS "}\n\n";
+	print  ELMTS "$onoff AppMag $Hp2\n";
+	print  ELMTS "$onoff \n";
+	print  ELMTS "$onoff        EllipticalOrbit {\n";
+	printf ELMTS "$onoff                Period          %10.3f\n",$Period;
+	printf ELMTS "$onoff                SemiMajorAxis   %10.3f \# mass ratio %4.2f : %4.2f\n",$a2,$m1,$m2;
+	printf ELMTS "$onoff                Eccentricity    %10.3f\n",$Eccentricity;
+	printf ELMTS "$onoff                Inclination     %10.3f\n",$Inclination;
+	printf ELMTS "$onoff                AscendingNode   %10.3f\n",$AscendingNode;
+	printf ELMTS "$onoff                ArgOfPericenter %10.3f\n",$ArgOfPeri;
+	printf ELMTS "$onoff                MeanAnomaly     %10.3f\n",$MeanAnomaly;
+	printf ELMTS "$onoff        }\n";
+	print  ELMTS "$onoff }\n\n";
 	$count++;
 }
 print STDOUT "\nNumber of visual binaries: $count\n";
