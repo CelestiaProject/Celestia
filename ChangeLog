@@ -1192,3 +1192,6 @@ Code:
   - Added script for marking all member galaxies of the local group
 * Fixed crash when deepsky.dsc was empty
 * Increased max draw distance to 100 Gly
+* Modified the visualbin and spectbin databases to allow selection of the
+  barycenters throughout. Commented out a number of binaries in spectbins that
+  were also included in visualbins
