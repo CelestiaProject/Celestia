@@ -389,33 +389,42 @@ std::string Url::getCoordSysName(astro::CoordinateSystem mode) const
 }
 
 
+static std::string getBodyName(Universe* universe, Body* body)
+{
+    std::string name = body->getName();
+    PlanetarySystem* parentSystem = body->getSystem();
+    Body* parentBody = NULL;
+
+    if (parentSystem != NULL)
+        parentBody = parentSystem->getPrimaryBody();
+
+    while (parentBody != NULL)
+    {
+        name = parentBody->getName() + ":" + name;
+        parentSystem = parentBody->getSystem();
+        if (parentSystem == NULL)
+            parentBody = NULL;
+        else
+            parentBody = parentSystem->getPrimaryBody();
+    }
+
+    if (body->getSystem()->getStar() != NULL)
+    {
+        name = universe->getStarCatalog()->getStarName(*(body->getSystem()->getStar())) + ":" + name;
+    }
+
+    return name;
+}
+
+
 std::string Url::getSelectionName(const Selection& selection) const
 {
-    PlanetarySystem* parentSystem;
-    Body* parentBody;
     Universe *universe = appCore->getSimulation()->getUniverse();
 
     switch (selection.getType())
     {
     case Selection::Type_Body:
-        {
-            std::string name = selection.body()->getName();
-            parentSystem = selection.body()->getSystem();
-            if (parentSystem != NULL && (parentBody = parentSystem->getPrimaryBody()) != NULL)
-            {
-                while (parentSystem != NULL && parentBody != NULL)
-                {
-                    name = parentSystem->getPrimaryBody()->getName() + ":" + name;
-                    parentSystem = parentSystem->getPrimaryBody()->getSystem();
-                    parentBody = parentSystem->getPrimaryBody();
-                }
-                if (selection.body()->getSystem()->getStar() != NULL)
-                {
-                    name = universe->getStarCatalog()->getStarName(*(selection.body()->getSystem()->getStar())) + ":" + name;
-                }
-            }
-            return name;
-        }
+        return getBodyName(universe, selection.body());
 
     case Selection::Type_Star:
         return universe->getStarCatalog()->getStarName(*selection.star());
@@ -424,7 +433,13 @@ std::string Url::getSelectionName(const Selection& selection) const
         return universe->getDSOCatalog()->getDSOName(selection.deepsky());
 
     case Selection::Type_Location:
-        return "";
+        {
+            std::string name = selection.location()->getName();
+            Body* parentBody = selection.location()->getParentBody();
+            if (parentBody != NULL)
+                name = getBodyName(universe, parentBody) + ":" + name;
+            return name;
+        }
 
     default:
         return "";
