@@ -91,9 +91,9 @@ static void sscError(const Tokenizer& tok,
 //! Maximum depth permitted for nested frames.
 static unsigned int MaxFrameDepth = 50;
 
-static bool isFrameCircular(const ReferenceFrame& frame)
+static bool isFrameCircular(const ReferenceFrame& frame, ReferenceFrame::FrameType frameType)
 {
-    return frame.nestingDepth(MaxFrameDepth) > MaxFrameDepth;
+    return frame.nestingDepth(MaxFrameDepth, frameType) > MaxFrameDepth;
 }
                             
 
@@ -349,7 +349,7 @@ static Body* CreatePlanet(const string& name,
 
     if (body->getOrbitFrame() != NULL)
     {
-        if (isFrameCircular(*body->getOrbitFrame()))
+        if (isFrameCircular(*body->getOrbitFrame(), ReferenceFrame::PositionFrame))
         {
             clog << "Orbit frame for " << body->getName() << " is nested too deep (probably circular)\n";
             body->setOrbitFrame(NULL);
@@ -358,7 +358,7 @@ static Body* CreatePlanet(const string& name,
 
     if (body->getBodyFrame() != NULL)
     {
-        if (isFrameCircular(*body->getBodyFrame()))
+        if (isFrameCircular(*body->getBodyFrame(), ReferenceFrame::OrientationFrame))
         {
             clog << "Body frame for " << body->getName() << " is nested too deep (probably circular)\n";
             body->setBodyFrame(NULL);
@@ -692,7 +692,7 @@ static Body* CreateReferencePoint(const string& name,
 
     if (body->getOrbitFrame() != NULL)
     {
-        if (isFrameCircular(*body->getOrbitFrame()))
+        if (isFrameCircular(*body->getOrbitFrame(), ReferenceFrame::PositionFrame))
         {
             clog << "Orbit frame for " << body->getName() << " is nested too deep (probably circular)\n";
             body->setOrbitFrame(NULL);

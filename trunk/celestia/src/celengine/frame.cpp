@@ -302,14 +302,15 @@ ReferenceFrame::getCenter() const
 
 
 unsigned int
-ReferenceFrame::nestingDepth(unsigned int maxDepth) const
+ReferenceFrame::nestingDepth(unsigned int maxDepth, FrameType frameType) const
 {
-    return this->nestingDepth(0, maxDepth);
+    return this->nestingDepth(0, maxDepth, frameType);
 }
 
 
 static unsigned int
-getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth)
+getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
+              ReferenceFrame::FrameType frameType)
 {
     if (depth > maxDepth)
         return depth;
@@ -325,16 +326,16 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth)
 
     unsigned int orbitFrameDepth = depth;
     unsigned int bodyFrameDepth = depth;
-    if (body->getOrbitFrame() != NULL)
+    if (body->getOrbitFrame() != NULL && frameType == ReferenceFrame::PositionFrame)
     {
-        orbitFrameDepth = body->getOrbitFrame()->nestingDepth(depth + 1, maxDepth);
+        orbitFrameDepth = body->getOrbitFrame()->nestingDepth(depth + 1, maxDepth, frameType);
         if (orbitFrameDepth > maxDepth)
             return orbitFrameDepth;
     }
         
-    if (body->getBodyFrame() != NULL)
+    if (body->getBodyFrame() != NULL && frameType == ReferenceFrame::OrientationFrame)
     {
-        bodyFrameDepth = body->getBodyFrame()->nestingDepth(depth + 1, maxDepth);
+        bodyFrameDepth = body->getBodyFrame()->nestingDepth(depth + 1, maxDepth, frameType);
     }
 
     return max(orbitFrameDepth, bodyFrameDepth);
@@ -352,9 +353,11 @@ J2000EclipticFrame::J2000EclipticFrame(Selection center) :
 
 
 unsigned int
-J2000EclipticFrame::nestingDepth(unsigned int depth, unsigned int maxDepth) const
+J2000EclipticFrame::nestingDepth(unsigned int depth,
+                                 unsigned int maxDepth,
+                                 FrameType frameType) const
 {
-    return getFrameDepth(getCenter(), depth, maxDepth);
+    return getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
 }
 
 
@@ -374,9 +377,11 @@ J2000EquatorFrame::getOrientation(double /* tjd */) const
 
 
 unsigned int
-J2000EquatorFrame::nestingDepth(unsigned int depth, unsigned int maxDepth) const
+J2000EquatorFrame::nestingDepth(unsigned int depth,
+                                unsigned int maxDepth,
+                                FrameType frameType) const
 {
-    return getFrameDepth(getCenter(), depth, maxDepth);
+    return getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
 }
 
 
@@ -409,9 +414,20 @@ BodyFixedFrame::getOrientation(double tjd) const
 
 
 unsigned int
-BodyFixedFrame::nestingDepth(unsigned int depth, unsigned int maxDepth) const
+BodyFixedFrame::nestingDepth(unsigned int depth,
+                             unsigned int maxDepth,
+                             FrameType frameType) const
 {
-    return getFrameDepth(getCenter(), depth, maxDepth);
+    unsigned int n = getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
+    if (n > maxDepth)
+    {
+        return n;
+    }
+    else
+    {
+        unsigned int m = getFrameDepth(fixObject, depth, maxDepth, OrientationFrame);
+        return max(m, n);
+    }
 }
 
 
@@ -457,14 +473,21 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 
 
 unsigned int
-BodyMeanEquatorFrame::nestingDepth(unsigned int depth, unsigned int maxDepth) const
+BodyMeanEquatorFrame::nestingDepth(unsigned int depth,
+                                   unsigned int maxDepth,
+                                   FrameType frameType) const
 {
     // Test origin and equator object (typically the same) frames
-    unsigned int n =  getFrameDepth(getCenter(), depth, maxDepth);
+    unsigned int n =  getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
     if (n > maxDepth)
+    {
         return n;
+    }
     else
-        return max(n, getFrameDepth(equatorObject, depth, maxDepth));
+    {
+        unsigned int m = getFrameDepth(equatorObject, depth, maxDepth, OrientationFrame);
+        return max(m, n);
+    }
 }
 
 
@@ -603,19 +626,23 @@ TwoVectorFrame::computeOrientation(double tjd) const
 
 
 unsigned int
-TwoVectorFrame::nestingDepth(unsigned int depth, unsigned int maxDepth) const
+TwoVectorFrame::nestingDepth(unsigned int depth,
+                             unsigned int maxDepth,
+                             FrameType frameType) const
 {
     // Check nesting of the origin object as well as frames references by
     // the primary and secondary axes.
-    unsigned int n = getFrameDepth(getCenter(), depth, maxDepth);
+    unsigned int n = getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
     if (n > maxDepth)
         return n;
 
-    n = max(n, primaryVector.nestingDepth(depth, maxDepth));
+    unsigned int m = primaryVector.nestingDepth(depth, maxDepth);
+    n = max(m, n);
     if (n > maxDepth)
         return n;
 
-    return max(n, secondaryVector.nestingDepth(depth, maxDepth));
+    m = secondaryVector.nestingDepth(depth, maxDepth);
+    return max(m, n);
 }
 
 
@@ -745,18 +772,24 @@ FrameVector::direction(double tjd) const
 
 
 unsigned int
-FrameVector::nestingDepth(unsigned int depth, unsigned int maxDepth) const
+FrameVector::nestingDepth(unsigned int depth,
+                          unsigned int maxDepth) const
 {
     switch (vecType)
     {
     case RelativePosition:
     case RelativeVelocity:
         {
-            unsigned int n = getFrameDepth(observer, depth, maxDepth);
+            unsigned int n = getFrameDepth(observer, depth, maxDepth, ReferenceFrame::PositionFrame);
             if (n > maxDepth)
+            {
                 return n;
+            }
             else
-                return max(n, getFrameDepth(target, depth, maxDepth));
+            {
+                unsigned int m = getFrameDepth(target, depth, maxDepth, ReferenceFrame::PositionFrame);
+                return max(m, n);
+            }
         }
         break;
 
@@ -764,7 +797,7 @@ FrameVector::nestingDepth(unsigned int depth, unsigned int maxDepth) const
         if (depth > maxDepth)
             return depth;
         else
-            return frame->nestingDepth(depth + 1, maxDepth);
+            return frame->nestingDepth(depth + 1, maxDepth, ReferenceFrame::OrientationFrame);
         break;
 
     default:
