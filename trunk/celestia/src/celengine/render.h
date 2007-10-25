@@ -23,6 +23,15 @@
 
 struct RenderListEntry
 {
+    enum RenderableType
+    {
+        RenderableStar,
+        RenderableBody,
+        RenderableCometTail,
+        RenderableBodyAxes,
+        RenderableFrameAxes
+    };
+
     const Star* star;
     Body* body;
     Point3f position;
@@ -34,7 +43,7 @@ struct RenderListEntry
     float farZ;
     float discSizeInPixels;
     float appMag;
-    bool isCometTail;
+    RenderableType renderableType;
     bool isOpaque;
     int solarSysIndex;
 };
@@ -187,6 +196,8 @@ class Renderer
     void addSortedLabel(const std::string&, Color, const Point3f&);
     void clearLabels();
 	void clearSortedLabels();
+
+    void invalidateOrbitCache();
     
     struct OrbitPathListEntry
     {
@@ -411,6 +422,14 @@ class Renderer
                     double now,
                     float, float);
 
+    void renderAxes(Body& body,
+                    Point3f pos,
+                    float distance,
+                    double now,
+                    float nearPlaneDistance,
+                    float farPlaneDistance,
+                    RenderListEntry::RenderableType renderableType);
+
     void renderCometTail(const Body& body,
                          Point3f pos,
                          double now,
@@ -537,6 +556,8 @@ class Renderer
     
     bool useNewStarRendering;
 
+    uint32 frameCount;
+
  public:
     struct OrbitSample 
     {
@@ -544,14 +565,17 @@ class Renderer
         Point3f pos;
     };
 
- private:
     struct CachedOrbit
     {
         Body* body;
         std::vector<OrbitSample> trajectory;
-        bool keep;
+        uint32 lastUsed;
     };
-    std::vector<CachedOrbit*> orbitCache;
+
+ private:
+    typedef std::map<Body*, CachedOrbit*> OrbitCache;
+    OrbitCache orbitCache;
+    uint32 lastOrbitCacheFlush;
 
     float minOrbitSize;
     float distanceLimit;

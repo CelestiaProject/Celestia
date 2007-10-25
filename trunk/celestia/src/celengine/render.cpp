@@ -18,6 +18,8 @@
 #endif
 #endif /* _WIN32 */
 
+#define REFMARKS 0
+
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -40,6 +42,9 @@
 #include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
+#if REFMARKS
+#include "axisarrow.h"
+#endif
 
 using namespace std;
 
@@ -145,6 +150,11 @@ static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
 static const int MinSkySlices = 30;
 
+// Size at which the orbit cache will be flushed of old orbit paths
+static const unsigned int OrbitCacheCullThreshold = 200;
+// Age in frames at which unused orbit paths may be eliminated from the cache
+static const uint32 OrbitCacheRetireAge = 16;
+
 Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
 Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
 Color Renderer::MoonLabelColor          (0.231f, 0.733f, 0.792f);
@@ -155,8 +165,9 @@ Color Renderer::LocationLabelColor      (0.24f,  0.89f,  0.43f);
 Color Renderer::GalaxyLabelColor        (0.0f,   0.45f,  0.5f);
 Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
 Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
-Color Renderer::ConstellationLabelColor (0.125f, 0.167f, 0.2f);
-Color Renderer::EquatorialGridLabelColor(0.095f, 0.196f, 0.096f);
+Color Renderer::ConstellationLabelColor (0.225f, 0.301f, 0.36f);
+Color Renderer::EquatorialGridLabelColor(0.108f, 0.224f, 0.114f);
+
 
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
 Color Renderer::PlanetOrbitColor        (0.3f,   0.323f, 0.833f);
@@ -166,9 +177,9 @@ Color Renderer::CometOrbitColor         (0.639f, 0.487f, 0.168f);
 Color Renderer::SpacecraftOrbitColor    (0.4f,   0.4f,   0.4f);
 Color Renderer::SelectionOrbitColor     (1.0f,   0.0f,   0.0f);
 
-Color Renderer::ConstellationColor      (0.0f,   0.12f,  0.18f);
-Color Renderer::BoundaryColor           (0.1f,   0.006f, 0.066f);
-Color Renderer::EquatorialGridColor     (0.071f, 0.114f, 0.073f);
+Color Renderer::ConstellationColor      (0.0f,   0.24f,  0.36f);
+Color Renderer::BoundaryColor           (0.16f,  0.066f, 0.126f);
+Color Renderer::EquatorialGridColor     (0.129f, 0.209f, 0.123f);
 
 #if 0
 struct DisplayDevice
@@ -241,6 +252,8 @@ Renderer::Renderer() :
     usePointSprite(false),
     textureResolution(medres),
     useNewStarRendering(false),
+    frameCount(0),
+    lastOrbitCacheFlush(0),
     minOrbitSize(MinOrbitSizeForLabel),
     distanceLimit(1.0e6f),
     minFeatureSize(MinFeatureSizeForLabel),
@@ -688,7 +701,7 @@ bool Renderer::init(GLContext* _context,
             int hours = (int) ra;
             int minutes = (int) ((ra - hours) * 60);
             
-            sprintf(buf, "%dh %dm", hours, minutes);
+            sprintf(buf, "%dh %02dm", hours, minutes);
             RACoordLabels[i] = string(buf);
         }
 
@@ -1155,18 +1168,14 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
 {
     Body* body = orbitPath.body;
 
-    // Ugly cast here because orbit cache needs to be rewritten to use an STL map
+    // Ugly cast here because orbit cache uses the body pointer as a key
     Body* cacheKey = body != NULL ? body : reinterpret_cast<Body*>(const_cast<Star*>(orbitPath.star));
     vector<OrbitSample>* trajectory = NULL;
-    for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
-         iter != orbitCache.end(); iter++)
+    OrbitCache::iterator cached = orbitCache.find(cacheKey);
+    if (cached != orbitCache.end())
     {
-        if ((*iter)->body == cacheKey)
-        {
-            (*iter)->keep = true;
-            trajectory = &((*iter)->trajectory);
-            break;
-        }
+        trajectory = &cached->second->trajectory;
+        cached->second->lastUsed = frameCount;
     }
 
     const Orbit* orbit = NULL;
@@ -1178,28 +1187,6 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
     // If it's not in the cache already
     if (trajectory == NULL)
     {
-        CachedOrbit* cachedOrbit = NULL;
-
-        // Search the cache an see if we can reuse an old orbit
-        for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin();
-             iter != orbitCache.end(); iter++)
-        {
-            if ((*iter)->body == NULL)
-            {
-                cachedOrbit = *iter;
-                cachedOrbit->trajectory.clear();
-                break;
-            }
-        }
-
-        // If we can't reuse an old orbit, allocate a new one.
-        bool reuse = true;
-        if (cachedOrbit == NULL)
-        {
-            cachedOrbit = new CachedOrbit();
-            reuse = false;
-        }
-
         double startTime = t;
         int nSamples = detailOptions.orbitPathSamplePoints;
 
@@ -1229,18 +1216,37 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath, double t)
             }
         }
 
+        CachedOrbit* cachedOrbit = new CachedOrbit();
         cachedOrbit->body = cacheKey;
-        cachedOrbit->keep = true;
-        OrbitSampler sampler(&cachedOrbit->trajectory);
+        cachedOrbit->lastUsed = frameCount;
+        trajectory = &cachedOrbit->trajectory;
+
+        OrbitSampler sampler(trajectory);
         orbit->sample(startTime,
                       orbit->getPeriod(),
                       nSamples,
                       sampler);
-        trajectory = &cachedOrbit->trajectory;
 
-        // If the orbit is new, put it back in the cache
-        if (!reuse)
-            orbitCache.insert(orbitCache.end(), cachedOrbit);
+        // If the orbit cache is full, first try and eliminate some old orbits
+        if (orbitCache.size() > OrbitCacheCullThreshold)
+        {
+            // Check for old orbits at most once per frame
+            if (lastOrbitCacheFlush != frameCount)
+            {
+                for (OrbitCache::iterator iter = orbitCache.begin(); iter != orbitCache.end();)
+                {
+                    // Tricky code to eliminate a node in the orbit cache without screwing
+                    // up the iterator. Should work in all STL implementations.
+                    if (frameCount - iter->second->lastUsed > OrbitCacheRetireAge)
+                        orbitCache.erase(iter++);
+                    else
+                        ++iter;
+                }
+                lastOrbitCacheFlush = frameCount;
+            }
+        }
+
+        orbitCache[cacheKey] = cachedOrbit;
     }
 
     glPushMatrix();
@@ -1394,30 +1400,10 @@ void Renderer::renderItem(const RenderListEntry& rle,
                           float nearPlaneDistance,
                           float farPlaneDistance)
 {
-    if (rle.body != NULL)
+    switch (rle.renderableType)
     {
-        if (rle.isCometTail)
-        {
-            renderCometTail(*rle.body,
-                            rle.position,
-                            observer.getTime(),
-                            lightSourceLists[rle.solarSysIndex],
-                            rle.discSizeInPixels);
-        }
-        else
-        {
-            renderPlanet(*rle.body,
-                         rle.position,
-                         rle.distance,
-                         rle.appMag,
-                         observer,
-                         cameraOrientation,
-                         lightSourceLists[rle.solarSysIndex],
-                         nearPlaneDistance, farPlaneDistance);
-        }
-    }
-    else if (rle.star != NULL)
-    {
+    case RenderListEntry::RenderableStar:
+        assert(rle.star != NULL);
         renderStar(*rle.star,
                    rle.position,
                    rle.distance,
@@ -1425,6 +1411,51 @@ void Renderer::renderItem(const RenderListEntry& rle,
                    cameraOrientation,
                    observer.getTime(),
                    nearPlaneDistance, farPlaneDistance);
+        break;
+			
+    case RenderListEntry::RenderableBody:
+        assert(rle.body != NULL);
+        renderPlanet(*rle.body,
+                     rle.position,
+                     rle.distance,
+                     rle.appMag,
+                     observer,
+                     cameraOrientation,
+                     lightSourceLists[rle.solarSysIndex],
+                     nearPlaneDistance, farPlaneDistance);
+        break;
+			
+    case RenderListEntry::RenderableCometTail:
+        assert(rle.body != NULL);
+        renderCometTail(*rle.body,
+                        rle.position,
+                        observer.getTime(),
+                        lightSourceLists[rle.solarSysIndex],
+                        rle.discSizeInPixels);
+        break;
+
+#if REFMARKS
+    case RenderListEntry::RenderableBodyAxes:
+        renderAxes(*rle.body,
+                   rle.position,
+                   rle.distance,
+                   observer.getTime(),
+                   nearPlaneDistance, farPlaneDistance,
+                   RenderListEntry::RenderableBodyAxes);
+        break;
+			
+    case RenderListEntry::RenderableFrameAxes:
+        renderAxes(*rle.body,
+                   rle.position,
+                   rle.distance,
+                   observer.getTime(),
+                   nearPlaneDistance, farPlaneDistance,
+                   RenderListEntry::RenderableFrameAxes);
+        break;
+#endif
+			
+    default:
+        break;
     }
 }
 
@@ -1436,6 +1467,8 @@ void Renderer::render(const Observer& observer,
 {
     // Get the observer's time
     double now = observer.getTime();
+
+    frameCount++;
 
     // Compute the size of a pixel
     setFieldOfView(radToDeg(observer.getFOV()));
@@ -1702,15 +1735,6 @@ void Renderer::render(const Observer& observer,
 
     glPopMatrix();
 
-    // Clear the keep flag for all orbits in the cache; if they're not
-    // used when rendering this frame, they'll get marked for
-    // recycling.
-    if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0)
-    {
-        for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
-            (*iter)->keep = false;
-    }
-
     renderLabels(FontNormal, AlignLeft);
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
@@ -1735,39 +1759,48 @@ void Renderer::render(const Observer& observer,
             float cullRadius = 1.0f;
             float cloudHeight = 0.0f;
 
-            if (iter->body != NULL)
+            switch (iter->renderableType)
             {
-                if (iter->isCometTail)
-                {
-                    radius = iter->radius;
-                    cullRadius = radius;
-                    convex = false;
-                }
-                else
-                {
-                    radius = iter->body->getBoundingRadius();
-                    if (iter->body->getRings() != NULL)
-                    {
-                        radius = iter->body->getRings()->outerRadius;
-                        convex = false;
-                    }
-
-                    if (iter->body->getModel() != InvalidResource)
-                        convex = false;
-
-                    cullRadius = radius;
-                    if (iter->body->getAtmosphere() != NULL)
-                    {
-                        cullRadius += iter->body->getAtmosphere()->height;
-                        cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
-                                          iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
-                    }
-                }
-            }
-            else if (iter->star != NULL)
-            {
+            case RenderListEntry::RenderableStar:
                 radius = iter->star->getRadius();
                 cullRadius = radius * (1.0f + CoronaHeight);
+                break;
+				
+            case RenderListEntry::RenderableCometTail:
+                radius = iter->radius;
+                cullRadius = radius;
+                convex = false;
+                break;
+
+#if REFMARKS
+            case RenderListEntry::RenderableBodyAxes:
+            case RenderListEntry::RenderableFrameAxes:
+                radius = iter->radius;
+                cullRadius = radius;
+                convex = false;
+                break;
+#endif
+
+            case RenderListEntry::RenderableBody:
+            default:
+                radius = iter->body->getBoundingRadius();
+                if (iter->body->getRings() != NULL)
+                {
+                    radius = iter->body->getRings()->outerRadius;
+                    convex = false;
+                }
+                
+                if (iter->body->getModel() != InvalidResource)
+                    convex = false;
+                
+                cullRadius = radius;
+                if (iter->body->getAtmosphere() != NULL)
+                {
+                    cullRadius += iter->body->getAtmosphere()->height;
+                    cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
+                                      iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
+                }
+                break;														
             }
 
             // Test the object's bounding sphere against the view frustum
@@ -2118,16 +2151,6 @@ void Renderer::render(const Observer& observer,
 
     glPolygonMode(GL_FRONT, GL_FILL);
     glPolygonMode(GL_BACK, GL_FILL);
-
-    // Mark for recycling all unused orbits in the cache
-    if ((renderFlags & ShowOrbits) != 0 && orbitMask != 0)
-    {
-        for (vector<CachedOrbit*>::const_iterator iter = orbitCache.begin(); iter != orbitCache.end(); iter++)
-        {
-            if (!(*iter)->keep)
-                (*iter)->body = NULL;
-        }
-    }
 
     if ((renderFlags & ShowMarkers) != 0)
     {
@@ -4789,10 +4812,10 @@ void Renderer::renderLocations(const vector<Location*>& locations,
             float effSize = (*iter)->getImportance();
             if (effSize < 0.0f)
                 effSize = (*iter)->getSize();
+
             float pixSize = effSize / (float) (cpos.distanceFromOrigin() * pixelSize);
 
-            if (pixSize > minFeatureSize &&
-                (cpos - origin) * viewNormald > 0.0)
+            if (pixSize > minFeatureSize && (cpos - origin) * viewNormald > 0.0)
             {
                 double r = locPos.length();
                 if (r < scale * 0.99)
@@ -6216,6 +6239,73 @@ void Renderer::renderCometTail(const Body& body,
 }
 
 
+// Render coordinate frame axes
+void Renderer::renderAxes(Body& body,
+                          Point3f pos,
+                          float distance,
+                          double now,
+                          float nearPlaneDistance,
+                          float farPlaneDistance,
+                          RenderListEntry::RenderableType renderableType)
+{
+#if REFMARKS
+    float altitude = distance - body.getRadius();
+    float discSizeInPixels = body.getRadius() /
+        (max(nearPlaneDistance, altitude) * pixelSize);
+
+    if (discSizeInPixels <= 1)
+        return;
+
+    float opacity = (renderableType == RenderListEntry::RenderableFrameAxes) ? 0.5f : 1.0f;
+	
+    // Compute the orientation of the body before axial rotation
+    Quatf orientation;
+	
+    if (renderableType == RenderListEntry::RenderableFrameAxes)
+    {
+        Quatd q = body.getEclipticalToFrame(now);
+        orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    }
+    else
+    {
+        Quatd q = body.getEclipticalToBodyFixed(now);
+        orientation = Quatf::yrotation((float) PI) * Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    }
+
+    if (opacity == 1.0f)
+    {
+        // Enable depth buffering
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
+    }
+    else
+    {
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+	
+    glDisable(GL_TEXTURE_2D);
+
+    // Apply the modelview transform for the object
+    glPushMatrix();
+    glTranslate(pos);
+
+    RenderAxisArrows(~orientation, body.getRadius() * 2.0f, opacity);
+	
+    glPopMatrix();
+	
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#endif
+}
+
+
 // Add solar system bodies, orbits, and labels to the render list. Stars
 // are handled by other methods.
 void Renderer::buildRenderLists(const Star& sun,
@@ -6270,9 +6360,9 @@ void Renderer::buildRenderLists(const Star& sun,
             body->getClassification() != Body::Invisible)
         {
             RenderListEntry rle;
+            rle.renderableType = RenderListEntry::RenderableBody;
             rle.body = body;
             rle.star = NULL;
-            rle.isCometTail = false;
             // Treat all mesh objects as potentially transparent.
             // TODO: implement a better test for this
             //rle.isOpaque = body->getModel() == InvalidResource;
@@ -6308,9 +6398,9 @@ void Renderer::buildRenderLists(const Star& sun,
             if (discSize > 1)
             {
                 RenderListEntry rle;
+                rle.renderableType = RenderListEntry::RenderableCometTail;
                 rle.body = body;
                 rle.star = NULL;
-                rle.isCometTail = true;
                 rle.isOpaque = false;
                 rle.position = Point3f(pos.x, pos.y, pos.z);
                 rle.sun = sunPos;
@@ -6323,6 +6413,47 @@ void Renderer::buildRenderLists(const Star& sun,
                 renderList.push_back(rle);
             }
         }
+
+#if REFMARKS
+        if (body->getVisibleReferenceMarks() != 0)
+        {
+            if (body->referenceMarkVisible(Body::BodyAxes) && discSize > 1)
+            {
+                RenderListEntry rle;
+                rle.renderableType = RenderListEntry::RenderableBodyAxes;
+                rle.body = body;
+                rle.star = NULL;
+                rle.isOpaque = true;
+                rle.position = Point3f(pos.x, pos.y, pos.z);
+                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
+                rle.distance = (float) distanceFromObserver;
+                rle.centerZ = pos * viewMatZ;
+                rle.radius = body->getRadius() * 2.0f;
+                rle.discSizeInPixels = discSize;
+                rle.appMag = appMag;
+                rle.solarSysIndex = solarSysIndex;
+                renderList.push_back(rle);
+            }
+
+            if (body->referenceMarkVisible(Body::FrameAxes) && discSize > 1)
+            {
+                RenderListEntry rle;
+                rle.renderableType = RenderListEntry::RenderableFrameAxes;
+                rle.body = body;
+                rle.star = NULL;
+                rle.isOpaque = false;
+                rle.position = Point3f(pos.x, pos.y, pos.z);
+                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
+                rle.distance = (float) distanceFromObserver;
+                rle.centerZ = pos * viewMatZ;
+                rle.radius = body->getRadius() * 2.0f;
+                rle.discSizeInPixels = discSize;
+                rle.appMag = appMag;
+                rle.solarSysIndex = solarSysIndex;
+                renderList.push_back(rle);
+            }
+        }
+#endif
 
         if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
         {
@@ -6732,9 +6863,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
             RenderListEntry rle;
+            rle.renderableType = RenderListEntry::RenderableStar;
             rle.star = &star;
             rle.body = NULL;
-            rle.isCometTail = false;
             rle.isOpaque = true;
 
             // Objects in the render list are always rendered relative to
@@ -6924,9 +7055,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
             RenderListEntry rle;
+            rle.renderableType = RenderListEntry::RenderableStar;
             rle.star = &star;
             rle.body = NULL;
-            rle.isCometTail = false;
 
             // Objects in the render list are always rendered relative to
             // a viewer at the origin--this is different than for distant
@@ -7955,4 +8086,10 @@ void Renderer::loadTextures(Body* body)
     {
         body->getRings()->texture.find(textureResolution);
     }
+}
+
+
+void Renderer::invalidateOrbitCache()
+{
+    orbitCache.clear();
 }
