@@ -466,7 +466,7 @@ LuaState::LuaState() :
     costate(NULL),
     alive(false),
     timer(NULL),
-    scriptAwakenTime(0.1),
+    scriptAwakenTime(0.0),
     ioMode(NoIO),
     eventHandlerEnabled(false)
 {
