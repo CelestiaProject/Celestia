@@ -1590,6 +1590,13 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, UTF8ToCurrentCP(_("&Follow")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, UTF8ToCurrentCP(_("S&ync Orbit")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
+#ifdef REFMARKS
+            AppendMenu(hMenu, MF_STRING, ID_RENDER_BODY_AXES, UTF8ToCurrentCP(_("Show Body Axes")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_RENDER_FRAME_AXES, UTF8ToCurrentCP(_("Show Frame Axes")).c_str());
+
+            CheckMenuItem(hMenu, ID_RENDER_BODY_AXES,   sel.body()->referenceMarkVisible(Body::BodyAxes) ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(hMenu, ID_RENDER_FRAME_AXES,  sel.body()->referenceMarkVisible(Body::FrameAxes) ? MF_CHECKED : MF_UNCHECKED);
+#endif
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
@@ -3158,7 +3165,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.lastVersion = 0x00000000;
     prefs.textureResolution = 1;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
-	printf("prefs: %08x\n", prefs.renderFlags);
 
     // Adjust window dimensions for screen dimensions
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -3195,12 +3201,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     appCore = new CelestiaCore();
     if (appCore == NULL)
     {
-		if (s_splash != NULL)
-		{
-			s_splash->close();
-			delete s_splash;
+        if (s_splash != NULL)
+        {
+            s_splash->close();
+            delete s_splash;
             s_splash = NULL;
-		}
+        }
 		
         MessageBox(NULL,
                    "Out of memory.", "Fatal Error",
@@ -3220,9 +3226,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // Loading localized resources
     char res[255];
     sprintf(res, "locale\\res_%s.dll", _("LANGUAGE"));
-    int langID;
-    sscanf(_("WinLangID"), "%x", &langID);
-    SetThreadLocale(langID);
+    int langID = 0;
+    if (sscanf(_("WinLangID"), "%x", &langID) == 1)
+        SetThreadLocale(langID);
     if ((hRes = LoadLibrary(res)) == NULL) {
         cout << "Couldn't load localized resources: "<< res<< "\n";
         hRes = hInstance;
@@ -3389,14 +3395,15 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         SendMessage(mainWindow, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cd));
     }
 
+    // Initial tick required before first frame is rendered; this gives
+    // start up scripts a chance to run.
+    appCore->tick();
+
     MSG msg;
     PeekMessage(&msg, NULL, 0U, 0U, PM_NOREMOVE);
     while (msg.message != WM_QUIT)
     {
         bool isVisible = !IsIconic(mainWindow);
-
-        // Tick the simulation
-        appCore->tick();
 
         // If Celestia is in an inactive state, use GetMessage to avoid
         // sucking CPU cycles.  If time is paused and the camera isn't
@@ -3407,6 +3414,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             haveMessage = PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE);
         else
             haveMessage = GetMessage(&msg, NULL, 0U, 0U);
+
+        if (!haveMessage)
+        {
+            // Tick the simulation
+            appCore->tick();
+        }
 
         if (haveMessage)
         {
@@ -4025,6 +4038,24 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('\030');
             syncMenusWithRendererState();
             break;
+
+#ifdef REFMARKS
+        case ID_RENDER_BODY_AXES:
+            {
+                Body* body = appCore->getSimulation()->getSelection().body();
+                if (body != NULL)
+                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::BodyAxes);
+            }
+            break;
+
+        case ID_RENDER_FRAME_AXES:
+            {
+                Body* body = appCore->getSimulation()->getSelection().body();
+                if (body != NULL)
+                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::FrameAxes);
+            }
+            break;
+#endif
 
         case ID_TIME_FASTER:
             appCore->charEntered('L');
