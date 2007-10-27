@@ -567,6 +567,8 @@ void StarPicker::process(const Star& star, float, float)
     {
         sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : ANGULAR_RES;
         pickedStar = &star;
+        if (pickedStar->getOrbitBarycenter() != NULL)
+            pickedStar = pickedStar->getOrbitBarycenter();
     }
 }
 
