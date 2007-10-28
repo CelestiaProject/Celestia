@@ -131,6 +131,8 @@ static int movieFramerate = 1;
 
 astro::Date newTime(0.0);
 
+#define REFMARKS 0
+
 #define INFINITE_MOUSE
 static int lastX = 0;
 static int lastY = 0;
@@ -1590,12 +1592,16 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, UTF8ToCurrentCP(_("&Follow")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, UTF8ToCurrentCP(_("S&ync Orbit")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
-#ifdef REFMARKS
+#if REFMARKS
             AppendMenu(hMenu, MF_STRING, ID_RENDER_BODY_AXES, UTF8ToCurrentCP(_("Show Body Axes")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_RENDER_FRAME_AXES, UTF8ToCurrentCP(_("Show Frame Axes")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_RENDER_SUN_DIRECTION, UTF8ToCurrentCP(_("Show Sun Direction")).c_str());
+            AppendMenu(hMenu, MF_STRING, ID_RENDER_VELOCITY_VECTOR, UTF8ToCurrentCP(_("Show Velocity Vector")).c_str());
 
             CheckMenuItem(hMenu, ID_RENDER_BODY_AXES,   sel.body()->referenceMarkVisible(Body::BodyAxes) ? MF_CHECKED : MF_UNCHECKED);
             CheckMenuItem(hMenu, ID_RENDER_FRAME_AXES,  sel.body()->referenceMarkVisible(Body::FrameAxes) ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(hMenu, ID_RENDER_SUN_DIRECTION,  sel.body()->referenceMarkVisible(Body::SunDirection) ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(hMenu, ID_RENDER_VELOCITY_VECTOR,  sel.body()->referenceMarkVisible(Body::VelocityVector) ? MF_CHECKED : MF_UNCHECKED);
 #endif
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
@@ -2439,7 +2445,6 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
         prefs.renderFlags |= Renderer::ShowCometTails;
         prefs.renderFlags |= Renderer::ShowRingShadows;
     }
-    prefs.renderFlags &= ~Renderer::ShowAutoMag;
 
     RegCloseKey(key);
 
@@ -4039,7 +4044,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             syncMenusWithRendererState();
             break;
 
-#ifdef REFMARKS
+#if REFMARKS
         case ID_RENDER_BODY_AXES:
             {
                 Body* body = appCore->getSimulation()->getSelection().body();
@@ -4055,6 +4060,23 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::FrameAxes);
             }
             break;
+
+        case ID_RENDER_SUN_DIRECTION:
+            {
+                Body* body = appCore->getSimulation()->getSelection().body();
+                if (body != NULL)
+                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::SunDirection);
+            }
+            break;
+
+        case ID_RENDER_VELOCITY_VECTOR:
+            {
+                Body* body = appCore->getSimulation()->getSelection().body();
+                if (body != NULL)
+                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::VelocityVector);
+            }
+            break;
+
 #endif
 
         case ID_TIME_FASTER:
