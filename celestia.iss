@@ -66,7 +66,7 @@ Source: "locale\res_de.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_el.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_es.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_fr.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
-Source: "locale\res_gl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+;Source: "locale\res_gl.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_hu.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_it.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_ja.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -90,7 +90,7 @@ Source: "locale\es\LC_MESSAGES\celestia.mo";                      DestDir: "{app
 Source: "locale\es\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/es/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\fr\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/fr/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\fr\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/fr/LC_MESSAGES"; Flags: ignoreversion
-Source: "locale\gl\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/gl/LC_MESSAGES"; Flags: ignoreversion
+;Source: "locale\gl\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/gl/LC_MESSAGES"; Flags: ignoreversion
 ; no translation available yet -- Source: "locale\gl\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/gl/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\hu\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/hu/LC_MESSAGES"; Flags: ignoreversion
 ; no translation available yet -- Source: "locale\hu\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/hu/LC_MESSAGES"; Flags: ignoreversion
