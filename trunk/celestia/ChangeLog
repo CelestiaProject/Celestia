@@ -1195,3 +1195,60 @@ Code:
 * Modified the visualbin and spectbin databases to allow selection of the
   barycenters throughout. Commented out a number of binaries in spectbins that
   were also included in visualbins
+* Mac: implemented tabbed browser interface
+* Mac: fixed crash at startup on multicore machines with Lua edu tools
+* Mac: fixed cmd+arrow infinite spin
+* Mac: made DSOs localizeable
+* Mac: fixed a crash when app is hidden at splash screen on multicore configs
+* Mac: added multibyte console input
+* Mac: minor fix for favorites bug
+* Mac: removed Show Clusters menu item
+* Mac: fixed crash on text enter after exiting full screen
+* Added Orion's belt to constellation diagrams
+* Orbit determination for Dysnomia
+* Updated Ceres rotation period from Icarus 2007, 188(2):451
+* New names for Saturnian satellites: Greip, Jarnsaxa, Tarqeq
+* Switched to equatorial coordinates for Charon and Pluto orbits, to match Nix
+  and Hydra
+* New extrasolar planets: HAT-P-4 b, HAT-P-5 b, HAT-P-6 b, HS 16175 b,
+ HD 167042 b, HD 74156 d, HD 285968 b, V391 Peg b,
+ HD 132406 b, HD 43691 b, NGC 2423 3 b, Gliese 317 b & c,
+ TrES-3, HD 155358 b&c, HD 5319 b, HD 75898 b; removed HD 33636 b
+* Set up transit of Gliese 436
+* Added setradius method for solar system objects to celx
+* Added script commands to set label and line colors
+* Added get/setgalaxylightgain functions for celx scripting
+* Added gl.LineWidth function
+* Eliminated 0.1 second delay in script startup, allowing scripts to run before
+  first frame is rendered.
+* Rewrote orbit cache for efficiency
+  - Avoid unnecessary recaclulation of orbits
+  - Prevents thrashing with multiple views
+  - Added function to invalidate orbit cache
+* Improved celestial grid
+  - More meridians and labels shown
+  - Better label formatting
+* cel: URL fixes:
+  - Added support for location selections
+  - Fixed omission of star name in path for some objects
+* Fixed small FOV bug when using Shift+Left button to zoom
+* Display ambient light level when adjusted with { or }
+* Improved star radius display
+* Don't show irrelevant text for invisible objects
+* Implemented adaptive tesselation for comet tails based on the size on screen;
+  makes comet tails appear smooth when seen up close
+* New label and line colors
+* Fixed depth sorting problem for stars that covered less than a pixel
+  in the view
+* Fixed bug with bookmarks when selection is a DSO
+* Centered constellation labels
+* Added checkbox for star orbit rendering (all platforms)
+* Added Scripts menu to quick launch scripts in the scripts directory
+* Fixed index out of bounds error in SampledOrbit, SampledRotation
+  (crashing bug)
+* Added adaptive sampling for rendering elliptical orbits (more samples in
+  regions of high curvature)
+* Windows: fixed movie recording rate
+* Windows: fixed unitialized variable that could cause wrong
+translations to be used
+* Changed pick code to select barycenter of distant star systems
