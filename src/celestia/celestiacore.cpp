@@ -53,7 +53,8 @@ using namespace std;
 static const int DragThreshold = 3;
 
 // Perhaps you'll want to put this stuff in configuration file.
-static const double timeScaleFactor = 10.0f;
+static const double CoarseTimeScaleFactor = 10.0;
+static const double FineTimeScaleFactor = 2.0;
 static const double fMinSlewRate = 3.0;
 static const double fMaxKeyAccel = 20.0;
 static const float fAltitudeThreshold = 4.0f;
@@ -1854,7 +1855,10 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         addToHistory();
         if (abs(timeScale) > MinimumTimeRate)
         {
-            timeScale /= timeScaleFactor;
+            if (c == 'k')
+                timeScale /= CoarseTimeScaleFactor;
+            else
+                timeScale /= FineTimeScaleFactor;
             if (!paused)
                 sim->setTimeScale(timeScale);
             char buf[128];
@@ -1867,7 +1871,10 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         addToHistory();
         if (abs(timeScale) < MaximumTimeRate)
         {
-            timeScale *= timeScaleFactor;
+            if (c == 'l')
+                timeScale *= CoarseTimeScaleFactor;
+            else
+                timeScale *= FineTimeScaleFactor;
             if (!paused)
                 sim->setTimeScale(timeScale);
             char buf[128];
