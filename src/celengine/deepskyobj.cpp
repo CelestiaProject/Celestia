@@ -165,7 +165,7 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
             if (resPath[1] == ':')
                 // Absolute Windows path, file:/// is required
                 infoURL = "file:///" + resPath + "/" + infoURL;
-            else
+            else if (!resPath.empty())
                 infoURL = resPath + "/" + infoURL;
         }
         setInfoURL(infoURL);
