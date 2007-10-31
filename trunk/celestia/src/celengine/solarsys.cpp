@@ -443,7 +443,7 @@ static Body* CreatePlanet(const string& name,
             if (path[1] == ':')
                 // Absolute Windows path, file:/// is required
                 infoURL = "file:///" + path + "/" + infoURL;
-            else
+            else if (!path.empty())
                 infoURL = path + "/" + infoURL;
         }
         body->setInfoURL(infoURL);
