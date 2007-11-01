@@ -286,13 +286,15 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
         markMenu->insertItem(i18n("Diamond"), baseId + 10);
         markMenu->insertItem(i18n("Triangle"), baseId + 11);
         markMenu->insertItem(i18n("Square"), baseId + 12);
-        markMenu->insertItem(i18n("Plus"), baseId + 13);
-        markMenu->insertItem(i18n("X"), baseId + 14);
-        markMenu->insertItem(i18n("Left Arrow"), baseId + 15);
-        markMenu->insertItem(i18n("Right Arrow"), baseId + 16);
-        markMenu->insertItem(i18n("Up Arrow"), baseId + 17);
-        markMenu->insertItem(i18n("Down Arrow"), baseId + 18);
-        markMenu->insertItem(i18n("Circle"), baseId + 19);
+        markMenu->insertItem(i18n("Filled Square"), baseId + 13);
+        markMenu->insertItem(i18n("Plus"), baseId + 14);
+        markMenu->insertItem(i18n("X"), baseId + 15);
+        markMenu->insertItem(i18n("Left Arrow"), baseId + 16);
+        markMenu->insertItem(i18n("Right Arrow"), baseId + 17);
+        markMenu->insertItem(i18n("Up Arrow"), baseId + 18);
+        markMenu->insertItem(i18n("Down Arrow"), baseId + 19);
+        markMenu->insertItem(i18n("Circle"), baseId + 20);
+        markMenu->insertItem(i18n("Disk"), baseId + 21);
         popup->insertItem(i18n("&Mark"), markMenu);
     }
     baseId += 30;
