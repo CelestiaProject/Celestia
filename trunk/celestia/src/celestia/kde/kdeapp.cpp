@@ -444,6 +444,8 @@ void KdeApp::initActions()
     new KAction(i18n("Set Time to Now"), "player_eject", Key_Exclam, this, SLOT(slotSetTimeNow()), actionCollection(), "setTimeNow");
     new KAction(i18n("Accelerate Time"), "1uparrow", Key_L, this, SLOT(slotAccelerateTime()), actionCollection(), "accelerateTime");
     new KAction(i18n("Decelerate Time"), "1downarrow", Key_K, this, SLOT(slotSlowDownTime()), actionCollection(), "slowDownTime");
+    new KAction(i18n("Accelerate Time (x2)"), "1uparrow", SHIFT + Key_L, this, SLOT(slotAccelerateTimeFine()), actionCollection(), "accelerateTimeFine");
+    new KAction(i18n("Decelerate Time (/2)"), "1downarrow", SHIFT + Key_K, this, SLOT(slotSlowDownTimeFine()), actionCollection(), "slowDownTimeFine");
     new KAction(i18n("Pause Time"), "player_pause", Key_Space, this, SLOT(slotPauseTime()), actionCollection(), "pauseTime");
     new KAction(i18n("Reverse Time"), "reload", Key_J, this, SLOT(slotReverseTime()), actionCollection(), "reverseTime");
 
@@ -1002,12 +1004,20 @@ void KdeApp::slotAccelerateTime() {
     appCore->charEntered('l');
 }
 
+void KdeApp::slotAccelerateTimeFine() {
+    appCore->charEntered('L');
+}
+
 void KdeApp::slotPauseTime() {
     appCore->charEntered(' ');
 }
 
 void KdeApp::slotSlowDownTime() {
     appCore->charEntered('k');
+}
+
+void KdeApp::slotSlowDownTimeFine() {
+    appCore->charEntered('K');
 }
 
 void KdeApp::slotSetTimeNow() {
