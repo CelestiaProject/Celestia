@@ -77,23 +77,23 @@ msgstr "Lade Modell: "
 
 #: src/celengine/meshmanager.cpp:118
 msgid "   Model statistics: "
-msgstr ""
+msgstr "   Modell Statistik: "
 
 #: src/celengine/meshmanager.cpp:119
 msgid " vertices, "
-msgstr ""
+msgstr " Eckpunkte, "
 
 #: src/celengine/meshmanager.cpp:120
 msgid " primitives, "
-msgstr ""
+msgstr " Primitive, "
 
 #: src/celengine/meshmanager.cpp:121
 msgid " materials "
-msgstr ""
+msgstr " Materialien "
 
 #: src/celengine/meshmanager.cpp:122
 msgid " unique)\n"
-msgstr ""
+msgstr " einmalig)\n"
 
 #: src/celengine/meshmanager.cpp:126
 msgid "Error loading model '"
@@ -228,15 +228,15 @@ msgstr "Sonne"
 
 #: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
-msgstr ""
+msgstr "Erzeuge aufgeteilte Textur. Breite="
 
 #: src/celengine/texture.cpp:1019
 msgid ", max="
-msgstr ""
+msgstr ", max="
 
 #: src/celengine/texture.cpp:1024
 msgid "Creating ordinary texture: "
-msgstr ""
+msgstr "Erzeuge normale Textur: "
 
 #: src/celengine/vertexprog.cpp:108
 msgid "Loading NV vertex program: "
@@ -327,14 +327,12 @@ msgid "Goto surface"
 msgstr "Gehe auf die Oberfläche"
 
 #: src/celestia/celestiacore.cpp:1386
-#, fuzzy
 msgid "Alt-azimuth mode enabled"
-msgstr "Alt-Azimuth Modus"
+msgstr "Alt-Azimuth Modus eingeschaltet"
 
 #: src/celestia/celestiacore.cpp:1389
-#, fuzzy
 msgid "Alt-azimuth mode disabled"
-msgstr "Alt-Azimuth Modus"
+msgstr "Alt-Azimuth Modus ausgeschaltet"
 
 #: src/celestia/celestiacore.cpp:1442
 msgid "Star style: fuzzy points"
@@ -511,9 +509,9 @@ msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Auto-Magnitude Grenzwert bei 45 Grad:  %.2f"
 
 #: src/celestia/celestiacore.cpp:2040 src/celestia/celestiacore.cpp:2053
-#, fuzzy, c-format
+#, c-format
 msgid "Ambient light level:  %.2f"
-msgstr "Umgebungslicht"
+msgstr "Umgebungslicht:  %.2f"
 
 #: src/celestia/celestiacore.cpp:2062 src/celestia/celestiacore.cpp:2072
 msgid "Light gain"
@@ -872,9 +870,8 @@ msgid "Max texture size: "
 msgstr "Maximale Texturgröße: "
 
 #: src/celestia/winmain.cpp:656
-#, fuzzy
 msgid "Max cube map size: "
-msgstr "Maximale Texturgröße: "
+msgstr "Maximale Cube-Map Texturgröße: "
 
 #: src/celestia/winmain.cpp:664 src/celestia/kde/kdeapp.cpp:946
 msgid "Point size range: "
@@ -1319,9 +1316,8 @@ msgid "Show Moon Orbits"
 msgstr "Orbits von Monden anzeigen"
 
 #: src/celestia/kde/kdeapp.cpp:560
-#, fuzzy
 msgid "Show Star Orbits"
-msgstr "Orbitlinien anzeigen"
+msgstr "Orbits von Sternen anzeigen"
 
 #: src/celestia/kde/kdeapp.cpp:563
 msgid "Show Planet Orbits"
@@ -2441,9 +2437,8 @@ msgid "Nereid"
 msgstr "Nereid"
 
 #: data/data.cpp:39
-#, fuzzy
 msgid "Pluto-Charon"
-msgstr "Charon"
+msgstr "Pluto-Charon"
 
 #: data/data.cpp:41
 msgid "Charon"
@@ -2506,14 +2501,12 @@ msgid "&Open Script..."
 msgstr "&Skript laden..."
 
 #: src/celestia/res/resource_strings.cpp:3
-#, fuzzy
 msgid "Scripts"
-msgstr "Orbit-Linien"
+msgstr "Skripte"
 
 #: src/celestia/res/resource_strings.cpp:4
-#, fuzzy
 msgid "Placeholder"
-msgstr "Schwarzes Loch"
+msgstr "Platzhalter"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
@@ -2820,7 +2813,7 @@ msgstr "Bob Ippolito"
 
 #: src/celestia/res/resource_strings.cpp:79
 msgid "Vincent Giangiulio"
-msgstr ""
+msgstr "Vincent Giangiulio"
 
 #: src/celestia/res/resource_strings.cpp:80
 msgid "Select Object"
