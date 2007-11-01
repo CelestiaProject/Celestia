@@ -112,6 +112,8 @@ public slots:
     void slotSetTimeNow();
     void slotAccelerateTime();
     void slotSlowDownTime();
+    void slotAccelerateTimeFine();
+    void slotSlowDownTimeFine();
     void slotPauseTime();
     void slotReverseTime();
     void slotCenterCO();
