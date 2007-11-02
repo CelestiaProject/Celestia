@@ -109,6 +109,7 @@ void KdeGlWidget::initializeGL()
     localtime(&curtime); /* Only doing this to set timezone as a side effect*/
     appCore->setTimeZoneBias(-timezone+3600*daylight);
     appCore->setTimeZoneName(tzname[daylight?0:1]);
+    appCore->tick();
 
     KGlobal::config()->setGroup("Preferences");
     if (KGlobal::config()->hasKey("RendererFlags"))
