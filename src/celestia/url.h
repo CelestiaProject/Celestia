@@ -63,6 +63,7 @@ private:
     int renderFlags;
     int labelMode;
     bool lightTimeDelay;
+    bool pauseState;
 
     std::map<std::string, std::string> parseUrlParams(const std::string& url) const;
     std::string getCoordSysName(astro::CoordinateSystem mode) const;

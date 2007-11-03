@@ -414,8 +414,6 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     double sysTime;
     double currentTime;
-    double timeScale;
-    bool paused;
 
     Vec3f joystickRotation;
     bool joyButtonsPressed[JoyButtonCount];

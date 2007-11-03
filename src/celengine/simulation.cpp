@@ -19,6 +19,8 @@ using namespace std;
 Simulation::Simulation(Universe* _universe) :
     realTime(0.0),
     timeScale(1.0),
+    storedTimeScale(1.0),
+    pauseState(false),
     syncTime(true),
     universe(_universe),
     closestSolarSystem(NULL),
@@ -478,12 +480,19 @@ vector<std::string> Simulation::getObjectCompletion(string s, bool withLocations
 
 double Simulation::getTimeScale() const
 {
-    return timeScale;
+    return pauseState?storedTimeScale:timeScale;
 }
 
 void Simulation::setTimeScale(double _timeScale)
 {
-    timeScale = _timeScale;
+    if (pauseState == true)
+    {
+        storedTimeScale = _timeScale;
+    }
+    else
+    {
+        timeScale = _timeScale;
+    }
 }
 
 bool Simulation::getSyncTime() const
@@ -494,6 +503,27 @@ bool Simulation::getSyncTime() const
 void Simulation::setSyncTime(bool sync)
 {
     syncTime = sync;
+}
+
+bool Simulation::getPauseState() const
+{
+    return pauseState;
+}
+
+void Simulation::setPauseState(bool state)
+{
+    if (pauseState == state) return;
+
+    pauseState = state;
+    if (pauseState == true)
+    {
+        storedTimeScale = timeScale;
+        timeScale = 0.0;
+    }
+    else
+    {
+        timeScale = storedTimeScale;
+    }
 }
 
 // Synchronize all observers to active observer time
