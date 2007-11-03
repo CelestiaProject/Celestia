@@ -398,10 +398,12 @@ static std::string getBodyName(Universe* universe, Body* body)
 {
     std::string name = body->getName();
     PlanetarySystem* parentSystem = body->getSystem();
-    Body* parentBody = NULL;
+    const Body* parentBody = NULL;
 
     if (parentSystem != NULL)
         parentBody = parentSystem->getPrimaryBody();
+    else
+        parentBody = body->getOrbitBarycenter();
 
     while (parentBody != NULL)
     {
