@@ -333,8 +333,6 @@ CelestiaCore::CelestiaCore() :
     zoomTime(0.0),
     sysTime(0.0),
     currentTime(0.0),
-    timeScale(1.0),
-    paused(false),
     joystickRotation(0.0f, 0.0f, 0.0f),
     KeyAccel(1.0),
     movieCapture(NULL),
@@ -565,7 +563,7 @@ void CelestiaCore::runScript(const string& filename)
             else
             {
                 runningScript = new Execution(*script, *execEnv);
-                scriptState = ScriptRunning;
+                scriptState = sim->getPauseState()?ScriptPaused:ScriptRunning;
             }
         }
     }
@@ -614,7 +612,7 @@ void CelestiaCore::runScript(const string& filename)
             }
             else
             {
-                scriptState = ScriptRunning;
+                scriptState = sim->getPauseState()?ScriptPaused:ScriptRunning;
             }
         }
     }
@@ -1553,17 +1551,15 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         break;
 
     case ' ':
-        if (paused)
+        if (sim->getPauseState() == true)
         {
-            sim->setTimeScale(timeScale);
             if (scriptState == ScriptPaused)
                 scriptState = ScriptRunning;
-            paused = false;
+            sim->setPauseState(false);
         }
         else
         {
-            sim->setTimeScale(0.0);
-            paused = true;
+            sim->setPauseState(true);
 
             // If there's a script running then pause it.  This has the
             // potentially confusing side effect of rendering nonfunctional
@@ -1584,7 +1580,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             }
         }
 
-        if (paused)
+        if (sim->getPauseState() == true)
         {
             if (scriptState == ScriptPaused)
                 flash(_("Time and script are paused"));
@@ -1724,7 +1720,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 	    {
 	        setFaintestAutoMag();
 		char buf[128];
+                setlocale(LC_NUMERIC, "");
 		sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+                setlocale(LC_NUMERIC, "C");
 		flash(buf);
 	    }
 	}
@@ -1740,7 +1738,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 	    {
 	        setFaintestAutoMag();
 		char buf[128];
+                setlocale(LC_NUMERIC, "");
 		sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+                setlocale(LC_NUMERIC, "C");
 		flash(buf);
 	    }
 	}
@@ -1842,10 +1842,8 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 
     case 'J':
         addToHistory();
-        timeScale = -timeScale;
-        if (!paused)
-            sim->setTimeScale(timeScale);
-        if (timeScale >= 0)
+        sim->setTimeScale(-sim->getTimeScale());
+        if (sim->getTimeScale() >= 0)
             flash(_("Time: Forward"));
         else
             flash(_("Time: Backward"));
@@ -1853,32 +1851,32 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 
     case 'K':
         addToHistory();
-        if (abs(timeScale) > MinimumTimeRate)
+        if (abs(sim->getTimeScale()) > MinimumTimeRate)
         {
             if (c == 'k')
-                timeScale /= CoarseTimeScaleFactor;
+                sim->setTimeScale(sim->getTimeScale() / CoarseTimeScaleFactor);
             else
-                timeScale /= FineTimeScaleFactor;
-            if (!paused)
-                sim->setTimeScale(timeScale);
+                sim->setTimeScale(sim->getTimeScale() / FineTimeScaleFactor);
             char buf[128];
-            sprintf(buf, _("Time rate: %g"), timeScale);
+            setlocale(LC_NUMERIC, "");
+            sprintf(buf, _("Time rate: %'.12g"), sim->getTimeScale());
+            setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
         break;
 
     case 'L':
         addToHistory();
-        if (abs(timeScale) < MaximumTimeRate)
+        if (abs(sim->getTimeScale()) < MaximumTimeRate)
         {
             if (c == 'l')
-                timeScale *= CoarseTimeScaleFactor;
+                sim->setTimeScale(sim->getTimeScale() * CoarseTimeScaleFactor);
             else
-                timeScale *= FineTimeScaleFactor;
-            if (!paused)
-                sim->setTimeScale(timeScale);
+                sim->setTimeScale(sim->getTimeScale() * FineTimeScaleFactor);
             char buf[128];
-            sprintf(buf, _("Time rate: %g"), timeScale);
+            setlocale(LC_NUMERIC, "");
+            sprintf(buf, _("Time rate: %'.12g"), sim->getTimeScale());
+            setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
         break;
@@ -1987,7 +1985,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                 setFaintest(sim->getFaintestVisible() - 0.2f);
                 notifyWatchers(FaintestChanged);
                 char buf[128];
+                setlocale(LC_NUMERIC, "");
                 sprintf(buf, _("Magnitude limit: %.2f"),sim->getFaintestVisible());
+                setlocale(LC_NUMERIC, "C");
                 flash(buf);
             }
         }
@@ -1996,16 +1996,16 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() - 0.1f);
             setFaintestAutoMag();
             char buf[128];
+            setlocale(LC_NUMERIC, "");
             sprintf(buf, _("Auto magnitude limit at 45 degrees:  %.2f"),renderer->getFaintestAM45deg());
+            setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
         break;
 
     case '\\':
         addToHistory();
-        timeScale = 1.0f;
-        if (!paused)
-            sim->setTimeScale(timeScale);
+        sim->setTimeScale(1.0f);
         break;
 
     case ']':
@@ -2016,7 +2016,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 	              setFaintest(sim->getFaintestVisible() + 0.2f);
                 notifyWatchers(FaintestChanged);
                 char buf[128];
-		            sprintf(buf, _("Magnitude limit: %.2f"),sim->getFaintestVisible());
+                setlocale(LC_NUMERIC, "");
+                sprintf(buf, _("Magnitude limit: %.2f"),sim->getFaintestVisible());
+                setlocale(LC_NUMERIC, "C");
                 flash(buf);
             }
         }
@@ -2025,7 +2027,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             renderer->setFaintestAM45deg(renderer->getFaintestAM45deg() + 0.1f);
             setFaintestAutoMag();
             char buf[128];
+            setlocale(LC_NUMERIC, "");
             sprintf(buf, _("Auto magnitude limit at 45 degrees:  %.2f"),renderer->getFaintestAM45deg());
+            setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
         break;
@@ -2042,9 +2046,11 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                 renderer->setAmbientLightLevel(0.0f);
             notifyWatchers(AmbientLightChanged);
             char buf[128];
+            setlocale(LC_NUMERIC, "");
             sprintf(buf, _("Ambient light level:  %.2f"),renderer->getAmbientLightLevel());
-	          flash(buf);
-	      }
+            setlocale(LC_NUMERIC, "C");
+            flash(buf);
+        }
         break;
 
     case '}':
@@ -2055,16 +2061,20 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                 renderer->setAmbientLightLevel(1.0f);
             notifyWatchers(AmbientLightChanged);
             char buf[128];
+            setlocale(LC_NUMERIC, "");
             sprintf(buf, _("Ambient light level:  %.2f"),renderer->getAmbientLightLevel());
-	          flash(buf);
-	      }
+            setlocale(LC_NUMERIC, "C");
+            flash(buf);
+        }
         break;
 
     case '(':
         {
             char buf[128];
             Galaxy::decreaseLightGain();
+            setlocale(LC_NUMERIC, "");
             sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            setlocale(LC_NUMERIC, "C");
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
         }
@@ -2074,7 +2084,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         {
             char buf[128];
             Galaxy::increaseLightGain();
+            setlocale(LC_NUMERIC, "");
             sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            setlocale(LC_NUMERIC, "C");
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
         }
@@ -2180,10 +2192,6 @@ void CelestiaCore::tick()
         dt = 0.0;
 
     currentTime += dt;
-
-    // synchronize timeScale if it was changed by a script:
-    if (!paused && (timeScale != sim->getTimeScale()))
-        timeScale = sim->getTimeScale();
 
     // Mouse wheel zoom
     if (zoomMotion != 0.0f)
@@ -3234,28 +3242,29 @@ void CelestiaCore::renderOverlay()
         }
 
         {
-            if (abs(abs(timeScale) - 1) < 1e-6)
+            if (abs(abs(sim->getTimeScale()) - 1) < 1e-6)
             {
-                if (sign(timeScale) == 1)
+                if (sign(sim->getTimeScale()) == 1)
                     *overlay << _("Real time");
                 else
                     *overlay << _("-Real time");
             }
-            else if (abs(timeScale) < MinimumTimeRate)
+            else if (abs(sim->getTimeScale()) < MinimumTimeRate)
             {
                 *overlay << _("Time stopped");
             }
-            else if (abs(timeScale) > 1.0)
+            else if (abs(sim->getTimeScale()) > 1.0)
             {
-                *overlay << FormattedNumber(timeScale, 0, FormattedNumber::GroupThousands)
-                         << UTF8_MULTIPLICATION_SIGN << _(" faster");
+                overlay->oprintf("%'.12g", sim->getTimeScale());
+                *overlay << UTF8_MULTIPLICATION_SIGN << _(" faster");
             }
             else
             {
-                *overlay << SigDigitNum(1.0 / timeScale, 1) << UTF8_MULTIPLICATION_SIGN << _(" slower");
+                overlay->oprintf("%'.12g", 1.0 / sim->getTimeScale());
+                *overlay << UTF8_MULTIPLICATION_SIGN << _(" slower");
             }
 
-            if (paused)
+            if (sim->getPauseState() == true)
             {
                 glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
                 *overlay << _(" (Paused)");
@@ -4417,7 +4426,6 @@ void CelestiaCore::goToUrl(const string& urlStr)
 {
     Url url(urlStr, this);
     url.goTo();
-    timeScale = sim->getTimeScale();
     notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
 }
 
@@ -4449,7 +4457,6 @@ void CelestiaCore::back()
     }
     historyCurrent--;
     history[historyCurrent].goTo();
-    timeScale = sim->getTimeScale();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4460,7 +4467,6 @@ void CelestiaCore::forward()
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
     history[historyCurrent].goTo();
-    timeScale = sim->getTimeScale();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 

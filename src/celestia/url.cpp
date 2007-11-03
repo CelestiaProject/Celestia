@@ -26,10 +26,11 @@ static const unsigned int CurrentCelestiaURLVersion = 2;
 Url::Url()
 {};
 
-Url::Url(const std::string& str, CelestiaCore *core)
+Url::Url(const std::string& str, CelestiaCore *core):
+    urlStr(str),
+    appCore(core),
+    pauseState(false)
 {
-    urlStr = str;
-    appCore = core;
     std::string::size_type pos, endPrevious;
     std::vector<Selection> bodies;
     Simulation *sim = appCore->getSimulation();
@@ -190,6 +191,9 @@ Url::Url(const std::string& str, CelestiaCore *core)
         if (params["ts"] != "") {
             sscanf(params["ts"].c_str(), "%f", &timeScale);
         }
+        if (params["p"] != "") {
+            sscanf(params["p"].c_str(), "%d", &pauseState);
+        }
         break;
     case Settings:
         break;
@@ -268,9 +272,10 @@ Url::Url(CelestiaCore* core, UrlType type)
 
         fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
         timeScale = (float) sim->getTimeScale();
+        pauseState = sim->getPauseState();
         lightTimeDelay = appCore->getLightDelayActive();
-        sprintf(buff, "&fov=%f&ts=%f&ltd=%c&", fieldOfView,
-            timeScale, lightTimeDelay?'1':'0');
+        sprintf(buff, "&fov=%f&ts=%f&ltd=%c&p=%c&", fieldOfView,
+            timeScale, lightTimeDelay?'1':'0', pauseState?'1':'0');
         urlStr += buff;
     case Settings: // Intentional Fall-Through
         renderFlags = renderer->getRenderFlags();
@@ -466,25 +471,41 @@ void Url::goTo()
         sim->getActiveObserver()->setFOV(degToRad(fieldOfView));
         appCore->setZoomFromFOV();
         sim->setTimeScale(timeScale);
+        sim->setPauseState(pauseState);
         appCore->setLightDelayActive(lightTimeDelay);
 
-        pos = 0;
-        while(pos != std::string::npos)
+        if (selectedStr != "")
         {
-            pos = selectedStr.find(":", pos + 1);
-            if (pos != std::string::npos) selectedStr[pos]='/';
+            pos = 0;
+            while(pos != std::string::npos)
+            {
+                pos = selectedStr.find(":", pos + 1);
+                if (pos != std::string::npos) selectedStr[pos]='/';
+            }
+            sel = sim->findObjectFromPath(selectedStr);
+            sim->setSelection(sel);
         }
-        sel = sim->findObjectFromPath(selectedStr);
-        sim->setSelection(sel);
+        else
+        {
+            sim->setSelection(Selection());
+        }
 
-        pos = 0;
-        while(pos != std::string::npos)
+        if (trackedStr != "")
         {
-            pos = trackedStr.find(":", pos + 1);
-            if (pos != std::string::npos) trackedStr[pos]='/';
+            pos = 0;
+            while(pos != std::string::npos)
+            {
+                pos = trackedStr.find(":", pos + 1);
+                if (pos != std::string::npos) trackedStr[pos]='/';
+            }
+            sel = sim->findObjectFromPath(trackedStr);
+            sim->setTrackedObject(sel);
         }
-        sel = sim->findObjectFromPath(trackedStr);
-        sim->setTrackedObject(sel);
+        else
+        {
+            if (!sim->getTrackedObject().empty())
+                sim->setTrackedObject(Selection());
+        }
         // Intentional Fall-Through
     case Settings:
         renderer->setRenderFlags(renderFlags);
