@@ -83,7 +83,8 @@ int KdeUniqueCelestia::newInstance() {
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     if (args->count() != 0) {
         app->goToURL(args->url(0));
-        app->showNormal();
+        if (app->windowState() && Qt::WindowMinimized)
+            app->setWindowState(app->windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
         app->setActiveWindow();
         app->raise();
     }
