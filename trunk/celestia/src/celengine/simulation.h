@@ -98,6 +98,8 @@ class Simulation
     bool getSyncTime() const;
     void setSyncTime(bool);
     void synchronizeTime();
+    bool getPauseState() const;
+    void setPauseState(bool);
 
     float getFaintestVisible() const;
     void setFaintestVisible(float);
@@ -126,6 +128,8 @@ class Simulation
     std::vector<Observer*> observers;
 
     float faintestVisible;
+    double storedTimeScale;
+    bool pauseState;
 };
 
 #endif // _CELENGINE_SIMULATION_H_
