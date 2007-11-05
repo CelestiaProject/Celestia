@@ -32,7 +32,7 @@
 	AbsMag 3.6         # from spectral class
 }
 
-1013242652 "TrES-1 (parent star)"
+1013242652 "TrES-1 (parent star):GSC 02652-01324"
 {
 	RA 286.04083
 	Dec 36.6325
@@ -59,7 +59,7 @@
 	AppMag 11.3
 }
 
-1000053413 "XO-2"
+1000053413 "XO-2:GSC 03413-00005"
 {
 	RA 117.0292
 	Dec 50.2258
@@ -68,7 +68,7 @@
 	AppMag 11.18
 }
 
-1028113549 "TrES-2 (parent star)"
+1028113549 "TrES-2 (parent star):GSC 03549-02811"
 {
 	RA 286.80848
 	Dec 49.31641
@@ -104,6 +104,15 @@
 	AppMag 11.98
 }
 
+1001952636 "WASP-3:GSC 02636-00195"
+{
+	RA 278.63167
+	Dec 35.66167
+	Distance 727
+	SpectralType "F7V"
+	AppMag 10.64
+}
+
 1000370197 # HD 70573
 {
 	RA 125.7083
@@ -122,7 +131,7 @@
 	AppMag 7.73
 }
 
-"TrES-3 (parent star)"
+"TrES-3 (parent star):GSC 03089-00929"
 {
 	RA 268.02917
 	Dec 37.54611
@@ -131,7 +140,7 @@
 	AppMag 12.4
 }
 
-1021565409 "NGC 2423 3"
+1021565409 "NGC 2423 3:GSC 05409-02156"
 {
 	RA 114.2875
 	Dec -13.90667
@@ -159,7 +168,7 @@
 	AppMag 8.31
 }
 
-"HAT-P-3"
+1008193466 "HAT-P-3:GSC 03466-00819"
 {
 	RA 206.094167
 	Dec 48.028611
@@ -177,7 +186,7 @@
 	AppMag 20.1
 }
 
-"TrES-4 (parent star)"
+1006482620 "TrES-4 (parent star):GSC 02620-00648"
 {
 	RA 268.304375
 	Dec 37.211833
@@ -195,7 +204,7 @@
 	AppMag 14.57
 }
 
-1015992569 "HAT-P-4"
+1015992569 "HAT-P-4:GSC 02569-01599"
 {
 	RA 229.99125
 	Dec 36.229722
@@ -204,7 +213,7 @@
 	AppMag 11.2
 }
 
-1010872634 "HAT-P-5"
+1010872634 "HAT-P-5:GSC 02634-01087"
 {
 	RA 274.40542
 	Dec 36.621389
@@ -213,13 +222,22 @@
 	AppMag 12
 }
 
-1009923239 "HAT-P-6"
+1009923239 "HAT-P-6:GSC 03239-00992"
 {
 	RA 354.77417
 	Dec 42.466111
 	Distance 650
 	SpectralType "F4V" # from temperature and radius
 	AppMag 10.5
+}
+
+"OGLE-TR-182"
+{
+	RA 167.32833
+	Dec -61.09528
+	Distance 8600      # from apparent I-mag and estimated spectral class
+	SpectralType "G0V" # from mass, radius and temperature
+	AbsMag 4.4         # from spectral class
 }
 
 Barycenter "TAU Boo:4 Boo"
