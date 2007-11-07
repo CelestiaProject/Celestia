@@ -238,10 +238,15 @@ void EllipticalOrbit::sample(double, double t, int nSamples,
         double E = 0.0;
         double dE = 2 * PI / (double) nSamples;
         double w = (1 - square(eccentricity));
-
+        double M0 = E - eccentricity * sin(E);
+        
         while (E < 2 * PI)
         {
-            proc.sample(t, positionAtE(E));
+            // Compute the time tag for this sample
+            double M = E - eccentricity * sin(E);            // Mean anomaly from ecc anomaly
+            double tsamp = t + (M - M0) * period / (2 * PI); // Time from mean anomaly
+            
+            proc.sample(tsamp, positionAtE(E));
 
             // Compute the curvature
             double k = w * pow(square(sin(E)) + w * w * square(cos(E)), -1.5);
