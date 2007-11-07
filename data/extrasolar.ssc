@@ -1,4 +1,4 @@
-# Catalog of 255 known extrasolar planets.
+# Catalog of 256 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -759,17 +759,17 @@ AltSurface "limit of knowledge" "TYC 2634-1087-1/b"
 	Texture "venuslike.*"
 	NightTexture "venuslikenight.*"
 
-	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Mass      11     # M.sin(i) = 11 earths
+	Radius     14000
 
 	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
 		Period          0.0077
-		SemiMajorAxis   0.0377
-		Eccentricity    0.09
-		ArgOfPericenter 45
-		MeanAnomaly     227
+		SemiMajorAxis   0.038
+		Eccentricity    0.07
+		ArgOfPericenter 107
+		MeanAnomaly     181
 	}
 
 	# likely to be in captured synchronous rotation
@@ -788,17 +788,17 @@ AltSurface "limit of knowledge" "HD 75732/e"
 	Color  [0.53 0.62 1]
 	Albedo 0.1
 
-	Mass       270     # M.sin(i) = 0.833 jupiters
+	Mass       260     # M.sin(i) = 0.824 jupiters
 	Radius     84000
 
 	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
 		Period          0.0401
-		SemiMajorAxis   0.114
-		Eccentricity    0.01
-		ArgOfPericenter 26
-		MeanAnomaly     53
+		SemiMajorAxis   0.115
+		Eccentricity    0.014
+		ArgOfPericenter 350
+		MeanAnomaly     89
 	}
 
 	# likely to be in captured synchronous rotation
@@ -817,23 +817,53 @@ AltSurface "limit of knowledge" "HD 75732/b"
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       50     # M.sin(i) = 0.157 jupiters
+	Mass       50     # M.sin(i) = 0.169 jupiters
 	Radius     56000
 
 	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
-		Period          0.1215
-		SemiMajorAxis   0.238
-		Eccentricity    0.071
-		ArgOfPericenter 333
-		MeanAnomaly     4
+		Period          0.1214
+		SemiMajorAxis   0.24
+		Eccentricity    0.086
+		ArgOfPericenter 102
+		MeanAnomaly     29
 	}
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "HD 75732/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"f" "HD 75732"   # Rho1 Cnc A
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       50     # M.sin(i) = 0.144 jupiters
+	Radius     56000
+	Oblateness 0.07
+
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
+
+	EllipticalOrbit {
+		Period          0.7118
+		SemiMajorAxis   0.781
+		Eccentricity    0.2
+		ArgOfPericenter 39
+		MeanAnomaly     227
+	}
+
+	RotationPeriod  17 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 75732/f"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -846,18 +876,18 @@ AltSurface "limit of knowledge" "HD 75732/c"
 	Color  [0.96 0.96 1]
 	Albedo 0.5
 
-	Mass       1240     # M.sin(i) = 3.90 jupiters
+	Mass       1220     # M.sin(i) = 3.835 jupiters
 	Radius     70000
 	Oblateness 0.02
 
 	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
 	EllipticalOrbit {
-		Period          15.2005
-		SemiMajorAxis   5.97
-		Eccentricity    0.091
+		Period          14.2861
+		SemiMajorAxis   5.77
+		Eccentricity    0.025
 		ArgOfPericenter 39
-		MeanAnomaly     286
+		MeanAnomaly     294
 	}
 
 	RotationPeriod  10 # plausible guess
