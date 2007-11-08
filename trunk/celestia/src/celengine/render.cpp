@@ -166,7 +166,7 @@ Color Renderer::GalaxyLabelColor        (0.0f,   0.45f,  0.5f);
 Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
 Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
 Color Renderer::ConstellationLabelColor (0.225f, 0.301f, 0.36f);
-Color Renderer::EquatorialGridLabelColor(0.108f, 0.224f, 0.114f);
+Color Renderer::EquatorialGridLabelColor(0.32f,  0.44f,  0.36f);
 
 
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
@@ -178,8 +178,8 @@ Color Renderer::SpacecraftOrbitColor    (0.4f,   0.4f,   0.4f);
 Color Renderer::SelectionOrbitColor     (1.0f,   0.0f,   0.0f);
 
 Color Renderer::ConstellationColor      (0.0f,   0.24f,  0.36f);
-Color Renderer::BoundaryColor           (0.16f,  0.066f, 0.126f);
-Color Renderer::EquatorialGridColor     (0.129f, 0.209f, 0.123f);
+Color Renderer::BoundaryColor           (0.24f,  0.10f,  0.12f);
+Color Renderer::EquatorialGridColor     (0.19f,  0.25f,  0.19f);
 
 #if 0
 struct DisplayDevice
@@ -1451,6 +1451,21 @@ void Renderer::renderItem(const RenderListEntry& rle,
                    observer.getTime(),
                    nearPlaneDistance, farPlaneDistance,
                    RenderListEntry::RenderableFrameAxes);
+        break;
+    case RenderListEntry::RenderableSunDirection:
+        renderSunDirection(*rle.body,
+                           rle.position,
+                           rle.distance,
+                           observer.getTime(),
+                           lightSourceLists[rle.solarSysIndex],
+                           nearPlaneDistance, farPlaneDistance);
+        break;
+    case RenderListEntry::RenderableVelocityVector:
+        renderVelocityVector(*rle.body,
+                             rle.position,
+                             rle.distance,
+                             observer.getTime(),
+                             nearPlaneDistance, farPlaneDistance);
         break;
 #endif
 			
@@ -6306,6 +6321,106 @@ void Renderer::renderAxes(Body& body,
 }
 
 
+// Render sun direction arrow
+void Renderer::renderSunDirection(Body& body,
+                                  Point3f pos,
+                                  float distance,
+                                  double now,
+                                  const vector<LightSource>& lightSources,
+                                  float nearPlaneDistance,
+                                  float farPlaneDistance)
+{
+#if REFMARKS
+    float altitude = distance - body.getRadius();
+    float discSizeInPixels = body.getRadius() /
+        (max(nearPlaneDistance, altitude) * pixelSize);
+
+    if (discSizeInPixels <= 1)
+        return;
+
+    // Enable depth buffering
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+	
+    glDisable(GL_TEXTURE_2D);
+
+    // Apply the modelview transform for the object
+    glPushMatrix();
+    glTranslate(pos);
+
+    Point3d posd = body.getHeliocentricPosition(now);
+    for (vector<LightSource>::const_iterator iter = lightSources.begin(); iter != lightSources.end(); iter++)
+    {
+        Vec3d v = iter->position - posd;
+        v.normalize();
+        RenderSunDirectionArrow(Vec3f((float) v.x, (float) v.y, (float) v.z), body.getRadius() * 2.0f, 1.0f);
+    }
+
+    glPopMatrix();
+	
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#endif
+}
+
+
+// Render arrow pointing direction of velocity (within the reference frame)
+void Renderer::renderVelocityVector(Body& body,
+                                    Point3f pos,
+                                    float distance,
+                                    double now,
+                                    float nearPlaneDistance,
+                                    float farPlaneDistance)
+{
+#if REFMARKS
+    float altitude = distance - body.getRadius();
+    float discSizeInPixels = body.getRadius() /
+        (max(nearPlaneDistance, altitude) * pixelSize);
+
+    if (discSizeInPixels <= 1)
+        return;
+
+    // Enable depth buffering
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+	
+    glDisable(GL_TEXTURE_2D);
+
+    // Apply the modelview transform for the object
+    glPushMatrix();
+    glTranslate(pos);
+
+    const Orbit* orbit = body.getOrbit();
+    if (orbit != NULL)
+    {
+        // Approximate velocity by taking the different between two orbit positions one minute apart
+        // TODO: switch to using velocity method of orbit class when availabe
+        Point3d pos0 = orbit->positionAtTime(now);
+        Point3d pos1 = orbit->positionAtTime(now + 1.0 / 1440.0);
+        Vec3d v = pos1 - pos0;
+        if (v.length() > 1.0e-12)
+        {
+            v.normalize();
+            RenderVelocityArrow(Vec3f((float) v.x, (float) v.y, (float) v.z), body.getRadius() * 2.0f, 1.0f);
+        }
+    }
+
+    glPopMatrix();
+	
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#endif
+}
+
+
 // Add solar system bodies, orbits, and labels to the render list. Stars
 // are handled by other methods.
 void Renderer::buildRenderLists(const Star& sun,
@@ -6439,6 +6554,42 @@ void Renderer::buildRenderLists(const Star& sun,
             {
                 RenderListEntry rle;
                 rle.renderableType = RenderListEntry::RenderableFrameAxes;
+                rle.body = body;
+                rle.star = NULL;
+                rle.isOpaque = false;
+                rle.position = Point3f(pos.x, pos.y, pos.z);
+                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
+                rle.distance = (float) distanceFromObserver;
+                rle.centerZ = pos * viewMatZ;
+                rle.radius = body->getRadius() * 2.0f;
+                rle.discSizeInPixels = discSize;
+                rle.appMag = appMag;
+                rle.solarSysIndex = solarSysIndex;
+                renderList.push_back(rle);
+            }
+
+            if (body->referenceMarkVisible(Body::SunDirection) && discSize > 1)
+            {
+                RenderListEntry rle;
+                rle.renderableType = RenderListEntry::RenderableSunDirection;
+                rle.body = body;
+                rle.star = NULL;
+                rle.isOpaque = false;
+                rle.position = Point3f(pos.x, pos.y, pos.z);
+                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
+                rle.distance = (float) distanceFromObserver;
+                rle.centerZ = pos * viewMatZ;
+                rle.radius = body->getRadius() * 2.0f;
+                rle.discSizeInPixels = discSize;
+                rle.appMag = appMag;
+                rle.solarSysIndex = solarSysIndex;
+                renderList.push_back(rle);
+            }
+
+            if (body->referenceMarkVisible(Body::VelocityVector) && discSize > 1)
+            {
+                RenderListEntry rle;
+                rle.renderableType = RenderListEntry::RenderableVelocityVector;
                 rle.body = body;
                 rle.star = NULL;
                 rle.isOpaque = false;
