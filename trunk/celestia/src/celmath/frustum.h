@@ -11,6 +11,7 @@
 #define _FRUSTUM_H_
 
 #include <celmath/plane.h>
+#include <celmath/capsule.h>
 
 
 class Frustum
@@ -42,6 +43,7 @@ class Frustum
     Aspect test(const Point3f&) const;
     Aspect testSphere(const Point3f& center, float radius) const;
     Aspect testSphere(const Point3d& center, double radius) const;
+    Aspect testCapsule(const Capsulef&) const;
 
  private:
     void init(float, float, float, float);
