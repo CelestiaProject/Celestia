@@ -23,6 +23,7 @@ template<class T> class Plane
     inline Plane(const Vector3<T>&, const Point3<T>&);
 
     T distanceTo(const Point3<T>&) const;
+    T distanceToSegment(const Point3<T>&, const Vector3<T>&) const;
 
     static Point3<T> intersection(const Plane<T>&,
                                   const Plane<T>&,
@@ -62,6 +63,42 @@ template<class T> T Plane<T>::distanceTo(const Point3<T>& p) const
 {
     return normal.x * p.x + normal.y * p.y + normal.z * p.z + d;
 }
+
+// Distance between a plane and a segment defined by orig+dir*t, t <= 0 <= 1
+template<class T> T Plane<T>::distanceToSegment(const Point3<T>& origin,
+                                                const Vector3<T>& direction) const
+{
+    T u = (direction * normal);
+    T dist;
+    
+    // Avoid divide by zero; near-zero values shouldn't cause problems
+    if (u == 0)
+    {
+        // All points equidistant; we can just compute distance to origin
+        dist = distanceTo(origin);
+    }
+    else
+    {
+        T t = -(d + Vector3<T>(origin.x, origin.y, origin.z) * normal) / u;
+        if (t < 0)
+        {
+            dist = distanceTo(origin);
+        }
+        else if (t > 1)
+        {
+            dist = distanceTo(origin + direction);
+        }
+        else
+        {
+            // Segment intersects plane
+            dist = 0.0;
+        }
+    }
+    
+    return dist;
+}
+
+
 
 template<class T> Plane<T> operator*(const Matrix4<T>& m, const Plane<T>& p)
 {
