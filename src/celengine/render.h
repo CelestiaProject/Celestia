@@ -29,7 +29,9 @@ struct RenderListEntry
         RenderableBody,
         RenderableCometTail,
         RenderableBodyAxes,
-        RenderableFrameAxes
+        RenderableFrameAxes,
+        RenderableSunDirection,
+        RenderableVelocityVector,
     };
 
     const Star* star;
@@ -429,6 +431,21 @@ class Renderer
                     float nearPlaneDistance,
                     float farPlaneDistance,
                     RenderListEntry::RenderableType renderableType);
+
+    void renderSunDirection(Body& body,
+                            Point3f pos,
+                            float distance,
+                            double now,
+                            const vector<LightSource>& lightSources,
+                            float nearPlaneDistance,
+                            float farPlaneDistance);
+
+    void renderVelocityVector(Body& body,
+                              Point3f pos,
+                              float distance,
+                              double now,
+                              float nearPlaneDistance,
+                              float farPlaneDistance);
 
     void renderCometTail(const Body& body,
                          Point3f pos,
