@@ -37,4 +37,19 @@ template<class T> T distance(const Point3<T>& p, const Ray3<T>& r)
         return p.distanceTo(r.point(t));
 }
 
+// Distance between a point and a segment defined by orig+dir*t, 0 <= t <= 1
+template<class T> T distanceToSegment(const Point3<T>& p,
+				      const Point3<T>& origin,
+				      const Vector3<T>& direction)
+{
+    T t = ((p - origin) * direction) / (direction * direction);
+    if (t <= 0)
+        return p.distanceTo(origin);
+    else if (t >= 1)
+        return p.distanceTo(origin + direction);
+    else
+        return p.distanceTo(origin + direction * t);
+}
+
+
 #endif // _CELMATH_DISTANCE_H_

@@ -76,7 +76,7 @@ Frustum::Aspect Frustum::testSphere(const Point3d& center, double radius) const
 
     for (int i = 0; i < nPlanes; i++)
     {
-        //TODO: Celestia should incorporate some casting operators overloading to accomodate all this kind of stuff:
+        //TODO: Celestia should incorporate some casting operators overloading to accommodate all this kind of stuff:
         Vec3f plNormal       = planes[i].normal;
         Vec3d plNormalDbl(plNormal.x, plNormal.y, plNormal.z); 
          
@@ -89,6 +89,57 @@ Frustum::Aspect Frustum::testSphere(const Point3d& center, double radius) const
 
     return (intersections == 0) ? Inside : Intersect;
 }
+
+
+Frustum::Aspect Frustum::testCapsule(const Capsulef& capsule) const
+{
+    int nPlanes = infinite ? 5 : 6;
+    int intersections = 0;
+    float r2 = capsule.radius * capsule.radius;
+    
+    for (int i = 0; i < nPlanes; i++)
+    {
+        float signedDist0 = planes[i].normal * Vec3f(capsule.origin.x, capsule.origin.y, capsule.origin.z) + planes[i].d;
+        float signedDist1 = signedDist0 + planes[i].normal * capsule.axis;
+        if (signedDist0 * signedDist1 > r2)
+        {
+            // Endpoints of capsule are on same side of plane; test closest endpoint to see if it
+            // lies closer to the plane than radius
+            if (abs(signedDist0) <= abs(signedDist1))
+            {
+                if (signedDist0 < -capsule.radius)
+                    return Outside;
+                else if (signedDist0 < capsule.radius)
+                    intersections |= (1 << i);
+            }
+            else
+            {
+                if (signedDist1 < -capsule.radius)
+                    return Outside;
+                else if (signedDist1 < capsule.radius)
+                    intersections |= (1 << i);
+            }
+        }
+        else
+        {
+            // Capsule endpoints are on different sides of the plane, so we have an intersection
+            intersections |= (1 << i);
+        }
+#if 0        
+        Vec3f plNormal       = planes[i].normal;
+        Vec3d plNormalDbl(plNormal.x, plNormal.y, plNormal.z); 
+         
+        double distanceToPlane = planes[i].distanceToSegment(capsule.origin, capsule.axis);
+        if (distanceToPlane < -capsule.radius)
+            return Outside;
+        else if (distanceToPlane <= capsule.radius)
+            intersections |= (1 << i);
+#endif
+    }
+
+    return (intersections == 0) ? Inside : Intersect;
+}
+
 
 #if 0
 // See if the half space defined by the plane intersects the frustum.  For the
