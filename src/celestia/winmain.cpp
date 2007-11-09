@@ -1904,7 +1904,7 @@ bool SetDCPixelFormat(HDC hDC)
 HWND CreateOpenGLWindow(int x, int y, int width, int height,
                         int mode, int& newMode)
 {
-    assert(mode >= 0 && mode < displayModes->size());
+    assert(mode >= 0 && mode <= displayModes->size());
     if (mode != 0)
     {
         x = 0;
