@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <string>
+#include <celmath/frustum.h>
 #include <celengine/observer.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
@@ -512,7 +513,12 @@ class Renderer
                        const Quatf& orientation,
                        double jd);
 
-    void renderOrbit(const OrbitPathListEntry&, double);
+    void renderOrbit(const OrbitPathListEntry&,
+                     double now,
+                     const Quatf& cameraOrientation,
+                     const Frustum& frustum,
+                     float nearDist,
+                     float farDist);
 
  private:
     GLContext* context;
@@ -579,13 +585,23 @@ class Renderer
     struct OrbitSample 
     {
         double t;
-        Point3f pos;
+        Point3d pos;
+        
+        OrbitSample(const Point3d& _pos, double _t) : t(_t), pos(_pos) { }
+        OrbitSample() { }
     };
 
+    struct OrbitSection
+    {
+        Capsuled boundingVolume;
+        uint32 firstSample;
+    };
+    
     struct CachedOrbit
     {
         Body* body;
         std::vector<OrbitSample> trajectory;
+        std::vector<OrbitSection> sections;
         uint32 lastUsed;
     };
 
