@@ -115,6 +115,15 @@ struct OpticalDepths
     double absorption;
 };
 
+OpticalDepths sumOpticalDepths(OpticalDepths a, OpticalDepths b)
+{
+    OpticalDepths depths;
+    depths.rayleigh   = a.rayleigh + b.rayleigh;
+    depths.mie        = a.mie + b.mie;
+    depths.absorption = a.absorption + b.absorption;
+    return depths;
+}
+
 
 class Atmosphere
 {
@@ -375,36 +384,6 @@ double phaseSchlick(double cosTheta, double k)
  *
  */
 
-double integrateDensity(const Scene& scene,
-                        const Point3d& atmStart,
-                        const Point3d& atmEnd)
-{
-    const unsigned int nSteps = IntegrateDepthSteps;
-
-    Vec3d dir = atmEnd - atmStart;
-    double stepDist = dir.length() / (double) nSteps;
-    dir.normalize();
-    Point3d samplePoint = atmStart + (0.5 * stepDist * dir);
-    double density = 0.0;
-
-    for (unsigned int i = 0; i < nSteps; i++)
-    {
-        double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
-
-        double rho = exp(-h / scene.atmosphere.rayleighScaleHeight);
-        density += rho * stepDist;
-#if 0
-        rho = exp(-h / scene.atmosphere.
-        rho = exp(-h / scene.atmosphere.absorbScaleHeight);
-        density += rho * stepDist;
-#endif
-        
-        samplePoint += stepDist * dir;
-    }
-
-    return density;
-}
-
 
 OpticalDepths integrateOpticalDepth(const Scene& scene,
                                     const Point3d& atmStart,
@@ -492,10 +471,9 @@ Vec3d integrateInscattering(const Scene& scene,
 
         // Sum the optical depths to get the depth on the complete path from sun
         // to sample point to eye.
-        OpticalDepths totalDepth;
-        totalDepth.rayleigh   = (sunDepth.rayleigh   + eyeDepth.rayleigh) * 4 * PI;
-        totalDepth.mie        = (sunDepth.mie        + eyeDepth.mie) * 4 * PI;
-        totalDepth.absorption = sunDepth.absorption  + eyeDepth.absorption;
+        OpticalDepths totalDepth = sumOpticalDepths(sunDepth, eyeDepth);
+        totalDepth.rayleigh *= 4.0 * PI;
+        totalDepth.mie      *= 4.0 * PI;
 
         Vec3d extinction = scene.atmosphere.computeExtinction(totalDepth);
 
@@ -545,6 +523,7 @@ Color raytrace(const Scene& scene, const Ray3d& ray)
             Vec3d lightDir = -scene.light.direction;
             double diffuse = max(0.0, normal * lightDir);
             
+            // Give the planet a checkerboard texture
             Vec3d spherePoint = normal;
             double phi = atan2(normal.z, normal.x);
             double theta = asin(normal.y);
@@ -552,22 +531,28 @@ Color raytrace(const Scene& scene, const Ray3d& ray)
             int ty = (int) (8 + 8 * theta / PI);
             Color planetColor = ((tx ^ ty) & 0x1) ? scene.planetColor : scene.planetColor2;
 
-            Point3d origin = Point3d(0.0, 0.0, 0.0) + (intersectPoint - scene.planet.center);
+            Point3d surfacePt = Point3d(0.0, 0.0, 0.0) + (intersectPoint - scene.planet.center);
             Sphered shell = Sphered(Point3d(0.0, 0.0, 0.0),
                                     scene.planet.radius + scene.atmosphereShellHeight);
-            Ray3d sunRay(origin, lightDir);
+
+            // Compute ray from surface point to edge of the atmosphere in the direction
+            // of the sun.
+            Ray3d sunRay(surfacePt, lightDir);
             double sunDist = 0.0;
             testIntersection(sunRay, shell, sunDist);
 
-            // Compute color of sunlight filtered by the atmosphere
-            OpticalDepths depth = integrateOpticalDepth(scene, origin, sunRay.point(sunDist));
-            Vec3d extinction = scene.atmosphere.computeExtinction(depth);
+            // Compute color of sunlight filtered by the atmosphere; consider extinction
+            // along both the sun-to-surface and surface-to-eye paths.
+            OpticalDepths sunDepth = integrateOpticalDepth(scene, surfacePt, sunRay.point(sunDist));
+            OpticalDepths eyeDepth = integrateOpticalDepth(scene, atmStart, surfacePt);
+            OpticalDepths totalDepth = sumOpticalDepths(sunDepth, eyeDepth);
+            totalDepth.rayleigh *= 4.0 * PI;
+            totalDepth.mie      *= 4.0 * PI;
+            Vec3d extinction = scene.atmosphere.computeExtinction(totalDepth);
 
             // Reflected color of planet surface is:
             //   surface color * sun color * atmospheric extinction
             baseColor = (planetColor * extinction) * scene.light.color * diffuse;
-
-            // TODO: still need to account for extinction on eye-surface path
             
             atmEnd = ray.origin + dist * ray.direction;
         }
@@ -819,7 +804,7 @@ void main(int argc, char* argv[])
     cameraClose.fov = degToRad(45.0);
     cameraClose.front = 1.0;
     cameraClose.transform = 
-        Mat4d::xrotation(degToRad(40.0)) *
+        Mat4d::xrotation(degToRad(55.0)) *
         Mat4d::translation(Point3d(0.0, 0.0, -cameraCloseDist)) *
         Mat4d::yrotation(degToRad(50.0));
 
@@ -828,7 +813,7 @@ void main(int argc, char* argv[])
     cameraSurface.front = 1.0;
     cameraSurface.transform = 
         Mat4d::xrotation(degToRad(85.0)) *
-        Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.001)) *
+        Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
         Mat4d::yrotation(degToRad(20.0));
 
     RGBImage image(600, 450);
