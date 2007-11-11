@@ -27,7 +27,7 @@ using namespace std;
 
 
 const unsigned int IntegrateScatterSteps = 20;
-const unsigned int IntegrateExtinctionSteps = 20;
+const unsigned int IntegrateDepthSteps = 20;
 
 
 typedef map<string, double> ParameterSet;
@@ -108,6 +108,14 @@ public:
 };
 
 
+struct OpticalDepths
+{
+    double rayleigh;
+    double mie;
+    double absorption;
+};
+
+
 class Atmosphere
 {
 public:
@@ -117,6 +125,8 @@ public:
         return -log(0.002) * maxScaleHeight;
     }
 
+    Vec3d computeExtinction(const OpticalDepths&) const;
+
     double rayleighScaleHeight;
     double mieScaleHeight;
     double absorbScaleHeight;
@@ -125,7 +135,7 @@ public:
     Vec3d absorbCoeff;
     double mieCoeff;
 
-    double density;
+    double mieAsymmetry;
 };
 
 
@@ -203,14 +213,6 @@ public:
     unsigned int width;
     unsigned int height;
     unsigned char* pixels;
-};
-
-
-struct ExtinctionCoeffs
-{
-    double rayleigh;
-    double mie;
-    double absorption;
 };
 
 
@@ -343,11 +345,41 @@ double phaseRayleigh(double cosTheta)
 }
 
 
+double phaseHenyeyGreenstein(double cosTheta, double g)
+{
+    return (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * cosTheta, 1.5);
+}
+
+
+double phaseSchlick(double cosTheta, double k)
+{
+    return (1 - k * k) / square(1 - k * cosTheta);
+}
+
+
+/*
+ * Theory:
+ * Atmospheres are assumed to be composed of three different populations of
+ * particles: Rayleigh scattering, Mie scattering, and absorbing. The density
+ * of each population decreases exponentially with height above the planet
+ * surface to a degree determined by a scale height:
+ *
+ *     density(height) = e^(-height/scaleHeight)
+ *
+ * Rayleigh scattering is wavelength dependent, with a fixed phase function.
+ *
+ * Mie scattering is wavelength independent, with a phase function determined
+ * by a single parameter g (the asymmetry parameter)
+ *
+ * Absorbing is wavelength dependent
+ *
+ */
+
 double integrateDensity(const Scene& scene,
                         const Point3d& atmStart,
                         const Point3d& atmEnd)
 {
-    const unsigned int nSteps = IntegrateExtinctionSteps;
+    const unsigned int nSteps = IntegrateDepthSteps;
 
     Vec3d dir = atmEnd - atmStart;
     double stepDist = dir.length() / (double) nSteps;
@@ -374,40 +406,61 @@ double integrateDensity(const Scene& scene,
 }
 
 
-ExtinctionCoeffs integrateExtinction(const Scene& scene,
-                                     const Point3d& atmStart,
-                                     const Point3d& atmEnd)
+OpticalDepths integrateOpticalDepth(const Scene& scene,
+                                    const Point3d& atmStart,
+                                    const Point3d& atmEnd)
 {
-    const unsigned int nSteps = IntegrateExtinctionSteps;
+    const unsigned int nSteps = IntegrateDepthSteps;
 
     Vec3d dir = atmEnd - atmStart;
     double stepDist = dir.length() / (double) nSteps;
     dir.normalize();
     Point3d samplePoint = atmStart + (0.5 * stepDist * dir);
 
-    ExtinctionCoeffs ext;
-    ext.rayleigh   = 0.0;
-    ext.mie        = 0.0;
-    ext.absorption = 0.0;
+    OpticalDepths depth;
+    depth.rayleigh   = 0.0;
+    depth.mie        = 0.0;
+    depth.absorption = 0.0;
 
     for (unsigned int i = 0; i < nSteps; i++)
     {
         double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
 
-        ext.rayleigh   += exp(-h / scene.atmosphere.rayleighScaleHeight) * stepDist;
-        ext.mie        += exp(-h / scene.atmosphere.mieScaleHeight) * stepDist;
-        ext.absorption += exp(-h / scene.atmosphere.absorbScaleHeight) * stepDist;
+        // Optical depth due to two phenomena:
+        //   Outscattering by Rayleigh and Mie scattering particles
+        //   Absorption by absorbing particles
+        depth.rayleigh   += exp(-h / scene.atmosphere.rayleighScaleHeight) * stepDist;
+        depth.mie        += exp(-h / scene.atmosphere.mieScaleHeight)      * stepDist;
+        depth.absorption += exp(-h / scene.atmosphere.absorbScaleHeight)   * stepDist;
         
         samplePoint += stepDist * dir;
     }
 
-    return ext;
+    return depth;
 }
 
 
-Vec3d integrateScattering(const Scene& scene,
-                          const Point3d& atmStart,
-                          const Point3d& atmEnd)
+Vec3d
+Atmosphere::computeExtinction(const OpticalDepths& depth) const
+{
+    Vec3d extinction;
+    extinction.x = exp(-depth.rayleigh   * rayleighCoeff.x -
+                        depth.mie        * mieCoeff -
+                        depth.absorption * absorbCoeff.x);
+    extinction.y = exp(-depth.rayleigh   * rayleighCoeff.y -
+                        depth.mie        * mieCoeff -
+                        depth.absorption * absorbCoeff.y);
+    extinction.z = exp(-depth.rayleigh   * rayleighCoeff.z -
+                        depth.mie        * mieCoeff -
+                        depth.absorption * absorbCoeff.z);
+
+    return extinction;
+}
+
+
+Vec3d integrateInscattering(const Scene& scene,
+                            const Point3d& atmStart,
+                            const Point3d& atmEnd)
 {
     const unsigned int nSteps = IntegrateScatterSteps;
 
@@ -415,58 +468,12 @@ Vec3d integrateScattering(const Scene& scene,
     Point3d origin = Point3d(0.0, 0.0, 0.0) + (atmStart - scene.planet.center);
     double stepDist = dir.length() / (double) nSteps;
     dir.normalize();
+
+    // Start at the midpoint of the first interval
     Point3d samplePoint = origin + 0.5 * stepDist * dir;
-    Vec3d scatter(0.0, 0.0, 0.0);
-    Vec3d rayleigh = scene.atmosphere.rayleighCoeff;
 
-    Vec3d lightDir = -scene.light.direction;
-    Sphered shell = Sphered(Point3d(0.0, 0.0, 0.0),
-                            scene.planet.radius + scene.atmosphereShellHeight);
-
-    for (unsigned int i = 0; i < nSteps; i++)
-    {
-        Ray3d sunRay(samplePoint, lightDir);
-        double sunDist = 0.0;
-        testIntersection(sunRay, shell, sunDist);
-        
-        double sunAtten = integrateDensity(scene, samplePoint, sunRay.point(sunDist));
-        double eyeAtten = integrateDensity(scene, samplePoint, atmStart);
-        double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
-        double rho = exp(-h / scene.atmosphere.rayleighScaleHeight);
-
-        double attenuation = (sunAtten + eyeAtten) * 4 * PI;
-
-        scatter += rho * stepDist *
-            Vec3d(exp(-attenuation * rayleigh.x),
-                  exp(-attenuation * rayleigh.y),
-                  exp(-attenuation * rayleigh.z));
-        
-        samplePoint += stepDist * dir;
-    }
-
-    double cosSunAngle = lightDir * dir;
-    double phase = phaseRayleigh(cosSunAngle);
-    return phase * Vec3d(scatter.x * rayleigh.x,
-                         scatter.y * rayleigh.y,
-                         scatter.z * rayleigh.z);
-}
-
-
-Vec3d integrateScattering2(const Scene& scene,
-                           const Point3d& atmStart,
-                           const Point3d& atmEnd)
-{
-    const unsigned int nSteps = IntegrateScatterSteps;
-
-    Vec3d dir = atmEnd - atmStart;
-    Point3d origin = Point3d(0.0, 0.0, 0.0) + (atmStart - scene.planet.center);
-    double stepDist = dir.length() / (double) nSteps;
-    dir.normalize();
-    Point3d samplePoint = origin + 0.5 * stepDist * dir;
     Vec3d rayleighScatter(0.0, 0.0, 0.0);
-    double mieScatter = 0.0;
-    Vec3d absorption(0.0, 0.0, 0.0);
-    Vec3d rayleigh = scene.atmosphere.rayleighCoeff;
+    Vec3d mieScatter(0.0, 0.0, 0.0);
 
     Vec3d lightDir = -scene.light.direction;
     Sphered shell = Sphered(Point3d(0.0, 0.0, 0.0),
@@ -478,38 +485,39 @@ Vec3d integrateScattering2(const Scene& scene,
         double sunDist = 0.0;
         testIntersection(sunRay, shell, sunDist);
 
-        ExtinctionCoeffs sunExt = integrateExtinction(scene, samplePoint, sunRay.point(sunDist));
-        ExtinctionCoeffs eyeExt = integrateExtinction(scene, samplePoint, atmStart);
+        // Compute the optical depth along path from sample point to the sun
+        OpticalDepths sunDepth = integrateOpticalDepth(scene, samplePoint, sunRay.point(sunDist));
+        // Compute the optical depth along the path from the sample point to the eye
+        OpticalDepths eyeDepth = integrateOpticalDepth(scene, samplePoint, atmStart);
 
-        ExtinctionCoeffs totalExt;
-        totalExt.rayleigh   = (sunExt.rayleigh   + eyeExt.rayleigh) * 4 * PI;
-        totalExt.mie        = (sunExt.mie        + eyeExt.mie) * 4 * PI;
-        totalExt.absorption = sunExt.absorption  + eyeExt.absorption;
+        // Sum the optical depths to get the depth on the complete path from sun
+        // to sample point to eye.
+        OpticalDepths totalDepth;
+        totalDepth.rayleigh   = (sunDepth.rayleigh   + eyeDepth.rayleigh) * 4 * PI;
+        totalDepth.mie        = (sunDepth.mie        + eyeDepth.mie) * 4 * PI;
+        totalDepth.absorption = sunDepth.absorption  + eyeDepth.absorption;
+
+        Vec3d extinction = scene.atmosphere.computeExtinction(totalDepth);
 
         double h = samplePoint.distanceFromOrigin() - scene.planet.radius;
 
+        // Add the inscattered light from Rayleigh and Mie scattering particles
         rayleighScatter +=
-            exp(-h / scene.atmosphere.rayleighScaleHeight) * stepDist *
-            Vec3d(exp(-totalExt.rayleigh * rayleigh.x),
-                  exp(-totalExt.rayleigh * rayleigh.y),
-                  exp(-totalExt.rayleigh * rayleigh.z));
+            exp(-h / scene.atmosphere.rayleighScaleHeight) * stepDist * extinction;
         mieScatter +=
-            exp(-h / scene.atmosphere.mieScaleHeight) * stepDist *
-            exp(-totalExt.rayleigh * scene.atmosphere.mieCoeff);
-        absorption +=
-            exp(-h / scene.atmosphere.absorbScaleHeight) * stepDist *
-            Vec3d(exp(-totalExt.absorption * rayleigh.x),
-                  exp(-totalExt.absorption * rayleigh.y),
-                  exp(-totalExt.absorption * rayleigh.z));
+            exp(-h / scene.atmosphere.mieScaleHeight) * stepDist * extinction;
         
         samplePoint += stepDist * dir;
     }
 
     double cosSunAngle = lightDir * dir;
-    double phase = phaseRayleigh(cosSunAngle);
-    return phase * Vec3d(rayleighScatter.x * rayleigh.x,
-                         rayleighScatter.y * rayleigh.y,
-                         rayleighScatter.z * rayleigh.z);
+
+    const Vec3d& rayleigh = scene.atmosphere.rayleighCoeff;
+    return phaseRayleigh(cosSunAngle) * Vec3d(rayleighScatter.x * rayleigh.x,
+                                              rayleighScatter.y * rayleigh.y,
+                                              rayleighScatter.z * rayleigh.z) +
+        phaseHenyeyGreenstein(cosSunAngle, scene.atmosphere.mieAsymmetry) *
+        mieScatter * scene.atmosphere.mieCoeff;
 }
 
 
@@ -550,30 +558,24 @@ Color raytrace(const Scene& scene, const Ray3d& ray)
             Ray3d sunRay(origin, lightDir);
             double sunDist = 0.0;
             testIntersection(sunRay, shell, sunDist);
-            double sunAtten = integrateDensity(scene, origin, sunRay.point(sunDist));
-            double attenuation = sunAtten * 4 * PI;
 
-            Vec3d rayleigh = scene.atmosphere.rayleighCoeff;
-            Vec3d outscatter = Vec3d(exp(-attenuation * rayleigh.x),
-                                     exp(-attenuation * rayleigh.y),
-                                     exp(-attenuation * rayleigh.z));
+            // Compute color of sunlight filtered by the atmosphere
+            OpticalDepths depth = integrateOpticalDepth(scene, origin, sunRay.point(sunDist));
+            Vec3d extinction = scene.atmosphere.computeExtinction(depth);
 
-            //baseColor = planetColor * scene.light.color * diffuse;
-            baseColor = (planetColor * outscatter) * scene.light.color * diffuse;
+            // Reflected color of planet surface is:
+            //   surface color * sun color * atmospheric extinction
+            baseColor = (planetColor * extinction) * scene.light.color * diffuse;
+
+            // TODO: still need to account for extinction on eye-surface path
             
             atmEnd = ray.origin + dist * ray.direction;
         }
 
-#define VISUALIZE_DENSITY 0
-#if VISUALIZE_DENSITY        
-        double d = integrateDensity(scene, atmStart, atmEnd) * 0.0005;
-        return Color((float) d, (float) d, (float) d) + baseColor;
-#else
-        Vec3d inscatter = integrateScattering(scene, atmStart, atmEnd) * 4.0 * PI;
+        Vec3d inscatter = integrateInscattering(scene, atmStart, atmEnd) * 4.0 * PI;
 
         return Color((float) inscatter.x, (float) inscatter.y, (float) inscatter.z) +
             baseColor;
-#endif
     }
     else
     {
@@ -641,6 +643,7 @@ void Scene::setParameters(ParameterSet& params)
 
     atmosphere.mieScaleHeight      = params["MieScaleHeight"];
     atmosphere.mieCoeff            = params["Mie"];
+    atmosphere.mieAsymmetry        = params["MieAsymmetry"];
 
     atmosphere.absorbScaleHeight   = params["AbsorbScaleHeight"];
     atmosphere.absorbCoeff.x       = params["AbsorbRed"];
@@ -669,6 +672,7 @@ void setSceneDefaults(ParameterSet& params)
     
     params["MieScaleHeight"]      = 1.2;
     params["Mie"]                 = 0.0;
+    params["MieAsymmetry"]        = 0.0;
 
     params["AbsorbScaleHeight"]   = 7.994;
     params["AbsorbRed"]           = 0.0;
