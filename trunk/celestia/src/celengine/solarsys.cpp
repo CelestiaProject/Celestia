@@ -217,42 +217,18 @@ static void FillinSurface(Hash* surfaceData,
 
 
 // Set up the orbit barycenter for a body. By default, it is the parent of the
-// object, but an alternate barycenter may be specified with the OrbitBarycenter
-// field.
+// object
 static Selection GetOrbitBarycenter(const string& name,
                                     PlanetarySystem* system,
                                     Universe& universe,
                                     Hash* bodyData)
 {
-    // Use the orbit barycenter specified in the definition; otherwise default to the
-    // parent object.
-    string orbitBarycenterName;
     Selection orbitBarycenter;
-    if (bodyData->getString("OrbitBarycenter", orbitBarycenterName))
-    {
-        // An explicit orbit barycenter was given . . .
-        orbitBarycenter = universe.findPath(orbitBarycenterName, NULL, 0);
-
-        if (orbitBarycenter.empty())
-        {
-            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' not found.\n");
-            return Selection();
-        }
-        else if (orbitBarycenter.body() == NULL && orbitBarycenter.star() == NULL)
-        {
-            cerr << "OrbitBarycenter '" << orbitBarycenterName << _("' of '") << name << _("' is not a star or planet.\n");
-            return Selection();
-        }
-    }
+    Body* primary = system->getPrimaryBody();
+    if (primary != NULL)
+        orbitBarycenter = Selection(primary);
     else
-    {
-        // The default orbit barycenter is the parent object
-        Body* primary = system->getPrimaryBody();
-        if (primary != NULL)
-            orbitBarycenter = Selection(primary);
-        else
-            orbitBarycenter = Selection(system->getStar());
-    }
+        orbitBarycenter = Selection(system->getStar());
 
     // The barycenter must be in the same star system as the object we're creating
     if (orbitBarycenter.body())
@@ -299,7 +275,6 @@ static Body* CreatePlanet(const string& name,
         body = new Body(system);
     }
 
-    // TODO: OrbitBarycenter field is replaced by reference frames
     Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, planetData);
     bool orbitsPlanet = false;
     if (orbitBarycenter.body())
