@@ -1164,17 +1164,24 @@ void renderOrbitColor(int classification, bool selected, float opacity)
 }
 
 
-// Subdivide the orbit into sections and compute a bounding volume for each section.
+// Subdivide the orbit into sections and compute a bounding volume for each section. The bounding
+// volumes used are capsules, the set of all points less than some constant distance from a line
+// segment.
 static void computeOrbitSectionBoundingVolumes(Renderer::CachedOrbit& orbit)
 {
     const unsigned int MinOrbitSections = 6;
     const unsigned int MinSamplesPerSection = 32;
     
+    // Determine the number of trajectory samples to include in each bounding volume; typically,
+    // the last volume will contain any leftover samples.
     unsigned int nSections = max(orbit.trajectory.size() / MinSamplesPerSection, MinOrbitSections);
     unsigned int samplesPerSection = orbit.trajectory.size() / nSections;
     if (samplesPerSection <= 1)
     {
-        nSections = 1;
+        if (orbit.trajectory.size() == 0)
+            nSections = 0;
+        else
+            nSections = 1;
     }
 
     for (unsigned int i = 0; i < nSections; i++)
@@ -1313,6 +1320,7 @@ static Point3d renderOrbitSplineSegment(const Renderer::OrbitSample& p0,
 }
 
 
+// Not yet used
 static Point3d renderOrbitSplineAdaptive(const Renderer::OrbitSample& p0,
                                          const Renderer::OrbitSample& p1,
                                          const Renderer::OrbitSample& p2,
@@ -1631,32 +1639,6 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         }
             
         computeOrbitSectionBoundingVolumes(*cachedOrbit);
-        if (body != NULL)
-        {
-            cout << "Orbit: " << body->getName() << "\n";
-            for (unsigned int i = 0; i < cachedOrbit->sections.size(); i++)
-            {
-                OrbitSection& seg(cachedOrbit->sections[i]);
-                cout << "sample=" << seg.firstSample
-                     << ", radius=" << seg.boundingVolume.radius
-                     << ", length=" << seg.boundingVolume.axis.length()
-                    << endl;
-                unsigned int lastPoint;
-                if (i == cachedOrbit->sections.size() - 1)
-                    lastPoint = cachedOrbit->trajectory.size() - 1;
-                else
-                    lastPoint = cachedOrbit->sections[i + 1].firstSample;
-                Capsuled& bv = cachedOrbit->sections[i].boundingVolume;
-                for (unsigned int j = cachedOrbit->sections[i].firstSample; j <= lastPoint; j++)
-                {
-                    double d = distanceToSegment(cachedOrbit->trajectory[j].pos, bv.origin, bv.axis);
-                    if (d > bv.radius)
-                    {
-                        cout << "Bad point: " << j << ", exceeds radius by " << (d / bv.radius - 1.0) * 100 << "%\n";
-                    }
-                }
-            }
-        }
 
         // If the orbit cache is full, first try and eliminate some old orbits
         if (orbitCache.size() > OrbitCacheCullThreshold)
@@ -1690,16 +1672,18 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     // render orbits properly. Start by computing the modelview matrix, to transform orbit
     // vertices into camera space.
     Mat4d modelview;
-    if (body != NULL)
     {
         Quatd orientation(1.0);
-        if (body->getOrbitFrame() != NULL)
+        if (body != NULL)
         {
-            orientation = body->getOrbitFrame()->getOrientation(t);
-        }
-        else if (body->getOrbitBarycenter() != NULL)
-        {
-            orientation = body->getOrbitBarycenter()->getEclipticalToEquatorial(t);
+            if (body->getOrbitFrame() != NULL)
+            {
+                orientation = body->getOrbitFrame()->getOrientation(t);
+            }
+            else if (body->getOrbitBarycenter() != NULL)
+            {
+                orientation = body->getOrbitBarycenter()->getEclipticalToEquatorial(t);
+            }
         }
 
         // Equivalent to:
