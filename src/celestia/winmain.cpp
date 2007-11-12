@@ -167,6 +167,7 @@ struct AppPreferences
     int orbitMask;
     float visualMagnitude;
     float ambientLight;
+    float galaxyLightGain;
     int showLocalTime;
     int hudDetail;
     int fullScreenMode;
@@ -2423,6 +2424,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "OrbitMask", &prefs.orbitMask, sizeof(prefs.orbitMask));
     GetRegistryValue(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
     GetRegistryValue(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
+    GetRegistryValue(key, "GalaxyLightGain", &prefs.galaxyLightGain, sizeof(prefs.galaxyLightGain));
     GetRegistryValue(key, "ShowLocalTime", &prefs.showLocalTime, sizeof(prefs.showLocalTime));
     GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
     GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
@@ -2479,12 +2481,13 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "OrbitMask", prefs.orbitMask);
     SetRegistryBin(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
     SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
+    SetRegistryBin(key, "GalaxyLightGain", &prefs.galaxyLightGain, sizeof(prefs.galaxyLightGain));
     SetRegistryInt(key, "ShowLocalTime", prefs.showLocalTime);
     SetRegistryInt(key, "HudDetail", prefs.hudDetail);
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
     SetRegistryInt(key, "StarStyle", prefs.starStyle);
-	SetRegistryInt(key, "RenderPath", prefs.renderPath);
+	  SetRegistryInt(key, "RenderPath", prefs.renderPath);
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
 
@@ -2512,6 +2515,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.orbitMask = appCore->getRenderer()->getOrbitMask();
     prefs.visualMagnitude = appCore->getSimulation()->getFaintestVisible();
     prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
+    prefs.galaxyLightGain = Galaxy::getLightGain();
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
     prefs.hudDetail = appCore->getHudDetail();
     prefs.fullScreenMode = lastFullScreenMode;
@@ -3159,6 +3163,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.winX = CW_USEDEFAULT;
     prefs.winY = CW_USEDEFAULT;
     prefs.ambientLight = 0.1f;  // Low
+    prefs.galaxyLightGain = 0.0f;
     prefs.labelMode = 0;
     prefs.orbitMask = Body::Planet | Body::Moon;
     prefs.renderFlags = Renderer::DefaultRenderFlags;
@@ -3345,6 +3350,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->getRenderer()->setLabelMode(prefs.labelMode);
         appCore->getRenderer()->setOrbitMask(prefs.orbitMask);
         appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
+        Galaxy::setLightGain(prefs.galaxyLightGain);
         appCore->getRenderer()->setStarStyle(prefs.starStyle);
         appCore->setHudDetail(prefs.hudDetail);
         if (prefs.showLocalTime == 1)
