@@ -5680,7 +5680,10 @@ static void gl_loadlib(lua_State* l)
 
     RegisterValue(l, "QUADS", GL_QUADS);
     RegisterValue(l, "LIGHTING", GL_LIGHTING);
+    RegisterValue(l, "POINTS", GL_POINTS);
+    RegisterValue(l, "LINES", GL_LINES);
     RegisterValue(l, "LINE_LOOP", GL_LINE_LOOP);
+    RegisterValue(l, "LINE_SMOOTH", GL_LINE_SMOOTH);
     RegisterValue(l, "POLYGON", GL_POLYGON);
     RegisterValue(l, "PROJECTION", GL_PROJECTION);
     RegisterValue(l, "MODELVIEW", GL_MODELVIEW);
