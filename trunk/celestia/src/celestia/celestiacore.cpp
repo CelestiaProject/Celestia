@@ -2073,7 +2073,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             char buf[128];
             Galaxy::decreaseLightGain();
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            sprintf(buf, "%s:  %3.0f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
             setlocale(LC_NUMERIC, "C");
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
@@ -2085,7 +2085,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             char buf[128];
             Galaxy::increaseLightGain();
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, "%s:  %3.2f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
+            sprintf(buf, "%s:  %3.0f %%", _("Light gain"), Galaxy::getLightGain() * 100.0f);
             setlocale(LC_NUMERIC, "C");
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
