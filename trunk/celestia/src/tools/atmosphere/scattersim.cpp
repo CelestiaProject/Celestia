@@ -21,7 +21,11 @@
 #include <celmath/ray.h>
 #include <celmath/sphere.h>
 #include <celmath/intersect.h>
+#ifdef MACOSX
+#include "../../../macosx/png.h"
+#else
 #include "png.h"
+#endif // MACOSX
 
 using namespace std;
 
@@ -929,7 +933,7 @@ buildExtinctionLUT(const Scene& scene)
     {
         double h = (double) i / (double) (ExtinctionLUTHeightSteps - 1) *
             scene.atmosphereShellHeight * 0.9999;
-        Point3d& atmStart = Point3d(0.0, 0.0, 0.0) +
+        Point3d atmStart = Point3d(0.0, 0.0, 0.0) +
             Vec3d(1.0, 0.0, 0.0) * (h + scene.planet.radius);
 
         for (unsigned int j = 0; j < ExtinctionLUTViewAngleSteps; j++)
@@ -992,7 +996,7 @@ buildOpticalDepthLUT(const Scene& scene)
     {
         double h = (double) i / (double) (ExtinctionLUTHeightSteps - 1) *
             scene.atmosphereShellHeight;
-        Point3d& atmStart = Point3d(0.0, 0.0, 0.0) +
+        Point3d atmStart = Point3d(0.0, 0.0, 0.0) +
             Vec3d(1.0, 0.0, 0.0) * (h + scene.planet.radius);
 
         for (unsigned int j = 0; j < ExtinctionLUTViewAngleSteps; j++)
@@ -1216,7 +1220,7 @@ buildScatteringLUT(const Scene& scene)
     {
         double h = (double) i / (double) (ScatteringLUTHeightSteps - 1) *
             scene.atmosphereShellHeight * 0.9999;
-        Point3d& atmStart = Point3d(0.0, 0.0, 0.0) +
+        Point3d atmStart = Point3d(0.0, 0.0, 0.0) +
             Vec3d(1.0, 0.0, 0.0) * (h + scene.planet.radius);
 
         for (unsigned int j = 0; j < ScatteringLUTViewAngleSteps; j++)
@@ -1778,7 +1782,7 @@ bool parseCommandLine(int argc, char* argv[])
 }
 
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     bool commandLineOK = parseCommandLine(argc, argv);
     if (!commandLineOK || configFilename.empty())
