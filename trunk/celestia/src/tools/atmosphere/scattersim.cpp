@@ -39,9 +39,17 @@ const unsigned int ScatteringLUTLightAngleSteps = 64;
 // Values settable via the command line
 static unsigned int IntegrateScatterSteps = 20;
 static unsigned int IntegrateDepthSteps = 20;
-static bool UseLUT = false;
 static unsigned int OutputImageWidth = 600;
 static unsigned int OutputImageHeight = 450;
+enum LUTUsageType
+{
+    NoLUT,
+    UseExtinctionLUT,
+    UseScatteringLUT
+};
+
+static LUTUsageType LUTUsage = NoLUT;
+
 
 
 typedef map<string, double> ParameterSet;
@@ -1038,7 +1046,8 @@ lookupOpticalDepth(const Scene& scene,
 Vec3d integrateInscattering_LUT(const Scene& scene,
                                 const Point3d& atmStart,
                                 const Point3d& atmEnd,
-                                const Point3d& eyePt)
+                                const Point3d& eyePt,
+                                bool hitPlanet)
 {
     const unsigned int nSteps = IntegrateScatterSteps;
 
@@ -1066,18 +1075,35 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
         testIntersection(sunRay, shell, sunDist);
 
         Vec3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
-        Vec3d eyeExt = lookupExtinction(scene, samplePoint, atmStart);
-        if (1 && eyeInsideAtmosphere)
+        Vec3d eyeExt;
+        if (!eyeInsideAtmosphere)
         {
-#if 1
-            Vec3d oppExt = lookupExtinction(scene, eyePt, atmStart);
-#else
-            OpticalDepths depth = integrateOpticalDepth(scene, eyePt, atmStart);
-            Vec3d oppExt = scene.atmosphere.computeExtinction(depth);
-#endif
-            eyeExt = Vec3d(eyeExt.x / oppExt.x,
-                           eyeExt.y / oppExt.y,
-                           eyeExt.z / oppExt.z);
+            eyeExt = lookupExtinction(scene, samplePoint, atmStart);
+        }
+        else
+        {
+            // Eye is inside the atmosphere, so we need to subtract
+            // extinction from the part of the light path not traveled.
+            // Do this carefully! We want to avoid doing arithmetic with
+            // intervals that pass through the planet, since they tend to
+            // have values extremely close to zero.
+            Vec3d subExt;
+            if (hitPlanet)
+            {
+                eyeExt = lookupExtinction(scene, samplePoint, atmStart);
+                subExt = lookupExtinction(scene, eyePt, atmStart);
+            }
+            else
+            {
+                eyeExt = lookupExtinction(scene, eyePt, atmEnd);
+                subExt = lookupExtinction(scene, samplePoint, atmEnd);
+            }
+
+            // Subtract the extinction from the untraversed portion of the
+            // light path.
+            eyeExt = Vec3d(eyeExt.x / subExt.x,
+                           eyeExt.y / subExt.y,
+                           eyeExt.z / subExt.z);
         }
 
         // Compute the extinction along the entire light path from sun to sample point
@@ -1104,10 +1130,13 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
 }
 
 
+// Used for building LUT; start point is assumed to be within
+// atmosphere.
 Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
                                        const Point3d& atmStart,
                                        const Point3d& atmEnd,
-                                       const Vec3d& lightDir)
+                                       const Vec3d& lightDir,
+                                       bool planetHit)
 {
     const unsigned int nSteps = IntegrateScatterSteps;
 
@@ -1132,9 +1161,27 @@ Vec4d integrateInscatteringFactors_LUT(const Scene& scene,
         testIntersection(sunRay, shell, sunDist);
 
         Vec3d sunExt = lookupExtinction(scene, samplePoint, sunRay.point(sunDist));
-        Vec3d eyeExt = lookupExtinction(scene, samplePoint, atmStart);
-        //eyeExt = Vec3d(1.0, 1.0, 1.0);
-        //sunExt = Vec3d(1.0, 1.0, 1.0);
+        Vec3d eyeExt;
+        Vec3d subExt;
+        if (planetHit)
+        {
+            eyeExt = lookupExtinction(scene, samplePoint, atmEnd);
+            subExt = lookupExtinction(scene, atmEnd, atmStart);
+        }
+        else
+        {
+            eyeExt = lookupExtinction(scene, atmStart, atmEnd);
+            subExt = lookupExtinction(scene, samplePoint, atmEnd);
+        }
+
+        // Subtract the extinction from the untraversed portion of the
+        // light path.
+        eyeExt = Vec3d(eyeExt.x / subExt.x,
+                       eyeExt.y / subExt.y,
+                       eyeExt.z / subExt.z);
+
+        //Vec3d eyeExt = lookupExtinction(scene, samplePoint, atmStart);
+
 
         // Compute the extinction along the entire light path from sun to sample point
         // to eye.
@@ -1195,7 +1242,8 @@ buildScatteringLUT(const Scene& scene)
                 Vec4d inscatter = integrateInscatteringFactors_LUT(scene,
                                                                    atmStart,
                                                                    atmEnd,
-                                                                   lightDir);
+                                                                   lightDir,
+                                                                   true);
 #else
                 Vec4d inscatter = integrateInscatteringFactors(scene,
                                                                atmStart,
@@ -1316,7 +1364,6 @@ Color Scene::raytrace(const Ray3d& ray) const
 Color
 Scene::raytrace_LUT(const Ray3d& ray) const
 {
-    double dist = 0.0;
     double atmEnter = 0.0;
     double atmExit = 0.0;
 
@@ -1336,9 +1383,15 @@ Scene::raytrace_LUT(const Ray3d& ray) const
         Point3d atmStart = mray.origin + atmEnter * mray.direction;
         Point3d atmEnd = mray.origin + atmExit * mray.direction;
 
-        if (testIntersection(mray, Sphered(planet.radius), dist))
+        double planetEnter = 0.0;
+        double planetExit = 0.0;
+        hit = raySphereIntersect2(mray,
+                                 Sphered(planet.radius),
+                                 planetEnter,
+                                 planetExit);
+        if (hit && planetEnter > 0.0)
         {
-            Point3d surfacePt = mray.point(dist);
+            Point3d surfacePt = mray.point(planetEnter);
 
             // Lambert lighting
             Vec3d normal = surfacePt - Point3d(0, 0, 0);
@@ -1373,27 +1426,46 @@ Scene::raytrace_LUT(const Ray3d& ray) const
             // Reflected color of planet surface is:
             //   surface color * sun color * atmospheric extinction
             baseColor = (planetColor * extinction) * light.color * diffuse;
-            
-            atmEnd = mray.origin + dist * mray.direction;
+
+            atmEnd = mray.point(planetEnter);
         }
 
         Vec3d inscatter;
 
-        if (0)
+        if (LUTUsage == UseExtinctionLUT)
         {
-            inscatter = integrateInscattering_LUT(*this, atmStart, atmEnd, eyePt) * 4.0 * PI;
+            bool hitPlanet = hit && planetEnter > 0.0;
+            inscatter = integrateInscattering_LUT(*this, atmStart, atmEnd, eyePt, hitPlanet) * 4.0 * PI;
         }
-        else
+        else if (LUTUsage == UseScatteringLUT)
         {
             Vec3d rayleighScatter;
             if (eyeInsideAtmosphere)
             {
-#if 0
-                rayleighScatter = 
-                    lookupScattering(*this, atmEnd, atmStart, -light.direction) -
-                    lookupScattering(*this, eyePt, atmStart, -light.direction);
+#if 1
+                if (!hit || planetEnter < 0.0)
+                {
+                    rayleighScatter = 
+                        lookupScattering(*this, eyePt, atmEnd, -light.direction);
+                }
+                else
+                {
+                    atmEnd = atmStart;
+                    atmStart = mray.point(planetEnter);
+                    //cout << atmEnter << ", " << planetEnter << ", " << atmExit << "\n";
+                    rayleighScatter = 
+                        lookupScattering(*this, atmStart, atmEnd, -light.direction) -
+                        lookupScattering(*this, eyePt, atmEnd, -light.direction);
+
+                    //cout << rayleighScatter.y << endl;
+                    cout << (atmStart - atmEnd).length() - (eyePt - atmEnd).length()
+                         << ", " << rayleighScatter.y
+                         << endl;
+                    //rayleighScatter = Vec3d(0.0, 0.0, 0.0);
+                }
+#else
+                //rayleighScatter = lookupScattering(*this, atmEnd, atmStart, -light.direction);
 #endif
-                rayleighScatter = lookupScattering(*this, eyePt, atmStart, -light.direction);
             }
             else
             {
@@ -1454,7 +1526,7 @@ void render(const Scene& scene,
             viewRay = viewRay * camera.transform;
 
             Color color;
-            if (UseLUT)
+            if (LUTUsage != NoLUT)
                 color = scene.raytrace_LUT(viewRay);
             else
                 color = scene.raytrace(viewRay);
@@ -1609,7 +1681,11 @@ bool parseCommandLine(int argc, char* argv[])
         {
             if (!strcmp(argv[i], "-l") || !strcmp(argv[i], "--lut"))
             {
-                UseLUT = true;
+                LUTUsage = UseExtinctionLUT;
+            }
+            else if (!strcmp(argv[i], "-L") || !strcmp(argv[i], "--LUT"))
+            {
+                LUTUsage = UseScatteringLUT;
             }
             else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--scattersteps"))
             {
@@ -1746,13 +1822,16 @@ void main(int argc, char* argv[])
         scene.atmosphere.rayleighCoeff.z * 4 * PI << endl;
 
 
-    if (UseLUT)
+    if (LUTUsage != NoLUT)
     {
         cout << "Building extinction LUT...\n";
         scene.extinctionLUT = buildExtinctionLUT(scene);
         cout << "Complete!\n";
         DumpLUT(*scene.extinctionLUT, "extlut.png");
+    }
 
+    if (LUTUsage == UseScatteringLUT)
+    {
         cout << "Building scattering LUT...\n";
         scene.scatteringLUT = buildScatteringLUT(scene);
         cout << "Complete!\n";
