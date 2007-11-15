@@ -222,12 +222,8 @@ class Renderer
     void setFont(FontStyle, TextureFont*);
     TextureFont* getFont(FontStyle) const;
 
-    enum LabelAlignment
-    {
-        AlignCenter,
-        AlignLeft,
-        AlignRight
-    };
+    bool settingsHaveChanged() const;
+    void markSettingsChanged();
 
  public:
     // Internal types
@@ -367,6 +363,12 @@ class Renderer
         };
     };
 
+    enum LabelAlignment
+    {
+        AlignCenter,
+        AlignLeft,
+        AlignRight
+    };
     typedef ObjectLabel<Star>          StarLabel;
     typedef ObjectLabel<DeepSkyObject> DSOLabel;    // currently not used
     
@@ -624,6 +626,7 @@ class Renderer
     Selection highlightObject;
 
     bool videoSync;
+    bool settingsChanged;
 
  public:
     // Colors for all lines and labels
