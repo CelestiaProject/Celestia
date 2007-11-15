@@ -333,6 +333,7 @@ CelestiaCore::CelestiaCore() :
     zoomTime(0.0),
     sysTime(0.0),
     currentTime(0.0),
+    viewChanged(true),
     joystickRotation(0.0f, 0.0f, 0.0f),
     KeyAccel(1.0),
     movieCapture(NULL),
@@ -634,6 +635,8 @@ bool checkMask(int modifiers, int mask)
 
 void CelestiaCore::mouseButtonDown(float x, float y, int button)
 {
+    setViewChanged();
+
     mouseMotion = 0.0f;
 
 #ifdef CELX
@@ -698,6 +701,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
 
 void CelestiaCore::mouseButtonUp(float x, float y, int button)
 {
+    setViewChanged();
 
     // Four pixel tolerance for picking
     float pickTolerance = sim->getActiveObserver()->getFOV() / height * 4.0f;
@@ -761,9 +765,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             }
         }
         else if (button == MiddleButton)
-	{
-            if (views[activeView]->zoom != 1)
 	    {
+            if (views[activeView]->zoom != 1)
+	        {
                 views[activeView]->alternateZoom = views[activeView]->zoom;
                 views[activeView]->zoom = 1;
             }
@@ -776,12 +780,14 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             // If AutoMag, adapt the faintestMag to the new fov
             if((renderer->getRenderFlags() & Renderer::ShowAutoMag) != 0)
 	        setFaintestAutoMag();
-	}
+	    }
     }
 }
 
 void CelestiaCore::mouseWheel(float motion, int modifiers)
 {
+    setViewChanged();
+
     if (config->reverseMouseWheel) motion = -motion;
     if (motion != 0.0)
     {
@@ -835,6 +841,9 @@ void CelestiaCore::mouseMove(float x, float y)
 
 void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 {
+    if (modifiers != 0)
+        setViewChanged();
+
     if (resizeSplit != 0)
     {
         switch(resizeSplit->type) {
@@ -946,13 +955,13 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 setZoomFromFOV();
             }
 
-	    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
-	    {
-	        setFaintestAutoMag();
-		char buf[128];
-		sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
-		flash(buf);
-	    }
+    	    if ((renderer->getRenderFlags() & Renderer::ShowAutoMag))
+	        {
+	            setFaintestAutoMag();
+    		    char buf[128];
+        		sprintf(buf, _("Magnitude limit: %.2f"), sim->getFaintestVisible());
+        		flash(buf);
+	        }
         }
         else
         {
@@ -1004,6 +1013,8 @@ void CelestiaCore::pickView(float x, float y)
 
 void CelestiaCore::joystickAxis(int axis, float amount)
 {
+    setViewChanged();
+
     float deadZone = 0.25f;
 
     if (abs(amount) < deadZone)
@@ -1022,6 +1033,8 @@ void CelestiaCore::joystickAxis(int axis, float amount)
 
 void CelestiaCore::joystickButton(int button, bool down)
 {
+    setViewChanged();
+
     if (button >= 0 && button < JoyButtonCount)
         joyButtonsPressed[button] = down;
 }
@@ -1051,6 +1064,8 @@ static void scrollConsole(Console& con, int lines)
 
 void CelestiaCore::keyDown(int key, int modifiers)
 {
+    setViewChanged();
+
 #ifdef CELX
     // TODO: should pass modifiers as a Lua table
     if (luaHook && luaHook->callLuaHook(this,
@@ -1147,6 +1162,7 @@ void CelestiaCore::keyDown(int key, int modifiers)
 
 void CelestiaCore::keyUp(int key, int)
 {
+    setViewChanged();
     KeyAccel = 1.0;
     if (islower(key))
         key = toupper(key);
@@ -1179,6 +1195,7 @@ static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
 
 void CelestiaCore::charEntered(char c, int modifiers)
 {
+    setViewChanged();
     char C[2];
     C[0] = c;
     C[1] = '\0';
@@ -1187,6 +1204,8 @@ void CelestiaCore::charEntered(char c, int modifiers)
 
 void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 {
+    setViewChanged();
+
     Observer* observer = sim->getActiveObserver();
 
     char c = *c_p;
@@ -1859,7 +1878,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                 sim->setTimeScale(sim->getTimeScale() / FineTimeScaleFactor);
             char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Time rate: %'.12g"), sim->getTimeScale());
+            sprintf(buf, _("Time rate: %.12g"), sim->getTimeScale());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -1875,7 +1894,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                 sim->setTimeScale(sim->getTimeScale() * FineTimeScaleFactor);
             char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Time rate: %'.12g"), sim->getTimeScale());
+            sprintf(buf, _("Time rate: %.12g"), sim->getTimeScale());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -2376,6 +2395,10 @@ void CelestiaCore::tick()
 
 void CelestiaCore::draw()
 {
+    if (!viewUpdateRequired())
+        return;
+    viewChanged = false;
+
     if (views.size() == 1)
     {
         // I'm not certain that a special case for one view is required; but,
@@ -2469,8 +2492,57 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
 }
 
 
+// Return true if anything changed that requires re-rendering. Otherwise, we
+// can skip rendering, keep the GPU idle, and save power.
+bool CelestiaCore::viewUpdateRequired() const
+{
+#if 1
+    // Enable after 1.5.0
+    return true;
+#else
+    bool isPaused = sim->getPauseState() || sim->getTimeScale() == 0.0;
+
+    // See if the camera in any of the views is moving
+    bool observersMoving = false;
+    for (vector<View*>::const_iterator iter = views.begin(); iter != views.end(); iter++)
+    {
+        View* v = *iter;
+        if (v->observer->getAngularVelocity().length() > 1.0e-10 ||
+            v->observer->getVelocity().length() > 1.0e-12)
+        {
+            observersMoving = true;
+            break;
+        }
+    }
+
+    if (viewChanged ||
+        !isPaused ||
+        observersMoving ||
+        dollyMotion != 0.0 ||
+        zoomMotion != 0.0 ||
+        scriptState == ScriptRunning ||
+        renderer->settingsHaveChanged())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+#endif
+}
+
+
+void CelestiaCore::setViewChanged()
+{
+    viewChanged = true;
+}
+
+
 void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 {
+    setViewChanged();
+
     if (av == NULL)
         av = views[activeView];
     bool vertical = ( type == View::VerticalSplit );
@@ -2573,6 +2645,8 @@ void CelestiaCore::setZoomFromFOV()
 
 void CelestiaCore::singleView(View* av)
 {
+    setViewChanged();
+
     if (av == NULL)
         av = views[activeView];
 
@@ -2657,6 +2731,8 @@ bool CelestiaCore::getFramesVisible() const
 
 void CelestiaCore::setFramesVisible(bool visible)
 {
+    setViewChanged();
+
     showViewFrames = visible;
 }
 
@@ -2667,6 +2743,8 @@ bool CelestiaCore::getActiveFrameVisible() const
 
 void CelestiaCore::setActiveFrameVisible(bool visible)
 {
+    setViewChanged();
+
     showActiveViewFrame = visible;
 }
 
@@ -3255,12 +3333,12 @@ void CelestiaCore::renderOverlay()
             }
             else if (abs(sim->getTimeScale()) > 1.0)
             {
-                overlay->oprintf("%'.12g", sim->getTimeScale());
+                overlay->oprintf("%.12g", sim->getTimeScale());
                 *overlay << UTF8_MULTIPLICATION_SIGN << _(" faster");
             }
             else
             {
-                overlay->oprintf("%'.12g", 1.0 / sim->getTimeScale());
+                overlay->oprintf("%.12g", 1.0 / sim->getTimeScale());
                 *overlay << UTF8_MULTIPLICATION_SIGN << _(" slower");
             }
 

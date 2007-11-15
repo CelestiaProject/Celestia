@@ -252,6 +252,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void addFavoriteFolder(std::string, FavoritesList::iterator* iter=NULL);
     FavoritesList* getFavorites();
 
+    bool viewUpdateRequired() const;
+    void setViewChanged();
+
     const DestinationList* getDestinations();
 
     int getTimeZoneBias() const;
@@ -414,6 +417,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     double sysTime;
     double currentTime;
+
+    bool viewChanged;
 
     Vec3f joystickRotation;
     bool joyButtonsPressed[JoyButtonCount];
