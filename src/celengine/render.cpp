@@ -259,7 +259,8 @@ Renderer::Renderer() :
     minFeatureSize(MinFeatureSizeForLabel),
     locationFilter(~0u),
     colorTemp(NULL),
-    videoSync(false)
+    videoSync(false),
+    settingsChanged(true)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
@@ -839,6 +840,7 @@ void Renderer::setScreenDpi(int _dpi)
 
 void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
 {
+    markSettingsChanged();
     faintestAutoMag45deg = _faintestAutoMag45deg;
 }
 
@@ -855,6 +857,7 @@ unsigned int Renderer::getResolution()
 
 void Renderer::setResolution(unsigned int resolution)
 {
+    //markSettingsChanged();
     if (resolution < TEXTURE_RESOLUTION)
         textureResolution = resolution;
 }
@@ -867,11 +870,13 @@ TextureFont* Renderer::getFont(FontStyle fs) const
 
 void Renderer::setFont(FontStyle fs, TextureFont* txf)
 {
+    markSettingsChanged();
     font[(int) fs] = txf;
 }
 
 void Renderer::setRenderMode(int _renderMode)
 {
+    markSettingsChanged();
     renderMode = _renderMode;
 }
 
@@ -882,6 +887,7 @@ int Renderer::getRenderFlags() const
 
 void Renderer::setRenderFlags(int _renderFlags)
 {
+    markSettingsChanged();
     renderFlags = _renderFlags;
 }
 
@@ -892,6 +898,7 @@ int Renderer::getLabelMode() const
 
 void Renderer::setLabelMode(int _labelMode)
 {
+    markSettingsChanged();
     labelMode = _labelMode;
 }
 
@@ -902,6 +909,7 @@ int Renderer::getOrbitMask() const
 
 void Renderer::setOrbitMask(int mask)
 {
+    markSettingsChanged();
     orbitMask = mask;
 }
 
@@ -916,6 +924,7 @@ Renderer::getStarColorTable() const
 void
 Renderer::setStarColorTable(const ColorTemperatureTable* ct)
 {
+    markSettingsChanged();
     colorTemp = ct;
 }
 
@@ -927,6 +936,7 @@ bool Renderer::getVideoSync() const
 
 void Renderer::setVideoSync(bool sync)
 {
+    markSettingsChanged();
     videoSync = sync;
 }
 
@@ -939,6 +949,7 @@ float Renderer::getAmbientLightLevel() const
 
 void Renderer::setAmbientLightLevel(float level)
 {
+    markSettingsChanged();
     ambientLightLevel = level;
 }
 
@@ -951,6 +962,7 @@ float Renderer::getMinimumFeatureSize() const
 
 void Renderer::setMinimumFeatureSize(float pixels)
 {
+    markSettingsChanged();
     minFeatureSize = pixels;
 }
 
@@ -964,6 +976,7 @@ float Renderer::getMinimumOrbitSize() const
 // occupies some minimum number of pixels on screen.
 void Renderer::setMinimumOrbitSize(float pixels)
 {
+    markSettingsChanged();
     minOrbitSize = pixels;
 }
 
@@ -976,6 +989,7 @@ float Renderer::getDistanceLimit() const
 
 void Renderer::setDistanceLimit(float distanceLimit_)
 {
+    markSettingsChanged();
     distanceLimit = distanceLimit_;
 }
 
@@ -987,6 +1001,7 @@ bool Renderer::getFragmentShaderEnabled() const
 
 void Renderer::setFragmentShaderEnabled(bool enable)
 {
+    markSettingsChanged();
     fragmentShaderEnabled = enable && fragmentShaderSupported();
 }
 
@@ -1002,6 +1017,7 @@ bool Renderer::getVertexShaderEnabled() const
 
 void Renderer::setVertexShaderEnabled(bool enable)
 {
+    markSettingsChanged();
     vertexShaderEnabled = enable && vertexShaderSupported();
 }
 
@@ -2072,6 +2088,7 @@ void Renderer::render(const Observer& observer,
     double now = observer.getTime();
 
     frameCount++;
+    settingsChanged = false;
 
     // Compute the size of a pixel
     setFieldOfView(radToDeg(observer.getFOV()));
@@ -8584,6 +8601,7 @@ void Renderer::renderMarkers(const MarkerList& markers,
 
 void Renderer::setStarStyle(StarStyle style)
 {
+    markSettingsChanged();
     starStyle = style;
 }
 
@@ -8879,4 +8897,17 @@ void Renderer::loadTextures(Body* body)
 void Renderer::invalidateOrbitCache()
 {
     orbitCache.clear();
+}
+
+
+bool Renderer::settingsHaveChanged() const
+{
+    return settingsChanged;
+}
+
+
+void Renderer::markSettingsChanged()
+{
+    clog << "settings changed: " << frameCount << endl;
+    settingsChanged = true;
 }
