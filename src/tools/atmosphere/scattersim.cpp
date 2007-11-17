@@ -32,8 +32,8 @@ using namespace std;
 
 
 // Extinction lookup table dimensions
-const unsigned int ExtinctionLUTHeightSteps = 128;
-const unsigned int ExtinctionLUTViewAngleSteps = 256;
+const unsigned int ExtinctionLUTHeightSteps = 256;
+const unsigned int ExtinctionLUTViewAngleSteps = 512;
 
 // Scattering lookup table dimensions
 const unsigned int ScatteringLUTHeightSteps = 64;
@@ -53,6 +53,7 @@ enum LUTUsageType
 };
 
 static LUTUsageType LUTUsage = NoLUT;
+static bool UseFisheyeCameras = false;
 
 
 
@@ -104,9 +105,51 @@ static uint8 floatToByte(float f)
 class Camera
 {
 public:
+    enum CameraType
+    {
+        Planar,
+        Spherical,
+    };
+
+    Camera() :
+        fov(PI / 2.0),
+        front(1.0),
+        transform(Mat4d::identity()),
+        type(Planar)
+    {
+    }
+
+    Ray3d getViewRay(double viewportX, double viewportY) const
+    {
+        Vec3d viewDir;
+
+        if (type == Planar)
+        {
+            double viewPlaneHeight = tan(fov / 2.0) * 2 * front;
+            viewDir.x = viewportX * viewPlaneHeight;
+            viewDir.y = viewportY * viewPlaneHeight;
+            viewDir.z = front;
+            viewDir.normalize();
+        }
+        else
+        {
+            double phi = -viewportY * fov / 2.0 + PI / 2.0;
+            double theta = viewportX * fov / 2.0 + PI / 2.0; 
+            viewDir.x = sin(phi) * cos(theta);
+            viewDir.y = cos(phi);
+            viewDir.z = sin(phi) * sin(theta);
+            viewDir.normalize();
+        }
+
+        Ray3d viewRay(Point3d(0.0, 0.0, 0.0), viewDir);
+
+        return viewRay * transform;
+    }
+
     double fov;
     double front;
     Mat4d transform;
+    CameraType type;
 };
 
 
@@ -235,6 +278,8 @@ public:
 
     double atmosphereShellHeight;
 
+    double sunAngularDiameter;
+
     LUT2* extinctionLUT;
     LUT3* scatteringLUT;
 };
@@ -303,6 +348,7 @@ void usage()
 {
     cerr << "Usage: scattersim [options] <config file>\n";
     cerr << "   --lut (or -l)              : accelerate calculation by using a lookup table\n";
+    cerr << "   --fisheye (or -f)          : use wide angle cameras on surface\n";
     cerr << "   --width <value> (or -w)    : set width of output image\n";
     cerr << "   --height <value> (or -h)   : set height of output image\n";
     cerr << "   --image <filename> (or -i) : set filename of output image\n";
@@ -1309,12 +1355,16 @@ Color Scene::raytrace(const Ray3d& ray) const
 
     double shellRadius = planet.radius + atmosphereShellHeight;
 
+    Color color = background;
+    if (ray.direction * -light.direction > cos(sunAngularDiameter / 2.0))
+        color = light.color;
+
     if (raySphereIntersect(ray,
                            Sphered(planet.center, shellRadius),
                            atmEnter,
                            atmExit))
     {
-        Color baseColor = background;
+        Color baseColor = color;
         Point3d atmStart = ray.origin + atmEnter * ray.direction;
         Point3d atmEnd = ray.origin + atmExit * ray.direction;
 
@@ -1360,7 +1410,7 @@ Color Scene::raytrace(const Ray3d& ray) const
     }
     else
     {
-        return background;
+        return color;
     }
 }
 
@@ -1375,13 +1425,17 @@ Scene::raytrace_LUT(const Ray3d& ray) const
     Sphered shell(shellRadius);
     Point3d eyePt = Point3d(0.0, 0.0, 0.0) + (ray.origin - planet.center);
 
+    Color color = background;
+    if (ray.direction * -light.direction > cos(sunAngularDiameter / 2.0))
+        color = light.color;
+
     // Transform ray to model space
     Ray3d mray(eyePt, ray.direction);
 
     bool hit = raySphereIntersect2(mray, shell, atmEnter, atmExit);
     if (hit && atmExit > 0.0)
     {
-        Color baseColor = background;
+        Color baseColor = color;
 
         bool eyeInsideAtmosphere = atmEnter < 0.0;
         Point3d atmStart = mray.origin + atmEnter * mray.direction;
@@ -1440,6 +1494,8 @@ Scene::raytrace_LUT(const Ray3d& ray) const
         {
             bool hitPlanet = hit && planetEnter > 0.0;
             inscatter = integrateInscattering_LUT(*this, atmStart, atmEnd, eyePt, hitPlanet) * 4.0 * PI;
+            //if (!hit)
+            //inscatter = Vec3d(0.0, 0.0, 0.0);
         }
         else if (LUTUsage == UseScatteringLUT)
         {
@@ -1490,7 +1546,7 @@ Scene::raytrace_LUT(const Ray3d& ray) const
     }
     else
     {
-        return background;
+        return color;
     }
 }
 
@@ -1501,8 +1557,6 @@ void render(const Scene& scene,
             RGBImage& image)
 {
     double aspectRatio = (double) image.width / (double) image.height;
-    double viewPlaneHeight = tan(camera.fov / 2.0) * 2 * camera.front;
-    double viewPlaneWidth = viewPlaneHeight * aspectRatio;
 
     if (viewport.x >= image.width || viewport.y >= image.height)
         return;
@@ -1520,14 +1574,10 @@ void render(const Scene& scene,
 
         for (unsigned int j = viewport.x; j < right; j++)
         {
-            Vec3d viewDir;
-            viewDir.x = ((double) (j - viewport.x) / (double) (viewport.width - 1) - 0.5) * viewPlaneWidth;
-            viewDir.y = ((double) (i - viewport.y) / (double) (viewport.height - 1) - 0.5) * viewPlaneHeight;
-            viewDir.z = camera.front;
-            viewDir.normalize();
+            double viewportX = ((double) (j - viewport.x) / (double) (viewport.width - 1) - 0.5) * aspectRatio;
+            double viewportY ((double) (i - viewport.y) / (double) (viewport.height - 1) - 0.5);
 
-            Ray3d viewRay(Point3d(0.0, 0.0, 0.0), viewDir);
-            viewRay = viewRay * camera.transform;
+            Ray3d viewRay = camera.getViewRay(viewportX, viewportY);
 
             Color color;
             if (LUTUsage != NoLUT)
@@ -1567,6 +1617,8 @@ void Scene::setParameters(ParameterSet& params)
 
     atmosphereShellHeight          = atmosphere.calcShellHeight();
 
+    sunAngularDiameter             = degToRad(params["SunAngularDiameter"]);
+
     planet.radius                  = params["Radius"];
     planet.center                  = Point3d(0.0, 0.0, 0.0);
 
@@ -1599,6 +1651,8 @@ void setSceneDefaults(ParameterSet& params)
     params["SurfaceRed"]          = 0.2;
     params["SurfaceGreen"]        = 0.3;
     params["SurfaceBlue"]         = 1.0;
+
+    params["SunAngularDiameter"]  = 0.5; // degrees
 }
 
 
@@ -1690,6 +1744,10 @@ bool parseCommandLine(int argc, char* argv[])
             else if (!strcmp(argv[i], "-L") || !strcmp(argv[i], "--LUT"))
             {
                 LUTUsage = UseScatteringLUT;
+            }
+            else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--fisheye"))
+            {
+                UseFisheyeCameras = true;
             }
             else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--scattersteps"))
             {
@@ -1876,18 +1934,52 @@ int main(int argc, char* argv[])
         Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
         Mat4d::yrotation(degToRad(20.0));
 
+    double aspectRatio = (double) OutputImageWidth / (double) OutputImageHeight;
+    // Make the horizontal FOV of the fisheye cameras 180 degrees
+    double fisheyeFOV = degToRad(max(180.0, 180.0 / aspectRatio));
+
+    Camera cameraFisheyeMidday;
+    cameraFisheyeMidday.fov = fisheyeFOV;
+    cameraFisheyeMidday.type = Camera::Spherical;
+    cameraFisheyeMidday.transform = 
+        Mat4d::xrotation(degToRad(85.0)) *
+        Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
+        Mat4d::yrotation(degToRad(20.0));
+
+    Camera cameraFisheyeSunset;
+    cameraFisheyeSunset.fov = degToRad(180.0);
+    cameraFisheyeSunset.type = Camera::Spherical;
+    cameraFisheyeSunset.transform = 
+        Mat4d::zrotation(degToRad(-5.0)) *
+        Mat4d::yrotation(degToRad(90.0)) *
+        Mat4d::xrotation(degToRad(85.0)) *
+        Mat4d::translation(Point3d(0.0, 0.0, -planetRadius * 1.0002)) *
+        Mat4d::yrotation(degToRad(80.0));
+
+
     RGBImage image(OutputImageWidth, OutputImageHeight);
 
     Viewport topleft (0, 0, image.width / 2, image.height / 2);
     Viewport topright(image.width / 2, 0, image.width / 2, image.height / 2);
     Viewport botleft (0, image.height / 2, image.width / 2, image.height / 2);
     Viewport botright(image.width / 2, image.height / 2, image.width / 2, image.height / 2);
+    Viewport tophalf (0, 0, image.width, image.height / 2);
+    Viewport bothalf (0, image.height / 2, image.width, image.height / 2);
 
     image.clear(Color(0.1f, 0.1f, 1.0f));
-    render(scene, cameraLowPhase, topleft, image);
-    render(scene, cameraHighPhase, topright, image);
-    render(scene, cameraClose, botleft, image);
-    render(scene, cameraSurface, botright, image);
+
+    if (UseFisheyeCameras)
+    {
+        render(scene, cameraFisheyeMidday, tophalf, image);
+        render(scene, cameraFisheyeSunset, bothalf, image);
+    }
+    else
+    {
+        render(scene, cameraLowPhase, topleft, image);
+        render(scene, cameraHighPhase, topright, image);
+        render(scene, cameraClose, botleft, image);
+        render(scene, cameraSurface, botright, image);
+    }
 
     WritePNG(outputImageName, image);
 
