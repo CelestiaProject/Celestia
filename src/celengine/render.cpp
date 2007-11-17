@@ -1650,8 +1650,11 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         // Add an extra sample to close a periodic orbit
         if (orbit->isPeriodic())
         {
-            double lastSampleTime = cachedOrbit->trajectory[0].t + orbit->getPeriod();
-            cachedOrbit->trajectory.push_back(OrbitSample(cachedOrbit->trajectory[0].pos, lastSampleTime));
+            if (!cachedOrbit->trajectory.empty())
+            {
+                double lastSampleTime = cachedOrbit->trajectory[0].t + orbit->getPeriod();
+                cachedOrbit->trajectory.push_back(OrbitSample(cachedOrbit->trajectory[0].pos, lastSampleTime));
+            }
         }
             
         computeOrbitSectionBoundingVolumes(*cachedOrbit);
