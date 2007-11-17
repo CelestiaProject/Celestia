@@ -722,6 +722,27 @@ double phaseHenyeyGreenstein(double cosTheta, double g)
     return (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * cosTheta, 1.5);
 }
 
+double mu2g(double mu)
+{
+	// mu = <cosTheta>
+	// This routine invertes the simple relation of the Cornette-Shanks
+	// improved Henyey-Greenstein(HG) phase function:
+	// mu = <cosTheta>= 3*g *(g^2 + 4)/(5*(2+g^2))
+
+    double mu2 = mu * mu; 
+    double x = 0.5555555556 * mu + 0.17146776 * mu * mu2 + sqrt(max(2.3703704 - 1.3374486 * mu2 + 0.57155921 * mu2 * mu2, 0.0));
+	double y = pow(x, 0.33333333333);
+    return 0.55555555556 * mu - (1.33333333333 - 0.30864198 * mu2)/y + y;	
+}
+
+double phaseHenyeyGreenstein_CS(double cosTheta, double g)
+{ 
+	// improved HG - phase function -> Rayleigh phase function for 
+ 	// g -> 0, -> HG-phase function for g -> 1.
+	double g2 = g * g;
+	return 1.5 * (1.0 - g2) * (1.0 + cosTheta * cosTheta) /((2.0 + g2) * pow(1.0 + g2 - 2.0 * g * cosTheta, 1.5));
+}
+
 
 double phaseSchlick(double cosTheta, double k)
 {
@@ -887,7 +908,7 @@ Vec3d integrateInscattering(const Scene& scene,
     return phaseRayleigh(cosSunAngle) * Vec3d(rayleighScatter.x * rayleigh.x,
                                               rayleighScatter.y * rayleigh.y,
                                               rayleighScatter.z * rayleigh.z) +
-        phaseHenyeyGreenstein(cosSunAngle, scene.atmosphere.mieAsymmetry) *
+        phaseHenyeyGreenstein_CS(cosSunAngle, scene.atmosphere.mieAsymmetry) *
         mieScatter * scene.atmosphere.mieCoeff;
 }
 
@@ -1175,7 +1196,7 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
     return phaseRayleigh(cosSunAngle) * Vec3d(rayleighScatter.x * rayleigh.x,
                                               rayleighScatter.y * rayleigh.y,
                                               rayleighScatter.z * rayleigh.z) +
-        phaseHenyeyGreenstein(cosSunAngle, scene.atmosphere.mieAsymmetry) *
+        phaseHenyeyGreenstein_CS(cosSunAngle, scene.atmosphere.mieAsymmetry) *
         mieScatter * scene.atmosphere.mieCoeff;
 }
 
@@ -1608,8 +1629,9 @@ void Scene::setParameters(ParameterSet& params)
 
     atmosphere.mieScaleHeight      = params["MieScaleHeight"];
     atmosphere.mieCoeff            = params["Mie"];
-    atmosphere.mieAsymmetry        = params["MieAsymmetry"];
-
+	double mu                      = params["MieAsymmetry"];
+	cerr << "\nMie Asymmetry <cosTheta> = " << mu <<";  g = " << mu2g(mu) << "\n\n";
+	atmosphere.mieAsymmetry        = mu2g(mu);
     atmosphere.absorbScaleHeight   = params["AbsorbScaleHeight"];
     atmosphere.absorbCoeff.x       = params["AbsorbRed"];
     atmosphere.absorbCoeff.y       = params["AbsorbGreen"];
@@ -1916,7 +1938,7 @@ int main(int argc, char* argv[])
     cameraHighPhase.front = 1.0;
     cameraHighPhase.transform = 
         Mat4d::translation(Point3d(0.0, 0.0, -cameraFarDist)) *
-        Mat4d::yrotation(degToRad(110.0));
+        Mat4d::yrotation(degToRad(160.0));
 
     Camera cameraClose;
     cameraClose.fov = degToRad(45.0);
