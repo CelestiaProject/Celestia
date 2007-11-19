@@ -54,7 +54,7 @@ enum LUTUsageType
 
 static LUTUsageType LUTUsage = NoLUT;
 static bool UseFisheyeCameras = false;
-
+static double CameraExposure = 0.0;
 
 
 typedef map<string, double> ParameterSet;
@@ -64,6 +64,18 @@ struct Color
 {
     Color() : r(0.0f), g(0.0f), b(0.0f) {}
     Color(float _r, float _g, float _b) : r(_r), g(_g), b(_b) {}
+
+    Color exposure(float e) const
+    {
+#if 0
+        float brightness = max(r, max(g, b));
+        float f = 1.0f - (float) exp(-e * brightness);
+        return Color(r * f, g * f, b * f);
+#endif
+        return Color((float) (1.0 - exp(-e * r)),
+                     (float) (1.0 - exp(-e * g)),
+                     (float) (1.0 - exp(-e * b)));
+    }
 
     float r, g, b;
 };
@@ -194,13 +206,28 @@ OpticalDepths sumOpticalDepths(OpticalDepths a, OpticalDepths b)
 }
 
 
+typedef double (*MiePhaseFunction)(double cosTheta, double asymmetry);
+double phaseHenyeyGreenstein_CS(double, double);
+double phaseHenyeyGreenstein(double, double);
+double phaseSchlick(double, double);
+
 class Atmosphere
 {
 public:
+    Atmosphere() :
+        miePhaseFunction(phaseHenyeyGreenstein_CS)
+    {
+    }
+
     double calcShellHeight()
     {
         double maxScaleHeight = max(rayleighScaleHeight, max(mieScaleHeight, absorbScaleHeight));
         return -log(0.002) * maxScaleHeight;
+    }
+
+    double miePhase(double cosAngle) const
+    {
+        return miePhaseFunction(cosAngle, mieAsymmetry);
     }
 
     double rayleighDensity(double h) const;
@@ -218,6 +245,8 @@ public:
     double mieCoeff;
 
     double mieAsymmetry;
+
+    MiePhaseFunction miePhaseFunction;
 };
 
 
@@ -349,6 +378,7 @@ void usage()
     cerr << "Usage: scattersim [options] <config file>\n";
     cerr << "   --lut (or -l)              : accelerate calculation by using a lookup table\n";
     cerr << "   --fisheye (or -f)          : use wide angle cameras on surface\n";
+    cerr << "   --exposure <value> (or -e) : set exposure for HDR\n";
     cerr << "   --width <value> (or -w)    : set width of output image\n";
     cerr << "   --height <value> (or -h)   : set height of output image\n";
     cerr << "   --image <filename> (or -i) : set filename of output image\n";
@@ -724,26 +754,40 @@ double phaseHenyeyGreenstein(double cosTheta, double g)
 
 double mu2g(double mu)
 {
-	// mu = <cosTheta>
-	// This routine invertes the simple relation of the Cornette-Shanks
-	// improved Henyey-Greenstein(HG) phase function:
-	// mu = <cosTheta>= 3*g *(g^2 + 4)/(5*(2+g^2))
+    // mu = <cosTheta>
+    // This routine invertes the simple relation of the Cornette-Shanks
+    // improved Henyey-Greenstein(HG) phase function:
+    // mu = <cosTheta>= 3*g *(g^2 + 4)/(5*(2+g^2))
 
     double mu2 = mu * mu; 
     double x = 0.5555555556 * mu + 0.17146776 * mu * mu2 + sqrt(max(2.3703704 - 1.3374486 * mu2 + 0.57155921 * mu2 * mu2, 0.0));
-	double y = pow(x, 0.33333333333);
-    return 0.55555555556 * mu - (1.33333333333 - 0.30864198 * mu2)/y + y;	
+    double y = pow(x, 0.33333333333);
+    return 0.55555555556 * mu - (1.33333333333 - 0.30864198 * mu2) / y + y;
 }
+
 
 double phaseHenyeyGreenstein_CS(double cosTheta, double g)
 { 
-	// improved HG - phase function -> Rayleigh phase function for 
- 	// g -> 0, -> HG-phase function for g -> 1.
-	double g2 = g * g;
-	return 1.5 * (1.0 - g2) * (1.0 + cosTheta * cosTheta) /((2.0 + g2) * pow(1.0 + g2 - 2.0 * g * cosTheta, 1.5));
+    // improved HG - phase function -> Rayleigh phase function for 
+    // g -> 0, -> HG-phase function for g -> 1.
+    double g2 = g * g;
+    return 1.5 * (1.0 - g2) * (1.0 + cosTheta * cosTheta) /((2.0 + g2) * pow(1.0 + g2 - 2.0 * g * cosTheta, 1.5));
 }
 
 
+// Convert the asymmetry paramter for the Henyey-Greenstein function to
+// the approximate equivalent for the Schlick phase function. From Blasi,
+// Saec, and Schlick: 1993, "A rendering algorithm for discrete volume
+// density objects"
+double schlick_g2k(double g)
+{
+    return 1.55 * g - 0.55 * g * g * g;
+}
+
+
+// The Schlick phase function is a less computationally expensive than the
+// Henyey-Greenstein function, but produces similar results. May be more
+// appropriate for a GPU implementation.
 double phaseSchlick(double cosTheta, double k)
 {
     return (1 - k * k) / square(1 - k * cosTheta);
@@ -904,12 +948,12 @@ Vec3d integrateInscattering(const Scene& scene,
 
     double cosSunAngle = lightDir * dir;
 
+    double miePhase = scene.atmosphere.miePhase(cosSunAngle);
     const Vec3d& rayleigh = scene.atmosphere.rayleighCoeff;
     return phaseRayleigh(cosSunAngle) * Vec3d(rayleighScatter.x * rayleigh.x,
                                               rayleighScatter.y * rayleigh.y,
                                               rayleighScatter.z * rayleigh.z) +
-        phaseHenyeyGreenstein_CS(cosSunAngle, scene.atmosphere.mieAsymmetry) *
-        mieScatter * scene.atmosphere.mieCoeff;
+        miePhase * mieScatter * scene.atmosphere.mieCoeff;
 }
 
 
@@ -1192,12 +1236,12 @@ Vec3d integrateInscattering_LUT(const Scene& scene,
 
     double cosSunAngle = lightDir * viewDir;
 
+    double miePhase = scene.atmosphere.miePhase(cosSunAngle);
     const Vec3d& rayleigh = scene.atmosphere.rayleighCoeff;
     return phaseRayleigh(cosSunAngle) * Vec3d(rayleighScatter.x * rayleigh.x,
                                               rayleighScatter.y * rayleigh.y,
                                               rayleighScatter.z * rayleigh.z) +
-        phaseHenyeyGreenstein_CS(cosSunAngle, scene.atmosphere.mieAsymmetry) *
-        mieScatter * scene.atmosphere.mieCoeff;
+        miePhase * mieScatter * scene.atmosphere.mieCoeff;
 }
 
 
@@ -1539,9 +1583,9 @@ Scene::raytrace_LUT(const Ray3d& ray) const
                         lookupScattering(*this, eyePt, atmEnd, -light.direction);
 
                     //cout << rayleighScatter.y << endl;
-                    cout << (atmStart - atmEnd).length() - (eyePt - atmEnd).length()
-                         << ", " << rayleighScatter.y
-                         << endl;
+                    //cout << (atmStart - atmEnd).length() - (eyePt - atmEnd).length()
+                    //<< ", " << rayleighScatter.y
+                    //<< endl;
                     //rayleighScatter = Vec3d(0.0, 0.0, 0.0);
                 }
 #else
@@ -1605,6 +1649,10 @@ void render(const Scene& scene,
                 color = scene.raytrace_LUT(viewRay);
             else
                 color = scene.raytrace(viewRay);
+
+            if (CameraExposure != 0.0)
+                color = color.exposure((float) CameraExposure);
+
             image.setPixel(j, i, color);
         }
     }
@@ -1629,9 +1677,26 @@ void Scene::setParameters(ParameterSet& params)
 
     atmosphere.mieScaleHeight      = params["MieScaleHeight"];
     atmosphere.mieCoeff            = params["Mie"];
-	double mu                      = params["MieAsymmetry"];
-	cerr << "\nMie Asymmetry <cosTheta> = " << mu <<";  g = " << mu2g(mu) << "\n\n";
+
+    double phaseFunc = params["MiePhaseFunction"];
+    if (phaseFunc == 0)
+    {
+        double mu                      = params["MieAsymmetry"];
 	atmosphere.mieAsymmetry        = mu2g(mu);
+        atmosphere.miePhaseFunction    = phaseHenyeyGreenstein_CS;
+    }
+    else if (phaseFunc == 1)
+    {
+        atmosphere.mieAsymmetry        = params["MieAsymmetry"];
+        atmosphere.miePhaseFunction    = phaseHenyeyGreenstein;
+    }
+    else if (phaseFunc == 2)
+    {
+        double k                       = params["MieAsymmetry"];
+        atmosphere.mieAsymmetry        = schlick_g2k(k);
+        atmosphere.miePhaseFunction    = phaseSchlick;
+    }
+    
     atmosphere.absorbScaleHeight   = params["AbsorbScaleHeight"];
     atmosphere.absorbCoeff.x       = params["AbsorbRed"];
     atmosphere.absorbCoeff.y       = params["AbsorbGreen"];
@@ -1675,6 +1740,8 @@ void setSceneDefaults(ParameterSet& params)
     params["SurfaceBlue"]         = 1.0;
 
     params["SunAngularDiameter"]  = 0.5; // degrees
+
+    params["MiePhaseFunction"]       = 0;
 }
 
 
@@ -1691,13 +1758,34 @@ bool LoadParameterSet(ParameterSet& params, const string& filename)
     while (in.good())
     {
         string name;
-        double value;
 
         in >> name;
-        in >> value;
-        if (in.good())
+
+        if (name == "MiePhaseFunction")
         {
-            params[name] = value;
+            string strValue;
+            in >> strValue;
+            if (strValue == "HenyeyGreenstein_CS")
+            {
+                params[name] = 0;
+            }
+            else if (strValue == "HenyeyGreenstein")
+            {
+                params[name] = 1;
+            }
+            else if (strValue == "Schlick")
+            {
+                params[name] = 2;
+            }
+        }
+        else
+        {
+            double numValue;
+            in >> numValue;
+            if (in.good())
+            {
+                params[name] = numValue;
+            }
         }
     }
 
@@ -1770,6 +1858,19 @@ bool parseCommandLine(int argc, char* argv[])
             else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--fisheye"))
             {
                 UseFisheyeCameras = true;
+            }
+            else if (!strcmp(argv[i], "-e") || !strcmp(argv[i], "--exposure"))
+            {
+                if (i == argc - 1)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (sscanf(argv[i + 1], " %lf", &CameraExposure) != 1)
+                        return false;
+                    i++;
+                }
             }
             else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--scattersteps"))
             {
