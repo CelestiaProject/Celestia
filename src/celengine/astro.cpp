@@ -383,7 +383,7 @@ astro::Date::Date(int Y, int M, int D)
 
 astro::Date::Date(double jd)
 {
-    int a = (int) (jd + 0.5);
+    int a = (int) floor(jd + 0.5);
     double c;
     if (a < 2299161)
     {
@@ -391,15 +391,15 @@ astro::Date::Date(double jd)
     }
     else
     {
-        double b = (int) ((a - 1867216.25) / 36524.25);
-        c = a + b - (int) (b / 4) + 1525;
+        double b = (int) floor((a - 1867216.25) / 36524.25);
+        c = a + b - (int) floor(b / 4) + 1525;
     }
 
-    int d = (int) ((c - 122.1) / 365.25);
-    int e = (int) (365.25 * d);
-    int f = (int) ((c - e) / 30.6001);
+    int d = (int) floor((c - 122.1) / 365.25);
+    int e = (int) floor(365.25 * d);
+    int f = (int) floor((c - e) / 30.6001);
 
-    double dday = c - e - (int) (30.6001 * f) + ((jd + 0.5) - (int) (jd + 0.5));
+    double dday = c - e - (int) floor(30.6001 * f) + ((jd + 0.5) - a);
 
     // This following used to be 14.0, but gcc was computing it incorrectly, so
     // it was changed to 14
