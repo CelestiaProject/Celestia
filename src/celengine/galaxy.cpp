@@ -269,6 +269,20 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     if (form == NULL)
         return;
 
+    /* We'll first see if the galaxy's apparent size is big enough to
+       be noticeable on screen; if it's not we'll break right here,
+       avoiding all the overhead of the matrix transformations and
+       GL state changes: */
+        float distanceToDSO = offset.length() - getRadius();
+        if (distanceToDSO < 0)
+            distanceToDSO = 0;
+
+        float minimumFeatureSize = pixelSize * distanceToDSO;
+        float size  = 2 * getRadius();
+
+        if (size < minimumFeatureSize)
+            return;
+
     if (galaxyTex == NULL)
     {
         galaxyTex = CreateProceduralTexture(width, height, GL_RGBA,
@@ -285,19 +299,9 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     Vec3f v2 = Vec3f( 1,  1, 0) * viewMat;
     Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
 
-    float distanceToDSO = offset.length() - getRadius();
-    if (distanceToDSO < 0)
-        distanceToDSO = 0;
-
-    float minimumFeatureSize = pixelSize * distanceToDSO;
-
     //Mat4f m = (getOrientation().toMatrix4() *
     //           Mat4f::scaling(form->scale) *
     //           Mat4f::scaling(getRadius()));
-
-    float  size  = 2 * getRadius();
-
-
 
     Mat3f m =
         Mat3f::scaling(form->scale)*getOrientation().toMatrix3()*Mat3f::scaling(size);
@@ -330,22 +334,25 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
         if (brightness_corr < 0.45f)
             brightness_corr = 0.45f;
     }
+
     glBegin(GL_QUADS);
     for (unsigned int i = 0; i < nPoints; ++i)
     {
+        if ((i & pow2) != 0)
+        {
+            pow2 <<= 1;
+            size /= 1.55f;
+            if (size < minimumFeatureSize)
+                break;
+        }
+
         Blob    b  = (*points)[i];
         Point3f p  = b.position * m;
         float   br = b.brightness / 255.0f;
 
         Color   c      = colorTable[b.colorIndex];     // lookup static color table
         Point3f relPos = p + offset;
-        if ((i & pow2) != 0)
-        {
-            pow2 <<= 1;
-           	size /= 1.55f;
-            if (size < minimumFeatureSize)
-                break;
-        }
+
         float screenFrac = size / relPos.distanceFromOrigin();
         if (screenFrac < 0.1f)
         {
