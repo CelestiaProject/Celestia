@@ -553,7 +553,7 @@ template<class T> Quaternion<T> Quaternion<T>::slerp(const Quaternion<T>& q0,
     }
     else
     {
-        qstart = q;
+        qstart = q0;
     }
 
     // Avoid precision troubles when we're near the limit of acos range and
