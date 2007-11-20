@@ -1,0 +1,370 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Konstellációk\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2007-11-18 22:14+0100\n"
+"Last-Translator: Székely Zoltán <zoltanszekely@hotmail.com>\n"
+"Language-Team:  <zoltanszekely@hotmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: hungarian\n"
+"X-Poedit-Country: Hungary\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "Androméda"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "Légszivattyú"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "Paradicsommadár"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "Vízöntő"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "Sas"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "Oltár"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "Kos"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "Szekeres"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "Ökörhajcsár"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "Véső"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "Zsiráf"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "Rák"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "Vadászebek"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "Nagy Kutya"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "Kis Kutya"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "Bak"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "Hajógerinc"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "Cassiopea"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "Kentaur"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "Céfeusz"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "Cet"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "Kaméleon"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "Körző"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "Galamb"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "Bereniké Haja"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "Déli Korona"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "Északi Korona"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "Holló"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "Serleg"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "Déli Kereszt"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "Hattyú"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "Delfin"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "Aranyhal"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "Sárkány"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "Csikó"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "Eridánusz"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "Kemence"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "Ikrek"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "Daru"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "Herkules"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "Ingaóra"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr "Északi Vízikígyó"
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "Déli Vízikígyó"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "Indus"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "Gyík"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "Oroszlán"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "Kis Oroszlán"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "Nyúl"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "Mérleg"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "Farkas"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "Hiúz"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "Lant"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "Táblahegy"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "Mikroszkóp"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "Egyszarvú"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "Légy"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "Szögmérő"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "Oktáns"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "Kígyótartó"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "Orion"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "Páva"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "Pegazus"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "Perzeusz"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "Főnix"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "Festő"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "Halak"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "Déli Hal"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "Hajófar"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "Tájoló"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "Háló"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "Nyíl"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "Nyilas"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "Skorpió"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "Szobrász"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "Pajzs"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "Kígyó fej"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "Kígyó farok"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "Szextáns"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "Bika"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "Távcső"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "Háromszög"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "Déli Háromszög"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "Tukán"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "Nagy Medve"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "Kis Medve "
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "Vitorla"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "Szűz"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "Repülőhal"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "Kis Róka"
