@@ -44,7 +44,7 @@ public:
     Matrix4<T> toMatrix4() const;
     Matrix3<T> toMatrix3() const;
 
-    static Quaternion<T> slerp(Quaternion<T>, Quaternion<T>, T);
+    static Quaternion<T> slerp(const Quaternion<T>&, const Quaternion<T>&, T);
     static Quaternion<T> vecToVecRotation(const Vector3<T>& v0,
                                           const Vector3<T>& v1);
     static Quaternion<T> matrixToQuaternion(const Matrix3<T>& m);
@@ -530,29 +530,66 @@ template<class T> T dot(Quaternion<T> a, Quaternion<T> b)
 }
 
 
-//! Spherical interpolation of two unit quaternions
-template<class T> Quaternion<T> Quaternion<T>::slerp(Quaternion<T> q0,
-                                                     Quaternion<T> q1,
+/*! Spherical linear interpolation of two unit quaternions. Designed for
+ *  interpolating rotations, so shortest path between rotations will be
+ *  taken.
+ */
+template<class T> Quaternion<T> Quaternion<T>::slerp(const Quaternion<T>& q0,
+                                                     const Quaternion<T>& q1,
                                                      T t)
 {
-    T c = dot(q0, q1);
+    const double Nlerp_Threshold = 0.99999;
 
+    T cosAngle = dot(q0, q1);
+
+    // Assuming the quaternions representat rotations, ensure that we interpolate
+    // through the shortest path by inverting one of the quaternions if the
+    // angle between them is negative.
+    Quaternion qstart;
+    if (cosAngle < 0)
+    {
+        qstart = -q0;
+        cosAngle  = -cosAngle;
+    }
+    else
+    {
+        qstart = q;
+    }
+
+    // Avoid precision troubles when we're near the limit of acos range and
+    // perform a linear interpolation followed by a normalize when interpolating
+    // very small angles.
+    if (cosAngle > (T) Nlerp_Threshold)
+    {
+        Quaternion<T> q = (1 - t) * qstart + t * q1;
+        q.normalize();
+        return q;
+    }
+
+    // Below code unnecessary since we've already inverted cosAngle if it's negative.
+    // It will be necessary if we change slerp to not assume that we want the shortest
+    // path between two rotations.
+#if 0
     // Because of potential rounding errors, we must clamp c to the domain of acos.
-    if (c > (T) 1.0)
-        c = (T) 1.0;
-    else if (c < (T) -1.0)
-        c = (T) -1.0;
+    if (cosAngle < (T) -1.0)
+        cosAngle = (T) -1.0;
+#endif
 
-    T angle = (T) acos(c);
+    T angle = (T) acos(cosAngle);
+    T interpolatedAngle = t * angle;
 
-    if (abs(angle) < (T) 1.0e-5)
-        return q0;
+    // qstart and q2 will form an orthonormal basis in the plane of interpolation.
+    Quaternion q2 = q1 - qstart * cosAngle;
+    q2.normalize();
 
+    return qstart * (T) cos(interpolatedAngle) + q2 * (T) sin(interpolatedAngle);
+#if 0
     T s = (T) sin(angle);
     T is = (T) 1.0 / s;
 
     return q0 * ((T) sin((1 - t) * angle) * is) +
            q1 * ((T) sin(t * angle) * is);
+#endif
 }
 
 
