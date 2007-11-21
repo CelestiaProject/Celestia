@@ -1,6 +1,6 @@
 // parseobject.cpp
 //
-// Copyright (C) 2004 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2007 Chris Laurel <claurel@gmail.com>
 //
 // Functions for parsing objects common to star, solar system, and
 // deep sky catalogs.
@@ -47,6 +47,40 @@ ParseDate(Hash* hash, const string& name, double& jd)
 }
 
 
+/*!
+ * Create a new Keplerian orbit from an ssc property table:
+ *
+ * EllipticalOrbit
+ * {
+ *     # One of the following is required to specify orbit size:
+ *     SemiMajorAxis <number>
+ *     PericenterDistance <number>
+ *
+ *     # Required
+ *     Period <number>
+ *     
+ *     Eccentricity <number>   (default: 0.0)
+ *     Inclination <degrees>   (default: 0.0)
+ *     AscendingNode <degrees> (default: 0.0)
+ *
+ *     # One or none of the following:
+ *     ArgOfPericenter <degrees>  (default: 0.0)
+ *     LongOfPericenter <degrees> (default: 0.0)
+ *
+ *     Epoch <date> (default J2000.0)
+ *
+ *     # One or none of the following:
+ *     MeanAnomaly <degrees>     (default: 0.0)
+ *     MeanLongitude <degrees>   (default: 0.0)
+ * }
+ *
+ * If usePlanetUnits is true:
+ *     Period is in Julian years
+ *     SemiMajorAxis or PericenterDistance is in AU
+ * Otherwise:
+ *     Period is in Julian days
+ *     SemiMajorAxis or PericenterDistance is in kilometers.    
+ */
 static EllipticalOrbit*
 CreateEllipticalOrbit(Hash* orbitData,
                       bool usePlanetUnits)
@@ -121,6 +155,62 @@ CreateEllipticalOrbit(Hash* orbitData,
                                degToRad(anomalyAtEpoch),
                                period,
                                epoch);
+}
+
+
+/*!
+ * Create a new sampled orbit from an ssc property table:
+ *
+ * SampledTrajectory
+ * {
+ *     Source <string>
+ *     Interpolation "Cubic" | "Linear"
+ *     DoublePrecision <boolean>
+ * }
+ *
+ * Source is the only required field. Interpolation defaults to cubic, and
+ * DoublePrecision defaults to true.
+ */
+static Orbit*
+CreateSampledTrajectory(Hash* trajData, const string& path)
+{
+    string sourceName;
+    if (!trajData->getString("Source", sourceName))
+    {
+        clog << "SampledTrajectory is missing a source.\n";
+        return NULL;
+    }
+
+    // Read interpolation type; string value must be either "Linear" or "Cubic"
+    // Default interpolation type is cubic.
+    string interpolationString;
+    TrajectoryInterpolation interpolation = TrajectoryInterpolationCubic;
+    if (trajData->getString("Interpolation", interpolationString))
+    {
+        if (!compareIgnoringCase(interpolationString, "linear"))
+            interpolation = TrajectoryInterpolationLinear;
+        else if (!compareIgnoringCase(interpolationString, "cubic"))
+            interpolation = TrajectoryInterpolationCubic;
+        else
+            clog << "Unknown interpolation type " << interpolationString << endl; // non-fatal error
+    }
+
+    // Double precision is true by default
+    bool useDoublePrecision = true;
+    trajData->getBoolean("DoublePrecision", useDoublePrecision);
+    TrajectoryPrecision precision = useDoublePrecision ? TrajectoryPrecisionDouble : TrajectoryPrecisionSingle;
+
+    DPRINTF(1, "Attempting to load sampled trajectory from source '%s'\n", sourceName.c_str());
+    ResourceHandle orbitHandle = GetTrajectoryManager()->getHandle(TrajectoryInfo(sourceName, path, interpolation, precision));
+    Orbit* orbit = GetTrajectoryManager()->find(orbitHandle);
+    if (orbit == NULL)
+    {
+        clog << "Could not load sampled trajectory from '" << sourceName << "'\n";
+    }
+
+    clog << "Interpolation: " << interpolation << ", precision: " << precision << endl;
+    clog << "Orbit: " << (void*) orbit << "\n";
+    return orbit;
 }
 
 
@@ -283,6 +373,7 @@ CreateOrbit(PlanetarySystem* system,
     }
 #endif
 
+    // Trajectory calculated by Lua script
     Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit");
     if (scriptedOrbitValue != NULL)
     {
@@ -299,20 +390,40 @@ CreateOrbit(PlanetarySystem* system,
         }
     }
 
+    // New 1.5.0 style for sampled trajectories. Permits specification of
+    // precision and interpolation type.
+    Value* sampledTrajDataValue = planetData->getValue("SampledTrajectory");
+    if (sampledTrajDataValue != NULL)
+    {
+        if (sampledTrajDataValue->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect syntax for SampledTrajectory.\n";
+            return NULL;
+        }
+        else
+        {
+            return CreateSampledTrajectory(sampledTrajDataValue->getHash(), path);
+        }
+    }
+
+    // Old style for sampled trajectories. Assumes cubic interpolation and
+    // single precision.
     string sampOrbitFile;
     if (planetData->getString("SampledOrbit", sampOrbitFile))
     {
         DPRINTF(1, "Attempting to load sampled orbit file '%s'\n",
                 sampOrbitFile.c_str());
         ResourceHandle orbitHandle =
-            GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile, path));
+            GetTrajectoryManager()->getHandle(TrajectoryInfo(sampOrbitFile,
+                                                             path,
+                                                             TrajectoryInterpolationCubic,
+                                                             TrajectoryPrecisionSingle));
         orbit = GetTrajectoryManager()->find(orbitHandle);
         if (orbit != NULL)
         {
             return orbit;
         }
-        clog << "Could not load sampled orbit file '" <<
-            sampOrbitFile << "'\n";
+        clog << "Could not load sampled orbit file '" << sampOrbitFile << "'\n";
     }
 
     Value* orbitDataValue = planetData->getValue("EllipticalOrbit");

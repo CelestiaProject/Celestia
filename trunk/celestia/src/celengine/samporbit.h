@@ -1,6 +1,6 @@
 // samporbit.h
 //
-// Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2002-2007, Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,6 +13,19 @@
 #include <string>
 #include <celengine/orbit.h>
 
-extern Orbit* LoadSampledOrbit(const std::string& name);
+enum TrajectoryInterpolation
+{
+    TrajectoryInterpolationLinear,
+    TrajectoryInterpolationCubic,
+};
+
+enum TrajectoryPrecision
+{
+    TrajectoryPrecisionSingle,
+    TrajectoryPrecisionDouble
+};
+
+extern Orbit* LoadSampledTrajectoryDoublePrec(const std::string& name, TrajectoryInterpolation interpolation);
+extern Orbit* LoadSampledTrajectorySinglePrec(const std::string& name, TrajectoryInterpolation interpolation);
 
 #endif // _CELENGINE_SAMPORBIT_H_
