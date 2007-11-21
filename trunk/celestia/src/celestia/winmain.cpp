@@ -1464,26 +1464,29 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
     for (int i = 0; i < psys->getSystemSize(); i++)
     {
         Body* body = psys->getBody(i);
-        switch(body->getClassification())
+        if (!body->getName().empty())
         {
-        case Body::Asteroid:
-            asteroids.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
-            break;
-        case Body::Comet:
-            comets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
-            break;
-        case Body::Invisible:
-            invisibles.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
-            break;
-        case Body::Moon:
-            moons.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
-            break;
-        case Body::Planet:
-            planets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
-            break;
-        case Body::Spacecraft:
-            spacecraft.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
-            break;
+            switch(body->getClassification())
+            {
+            case Body::Asteroid:
+                asteroids.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
+                break;
+            case Body::Comet:
+                comets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
+                break;
+            case Body::Invisible:
+                invisibles.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
+                break;
+            case Body::Moon:
+                moons.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
+                break;
+            case Body::Planet:
+                planets.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
+                break;
+            case Body::Spacecraft:
+                spacecraft.push_back(make_pair(i, UTF8ToCurrentCP(body->getName(true))));
+                break;
+            }
         }
     }
 
