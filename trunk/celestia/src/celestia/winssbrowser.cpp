@@ -74,7 +74,7 @@ void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int lev
     for (int i = 0; i < sys->getSystemSize(); i++)
     {
         Body* world = sys->getBody(i);
-        if (world != NULL && world->getClassification() != Body::Invisible)
+        if (world != NULL && world->getClassification() != Body::Invisible && !world->getName().empty())
         {
             HTREEITEM item;
             item = AddItemToTree(treeView, 
