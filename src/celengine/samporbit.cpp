@@ -18,6 +18,7 @@
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/orbit.h>
+#include <celengine/samporbit.h>
 
 using namespace std;
 
@@ -28,21 +29,21 @@ static const double MinSampleInterval = 1.0 / 1440.0; // one minute
 static const double MaxSampleInterval = 50.0;
 static const double SampleThresholdAngle = 2.0;
 
-struct Sample
+template <typename T> struct Sample
 {
     double t;
-    float x, y, z;
+    T x, y, z;
 };
 
-bool operator<(const Sample& a, const Sample& b)
+template <typename T> bool operator<(const Sample<T>& a, const Sample<T>& b)
 {
     return a.t < b.t;
 }
 
-class SampledOrbit : public CachingOrbit
+template <typename T> class SampledOrbit : public CachingOrbit
 {
 public:
-    SampledOrbit();
+    SampledOrbit(TrajectoryInterpolation);
     virtual ~SampledOrbit();
 
     void addSample(double t, double x, double y, double z);
@@ -62,69 +63,63 @@ public:
     virtual void sample(double, double, int, OrbitSampleProc& proc) const;
 
 private:
-    vector<Sample> samples;
+    vector<Sample<T> > samples;
     double boundingRadius;
     double period;
     mutable int lastSample;
 
-    enum InterpolationType
-    {
-        Linear = 0,
-        Cubic = 1,
-    };
-
-    InterpolationType interpolation;
+    TrajectoryInterpolation interpolation;
 };
 
 
-SampledOrbit::SampledOrbit() :
+template <typename T> SampledOrbit<T>::SampledOrbit(TrajectoryInterpolation _interpolation) :
     boundingRadius(0.0),
     period(1.0),
     lastSample(0),
-    interpolation(Cubic)
+    interpolation(_interpolation)
 {
 }
 
 
-SampledOrbit::~SampledOrbit()
+template <typename T> SampledOrbit<T>::~SampledOrbit()
 {
 }
 
 
-void SampledOrbit::addSample(double t, double x, double y, double z)
+template <typename T> void SampledOrbit<T>::addSample(double t, double x, double y, double z)
 {
     double r = sqrt(x * x + y * y + z * z);
     if (r > boundingRadius)
         boundingRadius = r;
 
-    Sample samp;
-    samp.x = (float) x;
-    samp.y = (float) y;
-    samp.z = (float) z;
+    Sample<T> samp;
+    samp.x = (T) x;
+    samp.y = (T) y;
+    samp.z = (T) z;
     samp.t = t;
     samples.insert(samples.end(), samp);
 }
 
-double SampledOrbit::getPeriod() const
+template <typename T> double SampledOrbit<T>::getPeriod() const
 {
     return samples[samples.size() - 1].t - samples[0].t;
 }
 
 
-bool SampledOrbit::isPeriodic() const
+template <typename T> bool SampledOrbit<T>::isPeriodic() const
 {
     return false;
 }
 
 
-void SampledOrbit::getValidRange(double& begin, double& end) const
+template <typename T> void SampledOrbit<T>::getValidRange(double& begin, double& end) const
 {
     begin = samples[0].t;
     end = samples[samples.size() - 1].t;
 }
 
 
-double SampledOrbit::getBoundingRadius() const
+template <typename T> double SampledOrbit<T>::getBoundingRadius() const
 {
     return boundingRadius;
 }
@@ -153,7 +148,7 @@ static Vec3d cubicInterpolateVelocity(const Point3d& p0, const Vec3d& v0,
 #endif
 
 
-Point3d SampledOrbit::computePosition(double jd) const
+template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
 {
     Point3d pos;
     if (samples.size() == 0)
@@ -166,15 +161,15 @@ Point3d SampledOrbit::computePosition(double jd) const
     }
     else
     {
-        Sample samp;
+        Sample<T> samp;
         samp.t = jd;
         int n = lastSample;
 
         if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
         {
-            vector<Sample>::const_iterator iter = lower_bound(samples.begin(),
-                                                              samples.end(),
-                                                              samp);
+            typename vector<Sample<T> >::const_iterator iter = lower_bound(samples.begin(),
+                                                                           samples.end(),
+                                                                           samp);
             if (iter == samples.end())
                 n = samples.size();
             else
@@ -189,19 +184,19 @@ Point3d SampledOrbit::computePosition(double jd) const
         }
         else if (n < (int) samples.size())
         {
-            if (interpolation == Linear)
+            if (interpolation == TrajectoryInterpolationLinear)
             {
-                Sample s0 = samples[n - 1];
-                Sample s1 = samples[n];
+                Sample<T> s0 = samples[n - 1];
+                Sample<T> s1 = samples[n];
 
                 double t = (jd - s0.t) / (s1.t - s0.t);
                 pos = Point3d(Mathd::lerp(t, (double) s0.x, (double) s1.x),
                               Mathd::lerp(t, (double) s0.y, (double) s1.y),
                               Mathd::lerp(t, (double) s0.z, (double) s1.z));
             }
-            else if (interpolation == Cubic)
+            else if (interpolation == TrajectoryInterpolationCubic)
             {
-                Sample s0, s1, s2, s3;
+                Sample<T> s0, s1, s2, s3;
                 if (n > 1)
                     s0 = samples[n - 2];
                 else
@@ -247,7 +242,7 @@ Point3d SampledOrbit::computePosition(double jd) const
 
 #if 0
 // Not yet required
-Vec3d SampledOrbit::computeVelocity(double jd) const
+template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
 {
     Vec3d vel;
 
@@ -276,7 +271,7 @@ Vec3d SampledOrbit::computeVelocity(double jd) const
         }
         else if (n < (int) samples.size())
         {
-            if (interpolation == Linear)
+            if (interpolation == TrajectoryInterpolationLinear)
             {
                 Sample s0 = samples[n - 1];
                 Sample s1 = samples[n];
@@ -284,7 +279,7 @@ Vec3d SampledOrbit::computeVelocity(double jd) const
                 double dt = (s1.t - s0.t);
                 return (Vec3d(s1.x, s1.y, s1.z) - Vec3d(s0.x, s0.y, s0.z)) * (1.0 / dt);
             }
-            else if (interpolation == Cubic)
+            else if (interpolation == TrajectoryInterpolationCubic)
             {
                 Sample s0, s1, s2, s3;
                 if (n > 1)
@@ -330,8 +325,8 @@ Vec3d SampledOrbit::computeVelocity(double jd) const
 #endif
 
 
-void SampledOrbit::sample(double start, double t, int,
-                          OrbitSampleProc& proc) const
+template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
+                                                   OrbitSampleProc& proc) const
 {
     double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
     double dt = MinSampleInterval;
@@ -381,13 +376,16 @@ void SampledOrbit::sample(double start, double t, int,
 }
 
 
-Orbit* LoadSampledOrbit(const string& filename)
+template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, TrajectoryInterpolation interpolation, T)
 {
     ifstream in(filename.c_str());
     if (!in.good())
         return NULL;
 
-    SampledOrbit* orbit = new SampledOrbit();
+    SampledOrbit<T>* orbit = NULL;
+    
+    orbit = new SampledOrbit<T>(interpolation);
+
     int nSamples = 0;
     while (in.good())
     {
@@ -418,4 +416,16 @@ Orbit* LoadSampledOrbit(const string& filename)
     }
 
     return orbit;
+}
+
+
+Orbit* LoadSampledTrajectorySinglePrec(const string& filename, TrajectoryInterpolation interpolation)
+{
+    return LoadSampledOrbit(filename, interpolation, 0.0f);
+}
+
+
+Orbit* LoadSampledTrajectoryDoublePrec(const string& filename, TrajectoryInterpolation interpolation)
+{
+    return LoadSampledOrbit(filename, interpolation, 0.0);
 }
