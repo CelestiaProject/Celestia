@@ -1,6 +1,6 @@
 // trajmanager.cpp
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2007 Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 #include "celestia.h"
 #include <celutil/debug.h>
@@ -19,6 +20,8 @@ using namespace std;
 
 
 static TrajectoryManager* trajectoryManager = NULL;
+
+static const char UniqueSuffixChar = '!';
 
 
 TrajectoryManager* GetTrajectoryManager()
@@ -31,22 +34,44 @@ TrajectoryManager* GetTrajectoryManager()
 
 string TrajectoryInfo::resolve(const string& baseDir)
 {
+    // Ensure that trajectories with different interpolation or precision get resolved to different objects by
+    // adding a 'uniquifying' suffix to the filename that encodes the properties other than filename which can
+    // distinguish two trajectories. This suffix is stripped before the file is actually loaded.
+    char uniquifyingSuffix[32];
+    sprintf(uniquifyingSuffix, "%c%u%u", UniqueSuffixChar, (unsigned int) interpolation, (unsigned int) precision);
+
     if (!path.empty())
     {
         string filename = path + "/data/" + source;
-        // cout << "Resolve: testing [" << filename << "]\n";
         ifstream in(filename.c_str());
         if (in.good())
-            return filename;
+            return filename + uniquifyingSuffix;
     }
 
-    return baseDir + "/" + source;
+    return baseDir + "/" + source + uniquifyingSuffix;
 }
 
 Orbit* TrajectoryInfo::load(const string& filename)
 {
-    DPRINTF(1, "Loading trajectory: %s\n", filename.c_str());
-    // cout << "Loading trajectory: " << filename << '\n';
+    // strip off the uniquifying suffix
+    string::size_type uniquifyingSuffixStart = filename.rfind(UniqueSuffixChar);
+    string strippedFilename(filename, 0, uniquifyingSuffixStart);
 
-    return LoadSampledOrbit(filename);
+    DPRINTF(1, "Loading trajectory: %s\n", strippedFilename.c_str());
+
+    Orbit* sampTrajectory = NULL;
+    switch (precision)
+    {
+    case TrajectoryPrecisionSingle:
+        sampTrajectory = LoadSampledTrajectorySinglePrec(strippedFilename, interpolation);
+        break;
+    case TrajectoryPrecisionDouble:
+        sampTrajectory = LoadSampledTrajectoryDoublePrec(strippedFilename, interpolation);
+        break;
+    default:
+        assert(0);
+        break;
+    }
+
+    return sampTrajectory;
 }
