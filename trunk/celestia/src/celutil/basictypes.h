@@ -20,5 +20,15 @@ typedef unsigned short uint16;
 typedef char           int8;
 typedef unsigned char  uint8;
 
+#ifdef _MSC_VER
+// MS Visual C++ does not include stdint.h
+typedef __int64          int64;
+typedef unsigned __int64 uint64;
+#else
+#include <stdint.h>
+typedef          int64_t int64;
+typedef         uint64_t uint64;
+#endif
+
 #endif // _BASICTYPES_H_
 
