@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "celestia", "celestia.vcproj", "{DDDE8EA8-F55A-491B-A102-11C9C01B4B58}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDDE8EA8-F55A-491B-A102-11C9C01B4B58}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DDDE8EA8-F55A-491B-A102-11C9C01B4B58}.Debug|Win32.Build.0 = Debug|Win32
+		{DDDE8EA8-F55A-491B-A102-11C9C01B4B58}.Release|Win32.ActiveCfg = Release|Win32
+		{DDDE8EA8-F55A-491B-A102-11C9C01B4B58}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
