@@ -7306,7 +7306,7 @@ void Renderer::buildRenderLists(const Star& sun,
 
                 labelColor = Color(labelColor, opacity * labelColor.alpha());
 
-                if (showLabel)
+                if (showLabel && !body->getName().empty())
                 {
                     addSortedLabel(body->getName(true), labelColor,
                                    Point3f(pos.x, pos.y, pos.z));
