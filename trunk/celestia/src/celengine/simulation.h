@@ -1,5 +1,5 @@
 // simulation.h
-// 
+//
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
@@ -117,6 +117,7 @@ class Simulation
  private:
     double realTime;
     double timeScale;
+    double storedTimeScale;
     bool syncTime;
 
     Universe* universe;
@@ -128,7 +129,6 @@ class Simulation
     std::vector<Observer*> observers;
 
     float faintestVisible;
-    double storedTimeScale;
     bool pauseState;
 };
 
