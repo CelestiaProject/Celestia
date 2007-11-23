@@ -20,12 +20,12 @@ Simulation::Simulation(Universe* _universe) :
     realTime(0.0),
     timeScale(1.0),
     storedTimeScale(1.0),
-    pauseState(false),
     syncTime(true),
     universe(_universe),
     closestSolarSystem(NULL),
     selection(),
-    faintestVisible(5.0f)
+    faintestVisible(5.0f),
+    pauseState(false)
 {
     activeObserver = new Observer();
     observers.insert(observers.end(), activeObserver);
