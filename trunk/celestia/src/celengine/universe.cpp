@@ -756,9 +756,6 @@ void DSOPicker::process(DeepSkyObject* const & dso, double, float)
 
     Vec3d relativeDSOPos = dso->getPosition() - pickOrigin;
     Vec3d dsoDir = relativeDSOPos;
-    dsoDir.normalize();
-
-    double sinAngle2 = 0.0;
 
     double distance2;
     if (testIntersection(Ray3d(Point3d(0.0, 0.0, 0.0), pickDir),
@@ -768,11 +765,11 @@ void DSOPicker::process(DeepSkyObject* const & dso, double, float)
         dsoDir         = Vec3d(dsoPos.x * 1.0e-6 - pickOrigin.x,
                                dsoPos.y * 1.0e-6 - pickOrigin.y,
                                dsoPos.z * 1.0e-6 - pickOrigin.z);
-        dsoDir.normalize();
     }
+    dsoDir.normalize();
 
     Vec3d dsoMissd   = dsoDir - Vec3d(pickDir.x, pickDir.y, pickDir.z);
-    sinAngle2        = sqrt(dsoMissd * dsoMissd)/2.0;
+    double sinAngle2 = sqrt(dsoMissd * dsoMissd)/2.0;
 
     if (sinAngle2 <= sinAngle2Closest)
     {
