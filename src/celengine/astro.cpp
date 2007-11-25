@@ -13,6 +13,7 @@
 #include <celmath/mathlib.h>
 #include "celestia.h"
 #include "astro.h"
+#include <celutil/util.h>
 
 using namespace std;
 
@@ -76,6 +77,10 @@ static const LeapSecondRecord LeapSeconds[] =
     { 32, 2451179.5 }, // 1 Jan 1999
     { 33, 2453736.5 }, // 1 Jan 2006
 };
+
+
+static const char* MonthAbbrList[12] =
+{ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 
 static Mat3d equatorialToCelestiald = Mat3d::xrotation(astro::J2000Obliquity);
@@ -491,7 +496,7 @@ bool astro::parseDate(const string& s, astro::Date& date)
 
 ostream& operator<<(ostream& s, const astro::Date d)
 {
-    s << d.year << ' ' << setw(2) << setfill('0') << d.month << ' ';
+    s << d.year << ' ' << setw(2) << setfill('0') << _(MonthAbbrList[d.month - 1]) << ' ';
     s << setw(2) << setfill('0') << d.day << ' ';
     s << setw(2) << setfill('0') << d.hour << ':';
     s << setw(2) << setfill('0') << d.minute << ':';
