@@ -118,6 +118,7 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     configParams->getNumber("RotateAcceleration", config->rotateAcceleration);
     config->mouseRotationSensitivity = 1.0f;
     configParams->getNumber("MouseRotationSensitivity", config->mouseRotationSensitivity);
+    config->reverseMouseWheel = false;
     configParams->getBoolean("ReverseMouseWheel", config->reverseMouseWheel);
     configParams->getString("ScriptScreenshotDirectory", config->scriptScreenshotDirectory);
     config->scriptScreenshotDirectory = WordExp(config->scriptScreenshotDirectory);
