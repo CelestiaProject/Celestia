@@ -66,11 +66,11 @@ dist-hook:
 	)
 
 install-data-hook:
-	if [ "$(kde_datadir)" -a -d $(kde_datadir)/@PACKAGE@ -a ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
-		mv -f -b $(kde_datadir)/@PACKAGE@/* $(datadir)/@PACKAGE@/ ; \
-		rmdir $(kde_datadir)/@PACKAGE@ ; \
+	if [ "$(DESTDIR)/$(kde_datadir)" -a -d $(DESTDIR)/$(kde_datadir)/@PACKAGE@ -a ! -h $(DESTDIR)/$(kde_datadir)/@PACKAGE@ ] ; then \
+		mv -f -b $(DESTDIR)/$(kde_datadir)/@PACKAGE@/* $(DESTDIR)/$(datadir)/@PACKAGE@/ ; \
+		rmdir $(DESTDIR)/$(kde_datadir)/@PACKAGE@ ; \
 	fi
-	if [ "$(kde_datadir)" -a ! -h $(kde_datadir)/@PACKAGE@ ] ; then \
-		ln -s $(datadir)/@PACKAGE@ $(kde_datadir)/@PACKAGE@ ; \
+	if [ "$(DESTDIR)/$(kde_datadir)" -a ! -h $(DESTDIR)/$(kde_datadir)/@PACKAGE@ ] ; then \
+		ln -s $(datadir)/@PACKAGE@ $(DESTDIR)/$(kde_datadir)/@PACKAGE@ ; \
 	fi
 
