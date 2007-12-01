@@ -5,6 +5,17 @@
 # Additionally, some companion stars and orbits for named binary stars
 # with extrasolar planets.
 
+# OGLE survey
+
+"OGLE-TR-10"
+{
+	RA 267.867708
+	Dec -29.876361
+	Distance 4900
+	SpectralType "G2V" # from Simbad: mass and luminosity seem too high, however
+	AppMag 14.93
+}
+
 "OGLE-TR-56"
 {
 	RA 269.148070
@@ -12,6 +23,15 @@
 	Distance 8900      # to give known apparent magnitude
 	SpectralType "G0V" # from estimated mass and radius
 	AbsMag 4.4         # from spectral class
+}
+
+"OGLE-TR-111"
+{
+	RA 163.324625
+	Dec -60.405639
+	Distance 3300        # estimate from mass and app. mag.
+	SpectralType "G8V"   # estimated from mass
+	AppMag 15.55
 }
 
 "OGLE-TR-113"
@@ -32,6 +52,26 @@
 	AbsMag 3.6         # from spectral class
 }
 
+"OGLE-TR-182"
+{
+	RA 167.32833
+	Dec -61.09528
+	Distance 10000     # from apparent magnitude and estimated spectral class
+	SpectralType "G0V" # from mass, radius and temperature
+	AppMag 16.84
+}
+
+"OGLE-TR-211"
+{
+	RA 160.0625
+	Dec -62.45555
+	Distance 5200      # from estimated apparent magnitude and spectral class
+	SpectralType "F8V" 
+	AppMag 15          # estimated from I magnitude and spectral class
+}
+
+# TrES survey
+
 1013242652 "TrES-1 (parent star):GSC 02652-01324"
 {
 	RA 286.04083
@@ -41,14 +81,34 @@
 	AppMag 11.79
 }
 
-"OGLE-TR-10"
+1028113549 "TrES-2 (parent star):GSC 03549-02811"
 {
-	RA 267.867708
-	Dec -29.876361
-	Distance 4900
-	SpectralType "G2V" # from Simbad: mass and luminosity seem too high, however
-	AppMag 14.93
+	RA 286.80848
+	Dec 49.31641
+	Distance 750
+	SpectralType "G0V"
+	AppMag 11.41
 }
+
+"TrES-3 (parent star):GSC 03089-00929"
+{
+	RA 268.02917
+	Dec 37.54611
+	Distance 940       # from inferred spectrum
+	SpectralType "G5V" # from inferred mass and temp
+	AppMag 12.4
+}
+
+1006482620 "TrES-4 (parent star):GSC 02620-00648"
+{
+	RA 268.304375
+	Dec 37.211833
+	Distance 1430
+	SpectralType "G0IV" # from inferred mass, radius and temp
+	AbsMag 3.36
+}
+
+# XO survey
 
 1016572041 "XO-1:GSC 02041-01657"
 {
@@ -68,14 +128,7 @@
 	AppMag 11.18
 }
 
-1028113549 "TrES-2 (parent star):GSC 03549-02811"
-{
-	RA 286.80848
-	Dec 49.31641
-	Distance 750
-	SpectralType "G0V"
-	AppMag 11.41
-}
+# HAT-P survey
 
 "HAT-P-1:SAO 72884"
 {
@@ -86,88 +139,6 @@
 	AppMag 10.4
 }
 
-"WASP-1"
-{
-	RA 5.167083
-	Dec 31.990000
-	Distance 1200
-	SpectralType "F7V"
-	AppMag 11.79
-}
-
-"WASP-2"
-{
-	RA 307.725417
-	Dec 6.429444
-	Distance 470
-	SpectralType "K1V"
-	AppMag 11.98
-}
-
-1001952636 "WASP-3:GSC 02636-00195"
-{
-	RA 278.63167
-	Dec 35.66167
-	Distance 727
-	SpectralType "F7V"
-	AppMag 10.64
-}
-
-1000370197 # HD 70573
-{
-	RA 125.7083
-	Dec 1.8594
-	Distance 149
-	SpectralType "G1V"
-	AppMag 8.70
-}
-
-1001013304 # HD 17092
-{
-	RA 41.5917
-	Dec 49.6531
-	Distance 355
-	SpectralType "K0III"
-	AppMag 7.73
-}
-
-"TrES-3 (parent star):GSC 03089-00929"
-{
-	RA 268.02917
-	Dec 37.54611
-	Distance 940       # from inferred spectrum
-	SpectralType "G5V" # from inferred mass and temp
-	AppMag 12.4
-}
-
-1021565409 "NGC 2423 3:GSC 05409-02156"
-{
-	RA 114.2875
-	Dec -13.90667
-	Distance 2500
-	SpectralType "GIV"
-	AppMag 9.45
-}
-
-"Gliese 317"
-{
-	RA 130.24583
-	Dec -23.45639
-	Distance 29.9
-	SpectralType "M3.5V"
-	AppMag 12.0
-}
-
-
-1014500458 # HD 171028
-{
-	RA 206.094167
-	Dec 6.94583
-	Distance 290
-	SpectralType "G0"
-	AppMag 8.31
-}
-
 1008193466 "HAT-P-3:GSC 03466-00819"
 {
 	RA 206.094167
@@ -175,33 +146,6 @@
 	Distance 460
 	SpectralType "K0V" # from temp and luminosity
 	AbsMag 5.86
-}
-
-"Cha Hα 8:Cha Ha 8"
-{
-	RA 166.949167
-	Dec -77.668889
-	Distance 520
-	SpectralType "M6.5V"
-	AppMag 20.1
-}
-
-1006482620 "TrES-4 (parent star):GSC 02620-00648"
-{
-	RA 268.304375
-	Dec 37.211833
-	Distance 1430
-	SpectralType "G0IV" # from inferred mass, radius and temp
-	AbsMag 3.36
-}
-
-"V391 Peg"
-{
-	RA 331.05083
-	Dec 26.41889
-	Distance 4600
-	SpectralType "B0" # from effective temperature, gives correct radius
-	AppMag 14.57
 }
 
 1015992569 "HAT-P-4:GSC 02569-01599"
@@ -231,14 +175,122 @@
 	AppMag 10.5
 }
 
-"OGLE-TR-182"
+# WASP survey
+
+"WASP-1"
 {
-	RA 167.32833
-	Dec -61.09528
-	Distance 8600      # from apparent I-mag and estimated spectral class
-	SpectralType "G0V" # from mass, radius and temperature
-	AbsMag 4.4         # from spectral class
+	RA 5.167083
+	Dec 31.990000
+	Distance 1200
+	SpectralType "F7V"
+	AppMag 11.79
 }
+
+"WASP-2"
+{
+	RA 307.725417
+	Dec 6.429444
+	Distance 470
+	SpectralType "K1V"
+	AppMag 11.98
+}
+
+1001952636 "WASP-3:GSC 02636-00195"
+{
+	RA 278.63167
+	Dec 35.66167
+	Distance 727
+	SpectralType "F7V"
+	AppMag 10.64
+}
+
+# HD stars without Hip numbers
+
+1000370197 # HD 70573
+{
+	RA 125.7083
+	Dec 1.8594
+	Distance 149
+	SpectralType "G1V"
+	AppMag 8.70
+}
+
+1001013304 # HD 17092
+{
+	RA 41.5917
+	Dec 49.6531
+	Distance 355
+	SpectralType "K0III"
+	AppMag 7.73
+}
+
+1014500458 # HD 171028
+{
+	RA 206.094167
+	Dec 6.94583
+	Distance 290
+	SpectralType "G0"
+	AppMag 8.31
+}
+
+# Other non-Hip stars
+
+1009465503 "BD-10 3166"
+{
+	RA 164.61993
+	Dec -10.77038
+	Distance 378.39
+	SpectralType "G4V"
+	AppMag 10.0
+}
+
+1021565409 "NGC 2423 3:GSC 05409-02156"
+{
+	RA 114.2875
+	Dec -13.90667
+	Distance 2500
+	SpectralType "GIV"
+	AppMag 9.45
+}
+
+"Gliese 317"
+{
+	RA 130.24583
+	Dec -23.45639
+	Distance 29.9
+	SpectralType "M3.5V"
+	AppMag 12.0
+}
+
+"Cha Hα 8:Cha Ha 8"
+{
+	RA 166.949167
+	Dec -77.668889
+	Distance 520
+	SpectralType "M6.5V"
+	AppMag 20.1
+}
+
+"V391 Peg"
+{
+	RA 331.05083
+	Dec 26.41889
+	Distance 4600
+	SpectralType "B0" # from effective temperature, gives correct radius
+	AppMag 14.57
+}
+
+
+"Lupus-TR-3"
+{
+	RA 232.579167
+	Dec -42.979444
+	Distance 5900      # estimate from spectral class and app. mag.
+	SpectralType "K1V"
+	AppMag 17.4
+}
+
+# Definitions for some exoplanet stars in multiple systems
 
 Barycenter "TAU Boo:4 Boo"
 {
@@ -279,24 +331,6 @@ Barycenter "TAU Boo:4 Boo"
 		ArgOfPericenter 213.2
 		MeanAnomaly     356.9
 	}
-}
-
-1009465503 "BD-10 3166"
-{
-	RA 164.61993
-	Dec -10.77038
-	Distance 378.39
-	SpectralType "G4V"
-	AppMag 10.0
-}
-
-"OGLE-TR-111"
-{
-	RA 163.324625
-	Dec -60.405639
-	Distance 3300        # estimate from mass and app. mag.
-	SpectralType "G8V"   # estimated from mass
-	AppMag 15.55
 }
 
 Barycenter "UPS And:50 And"
