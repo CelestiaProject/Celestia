@@ -33,7 +33,6 @@
 -(void)setSelection:(CelestiaSelection*)sel;
 -(CelestiaSelection*)trackedObject;
 -(void)setTrackedObject:(CelestiaSelection*)sel;
--(void)selectStar:(NSNumber*)catalogNo;
 -(void)selectPlanet:(NSNumber*)planetNo;
 -(CelestiaSelection*)findObject:(NSString*)s;
 -(CelestiaSelection*)findObjectFromPath:(NSString*)s;
