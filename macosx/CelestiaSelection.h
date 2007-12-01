@@ -17,7 +17,6 @@
 -(CelestiaSelection*)initWithCelestiaStar:(CelestiaStar*)s;
 -(CelestiaSelection*)initWithCelestiaBody:(CelestiaBody*)b;
 -(CelestiaSelection*)initWithCelestiaGalaxy:(CelestiaGalaxy*)g;
--(CelestiaBody *)body;
 -(BOOL)isEmpty;
 -(NSNumber*)radius;
 -(BOOL)isEqualToSelection:(CelestiaSelection*)csel;
