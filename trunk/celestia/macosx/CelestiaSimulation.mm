@@ -124,11 +124,6 @@ FrameOfReference getFrame() const;
     [self simulation]->setTrackedObject([sel selection]);
 }    
 
--(void)selectStar:(NSNumber*)catalogNo
-{
-//    [self simulation]->selectStar([catalogNo unsignedIntValue]);
-}
-
 -(void)selectPlanet:(NSNumber*)planetNo
 {
     [self simulation]->selectPlanet([planetNo intValue]);
