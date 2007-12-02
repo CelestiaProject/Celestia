@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Thu Jun 20 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #import "MyTree.h"
@@ -39,6 +39,11 @@
     self = [self init];
     _myClass = myClass;
     return self;
+}
+-(void)dealloc
+{
+    [_array release];
+    [super dealloc];
 }
 -(void)addObject:(id)obj
 {
@@ -147,7 +152,7 @@
     // Leaf
     if ((origArray = [dict objectForKey:@"children"]) == nil)
         return [self initWithNode:nodeValue parent:parent];
-    children = [[MyVector alloc] initWithClass:[MyTree class]];
+    children = [[[MyVector alloc] initWithClass:[MyTree class]] autorelease];
     enumerator = [origArray objectEnumerator];
     while ((childDict = [enumerator nextObject]) != nil)
         [children addObject:[[[MyTree alloc] initWithDictionary:childDict parent:self] autorelease]];
@@ -175,7 +180,7 @@
         [[self nodeValue] autorelease];
     _nodeValue = [obj retain];
 }
--(void)setParent:(id)obj
+-(void)setParent:(MyTree*)obj
 {
     _parent = obj;
 }
