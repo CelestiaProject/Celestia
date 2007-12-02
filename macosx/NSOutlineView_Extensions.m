@@ -60,7 +60,7 @@
 }
 
 - (void)selectItems:(NSArray*)items byExtendingSelection:(BOOL)extend {
-    int i;
+    unsigned i;
     if (extend==NO) [self deselectAll:nil];
     for (i=0;i<[items count];i++) {
         int row = [self rowForItem:[items objectAtIndex:i]];

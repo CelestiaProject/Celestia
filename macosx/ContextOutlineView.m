@@ -15,7 +15,21 @@
             if ([delegate respondsToSelector:@selector(outlineView:shouldSelectItem:)] && [delegate outlineView:self shouldSelectItem:item])
                 [self selectRow:rowIndex byExtendingSelection:NO];
             if ([delegate respondsToSelector:@selector(outlineView:contextMenuForItem:)])
-                return [delegate outlineView:self contextMenuForItem:item];
+            {
+                SEL sel = @selector(outlineView:contextMenuForItem:);
+                NSInvocation *invoc = [NSInvocation invocationWithMethodSignature:
+                    [delegate methodSignatureForSelector: sel]];
+                if (invoc)
+                {
+                    NSMenu *result;
+                    [invoc setSelector: sel];
+                    [invoc setArgument: &self atIndex: 2];
+                    [invoc setArgument: &item atIndex: 3];
+                    [invoc invokeWithTarget: delegate];
+                    [invoc getReturnValue: &result];
+                    return result;
+                }
+            }
         }
     } else {
         [self deselectAll:self];

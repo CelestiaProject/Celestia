@@ -68,7 +68,15 @@ public:
     BOOL hasMarkedText = NO;
     if ([aTextObject respondsToSelector: @selector(hasMarkedText)])
     {
-        hasMarkedText = [aTextObject performSelector: @selector(hasMarkedText)];
+        SEL sel = @selector(hasMarkedText);
+        NSInvocation *invoc = [NSInvocation invocationWithMethodSignature:
+            [aTextObject methodSignatureForSelector: sel]];
+        if (invoc)
+        {
+            [invoc setSelector:      sel];
+            [invoc invokeWithTarget: aTextObject];
+            [invoc getReturnValue:   &hasMarkedText];
+        }
     }
     
     [[aTextObject window] makeKeyAndOrderFront: nil];
