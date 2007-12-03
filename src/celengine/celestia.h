@@ -10,10 +10,6 @@
 #ifndef _CELESTIA_H_
 #define _CELESTIA_H_
 
-#ifdef _WIN32
-
-#define snprintf _snprintf
-
 #if _MSC_VER >= 1000
 // Make VC shut up about long variable names from templates
 #pragma warning(disable : 4786)
@@ -21,9 +17,9 @@
 
 #ifdef _MSC_VER
 #define BROKEN_FRIEND_TEMPLATES
+#define snprintf _snprintf
 #endif // _MSC_VER
 
-#endif // _WIN32
 
 #define HAVE_SSTREAM
 #ifdef __GNUC__
