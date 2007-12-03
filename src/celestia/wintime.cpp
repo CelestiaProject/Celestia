@@ -217,7 +217,7 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
     
         case IDC_SETCURRENTTIME:
             // Set time to the current system time
-            setTime((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1));
+            setTime(astro::UTCtoTDB((double) time(NULL) / 86400.0 + (double) astro::Date(1970, 1, 1)));
             updateControls();
             return TRUE;
             
