@@ -164,6 +164,7 @@ SetTimeDialog::updateControls()
 {
     HWND timeItem = NULL;
     HWND dateItem = NULL;
+    HWND jdItem = NULL;
     SYSTEMTIME sysTime;
     double tztdb = tdb;
 
@@ -195,6 +196,14 @@ SetTimeDialog::updateControls()
         sprintf(dateFormat, "HH':'mm':'ss' %s'", timeZoneName);
         DateTime_SetFormat(timeItem, dateFormat);
         DateTime_SetSystemtime(timeItem, GDT_VALID, &sysTime);
+    }
+
+    jdItem = GetDlgItem(hDlg, IDC_JDPICKER);
+    if (jdItem != NULL)
+    {
+        char jd[16];
+        sprintf(jd, "%0.5f", astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb))));
+        SetWindowText(GetDlgItem(hDlg, IDC_JDPICKER), jd);
     }
 }
 
@@ -230,6 +239,16 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
             }
             return TRUE;          
             
+        case IDC_JDPICKER:
+            if (HIWORD(wParam) == EN_KILLFOCUS)
+            {
+                char jd[16];
+                GetWindowText(GetDlgItem(hDlg, IDC_JDPICKER), jd, sizeof(jd));
+                tdb = astro::TTtoTDB(astro::TAItoTT(astro::JDUTCtoTAI(atof(jd))));
+                updateControls();
+            }
+            return TRUE;
+
         default:
             return FALSE;
     }
@@ -262,6 +281,8 @@ SetTimeDialog::notify(int id, const NMHDR& hdr)
                 tdb = astro::UTCtoTDB(newTime);
                 if (useLocalTime)
                     tdb -= localTimeZoneBiasInSeconds / 86400.0;
+
+                updateControls();
             }
         }
     }
