@@ -10,6 +10,7 @@
 #include <cmath>
 #include <iomanip>
 #include <cstdio>
+#include <celutil/basictypes.h>
 #include <celmath/mathlib.h>
 #include "celestia.h"
 #include "astro.h"
@@ -388,28 +389,28 @@ astro::Date::Date(int Y, int M, int D)
 
 astro::Date::Date(double jd)
 {
-    int a = (int) floor(jd + 0.5);
+    int64 a = (int64) floor(jd + 0.5);
     double c;
     if (a < 2299161)
     {
-        c = a + 1524;
+        c = (double) (a + 1524);
     }
     else
     {
-        double b = (int) floor((a - 1867216.25) / 36524.25);
-        c = a + b - (int) floor(b / 4) + 1525;
+        double b = (double) ((int64) floor((a - 1867216.25) / 36524.25));
+        c = a + b - (int64) floor(b / 4) + 1525;
     }
 
-    int d = (int) floor((c - 122.1) / 365.25);
-    int e = (int) floor(365.25 * d);
-    int f = (int) floor((c - e) / 30.6001);
+    int64 d = (int64) floor((c - 122.1) / 365.25);
+    int64 e = (int64) floor(365.25 * d);
+    int64 f = (int64) floor((c - e) / 30.6001);
 
-    double dday = c - e - (int) floor(30.6001 * f) + ((jd + 0.5) - a);
+    double dday = c - e - (int64) floor(30.6001 * f) + ((jd + 0.5) - a);
 
     // This following used to be 14.0, but gcc was computing it incorrectly, so
     // it was changed to 14
-    month = f - 1 - 12 * (int) (f / 14);
-    year = d - 4715 - (int) ((7.0 + month) / 10.0);
+    month = (int) (f - 1 - 12 * (int64) (f / 14));
+    year = (int) (d - 4715 - (int64) ((7.0 + month) / 10.0));
     day = (int) dday;
 
     double dhour = (dday - day) * 24;
