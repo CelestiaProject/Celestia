@@ -6543,14 +6543,11 @@ void Renderer::renderStar(const Star& star,
         atmosphere.upperColor = atmColor;
         atmosphere.skyColor = atmColor;
 
-#if 0
-        // Atmosphere effect may be use to give stars a fuzzy fringe,
-        // but this doesn't seem to be an improvement.
+        // Use atmosphere effect to give stars a fuzzy fringe
         if (rp.model == InvalidResource)
             rp.atmosphere = &atmosphere;
         else
             rp.atmosphere = NULL;
-#endif
 
         Quatd q = star.getRotationModel()->orientationAtTime(now);
         rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
