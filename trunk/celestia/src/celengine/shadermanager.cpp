@@ -1841,7 +1841,10 @@ ShaderManager::buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += "vec3 color = vec3(0.0, 0.0, 0.0);\n";
     source += "vec3 V = normalize(eyeDir_obj);\n";
 
-    for (i = 0; i < props.nLights; i++)
+    // Only do scattering calculations for the primary light source
+    // TODO: Eventually handle multiple light sources, and removed the 'min'
+    // from the line below.
+    for (i = 0; i < (unsigned int) min(props.nLights, 1); i++)
     {
         source += "    float cosTheta = dot(V, " + LightProperty(i, "direction") + ");\n";
         source += ScatteringPhaseFunctions(props);
