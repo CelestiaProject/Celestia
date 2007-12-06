@@ -508,8 +508,9 @@ class Renderer
                          Quatf orientation);
     void renderLabels(FontStyle fs, LabelAlignment la);
     std::vector<Label>::iterator renderSortedLabels(std::vector<Label>::iterator,
-                                                     float depth,
-                                                     FontStyle fs);
+                                                    float nearDist,
+                                                    float farDist,
+                                                    FontStyle fs);
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& position,
                        const Quatf& orientation,
