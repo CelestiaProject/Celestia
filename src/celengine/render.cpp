@@ -2784,7 +2784,7 @@ void Renderer::render(const Observer& observer,
             }
 
             // Render labels in this interval
-            label = renderSortedLabels(label, -depthPartitions[interval].nearZ, FontNormal);
+            label = renderSortedLabels(label, -depthPartitions[interval].nearZ, -depthPartitions[interval].farZ, FontNormal);
             glDisable(GL_DEPTH_TEST);
         }
 #if 0
@@ -7083,6 +7083,9 @@ void Renderer::buildRenderLists(const Star& sun,
     Mat3f viewMat = observer.getOrientation().toMatrix3();
     Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
+    Body* lastPrimary = NULL;
+    Sphered primarySphere;
+
     int nBodies = solSystem != NULL ? solSystem->getSystemSize() : 0;
     for (int i = 0; i < nBodies; i++)
     {
@@ -7308,6 +7311,78 @@ void Renderer::buildRenderLists(const Star& sun,
 
                 if (showLabel && !body->getName().empty())
                 {
+                    bool isBehindPrimary = false;
+                    Body* primary = body->getSystem()->getPrimaryBody();
+
+                    // Position the label slightly in front of the object along a line from
+                    // object center to viewer.
+                    pos = pos * (1.0f - body->getRadius() * 1.01f / pos.length());
+
+                    // Try and position the label so that it's not partially
+                    // occluded by other objects. We'll consider just the object
+                    // that the labeled body is orbiting (its primary) as a
+                    // potential occluder. If a ray from the viewer to labeled
+                    // object center intersects the occluder first, skip
+                    // rendering the object label. Otherwise, ensure that the
+                    // label is completely in front of the primary by projecting
+                    // it onto the plane tangent to the primary at the
+                    // viewer-primary intersection point. Whew. Don't do any of
+                    // this if the primary isn't an ellipsoid.
+                    //
+                    // This only handles the problem of partial label occlusion
+                    // for low orbiting and surface positioned objects, but that
+                    // case is *much* more common than other possibilities.
+                    if (primary != NULL && primary->getModel() == InvalidResource)
+                    {
+                        // In the typical case, we're rendering labels for many
+                        // objects that orbit the same primary. Avoid repeatedly
+                        // calling getPosition() by caching the last primary
+                        // position.
+                        if (primary != lastPrimary)
+                        {
+                            Vec3d v = primary->getHeliocentricPosition(now) - observerPos;
+                            primarySphere = Sphered(Point3d(v.x, v.y, v.z),
+                                                    primary->getRadius());
+                            lastPrimary = primary;
+                        }
+
+                        Ray3d testRay(Point3d(0.0, 0.0, 0.0), Vec3d(pos.x, pos.y, pos.z));
+
+                        // Test the viewer-to-labeled object ray against
+                        // the primary sphere (TODO: handle ellipsoids)
+                        double t = 0.0;
+                        if (testIntersection(testRay, primarySphere, t))
+                        {
+                            // Center of labeled object is behind primary
+                            // sphere; mark it for rejection.
+                            isBehindPrimary = t < 1.0;
+                        }
+
+                        if (!isBehindPrimary)
+                        {
+                            // Not rejected. Compute the plane tangent to
+                            // the primary at the viewer-to-primary
+                            // intersection point.
+                            Vec3d primaryVec(primarySphere.center.x,
+                                             primarySphere.center.y,
+                                             primarySphere.center.z);
+                            double distToPrimary = primaryVec.length();
+                            Planed primaryTangentPlane(primaryVec, primaryVec * (primaryVec * (1.0 - primarySphere.radius / distToPrimary)));
+
+                            // Compute the intersection of the viewer-to-labeled
+                            // object ray with the tangent plane.
+                            float u = (float) (primaryTangentPlane.d / (primaryTangentPlane.normal * Vec3d(pos.x, pos.y, pos.z)));
+
+                            // If the intersection point is closer to the viewer
+                            // than the label, then project the label onto the
+                            // tangent plane.
+                            if (u < 1.0f && u > 0.0f)
+                            {
+                                pos = pos * u;
+                            }
+                        }
+                    }
+
                     addSortedLabel(body->getName(true), labelColor,
                                    Point3f(pos.x, pos.y, pos.z));
                 }
@@ -8494,12 +8569,12 @@ void Renderer::renderLabels(FontStyle fs, LabelAlignment la)
 
 
 vector<Renderer::Label>::iterator
-Renderer::renderSortedLabels(vector<Label>::iterator iter, float depth, FontStyle fs)
+Renderer::renderSortedLabels(vector<Label>::iterator iter, float nearDist, float farDist, FontStyle fs)
 {
     if (font[fs] == NULL)
         return iter;
 
-    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     font[fs]->bind();
     glEnable(GL_BLEND);
@@ -8515,13 +8590,28 @@ Renderer::renderSortedLabels(vector<Label>::iterator iter, float depth, FontStyl
     glTranslatef(GLfloat((int) (windowWidth / 2)),
                  GLfloat((int) (windowHeight / 2)), 0);
 
-    for (; iter != depthSortedLabels.end() && iter->position.z > depth; iter++)
+    // Precompute values that will be used to generate the normalized device z value;
+    // we're effectively just handling the projection instead of OpenGL. We use an orthographic
+    // projection matrix in order to get the label text position exactly right but need to mimic
+    // the depth coordinate generation of a perspective projection.
+    float d1 = -(farDist + nearDist) / (farDist - nearDist);
+    float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
+
+    for (; iter != depthSortedLabels.end() && iter->position.z > nearDist; iter++)
     {
+        // Compute normalized device z
+        float ndc_z = d1 + d2 / -iter->position.z;
+        ndc_z = min(1.0f, max(-1.0f, ndc_z)); // Clamp to [-1,1]
+
+        // Offsets to left align label
+        int labelHOffset = 0;
+        int labelVOffset = 0;
+
         glColor(iter->color);
         glPushMatrix();
-        glTranslatef((int) iter->position.x + PixelOffset + 2.0f,
-                     (int) iter->position.y + PixelOffset,
-                     0.0f);
+        glTranslatef((int) iter->position.x + PixelOffset + labelHOffset,
+                     (int) iter->position.y + PixelOffset + labelVOffset,
+                     ndc_z);
         font[fs]->render(iter->text);
         glPopMatrix();
     }
@@ -8916,6 +9006,5 @@ bool Renderer::settingsHaveChanged() const
 
 void Renderer::markSettingsChanged()
 {
-    clog << "settings changed: " << frameCount << endl;
     settingsChanged = true;
 }
