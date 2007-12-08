@@ -90,6 +90,14 @@ class StarDetails
     Vec3f semiAxes;
 
  public:
+    struct StarTextureSet
+    {
+        MultiResTexture defaultTex;
+        MultiResTexture neutronStarTex;
+        MultiResTexture starTex[StellarClass::Spectral_Count];
+    };
+    
+ public:
     static StarDetails* GetStarDetails(const StellarClass&);
     static StarDetails* CreateStandardStarType(const std::string& _specType,
                                                float _temperature,
@@ -103,13 +111,11 @@ class StarDetails
     static StarDetails* GetNeutronStarDetails();
     static StarDetails* GetBlackHoleDetails();
     static StarDetails* GetBarycenterDetails();
-
-    static void InitializeStarTextures();
-    static ResourceHandle starTexB;
-    static ResourceHandle starTexA;
-    static ResourceHandle starTexG;
-    static ResourceHandle starTexM;
-    static ResourceHandle starTexL;
+    
+    static void SetStarTextures(const StarTextureSet&);
+    
+ private:
+    static StarTextureSet starTextures;
 };
 
 
