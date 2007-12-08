@@ -4182,8 +4182,7 @@ static void loadCrossIndex(StarDatabase* starDB,
 bool CelestiaCore::readStars(const CelestiaConfig& cfg,
                              ProgressNotifier* progressNotifier)
 {
-    StarDetails::InitializeStarTextures();
-
+    StarDetails::SetStarTextures(cfg.starTextures);
 
     ifstream starNamesFile(cfg.starNamesFile.c_str(), ios::in);
     if (!starNamesFile.good())
