@@ -37,13 +37,15 @@ Shift+Arrows      : Orbit object
 1-9  : Select planets around nearby sun
 
 Time:
-Space : stop time
-L     : Time 10x faster
-K     : Time 10x slower
-J     : Reverse time
-!     : Set time to now
-?     : Display light-travel delay between observer and selected object
--     : Subtract light-travel delay from current simulation time
+Space   : stop time
+L       : Time 10x faster
+Shift+L : Time 2x faster
+K       : Time 10x slower
+Shift+K : Time 2x slower
+J       : Reverse time
+!       : Set time to now
+?       : Display light-travel delay between observer and selected object
+-       : Subtract light-travel delay from current simulation time
 
 Labels:
 =  : Toggle constellation labels
