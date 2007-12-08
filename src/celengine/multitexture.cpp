@@ -97,3 +97,11 @@ Texture* MultiResTexture::find(unsigned int resolution)
 
     return texMan->find(tex[resolution]);
 }
+
+
+bool MultiResTexture::isValid() const
+{
+    return (tex[lores] != InvalidResource ||
+            tex[medres] != InvalidResource ||
+            tex[hires] != InvalidResource);
+}
