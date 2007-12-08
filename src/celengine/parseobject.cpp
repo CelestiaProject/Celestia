@@ -208,8 +208,6 @@ CreateSampledTrajectory(Hash* trajData, const string& path)
         clog << "Could not load sampled trajectory from '" << sourceName << "'\n";
     }
 
-    clog << "Interpolation: " << interpolation << ", precision: " << precision << endl;
-    clog << "Orbit: " << (void*) orbit << "\n";
     return orbit;
 }
 
