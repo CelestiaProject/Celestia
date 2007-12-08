@@ -41,6 +41,8 @@ class MultiResTexture
                     unsigned int flags);
     Texture* find(unsigned int resolution);
 
+    bool isValid() const;
+
  public:
     ResourceHandle tex[3];
 };
