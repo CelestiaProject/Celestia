@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <celengine/parser.h>
+#include <celengine/star.h>
 
 
 class CelestiaConfig
@@ -50,6 +51,8 @@ public:
     std::string HDCrossIndexFile;
     std::string SAOCrossIndexFile;
     std::string GlieseCrossIndexFile;
+    
+    StarDetails::StarTextureSet starTextures;
 
     // Renderer detail options
     unsigned int shadowTextureSize;

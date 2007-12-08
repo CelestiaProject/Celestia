@@ -33,11 +33,6 @@ struct SpectralTypeInfo
     float rotationPeriod;
 };
 
-ResourceHandle StarDetails::starTexB = InvalidResource;
-ResourceHandle StarDetails::starTexA = InvalidResource;
-ResourceHandle StarDetails::starTexG = InvalidResource;
-ResourceHandle StarDetails::starTexM = InvalidResource;
-ResourceHandle StarDetails::starTexL = InvalidResource;
 
 static StarDetails** normalStarDetails = NULL;
 static StarDetails** whiteDwarfDetails = NULL;
@@ -45,6 +40,7 @@ static StarDetails*  neutronStarDetails = NULL;
 static StarDetails*  blackHoleDetails = NULL;
 static StarDetails*  barycenterDetails = NULL;
 
+StarDetails::StarTextureSet StarDetails::starTextures;
 
 // Star temperature data from Lang's _Astrophysical Data: Planets and Stars_
 // Temperatures from missing (and typically not used) types in those
@@ -604,15 +600,10 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
         normalStarDetails[index] = CreateStandardStarType(name, temp, period);
         normalStarDetails[index]->setBolometricCorrection(bmagCorrection);
 
-        if (specClass == StellarClass::Spectral_L ||
-            specClass == StellarClass::Spectral_T)
-        {
-            normalStarDetails[index]->setTexture(MultiResTexture(starTexL, starTexL, starTexL));
-        }
-        else
-        {
-            normalStarDetails[index]->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
-        }
+        MultiResTexture starTex = starTextures.starTex[specClass];
+        if (!starTex.isValid())
+            starTex = starTextures.defaultTex;
+        normalStarDetails[index]->setTexture(starTex);
     }
 
     return normalStarDetails[index];
@@ -666,7 +657,10 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
         float period = 1.0f / 48.0f;
 
         whiteDwarfDetails[index] = CreateStandardStarType(name, temp, period);
-        whiteDwarfDetails[index]->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
+        MultiResTexture starTex = starTextures.starTex[StellarClass::Spectral_D];
+        if (!starTex.isValid())
+            starTex = starTextures.defaultTex;
+        whiteDwarfDetails[index]->setTexture(starTex);
         whiteDwarfDetails[index]->setBolometricCorrection(bmagCorrection);
     }
 
@@ -685,7 +679,10 @@ StarDetails::GetNeutronStarDetails()
                                                     1.0f / 86400.0f);
         neutronStarDetails->setRadius(10.0f);
         neutronStarDetails->addKnowledge(KnowRadius);
-        neutronStarDetails->setTexture(MultiResTexture(starTexA, starTexA, starTexA));
+        MultiResTexture starTex = starTextures.neutronStarTex;
+        if (!starTex.isValid())
+            starTex = starTextures.defaultTex;
+        neutronStarDetails->setTexture(starTex);
     }
 
     return neutronStarDetails;
@@ -728,13 +725,9 @@ StarDetails::GetBarycenterDetails()
 
 
 void
-StarDetails::InitializeStarTextures()
+StarDetails::SetStarTextures(const StarTextureSet& _starTextures)
 {
-    starTexB = GetTextureManager()->getHandle(TextureInfo("bstar.jpg", 0));
-    starTexA = GetTextureManager()->getHandle(TextureInfo("astar.jpg", 0));
-    starTexG = GetTextureManager()->getHandle(TextureInfo("gstar.jpg", 0));
-    starTexM = GetTextureManager()->getHandle(TextureInfo("mstar.jpg", 0));
-    starTexL = GetTextureManager()->getHandle(TextureInfo("browndwarf.jpg", 0));
+    starTextures = _starTextures;
 }
 
 

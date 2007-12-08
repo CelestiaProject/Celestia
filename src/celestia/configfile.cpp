@@ -14,6 +14,7 @@
 #include <celutil/directory.h>
 #include <celutil/util.h>
 #include <celengine/celestia.h>
+#include <celengine/texmanager.h>
 #include "configfile.h"
 
 using namespace std;
@@ -247,6 +248,61 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
                     config->ignoreGLExtensions.push_back(extVal->getString());
                 else
                     DPRINTF(0, "%s: extension name must be a string.\n", filename.c_str());
+            }
+        }
+    }
+    
+    Value* starTexValue = configParams->getValue("StarTextures");
+    if (starTexValue != NULL)
+    {
+        if (starTexValue->getType() != Value::HashType)
+        {
+            DPRINTF(0, "%s: StarTextures must be a property list.\n", filename.c_str());
+        }
+        else
+        {
+            Hash* starTexTable = starTexValue->getHash();
+            string starTexNames[StellarClass::Spectral_Count];
+            starTexTable->getString("O", starTexNames[StellarClass::Spectral_O]);
+            starTexTable->getString("B", starTexNames[StellarClass::Spectral_B]);
+            starTexTable->getString("A", starTexNames[StellarClass::Spectral_A]);
+            starTexTable->getString("F", starTexNames[StellarClass::Spectral_F]);
+            starTexTable->getString("G", starTexNames[StellarClass::Spectral_G]);
+            starTexTable->getString("K", starTexNames[StellarClass::Spectral_K]);
+            starTexTable->getString("M", starTexNames[StellarClass::Spectral_M]);
+            starTexTable->getString("R", starTexNames[StellarClass::Spectral_R]);
+            starTexTable->getString("S", starTexNames[StellarClass::Spectral_S]);
+            starTexTable->getString("N", starTexNames[StellarClass::Spectral_N]);
+            starTexTable->getString("WC", starTexNames[StellarClass::Spectral_WC]);
+            starTexTable->getString("WN", starTexNames[StellarClass::Spectral_WN]);
+            starTexTable->getString("Unknown", starTexNames[StellarClass::Spectral_Unknown]);
+            starTexTable->getString("L", starTexNames[StellarClass::Spectral_L]);
+            starTexTable->getString("T", starTexNames[StellarClass::Spectral_T]);
+            starTexTable->getString("C", starTexNames[StellarClass::Spectral_C]);
+            
+            // One texture for all white dwarf types; not sure if this needs to be
+            // changed. White dwarfs vary widely in temperature, so texture choice
+            // should probably be based on that instead of spectral type.
+            starTexTable->getString("WD", starTexNames[StellarClass::Spectral_D]);
+            
+            string neutronStarTexName;
+            if (starTexTable->getString("NeutronStar", neutronStarTexName))
+            {
+                config->starTextures.neutronStarTex.setTexture(neutronStarTexName, "textures");
+            }
+            
+            string defaultTexName;
+            if (starTexTable->getString("Default", defaultTexName))
+            {
+                config->starTextures.defaultTex.setTexture(defaultTexName, "textures");
+            }
+            
+            for (unsigned int i = 0; i < (unsigned int) StellarClass::Spectral_Count; i++)
+            {
+                if (starTexNames[i] != "")
+                {
+                    config->starTextures.starTex[i].setTexture(starTexNames[i], "textures");
+                }
             }
         }
     }
