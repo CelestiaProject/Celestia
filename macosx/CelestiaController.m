@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Tue May 28 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #include <unistd.h>
@@ -724,7 +724,17 @@ NSString* fatalErrorMessage;
     [appCore forward];
 }
 
--(IBAction)showGLInfo:(id)sender
+- (IBAction) selectSatellite:(id)sender
+{
+    if (sender &&
+        [sender respondsToSelector: @selector(representedObject)] &&
+        [sender representedObject])
+    {
+        [[appCore simulation] setSelection: [[[CelestiaSelection alloc] initWithCelestiaBody: [sender representedObject]] autorelease]];
+    }
+}
+
+- (IBAction) showGLInfo:(id)sender
 {
     if (![glInfoPanel isVisible])
     {
@@ -775,7 +785,7 @@ NSString* fatalErrorMessage;
 
 // GUI Tag Methods ----------------------------------------------------------
 
-- (BOOL)     validateMenuItem: (id) item
+- (BOOL) validateMenuItem: (id) item
 {
     if ( [startupCondition condition] == 0 ) return NO;
     if ( [item action] == nil  ) return NO;
@@ -806,12 +816,6 @@ NSString* fatalErrorMessage;
         [settings validateItemForTag: tag];
     }
 }
-
-- (void) addSurfaceMenu: (NSMenu*) contextMenu
-{
-    [settings addSurfaceMenu: contextMenu ];
-}
-
 
 -(IBAction) showPanel: (id) sender
 {

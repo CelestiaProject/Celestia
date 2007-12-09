@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Sat Jun 08 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #import "CelestiaBody.h"
@@ -122,5 +122,24 @@
 -(CelestiaVector*)eclipticalToBodyFixed:(NSNumber*)n
 {
     return [CelestiaVector vectorWithQuatd:[self body]->getEclipticalToBodyFixed([n doubleValue])];
+}
+
+-(NSArray*)alternateSurfaceNames
+{
+    NSMutableArray *result = nil;
+    std::vector<std::string>* altSurfaces = [self body]->getAlternateSurfaceNames();
+    if (altSurfaces)
+    {
+        result = [NSMutableArray array];
+        if (altSurfaces->size() > 0)
+        {
+            for (unsigned int i = 0; i < altSurfaces->size(); ++i)
+            {
+                [result addObject: [NSString stringWithStdString: (*altSurfaces)[i].c_str()]];
+            }
+        }
+        delete altSurfaces;
+    }
+    return result;
 }
 @end
