@@ -11,6 +11,13 @@
 #import <OpenGL/gl.h>
 #import <OpenGL/glext.h>
 
+#ifndef GL_SHADING_LANGUAGE_VERSION_ARB
+#define GL_SHADING_LANGUAGE_VERSION_ARB   0x8B8C
+#endif
+#ifndef GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT
+#define GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT  0x851C
+#endif
+
 
 static char *gExtensions;
 
@@ -40,14 +47,14 @@ static BOOL ExtensionSupported(const char *ext)
 
 static NSString *queryGLInteger(GLenum e, NSString *desc)
 {
-    GLint r[2];
+    GLint r = 0;
     NSString *result;
 
-    glGetIntegerv(e, r);
-    if (glGetError())
-        result = [NSString stringWithFormat:NSLocalizedString(@"%@: --not available--",""), desc];
-    else
-        result = [NSString stringWithFormat:NSLocalizedString(@"%@: %d",""), desc, (int)r[0]];
+    glGetIntegerv(e, &r);
+//    if (glGetError())
+//        result = [NSString stringWithFormat:NSLocalizedString(@"%@: --not available--",""), desc];
+//    else
+    result = [NSString stringWithFormat: NSLocalizedString(@"%@: %d",""), desc, r];
 
     return result;
 }
@@ -73,6 +80,20 @@ static NSString *queryGLExtension(const char *extName)
     [result appendString:
         [NSString stringWithFormat:NSLocalizedString(@"Version: %@",""), [NSString stringWithUTF8String:(const char *)glGetString (GL_VERSION)]]]; ENDL;
 
+    if (ExtensionSupported("GL_ARB_shading_language_100"))
+    {
+        NSString *glslVersion = [NSString stringWithUTF8String:
+            (const char *)glGetString (0x8B8C)];
+        if (glslVersion)
+        {
+            [result appendString:
+                [NSString stringWithFormat: @"%@%@",
+                    NSLocalizedStringFromTable(@"GLSL version: ",@"po",""),
+                    glslVersion]
+            ]; ENDL;
+        }
+    }
+
     ENDL;
 
     [result appendString:
@@ -80,6 +101,25 @@ static NSString *queryGLExtension(const char *extName)
          queryGLInteger(GL_MAX_TEXTURE_UNITS_ARB, NSLocalizedString(@"Max simultaneous textures","")) :
          [NSString stringWithFormat: [NSString stringWithFormat: @"%@: 1", NSLocalizedString(@"Max simultaneous textures","")]])]; ENDL;
     [result appendString: queryGLInteger(GL_MAX_TEXTURE_SIZE, NSLocalizedString(@"Max texture size",""))]; ENDL;
+
+    if (ExtensionSupported("GL_EXT_texture_cube_map"))
+    {
+        GLint maxCubeMapSize = 0;
+        glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT, &maxCubeMapSize);
+        [result appendString:
+            [NSString stringWithFormat: @"%@%d",
+                NSLocalizedStringFromTable(@"Max cube map size: ",@"po",""),
+                maxCubeMapSize]
+        ]; ENDL;
+    }
+
+    GLfloat pointSizeRange[2];
+    glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
+    [result appendString:
+        [NSString stringWithFormat: @"%@%f - %f",
+            NSLocalizedStringFromTable(@"Point size range: ",@"po",""),
+            pointSizeRange[0], pointSizeRange[1]]
+    ]; ENDL;
 
     ENDL;
 
