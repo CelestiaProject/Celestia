@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Hank Ramsey on Fri Oct 29 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #import "CelestiaSettings.h"
@@ -564,57 +564,20 @@ FEATUREMETHODS(Other)
 
 // Alt Surface Setting
 
-/*- (BOOL) validateAltSurface: (int) index
-{
-    if (index == 0) 
-    {
-        string displayedSurfName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
-        return displayedSurfName == string("");
-    }
-    index--;
-    // Validate items for the alternate surface submenu
-    Selection sel = appCore->getSimulation()->getSelection();
-    if (sel.body() != NULL)
-    {
-        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
-        if (surfNames != NULL)
-        {
-            string surfName, displayedSurfName;
-            if (index >= 0 && index < (int)surfNames->size())
-                surfName = surfNames->at(index);
-            displayedSurfName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
-            if (surfName  == displayedSurfName )
-            { 
-                delete surfNames;
-                return YES;
-            }
-        }
-    }
-    return NO;
-}
-*/
-
 - (int) altSurface
 {
     // return alternate surface index
     string displayedSurfName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
-    Selection sel = appCore->getSimulation()->getSelection();
-    if (sel.body() != NULL)
+    CelestiaSelection *sel = [[[CelestiaAppCore sharedAppCore] simulation] selection];
+    if ([sel body])
     {
-        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
-        if (surfNames != NULL)
+        NSArray *surfaces = [[sel body] alternateSurfaceNames];
+        if ( surfaces && [surfaces count] > 0 )
         {
-            int index;
-            string surfName;
-            for (index = 0 ; index < (int)surfNames->size(); index++)
-            {
-                surfName = surfNames->at(index);
-                if (surfName  == displayedSurfName )
-                { 
-                    delete surfNames;
-                    return index+1;
-                }
-            }
+            NSString *displayedSurfStr = [NSString stringWithStdString: displayedSurfName];
+            unsigned index = [surfaces indexOfObject: displayedSurfStr];
+            if (index != NSNotFound)
+                return index+1;
         }
     }
     return 0;
@@ -623,101 +586,26 @@ FEATUREMETHODS(Other)
 - (void) setAltSurface: (int) index
 {
     // Handle the alternate surface submenu
-    Selection sel = appCore->getSimulation()->getSelection();
-    if (sel.body() != NULL)
+    CelestiaSelection *sel = [[[CelestiaAppCore sharedAppCore] simulation] selection];
+    if ([sel body])
     {
         if ( index == 0 )
         {
             appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(string(""));
             return;
         }
-        vector<string>* surfNames = sel.body()->getAlternateSurfaceNames();
-        if (surfNames != NULL)
+        NSArray *surfaces = [[sel body] alternateSurfaceNames];
+        if ( surfaces && [surfaces count] > 0 )
         {
             string surfName;
             index--;
-            if (index >= 0 && index < (int)surfNames->size())
-                surfName = surfNames->at(index);
+            if (index >= 0 && (unsigned)index < [surfaces count])
+                surfName = [[surfaces objectAtIndex: index] stdString];
             appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(surfName);
-            delete surfNames;
         }
     }
 }
 
-- (NSMenuItem *) getSurfaceMenuItem: (NSMenu*) contextMenu
-{
-    NSMenuItem *surfaceItem = [contextMenu itemWithTitle: NSLocalizedString(@"Show Alternate Surface",@"")];
-    if (surfaceItem == nil)
-        surfaceItem = [contextMenu itemWithTitle: @"Show Alternate Surface"];
-    return surfaceItem;
-}
-
-- (void) disableSurfaceMenu: (NSMenu*) contextMenu
-{
-    NSMenuItem *surfaceItem = [self getSurfaceMenuItem: contextMenu];
-    [ surfaceItem setEnabled: NO ];
-//        NSLog(@"disabling surface menu\n");
-}
-
-- (void) addSurfaceMenu: (NSMenu*) contextMenu
-{
-    Selection sel = appCore->getSimulation()->getSelection();
-    if (sel.body() == NULL)
-    {
-        [self disableSurfaceMenu: contextMenu ];
-        return;
-    }
-    else
-    {
-        NSMenuItem* firstItem = [contextMenu itemAtIndex: 0];
-        NSMenuItem *surfaceItem = [self getSurfaceMenuItem: contextMenu];
-        [surfaceItem setTitle: NSLocalizedString(@"Show Alternate Surface",@"")];
-        NSMenu* surfaceMenu = [[NSMenu alloc ] initWithTitle: @"altsurf" ];
-        vector<string>* surfaces = sel.body()->getAlternateSurfaceNames();
-        if ( surfaces->size() == 0 ) 
-        {
-            [self disableSurfaceMenu: contextMenu];
-            return;
-        }
-            [ surfaceItem setEnabled: YES ];
-            [ contextMenu setAutoenablesItems: YES ];
-            [ surfaceMenu setAutoenablesItems: YES ];
-            NSMenuItem* newItem = [ [NSMenuItem alloc] init ]; 
-            [newItem setTitle: NSLocalizedString(@"default",@"") ];
-            [newItem setTag:  600 ];
-            [newItem setTarget:  [firstItem target] ];
-            [newItem setAction:  [firstItem action] ];
-            [ surfaceMenu addItem: newItem ];
-        for (int i = 0; i < (int)surfaces->size(); i++)
-        {
-            NSMenuItem* newItem = [ [NSMenuItem alloc] init ]; 
-            [newItem setTitle: [ NSString stringWithStdString: (*surfaces)[i] ] ];
-            [newItem setTag:  601+i ];
-            [newItem setEnabled:  YES ];
-            [newItem setTarget:  [firstItem target] ];
-            [newItem setAction:  [firstItem action] ];
-            [ surfaceMenu addItem: newItem ];
-        }
-        [ surfaceItem setSubmenu: surfaceMenu ];
-        [ surfaceItem setEnabled: YES ];
-        [ surfaceMenu update ];
-        delete surfaces;
-        return;
-    }
-}
-
-/* not yet...
-
-// Shader Settings
-
-    bool getFragmentShaderEnabled() const;
-    void setFragmentShaderEnabled(bool);
-    bool fragmentShaderSupported() const;
-    bool getVertexShaderEnabled() const;
-    void setVertexShaderEnabled(bool);
-    bool vertexShaderSupported() const;
-
-*/
 
 // GUI Tag Methods ----------------------------------------------------------
 

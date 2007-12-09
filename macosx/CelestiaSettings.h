@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Hank Ramsey on Fri Oct 29 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 @interface CelestiaSettings : NSObject {
@@ -123,7 +123,7 @@
 -(void) setShowStarLabels: (BOOL) value ; 
 
 -(BOOL) showPlanetLabels ;
- -(void) setShowPlanetLabels: (BOOL) value ; 
+-(void) setShowPlanetLabels: (BOOL) value ; 
 
 -(BOOL) showMoonLabels ;
 -(void) setShowMoonLabels: (BOOL) value ; 
@@ -206,26 +206,11 @@
 -(void) setFullScreenMode: (int) value ;
 
 // GUI Methods
-
-- (void) addSurfaceMenu: (NSMenu*) contextMenu;
 - (void) actionForItem: (id) item;
 - (BOOL) validateItem: (id) item;
 - (void) validateItems;
 - (void) validateItemForTag: (int) tag;
-- (int) tagForKey: (int) key;
+- (int)  tagForKey: (int) key;
 - (void) scanForKeys: (id) item;
-
-/* not yet...
-
-// Shader Settings
-
-    bool getFragmentShaderEnabled() const;
-    void setFragmentShaderEnabled(bool);
-    bool fragmentShaderSupported() const;
-    bool getVertexShaderEnabled() const;
-    void setVertexShaderEnabled(bool);
-    bool vertexShaderSupported() const;
-
-*/
 
 @end
