@@ -25,9 +25,11 @@
 #define POCONV_DEFAULT_STRINGS_FILENAME    @"po.strings"
 #define POCONV_DEBUG_LEVEL                 1
 
-BOOL gIgnoreFuzzy;  /*! -n cmdline arg, set to ignore fuzzy entries */
-int gDebugLevel;    /*! -v cmdline arg, 0 = no console messages */
+BOOL gIgnoreFuzzy;  /*! -n cmdline arg, YES = ignore fuzzy entries */
+int gDebugLevel;    /*! -v cmdline arg, 0   = no console messages */
 NSAutoreleasePool *gPool;
+NSCharacterSet *gNewLineSet;
+NSCharacterSet *gDelimitSet;
 
 
 /*! Returns NO if line is a comment. range and result are modified. */
@@ -45,7 +47,7 @@ static BOOL readLine(NSString *string, NSRange *range, NSString **outString)
 }
 
 
-/*! Scans data (from a po file) in ascii mode, looking for the charset specification */
+/*! Scans data (from a po file) in ascii mode and gets the charset specification */
 static NSStringEncoding getCharset(NSData *data)
 {
     NSString *string = [[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease];
@@ -109,10 +111,6 @@ static NSString *extractStringFromLine(NSString *line)
     NSRange escRange;
     NSMutableString *escString = [NSMutableString string];
 
-    NSMutableCharacterSet *newLineSet = [[[scanner charactersToBeSkipped] mutableCopy] autorelease];
-    [newLineSet formIntersectionWithCharacterSet:
-        [[NSCharacterSet whitespaceCharacterSet] invertedSet]];
-
     while (![scanner isAtEnd])
     {
         aString = nil;
@@ -124,8 +122,18 @@ static NSString *extractStringFromLine(NSString *line)
             {
                 // Make sure we don't skip leading spaces (but skip newlines)
                 NSCharacterSet *origSkip = [scanner charactersToBeSkipped];
-                [scanner setCharactersToBeSkipped: newLineSet];
-                [scanner scanUpToString:@"\"" intoString: &aString];
+                [scanner setCharactersToBeSkipped: gNewLineSet];
+                [scanner scanUpToCharactersFromSet: gDelimitSet intoString: &aString];
+                // Remove shorcut key ampersands
+                // TODO: Recognize longer "(&x)" format used in
+                //       non-roman localizations
+                while ([scanner scanString: @"&" intoString: nil])
+                {
+                    if (aString)
+                        [escString appendString: aString];
+                    [scanner scanUpToCharactersFromSet: gDelimitSet intoString: &aString];
+                }
+//                [scanner scanUpToString:@"\"" intoString: &aString];
                 [scanner setCharactersToBeSkipped: origSkip];
 
                 if (aString)
@@ -161,7 +169,7 @@ static NSString *extractStringFromLine(NSString *line)
 }
 
 
-/*! Get all parts of a quoted string is possibly broken across multiple lines, and returns the concatenated result. */
+/*! Get all parts of a quoted string (possibly broken across multiple lines) and returns the concatenated result. */
 static NSString *getQuotedString(NSString *fileString, NSRange *range, NSString *line)
 {
     NSMutableString *result = [NSMutableString stringWithString:extractStringFromLine(line)];
@@ -192,7 +200,7 @@ static NSString *getQuotedString(NSString *fileString, NSRange *range, NSString 
 }
 
 
-/*! Pass any comment line. If the line is a flag line (#, ...) and contains the "fuzzy" flag, returns YES */
+/*! Takes any comment line. If it is a flag line (starts with #, ) and contains the "fuzzy" flag, returns YES */
 static BOOL isFuzzy(NSString *line)
 {
     NSRange flagRange = [line rangeOfString:@"#," options:NSAnchoredSearch];
@@ -270,7 +278,7 @@ static BOOL isSource(NSString *line, BOOL *containsNonKde)
 }
 #endif TARGET_CELESTIA
 
-/*! The method that does all the work of reading, converting, and writing. Returns the number of lines successfully converted. */
+/*! Does all the work of reading, converting, and writing. Returns the number of lines successfully converted. */
 static long convertData(NSData *data, NSStringEncoding encoding, NSFileHandle *ofh)
 {
     long numConverted = 0;
@@ -321,8 +329,9 @@ static long convertData(NSData *data, NSStringEncoding encoding, NSFileHandle *o
             }
 
 #ifdef TARGET_CELESTIA
-            if (parsingSources)
-                acceptEntry = containsNonKde;
+//            if (parsingSources)
+//                acceptEntry = containsNonKde;
+            acceptEntry    = YES;
             parsingSources = NO;
             containsNonKde = NO;
 #endif
@@ -559,7 +568,7 @@ int main(int argc, const char **argv)
 
             ofh = [NSFileHandle fileHandleForWritingAtPath: resultFilename];
             // Delay truncating file and wiping it out until we actually
-            // get something to write ou
+            // get something to write to
         }
         else
         {
@@ -578,6 +587,11 @@ int main(int argc, const char **argv)
             CFShow((CFStringRef)[NSString stringWithFormat:@"poFile='%@', result='%@', ignoreFuzzy=%d, debugLevel=%d, silent=%d", poFilename, (resultFilename ? resultFilename : @"stdout"), gIgnoreFuzzy, gDebugLevel, isSilent]);
 
         NSData *data = [NSData dataWithContentsOfMappedFile: poFilename];
+        NSMutableCharacterSet *newLineSet = [[[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy] autorelease];
+        [newLineSet formIntersectionWithCharacterSet:
+            [[NSCharacterSet whitespaceCharacterSet] invertedSet]];
+        gNewLineSet = newLineSet;
+        gDelimitSet = [NSCharacterSet characterSetWithCharactersInString: @"&\""];
 
         // First detect the file encoding
         NSStringEncoding encoding = getCharset(data);
