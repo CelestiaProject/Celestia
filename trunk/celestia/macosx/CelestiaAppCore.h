@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Wed Jun 05 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #import "CelestiaDestination.h"
@@ -27,7 +27,7 @@ class CelestiaCore;
 -(int)toCelestiaModifiers:(unsigned int)modifiers buttons:(unsigned int)buttons;
 -(void)archive;
 +(CelestiaAppCore *)sharedAppCore;
-    -(BOOL)initSimulation;
+-(BOOL)initSimulation;
 -(BOOL)initRenderer;
 -(void)start:(NSDate *)date withTimeZone:(NSTimeZone *)timeZone;
 -(void)charEntered:(char)c withModifiers:(int)modifiers;
@@ -56,10 +56,9 @@ class CelestiaCore;
 -(void)cancelScript;
 -(int)hudDetail;
 -(void)setHudDetail:(int)hudDetail;
--(void)setContextMenuCallback:(id)cObj;
 -(void)back;
 -(void)forward;
-- (NSString *) currentURL;
+-(NSString *) currentURL;
 -(void)goToUrl:(NSString *)url;
 -(void)setStartURL:(NSString *)url;
 -(unsigned int) getLocationFilter;
@@ -71,8 +70,6 @@ class CelestiaCore;
 -(unsigned int)aaSamples;
 -(BOOL)glExtensionIgnored:(NSString *)extension;
 -(void)setGLExtensionIgnored:(NSString *)extension;
-- (BOOL) captureMovie: (NSString*)filename width: (int)width height: (int)height
+-(BOOL) captureMovie: (NSString*)filename width: (int)width height: (int)height
                               frameRate: (float)framerate;
-
-
 @end

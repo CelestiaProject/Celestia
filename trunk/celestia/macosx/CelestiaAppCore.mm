@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Wed Jun 05 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #import "CelestiaAppCore.h"
@@ -14,8 +14,6 @@
 #import "CelestiaSelection_PrivateAPI.h"
 #import "CelestiaSimulation_PrivateAPI.h"
 #import "CelestiaRenderer_PrivateAPI.h"
-#import "CelestiaUniversalCoord_PrivateAPI.h"
-#import "CelestiaUniverse_PrivateAPI.h"
 #import "Astro.h"
 
 #import "CelestiaController.h"
@@ -136,17 +134,6 @@ private:
 
 CelestiaAppCore *_sharedCelestiaAppCore;
 CelestiaCore *appCore;
-NSInvocation *contextMenuCallbackInvocation;
-
-void ContextMenuCallback(float x,float y, Selection selection) {
-    CelestiaSelection *csel;
-    NSPoint myPoint = NSMakePoint(x,y);
-    if (contextMenuCallbackInvocation == nil) return;
-    csel = [[[CelestiaSelection alloc] initWithSelection:selection] autorelease];
-    [contextMenuCallbackInvocation setArgument:&csel atIndex:2];
-    [contextMenuCallbackInvocation setArgument:&myPoint atIndex:3];
-    [contextMenuCallbackInvocation invoke];
-}
 
 @implementation CelestiaAppCore
 
@@ -286,14 +273,11 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     return cModifiers;
 }
 
-//static NSMutableDictionary* tagDict;
 
 +(void)initialize
 {
     _sharedCelestiaAppCore = nil;
-    contextMenuCallbackInvocation = nil;
     appCore = NULL;
-//    tagDict = [[ NSMutableDictionary dictionaryWithCapacity: 100 ] retain];
 }
 
 +(CelestiaAppCore *)sharedAppCore
@@ -311,7 +295,6 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     }
     self = [super init];
     appCore = NULL;
-    contextMenuCallbackInvocation = NULL;
     _destinations = nil;
     return self;
 }
@@ -327,10 +310,6 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     if (_destinations != nil) {
         [_destinations release];
         _destinations = nil;
-    }
-    if (contextMenuCallbackInvocation != nil) {
-        [contextMenuCallbackInvocation release];
-        contextMenuCallbackInvocation = nil;
     }
     if (appCore != NULL) {
         // appCore doesn't own the custom alerter and cursor
@@ -549,23 +528,6 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     appCore->setHudDetail(hudDetail);
 }
 
--(void)setContextMenuCallback:(id)cObj
-{
-    SEL callbackSelector = @selector(contextMenuCallback:location:);
-    if (contextMenuCallbackInvocation != nil) {
-        [contextMenuCallbackInvocation release];
-        contextMenuCallbackInvocation = nil;
-    }
-    if (cObj == nil)
-        appCore->setContextMenuCallback(NULL);
-    else {
-        appCore->setContextMenuCallback(ContextMenuCallback);
-        contextMenuCallbackInvocation = [[NSInvocation invocationWithMethodSignature:[[cObj class] instanceMethodSignatureForSelector:callbackSelector]] retain];
-        [contextMenuCallbackInvocation setSelector:callbackSelector];
-        [contextMenuCallbackInvocation setTarget:cObj];
-    }
-}
-
 -(void)back
 {
     appCore->back();
@@ -579,12 +541,11 @@ void ContextMenuCallback(float x,float y, Selection selection) {
     appCore->forward();
 }
 
-- (NSString *) currentURL
+-(NSString *) currentURL
 {
-     Url currentUrl = Url(appCore, Url::Absolute);
-//   NSURL *url = [NSURL URLWithString: [ NSString stringWithStdString: currentUrl.getAsString() ]];
+    Url currentUrl = Url(appCore, Url::Absolute);
     NSString *url = [ NSString stringWithStdString: currentUrl.getAsString() ];
-   return url;
+    return url;
 }
 
 -(void)goToUrl:(NSString *)url
@@ -711,4 +672,3 @@ void ContextMenuCallback(float x,float y, Selection selection) {
 }
 
 @end
-
