@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Sat Jun 08 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #import "CelestiaVector.h"
@@ -28,4 +28,5 @@
 -(CelestiaVector*)equatorialToBodyFixed:(NSNumber*)n;
 -(CelestiaVector*)eclipticalToEquatorial:(NSNumber*)n;
 -(CelestiaVector*)eclipticalToBodyFixed:(NSNumber*)n;
+-(NSArray*)alternateSurfaceNames;
 @end

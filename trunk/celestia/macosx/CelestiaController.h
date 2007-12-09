@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Tue May 28 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 
 #import "CelestiaAppCore.h"
@@ -74,7 +74,6 @@
 
 -(IBAction) captureMovie: (id) sender;
 
--(void)addSurfaceMenu:(NSMenu*)contextMenu;
 -(BOOL)validateMenuItem:(id)item;
 -(IBAction)activateMenuItem:(id)item;
 
