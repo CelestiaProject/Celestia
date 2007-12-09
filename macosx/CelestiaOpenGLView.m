@@ -3,12 +3,13 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Tue May 28 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2007, Celestia Development Team
 //
 #import "CelestiaOpenGLView.h"
 #import "CelestiaAppCore.h"
 #import "MacInputWatcher.h"
 #import "TextWindowController.h"
+#import "Menu_Extensions.h"
 #import <OpenGL/gl.h>
 #import <OpenGL/glext.h>
 #import <OpenGL/CGLTypes.h>
@@ -161,7 +162,51 @@
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
     [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
 
+    NSMenuItem *surfItem = nil;
+    NSMenuItem *satItem  = nil;
+    int satMenuIndex     = -1;
+    int surfMenuIndex    = -1;
+    int separatorIndex   = -1;
+
+    [[self menu] removePlanetarySystemItem];
+    [[self menu] removeAltSurfaceItem];
+
     selection = [[appCore simulation] selection];
+
+    satItem  = [[self menu] addPlanetarySystemItemForSelection: selection
+                                                        target: controller];
+    surfItem = [[self menu] addAltSurfaceItemForSelection: selection
+                                                   target: controller];
+    if (surfItem)
+        surfMenuIndex = [[self menu] indexOfItem: surfItem];
+    if (satItem)
+        satMenuIndex  = [[self menu] indexOfItem: satItem];
+
+    separatorIndex = (surfMenuIndex > satMenuIndex) ?
+        surfMenuIndex + 1 :
+        satMenuIndex  + 1;
+    if (separatorIndex > 0 && separatorIndex < [[self menu] numberOfItems])
+    {
+        [[self menu] insertItem: [NSMenuItem separatorItem]
+                        atIndex: separatorIndex];
+    }
+
+    if ([selection body])
+    {
+        selectionName = [[selection body] name];
+#if REFMARKS
+        // TODO: Add support for reference marks
+#endif
+    }
+    else if ([selection star])
+    {
+        selectionName = [[selection star] name];
+    }
+    else
+    {
+        selectionName = [selection briefName];
+    }
+/*
     selectionName = [[[appCore simulation] selection] briefName];
     if ([selectionName isEqualToString: @""])
     {
@@ -169,11 +214,11 @@
         [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
         selection = [[appCore simulation] selection];
         selectionName = [[[appCore simulation] selection] name];
-    } 
-    if ([selectionName isEqualToString: @""]) return NULL;
+    }
+*/
+    if ([selectionName isEqualToString: @""]) return nil;
     [[[self menu] itemAtIndex: 0] setTitle: selectionName ];
     [[[self menu] itemAtIndex: 0] setEnabled: YES ];
-    [ controller addSurfaceMenu: [self menu] ];
 //    [ [self menu] setAutoenablesItems: NO ];
     return [self menu];
 }
@@ -254,6 +299,15 @@
     }
 
     NSPoint location = [self convertPoint: [theEvent locationInWindow] fromView: nil];
+    NSRect bounds = [self bounds];
+    if (!NSPointInRect(location, bounds))
+    {
+        // -ve coords can crash Celestia so clamp to view bounds
+        if (location.x < NSMinX(bounds)) location.x = NSMinX(bounds);
+        if (location.x > NSMaxX(bounds)) location.x = NSMaxX(bounds);
+        if (location.y < NSMinY(bounds)) location.y = NSMinY(bounds);
+        if (location.y > NSMaxY(bounds)) location.y = NSMaxY(bounds);
+    }
     CelestiaAppCore *appCore = [CelestiaAppCore sharedAppCore];
     [appCore mouseButtonUp:location modifiers:[appCore toCelestiaModifiers:[theEvent modifierFlags] buttons:CEL_LEFT_BUTTON]];
 }
