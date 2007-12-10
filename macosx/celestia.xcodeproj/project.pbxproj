@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
-		E50657D80CBFB08500151204 /* imagecapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50657D60CBFB08500151204 /* imagecapture.cpp */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
@@ -482,7 +481,6 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		E50657D60CBFB08500151204 /* imagecapture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imagecapture.cpp; path = ../src/celestia/imagecapture.cpp; sourceTree = SOURCE_ROOT; };
 		E50657D70CBFB08500151204 /* imagecapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imagecapture.h; path = ../src/celestia/imagecapture.h; sourceTree = SOURCE_ROOT; };
 		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
 		E50CCA380C065BF900E9C76A /* eclipsefinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eclipsefinder.h; path = ../src/celestia/eclipsefinder.h; sourceTree = SOURCE_ROOT; };
@@ -1346,7 +1344,6 @@
 				F51C6D8D02959960014901DC /* destination.cpp */,
 				E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */,
 				F51C6D8E02959960014901DC /* favorites.cpp */,
-				E50657D60CBFB08500151204 /* imagecapture.cpp */,
 				0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */,
 				E53E61990C0CA105003CD767 /* scriptmenu.cpp */,
 				F53036BB03D908CE01000002 /* url.cpp */,
@@ -1908,7 +1905,6 @@
 				E53E61AD0C0CA444003CD767 /* ScriptsController.mm in Sources */,
 				E5B48EBA0C22065E00C6FBD7 /* MacInputWatcher.mm in Sources */,
 				E5E2BDD70C24F7E6000D6E83 /* TextWindowController.m in Sources */,
-				E50657D80CBFB08500151204 /* imagecapture.cpp in Sources */,
 				E512245A0CF9FC7D009092A2 /* BrowserItem.mm in Sources */,
 				E5D542770D0B87EA00E8C513 /* Menu_Extensions.m in Sources */,
 			);
