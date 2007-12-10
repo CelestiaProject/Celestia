@@ -579,7 +579,7 @@ Command* CommandParser::parseCommand()
         paramList->getVector("color", colorv);
         double alpha = 0.9f;
         paramList->getNumber("alpha", alpha);
-        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z, alpha);
+        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z, (float) alpha);
 
         Marker::Symbol symbol = Marker::Diamond;
         string symbolString;
