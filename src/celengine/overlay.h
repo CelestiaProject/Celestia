@@ -62,7 +62,7 @@ class Overlay : public std::ostream
     void endText();
     void print(wchar_t);
     void print(char);
-    void print(char*);
+    void print(const char*);
 #ifndef _WIN32
     // Disable GCC format attribute specification requests. Only
     // the format string will be checked:
