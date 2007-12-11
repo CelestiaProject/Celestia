@@ -181,9 +181,19 @@ class Body
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
 
+    /*! Get the transformation which converts body coordinates into
+     *  heliocentric coordinates. Some clarification on the meaning
+     *  of 'heliocentric': the position of every solar system body
+     *  is ultimately defined with respect to some star or star
+     *  system barycenter. Currently, this star is the root of the
+     *  name hierarchy containing the body. In future (post-1.5.0)
+     *  versions of Celestia, this will be changed so that the
+     *  reference star is the root of the frame hierarchy.
+     */
     Mat4d getLocalToHeliocentric(double) const;
     Point3d getHeliocentricPosition(double) const;
     Quatd getEquatorialToBodyFixed(double) const;
+    Quatd getEclipticalToFrame(double) const;
     Quatd getEclipticalToEquatorial(double) const;
     Quatd getEclipticalToBodyFixed(double) const;
     Mat4d getBodyFixedToHeliocentric(double) const;
@@ -204,6 +214,22 @@ class Body
     void addLocation(Location*);
     Location* findLocation(const std::string&, bool i18n = false) const;
     void computeLocations();
+
+    enum
+    {
+        BodyAxes       =   0x01,
+        FrameAxes      =   0x02,
+        LongLatGrid    =   0x04,
+        SunDirection   =   0x08,
+        VelocityVector =   0x10,
+    };
+	
+    bool referenceMarkVisible(uint32) const;
+    uint32 getVisibleReferenceMarks() const;
+    void setVisibleReferenceMarks(uint32);
+
+    Star* getReferenceStar() const;
+    Star* getFrameReferenceStar() const;
 
  private:
     std::string name;
@@ -244,6 +270,11 @@ class Body
 
     std::vector<Location*>* locations;
     mutable bool locationsComputed;
+
+    uint32 referenceMarks;
+
+    // Only necessary until we switch to using frame hierarchy
+    Star* frameRefStar;
 };
 
 #endif // _CELENGINE_BODY_H_

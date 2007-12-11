@@ -46,7 +46,9 @@ Body::Body(PlanetarySystem* _system) :
     classification(Unknown),
     altSurfaces(NULL),
     locations(NULL),
-    locationsComputed(false)
+    locationsComputed(false),
+    referenceMarks(0),
+    frameRefStar(NULL)
 {
     system = _system;
 }
@@ -131,6 +133,14 @@ Body::setOrbitFrame(const ReferenceFrame* f)
         orbitFrame->release();
 
     orbitFrame = f;
+
+    // Temporary hack: keep track of the star this frame is ultimately
+    // referenced to if it is different from the star at the root of
+    // the body's name hierarchy.
+    Star* frameRoot = getFrameReferenceStar();
+    Star* refStar = getReferenceStar();
+    if (frameRoot != refStar)
+        frameRefStar = frameRoot;
 }
 
 
@@ -316,12 +326,33 @@ Mat4d Body::getLocalToHeliocentric(double tjd) const
     if (orbitFrame != NULL)
     {
         Point3d p = orbitFrame->convertFromAstrocentric(pos, tjd);
-        return Mat4d::translation(p);
+
+        // Temporary hack; won't be necessary post-1.5.0 when this function
+        // is redefined to return position with respect to frame root object
+        // instead of name hierarchy root.
+        if (frameRefStar != NULL)
+        {
+            Vec3d frameOffset(0.0, 0.0, 0.0);
+            Star* refStar = getReferenceStar();
+            if (refStar != NULL)
+            {
+                frameOffset = (frameRefStar->getPosition(tjd) - refStar->getPosition(tjd)) *
+                    astro::microLightYearsToKilometers(1.0);
+            }
+
+            return Mat4d::translation(p + frameOffset);
+        }
+        else
+        {
+            return Mat4d::translation(p);
+        }
     }
     else
     {
         Mat4d frame;
 
+        // TODO: inconsistent with orbitFrame != NULL case; shouldn't apply
+        // rotation model of body, only of parents.
         frame = getRotationModel()->equatorOrientationAtTime(tjd).toMatrix4() *
             Mat4d::translation(pos);
 
@@ -336,6 +367,24 @@ Mat4d Body::getLocalToHeliocentric(double tjd) const
 Point3d Body::getHeliocentricPosition(double when) const
 {
     return Point3d(0.0, 0.0, 0.0) * getLocalToHeliocentric(when);
+}
+
+
+Quatd Body::getEclipticalToFrame(double tjd) const
+{
+    Quatd q(1.0);
+
+    if (bodyFrame != NULL)
+    {
+        q = bodyFrame->getOrientation(tjd);
+    }
+    else
+    {
+        if (orbitBarycenter != NULL)
+            q = orbitBarycenter->getEclipticalToEquatorial(tjd);
+    }
+
+    return q;
 }
 
 
@@ -642,6 +691,95 @@ void Body::computeLocations()
         }
     }
 }
+
+
+bool
+Body::referenceMarkVisible(uint32 refmark) const
+{
+    return (referenceMarks & refmark) != 0;
+}
+
+
+uint32
+Body::getVisibleReferenceMarks() const
+{
+    return referenceMarks;
+}
+
+
+void
+Body::setVisibleReferenceMarks(uint32 refmarks)
+{
+	referenceMarks = refmarks;
+}
+
+
+// Get the star at the root of the name hierarchy
+// NOTE: This method shouldn't be required after cleanup of frame and name
+// hierarchies post 1.5.0.
+Star*
+Body::getReferenceStar() const
+{
+    const Body* body = this;
+
+    while (body->orbitBarycenter != NULL)
+        body = body->orbitBarycenter;
+
+    if (body->getSystem() != NULL)
+        return body->getSystem()->getStar();
+    else
+        return NULL;
+}
+
+
+// Get the star at the root of the frame hierarchy
+// NOTE: This method shouldn't be required after cleanup of frame and name
+// hierarchies post 1.5.0.
+Star*
+Body::getFrameReferenceStar() const
+{
+    const Body* body = this;
+
+    for (;;)
+    {
+        // Body has an orbit frame, parent is the frame center
+        if (body->orbitFrame != NULL)
+        {
+            if (body->orbitFrame->getCenter().star() != NULL)
+            {
+                return body->orbitFrame->getCenter().star();
+            }
+            else if (body->orbitFrame->getCenter().body() != NULL)
+            {
+                body = body->orbitFrame->getCenter().body();
+            }
+            else
+            {
+                // Bad frame center: either a location, deep sky object, or
+                // null object.
+                return NULL;
+            }
+        }
+        // Otherwise, use object's parent in the name hierarchy
+        else
+        {
+            if (body->orbitBarycenter != NULL)
+            {
+                body = body->orbitBarycenter;
+            }
+            else
+            {
+                if (body->getSystem() != NULL)
+                    return body->getSystem()->getStar();
+                else
+                    return NULL;
+            }
+        }
+    }
+
+    return NULL;
+}
+
 
 
 /**** Implementation of PlanetarySystem ****/

@@ -3021,9 +3021,14 @@ void Renderer::renderObjectAsPoint(Point3f position,
             else if (alpha > 1.0f)
             {
                 float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
-                pointSize *= discScale;
-
+                pointSize *= max(1.0f, discScale);
+                
                 glareAlpha = min(0.5f, discScale / 4.0f);
+                if (discSizeInPixels > MaxScaledDiscStarSize)
+                {
+                    glareAlpha = min(glareAlpha, 
+                                     (MaxScaledDiscStarSize - discSizeInPixels) / MaxScaledDiscStarSize + 1.0f);
+                }
                 glareSize = pointSize * 3.0f;
 
                 alpha = 1.0f;
@@ -7393,9 +7398,19 @@ void Renderer::buildRenderLists(const Star& sun,
             Point3d orbitOrigin(0.0, 0.0, 0.0);
             if (body->getOrbitFrame())
             {
-                Body* centralBody = body->getOrbitFrame()->getCenter().body();
-                if (centralBody != NULL)
-                    orbitOrigin = centralBody->getHeliocentricPosition(now);
+                Selection centerObject = body->getOrbitFrame()->getCenter();
+                if (centerObject.body() != NULL)
+                {
+                    orbitOrigin = centerObject.body()->getHeliocentricPosition(now);
+                }
+                else if (centerObject.star() != NULL)
+                {
+                    if (centerObject.star() != &sun)
+                    {
+                        Vec3d v = (centerObject.star()->getPosition(now) - sun.getPosition(now)) * astro::microLightYearsToKilometers(1.0);
+                        orbitOrigin = Point3d(v.x, v.y, v.z);
+                    }
+                }
             }
             else if (body->getOrbitBarycenter())
             {
