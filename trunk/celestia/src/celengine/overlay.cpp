@@ -153,7 +153,7 @@ void Overlay::print(char c)
     }
 }
 
-void Overlay::print(char* s)
+void Overlay::print(const char* s)
 {
 #if 0
     while (*s != '\0')
@@ -161,7 +161,7 @@ void Overlay::print(char* s)
 #else
     int length = strlen(s);
     bool validChar = true;
-	int i = 0;
+    int i = 0;
     while (i < length && validChar)
     {
         wchar_t ch = 0;
