@@ -2039,11 +2039,10 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     else
     {
         status = ShaderStatus_CompileError;
-        if (vs != NULL)
-            delete vs;
-        if (fs != NULL)
-            delete fs;
     }
+
+    delete vs;
+    delete fs;
 
     if (status != ShaderStatus_OK)
     {
