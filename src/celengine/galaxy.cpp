@@ -605,6 +605,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 			 }
 		}
 
+    delete img;
 	galacticPoints->reserve(j);
 
 	// sort to start with the galaxy center region (x^2 + y^2 + z^2 ~ 0), such that
@@ -664,7 +665,6 @@ void InitializeForms()
     for (unsigned int eform  = 0; eform <= 7; ++eform)
     {
         float ell = 1.0f - (float) eform / 8.0f;
-        ellipticalForms[eform] = new GalacticForm();
 
         // note the correct x,y-alignment of 'ell' scaling!!
    		// build all elliptical templates from rescaling E0

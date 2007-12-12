@@ -505,7 +505,10 @@ AsciiModelLoader::loadVertexDescription()
         return NULL;
     }
 
-    return new Mesh::VertexDescription(offset, nAttributes, attributes);
+    Mesh::VertexDescription *vertexDesc =
+        new Mesh::VertexDescription(offset, nAttributes, attributes);
+    delete[] attributes;
+    return vertexDesc;
 }
 
 
@@ -578,10 +581,12 @@ AsciiModelLoader::loadVertices(const Mesh::VertexDescription& vertexDesc,
                 if (tok.nextToken() != Tokenizer::TokenNumber)
                 {
                     reportError("Error in vertex data");
-                    delete[] vertexData;
+                    data[j] = 0.0;
                 }
-                data[j] = tok.getNumberValue();
-
+                else
+                {
+                    data[j] = tok.getNumberValue();
+                }
                 // TODO: range check unsigned byte values
             }
 
@@ -623,11 +628,15 @@ AsciiModelLoader::loadMesh()
     uint32 vertexCount = 0;
     char* vertexData = loadVertices(*vertexDesc, vertexCount);
     if (vertexData == NULL)
+    {
+        delete vertexDesc;
         return NULL;
+    }
 
     Mesh* mesh = new Mesh();
     mesh->setVertexDescription(*vertexDesc);
     mesh->setVertices(vertexCount, vertexData);
+    delete vertexDesc;
 
     while (tok.nextToken() == Tokenizer::TokenName &&
            tok.getNameValue() != "end_mesh")
@@ -1499,7 +1508,10 @@ BinaryModelLoader::loadVertexDescription()
         return NULL;
     }
 
-    return new Mesh::VertexDescription(offset, nAttributes, attributes);
+    Mesh::VertexDescription *vertexDesc =
+        new Mesh::VertexDescription(offset, nAttributes, attributes);
+    delete[] attributes;
+    return vertexDesc;
 }
 
 
@@ -1513,11 +1525,15 @@ BinaryModelLoader::loadMesh()
     uint32 vertexCount = 0;
     char* vertexData = loadVertices(*vertexDesc, vertexCount);
     if (vertexData == NULL)
+    {
+        delete vertexDesc;
         return NULL;
+    }
 
     Mesh* mesh = new Mesh();
     mesh->setVertexDescription(*vertexDesc);
     mesh->setVertices(vertexCount, vertexData);
+    delete vertexDesc;
 
     for (;;)
     {

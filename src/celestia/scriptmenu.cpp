@@ -101,6 +101,7 @@ ScanScriptsDirectory(string scriptsDir, bool deep)
     scanner.pushDir(scriptsDir);
 
     dir->enumFiles(scanner, deep);
+    delete dir;
 
     return scripts;
 }
