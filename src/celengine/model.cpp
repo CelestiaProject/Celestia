@@ -333,6 +333,7 @@ Model::uniquifyMaterials()
 
     vector<const Mesh::Material*> uniqueMaterials;
     vector<uint32> materialMap(materials.size());
+    vector<uint32> duplicateMaterials;
 
     // From the sorted material list construct the list of unique materials
     // and a map to convert old material indices into indices that can be
@@ -345,6 +346,10 @@ Model::uniquifyMaterials()
             uniqueMaterialCount++;
             uniqueMaterials.push_back(indexedMaterials[i].material);
         }
+        else
+        {
+            duplicateMaterials.push_back(i);
+        }
         materialMap[indexedMaterials[i].originalIndex] = uniqueMaterialCount - 1;
     }
 
@@ -355,6 +360,13 @@ Model::uniquifyMaterials()
          iter != meshes.end(); iter++)
     {
         (*iter)->remapMaterials(materialMap);
+    }
+
+    vector<uint32>::const_iterator dupIter;
+    for (dupIter = duplicateMaterials.begin();
+         dupIter != duplicateMaterials.end(); ++dupIter)
+    {
+        delete indexedMaterials[*dupIter].material;
     }
 
     materials = uniqueMaterials;

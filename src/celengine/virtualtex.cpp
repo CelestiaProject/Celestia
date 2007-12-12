@@ -300,6 +300,7 @@ void VirtualTexture::populateTileTree()
                         }
                     }
                 }
+                delete dir;
             }
         }
     }

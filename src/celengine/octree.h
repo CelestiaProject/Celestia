@@ -174,6 +174,7 @@ inline DynamicOctree<OBJ, PREC>::~DynamicOctree()
 
         delete[] _children;
     }
+    delete _objects;
 }
 
 
