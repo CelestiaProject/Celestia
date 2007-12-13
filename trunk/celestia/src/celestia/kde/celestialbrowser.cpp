@@ -119,13 +119,16 @@ void CelestialBrowser::slotRefresh()
     {
         const Star *star=(Star *)(*i);
 
+        QString starClass(star->getSpectralType());
+
+        if (starClass == "Bary") continue;
+
         Point3f starPos = star->getPosition();
         Vec3d v(starPos.x - obsPos.x,
                 starPos.y - obsPos.y,
                 starPos.z - obsPos.z);
         float dist = v.length();
 
-        QString starClass(star->getSpectralType());
         CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, _("ly"),
                 astro::absToAppMag(star->getAbsoluteMagnitude(), dist),
                 star->getAbsoluteMagnitude(), starClass);
@@ -133,38 +136,7 @@ void CelestialBrowser::slotRefresh()
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(star->getCatalogNumber());
         if (iter != solarSystemCatalog->end())
         {
-            const PlanetarySystem* planets = 0;
-            SolarSystem* solarSys = iter->second;
-            planets = solarSys->getPlanets();
-
-            for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
-            {
-                Body* body = solarSys->getPlanets()->getBody(i);
-
-                Point3d bodyPos = body->getHeliocentricPosition(appSim->getTime());
-                double starBodyDist = bodyPos.distanceFromOrigin();
-
-                CelListViewItem *planetItem = new CelListViewItem(starItem, body->getName(true),
-                                            starBodyDist / KM_PER_AU, _("au"),
-                                            0, 0, getClassification(body->getClassification()));
-
-                const PlanetarySystem* satellites = body->getSatellites();
-                if (satellites != NULL && satellites->getSystemSize() != 0)
-                {
-                        for (int i = 0; i < satellites->getSystemSize(); i++)
-                        {
-                                Body* sat = satellites->getBody(i);
-
-                                Point3d satPos = sat->getHeliocentricPosition(appSim->getTime());
-                                Vec3d bodySatVec(bodyPos.x - satPos.x, bodyPos.y - satPos.y, bodyPos.z - satPos.z);
-                                double bodySatDist = bodySatVec.length();
-
-                                new CelListViewItem(planetItem, sat->getName(true),
-                                    bodySatDist, "km", 0, 0, getClassification(sat->getClassification()));
-
-                        }
-                }
-            }
+            addPlanetarySystem(starItem, iter->second->getPlanets());
         }
     }
 
@@ -173,6 +145,33 @@ void CelestialBrowser::slotRefresh()
     delete(stars);
 }
 
+void CelestialBrowser::addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Point3d* parentBodyPos) 
+{
+    if (parentItem == NULL || system == NULL) return;
+    for ( int i = 0; i < system->getSystemSize(); i++ ) 
+    {
+        const Body* body = system->getBody(i);
+        if (body->getClassification() & (Body::Barycenter | Body::Invisible)) continue;
+        Point3d bodyPos = body->getHeliocentricPosition(appSim->getTime());
+        CelListViewItem* item = NULL;
+        if (parentBodyPos == NULL) 
+        {
+            double bodyDist = bodyPos.distanceFromOrigin();
+            item = new CelListViewItem(parentItem, body->getName(true),
+                                       bodyDist / KM_PER_AU, _("au"),
+                                       0, 0, getClassification(body->getClassification()));
+        } 
+        else 
+        {
+            Vec3d bodyVec(parentBodyPos->x - bodyPos.x, parentBodyPos->y - bodyPos.y, parentBodyPos->z - bodyPos.z);
+            double bodyDist = bodyVec.length();
+            item = new CelListViewItem(parentItem, body->getName(true),
+                                       bodyDist, "km", 
+                                       0, 0, getClassification(body->getClassification()));
+        }
+        addPlanetarySystem(item, body->getSatellites(), &bodyPos);
+    }
+}
 
 QString CelestialBrowser::getClassification(int c) const{
     QString cl;
@@ -192,6 +191,18 @@ QString CelestialBrowser::getClassification(int c) const{
             break;
         case Body::Spacecraft:
             cl = i18n("Spacecraft");
+            break;
+        case Body::Invisible:
+            cl = i18n("Invisible");
+            break;
+        case Body::Barycenter:
+            cl = i18n("Barycenter");
+            break;
+        case Body::SmallBody:
+            cl = i18n("Small Body");
+            break;
+        case Body::DwarfPlanet:
+            cl = i18n("Dwarf Planet");
             break;
         case Body::Unknown:
         default:
