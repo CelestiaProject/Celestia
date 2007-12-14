@@ -59,6 +59,7 @@ class PlanetarySystem
     Body* primary;
     std::vector<Body*> satellites;
     ObjectIndex objectIndex;  // index of bodies by name
+    ObjectIndex i18nObjectIndex;
 };
 
 
