@@ -802,6 +802,7 @@ void PlanetarySystem::addBody(Body* body)
 {
     satellites.insert(satellites.end(), body);
     objectIndex.insert(make_pair(body->getName(), body));
+    i18nObjectIndex.insert(make_pair(body->getName(true), body));
 }
 
 
@@ -817,7 +818,7 @@ void PlanetarySystem::removeBody(Body* body)
         }
     }
 
-    // Erase the object from the object index
+    // Erase the object from the object indices
     for (ObjectIndex::iterator iter = objectIndex.begin();
          iter != objectIndex.end(); iter++)
     {
@@ -827,6 +828,17 @@ void PlanetarySystem::removeBody(Body* body)
             break;
         }
     }
+
+    for (ObjectIndex::iterator iter = i18nObjectIndex.begin();
+         iter != i18nObjectIndex.end(); iter++)
+    {
+        if (iter->second == body)
+        {
+            i18nObjectIndex.erase(iter);
+            break;
+        }
+    }
+
 }
 
 
@@ -842,7 +854,7 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
         }
     }
 
-    // Erase the object from the object index
+    // Erase the object from the object indices
     for (ObjectIndex::iterator iter = objectIndex.begin();
          iter != objectIndex.end(); iter++)
     {
@@ -853,15 +865,27 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
         }
     }
 
-    // Add the replacement to the object index
+    for (ObjectIndex::iterator iter = i18nObjectIndex.begin();
+         iter != i18nObjectIndex.end(); iter++)
+    {
+        if (iter->second == oldBody)
+        {
+            i18nObjectIndex.erase(iter);
+            break;
+        }
+    }
+
+    // Add the replacement to the object indices
     objectIndex.insert(make_pair(newBody->getName(), newBody));
+    i18nObjectIndex.insert(make_pair(newBody->getName(true), newBody));
 }
 
 
 Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    ObjectIndex::const_iterator firstMatch = objectIndex.find(_name);
-    if (firstMatch != objectIndex.end())
+    ObjectIndex index = i18n?i18nObjectIndex:objectIndex;
+    ObjectIndex::const_iterator firstMatch = index.find(_name);
+    if (firstMatch != index.end())
     {
         return firstMatch->second;
     }
