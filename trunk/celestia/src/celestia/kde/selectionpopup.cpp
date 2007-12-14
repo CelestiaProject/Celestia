@@ -355,6 +355,8 @@ void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parent
     std::vector<Body*> moons;
     std::vector<Body*> planets;
     std::vector<Body*> spacecraft;
+    std::vector<Body*> smallBodies;
+    std::vector<Body*> dwarfPlanets;
 
     std::vector<std::vector<Body*>* > objects;
     std::vector<std::string> menuNames;
@@ -364,14 +366,16 @@ void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parent
     menuNames.push_back(QString::fromUtf8(_("Asteroids")));
     objects.push_back(&comets);
     menuNames.push_back(QString::fromUtf8(_("Comets")));
-    objects.push_back(&invisibles);
-    menuNames.push_back(QString::fromUtf8(_("Invisibles")));
     objects.push_back(&moons);
     menuNames.push_back(QString::fromUtf8(_("Moons")));
     objects.push_back(&planets);
     menuNames.push_back(QString::fromUtf8(_("Planets")));
     objects.push_back(&spacecraft);
     menuNames.push_back(QString::fromUtf8(_("Spacecraft")));
+    objects.push_back(&smallBodies);
+    menuNames.push_back(QString::fromUtf8(_("Small Bodies")));
+    objects.push_back(&dwarfPlanets);
+    menuNames.push_back(QString::fromUtf8(_("Dwarf Planets")));
 
     for (int i = 0; i < psys->getSystemSize(); i++) {
         Body* body = psys->getBody(i);
@@ -382,9 +386,6 @@ void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parent
         case Body::Comet:
             comets.push_back(body);
             break;
-        case Body::Invisible:
-            invisibles.push_back(body);
-            break;
         case Body::Moon:
             moons.push_back(body);
             break;
@@ -393,6 +394,15 @@ void SelectionPopup::insertPlanetaryMenu(KPopupMenu* popup, const string& parent
             break;
         case Body::Spacecraft:
             spacecraft.push_back(body);
+            break;
+        case Body::SmallBody:
+            smallBodies.push_back(body);
+            break;
+        case Body::DwarfPlanet:
+            dwarfPlanets.push_back(body);
+            break;
+        case Body::Invisible:
+        case Body::Barycenter:
             break;
         }
     }
