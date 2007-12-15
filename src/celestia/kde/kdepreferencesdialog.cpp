@@ -32,7 +32,8 @@
 #include <qspinbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-
+#include <qlineedit.h>
+#include <qvalidator.h>
 
 #include "kdeapp.h"
 #include "kdepreferencesdialog.h"
@@ -411,6 +412,16 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     QLabel* spacer3 = new QLabel(" ", timeFrame);
     timeFrame->setStretchFactor(spacer3, 2);
 
+    QHBox *hbox4 = new QHBox(setTimezoneGroup);
+    new QLabel(i18n("Julian Date: "), hbox4);
+    new QLabel(" ", hbox4);
+    julianDateEdit = new QLineEdit(hbox4);
+    QDoubleValidator *julianDateValidator = new QDoubleValidator(julianDateEdit);
+    julianDateEdit->setValidator(julianDateValidator);
+    julianDateEdit->setAlignment(Qt::AlignRight);
+    connect(julianDateEdit, SIGNAL(lostFocus()), SLOT(slotJDHasChanged()));
+
+
     setTime(astro::TDBtoUTC(appCore->getSimulation()->getTime()));
     connect(YSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
     connect(MSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
@@ -589,6 +600,9 @@ void KdePreferencesDialog::setTime(double d) {
         mSpin->setValue(date.minute);
         sSpin->setValue(int(date.seconds));
     }
+
+    QString jd;
+    julianDateEdit->setText(jd.setNum(d, 'f'));
 }
 
 double KdePreferencesDialog::getTime() const {
@@ -613,6 +627,10 @@ double KdePreferencesDialog::getTime() const {
         time.tm_sec = sSpin->value();
         d = astro::secondsToJulianDate(mktime(&time)) + (double) astro::Date(1970, 1, 1);
     }
+
+    QString jd;
+    julianDateEdit->setText(jd.setNum(d, 'f'));
+
     return d;
 }
 
@@ -682,6 +700,11 @@ void KdePreferencesDialog::slotApply() {
 
 void KdePreferencesDialog::slotTimeHasChanged() {
     timeHasChanged = true;
+    getTime();
+}
+
+void KdePreferencesDialog::slotJDHasChanged() {
+    setTime(julianDateEdit->text().toDouble());
 }
 
 void KdePreferencesDialog::slotFaintestVisible(int m) {
