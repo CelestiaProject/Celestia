@@ -24,6 +24,7 @@ class QSpinBox;
 class QComboBox;
 class QCheckBox;
 class KKeyChooser;
+class QLineEdit;
 
 class KdeApp;
 
@@ -41,6 +42,7 @@ public slots:
     void setNow();
     void ltSubstract();
     void slotTimeHasChanged();
+    void slotJDHasChanged();
     void slotAmbientLightLevel(int l);
     void slotFaintestVisible(int m);
     void slotRenderPath(int);
@@ -75,6 +77,8 @@ protected:
     QSpinBox *hSpin, *mSpin, *sSpin;
 
     QSpinBox *dtsSpin;
+
+    QLineEdit *julianDateEdit;
 
     QComboBox *renderPathCombo;
     QLabel* renderPathLabel;
