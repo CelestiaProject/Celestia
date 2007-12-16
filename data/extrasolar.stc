@@ -290,6 +290,15 @@
 	AppMag 17.4
 }
 
+"GD 66:V361 Aur:WD 0517+307"
+{
+	RA 80.159583
+	Dec +30.806667
+	Distance 166
+	SpectralType "DA"
+	AppMag 15.6
+}
+
 # Definitions for some exoplanet stars in multiple systems
 
 Barycenter "TAU Boo:4 Boo"
