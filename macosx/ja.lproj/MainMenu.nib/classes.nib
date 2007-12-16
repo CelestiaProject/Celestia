@@ -100,7 +100,7 @@
             ACTIONS = {setTime = id; showWindow = id; }; 
             CLASS = SetTimeWindowController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {dateField = NSTextField; timeField = NSTextField; }; 
+            OUTLETS = {dateField = NSTextField; jdField = NSTextField; timeField = NSTextField; }; 
             SUPERCLASS = NSWindowController; 
         }, 
         {CLASS = SplashImageView; LANGUAGE = ObjC; SUPERCLASS = NSImageView; }, 

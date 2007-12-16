@@ -16,7 +16,38 @@ NSDictionary* coordinateDict;
 @implementation NSDate(AstroAPI)
 +(NSDate*)dateWithJulian:(NSNumber*)jd
 {
-    return [NSDate dateWithTimeIntervalSince1970:[[Astro julianDateToSeconds:jd] doubleValue]-[[Astro julianDateToSeconds:[NSNumber numberWithDouble:astro::Date(1970,1,1)]] doubleValue]];
+    NSDate *date = nil;
+    astro::Date astroDate([jd doubleValue]);
+    int year = astroDate.year;
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
+    NSCalendar *currentCalendar = [NSCalendar currentCalendar];
+    [currentCalendar setTimeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
+    int era = 1;
+    if (year < 1)
+    {
+        era  = 0;
+        year = 1 - year;
+    }
+    [comps setEra:    era];
+    [comps setYear:   year];
+    [comps setMonth:  astroDate.month];
+    [comps setDay:    astroDate.day];
+    [comps setHour:   astroDate.hour];
+    [comps setMinute: astroDate.minute];
+    [comps setSecond: (int)astroDate.seconds];
+    date = [currentCalendar dateFromComponents: comps];
+#else
+    date = [NSCalendarDate dateWithYear: year
+                                  month: astroDate.month
+                                    day: astroDate.day
+                                   hour: astroDate.hour
+                                 minute: astroDate.minute
+                                 second: (int)astroDate.seconds
+                               timeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+#endif
+
+    return date;
 }
 @end
 
@@ -64,7 +95,34 @@ NSDictionary* coordinateDict;
 
 +(NSNumber*)julianDate:(NSDate *)date
 {
-    return [NSNumber numberWithDouble:([[Astro secondsToJulianDate:[NSNumber numberWithDouble:(double)[date timeIntervalSince1970]]] doubleValue]+(double)astro::Date(1970,1,1))];
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
+    NSCalendar *currentCalendar = [NSCalendar currentCalendar];
+    [currentCalendar setTimeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    NSDateComponents *comps = [currentCalendar components:
+        NSEraCalendarUnit  |
+        NSYearCalendarUnit | NSMonthCalendarUnit  | NSDayCalendarUnit | 
+        NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit
+                                                 fromDate: date];
+    int era  = [comps era];
+    int year = [comps year];
+    if (era < 1) year = 1 - year;
+    astro::Date astroDate(year, [comps month], [comps day]);
+    astroDate.hour    = [comps hour];
+    astroDate.minute  = [comps minute];
+    astroDate.seconds = [comps second];
+#else
+    NSCalendarDate *cd =  [date dateWithCalendarFormat: nil timeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    // astro::Date requires GMT (UTC) times
+    astro::Date astroDate([cd yearOfCommonEra],
+                          [cd monthOfYear],
+                          [cd dayOfMonth]);
+    astroDate.hour    = [cd hourOfDay];    // takes DST in to account
+    astroDate.minute  = [cd minuteOfHour];
+    astroDate.seconds = [cd secondOfMinute];
+#endif
+
+    double jd = (double)astroDate;
+    return [NSNumber numberWithDouble: jd];
 }
 
 +(NSNumber*)speedOfLight
