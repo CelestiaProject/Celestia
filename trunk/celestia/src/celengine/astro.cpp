@@ -190,24 +190,34 @@ double astro::julianDateToSeconds(double jd)
     return jd * 86400.0;
 }
 
-void astro::decimalToDegMinSec(double angle, int& hours, int& minutes, double& seconds)
+void astro::decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
 {
     double A, B, C;
 
-    hours = (int) angle;
+    degrees = (int) angle;
 
-    A = angle - (double) hours;
+    A = angle - (double) degrees;
     B = A * 60.0;
     minutes = (int) B;
     C = B - (double) minutes;
     seconds = C * 60.0;
 }
 
-double astro::degMinSecToDecimal(int hours, int minutes, double seconds)
+double astro::degMinSecToDecimal(int degrees, int minutes, double seconds)
 {
-    return (double)hours + (seconds/60.0 + (double)minutes)/60.0;
+    return (double)degrees + (seconds/60.0 + (double)minutes)/60.0;
 }
 
+void astro::decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds)
+{
+    double A, B;
+
+    A = angle / 15.0;
+    hours = (int) A;
+    B = (A - (double) hours) * 60.0;
+    minutes = (int) (B);
+    seconds = (B - (double) minutes) * 60.0;
+}
 
 // Compute the fraction of a sphere which is illuminated and visible
 // to a viewer.  The source of illumination is assumed to be at (0, 0, 0)
