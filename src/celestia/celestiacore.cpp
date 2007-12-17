@@ -2849,21 +2849,19 @@ static void displayAngle(Overlay& overlay, double angle)
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    if (degrees > 0)
-    {
-        overlay.oprintf("%d%s %02d' %.1f\"",
-                        degrees, UTF8_DEGREE_SIGN, minutes, seconds);
-    }
-    else if (minutes > 0)
-    {
-        overlay.oprintf("%02d' %.1f\"", minutes, seconds);
-    }
-    else
-    {
-        overlay.oprintf("%.1f\"", seconds);
-    }
+    overlay.oprintf("%d%s %02d' %.1f\"",
+                        degrees, UTF8_DEGREE_SIGN, abs(minutes), abs(seconds));
 }
 
+static void displayAngleInHourMinSec(Overlay& overlay, double angle)
+{
+    int hours, minutes;
+    double seconds;
+    astro::decimalToHourMinSec(angle, hours, minutes, seconds);
+
+    overlay.oprintf("%dh %02dm %.1fs",
+                        hours, abs(minutes), abs(seconds));
+}
 
 static void displayApparentDiameter(Overlay& overlay,
                                     double radius,
@@ -2901,6 +2899,31 @@ static void displayApparentMagnitude(Overlay& overlay,
 
     overlay.oprintf("%.1f\n", appMag);
 }
+
+
+static void displayRADec(Overlay& overlay, Vec3d v)
+{
+    double phi = atan2(v.x, v.z) - PI / 2;
+    if (phi < 0)
+        phi = phi + 2 * PI;
+
+    double theta = atan2(sqrt(v.x * v.x + v.z * v.z), v.y);
+    if (theta > 0)
+        theta = PI / 2 - theta;
+    else
+        theta = -PI / 2 - theta;
+
+    double ra = radToDeg(phi);
+    double dec = radToDeg(theta);
+
+    overlay << _("RA: ");
+    overlay << " ";
+    displayAngleInHourMinSec(overlay, ra);
+    overlay << "\n";
+    overlay << _("Dec: ");
+    displayAngle(overlay, dec);
+}
+
 
 static void displayAcronym(Overlay& overlay, char* s)
 {
@@ -3537,9 +3560,13 @@ void CelestiaCore::renderOverlay()
                                 v.length() * 1e-6);
             break;
 
-	default:
-	    break;
+	      default:
+	          break;
         }
+
+        Vec3d vect = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
+        vect = vect * Mat3d::xrotation(-astro::J2000Obliquity);
+        displayRADec(*overlay, vect);
 
         overlay->endText();
 
