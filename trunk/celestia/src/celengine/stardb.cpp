@@ -1206,10 +1206,9 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                         length = next - startPos;
                         ++next;
                     }
-                    if (catalogNumber == 0 && objName.substr(startPos, length) == "Sun")
+                    if (catalogNumber == 0 && objName.substr(startPos, length) == "Sun" && string("Sun") != _("Sun"))
                         namesDB->add(0, _("Sun"));
-                    else
-                        namesDB->add(catalogNumber, objName.substr(startPos, length));
+                    namesDB->add(catalogNumber, objName.substr(startPos, length));
                     startPos = next;
                 }
             }
