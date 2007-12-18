@@ -1055,7 +1055,14 @@ Code:
   - Allow leading + (no effect, just symmetry with - )
   - Allow numbers to begin with a decimal point (e.g. accept .12 as well
     as 0.12)
-* KDE: improvements to popup menu--orbiting bodies are now sorted by type
+* KDE: improvements to popup menu
+  - orbiting bodies are now sorted by type
+  - filtered out invisible objects and barycenters
+  - added new marker shapes
+* KDE: CelestialBrowser improvements:
+  - Show satellites of satellites
+  - Don't display barycenters and invisible objects
+  - Added new body classifications: small body and dwarf planet
 * Added cmodsphere, a utility for producing cmod meshes from height samples
   regularly spaced in longitude and latitude.
 * COPYING, controls.txt, start script, and guide can all be localized
@@ -1213,7 +1220,10 @@ Code:
 * New extrasolar planets: HAT-P-4 b, HAT-P-5 b, HAT-P-6 b, HS 16175 b,
  HD 167042 b, HD 74156 d, HD 285968 b, V391 Peg b,
  HD 132406 b, HD 43691 b, NGC 2423 3 b, Gliese 317 b & c,
- TrES-3, HD 155358 b&c, HD 5319 b, HD 75898 b; removed HD 33636 b
+ TrES-3, HD 155358 b&c, HD 5319 b, HD 75898 b, OGLE-TR-182 b, WASP-3 b,
+ 55 Cnc f, Lupus-TR-3 b, OGLE-TR-211 b, HD 156846 b, HD 4113 b, Kap CrB b, 
+ GD 66 b;
+ removed HD 33636 b
 * Set up transit of Gliese 436
 * Added setradius method for solar system objects to celx
 * Added script commands to set label and line colors
@@ -1252,3 +1262,41 @@ Code:
 * Windows: fixed unitialized variable that could cause wrong
 translations to be used
 * Changed pick code to select barycenter of distant star systems
+* Windows: Fixed bug in popup menu and solar system browser with objects with
+  empty name strings
+* Windows: Fixed bug in 'Set current time' action for Windows Set Time dialog;   UTC to TDB correction was not being applied.
+* KDE: Fixed cel URL handler to avoid opening of empty tab in Konqueror
+* KDE: Fixed window being resized when URL is activated by another app
+* Mac: Added more info to OpenGL Info window
+* Mac: Added satellites submenu to context menu
+* Added Julian date setting to Set Time dialog
+* Bound Shift+K and Shift+L key combinations to adjust time by factor of 2
+* Fixed pause behavior with cel URLs and bookmarks (non-Windows platforms)
+* Include star system barycenters in cel URL paths
+* Switched to double precision arithmetic for orbits to avoid rendering
+  artifacts
+* Use cubic interpolation for orbits paths to eliminate sharp angles when
+  rendering them
+* Removed fractional part in the display of galaxy light gain
+* Fixed bug in calendar date calculation for negative Julian dates and
+  dates far in the past or future.
+* Changed quaternion slerp so shortest path is taken when interpolating
+  orientations. Prevents extra spinning when using SampledOrientatin.
+* Implemented SampledTrajectory, a new trajectory type similar to
+  SampledOrbit except with properties to control interpolation and precision.
+* Fixed bug with showing labels of objects with empty name strings
+* Replaced month number with name abbreviation in date display
+* Fixed inconsistent operation of mouse wheel reverse flag
+* Fixed some memory leaks
+* Fixed depth sorting of labels for solar system objects
+* Added capability to set default star textures via celestia.cfg
+* Added RA/Dec to selection information (using observer centered coordinate
+ system)
+* Removed hardcoded limit on max number of nearby solar systems when rendering
+  (fixes a crashing bug.)
+* Added untranslated "Sun" name so that scripts and add-ons using that name
+  aren't broken on non-English versions
+* Added translation for "Milky Way"
+* Perf: Rearranged some galaxy rendering code to increase performance
+* Perf: Added code to skip deep sky object octree traversal when all deep sky
+  objects are disabled.
