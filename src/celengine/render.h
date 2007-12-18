@@ -1,16 +1,18 @@
 // render.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2007, Celestia Development Team
+// Contact: Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _RENDER_H_
-#define _RENDER_H_
+#ifndef _CELENGINE_RENDER_H_
+#define _CELENGINE_RENDER_H_
 
 #include <vector>
+#include <list>
 #include <string>
 #include <celmath/frustum.h>
 #include <celengine/observer.h>
@@ -20,6 +22,15 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
+
+
+struct LightSource
+{
+    Point3d position;
+    Color color;
+    float luminosity;
+    float radius;
+};
 
 
 struct RenderListEntry
@@ -48,10 +59,8 @@ struct RenderListEntry
     float appMag;
     RenderableType renderableType;
     bool isOpaque;
-    int solarSysIndex;
+    std::vector<LightSource>* lightSourceList;
 };
-
-static const unsigned int MaxSolarSystems = 16;
 
 
 class Renderer
@@ -281,15 +290,7 @@ class Renderer
         Vec3f v0, v1, v2, v3;
     };
 
-    struct LightSource
-    {
-        Point3d position;
-        Color color;
-        float luminosity;
-        float radius;
-    };
 
-    
     class PointStarVertexBuffer
     {
     public:
@@ -395,7 +396,7 @@ class Renderer
                           const PlanetarySystem* solSystem,
                           const Observer& observer,
                           double now,
-                          unsigned int solarSysIndex,
+                          std::vector<LightSource>* lightSourceList,
                           bool showLabels = false);
     void addStarOrbitToRenderList(const Star& star,
                                   const Observer& observer,
@@ -566,7 +567,7 @@ class Renderer
     std::vector<EclipseShadow> eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;
 
-    std::vector<LightSource> lightSourceLists[MaxSolarSystems];
+    std::list<std::vector<LightSource>* > lightSourceLists;
 
     double modelMatrix[16];
     double projMatrix[16];
@@ -657,4 +658,4 @@ class Renderer
     static Color EquatorialGridColor;
 };
 
-#endif // _RENDER_H_
+#endif // _CELENGINE_RENDER_H_
