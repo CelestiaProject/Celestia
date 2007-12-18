@@ -445,6 +445,8 @@ static void IllumMapEval(float x, float y, float z,
 }
 
 
+
+
 static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
                                       unsigned int log2size,
                                       float fwhm,
@@ -1950,7 +1952,7 @@ static void
 setupLightSources(const vector<const Star*>& nearStars,
                   const Star& sun,
                   double t,
-                  vector<Renderer::LightSource>& lightSources)
+                  vector<LightSource>& lightSources)
 {
     UniversalCoord center = sun.getPosition(t);
 
@@ -1964,7 +1966,7 @@ setupLightSources(const vector<const Star*>& nearStars,
             Vec3d v = ((*iter)->getPosition(t) - center) *
                 astro::microLightYearsToKilometers(1.0);
 
-            Renderer::LightSource ls;
+            LightSource ls;
             ls.position = Point3d(v.x, v.y, v.z);
             ls.luminosity = (*iter)->getLuminosity();
             ls.radius = (*iter)->getRadius();
@@ -2028,7 +2030,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
                      rle.appMag,
                      observer,
                      cameraOrientation,
-                     lightSourceLists[rle.solarSysIndex],
+                     *rle.lightSourceList,
                      nearPlaneDistance, farPlaneDistance);
         break;
 
@@ -2037,7 +2039,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
         renderCometTail(*rle.body,
                         rle.position,
                         observer.getTime(),
-                        lightSourceLists[rle.solarSysIndex],
+                        *rle.lightSourceList,
                         rle.discSizeInPixels);
         break;
 
@@ -2064,7 +2066,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
                            rle.position,
                            rle.distance,
                            observer.getTime(),
-                           lightSourceLists[rle.solarSysIndex],
+                           *rle.lightSourceList,
                            nearPlaneDistance, farPlaneDistance);
         break;
     case RenderListEntry::RenderableVelocityVector:
@@ -2166,7 +2168,18 @@ void Renderer::render(const Observer& observer,
         nearStars.clear();
         universe.getNearStars(observer.getPosition(), 1.0f, nearStars);
 
-        unsigned int solarSysIndex = 0;
+        if (nearStars.size() > lightSourceLists.size())
+        {
+            unsigned int expandElements = nearStars.size() - lightSourceLists.size();
+            for (unsigned int i = 0; i < expandElements; i++)
+            {
+                vector<LightSource>* ls = new vector<LightSource>();
+                lightSourceLists.push_back(ls);
+            }
+        }
+        
+        list<vector<LightSource>* >::iterator lsIter = lightSourceLists.begin();
+
         for (vector<const Star*>::const_iterator iter = nearStars.begin();
              iter != nearStars.end(); iter++)
         {
@@ -2174,15 +2187,15 @@ void Renderer::render(const Observer& observer,
             SolarSystem* solarSystem = universe.getSolarSystem(sun);
             if (solarSystem != NULL)
             {
-                setupLightSources(nearStars, *sun, now,
-                                  lightSourceLists[solarSysIndex]);
+                vector<LightSource>* lightSources = *lsIter++;
+                
+                setupLightSources(nearStars, *sun, now, *lightSources);
                 buildRenderLists(*sun,
                                  solarSystem->getPlanets(),
                                  observer,
                                  now,
-                                 solarSysIndex,
+                                 lightSources,
                                  (labelMode & (BodyLabelMask)) != 0);
-                solarSysIndex++;
             }
 
             addStarOrbitToRenderList(*sun, observer, now);
@@ -5528,7 +5541,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 
 
 static void
-setupObjectLighting(const vector<Renderer::LightSource>& suns,
+setupObjectLighting(const vector<LightSource>& suns,
                     const Point3d& objPosition,
                     const Quatf& objOrientation,
                     const Vec3f& objScale,
@@ -7076,7 +7089,7 @@ void Renderer::buildRenderLists(const Star& sun,
                                 const PlanetarySystem* solSystem,
                                 const Observer& observer,
                                 double now,
-                                unsigned int solarSysIndex,
+                                vector<LightSource>* lightSourceList,
                                 bool showLabels)
 {
     Point3f starPos = sun.getPosition();
@@ -7106,7 +7119,7 @@ void Renderer::buildRenderLists(const Star& sun,
         double distanceFromObserver = posd.length();
         float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
 
-        vector<LightSource>& lightSources = lightSourceLists[solarSysIndex];
+        vector<LightSource>& lightSources = *lightSourceList;
 
         // Compute the apparent magnitude; instead of summing the reflected
         // light from all nearby stars, we just consider the one with the
@@ -7152,7 +7165,7 @@ void Renderer::buildRenderLists(const Star& sun,
             rle.radius = body->getRadius();
             rle.discSizeInPixels = discSize;
             rle.appMag = appMag;
-            rle.solarSysIndex = solarSysIndex;
+            rle.lightSourceList = lightSourceList;
             renderList.push_back(rle);
         }
 
@@ -7176,7 +7189,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.radius = radius;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
-                rle.solarSysIndex = solarSysIndex;
+                rle.lightSourceList = lightSourceList;
                 renderList.push_back(rle);
             }
         }
@@ -7198,7 +7211,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.radius = body->getRadius() * 2.0f;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
-                rle.solarSysIndex = solarSysIndex;
+                rle.lightSourceList = lightSourceList;
                 renderList.push_back(rle);
             }
 
@@ -7216,7 +7229,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.radius = body->getRadius() * 2.0f;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
-                rle.solarSysIndex = solarSysIndex;
+                rle.lightSourceList = lightSourceList;
                 renderList.push_back(rle);
             }
 
@@ -7234,7 +7247,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.radius = body->getRadius() * 2.0f;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
-                rle.solarSysIndex = solarSysIndex;
+                rle.lightSourceList = lightSourceList;
                 renderList.push_back(rle);
             }
 
@@ -7252,7 +7265,7 @@ void Renderer::buildRenderLists(const Star& sun,
                 rle.radius = body->getRadius() * 2.0f;
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
-                rle.solarSysIndex = solarSysIndex;
+                rle.lightSourceList = lightSourceList;
                 renderList.push_back(rle);
             }
         }
@@ -7315,6 +7328,11 @@ void Renderer::buildRenderLists(const Star& sun,
                 {
                     bool isBehindPrimary = false;
                     Body* primary = body->getSystem()->getPrimaryBody();
+                    if (primary != NULL && (primary->getClassification() & Body::Invisible) != 0)
+                    {
+                        if (primary->getSystem() != NULL)
+                            primary = primary->getSystem()->getPrimaryBody();
+                    }
 
                     // Position the label slightly in front of the object along a line from
                     // object center to viewer.
@@ -7450,7 +7468,7 @@ void Renderer::buildRenderLists(const Star& sun,
             if (satellites != NULL)
             {
                 buildRenderLists(sun, satellites, observer,
-                                 now, solarSysIndex, showLabels);
+                                 now, lightSourceList, showLabels);
             }
         }
     }
