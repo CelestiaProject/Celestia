@@ -339,6 +339,8 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
                         length   = next - startPos;
                         ++next;
                     }
+                    if (objName.substr(startPos, length) == "Milky Way" && string("Milky Way") != _("Milky Way"))
+                        namesDB->add(objCatalogNumber, _("Milky Way"));
                     namesDB->add(objCatalogNumber, objName.substr(startPos, length));
                     startPos   = next;
                 }
