@@ -1,0 +1,373 @@
+# translation of en_US.po to Bulgarian
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Chris Laurel.
+# Atanas Kumbarov <kumbarov@gmail.com>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Celestia-Bulgarian\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2007-12-19 12:13+0200\n"
+"Last-Translator: Atanas Kumbarov <kumbarov@gmail.com>\n"
+"Language-Team: Bulgarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.10\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "Андромеда"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "Помпа"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "Райска птица"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "Водолей"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "Орел"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "Жертвеник"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "Овен"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "Колар"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "Воловар"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "Длето"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "Жираф"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "Рак"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "Ловджийски кучета"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "Голямо куче"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "Малко куче"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "Козирог"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "Кил"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "Касиопея"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "Кентавър"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "Цефей"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "Кит"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "Хамелеон"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "Пергел"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "Гълъб"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "Косите на Вероника"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "Южна корона"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "Северна Корона"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "Врана"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "Чаша"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "Южен кръст"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "Лебед"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "Делфин"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "Златна рибка"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "Дракон"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "Жребче"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "Еридан"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "Пещ"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "Близнаци"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "Жерав"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "Херкулес"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "Часовник"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr "Хидра"
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "Южна Хидра"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "Индиец"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "Гущер"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "Лъв"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "Лъвче"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "Заек"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "Везни"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "Вълк"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "Рис"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "Лира"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "Маса"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "Микроскоп"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "Еднорог"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "Муха"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "Прав ъгъл"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "Октант"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "Змиеносец"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "Орион"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "Паун"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "Пегас"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "Персей"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "Феникс"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "Живописец"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "Риби"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "Южна риба"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "Кърма"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "Компас"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "Микрометър"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "Стрела"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "Стрелец"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "Скорпион"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "Скулптор"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "Щит"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "Змийска глава"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "Змийска опашка"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "Секстант"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "Бик"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "Телескоп"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "Триъгълник"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "Южен триъгълник"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "Тукан"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "Голяма мечка"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "Малка мечка"
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "Корабни платна"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "Дева"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "Хвърчаща риба"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "Лисиче"

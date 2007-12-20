@@ -12,6 +12,7 @@ src/celengine/customorbit.cpp
 src/celengine/dds.cpp
 src/celengine/deepskyobj.cpp
 src/celengine/dispmap.cpp
+src/celengine/dsodb.cpp
 src/celengine/execution.cpp
 src/celengine/fragmentprog.cpp
 src/celengine/frame.cpp
