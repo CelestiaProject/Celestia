@@ -39,6 +39,7 @@ close RES;
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_238z.asp
 my %lang = (
 ar => [ '401', 1256 ],
+bg => [ '402', 1251 ],
 de => [ '407', 1252 ],
 el => [ '408', 1253 ],
 en => [ '409', 1252 ],
