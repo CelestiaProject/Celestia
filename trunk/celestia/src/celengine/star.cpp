@@ -276,7 +276,7 @@ static float bmag_correctionT[10] =
 
 // White dwarf data from Grant Hutchison; value for hypothetical
 // 0 subclass is just duplicated from subclass 1.
-static float bmag_correctionWD[10] = 
+static float bmag_correctionWD[10] =
 {
     -4.15f, -4.15f, -2.22f, -1.24f, -0.67f,
     -0.32f, -0.13f, -0.04f, -0.03f, -0.09f,
@@ -640,7 +640,8 @@ StarDetails::GetWhiteDwarfDetails(StellarClass::SpectralClass specClass,
 
         float temp;
         float bmagCorrection;
-        if (subclass >= 0 && subclass <= 9)
+        // subclass is always >= 0:
+        if (subclass <= 9)
         {
             temp = tempWD[subclass];
             bmagCorrection = bmag_correctionWD[subclass];
