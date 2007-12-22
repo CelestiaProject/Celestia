@@ -2591,7 +2591,7 @@ static int object_getinfo(lua_State* l)
 
         if (objTypeName == "galaxy")
             setTable(l, "hubbleType", deepsky->getType());
-        
+
         setTable(l, "absoluteMagnitude", (lua_Number)deepsky->getAbsoluteMagnitude());
         setTable(l, "radius", (lua_Number)deepsky->getRadius());
     }
@@ -4229,7 +4229,6 @@ static int celestia_getoverlayelements(lua_State* l)
 static int celestia_setlabelcolor(lua_State* l)
 {
     checkArgs(l, 5, 5, "Four arguments expected for celestia:setlabelcolor()");
-    CelestiaCore* appCore = this_celestia(l);
     if (!lua_isstring(l, 2))
     {
         doError(l, "First argument to celestia:setlabelstyle() must be a string");
@@ -4250,7 +4249,7 @@ static int celestia_setlabelcolor(lua_State* l)
     double red     = safeGetNumber(l, 3, AllErrors, "setlabelcolor: color values must be numbers");
     double green   = safeGetNumber(l, 4, AllErrors, "setlabelcolor: color values must be numbers");
     double blue    = safeGetNumber(l, 5, AllErrors, "setlabelcolor: color values must be numbers");
-    
+
     // opacity currently not settable
     double opacity = 1.0;
 
@@ -4266,7 +4265,6 @@ static int celestia_setlabelcolor(lua_State* l)
 static int celestia_setlinecolor(lua_State* l)
 {
     checkArgs(l, 5, 5, "Four arguments expected for celestia:setlinecolor()");
-    CelestiaCore* appCore = this_celestia(l);
     if (!lua_isstring(l, 2))
     {
         doError(l, "First argument to celestia:setlinecolor() must be a string");
@@ -4287,7 +4285,7 @@ static int celestia_setlinecolor(lua_State* l)
     double red     = safeGetNumber(l, 3, AllErrors, "setlinecolor: color values must be numbers");
     double green   = safeGetNumber(l, 4, AllErrors, "setlinecolor: color values must be numbers");
     double blue    = safeGetNumber(l, 5, AllErrors, "setlinecolor: color values must be numbers");
-    
+
     // opacity currently not settable
     double opacity = 1.0;
 
@@ -4664,10 +4662,10 @@ static int celestia_stars_iter(lua_State* l)
         doError(l, "Bad celestia object!");
         return 0;
     }
-   
+
     uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
     Universe* u = appCore->getSimulation()->getUniverse();
-    
+
     if (i < u->getStarCatalog()->size())
     {
         // Increment the counter
@@ -4692,8 +4690,6 @@ static int celestia_stars_iter(lua_State* l)
 
 static int celestia_stars(lua_State* l)
 {
-    CelestiaCore* appCore = this_celestia(l);
-    
     // Push a closure with two upvalues: the celestia object and a
     // counter.
     lua_pushvalue(l, 1);    // Celestia object
@@ -4725,10 +4721,10 @@ static int celestia_dsos_iter(lua_State* l)
         doError(l, "Bad celestia object!");
         return 0;
     }
-   
+
     uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
     Universe* u = appCore->getSimulation()->getUniverse();
-    
+
     if (i < u->getDSOCatalog()->size())
     {
         // Increment the counter
@@ -4753,8 +4749,6 @@ static int celestia_dsos_iter(lua_State* l)
 
 static int celestia_dsos(lua_State* l)
 {
-    CelestiaCore* appCore = this_celestia(l);
-    
     // Push a closure with two upvalues: the celestia object and a
     // counter.
     lua_pushvalue(l, 1);    // Celestia object
@@ -5351,7 +5345,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "utctotdb", celestia_utctotdb);
     RegisterMethod(l, "tdbtoutc", celestia_tdbtoutc);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
-    RegisterMethod(l, "getdsocount", celestia_getdsocount);   
+    RegisterMethod(l, "getdsocount", celestia_getdsocount);
     RegisterMethod(l, "getstar", celestia_getstar);
     RegisterMethod(l, "getdso", celestia_getdso);
     RegisterMethod(l, "newframe", celestia_newframe);
