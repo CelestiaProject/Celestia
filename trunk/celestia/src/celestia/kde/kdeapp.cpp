@@ -518,6 +518,13 @@ void KdeApp::initActions()
     if (KGlobal::config()->hasKey("TimeZoneBias"))
         isLocal = (KGlobal::config()->readNumEntry("TimeZoneBias") != 0);
 
+    if (KGlobal::config()->hasKey("StarStyle")) 
+    {
+        int starStyle = KGlobal::config()->readNumEntry("StarStyle");
+        if (starStyle >= 0 && starStyle < Renderer::StarStyleCount)
+            appCore->getRenderer()->setStarStyle((Renderer::StarStyle)starStyle);
+    }
+
     /////////////////////////////////////////
     // Render Flags
     KToggleAction* showStars = new KToggleAction(i18n("Show Stars"), 0, this, SLOT(slotShowStars()), actionCollection(), "showStars");
@@ -760,6 +767,7 @@ bool KdeApp::queryExit() {
     conf->writeEntry("LocationFilter", appCore->getSimulation()->getActiveObserver()->getLocationFilter());
     conf->writeEntry("MinFeatureSize", appCore->getRenderer()->getMinimumFeatureSize());
     conf->writeEntry("VideoSync", appCore->getRenderer()->getVideoSync());
+    conf->writeEntry("StarStyle", appCore->getRenderer()->getStarStyle());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
