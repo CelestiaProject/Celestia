@@ -95,7 +95,7 @@ static bool isFrameCircular(const ReferenceFrame& frame, ReferenceFrame::FrameTy
 {
     return frame.nestingDepth(MaxFrameDepth, frameType) > MaxFrameDepth;
 }
-                            
+
 
 
 static Location* CreateLocation(Hash* locationData,
@@ -219,9 +219,7 @@ static void FillinSurface(Hash* surfaceData,
 // Set up the orbit barycenter for a body. By default, it is the parent of the
 // object
 static Selection GetOrbitBarycenter(const string& name,
-                                    PlanetarySystem* system,
-                                    Universe& universe,
-                                    Hash* bodyData)
+                                    PlanetarySystem* system)
 {
     Selection orbitBarycenter;
     Body* primary = system->getPrimaryBody();
@@ -275,7 +273,7 @@ static Body* CreatePlanet(const string& name,
         body = new Body(system);
     }
 
-    Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, planetData);
+    Selection orbitBarycenter = GetOrbitBarycenter(name, system);
     bool orbitsPlanet = false;
     if (orbitBarycenter.body())
     {
@@ -339,7 +337,7 @@ static Body* CreatePlanet(const string& name,
             body->setBodyFrame(NULL);
         }
     }
-        
+
 
     Orbit* orbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
     if (orbit != NULL)
@@ -628,7 +626,7 @@ static Body* CreateReferencePoint(const string& name,
     body->setRadius(1.0f);
     body->setClassification(Body::Invisible);
 
-    Selection orbitBarycenter = GetOrbitBarycenter(name, system, universe, refPointData);
+    Selection orbitBarycenter = GetOrbitBarycenter(name, system);
     bool orbitsPlanet = false;
     if (orbitBarycenter.body())
     {
