@@ -445,7 +445,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     fav->name = name;
     fav->isFolder = false;
     fav->parentFolder = parentFolder;
-    
+
     Selection sel = sim->getSelection();
     if (sel.deepsky() != NULL)
         fav->selectionName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
@@ -2984,7 +2984,6 @@ static void displayStarInfo(Overlay& overlay,
     if (detail > 1)
     {
         overlay << _("Surface temp: ") << SigDigitNum(star.getTemperature(), 3) << " K\n";
-        float radius = star.getRadius();
         float solarRadii = star.getRadius() / 6.96e5f;
 
         overlay << _("Radius: ");
@@ -4686,7 +4685,7 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
 
         if (progressNotifier)
             progressNotifier->update(config->luaHook);
-            
+
         status = luaHook->loadScript(scriptfile, filename);
     }
     else
