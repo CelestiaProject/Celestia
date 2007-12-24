@@ -84,6 +84,8 @@
         for ( i=0; i<sysSize; i++)
         {
             Body* body = sys->getBody(i);
+            if (body->getName().empty())
+                continue;
             BrowserItem *item = [[[BrowserItem alloc] initWithCelestiaBody:
                 [[[CelestiaBody alloc] initWithBody: body] autorelease]] autorelease];
             int bodyClass  = body->getClassification();
@@ -153,6 +155,8 @@
         for ( i=0; i<sysSize; i++)
         {
             Body* body = sys->getBody(i);
+            if (body->getName().empty())
+                continue;
             BrowserItem *item = [[[BrowserItem alloc] initWithCelestiaBody:
                 [[[CelestiaBody alloc] initWithBody: body] autorelease]] autorelease];
             int bodyClass  = body->getClassification();
