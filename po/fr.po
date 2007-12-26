@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2007-12-20 23:28+0100\n"
-"PO-Revision-Date: 2007-12-15 00:09+0100\n"
+"PO-Revision-Date: 2007-12-21 00:19+0100\n"
 "Last-Translator: Christophe Teyssier <chris@teyssier.org>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -583,12 +583,11 @@ msgstr "Magnitude absolue : "
 
 #: src/celestia/celestiacore.cpp:2943
 msgid "RA: "
-msgstr ""
+msgstr "AD : "
 
 #: src/celestia/celestiacore.cpp:2947
-#, fuzzy
 msgid "Dec: "
-msgstr "Déc"
+msgstr "Déc. : "
 
 #: src/celestia/celestiacore.cpp:2979 src/celestia/celestiacore.cpp:3048
 #: src/celestia/celestiacore.cpp:3080 src/celestia/celestiacore.cpp:3140
@@ -1611,8 +1610,7 @@ msgid "UTC"
 msgstr "UTC"
 
 #: src/celestia/kde/kdeapp.cpp:1421
-msgid ""
-"This version of Celestia was not built with support for movie recording."
+msgid "This version of Celestia was not built with support for movie recording."
 msgstr ""
 "Cette version de Celestia n'a pas été compilée avec le support de "
 "l'acquisition vidéo."
@@ -2035,8 +2033,7 @@ msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr "<b>Langage d'ombrage OpenGL 2.0<b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:43
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
 msgstr ""
 "Le fichier %1 n'existe pas, utilisation du fichier de configuration par "
 "défaut %2/celestia.cfg"
@@ -3258,3 +3255,4 @@ msgstr "Déc"
 
 #~ msgid "Sol"
 #~ msgstr "Soleil"
+
