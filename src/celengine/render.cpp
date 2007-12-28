@@ -2907,9 +2907,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
 
     if (discSizeInPixels < maxBlendDiscSize || useHalos)
     {
-        float a = 1;
         float fade = 1.0f;
-
         if (discSizeInPixels > maxDiscSize)
         {
             fade = (maxBlendDiscSize - discSizeInPixels) /
@@ -2918,7 +2916,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
                 fade = 1;
         }
 
-        a = (_faintestMag - appMag) * brightnessScale + brightnessBias;
+        float a = (_faintestMag - appMag) * brightnessScale + brightnessBias;
         if (starStyle == ScaledDiscStars && a > 1.0f)
             discSize = min(discSize * (2.0f * a - 1.0f), maxDiscSize);
         a = clamp(a) * fade;
@@ -2956,15 +2954,18 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // limited dynamic range of monitors.
         if (useHalos && appMag < saturationMag)
         {
-            a = GlareOpacity * clamp((appMag - saturationMag) * -0.8f);
-            float s = center.distanceFromOrigin() * 0.001f * (3 - (appMag - saturationMag)) * 2;
+            float dist = center.distanceFromOrigin();
+            float s    = dist * 0.001f * (3 - (appMag - saturationMag)) * 2;
             if (s > size * 3)
-	        size = s * 2.0f/(1.0f +FOV/fov);
+                size = s * 2.0f/(1.0f + FOV/fov);
             else
                 size = size * 3;
-            float realSize = discSizeInPixels * pixelSize * renderZ;
-            if (size < realSize * 10)
-                size = realSize * 10;
+
+            float realSize = discSizeInPixels * pixelSize * dist;
+            if (size < realSize * 6)
+                size = realSize * 6;
+
+            a = GlareOpacity * clamp((appMag - saturationMag) * -0.8f);
             gaussianGlareTex->bind();
             glColor(color, a);
             glBegin(GL_QUADS);
@@ -6480,7 +6481,6 @@ void Renderer::renderPlanet(Body& body,
                             rp.radius);
 
             glDisable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
         }
     }
 
@@ -6573,8 +6573,6 @@ void Renderer::renderStar(const Star& star,
         renderObject(pos, distance, now,
                      cameraOrientation, nearPlaneDistance, farPlaneDistance,
                      rp, LightingState());
-
-        glEnable(GL_TEXTURE_2D);
     }
 
     glEnable(GL_TEXTURE_2D);
