@@ -363,10 +363,56 @@ Mat4d Body::getLocalToHeliocentric(double tjd) const
     }
 }
 
+
 // Return the position of the center of the body in heliocentric coordinates
-Point3d Body::getHeliocentricPosition(double when) const
+Point3d Body::getHeliocentricPosition(double tjd) const
 {
-    return Point3d(0.0, 0.0, 0.0) * getLocalToHeliocentric(when);
+    Point3d pos = orbit->positionAtTime(tjd);
+
+    if (orbitFrame != NULL)
+    {
+        Point3d p = orbitFrame->convertFromAstrocentric(pos, tjd);
+
+        // Temporary hack; won't be necessary post-1.5.0 when this function
+        // is redefined to return position with respect to frame root object
+        // instead of name hierarchy root.
+        if (frameRefStar != NULL)
+        {
+            Vec3d frameOffset(0.0, 0.0, 0.0);
+            Star* refStar = getReferenceStar();
+            if (refStar != NULL)
+            {
+                frameOffset = (frameRefStar->getPosition(tjd) - refStar->getPosition(tjd)) *
+                    astro::microLightYearsToKilometers(1.0);
+            }
+
+            return p + frameOffset;
+        }
+        else
+        {
+            return p;
+        }
+    }
+    else
+    {
+        // No orbit frame was specified; use the default orbit frame, which
+        // is typically the mean equatorial frame of the parent object. The
+        // exception is when the parent object is a star; in this case, the
+        // orbit frame is just the ecliptical frame.
+        if (orbitBarycenter != NULL)
+        {
+            // Object orbits a non-stellar object; get the parent's equatorial
+            // frame and convert to ecliptical coordinates.
+            Quatd orientation = orbitBarycenter->getEclipticalToEquatorial(tjd);
+            return orbitBarycenter->getHeliocentricPosition(tjd) +
+                pos * orientation.toMatrix3();
+        }
+        else
+        {
+            // Parent is a star; pos is already in ecliptical coordinates
+            return pos;
+        }
+    }
 }
 
 
