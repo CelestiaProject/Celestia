@@ -477,7 +477,7 @@ BEGIN
     LTEXT           VERSION_STRING,IDC_STATIC,90,17,40,9
 
 
-    LTEXT           "Copyright (C) 2001-2006, Chris Laurel",IDC_STATIC,56,26,150,9
+    LTEXT           "Copyright (C) 2001-2008, Celestia Development Team",IDC_STATIC,56,26,150,9
 
 
     LTEXT           "http://www.shatters.net/celestia",IDC_CELESTIALINK,56,43,150,9
@@ -1195,9 +1195,6 @@ BEGIN
     CONTROL         "Label Features",IDC_LABELFEATURES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,103,142,10
 
 
-    CONTROL         "Mark Features",IDC_MARKFEATURES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,116,147,10
-
-
     EDITTEXT        IDC_EDIT_FEATURE_SIZE,117,175,44,12,ES_AUTOHSCROLL | ES_READONLY
 
 
@@ -1840,10 +1837,10 @@ END
 VS_VERSION_INFO VERSIONINFO
 
 
- FILEVERSION 1,4,1,0
+ FILEVERSION 1,5,0,0
 
 
- PRODUCTVERSION 1,4,1,0
+ PRODUCTVERSION 1,5,0,0
 
 
  FILEFLAGSMASK 0x3fL
@@ -1900,7 +1897,7 @@ BEGIN
             VALUE "InternalName", "celestia"
 
 
-            VALUE "LegalCopyright", "Copyright  2001-2006, Chris Laurel"
+            VALUE "LegalCopyright", "Copyright  2001-2008, Celestia Development Team"
 
 
             VALUE "OriginalFilename", "celestia.exe"
