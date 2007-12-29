@@ -950,10 +950,22 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
             details->setOrbit(orbit);
 
             // See if a barycenter was specified as well
+            uint32 barycenterCatNo = Star::InvalidCatalogNumber;
+            bool barycenterDefined = false;
+
             string barycenterName;
             if (starData->getString("OrbitBarycenter", barycenterName))
             {
-                uint32 barycenterCatNo   = namesDB->findCatalogNumberByName(barycenterName);
+                barycenterCatNo   = namesDB->findCatalogNumberByName(barycenterName);
+                barycenterDefined = true;
+            }
+            else if (starData->getNumber("OrbitBarycenter", barycenterCatNo))
+            {
+                barycenterDefined = true;
+            }
+
+            if (barycenterDefined)
+            {
                 if (barycenterCatNo != Star::InvalidCatalogNumber)
                 {
                     // We can't actually resolve the barycenter catalog number

@@ -15,6 +15,7 @@
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celutil/color.h>
+#include <celutil/basictypes.h>
 #include <celengine/tokenizer.h>
 
 class Value;
@@ -33,6 +34,7 @@ class AssociativeArray
     bool getNumber(const std::string&, double&) const;
     bool getNumber(const std::string&, float&) const;
     bool getNumber(const std::string&, int&) const;
+    bool getNumber(const std::string&, uint32&) const;
     bool getString(const std::string&, std::string&) const;
     bool getBoolean(const std::string&, bool&) const;
     bool getVector(const std::string&, Vec3d&) const;
