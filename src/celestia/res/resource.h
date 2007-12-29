@@ -144,7 +144,6 @@
 #define IDC_SHOW_TERRAE                 1107
 #define IDC_SHOW_OTHERS                 1108
 #define IDC_LABELFEATURES               1109
-#define IDC_MARKFEATURES                1110
 #define IDC_SLIDER_FEATURE_SIZE         1150
 #define IDC_EDIT_FEATURE_SIZE           1151
 #define IDC_CELESTIALINK                1152
