@@ -96,6 +96,16 @@ static const float MinOrbitSizeForLabel = 20.0f;
 // a label for it.
 static const float MinFeatureSizeForLabel = 20.0f;
 
+/* The maximum distance of the observer to the origin of coordinates before
+   asterism lines and labels start to linearly fade out: */
+static const float MaxAsterismLabelsConstDist  = 6.0e8f;
+static const float MaxAsterismLinesConstDist   = 6.0e8f;
+
+/* The maximum distance of the observer to the origin of coordinates before
+   asterisms labels and lines fade out completely: */
+static const float MaxAsterismLabelsDist = 1.304e10f;
+static const float MaxAsterismLinesDist  = 6.52e10f;
+
 // Maximum size of a solar system in light years. Features beyond this distance
 // will not necessarily be rendered correctly. This limit is used for
 // visibility culling of solar systems.
@@ -2177,7 +2187,7 @@ void Renderer::render(const Observer& observer,
                 lightSourceLists.push_back(ls);
             }
         }
-        
+
         list<vector<LightSource>* >::iterator lsIter = lightSourceLists.begin();
 
         for (vector<const Star*>::const_iterator iter = nearStars.begin();
@@ -2188,7 +2198,7 @@ void Renderer::render(const Observer& observer,
             if (solarSystem != NULL)
             {
                 vector<LightSource>* lightSources = *lsIter++;
-                
+
                 setupLightSources(nearStars, *sun, now, *lightSources);
                 buildRenderLists(*sun,
                                  solarSystem->getPlanets(),
@@ -2326,7 +2336,17 @@ void Renderer::render(const Observer& observer,
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
     {
-        glColor(ConstellationColor);
+        /* We'll linearly fade the lines as a function of the observer's
+           distance to the origin of coordinates: */
+        float opacity = 1.0f;
+        float dist = observerPosLY.distanceFromOrigin() * 1e6f;
+        if (dist > MaxAsterismLinesConstDist)
+        {
+            opacity = clamp((MaxAsterismLinesConstDist - dist) /
+                            (MaxAsterismLinesDist - MaxAsterismLinesConstDist) + 1);
+        }
+
+        glColor(ConstellationColor, opacity);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -3036,11 +3056,11 @@ void Renderer::renderObjectAsPoint(Point3f position,
             {
                 float discScale = min(MaxScaledDiscStarSize, (float) pow(2.0f, 0.3f * (satPoint - appMag)));
                 pointSize *= max(1.0f, discScale);
-                
+
                 glareAlpha = min(0.5f, discScale / 4.0f);
                 if (discSizeInPixels > MaxScaledDiscStarSize)
                 {
-                    glareAlpha = min(glareAlpha, 
+                    glareAlpha = min(glareAlpha,
                                      (MaxScaledDiscStarSize - discSizeInPixels) / MaxScaledDiscStarSize + 1.0f);
                 }
                 glareSize = pointSize * 3.0f;
@@ -8498,10 +8518,20 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                 avg = avg / (float) chain.size();
                 avg = avg * 1e6f;
                 Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
-                if ((rpos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+                if ((observer.getOrientation().toMatrix3() * rpos).z < 0)
                 {
+                    /* We'll linearly fade the labels as a function of the
+                       observer's distance to the origin of coordinates: */
+                    float opacity = 1.0f;
+                    float dist = observerPos.distanceFromOrigin();
+                    if (dist > MaxAsterismLabelsConstDist)
+                    {
+                        opacity = clamp((MaxAsterismLabelsConstDist - dist) /
+                                        (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
+                    }
+
                     addLabel(ast->getName((labelMode & I18nConstellationLabels) != 0),
-                             ConstellationLabelColor,
+                             Color(ConstellationLabelColor, opacity),
                              Point3f(rpos.x, rpos.y, rpos.z));
                 }
             }
