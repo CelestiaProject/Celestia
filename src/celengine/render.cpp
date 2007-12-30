@@ -18,7 +18,7 @@
 #endif
 #endif /* _WIN32 */
 
-#define REFMARKS 0
+#define REFMARKS 1
 
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
@@ -97,13 +97,13 @@ static const float MinOrbitSizeForLabel = 20.0f;
 static const float MinFeatureSizeForLabel = 20.0f;
 
 /* The maximum distance of the observer to the origin of coordinates before
-   asterism lines and labels start to linearly fade out: */
-static const float MaxAsterismLabelsConstDist  = 6.0e8f;
+   asterism lines and labels start to linearly fade out (in uLY) */
+static const float MaxAsterismLabelsConstDist  = 6.0e6f;
 static const float MaxAsterismLinesConstDist   = 6.0e8f;
 
 /* The maximum distance of the observer to the origin of coordinates before
-   asterisms labels and lines fade out completely: */
-static const float MaxAsterismLabelsDist = 1.304e10f;
+   asterisms labels and lines fade out completely (in uLY) */
+static const float MaxAsterismLabelsDist = 10.0e6f;
 static const float MaxAsterismLinesDist  = 6.52e10f;
 
 // Maximum size of a solar system in light years. Features beyond this distance
@@ -135,6 +135,8 @@ static const float ShadowTextureScale = 15.0f / 16.0f;
 static Texture* eclipseShadowTextures[4];
 static Texture* shadowMaskTexture = NULL;
 static Texture* penumbraFunctionTexture = NULL;
+
+Texture* rectToSphericalTexture = NULL;
 
 static const Color compassColor(0.4f, 0.4f, 1.0f);
 
@@ -191,28 +193,6 @@ Color Renderer::ConstellationColor      (0.0f,   0.24f,  0.36f);
 Color Renderer::BoundaryColor           (0.24f,  0.10f,  0.12f);
 Color Renderer::EquatorialGridColor     (0.19f,  0.25f,  0.19f);
 
-#if 0
-struct DisplayDevice
-{
-    float faintestVisibleLevel;
-};
-
-struct Detector
-{
-    float saturationLevel;
-};
-
-
-DisplayDevice displayDevice =
-{
-    0.1f,
-};
-
-Detector detector =
-{
-    1.0f,
-};
-#endif
 
 // Some useful unit conversions
 inline float mmToInches(float mm)
@@ -429,32 +409,43 @@ static void IllumMapEval(float x, float y, float z,
                          unsigned char* pixel)
 {
     Vec3f v(x, y, z);
-    Vec3f u(0, 0, 1);
 
-#if 0
-    Vec3f n(0, 0, 1);
-    // Experimental illumination function
-    float c = v * n;
-    if (c < 0.0f)
-    {
-        u = v;
-    }
-    else
-    {
-        c = (1 - ((1 - c))) * 1.0f;
-        u = v + (c * n);
-        u.normalize();
-    }
-#else
-    u = v;
-#endif
-
-    pixel[0] = 128 + (int) (127 * u.x);
-    pixel[1] = 128 + (int) (127 * u.y);
-    pixel[2] = 128 + (int) (127 * u.z);
+    pixel[0] = 128 + (int) (127 * v.x);
+    pixel[1] = 128 + (int) (127 * v.y);
+    pixel[2] = 128 + (int) (127 * v.z);
 }
 
 
+// The RectToSpherical map converts XYZ coordinates to UV coordinates
+// via a cube map lookup. However, a lot of GPUs don't support linear
+// interpolation of textures with > 8 bits per component, which is
+// inadequate precision for storing texture coordinates. To work around
+// this, we'll store the u and v texture coordinates with two 8 bit
+// coordinates each: rg for u, ba for v. The coordinates are unpacked
+// as: u = r * 255/256 + g * 1/255
+//     v = b * 255/256 + a * 1/255
+// This gives an effective precision of 16 bits for each texture coordinate.
+static void RectToSphericalMapEval(float x, float y, float z,
+                                   unsigned char* pixel)
+{
+    // Compute spherical coodinates (r is always 1)
+    double phi = asin(y);
+    double theta = atan2(z, -x);
+   
+    // Convert to texture coordinates
+    double u = (theta / PI + 1.0) * 0.5;
+    double v = (-phi / PI + 0.5);
+   
+    // Pack texture coordinates in red/green and blue/alpha
+    // u = red + green/256
+    // v = blue* + alpha/256
+    uint16 rg = (uint16) (u * 65535.99);
+    uint16 ba = (uint16) (v * 65535.99);
+    pixel[0] = rg >> 8;
+    pixel[1] = rg & 0xff;
+    pixel[2] = ba >> 8;
+    pixel[3] = ba & 0xff;
+}
 
 
 static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
@@ -695,10 +686,12 @@ bool Renderer::init(GLContext* _context,
                                                           PenumbraFunctionEval,
                                                           Texture::EdgeClamp);
 
-        if (context->extensionSupported("GL_EXT_texture_cube_map"))
+        if (context->extensionSupported("GL_ARB_texture_cube_map"))
         {
-            // normalizationTex = CreateNormalizationCubeMap(64);
             normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
+#if ADVANCED_CLOUD_SHADOWS
+            rectToSphericalTexture = CreateProceduralCubeMap(128, GL_RGBA, RectToSphericalMapEval);
+#endif
         }
 
         // Create labels for celestial sphere
@@ -2374,7 +2367,17 @@ void Renderer::render(const Observer& observer,
 
     if ((renderFlags & ShowBoundaries) != 0)
     {
-        glColor(BoundaryColor);
+        /* We'll linearly fade the boundaries as a function of the
+           observer's distance to the origin of coordinates: */
+        float opacity = 1.0f;
+        float dist = observerPosLY.distanceFromOrigin() * 1e6f;
+        if (dist > MaxAsterismLabelsConstDist)
+        {
+            opacity = clamp((MaxAsterismLabelsConstDist - dist) /
+                            (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
+        }
+        glColor(BoundaryColor, opacity);
+
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -3266,11 +3269,11 @@ static void renderBumpMappedMesh(const GLContext& context,
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
     glEnable(GL_TEXTURE_GEN_R);
-    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
     glEnable(GL_TEXTURE_GEN_S);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
     glEnable(GL_TEXTURE_GEN_T);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
 
     // Set up the texture transformation--the light direction and the
     // viewer orientation both need to be considered.
@@ -3357,11 +3360,11 @@ static void renderSmoothMesh(const GLContext& context,
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
     glEnable(GL_TEXTURE_GEN_R);
-    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
     glEnable(GL_TEXTURE_GEN_S);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
     glEnable(GL_TEXTURE_GEN_T);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_EXT);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_NORMAL_MAP_ARB);
 
     // Set up the texture transformation--the light direction and the
     // viewer orientation both need to be considered.
@@ -6513,7 +6516,7 @@ void Renderer::renderPlanet(Body& body,
     	renderObjectAsPoint(pos,
                             body.getRadius(),
                             appMag,
-                            faintestPlanetMag,
+                            faintestMag,
                             discSizeInPixels,
                             body.getSurface().color,
                             cameraOrientation,
@@ -6523,7 +6526,7 @@ void Renderer::renderPlanet(Body& body,
     {
         renderBodyAsParticle(pos,
                              appMag,
-                             faintestPlanetMag,
+                             faintestMag,
                              discSizeInPixels,
                              body.getSurface().color,
                              cameraOrientation,
@@ -7153,7 +7156,6 @@ void Renderer::buildRenderLists(const Star& sun,
 
         Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
 
-        // if (discSize > 1 || appMag < 1.0f / brightnessScale)
         if ((discSize > 1 || appMag < faintestPlanetMag) &&
             body->getClassification() != Body::Invisible)
         {
@@ -8516,12 +8518,17 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     avg += (*iter - Point3f(0, 0, 0));
 
                 avg = avg / (float) chain.size();
-                avg = avg * 1e6f;
+
+                // Draw all constellation labels at the same distance
+                avg.normalize();
+                avg = avg * 1.0e10f;
+
                 Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
+
                 if ((observer.getOrientation().toMatrix3() * rpos).z < 0)
                 {
-                    /* We'll linearly fade the labels as a function of the
-                       observer's distance to the origin of coordinates: */
+                    // We'll linearly fade the labels as a function of the
+                    // observer's distance to the origin of coordinates:
                     float opacity = 1.0f;
                     float dist = observerPos.distanceFromOrigin();
                     if (dist > MaxAsterismLabelsConstDist)

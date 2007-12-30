@@ -72,7 +72,7 @@ void SetupCombinersBumpMap(Texture& bumpTexture,
 
     glDisable(GL_LIGHTING);
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-    glEnable(GL_TEXTURE_CUBE_MAP_EXT);
+    glEnable(GL_TEXTURE_CUBE_MAP_ARB);
     normalizationTexture.bind();
 
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -155,7 +155,7 @@ void SetupCombinersSmooth(Texture& baseTexture,
 
     glDisable(GL_LIGHTING);
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-    glEnable(GL_TEXTURE_CUBE_MAP_EXT);
+    glEnable(GL_TEXTURE_CUBE_MAP_ARB);
     normalizationTexture.bind();
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
@@ -432,7 +432,7 @@ void DisableCombiners()
 {
     glDisable(GL_REGISTER_COMBINERS_NV);
     glx::glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_CUBE_MAP_EXT);
+    glDisable(GL_TEXTURE_CUBE_MAP_ARB);
     glDisable(GL_TEXTURE_2D);
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 }
