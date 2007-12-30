@@ -142,19 +142,19 @@ namespace glx
 };
 
 /* EXT_texture_cube_map defines from <GL/gl.h> */
-#if !(defined( GL_EXT_texture_cube_map) || defined(__glext_h_)) || defined(MACOSX)
-#define GL_NORMAL_MAP_EXT                   ((GLenum) 0x8511)
-#define GL_REFLECTION_MAP_EXT               ((GLenum) 0x8512)
-#define GL_TEXTURE_CUBE_MAP_EXT             ((GLenum) 0x8513)
-#define GL_TEXTURE_BINDING_CUBE_MAP_EXT     ((GLenum) 0x8514)
-#define GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT  ((GLenum) 0x8515)
-#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X_EXT  ((GLenum) 0x8516)
-#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y_EXT  ((GLenum) 0x8517)
-#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_EXT  ((GLenum) 0x8518)
-#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z_EXT  ((GLenum) 0x8519)
-#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_EXT  ((GLenum) 0x851A)
-#define GL_PROXY_TEXTURE_CUBE_MAP_EXT       ((GLenum) 0x851B)
-#define GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT    ((GLenum) 0x851C)
+#if !(defined( GL_ARB_texture_cube_map) || defined(__glext_h_)) || defined(MACOSX)
+#define GL_NORMAL_MAP_ARB                   ((GLenum) 0x8511)
+#define GL_REFLECTION_MAP_ARB               ((GLenum) 0x8512)
+#define GL_TEXTURE_CUBE_MAP_ARB             ((GLenum) 0x8513)
+#define GL_TEXTURE_BINDING_CUBE_MAP_ARB     ((GLenum) 0x8514)
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB  ((GLenum) 0x8515)
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB  ((GLenum) 0x8516)
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB  ((GLenum) 0x8517)
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB  ((GLenum) 0x8518)
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB  ((GLenum) 0x8519)
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB  ((GLenum) 0x851A)
+#define GL_PROXY_TEXTURE_CUBE_MAP_ARB       ((GLenum) 0x851B)
+#define GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB    ((GLenum) 0x851C)
 #endif
 
 /* EXT_separate_specular_color defines from <GL/gl.h> */
