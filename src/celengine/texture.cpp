@@ -765,21 +765,20 @@ CubeMap::CubeMap(Image* faces[]) :
     if (!precomputedMipMaps && faces[0]->isCompressed())
         mipmap = false;
 
-    glGenTextures(1, (GLuint*)&glName);
-    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, glName);
+    glGenTextures(1, (GLuint*) &glName);
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, glName);
 
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER,
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_ARB, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-//                    mipMapMode == NoMipMaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     int internalFormat = getInternalFormat(format);
 
     for (i = 0; i < 6; i++)
     {
-        GLenum targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT + i);
+        GLenum targetFace = (GLenum) ((int) GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + i);
         Image* face = faces[i];
 
         if (mipmap)
@@ -815,7 +814,7 @@ CubeMap::~CubeMap()
 
 void CubeMap::bind()
 {
-    glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, glName);
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, glName);
 }
 
 
@@ -831,7 +830,7 @@ const TextureTile CubeMap::getTile(int lod, int u, int v)
 void CubeMap::setBorderColor(Color borderColor)
 {
     bind();
-    SetBorderColor(borderColor, GL_TEXTURE_CUBE_MAP_EXT);
+    SetBorderColor(borderColor, GL_TEXTURE_CUBE_MAP_ARB);
 }
 
 
@@ -890,7 +889,8 @@ Texture* CreateProceduralTexture(int width, int height,
 }
 
 
-// Helper function for CreateNormalizationCubeMap
+// Helper function for CreateProceduralCubeMap; return the normalized
+// vector pointing to (s, t) on the specified face.
 static Vec3f cubeVector(int face, float s, float t)
 {
     Vec3f v;

@@ -16,6 +16,9 @@
 #include <celengine/lightenv.h>
 #include <celengine/atmosphere.h>
 
+#define ADVANCED_CLOUD_SHADOWS 0
+
+
 class ShaderProperties
 {
  public:

@@ -16,6 +16,9 @@
 using namespace std;
 
 
+static const float BoundariesDrawDistance = 10000.0f;
+
+
 ConstellationBoundaries::ConstellationBoundaries() :
     currentChain(NULL)
 {
@@ -39,7 +42,7 @@ void ConstellationBoundaries::moveto(float ra, float dec)
 {
     assert(currentChain != NULL);
 
-    Point3f p = astro::equatorialToCelestialCart(ra, dec, 10.0f);
+    Point3f p = astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance);
     if (currentChain->size() > 1)
     {
         chains.insert(chains.end(), currentChain);
@@ -56,7 +59,7 @@ void ConstellationBoundaries::moveto(float ra, float dec)
 void ConstellationBoundaries::lineto(float ra, float dec)
 {
     currentChain->insert(currentChain->end(),
-                         astro::equatorialToCelestialCart(ra, dec, 10.0f));
+                         astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance));
 }
 
 
