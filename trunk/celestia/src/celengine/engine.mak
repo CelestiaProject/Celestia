@@ -20,6 +20,7 @@ NULL=nul
 OBJS=\
 	$(INTDIR)\asterism.obj \
 	$(INTDIR)\astro.obj \
+	$(INTDIR)\axisarrow.obj \
 	$(INTDIR)\body.obj \
 	$(INTDIR)\boundaries.obj \
 	$(INTDIR)\catalogxref.obj \
