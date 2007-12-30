@@ -14,6 +14,7 @@
 #include "celestia.h"
 #include "render.h"
 
+
 class MacOSXWatcher : public CelestiaWatcher
 {
     private:
@@ -81,7 +82,7 @@ static NSMutableDictionary* tagMap;
 
     appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
 
-    tagDict = [[NSDictionary dictionaryWithObjectsAndKeys:
+    tagDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
 //        TAGDEF(101,@"time")
 //        TAGDEF(999,@"timeScale")
         TAGDEF(300,@"fullScreenMode")
@@ -173,9 +174,18 @@ static NSMutableDictionary* tagMap;
         TAGDEF(904,@"galaxyBrightness")
 //        TAGDEF(999,@"saturationMagnitude")
 
-        nil ] retain];
+        nil];
     keyArray = [[tagDict allValues] retain];
-    
+
+#if REFMARKS
+    NSDictionary *volatileTagDict = [NSDictionary dictionaryWithObjectsAndKeys:
+        TAGDEF(1000,@"showBodyAxes")
+        TAGDEF(1001,@"showFrameAxes")
+        TAGDEF(1002,@"showSunDirection")
+        TAGDEF(1003,@"showVelocityVector")
+        nil];
+    [tagDict addEntriesFromDictionary: volatileTagDict];
+#endif
 
     return self;
 }
@@ -245,21 +255,17 @@ static NSMutableDictionary* tagMap;
 -(void) loadUserDefaults 
 {
 	id key;
-//        NSLog(@"loading user defaults");
 	NSDictionary* defaultsDictionary = [self findUserDefaults ];
 	if ( defaultsDictionary == nil ) return;
 	NSEnumerator* keys = [ defaultsDictionary keyEnumerator];
 	while ( nil != (key = [keys nextObject]) )
 	{
-//                NSLog([NSString stringWithFormat: @"loading default dict entry %@ %@", key, [defaultsDictionary objectForKey: key] ]);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
 		[self setValue: [defaultsDictionary objectForKey: key] forKey: key];
 #else
 		[self takeValue: [defaultsDictionary objectForKey: key] forKey: key];
 #endif
-//                NSLog([NSString stringWithFormat: @"loaded default dict entry %@ %@", key, [self valueForKey: key] ]);
 	}
-//        NSLog(@"loaded user defaults");
 }
 
 -(void) loadAppDefaults
@@ -297,21 +303,19 @@ static NSMutableDictionary* tagMap;
 
 -(id) valueForTag: (int) tag { 
     return [self valueForKey: [tagDict objectForKey: [NSNumber numberWithInt: tag] ] ];
-    }
+}
 
 -(void) takeValue: (id) value forTag: (int) tag 
 {
-//      NSLog([NSString stringWithFormat: @"take value for tag %@ %d", value, tag]);
-      id key = [tagDict objectForKey: [NSNumber numberWithInt: tag] ];
-//      NSLog([NSString stringWithFormat: @"take value for key %@ %@", value, key]);
-     if (key!= nil)
-     {
+    id key = [tagDict objectForKey: [NSNumber numberWithInt: tag] ];
+    if (key!= nil)
+    {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
-         [self setValue: value forKey: key ];
+        [self setValue: value forKey: key ];
 #else
-         [self takeValue: value forKey: key ];
+        [self takeValue: value forKey: key ];
 #endif
-     }
+    }
 }
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
@@ -495,6 +499,17 @@ FEATUREMETHODS(Other)
 -(float) minimumFeatureSize { return appCore->getRenderer()->getMinimumFeatureSize(); }
 -(void)  setMinimumFeatureSize: (float) value { appCore->getRenderer()->setMinimumFeatureSize(value); }
 
+#if REFMARKS
+// Refmark Settings
+
+#define REFMARKMETHODS(flag)  -(BOOL) show##flag { return (appCore->getSimulation()->getSelection().body()->getVisibleReferenceMarks()&Body::flag) != 0; } -(void) setShow##flag: (BOOL) value  { appCore->getSimulation()->getSelection().body()->setVisibleReferenceMarks([self setValue: value forBit: Body::flag inSet: appCore->getSimulation()->getSelection().body()->getVisibleReferenceMarks()]); } 
+
+REFMARKMETHODS(BodyAxes)
+REFMARKMETHODS(FrameAxes)
+REFMARKMETHODS(SunDirection)
+REFMARKMETHODS(VelocityVector)
+#endif
+
 // Lighting Settings
 
 -(float) ambientLightLevel { return appCore->getRenderer()->getAmbientLightLevel(); }
@@ -630,7 +645,7 @@ FEATUREMETHODS(Other)
     if ( tag <= 128 ) { appCore->charEntered(tag); return; }
     switch ( tag/100)
     {
-        case 4: case 5: case 7: case 8: // 400, 500, 700, 800
+        case 4: case 5: case 7: case 8: case 10: // 400, 500, 700, 800, 1000
             [self takeValue: [NSNumber numberWithInt: (1-[[self valueForTag: tag] intValue])] forTag: tag ];
         break;
         case 6: // 600
@@ -688,27 +703,27 @@ FEATUREMETHODS(Other)
     }
     else 
     {
-	switch ( tag/100)
-	{
-		case 4: case 5: case 7: case 8:
-		// 400s, 500s, 700s, 800s (checkboxes)
-		        [item setState: [[self valueForTag: tag] intValue] ? NSOnState : NSOffState ];
+        switch ( tag/100)
+        {
+		case 4: case 5: case 7: case 8: case 10:
+		// 400s, 500s, 700s, 800s, 1000s (checkboxes)
+            [item setState: [[self valueForTag: tag] intValue] ? NSOnState : NSOffState ];
 		break;
 		case 6:
 		// 600s (popups)
-                    if ( tag >= 600 && tag < 610 ) // altSurface menu
-                    {
-                        int index = tag-600;
-                        [item setState:  ([self altSurface] == index ) ? NSOnState: NSOffState ];            
-                    } 
-                    else
-                        [self validateButton: item atIndex: tag%10 withValue: [[self valueForTag: tag-(tag%10)] intValue] ];
+            if ( tag >= 600 && tag < 610 ) // altSurface menu
+            {
+                int index = tag-600;
+                [item setState:  ([self altSurface] == index ) ? NSOnState: NSOffState ];            
+            } 
+            else
+                [self validateButton: item atIndex: tag%10 withValue: [[self valueForTag: tag-(tag%10)] intValue] ];
 		break;
 		case 9:
 		// 900s (floats)
-	                [item setFloatValue: [[self valueForTag: tag] floatValue] ];                
+            [item setFloatValue: [[self valueForTag: tag] floatValue] ];                
 		break;
-	}
+        }
     }
     return YES;
 }
