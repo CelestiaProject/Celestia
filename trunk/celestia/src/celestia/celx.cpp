@@ -748,8 +748,11 @@ bool LuaState::charEntered(const char* c_p)
             result = (lua_toboolean(costate, -1) != 0);
         }
     }
+
+#if LUA_VER < 0x050100
     // cleanup stack - is this necessary?
     lua_settop(costate, stack_top);
+#endif
     return result;
 }
 
