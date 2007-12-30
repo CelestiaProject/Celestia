@@ -21,6 +21,7 @@ endif
 libcelengine_a_SOURCES = \
 	asterism.cpp \
 	astro.cpp \
+	axisarrow.cpp \
 	body.cpp \
 	boundaries.cpp \
 	catalogxref.cpp \
