@@ -131,7 +131,7 @@ static int movieFramerate = 1;
 
 astro::Date newTime(0.0);
 
-#define REFMARKS 0
+#define REFMARKS 1
 
 #define INFINITE_MOUSE
 static int lastX = 0;
@@ -654,7 +654,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
             if (ExtensionSupported("GL_EXT_texture_cube_map"))
             {
                 GLint maxCubeMapSize = 0;
-                glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT, &maxCubeMapSize);
+                glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
                 sprintf(buf, "%s%d\r\r\n",
                         UTF8ToCurrentCP(_("Max cube map size: ")).c_str(),
                         maxTextureSize);
