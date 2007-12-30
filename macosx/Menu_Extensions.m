@@ -9,6 +9,7 @@
 #import "Menu_Extensions.h"
 #import "CelestiaSelection.h"
 #import "BrowserItem.h"
+#import "CelestiaSettings.h"
 
 
 @implementation NSMenu (CelestiaMenu)
@@ -20,6 +21,21 @@
     return index;
 }
 
+#if REFMARKS
+- (void) removeRefMarkItems
+{
+    int index;
+    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Body Axes",@"")];
+    if (index >= 0) [self removeItemAtIndex: index];
+    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Frame Axes",@"")];
+    if (index >= 0) [self removeItemAtIndex: index];
+    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Sun Direction",@"")];
+    if (index >= 0) [self removeItemAtIndex: index];
+    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Velocity Vector",@"")];
+    if (index >= 0) [self removeItemAtIndex: index];
+}
+#endif
+
 - (void) removePlanetarySystemItem
 {
     int satMenuIndex = [self indexOfItemWithTitle:
@@ -30,11 +46,7 @@
     if (satMenuIndex < 0)
         satMenuIndex = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Planets",@"po",@"")];
     if (satMenuIndex >= 0)
-    {
         [self removeItemAtIndex: satMenuIndex];
-        if ([[self itemAtIndex:  satMenuIndex] isSeparatorItem])
-             [self removeItemAtIndex: satMenuIndex];
-    }
 }
 
 - (void) removeAltSurfaceItem
@@ -42,16 +54,60 @@
     int surfMenuIndex = [self indexOfItemWithLocalizableTitle:
         @"Show Alternate Surface" ];
     if (surfMenuIndex >= 0)
-    {
         [self removeItemAtIndex: surfMenuIndex];
-        if ([[self itemAtIndex:  surfMenuIndex] isSeparatorItem])
-             [self removeItemAtIndex: surfMenuIndex];
-    }
 }
 
-- (NSMenuItem *) addPlanetarySystemItemForSelection: (CelestiaSelection *) aSelection
-                                             target: (id) aTarget;
+#if REFMARKS
+- (BOOL) insertRefMarkItemsForSelection: (CelestiaSelection *) aSelection
+                                atIndex: (int) aIndex
 {
+    BOOL result    = NO;
+    NSMenuItem *mi = nil;
+    id target      = nil;
+    CelestiaSettings *settings = [CelestiaSettings shared];
+
+    if ([aSelection body])
+    {
+        target = [aSelection body];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Velocity Vector",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1003];
+            [self insertItem: mi atIndex: aIndex];
+            [settings scanForKeys: mi];
+        }
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Sun Direction",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1002];
+            [self insertItem: mi atIndex: aIndex];
+            [settings scanForKeys: mi];
+        }
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Frame Axes",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1001];
+            [self insertItem: mi atIndex: aIndex];
+            [settings scanForKeys: mi];
+        }
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Body Axes",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1000];
+            [self insertItem: mi atIndex: aIndex];
+            [settings scanForKeys: mi];
+        }
+        result = YES;
+    }
+    return result;
+}
+#endif
+
+- (BOOL) insertPlanetarySystemItemForSelection: (CelestiaSelection *) aSelection
+                                        target: (id) aTarget
+                                       atIndex: (int) aIndex
+{
+    BOOL result = NO;
     NSMenuItem *mi = nil;
     id browseItem;
     if ([aSelection body])
@@ -84,21 +140,17 @@
     }
     if (mi && [[mi submenu] numberOfItems] > 0)
     {
-        int menuPos = [self numberOfItems] - 2;
-        if (menuPos < 0)
-            menuPos = 0;
-        [self insertItem: mi atIndex: menuPos];
+        [self insertItem: mi atIndex: aIndex];
+        result = YES;
     }
-    else
-    {
-        mi = nil;
-    }
-    return mi;
+    return result;
 }
 
-- (NSMenuItem *) addAltSurfaceItemForSelection: (CelestiaSelection *) aSelection
-                                        target: (id) aTarget;
+- (BOOL) insertAltSurfaceItemForSelection: (CelestiaSelection *) aSelection
+                                   target: (id) aTarget
+                                  atIndex: (int) aIndex
 {
+    BOOL result = NO;
     NSMenuItem *mi = nil;
     if ([aSelection body])
     {
@@ -113,18 +165,12 @@
                                     action: @selector(activateMenuItem:)];
             if (mi && [[mi submenu] numberOfItems] > 0)
             {
-                int menuPos = [self numberOfItems] - 2;
-                if (menuPos < 0)
-                    menuPos = 0;
-                [self insertItem: mi atIndex: menuPos];
-            }
-            else
-            {
-                mi = nil;
+                [self insertItem: mi atIndex: aIndex];
+                result = YES;
             }
         }
     }
-    return mi;
+    return result;
 }
 @end
 

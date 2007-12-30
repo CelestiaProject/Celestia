@@ -8,7 +8,7 @@
 
 @interface CelestiaSettings : NSObject {
     @private
-    NSDictionary* tagDict;
+    NSMutableDictionary* tagDict;
     NSArray* keyArray;
 }
 

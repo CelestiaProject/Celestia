@@ -13,10 +13,19 @@
 
 @interface NSMenu (CelestiaMenu)
 - (int) indexOfItemWithLocalizableTitle: (NSString *) aTitle;
-- (NSMenuItem *) addPlanetarySystemItemForSelection: (CelestiaSelection *) aSelection
-                                             target: (id) aTarget;
-- (NSMenuItem *) addAltSurfaceItemForSelection: (CelestiaSelection *) aSelection
-                                        target: (id) aTarget;
+#if REFMARKS
+- (BOOL) insertRefMarkItemsForSelection: (CelestiaSelection *) aSelection
+                                atIndex: (int) aIndex;
+#endif
+- (BOOL) insertPlanetarySystemItemForSelection: (CelestiaSelection *) aSelection
+                                        target: (id) aTarget
+                                       atIndex: (int) aIndex;
+- (BOOL) insertAltSurfaceItemForSelection: (CelestiaSelection *) aSelection
+                                   target: (id) aTarget
+                                  atIndex: (int) aIndex;
+#if REFMARKS
+- (void) removeRefMarkItems;
+#endif
 - (void) removePlanetarySystemItem;
 - (void) removeAltSurfaceItem;
 @end

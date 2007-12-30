@@ -162,41 +162,59 @@
     [appCore mouseButtonDown:location modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
     [appCore mouseButtonUp:location2 modifiers:[appCore toCelestiaModifiers: 0 buttons:CEL_LEFT_BUTTON]];
 
-    NSMenuItem *surfItem = nil;
-    NSMenuItem *satItem  = nil;
-    int satMenuIndex     = -1;
-    int surfMenuIndex    = -1;
+    int auxItemIndex     = -1;
     int separatorIndex   = -1;
+    BOOL insertedAuxItem = NO;
 
     [[self menu] removePlanetarySystemItem];
     [[self menu] removeAltSurfaceItem];
+#if REFMARKS
+    [[self menu] removeRefMarkItems];
+#endif
+    separatorIndex = [[self menu] numberOfItems] - 4;
+    if (separatorIndex < 0) separatorIndex = 0;
+    if ([[[self menu] itemAtIndex: separatorIndex] isSeparatorItem])
+        ++separatorIndex;
+    if ([[[self menu] itemAtIndex: separatorIndex] isSeparatorItem])
+        [[self menu] removeItemAtIndex: separatorIndex];
 
     selection = [[appCore simulation] selection];
 
-    satItem  = [[self menu] addPlanetarySystemItemForSelection: selection
-                                                        target: controller];
-    surfItem = [[self menu] addAltSurfaceItemForSelection: selection
-                                                   target: controller];
-    if (surfItem)
-        surfMenuIndex = [[self menu] indexOfItem: surfItem];
-    if (satItem)
-        satMenuIndex  = [[self menu] indexOfItem: satItem];
+#if REFMARKS
+    auxItemIndex   = [[self menu] numberOfItems] - 2;
+    if (auxItemIndex < 0) auxItemIndex = 0;
+    insertedAuxItem =
+        [[self menu] insertRefMarkItemsForSelection: selection
+                                            atIndex: auxItemIndex];
+#endif
+    auxItemIndex   = [[self menu] numberOfItems] - 2;
+    if (auxItemIndex < 0) auxItemIndex = 0;
+    insertedAuxItem =
+        [[self menu] insertPlanetarySystemItemForSelection: selection
+                                                    target: controller
+                                                   atIndex: auxItemIndex]
+        || insertedAuxItem;
+    auxItemIndex   = [[self menu] numberOfItems] - 2;
+    if (auxItemIndex < 0) auxItemIndex = 0;
+    insertedAuxItem =
+        [[self menu] insertAltSurfaceItemForSelection: selection
+                                               target: controller
+                                              atIndex: auxItemIndex]
+        || insertedAuxItem;
 
-    separatorIndex = (surfMenuIndex > satMenuIndex) ?
-        surfMenuIndex + 1 :
-        satMenuIndex  + 1;
-    if (separatorIndex > 0 && separatorIndex < [[self menu] numberOfItems])
+    if (insertedAuxItem)
     {
-        [[self menu] insertItem: [NSMenuItem separatorItem]
-                        atIndex: separatorIndex];
+        separatorIndex = [[self menu] numberOfItems] - 2;
+        if (separatorIndex > 0)
+        {
+            [[self menu] insertItem: [NSMenuItem separatorItem]
+                            atIndex: separatorIndex];
+        }
     }
 
     if ([selection body])
     {
         selectionName = [[selection body] name];
-#if REFMARKS
-        // TODO: Add support for reference marks
-#endif
     }
     else if ([selection star])
     {
