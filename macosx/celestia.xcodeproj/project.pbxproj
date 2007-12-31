@@ -2037,13 +2037,8 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREFIX_HEADER = Util.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
 					NDEBUG,
-					"MACOSX=1",
-					"MACOSX_PB=1",
-					PNG_SUPPORT,
-					CELX,
-					LUA_USE_MACOSX,
-					"LUA_VER=0x050100",
 				);
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -2070,6 +2065,16 @@
 		E50E8708097436A4006687D3 /* Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MACOSX=1",
+					"MACOSX_PB=1",
+					PNG_SUPPORT,
+					CELX,
+					LUA_USE_MACOSX,
+					"LUA_VER=0x050100",
+					"REFMARKS=1",
+				);
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
 				PREBINDING = NO;
@@ -2088,12 +2093,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Util.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"MACOSX=1",
-					"MACOSX_PB=1",
-					PNG_SUPPORT,
-					CELX,
-					LUA_USE_MACOSX,
-					"LUA_VER=0x050100",
+					"$(inherited)",
 					"DEBUG=1",
 				);
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
@@ -2121,6 +2121,16 @@
 		E532F41E0933316100D7D5B3 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MACOSX=1",
+					"MACOSX_PB=1",
+					PNG_SUPPORT,
+					CELX,
+					LUA_USE_MACOSX,
+					"LUA_VER=0x050100",
+					"REFMARKS=1",
+				);
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Development;
