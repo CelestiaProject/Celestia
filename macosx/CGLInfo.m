@@ -14,10 +14,6 @@
 #ifndef GL_SHADING_LANGUAGE_VERSION_ARB
 #define GL_SHADING_LANGUAGE_VERSION_ARB   0x8B8C
 #endif
-#ifndef GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT
-#define GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT  0x851C
-#endif
-
 
 static char *gExtensions;
 
@@ -102,10 +98,10 @@ static NSString *queryGLExtension(const char *extName)
          [NSString stringWithFormat: [NSString stringWithFormat: @"%@: 1", NSLocalizedString(@"Max simultaneous textures","")]])]; ENDL;
     [result appendString: queryGLInteger(GL_MAX_TEXTURE_SIZE, NSLocalizedString(@"Max texture size",""))]; ENDL;
 
-    if (ExtensionSupported("GL_EXT_texture_cube_map"))
+    if (ExtensionSupported("GL_ARB_texture_cube_map"))
     {
         GLint maxCubeMapSize = 0;
-        glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_EXT, &maxCubeMapSize);
+        glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
         [result appendString:
             [NSString stringWithFormat: @"%@%d",
                 NSLocalizedStringFromTable(@"Max cube map size: ",@"po",""),
@@ -129,7 +125,7 @@ static NSString *queryGLExtension(const char *extName)
     [result appendString: queryGLExtension("GL_EXT_texture_compression_s3tc")]; ENDL;
     [result appendString: queryGLExtension("GL_ARB_texture_border_clamp")]; ENDL;
     [result appendString: queryGLExtension("GL_EXT_texture_edge_clamp")]; ENDL;
-    [result appendString: queryGLExtension("GL_EXT_texture_cube_map")]; ENDL;
+    [result appendString: queryGLExtension("GL_ARB_texture_cube_map")]; ENDL;
     [result appendString: queryGLExtension("GL_SGIS_generate_mipmap")]; ENDL;
     [result appendString: queryGLExtension("GL_EXT_rescale_normal")]; ENDL;
     [result appendString: queryGLExtension("GL_ARB_point_sprite")]; ENDL;
