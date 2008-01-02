@@ -2650,7 +2650,7 @@ static int object_absmag(lua_State* l)
 
 static int object_mark(lua_State* l)
 {
-    checkArgs(l, 1, 5, "Need 0 to 4 arguments for object:mark");
+    checkArgs(l, 1, 6, "Need 0 to 5 arguments for object:mark");
 
     Selection* sel = this_object(l);
     CelestiaCore* appCore = getAppCore(l, AllErrors);
@@ -2680,9 +2680,13 @@ static int object_mark(lua_State* l)
     Color markColorAlpha(0.0f, 1.0f, 0.0f, 0.9f);
     markColorAlpha = Color::Color(markColor, markAlpha);
 
+    const char* markName = safeGetString(l, 6, WrongType, "Fifth argument to object:mark must be a string");
+    if (markName == NULL)
+        markName = "";
+
     Simulation* sim = appCore->getSimulation();
     sim->getUniverse()->markObject(*sel, markSize,
-                                   markColorAlpha, markSymbol, 1);
+                                   markColorAlpha, markSymbol, 1, markName);
 
     return 0;
 }
@@ -4459,7 +4463,7 @@ static int celestia_mark(lua_State* l)
     if (sel != NULL)
     {
         sim->getUniverse()->markObject(*sel, 10.0f,
-                                       Color(0.0f, 1.0f, 0.0f), Marker::Diamond, 1);
+                                       Color(0.0f, 1.0f, 0.0f), Marker::Diamond, 1, "");
     }
     else
     {

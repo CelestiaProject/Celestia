@@ -615,7 +615,7 @@ void CommandMark::process(ExecutionEnvironment& env)
         return;
 
     if (env.getSimulation()->getUniverse() != NULL)
-        env.getSimulation()->getUniverse()->markObject(sel, size, color, symbol, 1);
+        env.getSimulation()->getUniverse()->markObject(sel, size, color, symbol, 1, "");
 }
 
 

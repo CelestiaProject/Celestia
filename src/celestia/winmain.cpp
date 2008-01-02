@@ -4228,7 +4228,8 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                                    10.0f,
                                                    Color(0.0f, 1.0f, 0.0f, 0.9f),
                                                    Marker::Diamond,
-                                                   1);
+                                                   1,
+                                                   "");
                 }
             }
             break;
