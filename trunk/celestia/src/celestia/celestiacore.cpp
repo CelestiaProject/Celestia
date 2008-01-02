@@ -1432,7 +1432,8 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                                                10.0f,
                                                Color(0.0f, 1.0f, 0.0f, 0.9f),
                                                Marker::Diamond,
-                                               1);
+                                               1,
+                                               "");
             }
         }
         break;

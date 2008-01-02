@@ -102,7 +102,8 @@ class Universe
                     float size,
                     Color color,
                     Marker::Symbol symbol,
-                    int priority);
+                    int priority,
+                    string name);
     void unmarkObject(const Selection&, int priority);
     void unmarkAll();
     bool isMarked(const Selection&, int priority) const;
