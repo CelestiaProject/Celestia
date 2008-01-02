@@ -19,7 +19,8 @@ Marker::Marker(const Selection& s) :
     size(10.0f),
     color(Color::White),
     priority(0),
-    symbol(Diamond)
+    symbol(Diamond),
+    name("")
 {
 }
 
@@ -84,6 +85,18 @@ Marker::Symbol Marker::getSymbol() const
 void Marker::setSymbol(Marker::Symbol _symbol)
 {
     symbol = _symbol;
+}
+
+
+string Marker::getName() const
+{
+    return name;
+}
+
+
+void Marker::setName(string _name)
+{
+    name = _name;
 }
 
 
