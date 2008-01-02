@@ -1597,15 +1597,17 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, UTF8ToCurrentCP(_("S&ync Orbit")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
 #if REFMARKS
-            AppendMenu(hMenu, MF_STRING, ID_RENDER_BODY_AXES, UTF8ToCurrentCP(_("Show Body Axes")).c_str());
-            AppendMenu(hMenu, MF_STRING, ID_RENDER_FRAME_AXES, UTF8ToCurrentCP(_("Show Frame Axes")).c_str());
-            AppendMenu(hMenu, MF_STRING, ID_RENDER_SUN_DIRECTION, UTF8ToCurrentCP(_("Show Sun Direction")).c_str());
-            AppendMenu(hMenu, MF_STRING, ID_RENDER_VELOCITY_VECTOR, UTF8ToCurrentCP(_("Show Velocity Vector")).c_str());
+            HMENU refVectorMenu = CreatePopupMenu();
+            AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) refVectorMenu, UTF8ToCurrentCP(_("&Reference Vectors")).c_str());
+            AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_BODY_AXES, UTF8ToCurrentCP(_("Show Body Axes")).c_str());
+            AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_FRAME_AXES, UTF8ToCurrentCP(_("Show Frame Axes")).c_str());
+            AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_SUN_DIRECTION, UTF8ToCurrentCP(_("Show Sun Direction")).c_str());
+            AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_VELOCITY_VECTOR, UTF8ToCurrentCP(_("Show Velocity Vector")).c_str());
 
-            CheckMenuItem(hMenu, ID_RENDER_BODY_AXES,   sel.body()->referenceMarkVisible(Body::BodyAxes) ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(hMenu, ID_RENDER_FRAME_AXES,  sel.body()->referenceMarkVisible(Body::FrameAxes) ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(hMenu, ID_RENDER_SUN_DIRECTION,  sel.body()->referenceMarkVisible(Body::SunDirection) ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(hMenu, ID_RENDER_VELOCITY_VECTOR,  sel.body()->referenceMarkVisible(Body::VelocityVector) ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_BODY_AXES,   sel.body()->referenceMarkVisible(Body::BodyAxes) ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_FRAME_AXES,  sel.body()->referenceMarkVisible(Body::FrameAxes) ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_SUN_DIRECTION,  sel.body()->referenceMarkVisible(Body::SunDirection) ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_VELOCITY_VECTOR,  sel.body()->referenceMarkVisible(Body::VelocityVector) ? MF_CHECKED : MF_UNCHECKED);
 #endif
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
