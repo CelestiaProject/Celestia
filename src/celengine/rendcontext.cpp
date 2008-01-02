@@ -647,9 +647,18 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         prog->lunarLambert = lunarLambert;
     }
 
+    // Generally, we want to disable depth writes for blend because it
+    // makes translucent objects look a bit better (though there are
+    // still problems when rendering them without sorting.) However,
+    // when scattering atmospheres are enabled, we need to render with
+    // depth writes on, otherwise the atmosphere will be drawn over
+    // a planet mesh. See SourceForge bug #1855894 for more details.
+    bool disableDepthWriteOnBlend = true;
+
     if (shaderProps.hasScattering())
     {
         prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius);
+        disableDepthWriteOnBlend = false;
     }
 
     if ((shaderProps.texUsage & ShaderProperties::PointSprite) != 0)
@@ -673,12 +682,12 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         case Mesh::NormalBlend:
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glDepthMask(GL_FALSE);
+            glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
             break;
         case Mesh::AdditiveBlend:
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            glDepthMask(GL_FALSE);
+            glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
             break;
         default:
             glDisable(GL_BLEND);
