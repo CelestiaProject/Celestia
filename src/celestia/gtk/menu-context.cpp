@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: menu-context.cpp,v 1.3 2005-12-13 06:19:57 suwalski Exp $
+ *  $Id: menu-context.cpp,v 1.4 2008-01-03 00:20:33 vincent_gian Exp $
  */
 
 #include <algorithm>
@@ -159,7 +159,8 @@ static void menuMark()
 						10.0f,
 						Color(0.0f, 1.0f, 0.0f, 0.9f),
 						Marker::Diamond,
-						1);
+						1,
+						"");
 	}
 }
 
