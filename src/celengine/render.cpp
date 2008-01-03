@@ -8748,13 +8748,13 @@ void Renderer::renderMarkers(const MarkerList& markers,
 
                 glColor(iter->getColor());
                 iter->render();
-                if (!iter->getName().empty())
+                if (!iter->getLabel().empty())
                 {
                     glEnable(GL_TEXTURE_2D);
-                    int nameOffset = (int) iter->getSize() / 2;
-                    glTranslatef(nameOffset + PixelOffset, -nameOffset - font[FontNormal]->getHeight() + PixelOffset, 0.0f);
+                    int labelOffset = (int) iter->getSize() / 2;
+                    glTranslatef(labelOffset + PixelOffset, -labelOffset - font[FontNormal]->getHeight() + PixelOffset, 0.0f);
                     font[FontNormal]->bind();
-                    font[FontNormal]->render(iter->getName());
+                    font[FontNormal]->render(iter->getLabel());
                     glDisable(GL_TEXTURE_2D);
                 }
 
