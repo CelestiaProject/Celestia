@@ -469,7 +469,7 @@ class CommandPreloadTextures : public InstantaneousCommand
 class CommandMark : public InstantaneousCommand
 {
  public:
-    CommandMark(const std::string&, Color, float, Marker::Symbol);
+    CommandMark(const std::string&, Color, float, Marker::Symbol, const std::string&);
     void process(ExecutionEnvironment&);
 
  private:
@@ -477,6 +477,7 @@ class CommandMark : public InstantaneousCommand
     Color color;
     float size;
     Marker::Symbol symbol;
+    std::string name;
 };
 
 
