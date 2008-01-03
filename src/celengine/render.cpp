@@ -8744,10 +8744,19 @@ void Renderer::renderMarkers(const MarkerList& markers,
             if (eyepos.z < 0.0f)
             {
                 glPushMatrix();
-                glTranslatef((GLfloat) winX, (GLfloat) winY, 0.0f);
+                glTranslatef((GLfloat) (int) winX, (GLfloat) (int) winY, 0.0f);
 
                 glColor(iter->getColor());
                 iter->render();
+                if (!iter->getName().empty())
+                {
+                    glEnable(GL_TEXTURE_2D);
+                    int nameOffset = (int) iter->getSize() / 2;
+                    glTranslatef(nameOffset + PixelOffset, -nameOffset - font[FontNormal]->getHeight() + PixelOffset, 0.0f);
+                    font[FontNormal]->bind();
+                    font[FontNormal]->render(iter->getName());
+                    glDisable(GL_TEXTURE_2D);
+                }
 
                 glPopMatrix();
             }
