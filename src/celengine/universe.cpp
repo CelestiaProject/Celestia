@@ -170,7 +170,7 @@ void Universe::markObject(const Selection& sel,
                           Color color,
                           Marker::Symbol symbol,
                           int priority,
-                          string name)
+                          string label)
 {
     for (MarkerList::iterator iter = markers->begin();
          iter != markers->end(); iter++)
@@ -197,7 +197,7 @@ void Universe::markObject(const Selection& sel,
     marker.setSymbol(symbol);
     marker.setSize(size);
     marker.setPriority(priority);
-    marker.setName(name);
+    marker.setLabel(label);
     markers->insert(markers->end(), marker);
 }
 

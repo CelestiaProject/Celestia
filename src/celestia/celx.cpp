@@ -2680,13 +2680,13 @@ static int object_mark(lua_State* l)
     Color markColorAlpha(0.0f, 1.0f, 0.0f, 0.9f);
     markColorAlpha = Color::Color(markColor, markAlpha);
 
-    const char* markName = safeGetString(l, 6, WrongType, "Fifth argument to object:mark must be a string");
-    if (markName == NULL)
-        markName = "";
+    const char* markLabel = safeGetString(l, 6, WrongType, "Fifth argument to object:mark must be a string");
+    if (markLabel == NULL)
+        markLabel = "";
 
     Simulation* sim = appCore->getSimulation();
     sim->getUniverse()->markObject(*sel, markSize,
-                                   markColorAlpha, markSymbol, 1, markName);
+                                   markColorAlpha, markSymbol, 1, markLabel);
 
     return 0;
 }

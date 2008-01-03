@@ -20,7 +20,7 @@ Marker::Marker(const Selection& s) :
     color(Color::White),
     priority(0),
     symbol(Diamond),
-    name("")
+    label("")
 {
 }
 
@@ -88,15 +88,15 @@ void Marker::setSymbol(Marker::Symbol _symbol)
 }
 
 
-string Marker::getName() const
+string Marker::getLabel() const
 {
-    return name;
+    return label;
 }
 
 
-void Marker::setName(string _name)
+void Marker::setLabel(string _label)
 {
-    name = _name;
+    label = _label;
 }
 
 

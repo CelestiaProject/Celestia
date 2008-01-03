@@ -477,7 +477,7 @@ class CommandMark : public InstantaneousCommand
     Color color;
     float size;
     Marker::Symbol symbol;
-    std::string name;
+    std::string label;
 };
 
 
