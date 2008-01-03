@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# Version 1.33 (2007 Sep 25)
+# Version 1.34 (2008 Jan 03)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -1016,7 +1016,7 @@
 	Albedo 0.06
 }
 
-"Erriapo" "Sol/Saturn"
+"Erriapus" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
@@ -2081,17 +2081,19 @@
 
 # Additional moons of Pluto
 # "Orbits and photometry of Pluto's satellites: Charon, S/2005 P1
-# and S/2005 P2" Buie et al. http://arxiv.org/abs/astro-ph/0512491
+# and S/2005 P2" Buie et al. 
+# http://arxiv.org/abs/astro-ph/0512491
+# "Masses of Nix and Hydra" Tholen et al. 
+# http://arxiv.org/ftp/arxiv/papers/0712/0712.1261.pdf
 
 "Hydra" "Sol/Pluto"
 {
 	Texture	 	"asteroid.jpg" # "spectrally neutral"
 	Mesh		"asteroid.cms"
-	Radius		22 # for 35% albedo
+	Radius		36
 	
 	InfoURL "http://www.boulder.swri.edu/plutonews/"
 
-	# Elements from Buie et al. referenced to J2000 Earth equator
 	OrbitFrame {
 		EquatorJ2000 { Center "Sol/Pluto-Charon" }
 	}	
@@ -2099,16 +2101,16 @@
 	EllipticalOrbit
 	{
 	Epoch		2452600.5	# 2002 Nov 22
-	Period		38.2065
-	SemiMajorAxis	64780
-	Eccentricity	0.0052
-	Inclination       96.36
-        AscendingNode    223.173
-	LongOfPericenter 200.1
-	MeanLongitude    322.71
+	Period		38.734		# mean
+	SemiMajorAxis	65082		# mean
+	Eccentricity	0.00870		# mean
+	Inclination	96.362
+        AscendingNode	223.077
+	ArgOfPericenter	45.4
+	MeanLongitude	322.4
 	}
 
-	Albedo 0.35 # estimate, based on Charon
+	Albedo 0.18
 }
 
 "Nix" "Sol/Pluto"
@@ -2118,11 +2120,10 @@
 					# but not subsequently detected
 	BlendTexture true
 	Mesh		"asteroid.cms"
-	Radius		22 # for 35% albedo
+	Radius		44
 	
 	InfoURL "http://www.boulder.swri.edu/plutonews/"
 
-	# Elements from Buie et al. referenced to J2000 Earth equator
 	OrbitFrame {
 		EquatorJ2000 { Center "Sol/Pluto-Charon" }
 	}	
@@ -2130,15 +2131,14 @@
 	EllipticalOrbit
 	{
 	Epoch		2452600.5	# 2002 Nov 22
-	Period		24.8562
-	SemiMajorAxis	48675
-	Eccentricity	0.0023
-	Inclination       96.18
-	AscendingNode    223.14
-	LongOfPericenter 216
-	MeanLongitude    123.14
+	Period		25.492		# mean
+	SemiMajorAxis	49242		# mean
+	Eccentricity	0.01504		# mean
+	Inclination	96.190
+	AscendingNode	223.202
+	ArgOfPericenter 244.3
+	MeanLongitude	122.7
 	}
 
-	Albedo 0.35 # estimate, based on Charon
+	Albedo 0.08
 }
-
