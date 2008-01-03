@@ -53,8 +53,8 @@ class Marker
     Symbol getSymbol() const;
     void setSymbol(Symbol);
 
-    string getName() const;
-    void setName(string);
+    string getLabel() const;
+    void setLabel(string);
 
     void render() const;
 
@@ -64,7 +64,7 @@ class Marker
     Color color;
     int priority;
     Symbol symbol;
-    string name;
+    string label;
 };
 
 typedef std::vector<Marker> MarkerList;

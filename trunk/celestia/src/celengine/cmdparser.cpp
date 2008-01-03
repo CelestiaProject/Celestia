@@ -611,10 +611,10 @@ Command* CommandParser::parseCommand()
                 symbol = Marker::Disk;
         }
 
-        string name;
-        paramList->getString("name", name);
+        string label;
+        paramList->getString("label", label);
 
-        cmd = new CommandMark(object, color, (float) size, symbol, name);
+        cmd = new CommandMark(object, color, (float) size, symbol, label);
     }
     else if (commandName == "unmark")
     {
