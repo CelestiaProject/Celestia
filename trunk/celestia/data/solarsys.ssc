@@ -308,13 +308,13 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 	UniformRotation
 	{
-	Period         9.927953 # System II (for GRS)
-	# Period       9.92425  # System III (radio emissions)
-	Inclination              2.222461 # 1.82246 # 2.22246
-	AscendingNode -22.203    # -1.87785 # -22.203
-	MeridianAngle        12        # for correct location of GRS 
-	                                # (equal to 101 minus current W longitude of GRS)
-	# MeridianAngle     305.40     # correct System III prime meridian
+	Period		9.927953 # System II (for GRS)
+	# Period	9.92425  # System III (radio emissions)
+	Inclination	2.222461 # 1.82246 # 2.22246
+	AscendingNode	-22.203  # -1.87785 # -22.203
+	MeridianAngle	342      # for correct location of GRS 
+	                         # (equal to 461 minus current W longitude of GRS)
+	# MeridianAngle	305.40   # correct System III prime meridian
 	}
 
 	Albedo 0.51
@@ -1295,6 +1295,9 @@ ReferencePoint "Pluto-Charon" "Sol"
     CustomOrbit "pluto"
 }
 
+# Updated from "Masses of Nix and Hydra" Tholen et al. 
+# http://arxiv.org/ftp/arxiv/papers/0712/0712.1261.pdf
+
 "Pluto" "Sol"
 {
     Texture "pluto-lok.*"
@@ -1314,21 +1317,22 @@ ReferencePoint "Pluto-Charon" "Sol"
 
     EllipticalOrbit
     {
-        Period           6.387246
-        SemiMajorAxis    2411      # mass ratio of 0.123
-        Eccentricity     0.0002
-        Inclination      96.177
-        AscendingNode   223.052
-        ArgOfPericenter 314.540
-        MeanAnomaly     169.750
+	Epoch		2452600.5   # 2002 Nov 22
+        Period           6.387206   # mean
+        SemiMajorAxis    2043.1     # mass ratio of 0.1166
+        Eccentricity     0.003484   # mean
+        Inclination      96.1680    # mean
+        AscendingNode   223.0539    # mean
+        ArgOfPericenter 337.92      # mean
+        MeanLongitude	 77.960     
     }
 
     UniformRotation
     {
-    Period       153.293904
-    Inclination            115.60
-    AscendingNode 228.34
-    MeridianAngle       320.75
+    Period		153.292944
+    Inclination		115.60
+    AscendingNode	228.34
+    MeridianAngle	320.75
     }
 	
     Albedo           0.55
@@ -1348,6 +1352,7 @@ AltSurface "limit of knowledge" "Sol/Pluto"
     SpecularTexture "charon-lok-spec.*"
     SpecularColor            [ 0.135 0.12 0.08 ]
     SpecularPower             9.5
+
     Radius   593
 
     InfoURL "http://www.nineplanets.org/pluto.html#Charon"
@@ -1362,18 +1367,19 @@ AltSurface "limit of knowledge" "Sol/Pluto"
 
     EllipticalOrbit
     {
-        Period          6.387246
-        SemiMajorAxis   17188   # mass ratio of 0.123
-        Eccentricity    0.0002
-        Inclination      96.177
-        AscendingNode   223.052
-        ArgOfPericenter 134.540
-        MeanAnomaly     169.750
+	Epoch		2452600.5 # 2002 Nov 22
+        Period          6.387206
+        SemiMajorAxis   17527.4   # mass ratio of 0.1166
+        Eccentricity    0.003484  # mean
+        Inclination      96.1680  # mean
+        AscendingNode   223.0539  # mean
+        ArgOfPericenter 157.92    # mean
+        MeanLongitude   257.960
     }
 
     UniformRotation
     {
-    Period              153.293904
+    Period              153.292944
     Inclination         115.9
     AscendingNode       227.3
     MeridianAngle       140.4
@@ -1389,4 +1395,3 @@ AltSurface "limit of knowledge" "Sol/Pluto/Charon"
         SpecularColor            [ 0.135 0.12 0.08 ]
         SpecularPower             9.5
 }
-
