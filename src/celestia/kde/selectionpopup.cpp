@@ -218,7 +218,8 @@ void SelectionPopup::process(int id)
                                            10.0f,
                                            Color(0.0f, 1.0f, 0.0f, 0.9f),
                                            (Marker::Symbol)(actionId - 10),
-                                           1);
+                                           1,
+                                           "");
         }
         return;
     }
