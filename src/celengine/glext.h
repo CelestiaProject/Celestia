@@ -141,8 +141,8 @@ namespace glx
     extern PFNGLCLIENTACTIVETEXTUREARBPROC glClientActiveTextureARB;
 };
 
-/* EXT_texture_cube_map defines from <GL/gl.h> */
-#if !(defined( GL_ARB_texture_cube_map) || defined(__glext_h_)) || defined(MACOSX)
+/* ARB_texture_cube_map defines from <GL/gl.h> */
+#if !(defined( GL_ARB_texture_cube_map) || defined(__glext_h_))
 #define GL_NORMAL_MAP_ARB                   ((GLenum) 0x8511)
 #define GL_REFLECTION_MAP_ARB               ((GLenum) 0x8512)
 #define GL_TEXTURE_CUBE_MAP_ARB             ((GLenum) 0x8513)
@@ -954,6 +954,8 @@ namespace glx
 #define GL_ARB_point_sprite 1
 #define GL_POINT_SPRITE_ARB               0x8861
 #define GL_COORD_REPLACE_ARB              0x8862
+#define GL_SMOOTH_POINT_SIZE_RANGE        0x0B12
+#define GL_ALIASED_POINT_SIZE_RANGE       0x846D
 #endif
 
 
