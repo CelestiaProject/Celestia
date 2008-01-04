@@ -8290,14 +8290,6 @@ Location "Fotla Corona" "Sol/Venus"
     Type "CR"
 }
 
-Location "Furachoga Corona" "Sol/Venus"
-{
-    LongLat [ -258 38 0 ]
-    Size 550.00
-    Importance  82.40
-    Type "CR"
-}
-
 Location "Gaia Corona" "Sol/Venus"
 {
     LongLat [ -21.5 -6 0 ]
@@ -15068,4 +15060,39 @@ Location "Ezili Tholus" "Sol/Venus"
 	Size 150
 	Importance 50.45
 	Type "TH"
+}
+
+# Update 2008 Jan 04, Grant Hutchison
+# -----------------------------------
+
+Location "Larisa" "Sol/Venus"
+{
+	LongLat [ -131.1 18.5 0 ]
+	Size 3.7
+	Importance 29.04
+	Type "AA"
+}
+
+Location "Kono Mons" "Sol/Venus"
+{
+	LongLat [ -268. -19.5 0 ]
+	Size 350
+	Importance 67.98
+	Type "MO"
+}
+
+Location "Copacati Mons" "Sol/Venus"
+{
+	LongLat [ -276.8 -34.8 0 ]
+	Size 80
+	Importance 42.47
+	Type "MO"
+}
+
+Location "Urash Corona" "Sol/Venus"
+{
+	LongLat [ -282. -43.2 0 ]
+	Size 360
+	Importance 68.76
+	Type "CR"
 }
