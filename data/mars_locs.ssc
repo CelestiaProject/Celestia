@@ -8778,14 +8778,6 @@ Location "Ceraunius Fossae" "Sol/Mars"
     Type "FO"
 }
 
-Location "Cerberus Fossae" "Sol/Mars"
-{
-    LongLat [ 164 8.4 0 ]
-    Size 1215.00
-    Importance  86.52
-    Type "FO"
-}
-
 Location "Chalce Fossa" "Sol/Mars"
 {
     LongLat [ 320.3 -51.7 0 ]
@@ -9682,14 +9674,6 @@ Location "Tyrrhena Mons" "Sol/Mars"
     Type "MO"
 }
 
-Location "Alba Patera" "Sol/Mars"
-{
-    LongLat [ 250.4 40.4 0 ]
-    Size 530.00
-    Importance  57.25
-    Type "PE"
-}
-
 Location "Amphitrites Patera" "Sol/Mars"
 {
     LongLat [ 60.9 -58.7 0 ]
@@ -9706,43 +9690,11 @@ Location "Angusta Patera" "Sol/Mars"
     Type "PE"
 }
 
-Location "Apollinaris Patera" "Sol/Mars"
-{
-    LongLat [ 174.4 -9.3 0 ]
-    Size 296.00
-    Importance  44.98
-    Type "PE"
-}
-
 Location "Australis Patera" "Sol/Mars"
 {
     LongLat [ 308.3 -80.1 0 ]
     Size  12.70
     Importance  22.17
-    Type "PE"
-}
-
-Location "Biblis Patera" "Sol/Mars"
-{
-    LongLat [ 235.4 2.6 0 ]
-    Size 171.50
-    Importance  37.15
-    Type "PE"
-}
-
-Location "Diacria Patera" "Sol/Mars"
-{
-    LongLat [ 227.4 34.6 0 ]
-    Size  65.50
-    Importance  28.61
-    Type "PE"
-}
-
-Location "Hadriaca Patera" "Sol/Mars"
-{
-    LongLat [ 91.8 -32.1 0 ]
-    Size 575.00
-    Importance  59.40
     Type "PE"
 }
 
@@ -9799,30 +9751,6 @@ Location "Pityusa Patera" "Sol/Mars"
     LongLat [ 36.9 -66.8 0 ]
     Size 230.00
     Importance  41.01
-    Type "PE"
-}
-
-Location "Tyrrhena Patera" "Sol/Mars"
-{
-    LongLat [ 106.5 -21.4 0 ]
-    Size 473.40
-    Importance  54.47
-    Type "PE"
-}
-
-Location "Ulysses Patera" "Sol/Mars"
-{
-    LongLat [ 238.4 2.9 0 ]
-    Size 101.70
-    Importance  31.87
-    Type "PE"
-}
-
-Location "Uranius Patera" "Sol/Mars"
-{
-    LongLat [ 267.8 26.8 0 ]
-    Size 274.00
-    Importance  43.69
     Type "PE"
 }
 
@@ -12158,3 +12086,269 @@ Location "Wynn-Williams" "Sol/Mars"
 	Type "AA"
 }
 
+# Update 2008 Jan 04, Grant Hutchison
+# -----------------------------------
+
+Location "Louth" "Sol/Mars"
+{
+	LongLat [ -256.9 70.2 0 ]
+	Size 37.8
+	Importance 25.64
+	Type "AA"
+}
+
+Location "Aspledon Undae" "Sol/Mars"
+{
+	LongLat [ -51.3 73. 0 ]
+	Size 214
+	Importance 39.99
+	Type "UN"
+}
+
+Location "Siton Undae" "Sol/Mars"
+{
+	LongLat [ -296.8 75.2 0 ]
+	Size 215
+	Importance 40.05
+	Type "UN"
+}
+
+Location "Olympia Planum" "Sol/Mars"
+{
+	LongLat [ -165. 82. 0 ]
+	Size 1000
+	Importance 77.93
+	Type "PM"
+}
+
+Location "Henbury" "Sol/Mars"
+{
+	LongLat [ -147.9 -63.5 0 ]
+	Size 27
+	Importance 24.29
+	Type "AA"
+}
+
+Location "Laylá" "Sol/Mars"
+{
+	LongLat [ -253. -61. 0 ]
+	Size 20.8
+	Importance 23.42
+	Type "AA"
+}
+
+Location "Lonar" "Sol/Mars"
+{
+	LongLat [ -321.7 73. 0 ]
+	Size 11.3
+	Importance 21.94
+	Type "AA"
+}
+
+Location "Maricourt" "Sol/Mars"
+{
+	LongLat [ -71.3 53.3 0 ]
+	Size 9.9
+	Importance 21.69
+	Type "AA"
+}
+
+Location "Steinheim" "Sol/Mars"
+{
+	LongLat [ -169.4 54.5 0 ]
+	Size 11.6
+	Importance 21.98
+	Type "AA"
+}
+
+Location "Gemina Lingula" "Sol/Mars"
+{
+	LongLat [ -355. 82. 0 ]
+	Size 865
+	Importance 72.15
+	Type "LN"
+}
+
+Location "Sinton" "Sol/Mars"
+{
+	LongLat [ -328.4 40.7 0 ]
+	Size 65.2
+	Importance 28.58
+	Type "AA"
+}
+
+Location "Olympia Rupēs" "Sol/Mars"
+{
+	LongLat [ -175.5 85.4 0 ]
+	Size 900
+	Importance 73.80
+	Type "RU"
+}
+
+Location "Jezero" "Sol/Mars"
+{
+	LongLat [ -282.4 18.4 0 ]
+	Size 49
+	Importance 26.92
+	Type "AA"
+}
+
+Location "Marikh Vallis" "Sol/Mars"
+{
+	LongLat [ -356.1 -19.5 0 ]
+	Size 1280
+	Importance 89.03
+	Type "VA"
+}
+
+Location "Moroz" "Sol/Mars"
+{
+	LongLat [ -20.6 -23.7 0 ]
+	Size 123
+	Importance 33.59
+	Type "AA"
+}
+
+Location "Alba Mons" "Sol/Mars"
+{
+	LongLat [ -109.6 40.8 0 ]
+	Size 530
+	Importance 57.23
+	Type "MO"
+}
+
+Location "Apollinaris Mons" "Sol/Mars"
+{
+	LongLat [ -185.6 -9.4 0 ]
+	Size 296
+	Importance 44.98
+	Type "MO"
+}
+
+Location "Biblis Tholus" "Sol/Mars"
+{
+	LongLat [ -124.6 2.7 0 ]
+	Size 171.5
+	Importance 37.15
+	Type "TH"
+}
+
+Location "Hadriacus Mons" "Sol/Mars"
+{
+	LongLat [ -268.2 -32.4 0 ]
+	Size 575
+	Importance 59.40
+	Type "MO"
+}
+
+Location "Tyrrhenus Mons" "Sol/Mars"
+{
+	LongLat [ -253.5 -21.6 0 ]
+	Size 473.4
+	Importance 54.47
+	Type "MO"
+}
+
+Location "Ulysses Tholus" "Sol/Mars"
+{
+	LongLat [ -121.6 2.9 0 ]
+	Size 101.7
+	Importance 31.87
+	Type "TH"
+}
+
+Location "Uranius Mons" "Sol/Mars"
+{
+	LongLat [ -92.2 27.1 0 ]
+	Size 274
+	Importance 43.69
+	Type "MO"
+}
+
+Location "Alba Patera" "Sol/Mars"
+{
+    LongLat [ 250.2 39.8 0 ]
+    Size 136
+    Importance  34.58
+    Type "PE"
+}
+
+Location "Apollinaris Patera" "Sol/Mars"
+{
+    LongLat [ 174.4 -8.5 0 ]
+    Size 296
+    Importance  44.98
+    Type "PE"
+}
+
+Location "Biblis Patera" "Sol/Mars"
+{
+    LongLat [ 236.1 2.3 0 ]
+    Size 50
+    Importance  27.02
+    Type "PE"
+}
+
+Location "Hadriaca Patera" "Sol/Mars"
+{
+    LongLat [ 92.7 -29.9 0 ]
+    Size 67
+    Importance 28.76 
+    Type "PE"
+}
+
+Location "Tyrrhena Patera" "Sol/Mars"
+{
+    LongLat [ 106.5 -21.2 0 ]
+    Size 16
+    Importance 22.71
+    Type "PE"
+}
+
+Location "Ulysses Patera" "Sol/Mars"
+{
+    LongLat [ 238.4 2.9 0 ]
+    Size 58
+    Importance  27.86
+    Type "PE"
+}
+
+Location "Uranius Patera" "Sol/Mars"
+{
+    LongLat [ 267.0 25.9 0 ]
+    Size 114
+    Importance  32.88
+    Type "PE"
+}
+
+Location "Erythraeum Chaos" "Sol/Mars"
+{
+	LongLat [ -12.4 -21.9 0 ]
+	Size 149
+	Importance 35.55
+	Type "CH"
+}
+
+Location "Miyamoto" "Sol/Mars"
+{
+	LongLat [ -7. -2.9 0 ]
+	Size 160
+	Importance 36.34
+	Type "AA"
+}
+
+Location "Capen" "Sol/Mars"
+{
+	LongLat [ -345.7 6.6 0 ]
+	Size 70
+	Importance 29.05
+	Type "AA"
+}
+
+Location "Cerberus Fossae" "Sol/Mars"
+{
+    LongLat [ 171.2 11.8 0 ]
+    Size 1630.00
+    Importance  102.18
+    Type "FO"
+}
