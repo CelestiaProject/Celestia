@@ -75,6 +75,13 @@ Location "Keeler gap" "Sol/Saturn"
     Type "XX"
 }
 
+Location "Roche division" "Sol/Saturn"
+{
+    LongLat [ 0 0 78220 ]
+    Importance 5000
+    Type "XX"
+}
+
 Location "F ring" "Sol/Saturn"
 {
     LongLat [ 0 0 79950 ]
@@ -155,6 +162,13 @@ Location "Encke gap" "Sol/Saturn"
 Location "Keeler gap" "Sol/Saturn"
 {
     LongLat [ 180 0 76260 ]
+    Importance 5000
+    Type "XX"
+}
+
+Location "Roche division" "Sol/Saturn"
+{
+    LongLat [ 180 0 78220 ]
     Importance 5000
     Type "XX"
 }
