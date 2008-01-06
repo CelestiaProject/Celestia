@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cassert>
 #include <unistd.h>
 #include <celengine/gl.h>
 //#include <celengine/glext.h>
