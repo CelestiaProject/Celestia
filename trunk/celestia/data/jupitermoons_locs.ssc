@@ -666,7 +666,7 @@ Location "Kane Patera" "Sol/Jupiter/Io"
 Location "Kanehekili" "Sol/Jupiter/Io"
 {
 	LongLat [ -33.6 -18.2 0 ]
-	Size 0
+	Size 100
 	Type "ER"
 }
 
@@ -757,7 +757,7 @@ Location "Llew Patera" "Sol/Jupiter/Io"
 Location "Loki" "Sol/Jupiter/Io"
 {
 	LongLat [ -302.6 18.2 0 ]
-	Size 0
+	Size 200
 	Type "ER"
 }
 
@@ -1030,7 +1030,7 @@ Location "Pautiwa Patera" "Sol/Jupiter/Io"
 Location "Pele" "Sol/Jupiter/Io"
 {
 	LongLat [ -255.3 -18.7 0 ]
-	Size 0
+	Size 200
 	Type "ER"
 }
 
@@ -1282,7 +1282,7 @@ Location "Sui Jen Patera" "Sol/Jupiter/Io"
 Location "Surt" "Sol/Jupiter/Io"
 {
 	LongLat [ -336.5 45.2 0 ]
-	Size 0
+	Size 50
 	Type "ER"
 }
 
