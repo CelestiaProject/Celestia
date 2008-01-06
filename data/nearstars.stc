@@ -680,6 +680,7 @@ Barycenter "Kruger 60:Gliese 860"
 
 "DENIS 1048-3956:RECONS 2"
 {
+	Texture "browndwarf.*"
 	RA 162.061250
 	Dec -39.935000
 	Distance 13.167
@@ -981,6 +982,7 @@ Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
 
 "LP 944-20"
 {
+	Texture "browndwarf.*"
 	RA 54.896667
 	Dec -35.428056
 	Distance 16.195
