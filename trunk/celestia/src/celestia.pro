@@ -1,0 +1,318 @@
+TEMPLATE = app
+
+QT += opengl
+
+
+#### Utility library ####
+
+UTIL_SOURCES = \
+	celutil/bigfix.cpp \
+	celutil/color.cpp \
+	celutil/debug.cpp \
+	celutil/directory.cpp \
+	celutil/filetype.cpp \
+	celutil/formatnum.cpp \
+	celutil/utf8.cpp \
+	celutil/util.cpp
+
+UTIL_HEADERS = \
+	celutil/basictypes.h \
+	celutil/bigfix.h \
+	celutil/bytes.h \
+	celutil/color.h \
+	celutil/debug.h \
+	celutil/directory.h \
+	celutil/filetype.h \
+	celutil/formatnum.h \
+	celutil/reshandle.h \
+	celutil/resmanager.h \
+	celutil/timer.h \
+	celutil/utf8.h \
+	celutil/util.h \
+	celutil/watcher.h
+
+win32 {
+	UTIL_SOURCES += celutil/windirectory.cpp celutil/wintimer.cpp
+	UTIL_HEADERS += celutil/winutil.h
+}
+
+
+#### Math library ####
+
+MATH_SOURCES = \
+	celmath/frustum.cpp \
+	celmath/perlin.cpp
+
+MATH_HEADERS = \
+	celmath/aabox.h \
+	celmath/capsule.h \
+	celmath/distance.h \
+	celmath/ellipsoid.h \
+	celmath/frustum.h \
+	celmath/intersect.h \
+	celmath/mathlib.h \
+	celmath/perlin.h \
+	celmath/plane.h \
+	celmath/quaternion.h \
+	celmath/ray.h \
+	celmath/solve.h \
+	celmath/sphere.h \
+	celmath/vecmath.h
+
+
+#### 3DS Mesh library ####
+
+TDS_SOURCES = \
+	cel3ds/3dsmodel.cpp \
+	cel3ds/3dsread.cpp
+
+TDS_HEADERS = \
+	cel3ds/3dschunk.h \
+	cel3ds/3dsmodel.h \
+	cel3ds/3dsread.h
+
+
+#### Texture font library ####
+
+TXF_SOURCES = \
+	celtxf/texturefont.cpp
+
+TXF_HEADERS = \
+	celtxf/texturefont.h
+
+
+#### Celestia Engine ####
+
+ENGINE_SOURCES = \
+	celengine/asterism.cpp \
+	celengine/astro.cpp \
+	celengine/axisarrow.cpp \
+	celengine/body.cpp \
+	celengine/boundaries.cpp \
+	celengine/catalogxref.cpp \
+	celengine/cmdparser.cpp \
+	celengine/command.cpp \
+	celengine/console.cpp \
+	celengine/constellation.cpp \
+	celengine/customorbit.cpp \
+	celengine/dds.cpp \
+	celengine/deepskyobj.cpp \
+	celengine/dispmap.cpp \
+	celengine/dsodb.cpp \
+	celengine/dsoname.cpp \
+	celengine/dsooctree.cpp \
+	celengine/execution.cpp \
+	celengine/fragmentprog.cpp \
+	celengine/frame.cpp \
+	celengine/galaxy.cpp \
+	celengine/glcontext.cpp \
+	celengine/glext.cpp \
+	celengine/glshader.cpp \
+	celengine/image.cpp \
+	celengine/jpleph.cpp \
+	celengine/location.cpp \
+	celengine/lodspheremesh.cpp \
+	celengine/marker.cpp \
+	celengine/mesh.cpp \
+	celengine/meshmanager.cpp \
+	celengine/model.cpp \
+	celengine/modelfile.cpp \
+	celengine/multitexture.cpp \
+	celengine/nebula.cpp \
+	celengine/observer.cpp \
+	celengine/opencluster.cpp \
+	celengine/orbit.cpp \
+	celengine/overlay.cpp \
+	celengine/parseobject.cpp \
+	celengine/parser.cpp \
+	celengine/regcombine.cpp \
+	celengine/rendcontext.cpp \
+	celengine/render.cpp \
+	celengine/renderglsl.cpp \
+	celengine/rotation.cpp \
+	celengine/rotationmanager.cpp \
+	celengine/samporbit.cpp \
+	celengine/samporient.cpp \
+	celengine/selection.cpp \
+	celengine/shadermanager.cpp \
+	celengine/simulation.cpp \
+	celengine/solarsys.cpp \
+	celengine/spheremesh.cpp \
+	celengine/star.cpp \
+	celengine/starcolors.cpp \
+	celengine/stardb.cpp \
+	celengine/starname.cpp \
+	celengine/staroctree.cpp \
+	celengine/stellarclass.cpp \
+	celengine/texmanager.cpp \
+	celengine/texture.cpp \
+	celengine/tokenizer.cpp \
+	celengine/trajmanager.cpp \
+	celengine/univcoord.cpp \
+	celengine/universe.cpp \
+	celengine/vertexlist.cpp \
+	celengine/vertexprog.cpp \
+	celengine/virtualtex.cpp \
+	celengine/vsop87.cpp
+
+ENGINE_HEADERS = \
+	celengine/asterism.h \
+	celengine/astro.h \
+	celengine/atmosphere.h \
+	celengine/axisarrow.h \
+	celengine/body.h \
+	celengine/boundaries.h \
+	celengine/catalogxref.h \
+	celengine/celestia.h \
+	celengine/cmdparser.h \
+	celengine/command.h \
+	celengine/console.h \
+	celengine/constellation.h \
+	celengine/customorbit.h \
+	celengine/deepskyobj.h \
+	celengine/dispmap.h \
+	celengine/dsodb.h \
+	celengine/dsoname.h \
+	celengine/dsooctree.h \
+	celengine/execenv.h \
+	celengine/execution.h \
+	celengine/fragmentprog.h \
+	celengine/frame.h \
+	celengine/galaxy.h \
+	celengine/gl.h \
+	celengine/glcontext.h \
+	celengine/glext.h \
+	celengine/glshader.h \
+	celengine/image.h \
+	celengine/jpleph.h \
+	celengine/lightenv.h \
+	celengine/location.h \
+	celengine/lodspheremesh.h \
+	celengine/marker.h \
+	celengine/mesh.h \
+	celengine/meshmanager.h \
+	celengine/model.h \
+	celengine/modelfile.h \
+	celengine/multitexture.h \
+	celengine/nebula.h \
+	celengine/observer.h \
+	celengine/octree.h \
+	celengine/opencluster.h \
+	celengine/orbit.h \
+	celengine/overlay.h \
+	celengine/parseobject.h \
+	celengine/parser.h \
+	celengine/regcombine.h \
+	celengine/rendcontext.h \
+	celengine/render.h \
+	celengine/renderglsl.h \
+	celengine/renderinfo.h \
+	celengine/rotation.h \
+	celengine/rotationmanager.h \
+	celengine/samporbit.h \
+	celengine/samporient.h \
+	celengine/selection.h \
+	celengine/shadermanager.h \
+	celengine/simulation.h \
+	celengine/solarsys.h \
+	celengine/spheremesh.h \
+	celengine/star.h \
+	celengine/starcolors.h \
+	celengine/stardb.h \
+	celengine/starname.h \
+	celengine/staroctree.h \
+	celengine/stellarclass.h \
+	celengine/surface.h \
+	celengine/texmanager.h \
+	celengine/texture.h \
+	celengine/tokenizer.h \
+	celengine/trajmanager.h \
+	celengine/univcoord.h \
+	celengine/universe.h \
+	celengine/vecgl.h \
+	celengine/vertexlist.h \
+	celengine/vertexprog.h \
+	celengine/virtualtex.h \
+	celengine/vsop87.h
+
+
+#### App sources ####
+
+APP_SOURCES = \
+	celestia/celestiacore.cpp \
+	celestia/configfile.cpp \
+	celestia/destination.cpp \
+	celestia/eclipsefinder.cpp \
+	celestia/favorites.cpp \
+	celestia/imagecapture.cpp \
+	celestia/scriptmenu.cpp \
+	celestia/url.cpp
+
+APP_HEADERS = \
+	celestia/celestiacore.h \
+	celestia/configfile.h \
+	celestia/destination.h \
+	celestia/eclipsefinder.h \
+	celestia/favorites.h \
+	celestia/imagecapture.h \
+	celestia/scriptmenu.h \
+	celestia/url.h
+
+
+#### Qt front-end sources ####
+
+QTAPP_SOURCES = \
+	celestia/qt/qtmain.cpp \
+	celestia/qt/qtappwin.cpp \
+	celestia/qt/qtglwidget.cpp \
+	celestia/qt/qtpreferencesdialog.cpp \
+	celestia/qt/qtcelestialbrowser.cpp
+
+QTAPP_HEADERS = \
+	celestia/qt/qtappwin.h \
+	celestia/qt/qtglwidget.h \
+	celestia/qt/qtpreferencesdialog.h \
+	celestia/qt/qtcelestialbrowser.h
+
+
+
+SOURCES = \
+	$$UTIL_SOURCES \
+	$$MATH_SOURCES \
+	$$TXF_SOURCES \
+	$$TDS_SOURCES \
+	$$ENGINE_SOURCES \
+	$$APP_SOURCES \
+	$$QTAPP_SOURCES
+
+HEADERS = \
+	$$UTIL_HEADERS \
+	$$MATH_HEADERS \
+	$$TXF_HEADERS \
+	$$TDS_HEADERS \
+	$$ENGINE_HEADERS \
+	$$APP_HEADERS \
+	$$QTAPP_HEADERS
+
+#FORMS = \
+#	celestia/qt/celestialbrowserbase.ui
+
+#UI_HEADERS_DIR = ./celestia/qt
+#UI_SOURCES_DIR = ./celestia/qt	
+
+
+INCLUDEPATH += ..
+INCLUDEPATH += ../..
+
+win32 {
+	INCLUDEPATH += \
+		../inc/libintl \
+		../inc/libz \
+		../inc/libpng \
+		../inc/libjpeg 
+	LIBS += -L../lib \
+		-lzlib \
+		-llibpng \
+		-llibjpeg2 \
+		-lintl
+}
