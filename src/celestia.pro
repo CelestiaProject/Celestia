@@ -1,4 +1,5 @@
 TEMPLATE = app
+TARGET = celestia-qt4
 
 QT += opengl
 
@@ -36,6 +37,9 @@ win32 {
 	UTIL_HEADERS += celutil/winutil.h
 }
 
+unix {
+	UTIL_SOURCES += celutil/unixdirectory.cpp celutil/unixtimer.cpp
+}
 
 #### Math library ####
 
@@ -315,4 +319,8 @@ win32 {
 		-llibpng \
 		-llibjpeg2 \
 		-lintl
+}
+
+unix {
+	LIBS += -ljpeg
 }
