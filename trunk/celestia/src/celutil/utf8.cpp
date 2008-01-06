@@ -773,7 +773,8 @@ std::string ReplaceGreekLetterAbbr(const std::string& str)
         for (int i = 0; i < Greek::instance->nLetters; i++)
         {
             const std::string& abbr = Greek::instance->abbrevs[i];
-            if (str.compare(0, abbr.length(), abbr) == 0)
+            if (str.compare(0, abbr.length(), abbr) == 0 &&
+                (str[abbr.length()] == ' ' || isdigit(str[abbr.length()])))
             {
                 std::string superscript;
                 if (str.length() > abbr.length())
