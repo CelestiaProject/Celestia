@@ -48,6 +48,7 @@ public slots:
     void slotRenderPath(int);
     void slotDistanceToScreen(int);
     void slotMinFeatureSize(int);
+    void slotTextureRes(int);
 
 protected:
     CelestiaCore* appCore;
@@ -67,6 +68,7 @@ protected:
     uint32 savedLocationFilter;
     int savedMinFeatureSize;
     bool savedVideoSync;
+    int savedTextureRes;
 
     bool timeHasChanged;
 

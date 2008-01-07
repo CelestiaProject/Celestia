@@ -285,6 +285,16 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     infoTextCombo->setCurrentItem(savedHudDetail);
     ((KdeApp*)parent)->connect(infoTextCombo, SIGNAL(activated(int)), SLOT(slotHudDetail(int)));
 
+    QGroupBox* textureGroup = new QGroupBox(1, Qt::Vertical, i18n("Textures"), vbox1);
+    new QLabel(i18n("Resolution: "), textureGroup);
+    QComboBox* textureResCombo = new QComboBox(textureGroup);
+    textureResCombo->insertItem(i18n("Low"));
+    textureResCombo->insertItem(i18n("Medium"));
+    textureResCombo->insertItem(i18n("High"));
+    savedTextureRes = appCore->getRenderer()->getResolution();
+    textureResCombo->setCurrentItem(savedTextureRes);
+    connect(textureResCombo, SIGNAL(activated(int)), SLOT(slotTextureRes(int)));
+
     QGroupBox* fovGroup = new QGroupBox(2, Qt::Horizontal, i18n("Automatic FOV"), vbox1);
     new QLabel(i18n("Screen DPI: "), fovGroup);
     new QLabel(QString::number(appCore->getScreenDpi(), 10), fovGroup);
@@ -651,6 +661,7 @@ void KdePreferencesDialog::slotCancel() {
     appCore->getSimulation()->getActiveObserver()->setLocationFilter(savedLocationFilter);
     appCore->getRenderer()->setMinimumFeatureSize(savedMinFeatureSize);
     appCore->getRenderer()->setVideoSync(savedVideoSync);
+    appCore->getRenderer()->setResolution(savedTextureRes);
     reject();
 }
 
@@ -666,6 +677,7 @@ void KdePreferencesDialog::slotApply() {
     savedLocationFilter = appCore->getSimulation()->getActiveObserver()->getLocationFilter();
     savedMinFeatureSize = (int)appCore->getRenderer()->getMinimumFeatureSize();
     savedVideoSync = appCore->getRenderer()->getVideoSync();
+    savedTextureRes = appCore->getRenderer()->getResolution();
 
     keyChooser->commitChanges();
 
@@ -746,6 +758,10 @@ void KdePreferencesDialog::slotRenderPath(int pathIdx) {
 
 void KdePreferencesDialog::slotDistanceToScreen(int dts) {
     appCore->setDistanceToScreen(dts * 10);
+}
+
+void KdePreferencesDialog::slotTextureRes(int res) {
+    appCore->getRenderer()->setResolution(res);
 }
 
 void KdePreferencesDialog::setRenderPathLabel() {
