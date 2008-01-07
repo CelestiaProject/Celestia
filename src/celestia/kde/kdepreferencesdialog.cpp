@@ -39,6 +39,7 @@
 #include "kdepreferencesdialog.h"
 #include "celengine/render.h"
 #include "celengine/glcontext.h"
+#include "celengine/astro.h"
 
 static uint32 FilterOtherLocations = ~(Location::City |
                     Location::Observatory |
@@ -368,14 +369,25 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
         KGlobal::iconLoader()->loadIcon("clock", KIcon::NoGroup));
 
     savedDisplayLocalTime = appCore->getTimeZoneBias();
-    QGroupBox* displayTimezoneGroup = new QGroupBox(1, Qt::Vertical, i18n("Display"), timeFrame);
-    new QLabel(i18n("Timezone: "), displayTimezoneGroup);
-    displayTimezoneCombo = new QComboBox(displayTimezoneGroup);
+    QGroupBox* displayTimezoneGroup = new QGroupBox(1, Qt::Horizontal, i18n("Display"), timeFrame);
+    QHBox *hbox0 = new QHBox(displayTimezoneGroup);
+    new QLabel(i18n("Timezone: "), hbox0);
+    displayTimezoneCombo = new QComboBox(hbox0);
     displayTimezoneCombo->insertItem(i18n("UTC"));
     displayTimezoneCombo->insertItem(i18n("Local Time"));
     displayTimezoneCombo->setCurrentItem((appCore->getTimeZoneBias()==0)?0:1);
     ((KdeApp*)parent)->connect(displayTimezoneCombo, SIGNAL(activated(int)), SLOT(slotDisplayLocalTime()));
     displayTimezoneGroup->addSpace(0);
+
+    QHBox *hbox1 = new QHBox(displayTimezoneGroup);
+    new QLabel(i18n("Format: "), hbox1);
+    QComboBox *timeFormatCombo = new QComboBox(hbox1);
+    timeFormatCombo->insertItem(i18n("Local Format"));
+    timeFormatCombo->insertItem("YYYY MMM DD HH:MM:SS TZ");
+    timeFormatCombo->insertItem("YYYY MMM DD HH:MM:SS Offset");
+    savedDateFormat = appCore->getDateFormat();
+    timeFormatCombo->setCurrentItem((int)savedDateFormat);
+    connect(timeFormatCombo, SIGNAL(activated(int)), SLOT(slotDateFormat(int)));
 
     QGroupBox* setTimezoneGroup = new QGroupBox(1, Qt::Horizontal, i18n("Set"), timeFrame);
     new QLabel(i18n("Local Time is only supported for dates between 1902 and 2037.\n"), setTimezoneGroup);
@@ -662,6 +674,7 @@ void KdePreferencesDialog::slotCancel() {
     appCore->getRenderer()->setMinimumFeatureSize(savedMinFeatureSize);
     appCore->getRenderer()->setVideoSync(savedVideoSync);
     appCore->getRenderer()->setResolution(savedTextureRes);
+    appCore->setDateFormat(savedDateFormat);
     reject();
 }
 
@@ -678,6 +691,7 @@ void KdePreferencesDialog::slotApply() {
     savedMinFeatureSize = (int)appCore->getRenderer()->getMinimumFeatureSize();
     savedVideoSync = appCore->getRenderer()->getVideoSync();
     savedTextureRes = appCore->getRenderer()->getResolution();
+    savedDateFormat = appCore->getDateFormat();
 
     keyChooser->commitChanges();
 
@@ -762,6 +776,10 @@ void KdePreferencesDialog::slotDistanceToScreen(int dts) {
 
 void KdePreferencesDialog::slotTextureRes(int res) {
     appCore->getRenderer()->setResolution(res);
+}
+
+void KdePreferencesDialog::slotDateFormat(int format) {
+    appCore->setDateFormat((astro::Date::Format)format);
 }
 
 void KdePreferencesDialog::setRenderPathLabel() {
