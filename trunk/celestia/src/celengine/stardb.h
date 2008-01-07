@@ -1,14 +1,14 @@
 // stardb.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _STARDB_H_
-#define _STARDB_H_
+#ifndef _CELENGINE_STARDB_H_
+#define _CELENGINE_STARDB_H_
 
 #include <iostream>
 #include <vector>
@@ -34,6 +34,7 @@ class StarDatabase
 
     Star* find(const uint32 catalogNumber) const;
     Star* find(const std::string&) const;
+    uint32 findCatalogNumberByName(const std::string&) const;
 
     std::vector<std::string> getCompletion(const std::string&) const;
 
@@ -81,6 +82,7 @@ class StarDatabase
     typedef std::vector<CrossIndexEntry> CrossIndex;
 
     bool   loadCrossIndex  (const Catalog, std::istream&);
+    uint32 searchCrossIndexForCatalogNumber(const Catalog, const uint32 number) const;
     Star*  searchCrossIndex(const Catalog, const uint32 number) const;
     uint32 crossIndex      (const Catalog, const uint32 number) const;
 
@@ -125,4 +127,4 @@ uint32 StarDatabase::size() const
     return nStars;
 }
 
-#endif // _STARDB_H_
+#endif // _CELENGINE_STARDB_H_
