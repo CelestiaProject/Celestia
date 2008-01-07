@@ -531,6 +531,12 @@ void KdeApp::initActions()
         appCore->getRenderer()->setResolution(textureResolution);
     }
 
+    if (KGlobal::config()->hasKey("DateFormat")) 
+    {
+        astro::Date::Format dateFormat = (astro::Date::Format) KGlobal::config()->readNumEntry("DateFormat");
+        appCore->setDateFormat(dateFormat);
+    }
+
     /////////////////////////////////////////
     // Render Flags
     KToggleAction* showStars = new KToggleAction(i18n("Show Stars"), 0, this, SLOT(slotShowStars()), actionCollection(), "showStars");
@@ -775,6 +781,7 @@ bool KdeApp::queryExit() {
     conf->writeEntry("VideoSync", appCore->getRenderer()->getVideoSync());
     conf->writeEntry("StarStyle", appCore->getRenderer()->getStarStyle());
     conf->writeEntry("TextureResolution", appCore->getRenderer()->getResolution());
+    conf->writeEntry("DateFormat", appCore->getDateFormat());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
