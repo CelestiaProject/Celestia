@@ -48,6 +48,12 @@
 #include <celengine/scriptobject.h>
 #endif
 
+#ifdef _WIN32
+#define TIMERATE_PRINTF_FORMAT "%.12g"
+#else
+#define TIMERATE_PRINTF_FORMAT "%'.12g"
+#endif
+
 using namespace std;
 
 static const int DragThreshold = 3;
@@ -304,6 +310,8 @@ CelestiaCore::CelestiaCore() :
     typedTextCompletionIdx(-1),
     textEnterMode(KbNormal),
     hudDetail(1),
+    dateFormat(astro::Date::Locale),
+    dateStrWidth(0),
     overlayElements(ShowTime | ShowVelocity | ShowSelection | ShowFrame),
     wireframe(false),
     editMode(false),
@@ -1827,8 +1835,8 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         break;
 
     case 'D':
-       addToHistory();
-       if (config->demoScriptFile != "")
+        addToHistory();
+        if (config->demoScriptFile != "")
            runScript(config->demoScriptFile);
         break;
 
@@ -1879,7 +1887,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                 sim->setTimeScale(sim->getTimeScale() / FineTimeScaleFactor);
             char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Time rate: %.12g"), sim->getTimeScale());
+            sprintf(buf, "%s: " TIMERATE_PRINTF_FORMAT,  _("Time rate"), sim->getTimeScale());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -1895,7 +1903,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
                 sim->setTimeScale(sim->getTimeScale() * FineTimeScaleFactor);
             char buf[128];
             setlocale(LC_NUMERIC, "");
-            sprintf(buf, _("Time rate: %.12g"), sim->getTimeScale());
+            sprintf(buf, "%s: " TIMERATE_PRINTF_FORMAT,  _("Time rate"), sim->getTimeScale());
             setlocale(LC_NUMERIC, "C");
             flash(buf);
         }
@@ -3268,17 +3276,9 @@ void CelestiaCore::renderOverlay()
 
     if (hudDetail > 0 && (overlayElements & ShowTime))
     {
-        // Time and date
-        glPushMatrix();
-        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef((float) (width - (11 + timeZoneName.length() + 3) * emWidth),
-                     (float) (height - fontHeight),
-                     0.0f);
-        overlay->beginText();
-
         bool time_displayed = false;
         double lt = 0.0;
-
+ 
         if (sim->getSelection().getType() == Selection::Type_Body &&
             (sim->getTargetSpeed() < 0.99 *
              astro::kilometersToMicroLightYears(astro::speedOfLight)))
@@ -3296,51 +3296,29 @@ void CelestiaCore::renderOverlay()
     	    lt = 0.0;
     	}
 
-        double tdb = sim->getTime();
+        double tdb = sim->getTime() + lt;
+        astro::Date d = timeZoneBias != 0?astro::TDBtoLocal(tdb):astro::TDBtoUTC(tdb);
+        const char* dateStr = d.toCStr(dateFormat);
+        int dateWidth = (font->getWidth(dateStr)/(emWidth * 3) + 2) * emWidth * 3;
+        if (dateWidth > dateStrWidth) dateStrWidth = dateWidth;
 
-        // TODO: Display of local time does not currently work correctly during leap seconds
-        double jdutc = astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb)));
-        if (timeZoneBias != 0 &&
-            jdutc < 2465442 &&
-            jdutc > 2415733)
-        {
-            time_t time = (int) astro::julianDateToSeconds(jdutc - 2440587.5 + lt);
-            struct tm *localt = localtime(&time);
-            if (localt != NULL)
-            {
-                astro::Date d;
-                d.year = localt->tm_year + 1900;
-                d.month = localt->tm_mon + 1;
-                d.day = localt->tm_mday;
-                d.hour = localt->tm_hour;
-                d.minute = localt->tm_min;
-                d.seconds = (int) localt->tm_sec;
-                *overlay << d << " ";
-                displayAcronym(*overlay, tzname[localt->tm_isdst > 0 ? 1 : 0]);
-                time_displayed = true;
-                if (lightTravelFlag && lt > 0.0)
-                {
-                    glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
-                    *overlay << _("  LT");
-                    glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-                }
-                *overlay << '\n';
-            }
-        }
+        // Time and date
+        glPushMatrix();
+        glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
+        glTranslatef( width - dateStrWidth,
+                     (float) (height - fontHeight),
+                     0.0f);
+        overlay->beginText();
 
-        if (!time_displayed)
+        overlay->print(dateStr);
+
+        if (lightTravelFlag && lt > 0.0)
         {
-            astro::Date utcDate = astro::TAItoUTC(astro::TTtoTAI(astro::TDBtoTT(tdb + lt)));
-            *overlay << utcDate;
-            *overlay << _(" UTC");
-            if (lightTravelFlag && lt > 0.0)
-            {
-                glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
-                *overlay << _("  LT");
-                glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-            }
-            *overlay << '\n';
+            glColor4f(0.42f, 1.0f, 1.0f, 1.0f);
+            *overlay << _("  LT");
+            glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
         }
+        *overlay << '\n';
 
         {
             if (abs(abs(sim->getTimeScale()) - 1) < 1e-6)
@@ -3356,12 +3334,12 @@ void CelestiaCore::renderOverlay()
             }
             else if (abs(sim->getTimeScale()) > 1.0)
             {
-                overlay->oprintf("%.12g", sim->getTimeScale());
+                overlay->oprintf(TIMERATE_PRINTF_FORMAT, sim->getTimeScale());
                 *overlay << UTF8_MULTIPLICATION_SIGN << _(" faster");
             }
             else
             {
-                overlay->oprintf("%.12g", 1.0 / sim->getTimeScale());
+                overlay->oprintf(TIMERATE_PRINTF_FORMAT, 1.0 / sim->getTimeScale());
                 *overlay << UTF8_MULTIPLICATION_SIGN << _(" slower");
             }
 
@@ -4436,6 +4414,17 @@ void CelestiaCore::setHudDetail(int newHudDetail)
 {
     hudDetail = newHudDetail%3;
     notifyWatchers(VerbosityLevelChanged);
+}
+
+astro::Date::Format CelestiaCore::getDateFormat() const
+{
+    return dateFormat;
+}
+
+void CelestiaCore::setDateFormat(astro::Date::Format format)
+{
+    dateStrWidth = 0;
+    dateFormat = format;
 }
 
 int CelestiaCore::getOverlayElements() const

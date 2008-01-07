@@ -10,6 +10,7 @@
 #include <cmath>
 #include <iomanip>
 #include <cstdio>
+#include <time.h>
 #include <celutil/basictypes.h>
 #include <celmath/mathlib.h>
 #include "celestia.h"
@@ -384,6 +385,9 @@ astro::Date::Date()
     hour = 0;
     minute = 0;
     seconds = 0.0;
+    wday = 0;
+    utc_offset = 0;
+    tzname = "UTC";
 }
 
 astro::Date::Date(int Y, int M, int D)
@@ -394,12 +398,15 @@ astro::Date::Date(int Y, int M, int D)
     hour = 0;
     minute = 0;
     seconds = 0.0;
+    wday = 0;
+    utc_offset = 0;
+    tzname = "UTC";
 }
-
 
 astro::Date::Date(double jd)
 {
     int64 a = (int64) floor(jd + 0.5);
+    wday = (a + 1) % 7;
     double c;
     if (a < 2299161)
     {
@@ -430,8 +437,67 @@ astro::Date::Date(double jd)
     minute = (int) dminute;
 
     seconds = (dminute - minute) * 60;
+    utc_offset = 0;
+    tzname = "UTC";
 }
 
+const char* astro::Date::toCStr(Format format) const
+{
+    static char date[255];
+
+#ifdef __GLIBC__
+    struct tm cal_time;
+    memset(&cal_time, 0, sizeof(cal_time));
+    cal_time.tm_year = year-1900;
+    cal_time.tm_mon = month-1;
+    cal_time.tm_mday = day;
+    cal_time.tm_hour = hour;
+    cal_time.tm_min = minute;
+    cal_time.tm_sec = (int)seconds;
+    cal_time.tm_wday = wday;
+    cal_time.tm_gmtoff = utc_offset;
+    cal_time.tm_zone = tzname.c_str();
+
+    char* strftime_format;
+    switch(format)
+    {
+    case Locale:
+        strftime_format = "%c";
+        break;
+    case TZName:
+        strftime_format = "%Y %b %d %H:%M:%S %Z";
+        break;
+    case UTCOffset:
+        strftime_format = "%Y %b %d %H:%M:%S %z";
+        break;
+    }
+
+    strftime(date, sizeof(date), strftime_format, &cal_time);
+#else
+    switch(format)
+    {
+    case Locale:
+    case TZName:
+        snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %s", 
+                 year, _(MonthAbbrList[month-1]), day, 
+                 hour, minute, (int)seconds, tzname.c_str());
+        break;
+    case UTCOffset:
+        {
+            int sign = utc_offset < 0 ? -1:1;
+            int h_offset = sign * utc_offset / 3600;
+            int m_offset = (sign * utc_offset - h_offset * 3600) / 60;
+            snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %c%02d%02d", 
+                    year, _(MonthAbbrList[month-1]), day, 
+                    hour, minute, (int)seconds, (sign==1?'+':'-'), h_offset, m_offset);
+        }
+        break;
+    }
+#endif
+
+    return date;
+
+}
 
 // Convert a calendar date to a Julian date
 astro::Date::operator double() const
@@ -504,14 +570,9 @@ bool astro::parseDate(const string& s, astro::Date& date)
     return false;
 }
 
-
 ostream& operator<<(ostream& s, const astro::Date d)
 {
-    s << d.year << ' ' << setw(2) << setfill('0') << _(MonthAbbrList[d.month - 1]) << ' ';
-    s << setw(2) << setfill('0') << d.day << ' ';
-    s << setw(2) << setfill('0') << d.hour << ':';
-    s << setw(2) << setfill('0') << d.minute << ':';
-    s << setw(2) << setfill('0') << (int) d.seconds;
+    s << d.toCStr();
     return s;
 }
 
@@ -635,6 +696,52 @@ astro::TDBtoUTC(double tdb)
     return TAItoUTC(TTtoTAI(TDBtoTT(tdb)));
 }
 
+// Convert from Barycentric Dynamical Time to local calendar if possible
+// otherwise convert to UTC
+astro::Date
+astro::TDBtoLocal(double tdb)
+{
+    double tai = astro::TTtoTAI(astro::TDBtoTT(tdb));
+    double jdutc = astro::TAItoJDUTC(tai);
+    if (jdutc < 2465442 &&
+        jdutc > 2415733)
+    {
+        time_t time = (int) astro::julianDateToSeconds(jdutc - 2440587.5);
+        struct tm *localt = localtime(&time);
+        if (localt != NULL)
+        {
+            astro::Date d;
+            d.year = localt->tm_year + 1900;
+            d.month = localt->tm_mon + 1;
+            d.day = localt->tm_mday;
+            d.hour = localt->tm_hour;
+            d.minute = localt->tm_min;
+            d.seconds = (int) localt->tm_sec;
+            d.wday = localt->tm_wday;
+        #ifdef __GLIBC__
+            d.utc_offset = localt->tm_gmtoff;
+            d.tzname = localt->tm_zone;
+        #else
+            {
+                astro::Date utcDate = astro::TAItoUTC(tai);
+                int daydiff = d.day - utcDate.day;
+                int hourdiff;
+                if (daydiff == 0)
+                    hourdiff = 0;
+                else if (daydiff > 1 || daydiff == -1)
+                    hourdiff = -24;
+                else
+                    hourdiff = 24;
+                d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600 
+                             + (d.minute - utcDate.minute) * 60;
+            }
+            d.tzname = localt->tm_isdst ? _("DST"): _("STD");
+        #endif
+            return d;
+        }
+    }
+    return astro::TDBtoUTC(tdb);
+}
 
 // Convert from Barycentric Dynamical Time to UTC
 double
