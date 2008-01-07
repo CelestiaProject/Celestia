@@ -525,6 +525,12 @@ void KdeApp::initActions()
             appCore->getRenderer()->setStarStyle((Renderer::StarStyle)starStyle);
     }
 
+    if (KGlobal::config()->hasKey("TextureResolution")) 
+    {
+        int textureResolution = KGlobal::config()->readNumEntry("TextureResolution");
+        appCore->getRenderer()->setResolution(textureResolution);
+    }
+
     /////////////////////////////////////////
     // Render Flags
     KToggleAction* showStars = new KToggleAction(i18n("Show Stars"), 0, this, SLOT(slotShowStars()), actionCollection(), "showStars");
@@ -768,6 +774,7 @@ bool KdeApp::queryExit() {
     conf->writeEntry("MinFeatureSize", appCore->getRenderer()->getMinimumFeatureSize());
     conf->writeEntry("VideoSync", appCore->getRenderer()->getVideoSync());
     conf->writeEntry("StarStyle", appCore->getRenderer()->getStarStyle());
+    conf->writeEntry("TextureResolution", appCore->getRenderer()->getResolution());
     conf->setGroup(0);
     actionCollection()->writeShortcutSettings("Shortcuts", conf);
     openRecent->saveEntries(KGlobal::config());
