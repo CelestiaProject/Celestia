@@ -29,7 +29,7 @@ uint32 StarNameDatabase::findCatalogNumberByName(const string& name) const
         string conName(name, pos + 1, string::npos);
         Constellation* con  = Constellation::getConstellation(conName);
         if (con != NULL)
-    {
+        {
             char digit  = ' ';
             int len     = prefix.length();
 
@@ -41,7 +41,7 @@ uint32 StarNameDatabase::findCatalogNumberByName(const string& name) const
             {
                 --len;
                 digit   = prefix[len];
-    }
+            }
 
             // We have a valid constellation as the last part
             // of the name.  Next, we see if the first part of
@@ -57,13 +57,13 @@ uint32 StarNameDatabase::findCatalogNumberByName(const string& name) const
                     // 'let1 con' instead.
                     altName  = letter + '1' + ' ' + con->getAbbreviation();
                 }
-    else
-    {
+                else
+                {
                     priName  = letter + digit + ' ' + con->getAbbreviation();
                 }
             }
             else
-        {
+            {
                 // Something other than a Bayer designation
                 priName  = prefix + ' ' + con->getAbbreviation();
             }
