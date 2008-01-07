@@ -35,6 +35,8 @@ class Url;
 // class CelestiaWatcher;
 class CelestiaCore;
 
+class astro::Date;
+
 typedef Watcher<CelestiaCore> CelestiaWatcher;
 
 class ProgressNotifier
@@ -278,6 +280,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int getHudDetail();
     void setHudDetail(int);
+    astro::Date::Format getDateFormat() const;
+    void setDateFormat(astro::Date::Format format);
     int getOverlayElements() const;
     void setOverlayElements(int);
 
@@ -372,6 +376,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int typedTextCompletionIdx;
     int textEnterMode;
     int hudDetail;
+    astro::Date::Format dateFormat;
+    int dateStrWidth;
     int overlayElements;
     bool wireframe;
     bool editMode;
