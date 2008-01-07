@@ -12,6 +12,9 @@
 #include "observer.h"
 #include "simulation.h"
 
+static const double maximumSimTime = 730486721060.00073; // 2000000000 Jan 01 12:00:00 UTC
+static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 12:00:00 UTC
+
 using namespace std;
 
 
@@ -237,6 +240,11 @@ void Observer::update(double dt, double timeScale)
 {
     realTime += dt;
     simTime += (dt / 86400.0) * timeScale;
+
+    if (simTime >= maximumSimTime)
+        simTime = maximumSimTime;
+    if (simTime <= minimumSimTime)
+        simTime = minimumSimTime;
 
     if (observerMode == Travelling)
     {
