@@ -1,6 +1,6 @@
 // stardb.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -215,45 +215,51 @@ Star* StarDatabase::find(const uint32 catalogNumber) const
 }
 
 
-Star* StarDatabase::find(const string& name) const
+uint32 StarDatabase::findCatalogNumberByName(const string& name) const
 {
     if (name.empty())
-        return NULL;
+        return Star::InvalidCatalogNumber;
 
-    uint32 catalogNumber = 0;
+    uint32 catalogNumber = Star::InvalidCatalogNumber;
 
     if (parseCelestiaCatalogNumber(name, &catalogNumber))
     {
-        return find(catalogNumber);
+        return catalogNumber;
     }
     else if (parseHIPPARCOSCatalogNumber(name, &catalogNumber))
     {
-        return find(catalogNumber);
+        return catalogNumber;
     }
     else if (parseTychoCatalogNumber(name, &catalogNumber))
     {
-        return find(catalogNumber);
+        return catalogNumber;
     }
     else if (parseHDCatalogNumber(name, &catalogNumber))
     {
-        return searchCrossIndex(HenryDraper, catalogNumber);
+        return searchCrossIndexForCatalogNumber(HenryDraper, catalogNumber);
     }
     else if (parseSimpleCatalogNumber(name, SAOCatalogPrefix,
                                       &catalogNumber))
     {
-        return searchCrossIndex(SAO, catalogNumber);
+        return searchCrossIndexForCatalogNumber(SAO, catalogNumber);
     }
     else
     {
         if (namesDB != NULL)
-        {
-            uint32 catalogNumber   = namesDB->findCatalogNumberByName(name);
-            if (catalogNumber != Star::InvalidCatalogNumber)
-                return find(catalogNumber);
-        }
-
-        return NULL;
+            return namesDB->findCatalogNumberByName(name);
+        else
+            return Star::InvalidCatalogNumber;
     }
+}
+
+
+Star* StarDatabase::find(const string& name) const
+{
+    uint32 catalogNumber = findCatalogNumberByName(name);
+    if (catalogNumber != Star::InvalidCatalogNumber)
+        return find(catalogNumber);
+    else
+        return NULL;
 }
 
 
@@ -278,14 +284,16 @@ uint32 StarDatabase::crossIndex(const Catalog catalog, const uint32 celCatalogNu
 }
 
 
-Star* StarDatabase::searchCrossIndex(const Catalog catalog, const uint32 number) const
+// Return the Celestia catalog number for the star with a specified number
+// in a cross index.
+uint32 StarDatabase::searchCrossIndexForCatalogNumber(const Catalog catalog, const uint32 number) const
 {
     if (static_cast<unsigned int>(catalog) >= crossIndexes.size())
-        return NULL;
+        return Star::InvalidCatalogNumber;
 
     CrossIndex* xindex = crossIndexes[catalog];
     if (xindex == NULL)
-        return NULL;
+        return Star::InvalidCatalogNumber;
 
     CrossIndexEntry xindexEnt;
     xindexEnt.catalogNumber = number;
@@ -293,9 +301,19 @@ Star* StarDatabase::searchCrossIndex(const Catalog catalog, const uint32 number)
     CrossIndex::iterator iter = lower_bound(xindex->begin(), xindex->end(),
                                             xindexEnt);
     if (iter == xindex->end() || iter->catalogNumber != number)
-        return NULL;
+        return Star::InvalidCatalogNumber;
     else
-        return find(iter->celCatalogNumber);
+        return iter->celCatalogNumber;
+}
+
+
+Star* StarDatabase::searchCrossIndex(const Catalog catalog, const uint32 number) const
+{
+    uint32 celCatalogNumber = searchCrossIndexForCatalogNumber(catalog, number);
+    if (celCatalogNumber != Star::InvalidCatalogNumber)
+        return find(celCatalogNumber);
+    else
+        return NULL;
 }
 
 
@@ -859,9 +877,9 @@ static void stcError(const Tokenizer& tok,
 
 
 Star* StarDatabase::createStar(const uint32 catalogNumber,
-                         Hash* starData,
-                         const string& path,
-                         bool isBarycenter)
+                               Hash* starData,
+                               const string& path,
+                               bool isBarycenter)
 {
     StarDetails* details = NULL;
     string spectralType;
@@ -956,7 +974,7 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
             string barycenterName;
             if (starData->getString("OrbitBarycenter", barycenterName))
             {
-                barycenterCatNo   = namesDB->findCatalogNumberByName(barycenterName);
+                barycenterCatNo   = findCatalogNumberByName(barycenterName);
                 barycenterDefined = true;
             }
             else if (starData->getNumber("OrbitBarycenter", barycenterCatNo))
