@@ -21,7 +21,7 @@
 #define LY_PER_PARSEC 3.26167
 #define KM_PER_LY     9460730472580.8
 // Old incorrect value; will be required for cel:// URL compatibility
-//#define KM_PER_LY     9466411842000.000
+// #define OLD_KM_PER_LY     9466411842000.000
 #define KM_PER_AU     149597870.7
 #define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
 
@@ -34,7 +34,17 @@ namespace astro
         Date(int Y, int M, int D);
         Date(double);
 
+        enum Format
+        {
+            Locale          = 0,
+            TZName          = 1,
+            UTCOffset       = 2,
+        };
+
+        const char* toCStr(Format format = Locale) const;
+
         operator double() const;
+
 
     public:
         int year;
@@ -42,6 +52,9 @@ namespace astro
         int day;
         int hour;
         int minute;
+        int wday;           // week day, 0 Sunday to 6 Saturday
+        int utc_offset;     // offset from utc in seconds
+        std::string tzname; // timezone name
         double seconds;
     };
 
@@ -57,6 +70,7 @@ namespace astro
         PhaseLock       = 5,
         Chase           = 6,
     };
+
 
     // Time scale conversions
     // UTC - Coordinated Universal Time
@@ -80,6 +94,7 @@ namespace astro
     astro::Date TAItoUTC(double tai);
     double UTCtoTDB(const astro::Date& utc);
     astro::Date TDBtoUTC(double tdb);
+    astro::Date TDBtoLocal(double tdb);
 
     // Convert among uniform time scales
     double TTtoTAI(double tt);
