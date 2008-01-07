@@ -27,6 +27,7 @@ class KKeyChooser;
 class QLineEdit;
 
 class KdeApp;
+class astro::Date;
 
 class KdePreferencesDialog : public KDialogBase {
 Q_OBJECT
@@ -49,6 +50,7 @@ public slots:
     void slotDistanceToScreen(int);
     void slotMinFeatureSize(int);
     void slotTextureRes(int);
+    void slotDateFormat(int);
 
 protected:
     CelestiaCore* appCore;
@@ -69,6 +71,7 @@ protected:
     int savedMinFeatureSize;
     bool savedVideoSync;
     int savedTextureRes;
+    astro::Date::Format savedDateFormat;
 
     bool timeHasChanged;
 
