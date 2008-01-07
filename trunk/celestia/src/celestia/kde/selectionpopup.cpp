@@ -210,7 +210,7 @@ void SelectionPopup::process(int id)
         sim->getUniverse()->unmarkAll();
         return;
     }
-    if (actionId >= 10 && actionId < 30)
+    if (actionId >= 10 && actionId < 25)
     {
         if (sim->getUniverse() != NULL)
         {
@@ -222,6 +222,24 @@ void SelectionPopup::process(int id)
                                            "");
         }
         return;
+    }
+    if (actionId >=25 && actionId < 30 && sel.body() != NULL) 
+    {
+        switch(actionId)
+        {
+        case 25:
+            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::BodyAxes);
+            break;
+        case 26:
+            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::FrameAxes);
+            break;
+        case 27:
+            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::SunDirection);
+            break;
+        case 28:
+            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::VelocityVector);
+            break;
+        }
     }
     if (actionId == 30) {
         sim->getActiveObserver()->setDisplayedSurface("");
@@ -298,6 +316,21 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
         markMenu->insertItem(i18n("Disk"), baseId + 21);
         popup->insertItem(i18n("&Mark"), markMenu);
     }
+
+    if (sel.body() != NULL) {
+        KPopupMenu *refVectorMenu = new KPopupMenu(this);
+        refVectorMenu->setCheckable(true);
+        popup->insertItem(i18n("&Reference Vectors"), refVectorMenu);
+        refVectorMenu->insertItem(i18n("Show Body Axes"), baseId + 25);
+        refVectorMenu->setItemChecked(baseId + 25, sel.body()->getVisibleReferenceMarks() & Body::BodyAxes);
+        refVectorMenu->insertItem(i18n("Show Frame Axes"), baseId + 26);
+        refVectorMenu->setItemChecked(baseId + 26, sel.body()->getVisibleReferenceMarks() & Body::FrameAxes);
+        refVectorMenu->insertItem(i18n("Show Sun Direction"), baseId + 27);
+        refVectorMenu->setItemChecked(baseId + 27, sel.body()->getVisibleReferenceMarks() & Body::SunDirection);
+        refVectorMenu->insertItem(i18n("Show Velocity Vector"), baseId + 28);
+        refVectorMenu->setItemChecked(baseId + 28, sel.body()->getVisibleReferenceMarks() & Body::VelocityVector);
+    }
+
     baseId += 30;
 
     if (showSubObjects && sel.body() != NULL)
