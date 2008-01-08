@@ -270,14 +270,15 @@ QTAPP_SOURCES = \
 	celestia/qt/qtappwin.cpp \
 	celestia/qt/qtglwidget.cpp \
 	celestia/qt/qtpreferencesdialog.cpp \
-	celestia/qt/qtcelestialbrowser.cpp
+	celestia/qt/qtcelestialbrowser.cpp \
+	celestia/qt/qtselectionpopup.cpp
 
 QTAPP_HEADERS = \
 	celestia/qt/qtappwin.h \
 	celestia/qt/qtglwidget.h \
 	celestia/qt/qtpreferencesdialog.h \
-	celestia/qt/qtcelestialbrowser.h
-
+	celestia/qt/qtcelestialbrowser.h \
+	celestia/qt/qtselectionpopup.h
 
 
 SOURCES = \
