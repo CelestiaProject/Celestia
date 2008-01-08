@@ -13,6 +13,7 @@
 #ifndef _QTAPPWIN_H_
 #define _QTAPPWIN_H_
 
+#include <celengine/selection.h>
 #include <QMainWindow>
 
 
@@ -31,6 +32,10 @@ class CelestiaAppWindow : public QMainWindow
 
     void writeSettings();
     void readSettings();
+
+    CelestiaCore* getAppCore() const;
+
+    void contextMenu(float x, float y, Selection sel);
 
  public slots:
     void celestia_tick();
