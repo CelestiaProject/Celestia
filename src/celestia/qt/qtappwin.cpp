@@ -10,10 +10,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "qtappwin.h"
-#include "qtglwidget.h"
-#include "qtpreferencesdialog.h"
-#include "qtcelestialbrowser.h"
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QTimer>
@@ -23,6 +19,12 @@
 #include <QDockWidget>
 #include <vector>
 #include <string>
+#include "qtappwin.h"
+#include "qtglwidget.h"
+#include "qtpreferencesdialog.h"
+#include "qtcelestialbrowser.h"
+#include "qtselectionpopup.h"
+
 
 using namespace std;
 
@@ -34,33 +36,52 @@ string configFile = "celestia.cfg";
 const QSize DEFAULT_MAIN_WINDOW_SIZE(800, 600);
 const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
 
+// Used when saving and restoring main window state; increment whenever
+// new dockables or toolbars are added.
+static const int CELESTIA_MAIN_WINDOW_VERSION = 1;
+
+
+// Terrible hack required because context menu callback doesn't retain
+// any state.
+static CelestiaAppWindow* MainWindowInstance = NULL;
+static void ContextMenu(float x, float y, Selection sel);
+
 
 CelestiaAppWindow::CelestiaAppWindow() :
     glWidget(NULL),
     celestialBrowser(NULL),
     appCore(NULL)
 {
+    setObjectName("celestia-mainwin");
+
     appCore = new CelestiaCore();
     appCore->initSimulation(&configFile, &extrasDirs, NULL);
 
     glWidget = new CelestiaGlWidget(NULL, "Celestia", appCore);
     glctx = glWidget->context();
+    appCore->setCursorHandler(glWidget);
+    appCore->setContextMenuCallback(ContextMenu);
+    MainWindowInstance = this; // TODO: Fix context menu callback
 
     setCentralWidget(glWidget);
 
     setWindowTitle("Celestia");
-    readSettings();
 
     createMenus();
 
     celestialBrowser = new CelestialBrowser(NULL);
+    celestialBrowser->setObjectName("celestia-browser");
+
     toolsDock = new QDockWidget(tr("Celestial Browser"), this);
+    toolsDock->setObjectName("celestia-tools-dock");
     toolsDock->setAllowedAreas(Qt::LeftDockWidgetArea |
                                Qt::RightDockWidgetArea);
     toolsDock->setWidget(celestialBrowser);
     addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
 
     viewMenu->addAction(toolsDock->toggleViewAction());
+
+    readSettings();
 
     // We use a timer with a null timeout value
     // to add appCore->tick to Qt's event loop
@@ -77,6 +98,7 @@ void CelestiaAppWindow::writeSettings()
     settings.beginGroup("MainWindow");
     settings.setValue("Size", size());
     settings.setValue("Pos", pos());
+    settings.setValue("State", saveState(CELESTIA_MAIN_WINDOW_VERSION));
     settings.endGroup();
 
     // Renderer settings
@@ -87,6 +109,7 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("StarStyle", renderer->getStarStyle());
     settings.setValue("RenderPath", (int) renderer->getGLContext()->getRenderPath());
+    settings.setValue("TextureResolution", renderer->getResolution());
 }
 
 
@@ -97,9 +120,17 @@ void CelestiaAppWindow::readSettings()
     settings.beginGroup("MainWindow");
     resize(settings.value("Size", DEFAULT_MAIN_WINDOW_SIZE).toSize());
     move(settings.value("Pos", DEFAULT_MAIN_WINDOW_POSITION).toPoint());
+    if (settings.contains("State"))
+        restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
     settings.endGroup();
 
     // Render settings read in qtglwidget
+}
+
+
+CelestiaCore* CelestiaAppWindow::getAppCore() const
+{
+    return appCore;
 }
 
 
@@ -188,3 +219,15 @@ void CelestiaAppWindow::createMenus()
     viewMenu = menuBar()->addMenu(tr("&View"));
 }
 
+
+void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
+{
+    SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
+    menu->exec(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));
+}
+
+
+void ContextMenu(float x, float y, Selection sel)
+{
+    MainWindowInstance->contextMenu(x, y, sel);
+}

@@ -71,6 +71,8 @@ const float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.0f;
 
 const Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 
+const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
+
 
 CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCore* core) :
     QGLWidget(parent)
@@ -84,8 +86,6 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCo
     setCursor(QCursor(Qt::CrossCursor));
     currentCursor = CelestiaCore::CrossCursor;
     setMouseTracking(true);
-
-    appCore->setCursorHandler(this);
 
     lastX = lastY = 0;
 }
@@ -160,6 +160,7 @@ void CelestiaGlWidget::initializeGL()
     appRenderer->setLabelMode(settings.value("LabelMode", DEFAULT_LABEL_MODE).toInt());
     appRenderer->setAmbientLightLevel((float) settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble());
     appRenderer->setStarStyle((Renderer::StarStyle) settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt());
+    appRenderer->setResolution(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toUInt());
 
     // Read the saved render path
     GLContext::GLRenderPath bestPath = getBestAvailableRenderPath(*appRenderer->getGLContext());
