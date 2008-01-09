@@ -69,7 +69,7 @@ CelestiaAppWindow::CelestiaAppWindow() :
 
     createMenus();
 
-    celestialBrowser = new CelestialBrowser(NULL);
+    celestialBrowser = new CelestialBrowser(appCore, NULL);
     celestialBrowser->setObjectName("celestia-browser");
 
     toolsDock = new QDockWidget(tr("Celestial Browser"), this);
