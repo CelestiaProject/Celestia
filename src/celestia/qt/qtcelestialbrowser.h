@@ -20,6 +20,7 @@ class QTreeView;
 class QRadioButton;
 class QComboBox;
 class QCheckBox;
+class QLabel;
 class CelestiaCore;
 
 class StarTableModel;
@@ -36,6 +37,10 @@ Q_OBJECT
     void slotRefreshTable();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
+    void slotChooseMarkerColor();
+
+ private:
+    void setMarkerColor(QColor color);
 
  private:
     CelestiaCore* appCore;
@@ -49,6 +54,9 @@ Q_OBJECT
 
     QComboBox* markerSymbolBox;
     QCheckBox* labelMarkerBox;
+
+    QLabel* colorLabel;
+    QColor markerColor;
 };
 
 #endif // _QTCELESTIALBROWSER_H_
