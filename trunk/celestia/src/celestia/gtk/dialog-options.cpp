@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-options.cpp,v 1.3 2005-12-16 00:57:05 suwalski Exp $
+ *  $Id: dialog-options.cpp,v 1.4 2008-01-09 06:15:04 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -43,25 +43,25 @@ void dialogViewOptions(AppData* app)
 		return;
 	}
 	
-    app->optionDialog = gtk_dialog_new_with_buttons("View Options",
-                                                    GTK_WINDOW(app->mainWindow),
+	app->optionDialog = gtk_dialog_new_with_buttons("View Options",
+	                                                GTK_WINDOW(app->mainWindow),
 	                                                GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                GTK_STOCK_OK,
 	                                                GTK_RESPONSE_OK,
 	                                                NULL);
 	
 	/* Create the main layout boxes */
-    GtkWidget* hbox = gtk_hbox_new(FALSE, CELSPACING);
-    GtkWidget* midBox = gtk_vbox_new(FALSE, CELSPACING);
-    GtkWidget* miscBox = gtk_vbox_new(FALSE, CELSPACING);
+	GtkWidget* hbox = gtk_hbox_new(FALSE, CELSPACING);
+	GtkWidget* midBox = gtk_vbox_new(FALSE, CELSPACING);
+	GtkWidget* miscBox = gtk_vbox_new(FALSE, CELSPACING);
 
 	/* Create all of the frames */
 	GtkWidget* showFrame = gtk_frame_new("Show");
 	GtkWidget* orbitFrame = gtk_frame_new("Orbits");
 	GtkWidget* labelFrame = gtk_frame_new("Label");
-    GtkWidget* limitFrame = gtk_frame_new("Filter Stars");
-    GtkWidget* infoFrame = gtk_frame_new("Info Text");
-    GtkWidget* ambientFrame = gtk_frame_new("Ambient Light");
+	GtkWidget* limitFrame = gtk_frame_new("Filter Stars");
+	GtkWidget* infoFrame = gtk_frame_new("Info Text");
+	GtkWidget* ambientFrame = gtk_frame_new("Ambient Light");
 
 	/* Create the boxes that go in the frames */
 	GtkWidget* showBox = gtk_vbox_new(FALSE, 0);
@@ -75,44 +75,44 @@ void dialogViewOptions(AppData* app)
 	gtk_container_border_width(GTK_CONTAINER(showBox), CELSPACING);
 	gtk_container_border_width(GTK_CONTAINER(labelBox), CELSPACING);
 	gtk_container_border_width(GTK_CONTAINER(orbitBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(limitBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(ambientBox), CELSPACING);
-    gtk_container_border_width(GTK_CONTAINER(infoBox), CELSPACING);
+	gtk_container_border_width(GTK_CONTAINER(limitBox), CELSPACING);
+	gtk_container_border_width(GTK_CONTAINER(ambientBox), CELSPACING);
+	gtk_container_border_width(GTK_CONTAINER(infoBox), CELSPACING);
 	
 	/* Set border padding on the frames */
 	gtk_container_border_width(GTK_CONTAINER(showFrame), 0);
 	gtk_container_border_width(GTK_CONTAINER(labelFrame), 0);
 	gtk_container_border_width(GTK_CONTAINER(orbitFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(limitFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(ambientFrame), 0);
-    gtk_container_border_width(GTK_CONTAINER(infoFrame), 0);
+	gtk_container_border_width(GTK_CONTAINER(limitFrame), 0);
+	gtk_container_border_width(GTK_CONTAINER(ambientFrame), 0);
+	gtk_container_border_width(GTK_CONTAINER(infoFrame), 0);
 	
 	/* Place the boxes in the frames */
 	gtk_container_add(GTK_CONTAINER(showFrame), GTK_WIDGET(showBox));
 	gtk_container_add(GTK_CONTAINER(labelFrame), GTK_WIDGET(labelBox));
 	gtk_container_add(GTK_CONTAINER(orbitFrame), GTK_WIDGET(orbitBox));
-    gtk_container_add(GTK_CONTAINER(limitFrame),GTK_WIDGET(limitBox));
+	gtk_container_add(GTK_CONTAINER(limitFrame),GTK_WIDGET(limitBox));
 	gtk_container_add(GTK_CONTAINER(ambientFrame),GTK_WIDGET(ambientBox));
 	gtk_container_add(GTK_CONTAINER(infoFrame),GTK_WIDGET(infoBox));
 
 	/* Pack the frames into the top-level boxes and into the window */
-    gtk_box_pack_start(GTK_BOX(hbox), showFrame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(midBox), labelFrame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(midBox), limitFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), showFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(midBox), labelFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(midBox), limitFrame, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(miscBox), orbitFrame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(miscBox), ambientFrame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(miscBox), infoFrame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), midBox, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), miscBox, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG (app->optionDialog)->vbox), hbox, TRUE,
-                       TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(miscBox), ambientFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(miscBox), infoFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), midBox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), miscBox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG (app->optionDialog)->vbox), hbox, TRUE,
+	                   TRUE, 0);
 
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), CELSPACING);
 
 	float logDistanceLimit = log(app->renderer->getDistanceLimit()) / log((float)MaxDistanceLimit);
-    GtkAdjustment *adj= (GtkAdjustment *)
-							gtk_adjustment_new((gfloat)(logDistanceLimit * DistanceSliderRange),
-                                               0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
+	GtkAdjustment *adj = (GtkAdjustment *)
+	                        gtk_adjustment_new((gfloat)(logDistanceLimit * DistanceSliderRange),
+	                        0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
 
 	GtkWidget* magLabel = gtk_label_new(NULL);
 	GtkWidget* slider = gtk_hscale_new(adj);
