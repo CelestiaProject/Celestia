@@ -23,6 +23,8 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QLabel>
+#include <QColorDialog>
 #include <vector>
 #include <set>
 #include <celestia/celestiacore.h>
@@ -418,8 +420,17 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     markerSymbolBox->setCurrentIndex(1);
     markGroupLayout->addWidget(markerSymbolBox, 0, 1);
 
+    QPushButton* colorButton = new QPushButton(tr("Marker Color"));
+    connect(colorButton, SIGNAL(clicked()), this, SLOT(slotChooseMarkerColor()));
+    markGroupLayout->addWidget(colorButton, 1, 0);
+
+    colorLabel = new QLabel();
+    colorLabel->setFrameStyle(QFrame::Sunken | QFrame::Panel);
+    markGroupLayout->addWidget(colorLabel, 1, 1);
+    setMarkerColor(QColor("cyan"));
+
     labelMarkerBox = new QCheckBox(tr("Label"));
-    markGroupLayout->addWidget(labelMarkerBox, 1, 0);
+    markGroupLayout->addWidget(labelMarkerBox, 2, 0);
 
     markGroup->setLayout(markGroupLayout);
     layout->addWidget(markGroup);
@@ -434,6 +445,8 @@ CelestialBrowser::~CelestialBrowser()
 {
 }
 
+
+/******* Slots ********/
 
 void CelestialBrowser::slotRefreshTable()
 {
@@ -472,7 +485,10 @@ void CelestialBrowser::slotMarkSelected()
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
     Marker::Symbol markerSymbol = (Marker::Symbol) markerData.toInt(&convertOK);
-
+    Color color((float) markerColor.redF(),
+                (float) markerColor.greenF(),
+                (float) markerColor.blueF());
+    
     Universe* universe = appCore->getSimulation()->getUniverse();
     string label;
 
@@ -493,7 +509,7 @@ void CelestialBrowser::slotMarkSelected()
                 }
 
                 universe->markObject(sel, 10.0f,
-                                     Color(0.0f, 1.0f, 1.0f, 0.9f),
+                                     color,
                                      markerSymbol, 1, label);
             }
             else
@@ -502,4 +518,22 @@ void CelestialBrowser::slotMarkSelected()
             }
         }
     }
+}
+
+
+void CelestialBrowser::slotChooseMarkerColor()
+{
+    QColor color = QColorDialog::getColor(markerColor, this);
+    if (color.isValid())
+        setMarkerColor(color);
+}
+
+
+/********* Internal methods *******/
+
+void CelestialBrowser::setMarkerColor(QColor color)
+{
+    markerColor = color;
+    colorLabel->setPalette(QPalette(markerColor));
+    colorLabel->setAutoFillBackground(true);
 }
