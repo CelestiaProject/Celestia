@@ -11,12 +11,18 @@
 // of the License, or (at your option) any later version.
 
 #include "qtcelestialbrowser.h"
+#include "qtselectionpopup.h"
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
 #include <QTreeView>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QComboBox>
+#include <QCheckBox>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QGroupBox>
 #include <vector>
 #include <set>
 #include <celestia/celestiacore.h>
@@ -68,14 +74,25 @@ public:
         HasPlanetsPredicate
     };
 
+    enum
+    {
+        NameColumn        = 0,
+        DistanceColumn    = 1,
+        AbsMagColumn      = 2,
+        AppMagColumn      = 3,
+        SpectralTypeColumn = 4,
+    };
+
     void populate(const UniversalCoord& _observerPos,
                   StarPredicate::Criterion criterion,
                   unsigned int nStars);
 
+    Selection itemAtRow(unsigned int row);
+
 private:
     const Universe* universe;
     UniversalCoord observerPos;
-    vector<const Star*> stars;
+    vector<Star*> stars;
 };
 
 
@@ -91,12 +108,16 @@ StarTableModel::~StarTableModel()
 }
 
 
+/****** Virtual methods from QAbstractTableModel *******/
+
+// Override QAbstractTableModel::flags()
 Qt::ItemFlags StarTableModel::flags(const QModelIndex&) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 
+// Override QAbstractTableModel::data()
 QVariant StarTableModel::data(const QModelIndex& index, int role) const
 {
     int row = index.row();
@@ -113,27 +134,27 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
 
     switch (index.column())
     {
-    case 0:
+    case NameColumn:
         {
-            string starNameString = universe->getStarCatalog()->getStarName(*star);
-            return QVariant(QString(starNameString.c_str()));
+            string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star));
+            return QVariant(QString::fromUtf8(starNameString.c_str()));
         }
-    case 1:
+    case DistanceColumn:
         {
             UniversalCoord pos = star->getPosition(astro::J2000);
             Vec3d v = pos - observerPos;
             return QVariant(v.length() * 1.0e-6);
         }
-    case 2:
+    case AbsMagColumn:
         {
             UniversalCoord pos = star->getPosition(astro::J2000);
             Vec3d v = pos - observerPos;
             double distance = v.length() * 1.0e-6;
             return QVariant(star->getApparentMagnitude((float) distance));
         }
-    case 3:
+    case AppMagColumn:
         return QVariant(star->getAbsoluteMagnitude());
-    case 4:
+    case SpectralTypeColumn:
         return QString(star->getSpectralType());
     default:
         return QVariant();
@@ -141,6 +162,7 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
 }
 
 
+// Override QAbstractDataModel::headerData()
 QVariant StarTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
@@ -164,12 +186,14 @@ QVariant StarTableModel::headerData(int section, Qt::Orientation orientation, in
 }
 
 
+// Override QAbstractDataModel::rowCount()
 int StarTableModel::rowCount(const QModelIndex&) const
 {
     return (int) stars.size();
 }
 
 
+// Override QAbstractDataModel::columnCount()
 int StarTableModel::columnCount(const QModelIndex&) const
 {
     return 5;
@@ -256,13 +280,28 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
                               unsigned int nStars)
 {
     const StarDatabase& stardb = *universe->getStarCatalog();
-
+    
     observerPos = _observerPos;
-    stars.clear();
 
-    typedef multiset<const Star*, StarPredicate> StarSet;
+    typedef multiset<Star*, StarPredicate> StarSet;
     StarPredicate pred(criterion, observerPos);
     pred.solarSystems = universe->getSolarSystemCatalog();
+
+    // If we're showing stars with planets, and there are less such stars
+    // than the requested number of rows rows, shrink the number of rows.
+    if (criterion == StarPredicate::Planets)
+    {
+        nStars = min(nStars, pred.solarSystems->size());
+    }
+
+    // Notify the view that rows have been trimmed
+    if (nStars < stars.size())
+    {
+        removeRows(nStars, stars.size() - nStars);
+    }
+
+    // Clear out the results of the previous populate() call
+    stars.clear();
 
     StarSet firstStars(pred);
 
@@ -307,6 +346,15 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
 }
 
 
+Selection StarTableModel::itemAtRow(unsigned int row)
+{
+    if (row >= stars.size())
+        return Selection();
+    else
+        return Selection(stars[row]);
+}
+
+
 CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QWidget(parent),
     appCore(_appCore),
@@ -321,9 +369,14 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     treeView->setAlternatingRowColors(true);
     treeView->setItemsExpandable(false);
     treeView->setUniformRowHeights(true);
+    treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     starModel = new StarTableModel(appCore->getSimulation()->getUniverse());
     treeView->setModel(starModel);
+
+    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(treeView, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(slotContextMenu(const QPoint&)));
 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
@@ -346,6 +399,31 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     connect(refreshButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
     layout->addWidget(refreshButton);
 
+    QGroupBox* markGroup = new QGroupBox(tr("Markers"));
+    QGridLayout* markGroupLayout = new QGridLayout();
+
+    QPushButton* markSelectedButton = new QPushButton(tr("Mark Selected"));
+    connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
+    markGroupLayout->addWidget(markSelectedButton, 0, 0);
+
+    markerSymbolBox = new QComboBox();
+    markerSymbolBox->setEditable(false);
+    markerSymbolBox->addItem(tr("None"));
+    markerSymbolBox->addItem(tr("Diamond"), (int) Marker::Diamond);
+    markerSymbolBox->addItem(tr("Triangle"), (int) Marker::Triangle);
+    markerSymbolBox->addItem(tr("Square"), (int) Marker::Square);
+    markerSymbolBox->addItem(tr("Plus"), (int) Marker::Plus);
+    markerSymbolBox->addItem(tr("X"), (int) Marker::X);
+    markerSymbolBox->addItem(tr("Circle"), (int) Marker::Circle);
+    markerSymbolBox->setCurrentIndex(1);
+    markGroupLayout->addWidget(markerSymbolBox, 0, 1);
+
+    labelMarkerBox = new QCheckBox(tr("Label"));
+    markGroupLayout->addWidget(labelMarkerBox, 1, 0);
+
+    markGroup->setLayout(markGroupLayout);
+    layout->addWidget(markGroup);
+
     slotRefreshTable();
 
     setLayout(layout);
@@ -367,5 +445,61 @@ void CelestialBrowser::slotRefreshTable()
     else if (withPlanetsButton->isChecked())
         criterion = StarPredicate::Planets;
 
-    ((StarTableModel*) starModel)->populate(observerPos, criterion, 1000);
+    treeView->clearSelection();
+    starModel->populate(observerPos, criterion, 1000);
+}
+
+
+void CelestialBrowser::slotContextMenu(const QPoint& pos)
+{
+    QModelIndex index = treeView->indexAt(pos);
+    Selection sel = starModel->itemAtRow((unsigned int) index.row());
+
+    if (!sel.empty())
+    {
+        SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
+        menu->exec(treeView->mapToGlobal(pos));
+    }
+}
+
+
+void CelestialBrowser::slotMarkSelected()
+{
+    QItemSelectionModel* sm = treeView->selectionModel();
+    QModelIndexList rows = sm->selectedRows();
+
+    bool labelMarker = labelMarkerBox->checkState() == Qt::Checked;
+    bool convertOK = false;
+    QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
+    Marker::Symbol markerSymbol = (Marker::Symbol) markerData.toInt(&convertOK);
+
+    Universe* universe = appCore->getSimulation()->getUniverse();
+    string label;
+
+    for (QModelIndexList::const_iterator iter = rows.begin();
+         iter != rows.end(); iter++)
+    {
+        int row = (*iter).row();
+        Selection sel = starModel->itemAtRow((unsigned int) row);
+        if (!sel.empty())
+        {
+            if (convertOK)
+            {
+                if (labelMarker)
+                {
+                    if (sel.star() != NULL)
+                        label = universe->getStarCatalog()->getStarName(*sel.star());
+                    label = ReplaceGreekLetterAbbr(label);
+                }
+
+                universe->markObject(sel, 10.0f,
+                                     Color(0.0f, 1.0f, 1.0f, 0.9f),
+                                     markerSymbol, 1, label);
+            }
+            else
+            {
+                universe->unmarkObject(sel, 1);
+            }
+        }
+    }
 }
