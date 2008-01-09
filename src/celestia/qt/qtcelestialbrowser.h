@@ -15,13 +15,31 @@
 
 #include <QWidget>
 
+class QAbstractItemModel;
+class QTreeView;
+class CelestiaCore;
+class QRadioButton;
+
 class CelestialBrowser : public QWidget
 {
 Q_OBJECT
 
  public:
-    CelestialBrowser(QWidget* parent);
+    CelestialBrowser(CelestiaCore* _appCore, QWidget* parent);
     ~CelestialBrowser();
+
+ public slots:
+    void slotRefreshTable();
+
+ private:
+    CelestiaCore* appCore;
+
+    QAbstractItemModel* starModel;
+    QTreeView* treeView;
+
+    QRadioButton* closestButton;
+    QRadioButton* brightestButton;
+    QRadioButton* withPlanetsButton;
 };
 
 #endif // _QTCELESTIALBROWSER_H_
