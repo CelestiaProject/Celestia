@@ -17,8 +17,12 @@
 
 class QAbstractItemModel;
 class QTreeView;
-class CelestiaCore;
 class QRadioButton;
+class QComboBox;
+class QCheckBox;
+class CelestiaCore;
+
+class StarTableModel;
 
 class CelestialBrowser : public QWidget
 {
@@ -30,16 +34,21 @@ Q_OBJECT
 
  public slots:
     void slotRefreshTable();
+    void slotContextMenu(const QPoint& pos);
+    void slotMarkSelected();
 
  private:
     CelestiaCore* appCore;
 
-    QAbstractItemModel* starModel;
+    StarTableModel* starModel;
     QTreeView* treeView;
 
     QRadioButton* closestButton;
     QRadioButton* brightestButton;
     QRadioButton* withPlanetsButton;
+
+    QComboBox* markerSymbolBox;
+    QCheckBox* labelMarkerBox;
 };
 
 #endif // _QTCELESTIALBROWSER_H_
