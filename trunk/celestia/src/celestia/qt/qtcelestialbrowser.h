@@ -50,7 +50,8 @@ Q_OBJECT
 
     QRadioButton* closestButton;
     QRadioButton* brightestButton;
-    QRadioButton* withPlanetsButton;
+
+    QCheckBox* withPlanetsFilterBox;
 
     QComboBox* markerSymbolBox;
     QCheckBox* labelMarkerBox;
