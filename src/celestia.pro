@@ -1,5 +1,6 @@
 TEMPLATE = app
 TARGET = celestia-qt4
+DESTDIR = ..\
 
 QT += opengl
 
