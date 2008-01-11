@@ -55,15 +55,15 @@ WindowsDirectory::~WindowsDirectory()
 
 bool WindowsDirectory::nextFile(std::string& filename)
 {
-    WIN32_FIND_DATA findData;
+    WIN32_FIND_DATAA findData;
 
     if (status != DirGood)
         return false;
 
     if (searchHandle == INVALID_HANDLE_VALUE)
     {
-        searchHandle = FindFirstFile(const_cast<LPCTSTR>(searchName.c_str()),
-                                     &findData);
+        searchHandle = FindFirstFileA(const_cast<char*>(searchName.c_str()),
+                                      &findData);
         if (searchHandle == INVALID_HANDLE_VALUE)
         {
             status = DirBad;
@@ -77,7 +77,7 @@ bool WindowsDirectory::nextFile(std::string& filename)
     }
     else
     {
-        if (FindNextFile(searchHandle, &findData))
+        if (FindNextFileA(searchHandle, &findData))
         {
             filename = findData.cFileName;
             return true;
@@ -99,7 +99,7 @@ Directory* OpenDirectory(const std::string& dirname)
 
 bool IsDirectory(const std::string& filename)
 {
-    DWORD attr = GetFileAttributes(const_cast<LPCTSTR>(filename.c_str()));
+    DWORD attr = GetFileAttributesA(const_cast<char*>(filename.c_str()));
     if (attr == 0xffffffff)
         return false;
     else
