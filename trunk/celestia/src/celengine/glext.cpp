@@ -275,6 +275,15 @@ glx::PFNGLGETSHADERSOURCEARBPROC           glx::glGetShaderSourceARB;
 
 // extern void Alert(const char *szFormat, ...);
 
+#if defined(QT_OPENGL_LIB) && defined(_WIN32)
+
+// TODO: We should use something other than a global GL context
+#include <QGLContext>
+extern QGLContext* glctx;
+#define GET_GL_PROC_ADDRESS(name) glctx->getProcAddress(name)
+
+#else
+
 #ifndef MACOSX
 #if defined(_WIN32)
 
@@ -309,7 +318,11 @@ FUNCS GetGLProcAddress(const GLubyte* procName)
 }
 
 #endif // defined(WIN32)
-#endif /* !MACOSX */
+#endif // !MACOSX
+
+#endif // QT_CORE_LIB
+
+
 #ifdef MACOSX
 #include <mach-o/dyld.h>
 #include <stdio.h>
