@@ -38,6 +38,9 @@ Q_OBJECT
     void slotMark();
     void slotToggleReferenceVector();
 
+    void popupAtGoto(const QPoint& p);
+    void popupAtCenter(const QPoint& p);
+
  private:
     QMenu* createMarkMenu();
     QMenu* createReferenceVectorMenu();
@@ -48,6 +51,8 @@ Q_OBJECT
  private:
     Selection selection;
     CelestiaCore* appCore;
+    QAction* centerAction;
+    QAction* gotoAction;
 };
 
 #endif // _QTSELECTIONPOPUP_H_
