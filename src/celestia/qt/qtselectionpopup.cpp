@@ -45,7 +45,9 @@ SelectionPopup::SelectionPopup(const Selection& sel,
                                QWidget* parent) :
     QMenu(parent),
     selection(sel),
-    appCore(_appCore)
+    appCore(_appCore),
+    centerAction(NULL),
+    gotoAction(NULL)
 {
     Simulation* sim = appCore->getSimulation();
     Vec3d v = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
@@ -98,11 +100,11 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     QAction* selectAction = new QAction(tr("&Select"), this);
     addAction(selectAction);
 
-    QAction* centerAction = new QAction(tr("&Center"), this);
+    centerAction = new QAction(tr("&Center"), this);
     connect(centerAction, SIGNAL(triggered()), this, SLOT(slotCenterSelection()));
     addAction(centerAction);
 
-    QAction* gotoAction = new QAction(tr("&Goto"), this);
+    gotoAction = new QAction(tr("&Goto"), this);
     connect(gotoAction, SIGNAL(triggered()), this, SLOT(slotGotoSelection()));
     addAction(gotoAction);
 
@@ -356,6 +358,19 @@ void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
 }
 
 
+void SelectionPopup::popupAtGoto(const QPoint& pt)
+{
+    exec(pt, gotoAction);
+}
+
+
+void SelectionPopup::popupAtCenter(const QPoint& pt)
+{
+    exec(pt, centerAction);
+}
+
+
+/******** Slots *********/
 void SelectionPopup::slotCenterSelection()
 {
     appCore->getSimulation()->setSelection(selection);

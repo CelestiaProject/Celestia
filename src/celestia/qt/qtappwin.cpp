@@ -223,7 +223,7 @@ void CelestiaAppWindow::createMenus()
 void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
 {
     SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
-    menu->exec(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));
+    menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));
 }
 
 
