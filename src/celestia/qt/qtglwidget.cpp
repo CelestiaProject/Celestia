@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include <cassert>
-#include <unistd.h>
+#include <time.h>
 #include <celengine/gl.h>
 //#include <celengine/glext.h>
 #include <celengine/celestia.h>

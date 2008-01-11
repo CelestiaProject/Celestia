@@ -29,6 +29,9 @@
 #include <vector>
 #include <set>
 #include <celestia/celestiacore.h>
+#ifdef _WIN32
+#include <algorithm>
+#endif
 
 using namespace std;
 
