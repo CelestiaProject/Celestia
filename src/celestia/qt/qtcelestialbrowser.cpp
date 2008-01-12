@@ -25,6 +25,8 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QColorDialog>
+#include <QLineEdit>
+#include <QRegExp>
 #include <cstring>
 #include <vector>
 #include <set>
@@ -43,6 +45,9 @@ public:
     bool operator()(const Star* star) const;
 
     bool planetsFilterEnabled;
+    bool omitBarycenters;
+    bool spectralTypeFilterEnabled;
+    QRegExp spectralTypeFilter;
     SolarSystemCatalog* solarSystems;
 };
 
@@ -67,9 +72,6 @@ private:
     Criterion criterion;
     Point3f pos;
     UniversalCoord ucPos;
-
-public:
-    StarFilterPredicate filterPred;
 };
 
 
@@ -104,10 +106,9 @@ public:
     };
 
     void populate(const UniversalCoord& _observerPos,
+                  StarFilterPredicate& filterPred,
                   StarPredicate::Criterion criterion,
                   unsigned int nStars);
-
-    void setPlanetsFilter(bool enable);
 
     Selection itemAtRow(unsigned int row);
 
@@ -115,14 +116,12 @@ private:
     const Universe* universe;
     UniversalCoord observerPos;
     vector<Star*> stars;
-    bool planetsFilterEnabled;
 };
 
 
 StarTableModel::StarTableModel(const Universe* _universe) :
     universe(_universe),
-    observerPos(0.0, 0.0, 0.0),
-    planetsFilterEnabled(false)
+    observerPos(0.0, 0.0, 0.0)
 {
 }
 
@@ -246,18 +245,6 @@ StarPredicate::StarPredicate(Criterion _criterion,
 
 bool StarPredicate::operator()(const Star* star0, const Star* star1) const
 {
-    // The filter acts as the primary sort key
-    bool filter0 = filterPred(star0);
-    bool filter1 = filterPred(star1);
-
-    if (filter0 && !filter1)
-        return false;
-    else if (!filter0 && filter1)
-        return true;
-
-    // Both stars pass or both stars file the filter; compare them
-    // using the sort criterion.
-
     switch (criterion)
     {
     case Distance:
@@ -297,6 +284,8 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
 
 StarFilterPredicate::StarFilterPredicate() :
     planetsFilterEnabled(false),
+    omitBarycenters(true),
+    spectralTypeFilterEnabled(false),
     solarSystems(NULL)
 {
 }
@@ -304,6 +293,12 @@ StarFilterPredicate::StarFilterPredicate() :
 
 bool StarFilterPredicate::operator()(const Star* star) const
 {
+    if (omitBarycenters)
+    {
+        if (!star->getVisibility())
+            return true;
+    }
+
     if (planetsFilterEnabled)
     {
         if (solarSystems == NULL)
@@ -311,6 +306,12 @@ bool StarFilterPredicate::operator()(const Star* star) const
 
         SolarSystemCatalog::iterator iter = solarSystems->find(star->getCatalogNumber());
         if (iter == solarSystems->end())
+            return true;
+    }
+
+    if (spectralTypeFilterEnabled)
+    {
+        if (!spectralTypeFilter.exactMatch(star->getSpectralType()))
             return true;
     }
 
@@ -354,6 +355,7 @@ void StarTableModel::sort(int column, Qt::SortOrder order)
 
 
 void StarTableModel::populate(const UniversalCoord& _observerPos,
+                              StarFilterPredicate& filterPred,
                               StarPredicate::Criterion criterion,
                               unsigned int nStars)
 {
@@ -364,9 +366,21 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
     typedef multiset<Star*, StarPredicate> StarSet;
     StarPredicate pred(criterion, observerPos);
 
-    // Set up the filter
-    pred.filterPred.planetsFilterEnabled = planetsFilterEnabled;
-    pred.filterPred.solarSystems = universe->getSolarSystemCatalog();
+    // Apply the filter
+    vector<Star*> filteredStars;
+    unsigned int totalStars = stardb.size();
+    unsigned int i = 0;
+    filteredStars.reserve(totalStars);
+    for (i = 0; i < totalStars; i++)
+    {
+        Star* star = stardb.getStar(i);
+        if (!filterPred(star))
+            filteredStars.push_back(star);
+    }
+
+    // Don't try and show more stars than remain after the filter
+    if (filteredStars.size() < nStars)
+        nStars = filteredStars.size();
 
     // Clear out the results of the previous populate() call
     if (stars.size() != 0)
@@ -376,31 +390,26 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
         endRemoveRows();
     }
 
-    StarSet firstStars(pred);
+    if (filteredStars.empty())
+        return;
 
-    // Don't exceed the size of the star catalog
-    unsigned int totalStars = stardb.size();
-    if (totalStars < nStars)
-        nStars = totalStars;
+    StarSet firstStars(pred);
 
     // We'll need at least nStars in the set, so first fill
     // up the list indiscriminately.
-    unsigned int i = 0;
     for (i = 0; i < nStars; i++)
     {
-        Star* star = stardb.getStar(i);
-        if (star->getVisibility())
-            firstStars.insert(star);
+        firstStars.insert(filteredStars[i]);
     }
 
     // From here on, only add a star to the set if it's
     // A better match than the worst matching star already
     // in the set.
     const Star* lastStar = *--firstStars.end();
-    for (; i < totalStars; i++)
+    for (; i < filteredStars.size(); i++)
     {
-        Star* star = stardb.getStar(i);
-        if (star->getVisibility() && pred(star, lastStar))
+        Star* star = filteredStars[i];
+        if (pred(star, lastStar))
         {
             firstStars.insert(star);
             firstStars.erase(--firstStars.end());
@@ -416,13 +425,6 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
         stars.push_back(*iter);
     }
 
-    // The resulting list of star will always have at least have
-    // a size of nStars, even if less than this number passed the
-    // filter. Remove these extra stars now.
-    vector<Star*>::iterator newEnd = remove_if(stars.begin(), stars.end(), pred.filterPred);
-    stars.erase(newEnd, stars.end());
-
-    //dataChanged(index(0, 0), index(stars.size() - 1, 4));
     beginInsertRows(QModelIndex(), 0, stars.size());
     endInsertRows();
 }
@@ -434,12 +436,6 @@ Selection StarTableModel::itemAtRow(unsigned int row)
         return Selection();
     else
         return Selection(stars[row]);
-}
-
-
-void StarTableModel::setPlanetsFilter(bool enabled)
-{
-    planetsFilterEnabled = enabled;
 }
 
 
@@ -487,6 +483,12 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     withPlanetsFilterBox = new QCheckBox(tr("With Planets"));
     connect(withPlanetsFilterBox, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
     filterGroupLayout->addWidget(withPlanetsFilterBox);
+
+    filterGroupLayout->addStretch();
+
+    filterGroupLayout->addWidget(new QLabel(tr("Spectral Type")));
+    spectralTypeFilterBox = new QLineEdit();
+    filterGroupLayout->addWidget(spectralTypeFilterBox);
 
     filterGroup->setLayout(filterGroupLayout);
     layout->addWidget(filterGroup);
@@ -553,10 +555,28 @@ void CelestialBrowser::slotRefreshTable()
     if (brightestButton->isChecked())
         criterion = StarPredicate::Brightness;
 
-    starModel->setPlanetsFilter(withPlanetsFilterBox->checkState() == Qt::Checked);
-
     treeView->clearSelection();
-    starModel->populate(observerPos, criterion, 1000);
+
+    // Set up the filter
+    StarFilterPredicate filterPred;
+    filterPred.planetsFilterEnabled = withPlanetsFilterBox->checkState() == Qt::Checked;
+    filterPred.omitBarycenters = true;
+    filterPred.solarSystems = appCore->getSimulation()->getUniverse()->getSolarSystemCatalog();
+
+    QRegExp re(spectralTypeFilterBox->text(),
+               Qt::CaseInsensitive,
+               QRegExp::Wildcard);
+    if (!re.isEmpty() && re.isValid())
+    {
+        filterPred.spectralTypeFilter = re;
+        filterPred.spectralTypeFilterEnabled = true;
+    }
+    else
+    {
+        filterPred.spectralTypeFilterEnabled = false;
+    }
+
+    starModel->populate(observerPos, filterPred, criterion, 1000);
 }
 
 
