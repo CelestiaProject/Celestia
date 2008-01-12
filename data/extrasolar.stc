@@ -128,6 +128,15 @@
 	AppMag 11.18
 }
 
+1010643727 "XO-3:GSC 03727-01064"
+{
+	RA  65.46958
+	Dec 57.81694
+	Distance 850
+	SpectralType "F5V"
+	AppMag 9.8
+}
+
 # HAT-P survey
 
 "HAT-P-1:SAO 72884"
@@ -202,6 +211,15 @@
 	Distance 727
 	SpectralType "F7V"
 	AppMag 10.64
+}
+
+"WASP-4"
+{
+	RA 353.56292
+	Dec -42.06139
+	Distance 980
+	SpectralType "G7V"
+	AppMag 12.6
 }
 
 # HD stars without Hip numbers
@@ -297,6 +315,16 @@
 	Distance 166
 	SpectralType "DA"
 	AppMag 15.6
+}
+
+53911 "TW Hya" # redefined because of absent spectral
+               # class in stars.dat
+{
+	RA 165.46625
+	Dec -34.70472
+	Distance 184.07
+	SpectralType "K8V"
+	AppMag 10.91
 }
 
 # Definitions for some exoplanet stars in multiple systems
