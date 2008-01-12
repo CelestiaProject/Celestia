@@ -21,6 +21,7 @@ class QRadioButton;
 class QComboBox;
 class QCheckBox;
 class QLabel;
+class QLineEdit;
 class CelestiaCore;
 
 class StarTableModel;
@@ -52,6 +53,7 @@ Q_OBJECT
     QRadioButton* brightestButton;
 
     QCheckBox* withPlanetsFilterBox;
+    QLineEdit* spectralTypeFilterBox;
 
     QComboBox* markerSymbolBox;
     QCheckBox* labelMarkerBox;
