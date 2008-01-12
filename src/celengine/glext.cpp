@@ -275,7 +275,7 @@ glx::PFNGLGETSHADERSOURCEARBPROC           glx::glGetShaderSourceARB;
 
 // extern void Alert(const char *szFormat, ...);
 
-#if defined(QT_OPENGL_LIB) && defined(_WIN32)
+#if defined(QT_OPENGL_LIB) && defined(_WIN32) && !defined(_MSC_VER)
 
 // TODO: We should use something other than a global GL context
 #include <QGLContext>
