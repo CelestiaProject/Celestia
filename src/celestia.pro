@@ -272,6 +272,7 @@ QTAPP_SOURCES = \
 	celestia/qt/qtglwidget.cpp \
 	celestia/qt/qtpreferencesdialog.cpp \
 	celestia/qt/qtcelestialbrowser.cpp \
+	celestia/qt/qtdeepskybrowser.cpp \
 	celestia/qt/qtselectionpopup.cpp
 
 QTAPP_HEADERS = \
@@ -279,6 +280,7 @@ QTAPP_HEADERS = \
 	celestia/qt/qtglwidget.h \
 	celestia/qt/qtpreferencesdialog.h \
 	celestia/qt/qtcelestialbrowser.h \
+	celestia/qt/qtdeepskybrowser.h \
 	celestia/qt/qtselectionpopup.h
 
 
@@ -326,3 +328,5 @@ win32 {
 unix {
 	LIBS += -ljpeg
 }
+
+# QMAKE_CXXFLAGS += -ffast-math
