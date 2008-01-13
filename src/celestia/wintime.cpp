@@ -85,7 +85,8 @@ SetTimeDialog::init(HWND _hDlg)
     hDlg = _hDlg;
     
     SetWindowLong(hDlg, DWL_USER, reinterpret_cast<LPARAM>(this));
-    
+    getLocalTimeZoneInfo();
+
     tdb = appCore->getSimulation()->getTime();
     useLocalTime = appCore->getTimeZoneBias() != 0;
     useUTCOffset = appCore->getDateFormat() == 2;
