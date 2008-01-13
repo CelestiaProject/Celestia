@@ -148,8 +148,9 @@
 #define IDC_EDIT_FEATURE_SIZE           1151
 #define IDC_CELESTIALINK                1152
 #define IDC_COMBOBOX_TIMEZONE           1153
-#define IDC_SOLARECLIPSE                1153
-#define IDC_LUNARECLIPSE                1154
+#define IDC_COMBOBOX_DATE_FORMAT           1154
+#define IDC_SOLARECLIPSE                1155
+#define IDC_LUNARECLIPSE                1156
 #define ID_SELECTSOL                    40001
 #define ID_GOTOSELECTION                40002
 #define ID_FOLLOWSELECTION              40003
