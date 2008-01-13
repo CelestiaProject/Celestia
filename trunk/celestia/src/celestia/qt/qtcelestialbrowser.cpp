@@ -30,10 +30,8 @@
 #include <cstring>
 #include <vector>
 #include <set>
-#include <celestia/celestiacore.h>
-#ifdef _WIN32
 #include <algorithm>
-#endif
+#include <celestia/celestiacore.h>
 
 using namespace std;
 
@@ -488,6 +486,7 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
 
     filterGroupLayout->addWidget(new QLabel(tr("Spectral Type")));
     spectralTypeFilterBox = new QLineEdit();
+    connect(spectralTypeFilterBox, SIGNAL(editingFinished()), this, SLOT(slotRefreshTable()));
     filterGroupLayout->addWidget(spectralTypeFilterBox);
 
     filterGroup->setLayout(filterGroupLayout);
