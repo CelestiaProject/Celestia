@@ -15,30 +15,28 @@
  *                                                                         *
  ***************************************************************************/
 
-//#include <kcmdlineargs.h>
-//#include <kaboutdata.h>
-//#include <klocale.h>
-
-//#include "kdeuniquecelestia.h"
 #include <QApplication>
-
+#include <vector>
 #include "qtappwin.h"
+
+using namespace std;
 
 
 static const char *description = "Celestia";
 
+// Command line options
+static bool startFullscreen = false;
+static bool runOnce = false;
+static QString startURL;
+static QString startDirectory;
+static QString startScript;
+static QStringList extrasDirectories;
+static QString configFileName;
+static bool useAlternateConfigFile = false;
+static bool skipSplashScreen = false;
 
-//static KCmdLineOptions options[] =
-//{ 
-//  { "conf <file>", I18N_NOOP("Use alternate configuration file"), 0 },
-//  { "dir <directory>", I18N_NOOP("Use alternate installation directory"), 0 },
-//  { "extrasdir <directory>", I18N_NOOP("Use as additional \"extras\" directory"), 0 },
-//  { "fullscreen", I18N_NOOP("Start fullscreen"), 0 },
-//  { "s", 0, 0 },
-//  { "nosplash", I18N_NOOP("Disable splash screen"), 0 },
-//  { "+[url]", I18N_NOOP("Start and go to url"), 0},
-//  { 0, 0, 0 }
-// };
+static bool ParseCommandLine();
+
 
 int main(int argc, char *argv[])
 {  
@@ -47,17 +45,104 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Celestia Development Team");
     QCoreApplication::setApplicationName("Celestia");
 
-    CelestiaAppWindow window;
+    ParseCommandLine();
+
+    CelestiaAppWindow window(configFileName,
+                             extrasDirectories);
+                             
     window.show();
 
     return app.exec();
-#if 0  
-    KCmdLineArgs::init( argc, argv, &aboutData );
-    KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
-    KUniqueApplication::addCmdLineOptions();
+}
 
-    KdeUniqueCelestia a;
 
-    return a.exec();
+
+static void CommandLineError(const char*)
+{
+}
+
+
+
+bool ParseCommandLine()
+{
+    QStringList args = QCoreApplication::arguments();
+
+    int i = 1;
+
+    while (i < args.size())
+    {
+        bool isLastArg = (i == args.size() - 1);
+#if 0
+        if (strcmp(argv[i], "--verbose") == 0)
+        {
+            SetDebugVerbosity(1);
+        }
+        else
 #endif
+        if (args.at(i) == "--fullscreen")
+        {
+            startFullscreen = true;
+        }
+        else if (args.at(i) == "--once")
+        {
+            runOnce = true;
+        }
+        else if (args.at(i) == "--dir")
+        {
+            if (isLastArg)
+            {
+                CommandLineError("Directory expected after --dir");
+                return false;
+            }
+            i++;
+            startDirectory = args.at(i);
+        }
+        else if (args.at(i) == "--conf")
+        {
+            if (isLastArg)
+            {
+                CommandLineError("Configuration file name expected after --conf");
+                return false;
+            }
+            i++;
+            configFileName = args.at(i);
+            useAlternateConfigFile = true;
+        }
+        else if (args.at(i) == "--extrasdir")
+        {
+            if (isLastArg)
+            {
+                CommandLineError("Directory expected after --extrasdir");
+                return false;
+            }
+            i++;
+            extrasDirectories.push_back(args.at(i));
+        }
+        else if (args.at(i) == "-u" || args.at(i) == "--url")
+        {
+            if (isLastArg)
+            {
+                CommandLineError("URL expected after --url");
+                return false;
+            }
+            i++;
+            startURL = args.at(i);
+        }
+        else if (args.at(i) == "-s" || args.at(i) == "--nosplash")
+        {
+            skipSplashScreen = true;
+        }
+        else
+        {
+            char* buf = new char[args.at(i).length() + 256];
+            sprintf(buf, "Invalid command line option '%s'", args.at(i).toUtf8().data());
+            CommandLineError(buf);
+            delete[] buf;
+            return false;
+        }
+
+        i++;
+    }
+
+    return true;
 }
