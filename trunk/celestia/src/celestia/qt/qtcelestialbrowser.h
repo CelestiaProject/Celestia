@@ -49,6 +49,8 @@ Q_OBJECT
     StarTableModel* starModel;
     QTreeView* treeView;
 
+    QLabel* searchResultLabel;
+
     QRadioButton* closestButton;
     QRadioButton* brightestButton;
 

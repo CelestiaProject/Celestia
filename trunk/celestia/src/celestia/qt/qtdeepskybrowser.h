@@ -49,8 +49,11 @@ Q_OBJECT
     DSOTableModel* dsoModel;
     QTreeView* treeView;
 
-    QRadioButton* closestButton;
-    QRadioButton* brightestButton;
+    QLabel* searchResultLabel;
+
+    QRadioButton* galaxiesButton;
+    QRadioButton* nebulaeButton;
+    QRadioButton* openClustersButton;
 
     QLineEdit* objectTypeFilterBox;
 
