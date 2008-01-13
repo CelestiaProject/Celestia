@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: settings-file.cpp,v 1.3 2006-12-12 00:31:01 suwalski Exp $
+ *  $Id: settings-file.cpp,v 1.4 2008-01-13 03:02:41 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -88,7 +88,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 {
 	GError* e;
 	float ambientLight, visualMagnitude, galaxyLightGain;
-	int errors, verbosity, starStyle, rf, om, lm;
+	int errors, verbosity, starStyle, textureResolution, rf, om, lm;
 		
 	/* See comment in applySettingsFilePrefs() */
 	e = NULL;
@@ -112,6 +112,10 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	if (e != NULL) starStyle = -1;
 		
 	e = NULL;
+	textureResolution = g_key_file_get_integer(file, "Main", "textureResolution", &e);
+	if (e != NULL) textureResolution = -1;
+		
+	e = NULL;
 	app->showLocalTime = g_key_file_get_boolean(file, "Main", "localTime", &e);
 	if (e != NULL) app->showLocalTime = FALSE;
 
@@ -125,6 +129,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	setSaneGalaxyLightGain(galaxyLightGain);
 	setSaneVerbosity(app, verbosity);
 	setSaneStarStyle(app, (Renderer::StarStyle)starStyle);
+	setSaneTextureResolution(app, textureResolution);
 	setSaneAltSurface(app, g_key_file_get_string(file, "Main", "altSurfaceName", NULL));
 	
 	/* Render Flags */
@@ -213,6 +218,8 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_comment(file, "Main", "verbosity", "Level of Detail in the heads-up-display. 0=None, 1=Terse, 2=Verbose", NULL);
 	g_key_file_set_integer(file, "Main", "starStyle", app->renderer->getStarStyle());
 	g_key_file_set_comment(file, "Main", "starStyle", "Style of star rendering. 0=Fuzzy Points, 1=Points, 2=Scaled Discs", NULL);
+	g_key_file_set_integer(file, "Main", "textureResolution", app->renderer->getResolution());
+	g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", NULL);
 	g_key_file_set_string(file, "Main", "altSurfaceName", app->simulation->getActiveObserver()->getDisplayedSurface().c_str());
 	g_key_file_set_boolean(file, "Main", "localTime", app->showLocalTime);
 	g_key_file_set_boolean(file, "Main", "videoSync", app->renderer->getVideoSync());

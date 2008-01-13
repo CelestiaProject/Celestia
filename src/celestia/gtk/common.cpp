@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.cpp,v 1.4 2005-12-13 06:19:57 suwalski Exp $
+ *  $Id: common.cpp,v 1.5 2008-01-13 03:02:41 suwalski Exp $
  */
 
 #include <fstream>
@@ -209,6 +209,16 @@ void setSaneStarStyle(AppData* app, Renderer::StarStyle value)
 		value = Renderer::FuzzyPointStars;
 	
 	app->renderer->setStarStyle(value);
+}
+
+
+/* Sanitizes and sets Texture Resolution */
+void setSaneTextureResolution(AppData* app, int value)
+{
+	if (value < 0 || value > TEXTURE_RESOLUTION)
+		value = 1; /* Default to "Medium" */
+
+	app->renderer->setResolution(value);
 }
 
 
