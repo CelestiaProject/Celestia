@@ -169,6 +169,7 @@ struct AppPreferences
     float ambientLight;
     float galaxyLightGain;
     int showLocalTime;
+    int dateFormat;
     int hudDetail;
     int fullScreenMode;
     uint32 lastVersion;
@@ -2431,6 +2432,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
     GetRegistryValue(key, "GalaxyLightGain", &prefs.galaxyLightGain, sizeof(prefs.galaxyLightGain));
     GetRegistryValue(key, "ShowLocalTime", &prefs.showLocalTime, sizeof(prefs.showLocalTime));
+    GetRegistryValue(key, "DateFormat", &prefs.dateFormat, sizeof(prefs.dateFormat));
     GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
     GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
 
@@ -2488,6 +2490,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
     SetRegistryBin(key, "GalaxyLightGain", &prefs.galaxyLightGain, sizeof(prefs.galaxyLightGain));
     SetRegistryInt(key, "ShowLocalTime", prefs.showLocalTime);
+    SetRegistryInt(key, "DateFormat", prefs.dateFormat);
     SetRegistryInt(key, "HudDetail", prefs.hudDetail);
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
@@ -2522,6 +2525,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
     prefs.galaxyLightGain = Galaxy::getLightGain();
     prefs.showLocalTime = (appCore->getTimeZoneBias() != 0);
+    prefs.dateFormat = appCore->getDateFormat();
     prefs.hudDetail = appCore->getHudDetail();
     prefs.fullScreenMode = lastFullScreenMode;
     prefs.lastVersion = 0x01040100;
@@ -3175,6 +3179,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
     prefs.visualMagnitude = 6.0f;   //Default specified in Simulation::Simulation()
     prefs.showLocalTime = 0;
+    prefs.dateFormat = 0;
     prefs.hudDetail = 1;
     prefs.fullScreenMode = -1;
     prefs.lastVersion = 0x00000000;
@@ -3362,6 +3367,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
             ShowLocalTime(appCore);
         else
             ShowUniversalTime(appCore);
+        appCore->setDateFormat((astro::Date::Format) prefs.dateFormat);
         appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
         appCore->getRenderer()->setResolution(prefs.textureResolution);
         if (prefs.renderPathSet)
