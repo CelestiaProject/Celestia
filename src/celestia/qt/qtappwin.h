@@ -23,12 +23,14 @@ class CelestiaGlWidget;
 class CelestialBrowser;
 class CelestiaCore;
 
+
 class CelestiaAppWindow : public QMainWindow
 {
     Q_OBJECT
 
  public:
-    CelestiaAppWindow();
+    CelestiaAppWindow(const QString& configFileName,
+                      const QStringList& extrasDirectories);
 
     void writeSettings();
     void readSettings();

@@ -17,12 +17,14 @@
 #include <QMenuBar>
 #include <QSettings>
 #include <QDockWidget>
+#include <QTabWidget>
 #include <vector>
 #include <string>
 #include "qtappwin.h"
 #include "qtglwidget.h"
 #include "qtpreferencesdialog.h"
 #include "qtcelestialbrowser.h"
+#include "qtdeepskybrowser.h"
 #include "qtselectionpopup.h"
 
 
@@ -30,15 +32,14 @@ using namespace std;
 
 
 const QGLContext* glctx = NULL;
-vector<string> extrasDirs;
-string configFile = "celestia.cfg";
+QString DEFAULT_CONFIG_FILE = "celestia.cfg";
 
 const QSize DEFAULT_MAIN_WINDOW_SIZE(800, 600);
 const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
 
 // Used when saving and restoring main window state; increment whenever
 // new dockables or toolbars are added.
-static const int CELESTIA_MAIN_WINDOW_VERSION = 1;
+static const int CELESTIA_MAIN_WINDOW_VERSION = 2;
 
 
 // Terrible hack required because context menu callback doesn't retain
@@ -47,15 +48,33 @@ static CelestiaAppWindow* MainWindowInstance = NULL;
 static void ContextMenu(float x, float y, Selection sel);
 
 
-CelestiaAppWindow::CelestiaAppWindow() :
+CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
+                                     const QStringList& qExtrasDirectories) :
     glWidget(NULL),
     celestialBrowser(NULL),
     appCore(NULL)
 {
     setObjectName("celestia-mainwin");
 
+    // Get the config file name
+    string configFileName;
+    if (qConfigFileName.isEmpty())
+        configFileName = DEFAULT_CONFIG_FILE.toUtf8().data();
+    else
+        configFileName = qConfigFileName.toUtf8().data();
+    
+    // Translate extras directories from QString -> std::string
+    vector<string> extrasDirectories;
+    for (QStringList::const_iterator iter = qExtrasDirectories.begin();
+         iter != qExtrasDirectories.end(); iter++)
+    {
+        extrasDirectories.push_back(iter->toUtf8().data());
+    }
+
     appCore = new CelestiaCore();
-    appCore->initSimulation(&configFile, &extrasDirs, NULL);
+    appCore->initSimulation(&configFileName,
+                            &extrasDirectories,
+                            NULL);
 
     glWidget = new CelestiaGlWidget(NULL, "Celestia", appCore);
     glctx = glWidget->context();
@@ -69,6 +88,9 @@ CelestiaAppWindow::CelestiaAppWindow() :
 
     createMenus();
 
+    QTabWidget* tabWidget = new QTabWidget(this);
+    tabWidget->setObjectName("celestia-tabbed-browser");
+
     celestialBrowser = new CelestialBrowser(appCore, NULL);
     celestialBrowser->setObjectName("celestia-browser");
 
@@ -76,10 +98,23 @@ CelestiaAppWindow::CelestiaAppWindow() :
     toolsDock->setObjectName("celestia-tools-dock");
     toolsDock->setAllowedAreas(Qt::LeftDockWidgetArea |
                                Qt::RightDockWidgetArea);
+#if 0
     toolsDock->setWidget(celestialBrowser);
     addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
+#else
+    QWidget* deepSkyBrowser = new DeepSkyBrowser(appCore, NULL);
+    deepSkyBrowser->setObjectName("deepsky-browser");
+
+    tabWidget->addTab(celestialBrowser, tr("Stars"));
+    tabWidget->addTab(deepSkyBrowser, tr("Deep Sky Objects"));
+
+    toolsDock->setWidget(tabWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
+#endif
 
     viewMenu->addAction(toolsDock->toggleViewAction());
+
+    glWidget->setFocus();
 
     readSettings();
 
