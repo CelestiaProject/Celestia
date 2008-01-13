@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: settings-gconf.cpp,v 1.2 2006-12-12 00:31:01 suwalski Exp $
+ *  $Id: settings-gconf.cpp,v 1.3 2008-01-13 03:02:41 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -36,6 +36,7 @@ static void confShowLocalTime(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confVerbosity(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confFullScreen(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confStarStyle(GConfClient*, guint, GConfEntry* e, AppData* app);
+static void confTextureResolution(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confAltSurfaceName(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confVideoSync(GConfClient*, guint, GConfEntry* e, AppData* app);
 
@@ -72,6 +73,7 @@ void initSettingsGConfNotifiers(AppData* app)
 	gconf_client_notify_add (app->client, "/apps/celestia/verbosity", (GConfClientNotifyFunc)confVerbosity, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/fullScreen", (GConfClientNotifyFunc)confFullScreen, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/starStyle", (GConfClientNotifyFunc)confStarStyle, app, NULL, NULL);
+	gconf_client_notify_add (app->client, "/apps/celestia/textureResolution", (GConfClientNotifyFunc)confTextureResolution, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/altSurfaceName", (GConfClientNotifyFunc)confAltSurfaceName, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/videoSync", (GConfClientNotifyFunc)confVideoSync, app, NULL, NULL);
 }
@@ -105,6 +107,7 @@ void applySettingsGConfMain(AppData* app, GConfClient* client)
 	setSaneGalaxyLightGain(gconf_client_get_float(client, "/apps/celestia/galaxyLightGain", NULL));
 	setSaneVerbosity(app, gconf_client_get_int(client, "/apps/celestia/verbosity", NULL));
 	setSaneStarStyle(app, (Renderer::StarStyle)gconf_client_get_int(client, "/apps/celestia/starStyle", NULL));
+	setSaneTextureResolution(app, gconf_client_get_int(client, "/apps/celestia/textureResolution", NULL));
 	setSaneAltSurface(app, gconf_client_get_string(client, "/apps/celestia/altSurfaceName", NULL));
 	
 	app->showLocalTime = gconf_client_get_bool(client, "/apps/celestia/showLocalTime", NULL);
@@ -132,9 +135,12 @@ void saveSettingsGConf(AppData* app)
 	gconf_client_set_int(app->client, "/apps/celestia/winX", getWinX(app), NULL);
 	gconf_client_set_int(app->client, "/apps/celestia/winY", getWinY(app), NULL);
 	
-	/* Save window  size */
+	/* Save window size */
 	gconf_client_set_int(app->client, "/apps/celestia/winWidth", getWinWidth(app), NULL);
 	gconf_client_set_int(app->client, "/apps/celestia/winHeight", getWinHeight(app), NULL);
+
+	/* Save texture resolution: does not produce notification when changed */
+	gconf_client_set_int(app->client, "/apps/celestia/textureResolution", app->renderer->getResolution(), NULL);
 	
 	g_object_unref (G_OBJECT (app->client));
 }
@@ -376,6 +382,18 @@ static void confStarStyle(GConfClient*, guint, GConfEntry* e, AppData* app)
 		return;
 	
 	setSaneStarStyle(app, (Renderer::StarStyle)value);
+}
+
+
+/* GCONF CALLBACK: Sets texture resolution when changed */
+static void confTextureResolution(GConfClient*, guint, GConfEntry* e, AppData* app)
+{
+	int value = gconf_value_get_int(e->value);
+	
+	if (value == app->renderer->getResolution())
+		return;
+	
+	setSaneTextureResolution(app, value);
 }
 
 

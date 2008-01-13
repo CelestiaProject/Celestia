@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-options.cpp,v 1.4 2008-01-09 06:15:04 suwalski Exp $
+ *  $Id: dialog-options.cpp,v 1.5 2008-01-13 03:02:41 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -21,6 +21,8 @@
 
 /* Definitions: Callbacks */
 static gint changeDistanceLimit(GtkRange *slider, AppData* app);
+static gint changeTextureResolution(GtkRange *slider, AppData* app);
+static gchar* formatTextureSlider(GtkRange*, gdouble value);
 
 /* Definitions: Helpers */
 static void checkButtonsFromAG(const GtkToggleActionEntry actions[], int size, GtkActionGroup* ag, GtkWidget* box);
@@ -60,6 +62,7 @@ void dialogViewOptions(AppData* app)
 	GtkWidget* orbitFrame = gtk_frame_new("Orbits");
 	GtkWidget* labelFrame = gtk_frame_new("Label");
 	GtkWidget* limitFrame = gtk_frame_new("Filter Stars");
+	GtkWidget* textureFrame = gtk_frame_new("Texture Detail");
 	GtkWidget* infoFrame = gtk_frame_new("Info Text");
 	GtkWidget* ambientFrame = gtk_frame_new("Ambient Light");
 
@@ -68,6 +71,7 @@ void dialogViewOptions(AppData* app)
 	GtkWidget* labelBox = gtk_vbox_new(FALSE, 0);
 	GtkWidget* orbitBox = gtk_vbox_new(FALSE, 0);
 	GtkWidget* limitBox = gtk_vbox_new(FALSE, 0);
+	GtkWidget* textureBox = gtk_vbox_new(FALSE, 0);
 	GtkWidget* infoBox = gtk_vbox_new(FALSE, 0);
 	GtkWidget* ambientBox = gtk_vbox_new(FALSE, 0);
     
@@ -76,6 +80,7 @@ void dialogViewOptions(AppData* app)
 	gtk_container_border_width(GTK_CONTAINER(labelBox), CELSPACING);
 	gtk_container_border_width(GTK_CONTAINER(orbitBox), CELSPACING);
 	gtk_container_border_width(GTK_CONTAINER(limitBox), CELSPACING);
+	gtk_container_border_width(GTK_CONTAINER(textureBox), CELSPACING);
 	gtk_container_border_width(GTK_CONTAINER(ambientBox), CELSPACING);
 	gtk_container_border_width(GTK_CONTAINER(infoBox), CELSPACING);
 	
@@ -84,6 +89,7 @@ void dialogViewOptions(AppData* app)
 	gtk_container_border_width(GTK_CONTAINER(labelFrame), 0);
 	gtk_container_border_width(GTK_CONTAINER(orbitFrame), 0);
 	gtk_container_border_width(GTK_CONTAINER(limitFrame), 0);
+	gtk_container_border_width(GTK_CONTAINER(textureFrame), 0);
 	gtk_container_border_width(GTK_CONTAINER(ambientFrame), 0);
 	gtk_container_border_width(GTK_CONTAINER(infoFrame), 0);
 	
@@ -92,6 +98,7 @@ void dialogViewOptions(AppData* app)
 	gtk_container_add(GTK_CONTAINER(labelFrame), GTK_WIDGET(labelBox));
 	gtk_container_add(GTK_CONTAINER(orbitFrame), GTK_WIDGET(orbitBox));
 	gtk_container_add(GTK_CONTAINER(limitFrame),GTK_WIDGET(limitBox));
+	gtk_container_add(GTK_CONTAINER(textureFrame),GTK_WIDGET(textureBox));
 	gtk_container_add(GTK_CONTAINER(ambientFrame),GTK_WIDGET(ambientBox));
 	gtk_container_add(GTK_CONTAINER(infoFrame),GTK_WIDGET(infoBox));
 
@@ -99,6 +106,7 @@ void dialogViewOptions(AppData* app)
 	gtk_box_pack_start(GTK_BOX(hbox), showFrame, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(midBox), labelFrame, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(midBox), limitFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(midBox), textureFrame, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(miscBox), orbitFrame, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(miscBox), ambientFrame, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(miscBox), infoFrame, TRUE, TRUE, 0);
@@ -114,6 +122,7 @@ void dialogViewOptions(AppData* app)
 	                        gtk_adjustment_new((gfloat)(logDistanceLimit * DistanceSliderRange),
 	                        0.0, DistanceSliderRange, 1.0, 2.0, 0.0);
 
+	/* Distance limit slider */
 	GtkWidget* magLabel = gtk_label_new(NULL);
 	GtkWidget* slider = gtk_hscale_new(adj);
 	g_object_set_data(G_OBJECT(slider), "valueLabel", magLabel);
@@ -122,6 +131,16 @@ void dialogViewOptions(AppData* app)
 	gtk_box_pack_start(GTK_BOX(limitBox), magLabel, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(slider), "value-changed", G_CALLBACK(changeDistanceLimit), app);
 	changeDistanceLimit(GTK_RANGE(GTK_HSCALE(slider)), app);
+
+	/* Texture resolution slider */
+	GtkWidget* textureSlider = gtk_hscale_new_with_range(0, 2, 1);
+	gtk_scale_set_value_pos(GTK_SCALE(textureSlider), GTK_POS_BOTTOM);
+	gtk_range_set_increments(GTK_RANGE(textureSlider), 1, 1);
+	gtk_range_set_value(GTK_RANGE(textureSlider), app->renderer->getResolution());
+	gtk_range_set_update_policy(GTK_RANGE(textureSlider), GTK_UPDATE_DISCONTINUOUS);
+	gtk_box_pack_start(GTK_BOX(textureBox), textureSlider, TRUE, TRUE, 0);
+	g_signal_connect(GTK_OBJECT(textureSlider), "value-changed", G_CALLBACK(changeTextureResolution), app);
+	g_signal_connect(GTK_OBJECT(textureSlider), "format-value", G_CALLBACK(formatTextureSlider), NULL);
 
 	checkButtonsFromAG(actionsRenderFlags, G_N_ELEMENTS(actionsRenderFlags), app->agRender, showBox);
 	checkButtonsFromAG(actionsOrbitFlags, G_N_ELEMENTS(actionsOrbitFlags), app->agOrbit, orbitBox);
@@ -151,6 +170,33 @@ static gint changeDistanceLimit(GtkRange *slider, AppData* app)
 	gtk_label_set_text(GTK_LABEL(magLabel), labeltext);
 
 	return TRUE;
+}
+
+
+/* CALLBACK: React to changes in the texture resolution slider */
+static gint changeTextureResolution(GtkRange *slider, AppData* app)
+{
+	app->renderer->setResolution((int)gtk_range_get_value(slider));
+
+	#ifdef GNOME
+	/* Texture resolution changes do not trigger an event like the other
+	 * render settings. Save setting here. */
+	gconf_client_set_int(app->client, "/apps/celestia/textureResolution", app->renderer->getResolution(), NULL);
+	#endif /* GNOME */
+
+	return TRUE;
+}
+
+
+/* CALLBACK: Format the label under the texture detail slider */
+static gchar* formatTextureSlider(GtkRange*, gdouble value)
+{
+	switch ((int)value) {
+		case 0: return g_strdup("Low");
+		case 1: return g_strdup("Medium");
+		case 2: return g_strdup("High");
+		default: return g_strdup("Error");
+	}
 }
 
 

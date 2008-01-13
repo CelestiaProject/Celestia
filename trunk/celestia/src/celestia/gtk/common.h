@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.h,v 1.3 2005-12-13 06:19:57 suwalski Exp $
+ *  $Id: common.h,v 1.4 2008-01-13 03:02:41 suwalski Exp $
  */
 
 #ifndef GTK_COMMON_H
@@ -93,6 +93,7 @@ void setSaneVisualMagnitude(AppData* app, float value);
 void setSaneGalaxyLightGain(float value);
 void setSaneVerbosity(AppData* app, int value);
 void setSaneStarStyle(AppData* app, Renderer::StarStyle value);
+void setSaneTextureResolution(AppData* app, int value);
 void setSaneAltSurface(AppData* app, char* value);
 void setSaneWinSize(AppData* app, int x, int y);
 void setSaneWinPosition(AppData* app, int x, int y);
