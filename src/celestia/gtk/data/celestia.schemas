@@ -112,7 +112,18 @@
       <default>0</default>
       <locale name="C">
         <short>Style of star rendering.</short>
-		<long>0=Fuzzy Points, 1=Points, 2=Scaled Discs</long>
+        <long>0=Fuzzy Points, 1=Points, 2=Scaled Discs</long>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/textureResolution</key>
+      <applyto>/apps/celestia/textureResolution</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>1</default>
+      <locale name="C">
+        <short>Resolution of textures.</short>
+        <long>0=Low, 1=Medium, 2=High</long>
       </locale>
     </schema>
     <schema>
