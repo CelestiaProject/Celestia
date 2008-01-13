@@ -1,0 +1,150 @@
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Beginnen met de demo . . .\nDruk ESC om te stoppen." origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "Laten we dicht bij huis beginnen . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "We zweven nu ongeveer 12,500km boven de aarde." row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Aarde ziet er met wolken veel herkenbaarder uit." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Volgende halte: de Maan." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Let op de Aarde en de Zon als we rond de Maan draaien." row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Op naar de Zon." row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "Op deze afstand zijn de donkere zonnevlekken op het oppervlak van de Zon goed zichtbaar." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Laten we uitzoomen voor een overzicht van het binnenste gedeelte van het zonnestelsel." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Activeren van labels bij de planeten . . ." row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "We kunnen tijd nu versnellen om de planeten rond de zon te zien draaien." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "Elke seconde verstrijkt een maand in de simulatie." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Nu is de tijd helemaal gestopt." row -3}
+
+	wait { duration 1.0 }
+	print { text "Onze volgende bestemming is Saturnus." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Diverse manen van Saturnus zijn zichtbaar als heldere stippen" row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "Het meest prominente kenmerk op Saturnus' maan Mimas is de grote inslagkrater Herschel." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Zie hoe zwak de Zon vanaf deze afstand is." row -3 }
+	wait { duration 2 }
+
+	print { text "Laten we eens naar de sterren in de hemel kijken." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Mensen van het Noordelijk Halfrond zouden het sterrenbeeld Grote Beer moeten herkennen." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "We zijn nu gecentreerd op Polaris, de Poolster." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Polaris bevindt zich in het sterrenbeeld Kleine Beer." row -3}
+	wait { duration 2 }
+	print { text "Om ons te helpen oriënteren kan Celestia de sterrenbeelden tekenen . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . en de bijbehorende namen" row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orion is het meest prominente sterrenbeeld in de hemel." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Het Zuiderkruis is een herkenbaar gezicht in de hemel van het Zuidelijk Halfrond." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Laten we sterrenstelsel weergave eens aanzetten, zodat we de Melkweg kunnen zien." row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Nu reizen we naar Antares, een grote rode ster in Schorpioen." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "Zelfs nu we 10 keer verder van Antares zijn dan\nAarde van de Zon is, beslaat de gigantische rode ster nog steeds een groot gedeelte van de hemel." row -3}
+	wait { duration 4.0 }
+
+	print { text "Laten we uitzoomen voor het grote overzicht . . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "We zien nu het hele Melkweg stelsel." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Tijd om naar huis te gaan . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Demo afgelopen." row -3}
+	wait { duration 3.0 }
+}
