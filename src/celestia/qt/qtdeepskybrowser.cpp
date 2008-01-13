@@ -36,6 +36,8 @@
 using namespace std;
 
 
+static const int MAX_LISTED_DSOS = 20000;
+
 class DSOFilterPredicate
 {
 public:
@@ -394,8 +396,10 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     appCore(_appCore),
     dsoModel(NULL),
     treeView(NULL),
-    closestButton(NULL),
-    brightestButton(NULL)
+    searchResultLabel(NULL),
+    galaxiesButton(NULL),
+    nebulaeButton(NULL),
+    openClustersButton(NULL)
 {
     treeView = new QTreeView();
     treeView->setRootIsDecorated(false);
@@ -415,16 +419,23 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
 
+    searchResultLabel = new QLabel("");
+    layout->addWidget(searchResultLabel);
+
     // Buttons to select filtering criterion for dsos
-    closestButton = new QRadioButton(tr("Closest"));
-    connect(closestButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    layout->addWidget(closestButton);
+    galaxiesButton = new QRadioButton(tr("Galaxies"));
+    connect(galaxiesButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
+    layout->addWidget(galaxiesButton);
 
-    brightestButton = new QRadioButton(tr("Brightest"));
-    connect(brightestButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    layout->addWidget(brightestButton);
+    nebulaeButton = new QRadioButton(tr("Nebulae"));
+    connect(nebulaeButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
+    layout->addWidget(nebulaeButton);
 
-    closestButton->setChecked(true);
+    openClustersButton = new QRadioButton(tr("Open Clusters"));
+    connect(openClustersButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
+    layout->addWidget(openClustersButton);
+    
+    galaxiesButton->setChecked(true);
 
     // Additional filtering controls
     QGroupBox* filterGroup = new QGroupBox(tr("Filter"));
@@ -497,13 +508,18 @@ void DeepSkyBrowser::slotRefreshTable()
     UniversalCoord observerPos = appCore->getSimulation()->getActiveObserver()->getPosition();
 
     DSOPredicate::Criterion criterion = DSOPredicate::Distance;
-    if (brightestButton->isChecked())
-        criterion = DSOPredicate::Brightness;
 
     treeView->clearSelection();
 
     // Set up the filter
     DSOFilterPredicate filterPred;
+
+    if (galaxiesButton->isChecked())
+        filterPred.objectTypeMask = Renderer::ShowGalaxies;
+    else if (nebulaeButton->isChecked())
+        filterPred.objectTypeMask = Renderer::ShowNebulae;
+    else
+        filterPred.objectTypeMask = Renderer::ShowOpenClusters;
 
     QRegExp re(objectTypeFilterBox->text(),
                Qt::CaseInsensitive,
@@ -518,7 +534,9 @@ void DeepSkyBrowser::slotRefreshTable()
         filterPred.typeFilterEnabled = false;
     }
 
-    dsoModel->populate(observerPos, filterPred, criterion, 1000);
+    dsoModel->populate(observerPos, filterPred, criterion, MAX_LISTED_DSOS);
+
+    searchResultLabel->setText(tr("%1 objects found").arg(dsoModel->rowCount(QModelIndex())));
 }
 
 

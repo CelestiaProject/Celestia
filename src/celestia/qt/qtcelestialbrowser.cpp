@@ -442,6 +442,7 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     appCore(_appCore),
     starModel(NULL),
     treeView(NULL),
+    searchResultLabel(NULL),
     closestButton(NULL),
     brightestButton(NULL)
 {
@@ -462,6 +463,9 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
+
+    searchResultLabel = new QLabel("");
+    layout->addWidget(searchResultLabel);
 
     // Buttons to select filtering criterion for stars
     closestButton = new QRadioButton(tr("Closest Stars"));
@@ -576,6 +580,8 @@ void CelestialBrowser::slotRefreshTable()
     }
 
     starModel->populate(observerPos, filterPred, criterion, 1000);
+
+    searchResultLabel->setText(tr("%1 objects found").arg(starModel->rowCount(QModelIndex())));
 }
 
 
