@@ -41,8 +41,7 @@ private:
     CelestiaCore* appCore;
     double tdb;
     bool useLocalTime;
-    char localTimeZoneAbbrev[64];
-    char localTimeZoneName[64];
+    bool useUTCOffset;
     int localTimeZoneBiasInSeconds;
     
     void getLocalTimeZoneInfo();
@@ -54,10 +53,9 @@ SetTimeDialog::SetTimeDialog(CelestiaCore* _appCore) :
     appCore(_appCore),
     tdb(astro::J2000),
     useLocalTime(false),
+    useUTCOffset(false),
     localTimeZoneBiasInSeconds(0)
 {
-    localTimeZoneAbbrev[0] = '\0';
-    localTimeZoneName[0] = '\0';
 }
 
 
@@ -87,18 +85,23 @@ SetTimeDialog::init(HWND _hDlg)
     hDlg = _hDlg;
     
     SetWindowLong(hDlg, DWL_USER, reinterpret_cast<LPARAM>(this));
-    getLocalTimeZoneInfo();
     
     tdb = appCore->getSimulation()->getTime();
     useLocalTime = appCore->getTimeZoneBias() != 0;
+    useUTCOffset = appCore->getDateFormat() == 2;
 
     bind_textdomain_codeset("celestia", CurrentCP());
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) _("Universal Time"));
-    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) localTimeZoneName);
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, (LPARAM) _("Local Time"));
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("Time Zone Name"));
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_ADDSTRING, 0, (LPARAM) _("UTC Offset"));
     bind_textdomain_codeset("celestia", "UTF8");
     
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_SETCURSEL, useLocalTime ? 1 : 0, 0);
-    
+    SendDlgItemMessage(hDlg, IDC_COMBOBOX_DATE_FORMAT, CB_SETCURSEL, useUTCOffset ? 1 : 0, 0);
+
+    EnableWindow (GetDlgItem (hDlg, IDC_COMBOBOX_DATE_FORMAT), useLocalTime);
+
     updateControls();
 }
 
@@ -125,22 +128,6 @@ SetTimeDialog::getLocalTimeZoneInfo()
         }
 
         localTimeZoneBiasInSeconds = (tzi.Bias + dstBias) * -60;
-        
-        // Convert from wide chars to a normal C string
-        WideCharToMultiByte(CP_ACP, 0,
-                            tzName, -1,
-                            localTimeZoneName, sizeof(localTimeZoneName),
-                            NULL, NULL);
-        strcpy(localTimeZoneAbbrev, localTimeZoneName);
-
-        // Not sure what GetTimeZoneInformation can return for the
-        // time zone name.  On my XP system, it returns the string
-        // "Pacific Standard Time", when we want PST . . .  So, we
-        // call acronymify to do the conversion.  If the time zone
-        // name doesn't contain any spaces, we assume that it's
-        // already in acronym form.
-        if (strchr(localTimeZoneAbbrev, ' ') != NULL)
-            acronymify(localTimeZoneAbbrev, strlen(localTimeZoneAbbrev));
     }
 }
 
@@ -191,10 +178,9 @@ SetTimeDialog::updateControls()
     timeItem = GetDlgItem(hDlg, IDC_TIMEPICKER);
     if (timeItem != NULL)
     {
-        char dateFormat[256];
-        char* timeZoneName = useLocalTime ? localTimeZoneAbbrev : "UTC";
-        sprintf(dateFormat, "HH':'mm':'ss' %s'", timeZoneName);
-        DateTime_SetFormat(timeItem, dateFormat);
+        char timeFormat[256];
+        sprintf(timeFormat, "HH':'mm':'ss");
+        DateTime_SetFormat(timeItem, timeFormat);
         DateTime_SetSystemtime(timeItem, GDT_VALID, &sysTime);
     }
 
@@ -217,6 +203,7 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
             appCore->tick();
             appCore->getSimulation()->setTime(tdb);
             appCore->setTimeZoneBias(useLocalTime ? 1 : 0);
+            appCore->setDateFormat((astro::Date::Format) (useLocalTime && useUTCOffset ? 2 : 1));
             EndDialog(hDlg, 0);
             return TRUE;
             
@@ -235,10 +222,20 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
             {
                 LRESULT selection = SendMessage((HWND) lParam, CB_GETCURSEL, 0, 0);
                 useLocalTime = (selection == 1);
+                EnableWindow (GetDlgItem (hDlg, IDC_COMBOBOX_DATE_FORMAT), useLocalTime);
                 updateControls();
             }
             return TRUE;          
-            
+
+        case IDC_COMBOBOX_DATE_FORMAT:
+            if (HIWORD(wParam) == CBN_SELCHANGE)
+            {
+                LRESULT selection = SendMessage((HWND) lParam, CB_GETCURSEL, 0, 0);
+                useUTCOffset = (selection == 1);
+                updateControls();
+            }
+            return TRUE;  
+
         case IDC_JDPICKER:
             if (HIWORD(wParam) == EN_KILLFOCUS)
             {
