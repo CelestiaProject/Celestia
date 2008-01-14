@@ -12,8 +12,8 @@
 
 #include "qtdeepskybrowser.h"
 #include "qtselectionpopup.h"
+#include "qtcolorswatchwidget.h"
 #include <QAbstractItemModel>
-#include <QStandardItemModel>
 #include <QTreeView>
 #include <QPushButton>
 #include <QRadioButton>
@@ -24,7 +24,6 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QColorDialog>
 #include <QLineEdit>
 #include <QRegExp>
 #include <cstring>
@@ -160,12 +159,13 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
         }
     case DistanceColumn:
         {
-            return QVariant(observerPos.distanceTo(dso->getPosition()));
+            //return QVariant(observerPos.distanceTo(dso->getPosition()));
+            return QString("%L1").arg(observerPos.distanceTo(dso->getPosition()), 0, 'g', 4);
         }
     case AppMagColumn:
         {
             double distance = observerPos.distanceTo(dso->getPosition());
-            return QVariant(astro::absToAppMag((double) dso->getAbsoluteMagnitude(), distance));
+            return QString("%1").arg(astro::absToAppMag((double) dso->getAbsoluteMagnitude(), distance), 0, 'f', 2);
         }
     case TypeColumn:
         return QString(dso->getType());
@@ -459,8 +459,14 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QGridLayout* markGroupLayout = new QGridLayout();
 
     QPushButton* markSelectedButton = new QPushButton(tr("Mark Selected"));
+    markSelectedButton->setToolTip(tr("Mark stars selected in list view"));
     connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
     markGroupLayout->addWidget(markSelectedButton, 0, 0);
+
+    QPushButton* clearMarkersButton = new QPushButton(tr("Clear Markers"));
+    connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
+    clearMarkersButton->setToolTip(tr("Remove all existing markers"));
+    markGroupLayout->addWidget(clearMarkersButton, 0, 1);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
@@ -472,16 +478,12 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     markerSymbolBox->addItem(tr("X"), (int) Marker::X);
     markerSymbolBox->addItem(tr("Circle"), (int) Marker::Circle);
     markerSymbolBox->setCurrentIndex(1);
-    markGroupLayout->addWidget(markerSymbolBox, 0, 1);
+    markerSymbolBox->setToolTip(tr("Select marker symbol"));
+    markGroupLayout->addWidget(markerSymbolBox, 1, 0);
 
-    QPushButton* colorButton = new QPushButton(tr("Marker Color"));
-    connect(colorButton, SIGNAL(clicked()), this, SLOT(slotChooseMarkerColor()));
-    markGroupLayout->addWidget(colorButton, 1, 0);
-
-    colorLabel = new QLabel();
-    colorLabel->setFrameStyle(QFrame::Sunken | QFrame::Panel);
-    markGroupLayout->addWidget(colorLabel, 1, 1);
-    setMarkerColor(QColor("cyan"));
+    colorSwatch = new ColorSwatchWidget(QColor("cyan"));
+    colorSwatch->setToolTip(tr("Click to select marker color"));
+    markGroupLayout->addWidget(colorSwatch, 1, 1);
 
     labelMarkerBox = new QCheckBox(tr("Label"));
     markGroupLayout->addWidget(labelMarkerBox, 2, 0);
@@ -535,6 +537,8 @@ void DeepSkyBrowser::slotRefreshTable()
     }
 
     dsoModel->populate(observerPos, filterPred, criterion, MAX_LISTED_DSOS);
+    treeView->resizeColumnToContents(DSOTableModel::DistanceColumn);
+    treeView->resizeColumnToContents(DSOTableModel::AppMagColumn);
 
     searchResultLabel->setText(tr("%1 objects found").arg(dsoModel->rowCount(QModelIndex())));
 }
@@ -562,6 +566,7 @@ void DeepSkyBrowser::slotMarkSelected()
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
     Marker::Symbol markerSymbol = (Marker::Symbol) markerData.toInt(&convertOK);
+    QColor markerColor = colorSwatch->color();
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
                 (float) markerColor.blueF());
@@ -597,19 +602,7 @@ void DeepSkyBrowser::slotMarkSelected()
 }
 
 
-void DeepSkyBrowser::slotChooseMarkerColor()
+void DeepSkyBrowser::slotClearMarkers()
 {
-    QColor color = QColorDialog::getColor(markerColor, this);
-    if (color.isValid())
-        setMarkerColor(color);
-}
-
-
-/********* Internal methods *******/
-
-void DeepSkyBrowser::setMarkerColor(QColor color)
-{
-    markerColor = color;
-    colorLabel->setPalette(QPalette(markerColor));
-    colorLabel->setAutoFillBackground(true);
+    appCore->getSimulation()->getUniverse()->unmarkAll();
 }
