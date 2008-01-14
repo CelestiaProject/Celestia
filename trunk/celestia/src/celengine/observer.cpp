@@ -967,9 +967,29 @@ static double getPreferredDistance(const Selection& selection)
         return 5.0 * selection.radius();
     case Selection::Type_Star:
         if (selection.star()->getVisibility())
+        {
             return 100.0 * selection.radius();
+        }
         else
-            return astro::AUtoKilometers(1.0);
+        {
+            double maxOrbitRadius = 0.0;
+            const vector<Star*>* orbitingStars = selection.star()->getOrbitingStars();
+            if (orbitingStars != NULL)
+            {
+                for (vector<Star*>::const_iterator iter = orbitingStars->begin();
+                     iter != orbitingStars->end(); iter++)
+                {
+                    Orbit* orbit = (*iter)->getOrbit();
+                    if (orbit != NULL)
+                        maxOrbitRadius = max(orbit->getBoundingRadius(), maxOrbitRadius);
+                }
+            }
+
+            if (maxOrbitRadius == 0.0)
+                return astro::AUtoKilometers(1.0);
+            else
+                return maxOrbitRadius * 5.0;
+        }
     case Selection::Type_Location:
         {
             double maxDist = getPreferredDistance(selection.location()->getParentBody());

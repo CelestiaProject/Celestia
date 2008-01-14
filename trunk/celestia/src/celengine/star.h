@@ -10,6 +10,7 @@
 #ifndef _STAR_H_
 #define _STAR_H_
 
+#include <vector>
 #include <celutil/basictypes.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
@@ -25,13 +26,19 @@ class Star;
 
 class StarDetails
 {
-    // TODO: This class really needs an assignment operator and
-    // copy constructor.  We need to do some management tracking of
-    // orbits and StarDetails objects.  Currently, it's assumed that they
-    // have lifetimes that continue until program termination.
+    friend class Star;
+
  public:
     StarDetails();
+    StarDetails(const StarDetails&);
 
+    ~StarDetails();
+    
+ private:
+    // Prohibit assignment of StarDetails objects
+    StarDetails& operator=(const StarDetails&);
+
+ public:
     inline float getRadius() const;
     inline float getTemperature() const;
     inline ResourceHandle getModel() const;
@@ -58,6 +65,8 @@ class StarDetails
     void setVisibility(bool);
     void setRotationModel(const RotationModel*);
     void setEllipsoidSemiAxes(const Vec3f&);
+
+    bool shared() const;
     
     enum
     {
@@ -68,6 +77,9 @@ class StarDetails
     inline bool getKnowledge(uint32) const;
     void setKnowledge(uint32);
     void addKnowledge(uint32);
+
+ private:
+    void addOrbitingStar(Star*);
 
  private:
     float radius;
@@ -88,6 +100,9 @@ class StarDetails
     const RotationModel* rotationModel;
 
     Vec3f semiAxes;
+
+    std::vector<Star*>* orbitingStars;
+    bool isShared;
 
  public:
     struct StarTextureSet
@@ -208,6 +223,7 @@ class Star
 {
 public:
     inline Star();
+    ~Star();
 
     // Accessor methods for members of the star class
     inline uint32 getCatalogNumber() const;
@@ -231,6 +247,9 @@ public:
     void computeOrbitalRadius();
 
     void setRotationModel(const RotationModel*);
+
+    void addOrbitingStar(Star*);
+    inline const std::vector<Star*>* getOrbitingStars() const;
 
     // Accessor methods that delegate to StarDetails
     float getRadius() const;
@@ -343,6 +362,12 @@ Vec3f
 Star::getEllipsoidSemiAxes() const
 {
     return details->getEllipsoidSemiAxes();
+}
+
+const std::vector<Star*>*
+Star::getOrbitingStars() const
+{
+    return details->orbitingStars;
 }
 
 #endif // _STAR_H_

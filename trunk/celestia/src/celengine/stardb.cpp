@@ -857,8 +857,12 @@ void StarDatabase::finish()
         assert(star != NULL);
         assert(barycenter != NULL);
         if (star != NULL && barycenter != NULL)
+        {
             star->setOrbitBarycenter(barycenter);
+            barycenter->addOrbitingStar(star);
+        }
     }
+
     barycenters.clear();
 }
 
@@ -935,10 +939,6 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
         // stars of the same spectral type.
-        // TODO: Need better management of star details objects.  The
-        // standard ones should be persistent, but the custom ones should
-        // probably be destroyed in the star destructor.  Reference counting
-        // is probably the best strategy.
         details = new StarDetails(*details);
 
         if (hasTexture)
