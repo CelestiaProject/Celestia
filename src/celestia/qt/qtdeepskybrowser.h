@@ -22,6 +22,7 @@ class QComboBox;
 class QCheckBox;
 class QLabel;
 class QLineEdit;
+class ColorSwatchWidget;
 class CelestiaCore;
 
 class DSOTableModel;
@@ -38,10 +39,7 @@ Q_OBJECT
     void slotRefreshTable();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
-    void slotChooseMarkerColor();
-
- private:
-    void setMarkerColor(QColor color);
+    void slotClearMarkers();
 
  private:
     CelestiaCore* appCore;
@@ -60,8 +58,7 @@ Q_OBJECT
     QComboBox* markerSymbolBox;
     QCheckBox* labelMarkerBox;
 
-    QLabel* colorLabel;
-    QColor markerColor;
+    ColorSwatchWidget* colorSwatch;
 };
 
 #endif // _QTDEEPSKYBROWSER_H_
