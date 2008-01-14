@@ -9,11 +9,14 @@
 
 #include <celmath/mathlib.h>
 #include <cstring>
+#include <cassert>
 #include "celestia.h"
 #include "astro.h"
 #include "orbit.h"
 #include "star.h"
 #include "texmanager.h"
+
+using namespace std;
 
 
 // The value of the temperature of the sun is actually 5780, but the
@@ -738,13 +741,44 @@ StarDetails::StarDetails() :
     bolometricCorrection(0.0f),
     knowledge(0u),
     visible(true),
+    texture(texture),
     model(InvalidResource),
     orbit(NULL),
     orbitalRadius(0.0f),
     barycenter(NULL),
-    semiAxes(1.0f, 1.0f, 1.0f)
+    rotationModel(NULL),
+    semiAxes(1.0f, 1.0f, 1.0f),
+    orbitingStars(NULL),
+    isShared(true)
 {
     spectralType[0] = '\0';
+}
+
+
+StarDetails::StarDetails(const StarDetails& sd) :
+    radius(sd.radius),
+    temperature(sd.temperature),
+    bolometricCorrection(sd.bolometricCorrection),
+    knowledge(sd.knowledge),
+    visible(sd.visible),
+    texture(texture),
+    model(sd.model),
+    orbit(sd.orbit),
+    orbitalRadius(sd.orbitalRadius),
+    barycenter(sd.barycenter),
+    rotationModel(sd.rotationModel),
+    semiAxes(sd.semiAxes),
+    orbitingStars(NULL),
+    isShared(false)
+{
+    assert(sd.isShared);
+    memcpy(spectralType, sd.spectralType, sizeof(spectralType));
+}
+
+
+StarDetails::~StarDetails()
+{
+    delete orbitingStars;
 }
 
 
@@ -859,6 +893,18 @@ StarDetails::setRotationModel(const RotationModel* rm)
 }
 
 
+
+Star::~Star()
+{
+    // TODO: Implement reference counting for StarDetails objects so that
+    // we can enable this.
+#if 0
+    if (!details->shared())
+        delete details;
+#endif
+}
+
+
 // Return the radius of the star in kilometers
 float Star::getRadius() const
 {
@@ -889,6 +935,23 @@ void
 StarDetails::setEllipsoidSemiAxes(const Vec3f& v)
 {
     semiAxes = v;
+}
+
+
+bool
+StarDetails::shared() const
+{
+    return isShared;
+}
+
+
+void
+StarDetails::addOrbitingStar(Star* star)
+{
+    assert(!shared());
+    if (orbitingStars == NULL)
+        orbitingStars = new vector<Star*>();
+    orbitingStars->push_back(star);
 }
 
 
@@ -1016,4 +1079,12 @@ void
 Star::setRotationModel(const RotationModel* rm)
 {
     details->setRotationModel(rm);
+}
+
+void
+Star::addOrbitingStar(Star* star)
+{
+    if (details->shared())
+        details = new StarDetails(*details);
+    details->addOrbitingStar(star);
 }
