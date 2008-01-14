@@ -3,7 +3,7 @@
 // Copyright (C) 2007-2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
 //
-// Dockable celestial browser widget.
+// Star browser widget for Qt4 front-end.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,8 +12,8 @@
 
 #include "qtcelestialbrowser.h"
 #include "qtselectionpopup.h"
+#include "qtcolorswatchwidget.h"
 #include <QAbstractItemModel>
-#include <QStandardItemModel>
 #include <QTreeView>
 #include <QPushButton>
 #include <QRadioButton>
@@ -24,9 +24,9 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
-#include <QColorDialog>
 #include <QLineEdit>
 #include <QRegExp>
+#include <QFontMetrics>
 #include <cstring>
 #include <vector>
 #include <set>
@@ -150,34 +150,56 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
 
     const Star* star = stars[row];
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
-
-    switch (index.column())
+    if (role == Qt::DisplayRole)
     {
-    case NameColumn:
+        switch (index.column())
         {
-            string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star));
-            return QVariant(QString::fromUtf8(starNameString.c_str()));
+        case NameColumn:
+            {
+                string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star));
+                return QVariant(QString::fromUtf8(starNameString.c_str()));
+            }
+        case DistanceColumn:
+            {
+                UniversalCoord pos = star->getPosition(astro::J2000);
+                Vec3d v = pos - observerPos;
+                return QVariant(v.length() * 1.0e-6);
+            }
+        case AppMagColumn:
+            {
+                UniversalCoord pos = star->getPosition(astro::J2000);
+                Vec3d v = pos - observerPos;
+                double distance = v.length() * 1.0e-6;
+                return QString("%1").arg((double) star->getApparentMagnitude((float) distance), 0, 'f', 2);
+            }
+        case AbsMagColumn:
+            return QString("%1").arg(star->getAbsoluteMagnitude(), 0, 'f', 2);
+        case SpectralTypeColumn:
+            return QString(star->getSpectralType());
+        default:
+            return QVariant();
         }
-    case DistanceColumn:
+    }
+    else if (role == Qt::ToolTipRole)
+    {
+        // Experimental feature: show the HD catalog number of a star as a tooltip
+        switch (index.column())
         {
-            UniversalCoord pos = star->getPosition(astro::J2000);
-            Vec3d v = pos - observerPos;
-            return QVariant(v.length() * 1.0e-6);
+        case NameColumn:
+            {
+                uint32 hipCatNo = star->getCatalogNumber();
+                uint32 hdCatNo   = universe->getStarCatalog()->crossIndex(StarDatabase::HenryDraper, hipCatNo);
+                if (hdCatNo != Star::InvalidCatalogNumber)
+                    return QString("HD %1").arg(hdCatNo);
+                else
+                    return QVariant();
+            }
+        default:
+            return QVariant();
         }
-    case AppMagColumn:
-        {
-            UniversalCoord pos = star->getPosition(astro::J2000);
-            Vec3d v = pos - observerPos;
-            double distance = v.length() * 1.0e-6;
-            return QVariant(star->getApparentMagnitude((float) distance));
-        }
-    case AbsMagColumn:
-        return QVariant(star->getAbsoluteMagnitude());
-    case SpectralTypeColumn:
-        return QString(star->getSpectralType());
-    default:
+    }
+    else
+    {
         return QVariant();
     }
 }
@@ -457,6 +479,13 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     starModel = new StarTableModel(appCore->getSimulation()->getUniverse());
     treeView->setModel(starModel);
 
+#if 0
+    QFontMetrics fm = fontMetrics();
+    treeView->setColumnWidth(StarTableModel::DistanceColumn, fm.width(starModel->headerData(StarTableModel::DistanceColumn)));
+    treeView->setColumnWidth(StarTableModel::AppMagColumn, 30);
+    treeView->setColumnWidth(StarTableModel::AbsMagColumn, 30);
+#endif
+
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(slotContextMenu(const QPoint&)));
@@ -507,7 +536,13 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
 
     QPushButton* markSelectedButton = new QPushButton(tr("Mark Selected"));
     connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
+    markSelectedButton->setToolTip(tr("Mark stars selected in list view"));
     markGroupLayout->addWidget(markSelectedButton, 0, 0);
+
+    QPushButton* clearMarkersButton = new QPushButton(tr("Clear Markers"));
+    connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
+    clearMarkersButton->setToolTip(tr("Remove all existing markers"));
+    markGroupLayout->addWidget(clearMarkersButton, 0, 1);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
@@ -519,17 +554,13 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     markerSymbolBox->addItem(tr("X"), (int) Marker::X);
     markerSymbolBox->addItem(tr("Circle"), (int) Marker::Circle);
     markerSymbolBox->setCurrentIndex(1);
-    markGroupLayout->addWidget(markerSymbolBox, 0, 1);
+    markerSymbolBox->setToolTip(tr("Select marker symbol"));
+    markGroupLayout->addWidget(markerSymbolBox, 1, 0);
 
-    QPushButton* colorButton = new QPushButton(tr("Marker Color"));
-    connect(colorButton, SIGNAL(clicked()), this, SLOT(slotChooseMarkerColor()));
-    markGroupLayout->addWidget(colorButton, 1, 0);
-
-    colorLabel = new QLabel();
-    colorLabel->setFrameStyle(QFrame::Sunken | QFrame::Panel);
-    markGroupLayout->addWidget(colorLabel, 1, 1);
-    setMarkerColor(QColor("cyan"));
-
+    colorSwatch = new ColorSwatchWidget(QColor("cyan"));
+    colorSwatch->setToolTip(tr("Click to select marker color"));
+    markGroupLayout->addWidget(colorSwatch, 1, 1);
+    
     labelMarkerBox = new QCheckBox(tr("Label"));
     markGroupLayout->addWidget(labelMarkerBox, 2, 0);
 
@@ -581,6 +612,10 @@ void CelestialBrowser::slotRefreshTable()
 
     starModel->populate(observerPos, filterPred, criterion, 1000);
 
+    treeView->resizeColumnToContents(StarTableModel::DistanceColumn);
+    treeView->resizeColumnToContents(StarTableModel::AppMagColumn);
+    treeView->resizeColumnToContents(StarTableModel::AbsMagColumn);
+
     searchResultLabel->setText(tr("%1 objects found").arg(starModel->rowCount(QModelIndex())));
 }
 
@@ -607,6 +642,7 @@ void CelestialBrowser::slotMarkSelected()
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
     Marker::Symbol markerSymbol = (Marker::Symbol) markerData.toInt(&convertOK);
+    QColor markerColor = colorSwatch->color();
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
                 (float) markerColor.blueF());
@@ -643,19 +679,7 @@ void CelestialBrowser::slotMarkSelected()
 }
 
 
-void CelestialBrowser::slotChooseMarkerColor()
+void CelestialBrowser::slotClearMarkers()
 {
-    QColor color = QColorDialog::getColor(markerColor, this);
-    if (color.isValid())
-        setMarkerColor(color);
-}
-
-
-/********* Internal methods *******/
-
-void CelestialBrowser::setMarkerColor(QColor color)
-{
-    markerColor = color;
-    colorLabel->setPalette(QPalette(markerColor));
-    colorLabel->setAutoFillBackground(true);
+    appCore->getSimulation()->getUniverse()->unmarkAll();
 }
