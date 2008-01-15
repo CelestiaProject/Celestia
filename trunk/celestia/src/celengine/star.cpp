@@ -1062,11 +1062,14 @@ void Star::setLuminosity(float lum)
 
 void Star::setDetails(StarDetails* sd)
 {
+    // TODO: delete existing details if they aren't shared
     details = sd;
 }
 
 void Star::setOrbitBarycenter(Star* s)
 {
+    if (details->shared())
+        details = new StarDetails(*details);
     details->setOrbitBarycenter(s);
 }
 
