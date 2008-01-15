@@ -239,7 +239,7 @@ bool Universe::isMarked(const Selection& sel, int priority) const
 class ClosestStarFinder : public StarHandler
 {
 public:
-    ClosestStarFinder(float _maxDistance);
+    ClosestStarFinder(float _maxDistance, const Universe* _universe);
     ~ClosestStarFinder() {};
     void process(const Star& star, float distance, float appMag);
 
@@ -247,10 +247,17 @@ public:
     float maxDistance;
     float closestDistance;
     Star* closestStar;
+    const Universe* universe;
+    bool withPlanets;
 };
 
-ClosestStarFinder::ClosestStarFinder(float _maxDistance) :
-    maxDistance(_maxDistance), closestDistance(_maxDistance), closestStar(NULL)
+ClosestStarFinder::ClosestStarFinder(float _maxDistance,
+                                     const Universe* _universe) :
+    maxDistance(_maxDistance),
+    closestDistance(_maxDistance),
+    closestStar(NULL),
+    universe(_universe),
+    withPlanets(false)
 {
 }
 
@@ -258,8 +265,11 @@ void ClosestStarFinder::process(const Star& star, float distance, float)
 {
     if (distance < closestDistance)
     {
-        closestStar = const_cast<Star*>(&star);
-        closestDistance = distance;
+        if (!withPlanets || universe->getSolarSystem(&star))
+        {
+            closestStar = const_cast<Star*>(&star);
+            closestDistance = distance;
+        }
     }
 }
 
@@ -1251,7 +1261,8 @@ SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) con
 {
     Point3f pos = (Point3f) position;
     Point3f lyPos(pos.x * 1.0e-6f, pos.y * 1.0e-6f, pos.z * 1.0e-6f);
-    ClosestStarFinder closestFinder(1.0f);
+    ClosestStarFinder closestFinder(1.0f, this);
+    closestFinder.withPlanets = true;
     starCatalog->findCloseStars(closestFinder, lyPos, 1.0f);
     return getSolarSystem(closestFinder.closestStar);
 }
