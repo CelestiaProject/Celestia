@@ -27,6 +27,7 @@
 #include "qtcelestialbrowser.h"
 #include "qtdeepskybrowser.h"
 #include "qtselectionpopup.h"
+#include "qttimetoolbar.h"
 
 
 using namespace std;
@@ -92,32 +93,36 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
     QTabWidget* tabWidget = new QTabWidget(this);
     tabWidget->setObjectName("celestia-tabbed-browser");
 
-    celestialBrowser = new CelestialBrowser(appCore, NULL);
-    celestialBrowser->setObjectName("celestia-browser");
-
     toolsDock = new QDockWidget(tr("Celestial Browser"), this);
     toolsDock->setObjectName("celestia-tools-dock");
     toolsDock->setAllowedAreas(Qt::LeftDockWidgetArea |
                                Qt::RightDockWidgetArea);
-#if 0
-    toolsDock->setWidget(celestialBrowser);
-    addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
-#else
+
+    // Create the various browser widgets
+    celestialBrowser = new CelestialBrowser(appCore, NULL);
+    celestialBrowser->setObjectName("celestia-browser");
+
     QWidget* deepSkyBrowser = new DeepSkyBrowser(appCore, NULL);
     deepSkyBrowser->setObjectName("deepsky-browser");
 
     SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(appCore, NULL);
     solarSystemBrowser->setObjectName("ssys-browser");
 
+    // Set up the browser tabs
     tabWidget->addTab(solarSystemBrowser, tr("Solar System"));
     tabWidget->addTab(celestialBrowser, tr("Stars"));
     tabWidget->addTab(deepSkyBrowser, tr("Deep Sky Objects"));
 
     toolsDock->setWidget(tabWidget);
     addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
-#endif
+
+    TimeToolBar* timeToolBar = new TimeToolBar(appCore, tr("Time"));
+    timeToolBar->setFloatable(true);
+    timeToolBar->setMovable(true);
+    addToolBar(Qt::TopToolBarArea, timeToolBar);
 
     viewMenu->addAction(toolsDock->toggleViewAction());
+    viewMenu->addAction(timeToolBar->toggleViewAction());
 
     glWidget->setFocus();
 
