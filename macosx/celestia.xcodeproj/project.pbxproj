@@ -208,7 +208,7 @@
 		E5B615070777307F001BB2BF /* celestia.icns in Resources */ = {isa = PBXBuildFile; fileRef = E5B615060777307F001BB2BF /* celestia.icns */; };
 		E5C9ADE10848FFEF0071B1EE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5040B0602A47B91014901DC /* Carbon.framework */; };
 		E5C9B478084909E40071B1EE /* README for Mac OS X.rtf in Copy App */ = {isa = PBXBuildFile; fileRef = E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */; };
-		E5CC203609AA836700CFFF2C /* POSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203409AA834B00CFFF2C /* POSupport.m */; };
+		E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5CAABA60D3D7A08001926FC /* POSupport.cpp */; };
 		E5CC203709AA836E00CFFF2C /* POConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = E5CC203209AA834B00CFFF2C /* POConverter.m */; };
 		E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E5CC204509AA843300CFFF2C /* Localizable.strings */; };
 		E5D3196B096C91A6007FA87F /* vp_patch.sh in Resources */ = {isa = PBXBuildFile; fileRef = E5D3196A096C91A6007FA87F /* vp_patch.sh */; };
@@ -621,10 +621,10 @@
 		E5B61B2E077737A6001BB2BF /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		E5B61B2F077737A6001BB2BF /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
 		E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "README for Mac OS X.rtf"; sourceTree = "<group>"; };
+		E5CAABA60D3D7A08001926FC /* POSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = POSupport.cpp; sourceTree = "<group>"; };
 		E5CC202909AA823400CFFF2C /* POConverter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = POConverter; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5CC203209AA834B00CFFF2C /* POConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POConverter.m; sourceTree = "<group>"; };
 		E5CC203309AA834B00CFFF2C /* POSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POSupport.h; sourceTree = "<group>"; };
-		E5CC203409AA834B00CFFF2C /* POSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POSupport.m; sourceTree = "<group>"; };
 		E5CC204609AA843300CFFF2C /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E5CC204809AA846600CFFF2C /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E5D3196A096C91A6007FA87F /* vp_patch.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = vp_patch.sh; sourceTree = "<group>"; };
@@ -1181,7 +1181,7 @@
 			children = (
 				E5CC203209AA834B00CFFF2C /* POConverter.m */,
 				E5CC203309AA834B00CFFF2C /* POSupport.h */,
-				E5CC203409AA834B00CFFF2C /* POSupport.m */,
+				E5CAABA60D3D7A08001926FC /* POSupport.cpp */,
 			);
 			name = POConverter;
 			sourceTree = "<group>";
@@ -1894,7 +1894,6 @@
 				E532F4F80933331800D7D5B3 /* staroctree.cpp in Sources */,
 				E5E365AD095C11B500B14224 /* SplashScreen.m in Sources */,
 				E5D956E00966520700CB02B2 /* SplashWindowController.m in Sources */,
-				E5CC203609AA836700CFFF2C /* POSupport.m in Sources */,
 				E56B96570AAB22AA0097DDFE /* renderglsl.cpp in Sources */,
 				E56457520AF8FD6A00F2D9FA /* samporient.cpp in Sources */,
 				E56457550AF8FD6A00F2D9FA /* rotationmanager.cpp in Sources */,
@@ -1913,6 +1912,7 @@
 				E512245A0CF9FC7D009092A2 /* BrowserItem.mm in Sources */,
 				E5D542770D0B87EA00E8C513 /* Menu_Extensions.m in Sources */,
 				E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */,
+				E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
