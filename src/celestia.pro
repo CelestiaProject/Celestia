@@ -273,8 +273,10 @@ QTAPP_SOURCES = \
 	celestia/qt/qtpreferencesdialog.cpp \
 	celestia/qt/qtcelestialbrowser.cpp \
 	celestia/qt/qtdeepskybrowser.cpp \
+	celestia/qt/qtsolarsystembrowser.cpp \
 	celestia/qt/qtselectionpopup.cpp \
-	celestia/qt/qtcolorswatchwidget.cpp
+	celestia/qt/qtcolorswatchwidget.cpp \
+	celestia/qt/qttimetoolbar.cpp
 
 QTAPP_HEADERS = \
 	celestia/qt/qtappwin.h \
@@ -282,8 +284,10 @@ QTAPP_HEADERS = \
 	celestia/qt/qtpreferencesdialog.h \
 	celestia/qt/qtcelestialbrowser.h \
 	celestia/qt/qtdeepskybrowser.h \
+	celestia/qt/qtsolarsystembrowser.h \
 	celestia/qt/qtselectionpopup.h \
-	celestia/qt/qtcolorswatchwidget.h
+	celestia/qt/qtcolorswatchwidget.h \
+	celestia/qt/qttimetoolbar.h
 
 SOURCES = \
 	$$UTIL_SOURCES \

@@ -22,50 +22,57 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     QToolBar(title, parent),
     appCore(_appCore)
 {
-#if 0
+#if 1
     // Text-only buttons
     setToolButtonStyle(Qt::ToolButtonTextOnly);
     QAction* reverseTimeAction = new QAction(QString("< >"), this);
+    reverseTimeAction->setToolTip(tr("Reverse time"));
     QAction* slowTimeAction = new QAction(QString("<<|"), this);
+    slowTimeAction->setToolTip(tr("10x slower"));
     QAction* halfTimeAction = new QAction(QString("<|"), this);
+    halfTimeAction->setToolTip(tr("2x slower"));
     QAction* pauseAction = new QAction(QString("||"), this);
+    pauseAction->setToolTip(tr("Pause time"));
     QAction* realTimeAction = new QAction(QString(">"), this);
+    realTimeAction->setToolTip(tr("Real time"));
     QAction* doubleTimeAction = new QAction(QString(">>"), this);
+    doubleTimeAction->setToolTip(tr("2x faster"));
     QAction* fastTimeAction = new QAction(QString(">>>"), this);
-#endif
-
+    fastTimeAction->setToolTip(tr("10x faster"));
+#else
     QAction* reverseTimeAction = new QAction(QIcon("icons/qt/media-eject.png"),
                                              tr("Reverse time"), this);
+    QAction* slowTimeAction = new QAction(QIcon("icons/qt/media-skip-backward.png"),
+                                          tr("10x slower"), this);
+    QAction* halfTimeAction = new QAction(QIcon("icons/qt/media-seek-backward.png"),
+                                          tr("2x slower"), this);
+    QAction* pauseAction = new QAction(QIcon("icons/qt/media-playback-pause.png"),
+                                       tr("Pause time"), this);
+    QAction* realTimeAction = new QAction(QIcon("icons/qt/media-playback-start.png"),
+                                          tr("Real time"), this);
+    QAction* doubleTimeAction = new QAction(QIcon("icons/qt/media-seek-forward.png"),
+                                            tr("2x faster"), this);
+    QAction* fastTimeAction = new QAction(QIcon("icons/qt/media-skip-forward.png"),
+                                          tr("10x faster"), this);
+#endif
     connect(reverseTimeAction, SIGNAL(triggered()), this, SLOT(slotReverseTime()));
     addAction(reverseTimeAction);
 
-    QAction* slowTimeAction = new QAction(QIcon("icons/qt/media-skip-backward.png"),
-                                          tr("10x slower"), this);
     connect(slowTimeAction, SIGNAL(triggered()), this, SLOT(slotSlower()));
     addAction(slowTimeAction);
     
-    QAction* halfTimeAction = new QAction(QIcon("icons/qt/media-seek-backward.png"),
-                                          tr("2x slower"), this);
     connect(halfTimeAction, SIGNAL(triggered()), this, SLOT(slotHalfTime()));
     addAction(halfTimeAction);
 
-    QAction* pauseAction = new QAction(QIcon("icons/qt/media-playback-pause.png"),
-                                       tr("Pause time"), this);
     connect(pauseAction, SIGNAL(triggered()), this, SLOT(slotPauseTime()));
     addAction(pauseAction);
 
-    QAction* realTimeAction = new QAction(QIcon("icons/qt/media-playback-start.png"),
-                                          tr("Real time"), this);
     connect(realTimeAction, SIGNAL(triggered()), this, SLOT(slotRealTime()));
     addAction(realTimeAction);
 
-    QAction* doubleTimeAction = new QAction(QIcon("icons/qt/media-seek-forward.png"),
-                                            tr("2x faster"), this);
     connect(doubleTimeAction, SIGNAL(triggered()), this, SLOT(slotDoubleTime()));
     addAction(doubleTimeAction);
 
-    QAction* fastTimeAction = new QAction(QIcon("icons/qt/media-skip-forward.png"),
-                                          tr("10x faster"), this);
     connect(fastTimeAction, SIGNAL(triggered()), this, SLOT(slotFaster()));
     addAction(fastTimeAction);
 }
