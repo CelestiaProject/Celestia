@@ -17,6 +17,7 @@
 
 class QAbstractItemModel;
 class QTreeView;
+class QCheckBox;
 class CelestiaCore;
 
 class SolarSystemTreeModel;
@@ -43,6 +44,8 @@ Q_OBJECT
 
     SolarSystemTreeModel* solarSystemModel;
     QTreeView* treeView;
+
+    QCheckBox* groupCheckBox;
 };
 
 #endif // _QTSOLARSYSTEMBROWSER_H_

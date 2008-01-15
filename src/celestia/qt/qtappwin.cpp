@@ -23,6 +23,7 @@
 #include "qtappwin.h"
 #include "qtglwidget.h"
 #include "qtpreferencesdialog.h"
+#include "qtsolarsystembrowser.h"
 #include "qtcelestialbrowser.h"
 #include "qtdeepskybrowser.h"
 #include "qtselectionpopup.h"
@@ -39,7 +40,7 @@ const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
 
 // Used when saving and restoring main window state; increment whenever
 // new dockables or toolbars are added.
-static const int CELESTIA_MAIN_WINDOW_VERSION = 2;
+static const int CELESTIA_MAIN_WINDOW_VERSION = 3;
 
 
 // Terrible hack required because context menu callback doesn't retain
@@ -105,6 +106,10 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
     QWidget* deepSkyBrowser = new DeepSkyBrowser(appCore, NULL);
     deepSkyBrowser->setObjectName("deepsky-browser");
 
+    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(appCore, NULL);
+    solarSystemBrowser->setObjectName("ssys-browser");
+
+    tabWidget->addTab(solarSystemBrowser, tr("Solar System"));
     tabWidget->addTab(celestialBrowser, tr("Stars"));
     tabWidget->addTab(deepSkyBrowser, tr("Deep Sky Objects"));
 
