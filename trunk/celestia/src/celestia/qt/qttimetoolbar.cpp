@@ -22,7 +22,7 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     QToolBar(title, parent),
     appCore(_appCore)
 {
-#if 1
+#if 0
     // Text-only buttons
     setToolButtonStyle(Qt::ToolButtonTextOnly);
     QAction* reverseTimeAction = new QAction(QString("< >"), this);
@@ -40,19 +40,19 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     QAction* fastTimeAction = new QAction(QString(">>>"), this);
     fastTimeAction->setToolTip(tr("10x faster"));
 #else
-    QAction* reverseTimeAction = new QAction(QIcon("icons/qt/media-eject.png"),
+    QAction* reverseTimeAction = new QAction(QIcon("src/celestia/qt/data/time-reverse.png"),
                                              tr("Reverse time"), this);
-    QAction* slowTimeAction = new QAction(QIcon("icons/qt/media-skip-backward.png"),
+    QAction* slowTimeAction = new QAction(QIcon("src/celestia/qt/data/time-slower.png"),
                                           tr("10x slower"), this);
-    QAction* halfTimeAction = new QAction(QIcon("icons/qt/media-seek-backward.png"),
+    QAction* halfTimeAction = new QAction(QIcon("src/celestia/qt/data/time-half.png"),
                                           tr("2x slower"), this);
-    QAction* pauseAction = new QAction(QIcon("icons/qt/media-playback-pause.png"),
+    QAction* pauseAction = new QAction(QIcon("src/celestia/qt/data/time-pause.png"),
                                        tr("Pause time"), this);
-    QAction* realTimeAction = new QAction(QIcon("icons/qt/media-playback-start.png"),
+    QAction* realTimeAction = new QAction(QIcon("src/celestia/qt/data/time-realtime.png"),
                                           tr("Real time"), this);
-    QAction* doubleTimeAction = new QAction(QIcon("icons/qt/media-seek-forward.png"),
+    QAction* doubleTimeAction = new QAction(QIcon("src/celestia/qt/data/time-double.png"),
                                             tr("2x faster"), this);
-    QAction* fastTimeAction = new QAction(QIcon("icons/qt/media-skip-forward.png"),
+    QAction* fastTimeAction = new QAction(QIcon("src/celestia/qt/data/time-faster.png"),
                                           tr("10x faster"), this);
 #endif
     connect(reverseTimeAction, SIGNAL(triggered()), this, SLOT(slotReverseTime()));
