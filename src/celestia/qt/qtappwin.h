@@ -18,6 +18,7 @@
 
 
 class QMenu;
+class QCloseEvent;
 class QDockWidget;
 class CelestiaGlWidget;
 class CelestialBrowser;
@@ -26,7 +27,7 @@ class CelestiaCore;
 
 class CelestiaAppWindow : public QMainWindow
 {
-    Q_OBJECT
+ Q_OBJECT
 
  public:
     CelestiaAppWindow(const QString& configFileName,
@@ -43,20 +44,33 @@ class CelestiaAppWindow : public QMainWindow
     void celestia_tick();
 
  private slots:
+    void slotGrabImage();
+    void slotCaptureVideo();
+
     void centerSelection();
     void gotoSelection();
     void selectSun();
 
-    void slotClose();
     void slotPreferences();
+
+    void slotSplitViewVertically();
+    void slotSplitViewHorizontally();
+    void slotCycleView();	
+    void slotSingleView();
+    void slotDeleteView();
+    void slotToggleFramesVisible();
+    void slotToggleActiveFrameVisible();
+    void slotToggleSyncTime();
 
  private:
     void createActions();
     void createMenus();
 
+    void closeEvent(QCloseEvent* event);
+
  private:
     CelestiaGlWidget* glWidget;
-    QDockWidget *toolsDock;
+    QDockWidget* toolsDock;
     CelestialBrowser* celestialBrowser;
 
     CelestiaCore* appCore;
