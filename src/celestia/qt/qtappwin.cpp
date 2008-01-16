@@ -276,12 +276,12 @@ void CelestiaAppWindow::slotPreferences()
 
 void CelestiaAppWindow::slotSplitViewVertically()
 {
-    appCore->charEntered('\022');
+    appCore->charEntered('\025');
 }
 
 void CelestiaAppWindow::slotSplitViewHorizontally()
 {
-    appCore->charEntered('\025');
+    appCore->charEntered('\022');
 }
 
 void CelestiaAppWindow::slotCycleView()
