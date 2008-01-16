@@ -18,6 +18,9 @@
 #include <QSettings>
 #include <QDockWidget>
 #include <QTabWidget>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QCloseEvent>
 #include <vector>
 #include <string>
 #include "qtappwin.h"
@@ -28,6 +31,7 @@
 #include "qtdeepskybrowser.h"
 #include "qtselectionpopup.h"
 #include "qttimetoolbar.h"
+//#include "qtvideocapturedialog.h"
 
 
 using namespace std;
@@ -64,7 +68,7 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
         configFileName = DEFAULT_CONFIG_FILE.toUtf8().data();
     else
         configFileName = qConfigFileName.toUtf8().data();
-    
+
     // Translate extras directories from QString -> std::string
     vector<string> extrasDirectories;
     for (QStringList::const_iterator iter = qExtrasDirectories.begin();
@@ -117,6 +121,7 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
     addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
 
     TimeToolBar* timeToolBar = new TimeToolBar(appCore, tr("Time"));
+    timeToolBar->setObjectName("time-toolbar");
     timeToolBar->setFloatable(true);
     timeToolBar->setMovable(true);
     addToolBar(Qt::TopToolBarArea, timeToolBar);
@@ -155,6 +160,13 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("StarStyle", renderer->getStarStyle());
     settings.setValue("RenderPath", (int) renderer->getGLContext()->getRenderPath());
     settings.setValue("TextureResolution", renderer->getResolution());
+
+    Simulation* simulation = appCore->getSimulation();
+    settings.beginGroup("Preferences");
+    settings.setValue("SyncTime", simulation->getSyncTime());
+    settings.setValue("FramesVisible", appCore->getFramesVisible());
+    settings.setValue("ActiveFrameVisible", appCore->getActiveFrameVisible());
+    settings.endGroup();
 }
 
 
@@ -185,6 +197,56 @@ void CelestiaAppWindow::celestia_tick()
     glWidget->updateGL();
 }
 
+void CelestiaAppWindow::slotGrabImage()
+{
+    QString dir;
+    QSettings settings;
+    settings.beginGroup("Preferences");
+    if (settings.contains("GrabImageDir"))
+    {
+        dir = settings.value("GrabImageDir").toString();
+    }
+    else
+    {
+        dir = QDir::current().path();
+    }
+
+    QString saveAsName = QFileDialog::getSaveFileName(this,
+                                                      tr("Save Image"),
+                                                      dir,
+                                                      tr("Images (*.png)"));
+
+    if (!saveAsName.isEmpty())
+    {
+        QFileInfo saveAsFile(saveAsName);
+
+        //glWidget->repaint();
+        QImage grabedImage = glWidget->grabFrameBuffer();
+        grabedImage.save(saveAsName, "PNG");
+
+        settings.setValue("GrabImageDir", saveAsFile.absolutePath());
+    }
+    settings.endGroup();
+}
+
+void CelestiaAppWindow::slotCaptureVideo()
+{
+    QString dir;
+    QSettings settings;
+    settings.beginGroup("Preferences");
+    if (settings.contains("CaptureVideoDir"))
+    {
+        dir = settings.value("CaptureVideoDir").toString();
+    }
+    else
+    {
+        dir = QDir::current().path();
+    }
+
+    //TODO
+
+    settings.endGroup();
+}
 
 void CelestiaAppWindow::selectSun()
 {
@@ -204,13 +266,6 @@ void CelestiaAppWindow::gotoSelection()
 }
 
 
-void CelestiaAppWindow::slotClose()
-{
-    writeSettings();
-    close();
-}
-
-
 void CelestiaAppWindow::slotPreferences()
 {
     PreferencesDialog dlg(this, appCore);
@@ -219,24 +274,77 @@ void CelestiaAppWindow::slotPreferences()
     //resyncMenus();
 }
 
+void CelestiaAppWindow::slotSplitViewVertically()
+{
+    appCore->charEntered('\022');
+}
+
+void CelestiaAppWindow::slotSplitViewHorizontally()
+{
+    appCore->charEntered('\025');
+}
+
+void CelestiaAppWindow::slotCycleView()
+{
+    appCore->charEntered('\011');
+}
+
+void CelestiaAppWindow::slotSingleView()
+{
+    appCore->charEntered('\004');
+}
+
+void CelestiaAppWindow::slotDeleteView()
+{
+    appCore->charEntered(127);
+}
+
+void CelestiaAppWindow::slotToggleFramesVisible()
+{
+    appCore->setFramesVisible(!appCore->getFramesVisible());
+}
+
+void CelestiaAppWindow::slotToggleActiveFrameVisible()
+{
+    appCore->setActiveFrameVisible(!appCore->getActiveFrameVisible());
+}
+
+void CelestiaAppWindow::slotToggleSyncTime()
+{
+    appCore->getSimulation()->setSyncTime(!appCore->getSimulation()->getSyncTime());
+}
 
 void CelestiaAppWindow::createActions()
 {
 }
-
 
 void CelestiaAppWindow::createMenus()
 {
     /****** File menu ******/
     fileMenu = menuBar()->addMenu(tr("&File"));
 
-    QAction* prefAct = new QAction(tr("&Preferences"), this);
+    QAction* grabImageAction = new QAction(QIcon(":data/grab-image.png"),
+                                           tr("&Grab image"), this);
+    grabImageAction->setShortcut(tr("F10"));
+    connect(grabImageAction, SIGNAL(triggered()), this, SLOT(slotGrabImage()));
+    fileMenu->addAction(grabImageAction);
+
+    QAction* captureVideoAction = new QAction(QIcon(":data/capture-video.png"),
+                                              tr("&Capture video"), this);
+    captureVideoAction->setShortcut(tr("F11"));
+    connect(captureVideoAction, SIGNAL(triggered()), this, SLOT(slotCaptureVideo()));
+    fileMenu->addAction(captureVideoAction);
+
+    fileMenu->addSeparator();
+
+    QAction* prefAct = new QAction(QIcon(":data/preferences.png"),
+                                   tr("&Preferences"), this);
     connect(prefAct, SIGNAL(triggered()), this, SLOT(slotPreferences()));
     fileMenu->addAction(prefAct);
 
-    QAction* quitAct = new QAction(tr("E&xit"), this);
+    QAction* quitAct = new QAction(QIcon(":data/exit.png"), tr("E&xit"), this);
     quitAct->setShortcut(tr("Ctrl+Q"));
-    connect(quitAct, SIGNAL(triggered()), this, SLOT(slotClose()));
+    connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
     fileMenu->addAction(quitAct);
 
     /****** Navigation menu ******/
@@ -262,8 +370,102 @@ void CelestiaAppWindow::createMenus()
 
     /****** View menu ******/
     viewMenu = menuBar()->addMenu(tr("&View"));
+
+    /****** MultiView menu ******/
+    QMenu* multiviewMenu = menuBar()->addMenu(tr("&MultiView"));
+
+    QAction* splitViewVertAction = new QAction(QIcon(":data/split-vert.png"),
+                                               tr("Split view vertically"), this);
+    splitViewVertAction->setShortcut(tr("Ctrl+R"));
+    connect(splitViewVertAction, SIGNAL(triggered()), this, SLOT(slotSplitViewVertically()));
+    multiviewMenu->addAction(splitViewVertAction);
+
+    QAction* splitViewHorizAction = new QAction(QIcon(":data/split-horiz.png"),
+                                                tr("Split view horizontally"), this);
+    splitViewHorizAction->setShortcut(tr("Ctrl+U"));
+    connect(splitViewHorizAction, SIGNAL(triggered()), this, SLOT(slotSplitViewHorizontally()));
+    multiviewMenu->addAction(splitViewHorizAction);
+
+    QAction* cycleViewAction = new QAction(QIcon(":data/split-cycle.png"),
+                                           tr("Cycle views"), this);
+    cycleViewAction->setShortcut(tr("Tab"));
+    connect(cycleViewAction, SIGNAL(triggered()), this, SLOT(slotCycleView()));
+    multiviewMenu->addAction(cycleViewAction);
+
+    QAction* singleViewAction = new QAction(QIcon(":data/split-single.png"),
+                                            tr("Single view"), this);
+    singleViewAction->setShortcut(tr("Ctrl+D"));
+    connect(singleViewAction, SIGNAL(triggered()), this, SLOT(slotSingleView()));
+    multiviewMenu->addAction(singleViewAction);
+
+    QAction* deleteViewAction = new QAction(QIcon(":data/split-delete.png"),
+                                            tr("Delete view"), this);
+    deleteViewAction->setShortcut(tr("Delete"));
+    connect(deleteViewAction, SIGNAL(triggered()), this, SLOT(slotDeleteView()));
+    multiviewMenu->addAction(deleteViewAction);
+
+    multiviewMenu->addSeparator();
+
+    QAction* framesVisibleAction = new QAction(tr("Frames visible"), this);
+    framesVisibleAction->setCheckable(true);
+    connect(framesVisibleAction, SIGNAL(triggered()), this, SLOT(slotToggleFramesVisible()));
+    multiviewMenu->addAction(framesVisibleAction);
+
+    // The toggle actions below shall have their settings saved:
+    bool check;
+    QSettings settings;
+    settings.beginGroup("Preferences");
+    if (settings.contains("FramesVisible"))
+    {
+        check = settings.value("FramesVisible").toBool();
+    }
+    else
+    {
+        check = appCore->getFramesVisible();
+    }
+    framesVisibleAction->setChecked(check);
+    appCore->setFramesVisible(check);
+
+    QAction* activeFrameVisibleAction = new QAction(tr("Active frame visible"), this);
+    activeFrameVisibleAction->setCheckable(true);
+    connect(activeFrameVisibleAction, SIGNAL(triggered()), this, SLOT(slotToggleActiveFrameVisible()));
+    multiviewMenu->addAction(activeFrameVisibleAction);
+
+    if (settings.contains("ActiveFrameVisible"))
+    {
+        check = settings.value("ActiveFrameVisible").toBool();
+    }
+    else
+    {
+        check = appCore->getActiveFrameVisible();
+    }
+    activeFrameVisibleAction->setChecked(check);
+    appCore->setActiveFrameVisible(check);
+
+    QAction* syncTimeAction = new QAction(tr("Synchronize time"), this);
+    syncTimeAction->setCheckable(true);
+    connect(syncTimeAction, SIGNAL(triggered()), this, SLOT(slotToggleSyncTime()));
+    multiviewMenu->addAction(syncTimeAction);
+
+    if (settings.contains("SyncTime"))
+    {
+        check = settings.value("SyncTime").toBool();
+    }
+    else
+    {
+        check = appCore->getSimulation()->getSyncTime();
+    }
+    syncTimeAction->setChecked(check);
+    appCore->getSimulation()->setSyncTime(check);
+
+    settings.endGroup();
 }
 
+void CelestiaAppWindow::closeEvent(QCloseEvent* event)
+{
+    writeSettings();
+    event->accept();
+}
 
 void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
 {
