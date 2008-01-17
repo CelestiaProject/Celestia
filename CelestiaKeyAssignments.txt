@@ -112,8 +112,8 @@ G  DUP Go to selected object
 H  DUP Select our sun (Home)
 I  DUP Toggle cloud textures
 J  DUP Toggle Forward/Reverse time
-K  DUP Time 10x slower
-L  DUP Time 10x faster
+K  Time 2x slower
+L  Time 2x faster
 M  DUP Toggle moon labels
 N  DUP Toggle spacecraft labels
 O  DUP Toggle planet orbits
