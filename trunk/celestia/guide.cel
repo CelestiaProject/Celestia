@@ -9,7 +9,7 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Pluto orbits our sun at a average distance of nearly six billion kilometers.  Its single known moon Charon is so large, that the two are often referred to as a 'double planet'."
+	Description "Pluto orbits our sun at a average distance of nearly six billion kilometers.  Its moon Charon is so large that the two are often referred to as a 'double planet'."
 }
 
 {
@@ -45,7 +45,7 @@
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b is a giant planet orbiting a red dwarf star.  It is in a 2:1 orbital resonance with the other known planet in the system."
+	Description "Gliese 876 b is a giant planet orbiting a red dwarf star.  It is in a 2:1 orbital resonance with another planet in the system."
 }
 
 {
