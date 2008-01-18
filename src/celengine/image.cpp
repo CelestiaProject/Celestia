@@ -9,12 +9,12 @@
 
 #include <fstream>
 
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
 #define JPEG_SUPPORT
 #define PNG_SUPPORT
 #endif
 
-#ifdef MACOSX
+#ifdef TARGET_OS_MAC
 #include <unistd.h>
 #include "CGBuffer.h"
 #ifndef PNG_SUPPORT
@@ -24,9 +24,9 @@
 #endif
 
 #ifndef _WIN32
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* ! MACOSX */
+#endif /* ! TARGET_OS_MAC */
 #endif /* ! _WIN32 */
 
 #include "image.h"
@@ -49,11 +49,11 @@ extern "C" {
 #endif // JPEG_SUPPORT
 
 #ifdef PNG_SUPPORT // PNG_SUPPORT
-#ifdef MACOSX
+#ifdef TARGET_OS_MAC
 #include "../../macosx/png.h"
 #else
 #include "png.h"
-#endif // MACOSX
+#endif // TARGET_OS_MAC
 
 #include <celutil/debug.h>
 #include <celutil/util.h>
@@ -554,7 +554,7 @@ Image* LoadJPEGImage(const string& filename, int)
 
     return img;
 
-#elif MACOSX
+#elif TARGET_OS_MAC
 
     Image* img = NULL;
     CGBuffer* cgJpegImage;

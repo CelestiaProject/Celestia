@@ -12,8 +12,10 @@
 #define dgettext(d,s)   localizedUTF8StringWithDomain(d,s)
 #endif
 
+#define __AIFF__
+#include <TargetConditionals.h>
+
 #ifdef __OBJC__
-# define __AIFF__
 # import <Cocoa/Cocoa.h>
 # undef DPRINTF
 #endif

@@ -263,6 +263,11 @@ APP_HEADERS = \
 	celestia/scriptmenu.h \
 	celestia/url.h
 
+macx {
+	APP_SOURCES -= celestia/imagecapture.cpp
+	APP_SOURCES += ../macosx/POSupport.cpp
+	APP_HEADERS += ../macosx/POSupport.h
+}
 
 #### Qt front-end sources ####
 
@@ -332,6 +337,16 @@ win32 {
 
 unix {
 	LIBS += -ljpeg
+}
+
+macx {
+	QMAKE_CXXFLAGS += -fpermissive
+	QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
+	CONFIG += x86 ppc
+	PRECOMPILED_HEADER += ../macosx/Util.h
+	LIBS -= -ljpeg
+	LIBS += -L../macosx/Frameworks
+	DEFINES += PNG_SUPPORT REFMARKS=1
 }
 
 # QMAKE_CXXFLAGS += -ffast-math

@@ -5239,7 +5239,7 @@ static int celestia_takescreenshot(lua_State* l)
     int viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
     if (strncmp(filetype, "jpg", 3) == 0)
     {
         string filepath = path + filenamestem + ".jpg";

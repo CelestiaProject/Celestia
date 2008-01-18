@@ -405,7 +405,7 @@ namespace glx
 
 
 /* NV_vertex_program */
-#if !defined(GL_NV_vertex_program)||defined(MACOSX)
+#if !defined(GL_NV_vertex_program)||defined(TARGET_OS_MAC)
 
 #define GL_VERTEX_PROGRAM_NV              0x8620
 #define GL_VERTEX_STATE_PROGRAM_NV        0x8621
@@ -481,7 +481,7 @@ namespace glx
 #define GL_MAP2_VERTEX_ATTRIB14_4_NV      0x867E
 #define GL_MAP2_VERTEX_ATTRIB15_4_NV      0x867F
 
-#endif // !defined(GL_NV_VERTEX_PROGRAM) || defined(MACOSX)
+#endif // !defined(GL_NV_VERTEX_PROGRAM) || defined(TARGET_OS_MAC)
 
 #ifndef GL_VERTEX_ATTRIB_ARRAY6_NV
 #define GL_VERTEX_ATTRIB_ARRAY6_NV        0x8656
