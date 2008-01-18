@@ -12,10 +12,10 @@
 
 #ifndef _WIN32
 // Assume that this is a UNIX/X11 system if it's not Windows or Mac OS X.
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
 #include "GL/glx.h"
 #include <dlfcn.h>
-#endif /* ! MACOSX */
+#endif /* ! TARGET_OS_MAC */
 #endif /* ! _WIN32 */
 
 #include "glext.h"
@@ -284,7 +284,7 @@ extern QGLContext* glctx;
 
 #else
 
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
 #if defined(_WIN32)
 
 #define GET_GL_PROC_ADDRESS(name) wglGetProcAddress(name)
@@ -318,12 +318,12 @@ FUNCS GetGLProcAddress(const GLubyte* procName)
 }
 
 #endif // defined(WIN32)
-#endif // !MACOSX
+#endif // !TARGET_OS_MAC
 
 #endif // QT_CORE_LIB
 
 
-#ifdef MACOSX
+#ifdef TARGET_OS_MAC
 #include <mach-o/dyld.h>
 #include <stdio.h>
 typedef void (*FUNCS) (void);
@@ -366,7 +366,7 @@ FUNCS osxGetProcAddress(const GLubyte *procName) {
     //}
 }
 #define GET_GL_PROC_ADDRESS(name) osxGetProcAddress((GLubyte *)name)
-#endif /* MACOSX */
+#endif /* TARGET_OS_MAC */
 
 
 void Alert(const char /* *szFormat*/, ...)

@@ -13,7 +13,7 @@
 #include <cassert>
 
 #ifndef _WIN32
-#ifndef MACOSX_PB
+#ifndef TARGET_OS_MAC
 #include <config.h>
 #endif
 #endif /* _WIN32 */

@@ -2067,8 +2067,6 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"MACOSX=1",
-					"MACOSX_PB=1",
 					PNG_SUPPORT,
 					CELX,
 					LUA_USE_MACOSX,
@@ -2123,8 +2121,6 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"MACOSX=1",
-					"MACOSX_PB=1",
 					PNG_SUPPORT,
 					CELX,
 					LUA_USE_MACOSX,

@@ -15,6 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifdef TARGET_OS_MAC
+#include <Carbon/Carbon.h>
+#endif
+
 #include <cassert>
 #include <time.h>
 #include <celengine/gl.h>
@@ -149,7 +153,13 @@ void CelestiaGlWidget::initializeGL()
     time_t curtime=time(NULL);
     appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
     localtime(&curtime); /* Only doing this to set timezone as a side effect*/
+#ifdef TARGET_OS_MAC
+    CFTimeZoneRef tz = CFTimeZoneCopyDefault();
+    appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
+    CFRelease(tz);
+#else
     appCore->setTimeZoneBias(-timezone+3600*daylight);
+#endif
     appCore->setTimeZoneName(tzname[daylight?0:1]);
     appCore->tick();
 

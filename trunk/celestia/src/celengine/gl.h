@@ -29,7 +29,7 @@
 
 #endif
 
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
 #ifndef GL_ARB_multitexture
 #define GL_ARB_multitexture
 #endif
