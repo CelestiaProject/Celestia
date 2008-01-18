@@ -7,12 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
 #define JPEG_SUPPORT
 #define PNG_SUPPORT
 #endif
 
-#ifdef MACOSX
+#ifdef TARGET_OS_MAC
 #include <unistd.h>
 #include "CGBuffer.h"
 #ifndef PNG_SUPPORT
@@ -30,9 +30,9 @@
 #include <cassert>
 
 #ifndef _WIN32
-#ifndef MACOSX
+#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* ! MACOSX */
+#endif /* ! TARGET_OS_MAC */
 #endif /* ! _WIN32 */
 
 #include <celmath/vecmath.h>
@@ -67,11 +67,11 @@ extern "C" {
 #endif // JPEG_SUPPORT
 
 #ifdef PNG_SUPPORT // PNG_SUPPORT
-#ifdef MACOSX
+#ifdef TARGET_OS_MAC
 #include "../../macosx/png.h"
 #else
 #include "png.h"
-#endif // MACOSX
+#endif // TARGET_OS_MAC
 
 // Define png_jmpbuf() in case we are using a pre-1.0.6 version of libpng
 #ifndef png_jmpbuf

@@ -30,9 +30,9 @@
 #endif // __GNUC__
 
 #ifndef _WIN32
-#ifndef MACOSX_PB
+#ifndef TARGET_OS_MAC
 #include <config.h>
-#endif /* MACOSX_PB */
+#endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
 

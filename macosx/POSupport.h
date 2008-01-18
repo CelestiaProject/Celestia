@@ -20,12 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    extern const char *localizedUTF8String(const char *key);
-    extern const char *localizedUTF8StringWithDomain(const char *domain, const char *key);
-#ifdef __cplusplus
-}
-#endif
+#ifndef _POSUPPORT_H_
+#define _POSUPPORT_H_
 
+extern const char *localizedUTF8String(const char *key);
+extern const char *localizedUTF8StringWithDomain(const char *domain, const char *key);
+
+#endif
