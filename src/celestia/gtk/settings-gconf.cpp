@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: settings-gconf.cpp,v 1.3 2008-01-13 03:02:41 suwalski Exp $
+ *  $Id: settings-gconf.cpp,v 1.4 2008-01-18 04:36:11 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -32,6 +32,7 @@ static void confWinY(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confAmbientLight(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confVisualMagnitude(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confGalaxyLightGain(GConfClient*, guint, GConfEntry* e, AppData*);
+static void confDistanceLimit(GConfClient*, guint, GConfEntry* e, AppData*);
 static void confShowLocalTime(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confVerbosity(GConfClient*, guint, GConfEntry* e, AppData* app);
 static void confFullScreen(GConfClient*, guint, GConfEntry* e, AppData* app);
@@ -69,6 +70,7 @@ void initSettingsGConfNotifiers(AppData* app)
 	gconf_client_notify_add (app->client, "/apps/celestia/ambientLight", (GConfClientNotifyFunc)confAmbientLight, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/visualMagnitude", (GConfClientNotifyFunc)confVisualMagnitude, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/galaxyLightGain", (GConfClientNotifyFunc)confGalaxyLightGain, app, NULL, NULL);
+	gconf_client_notify_add (app->client, "/apps/celestia/distanceLimit", (GConfClientNotifyFunc)confDistanceLimit, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/showLocalTime", (GConfClientNotifyFunc)confShowLocalTime, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/verbosity", (GConfClientNotifyFunc)confVerbosity, app, NULL, NULL);
 	gconf_client_notify_add (app->client, "/apps/celestia/fullScreen", (GConfClientNotifyFunc)confFullScreen, app, NULL, NULL);
@@ -105,6 +107,7 @@ void applySettingsGConfMain(AppData* app, GConfClient* client)
 	setSaneAmbientLight(app, gconf_client_get_float(client, "/apps/celestia/ambientLight", NULL));
 	setSaneVisualMagnitude(app, gconf_client_get_float(client, "/apps/celestia/visualMagnitude", NULL));
 	setSaneGalaxyLightGain(gconf_client_get_float(client, "/apps/celestia/galaxyLightGain", NULL));
+	setSaneDistanceLimit(app, gconf_client_get_int(client, "/apps/celestia/distanceLimit", NULL));
 	setSaneVerbosity(app, gconf_client_get_int(client, "/apps/celestia/verbosity", NULL));
 	setSaneStarStyle(app, (Renderer::StarStyle)gconf_client_get_int(client, "/apps/celestia/starStyle", NULL));
 	setSaneTextureResolution(app, gconf_client_get_int(client, "/apps/celestia/textureResolution", NULL));
@@ -139,8 +142,9 @@ void saveSettingsGConf(AppData* app)
 	gconf_client_set_int(app->client, "/apps/celestia/winWidth", getWinWidth(app), NULL);
 	gconf_client_set_int(app->client, "/apps/celestia/winHeight", getWinHeight(app), NULL);
 
-	/* Save texture resolution: does not produce notification when changed */
+	/* These do not produce notification when changed */
 	gconf_client_set_int(app->client, "/apps/celestia/textureResolution", app->renderer->getResolution(), NULL);
+	gconf_client_set_int(app->client, "/apps/celestia/distanceLimit", (int)app->renderer->getDistanceLimit(), NULL);
 	
 	g_object_unref (G_OBJECT (app->client));
 }
@@ -330,6 +334,18 @@ static void confGalaxyLightGain(GConfClient*, guint, GConfEntry* e, AppData*)
 }
 
 
+/* GCONF CALLBACK: Sets texture resolution when changed */
+static void confDistanceLimit(GConfClient*, guint, GConfEntry* e, AppData* app)
+{
+	int value = gconf_value_get_int(e->value);
+	
+	if (value == app->renderer->getDistanceLimit())
+		return;
+	
+	setSaneDistanceLimit(app, value);
+}
+
+
 /* GCONF CALLBACK: Sets "show local time" setting upon change */
 static void confShowLocalTime(GConfClient*, guint, GConfEntry* e, AppData* app)
 {
@@ -390,7 +406,7 @@ static void confTextureResolution(GConfClient*, guint, GConfEntry* e, AppData* a
 {
 	int value = gconf_value_get_int(e->value);
 	
-	if (value == app->renderer->getResolution())
+	if (value == (int)app->renderer->getResolution())
 		return;
 	
 	setSaneTextureResolution(app, value);

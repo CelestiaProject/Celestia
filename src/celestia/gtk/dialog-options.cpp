@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-options.cpp,v 1.5 2008-01-13 03:02:41 suwalski Exp $
+ *  $Id: dialog-options.cpp,v 1.6 2008-01-18 04:36:11 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -166,8 +166,14 @@ static gint changeDistanceLimit(GtkRange *slider, AppData* app)
 	app->renderer->setDistanceLimit(limit);
 
 	char labeltext[16] = "100000 ly";
-	sprintf(labeltext, "%ld ly", (long)limit);
+	sprintf(labeltext, "%ld ly", (long)(limit + 0.5));
 	gtk_label_set_text(GTK_LABEL(magLabel), labeltext);
+
+	#ifdef GNOME
+	/* Distance limit changes do not trigger an event like the other
+	 * render settings. Save setting here. */
+	gconf_client_set_int(app->client, "/apps/celestia/distanceLimit", (int)(limit + 0.5), NULL);
+	#endif /* GNOME */
 
 	return TRUE;
 }
