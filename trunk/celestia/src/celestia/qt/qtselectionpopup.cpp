@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <sstream>
 #include <celestia/celestiacore.h>
 #include "qtselectionpopup.h"
 #include "qtappwin.h"
@@ -55,6 +56,37 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     if (sel.body() != NULL)
     {
         addAction(boldTextItem(QString::fromUtf8(sel.body()->getName(true).c_str())));
+
+        // Start and end dates
+        double startTime = 0.0;
+        double endTime = 0.0;
+        sel.body()->getLifespan(startTime, endTime);
+        
+        if (startTime > -1.0e9 || endTime < 1.0e9)
+        {
+            addSeparator();
+
+            if (startTime > -1.0e9)
+            {
+                ostringstream startDateStr;
+                startDateStr << "Start: " << astro::TDBtoUTC(startTime);
+                QAction* startDateAct = new QAction(startDateStr.str().c_str(), this);
+                connect(startDateAct, SIGNAL(triggered()),
+                        this, SLOT(slotGotoStartDate()));
+                addAction(startDateAct);
+            }
+
+            if (endTime < 1.0e9)
+            {
+                ostringstream endDateStr;
+                endDateStr << "End: " << astro::TDBtoUTC(endTime);
+                QAction* endDateAct = new QAction(endDateStr.str().c_str(), this);
+                connect(endDateAct, SIGNAL(triggered()),
+                        this, SLOT(slotGotoEndDate()));
+                addAction(endDateAct);
+            }
+        }
+
     }
     else if (sel.star() != NULL)
     {
@@ -484,4 +516,24 @@ void SelectionPopup::slotToggleReferenceVector()
             body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ refVec);
         }
     }
+}
+
+
+void SelectionPopup::slotGotoStartDate()
+{
+    assert(selection.body() != NULL);
+    double startDate = 0.0;
+    double endDate = 0.0;
+    selection.body()->getLifespan(startDate, endDate);
+    appCore->getSimulation()->setTime(startDate);
+}
+
+
+void SelectionPopup::slotGotoEndDate()
+{
+    assert(selection.body() != NULL);
+    double startDate = 0.0;
+    double endDate = 0.0;
+    selection.body()->getLifespan(startDate, endDate);
+    appCore->getSimulation()->setTime(endDate);
 }

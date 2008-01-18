@@ -37,6 +37,8 @@ Q_OBJECT
     void slotSelectChildObject();
     void slotMark();
     void slotToggleReferenceVector();
+    void slotGotoStartDate();
+    void slotGotoEndDate();
 
     void popupAtGoto(const QPoint& p);
     void popupAtCenter(const QPoint& p);
