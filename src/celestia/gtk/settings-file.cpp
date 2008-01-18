@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: settings-file.cpp,v 1.4 2008-01-13 03:02:41 suwalski Exp $
+ *  $Id: settings-file.cpp,v 1.5 2008-01-18 04:36:11 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -88,7 +88,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 {
 	GError* e;
 	float ambientLight, visualMagnitude, galaxyLightGain;
-	int errors, verbosity, starStyle, textureResolution, rf, om, lm;
+	int errors, verbosity, starStyle, textureResolution, distanceLimit, rf, om, lm;
 		
 	/* See comment in applySettingsFilePrefs() */
 	e = NULL;
@@ -103,6 +103,10 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	galaxyLightGain = (float)g_key_file_get_integer(file, "Main", "galaxyLightGain", &e) / 1000.0;
 	if (e != NULL) galaxyLightGain = -1.0;
 
+	e = NULL;
+	distanceLimit = g_key_file_get_integer(file, "Main", "distanceLimit", &e);
+	if (e != NULL) distanceLimit = -1;
+		
 	e = NULL;
 	verbosity = g_key_file_get_integer(file, "Main", "verbosity", &e);
 	if (e != NULL) verbosity = -1;
@@ -127,6 +131,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	setSaneAmbientLight(app, ambientLight);
 	setSaneVisualMagnitude(app, visualMagnitude);
 	setSaneGalaxyLightGain(galaxyLightGain);
+	setSaneDistanceLimit(app, distanceLimit);
 	setSaneVerbosity(app, verbosity);
 	setSaneStarStyle(app, (Renderer::StarStyle)starStyle);
 	setSaneTextureResolution(app, textureResolution);
@@ -213,7 +218,10 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_comment(file, "Main", "visualMagnitude", "visualMagnitude = (int)(1000 * FaintestVisible)", NULL);
 	g_key_file_set_integer(file, "Main", "galaxyLightGain", (int)(1000 * Galaxy::getLightGain()));
 	g_key_file_set_comment(file, "Main", "galaxyLightGain", "galaxyLightGain = (int)(1000 * GalaxyLightGain)", NULL);
+	g_key_file_set_integer(file, "Main", "distanceLimit", (int)app->renderer->getDistanceLimit());
+	g_key_file_set_comment(file, "Main", "distanceLimit", "Rendering limit in light-years", NULL);
 	g_key_file_set_boolean(file, "Main", "localTime", app->showLocalTime);
+	g_key_file_set_comment(file, "Main", "localTime", "Display time in terms of local time zone", NULL);
 	g_key_file_set_integer(file, "Main", "verbosity", app->core->getHudDetail());
 	g_key_file_set_comment(file, "Main", "verbosity", "Level of Detail in the heads-up-display. 0=None, 1=Terse, 2=Verbose", NULL);
 	g_key_file_set_integer(file, "Main", "starStyle", app->renderer->getStarStyle());
@@ -221,7 +229,6 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_integer(file, "Main", "textureResolution", app->renderer->getResolution());
 	g_key_file_set_comment(file, "Main", "textureResolution", "Resolution of textures. 0=Low, 1=Medium, 2=High", NULL);
 	g_key_file_set_string(file, "Main", "altSurfaceName", app->simulation->getActiveObserver()->getDisplayedSurface().c_str());
-	g_key_file_set_boolean(file, "Main", "localTime", app->showLocalTime);
 	g_key_file_set_boolean(file, "Main", "videoSync", app->renderer->getVideoSync());
 	g_key_file_set_comment(file, "Main", "videoSync", "Sync Framerate to Video Refresh", NULL);
 	

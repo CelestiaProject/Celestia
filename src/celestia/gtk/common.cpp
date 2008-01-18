@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: common.cpp,v 1.5 2008-01-13 03:02:41 suwalski Exp $
+ *  $Id: common.cpp,v 1.6 2008-01-18 04:36:11 suwalski Exp $
  */
 
 #include <fstream>
@@ -191,6 +191,15 @@ void setSaneGalaxyLightGain(float value)
 	Galaxy::setLightGain(value);
 }
 
+
+/* Sanitizes and sets Distance Limit */
+void setSaneDistanceLimit(AppData* app, int value)
+{
+	if (value < 0 || value > 1000000)
+		value = 1000000; /* Default to maximum */
+
+	app->renderer->setDistanceLimit(value);
+}
 
 /* Sanitizes and sets HUD Verbosity */
 void setSaneVerbosity(AppData* app, int value)
