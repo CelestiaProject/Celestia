@@ -445,7 +445,7 @@ const char* astro::Date::toCStr(Format format) const
 {
     static char date[255];
 
-#ifdef __GLIBC__
+#ifdef __GNUC__
     struct tm cal_time;
     memset(&cal_time, 0, sizeof(cal_time));
     cal_time.tm_year = year-1900;
@@ -718,7 +718,7 @@ astro::TDBtoLocal(double tdb)
             d.minute = localt->tm_min;
             d.seconds = (int) localt->tm_sec;
             d.wday = localt->tm_wday;
-        #ifdef __GLIBC__
+        #ifdef __GNUC__
             d.utc_offset = localt->tm_gmtoff;
             d.tzname = localt->tm_zone;
         #else
