@@ -1950,6 +1950,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             flash(_("High res textures"));
             break;
         }
+        notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'S':
