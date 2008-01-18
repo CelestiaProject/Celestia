@@ -75,6 +75,16 @@
       </locale>
     </schema>
     <schema>
+      <key>/schemas/apps/celestia/distanceLimit</key>
+      <applyto>/apps/celestia/distanceLimit</applyto>
+      <owner>celestia</owner>
+      <type>int</type>
+      <default>1000000</default>
+      <locale name="C">
+        <short>Rendering limit in light-years.</short>
+      </locale>
+    </schema>
+    <schema>
       <key>/schemas/apps/celestia/showLocalTime</key>
       <applyto>/apps/celestia/showLocalTime</applyto>
       <owner>celestia</owner>
