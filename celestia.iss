@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.5.0pre3
+AppVerName=Celestia 1.5.0pre6
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -321,6 +321,14 @@ Source: "textures\medres\venus.jpg";           DestDir: "{app}/textures/medres";
 Source: "textures\medres\venuslike.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\venuslikenight.jpg";  DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\venussurface.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
+
+; Textures (High resolution)
+Source: "textures\hires\iapetus.jpg";          DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\moon.jpg";             DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\moonbump.jpg";         DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\phoebe.jpg";           DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\tethys.jpg";           DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\titan.jpg";            DestDir: "{app}/textures/hires"; Flags: ignoreversion
 
 
 ; Shaders (NV)
