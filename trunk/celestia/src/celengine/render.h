@@ -24,6 +24,8 @@
 #include <celtxf/texturefont.h>
 
 
+class RendererWatcher;
+
 struct LightSource
 {
     Point3d position;
@@ -233,6 +235,10 @@ class Renderer
 
     bool settingsHaveChanged() const;
     void markSettingsChanged();
+
+    void addWatcher(RendererWatcher*);
+    void removeWatcher(RendererWatcher*);
+    void notifyWatchers() const;
 
  public:
     // Internal types
@@ -630,6 +636,8 @@ class Renderer
     bool videoSync;
     bool settingsChanged;
 
+    std::list<RendererWatcher*> watchers;
+
  public:
     // Colors for all lines and labels
     static Color StarLabelColor;
@@ -657,5 +665,13 @@ class Renderer
     static Color BoundaryColor;
     static Color EquatorialGridColor;
 };
+
+
+class RendererWatcher
+{
+ public:
+    virtual void notifyRenderSettingsChanged(const Renderer*) = 0;
+};
+
 
 #endif // _CELENGINE_RENDER_H_
