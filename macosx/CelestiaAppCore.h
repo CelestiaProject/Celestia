@@ -29,7 +29,7 @@ class CelestiaCore;
 +(CelestiaAppCore *)sharedAppCore;
 -(BOOL)initSimulation;
 -(BOOL)initRenderer;
--(void)start:(NSDate *)date withTimeZone:(NSTimeZone *)timeZone;
+-(void)start:(NSDate *)date;
 -(void)charEntered:(char)c withModifiers:(int)modifiers;
 -(void)charEntered:(NSString *)string;
 -(void)keyDown:(int)c;

@@ -8,6 +8,8 @@
 		<integer>0</integer>
 		<key>ambientLightLevel</key>
 		<real>0.10000000000000001</real>
+		<key>dateFormat</key>
+		<integer>1</integer>
 		<key>faintestVisible</key>
 		<real>7</real>
 		<key>fullScreenMode</key>
@@ -19,7 +21,7 @@
 		<key>minimumFeatureSize</key>
 		<real>20</real>
 		<key>renderPath</key>
-		<integer>3</integer>
+		<integer>8</integer>
 		<key>resolution</key>
 		<integer>1</integer>
 		<key>showAsteroidLabels</key>
@@ -46,6 +48,8 @@
 		<integer>1</integer>
 		<key>showCloudMaps</key>
 		<integer>1</integer>
+		<key>showCloudShadows</key>
+		<integer>0</integer>
 		<key>showCometLabels</key>
 		<integer>0</integer>
 		<key>showCometOrbits</key>
@@ -153,6 +157,8 @@
 		<key>showVallisLabels</key>
 		<integer>1</integer>
 		<key>starStyle</key>
+		<integer>0</integer>
+		<key>timeZone</key>
 		<integer>0</integer>
 	</dict>
 </dict>
