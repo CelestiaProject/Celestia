@@ -103,7 +103,7 @@ static const float MaxAsterismLinesConstDist   = 6.0e8f;
 
 /* The maximum distance of the observer to the origin of coordinates before
    asterisms labels and lines fade out completely (in uLY) */
-static const float MaxAsterismLabelsDist = 10.0e6f;
+static const float MaxAsterismLabelsDist = 2.0e7f;
 static const float MaxAsterismLinesDist  = 6.52e10f;
 
 // Maximum size of a solar system in light years. Features beyond this distance
@@ -845,8 +845,8 @@ void Renderer::setScreenDpi(int _dpi)
 
 void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
 {
-    markSettingsChanged();
     faintestAutoMag45deg = _faintestAutoMag45deg;
+    markSettingsChanged();
 }
 
 float Renderer::getFaintestAM45deg()
@@ -862,9 +862,9 @@ unsigned int Renderer::getResolution()
 
 void Renderer::setResolution(unsigned int resolution)
 {
-    //markSettingsChanged();
     if (resolution < TEXTURE_RESOLUTION)
         textureResolution = resolution;
+    //markSettingsChanged();
 }
 
 
@@ -875,14 +875,14 @@ TextureFont* Renderer::getFont(FontStyle fs) const
 
 void Renderer::setFont(FontStyle fs, TextureFont* txf)
 {
-    markSettingsChanged();
     font[(int) fs] = txf;
+    markSettingsChanged();
 }
 
 void Renderer::setRenderMode(int _renderMode)
 {
-    markSettingsChanged();
     renderMode = _renderMode;
+    markSettingsChanged();
 }
 
 int Renderer::getRenderFlags() const
@@ -892,8 +892,8 @@ int Renderer::getRenderFlags() const
 
 void Renderer::setRenderFlags(int _renderFlags)
 {
-    markSettingsChanged();
     renderFlags = _renderFlags;
+    markSettingsChanged();
 }
 
 int Renderer::getLabelMode() const
@@ -903,8 +903,8 @@ int Renderer::getLabelMode() const
 
 void Renderer::setLabelMode(int _labelMode)
 {
-    markSettingsChanged();
     labelMode = _labelMode;
+    markSettingsChanged();
 }
 
 int Renderer::getOrbitMask() const
@@ -914,8 +914,8 @@ int Renderer::getOrbitMask() const
 
 void Renderer::setOrbitMask(int mask)
 {
-    markSettingsChanged();
     orbitMask = mask;
+    markSettingsChanged();
 }
 
 
@@ -929,8 +929,8 @@ Renderer::getStarColorTable() const
 void
 Renderer::setStarColorTable(const ColorTemperatureTable* ct)
 {
-    markSettingsChanged();
     colorTemp = ct;
+    markSettingsChanged();
 }
 
 
@@ -941,8 +941,8 @@ bool Renderer::getVideoSync() const
 
 void Renderer::setVideoSync(bool sync)
 {
-    markSettingsChanged();
     videoSync = sync;
+    markSettingsChanged();
 }
 
 
@@ -954,8 +954,8 @@ float Renderer::getAmbientLightLevel() const
 
 void Renderer::setAmbientLightLevel(float level)
 {
-    markSettingsChanged();
     ambientLightLevel = level;
+    markSettingsChanged();
 }
 
 
@@ -967,8 +967,8 @@ float Renderer::getMinimumFeatureSize() const
 
 void Renderer::setMinimumFeatureSize(float pixels)
 {
-    markSettingsChanged();
     minFeatureSize = pixels;
+    markSettingsChanged();
 }
 
 
@@ -981,8 +981,8 @@ float Renderer::getMinimumOrbitSize() const
 // occupies some minimum number of pixels on screen.
 void Renderer::setMinimumOrbitSize(float pixels)
 {
-    markSettingsChanged();
     minOrbitSize = pixels;
+    markSettingsChanged();
 }
 
 
@@ -994,8 +994,8 @@ float Renderer::getDistanceLimit() const
 
 void Renderer::setDistanceLimit(float distanceLimit_)
 {
-    markSettingsChanged();
     distanceLimit = distanceLimit_;
+    markSettingsChanged();
 }
 
 
@@ -1006,8 +1006,8 @@ bool Renderer::getFragmentShaderEnabled() const
 
 void Renderer::setFragmentShaderEnabled(bool enable)
 {
-    markSettingsChanged();
     fragmentShaderEnabled = enable && fragmentShaderSupported();
+    markSettingsChanged();
 }
 
 bool Renderer::fragmentShaderSupported() const
@@ -1022,8 +1022,8 @@ bool Renderer::getVertexShaderEnabled() const
 
 void Renderer::setVertexShaderEnabled(bool enable)
 {
-    markSettingsChanged();
     vertexShaderEnabled = enable && vertexShaderSupported();
+    markSettingsChanged();
 }
 
 bool Renderer::vertexShaderSupported() const
@@ -7356,7 +7356,7 @@ void Renderer::buildRenderLists(const Star& sun,
 
                     // Position the label slightly in front of the object along a line from
                     // object center to viewer.
-                    pos = pos * (1.0f - body->getRadius() * 1.01f / pos.length());
+                    pos = pos * (1.0f - body->getBoundingRadius() * 1.01f / pos.length());
 
                     // Try and position the label so that it's not partially
                     // occluded by other objects. We'll consider just the object
@@ -8773,8 +8773,8 @@ void Renderer::renderMarkers(const MarkerList& markers,
 
 void Renderer::setStarStyle(StarStyle style)
 {
-    markSettingsChanged();
     starStyle = style;
+    markSettingsChanged();
 }
 
 
@@ -9081,4 +9081,29 @@ bool Renderer::settingsHaveChanged() const
 void Renderer::markSettingsChanged()
 {
     settingsChanged = true;
+    notifyWatchers();
+}
+
+
+void Renderer::addWatcher(RendererWatcher* watcher)
+{
+    assert(watcher != NULL);
+    watchers.insert(watchers.end(), watcher);
+}
+
+void Renderer::removeWatcher(RendererWatcher* watcher)
+{
+    list<RendererWatcher*>::iterator iter =
+        find(watchers.begin(), watchers.end(), watcher);
+    if (iter != watchers.end())
+        watchers.erase(iter);
+}
+
+void Renderer::notifyWatchers() const
+{
+    for (list<RendererWatcher*>::const_iterator iter = watchers.begin();
+         iter != watchers.end(); iter++)
+    {
+        (*iter)->notifyRenderSettingsChanged(this);
+    }
 }
