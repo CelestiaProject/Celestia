@@ -16,6 +16,7 @@
     NSDateFormatter *bcFormat;
     NSDateFormatter *zeroFormat;
 #endif
+    BOOL setupDone;
 }
 - (IBAction)setTime:(id)sender;
 @end

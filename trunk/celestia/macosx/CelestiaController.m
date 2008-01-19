@@ -353,18 +353,19 @@ NSString* fatalErrorMessage;
     [settings scanForKeys: [renderPanelController window]];
     [settings validateItems];
 
-    // load settings
-    [settings loadUserDefaults];
-
     // paste URL if pending
     if (pendingUrl != nil )
     {
         [ appCore setStartURL: pendingUrl ];
     }
 
-    // set the simulation starting time to the current system time
-    [appCore start:[NSDate date] withTimeZone:[NSTimeZone defaultTimeZone]];
+    [appCore start:[NSDate date]];
 
+    // load settings
+    // Delay applying settings until after setting simulation time
+    // This allows the timezone to be set correctly
+    [settings loadUserDefaults];
+    
     ready = YES;
     timer = [[NSTimer timerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:YES] retain];
     [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
