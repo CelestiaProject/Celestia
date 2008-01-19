@@ -369,10 +369,9 @@ CelestiaCore *appCore;
     return (BOOL)appCore->initRenderer();
 }
 
--(void)start:(NSDate *)date withTimeZone:(NSTimeZone *)timeZone
+-(void)start:(NSDate *)date
 {
     appCore->start([[Astro julianDate:date] doubleValue]);
-    [self setTimeZone:timeZone withDate:date];
 }
 
 -(void)charEntered:(char)c withModifiers:(int)modifiers

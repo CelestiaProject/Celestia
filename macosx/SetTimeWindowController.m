@@ -9,6 +9,7 @@
 #import "CelestiaAppCore.h"
 #import "CelestiaSimulation.h"
 #import "Astro.h"
+#import "CelestiaSettings.h"
 
 @interface SetTimeWindowController(Private)
 - (NSNumber *) julianDateFromDateAndTime;
@@ -69,6 +70,16 @@
     NSNumber *jd = [self julianDateFromDateAndTime];
     if (jd)
         [sim setDate: jd ];
+}
+
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+    if (!setupDone && [self window]==[aNotification object])
+    {
+        setupDone = YES;
+        [[CelestiaSettings shared] scanForKeys: [self window]];
+        [[CelestiaSettings shared] validateItems];
+    }
 }
 
 - (NSNumber *) julianDateFromDateAndTime

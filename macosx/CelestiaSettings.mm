@@ -127,6 +127,8 @@ static NSMutableDictionary* tagMap;
         TAGDEF(620,@"starStyle")
         TAGDEF(630,@"renderPath")
         TAGDEF(640,@"resolution")
+        TAGDEF(650,@"timeZone")
+        TAGDEF(660,@"dateFormat")
         // orbits
 //        TAGDEF(999,@"minimumOrbitSize")
         TAGDEF(700,@"showPlanetOrbits")
@@ -561,6 +563,27 @@ REFMARKMETHODS(VelocityVector)
 
 -(int)  hudDetail { return appCore->getHudDetail(); }
 -(void) setHudDetail: (int) value { appCore->setHudDetail(value); }
+
+// Time settings
+
+-(int)  timeZone { return appCore->getTimeZoneBias()==0 ? 1 : 0; }
+-(void) setTimeZone: (int) value
+{
+    NSTimeZone *tz;
+    NSDate *date = [NSDate dateWithJulian: [NSNumber numberWithDouble: [self time]]];
+    if (0 == value)
+    {
+        tz = [NSTimeZone defaultTimeZone];
+    }
+    else
+    {
+        tz = [NSTimeZone timeZoneWithAbbreviation: @"GMT"];
+    }
+    [[CelestiaAppCore sharedAppCore] setTimeZone: tz withDate: date];
+}
+
+-(int)  dateFormat { return appCore->getDateFormat(); }
+-(void) setDateFormat: (int) value { appCore->setDateFormat((astro::Date::Format)value); }
 
 // Other Settings
 
