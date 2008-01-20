@@ -1330,3 +1330,4 @@ translations to be used
 * KDE: Save texture resolution setting to config file
 * KDE: Added texture resolution setting to config dialog
 * Windows: Removed unused Mark Features checkbox from Locations dialog
+* Core: Default to the GLSL/OpenGL 2.0 render path if possible
