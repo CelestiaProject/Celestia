@@ -69,10 +69,17 @@ char AppName[] = "Celestia";
 
 static CelestiaCore* appCore = NULL;
 
+// Display modes for full screen operation
 static vector<DEVMODE>* displayModes = NULL;
+
+// Display mode indices
 static int currentScreenMode = 0;
 static int newScreenMode = 0;
+
+// The last fullscreen mode set; saved and restored from the registry
 static int lastFullScreenMode = 0;
+// A fullscreen mode guaranteed to work
+static int fallbackFullScreenMode = 0;
 static RECT windowRect;
 
 static HGLRC glContext;
@@ -2883,21 +2890,22 @@ vector<DEVMODE>* EnumerateDisplayModes(unsigned int minBPP)
 
     modes->resize(keepIter - modes->begin() + 1);
 
-    // Select the default display mode--choose 640x480 at the current
+    // Select the fallback display mode--choose 640x480 at the current
     // pixel depth.  If for some bizarre reason that's not available,
     // fall back to the first mode in the list.
-    lastFullScreenMode = 0;
+    fallbackFullScreenMode = 0;
     for (iter = modes->begin(); iter != modes->end(); iter++)
     {
         if (iter->dmPelsWidth == 640 && iter->dmPelsHeight == 480)
         {
             // Add one to the mode index, since mode 0 means windowed mode
-            lastFullScreenMode = (iter - modes->begin()) + 1;
+            fallbackFullScreenMode = (iter - modes->begin()) + 1;
             break;
         }
     }
-    if (lastFullScreenMode == 0 && modes->size() > 0)
-        lastFullScreenMode = 1;
+    if (fallbackFullScreenMode == 0 && modes->size() > 0)
+        fallbackFullScreenMode = 1;
+    lastFullScreenMode = fallbackFullScreenMode;
 
     return modes;
 }
@@ -3217,6 +3225,18 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     // If full screen mode was found in registry, override default with it.
     if (prefs.fullScreenMode != -1)
         lastFullScreenMode = prefs.fullScreenMode;
+
+    // If the user changes the computer's graphics card or driver, the
+    // number of display modes may change. Since we're storing a display
+    // index this can cause troubles. Avoid out of range errors by
+    // checking against the size of the mode list, falling back to a
+    // safe mode if the last used mode index is now out of range.
+    // TODO: A MUCH better fix for the problem of changing GPU/driver
+    // is to store the mode parameters instead of just the mode index.
+    if (lastFullScreenMode > displayModes->size())
+    {
+        lastFullScreenMode = fallbackFullScreenMode;
+    }
 
     appCore = new CelestiaCore();
     if (appCore == NULL)
@@ -4236,6 +4256,8 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                                                    Marker::Diamond,
                                                    1,
                                                    "");
+
+                    appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);
                 }
             }
             break;
