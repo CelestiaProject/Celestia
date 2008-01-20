@@ -973,7 +973,8 @@ Code:
 
 
 1.5.0
-* New translations: Ukrainian, Russian, Arabic, Dutch, Chinese, Korean
+* New translations: Ukrainian, Russian, Arabic, Dutch, Chinese, Korean,
+  Bulgarian
 * Updated translations
 * Separate i18n domain for constellation names
 * Windows: Added support for i18n
@@ -1133,7 +1134,6 @@ Code:
 * Accelerated loading of large catalog files with an improved name index
   (over 100x performance increase for 100k+ object catalogs)
 * Fixed bug that causes locations to work improperly in multi-star systems
-* Moved solar system barycenter to origin of universal coordinate system
 * Improved vecToVec rotation and quaternion-to-matrix functions
 * Added moons Daphnis, Perdita, Mab, and Cupid to numberedmoons.ssc
 * Added FixedPosition trajectory type for making an object stationary within
@@ -1222,7 +1222,7 @@ Code:
  HD 132406 b, HD 43691 b, NGC 2423 3 b, Gliese 317 b & c,
  TrES-3, HD 155358 b&c, HD 5319 b, HD 75898 b, OGLE-TR-182 b, WASP-3 b,
  55 Cnc f, Lupus-TR-3 b, OGLE-TR-211 b, HD 156846 b, HD 4113 b, Kap CrB b, 
- GD 66 b;
+ GD 66 b, XO-3 b, WASP-4 b TW Hya b
  removed HD 33636 b
 * Set up transit of Gliese 436
 * Added setradius method for solar system objects to celx
@@ -1300,3 +1300,33 @@ translations to be used
 * Perf: Rearranged some galaxy rendering code to increase performance
 * Perf: Added code to skip deep sky object octree traversal when all deep sky
   objects are disabled.
+* Updated stc parser to handle catalog numbers for OrbitBarycenter
+* Added fade effect for constellation labels and lines when viewer leaves
+  vicinity of Solar System
+* Added support for showing reference vectors: frame axes, body axes, velocity,
+  sun direction
+* Implemented labels for markers
+* Clamped simulation time to +/- two billion years
+* Added hires textures to distribution
+* New date/time formatting; date format setting added to config dialog
+* Added child lists for stars
+* Changed goto distance for stellar barycenters so that all child stars fit
+  in view
+* Fixed bug that caused solar system browser to come up empty if the observer
+  was close to a star without a solar system.
+* Fixed incorrect shadow count assert
+* Fixed inappropriate Greek letter substitution in some object names
+* Added definition for RingSystemSectinos to celestia.cfg
+* Updated Great Red Spot longitude
+* Updated Nix and Hydra orbits (new data from Tholen et al)
+* IAU naming changes: Erriapo -> Erriapus, new spelling of Hyrrokkin
+* Added new IAU names for features on Mars, Io, Europa, Titan, Venus
+* New IAU name for Saturnian ring feature: Roche division
+* Updated crater sizes for Gaspra
+* Applied brown dwarf textures to type M brown dwarfs RECONS 2 and LP 944-20
+* Mac: Ignore bodies with empty names in solar system browser
+* Mac: Fixed POSIX locales by setting LANG at startup
+* KDE: Star type saved in config file
+* KDE: Save texture resolution setting to config file
+* KDE: Added texture resolution setting to config dialog
+* Windows: Removed unused Mark Features checkbox from Locations dialog
