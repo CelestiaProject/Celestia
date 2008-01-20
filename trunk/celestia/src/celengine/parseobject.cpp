@@ -479,7 +479,20 @@ CreateOrbit(PlanetarySystem* system,
 }
 
 
-static UniformRotationModel*
+static ConstantOrientation*
+CreateFixedRotationModel(double offset,
+                         double inclination,
+                         double ascendingNode)
+{
+    Quatd q = Quatd::yrotation(-PI - offset) *
+              Quatd::xrotation(-inclination) *
+              Quatd::yrotation(-ascendingNode);
+
+    return new ConstantOrientation(q);
+}
+
+
+static RotationModel*
 CreateUniformRotationModel(Hash* rotationData,
                            double syncRotationPeriod)
 {
@@ -511,11 +524,22 @@ CreateUniformRotationModel(Hash* rotationData,
         ascendingNode = degToRad(ascendingNode);
     }
 
-    return new UniformRotationModel(period,
-                                    offset,
-                                    epoch,
-                                    inclination,
-                                    ascendingNode);
+    // No period was specified, and the default synchronous
+    // rotation period is zero, indicating that the object
+    // doesn't have a periodic orbit. Default to a constant
+    // orientation instead.
+    if (period == 0.0)
+    {
+        return CreateFixedRotationModel(offset, inclination, ascendingNode);
+    }
+    else
+    {
+        return new UniformRotationModel(period,
+                                        offset,
+                                        epoch,
+                                        inclination,
+                                        ascendingNode);
+    }
 }
 
 
@@ -548,7 +572,7 @@ CreateFixedRotationModel(Hash* rotationData)
 }
 
 
-static PrecessingRotationModel*
+static RotationModel*
 CreatePrecessingRotationModel(Hash* rotationData,
                               double syncRotationPeriod)
 {
@@ -590,12 +614,23 @@ CreatePrecessingRotationModel(Hash* rotationData,
         precessionPeriod = precessionPeriod * 365.25;
     }
 
-    return new PrecessingRotationModel(period,
-                                       offset,
-                                       epoch,
-                                       inclination,
-                                       ascendingNode,
-                                       precessionPeriod);
+    // No period was specified, and the default synchronous
+    // rotation period is zero, indicating that the object
+    // doesn't have a periodic orbit. Default to a constant
+    // orientation instead.
+    if (period == 0.0)
+    {
+        return CreateFixedRotationModel(offset, inclination, ascendingNode);
+    }
+    else
+    {
+        return new PrecessingRotationModel(period,
+                                           offset,
+                                           epoch,
+                                           inclination,
+                                           ascendingNode,
+                                           precessionPeriod);
+    }
 }
 
 
@@ -796,7 +831,15 @@ CreateRotationModel(Hash* planetData,
     if (specified)
     {
         RotationModel* rm = NULL;
-        if (precessionRate == 0.0)
+        if (period == 0.0)
+        {
+            // No period was specified, and the default synchronous
+            // rotation period is zero, indicating that the object
+            // doesn't have a periodic orbit. Default to a constant
+            // orientation instead.
+            rm = CreateFixedRotationModel(offset, inclination, ascendingNode);
+        }
+        else if (precessionRate == 0.0)
         {
             rm = new UniformRotationModel(period,
                                           offset,
@@ -826,11 +869,20 @@ CreateRotationModel(Hash* planetData,
 
 RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
 {
-    return new UniformRotationModel(syncRotationPeriod,
-                                    0.0f,
-                                    astro::J2000,
-                                    0.0f,
-                                    0.0f);
+    if (syncRotationPeriod == 0.0)
+    {
+        // If syncRotationPeriod is 0, the orbit of the object is
+        // aperiodic and we'll just return a FixedRotation.
+        return new ConstantOrientation(Quatd(1.0));
+    }
+    else
+    {
+        return new UniformRotationModel(syncRotationPeriod,
+                                        0.0f,
+                                        astro::J2000,
+                                        0.0f,
+                                        0.0f);
+    }
 }
 
 
