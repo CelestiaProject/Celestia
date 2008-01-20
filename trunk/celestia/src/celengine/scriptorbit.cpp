@@ -49,9 +49,9 @@ ScriptedOrbit::~ScriptedOrbit()
  *      period - A number giving the period of the orbit. If not present,
  *         the orbit is assumed to be aperiodic. The orbital period is only
  *         used for drawing the orbit path.
- *      begin, end - optional values that specify the time span over which
- *         the orbit is valid. If not given, the orbit is assumed to be useable
- *         at any time. The orbit is invalid if end < begin.
+ *      beginDate, endDate - optional values that specify the time span over
+ *         which the orbit is valid. If not given, the orbit is assumed to be
+ *          useable at any time. The orbit is invalid if end < begin.
  *      position(time) - The position function takes a time value as input
  *         (TDB Julian day) and returns three values which are the x, y, and
  *         z coordinates. Units for the position are kilometers.
@@ -177,8 +177,8 @@ ScriptedOrbit::initialize(const std::string& moduleName,
 
     // Get the rest of the orbit parameters; they are all optional.
     period          = SafeGetLuaNumber(luaState, -1, "period", 0.0);
-    validRangeBegin = SafeGetLuaNumber(luaState, -1, "begin", 0.0);
-    validRangeEnd   = SafeGetLuaNumber(luaState, -1, "end", 0.0);
+    validRangeBegin = SafeGetLuaNumber(luaState, -1, "beginDate", 0.0);
+    validRangeEnd   = SafeGetLuaNumber(luaState, -1, "endDate", 0.0);
 
     // Pop the orbit object off the stack
     lua_pop(luaState, 1);
