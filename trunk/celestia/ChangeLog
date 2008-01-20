@@ -1152,7 +1152,6 @@ Code:
 * Fixed sizes of irregular galaxies (factor of 2!).
 * Prevented galaxy code from crashing if a template is missing.
 * Improved selection of galaxies by taking into account their 3d shape
-* Added new code featuring varying label transparency for galaxies.
 * Added new parameter set for Mie atmosphere display of Titan.
 * Added handling zero duration goto object commands
 * Fixed too aggressive rounding in time rate display
@@ -1281,7 +1280,7 @@ translations to be used
 * Fixed bug in calendar date calculation for negative Julian dates and
   dates far in the past or future.
 * Changed quaternion slerp so shortest path is taken when interpolating
-  orientations. Prevents extra spinning when using SampledOrientatin.
+  orientations. Prevents extra spinning when using SampledOrientation.
 * Implemented SampledTrajectory, a new trajectory type similar to
   SampledOrbit except with properties to control interpolation and precision.
 * Fixed bug with showing labels of objects with empty name strings
@@ -1330,4 +1329,10 @@ translations to be used
 * KDE: Save texture resolution setting to config file
 * KDE: Added texture resolution setting to config dialog
 * Windows: Removed unused Mark Features checkbox from Locations dialog
+* Windows: Prevent crash on switch to fullscreen mode when graphics card or driver is
+  changed between program runs.
+* Windows: Automatically enable markers when 'Mark Object' is chosen from selection
+  popup menu.
+* Changed default rotation model to FixedRotation for objects without
+  periodic orbits.
 * Core: Default to the GLSL/OpenGL 2.0 render path if possible
