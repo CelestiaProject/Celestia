@@ -4093,6 +4093,7 @@ bool CelestiaCore::initRenderer()
     context->setRenderPath(GLContext::GLPath_DOT3_ARBVP);
     context->setRenderPath(GLContext::GLPath_NvCombiner_NvVP);
     context->setRenderPath(GLContext::GLPath_NvCombiner_ARBVP);
+    context->setRenderPath(GLContext::GLPath_GLSL);
     cout << _("render path: ") << context->getRenderPath() << '\n';
 
     Renderer::DetailOptions detailOptions;
