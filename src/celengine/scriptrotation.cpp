@@ -49,10 +49,10 @@ ScriptedRotation::~ScriptedRotation()
  *
  *      period - A number giving the period of the rotation. If not present,
  *         the rotation is assumed to be aperiodic.
- *      begin, end - optional values that specify the time span over which
- *         the rotation model is valid. If not given, the rotation model is
- *         assumed to be valid over all time. The rotation model is invalid if
- *         end < begin.
+ *      beginDate, endDate - optional values that specify the time span over
+ *         which the rotation model is valid. If not given, the rotation model
+ *         is assumed to be valid over all time. The rotation model is invalid
+ *         if end < begin.
  *      orientation(time) - The orientation function takes a time value as
  *         input (TDB Julian day) and returns three values which are the the
  *         quaternion (w, x, y, z).
@@ -137,8 +137,8 @@ ScriptedRotation::initialize(const std::string& moduleName,
 
     // Get the rest of the rotation parameters; they are all optional.
     period          = SafeGetLuaNumber(luaState, -1, "period", 0.0);
-    validRangeBegin = SafeGetLuaNumber(luaState, -1, "begin", 0.0);
-    validRangeEnd   = SafeGetLuaNumber(luaState, -1, "end", 0.0);
+    validRangeBegin = SafeGetLuaNumber(luaState, -1, "beginDate", 0.0);
+    validRangeEnd   = SafeGetLuaNumber(luaState, -1, "endDate", 0.0);
 
     // Pop the rotations object off the stack
     lua_pop(luaState, 1);
