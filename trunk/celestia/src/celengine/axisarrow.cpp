@@ -146,10 +146,10 @@ void RenderAxisArrows(const Quatf& orientation, float scale, float opacity)
 #endif
 
     float shaftLength = 0.85f;
-    float headLength = 0.15f;
-    float shaftRadius = 0.015f;
-    float headRadius = 0.06f;
-    unsigned int nSections = 20;
+    float headLength = 0.10f;
+    float shaftRadius = 0.010f;
+    float headRadius = 0.025f;
+    unsigned int nSections = 30;
     float labelScale = 0.1f;
 	
     // x-axis
@@ -195,10 +195,10 @@ void RenderSunDirectionArrow(const Vec3f& direction, float scale, float opacity)
     glDisable(GL_LIGHTING);
 
     float shaftLength = 0.85f;
-    float headLength = 0.15f;
-    float shaftRadius = 0.015f;
-    float headRadius = 0.06f;
-    unsigned int nSections = 20;
+    float headLength = 0.10f;
+    float shaftRadius = 0.010f;
+    float headRadius = 0.025f;
+    unsigned int nSections = 30;
     float labelScale = 0.1f;
 	
     glColor4f(1.0f, 1.0f, 0.0f, opacity);
@@ -217,10 +217,10 @@ void RenderVelocityArrow(const Vec3f& direction, float scale, float opacity)
     glDisable(GL_LIGHTING);
 
     float shaftLength = 0.85f;
-    float headLength = 0.15f;
-    float shaftRadius = 0.015f;
-    float headRadius = 0.06f;
-    unsigned int nSections = 20;
+    float headLength = 0.10f;
+    float shaftRadius = 0.010f;
+    float headRadius = 0.025f;
+    unsigned int nSections = 30;
     float labelScale = 0.1f;
 	
     glColor4f(0.6f, 0.6f, 0.9f, opacity);
