@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.5.0pre6
+AppVerName=Celestia 1.5.0
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -82,6 +82,8 @@ Source: "locale\res_zh_CN.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
 
 Source: "locale\ar\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\ar\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\bg\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/bg/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\bg\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/bg/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\de\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/de/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\de\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/de/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\el\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/el/LC_MESSAGES"; Flags: ignoreversion
