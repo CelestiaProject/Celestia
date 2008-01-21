@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.15 2006-12-12 00:31:01 suwalski Exp $
+ *  $Id: actions.cpp,v 1.16 2008-01-21 04:55:19 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -1418,4 +1418,15 @@ void resyncGalaxyGainActions(AppData* app)
 	#ifdef GNOME
 	gconf_client_set_float(app->client, "/apps/celestia/galaxyLightGain", gain, NULL);
 	#endif
+}
+
+
+/* Synchronizes the Texture Resolution with the state of the core */
+void resyncTextureResolutionActions(AppData* app)
+{
+	int resolution = app->renderer->getResolution();
+
+	#ifdef GNOME
+	gconf_client_set_int(app->client, "/apps/celestia/textureResolution", resolution, NULL);
+	#endif /* GNOME */
 }
