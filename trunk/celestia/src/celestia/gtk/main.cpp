@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: main.cpp,v 1.8 2006-12-12 04:21:19 suwalski Exp $
+ *  $Id: main.cpp,v 1.9 2008-01-21 04:55:19 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -168,6 +168,7 @@ void GtkWatcher::notifyChange(CelestiaCore*, int property)
 		resyncRenderActions(app);
 		resyncOrbitActions(app);
 		resyncStarStyleActions(app);
+		resyncTextureResolutionActions(app);
 	}
 
 	else if (property & CelestiaCore::VerbosityLevelChanged)

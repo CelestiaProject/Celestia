@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: dialog-options.cpp,v 1.6 2008-01-18 04:36:11 suwalski Exp $
+ *  $Id: dialog-options.cpp,v 1.7 2008-01-21 04:55:19 suwalski Exp $
  */
 
 #include <gtk/gtk.h>
@@ -184,11 +184,8 @@ static gint changeTextureResolution(GtkRange *slider, AppData* app)
 {
 	app->renderer->setResolution((int)gtk_range_get_value(slider));
 
-	#ifdef GNOME
-	/* Texture resolution changes do not trigger an event like the other
-	 * render settings. Save setting here. */
-	gconf_client_set_int(app->client, "/apps/celestia/textureResolution", app->renderer->getResolution(), NULL);
-	#endif /* GNOME */
+	/* Seeing as this is not a GtkAction, kick off the update function */
+	resyncTextureResolutionActions(app);
 
 	return TRUE;
 }

@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.h,v 1.6 2006-12-12 00:31:01 suwalski Exp $
+ *  $Id: actions.h,v 1.7 2008-01-21 04:55:19 suwalski Exp $
  */
 
 #ifndef GTK_ACTIONS_H
@@ -118,6 +118,7 @@ void resyncTimeZoneAction(AppData* app);
 void resyncAmbientActions(AppData* app);
 void resyncStarStyleActions(AppData* app);
 void resyncGalaxyGainActions(AppData* app);
+void resyncTextureResolutionActions(AppData* app);
 
 
 /* Information for the about box */
