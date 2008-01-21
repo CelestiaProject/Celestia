@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-01-07 22:21+0100\n"
+"POT-Creation-Date: 2008-01-21 21:34+0100\n"
 "PO-Revision-Date: 2007-01-09 14:45+0200\n"
 "Last-Translator: Jānis Jātnieks <sg30022@lanet.lv>\n"
 "Language-Team: Latviešu <LL@li.org>\n"
@@ -162,81 +162,81 @@ msgstr "nederīga alternatīvā virsma"
 msgid "bad location"
 msgstr "nederīga vieta"
 
-#: src/celengine/stardb.cpp:542
+#: src/celengine/stardb.cpp:560
 msgid "Bad header for cross index\n"
 msgstr "Kopējam indeksam bojāta galvane\n"
 
-#: src/celengine/stardb.cpp:555
+#: src/celengine/stardb.cpp:573
 msgid "Bad version for cross index\n"
 msgstr "Kopējam indekstam nederīga versija\n"
 
-#: src/celengine/stardb.cpp:577
+#: src/celengine/stardb.cpp:595
 msgid "Loading cross index failed at record "
 msgstr "Kopējā indeksa ielāde apstājās pie ieraksta "
 
-#: src/celengine/stardb.cpp:678
+#: src/celengine/stardb.cpp:696
 msgid "Bad spectral type in star database, star #\n"
 msgstr "Nepareiza spektra klase datubāzē zvaigznei #\n"
 
-#: src/celengine/stardb.cpp:791
+#: src/celengine/stardb.cpp:809
 msgid "Bad spectral type in star database, star #"
 msgstr "Nepareiza spektra klase datubāzē zvaigznei #"
 
-#: src/celengine/stardb.cpp:805
+#: src/celengine/stardb.cpp:823
 msgid " stars in binary database\n"
 msgstr " zvaizgnes binārajā datubāzē\n"
 
-#: src/celengine/stardb.cpp:821
+#: src/celengine/stardb.cpp:839
 msgid "Total star count: "
 msgstr "Kopējais zvaigzņu skaits: "
 
-#: src/celengine/stardb.cpp:823
+#: src/celengine/stardb.cpp:841
 msgid " star(s) with duplicate catalog numbers deleted.)\n"
 msgstr " zvaigzne(s) ar vienādiem kataloga numuriem tika izdzēstas.)\n"
 
-#: src/celengine/stardb.cpp:850
+#: src/celengine/stardb.cpp:872
 msgid "Error in .stc file (line "
 msgstr "Kļūda .stc failā (līnijā "
 
-#: src/celengine/stardb.cpp:880
+#: src/celengine/stardb.cpp:902
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Kļūdaina zvaigzne: nav norādīta spektra klase.\n"
 
-#: src/celengine/stardb.cpp:887
+#: src/celengine/stardb.cpp:909
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Kļūdaina zvaigzne: nederīga spektra klase.\n"
 
-#: src/celengine/stardb.cpp:1007
+#: src/celengine/stardb.cpp:1025
 msgid "Barycenter "
 msgstr "Baricentrs"
 
-#: src/celengine/stardb.cpp:1007
+#: src/celengine/stardb.cpp:1025
 msgid " does not exist.\n"
 msgstr " neeksistē.\n"
 
-#: src/celengine/stardb.cpp:1034
+#: src/celengine/stardb.cpp:1052
 msgid "Invalid star: missing right ascension\n"
 msgstr "Nederīga zvaigznes: trūkst rektascensijas\n"
 
-#: src/celengine/stardb.cpp:1041
+#: src/celengine/stardb.cpp:1059
 msgid "Invalid star: missing declination.\n"
 msgstr "Nederīga zvaigzne: trūkst deklinācijas.\n"
 
-#: src/celengine/stardb.cpp:1048
+#: src/celengine/stardb.cpp:1066
 msgid "Invalid star: missing distance.\n"
 msgstr "Nederīga zvaigzne: trūkst distances.\n"
 
-#: src/celengine/stardb.cpp:1074
+#: src/celengine/stardb.cpp:1092
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Nederīga zvaigzne: trūkst zvaigžņlieluma.\n"
 
-#: src/celengine/stardb.cpp:1087
+#: src/celengine/stardb.cpp:1105
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr ""
 
-#: src/celengine/stardb.cpp:1221 src/celengine/stardb.cpp:1222
+#: src/celengine/stardb.cpp:1239 src/celengine/stardb.cpp:1240
 msgid "Sun"
 msgstr "Saule"
 
@@ -866,180 +866,180 @@ msgstr "OggTheoraCapture::cleanup() - ierakstīja %d kadrus\n"
 msgid "Settings"
 msgstr "Iestatījumi"
 
-#: src/celestia/winmain.cpp:612 src/celestia/kde/kdeapp.cpp:940
+#: src/celestia/winmain.cpp:613 src/celestia/kde/kdeapp.cpp:940
 msgid "Vendor: "
 msgstr "Ražotājs: "
 
-#: src/celestia/winmain.cpp:617 src/celestia/kde/kdeapp.cpp:945
+#: src/celestia/winmain.cpp:618 src/celestia/kde/kdeapp.cpp:945
 msgid "Renderer: "
 msgstr "Renderētājs: "
 
-#: src/celestia/winmain.cpp:622 src/celestia/kde/kdeapp.cpp:950
+#: src/celestia/winmain.cpp:623 src/celestia/kde/kdeapp.cpp:950
 msgid "Version: "
 msgstr "Versija: "
 
-#: src/celestia/winmain.cpp:632
+#: src/celestia/winmain.cpp:633
 #, fuzzy
 msgid "GLSL version: "
 msgstr "Versija: "
 
-#: src/celestia/winmain.cpp:643 src/celestia/kde/kdeapp.cpp:959
+#: src/celestia/winmain.cpp:644 src/celestia/kde/kdeapp.cpp:959
 msgid "Max simultaneous textures: "
 msgstr "Maksimālais tekstūru skaits vienlaicīgi: "
 
-#: src/celestia/winmain.cpp:650 src/celestia/kde/kdeapp.cpp:964
+#: src/celestia/winmain.cpp:651 src/celestia/kde/kdeapp.cpp:964
 msgid "Max texture size: "
 msgstr "Maksimālais tekstūras izmērs: "
 
-#: src/celestia/winmain.cpp:659
+#: src/celestia/winmain.cpp:660
 #, fuzzy
 msgid "Max cube map size: "
 msgstr "Maksimālais tekstūras izmērs: "
 
-#: src/celestia/winmain.cpp:667 src/celestia/kde/kdeapp.cpp:970
+#: src/celestia/winmain.cpp:668 src/celestia/kde/kdeapp.cpp:970
 msgid "Point size range: "
 msgstr "Punktu mērogošanas attālums: "
 
-#: src/celestia/winmain.cpp:672 src/celestia/kde/kdeapp.cpp:974
+#: src/celestia/winmain.cpp:673 src/celestia/kde/kdeapp.cpp:974
 msgid "Supported Extensions:"
 msgstr "Atbalstītie paplašinājumi:"
 
-#: src/celestia/winmain.cpp:1377
+#: src/celestia/winmain.cpp:1378
 msgid "Windowed Mode"
 msgstr "Logu režīms"
 
-#: src/celestia/winmain.cpp:1499 src/celestia/kde/kdepreferencesdialog.cpp:236
-#: src/celestia/kde/selectionpopup.cpp:367
+#: src/celestia/winmain.cpp:1500 src/celestia/kde/kdepreferencesdialog.cpp:236
+#: src/celestia/kde/selectionpopup.cpp:400
 #: src/celestia/res/resource_strings.cpp:155
 msgid "Asteroids"
 msgstr "Asteroīdiem"
 
-#: src/celestia/winmain.cpp:1501 src/celestia/kde/kdepreferencesdialog.cpp:202
-#: src/celestia/kde/selectionpopup.cpp:369
+#: src/celestia/winmain.cpp:1502 src/celestia/kde/kdepreferencesdialog.cpp:202
+#: src/celestia/kde/selectionpopup.cpp:402
 #: src/celestia/res/resource_strings.cpp:176
 msgid "Comets"
 msgstr "Komētām"
 
-#: src/celestia/winmain.cpp:1503
+#: src/celestia/winmain.cpp:1504
 msgid "Invisibles"
 msgstr "Neredzamajiem"
 
-#: src/celestia/winmain.cpp:1505 src/celestia/kde/kdepreferencesdialog.cpp:193
-#: src/celestia/kde/selectionpopup.cpp:371
+#: src/celestia/winmain.cpp:1506 src/celestia/kde/kdepreferencesdialog.cpp:193
+#: src/celestia/kde/selectionpopup.cpp:404
 #: src/celestia/res/resource_strings.cpp:159
 msgid "Moons"
 msgstr "Pavadoņiem"
 
-#: src/celestia/winmain.cpp:1507 src/celestia/winmain.cpp:1542
-#: src/celestia/winmain.cpp:1657 src/celestia/kde/kdepreferencesdialog.cpp:82
+#: src/celestia/winmain.cpp:1508 src/celestia/winmain.cpp:1543
+#: src/celestia/winmain.cpp:1658 src/celestia/kde/kdepreferencesdialog.cpp:82
 #: src/celestia/kde/kdepreferencesdialog.cpp:184
-#: src/celestia/kde/selectionpopup.cpp:373
-#: src/celestia/kde/selectionpopup.cpp:451
+#: src/celestia/kde/selectionpopup.cpp:406
+#: src/celestia/kde/selectionpopup.cpp:484
 #: src/celestia/res/resource_strings.cpp:151
 #: src/celestia/res/resource_strings.cpp:160
 msgid "Planets"
 msgstr "Planētām"
 
-#: src/celestia/winmain.cpp:1509 src/celestia/kde/celestialbrowser.cpp:193
-#: src/celestia/kde/selectionpopup.cpp:375
+#: src/celestia/winmain.cpp:1510 src/celestia/kde/celestialbrowser.cpp:193
+#: src/celestia/kde/selectionpopup.cpp:408
 #: src/celestia/res/resource_strings.cpp:161
 msgid "Spacecraft"
 msgstr "Mākslīgie pavadoņi"
 
-#: src/celestia/winmain.cpp:1599 src/celestia/winmain.cpp:1645
-#: src/celestia/winmain.cpp:1668 src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:272
+#: src/celestia/winmain.cpp:1600 src/celestia/winmain.cpp:1646
+#: src/celestia/winmain.cpp:1669 src/celestia/kde/eclipsefinderdlg.cpp:117
+#: src/celestia/kde/selectionpopup.cpp:290
 msgid "&Goto"
 msgstr "&Doties uz"
 
-#: src/celestia/winmain.cpp:1600 src/celestia/winmain.cpp:1669
-#: src/celestia/kde/selectionpopup.cpp:273
+#: src/celestia/winmain.cpp:1601 src/celestia/winmain.cpp:1670
+#: src/celestia/kde/selectionpopup.cpp:291
 msgid "&Follow"
 msgstr "&Sekot"
 
-#: src/celestia/winmain.cpp:1601
+#: src/celestia/winmain.cpp:1602
 msgid "S&ync Orbit"
 msgstr "&Synhronizēt ar orbītu"
 
-#: src/celestia/winmain.cpp:1602 src/celestia/winmain.cpp:1646
-#: src/celestia/winmain.cpp:1670 src/celestia/kde/selectionpopup.cpp:276
+#: src/celestia/winmain.cpp:1603 src/celestia/winmain.cpp:1647
+#: src/celestia/winmain.cpp:1671 src/celestia/kde/selectionpopup.cpp:294
 msgid "&Info"
 msgstr "&Informācija"
 
-#: src/celestia/winmain.cpp:1605
+#: src/celestia/winmain.cpp:1606 src/celestia/kde/selectionpopup.cpp:323
 msgid "&Reference Vectors"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1606
+#: src/celestia/winmain.cpp:1607 src/celestia/kde/selectionpopup.cpp:324
 #, fuzzy
 msgid "Show Body Axes"
 msgstr "Rādīt robežas"
 
-#: src/celestia/winmain.cpp:1607
+#: src/celestia/winmain.cpp:1608 src/celestia/kde/selectionpopup.cpp:326
 #, fuzzy
 msgid "Show Frame Axes"
 msgstr "Izmantot &rāmjus"
 
-#: src/celestia/winmain.cpp:1608
+#: src/celestia/winmain.cpp:1609 src/celestia/kde/selectionpopup.cpp:328
 #, fuzzy
 msgid "Show Sun Direction"
 msgstr "Rādīt kalnus"
 
-#: src/celestia/winmain.cpp:1609
+#: src/celestia/winmain.cpp:1610 src/celestia/kde/selectionpopup.cpp:330
 #, fuzzy
 msgid "Show Velocity Vector"
 msgstr "Rādīt pilsētu novietojumu"
 
-#: src/celestia/winmain.cpp:1622
+#: src/celestia/winmain.cpp:1623
 msgid "&Satellites"
 msgstr "&Pavadoņi"
 
-#: src/celestia/winmain.cpp:1632 src/celestia/kde/selectionpopup.cpp:319
+#: src/celestia/winmain.cpp:1633 src/celestia/kde/selectionpopup.cpp:352
 msgid "&Alternate Surfaces"
 msgstr "&Alternatīvās virsmas"
 
-#: src/celestia/winmain.cpp:1655 src/celestia/kde/selectionpopup.cpp:430
+#: src/celestia/winmain.cpp:1656 src/celestia/kde/selectionpopup.cpp:463
 msgid "Orbiting Bodies"
 msgstr "Apriņķojošie objekti"
 
-#: src/celestia/winmain.cpp:1682 src/celestia/kde/selectionpopup.cpp:282
+#: src/celestia/winmain.cpp:1683 src/celestia/kde/selectionpopup.cpp:300
 msgid "&Unmark"
 msgstr "&Atcelt iezīmēto"
 
-#: src/celestia/winmain.cpp:1684 src/celestia/kde/selectionpopup.cpp:299
+#: src/celestia/winmain.cpp:1685 src/celestia/kde/selectionpopup.cpp:317
 msgid "&Mark"
 msgstr "&Iezīmēt"
 
-#: src/celestia/winmain.cpp:3092
+#: src/celestia/winmain.cpp:3096
 msgid "Loading: "
 msgstr "Ielādē: "
 
-#: src/celestia/winmain.cpp:3248 src/celutil/util.cpp:72
+#: src/celestia/winmain.cpp:3253 src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
 msgstr "lv"
 
-#: src/celestia/winmain.cpp:3250 src/celestia/res/resource_strings.cpp:218
+#: src/celestia/winmain.cpp:3255 src/celestia/res/resource_strings.cpp:218
 msgid "WinLangID"
 msgstr "0426"
 
-#: src/celestia/winmain.cpp:3751
+#: src/celestia/winmain.cpp:3757
 msgid "Copied URL"
 msgstr "Iekopēja URL"
 
-#: src/celestia/winmain.cpp:3846
+#: src/celestia/winmain.cpp:3852
 msgid "Loading URL"
 msgstr "Ielādē URL"
 
-#: src/celestia/winmain.cpp:3858
+#: src/celestia/winmain.cpp:3864
 msgid "Error opening script"
 msgstr "Kļūda atverot skriptu"
 
-#: src/celestia/winmain.cpp:3877
+#: src/celestia/winmain.cpp:3883
 msgid "Error loading script"
 msgstr "Kļūda ielādējot skriptu"
 
-#: src/celestia/winmain.cpp:3882
+#: src/celestia/winmain.cpp:3888
 msgid "Running script"
 msgstr "Izpilda skriptu"
 
@@ -1125,9 +1125,23 @@ msgstr "Abs.spož."
 msgid "Type"
 msgstr "Tips"
 
-#: src/celestia/wintime.cpp:96
+#: src/celestia/wintime.cpp:95
 msgid "Universal Time"
 msgstr "Universālais Laiks"
+
+#: src/celestia/wintime.cpp:96 src/celestia/kde/kdepreferencesdialog.cpp:377
+#: src/celestia/kde/kdepreferencesdialog.cpp:398
+msgid "Local Time"
+msgstr "Vietējais laiks"
+
+#: src/celestia/wintime.cpp:97
+#, fuzzy
+msgid "Time Zone Name"
+msgstr "Laika zona: "
+
+#: src/celestia/wintime.cpp:98
+msgid "UTC Offset"
+msgstr ""
 
 #: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:497
 #: src/celestia/kde/rc.cpp:30
@@ -1974,11 +1988,6 @@ msgstr "Rādīt"
 msgid "Timezone: "
 msgstr "Laika zona:"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:377
-#: src/celestia/kde/kdepreferencesdialog.cpp:398
-msgid "Local Time"
-msgstr "Vietējais laiks"
-
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
 #, fuzzy
 msgid "Format: "
@@ -2106,84 +2115,84 @@ msgstr "Virsmas temp.: "
 msgid "Marked objects"
 msgstr "Marķētie objekti"
 
-#: src/celestia/kde/selectionpopup.cpp:270
+#: src/celestia/kde/selectionpopup.cpp:288
 msgid "&Select"
 msgstr "&Izvēlēties"
 
-#: src/celestia/kde/selectionpopup.cpp:271
+#: src/celestia/kde/selectionpopup.cpp:289
 #: src/celestia/res/resource_strings.cpp:105
 #: src/celestia/res/resource_strings.cpp:112
 msgid "&Center"
 msgstr "&Iecentrēt"
 
-#: src/celestia/kde/selectionpopup.cpp:275
+#: src/celestia/kde/selectionpopup.cpp:293
 msgid "S&ynch Orbit"
 msgstr "&Sinhronā orbīta"
 
-#: src/celestia/kde/selectionpopup.cpp:278
+#: src/celestia/kde/selectionpopup.cpp:296
 msgid "Unmark &All"
 msgstr "&Nemarķēt visus"
 
-#: src/celestia/kde/selectionpopup.cpp:287
+#: src/celestia/kde/selectionpopup.cpp:305
 msgid "Diamond"
 msgstr "Rombs"
 
-#: src/celestia/kde/selectionpopup.cpp:288
+#: src/celestia/kde/selectionpopup.cpp:306
 msgid "Triangle"
 msgstr "Trijstūris"
 
-#: src/celestia/kde/selectionpopup.cpp:289
+#: src/celestia/kde/selectionpopup.cpp:307
 msgid "Square"
 msgstr "Kvadrāts"
 
-#: src/celestia/kde/selectionpopup.cpp:290
+#: src/celestia/kde/selectionpopup.cpp:308
 #, fuzzy
 msgid "Filled Square"
 msgstr "Filtrēt zvaigznes no"
 
-#: src/celestia/kde/selectionpopup.cpp:291
+#: src/celestia/kde/selectionpopup.cpp:309
 msgid "Plus"
 msgstr "Pluss"
 
-#: src/celestia/kde/selectionpopup.cpp:292
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "X"
 msgstr "X"
 
-#: src/celestia/kde/selectionpopup.cpp:293
+#: src/celestia/kde/selectionpopup.cpp:311
 msgid "Left Arrow"
 msgstr "Kreisā bulta"
 
-#: src/celestia/kde/selectionpopup.cpp:294
+#: src/celestia/kde/selectionpopup.cpp:312
 msgid "Right Arrow"
 msgstr "Labā bulta"
 
-#: src/celestia/kde/selectionpopup.cpp:295
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "Up Arrow"
 msgstr "Bulta uz augšu"
 
-#: src/celestia/kde/selectionpopup.cpp:296
+#: src/celestia/kde/selectionpopup.cpp:314
 msgid "Down Arrow"
 msgstr "Bulta uz leju"
 
-#: src/celestia/kde/selectionpopup.cpp:297
+#: src/celestia/kde/selectionpopup.cpp:315
 msgid "Circle"
 msgstr "Rinķis"
 
-#: src/celestia/kde/selectionpopup.cpp:298
+#: src/celestia/kde/selectionpopup.cpp:316
 #, fuzzy
 msgid "Disk"
 msgstr "Att."
 
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:344
 msgid "Normal"
 msgstr "Normāls"
 
-#: src/celestia/kde/selectionpopup.cpp:377
+#: src/celestia/kde/selectionpopup.cpp:410
 #, fuzzy
 msgid "Small Bodies"
 msgstr "&Pavadoņi"
 
-#: src/celestia/kde/selectionpopup.cpp:379
+#: src/celestia/kde/selectionpopup.cpp:412
 #, fuzzy
 msgid "Dwarf Planets"
 msgstr "Planēta"
