@@ -25,13 +25,13 @@
 - (void) removeRefMarkItems
 {
     int index;
-    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Body Axes",@"")];
+    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Body Axes",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Frame Axes",@"")];
+    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Frame Axes",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Sun Direction",@"")];
+    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Sun Direction",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedString(@"Show Velocity Vector",@"")];
+    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
 }
 #endif
@@ -69,28 +69,28 @@
     if ([aSelection body])
     {
         target = [aSelection body];
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Velocity Vector",@"") action: nil keyEquivalent: @""] autorelease];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
             [mi setTag: 1003];
             [self insertItem: mi atIndex: aIndex];
             [settings scanForKeys: mi];
         }
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Sun Direction",@"") action: nil keyEquivalent: @""] autorelease];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Sun Direction",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
             [mi setTag: 1002];
             [self insertItem: mi atIndex: aIndex];
             [settings scanForKeys: mi];
         }
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Frame Axes",@"") action: nil keyEquivalent: @""] autorelease];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Frame Axes",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
             [mi setTag: 1001];
             [self insertItem: mi atIndex: aIndex];
             [settings scanForKeys: mi];
         }
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Show Body Axes",@"") action: nil keyEquivalent: @""] autorelease];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Body Axes",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
             [mi setTag: 1000];
