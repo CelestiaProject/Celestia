@@ -44,7 +44,7 @@
 # Imaginary textures are assigned to giant planets based on their estimated temperatures,
 # according to the five categories set out by D Sudarsky, A Burrows & P Pinto in 'Albedo and
 # reflection spectra of extrasolar giant planets'(Astrophysical Journal 2000; 538: 885-903):
-#      http://www.journals.uchicago.edu/ApJ/journal/issues/ApJ/v538n2/50692/50692.web.pdf
+#      http://www.journals.uchicago.edu/doi/pdf/10.1086/309160
 # Color values and albedos are based on the theoretical reflectance spectra given in that paper.
 # Planets with an estimated temperature greater than 1000K have been assigned a glowing nightside
 # texture.
