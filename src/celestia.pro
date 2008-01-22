@@ -138,6 +138,9 @@ ENGINE_SOURCES = \
 	celengine/rotationmanager.cpp \
 	celengine/samporbit.cpp \
 	celengine/samporient.cpp \
+	celengine/scriptobject.cpp \
+	celengine/scriptorbit.cpp \
+	celengine/scriptrotation.cpp \
 	celengine/selection.cpp \
 	celengine/shadermanager.cpp \
 	celengine/simulation.cpp \
@@ -216,6 +219,9 @@ ENGINE_HEADERS = \
 	celengine/rotationmanager.h \
 	celengine/samporbit.h \
 	celengine/samporient.h \
+	celengine/scriptobject.h \
+	celengine/scriptorbit.h \
+	celengine/scriptrotation.h \
 	celengine/selection.h \
 	celengine/shadermanager.h \
 	celengine/simulation.h \
@@ -251,7 +257,8 @@ APP_SOURCES = \
 	celestia/favorites.cpp \
 	celestia/imagecapture.cpp \
 	celestia/scriptmenu.cpp \
-	celestia/url.cpp
+	celestia/url.cpp \
+	celestia/celx.cpp
 
 APP_HEADERS = \
 	celestia/celestiacore.h \
@@ -261,7 +268,8 @@ APP_HEADERS = \
 	celestia/favorites.h \
 	celestia/imagecapture.h \
 	celestia/scriptmenu.h \
-	celestia/url.h
+	celestia/url.h \
+	celestia/celx.h
 
 macx {
 	APP_SOURCES -= celestia/imagecapture.cpp
@@ -281,7 +289,9 @@ QTAPP_SOURCES = \
 	celestia/qt/qtsolarsystembrowser.cpp \
 	celestia/qt/qtselectionpopup.cpp \
 	celestia/qt/qtcolorswatchwidget.cpp \
-	celestia/qt/qttimetoolbar.cpp
+	celestia/qt/qttimetoolbar.cpp \
+	celestia/qt/qtcelestiaactions.cpp \
+	celestia/qt/qtinfopanel.cpp
 
 QTAPP_HEADERS = \
 	celestia/qt/qtappwin.h \
@@ -292,7 +302,9 @@ QTAPP_HEADERS = \
 	celestia/qt/qtsolarsystembrowser.h \
 	celestia/qt/qtselectionpopup.h \
 	celestia/qt/qtcolorswatchwidget.h \
-	celestia/qt/qttimetoolbar.h
+	celestia/qt/qttimetoolbar.h \	
+	celestia/qt/qtcelestiaactions.h \
+	celestia/qt/qtinfopanel.h
 
 SOURCES = \
 	$$UTIL_SOURCES \
@@ -327,12 +339,14 @@ win32 {
 		../inc/libintl \
 		../inc/libz \
 		../inc/libpng \
-		../inc/libjpeg 
+		../inc/libjpeg \
+		../inc/lua-5.1
 	LIBS += -L../lib \
 		-lzlib \
 		-llibpng \
 		-llibjpeg2 \
-		-lintl
+		-lintl \
+		-llua5.1
 }
 
 unix {
@@ -348,5 +362,7 @@ macx {
 	LIBS += -L../macosx/Frameworks
 	DEFINES += PNG_SUPPORT REFMARKS=1
 }
+
+DEFINES += CELX LUA_VER=0x050100
 
 # QMAKE_CXXFLAGS += -ffast-math
