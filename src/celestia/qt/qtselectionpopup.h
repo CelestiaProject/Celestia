@@ -29,6 +29,7 @@ Q_OBJECT
     ~SelectionPopup();
 
  public slots:
+    void slotSelect();
     void slotCenterSelection();
     void slotGotoSelection();
     void slotFollowSelection();
@@ -39,9 +40,13 @@ Q_OBJECT
     void slotToggleReferenceVector();
     void slotGotoStartDate();
     void slotGotoEndDate();
+    void slotInfo();
 
     void popupAtGoto(const QPoint& p);
     void popupAtCenter(const QPoint& p);
+
+ signals:
+    void selectionInfoRequested(Selection& sel);
 
  private:
     QMenu* createMarkMenu();

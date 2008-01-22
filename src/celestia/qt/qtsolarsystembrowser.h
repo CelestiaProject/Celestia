@@ -14,6 +14,7 @@
 #define _QTSOLARSYSTEMBROWSER_H_
 
 #include <QWidget>
+#include "celengine/selection.h"
 
 class QAbstractItemModel;
 class QTreeView;
@@ -35,6 +36,9 @@ Q_OBJECT
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
     //void slotChooseMarkerColor();
+
+ signals:
+    void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
 
  private:
     void setMarkerColor(QColor color);

@@ -130,6 +130,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     addSeparator();
 
     QAction* selectAction = new QAction(tr("&Select"), this);
+    connect(selectAction, SIGNAL(triggered()), this, SLOT(slotSelect()));
     addAction(selectAction);
 
     centerAction = new QAction(tr("&Center"), this);
@@ -152,6 +153,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     }
 
     QAction* infoAction = new QAction("Info", this);
+    connect(infoAction, SIGNAL(triggered()), this, SLOT(slotInfo()));
     addAction(infoAction);
 
     // Marker submenu
@@ -403,6 +405,13 @@ void SelectionPopup::popupAtCenter(const QPoint& pt)
 
 
 /******** Slots *********/
+
+void SelectionPopup::slotSelect()
+{
+    appCore->getSimulation()->setSelection(selection);
+}
+
+
 void SelectionPopup::slotCenterSelection()
 {
     appCore->getSimulation()->setSelection(selection);
@@ -496,6 +505,9 @@ void SelectionPopup::slotMark()
                                            (Marker::Symbol) symbol,
                                            1,
                                            "");
+
+            // Automatically enable markers
+            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);
         }
     }
 }
@@ -536,4 +548,10 @@ void SelectionPopup::slotGotoEndDate()
     double endDate = 0.0;
     selection.body()->getLifespan(startDate, endDate);
     appCore->getSimulation()->setTime(endDate);
+}
+
+
+void SelectionPopup::slotInfo()
+{
+    emit selectionInfoRequested(selection);
 }

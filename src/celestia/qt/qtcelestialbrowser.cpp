@@ -11,7 +11,6 @@
 // of the License, or (at your option) any later version.
 
 #include "qtcelestialbrowser.h"
-#include "qtselectionpopup.h"
 #include "qtcolorswatchwidget.h"
 #include <QAbstractItemModel>
 #include <QTreeView>
@@ -627,8 +626,7 @@ void CelestialBrowser::slotContextMenu(const QPoint& pos)
 
     if (!sel.empty())
     {
-        SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
-        menu->popupAtGoto(treeView->mapToGlobal(pos));
+        emit selectionContextMenuRequested(treeView->mapToGlobal(pos), sel);
     }
 }
 

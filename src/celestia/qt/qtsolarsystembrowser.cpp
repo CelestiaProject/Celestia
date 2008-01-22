@@ -11,7 +11,6 @@
 // of the License, or (at your option) any later version.
 
 #include "qtsolarsystembrowser.h"
-#include "qtselectionpopup.h"
 #include <QAbstractItemModel>
 #include <QTreeView>
 #include <QPushButton>
@@ -679,6 +678,19 @@ void SolarSystemBrowser::slotRefreshTree()
     treeView->resizeColumnToContents(SolarSystemTreeModel::NameColumn);
 
     treeView->clearSelection();
+
+    // Automatically expand stars in the model (to a max depth of 2)
+    QModelIndex primary = solarSystemModel->index(0, 0, QModelIndex());
+    if (primary.isValid() && solarSystemModel->objectAtIndex(primary).star() != NULL)
+    {
+        treeView->setExpanded(primary, true);
+        QModelIndex secondary = solarSystemModel->index(0, 0, primary);
+        if (secondary.isValid() && solarSystemModel->objectAtIndex(secondary).star() != NULL)
+        {
+            treeView->setExpanded(secondary, true);
+        }
+    }
+    
 }
 
 
@@ -689,8 +701,7 @@ void SolarSystemBrowser::slotContextMenu(const QPoint& pos)
 
     if (!sel.empty())
     {
-        SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
-        menu->popupAtGoto(treeView->mapToGlobal(pos));
+        emit selectionContextMenuRequested(treeView->mapToGlobal(pos), sel);
     }
 }
 
