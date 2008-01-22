@@ -6,7 +6,7 @@
 // keyboard events.  CelestiaCore then turns those events into calls
 // to Renderer and Simulation.
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -2929,10 +2929,92 @@ static void displayRADec(Overlay& overlay, Vec3d v)
     overlay << _("RA: ");
     overlay << " ";
     displayAngleInHourMinSec(overlay, ra);
-    overlay << "\n";
+    overlay << endl;
     overlay << _("Dec: ");
     displayAngle(overlay, dec);
+    overlay << endl;
 }
+
+
+// Display nicely formatted planetocentric/planetographic coordinates.
+// The latitude and longitude parameters are angles in radians, altitude
+// is in kilometers.
+static void displayPlanetocentricCoords(Overlay& overlay,
+                                        const Body& body,
+                                        double longitude,
+                                        double latitude,
+                                        double altitude,
+                                        bool showAltitude)
+{
+    char ewHemi = ' ';
+    char nsHemi = ' ';
+    double lon = 0.0;
+    double lat = 0.0;
+
+    // Terrible hack for Earth and Moon longitude conventions.  Fix by
+    // adding a field to specify the longitude convention in .ssc files.
+    if (body.getName() == "Earth" || body.getName() == "Moon")
+    {
+        if (latitude < 0.0)
+            nsHemi = 'S';
+        else if (latitude > 0.0)
+            nsHemi = 'N';
+
+        if (longitude < 0.0)
+            ewHemi = 'W';
+        else if (longitude > 0.0f)
+            ewHemi = 'E';
+
+        lon = (float) abs(radToDeg(longitude));
+        lat = (float) abs(radToDeg(latitude));
+    }
+    else
+    {
+        // Swap hemispheres if the object is a retrograde rotator
+        Quatd q = ~body.getEclipticalToEquatorial(astro::J2000);
+        bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
+
+        if ((latitude < 0.0) ^ retrograde)
+            nsHemi = 'S';
+        else if ((latitude > 0.0) ^ retrograde)
+            nsHemi = 'N';
+        
+        if (retrograde)
+            ewHemi = 'E';
+        else
+            ewHemi = 'W';
+
+        lon = -radToDeg(longitude);
+        if (lon < 0.0)
+            lon += 360.0;
+        lat = abs(radToDeg(latitude));
+    }
+
+    overlay.unsetf(ios::fixed);
+    overlay << setprecision(6);
+    overlay << lat << nsHemi << ' ' << lon << ewHemi;
+    if (showAltitude)
+        overlay << ' ' << altitude << _("km") << endl;
+    overlay << endl;
+}
+
+
+#if 0
+// Show the planetocentric latitude, longitude, and altitude of a
+// observer.
+static void displayObserverPlanetocentricCoords(Overlay& overlay,
+                                                Body& body,
+                                                const UniversalCoord& observerPos,
+                                                double tdb)
+{
+    // Get the observer position in body-centered ecliptical coordinates
+    Vec3d ecl = observerPos - Selection(&body).getPosition(tdb);
+    ecl *= astro::microLightYearsToKilometers(1.0);
+    Vec3d pc = body.eclipticToPlanetocentric(ecl, tdb);
+
+    displayPlanetocentricCoords(overlay, body, pc.x, pc.y, pc.z, true);
+}
+#endif
 
 
 static void displayAcronym(Overlay& overlay, char* s)
@@ -3131,54 +3213,8 @@ static void displayLocationInfo(Overlay& overlay,
     {
         Vec3f locPos = location.getPosition();
         Vec3d lonLatAlt = body->cartesianToPlanetocentric(Vec3d(locPos.x, locPos.y, locPos.z));
-        char ewHemi = ' ';
-        char nsHemi = ' ';
-        float lon = 0.0f;
-        float lat = 0.0f;
-
-        // Terrible hack for Earth and Moon longitude conventions.  Fix by
-        // adding a field to specify the longitude convention in .ssc files.
-        if (body->getName() == "Earth" || body->getName() == "Moon")
-        {
-            if (lonLatAlt.y < 0.0f)
-                nsHemi = 'S';
-            else if (lonLatAlt.y > 0.0f)
-                nsHemi = 'N';
-
-            if (lonLatAlt.x < 0.0f)
-                ewHemi = 'W';
-            else if (lonLatAlt.x > 0.0f)
-                ewHemi = 'E';
-
-            lon = (float) abs(radToDeg(lonLatAlt.x));
-            lat = (float) abs(radToDeg(lonLatAlt.y));
-        }
-        else
-        {
-            // Swap hemispheres if the object is a retrograde rotator
-            Quatd q = ~body->getEclipticalToEquatorial(astro::J2000);
-            bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
-
-            if ((lonLatAlt.y < 0.0f) ^ retrograde)
-                nsHemi = 'S';
-            else if ((lonLatAlt.y > 0.0f) ^ retrograde)
-                nsHemi = 'N';
-
-            if (retrograde)
-                ewHemi = 'E';
-            else
-                ewHemi = 'W';
-
-            lon = (float) -radToDeg(lonLatAlt.x);
-            if (lon < 0.0f)
-                lon += 360.0f;
-            lat = (float) abs(radToDeg(lonLatAlt.y));
-        }
-
-        overlay << body->getName(true).c_str() << " ";
-        overlay.unsetf(ios::fixed);
-        overlay << setprecision(6);
-        overlay << lat << nsHemi << ' ' << lon << ewHemi << '\n';
+        displayPlanetocentricCoords(overlay, *body,
+                                    lonLatAlt.x, lonLatAlt.y, lonLatAlt.z, false);
     }
 }
 
@@ -3306,9 +3342,9 @@ void CelestiaCore::renderOverlay()
         // Time and date
         glPushMatrix();
         glColor4f(0.7f, 0.7f, 1.0f, 1.0f);
-        glTranslatef( width - dateStrWidth,
-                     (float) (height - fontHeight),
-                     0.0f);
+        glTranslatef( (float) (width - dateStrWidth),
+                      (float) (height - fontHeight),
+                      0.0f);
         overlay->beginText();
 
         overlay->print(dateStr);
@@ -3543,9 +3579,54 @@ void CelestiaCore::renderOverlay()
 	          break;
         }
 
-        Vec3d vect = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
-        vect = vect * Mat3d::xrotation(-astro::J2000Obliquity);
-        displayRADec(*overlay, vect);
+        
+        // Display RA/Dec for the selection, but only when the observer is near
+        // the Earth.
+        Selection refObject = sim->getFrame().refObject;
+        if (refObject.body() && refObject.body()->getName() == "Earth")
+        {
+            Body* earth = refObject.body();
+
+            UniversalCoord observerPos = sim->getObserver().getPosition();
+            double distToEarth = (observerPos - refObject.getPosition(sim->getTime())).length();
+            distToEarth = astro::microLightYearsToKilometers(distToEarth) - earth->getRadius();
+            if (distToEarth < 1000.0)
+            {
+#if 1
+                // Code to show the geocentric RA/Dec
+
+                // Only show the coordinates for stars and deep sky objects, where
+                // the geocentric values will match the apparent values for observers
+                // near the Earth.
+                if (sel.star() != NULL || sel.deepsky() != NULL)
+                {
+                    Vec3d v = sel.getPosition(sim->getTime()) - Selection(earth).getPosition(sim->getTime());
+                    v = v * Mat3d::xrotation(-astro::J2000Obliquity);
+                    displayRADec(*overlay, v);
+                }
+#else
+                // Code to display the apparent RA/Dec for the observer
+
+                // Don't show RA/Dec for the Earth itself
+                if (sel.body() != earth)
+                {
+                    Vec3d vect = sel.getPosition(sim->getTime()) - observerPos;
+                    vect = vect * Mat3d::xrotation(-astro::J2000Obliquity);
+                    displayRADec(*overlay, vect);
+                }
+
+                // Show the geocentric coordinates of the observer, required for
+                // converting the selection RA/Dec from observer-centric to some
+                // other coordinate system.
+                // TODO: We should really show the planetographic (for Earth, geodetic)
+                // coordinates.
+                displayObserverPlanetocentricCoords(*overlay,
+                                                    *earth,
+                                                    observerPos,
+                                                    sim->getTime());
+#endif
+            }
+        }
 
         overlay->endText();
 
