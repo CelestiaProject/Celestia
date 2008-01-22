@@ -31,8 +31,9 @@
 #include "qtdeepskybrowser.h"
 #include "qtselectionpopup.h"
 #include "qttimetoolbar.h"
+#include "qtcelestiaactions.h"
+#include "qtinfopanel.h"
 //#include "qtvideocapturedialog.h"
-
 
 using namespace std;
 
@@ -45,7 +46,7 @@ const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
 
 // Used when saving and restoring main window state; increment whenever
 // new dockables or toolbars are added.
-static const int CELESTIA_MAIN_WINDOW_VERSION = 3;
+static const int CELESTIA_MAIN_WINDOW_VERSION = 5;
 
 
 // Terrible hack required because context menu callback doesn't retain
@@ -58,7 +59,8 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
                                      const QStringList& qExtrasDirectories) :
     glWidget(NULL),
     celestialBrowser(NULL),
-    appCore(NULL)
+    appCore(NULL),
+    infoPanel(NULL)
 {
     setObjectName("celestia-mainwin");
 
@@ -92,6 +94,8 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
 
     setWindowTitle("Celestia");
 
+    actions = new CelestiaActions(this, appCore);
+
     createMenus();
 
     QTabWidget* tabWidget = new QTabWidget(this);
@@ -105,12 +109,24 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
     // Create the various browser widgets
     celestialBrowser = new CelestialBrowser(appCore, NULL);
     celestialBrowser->setObjectName("celestia-browser");
+    connect(celestialBrowser,
+            SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
+            this,
+            SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
     QWidget* deepSkyBrowser = new DeepSkyBrowser(appCore, NULL);
     deepSkyBrowser->setObjectName("deepsky-browser");
+    connect(deepSkyBrowser,
+            SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
+            this,
+            SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
     SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(appCore, NULL);
     solarSystemBrowser->setObjectName("ssys-browser");
+    connect(solarSystemBrowser,
+            SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
+            this,
+            SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
     // Set up the browser tabs
     tabWidget->addTab(solarSystemBrowser, tr("Solar System"));
@@ -120,15 +136,42 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
     toolsDock->setWidget(tabWidget);
     addDockWidget(Qt::LeftDockWidgetArea, toolsDock);
 
+    infoPanel = new InfoPanel(tr("Info Browser"), this);
+    infoPanel->setObjectName("info-panel");
+    infoPanel->setAllowedAreas(Qt::LeftDockWidgetArea |
+                               Qt::RightDockWidgetArea);
+    addDockWidget(Qt::RightDockWidgetArea, infoPanel);
+
+    // Create the time toolbar
     TimeToolBar* timeToolBar = new TimeToolBar(appCore, tr("Time"));
     timeToolBar->setObjectName("time-toolbar");
     timeToolBar->setFloatable(true);
     timeToolBar->setMovable(true);
     addToolBar(Qt::TopToolBarArea, timeToolBar);
 
-    viewMenu->addAction(toolsDock->toggleViewAction());
-    viewMenu->addAction(timeToolBar->toggleViewAction());
+    // Create the guides toolbar
+    QToolBar* guidesToolBar = new QToolBar(tr("Guides"));
+    guidesToolBar->setObjectName("guides-toolbar");
+    guidesToolBar->setFloatable(true);
+    guidesToolBar->setMovable(true);
+    guidesToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
 
+    guidesToolBar->addAction(actions->eqGridAction);
+    guidesToolBar->addAction(actions->markersAction);
+    guidesToolBar->addAction(actions->constellationsAction);
+    guidesToolBar->addAction(actions->boundariesAction);
+    guidesToolBar->addAction(actions->orbitsAction);
+    guidesToolBar->addAction(actions->labelsAction);
+
+    addToolBar(Qt::TopToolBarArea, guidesToolBar);
+
+    // Add dockable panels and toolbars to the view menu
+    viewMenu->addAction(toolsDock->toggleViewAction());
+    viewMenu->addAction(infoPanel->toggleViewAction());
+    viewMenu->addAction(timeToolBar->toggleViewAction());
+    viewMenu->addAction(guidesToolBar->toggleViewAction());
+
+    // Give keyboard focus to the 3D view
     glWidget->setFocus();
 
     readSettings();
@@ -185,17 +228,22 @@ void CelestiaAppWindow::readSettings()
 }
 
 
-CelestiaCore* CelestiaAppWindow::getAppCore() const
-{
-    return appCore;
-}
-
-
 void CelestiaAppWindow::celestia_tick()
 {
     appCore->tick();
     glWidget->updateGL();
 }
+
+
+void CelestiaAppWindow::slotShowSelectionContextMenu(const QPoint& pos,
+                                                     Selection& sel)
+{
+    SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
+    connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
+            this, SLOT(slotShowObjectInfo(Selection&)));
+    menu->popupAtCenter(pos);
+}
+
 
 void CelestiaAppWindow::slotGrabImage()
 {
@@ -313,6 +361,15 @@ void CelestiaAppWindow::slotToggleSyncTime()
 {
     appCore->getSimulation()->setSyncTime(!appCore->getSimulation()->getSyncTime());
 }
+
+
+void CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
+{
+    infoPanel->buildInfoPage(sel, appCore->getSimulation()->getTime());
+    if (!infoPanel->isVisible())
+        infoPanel->setVisible(true);
+}
+
 
 void CelestiaAppWindow::createActions()
 {
@@ -470,6 +527,8 @@ void CelestiaAppWindow::closeEvent(QCloseEvent* event)
 void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
 {
     SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
+    connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
+            this, SLOT(slotShowObjectInfo(Selection&)));
     menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));
 }
 
