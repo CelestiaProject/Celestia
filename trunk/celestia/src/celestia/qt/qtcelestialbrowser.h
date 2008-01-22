@@ -14,6 +14,7 @@
 #define _QTCELESTIALBROWSER_H_
 
 #include <QWidget>
+#include "qtselectionpopup.h"
 
 class QAbstractItemModel;
 class QTreeView;
@@ -40,6 +41,9 @@ Q_OBJECT
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
     void slotClearMarkers();
+
+ signals:
+    void selectionContextMenuRequested(const QPoint& pos, Selection& sel);
 
  private:
     CelestiaCore* appCore;
