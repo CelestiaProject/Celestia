@@ -22,7 +22,9 @@ class QCloseEvent;
 class QDockWidget;
 class CelestiaGlWidget;
 class CelestialBrowser;
+class InfoPanel;
 class CelestiaCore;
+class CelestiaActions;
 
 
 class CelestiaAppWindow : public QMainWindow
@@ -36,12 +38,11 @@ class CelestiaAppWindow : public QMainWindow
     void writeSettings();
     void readSettings();
 
-    CelestiaCore* getAppCore() const;
-
     void contextMenu(float x, float y, Selection sel);
 
  public slots:
     void celestia_tick();
+    void slotShowSelectionContextMenu(const QPoint& pos, Selection& sel);
 
  private slots:
     void slotGrabImage();
@@ -62,6 +63,8 @@ class CelestiaAppWindow : public QMainWindow
     void slotToggleActiveFrameVisible();
     void slotToggleSyncTime();
 
+    void slotShowObjectInfo(Selection& sel);
+
  private:
     void createActions();
     void createMenus();
@@ -74,11 +77,15 @@ class CelestiaAppWindow : public QMainWindow
     CelestialBrowser* celestialBrowser;
 
     CelestiaCore* appCore;
+    
+    CelestiaActions* actions;
 
     QMenu* fileMenu;
     QMenu* navMenu;
     QMenu* timeMenu;
     QMenu* viewMenu;
+
+    InfoPanel* infoPanel;
 };
 
 
