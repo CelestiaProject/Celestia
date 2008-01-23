@@ -40,4 +40,4 @@ Q_OBJECT
     CelestiaCore* appCore;
 };
 
-#endif // _QTSOLARSYSTEMBROWSER_H_
+#endif // _QTTIMETOOLBAR_H_
