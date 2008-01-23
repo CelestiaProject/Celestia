@@ -359,7 +359,9 @@ macx {
 	CONFIG += x86 ppc
 	PRECOMPILED_HEADER += ../macosx/Util.h
 	LIBS -= -ljpeg
-	LIBS += -L../macosx/Frameworks
+        LIBS += -llua
+	LIBS += -L../macosx/lib
+        LIBS += -L../macosx/Frameworks
 	DEFINES += PNG_SUPPORT REFMARKS=1
 }
 
