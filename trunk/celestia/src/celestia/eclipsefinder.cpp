@@ -92,7 +92,10 @@ bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
                                Ray3d(posCaster, posCaster - Point3d(0, 0, 0)));
         if (dist < R)
         {
-            return true;
+            // Ignore "eclipses" where the caster and receiver have
+            // intersecting bounding spheres.
+            if (distToCaster > caster.getRadius())
+                return true;
         }
     }
 
