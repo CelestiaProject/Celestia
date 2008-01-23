@@ -21,6 +21,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QCloseEvent>
+#include <QDir>
+#include <QMessageBox>
 #include <vector>
 #include <string>
 #include "qtappwin.h"
@@ -79,6 +81,18 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
         extrasDirectories.push_back(iter->toUtf8().data());
     }
 
+#ifdef TARGET_OS_MAC    
+    QString resourceDir = QDir::homePath() + QString("/Library/Application Support/CelestiaResources");
+    bool ok = QDir::setCurrent(resourceDir);
+    if (!ok)
+    {
+        QMessageBox::critical(0, "Celestia",
+                              tr("Celestia is unable to run because the CelestiaResources folder was not "
+                                 "found, probably due to improper installation."));
+        exit(1);
+    }
+#endif
+    
     appCore = new CelestiaCore();
     appCore->initSimulation(&configFileName,
                             &extrasDirectories,
