@@ -87,7 +87,7 @@ bool InitEclipseFinderItems(HWND listView, const vector<Eclipse>& eclipses)
     lvi.stateMask = 0;
     lvi.pszText = LPSTR_TEXTCALLBACK;
 
-    for (int i = 0; i < eclipses.size(); i++)
+    for (unsigned int i = 0; i < eclipses.size(); i++)
     {
         lvi.iItem = i;
         lvi.iSubItem = 0;
@@ -239,21 +239,30 @@ int CALLBACK EclipseFinderCompareFunc(LPARAM lParam0, LPARAM lParam1,
     case 1:
         if (eclipse0->sattelite < eclipse1->sattelite)
             return -1;
-        else
+        else if (eclipse1->sattelite < eclipse0->sattelite)
             return 1;
+        else
+            return 0;
 
     case 4:
-        if ((eclipse0->endTime - eclipse0->startTime) <
-            (eclipse1->endTime - eclipse1->startTime))
-            return -1;
-        else
-            return 1;
+        {
+            double duration0 = eclipse0->endTime - eclipse0->startTime;
+            double duration1 = eclipse1->endTime - eclipse1->startTime;
+            if (duration0 < duration1)
+                return -1;
+            else if (duration1 < duration0)
+                return 1;
+            else
+                return 0;
+        }
 
     default:
         if (eclipse0->startTime < eclipse1->startTime)
             return -1;
-        else
+        else if (eclipse1->startTime < eclipse0->startTime)
             return 1;
+        else
+            return 0;
     }
 }
 
