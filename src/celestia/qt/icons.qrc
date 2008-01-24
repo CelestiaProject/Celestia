@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/icons">
+<file alias="time-currenttime.png">data/time-currenttime.png</file>
+<file alias="time-double.png">data/time-double.png</file>
+<file alias="time-faster.png">data/time-faster.png</file>
+<file alias="time-half.png">data/time-half.png</file>
+<file alias="time-pause.png">data/time-pause.png</file>
+<file alias="time-realtime.png">data/time-realtime.png</file>
+<file alias="time-reverse.png">data/time-reverse.png</file>
+<file alias="time-slower.png">data/time-slower.png</file>
+</qresource>
+</RCC>

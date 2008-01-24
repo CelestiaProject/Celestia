@@ -324,6 +324,9 @@ HEADERS = \
 	$$APP_HEADERS \
 	$$QTAPP_HEADERS
 
+RESOURCES = \
+	 celestia/qt/icons.qrc
+
 #FORMS = \
 #	celestia/qt/celestialbrowserbase.ui
 
