@@ -670,6 +670,9 @@ class Renderer
 class RendererWatcher
 {
  public:
+    RendererWatcher() {};
+    virtual ~RendererWatcher() {};
+
     virtual void notifyRenderSettingsChanged(const Renderer*) = 0;
 };
 
