@@ -1336,3 +1336,5 @@ translations to be used
 * Changed default rotation model to FixedRotation for objects without
   periodic orbits.
 * Core: Default to the GLSL/OpenGL 2.0 render path if possible
+* GTK: Save star rendering limit distance
+* GTK: Add texture resolution setting to preferences and save value
