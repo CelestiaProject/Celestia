@@ -18,6 +18,7 @@
 #include "celengine/selection.h"
 
 class QTextBrowser;
+class Universe;
 
 class InfoPanel : public QDockWidget
 {
@@ -25,14 +26,14 @@ class InfoPanel : public QDockWidget
     InfoPanel(const QString& title, QWidget* parent);
     ~InfoPanel();
 
-    void buildInfoPage(Selection sel, double t);
+    void buildInfoPage(Selection sel, Universe*, double t);
 
  private:
     void pageHeader(QTextStream&);
     void pageFooter(QTextStream&);
     void buildSolarSystemBodyPage(const Body* body, double t, QTextStream&);
     void buildStarPage(const Star* star, QTextStream&);
-    void buildDSOPage(const DeepSkyObject* dso, QTextStream&);
+    void buildDSOPage(const DeepSkyObject* dso, const Universe* u, QTextStream&);
 
  public:
     QTextBrowser* textBrowser;
