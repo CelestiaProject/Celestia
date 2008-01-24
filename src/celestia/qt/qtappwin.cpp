@@ -36,6 +36,7 @@
 #include "qtcelestiaactions.h"
 #include "qtinfopanel.h"
 //#include "qtvideocapturedialog.h"
+#include "celestia/scriptmenu.h"
 
 using namespace std;
 
@@ -379,9 +380,37 @@ void CelestiaAppWindow::slotToggleSyncTime()
 
 void CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
 {
-    infoPanel->buildInfoPage(sel, appCore->getSimulation()->getTime());
+    infoPanel->buildInfoPage(sel,
+                             appCore->getSimulation()->getUniverse(),
+                             appCore->getSimulation()->getTime());
     if (!infoPanel->isVisible())
         infoPanel->setVisible(true);
+}
+
+
+void CelestiaAppWindow::slotOpenScriptDialog()
+{
+    QString scriptFileName = QFileDialog::getOpenFileName(this,
+                                                          tr("Open Script"),
+                                                          "scripts",
+                                                          tr("Celestia Scripts (*.celx *.cel)"));
+
+    if (!scriptFileName.isEmpty())
+    {
+        appCore->cancelScript();
+        appCore->runScript(scriptFileName.toUtf8().data());
+    }
+}
+
+
+void CelestiaAppWindow::slotOpenScript()
+{
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action != NULL)
+    {
+        appCore->cancelScript();
+        appCore->runScript(action->data().toString().toUtf8().data());
+    }
 }
 
 
@@ -408,6 +437,16 @@ void CelestiaAppWindow::createMenus()
 
     fileMenu->addSeparator();
 
+    QAction* openScriptAction = new QAction(tr("&Open Script..."), this);
+    connect(openScriptAction, SIGNAL(triggered()), this, SLOT(slotOpenScriptDialog()));
+    fileMenu->addAction(openScriptAction);
+
+    QMenu* scriptsMenu = buildScriptsMenu();
+    if (scriptsMenu != NULL)
+        fileMenu->addMenu(scriptsMenu);
+
+    fileMenu->addSeparator();
+
     QAction* prefAct = new QAction(QIcon(":data/preferences.png"),
                                    tr("&Preferences"), this);
     connect(prefAct, SIGNAL(triggered()), this, SLOT(slotPreferences()));
@@ -417,6 +456,8 @@ void CelestiaAppWindow::createMenus()
     quitAct->setShortcut(tr("Ctrl+Q"));
     connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
     fileMenu->addAction(quitAct);
+
+    
 
     /****** Navigation menu ******/
     navMenu = menuBar()->addMenu(tr("&Navigation"));
@@ -544,6 +585,27 @@ void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
             this, SLOT(slotShowObjectInfo(Selection&)));
     menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));
+}
+
+
+QMenu* CelestiaAppWindow::buildScriptsMenu()
+{
+    vector<ScriptMenuItem>* scripts = ScanScriptsDirectory("scripts", false);
+    if (scripts->empty())
+        return NULL;
+
+    QMenu* menu = new QMenu(tr("Scripts"));
+    
+    for (vector<ScriptMenuItem>::const_iterator iter = scripts->begin();
+         iter != scripts->end(); iter++)
+    {
+        QAction* act = new QAction(iter->title.c_str(), this);
+        act->setData(iter->filename.c_str());
+        connect(act, SIGNAL(triggered()), this, SLOT(slotOpenScript()));
+        menu->addAction(act);
+    }
+
+    return menu;
 }
 
 

@@ -65,9 +65,13 @@ class CelestiaAppWindow : public QMainWindow
 
     void slotShowObjectInfo(Selection& sel);
 
+    void slotOpenScriptDialog();
+    void slotOpenScript();
+
  private:
     void createActions();
     void createMenus();
+    QMenu* buildScriptsMenu();
 
     void closeEvent(QCloseEvent* event);
 
