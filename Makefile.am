@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I macros
+
 pkgdatadir = @datadir@/@PACKAGE@
 
 dosstuff = \
