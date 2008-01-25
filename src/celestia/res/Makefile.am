@@ -1,4 +1,5 @@
 noinst_DATA = \
+	celestia.exe.manifest \
 	celestia.rc \
 	resource.h \
 	$(wildcard *.bmp) \

@@ -29,6 +29,7 @@ COMMONSOURCES = \
 WINSOURCES = \
 	avicapture.cpp \
 	ODMenu.cpp \
+	scriptmenu.cpp \
 	wglext.cpp \
 	winbookmarks.cpp \
 	windatepicker.cpp \
