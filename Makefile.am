@@ -32,7 +32,7 @@ EXTRA_DIST = \
 splashdir = $(pkgdatadir)/splash
 splash_DATA = splash.png
 
-SUBDIRS = src data extras textures models shaders fonts po po2 locale
+SUBDIRS = src data extras textures models shaders fonts po po2 locale scripts
 
 # Non-automake directories
 NONAUTO = macosx
