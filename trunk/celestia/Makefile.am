@@ -5,6 +5,8 @@ pkgdatadir = @datadir@/@PACKAGE@
 dosstuff = \
 	celestia.mak \
 	celestia.iss \
+	celestia.sln \
+	celestia.vcproj \
 	$(wildcard *.bat)
 
 noinst_DATA = \
