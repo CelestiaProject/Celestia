@@ -7,7 +7,7 @@
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
  *
- *  $Id: actions.cpp,v 1.16 2008-01-21 04:55:19 suwalski Exp $
+ *  $Id: actions.cpp,v 1.17 2008-01-25 01:05:14 suwalski Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -714,6 +714,7 @@ void actionHelpAbout(GtkAction*, AppData* app)
 		"Pat Suwalski <pat@suwalski.net>",
 		"Toti <>",
 		"Da-Woon Jung <dirkpitt2050@users.sf.net>",
+		"Vincent Giangiulio <vince.gian@free.fr>",
 		NULL
     };
 
@@ -722,7 +723,7 @@ void actionHelpAbout(GtkAction*, AppData* app)
 	gtk_show_about_dialog(GTK_WINDOW(app->mainWindow),
 	                     "name", "Celestia",
 	                     "version", VERSION,
-	                     "copyright", "Copyright \xc2\xa9 2001-2005 Chris Laurel",
+	                     "copyright", "Copyright \xc2\xa9 2001-2008 Celestia Development Team",
 	                     "comments", FRONTEND " Front-End",
 	                     "website", "http://celestia.sf.net",
 	                     "authors", authors,
