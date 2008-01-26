@@ -11,6 +11,7 @@
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
+		E50DB0F30D4AB5AA00FD137F /* hires in Copy Textures */ = {isa = PBXBuildFile; fileRef = E50DB0E50D4AB4D600FD137F /* hires */; };
 		E512245A0CF9FC7D009092A2 /* BrowserItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = E51224580CF9FC7D009092A2 /* BrowserItem.mm */; };
 		E532F4F10933331800D7D5B3 /* dsodb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4E80933331800D7D5B3 /* dsodb.cpp */; settings = {COMPILER_FLAGS = "-DDPRINTF=//"; }; };
 		E532F4F30933331800D7D5B3 /* dsoname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EA0933331800D7D5B3 /* dsoname.cpp */; };
@@ -466,6 +467,7 @@
 				E5D767FE0982B7930099DBBD /* logo.png in Copy Textures */,
 				E5D767FF0982B7930099DBBD /* lores in Copy Textures */,
 				E5D768000982B7930099DBBD /* medres in Copy Textures */,
+				E50DB0F30D4AB5AA00FD137F /* hires in Copy Textures */,
 			);
 			name = "Copy Textures";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -490,6 +492,7 @@
 		E50CCA5D0C065F4300E9C76A /* es */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = es; path = es.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
 		E50CCA670C06632A00E9C76A /* EclipseFinderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EclipseFinderController.h; sourceTree = "<group>"; };
 		E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EclipseFinderController.mm; sourceTree = "<group>"; };
+		E50DB0E50D4AB4D600FD137F /* hires */ = {isa = PBXFileReference; lastKnownFileType = folder; path = hires; sourceTree = "<group>"; };
 		E51224570CF9FC7D009092A2 /* BrowserItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserItem.h; sourceTree = "<group>"; };
 		E51224580CF9FC7D009092A2 /* BrowserItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserItem.mm; sourceTree = "<group>"; };
 		E51224730CF9FE7C009092A2 /* Astro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Astro.h; sourceTree = "<group>"; };
@@ -1248,6 +1251,7 @@
 				E5D766AD0982B6DF0099DBBD /* logo.png */,
 				E5D767530982B71D0099DBBD /* lores */,
 				E5D767540982B71D0099DBBD /* medres */,
+				E50DB0E50D4AB4D600FD137F /* hires */,
 			);
 			name = textures;
 			path = ../textures;
@@ -1748,7 +1752,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/Celestia/CelestiaResources/textures/hires\nfind $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
+			shellScript = "find $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
 		};
 		E5CC203B09AA83A900CFFF2C /* Convert PO */ = {
 			isa = PBXShellScriptBuildPhase;
