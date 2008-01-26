@@ -27,6 +27,8 @@ EXTRA_DIST = \
 	$(noinst_DATA) \
 	admin \
 	splash.png \
+	po/extract_resource_strings.pl \
+	po/translate_resources.pl \
 	TRANSLATORS
 
 splashdir = $(pkgdatadir)/splash
