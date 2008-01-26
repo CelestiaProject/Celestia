@@ -1,0 +1,76 @@
+{
+	Name   "Jupiter"
+	Target "Sol/Jupiter"
+	Description "Jupiter is de grootste planeet in ons zonnestelsel en de vijfde planeet vanaf de zon gezien. Zoals de andere grote buitenplaneten is Jupiter een gasreus zonder vast oppervlak. De grote rode vlek is de grootste en de langstlevende van alle stormen in Jupiters turbulente atmosfeer; deze storm, van hetzelfde formaat als de Aarde zelf, is al aan het rondzwerven voor minstens 300 jaar."
+}
+
+{
+	Name "Pluto en Charon"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "Pluto cirkelt rond onze zon op een gemiddelde afstand van bijna zes miljard kilometer. Zijn maan Charon is zo groot dat de twee vaak 'dubbelplaneet' worden genoemd."
+}
+
+{
+	Name "Eros"
+	Target "Sol/Eros"
+	Description "Eros is een aardappelvormig nabij-Aarde asteroide van ongeveer 33 km lang. Dankzij de NEAR Shoermaker ruimtevaartuig is er meer te weten gekomen van Eros dan van elke andere asteroïde. Op 14 Februari 2001 daalde NEAR neer op Eros en werd daarmee het eerste ruimtevaartuig dat ooit op een asteroïde landde."
+}
+
+{
+	Name "Alpha Centauri"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "Alpha Centauri A en B zijn samen met Proxima Centauri het dichtsbijzijnde zonnestelsel voor ons. Alpha Cen A is vergelijkbaar met onze eigen Zon, maar lichtjes ouder en helderder. B is zwakker en roder, en Proxima is zo zwak dat het niet eens met het blote oog gezien kan worden, zelfs al is het de dichtsbijzijnde ster vanaf de Zon."
+}
+
+{
+	Name "Pleiades"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "De Pleiades sterrenhoop is een groep van heldere, recent gevormde sterren. De Pleiades zijn genoemd naar de zeven zussen van de Griekse mythologie, hoewel telescopen hebben onthuld dat er aanzienlijk meer dan zeven sterren in de sterrenhoop zijn."
+}
+
+{
+	Name "Hyades"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "Genoemd naar de vijf dochters van Atlas en Aethra, de Hyades is een van de meest opvallende open sterrenhopen in de hemel. Er zijn schattingen dat de sterren van de Hyades ongeveer 660 miljoen jaar oud zijn -- meer dan zes keer ouder dan de hetere, blauwere Pleiadessterren die in onze nachtelijke hemel dichtbij elkaar staan."
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b is een reuzenplaneet met een omloopbaan rond een rode dwergster. Het is in een 2:1 baanresonantie met een andere planeet in het zonnestelsel."
+}
+
+{
+	Name "Ida en Dactyl"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "Het Galileo ruimtevaartuig fotografeerde de asteroïde 243 Ida in 1993 op zijn weg naar Jupiter. Deze foto's onthulden dat Ida een kleine satelliet had die later Dactyl genoemd werd. Van verscheidene andere asteroïden is sindsdien ook ontdekt dat ze satellieten hebben."
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "51 Pegasi b is de eerst ontdekte planeet die een omloopbaan rond een normale ster, die niet onze Zon is, heeft. Het is een gasreusplaneet en cirkelt extreem dicht rond zijn ster -- minder dan een vijfde van de afstand tussen Mercurius en onze Zon. Dat een gasreus zo dichtbij een ster kan bestaan heeft astronomen gedwongen om hun theorieën over zonnestelselvorming serieus te herzien."
+}
+
+{
+	Name "Albireo"
+	Target "Albireo"
+	Distance 0.6
+	Description "Vanwege de contrasterende oranje en blauw-witte kleuren van zijn component sterren, wordt het Albireo dubbelzonnestelsel beschouwd als een van de meest prachtige paren in de hemel. De oranje ster is een type K reus en zijn metgezel is een B dwerg."
+}
+
+{
+	Name "Komeet Borrelly"
+	Target "Sol/Borrelly"
+	Description "Op 22 september 2001 werd komeet Borrelly de tweede komeet die op korte afstand door een ruimtevaartuig gefotografeerd werd. Ondanks het feit niet te ontworpen zijn voor een vlucht vlak langs een komeet, naderde Deep Space 1 binnen een afstand van 2200 kilometer de kern van Borrelly om terug te keren met de hoogste resolutiefoto's die we van een komeetkern hebben."
+}
