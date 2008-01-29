@@ -16,6 +16,9 @@
  ***************************************************************************/
 
 #include <QApplication>
+#include <QSplashScreen>
+#include <QPixmap>
+#include <QBitmap>
 #include <vector>
 #include "qtappwin.h"
 
@@ -47,10 +50,26 @@ int main(int argc, char *argv[])
 
     ParseCommandLine();
 
-    CelestiaAppWindow window(configFileName,
-                             extrasDirectories);
-                             
+    QPixmap pixmap("splash.png");
+    QSplashScreen splash(pixmap);
+    splash.setMask(pixmap.mask());
+
+    // Disabled for now until issues with pixmap alpha channel
+    // are resolved
+    //splash.show();
+
+    CelestiaAppWindow window;
+
+    // Connect the splash screen to the main window so that it
+    // can receive progress notifications as Celestia files required
+    // for startup are loaded.
+    QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
+                     &splash, SLOT(showMessage(const QString&, int, const QColor&)));
+
+    window.init(configFileName, extrasDirectories);
     window.show();
+
+    splash.finish(&window);
 
     return app.exec();
 }

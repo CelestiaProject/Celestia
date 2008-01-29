@@ -23,6 +23,7 @@ class QDockWidget;
 class CelestiaGlWidget;
 class CelestialBrowser;
 class InfoPanel;
+class EventFinder;
 class CelestiaCore;
 class CelestiaActions;
 
@@ -32,13 +33,17 @@ class CelestiaAppWindow : public QMainWindow
  Q_OBJECT
 
  public:
-    CelestiaAppWindow(const QString& configFileName,
-                      const QStringList& extrasDirectories);
+    CelestiaAppWindow();
+
+    void init(const QString& configFileName,
+              const QStringList& extrasDirectories);
 
     void writeSettings();
     void readSettings();
 
     void contextMenu(float x, float y, Selection sel);
+
+    void loadingProgressUpdate(const QString& s);
 
  public slots:
     void celestia_tick();
@@ -67,6 +72,9 @@ class CelestiaAppWindow : public QMainWindow
 
     void slotOpenScriptDialog();
     void slotOpenScript();
+    
+ signals:
+    void progressUpdate(const QString& s, int align, const QColor& c);
 
  private:
     void createActions();
@@ -90,6 +98,7 @@ class CelestiaAppWindow : public QMainWindow
     QMenu* viewMenu;
 
     InfoPanel* infoPanel;
+    EventFinder* eventFinder;
 };
 
 

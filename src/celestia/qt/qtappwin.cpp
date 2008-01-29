@@ -35,6 +35,7 @@
 #include "qttimetoolbar.h"
 #include "qtcelestiaactions.h"
 #include "qtinfopanel.h"
+#include "qteventfinder.h"
 //#include "qtvideocapturedialog.h"
 #include "celestia/scriptmenu.h"
 
@@ -49,7 +50,7 @@ const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
 
 // Used when saving and restoring main window state; increment whenever
 // new dockables or toolbars are added.
-static const int CELESTIA_MAIN_WINDOW_VERSION = 5;
+static const int CELESTIA_MAIN_WINDOW_VERSION = 9;
 
 
 // Terrible hack required because context menu callback doesn't retain
@@ -58,15 +59,41 @@ static CelestiaAppWindow* MainWindowInstance = NULL;
 static void ContextMenu(float x, float y, Selection sel);
 
 
-CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
-                                     const QStringList& qExtrasDirectories) :
+// Progress notifier class receives update messages from CelestiaCore
+// at startup. This simple implementation just forwards messages on
+// to the main Celestia window.
+class AppProgressNotifier : public ProgressNotifier
+{
+public:
+    AppProgressNotifier(CelestiaAppWindow* _appWin) :
+        appWin(_appWin)
+    {
+    }
+
+    void update(const string& s)
+    {
+        appWin->loadingProgressUpdate(QString(s.c_str()));
+    }
+
+private:
+    CelestiaAppWindow* appWin;
+};
+
+
+CelestiaAppWindow::CelestiaAppWindow() :
     glWidget(NULL),
     celestialBrowser(NULL),
     appCore(NULL),
-    infoPanel(NULL)
+    infoPanel(NULL),
+    eventFinder(NULL)
 {
     setObjectName("celestia-mainwin");
+}
 
+
+void CelestiaAppWindow::init(const QString& qConfigFileName,
+                             const QStringList& qExtrasDirectories)
+{
     // Get the config file name
     string configFileName;
     if (qConfigFileName.isEmpty())
@@ -93,11 +120,13 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
         exit(1);
     }
 #endif
-    
+
+    AppProgressNotifier* progress = new AppProgressNotifier(this);
     appCore = new CelestiaCore();
     appCore->initSimulation(&configFileName,
                             &extrasDirectories,
-                            NULL);
+                            progress);
+    delete progress;
 
     glWidget = new CelestiaGlWidget(NULL, "Celestia", appCore);
     glctx = glWidget->context();
@@ -157,6 +186,15 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
                                Qt::RightDockWidgetArea);
     addDockWidget(Qt::RightDockWidgetArea, infoPanel);
 
+    eventFinder = new EventFinder(appCore->getSimulation()->getUniverse(),
+                                  tr("Event Finder"), this);
+    eventFinder->setObjectName("event-finder");
+    eventFinder->setAllowedAreas(Qt::LeftDockWidgetArea |
+                               Qt::RightDockWidgetArea);
+    addDockWidget(Qt::LeftDockWidgetArea, eventFinder);
+    eventFinder->setVisible(false);
+    //addDockWidget(Qt::DockWidgetArea, eventFinder);
+
     // Create the time toolbar
     TimeToolBar* timeToolBar = new TimeToolBar(appCore, tr("Time"));
     timeToolBar->setObjectName("time-toolbar");
@@ -181,10 +219,12 @@ CelestiaAppWindow::CelestiaAppWindow(const QString& qConfigFileName,
     addToolBar(Qt::TopToolBarArea, guidesToolBar);
 
     // Add dockable panels and toolbars to the view menu
-    viewMenu->addAction(toolsDock->toggleViewAction());
-    viewMenu->addAction(infoPanel->toggleViewAction());
     viewMenu->addAction(timeToolBar->toggleViewAction());
     viewMenu->addAction(guidesToolBar->toggleViewAction());
+    viewMenu->addSeparator();
+    viewMenu->addAction(toolsDock->toggleViewAction());
+    viewMenu->addAction(infoPanel->toggleViewAction());
+    viewMenu->addAction(eventFinder->toggleViewAction());
 
     // Give keyboard focus to the 3D view
     glWidget->setFocus();
@@ -585,6 +625,12 @@ void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
             this, SLOT(slotShowObjectInfo(Selection&)));
     menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));
+}
+
+
+void CelestiaAppWindow::loadingProgressUpdate(const QString& s)
+{
+    emit progressUpdate(s, Qt::AlignLeft, Qt::white);
 }
 
 
