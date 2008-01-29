@@ -73,6 +73,7 @@ src/celestia/wineclipses.cpp
 src/celestia/winssbrowser.cpp
 src/celestia/winstarbrowser.cpp
 src/celestia/wintime.cpp
+src/celestia/winsplash.cpp
 
 src/celutil/util.cpp
 
