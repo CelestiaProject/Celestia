@@ -445,7 +445,9 @@ const char* astro::Date::toCStr(Format format) const
 {
     static char date[255];
 
-#ifdef __GNUC__
+    // MinGW's libraries don't have the tm_gmtoff and tm_zone fields for
+    // struct tm.
+#if defined(__GNUC__) && !defined(_WIN32)
     struct tm cal_time;
     memset(&cal_time, 0, sizeof(cal_time));
     cal_time.tm_year = year-1900;
@@ -718,7 +720,7 @@ astro::TDBtoLocal(double tdb)
             d.minute = localt->tm_min;
             d.seconds = (int) localt->tm_sec;
             d.wday = localt->tm_wday;
-        #ifdef __GNUC__
+        #if defined(__GNUC__) && !defined(_WIN32)
             d.utc_offset = localt->tm_gmtoff;
             d.tzname = localt->tm_zone;
         #else
