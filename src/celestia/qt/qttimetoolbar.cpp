@@ -12,6 +12,7 @@
 
 #include <QAction>
 #include <QIcon>
+#include <QDateTime>
 #include "celestia/celestiacore.h"
 #include "qttimetoolbar.h"
 
@@ -54,6 +55,8 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
                                             tr("2x faster"), this);
     QAction* fastTimeAction = new QAction(QIcon(":/icons/time-faster.png"),
                                           tr("10x faster"), this);
+    QAction* currentTimeAction = new QAction(QIcon(":icons/time-currenttime.png"),
+                                             tr("Set to current time"), this);
 #endif
     connect(reverseTimeAction, SIGNAL(triggered()), this, SLOT(slotReverseTime()));
     addAction(reverseTimeAction);
@@ -75,6 +78,9 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
 
     connect(fastTimeAction, SIGNAL(triggered()), this, SLOT(slotFaster()));
     addAction(fastTimeAction);
+
+    connect(currentTimeAction, SIGNAL(triggered()), this, SLOT(slotCurrentTime()));
+    addAction(currentTimeAction);
 }
 
 
@@ -125,4 +131,15 @@ void TimeToolBar::slotSlower()
 }
 
 
+void TimeToolBar::slotCurrentTime()
+{
+    QDateTime now = QDateTime::currentDateTime().toUTC();
+    QDate d = now.date();
+    QTime t = now.time();
+    astro::Date celDate(d.year(), d.month(), d.day());
+    celDate.hour = t.hour();
+    celDate.minute = t.minute();
+    celDate.seconds = (double) t.second() + t.msec() / 1000.0;
 
+    appCore->getSimulation()->setTime(astro::UTCtoTDB(celDate));
+}
