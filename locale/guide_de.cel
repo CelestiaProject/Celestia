@@ -1,0 +1,94 @@
+#Überarbeitete und erweiterte deutsche Fassung von Ulrich 'Adirondack' Dickmann, Oktober 2007 <www.celestia.info>
+{
+	Name   "Bitte auswählen"
+	Target "Sol"
+	Description "Bitte wählen Sie oben Ihr Ziel aus der Liste aus.
+Dazu klicken Sie auf den kleinen Pfeil neben dem Auswahlfeld und klicken anschließend Ihr Ziel an.
+
+Mit Klick auf den Schalter 'Gehe zu' fliegen Sie dann dort hin."
+}
+
+{
+	Name   "Jupiter"
+	Target "Sol/Jupiter"
+	Description "Jupiter ist der größte Planet in unserem Sonnen- system und der fünfte von der Sonne aus ge- sehen.\nWie auch die anderen großen äußeren Planeten, ist auch Jupiter ein Gasriese ohne feste Oberfläche. Der 'Große Rote Fleck' ist der größte und langlebigste Sturm der vielen Stürme in Jupiter's Atmosphäre. Der Große Rote Fleck hat in etwa die Größe der Erde und tobt schon seit mindestens 300 Jahren."
+}
+
+{
+	Name "Pluto und Charon"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "Pluto umkreist unsere Sonne in einer mittleren Entfernung von fast 6 Milliarden Kilometern.\nSein größter Mond 'Charon' ist so groß, dass die Beiden oft als 'Doppel-Planet' bezeichnet werden. Inzwischen wurde 'Pluto' jedoch der Status eines Planeten aberkannt\n'Pluto' verfügt über zwei weitere (kleinere) Monde: 'Hydra' und 'Nix'."
+}
+
+{
+	Name "Eros"
+	Target "Sol/Eros"
+	Description "Eros ist ein kartoffelähnlicher Asteroid, der sich mit rund 33 km Länge in Erdnähe aufhält. Dank der Sonde 'NEAR Shoemaker' ist über Eros mehr bekannt, als über sonstige Asteroiden.\nAm 14.02.2001 ist 'NEAR' zu Eros hinabgestiegen und wurde damit zur ersten Sonde, die auf einem Asteroiden gelandet ist."
+}
+
+{
+	Name "Milchstraße"
+	Target "Milky Way"
+	Distance 270000
+	DistanceUnits "ly"
+	Description "Die 'Milchstraße' ist die Galaxie, in der sich unser Sonnensystem befindet.\nUnser Sonnensystem liegt dabei in einem der Spiralarme, die aus einer Entfernung von z.B. 270.000 Lichtjahren hübsch anzusehen sind.\n Wenn Sie dort hinfliegen, müssen Sie ggf. mit gedrückter rechten Maustaste die Galaxie etwas drehen, um die Spiralarme sehen zu können."
+}
+
+{
+	Name "Alpha Centauri"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "Alpha Centauri A und B sind zusammen mit 'Proxima Centauri', das uns nächste Sonnen- system.\nAlpha Centauri A ist unserer Sonne sehr ähnlich, obwohl geringfügig älter und heller.\nB ist dunkler und rötlicher.\n'Proxima' ist so schwach, dass sie mit bloßem Auge nicht erkennbar ist, obwohl es sich um einen Stern handelt, der unserer Sonne am nahegelegensten ist."
+}
+
+{
+	Name "Plejaden"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "Die 'Plejaden' sind eine Gruppe von hellen Sternen. Die Sterne sind nach den sieben Schwestern der griechischen Mythologie benannt, obwohl der Blick durch ein Teleskop mehr als sieben Sterne in diesem Sternhaufen erkennen lässt."
+}
+
+{
+	Name "Hyaden"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "Benannt nach den fünf Töchtern von 'Atlas' und 'Aethra', stellen die Hyaden den bekanntesten offenen Sternhaufen am Himmel dar.\nEs wird angenommen, dass die Hyaden etwa 660 Millionen Jahre alt sind und damit sechsmal älter als die Plejaden."
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b ist ein riesiger Planet, der einen sog. 'Roten Zwerg' umläuft.\nEr steht in einer Umlaufkopplung von 2:1 mit den anderen bekannten Planeten in diesem System."
+}
+
+{
+	Name "Ida und Dactyl"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "Die Galileo-Raumsonde hat 1993 auf ihrem Weg zum Jupiter den Asteroiden '243 Ida' fotografiert.\nDiese Fotos haben offenbart, dass 'Ida' einen winzigen Mond besitzt, der später 'Dactyl' benannt wurde. Seitdem wurde entdeckt, dass auch andere Asteroiden Monde besitzen."
+}
+
+{
+	Name "51 Pegasi b"
+	Target "51 Peg/b"
+	Description "'51 Pegasi b' war der erste Planet, bei dem man entdeckte, dass er einen normalen Stern anders umkreist als unsere Sonne umkreist wird.\nEs ist ein riesiger Gasplanet, der seinen Mutterstern extrem nahe umläuft - mit weniger als einem Fünftel der Distanz zwischen Merkur und Sonne.\nDass ein Gas-Gigant so nahe an einem Stern existieren kann, hat die Astronomen dazu gezwungen, die Theorien über die Formation von Sonnensystemen ernsthaft zu überdenken."
+}
+
+{
+	Name "Albireo"
+	Target "Albireo"
+	Distance 0.6
+	Description "Wegen der kontrastreichen orangen und blau-weißen Farbe der zusammengehörenden Sterne ist der Doppelstern 'Albireo' wohl der schönste am Himmel.\nDer orange Stern ist ein Riese des Typs 'K' und sein Begleiter ist ein Zwerg der Klasse 'B'."
+}
+
+{
+	Name "Komet Borrelly"
+	Target "Sol/Borrelly"
+	Description "Am 22.09.2001 wurde der Komet 'Borelly' zum zweiten jemals von einer Sonde aus geringer Entfernung fotografierten Kometen.\nObwohl für einen Kometenvorbeiflug gar nicht konzipiert, erreichte die Sonde 'Deep Space 1' eine Annäherung von 2200 Kilometer an den Kometen-Kern und lieferte so hochaufgelöste Fotos, wie sie bisher von einem Kometenkern noch nicht vorlagen."
+}

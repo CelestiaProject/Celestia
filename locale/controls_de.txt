@@ -1,0 +1,151 @@
+Maus- und Tastaturbefehle für Celestia 1.5.0
+============================================
+
+
+MAUSFUNKTIONEN:
+
+Links (ziehen):		Orientierung der Kamera/Ansicht
+Rechts (ziehen):		Gewähltes Objekt umlaufen
+Maus-Rad:		Entfernung zum gewählten Objekt einstellen
+Rechts + Links (ziehen):	Entfernung zum gewählten Objekt einstellen
+Strg  + Links (ziehen):   	Entfernung zum gewählten Objekt einstellen
+Shift + Links (ziehen):   	Blickfeld ändern
+Rad / mittlere Taste Klick:  	Blickfeld umschalten zwischen aktuellem
+			und vorherigem Blickfeld
+Links-Klick:        		Objekt (an)wählen
+Links-Doppelklick:   	Auswahl zentrieren
+Rechtsklick:       		Kontextmenü aufrufen
+
+
+TASTATURBEFEHLE:
+
+Navigation:
+H	Zur Sonne (Home)
+C	Zentriert das gewählte Objekt
+Shift+C	Orbit zentrieren (zentriert das gewählte Objekt,
+	ohne die Position des Referenzobjektes zu ändern)
+G	Gehe zum gewählten Objekt
+F	Folge dem gewählten Objekt
+Y	Orbit des gewählten Objekts mit synchroner Umdrehungrate
+:	Gewähltes Objekt anbinden
+"	Gewähltes Objekt nacheilen (Orientierung basiert auf Geschwindig-
+	keit der Auswahl)
+T	Gewähltes Objekt einfangen (hält das gewählten Objekt zentriert)
+Pos1	Näher zum Objekt
+*	Zurück blicken (aus dem Heckfenster)
+ENDE	Vom Objekt entfernen
+ESC	Bewegung oder Skript abbrechen
+
+Links/Rechts Pfeile:	Kamera rollen/neigen
+Hoch / Runter Pfeile:	Kameraposition ändern
+Shift+Pfeile:		Objekt umlaufen
+1-9 (Ziffernreihe):		Auswahl der Planeten im Sonnensystem
+
+Zeiteinstellung:
+Leer	Zeit anhalten
+Shift+L     Zeitablauf jew. 2x schneller
+Shift+K     Zeitablauf jew. 2x langsamer
+L	Zeitablauf jew. 10x schneller
+K	Zeitablauf jew. 10x langsamer
+J	Zeitablauf umkehren
+!	Jetzigen Zeitpunkt setzen
+?	Lichtlaufgeschwindigkeit zum gewählten Objekt anzeigen
+-	Lichtlaufgeschwindigkeit von der aktuellen Simulationszeit abziehen
+
+Bezeichnungen:
+= 	Bezeichnungen der Sternbilder ein-/ausschalten
+B	Bezeichnungen der Sterne ein-/ausschalten
+E	Bezeichnungen der Galaxien ein-/ausschalten
+M	Bezeichnungen der Monde ein-/ausschalten
+W	Bezeichnungen der Asteroiden u. Kometen ein-/ausschalten
+N	Bezeichnungen der Raumschiffe/-sonden ein-/ausschalten
+P	Bezeichnungen der Planeten ein-/ausschalten
+&	Bezeichnungen der Bezugspunkte/Orte ein-/ausschalten
+V	Umfang des Informationstextes verändern
+
+Optionen:
+I	Wolken ein-/ausschalten
+U	Galaxien ein-/ausschalten
+O	Umlaufbahnen ein-/ausschalten
+/	Sternbilder ein-/ausschalten
+^	Nebel ein-/ausschalten
+%	Stern-Farben-Tabelle ein-/ausschalten
+;	Himmelsraster ein-/ausschalten
+AltGr + [	Wenn autoMag AUS: Magnitude verringern (weniger Sterne sichtbar)
+     	Wenn autoMag EIN: Magnitude verringern bei 45� Blickfeld
+AltGr + ]	Wenn autoMag AUS: Magnitude vergrößern (mehr Sterne sichtbar)
+	Wenn autoMag EIN: Magnitude vergrößern bei 45° Blickfeld
+AltGr + {	Streulichtanteil erhöhen
+AltGr + }	Streulichtanteil verringern
+(	Galaxie-Helligkeit erhöhen (abhängig von Sternhelligkeit)
+)	Galaxie-Helligkeit verringern (abhängig von Sternhelligkeit)
+,	Blickfeld begrenzen/einschränken
+.	Blickfeld erweitern/ausdehnen
+Leer	Aktuelle Auswahl abbrechen
+Strg+A	Amtmosphäre ein-/ausschalten
+Strg+B	Konstellationsgrenzen ein-/ausschalten 
+Strg+E	Kernschatten ein-/ausschalten
+Strg+K	Anzeige Objekt-Markierung ein-/ausschalten
+Strg+L	Lichter auf Nachtseite ein-/ausschalten
+Strg+P	Ausgewähltes Objekt markieren
+Strg+S	Aussehen der Sterne ändern (flockig, skalierte Punkte, Punkte)
+Strg+T	Kometenschweife ein-/ausschalten
+Strg+V	Unterstützte 'OpenGL render paths' verändern
+Strg+W	Gitternetz-Modus ein-/ausschalten (Objekte mit/ohne Texturen)
+Strg+X	Antialiasing ein-/ausschalten
+Strg+Y	Auto Magnitude ein-/ausschalten  
+R	Auflösung der Texturen erhöhen (falls möhlich)
+r	Auflösung der Texturen verringern (falls möglich)
++	Zwischen LOK-Texturen und interpretierenden Texturen umschalten
+
+Mehrfachansichten:
+Strg+R	Bildschirm vertikal teilen
+Strg+U	Bildschirm horizontal teilen
+TAB	Geteilte Ansicht auswählen/aktivieren
+Entf	Aktivierte Ansicht entfernen
+Strg+D	Alle Ansichten entfernen (außer aktive Ansicht)
+
+Raumflug:
+F1	Stop
+F2	Geschwindigkeit einstellen auf 1 km/s
+F3	Geschwindigkeit einstellen auf 1,000 km/s
+F4	Geschwindigkeit einstellen auf Lichtgeschwindigkeit (1 c)
+F5	Geschwindigkeit einstellen auf 10x Lichtgeschwindigkeit
+F6	Geschwindigkeit einstellen auf 1 AE/s
+F7	Geschwindigkeit einstellen auf 1 LJ/s
+A	Geschwindigkeit erhöhen ("Gas gegben")
+Z	Geschwindigkeit verringern ("Bremsen")
+Q	Flugrichtung umkehren (Raumschiff um 180° drehen)
+X	Flugrichtung auf die Mitte des Bildschirm setzen
+
+Zahlenblock (rechts auf Tastatur) - "NumLock" einschalten!:
+4	Links vom Kurs abweichen (nach links lenken)
+6	Rechts vom Kurs abweichen (nach rechts lenken)
+8	Nach unten neigen
+2	Nach oben neigen
+7	Nach links rollen
+9	Nach rechts rollen
+5	Rotation stoppen
+
+
+JOYSTICK:
+
+X-Achse		Lenken (rechts/links)
+Y-Achse		Neigen (hoch/runter)
+Linker Abzug	Links rollen
+Rechter Abzug	Rechts rollen
+Knopf 1		Langsamer ("bremsen")
+Knopf 2		Schneller ("Gas geben")
+
+
+SONSTIGES:
+
+D	Demo starten
+F8	Joystick einschalten
+F10	Image erstellen
+`	Anzahl der Bilder/Sekunde anzeigen (FPS)
+ENTER	Objekt durch Eingabe des Namens auswählen
+Strg+C	Pfad der aktuellen Szene in Zwischenablage kopieren
+
+In Deutsch bereitgestellt von Ulrich Dickmann, Januar 2008
+http://www.celestia.info/

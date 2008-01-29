@@ -1,0 +1,136 @@
+# Title: Demo-Skript (deutsch)
+# Deutsche Übersetzung: Ulrich Dickmann
+
+{	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets|nightmaps"
+    clear "constellations|cloudmaps|galaxies" }
+    set { name "AmbientLightLevel" value 0.1 }
+	print { text "Demo beginnt . . .\nZum Beenden ESC drücken." origin "center" duration 2 }
+	wait { duration 2.0 }
+	print { text "Lassen Sie uns zu Hause beginnen . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 5.0 }
+	follow {}
+	print { text "Wir befinden uns nun etwa 13.600 Kilometer über der Erde." row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Mit Wolken kommt uns die Erde irgendwie bekannter vor . . ." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+	wait { duration 1 }
+	print { text "Nächster Halt: Der Mond." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 8 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Achten Sie auf die Erde und die Sonne im Hintergrund,\nwenn wir den Mond umrunden." row -3}
+	orbit { axis [ 0 1 0 ] rate 15 duration 30 }
+	print { text "Auf zur Sonne . . ." row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "In dieser Entfernung sind Sonnenflecken erkennbar." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+	print { text "Lassen Sie uns einen Schritt zurücktreten,\num das innere Sonnensystem zu überblicken." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 10 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.2 }
+	print { text "Jetzt schalten wir die Bezeichnungen der Planeten ein . . ." row -3}
+	wait { duration 2.0 }
+	labels { set "planets" }
+	print { text "Wir beschleunigen den Zeitablauf,\num die Planeten um die Sonne kreisen zu sehen." row -3}
+	timerate { rate 2592000 }
+	wait { duration 5.0 }
+	print { text "In jeder Sekunde vergeht nun ein Monat in der Simulation." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Nun haben wir die Zeit komplett angehalten." row -3}
+	wait { duration 4.0 }
+	print { text "Unser folgendes Ziel ist der Saturn." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	renderflags { clear "orbits" }
+	wait { duration 6.5 }
+	labels { clear "planets" }
+	print { text "Verschiedene Saturn-Monde sind als helle Punkte sichtbar." row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	select { object "Mimas" }
+	goto { time 5 distance 5 upframe "equatorial" }
+	print { text "Das prominenteste Merkmal auf dem Saturn-Mond\nMimas ist der riesige Einschlagskarter Herschel." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Beachten Sie, wie schwach die Sonne in dieser\nEntfernung erscheint." row -3 }
+	wait { duration 4 }
+	print { text "Lassen Sie uns nun einen Blick in die Sterne werfen . . ." row -3 duration 2 }
+	wait { duration 4 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Auf der Nord-Hemisphäre erkennen wir den Großen Wagen\nim Sternbild des Großen Bären." row -3 duration 3 }
+	wait { duration 4 }
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "Jetzt sehen wir in der Mitte den Polarstern." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Der Polarstern ist Bestandteil des Sternbildes Kleiner Wagen." row -3}
+	wait { duration 4 }
+	print { text "Um uns bei der Orientierung im All zu helfen, kann Celestia\nuns die Sternbilder anzeigen . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 5 }
+	print { text ". . . und auch deren Bezeichnungen." row -3}
+	labels { set "constellations" }
+	wait { duration 4 }
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orion ist eine sehr bekannte Konstellation." row -3 duration 3 }
+	wait { duration 4 }
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Das Kreuz des Südens ist nur in der\nSüd-Hemisphäre zu sehen." row -3 duration 4 }
+	wait { duration 4 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Lassen wir die Konstellationen noch ein wenig,\nan uns vorbei ziehen . . ." row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Nun fliegen wir zu Antares, einem roten Riesen-Stern im\nSternbild des Skorpion." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	print { text "Links sehen Sie die Milchstraße." row -3 duration 5 }
+	goto { time 5 distance 10 }
+	wait { duration 6.0 }
+	print { text "Obwohl wir nun 10 Mal weiter weg von Antares sind,\nals die Erde von der Sonne, erscheint der rote Gigant riesig im All." row -3}
+	wait { duration 4.0 }
+	print { text "Treten wir weiter zurück und holen uns die grosse Ansicht. . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+	select { object "Milky Way" }
+	print { text "Wir sehen hier die komplette Milchstraße." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Es wird Zeit, wieder nach Hause zu fliegen . . ." row -3}
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Ende.\nViel Spass mit CELESTIA" row -3 duration 3}
+	wait { duration 3.0 }
+    renderflags {clear "galaxies"}
+}
