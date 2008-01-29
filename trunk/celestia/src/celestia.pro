@@ -291,7 +291,8 @@ QTAPP_SOURCES = \
 	celestia/qt/qtcolorswatchwidget.cpp \
 	celestia/qt/qttimetoolbar.cpp \
 	celestia/qt/qtcelestiaactions.cpp \
-	celestia/qt/qtinfopanel.cpp
+	celestia/qt/qtinfopanel.cpp \
+	celestia/qt/qteventfinder.cpp
 
 QTAPP_HEADERS = \
 	celestia/qt/qtappwin.h \
@@ -304,7 +305,8 @@ QTAPP_HEADERS = \
 	celestia/qt/qtcolorswatchwidget.h \
 	celestia/qt/qttimetoolbar.h \	
 	celestia/qt/qtcelestiaactions.h \
-	celestia/qt/qtinfopanel.h
+	celestia/qt/qtinfopanel.h \
+	celestia/qt/qteventfinder.h
 
 SOURCES = \
 	$$UTIL_SOURCES \

@@ -1,4 +1,4 @@
-// qtcelestiaactions.h
+// qtinfopanel.cpp
 //
 // Copyright (C) 2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
