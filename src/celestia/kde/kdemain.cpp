@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 {    
     KAboutData aboutData( "celestia", I18N_NOOP("Celestia"),
       VERSION, description, KAboutData::License_GPL,
-      "(c) 2002, Chris Laurel", 0, "http://www.shatters.net/celestia/", "chris@teyssier.org");
+      I18N_NOOP("Copyright (C) 2001-2008, Celestia Development Team"), 0, "http://www.shatters.net/celestia/", "chris@teyssier.org");
     aboutData.addAuthor("Chris Laurel",0, "claurel@shatters.net");
     aboutData.addAuthor("Clint Weisbrod",0, "cweisbrod@adelphia.net");
     aboutData.addAuthor("Fridger Schrempp",0, "t00fri@mail.desy.de");
