@@ -35,6 +35,7 @@ Q_OBJECT
     void slotHalfTime();
     void slotFaster();
     void slotSlower();
+    void slotCurrentTime();
 
  private:
     CelestiaCore* appCore;
