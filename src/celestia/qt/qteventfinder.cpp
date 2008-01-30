@@ -23,6 +23,7 @@
 #include <QProgressDialog>
 #include <QApplication>
 #include <vector>
+#include <cassert>
 #include "qteventfinder.h"
 #include "celengine/universe.h"
 #include "celmath/distance.h"
