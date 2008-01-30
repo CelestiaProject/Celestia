@@ -6944,7 +6944,6 @@ void Renderer::renderCometTail(const Body& body,
     }
     glEnd();
 
-    glDepthMask(GL_TRUE);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
 
