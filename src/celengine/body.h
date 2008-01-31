@@ -215,6 +215,11 @@ class Body
     void addLocation(Location*);
     Location* findLocation(const std::string&, bool i18n = false) const;
     void computeLocations();
+    
+    bool isClickable() const { return clickable == 1; }
+    void setClickable(bool _clickable);
+    bool isVisibleAsPoint() const { return visibleAsPoint == 1; }
+    void setVisibleAsPoint(bool _visibleAsPoint);
 
     enum
     {
@@ -273,6 +278,8 @@ class Body
     mutable bool locationsComputed;
 
     uint32 referenceMarks;
+    unsigned int clickable : 1;
+    unsigned int visibleAsPoint : 1;
 
     // Only necessary until we switch to using frame hierarchy
     Star* frameRefStar;
