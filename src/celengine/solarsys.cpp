@@ -354,7 +354,7 @@ static Body* CreatePlanet(const string& name,
         return NULL;
     }
 
-    double radius = (double)body->getRadius();
+    double radius = (double) body->getRadius();
     planetData->getNumber("Radius", radius);
     body->setRadius((float) radius);
 
@@ -388,7 +388,7 @@ static Body* CreatePlanet(const string& name,
         }
         else
         {
-            if(radius < 1000.0)
+            if (radius < 1000.0)
                 classification = Body::Asteroid;
             else
                 classification = Body::Planet;
@@ -596,6 +596,12 @@ static Body* CreatePlanet(const string& name,
                 body->setRings(rings);
             }
         }
+    }
+    
+    bool clickable = true;
+    if (planetData->getBoolean("Clickable", clickable))
+    {
+        body->setClickable(clickable);
     }
 
     return body;

@@ -48,6 +48,8 @@ Body::Body(PlanetarySystem* _system) :
     locations(NULL),
     locationsComputed(false),
     referenceMarks(0),
+    clickable(1),
+    visibleAsPoint(1),
     frameRefStar(NULL)
 {
     system = _system;
@@ -827,6 +829,17 @@ Body::getFrameReferenceStar() const
 }
 
 
+void Body::setClickable(bool _clickable)
+{
+    clickable = _clickable ? 1 : 0;
+}
+
+
+void Body::setVisibleAsPoint(bool _visibleAsPoint)
+{
+    visibleAsPoint = _visibleAsPoint ? 1 : 0;
+}
+
 
 /**** Implementation of PlanetarySystem ****/
 
@@ -997,3 +1010,4 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
 
     return completion;
 }
+
