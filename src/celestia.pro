@@ -352,6 +352,7 @@ win32 {
 		-llibjpeg2 \
 		-lintl \
 		-llua5.1
+	RC_FILE = celestia/qt/celestia.rc
 }
 
 unix {
