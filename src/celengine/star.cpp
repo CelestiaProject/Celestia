@@ -761,7 +761,7 @@ StarDetails::StarDetails(const StarDetails& sd) :
     bolometricCorrection(sd.bolometricCorrection),
     knowledge(sd.knowledge),
     visible(sd.visible),
-    texture(texture),
+    texture(sd.texture),
     model(sd.model),
     orbit(sd.orbit),
     orbitalRadius(sd.orbitalRadius),
