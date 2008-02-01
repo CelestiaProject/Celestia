@@ -2240,8 +2240,10 @@ void Renderer::render(const Observer& observer,
                 // to sphere calculation will not suffice.
                 const Atmosphere* atmosphere = iter->body->getAtmosphere();
                 float radius = iter->body->getRadius();
-                float oblateness = iter->body->getOblateness();
-                Vec3f recipSemiAxes(1.0f, 1.0f / (1.0f - oblateness), 1.0f);
+                Vec3f semiAxes = iter->body->getSemiAxes() * (1.0f / radius);
+                Vec3f recipSemiAxes(1.0f / semiAxes.x,
+                                    1.0f / semiAxes.y,
+                                    1.0f / semiAxes.z);
                 Mat3f A = Mat3f::scaling(recipSemiAxes);
                 Vec3f eyeVec = iter->position - Point3f(0.0f, 0.0f, 0.0f);
                 eyeVec *= (1.0f / radius);
@@ -2508,10 +2510,14 @@ void Renderer::render(const Observer& observer,
                     // Make the far plane as close as possible
                     float d = center.distanceFromOrigin();
 
-                    // Account for the oblateness
+                    // Account for ellipsoidal objects
                     float eradius = radius;
                     if (iter->body != NULL)
-                        eradius *= 1.0f - iter->body->getOblateness();
+                    {
+                        Vec3f semiAxes = iter->body->getSemiAxes();
+                        float minSemiAxis = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
+                        eradius *= minSemiAxis / radius;
+                    }
 
                     if (d > eradius)
                     {
@@ -5762,11 +5768,11 @@ void Renderer::renderObject(Point3f pos,
     glTranslate(pos);
     glRotate(~obj.orientation);
 
-    // Apply a scale factor which depends on the size of the planet and
-    // its oblateness.  Since the oblateness is usually quite
-    // small, the potentially nonuniform scale factor shouldn't mess up
-    // the lighting calculations enough to be noticeable (and we turn on
-    // renormalization anyhow, which most graphics cards support.)
+    // Scaling will be nonuniform for nonspherical planets. As long as the
+    // deviation from spherical isn't too large, the nonuniform scale factor
+    // shouldn't mess up the lighting calculations enough to be noticeable
+    // (and we turn on renormalization anyhow, which most graphics cards
+    // support.)
     // TODO:  Figure out a better way to render ellipsoids than applying
     // a nonunifom scale factor to a sphere.
     float radius = obj.radius;
@@ -5863,7 +5869,7 @@ void Renderer::renderObject(Point3f pos,
         // Only adjust the far plane for ellipsoidal objects
         float d = pos.distanceFromOrigin();
 
-        // Account for oblateness
+        // Account for non-spherical objects
         float eradius = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
 
         if (d > eradius)
@@ -6402,7 +6408,7 @@ void Renderer::renderPlanet(Body& body,
         rp.atmosphere = body.getAtmosphere();
         rp.rings = body.getRings();
         rp.radius = body.getRadius();
-        rp.semiAxes = Vec3f(1.0f, 1.0f - body.getOblateness(), 1.0f);
+        rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
         rp.model = body.getModel();
 
         // Compute the orientation of the planet before axial rotation

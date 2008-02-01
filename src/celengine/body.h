@@ -119,12 +119,16 @@ class Body
 
     const RotationModel* getRotationModel() const;
     void setRotationModel(const RotationModel*);
+
+    // Size methods
+    void setSemiAxes(const Vec3f&);
+    Vec3f getSemiAxes() const;
     float getRadius() const;
-    void setRadius(float);
+    bool isSphere() const;
+    bool isEllipsoid() const;
+
     float getMass() const;
     void setMass(float);
-    float getOblateness() const;
-    void setOblateness(float);
     float getAlbedo() const;
     void setAlbedo(float);
     Quatf getOrientation() const;
@@ -203,6 +207,9 @@ class Body
     Vec3d planetocentricToCartesian(const Vec3d& lonLatAlt) const;
     Vec3d cartesianToPlanetocentric(const Vec3d& v) const;
 
+    Vec3d eclipticToPlanetocentric(const Vec3d& ecl, double tdb) const;
+    
+
     bool extant(double) const;
     void setLifespan(double, double);
     void getLifespan(double&, double&) const;
@@ -251,8 +258,8 @@ class Body
     const RotationModel* rotationModel;
 
     float radius;
+    Vec3f semiAxes;
     float mass;
-    float oblateness;
     float albedo;
     Quatf orientation;
 

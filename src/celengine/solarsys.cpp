@@ -354,9 +354,42 @@ static Body* CreatePlanet(const string& name,
         return NULL;
     }
 
+    // Three values control the shape and size of an ellipsoidal object:
+    // semiAxes, radius, and oblateness. It is an error if neither the
+    // radius nor semiaxes are set. If both are set, the radius is
+    // multipled by each of the specified semiaxis to give the shape of
+    // the body ellipsoid. Oblateness is ignored if semiaxes are provided;
+    // otherwise, the ellipsoid has semiaxes: ( radius, radius, 1-radius ).
+    // These rather complex rules exist to maintain backward compatibility.
+    //
+    // If the body also has a mesh, it is always scaled in x, y, and z by
+    // the maximum semiaxis, never anisotropically.
+
     double radius = (double) body->getRadius();
-    planetData->getNumber("Radius", radius);
-    body->setRadius((float) radius);
+    bool radiusSpecified = false;
+    if (planetData->getNumber("Radius", radius))
+    {
+        body->setSemiAxes(Vec3f((float) radius, (float) radius, (float) radius));
+        radiusSpecified = true;
+    }
+
+    Vec3d semiAxes;
+    if (planetData->getVector("SemiAxes", semiAxes))
+    {
+        if (radiusSpecified)
+            semiAxes *= radius;
+        // Swap y and z to match internal coordinate system
+        body->setSemiAxes(Vec3f((float) semiAxes.x, (float) semiAxes.z, (float) semiAxes.y));
+    }
+    else
+    {
+        double oblateness = 0.0;
+        if (planetData->getNumber("Oblateness", oblateness))
+        {
+            body->setSemiAxes((float) body->getRadius() * Vec3f(1.0f, 1.0f - (float) oblateness, 1.0f));
+        }
+    }
+
 
     int classification = body->getClassification();
     string classificationName;
@@ -425,10 +458,6 @@ static Body* CreatePlanet(const string& name,
     double albedo = 0.5;
     if (planetData->getNumber("Albedo", albedo))
         body->setAlbedo((float) albedo);
-
-    double oblateness = 0.0;
-    if (planetData->getNumber("Oblateness", oblateness))
-        body->setOblateness((float) oblateness);
 
     double mass = 0.0;
     if (planetData->getNumber("Mass", mass))
@@ -629,7 +658,7 @@ static Body* CreateReferencePoint(const string& name,
         body = new Body(system);
     }
 
-    body->setRadius(1.0f);
+    body->setSemiAxes(Vec3f(1.0f, 1.0f, 1.0f));
     body->setClassification(Body::Invisible);
 
     Selection orbitBarycenter = GetOrbitBarycenter(name, system);

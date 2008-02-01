@@ -27,9 +27,9 @@ Body::Body(PlanetarySystem* _system) :
     orbitFrame(NULL),
     bodyFrame(NULL),
     rotationModel(NULL),
-    radius(10000.0f),
+    radius(1.0f),
+    semiAxes(1.0f, 1.0f, 1.0f),
     mass(0.0f),
-    oblateness(0),
     albedo(0.5),
     orientation(1.0f),
     // Ugh.  Numeric_limits class is missing from g++
@@ -165,18 +165,6 @@ Body::setBodyFrame(const ReferenceFrame* f)
 }
 
 
-float Body::getRadius() const
-{
-    return radius;
-}
-
-
-void Body::setRadius(float _radius)
-{
-    radius = _radius;
-}
-
-
 // For an irregular object, the radius is defined to be the largest semi-axis
 // of the axis-aligned bounding box.  The radius of the smallest sphere
 // containing the object is potentially larger by a factor of sqrt(3)
@@ -198,18 +186,6 @@ float Body::getMass() const
 void Body::setMass(float _mass)
 {
     mass = _mass;
-}
-
-
-float Body::getOblateness() const
-{
-    return oblateness;
-}
-
-
-void Body::setOblateness(float _oblateness)
-{
-    oblateness = _oblateness;
 }
 
 
@@ -245,6 +221,59 @@ const RotationModel* Body::getRotationModel() const
 void Body::setRotationModel(const RotationModel* rm)
 {
     rotationModel = rm;
+}
+
+
+/*! Set the semiaxes of a body.
+ */
+void Body::setSemiAxes(const Vec3f& _semiAxes)
+{
+    semiAxes = _semiAxes;
+
+    // Radius will always be the largest of the three semi axes
+    radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
+}
+
+
+/*! Retrieve the body's semiaxes
+ */
+Vec3f Body::getSemiAxes() const
+{
+    return semiAxes;
+}
+
+
+/*! Get the radius of the body. For a spherical body, this is simply
+ *  the sphere's radius. For an ellipsoidal body, the radius is the
+ *  largest of the three semiaxes. For irregular bodies (with a shape
+ *  represented by a mesh), the radius is the largest semiaxis of the
+ *  mesh's axis aligned bounding axis. Note that this means some portions
+ *  of the mesh may extend outside the sphere of the retrieved radius.
+ *  To obtain the radius of a sphere that will definitely enclose the
+ *  body, call getBoundingRadius() instead.
+ */
+float Body::getRadius() const
+{
+    return radius;
+}
+
+
+/*! Return true if the body is a perfect sphere.
+*/
+bool Body::isSphere() const
+{
+    return (model == InvalidResource) &&
+           (semiAxes.x == semiAxes.y) && 
+           (semiAxes.x == semiAxes.z);
+}
+
+
+/*! Return true if the body is ellipsoidal, with geometry determined
+ *  completely by its semiaxes rather than a triangle based model.
+ */
+bool Body::isEllipsoid() const
+{
+    return model == InvalidResource;
 }
 
 
@@ -496,6 +525,9 @@ Vec3d Body::planetocentricToCartesian(const Vec3d& lonLatAlt) const
 }
 
 
+/*! Convert cartesian body-fixed coordinates to spherical planetocentric
+ *  coordinates.
+ */
 Vec3d Body::cartesianToPlanetocentric(const Vec3d& v) const
 {
     Vec3d w = v;
@@ -506,6 +538,19 @@ Vec3d Body::cartesianToPlanetocentric(const Vec3d& v) const
 
     return Vec3d(lon, lat, v.length() - getRadius());
 }
+
+
+/*! Convert body-centered ecliptic coordinates to spherical planetocentric
+ *  coordinates.
+ */
+Vec3d Body::eclipticToPlanetocentric(const Vec3d& ecl, double tdb) const
+{
+    Quatd q = getEclipticalToBodyFixed(tdb);
+    Vec3d bf = ecl * (~q).toMatrix3();
+
+    return cartesianToPlanetocentric(bf);
+}
+
 
 
 bool Body::extant(double t) const

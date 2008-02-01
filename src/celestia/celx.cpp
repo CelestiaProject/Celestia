@@ -2362,7 +2362,7 @@ static int object_setradius(lua_State* l)
         double radius = safeGetNumber(l, 2, AllErrors, "Argument to object:setradius() must be a number");
         if ((radius > 0))
         {
-            body->setRadius((float) radius);
+            body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
         }
 
         if (body->getRings() != NULL)
@@ -2535,13 +2535,21 @@ static int object_getinfo(lua_State* l)
         case Body::Spacecraft : tname = "spacecraft"; break;
         case Body::Invisible  : tname = "invisible"; break;
         }
+
         setTable(l, "type", tname);
         setTable(l, "name", body->getName().c_str());
         setTable(l, "mass", (lua_Number)body->getMass());
-        setTable(l, "oblateness", (lua_Number)body->getOblateness());
         setTable(l, "albedo", (lua_Number)body->getAlbedo());
         setTable(l, "infoURL", body->getInfoURL().c_str());
         setTable(l, "radius", (lua_Number)body->getRadius());
+
+        // TODO: add method to return semiaxes
+        Vec3f semiAxes = body->getSemiAxes();
+        // Note: oblateness is an obsolete field, replaced by semiaxes;
+        // it's only here for backward compatibility.
+        float polarRadius = semiAxes.y;
+        float eqRadius = max(semiAxes.x, semiAxes.z);
+        setTable(l, "oblateness", (eqRadius - polarRadius) / eqRadius);
 
         double lifespanStart, lifespanEnd;
         body->getLifespan(lifespanStart, lifespanEnd);
