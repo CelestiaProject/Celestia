@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QPushButton>
 #include <QTimer>
 #include <QMenu>
@@ -23,6 +24,7 @@
 #include <QCloseEvent>
 #include <QDir>
 #include <QMessageBox>
+#include <QDateTimeEdit>
 #include <vector>
 #include <string>
 #include "qtappwin.h"
@@ -36,6 +38,7 @@
 #include "qtcelestiaactions.h"
 #include "qtinfopanel.h"
 #include "qteventfinder.h"
+#include "qtsettimedialog.h"
 //#include "qtvideocapturedialog.h"
 #include "celestia/scriptmenu.h"
 
@@ -454,6 +457,22 @@ void CelestiaAppWindow::slotOpenScript()
 }
 
 
+void CelestiaAppWindow::slotShowTimeDialog()
+{
+    SetTimeDialog* timeDialog = new SetTimeDialog(appCore->getSimulation()->getTime(),
+                                                  this);
+    connect(timeDialog, SIGNAL(setTimeTriggered(double)), this, SLOT(slotSetTime(double)));
+
+    timeDialog->exec();
+}
+
+
+void CelestiaAppWindow::slotSetTime(double tdb)
+{
+    appCore->getSimulation()->setTime(tdb);
+}
+
+
 void CelestiaAppWindow::createActions()
 {
 }
@@ -514,11 +533,14 @@ void CelestiaAppWindow::createMenus()
     connect(gotoAct, SIGNAL(triggered()), this, SLOT(gotoSelection()));
     navMenu->addAction(gotoAct);
 
-    //navMenu->addAction();
 
     /****** Time menu ******/
     timeMenu = menuBar()->addMenu(tr("&Time"));
-    //timeMenu->addAction();
+
+    QAction* setTimeAct = new QAction(tr("Set &time"), this);
+    connect(setTimeAct, SIGNAL(triggered()), this, SLOT(slotShowTimeDialog()));
+    timeMenu->addAction(setTimeAct);
+
 
     /****** View menu ******/
     viewMenu = menuBar()->addMenu(tr("&View"));
