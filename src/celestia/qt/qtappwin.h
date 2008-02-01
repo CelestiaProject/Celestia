@@ -72,6 +72,10 @@ class CelestiaAppWindow : public QMainWindow
 
     void slotOpenScriptDialog();
     void slotOpenScript();
+
+    void slotShowTimeDialog();
+
+    void slotSetTime(double tdb);
     
  signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
