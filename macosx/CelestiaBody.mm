@@ -71,10 +71,6 @@
 {
     return [NSNumber numberWithFloat:[self body]->getMass()];
 }
--(NSNumber *)oblateness
-{
-    return [NSNumber numberWithFloat:[self body]->getOblateness()];
-}
 -(NSNumber *)albedo
 {
     return [NSNumber numberWithFloat:[self body]->getAlbedo()];
@@ -91,17 +87,9 @@
 {
     [self body]->setName([s stdString]);
 }
--(void)setRadius:(NSNumber*)r
-{
-    [self body]->setRadius([r floatValue]);
-}
 -(void)setMass:(NSNumber*)m
 {
     [self body]->setMass([m floatValue]);
-}
--(void)setOblateness:(NSNumber*)o
-{
-    [self body]->setOblateness([o floatValue]);
 }
 -(void)setAlbedo:(NSNumber*)a
 {
