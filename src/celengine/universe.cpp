@@ -369,15 +369,12 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         if (body->getModel() == InvalidResource)
         {
             // There's no mesh, so the object is an ellipsoid.  If it's
-            // oblate, do a ray intersection test to see if the object was
-            // picked.  Otherwise, the object is spherical and we've already
-            // done all the work we need to.
-            if (body->getOblateness() != 0.0f)
+            // spherical, we've already done all the work we need to. Otherwise,
+            // we need to perform a ray-ellipsoid intersection test.
+            if (!body->isSphere())
             {
-                // Oblate sphere; use ray ellipsoid intersection calculation
-                Vec3d ellipsoidAxes(radius,
-                                    radius * (1.0 - body->getOblateness()),
-                                    radius);
+                Vec3f semiAxes = body->getSemiAxes();
+                Vec3d ellipsoidAxes(semiAxes.x, semiAxes.y, semiAxes.z);
                 // Transform rotate the pick ray into object coordinates
                 Mat3d m = conjugate(body->getEclipticalToEquatorial(pickInfo->jd)).toMatrix3();
                 Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
