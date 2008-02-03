@@ -416,6 +416,9 @@ static void IllumMapEval(float x, float y, float z,
 }
 
 
+#if 0
+// Not used yet.
+
 // The RectToSpherical map converts XYZ coordinates to UV coordinates
 // via a cube map lookup. However, a lot of GPUs don't support linear
 // interpolation of textures with > 8 bits per component, which is
@@ -446,6 +449,7 @@ static void RectToSphericalMapEval(float x, float y, float z,
     pixel[2] = ba >> 8;
     pixel[3] = ba & 0xff;
 }
+#endif
 
 
 static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
@@ -1162,7 +1166,7 @@ public:
 };
 
 
-void renderOrbitColor(int classification, bool selected, float opacity)
+void renderOrbitColor(const Body *body, bool selected, float opacity)
 {
     Color orbitColor;
 
@@ -1171,8 +1175,18 @@ void renderOrbitColor(int classification, bool selected, float opacity)
         // Highlight the orbit of the selected object in red
         orbitColor = Renderer::SelectionOrbitColor;
     }
+    else if (body != NULL && body->isOrbitColorOverridden())
+    {
+        orbitColor = body->getOrbitColor();
+    }
     else
     {
+        int classification;
+        if (body != NULL)
+            classification = body->getClassification();
+        else
+            classification = Body::Stellar;
+
         switch (classification)
         {
         case Body::Moon:
@@ -1357,6 +1371,7 @@ static Point3d renderOrbitSplineSegment(const Renderer::OrbitSample& p0,
 }
 
 
+#if 0
 // Not yet used
 static Point3d renderOrbitSplineAdaptive(const Renderer::OrbitSample& p0,
                                          const Renderer::OrbitSample& p1,
@@ -1437,6 +1452,7 @@ static Point3d renderOrbitSplineAdaptive(const Renderer::OrbitSample& p0,
 
     return lastP;
 }
+#endif
 
 
 static Point3d renderOrbitSection(const Orbit& orbit,
@@ -1744,7 +1760,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         highlight = highlightObject.body() == body;
     else
         highlight = highlightObject.star() == orbitPath.star;
-    renderOrbitColor(body != NULL ? body->getClassification() : Body::Stellar, highlight, orbitPath.opacity);
+    renderOrbitColor(body, highlight, orbitPath.opacity);
 
     if ((renderFlags & ShowPartialTrajectories) == 0 || orbit->isPeriodic())
     {
@@ -6303,7 +6319,7 @@ bool Renderer::testEclipse(const Body& receiver,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
     if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        caster.getClassification() != Body::Invisible &&
+        caster.isVisible() &&
         caster.extant(now) &&
         caster.getModel() == InvalidResource)
     {
@@ -6448,7 +6464,7 @@ void Renderer::renderPlanet(Body& body,
 
         // Calculate eclipse circumstances
         if ((renderFlags & ShowEclipseShadows) != 0 &&
-            body.getClassification() != Body::Invisible &&
+            body.isVisible() &&
             body.getSystem() != NULL)
         {
             PlanetarySystem* system = body.getSystem();
@@ -6533,27 +6549,30 @@ void Renderer::renderPlanet(Body& body,
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    if (useNewStarRendering)
+    if (body.isVisibleAsPoint())
     {
-    	renderObjectAsPoint(pos,
-                            body.getRadius(),
-                            appMag,
-                            faintestMag,
-                            discSizeInPixels,
-                            body.getSurface().color,
-                            cameraOrientation,
-                            false, false);
-    }
-    else
-    {
-        renderBodyAsParticle(pos,
-                             appMag,
-                             faintestMag,
-                             discSizeInPixels,
-                             body.getSurface().color,
-                             cameraOrientation,
-                             (nearPlaneDistance + farPlaneDistance) / 2.0f,
-                             false);
+        if (useNewStarRendering)
+        {
+            renderObjectAsPoint(pos,
+                                body.getRadius(),
+                                appMag,
+                                faintestMag,
+                                discSizeInPixels,
+                                body.getSurface().color,
+                                cameraOrientation,
+                                false, false);
+        }
+        else
+        {
+            renderBodyAsParticle(pos,
+                                 appMag,
+                                 faintestMag,
+                                 discSizeInPixels,
+                                 body.getSurface().color,
+                                 cameraOrientation,
+                                 (nearPlaneDistance + farPlaneDistance) / 2.0f,
+                                 false);
+        }
     }
 }
 
@@ -7176,9 +7195,9 @@ void Renderer::buildRenderLists(const Star& sun,
         }
 
         Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
+        bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
 
-        if ((discSize > 1 || appMag < faintestPlanetMag) &&
-            body->getClassification() != Body::Invisible)
+        if ((discSize > 1 || visibleAsPoint) && body->isVisible())
         {
             RenderListEntry rle;
             rle.renderableType = RenderListEntry::RenderableBody;
@@ -7451,51 +7470,56 @@ void Renderer::buildRenderLists(const Star& sun,
         }
 
         // Only show orbits for major bodies or selected objects
-        if ((renderFlags & ShowOrbits) != 0 &&
-            ((body->getClassification() & orbitMask) != 0 || body == highlightObject.body()))
+        if ((renderFlags & ShowOrbits) != 0)
         {
-            Point3d orbitOrigin(0.0, 0.0, 0.0);
-            if (body->getOrbitFrame())
+            Body::VisibilityPolicy orbitVis = body->getOrbitVisibility();
+            if (body == highlightObject.body() ||
+                orbitVis == Body::AlwaysVisible ||
+                (orbitVis == Body::UseClassVisibility && (body->getClassification() & orbitMask) != 0))
             {
-                Selection centerObject = body->getOrbitFrame()->getCenter();
-                if (centerObject.body() != NULL)
+                Point3d orbitOrigin(0.0, 0.0, 0.0);
+                if (body->getOrbitFrame())
                 {
-                    orbitOrigin = centerObject.body()->getHeliocentricPosition(now);
-                }
-                else if (centerObject.star() != NULL)
-                {
-                    if (centerObject.star() != &sun)
+                    Selection centerObject = body->getOrbitFrame()->getCenter();
+                    if (centerObject.body() != NULL)
                     {
-                        Vec3d v = (centerObject.star()->getPosition(now) - sun.getPosition(now)) * astro::microLightYearsToKilometers(1.0);
-                        orbitOrigin = Point3d(v.x, v.y, v.z);
+                        orbitOrigin = centerObject.body()->getHeliocentricPosition(now);
+                    }
+                    else if (centerObject.star() != NULL)
+                    {
+                        if (centerObject.star() != &sun)
+                        {
+                            Vec3d v = (centerObject.star()->getPosition(now) - sun.getPosition(now)) * astro::microLightYearsToKilometers(1.0);
+                            orbitOrigin = Point3d(v.x, v.y, v.z);
+                        }
                     }
                 }
-            }
-            else if (body->getOrbitBarycenter())
-            {
-                orbitOrigin = body->getOrbitBarycenter()->getHeliocentricPosition(now);
-            }
+                else if (body->getOrbitBarycenter())
+                {
+                    orbitOrigin = body->getOrbitBarycenter()->getHeliocentricPosition(now);
+                }
 
-            // Calculate the origin of the orbit relative to the observer
-            Vec3d relOrigin = orbitOrigin - observerPos;
-            Vec3f origf((float) relOrigin.x, (float) relOrigin.y, (float) relOrigin.z);
+                // Calculate the origin of the orbit relative to the observer
+                Vec3d relOrigin = orbitOrigin - observerPos;
+                Vec3f origf((float) relOrigin.x, (float) relOrigin.y, (float) relOrigin.z);
 
-            // Compute the size of the orbit in pixels
-            double originDistance = posd.length();
-            double boundingRadius = body->getOrbit()->getBoundingRadius();
-            float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
+                // Compute the size of the orbit in pixels
+                double originDistance = posd.length();
+                double boundingRadius = body->getOrbit()->getBoundingRadius();
+                float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
 
-            if (orbitRadiusInPixels > minOrbitSize)
-            {
-                // Add the orbit of this body to the list of orbits to be rendered
-                OrbitPathListEntry path;
-                path.body = body;
-                path.star = NULL;
-                path.centerZ = origf * viewMatZ;
-                path.radius = (float) boundingRadius;
-                path.origin = Point3f(origf.x, origf.y, origf.z);
-                path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
-                orbitPathList.push_back(path);
+                if (orbitRadiusInPixels > minOrbitSize)
+                {
+                    // Add the orbit of this body to the list of orbits to be rendered
+                    OrbitPathListEntry path;
+                    path.body = body;
+                    path.star = NULL;
+                    path.centerZ = origf * viewMatZ;
+                    path.radius = (float) boundingRadius;
+                    path.origin = Point3f(origf.x, origf.y, origf.z);
+                    path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
+                    orbitPathList.push_back(path);
+                }
             }
         }
 

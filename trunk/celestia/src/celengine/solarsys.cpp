@@ -407,6 +407,10 @@ static Body* CreatePlanet(const string& name,
             classification = Body::Spacecraft;
         else if (compareIgnoringCase(classificationName, "invisible") == 0)
             classification = Body::Invisible;
+        else if (compareIgnoringCase(classificationName, "surfacefeature") == 0)
+            classification = Body::SurfaceFeature;
+        else if (compareIgnoringCase(classificationName, "component") == 0)
+            classification = Body::Component;
     }
 
     if (classification == Body::Unknown)
@@ -428,6 +432,18 @@ static Body* CreatePlanet(const string& name,
         }
     }
     body->setClassification(classification);
+
+    if (classification == Body::Invisible)
+        body->setVisible(false);
+
+    // Surface features and component objects are by default not
+    // visible as points at a distance.
+    if (classification == Body::Invisible ||
+        classification == Body::SurfaceFeature ||
+        classification == Body::Component)
+    {
+        body->setVisibleAsPoint(false);
+    }
 
     // g++ is missing limits header, so we can use this
     // double beginning   = -numeric_limits<double>::infinity();
@@ -633,6 +649,19 @@ static Body* CreatePlanet(const string& name,
         body->setClickable(clickable);
     }
 
+    bool visible = true;
+    if (planetData->getBoolean("Visible", visible))
+    {
+        body->setVisible(visible);
+    }
+
+    Color orbitColor;
+    if (planetData->getColor("OrbitColor", orbitColor))
+    {
+        body->setOrbitColorOverridden(true);
+        body->setOrbitColor(orbitColor);
+    }
+
     return body;
 }
 
@@ -660,6 +689,9 @@ static Body* CreateReferencePoint(const string& name,
 
     body->setSemiAxes(Vec3f(1.0f, 1.0f, 1.0f));
     body->setClassification(Body::Invisible);
+    body->setVisible(false);
+    body->setVisibleAsPoint(false);
+    body->setClickable(false);
 
     Selection orbitBarycenter = GetOrbitBarycenter(name, system);
     bool orbitsPlanet = false;
