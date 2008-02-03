@@ -317,7 +317,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
 
     // Reject invisible bodies and bodies that don't exist at the current time
-    if (body->getClassification() == Body::Invisible || !body->extant(pickInfo->jd) || !body->isClickable())
+    if (!body->isVisible() || !body->extant(pickInfo->jd) || !body->isClickable())
         return true;
 
     Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
@@ -361,7 +361,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
     double distance = -1.0;
 
     // Test for intersection with the bounding sphere
-    if (body->getClassification() != Body::Invisible &&
+    if (body->isVisible() &&
         body->extant(pickInfo->jd) &&
         body->isClickable() &&
         testIntersection(pickInfo->pickRay, Sphered(bpos, radius), distance))
@@ -1208,7 +1208,6 @@ vector<string> Universe::getCompletionPath(const string& s,
 
     if (sel.empty())
     {
-        cerr << "nothing found" << endl;
         return completion;
     }
 
@@ -1220,7 +1219,7 @@ vector<string> Universe::getCompletionPath(const string& s,
 
     PlanetarySystem* worlds = NULL;
     if (sel.getType() == Selection::Type_Body)
-    {cerr << "body found" << endl;
+    {
         worlds = sel.body()->getSatellites();
         vector<Location*>* locations = sel.body()->getLocations();
         if (locations != NULL && withLocations)

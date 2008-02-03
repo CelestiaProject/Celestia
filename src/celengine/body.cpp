@@ -48,8 +48,11 @@ Body::Body(PlanetarySystem* _system) :
     locations(NULL),
     locationsComputed(false),
     referenceMarks(0),
+    visible(1),
     clickable(1),
     visibleAsPoint(1),
+    overrideOrbitColor(0),
+    orbitVisibility(UseClassVisibility),
     frameRefStar(NULL)
 {
     system = _system;
@@ -874,16 +877,67 @@ Body::getFrameReferenceStar() const
 }
 
 
+/*! Sets whether or not the object is visible.
+ */
+void Body::setVisible(bool _visible)
+{
+    visible = _visible ? 1 : 0;
+}
+
+
+/*! Sets whether or not the object can be selected by clicking on
+ *  it. If set to false, the object is completely ignored when the
+ *  user clicks it, making it possible to select background objects.
+ */
 void Body::setClickable(bool _clickable)
 {
     clickable = _clickable ? 1 : 0;
 }
 
 
+/*! Set whether or not the object is visible as a starlike point
+ *  when it occupies less than a pixel onscreen. This is appropriate
+ *  for planets and moons, but generally not desireable for buildings
+ *  or spacecraft components.
+ */
 void Body::setVisibleAsPoint(bool _visibleAsPoint)
 {
     visibleAsPoint = _visibleAsPoint ? 1 : 0;
 }
+
+
+/*! The orbitColorOverride flag is set to true if an alternate orbit
+ *  color should be used (specified via setOrbitColor) instead of the
+ *  default class orbit color.
+ */
+void Body::setOrbitColorOverridden(bool override)
+{
+    overrideOrbitColor = override ? 1 : 0;
+}
+
+
+/*! Set the visibility policy for the orbit of this object:
+ *  - NeverVisibile: Never show the orbit of this object.
+ *  - UseClassVisibility: (Default) Show the orbit of this object
+ *    its class is enabled in the orbit mask.
+ *  - AlwaysVisibile: Always show the orbit of this object whenever
+ *    orbit paths are enabled.
+ */
+void Body::setOrbitVisibility(VisibilityPolicy _orbitVisibility)
+{
+    orbitVisibility = _orbitVisibility;
+}
+
+
+/*! Set the color used when rendering the orbit. This is only used
+ *  when the orbitColorOverride flag is set to true; otherwise, the
+ *  standard orbit color for all objects of the class is used.
+ */
+void Body::setOrbitColor(const Color& c)
+{
+    orbitColor = c;
+}
+
 
 
 /**** Implementation of PlanetarySystem ****/

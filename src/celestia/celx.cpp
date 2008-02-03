@@ -90,6 +90,7 @@ static FlagMap LabelFlagMap;
 static FlagMap LocationFlagMap;
 static FlagMap BodyTypeMap;
 static FlagMap OverlayElementMap;
+static FlagMap OrbitVisibilityMap;
 static ColorMap LineColorMap;
 static ColorMap LabelColorMap;
 static bool mapsInitialized = false;
@@ -198,6 +199,13 @@ static void initOverlayElementMap()
     OverlayElementMap["Frame"] = CelestiaCore::ShowFrame;
 }
 
+static void initOrbitVisibilityMap()
+{
+    OrbitVisibilityMap["never"] = Body::NeverVisible;
+    OrbitVisibilityMap["normal"] = Body::UseClassVisibility;
+    OrbitVisibilityMap["always"] = Body::AlwaysVisible;
+}
+
 
 static void initLabelColorMap()
 {
@@ -252,6 +260,7 @@ static void initMaps()
         initBodyTypeMap();
         initLocationFlagMap();
         initOverlayElementMap();
+        initOrbitVisibilityMap();
         initLabelColorMap();
         initLineColorMap();
     }
@@ -1327,6 +1336,42 @@ static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors
     return lua_tonumber(l, index);
 }
 
+// Safe wrapper for lua_tobool, c.f. safeGetString
+// Non-fata errors will return defaultValue
+static bool safeGetBoolean(lua_State* l, 
+                           int index,
+                           FatalErrors fatalErrors = AllErrors,
+                           const char* errorMsg = "Boolean argument expected",
+                           bool defaultValue = false)
+{
+    int argc = lua_gettop(l);
+    if (index < 1 || index > argc)
+    {
+        if (fatalErrors & WrongArgc)
+        {
+            doError(l, errorMsg);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
+    if (!lua_isboolean(l, index))
+    {
+        if (fatalErrors & WrongType)
+        {
+            doError(l, errorMsg);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+
+    return lua_toboolean(l, index) != 0;
+}
+
 
 // Add a field to the table on top of the stack
 static void setTable(lua_State* l, const char* field, lua_Number value)
@@ -2340,6 +2385,143 @@ static int object_tostring(lua_State* l)
     return 1;
 }
 
+
+// Return true if the object is visible, false if not.
+static int object_visible(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to function object:visible");
+    
+    Selection* sel = this_object(l);
+    lua_pushboolean(l, sel->isVisible());
+
+    return 1;
+}
+
+
+// Set the object visibility flag.
+static int object_setvisible(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to object:setvisible()");
+    
+    Selection* sel = this_object(l);
+    bool visible = safeGetBoolean(l, 2, AllErrors, "Argument to object:setvisible() must be a boolean");
+    if (sel->body() != NULL)
+    {
+        sel->body()->setVisible(visible);
+    }
+
+    return 0;
+}
+
+
+static int object_setorbitcolor(lua_State* l)
+{
+    checkArgs(l, 4, 4, "Red, green, and blue color values exepected for object:setorbitcolor()");
+
+    Selection* sel = this_object(l);
+    float r = (float) safeGetNumber(l, 2, WrongType, "Argument 1 to object:setorbitcolor() must be a number", 0.0);
+    float g = (float) safeGetNumber(l, 3, WrongType, "Argument 2 to object:setorbitcolor() must be a number", 0.0);
+    float b = (float) safeGetNumber(l, 4, WrongType, "Argument 3 to object:setorbitcolor() must be a number", 0.0);
+    Color orbitColor(r, g, b);
+    
+    if (sel->body() != NULL)
+    {
+        sel->body()->setOrbitColor(orbitColor);
+    }
+
+    return 0;
+}
+
+
+static int object_orbitcoloroverridden(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to object:orbitcoloroverridden");
+    
+    bool isOverridden = false;
+    Selection* sel = this_object(l);
+    if (sel->body() != NULL)
+    {
+        isOverridden = sel->body()->isOrbitColorOverridden();
+    }
+
+    lua_pushboolean(l, isOverridden);
+
+    return 1;
+}
+
+
+static int object_setorbitcoloroverridden(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to object:setorbitcoloroverridden");
+
+    Selection* sel = this_object(l);
+    bool override = safeGetBoolean(l, 2, AllErrors, "Argument to object:setorbitcoloroverridden() must be a boolean");
+
+    if (sel->body() != NULL)
+    {
+        sel->body()->setOrbitColorOverridden(override);
+    }
+
+    return 0;
+}
+
+
+static int object_orbitvisibility(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments expected to object:orbitvisibility");
+    
+    Body::VisibilityPolicy visibility = Body::UseClassVisibility;
+
+    Selection* sel = this_object(l);
+    if (sel->body() != NULL)
+    {
+        visibility = sel->body()->getOrbitVisibility();
+    }
+
+    char* s = "normal";
+    if (visibility == Body::AlwaysVisible)
+        s = "always";
+    else if (visibility == Body::NeverVisible)
+        s = "never";
+    
+    lua_pushstring(l, s);
+
+    return 1;
+}
+
+
+static int object_setorbitvisibility(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument expected to object:setorbitcoloroverridden");
+
+    if (!lua_isstring(l, 2))
+    {
+        doError(l, "First argument to object:setorbitvisibility() must be a string");
+    }
+
+    Selection* sel = this_object(l);
+
+    string key;
+    key = lua_tostring(l, 2);
+
+    if (OrbitVisibilityMap.count(key) == 0)
+    {
+        cerr << "Unknown visibility policy: " << key << endl;
+    }
+    else
+    {
+        Body::VisibilityPolicy visibility = static_cast<Body::VisibilityPolicy>(OrbitVisibilityMap[key]);
+
+        if (sel->body() != NULL)
+        {
+            sel->body()->setOrbitVisibility(visibility);
+        }
+    }
+
+    return 0;
+}
+
+
 static int object_radius(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:radius");
@@ -2798,6 +2980,13 @@ static void CreateObjectMetaTable(lua_State* l)
     CreateClassMetatable(l, _Object);
 
     RegisterMethod(l, "__tostring", object_tostring);
+    RegisterMethod(l, "visible", object_visible);
+    RegisterMethod(l, "setvisible", object_setvisible);
+    RegisterMethod(l, "orbitcoloroverridden", object_orbitcoloroverridden);
+    RegisterMethod(l, "setorbitcoloroverridden", object_setorbitcoloroverridden);
+    RegisterMethod(l, "setorbitcolor", object_setorbitcolor);
+    RegisterMethod(l, "orbitvisibility", object_orbitvisibility);
+    RegisterMethod(l, "setorbitvisibility", object_setorbitvisibility);
     RegisterMethod(l, "radius", object_radius);
     RegisterMethod(l, "setradius", object_setradius);
     RegisterMethod(l, "type", object_type);

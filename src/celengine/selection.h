@@ -43,6 +43,8 @@ class Selection
     std::string getName(bool i18n = false) const;
     Selection parent() const;
 
+    bool isVisible() const;
+
     Star* star() const
     {
         return type == Type_Star ? static_cast<Star*>(obj) : NULL;
