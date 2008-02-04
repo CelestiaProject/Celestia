@@ -83,14 +83,44 @@ private:
 };
 
 
+// Alerter callback class for CelestiaCore
+class AppAlerter : public CelestiaCore::Alerter
+{
+public:
+    AppAlerter(QWidget* _parent) :
+        parent(_parent)
+    {
+    }
+
+    ~AppAlerter()
+    {
+    }
+
+    void fatalError(const string& msg)
+    {
+        QMessageBox::critical(parent, "Celestia", QString(msg.c_str()));
+    }
+
+private:
+    QWidget* parent;
+};    
+
+
 CelestiaAppWindow::CelestiaAppWindow() :
     glWidget(NULL),
     celestialBrowser(NULL),
     appCore(NULL),
     infoPanel(NULL),
-    eventFinder(NULL)
+    eventFinder(NULL),
+    alerter(NULL)
 {
     setObjectName("celestia-mainwin");
+}
+
+
+CelestiaAppWindow::~CelestiaAppWindow()
+{
+    delete(alerter);
 }
 
 
@@ -124,8 +154,12 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     }
 #endif
 
-    AppProgressNotifier* progress = new AppProgressNotifier(this);
     appCore = new CelestiaCore();
+    
+    AppProgressNotifier* progress = new AppProgressNotifier(this);
+    alerter = new AppAlerter(this);
+    appCore->setAlerter(alerter);
+
     appCore->initSimulation(&configFileName,
                             &extrasDirectories,
                             progress);
