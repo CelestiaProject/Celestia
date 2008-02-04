@@ -77,6 +77,8 @@ class StarDatabase
     {
         uint32 catalogNumber;
         uint32 celCatalogNumber;
+
+        bool operator<(const CrossIndexEntry&) const;
     };
 
     typedef std::vector<CrossIndexEntry> CrossIndex;
