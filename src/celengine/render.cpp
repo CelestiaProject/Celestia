@@ -598,18 +598,21 @@ bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 
 
 // Depth comparison for labels
-bool operator<(const Renderer::Label& a, const Renderer::Label& b)
+// Note that it's essential to declare this operator as a member
+// function of Renderer::Label; if it's not a class member, C++'s
+// argument dependent lookup will not find the operator when it's
+// used as a predicate for STL algorithms.
+bool Renderer::Label::operator<(const Label& l) const
 {
     // Operation is reversed because -z axis points into the screen
-    return a.position.z > b.position.z;
+    return position.z > l.position.z;
 }
 
-
 // Depth comparison for orbit paths
-bool operator<(const Renderer::OrbitPathListEntry& a, const Renderer::OrbitPathListEntry& b)
+bool Renderer::OrbitPathListEntry::operator<(const Renderer::OrbitPathListEntry& o) const
 {
     // Operation is reversed because -z axis points into the screen
-    return a.centerZ - a.radius > b.centerZ - b.radius;
+    return centerZ - radius > o.centerZ - o.radius;
 }
 
 
