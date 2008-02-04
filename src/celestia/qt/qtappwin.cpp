@@ -165,6 +165,16 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
                             progress);
     delete progress;
 
+	// Enable antialiasing if requested in the config file.
+	// TODO: Make this settable via the GUI
+	QGLFormat glformat = QGLFormat::defaultFormat();
+	if (appCore->getConfig()->aaSamples > 1)
+	{
+		glformat.setSampleBuffers(true);
+		glformat.setSamples(appCore->getConfig()->aaSamples);
+		QGLFormat::setDefaultFormat(glformat);
+	}
+
     glWidget = new CelestiaGlWidget(NULL, "Celestia", appCore);
     glctx = glWidget->context();
     appCore->setCursorHandler(glWidget);
