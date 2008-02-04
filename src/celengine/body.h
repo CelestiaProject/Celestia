@@ -101,7 +101,16 @@ class Body
         SmallBody   =    0x80,
         DwarfPlanet =   0x100,
         Stellar     =   0x200, // only used for orbit mask
+        SurfaceFeature = 0x400,
+        Component   = 0x800,
         Unknown     = 0x10000,
+    };
+
+    enum VisibilityPolicy
+    {
+        NeverVisible       = 0,
+        UseClassVisibility = 1,
+        AlwaysVisible      = 2,
     };
 
     PlanetarySystem* getSystem() const;
@@ -222,11 +231,20 @@ class Body
     void addLocation(Location*);
     Location* findLocation(const std::string&, bool i18n = false) const;
     void computeLocations();
-    
+
+    bool isVisible() const { return visible == 1; }
+    void setVisible(bool _visible);
     bool isClickable() const { return clickable == 1; }
     void setClickable(bool _clickable);
     bool isVisibleAsPoint() const { return visibleAsPoint == 1; }
     void setVisibleAsPoint(bool _visibleAsPoint);
+    bool isOrbitColorOverridden() const { return overrideOrbitColor == 1; }
+    void setOrbitColorOverridden(bool override);
+    VisibilityPolicy getOrbitVisibility() const { return orbitVisibility; }
+    void setOrbitVisibility(VisibilityPolicy _orbitVisibility);
+
+    Color getOrbitColor() const { return orbitColor; }
+    void setOrbitColor(const Color&);
 
     enum
     {
@@ -285,8 +303,14 @@ class Body
     mutable bool locationsComputed;
 
     uint32 referenceMarks;
+
+    Color orbitColor;
+
+    unsigned int visible : 1;
     unsigned int clickable : 1;
     unsigned int visibleAsPoint : 1;
+    unsigned int overrideOrbitColor : 1;
+    VisibilityPolicy orbitVisibility : 3;
 
     // Only necessary until we switch to using frame hierarchy
     Star* frameRefStar;

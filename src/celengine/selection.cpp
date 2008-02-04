@@ -175,3 +175,19 @@ Selection Selection::parent() const
         return Selection();
     }
 }
+
+
+/*! Return true if the selection's visibility flag is set. */
+bool Selection::isVisible() const
+{
+    switch (type)
+    {
+    case Type_Body:
+        return body()->isVisible();
+    case Type_Star:
+    case Type_DeepSky:
+        return true;
+    default:
+        return false;
+    }
+}
