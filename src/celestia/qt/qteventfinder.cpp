@@ -234,8 +234,6 @@ double QtEclipseFinder::findEclipseEnd(const Body& receiver, const Body& occulte
     if (eclipsed)
         t += step;
 
-    clog << "end: " << t - now << ", " << step << endl;
-
     return t;
 }
 
@@ -459,7 +457,7 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const
 }
 
 
-QVariant EventTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant EventTableModel::headerData(int section, Qt::Orientation, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -480,7 +478,7 @@ QVariant EventTableModel::headerData(int section, Qt::Orientation orientation, i
 }
 
 
-int EventTableModel::rowCount(const QModelIndex& index) const
+int EventTableModel::rowCount(const QModelIndex&) const
 {
     return (int) eclipses.size();
 }
@@ -519,15 +517,8 @@ void EventTableModel::sort(int column, Qt::SortOrder order)
 
 void EventTableModel::setEclipses(const vector<EclipseRecord>& _eclipses)
 {
-    if (eclipses.size() != 0)
-    {
-        beginRemoveRows(QModelIndex(), 0, eclipses.size());
-        endRemoveRows();
-    }
-
-    beginInsertRows(QModelIndex(), 0, eclipses.size());
     eclipses = _eclipses;
-    endInsertRows();
+	reset();
 }
 
 
@@ -577,7 +568,9 @@ EventFinder::EventFinder(Universe* _universe,
     
     startDateEdit = new QDateEdit(searchRangeBox);
     endDateEdit = new QDateEdit(searchRangeBox);
-    searchRangeLayout->addWidget(startDateEdit);
+	startDateEdit->setDisplayFormat("dd MMM yyyy");
+	endDateEdit->setDisplayFormat("dd MMM yyyy");
+	searchRangeLayout->addWidget(startDateEdit);
     searchRangeLayout->addWidget(endDateEdit);
 
     searchRangeBox->setLayout(searchRangeLayout);
@@ -679,10 +672,6 @@ void EventFinder::slotFindEclipses()
 
     QtEclipseFinder finder(obj.body(), this);
     
-    clog << "Finding eclipses: " << 
-        startDate.toString().toUtf8().data() << " to " <<
-        endDate.toString().toUtf8().data() << endl;
-
     double startTimeTDB = QDateToTDB(startDate);
     double endTimeTDB = QDateToTDB(endDate);
 
