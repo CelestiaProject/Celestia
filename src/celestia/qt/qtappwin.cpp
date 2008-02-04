@@ -262,11 +262,22 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     viewMenu->addAction(toolsDock->toggleViewAction());
     viewMenu->addAction(infoPanel->toggleViewAction());
     viewMenu->addAction(eventFinder->toggleViewAction());
+    viewMenu->addSeparator();
+
+    QAction* fullScreenAction = new QAction(tr("Full screen"), this);
+    fullScreenAction->setCheckable(true);
+    fullScreenAction->setShortcut(tr("Shift+F11"));
+
+    connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(slotToggleFullScreen()));
+    viewMenu->addAction(fullScreenAction);
 
     // Give keyboard focus to the 3D view
     glWidget->setFocus();
 
     readSettings();
+
+    // Set the full screen check state only after reading settings
+    fullScreenAction->setChecked(isFullScreen());
 
     // We use a timer with a null timeout value
     // to add appCore->tick to Qt's event loop
@@ -281,9 +292,20 @@ void CelestiaAppWindow::writeSettings()
     QSettings settings;
 
     settings.beginGroup("MainWindow");
-    settings.setValue("Size", size());
-    settings.setValue("Pos", pos());
+    if (isFullScreen())
+    {
+        // Save the normal size, not the fullscreen size; fullscreen will
+        // be restored automatically.
+        settings.setValue("Size", normalGeometry().size());
+        settings.setValue("Pos", normalGeometry().topLeft());
+    }
+    else
+    {
+        settings.setValue("Size", size());
+        settings.setValue("Pos", pos());
+    }
     settings.setValue("State", saveState(CELESTIA_MAIN_WINDOW_VERSION));
+    settings.setValue("Fullscreen", isFullScreen());
     settings.endGroup();
 
     // Renderer settings
@@ -314,6 +336,8 @@ void CelestiaAppWindow::readSettings()
     move(settings.value("Pos", DEFAULT_MAIN_WINDOW_POSITION).toPoint());
     if (settings.contains("State"))
         restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
+    if (settings.value("Fullscreen", false).toBool())
+        showFullScreen();
     settings.endGroup();
 
     // Render settings read in qtglwidget
@@ -504,6 +528,15 @@ void CelestiaAppWindow::slotShowTimeDialog()
 void CelestiaAppWindow::slotSetTime(double tdb)
 {
     appCore->getSimulation()->setTime(tdb);
+}
+
+
+void CelestiaAppWindow::slotToggleFullScreen()
+{
+    if (isFullScreen())
+        showNormal();
+    else
+        showFullScreen();
 }
 
 
