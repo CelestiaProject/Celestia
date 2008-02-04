@@ -13,7 +13,7 @@
 #ifndef _QTAPPWIN_H_
 #define _QTAPPWIN_H_
 
-#include <celengine/selection.h>
+#include <celestia/celestiacore.h>
 #include <QMainWindow>
 
 
@@ -24,7 +24,6 @@ class CelestiaGlWidget;
 class CelestialBrowser;
 class InfoPanel;
 class EventFinder;
-class CelestiaCore;
 class CelestiaActions;
 
 
@@ -34,6 +33,7 @@ class CelestiaAppWindow : public QMainWindow
 
  public:
     CelestiaAppWindow();
+    ~CelestiaAppWindow();
 
     void init(const QString& configFileName,
               const QStringList& extrasDirectories);
@@ -103,6 +103,8 @@ class CelestiaAppWindow : public QMainWindow
 
     InfoPanel* infoPanel;
     EventFinder* eventFinder;
+
+    CelestiaCore::Alerter* alerter;
 };
 
 
