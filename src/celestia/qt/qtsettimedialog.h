@@ -14,6 +14,10 @@
 #define _QTSETTIMEDIALOG_H_
 
 #include <QDialog>
+#include <QDateEdit>
+#include <QTimeEdit>
+#include <QDoubleSpinBox>
+#include <QLabel>
 
 class QDateTimeEdit;
 
@@ -29,12 +33,18 @@ Q_OBJECT
 
  public slots:
     void slotSetTime();
+    void syncJulianDate();
+    void syncDateTime();
 
  signals:
     void setTimeTriggered(double tdb);
 
  private:
-    QDateTimeEdit* dateEdit;
+    QDateEdit* dateEdit;
+    QTimeEdit* timeEdit;
+
+    QDoubleSpinBox* julianDateEdit;
+    QLabel* julianDateLabel;
 };
 
 #endif // _QTSETTIMEDIALOG_H_
