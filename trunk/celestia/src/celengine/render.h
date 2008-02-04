@@ -203,6 +203,8 @@ class Renderer
         char text[MaxLabelLength];
         Color color;
         Point3f position;
+
+        bool operator<(const Label&) const;
     };
     
     void addLabel(const char* text, Color, const Point3f&, float depth = -1);
@@ -221,6 +223,8 @@ class Renderer
         const Star* star;
         Point3f origin;
         float opacity;
+
+        bool operator<(const OrbitPathListEntry&) const;
     };        
 
     enum FontStyle

@@ -163,10 +163,9 @@ static bool parseCelestiaCatalogNumber(const string& name,
 }
 
 
-bool operator< (const StarDatabase::CrossIndexEntry& a,
-                const StarDatabase::CrossIndexEntry& b)
+bool StarDatabase::CrossIndexEntry::operator<(const StarDatabase::CrossIndexEntry& e) const
 {
-    return a.catalogNumber < b.catalogNumber;
+    return catalogNumber < e.catalogNumber;
 }
 
 
