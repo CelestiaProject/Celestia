@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/icons">
+<file alias="celestia.png">data/celestia.png</file>
 <file alias="time-currenttime.png">data/time-currenttime.png</file>
 <file alias="time-double.png">data/time-double.png</file>
 <file alias="time-faster.png">data/time-faster.png</file>

@@ -160,6 +160,8 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     alerter = new AppAlerter(this);
     appCore->setAlerter(alerter);
 
+	setWindowIcon(QIcon(":/icons/celestia.png"));
+
     appCore->initSimulation(&configFileName,
                             &extrasDirectories,
                             progress);
@@ -550,6 +552,28 @@ void CelestiaAppWindow::slotToggleFullScreen()
 }
 
 
+static const char* aboutText =
+"<html>"
+"<p><b>Celestia 1.5.0 (Qt4 experimental version)</b></p>"
+"<p>Copyright (C) 2001-2008 by the Celestia Development Team. Celestia "
+"is free software. You can redistribute it and/or modify it under the "
+"terms of the GNU General Public License version 2.</p>"
+"<b>Celestia on the web</b>"
+"<br>"
+"Main site: <a href=\"http://www.shatters.net/celestia/\">"
+"http://www.shatters.net/celestia/</a><br>"
+"Forum: <a href=\"http://www.shatters.net/forum/\">"
+"http://www.shatters.net/forum/</a><br>"
+"SourceForge project: <a href=\"http://www.sourceforge.net/projects/celestia\">"
+"http://www.sourceforge.net/projects/celestia</a><br>"
+"</html>";
+
+void CelestiaAppWindow::slotShowAbout()
+{
+	QMessageBox::about(this, "Celestia", aboutText);
+}
+
+
 void CelestiaAppWindow::createActions()
 {
 }
@@ -708,6 +732,13 @@ void CelestiaAppWindow::createMenus()
     }
     syncTimeAction->setChecked(check);
     appCore->getSimulation()->setSyncTime(check);
+
+	/****** Help Menu ******/
+    helpMenu = menuBar()->addMenu(tr("&Help"));
+
+    QAction* aboutAct = new QAction(tr("About Celestia"), this);
+    connect(aboutAct, SIGNAL(triggered()), this, SLOT(slotShowAbout()));
+    helpMenu->addAction(aboutAct);
 
     settings.endGroup();
 }
