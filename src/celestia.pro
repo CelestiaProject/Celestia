@@ -366,11 +366,14 @@ macx {
 	QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
 	CONFIG += x86 ppc
 	PRECOMPILED_HEADER += ../macosx/Util.h
+	FRAMEWORKPATH = ../macosx/Frameworks
 	LIBS -= -ljpeg
-        LIBS += -llua
-	LIBS += -L../macosx/lib
-        LIBS += -L../macosx/Frameworks
+	LIBS += -llua
+	LIBS += -L$$FRAMEWORKPATH
 	DEFINES += PNG_SUPPORT REFMARKS=1
+	FRAMEWORKS.files = $$FRAMEWORKPATH/liblua.dylib $$FRAMEWORKPATH/libpng.dylib
+	FRAMEWORKS.path = Contents/Frameworks
+	QMAKE_BUNDLE_DATA += FRAMEWORKS
 }
 
 DEFINES += CELX LUA_VER=0x050100
