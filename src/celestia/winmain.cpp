@@ -4117,10 +4117,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 #endif
 
         case ID_TIME_FASTER:
-            appCore->charEntered('L');
+            appCore->charEntered('l');
             break;
         case ID_TIME_SLOWER:
-            appCore->charEntered('K');
+            appCore->charEntered('k');
             break;
         case ID_TIME_REALTIME:
             appCore->charEntered('\\');
