@@ -1,4 +1,4 @@
-// qtappwin.cpp
+// qtappwin.h
 //
 // Copyright (C) 2007-2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
@@ -74,10 +74,11 @@ class CelestiaAppWindow : public QMainWindow
     void slotOpenScript();
 
     void slotShowTimeDialog();
-
     void slotSetTime(double tdb);
 
     void slotToggleFullScreen();
+
+	void slotShowAbout();
     
  signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
@@ -102,6 +103,7 @@ class CelestiaAppWindow : public QMainWindow
     QMenu* navMenu;
     QMenu* timeMenu;
     QMenu* viewMenu;
+	QMenu* helpMenu;
 
     InfoPanel* infoPanel;
     EventFinder* eventFinder;
