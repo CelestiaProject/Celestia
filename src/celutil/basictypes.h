@@ -24,10 +24,17 @@ typedef unsigned char  uint8;
 // MS Visual C++ does not include stdint.h
 typedef __int64          int64;
 typedef unsigned __int64 uint64;
+#define INT64_MAX  LLONG_MAX
+#define UINT64_MAX ULLONG_MAX
 #else
 #include <stdint.h>
+#include <limits>
 typedef          int64_t int64;
 typedef         uint64_t uint64;
+#define INT64_MAX 9223372036854775807LL
+#define UINT64_MAX 0xffffffffffffffffULL
+//#define INT64_MAX  std::numeric_limits<int64_t>::max()
+//#define UINT64_MAX std::numeric_limits<uint64_t>::max()
 #endif
 
 #endif // _BASICTYPES_H_
