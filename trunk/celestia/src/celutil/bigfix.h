@@ -57,7 +57,7 @@ class BigFix
         return hi > INT64_MAX;
     }
 
-    static void BigFix::negate128(uint64& hi, uint64& lo);
+    static void negate128(uint64& hi, uint64& lo);
 
  private:
     uint64 hi;
