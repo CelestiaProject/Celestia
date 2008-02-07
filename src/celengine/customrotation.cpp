@@ -96,6 +96,25 @@ public:
 };
 
 
+class IAUEnceladusRotationModel : public IAURotationModel
+{
+public:
+    IAUEnceladusRotationModel() : IAURotationModel(360.0 / 262.7318996) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        ra = 40.66 - 0.036 * T;
+        dec = 83.52 - 0.004 * T;
+    }
+    
+    double meridian(double t) const
+    {
+        return 2.82 + 262.7318996 * t;
+    }
+};
+
+
 class IAUTethysRotationModel : public IAURotationModel
 {
 public:
@@ -119,17 +138,217 @@ public:
 };
 
 
+class IAUTelestoRotationModel : public IAURotationModel
+{
+public:
+    IAUTelestoRotationModel() : IAURotationModel(360.0 / 190.6979330) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        ra = 50.50 - 0.036 * T;
+        dec = 84.06 - 0.004 * T;
+    }
+    
+    double meridian(double t) const
+    {
+        return 56.88 + 190.6979330 * t;
+    }
+};
+
+
+class IAUCalypsoRotationModel : public IAURotationModel
+{
+public:
+    IAUCalypsoRotationModel() : IAURotationModel(360.0 / 190.6742373) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double S5 = degToRad(53.59 - 8968.6 * T);
+        ra = 40.58 - 0.036 * T - 13.943 * sin(S5) - 1.686 * sin(2.0 * S5);
+        dec = 83.43 - 0.004 * T - 1.572 * cos(S5) + 0.095 * cos(2.0 * S5);
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double S5 = degToRad(53.59 - 8968.6 * T);
+        return 149.36 + 190.6742373 * t - 13.849 * sin(S5) + 1.685 * sin(2.0 * S5);
+    }
+};
+
+
+class IAUDioneRotationModel : public IAURotationModel
+{
+public:
+    IAUDioneRotationModel() : IAURotationModel(360.0 / 131.5349316) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        ra = 40.66 - 0.036 * T;
+        dec = 83.52 - 0.004 * T;
+    }
+    
+    double meridian(double t) const
+    {
+        return 357.00 + 131.5349316 * t;
+    }
+};
+
+
+class IAUHeleneRotationModel : public IAURotationModel
+{
+public:
+    IAUHeleneRotationModel() : IAURotationModel(360.0 / 131.6174056) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double S6 = degToRad(143.38 - 10553.5 * T);
+        ra = 40.58 - 0.036 * T + 1.662 * sin(S6) + 0.024 * sin(2.0 * S6);
+        dec = 83.52 - 0.004 * T - 0.187 * cos(S6) + 0.095 * cos(2.0 * S6);
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double S6 = degToRad(143.38 - 10553.5 * T);
+        return 245.39 + 131.6174056 * t - 1.651 * sin(S6) + 0.024 * sin(2.0 * S6);
+    }
+};
+
+
+class IAURheaRotationModel : public IAURotationModel
+{
+public:
+    IAURheaRotationModel() : IAURotationModel(360.0 / 79.6900478) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double S7 = degToRad(345.20 - 1016.3 * T);
+        ra = 40.38 - 0.036 * T + 3.10 * sin(S7);
+        dec = 83.55 - 0.004 * T - 0.35 * cos(S7);
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double S7 = degToRad(345.20 - 1016.3 * T);
+        return 235.16 + 79.6900478 * t - 1.651 - 3.08 * S7;
+    }
+};
+
+
+class IAUTitanRotationModel : public IAURotationModel
+{
+public:
+    IAUTitanRotationModel() : IAURotationModel(360.0 / 22.5769768) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double S8 = degToRad(29.80 - 52.1 * T);
+        ra = 36.41 - 0.036 * T + 2.66 * sin(S8);
+        dec = 83.94 - 0.004 * T - 0.30 * cos(S8);
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double S8 = degToRad(29.80 - 52.1 * T);
+        return 189.64 + 22.5769768 * t - 2.64 * sin(S8);
+    }
+};
+
+
+class IAUIapetusRotationModel : public IAURotationModel
+{
+public:
+    IAUIapetusRotationModel() : IAURotationModel(360.0 / 4.5379572) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        ra = 318.16 - 3.949 * T;
+        dec = 75.03 - 1.142 * T;
+    }
+    
+    double meridian(double t) const
+    {
+        return 350.20 + 4.5379572 * t;
+    }
+};
+
+
+class IAUPhoebeRotationModel : public IAURotationModel
+{
+public:
+    IAUPhoebeRotationModel() : IAURotationModel(360.0 / 22.5769768) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        ra = 355.16;
+        dec = 68.70 - 1.143 * T;
+    }
+    
+    double meridian(double t) const
+    {
+        return 304.70 + 930.8338720 * t;
+    }
+};
+
+
+
 RotationModel*
 GetCustomRotationModel(const std::string& name)
 {
-    clog << "GetCustomRotationModel [" << name << "]\n";
     if (name == "iau-mimas")
     {
         return new IAUMimasRotationModel();
     }
+    else if (name == "iau-enceladus")
+    {
+        return new IAUEnceladusRotationModel();
+    }
     else if (name == "iau-tethys")
     {
         return new IAUTethysRotationModel();
+    }
+    else if (name == "iau-telesto")
+    {
+        return new IAUTelestoRotationModel();
+    }
+    else if (name == "iau-calypso")
+    {
+        return new IAUCalypsoRotationModel();
+    }
+    else if (name == "iau-dione")
+    {
+        return new IAUDioneRotationModel();
+    }
+    else if (name == "iau-helene")
+    {
+        return new IAUHeleneRotationModel();
+    }
+    else if (name == "iau-rhea")
+    {
+        return new IAURheaRotationModel();
+    }
+    else if (name == "iau-titan")
+    {
+        return new IAUTitanRotationModel();
+    }
+    else if (name == "iau-iapetus")
+    {
+        return new IAUIapetusRotationModel();
+    }
+    else if (name == "iau-phoebe")
+    {
+        return new IAUPhoebeRotationModel();
     }
     else
     {
