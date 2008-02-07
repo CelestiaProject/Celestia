@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
+		8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844B87C0D5AA3290059AA3A /* customrotation.cpp */; };
+		8844B87F0D5AA3290059AA3A /* customrotation.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844B87D0D5AA3290059AA3A /* customrotation.h */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
@@ -363,6 +365,7 @@
 			files = (
 				E5F8C9E70795239600D1DAF2 /* liblua.dylib in Copy Libraries */,
 				E5F8C9E90795239600D1DAF2 /* libpng.dylib in Copy Libraries */,
+				8844B87F0D5AA3290059AA3A /* customrotation.h in Copy Libraries */,
 			);
 			name = "Copy Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,6 +487,8 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		8844B87C0D5AA3290059AA3A /* customrotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = customrotation.cpp; path = ../src/celengine/customrotation.cpp; sourceTree = SOURCE_ROOT; };
+		8844B87D0D5AA3290059AA3A /* customrotation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = customrotation.h; path = ../src/celengine/customrotation.h; sourceTree = SOURCE_ROOT; };
 		E50657D70CBFB08500151204 /* imagecapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imagecapture.h; path = ../src/celestia/imagecapture.h; sourceTree = SOURCE_ROOT; };
 		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
 		E50CCA380C065BF900E9C76A /* eclipsefinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eclipsefinder.h; path = ../src/celestia/eclipsefinder.h; sourceTree = SOURCE_ROOT; };
@@ -1372,6 +1377,8 @@
 		F51C6D52029596B4014901DC /* celengine */ = {
 			isa = PBXGroup;
 			children = (
+				8844B87C0D5AA3290059AA3A /* customrotation.cpp */,
+				8844B87D0D5AA3290059AA3A /* customrotation.h */,
 				E5D3E6530D1EA18A00214838 /* axisarrow.cpp */,
 				E5D3E6540D1EA18A00214838 /* axisarrow.h */,
 				E5A994710B1482FE009F40FA /* scriptrotation.cpp */,
@@ -1917,6 +1924,7 @@
 				E5D542770D0B87EA00E8C513 /* Menu_Extensions.m in Sources */,
 				E5D3E6550D1EA18A00214838 /* axisarrow.cpp in Sources */,
 				E5CAABA70D3D7A08001926FC /* POSupport.cpp in Sources */,
+				8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
