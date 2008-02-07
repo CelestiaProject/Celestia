@@ -30,6 +30,7 @@ libcelengine_a_SOURCES = \
 	console.cpp \
 	constellation.cpp \
 	customorbit.cpp \
+	customrotation.cpp \
 	dds.cpp \
 	deepskyobj.cpp \
 	dispmap.cpp \
