@@ -29,6 +29,7 @@ OBJS=\
 	$(INTDIR)\console.obj \
 	$(INTDIR)\constellation.obj \
 	$(INTDIR)\customorbit.obj \
+	$(INTDIR)\customrotation.obj \
 	$(INTDIR)\dds.obj \
 	$(INTDIR)\deepskyobj.obj \
 	$(INTDIR)\dispmap.obj \
