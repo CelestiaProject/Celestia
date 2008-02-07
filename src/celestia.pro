@@ -100,6 +100,7 @@ ENGINE_SOURCES = \
 	celengine/console.cpp \
 	celengine/constellation.cpp \
 	celengine/customorbit.cpp \
+        celengine/customrotation.cpp \
 	celengine/dds.cpp \
 	celengine/deepskyobj.cpp \
 	celengine/dispmap.cpp \
@@ -177,6 +178,7 @@ ENGINE_HEADERS = \
 	celengine/console.h \
 	celengine/constellation.h \
 	celengine/customorbit.h \
+        celengine/customrotation.h \
 	celengine/deepskyobj.h \
 	celengine/dispmap.h \
 	celengine/dsodb.h \

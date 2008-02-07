@@ -14,6 +14,7 @@
 #include <celutil/debug.h>
 #include "parseobject.h"
 #include "customorbit.h"
+#include "customrotation.h"
 #include "spiceorbit.h"
 #include "scriptorbit.h"
 #include "scriptrotation.h"
@@ -691,10 +692,9 @@ CreateRotationModel(Hash* planetData,
     //   legacy rotation parameters
 
     string customRotationModelName;
-    if (planetData->getString("CustomRotationModel", customRotationModelName))
+    if (planetData->getString("CustomRotation", customRotationModelName))
     {
-        //rotationModel = GetCustomRotationModel(customRotationModelName);
-        rotationModel = NULL;
+        rotationModel = GetCustomRotationModel(customRotationModelName);
         if (rotationModel != NULL)
         {
             return rotationModel;
