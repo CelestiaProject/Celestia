@@ -10,6 +10,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#ifdef TARGET_OS_MAC
+#include <Carbon/Carbon.h>
+#endif
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -142,10 +145,26 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
         extrasDirectories.push_back(iter->toUtf8().data());
     }
 
-#ifdef TARGET_OS_MAC    
-    QString resourceDir = QDir::homePath() + QString("/Library/Application Support/CelestiaResources");
-    bool ok = QDir::setCurrent(resourceDir);
-    if (!ok)
+#ifdef TARGET_OS_MAC
+    static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
+    int domain = 0;
+    int domainCount = (sizeof domains / sizeof(short));
+    QString resourceDir = QDir::currentPath();
+    while (!QDir::setCurrent(resourceDir+"/CelestiaResources") && domain < domainCount)
+    {
+        FSRef folder;
+        CFURLRef url;
+        UInt8 fullPath[PATH_MAX];
+        if (noErr == FSFindFolder(domains[domain++], kApplicationSupportFolderType, FALSE, &folder))
+        {
+            url = CFURLCreateFromFSRef(nil, &folder);
+            if (CFURLGetFileSystemRepresentation(url, TRUE, fullPath, PATH_MAX))
+                resourceDir = (const char *)fullPath;
+            CFRelease(url);
+        }
+    }
+
+    if (domain >= domainCount)
     {
         QMessageBox::critical(0, "Celestia",
                               tr("Celestia is unable to run because the CelestiaResources folder was not "
