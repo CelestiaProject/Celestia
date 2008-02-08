@@ -359,7 +359,7 @@ Mat4d Body::getLocalToHeliocentric(double tjd) const
 
     if (orbitFrame != NULL)
     {
-        Point3d p = orbitFrame->convertFromAstrocentric(pos, tjd);
+        Point3d p = orbitFrame->convertToAstrocentric(pos, tjd);
 
         // Temporary hack; won't be necessary post-1.5.0 when this function
         // is redefined to return position with respect to frame root object
@@ -405,7 +405,7 @@ Point3d Body::getHeliocentricPosition(double tjd) const
 
     if (orbitFrame != NULL)
     {
-        Point3d p = orbitFrame->convertFromAstrocentric(pos, tjd);
+        Point3d p = orbitFrame->convertToAstrocentric(pos, tjd);
 
         // Temporary hack; won't be necessary post-1.5.0 when this function
         // is redefined to return position with respect to frame root object

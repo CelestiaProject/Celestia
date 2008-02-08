@@ -79,7 +79,7 @@ class CommandGoto : public InstantaneousCommand
 {
  public:
     CommandGoto(double t, double dist,
-                Vec3f _up, astro::CoordinateSystem _upFrame);
+                Vec3f _up, ObserverFrame::CoordinateSystem _upFrame);
     ~CommandGoto();
     void process(ExecutionEnvironment&);
 
@@ -87,7 +87,7 @@ class CommandGoto : public InstantaneousCommand
     double gotoTime;
     double distance;
     Vec3f up;
-    astro::CoordinateSystem upFrame;
+    ObserverFrame::CoordinateSystem upFrame;
 };
 
 
@@ -205,12 +205,12 @@ class CommandTrack : public InstantaneousCommand
 class CommandSetFrame : public InstantaneousCommand
 {
  public:
-    CommandSetFrame(astro::CoordinateSystem,
+    CommandSetFrame(ObserverFrame::CoordinateSystem,
                     const std::string&, const std::string&);
     void process(ExecutionEnvironment&);
 
  private:
-    astro::CoordinateSystem coordSys;
+    ObserverFrame::CoordinateSystem coordSys;
     std::string refObjectName;
     std::string targetObjectName;
 };

@@ -52,11 +52,11 @@ private:
 
     CelestiaCore *appCore;
 
-    FrameOfReference ref;
+    ObserverFrame ref;
     Selection selected;
     Selection tracked;
 
-    astro::CoordinateSystem mode;
+    ObserverFrame::CoordinateSystem mode;
     int nbBodies;
     float fieldOfView;
     float timeScale;
@@ -66,7 +66,7 @@ private:
     bool pauseState;
 
     std::map<std::string, std::string> parseUrlParams(const std::string& url) const;
-    std::string getCoordSysName(astro::CoordinateSystem mode) const;
+    std::string getCoordSysName(ObserverFrame::CoordinateSystem mode) const;
     std::string getSelectionName(const Selection& selection) const;
     std::string getBodyShortName(const std::string& body) const;
     static std::string decode_string(const std::string& str);

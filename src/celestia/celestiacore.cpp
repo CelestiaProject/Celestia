@@ -140,7 +140,7 @@ float ComputeRotationCoarseness(Simulation& sim)
 {
     float coarseness = 1.5f;
 
-    Selection selection = sim.getActiveObserver()->getFrame().refObject;
+    Selection selection = sim.getActiveObserver()->getFrame()->getRefObject();
     if (selection.getType() == Selection::Type_Star ||
         selection.getType() == Selection::Type_Body)
     {
@@ -449,7 +449,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     FavoritesEntry* fav = new FavoritesEntry();
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
-    fav->orientation = sim->getObserver().getOrientation();
+    fav->orientation = sim->getObserver().getOrientationf();
     fav->name = name;
     fav->isFolder = false;
     fav->parentFolder = parentFolder;
@@ -460,7 +460,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     else
         fav->selectionName = sel.getName();
 
-    fav->coordSys = sim->getFrame().coordSys;
+    fav->coordSys = sim->getFrame()->getCoordinateSystem();
 
     favorites->insert(pos, fav);
 }
@@ -937,11 +937,12 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             {
                 Observer& observer = sim->getObserver();
                 Vec3d v = Vec3d(0, 0, dx * -MouseRotationSensitivity);
-                RigidTransform rt = observer.getSituation();
-                Quatd dr = 0.5 * (v * rt.rotation);
-                rt.rotation += dr;
-                rt.rotation.normalize();
-                observer.setSituation(rt);
+
+                Quatd obsOrientation = observer.getOrientation();
+                Quatd dr = 0.5 * (v * obsOrientation);
+                obsOrientation += dr;
+                obsOrientation.normalize();
+                observer.setOrientation(obsOrientation);
             }
         }
         else if (checkMask(modifiers, LeftButton | ShiftKey))
@@ -1571,7 +1572,7 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             if (sim->getObserverMode() == Observer::Travelling)
                 sim->setObserverMode(Observer::Free);
             else
-                sim->setFrame(astro::Universal, Selection());
+                sim->setFrame(ObserverFrame::Universal, Selection());
             if (!sim->getTrackedObject().empty())
                 sim->setTrackedObject(Selection());
         }
@@ -1853,9 +1854,9 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
 
     case 'G':
         addToHistory();
-        if (sim->getFrame().coordSys == astro::Universal)
+        if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
             sim->follow();
-        sim->gotoSelection(5.0, Vec3f(0, 1, 0), astro::ObserverLocal);
+        sim->gotoSelection(5.0, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
         break;
 
     case 'H':
@@ -2266,7 +2267,7 @@ void CelestiaCore::tick()
     av = av * (float) exp(-dt * RotationDecay);
 
     float fov = sim->getActiveObserver()->getFOV() / stdFOV;
-    FrameOfReference frame = sim->getFrame();
+    Selection refObject = sim->getFrame()->getRefObject();
 
     // Handle arrow keys; disable them when the log console is displayed,
     // because then they're used to scroll up and down.
@@ -2285,11 +2286,11 @@ void CelestiaCore::tick()
         }
         else
         {
-            if (!frame.refObject.empty())
+            if (!refObject.empty())
             {
-                Quatf orientation = sim->getObserver().getOrientation();
+                Quatf orientation = sim->getObserver().getOrientationf();
                 Vec3d upd = sim->getObserver().getPosition() -
-                    frame.refObject.getPosition(sim->getTime());
+                    refObject.getPosition(sim->getTime());
                 upd.normalize();
 
                 Vec3f up((float) upd.x, (float) upd.y, (float) upd.z);
@@ -2359,7 +2360,7 @@ void CelestiaCore::tick()
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
-    if (!frame.refObject.empty())
+    if (!refObject.empty())
     {
         Quatf q(1.0f);
         float coarseness = ComputeRotationCoarseness(*sim);
@@ -3452,32 +3453,34 @@ void CelestiaCore::renderOverlay()
         *overlay << '\n';
 
         {
-            FrameOfReference frame = sim->getFrame();
+            //FrameOfReference frame = sim->getFrame();
+            Selection refObject = sim->getFrame()->getRefObject();
+            ObserverFrame::CoordinateSystem coordSys = sim->getFrame()->getCoordinateSystem();
 
-            switch (frame.coordSys)
+            switch (coordSys)
             {
-            case astro::Ecliptical:
+            case ObserverFrame::Ecliptical:
                 *overlay << _("Follow ");
-                displaySelectionName(*overlay, frame.refObject,
+                displaySelectionName(*overlay, refObject,
                                      *sim->getUniverse());
                 break;
-            case astro::Geographic:
+            case ObserverFrame::BodyFixed:
                 *overlay << _("Sync Orbit ");
-                displaySelectionName(*overlay, frame.refObject,
+                displaySelectionName(*overlay, refObject,
                                      *sim->getUniverse());
                 break;
-            case astro::PhaseLock:
+            case ObserverFrame::PhaseLock:
                 *overlay << _("Lock ");
-                displaySelectionName(*overlay, frame.refObject,
+                displaySelectionName(*overlay, refObject,
                                      *sim->getUniverse());
                 *overlay << " -> ";
-                displaySelectionName(*overlay, frame.targetObject,
+                displaySelectionName(*overlay, sim->getFrame()->getTargetObject(),
                                      *sim->getUniverse());
                 break;
 
-            case astro::Chase:
+            case ObserverFrame::Chase:
                 *overlay << _("Chase ");
-                displaySelectionName(*overlay, frame.refObject,
+                displaySelectionName(*overlay, refObject,
                                      *sim->getUniverse());
                 break;
 
@@ -3582,7 +3585,7 @@ void CelestiaCore::renderOverlay()
         
         // Display RA/Dec for the selection, but only when the observer is near
         // the Earth.
-        Selection refObject = sim->getFrame().refObject;
+        Selection refObject = sim->getFrame()->getRefObject();
         if (refObject.body() && refObject.body()->getName() == "Earth")
         {
             Body* earth = refObject.body();

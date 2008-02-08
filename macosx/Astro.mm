@@ -8,6 +8,7 @@
 
 #import "Astro.h"
 #import "Astro_PrivateAPI.h"
+#import "Observer.h"
 #import "CelestiaUniversalCoord_PrivateAPI.h"
 #import "CelestiaVector_PrivateAPI.h"
 
@@ -68,7 +69,7 @@ NSDictionary* coordinateDict;
 +(void)initialize
 {
     // compiler macro would be prettier I guess
-    coordinateDict = [[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:astro::Universal],@"Universal",[NSNumber numberWithInt:astro::Ecliptical],@"Ecliptical",[NSNumber numberWithInt:astro::Equatorial],@"Equatorial",[NSNumber numberWithInt:astro::Geographic],@"Geographic",[NSNumber numberWithInt:astro::ObserverLocal],@"ObserverLocal",[NSNumber numberWithInt:astro::PhaseLock],@"PhaseLock",[NSNumber numberWithInt:astro::Chase],@"Chase",nil,nil] retain];
+    coordinateDict = [[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:ObserverFrame::Universal],@"Universal",[NSNumber numberWithInt:ObserverFrame::Ecliptical],@"Ecliptical",[NSNumber numberWithInt:ObserverFrame::Equatorial],@"Equatorial",[NSNumber numberWithInt:ObserverFrame::BodyFixed],@"Geographic",[NSNumber numberWithInt:ObserverFrame::ObserverLocal],@"ObserverLocal",[NSNumber numberWithInt:ObserverFrame::PhaseLock],@"PhaseLock",[NSNumber numberWithInt:ObserverFrame::Chase],@"Chase",nil,nil] retain];
 }
 +(NSNumber*)sphereIlluminationFraction:(CelestiaVector*)spherePos viewerPosition:(CelestiaVector*)viewerPos
 {

@@ -162,15 +162,14 @@ static CelestiaBody *eclipseBody;
     sim->setTime(startTime);
     Selection target(body);
     Selection ref(body->getSystem()->getStar());
-    sim->setFrame(FrameOfReference(astro::PhaseLock, target, ref));
+    sim->setFrame(ObserverFrame::PhaseLock, target, ref);
     sim->update(0.0);
 
     double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-    RigidTransform to;
-    to.rotation = Quatd::yrotation(PI);
-    to.translation = Point3d(0, 0, -distance);
+    Quatd toRotation = Quatd::yrotation(PI);
+    UniversalCoord toPosition = Point3d(0, 0, -distance);
     sim->setSelection(target);
-    sim->gotoLocation(to, 2.5);    
+    sim->gotoLocation(toPosition, toRotation, 2.5);    
 }
 
 - (IBAction)stopFind: (id)sender

@@ -20,35 +20,102 @@
 
 #include <celengine/frame.h>
 
+class ObserverFrame
+{
+public:
+    enum CoordinateSystem
+    {
+        Universal       = 0,
+        Ecliptical      = 1,
+        Equatorial      = 2,
+        BodyFixed       = 3,
+        PhaseLock       = 5,
+        Chase           = 6,
+        
+        // Previous versions of PhaseLock and Chase used the
+        // spin axis of the reference object as a secondary
+        // vector for the coordinate system.
+        PhaseLock_Old   = 100,
+        Chase_Old       = 101,
+        
+        // ObserverLocal is not a real frame; it's an optional
+        // way to specify view vectors. Eventually, there will
+        // be some other way to accomplish this and ObserverLocal
+        // will go away.
+        ObserverLocal   = 200,
+        
+        Unknown         = 1000,
+    };
+    
+    ObserverFrame();
+    ObserverFrame(CoordinateSystem cs,
+                  const Selection& _refObject,
+                  const Selection& _targetObj = Selection());
+    ObserverFrame(const ObserverFrame&);
+    
+    ~ObserverFrame();
+    
+    ObserverFrame& operator=(const ObserverFrame& f);
+    
+    CoordinateSystem getCoordinateSystem() const;
+    Selection getRefObject() const;
+    Selection getTargetObject() const;
+    
+    const ReferenceFrame* getFrame() const;
+    
+    UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
+    UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
+    Quatd convertFromUniversal(const Quatd& q, double tjd) const;
+    Quatd convertToUniversal(const Quatd& q, double tjd) const;
+    
+    static UniversalCoord convert(const ObserverFrame* fromFrame,
+                                  const ObserverFrame* toFrame,
+                                  const UniversalCoord& uc,
+                                  double t);
+    static Quatd          convert(const ObserverFrame* fromFrame,
+                                  const ObserverFrame* toFrame,
+                                  const Quatd& q,
+                                  double t);
+    
+private:
+    ReferenceFrame* createFrame(CoordinateSystem _coordSys,
+                                const Selection& _refObject,
+                                const Selection& _targetObject);
+    
+private:
+    CoordinateSystem coordSys;
+    ReferenceFrame* frame;
+    Selection targetObject;
+};
+
+
+/*! ObserverFrame is a wrapper class for ReferenceFrame which adds some
+ * annotation data. The goal is to place some restrictions on what reference
+ * frame can be set for an observer. General reference frames can be
+ * arbitrarily complex, with multiple levels of nesting. This makes it
+ * difficult to store them in a cel:// URL or display information about
+ * them for the user. The restricted set of reference frames wrapped by
+ * the ObserverFrame class does not suffer from such problems.
+ */
 class Observer
 {
 public:
     Observer();
-
-    // The getPosition method returns the observer's position in micro light
-    // years.
+        
     UniversalCoord getPosition() const;
-
-    // getRelativePosition returns in units of kilometers the difference
-    // between the position of the observer and a location specified in
-    // light years.
-    Point3d       getRelativePosition(const Point3d&) const;
-
-    Quatf         getOrientation() const;
+    void          setPosition(const UniversalCoord&);
+    void          setPosition(const Point3d&);    
+    
+    Quatd         getOrientation() const;
+    Quatf         getOrientationf() const;
     void          setOrientation(const Quatf&);
     void          setOrientation(const Quatd&);
+    
     Vec3d         getVelocity() const;
     void          setVelocity(const Vec3d&);
     Vec3f         getAngularVelocity() const;
     void          setAngularVelocity(const Vec3f&);
-
-    void          setPosition(BigFix x, BigFix y, BigFix z);
-    void          setPosition(const UniversalCoord&);
-    void          setPosition(const Point3d&);
-
-    RigidTransform getSituation() const;
-    void           setSituation(const RigidTransform&);
-
+    
     float          getFOV() const;
     void           setFOV(float);
 
@@ -75,30 +142,31 @@ public:
     void gotoSelection(const Selection&,
                        double gotoTime,
                        Vec3f up,
-                       astro::CoordinateSystem upFrame);
+                       ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
                        double gotoTime,
                        double startInter,
                        double endInter,
                        Vec3f up,
-                       astro::CoordinateSystem upFrame);
+                       ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionGC(const Selection&,
                          double gotoTime,
                          double startInter,
                          double endInter,
                          Vec3f up,
-                         astro::CoordinateSystem upFrame);
+                         ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
                        double gotoTime,
                        double distance,
                        Vec3f up,
-                       astro::CoordinateSystem upFrame);
+                       ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionLongLat(const Selection&,
                               double gotoTime,
                               double distance,
                               float longitude, float latitude,
                               Vec3f up);
-    void gotoLocation(const RigidTransform& transform,
+    void gotoLocation(const UniversalCoord& toPosition,
+                      const Quatd& toOrientation,
                       double duration);
     void getSelectionLongLat(const Selection&,
                              double& distance,
@@ -108,7 +176,7 @@ public:
                          double gotoTime,
                          double distance,
                          Vec3f up,
-                         astro::CoordinateSystem upFrame);
+                         ObserverFrame::CoordinateSystem upFrame);
     void gotoSurface(const Selection&, double duration);
     void centerSelection(const Selection&, double centerTime = 0.5);
     void centerSelectionCO(const Selection&, double centerTime = 0.5);
@@ -120,23 +188,28 @@ public:
 
     void reverseOrientation();
 
-    void setFrame(const FrameOfReference&);
-    FrameOfReference getFrame() const;
+    void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj, const Selection& targetObj);
+    void setFrame(ObserverFrame::CoordinateSystem cs, const Selection& refObj);
+    void setFrame(const ObserverFrame& f);
+
+    const ObserverFrame* getFrame() const;
 
     double getArrivalTime() const;
 
     double getTime() const;
     void setTime(double);
 
-    enum ObserverMode {
+    enum ObserverMode
+    {
         Free                    = 0,
         Travelling              = 1,
     };
-
+    
     ObserverMode getMode() const;
     void setMode(ObserverMode);
 
-    enum TrajectoryType {
+    enum TrajectoryType
+    {
         Linear        = 0,
         GreatCircle   = 1,
         CircularOrbit = 2,          
@@ -148,13 +221,13 @@ public:
         double startTime;
         UniversalCoord from;
         UniversalCoord to;
-        Quatf initialOrientation;
-        Quatf finalOrientation;
+        Quatd initialOrientation;
+        Quatd finalOrientation;
         double startInterpolation; // start of orientation interpolation phase [0-1]
         double endInterpolation;   // end of orientation interpolation phase [0-1]
         double expFactor;
         double accelTime;
-        Quatf rotation1; // rotation on the CircularOrbit around centerObject
+        Quatd rotation1; // rotation on the CircularOrbit around centerObject
 
         Selection centerObject;
         
@@ -171,18 +244,18 @@ public:
                                double startInter,
                                double endInter,
                                Vec3d offset,
-                               astro::CoordinateSystem offsetFrame,
+                               ObserverFrame::CoordinateSystem offsetFrame,
                                Vec3f up,
-                               astro::CoordinateSystem upFrame);
+                               ObserverFrame::CoordinateSystem upFrame);
     void computeGotoParametersGC(const Selection& sel,
                                  JourneyParams& jparams,
                                  double gotoTime,
                                  double startInter,
                                  double endInter,
                                  Vec3d offset,
-                                 astro::CoordinateSystem offsetFrame,
+                                 ObserverFrame::CoordinateSystem offsetFrame,
                                  Vec3f up,
-                                 astro::CoordinateSystem upFrame,
+                                 ObserverFrame::CoordinateSystem upFrame,
                                  const Selection& centerObj);
     void computeCenterParameters(const Selection& sel,
                                  JourneyParams& jparams,
@@ -191,13 +264,25 @@ public:
                                    JourneyParams& jparams,
                                    double centerTime);
 
+    void updateUniversal();
+    void convertFrameCoordinates(const ObserverFrame* newFrame);
+    
  private:
     double         simTime;
 
-    RigidTransform situation;
+    // Position, orientation, and velocity in the observer's reference frame
+    UniversalCoord position;
+    Quatd          orientation;
     Vec3d          velocity;
     Vec3f          angularVelocity;
-
+    
+    // Position and orientation in universal coordinates, derived from the
+    // equivalent quantities in the observer reference frame.
+    UniversalCoord positionUniv;
+    Quatd          orientationUniv;
+    
+    ObserverFrame* frame;
+    
     double         realTime;
 
     double         targetSpeed;
@@ -206,11 +291,10 @@ public:
     double         beginAccelTime;
 
     ObserverMode     observerMode;
-    JourneyParams    journey;
-    FrameOfReference frame;
+    JourneyParams    journey;    
     Selection        trackObject;
 
-    Quatf trackingOrientation;   // orientation prior to selecting tracking
+    Quatd trackingOrientation;   // orientation prior to selecting tracking
 
     float fov;
     bool reverseFlag;

@@ -12,6 +12,7 @@
 #import "CelestiaUniversalCoord_PrivateAPI.h"
 #import "NSString_ObjCPlusPlus.h"
 #import "Astro.h"
+#import "Observer.h"
 #import "CelestiaAppCore.h"
 #import "CelestiaSimulation.h"
 #import "CelestiaSimulation_PrivateAPI.h"
@@ -52,7 +53,7 @@
 }
 -(void)setCoordinateSystem:(NSString*)coordSys
 {
-    [self favorite]->coordSys = (astro::CoordinateSystem)[[Astro coordinateSystem:coordSys] intValue];
+    [self favorite]->coordSys = (ObserverFrame::CoordinateSystem)[[Astro coordinateSystem:coordSys] intValue];
 }
 @end
 
@@ -134,7 +135,7 @@
         name = [[[[CelestiaAppCore sharedAppCore] simulation] julianDate] description];
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
-    fav->orientation = sim->getObserver().getOrientation();
+    fav->orientation = sim->getObserver().getOrientationf();
     fav->name = [name stdString];
     fav->isFolder = false;
     fav->parentFolder = [parentFolder stdString];
@@ -145,7 +146,7 @@
     else
         fav->selectionName = sel.getName();
 
-    fav->coordSys = sim->getFrame().coordSys;
+    fav->coordSys = sim->getFrame()->getCoordinateSystem();
     self = [self initWithFavorite:fav];
     _freeWhenDone = YES;
 #ifdef URL_FAVORITES

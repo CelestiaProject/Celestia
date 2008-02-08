@@ -88,13 +88,13 @@ FavoritesList* ReadFavoritesList(istream& in)
         string coordSysName;
         favParams->getString("coordsys", coordSysName);
         if (coordSysName == "ecliptical")
-            fav->coordSys = astro::Ecliptical;
+            fav->coordSys = ObserverFrame::Ecliptical;
         else if (coordSysName == "equatorial")
-            fav->coordSys = astro::Equatorial;
+            fav->coordSys = ObserverFrame::Equatorial;
         else if (coordSysName == "geographic")
-            fav->coordSys = astro::Geographic;
+            fav->coordSys = ObserverFrame::BodyFixed;
         else
-            fav->coordSys = astro::Universal;
+            fav->coordSys = ObserverFrame::Universal;
 
         favorites->insert(favorites->end(), fav);
     }
@@ -137,19 +137,19 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
             out << "\tcoordsys \"";
             switch (fav->coordSys)
             {
-            case astro::Universal:
+            case ObserverFrame::Universal:
                 out << "universal"; break;
-            case astro::Ecliptical:
+            case ObserverFrame::Ecliptical:
                 out << "ecliptical"; break;
-            case astro::Equatorial:
+            case ObserverFrame::Equatorial:
                 out << "equatorial"; break;
-            case astro::Geographic:
+            case ObserverFrame::BodyFixed:
                 out << "geographic"; break;
-            case astro::ObserverLocal:
+            case ObserverFrame::ObserverLocal:
                 out << "local"; break;
-            case astro::PhaseLock:
+            case ObserverFrame::PhaseLock:
                 out << "phaselock"; break;
-            case astro::Chase:
+            case ObserverFrame::Chase:
                 out << "chase"; break;
             }
             out << "\"\n";

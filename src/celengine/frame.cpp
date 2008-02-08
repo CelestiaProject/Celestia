@@ -13,214 +13,6 @@
 using namespace std;
 
 
-RigidTransform FrameOfReference::toUniversal(const RigidTransform& xform,
-                                             double t) const
-{
-    // Handle the easy case . . .
-    if (coordSys == astro::Universal)
-        return xform;
-    UniversalCoord origin = refObject.getPosition(t);
-
-    if (coordSys == astro::Geographic)
-    {
-        Quatd rotation(1, 0, 0, 0);
-        switch (refObject.getType())
-        {
-        case Selection::Type_Body:
-            rotation = refObject.body()->getEclipticalToBodyFixed(t);
-            break;
-        case Selection::Type_Star:
-            rotation = refObject.star()->getRotationModel()->orientationAtTime(t);
-            break;
-        case Selection::Type_Location:
-            if (refObject.location()->getParentBody() != NULL)
-                rotation = refObject.location()->getParentBody()->getEclipticalToBodyFixed(t);
-            break;
-        default:
-            break;
-        }
-
-        Point3d p = (Point3d) xform.translation * rotation.toMatrix4();
-        return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
-                              xform.rotation * rotation);
-    }
-    else if (coordSys == astro::PhaseLock)
-    {
-        Mat3d m;
-        Vec3d lookDir = refObject.getPosition(t) - targetObject.getPosition(t);
-        lookDir.normalize();
-
-        switch (refObject.getType())
-        {
-        case Selection::Type_Body:
-            {
-                Body* body = refObject.body();
-                Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
-                Vec3d v = axisDir ^ lookDir;
-                v.normalize();
-                Vec3d u = lookDir ^ v;
-                m = Mat3d(v, u, lookDir);
-            }
-            break;
-        case Selection::Type_Star:
-            {
-                Star* star = refObject.star();
-                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationModel()->equatorOrientationAtTime(t).toMatrix3();
-                Vec3d v = axisDir ^ lookDir;
-                v.normalize();
-                Vec3d u = lookDir ^ v;
-                m = Mat3d(v, u, lookDir);
-            }
-        default:
-            return xform;
-        }
-
-        Point3d p = (Point3d) xform.translation * m;
-
-        return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
-                              xform.rotation * Quatd(m));
-    }
-    else if (coordSys == astro::Chase)
-    {
-        Mat3d m;
-
-        switch (refObject.getType())
-        {
-        case Selection::Type_Body:
-            {
-                Body* body = refObject.body();
-                Vec3d lookDir = body->getOrbit()->positionAtTime(t) -
-                    body->getOrbit()->positionAtTime(t - 1.0 / 1440.0);
-                Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
-                lookDir.normalize();
-                Vec3d v = lookDir ^ axisDir;
-                v.normalize();
-                Vec3d u = v ^ lookDir;
-                m = Mat3d(v, u, -lookDir);
-            }
-            break;
-        default:
-            return xform;
-        }
-
-        Point3d p = (Point3d) xform.translation * m;
-
-        return RigidTransform(origin + Vec3d(p.x, p.y, p.z),
-                              xform.rotation * Quatd(m));
-    }
-    else
-    {
-        return RigidTransform(origin + xform.translation, xform.rotation);
-    }
-}
-
-
-RigidTransform FrameOfReference::fromUniversal(const RigidTransform& xform,
-                                               double t) const
-{
-    // Handle the easy case . . .
-    if (coordSys == astro::Universal)
-        return xform;
-    UniversalCoord origin = refObject.getPosition(t);
-
-    if (coordSys == astro::Geographic)
-    {
-        Quatd rotation(1, 0, 0, 0);
-        switch (refObject.getType())
-        {
-        case Selection::Type_Body:
-            rotation = refObject.body()->getEclipticalToBodyFixed(t);
-            break;
-        case Selection::Type_Star:
-            rotation = refObject.star()->getRotationModel()->orientationAtTime(t);
-            break;
-        case Selection::Type_Location:
-            if (refObject.location()->getParentBody() != NULL)
-                rotation = refObject.location()->getParentBody()->getEclipticalToBodyFixed(t);
-            break;
-        default:
-            break;
-        }
-        Vec3d v = (xform.translation - origin) * (~rotation).toMatrix4();
-        
-        return RigidTransform(UniversalCoord(v.x, v.y, v.z),
-                              xform.rotation * ~rotation);
-    }
-    else if (coordSys == astro::PhaseLock)
-    {
-        Mat3d m;
-        Vec3d lookDir = refObject.getPosition(t) - targetObject.getPosition(t);
-        lookDir.normalize();
-
-        switch (refObject.getType())
-        {
-        case Selection::Type_Body:
-            {
-                Body* body = refObject.body();
-                Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
-                Vec3d v = axisDir ^ lookDir;
-                v.normalize();
-                Vec3d u = lookDir ^ v;
-                m = Mat3d(v, u, lookDir);
-            }
-            break;
-
-        case Selection::Type_Star:
-            {
-                Star* star = refObject.star();
-                Vec3d axisDir = Vec3d(0, 1, 0) * star->getRotationModel()->equatorOrientationAtTime(t).toMatrix3();
-                Vec3d v = axisDir ^ lookDir;
-                v.normalize();
-                Vec3d u = lookDir ^ v;
-                m = Mat3d(v, u, lookDir);
-            }
-
-        default:
-            return xform;
-        }
-
-        Vec3d v = (xform.translation - origin) * m.transpose();
-
-        return RigidTransform(UniversalCoord(v.x, v.y, v.z),
-                              xform.rotation * ~Quatd(m));
-    }
-    else if (coordSys == astro::Chase)
-    {
-        Mat3d m;
-
-        switch (refObject.getType())
-        {
-        case Selection::Type_Body:
-            {
-                Body* body = refObject.body();
-                Vec3d lookDir = body->getOrbit()->positionAtTime(t) -
-                    body->getOrbit()->positionAtTime(t - 1.0 / 1440.0);
-                Vec3d axisDir = Vec3d(0, 1, 0) * body->getEclipticalToEquatorial(t).toMatrix3();
-                lookDir.normalize();
-                Vec3d v = lookDir ^ axisDir;
-                v.normalize();
-                Vec3d u = v ^ lookDir;
-                m = Mat3d(v, u, -lookDir);
-            }
-            break;
-
-        default:
-            return xform;
-        }
-
-        Vec3d v = (xform.translation - origin) * m.transpose();
-
-        return RigidTransform(UniversalCoord(v.x, v.y, v.z),
-                              xform.rotation * ~Quatd(m));
-    }
-    else
-    {
-        return RigidTransform(xform.translation.difference(origin),
-                              xform.rotation);
-    }
-}
-
-
 /*** ReferenceFrame ***/
 
 ReferenceFrame::ReferenceFrame(Selection center) :
@@ -249,30 +41,92 @@ ReferenceFrame::release() const
 }
 
 
-// TODO: Not correct; requires BigFix * double multiplication
-UniversalCoord
-ReferenceFrame::convertFrom(const UniversalCoord& uc, double tjd) const
+// High-precision rotation using 64.64 fixed point path. Rotate uc by
+// the rotation specified by unit quaternion q.
+static UniversalCoord rotate(const UniversalCoord& uc, const Quatd& q)
 {
-    UniversalCoord center = centerObject.getPosition(tjd);
-    Vec3d relative = uc - center;
-
-    return center + relative * getOrientation(tjd).toMatrix3();
+    Mat3d r = q.toMatrix3();
+    UniversalCoord uc1;
+    
+    uc1.x = uc.x * BigFix(r[0].x) + uc.y * BigFix(r[1].x) + uc.z * BigFix(r[2].x);
+    uc1.y = uc.x * BigFix(r[0].y) + uc.y * BigFix(r[1].y) + uc.z * BigFix(r[2].y);
+    uc1.z = uc.x * BigFix(r[0].z) + uc.y * BigFix(r[1].z) + uc.z * BigFix(r[2].z);
+    
+    return uc1;
 }
 
 
-// TODO: Not correct; requires BigFix * double multiplication
+/*! Convert from universal coordinates to frame coordinates. This method
+ *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
+ *  than convertFromAstrocentric(), which works with double precision
+ *  floating points values. For cases when the bodies are all in the same
+ *  solar system, convertFromAstrocentric() should be used.
+ */
 UniversalCoord
-ReferenceFrame::convertTo(const UniversalCoord& uc, double tjd) const
+ReferenceFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 {
-    UniversalCoord center = centerObject.getPosition(tjd);
-    Vec3d relative = uc - center;
+    UniversalCoord uc1 = uc.difference(centerObject.getPosition(tjd));
+    return rotate(uc1, conjugate(getOrientation(tjd)));
+}
 
-    return center + relative * conjugate(getOrientation(tjd)).toMatrix3();
+
+Quatd
+ReferenceFrame::convertFromUniversal(const Quatd& q, double tjd) const
+{
+    return q * conjugate(getOrientation(tjd));
+}
+
+
+/*! Convert from local coordinates to universal coordinates. This method
+ *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
+ *  than convertFromAstrocentric(), which works with double precision
+ *  floating points values. For cases when the bodies are all in the same
+ *  solar system, convertFromAstrocentric() should be used.
+ *
+ *  To get the position of a solar system object in universal coordinates,
+ *  it usually suffices to get the astrocentric position and then add that
+ *  to the position of the star in universal coordinates. This avoids any
+ *  expensive high-precision multiplication.
+ */
+UniversalCoord
+ReferenceFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
+{
+    return centerObject.getPosition(tjd) + rotate(uc, getOrientation(tjd));
+}
+
+
+Quatd
+ReferenceFrame::convertToUniversal(const Quatd& q, double tjd) const
+{
+    return q * getOrientation(tjd);
 }
 
 
 Point3d
 ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
+{
+    Point3d center;
+    if (centerObject.getType() == Selection::Type_Body)
+    {
+        Point3d center = centerObject.body()->getHeliocentricPosition(tjd);
+        return Point3d(0.0, 0.0, 0.0) + (p - center) * conjugate(getOrientation(tjd)).toMatrix3();
+    }
+    else if (centerObject.getType() == Selection::Type_Star)
+    {
+        return p * conjugate(getOrientation(tjd)).toMatrix3();
+    }
+    else
+    {
+        // TODO:
+        // bad if the center object is a galaxy
+        // what about locations?
+        return Point3d(0.0, 0.0, 0.0);
+    }
+}
+
+
+Point3d
+ReferenceFrame::convertToAstrocentric(const Point3d& p, double tjd) const
 {
     Point3d center;
     if (centerObject.getType() == Selection::Type_Body)
@@ -290,7 +144,7 @@ ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
         // bad if the center object is a galaxy
         // what about locations?
         return Point3d(0.0, 0.0, 0.0);
-    }
+    }    
 }
 
 
