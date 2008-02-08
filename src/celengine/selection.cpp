@@ -167,6 +167,8 @@ Selection Selection::parent() const
         break;
 
     case Type_Star:
+        return Selection(star()->getOrbitBarycenter());
+        
     case Type_DeepSky:
         // Currently no hierarchy for stars and deep sky objects.
         return Selection();
