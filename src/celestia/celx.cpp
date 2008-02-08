@@ -756,6 +756,7 @@ bool LuaState::charEntered(const char* c_p)
         {
             result = (lua_toboolean(costate, -1) != 0);
         }
+		lua_pop(costate, 1);
     }
 
 #if LUA_VER < 0x050100
@@ -3609,7 +3610,7 @@ static int observer_getframe(lua_State* l)
 
     Observer* obs = this_observer(l);
 
-    ObserverFrame* frame = obs->getFrame();
+    const ObserverFrame* frame = obs->getFrame();
     frame_new(l, *frame);
     return 1;
 }
