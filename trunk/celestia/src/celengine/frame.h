@@ -16,72 +16,12 @@
 #include <celengine/selection.h>
 
 
-struct RigidTransform
-{
-    RigidTransform() :
-        translation(0.0, 0.0, 0.0), rotation(1.0, 0.0, 0.0, 0.0) {};
-    RigidTransform(const UniversalCoord& uc) :
-        translation(uc), rotation(1.0f) {};
-    RigidTransform(const UniversalCoord& uc, const Quatd& q) :
-        translation(uc), rotation(q) {};
-    RigidTransform(const UniversalCoord& uc, const Quatf& q) :
-        translation(uc), rotation(q.w, q.x, q.y, q.z) {};
-    UniversalCoord translation;
-    Quatd rotation;
-};
-
-
-struct FrameOfReference
-{
-    FrameOfReference() :
-        coordSys(astro::Universal) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, Body* _body) :
-        coordSys(_coordSys), refObject(_body) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, Star* _star) :
-        coordSys(_coordSys), refObject(_star) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, DeepSkyObject* _deepsky) :
-        coordSys(_coordSys), refObject(_deepsky) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, const Selection& sel) :
-        coordSys(_coordSys), refObject(sel) {};
-    FrameOfReference(astro::CoordinateSystem _coordSys, const Selection& ref,
-                     const Selection& target) :
-        coordSys(_coordSys), refObject(ref), targetObject(target) {};
-
-    RigidTransform toUniversal(const RigidTransform& xform, double t) const;
-    RigidTransform fromUniversal(const RigidTransform& xform, double t) const;
-
-    astro::CoordinateSystem coordSys;
-    Selection refObject;
-    Selection targetObject;
-};
-
-
-// class RefCountedObject
-
-/*!
-Frame
-{
-   Center "Sol"
-   # Orientation "J2000"
-   # Orientation "J2000Ecliptic"
-   TwoAxis
-   {
-       Primary
-       {
-          Axis "+X"
-          Observer "Earth"
-          Target "Sun"
-       }
-
-       Secondary
-       {
-           Axis "+Y"
-       }
-   }
-}
-*/
-
-
+/*! A ReferenceFrame object has a center and set of orthogonal axes.
+ *
+ * Subclasses of ReferenceFrame must override the getOrientation method
+ * (which specifies the coordinate axes at a given time) and the
+ * nestingDepth() method (which is used to check for recursive frames.)
+ */
 class ReferenceFrame
 {
  public:
@@ -91,10 +31,13 @@ class ReferenceFrame
     int addRef() const;
     int release() const;
     
-    UniversalCoord convertFrom(const UniversalCoord& uc, double tjd) const;
-    UniversalCoord convertTo(const UniversalCoord& uc, double tjd) const;
+    UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
+    UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
+    Quatd convertFromUniversal(const Quatd& q, double tjd) const;
+    Quatd convertToUniversal(const Quatd& q, double tjd) const;
 
     Point3d convertFromAstrocentric(const Point3d& p, double tjd) const;
+    Point3d convertToAstrocentric(const Point3d& p, double tjd) const;
     
     Selection getCenter() const;
 

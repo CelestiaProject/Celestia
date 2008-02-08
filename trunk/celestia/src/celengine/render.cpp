@@ -2163,7 +2163,7 @@ void Renderer::render(const Observer& observer,
     // Highlight the selected object
     highlightObject = sel;
 
-    Quatf cameraOrientation = observer.getOrientation();
+    Quatf cameraOrientation = observer.getOrientationf();
 
     // Set up the camera for star rendering; the units of this phase
     // are light years.
@@ -2445,7 +2445,7 @@ void Renderer::render(const Observer& observer,
         Frustum frustum(degToRad(fov),
                         (float) windowWidth / (float) windowHeight,
                         MinNearPlaneDistance);
-        Mat3f viewMat = conjugate(observer.getOrientation()).toMatrix3();
+        Mat3f viewMat = conjugate(observer.getOrientationf()).toMatrix3();
 
         // Remove objects from the render list that lie completely outside the
         // view frustum.
@@ -2898,7 +2898,7 @@ void Renderer::render(const Observer& observer,
 
         renderMarkers(*universe.getMarkers(),
                       observer.getPosition(),
-                      observer.getOrientation(),
+                      observer.getOrientationf(),
                       now);
 
         if ((renderFlags & ShowSmoothLines) != 0)
@@ -7159,7 +7159,7 @@ void Renderer::buildRenderLists(const Star& sun,
     Point3f starPos = sun.getPosition();
     Point3d observerPos = astrocentricPosition(observer.getPosition(),
                                                sun, now);
-    Mat3f viewMat = observer.getOrientation().toMatrix3();
+    Mat3f viewMat = observer.getOrientationf().toMatrix3();
     Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
     Body* lastPrimary = NULL;
@@ -7334,7 +7334,7 @@ void Renderer::buildRenderLists(const Star& sun,
         }
 #endif
 
-        if (showLabels && (pos * conjugate(observer.getOrientation()).toMatrix3()).z < 0)
+        if (showLabels && (pos * conjugate(observer.getOrientationf()).toMatrix3()).z < 0)
         {
             float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;
             if (boundingRadiusSize > minOrbitSize)
@@ -7552,7 +7552,7 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
     if ((renderFlags & ShowOrbits) != 0 &&
         ((orbitMask & Body::Stellar) != 0 || highlightObject.star() == &star))
     {
-        Mat3f viewMat = observer.getOrientation().toMatrix3();
+        Mat3f viewMat = observer.getOrientationf().toMatrix3();
         Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
         if (star.getOrbit() != NULL)
@@ -7830,7 +7830,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
-            Mat3f viewMat = observer->getOrientation().toMatrix3();
+            Mat3f viewMat = observer->getOrientationf().toMatrix3();
             Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
             RenderListEntry rle;
@@ -8022,7 +8022,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
-            Mat3f viewMat = observer->getOrientation().toMatrix3();
+            Mat3f viewMat = observer->getOrientationf().toMatrix3();
             Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
             RenderListEntry rle;
@@ -8075,7 +8075,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.starDB           = &starDB;
     starRenderer.observer         = &observer;
     starRenderer.obsPos           = obsPos;
-    starRenderer.viewNormal       = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    starRenderer.viewNormal       = Vec3f(0, 0, -1) * observer.getOrientationf().toMatrix3();
     starRenderer.glareParticles   = &glareParticles;
     starRenderer.renderList       = &renderList;
     starRenderer.starVertexBuffer = starVertexBuffer;
@@ -8119,7 +8119,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
 
     glareParticles.clear();
 
-    starVertexBuffer->setBillboardOrientation(observer.getOrientation());
+    starVertexBuffer->setBillboardOrientation(observer.getOrientationf());
 
     glEnable(GL_TEXTURE_2D);
 
@@ -8142,7 +8142,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     }
     starDB.findVisibleStars(starRenderer,
                             obsPos,
-                            observer.getOrientation(),
+                            observer.getOrientationf(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestMagNight);
@@ -8153,7 +8153,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
         starRenderer.starVertexBuffer->finish();
 
     gaussianGlareTex->bind();
-    renderParticles(glareParticles, observer.getOrientation());
+    renderParticles(glareParticles, observer.getOrientationf());
 }
 
 
@@ -8169,7 +8169,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.starDB            = &starDB;
     starRenderer.observer          = &observer;
     starRenderer.obsPos            = obsPos;
-    starRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    starRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientationf().toMatrix3();
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
     starRenderer.glareVertexBuffer = glareVertexBuffer;
@@ -8216,7 +8216,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     starDB.findVisibleStars(starRenderer,
                             obsPos,
-                            observer.getOrientation(),
+                            observer.getOrientationf(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestMagNight);
@@ -8334,7 +8334,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 
             dso->render(*context,
                         relPos,
-                        observer->getOrientation(),
+                        observer->getOrientationf(),
                         (float) brightness,
                         pixelSize);
             glPopMatrix();
@@ -8419,10 +8419,10 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     dsoRenderer.context          = context;
     dsoRenderer.renderer         = this;
     dsoRenderer.dsoDB            = dsoDB;
-    dsoRenderer.orientationMatrix = conjugate(observer.getOrientation()).toMatrix3();
+    dsoRenderer.orientationMatrix = conjugate(observer.getOrientationf()).toMatrix3();
     dsoRenderer.observer          = &observer;
     dsoRenderer.obsPos            = obsPos;
-    dsoRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientation().toMatrix3();
+    dsoRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientationf().toMatrix3();
     dsoRenderer.fov              = fov;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     dsoRenderer.size             = pixelSize * 1.6f / corrFac;
@@ -8456,7 +8456,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
-                           observer.getOrientation(),
+                           observer.getOrientationf(),
                            degToRad(fov),
                            (float) windowWidth / (float) windowHeight,
                            2 * faintestMagNight);
@@ -8514,7 +8514,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
 
     glLineWidth(1.0f);
 
-    Mat3f m = conjugate(observer.getOrientation()).toMatrix3();
+    Mat3f m = conjugate(observer.getOrientationf()).toMatrix3();
 
     // Show the declination labels
     for (i = 0; i < DecLabelCount; i++)
@@ -8573,7 +8573,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
                 Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
 
-                if ((observer.getOrientation().toMatrix3() * rpos).z < 0)
+                if ((observer.getOrientationf().toMatrix3() * rpos).z < 0)
                 {
                     // We'll linearly fade the labels as a function of the
                     // observer's distance to the origin of coordinates:

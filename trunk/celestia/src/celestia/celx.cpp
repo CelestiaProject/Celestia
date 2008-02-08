@@ -1170,24 +1170,24 @@ static void checkArgs(lua_State* l,
 }
 
 
-static astro::CoordinateSystem parseCoordSys(const string& name)
+static ObserverFrame::CoordinateSystem parseCoordSys(const string& name)
 {
     if (compareIgnoringCase(name, "universal") == 0)
-        return astro::Universal;
+        return ObserverFrame::Universal;
     else if (compareIgnoringCase(name, "ecliptic") == 0)
-        return astro::Ecliptical;
+        return ObserverFrame::Ecliptical;
     else if (compareIgnoringCase(name, "equatorial") == 0)
-        return astro::Equatorial;
+        return ObserverFrame::Equatorial;
     else if (compareIgnoringCase(name, "planetographic") == 0)
-        return astro::Geographic;
+        return ObserverFrame::BodyFixed;
     else if (compareIgnoringCase(name, "observer") == 0)
-        return astro::ObserverLocal;
+        return ObserverFrame::ObserverLocal;
     else if (compareIgnoringCase(name, "lock") == 0)
-        return astro::PhaseLock;
+        return ObserverFrame::PhaseLock;
     else if (compareIgnoringCase(name, "chase") == 0)
-        return astro::Chase;
+        return ObserverFrame::Chase;
     else
-        return astro::Universal;
+        return ObserverFrame::Universal;
 }
 
 
@@ -2147,9 +2147,9 @@ static void CreatePositionMetaTable(lua_State* l)
 }
 
 // ==================== FrameOfReference ====================
-static int frame_new(lua_State* l, const FrameOfReference& f)
+static int frame_new(lua_State* l, const ObserverFrame& f)
 {
-    FrameOfReference* ud = reinterpret_cast<FrameOfReference*>(lua_newuserdata(l, sizeof(FrameOfReference)));
+    ObserverFrame* ud = reinterpret_cast<ObserverFrame*>(lua_newuserdata(l, sizeof(ObserverFrame)));
     *ud = f;
 
     SetClass(l, _Frame);
@@ -2157,14 +2157,14 @@ static int frame_new(lua_State* l, const FrameOfReference& f)
     return 1;
 }
 
-static FrameOfReference* to_frame(lua_State* l, int index)
+static ObserverFrame* to_frame(lua_State* l, int index)
 {
-    return static_cast<FrameOfReference*>(CheckUserData(l, index, _Frame));
+    return static_cast<ObserverFrame*>(CheckUserData(l, index, _Frame));
 }
 
-static FrameOfReference* this_frame(lua_State* l)
+static ObserverFrame* this_frame(lua_State* l)
 {
-    FrameOfReference* f = to_frame(l, 1);
+    ObserverFrame* f = to_frame(l, 1);
     if (f == NULL)
     {
         doError(l, "Bad frame object!");
@@ -2179,10 +2179,8 @@ static int frame_from(lua_State* l)
 {
     checkArgs(l, 2, 3, "Two or three arguments required for frame:from");
 
-    FrameOfReference* frame = this_frame(l);
+    ObserverFrame* frame = this_frame(l);
     CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    RigidTransform rt;
 
     UniversalCoord* uc = NULL;
     Quatd* q = NULL;
@@ -2205,15 +2203,13 @@ static int frame_from(lua_State* l)
 
     if (uc != NULL)
     {
-        rt.translation = *uc;
-        rt = frame->toUniversal(rt, jd);
-        position_new(l, rt.translation);
+        UniversalCoord uc1 = frame->convertToUniversal(*uc, jd);
+        position_new(l, uc1);
     }
     else
     {
-        rt.rotation = *q;
-        rt = frame->toUniversal(rt, jd);
-        rotation_new(l, rt.rotation);
+        Quatd q1 = frame->convertToUniversal(*q, jd);
+        rotation_new(l, q1);
     }
 
     return 1;
@@ -2224,10 +2220,8 @@ static int frame_to(lua_State* l)
 {
     checkArgs(l, 2, 3, "Two or three arguments required for frame:to");
 
-    FrameOfReference* frame = this_frame(l);
+    ObserverFrame* frame = this_frame(l);
     CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    RigidTransform rt;
 
     UniversalCoord* uc = NULL;
     Quatd* q = NULL;
@@ -2252,15 +2246,13 @@ static int frame_to(lua_State* l)
 
     if (uc != NULL)
     {
-        rt.translation = *uc;
-        rt = frame->fromUniversal(rt, jd);
-        position_new(l, rt.translation);
+        UniversalCoord uc1 = frame->convertFromUniversal(*uc, jd);
+        position_new(l, uc1);
     }
     else
     {
-        rt.rotation = *q;
-        rt = frame->fromUniversal(rt, jd);
-        rotation_new(l, rt.rotation);
+        Quatd q1 = frame->convertFromUniversal(*q, jd);
+        rotation_new(l, q1);
     }
 
     return 1;
@@ -2270,14 +2262,14 @@ static int frame_getrefobject(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for frame:getrefobject()");
 
-    FrameOfReference* frame = this_frame(l);
-    if (frame->refObject.getType() == Selection::Type_Nil)
+    ObserverFrame* frame = this_frame(l);
+    if (frame->getRefObject().getType() == Selection::Type_Nil)
     {
         lua_pushnil(l);
     }
     else
     {
-        object_new(l, frame->refObject);
+        object_new(l, frame->getRefObject());
     }
     return 1;
 }
@@ -2286,14 +2278,14 @@ static int frame_gettargetobject(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for frame:gettarget()");
 
-    FrameOfReference* frame = this_frame(l);
-    if (frame->targetObject.getType() == Selection::Type_Nil)
+    ObserverFrame* frame = this_frame(l);
+    if (frame->getTargetObject().getType() == Selection::Type_Nil)
     {
         lua_pushnil(l);
     }
     else
     {
-        object_new(l, frame->targetObject);
+        object_new(l, frame->getTargetObject());
     }
     return 1;
 }
@@ -2302,23 +2294,23 @@ static int frame_getcoordinatesystem(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected for frame:getcoordinatesystem()");
 
-    FrameOfReference* frame = this_frame(l);
+    ObserverFrame* frame = this_frame(l);
     string coordsys;
-    switch (frame->coordSys)
+    switch (frame->getCoordinateSystem())
     {
-    case astro::Universal:
+    case ObserverFrame::Universal:
         coordsys = "universal"; break;
-    case astro::Ecliptical:
+    case ObserverFrame::Ecliptical:
         coordsys = "ecliptic"; break;
-    case astro::Equatorial:
+    case ObserverFrame::Equatorial:
         coordsys = "equatorial"; break;
-    case astro::Geographic:
+    case ObserverFrame::BodyFixed:
         coordsys = "planetographic"; break;
-    case astro::ObserverLocal:
+    case ObserverFrame::ObserverLocal:
         coordsys = "observer"; break;
-    case astro::PhaseLock:
+    case ObserverFrame::PhaseLock:
         coordsys = "lock"; break;
-    case astro::Chase:
+    case ObserverFrame::Chase:
         coordsys = "chase"; break;
     default:
         coordsys = "invalid";
@@ -3089,8 +3081,7 @@ static int observer_getorientation(lua_State* l)
     checkArgs(l, 1, 1, "No arguments expected to observer:getorientation()");
 
     Observer* o = this_observer(l);
-    Quatf q = o->getOrientation();
-    rotation_new(l, Quatd(q.w, q.x, q.y, q.z));
+    rotation_new(l, o->getOrientation());
 
     return 1;
 }
@@ -3180,8 +3171,8 @@ static int observer_gototable(lua_State* l)
 
     Observer::JourneyParams jparams;
     jparams.duration = 5.0;
-    jparams.from = o->getSituation().translation;
-    jparams.to = o->getSituation().translation;
+    jparams.from = o->getPosition();
+    jparams.to = o->getPosition();
     jparams.initialOrientation = o->getOrientation();
     jparams.finalOrientation = o->getOrientation();
     jparams.startInterpolation = 0.25;
@@ -3212,14 +3203,14 @@ static int observer_gototable(lua_State* l)
     lua_gettable(l, 2);
     Quatd* rot1 = to_rotation(l, 3);
     if (rot1 != NULL)
-        jparams.initialOrientation = Quatf((float) rot1->w, (float) rot1->x, (float) rot1->y, (float) rot1->z);
+        jparams.initialOrientation = *rot1;
     lua_settop(l, 2);
 
     lua_pushstring(l, "finalOrientation");
     lua_gettable(l, 2);
     Quatd* rot2 = to_rotation(l, 3);
     if (rot2 != NULL)
-        jparams.finalOrientation = Quatf((float) rot2->w, (float) rot2->x, (float) rot2->y, (float) rot2->z);
+        jparams.finalOrientation = *rot2;
     lua_settop(l, 2);
 
     lua_pushstring(l, "startInterpolation");
@@ -3243,10 +3234,11 @@ static int observer_gototable(lua_State* l)
     jparams.endInterpolation = min(1.0, max(0.0, jparams.endInterpolation));
 
     // args are in universal coords, let setFrame handle conversion:
-    FrameOfReference tmp = o->getFrame();
-    o->setFrame(FrameOfReference());
+    ObserverFrame tmp = *(o->getFrame());
+    o->setFrame(ObserverFrame::Universal, Selection());
     o->gotoJourney(jparams);
     o->setFrame(tmp);
+    
     return 0;
 }
 
@@ -3279,13 +3271,16 @@ static int observer_goto(lua_State* l)
     // The first argument may be either an object or a position
     if (sel != NULL)
     {
-        o->gotoSelection(*sel, travelTime, startInter, endInter, Vec3f(0, 1, 0), astro::ObserverLocal);
+        o->gotoSelection(*sel, travelTime, startInter, endInter, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
     }
     else
     {
+#if 0
         RigidTransform rt = o->getSituation();
         rt.translation = *uc;
         o->gotoLocation(rt, travelTime);
+#endif
+        o->gotoLocation(*uc, o->getOrientation(), travelTime);
     }
 
     return 0;
@@ -3340,9 +3335,12 @@ static int observer_gotolocation(lua_State* l)
     UniversalCoord* uc = to_position(l, 2);
     if (uc != NULL)
     {
+#if 0
         RigidTransform rt = o->getSituation();
         rt.translation = *uc;
         o->gotoLocation(rt, travelTime);
+#endif
+        o->gotoLocation(*uc, o->getOrientation(), travelTime);
     }
     else
     {
@@ -3379,7 +3377,7 @@ static int observer_gotodistance(lua_State* l)
         up.z = (float)up_arg->z;
     }
 
-    o->gotoSelection(*sel, travelTime, astro::kilometersToLightYears(distance), up, astro::Universal);
+    o->gotoSelection(*sel, travelTime, astro::kilometersToLightYears(distance), up, ObserverFrame::Universal);
 
     return 0;
 }
@@ -3611,8 +3609,8 @@ static int observer_getframe(lua_State* l)
 
     Observer* obs = this_observer(l);
 
-    FrameOfReference frame = obs->getFrame();
-    frame_new(l, frame);
+    ObserverFrame* frame = obs->getFrame();
+    frame_new(l, *frame);
     return 1;
 }
 
@@ -3622,7 +3620,7 @@ static int observer_setframe(lua_State* l)
 
     Observer* obs = this_observer(l);
 
-    FrameOfReference* frame;
+    ObserverFrame* frame;
     frame = to_frame(l, 2);
     if (frame != NULL)
     {
@@ -5258,15 +5256,15 @@ static int celestia_newframe(lua_State* l)
     this_celestia(l);
 
     const char* coordsysName = safeGetString(l, 2, AllErrors, "newframe: first argument must be a string");
-    astro::CoordinateSystem coordSys = parseCoordSys(coordsysName);
+    ObserverFrame::CoordinateSystem coordSys = parseCoordSys(coordsysName);
     Selection* ref = NULL;
     Selection* target = NULL;
 
-    if (coordSys == astro::Universal)
+    if (coordSys == ObserverFrame::Universal)
     {
-        frame_new(l, FrameOfReference());
+        frame_new(l, ObserverFrame());
     }
-    else if (coordSys == astro::PhaseLock)
+    else if (coordSys == ObserverFrame::PhaseLock)
     {
         if (argc >= 4)
         {
@@ -5279,7 +5277,7 @@ static int celestia_newframe(lua_State* l)
             doError(l, "newframe: two objects required for lock frame");
         }
 
-        frame_new(l, FrameOfReference(coordSys, *ref, *target));
+        frame_new(l, ObserverFrame(coordSys, *ref, *target));
     }
     else
     {
@@ -5290,7 +5288,7 @@ static int celestia_newframe(lua_State* l)
             doError(l, "newframe: one object argument required for frame");
         }
 
-        frame_new(l, FrameOfReference(coordSys, *ref));
+        frame_new(l, ObserverFrame(coordSys, *ref));
     }
 
     return 1;

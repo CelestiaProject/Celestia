@@ -166,7 +166,7 @@ void Simulation::setTrackedObject(const Selection& sel)
 Selection Simulation::pickObject(Vec3f pickRay, int renderFlags, float tolerance)
 {
     return universe->pick(activeObserver->getPosition(),
-                          pickRay * activeObserver->getOrientation().toMatrix4(),
+                          pickRay * activeObserver->getOrientationf().toMatrix4(),
                           activeObserver->getTime(),
                           renderFlags,
                           faintestVisible,
@@ -236,18 +236,20 @@ void Simulation::setObserverMode(Observer::ObserverMode mode)
     activeObserver->setMode(mode);
 }
 
-void Simulation::setFrame(astro::CoordinateSystem coordSys,
-                          const Selection& sel)
+void Simulation::setFrame(ObserverFrame::CoordinateSystem coordSys,
+                          const Selection& refObject,
+                          const Selection& targetObject)
 {
-    activeObserver->setFrame(FrameOfReference(coordSys, sel));
+    activeObserver->setFrame(coordSys, refObject, targetObject);
 }
 
-void Simulation::setFrame(const FrameOfReference& _frame)
+void Simulation::setFrame(ObserverFrame::CoordinateSystem coordSys,
+                          const Selection& refObject)
 {
-    activeObserver->setFrame(_frame);
+    activeObserver->setFrame(coordSys, refObject);
 }
 
-FrameOfReference Simulation::getFrame() const
+const ObserverFrame* Simulation::getFrame() const
 {
     return activeObserver->getFrame();
 }
@@ -286,7 +288,7 @@ float Simulation::getTargetSpeed()
 
 void Simulation::gotoSelection(double gotoTime,
                                Vec3f up,
-                               astro::CoordinateSystem upFrame)
+                               ObserverFrame::CoordinateSystem upFrame)
 {
     if (selection.getType() == Selection::Type_Location)
     {
@@ -303,9 +305,9 @@ void Simulation::gotoSelection(double gotoTime,
 void Simulation::gotoSelection(double gotoTime,
                                double distance,
                                Vec3f up,
-                               astro::CoordinateSystem upFrame)
+                               ObserverFrame::CoordinateSystem upCoordSys)
 {
-    activeObserver->gotoSelection(selection, gotoTime, distance, up, upFrame);
+    activeObserver->gotoSelection(selection, gotoTime, distance, up, upCoordSys);
 }
 
 void Simulation::gotoSelectionLongLat(double gotoTime,
@@ -319,10 +321,11 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
 }
 
 
-void Simulation::gotoLocation(const RigidTransform& transform,
+void Simulation::gotoLocation(const UniversalCoord& position,
+                              const Quatd& orientation,
                               double duration)
 {
-    activeObserver->gotoLocation(transform, duration);
+    activeObserver->gotoLocation(position, orientation, duration);
 }
 
 

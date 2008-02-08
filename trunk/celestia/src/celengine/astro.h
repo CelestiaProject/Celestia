@@ -60,18 +60,6 @@ namespace astro
 
     bool parseDate(const std::string&, Date&);
 
-    enum CoordinateSystem
-    {
-        Universal       = 0,
-        Ecliptical      = 1,
-        Equatorial      = 2,
-        Geographic      = 3,
-        ObserverLocal   = 4,
-        PhaseLock       = 5,
-        Chase           = 6,
-    };
-
-
     // Time scale conversions
     // UTC - Coordinated Universal Time
     // TAI - International Atomic Time

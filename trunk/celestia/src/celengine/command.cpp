@@ -60,7 +60,7 @@ void CommandSelect::process(ExecutionEnvironment& env)
 CommandGoto::CommandGoto(double t,
                          double dist,
                          Vec3f _up,
-                         astro::CoordinateSystem _upFrame) :
+                         ObserverFrame::CoordinateSystem _upFrame) :
     gotoTime(t), distance(dist), up(_up), upFrame(_upFrame)
 {
 }
@@ -124,10 +124,9 @@ CommandGotoLocation::~CommandGotoLocation()
 
 void CommandGotoLocation::process(ExecutionEnvironment& env)
 {
-    RigidTransform to;
-    to.rotation = Quatd(rotation.w, rotation.x, rotation.y, rotation.z);
-    to.translation = translation;
-    env.getSimulation()->gotoLocation(to, gotoTime);
+    Quatd toOrientation = Quatd(rotation.w, rotation.x, rotation.y, rotation.z);
+    UniversalCoord toPosition = translation;
+    env.getSimulation()->gotoLocation(toPosition, toOrientation, gotoTime);
 }
 
 /////////////////////////////
@@ -231,7 +230,7 @@ void CommandLock::process(ExecutionEnvironment& env)
 ////////////////
 // Setframe command
 
-CommandSetFrame::CommandSetFrame(astro::CoordinateSystem _coordSys,
+CommandSetFrame::CommandSetFrame(ObserverFrame::CoordinateSystem _coordSys,
                                  const string& refName,
                                  const string& targetName) :
     coordSys(_coordSys), refObjectName(refName), targetObjectName(targetName)
@@ -242,9 +241,9 @@ void CommandSetFrame::process(ExecutionEnvironment& env)
 {
     Selection ref = env.getSimulation()->findObjectFromPath(refObjectName);
     Selection target;
-    if (coordSys == astro::PhaseLock)
+    if (coordSys == ObserverFrame::PhaseLock)
         target = env.getSimulation()->findObjectFromPath(targetObjectName);
-    env.getSimulation()->setFrame(FrameOfReference(coordSys, ref, target));
+    env.getSimulation()->setFrame(coordSys, ref, target);
 }
 
 
@@ -273,7 +272,7 @@ CommandCancel::CommandCancel()
 void CommandCancel::process(ExecutionEnvironment& env)
 {
     env.getSimulation()->cancelMotion();
-    env.getSimulation()->setFrame(FrameOfReference());
+    env.getSimulation()->setFrame(ObserverFrame::Universal, Selection());
     env.getSimulation()->setTrackedObject(Selection());
 }
 

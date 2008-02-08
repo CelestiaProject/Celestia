@@ -15,7 +15,7 @@
 #include <iostream>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
-#include <celengine/astro.h>
+#include <celengine/observer.h>
 
 
 struct FavoritesEntry
@@ -29,7 +29,7 @@ struct FavoritesEntry
     bool isFolder;
     std::string parentFolder;
 
-    astro::CoordinateSystem coordSys;
+    ObserverFrame::CoordinateSystem coordSys;
 };
 
 typedef std::vector<FavoritesEntry*> FavoritesList;
