@@ -52,27 +52,27 @@ Url::Url(const std::string& str, CelestiaCore *core):
 
     if (!compareIgnoringCase(modeStr, std::string("Freeflight")))
     {
-        mode = astro::Universal;
+        mode = ObserverFrame::Universal;
         nbBodies = 0;
     }
     else if (!compareIgnoringCase(modeStr, std::string("Follow")))
     {
-        mode = astro::Ecliptical;
+        mode = ObserverFrame::Ecliptical;
         nbBodies = 1;
     }
     else if (!compareIgnoringCase(modeStr, std::string("SyncOrbit")))
     {
-        mode = astro::Geographic;
+        mode = ObserverFrame::BodyFixed;
         nbBodies = 1;
     }
     else if (!compareIgnoringCase(modeStr, std::string("Chase")))
     {
-        mode = astro::Chase;
+        mode = ObserverFrame::Chase;
         nbBodies = 1;
     }
     else if (!compareIgnoringCase(modeStr, std::string("PhaseLock")))
     {
-        mode = astro::PhaseLock;
+        mode = ObserverFrame::PhaseLock;
         nbBodies = 2;
     }
     else if (!compareIgnoringCase(modeStr, std::string("Settings")))
@@ -125,9 +125,9 @@ Url::Url(const std::string& str, CelestiaCore *core):
         return; // Number of bodies in Url doesn't match Mode
     }
 
-    if (nbBodies == 0) ref = FrameOfReference();
-    if (nbBodies == 1) ref = FrameOfReference(mode, bodies[0]);
-    if (nbBodies == 2) ref = FrameOfReference(mode, bodies[0], bodies[1]);
+    if (nbBodies == 0) ref = ObserverFrame();
+    if (nbBodies == 1) ref = ObserverFrame(mode, bodies[0]);
+    if (nbBodies == 2) ref = ObserverFrame(mode, bodies[0], bodies[1]);
     fromString = true;
 
     std::string time="";
@@ -218,15 +218,15 @@ Url::Url(CelestiaCore* core, UrlType type)
 
     this->type = type;
 
-    modeStr = getCoordSysName(sim->getFrame().coordSys);
+    modeStr = getCoordSysName(sim->getFrame()->getCoordinateSystem());
     if (type == Settings) modeStr = "Settings";
-    ref = sim->getFrame();
+    ref = *sim->getFrame();
     urlStr += "cel://" + modeStr;
-    if (type != Settings && sim->getFrame().coordSys != astro::Universal) {
-        body1 = getSelectionName(sim->getFrame().refObject);
+    if (type != Settings && sim->getFrame()->getCoordinateSystem() != ObserverFrame::Universal) {
+        body1 = getSelectionName(sim->getFrame()->getRefObject());
         urlStr += "/" + body1;
-        if (sim->getFrame().coordSys == astro::PhaseLock) {
-            body2 = getSelectionName(sim->getFrame().targetObject);
+        if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::PhaseLock) {
+            body2 = getSelectionName(sim->getFrame()->getTargetObject());
             urlStr += "/" + body2;
         }
     }
@@ -245,7 +245,7 @@ Url::Url(CelestiaCore* core, UrlType type)
         urlStr += "&y=" +  coord.y.toString();
         urlStr += "&z=" +  coord.z.toString();
 
-        orientation = sim->getObserver().getOrientation();
+        orientation = sim->getObserver().getOrientationf();
         sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w, orientation.x, orientation.y, orientation.z);
         urlStr += buff;
         break;
@@ -371,23 +371,23 @@ std::map<std::string, std::string> Url::parseUrlParams(const std::string& url) c
 }
 
 
-std::string Url::getCoordSysName(astro::CoordinateSystem mode) const
+std::string Url::getCoordSysName(ObserverFrame::CoordinateSystem mode) const
 {
     switch (mode)
     {
-    case astro::Universal:
+    case ObserverFrame::Universal:
         return "Freeflight";
-    case astro::Ecliptical:
+    case ObserverFrame::Ecliptical:
         return "Follow";
-    case astro::Geographic:
+    case ObserverFrame::BodyFixed:
         return "SyncOrbit";
-    case astro::Chase:
+    case ObserverFrame::Chase:
         return "Chase";
-    case astro::PhaseLock:
+    case ObserverFrame::PhaseLock:
         return "PhaseLock";
-    case astro::Equatorial:
+    case ObserverFrame::Equatorial:
         return "Unknown";
-    case astro::ObserverLocal:
+    case ObserverFrame::ObserverLocal:
         return "Unknown";
     }
     return "Unknown";
@@ -469,7 +469,7 @@ void Url::goTo()
     switch(type) {
     case Absolute:// Intentional Fall-Through
     case Relative:
-        sim->setFrame(ref);
+        sim->setFrame(ref.getCoordinateSystem(), ref.getRefObject(), ref.getTargetObject());
         sim->getActiveObserver()->setFOV(degToRad(fieldOfView));
         appCore->setZoomFromFOV();
         sim->setTimeScale(timeScale);

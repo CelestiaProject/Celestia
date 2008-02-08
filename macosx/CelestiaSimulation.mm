@@ -144,7 +144,7 @@ FrameOfReference getFrame() const;
     [self simulation]->gotoSelection(
         [gotoTime doubleValue],
         [up vec3f],
-        (astro::CoordinateSystem)[[Astro coordinateSystem:csysName] intValue]);
+        (ObserverFrame::CoordinateSystem)[[Astro coordinateSystem:csysName] intValue]);
 }
 
 
@@ -154,7 +154,7 @@ FrameOfReference getFrame() const;
         [gotoTime doubleValue],
         [distance doubleValue],
         [up vec3f], 
-        (astro::CoordinateSystem)[[Astro coordinateSystem:csysName] intValue]);
+        (ObserverFrame::CoordinateSystem)[[Astro coordinateSystem:csysName] intValue]);
 }
 
 -(void)gotoSelection:(NSNumber*)gotoTime distance:(NSNumber*)distance longitude:(NSNumber*)longitude latitude:(NSNumber*)latitude up:(CelestiaVector*)up
@@ -225,7 +225,7 @@ FrameOfReference getFrame() const;
 
 -(void)setFrame:(NSString*)cs selection:(CelestiaSelection*)sel
 {
-    [self simulation]->setFrame((astro::CoordinateSystem)[[Astro coordinateSystem:cs] intValue], [sel selection]);
+    [self simulation]->setFrame((ObserverFrame::CoordinateSystem)[[Astro coordinateSystem:cs] intValue], [sel selection]);
 }
 
 @end

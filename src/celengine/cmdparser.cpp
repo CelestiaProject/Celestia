@@ -116,24 +116,24 @@ void CommandParser::error(const string errMsg)
 }
 
 
-static astro::CoordinateSystem parseCoordinateSystem(const string& name)
+static ObserverFrame::CoordinateSystem parseCoordinateSystem(const string& name)
 {
     if (compareIgnoringCase(name, "observer") == 0)
-        return astro::ObserverLocal;
+        return ObserverFrame::ObserverLocal;
     else if (compareIgnoringCase(name, "geographic") == 0)
-        return astro::Geographic;
+        return ObserverFrame::BodyFixed;
     else if (compareIgnoringCase(name, "equatorial") == 0)
-        return astro::Equatorial;
+        return ObserverFrame::Equatorial;
     else if (compareIgnoringCase(name, "ecliptical") == 0)
-        return astro::Ecliptical;
+        return ObserverFrame::Ecliptical;
     else if (compareIgnoringCase(name, "universal") == 0)
-        return astro::Universal;
+        return ObserverFrame::Universal;
     else if (compareIgnoringCase(name, "lock") == 0)
-        return astro::PhaseLock;
+        return ObserverFrame::PhaseLock;
     else if (compareIgnoringCase(name, "chase") == 0)
-        return astro::Chase;
+        return ObserverFrame::Chase;
     else
-        return astro::ObserverLocal;
+        return ObserverFrame::ObserverLocal;
 }
 
 
@@ -198,7 +198,7 @@ Command* CommandParser::parseCommand()
         string targetName;
         paramList->getString("target", targetName);
         string coordSysName;
-        astro::CoordinateSystem coordSys = astro::Universal;
+        ObserverFrame::CoordinateSystem coordSys = ObserverFrame::Universal;
         if (paramList->getString("coordsys", coordSysName))
             coordSys = parseCoordinateSystem(coordSysName);
 
@@ -217,7 +217,7 @@ Command* CommandParser::parseCommand()
         double distance = 5.0;
         paramList->getNumber("distance", distance);
 
-        astro::CoordinateSystem upFrame = astro::ObserverLocal;
+        ObserverFrame::CoordinateSystem upFrame = ObserverFrame::ObserverLocal;
         string frameString;
         if (paramList->getString("upframe", frameString))
             upFrame = parseCoordinateSystem(frameString);

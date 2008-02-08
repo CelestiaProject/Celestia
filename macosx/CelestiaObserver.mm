@@ -37,13 +37,9 @@
 {
     return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self observer].getPosition()] autorelease];
 }
--(CelestiaVector*)relativePosition:(CelestiaVector*)p
-{
-    return [CelestiaVector vectorWithPoint3d:[self observer].getRelativePosition([p point3d])];
-}
 -(CelestiaVector*)orientation
 {
-    return [CelestiaVector vectorWithQuatf:[self observer].getOrientation()];
+    return [CelestiaVector vectorWithQuatf:[self observer].getOrientationf()];
 }
 -(void)setOrientation:(CelestiaVector*)q
 {

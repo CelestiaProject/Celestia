@@ -61,14 +61,14 @@ class Simulation
     Selection findObjectFromPath(std::string s, bool i18n = false);
     std::vector<std::string> getObjectCompletion(std::string s, bool withLocations = false);
     void gotoSelection(double gotoTime,
-                       Vec3f up, astro::CoordinateSystem upFrame);
+                       Vec3f up, ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(double gotoTime, double distance,
-                       Vec3f up, astro::CoordinateSystem upFrame);
+                       Vec3f up, ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionLongLat(double gotoTime,
                               double distance,
                               float longitude, float latitude,
                               Vec3f up);
-    void gotoLocation(const RigidTransform& transform, double duration);
+    void gotoLocation(const UniversalCoord& toPosition, const Quatd& toOrientation, double duration);
     void getSelectionLongLat(double& distance,
                              double& longitude,
                              double& latitude);
@@ -107,9 +107,9 @@ class Simulation
     void setObserverMode(Observer::ObserverMode);
     Observer::ObserverMode getObserverMode() const;
 
-    void setFrame(astro::CoordinateSystem, const Selection&);
-    void setFrame(const FrameOfReference&);
-    FrameOfReference getFrame() const;
+    void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject, const Selection& targetObject); 
+    void setFrame(ObserverFrame::CoordinateSystem, const Selection& refObject);
+    const ObserverFrame* getFrame() const;
 
  private:
     SolarSystem* getSolarSystem(const Star* star);
