@@ -100,14 +100,14 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                         // Use the default distance
                         sim->gotoSelection(5.0,
                                            Vec3f(0, 1, 0),
-                                           astro::ObserverLocal);
+                                           ObserverFrame::ObserverLocal);
                     }
                     else
                     {
                         sim->gotoSelection(5.0,
                                            tourGuide->selectedDest->distance,
                                            Vec3f(0, 1, 0),
-                                           astro::ObserverLocal);
+                                           ObserverFrame::ObserverLocal);
                     }
                 }
             }
@@ -119,7 +119,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                 HWND hwnd = reinterpret_cast<HWND>(lParam);
                 int item = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
                 const DestinationList* destinations = tourGuide->appCore->getDestinations();
-                if (item != CB_ERR && item < destinations->size())
+                if (item != CB_ERR && item < (int) destinations->size())
                 {
                     Destination* dest = (*destinations)[item];
                     SetDlgItemText(hDlg,

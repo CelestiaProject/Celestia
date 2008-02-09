@@ -132,7 +132,7 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                     sim->gotoSelection(5.0,
                                        distance,
                                        Vec3f(0, 1, 0),
-                                       astro::ObserverLocal);
+                                       ObserverFrame::ObserverLocal);
                 }
             }
             return TRUE;
