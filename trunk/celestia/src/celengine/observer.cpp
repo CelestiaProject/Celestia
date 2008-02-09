@@ -89,6 +89,7 @@ double Observer::getTime() const
 void Observer::setTime(double jd)
 {
     simTime = jd;
+	updateUniversal();
 }
 
 
