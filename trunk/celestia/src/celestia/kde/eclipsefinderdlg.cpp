@@ -121,7 +121,7 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
     if (id == 1) {
         Selection target = appCore->getSimulation()->findObjectFromPath(std::string(item->text(col == 1).utf8()), true);
 	Selection ref = target.body()->getSystem()->getStar();
-	appCore->getSimulation()->setFrame(FrameOfReference(astro::PhaseLock, target, ref));
+	appCore->getSimulation()->setFrame(ObserverFrame::PhaseLock, target, ref);
 	QString date = item->text(2);
         int yearEnd = date.find('-', 1);
         astro::Date d(date.left(yearEnd).toInt(), 
@@ -134,10 +134,7 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
         appCore->getSimulation()->update(0.0);
 
 	double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-        RigidTransform to;
-        to.rotation = Quatd::yrotation(PI);
-        to.translation = Point3d(0, 0, -distance);
-        appCore->getSimulation()->gotoLocation(to, 2.5);
+        appCore->getSimulation()->gotoLocation(Point3d(0, 0, distance), Quatd::yrotation(0), 2.5);
     }
 }
 
