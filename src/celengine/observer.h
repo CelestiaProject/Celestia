@@ -101,6 +101,9 @@ class Observer
 {
 public:
     Observer();
+	Observer(const Observer& o);
+
+	Observer& operator=(const Observer& o);
         
     UniversalCoord getPosition() const;
     void          setPosition(const UniversalCoord&);
