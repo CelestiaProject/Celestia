@@ -75,6 +75,60 @@ Observer::Observer() :
 }
 
 
+/*! Copy constructor. */
+Observer::Observer(const Observer& o) :
+	simTime(o.simTime),
+	position(o.position),
+	orientation(o.orientation),
+	velocity(o.velocity),
+	angularVelocity(o.angularVelocity),
+	frame(NULL),
+	realTime(o.realTime),
+	targetSpeed(o.targetSpeed),
+	targetVelocity(o.targetVelocity),
+	beginAccelTime(o.beginAccelTime),
+	observerMode(o.observerMode),
+	journey(o.journey),
+	trackObject(o.trackObject),
+	trackingOrientation(o.trackingOrientation),
+	fov(o.fov),
+	reverseFlag(o.reverseFlag),
+	locationFilter(o.locationFilter),
+	displayedSurface(o.displayedSurface)
+{
+	frame = new ObserverFrame(*o.frame);
+	updateUniversal();
+}
+
+
+Observer& Observer::operator=(const Observer& o)
+{
+	simTime = o.simTime;
+	position = o.position;
+	orientation = o.orientation;
+	velocity = o.velocity;
+	angularVelocity = o.angularVelocity;
+	frame = NULL;
+	realTime = o.realTime;
+	targetSpeed = o.targetSpeed;
+	targetVelocity = o.targetVelocity;
+	beginAccelTime = o.beginAccelTime;
+	observerMode = o.observerMode;
+	journey = o.journey;
+	trackObject = o.trackObject;
+	trackingOrientation = o.trackingOrientation;
+	fov = o.fov;
+	reverseFlag = o.reverseFlag;
+	locationFilter = o.locationFilter;
+	displayedSurface = o.displayedSurface;
+
+	setFrame(*o.frame);
+	updateUniversal();
+
+	return *this;
+}
+
+
 /*! Get the current simulation time. The time returned is a Julian date,
  *  and the time standard is TDB.
  */
@@ -793,8 +847,11 @@ void Observer::setFrame(const ObserverFrame& f)
         
         if (newFrame != NULL)
         {
-            convertFrameCoordinates(newFrame);
-            delete frame;
+			if (frame != NULL)
+			{
+				convertFrameCoordinates(newFrame);
+				delete frame;
+			}
             frame = newFrame;
         }
     }    
