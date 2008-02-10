@@ -166,10 +166,10 @@ static CelestiaBody *eclipseBody;
     sim->update(0.0);
 
     double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-    Quatd toRotation = Quatd::yrotation(PI);
-    UniversalCoord toPosition = Point3d(0, 0, -distance);
     sim->setSelection(target);
-    sim->gotoLocation(toPosition, toRotation, 2.5);    
+    sim->gotoLocation(Point3d(distance, 0, 0),
+                      Quatd::yrotation(-0.5*PI)*Quatd::xrotation(-0.5*PI),
+                      5.0);
 }
 
 - (IBAction)stopFind: (id)sender
