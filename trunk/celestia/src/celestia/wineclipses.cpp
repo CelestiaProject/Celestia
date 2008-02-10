@@ -398,7 +398,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                 sim->update(0.0);
 
                 double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-                sim->gotoLocation(Point3d(0, 0, distance), Quatd::yrotation(0), 5.0);
+                sim->gotoLocation(Point3d(distance, 0, 0), Quatd::yrotation(-PI / 2) * Quatd::xrotation(-PI / 2), 2.5);
             }
             break;
         case IDC_SOLARECLIPSE:
