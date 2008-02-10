@@ -134,7 +134,7 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
         appCore->getSimulation()->update(0.0);
 
 	double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-        appCore->getSimulation()->gotoLocation(Point3d(0, 0, distance), Quatd::yrotation(0), 2.5);
+        appCore->getSimulation()->gotoLocation(Point3d(distance, 0, 0), Quatd::yrotation(-PI / 2) * Quatd::xrotation(-PI / 2), 5.0);
     }
 }
 
