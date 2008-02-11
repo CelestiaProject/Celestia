@@ -328,14 +328,11 @@ static gint eclipseGoto(GtkButton*, EclipseData* ed)
 	/* Use the phase lock coordinate system to set a position
 	 * on the line between the sun and the body where the eclipse
 	 * is occurring. */
-	sim->setFrame(FrameOfReference(astro::PhaseLock, target, ref));
+	sim->setFrame(ObserverFrame::PhaseLock, target, ref);
 	sim->update(0.0);
 
 	double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-	RigidTransform to;
-	to.rotation = Quatd::yrotation(PI);
-	to.translation = Point3d(0, 0, -distance);
-	sim->gotoLocation(to, 2.5);
+	sim->gotoLocation(Point3d(distance, 0, 0), Quatd::yrotation(-PI / 2) * Quatd::xrotation(-PI / 2), 5.0);
 
 	return TRUE;
 }
