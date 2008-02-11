@@ -27,6 +27,8 @@ class Universe;
 class EclipseFinderWatcher
 {
 public:
+    virtual ~EclipseFinderWatcher() {};
+    
     enum Status
     {
         ContinueOperation = 0,
