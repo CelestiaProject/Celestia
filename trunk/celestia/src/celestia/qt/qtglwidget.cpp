@@ -212,6 +212,17 @@ void CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
         buttons |= CelestiaCore::ShiftKey;
     if (m->modifiers() & ControlModifier)
         buttons |= CelestiaCore::ControlKey;
+    
+#ifdef TARGET_OS_MAC
+    // On the Mac, right dragging is be simulated with Option+left drag.
+    // We may want to enable this on other platforms, though it's mostly only helpful
+    // for users with single button mice.
+    if (m->modifiers() & AltModifier)
+    {
+        buttons &= ~CelestiaCore::LeftButton;
+        buttons |= CelestiaCore::RightButton;
+    }
+#endif
 
     if (buttons != 0)
         appCore->mouseMove(x - lastX, y - lastY, buttons);
