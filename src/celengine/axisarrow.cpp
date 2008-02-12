@@ -199,7 +199,6 @@ void RenderSunDirectionArrow(const Vec3f& direction, float scale, float opacity)
     float shaftRadius = 0.010f;
     float headRadius = 0.025f;
     unsigned int nSections = 30;
-    float labelScale = 0.1f;
 	
     glColor4f(1.0f, 1.0f, 0.0f, opacity);
     RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
@@ -221,7 +220,6 @@ void RenderVelocityArrow(const Vec3f& direction, float scale, float opacity)
     float shaftRadius = 0.010f;
     float headRadius = 0.025f;
     unsigned int nSections = 30;
-    float labelScale = 0.1f;
 	
     glColor4f(0.6f, 0.6f, 0.9f, opacity);
     RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
