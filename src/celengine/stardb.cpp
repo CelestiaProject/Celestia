@@ -336,7 +336,7 @@ static void catalogNumberToString(uint32 catalogNumber, char* buf, unsigned int 
         buf[0] = '\0';
     }
 
-    if (catalogNumber < 1000000)
+	if (catalogNumber <= StarDatabase::MAX_HIPPARCOS_NUMBER)
     {
         sprintf(buf, "HIP %d", catalogNumber);
     }

@@ -73,6 +73,10 @@ class StarDatabase
         MaxCatalog  = 3,
     };
 
+	// Not exact, but any star with a catalog number greater than this is assumed to not be
+	// a HIPPARCOS stars.
+	static const uint32 MAX_HIPPARCOS_NUMBER = 999999;
+
     struct CrossIndexEntry
     {
         uint32 catalogNumber;
