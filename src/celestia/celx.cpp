@@ -2968,6 +2968,74 @@ static int object_preloadtexture(lua_State* l)
     return 0;
 }
 
+
+/*! object:catalognumber(<string>)
+ *
+ *  Look up the catalog number for a star in one of the supported catalogs,
+ *  currently HIPPARCOS, HD, or SAO. The single argument is a string that
+ *  specifies the catalog number, either "HD", "SAO", or "HIP".
+ *  If the object is a star, the catalog string is valid, and the star
+ *  is present in the catalog, the catalog number is returned on the stack.
+ *  Otherwise, nil is returned.
+ */
+static int object_catalognumber(lua_State* l)
+{
+	checkArgs(l, 2, 2, "One argument expected to object:catalognumber");
+	CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+	Selection* sel = this_object(l);
+    const char* catalogName = safeGetString(l, 2, WrongType, "Argument to object:catalognumber must be a string");
+
+	// The argument is a string indicating the catalog.
+	bool validCatalog = false;
+	bool useHIPPARCOS = false;
+	StarDatabase::Catalog catalog = StarDatabase::HenryDraper;
+	if (catalogName != NULL)
+	{
+		if (compareIgnoringCase(catalogName, "HD") == 0)
+		{
+			catalog = StarDatabase::HenryDraper;
+			validCatalog = true;
+		}
+		else if (compareIgnoringCase(catalogName, "SAO") == 0)
+		{
+			catalog = StarDatabase::SAO;
+			validCatalog = true;
+		}
+		else if (compareIgnoringCase(catalogName, "HIP") == 0)
+		{
+			useHIPPARCOS = true;
+			validCatalog = true;
+		}
+	}
+
+	uint32 catalogNumber = Star::InvalidCatalogNumber;
+	if (sel->star() != NULL && validCatalog)
+	{
+		uint32 internalNumber = sel->star()->getCatalogNumber();
+
+		if (useHIPPARCOS)
+		{
+			// Celestia's internal catalog numbers /are/ HIPPARCOS numbers
+			if (internalNumber < StarDatabase::MAX_HIPPARCOS_NUMBER)
+				catalogNumber = internalNumber;
+		}
+		else
+		{
+			const StarDatabase* stardb = appCore->getSimulation()->getUniverse()->getStarCatalog();
+			catalogNumber = stardb->crossIndex(catalog, internalNumber);
+		}
+	}
+
+	if (catalogNumber != Star::InvalidCatalogNumber)
+		lua_pushnumber(l, catalogNumber);
+	else
+		lua_pushnil(l);
+
+	return 1;
+}
+
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
@@ -2985,6 +3053,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "type", object_type);
     RegisterMethod(l, "spectraltype", object_spectraltype);
     RegisterMethod(l, "getinfo", object_getinfo);
+	RegisterMethod(l, "catalognumber", object_catalognumber);
     RegisterMethod(l, "absmag", object_absmag);
     RegisterMethod(l, "name", object_name);
     RegisterMethod(l, "localname", object_localname);
