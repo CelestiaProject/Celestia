@@ -62,6 +62,8 @@ public:
     static Quaternion<T> yrotation(T);
     static Quaternion<T> zrotation(T);
 
+	static Quaternion<T> lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up);
+
     T w, x, y, z;
 };
 
@@ -732,6 +734,22 @@ template<class T> Quaternion<T> Quaternion<T>::zrotation(T angle)
     T s, c;
     Math<T>::sincos(angle * (T) 0.5, s, c);
     return Quaternion<T>(c, 0, 0, s);
+}
+
+/*! Determine an orientation that will make the negative z-axis point from
+ *  from the observer to the target, with the y-axis pointing in direction
+ *  of the component of 'up' that is orthogonal to the z-axis.
+ */
+template<class T> Quaternion<T> 
+Quaternion<T>::lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up)
+{
+    Vector3<T> n = to - from;
+    n.normalize();
+    Vector3<T> v = n ^ up;
+    v.normalize();
+    Vector3<T> u = v ^ n;
+
+    return Quaternion<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
 }
 
 #endif // _QUATERNION_H_
