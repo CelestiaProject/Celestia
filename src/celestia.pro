@@ -357,6 +357,7 @@ win32 {
 		-lintl \
 		-llua5.1
 	RC_FILE = celestia/qt/celestia.rc
+	DEFINES += _CRT_SECURE_NO_WARNINGS
 }
 
 unix {
