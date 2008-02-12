@@ -254,11 +254,10 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
                                Qt::RightDockWidgetArea);
     addDockWidget(Qt::RightDockWidgetArea, infoPanel);
 
-    eventFinder = new EventFinder(appCore->getSimulation()->getUniverse(),
-                                  tr("Event Finder"), this);
+    eventFinder = new EventFinder(appCore, tr("Event Finder"), this);
     eventFinder->setObjectName("event-finder");
     eventFinder->setAllowedAreas(Qt::LeftDockWidgetArea |
-                               Qt::RightDockWidgetArea);
+                                 Qt::RightDockWidgetArea);
     addDockWidget(Qt::LeftDockWidgetArea, eventFinder);
     eventFinder->setVisible(false);
     //addDockWidget(Qt::DockWidgetArea, eventFinder);

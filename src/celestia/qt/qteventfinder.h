@@ -14,15 +14,17 @@
 #define _QTEVENTFINDER_H_
 
 #include <QDockWidget>
+#include <QTime>
 
 class QTreeView;
 class QRadioButton;
 class QDateEdit;
 class QComboBox;
 class QProgressDialog;
+class QMenu;
 class EventTableModel;
-class Universe;
-
+class CelestiaCore;
+class EclipseRecord;
 
 class EclipseFinderWatcher
 {
@@ -44,16 +46,23 @@ class EventFinder : public QDockWidget, EclipseFinderWatcher
 Q_OBJECT
 
  public:
-    EventFinder(Universe* u, const QString& title, QWidget* parent);
+    EventFinder(CelestiaCore* _appCore, const QString& title, QWidget* parent);
     ~EventFinder();
 
     EclipseFinderWatcher::Status eclipseFinderProgressUpdate(double t);
     
  public slots:
     void slotFindEclipses();
+	void slotContextMenu(const QPoint&);
+
+	void slotSetEclipseTime();
+	void slotViewNearEclipsed();
+	void slotViewEclipsedSurface();
+	void slotViewOccluderSurface();
+	void slotViewBehindOccluder();
 
  private:
-    Universe* universe;
+    CelestiaCore* appCore;
 
     QRadioButton* solarOnlyButton;
     QRadioButton* lunarOnlyButton;
@@ -66,10 +75,15 @@ Q_OBJECT
 
     EventTableModel* model;
     QTreeView* eventTable;
+	QMenu* contextMenu;
 
     QProgressDialog* progress;
     double searchSpan;
     double lastProgressUpdate;
+
+	QTime searchTimer;
+
+	const EclipseRecord* activeEclipse;
 };
 
 #endif // _QTEVENTFINDER_H_
