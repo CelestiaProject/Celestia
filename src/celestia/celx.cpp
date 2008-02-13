@@ -739,7 +739,9 @@ bool LuaState::charEntered(const char* c_p)
         lua_settop(costate,stackTop);
         return true;
     }
+#if LUA_VER < 0x050100
     int stack_top = lua_gettop(costate);
+#endif
     bool result = true;
     lua_pushstring(costate, KbdCallback);
     lua_gettable(costate, LUA_GLOBALSINDEX);
@@ -2147,11 +2149,12 @@ static void CreatePositionMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
-// ==================== FrameOfReference ====================
+// ==================== ObserverFrame ====================
 static int frame_new(lua_State* l, const ObserverFrame& f)
 {
-    ObserverFrame* ud = reinterpret_cast<ObserverFrame*>(lua_newuserdata(l, sizeof(ObserverFrame)));
-    *ud = f;
+	// Use placement new to put the new frame in the userdata block.
+	void* block = lua_newuserdata(l, sizeof(ObserverFrame));
+	new (block) ObserverFrame(f);
 
     SetClass(l, _Frame);
 
@@ -2328,11 +2331,27 @@ static int frame_tostring(lua_State* l)
     return 1;
 }
 
+
+/*! Garbage collection metamethod frame objects.
+ */
+static int frame_gc(lua_State* l)
+{
+	clog << "garbage collecting frame\n";
+	ObserverFrame* frame = this_frame(l);
+
+	// Explicitly call the destructor since the object was created with placement new
+	frame->~ObserverFrame();
+
+	return 0;
+}
+
+
 static void CreateFrameMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Frame);
 
     RegisterMethod(l, "__tostring", frame_tostring);
+	RegisterMethod(l, "__gc", frame_gc);
     RegisterMethod(l, "to", frame_to);
     RegisterMethod(l, "from", frame_from);
     RegisterMethod(l, "getcoordinatesystem", frame_getcoordinatesystem);
@@ -2969,7 +2988,7 @@ static int object_preloadtexture(lua_State* l)
 }
 
 
-/*! object:catalognumber(<string>)
+/*! object:catalognumber(string: catalog_prefix)
  *
  *  Look up the catalog number for a star in one of the supported catalogs,
  *  currently HIPPARCOS, HD, or SAO. The single argument is a string that
