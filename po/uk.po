@@ -3175,7 +3175,7 @@ msgstr "Valles (Долини)"
 
 #: src/celestia/res/resource_strings.cpp:187
 msgid "Terrae (Land masses)"
-msgstr "Terrae (Масиви \"материків\")"
+msgstr "Terrae (Масиви материків)"
 
 #: src/celestia/res/resource_strings.cpp:188
 msgid "Other features"

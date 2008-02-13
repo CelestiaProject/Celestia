@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-01-27 10:31+0100\n"
-"PO-Revision-Date: 2008-02-04 19:35+0200\n"
-"Last-Translator: Jānis Jātnieks <sg30022@lanet.lv>\n"
+"PO-Revision-Date: 2008-02-13 12:29+0200\n"
+"Last-Translator: \n"
 "Language-Team: Latviešu <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -501,7 +501,7 @@ msgstr "Laiks: atpakaļ"
 #: src/celestia/celestiacore.cpp:1890
 #: src/celestia/celestiacore.cpp:1906
 msgid "Time rate"
-msgstr "Laika ātrums: "
+msgstr "Laika ātrums"
 
 #: src/celestia/celestiacore.cpp:1944
 msgid "Low res textures"
@@ -956,6 +956,7 @@ msgstr "Neredzamajiem"
 msgid "Moons"
 msgstr "Pavadoņiem"
 
+# This string should not be reused for rendering and labels / orbits - certain languages (like Latvian) require different word forms for different contexts - using single string for both cases makes it impossible to translate correctly for both cases
 #: src/celestia/winmain.cpp:1508
 #: src/celestia/winmain.cpp:1543
 #: src/celestia/winmain.cpp:1658
@@ -1790,7 +1791,7 @@ msgstr ""
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:58
 msgid "Celestia Preferences"
-msgstr "Celestia iestādījumi"
+msgstr "Celestia iestatījumi"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:64
 msgid "Rendering"
@@ -1799,7 +1800,7 @@ msgstr "Izzīmēšana"
 #: src/celestia/kde/kdepreferencesdialog.cpp:72
 #: src/celestia/res/resource_strings.cpp:171
 msgid "Show"
-msgstr "Parādīt"
+msgstr "Rādīt"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:74
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
@@ -1846,7 +1847,7 @@ msgstr "Mākoņu ēnas"
 #: src/celestia/kde/kdepreferencesdialog.cpp:110
 #: src/celestia/res/resource_strings.cpp:150
 msgid "Night Side Lights"
-msgstr "Pilsētu gaismas nakts pusē"
+msgstr "Pilsētu gaismas ēnas pusē"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:114
 #: src/celestia/res/resource_strings.cpp:147
@@ -2424,12 +2425,12 @@ msgstr "*.ogg"
 #: src/celestia/kde/rc.cpp:142
 #, no-c-format
 msgid "Aspect Ratio:"
-msgstr "Proporcijas:"
+msgstr "Proporcija:"
 
 #: src/celestia/kde/rc.cpp:145
 #, no-c-format
 msgid "Current"
-msgstr "Pašreizējās"
+msgstr "Pašreizējā"
 
 #: src/celestia/kde/rc.cpp:148
 #, no-c-format
@@ -2684,7 +2685,7 @@ msgstr "&Faili"
 
 #: src/celestia/res/resource_strings.cpp:2
 msgid "&Open Script..."
-msgstr "&Atvērt Skriptu..."
+msgstr "&Atvērt scenāriju..."
 
 #: src/celestia/res/resource_strings.cpp:3
 msgid "Scripts"
@@ -2696,15 +2697,15 @@ msgstr "Marķieris"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
-msgstr "Saglabāt &Attēlu...\tF10"
+msgstr "Saglabāt ekrāna &attēlu...\tF10"
 
 #: src/celestia/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
-msgstr "Saglabāt &Filmu...\tShift+F10"
+msgstr "Uzņemt filmu &filmu...\tShift+F10"
 
 #: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
-msgstr "I&ziet"
+msgstr "I&ziet no programmas"
 
 #: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
@@ -2712,11 +2713,11 @@ msgstr "Izvēlēties &Sauli\tH"
 
 #: src/celestia/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
-msgstr "Ceļojumu &Gids..."
+msgstr "Ceļojumu &gids..."
 
 #: src/celestia/res/resource_strings.cpp:11
 msgid "Select &Object..."
-msgstr "Izvēlēties &Objektu..."
+msgstr "Izvēlēties &objektu..."
 
 #: src/celestia/res/resource_strings.cpp:12
 msgid "Goto Object..."
@@ -2780,7 +2781,7 @@ msgstr "Laiks &atpakaļ\tJ"
 
 #: src/celestia/res/resource_strings.cpp:27
 msgid "Set &Time..."
-msgstr "Ie&stādīt Laiku..."
+msgstr "Ie&statīt laiku..."
 
 #: src/celestia/res/resource_strings.cpp:28
 msgid "Show Local Time"
@@ -2864,7 +2865,7 @@ msgstr "Sadalīt &horizontāli\tCtrl+R"
 
 #: src/celestia/res/resource_strings.cpp:48
 msgid "Split &Vertically\tCtrl+U"
-msgstr "Sadalīt &Vertikāli\tCtrl+U"
+msgstr "Sadalīt &vertikāli\tCtrl+U"
 
 #: src/celestia/res/resource_strings.cpp:49
 msgid "&Delete Active View\tDEL"
@@ -2872,7 +2873,7 @@ msgstr "Aizvērt &aktīvo skatījumu\tDEL"
 
 #: src/celestia/res/resource_strings.cpp:50
 msgid "&Single View\tCtrl+D"
-msgstr "&Viens skats\tCtrl+D"
+msgstr "&Viens skatījums\tCtrl+D"
 
 #: src/celestia/res/resource_strings.cpp:51
 msgid "Show &Frames"
@@ -2951,7 +2952,7 @@ msgstr "http://www.shatters.net/celestia"
 
 #: src/celestia/res/resource_strings.cpp:67
 msgid "Celestia is free software and comes with absolutely no warranty."
-msgstr "Celestia ir bezmaksas programma un tai nav nekādu garantiju."
+msgstr "Celestia ir bezmaksas programma un tai nav absolūti nekādu garantiju."
 
 #: src/celestia/res/resource_strings.cpp:68
 msgid "Authors"
@@ -3143,7 +3144,7 @@ msgstr "Izšķirtspēja"
 
 #: src/celestia/res/resource_strings.cpp:139
 msgid "View Options"
-msgstr "Skata Opcijas"
+msgstr "Skata opcijas"
 
 #: src/celestia/res/resource_strings.cpp:145
 msgid "Constellation Borders"
@@ -3180,7 +3181,7 @@ msgstr "Zemienes"
 
 #: src/celestia/res/resource_strings.cpp:188
 msgid "Other features"
-msgstr "Citām struktūrām"
+msgstr "Citas struktūras"
 
 #: src/celestia/res/resource_strings.cpp:189
 msgid "Label Features"
@@ -3192,7 +3193,7 @@ msgstr "Rādīt struktūras"
 
 #: src/celestia/res/resource_strings.cpp:193
 msgid "Minimum Labeled Feature Size"
-msgstr "Minimālais izmērs nosauktajām struktūrām"
+msgstr "Minimālais izmērs nosaucamajām struktūrām"
 
 #: src/celestia/res/resource_strings.cpp:194
 msgid "Add New Bookmark Folder"
