@@ -602,10 +602,10 @@ bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 // function of Renderer::Label; if it's not a class member, C++'s
 // argument dependent lookup will not find the operator when it's
 // used as a predicate for STL algorithms.
-bool Renderer::Label::operator<(const Label& l) const
+bool Renderer::Annotation::operator<(const Annotation& a) const
 {
     // Operation is reversed because -z axis points into the screen
-    return position.z > l.position.z;
+    return position.z > a.position.z;
 }
 
 // Depth comparison for orbit paths
@@ -1055,10 +1055,12 @@ bool Renderer::vertexShaderSupported() const
 }
 
 
-void Renderer::addLabel(const char* text,
-                         Color color,
-                         const Point3f& pos,
-                         float depth)
+void Renderer::addAnnotation(vector<Annotation>& annotations,
+                             const Marker* marker,
+                             const char* labelText,
+                             Color color,
+                             const Point3f& pos,
+                             float depth)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -1075,28 +1077,53 @@ void Renderer::addLabel(const char* text,
                    (const GLint*) view,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
-        Label l;
-        ReplaceGreekLetterAbbr(l.text, MaxLabelLength, text, strlen(text));
-        // Might be nice to use abbreviations instead of Greek letters
-        // strncpy(l.text, text, MaxLabelLength);
-        l.text[MaxLabelLength - 1] = '\0';
-        l.color = color;
-        l.position = Point3f((float) winX, (float) winY, -depth);
-        labels.insert(labels.end(), l);
+        Annotation a;
+        
+        if (marker == NULL)
+        {
+            ReplaceGreekLetterAbbr(a.labelText, MaxLabelLength, labelText, strlen(labelText));
+            // Might be nice to use abbreviations instead of Greek letters
+            // strncpy(l.text, text, MaxLabelLength);
+            a.labelText[MaxLabelLength - 1] = '\0';
+        }
+        a.marker = marker;
+        a.color = color;
+        a.position = Point3f((float) winX, (float) winY, -depth);
+        annotations.push_back(a);
     }
 }
 
 
-void Renderer::addLabel(const string& text,
-                        Color color,
-                        const Point3f& pos,
-                        float depth)
+void Renderer::addForegroundAnnotation(const Marker* marker,
+                                       const char* labelText,
+                                       Color color,
+                                       const Point3f& pos,
+                                       float depth)
 {
-    addLabel(text.c_str(), color, pos, depth);
+    addAnnotation(foregroundAnnotations, marker, labelText, color, pos, depth);
 }
 
 
-void Renderer::addSortedLabel(const string& text, Color color, const Point3f& pos)
+void Renderer::addBackgroundAnnotation(const Marker* marker,
+                                       const char* labelText,
+                                       Color color,
+                                       const Point3f& pos,
+                                       float depth)
+{
+    addAnnotation(backgroundAnnotations, marker, labelText, color, pos, depth);
+}
+
+
+void Renderer::addBackgroundAnnotation(const string& labelText,
+                                       Color color,
+                                       const Point3f& pos,
+                                       float depth)
+{
+    addAnnotation(backgroundAnnotations, NULL, labelText.c_str(), color, pos, depth);
+}
+
+
+void Renderer::addSortedAnnotation(const Marker* marker, const string& labelText, Color color, const Point3f& pos)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -1113,26 +1140,31 @@ void Renderer::addSortedLabel(const string& text, Color color, const Point3f& po
                    (const GLint*) view,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
-        Label l;
-        //l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
-        strncpy(l.text, text.c_str(), MaxLabelLength);
-        l.text[MaxLabelLength - 1] = '\0';
-        l.color = color;
-        l.position = Point3f((float) winX, (float) winY, -depth);
-        depthSortedLabels.insert(depthSortedLabels.end(), l);
+        Annotation a;
+        
+        if (marker == NULL)
+        {
+            //l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
+            strncpy(a.labelText, labelText.c_str(), MaxLabelLength);
+            a.labelText[MaxLabelLength - 1] = '\0';
+        }
+        a.marker = marker;
+        a.color = color;
+        a.position = Point3f((float) winX, (float) winY, -depth);
+        depthSortedAnnotations.push_back(a);
     }
 }
 
 
-void Renderer::clearLabels()
+void Renderer::clearAnnotations(vector<Annotation>& annotations)
 {
-    labels.clear();
+    annotations.clear();
 }
 
 
-void Renderer::clearSortedLabels()
+void Renderer::clearSortedAnnotations()
 {
-    depthSortedLabels.clear();
+    depthSortedAnnotations.clear();
 }
 
 
@@ -2179,8 +2211,7 @@ void Renderer::render(const Observer& observer,
     glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
     glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
 
-    clearLabels();
-    clearSortedLabels();
+    clearSortedAnnotations();
 
     // Put all solar system bodies into the render list.  Stars close and
     // large enough to have discernible surface detail are also placed in
@@ -2327,7 +2358,8 @@ void Renderer::render(const Observer& observer,
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
-
+    
+    // Render sky grids first--these will always be in the background
     if ((renderFlags & ShowCelestialSphere) != 0)
     {
         glColor(EquatorialGridColor);
@@ -2341,6 +2373,7 @@ void Renderer::render(const Observer& observer,
         glEnable(GL_TEXTURE_2D);
     }
 
+    // Render deep sky objects
     if ((renderFlags & (ShowGalaxies |
                         ShowNebulae |
                         ShowOpenClusters)) != 0 &&
@@ -2424,19 +2457,28 @@ void Renderer::render(const Observer& observer,
             disableSmoothLines();
     }
 
-    renderLabels(FontNormal, AlignLeft);
-    clearLabels();
+    // Render star and deep sky object labels
+    renderBackgroundAnnotations(FontNormal, AlignLeft);
 
+    // Render constellations labels
     if ((labelMode & ConstellationLabels) != 0 && universe.getAsterisms() != NULL)
     {
         labelConstellations(*universe.getAsterisms(), observer);
-        renderLabels(FontLarge, AlignCenter);
-        clearLabels();
+        renderBackgroundAnnotations(FontLarge, AlignCenter);
     }
 
     glPopMatrix();
 
-    renderLabels(FontNormal, AlignLeft);
+    if ((renderFlags & ShowMarkers) != 0)
+    {
+        renderMarkers(*universe.getMarkers(),
+                      observer.getPosition(),
+                      now);
+        
+        // Render background markers; rendering of other markers is deferred until
+        // solar system objects are rendered.
+        renderBackgroundAnnotations(FontNormal, AlignLeft);
+    }    
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
     glPolygonMode(GL_BACK, (GLenum) renderMode);
@@ -2575,8 +2617,8 @@ void Renderer::render(const Observer& observer,
         // amount of overdraw in Celestia is typically low.)
         sort(renderList.begin(), renderList.end());
 
-        // Sort the labels
-        sort(depthSortedLabels.begin(), depthSortedLabels.end());
+        // Sort the annotations
+        sort(depthSortedAnnotations.begin(), depthSortedAnnotations.end());
 
         // Sort the orbit paths
         sort(orbitPathList.begin(), orbitPathList.end());
@@ -2711,7 +2753,7 @@ void Renderer::render(const Observer& observer,
         // partitions that have small spans in the depth buffer.
         // TODO: Implement this step!
 
-        vector<Label>::iterator label = depthSortedLabels.begin();
+        vector<Annotation>::iterator annotation = depthSortedAnnotations.begin();
 
         // Render everything that wasn't culled.
         float intervalSize = 1.0f / (float) max(1, nIntervals);
@@ -2860,8 +2902,12 @@ void Renderer::render(const Observer& observer,
                 i--;
             }
 
-            // Render labels in this interval
-            label = renderSortedLabels(label, -depthPartitions[interval].nearZ, -depthPartitions[interval].farZ, FontNormal);
+            // Render annotations in this interval
+            if ((renderFlags & ShowSmoothLines) != 0)
+                enableSmoothLines();
+            annotation = renderSortedAnnotations(annotation, -depthPartitions[interval].nearZ, -depthPartitions[interval].farZ, FontNormal);
+            if ((renderFlags & ShowSmoothLines) != 0)
+                disableSmoothLines();
             glDisable(GL_DEPTH_TEST);
         }
 #if 0
@@ -2880,6 +2926,8 @@ void Renderer::render(const Observer& observer,
         // reset the depth range
         glDepthRange(0, 1);
     }
+    
+    renderForegroundAnnotations(FontNormal, AlignLeft);
 
     // Pop camera orientation matrix
     glPopMatrix();
@@ -2890,21 +2938,7 @@ void Renderer::render(const Observer& observer,
 
     glPolygonMode(GL_FRONT, GL_FILL);
     glPolygonMode(GL_BACK, GL_FILL);
-
-    if ((renderFlags & ShowMarkers) != 0)
-    {
-        if ((renderFlags & ShowSmoothLines) != 0)
-            enableSmoothLines();
-
-        renderMarkers(*universe.getMarkers(),
-                      observer.getPosition(),
-                      observer.getOrientationf(),
-                      now);
-
-        if ((renderFlags & ShowSmoothLines) != 0)
-            disableSmoothLines();
-    }
-
+    
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
     glEnable(GL_LIGHTING);
@@ -5544,7 +5578,7 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     {
         if ((*iter)->getFeatureType() & locationFilter)
         {
-            // Get the position of the label with respect to the planet center
+            // Get the position of the annotation with respect to the planet center
             Vec3f ppos = (*iter)->getPosition();
 
             // Compute the body-centric position of the location
@@ -7147,7 +7181,7 @@ void Renderer::renderVelocityVector(Body& body,
 }
 
 
-// Add solar system bodies, orbits, and labels to the render list. Stars
+// Add solar system bodies, orbits, and annotations to the render list. Stars
 // are handled by other methods.
 void Renderer::buildRenderLists(const Star& sun,
                                 const PlanetarySystem* solSystem,
@@ -7415,7 +7449,7 @@ void Renderer::buildRenderLists(const Star& sun,
                     // This only handles the problem of partial label occlusion
                     // for low orbiting and surface positioned objects, but that
                     // case is *much* more common than other possibilities.
-                    if (primary != NULL && primary->getModel() == InvalidResource)
+                    if (primary != NULL && primary->isEllipsoid())
                     {
                         // In the typical case, we're rendering labels for many
                         // objects that orbit the same primary. Avoid repeatedly
@@ -7466,8 +7500,8 @@ void Renderer::buildRenderLists(const Star& sun,
                         }
                     }
 
-                    addSortedLabel(body->getName(true), labelColor,
-                                   Point3f(pos.x, pos.y, pos.z));
+                    addSortedAnnotation(NULL, body->getName(true), labelColor,
+                                        Point3f(pos.x, pos.y, pos.z));
                 }
             }
         }
@@ -7748,9 +7782,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                 float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
                 if (distr > 1.0f)
                     distr = 1.0f;
-                renderer->addLabel(nameBuffer,
-                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                   Point3f(relPos.x, relPos.y, relPos.z));
+                renderer->addBackgroundAnnotation(NULL, nameBuffer,
+                                                  Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
+                                                  Point3f(relPos.x, relPos.y, relPos.z));
                 nLabelled++;
             }
         }
@@ -7969,9 +8003,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
                 if (distr > 1.0f)
                     distr = 1.0f;
-                renderer->addLabel(nameBuffer,
-                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                   Point3f(relPos.x, relPos.y, relPos.z));
+                renderer->addBackgroundAnnotation(NULL, nameBuffer,
+                                                  Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
+                                                  Point3f(relPos.x, relPos.y, relPos.z));
                 nLabelled++;
             }
         }
@@ -8395,9 +8429,9 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             if (distr > 1.0f)
                 distr = 1.0f;
 
-            renderer->addLabel(dsoDB->getDSOName(dso),
-                               Color(labelColor, distr * labelColor.alpha()),
-                               Point3f(relPos.x, relPos.y, relPos.z));
+            renderer->addBackgroundAnnotation(dsoDB->getDSOName(dso),
+                                              Color(labelColor, distr * labelColor.alpha()),
+                                              Point3f(relPos.x, relPos.y, relPos.z));
         }
     }
 }
@@ -8526,7 +8560,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
             {
                 Point3f pos = astro::equatorialToCelestialCart(ra, dec, radius);
                 if ((pos * m).z < 0)
-                    addLabel(DecCoordLabels[i], EquatorialGridLabelColor, pos);
+                    addBackgroundAnnotation(DecCoordLabels[i], EquatorialGridLabelColor, pos);
             }
         }
     }
@@ -8537,7 +8571,7 @@ void Renderer::renderCelestialSphere(const Observer& observer)
         float ra = i * RALabelSpacing;
         Point3f pos = astro::equatorialToCelestialCart(ra, 0.0f, radius);
         if ((pos * m).z < 0)
-            addLabel(RACoordLabels[i], EquatorialGridLabelColor, pos);
+            addBackgroundAnnotation(RACoordLabels[i], EquatorialGridLabelColor, pos);
     }
 }
 
@@ -8585,9 +8619,9 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                                         (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
                     }
 
-                    addLabel(ast->getName((labelMode & I18nConstellationLabels) != 0),
-                             Color(ConstellationLabelColor, opacity),
-                             Point3f(rpos.x, rpos.y, rpos.z));
+                    addBackgroundAnnotation(ast->getName((labelMode & I18nConstellationLabels) != 0),
+                                            Color(ConstellationLabelColor, opacity),
+                                            Point3f(rpos.x, rpos.y, rpos.z));
                 }
             }
         }
@@ -8628,12 +8662,15 @@ void Renderer::renderParticles(const vector<Particle>& particles,
 }
 
 
-void Renderer::renderLabels(FontStyle fs, LabelAlignment la)
+void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyle fs, LabelAlignment la)
 {
     if (font[fs] == NULL)
         return;
 
-    //glEnable(GL_DEPTH_TEST);
+    // Enable line smoothing for rendering symbols
+    if ((renderFlags & ShowSmoothLines) != 0)
+        enableSmoothLines();
+    
     glEnable(GL_TEXTURE_2D);
     font[fs]->bind();
     glEnable(GL_BLEND);
@@ -8649,27 +8686,49 @@ void Renderer::renderLabels(FontStyle fs, LabelAlignment la)
     glTranslatef(GLfloat((int) (windowWidth / 2)),
                  GLfloat((int) (windowHeight / 2)), 0);
 
-    for (int i = 0; i < (int) labels.size(); i++)
+    for (int i = 0; i < (int) annotations.size(); i++)
     {
-        glColor(labels[i].color);
         glPushMatrix();
 
-        int labelOffset = 2;
-        if (la == AlignCenter)
+        if (annotations[i].marker != NULL)
         {
-            int labelwidth = (font[fs]->getWidth(labels[i].text));
-            labelOffset = (int) -labelwidth/2;
-        }
-        else if (la == AlignRight)
-        {
-            int labelwidth = (font[fs]->getWidth(labels[i].text));
-            labelOffset = (int) -(labelwidth + 2);
-        }
+            const Marker& marker = *annotations[i].marker;
 
-        glTranslatef((int) labels[i].position.x + GLfloat((int) labelOffset) + PixelOffset,
-                     (int) labels[i].position.y + PixelOffset, 0.0f);
-		// EK TODO: Check where to replace (see '_(' above)
-		font[fs]->render(labels[i].text);
+            glColor(marker.getColor());                        
+            glTranslatef((GLfloat) (int) annotations[i].position.x,
+                         (GLfloat) (int) annotations[i].position.y, 0.0f);
+
+            glDisable(GL_TEXTURE_2D);
+            marker.render();
+            glEnable(GL_TEXTURE_2D);
+            
+            if (!marker.getLabel().empty())
+            {
+                int labelOffset = (int) marker.getSize() / 2;
+                glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
+                font[fs]->render(marker.getLabel());
+            }            
+        }
+        else
+        {
+            int labelOffset = 2;
+            if (la == AlignCenter)
+            {
+                int labelwidth = (font[fs]->getWidth(annotations[i].labelText));
+                labelOffset = (int) -labelwidth/2;
+            }
+            else if (la == AlignRight)
+            {
+                int labelwidth = (font[fs]->getWidth(annotations[i].labelText));
+                labelOffset = (int) -(labelwidth + 2);
+            }
+            
+            glColor(annotations[i].color);
+            glTranslatef((int) annotations[i].position.x + GLfloat((int) labelOffset) + PixelOffset,
+                         (int) annotations[i].position.y + PixelOffset, 0.0f);
+            // EK TODO: Check where to replace (see '_(' above)
+            font[fs]->render(annotations[i].labelText);
+        }
         glPopMatrix();
     }
 
@@ -8677,12 +8736,38 @@ void Renderer::renderLabels(FontStyle fs, LabelAlignment la)
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
-    glDisable(GL_DEPTH_TEST);
+    
+    if ((renderFlags & ShowSmoothLines) != 0)
+        disableSmoothLines();
 }
 
 
-vector<Renderer::Label>::iterator
-Renderer::renderSortedLabels(vector<Label>::iterator iter, float nearDist, float farDist, FontStyle fs)
+void
+Renderer::renderBackgroundAnnotations(FontStyle fs, LabelAlignment la)
+{
+    glEnable(GL_DEPTH_TEST);
+    renderAnnotations(backgroundAnnotations, fs, la);
+    glDisable(GL_DEPTH_TEST);
+    
+    clearAnnotations(backgroundAnnotations);
+}
+
+
+void
+Renderer::renderForegroundAnnotations(FontStyle fs, LabelAlignment la)
+{
+    glDisable(GL_DEPTH_TEST);
+    renderAnnotations(foregroundAnnotations, fs, la);
+    
+    clearAnnotations(foregroundAnnotations);
+}
+
+
+vector<Renderer::Annotation>::iterator
+Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
+                                  float nearDist,
+                                  float farDist,
+                                  FontStyle fs)
 {
     if (font[fs] == NULL)
         return iter;
@@ -8710,7 +8795,7 @@ Renderer::renderSortedLabels(vector<Label>::iterator iter, float nearDist, float
     float d1 = -(farDist + nearDist) / (farDist - nearDist);
     float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
 
-    for (; iter != depthSortedLabels.end() && iter->position.z > nearDist; iter++)
+    for (; iter != depthSortedAnnotations.end() && iter->position.z > nearDist; iter++)
     {
         // Compute normalized device z
         float ndc_z = d1 + d2 / -iter->position.z;
@@ -8720,12 +8805,33 @@ Renderer::renderSortedLabels(vector<Label>::iterator iter, float nearDist, float
         int labelHOffset = 0;
         int labelVOffset = 0;
 
-        glColor(iter->color);
         glPushMatrix();
-        glTranslatef((int) iter->position.x + PixelOffset + labelHOffset,
-                     (int) iter->position.y + PixelOffset + labelVOffset,
-                     ndc_z);
-        font[fs]->render(iter->text);
+        if (iter->marker != NULL)
+        {
+            const Marker& marker = *iter->marker;
+            
+            glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
+            glColor(marker.getColor());
+                        
+            glDisable(GL_TEXTURE_2D);
+            marker.render();
+            glEnable(GL_TEXTURE_2D);            
+            
+            if (!marker.getLabel().empty())
+            {
+                int labelOffset = (int) marker.getSize() / 2;
+                glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
+                font[fs]->render(marker.getLabel());
+            }
+        }
+        else
+        {
+            glTranslatef((int) iter->position.x + PixelOffset + labelHOffset,
+                         (int) iter->position.y + PixelOffset + labelVOffset,
+                         ndc_z);
+            glColor(iter->color);
+            font[fs]->render(iter->labelText);
+        }
         glPopMatrix();
     }
 
@@ -8741,81 +8847,45 @@ Renderer::renderSortedLabels(vector<Label>::iterator iter, float nearDist, float
 
 void Renderer::renderMarkers(const MarkerList& markers,
                              const UniversalCoord& position,
-                             const Quatf& orientation,
                              double jd)
 {
-    double identity4x4[16] = { 1.0, 0.0, 0.0, 0.0,
-                               0.0, 1.0, 0.0, 0.0,
-                               0.0, 0.0, 1.0, 0.0,
-                               0.0, 0.0, 0.0, 1.0
-                             };
-    int view[4] = { 0, 0, 0, 0 };
-    view[0] = -windowWidth / 2;
-    view[1] = -windowHeight / 2;
-    view[2] = windowWidth;
-    view[3] = windowHeight;
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glDisable(GL_LIGHTING);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_TEXTURE_2D);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, windowWidth, 0, windowHeight);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glTranslatef(GLfloat((int) (windowWidth / 2)),
-                 GLfloat((int) (windowHeight / 2)), 0);
-
-    Mat3f rot = conjugate(orientation).toMatrix3();
-
-    for (MarkerList::const_iterator iter = markers.begin();
-         iter != markers.end(); iter++)
+    string emptyLabel;
+    for (MarkerList::const_iterator iter = markers.begin(); iter != markers.end(); iter++)
     {
         UniversalCoord uc = iter->getPosition(jd);
-        Vec3d offset = uc - position;
-        Vec3f eyepos = Vec3f((float) offset.x, (float) offset.y, (float) offset.z) * rot;
-        eyepos.normalize();
-        eyepos *= 1000.0f;
-
-        double winX, winY, winZ;
-        if (gluProject(eyepos.x, eyepos.y, eyepos.z,
-                       identity4x4,
-                       projMatrix,
-                       (const GLint*) view,
-                       &winX, &winY, &winZ) != GL_FALSE)
+        Vec3d offset = (uc - position) * astro::microLightYearsToKilometers(1.0);
+                
+        if (iter->isOccludable())
         {
-            if (eyepos.z < 0.0f)
+            // If the marker is occludable, add it to the sorted annotation list if it's relatively
+            // nearby, and to the background list if it's very distant.
+            if (offset.length() < astro::lightYearsToKilometers(1.0))
             {
-                glPushMatrix();
-                glTranslatef((GLfloat) (int) winX, (GLfloat) (int) winY, 0.0f);
-
-                glColor(iter->getColor());
-                iter->render();
-                if (!iter->getLabel().empty())
-                {
-                    glEnable(GL_TEXTURE_2D);
-                    int labelOffset = (int) iter->getSize() / 2;
-                    glTranslatef(labelOffset + PixelOffset, -labelOffset - font[FontNormal]->getHeight() + PixelOffset, 0.0f);
-                    font[FontNormal]->bind();
-                    font[FontNormal]->render(iter->getLabel());
-                    glDisable(GL_TEXTURE_2D);
-                }
-
-                glPopMatrix();
+                // Modify the marker position so that it is always in front of the marked object.
+                double boundingRadius;
+                if (iter->getObject().body() != NULL)
+                    boundingRadius = iter->getObject().body()->getBoundingRadius();
+                else
+                    boundingRadius = iter->getObject().radius();                
+                offset *= (1.0 - boundingRadius * 1.01 / offset.length());
+                
+                addSortedAnnotation(&(*iter), emptyLabel, iter->getColor(),
+                                    Point3f((float) offset.x, (float) offset.y, (float) offset.z));
+            }
+            else
+            {
+                addAnnotation(backgroundAnnotations,
+                              &(*iter), NULL, iter->getColor(),
+                              Point3f((float) offset.x, (float) offset.y, (float) offset.z));
             }
         }
+        else
+        {
+            addAnnotation(foregroundAnnotations,
+                          &(*iter), NULL, iter->getColor(),
+                          Point3f((float) offset.x, (float) offset.y, (float) offset.z));                          
+        }
     }
-
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glDisable(GL_DEPTH_TEST);
 }
 
 

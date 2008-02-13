@@ -103,7 +103,8 @@ class Universe
                     Color color,
                     Marker::Symbol symbol,
                     int priority,
-                    string label);
+                    string label,
+                    bool occludable = true);
     void unmarkObject(const Selection&, int priority);
     void unmarkAll();
     bool isMarked(const Selection&, int priority) const;
