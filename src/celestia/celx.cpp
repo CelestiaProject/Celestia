@@ -1175,12 +1175,17 @@ static void checkArgs(lua_State* l,
 
 static ObserverFrame::CoordinateSystem parseCoordSys(const string& name)
 {
+	// 'planetographic' is a deprecated name for bodyfixed, but maintained here
+	// for compatibility with older scripts.
+
     if (compareIgnoringCase(name, "universal") == 0)
         return ObserverFrame::Universal;
     else if (compareIgnoringCase(name, "ecliptic") == 0)
         return ObserverFrame::Ecliptical;
     else if (compareIgnoringCase(name, "equatorial") == 0)
         return ObserverFrame::Equatorial;
+    else if (compareIgnoringCase(name, "bodyfixed") == 0)
+        return ObserverFrame::BodyFixed;
     else if (compareIgnoringCase(name, "planetographic") == 0)
         return ObserverFrame::BodyFixed;
     else if (compareIgnoringCase(name, "observer") == 0)
@@ -2309,7 +2314,7 @@ static int frame_getcoordinatesystem(lua_State* l)
     case ObserverFrame::Equatorial:
         coordsys = "equatorial"; break;
     case ObserverFrame::BodyFixed:
-        coordsys = "planetographic"; break;
+        coordsys = "bodyfixed"; break;
     case ObserverFrame::ObserverLocal:
         coordsys = "observer"; break;
     case ObserverFrame::PhaseLock:
@@ -2336,7 +2341,6 @@ static int frame_tostring(lua_State* l)
  */
 static int frame_gc(lua_State* l)
 {
-	clog << "garbage collecting frame\n";
 	ObserverFrame* frame = this_frame(l);
 
 	// Explicitly call the destructor since the object was created with placement new
