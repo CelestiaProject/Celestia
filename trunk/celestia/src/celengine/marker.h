@@ -33,6 +33,8 @@ class Marker
     void setSize(float);
     int getPriority() const;
     void setPriority(int);
+    bool isOccludable() const;
+    void setOccludable(bool);
 
     enum Symbol
     {
@@ -65,6 +67,7 @@ class Marker
     int priority;
     Symbol symbol;
     string label;
+    bool occludable;
 };
 
 typedef std::vector<Marker> MarkerList;
