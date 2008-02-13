@@ -198,20 +198,23 @@ class Renderer
 
     // Label related methods
     static const int MaxLabelLength = 32;
-    struct Label
+    struct Annotation
     {
-        char text[MaxLabelLength];
+        char labelText[MaxLabelLength];
+        const Marker* marker;
         Color color;
         Point3f position;
 
-        bool operator<(const Label&) const;
+        bool operator<(const Annotation&) const;
     };
+        
+    void addForegroundAnnotation(const Marker*, const char* labelText, Color, const Point3f&, float depth = -1);
+    void addBackgroundAnnotation(const Marker*, const char* labelText, Color, const Point3f&, float depth = -1);
+    void addBackgroundAnnotation(const std::string&, Color, const Point3f&, float depth = -1);
+    void addSortedAnnotation(const Marker* marker, const std::string&, Color, const Point3f&);
     
-    void addLabel(const char* text, Color, const Point3f&, float depth = -1);
-    void addLabel(const std::string&, Color, const Point3f&, float depth = -1);
-    void addSortedLabel(const std::string&, Color, const Point3f&);
-    void clearLabels();
-	void clearSortedLabels();
+    void clearAnnotations(std::vector<Annotation>&);
+	void clearSortedAnnotations();
 
     void invalidateOrbitCache();
     
@@ -517,14 +520,19 @@ class Renderer
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
                          Quatf orientation);
-    void renderLabels(FontStyle fs, LabelAlignment la);
-    std::vector<Label>::iterator renderSortedLabels(std::vector<Label>::iterator,
-                                                    float nearDist,
-                                                    float farDist,
-                                                    FontStyle fs);
+    
+    
+    void addAnnotation(std::vector<Annotation>&,
+                       const Marker*, const char* labelText, Color, const Point3f&, float depth = -1);
+    void renderAnnotations(const std::vector<Annotation>&, FontStyle fs, LabelAlignment la);
+    void renderBackgroundAnnotations(FontStyle fs, LabelAlignment la);
+    void renderForegroundAnnotations(FontStyle fs, LabelAlignment la);
+    std::vector<Annotation>::iterator renderSortedAnnotations(std::vector<Annotation>::iterator,
+                                                              float nearDist,
+                                                              float farDist,
+                                                              FontStyle fs);
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& position,
-                       const Quatf& orientation,
                        double jd);
 
     void renderOrbit(const OrbitPathListEntry&,
@@ -571,8 +579,9 @@ class Renderer
     std::vector<RenderListEntry> renderList;
     std::vector<DepthBufferPartition> depthPartitions;
     std::vector<Particle> glareParticles;
-    std::vector<Label> labels;
-    std::vector<Label> depthSortedLabels;
+    std::vector<Annotation> backgroundAnnotations;
+    std::vector<Annotation> foregroundAnnotations;
+    std::vector<Annotation> depthSortedAnnotations;
     std::vector<OrbitPathListEntry> orbitPathList;
     std::vector<EclipseShadow> eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;

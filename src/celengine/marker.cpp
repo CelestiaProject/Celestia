@@ -20,7 +20,8 @@ Marker::Marker(const Selection& s) :
     color(Color::White),
     priority(0),
     symbol(Diamond),
-    label("")
+    label(""),
+    occludable(true)
 {
 }
 
@@ -99,6 +100,17 @@ void Marker::setLabel(string _label)
     label = _label;
 }
 
+
+bool Marker::isOccludable() const
+{
+    return occludable;
+}
+
+
+void Marker::setOccludable(bool _occludable)
+{
+    occludable = _occludable;
+}
 
 void Marker::render() const
 {
