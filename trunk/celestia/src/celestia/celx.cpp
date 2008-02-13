@@ -2856,7 +2856,7 @@ static int object_absmag(lua_State* l)
 
 static int object_mark(lua_State* l)
 {
-    checkArgs(l, 1, 6, "Need 0 to 5 arguments for object:mark");
+    checkArgs(l, 1, 7, "Need 0 to 6 arguments for object:mark");
 
     Selection* sel = this_object(l);
     CelestiaCore* appCore = getAppCore(l, AllErrors);
@@ -2890,9 +2890,11 @@ static int object_mark(lua_State* l)
     if (markLabel == NULL)
         markLabel = "";
 
+    bool occludable = safeGetBoolean(l, 7, WrongType, "Sixth argument to object:mark must be a boolean", true);	
+
     Simulation* sim = appCore->getSimulation();
     sim->getUniverse()->markObject(*sel, markSize,
-                                   markColorAlpha, markSymbol, 1, markLabel);
+                                   markColorAlpha, markSymbol, 1, markLabel, occludable);
 
     return 0;
 }
