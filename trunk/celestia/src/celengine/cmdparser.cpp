@@ -118,8 +118,12 @@ void CommandParser::error(const string errMsg)
 
 static ObserverFrame::CoordinateSystem parseCoordinateSystem(const string& name)
 {
+	// 'geographic' is a deprecated name for the bodyfixed coordinate system,
+	// maintained here for compatibility with older scripts.
     if (compareIgnoringCase(name, "observer") == 0)
         return ObserverFrame::ObserverLocal;
+    else if (compareIgnoringCase(name, "bodyfixed") == 0)
+        return ObserverFrame::BodyFixed;
     else if (compareIgnoringCase(name, "geographic") == 0)
         return ObserverFrame::BodyFixed;
     else if (compareIgnoringCase(name, "equatorial") == 0)
