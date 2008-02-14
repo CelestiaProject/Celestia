@@ -3061,6 +3061,72 @@ static int object_catalognumber(lua_State* l)
 }
 
 
+// Locations iterator function; two upvalues expected. Used by
+// object:locations method.
+static int object_locations_iter(lua_State* l)
+{
+    Selection* sel = to_object(l, lua_upvalueindex(1));
+    if (sel == NULL)
+    {
+        doError(l, "Bad object!");
+        return 0;
+    }
+
+    // Get the current counter value
+    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
+    
+    vector<Location*>* locations = NULL;
+    if (sel->body() != NULL)
+    {
+        locations = sel->body()->getLocations();
+    }
+        
+    if (locations != NULL && i < locations->size())
+    {
+        // Increment the counter
+        lua_pushnumber(l, i + 1);
+        lua_replace(l, lua_upvalueindex(2));
+        
+        Location* loc = locations->at(i);
+        if (loc == NULL)
+            lua_pushnil(l);
+        else
+            object_new(l, Selection(loc));
+        
+        return 1;
+    }
+    else
+    {
+        // Return nil when we've enumerated all the locations (or if
+        // there were no locations associated with the object.)
+        return 0;
+    }
+}
+
+
+/*! object:locations()
+ *
+ * Return an iterator over all the locations associated with an object.
+ * Only solar system bodies have locations; for all other object types,
+ * this method will return an empty iterator.
+ *
+ * Example: print locations of current selection
+ * --
+ * for loc in celestia:getselection():locations() do
+ *     celestia:log(loc:name())
+ * end
+ */
+static int object_locations(lua_State* l)
+{
+    // Push a closure with two upvalues: the object and a counter
+    lua_pushvalue(l, 1);    // object
+    lua_pushnumber(l, 0);   // counter
+    lua_pushcclosure(l, object_locations_iter, 2);
+    
+    return 1;
+}
+
+
 static void CreateObjectMetaTable(lua_State* l)
 {
     CreateClassMetatable(l, _Object);
@@ -3086,6 +3152,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "unmark", object_unmark);
     RegisterMethod(l, "getposition", object_getposition);
     RegisterMethod(l, "getchildren", object_getchildren);
+    RegisterMethod(l, "locations", object_locations);
     RegisterMethod(l, "preloadtexture", object_preloadtexture);
 
     lua_pop(l, 1); // pop metatable off the stack
