@@ -213,7 +213,78 @@ CreateSampledTrajectory(Hash* trajData, const string& path)
 }
 
 
+// Parse a string list--either a single string or an array of strings is permitted.
+static bool
+ParseStringList(Hash* table,
+				const string& propertyName,
+				list<string>& stringList)
+{
+	Value* v = table->getValue(propertyName);
+	if (v == NULL)
+		return NULL;
+
+	// Check for a single string first.
+	if (v->getType() == Value::StringType)
+	{
+		stringList.push_back(v->getString());
+		return true;
+	}
+	else if (v->getType() == Value::ArrayType)
+	{
+		Array* array = v->getArray();
+		Array::const_iterator iter;
+
+		// Verify that all array entries are strings
+		for (iter = array->begin(); iter != array->end(); iter++)
+		{
+			if ((*iter)->getType() != Value::StringType)
+				return false;
+		}
+
+		// Add strings to stringList
+		for (iter = array->begin(); iter != array->end(); iter++)
+			 stringList.push_back((*iter)->getString());
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
 #ifdef USE_SPICE
+
+/*! Create a new SPICE orbit. This is just a Celestia wrapper for a trajectory specified
+ *  in a SPICE SPK file.
+ *
+ *  SpiceOrbit
+ *  {
+ *      Kernel <string|string array>   # optional
+ *      Target <string>
+ *      Origin <string>
+ *      BoundingRadius <number>
+ *      Period <number>                # optional
+ *      Beginning <number>             # optional
+ *      Ending <number>                # optional
+ *  }
+ *
+ *  The Kernel property specifies one or more SPK files that must be loaded. Any 
+ *  already loaded kernels will also be used if they contain trajectories for
+ *  the target or origin.
+ *  Target and origin are strings that give NAIF IDs for the target and origin
+ *  objects. Either names or integer IDs are valid, but integer IDs still must
+ *  be quoted.
+ *  BoundingRadius gives a conservative estimate of the maximum distance between
+ *  the target and origin objects. It is required by Celestia for visibility
+ *  culling when rendering.
+ *  Beginning and Ending specify the valid time range of the SPICE orbit. It is
+ *  an error to specify Beginning without Ending, and vice versa. If neither is
+ *  specified, the valid range is computed from the coverage window in the SPICE
+ *  kernel pool. If the coverage window is noncontiguous, the first interval is
+ *  used.
+ */
 static SpiceOrbit*
 CreateSpiceOrbit(Hash* orbitData,
                  const string& path,
@@ -221,12 +292,18 @@ CreateSpiceOrbit(Hash* orbitData,
 {
     string targetBodyName;
     string originName;
-    string kernelFileName;
-    if (!orbitData->getString("Kernel", kernelFileName))
-    {
-        clog << "Kernel filename missing from SPICE orbit\n";
-        return NULL;
-    }
+	list<string> kernelList;
+
+	if (orbitData->getValue("Kernel") != NULL)
+	{
+		// Kernel list is optional; a SPICE orbit may rely on kernels already loaded into
+		// the kernel pool.
+		if (!ParseStringList(orbitData, "Kernel", kernelList))
+		{
+			clog << "Kernel list for SPICE orbit is neither a string nor array of strings\n";
+			return NULL;
+		}
+	}
 
     if (!orbitData->getString("Target", targetBodyName))
     {
@@ -237,20 +314,6 @@ CreateSpiceOrbit(Hash* orbitData,
     if (!orbitData->getString("Origin", originName))
     {
         clog << "Origin name missing from SPICE orbit\n";
-        return NULL;
-    }
-
-    double beginningTDBJD = 0.0;
-    if (!ParseDate(orbitData, "Beginning", beginningTDBJD))
-    {
-        clog << "Beginning date missing from SPICE orbit\n";
-        return NULL;
-    }
-
-    double endingTDBJD = 0.0;
-    if (!ParseDate(orbitData, "Ending", endingTDBJD))
-    {
-        clog << "Ending date missing from SPICE orbit\n";
         return NULL;
     }
 
@@ -274,14 +337,57 @@ CreateSpiceOrbit(Hash* orbitData,
         period = period * 365.25;
     }
 
-    SpiceOrbit* orbit = new SpiceOrbit(kernelFileName,
-                                       targetBodyName,
-                                       originName,
-                                       period,
-                                       boundingRadius,
-                                       beginningTDBJD,
-                                       endingTDBJD);
-    if (!orbit->init(path))
+	// Either a complete time interval must be specified with Beginning/Ending, or
+	// else neither field can be present.
+	Value* beginningDate = orbitData->getValue("Beginning");
+	Value* endingDate = orbitData->getValue("Ending");
+	if (beginningDate != NULL && endingDate == NULL)
+	{
+		clog << "Beginning specified for SPICE orbit, but ending is missing.\n";
+		return NULL;
+	}
+
+	if (endingDate != NULL && beginningDate == NULL)
+	{
+		clog << "Ending specified for SPICE orbit, but beginning is missing.\n";
+		return NULL;
+	}
+
+	SpiceOrbit* orbit = NULL;
+	if (beginningDate != NULL && endingDate != NULL)
+	{
+		double beginningTDBJD = 0.0;
+		if (!ParseDate(orbitData, "Beginning", beginningTDBJD))
+		{
+			clog << "Invalid beginning date specified for SPICE orbit.\n";
+			return NULL;
+		}
+
+		double endingTDBJD = 0.0;
+		if (!ParseDate(orbitData, "Ending", endingTDBJD))
+		{
+			clog << "Invalid ending date specified for SPICE orbit.\n";
+			return NULL;
+		}
+	
+		orbit = new SpiceOrbit(targetBodyName,
+							   originName,
+							   period,
+							   boundingRadius,
+							   beginningTDBJD,
+							   endingTDBJD);
+	}
+	else
+	{
+		// No time interval given; we'll use whatever coverage window is given
+		// in the SPICE kernel.
+		orbit = new SpiceOrbit(targetBodyName,
+							   originName,
+							   period,
+							   boundingRadius);
+	}
+
+    if (!orbit->init(path, &kernelList))
     {
         // Error using SPICE library; destroy the orbit; hopefully a
         // fallback is defined in the SSC file.
