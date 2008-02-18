@@ -69,6 +69,79 @@ private:
 };
 
 
+/******* IAU rotation models for the planets *******/
+
+
+/*! IAUPrecessingRotationModel is a rotation model with uniform rotation about
+ *  a pole that precesses linearly in RA and declination.
+ */
+class IAUPrecessingRotationModel : public IAURotationModel
+{
+public:
+    
+    /*! rotationRate is in degrees per Julian day
+     *  pole precession is in degrees per Julian century
+     */
+    IAUPrecessingRotationModel(double _poleRA,
+                               double _poleRARate,
+                               double _poleDec,
+                               double _poleDecRate,
+                               double _meridianAtEpoch,
+                               double _rotationRate) :
+        IAURotationModel(360.0 / _rotationRate),
+        poleRA(_poleRA),
+        poleRARate(_poleRARate),
+        poleDec(_poleDec),
+        poleDecRate(_poleDecRate),
+        meridianAtEpoch(_meridianAtEpoch),
+        rotationRate(_rotationRate)
+    {
+    }
+    
+    void pole(double d, double& ra, double &dec) const
+    {
+        double T = d / 36525.0;
+        ra = poleRA + poleRARate * T;
+        dec = poleDec + poleDecRate * T;
+    }
+    
+    double meridian(double d) const
+    {
+        return meridianAtEpoch + rotationRate * d;
+    }
+    
+private:
+    double poleRA;
+    double poleRARate;
+    double poleDec;
+    double poleDecRate;
+    double meridianAtEpoch;
+    double rotationRate;
+};
+
+
+class IAUNeptuneRotationModel : public IAURotationModel
+{
+public:
+    IAUNeptuneRotationModel() : IAURotationModel(360.0 / 536.3128492) {}
+    
+    void pole(double d, double& ra, double &dec) const
+    {
+        double T = d / 36525.0;
+        double N = degToRad(357.85 + 52.316 * T);
+        ra = 299.36 + 0.70 * sin(N);
+        dec = 43.46 - 0.51 * cos(N);
+    }
+    
+    double meridian(double d) const
+    {
+        double T = d / 36525.0;
+        double N = degToRad(357.85 + 52.316 * T);
+        return 253.18 + 536.3128492 * d - 0.48 * sin(N);
+    }    
+};
+
+
 /*! IAU rotation model for the Moon.
  *  From the IAU/IAG Working Group on Cartographic Coordinates and Rotational Elements:
  *  http://astrogeology.usgs.gov/Projects/WGCCRE/constants/iau2000_table2.html
@@ -404,6 +477,31 @@ GetCustomRotationModel(const std::string& name)
     {
         CustomRotationModelsInitialized = true;
         
+        CustomRotationModels["iau-mercury"] = new IAUPrecessingRotationModel(281.01, -0.033,
+                                                                             61.45, -0.005,
+                                                                             329.548, 6.1385025);
+        CustomRotationModels["iau-venus"]   = new IAUPrecessingRotationModel(272.76, 0.0,
+                                                                             67.16, 0.0,
+                                                                             160.20, -1.4813688);
+        CustomRotationModels["iau-earth"]   = new IAUPrecessingRotationModel(0.0, -0.641,
+                                                                             90.0, -0.557,
+                                                                             190.147, 360.9856235);
+        CustomRotationModels["iau-mars"]    = new IAUPrecessingRotationModel(317.68143, -0.1061,
+                                                                             52.88650, -0.0609,
+                                                                             176.630, 350.89198226);
+        CustomRotationModels["iau-jupiter"] = new IAUPrecessingRotationModel(268.05, -0.009,
+                                                                             64.49, -0.003,
+                                                                             284.95, 870.5366420);
+        CustomRotationModels["iau-saturn"]  = new IAUPrecessingRotationModel(40.589, -0.036,
+                                                                             83.537, -0.004,
+                                                                             38.90, 810.7939024);
+        CustomRotationModels["iau-uranus"]  = new IAUPrecessingRotationModel(257.311, 0.0,
+                                                                             -15.175, 0.0,
+                                                                             203.81, -501.1600928);
+        CustomRotationModels["iau-neptune"] = new IAUNeptuneRotationModel();
+        CustomRotationModels["iau-pluto"]   = new IAUPrecessingRotationModel(313.02, 0.0,
+                                                                             9.09, 0.0,
+                                                                             236.77, -56.3623195);
         CustomRotationModels["iau-moon"] = new IAULunarRotationModel();
         CustomRotationModels["iau-mimas"] = new IAUMimasRotationModel();
         CustomRotationModels["iau-enceladus"] = new IAUEnceladusRotationModel();
