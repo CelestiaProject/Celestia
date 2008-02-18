@@ -13,21 +13,26 @@
 #define _CELENGINE_SPICEORBIT_H_
 
 #include <string>
+#include <list>
 #include <celengine/orbit.h>
 
 class SpiceOrbit : public CachingOrbit
 {
  public:
-    SpiceOrbit(const std::string& _kernelFile,
-               const std::string& _targetBodyName,
+    SpiceOrbit(const std::string& _targetBodyName,
                const std::string& _originName,
                double _period,
                double _boundingRadius,
                double _beginning,
                double _ending);
+	SpiceOrbit(const std::string& _targetBodyName,
+			   const std::string& _originName,
+			   double _period,
+			   double _boundingRadius);
     virtual ~SpiceOrbit();
 
-    bool init(const std::string& path);
+    bool init(const std::string& path,
+			  const std::list<std::string>* requiredKernels);
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
@@ -42,7 +47,6 @@ class SpiceOrbit : public CachingOrbit
     virtual void getValidRange(double& begin, double& end) const;
 
  private:
-    const std::string kernelFile;
     const std::string targetBodyName;
     const std::string originName;
     double period;
@@ -55,6 +59,8 @@ class SpiceOrbit : public CachingOrbit
 
     double validIntervalBegin;
     double validIntervalEnd;
+
+	bool useDefaultTimeInterval;
 };
 
 #endif // _CELENGINE_SPICEORBIT_H_
