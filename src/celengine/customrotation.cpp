@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <map>
+#include <string>
 #include <celengine/customrotation.h>
 #include <celengine/rotation.h>
 #include <celengine/astro.h>
@@ -17,6 +19,13 @@
 using namespace std;
 
 
+static map<string, RotationModel*> CustomRotationModels;
+static bool CustomRotationModelsInitialized = false;
+
+
+/*! Base class for IAU rotation models. All IAU rotation models are in the
+ *  J2000.0 Earth equatorial frame.
+ */
 class IAURotationModel : public RotationModel
 {
 public:
@@ -32,6 +41,8 @@ public:
     
     virtual Quatd spin(double t) const
     {
+        // Time argument of IAU rotation models is actually day since J2000.0 TT, but
+        // Celestia uses TDB. The difference should be so minute as to be irrelevant.
         t = t - astro::J2000;
         return Quatd::yrotation(-degToRad(180.0 + meridian(t)));
     }
@@ -55,6 +66,88 @@ public:
     
 private:
     double period;
+};
+
+
+/*! IAU rotation model for the Moon.
+ *  From the IAU/IAG Working Group on Cartographic Coordinates and Rotational Elements:
+ *  http://astrogeology.usgs.gov/Projects/WGCCRE/constants/iau2000_table2.html
+ */
+class IAULunarRotationModel : public IAURotationModel
+{
+public:
+    IAULunarRotationModel() : IAURotationModel(360.0 / 13.17635815) {}
+    
+    void calcArgs(double d, double E[14]) const
+    {
+        E[1]  = degToRad(125.045 -  0.0529921 * d);
+        E[2]  = degToRad(250.089 -  0.1059842 * d);
+        E[3]  = degToRad(260.008 + 13.012009 * d);
+        E[4]  = degToRad(176.625 + 13.3407154 * d);
+        E[5]  = degToRad(357.529 +  0.9856993 * d);
+        E[6]  = degToRad(311.589 + 26.4057084 * d);
+        E[7]  = degToRad(134.963 + 13.0649930 * d);
+        E[8]  = degToRad(276.617 +  0.3287146 * d);
+        E[9]  = degToRad( 34.226 +  1.7484877 * d);
+        E[10] = degToRad( 15.134 -  0.1589763 * d);
+        E[11] = degToRad(119.743 +  0.0036096 * d);
+        E[12] = degToRad(239.961 +  0.1643573 * d);
+        E[13] = degToRad( 25.053 + 12.9590088 * d);
+    }
+    
+    void pole(double d, double& ra, double& dec) const
+    {
+        double T = d / 36525.0;
+
+        double E[14];
+        calcArgs(d, E);
+        
+        ra = 269.9949
+            + 0.0013*T
+            - 3.8787 * sin(E[1])
+            - 0.1204 * sin(E[2])
+            + 0.0700 * sin(E[3])
+            - 0.0172 * sin(E[4])
+            + 0.0072 * sin(E[6])
+            - 0.0052 * sin(E[10])
+            + 0.0043 * sin(E[13]);
+            
+        dec = 66.5392
+            + 0.0130 * T
+            + 1.5419 * cos(E[1])
+            + 0.0239 * cos(E[2])
+            - 0.0278 * cos(E[3])
+            + 0.0068 * cos(E[4])
+            - 0.0029 * cos(E[6])
+            + 0.0009 * cos(E[7])
+            + 0.0008 * cos(E[10])
+            - 0.0009 * cos(E[13]);
+            
+            
+    }
+    
+    double meridian(double d) const
+    {
+        double E[14];
+        calcArgs(d, E);
+        
+        return (38.3213
+                + 13.17635815 * d
+                - 1.4e-12 * d * d
+                + 3.5610 * sin(E[1])
+                + 0.1208 * sin(E[2])
+                - 0.0642 * sin(E[3])
+                + 0.0158 * sin(E[4])
+                + 0.0252 * sin(E[5])
+                - 0.0066 * sin(E[6])
+                - 0.0047 * sin(E[7])
+                - 0.0046 * sin(E[8])
+                + 0.0028 * sin(E[9])
+                + 0.0052 * sin(E[10])
+                + 0.0040 * sin(E[11])
+                + 0.0019 * sin(E[12])
+                - 0.0044 * sin(E[13]));
+    }
 };
 
 
@@ -306,54 +399,29 @@ public:
 RotationModel*
 GetCustomRotationModel(const std::string& name)
 {
-    if (name == "iau-mimas")
+    // Initialize the custom rotation model table.
+    if (!CustomRotationModelsInitialized)
     {
-        return new IAUMimasRotationModel();
+        CustomRotationModelsInitialized = true;
+        
+        CustomRotationModels["iau-moon"] = new IAULunarRotationModel();
+        CustomRotationModels["iau-mimas"] = new IAUMimasRotationModel();
+        CustomRotationModels["iau-enceladus"] = new IAUEnceladusRotationModel();
+        CustomRotationModels["iau-tethys"] = new IAUTethysRotationModel();
+        CustomRotationModels["iau-telesto"] = new IAUTelestoRotationModel();
+        CustomRotationModels["iau-calypso"] = new IAUCalypsoRotationModel();
+        CustomRotationModels["iau-dione"] = new IAUDioneRotationModel();
+        CustomRotationModels["iau-helene"] = new IAUHeleneRotationModel();
+        CustomRotationModels["iau-rhea"] = new IAURheaRotationModel();
+        CustomRotationModels["iau-titan"] = new IAUTitanRotationModel();
+        CustomRotationModels["iau-iapetus"] = new IAUIapetusRotationModel();
+        CustomRotationModels["iau-phoebe"] = new IAUPhoebeRotationModel();
     }
-    else if (name == "iau-enceladus")
-    {
-        return new IAUEnceladusRotationModel();
-    }
-    else if (name == "iau-tethys")
-    {
-        return new IAUTethysRotationModel();
-    }
-    else if (name == "iau-telesto")
-    {
-        return new IAUTelestoRotationModel();
-    }
-    else if (name == "iau-calypso")
-    {
-        return new IAUCalypsoRotationModel();
-    }
-    else if (name == "iau-dione")
-    {
-        return new IAUDioneRotationModel();
-    }
-    else if (name == "iau-helene")
-    {
-        return new IAUHeleneRotationModel();
-    }
-    else if (name == "iau-rhea")
-    {
-        return new IAURheaRotationModel();
-    }
-    else if (name == "iau-titan")
-    {
-        return new IAUTitanRotationModel();
-    }
-    else if (name == "iau-iapetus")
-    {
-        return new IAUIapetusRotationModel();
-    }
-    else if (name == "iau-phoebe")
-    {
-        return new IAUPhoebeRotationModel();
-    }
+
+    if (CustomRotationModels.count(name) > 0)
+        return CustomRotationModels[name];
     else
-    {
         return NULL;
-    }
 }
 
 
