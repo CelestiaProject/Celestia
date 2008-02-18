@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Celestia-pt\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-01-29 22:52+0100\n"
-"PO-Revision-Date: 2008-02-09 11:31-0000\n"
+"PO-Revision-Date: 2008-02-16 16:02-0000\n"
 "Last-Translator: José Raeiro <zeraeiro@gmail.com>\n"
 "Language-Team: Portuguese <zeraeiro@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -102,7 +102,7 @@ msgstr "  Estatísticas do modelo: "
 
 #: src/celengine/meshmanager.cpp:119
 msgid " vertices, "
-msgstr " vertices, "
+msgstr " vértices, "
 
 #: src/celengine/meshmanager.cpp:120
 msgid " primitives, "
@@ -197,7 +197,7 @@ msgstr "Total de estrelas: "
 
 #: src/celengine/stardb.cpp:841
 msgid " star(s) with duplicate catalog numbers deleted.)\n"
-msgstr " estrela(s) com números de catálogo duplicadas apagadas.)\n"
+msgstr " estrela(s) com números de catálogo duplicados apagados.)\n"
 
 #: src/celengine/stardb.cpp:872
 msgid "Error in .stc file (line "
@@ -213,7 +213,7 @@ msgstr "Estrela inválida: classe espectral inválida.\n"
 
 #: src/celengine/stardb.cpp:1025
 msgid "Barycenter "
-msgstr "Baricentro"
+msgstr "Baricentro "
 
 #: src/celengine/stardb.cpp:1025
 msgid " does not exist.\n"
@@ -250,7 +250,7 @@ msgstr "Criando uma textura em mosaico. Largura="
 
 #: src/celengine/texture.cpp:1019
 msgid ", max="
-msgstr ", max="
+msgstr ", máx="
 
 #: src/celengine/texture.cpp:1024
 msgid "Creating ordinary texture: "
@@ -339,11 +339,11 @@ msgstr "Limite de magnitude: %.2f"
 
 #: src/celestia/celestiacore.cpp:1384
 msgid "Markers enabled"
-msgstr "Marcadores activados"
+msgstr "Marcas activadas"
 
 #: src/celestia/celestiacore.cpp:1387
 msgid "Markers disabled"
-msgstr "Marcadores desactivados"
+msgstr "Marcas desactivadas"
 
 #: src/celestia/celestiacore.cpp:1397
 msgid "Goto surface"
@@ -363,7 +363,7 @@ msgstr "Forma das estrelas: Pontos Indistintos"
 
 #: src/celestia/celestiacore.cpp:1470
 msgid "Star style: points"
-msgstr "Forma das estrelas: pontos"
+msgstr "Forma das estrelas: Pontos"
 
 #: src/celestia/celestiacore.cpp:1473
 msgid "Star style: scaled discs"
@@ -484,7 +484,7 @@ msgstr "limite do conhecimento"
 
 #: src/celestia/celestiacore.cpp:1787
 msgid "Using limit of knowledge surface textures."
-msgstr "Usando texturas de superfície do limite do conhecimento"
+msgstr "Usando texturas no limite do conhecimento de superfície "
 
 #: src/celestia/celestiacore.cpp:1850
 msgid "Follow"
@@ -804,7 +804,7 @@ msgstr "Erro ao ler o ficheiro de configuração."
 
 #: src/celestia/celestiacore.cpp:3934
 msgid "Initialization of SPICE library failed."
-msgstr "Inicialização da libraria SPICE falhou."
+msgstr "Inicialização da livraria SPICE falhou."
 
 #: src/celestia/celestiacore.cpp:3981
 msgid "Cannot read star database."
@@ -838,7 +838,7 @@ msgstr "Caminho de Renderização: "
 
 #: src/celestia/celestiacore.cpp:4189
 msgid "Failed to initialize renderer"
-msgstr "Falha na inicializaçaõ do motor de renderização"
+msgstr "Falha na inicialização do motor de renderização"
 
 #: src/celestia/celestiacore.cpp:4205
 msgid "Error loading font; text will not be visible.\n"
@@ -846,15 +846,15 @@ msgstr "Erro ao carregar a fonte; o texto não será visível.\n"
 
 #: src/celestia/celestiacore.cpp:4262
 msgid "Error reading cross index "
-msgstr "Erro ao ler o indície remissívo "
+msgstr "Erro ao ler o índice remissivo "
 
 #: src/celestia/celestiacore.cpp:4264
 msgid "Loaded cross index "
-msgstr "Indíce remissivo carregado "
+msgstr "Índice remissivo carregado "
 
 #: src/celestia/celestiacore.cpp:4285
 msgid "Error reading star names file\n"
-msgstr "Erro ao ler o fichero com o nome das estrelas\n"
+msgstr "Erro ao ler o ficheiro com o nome das estrelas\n"
 
 #: src/celestia/celestiacore.cpp:4308
 msgid "Error reading stars file\n"
@@ -872,7 +872,7 @@ msgstr "Erro ao criar o ficheiro ogg %s para captura.\n"
 #: src/celestia/oggtheoracapture.cpp:247
 #: src/celestia/oggtheoracapture.cpp:267
 msgid "Internal Ogg library error."
-msgstr "Erro na libraria interna de Ogg."
+msgstr "Erro na livraria interna de Ogg."
 
 #: src/celestia/oggtheoracapture.cpp:302
 #, c-format
@@ -1484,7 +1484,7 @@ msgstr "Mostrar Luzes do Lado Nocturno"
 
 #: src/celestia/kde/kdeapp.cpp:596
 msgid "Show Markers"
-msgstr "Mostrar Marcadores"
+msgstr "Mostrar Marcas"
 
 #: src/celestia/kde/kdeapp.cpp:599
 msgid "Show Atmospheres"
@@ -1697,7 +1697,7 @@ msgstr "UTC"
 
 #: src/celestia/kde/kdeapp.cpp:1443
 msgid "This version of Celestia was not built with support for movie recording."
-msgstr "Esta versão do Celestia não foi feita com suporta para captura de filme."
+msgstr "Esta versão do Celestia não foi feita com suporte para captura de filme."
 
 #: src/celestia/kde/kdeapp.cpp:1469
 msgid "Go to URL"
@@ -1759,11 +1759,11 @@ msgstr "Usar directoria de instalação alternativa"
 
 #: src/celestia/kde/kdemain.cpp:33
 msgid "Use as additional \"extras\" directory"
-msgstr "Usar adicionalmete a directoria \"extras\""
+msgstr "Usar como directoria de extensões \"extras\""
 
 #: src/celestia/kde/kdemain.cpp:34
 msgid "Start fullscreen"
-msgstr "Iníciar em ecrã inteiro"
+msgstr "Iniciar em ecrã inteiro"
 
 #: src/celestia/kde/kdemain.cpp:36
 msgid "Disable splash screen"
@@ -1776,7 +1776,7 @@ msgstr "Iniciar e ir para o url"
 #: src/celestia/kde/kdemain.cpp:45
 #: src/celestia/res/resource_strings.cpp:65
 msgid "Copyright (C) 2001-2008, Celestia Development Team"
-msgstr "Copyright (C) 2001-2006, Equipa de Desenvolvimento do Celestia"
+msgstr "Copr. (C) 2001-2008, Equipa de Desenv. do Celestia"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid ""
@@ -1889,7 +1889,7 @@ msgstr "Constelações"
 #: src/celestia/kde/kdepreferencesdialog.cpp:142
 #: src/celestia/res/resource_strings.cpp:155
 msgid "Markers"
-msgstr "Marcadores"
+msgstr "Marcas"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:146
 #: src/celestia/res/resource_strings.cpp:153
@@ -1979,7 +1979,7 @@ msgstr "Alto"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:299
 msgid "Automatic FOV"
-msgstr "CDV Automático"
+msgstr "FOV Automático"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:300
 msgid "Screen DPI: "
@@ -2366,7 +2366,7 @@ msgstr "Fim"
 #: src/celestia/res/resource_strings.cpp:215
 #, no-c-format
 msgid "Search parameters"
-msgstr "Parâmetros de procura"
+msgstr "Parâmetros de busca"
 
 #: src/celestia/kde/rc.cpp:91
 #: src/celestia/res/resource_strings.cpp:216
@@ -2431,7 +2431,7 @@ msgstr "Formato"
 #: src/celestia/kde/rc.cpp:145
 #, no-c-format
 msgid "Current"
-msgstr "Corrente"
+msgstr "Actual"
 
 #: src/celestia/kde/rc.cpp:148
 #, no-c-format
@@ -2698,7 +2698,7 @@ msgstr "Espaço reservado"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
-msgstr "Capturar &Imagen...\tF10"
+msgstr "Capturar &Imagem...\tF10"
 
 #: src/celestia/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
@@ -2770,7 +2770,7 @@ msgstr "10x Mais &Lento\tK"
 
 #: src/celestia/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
-msgstr "Parali&zar\tEspaço"
+msgstr "Pau&sar\tEspaço"
 
 #: src/celestia/res/resource_strings.cpp:25
 msgid "&Real Time\t\\"
@@ -2818,7 +2818,7 @@ msgstr "Menos Estrelas Visíveis\t["
 
 #: src/celestia/res/resource_strings.cpp:36
 msgid "Auto Magnitude\tCtrl+Y"
-msgstr "Magnitude Automatica\tCtrl+Y"
+msgstr "Magnitude Automática\tCtrl+Y"
 
 #: src/celestia/res/resource_strings.cpp:37
 msgid "Star St&yle"
@@ -2854,7 +2854,7 @@ msgstr "&Média"
 
 #: src/celestia/res/resource_strings.cpp:45
 msgid "Antialiasing\tCtrl+X"
-msgstr "Anti-serrilhado\tCtrl+X"
+msgstr "Antialiasing\tCtrl+X"
 
 #: src/celestia/res/resource_strings.cpp:46
 msgid "&View"
@@ -3190,7 +3190,7 @@ msgstr "Mostrar as Feições"
 
 #: src/celestia/res/resource_strings.cpp:193
 msgid "Minimum Labeled Feature Size"
-msgstr "Tamanho Minímo da Feição Legendada"
+msgstr "Tamanho Mínimo da Feição Legendada"
 
 #: src/celestia/res/resource_strings.cpp:194
 msgid "Add New Bookmark Folder"
