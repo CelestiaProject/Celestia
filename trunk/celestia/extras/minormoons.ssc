@@ -1,12 +1,19 @@
 # Named minor moons of the giant planets.
 
+# Semiaxes from the Natural Satellites Data Center
+# http://lnfm1.sai.msu.ru/neb/nss/pardihe.htm,
+# supplemented by Karkoschka "Sizes, shapes and albedos
+# of the inner satellites of Neptune" Icarus 2003; 162: 400
+# and Porco et al. "Physical characteristics and possible
+# accretionary origins for Saturn's small satellites" (2006)
+# http://www.lpi.usra.edu/meetings/lpsc2006/pdf/2289.pdf
+ 
 # Minor moons of Jupiter
 
 "Metis" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		21.5
+	SemiAxes [ 30 20 20 ]
 
 	EllipticalOrbit
 	{
@@ -27,8 +34,7 @@
 "Adrastea" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		8.2
+	SemiAxes [ 10 8 7 ]
 
 	EllipticalOrbit
 	{
@@ -49,8 +55,7 @@
 "Thebe" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		49.3
+	SemiAxes [ 58 49 42 ]
 
 	EllipticalOrbit
 	{
@@ -116,8 +121,7 @@
 "Himalia" "Sol/Jupiter"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		85
+	SemiAxes [ 75 60 60 ]
 
 	EllipticalOrbit
 	{
@@ -493,8 +497,7 @@
 "Pan" "Sol/Saturn"   # Cassini-epoch data
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		12.8
+	SemiAxes [ 17.6 17.3 11.5 ]
 
 	EllipticalOrbit
 	{
@@ -518,8 +521,7 @@
 "Atlas" "Sol/Saturn"   # Cassini-epoch data
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		10
+	SemiAxes [ 22.8 19.0 9.6 ]
 
 	EllipticalOrbit
 	{
@@ -544,8 +546,7 @@
 # Leading Lagrange point of Tethys
 {
 	Texture		"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		12
+	SemiAxes [ 15 12.5 7.5 ]
 
 	EllipticalOrbit
 	{
@@ -569,8 +570,7 @@
 # Trailing Lagrange point of Tethys
 {
 	Texture 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		9.5
+	SemiAxes [ 15 8 8 ]
 
 	EllipticalOrbit
 	{
@@ -594,8 +594,7 @@
 # Leading Lagrange point of Dione
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		16
+	SemiAxes [ 18 16 15 ]
 
 	EllipticalOrbit
 	{
@@ -619,8 +618,7 @@
 "Cordelia" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		20.1
+	SemiAxes [ 25 18 18 ]
 
 	EllipticalOrbit
 	{
@@ -641,8 +639,7 @@
 "Ophelia" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		21.4
+	SemiAxes [ 27 19 19 ]
 
 	EllipticalOrbit
 	{
@@ -663,8 +660,7 @@
 "Bianca" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		25.7
+	SemiAxes [ 32 23 23 ]
 
 	EllipticalOrbit
 	{
@@ -685,8 +681,7 @@
 "Cressida" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		39.8
+	SemiAxes [ 46 37 37 ]
 
 	EllipticalOrbit
 	{
@@ -708,8 +703,7 @@
 "Desdemona" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		32.0
+	SemiAxes [ 45 27 27 ]
 
 	EllipticalOrbit
 	{
@@ -730,8 +724,7 @@
 "Juliet" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		46.8
+	SemiAxes [ 75 37 37 ]
 
 	EllipticalOrbit
 	{
@@ -752,8 +745,7 @@
 "Portia" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		67.6
+	SemiAxes [ 78 63 63 ]
 
 	EllipticalOrbit
 	{
@@ -796,8 +788,7 @@
 "Belinda" "Sol/Uranus"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		40.3
+	SemiAxes [ 64 32 32 ]
 
 	EllipticalOrbit
 	{
@@ -953,8 +944,7 @@
 "Naiad" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		29
+	SemiAxes [ 47 30 26 ]
 
 	EllipticalOrbit
 	{
@@ -977,8 +967,7 @@
 "Thalassa" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		40
+	SemiAxes [ 54 50 26 ]
 
 	EllipticalOrbit
 	{
@@ -999,8 +988,7 @@
 "Despina" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		74
+	SemiAxes [ 90 74 64 ]
 
 	EllipticalOrbit
 	{
@@ -1021,8 +1009,7 @@
 "Galatea" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
-	Mesh		"asteroid.cms"
-	Radius		79
+	SemiAxes [ 102 92 72 ]
 
 	EllipticalOrbit
 	{
