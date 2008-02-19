@@ -37,12 +37,15 @@
 } 
 
 "Pallas" "Sol" 
+# Pole and shape from Schmidt et al
+# "Hubble takes a look at Pallas: Shape, Size and Surface"
+# (2008) http://www.lpi.usra.edu/meetings/lpsc2008/pdf/2502.pdf
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
 	Color [ 1.000 0.952 0.903 ]
 	BlendTexture true
-	Radius 263 
+	SemiAxes [ 291 278 250 ] 
 
 	EllipticalOrbit 
 	{ 
@@ -58,10 +61,10 @@
 
 	UniformRotation
 	{
-	Period         7.81323264 
-	Inclination            102 
-	AscendingNode 162 
-	MeridianAngle       352.77 
+	Period		7.81323264 
+	Inclination	113 
+	AscendingNode	118 
+	MeridianAngle	339 
 	}
 
 	Albedo 0.159 
@@ -73,7 +76,7 @@
 	Texture "asteroid.jpg" 
         Color [ 1.000 0.912 0.833 ]
 	BlendTexture true
-	Radius 130 
+	SemiAxes [ 145 120 95 ] 
 
 	EllipticalOrbit 
 	{ 
@@ -304,7 +307,7 @@
 	{
 	Period  129.6         # 5.41 days
 	Inclination       145
-	PrecessionPeriod  -49.67        # 7.35 day period
+	PrecessionPeriod  -0.0201        # 7.35 day period
 	}
 
 	Albedo 0.16
