@@ -50,6 +50,7 @@
 	OrbitFrame {
 		EquatorJ2000 { Center "Sol/Eris" }
 	}	
+
 	EllipticalOrbit
 	{
 	Epoch		2453979.0    # 2006 Aug 31 12:00UT
@@ -88,7 +89,8 @@
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-	Radius  750              # estimate
+#	Radius  750              # estimate
+	SemiAxes [ 980 760 500 ] # estimate
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
 
@@ -106,6 +108,9 @@
 	UniformRotation
 	{
 	Period     3.9152
+
+	Inclination	255   # spin axis assumed to match
+	AscendingNode	25    # satellite orbits
 	}
 }
 
@@ -118,6 +123,13 @@
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
 #	Orbit from Brown ME et al: http://www.gps.caltech.edu/%7Embrown/papers/ps/EL61.pdf
+
+	BodyFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
+	OrbitFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
 
 	EllipticalOrbit {
 		Period            49.12 
@@ -141,6 +153,13 @@
 	Radius  90             # ~0.2% of system mass
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
+
+	BodyFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
+	OrbitFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
 
 	EllipticalOrbit {
 		Period            34.1 
