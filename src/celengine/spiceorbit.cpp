@@ -157,7 +157,7 @@ SpiceOrbit::init(const string& path,
 	}
    
 	SpiceInt nIntervals = card_c(&targetCoverage) / 2;
-	if (nIntervals <= 0)
+	if (nIntervals <= 0 && targetID != 0)
 	{
         clog << "Couldn't find object " << targetBodyName << " in SPICE kernel pool.\n";
         spiceErr = true;
