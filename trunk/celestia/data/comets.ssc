@@ -26,7 +26,7 @@
 	{
 	Period             170          # 7.1 day axial rotation period 
 	Inclination         66    
-	PrecessionPeriod    98.72       # 3.7 day precession period 
+	PrecessionPeriod     0.010      # 3.7 day precession period 
 	}
 
 	Albedo 0.04 
