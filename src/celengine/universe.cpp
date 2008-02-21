@@ -322,14 +322,14 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     if (!body->isVisible() || !body->extant(pickInfo->jd) || !body->isClickable())
         return true;
 
-    Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
+    Point3d bpos = body->getAstrocentricPosition(pickInfo->jd);
     Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
     double distance = bodyDir.length();
 
     // Check the apparent radius of the orbit against our tolerance factor.
     // This check exists to make sure than when picking a distant, we select
     // the planet rather than one of its satellites.
-    float appOrbitRadius = (float) (body->getOrbit()->getBoundingRadius() /
+    float appOrbitRadius = (float) (body->getOrbit(pickInfo->jd)->getBoundingRadius() /
                                     distance);
 
     if ((pickInfo->atanTolerance > ANGULAR_RES ? pickInfo->atanTolerance:
@@ -358,7 +358,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
-    Point3d bpos = body->getHeliocentricPosition(pickInfo->jd);
+    Point3d bpos = body->getAstrocentricPosition(pickInfo->jd);
     float radius = body->getRadius();
     double distance = -1.0;
 
@@ -378,7 +378,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
                 Vec3f semiAxes = body->getSemiAxes();
                 Vec3d ellipsoidAxes(semiAxes.x, semiAxes.y, semiAxes.z);
                 // Transform rotate the pick ray into object coordinates
-                Mat3d m = conjugate(body->getEclipticalToEquatorial(pickInfo->jd)).toMatrix3();
+                Mat3d m = conjugate(body->getEclipticToEquatorial(pickInfo->jd)).toMatrix3();
                 Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
                         pickInfo->pickRay.direction);
                 r = r * m;
@@ -391,7 +391,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // Transform rotate the pick ray into object coordinates
             Quatf qf = body->getOrientation();
             Quatd qd(qf.w, qf.x, qf.y, qf.z);
-            Mat3d m = conjugate(qd * body->getEclipticalToBodyFixed(pickInfo->jd)).toMatrix3();
+            Mat3d m = conjugate(qd * body->getEclipticToBodyFixed(pickInfo->jd)).toMatrix3();
             Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
                     pickInfo->pickRay.direction);
             r = r * m;

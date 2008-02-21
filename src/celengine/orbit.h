@@ -26,9 +26,11 @@ class Orbit
     virtual Point3d positionAtTime(double jd) const = 0;
 
     /*! Return the orbital velocity in the orbit's reference frame at the
-     * specified time (TDB). Units are kilometers per day.
+     * specified time (TDB). Units are kilometers per day. If the method
+	 * is not overridden, the velocity will be computed by differentiation
+	 * of position.
      */
-    //virtual Vec3d velocityAtTime(double) const = 0;
+    virtual Vec3d velocityAtTime(double) const;
 
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
@@ -92,21 +94,25 @@ class OrbitSampleProc
 class CachingOrbit : public Orbit
 {
  public:
-    CachingOrbit() : lastTime(-1.0e30) {};
-    virtual ~CachingOrbit() {};
+    CachingOrbit();
+    virtual ~CachingOrbit();
 
     virtual Point3d computePosition(double jd) const = 0;
-    //virtual Vec3d computeVelocity(double jd) const = 0;
+    virtual Vec3d computeVelocity(double jd) const;
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
 
     Point3d positionAtTime(double jd) const;
+	Vec3d velocityAtTime(double jd) const;
 
     virtual void sample(double, double, int, OrbitSampleProc& proc) const;
 
  private:
     mutable Point3d lastPosition;
+	mutable Vec3d lastVelocity;
     mutable double lastTime;
+	mutable bool positionCacheValid;
+	mutable bool velocityCacheValid;
 };
 
 
@@ -123,7 +129,7 @@ class MixedOrbit : public Orbit
     virtual ~MixedOrbit();
 
     virtual Point3d positionAtTime(double jd) const;
-    //virtual Vec3d velocityAtTime(double jd) const;
+    virtual Vec3d velocityAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
     virtual void sample(double t0, double t1,

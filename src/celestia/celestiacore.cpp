@@ -2972,7 +2972,7 @@ static void displayPlanetocentricCoords(Overlay& overlay,
     else
     {
         // Swap hemispheres if the object is a retrograde rotator
-        Quatd q = ~body.getEclipticalToEquatorial(astro::J2000);
+        Quatd q = ~body.getEclipticToEquatorial(astro::J2000);
         bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
 
         if ((latitude < 0.0) ^ retrograde)
@@ -3141,7 +3141,7 @@ static void displayPlanetInfo(Overlay& overlay,
                               Body& body,
                               double t,
                               double distance,
-                              Vec3d /*viewVec*/)
+                              Vec3d viewVec)
 {
     double kmDistance = astro::lightYearsToKilometers(distance);
 
@@ -3162,12 +3162,53 @@ static void displayPlanetInfo(Overlay& overlay,
 
     displayApparentDiameter(overlay, body.getRadius(), kmDistance);
 
+	// Display the phase angle
+
+	// Find the parent star of the body. This can be slightly complicated if
+	// the body orbits a barycenter instead of a star.
+	Selection parent = Selection(&body).parent();
+	while (parent.body() != NULL)
+		parent = parent.parent();
+
+	if (parent.star() != NULL)
+	{
+		bool showPhaseAngle = false;
+
+		Star* sun = parent.star();
+		if (sun->getVisibility())
+		{
+			showPhaseAngle = true;
+		}
+		else
+		{
+			// The planet's orbit is defined with respect to a barycenter. If there's
+			// a single star orbiting the barycenter, we'll compute the phase angle
+			// for the planet with respect to that star. If there are no stars, the
+			// planet is an orphan, drifting through space with no star. We also skip
+			// displaying the phase angle when there are multiple stars (for now.)
+			if (sun->getOrbitingStars()->size() == 1)
+			{
+				sun = sun->getOrbitingStars()->at(0);
+				showPhaseAngle = sun->getVisibility();
+			}
+		}
+
+		if (showPhaseAngle)
+		{
+			Vec3d sunVec = Selection(&body).getPosition(t) - Selection(sun).getPosition(t);
+			sunVec.normalize();
+			double cosPhaseAngle = sunVec * ((1.0 / viewVec.length()) * viewVec);
+			double phaseAngle = acos(cosPhaseAngle);
+			//overlay.oprintf("Phase angle: %.1f%s\n", radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+		}
+	}
+
     if (detail > 1)
     {
-        if (body.getRotationModel()->isPeriodic())
+        if (body.getRotationModel(t)->isPeriodic())
         {
             overlay << _("Day length: ");
-            displayDuration(overlay, body.getRotationModel()->getPeriod());
+            displayDuration(overlay, body.getRotationModel(t)->getPeriod());
             overlay << '\n';
         }
 
@@ -3177,7 +3218,7 @@ static void displayPlanetInfo(Overlay& overlay,
             const Star* sun = system->getStar();
             if (sun != NULL)
             {
-                double distFromSun = body.getHeliocentricPosition(t).distanceFromOrigin();
+                double distFromSun = body.getAstrocentricPosition(t).distanceFromOrigin();
                 float planetTemp = sun->getTemperature() *
                     (float) (::pow(1.0 - body.getAlbedo(), 0.25) *
                              sqrt(sun->getRadius() / (2.0 * distFromSun)));
@@ -3190,7 +3231,7 @@ static void displayPlanetInfo(Overlay& overlay,
             // Code to display apparent magnitude.  Disabled because it's not very
             // accurate.  Too many simplifications are used when computing the amount
             // of light reflected from a body.
-            Point3d bodyPos = body.getHeliocentricPosition(t);
+            Point3d bodyPos = body.getAstrocentricPosition(t);
             float appMag = body.getApparentMagnitude(*sun,
                                                      bodyPos - Point3d(0, 0, 0),
                                                      viewVec);

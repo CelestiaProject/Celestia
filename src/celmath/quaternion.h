@@ -618,7 +618,7 @@ template<class T> Quaternion<T> Quaternion<T>::vecToVecRotation(const Vector3<T>
         // The magnitude of rotAxis is the sine of half the angle between
         // v0 and v1.
         Vector3<T> rotAxis = half ^ v1;
-        double cosAngle = half * v1;
+        T cosAngle = half * v1;
         return Quaternion<T>(cosAngle, rotAxis.x, rotAxis.y, rotAxis.z);
     }
     else

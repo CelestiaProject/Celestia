@@ -955,6 +955,8 @@ StarDetails::addOrbitingStar(Star* star)
 }
 
 
+/*! Get the position of the star in the universal coordinate system.
+ */
 UniversalCoord
 Star::getPosition(double t) const
 {
@@ -1005,6 +1007,37 @@ Star::getOrbitBarycenterPosition(double t) const
     else
     {
         return barycenter->getPosition(t);
+    }
+}
+
+
+/*! Get the velocity of the star in the universal coordinate system.
+ */
+Vec3d
+Star::getVelocity(double t) const
+{
+    const Orbit* orbit = getOrbit();
+    if (!orbit)
+    {
+		// The star doesn't have a defined orbit, so the velocity is just
+		// zero. (This will change when stellar proper motion is implemented.)
+		return Vec3d(0.0, 0.0, 0.0);
+    }
+    else
+    {
+        const Star* barycenter = getOrbitBarycenter();
+
+        if (barycenter == NULL)
+        {
+			// Star orbit is defined around a fixed point, so the total velocity
+			// is just the star's orbit velocity.
+			return orbit->velocityAtTime(t);
+        }
+        else
+        {
+			// Sum the star's orbital velocity and the velocity of the barycenter.
+            return barycenter->getVelocity(t) + orbit->velocityAtTime(t);
+        }
     }
 }
 

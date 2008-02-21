@@ -21,16 +21,19 @@
 #include <celengine/star.h>
 #include <celengine/location.h>
 #include <celengine/rotation.h>
+#include <celengine/timeline.h>
 
 class ReferenceFrame;
 class Body;
+class FrameTree;
 
 class PlanetarySystem
 {
  public:
     PlanetarySystem(Body* _primary);
     PlanetarySystem(Star* _star);
-    
+    ~PlanetarySystem();
+
     Star* getStar() const { return star; };
     Body* getPrimaryBody() const { return primary; };
     int getSystemSize() const { return satellites.size(); };
@@ -58,6 +61,7 @@ class PlanetarySystem
     Star* star;
     Body* primary;
     std::vector<Body*> satellites;
+    ReferenceFrame* defaultFrame;
     ObjectIndex objectIndex;  // index of bodies by name
     ObjectIndex i18nObjectIndex;
 };
@@ -116,23 +120,23 @@ class Body
     PlanetarySystem* getSystem() const;
     std::string getName(bool i18n = false) const;
     void setName(const std::string);
-    Orbit* getOrbit() const;
-    void setOrbit(Orbit*);
-    const Body* getOrbitBarycenter() const;
-    void setOrbitBarycenter(const Body*);
 
-    const ReferenceFrame* getOrbitFrame() const;
-    void setOrbitFrame(const ReferenceFrame* f);
-    const ReferenceFrame* getBodyFrame() const;
-    void setBodyFrame(const ReferenceFrame* f);
+    void setTimeline(Timeline* timeline);
+    const Timeline* getTimeline() const;
 
-    const RotationModel* getRotationModel() const;
-    void setRotationModel(const RotationModel*);
+    FrameTree* getFrameTree() const;
+    FrameTree* getOrCreateFrameTree();
 
+    const ReferenceFrame* getOrbitFrame(double tdb) const;
+    const Orbit* getOrbit(double tdb) const;
+    const ReferenceFrame* getBodyFrame(double tdb) const;
+    const RotationModel* getRotationModel(double tdb) const;
+ 
     // Size methods
     void setSemiAxes(const Vec3f&);
     Vec3f getSemiAxes() const;
     float getRadius() const;
+
     bool isSphere() const;
     bool isEllipsoid() const;
 
@@ -169,55 +173,37 @@ class Body
     float getLuminosity(float sunLuminosity,
                         float distanceFromSun) const;
 
-    /*! Get the apparent magnitude of the body, neglecting the phase (as if
-     *  the body was at opposition.
-     */
     float getApparentMagnitude(const Star& sun,
                                float distanceFromSun,
                                float distanceFromViewer) const;
-
-    /*! Get the apparent magnitude of the body, neglecting the phase (as if
-     *  the body was at opposition.
-     */
     float getApparentMagnitude(float sunLuminosity,
                                float distanceFromSun,
                                float distanceFromViewer) const;
-
-    /*! Get the apparent magnitude of the body, corrected for its phase.
-     */
     float getApparentMagnitude(const Star& sun,
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
-
-    /*! Get the apparent magnitude of the body, corrected for the phase.
-     */
     float getApparentMagnitude(float sunLuminosity,
                                const Vec3d& sunPosition,
                                const Vec3d& viewerPosition) const;
 
-    /*! Get the transformation which converts body coordinates into
-     *  heliocentric coordinates. Some clarification on the meaning
-     *  of 'heliocentric': the position of every solar system body
-     *  is ultimately defined with respect to some star or star
-     *  system barycenter. Currently, this star is the root of the
-     *  name hierarchy containing the body. In future (post-1.5.0)
-     *  versions of Celestia, this will be changed so that the
-     *  reference star is the root of the frame hierarchy.
-     */
-    Mat4d getLocalToHeliocentric(double) const;
-    Point3d getHeliocentricPosition(double) const;
+    UniversalCoord getPosition(double tdb) const;
+    Quatd getOrientation(double tdb) const;
+	Vec3d getVelocity(double tdb) const;
+	Vec3d getAngularVelocity(double tdb) const;
+
+    Mat4d getLocalToAstrocentric(double) const;
+    Point3d getAstrocentricPosition(double) const;
     Quatd getEquatorialToBodyFixed(double) const;
-    Quatd getEclipticalToFrame(double) const;
-    Quatd getEclipticalToEquatorial(double) const;
-    Quatd getEclipticalToBodyFixed(double) const;
-    Mat4d getBodyFixedToHeliocentric(double) const;
+    Quatd getEclipticToFrame(double) const;
+    Quatd getEclipticToEquatorial(double) const;
+    Quatd getEclipticToBodyFixed(double) const;
+    Mat4d getBodyFixedToAstrocentric(double) const;
 
     Vec3d planetocentricToCartesian(double lon, double lat, double alt) const;
     Vec3d planetocentricToCartesian(const Vec3d& lonLatAlt) const;
     Vec3d cartesianToPlanetocentric(const Vec3d& v) const;
 
-    Vec3d eclipticToPlanetocentric(const Vec3d& ecl, double tdb) const;
-    
+    Vec3d eclipticToPlanetocentric(const Vec3d& ecl, double tdb) const;  
 
     bool extant(double) const;
     void setLifespan(double, double);
@@ -262,18 +248,21 @@ class Body
     Star* getReferenceStar() const;
     Star* getFrameReferenceStar() const;
 
+    void markChanged();
+    void markUpdated();
+
  private:
     std::string name;
     std::string i18nName;
 
+    // Parent in the name hierarchy
     PlanetarySystem* system;
-    
-    Orbit* orbit;
-    const Body* orbitBarycenter;
-    const ReferenceFrame* orbitFrame;
-    const ReferenceFrame* bodyFrame;
-    
-    const RotationModel* rotationModel;
+    // Children in the name hierarchy
+    PlanetarySystem* satellites;
+
+    Timeline* timeline;
+    // Children in the frame hierarchy
+    FrameTree* frameTree;
 
     float radius;
     Vec3f semiAxes;
@@ -281,16 +270,11 @@ class Body
     float albedo;
     Quatf orientation;
 
-    double protos;
-    double eschatos;
-
     ResourceHandle model;
     Surface surface;
 
     Atmosphere* atmosphere;
     RingSystem* rings;
-
-    PlanetarySystem* satellites;
 
     int classification;
 
@@ -311,9 +295,6 @@ class Body
     unsigned int visibleAsPoint : 1;
     unsigned int overrideOrbitColor : 1;
     VisibilityPolicy orbitVisibility : 3;
-
-    // Only necessary until we switch to using frame hierarchy
-    Star* frameRefStar;
 };
 
 #endif // _CELENGINE_BODY_H_

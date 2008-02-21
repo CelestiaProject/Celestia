@@ -8,8 +8,6 @@
 // of the License, or (at your option) any later version.
 
 #include <cstdlib>
-// Missing from g++ . . . why???
-// #include <limits>
 #include <cassert>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
@@ -18,31 +16,26 @@
 #include "meshmanager.h"
 #include "body.h"
 #include "frame.h"
+#include "timeline.h"
+#include "timelinephase.h"
+#include "frametree.h"
 
 using namespace std;
 
 Body::Body(PlanetarySystem* _system) :
-    orbit(NULL),
-    orbitBarycenter(_system ? _system->getPrimaryBody() : NULL),
-    orbitFrame(NULL),
-    bodyFrame(NULL),
-    rotationModel(NULL),
+    system(_system),
+    satellites(NULL),
+    timeline(NULL),
+    frameTree(NULL),
     radius(1.0f),
     semiAxes(1.0f, 1.0f, 1.0f),
     mass(0.0f),
     albedo(0.5),
     orientation(1.0f),
-    // Ugh.  Numeric_limits class is missing from g++
-    // protos(-numeric_limits<double>::infinity()),
-    // eschatos(numeric_limits<double>::infinity()),
-    // Do it the ugly way instead:
-    protos(-1.0e+50),
-    eschatos(1.0e+50),
     model(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
     rings(NULL),
-    satellites(NULL),
     classification(Unknown),
     altSurfaces(NULL),
     locations(NULL),
@@ -52,29 +45,21 @@ Body::Body(PlanetarySystem* _system) :
     clickable(1),
     visibleAsPoint(1),
     overrideOrbitColor(0),
-    orbitVisibility(UseClassVisibility),
-    frameRefStar(NULL)
+    orbitVisibility(UseClassVisibility)
 {
-    system = _system;
 }
 
 
 Body::~Body()
 {
-    // clean up orbit, atmosphere, etc.
     if (system != NULL)
         system->removeBody(this);
+    // Remove from frame hierarchy
 
-    if (orbitFrame != NULL)
-        orbitFrame->release();
-    if (bodyFrame != NULL)
-        bodyFrame->release();
-}
+    delete timeline;
 
-
-PlanetarySystem* Body::getSystem() const
-{
-    return system;
+    delete satellites;
+    delete frameTree;
 }
 
 
@@ -93,78 +78,78 @@ void Body::setName(const string _name)
 }
 
 
-Orbit* Body::getOrbit() const
+PlanetarySystem* Body::getSystem() const
 {
-    return orbit;
+    return system;
 }
 
 
-void Body::setOrbit(Orbit* _orbit)
+FrameTree* Body::getFrameTree() const
 {
-    delete orbit;
-    orbit = _orbit;
+    return frameTree;
 }
 
 
-// TODO: orbitBarycenter is superceded by frames and should be removed.
-const Body* Body::getOrbitBarycenter() const
+FrameTree* Body::getOrCreateFrameTree()
 {
-    return orbitBarycenter;
+    if (frameTree == NULL)
+        frameTree = new FrameTree(this);
+    return frameTree;
 }
 
 
-void Body::setOrbitBarycenter(const Body* barycenterBody)
+const Timeline* Body::getTimeline() const
 {
-    assert(barycenterBody == NULL || barycenterBody->getSystem()->getStar() == getSystem()->getStar());
-    if (barycenterBody != NULL)
+    return timeline;
+}
+
+
+void Body::setTimeline(Timeline* newTimeline)
+{
+    if (timeline != newTimeline)
     {
+        delete timeline;
+        timeline = newTimeline;
+        markChanged();
     }
-    orbitBarycenter = barycenterBody;
-}
-
-const ReferenceFrame* Body::getOrbitFrame() const
-{
-    return orbitFrame;
 }
 
 
-void
-Body::setOrbitFrame(const ReferenceFrame* f)
+void Body::markChanged()
 {
-    // Update reference counts
-    if (f != NULL)
-        f->addRef();
-    if (orbitFrame != NULL)
-        orbitFrame->release();
-
-    orbitFrame = f;
-
-    // Temporary hack: keep track of the star this frame is ultimately
-    // referenced to if it is different from the star at the root of
-    // the body's name hierarchy.
-    Star* frameRoot = getFrameReferenceStar();
-    Star* refStar = getReferenceStar();
-    if (frameRoot != refStar)
-        frameRefStar = frameRoot;
+    if (timeline != NULL)
+        timeline->markChanged();
 }
 
 
-const ReferenceFrame* Body::getBodyFrame() const
+void Body::markUpdated()
 {
-    return bodyFrame;
+    if (frameTree != NULL)
+        frameTree->markUpdated();
 }
 
 
-void
-Body::setBodyFrame(const ReferenceFrame* f)
+const ReferenceFrame* Body::getOrbitFrame(double tdb) const
 {
-    // Update reference counts
-    if (f != NULL)
-        f->addRef();
-    if (bodyFrame != NULL)
-        bodyFrame->release();
+    return timeline->findPhase(tdb)->orbitFrame();
+}
 
-    bodyFrame = f;
+
+const Orbit* Body::getOrbit(double tdb) const
+{
+    return timeline->findPhase(tdb)->orbit();
+}
+
+
+const ReferenceFrame* Body::getBodyFrame(double tdb) const
+{
+    return timeline->findPhase(tdb)->bodyFrame();
+}
+
+
+const RotationModel* Body::getRotationModel(double tdb) const
+{
+    return timeline->findPhase(tdb)->rotationModel();
 }
 
 
@@ -213,17 +198,6 @@ Quatf Body::getOrientation() const
 void Body::setOrientation(const Quatf& q)
 {
     orientation = q;
-}
-
-
-const RotationModel* Body::getRotationModel() const
-{
-    return rotationModel;
-}
-
-void Body::setRotationModel(const RotationModel* rm)
-{
-    rotationModel = rm;
 }
 
 
@@ -352,160 +326,169 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
 }
 
 
-// Get a matrix which converts from local to heliocentric coordinates
-Mat4d Body::getLocalToHeliocentric(double tjd) const
+// The following four functions are used to get the state of the body
+// in universal coordinates:
+//    * getPosition
+//    * getOrientation
+//    * getVelocity
+//    * getAngularVelocity
+
+/*! Get the position of the body in the universal coordinate system.
+ *  This method uses high-precision coordinates and is thus
+ *  slower relative to getAstrocentricPosition(), which works strictly
+ *  with standard double precision. For most purposes,
+ *  getAstrocentricPosition() should be used instead of the more
+ *  general getPosition().
+ */
+UniversalCoord Body::getPosition(double tdb) const
 {
-    Point3d pos = orbit->positionAtTime(tjd);
+    Point3d position(0.0, 0.0, 0.0);
 
-    if (orbitFrame != NULL)
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    Point3d p = phase->orbit()->positionAtTime(tdb);
+    ReferenceFrame* frame = phase->orbitFrame();
+
+    while (frame->getCenter().getType() == Selection::Type_Body)
     {
-        Point3d p = orbitFrame->convertToAstrocentric(pos, tjd);
-
-        // Temporary hack; won't be necessary post-1.5.0 when this function
-        // is redefined to return position with respect to frame root object
-        // instead of name hierarchy root.
-        if (frameRefStar != NULL)
-        {
-            Vec3d frameOffset(0.0, 0.0, 0.0);
-            Star* refStar = getReferenceStar();
-            if (refStar != NULL)
-            {
-                frameOffset = (frameRefStar->getPosition(tjd) - refStar->getPosition(tjd)) *
-                    astro::microLightYearsToKilometers(1.0);
-            }
-
-            return Mat4d::translation(p + frameOffset);
-        }
-        else
-        {
-            return Mat4d::translation(p);
-        }
+        phase = frame->getCenter().body()->timeline->findPhase(tdb);
+        position += Vec3d(p.x, p.y, p.z) * frame->getOrientation(tdb).toMatrix3();
+        p = phase->orbit()->positionAtTime(tdb);
+        frame = phase->orbitFrame();
     }
+
+    position += Vec3d(p.x, p.y, p.z) * frame->getOrientation(tdb).toMatrix3();
+
+    if (frame->getCenter().star())
+        return astro::universalPosition(position, frame->getCenter().star()->getPosition(tdb));
     else
-    {
-        Mat4d frame;
-
-        // TODO: inconsistent with orbitFrame != NULL case; shouldn't apply
-        // rotation model of body, only of parents.
-        frame = getRotationModel()->equatorOrientationAtTime(tjd).toMatrix4() *
-            Mat4d::translation(pos);
-
-        // Recurse up the hierarchy . . .
-        if (orbitBarycenter != NULL)
-            frame = frame * orbitBarycenter->getLocalToHeliocentric(tjd);
-        return frame;
-    }
+        return astro::universalPosition(position, frame->getCenter().getPosition(tdb));
 }
 
 
-// Return the position of the center of the body in heliocentric coordinates
-Point3d Body::getHeliocentricPosition(double tjd) const
+/*! Get the orientation of the body in the universal coordinate system.
+ */
+Quatd Body::getOrientation(double tdb) const
 {
-    Point3d pos = orbit->positionAtTime(tjd);
-
-    if (orbitFrame != NULL)
-    {
-        Point3d p = orbitFrame->convertToAstrocentric(pos, tjd);
-
-        // Temporary hack; won't be necessary post-1.5.0 when this function
-        // is redefined to return position with respect to frame root object
-        // instead of name hierarchy root.
-        if (frameRefStar != NULL)
-        {
-            Vec3d frameOffset(0.0, 0.0, 0.0);
-            Star* refStar = getReferenceStar();
-            if (refStar != NULL)
-            {
-                frameOffset = (frameRefStar->getPosition(tjd) - refStar->getPosition(tjd)) *
-                    astro::microLightYearsToKilometers(1.0);
-            }
-
-            return p + frameOffset;
-        }
-        else
-        {
-            return p;
-        }
-    }
-    else
-    {
-        // No orbit frame was specified; use the default orbit frame, which
-        // is typically the mean equatorial frame of the parent object. The
-        // exception is when the parent object is a star; in this case, the
-        // orbit frame is just the ecliptical frame.
-        if (orbitBarycenter != NULL)
-        {
-            // Object orbits a non-stellar object; get the parent's equatorial
-            // frame and convert to ecliptical coordinates.
-            Quatd orientation = orbitBarycenter->getEclipticalToEquatorial(tjd);
-            return orbitBarycenter->getHeliocentricPosition(tjd) +
-                pos * orientation.toMatrix3();
-        }
-        else
-        {
-            // Parent is a star; pos is already in ecliptical coordinates
-            return pos;
-        }
-    }
+    // TODO: This method overloads getOrientation(), but the two do very
+    // different things. The other method should be renamed to
+    // getModelOrientation().
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    return phase->rotationModel()->orientationAtTime(tdb) *
+           phase->bodyFrame()->getOrientation(tdb);
 }
 
 
-Quatd Body::getEclipticalToFrame(double tjd) const
+/*! Get the velocity of the body in the universal frame.
+ */
+Vec3d Body::getVelocity(double tdb) const
 {
-    Quatd q(1.0);
+    const TimelinePhase* phase = timeline->findPhase(tdb);
 
-    if (bodyFrame != NULL)
-    {
-        q = bodyFrame->getOrientation(tjd);
-    }
-    else
-    {
-        if (orbitBarycenter != NULL)
-            q = orbitBarycenter->getEclipticalToEquatorial(tjd);
-    }
+    ReferenceFrame* orbitFrame = phase->orbitFrame();
 
-    return q;
+    Vec3d v = phase->orbit()->velocityAtTime(tdb);
+    v = v * orbitFrame->getOrientation(tdb).toMatrix3() + orbitFrame->getCenter().getVelocity(tdb);
+
+	if (!orbitFrame->isInertial())
+	{
+		Vec3d r = Selection(const_cast<Body*>(this)).getPosition(tdb) - orbitFrame->getCenter().getPosition(tdb);
+		r = r * astro::microLightYearsToKilometers(1.0);
+		v += cross(orbitFrame->getAngularVelocity(tdb), r);
+	}
+
+	return v;
 }
 
 
-Quatd Body::getEclipticalToEquatorial(double tjd) const
+/*! Get the angular velocity of the body in the universal frame.
+ */
+Vec3d Body::getAngularVelocity(double tdb) const
 {
-    Quatd q = getRotationModel()->equatorOrientationAtTime(tjd);
-        
-    if (bodyFrame != NULL)
-    {
-        return q * bodyFrame->getOrientation(tjd);
-    }
-    else
-    {
-        // Recurse up the hierarchy . . .
-        if (orbitBarycenter != NULL)
-            q = q * orbitBarycenter->getEclipticalToEquatorial(tjd);
-    }
-        
-    return q;
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+
+    Vec3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
+
+    ReferenceFrame* bodyFrame = phase->bodyFrame();
+	v = v * bodyFrame->getOrientation(tdb).toMatrix3();
+	if (!bodyFrame->isInertial())
+	{
+		v += bodyFrame->getAngularVelocity(tdb);
+	}
+
+    return v;
 }
 
 
-Quatd Body::getEclipticalToBodyFixed(double when) const
+/*! Get the transformation which converts body coordinates into
+ *  astrocentric coordinates. Some clarification on the meaning
+ *  of 'astrocentric': the position of every solar system body
+ *  is ultimately defined with respect to some star or star
+ *  system barycenter.
+ */
+Mat4d Body::getLocalToAstrocentric(double tdb) const
 {
-    return getEquatorialToBodyFixed(when) * getEclipticalToEquatorial(when);
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    Point3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
+    return Mat4d::translation(p);
+}
+
+
+/*! Get the position of the center of the body in astrocentric ecliptic coordinates.
+ */
+Point3d Body::getAstrocentricPosition(double tdb) const
+{
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    return phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
+}
+
+
+/*! Get a rotation that converts from the ecliptic frame to the body frame.
+ */
+Quatd Body::getEclipticToFrame(double tdb) const
+{
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    return phase->bodyFrame()->getOrientation(tdb);
+}
+
+
+/*! Get a rotation that converts from the ecliptic frame to the body's 
+ *  mean equatorial frame.
+ */
+Quatd Body::getEclipticToEquatorial(double tdb) const
+{
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    return phase->rotationModel()->equatorOrientationAtTime(tdb) *
+           phase->bodyFrame()->getOrientation(tdb); 
+}
+
+
+/*! Get a rotation that converts from the ecliptic frame to this
+ *  objects's body fixed frame.
+ */
+Quatd Body::getEclipticToBodyFixed(double tdb) const
+{
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    return phase->rotationModel()->orientationAtTime(tdb) *
+           phase->bodyFrame()->getOrientation(tdb);
 }
 
 
 // The body-fixed coordinate system has an origin at the center of the
 // body, y-axis parallel to the rotation axis, x-axis through the prime
 // meridian, and z-axis at a right angle the xy plane.
-Quatd Body::getEquatorialToBodyFixed(double when) const
+Quatd Body::getEquatorialToBodyFixed(double tdb) const
 {
-    return rotationModel->spin(when);
+    const TimelinePhase* phase = timeline->findPhase(tdb);
+    return phase->rotationModel()->spin(tdb);
 }
 
 
-Mat4d Body::getBodyFixedToHeliocentric(double when) const
+/*! Get a transformation to convert from the object's body fixed frame
+ *  to the astrocentric ecliptic frame.
+ */
+Mat4d Body::getBodyFixedToAstrocentric(double tdb) const
 {
-    return getEquatorialToBodyFixed(when).toMatrix4() *
-        getLocalToHeliocentric(when);
+    return getEquatorialToBodyFixed(tdb).toMatrix4() * getLocalToAstrocentric(tdb);
 }
 
 
@@ -548,31 +531,23 @@ Vec3d Body::cartesianToPlanetocentric(const Vec3d& v) const
  */
 Vec3d Body::eclipticToPlanetocentric(const Vec3d& ecl, double tdb) const
 {
-    Quatd q = getEclipticalToBodyFixed(tdb);
+    Quatd q = getEclipticToBodyFixed(tdb);
     Vec3d bf = ecl * (~q).toMatrix3();
 
     return cartesianToPlanetocentric(bf);
 }
 
 
-
 bool Body::extant(double t) const
 {
-    return t >= protos && t < eschatos;
-}
-
-
-void Body::setLifespan(double begin, double end)
-{
-    protos = begin;
-    eschatos = end;
+    return timeline->includes(t);
 }
 
 
 void Body::getLifespan(double& begin, double& end) const
 {
-    begin = protos;
-    end = eschatos;
+    begin = timeline->startTime();
+    end = timeline->endTime();
 }
 
 
@@ -608,6 +583,9 @@ float Body::getLuminosity(float sunLuminosity,
 }
 
 
+/*! Get the apparent magnitude of the body, neglecting the phase (as if
+ *  the body was at opposition.
+ */
 float Body::getApparentMagnitude(const Star& sun,
                                  float distanceFromSun,
                                  float distanceFromViewer) const
@@ -617,6 +595,9 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
+/*! Get the apparent magnitude of the body, neglecting the phase (as if
+ *  the body was at opposition.
+ */
 float Body::getApparentMagnitude(float sunLuminosity,
                                  float distanceFromSun,
                                  float distanceFromViewer) const
@@ -625,8 +606,8 @@ float Body::getApparentMagnitude(float sunLuminosity,
                               astro::kilometersToLightYears(distanceFromViewer));
 }
 
-
-// Return the apparent magnitude of the body, corrected for the phase.
+/*! Get the apparent magnitude of the body, corrected for its phase.
+ */
 float Body::getApparentMagnitude(const Star& sun,
                                  const Vec3d& sunPosition,
                                  const Vec3d& viewerPosition) const
@@ -637,6 +618,8 @@ float Body::getApparentMagnitude(const Star& sun,
 }
 
 
+/*! Get the apparent magnitude of the body, corrected for its phase.
+ */
 float Body::getApparentMagnitude(float sunLuminosity,
                                  const Vec3d& sunPosition,
                                  const Vec3d& viewerPosition) const
@@ -810,72 +793,6 @@ Body::setVisibleReferenceMarks(uint32 refmarks)
 }
 
 
-// Get the star at the root of the name hierarchy
-// NOTE: This method shouldn't be required after cleanup of frame and name
-// hierarchies post 1.5.0.
-Star*
-Body::getReferenceStar() const
-{
-    const Body* body = this;
-
-    while (body->orbitBarycenter != NULL)
-        body = body->orbitBarycenter;
-
-    if (body->getSystem() != NULL)
-        return body->getSystem()->getStar();
-    else
-        return NULL;
-}
-
-
-// Get the star at the root of the frame hierarchy
-// NOTE: This method shouldn't be required after cleanup of frame and name
-// hierarchies post 1.5.0.
-Star*
-Body::getFrameReferenceStar() const
-{
-    const Body* body = this;
-
-    for (;;)
-    {
-        // Body has an orbit frame, parent is the frame center
-        if (body->orbitFrame != NULL)
-        {
-            if (body->orbitFrame->getCenter().star() != NULL)
-            {
-                return body->orbitFrame->getCenter().star();
-            }
-            else if (body->orbitFrame->getCenter().body() != NULL)
-            {
-                body = body->orbitFrame->getCenter().body();
-            }
-            else
-            {
-                // Bad frame center: either a location, deep sky object, or
-                // null object.
-                return NULL;
-            }
-        }
-        // Otherwise, use object's parent in the name hierarchy
-        else
-        {
-            if (body->orbitBarycenter != NULL)
-            {
-                body = body->orbitBarycenter;
-            }
-            else
-            {
-                if (body->getSystem() != NULL)
-                    return body->getSystem()->getStar();
-                else
-                    return NULL;
-            }
-        }
-    }
-
-    return NULL;
-}
-
 
 /*! Sets whether or not the object is visible.
  */
@@ -917,10 +834,10 @@ void Body::setOrbitColorOverridden(bool override)
 
 
 /*! Set the visibility policy for the orbit of this object:
- *  - NeverVisibile: Never show the orbit of this object.
+ *  - NeverVisible: Never show the orbit of this object.
  *  - UseClassVisibility: (Default) Show the orbit of this object
  *    its class is enabled in the orbit mask.
- *  - AlwaysVisibile: Always show the orbit of this object whenever
+ *  - AlwaysVisible: Always show the orbit of this object whenever
  *    orbit paths are enabled.
  */
 void Body::setOrbitVisibility(VisibilityPolicy _orbitVisibility)
@@ -939,20 +856,33 @@ void Body::setOrbitColor(const Color& c)
 }
 
 
-
 /**** Implementation of PlanetarySystem ****/
 
-PlanetarySystem::PlanetarySystem(Body* _primary) : primary(_primary)
+/*! Return the equatorial frame for this object. This frame is used as
+ *  the default frame for objects in SSC files that orbit non-stellar bodies.
+ *  In order to avoid wasting memory, it is created until the first time it
+ *  is requested.
+ */
+
+PlanetarySystem::PlanetarySystem(Body* _primary) :
+    star(NULL),
+    primary(_primary)
 {
     if (primary != NULL && primary->getSystem() != NULL)
         star = primary->getSystem()->getStar();
-    else
-        star = NULL;
 }
 
+
 PlanetarySystem::PlanetarySystem(Star* _star) :
-    star(_star), primary(NULL)
+    star(_star),
+    primary(NULL)
 {
+}
+
+
+PlanetarySystem::~PlanetarySystem()
+{
+    defaultFrame->release();
 }
 
 

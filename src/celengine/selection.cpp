@@ -1,6 +1,6 @@
 // selection.cpp
 // 
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,8 +10,14 @@
 #include <cstdio>
 #include "astro.h"
 #include "selection.h"
+#include "frametree.h"
 
 using namespace std;
+
+
+// Some velocities are computed by differentiation; units
+// are Julian days.
+static const double VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
 
 double Selection::radius() const
@@ -38,19 +44,7 @@ UniversalCoord Selection::getPosition(double t) const
     switch (type)
     {
     case Type_Body:
-        {
-            PlanetarySystem* system = body()->getSystem();
-            const Star* sun = NULL;
-            if (system != NULL)
-                sun = system->getStar();
-
-            Point3d hpos = body()->getHeliocentricPosition(t);
-            if (sun != NULL)
-                return astro::universalPosition(hpos, sun->getPosition(t));
-            else
-                return astro::universalPosition(hpos, Point3f(0.0f, 0.0f, 0.0f));
-                                                
-        }
+        return body()->getPosition(t);
         
     case Type_Star:
         return star()->getPosition(t);
@@ -79,6 +73,32 @@ UniversalCoord Selection::getPosition(double t) const
 
     default:
         return UniversalCoord(Point3d(0.0, 0.0, 0.0));
+    }
+}
+
+
+Vec3d Selection::getVelocity(double t) const
+{
+    switch (type)
+    {
+    case Type_Body:
+		return body()->getVelocity(t);
+        
+    case Type_Star:
+        return star()->getVelocity(t);
+
+    case Type_DeepSky:
+		return Vec3d(0.0, 0.0, 0.0);
+
+    case Type_Location:
+		{
+			// For now, just use differentiation for location velocities.
+			Vec3d ulyPerJD = (getPosition(t) - getPosition(t - VELOCITY_DIFF_DELTA)) * (1.0 / VELOCITY_DIFF_DELTA);
+			return ulyPerJD * astro::microLightYearsToKilometers(1.0);
+		}
+
+    default:
+        return Vec3d(0.0, 0.0, 0.0);
     }
 }
 

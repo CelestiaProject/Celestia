@@ -20,6 +20,10 @@
 using namespace std;
 
 
+// Orbital velocity is computed by differentiation for orbits that don't
+// override velocityAtTime().
+static const double ORBITAL_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
+
 
 EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
                                  double _eccentricity,
@@ -114,6 +118,14 @@ struct SolveKeplerLaguerreConwayHyp : public unary_function<double, double>
 };
 
 typedef pair<double, double> Solution;
+
+
+Vec3d Orbit::velocityAtTime(double tdb) const
+{
+	Point3d p0 = positionAtTime(tdb);
+	Point3d p1 = positionAtTime(tdb + ORBITAL_VELOCITY_DIFF_DELTA);
+	return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
+}
 
 
 double EllipticalOrbit::eccentricAnomaly(double M) const
@@ -260,6 +272,18 @@ void EllipticalOrbit::sample(double, double t, int nSamples,
 }
 
 
+CachingOrbit::CachingOrbit() :
+	lastTime(-1.0e30),
+	positionCacheValid(false),
+	velocityCacheValid(false)
+{
+}
+
+
+CachingOrbit::~CachingOrbit()
+{
+}
+
 
 Point3d CachingOrbit::positionAtTime(double jd) const
 {
@@ -267,8 +291,54 @@ Point3d CachingOrbit::positionAtTime(double jd) const
     {
         lastTime = jd;
         lastPosition = computePosition(jd);
+		positionCacheValid = true;
+		velocityCacheValid = false;
     }
+	else if (!positionCacheValid)
+	{
+		lastPosition = computePosition(jd);
+		positionCacheValid = true;
+	}
+
     return lastPosition;
+}
+
+
+Vec3d CachingOrbit::velocityAtTime(double jd) const
+{
+	if (jd != lastTime)
+	{
+		lastTime = jd;
+		lastVelocity = computeVelocity(jd);
+		positionCacheValid = false;
+		velocityCacheValid = true;
+	}
+	else if (!velocityCacheValid)
+	{
+		lastVelocity = computeVelocity(jd);
+		velocityCacheValid = true;
+	}
+
+	return lastVelocity;
+}
+
+
+/*! Calculate the velocity at the specified time (units are
+ *  kilometers / Julian day.) The default implementation just
+ *  differentiates the position.
+ */
+Vec3d CachingOrbit::computeVelocity(double jd) const
+{
+	// Compute the velocity by differentiating.
+	Point3d p0 = positionAtTime(jd);
+
+	// Call computePosition() instead of positionAtTime() so that we
+	// don't affect the cached value. 
+	// TODO: check the valid ranges of the orbit to make sure that
+	// jd+dt is still in range.
+	Point3d p1 = computePosition(jd + ORBITAL_VELOCITY_DIFF_DELTA);
+
+	return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
 }
 
 
@@ -397,6 +467,17 @@ Point3d MixedOrbit::positionAtTime(double jd) const
 }
 
 
+Vec3d MixedOrbit::velocityAtTime(double jd) const
+{
+    if (jd < begin)
+        return beforeApprox->velocityAtTime(jd);
+    else if (jd < end)
+        return primary->velocityAtTime(jd);
+    else
+        return afterApprox->velocityAtTime(jd);
+}
+
+
 double MixedOrbit::getPeriod() const
 {
     return primary->getPeriod();
@@ -498,7 +579,7 @@ Point3d SynchronousOrbit::positionAtTime(double jd) const
 
 double SynchronousOrbit::getPeriod() const
 {
-    return body.getRotationModel()->getPeriod();
+    return body.getRotationModel(0.0)->getPeriod();
 }
 
 
