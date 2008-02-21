@@ -50,6 +50,7 @@ static const char* ClassNames[] =
     "class_font",
     "class_image",
     "class_texture",
+    "class_phase",
 };
 
 static const int _Celestia = 0;
@@ -64,6 +65,7 @@ static const int _CelScript= 8;
 static const int _Font     = 9;
 static const int _Image    = 10;
 static const int _Texture  = 11;
+static const int _Phase    = 12;
 
 #define CLASS(i) ClassNames[(i)]
 
@@ -2732,6 +2734,8 @@ static int object_getinfo(lua_State* l)
         case Body::Comet      : tname = "comet"; break;
         case Body::Spacecraft : tname = "spacecraft"; break;
         case Body::Invisible  : tname = "invisible"; break;
+		case Body::SurfaceFeature : tname = "surfacefeature"; break;
+		case Body::Component  : tname = "component"; break;
         }
 
         setTable(l, "type", tname);
@@ -2775,10 +2779,14 @@ static int object_getinfo(lua_State* l)
         lua_pushboolean(l, body->getRings() != NULL);
         lua_settable(l, -3);
 
-        const RotationModel* rm = body->getRotationModel();
+        // TIMELINE-TODO: The code to retrieve orbital and rotation periods only works
+        // if the object has a single timeline phase. This should hardly ever
+        // be a problem, but it still may be best to set the periods to zero
+        // for objects with multiple phases.
+        const RotationModel* rm = body->getRotationModel(0.0);
         setTable(l, "rotationPeriod", (double) rm->getPeriod());
 
-        Orbit* orbit = body->getOrbit();
+        const Orbit* orbit = body->getOrbit(0.0);
         setTable(l, "orbitPeriod", orbit->getPeriod());
         Atmosphere* atmosphere = body->getAtmosphere();
         if (atmosphere != NULL)

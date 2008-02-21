@@ -40,6 +40,7 @@ libcelengine_a_SOURCES = \
 	execution.cpp \
 	fragmentprog.cpp \
 	frame.cpp \
+	frametree.cpp \
 	galaxy.cpp \
 	glcontext.cpp \
 	glext.cpp \
@@ -83,6 +84,8 @@ libcelengine_a_SOURCES = \
 	stellarclass.cpp \
 	texmanager.cpp \
 	texture.cpp \
+	timeline.cpp \
+	timelinephase.cpp \
 	tokenizer.cpp \
 	trajmanager.cpp \
 	univcoord.cpp \

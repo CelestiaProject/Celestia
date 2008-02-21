@@ -40,6 +40,7 @@ class Selection
     bool empty() const { return type == Type_Nil; }
     double radius() const;
     UniversalCoord getPosition(double t) const;
+	Vec3d getVelocity(double t) const;
     std::string getName(bool i18n = false) const;
     Selection parent() const;
 

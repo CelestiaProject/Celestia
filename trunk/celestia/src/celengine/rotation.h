@@ -36,6 +36,8 @@ class RotationModel
         return spin(tjd) * equatorOrientationAtTime(tjd);
     }
 
+	Vec3d angularVelocityAtTime(double tjd) const;
+
     /*! Return the orientation of the equatorial plane (normal to the primary
      *  axis of rotation.) The overall orientation of the object is
      *  spin * equator. If there is no primary axis of rotation, equator = 1
@@ -82,6 +84,7 @@ class ConstantOrientation : public RotationModel
     virtual ~ConstantOrientation();
 
     virtual Quatd spin(double tjd) const;
+	virtual Vec3d angularVelocityAtTime(double tjd) const;
 
  private:
     Quatd orientation;
@@ -105,6 +108,7 @@ class UniformRotationModel : public RotationModel
     virtual double getPeriod() const;
     virtual Quatd equatorOrientationAtTime(double tjd) const;
     virtual Quatd spin(double tjd) const;
+	virtual Vec3d angularVelocityAtTime(double tjd) const;
 
  private:
     double period;       // sidereal rotation period

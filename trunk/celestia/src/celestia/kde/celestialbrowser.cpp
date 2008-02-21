@@ -152,7 +152,7 @@ void CelestialBrowser::addPlanetarySystem(CelListViewItem* parentItem, const Pla
     {
         const Body* body = system->getBody(i);
         if (body->getClassification() & (Body::Barycenter | Body::Invisible)) continue;
-        Point3d bodyPos = body->getHeliocentricPosition(appSim->getTime());
+        Point3d bodyPos = body->getAstrocentricPosition(appSim->getTime());
         CelListViewItem* item = NULL;
         if (parentBodyPos == NULL) 
         {

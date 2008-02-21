@@ -1,6 +1,8 @@
 // frame.cpp
 // 
-// Copyright (C) 2003-2006, Chris Laurel <claurel@shatters.net>
+// Reference frame base class.
+//
+// Copyright (C) 2003-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,6 +13,11 @@
 #include <celengine/frame.h>
 
 using namespace std;
+
+
+// Velocity for two-vector frames is computed by differentiation; units
+// are Julian days.
+static const double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
 
 /*** ReferenceFrame ***/
@@ -105,10 +112,9 @@ ReferenceFrame::convertToUniversal(const Quatd& q, double tjd) const
 Point3d
 ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
 {
-    Point3d center;
     if (centerObject.getType() == Selection::Type_Body)
     {
-        Point3d center = centerObject.body()->getHeliocentricPosition(tjd);
+        Point3d center = centerObject.body()->getAstrocentricPosition(tjd);
         return Point3d(0.0, 0.0, 0.0) + (p - center) * conjugate(getOrientation(tjd)).toMatrix3();
     }
     else if (centerObject.getType() == Selection::Type_Star)
@@ -128,10 +134,9 @@ ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
 Point3d
 ReferenceFrame::convertToAstrocentric(const Point3d& p, double tjd) const
 {
-    Point3d center;
     if (centerObject.getType() == Selection::Type_Body)
     {
-        Point3d center = centerObject.body()->getHeliocentricPosition(tjd);
+        Point3d center = centerObject.body()->getAstrocentricPosition(tjd);
         return center + p * getOrientation(tjd).toMatrix3();
     }
     else if (centerObject.getType() == Selection::Type_Star)
@@ -148,10 +153,28 @@ ReferenceFrame::convertToAstrocentric(const Point3d& p, double tjd) const
 }
 
 
+/*! Return the object that is the defined origin of the reference frame.
+ */
 Selection
 ReferenceFrame::getCenter() const
 {
     return centerObject;
+}
+
+
+Vec3d
+ReferenceFrame::getAngularVelocity(double tjd) const
+{
+	Quatd q0 = getOrientation(tjd);
+	Quatd q1 = getOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
+	Quatd dq = q1 * ~q0;
+
+	if (fabs(dq.w) > 0.99999999)
+		return Vec3d(0.0, 0.0, 0.0);
+
+	Vec3d v(dq.x, dq.y, dq.z);
+	v.normalize();
+	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
 }
 
 
@@ -180,16 +203,17 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
 
     unsigned int orbitFrameDepth = depth;
     unsigned int bodyFrameDepth = depth;
-    if (body->getOrbitFrame() != NULL && frameType == ReferenceFrame::PositionFrame)
+    // TODO: need to check /all/ orbit frames of body
+    if (body->getOrbitFrame(0.0) != NULL && frameType == ReferenceFrame::PositionFrame)
     {
-        orbitFrameDepth = body->getOrbitFrame()->nestingDepth(depth + 1, maxDepth, frameType);
+        orbitFrameDepth = body->getOrbitFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
         if (orbitFrameDepth > maxDepth)
             return orbitFrameDepth;
     }
         
-    if (body->getBodyFrame() != NULL && frameType == ReferenceFrame::OrientationFrame)
+    if (body->getBodyFrame(0.0) != NULL && frameType == ReferenceFrame::OrientationFrame)
     {
-        bodyFrameDepth = body->getBodyFrame()->nestingDepth(depth + 1, maxDepth, frameType);
+        bodyFrameDepth = body->getBodyFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
     }
 
     return max(orbitFrameDepth, bodyFrameDepth);
@@ -205,11 +229,17 @@ J2000EclipticFrame::J2000EclipticFrame(Selection center) :
 }
 
 
+bool
+J2000EclipticFrame::isInertial() const
+{
+	return true;
+}
+
 
 unsigned int
 J2000EclipticFrame::nestingDepth(unsigned int depth,
                                  unsigned int maxDepth,
-                                 FrameType frameType) const
+                                 FrameType) const
 {
     return getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
 }
@@ -230,10 +260,17 @@ J2000EquatorFrame::getOrientation(double /* tjd */) const
 }
 
 
+bool
+J2000EquatorFrame::isInertial() const
+{
+	return true;
+}
+
+
 unsigned int
 J2000EquatorFrame::nestingDepth(unsigned int depth,
                                 unsigned int maxDepth,
-                                FrameType frameType) const
+                                FrameType) const
 {
     return getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
 }
@@ -258,7 +295,7 @@ BodyFixedFrame::getOrientation(double tjd) const
     switch (fixObject.getType())
     {
     case Selection::Type_Body:
-        return yrot180 * fixObject.body()->getEclipticalToBodyFixed(tjd);
+        return yrot180 * fixObject.body()->getEclipticToBodyFixed(tjd);
     case Selection::Type_Star:
         return yrot180 * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
     default:
@@ -267,10 +304,32 @@ BodyFixedFrame::getOrientation(double tjd) const
 }
 
 
+Vec3d
+BodyFixedFrame::getAngularVelocity(double tjd) const
+{
+	switch (fixObject.getType())
+	{
+	case Selection::Type_Body:
+		return fixObject.body()->getAngularVelocity(tjd);
+	case Selection::Type_Star:
+		return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
+	default:
+		return Vec3d(0.0, 0.0, 0.0);
+	}
+}
+
+
+bool
+BodyFixedFrame::isInertial() const
+{
+	return false;
+}
+
+
 unsigned int
 BodyFixedFrame::nestingDepth(unsigned int depth,
                              unsigned int maxDepth,
-                             FrameType frameType) const
+                             FrameType) const
 {
     unsigned int n = getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
     if (n > maxDepth)
@@ -317,7 +376,7 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
     switch (equatorObject.getType())
     {
     case Selection::Type_Body:
-        return equatorObject.body()->getRotationModel()->equatorOrientationAtTime(t);
+        return equatorObject.body()->getRotationModel(tjd)->equatorOrientationAtTime(t);
     case Selection::Type_Star:
         return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
@@ -326,10 +385,56 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 }
 
 
+Vec3d
+BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
+{
+	if (isFrozen)
+	{
+		return Vec3d(0.0, 0.0, 0.0);
+	}
+	else
+	{
+		if (equatorObject.body() != NULL)
+		{
+			return equatorObject.body()->getBodyFrame(tjd)->getAngularVelocity(tjd);
+		}
+        else
+        {
+            return Vec3d(0.0, 0.0, 0.0);
+        }
+	}
+}
+
+
+bool
+BodyMeanEquatorFrame::isInertial() const
+{
+	if (isFrozen)
+	{
+		return true;
+	}
+	else
+	{
+		// Although the mean equator of an object may vary slightly due to precession,
+		// treat it as an inertial frame as long as the body frame of the object is
+		// also inertial.
+		if (equatorObject.body() != NULL)
+		{
+            // TIMELINE-TODO: isInertial must take a time argument.
+			return equatorObject.body()->getBodyFrame(0.0)->isInertial();
+		}
+        else
+        {
+            return true;
+        }
+	}
+}
+
+
 unsigned int
 BodyMeanEquatorFrame::nestingDepth(unsigned int depth,
                                    unsigned int maxDepth,
-                                   FrameType frameType) const
+                                   FrameType) const
 {
     // Test origin and equator object (typically the same) frames
     unsigned int n =  getFrameDepth(getCenter(), depth, maxDepth, PositionFrame);
@@ -350,7 +455,10 @@ BodyMeanEquatorFrame::nestingDepth(unsigned int depth,
 CachingFrame::CachingFrame(Selection _center) :
     ReferenceFrame(_center),
     lastTime(-1.0e50),
-    lastOrientation(1.0)
+    lastOrientation(1.0),
+	lastAngularVelocity(0.0, 0.0, 0.0),
+	orientationCacheValid(false),
+	angularVelocityCacheValid(false)
 {
 }
 
@@ -358,17 +466,66 @@ CachingFrame::CachingFrame(Selection _center) :
 Quatd
 CachingFrame::getOrientation(double tjd) const
 {
-    if (tjd == lastTime)
-    {
-        return lastOrientation;
-    }
-    else
-    {
-        lastTime = tjd;
-        lastOrientation = computeOrientation(tjd);
-        return lastOrientation;
-    }
+	if (tjd != lastTime)
+	{
+		lastTime = tjd;
+		lastOrientation = computeOrientation(tjd);
+		orientationCacheValid = true;
+		angularVelocityCacheValid = false;
+	}
+	else if (!orientationCacheValid)
+	{
+		lastOrientation = computeOrientation(tjd);
+		orientationCacheValid = true;
+	}
+
+	return lastOrientation;
 }
+
+
+Vec3d CachingFrame::getAngularVelocity(double tjd) const
+{
+	if (tjd != lastTime)
+	{
+		lastTime = tjd;
+		lastAngularVelocity = computeAngularVelocity(tjd);
+		orientationCacheValid = false;
+		angularVelocityCacheValid = true;
+	}
+	else if (!angularVelocityCacheValid)
+	{
+		lastAngularVelocity = computeAngularVelocity(tjd);
+		angularVelocityCacheValid = true;
+	}
+
+	return lastAngularVelocity;
+}
+
+
+/*! Calculate the angular velocity at the specified time (units are
+ *  radians / Julian day.) The default implementation just
+ *  differentiates the orientation.
+ */
+Vec3d CachingFrame::computeAngularVelocity(double tjd) const
+{
+	Quatd q0 = getOrientation(tjd);
+
+	// Call computeOrientation() instead of getOrientation() so that we
+	// don't affect the cached value. 
+	// TODO: check the valid ranges of the frame to make sure that
+	// jd+dt is still in range.
+	Quatd q1 = computeOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
+
+	Quatd dq = q1 * ~q0;
+
+	if (fabs(dq.w) > 0.99999999)
+		return Vec3d(0.0, 0.0, 0.0);
+
+	Vec3d v(dq.x, dq.y, dq.z);
+	v.normalize();
+	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
+}
+
 
 
 /*** TwoVectorFrame ***/
@@ -479,10 +636,20 @@ TwoVectorFrame::computeOrientation(double tjd) const
 }
 
 
+bool
+TwoVectorFrame::isInertial() const
+{
+	// Although it's possible to specify an inertial two-vector frame, we won't
+	// bother trying to distinguish these cases: all two-vector frames will be
+	// treated as non-inertial.
+	return true;
+}
+
+
 unsigned int
 TwoVectorFrame::nestingDepth(unsigned int depth,
                              unsigned int maxDepth,
-                             FrameType frameType) const
+                             FrameType) const
 {
     // Check nesting of the origin object as well as frames references by
     // the primary and secondary axes.
@@ -600,10 +767,9 @@ FrameVector::direction(double tjd) const
         break;
 
     case RelativeVelocity:
-        // TODO: add getVelocity() method to selection
         {
-            Vec3d v0 = observer.getPosition(tjd) - observer.getPosition(tjd - 1.0 / 1440.0);
-            Vec3d v1 = target.getPosition(tjd) - target.getPosition(tjd - 1.0 / 1440.0);
+			Vec3d v0 = observer.getVelocity(tjd);
+			Vec3d v1 = target.getVelocity(tjd);
             v = v1 - v0;
         }
         break;

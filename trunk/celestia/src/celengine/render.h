@@ -25,6 +25,7 @@
 
 
 class RendererWatcher;
+class FrameTree;
 
 struct LightSource
 {
@@ -406,7 +407,7 @@ class Renderer
                               float faintestMagNight);
     void renderCelestialSphere(const Observer& observer);
     void buildRenderLists(const Star& sun,
-                          const PlanetarySystem* solSystem,
+                          const FrameTree* tree,
                           const Observer& observer,
                           double now,
                           std::vector<LightSource>* lightSourceList,
@@ -622,14 +623,13 @@ class Renderer
     
     struct CachedOrbit
     {
-        Body* body;
         std::vector<OrbitSample> trajectory;
         std::vector<OrbitSection> sections;
         uint32 lastUsed;
     };
 
  private:
-    typedef std::map<Body*, CachedOrbit*> OrbitCache;
+    typedef std::map<const Orbit*, CachedOrbit*> OrbitCache;
     OrbitCache orbitCache;
     uint32 lastOrbitCacheFlush;
 

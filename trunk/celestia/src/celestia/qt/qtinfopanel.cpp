@@ -146,16 +146,16 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 #endif
 
     double orbitalPeriod = 0.0;
-    if (body->getOrbit()->isPeriodic())
-        orbitalPeriod = body->getOrbit()->getPeriod();
+    if (body->getOrbit(t)->isPeriodic())
+        orbitalPeriod = body->getOrbit(t)->getPeriod();
 
     // Show rotation information for natural, periodic rotators
-    if (body->getRotationModel()->isPeriodic() && !isArtificial)
+    if (body->getRotationModel(t)->isPeriodic() && !isArtificial)
     {
-        double rotPeriod = body->getRotationModel()->getPeriod();
+        double rotPeriod = body->getRotationModel(t)->getPeriod();
 
         double dayLength = 0.0;
-        if (body->getOrbit()->isPeriodic())
+        if (body->getOrbit(t)->isPeriodic())
         {
             double siderealDaysPerYear = orbitalPeriod / rotPeriod;
             double solarDaysPerYear = siderealDaysPerYear - 1.0;
@@ -187,7 +187,7 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     if (orbitalPeriod != 0.0)
     {
         OrbitalElements elements;
-        CalculateOsculatingElements(*body->getOrbit(),
+        CalculateOsculatingElements(*body->getOrbit(t),
                                     t,
                                     orbitalPeriod * 1.0e-6,
                                     &elements);

@@ -236,6 +236,8 @@ public:
     UniversalCoord getPosition(double t) const;
     UniversalCoord getOrbitBarycenterPosition(double t) const;
 
+	Vec3d getVelocity(double t) const;
+
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);
     void setPosition(Point3f);
