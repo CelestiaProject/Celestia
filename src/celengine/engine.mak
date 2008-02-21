@@ -39,6 +39,7 @@ OBJS=\
 	$(INTDIR)\execution.obj \
 	$(INTDIR)\fragmentprog.obj \
 	$(INTDIR)\frame.obj \
+	$(INTDIR)\frametree.obj \
 	$(INTDIR)\galaxy.obj \
 	$(INTDIR)\glcontext.obj \
 	$(INTDIR)\glext.obj \
@@ -81,6 +82,8 @@ OBJS=\
 	$(INTDIR)\stellarclass.obj \
 	$(INTDIR)\texmanager.obj \
 	$(INTDIR)\texture.obj \
+	$(INTDIR)\timeline.obj \
+	$(INTDIR)\timelinephase.obj \
 	$(INTDIR)\tokenizer.obj \
 	$(INTDIR)\trajmanager.obj \
 	$(INTDIR)\univcoord.obj \

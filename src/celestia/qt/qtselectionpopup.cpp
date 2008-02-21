@@ -156,6 +156,15 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     connect(infoAction, SIGNAL(triggered()), this, SLOT(slotInfo()));
     addAction(infoAction);
 
+	if (sel.body() != NULL)
+	{
+		QAction* setVisibilityAction = new QAction("Visible", this);
+		setVisibilityAction->setCheckable(true);
+		setVisibilityAction->setChecked(sel.body()->isVisible());
+		connect(setVisibilityAction, SIGNAL(toggled(bool)), this, SLOT(slotToggleVisibility(bool)));
+		addAction(setVisibilityAction);
+	}
+
     // Marker submenu
     QMenu* markMenu = createMarkMenu();
     addMenu(markMenu);
@@ -347,7 +356,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
                         title = tr("Comets");
                         break;
                     case Body::Spacecraft:
-                        title = tr("Spacecracft");
+                        title = tr("Spacecraft");
                         break;
                     default:
                         title = tr("Other objects");
@@ -554,4 +563,11 @@ void SelectionPopup::slotGotoEndDate()
 void SelectionPopup::slotInfo()
 {
     emit selectionInfoRequested(selection);
+}
+
+
+void SelectionPopup::slotToggleVisibility(bool visible)
+{
+	assert(selection.body() != NULL);
+	selection.body()->setVisible(visible);	
 }

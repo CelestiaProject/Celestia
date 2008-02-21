@@ -15,6 +15,30 @@
 using namespace std;
 
 
+static const double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
+
+
+/***** RotationModel *****/
+
+/*! Return the angular velocity at the specified time (TDB). The default
+ *  implementation computes the angular velocity via differentiation.
+ */
+Vec3d
+RotationModel::angularVelocityAtTime(double tdb) const
+{
+	Quatd q0 = orientationAtTime(tdb);
+	Quatd q1 = orientationAtTime(tdb + ANGULAR_VELOCITY_DIFF_DELTA);
+	Quatd dq = q1 * ~q0;
+
+	if (fabs(dq.w) > 0.99999999)
+		return Vec3d(0.0, 0.0, 0.0);
+
+	Vec3d v(dq.x, dq.y, dq.z);
+	v.normalize();
+	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
+}
+
+
 /***** ConstantOrientation implementation *****/
 
 ConstantOrientation::ConstantOrientation(const Quatd& q) :
@@ -34,6 +58,12 @@ ConstantOrientation::spin(double) const
     return orientation;
 }
 
+
+Vec3d
+ConstantOrientation::angularVelocityAtTime(double tdb) const
+{
+	return Vec3d(0.0, 0.0, 0.0);
+}
 
 
 /***** UniformRotationModel implementation *****/
@@ -94,6 +124,14 @@ UniformRotationModel::equatorOrientationAtTime(double) const
     return Quatd::xrotation(-inclination) * Quatd::yrotation(-ascendingNode);
 }
 
+
+Vec3d
+UniformRotationModel::angularVelocityAtTime(double tdb) const
+{
+	Vec3d v(0.0, 1.0, 0.0);
+	v = v * equatorOrientationAtTime(tdb).toMatrix3();
+	return v * (2.0 * PI / period);
+}
 
 
 /***** PrecessingRotationModel implementation *****/

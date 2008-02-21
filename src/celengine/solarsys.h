@@ -16,6 +16,7 @@
 #include <celengine/body.h>
 #include <celengine/stardb.h>
 
+class FrameTree;
 
 class SolarSystem
 {
@@ -25,10 +26,12 @@ class SolarSystem
     Star* getStar() const;
     Point3f getCenter() const;
     PlanetarySystem* getPlanets() const;
-    
+    FrameTree* getFrameTree() const;
+
  private:
-    PlanetarySystem* planets;
     Star* star;
+    PlanetarySystem* planets;
+    FrameTree* frameTree;
 };
 
 typedef std::map<uint32, SolarSystem*> SolarSystemCatalog;

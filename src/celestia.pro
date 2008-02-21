@@ -110,6 +110,7 @@ ENGINE_SOURCES = \
 	celengine/execution.cpp \
 	celengine/fragmentprog.cpp \
 	celengine/frame.cpp \
+	celengine/frametree.cpp \
 	celengine/galaxy.cpp \
 	celengine/glcontext.cpp \
 	celengine/glext.cpp \
@@ -155,6 +156,8 @@ ENGINE_SOURCES = \
 	celengine/stellarclass.cpp \
 	celengine/texmanager.cpp \
 	celengine/texture.cpp \
+	celengine/timeline.cpp \
+	celengine/timelinephase.cpp \
 	celengine/tokenizer.cpp \
 	celengine/trajmanager.cpp \
 	celengine/univcoord.cpp \
@@ -188,6 +191,7 @@ ENGINE_HEADERS = \
 	celengine/execution.h \
 	celengine/fragmentprog.h \
 	celengine/frame.h \
+	celengine/frametree.h \
 	celengine/galaxy.h \
 	celengine/gl.h \
 	celengine/glcontext.h \
@@ -238,6 +242,8 @@ ENGINE_HEADERS = \
 	celengine/surface.h \
 	celengine/texmanager.h \
 	celengine/texture.h \
+	celengine/timeline.h \
+	celengine/timelinephase.h \
 	celengine/tokenizer.h \
 	celengine/trajmanager.h \
 	celengine/univcoord.h \
@@ -248,6 +254,13 @@ ENGINE_HEADERS = \
 	celengine/virtualtex.h \
 	celengine/vsop87.h
 
+SPICE_SOURCES = \
+	celengine/spiceinterface.cpp \
+	celengine/spiceorbit.cpp
+
+SPICE_HEADERS = \
+	celengine/spiceinterface.h \
+	celengine/spiceorbit.h
 
 #### App sources ####
 
@@ -339,6 +352,11 @@ RESOURCES = \
 #UI_HEADERS_DIR = ./celestia/qt
 #UI_SOURCES_DIR = ./celestia/qt	
 
+# SPICE support
+SOURCES += $$SPICE_SOURCES
+HEADERS += $$SPICE_HEADERS
+DEFINES += USE_SPICE
+INCLUDEPATH += ../inc/spice
 
 INCLUDEPATH += ..
 INCLUDEPATH += ../..
@@ -355,7 +373,9 @@ win32 {
 		-llibpng \
 		-llibjpeg2 \
 		-lintl \
-		-llua5.1
+		-llua5.1 \
+		-lcspice
+
 	RC_FILE = celestia/qt/celestia.rc
 	DEFINES += _CRT_SECURE_NO_WARNINGS
 }

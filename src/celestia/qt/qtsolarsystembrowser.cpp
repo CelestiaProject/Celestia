@@ -251,12 +251,16 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
     vector<Body*> asteroids;
     vector<Body*> spacecraft;
     vector<Body*> minorMoons;
+	vector<Body*> surfaceFeatures;
+	vector<Body*> components;
     vector<Body*> other;
     vector<Body*> normal;
 
     float minorMoonCutoffRadius = 0.0f;
     bool groupAsteroids = true;
     bool groupSpacecraft = true;
+	bool groupComponents = true;
+	bool groupSurfaceFeatures = true;
     if (parent.body())
     {
         // TODO: we should define a class for minor moons. Until then,
@@ -301,6 +305,18 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
             else
                 normal.push_back(body);
             break;
+		case Body::Component:
+			if (groupComponents)
+				components.push_back(body);
+			else
+				normal.push_back(body);
+			break;
+		case Body::SurfaceFeature:
+			if (groupSurfaceFeatures)
+				surfaceFeatures.push_back(body);
+			else
+				normal.push_back(body);
+			break;
         default:
             other.push_back(body);
             break;
@@ -319,6 +335,10 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
         item->nChildren++;
     if (!minorMoons.empty())
         item->nChildren++;
+	if (!surfaceFeatures.empty())
+		item->nChildren++;
+	if (!components.empty())
+		item->nChildren++;
     if (!other.empty())
         item->nChildren++;
 
@@ -369,6 +389,22 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
                                                                  item, childIndex);
                 childIndex++;
             }
+
+			if (!surfaceFeatures.empty())
+			{
+                item->children[childIndex] = createGroupTreeItem(Body::SurfaceFeature,
+                                                                 surfaceFeatures,
+                                                                 item, childIndex);
+                childIndex++;
+			}
+
+			if (!components.empty())
+			{
+                item->children[childIndex] = createGroupTreeItem(Body::Component,
+                                                                 components,
+                                                                 item, childIndex);
+                childIndex++;
+			}
 
             if (!other.empty())
             {
@@ -492,6 +528,10 @@ static QString objectTypeName(const Selection& sel)
             return QObject::tr("Spacecraft");
         else if (classification == Body::Invisible)
             return QObject::tr("Reference point");
+		else if (classification == Body::Component)
+			return QObject::tr("Component");
+		else if (classification == Body::SurfaceFeature)
+			return QObject::tr("Surface feature");
     }
 
     return QObject::tr("Unknown");
@@ -512,6 +552,10 @@ static QString classificationName(int classification)
         return QObject::tr("Reference points");
     else if (classification == Body::SmallBody) // TODO: should have a separate
         return QObject::tr("Minor moons");      // category for this.
+	else if (classification == Body::Component)
+		return QObject::tr("Components");
+	else if (classification == Body::SurfaceFeature)
+		return QObject::tr("Surface features");
     else
         return QObject::tr("Other objects");
 }

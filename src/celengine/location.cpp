@@ -188,7 +188,7 @@ Point3d Location::getPlanetocentricPosition(double t) const
     if (parent == NULL)
         return Point3d(position.x, position.y, position.z);
 
-    Quatd q = parent->getEclipticalToBodyFixed(t);
+    Quatd q = parent->getEclipticToBodyFixed(t);
     return Point3d(position.x, position.y, position.z) * q.toMatrix3();
 }
 
@@ -198,6 +198,6 @@ Point3d Location::getHeliocentricPosition(double t) const
     if (parent == NULL)
         return Point3d(position.x, position.y, position.z);
 
-    return parent->getHeliocentricPosition(t) +
+    return parent->getAstrocentricPosition(t) +
         (getPlanetocentricPosition(t) - Point3d(0.0, 0.0, 0.0));
 }

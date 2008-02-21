@@ -23,6 +23,7 @@
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <cstdio>
+#include <limits>
 #include "astro.h"
 #include "parser.h"
 #include "texmanager.h"
@@ -30,6 +31,9 @@
 #include "universe.h"
 #include "multitexture.h"
 #include "parseobject.h"
+#include "frametree.h"
+#include "timeline.h"
+#include "timelinephase.h"
 
 using namespace std;
 
@@ -250,6 +254,360 @@ static Selection GetOrbitBarycenter(const string& name,
 }
 
 
+TimelinePhase* CreateTimelinePhase(Body* body,
+                                   Universe& universe,
+                                   Hash* phaseData,
+                                   const string& path,
+                                   ReferenceFrame* defaultFrame,
+                                   bool isFirstPhase,
+                                   bool isLastPhase,
+                                   double previousPhaseEnd)
+{
+    double beginning = previousPhaseEnd;
+    double ending = numeric_limits<double>::infinity();
+
+    // Beginning is optional for the first phase of a timeline, and not
+    // allowed for the other phases, where beginning is always the ending
+    // of the previous phase.
+    bool hasBeginning = ParseDate(phaseData, "Beginning", beginning);
+    if (!isFirstPhase && hasBeginning)
+    {
+        clog << "Error: Beginning can only be specified for initial phase of timeline.\n";
+        return NULL;
+    }
+
+    // Ending is required for all phases except for the final one.
+    bool hasEnding = ParseDate(phaseData, "Ending", ending);
+    if (!isLastPhase && !hasEnding)
+    {
+        clog << "Error: Ending is required for all timeline phases other than the final one.\n";
+        return NULL;
+    }
+
+    // Get the orbit reference frame.
+    ReferenceFrame* orbitFrame;
+    Value* frameValue = phaseData->getValue("OrbitFrame");
+    if (frameValue != NULL)
+    {
+        orbitFrame = CreateReferenceFrame(universe, frameValue);
+        if (orbitFrame == NULL)
+        {
+            return NULL;
+        }
+    }
+    else
+    {
+        // No orbit frame specified; use the default frame.
+        orbitFrame = defaultFrame;
+        orbitFrame->addRef();
+    }
+
+    // Get the body reference frame
+    ReferenceFrame* bodyFrame;
+    Value* bodyFrameValue = phaseData->getValue("BodyFrame");
+    if (bodyFrameValue != NULL)
+    {
+        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue);
+        if (bodyFrame == NULL)
+        {
+            orbitFrame->release();
+            return NULL;
+        }
+    }
+    else
+    {
+        // No body frame specified; use the default frame.
+        bodyFrame = defaultFrame;
+        bodyFrame->addRef();
+    }
+
+    // Use planet units (AU for semimajor axis) if the center of the orbit 
+    // reference frame is a star.
+    bool usePlanetUnits = orbitFrame->getCenter().star() != NULL;
+
+    // Get the orbit
+    Orbit* orbit = CreateOrbit(NULL, phaseData, path, usePlanetUnits);
+    if (!orbit)
+    {
+        clog << "Error: missing orbit in timeline phase.\n";
+        bodyFrame->release();
+        orbitFrame->release();
+        return NULL;
+    }
+
+    // Get the rotation model
+    // TIMELINE-TODO: default rotation model is UniformRotation with a period
+    // equal to the orbital period. Should we do something else?
+    RotationModel* rotationModel = CreateRotationModel(phaseData, path, orbit->getPeriod());
+    if (!rotationModel)
+    {
+        // TODO: Should distinguish between a missing rotation model (where it's
+        // appropriate to use a default one) and a bad rotation model (where
+        // we should report an error.)
+        rotationModel = new ConstantOrientation(Quatd(1.0));
+    }
+
+    return TimelinePhase::CreateTimelinePhase(universe,
+                                              body,
+                                              beginning, ending,
+                                              *orbitFrame,
+                                              *orbit,
+                                              *bodyFrame,
+                                              *rotationModel);
+}
+
+
+Timeline* CreateTimelineFromArray(Body* body,
+                                  Universe& universe,
+                                  Array* timelineArray,
+                                  const string& path,
+                                  ReferenceFrame* defaultFrame)
+{
+    Timeline* timeline = new Timeline();
+    double previousEnding = -numeric_limits<double>::infinity();
+
+    for (Array::const_iterator iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
+    {
+        Hash* phaseData = (*iter)->getHash();
+        if (phaseData == NULL)
+        {
+            clog << "Error: Timeline phase " << iter - timelineArray->begin() + 1 << " is not a property group.\n";
+            delete timeline;
+            return NULL;
+        }
+
+        bool isFirstPhase = iter == timelineArray->begin();
+        bool isLastPhase = *iter == timelineArray->back();
+
+        TimelinePhase* phase = CreateTimelinePhase(body, universe, phaseData,
+                                                   path,
+                                                   defaultFrame,
+                                                   isFirstPhase, isLastPhase, previousEnding);
+        if (phase == NULL)
+        {
+            clog << "Error in timeline phase " << iter - timelineArray->begin() + 1 << endl;
+            delete timeline;
+            return NULL;
+        }
+
+        previousEnding = phase->endTime();
+
+        timeline->appendPhase(phase);
+    }
+
+    return timeline;
+}
+
+
+static bool CreateTimeline(Body* body,
+                           const string& name,
+                           PlanetarySystem* system,
+                           Universe& universe,
+                           Hash* planetData,
+                           const string& path,
+                           Disposition disposition)
+{
+    FrameTree* parentFrameTree = NULL;
+    Selection orbitBarycenter = GetOrbitBarycenter(name, system);
+    bool orbitsPlanet = false;
+    if (orbitBarycenter.body())
+    {
+        parentFrameTree = orbitBarycenter.body()->getOrCreateFrameTree();
+        orbitsPlanet = true;
+    }
+    else if (orbitBarycenter.star())
+    {
+        SolarSystem* solarSystem = universe.getSolarSystem(orbitBarycenter.star());
+        if (solarSystem == NULL)
+            solarSystem = universe.createSolarSystem(orbitBarycenter.star());
+        parentFrameTree = solarSystem->getFrameTree();
+    }
+    else
+    {
+        // Bad orbit barycenter specified
+        return false;
+    }
+
+    // If there's an explicit timeline definition, parse that. Otherwise, we'll do
+    // things the old way.
+    Value* value = planetData->getValue("Timeline");
+    if (value != NULL)
+    {
+        if (value->getType() != Value::ArrayType)
+        {
+            clog << "Error: Timeline must be an array\n";
+            return false;
+        }
+
+        Timeline* timeline = CreateTimelineFromArray(body, universe, value->getArray(), path,
+                                                     parentFrameTree->getDefaultReferenceFrame());
+        if (timeline == NULL)
+        {
+            return false;
+        }
+        else
+        {
+            body->setTimeline(timeline);
+            return true;
+        }
+    }
+
+    // Information required for the object timeline.
+    ReferenceFrame* orbitFrame   = NULL;
+    ReferenceFrame* bodyFrame    = NULL;
+    Orbit* orbit                 = NULL;
+    RotationModel* rotationModel = NULL;
+    double beginning             = -numeric_limits<double>::infinity();
+    double ending                =  numeric_limits<double>::infinity();
+
+    // If any new timeline values are specified, we need to overrideOldTimeline will
+    // be set to true.
+    bool overrideOldTimeline = false;
+
+    // The interaction of Modify with timelines is slightly complicated. If the timeline
+    // is specified by putting the OrbitFrame, Orbit, BodyFrame, or RotationModel directly
+    // in the object definition (i.e. not inside a Timeline structure), it will completely
+    // replace the previous timeline if it contained more than one phase. Otherwise, the
+    // properties of the single phase will be modified individually, for compatibility with
+    // Celestia versions 1.5.0 and earlier.
+    if (disposition == ModifyObject)
+    {
+        const Timeline* timeline = body->getTimeline();
+        if (timeline->phaseCount() == 1)
+        {
+            const TimelinePhase* phase = timeline->getPhase(0);
+            orbitFrame    = phase->orbitFrame();
+            bodyFrame     = phase->bodyFrame();
+            orbit         = phase->orbit();
+            rotationModel = phase->rotationModel();
+            beginning     = phase->startTime();
+            ending        = phase->endTime();
+        }
+    }
+
+    // Get the object's orbit reference frame.
+    bool newOrbitFrame = false;
+    Value* frameValue = planetData->getValue("OrbitFrame");
+    if (frameValue != NULL)
+    {
+        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue);
+        if (frame != NULL)
+        {
+            orbitFrame = frame;
+            newOrbitFrame = true;
+            overrideOldTimeline = true;
+        }
+    }
+
+    // Get the object's body frame.
+    bool newBodyFrame = false;
+    Value* bodyFrameValue = planetData->getValue("BodyFrame");
+    if (bodyFrameValue != NULL)
+    {
+        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue);
+        if (frame != NULL)
+        {
+            bodyFrame = frame;
+            newBodyFrame = true;
+            overrideOldTimeline = true;
+        }
+    }
+
+    // If no orbit or body frame was specified, use the default ones
+    if (orbitFrame == NULL)
+        orbitFrame = parentFrameTree->getDefaultReferenceFrame();
+    if (bodyFrame == NULL)
+        bodyFrame = parentFrameTree->getDefaultReferenceFrame();
+
+    // If the center of the is a star, orbital element units are
+    // in AU; otherwise, use kilometers.
+    if (orbitFrame->getCenter().star() != NULL)
+        orbitsPlanet = false;
+    else
+        orbitsPlanet = true;
+
+    Orbit* newOrbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
+    if (newOrbit == NULL && orbit == NULL)
+    {
+        clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.";
+        return false;
+    }
+
+    // If a new orbit was given, override any old orbit
+    if (newOrbit != NULL)
+    {
+        orbit = newOrbit;
+        overrideOldTimeline = true;
+    }
+
+    // Get the rotation model for this body
+    double syncRotationPeriod = orbit->getPeriod();
+    RotationModel* newRotationModel = CreateRotationModel(planetData, path, syncRotationPeriod);
+
+    // If a new rotation model was given, override the old one
+    if (newRotationModel != NULL)
+    {
+        rotationModel = newRotationModel;
+        overrideOldTimeline = true;
+    }
+
+    // If there was no rotation model specified, nor a previous rotation model to
+    // override, create the default one.
+    if (rotationModel == NULL)
+    {
+        // If no rotation model is provided, use a default rotation model--
+        // a uniform rotation that's synchronous with the orbit (appropriate
+        // for nearly all natural satellites in the solar system.)
+        rotationModel = CreateDefaultRotationModel(syncRotationPeriod);
+    }
+    
+    if (ParseDate(planetData, "Beginning", beginning) ||
+        ParseDate(planetData, "Ending", ending))
+    {
+        overrideOldTimeline = true;
+    }
+
+    // Something went wrong if the disposition isn't modify and no timeline
+    // is to be created.
+    assert(disposition == ModifyObject || overrideOldTimeline);
+
+    if (overrideOldTimeline)
+    {
+        // We finally have an orbit, rotation model, frames, and time range. Create
+        // the object timeline.
+        TimelinePhase* phase = TimelinePhase::CreateTimelinePhase(universe,
+                                                                  body,
+                                                                  beginning, ending,
+                                                                  *orbitFrame,
+                                                                  *orbit,
+                                                                  *bodyFrame,
+                                                                  *rotationModel);
+        Timeline* timeline = new Timeline();
+        timeline->appendPhase(phase);
+
+        body->setTimeline(timeline);
+
+        // Check for circular references in frames; this can only be done once the timeline
+        // has actually been set.
+        // TIMELINE-TODO: This check is not comprehensive; it won't find recursion in
+        // multiphase timelines.
+        if (newOrbitFrame && isFrameCircular(*body->getOrbitFrame(0.0), ReferenceFrame::PositionFrame))
+        {
+            clog << "Orbit frame for " << body->getName() << " is nested too deep (probably circular)\n";
+            return false;
+        }
+
+        if (newBodyFrame && isFrameCircular(*body->getBodyFrame(0.0), ReferenceFrame::OrientationFrame))
+        {
+            clog << "Body frame for " << body->getName() << " is nested too deep (probably circular)\n";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
 // Create a body (planet or moon) using the values from a hash
 // The usePlanetsUnits flags specifies whether period and semi-major axis
 // are in years and AU rather than days and kilometers
@@ -273,82 +631,9 @@ static Body* CreatePlanet(const string& name,
         body = new Body(system);
     }
 
-    Selection orbitBarycenter = GetOrbitBarycenter(name, system);
-    bool orbitsPlanet = false;
-    if (orbitBarycenter.body())
+    if (!CreateTimeline(body, name, system, universe, planetData, path, disposition))
     {
-        body->setOrbitBarycenter(orbitBarycenter.body());
-        orbitsPlanet = true;
-    }
-    else if (orbitBarycenter.star())
-    {
-        body->setOrbitBarycenter(NULL);
-    }
-    else
-    {
-        // Bad orbit barycenter specified
-        if (body != existingBody)
-            delete body;
-        return NULL;
-    }
-
-    // Set the reference frame of the orbit
-    Value* frameValue = planetData->getValue("OrbitFrame");
-    if (frameValue != NULL)
-    {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue);
-        if (frame != NULL)
-        {
-            body->setOrbitFrame(frame);
-
-            // If the center of the is a star, orbital element units are
-            // in AU; otherwise, use kilometers.
-            if (frame->getCenter().star() != NULL)
-                orbitsPlanet = false;
-            else
-                orbitsPlanet = true;
-        }
-    }
-
-    Value* bodyFrameValue = planetData->getValue("BodyFrame");
-    if (bodyFrameValue != NULL)
-    {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue);
-        if (frame != NULL)
-        {
-            body->setBodyFrame(frame);
-        }
-    }
-
-    if (body->getOrbitFrame() != NULL)
-    {
-        if (isFrameCircular(*body->getOrbitFrame(), ReferenceFrame::PositionFrame))
-        {
-            clog << "Orbit frame for " << body->getName() << " is nested too deep (probably circular)\n";
-            body->setOrbitFrame(NULL);
-        }
-    }
-
-    if (body->getBodyFrame() != NULL)
-    {
-        if (isFrameCircular(*body->getBodyFrame(), ReferenceFrame::OrientationFrame))
-        {
-            clog << "Body frame for " << body->getName() << " is nested too deep (probably circular)\n";
-            body->setBodyFrame(NULL);
-        }
-    }
-
-
-    Orbit* orbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
-    if (orbit != NULL)
-    {
-        body->setOrbit(orbit);
-    }
-
-    if (body->getOrbit() == NULL)
-    {
-        DPRINTF(0, "No valid orbit specified for object '%s'; skipping . . .\n",
-                body->getName().c_str());
+        // No valid timeline given; give up.
         if (body != existingBody)
             delete body;
         return NULL;
@@ -445,16 +730,6 @@ static Body* CreatePlanet(const string& name,
         body->setVisibleAsPoint(false);
     }
 
-    // g++ is missing limits header, so we can use this
-    // double beginning   = -numeric_limits<double>::infinity();
-    // double ending      =  numeric_limits<double>::infinity();
-    double beginning   = -1.0e+50;
-    double ending      =  1.0e+50;
-    body->getLifespan(beginning, ending);
-    ParseDate(planetData, "Beginning", beginning);
-    ParseDate(planetData, "Ending", ending);
-    body->setLifespan(beginning, ending);
-
     string infoURL;
     if (planetData->getString("InfoURL", infoURL))
     {
@@ -482,29 +757,6 @@ static Body* CreatePlanet(const string& name,
     Quatf orientation;
     if (planetData->getRotation("Orientation", orientation))
         body->setOrientation(orientation);
-
-    // Get the rotation model for this body
-    double syncRotationPeriod = body->getOrbit()->getPeriod();
-    RotationModel* rm = CreateRotationModel(planetData, path,
-                                            syncRotationPeriod);
-    if (rm != NULL)
-    {
-        // TODO: Free old rotation model and replace it with the new one;
-        // should reference count rotation model objects.
-        body->setRotationModel(rm);
-    }
-    else
-    {
-        // If no rotation model is provided, use a default rotation model--
-        // a uniform rotation that's synchronous with the orbit (appropriate
-        // for nearly all natural satellites in the solar system.) If the
-        // disposition is modify, we do not want to replace the existing
-        // rotation model with a default one.
-        if (disposition != ModifyObject)
-        {
-            body->setRotationModel(CreateDefaultRotationModel(syncRotationPeriod));
-        }
-    }
 
     Surface surface;
     if (disposition == ModifyObject)
@@ -693,68 +945,13 @@ static Body* CreateReferencePoint(const string& name,
     body->setVisibleAsPoint(false);
     body->setClickable(false);
 
-    Selection orbitBarycenter = GetOrbitBarycenter(name, system);
-    bool orbitsPlanet = false;
-    if (orbitBarycenter.body())
+    if (!CreateTimeline(body, name, system, universe, refPointData, path, disposition))
     {
-        body->setOrbitBarycenter(orbitBarycenter.body());
-        orbitsPlanet = true;
-    }
-    else if (orbitBarycenter.star())
-    {
-        body->setOrbitBarycenter(NULL);
-    }
-    else
-    {
-        // Bad orbit barycenter specified
+        // No valid timeline given; give up.
         if (body != existingBody)
             delete body;
         return NULL;
     }
-
-   // Set the reference frame of the orbit
-    Value* frameValue = refPointData->getValue("OrbitFrame");
-    if (frameValue != NULL)
-    {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue);
-        if (frame != NULL)
-        {
-            body->setOrbitFrame(frame);
-
-            // If the center of the is a star, orbital element units are
-            // in AU; otherwise, use kilometers.
-            if (frame->getCenter().star() != NULL)
-                orbitsPlanet = false;
-            else
-                orbitsPlanet = true;
-        }
-    }
-
-    if (body->getOrbitFrame() != NULL)
-    {
-        if (isFrameCircular(*body->getOrbitFrame(), ReferenceFrame::PositionFrame))
-        {
-            clog << "Orbit frame for " << body->getName() << " is nested too deep (probably circular)\n";
-            body->setOrbitFrame(NULL);
-        }
-    }
-
-    Orbit* orbit = CreateOrbit(system, refPointData, path, !orbitsPlanet);
-    if (orbit != NULL)
-    {
-        body->setOrbit(orbit);
-    }
-
-    if (body->getOrbit() == NULL)
-    {
-        DPRINTF(0, "No valid orbit specified for barycenter '%s'; skipping . . .\n",
-                name.c_str());
-        if (body != existingBody)
-            delete body;
-        return NULL;
-    }
-
-    body->setRotationModel(new ConstantOrientation(Quatd(1.0)));
 
     return body;
 }
@@ -934,9 +1131,13 @@ bool LoadSolarSystemObjects(istream& in,
 }
 
 
-SolarSystem::SolarSystem(Star* _star) : star(_star)
+SolarSystem::SolarSystem(Star* _star) : 
+    star(_star),
+    planets(NULL),
+    frameTree(NULL)
 {
-    planets = new PlanetarySystem(_star);
+    planets = new PlanetarySystem(star);
+    frameTree = new FrameTree(star);
 }
 
 
@@ -956,4 +1157,9 @@ Point3f SolarSystem::getCenter() const
 PlanetarySystem* SolarSystem::getPlanets() const
 {
     return planets;
+}
+
+FrameTree* SolarSystem::getFrameTree() const
+{
+    return frameTree;
 }

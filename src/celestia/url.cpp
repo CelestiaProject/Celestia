@@ -16,7 +16,8 @@
  ***************************************************************************/
 
 #include <string>
-#include <stdio.h>
+#include <cstdio>
+#include <cassert>
 #include "celestiacore.h"
 #include "celengine/astro.h"
 #include "url.h"
@@ -403,7 +404,9 @@ static std::string getBodyName(Universe* universe, Body* body)
     if (parentSystem != NULL)
         parentBody = parentSystem->getPrimaryBody();
     else
-        parentBody = body->getOrbitBarycenter();
+        assert(0);
+        // TODO: Figure out why the line below was added.
+        //parentBody = body->getOrbitBarycenter();  
 
     while (parentBody != NULL)
     {

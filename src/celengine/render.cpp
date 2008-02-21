@@ -18,8 +18,6 @@
 #endif
 #endif /* _WIN32 */
 
-#define REFMARKS 1
-
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -42,9 +40,9 @@
 #include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
-#if REFMARKS
 #include "axisarrow.h"
-#endif
+#include "frametree.h"
+#include "timelinephase.h"
 
 using namespace std;
 
@@ -1498,7 +1496,7 @@ static Point3d renderOrbitSection(const Orbit& orbit,
                                   int lastOutcode,
                                   double nearZ,
                                   double farZ,
-                                  uint32 renderFlags)
+                                  uint32 /* renderFlags */)
 {
     vector<Renderer::OrbitSample>& trajectory(cachedOrbit.trajectory);
     unsigned int nPoints = cachedOrbit.trajectory.size();
@@ -1661,21 +1659,19 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     double nearZ = -nearDist;  // negate, becase z is into the screen in camera space
     double farZ = -farDist;
 
-    // Ugly cast here because orbit cache uses the body pointer as a key
-    Body* cacheKey = body != NULL ? body : reinterpret_cast<Body*>(const_cast<Star*>(orbitPath.star));
+    const Orbit* orbit = NULL;
+    if (body != NULL)
+        orbit = body->getOrbit(t);
+    else
+        orbit = orbitPath.star->getOrbit();
+
     CachedOrbit* cachedOrbit = NULL;
-    OrbitCache::iterator cached = orbitCache.find(cacheKey);
+    OrbitCache::iterator cached = orbitCache.find(orbit);
     if (cached != orbitCache.end())
     {
         cachedOrbit = cached->second;
         cachedOrbit->lastUsed = frameCount;
     }
-
-    const Orbit* orbit = NULL;
-    if (body != NULL)
-        orbit = body->getOrbit();
-    else
-        orbit = orbitPath.star->getOrbit();
 
     // If it's not in the cache already
     if (cachedOrbit == NULL)
@@ -1710,7 +1706,6 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         }
 
         cachedOrbit = new CachedOrbit();
-        cachedOrbit->body = cacheKey;
         cachedOrbit->lastUsed = frameCount;
 
         OrbitSampler sampler(&cachedOrbit->trajectory);
@@ -1750,7 +1745,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             }
         }
 
-        orbitCache[cacheKey] = cachedOrbit;
+        orbitCache[orbit] = cachedOrbit;
     }
 
     vector<OrbitSample>* trajectory = &cachedOrbit->trajectory;
@@ -1767,14 +1762,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         Quatd orientation(1.0);
         if (body != NULL)
         {
-            if (body->getOrbitFrame() != NULL)
-            {
-                orientation = body->getOrbitFrame()->getOrientation(t);
-            }
-            else if (body->getOrbitBarycenter() != NULL)
-            {
-                orientation = body->getOrbitBarycenter()->getEclipticalToEquatorial(t);
-            }
+            orientation = body->getOrbitFrame(t)->getOrientation(t);
         }
 
         // Equivalent to:
@@ -2113,7 +2101,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
                         rle.discSizeInPixels);
         break;
 
-#if REFMARKS
     case RenderListEntry::RenderableBodyAxes:
         renderAxes(*rle.body,
                    rle.position,
@@ -2146,7 +2133,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
                              observer.getTime(),
                              nearPlaneDistance, farPlaneDistance);
         break;
-#endif
 
     default:
         break;
@@ -2260,7 +2246,7 @@ void Renderer::render(const Observer& observer,
 
                 setupLightSources(nearStars, *sun, now, *lightSources);
                 buildRenderLists(*sun,
-                                 solarSystem->getPlanets(),
+                                 solarSystem->getFrameTree(),
                                  observer,
                                  now,
                                  lightSources,
@@ -2300,7 +2286,7 @@ void Renderer::render(const Observer& observer,
                 eyeVec *= (1.0f / radius);
 
                 // Compute the orientation of the planet before axial rotation
-                Quatd qd = iter->body->getEclipticalToEquatorial(now);
+                Quatd qd = iter->body->getEclipticToEquatorial(now);
                 Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
                 eyeVec = eyeVec * conjugate(q).toMatrix3();
 
@@ -2515,14 +2501,12 @@ void Renderer::render(const Observer& observer,
                 convex = false;
                 break;
 
-#if REFMARKS
             case RenderListEntry::RenderableBodyAxes:
             case RenderListEntry::RenderableFrameAxes:
                 radius = iter->radius;
                 cullRadius = radius;
                 convex = false;
                 break;
-#endif
 
             case RenderListEntry::RenderableBody:
             default:
@@ -2996,7 +2980,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
                                     float discSizeInPixels,
                                     Color color,
                                     const Quatf& orientation,
-                                    float renderZ,
+                                    float /* renderZ */,
                                     bool useHalos)
 {
     float maxDiscSize = 1.0f;
@@ -6368,8 +6352,8 @@ bool Renderer::testEclipse(const Body& receiver,
         // less than the distance between the sun and the receiver.  This
         // approximation works everywhere in the solar system, and is likely
         // valid for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = receiver.getHeliocentricPosition(now);
-        Point3d posCaster = caster.getHeliocentricPosition(now);
+        Point3d posReceiver = receiver.getAstrocentricPosition(now);
+        Point3d posCaster = caster.getAstrocentricPosition(now);
 
         //const Star* sun = receiver.getSystem()->getStar();
         //assert(sun != NULL);
@@ -6466,8 +6450,8 @@ void Renderer::renderPlanet(Body& body,
         rp.model = body.getModel();
 
         // Compute the orientation of the planet before axial rotation
-        Quatd q = body.getRotationModel()->spin(now) *
-            body.getEclipticalToEquatorial(now);
+        Quatd q = body.getRotationModel(now)->spin(now) *
+            body.getEclipticToEquatorial(now);
 
         rp.orientation = body.getOrientation() *
             Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
@@ -6478,7 +6462,7 @@ void Renderer::renderPlanet(Body& body,
 
         LightingState lights;
         setupObjectLighting(lightSources,
-                            body.getHeliocentricPosition(now),
+                            body.getAstrocentricPosition(now),
                             rp.orientation,
                             rp.semiAxes * rp.radius,
                             pos,
@@ -6811,8 +6795,8 @@ void Renderer::renderCometTail(const Body& body,
                                float discSizeInPixels)
 {
     Point3f cometPoints[MaxCometTailPoints];
-    Point3d pos0 = body.getOrbit()->positionAtTime(now);
-    Point3d pos1 = body.getOrbit()->positionAtTime(now - 0.01);
+    Point3d pos0 = body.getOrbit(now)->positionAtTime(now);
+    Point3d pos1 = body.getOrbit(now)->positionAtTime(now - 0.01);
     Vec3d vd = pos1 - pos0;
     double t = now;
     /*float f = 1.0e15f;    Unused*/
@@ -6834,7 +6818,7 @@ void Renderer::renderCometTail(const Body& body,
 
     for (unsigned int li = 0; li < lightSources.size(); li++)
     {
-        distanceFromSun = (float) (body.getHeliocentricPosition(now) -
+        distanceFromSun = (float) (body.getAstrocentricPosition(now) -
                            lightSources[li].position).length();
         float irradiance = lightSources[li].luminosity / square(distanceFromSun);
         if (irradiance > irradiance_max )
@@ -6847,7 +6831,7 @@ void Renderer::renderCometTail(const Body& body,
 
     // direction to sun with dominant light irradiance:
 
-    Vec3d sd = body.getHeliocentricPosition(now) - lightSources[li_eff].position;
+    Vec3d sd = body.getAstrocentricPosition(now) - lightSources[li_eff].position;
     Vec3f sunDir = Vec3f((float) sd.x, (float) sd.y, (float) sd.z);
     sunDir.normalize();
 
@@ -6888,7 +6872,7 @@ void Renderer::renderCometTail(const Body& body,
     // comet.  The first axis is the velocity.  We choose the second one
     // based on the orientation of the comet.  And the third is just the cross
     // product of the first and second axes.
-    Quatd qd = body.getEclipticalToEquatorial(t);
+    Quatd qd = body.getEclipticToEquatorial(t);
     Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
     Vec3f v = cometPoints[1] - cometPoints[0];
     v.normalize();
@@ -7020,10 +7004,9 @@ void Renderer::renderAxes(Body& body,
                           float distance,
                           double now,
                           float nearPlaneDistance,
-                          float farPlaneDistance,
+                          float /* farPlaneDistance */,
                           RenderListEntry::RenderableType renderableType)
 {
-#if REFMARKS
     float altitude = distance - body.getRadius();
     float discSizeInPixels = body.getRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
@@ -7038,12 +7021,12 @@ void Renderer::renderAxes(Body& body,
 
     if (renderableType == RenderListEntry::RenderableFrameAxes)
     {
-        Quatd q = body.getEclipticalToFrame(now);
+        Quatd q = body.getEclipticToFrame(now);
         orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
     }
     else
     {
-        Quatd q = body.getEclipticalToBodyFixed(now);
+        Quatd q = body.getEclipticToBodyFixed(now);
         orientation = Quatf::yrotation((float) PI) * Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
     }
 
@@ -7077,7 +7060,6 @@ void Renderer::renderAxes(Body& body,
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-#endif
 }
 
 
@@ -7088,9 +7070,8 @@ void Renderer::renderSunDirection(Body& body,
                                   double now,
                                   const vector<LightSource>& lightSources,
                                   float nearPlaneDistance,
-                                  float farPlaneDistance)
+                                  float /* farPlaneDistance */)
 {
-#if REFMARKS
     float altitude = distance - body.getRadius();
     float discSizeInPixels = body.getRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
@@ -7109,7 +7090,7 @@ void Renderer::renderSunDirection(Body& body,
     glPushMatrix();
     glTranslate(pos);
 
-    Point3d posd = body.getHeliocentricPosition(now);
+    Point3d posd = body.getAstrocentricPosition(now);
     for (vector<LightSource>::const_iterator iter = lightSources.begin(); iter != lightSources.end(); iter++)
     {
         Vec3d v = iter->position - posd;
@@ -7124,7 +7105,6 @@ void Renderer::renderSunDirection(Body& body,
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-#endif
 }
 
 
@@ -7134,9 +7114,8 @@ void Renderer::renderVelocityVector(Body& body,
                                     float distance,
                                     double now,
                                     float nearPlaneDistance,
-                                    float farPlaneDistance)
+                                    float /* farPlaneDistance */)
 {
-#if REFMARKS
     float altitude = distance - body.getRadius();
     float discSizeInPixels = body.getRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
@@ -7155,7 +7134,7 @@ void Renderer::renderVelocityVector(Body& body,
     glPushMatrix();
     glTranslate(pos);
 
-    const Orbit* orbit = body.getOrbit();
+    const Orbit* orbit = body.getOrbit(now);
     if (orbit != NULL)
     {
         // Approximate velocity by taking the different between two orbit positions one minute apart
@@ -7177,36 +7156,34 @@ void Renderer::renderVelocityVector(Body& body,
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-#endif
 }
 
 
 // Add solar system bodies, orbits, and annotations to the render list. Stars
 // are handled by other methods.
 void Renderer::buildRenderLists(const Star& sun,
-                                const PlanetarySystem* solSystem,
+                                const FrameTree* tree,
                                 const Observer& observer,
                                 double now,
                                 vector<LightSource>* lightSourceList,
                                 bool showLabels)
 {
-    Point3f starPos = sun.getPosition();
-    Point3d observerPos = astrocentricPosition(observer.getPosition(),
-                                               sun, now);
+    Point3d observerPos = astrocentricPosition(observer.getPosition(), sun, now);
+
     Mat3f viewMat = observer.getOrientationf().toMatrix3();
     Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
     Body* lastPrimary = NULL;
     Sphered primarySphere;
 
-    int nBodies = solSystem != NULL ? solSystem->getSystemSize() : 0;
+    int nBodies = tree != NULL ? tree->childCount() : 0;
     for (int i = 0; i < nBodies; i++)
     {
-        Body* body = solSystem->getBody(i);
+        Body* body = tree->getChild(i)->body();
         if (!body->extant(now))
             continue;
 
-        Point3d bodyPos = body->getHeliocentricPosition(now);
+        Point3d bodyPos = body->getAstrocentricPosition(now);
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the planet
@@ -7291,7 +7268,6 @@ void Renderer::buildRenderLists(const Star& sun,
             }
         }
 
-#if REFMARKS
         if (body->getVisibleReferenceMarks() != 0)
         {
             if (body->referenceMarkVisible(Body::BodyAxes) && discSize > 1)
@@ -7366,11 +7342,10 @@ void Renderer::buildRenderLists(const Star& sun,
                 renderList.push_back(rle);
             }
         }
-#endif
 
         if (showLabels && (pos * conjugate(observer.getOrientationf()).toMatrix3()).z < 0)
         {
-            float boundingRadiusSize = (float) (body->getOrbit()->getBoundingRadius() / distanceFromObserver) / pixelSize;
+            float boundingRadiusSize = (float) (body->getOrbit(now)->getBoundingRadius() / distanceFromObserver) / pixelSize;
             if (boundingRadiusSize > minOrbitSize)
             {
                 Color labelColor;
@@ -7457,7 +7432,7 @@ void Renderer::buildRenderLists(const Star& sun,
                         // position.
                         if (primary != lastPrimary)
                         {
-                            Vec3d v = primary->getHeliocentricPosition(now) - observerPos;
+                            Vec3d v = primary->getAstrocentricPosition(now) - observerPos;
                             primarySphere = Sphered(Point3d(v.x, v.y, v.z),
                                                     primary->getRadius());
                             lastPrimary = primary;
@@ -7515,25 +7490,18 @@ void Renderer::buildRenderLists(const Star& sun,
                 (orbitVis == Body::UseClassVisibility && (body->getClassification() & orbitMask) != 0))
             {
                 Point3d orbitOrigin(0.0, 0.0, 0.0);
-                if (body->getOrbitFrame())
+                Selection centerObject = body->getOrbitFrame(now)->getCenter();
+                if (centerObject.body() != NULL)
                 {
-                    Selection centerObject = body->getOrbitFrame()->getCenter();
-                    if (centerObject.body() != NULL)
-                    {
-                        orbitOrigin = centerObject.body()->getHeliocentricPosition(now);
-                    }
-                    else if (centerObject.star() != NULL)
-                    {
-                        if (centerObject.star() != &sun)
-                        {
-                            Vec3d v = (centerObject.star()->getPosition(now) - sun.getPosition(now)) * astro::microLightYearsToKilometers(1.0);
-                            orbitOrigin = Point3d(v.x, v.y, v.z);
-                        }
-                    }
+                    orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
                 }
-                else if (body->getOrbitBarycenter())
+                else if (centerObject.star() != NULL)
                 {
-                    orbitOrigin = body->getOrbitBarycenter()->getHeliocentricPosition(now);
+                    if (centerObject.star() != &sun)
+                    {
+                        Vec3d v = (centerObject.star()->getPosition(now) - sun.getPosition(now)) * astro::microLightYearsToKilometers(1.0);
+                        orbitOrigin = Point3d(v.x, v.y, v.z);
+                    }
                 }
 
                 // Calculate the origin of the orbit relative to the observer
@@ -7542,7 +7510,7 @@ void Renderer::buildRenderLists(const Star& sun,
 
                 // Compute the size of the orbit in pixels
                 double originDistance = posd.length();
-                double boundingRadius = body->getOrbit()->getBoundingRadius();
+                double boundingRadius = body->getOrbit(now)->getBoundingRadius();
                 float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
 
                 if (orbitRadiusInPixels > minOrbitSize)
@@ -7566,10 +7534,10 @@ void Renderer::buildRenderLists(const Star& sun,
         // for example.)
         if (oppositionMag < faintestPlanetMag || (body->getClassification() & Body::Invisible) != 0)
         {
-            const PlanetarySystem* satellites = body->getSatellites();
-            if (satellites != NULL)
+            const FrameTree* subtree = body->getFrameTree();
+            if (subtree != NULL)
             {
-                buildRenderLists(sun, satellites, observer,
+                buildRenderLists(sun, subtree, observer,
                                  now, lightSourceList, showLabels);
             }
         }
