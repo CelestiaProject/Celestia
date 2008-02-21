@@ -95,21 +95,21 @@
 {
     [self body]->setAlbedo([a floatValue]);
 }
--(CelestiaVector*)heliocentricPosition:(NSNumber*)n
+-(CelestiaVector*)astrocentricPosition:(NSNumber*)n
 {
-    return [CelestiaVector vectorWithPoint3d:[self body]->getHeliocentricPosition([n doubleValue])];
+    return [CelestiaVector vectorWithPoint3d:[self body]->getAstrocentricPosition([n doubleValue])];
 }
 -(CelestiaVector*)equatorialToBodyFixed:(NSNumber*)n
 {
     return [CelestiaVector vectorWithQuatd:[self body]->getEquatorialToBodyFixed([n doubleValue])];
 }
--(CelestiaVector*)eclipticalToEquatorial:(NSNumber*)n
+-(CelestiaVector*)eclipticToEquatorial:(NSNumber*)n
 {
-    return [CelestiaVector vectorWithQuatd:[self body]->getEclipticalToEquatorial([n doubleValue])];
+    return [CelestiaVector vectorWithQuatd:[self body]->getEclipticToEquatorial([n doubleValue])];
 }
--(CelestiaVector*)eclipticalToBodyFixed:(NSNumber*)n
+-(CelestiaVector*)eclipticToBodyFixed:(NSNumber*)n
 {
-    return [CelestiaVector vectorWithQuatd:[self body]->getEclipticalToBodyFixed([n doubleValue])];
+    return [CelestiaVector vectorWithQuatd:[self body]->getEclipticToBodyFixed([n doubleValue])];
 }
 
 -(NSArray*)alternateSurfaceNames
