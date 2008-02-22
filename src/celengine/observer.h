@@ -52,6 +52,7 @@ public:
                   const Selection& _refObject,
                   const Selection& _targetObj = Selection());
     ObserverFrame(const ObserverFrame&);
+    ObserverFrame(const ReferenceFrame& f);
     
     ~ObserverFrame();
     
@@ -84,7 +85,7 @@ private:
     
 private:
     CoordinateSystem coordSys;
-    ReferenceFrame* frame;
+    const ReferenceFrame* frame;
     Selection targetObject;
 };
 

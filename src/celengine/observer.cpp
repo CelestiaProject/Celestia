@@ -1416,6 +1416,10 @@ ObserverFrame::ObserverFrame() :
 }
 
 
+/*! Create a new frame with the specified coordinate system and
+ *  reference object. The targetObject is only needed for phase
+ *  lock frames; the argument is ignored for other frames.
+ */
 ObserverFrame::ObserverFrame(CoordinateSystem _coordSys,
                              const Selection& _refObject,
                              const Selection& _targetObject) :
@@ -1428,6 +1432,18 @@ ObserverFrame::ObserverFrame(CoordinateSystem _coordSys,
 }
 
 
+/*! Create a new ObserverFrame with the specified reference frame.
+ *  The coordinate system of this frame will be marked as unknown.
+ */
+ObserverFrame::ObserverFrame(const ReferenceFrame &f) :
+    coordSys(Unknown),
+    frame(&f)
+{
+    frame->addRef();
+}
+
+
+/*! Copy constructor. */
 ObserverFrame::ObserverFrame(const ObserverFrame& f) :
     coordSys(f.coordSys),
     frame(f.frame),
@@ -1602,4 +1618,5 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
         return new J2000EclipticFrame(_refObject);
     }
 }
+
 
