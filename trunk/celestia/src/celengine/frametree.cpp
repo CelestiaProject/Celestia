@@ -156,8 +156,8 @@ FrameTree::removeChild(TimelinePhase* phase)
     vector<TimelinePhase*>::iterator iter = find(children.begin(), children.end(), phase);
     if (iter != children.end())
     {
-        children.erase(iter);
         (*iter)->release();
+        children.erase(iter);
         markChanged();
     }
 }
