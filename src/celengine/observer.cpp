@@ -479,7 +479,11 @@ void Observer::update(double dt, double timeScale)
         orientation += dt * dr;
         orientation.normalize();
     }
+   
+    updateUniversal();
 
+    // Update orientation for tracking--must occur after updateUniversal(), as it
+    // relies on the universal position and orientation of the observer.
     if (!trackObject.empty())
     {
         Vec3d up = Vec3d(0, 1, 0) * getOrientation().toMatrix3();
@@ -489,8 +493,6 @@ void Observer::update(double dt, double timeScale)
                               Point3d(viewDir.x, viewDir.y, viewDir.z),
                               up));
     }
-    
-    updateUniversal();
 }
 
 
