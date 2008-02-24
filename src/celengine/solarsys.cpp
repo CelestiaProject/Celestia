@@ -529,7 +529,7 @@ static bool CreateTimeline(Body* body,
     Orbit* newOrbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
     if (newOrbit == NULL && orbit == NULL)
     {
-        clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.";
+        clog << "No valid orbit specified for object '" << name << "'. Skipping.\n";
         return false;
     }
 
@@ -561,11 +561,10 @@ static bool CreateTimeline(Body* body,
         rotationModel = CreateDefaultRotationModel(syncRotationPeriod);
     }
     
-    if (ParseDate(planetData, "Beginning", beginning) ||
-        ParseDate(planetData, "Ending", ending))
-    {
+    if (ParseDate(planetData, "Beginning", beginning))
         overrideOldTimeline = true;
-    }
+    if (ParseDate(planetData, "Ending", ending))
+        overrideOldTimeline = true;
 
     // Something went wrong if the disposition isn't modify and no timeline
     // is to be created.
