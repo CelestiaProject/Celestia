@@ -21,9 +21,9 @@
 -(void)setName:(NSString*)s;
 -(void)setMass:(NSNumber*)m;
 -(void)setAlbedo:(NSNumber*)a;
--(CelestiaVector*)heliocentricPosition:(NSNumber*)n;
+-(CelestiaVector*)astrocentricPosition:(NSNumber*)n;
 -(CelestiaVector*)equatorialToBodyFixed:(NSNumber*)n;
--(CelestiaVector*)eclipticalToEquatorial:(NSNumber*)n;
--(CelestiaVector*)eclipticalToBodyFixed:(NSNumber*)n;
+-(CelestiaVector*)eclipticToEquatorial:(NSNumber*)n;
+-(CelestiaVector*)eclipticToBodyFixed:(NSNumber*)n;
 -(NSArray*)alternateSurfaceNames;
 @end

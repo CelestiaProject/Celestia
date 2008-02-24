@@ -9,13 +9,9 @@
 /* Begin PBXBuildFile section */
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
 		8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844B87C0D5AA3290059AA3A /* customrotation.cpp */; };
-		8844B87F0D5AA3290059AA3A /* customrotation.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844B87D0D5AA3290059AA3A /* customrotation.h */; };
 		8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAA80D6D13FE0059AA3A /* frametree.cpp */; };
-		8844BAAF0D6D13FE0059AA3A /* frametree.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844BAA90D6D13FE0059AA3A /* frametree.h */; };
 		8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAA0D6D13FE0059AA3A /* timeline.cpp */; };
-		8844BAB10D6D13FE0059AA3A /* timeline.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844BAAB0D6D13FE0059AA3A /* timeline.h */; };
 		8844BAB20D6D13FE0059AA3A /* timelinephase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAC0D6D13FE0059AA3A /* timelinephase.cpp */; };
-		8844BAB30D6D13FE0059AA3A /* timelinephase.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844BAAD0D6D13FE0059AA3A /* timelinephase.h */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
@@ -371,10 +367,6 @@
 			files = (
 				E5F8C9E70795239600D1DAF2 /* liblua.dylib in Copy Libraries */,
 				E5F8C9E90795239600D1DAF2 /* libpng.dylib in Copy Libraries */,
-				8844B87F0D5AA3290059AA3A /* customrotation.h in Copy Libraries */,
-				8844BAAF0D6D13FE0059AA3A /* frametree.h in Copy Libraries */,
-				8844BAB10D6D13FE0059AA3A /* timeline.h in Copy Libraries */,
-				8844BAB30D6D13FE0059AA3A /* timelinephase.h in Copy Libraries */,
 			);
 			name = "Copy Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -541,7 +533,7 @@
 		E561FC2D0B47910800668CFE /* CelestiaLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaLocation.h; sourceTree = "<group>"; };
 		E561FC2E0B47910800668CFE /* CelestiaLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaLocation.mm; sourceTree = "<group>"; };
 		E564312D07769C9000E2C4A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
-		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56431450776D52D00E2C4A3 /* celx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = celx.cpp; path = ../src/celestia/celx.cpp; sourceTree = SOURCE_ROOT; };
 		E56431460776D52D00E2C4A3 /* celx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celx.h; path = ../src/celestia/celx.h; sourceTree = SOURCE_ROOT; };
 		E56431490776D5C800E2C4A3 /* jpleph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jpleph.cpp; path = ../src/celengine/jpleph.cpp; sourceTree = SOURCE_ROOT; };
