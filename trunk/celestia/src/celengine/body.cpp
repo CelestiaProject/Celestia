@@ -551,9 +551,6 @@ void Body::getLifespan(double& begin, double& end) const
 }
 
 
-#define SOLAR_IRRADIANCE   1367.6
-#define SOLAR_POWER           3.8462e26  // Watts
-
 float Body::getLuminosity(const Star& sun,
                           float distanceFromSun) const
 {
@@ -565,7 +562,7 @@ float Body::getLuminosity(float sunLuminosity,
                           float distanceFromSun) const
 {
     // Compute the total power of the star in Watts
-    double power = SOLAR_POWER * sunLuminosity;
+    double power = astro::SOLAR_POWER * sunLuminosity;
 
     // Compute the irradiance at a distance of 1au from the star in W/m^2
     // double irradiance = power / sphereArea(astro::AUtoKilometers(1.0) * 1000);
@@ -579,7 +576,7 @@ float Body::getLuminosity(float sunLuminosity,
     double reflectedEnergy = incidentEnergy * albedo;
     
     // Compute the luminosity (i.e. power relative to solar power)
-    return (float) (reflectedEnergy / SOLAR_POWER);
+    return (float) (reflectedEnergy / astro::SOLAR_POWER);
 }
 
 
