@@ -1,14 +1,14 @@
 // plane.h
 // 
-// Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2000-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _PLANE_H_
-#define _PLANE_H_
+#ifndef _CELMATH_PLANE_H_
+#define _CELMATH_PLANE_H_
 
 #include <celmath/mathlib.h>
 #include <celmath/vecmath.h>
@@ -99,6 +99,17 @@ template<class T> T Plane<T>::distanceToSegment(const Point3<T>& origin,
 }
 
 
+template<class T> Plane<T> operator*(const Matrix3<T>& m, const Plane<T>& p)
+{
+    Vector3<T> v = m * p.normal;
+    return Plane<T>(v, p.d);
+}
+
+template<class T> Plane<T> operator*(const Plane<T>& p, const Matrix3<T>& m)
+{
+    Vector3<T> v = p.normal * m;
+    return Plane<T>(v, p.d);
+}
 
 template<class T> Plane<T> operator*(const Matrix4<T>& m, const Plane<T>& p)
 {
@@ -124,4 +135,4 @@ template<class T> Point3<T> Plane<T>::intersection(const Plane<T>& p0,
     return Point3<T>(v.x, v.y, v.z);
 }
 
-#endif // _PLANE_H_
+#endif // _CELMATH_PLANE_H_
