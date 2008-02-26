@@ -167,7 +167,7 @@ ReferenceFrame::getAngularVelocity(double tjd) const
 {
 	Quatd q0 = getOrientation(tjd);
 	Quatd q1 = getOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
-	Quatd dq = q1 * ~q0;
+	Quatd dq = ~q0 * q1;
 
 	if (fabs(dq.w) > 0.99999999)
 		return Vec3d(0.0, 0.0, 0.0);
@@ -516,7 +516,7 @@ Vec3d CachingFrame::computeAngularVelocity(double tjd) const
 	// jd+dt is still in range.
 	Quatd q1 = computeOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
 
-	Quatd dq = q1 * ~q0;
+	Quatd dq = ~q0 * q1;
 
 	if (fabs(dq.w) > 0.99999999)
 		return Vec3d(0.0, 0.0, 0.0);
