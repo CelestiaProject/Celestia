@@ -52,13 +52,34 @@ public:
         return bodyParent == NULL;
     }
 
+    bool updateRequired() const
+    {
+        return m_changed;
+    }
+
+    /*! Get the radius of a sphere large enough to contain all
+     *  objects in the tree.
+     */
+    double boundingSphereRadius() const
+    {
+        return m_boundingSphereRadius;
+    }
+
+    /*! Get the radius of the largest body in the tree.
+     */
+    double maxChildRadius() const
+    {
+        return m_maxChildRadius;
+    }
+
 private:
     Star* starParent;
     Body* bodyParent;
     std::vector<TimelinePhase*> children;
 
-    double boundingSphereRadius;
-    bool changed;
+    double m_boundingSphereRadius;
+    double m_maxChildRadius;
+    bool m_changed;
 
     ReferenceFrame* defaultFrame;
 };
