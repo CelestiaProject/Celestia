@@ -152,8 +152,18 @@ Frustum::Aspect Frustum::testHalfSpace(const Planef& plane)
 #endif
 
 
-void Frustum::transform(const Mat3f&)
+void Frustum::transform(const Mat3f& m)
 {
+    int nPlanes = infinite ? 5 : 6;
+    Mat3f invTranspose = m.inverse().transpose();
+
+    for (int i = 0; i < nPlanes; i++)
+    {
+        planes[i] = planes[i] * invTranspose;
+        float s = 1.0f / planes[i].normal.length();
+        planes[i].normal = planes[i].normal * s;
+        planes[i].d *= s;
+    }
 }
 
 
