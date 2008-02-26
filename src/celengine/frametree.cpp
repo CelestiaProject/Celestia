@@ -19,8 +19,8 @@
 
 
 /* A FrameTree is hierarchy of solar system bodies organized according to
- * the relationship of their reference frames. An object will appear in as a child
- * in the tree of whatever object is the center of its orbit frame.
+ * the relationship of their reference frames. An object will appear in as
+ * a child in the tree of whatever object is the center of its orbit frame.
  * Since an object may have several orbit frames in its timeline, the
  * structure is a bit more complicated than a straightforward tree
  * of Body objects. A Body has exactly a single parent in the frame tree
@@ -28,6 +28,14 @@
  * timeline contains a list of timeline phases; each phase can point to
  * a different parent. Thus, the timeline can be thought of as a list of
  * parents.
+ *
+ * The FrameTree hiearchy is designed for fast visibility culling. There are
+ * two values stored in each node for this purpose: the bounding sphere 
+ * radius, and the maximum child object radius. The bounding sphere is large
+ * enough to contain the orbits of all child objects, as well as the child
+ * objects themselves. Change tracking is performed whenever the frame tree
+ * is modified: adding a node, removing a node, or changing the radius of an
+ * object will all cause the tree to be marked as changed.
  */
 
 /*! Create a frame tree associated with a star.
@@ -79,9 +87,9 @@ FrameTree::getDefaultReferenceFrame() const
 void
 FrameTree::markChanged()
 {
-    if (!changed)
+    if (!m_changed)
     {
-        changed = true;
+        m_changed = true;
         if (bodyParent != NULL)
             bodyParent->markChanged();
     }
@@ -95,9 +103,9 @@ FrameTree::markChanged()
 void
 FrameTree::markUpdated()
 {
-    if (changed)
+    if (m_changed)
     {
-        changed = false;
+        m_changed = false;
         for (vector<TimelinePhase*>::iterator iter = children.begin();
              iter != children.end(); iter++)
         {
@@ -109,28 +117,34 @@ FrameTree::markUpdated()
 
 /*! Recompute the bounding sphere for this tree and all subtrees marked
  *  as having changed. The bounding sphere is large enough to accommodate
- *  the orbits (and radii) of all child bodies.
+ *  the orbits (and radii) of all child bodies. This method also recomputes
+ *  the maximum child radius.
  */
 void
 FrameTree::recomputeBoundingSphere()
 {
-    if (changed)
+    if (m_changed)
     {
-        boundingSphereRadius = 0.0;
+        m_boundingSphereRadius = 0.0;
+        m_maxChildRadius = 0.0;
+
         for (vector<TimelinePhase*>::iterator iter = children.begin();
              iter != children.end(); iter++)
         {
             TimelinePhase* phase = *iter;
-            double r = phase->body()->getRadius() + phase->orbit()->getBoundingRadius();
+            double bodyRadius = phase->body()->getRadius();
+            double r = bodyRadius + phase->orbit()->getBoundingRadius();
+            m_maxChildRadius = max(m_maxChildRadius, bodyRadius);
 
             FrameTree* tree = phase->body()->getFrameTree();
             if (tree != NULL)
             {
                 tree->recomputeBoundingSphere();
-                r += tree->boundingSphereRadius;
+                r += tree->m_boundingSphereRadius;
+                m_maxChildRadius = max(m_maxChildRadius, tree->m_maxChildRadius);
             }
 
-            boundingSphereRadius = max(boundingSphereRadius, r);
+            m_boundingSphereRadius = max(m_boundingSphereRadius, r);
         }
     }
 }
