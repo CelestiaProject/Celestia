@@ -36,7 +36,7 @@ class RotationModel
         return spin(tjd) * equatorOrientationAtTime(tjd);
     }
 
-	Vec3d angularVelocityAtTime(double tjd) const;
+	virtual Vec3d angularVelocityAtTime(double tjd) const;
 
     /*! Return the orientation of the equatorial plane (normal to the primary
      *  axis of rotation.) The overall orientation of the object is
