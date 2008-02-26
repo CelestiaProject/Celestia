@@ -28,7 +28,7 @@ RotationModel::angularVelocityAtTime(double tdb) const
 {
 	Quatd q0 = orientationAtTime(tdb);
 	Quatd q1 = orientationAtTime(tdb + ANGULAR_VELOCITY_DIFF_DELTA);
-	Quatd dq = q1 * ~q0;
+	Quatd dq = ~q0 * q1;
 
 	if (fabs(dq.w) > 0.99999999)
 		return Vec3d(0.0, 0.0, 0.0);
@@ -60,7 +60,7 @@ ConstantOrientation::spin(double) const
 
 
 Vec3d
-ConstantOrientation::angularVelocityAtTime(double tdb) const
+ConstantOrientation::angularVelocityAtTime(double /* tdb */) const
 {
 	return Vec3d(0.0, 0.0, 0.0);
 }
