@@ -35,6 +35,9 @@ const double astro::LunarMass = 7.354e22;
 // Astronomical Almanac_ (1992), eqn 3.222-1.
 const double astro::J2000Obliquity = degToRad(23.4392911);
 
+const double astro::SOLAR_IRRADIANCE  = 1367.6;        // Watts / m^2
+const double astro::SOLAR_POWER       =    3.8462e26;  // Watts
+
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
 
