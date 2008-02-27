@@ -372,11 +372,10 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
     double t = isFrozen ? tjd : freezeEpoch;
 
-    // TODO: need to consider frame of object
     switch (equatorObject.getType())
     {
     case Selection::Type_Body:
-        return equatorObject.body()->getRotationModel(tjd)->equatorOrientationAtTime(t);
+        return equatorObject.body()->getEclipticToEquatorial(t);
     case Selection::Type_Star:
         return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
