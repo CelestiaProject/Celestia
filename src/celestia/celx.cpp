@@ -20,6 +20,8 @@
 #include <celengine/execution.h>
 #include <celmath/vecmath.h>
 #include <celengine/gl.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
 #include "imagecapture.h"
 
 // Older gcc versions used <strstream> instead of <sstream>.
@@ -104,6 +106,29 @@ enum FatalErrors {
     WrongType = 1,
     WrongArgc = 2,
     AllErrors = WrongType | WrongArgc,
+};
+
+
+// We want to avoid copying TimelinePhase objects, so we can't make them
+// userdata. But, they can't be lightuserdata either because they need to
+// be reference counted, and Lua doesn't garbage collect lightuserdata. The
+// solution is the PhaseReference object, which just wraps a TimelinePhase
+// pointer.
+class PhaseReference
+{
+public:
+    PhaseReference(const TimelinePhase& _phase) :
+        phase(&_phase)
+    {
+        phase->addRef();
+    }
+
+    ~PhaseReference()
+    {
+        phase->release();
+    }
+
+    const TimelinePhase* phase;
 };
 
 
@@ -2367,6 +2392,192 @@ static void CreateFrameMetaTable(lua_State* l)
     lua_pop(l, 1); // remove metatable from stack
 }
 
+
+#if 1
+// ==================== TimelinePhase ====================
+static int phase_new(lua_State* l, const TimelinePhase& phase)
+{
+	// Use placement new to put the new phase reference in the userdata block.
+	void* block = lua_newuserdata(l, sizeof(PhaseReference));
+	new (block) PhaseReference(phase);
+
+    SetClass(l, _Phase);
+
+    return 1;
+}
+
+
+static const TimelinePhase* to_phase(lua_State* l, int index)
+{
+    PhaseReference* ref = static_cast<PhaseReference*>(CheckUserData(l, index, _Phase));
+    return ref == NULL ? NULL : ref->phase;
+}
+
+
+static const TimelinePhase* this_phase(lua_State* l)
+{
+    const TimelinePhase* phase = to_phase(l, 1);
+    if (phase == NULL)
+    {
+        doError(l, "Bad phase object!");
+    }
+
+    return phase;
+}
+
+
+/*! phase:timespan()
+ *
+ * Return the start and end times for this timeline phase.
+ *
+ * \verbatim
+ * -- Example: retrieve the start and end times of the first phase
+ * -- of Cassini's timeline:
+ * --
+ * cassini = celestia:find("Sol/Cassini")
+ * phases = cassini:timeline()
+ * begintime, endtime = phases[1]:timespan()
+ *
+ * \endverbatim
+ */
+static int phase_timespan(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments allowed for to phase:timespan");
+        
+	const TimelinePhase* phase = this_phase(l);
+    lua_pushnumber(l, phase->startTime());
+    lua_pushnumber(l, phase->endTime());
+
+    return 2;
+}
+
+
+/*! frame phase:orbitframe()
+ *
+ * Return the orbit frame for this timeline phase.
+ */
+static int phase_orbitframe(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments allowed for to phase:orbitframe");
+        
+	const TimelinePhase* phase = this_phase(l);
+    const ReferenceFrame* f = phase->orbitFrame();
+    frame_new(l, ObserverFrame(*f));
+    
+    return 1;
+}
+
+
+/*! frame phase:bodyframe()
+ *
+ * Return the body frame for this timeline phase.
+ */
+static int phase_bodyframe(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No arguments allowed for to phase:bodyframe");
+        
+	const TimelinePhase* phase = this_phase(l);
+    const ReferenceFrame* f = phase->bodyFrame();
+    frame_new(l, ObserverFrame(*f));
+    
+    return 1;
+}
+
+
+/*! position phase:getposition(time: t)
+ *
+ * Return the position in frame coordinates at the specified time.
+ * Times outside the span covered by the phase are automatically clamped
+ * to either the beginning or ending of the span.
+ */
+static int phase_getposition(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for phase:getposition");
+
+    const TimelinePhase* phase = this_phase(l);
+
+    double tdb = safeGetNumber(l, 2, WrongType, "Argument to phase:getposition() must be number", 0.0);
+    if (tdb < phase->startTime())
+        tdb = phase->startTime();
+    else if (tdb > phase->endTime())
+        tdb = phase->endTime();
+    position_new(l, UniversalCoord(phase->orbit()->positionAtTime(tdb) * astro::kilometersToMicroLightYears(1.0)));
+
+    return 1;
+}
+
+
+/*! rotation phase:getorientation(time: t)
+ *
+ * Return the orientation in frame coordinates at the specified time.
+ * Times outside the span covered by the phase are automatically clamped
+ * to either the beginning or ending of the span.
+ */
+static int phase_getorientation(lua_State* l)
+{
+    checkArgs(l, 2, 2, "One argument required for phase:getorientation");
+
+    const TimelinePhase* phase = this_phase(l);
+
+    double tdb = safeGetNumber(l, 2, WrongType, "Argument to phase:getorientation() must be number", 0.0);
+    if (tdb < phase->startTime())
+        tdb = phase->startTime();
+    else if (tdb > phase->endTime())
+        tdb = phase->endTime();
+    rotation_new(l, phase->rotationModel()->orientationAtTime(tdb));
+
+    return 1;
+}
+
+
+/*! __tostring metamethod
+ * Convert a phase to a string (currently just "[Phase]")
+ */
+static int phase_tostring(lua_State* l)
+{
+    lua_pushstring(l, "[Phase]");
+
+    return 1;
+}
+
+
+/*! __gc metamethod 
+ * Garbage collection for phases.
+ */
+static int phase_gc(lua_State* l)
+{
+    PhaseReference* ref = static_cast<PhaseReference*>(CheckUserData(l, 1, _Phase));
+    if (ref == NULL)
+    {
+        doError(l, "Bad phase object during garbage collection!");
+    }
+    else
+    {
+        // Explicitly call the destructor since the object was created with placement new
+    	ref->~PhaseReference();
+    }
+
+	return 0;
+}
+
+
+static void CreatePhaseMetaTable(lua_State* l)
+{
+    CreateClassMetatable(l, _Phase);
+
+    RegisterMethod(l, "__tostring", phase_tostring);
+	RegisterMethod(l, "__gc", phase_gc);
+    RegisterMethod(l, "timespan", phase_timespan);
+    RegisterMethod(l, "orbitframe", phase_orbitframe);
+    RegisterMethod(l, "bodyframe", phase_bodyframe);
+    RegisterMethod(l, "getposition", phase_getposition);
+    RegisterMethod(l, "getorientation", phase_getorientation);
+
+    lua_pop(l, 1); // remove metatable from stack
+}
+#endif
+
+
 // ==================== Object ====================
 // star, planet, or deep-sky object
 static int object_new(lua_State* l, const Selection& sel)
@@ -3010,6 +3221,15 @@ static int object_preloadtexture(lua_State* l)
  *  If the object is a star, the catalog string is valid, and the star
  *  is present in the catalog, the catalog number is returned on the stack.
  *  Otherwise, nil is returned.
+ *
+ * \verbatim
+ * -- Example: Get the SAO and HD catalog numbers for Rigel
+ * --
+ * rigel = celestia:find("Rigel")
+ * sao = rigel:catalognumber("SAO")
+ * hd = rigel:catalognumber("HD")
+ *
+ * \endverbatim
  */
 static int object_catalognumber(lua_State* l)
 {
@@ -3118,11 +3338,14 @@ static int object_locations_iter(lua_State* l)
  * Only solar system bodies have locations; for all other object types,
  * this method will return an empty iterator.
  *
- * Example: print locations of current selection
+ * \verbatim
+ * -- Example: print locations of current selection
  * --
  * for loc in celestia:getselection():locations() do
  *     celestia:log(loc:name())
  * end
+ *
+ * \endverbatim
  */
 static int object_locations(lua_State* l)
 {
@@ -3130,6 +3353,251 @@ static int object_locations(lua_State* l)
     lua_pushvalue(l, 1);    // object
     lua_pushnumber(l, 0);   // counter
     lua_pushcclosure(l, object_locations_iter, 2);
+    
+    return 1;
+}
+
+
+/*! object:bodyfixedframe()
+ *
+ * Return the body-fixed frame for this object.
+ *
+ * \verbatim
+ * -- Example: get the body-fixed frame of the Earth
+ * --
+ * earth = celestia:find("Sol/Earth")
+ * ebf = earth:bodyfixedframe()
+ *
+ * \endverbatim
+ */
+static int object_bodyfixedframe(lua_State* l)
+{
+	checkArgs(l, 1, 1, "No arguments allowed for object:bodyfixedframe");
+
+	Selection* sel = this_object(l);    
+    frame_new(l, ObserverFrame(ObserverFrame::BodyFixed, *sel));
+    
+    return 1;
+}
+    
+
+/*! object:equatorialframe()
+ *
+ * Return the mean equatorial frame for this object.
+ *
+ * \verbatim
+ * -- Example: getthe equatorial frame of the Earth
+ * --
+ * earth = celestia:find("Sol/Earth")
+ * eme = earth:equatorialframe()
+ *
+ * \endverbatim
+ */
+static int object_equatorialframe(lua_State* l)
+{
+    // TODO: allow one argument specifying a freeze time
+	checkArgs(l, 1, 1, "No arguments allowed for to object:equatorialframe");
+    
+	Selection* sel = this_object(l);    
+    frame_new(l, ObserverFrame(ObserverFrame::Equatorial, *sel));
+    
+    return 1;
+}
+
+
+/*! object:orbitframe(time: t)
+ *
+ * Return the frame in which the orbit for an object is defined at a particular
+ * time. If time isn't specified, the current simulation time is assumed. The
+ * positions of stars and deep sky objects are always defined in the universal
+ * frame.
+ *
+ * \verbatim
+ * -- Example: get the orbital frame for the Earth at the current time.
+ * --
+ * earth = celestia:find("Sol/Earth")
+ * eof = earth:orbitframe() 
+ *
+ * \endverbatim
+ */
+static int object_orbitframe(lua_State* l)
+{
+	checkArgs(l, 1, 2, "One or no arguments allowed for to object:orbitframe");
+        
+	Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    
+    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:orbitframe",
+                             appCore->getSimulation()->getTime());
+    
+    if (sel->body() == NULL)
+    {
+        // The default universal frame
+        frame_new(l, ObserverFrame());
+    }
+    else 
+    {
+        const ReferenceFrame* f = sel->body()->getOrbitFrame(t);
+        frame_new(l, ObserverFrame(*f));
+    }
+    
+    return 1;
+}
+
+
+/*! object:bodyframe(time: t)
+*
+* Return the frame in which the orientation for an object is defined at a 
+* particular time. If time isn't specified, the current simulation time is
+* assumed. The positions of stars and deep sky objects are always defined
+* in the universal frame.
+*
+* \verbatim
+* -- Example: get the curren body frame for the International Space Station.
+* --
+* iss = celestia:find("Sol/Earth/ISS")
+* f = iss:bodyframe() 
+*
+* \endverbatim
+*/
+static int object_bodyframe(lua_State* l)
+{
+	checkArgs(l, 1, 2, "One or no arguments allowed for to object:bodyframe");
+    
+	Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    
+    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:orbitframe",
+                             appCore->getSimulation()->getTime());
+    
+    if (sel->body() == NULL)
+    {
+        // The default universal frame
+        frame_new(l, ObserverFrame());
+    }
+    else 
+    {
+        const ReferenceFrame* f = sel->body()->getBodyFrame(t);
+        frame_new(l, ObserverFrame(*f));
+    }
+    
+    return 1;
+}
+
+
+/*! object:getphase(time: t)
+ *
+ * Get the active timeline phase at the specified time. If no time is
+ * specified, the current simulation time is used. This method returns
+ * nil if the object is not a solar system body, or if the time lies
+ * outside the range covered by the timeline.
+ *
+ * \verbatim
+ * -- Example: get the timeline phase for Cassini at midnight January 1, 2000 UTC.
+ * --
+ * cassini = celestia:find("Sol/Cassini")
+ * tdb = celestia:utctotdb(2000, 1, 1)
+ * phase = cassini:getphase(tdb)
+ *
+ * \endverbatim
+ */
+static int object_getphase(lua_State* l)
+{
+	checkArgs(l, 1, 2, "One or no arguments allowed for to object:getphase");
+    
+	Selection* sel = this_object(l);
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    
+    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:getphase",
+                             appCore->getSimulation()->getTime());
+    
+    if (sel->body() == NULL)
+    {
+        lua_pushnil(l);
+    }
+    else 
+    {
+        const Timeline* timeline = sel->body()->getTimeline();
+        if (timeline->includes(t))
+        {
+            phase_new(l, *timeline->findPhase(t));
+        }
+        else
+        {
+            lua_pushnil(l);
+        }
+    }
+    
+    return 1;
+}
+
+
+// Phases iterator function; two upvalues expected. Used by
+// object:phases method.
+static int object_phases_iter(lua_State* l)
+{
+    Selection* sel = to_object(l, lua_upvalueindex(1));
+    if (sel == NULL)
+    {
+        doError(l, "Bad object!");
+        return 0;
+    }
+
+    // Get the current counter value
+    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
+    
+    const Timeline* timeline = NULL;
+    if (sel->body() != NULL)
+    {
+        timeline = sel->body()->getTimeline();
+    }
+        
+    if (timeline != NULL && i < timeline->phaseCount())
+    {
+        // Increment the counter
+        lua_pushnumber(l, i + 1);
+        lua_replace(l, lua_upvalueindex(2));
+        
+        const TimelinePhase* phase = timeline->getPhase(i);
+        phase_new(l, *phase);
+        
+        return 1;
+    }
+    else
+    {
+        // Return nil when we've enumerated all the phases (or if
+        // if the object wasn't a solar system body.)
+        return 0;
+    }
+}
+
+
+/*! object:phases()
+ *
+ * Return an iterator over all the phases in an object's timeline.
+ * Only solar system bodies have timeline; for all other object types,
+ * this method will return an empty iterator. The phases in a timeline
+ * are always sorted from earliest to latest, and always coverage a
+ * continuous span of time.
+ *
+ * \verbatim
+ * -- Example: copy all of an objects phases into the array timeline
+ * --
+ * timeline = { }
+ * count = 0
+ * for phase in celestia:getselection():phases() do
+ *     count = count + 1
+ *     timeline[count] = phase
+ * end
+ *
+ * \endverbatim
+ */
+static int object_phases(lua_State* l)
+{
+    // Push a closure with two upvalues: the object and a counter
+    lua_pushvalue(l, 1);    // object
+    lua_pushnumber(l, 0);   // counter
+    lua_pushcclosure(l, object_phases_iter, 2);
     
     return 1;
 }
@@ -3152,7 +3620,7 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "type", object_type);
     RegisterMethod(l, "spectraltype", object_spectraltype);
     RegisterMethod(l, "getinfo", object_getinfo);
-	RegisterMethod(l, "catalognumber", object_catalognumber);
+    RegisterMethod(l, "catalognumber", object_catalognumber);
     RegisterMethod(l, "absmag", object_absmag);
     RegisterMethod(l, "name", object_name);
     RegisterMethod(l, "localname", object_localname);
@@ -3161,6 +3629,12 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "getposition", object_getposition);
     RegisterMethod(l, "getchildren", object_getchildren);
     RegisterMethod(l, "locations", object_locations);
+    RegisterMethod(l, "bodyfixedframe", object_bodyfixedframe);
+    RegisterMethod(l, "equatorialframe", object_equatorialframe);
+    RegisterMethod(l, "orbitframe", object_orbitframe);
+    RegisterMethod(l, "bodyframe", object_bodyframe);
+    RegisterMethod(l, "getphase", object_getphase);
+    RegisterMethod(l, "phases", object_phases);
     RegisterMethod(l, "preloadtexture", object_preloadtexture);
 
     lua_pop(l, 1); // pop metatable off the stack
@@ -3445,11 +3919,6 @@ static int observer_goto(lua_State* l)
     }
     else
     {
-#if 0
-        RigidTransform rt = o->getSituation();
-        rt.translation = *uc;
-        o->gotoLocation(rt, travelTime);
-#endif
         o->gotoLocation(*uc, o->getOrientation(), travelTime);
     }
 
@@ -3505,11 +3974,6 @@ static int observer_gotolocation(lua_State* l)
     UniversalCoord* uc = to_position(l, 2);
     if (uc != NULL)
     {
-#if 0
-        RigidTransform rt = o->getSituation();
-        rt.translation = *uc;
-        o->gotoLocation(rt, travelTime);
-#endif
         o->gotoLocation(*uc, o->getOrientation(), travelTime);
     }
     else
@@ -6607,6 +7071,7 @@ static void loadLuaLibs(lua_State* state)
     CreateVectorMetaTable(state);
     CreateRotationMetaTable(state);
     CreateFrameMetaTable(state);
+    CreatePhaseMetaTable(state);
     CreateCelscriptMetaTable(state);
     CreateFontMetaTable(state);
     CreateImageMetaTable(state);
