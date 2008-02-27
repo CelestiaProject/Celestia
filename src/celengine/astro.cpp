@@ -16,6 +16,7 @@
 #include "celestia.h"
 #include "astro.h"
 #include <celutil/util.h>
+#include <langinfo.h>
 
 using namespace std;
 
@@ -376,7 +377,6 @@ double astro::meanEclipticObliquity(double jd)
     return J2000Obliquity - de;
 }
 
-
 astro::Date::Date()
 {
     year = 0;
@@ -441,6 +441,10 @@ astro::Date::Date(double jd)
     tzname = "UTC";
 }
 
+bool astro::Date::utf8Locale = false;
+bool astro::Date::utf8LocaleSet = false;
+iconv_t astro::Date::utf8Iconv;
+
 const char* astro::Date::toCStr(Format format) const
 {
     static char date[255];
@@ -472,7 +476,29 @@ const char* astro::Date::toCStr(Format format) const
         break;
     }
 
-    strftime(date, sizeof(date), strftime_format, &cal_time);
+    size_t in = strftime(date, sizeof(date), strftime_format, &cal_time);
+
+    // The string returned by strftime is in the current locale's charset
+    // which may not be UTF-8
+    if (!astro::Date::utf8LocaleSet)
+    {
+        // Checks the current locale's charset and if needed sets up
+        // an iconv handle
+        astro::Date::utf8Locale = !strcmp(nl_langinfo(CODESET), "UTF-8");
+        if (!astro::Date::utf8Locale) 
+            astro::Date::utf8Iconv = iconv_open("UTF-8", nl_langinfo(CODESET));
+        astro::Date::utf8LocaleSet = true;
+    }
+
+    if (!astro::Date::utf8Locale)
+    {
+        static char utf8Date[255];
+        char* outBuff = utf8Date;
+        char* inBuff = date;
+        size_t out = 255;
+        iconv(astro::Date::utf8Iconv, &inBuff, &in, &outBuff, &out);
+        return utf8Date;
+    }
 #else
     switch(format)
     {

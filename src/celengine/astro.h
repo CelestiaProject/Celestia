@@ -15,6 +15,7 @@
 #include <cmath>
 #include <celmath/vecmath.h>
 #include <celengine/univcoord.h>
+#include <iconv.h>
 
 #define SOLAR_ABSMAG  4.83f
 #define LN_MAG        1.085736
@@ -56,6 +57,12 @@ namespace astro
         int utc_offset;     // offset from utc in seconds
         std::string tzname; // timezone name
         double seconds;
+
+    private:
+        // Static members used to store locale related UTF-8 information
+        static bool utf8Locale;
+        static bool utf8LocaleSet;
+        static iconv_t utf8Iconv;
     };
 
     bool parseDate(const std::string&, Date&);
