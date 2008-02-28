@@ -2183,6 +2183,19 @@ void Renderer::render(const Observer& observer,
 
     Quatf cameraOrientation = observer.getOrientationf();
 
+    // Get the view frustum used for culling in camera space.
+    float viewAspectRatio = (float) windowWidth / (float) windowHeight;
+    Frustum frustum(degToRad(fov),
+                    viewAspectRatio,
+                    MinNearPlaneDistance);
+
+    // Get the transformed frustum, used for culling in the astrocentric coordinate
+    // system.
+    Frustum xfrustum(degToRad(fov),
+                     viewAspectRatio,
+                     MinNearPlaneDistance);
+    xfrustum.transform(conjugate(observer.getOrientationf()).toMatrix3());
+
     // Set up the camera for star rendering; the units of this phase
     // are light years.
     Point3f observerPosLY = (Point3f) observer.getPosition();
@@ -2244,13 +2257,28 @@ void Renderer::render(const Observer& observer,
             {
                 vector<LightSource>* lightSources = *lsIter++;
 
-                setupLightSources(nearStars, *sun, now, *lightSources);
-                buildRenderLists(*sun,
-                                 solarSystem->getFrameTree(),
-                                 observer,
-                                 now,
-                                 lightSources,
-                                 (labelMode & (BodyLabelMask)) != 0);
+                FrameTree* solarSysTree = solarSystem->getFrameTree();
+                if (solarSysTree != NULL)
+                {
+                    if (solarSysTree->updateRequired())
+                    {
+                        // Tree has changed, so we must recompute bounding spheres.
+                        solarSysTree->recomputeBoundingSphere();
+                        solarSysTree->markUpdated();
+                    }
+
+                    // Compute the position of the observer in astrocentric coordinates
+                    Point3d astrocentricObserverPos = astrocentricPosition(observer.getPosition(), *sun, now);
+
+                    setupLightSources(nearStars, *sun, now, *lightSources);
+
+                    buildRenderLists(astrocentricObserverPos,
+                                     xfrustum,
+                                     solarSysTree,
+                                     observer,
+                                     now,
+                                     lightSources);
+                }
             }
 
             addStarOrbitToRenderList(*sun, observer, now);
@@ -2470,9 +2498,6 @@ void Renderer::render(const Observer& observer,
     glPolygonMode(GL_BACK, (GLenum) renderMode);
 
     {
-        Frustum frustum(degToRad(fov),
-                        (float) windowWidth / (float) windowHeight,
-                        MinNearPlaneDistance);
         Mat3f viewMat = conjugate(observer.getOrientationf()).toMatrix3();
 
         // Remove objects from the render list that lie completely outside the
@@ -7159,36 +7184,61 @@ void Renderer::renderVelocityVector(Body& body,
 }
 
 
+// Helper function to compute the luminosity of a perfectly
+// reflective disc with the specified radius. This is used as an upper
+// bound for the apparent brightness of an object when culling
+// invisible objects.
+static float luminosityAtOpposition(float sunLuminosity,
+                                    float distanceFromSun,
+                                    float objRadius)
+{
+    // Compute the total power of the star in Watts
+    double power = astro::SOLAR_POWER * sunLuminosity;
+
+    // Compute the irradiance at the body's distance from the star
+    double irradiance = power / sphereArea(distanceFromSun * 1000);
+
+    // Compute the total energy hitting the planet; assume an albedo of 1.0, so
+    // reflected energy = incident energy.
+    double incidentEnergy = irradiance * circleArea(objRadius * 1000);
+    
+    // Compute the luminosity (i.e. power relative to solar power)
+    return (float) (incidentEnergy / astro::SOLAR_POWER);
+}
+
+
 // Add solar system bodies, orbits, and annotations to the render list. Stars
 // are handled by other methods.
-void Renderer::buildRenderLists(const Star& sun,
+void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
+                                const Frustum& viewFrustum,
                                 const FrameTree* tree,
                                 const Observer& observer,
                                 double now,
-                                vector<LightSource>* lightSourceList,
-                                bool showLabels)
+                                vector<LightSource>* lightSourceList)
 {
-    Point3d observerPos = astrocentricPosition(observer.getPosition(), sun, now);
-
     Mat3f viewMat = observer.getOrientationf().toMatrix3();
     Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
 
     Body* lastPrimary = NULL;
     Sphered primarySphere;
 
-    int nBodies = tree != NULL ? tree->childCount() : 0;
-    for (int i = 0; i < nBodies; i++)
+    int nChildren = tree != NULL ? tree->childCount() : 0;
+    for (int i = 0; i < nChildren; i++)
     {
-        Body* body = tree->getChild(i)->body();
-        if (!body->extant(now))
+        const TimelinePhase* phase = tree->getChild(i);
+
+        // No need to do anything if the phase isn't active now
+        if (!phase->includes(now))
             continue;
+
+        Body* body = phase->body();
 
         Point3d bodyPos = body->getAstrocentricPosition(now);
 
         // We now have the positions of the observer and the planet relative
-        // to the sun.  From these, compute the position of the planet
+        // to the sun.  From these, compute the position of the body
         // relative to the observer.
-        Vec3d posd = bodyPos - observerPos;
+        Vec3d posd = bodyPos - astrocentricObserverPos;
 
         // Compute the size of the planet/moon disc in pixels
         double distanceFromObserver = posd.length();
@@ -7200,12 +7250,10 @@ void Renderer::buildRenderLists(const Star& sun,
         // light from all nearby stars, we just consider the one with the
         // highest apparent brightness.
         float appMag = 100.0f;
-        float oppositionMag = 100.0f;
         for (unsigned int li = 0; li < lightSources.size(); li++)
         {
             Vec3d sunPos = bodyPos - lightSources[li].position;
             appMag = min(appMag, body->getApparentMagnitude(lightSources[li].luminosity, sunPos, posd));
-            oppositionMag = min(oppositionMag, body->getApparentMagnitude(lightSources[li].luminosity, (float) sunPos.length(), (float) distanceFromObserver));
         }
 
         Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
@@ -7217,9 +7265,7 @@ void Renderer::buildRenderLists(const Star& sun,
             rle.renderableType = RenderListEntry::RenderableBody;
             rle.body = body;
             rle.star = NULL;
-            // Treat all mesh objects as potentially transparent.
-            // TODO: implement a better test for this
-            //rle.isOpaque = body->getModel() == InvalidResource;
+
             if (body->getModel() != InvalidResource && discSize > 1)
             {
                 Model* model = GetModelManager()->find(body->getModel());
@@ -7343,7 +7389,9 @@ void Renderer::buildRenderLists(const Star& sun,
             }
         }
 
-        if (showLabels && (pos * conjugate(observer.getOrientationf()).toMatrix3()).z < 0)
+        bool showLabels = (labelMode & (BodyLabelMask)) != 0;
+
+        if (showLabels && viewFrustum.testSphere(Point3f(pos.x, pos.y, pos.z), body->getRadius()) != Frustum::Outside)
         {
             float boundingRadiusSize = (float) (body->getOrbit(now)->getBoundingRadius() / distanceFromObserver) / pixelSize;
             if (boundingRadiusSize > minOrbitSize)
@@ -7432,7 +7480,7 @@ void Renderer::buildRenderLists(const Star& sun,
                         // position.
                         if (primary != lastPrimary)
                         {
-                            Vec3d v = primary->getAstrocentricPosition(now) - observerPos;
+                            Vec3d v = primary->getAstrocentricPosition(now) - astrocentricObserverPos;
                             primarySphere = Sphered(Point3d(v.x, v.y, v.z),
                                                     primary->getRadius());
                             lastPrimary = primary;
@@ -7490,22 +7538,14 @@ void Renderer::buildRenderLists(const Star& sun,
                 (orbitVis == Body::UseClassVisibility && (body->getClassification() & orbitMask) != 0))
             {
                 Point3d orbitOrigin(0.0, 0.0, 0.0);
-                Selection centerObject = body->getOrbitFrame(now)->getCenter();
+                Selection centerObject = phase->orbitFrame()->getCenter();
                 if (centerObject.body() != NULL)
                 {
                     orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
                 }
-                else if (centerObject.star() != NULL)
-                {
-                    if (centerObject.star() != &sun)
-                    {
-                        Vec3d v = (centerObject.star()->getPosition(now) - sun.getPosition(now)) * astro::microLightYearsToKilometers(1.0);
-                        orbitOrigin = Point3d(v.x, v.y, v.z);
-                    }
-                }
 
                 // Calculate the origin of the orbit relative to the observer
-                Vec3d relOrigin = orbitOrigin - observerPos;
+                Vec3d relOrigin = orbitOrigin - astrocentricObserverPos;
                 Vec3f origf((float) relOrigin.x, (float) relOrigin.y, (float) relOrigin.z);
 
                 // Compute the size of the orbit in pixels
@@ -7528,19 +7568,56 @@ void Renderer::buildRenderLists(const Star& sun,
             }
         }
 
-        // Only render the satellites of bodies brighter than the threshold
-        // magnitude. Ignore the phase and use the opposition magnitude so
-        // that satellites don't disappear unexpectedly (during a solar transit
-        // for example.)
-        if (oppositionMag < faintestPlanetMag || (body->getClassification() & Body::Invisible) != 0)
+        // Render this object's subtree, but only if:
+        //    The subtree bounding sphere intersects the view frustum, and
+        //    The subtree contains and object bright or large enough to be visible.
+        const FrameTree* subtree = body->getFrameTree();
+        if (subtree != NULL)
         {
-            const FrameTree* subtree = body->getFrameTree();
-            if (subtree != NULL)
+            float minPossibleDistance = (float) (distanceFromObserver - subtree->boundingSphereRadius());
+            float brightestPossible = 0.0;
+            float largestPossible = 0.0;
+
+            // If the viewer is not within the subtree bounding sphere, see if we can cull it because
+            // it contains no objects brighter than the limiting magnitude and no objects that will
+            // be larger than one pixel in size.
+            if (minPossibleDistance > 1.0f)
             {
-                buildRenderLists(sun, subtree, observer,
-                                 now, lightSourceList, showLabels);
+                // Figure out the magnitude of the brightest possible object in the subtree.
+
+                // Compute the luminosity from reflected light of the largest object in the subtree
+                float lum = 0.0f;                
+                for (unsigned int li = 0; li < lightSources.size(); li++)
+                {
+                    Vec3d sunPos = bodyPos - lightSources[li].position;
+                    lum += luminosityAtOpposition(lightSources[li].luminosity, (float) sunPos.length(), (float) subtree->maxChildRadius());
+                }
+                brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
+                largestPossible = (float) subtree->maxChildRadius() / (float) minPossibleDistance / pixelSize;
             }
-        }
+            else
+            {
+                // Viewer is within the bounding sphere, so the object could be very close.
+                // Assume that an object in the subree could be very bright, so no culling
+                // will occur.
+                brightestPossible = -100.0f;
+            }
+
+            if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
+            {
+                // See if the object or any of its children are within the view frustum
+                if (viewFrustum.testSphere(Point3f(pos.x, pos.y, pos.z), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
+                {
+                    buildRenderLists(astrocentricObserverPos,
+                                     viewFrustum,
+                                     subtree,
+                                     observer,
+                                     now,
+                                     lightSourceList);
+                }
+            }
+        } // end subtree render
+
     }
 }
 

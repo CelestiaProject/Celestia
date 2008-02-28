@@ -406,12 +406,12 @@ class Renderer
                               const Observer&,
                               float faintestMagNight);
     void renderCelestialSphere(const Observer& observer);
-    void buildRenderLists(const Star& sun,
+    void buildRenderLists(const Point3d& astrocentricObserverPos,
+                          const Frustum& viewFrustum,
                           const FrameTree* tree,
                           const Observer& observer,
                           double now,
-                          std::vector<LightSource>* lightSourceList,
-                          bool showLabels = false);
+                          std::vector<LightSource>* lightSourceList);
     void addStarOrbitToRenderList(const Star& star,
                                   const Observer& observer,
                                   double now);
