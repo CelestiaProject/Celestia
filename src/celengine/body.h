@@ -42,6 +42,9 @@ class PlanetarySystem
     void removeBody(Body* body);
     void replaceBody(Body* oldBody, Body* newBody);
 
+    int getOrder(const Body* body) const;
+    bool reorderLastChild(int index);
+
     enum TraversalResult
     {
         ContinueTraversal   = 0,
@@ -61,7 +64,6 @@ class PlanetarySystem
     Star* star;
     Body* primary;
     std::vector<Body*> satellites;
-    ReferenceFrame* defaultFrame;
     ObjectIndex objectIndex;  // index of bodies by name
     ObjectIndex i18nObjectIndex;
 };
@@ -90,7 +92,7 @@ class RingSystem
 class Body
 {
  public:
-    Body(PlanetarySystem*);
+     Body(PlanetarySystem*, const std::string& name);
     ~Body();
 
     enum
