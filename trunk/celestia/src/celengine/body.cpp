@@ -9,6 +9,7 @@
 
 #include <cstdlib>
 #include <cassert>
+#include <algorithm>
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <celutil/utf8.h>
@@ -22,7 +23,7 @@
 
 using namespace std;
 
-Body::Body(PlanetarySystem* _system) :
+Body::Body(PlanetarySystem* _system, const string& _name) :
     system(_system),
     satellites(NULL),
     timeline(NULL),
@@ -47,6 +48,8 @@ Body::Body(PlanetarySystem* _system) :
     overrideOrbitColor(0),
     orbitVisibility(UseClassVisibility)
 {
+    setName(_name);
+    system->addBody(this);
 }
 
 
@@ -437,6 +440,7 @@ Mat4d Body::getLocalToAstrocentric(double tdb) const
  */
 Point3d Body::getAstrocentricPosition(double tdb) const
 {
+    // TODO: Switch the iterative method used in getPosition
     const TimelinePhase* phase = timeline->findPhase(tdb);
     return phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
 }
@@ -879,7 +883,6 @@ PlanetarySystem::PlanetarySystem(Star* _star) :
 
 PlanetarySystem::~PlanetarySystem()
 {
-    defaultFrame->release();
 }
 
 
@@ -1037,3 +1040,36 @@ std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name
     return completion;
 }
 
+
+/*! Get the order of the object in the list of children. Returns -1 if the
+ *  specified body is not a child object.
+ */
+int PlanetarySystem::getOrder(const Body* body) const
+{
+    vector<Body*>::const_iterator iter = std::find(satellites.begin(), satellites.end(), body);
+    if (iter == satellites.end())
+        return -1;
+    else
+        return iter - satellites.begin();
+}
+
+
+/*! Move the final child object to newIndex. Return true if the index is valid,
+ *  false otherwise. This method exists only because the number keys
+ *  in the Celestia UI are dependent on the actual order in which the planets are
+ *  listed in child array.
+ */
+bool PlanetarySystem::reorderLastChild(int index)
+{
+    if (index >= satellites.size() || index < 0)
+        return false;
+
+    if (index <= satellites.size() - 1)
+    {
+        Body* lastItem = satellites.back();
+        satellites.pop_back();
+        satellites.insert(satellites.begin() + index, lastItem);
+    } // else child is already in the correct order
+
+    return true;
+}

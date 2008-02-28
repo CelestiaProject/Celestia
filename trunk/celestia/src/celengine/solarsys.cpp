@@ -400,7 +400,6 @@ Timeline* CreateTimelineFromArray(Body* body,
 
 
 static bool CreateTimeline(Body* body,
-                           const string& name,
                            PlanetarySystem* system,
                            Universe& universe,
                            Hash* planetData,
@@ -408,7 +407,7 @@ static bool CreateTimeline(Body* body,
                            Disposition disposition)
 {
     FrameTree* parentFrameTree = NULL;
-    Selection orbitBarycenter = GetOrbitBarycenter(name, system);
+    Selection orbitBarycenter = GetOrbitBarycenter(body->getName(), system);
     bool orbitsPlanet = false;
     if (orbitBarycenter.body())
     {
@@ -529,7 +528,7 @@ static bool CreateTimeline(Body* body,
     Orbit* newOrbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
     if (newOrbit == NULL && orbit == NULL)
     {
-        clog << "No valid orbit specified for object '" << name << "'. Skipping.\n";
+        clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.\n";
         return false;
     }
 
@@ -627,10 +626,10 @@ static Body* CreatePlanet(const string& name,
 
     if (body == NULL)
     {
-        body = new Body(system);
+        body = new Body(system, name);
     }
 
-    if (!CreateTimeline(body, name, system, universe, planetData, path, disposition))
+    if (!CreateTimeline(body, system, universe, planetData, path, disposition))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -935,7 +934,7 @@ static Body* CreateReferencePoint(const string& name,
 
     if (body == NULL)
     {
-        body = new Body(system);
+        body = new Body(system, name);
     }
 
     body->setSemiAxes(Vec3f(1.0f, 1.0f, 1.0f));
@@ -944,7 +943,7 @@ static Body* CreateReferencePoint(const string& name,
     body->setVisibleAsPoint(false);
     body->setClickable(false);
 
-    if (!CreateTimeline(body, name, system, universe, refPointData, path, disposition))
+    if (!CreateTimeline(body, system, universe, refPointData, path, disposition))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -1077,16 +1076,15 @@ bool LoadSolarSystemObjects(istream& in,
 
                 if (body != NULL)
                 {
-                    body->setName(name);
-                    if (disposition == ReplaceObject)
-                    {
-                        parentSystem->replaceBody(existingBody, body);
+                    int order = parentSystem->getOrder(existingBody);
+                    if (disposition == ReplaceObject && existingBody != NULL)
                         delete existingBody;
-                    }
-                    else if (disposition == AddObject)
-                    {
-                        parentSystem->addBody(body);
-                    }
+
+                    // When replacing an object, we need to maintain the same order in the child list so that
+                    // Celestia's number keys still work properly (i.e. '3' to select Earth.) This is an
+                    // inelegant approach; we'll handle it better once add-on loading/unloading is implemented.
+                    if (order >= 0)
+                        parentSystem->reorderLastChild(order);
                 }
             }
         }
