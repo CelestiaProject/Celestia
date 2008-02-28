@@ -57,7 +57,7 @@ Observer::Observer() :
     position(0.0, 0.0, 0.0),
     orientation(1.0),
     velocity(0.0, 0.0, 0.0),
-    angularVelocity(0.0f, 0.0f, 0.0f),
+    angularVelocity(0.0, 0.0, 0.0),
     frame(NULL),
     realTime(0.0),
     targetSpeed(0.0),
@@ -231,13 +231,13 @@ void Observer::setVelocity(const Vec3d& v)
 }
 
 
-Vec3f Observer::getAngularVelocity() const
+Vec3d Observer::getAngularVelocity() const
 {
     return angularVelocity;
 }
 
 
-void Observer::setAngularVelocity(const Vec3f& v)
+void Observer::setAngularVelocity(const Vec3d& v)
 {
     angularVelocity = v;
 }
@@ -473,8 +473,7 @@ void Observer::update(double dt, double timeScale)
     if (observerMode == Free)
     {
         // Update the observer's orientation
-        Vec3f fAV = getAngularVelocity();
-        Vec3d AV(fAV.x, fAV.y, fAV.z);
+        Vec3d AV = getAngularVelocity();
         Quatd dr = 0.5 * (AV * orientation);
         orientation += dt * dr;
         orientation.normalize();
