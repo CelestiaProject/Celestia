@@ -2262,9 +2262,9 @@ void CelestiaCore::tick()
         sim->changeOrbitDistance((float) (dt * 2));
 
     // Keyboard rotate
-    Vec3f av = sim->getObserver().getAngularVelocity();
+    Vec3d av = sim->getObserver().getAngularVelocity();
 
-    av = av * (float) exp(-dt * RotationDecay);
+    av = av * exp(-dt * RotationDecay);
 
     float fov = sim->getActiveObserver()->getFOV() / stdFOV;
     Selection refObject = sim->getFrame()->getRefObject();
@@ -2276,26 +2276,23 @@ void CelestiaCore::tick()
         if (!altAzimuthMode)
         {
             if (keysPressed[Key_Left])
-                av += Vec3f(0.0f, 0.0f, (float) (dt * -KeyRotationAccel));
+                av += Vec3d(0.0, 0.0, dt * -KeyRotationAccel);
             if (keysPressed[Key_Right])
-                av += Vec3f(0.0f, 0.0f, (float) (dt * KeyRotationAccel));
+                av += Vec3d(0.0, 0.0, dt * KeyRotationAccel);
             if (keysPressed[Key_Down])
-                av += Vec3f((float) (dt * fov * -KeyRotationAccel), 0.0f, 0.0f);
+                av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
             if (keysPressed[Key_Up])
-                av += Vec3f((float) (dt * fov * KeyRotationAccel), 0.0f, 0.0f);
+                av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
         }
         else
         {
             if (!refObject.empty())
             {
-                Quatf orientation = sim->getObserver().getOrientationf();
-                Vec3d upd = sim->getObserver().getPosition() -
-                    refObject.getPosition(sim->getTime());
-                upd.normalize();
+                Quatd orientation = sim->getObserver().getOrientation();
+                Vec3d up = sim->getObserver().getPosition() - refObject.getPosition(sim->getTime());
+                up.normalize();
 
-                Vec3f up((float) upd.x, (float) upd.y, (float) upd.z);
-
-                Vec3f v = up * (float) (KeyRotationAccel * dt);
+                Vec3d v = up * (KeyRotationAccel * dt);
                 v = v * (~orientation).toMatrix3();
 
                 if (keysPressed[Key_Left])
@@ -2303,25 +2300,25 @@ void CelestiaCore::tick()
                 if (keysPressed[Key_Right])
                     av += v;
                 if (keysPressed[Key_Down])
-                    av += Vec3f((float) (dt * fov * -KeyRotationAccel), 0.0f, 0.0f);
+                    av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
                 if (keysPressed[Key_Up])
-                    av += Vec3f((float) (dt * fov * KeyRotationAccel), 0.0f, 0.0f);
+                    av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
             }
         }
     }
 
     if (keysPressed[Key_NumPad4])
-        av += Vec3f(0.0f, (float) (dt * fov * -KeyRotationAccel), 0.0f);
+        av += Vec3d(0.0, dt * fov * -KeyRotationAccel, 0.0);
     if (keysPressed[Key_NumPad6])
-        av += Vec3f(0.0f, (float) (dt * fov * KeyRotationAccel), 0.0f);
+        av += Vec3d(0.0, dt * fov * KeyRotationAccel, 0.0);
     if (keysPressed[Key_NumPad2])
-        av += Vec3f((float) (dt * fov * -KeyRotationAccel), 0.0f, 0.0f);
+        av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
     if (keysPressed[Key_NumPad8])
-        av += Vec3f((float) (dt * fov * KeyRotationAccel), 0.0f, 0.0f);
+        av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
     if (keysPressed[Key_NumPad7] || joyButtonsPressed[JoyButton7])
-        av += Vec3f(0.0f, 0.0f, (float) (dt * -KeyRotationAccel));
+        av += Vec3d(0.0, 0.0, dt * -KeyRotationAccel);
     if (keysPressed[Key_NumPad9] || joyButtonsPressed[JoyButton8])
-        av += Vec3f(0.0f, 0.0f, (float) (dt * KeyRotationAccel));
+        av += Vec3d(0.0, 0.0, dt * KeyRotationAccel);
 
     //Use Boolean to indicate if sim->setTargetSpeed() is called
     bool bSetTargetSpeed = false;
@@ -2329,12 +2326,12 @@ void CelestiaCore::tick()
     {
         bSetTargetSpeed = true;
 
-        av += (float) (dt * KeyRotationAccel) * joystickRotation;
+        av += (dt * KeyRotationAccel) * Vec3d(joystickRotation.x, joystickRotation.y, joystickRotation.z);
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
     if (keysPressed[Key_NumPad5])
-        av = av * (float) exp(-dt * RotationBraking);
+        av = av * exp(-dt * RotationBraking);
 
     sim->getObserver().setAngularVelocity(av);
 
