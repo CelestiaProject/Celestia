@@ -117,8 +117,8 @@ public:
     
     Vec3d         getVelocity() const;
     void          setVelocity(const Vec3d&);
-    Vec3f         getAngularVelocity() const;
-    void          setAngularVelocity(const Vec3f&);
+    Vec3d         getAngularVelocity() const;
+    void          setAngularVelocity(const Vec3d&);
     
     float          getFOV() const;
     void           setFOV(float);
@@ -278,7 +278,7 @@ public:
     UniversalCoord position;
     Quatd          orientation;
     Vec3d          velocity;
-    Vec3f          angularVelocity;
+    Vec3d          angularVelocity;
     
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.
