@@ -10,6 +10,8 @@
 #ifndef _COMMAND_H_
 #define _COMMAND_H_
 
+#define MAX_CONSTELLATIONS 100
+
 #include <iostream>
 #include <celutil/color.h>
 #include <celengine/execenv.h>
@@ -385,6 +387,37 @@ class CommandRenderFlags : public InstantaneousCommand
  private:
     int setFlags;
     int clearFlags;
+};
+
+
+class CommandConstellations : public InstantaneousCommand
+{
+ public:
+    CommandConstellations();
+    void process(ExecutionEnvironment&);
+	void setValues(string cons, int act);
+    std::string constellation[MAX_CONSTELLATIONS];
+	int active[MAX_CONSTELLATIONS];
+    int numConstellations;
+	int all;
+    int none;
+};
+
+
+class CommandConstellationColor : public InstantaneousCommand
+{
+ public:
+    CommandConstellationColor();
+    void process(ExecutionEnvironment&);
+	void setConstellations(string cons);
+	void setColor(float r, float g, float b);
+	void unsetColor();
+    std::string constellation[MAX_CONSTELLATIONS];
+	Color rgb;
+	int unset;
+    int numConstellations;
+	int all;
+    int none;
 };
 
 

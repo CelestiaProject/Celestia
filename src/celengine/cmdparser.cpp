@@ -37,6 +37,8 @@ using namespace std;
 static int parseRenderFlags(string);
 static int parseLabelFlags(string);
 static int parseOrbitFlags(string);
+static int parseConstellations(CommandConstellations* cmd, string s, int act);
+int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col, int act);
 
 CommandParser::CommandParser(istream& in)
 {
@@ -549,6 +551,32 @@ Command* CommandParser::parseCommand()
 
         cmd = new CommandOrbitFlags(setFlags, clearFlags);
     }
+	else if (commandName == "constellations")
+    {
+        string s;
+		CommandConstellations *cmdcons= new CommandConstellations();
+		
+        if (paramList->getString("set", s))
+            parseConstellations(cmdcons, s, 1);
+        if (paramList->getString("clear", s))
+            parseConstellations(cmdcons, s, 0);   
+		cmd = cmdcons;
+    }
+
+	else if (commandName == "constellationcolor")
+    {
+        string s;
+		CommandConstellationColor *cmdconcol= new CommandConstellationColor();
+		
+		Vec3d colorv(1.0f, 0.0f, 0.0f);
+        paramList->getVector("color", colorv);
+
+        if (paramList->getString("set", s))
+            parseConstellationColor(cmdconcol, s, &colorv, 1);
+        if (paramList->getString("clear", s))
+            parseConstellationColor(cmdconcol, s, &colorv, 0);   
+		cmd = cmdconcol;
+    }
     else if (commandName == "setvisibilitylimit")
     {
         double mag = 6.0;
@@ -820,6 +848,80 @@ int parseOrbitFlags(string s)
         else
         {
             DPRINTF(0, "Command Parser: error parsing orbit flags\n");
+            return 0;
+        }
+    }
+
+    return flags;
+}
+
+
+int parseConstellations(CommandConstellations* cmd, string s, int act)
+{
+    istringstream in(s);
+
+    Tokenizer tokenizer(&in);
+    int flags = 0;
+
+    Tokenizer::TokenType ttype = tokenizer.nextToken();
+    while (ttype != Tokenizer::TokenEnd)
+    {
+        if (ttype == Tokenizer::TokenName)
+        {
+            string name = tokenizer.getNameValue();
+			if (compareIgnoringCase(name, "all") == 0 && act==1)
+				cmd->all=1;
+			else if (compareIgnoringCase(name, "all") == 0 && act==0)
+				cmd->none=1;
+			else 
+				cmd->setValues(name,act);
+
+            ttype = tokenizer.nextToken();
+            if (ttype == Tokenizer::TokenBar)
+                ttype = tokenizer.nextToken();
+        }
+        else
+        {
+            DPRINTF(0, "Command Parser: error parsing render flags\n");
+            return 0;
+        }
+    }
+
+    return flags;
+}
+
+int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col, int act)
+{
+    istringstream in(s);
+
+    Tokenizer tokenizer(&in);
+    int flags = 0;
+
+	if(!act)
+		cmd->unsetColor();
+	else
+		cmd->setColor((float)col->x, (float)col->y, (float)col->z);
+
+    Tokenizer::TokenType ttype = tokenizer.nextToken();
+    while (ttype != Tokenizer::TokenEnd)
+    {
+        if (ttype == Tokenizer::TokenName)
+        {
+            string name = tokenizer.getNameValue();
+			if (compareIgnoringCase(name, "all") == 0 && act==1)
+				cmd->all=1;
+			else if (compareIgnoringCase(name, "all") == 0 && act==0)
+				cmd->none=1;
+			else 
+				cmd->setConstellations(name);
+				
+            ttype = tokenizer.nextToken();
+            if (ttype == Tokenizer::TokenBar)
+                ttype = tokenizer.nextToken();
+        }
+        else
+        {
+            DPRINTF(0, "Command Parser: error parsing render flags\n");
             return 0;
         }
     }

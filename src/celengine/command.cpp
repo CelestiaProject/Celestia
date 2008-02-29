@@ -784,3 +784,169 @@ double RepeatCommand::getDuration()
 {
     return bodyDuration * repeatCount;
 }
+
+
+
+
+//====================================================
+// Add on by Javier Nieto from www.astrohenares.org
+//====================================================
+CommandConstellations::CommandConstellations()
+{
+	numConstellations = 0;
+	all = 0;
+	none = 0;
+}
+
+void CommandConstellations::process(ExecutionEnvironment& env)
+{
+    Universe* u = env.getSimulation()->getUniverse();
+    if (u != NULL)
+    {
+		AsterismList* asterisms = u->getAsterisms();
+        for (AsterismList::const_iterator iter = asterisms->begin();
+             iter != asterisms->end(); iter++)
+        {
+			Asterism* ast = *iter;
+			if (none) 
+            {
+				ast->setActive(0);
+            }
+			else if (all) 
+            {
+				ast->setActive(1);
+            }
+			else
+            {
+				for (int i = 0; i < numConstellations; i++)
+                {
+					if (compareIgnoringCase(constellation[i],ast->getName(false)) == 0)
+                    {
+						ast->setActive(active[i] != 0);
+						break;
+					}
+                }
+			}
+        }
+    }
+}
+
+void CommandConstellations::setValues(string cons, int act)
+{
+	int found = 0;
+	for (unsigned int j = 0; j < cons.size(); j++)
+    {
+		if(cons[j] == '_')
+			cons[j] = ' ';
+    }
+	
+	// ignore all above 99 constellations
+	if (numConstellations == MAX_CONSTELLATIONS)
+		return;
+
+	for (int i = 0; i < numConstellations; i++)
+    {
+		if (compareIgnoringCase(constellation[i], cons) == 0 )
+        {
+			active[i]=act;
+			found=1;
+			break;
+		}
+	}
+
+	if (!found)
+    {
+		constellation[numConstellations]=cons;
+		active[numConstellations]=act;
+		numConstellations++;
+	}
+}
+
+
+CommandConstellationColor::CommandConstellationColor()
+{
+	numConstellations=0;
+	all=0;
+	none=0;
+	unset=0;
+}
+
+
+void CommandConstellationColor::process(ExecutionEnvironment& env)
+{
+    Universe* u = env.getSimulation()->getUniverse();
+    if (u != NULL)
+    {
+		AsterismList* asterisms = u->getAsterisms();
+        for (AsterismList::const_iterator iter = asterisms->begin();
+             iter != asterisms->end(); iter++)
+        {
+			Asterism* ast = *iter;
+			if (none) 
+            {
+				ast->unsetOverrideColor();
+            }
+			else if (all) 
+            {
+				ast->setOverrideColor(rgb);
+            }
+			else
+            {
+				for(int i = 0; i < numConstellations; i++)
+                {
+					if (compareIgnoringCase(constellation[i],ast->getName(false)) ==0 )
+                    {
+						if(unset)
+							ast->unsetOverrideColor();
+						else
+							ast->setOverrideColor(rgb);
+						break;
+					}
+                }
+			}
+        }
+    }
+}
+
+
+void CommandConstellationColor::setColor(float r, float g, float b)
+{
+    rgb = Color(r, g, b);
+	unset = 0;
+}
+
+
+void CommandConstellationColor::unsetColor()
+{
+	unset = 1;
+}
+
+
+void CommandConstellationColor::setConstellations(string cons)
+{
+	int found=0;
+	for (unsigned int j = 0; j < cons.size(); j++)
+    {
+		if (cons[j] == '_')
+			cons[j] = ' ';
+    }
+	
+	// ignore all above 99 constellations
+	if (numConstellations == MAX_CONSTELLATIONS)
+		return;
+
+	for (int i=0; i<numConstellations; i++)
+    {
+		if (compareIgnoringCase(constellation[i], cons) == 0)
+        {
+			found=1;
+			break;
+		}
+	}
+
+	if (!found)
+    {
+		constellation[numConstellations]=cons;
+		numConstellations++;
+	}
+}
