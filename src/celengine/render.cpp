@@ -2433,16 +2433,24 @@ void Renderer::render(const Observer& observer,
         {
             Asterism* ast = *iter;
 
-            for (int i = 0; i < ast->getChainCount(); i++)
+			if (ast->getActive())
             {
-                const Asterism::Chain& chain = ast->getChain(i);
+				if (ast->isColorOverridden())
+					glColor(ast->getOverrideColor(), opacity);
+				else
+					glColor(ConstellationColor, opacity);
 
-                glBegin(GL_LINE_STRIP);
-                for (Asterism::Chain::const_iterator iter = chain.begin();
-                     iter != chain.end(); iter++)
-                    glVertex(*iter);
-                glEnd();
-            }
+				for (int i = 0; i < ast->getChainCount(); i++)
+				{
+					const Asterism::Chain& chain = ast->getChain(i);
+
+					glBegin(GL_LINE_STRIP);
+					for (Asterism::Chain::const_iterator iter = chain.begin();
+						 iter != chain.end(); iter++)
+						glVertex(*iter);
+					glEnd();
+				}
+			}
         }
 
         if ((renderFlags & ShowSmoothLines) != 0)
@@ -8630,7 +8638,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
          iter != asterisms.end(); iter++)
     {
         Asterism* ast = *iter;
-        if (ast->getChainCount() > 0)
+        if (ast->getChainCount() > 0 && ast->getActive())
         {
             const Asterism::Chain& chain = ast->getChain(0);
 
@@ -8664,8 +8672,14 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                                         (MaxAsterismLabelsDist - MaxAsterismLabelsConstDist) + 1);
                     }
 
+                    // Use the default label color unless the constellation has an
+                    // override color set.
+                    Color labelColor = ConstellationLabelColor;
+                    if (ast->isColorOverridden())
+                        labelColor = ast->getOverrideColor();
+
                     addBackgroundAnnotation(ast->getName((labelMode & I18nConstellationLabels) != 0),
-                                            Color(ConstellationLabelColor, opacity),
+                                            Color(labelColor, opacity),
                                             Point3f(rpos.x, rpos.y, rpos.z));
                 }
             }

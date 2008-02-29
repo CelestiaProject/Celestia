@@ -23,7 +23,10 @@
 using namespace std;
 
 
-Asterism::Asterism(string _name) : name(_name)
+Asterism::Asterism(string _name) :
+    name(_name),
+    active(true),
+    useOverrideColor(false)
 {
     i18nName = dgettext("celestia_constellations", _name.c_str());
 }
@@ -51,6 +54,60 @@ const Asterism::Chain& Asterism::getChain(int index) const
 void Asterism::addChain(Asterism::Chain& chain)
 {
     chains.insert(chains.end(), &chain);
+}
+
+
+/*! Return whether the constellation is visible.
+ */
+bool Asterism::getActive() const
+{
+    return active;
+}
+
+
+/*! Set whether or not the constellation is visible.
+ */
+void Asterism::setActive(bool _active)
+{
+	active = _active;
+}
+
+
+/*! Get the override color for this constellation.
+ */
+Color Asterism::getOverrideColor() const
+{
+    return color;
+}
+
+
+/*! Set an override color for the constellation. If this method isn't
+ *  called, the constellation is drawn in the render's default color
+ *  for contellations. Calling unsetOverrideColor will remove the
+ *  override color.
+ */
+void Asterism::setOverrideColor(Color c)
+{
+    color = c;
+    useOverrideColor = true;
+}
+
+
+/*! Make this constellation appear in the default color (undoing any
+ *  calls to setOverrideColor.
+ */
+void Asterism::unsetOverrideColor()
+{
+    useOverrideColor = false;
+}
+
+
+/*! Return true if this constellation has a custom color, or false
+ *  if it should be drawn in the default color.
+ */
+bool Asterism::isColorOverridden() const
+{ 
+    return useOverrideColor;
 }
 
 
