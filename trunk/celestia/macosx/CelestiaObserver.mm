@@ -55,11 +55,11 @@
 }
 -(CelestiaVector*)angularVelocity
 {
-    return [CelestiaVector vectorWithVec3f:[self observer].getAngularVelocity()];
+    return [CelestiaVector vectorWithVec3d:[self observer].getAngularVelocity()];
 }
 -(void)setAngularVelocity:(CelestiaVector*)v
 {
-    [self observer].setAngularVelocity([v vec3f]);
+    [self observer].setAngularVelocity([v vec3d]);
 }
 -(void)setPosition:(CelestiaUniversalCoord*)p
 {
