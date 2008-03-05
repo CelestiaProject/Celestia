@@ -13,6 +13,7 @@
 #include <cstring>
 #include <cstdio>
 #include <map>
+#include <ctime>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celengine/cmdparser.h>
@@ -730,6 +731,7 @@ bool LuaState::charEntered(const char* c_p)
 #if LUA_VER >= 0x050100
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
             openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
+            openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
 #else
             lua_iolibopen(costate);
 #endif
@@ -5466,6 +5468,31 @@ static int celestia_tdbtoutc(lua_State* l)
 }
 
 
+static int celestia_getsystemtime(lua_State* l)
+{
+    checkArgs(l, 1, 1, "No argument expected to function celestia:getsystemtime");
+
+    time_t t = time(NULL);
+    struct tm *gmt = gmtime(&t);
+    if (gmt != NULL)
+    {
+        astro::Date d;
+        d.year = gmt->tm_year + 1900;
+        d.month = gmt->tm_mon + 1;
+        d.day = gmt->tm_mday;
+        d.hour = gmt->tm_hour;
+        d.minute = gmt->tm_min;
+        d.seconds = (int) gmt->tm_sec;
+
+        CelestiaCore* appCore = this_celestia(l);
+        Simulation* sim = appCore->getSimulation();
+        lua_pushnumber(l, astro::UTCtoTDB(d));
+    }
+
+    return 1;
+}
+
+
 static int celestia_unmarkall(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function celestia:unmarkall");
@@ -6180,6 +6207,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     RegisterMethod(l, "fromjulianday", celestia_fromjulianday);
     RegisterMethod(l, "utctotdb", celestia_utctotdb);
     RegisterMethod(l, "tdbtoutc", celestia_tdbtoutc);
+    RegisterMethod(l, "getsystemtime", celestia_getsystemtime);
     RegisterMethod(l, "getstarcount", celestia_getstarcount);
     RegisterMethod(l, "getdsocount", celestia_getdsocount);
     RegisterMethod(l, "getstar", celestia_getstar);
