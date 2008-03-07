@@ -15,17 +15,32 @@ namespace astro
 
 // PA and QA are the location of the pole of the ecliptic of date
 // with respect to the fixed ecliptic of J2000.0
-struct EclipticAngles
+struct EclipticPole
 {
     double PA;
     double QA;
 };
 
 
-// epsA is the obliquity with respect to the ecliptic of date. pA is
-// the general precession---the angle between the ascending node of the
-// equator on the ecliptic of date, and the ascending node of the ecliptic
-// of date on the J2000.0 ecliptic.
+// piA and PiA are angles that transform the J2000 ecliptic to the
+// ecliptic of date. They are related to the ecliptic pole coordinates
+// PA and QA:
+//   PA = sin(piA)*sin(PiA)
+//   QA = sin(piA)*cos(PiA)
+//
+// PiA is the angle along the J2000 ecliptic between the J2000 equinox
+// and the intersection of the J2000 ecliptic and ecliptic of date.
+struct EclipticAngles
+{
+    double piA;
+    double PiA;
+};
+
+
+// epsA is the angle between the ecliptic and mean equator of date. pA is the
+// general precession: the difference between angles L and PiA. L is the angle
+// along the mean ecliptic of date from the equinox of date to the
+// intersection of the J2000 ecliptic and ecliptic of date.
 struct PrecessionAngles
 {
     double pA;     // precession
@@ -33,7 +48,20 @@ struct PrecessionAngles
 };
 
 
-extern EclipticAngles EclipticPrecession_P03LP(double T);
+struct EquatorialPrecessionAngles
+{
+    double zetaA;
+    double zA;
+    double thetaA;
+};
+
+
+extern EclipticPole EclipticPrecession_P03LP(double T);
 extern PrecessionAngles PrecObliquity_P03LP(double T);
+
+extern EclipticPole EclipticPrecession_P03(double T);
+extern EclipticAngles EclipticPrecessionAngles_P03(double T);
+extern PrecessionAngles PrecObliquity_P03(double T);
+extern EquatorialPrecessionAngles EquatorialPrecessionAngles_P03(double T);
 
 };
