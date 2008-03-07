@@ -571,6 +571,12 @@ static bool CreateTimeline(Body* body,
 
     if (overrideOldTimeline)
     {
+        if (beginning >= ending)
+        {
+            clog << "Beginning time must be before Ending time.\n";
+            return false;
+        }
+
         // We finally have an orbit, rotation model, frames, and time range. Create
         // the object timeline.
         TimelinePhase* phase = TimelinePhase::CreateTimelinePhase(universe,
@@ -580,6 +586,16 @@ static bool CreateTimeline(Body* body,
                                                                   *orbit,
                                                                   *bodyFrame,
                                                                   *rotationModel);
+
+        // We've already checked that beginning < ending; nothing else should go
+        // wrong during the creation of a TimelinePhase.
+        assert(phase != NULL);
+        if (phase == NULL)
+        {
+            clog << "Internal error creating TimelinePhase.\n";
+            return false;
+        }
+
         Timeline* timeline = new Timeline();
         timeline->appendPhase(phase);
 
