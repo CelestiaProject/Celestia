@@ -39,6 +39,106 @@ RotationModel::angularVelocityAtTime(double tdb) const
 }
 
 
+/***** CachingRotationModel *****/
+
+CachingRotationModel::CachingRotationModel() :
+    lastTime(365.0),
+    spinCacheValid(false),
+    equatorCacheValid(false),
+    angularVelocityCacheValid(false)
+{
+}
+
+
+CachingRotationModel::~CachingRotationModel()
+{
+}
+
+
+Quatd
+CachingRotationModel::spin(double tjd) const
+{
+    if (tjd != lastTime)
+    {
+        lastTime = tjd;
+        lastSpin = computeSpin(tjd);
+        spinCacheValid = true;
+        equatorCacheValid = false;
+        angularVelocityCacheValid = false;
+    }
+    else if (!spinCacheValid)
+    {
+        lastSpin = computeSpin(tjd);
+        spinCacheValid = true;
+    }
+    
+    return lastSpin;
+}
+
+
+Quatd
+CachingRotationModel::equatorOrientationAtTime(double tjd) const
+{
+    if (tjd != lastTime)
+    {
+        lastTime = tjd;
+        lastEquator = computeEquatorOrientation(tjd);
+        spinCacheValid = false;
+        equatorCacheValid = true;
+        angularVelocityCacheValid = false;
+    }
+    else if (!equatorCacheValid)
+    {
+        lastEquator = computeEquatorOrientation(tjd);
+        equatorCacheValid = true;
+    }
+    
+    return lastEquator;    
+}
+
+
+Vec3d
+CachingRotationModel::angularVelocityAtTime(double tjd) const
+{
+    if (tjd != lastTime)
+    {
+        lastTime = tjd;
+        lastAngularVelocity = computeAngularVelocity(tjd);
+        spinCacheValid = false;
+        equatorCacheValid = false;
+        angularVelocityCacheValid = true;
+    }
+    else if (!angularVelocityCacheValid)
+    {
+        lastAngularVelocity = computeAngularVelocity(tjd);
+        angularVelocityCacheValid = true;
+    }
+    
+    return lastAngularVelocity;    
+}
+
+
+Vec3d
+CachingRotationModel::computeAngularVelocity(double tjd) const
+{
+    Quatd q0 = orientationAtTime(tjd);
+    
+    // Call computeSpin/computeEquatorOrientation instead of orientationAtTime
+    // in order to avoid affecting the cache.
+    Quatd spin = computeSpin(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
+    Quatd equator = computeEquatorOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
+	Quatd q1 = spin * equator;
+	Quatd dq = ~q0 * q1;
+    
+	if (fabs(dq.w) > 0.99999999)
+		return Vec3d(0.0, 0.0, 0.0);
+    
+	Vec3d v(dq.x, dq.y, dq.z);
+	v.normalize();
+	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);    
+}
+
+
 /***** ConstantOrientation implementation *****/
 
 ConstantOrientation::ConstantOrientation(const Quatd& q) :

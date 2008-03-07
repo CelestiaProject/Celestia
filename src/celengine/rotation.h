@@ -74,6 +74,42 @@ class RotationModel
 };
 
 
+/*! CachingRotationModel is an abstract base class for complicated rotation
+ *  models that are computationally expensive. The last calculated spin,
+ *  equator orientation, and angular velocity are all cached and reused in
+ *  order to avoid redundant calculation. Subclasses must override computeSpin(),
+ *  computeEquatorOrientation(), and getPeriod(). The default implementation
+ *  of computeAngularVelocity uses differentiation to approximate the
+ *  the instantaneous angular velocity. It may be overridden if there is some
+ *  better means to calculate the angular velocity for a specific rotation
+ *  model.
+ */
+class CachingRotationModel : public RotationModel
+{
+ public:
+    CachingRotationModel();
+    virtual ~CachingRotationModel();
+    
+    Quatd spin(double tjd) const;
+    Quatd equatorOrientationAtTime(double tjd) const;
+    Vec3d angularVelocityAtTime(double tjd) const;
+    
+    virtual Quatd computeEquatorOrientation(double tjd) const = 0;
+    virtual Quatd computeSpin(double tjd) const = 0;
+    virtual Vec3d computeAngularVelocity(double tjd) const;
+    virtual double getPeriod() const = 0;
+    
+private:
+    mutable Quatd lastSpin;
+    mutable Quatd lastEquator;
+    mutable Vec3d lastAngularVelocity;
+    mutable double lastTime;
+    mutable bool spinCacheValid;
+    mutable bool equatorCacheValid;
+    mutable bool angularVelocityCacheValid;
+};
+
+
 /*! The simplest rotation model is ConstantOrientation, which describes
  *  an orientation that is fixed within a reference frame.
  */
