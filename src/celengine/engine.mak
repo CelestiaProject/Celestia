@@ -55,12 +55,14 @@ OBJS=\
 	$(INTDIR)\modelfile.obj \
 	$(INTDIR)\multitexture.obj \
 	$(INTDIR)\nebula.obj \
+	$(INTDIR)\nutation.obj \
 	$(INTDIR)\observer.obj \
 	$(INTDIR)\opencluster.obj \
 	$(INTDIR)\orbit.obj \
 	$(INTDIR)\overlay.obj \
 	$(INTDIR)\parseobject.obj \
 	$(INTDIR)\parser.obj \
+	$(INTDIR)\precession.obj \
 	$(INTDIR)\regcombine.obj \
 	$(INTDIR)\rendcontext.obj \
 	$(INTDIR)\render.obj \
