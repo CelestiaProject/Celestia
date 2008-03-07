@@ -15,6 +15,7 @@
 #include <celengine/customrotation.h>
 #include <celengine/rotation.h>
 #include <celengine/astro.h>
+#include <celengine/precession.h>
 
 using namespace std;
 
@@ -67,6 +68,67 @@ public:
 private:
     double period;
 };
+
+
+
+/******* Earth rotation model *******/
+
+class EarthRotationModel : public CachingRotationModel
+{
+public:
+    EarthRotationModel()
+    {
+    }
+    
+    ~EarthRotationModel()
+    {
+    }
+    
+    Quatd computeSpin(double tjd) const
+    {
+        // TODO: Use a more accurate model for sidereal time
+        double t = tjd - astro::J2000;
+        double theta = 2 * PI * (t * 24.0 / 23.9344694 - 280.5 / 360.0);
+
+        return Quatd::yrotation(-theta);
+    }
+    
+    Quatd computeEquatorOrientation(double tjd) const
+    {
+        double T = (tjd - astro::J2000) / 36525.0;
+        astro::PrecessionAngles prec = astro::PrecObliquity_P03LP(T);
+        astro::EclipticPole pole = astro::EclipticPrecession_P03LP(T);
+        
+        double obliquity = degToRad(prec.epsA / 3600);
+        double precession = degToRad(prec.pA / 3600);
+        
+        // Calculate the angles pi and Pi from the ecliptic pole coordinates
+        // P and Q:
+        //   P = sin(pi)*sin(Pi)
+        //   Q = sin(pi)*cos(Pi)
+        double P = pole.PA * 2.0 * PI / 1296000;
+        double Q = pole.QA * 2.0 * PI / 1296000;
+        double piA = asin(sqrt(P * P + Q * Q));
+        double PiA = atan2(P, Q);
+
+        // Calculate the rotation from the J2000 ecliptic to the ecliptic
+        // of date.
+        Quatd RPi = Quatd::zrotation(PiA);
+        Quatd rpi = Quatd::xrotation(piA);
+        Quatd eclRotation = ~RPi * rpi * RPi;
+
+        Quatd q = Quatd::xrotation(obliquity) * Quatd::zrotation(-precession) * ~eclRotation;
+        
+        // convert to Celestia's coordinate system
+        return Quatd::xrotation(PI / 2.0) * q * Quatd::xrotation(-PI / 2.0);
+    }
+    
+    double getPeriod() const
+    {
+        return 24.0 / 23.9344694;
+    }
+};
+
 
 
 /******* IAU rotation models for the planets *******/
@@ -476,6 +538,8 @@ GetCustomRotationModel(const std::string& name)
     if (!CustomRotationModelsInitialized)
     {
         CustomRotationModelsInitialized = true;
+        
+        CustomRotationModels["earth-p03lp"] = new EarthRotationModel();
         
         CustomRotationModels["iau-mercury"] = new IAUPrecessingRotationModel(281.01, -0.033,
                                                                              61.45, -0.005,
