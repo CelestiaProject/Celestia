@@ -56,12 +56,14 @@ libcelengine_a_SOURCES = \
 	modelfile.cpp \
 	multitexture.cpp \
 	nebula.cpp \
+	nutation.cpp \
 	observer.cpp \
 	opencluster.cpp \
 	orbit.cpp \
 	overlay.cpp \
 	parseobject.cpp \
 	parser.cpp \
+	precession.cpp \
 	regcombine.cpp \
 	rendcontext.cpp \
 	render.cpp \
