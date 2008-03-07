@@ -126,12 +126,14 @@ ENGINE_SOURCES = \
 	celengine/modelfile.cpp \
 	celengine/multitexture.cpp \
 	celengine/nebula.cpp \
+	celengine/nutation.cpp \
 	celengine/observer.cpp \
 	celengine/opencluster.cpp \
 	celengine/orbit.cpp \
 	celengine/overlay.cpp \
 	celengine/parseobject.cpp \
 	celengine/parser.cpp \
+	celengine/precession.cpp \
 	celengine/regcombine.cpp \
 	celengine/rendcontext.cpp \
 	celengine/render.cpp \
@@ -209,6 +211,7 @@ ENGINE_HEADERS = \
 	celengine/modelfile.h \
 	celengine/multitexture.h \
 	celengine/nebula.h \
+	celengine/nutation.h \
 	celengine/observer.h \
 	celengine/octree.h \
 	celengine/opencluster.h \
@@ -216,6 +219,7 @@ ENGINE_HEADERS = \
 	celengine/overlay.h \
 	celengine/parseobject.h \
 	celengine/parser.h \
+	celengine/precession.h \
 	celengine/regcombine.h \
 	celengine/rendcontext.h \
 	celengine/render.h \
