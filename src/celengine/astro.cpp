@@ -407,6 +407,7 @@ astro::Date::Date(double jd)
 {
     int64 a = (int64) floor(jd + 0.5);
     wday = (a + 1) % 7;
+    if (wday < 0) wday += 7;
     double c;
     if (a < 2299161)
     {
