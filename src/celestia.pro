@@ -360,7 +360,6 @@ RESOURCES = \
 SOURCES += $$SPICE_SOURCES
 HEADERS += $$SPICE_HEADERS
 DEFINES += USE_SPICE
-INCLUDEPATH += ../inc/spice
 
 INCLUDEPATH += ..
 INCLUDEPATH += ../..
@@ -371,7 +370,8 @@ win32 {
 		../inc/libz \
 		../inc/libpng \
 		../inc/libjpeg \
-		../inc/lua-5.1
+		../inc/lua-5.1 \
+  		../inc/spice
 	LIBS += -L../lib \
 		-lzlib \
 		-llibpng \
@@ -385,7 +385,8 @@ win32 {
 }
 
 unix {
-	LIBS += -ljpeg
+	INCLUDEPATH += /usr/local/cspice/include
+	LIBS += -ljpeg -llua  /usr/local/cspice/lib/cspice.a
 }
 
 macx {
