@@ -783,14 +783,15 @@ bool Renderer::init(GLContext* _context,
         if (strstr(glRenderer, "Radeon 9600") != NULL ||
             strstr(glRenderer, "Radeon 9700") != NULL ||
             strstr(glRenderer, "Radeon 9800") != NULL ||
-            strstr(glRenderer, "Radeon X600") != NULL)
+            strstr(glRenderer, "Radeon X600") != NULL ||
+            strstr(glRenderer, "Radeon X800") != NULL)
         {
-            // ATI RV3xx drivers on the Mac appear to limit point sprite size.
+            // Some ATI drivers on the Mac appear to limit point sprite size.
             // This causes an abrupt size transition when going from billboards
             // to sprites. Rather than incur overhead accounting for the size limit,
             // do not use sprites on these renderers.
-            // Affected cards: 9550-9800, X300, X600, X1050 etc
-            // Renderer strings are not unique and only 4 should cover all cases
+            // Affected cards: 9550-9800, X300, X600, X1050, X850XT etc
+            // Renderer strings are not unique.
             usePointSprite = false;
         }
 #endif
