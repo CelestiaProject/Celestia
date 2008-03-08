@@ -184,6 +184,15 @@
 	AppMag 10.5
 }
 
+1014023547 "HAT-P-7:GSC 03547-01402"
+{
+	RA 292.24734
+	Dec 47.969518
+	Distance 1040
+	SpectralType "F6V"
+	AppMag 10.5
+}
+
 # WASP survey
 
 "WASP-1"
