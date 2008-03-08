@@ -75,8 +75,15 @@ string LocaleFilename(const string & filename)
     {
         localeFilename = filename + '_' + _("LANGUAGE");
     }
-    if (stat(localeFilename.c_str(), &filestat) != 0) {
-        localeFilename = filename;
+
+    if (stat(localeFilename.c_str(), &filestat) != 0) 
+    {
+        localeFilename = string("locale/") + localeFilename;
+        if (stat(localeFilename.c_str(), &filestat) != 0) 
+        {
+            localeFilename = filename;
+        }
     }
+
     return localeFilename;
 }
