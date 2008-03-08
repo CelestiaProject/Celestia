@@ -22,11 +22,11 @@ msgstr ""
 
 #: src/celengine/astro.cpp:738
 msgid "DST"
-msgstr "heure d'hiver"
+msgstr "heure d'été"
 
 #: src/celengine/astro.cpp:738
 msgid "STD"
-msgstr "heure d'été"
+msgstr "heure d'hiver"
 
 #: src/celengine/dsodb.cpp:342 src/celengine/dsodb.cpp:343
 msgid "Milky Way"
