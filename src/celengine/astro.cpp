@@ -16,7 +16,10 @@
 #include "celestia.h"
 #include "astro.h"
 #include <celutil/util.h>
+
+#ifdef __GNUC__
 #include <langinfo.h>
+#endif
 
 using namespace std;
 
@@ -442,9 +445,11 @@ astro::Date::Date(double jd)
     tzname = "UTC";
 }
 
+#ifdef __GNUC__	
 bool astro::Date::utf8Locale = false;
 bool astro::Date::utf8LocaleSet = false;
 iconv_t astro::Date::utf8Iconv;
+#endif
 
 const char* astro::Date::toCStr(Format format) const
 {

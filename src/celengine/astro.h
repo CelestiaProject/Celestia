@@ -15,7 +15,10 @@
 #include <cmath>
 #include <celmath/vecmath.h>
 #include <celengine/univcoord.h>
+
+#ifdef __GNUC__
 #include <iconv.h>
+#endif
 
 #define SOLAR_ABSMAG  4.83f
 #define LN_MAG        1.085736
@@ -58,11 +61,13 @@ namespace astro
         std::string tzname; // timezone name
         double seconds;
 
+#ifdef __GNUC__
     private:
         // Static members used to store locale related UTF-8 information
         static bool utf8Locale;
         static bool utf8LocaleSet;
         static iconv_t utf8Iconv;
+#endif
     };
 
     bool parseDate(const std::string&, Date&);
