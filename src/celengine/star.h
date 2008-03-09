@@ -51,6 +51,7 @@ class StarDetails
     inline bool getVisibility() const;
     inline const RotationModel* getRotationModel() const;
     inline Vec3f getEllipsoidSemiAxes() const;
+    const std::string& getInfoURL() const;
 
     void setRadius(float);
     void setTemperature(float);
@@ -65,6 +66,7 @@ class StarDetails
     void setVisibility(bool);
     void setRotationModel(const RotationModel*);
     void setEllipsoidSemiAxes(const Vec3f&);
+    void setInfoURL(const std::string& _infoURL);
 
     bool shared() const;
     
@@ -101,6 +103,8 @@ class StarDetails
 
     Vec3f semiAxes;
 
+    std::string* infoURL;
+    
     std::vector<Star*>* orbitingStars;
     bool isShared;
 
@@ -219,6 +223,7 @@ StarDetails::getEllipsoidSemiAxes() const
 }
 
 
+
 class Star
 {
 public:
@@ -267,6 +272,7 @@ public:
     inline uint32 getKnowledge() const;
     inline const RotationModel* getRotationModel() const;
     inline Vec3f getEllipsoidSemiAxes() const;
+    const std::string& getInfoURL() const;
 
     enum {
         MaxTychoCatalogNumber = 0xf0000000,

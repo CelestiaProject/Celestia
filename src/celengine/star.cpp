@@ -43,6 +43,8 @@ static StarDetails*  neutronStarDetails = NULL;
 static StarDetails*  blackHoleDetails = NULL;
 static StarDetails*  barycenterDetails = NULL;
 
+static string DEFAULT_INFO_URL("");
+
 StarDetails::StarTextureSet StarDetails::starTextures;
 
 // Star temperature data from Lang's _Astrophysical Data: Planets and Stars_
@@ -748,6 +750,7 @@ StarDetails::StarDetails() :
     barycenter(NULL),
     rotationModel(NULL),
     semiAxes(1.0f, 1.0f, 1.0f),
+    infoURL(NULL),
     orbitingStars(NULL),
     isShared(true)
 {
@@ -768,17 +771,34 @@ StarDetails::StarDetails(const StarDetails& sd) :
     barycenter(sd.barycenter),
     rotationModel(sd.rotationModel),
     semiAxes(sd.semiAxes),
+    infoURL(NULL),
     orbitingStars(NULL),
     isShared(false)
 {
     assert(sd.isShared);
     memcpy(spectralType, sd.spectralType, sizeof(spectralType));
+    if (sd.infoURL != NULL)
+        infoURL = new string(*sd.infoURL);
 }
 
 
 StarDetails::~StarDetails()
 {
     delete orbitingStars;
+    delete infoURL;
+}
+
+
+/*! Return the InfoURL. If the InfoURL has not been set, this method
+ *  returns an empty string.
+ */
+const std::string&
+StarDetails::getInfoURL() const
+{
+    if (infoURL != NULL)
+        return *infoURL;
+    else
+        return DEFAULT_INFO_URL;
 }
 
 
@@ -892,6 +912,29 @@ StarDetails::setRotationModel(const RotationModel* rm)
     rotationModel = rm;
 }
 
+
+/*! Set the InfoURL for this star.
+*/
+void
+StarDetails::setInfoURL(const string& _infoURL)
+{
+    if (_infoURL.empty())
+    {
+        // Save space in the common case--no InfoURL--by not
+        // allocating a string.
+        delete infoURL;
+        infoURL = NULL;
+    }
+    else
+    {
+        // Allocate the new string before freeing the old one, so we don't crash
+        // in the event the caller does something like:
+        // star->setInfoURL(star->getInfoURL());
+        string* oldURL = infoURL;
+        infoURL = new string(_infoURL);
+        delete oldURL;
+    }
+}
 
 
 Star::~Star()
@@ -1053,6 +1096,16 @@ ResourceHandle
 Star::getModel() const
 {
     return details->getModel();
+}
+
+
+/*! Return the InfoURL. If the InfoURL has not been set, this method
+*  returns an empty string.
+*/
+const string&
+Star::getInfoURL() const
+{
+    return details->getInfoURL();
 }
 
 
