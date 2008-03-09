@@ -14,7 +14,6 @@
 }
 
 -(CelestiaUniversalCoord*)position;
--(CelestiaVector*)relativePosition:(CelestiaVector*)p;
 -(CelestiaVector*)orientation;
 -(void)setOrientation:(CelestiaVector*)q;
 -(CelestiaVector*)velocity;
