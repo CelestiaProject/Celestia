@@ -12,11 +12,6 @@
 		8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAA80D6D13FE0059AA3A /* frametree.cpp */; };
 		8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAA0D6D13FE0059AA3A /* timeline.cpp */; };
 		8844BAB20D6D13FE0059AA3A /* timelinephase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAC0D6D13FE0059AA3A /* timelinephase.cpp */; };
-		8844BB770D761BAB0059AA3A /* celx_internal.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844BB740D761BAB0059AA3A /* celx_internal.h */; };
-		8844BB780D761BAB0059AA3A /* celx_phase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BB750D761BAB0059AA3A /* celx_phase.cpp */; };
-		8844BB790D761BAB0059AA3A /* celx_phase.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844BB760D761BAB0059AA3A /* celx_phase.h */; };
-		8844BC370D7636380059AA3A /* celx_frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BC350D7636380059AA3A /* celx_frame.cpp */; };
-		8844BC380D7636380059AA3A /* celx_frame.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844BC360D7636380059AA3A /* celx_frame.h */; };
 		8844CBC40D80DB020059AA3A /* nutation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC00D80DB020059AA3A /* nutation.cpp */; };
 		8844CBC50D80DB020059AA3A /* nutation.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CBC10D80DB020059AA3A /* nutation.h */; };
 		8844CBC60D80DB020059AA3A /* precession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC20D80DB020059AA3A /* precession.cpp */; };
@@ -376,9 +371,6 @@
 			files = (
 				E5F8C9E70795239600D1DAF2 /* liblua.dylib in Copy Libraries */,
 				E5F8C9E90795239600D1DAF2 /* libpng.dylib in Copy Libraries */,
-				8844BB770D761BAB0059AA3A /* celx_internal.h in Copy Libraries */,
-				8844BB790D761BAB0059AA3A /* celx_phase.h in Copy Libraries */,
-				8844BC380D7636380059AA3A /* celx_frame.h in Copy Libraries */,
 				8844CBC50D80DB020059AA3A /* nutation.h in Copy Libraries */,
 				8844CBC70D80DB020059AA3A /* precession.h in Copy Libraries */,
 			);
@@ -510,11 +502,6 @@
 		8844BAAB0D6D13FE0059AA3A /* timeline.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = timeline.h; path = ../src/celengine/timeline.h; sourceTree = SOURCE_ROOT; };
 		8844BAAC0D6D13FE0059AA3A /* timelinephase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = timelinephase.cpp; path = ../src/celengine/timelinephase.cpp; sourceTree = SOURCE_ROOT; };
 		8844BAAD0D6D13FE0059AA3A /* timelinephase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = timelinephase.h; path = ../src/celengine/timelinephase.h; sourceTree = SOURCE_ROOT; };
-		8844BB740D761BAB0059AA3A /* celx_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_internal.h; path = ../src/celestia/celx_internal.h; sourceTree = SOURCE_ROOT; };
-		8844BB750D761BAB0059AA3A /* celx_phase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_phase.cpp; path = ../src/celestia/celx_phase.cpp; sourceTree = SOURCE_ROOT; };
-		8844BB760D761BAB0059AA3A /* celx_phase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_phase.h; path = ../src/celestia/celx_phase.h; sourceTree = SOURCE_ROOT; };
-		8844BC350D7636380059AA3A /* celx_frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_frame.cpp; path = ../src/celestia/celx_frame.cpp; sourceTree = SOURCE_ROOT; };
-		8844BC360D7636380059AA3A /* celx_frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_frame.h; path = ../src/celestia/celx_frame.h; sourceTree = SOURCE_ROOT; };
 		8844CBC00D80DB020059AA3A /* nutation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = nutation.cpp; path = ../src/celengine/nutation.cpp; sourceTree = SOURCE_ROOT; };
 		8844CBC10D80DB020059AA3A /* nutation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = nutation.h; path = ../src/celengine/nutation.h; sourceTree = SOURCE_ROOT; };
 		8844CBC20D80DB020059AA3A /* precession.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = precession.cpp; path = ../src/celengine/precession.cpp; sourceTree = SOURCE_ROOT; };
@@ -1380,11 +1367,6 @@
 		F51C6D51029596B4014901DC /* celestia */ = {
 			isa = PBXGroup;
 			children = (
-				8844BC350D7636380059AA3A /* celx_frame.cpp */,
-				8844BC360D7636380059AA3A /* celx_frame.h */,
-				8844BB740D761BAB0059AA3A /* celx_internal.h */,
-				8844BB750D761BAB0059AA3A /* celx_phase.cpp */,
-				8844BB760D761BAB0059AA3A /* celx_phase.h */,
 				F51C6D8B02959960014901DC /* celestiacore.cpp */,
 				E56431450776D52D00E2C4A3 /* celx.cpp */,
 				F51C6D8C02959960014901DC /* configfile.cpp */,
@@ -1973,8 +1955,6 @@
 				8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */,
 				8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */,
 				8844BAB20D6D13FE0059AA3A /* timelinephase.cpp in Sources */,
-				8844BB780D761BAB0059AA3A /* celx_phase.cpp in Sources */,
-				8844BC370D7636380059AA3A /* celx_frame.cpp in Sources */,
 				8844CBC40D80DB020059AA3A /* nutation.cpp in Sources */,
 				8844CBC60D80DB020059AA3A /* precession.cpp in Sources */,
 			);
