@@ -925,6 +925,9 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
 
     double radius;
     bool hasRadius = starData->getNumber("Radius", radius);
+    
+    string infoURL;
+    bool hasInfoURL = starData->getString("InfoURL", infoURL);
 
     Orbit* orbit = CreateOrbit(NULL, starData, path, true);
 
@@ -933,7 +936,8 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
         orbit != NULL   ||
         hasSemiAxes     ||
         hasRadius       ||
-        hasRotationModel)
+        hasRotationModel ||
+        hasInfoURL)
     {
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
@@ -960,6 +964,11 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
         {
             details->setRadius((float) radius);
             details->addKnowledge(StarDetails::KnowRadius);
+        }
+        
+        if (hasInfoURL)
+        {
+            details->setInfoURL(infoURL);
         }
 
         if (orbit != NULL)
