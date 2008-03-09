@@ -248,8 +248,8 @@ astro::EclipticPrecessionAngles_P03(double T)
 }
 
 
-//static const double eps0 = 23.4392911;
-static const double eps0 = 23.4392802;
+// DE405 obliquity of the ecliptic
+static const double eps0 = 84381.40889;
 
 /*! Compute the general precession and obliquity using the P03
  *  precession model. See PrecObliquity_P03LP for more details.
@@ -263,7 +263,7 @@ astro::PrecObliquity_P03(double T)
     double T4 = T3 * T;
     double T5 = T4 * T;
     
-    prec.epsA = (eps0 * 3600
+    prec.epsA = (eps0
                 - 46.836769 * T
                 -  0.0001831 * T2
                 +  0.00200340 * T3
@@ -344,7 +344,6 @@ int main(int argc, char* argv[])
         Quatd p03lpRot = Quatd::xrotation(degToRad(prec.epsA / 3600.0)) *
                          Quatd::zrotation(-degToRad(prec.pA / 3600.0));
         p03lpRot = p03lpRot * ~eclRotation3;
-        //p03lpRot = ~eclRotation2 * p03lpRot;
                 
         astro::PrecessionAngles prec2 = astro::PrecObliquity_P03(T);
         //clog << prec.epsA - prec2.epsA << ", " << prec.pA - prec2.pA << endl;
@@ -353,7 +352,7 @@ int main(int argc, char* argv[])
         Quatd p03Rot = Quatd::zrotation(-degToRad(precP03.zA / 3600.0)) *
                        Quatd::yrotation( degToRad(precP03.thetaA / 3600.0)) *
                        Quatd::zrotation(-degToRad(precP03.zetaA / 3600.0));
-        p03Rot = p03Rot * Quatd::xrotation(degToRad(eps0));
+        p03Rot = p03Rot * Quatd::xrotation(degToRad(eps0 / 3600.0));
         
         Vec3d xaxis(0, 0, 1);
         Vec3d v0 = xaxis * p03lpRot.toMatrix3();
