@@ -3814,7 +3814,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             char utf8CharCode[7];
             memset(utf8CharCode, 0, sizeof(utf8CharCode));
             WCHAR wCharCode;
-            MultiByteToWideChar(CP_THREAD_ACP, 0, (char*)&charCode, 1, &wCharCode, 1);
+            MultiByteToWideChar(CP_ACP, 0, (char*)&charCode, 1, &wCharCode, 1);
             WideCharToMultiByte(CP_UTF8, 0, &wCharCode, 1, utf8CharCode, 7, 0, 0);
 
             /*cerr << "Char input: (ANSI) " << (int)(unsigned char)charCode << " - UTF8 -> ";
