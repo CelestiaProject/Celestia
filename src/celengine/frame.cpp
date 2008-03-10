@@ -350,7 +350,7 @@ BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center,
                                            Selection obj) :
     ReferenceFrame(center),
     equatorObject(obj),
-    freezeEpoch(0.0),
+    freezeEpoch(astro::J2000),
     isFrozen(false)
 {
 }
@@ -370,7 +370,7 @@ BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center,
 Quatd
 BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
-    double t = isFrozen ? tjd : freezeEpoch;
+    double t = isFrozen ? freezeEpoch : tjd;
 
     switch (equatorObject.getType())
     {
@@ -393,10 +393,10 @@ BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
 	}
 	else
 	{
-		if (equatorObject.body() != NULL)
-		{
-			return equatorObject.body()->getBodyFrame(tjd)->getAngularVelocity(tjd);
-		}
+        if (equatorObject.body() != NULL)
+        {
+            return equatorObject.body()->getBodyFrame(tjd)->getAngularVelocity(tjd);
+        }
         else
         {
             return Vec3d(0.0, 0.0, 0.0);
