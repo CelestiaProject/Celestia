@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iomanip>
 #include <celmath/mathlib.h>
+#include <celmath/quaternion.h>
 #include "astro.h"
 #include "customorbit.h"
 #include "vsop87.h"
@@ -2722,6 +2723,11 @@ static UranianSatelliteOrbit* CreateUranianSatelliteOrbit(int n)
 };
 
 
+/*! Orbit of Triton, from Seidelmann, _Explanatory Supplement to the
+ *  Astronomical Almanac_ (1992), p.373-374. The position of Triton
+ *  is calculated in Neptunocentric coordinates referred to the 
+ *  Earth equator/equinox of J2000.0.
+ */
 class TritonOrbit : public CachingOrbit
 {
  public:
@@ -2729,49 +2735,46 @@ class TritonOrbit : public CachingOrbit
 
     Point3d computePosition(double jd) const
     {
-        // Pole of the fixed reference plane
-        //double t = jd - 2433282.5;
         double epoch = 2433282.5;
         double t = jd - epoch;
-        double T = (jd - 2451545.0) / 36525;
-        double N = degToRad(359.28 + 54.308 * T);
-        double refplane_RA  = degToRad(298.72 +
-                                       2.58 * sin(N) - 0.04 * sin(2 * N));
-        double refplane_Dec = degToRad(42.63 -
-                                       1.90 * cos(N) - 0.01 * cos(2 * N));
-        double nepPole_RA = degToRad(299.36);
-        double nepPole_Dec = degToRad(43.46);
 
-        double a = 354800;
-        /*double e = 0.0000;    Unused*/
-        double n = degToRad(61.2588532);
+        // Compute the position of Triton in its orbital plane
+        double a = 354800;                // Semi-major axis (488.49")
+        double n = degToRad(61.2588532);  // mean motion
         double L0 = degToRad(200.913);
         double L  = L0 + n * t;
+
+        double E = L;   // Triton's orbit is circular, so E = mean anomaly
+        Point3d p(a * cos(E), a * sin(E), 0.0);
+
+        // Transform to the invariable plane:
+        //   gamma is the inclination of the orbital plane on the invariable plane
+        //   theta is the angle from the intersection of the invariable plane
+        //      with the Earth equatorial plane of 1950.0 to the ascending node
+        //      of the orbit on the invariable plane.
         double gamma = degToRad(158.996);
         double theta = degToRad(151.401 + 0.57806 * t / 365.25);
+        Quatd toInvariable = Quatd::xrotation(-gamma) * Quatd::zrotation(-theta);
 
-        double E = L - theta;
-        Point3d p(a * cos(E), 0.0, a * -sin(E));
-
-        // Orientation of the orbital plane with respect to the Laplacian plane
-        Mat3d Rorbit     = (Mat3d::yrotation(theta) *
-                            Mat3d::xrotation(gamma));
+        // Compute the RA and declination of the pole of the fixed reference plane
+        // (epoch is J2000.0)
+        double T = (jd - astro::J2000) / 36525;
+        double N = degToRad(359.28 + 54.308 * T);
+        double refplane_RA  = 298.72 + 2.58 * sin(N) - 0.04 * sin(2 * N);
+        double refplane_Dec =  42.63 - 1.90 * cos(N) - 0.01 * cos(2 * N);
 
         // Rotate to the Earth's equatorial plane
-        double Nr = degToRad(refplane_RA);
-        double Jr = degToRad(90 - refplane_Dec);
-        Mat3d Rrefplane = (Mat3d::yrotation( Nr) *
-                           Mat3d::xrotation( Jr) *
-                           Mat3d::yrotation(-Nr));
+        double Nr = degToRad(refplane_RA - 90.0);
+        double Jr = degToRad(90.0 - refplane_Dec);
+        Quatd toEarthEq = Quatd::xrotation(Jr) * Quatd::zrotation(Nr);
 
-        // Rotate to the Neptunian equatorial plane
-        double Nn = degToRad(nepPole_RA);
-        double Jn = degToRad(90 - nepPole_Dec);
-        Mat3d RNept_eq   = (Mat3d::yrotation( Nn) *
-                            Mat3d::xrotation(-Jn) *
-                            Mat3d::yrotation(-Nn));
+        Quatd q = toEarthEq * toInvariable;
+        //Quatd q = toInvariable * toEarthEq;
 
-        return RNept_eq * (Rrefplane * (Rorbit * p));
+        p = q.toMatrix3() * p;
+
+        // Convert to Celestia's coordinate system
+        return Point3d(p.x, p.z, -p.y);
     }
 
     double getPeriod() const
@@ -2783,6 +2786,268 @@ class TritonOrbit : public CachingOrbit
     {
         return 354800 * BoundingRadiusSlack;
     }
+};
+
+
+/*! Ephemeris for Helene, Telesto, and Calypso, from
+ *  "An upgraded theory for Helene, Telesto, and Calypso"
+ *  Oberti P., Vienne A., 2002, A&A
+ *  Translated to C++ by Chris Laurel from FORTRAN source available at:
+ *    ftp://ftp.imcce.fr/pub/ephem/satel/htc20
+ *
+ *  Coordinates are Saturnocentric and referred to the ecliptic 
+ *     and equinox of J2000.0.
+ */    
+static const double HeleneTerms[24*5] =
+{
+    0,0,0,0,1,
+    1,0,0,0,1,
+    1,1,0,0,1,
+    0,0,1,0,1,
+    1,0,1,0,1,
+    0,0,2,0,1,
+    1,0,2,0,1,
+    0,0,3,0,1,
+    0,1,0,0,-1,
+    1,1,0,0,-1,
+    0,0,1,0,-1,
+    1,0,1,0,-1,
+    0,0,2,0,-1,
+    1,0,2,0,-1,
+    0,0,3,0,-1,
+    1,0,0,1,0,
+    0,1,0,0,1,
+    1,0,3,0,1,
+    1,0,3,0,-1,
+    1,1,1,0,1,
+    1,1,-1,0,1,
+    0,0,0,1,0,
+    0,1,1,0,1,
+    0,1,-1,0,1,
+};
+
+static const double HeleneAmps[24*6] = 
+{ 
+    -0.002396,-0.000399,0.000442,0.001278,-0.004939,0.002466,
+     0.000557,-0.002152,0.001074,0.005500,0.000916,-0.001015,-0.000003,
+     0.,0.,0.000003,-0.000011,0.000006,-0.000066,0.000265,-0.000133,
+     -0.000676,-0.000107,0.000122,-0.000295,-0.000047,0.000053,
+     0.000151,-0.000607,0.000303,0.000015,0.000017,-0.000010,-0.000044,
+     0.000033,-0.000013,-0.000019,0.000014,-0.000006,-0.000035,
+     -0.000038,0.000023,0.000002,0.,0.,-0.000002,0.000004,-0.000002,
+     -0.000002,0.000008,-0.000004,0.,0.,0.,0.000009,0.,-0.000002,0.,0.,
+     0.,-0.000067,0.000264,-0.000132,-0.000677,-0.000110,0.000123,
+     0.000294,0.000048,-0.000053,-0.000154,0.000608,-0.000304,0.000015,
+     0.000016,-0.000010,-0.000044,0.000033,-0.000013,0.000019,
+     -0.000014,0.000006,0.000035,0.000038,-0.000023,0.000002,0.,0.,
+     -0.000002,0.000004,-0.000002,0.,0.000005,0.000010,0.,0.,0.,0.,
+     0.000002,0.,-0.000013,-0.000002,0.000002,0.,0.000002,0.,-0.000004,
+     -0.000002,0.,0.,-0.000002,0.,0.000004,0.000002,0.,0.,0.,0.,
+     -0.000003,0.,0.,0.,0.,0.,-0.000003,0.,0.,0.,0.,0.,0.,0.000005,
+     0.000010,0.,0.,0.,0.,0.000003,0.,0.,0.,0.,0.,0.000003,0.
+};
+
+
+static const double TelestoTerms[12*5] =
+{
+    1,0,0,1,0,
+    0,0,0,0,1,
+    1,0,0,0,1,
+    1,1,0,0,1,
+    0,0,1,0,1,
+    1,0,1,0,1,
+    1,1,0,0,-1,
+    0,0,1,0,-1,
+    1,0,1,0,-1,
+    0,1,0,0,1,
+    0,1,0,0,-1,
+    0,0,0,1,0
+};
+
+static const double TelestoAmps[12*6] =
+{
+    0.000002,0.000010,0.000019,0.,0.,0.,
+    -0.001933,-0.000253,0.000320,0.001237,-0.005767,0.002904,
+    0.000372,-0.001733,0.000873,0.006432,0.000842,-0.001066,
+    -0.000002,0.,0.,0.000003,-0.000014,0.000007,
+    -0.000006,0.000029,-0.000015,-0.000108,-0.000014,0.000018,
+    -0.000033,-0.000004,0.000005,0.000020,-0.000097,0.000049,
+    0.000007,0.,0.,0.,0.,0.,
+    -0.000006,0.000029,-0.000015,-0.000108,-0.000014,0.000018,
+    0.000032,0.000004,-0.000005,-0.000021,0.000097,-0.000049,
+    0.,0.000002,0.,-0.000016,-0.000002,0.000003,
+    0.,0.000007,-0.000003,0.,0.,0.,
+    0.,0.,0.,0.000002,0.000010,0.000019
+};
+
+static const double CalypsoTerms[24*5] =
+{
+    1,0,0,1,0,
+    0,0,0,0,1,
+    0,1,0,0,1,
+    1,0,0,0,1,
+    1,1,0,0,1,
+    0,0,1,0,1,
+    1,0,1,0,1,
+    0,0,2,0,1,
+    0,1,0,0,-1,
+    0,0,1,0,-1,
+    1,0,1,0,-1,
+    0,0,2,0,-1,
+    1,0,2,0,1,
+    1,1,0,0,-1,
+    1,0,2,0,-1,
+    0,0,1,1,0,
+    0,0,1,-1,0,
+    0,0,0,1,0,
+    0,1,1,0,-1,
+    0,1,-1,0,-1,
+    1,1,1,0,-1,
+    1,1,-1,0,-1,
+    1,0,1,1,0,
+    1,0,1,-1,0
+};
+
+static const double CalypsoAmps[24*6] =
+{
+    0.000005,0.000027,0.000052,0.,0.,0.,0.000651,0.001615,
+    -0.000910,-0.006145,0.002170,-0.000542,-0.000011,0.000004,0.,0.,
+    0.,0.,-0.001846,0.000652,-0.000163,-0.002166,-0.005375,0.003030,
+    -0.000004,-0.000010,0.000006,0.,0.,0.,-0.000077,0.000028,
+    -0.000007,-0.000092,-0.000225,0.000127,-0.000028,-0.000067,
+    0.000038,0.000257,-0.000092,0.000023,-0.000002,0.,0.,0.000004,
+    -0.000006,0.000003,-0.000004,0.,0.,-0.000009,-0.000022,0.000012,
+    -0.000078,0.000027,-0.000007,-0.000089,-0.000225,0.000127,
+    0.000027,0.000068,-0.000038,-0.000257,0.000089,-0.000022,
+    -0.000002,0.,0.,0.000004,-0.000006,0.000003,0.,-0.000002,0.,
+    0.000007,0.000003,-0.000002,0.,0.000003,-0.000002,-0.000025,
+    0.000009,-0.000002,0.,0.000002,0.,-0.000007,-0.000003,0.000002,
+    0.,0.,-0.000002,0.,0.,0.,0.,0.,-0.000002,0.,0.,0.,0.,0.,0.,
+    0.000005,0.000027,0.000052,0.,0.,0.,0.000002,0.,0.,0.,0.,0.,
+    0.000002,0.,0.,0.,0.,0.,0.,-0.000002,0.,0.,0.,0.,0.,-0.000002,0.,
+    0.,0.,0.,0.,0.,0.000002,0.,0.,0.,0.,0.,-0.000002
+};
+
+struct HTC20Angles
+{
+    double nu1;
+    double nu2;
+    double nu3;
+    double lambda;
+    double phi1;
+    double phi2;
+    double phi3;
+    double theta;
+};
+
+
+static const HTC20Angles HeleneAngles =
+{ 
+    2.29427177, 
+    -0.00802443,
+    2.29714724,
+    2.29571726,
+    3.27342548,
+    1.30770422,
+    0.77232982,
+    3.07410251
+};
+
+static const HTC20Angles TelestoAngles =
+{
+    3.32489098,
+    -0.00948045,
+    3.33170385,
+    3.32830561,
+    6.24233590,
+    4.62624497,
+    0.04769409,
+    3.24465053
+};
+
+static const HTC20Angles CalypsoAngles =
+{
+    -3.32489617,
+    0.00946761,
+    -3.33170262,
+    3.32830561,
+    5.41384760,
+    1.36874776,
+    5.64157287,
+    3.25074880
+};
+
+class HTC20Orbit : public CachingOrbit
+{
+ public:
+    HTC20Orbit(int _nTerms, const double* _args, const double* _amplitudes,
+               const HTC20Angles& _angles,
+               double _period, double _boundingRadius) :
+        nTerms(_nTerms),
+        args(_args),
+        amplitudes(_amplitudes),
+        angles(_angles),
+        period(_period),
+        boundingRadius(_boundingRadius)
+    {
+    }
+
+    virtual ~HTC20Orbit() {};
+
+    Point3d computePosition(double jd) const
+    {
+        double t = jd - astro::J2000 - (4156.0 / 86400.0);
+        Point3d pos(0.0, 0.0, 0.0);
+
+        for (int i = 0; i < nTerms; i++)
+        {
+            const double* row = args + i * 5;
+            double ang = (row[1] * (angles.nu1 * t + angles.phi1) +
+                          row[2] * (angles.nu2 * t + angles.phi2) +
+                          row[3] * (angles.nu3 * t + angles.phi3) +
+                          row[4] * (angles.lambda * t + angles.theta));
+
+            double u = row[0] == 0.0 ? cos(ang) : sin(ang);
+            pos += Vec3d(amplitudes[i * 6], amplitudes[i * 6 + 1], amplitudes[i * 6 + 2]) * u;
+        }
+
+        // Convert to Celestia's coordinate system
+        return Point3d(pos.x, pos.z, -pos.y)  * astro::AUtoKilometers(1.0);
+    }
+
+    double getPeriod() const
+    {
+        return period;
+    }
+
+    double getBoundingRadius() const
+    {
+        return 354800 * BoundingRadiusSlack;
+    }
+
+ private:
+    int nTerms;
+    const double* args;
+    const double* amplitudes;
+    HTC20Angles angles;
+    double period;
+    double boundingRadius;
+
+ public:
+     static HTC20Orbit* CreateHeleneOrbit()
+     {
+         return new HTC20Orbit(24, HeleneTerms, HeleneAmps, HeleneAngles, 2.736915, 380000);
+     }
+
+     static HTC20Orbit* CreateTelestoOrbit()
+     {
+         return new HTC20Orbit(12, TelestoTerms, TelestoAmps, TelestoAngles, 1.887802, 300000);
+     }
+
+     static HTC20Orbit* CreateCalypsoOrbit()
+     {
+         return new HTC20Orbit(24, CalypsoTerms, CalypsoAmps, CalypsoAngles, 1.887803, 300000);
+     }
 };
 
 
@@ -2979,6 +3244,14 @@ Orbit* GetCustomOrbit(const string& name)
                                  
     if (name == "jpl-sun-ssb")   // Position of Sun relative to SSB
         return CreateJPLEphOrbit(JPLEph_Sun,     JPLEph_SSB,             11.861773 * 365.25, 2000000);
+
+    // HTC2.0 ephemeris for Saturnian satellites in Lagrange points of Tethys and Dione
+    if (name == "htc20-helene")
+        return HTC20Orbit::CreateHeleneOrbit();
+    if (name == "htc20-telesto")
+        return HTC20Orbit::CreateTelestoOrbit();
+    if (name == "htc20-calypso")
+        return HTC20Orbit::CreateCalypsoOrbit();
 
     if (name == "phobos")
         return new PhobosOrbit();
