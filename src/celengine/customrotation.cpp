@@ -27,7 +27,7 @@ static bool CustomRotationModelsInitialized = false;
 /*! Base class for IAU rotation models. All IAU rotation models are in the
  *  J2000.0 Earth equatorial frame.
  */
-class IAURotationModel : public RotationModel
+class IAURotationModel : public CachingRotationModel
 {
 public:
     IAURotationModel(double _period) :
@@ -40,7 +40,7 @@ public:
     bool isPeriodic() const { return true; }
     double getPeriod() const { return period; }
     
-    virtual Quatd spin(double t) const
+    virtual Quatd computeSpin(double t) const
     {
         // Time argument of IAU rotation models is actually day since J2000.0 TT, but
         // Celestia uses TDB. The difference should be so minute as to be irrelevant.
@@ -48,7 +48,7 @@ public:
         return Quatd::yrotation(-degToRad(180.0 + meridian(t)));
     }
     
-    virtual Quatd equatorOrientationAtTime(double t) const
+    virtual Quatd computeEquatorOrientation(double t) const
     {
         double poleRA = 0.0;
         double poleDec = 0.0;
@@ -283,6 +283,210 @@ public:
                 + 0.0019 * sin(E[12])
                 - 0.0044 * sin(E[13]));
     }
+};
+
+
+// Rotations of Martian, Jovian, and Uranian satellites from IAU/IAG Working group 
+// on Cartographic Coordinates and Rotational Elements (Corrected for known errata
+// as of 17 Feb 2006)
+// See: http://astrogeology.usgs.gov/Projects/WGCCRE/constants/iau2000_table2.html
+
+class IAUPhobosRotationModel : public IAURotationModel
+{
+public:
+    IAUPhobosRotationModel() : IAURotationModel(360.0 / 1128.8445850) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double M1 = degToRad(169.51 - 0.04357640 * t);
+        ra  = 317.68 - 0.108 * T + 1.79 * sin(M1);
+        dec =  52.90 - 0.061 * T - 1.08 * cos(M1);
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double M1 = degToRad(169.51 - 0.04357640 * t);
+        double M2 = degToRad(192.93 + 1128.4096700 * t + 8.864 * T * T);
+        return 35.06 + 1128.8445850 * t + 8.864 * T * T - 1.42 * sin(M1) - 0.78 * sin(M2);
+    }
+};
+
+
+class IAUDeimosRotationModel : public IAURotationModel
+{
+public:
+    IAUDeimosRotationModel() : IAURotationModel(360.0 / 285.1618970) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        // Note: negative coefficient of T^2 term for meridian angle indicates faster
+        // rotation as Phobos's orbit evolves inward toward Mars
+        double T = t / 36525.0;
+        double M3 = degToRad(53.47 - 0.0181510 * t);
+        ra  = 316.65 - 0.108 * T + 2.98 * sin(M3);
+        dec =  53.52 - 0.061 * T - 1.78 * cos(M3);
+    }
+    
+    double meridian(double t) const
+    {
+        // Note: positive coefficient of T^2 term for meridian angle indicates slowing
+        // rotation as Deimos's orbit evolves outward from Mars
+        double T = t / 36525.0;
+        double M3 = degToRad(53.47 - 0.0181510 * t);
+        return 79.41 + 285.1618970 * t + 0.520 * T * T - 2.58 * sin(M3) + 0.19 * cos(M3);
+    }
+};
+
+
+/****** Satellites of Jupiter ******/
+        
+class IAUAmaltheaRotationModel : public IAURotationModel
+{
+public:
+    IAUAmaltheaRotationModel() : IAURotationModel(360.0 / 722.6314560) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double J1 = degToRad(73.32 + 91472.9 * T);
+        ra = 268.05 - 0.009 * T - 0.84 * sin(J1) + 0.01 * sin(2.0 * J1);
+        dec = 64.49 + 0.003 * T - 0.36 * cos(J1);
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double J1 = degToRad(73.32 + 91472.9 * T);
+        return 231.67 + 722.6314560 * t + 0.76 * sin(J1) - 0.01 * sin(2.0 * J1);
+    }
+};
+
+
+class IAUThebeRotationModel : public IAURotationModel
+{
+public:
+    IAUThebeRotationModel() : IAURotationModel(360.0 / 533.7004100) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double J2 = degToRad(24.62 + 45137.2 * T);
+        ra = 268.05 - 0.009 * T - 2.11 * sin(J2) + 0.04 * sin(2.0 * J2);
+        dec = 64.49 + 0.003 * T - 0.91 * cos(J2) + 0.01 * cos(2.0 * J2);        
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double J2 = degToRad(24.62 + 45137.2 * T);
+        return 8.56 + 533.7004100 * t + 1.91 * sin(J2) - 0.04 * sin(2.0 * J2);
+    }    
+};
+
+
+class IAUIoRotationModel : public IAURotationModel
+{
+public:
+    IAUIoRotationModel() : IAURotationModel(360.0 / 203.4889538) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double J3 = degToRad(283.90 + 4850.7 * T);
+        double J4 = degToRad(355.80 + 1191.3 * T);
+        ra = 268.05 - 0.009 * T + 0.094 * sin(J3) + 0.024 * sin(J4);
+        dec = 64.49 + 0.003 * T + 0.040 * cos(J3) + 0.011 * cos(J4);        
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double J3 = degToRad(283.90 + 4850.7 * T);
+        double J4 = degToRad(355.80 + 1191.3 * T);
+        return 200.39 + 203.4889538 * t - 0.085 * sin(J3) - 0.022 * sin(J4);
+    }    
+};
+
+
+class IAUEuropaRotationModel : public IAURotationModel
+{
+public:
+    IAUEuropaRotationModel() : IAURotationModel(360.0 / 101.3747235) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double J4 = degToRad(355.80 + 1191.3 * T);
+        double J5 = degToRad(119.90 + 262.1 * T);
+        double J6 = degToRad(229.80 + 64.3 * T);
+        double J7 = degToRad(352.35 + 2382.6 * T);
+        ra = 268.05 - 0.009 * T + 1.086 * sin(J4) + 0.060 * sin(J5) + 0.015 * sin(J6) + 0.009 * sin(J7);
+        dec = 64.49 + 0.003 * T + 0.486 * cos(J4) + 0.026 * cos(J5) + 0.007 * cos(J6) + 0.002 * cos(J7);        
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double J4 = degToRad(355.80 + 1191.3 * T);
+        double J5 = degToRad(119.90 + 262.1 * T);
+        double J6 = degToRad(229.80 + 64.3 * T);
+        double J7 = degToRad(352.35 + 2382.6 * T);
+        return 36.022 + 101.3747235 * t - 0.980 * sin(J4) - 0.054 * sin(J5) - 0.014 * sin(J6) - 0.008 * sin(J7);
+    }    
+};
+
+
+class IAUGanymedeRotationModel : public IAURotationModel
+{
+public:
+    IAUGanymedeRotationModel() : IAURotationModel(360.0 / 50.3176081) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double J4 = degToRad(355.80 + 1191.3 * T);
+        double J5 = degToRad(119.90 + 262.1 * T);
+        double J6 = degToRad(229.80 + 64.3 * T);
+        ra = 268.05 - 0.009 * T - 0.037 * sin(J4) + 0.431 * sin(J5) + 0.091 * sin(J6);
+        dec = 64.49 + 0.003 * T - 0.016 * cos(J4) + 0.186 * cos(J5) + 0.039 * cos(J6);        
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double J4 = degToRad(355.80 + 1191.3 * T);
+        double J5 = degToRad(119.90 + 262.1 * T);
+        double J6 = degToRad(229.80 + 64.3 * T);
+        return 44.064 + 50.3176081 * t + 0.033 * sin(J4) - 0.389 * sin(J5) - 0.082 * sin(J6);
+    }    
+};
+
+
+class IAUCallistoRotationModel : public IAURotationModel
+{
+public:
+    IAUCallistoRotationModel() : IAURotationModel(360.0 / 21.5710715) {}
+    
+    void pole(double t, double& ra, double& dec) const
+    {
+        double T = t / 36525.0;
+        double J5 = degToRad(119.90 + 262.1 * T);
+        double J6 = degToRad(229.80 + 64.3 * T);
+        double J8 = degToRad(113.35 + 6070.0 * T);
+        ra = 268.05 - 0.009 * T - 0.068 * sin(J5) + 0.590 * sin(J6) + 0.010 * sin(J8);
+        dec = 64.49 + 0.003 * T - 0.029 * cos(J5) + 0.254 * cos(J6) - 0.004 * cos(J8);        
+    }
+    
+    double meridian(double t) const
+    {
+        double T = t / 36525.0;
+        double J5 = degToRad(119.90 + 262.1 * T);
+        double J6 = degToRad(229.80 + 64.3 * T);
+        double J8 = degToRad(113.35 + 6070.0 * T);
+        return 259.51 + 21.5710715 * t + 0.061 * sin(J5) - 0.533 * sin(J6) - 0.009 * sin(J8);
+    }    
 };
 
 
@@ -541,6 +745,7 @@ GetCustomRotationModel(const std::string& name)
         
         CustomRotationModels["earth-p03lp"] = new EarthRotationModel();
         
+        // IAU rotation elements for the planets
         CustomRotationModels["iau-mercury"] = new IAUPrecessingRotationModel(281.01, -0.033,
                                                                              61.45, -0.005,
                                                                              329.548, 6.1385025);
@@ -566,7 +771,41 @@ GetCustomRotationModel(const std::string& name)
         CustomRotationModels["iau-pluto"]   = new IAUPrecessingRotationModel(313.02, 0.0,
                                                                              9.09, 0.0,
                                                                              236.77, -56.3623195);
+        
+        // IAU elements for satellite of Earth
         CustomRotationModels["iau-moon"] = new IAULunarRotationModel();
+        
+        // IAU elements for satellites of Mars
+        CustomRotationModels["iau-phobos"] = new IAUPhobosRotationModel();
+        CustomRotationModels["iau-deimos"] = new IAUDeimosRotationModel();
+        
+        // IAU elements for satellites of Jupiter
+        CustomRotationModels["iau-metis"]    = new IAUPrecessingRotationModel(268.05, -0.009,
+                                                                              64.49, 0.003,
+                                                                              346.09, 1221.2547301);
+        CustomRotationModels["iau-adrastea"] = new IAUPrecessingRotationModel(268.05, -0.009,
+                                                                              64.49, 0.003,
+                                                                              33.29, 1206.9986602);
+        CustomRotationModels["iau-amalthea"] = new IAUAmaltheaRotationModel();
+        CustomRotationModels["iau-thebe"]    = new IAUThebeRotationModel();
+        CustomRotationModels["iau-io"]       = new IAUIoRotationModel();
+        CustomRotationModels["iau-europa"]   = new IAUEuropaRotationModel();
+        CustomRotationModels["iau-ganymede"] = new IAUGanymedeRotationModel();
+        CustomRotationModels["iau-callisto"] = new IAUCallistoRotationModel();
+        
+        // IAU elements for satellites of Saturn
+        CustomRotationModels["iau-pan"]        = new IAUPrecessingRotationModel(40.6, -0.036,
+                                                                                83.5, -0.004,
+                                                                                48.8, 626.0440000);
+        CustomRotationModels["iau-atlas"]      = new IAUPrecessingRotationModel(40.6, -0.036,
+                                                                                83.5, -0.004,
+                                                                                137.88, 598.3060000);
+        CustomRotationModels["iau-prometheus"] = new IAUPrecessingRotationModel(40.6, -0.036,
+                                                                                83.5, -0.004,
+                                                                                296.14, 587.289000);
+        CustomRotationModels["iau-pandora"]    = new IAUPrecessingRotationModel(40.6, -0.036,
+                                                                                83.5, -0.004,
+                                                                                162.92, 572.7891000);
         CustomRotationModels["iau-mimas"] = new IAUMimasRotationModel();
         CustomRotationModels["iau-enceladus"] = new IAUEnceladusRotationModel();
         CustomRotationModels["iau-tethys"] = new IAUTethysRotationModel();
@@ -585,36 +824,5 @@ GetCustomRotationModel(const std::string& name)
     else
         return NULL;
 }
-
-
-#if 0
-// Mercury
-a = 280.01 - 0.033 * T;
-d = 61.45 - 0.005 * T;
-W = 329.71 + 6.1385025 * t;
-
-// Venus
-a = 272.72;
-d = 67.15;
-W = 160.26 - 1.4813596 * t;
-
-// Mars
-a = 317.681 - 0.108 * T;
-d = 52.886 - 0.061 * T;
-W = 176.868 + 250.8919830 * t;
-
-// Phobos
-a = 317.68 - 0.108 * T + 1.79 * sin M1;
-d = 52.90 - 0.061 * T - 1.08 * cos M1;
-W = 35.06 + 1128.8445850 * t + 0.6644e-9 * t*t - 1.42 * sin M1 - 0.78 * sin M2;
-
-// Deimos
-a = 316.65  - 0.108 * T + 2.98 * sin M3;
-d = 53.52 - 0.061 * T - 1.78 * cos M3;
-W = 79.41 + 285.1618970 * t - 0.390e-10 * t*t - 2.58 * sin M3 + 0.19 * cos M3;
-M1 = 169.51 - 0.4357640 * t;
-M2 = 192.93 + 1128.4096700 * t + 0.6644e-9*t*t;
-M3 = 53.47 - 0.0181510*t;
-#endif
 
 
