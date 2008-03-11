@@ -376,10 +376,12 @@ bool CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
             k = CelestiaCore::Key_NumPad9;
         break;
     case Qt::Key_A:
-        k = 'A';
+        if (e->modifiers() == NoModifier)
+            k = 'A';
         break;
     case Qt::Key_Z:
-        k = 'Z';
+        if (e->modifiers() == NoModifier)
+            k = 'Z';
         break;
     }
 
