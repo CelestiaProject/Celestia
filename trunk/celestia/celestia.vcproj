@@ -386,6 +386,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\customrotation.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\dds.cpp"
 					>
 				</File>
@@ -415,6 +419,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\frame.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\frametree.cpp"
 					>
 				</File>
 				<File
@@ -478,6 +486,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\nutation.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\observer.cpp"
 					>
 				</File>
@@ -499,6 +511,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\parser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\precession.cpp"
 					>
 				</File>
 				<File
@@ -610,6 +626,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\timeline.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\timelinephase.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\tokenizer.cpp"
 					>
 				</File>
@@ -704,6 +728,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\customrotation.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\deepskyobj.h"
 					>
 				</File>
@@ -737,6 +765,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\frame.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\frametree.h"
 					>
 				</File>
 				<File
@@ -812,6 +844,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\nutation.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\observer.h"
 					>
 				</File>
@@ -837,6 +873,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\parser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\precession.h"
 					>
 				</File>
 				<File
@@ -953,6 +993,14 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\texture.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\timeline.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\timelinephase.h"
 					>
 				</File>
 				<File
