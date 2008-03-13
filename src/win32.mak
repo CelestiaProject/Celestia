@@ -20,7 +20,7 @@ CFG=Debug
 
 ##### Compile flag settings for all build configurations
 
-COMPILE_OPTS=/nologo /W3 /EHsc /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /D _CRT_SECURE_NO_DEPRECATE
+COMPILE_OPTS=/nologo /W3 /EHsc /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D WINVER=0x0400 /D _WIN32_WINNT=0x0400 /D _CRT_SECURE_NO_DEPRECATE /D _SCL_SECURE_NO_WARNINGS
 
 !IF "$(CFG)" == "Release"
 OUTDIR=.\Release
