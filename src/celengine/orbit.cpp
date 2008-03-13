@@ -42,6 +42,9 @@ EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
     period(_period),
     epoch(_epoch)
 {
+    orbitPlaneRotation = (Mat3d::zrotation(_ascendingNode) *
+                          Mat3d::xrotation(_inclination) *
+                          Mat3d::zrotation(_argOfPeriapsis));
 }
 
 
@@ -176,34 +179,67 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
 }
 
 
+// Compute the position at the specified eccentric
+// anomaly E.
 Point3d EllipticalOrbit::positionAtE(double E) const
 {
-    double x, z;
+    double x, y;
 
     if (eccentricity < 1.0)
     {
         double a = pericenterDistance / (1.0 - eccentricity);
         x = a * (cos(E) - eccentricity);
-        z = a * sqrt(1 - square(eccentricity)) * -sin(E);
+        y = a * sqrt(1 - square(eccentricity)) * sin(E);
     }
     else if (eccentricity > 1.0)
     {
         double a = pericenterDistance / (1.0 - eccentricity);
         x = -a * (eccentricity - cosh(E));
-        z = -a * sqrt(square(eccentricity) - 1) * -sinh(E);
+        y = -a * sqrt(square(eccentricity) - 1) * sinh(E);
     }
     else
     {
         // TODO: Handle parabolic orbits
         x = 0.0;
-        z = 0.0;
+        y = 0.0;
     }
 
-    Mat3d R = (Mat3d::yrotation(ascendingNode) *
-               Mat3d::xrotation(inclination) *
-               Mat3d::yrotation(argOfPeriapsis));
+    Point3d p = orbitPlaneRotation * Point3d(x, y, 0);
 
-    return R * Point3d(x, 0, z);
+    // Convert to Celestia's internal coordinate system
+    return Point3d(p.x, p.z, -p.y);
+}
+
+
+// Compute the velocity at the specified eccentric
+// anomaly E.
+Vec3d EllipticalOrbit::velocityAtE(double E) const
+{
+    double x, y;
+
+    if (eccentricity < 1.0)
+    {
+        double a = pericenterDistance / (1.0 - eccentricity);
+        x = a * (-sin(E) - eccentricity);
+        y = a * sqrt(1 - square(eccentricity)) * cos(E);
+    }
+    else if (eccentricity > 1.0)
+    {
+        double a = pericenterDistance / (1.0 - eccentricity);
+        x = -a * (eccentricity - cosh(E));
+        y = -a * sqrt(square(eccentricity) - 1) * sinh(E);
+    }
+    else
+    {
+        // TODO: Handle parabolic orbits
+        x = 0.0;
+        y = 0.0;
+    }
+
+    Vec3d v = orbitPlaneRotation * Vec3d(x, y, 0);
+
+    // Convert to Celestia's coordinate system
+    return Vec3d(v.x, v.z, -v.y);
 }
 
 
@@ -216,6 +252,17 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
     double E = eccentricAnomaly(meanAnomaly);
 
     return positionAtE(E);
+}
+
+
+Vec3d EllipticalOrbit::velocityAtTime(double t) const
+{
+    t = t - epoch;
+    double meanMotion = 2.0 * PI / period;
+    double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
+    double E = eccentricAnomaly(meanAnomaly);
+
+    return velocityAtE(E);
 }
 
 
@@ -404,16 +451,6 @@ static EllipticalOrbit* StateVectorToOrbit(const Point3d& position,
     // Compute the period
     double T = 2 * PI * sqrt(cube(a) / GM);
     T = T / 86400.0; // Convert from seconds to days
-
-#if 0
-    cout << "a: " << astro::kilometersToAU(a) << '\n';
-    cout << "e: " << e << '\n';
-    cout << "i: " << radToDeg(i) << '\n';
-    cout << "Om: " << radToDeg(Om) << '\n';
-    cout << "om: " << radToDeg(om) << '\n';
-    cout << "M: " << radToDeg(M) << '\n';
-    cout << "T: " << T << '\n';
-#endif
 
     return new EllipticalOrbit(a * (1 - e), e, i, Om, om, M, T, t);
 }
