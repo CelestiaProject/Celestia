@@ -17,6 +17,15 @@ using namespace std;
 
 static const double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
+// Choose a time interval for numerically differentiating orientation
+// to get the angular velocity for a rotation model.
+static double chooseDiffTimeDelta(const RotationModel& rm)
+{
+    if (rm.isPeriodic())
+        return rm.getPeriod() / 10000.0;
+    else
+        return ANGULAR_VELOCITY_DIFF_DELTA;
+}
 
 /***** RotationModel *****/
 
@@ -26,16 +35,17 @@ static const double ANGULAR_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 Vec3d
 RotationModel::angularVelocityAtTime(double tdb) const
 {
+    double dt = chooseDiffTimeDelta(*this);
 	Quatd q0 = orientationAtTime(tdb);
-	Quatd q1 = orientationAtTime(tdb + ANGULAR_VELOCITY_DIFF_DELTA);
-	Quatd dq = ~q0 * q1;
+	Quatd q1 = orientationAtTime(tdb + dt);
+	Quatd dq = ~q1 * q0;
 
 	if (fabs(dq.w) > 0.99999999)
 		return Vec3d(0.0, 0.0, 0.0);
 
 	Vec3d v(dq.x, dq.y, dq.z);
 	v.normalize();
-	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
+	return v * (2.0 * acos(dq.w) / dt);
 }
 
 
@@ -102,8 +112,8 @@ CachingRotationModel::angularVelocityAtTime(double tjd) const
 {
     if (tjd != lastTime)
     {
-        lastTime = tjd;
         lastAngularVelocity = computeAngularVelocity(tjd);
+        lastTime = tjd;
         spinCacheValid = false;
         equatorCacheValid = false;
         angularVelocityCacheValid = true;
@@ -121,21 +131,22 @@ CachingRotationModel::angularVelocityAtTime(double tjd) const
 Vec3d
 CachingRotationModel::computeAngularVelocity(double tjd) const
 {
+    double dt = chooseDiffTimeDelta(*this);
     Quatd q0 = orientationAtTime(tjd);
     
     // Call computeSpin/computeEquatorOrientation instead of orientationAtTime
     // in order to avoid affecting the cache.
-    Quatd spin = computeSpin(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
-    Quatd equator = computeEquatorOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
+    Quatd spin = computeSpin(tjd + dt);
+    Quatd equator = computeEquatorOrientation(tjd + dt);
 	Quatd q1 = spin * equator;
-	Quatd dq = ~q0 * q1;
+    Quatd dq = ~q1 * q0;
     
 	if (fabs(dq.w) > 0.99999999)
 		return Vec3d(0.0, 0.0, 0.0);
     
 	Vec3d v(dq.x, dq.y, dq.z);
 	v.normalize();
-	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);    
+	return v * (2.0 * acos(dq.w) / dt);    
 }
 
 
