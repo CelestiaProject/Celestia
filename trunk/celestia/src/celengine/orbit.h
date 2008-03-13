@@ -12,7 +12,6 @@
 
 #include <celmath/vecmath.h>
 
-
 class OrbitSampleProc;
 
 class Orbit
@@ -54,7 +53,7 @@ class EllipticalOrbit : public Orbit
 
     // Compute the orbit for a specified Julian date
     virtual Point3d positionAtTime(double) const;
-    //virtual Vec3d velocityAtTime(double) const;
+    virtual Vec3d velocityAtTime(double) const;
     double getPeriod() const;
     double getBoundingRadius() const;
     virtual void sample(double, double, int, OrbitSampleProc&) const;
@@ -62,6 +61,7 @@ class EllipticalOrbit : public Orbit
  private:
     double eccentricAnomaly(double) const;
     Point3d positionAtE(double) const;
+    Vec3d velocityAtE(double) const;
 
     double pericenterDistance;
     double eccentricity;
@@ -71,6 +71,8 @@ class EllipticalOrbit : public Orbit
     double meanAnomalyAtEpoch;
     double period;
     double epoch;
+
+    Mat3d orbitPlaneRotation;
 };
 
 
