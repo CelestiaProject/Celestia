@@ -54,10 +54,10 @@ clean:
 	nmake /nologo /f txf.mak MFLAGS=-MD clean CFG=$(CFG)
 	cd ..
 	cd celengine
-	nmake /nologo /f engine.mak MFLAGS=-MD clean CFG=$(CFG)
+	nmake /nologo /f engine.mak MFLAGS=-MD clean CFG=$(CFG) SPICE=$(SPICE) CELX=$(CELX) LUA_VER=$(LUA_VER)
 	cd ..
 	cd celestia
-	nmake /nologo /f celestia.mak MFLAGS=-MD clean CFG=$(CFG)
+	nmake /nologo /f celestia.mak MFLAGS=-MD clean CFG=$(CFG) SPICE=$(SPICE) CELX=$(CELX) LUA_VER=$(LUA_VER)
 	cd ..
 
 always:
