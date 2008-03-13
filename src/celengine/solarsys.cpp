@@ -643,6 +643,8 @@ static Body* CreatePlanet(const string& name,
     if (body == NULL)
     {
         body = new Body(system, name);
+        // If the body doesn't exist, always treat the disposition as 'Add'
+        disposition = AddObject;
     }
 
     if (!CreateTimeline(body, system, universe, planetData, path, disposition))
@@ -951,6 +953,8 @@ static Body* CreateReferencePoint(const string& name,
     if (body == NULL)
     {
         body = new Body(system, name);
+        // If the point doesn't exist, always treat the disposition as 'Add'
+        disposition = AddObject;
     }
 
     body->setSemiAxes(Vec3f(1.0f, 1.0f, 1.0f));
