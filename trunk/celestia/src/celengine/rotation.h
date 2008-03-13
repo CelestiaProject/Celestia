@@ -98,6 +98,7 @@ class CachingRotationModel : public RotationModel
     virtual Quatd computeSpin(double tjd) const = 0;
     virtual Vec3d computeAngularVelocity(double tjd) const;
     virtual double getPeriod() const = 0;
+    virtual bool isPeriodic() const = 0;
     
 private:
     mutable Quatd lastSpin;

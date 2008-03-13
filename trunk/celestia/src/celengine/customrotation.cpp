@@ -127,6 +127,11 @@ public:
     {
         return 24.0 / 23.9344694;
     }
+
+    bool isPeriodic() const
+    {
+        return true;
+    }
 };
 
 
