@@ -292,7 +292,7 @@ class Renderer
         void start();
         void render();
         void finish();
-        void addStar(const Point3f&, const Color&, float);
+        void addStar(const Vec3f&, const Color&, float);
         void setBillboardOrientation(const Quatf&);
 
     private:
@@ -314,13 +314,13 @@ class Renderer
         void startSprites(const GLContext&);
         void render();
         void finish();
-        void addStar(const Point3f& f, const Color&, float);
+        void addStar(const Vec3f& f, const Color&, float);
 		void setTexture(Texture*);
 
     private:
         struct StarVertex
         {
-            Point3f position;
+            Vec3f position;
             float size;
             unsigned char color[4];
             float pad;
@@ -441,7 +441,7 @@ class Renderer
                     Quatf orientation,
                     double now,
                     float, float);
-
+    
     void renderAxes(Body& body,
                     Point3f pos,
                     float distance,
