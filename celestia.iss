@@ -15,6 +15,7 @@ DefaultGroupName=Celestia
 LicenseFile=C:\celestia\celestia\COPYING
 Compression=lzma/max
 UninstallDisplayIcon={app}\celestia.exe
+WizardImageFile=win32-installer-image.bmp
 
 ; Tell Explorer to refresh its file associations information at the
 ; end of the installation, and Uninstall will do the same at the end
