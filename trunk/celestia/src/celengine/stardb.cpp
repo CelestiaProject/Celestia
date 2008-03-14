@@ -36,7 +36,14 @@ static string LacailleCatalogPrefix("Lacaille ");
 static string TychoCatalogPrefix("TYC ");
 static string SAOCatalogPrefix("SAO ");
 
-static const float STAR_OCTREE_ROOT_SIZE  = 15000.0f;
+// The size of the root star octree node is also the maximum distance
+// distance from the Sun at which any star may be located. The current
+// setting of 1.0e7 light years is large enough to contain the entire
+// local group of galaxies. A larger value should be OK, but the
+// performance implications for octree traversal still need to be
+// investigated.
+static const float STAR_OCTREE_ROOT_SIZE  = 10000000.0f;
+
 static const float STAR_OCTREE_MAGNITUDE  = 6.0f;
 static const float STAR_EXTRA_ROOM        = 0.01f; // Reserve 1% capacity for extra stars
 
