@@ -16,8 +16,10 @@
 #include <celmath/vecmath.h>
 #include <celengine/univcoord.h>
 
+#ifndef TARGET_OS_MAC
 #ifdef __GNUC__
 #include <iconv.h>
+#endif
 #endif
 
 #define SOLAR_ABSMAG  4.83f
@@ -61,12 +63,14 @@ namespace astro
         std::string tzname; // timezone name
         double seconds;
 
+#ifndef TARGET_OS_MAC
 #ifdef __GNUC__
     private:
         // Static members used to store locale related UTF-8 information
         static bool utf8Locale;
         static bool utf8LocaleSet;
         static iconv_t utf8Iconv;
+#endif
 #endif
     };
 

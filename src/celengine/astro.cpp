@@ -17,8 +17,10 @@
 #include "astro.h"
 #include <celutil/util.h>
 
+#ifndef TARGET_OS_MAC
 #ifdef __GNUC__
 #include <langinfo.h>
+#endif
 #endif
 
 using namespace std;
@@ -445,10 +447,12 @@ astro::Date::Date(double jd)
     tzname = "UTC";
 }
 
+#ifndef TARGET_OS_MAC
 #ifdef __GNUC__	
 bool astro::Date::utf8Locale = false;
 bool astro::Date::utf8LocaleSet = false;
 iconv_t astro::Date::utf8Iconv;
+#endif
 #endif
 
 const char* astro::Date::toCStr(Format format) const
@@ -484,6 +488,7 @@ const char* astro::Date::toCStr(Format format) const
 
     size_t in = strftime(date, sizeof(date), strftime_format, &cal_time);
 
+#ifndef TARGET_OS_MAC
     // The string returned by strftime is in the current locale's charset
     // which may not be UTF-8
     if (!astro::Date::utf8LocaleSet)
@@ -505,6 +510,7 @@ const char* astro::Date::toCStr(Format format) const
         iconv(astro::Date::utf8Iconv, &inBuff, &in, &outBuff, &out);
         return utf8Date;
     }
+#endif
 #else
     switch(format)
     {
