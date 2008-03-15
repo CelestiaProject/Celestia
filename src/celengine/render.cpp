@@ -2395,7 +2395,7 @@ void Renderer::render(const Observer& observer,
 
     // Translate the camera before rendering the stars
     glPushMatrix();
-    glTranslatef(-observerPosLY.x, -observerPosLY.y, -observerPosLY.z);
+
     // Render stars
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -2406,6 +2406,8 @@ void Renderer::render(const Observer& observer,
         else
             renderStars(*universe.getStarCatalog(), faintestMag, observer);
     }
+
+    glTranslatef(-observerPosLY.x, -observerPosLY.y, -observerPosLY.z);
 
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
@@ -7731,7 +7733,7 @@ class StarRenderer : public ObjectRenderer<Star, float>
     void process(const Star& star, float distance, float appMag);
 
  public:
-    Point3f obsPos;
+    Point3d obsPos;
 
     vector<Renderer::Particle>*      glareParticles;
     vector<RenderListEntry>*         renderList;
@@ -7767,7 +7769,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
     nProcessed++;
 
     Point3f starPos = star.getPosition();
-    Vec3f   relPos = starPos - obsPos;
+    Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
+                   (float) ((double) starPos.y - obsPos.y),
+                   (float) ((double) starPos.z - obsPos.z));    
     float   orbitalRadius = star.getOrbitalRadius();
     bool    hasOrbit = orbitalRadius > 0.0f;
 
@@ -7869,13 +7873,13 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
             if (starPrimitive == GL_POINTS)
             {
-                pointStarVertexBuffer->addStar(starPos,
+                pointStarVertexBuffer->addStar(relPos,
                                                Color(starColor, alpha),
                                                pointSize);
             }
             else
             {
-                starVertexBuffer->addStar(starPos,
+                starVertexBuffer->addStar(relPos,
                                           Color(starColor, alpha),
                                           pointSize * renderDistance);
             }
@@ -7888,7 +7892,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             if (appMag < saturationMag)
             {
                 Renderer::Particle p;
-                p.center = starPos;
+                p.center = Point3f(relPos.x, relPos.y, relPos.z);
                 p.size = size;
                 p.color = Color(starColor, alpha);
 
@@ -7947,7 +7951,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     void process(const Star& star, float distance, float appMag);
 
  public:
-    Point3f obsPos;
+    Point3d obsPos;
 
     vector<RenderListEntry>*         renderList;
     Renderer::PointStarVertexBuffer* starVertexBuffer;
@@ -7981,7 +7985,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
     nProcessed++;
 
     Point3f starPos = star.getPosition();
-    Vec3f   relPos = starPos - obsPos;
+    Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
+                   (float) ((double) starPos.y - obsPos.y),
+                   (float) ((double) starPos.z - obsPos.z));
     float   orbitalRadius = star.getOrbitalRadius();
     bool    hasOrbit = orbitalRadius > 0.0f;
 
@@ -8081,11 +8087,11 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     discSize *= discScale;
 
                     float glareAlpha = min(0.5f, discScale / 4.0f);
-                    glareVertexBuffer->addStar(starPos, Color(starColor, glareAlpha), discSize * 3.0f);
+                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), discSize * 3.0f);
 
                     alpha = 1.0f;
                 }
-                starVertexBuffer->addStar(starPos, Color(starColor, alpha), discSize);
+                starVertexBuffer->addStar(relPos, Color(starColor, alpha), discSize);
             }
             else
             {
@@ -8097,9 +8103,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 {
                     float discScale = min(100.0f, satPoint - appMag + 2.0f);
                     float glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
-                    glareVertexBuffer->addStar(starPos, Color(starColor, glareAlpha), 2.0f * discScale * size);
+                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), 2.0f * discScale * size);
                 }
-                starVertexBuffer->addStar(starPos, Color(starColor, alpha), size);
+                starVertexBuffer->addStar(relPos, Color(starColor, alpha), size);
             }
 
             ++nRendered;
@@ -8130,9 +8136,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 }
 
 
-static Point3f microLYToLY(const Point3f& p)
+template<class T> static Point3<T> microLYToLY(const Point3<T>& p)
 {
-	return Point3f(p.x * 1e-6f, p.y * 1e-6f, p.z * 1e-6f);
+    return Point3<T>(p.x * (T) 1e-6, p.y * (T) 1e-6, p.z * (T) 1e-6);
 }
 
 
@@ -8152,7 +8158,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
                            const Observer& observer)
 {
     StarRenderer starRenderer;
-    Point3f obsPos = microLYToLY((Point3f) observer.getPosition());
+    Point3d obsPos = microLYToLY((Point3d) observer.getPosition());
+
 
     starRenderer.context          = context;
     starRenderer.renderer         = this;
@@ -8225,7 +8232,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
         starRenderer.starVertexBuffer->start();
     }
     starDB.findVisibleStars(starRenderer,
-                            obsPos,
+                            Point3f((float) obsPos.x, (float) obsPos.y, (float) obsPos.z),
                             observer.getOrientationf(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
@@ -8245,7 +8252,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                 float faintestMagNight,
                                 const Observer& observer)
 {
-    Point3f obsPos = microLYToLY((Point3f) observer.getPosition());
+    Point3d obsPos = microLYToLY((Point3d) observer.getPosition());
 
     PointStarRenderer starRenderer;
     starRenderer.context           = context;
@@ -8299,7 +8306,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         starRenderer.starVertexBuffer->startSprites(*context);
 
     starDB.findVisibleStars(starRenderer,
-                            obsPos,
+                            Point3f((float) obsPos.x, (float) obsPos.y, (float) obsPos.z),
                             observer.getOrientationf(),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
@@ -9019,7 +9026,7 @@ void Renderer::StarVertexBuffer::finish()
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Renderer::StarVertexBuffer::addStar(const Point3f& pos,
+void Renderer::StarVertexBuffer::addStar(const Vec3f& pos,
                                          const Color& color,
                                          float size)
 {
@@ -9183,7 +9190,7 @@ void Renderer::PointStarVertexBuffer::finish()
     }
 }
 
-void Renderer::PointStarVertexBuffer::addStar(const Point3f& pos,
+void Renderer::PointStarVertexBuffer::addStar(const Vec3f& pos,
                                               const Color& color,
                                               float size)
 {
