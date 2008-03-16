@@ -694,6 +694,7 @@ bool LuaState::charEntered(const char* c_p)
 #if LUA_VER >= 0x050100
             openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
             openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
+            openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
 #else
             lua_iolibopen(costate);
 #endif
