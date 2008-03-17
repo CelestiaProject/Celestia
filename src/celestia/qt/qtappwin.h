@@ -79,6 +79,7 @@ class CelestiaAppWindow : public QMainWindow
     void slotToggleFullScreen();
 
 	void slotShowAbout();
+    void slotShowGLInfo();
     
  signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
