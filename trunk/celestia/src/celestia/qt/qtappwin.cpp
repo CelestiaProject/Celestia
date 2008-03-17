@@ -28,6 +28,9 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QDateTimeEdit>
+#include <QTextEdit>
+#include <QDialogButtonBox>
+#include <QTextStream>
 #include <vector>
 #include <string>
 #include "qtappwin.h"
@@ -44,6 +47,8 @@
 #include "qtsettimedialog.h"
 //#include "qtvideocapturedialog.h"
 #include "celestia/scriptmenu.h"
+#include "celengine/gl.h"
+#include "celengine/glext.h"
 
 using namespace std;
 
@@ -592,6 +597,71 @@ void CelestiaAppWindow::slotShowAbout()
 }
 
 
+/*! Show a dialog box with information about the OpenGL driver and hardware.
+ */
+void CelestiaAppWindow::slotShowGLInfo()
+{
+    QString infoText;
+    QTextStream out(&infoText, QIODevice::WriteOnly);
+
+    // Get the version string
+    out << "<b>OpenGL version: </b>";
+    const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    if (version != NULL)
+        out << version;
+    else
+        out << "???";
+    out << "<br>\n";
+
+    out << "<b>Renderer: </b>";
+    const char* glrenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    if (glrenderer != NULL)
+        out << glrenderer;
+    out << "<br>\n";
+
+    // shading language version
+    const char* glslversion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION_ARB));
+    if (glslversion != NULL)
+    {
+        out << "<b>GLSL Version: </b>" << glslversion << "<br>\n";
+    }
+
+    // texture size
+    GLint maxTextureSize = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    out << "<b>Maximum texture size: </b>" << maxTextureSize << "<br>\n";
+
+    out << "<br>\n";
+
+    // Show all supported extensions
+    out << "<b>Extensions:</b><br>\n";
+    const char *extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    if (extensions != NULL)
+    {
+        QStringList extList = QString(extensions).split(" ");
+        foreach(QString s, extList)
+        {
+            out << s << "<br>\n";
+        }
+    }
+
+    QDialog glInfo(this);
+    
+    QVBoxLayout* layout = new QVBoxLayout(&glInfo);
+    QTextEdit* textEdit = new QTextEdit(infoText, &glInfo);
+    layout->addWidget(textEdit);
+
+    QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, &glInfo);
+    connect(buttons, SIGNAL(accepted()), &glInfo, SLOT(accept()));
+    layout->addWidget(buttons);
+
+    glInfo.setMinimumSize(QSize(300, 450));
+    glInfo.setLayout(layout);
+
+    glInfo.exec();
+}
+
+
 void CelestiaAppWindow::createActions()
 {
 }
@@ -757,6 +827,11 @@ void CelestiaAppWindow::createMenus()
     QAction* aboutAct = new QAction(tr("About Celestia"), this);
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(slotShowAbout()));
     helpMenu->addAction(aboutAct);
+    helpMenu->addSeparator();
+
+    QAction* glInfoAct = new QAction(tr("OpenGL Info"), this);
+    connect(glInfoAct, SIGNAL(triggered()), this, SLOT(slotShowGLInfo()));
+    helpMenu->addAction(glInfoAct);
 
     settings.endGroup();
 }
