@@ -272,6 +272,28 @@ glx::PFNGLGETUNIFORMFVARBPROC              glx::glGetUniformfvARB;
 glx::PFNGLGETUNIFORMIVARBPROC              glx::glGetUniformivARB;
 glx::PFNGLGETSHADERSOURCEARBPROC           glx::glGetShaderSourceARB;
 
+// ARB_color_buffer_float
+glx::PFNGLCLAMPCOLORARBPROC                glx::glClampColorARB;
+
+// EXT_framebuffer_object
+glx::PFNGLISRENDERBUFFEREXTPROC                       glx::glIsRenderbufferEXT;
+glx::PFNGLBINDRENDERBUFFEREXTPROC                     glx::glBindRenderbufferEXT;
+glx::PFNGLDELETERENDERBUFFERSEXTPROC                  glx::glDeleteRenderbuffersEXT;
+glx::PFNGLGENRENDERBUFFERSEXTPROC                     glx::glGenRenderbuffersEXT;
+glx::PFNGLRENDERBUFFERSTORAGEEXTPROC                  glx::glRenderbufferStorageEXT;
+glx::PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC           glx::glGetRenderbufferParameterivEXT;
+glx::PFNGLISFRAMEBUFFEREXTPROC                        glx::glIsFramebufferEXT;
+glx::PFNGLBINDFRAMEBUFFEREXTPROC                      glx::glBindFramebufferEXT;
+glx::PFNGLDELETEFRAMEBUFFERSEXTPROC                   glx::glDeleteFramebuffersEXT;
+glx::PFNGLGENFRAMEBUFFERSEXTPROC                      glx::glGenFramebuffersEXT;
+glx::PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC               glx::glCheckFramebufferStatusEXT;
+glx::PFNGLFRAMEBUFFERTEXTURE1DEXTPROC                 glx::glFramebufferTexture1DEXT;
+glx::PFNGLFRAMEBUFFERTEXTURE2DEXTPROC                 glx::glFramebufferTexture2DEXT;
+glx::PFNGLFRAMEBUFFERTEXTURE3DEXTPROC                 glx::glFramebufferTexture3DEXT;
+glx::PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC              glx::glFramebufferRenderbufferEXT;
+glx::PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC  glx::glGetFramebufferAttachmentParameterivEXT;
+glx::PFNGLGENERATEMIPMAPEXTPROC                       glx::glGenerateMipmapEXT;
+
 
 // extern void Alert(const char *szFormat, ...);
 
@@ -838,6 +860,36 @@ static void InitExt_ARB_shader_objects()
 }
 
 
+static void InitExt_ARB_color_buffer_float()
+{
+#if defined(GET_GL_PROC_ADDRESS)
+    glx::glClampColorARB = (glx::PFNGLCLAMPCOLORARBPROC) GET_GL_PROC_ADDRESS("glClampColorARB");
+#endif
+}
+
+static void InitExt_EXT_framebuffer_object()
+{
+#if defined(GET_GL_PROC_ADDRESS)
+    glx::glIsRenderbufferEXT = (glx::PFNGLISRENDERBUFFEREXTPROC) GET_GL_PROC_ADDRESS("glIsRenderbufferEXT");
+    glx::glBindRenderbufferEXT = (glx::PFNGLBINDRENDERBUFFEREXTPROC) GET_GL_PROC_ADDRESS("glBindRenderbufferEXT");
+    glx::glDeleteRenderbuffersEXT = (glx::PFNGLDELETERENDERBUFFERSEXTPROC) GET_GL_PROC_ADDRESS("glDeleteRenderbuffersEXT");
+    glx::glGenRenderbuffersEXT = (glx::PFNGLGENRENDERBUFFERSEXTPROC) GET_GL_PROC_ADDRESS("glGenRenderbuffersEXT");
+    glx::glRenderbufferStorageEXT = (glx::PFNGLRENDERBUFFERSTORAGEEXTPROC) GET_GL_PROC_ADDRESS("glRenderbufferStorageEXT");
+    glx::glGetRenderbufferParameterivEXT = (glx::PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC) GET_GL_PROC_ADDRESS("glGetRenderbufferParameterivEXT");
+    glx::glIsFramebufferEXT = (glx::PFNGLISFRAMEBUFFEREXTPROC) GET_GL_PROC_ADDRESS("glIsFramebufferEXT");
+    glx::glBindFramebufferEXT = (glx::PFNGLBINDFRAMEBUFFEREXTPROC) GET_GL_PROC_ADDRESS("glBindFramebufferEXT");
+    glx::glDeleteFramebuffersEXT = (glx::PFNGLDELETEFRAMEBUFFERSEXTPROC) GET_GL_PROC_ADDRESS("glDeleteFramebuffersEXT");
+    glx::glGenFramebuffersEXT = (glx::PFNGLGENFRAMEBUFFERSEXTPROC) GET_GL_PROC_ADDRESS("glGenFramebuffersEXT");
+    glx::glCheckFramebufferStatusEXT = (glx::PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC) GET_GL_PROC_ADDRESS("glCheckFramebufferStatusEXT");
+    glx::glFramebufferTexture1DEXT  = (glx::PFNGLFRAMEBUFFERTEXTURE1DEXTPROC) GET_GL_PROC_ADDRESS("glFramebufferTexture1DEXT");
+    glx::glFramebufferTexture2DEXT  = (glx::PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) GET_GL_PROC_ADDRESS("glFramebufferTexture2DEXT");
+    glx::glFramebufferTexture3DEXT  = (glx::PFNGLFRAMEBUFFERTEXTURE3DEXTPROC) GET_GL_PROC_ADDRESS("glFramebufferTexture3DEXT");
+    glx::glFramebufferRenderbufferEXT = (glx::PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC) GET_GL_PROC_ADDRESS("glFramebufferRenderbufferEXT");
+    glx::glGetFramebufferAttachmentParameterivEXT = (glx::PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC) GET_GL_PROC_ADDRESS("glGetFramebufferAttachmentParameterivEXT");
+    glx::glGenerateMipmapEXT = (glx::PFNGLGENERATEMIPMAPEXTPROC) GET_GL_PROC_ADDRESS("glGenerateMipmapEXT");   
+#endif
+}
+
 void InitExtension(const char* ext)
 {
     if (!strcmp(ext, "GL_NV_fragment_program"))
@@ -868,7 +920,10 @@ void InitExtension(const char* ext)
         InitExt_EXT_swap_control();
     else if (!strcmp(ext, "GLX_SGI_video_sync"))
         InitExt_GLX_SGI_video_sync();
-
+    else if (!strcmp(ext, "GLX_ARB_color_buffer_float"))
+        InitExt_ARB_color_buffer_float();
+    else if (!strcmp(ext, "GL_EXT_framebuffer_object"))
+        InitExt_EXT_framebuffer_object();
 }
 
 
