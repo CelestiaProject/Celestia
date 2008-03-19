@@ -11,6 +11,7 @@
 #include <celmath/solve.h>
 #include "observer.h"
 #include "simulation.h"
+#include "frametree.h"
 
 static const double maximumSimTime = 730486721060.00073; // 2000000000 Jan 01 12:00:00 UTC
 static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 12:00:00 UTC
@@ -1035,9 +1036,24 @@ static double getPreferredDistance(const Selection& selection)
     switch (selection.getType())
     {
     case Selection::Type_Body:
-        return 5.0 * selection.radius();
+        // Handle reference points (i.e. invisible objects) specially, since the
+        // actual radius of the point is meaningless. Instead, use the size of
+        // bounding sphere of all child objects. This is useful for system
+        // barycenters--the normal goto command will place the observer at 
+        // a viewpoint in which the entire system can be seen.
+        if (selection.body()->getClassification() == Body::Invisible)
+        {
+            double r = selection.body()->getFrameTree()->boundingSphereRadius();
+            return min(astro::lightYearsToKilometers(0.1), r * 5.0);
+        }
+        else
+        {
+            return 5.0 * selection.radius();
+        }
+
     case Selection::Type_DeepSky:
         return 5.0 * selection.radius();
+
     case Selection::Type_Star:
         if (selection.star()->getVisibility())
         {
@@ -1045,6 +1061,8 @@ static double getPreferredDistance(const Selection& selection)
         }
         else
         {
+            // Handle star system barycenters specially, using the same approach as
+            // for reference points in solar systems.
             double maxOrbitRadius = 0.0;
             const vector<Star*>* orbitingStars = selection.star()->getOrbitingStars();
             if (orbitingStars != NULL)
@@ -1063,12 +1081,14 @@ static double getPreferredDistance(const Selection& selection)
             else
                 return maxOrbitRadius * 5.0;
         }
+
     case Selection::Type_Location:
         {
             double maxDist = getPreferredDistance(selection.location()->getParentBody());
             return max(min(selection.location()->getSize() * 50.0, maxDist),
                        1.0);
         }
+
     default:
         return 1.0;
     }
