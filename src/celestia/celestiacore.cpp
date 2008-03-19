@@ -3969,6 +3969,10 @@ bool CelestiaCore::initSimulation(const string* configFileName,
         return false;
     }
 
+    // Set the console log size; ignore any request to use less than 100 lines
+    if (config->consoleLogRows > 100)
+        console.setRowCount(config->consoleLogRows);
+
 #ifdef USE_SPICE
     if (!InitializeSpice())
     {

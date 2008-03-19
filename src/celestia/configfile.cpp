@@ -131,6 +131,8 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     config->shadowTextureSize = getUint(configParams, "ShadowTextureSize", 256);
     config->eclipseTextureSize = getUint(configParams, "EclipseTextureSize", 128);
 
+    config->consoleLogRows = getUint(configParams, "LogSize", 200);
+
     Value* solarSystemsVal = configParams->getValue("SolarSystemCatalogs");
     if (solarSystemsVal != NULL)
     {
