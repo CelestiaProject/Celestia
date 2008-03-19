@@ -10,6 +10,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cassert>
+#include <algorithm>
 #include "celutil/utf8.h"
 #include "gl.h"
 #include "vecgl.h"
@@ -49,6 +50,32 @@ Console::~Console()
 {
     if (text != NULL)
         delete[] text;
+}
+
+
+/*! Resize the console log to use the specified number of rows.
+ *  Old long entries are preserved in the resize. setRowCount()
+ *  returns true if it was able to successfully allocate a new
+ *  buffer, and false if there was a problem (out of memory.)
+ */
+bool Console::setRowCount(int _nRows)
+{
+    wchar_t* newText = new wchar_t[(nColumns + 1) * _nRows];
+    if (newText == NULL)
+        return false;
+
+    for (int i = 0; i < _nRows; i++)
+    {
+        newText[(nColumns + 1) * i] = '\0';
+    }
+
+    std::copy(newText, newText + (nColumns + 1) * min(_nRows, nRows), text);
+
+    delete[] text;
+    text = newText;
+    nRows = _nRows;
+
+    return true;
 }
 
 

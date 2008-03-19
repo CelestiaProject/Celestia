@@ -47,6 +47,8 @@ class Console : public std::ostream
     Console(int _nRows, int _nColumns);
     ~Console();
 
+    bool setRowCount(int _nRows);
+
     void begin();
     void end();
     void render(int rowHeight);
