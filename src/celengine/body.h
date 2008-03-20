@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <list>
 #include <celutil/utf8.h>
 #include <celmath/quaternion.h>
 #include <celengine/surface.h>
@@ -26,6 +27,7 @@
 class ReferenceFrame;
 class Body;
 class FrameTree;
+class ReferenceMark;
 
 class PlanetarySystem
 {
@@ -43,7 +45,6 @@ class PlanetarySystem
     void replaceBody(Body* oldBody, Body* newBody);
 
     int getOrder(const Body* body) const;
-    bool reorderLastChild(int index);
 
     enum TraversalResult
     {
@@ -118,6 +119,8 @@ class Body
         UseClassVisibility = 1,
         AlwaysVisible      = 2,
     };
+
+    void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;
     std::string getName(bool i18n = false) const;
@@ -246,6 +249,10 @@ class Body
     bool referenceMarkVisible(uint32) const;
     uint32 getVisibleReferenceMarks() const;
     void setVisibleReferenceMarks(uint32);
+    void addReferenceMark(ReferenceMark* refMark);
+    void removeReferenceMark(const std::string& tag);
+    ReferenceMark* findReferenceMark(const std::string& tag) const;
+    const std::list<ReferenceMark*>* getReferenceMarks() const;
 
     Star* getReferenceStar() const;
     Star* getFrameReferenceStar() const;
@@ -288,7 +295,8 @@ class Body
     std::vector<Location*>* locations;
     mutable bool locationsComputed;
 
-    uint32 referenceMarks;
+    uint32 refMarks;
+    std::list<ReferenceMark*>* referenceMarks;
 
     Color orbitColor;
 

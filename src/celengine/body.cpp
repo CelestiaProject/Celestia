@@ -20,6 +20,7 @@
 #include "timeline.h"
 #include "timelinephase.h"
 #include "frametree.h"
+#include "referencemark.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     radius(1.0f),
     semiAxes(1.0f, 1.0f, 1.0f),
     mass(0.0f),
-    albedo(0.5),
+    albedo(0.5f),
     orientation(1.0f),
     model(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
@@ -41,7 +42,8 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     altSurfaces(NULL),
     locations(NULL),
     locationsComputed(false),
-    referenceMarks(0),
+    refMarks(0),
+    referenceMarks(NULL),
     visible(1),
     clickable(1),
     visibleAsPoint(1),
@@ -59,10 +61,44 @@ Body::~Body()
         system->removeBody(this);
     // Remove from frame hierarchy
 
+    // Clean up the reference mark list
+    if (referenceMarks != NULL)
+    {
+        for (list<ReferenceMark*>::iterator iter = referenceMarks->begin(); iter != referenceMarks->end(); ++iter)
+            delete *iter;
+        delete referenceMarks;
+    }
+
     delete timeline;
 
     delete satellites;
     delete frameTree;
+}
+
+
+/*! Reset body attributes to their default values. The object hierarchy is left untouched,
+ *  i.e. child objects are not removed. Alternate surfaces and locations are not removed
+ *  either.
+ */
+void Body::setDefaultProperties()
+{
+    radius = 1.0f;
+    semiAxes = Vec3f(1.0f, 1.0f, 1.0f);
+    mass = 0.0f;
+    albedo = 0.5f;
+    orientation = Quatf(1.0f);
+    model = InvalidResource;
+    surface = Surface(Color::White);
+    delete atmosphere;
+    atmosphere = NULL;
+    delete rings;
+    rings = NULL;
+    classification = Unknown;
+    visible = 1;
+    clickable = 1;
+    visibleAsPoint = 1;
+    overrideOrbitColor = 0;
+    orbitVisibility = UseClassVisibility;
 }
 
 
@@ -776,23 +812,80 @@ void Body::computeLocations()
 bool
 Body::referenceMarkVisible(uint32 refmark) const
 {
-    return (referenceMarks & refmark) != 0;
+    return (refMarks & refmark) != 0;
 }
 
 
 uint32
 Body::getVisibleReferenceMarks() const
 {
-    return referenceMarks;
+    return refMarks;
 }
 
 
 void
 Body::setVisibleReferenceMarks(uint32 refmarks)
 {
-	referenceMarks = refmarks;
+	refMarks = refmarks;
 }
 
+
+/*! Add a new reference mark.
+ */
+void
+Body::addReferenceMark(ReferenceMark* refMark)
+{
+    if (referenceMarks == NULL)
+        referenceMarks = new list<ReferenceMark*>();
+    referenceMarks->push_back(refMark);
+}
+
+
+/*! Remove the first reference mark with the specified tag.
+ */
+void
+Body::removeReferenceMark(const string& tag)
+{
+    if (referenceMarks != NULL)
+    {
+        ReferenceMark* refMark = findReferenceMark(tag);
+        if (refMark != NULL)
+        {
+            referenceMarks->remove(refMark);
+            delete refMark;
+        }
+    }
+}
+
+
+/*! Find the first reference mark with the specified tag. If the body has
+ *  no reference marks with the specified tag, this method will return
+ *  NULL.
+ */
+ReferenceMark*
+Body::findReferenceMark(const string& tag) const
+{
+    if (referenceMarks != NULL)
+    {
+        for (list<ReferenceMark*>::iterator iter = referenceMarks->begin(); iter != referenceMarks->end(); ++iter)
+        {
+            if ((*iter)->getTag() == tag)
+                return *iter;
+        }
+    }
+
+    return NULL;
+}
+
+
+/*! Get the list of reference marks associated with this body. May return
+ *  NULL if there are no reference marks.
+ */
+const list<ReferenceMark*>*
+Body::getReferenceMarks() const
+{
+    return referenceMarks;
+}
 
 
 /*! Sets whether or not the object is visible.
@@ -1051,25 +1144,4 @@ int PlanetarySystem::getOrder(const Body* body) const
         return -1;
     else
         return iter - satellites.begin();
-}
-
-
-/*! Move the final child object to newIndex. Return true if the index is valid,
- *  false otherwise. This method exists only because the number keys
- *  in the Celestia UI are dependent on the actual order in which the planets are
- *  listed in child array.
- */
-bool PlanetarySystem::reorderLastChild(int index)
-{
-    if (index >= satellites.size() || index < 0)
-        return false;
-
-    if (index <= satellites.size() - 1)
-    {
-        Body* lastItem = satellites.back();
-        satellites.pop_back();
-        satellites.insert(satellites.begin() + index, lastItem);
-    } // else child is already in the correct order
-
-    return true;
 }

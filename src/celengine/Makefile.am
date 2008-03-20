@@ -63,6 +63,7 @@ libcelengine_a_SOURCES = \
 	overlay.cpp \
 	parseobject.cpp \
 	parser.cpp \
+	planetgrid.cpp \
 	precession.cpp \
 	regcombine.cpp \
 	rendcontext.cpp \

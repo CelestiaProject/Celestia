@@ -26,6 +26,7 @@
 
 class RendererWatcher;
 class FrameTree;
+class ReferenceMark;
 
 struct LightSource
 {
@@ -43,14 +44,16 @@ struct RenderListEntry
         RenderableStar,
         RenderableBody,
         RenderableCometTail,
-        RenderableBodyAxes,
-        RenderableFrameAxes,
-        RenderableSunDirection,
-        RenderableVelocityVector,
+        RenderableReferenceMark,
     };
 
-    const Star* star;
-    Body* body;
+    union
+    {
+        const Star* star;
+        Body* body;
+        const ReferenceMark* refMark;
+    };
+
     Point3f position;
     Vec3f sun;
     float distance;
@@ -209,10 +212,10 @@ class Renderer
         bool operator<(const Annotation&) const;
     };
         
-    void addForegroundAnnotation(const Marker*, const char* labelText, Color, const Point3f&, float depth = -1);
-    void addBackgroundAnnotation(const Marker*, const char* labelText, Color, const Point3f&, float depth = -1);
-    void addBackgroundAnnotation(const std::string&, Color, const Point3f&, float depth = -1);
-    void addSortedAnnotation(const Marker* marker, const std::string&, Color, const Point3f&);
+    void addForegroundAnnotation(const Marker*, const std::string& labelText, Color, const Point3f&, float depth = -1);
+    void addBackgroundAnnotation(const Marker*, const std::string& labelText, Color, const Point3f&, float depth = -1);
+    void addBackgroundAnnotation(const std::string& labelText, Color, const Point3f&, float depth = -1);
+    void addSortedAnnotation(const Marker* marker, const std::string& labelText, Color, const Point3f&);
     
     void clearAnnotations(std::vector<Annotation>&);
 	void clearSortedAnnotations();
@@ -442,28 +445,11 @@ class Renderer
                     double now,
                     float, float);
     
-    void renderAxes(Body& body,
-                    Point3f pos,
-                    float distance,
-                    double now,
-                    float nearPlaneDistance,
-                    float farPlaneDistance,
-                    RenderListEntry::RenderableType renderableType);
-
-    void renderSunDirection(Body& body,
-                            Point3f pos,
-                            float distance,
-                            double now,
-                            const vector<LightSource>& lightSources,
-                            float nearPlaneDistance,
-                            float farPlaneDistance);
-
-    void renderVelocityVector(Body& body,
-                              Point3f pos,
-                              float distance,
-                              double now,
-                              float nearPlaneDistance,
-                              float farPlaneDistance);
+    void renderReferenceMark(const ReferenceMark& refMark,
+                             Point3f pos,
+                             float distance,
+                             double now,
+                             float nearPlaneDistance);
 
     void renderCometTail(const Body& body,
                          Point3f pos,
@@ -524,7 +510,11 @@ class Renderer
     
     
     void addAnnotation(std::vector<Annotation>&,
-                       const Marker*, const char* labelText, Color, const Point3f&, float depth = -1);
+                       const Marker*,
+                       const std::string& labelText,
+                       Color,
+                       const Point3f&,
+                       float depth = -1);
     void renderAnnotations(const std::vector<Annotation>&, FontStyle fs, LabelAlignment la);
     void renderBackgroundAnnotations(FontStyle fs, LabelAlignment la);
     void renderForegroundAnnotations(FontStyle fs, LabelAlignment la);
@@ -665,6 +655,7 @@ class Renderer
     static Color OpenClusterLabelColor;
     static Color ConstellationLabelColor;
     static Color EquatorialGridLabelColor;
+    static Color PlanetographicGridLabelColor;
 
     static Color StarOrbitColor;
     static Color PlanetOrbitColor;
@@ -677,6 +668,8 @@ class Renderer
     static Color ConstellationColor;
     static Color BoundaryColor;
     static Color EquatorialGridColor;
+    static Color PlanetographicGridColor;
+    static Color PlanetEquatorColor;
 };
 
 

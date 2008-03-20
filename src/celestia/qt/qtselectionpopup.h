@@ -37,7 +37,13 @@ Q_OBJECT
     void slotSelectAlternateSurface();
     void slotSelectChildObject();
     void slotMark();
-    void slotToggleReferenceVector();
+    void slotToggleBodyAxes();
+    void slotToggleFrameAxes();
+    void slotToggleSunDirection();
+    void slotToggleVelocityVector();
+    void slotToggleSpinVector();
+    void slotToggleFrameCenterDirection();
+    void slotTogglePlanetographicGrid();
     void slotGotoStartDate();
     void slotGotoEndDate();
     void slotInfo();

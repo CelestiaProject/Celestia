@@ -133,6 +133,7 @@ ENGINE_SOURCES = \
 	celengine/overlay.cpp \
 	celengine/parseobject.cpp \
 	celengine/parser.cpp \
+	celengine/planetgrid.cpp \
 	celengine/precession.cpp \
 	celengine/regcombine.cpp \
 	celengine/rendcontext.cpp \
@@ -219,7 +220,9 @@ ENGINE_HEADERS = \
 	celengine/overlay.h \
 	celengine/parseobject.h \
 	celengine/parser.h \
+	celengine/planetgrid.h \
 	celengine/precession.h \
+	celengine/referencemark.h \
 	celengine/regcombine.h \
 	celengine/rendcontext.h \
 	celengine/render.h \
