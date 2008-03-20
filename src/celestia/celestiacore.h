@@ -338,6 +338,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     
     void setCursorHandler(CursorHandler*);
     CursorHandler* getCursorHandler() const;
+
+    void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
+    bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
     
  private:
     bool readStars(const CelestiaConfig&, ProgressNotifier*);

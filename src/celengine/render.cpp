@@ -114,6 +114,8 @@ static const float MaxSolarSystemSize = 1.0f;
 
 static bool commonDataInitialized = false;
 
+static const string EMPTY_STRING("");
+
 
 LODSphereMesh* g_lodSphere = NULL;
 
@@ -177,6 +179,7 @@ Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
 Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
 Color Renderer::ConstellationLabelColor (0.225f, 0.301f, 0.36f);
 Color Renderer::EquatorialGridLabelColor(0.32f,  0.44f,  0.36f);
+Color Renderer::PlanetographicGridLabelColor(0.8f, 0.8f, 0.8f);
 
 
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
@@ -190,7 +193,8 @@ Color Renderer::SelectionOrbitColor     (1.0f,   0.0f,   0.0f);
 Color Renderer::ConstellationColor      (0.0f,   0.24f,  0.36f);
 Color Renderer::BoundaryColor           (0.24f,  0.10f,  0.12f);
 Color Renderer::EquatorialGridColor     (0.19f,  0.25f,  0.19f);
-
+Color Renderer::PlanetographicGridColor (0.8f,   0.8f,   0.8f);
+Color Renderer::PlanetEquatorColor      (0.5f,   1.0f,   1.0f);
 
 // Some useful unit conversions
 inline float mmToInches(float mm)
@@ -1052,7 +1056,7 @@ bool Renderer::vertexShaderSupported() const
 
 void Renderer::addAnnotation(vector<Annotation>& annotations,
                              const Marker* marker,
-                             const char* labelText,
+                             const string& labelText,
                              Color color,
                              const Point3f& pos,
                              float depth)
@@ -1076,7 +1080,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
         
         if (marker == NULL)
         {
-            ReplaceGreekLetterAbbr(a.labelText, MaxLabelLength, labelText, strlen(labelText));
+            ReplaceGreekLetterAbbr(a.labelText, MaxLabelLength, labelText.c_str(), labelText.length());
             // Might be nice to use abbreviations instead of Greek letters
             // strncpy(l.text, text, MaxLabelLength);
             a.labelText[MaxLabelLength - 1] = '\0';
@@ -1090,7 +1094,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 
 
 void Renderer::addForegroundAnnotation(const Marker* marker,
-                                       const char* labelText,
+                                       const string& labelText,
                                        Color color,
                                        const Point3f& pos,
                                        float depth)
@@ -1100,7 +1104,7 @@ void Renderer::addForegroundAnnotation(const Marker* marker,
 
 
 void Renderer::addBackgroundAnnotation(const Marker* marker,
-                                       const char* labelText,
+                                       const string& labelText,
                                        Color color,
                                        const Point3f& pos,
                                        float depth)
@@ -1114,7 +1118,7 @@ void Renderer::addBackgroundAnnotation(const string& labelText,
                                        const Point3f& pos,
                                        float depth)
 {
-    addAnnotation(backgroundAnnotations, NULL, labelText.c_str(), color, pos, depth);
+    addAnnotation(backgroundAnnotations, NULL, labelText, color, pos, depth);
 }
 
 
@@ -2067,7 +2071,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
     switch (rle.renderableType)
     {
     case RenderListEntry::RenderableStar:
-        assert(rle.star != NULL);
         renderStar(*rle.star,
                    rle.position,
                    rle.distance,
@@ -2078,7 +2081,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
         break;
 
     case RenderListEntry::RenderableBody:
-        assert(rle.body != NULL);
         renderPlanet(*rle.body,
                      rle.position,
                      rle.distance,
@@ -2090,7 +2092,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
         break;
 
     case RenderListEntry::RenderableCometTail:
-        assert(rle.body != NULL);
         renderCometTail(*rle.body,
                         rle.position,
                         observer.getTime(),
@@ -2098,37 +2099,12 @@ void Renderer::renderItem(const RenderListEntry& rle,
                         rle.discSizeInPixels);
         break;
 
-    case RenderListEntry::RenderableBodyAxes:
-        renderAxes(*rle.body,
-                   rle.position,
-                   rle.distance,
-                   observer.getTime(),
-                   nearPlaneDistance, farPlaneDistance,
-                   RenderListEntry::RenderableBodyAxes);
-        break;
-
-    case RenderListEntry::RenderableFrameAxes:
-        renderAxes(*rle.body,
-                   rle.position,
-                   rle.distance,
-                   observer.getTime(),
-                   nearPlaneDistance, farPlaneDistance,
-                   RenderListEntry::RenderableFrameAxes);
-        break;
-    case RenderListEntry::RenderableSunDirection:
-        renderSunDirection(*rle.body,
-                           rle.position,
-                           rle.distance,
-                           observer.getTime(),
-                           *rle.lightSourceList,
-                           nearPlaneDistance, farPlaneDistance);
-        break;
-    case RenderListEntry::RenderableVelocityVector:
-        renderVelocityVector(*rle.body,
-                             rle.position,
-                             rle.distance,
-                             observer.getTime(),
-                             nearPlaneDistance, farPlaneDistance);
+    case RenderListEntry::RenderableReferenceMark:
+        renderReferenceMark(*rle.refMark,
+                            rle.position,
+                            rle.distance,
+                            observer.getTime(),
+                            nearPlaneDistance);
         break;
 
     default:
@@ -2294,7 +2270,7 @@ void Renderer::render(const Observer& observer,
         for (vector<RenderListEntry>::iterator iter = renderList.begin();
              iter != renderList.end(); iter++)
         {
-            if (iter->body != NULL && iter->body->getAtmosphere() != NULL)
+            if (iter->renderableType == RenderListEntry::RenderableBody && iter->body->getAtmosphere() != NULL)
             {
                 // Compute the density of the atmosphere, and from that
                 // the amount light scattering.  It's complicated by the
@@ -2533,15 +2509,7 @@ void Renderer::render(const Observer& observer,
                 convex = false;
                 break;
 
-            case RenderListEntry::RenderableBodyAxes:
-            case RenderListEntry::RenderableFrameAxes:
-                radius = iter->radius;
-                cullRadius = radius;
-                convex = false;
-                break;
-
             case RenderListEntry::RenderableBody:
-            default:
                 radius = iter->body->getBoundingRadius();
                 if (iter->body->getRings() != NULL)
                 {
@@ -2559,6 +2527,15 @@ void Renderer::render(const Observer& observer,
                     cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
                                       iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
                 }
+                break;
+
+            case RenderListEntry::RenderableReferenceMark:
+                radius = iter->radius;
+                cullRadius = radius;
+                convex = false;
+                break;
+
+            default:
                 break;
             }
 
@@ -5655,9 +5632,20 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 }
 
 
+static float
+getStellarIrradiance(const Star& star, float distance)
+{
+    return star.getLuminosity() / (distance * distance);
+}
+
+
+
+
+
 static void
 setupObjectLighting(const vector<LightSource>& suns,
-                    const Point3d& objPosition,
+                    const Body& body,
+                    double tdb,
                     const Quatf& objOrientation,
                     const Vec3f& objScale,
                     const Point3f& objPosition_eye,
@@ -5666,6 +5654,8 @@ setupObjectLighting(const vector<LightSource>& suns,
     unsigned int nLights = min(MaxLights, (unsigned int) suns.size());
     if (nLights == 0)
         return;
+
+    Point3d objPosition = body.getAstrocentricPosition(tdb);  
 
     unsigned int i;
     for (i = 0; i < nLights; i++)
@@ -5684,6 +5674,43 @@ setupObjectLighting(const vector<LightSource>& suns,
         ls.lights[i].position = suns[i].position;
         ls.lights[i].apparentSize = (float) (suns[i].radius / dir.length());
     }
+
+#ifdef PLANETSHINE
+    // Planetshine
+    // Only some body types are considered when calculating planetshine
+    const int PLANETSHINE_BODY_MASK = Body::Planet | Body::Moon | Body::Asteroid | Body::Comet;
+    Selection center = body.getOrbitFrame(tdb)->getCenter();
+    while (center.body() != NULL &&
+           (center.body()->getClassification() & PLANETSHINE_BODY_MASK) == 0)
+    {
+        center = center.body()->getOrbitFrame(tdb)->getCenter();
+    }
+
+    if (center.body() != NULL)
+    {
+        const Body* parent = center.body();
+        Point3d parentPos = parent->getAstrocentricPosition(tdb);
+        Vec3d toSun = suns[0].position - parentPos;
+        float au = astro::kilometersToAU(1.0f);
+        float planetIrr = suns[0].luminosity / ((float) toSun.lengthSquared() * au * au);
+        if (i < MaxLights - 1)
+        {
+            Vec3d toParent = parentPos - objPosition;
+            toParent *= (1.0 / parent->getRadius());
+
+            ls.lights[i].direction_eye = Vec3f((float) toParent.x, (float) toParent.y, (float) toParent.z);
+            ls.lights[i].direction_eye.normalize();
+            ls.lights[i].irradiance = planetIrr / (float) toParent.lengthSquared() * parent->getAlbedo();
+            ls.lights[i].color = parent->getSurface().color;        
+            ls.lights[i].apparentSize = -1.0f;
+
+            //clog << "planetshine - " << body.getName() << " / " << parent->getName() << ": " << ls.lights[i].irradiance / ls.lights[0].irradiance << endl;
+
+            i++;
+            nLights++;
+        }
+    }
+#endif
 
     // Sort light sources by brightness.  Light zero should always be the
     // brightest.  Optimize common cases of one and two lights.
@@ -6494,7 +6521,8 @@ void Renderer::renderPlanet(Body& body,
 
         LightingState lights;
         setupObjectLighting(lightSources,
-                            body.getAstrocentricPosition(now),
+                            body,
+                            now,
                             rp.orientation,
                             rp.semiAxes * rp.radius,
                             pos,
@@ -6533,10 +6561,15 @@ void Renderer::renderPlanet(Body& body,
                     int nSatellites = satellites->getSystemSize();
                     for (unsigned int li = 0; li < lights.nLights; li++)
                     {
-                        for (int i = 0; i < nSatellites; i++)
-                            testEclipse(body, *satellites->getBody(i),
-                                        lights.lights[li],
-                                        now, *lights.shadows[li]);
+                        if (lights.lights[li].apparentSize >= 0.0f)
+                        {
+                            for (int i = 0; i < nSatellites; i++)
+                            {
+                                testEclipse(body, *satellites->getBody(i),
+                                            lights.lights[li],
+                                            now, *lights.shadows[li]);
+                            }
+                        }
                     }
                 }
             }
@@ -6544,30 +6577,33 @@ void Renderer::renderPlanet(Body& body,
             {
                 for (unsigned int li = 0; li < lights.nLights; li++)
                 {
-                    // The body is a moon.  Check for eclipse shadows from
-                    // the parent planet and all satellites in the system.
-                    // Traverse up the hierarchy so that any parent objects
-                    // of the parent are also considered (TODO: their child
-                    // objects will not be checked for shadows.)
-                    Body* planet = system->getPrimaryBody();
-                    while (planet != NULL)
+                    if (lights.lights[li].apparentSize >= 0.0f)
                     {
-                        testEclipse(body, *planet, lights.lights[li],
-                                    now, *lights.shadows[li]);
-                        if (planet->getSystem() != NULL)
-                            planet = planet->getSystem()->getPrimaryBody();
-                        else
-                            planet = NULL;
-                    }
-
-                    int nSatellites = system->getSystemSize();
-                    for (int i = 0; i < nSatellites; i++)
-                    {
-                        if (system->getBody(i) != &body)
+                        // The body is a moon.  Check for eclipse shadows from
+                        // the parent planet and all satellites in the system.
+                        // Traverse up the hierarchy so that any parent objects
+                        // of the parent are also considered (TODO: their child
+                        // objects will not be checked for shadows.)
+                        Body* planet = system->getPrimaryBody();
+                        while (planet != NULL)
                         {
-                            testEclipse(body, *system->getBody(i),
-                                        lights.lights[li],
+                            testEclipse(body, *planet, lights.lights[li],
                                         now, *lights.shadows[li]);
+                            if (planet->getSystem() != NULL)
+                                planet = planet->getSystem()->getPrimaryBody();
+                            else
+                                planet = NULL;
+                        }
+
+                        int nSatellites = system->getSystemSize();
+                        for (int i = 0; i < nSatellites; i++)
+                        {
+                            if (system->getBody(i) != &body)
+                            {
+                                testEclipse(body, *system->getBody(i),
+                                            lights.lights[li],
+                                            now, *lights.shadows[li]);
+                            }
                         }
                     }
                 }
@@ -7030,156 +7066,25 @@ void Renderer::renderCometTail(const Body& body,
 }
 
 
-// Render coordinate frame axes
-void Renderer::renderAxes(Body& body,
-                          Point3f pos,
-                          float distance,
-                          double now,
-                          float nearPlaneDistance,
-                          float /* farPlaneDistance */,
-                          RenderListEntry::RenderableType renderableType)
+// Render a reference mark
+void Renderer::renderReferenceMark(const ReferenceMark& refMark,
+                                   Point3f pos,
+                                   float distance,
+                                   double now,
+                                   float nearPlaneDistance)
 {
-    float altitude = distance - body.getRadius();
-    float discSizeInPixels = body.getRadius() /
+    float altitude = distance - refMark.boundingSphereRadius();
+    float discSizeInPixels = refMark.boundingSphereRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
 
     if (discSizeInPixels <= 1)
         return;
 
-    float opacity = (renderableType == RenderListEntry::RenderableFrameAxes) ? 0.5f : 1.0f;
-
-    // Compute the orientation of the body before axial rotation
-    Quatf orientation;
-
-    if (renderableType == RenderListEntry::RenderableFrameAxes)
-    {
-        Quatd q = body.getEclipticToFrame(now);
-        orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
-    }
-    else
-    {
-        Quatd q = body.getEclipticToBodyFixed(now);
-        orientation = Quatf::yrotation((float) PI) * Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
-    }
-
-    if (opacity == 1.0f)
-    {
-        // Enable depth buffering
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-        glDisable(GL_BLEND);
-    }
-    else
-    {
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    glDisable(GL_TEXTURE_2D);
-
     // Apply the modelview transform for the object
     glPushMatrix();
     glTranslate(pos);
 
-    RenderAxisArrows(~orientation, body.getRadius() * 2.0f, opacity);
-
-    glPopMatrix();
-
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-}
-
-
-// Render sun direction arrow
-void Renderer::renderSunDirection(Body& body,
-                                  Point3f pos,
-                                  float distance,
-                                  double now,
-                                  const vector<LightSource>& lightSources,
-                                  float nearPlaneDistance,
-                                  float /* farPlaneDistance */)
-{
-    float altitude = distance - body.getRadius();
-    float discSizeInPixels = body.getRadius() /
-        (max(nearPlaneDistance, altitude) * pixelSize);
-
-    if (discSizeInPixels <= 1)
-        return;
-
-    // Enable depth buffering
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
-
-    glDisable(GL_TEXTURE_2D);
-
-    // Apply the modelview transform for the object
-    glPushMatrix();
-    glTranslate(pos);
-
-    Point3d posd = body.getAstrocentricPosition(now);
-    for (vector<LightSource>::const_iterator iter = lightSources.begin(); iter != lightSources.end(); iter++)
-    {
-        Vec3d v = iter->position - posd;
-        v.normalize();
-        RenderSunDirectionArrow(Vec3f((float) v.x, (float) v.y, (float) v.z), body.getRadius() * 2.0f, 1.0f);
-    }
-
-    glPopMatrix();
-
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-}
-
-
-// Render arrow pointing direction of velocity (within the reference frame)
-void Renderer::renderVelocityVector(Body& body,
-                                    Point3f pos,
-                                    float distance,
-                                    double now,
-                                    float nearPlaneDistance,
-                                    float /* farPlaneDistance */)
-{
-    float altitude = distance - body.getRadius();
-    float discSizeInPixels = body.getRadius() /
-        (max(nearPlaneDistance, altitude) * pixelSize);
-
-    if (discSizeInPixels <= 1)
-        return;
-
-    // Enable depth buffering
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
-
-    glDisable(GL_TEXTURE_2D);
-
-    // Apply the modelview transform for the object
-    glPushMatrix();
-    glTranslate(pos);
-
-    const Orbit* orbit = body.getOrbit(now);
-    if (orbit != NULL)
-    {
-        // Approximate velocity by taking the different between two orbit positions one minute apart
-        // TODO: switch to using velocity method of orbit class when availabe
-        Point3d pos0 = orbit->positionAtTime(now);
-        Point3d pos1 = orbit->positionAtTime(now + 1.0 / 1440.0);
-        Vec3d v = pos1 - pos0;
-        if (v.length() > 1.0e-12)
-        {
-            v.normalize();
-            RenderVelocityArrow(Vec3f((float) v.x, (float) v.y, (float) v.z), body.getRadius() * 2.0f, 1.0f);
-        }
-    }
+    refMark.render(this, pos, discSizeInPixels, now);
 
     glPopMatrix();
 
@@ -7271,7 +7176,6 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             RenderListEntry rle;
             rle.renderableType = RenderListEntry::RenderableBody;
             rle.body = body;
-            rle.star = NULL;
 
             if (body->getModel() != InvalidResource && discSize > 1)
             {
@@ -7307,7 +7211,6 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                 RenderListEntry rle;
                 rle.renderableType = RenderListEntry::RenderableCometTail;
                 rle.body = body;
-                rle.star = NULL;
                 rle.isOpaque = false;
                 rle.position = Point3f(pos.x, pos.y, pos.z);
                 rle.sun = sunPos;
@@ -7321,74 +7224,23 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             }
         }
 
-        if (body->getVisibleReferenceMarks() != 0)
+        const list<ReferenceMark*>* refMarks = body->getReferenceMarks();
+        if (refMarks != NULL)
         {
-            if (body->referenceMarkVisible(Body::BodyAxes) && discSize > 1)
+            for (list<ReferenceMark*>::const_iterator iter = refMarks->begin();
+                iter != refMarks->end(); ++iter)
             {
-                RenderListEntry rle;
-                rle.renderableType = RenderListEntry::RenderableBodyAxes;
-                rle.body = body;
-                rle.star = NULL;
-                rle.isOpaque = true;
-                rle.position = Point3f(pos.x, pos.y, pos.z);
-                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
-                rle.distance = (float) distanceFromObserver;
-                rle.centerZ = pos * viewMatZ;
-                rle.radius = body->getRadius() * 2.0f;
-                rle.discSizeInPixels = discSize;
-                rle.appMag = appMag;
-                rle.lightSourceList = lightSourceList;
-                renderList.push_back(rle);
-            }
+                const ReferenceMark* rm = *iter;
 
-            if (body->referenceMarkVisible(Body::FrameAxes) && discSize > 1)
-            {
                 RenderListEntry rle;
-                rle.renderableType = RenderListEntry::RenderableFrameAxes;
-                rle.body = body;
-                rle.star = NULL;
-                rle.isOpaque = false;
+                rle.renderableType = RenderListEntry::RenderableReferenceMark;
+                rle.refMark = rm;
+                rle.isOpaque = rm->isOpaque();
                 rle.position = Point3f(pos.x, pos.y, pos.z);
                 rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
                 rle.distance = (float) distanceFromObserver;
                 rle.centerZ = pos * viewMatZ;
-                rle.radius = body->getRadius() * 2.0f;
-                rle.discSizeInPixels = discSize;
-                rle.appMag = appMag;
-                rle.lightSourceList = lightSourceList;
-                renderList.push_back(rle);
-            }
-
-            if (body->referenceMarkVisible(Body::SunDirection) && discSize > 1)
-            {
-                RenderListEntry rle;
-                rle.renderableType = RenderListEntry::RenderableSunDirection;
-                rle.body = body;
-                rle.star = NULL;
-                rle.isOpaque = false;
-                rle.position = Point3f(pos.x, pos.y, pos.z);
-                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
-                rle.distance = (float) distanceFromObserver;
-                rle.centerZ = pos * viewMatZ;
-                rle.radius = body->getRadius() * 2.0f;
-                rle.discSizeInPixels = discSize;
-                rle.appMag = appMag;
-                rle.lightSourceList = lightSourceList;
-                renderList.push_back(rle);
-            }
-
-            if (body->referenceMarkVisible(Body::VelocityVector) && discSize > 1)
-            {
-                RenderListEntry rle;
-                rle.renderableType = RenderListEntry::RenderableVelocityVector;
-                rle.body = body;
-                rle.star = NULL;
-                rle.isOpaque = false;
-                rle.position = Point3f(pos.x, pos.y, pos.z);
-                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
-                rle.distance = (float) distanceFromObserver;
-                rle.centerZ = pos * viewMatZ;
-                rle.radius = body->getRadius() * 2.0f;
+                rle.radius = rm->boundingSphereRadius();
                 rle.discSizeInPixels = discSize;
                 rle.appMag = appMag;
                 rle.lightSourceList = lightSourceList;
@@ -7924,7 +7776,6 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             RenderListEntry rle;
             rle.renderableType = RenderListEntry::RenderableStar;
             rle.star = &star;
-            rle.body = NULL;
             rle.isOpaque = true;
 
             // Objects in the render list are always rendered relative to
@@ -8118,7 +7969,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             RenderListEntry rle;
             rle.renderableType = RenderListEntry::RenderableStar;
             rle.star = &star;
-            rle.body = NULL;
 
             // Objects in the render list are always rendered relative to
             // a viewer at the origin--this is different than for distant
@@ -8938,14 +8788,14 @@ void Renderer::renderMarkers(const MarkerList& markers,
             else
             {
                 addAnnotation(backgroundAnnotations,
-                              &(*iter), NULL, iter->getColor(),
+                              &(*iter), EMPTY_STRING, iter->getColor(),
                               Point3f((float) offset.x, (float) offset.y, (float) offset.z));
             }
         }
         else
         {
             addAnnotation(foregroundAnnotations,
-                          &(*iter), NULL, iter->getColor(),
+                          &(*iter), EMPTY_STRING, iter->getColor(),
                           Point3f((float) offset.x, (float) offset.y, (float) offset.z));                          
         }
     }

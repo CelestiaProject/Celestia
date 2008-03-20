@@ -13,6 +13,8 @@
 #include <cassert>
 #include <sstream>
 #include <celestia/celestiacore.h>
+#include <celengine/axisarrow.h>
+#include <celengine/planetgrid.h>
 #include "qtselectionpopup.h"
 #include "qtappwin.h"
 
@@ -261,31 +263,57 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
 {
     assert(selection.body() != NULL);
 
-    const int REFVECS[] = {
-        Body::BodyAxes,
-        Body::FrameAxes,
-        Body::SunDirection,
-        Body::VelocityVector,
-    };
+    Body* body = selection.body();
+    QMenu* refVecMenu = new QMenu(tr("&Reference Marks"));
 
-    const char* REFVEC_NAMES[] = {
-        "Show Body Axes",
-        "Show Frame Axes",
-        "Show Sun Direction",
-        "Show Velocity Vector",
-    };
-        
-    QMenu* refVecMenu = new QMenu("&Reference Vectors");
-    for (int i = 0; i < (int) (sizeof(REFVECS) / sizeof(REFVECS[0])); i++)
+    QAction* bodyAxesAction = new QAction(tr("Show &Body Axes"), refVecMenu);
+    bodyAxesAction->setCheckable(true);
+    bodyAxesAction->setChecked(appCore->referenceMarkEnabled("body axes", selection));
+    connect(bodyAxesAction, SIGNAL(triggered()), this, SLOT(slotToggleBodyAxes()));
+    refVecMenu->addAction(bodyAxesAction);
+
+    QAction* frameAxesAction = new QAction(tr("Show &Frame Axes"), refVecMenu);
+    frameAxesAction->setCheckable(true);
+    frameAxesAction->setChecked(appCore->referenceMarkEnabled("frame axes", selection));
+    connect(frameAxesAction, SIGNAL(triggered()), this, SLOT(slotToggleFrameAxes()));
+    refVecMenu->addAction(frameAxesAction);
+
+    QAction* sunDirectionAction = new QAction(tr("Show &Sun Direction"), refVecMenu);
+    sunDirectionAction->setCheckable(true);
+    sunDirectionAction->setChecked(appCore->referenceMarkEnabled("sun direction", selection));
+    connect(sunDirectionAction, SIGNAL(triggered()), this, SLOT(slotToggleSunDirection()));
+    refVecMenu->addAction(sunDirectionAction);
+
+    QAction* velocityVectorAction = new QAction(tr("Show &Velocity Vector"), refVecMenu);
+    velocityVectorAction->setCheckable(true);
+    velocityVectorAction->setChecked(appCore->referenceMarkEnabled("velocity vector", selection));
+    connect(velocityVectorAction, SIGNAL(triggered()), this, SLOT(slotToggleVelocityVector()));
+    refVecMenu->addAction(velocityVectorAction);
+
+    QAction* spinVectorAction = new QAction(tr("Show S&pin Vector"), refVecMenu);
+    spinVectorAction->setCheckable(true);
+    spinVectorAction->setChecked(appCore->referenceMarkEnabled("spin vector", selection));
+    connect(spinVectorAction, SIGNAL(triggered()), this, SLOT(slotToggleSpinVector()));
+    refVecMenu->addAction(spinVectorAction);
+
+    Selection center = body->getOrbitFrame(appCore->getSimulation()->getTime())->getCenter();
+    if (center.body() != NULL)
     {
-        QAction* act = new QAction(tr(REFVEC_NAMES[i]), refVecMenu);
-        act->setData((int) REFVECS[i]);
-        act->setCheckable(true);
-        act->setChecked(selection.body()->referenceMarkVisible(REFVECS[i]));
-        connect(act, SIGNAL(triggered()), this, SLOT(slotToggleReferenceVector()));
-        //connect(act, SIGNAL(changed()), this, SLOT(toggleReferenceVector()));
-        refVecMenu->addAction(act);
+        // Only show the frame center menu item if the selection orbits another
+        // a non-stellar object. If it orbits a star, this is generally identical
+        // to the sun direction entry.
+        QAction* frameCenterAction = new QAction(tr("Show &Direction to %1").arg(center.body()->getName(true).c_str()), refVecMenu);
+        frameCenterAction->setCheckable(true);
+        frameCenterAction->setChecked(appCore->referenceMarkEnabled("frame center arrow", selection));
+        connect(frameCenterAction, SIGNAL(triggered()), this, SLOT(slotToggleFrameCenterDirection()));
+        refVecMenu->addAction(frameCenterAction);
     }
+
+    QAction* gridAction = new QAction(tr("Show Planetographic &Grid"), refVecMenu);
+    gridAction->setCheckable(true);
+    gridAction->setChecked(appCore->referenceMarkEnabled("planetographic grid", selection));
+    connect(gridAction, SIGNAL(triggered()), this, SLOT(slotTogglePlanetographicGrid()));
+    refVecMenu->addAction(gridAction);
 
     return refVecMenu;
 }
@@ -522,21 +550,43 @@ void SelectionPopup::slotMark()
 }
 
 
-void SelectionPopup::slotToggleReferenceVector()
+void SelectionPopup::slotToggleBodyAxes()
 {
-    assert(selection.body() != NULL);
+    appCore->toggleReferenceMark("body axes");
+}
 
-    QAction* action = qobject_cast<QAction*>(sender());
-    if (action)
-    {
-        bool convertOK = false;
-        int refVec = action->data().toInt(&convertOK);
-        if (convertOK)
-        {
-            Body* body = selection.body();
-            body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ refVec);
-        }
-    }
+
+void SelectionPopup::slotToggleFrameAxes()
+{
+    appCore->toggleReferenceMark("frame axes");
+}
+
+
+void SelectionPopup::slotToggleSunDirection()
+{
+    appCore->toggleReferenceMark("sun direction", selection);
+}
+
+void SelectionPopup::slotToggleVelocityVector()
+{
+    appCore->toggleReferenceMark("velocity vector", selection);
+}
+
+void SelectionPopup::slotToggleSpinVector()
+{
+    appCore->toggleReferenceMark("spin vector", selection);
+}
+
+
+void SelectionPopup::slotToggleFrameCenterDirection()
+{
+    appCore->toggleReferenceMark("frame center arrow", selection);
+}
+
+
+void SelectionPopup::slotTogglePlanetographicGrid()
+{
+    appCore->toggleReferenceMark("planetographic grid", selection);
 }
 
 

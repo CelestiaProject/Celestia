@@ -38,6 +38,8 @@
 #include <celengine/cmdparser.h>
 #include <celengine/multitexture.h>
 #include <celengine/spiceinterface.h>
+#include <celengine/axisarrow.h>
+#include <celengine/planetgrid.h>
 #include "favorites.h"
 #include "celestiacore.h"
 #include <celutil/debug.h>
@@ -4714,6 +4716,88 @@ void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
 }
 
 
+
+
+/*! Toggle the specified reference mark for a selection.
+ *  a selection. The default value for the selection argument is
+ *  the current simulation selection. This method does nothing
+ *  if the selection isn't a solar system body.
+ */
+void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
+{
+    Body* body = NULL;
+
+    if (sel.empty())
+        body = getSimulation()->getSelection().body();
+    else
+        body = sel.body();
+    
+    // Reference marks can only be set for solar system bodies.
+    if (body == NULL)
+        return;
+
+    if (body->findReferenceMark(refMark))
+    {
+        body->removeReferenceMark(refMark);
+    }
+    else
+    {
+        if (refMark == "body axes")
+        {
+            body->addReferenceMark(new BodyAxisArrows(*body));
+        }
+        else if (refMark == "frame axes")
+        {
+            body->addReferenceMark(new FrameAxisArrows(*body));
+        }
+        else if (refMark == "sun direction")
+        {
+            body->addReferenceMark(new SunDirectionArrow(*body));
+        }
+        else if (refMark == "velocity vector")
+        {
+            body->addReferenceMark(new VelocityVectorArrow(*body));
+        }
+        else if (refMark == "spin vector")
+        {
+            body->addReferenceMark(new SpinVectorArrow(*body));
+        }
+        else if (refMark == "frame center arrow")
+        {
+            double now = getSimulation()->getTime();
+            BodyToBodyDirectionArrow* arrow = new BodyToBodyDirectionArrow(*body, body->getOrbitFrame(now)->getCenter());
+            arrow->setTag(refMark);
+            body->addReferenceMark(arrow);
+        }
+        else if (refMark == "planetographic grid")
+        {
+            body->addReferenceMark(new PlanetographicGrid(*body));
+        }
+    }
+}
+
+
+/*! Return whether the specified reference mark is enabled for a
+ *  a selection. The default value for the selection argument is
+ *  the current simulation selection.
+ */
+bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) const
+{
+    Body* body = NULL;
+
+    if (sel.empty())
+        body = getSimulation()->getSelection().body();
+    else
+        body = sel.body();
+    
+    // Reference marks can only be set for solar system bodies.
+    if (body == NULL)
+        return false;
+    else
+        return body->findReferenceMark(refMark);
+}
+
+
 #ifdef CELX
 class LuaPathFinder : public EnumFilesHandler
 {
@@ -4876,4 +4960,3 @@ bool CelestiaCore::initLuaHook(ProgressNotifier* progressNotifier)
     return true;
 }
 #endif
-

@@ -62,6 +62,7 @@ OBJS=\
 	$(INTDIR)\overlay.obj \
 	$(INTDIR)\parseobject.obj \
 	$(INTDIR)\parser.obj \
+	$(INTDIR)\planetgrid.obj \
 	$(INTDIR)\precession.obj \
 	$(INTDIR)\regcombine.obj \
 	$(INTDIR)\rendcontext.obj \
