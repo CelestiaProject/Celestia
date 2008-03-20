@@ -1338,3 +1338,22 @@ translations to be used
 * Core: Default to the GLSL/OpenGL 2.0 render path if possible
 * GTK: Save star rendering limit distance
 * GTK: Add texture resolution setting to preferences and save value
+
+
+1.5.1
+* Added fonts for Russian, Chinese, and Japanese
+* Updated translations
+* Fixed date formatting for non-UTF8 locales
+* Fixed crash for dates prior to JD -1.5 when local format is used
+* Fixed star rendering for Macs with ATI graphics hardware (worked around
+  a driver bug in point sprite support.)
+* Fixed star glare clipping bug
+* Fixed bug that caused some stars to be drawn untextured
+* Fixed faster/slower options in the Windows time menu to adjust time by
+  10x instead of 2x
+* Fixed translation of time acronyms DST and STD
+* Use localized versions of start script, guide, demo, license, and controls
+  file from locale directory
+* Fixed Windows 98/ME input problem; most keyboard commands weren't working on
+  the OSes.
+* Made Lua os functions available from celx scripts when access policy is "ask"
