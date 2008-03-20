@@ -25,7 +25,6 @@
 // OBJ's limiting property defined by the octree particular specialization: ie. we use [absolute magnitude] for star octrees, etc.
 // For details, see notes below.
 
-
 template <class OBJ, class PREC> class OctreeProcessor
 {
  public:
@@ -37,6 +36,12 @@ template <class OBJ, class PREC> class OctreeProcessor
 
 
 
+struct OctreeLevelStatistics
+{
+    unsigned int nodeCount;
+    unsigned int objectCount;
+    double size;
+};
 
 
 template <class OBJ, class PREC> class StaticOctree;
@@ -114,6 +119,8 @@ template <class OBJ, class PREC> class StaticOctree
 
     int countChildren() const;
     int countObjects()  const;
+
+    void computeStatistics(std::vector<OctreeLevelStatistics>& stats, unsigned int level = 0);
 
  private:
     static const PREC SQRT3;
@@ -342,5 +349,33 @@ inline int StaticOctree<OBJ, PREC>::countObjects() const
 
     return count;
 }
+
+
+template <class OBJ, class PREC>
+void StaticOctree<OBJ, PREC>::computeStatistics(std::vector<OctreeLevelStatistics>& stats, unsigned int level)
+{
+    if (level >= stats.size())
+    {
+        while (level >= stats.size())
+        {
+            OctreeLevelStatistics levelStats;
+            levelStats.nodeCount = 0;
+            levelStats.objectCount = 0;
+            levelStats.size = 0.0;
+            stats.push_back(levelStats);
+        }
+    }
+
+    stats[level].nodeCount++;
+    stats[level].objectCount += nObjects;
+    stats[level].size = 0.0;
+
+    if (_children != NULL)
+    {
+        for (int i = 0; i < 8; i++)
+            _children[i]->computeStatistics(stats, level + 1);
+    }
+}
+
 
 #endif // _OCTREE_H_

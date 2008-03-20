@@ -1291,6 +1291,18 @@ void StarDatabase::buildOctree()
     DPRINTF(1, "%d stars total\n", (int) (firstStar - sortedStars));
     DPRINTF(1, "Octree has %d nodes and %d stars.\n",
             1 + octreeRoot->countChildren(), octreeRoot->countObjects());
+#if PROFILE_OCTREE
+    vector<OctreeLevelStatistics> stats;
+    octreeRoot->computeStatistics(stats);
+    for (vector<OctreeLevelStatistics>::const_iterator iter = stats.begin(); iter != stats.end(); ++iter)
+    {
+        int level = iter - stats.begin();
+        clog << "Level " << level << ", "
+             << STAR_OCTREE_ROOT_SIZE / pow(2.0, (double) level) << "ly, "
+             << iter->nodeCount << " nodes, "
+             << iter->objectCount << " stars\n";
+    }
+#endif
 
     // Clean up . . .
     delete[] stars;
