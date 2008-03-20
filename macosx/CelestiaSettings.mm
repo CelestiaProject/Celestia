@@ -185,6 +185,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(1001,@"showFrameAxes")
         TAGDEF(1002,@"showSunDirection")
         TAGDEF(1003,@"showVelocityVector")
+        TAGDEF(1004,@"showPlanetographicGrid")
         nil];
     [tagDict addEntriesFromDictionary: volatileTagDict];
 #endif
@@ -504,12 +505,57 @@ FEATUREMETHODS(Other)
 #if REFMARKS
 // Refmark Settings
 
-#define REFMARKMETHODS(flag)  -(BOOL) show##flag { return (appCore->getSimulation()->getSelection().body()->getVisibleReferenceMarks()&Body::flag) != 0; } -(void) setShow##flag: (BOOL) value  { appCore->getSimulation()->getSelection().body()->setVisibleReferenceMarks([self setValue: value forBit: Body::flag inSet: appCore->getSimulation()->getSelection().body()->getVisibleReferenceMarks()]); } 
+-(BOOL) showBodyAxes
+{
+    return appCore->referenceMarkEnabled("body axes");
+}
 
-REFMARKMETHODS(BodyAxes)
-REFMARKMETHODS(FrameAxes)
-REFMARKMETHODS(SunDirection)
-REFMARKMETHODS(VelocityVector)
+-(void) setShowBodyAxes: (BOOL) value
+{
+    appCore->toggleReferenceMark("body axes");
+}
+
+-(BOOL) showFrameAxes
+{
+    return appCore->referenceMarkEnabled("frame axes");
+}
+
+-(void) setShowFrameAxes: (BOOL) value
+{
+    appCore->toggleReferenceMark("frame axes");
+}
+
+-(BOOL) showSunDirection
+{
+    return appCore->referenceMarkEnabled("sun direction");
+}
+
+-(void) setShowSunDirection: (BOOL) value
+{
+    appCore->toggleReferenceMark("sun direction");
+}
+
+-(BOOL) showVelocityVector
+{
+    return appCore->referenceMarkEnabled("velocity vector");
+}
+
+-(void) setShowVelocityVector: (BOOL) value
+{
+    appCore->toggleReferenceMark("velocity vector");
+}
+
+-(BOOL) showPlanetographicGrid
+{
+    return appCore->referenceMarkEnabled("planetographic grid");
+}
+
+-(void) setShowPlanetographicGrid: (BOOL) value
+{
+    appCore->toggleReferenceMark("planetographic grid");
+}
+
+
 #endif
 
 // Lighting Settings

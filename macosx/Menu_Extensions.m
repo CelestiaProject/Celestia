@@ -33,6 +33,8 @@
     if (index >= 0) [self removeItemAtIndex: index];
     index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
+    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Planetographic Grid",@"po",@"")];
+    if (index >= 0) [self removeItemAtIndex: index];
 }
 #endif
 
@@ -69,6 +71,13 @@
     if ([aSelection body])
     {
         target = [aSelection body];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Planetographic Grid",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1004];
+            [self insertItem: mi atIndex: aIndex];
+            [settings scanForKeys: mi];
+        }        
         mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
