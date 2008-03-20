@@ -34,6 +34,8 @@
 #include <celengine/celestia.h>
 #include <celengine/astro.h>
 #include <celengine/cmdparser.h>
+#include <celengine/axisarrow.h>
+#include <celengine/planetgrid.h>
 
 #include "../celengine/gl.h"
 #include "../celengine/glext.h"
@@ -1604,19 +1606,19 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, UTF8ToCurrentCP(_("&Follow")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, UTF8ToCurrentCP(_("S&ync Orbit")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
-#if REFMARKS
             HMENU refVectorMenu = CreatePopupMenu();
             AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) refVectorMenu, UTF8ToCurrentCP(_("&Reference Vectors")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_BODY_AXES, UTF8ToCurrentCP(_("Show Body Axes")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_FRAME_AXES, UTF8ToCurrentCP(_("Show Frame Axes")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_SUN_DIRECTION, UTF8ToCurrentCP(_("Show Sun Direction")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_VELOCITY_VECTOR, UTF8ToCurrentCP(_("Show Velocity Vector")).c_str());
+            AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_PLANETOGRAPHIC_GRID, UTF8ToCurrentCP(_("Show Planetographic Grid")).c_str());
 
-            CheckMenuItem(refVectorMenu, ID_RENDER_BODY_AXES,   sel.body()->referenceMarkVisible(Body::BodyAxes) ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_FRAME_AXES,  sel.body()->referenceMarkVisible(Body::FrameAxes) ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_SUN_DIRECTION,  sel.body()->referenceMarkVisible(Body::SunDirection) ? MF_CHECKED : MF_UNCHECKED);
-            CheckMenuItem(refVectorMenu, ID_RENDER_VELOCITY_VECTOR,  sel.body()->referenceMarkVisible(Body::VelocityVector) ? MF_CHECKED : MF_UNCHECKED);
-#endif
+            CheckMenuItem(refVectorMenu, ID_RENDER_BODY_AXES,   sel.body()->findReferenceMark("body axes") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_FRAME_AXES,  sel.body()->findReferenceMark("frame axes") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_SUN_DIRECTION,  sel.body()->findReferenceMark("sun direction") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_VELOCITY_VECTOR,  sel.body()->findReferenceMark("velocity vector") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_PLANETOGRAPHIC_GRID, sel.body()->findReferenceMark("planetographic grid") ? MF_CHECKED : MF_UNCHECKED);
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
@@ -4081,40 +4083,25 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             syncMenusWithRendererState();
             break;
 
-#if REFMARKS
         case ID_RENDER_BODY_AXES:
-            {
-                Body* body = appCore->getSimulation()->getSelection().body();
-                if (body != NULL)
-                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::BodyAxes);
-            }
+            appCore->toggleReferenceMark("body axes");
             break;
 
         case ID_RENDER_FRAME_AXES:
-            {
-                Body* body = appCore->getSimulation()->getSelection().body();
-                if (body != NULL)
-                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::FrameAxes);
-            }
+            appCore->toggleReferenceMark("frame axes");
             break;
 
         case ID_RENDER_SUN_DIRECTION:
-            {
-                Body* body = appCore->getSimulation()->getSelection().body();
-                if (body != NULL)
-                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::SunDirection);
-            }
+            appCore->toggleReferenceMark("sun direction");
             break;
 
         case ID_RENDER_VELOCITY_VECTOR:
-            {
-                Body* body = appCore->getSimulation()->getSelection().body();
-                if (body != NULL)
-                    body->setVisibleReferenceMarks(body->getVisibleReferenceMarks() ^ Body::VelocityVector);
-            }
+            appCore->toggleReferenceMark("velocity vector");
             break;
 
-#endif
+        case ID_RENDER_PLANETOGRAPHIC_GRID:
+            appCore->toggleReferenceMark("planetographic grid");
+            break;
 
         case ID_TIME_FASTER:
             appCore->charEntered('l');

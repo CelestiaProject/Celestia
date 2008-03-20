@@ -635,7 +635,7 @@ static Body* CreatePlanet(const string& name,
 {
     Body* body = NULL;
 
-    if (disposition == ModifyObject)
+    if (disposition == ModifyObject || disposition == ReplaceObject)
     {
         body = existingBody;
     }
@@ -945,7 +945,7 @@ static Body* CreateReferencePoint(const string& name,
 {
     Body* body = NULL;
 
-    if (disposition == ModifyObject)
+    if (disposition == ModifyObject || disposition == ReplaceObject)
     {
         body = existingBody;
     }
@@ -1081,11 +1081,19 @@ bool LoadSolarSystemObjects(istream& in,
             if (parentSystem != NULL)
             {
                 Body* existingBody = parentSystem->find(name);
-                if (existingBody && disposition == AddObject)
+                if (existingBody)
                 {
-                    errorMessagePrelude(tokenizer);
-                    cerr << _("warning duplicate definition of ") <<
-                        parentName << " " <<  name << '\n';
+                    if (disposition == AddObject)
+                    {
+                        errorMessagePrelude(tokenizer);
+                        cerr << _("warning duplicate definition of ") <<
+                            parentName << " " <<  name << '\n';
+                    }
+                    else if (disposition == ReplaceObject)
+                    {
+                        existingBody->setDefaultProperties();
+                        existingBody->setTimeline(NULL);
+                    }
                 }
 
                 Body* body;
@@ -1093,19 +1101,6 @@ bool LoadSolarSystemObjects(istream& in,
                     body = CreateReferencePoint(name, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
                     body = CreatePlanet(name, parentSystem, universe, existingBody, objectData, directory, disposition);
-
-                if (body != NULL)
-                {
-                    int order = parentSystem->getOrder(existingBody);
-                    if (disposition == ReplaceObject && existingBody != NULL)
-                        delete existingBody;
-
-                    // When replacing an object, we need to maintain the same order in the child list so that
-                    // Celestia's number keys still work properly (i.e. '3' to select Earth.) This is an
-                    // inelegant approach; we'll handle it better once add-on loading/unloading is implemented.
-                    if (order >= 0)
-                        parentSystem->reorderLastChild(order);
-                }
             }
         }
         else if (itemType == "AltSurface")
