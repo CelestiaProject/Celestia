@@ -620,7 +620,13 @@ void CelestiaAppWindow::slotShowGLInfo()
     out << "<br>\n";
 
     // shading language version
+    // GL_SHADING_LANGUAGE_VERSION_ARB seems to be missing in the Mac OS X OpenGL
+    // headers even though ARB_shading_language_100 is defined.
+#ifdef GL_SHADING_LANGUAGE_VERSION
+    const char* glslversion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+#else
     const char* glslversion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION_ARB));
+#endif
     if (glslversion != NULL)
     {
         out << "<b>GLSL Version: </b>" << glslversion << "<br>\n";
