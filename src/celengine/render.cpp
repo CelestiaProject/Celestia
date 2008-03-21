@@ -2470,6 +2470,7 @@ void Renderer::render(const Observer& observer,
     {
         renderMarkers(*universe.getMarkers(),
                       observer.getPosition(),
+		      observer.getOrientation(),
                       now);
         
         // Render background markers; rendering of other markers is deferred until
@@ -8759,44 +8760,58 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
 
 
 void Renderer::renderMarkers(const MarkerList& markers,
-                             const UniversalCoord& position,
+                             const UniversalCoord& cameraPosition,
+			     const Quatd& cameraOrientation,
                              double jd)
 {
-    string emptyLabel;
+    // Calculate the cosine of half the maximum field of view. We'll use this for
+    // fast testing of marker visibility. The stored field of view is the
+    // vertical field of view; we want the field of view as measured on the
+    // diagonal between viewport corners.
+    double h = tan(degToRad(fov / 2));
+    double diag = sqrt(1.0 + square(h) + square(h * (double) windowWidth / (double) windowHeight));
+    double cosFOV = 1.0 / diag;
+    
+    Vec3d viewVector = Vec3d(0.0, 0.0, -1.0) * cameraOrientation.toMatrix3();
+    
     for (MarkerList::const_iterator iter = markers.begin(); iter != markers.end(); iter++)
     {
         UniversalCoord uc = iter->getPosition(jd);
-        Vec3d offset = (uc - position) * astro::microLightYearsToKilometers(1.0);
+        Vec3d offset = (uc - cameraPosition) * astro::microLightYearsToKilometers(1.0);
                 
-        if (iter->isOccludable())
+        // Only render those markers that lie withing the field of view.
+        if ((offset * viewVector) > cosFOV * offset.length())
         {
-            // If the marker is occludable, add it to the sorted annotation list if it's relatively
-            // nearby, and to the background list if it's very distant.
-            if (offset.length() < astro::lightYearsToKilometers(1.0))
+            if (iter->isOccludable())
             {
-                // Modify the marker position so that it is always in front of the marked object.
-                double boundingRadius;
-                if (iter->getObject().body() != NULL)
-                    boundingRadius = iter->getObject().body()->getBoundingRadius();
-                else
-                    boundingRadius = iter->getObject().radius();                
-                offset *= (1.0 - boundingRadius * 1.01 / offset.length());
+                // If the marker is occludable, add it to the sorted annotation list if it's relatively
+                // nearby, and to the background list if it's very distant.
+                if (offset.length() < astro::lightYearsToKilometers(1.0))
+                {
+                    // Modify the marker position so that it is always in front of the marked object.
+                    double boundingRadius;
+                    if (iter->getObject().body() != NULL)
+                        boundingRadius = iter->getObject().body()->getBoundingRadius();
+                    else
+                        boundingRadius = iter->getObject().radius();                
+                    offset *= (1.0 - boundingRadius * 1.01 / offset.length());
                 
-                addSortedAnnotation(&(*iter), emptyLabel, iter->getColor(),
-                                    Point3f((float) offset.x, (float) offset.y, (float) offset.z));
+                    addSortedAnnotation(&(*iter), EMPTY_STRING, iter->getColor(),
+                                        Point3f((float) offset.x, (float) offset.y, (float) offset.z));
+                }
+                else
+                {
+                    addAnnotation(backgroundAnnotations,
+                                  &(*iter), EMPTY_STRING, iter->getColor(),
+                                  Point3f((float) offset.x, (float) offset.y, (float) offset.z));
+                }
             }
             else
             {
-                addAnnotation(backgroundAnnotations,
+                addAnnotation(foregroundAnnotations,
                               &(*iter), EMPTY_STRING, iter->getColor(),
-                              Point3f((float) offset.x, (float) offset.y, (float) offset.z));
+                              Point3f((float) offset.x, (float) offset.y, (float) offset.z));                          
             }
-        }
-        else
-        {
-            addAnnotation(foregroundAnnotations,
-                          &(*iter), EMPTY_STRING, iter->getColor(),
-                          Point3f((float) offset.x, (float) offset.y, (float) offset.z));                          
         }
     }
 }

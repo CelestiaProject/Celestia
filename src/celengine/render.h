@@ -523,7 +523,8 @@ class Renderer
                                                               float farDist,
                                                               FontStyle fs);
     void renderMarkers(const MarkerList&,
-                       const UniversalCoord& position,
+                       const UniversalCoord& cameraPosition,
+		       const Quatd& cameraOrientation,
                        double jd);
 
     void renderOrbit(const OrbitPathListEntry&,
