@@ -231,6 +231,15 @@
 	AppMag 12.6
 }
 
+"WASP-5"
+{
+	RA 359.348917
+	Dec -41.277083
+	Distance 980
+	SpectralType "G4V"
+	AppMag 12.3
+}
+
 # HD stars without Hip numbers
 
 1000370197 # HD 70573
