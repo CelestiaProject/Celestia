@@ -52,6 +52,9 @@ class CelestiaAppWindow : public QMainWindow
  private slots:
     void slotGrabImage();
     void slotCaptureVideo();
+    void slotCopyImage();
+    void slotCopyURL();
+    void slotPasteURL();
 
     void centerSelection();
     void gotoSelection();
