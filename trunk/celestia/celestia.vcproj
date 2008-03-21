@@ -514,6 +514,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\planetgrid.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\precession.cpp"
 					>
 				</File>
@@ -876,7 +880,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\planetgrid.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\precession.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\referencemark.h"
 					>
 				</File>
 				<File
