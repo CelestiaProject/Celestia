@@ -31,6 +31,8 @@
 #include <QTextEdit>
 #include <QDialogButtonBox>
 #include <QTextStream>
+#include <QClipboard>
+#include <QApplication>
 #include <vector>
 #include <string>
 #include "qtappwin.h"
@@ -47,6 +49,7 @@
 #include "qtsettimedialog.h"
 //#include "qtvideocapturedialog.h"
 #include "celestia/scriptmenu.h"
+#include "celestia/url.h"
 #include "celengine/gl.h"
 #include "celengine/glext.h"
 
@@ -420,13 +423,14 @@ void CelestiaAppWindow::slotGrabImage()
         QFileInfo saveAsFile(saveAsName);
 
         //glWidget->repaint();
-        QImage grabedImage = glWidget->grabFrameBuffer();
-        grabedImage.save(saveAsName, "PNG");
+        QImage grabbedImage = glWidget->grabFrameBuffer();
+        grabbedImage.save(saveAsName, "PNG");
 
         settings.setValue("GrabImageDir", saveAsFile.absolutePath());
     }
     settings.endGroup();
 }
+
 
 void CelestiaAppWindow::slotCaptureVideo()
 {
@@ -446,6 +450,35 @@ void CelestiaAppWindow::slotCaptureVideo()
 
     settings.endGroup();
 }
+
+
+void CelestiaAppWindow::slotCopyImage()
+{
+    //glWidget->repaint();
+    QImage grabbedImage = glWidget->grabFrameBuffer();
+    QApplication::clipboard()->setImage(grabbedImage);
+    appCore->flash(tr("Captured screen shot to clipboard").toUtf8().data());
+}
+
+
+void CelestiaAppWindow::slotCopyURL()
+{
+    Url url(appCore);
+    QApplication::clipboard()->setText(url.getAsString().c_str());
+    appCore->flash(tr("Copied URL").toUtf8().data());
+}
+
+
+void CelestiaAppWindow::slotPasteURL()
+{
+    QString urlText = QApplication::clipboard()->text();
+    if (!urlText.isEmpty())
+    {
+        appCore->goToUrl(urlText.toUtf8().data());
+        appCore->flash(tr("Pasting URL").toUtf8().data());
+    }
+}
+
 
 void CelestiaAppWindow::selectSun()
 {
@@ -684,10 +717,25 @@ void CelestiaAppWindow::createMenus()
     fileMenu->addAction(grabImageAction);
 
     QAction* captureVideoAction = new QAction(QIcon(":data/capture-video.png"),
-                                              tr("&Capture video"), this);
+                                              tr("Capture &video"), this);
     captureVideoAction->setShortcut(tr("F11"));
     connect(captureVideoAction, SIGNAL(triggered()), this, SLOT(slotCaptureVideo()));
     fileMenu->addAction(captureVideoAction);
+
+    QAction* copyImageAction = new QAction(tr("&Copy image"), this);
+    copyImageAction->setShortcut(tr("Ctrl+Shift+C", "File|Copy Image"));
+    connect(copyImageAction, SIGNAL(triggered()), this, SLOT(slotCopyImage()));
+    fileMenu->addAction(copyImageAction);
+
+    QAction* copyURLAction = new QAction(tr("Copy &URL"), this);
+    copyURLAction->setShortcut(QKeySequence::Copy);
+    connect(copyURLAction, SIGNAL(triggered()), this, SLOT(slotCopyURL()));
+    fileMenu->addAction(copyURLAction);
+
+    QAction* pasteURLAction = new QAction(tr("&Paste URL"), this);
+    pasteURLAction->setShortcut(QKeySequence::Paste);
+    connect(pasteURLAction, SIGNAL(triggered()), this, SLOT(slotPasteURL()));
+    fileMenu->addAction(pasteURLAction);
 
     fileMenu->addSeparator();
 
