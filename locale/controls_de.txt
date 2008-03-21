@@ -1,5 +1,5 @@
-Maus- und Tastaturbefehle für Celestia 1.5.0
-============================================
+Maus- und Tastaturbefehle für Celestia 1.5.1
+===================================
 
 
 MAUSFUNKTIONEN:
@@ -72,7 +72,7 @@ O	Umlaufbahnen ein-/ausschalten
 %	Stern-Farben-Tabelle ein-/ausschalten
 ;	Himmelsraster ein-/ausschalten
 AltGr + [	Wenn autoMag AUS: Magnitude verringern (weniger Sterne sichtbar)
-     	Wenn autoMag EIN: Magnitude verringern bei 45� Blickfeld
+     	Wenn autoMag EIN: Magnitude verringern bei 45° Blickfeld
 AltGr + ]	Wenn autoMag AUS: Magnitude vergrößern (mehr Sterne sichtbar)
 	Wenn autoMag EIN: Magnitude vergrößern bei 45° Blickfeld
 AltGr + {	Streulichtanteil erhöhen
