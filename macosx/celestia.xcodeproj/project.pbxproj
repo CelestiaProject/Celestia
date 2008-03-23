@@ -13,12 +13,8 @@
 		8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAA0D6D13FE0059AA3A /* timeline.cpp */; };
 		8844BAB20D6D13FE0059AA3A /* timelinephase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAC0D6D13FE0059AA3A /* timelinephase.cpp */; };
 		8844CBC40D80DB020059AA3A /* nutation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC00D80DB020059AA3A /* nutation.cpp */; };
-		8844CBC50D80DB020059AA3A /* nutation.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CBC10D80DB020059AA3A /* nutation.h */; };
 		8844CBC60D80DB020059AA3A /* precession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC20D80DB020059AA3A /* precession.cpp */; };
-		8844CBC70D80DB020059AA3A /* precession.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CBC30D80DB020059AA3A /* precession.h */; };
 		8844CF0B0D931D4E0059AA3A /* planetgrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CF080D931D4E0059AA3A /* planetgrid.cpp */; };
-		8844CF0C0D931D4E0059AA3A /* planetgrid.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CF090D931D4E0059AA3A /* planetgrid.h */; };
-		8844CF0D0D931D4E0059AA3A /* referencemark.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CF0A0D931D4E0059AA3A /* referencemark.h */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
@@ -374,10 +370,6 @@
 			files = (
 				E5F8C9E70795239600D1DAF2 /* liblua.dylib in Copy Libraries */,
 				E5F8C9E90795239600D1DAF2 /* libpng.dylib in Copy Libraries */,
-				8844CBC50D80DB020059AA3A /* nutation.h in Copy Libraries */,
-				8844CBC70D80DB020059AA3A /* precession.h in Copy Libraries */,
-				8844CF0C0D931D4E0059AA3A /* planetgrid.h in Copy Libraries */,
-				8844CF0D0D931D4E0059AA3A /* referencemark.h in Copy Libraries */,
 			);
 			name = "Copy Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
