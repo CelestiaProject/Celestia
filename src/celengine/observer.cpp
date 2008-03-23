@@ -1043,7 +1043,9 @@ static double getPreferredDistance(const Selection& selection)
         // a viewpoint in which the entire system can be seen.
         if (selection.body()->getClassification() == Body::Invisible)
         {
-            double r = selection.body()->getFrameTree()->boundingSphereRadius();
+            double r = selection.body()->getRadius();
+            if (selection.body()->getFrameTree() != NULL)
+                r = selection.body()->getFrameTree()->boundingSphereRadius();
             return min(astro::lightYearsToKilometers(0.1), r * 5.0);
         }
         else
