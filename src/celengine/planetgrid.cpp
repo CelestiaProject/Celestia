@@ -41,8 +41,6 @@ PlanetographicGrid::PlanetographicGrid(const Body& _body) :
 
 PlanetographicGrid::~PlanetographicGrid()
 {
-    delete xyCircle;
-    delete xzCircle;
 }
 
 
@@ -53,6 +51,7 @@ static void longLatLabel(const string& labelText,
                          const Point3d& bodyPos,
                          const Quatd& bodyOrientation,
                          const Vec3f& semiAxes,
+                         float labelOffset,
                          Renderer* renderer)
 {
     double theta = degToRad(longitude);
@@ -61,14 +60,14 @@ static void longLatLabel(const string& labelText,
               sin(phi) * semiAxes.y,
               -cos(phi) * sin(theta) * semiAxes.z);
 
-    pos = pos * 1.0001;
+    pos = pos * (1.0 + labelOffset);
 
     // Draw the label only if it isn't obscured by the body ellipsoid
     double t = 0.0;
     if (testIntersection(Ray3d(viewRayOrigin, Point3d(pos.x, pos.y, pos.z) - viewRayOrigin),
                          Ellipsoidd(Vec3d(semiAxes.x, semiAxes.y, semiAxes.z)), t) && t >= 1.0)
     {
-        Point3d labelPos = bodyPos + 1.01 * pos * bodyOrientation.toMatrix3();
+        Point3d labelPos = bodyPos + (1.0 + labelOffset) * pos * bodyOrientation.toMatrix3();
         renderer->addForegroundAnnotation(NULL, labelText,
                                           Renderer::PlanetographicGridLabelColor,
                                           Point3f((float) labelPos.x, (float) labelPos.y, (float) labelPos.z));
@@ -85,7 +84,8 @@ PlanetographicGrid::render(Renderer* renderer,
     Quatd q = Quatd::yrotation(PI) * body.getEclipticToBodyFixed(tdb);
     Quatf qf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
-    float scale = 1.0f + max(0.0005f, min(0.01f, 3.0f / discSizeInPixels));
+    float offset = max(0.0005f, min(0.01f, 3.0f / discSizeInPixels));
+    float scale = 1.0f + offset;
     Vec3f semiAxes = body.getSemiAxes();
 
     Point3d posd(pos.x, pos.y, pos.z);
@@ -104,7 +104,7 @@ PlanetographicGrid::render(Renderer* renderer,
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, sizeof(float) * 3, xzCircle);
+    glVertexPointer(3, GL_FLOAT, 0, xzCircle);
 
     // Only show the coordinate labels if the body is sufficiently large on screen
     bool showCoordinateLabels = false;
@@ -152,13 +152,13 @@ PlanetographicGrid::render(Renderer* renderer,
                 else
                     ns = northDirection == NorthNormal ? 'N' : 'S';
                 sprintf(buf, "%d%c", (int) fabs((double) latitude), ns);
-                longLatLabel(buf, 0.0, latitude, viewRayOrigin, posd, q, semiAxes, renderer);
-                longLatLabel(buf, 180.0, latitude, viewRayOrigin, posd, q, semiAxes, renderer);
+                longLatLabel(buf, 0.0, latitude, viewRayOrigin, posd, q, semiAxes, offset, renderer);
+                longLatLabel(buf, 180.0, latitude, viewRayOrigin, posd, q, semiAxes, offset, renderer);
             }
         }
     }
 
-    glVertexPointer(3, GL_FLOAT, sizeof(float) * 3, xyCircle);
+    glVertexPointer(3, GL_FLOAT, 0, xyCircle);
 
     for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
     {
@@ -193,7 +193,7 @@ PlanetographicGrid::render(Renderer* renderer,
 
             char buf[64];
             sprintf(buf, "%d%c", (int) showLongitude, ew);
-            longLatLabel(buf, longitude, 0.0, viewRayOrigin, posd, q, semiAxes, renderer);
+            longLatLabel(buf, longitude, 0.0, viewRayOrigin, posd, q, semiAxes, offset, renderer);
             if (longitude > 0.0f && longitude < 180.0f)
             {
                 showLongitude = (int) longitude;
@@ -214,7 +214,7 @@ PlanetographicGrid::render(Renderer* renderer,
                 }
 
                 sprintf(buf, "%d%c", showLongitude, ew);       
-                longLatLabel(buf, -longitude, 0.0, viewRayOrigin, posd, q, semiAxes, renderer);
+                longLatLabel(buf, -longitude, 0.0, viewRayOrigin, posd, q, semiAxes, offset, renderer);
             }
         }
     }
