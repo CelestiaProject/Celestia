@@ -1,0 +1,54 @@
+!!ARBvp1.0
+
+# Compute the surface space light vectors for diffuse bump mapping
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTangent      = vertex.attrib[6];
+ATTRIB iTex0         = vertex.texcoord[0];
+ATTRIB iTex1         = vertex.texcoord[1];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  qtr           = 0.25;
+PARAM  half          = 0.5;
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oTex1         = result.texcoord[1];
+
+TEMP   binormal;
+TEMP   t;
+TEMP   light_surf;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Compute the binormal--cross product of tangent and normal
+MOV   t, iTangent;
+MUL   binormal, iNormal.zxyw, t.yzxw;
+MAD   binormal, iNormal.yzxw, t.zxyw, -binormal;
+
+# Normalization should not be necessary
+#DP3   binormal.w, binormal, binormal;
+#RSQ   binormal.w, binormal.w;
+#MUL   binormal.xyz, binormal, binormal.w;
+
+# Transform the light direction from object space into surface space
+DP3   light_surf.x, iTangent, lightDir;
+DP3   light_surf.y, -binormal, lightDir;
+DP3   light_surf.z, iNormal, lightDir;
+
+# Compress the light direction to fit in the primary color and output it
+MAD   oColor, light_surf, qtr, half;
+MOV   oColor.w, one.w;
+
+# Output the texture
+MOV   oTex0, iTex0;
+MOV   oTex1, iTex1;
+
+END
+

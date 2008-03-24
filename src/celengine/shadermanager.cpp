@@ -1327,9 +1327,15 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "varying vec3 scatterEx;\n";
     }
 
-    if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
+    if ((props.texUsage & ShaderProperties::NightTexture))
     {
-        source += "varying float totalLight;\n";
+#ifdef USE_HDR
+        source += "uniform float nightLightScale;\n";
+#endif
+        if (VSComputesColorSum(props))
+        {
+            source += "varying float totalLight;\n";
+        }
     }
 
     // Declare shadow parameters
@@ -1580,7 +1586,11 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             source += NightTextureBlend();
         }
 
+#ifdef USE_HDR
+        source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight * nightLightScale;\n";
+#else
         source += "gl_FragColor += texture2D(nightTex, " + nightTexCoord + ".st) * totalLight;\n";
+#endif
     }
 
     if (props.texUsage & ShaderProperties::EmissiveTexture)
@@ -2144,6 +2154,9 @@ CelestiaGLProgram::initParameters()
 
     opacity      = floatParam("opacity");
     ambientColor = vec3Param("ambientColor");
+#ifdef USE_HDR
+    nightLightScale          = floatParam("nightLightScale");
+#endif
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
@@ -2253,7 +2266,11 @@ void
 CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                       Color materialDiffuse,
                                       Color materialSpecular,
-                                      Color materialEmissive)
+                                      Color materialEmissive
+#ifdef USE_HDR
+                                     ,float _nightLightScale
+#endif
+                                      )
 {
     unsigned int nLights = min(MaxShaderLights, ls.nLights);
 
@@ -2309,6 +2326,9 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
                          ls.ambientColor.y * diffuseColor.y + materialEmissive.green(),
                          ls.ambientColor.z * diffuseColor.z + materialEmissive.blue());
     opacity = materialDiffuse.alpha();
+#ifdef USE_HDR
+    nightLightScale = _nightLightScale;
+#endif
 }
 
 

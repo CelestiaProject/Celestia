@@ -39,6 +39,7 @@ class Simulation
 
     void update(double dt);
     void render(Renderer&);
+    void draw(Renderer&);
     void render(Renderer&, Observer&);
 
     Selection pickObject(Vec3f pickRay, int renderFlags, float tolerance = 0.0f);

@@ -1,0 +1,81 @@
+!!ARBvp1.0
+
+# Compute the surface space light vectors for diffuse bump mapping
+# as well as a fog factor for an atmospheric haze effect.
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTangent      = vertex.attrib[6];
+ATTRIB iTex0         = vertex.texcoord[0];
+ATTRIB iTex1         = vertex.texcoord[1];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  eyePos        = program.env[1];
+PARAM  lightDir      = program.env[0];
+PARAM  haze          = program.env[6];
+PARAM  qtr           = 0.25;
+PARAM  half          = 0.5;
+PARAM  zero          = 0;
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+OUTPUT oTex1         = result.texcoord[1];
+OUTPUT oFog          = result.fogcoord;
+
+TEMP   binormal;
+TEMP   t;
+TEMP   light_surf;
+TEMP   diffuseFactor;
+TEMP   eyeVec;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Compute the diffuse light component
+DP3   diffuseFactor, iNormal, lightDir;
+# Clamp the diffuse component to zero
+MAX   diffuseFactor, diffuseFactor, zero;
+
+# Get the vector from the eye to the vertex
+SUB   eyeVec, eyePos, iPos;
+
+# Normalize it
+DP3   eyeVec.w, eyeVec, eyeVec;
+RSQ   eyeVec.w, eyeVec.w;
+MUL   eyeVec, eyeVec, eyeVec.w;
+
+# Output the fog factor
+DP3   diffuseFactor.y, iNormal, eyeVec;
+SUB   diffuseFactor.y, one, diffuseFactor.y;
+MUL   oFog.x, diffuseFactor.x, diffuseFactor.y;
+
+# Haze is complete; now do the bump mapping setup
+
+# Compute the binormal--cross product of normal and tangent
+MOV   t, iTangent;
+MUL   binormal, iNormal.zxyw, t.yzxw;
+MAD   binormal, iNormal.yzxw, t.zxyw, -binormal;
+
+# Normalization should not be necessary
+#DP3   binormal.w, binormal, binormal;
+#RSQ   binormal.w, binormal.w;
+#MUL   binormal.xyz, binormal, binormal.w;
+
+# Transform the light direction from object space into surface space
+DP3   light_surf.x, iTangent, lightDir;
+DP3   light_surf.y, -binormal, lightDir;
+DP3   light_surf.z, iNormal, lightDir;
+
+# Compress the light direction to fit in the primary color and output it
+MAD   oColor, light_surf, qtr, half;
+MOV   oColor.w, one.w;
+
+# Output the texture
+MOV   oTex0, iTex0;
+MOV   oTex1, iTex1;
+
+END
+
