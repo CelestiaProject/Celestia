@@ -28,6 +28,9 @@ class Surface
         nightTexture(),
         overlayTexture(),
         bumpHeight(0.0f),
+#ifdef USE_HDR
+        nightLightRadiance(1.e-5f*.5f),
+#endif
         lunarLambert(0.0f)
     {};
 
@@ -56,6 +59,9 @@ class Surface
     MultiResTexture overlayTexture; // overlay texture, applied last
     float bumpHeight;               // scale of bump map relief
     float lunarLambert;             // mix between Lambertian and Lommel-Seeliger (lunar-like) photometric functions
+#ifdef USE_HDR
+    float nightLightRadiance;       // W sr^-1 m^-2
+#endif
 };
 
 #endif // _SURFACE_H_

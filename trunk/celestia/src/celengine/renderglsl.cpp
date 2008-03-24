@@ -212,7 +212,11 @@ void renderSphere_GLSL(const RenderInfo& ri,
 
     prog->use();
 
+#ifdef USE_HDR
+    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black, ri.nightLightScale);
+#else
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
+#endif
 
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;

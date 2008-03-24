@@ -114,7 +114,11 @@ class CelestiaGLProgram
     void setLightParameters(const LightingState& ls,
                             Color materialDiffuse,
                             Color materialSpecular,
-                            Color materialEmissive);
+                            Color materialEmissive
+#ifdef USE_HDR
+                           ,float nightLightScale = 1.0f
+#endif
+                            );
     void setEclipseShadowParameters(const LightingState& ls,
                                     float planetRadius,
                                     const Mat4f& planetMat);
@@ -130,6 +134,9 @@ class CelestiaGLProgram
     FloatShaderParameter shininess;
     Vec3ShaderParameter ambientColor;
     FloatShaderParameter opacity;
+#ifdef USE_HDR
+    FloatShaderParameter nightLightScale;
+#endif
 
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;

@@ -240,7 +240,11 @@ ArrowReferenceMark::ArrowReferenceMark(const Body& _body) :
     body(_body),
     size(1.0),
     color(1.0f, 1.0f, 1.0f),
+#ifdef USE_HDR
+    opacity(0.0f)
+#else
     opacity(1.0f)
+#endif
 {
 }
 
@@ -287,7 +291,11 @@ ArrowReferenceMark::render(Renderer* /* renderer */,
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
+#ifdef USE_HDR
+        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+#else
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
     }
 
     glPushMatrix();
@@ -320,7 +328,11 @@ ArrowReferenceMark::render(Renderer* /* renderer */,
 AxesReferenceMark::AxesReferenceMark(const Body& _body) :
     body(_body),
     size(),
-    opacity(1.0)
+#ifdef USE_HDR
+    opacity(0.0f)
+#else
+    opacity(1.0f)
+#endif
 {
 }
 
@@ -336,6 +348,9 @@ void
 AxesReferenceMark::setOpacity(float _opacity)
 {
     opacity = _opacity;
+#ifdef USE_HDR
+    opacity = 1.0f - opacity;
+#endif
 }
 
 
@@ -359,7 +374,11 @@ AxesReferenceMark::render(Renderer* /* renderer */,
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
+#ifdef USE_HDR
+        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+#else
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
     }
 
     glDisable(GL_TEXTURE_2D);
