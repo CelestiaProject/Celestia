@@ -77,6 +77,12 @@ namespace vp
     extern unsigned int nightLights_2light;
     extern unsigned int ellipticalGalaxy;
     extern unsigned int starDisc;
+#ifdef HDR_COMPRESS
+    extern unsigned int diffuseBumpHDR;
+    extern unsigned int diffuseBumpHazeHDR;
+    extern unsigned int nightLightsHDR;
+    extern unsigned int nightLights_2lightHDR;
+#endif
 };
 
 

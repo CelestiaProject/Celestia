@@ -12,6 +12,28 @@
 #include <cstring>
 #include <cassert>
 
+//#define DEBUG_HDR
+#ifdef DEBUG_HDR
+//#define DEBUG_HDR_FILE
+//#define DEBUG_HDR_ADAPT
+//#define DEBUG_HDR_TONEMAP
+#endif
+#ifdef DEBUG_HDR_FILE
+#include <fstream>
+std::ofstream hdrlog;
+#define HDR_LOG     hdrlog
+#else
+#define HDR_LOG     cout
+#endif
+
+#ifdef USE_HDR
+#define BLUR_PASS_COUNT     2
+#define BLUR_SIZE           128
+#define DEFAULT_EXPOSURE    -23.35f
+#define EXPOSURE_HALFLIFE   0.4f
+//#define USE_BLOOM_LISTS
+#endif
+
 #ifndef _WIN32
 #ifndef TARGET_OS_MAC
 #include <config.h>
@@ -251,6 +273,17 @@ Renderer::Renderer() :
     minFeatureSize(MinFeatureSizeForLabel),
     locationFilter(~0u),
     colorTemp(NULL),
+#ifdef USE_HDR
+    sceneTexture(0),
+    blurFormat(GL_RGBA),
+    useBlendSubtract(true),
+    useLuminanceAlpha(false),
+    bloomEnabled(true),
+    maxBodyMag(100.0f),
+    exposure(1.0f),
+    exposurePrev(1.0f),
+    brightPlus(0.0f),
+#endif
     videoSync(false),
     settingsChanged(true)
 {
@@ -261,6 +294,23 @@ Renderer::Renderer() :
     skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
     colorTemp = GetStarColorTable(ColorTable_Enhanced);
+#ifdef DEBUG_HDR_FILE
+    HDR_LOG.open("hdr.log", ios_base::app);
+#endif
+#ifdef USE_HDR
+    blurTextures = new Texture*[BLUR_PASS_COUNT];
+    blurTempTexture = NULL;
+    for (size_t i = 0; i < BLUR_PASS_COUNT; ++i)
+    {
+        blurTextures[i] = NULL;
+    }
+#endif
+#ifdef USE_BLOOM_LISTS
+    for (size_t i = 0; i < (sizeof gaussianLists/sizeof(GLuint)); ++i)
+    {
+        gaussianLists[i] = 0;
+    }
+#endif
 
     for (int i = 0; i < (int) FontCount; i++)
     {
@@ -278,6 +328,26 @@ Renderer::~Renderer()
     delete[] skyVertices;
     delete[] skyIndices;
     delete[] skyContour;
+#ifdef USE_BLOOM_LISTS
+    for (size_t i = 0; i < (sizeof gaussianLists/sizeof(GLuint)); ++i)
+    {
+        if (gaussianLists[i] != 0)
+            glDeleteLists(gaussianLists[i], 1);
+    }
+#endif
+#ifdef USE_HDR
+    for (size_t i = 0; i < BLUR_PASS_COUNT; ++i)
+    {
+        if (blurTextures[i] != NULL)
+            delete blurTextures[i];
+    }
+    delete [] blurTextures;
+    if (blurTempTexture)
+        delete blurTempTexture;
+
+    if (sceneTexture != 0)
+        glDeleteTextures(1, &sceneTexture);
+#endif
 }
 
 
@@ -728,6 +798,10 @@ bool Renderer::init(GLContext* _context,
             DecCoordLabels[i] = string(buf);
         }
 
+#ifdef USE_HDR
+        genSceneTexture();
+        genBlurTextures();
+#endif
         commonDataInitialized = true;
     }
 
@@ -819,6 +893,39 @@ bool Renderer::init(GLContext* _context,
         }
     }
 
+#ifdef USE_HDR
+    useBlendSubtract = context->extensionSupported("GL_EXT_blend_subtract");
+    Image        *testImg = new Image(GL_LUMINANCE_ALPHA, 1, 1);
+    ImageTexture *testTex = new ImageTexture(*testImg,
+                                             Texture::EdgeClamp,
+                                             Texture::NoMipMaps);
+    delete testImg;
+    GLint actualTexFormat = 0;
+    glEnable(GL_TEXTURE_2D);
+    testTex->bind();
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &actualTexFormat);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+    switch (actualTexFormat)
+    {
+    case GL_LUMINANCE_ALPHA:
+    case GL_LUMINANCE4_ALPHA4:
+    case GL_LUMINANCE6_ALPHA2:
+    case GL_LUMINANCE8_ALPHA8:
+    case GL_LUMINANCE12_ALPHA4:
+    case GL_LUMINANCE12_ALPHA12:
+    case GL_LUMINANCE16_ALPHA16:
+        useLuminanceAlpha = true;
+        break;
+    default:
+        useLuminanceAlpha = false;
+        break;
+    }
+
+    blurFormat = useLuminanceAlpha ? GL_LUMINANCE_ALPHA : GL_RGBA;
+    delete testTex;
+#endif
+
     glLoadIdentity();
 
     glEnable(GL_CULL_FACE);
@@ -839,9 +946,21 @@ bool Renderer::init(GLContext* _context,
 
 void Renderer::resize(int width, int height)
 {
+#ifdef USE_HDR
+    if (width == windowWidth && height == windowHeight)
+        return;
+#endif
     windowWidth = width;
     windowHeight = height;
     // glViewport(windowWidth, windowHeight);
+
+#ifdef USE_HDR
+    if (commonDataInitialized)
+    {
+        genSceneTexture();
+        genBlurTextures();
+    }
+#endif
 }
 
 float Renderer::calcPixelSize(float fovY, float windowHeight)
@@ -1170,7 +1289,11 @@ void Renderer::clearSortedAnnotations()
 static void enableSmoothLines()
 {
     // glEnable(GL_BLEND);
+#ifdef USE_HDR
+    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+#else
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(1.5f);
 }
@@ -1245,7 +1368,11 @@ void renderOrbitColor(const Body *body, bool selected, float opacity)
         }
     }
 
+#ifdef USE_HDR
+    glColor(orbitColor, 1.f - opacity * orbitColor.alpha());
+#else
     glColor(orbitColor, opacity * orbitColor.alpha());
+#endif
 }
 
 
@@ -2113,10 +2240,539 @@ void Renderer::renderItem(const RenderListEntry& rle,
 }
 
 
+#ifdef USE_HDR
+void Renderer::genBlurTextures()
+{
+    for (size_t i = 0; i < BLUR_PASS_COUNT; ++i)
+    {
+        if (blurTextures[i] != NULL)
+        {
+            delete blurTextures[i];
+            blurTextures[i] = NULL;
+        }
+    }
+    if (blurTempTexture)
+    {
+        delete blurTempTexture;
+        blurTempTexture = NULL;
+    }
+
+    blurBaseWidth = sceneTexWidth, blurBaseHeight = sceneTexHeight;
+
+    if (blurBaseWidth > blurBaseHeight)
+    {
+        while (blurBaseWidth > BLUR_SIZE)
+        {
+            blurBaseWidth  >>= 1;
+            blurBaseHeight >>= 1;
+        }
+    }
+    else
+    {
+        while (blurBaseHeight > BLUR_SIZE)
+        {
+            blurBaseWidth  >>= 1;
+            blurBaseHeight >>= 1;
+        }
+    }
+    genBlurTexture(0);
+    genBlurTexture(1);
+
+    Image *tempImg;
+    ImageTexture *tempTexture;
+    tempImg = new Image(GL_LUMINANCE, blurBaseWidth, blurBaseHeight);
+    tempTexture = new ImageTexture(*tempImg, Texture::EdgeClamp, Texture::DefaultMipMaps);
+    delete tempImg;
+    if (tempTexture && tempTexture->getName() != 0)
+        blurTempTexture = tempTexture;
+}
+
+void Renderer::genBlurTexture(int blurLevel)
+{
+    Image *img;
+    ImageTexture *texture;
+
+#ifdef DEBUG_HDR
+    HDR_LOG <<
+        "Window width = "    << windowWidth << ", " <<
+        "Window height = "   << windowHeight << ", " <<
+        "Blur tex width = "  << (blurBaseWidth>>blurLevel) << ", " <<
+        "Blur tex height = " << (blurBaseHeight>>blurLevel) << endl;
+#endif
+    img = new Image(blurFormat,
+                    blurBaseWidth>>blurLevel,
+                    blurBaseHeight>>blurLevel);
+    texture = new ImageTexture(*img,
+                               Texture::EdgeClamp,
+                               Texture::NoMipMaps);
+    delete img;
+
+    if (texture && texture->getName() != 0)
+        blurTextures[blurLevel] = texture;
+}
+
+void Renderer::genSceneTexture()
+{
+	unsigned int *data;
+    if (sceneTexture != 0)
+        glDeleteTextures(1, &sceneTexture);
+
+    sceneTexWidth  = 1;
+    sceneTexHeight = 1;
+    while (sceneTexWidth < windowWidth)
+        sceneTexWidth <<= 1;
+    while (sceneTexHeight < windowHeight)
+        sceneTexHeight <<= 1;
+    sceneTexWScale = (windowWidth > 0)  ? (GLfloat)sceneTexWidth  / (GLfloat)windowWidth :
+        1.0f;
+    sceneTexHScale = (windowHeight > 0) ? (GLfloat)sceneTexHeight / (GLfloat)windowHeight :
+        1.0f;
+	data = (unsigned int* )malloc(sceneTexWidth*sceneTexHeight*4*sizeof(unsigned int));
+    memset(data, 0, sceneTexWidth*sceneTexHeight*4*sizeof(unsigned int));
+    
+    glGenTextures(1, &sceneTexture);
+	glBindTexture(GL_TEXTURE_2D, sceneTexture);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, sceneTexWidth, sceneTexHeight, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, data);
+    
+	free(data);
+#ifdef DEBUG_HDR
+    static int genSceneTexCounter = 1;
+    HDR_LOG <<
+        "[" << genSceneTexCounter++ << "] " <<
+        "Window width = "  << windowWidth << ", " <<
+        "Window height = " << windowHeight << ", " <<
+        "Tex width = "  << sceneTexWidth << ", " <<
+        "Tex height = " << sceneTexHeight << endl;
+#endif
+}
+
+void Renderer::renderToBlurTexture(int blurLevel)
+{
+    if (blurTextures[blurLevel] == NULL)
+        return;
+    GLfloat windowAspect = (GLfloat)windowWidth / (GLfloat)windowHeight;
+    GLsizei blurTexWidth  = blurBaseWidth>>blurLevel;
+    GLsizei blurTexHeight = blurBaseHeight>>blurLevel;
+    GLsizei blurDrawWidth = (GLfloat)windowWidth/(GLfloat)sceneTexWidth * blurTexWidth;
+    GLsizei blurDrawHeight = (GLfloat)windowHeight/(GLfloat)sceneTexHeight * blurTexHeight;
+    GLfloat blurWScale = 1.f;
+    GLfloat blurHScale = 1.f;
+    GLfloat savedWScale = 1.f;
+    GLfloat savedHScale = 1.f;
+
+    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_VIEWPORT_BIT);
+    glClearColor(0, 0, 0, 1.f);
+    glViewport(0, 0, blurDrawWidth, blurDrawHeight);
+    glBindTexture(GL_TEXTURE_2D, sceneTexture);
+
+    if (useBlendSubtract)
+    {
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, 0.0f, 1.0f);
+        glEnd();
+        // Do not need to scale alpha so mask it off
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+        glEnable(GL_BLEND);
+        savedWScale = sceneTexWScale;
+        savedHScale = sceneTexHScale;
+
+        // Remove ldr part of image
+        {
+            const GLfloat bias  = -0.5f;
+            glBlendFunc(GL_ONE, GL_ONE);
+#ifdef GL_EXT_blend_subtract
+            glx::glBlendEquationEXT(GL_FUNC_REVERSE_SUBTRACT_EXT);
+#endif
+            glColor4f(-bias, -bias, -bias, 0.0f);
+
+            glDisable(GL_TEXTURE_2D);
+            glBegin(GL_QUADS);
+            glVertex2f(0.0f,           0.0f);
+            glVertex2f(1.f, 0.0f);
+            glVertex2f(1.f, 1.f);
+            glVertex2f(0.0f,           1.f);
+            glEnd();
+
+            glEnable(GL_TEXTURE_2D);
+            blurTextures[blurLevel]->bind();
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                             blurTexWidth, blurTexHeight, 0);
+        }
+
+        // Scale back up hdr part
+        {
+#ifdef GL_EXT_blend_subtract
+            glx::glBlendEquationEXT(GL_FUNC_ADD_EXT);
+#endif
+            glBlendFunc(GL_DST_COLOR, GL_ONE);
+
+            glBegin(GL_QUADS);
+            drawBlendedVertices(0.f, 0.f, 1.f); //x2
+            drawBlendedVertices(0.f, 0.f, 1.f); //x2
+            glEnd();
+        }
+
+        glDisable(GL_BLEND);
+
+        if (!useLuminanceAlpha)
+        {
+            blurTempTexture->bind();
+            glCopyTexImage2D(GL_TEXTURE_2D, blurLevel, GL_LUMINANCE, 0, 0,
+                             blurTexWidth, blurTexHeight, 0);
+            // Erase color, replace with luminance image
+            glBegin(GL_QUADS);
+            glColor4f(0.f, 0.f, 0.f, 1.f);
+            glVertex2f(0.0f, 0.0f);
+            glVertex2f(1.0f, 0.0f);
+            glVertex2f(1.0f, 1.0f);
+            glVertex2f(0.0f, 1.0f);
+            glEnd();
+            glBegin(GL_QUADS);
+            drawBlendedVertices(0.f, 0.f, 1.f);
+            glEnd();
+        }
+
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        blurTextures[blurLevel]->bind();
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                         blurTexWidth, blurTexHeight, 0);
+    }
+    else
+    {
+        // GL_EXT_blend_subtract not supported
+        // Use compatible (but slow) glPixelTransfer instead
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, 0.0f, 1.0f);
+        glEnd();
+        savedWScale = sceneTexWScale;
+        savedHScale = sceneTexHScale;
+        sceneTexWScale = blurWScale;
+        sceneTexHScale = blurHScale;
+
+        blurTextures[blurLevel]->bind();
+        glPixelTransferf(GL_RED_SCALE,   8.f);
+        glPixelTransferf(GL_GREEN_SCALE, 8.f);
+        glPixelTransferf(GL_BLUE_SCALE,  8.f);
+        glPixelTransferf(GL_RED_BIAS,   -0.5f);
+        glPixelTransferf(GL_GREEN_BIAS, -0.5f);
+        glPixelTransferf(GL_BLUE_BIAS,  -0.5f);
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                         blurTexWidth, blurTexHeight, 0);
+        glPixelTransferf(GL_RED_SCALE,   1.f);
+        glPixelTransferf(GL_GREEN_SCALE, 1.f);
+        glPixelTransferf(GL_BLUE_SCALE,  1.f);
+        glPixelTransferf(GL_RED_BIAS,    0.f);
+        glPixelTransferf(GL_GREEN_BIAS,  0.f);
+        glPixelTransferf(GL_BLUE_BIAS,   0.f);
+    }
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    GLfloat xdelta = 1.0f / (GLfloat)blurTexWidth;
+    GLfloat ydelta = 1.0f / (GLfloat)blurTexHeight;
+    blurWScale = ((GLfloat)blurTexWidth / (GLfloat)blurDrawWidth);
+    blurHScale = ((GLfloat)blurTexHeight / (GLfloat)blurDrawHeight);
+    sceneTexWScale = blurWScale;
+    sceneTexHScale = blurHScale;
+
+    // Butterworth low pass filter to reduce flickering dots
+    {
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f,    0.0f, .5f*1.f);
+        drawBlendedVertices(-xdelta, 0.0f, .5f*0.333f);
+        drawBlendedVertices( xdelta, 0.0f, .5f*0.25f);
+        glEnd();
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                         blurTexWidth, blurTexHeight, 0);
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, -ydelta, .5f*0.667f);
+        drawBlendedVertices(0.0f,  ydelta, .5f*0.333f);
+        glEnd();
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                         blurTexWidth, blurTexHeight, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    // Gaussian blur
+    switch (blurLevel)
+    {
+/*
+    case 0:
+        drawGaussian3x3(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
+        break;
+*/
+#ifdef TARGET_OS_MAC
+    case 0:
+        drawGaussian5x5(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
+        break;
+    case 1:
+        drawGaussian9x9(xdelta, ydelta, blurTexWidth, blurTexHeight, .3f);
+        break;
+#else
+    // Gamma correct: windows=(mac^1.8)^(1/2.2)
+    case 0:
+        drawGaussian5x5(xdelta, ydelta, blurTexWidth, blurTexHeight, 1.f);
+        break;
+    case 1:
+        drawGaussian9x9(xdelta, ydelta, blurTexWidth, blurTexHeight, .373f);
+        break;
+#endif
+    default:
+        break;
+    }
+
+    blurTextures[blurLevel]->bind();
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                     blurTexWidth, blurTexHeight, 0);
+
+    glDisable(GL_BLEND);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glPopAttrib();
+    sceneTexWScale = savedWScale;
+    sceneTexHScale = savedHScale;
+}
+
+void Renderer::renderToTexture(const Observer& observer,
+                               const Universe& universe,
+                               float faintestMagNight,
+                               const Selection& sel)
+{
+    if (sceneTexture == 0)
+        return;
+    glPushAttrib(GL_COLOR_BUFFER_BIT);
+
+    draw(observer, universe, faintestMagNight, sel);
+
+    glBindTexture(GL_TEXTURE_2D, sceneTexture);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0,
+                     sceneTexWidth, sceneTexHeight, 0);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glPopAttrib();
+}
+
+void Renderer::drawSceneTexture()
+{
+    if (sceneTexture == 0)
+        return;
+    glBindTexture(GL_TEXTURE_2D, sceneTexture);
+    glBegin(GL_QUADS);
+    drawBlendedVertices(0.0f, 0.0f, 1.0f);
+    glEnd();
+}
+
+void Renderer::drawBlendedVertices(float xdelta, float ydelta, float blend)
+{
+    glColor4f(1.0f, 1.0f, 1.0f, blend);
+    glTexCoord2i(0, 0); glVertex2f(xdelta,                ydelta);
+    glTexCoord2i(1, 0); glVertex2f(sceneTexWScale+xdelta, ydelta);
+    glTexCoord2i(1, 1); glVertex2f(sceneTexWScale+xdelta, sceneTexHScale+ydelta);
+    glTexCoord2i(0, 1); glVertex2f(xdelta,                sceneTexHScale+ydelta);
+}
+
+void Renderer::drawGaussian3x3(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend)
+{
+#ifdef USE_BLOOM_LISTS
+    if (gaussianLists[0] == 0)
+    {
+        gaussianLists[0] = glGenLists(1);
+        glNewList(gaussianLists[0], GL_COMPILE);
+#endif
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, 0.0f, blend);
+        drawBlendedVertices(-xdelta, 0.0f, 0.25f*blend);
+        drawBlendedVertices( xdelta, 0.0f, 0.20f*blend);
+        glEnd();
+
+        // Take result of horiz pass and apply vertical pass
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                         width, height, 0);
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, -ydelta, 0.429f);
+        drawBlendedVertices(0.0f,  ydelta, 0.300f);
+        glEnd();
+#ifdef USE_BLOOM_LISTS
+        glEndList();
+    }
+    glCallList(gaussianLists[0]);
+#endif
+}
+
+void Renderer::drawGaussian5x5(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend)
+{
+#ifdef USE_BLOOM_LISTS
+    if (gaussianLists[1] == 0)
+    {
+        gaussianLists[1] = glGenLists(1);
+        glNewList(gaussianLists[1], GL_COMPILE);
+#endif
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, 0.0f, blend);
+        drawBlendedVertices(-xdelta,      0.0f, 0.475f*blend);
+        drawBlendedVertices( xdelta,      0.0f, 0.475f*blend);
+        drawBlendedVertices(-2.0f*xdelta, 0.0f, 0.075f*blend);
+        drawBlendedVertices( 2.0f*xdelta, 0.0f, 0.075f*blend);
+        glEnd();
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                         width, height, 0);
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, -ydelta,      0.475f);
+        drawBlendedVertices(0.0f,  ydelta,      0.475f);
+        drawBlendedVertices(0.0f, -2.0f*ydelta, 0.075f);
+        drawBlendedVertices(0.0f,  2.0f*ydelta, 0.075f);
+        glEnd();
+#ifdef USE_BLOOM_LISTS
+        glEndList();
+    }
+    glCallList(gaussianLists[1]);
+#endif
+}
+
+void Renderer::drawGaussian9x9(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend)
+{
+#ifdef USE_BLOOM_LISTS
+    if (gaussianLists[2] == 0)
+    {
+        gaussianLists[2] = glGenLists(1);
+        glNewList(gaussianLists[2], GL_COMPILE);
+#endif
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, 0.0f, blend);
+        drawBlendedVertices(-xdelta,      0.0f, 0.632f*blend);
+        drawBlendedVertices( xdelta,      0.0f, 0.632f*blend);
+        drawBlendedVertices(-2.0f*xdelta, 0.0f, 0.159f*blend);
+        drawBlendedVertices( 2.0f*xdelta, 0.0f, 0.159f*blend);
+        drawBlendedVertices(-3.0f*xdelta, 0.0f, 0.016f*blend);
+        drawBlendedVertices( 3.0f*xdelta, 0.0f, 0.016f*blend);
+        glEnd();
+
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, blurFormat, 0, 0,
+                         width, height, 0);
+        glBegin(GL_QUADS);
+        drawBlendedVertices(0.0f, -ydelta,      0.632f);
+        drawBlendedVertices(0.0f,  ydelta,      0.632f);
+        drawBlendedVertices(0.0f, -2.0f*ydelta, 0.159f);
+        drawBlendedVertices(0.0f,  2.0f*ydelta, 0.159f);
+        drawBlendedVertices(0.0f, -3.0f*ydelta, 0.016f);
+        drawBlendedVertices(0.0f,  3.0f*ydelta, 0.016f);
+        glEnd();
+#ifdef USE_BLOOM_LISTS
+        glEndList();
+    }
+    glCallList(gaussianLists[2]);
+#endif
+}
+
+void Renderer::drawBlur()
+{
+    blurTextures[0]->bind();
+    glBegin(GL_QUADS);
+    drawBlendedVertices(0.0f, 0.0f, 1.0f);
+    glEnd();
+    blurTextures[1]->bind();
+    glBegin(GL_QUADS);
+    drawBlendedVertices(0.0f, 0.0f, 1.0f);
+    glEnd();
+}
+
+bool Renderer::getBloomEnabled()
+{
+    return bloomEnabled;
+}
+
+void Renderer::setBloomEnabled(bool aBloomEnabled)
+{
+    bloomEnabled = aBloomEnabled;
+}
+
+void Renderer::increaseBrightness()
+{
+    brightPlus += 1.0f;
+}
+
+void Renderer::decreaseBrightness()
+{
+    brightPlus -= 1.0f;
+}
+
+float Renderer::getBrightness()
+{
+    return brightPlus;
+}
+#endif // USE_HDR
+
 void Renderer::render(const Observer& observer,
                       const Universe& universe,
                       float faintestMagNight,
                       const Selection& sel)
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+#ifdef USE_HDR
+    renderToTexture(observer, universe, faintestMagNight, sel);
+
+    //------------- Post processing from here ------------//
+    glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho( 0.0, 1.0, 0.0, 1.0, -1.0, 1.0 );
+    glMatrixMode (GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    if (bloomEnabled)
+    {
+        renderToBlurTexture(0);
+        renderToBlurTexture(1);
+//        renderToBlurTexture(2);
+    }
+
+    drawSceneTexture();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+#ifdef HDR_COMPRESS
+    // Assume luminance 1.0 mapped to 128 previously
+    // Compositing a 2nd copy doubles 128->255
+    drawSceneTexture();
+#endif
+
+    if (bloomEnabled)
+    {
+        drawBlur();
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glPopAttrib();
+#else
+    draw(observer, universe, faintestMagNight, sel);
+#endif
+}
+
+void Renderer::draw(const Observer& observer,
+                    const Universe& universe,
+                    float faintestMagNight,
+                    const Selection& sel)
 {
     // Get the observer's time
     double now = observer.getTime();
@@ -2128,8 +2784,10 @@ void Renderer::render(const Observer& observer,
     setFieldOfView(radToDeg(observer.getFOV()));
     pixelSize = calcPixelSize(fov, (float) windowHeight);
     // Set up the projection we'll use for rendering stars.
+#if 0
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+#endif
     gluPerspective(fov,
                    (float) windowWidth / (float) windowHeight,
                    NEAR_DIST, FAR_DIST);
@@ -2203,6 +2861,14 @@ void Renderer::render(const Observer& observer,
     }
 
     faintestPlanetMag = faintestMag;
+#ifdef USE_HDR
+    float maxBodyMagPrev = saturationMag;
+    maxBodyMag = min(maxBodyMag, saturationMag);
+    vector<RenderListEntry>::iterator closestBody;
+    const Star *brightestStar = NULL;
+    bool foundClosestBody   = false;
+    bool foundBrightestStar = false;
+#endif
 
     if (renderFlags & ShowPlanets)
     {
@@ -2259,6 +2925,129 @@ void Renderer::render(const Observer& observer,
         starTex->bind();
     }
 
+#ifdef USE_HDR
+    Mat3f viewMat = conjugate(observer.getOrientationf()).toMatrix3();
+    float maxSpan = (float) sqrt(square((float) windowWidth) +
+                                 square((float) windowHeight));
+    float nearZcoeff = (float) cos(degToRad(fov / 2)) *
+        ((float) windowHeight / maxSpan);
+
+    // Remove objects from the render list that lie completely outside the
+    // view frustum.
+    vector<RenderListEntry>::iterator notCulled = renderList.begin();
+    for (vector<RenderListEntry>::iterator iter = renderList.begin();
+         iter != renderList.end(); iter++)
+    {
+        Point3f center = iter->position * viewMat;
+
+        bool convex = true;
+        float radius = 1.0f;
+        float cullRadius = 1.0f;
+        float cloudHeight = 0.0f;
+
+        switch (iter->renderableType)
+        {
+        case RenderListEntry::RenderableStar:
+            continue;
+
+        case RenderListEntry::RenderableCometTail:
+            radius = iter->radius;
+            cullRadius = radius;
+            convex = false;
+            break;
+
+        case RenderListEntry::RenderableReferenceMark:
+            radius = iter->radius;
+            cullRadius = radius;
+            convex = false;
+            break;
+
+        case RenderListEntry::RenderableBody:
+        default:
+            radius = iter->body->getBoundingRadius();
+            if (iter->body->getRings() != NULL)
+            {
+                radius = iter->body->getRings()->outerRadius;
+                convex = false;
+            }
+
+            if (iter->body->getModel() != InvalidResource)
+                convex = false;
+
+            cullRadius = radius;
+            if (iter->body->getAtmosphere() != NULL)
+            {
+                cullRadius += iter->body->getAtmosphere()->height;
+                cloudHeight = max(iter->body->getAtmosphere()->cloudHeight,
+                                  iter->body->getAtmosphere()->mieScaleHeight * (float) -log(AtmosphereExtinctionThreshold));
+            }
+            break;
+        }
+
+        // Test the object's bounding sphere against the view frustum
+        if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
+        {
+            float nearZ = center.distanceFromOrigin() - radius;
+            nearZ = -nearZ * nearZcoeff;
+            
+            if (nearZ > -MinNearPlaneDistance)
+                iter->nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
+            else
+                iter->nearZ = nearZ;
+            
+            if (!convex)
+            {
+                iter->farZ = center.z - radius;
+                if (iter->farZ / iter->nearZ > MaxFarNearRatio * 0.5f)
+                    iter->nearZ = iter->farZ / (MaxFarNearRatio * 0.5f);
+            }
+            else
+            {
+                // Make the far plane as close as possible
+                float d = center.distanceFromOrigin();
+                
+                // Account for ellipsoidal objects
+                float eradius = radius;
+                if (iter->body != NULL)
+                {
+                    Vec3f semiAxes = iter->body->getSemiAxes();
+                    float minSemiAxis = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
+                    eradius *= minSemiAxis / radius;
+                }
+
+                if (d > eradius)
+                {
+                    iter->farZ = iter->centerZ - iter->radius;
+                }
+                else
+                {
+                    // We're inside the bounding sphere (and, if the planet
+                    // is spherical, inside the planet.)
+                    iter->farZ = iter->nearZ * 2.0f;
+                }
+                
+                if (cloudHeight > 0.0f)
+                {
+                    // If there's a cloud layer, we need to move the
+                    // far plane out so that the clouds aren't clipped
+                    float cloudLayerRadius = eradius + cloudHeight;
+                    iter->farZ -= (float) sqrt(square(cloudLayerRadius) -
+                                               square(eradius));
+                }
+            }
+            
+            *notCulled = *iter;
+            notCulled++;
+
+            maxBodyMag = min(maxBodyMag, iter->appMag);
+            foundClosestBody = true;
+        }
+    }
+
+    renderList.resize(notCulled - renderList.begin());
+    saturationMag = maxBodyMag;
+#endif // USE_HDR
+
     Color skyColor(0.0f, 0.0f, 0.0f);
 
     // Scan through the render list to see if we're inside a planetary
@@ -2308,6 +3097,12 @@ void Renderer::render(const Observer& observer,
                     Vec3f normal = Point3f(0.0f, 0.0f, 0.0f) - iter->position;
                     sunDir.normalize();
                     normal.normalize();
+#ifdef USE_HDR
+                    // Ignore magnitude of planet underneath when lighting atmosphere
+                    // Could be changed to simulate light pollution, etc
+                    maxBodyMag = maxBodyMagPrev;
+                    saturationMag = maxBodyMag;
+#endif
                     float illumination = Math<float>::clamp((sunDir * normal) + 0.2f);
 
                     float lightness = illumination * density;
@@ -2325,18 +3120,45 @@ void Renderer::render(const Observer& observer,
     // maintain a minimum range of six magnitudes between faintest visible
     // and saturation; this keeps stars from popping in or out as the sun
     // sets or rises.
+#ifdef USE_HDR
+    brightnessScale = 1.0f / (faintestMag -  saturationMag);
+#else
     if (faintestMag - saturationMag >= 6.0f)
         brightnessScale = 1.0f / (faintestMag -  saturationMag);
     else
         brightnessScale = 0.1667f;
+#endif
 
+#ifdef USE_HDR
+    exposurePrev = exposure;
+    float exposureNow = 1.f / (1.f+exp((faintestMag - saturationMag + DEFAULT_EXPOSURE)/2.f));
+    exposure = exposurePrev + (exposureNow - exposurePrev) * (1.f - exp(-1.f/(15.f * EXPOSURE_HALFLIFE)));
+    brightnessScale /= exposure;
+#endif
+
+#ifdef DEBUG_HDR_TONEMAP
+    HDR_LOG <<
+//        "brightnessScale = " << brightnessScale <<
+        "faint = "    << faintestMag << ", " <<
+        "sat = "      << saturationMag << ", " <<
+        "exposure = " << (exposure+brightPlus) << endl;
+#endif
+
+#ifdef HDR_COMPRESS
+    ambientColor = Color(ambientLightLevel*.5f, ambientLightLevel*.5f, ambientLightLevel*.5f);
+#else
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel);
+#endif
 
     // Create the ambient light source.  For realistic scenes in space, this
     // should be black.
     glAmbientLightColor(ambientColor);
 
+#ifdef USE_HDR
+    glClearColor(skyColor.red(), skyColor.green(), skyColor.blue(), 0.0f);
+#else
     glClearColor(skyColor.red(), skyColor.green(), skyColor.blue(), 1);
+#endif
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -2373,6 +3195,9 @@ void Renderer::render(const Observer& observer,
     glPushMatrix();
 
     // Render stars
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+#endif
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != NULL)
@@ -2382,6 +3207,10 @@ void Renderer::render(const Observer& observer,
         else
             renderStars(*universe.getStarCatalog(), faintestMag, observer);
     }
+
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+#endif
 
     glTranslatef(-observerPosLY.x, -observerPosLY.y, -observerPosLY.z);
 
@@ -2486,10 +3315,27 @@ void Renderer::render(const Observer& observer,
 
         // Remove objects from the render list that lie completely outside the
         // view frustum.
+#ifdef USE_HDR
+        maxBodyMag = maxBodyMagPrev;
+        float starMaxMag = maxBodyMagPrev;
+        notCulled = renderList.begin();
+#else
         vector<RenderListEntry>::iterator notCulled = renderList.begin();
+#endif
         for (vector<RenderListEntry>::iterator iter = renderList.begin();
              iter != renderList.end(); iter++)
         {
+#ifdef USE_HDR
+            switch (iter->renderableType)
+            {
+            case RenderListEntry::RenderableStar:
+                break;
+            default:
+                *notCulled = *iter;
+                notCulled++;
+                continue;
+            }
+#endif
             Point3f center = iter->position * viewMat;
 
             bool convex = true;
@@ -2497,6 +3343,7 @@ void Renderer::render(const Observer& observer,
             float cullRadius = 1.0f;
             float cloudHeight = 0.0f;
 
+#ifndef USE_HDR
             switch (iter->renderableType)
             {
             case RenderListEntry::RenderableStar:
@@ -2539,17 +3386,24 @@ void Renderer::render(const Observer& observer,
             default:
                 break;
             }
+#else
+            radius = iter->star->getRadius();
+            cullRadius = radius * (1.0f + CoronaHeight);
+#endif // USE_HDR
 
             // Test the object's bounding sphere against the view frustum
             if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
             {
                 float nearZ = center.distanceFromOrigin() - radius;
+#ifdef USE_HDR
+                nearZ = -nearZ * nearZcoeff;
+#else
                 float maxSpan = (float) sqrt(square((float) windowWidth) +
                                              square((float) windowHeight));
 
                 nearZ = -nearZ * (float) cos(degToRad(fov / 2)) *
                     ((float) windowHeight / maxSpan);
-
+#endif
                 if (nearZ > -MinNearPlaneDistance)
                     iter->nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
                 else
@@ -2598,6 +3452,15 @@ void Renderer::render(const Observer& observer,
 
                 *notCulled = *iter;
                 notCulled++;
+#ifdef USE_HDR
+                if (iter->discSizeInPixels > 1.0f &&
+                    iter->appMag < starMaxMag)
+                {
+                    starMaxMag = iter->appMag;
+                    brightestStar = iter->star;
+                    foundBrightestStar = true;
+                }
+#endif
             }
         }
 
@@ -2618,6 +3481,56 @@ void Renderer::render(const Observer& observer,
         sort(orbitPathList.begin(), orbitPathList.end());
 
         int nEntries = renderList.size();
+
+#ifdef USE_HDR
+        // Compute 1 eclipse between eye - closest body - brightest star
+        // This prevents an eclipsed star from increasing exposure
+        bool eyeNotEclipsed = true;
+        closestBody = renderList.empty() ? renderList.end() : renderList.begin();
+        if (foundClosestBody &&
+            closestBody != renderList.end() &&
+            closestBody->renderableType == RenderListEntry::RenderableBody &&
+            closestBody->body && brightestStar)
+        {
+            const Body *body = closestBody->body;
+            double scale = astro::microLightYearsToKilometers(1.0);
+            Point3d posBody = body->getAstrocentricPosition(now);
+            Point3d posStar;
+            Point3d posEye = astrocentricPosition(observer.getPosition(), *brightestStar, now);
+
+            if (body->getSystem() &&
+                body->getSystem()->getStar() &&
+                body->getSystem()->getStar() != brightestStar)
+            {
+                UniversalCoord center = body->getSystem()->getStar()->getPosition(now);
+                Vec3d v = brightestStar->getPosition(now) - center;
+                posStar = Point3d(v.x, v.y, v.z);
+            }
+            else
+            {
+                posStar = brightestStar->getPosition(now);
+            }
+
+            posStar.x /= scale;
+            posStar.y /= scale;
+            posStar.z /= scale;
+            Vec3d lightToBodyDir = posBody - posStar;
+            Vec3d bodyToEyeDir = posEye - posBody;
+
+            if (lightToBodyDir * bodyToEyeDir > 0.0)
+            {
+                double dist = distance(posEye,
+                                       Ray3d(posBody, lightToBodyDir));
+                if (dist < body->getRadius())
+                    eyeNotEclipsed = false;
+            }
+        }
+
+        if (eyeNotEclipsed)
+        {
+            maxBodyMag = min(maxBodyMag, starMaxMag);
+        }
+#endif
 
 #define DEBUG_COALESCE 0
         // Since we're rendering objects of a huge range of sizes spread over
@@ -2832,7 +3745,11 @@ void Renderer::render(const Observer& observer,
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_DEPTH_TEST);
                 glDepthMask(GL_FALSE);
+#ifdef USE_HDR
+                glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+#else
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
                 if ((renderFlags & ShowSmoothLines) != 0)
                 {
                     enableSmoothLines();
@@ -3008,6 +3925,12 @@ void Renderer::renderBodyAsParticle(Point3f position,
                 fade = 1;
         }
 
+#ifdef USE_HDR
+        float fieldCorr = 2.0f * FOV/(fov + FOV);
+        float satPoint = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
+#else
+        float satPoint = saturationMag;
+#endif
         float a = (_faintestMag - appMag) * brightnessScale + brightnessBias;
         if (starStyle == ScaledDiscStars && a > 1.0f)
             discSize = min(discSize * (2.0f * a - 1.0f), maxDiscSize);
@@ -3044,10 +3967,10 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // If the object is brighter than magnitude 1, add a halo around it to
         // make it appear more brilliant.  This is a hack to compensate for the
         // limited dynamic range of monitors.
-        if (useHalos && appMag < saturationMag)
+        if (useHalos && appMag < satPoint)
         {
             float dist = center.distanceFromOrigin();
-            float s    = dist * 0.001f * (3 - (appMag - saturationMag)) * 2;
+            float s    = dist * 0.001f * (3 - (appMag - satPoint)) * 2;
             if (s > size * 3)
                 size = s * 2.0f/(1.0f + FOV/fov);
             else
@@ -3057,7 +3980,7 @@ void Renderer::renderBodyAsParticle(Point3f position,
             if (size < realSize * 6)
                 size = realSize * 6;
 
-            a = GlareOpacity * clamp((appMag - saturationMag) * -0.8f);
+            a = GlareOpacity * clamp((appMag - satPoint) * -0.8f);
             gaussianGlareTex->bind();
             glColor(color, a);
             glBegin(GL_QUADS);
@@ -3103,7 +4026,13 @@ void Renderer::renderObjectAsPoint(Point3f position,
         float alpha = 1.0f;
         float fade = 1.0f;
         float size = BaseStarDiscSize;
+#ifdef USE_HDR
+        float fieldCorr = 2.0f * FOV/(fov + FOV);
+        float satPoint = saturationMagNight * (1.0f + fieldCorr * fieldCorr);
+        satPoint += brightPlus;
+#else
         float satPoint = _faintestMag - (1.0f - brightnessBias) / brightnessScale;
+#endif
 
         if (discSizeInPixels > maxDiscSize)
         {
@@ -3865,6 +4794,9 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             if (coloration != 0.0f)
                 color = (1.0f - coloration) * color + coloration * sunsetColor;
 
+#ifdef HDR_COMPRESS
+            brightness *= 0.5f;
+#endif
             Color(brightness * color.x,
                   brightness * color.y,
                   brightness * color.z,
@@ -4123,10 +5055,15 @@ static void setLightParameters_VP(VertexProcessor& vproc,
     Vec3f diffuseColor(materialDiffuse.red(),
                        materialDiffuse.green(),
                        materialDiffuse.blue());
+#ifdef HDR_COMPRESS
+    Vec3f specularColor(materialSpecular.red()   * 0.5f,
+                        materialSpecular.green() * 0.5f,
+                        materialSpecular.blue()  * 0.5f);
+#else
     Vec3f specularColor(materialSpecular.red(),
                         materialSpecular.green(),
                         materialSpecular.blue());
-
+#endif
     for (unsigned int i = 0; i < ls.nLights; i++)
     {
         const DirectionalLight& light = ls.lights[i];
@@ -4236,15 +5173,36 @@ static void renderSphereDefault(const RenderInfo& ri,
     if (ri.nightTex != NULL && ri.useTexEnvCombine)
     {
         ri.nightTex->bind();
+#ifdef USE_HDR
+#ifdef HDR_COMPRESS
+        Color nightColor(ri.color.red()   * 2.f,
+                         ri.color.green() * 2.f,
+                         ri.color.blue()  * 2.f,
+                         ri.nightLightScale);  // Modulate brightness using alpha
+#else
+        Color nightColor(ri.color.red(),
+                         ri.color.green(),
+                         ri.color.blue(),
+                         ri.nightLightScale);  // Modulate brightness using alpha
+#endif
+        glColor(nightColor);
+#endif
         setupNightTextureCombine();
         glEnable(GL_BLEND);
+#ifdef USE_HDR
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#else
         glBlendFunc(GL_ONE, GL_ONE);
+#endif
         glAmbientLightColor(Color::Black); // Disable ambient light
         g_lodSphere->render(context,
                             LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
                             frustum, ri.pixWidth,
                             ri.nightTex);
         glAmbientLightColor(ri.ambientColor);
+#ifdef USE_HDR
+        glColor(ri.color);
+#endif
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -4375,7 +5333,11 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     vproc->parameter(vp::EyePosition, ri.eyePos_obj);
     setLightParameters_VP(*vproc, ls, ri.color, ri.specularColor);
 
-    vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
+    Color ambient(ri.ambientColor * ri.color);
+#ifdef USE_HDR
+    ambient = ri.ambientColor;
+#endif
+    vproc->parameter(vp::AmbientColor, ambient);
     vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
 
     // Don't use a normal map if it's a dxt5nm map--only the GLSL path
@@ -4386,7 +5348,11 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     {
         // We don't yet handle the case where there's a bump map but no
         // base texture.
+#ifdef HDR_COMPRESS
+        vproc->use(vp::diffuseBumpHDR);
+#else
         vproc->use(vp::diffuseBump);
+#endif
         if (ri.ambientColor != Color::Black)
         {
             // If there's ambient light, we'll need to render in two passes:
@@ -4396,7 +5362,7 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
             // texture stages.
 
             // Render the base texture modulated by the ambient color
-            setupTexenvAmbient(ri.ambientColor);
+            setupTexenvAmbient(ambient);
             g_lodSphere->render(context,
                                 LODSphereMesh::TexCoords0 | LODSphereMesh::VertexProgParams,
                                 frustum, ri.pixWidth,
@@ -4468,17 +5434,68 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
     if (ri.nightTex != NULL)
     {
         ri.nightTex->bind();
+#ifdef USE_HDR
+        // Scale night light intensity
+#ifdef HDR_COMPRESS
+        Color nightColor0(ls.lights[0].color.red()  *ri.color.red()  *2.f,
+                          ls.lights[0].color.green()*ri.color.green()*2.f,
+                          ls.lights[0].color.blue() *ri.color.blue() *2.f,
+                          ri.nightLightScale); // Modulate brightness with alpha
+#else
+        Color nightColor0(ls.lights[0].color.red()  *ri.color.red(),
+                          ls.lights[0].color.green()*ri.color.green(),
+                          ls.lights[0].color.blue() *ri.color.blue(),
+                          ri.nightLightScale); // Modulate brightness with alpha
+#endif
+        vproc->parameter(vp::DiffuseColor0, nightColor0);
+#endif
         if (ls.nLights > 1)
+        {
+#ifdef USE_HDR
+#ifdef HDR_COMPRESS
+            Color nightColor1(ls.lights[1].color.red()  *ri.color.red()  *2.f,
+                              ls.lights[1].color.green()*ri.color.green()*2.f,
+                              ls.lights[1].color.blue() *ri.color.blue() *2.f,
+                              ri.nightLightScale);
+#else
+            Color nightColor1(ls.lights[1].color.red()  *ri.color.red(),
+                              ls.lights[1].color.green()*ri.color.green(),
+                              ls.lights[1].color.blue() *ri.color.blue(),
+                              ri.nightLightScale);
+#endif
+            vproc->parameter(vp::DiffuseColor0, nightColor1);
+#endif
+#ifdef HDR_COMPRESS
+            vproc->use(vp::nightLights_2lightHDR);
+#else
             vproc->use(vp::nightLights_2light);
+#endif
+        }
         else
+        {
+#ifdef HDR_COMPRESS
+            vproc->use(vp::nightLightsHDR);
+#else
             vproc->use(vp::nightLights);
+#endif
+        }
+#ifdef USE_HDR
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#else
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
+#endif
         g_lodSphere->render(context,
-                          LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
-                          frustum, ri.pixWidth,
-                          ri.nightTex);
+                            LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
+                            frustum, ri.pixWidth,
+                            ri.nightTex);
+#ifdef USE_HDR
+        vproc->parameter(vp::DiffuseColor0, ls.lights[0].color * ri.color);
+        if (ls.nLights > 1)
+            vproc->parameter(vp::DiffuseColor1, ls.lights[1].color * ri.color);
+#endif
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -4520,14 +5537,22 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
 
     // Set up the fog parameters if the haze density is non-zero
     float hazeDensity = ri.hazeColor.alpha();
+#ifdef HDR_COMPRESS
+    Color hazeColor(ri.hazeColor.red()   * 0.5f,
+                    ri.hazeColor.green() * 0.5f,
+                    ri.hazeColor.blue()  * 0.5f,
+                    hazeDensity);
+#else
+    Color hazeColor = ri.hazeColor;
+#endif
 
     if (hazeDensity > 0.0f && !buggyVertexProgramEmulation)
     {
         glEnable(GL_FOG);
         float fogColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        fogColor[0] = ri.hazeColor.red();
-        fogColor[1] = ri.hazeColor.green();
-        fogColor[2] = ri.hazeColor.blue();
+        fogColor[0] = hazeColor.red();
+        fogColor[1] = hazeColor.green();
+        fogColor[2] = hazeColor.blue();
         glFogfv(GL_FOG_COLOR, fogColor);
         glFogi(GL_FOG_MODE, GL_LINEAR);
         glFogf(GL_FOG_START, 0.0);
@@ -4541,7 +5566,7 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
 
     vproc->parameter(vp::SpecularExponent, 0.0f, 1.0f, 0.5f, ri.specularPower);
     vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
-    vproc->parameter(vp::HazeColor, ri.hazeColor);
+    vproc->parameter(vp::HazeColor, hazeColor);
 
     // Don't use a normal map if it's a dxt5nm map--only the GLSL path
     // can handle them.
@@ -4549,9 +5574,21 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
         (ri.bumpTex->getFormatOptions() & Texture::DXT5NormalMap) == 0)
     {
         if (hazeDensity > 0.0f)
+        {
+#ifdef HDR_COMPRESS
+            vproc->use(vp::diffuseBumpHazeHDR);
+#else
             vproc->use(vp::diffuseBumpHaze);
+#endif
+        }
         else
+        {
+#ifdef HDR_COMPRESS
+            vproc->use(vp::diffuseBumpHDR);
+#else
             vproc->use(vp::diffuseBump);
+#endif
+        }
         SetupCombinersDecalAndBumpMap(*(ri.bumpTex),
                                       ri.ambientColor * ri.color,
                                       ri.sunColor * ri.color);
@@ -4635,17 +5672,66 @@ static void renderSphere_Combiners_VP(const RenderInfo& ri,
     if (ri.nightTex != NULL)
     {
         ri.nightTex->bind();
+#ifdef USE_HDR
+        // Scale night light intensity
+#ifdef HDR_COMPRESS
+        Color nightColor0(ls.lights[0].color.red()  *ri.color.red()  *2.f,
+                          ls.lights[0].color.green()*ri.color.green()*2.f,
+                          ls.lights[0].color.blue() *ri.color.blue() *2.f,
+                          ri.nightLightScale); // Modulate brightness with alpha
+#else
+        Color nightColor0(ls.lights[0].color.red()  *ri.color.red(),
+                          ls.lights[0].color.green()*ri.color.green(),
+                          ls.lights[0].color.blue() *ri.color.blue(),
+                          ri.nightLightScale); // Modulate brightness with alpha
+#endif
+        vproc->parameter(vp::DiffuseColor0, nightColor0);
+#endif
         if (ls.nLights > 1)
+        {
+#ifdef USE_HDR
+#ifdef HDR_COMPRESS
+            Color nightColor1(ls.lights[1].color.red()  *ri.color.red()  *2.f,
+                              ls.lights[1].color.green()*ri.color.green()*2.f,
+                              ls.lights[1].color.blue() *ri.color.blue() *2.f,
+                              ri.nightLightScale);
+#else
+            Color nightColor1(ls.lights[1].color.red()  *ri.color.red(),
+                              ls.lights[1].color.green()*ri.color.green(),
+                              ls.lights[1].color.blue() *ri.color.blue(),
+                              ri.nightLightScale);
+#endif
+            vproc->parameter(vp::DiffuseColor0, nightColor1);
+#endif
+#ifdef HDR_COMPRESS
+            vproc->use(vp::nightLights_2lightHDR);
+#else
             vproc->use(vp::nightLights_2light);
+#endif
+        }
         else
+        {
+#ifdef HDR_COMPRESS
+            vproc->use(vp::nightLightsHDR);
+#else
             vproc->use(vp::nightLights);
+#endif
+        }
+#ifdef USE_HDR
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#else
         setupNightTextureCombine();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
+#endif
         g_lodSphere->render(context,
                             LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
                             frustum, ri.pixWidth,
                             ri.nightTex);
+#ifdef USE_HDR
+        vproc->parameter(vp::DiffuseColor0, ri.sunColor * ri.color);
+#endif
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
 
@@ -5539,6 +6625,9 @@ void Renderer::renderLocations(const vector<Location*>& locations,
         modelview[15] = 1.0;
     }
 
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+#endif
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     font[FontNormal]->bind();
@@ -5618,7 +6707,23 @@ void Renderer::renderLocations(const vector<Location*>& locations,
                         glTranslatef((int) winX + PixelOffset,
                                      (int) winY + PixelOffset,
                                      0.0f);
+#ifdef USE_HDR
+                        glPushMatrix();
+#endif
                         font[FontNormal]->render((*iter)->getName(true));
+#ifdef USE_HDR
+                        glPopMatrix();
+                        // Write black alpha for glyphs to prevent inclusion in
+                        // post processing steps (bloom, etc)
+                        // TODO: This should be done when loading the font
+                        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                        font[FontNormal]->render((*iter)->getName(true));
+#endif
+#ifdef USE_HDR
+                        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+                        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
                         glPopMatrix();
                     }
                 }
@@ -5630,6 +6735,9 @@ void Renderer::renderLocations(const vector<Location*>& locations,
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+#endif
 }
 
 
@@ -5650,12 +6758,20 @@ setupObjectLighting(const vector<LightSource>& suns,
                     const Quatf& objOrientation,
                     const Vec3f& objScale,
                     const Point3f& objPosition_eye,
+#ifdef USE_HDR
+                    const float faintestMag,
+                    const float saturationMag,
+                    const float appMag,
+#endif
                     LightingState& ls)
 {
     unsigned int nLights = min(MaxLights, (unsigned int) suns.size());
     if (nLights == 0)
         return;
 
+#ifdef USE_HDR
+    float exposureFactor = (faintestMag - appMag)/(faintestMag - saturationMag + 0.001f);
+#endif
     Point3d objPosition = body.getAstrocentricPosition(tdb);  
 
     unsigned int i;
@@ -5751,8 +6867,12 @@ setupObjectLighting(const vector<LightSource>& suns,
     ls.nLights = 0;
     for (i = 0; i < nLights && ls.lights[i].irradiance > minVisibleIrradiance; i++)
     {
+#ifdef USE_HDR
+        ls.lights[i].irradiance *= exposureFactor / totalIrradiance;
+#else
         ls.lights[i].irradiance =
             (float) pow(ls.lights[i].irradiance / totalIrradiance, gamma);
+#endif
 
         // Compute the direction of the light in object space
         ls.lights[i].direction_obj = ls.lights[i].direction_eye * m;
@@ -5902,6 +7022,9 @@ void Renderer::renderObject(Point3f pos,
     ri.specularPower = obj.surface->specularPower;
     ri.useTexEnvCombine = context->getRenderPath() != GLContext::GLPath_Basic;
     ri.lunarLambert = obj.surface->lunarLambert;
+#ifdef USE_HDR
+    ri.nightLightScale = obj.surface->nightLightRadiance * exposure * 1.e5f * .5f;
+#endif
 
     // See if the surface should be lit
     bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
@@ -6184,7 +7307,7 @@ void Renderer::renderObject(Point3f pos,
                                           obj.orientation,
                                           semiAxes,
                                           ri.sunDir_eye,
-                                          ri.ambientColor,
+                                          ri.ambientColor * ri.color,
                                           thicknessInPixels,
                                           lit);
                 glEnable(GL_TEXTURE_2D);
@@ -6222,7 +7345,11 @@ void Renderer::renderObject(Point3f pos,
             cloudTex->bind();
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#ifdef HDR_COMPRESS
+            glColor4f(0.5f, 0.5f, 0.5f, 1);
+#else
             glColor4f(1, 1, 1, 1);
+#endif
 
             // Cloud layers can be trouble for the depth buffer, since they tend
             // to be very close to the surface of a planet relative to the radius
@@ -6527,6 +7654,11 @@ void Renderer::renderPlanet(Body& body,
                             rp.orientation,
                             rp.semiAxes * rp.radius,
                             pos,
+#ifdef USE_HDR
+                            faintestMag,
+                            DEFAULT_EXPOSURE + brightPlus, //exposure + brightPlus,
+                            appMag,
+#endif
                             lights);
         assert(lights.nLights < MaxLights);
 
@@ -6638,6 +7770,9 @@ void Renderer::renderPlanet(Body& body,
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+#endif
 
     if (body.isVisibleAsPoint())
     {
@@ -6664,6 +7799,9 @@ void Renderer::renderPlanet(Body& body,
                                  false);
         }
     }
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+#endif
 }
 
 
@@ -6708,6 +7846,7 @@ void Renderer::renderStar(const Star& star,
         rp.semiAxes = star.getEllipsoidSemiAxes();
         rp.model = star.getModel();
 
+#ifndef USE_HDR
         Atmosphere atmosphere;
         Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
         atmosphere.height = radius * CoronaHeight;
@@ -6719,6 +7858,7 @@ void Renderer::renderStar(const Star& star,
         if (rp.model == InvalidResource)
             rp.atmosphere = &atmosphere;
         else
+#endif
             rp.atmosphere = NULL;
 
         Quatd q = star.getRotationModel()->orientationAtTime(now);
@@ -6731,9 +7871,14 @@ void Renderer::renderStar(const Star& star,
 
     glEnable(GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+#endif
 
+#ifndef USE_HDR
     if (useNewStarRendering)
     {
+#endif
         renderObjectAsPoint(pos,
                             star.getRadius(),
                             appMag,
@@ -6742,6 +7887,7 @@ void Renderer::renderStar(const Star& star,
                             color,
                             cameraOrientation,
                             true, true);
+#ifndef USE_HDR
     }
     else
     {
@@ -6754,6 +7900,10 @@ void Renderer::renderStar(const Star& star,
                              (nearPlaneDistance + farPlaneDistance) / 2.0f,
                              true);
     }
+#endif
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+#endif
 }
 
 
@@ -7545,6 +8695,9 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     float faintestMag;
     float faintestMagNight;
     float saturationMag;
+#ifdef USE_HDR
+    float exposure;
+#endif
     float brightnessScale;
     float brightnessBias;
     float distanceLimit;
@@ -7569,6 +8722,9 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
 template <class OBJ, class PREC>
 ObjectRenderer<OBJ, PREC>::ObjectRenderer(const PREC _distanceLimit) :
     distanceLimit((float) _distanceLimit),
+#ifdef USE_HDR
+    exposure     (0.0f),
+#endif
     nRendered    (0),
     nClose       (0),
     nBright      (0),
@@ -7602,6 +8758,16 @@ class StarRenderer : public ObjectRenderer<Star, float>
     float cosFOV;
 
     const ColorTemperatureTable* colorTemp;
+#ifdef DEBUG_HDR_ADAPT
+    float minMag;
+    float maxMag;
+    float minAlpha;
+    float maxAlpha;
+    float maxSize;
+    float above;
+    unsigned long countAboveN;
+    unsigned long total;
+#endif
 };
 
 
@@ -7633,7 +8799,14 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
     if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f || hasOrbit)
     {
+#ifdef HDR_COMPRESS
+        Color starColorFull = colorTemp->lookupColor(star.getTemperature());
+        Color starColor(starColorFull.red()   * 0.5f,
+                        starColorFull.green() * 0.5f,
+                        starColorFull.blue()  * 0.5f);
+#else
         Color starColor = colorTemp->lookupColor(star.getTemperature());
+#endif
         float renderDistance = distance;
         float s = renderDistance * size;
         float discSizeInPixels = 0.0f;
@@ -7701,7 +8874,22 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > MaxSolarSystemSize)
         {
+#ifdef USE_HDR
+            float alpha = exposure*(faintestMag - appMag)/(faintestMag - saturationMag + 0.001f);
+#else
             float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
+#endif
+#ifdef DEBUG_HDR_ADAPT
+            minMag = max(minMag, appMag);
+            maxMag = min(maxMag, appMag);
+            minAlpha = min(minAlpha, alpha);
+            maxAlpha = max(maxAlpha, alpha);
+            ++total;
+            if (alpha > above)
+            {
+                ++countAboveN;
+            }
+#endif
             float pointSize;
 
             if (useScaledDiscs)
@@ -7722,6 +8910,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             {
                 alpha = clamp(alpha);
                 pointSize = size;
+#ifdef DEBUG_HDR_ADAPT
+                maxSize = max(maxSize, pointSize);
+#endif
             }
 
             if (starPrimitive == GL_POINTS)
@@ -7818,6 +9009,16 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     float cosFOV;
 
     const ColorTemperatureTable* colorTemp;
+#ifdef DEBUG_HDR_ADAPT
+    float minMag;
+    float maxMag;
+    float minAlpha;
+    float maxAlpha;
+    float maxSize;
+    float above;
+    unsigned long countAboveN;
+    unsigned long total;
+#endif
 };
 
 
@@ -7855,7 +9056,14 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
     // cost of a normalize per star.
     if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f || hasOrbit)
     {
+#ifdef HDR_COMPRESS
+        Color starColorFull = colorTemp->lookupColor(star.getTemperature());
+        Color starColor(starColorFull.red()   * 0.5f,
+                        starColorFull.green() * 0.5f,
+                        starColorFull.blue()  * 0.5f);
+#else
         Color starColor = colorTemp->lookupColor(star.getTemperature());
+#endif
         float renderDistance = distance;
         /*float s = renderDistance * size;      Unused*/
         float discSizeInPixels = 0.0f;
@@ -7923,8 +9131,24 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > MaxSolarSystemSize)
         {
+#ifdef USE_HDR
+            float satPoint = saturationMag;
+            float alpha = exposure*(faintestMag - appMag)/(faintestMag - saturationMag + 0.001f);
+#else
             float satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale; // TODO: precompute this value
             float alpha = (faintestMag - appMag) * brightnessScale + brightnessBias;
+#endif
+#ifdef DEBUG_HDR_ADAPT
+            minMag = max(minMag, appMag);
+            maxMag = min(maxMag, appMag);
+            minAlpha = min(minAlpha, alpha);
+            maxAlpha = max(maxAlpha, alpha);
+            ++total;
+            if (alpha > above)
+            {
+                ++countAboveN;
+            }
+#endif
 
             if (useScaledDiscs)
             {
@@ -7956,6 +9180,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     float discScale = min(100.0f, satPoint - appMag + 2.0f);
                     float glareAlpha = min(GlareOpacity, (discScale - 2.0f) / 4.0f);
                     glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), 2.0f * discScale * size);
+#ifdef DEBUG_HDR_ADAPT
+                    maxSize = max(maxSize, 2.0f * discScale * size);
+#endif
                 }
                 starVertexBuffer->addStar(relPos, Color(starColor, alpha), size);
             }
@@ -8033,6 +9260,19 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.faintestMag      = faintestMag;
     starRenderer.faintestMagNight = faintestMagNight;
     starRenderer.saturationMag    = saturationMag;
+#ifdef USE_HDR
+    starRenderer.exposure         = exposure + brightPlus;
+#endif
+#ifdef DEBUG_HDR_ADAPT
+    starRenderer.minMag = -100.f;
+    starRenderer.maxMag =  100.f;
+    starRenderer.minAlpha = 1.f;
+    starRenderer.maxAlpha = 0.f;
+    starRenderer.maxSize  = 0.f;
+    starRenderer.above    = 1.f;
+    starRenderer.countAboveN = 0L;
+    starRenderer.total       = 0L;
+#endif
     starRenderer.distanceLimit    = distanceLimit;
     starRenderer.labelMode        = labelMode;
 
@@ -8088,6 +9328,13 @@ void Renderer::renderStars(const StarDatabase& starDB,
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestMagNight);
+#ifdef DEBUG_HDR_ADAPT
+  HDR_LOG <<
+      "* minMag = "    << starRenderer.minMag << ", " <<
+      "maxMag = "      << starRenderer.maxMag << ", " <<
+      "percent above " << starRenderer.above << " = " <<
+      (100.0*(double)starRenderer.countAboveN/(double)starRenderer.total) << endl;
+#endif
 
     if (starRenderer.starPrimitive == GL_POINTS)
         starRenderer.pointStarVertexBuffer->finish();
@@ -8124,6 +9371,19 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.faintestMag       = faintestMag;
     starRenderer.faintestMagNight  = faintestMagNight;
     starRenderer.saturationMag     = saturationMag;
+#ifdef USE_HDR
+    starRenderer.exposure          = exposure + brightPlus;
+#endif
+#ifdef DEBUG_HDR_ADAPT
+    starRenderer.minMag = -100.f;
+    starRenderer.maxMag =  100.f;
+    starRenderer.minAlpha = 1.f;
+    starRenderer.maxAlpha = 0.f;
+    starRenderer.maxSize  = 0.f;
+    starRenderer.above    = 1.0f;
+    starRenderer.countAboveN = 0L;
+    starRenderer.total       = 0L;
+#endif
     starRenderer.distanceLimit     = distanceLimit;
     starRenderer.labelMode         = labelMode;
 
@@ -8244,6 +9504,9 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             	distanceToDSO = 0;
             double brightness = (distanceToDSO  >= pc10)? a - b * appMag: r + close;
             brightness = 2.3 * brightness * (faintestMag - 4.75)/renderer->getFaintestAM45deg();
+#ifdef USE_HDR
+            brightness *= exposure;
+#endif
             if (brightness < 0.0)
                 brightness = 0.0;
 
@@ -8375,6 +9638,9 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     dsoRenderer.faintestMag      = faintestMag;
     dsoRenderer.faintestMagNight = faintestMagNight;
     dsoRenderer.saturationMag    = saturationMag;
+#ifdef USE_HDR
+    dsoRenderer.exposure         = exposure + brightPlus;
+#endif
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
     dsoRenderer.wWidth           = windowWidth;
@@ -8585,6 +9851,9 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
     if ((renderFlags & ShowSmoothLines) != 0)
         enableSmoothLines();
     
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+#endif
     glEnable(GL_TEXTURE_2D);
     font[fs]->bind();
     glEnable(GL_BLEND);
@@ -8608,7 +9877,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
         {
             const Marker& marker = *annotations[i].marker;
 
-            glColor(marker.getColor());                        
+            glColor(marker.getColor());
             glTranslatef((GLfloat) (int) annotations[i].position.x,
                          (GLfloat) (int) annotations[i].position.y, 0.0f);
 
@@ -8650,7 +9919,10 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
-    
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+#endif
+
     if ((renderFlags & ShowSmoothLines) != 0)
         disableSmoothLines();
 }

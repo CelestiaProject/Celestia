@@ -41,6 +41,12 @@ unsigned int vp::specular_2light = 0;
 unsigned int vp::nightLights_2light = 0;
 unsigned int vp::ellipticalGalaxy = 0;
 unsigned int vp::starDisc = 0;
+#ifdef HDR_COMPRESS
+unsigned int vp::diffuseBumpHDR = 0;
+unsigned int vp::diffuseBumpHazeHDR = 0;
+unsigned int vp::nightLightsHDR = 0;
+unsigned int vp::nightLights_2lightHDR = 0;
+#endif
 
 
 class VertexProcessorNV : public VertexProcessor
@@ -279,6 +285,16 @@ VertexProcessor* vp::initARB()
         return NULL;
     if (!LoadARBVertexProgram("shaders/star_arb.vp", starDisc))
         return NULL;
+#ifdef HDR_COMPRESS
+    if (!LoadARBVertexProgram("shaders/bumpdiffuse_arb_hdr.vp", diffuseBumpHDR))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/bumphaze_arb_hdr.vp", diffuseBumpHazeHDR))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/night_arb_hdr.vp", nightLightsHDR))
+        return NULL;
+    if (!LoadARBVertexProgram("shaders/night2_arb_hdr.vp", nightLights_2lightHDR))
+        return NULL;
+#endif
 
     // Load vertex programs that are only required with fragment programs
     if (ExtensionSupported("GL_NV_fragment_program") ||

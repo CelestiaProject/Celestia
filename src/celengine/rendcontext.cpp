@@ -244,10 +244,17 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 
         if (useNormals || !lightingEnabled)
         {
+#ifdef HDR_COMPRESS
+            glColor4f(m.diffuse.red()   * 0.5f,
+                      m.diffuse.green() * 0.5f,
+                      m.diffuse.blue()  * 0.5f,
+                      m.opacity);
+#else
             glColor4f(m.diffuse.red(),
                       m.diffuse.green(),
                       m.diffuse.blue(),
                       m.opacity);
+#endif
 
             if (m.specular == Color::Black)
             {
@@ -288,10 +295,17 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
             glMaterialfv(GL_FRONT, GL_SPECULAR, matBlack);
             glMaterialfv(GL_FRONT, GL_SHININESS, &zero);
             {
+#ifdef HDR_COMPRESS
+                float matEmissive[4] = { m.emissive.red() + m.diffuse.red() * 0.5f,
+                                         m.emissive.green() + m.diffuse.green() * 0.5f,
+                                         m.emissive.blue() + m.diffuse.blue() * 0.5f,
+                                         m.opacity };
+#else
                 float matEmissive[4] = { m.emissive.red() + m.diffuse.red(),
                                          m.emissive.green() + m.diffuse.green(),
                                          m.emissive.blue() + m.diffuse.blue(),
                                          m.opacity };
+#endif
                 glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
             }
         }
@@ -633,7 +647,11 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     }
 
     // setLightParameters() expects opacity in the alpha channel of the diffuse color
+#ifdef HDR_COMPRESS
+    Color diffuse(m.diffuse.red() * 0.5f, m.diffuse.green() * 0.5f, m.diffuse.blue() * 0.5f, m.opacity);
+#else
     Color diffuse(m.diffuse.red(), m.diffuse.green(), m.diffuse.blue(), m.opacity);
+#endif
 
     prog->setLightParameters(lightingState, diffuse, m.specular, m.emissive);
 
@@ -814,9 +832,15 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
         textures[i]->bind();
     }
 
+#ifdef HDR_COMPRESS
+    prog->lights[0].diffuse = Vec3f(m.diffuse.red()   * 0.5f,
+                                    m.diffuse.green() * 0.5f,
+                                    m.diffuse.blue()  * 0.5f);
+#else
     prog->lights[0].diffuse = Vec3f(m.diffuse.red(),
                                     m.diffuse.green(),
                                     m.diffuse.blue());
+#endif
     prog->opacity = m.opacity;
 
     if ((shaderProps.texUsage & ShaderProperties::PointSprite) != 0)

@@ -24,13 +24,21 @@ struct RenderInfo
     Point3f eyePos_obj;
     Color sunColor;
     Color ambientColor;
+#ifdef USE_HDR
+    float nightLightScale;
+#endif
     float lunarLambert;
     Quatf orientation;
     float pixWidth;
     float pointScale;
     bool useTexEnvCombine;
 
-    RenderInfo() : color(1.0f, 1.0f, 1.0f),
+    RenderInfo() :
+#ifdef HDR_COMPRESS
+                   color(0.5f, 0.5f, 0.5f),
+#else
+                   color(1.0f, 1.0f, 1.0f),
+#endif
                    baseTex(NULL),
                    bumpTex(NULL),
                    nightTex(NULL),
@@ -45,6 +53,9 @@ struct RenderInfo
                    eyePos_obj(0.0f, 0.0f, 0.0f),
                    sunColor(1.0f, 1.0f, 1.0f),
                    ambientColor(0.0f, 0.0f, 0.0f),
+#ifdef USE_HDR
+                   nightLightScale(1.0f),
+#endif
                    lunarLambert(0.0f),
                    orientation(1.0f, 0.0f, 0.0f, 0.0f),
                    pixWidth(1.0f),

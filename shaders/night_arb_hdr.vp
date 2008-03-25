@@ -1,0 +1,41 @@
+!!ARBvp1.0
+
+# Night texture lighting
+
+ATTRIB iPos          = vertex.position;
+ATTRIB iNormal       = vertex.normal;
+ATTRIB iTex0         = vertex.texcoord[0];
+PARAM  mvp[4]        = { state.matrix.mvp };
+PARAM  lightDir      = program.env[0];
+PARAM  diffuse       = program.env[2];
+PARAM  zeroVec       = { 0, 0, 0, 0 };
+PARAM  one           = 1;
+OUTPUT oPos          = result.position;
+OUTPUT oColor        = result.color;
+OUTPUT oTex0         = result.texcoord[0];
+
+TEMP   diffuseFactor;
+
+# Transform the vertex by the modelview matrix
+DP4   oPos.x, mvp[0], iPos;
+DP4   oPos.y, mvp[1], iPos;
+DP4   oPos.z, mvp[2], iPos;
+DP4   oPos.w, mvp[3], iPos;
+
+# Compute the diffuse light component
+DP3   diffuseFactor, iNormal, lightDir;
+# Clamp the diffuse component to zero
+MAX   diffuseFactor, diffuseFactor, zeroVec;
+
+# Use the fourth power of L dot N to create a sharper division between
+# the lit and unlit sides of the planet.
+ADD   diffuseFactor, one, -diffuseFactor;
+MUL   diffuseFactor, diffuseFactor, diffuseFactor;
+MUL   diffuseFactor, diffuseFactor, diffuseFactor;
+
+# Output the texture
+MOV   oTex0, iTex0;
+# Output the primary color
+MUL   oColor, diffuse, diffuseFactor;
+
+END

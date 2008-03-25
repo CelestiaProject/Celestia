@@ -98,7 +98,11 @@ class Renderer
                 const Universe&,
                 float faintestVisible,
                 const Selection& sel);
-    
+    void draw(const Observer&,
+              const Universe&,
+              float faintestVisible,
+              const Selection& sel);
+
     enum {
         NoLabels            = 0x000,
         StarLabels          = 0x001,
@@ -190,6 +194,14 @@ class Renderer
     bool getVertexShaderEnabled() const;
     void setVertexShaderEnabled(bool);
     bool vertexShaderSupported() const;
+
+#ifdef USE_HDR
+    bool getBloomEnabled();
+    void setBloomEnabled(bool);
+    void increaseBrightness();
+    void decreaseBrightness();
+    float getBrightness();
+#endif
 
     GLContext* getGLContext() { return context; }
 
@@ -533,6 +545,39 @@ class Renderer
                      const Frustum& frustum,
                      float nearDist,
                      float farDist);
+
+#ifdef USE_HDR
+ private:
+    int sceneTexWidth, sceneTexHeight;
+    GLfloat sceneTexWScale, sceneTexHScale;
+    GLsizei blurBaseWidth, blurBaseHeight;
+    GLuint sceneTexture;
+    Texture **blurTextures;
+    Texture *blurTempTexture;
+    GLuint gaussianLists[4];
+    GLint blurFormat;
+    bool useBlendSubtract;
+    bool useLuminanceAlpha;
+    bool bloomEnabled;
+    float maxBodyMag;
+    float exposure, exposurePrev;
+    float brightPlus;
+
+    void genBlurTexture(int blurLevel);
+    void genBlurTextures();
+    void genSceneTexture();
+    void renderToBlurTexture(int blurLevel);
+    void renderToTexture(const Observer& observer,
+                         const Universe& universe,
+                         float faintestMagNight,
+                         const Selection& sel);
+    void drawSceneTexture();
+    void drawBlur();
+    void drawGaussian3x3(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend);
+    void drawGaussian5x5(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend);
+    void drawGaussian9x9(float xdelta, float ydelta, GLsizei width, GLsizei height, float blend);
+    void drawBlendedVertices(float xdelta, float ydelta, float blend);
+#endif
 
  private:
     GLContext* context;
