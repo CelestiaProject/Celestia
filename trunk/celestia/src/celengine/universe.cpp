@@ -18,6 +18,8 @@
 #include "meshmanager.h"
 #include "render.h"
 #include "universe.h"
+#include "timelinephase.h"
+#include "frametree.h"
 
 #define ANGULAR_RES 3.5e-6
 
@@ -432,6 +434,38 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
     return true;
 }
 
+// Recursively traverse a frame tree; call the specified callback function for each
+// body in the tree. The callback function returns a boolean indicating whether
+// traversal should continue.
+//
+// TODO: This function works, but could use some cleanup:
+//   * Make it a member of the frame tree class
+//   * Combine info and func into a traversal callback class
+static bool traverseFrameTree(FrameTree* frameTree,
+                              double tdb,
+                              PlanetarySystem::TraversalFunc func,
+                              void* info)
+{
+    for (unsigned int i = 0; i < frameTree->childCount(); i++)
+    {
+        TimelinePhase* phase = frameTree->getChild(i);
+        if (phase->includes(tdb))
+        {
+            Body* body = phase->body();
+            if (!func(body, info))
+                return false;
+
+            if (body->getFrameTree() != NULL)
+            {
+                if (!traverseFrameTree(body->getFrameTree(), tdb, func, info))
+                    return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 
 Selection Universe::pickPlanet(SolarSystem& solarSystem,
                                const UniversalCoord& origin,
@@ -466,31 +500,28 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
 
     // First see if there's a planet|moon that the pick ray intersects.
     // Select the closest planet|moon intersected.
-
-    solarSystem.getPlanets()->traverse(ExactPlanetPickTraversal,
-                                       (void*) &pickInfo);
+    traverseFrameTree(solarSystem.getFrameTree(), when, ExactPlanetPickTraversal, (void*) &pickInfo);
 
     if (pickInfo.closestBody != NULL)
     {
         // Retain that body
         Body* closestBody = pickInfo.closestBody;
 
-	// Check if there is a satellite in front of the primary body that is
-	// sufficiently close to the pickRay
+	    // Check if there is a satellite in front of the primary body that is
+	    // sufficiently close to the pickRay
+        traverseFrameTree(solarSystem.getFrameTree(), when, ApproxPlanetPickTraversal, (void*) &pickInfo);
 
-	solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
-                                           (void*) &pickInfo);
         if (pickInfo.closestBody == closestBody)
-	  return  Selection(closestBody);
+	        return  Selection(closestBody);
         // Nothing else around, select the body and return
 
         // Are we close enough to the satellite and is it in front of the body?
-	if ((pickInfo.sinAngle2Closest <= sinTol2) &&
+    	if ((pickInfo.sinAngle2Closest <= sinTol2) &&
             (pickInfo.closestDistance > pickInfo.closestApproxDistance))
-        return Selection(pickInfo.closestBody);
+            return Selection(pickInfo.closestBody);
             // Yes, select the satellite
-	else
-	    return  Selection(closestBody);
+	    else
+	        return  Selection(closestBody);
            //  No, select the primary body
     }
 
@@ -500,9 +531,8 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
     // clicks on a pixel where the planet's disc has been rendered--in order
     // to make distant planets visible on the screen at all, their apparent
     // size has to be greater than their actual disc size.
+    traverseFrameTree(solarSystem.getFrameTree(), when, ApproxPlanetPickTraversal, (void*) &pickInfo);
 
-    solarSystem.getPlanets()->traverse(ApproxPlanetPickTraversal,
-                                       (void*) &pickInfo);
     if (pickInfo.sinAngle2Closest <= sinTol2)
         return Selection(pickInfo.closestBody);
     else
