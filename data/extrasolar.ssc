@@ -1,4 +1,4 @@
-# Catalog of 270 known extrasolar planets.
+# Catalog of 272 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -221,6 +221,48 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 }
 
 
+"b" "CoRoT-Exo-1"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.1 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.49 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       330     # M.sin(i) = 1.03 jupiters
+	Radius     104300
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-1"
+
+	EllipticalOrbit {
+		Period          0.0041
+		SemiMajorAxis   0.0253
+		Eccentricity    0
+		Inclination     92.6
+		AscendingNode   96.7
+		MeanLongitude   199
+	}
+
+	Obliquity             93 # guess, to match inclination
+	EquatorAscendingNode  97 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "CoRoT-Exo-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "WASP-5"
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -298,6 +340,47 @@ AltSurface "limit of knowledge" "WASP-5/b"
 }
 
 AltSurface "limit of knowledge" "OGLE-TR-132/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "CoRoT-Exo-2"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 87.84 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.47 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       1050     # M.sin(i) = 3.31 jupiters
+	Radius     102900
+
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-2"
+
+	EllipticalOrbit {
+		Period          0.0048
+		SemiMajorAxis   0.028
+		Eccentricity    0
+		Inclination     82.4
+		AscendingNode   288.1
+		MeanLongitude   195
+	}
+
+	Obliquity             82 # guess, to match inclination
+	EquatorAscendingNode  288 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "CoRoT-Exo-2/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -8406,5 +8489,3 @@ AltSurface "limit of knowledge" "PSR 1620-26/b"
 {
 	Texture "extrasolar-lok.*"
 }
-
-
