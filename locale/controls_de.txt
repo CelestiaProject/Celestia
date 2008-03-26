@@ -1,66 +1,71 @@
-Maus- und Tastaturbefehle für Celestia 1.5.1
-===================================
-
+Maus- und Tastaturbefehle für  Celestia
+===============================
 
 MAUSFUNKTIONEN:
 
-Links (ziehen):		Orientierung der Kamera/Ansicht
-Rechts (ziehen):		Gewähltes Objekt umlaufen
-Maus-Rad:		Entfernung zum gewählten Objekt einstellen
-Rechts + Links (ziehen):	Entfernung zum gewählten Objekt einstellen
-Strg  + Links (ziehen):   	Entfernung zum gewählten Objekt einstellen
-Shift + Links (ziehen):   	Blickfeld ändern
-Rad / mittlere Taste Klick:  	Blickfeld umschalten zwischen aktuellem
-			und vorherigem Blickfeld
-Links-Klick:        		Objekt (an)wählen
-Links-Doppelklick:   	Auswahl zentrieren
-Rechtsklick:       		Kontextmenü aufrufen
+Links (ziehen)		Orientierung der Ansicht
+Rechts (ziehen)		Gewähltes Objekt umkreisen
+Mausrad (drehen)		Entfernung zum gewählten Objekt einstellen
+Rechts + Links (ziehen)	Entfernung zum gewählten Objekt einstellen
+Strg  + Links (ziehen)	Entfernung zum gewählten Objekt einstellen
+Shift + Links (ziehen)	Blickfeld ändern
+Rad/mittlere Taste (Klick)	Blickfeld umschalten zwischen aktuellem und
+			vorherigem Blickfeld
+Linksklick			Objekt auswählen
+Links-Doppelklick		Auswahl zentrieren
+Rechtsklick		Kontextmenü aufrufen
 
 
 TASTATURBEFEHLE:
 
 Navigation:
-H	Zur Sonne (Home)
+H	Unsere Sonne auswählen (Heimatsonne)
 C	Zentriert das gewählte Objekt
-Shift+C	Orbit zentrieren (zentriert das gewählte Objekt,
-	ohne die Position des Referenzobjektes zu ändern)
+Shift+C	Zentriert zwei Objekte in der Ansicht (das aktuelle Referenzobjekt und
+	ein zweites gewähltes Objekt)
+Strg+O	Dialogbox "Objekt auswählen" aufrufen
 G	Gehe zum gewählten Objekt
+Strg+G	Auf der Oberfläche des gewählten Objekts landen
+Strg+F	Alt-Azimut-Modus auf Objektoberfläche ein-/ausschalten
 F	Folge dem gewählten Objekt
-Y	Orbit des gewählten Objekts mit synchroner Umdrehungrate
-:	Gewähltes Objekt anbinden
-"	Gewähltes Objekt nacheilen (Orientierung basiert auf Geschwindig-
-	keit der Auswahl)
-T	Gewähltes Objekt einfangen (hält das gewählten Objekt zentriert)
-Pos1	Näher zum Objekt
+Y	Umkreisen des gewählten Objekts synchron zu seiner Eigenrotation
+:	Gewähltes Objekt mit vorherigem Objekt verbinden
+"	Gewähltem Objekt nacheilen (Orientierung basiert auf Geschwindig-
+	keitsvektor des gewählten Objekts)
+T	Gewähltes Objekt einfangen (hält das gewählte Objekt zentriert)
+Pos1	Näher zum Objekt bewegen
 *	Zurück blicken (aus dem Heckfenster)
-ENDE	Vom Objekt entfernen
-ESC	Bewegung oder Skript abbrechen
+Ende	Vom Objekt entfernen
+Esc	In freien Flug umschalten oder Skript abbrechen
 
-Links/Rechts Pfeile:	Kamera rollen/neigen
-Hoch / Runter Pfeile:	Kameraposition ändern
-Shift+Pfeile:		Objekt umlaufen
-1-9 (Ziffernreihe):		Auswahl der Planeten im Sonnensystem
+Pfeiltasten links/rechts	Ansicht rollen
+Pfeiltasten oben/unten	Neigung der Ansicht einstellen
+Shift+Pfeiltasten		Objekt umkreisen
+1-9 (Ziffernreihe)		Auswahl der Planeten im aktuellen Sonnensystem
+0 (Null)			Auswahl des Heimatsterns im akt. Sonnensystem
+Eingabetaste		Objekt durch Eingabe des Namens auswählen
 
 Zeiteinstellung:
-Leer	Zeit anhalten
-Shift+L     Zeitablauf jew. 2x schneller
-Shift+K     Zeitablauf jew. 2x langsamer
-L	Zeitablauf jew. 10x schneller
-K	Zeitablauf jew. 10x langsamer
-J	Zeitablauf umkehren
-!	Jetzigen Zeitpunkt setzen
-?	Lichtlaufgeschwindigkeit zum gewählten Objekt anzeigen
--	Lichtlaufgeschwindigkeit von der aktuellen Simulationszeit abziehen
+Leertaste	  Zeitablauf und Skripte anhalten/fortsetzen
+Shift+L	  Zeitablauf 2x schneller
+Shift+K	  Zeitablauf 2x langsamer
+L	  Zeitablauf 10x schneller
+K	  Zeitablauf 10x langsamer
+J	  Zeitablauf umkehren
+!	  Auf aktuelle Zeit setzen
+?	  Lichtlaufzeit zwischen Beobachter und gewähltem Objekt anzeigen
+-	  Lichtlaufzeit von der aktuellen Simulationszeit abziehen
 
 Bezeichnungen:
-= 	Bezeichnungen der Sternbilder ein-/ausschalten
+=	Bezeichnungen der Sternbilder ein-/ausschalten
 B	Bezeichnungen der Sterne ein-/ausschalten
 E	Bezeichnungen der Galaxien ein-/ausschalten
 M	Bezeichnungen der Monde ein-/ausschalten
-W	Bezeichnungen der Asteroiden u. Kometen ein-/ausschalten
-N	Bezeichnungen der Raumschiffe/-sonden ein-/ausschalten
+W	Bezeichnungen der Asteroiden ein-/ausschalten
+Shift+W	Bezeichnungen der Kometen ein-/ausschalten
+N	Bezeichnungen der Raumfahrzeuge ein-/ausschalten
 P	Bezeichnungen der Planeten ein-/ausschalten
-&	Bezeichnungen der Bezugspunkte/Orte ein-/ausschalten
+&	Bezeichnungen der Bezugspunkte und Orte ein-/ausschalten
 V	Umfang des Informationstextes verändern
 
 Optionen:
@@ -69,83 +74,95 @@ U	Galaxien ein-/ausschalten
 O	Umlaufbahnen ein-/ausschalten
 /	Sternbilder ein-/ausschalten
 ^	Nebel ein-/ausschalten
-%	Stern-Farben-Tabelle ein-/ausschalten
-;	Himmelsraster ein-/ausschalten
+%	Farben für die Sterndarstellung umschalten
+;	Erdbasiertes Himmelsraster ein-/ausschalten
 AltGr + [	Wenn autoMag AUS: Magnitude verringern (weniger Sterne sichtbar)
-     	Wenn autoMag EIN: Magnitude verringern bei 45° Blickfeld
+	Wenn autoMag EIN: Magnitude verringern bei 45° Blickfeld
 AltGr + ]	Wenn autoMag AUS: Magnitude vergrößern (mehr Sterne sichtbar)
 	Wenn autoMag EIN: Magnitude vergrößern bei 45° Blickfeld
-AltGr + {	Streulichtanteil erhöhen
-AltGr + }	Streulichtanteil verringern
-(	Galaxie-Helligkeit erhöhen (abhängig von Sternhelligkeit)
-)	Galaxie-Helligkeit verringern (abhängig von Sternhelligkeit)
-,	Blickfeld begrenzen/einschränken
-.	Blickfeld erweitern/ausdehnen
-Leer	Aktuelle Auswahl abbrechen
-Strg+A	Amtmosphäre ein-/ausschalten
-Strg+B	Konstellationsgrenzen ein-/ausschalten 
-Strg+E	Kernschatten ein-/ausschalten
-Strg+K	Anzeige Objekt-Markierung ein-/ausschalten
+AltGr + {	Streulichtanteil verringern
+AltGr + }	Streulichtanteil erhöhen
+(	Galaxienhelligkeit verringern (unabhängig von Sternhelligkeit)
+)	Galaxienhelligkeit erhöhen (unabhängig von Sternhelligkeit)
+,	Blickfeld verkleinern
+.	Blickfeld vergrößern
+Zurück	Aktuelle Auswahl aufheben
+Strg+A	Atmosphären ein-/ausschalten
+Strg+B	Sternbildgrenzen ein-/ausschalten 
+Strg+E	Finsternisschatten ein-/ausschalten
+Strg+K	Anzeige der Markierungen ein-/ausschalten
 Strg+L	Lichter auf Nachtseite ein-/ausschalten
 Strg+P	Ausgewähltes Objekt markieren
-Strg+S	Aussehen der Sterne ändern (flockig, skalierte Punkte, Punkte)
+Strg+S	Aussehen der Sterne ändern (verschwommene Punkte, Punkte, 
+	skalierte Scheiben)
 Strg+T	Kometenschweife ein-/ausschalten
-Strg+V	Unterstützte 'OpenGL render paths' verändern
-Strg+W	Gitternetz-Modus ein-/ausschalten (Objekte mit/ohne Texturen)
-Strg+X	Antialiasing ein-/ausschalten
-Strg+Y	Auto Magnitude ein-/ausschalten  
-R	Auflösung der Texturen erhöhen (falls möhlich)
-r	Auflösung der Texturen verringern (falls möglich)
-+	Zwischen LOK-Texturen und interpretierenden Texturen umschalten
+Strg+V	Unterstützte OpenGL-Methoden durchschalten
+Strg+W	Drahtgitter-Modus ein-/ausschalten
+Strg+X	Kantenglättung (Antialiasing) ein-/ausschalten
+Strg+Y	autoMag ein-/ausschalten (autoMag = Automatische Anpassung der
+	Sternensichtbarkeit an das Blickfeld)
+Shift+R	Auflösung der Texturen erhöhen (falls möglich)
+R	Auflösung der Texturen verringern (falls möglich)
++	Zwischen 'Limit Of Knowledge'-Texturen und interpretierenden
+	Texturen umschalten
 
 Mehrfachansichten:
 Strg+R	Bildschirm vertikal teilen
 Strg+U	Bildschirm horizontal teilen
-TAB	Geteilte Ansicht auswählen/aktivieren
-Entf	Aktivierte Ansicht entfernen
-Strg+D	Alle Ansichten entfernen (außer aktive Ansicht)
+TAB	Aktive Ansicht umschalten
+Entf	Aktive Ansicht löschen
+Strg+D	Alle Ansichten löschen (außer aktive Ansicht)
 
 Raumflug:
-F1	Stop
+F1	Stopp
 F2	Geschwindigkeit einstellen auf 1 km/s
-F3	Geschwindigkeit einstellen auf 1,000 km/s
+F3	Geschwindigkeit einstellen auf 1.000 km/s
 F4	Geschwindigkeit einstellen auf Lichtgeschwindigkeit (1 c)
-F5	Geschwindigkeit einstellen auf 10x Lichtgeschwindigkeit
+F5	Geschwindigkeit einstellen auf 10fache Lichtgeschwindigkeit
 F6	Geschwindigkeit einstellen auf 1 AE/s
 F7	Geschwindigkeit einstellen auf 1 LJ/s
-A	Geschwindigkeit erhöhen ("Gas gegben")
+A	Geschwindigkeit erhöhen ("Gas geben")
+S	Stopp
 Z	Geschwindigkeit verringern ("Bremsen")
 Q	Flugrichtung umkehren (Raumschiff um 180° drehen)
-X	Flugrichtung auf die Mitte des Bildschirm setzen
+X	Flugrichtung auf die Mitte des Bildschirms setzen
 
-Zahlenblock (rechts auf Tastatur) - "NumLock" einschalten!:
-4	Links vom Kurs abweichen (nach links lenken)
-6	Rechts vom Kurs abweichen (nach rechts lenken)
+Zahlenblock (rechts auf Tastatur) - "NumLock" einschalten:
+4	Nach links schwenken
+6	Nach rechts schwenken
 8	Nach unten neigen
 2	Nach oben neigen
-7	Nach links rollen
-9	Nach rechts rollen
-5	Rotation stoppen
+7	Nach links rollen (gegen Uhrzeigersinn)
+9	Nach rechts rollen (im Uhrzeigersinn)
+5	Kursänderung stoppen
 
 
 JOYSTICK:
 
-X-Achse		Lenken (rechts/links)
-Y-Achse		Neigen (hoch/runter)
-Linker Abzug	Links rollen
-Rechter Abzug	Rechts rollen
+X-Achse		Schwenken (links/rechts)
+Y-Achse		Neigen (nach oben/unten)
+Linker Abzug	Nach links rollen (gegen Uhrzeigersinn)
+Rechter Abzug	Nach rechts rollen (im Uhrzeigersinn)
 Knopf 1		Langsamer ("bremsen")
 Knopf 2		Schneller ("Gas geben")
 
 
 SONSTIGES:
 
-D	Demo starten
-F8	Joystick einschalten
-F10	Image erstellen
-`	Anzahl der Bilder/Sekunde anzeigen (FPS)
-ENTER	Objekt durch Eingabe des Namens auswählen
-Strg+C	Pfad der aktuellen Szene in Zwischenablage kopieren
+D	  Demo starten
+F8	  Joystick einschalten
+F10	  Bildschirmfoto erstellen
+Shift+F10	  Film-Modus aktivieren (Videoaufzeichnung)
+F11	  Im Film-Modus: Aufzeichnung starten / pausieren 
+F12	  Im Film-Modus: Aufzeichnung beenden
+AltGr + ~	  Logdatei anzeigen (Ladevorgänge, Fehlermeldungen)
+`	  Anzahl der Bilder pro Sekunde anzeigen (FPS)
+	  (Um ` zu erhalten, nacheinander Shift+` und Leertaste drücken)
+Strg+C	  URL der aktuellen Szene in Zwischenablage kopieren
+Strg+Einfg  URL der aktuellen Szene in Zwischenablage kopieren
 
-In Deutsch bereitgestellt von Ulrich Dickmann, Januar 2008
-http://www.celestia.info/
+
+     Deutsche Hilfedatei von Ulrich Dickmann, Christian Lenz, Andreas Wagner
+     
+Deutschsprachige Webseite zum Thema Celestia: http://www.celestia.info/
+			    
