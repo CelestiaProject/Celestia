@@ -240,6 +240,26 @@
 	AppMag 12.3
 }
 
+# CoRoT survey
+
+"CoRoT-Exo-1"
+{
+	RA 102.079875
+	Dec -3.102161
+	Distance 2250 # from spectral class and magnitude
+	SpectralType "G0V"
+	AppMag 13.6
+}
+
+"CoRoT-Exo-2"
+{
+	RA 291.777083
+	Dec 1.38375
+	Distance 885 # from spectral class and magnitude
+	SpectralType "G7V"
+	AppMag 12.57
+}
+
 # HD stars without Hip numbers
 
 1000370197 # HD 70573
