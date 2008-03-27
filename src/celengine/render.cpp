@@ -908,6 +908,7 @@ bool Renderer::init(GLContext* _context,
     glDisable(GL_TEXTURE_2D);
     switch (actualTexFormat)
     {
+    case 2:
     case GL_LUMINANCE_ALPHA:
     case GL_LUMINANCE4_ALPHA4:
     case GL_LUMINANCE6_ALPHA2:
@@ -2355,7 +2356,6 @@ void Renderer::renderToBlurTexture(int blurLevel)
 {
     if (blurTextures[blurLevel] == NULL)
         return;
-    GLfloat windowAspect = (GLfloat)windowWidth / (GLfloat)windowHeight;
     GLsizei blurTexWidth  = blurBaseWidth>>blurLevel;
     GLsizei blurTexHeight = blurBaseHeight>>blurLevel;
     GLsizei blurDrawWidth = (GLfloat)windowWidth/(GLfloat)sceneTexWidth * blurTexWidth;
@@ -2385,9 +2385,7 @@ void Renderer::renderToBlurTexture(int blurLevel)
         {
             const GLfloat bias  = -0.5f;
             glBlendFunc(GL_ONE, GL_ONE);
-#ifdef GL_EXT_blend_subtract
             glx::glBlendEquationEXT(GL_FUNC_REVERSE_SUBTRACT_EXT);
-#endif
             glColor4f(-bias, -bias, -bias, 0.0f);
 
             glDisable(GL_TEXTURE_2D);
@@ -2406,9 +2404,7 @@ void Renderer::renderToBlurTexture(int blurLevel)
 
         // Scale back up hdr part
         {
-#ifdef GL_EXT_blend_subtract
             glx::glBlendEquationEXT(GL_FUNC_ADD_EXT);
-#endif
             glBlendFunc(GL_DST_COLOR, GL_ONE);
 
             glBegin(GL_QUADS);
