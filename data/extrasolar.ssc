@@ -1,4 +1,4 @@
-# Catalog of 272 known extrasolar planets.
+# Catalog of 273 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1381,6 +1381,36 @@ AltSurface "limit of knowledge" "HD 187123/b"
 }
 
 
+"c" "HD 187123"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       620     # M.sin(i) = 1.95 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+187123"
+
+	EllipticalOrbit {
+		Period          10.13
+		SemiMajorAxis   4.8
+		Eccentricity    0.249
+		ArgOfPericenter 289
+		MeanAnomaly     266
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 187123/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "OGLE-TR-10"
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -2480,7 +2510,7 @@ AltSurface "limit of knowledge" "Gliese 581/d"
 	Color  [0 0.36 1]
 	Albedo 0.05
 
-	Mass       2750     # M.sin(i) = 8.64 jupiters
+	Mass       2740     # M.sin(i) = 8.62 jupiters
 	Radius     66500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+147506"
@@ -2488,11 +2518,11 @@ AltSurface "limit of knowledge" "Gliese 581/d"
 	EllipticalOrbit {
 		Period          0.0154
 		SemiMajorAxis   0.0677
-		Eccentricity    0.517
+		Eccentricity    0.5163
 		Inclination     99.6
 		AscendingNode   247
 		ArgOfPericenter 342
-		MeanAnomaly     113
+		MeanAnomaly     112
 	}
 
 	Obliquity             100 # guess, to match inclination
