@@ -2217,6 +2217,158 @@
 			};
 			name = Universal_Release;
 		};
+		E5F9EC660D9EA6BE00A83FEF /* HDR_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(GCC_PREPROCESSOR_DEFINITIONS)",
+					TARGET_CELESTIA,
+				);
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = NO;
+			};
+			name = HDR_Development;
+		};
+		E5F9EC670D9EA6BE00A83FEF /* HDR_Universal_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(GCC_PREPROCESSOR_DEFINITIONS)",
+					TARGET_CELESTIA,
+				);
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = POConverter;
+				ZERO_LINK = NO;
+			};
+			name = HDR_Universal_Release;
+		};
+		E5F9EC680D9EA6BE00A83FEF /* HDR_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Util.h;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_USE_GCC3_PFE_SUPPORT = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../src;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = Frameworks;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fpermissive",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Celestia;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = HDR_Development;
+		};
+		E5F9EC690D9EA6BE00A83FEF /* HDR_Universal_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PREFIX_HEADER = Util.h;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					NDEBUG,
+				);
+				GCC_USE_GCC3_PFE_SUPPORT = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../src;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = Frameworks;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fpermissive",
+				);
+				PRODUCT_NAME = Celestia;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = HDR_Universal_Release;
+		};
+		E5F9EC6A0D9EA6BE00A83FEF /* HDR_Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					PNG_SUPPORT,
+					CELX,
+					LUA_USE_MACOSX,
+					"LUA_VER=0x050100",
+					"REFMARKS=1",
+					USE_HDR,
+					HDR_COMPRESS,
+				);
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = HDR_Development;
+		};
+		E5F9EC6B0D9EA6BE00A83FEF /* HDR_Universal_Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					PNG_SUPPORT,
+					CELX,
+					LUA_USE_MACOSX,
+					"LUA_VER=0x050100",
+					"REFMARKS=1",
+					USE_HDR,
+					HDR_COMPRESS,
+				);
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				PREBINDING = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = HDR_Universal_Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2224,7 +2376,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E532F41A0933316100D7D5B3 /* Development */,
+				E5F9EC680D9EA6BE00A83FEF /* HDR_Development */,
 				E50E8707097436A4006687D3 /* Universal_Release */,
+				E5F9EC690D9EA6BE00A83FEF /* HDR_Universal_Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Universal_Release;
@@ -2233,7 +2387,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E532F41E0933316100D7D5B3 /* Development */,
+				E5F9EC6A0D9EA6BE00A83FEF /* HDR_Development */,
 				E50E8708097436A4006687D3 /* Universal_Release */,
+				E5F9EC6B0D9EA6BE00A83FEF /* HDR_Universal_Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Universal_Release;
@@ -2242,7 +2398,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E5CC202C09AA829B00CFFF2C /* Development */,
+				E5F9EC660D9EA6BE00A83FEF /* HDR_Development */,
 				E5CC202E09AA829B00CFFF2C /* Universal_Release */,
+				E5F9EC670D9EA6BE00A83FEF /* HDR_Universal_Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Universal_Release;
