@@ -257,9 +257,9 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
 
         if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
         {
-            vector<Sample<T> >::const_iterator iter = lower_bound(samples.begin(),
-                                                                  samples.end(),
-                                                                  samp);
+            typename vector<Sample<T> >::const_iterator iter = lower_bound(samples.begin(),
+                                                                           samples.end(),
+                                                                           samp);
             if (iter == samples.end())
                 n = samples.size();
             else
