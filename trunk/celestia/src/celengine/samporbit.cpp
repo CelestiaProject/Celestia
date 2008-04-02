@@ -1,6 +1,7 @@
 // samporbit.cpp
 //
-// Copyright (C) 2002-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2002-2008, Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // Trajectories based on unevenly spaced cartesian positions.
 //
@@ -52,10 +53,7 @@ public:
     double getPeriod() const;
     double getBoundingRadius() const;
     Point3d computePosition(double jd) const;
-#if 0
-    // Not yet implemented
     Vec3d computeVelocity(double jd) const;
-#endif
 
     bool isPeriodic() const;
     void getValidRange(double& begin, double& end) const;
@@ -135,8 +133,6 @@ static Point3d cubicInterpolate(const Point3d& p0, const Vec3d& v0,
 }
 
 
-#if 0
-// Not yet required
 static Vec3d cubicInterpolateVelocity(const Point3d& p0, const Vec3d& v0,
                                       const Point3d& p1, const Vec3d& v1,
                                       double t)
@@ -145,7 +141,6 @@ static Vec3d cubicInterpolateVelocity(const Point3d& p0, const Vec3d& v0,
            ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (2.0 * t)) +
            v0;
 }
-#endif
 
 
 template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
@@ -208,18 +203,25 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
                 else
                     s3 = samples[n];
 
-                double t = (jd - s1.t) / (s2.t - s1.t);
+                double h = s2.t - s1.t;
+                double ih = 1.0 / h;
+                double t = (jd - s1.t) * ih;
                 Point3d p0(s1.x, s1.y, s1.z);
                 Point3d p1(s2.x, s2.y, s2.z);
 
-                Vec3d v0((double) s2.x - (double) s0.x,
-                         (double) s2.y - (double) s0.y,
-                         (double) s2.z - (double) s0.z);
-                Vec3d v1((double) s3.x - (double) s1.x,
-                         (double) s3.y - (double) s1.y,
-                         (double) s3.z - (double) s1.z);
-                v0 *= (s2.t - s1.t) / (s2.t - s0.t);
-                v1 *= (s2.t - s1.t) / (s3.t - s1.t);
+                Vec3d v10((double) s1.x - (double) s0.x,
+                          (double) s1.y - (double) s0.y,
+                          (double) s1.z - (double) s0.z);
+                Vec3d v21((double) s2.x - (double) s1.x,
+                          (double) s2.y - (double) s1.y,
+                          (double) s2.z - (double) s1.z);
+                Vec3d v32((double) s3.x - (double) s2.x,
+                          (double) s3.y - (double) s2.y,
+                          (double) s3.z - (double) s2.z);
+                Vec3d v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
+                Vec3d v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
+                v0 *= h;
+                v1 *= h;
 
                 pos = cubicInterpolate(p0, v0, p1, v1, t);
             }
@@ -240,28 +242,28 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
 }
 
 
-#if 0
-// Not yet required
 template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
 {
     Vec3d vel;
-
     if (samples.size() < 2)
     {
         vel = Vec3d(0.0, 0.0, 0.0);
     }
     else
     {
-        Sample samp;
+        Sample<T> samp;
         samp.t = jd;
         int n = lastSample;
 
-        if (n < 1 || jd < samples[n - 1].t || jd > samples[n].t)
+        if (n < 1 || n >= (int) samples.size() || jd < samples[n - 1].t || jd > samples[n].t)
         {
-            vector<Sample>::const_iterator iter = lower_bound(samples.begin(),
-                                                              samples.end(),
-                                                              samp);
-            n = iter - samples.begin();
+            vector<Sample<T> >::const_iterator iter = lower_bound(samples.begin(),
+                                                                  samples.end(),
+                                                                  samp);
+            if (iter == samples.end())
+                n = samples.size();
+            else
+                n = iter - samples.begin();
             lastSample = n;
         }
 
@@ -273,15 +275,15 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
         {
             if (interpolation == TrajectoryInterpolationLinear)
             {
-                Sample s0 = samples[n - 1];
-                Sample s1 = samples[n];
+                Sample<T> s0 = samples[n - 1];
+                Sample<T> s1 = samples[n];
 
                 double dt = (s1.t - s0.t);
                 return (Vec3d(s1.x, s1.y, s1.z) - Vec3d(s0.x, s0.y, s0.z)) * (1.0 / dt);
             }
             else if (interpolation == TrajectoryInterpolationCubic)
             {
-                Sample s0, s1, s2, s3;
+                Sample<T> s0, s1, s2, s3;
                 if (n > 1)
                     s0 = samples[n - 2];
                 else
@@ -293,20 +295,28 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
                 else
                     s3 = samples[n];
 
-                double t = (jd - s1.t) / (s2.t - s1.t);
+                double h = s2.t - s1.t;
+                double ih = 1.0 / h;
+                double t = (jd - s1.t) * ih;
                 Point3d p0(s1.x, s1.y, s1.z);
                 Point3d p1(s2.x, s2.y, s2.z);
 
-                Vec3d v0((double) s2.x - (double) s0.x,
-                         (double) s2.y - (double) s0.y,
-                         (double) s2.z - (double) s0.z);
-                Vec3d v1((double) s3.x - (double) s1.x,
-                         (double) s3.y - (double) s1.y,
-                         (double) s3.z - (double) s1.z);
-                v0 *= (s2.t - s1.t) / (s2.t - s0.t);
-                v1 *= (s2.t - s1.t) / (s3.t - s1.t);
-                
+                Vec3d v10((double) s1.x - (double) s0.x,
+                          (double) s1.y - (double) s0.y,
+                          (double) s1.z - (double) s0.z);
+                Vec3d v21((double) s2.x - (double) s1.x,
+                          (double) s2.y - (double) s1.y,
+                          (double) s2.z - (double) s1.z);
+                Vec3d v32((double) s3.x - (double) s2.x,
+                          (double) s3.y - (double) s2.y,
+                          (double) s3.z - (double) s2.z);
+                Vec3d v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
+                Vec3d v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
+                v0 *= h;
+                v1 *= h;
+
                 vel = cubicInterpolateVelocity(p0, v0, p1, v1, t);
+                vel *= 1.0 / h;
             }
             else
             {
@@ -322,7 +332,6 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
 
     return Vec3d(vel.x, vel.z, -vel.y);
 }
-#endif
 
 
 template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
