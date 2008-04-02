@@ -34,7 +34,8 @@ static const string CelestiaLegacyScriptExt(".cel");
 static const string CelestiaScriptExt(".clx");
 static const string CelestiaScriptExt2(".celx");
 static const string CelestiaModelExt(".cmod");
-
+static const string CelestiaXYZTrajectoryExt(".xyz");
+static const string CelestiaXYZVTrajectoryExt(".xyzv");
 
 ContentType DetermineFileType(const string& filename)
 {
@@ -78,6 +79,10 @@ ContentType DetermineFileType(const string& filename)
         return Content_CelestiaModel;
     else if (compareIgnoringCase(DXT5NormalMapExt, ext) == 0)
         return Content_DXT5NormalMap;
+    else if (compareIgnoringCase(CelestiaXYZTrajectoryExt, ext) == 0)
+        return Content_CelestiaXYZTrajectory;
+    else if (compareIgnoringCase(CelestiaXYZVTrajectoryExt, ext) == 0)
+        return Content_CelestiaXYZVTrajectory;
     else
         return Content_Unknown;
 }

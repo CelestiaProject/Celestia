@@ -30,6 +30,8 @@ enum ContentType {
     Content_CelestiaLegacyScript   = 15,
     Content_CelestiaModel          = 16,
     Content_DXT5NormalMap          = 17,
+    Content_CelestiaXYZTrajectory  = 18,
+    Content_CelestiaXYZVTrajectory = 19,
     Content_Unknown                = -1,
 };
 
