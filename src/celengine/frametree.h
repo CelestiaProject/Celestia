@@ -72,6 +72,22 @@ public:
         return m_maxChildRadius;
     }
 
+    /*! Return whether any of the children of this frame
+     *  are secondary illuminators.
+     */
+    bool containsSecondaryIlluminators() const
+    {
+        return m_containsSecondaryIlluminators;
+    }
+
+    /*! Return a bitmask with the classifications of all children
+     *  in this tree.
+     */
+    int childClassMask() const
+    {
+        return m_childClassMask;
+    }
+
 private:
     Star* starParent;
     Body* bodyParent;
@@ -79,7 +95,9 @@ private:
 
     double m_boundingSphereRadius;
     double m_maxChildRadius;
+    bool m_containsSecondaryIlluminators;
     bool m_changed;
+    int m_childClassMask;
 
     ReferenceFrame* defaultFrame;
 };

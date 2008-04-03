@@ -1,6 +1,6 @@
 // render.h
 //
-// Copyright (C) 2001-2007, Celestia Development Team
+// Copyright (C) 2001-2008, Celestia Development Team
 // Contact: Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ class ReferenceMark;
 
 struct LightSource
 {
-    Point3d position;
+    Vec3d position;
     Color color;
     float luminosity;
     float radius;
@@ -65,7 +65,16 @@ struct RenderListEntry
     float appMag;
     RenderableType renderableType;
     bool isOpaque;
-    std::vector<LightSource>* lightSourceList;
+    //std::vector<LightSource>* lightSourceList;
+};
+
+
+struct SecondaryIlluminator
+{
+    const Body* body;
+    Vec3d position_v;       // viewer relative position
+    float radius;           // radius in km
+    float reflectedIrradiance;  // albedo times total irradiance from direct sources
 };
 
 
@@ -423,10 +432,22 @@ class Renderer
     void renderCelestialSphere(const Observer& observer);
     void buildRenderLists(const Point3d& astrocentricObserverPos,
                           const Frustum& viewFrustum,
+                          const Vec3d& viewPlaneNormal,
                           const FrameTree* tree,
                           const Observer& observer,
-                          double now,
-                          std::vector<LightSource>* lightSourceList);
+                          double now);
+    void buildOrbitLists(const Point3d& astrocentricObserverPos,
+                         const Quatf& observerOrientation,
+                         const Frustum& viewFrustum,
+                         const FrameTree* tree,
+                         double now);
+    void buildLabelLists(const Frustum& viewFrustum,
+                         double now);
+
+    void addRenderListEntries(RenderListEntry& rle,
+                              Body& body,
+                              bool isLabeled);
+
     void addStarOrbitToRenderList(const Star& star,
                                   const Observer& observer,
                                   double now);
@@ -446,7 +467,6 @@ class Renderer
                       float appMag,
                       const Observer& observer,
                       const Quatf& cameraOrientation,
-                      const vector<LightSource>& lightSources,
                       float, float);
 
     void renderStar(const Star& star,
@@ -466,7 +486,6 @@ class Renderer
     void renderCometTail(const Body& body,
                          Point3f pos,
                          double now,
-                         const vector<LightSource>& lightSources,
                          float discSizeInPixels);
 
     void renderBodyAsParticle(Point3f center,
@@ -585,6 +604,7 @@ class Renderer
     int windowWidth;
     int windowHeight;
     float fov;
+    float cosViewConeAngle;
     int screenDpi;
     float corrFac;
     float pixelSize;
@@ -614,6 +634,7 @@ class Renderer
     PointStarVertexBuffer* pointStarVertexBuffer;
 	PointStarVertexBuffer* glareVertexBuffer;
     std::vector<RenderListEntry> renderList;
+    std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;
     std::vector<Particle> glareParticles;
     std::vector<Annotation> backgroundAnnotations;
@@ -623,7 +644,7 @@ class Renderer
     std::vector<EclipseShadow> eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;
 
-    std::list<std::vector<LightSource>* > lightSourceLists;
+    std::vector<LightSource> lightSourceList;
 
     double modelMatrix[16];
     double projMatrix[16];
