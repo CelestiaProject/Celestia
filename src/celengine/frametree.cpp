@@ -118,7 +118,8 @@ FrameTree::markUpdated()
 /*! Recompute the bounding sphere for this tree and all subtrees marked
  *  as having changed. The bounding sphere is large enough to accommodate
  *  the orbits (and radii) of all child bodies. This method also recomputes
- *  the maximum child radius.
+ *  the maximum child radius, secondary illuminator status, and child
+ *  class mask.
  */
 void
 FrameTree::recomputeBoundingSphere()
@@ -127,14 +128,18 @@ FrameTree::recomputeBoundingSphere()
     {
         m_boundingSphereRadius = 0.0;
         m_maxChildRadius = 0.0;
+        m_containsSecondaryIlluminators = false;
+        m_childClassMask = 0;
 
         for (vector<TimelinePhase*>::iterator iter = children.begin();
              iter != children.end(); iter++)
         {
             TimelinePhase* phase = *iter;
             double bodyRadius = phase->body()->getRadius();
-            double r = bodyRadius + phase->orbit()->getBoundingRadius();
+            double r = phase->body()->getCullingRadius() + phase->orbit()->getBoundingRadius();
             m_maxChildRadius = max(m_maxChildRadius, bodyRadius);
+            m_containsSecondaryIlluminators = m_containsSecondaryIlluminators || phase->body()->isSecondaryIlluminator();
+            m_childClassMask |= phase->body()->getClassification();
 
             FrameTree* tree = phase->body()->getFrameTree();
             if (tree != NULL)
@@ -142,6 +147,8 @@ FrameTree::recomputeBoundingSphere()
                 tree->recomputeBoundingSphere();
                 r += tree->m_boundingSphereRadius;
                 m_maxChildRadius = max(m_maxChildRadius, tree->m_maxChildRadius);
+                m_containsSecondaryIlluminators = m_containsSecondaryIlluminators || tree->containsSecondaryIlluminators();
+                m_childClassMask |= tree->childClassMask();
             }
 
             m_boundingSphereRadius = max(m_boundingSphereRadius, r);

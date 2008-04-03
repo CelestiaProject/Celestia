@@ -302,8 +302,8 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     {
         // No orbit frame specified; use the default frame.
         orbitFrame = defaultFrame;
-        orbitFrame->addRef();
     }
+    orbitFrame->addRef();
 
     // Get the body reference frame
     ReferenceFrame* bodyFrame;
@@ -321,8 +321,8 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     {
         // No body frame specified; use the default frame.
         bodyFrame = defaultFrame;
-        bodyFrame->addRef();
     }
+    bodyFrame->addRef();
 
     // Use planet units (AU for semimajor axis) if the center of the orbit 
     // reference frame is a star.
@@ -350,13 +350,19 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         rotationModel = new ConstantOrientation(Quatd(1.0));
     }
 
-    return TimelinePhase::CreateTimelinePhase(universe,
-                                              body,
-                                              beginning, ending,
-                                              *orbitFrame,
-                                              *orbit,
-                                              *bodyFrame,
-                                              *rotationModel);
+    TimelinePhase* phase = TimelinePhase::CreateTimelinePhase(universe,
+                                                              body,
+                                                              beginning, ending,
+                                                              *orbitFrame,
+                                                              *orbit,
+                                                              *bodyFrame,
+                                                              *rotationModel);
+
+    // Frame ownership transfered to phase; release local references
+    orbitFrame->release();
+    bodyFrame->release();
+
+    return phase;
 }
 
 
@@ -747,6 +753,14 @@ static Body* CreatePlanet(const string& name,
         classification == Body::Component)
     {
         body->setVisibleAsPoint(false);
+    }
+
+    if (classification == Body::Invisible ||
+        classification == Body::SurfaceFeature ||
+        classification == Body::Component ||
+        classification == Body::Spacecraft)
+    {
+        body->setSecondaryIlluminator(false);
     }
 
     string infoURL;
