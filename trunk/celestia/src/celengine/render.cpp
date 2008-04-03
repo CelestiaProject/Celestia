@@ -1835,10 +1835,6 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         orbit = body->getOrbit(t);
     else
         orbit = orbitPath.star->getOrbit();
-    if (body == highlightObject.body() && body != NULL)
-    {
-        clog << body->getName() << ": " << orbit->getPeriod() << ", " << orbit->isPeriodic() << endl;
-    }
 
     CachedOrbit* cachedOrbit = NULL;
     OrbitCache::iterator cached = orbitCache.find(orbit);
@@ -2990,10 +2986,7 @@ void Renderer::draw(const Observer& observer,
         starTex->bind();
     }
 
-    if (renderFlags & ShowSmoothLines)
-        setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
-    else
-        secondaryIlluminators.clear();
+    setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
 
 #ifdef USE_HDR
     Mat3f viewMat = conjugate(observer.getOrientationf()).toMatrix3();
