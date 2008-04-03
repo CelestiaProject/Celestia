@@ -1,6 +1,6 @@
 // trajmanager.cpp
 //
-// Copyright (C) 2001-2007 Chris Laurel <claurel@gmail.com>
+// Copyright (C) 2001-2008 Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,6 +13,7 @@
 
 #include "celestia.h"
 #include <celutil/debug.h>
+#include <celutil/filetype.h>
 #include "samporbit.h"
 #include "trajmanager.h"
 
@@ -56,21 +57,41 @@ Orbit* TrajectoryInfo::load(const string& filename)
     // strip off the uniquifying suffix
     string::size_type uniquifyingSuffixStart = filename.rfind(UniqueSuffixChar);
     string strippedFilename(filename, 0, uniquifyingSuffixStart);
+    ContentType filetype = DetermineFileType(strippedFilename);
 
     DPRINTF(1, "Loading trajectory: %s\n", strippedFilename.c_str());
 
     Orbit* sampTrajectory = NULL;
-    switch (precision)
+
+    if (filetype == Content_CelestiaXYZVTrajectory)
     {
-    case TrajectoryPrecisionSingle:
-        sampTrajectory = LoadSampledTrajectorySinglePrec(strippedFilename, interpolation);
-        break;
-    case TrajectoryPrecisionDouble:
-        sampTrajectory = LoadSampledTrajectoryDoublePrec(strippedFilename, interpolation);
-        break;
-    default:
-        assert(0);
-        break;
+        switch (precision)
+        {
+        case TrajectoryPrecisionSingle:
+            sampTrajectory = LoadXYZVTrajectorySinglePrec(strippedFilename, interpolation);
+            break;
+        case TrajectoryPrecisionDouble:
+            sampTrajectory = LoadXYZVTrajectoryDoublePrec(strippedFilename, interpolation);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    }
+    else
+    {   
+        switch (precision)
+        {
+        case TrajectoryPrecisionSingle:
+            sampTrajectory = LoadSampledTrajectorySinglePrec(strippedFilename, interpolation);
+            break;
+        case TrajectoryPrecisionDouble:
+            sampTrajectory = LoadSampledTrajectoryDoublePrec(strippedFilename, interpolation);
+            break;
+        default:
+            assert(0);
+            break;
+        }
     }
 
     return sampTrajectory;
