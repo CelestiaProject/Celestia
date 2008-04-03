@@ -166,6 +166,7 @@ class Body
     void setSatellites(PlanetarySystem*);
 
     float getBoundingRadius() const;
+    float getCullingRadius() const;
 
     RingSystem* getRings() const;
     void setRings(const RingSystem&);
@@ -237,11 +238,16 @@ class Body
     void setVisibleAsPoint(bool _visibleAsPoint);
     bool isOrbitColorOverridden() const { return overrideOrbitColor == 1; }
     void setOrbitColorOverridden(bool override);
+    bool isSecondaryIlluminator() const { return secondaryIlluminator; }
+    void setSecondaryIlluminator(bool enable);
+
     VisibilityPolicy getOrbitVisibility() const { return orbitVisibility; }
     void setOrbitVisibility(VisibilityPolicy _orbitVisibility);
 
     Color getOrbitColor() const { return orbitColor; }
     void setOrbitColor(const Color&);
+
+    int getOrbitClassification() const;
 
     enum
     {
@@ -267,6 +273,9 @@ class Body
     void markUpdated();
 
  private:
+    void recomputeCullingRadius();
+
+ private:
     std::string name;
     std::string i18nName;
 
@@ -284,6 +293,8 @@ class Body
     float mass;
     float albedo;
     Quatf orientation;
+
+    float cullingRadius;
 
     ResourceHandle model;
     Surface surface;
@@ -311,6 +322,7 @@ class Body
     unsigned int visibleAsPoint : 1;
     unsigned int overrideOrbitColor : 1;
     VisibilityPolicy orbitVisibility : 3;
+    bool secondaryIlluminator : 1;
 };
 
 #endif // _CELENGINE_BODY_H_

@@ -80,6 +80,14 @@ using namespace std;
 static const float  STAR_DISTANCE_LIMIT  = 1.0e6f;
 static const int REF_DISTANCE_TO_SCREEN  = 400; //[mm]
 
+// Contribution from planetshine beyond this distance (in units of object radius)
+// is considered insignificant.
+static const float PLANETSHINE_DISTANCE_LIMIT_FACTOR = 100.0f;
+
+// Planetshine from objects less than this pixel size is treated as insignificant
+// and will be ignored.
+static const float PLANETSHINE_PIXEL_SIZE_LIMIT      =   0.1f;
+
 // Distance from the Sun at which comet tails will start to fade out
 static const float COMET_TAIL_ATTEN_DIST_SOL = astro::AUtoKilometers(5.0f);
 
@@ -239,11 +247,24 @@ inline float sizeFade(float screenSize, float minScreenSize, float opaqueScale)
 }
 
 
+// Calculate the cosine of half the maximum field of view. We'll use this for
+// fast testing of object visibility.  The function takes the vertical FOV (in
+// degrees) as an argument. When computing the view cone, we want the field of
+// view as measured on the diagonal between viewport corners.
+double computeCosViewConeAngle(double verticalFOV, double width, double height)
+{
+    double h = tan(degToRad(verticalFOV / 2));
+    double diag = sqrt(1.0 + square(h) + square(h * width / height));
+    return 1.0 / diag;
+}
+
+
 Renderer::Renderer() :
     context(0),
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
+    cosViewConeAngle((float) computeCosViewConeAngle(fov, 1, 1)),
     screenDpi(96),
     corrFac(1.12f),
     faintestAutoMag45deg(7.0f),
@@ -661,6 +682,25 @@ static Texture* BuildGaussianGlareTexture(unsigned int log2size)
 }
 
 
+static int translateLabelModeToClassMask(int labelMode)
+{
+    int classMask = 0;
+
+    if (labelMode & Renderer::PlanetLabels)
+        classMask |= Body::Planet;
+    if (labelMode & Renderer::MoonLabels)
+        classMask |= Body::Moon;
+    if (labelMode & Renderer::AsteroidLabels)
+        classMask |= Body::Asteroid;
+    if (labelMode & Renderer::CometLabels)
+        classMask |= Body::Comet;
+    if (labelMode & Renderer::SpacecraftLabels)
+        classMask |= Body::Spacecraft;
+
+    return classMask;
+}
+
+
 // Depth comparison function for render list entries
 bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 {
@@ -953,6 +993,7 @@ void Renderer::resize(int width, int height)
 #endif
     windowWidth = width;
     windowHeight = height;
+    cosViewConeAngle = (float) computeCosViewConeAngle(fov, windowWidth, windowHeight);
     // glViewport(windowWidth, windowHeight);
 
 #ifdef USE_HDR
@@ -973,6 +1014,7 @@ void Renderer::setFieldOfView(float _fov)
 {
     fov = _fov;
     corrFac = (0.12f * fov/FOV * fov/FOV + 1.0f);
+    cosViewConeAngle = (float) computeCosViewConeAngle(fov, windowWidth, windowHeight);
 }
 
 int Renderer::getScreenDpi() const
@@ -1341,7 +1383,7 @@ void renderOrbitColor(const Body *body, bool selected, float opacity)
     {
         int classification;
         if (body != NULL)
-            classification = body->getClassification();
+            classification = body->getOrbitClassification();
         else
             classification = Body::Stellar;
 
@@ -1793,6 +1835,10 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         orbit = body->getOrbit(t);
     else
         orbit = orbitPath.star->getOrbit();
+    if (body == highlightObject.body() && body != NULL)
+    {
+        clog << body->getName() << ": " << orbit->getPeriod() << ", " << orbit->isPeriodic() << endl;
+    }
 
     CachedOrbit* cachedOrbit = NULL;
     OrbitCache::iterator cached = orbitCache.find(orbit);
@@ -2134,15 +2180,14 @@ void Renderer::autoMag(float& faintestMag)
 
 
 // Set up the light sources for rendering a solar system.  The positions of
-// all nearby stars are converted from universal to solar system coordinates.
+// all nearby stars are converted from universal to viewer-centered
+// coordinates.
 static void
 setupLightSources(const vector<const Star*>& nearStars,
-                  const Star& sun,
+                  const UniversalCoord& observerPos,
                   double t,
                   vector<LightSource>& lightSources)
 {
-    UniversalCoord center = sun.getPosition(t);
-
     lightSources.clear();
 
     for (vector<const Star*>::const_iterator iter = nearStars.begin();
@@ -2150,11 +2195,11 @@ setupLightSources(const vector<const Star*>& nearStars,
     {
         if ((*iter)->getVisibility())
         {
-            Vec3d v = ((*iter)->getPosition(t) - center) *
+            Vec3d v = ((*iter)->getPosition(t) - observerPos) *
                 astro::microLightYearsToKilometers(1.0);
 
             LightSource ls;
-            ls.position = Point3d(v.x, v.y, v.z);
+            ls.position = v;
             ls.luminosity = (*iter)->getLuminosity();
             ls.radius = (*iter)->getRadius();
 
@@ -2185,11 +2230,31 @@ setupLightSources(const vector<const Star*>& nearStars,
 }
 
 
+// Set up the potential secondary light sources for rendering solar system
+// bodies.
+static void
+setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
+                           const vector<LightSource>& primaryIlluminators)
+{
+    float au2 = square(astro::kilometersToAU(1.0f));
+
+    for (vector<SecondaryIlluminator>::iterator i = secondaryIlluminators.begin();
+         i != secondaryIlluminators.end(); i++)
+    {
+        i->reflectedIrradiance = 0.0f;
+
+        for (vector<LightSource>::const_iterator j = primaryIlluminators.begin();
+             j != primaryIlluminators.end(); j++)
+        {
+            i->reflectedIrradiance += j->luminosity / ((float) (i->position_v - j->position).lengthSquared() * au2);
+        }
+
+        i->reflectedIrradiance *= i->body->getAlbedo();
+    }
+}
+
+
 // Render an item from the render list
-// TODO: change the way the observer class works so that it is more efficient;
-// we should only have to recompute the position and attitude in universal
-// coordinates once per time step. Then, we wouldn't have to resort to passing
-// the camera orientation in order to avoid extra calculation.
 void Renderer::renderItem(const RenderListEntry& rle,
                           const Observer& observer,
                           const Quatf& cameraOrientation,
@@ -2215,7 +2280,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
                      rle.appMag,
                      observer,
                      cameraOrientation,
-                     *rle.lightSourceList,
                      nearPlaneDistance, farPlaneDistance);
         break;
 
@@ -2223,7 +2287,6 @@ void Renderer::renderItem(const RenderListEntry& rle,
         renderCometTail(*rle.body,
                         rle.position,
                         observer.getTime(),
-                        *rle.lightSourceList,
                         rle.discSizeInPixels);
         break;
 
@@ -2844,6 +2907,8 @@ void Renderer::draw(const Observer& observer,
     // renderList.
     renderList.clear();
     orbitPathList.clear();
+    lightSourceList.clear();
+    secondaryIlluminators.clear();
 
     // See if we want to use AutoMag.
     if ((renderFlags & ShowAutoMag) != 0)
@@ -2871,18 +2936,11 @@ void Renderer::draw(const Observer& observer,
         nearStars.clear();
         universe.getNearStars(observer.getPosition(), 1.0f, nearStars);
 
-        if (nearStars.size() > lightSourceLists.size())
-        {
-            unsigned int expandElements = nearStars.size() - lightSourceLists.size();
-            for (unsigned int i = 0; i < expandElements; i++)
-            {
-                vector<LightSource>* ls = new vector<LightSource>();
-                lightSourceLists.push_back(ls);
-            }
-        }
+        // Set up direct light sources (i.e. just stars at the moment)
+        setupLightSources(nearStars, observer.getPosition(), now, lightSourceList);
 
-        list<vector<LightSource>* >::iterator lsIter = lightSourceLists.begin();
-
+        // Traverse the frame trees of each nearby solar system and
+        // build the list of objects to be rendered.
         for (vector<const Star*>::const_iterator iter = nearStars.begin();
              iter != nearStars.end(); iter++)
         {
@@ -2890,8 +2948,6 @@ void Renderer::draw(const Observer& observer,
             SolarSystem* solarSystem = universe.getSolarSystem(sun);
             if (solarSystem != NULL)
             {
-                vector<LightSource>* lightSources = *lsIter++;
-
                 FrameTree* solarSysTree = solarSystem->getFrameTree();
                 if (solarSysTree != NULL)
                 {
@@ -2905,21 +2961,39 @@ void Renderer::draw(const Observer& observer,
                     // Compute the position of the observer in astrocentric coordinates
                     Point3d astrocentricObserverPos = astrocentricPosition(observer.getPosition(), *sun, now);
 
-                    setupLightSources(nearStars, *sun, now, *lightSources);
-
+                    // Build render lists for bodies and orbits paths
                     buildRenderLists(astrocentricObserverPos,
                                      xfrustum,
+                                     Vec3d(0.0, 0.0, -1.0) * observer.getOrientation().toMatrix3(),
                                      solarSysTree,
                                      observer,
-                                     now,
-                                     lightSources);
+                                     now);
+                    if (renderFlags & ShowOrbits)
+                    {
+                        buildOrbitLists(astrocentricObserverPos,
+                                        observer.getOrientationf(),
+                                        xfrustum,
+                                        solarSysTree,
+                                        now);
+                    }
                 }
             }
 
             addStarOrbitToRenderList(*sun, observer, now);
         }
+
+        if ((labelMode & (BodyLabelMask)) != 0)
+        {
+            buildLabelLists(xfrustum, now);
+        }
+
         starTex->bind();
     }
+
+    if (renderFlags & ShowSmoothLines)
+        setupSecondaryLightSources(secondaryIlluminators, lightSourceList);
+    else
+        secondaryIlluminators.clear();
 
 #ifdef USE_HDR
     Mat3f viewMat = conjugate(observer.getOrientationf()).toMatrix3();
@@ -3295,7 +3369,7 @@ void Renderer::draw(const Observer& observer,
     {
         renderMarkers(*universe.getMarkers(),
                       observer.getPosition(),
-		      observer.getOrientation(),
+        		      observer.getOrientation(),
                       now);
         
         // Render background markers; rendering of other markers is deferred until
@@ -6744,13 +6818,57 @@ getStellarIrradiance(const Star& star, float distance)
 }
 
 
+// Estimate the fraction of light reflected from a sphere that
+// reaches an object at the specified position relative to that
+// sphere.
+//
+// This is function is just a rough approximation to the actual
+// lighting integral, but it reproduces the important features
+// of the way that phase and distance affect reflected light:
+//    - Higher phase angles mean less reflected light
+//    - The closer an object is to the reflector, the less
+//      area of the reflector that is visible.
+//
+// We approximate the reflected light by taking a weighted average
+// of the reflected light at three points on the reflector: the
+// light receiver's sub-point, and the two horizon points in the
+// plane of the light vector and receiver-to-reflector vector.
+//
+// The reflecting object is assumed to be spherical and perfectly
+// Lambertian.
+static float
+estimateReflectedLightFraction(const Vec3d& toSun,
+                               const Vec3d& toObject,
+                               float radius)
+{
+    // Theta is half the arc length visible to the reflector
+    double d = toObject.length();
+    float cosTheta = (float) (radius / d);
+    if (cosTheta > 0.999f)
+        cosTheta = 0.999f;
 
+    // Phi is the angle between the light vector and receiver-to-reflector vector.
+    // cos(phi) is thus the illumination at the sub-point. The horizon points are
+    // at phi+theta and phi-theta.
+    float cosPhi = (float) ((toSun * toObject) / (d * toSun.length()));
+
+    // Use a trigonometric identity to compute cos(phi +/- theta):
+    //   cos(phi + theta) = cos(phi) * cos(theta) - sin(phi) * sin(theta)
+
+    // s = sin(phi) * sin(theta)
+    float s = (float) sqrt((1.0f - cosPhi * cosPhi) * (1.0f - cosTheta * cosTheta));
+    
+    float cosPhi1 = cosPhi * cosTheta - s;  // cos(phi + theta)
+    float cosPhi2 = cosPhi * cosTheta + s;  // cos(phi - theta)
+
+    // Calculate a weighted average of illumination at the three points
+    return (2.0f * max(cosPhi, 0.0f) + max(cosPhi1, 0.0f) + max(cosPhi2, 0.0f)) * 0.25f;
+}
 
 
 static void
 setupObjectLighting(const vector<LightSource>& suns,
-                    const Body& body,
-                    double tdb,
+                    const vector<SecondaryIlluminator>& secondaryIlluminators,
                     const Quatf& objOrientation,
                     const Vec3f& objScale,
                     const Point3f& objPosition_eye,
@@ -6768,12 +6886,11 @@ setupObjectLighting(const vector<LightSource>& suns,
 #ifdef USE_HDR
     float exposureFactor = (faintestMag - appMag)/(faintestMag - saturationMag + 0.001f);
 #endif
-    Point3d objPosition = body.getAstrocentricPosition(tdb);  
 
     unsigned int i;
     for (i = 0; i < nLights; i++)
     {
-        Vec3d dir = suns[i].position - objPosition;
+        Vec3d dir = suns[i].position - Vec3d(objPosition_eye.x, objPosition_eye.y, objPosition_eye.z);
         ls.lights[i].direction_eye =
             Vec3f((float) dir.x, (float) dir.y, (float) dir.z);
         float distance = ls.lights[i].direction_eye.length();
@@ -6784,37 +6901,59 @@ setupObjectLighting(const vector<LightSource>& suns,
 
         // Store the position and apparent size because we'll need them for
         // testing for eclipses.
-        ls.lights[i].position = suns[i].position;
+        ls.lights[i].position = Point3d(suns[i].position.x, suns[i].position.y, suns[i].position.z);
         ls.lights[i].apparentSize = (float) (suns[i].radius / dir.length());
     }
 
-#ifdef PLANETSHINE
-    // Planetshine
-    // Only some body types are considered when calculating planetshine
-    const int PLANETSHINE_BODY_MASK = Body::Planet | Body::Moon | Body::Asteroid | Body::Comet;
-    Selection center = body.getOrbitFrame(tdb)->getCenter();
-    while (center.body() != NULL &&
-           (center.body()->getClassification() & PLANETSHINE_BODY_MASK) == 0)
+    // Include effects of secondary illumination (i.e. planetshine)
+    if (!secondaryIlluminators.empty() && i < MaxLights - 1)
     {
-        center = center.body()->getOrbitFrame(tdb)->getCenter();
-    }
+        float maxIrr = 0.0f;
+        unsigned int maxIrrSource = 0;
+        Vec3d objpos(objPosition_eye.x, objPosition_eye.y, objPosition_eye.z);
 
-    if (center.body() != NULL)
-    {
-        const Body* parent = center.body();
-        Point3d parentPos = parent->getAstrocentricPosition(tdb);
-        Vec3d toSun = suns[0].position - parentPos;
-        float au = astro::kilometersToAU(1.0f);
-        float planetIrr = suns[0].luminosity / ((float) toSun.lengthSquared() * au * au);
-        if (i < MaxLights - 1)
+        // Only account for light from the brightest secondary source
+        for (vector<SecondaryIlluminator>::const_iterator iter = secondaryIlluminators.begin();
+             iter != secondaryIlluminators.end(); iter++)
         {
-            Vec3d toParent = parentPos - objPosition;
-            toParent *= (1.0 / parent->getRadius());
+            Vec3d toIllum = iter->position_v - objpos;  // reflector-to-object vector
+            float distSquared = (float) toIllum.lengthSquared() / square(iter->radius);
 
-            ls.lights[i].direction_eye = Vec3f((float) toParent.x, (float) toParent.y, (float) toParent.z);
+            if (distSquared > 0.01f)
+            {
+                // Irradiance falls off with distance^2
+                float irr = iter->reflectedIrradiance / distSquared;
+
+                // Phase effects will always leave the irradiance unaffected or reduce it;
+                // don't bother calculating them if we've already found a brighter secondary
+                // source.
+                if (irr > maxIrr)
+                {
+                    // Account for the phase
+                    Vec3d toSun = objpos - suns[0].position;
+                    irr *= estimateReflectedLightFraction(toSun, toIllum, iter->radius);              
+                    if (irr > maxIrr)
+                    {
+                        maxIrr = irr;
+                        maxIrrSource = iter - secondaryIlluminators.begin();
+                    }
+                }
+            }
+        }
+#if DEBUG_SECONDARY_ILLUMINATION      
+        clog << "maxIrr = " << maxIrr << ", "
+             << secondaryIlluminators[maxIrrSource].body->getName() << ", "
+             << secondaryIlluminators[maxIrrSource].reflectedIrradiance << endl;
+#endif
+
+        if (maxIrr > 0.0f)
+        {
+            Vec3d toIllum = secondaryIlluminators[maxIrrSource].position_v - objpos;
+
+            ls.lights[i].direction_eye = Vec3f((float) toIllum.x, (float) toIllum.y, (float) toIllum.z);
             ls.lights[i].direction_eye.normalize();
-            ls.lights[i].irradiance = planetIrr / (float) toParent.lengthSquared() * parent->getAlbedo();
-            ls.lights[i].color = parent->getSurface().color;        
+            ls.lights[i].irradiance = maxIrr;
+            ls.lights[i].color = secondaryIlluminators[maxIrrSource].body->getSurface().color;        
             ls.lights[i].apparentSize = -1.0f;
 
             //clog << "planetshine - " << body.getName() << " / " << parent->getName() << ": " << ls.lights[i].irradiance / ls.lights[0].irradiance << endl;
@@ -6823,7 +6962,6 @@ setupObjectLighting(const vector<LightSource>& suns,
             nLights++;
         }
     }
-#endif
 
     // Sort light sources by brightness.  Light zero should always be the
     // brightest.  Optimize common cases of one and two lights.
@@ -6876,9 +7014,6 @@ setupObjectLighting(const vector<LightSource>& suns,
         ls.nLights++;
     }
 
-    Point3f pos((float) objPosition.x,
-                (float) objPosition.y,
-                (float) objPosition.z);
     ls.eyePos_obj = Point3f(-objPosition_eye.x / objScale.x,
                             -objPosition_eye.y / objScale.y,
                             -objPosition_eye.z / objScale.z) * m;
@@ -7517,7 +7652,6 @@ bool Renderer::testEclipse(const Body& receiver,
                            double now,
                            vector<EclipseShadow>& shadows)
 {
-
     // Ignore situations where the shadow casting body is much smaller than
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
@@ -7602,12 +7736,10 @@ void Renderer::renderPlanet(Body& body,
                             float appMag,
                             const Observer& observer,
                             const Quatf& cameraOrientation,
-                            const vector<LightSource>& lightSources,
                             float nearPlaneDistance,
                             float farPlaneDistance)
 {
     double now = observer.getTime();
-
     float altitude = distance - body.getRadius();
     float discSizeInPixels = body.getRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
@@ -7644,9 +7776,8 @@ void Renderer::renderPlanet(Body& body,
             body.computeLocations();
 
         LightingState lights;
-        setupObjectLighting(lightSources,
-                            body,
-                            now,
+        setupObjectLighting(lightSourceList,
+                            secondaryIlluminators,
                             rp.orientation,
                             rp.semiAxes * rp.radius,
                             pos,
@@ -8006,7 +8137,6 @@ static float cometDustTailLength(float distanceToSun,
 void Renderer::renderCometTail(const Body& body,
                                Point3f pos,
                                double now,
-                               const vector<LightSource>& lightSources,
                                float discSizeInPixels)
 {
     Point3f cometPoints[MaxCometTailPoints];
@@ -8031,12 +8161,11 @@ void Renderer::renderCometTail(const Body& body,
     // as function of the comet's position;
     // irradiance = sun's luminosity / square(distanceFromSun);
 
-    for (unsigned int li = 0; li < lightSources.size(); li++)
+    for (unsigned int li = 0; li < lightSourceList.size(); li++)
     {
-        distanceFromSun = (float) (body.getAstrocentricPosition(now) -
-                           lightSources[li].position).length();
-        float irradiance = lightSources[li].luminosity / square(distanceFromSun);
-        if (irradiance > irradiance_max )
+        distanceFromSun = (float) (Vec3d(pos.x, pos.y, pos.z) - lightSourceList[li].position).length();
+        float irradiance = lightSourceList[li].luminosity / square(distanceFromSun);
+        if (irradiance > irradiance_max)
         {
             li_eff = li;
             irradiance_max = irradiance;
@@ -8046,29 +8175,9 @@ void Renderer::renderCometTail(const Body& body,
 
     // direction to sun with dominant light irradiance:
 
-    Vec3d sd = body.getAstrocentricPosition(now) - lightSources[li_eff].position;
+    Vec3d sd = Vec3d(pos.x, pos.y, pos.z) - lightSourceList[li_eff].position;
     Vec3f sunDir = Vec3f((float) sd.x, (float) sd.y, (float) sd.z);
     sunDir.normalize();
-
-    int i;
-#if 0
-    for (i = 0; i < MaxCometTailPoints; i++)
-    {
-        Vec3d pd = body.getOrbit()->positionAtTime(t) - pos0;
-        Point3f p = Point3f((float) pd.x, (float) pd.y, (float) pd.z);
-        Vec3f r(p.x + (float) pos0.x,
-                p.y + (float) pos0.y,
-                p.z + (float) pos0.z);
-        float distance = r.length();
-
-        Vec3f a = r * ((1 / square(distance)) * f * dt);
-        Vec3f dx = a * (square(i * dt) * 0.5f);
-
-        cometPoints[i] = p + dx;
-
-        t -= dt;
-    }
-#endif
 
     float dustTailLength = cometDustTailLength((float) pos0.distanceFromOrigin(), body.getRadius());
     float dustTailRadius = dustTailLength * 0.1f;
@@ -8076,6 +8185,8 @@ void Renderer::renderCometTail(const Body& body,
 
     Point3f origin(0, 0, 0);
     origin -= sunDir * (body.getRadius() * 100);
+
+    int i;
     for (i = 0; i < nTailPoints; i++)
     {
         float alpha = (float) i / (float) nTailPoints;
@@ -8266,23 +8377,82 @@ static float luminosityAtOpposition(float sunLuminosity,
 }
 
 
-// Add solar system bodies, orbits, and annotations to the render list. Stars
-// are handled by other methods.
+void Renderer::addRenderListEntries(RenderListEntry& rle,
+                                    Body& body,
+                                    bool isLabeled)
+{
+    bool visibleAsPoint = rle.appMag < faintestPlanetMag && body.isVisibleAsPoint();
+
+    if ((rle.discSizeInPixels > 1 || visibleAsPoint || isLabeled) && body.isVisible())
+    {
+        rle.renderableType = RenderListEntry::RenderableBody;
+        rle.body = &body;
+
+        if (body.getModel() != InvalidResource && rle.discSizeInPixels > 1)
+        {
+            Model* model = GetModelManager()->find(body.getModel());
+            if (model == NULL)
+                rle.isOpaque = true;
+            else
+                rle.isOpaque = model->isOpaque();
+        }
+        else
+        {
+            rle.isOpaque = true;
+        }
+        rle.radius = body.getRadius();
+        renderList.push_back(rle);
+    }
+
+    if (body.getClassification() == Body::Comet && (renderFlags & ShowCometTails) != 0)
+    {
+        float radius = cometDustTailLength(rle.sun.length(), body.getRadius());
+        float discSize = (radius / (float) rle.distance) / pixelSize;
+        if (discSize > 1)
+        {
+            rle.renderableType = RenderListEntry::RenderableCometTail;
+            rle.body = &body;
+            rle.isOpaque = false;
+            rle.radius = radius;
+            rle.discSizeInPixels = discSize;
+            renderList.push_back(rle);
+        }
+    }
+
+    const list<ReferenceMark*>* refMarks = body.getReferenceMarks();
+    if (refMarks != NULL)
+    {
+        for (list<ReferenceMark*>::const_iterator iter = refMarks->begin();
+            iter != refMarks->end(); ++iter)
+        {
+            const ReferenceMark* rm = *iter;
+
+            rle.renderableType = RenderListEntry::RenderableReferenceMark;
+            rle.refMark = rm;
+            rle.isOpaque = rm->isOpaque();
+            rle.radius = rm->boundingSphereRadius();
+            renderList.push_back(rle);
+        }
+    }
+}
+
+
 void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                                 const Frustum& viewFrustum,
+                                const Vec3d& viewPlaneNormal,
                                 const FrameTree* tree,
                                 const Observer& observer,
-                                double now,
-                                vector<LightSource>* lightSourceList)
+                                double now)
 {
+    int labelClassMask = translateLabelModeToClassMask(labelMode);
+
     Mat3f viewMat = observer.getOrientationf().toMatrix3();
     Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+    double invCosViewAngle = 1.0 / cosViewConeAngle;
+    double sinViewAngle = sqrt(1.0 - square(cosViewConeAngle));   
 
-    Body* lastPrimary = NULL;
-    Sphered primarySphere;
-
-    int nChildren = tree != NULL ? tree->childCount() : 0;
-    for (int i = 0; i < nChildren; i++)
+    unsigned int nChildren = tree != NULL ? tree->childCount() : 0;
+    for (unsigned int i = 0; i < nChildren; i++)
     {
         const TimelinePhase* phase = tree->getChild(i);
 
@@ -8292,156 +8462,349 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
 
         Body* body = phase->body();
 
-        Point3d bodyPos = body->getAstrocentricPosition(now);
+        // pos_s: sun-relative position of object
+        // pos_v: viewer-relative position of object
+
+        // Get the position of the body relative to the sun.
+        Point3d pos_s = body->getAstrocentricPosition(now);
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the body
         // relative to the observer.
-        Vec3d posd = bodyPos - astrocentricObserverPos;
+        Vec3d pos_v = pos_s - astrocentricObserverPos;
 
-        // Compute the size of the planet/moon disc in pixels
-        double distanceFromObserver = posd.length();
-        float discSize = (body->getRadius() / (float) distanceFromObserver) / pixelSize;
+        // dist_vn: distance along view normal from the viewer to the
+        // projection of the object's center.
+        double dist_vn = viewPlaneNormal * pos_v;
 
-        vector<LightSource>& lightSources = *lightSourceList;
+        // Vector from object center to its projection on the view normal.
+        Vec3d toViewNormal = pos_v - dist_vn * viewPlaneNormal;
 
-        // Compute the apparent magnitude; instead of summing the reflected
-        // light from all nearby stars, we just consider the one with the
-        // highest apparent brightness.
-        float appMag = 100.0f;
-        for (unsigned int li = 0; li < lightSources.size(); li++)
+        float cullingRadius = body->getCullingRadius();
+
+        // The result of the planetshine test can be reused for the view cone
+        // test, but only when the object's light influence sphere is larger
+        // than the geometry. This is not 
+        bool viewConeTestFailed = false;
+        if (body->isSecondaryIlluminator())
         {
-            Vec3d sunPos = bodyPos - lightSources[li].position;
-            appMag = min(appMag, body->getApparentMagnitude(lightSources[li].luminosity, sunPos, posd));
-        }
-
-        Vec3f pos((float) posd.x, (float) posd.y, (float) posd.z);
-        bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
-
-        if ((discSize > 1 || visibleAsPoint) && body->isVisible())
-        {
-            RenderListEntry rle;
-            rle.renderableType = RenderListEntry::RenderableBody;
-            rle.body = body;
-
-            if (body->getModel() != InvalidResource && discSize > 1)
+            float influenceRadius = body->getBoundingRadius() + (body->getRadius() * PLANETSHINE_DISTANCE_LIMIT_FACTOR);
+            if (dist_vn > -influenceRadius)
             {
-                Model* model = GetModelManager()->find(body->getModel());
-                if (model == NULL)
-                    rle.isOpaque = true;
+                double maxPerpDist = (influenceRadius + dist_vn * sinViewAngle) * invCosViewAngle;
+                double perpDistSq = toViewNormal * toViewNormal;
+                if (perpDistSq < maxPerpDist * maxPerpDist)
+                {
+                    if ((body->getRadius() / (float) pos_v.length()) / pixelSize > PLANETSHINE_PIXEL_SIZE_LIMIT)
+                    {
+                        // add to planetshine list if larger than 1/10 pixel
+#if DEBUG_SECONDARY_ILLUMINATION
+                        clog << "Planetshine: " << body->getName()
+                             << ", " << body->getRadius() / (float) pos_v.length() / pixelSize << endl;
+#endif
+                        SecondaryIlluminator illum;
+                        illum.body = body;
+                        illum.position_v = pos_v;
+                        illum.radius = body->getRadius();
+                        secondaryIlluminators.push_back(illum);
+                    }
+                }
                 else
-                    rle.isOpaque = model->isOpaque();
+                {
+                    viewConeTestFailed = influenceRadius > cullingRadius;
+                }
             }
             else
             {
-                rle.isOpaque = true;
+                viewConeTestFailed = influenceRadius > cullingRadius;
             }
-            rle.position = Point3f(pos.x, pos.y, pos.z);
-            rle.sun = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
-            rle.distance = (float) distanceFromObserver;
-            rle.centerZ = pos * viewMatZ;
-            rle.radius = body->getRadius();
-            rle.discSizeInPixels = discSize;
-            rle.appMag = appMag;
-            rle.lightSourceList = lightSourceList;
-            renderList.push_back(rle);
         }
 
-        if (body->getClassification() == Body::Comet &&
-            (renderFlags & ShowCometTails) != 0)
+        bool insideViewCone = false;
+        if (!viewConeTestFailed)
         {
-            Vec3f sunPos = Vec3f((float) -bodyPos.x, (float) -bodyPos.y, (float) -bodyPos.z);
-            float radius = cometDustTailLength(sunPos.length(), body->getRadius());
-            discSize = (radius / (float) distanceFromObserver) / pixelSize;
-            if (discSize > 1)
+            float radius = body->getCullingRadius();
+            if (dist_vn > -radius)
+            {
+                double maxPerpDist = (radius + dist_vn * sinViewAngle) * invCosViewAngle;
+                double perpDistSq = toViewNormal * toViewNormal;
+                insideViewCone = perpDistSq < maxPerpDist * maxPerpDist;
+            }
+        }
+
+        if (insideViewCone)
+        {
+            // Calculate the distance to the viewer
+            double dist_v = pos_v.length();
+
+            // Calculate the size of the planet/moon disc in pixels
+            float discSize = (body->getCullingRadius() / (float) dist_v) / pixelSize;
+
+            // Compute the apparent magnitude; instead of summing the reflected
+            // light from all nearby stars, we just consider the one with the
+            // highest apparent brightness.
+            float appMag = 100.0f;
+            for (unsigned int li = 0; li < lightSourceList.size(); li++)
+            {
+                Vec3d sunPos = pos_v - lightSourceList[li].position;
+                appMag = min(appMag, body->getApparentMagnitude(lightSourceList[li].luminosity, sunPos, pos_v));
+            }
+
+            bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
+            bool isLabeled = (body->getClassification() & labelClassMask) != 0;
+
+            if ((discSize > 1 || visibleAsPoint || isLabeled) && body->isVisible())
             {
                 RenderListEntry rle;
-                rle.renderableType = RenderListEntry::RenderableCometTail;
-                rle.body = body;
-                rle.isOpaque = false;
-                rle.position = Point3f(pos.x, pos.y, pos.z);
-                rle.sun = sunPos;
-                rle.distance = (float) distanceFromObserver;
-                rle.centerZ = pos * viewMatZ;
-                rle.radius = radius;
-                rle.discSizeInPixels = discSize;
-                rle.appMag = appMag;
-                rle.lightSourceList = lightSourceList;
-                renderList.push_back(rle);
+
+                rle.position = Point3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z);
+                rle.distance = (float) dist_v;
+                rle.centerZ = Vec3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z) * viewMatZ;
+                rle.appMag   = appMag;
+                rle.discSizeInPixels = body->getRadius() / ((float) dist_v * pixelSize);
+
+                // TODO: Remove this. It's only used in two places: for calculating comet tail
+                // length, and for calculating sky brightness to adjust the limiting magnitude.
+                // In both cases, it's the wrong quantity to use (e.g. for objects with orbits
+                // defined relative to the SSB.)
+                rle.sun = Vec3f((float) -pos_s.x, (float) -pos_s.y, (float) -pos_s.z);
+
+                addRenderListEntries(rle, *body, isLabeled);
             }
         }
 
-        const list<ReferenceMark*>* refMarks = body->getReferenceMarks();
-        if (refMarks != NULL)
+        const FrameTree* subtree = body->getFrameTree();
+        if (subtree != NULL)
         {
-            for (list<ReferenceMark*>::const_iterator iter = refMarks->begin();
-                iter != refMarks->end(); ++iter)
+            double dist_v = pos_v.length();
+            bool traverseSubtree = false;
+
+            // There are two different tests available to determine whether we can reject
+            // the object's subtree. If the subtree contains no light reflecting objects,
+            // then render the subtree only when:
+            //    - the subtree bounding sphere intersects the view frustum, and
+            //    - the subtree contains an object bright or large enough to be visible.
+            // Otherwise, render the subtree when any of the above conditions are
+            // true or when a subtree object could potentially illuminate something
+            // in the view cone.
+            float minPossibleDistance = (float) (dist_v - subtree->boundingSphereRadius());
+            float brightestPossible = 0.0;
+            float largestPossible = 0.0;
+
+            // If the viewer is not within the subtree bounding sphere, see if we can cull it because
+            // it contains no objects brighter than the limiting magnitude and no objects that will
+            // be larger than one pixel in size.
+            if (minPossibleDistance > 1.0f)
             {
-                const ReferenceMark* rm = *iter;
+                // Figure out the magnitude of the brightest possible object in the subtree.
 
-                RenderListEntry rle;
-                rle.renderableType = RenderListEntry::RenderableReferenceMark;
-                rle.refMark = rm;
-                rle.isOpaque = rm->isOpaque();
-                rle.position = Point3f(pos.x, pos.y, pos.z);
-                rle.sun = Vec3f(0.0f, 0.0f, 0.0f);
-                rle.distance = (float) distanceFromObserver;
-                rle.centerZ = pos * viewMatZ;
-                rle.radius = rm->boundingSphereRadius();
-                rle.discSizeInPixels = discSize;
-                rle.appMag = appMag;
-                rle.lightSourceList = lightSourceList;
-                renderList.push_back(rle);
+                // Compute the luminosity from reflected light of the largest object in the subtree
+                float lum = 0.0f;                
+                for (unsigned int li = 0; li < lightSourceList.size(); li++)
+                {
+                    Vec3d sunPos = pos_v - lightSourceList[li].position;
+                    lum += luminosityAtOpposition(lightSourceList[li].luminosity, (float) sunPos.length(), (float) subtree->maxChildRadius());
+                }
+                brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
+                largestPossible = (float) subtree->maxChildRadius() / (float) minPossibleDistance / pixelSize;
+            }
+            else
+            {
+                // Viewer is within the bounding sphere, so the object could be very close.
+                // Assume that an object in the subree could be very bright or large,
+                // so no culling will occur.
+                brightestPossible = -100.0f;
+                largestPossible = 100.0f;
+            }
+
+            if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
+            {
+                // See if the object or any of its children are within the view frustum
+                if (viewFrustum.testSphere(Point3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
+                {
+                    traverseSubtree = true;
+                }
+            }
+
+            // If the subtree contains secondary illuminators, do one last check if it hasn't
+            // already been determined if we need to traverse the subtree: see if something
+            // in the subtree could possibly contribute significant illumination to an
+            // object in the view cone.
+            if (subtree->containsSecondaryIlluminators() &&
+                !traverseSubtree                         &&
+                largestPossible > PLANETSHINE_PIXEL_SIZE_LIMIT)
+            {
+                float influenceRadius = (float) (subtree->boundingSphereRadius() +
+                    (subtree->maxChildRadius() * PLANETSHINE_DISTANCE_LIMIT_FACTOR));
+                if (dist_vn > -influenceRadius)
+                {
+                    double maxPerpDist = (influenceRadius + dist_vn * sinViewAngle) * invCosViewAngle;
+                    double perpDistSq = toViewNormal * toViewNormal;
+                    if (perpDistSq < maxPerpDist * maxPerpDist)                   
+                        traverseSubtree = true;
+                }
+            }
+
+            if (traverseSubtree)
+            {
+                buildRenderLists(astrocentricObserverPos,
+                                 viewFrustum,
+                                 viewPlaneNormal,
+                                 subtree,
+                                 observer,
+                                 now);
+            }
+        } // end subtree traverse
+
+    }
+}
+
+
+void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
+                               const Quatf& observerOrientation,
+                               const Frustum& viewFrustum,
+                               const FrameTree* tree,
+                               double now)
+{
+    Mat3f viewMat = observerOrientation.toMatrix3();
+    Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+
+    unsigned int nChildren = tree != NULL ? tree->childCount() : 0;
+    for (unsigned int i = 0; i < nChildren; i++)
+    {
+        const TimelinePhase* phase = tree->getChild(i);
+
+        // No need to do anything if the phase isn't active now
+        if (!phase->includes(now))
+            continue;
+
+        Body* body = phase->body();
+
+        // pos_s: sun-relative position of object
+        // pos_v: viewer-relative position of object
+
+        // Get the position of the body relative to the sun.
+        Point3d pos_s = body->getAstrocentricPosition(now);
+
+        // We now have the positions of the observer and the planet relative
+        // to the sun.  From these, compute the position of the body
+        // relative to the observer.
+        Vec3d pos_v = pos_s - astrocentricObserverPos;
+
+        // Only show orbits for major bodies or selected objects. 
+        Body::VisibilityPolicy orbitVis = body->getOrbitVisibility();
+        if (body == highlightObject.body() ||
+            orbitVis == Body::AlwaysVisible ||
+            (orbitVis == Body::UseClassVisibility && (body->getOrbitClassification() & orbitMask) != 0))
+        {
+            Point3d orbitOrigin(0.0, 0.0, 0.0);
+            Selection centerObject = phase->orbitFrame()->getCenter();
+            if (centerObject.body() != NULL)
+            {
+                orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
+            }
+
+            // Calculate the origin of the orbit relative to the observer
+            Vec3d relOrigin = orbitOrigin - astrocentricObserverPos;
+            Vec3f origf((float) relOrigin.x, (float) relOrigin.y, (float) relOrigin.z);
+
+            // Compute the size of the orbit in pixels
+            double originDistance = pos_v.length();
+            double boundingRadius = body->getOrbit(now)->getBoundingRadius();
+            float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
+
+            if (orbitRadiusInPixels > minOrbitSize)
+            {
+                // Add the orbit of this body to the list of orbits to be rendered
+                OrbitPathListEntry path;
+                path.body = body;
+                path.star = NULL;
+                path.centerZ = origf * viewMatZ;
+                path.radius = (float) boundingRadius;
+                path.origin = Point3f(origf.x, origf.y, origf.z);
+                path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
+                orbitPathList.push_back(path);
             }
         }
 
-        bool showLabels = (labelMode & (BodyLabelMask)) != 0;
-
-        if (showLabels && viewFrustum.testSphere(Point3f(pos.x, pos.y, pos.z), body->getRadius()) != Frustum::Outside)
+        const FrameTree* subtree = body->getFrameTree();
+        if (subtree != NULL)
         {
-            float boundingRadiusSize = (float) (body->getOrbit(now)->getBoundingRadius() / distanceFromObserver) / pixelSize;
+            // Only try to render orbits of child objects when:
+            //   - The apparent size of the subtree bounding sphere is large enough that
+            //     orbit paths will be visible, and
+            //   - The subtree bounding sphere isn't outside the view frustum
+            double dist_v = pos_v.length();
+            float distanceToBoundingSphere = (float) (dist_v - subtree->boundingSphereRadius());
+            bool traverseSubtree = false;
+            if (distanceToBoundingSphere > 0.0f)
+            {
+                // We're inside the subtree's bounding sphere
+                traverseSubtree = true;
+            }
+            else
+            {
+                float maxPossibleOrbitSize = (float) subtree->boundingSphereRadius() / ((float) dist_v * pixelSize);
+                if (maxPossibleOrbitSize > minOrbitSize)
+                    traverseSubtree = true;
+            }
+
+            if (traverseSubtree)
+            {
+                // See if the object or any of its children are within the view frustum
+                if (viewFrustum.testSphere(Point3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
+                {
+                    buildOrbitLists(astrocentricObserverPos,
+                                    observerOrientation,
+                                    viewFrustum,
+                                    subtree,
+                                    now);
+                }
+            }
+        } // end subtree traverse
+    }
+}
+
+
+void Renderer::buildLabelLists(const Frustum& viewFrustum,
+                               double now)
+{
+    int labelClassMask = translateLabelModeToClassMask(labelMode);
+    Body* lastPrimary = NULL;
+    Sphered primarySphere;
+
+    for (vector<RenderListEntry>::const_iterator iter = renderList.begin();
+         iter != renderList.end(); iter++)
+    {
+        if (iter->renderableType == RenderListEntry::RenderableBody &&
+            (iter->body->getClassification() & labelClassMask)      &&
+            viewFrustum.testSphere(iter->position, iter->radius) != Frustum::Outside)
+        {
+            const Body* body = iter->body;
+            Vec3f pos(iter->position.x, iter->position.y, iter->position.z);
+
+            float boundingRadiusSize = (float) (body->getOrbit(now)->getBoundingRadius() / iter->distance) / pixelSize;
             if (boundingRadiusSize > minOrbitSize)
             {
                 Color labelColor;
-                bool showLabel = false;
                 float opacity = sizeFade(boundingRadiusSize, minOrbitSize, 2.0f);
 
                 switch (body->getClassification())
                 {
                 case Body::Planet:
-                    if ((labelMode & PlanetLabels) != 0)
-                    {
-                        labelColor = PlanetLabelColor;
-                        showLabel = true;
-                    }
+                    labelColor = PlanetLabelColor;
                     break;
                 case Body::Moon:
-                    if ((labelMode & MoonLabels) != 0)
-                    {
-                        labelColor = MoonLabelColor;
-                        showLabel = true;
-                    }
+                    labelColor = MoonLabelColor;
                     break;
                 case Body::Asteroid:
-                    if ((labelMode & AsteroidLabels) != 0)
-                    {
-                        labelColor = AsteroidLabelColor;
-                        showLabel = true;
-                    }
+                    labelColor = AsteroidLabelColor;
                     break;
                 case Body::Comet:
-                    if ((labelMode & CometLabels) != 0)
-                    {
-                        labelColor = CometLabelColor;
-                        showLabel = true;
-                    }
+                    labelColor = CometLabelColor;
                     break;
                 case Body::Spacecraft:
-                    if ((labelMode & SpacecraftLabels) != 0)
-                    {
-                        labelColor = SpacecraftLabelColor;
-                        showLabel = true;
-                    }
+                    labelColor = SpacecraftLabelColor;
                     break;
                 default:
                     labelColor = Color::Black;
@@ -8450,14 +8813,17 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
 
                 labelColor = Color(labelColor, opacity * labelColor.alpha());
 
-                if (showLabel && !body->getName().empty())
+                if (!body->getName().empty())
                 {
                     bool isBehindPrimary = false;
-                    Body* primary = body->getSystem()->getPrimaryBody();
+
+                    const TimelinePhase* phase = body->getTimeline()->findPhase(now);
+                    Body* primary = phase->orbitFrame()->getCenter().body();
                     if (primary != NULL && (primary->getClassification() & Body::Invisible) != 0)
                     {
-                        if (primary->getSystem() != NULL)
-                            primary = primary->getSystem()->getPrimaryBody();
+                        Body* parent = phase->orbitFrame()->getCenter().body();
+                        if (parent != NULL)
+                            primary = parent;
                     }
 
                     // Position the label slightly in front of the object along a line from
@@ -8486,7 +8852,10 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                         // position.
                         if (primary != lastPrimary)
                         {
-                            Vec3d v = primary->getAstrocentricPosition(now) - astrocentricObserverPos;
+                            Point3d p = phase->orbit()->positionAtTime(now) * 
+                                        phase->orbitFrame()->getOrientation(now).toMatrix3();
+                            Vec3d v(iter->position.x - p.x, iter->position.y - p.y, iter->position.z - p.z);
+                            
                             primarySphere = Sphered(Point3d(v.x, v.y, v.z),
                                                     primary->getRadius());
                             lastPrimary = primary;
@@ -8534,97 +8903,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                 }
             }
         }
-
-        // Only show orbits for major bodies or selected objects
-        if ((renderFlags & ShowOrbits) != 0)
-        {
-            Body::VisibilityPolicy orbitVis = body->getOrbitVisibility();
-            if (body == highlightObject.body() ||
-                orbitVis == Body::AlwaysVisible ||
-                (orbitVis == Body::UseClassVisibility && (body->getClassification() & orbitMask) != 0))
-            {
-                Point3d orbitOrigin(0.0, 0.0, 0.0);
-                Selection centerObject = phase->orbitFrame()->getCenter();
-                if (centerObject.body() != NULL)
-                {
-                    orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
-                }
-
-                // Calculate the origin of the orbit relative to the observer
-                Vec3d relOrigin = orbitOrigin - astrocentricObserverPos;
-                Vec3f origf((float) relOrigin.x, (float) relOrigin.y, (float) relOrigin.z);
-
-                // Compute the size of the orbit in pixels
-                double originDistance = posd.length();
-                double boundingRadius = body->getOrbit(now)->getBoundingRadius();
-                float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
-
-                if (orbitRadiusInPixels > minOrbitSize)
-                {
-                    // Add the orbit of this body to the list of orbits to be rendered
-                    OrbitPathListEntry path;
-                    path.body = body;
-                    path.star = NULL;
-                    path.centerZ = origf * viewMatZ;
-                    path.radius = (float) boundingRadius;
-                    path.origin = Point3f(origf.x, origf.y, origf.z);
-                    path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
-                    orbitPathList.push_back(path);
-                }
-            }
-        }
-
-        // Render this object's subtree, but only if:
-        //    The subtree bounding sphere intersects the view frustum, and
-        //    The subtree contains and object bright or large enough to be visible.
-        const FrameTree* subtree = body->getFrameTree();
-        if (subtree != NULL)
-        {
-            float minPossibleDistance = (float) (distanceFromObserver - subtree->boundingSphereRadius());
-            float brightestPossible = 0.0;
-            float largestPossible = 0.0;
-
-            // If the viewer is not within the subtree bounding sphere, see if we can cull it because
-            // it contains no objects brighter than the limiting magnitude and no objects that will
-            // be larger than one pixel in size.
-            if (minPossibleDistance > 1.0f)
-            {
-                // Figure out the magnitude of the brightest possible object in the subtree.
-
-                // Compute the luminosity from reflected light of the largest object in the subtree
-                float lum = 0.0f;                
-                for (unsigned int li = 0; li < lightSources.size(); li++)
-                {
-                    Vec3d sunPos = bodyPos - lightSources[li].position;
-                    lum += luminosityAtOpposition(lightSources[li].luminosity, (float) sunPos.length(), (float) subtree->maxChildRadius());
-                }
-                brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
-                largestPossible = (float) subtree->maxChildRadius() / (float) minPossibleDistance / pixelSize;
-            }
-            else
-            {
-                // Viewer is within the bounding sphere, so the object could be very close.
-                // Assume that an object in the subree could be very bright, so no culling
-                // will occur.
-                brightestPossible = -100.0f;
-            }
-
-            if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
-            {
-                // See if the object or any of its children are within the view frustum
-                if (viewFrustum.testSphere(Point3f(pos.x, pos.y, pos.z), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
-                {
-                    buildRenderLists(astrocentricObserverPos,
-                                     viewFrustum,
-                                     subtree,
-                                     observer,
-                                     now,
-                                     lightSourceList);
-                }
-            }
-        } // end subtree render
-
-    }
+    } // for each render list entry      
 }
 
 
@@ -10029,7 +10308,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
 
 void Renderer::renderMarkers(const MarkerList& markers,
                              const UniversalCoord& cameraPosition,
-			     const Quatd& cameraOrientation,
+			                 const Quatd& cameraOrientation,
                              double jd)
 {
     // Calculate the cosine of half the maximum field of view. We'll use this for

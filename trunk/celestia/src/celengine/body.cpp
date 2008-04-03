@@ -48,9 +48,11 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     clickable(1),
     visibleAsPoint(1),
     overrideOrbitColor(0),
-    orbitVisibility(UseClassVisibility)
+    orbitVisibility(UseClassVisibility),
+    secondaryIlluminator(true)
 {
     setName(_name);
+    recomputeCullingRadius();
     system->addBody(this);
 }
 
@@ -99,6 +101,7 @@ void Body::setDefaultProperties()
     visibleAsPoint = 1;
     overrideOrbitColor = 0;
     orbitVisibility = UseClassVisibility;
+    recomputeCullingRadius();
 }
 
 
@@ -192,15 +195,33 @@ const RotationModel* Body::getRotationModel(double tdb) const
 }
 
 
-// For an irregular object, the radius is defined to be the largest semi-axis
-// of the axis-aligned bounding box.  The radius of the smallest sphere
-// containing the object is potentially larger by a factor of sqrt(3)
+/*! Get the radius of a sphere large enough to contain the primary
+ *  geometry of the object: either a mesh or an ellipsoid.
+ *  For an irregular (mesh) object, the radius is defined to be
+ *  the largest semi-axis of the axis-aligned bounding box.  The
+ *  radius of the smallest sphere containing the object is potentially
+ *  larger by a factor of sqrt(3).
+ *
+ *  This method does not consider additional object features
+ *  such as rings, atmospheres, or reference marks; use
+ *  getCullingRadius() for that.
+ */
 float Body::getBoundingRadius() const
 {
     if (model == InvalidResource)
         return radius;
     else
         return radius * 1.7320508f; // sqrt(3)
+}
+
+
+/*! Return the radius of sphere large enough to contain any geometry
+ *  associated with this object: the primary geometry, comet tail,
+ *  rings, atmosphere shell, cloud layers, or reference marks.
+ */
+float Body::getCullingRadius() const
+{
+    return cullingRadius;
 }
 
 
@@ -248,6 +269,7 @@ void Body::setSemiAxes(const Vec3f& _semiAxes)
 
     // Radius will always be the largest of the three semi axes
     radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
+    recomputeCullingRadius();
 }
 
 
@@ -344,6 +366,7 @@ void Body::setRings(const RingSystem& _rings)
         rings = new RingSystem(_rings);
     else
         *rings = _rings;
+    recomputeCullingRadius();
 }
 
 
@@ -362,6 +385,7 @@ void Body::setAtmosphere(const Atmosphere& _atmosphere)
     if (atmosphere == NULL)
         atmosphere = new Atmosphere();
     *atmosphere = _atmosphere;
+    recomputeCullingRadius();
 }
 
 
@@ -678,6 +702,42 @@ int Body::getClassification() const
 void Body::setClassification(int _classification)
 {
     classification = _classification;
+    recomputeCullingRadius();
+    markChanged();
+}
+
+
+/*! Return the effective classification of this body used when rendering
+ *  orbits. Normally, this is just the classification of the object, but
+ *  invisible objects are treated specially: they behave as if they have
+ *  the classification of their child objects. This fixes annoyances when
+ *  planets are defined with orbits relative to their system barycenters.
+ *  For example, Pluto's orbit can seen in a solar system scale view, even
+ *  though its orbit is defined relative to the Pluto-Charon barycenter
+ *  and is this just a few hundred kilometers in size.
+ */
+int Body::getOrbitClassification() const
+{
+    if (classification != Invisible || frameTree == NULL)
+    {
+        return classification;
+    }
+    else
+    {
+        int orbitClass = frameTree->childClassMask();
+        if (orbitClass & Planet)
+            return Planet;
+        else if (orbitClass & DwarfPlanet)
+            return DwarfPlanet;
+        else if (orbitClass & Moon)
+            return Moon;
+        else if (orbitClass & Asteroid)
+            return Asteroid;
+        else if (orbitClass & Spacecraft)
+            return Spacecraft;
+        else
+            return Invisible;
+    }
 }
 
 
@@ -838,6 +898,7 @@ Body::addReferenceMark(ReferenceMark* refMark)
     if (referenceMarks == NULL)
         referenceMarks = new list<ReferenceMark*>();
     referenceMarks->push_back(refMark);
+    recomputeCullingRadius();
 }
 
 
@@ -853,6 +914,7 @@ Body::removeReferenceMark(const string& tag)
         {
             referenceMarks->remove(refMark);
             delete refMark;
+            recomputeCullingRadius();
         }
     }
 }
@@ -947,6 +1009,52 @@ void Body::setOrbitVisibility(VisibilityPolicy _orbitVisibility)
 void Body::setOrbitColor(const Color& c)
 {
     orbitColor = c;
+}
+
+
+/*! Set whether or not the object should be considered when calculating
+ *  secondary illumination (e.g. planetshine.)
+ */
+void Body::setSecondaryIlluminator(bool enable)
+{
+    if (enable != secondaryIlluminator)
+    {
+        markChanged();
+        secondaryIlluminator = enable;
+    }
+}
+
+
+void Body::recomputeCullingRadius()
+{
+    float r = getBoundingRadius();
+
+    if (rings != NULL)
+        r = max(r, rings->outerRadius);
+
+    if (atmosphere != NULL)
+    {
+        r = max(r, atmosphere->height);
+        r = max(r, atmosphere->cloudHeight);
+    }
+
+    if (referenceMarks != NULL)
+    {
+        for (std::list<ReferenceMark*>::const_iterator iter = referenceMarks->begin();
+             iter != referenceMarks->end(); iter++)
+        {
+            r = max(r, (*iter)->boundingSphereRadius());
+        }
+    }
+
+    if (classification == Body::Comet)
+        r = max(r, astro::AUtoKilometers(1.0f));
+
+    if (r != cullingRadius)
+    {
+        cullingRadius = r;
+        markChanged();
+    }
 }
 
 
