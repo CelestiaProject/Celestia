@@ -450,7 +450,7 @@ template <typename T> SampledOrbitXYZV<T>::~SampledOrbitXYZV()
 //    Velocity in km/Julian day
 template <typename T> void SampledOrbitXYZV<T>::addSample(double t, const Vec3d& position, const Vec3d& velocity)
 {
-    double r = sqrt(position.length());
+    double r = position.length();
     if (r > boundingRadius)
         boundingRadius = r;
 
