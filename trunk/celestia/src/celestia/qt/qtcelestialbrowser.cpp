@@ -103,6 +103,7 @@ public:
     };
 
     void populate(const UniversalCoord& _observerPos,
+                  double _now,
                   StarFilterPredicate& filterPred,
                   StarPredicate::Criterion criterion,
                   unsigned int nStars);
@@ -112,13 +113,15 @@ public:
 private:
     const Universe* universe;
     UniversalCoord observerPos;
+    double now;
     vector<Star*> stars;
 };
 
 
 StarTableModel::StarTableModel(const Universe* _universe) :
     universe(_universe),
-    observerPos(0.0, 0.0, 0.0)
+    observerPos(0.0, 0.0, 0.0),
+    now(astro::J2000)
 {
 }
 
@@ -160,13 +163,13 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
             }
         case DistanceColumn:
             {
-                UniversalCoord pos = star->getPosition(astro::J2000);
+                UniversalCoord pos = star->getPosition(now);
                 Vec3d v = pos - observerPos;
                 return QVariant(v.length() * 1.0e-6);
             }
         case AppMagColumn:
             {
-                UniversalCoord pos = star->getPosition(astro::J2000);
+                UniversalCoord pos = star->getPosition(now);
                 Vec3d v = pos - observerPos;
                 double distance = v.length() * 1.0e-6;
                 return QString("%1").arg((double) star->getApparentMagnitude((float) distance), 0, 'f', 2);
@@ -205,7 +208,7 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
 
 
 // Override QAbstractDataModel::headerData()
-QVariant StarTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant StarTableModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -374,6 +377,7 @@ void StarTableModel::sort(int column, Qt::SortOrder order)
 
 
 void StarTableModel::populate(const UniversalCoord& _observerPos,
+                              double _now,
                               StarFilterPredicate& filterPred,
                               StarPredicate::Criterion criterion,
                               unsigned int nStars)
@@ -381,6 +385,7 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
     const StarDatabase& stardb = *universe->getStarCatalog();
     
     observerPos = _observerPos;
+    now = _now;
 
     typedef multiset<Star*, StarPredicate> StarSet;
     StarPredicate pred(criterion, observerPos);
@@ -583,6 +588,7 @@ CelestialBrowser::~CelestialBrowser()
 void CelestialBrowser::slotRefreshTable()
 {
     UniversalCoord observerPos = appCore->getSimulation()->getActiveObserver()->getPosition();
+    double now = appCore->getSimulation()->getTime();
 
     StarPredicate::Criterion criterion = StarPredicate::Distance;
     if (brightestButton->isChecked())
@@ -609,7 +615,7 @@ void CelestialBrowser::slotRefreshTable()
         filterPred.spectralTypeFilterEnabled = false;
     }
 
-    starModel->populate(observerPos, filterPred, criterion, 1000);
+    starModel->populate(observerPos, now, filterPred, criterion, 1000);
 
     treeView->resizeColumnToContents(StarTableModel::DistanceColumn);
     treeView->resizeColumnToContents(StarTableModel::AppMagColumn);
