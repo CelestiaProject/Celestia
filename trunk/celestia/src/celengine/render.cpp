@@ -2961,6 +2961,7 @@ void Renderer::draw(const Observer& observer,
                     buildRenderLists(astrocentricObserverPos,
                                      xfrustum,
                                      Vec3d(0.0, 0.0, -1.0) * observer.getOrientation().toMatrix3(),
+                                     Vec3d(0.0, 0.0, 0.0),
                                      solarSysTree,
                                      observer,
                                      now);
@@ -8433,6 +8434,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                                 const Frustum& viewFrustum,
                                 const Vec3d& viewPlaneNormal,
+                                const Vec3d& frameCenter,
                                 const FrameTree* tree,
                                 const Observer& observer,
                                 double now)
@@ -8459,12 +8461,14 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
         // pos_v: viewer-relative position of object
 
         // Get the position of the body relative to the sun.
-        Point3d pos_s = body->getAstrocentricPosition(now);
+        Point3d p = phase->orbit()->positionAtTime(now);
+        ReferenceFrame* frame = phase->orbitFrame();
+        Vec3d pos_s = frameCenter + Vec3d(p.x, p.y, p.z) * frame->getOrientation(now).toMatrix3();
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the body
         // relative to the observer.
-        Vec3d pos_v = pos_s - astrocentricObserverPos;
+        Vec3d pos_v = Point3d(pos_s.x, pos_s.y, pos_s.z) - astrocentricObserverPos;
 
         // dist_vn: distance along view normal from the viewer to the
         // projection of the object's center.
@@ -8643,6 +8647,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                 buildRenderLists(astrocentricObserverPos,
                                  viewFrustum,
                                  viewPlaneNormal,
+                                 pos_s,
                                  subtree,
                                  observer,
                                  now);
@@ -8769,8 +8774,10 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
     for (vector<RenderListEntry>::const_iterator iter = renderList.begin();
          iter != renderList.end(); iter++)
     {
+        int classification = iter->body->getOrbitClassification();
+
         if (iter->renderableType == RenderListEntry::RenderableBody &&
-            (iter->body->getClassification() & labelClassMask)      &&
+            (classification & labelClassMask)                       &&
             viewFrustum.testSphere(iter->position, iter->radius) != Frustum::Outside)
         {
             const Body* body = iter->body;
@@ -8782,7 +8789,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                 Color labelColor;
                 float opacity = sizeFade(boundingRadiusSize, minOrbitSize, 2.0f);
 
-                switch (body->getClassification())
+                switch (classification)
                 {
                 case Body::Planet:
                     labelColor = PlanetLabelColor;

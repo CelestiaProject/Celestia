@@ -433,6 +433,7 @@ class Renderer
     void buildRenderLists(const Point3d& astrocentricObserverPos,
                           const Frustum& viewFrustum,
                           const Vec3d& viewPlaneNormal,
+                          const Vec3d& frameCenter,
                           const FrameTree* tree,
                           const Observer& observer,
                           double now);
