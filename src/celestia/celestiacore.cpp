@@ -3223,7 +3223,7 @@ static void displayPlanetInfo(Overlay& overlay,
 			sunVec.normalize();
 			double cosPhaseAngle = sunVec * ((1.0 / viewVec.length()) * viewVec);
 			double phaseAngle = acos(cosPhaseAngle);
-			//overlay.oprintf("Phase angle: %.1f%s\n", radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+			overlay.oprintf("Phase angle: %.1f%s\n", radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
 		}
 	}
 
