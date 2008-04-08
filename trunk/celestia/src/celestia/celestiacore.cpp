@@ -40,6 +40,7 @@
 #include <celengine/spiceinterface.h>
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
+#include <celengine/visibleregion.h>
 #include "favorites.h"
 #include "celestiacore.h"
 #include <celutil/debug.h>
@@ -3379,7 +3380,6 @@ void CelestiaCore::renderOverlay()
 
     if (hudDetail > 0 && (overlayElements & ShowTime))
     {
-        bool time_displayed = false;
         double lt = 0.0;
  
         if (sim->getSelection().getType() == Selection::Type_Body &&
@@ -4798,6 +4798,26 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
         {
             body->addReferenceMark(new PlanetographicGrid(*body));
         }
+        else if (refMark == "terminator")
+        {
+            double now = getSimulation()->getTime();
+            Star* sun = NULL;
+            Body* b = body;
+            while (b != NULL)
+            {
+                Selection center = b->getOrbitFrame(now)->getCenter();
+                if (center.star() != NULL)
+                    sun = center.star();
+                b = center.body();
+            }
+
+            if (sun != NULL)
+            {
+                VisibleRegion* visibleRegion = new VisibleRegion(*body, Selection(sun));
+                visibleRegion->setTag("terminator");
+                body->addReferenceMark(visibleRegion);
+            }
+        }
     }
 }
 
@@ -4819,7 +4839,7 @@ bool CelestiaCore::referenceMarkEnabled(const string& refMark, Selection sel) co
     if (body == NULL)
         return false;
     else
-        return body->findReferenceMark(refMark);
+        return body->findReferenceMark(refMark) != NULL;
 }
 
 

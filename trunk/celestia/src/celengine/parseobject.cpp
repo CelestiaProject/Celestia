@@ -16,6 +16,7 @@
 #include "customorbit.h"
 #include "customrotation.h"
 #include "spiceorbit.h"
+#include "spicerotation.h"
 #include "scriptorbit.h"
 #include "scriptrotation.h"
 #include "frame.h"
@@ -396,6 +397,126 @@ CreateSpiceOrbit(Hash* orbitData,
     }
 
     return orbit;
+}
+
+
+/*! Create a new rotation model based on a SPICE frame.
+ *
+ *  SpiceRotation
+ *  {
+ *      Kernel <string|string array>   # optional
+ *      Frame <string>
+ *      BaseFrame <string>             # optional (defaults to ecliptic)
+ *      Period <number>                # optional (units are hours)
+ *      Beginning <number>             # optional
+ *      Ending <number>                # optional
+ *  }
+ *
+ *  The Kernel property specifies one or more SPICE kernel files that must be
+ *  loaded in order for the frame to be defined over the required range. Any 
+ *  already loaded kernels will be used if they contain information relevant
+ *  for defining the frame.
+ *  Frame and base name are strings that give SPICE names for the frames. The
+ *  orientation of the SpiceRotation is the orientation of the frame relative to
+ *  the base frame. By default, the base frame is eclipj2000.
+ *  Beginning and Ending specify the valid time range of the SPICE rotation.
+ *  If the Beginning and Ending are omitted, the rotation model is assumed to
+ *  be valid at any time. It is an error to specify Beginning without Ending,
+ *  and vice versa.
+ *  Period specifies the principal rotation period; it defaults to 0 indicating
+ *  that the rotation is aperiodic. It is not essential to provide the rotation
+ *  period; it is only used by Celestia for displaying object information such
+ *  as sidereal day length.
+ */
+static SpiceRotation*
+CreateSpiceRotation(Hash* rotationData,
+                    const string& path)
+{
+    string frameName;
+    string baseFrameName = "eclipj2000";
+	list<string> kernelList;
+
+	if (rotationData->getValue("Kernel") != NULL)
+	{
+		// Kernel list is optional; a SPICE rotation may rely on kernels already loaded into
+		// the kernel pool.
+		if (!ParseStringList(rotationData, "Kernel", kernelList))
+		{
+			clog << "Kernel list for SPICE rotation is neither a string nor array of strings\n";
+			return NULL;
+		}
+	}
+
+    if (!rotationData->getString("Frame", frameName))
+    {
+        clog << "Frame name missing from SPICE rotation\n";
+        return NULL;
+    }
+
+    rotationData->getString("BaseFrame", baseFrameName);
+
+    // The period of the rotation may be specified if appropriate; a value
+    // of zero for the period (the default), means that the rotation will
+    // be considered aperiodic.
+    double period = 0.0;
+    rotationData->getNumber("Period", period);
+    period = period / 24.0;
+
+	// Either a complete time interval must be specified with Beginning/Ending, or
+	// else neither field can be present.
+	Value* beginningDate = rotationData->getValue("Beginning");
+	Value* endingDate = rotationData->getValue("Ending");
+	if (beginningDate != NULL && endingDate == NULL)
+	{
+		clog << "Beginning specified for SPICE rotation, but ending is missing.\n";
+		return NULL;
+	}
+
+	if (endingDate != NULL && beginningDate == NULL)
+	{
+		clog << "Ending specified for SPICE rotation, but beginning is missing.\n";
+		return NULL;
+	}
+
+	SpiceRotation* rotation = NULL;
+	if (beginningDate != NULL && endingDate != NULL)
+	{
+		double beginningTDBJD = 0.0;
+		if (!ParseDate(rotationData, "Beginning", beginningTDBJD))
+		{
+			clog << "Invalid beginning date specified for SPICE rotation.\n";
+			return NULL;
+		}
+
+		double endingTDBJD = 0.0;
+		if (!ParseDate(rotationData, "Ending", endingTDBJD))
+		{
+			clog << "Invalid ending date specified for SPICE rotation.\n";
+			return NULL;
+		}
+	
+		rotation = new SpiceRotation(frameName,
+				  			         baseFrameName,
+							         period,
+							         beginningTDBJD,
+							         endingTDBJD);
+	}
+	else
+	{
+		// No time interval given; rotation is valid at any time.
+		rotation = new SpiceRotation(frameName,
+                                     baseFrameName,
+                                     period);
+	}
+
+    if (!rotation->init(path, &kernelList))
+    {
+        // Error using SPICE library; destroy the rotation.
+        delete rotation;
+        rotation = NULL;
+    }
+
+    return rotation;
 }
 #endif
 
@@ -810,7 +931,25 @@ CreateRotationModel(Hash* planetData,
     }
 
 #ifdef USE_SPICE
-    // TODO: implement SPICE frame based rotations
+    Value* spiceRotationDataValue = planetData->getValue("SpiceRotation");
+    if (spiceRotationDataValue != NULL)
+    {
+        if (spiceRotationDataValue->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect spice rotation syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            rotationModel = CreateSpiceRotation(spiceRotationDataValue->getHash(), path);
+            if (rotationModel != NULL)
+            {
+                return rotationModel;
+            }
+            clog << "Bad spice rotation model\n";
+            DPRINTF(0, "Could not load SPICE rotation model\n");
+        }
+    }
 #endif
 
     Value* scriptedRotationValue = planetData->getValue("ScriptedRotation");
