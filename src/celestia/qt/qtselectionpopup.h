@@ -44,6 +44,7 @@ Q_OBJECT
     void slotToggleSpinVector();
     void slotToggleFrameCenterDirection();
     void slotTogglePlanetographicGrid();
+    void slotToggleTerminator();
     void slotGotoStartDate();
     void slotGotoEndDate();
     void slotInfo();

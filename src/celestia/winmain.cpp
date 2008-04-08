@@ -1613,12 +1613,14 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_SUN_DIRECTION, UTF8ToCurrentCP(_("Show Sun Direction")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_VELOCITY_VECTOR, UTF8ToCurrentCP(_("Show Velocity Vector")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_PLANETOGRAPHIC_GRID, UTF8ToCurrentCP(_("Show Planetographic Grid")).c_str());
+            AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_TERMINATOR, UTF8ToCurrentCP(_("Show Terminator")).c_str());
 
             CheckMenuItem(refVectorMenu, ID_RENDER_BODY_AXES,   sel.body()->findReferenceMark("body axes") ? MF_CHECKED : MF_UNCHECKED);
             CheckMenuItem(refVectorMenu, ID_RENDER_FRAME_AXES,  sel.body()->findReferenceMark("frame axes") ? MF_CHECKED : MF_UNCHECKED);
             CheckMenuItem(refVectorMenu, ID_RENDER_SUN_DIRECTION,  sel.body()->findReferenceMark("sun direction") ? MF_CHECKED : MF_UNCHECKED);
             CheckMenuItem(refVectorMenu, ID_RENDER_VELOCITY_VECTOR,  sel.body()->findReferenceMark("velocity vector") ? MF_CHECKED : MF_UNCHECKED);
             CheckMenuItem(refVectorMenu, ID_RENDER_PLANETOGRAPHIC_GRID, sel.body()->findReferenceMark("planetographic grid") ? MF_CHECKED : MF_UNCHECKED);
+            CheckMenuItem(refVectorMenu, ID_RENDER_TERMINATOR, sel.body()->findReferenceMark("terminator") ? MF_CHECKED : MF_UNCHECKED);
 
             const PlanetarySystem* satellites = sel.body()->getSatellites();
             if (satellites != NULL && satellites->getSystemSize() != 0)
@@ -4101,6 +4103,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_RENDER_PLANETOGRAPHIC_GRID:
             appCore->toggleReferenceMark("planetographic grid");
+            break;
+
+        case ID_RENDER_TERMINATOR:
+            appCore->toggleReferenceMark("terminator");
             break;
 
         case ID_TIME_FASTER:

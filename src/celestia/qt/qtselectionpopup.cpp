@@ -315,6 +315,12 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
     connect(gridAction, SIGNAL(triggered()), this, SLOT(slotTogglePlanetographicGrid()));
     refVecMenu->addAction(gridAction);
 
+    QAction* terminatorAction = new QAction(tr("Show &Terminator"), refVecMenu);
+    terminatorAction->setCheckable(true);
+    terminatorAction->setChecked(appCore->referenceMarkEnabled("terminator", selection));
+    connect(terminatorAction, SIGNAL(triggered()), this, SLOT(slotToggleTerminator()));
+    refVecMenu->addAction(terminatorAction);
+
     return refVecMenu;
 }
 
@@ -552,13 +558,13 @@ void SelectionPopup::slotMark()
 
 void SelectionPopup::slotToggleBodyAxes()
 {
-    appCore->toggleReferenceMark("body axes");
+    appCore->toggleReferenceMark("body axes", selection);
 }
 
 
 void SelectionPopup::slotToggleFrameAxes()
 {
-    appCore->toggleReferenceMark("frame axes");
+    appCore->toggleReferenceMark("frame axes", selection);
 }
 
 
@@ -587,6 +593,12 @@ void SelectionPopup::slotToggleFrameCenterDirection()
 void SelectionPopup::slotTogglePlanetographicGrid()
 {
     appCore->toggleReferenceMark("planetographic grid", selection);
+}
+
+
+void SelectionPopup::slotToggleTerminator()
+{
+    appCore->toggleReferenceMark("terminator", selection);
 }
 
 
