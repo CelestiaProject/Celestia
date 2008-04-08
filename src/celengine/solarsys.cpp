@@ -380,7 +380,7 @@ Timeline* CreateTimelineFromArray(Body* body,
         Hash* phaseData = (*iter)->getHash();
         if (phaseData == NULL)
         {
-            clog << "Error: Timeline phase " << iter - timelineArray->begin() + 1 << " is not a property group.\n";
+            clog << "Error in timeline of '" << body->getName() << "': phase " << iter - timelineArray->begin() + 1 << " is not a property group.\n";
             delete timeline;
             return NULL;
         }
@@ -394,7 +394,7 @@ Timeline* CreateTimelineFromArray(Body* body,
                                                    isFirstPhase, isLastPhase, previousEnding);
         if (phase == NULL)
         {
-            clog << "Error in timeline phase " << iter - timelineArray->begin() + 1 << endl;
+            clog << "Error in timeline of '" << body->getName() << "', phase " << iter - timelineArray->begin() + 1 << endl;
             delete timeline;
             return NULL;
         }
@@ -1109,7 +1109,6 @@ bool LoadSolarSystemObjects(istream& in,
                     else if (disposition == ReplaceObject)
                     {
                         existingBody->setDefaultProperties();
-                        existingBody->setTimeline(NULL);
                     }
                 }
 
