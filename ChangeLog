@@ -1338,3 +1338,4 @@ translations to be used
 * Core: Default to the GLSL/OpenGL 2.0 render path if possible
 * GTK: Save star rendering limit distance
 * GTK: Add texture resolution setting to preferences and save value
+* fix to admit absolute directory notation in VT ImageDirectory
