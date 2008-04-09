@@ -168,6 +168,7 @@ ENGINE_SOURCES = \
 	celengine/vertexlist.cpp \
 	celengine/vertexprog.cpp \
 	celengine/virtualtex.cpp \
+	celengine/visibleregion.cpp \
 	celengine/vsop87.cpp
 
 ENGINE_HEADERS = \
@@ -259,15 +260,18 @@ ENGINE_HEADERS = \
 	celengine/vertexlist.h \
 	celengine/vertexprog.h \
 	celengine/virtualtex.h \
+	celengine/visibleregion.h \
 	celengine/vsop87.h
 
 SPICE_SOURCES = \
 	celengine/spiceinterface.cpp \
-	celengine/spiceorbit.cpp
+	celengine/spiceorbit.cpp \
+	celengine/spicerotation.cpp
 
 SPICE_HEADERS = \
 	celengine/spiceinterface.h \
-	celengine/spiceorbit.h
+	celengine/spiceorbit.h \
+	celengine/spicerotation.h
 
 #### App sources ####
 
