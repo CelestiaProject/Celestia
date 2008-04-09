@@ -14,10 +14,10 @@
 #define _CELENGINE_VISIBLEREGION_H_
 
 #include <celengine/referencemark.h>
+#include <celengine/selection.h>
 #include <celutil/color.h>
 
 class Body;
-class Selection;
 
 
 /*! VisibleRegion is a reference mark that shows the outline of
@@ -43,7 +43,7 @@ public:
 
 private:
     const Body& m_body;
-    const Selection& m_target;
+    const Selection m_target;
     Color m_color;
     float m_opacity;
 };
