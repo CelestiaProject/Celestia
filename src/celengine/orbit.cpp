@@ -220,8 +220,16 @@ Vec3d EllipticalOrbit::velocityAtE(double E) const
     if (eccentricity < 1.0)
     {
         double a = pericenterDistance / (1.0 - eccentricity);
-        x = a * (-sin(E) - eccentricity);
-        y = a * sqrt(1 - square(eccentricity)) * cos(E);
+        double sinE = sin(E);
+        double cosE = cos(E);
+        
+        x = -a * sinE;
+        y =  a * sqrt(1 - square(eccentricity)) * cosE;
+        
+        double meanMotion = 2.0 * PI / period;
+        double edot = meanMotion / (1 - eccentricity * cosE);
+        x *= edot;
+        y *= edot;
     }
     else if (eccentricity > 1.0)
     {
