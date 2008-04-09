@@ -15,6 +15,13 @@
 		8844CBC40D80DB020059AA3A /* nutation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC00D80DB020059AA3A /* nutation.cpp */; };
 		8844CBC60D80DB020059AA3A /* precession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC20D80DB020059AA3A /* precession.cpp */; };
 		8844CF0B0D931D4E0059AA3A /* planetgrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CF080D931D4E0059AA3A /* planetgrid.cpp */; };
+		8844CF150D9320330059AA3A /* celx_frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CF100D9320330059AA3A /* celx_frame.cpp */; };
+		8844CF160D9320330059AA3A /* celx_frame.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CF110D9320330059AA3A /* celx_frame.h */; };
+		8844CF170D9320330059AA3A /* celx_internal.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CF120D9320330059AA3A /* celx_internal.h */; };
+		8844CF180D9320330059AA3A /* celx_phase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CF130D9320330059AA3A /* celx_phase.cpp */; };
+		8844CF190D9320330059AA3A /* celx_phase.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 8844CF140D9320330059AA3A /* celx_phase.h */; };
+		886544290DAC3CC4007C8027 /* visibleregion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 886544270DAC3CC4007C8027 /* visibleregion.cpp */; };
+		8865442A0DAC3CC4007C8027 /* visibleregion.h in Copy Libraries */ = {isa = PBXBuildFile; fileRef = 886544280DAC3CC4007C8027 /* visibleregion.h */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
@@ -370,6 +377,10 @@
 			files = (
 				E5F8C9E70795239600D1DAF2 /* liblua.dylib in Copy Libraries */,
 				E5F8C9E90795239600D1DAF2 /* libpng.dylib in Copy Libraries */,
+				8844CF160D9320330059AA3A /* celx_frame.h in Copy Libraries */,
+				8844CF170D9320330059AA3A /* celx_internal.h in Copy Libraries */,
+				8844CF190D9320330059AA3A /* celx_phase.h in Copy Libraries */,
+				8865442A0DAC3CC4007C8027 /* visibleregion.h in Copy Libraries */,
 			);
 			name = "Copy Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,6 +517,13 @@
 		8844CF080D931D4E0059AA3A /* planetgrid.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = planetgrid.cpp; path = ../src/celengine/planetgrid.cpp; sourceTree = SOURCE_ROOT; };
 		8844CF090D931D4E0059AA3A /* planetgrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = planetgrid.h; path = ../src/celengine/planetgrid.h; sourceTree = SOURCE_ROOT; };
 		8844CF0A0D931D4E0059AA3A /* referencemark.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = referencemark.h; path = ../src/celengine/referencemark.h; sourceTree = SOURCE_ROOT; };
+		8844CF100D9320330059AA3A /* celx_frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_frame.cpp; path = ../src/celestia/celx_frame.cpp; sourceTree = SOURCE_ROOT; };
+		8844CF110D9320330059AA3A /* celx_frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_frame.h; path = ../src/celestia/celx_frame.h; sourceTree = SOURCE_ROOT; };
+		8844CF120D9320330059AA3A /* celx_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_internal.h; path = ../src/celestia/celx_internal.h; sourceTree = SOURCE_ROOT; };
+		8844CF130D9320330059AA3A /* celx_phase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_phase.cpp; path = ../src/celestia/celx_phase.cpp; sourceTree = SOURCE_ROOT; };
+		8844CF140D9320330059AA3A /* celx_phase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_phase.h; path = ../src/celestia/celx_phase.h; sourceTree = SOURCE_ROOT; };
+		886544270DAC3CC4007C8027 /* visibleregion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = visibleregion.cpp; path = ../src/celengine/visibleregion.cpp; sourceTree = SOURCE_ROOT; };
+		886544280DAC3CC4007C8027 /* visibleregion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = visibleregion.h; path = ../src/celengine/visibleregion.h; sourceTree = SOURCE_ROOT; };
 		E50657D70CBFB08500151204 /* imagecapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imagecapture.h; path = ../src/celestia/imagecapture.h; sourceTree = SOURCE_ROOT; };
 		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
 		E50CCA380C065BF900E9C76A /* eclipsefinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eclipsefinder.h; path = ../src/celestia/eclipsefinder.h; sourceTree = SOURCE_ROOT; };
@@ -1367,6 +1385,11 @@
 		F51C6D51029596B4014901DC /* celestia */ = {
 			isa = PBXGroup;
 			children = (
+				8844CF100D9320330059AA3A /* celx_frame.cpp */,
+				8844CF110D9320330059AA3A /* celx_frame.h */,
+				8844CF120D9320330059AA3A /* celx_internal.h */,
+				8844CF130D9320330059AA3A /* celx_phase.cpp */,
+				8844CF140D9320330059AA3A /* celx_phase.h */,
 				F51C6D8B02959960014901DC /* celestiacore.cpp */,
 				E56431450776D52D00E2C4A3 /* celx.cpp */,
 				F51C6D8C02959960014901DC /* configfile.cpp */,
@@ -1394,6 +1417,8 @@
 		F51C6D52029596B4014901DC /* celengine */ = {
 			isa = PBXGroup;
 			children = (
+				886544270DAC3CC4007C8027 /* visibleregion.cpp */,
+				886544280DAC3CC4007C8027 /* visibleregion.h */,
 				8844CF080D931D4E0059AA3A /* planetgrid.cpp */,
 				8844CF090D931D4E0059AA3A /* planetgrid.h */,
 				8844CF0A0D931D4E0059AA3A /* referencemark.h */,
@@ -1961,6 +1986,9 @@
 				8844CBC40D80DB020059AA3A /* nutation.cpp in Sources */,
 				8844CBC60D80DB020059AA3A /* precession.cpp in Sources */,
 				8844CF0B0D931D4E0059AA3A /* planetgrid.cpp in Sources */,
+				8844CF150D9320330059AA3A /* celx_frame.cpp in Sources */,
+				8844CF180D9320330059AA3A /* celx_phase.cpp in Sources */,
+				886544290DAC3CC4007C8027 /* visibleregion.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

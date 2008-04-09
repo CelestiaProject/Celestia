@@ -186,6 +186,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(1002,@"showSunDirection")
         TAGDEF(1003,@"showVelocityVector")
         TAGDEF(1004,@"showPlanetographicGrid")
+        TAGDEF(1005,@"showTerminator")
         nil];
     [tagDict addEntriesFromDictionary: volatileTagDict];
 #endif
@@ -553,6 +554,16 @@ FEATUREMETHODS(Other)
 -(void) setShowPlanetographicGrid: (BOOL) value
 {
     appCore->toggleReferenceMark("planetographic grid");
+}
+
+-(BOOL) showTerminator
+{
+    return appCore->referenceMarkEnabled("terminator");
+}
+
+-(void) setShowTerminator: (BOOL) value
+{
+    appCore->toggleReferenceMark("terminator");
 }
 
 
