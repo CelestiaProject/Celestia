@@ -4787,7 +4787,7 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
         {
             body->addReferenceMark(new SpinVectorArrow(*body));
         }
-        else if (refMark == "frame center arrow")
+        else if (refMark == "frame center direction")
         {
             double now = getSimulation()->getTime();
             BodyToBodyDirectionArrow* arrow = new BodyToBodyDirectionArrow(*body, body->getOrbitFrame(now)->getCenter());
