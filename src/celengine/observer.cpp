@@ -1242,7 +1242,7 @@ void Observer::gotoSelectionLongLat(const Selection& selection,
     if (!selection.empty())
     {
         double phi = -latitude + PI / 2;
-        double theta = longitude - PI;
+        double theta = longitude;
         double x = cos(theta) * sin(phi);
         double y = cos(phi);
         double z = -sin(theta) * sin(phi);
