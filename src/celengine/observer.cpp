@@ -1293,8 +1293,14 @@ void Observer::getSelectionLongLat(const Selection& selection,
         Point3d bfPos = (Point3d) frame.convertFromUniversal(positionUniv, getTime());
         
         distance = bfPos.distanceFromOrigin();
-        longitude = -radToDeg(atan2(-bfPos.z, -bfPos.x));
-        latitude = radToDeg(PI/2 - acos(bfPos.y / distance));
+
+        // Convert from Celestia's coordinate system
+        double x = bfPos.x;
+        double y = -bfPos.z;
+        double z = bfPos.y;
+
+        longitude = radToDeg(atan2(y, x));
+        latitude = radToDeg(PI/2 - acos(z / distance));
         
         // Convert distance from light years to kilometers.
         distance = astro::microLightYearsToKilometers(distance);
