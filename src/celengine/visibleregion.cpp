@@ -37,7 +37,11 @@ VisibleRegion::VisibleRegion(const Body& body, const Selection& target) :
     m_body(body),
     m_target(target),
     m_color(1.0f, 1.0f, 0.0f),
+#ifdef USE_HDR
+    m_opacity(0.0f)
+#else
     m_opacity(1.0f)
+#endif
 {
     setTag("visible region");
 }
@@ -73,6 +77,9 @@ void
 VisibleRegion::setOpacity(float opacity)
 {
     m_opacity = opacity;
+#ifdef USE_HDR
+    m_opacity = 1.0f - opacity;
+#endif
 }
 
 
@@ -184,7 +191,11 @@ VisibleRegion::render(Renderer* /* renderer */,
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glEnable(GL_BLEND);
+#ifdef USE_HDR
+    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+#else
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
