@@ -594,6 +594,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\spicerotation.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\star.cpp"
 					>
 				</File>
@@ -663,6 +667,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\virtualtex.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\visibleregion.cpp"
 					>
 				</File>
 				<File
@@ -968,6 +976,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\spicerotation.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\star.h"
 					>
 				</File>
@@ -1049,6 +1061,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\virtualtex.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\visibleregion.h"
 					>
 				</File>
 				<File
