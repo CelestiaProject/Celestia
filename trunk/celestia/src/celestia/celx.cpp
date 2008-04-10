@@ -14,6 +14,9 @@
 #include <cstdio>
 #include <map>
 #include <ctime>
+#include <celengine/axisarrow.h>
+#include <celengine/visibleregion.h>
+#include <celengine/planetgrid.h>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celengine/cmdparser.h>
@@ -249,6 +252,7 @@ static void initLabelColorMap()
     LabelColorMap["openclusters"]   = &Renderer::OpenClusterLabelColor;
     LabelColorMap["constellations"] = &Renderer::ConstellationLabelColor;
     LabelColorMap["equatorialgrid"] = &Renderer::EquatorialGridLabelColor;
+    LabelColorMap["planetographicgrid"] = &Renderer::PlanetographicGridLabelColor;
 }
 
 static void initLineColorMap()
@@ -262,6 +266,8 @@ static void initLineColorMap()
     LineColorMap["constellations"]   = &Renderer::ConstellationColor;
     LineColorMap["boundaries"]       = &Renderer::BoundaryColor;
     LineColorMap["equatorialgrid"]   = &Renderer::EquatorialGridColor;
+    LineColorMap["planetographicgrid"]   = &Renderer::PlanetographicGridColor;
+    LineColorMap["planetequator"]   = &Renderer::PlanetEquatorColor;
 }
 
 
@@ -2753,6 +2759,155 @@ static int object_setorbitvisibility(lua_State* l)
 }
 
 
+static int object_addreferencemark(lua_State* l)
+{
+    checkArgs(l, 2, 2, "Expected one table as argument to object:addreferencemark()");
+
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    if (!lua_istable(l, 2))
+    {
+        doError(l, "Argument to object:addreferencemark() must be a table");
+    }
+
+    Selection* sel = this_object(l);
+    Body* body = sel->body();
+
+    lua_pushstring(l, "type");
+    lua_gettable(l, 2);
+    const char* rmtype = safeGetString(l, 3, NoErrors, "");
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "size");
+    lua_gettable(l, 2);
+    float rmsize = (float) safeGetNumber(l, 3, NoErrors, "", body->getRadius()) + body->getRadius();
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "opacity");
+    lua_gettable(l, 2);
+    float rmopacity = (float) safeGetNumber(l, 3, NoErrors, "", NULL);
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "color");
+    lua_gettable(l, 2);
+    const char* rmcolorstring = safeGetString(l, 3, NoErrors, "");
+    Color rmcolor(0.0f, 1.0f, 0.0f);
+    if (rmcolorstring != NULL)
+        Color::parse(rmcolorstring, rmcolor);
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "tag");
+    lua_gettable(l, 2);
+    const char* rmtag = safeGetString(l, 3, NoErrors, "");
+    if (rmtag == NULL)
+        rmtag = rmtype;
+    lua_settop(l, 2);
+
+    lua_pushstring(l, "target");
+    lua_gettable(l, 2);
+    Selection* rmtarget = to_object(l, 3);
+    lua_settop(l, 2);
+
+    if (rmtype != NULL)
+    {
+        body->removeReferenceMark(rmtype);
+
+        if (compareIgnoringCase(rmtype, "body axes") == 0)
+        {
+            BodyAxisArrows* arrow = new BodyAxisArrows(*body);
+            arrow->setTag(rmtag);
+            arrow->setSize(rmsize);
+            if (rmopacity != NULL)
+                arrow->setOpacity(rmopacity);
+            body->addReferenceMark(arrow);
+        }
+        else if (compareIgnoringCase(rmtype, "frame axes") == 0)
+        {
+            FrameAxisArrows* arrow = new FrameAxisArrows(*body);
+            arrow->setTag(rmtag);
+            arrow->setSize(rmsize);
+            if (rmopacity != NULL)
+                arrow->setOpacity(rmopacity);
+            body->addReferenceMark(arrow);
+        }
+        else if (compareIgnoringCase(rmtype, "sun direction") == 0)
+        {
+            SunDirectionArrow* arrow = new SunDirectionArrow(*body);
+            arrow->setTag(rmtag);
+            arrow->setSize(rmsize);
+            if (rmcolorstring != NULL)
+                arrow->setColor(rmcolor);
+            body->addReferenceMark(arrow);
+        }
+        else if (compareIgnoringCase(rmtype, "velocity vector") == 0)
+        {
+            VelocityVectorArrow* arrow = new VelocityVectorArrow(*body);
+            arrow->setTag(rmtag);
+            arrow->setSize(rmsize);
+            if (rmcolorstring != NULL)
+                arrow->setColor(rmcolor);
+            body->addReferenceMark(arrow);
+        }
+        else if (compareIgnoringCase(rmtype, "spin vector") == 0)
+        {
+            SpinVectorArrow* arrow = new SpinVectorArrow(*body);
+            arrow->setTag(rmtag);
+            arrow->setSize(rmsize);
+            if (rmcolorstring != NULL)
+                arrow->setColor(rmcolor);
+            body->addReferenceMark(arrow);
+        }
+        else if (compareIgnoringCase(rmtype, "body to body direction") == 0 && rmtarget != NULL)
+        {
+            BodyToBodyDirectionArrow* arrow = new BodyToBodyDirectionArrow(*body, *rmtarget);
+            arrow->setTag(rmtag);
+            arrow->setSize(rmsize);
+            if (rmcolorstring != NULL)
+                arrow->setColor(rmcolor);
+            body->addReferenceMark(arrow);
+        }
+        else if (compareIgnoringCase(rmtype, "visible region") == 0 && rmtarget != NULL)
+        {
+            VisibleRegion* region = new VisibleRegion(*body, *rmtarget);
+            region->setTag(rmtag);
+            if (rmopacity != NULL)
+                region->setOpacity(rmopacity);
+            if (rmcolorstring != NULL)
+                region->setColor(rmcolor);
+            body->addReferenceMark(region);
+        }
+        else if (compareIgnoringCase(rmtype, "planetographic grid") == 0)
+        {
+            PlanetographicGrid* grid = new PlanetographicGrid(*body);
+            body->addReferenceMark(grid);
+        }
+    }
+
+    return 0;
+}
+
+
+static int object_removereferencemark(lua_State* l)
+{
+    checkArgs(l, 1, 1000, "Invalid number of arguments in object:removereferencemark");
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+
+    Selection* sel = this_object(l);
+    Body* body = sel->body();
+
+    int argc = lua_gettop(l);
+    for (int i = 2; i <= argc; i++)
+    {
+        string refMark = safeGetString(l, i, AllErrors, "Arguments to object:removereferencemark() must be strings");
+
+        if (body->findReferenceMark(refMark))
+            appCore->toggleReferenceMark(refMark, *sel);
+    }
+
+    return 0;
+}
+
+
 static int object_radius(lua_State* l)
 {
     checkArgs(l, 1, 1, "No arguments expected to function object:radius");
@@ -3617,6 +3772,8 @@ static void CreateObjectMetaTable(lua_State* l)
     RegisterMethod(l, "setorbitcolor", object_setorbitcolor);
     RegisterMethod(l, "orbitvisibility", object_orbitvisibility);
     RegisterMethod(l, "setorbitvisibility", object_setorbitvisibility);
+    RegisterMethod(l, "addreferencemark", object_addreferencemark);
+    RegisterMethod(l, "removereferencemark", object_removereferencemark);
     RegisterMethod(l, "radius", object_radius);
     RegisterMethod(l, "setradius", object_setradius);
     RegisterMethod(l, "type", object_type);
