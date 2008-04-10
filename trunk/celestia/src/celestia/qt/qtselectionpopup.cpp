@@ -304,7 +304,7 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
         // to the sun direction entry.
         QAction* frameCenterAction = new QAction(tr("Show &Direction to %1").arg(center.body()->getName(true).c_str()), refVecMenu);
         frameCenterAction->setCheckable(true);
-        frameCenterAction->setChecked(appCore->referenceMarkEnabled("frame center arrow", selection));
+        frameCenterAction->setChecked(appCore->referenceMarkEnabled("frame center direction", selection));
         connect(frameCenterAction, SIGNAL(triggered()), this, SLOT(slotToggleFrameCenterDirection()));
         refVecMenu->addAction(frameCenterAction);
     }
@@ -586,7 +586,7 @@ void SelectionPopup::slotToggleSpinVector()
 
 void SelectionPopup::slotToggleFrameCenterDirection()
 {
-    appCore->toggleReferenceMark("frame center arrow", selection);
+    appCore->toggleReferenceMark("frame center direction", selection);
 }
 
 
