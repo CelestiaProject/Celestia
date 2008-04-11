@@ -84,8 +84,13 @@ PlanetographicGrid::render(Renderer* renderer,
     Quatd q = Quatd::yrotation(PI) * body.getEclipticToBodyFixed(tdb);
     Quatf qf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
-    float offset = max(0.0005f, min(0.01f, 3.0f / discSizeInPixels));
-    float scale = 1.0f + offset;
+    // The grid can't be rendered exactly on the planet sphere, or
+    // there will be z-fighting problems. Render it at a height above the
+    // planet that will place it about one pixel away from the planet.
+    float scale = (discSizeInPixels + 1) / discSizeInPixels;
+    scale = max(scale, 1.001f);
+    float offset = scale - 1.0f;
+
     Vec3f semiAxes = body.getSemiAxes();
 
     Point3d posd(pos.x, pos.y, pos.z);
