@@ -120,7 +120,6 @@ ellipsoidTangent(const Vector3<T>& recipSemiAxes,
     else
         t = (-b + (T) sqrt(discriminant)) / (2 * a);
 
-    clog << "a = " << a << ", ww=" << ww << ", ew=" << ew << ", ee=" << ee << endl;
     // V is the direction vector.  We now need the point of intersection,
     // which we obtain by solving the quadratic equation for the ray-ellipse
     // intersection.  Since we already know that the discriminant is zero,
@@ -178,12 +177,10 @@ VisibleRegion::render(Renderer* /* renderer */,
     Quatf qf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
     // The outline can't be rendered exactly on the planet sphere, or
-    // there will be z-fighting problems. Render it at some height above
-    // the planet that depends on the apparent size of the planet in pixels.
-    // This will prevent z-fighting without placing the terminator ellipse
-    // noticeably away from the planet surface.
-    float offset = max(0.0005f, min(0.01f, 3.0f / discSizeInPixels));
-    float scale = 1.0f + offset;
+    // there will be z-fighting problems. Render it at a height above the
+    // planet that will place it about one pixel away from the planet.
+    float scale = (discSizeInPixels + 1) / discSizeInPixels;
+    scale = max(scale, 1.0001f);
 
     Vec3f semiAxes = m_body.getSemiAxes();
 
