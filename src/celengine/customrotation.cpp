@@ -24,6 +24,13 @@ static map<string, RotationModel*> CustomRotationModels;
 static bool CustomRotationModelsInitialized = false;
 
 
+// Clamp secular terms in IAU rotation models to this number of centuries
+// from J2000. Extrapolating much further can lead to ridiculous results,
+// such as planets 'tipping over' Periodic terms are not clamped; their
+// validity over long time ranges is questionable, but extrapolating them
+// doesn't produce obviously absurd results.
+static const double IAU_SECULAR_TERM_VALID_CENTURIES = 50.0;
+
 /*! Base class for IAU rotation models. All IAU rotation models are in the
  *  J2000.0 Earth equatorial frame.
  */
@@ -64,7 +71,16 @@ public:
     virtual void pole(double t, double& ra, double& dec) const = 0;
     
     virtual double meridian(double t) const = 0;
-    
+
+protected:
+    static void clamp_centuries(double& T)
+    {
+        if (T < -IAU_SECULAR_TERM_VALID_CENTURIES)
+            T = -IAU_SECULAR_TERM_VALID_CENTURIES;
+        else if (T > IAU_SECULAR_TERM_VALID_CENTURIES)
+            T = IAU_SECULAR_TERM_VALID_CENTURIES;
+    }
+
 private:
     double period;
 };
@@ -88,7 +104,7 @@ public:
     {
         // TODO: Use a more accurate model for sidereal time
         double t = tjd - astro::J2000;
-        double theta = 2 * PI * (t * 24.0 / 23.9344694 - 280.5 / 360.0);
+        double theta = 2 * PI * (t * 24.0 / 23.9344694 - 259.853 / 360.0);
 
         return Quatd::yrotation(-theta);
     }
@@ -168,6 +184,7 @@ public:
     void pole(double d, double& ra, double &dec) const
     {
         double T = d / 36525.0;
+        clamp_centuries(T);
         ra = poleRA + poleRARate * T;
         dec = poleDec + poleDecRate * T;
     }
@@ -238,6 +255,7 @@ public:
     void pole(double d, double& ra, double& dec) const
     {
         double T = d / 36525.0;
+        clamp_centuries(T);
 
         double E[14];
         calcArgs(d, E);
@@ -270,7 +288,11 @@ public:
     {
         double E[14];
         calcArgs(d, E);
-        
+
+        // d^2 represents slowing of lunar rotation as the Moon recedes
+        // from the Earth. This may need to be clamped at some very large
+        // time range (1 Gy?)
+
         return (38.3213
                 + 13.17635815 * d
                 - 1.4e-12 * d * d
@@ -305,12 +327,15 @@ public:
     {
         double T = t / 36525.0;
         double M1 = degToRad(169.51 - 0.04357640 * t);
+        clamp_centuries(T);
         ra  = 317.68 - 0.108 * T + 1.79 * sin(M1);
         dec =  52.90 - 0.061 * T - 1.08 * cos(M1);
     }
     
     double meridian(double t) const
     {
+        // Note: negative coefficient of T^2 term for meridian angle indicates faster
+        // rotation as Phobos's orbit evolves inward toward Mars
         double T = t / 36525.0;
         double M1 = degToRad(169.51 - 0.04357640 * t);
         double M2 = degToRad(192.93 + 1128.4096700 * t + 8.864 * T * T);
@@ -326,10 +351,9 @@ public:
     
     void pole(double t, double& ra, double& dec) const
     {
-        // Note: negative coefficient of T^2 term for meridian angle indicates faster
-        // rotation as Phobos's orbit evolves inward toward Mars
         double T = t / 36525.0;
         double M3 = degToRad(53.47 - 0.0181510 * t);
+        clamp_centuries(T);
         ra  = 316.65 - 0.108 * T + 2.98 * sin(M3);
         dec =  53.52 - 0.061 * T - 1.78 * cos(M3);
     }
@@ -356,6 +380,7 @@ public:
     {
         double T = t / 36525.0;
         double J1 = degToRad(73.32 + 91472.9 * T);
+        clamp_centuries(T);
         ra = 268.05 - 0.009 * T - 0.84 * sin(J1) + 0.01 * sin(2.0 * J1);
         dec = 64.49 + 0.003 * T - 0.36 * cos(J1);
     }
@@ -378,6 +403,7 @@ public:
     {
         double T = t / 36525.0;
         double J2 = degToRad(24.62 + 45137.2 * T);
+        clamp_centuries(T);
         ra = 268.05 - 0.009 * T - 2.11 * sin(J2) + 0.04 * sin(2.0 * J2);
         dec = 64.49 + 0.003 * T - 0.91 * cos(J2) + 0.01 * cos(2.0 * J2);        
     }
@@ -401,6 +427,7 @@ public:
         double T = t / 36525.0;
         double J3 = degToRad(283.90 + 4850.7 * T);
         double J4 = degToRad(355.80 + 1191.3 * T);
+        clamp_centuries(T);
         ra = 268.05 - 0.009 * T + 0.094 * sin(J3) + 0.024 * sin(J4);
         dec = 64.49 + 0.003 * T + 0.040 * cos(J3) + 0.011 * cos(J4);        
     }
@@ -427,6 +454,7 @@ public:
         double J5 = degToRad(119.90 + 262.1 * T);
         double J6 = degToRad(229.80 + 64.3 * T);
         double J7 = degToRad(352.35 + 2382.6 * T);
+        clamp_centuries(T);
         ra = 268.05 - 0.009 * T + 1.086 * sin(J4) + 0.060 * sin(J5) + 0.015 * sin(J6) + 0.009 * sin(J7);
         dec = 64.49 + 0.003 * T + 0.486 * cos(J4) + 0.026 * cos(J5) + 0.007 * cos(J6) + 0.002 * cos(J7);        
     }
@@ -454,6 +482,7 @@ public:
         double J4 = degToRad(355.80 + 1191.3 * T);
         double J5 = degToRad(119.90 + 262.1 * T);
         double J6 = degToRad(229.80 + 64.3 * T);
+        clamp_centuries(T);
         ra = 268.05 - 0.009 * T - 0.037 * sin(J4) + 0.431 * sin(J5) + 0.091 * sin(J6);
         dec = 64.49 + 0.003 * T - 0.016 * cos(J4) + 0.186 * cos(J5) + 0.039 * cos(J6);        
     }
@@ -480,6 +509,7 @@ public:
         double J5 = degToRad(119.90 + 262.1 * T);
         double J6 = degToRad(229.80 + 64.3 * T);
         double J8 = degToRad(113.35 + 6070.0 * T);
+        clamp_centuries(T);
         ra = 268.05 - 0.009 * T - 0.068 * sin(J5) + 0.590 * sin(J6) + 0.010 * sin(J8);
         dec = 64.49 + 0.003 * T - 0.029 * cos(J5) + 0.254 * cos(J6) - 0.004 * cos(J8);        
     }
@@ -519,6 +549,7 @@ public:
     {
         double T = t / 36525.0;
         double S3 = degToRad(177.40 - 36505.5 * T);
+        clamp_centuries(T);
         ra = 40.66 - 0.036 * T + 13.56 * sin(S3);
         dec = 83.52 - 0.004 * T - 1.53 * cos(S3);
     }
@@ -541,6 +572,7 @@ public:
     void pole(double t, double& ra, double& dec) const
     {
         double T = t / 36525.0;
+        clamp_centuries(T);
         ra = 40.66 - 0.036 * T;
         dec = 83.52 - 0.004 * T;
     }
@@ -561,6 +593,7 @@ public:
     {
         double T = t / 36525.0;
         double S4 = degToRad(300.00 - 7225.9 * T);
+        clamp_centuries(T);
         ra = 40.66 - 0.036 * T - 9.66 * sin(S4);
         dec = 83.52 - 0.004 * T - 1.09 * cos(S4);
     }
@@ -583,6 +616,7 @@ public:
     void pole(double t, double& ra, double& dec) const
     {
         double T = t / 36525.0;
+        clamp_centuries(T);
         ra = 50.50 - 0.036 * T;
         dec = 84.06 - 0.004 * T;
     }
@@ -603,6 +637,7 @@ public:
     {
         double T = t / 36525.0;
         double S5 = degToRad(53.59 - 8968.6 * T);
+        clamp_centuries(T);
         ra = 40.58 - 0.036 * T - 13.943 * sin(S5) - 1.686 * sin(2.0 * S5);
         dec = 83.43 - 0.004 * T - 1.572 * cos(S5) + 0.095 * cos(2.0 * S5);
     }
@@ -624,6 +659,7 @@ public:
     void pole(double t, double& ra, double& dec) const
     {
         double T = t / 36525.0;
+        clamp_centuries(T);
         ra = 40.66 - 0.036 * T;
         dec = 83.52 - 0.004 * T;
     }
@@ -644,6 +680,7 @@ public:
     {
         double T = t / 36525.0;
         double S6 = degToRad(143.38 - 10553.5 * T);
+        clamp_centuries(T);
         ra = 40.58 - 0.036 * T + 1.662 * sin(S6) + 0.024 * sin(2.0 * S6);
         dec = 83.52 - 0.004 * T - 0.187 * cos(S6) + 0.095 * cos(2.0 * S6);
     }
@@ -666,6 +703,7 @@ public:
     {
         double T = t / 36525.0;
         double S7 = degToRad(345.20 - 1016.3 * T);
+        clamp_centuries(T);
         ra = 40.38 - 0.036 * T + 3.10 * sin(S7);
         dec = 83.55 - 0.004 * T - 0.35 * cos(S7);
     }
@@ -688,6 +726,7 @@ public:
     {
         double T = t / 36525.0;
         double S8 = degToRad(29.80 - 52.1 * T);
+        clamp_centuries(T);
         ra = 36.41 - 0.036 * T + 2.66 * sin(S8);
         dec = 83.94 - 0.004 * T - 0.30 * cos(S8);
     }
@@ -709,6 +748,7 @@ public:
     void pole(double t, double& ra, double& dec) const
     {
         double T = t / 36525.0;
+        clamp_centuries(T);
         ra = 318.16 - 3.949 * T;
         dec = 75.03 - 1.142 * T;
     }
@@ -728,6 +768,7 @@ public:
     void pole(double t, double& ra, double& dec) const
     {
         double T = t / 36525.0;
+        clamp_centuries(T);
         ra = 355.16;
         dec = 68.70 - 1.143 * T;
     }
