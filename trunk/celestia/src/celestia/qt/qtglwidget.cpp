@@ -15,12 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifdef TARGET_OS_MAC
-#include <Carbon/Carbon.h>
-#endif
-
 #include <cassert>
-#include <time.h>
 #include <celengine/gl.h>
 //#include <celengine/glext.h>
 #include <celengine/celestia.h>
@@ -78,7 +73,7 @@ const Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
 
 
-CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* name, CelestiaCore* core) :
+CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, CelestiaCore* core) :
     QGLWidget(parent)
 {
     setFocusPolicy(Qt::ClickFocus);
@@ -146,21 +141,10 @@ void CelestiaGlWidget::initializeGL()
 {
     if (!appCore->initRenderer())
     {
-//        cerr << "Failed to initialize renderer.\n";
+        // cerr << "Failed to initialize renderer.\n";
         exit(1);
     }
 
-    time_t curtime=time(NULL);
-    appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
-    localtime(&curtime); /* Only doing this to set timezone as a side effect*/
-#ifdef TARGET_OS_MAC
-    CFTimeZoneRef tz = CFTimeZoneCopyDefault();
-    appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
-    CFRelease(tz);
-#else
-    appCore->setTimeZoneBias(-timezone+3600*daylight);
-#endif
-    appCore->setTimeZoneName(tzname[daylight?0:1]);
     appCore->tick();
 
     // Read saved settings

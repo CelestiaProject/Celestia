@@ -13,6 +13,8 @@
 #ifdef TARGET_OS_MAC
 #include <Carbon/Carbon.h>
 #endif
+#include <time.h>
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -361,6 +363,14 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("SyncTime", simulation->getSyncTime());
     settings.setValue("FramesVisible", appCore->getFramesVisible());
     settings.setValue("ActiveFrameVisible", appCore->getActiveFrameVisible());
+
+    // TODO: This is not a reliable way determine when local time is enabled, but it's
+    // all that CelestiaCore offers right now. useLocalTime won't ever be true when the system
+    // time zone is UTC+0. This could be a problem when switching to/from daylight saving
+    // time.
+    bool useLocalTime = appCore->getTimeZoneBias() != 0;
+    settings.setValue("LocalTime", useLocalTime);
+    settings.setValue("TimeZoneName", QString::fromUtf8(appCore->getTimeZoneName().c_str()));
     settings.endGroup();
 }
 
@@ -733,7 +743,7 @@ void CelestiaAppWindow::createMenus()
     fileMenu->addAction(copyURLAction);
 
     QAction* pasteURLAction = new QAction(tr("&Paste URL"), this);
-    pasteURLAction->setShortcut(QKeySequence::Paste);
+    //pasteURLAction->setShortcut(QKeySequence::Paste);  // conflicts with cycle render path command
     connect(pasteURLAction, SIGNAL(triggered()), this, SLOT(slotPasteURL()));
     fileMenu->addAction(pasteURLAction);
 
@@ -874,6 +884,33 @@ void CelestiaAppWindow::createMenus()
     }
     syncTimeAction->setChecked(check);
     appCore->getSimulation()->setSyncTime(check);
+
+    // Set up the default time zone name and offset from UTC
+    time_t curtime = time(NULL);
+    appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
+    localtime(&curtime); // Only doing this to set timezone as a side effect
+
+#ifdef TARGET_OS_MAC
+    CFTimeZoneRef tz = CFTimeZoneCopyDefault();
+    appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
+    CFRelease(tz);
+#else
+    appCore->setTimeZoneBias(-timezone + 3600 * daylight);
+#endif
+    appCore->setTimeZoneName(tzname[daylight?0:1]);
+
+    // If LocalTime is set to false, set the time zone bias to zero.
+    if (settings.contains("LocalTime"))
+    {
+        bool useLocalTime = settings.value("LocalTime").toBool();
+        if (!useLocalTime)
+            appCore->setTimeZoneBias(0);
+    }
+
+    if (settings.contains("TimeZoneName"))
+    {
+        appCore->setTimeZoneName(settings.value("TimeZoneName").toString().toUtf8().data());
+    }
 
 	/****** Help Menu ******/
     helpMenu = menuBar()->addMenu(tr("&Help"));
