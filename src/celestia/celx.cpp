@@ -2763,8 +2763,6 @@ static int object_addreferencemark(lua_State* l)
 {
     checkArgs(l, 2, 2, "Expected one table as argument to object:addreferencemark()");
 
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
     if (!lua_istable(l, 2))
     {
         doError(l, "Argument to object:addreferencemark() must be a table");
@@ -5641,8 +5639,6 @@ static int celestia_getsystemtime(lua_State* l)
         d.minute = gmt->tm_min;
         d.seconds = (int) gmt->tm_sec;
 
-        CelestiaCore* appCore = this_celestia(l);
-        Simulation* sim = appCore->getSimulation();
         lua_pushnumber(l, astro::UTCtoTDB(d));
     }
 
