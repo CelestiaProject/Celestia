@@ -16,6 +16,15 @@
 		8844CBC60D80DB020059AA3A /* precession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC20D80DB020059AA3A /* precession.cpp */; };
 		8844CF0B0D931D4E0059AA3A /* planetgrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CF080D931D4E0059AA3A /* planetgrid.cpp */; };
 		886544290DAC3CC4007C8027 /* visibleregion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 886544270DAC3CC4007C8027 /* visibleregion.cpp */; };
+		88654A170DB29585007C8027 /* celx_celestia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A040DB29585007C8027 /* celx_celestia.cpp */; };
+		88654A190DB29585007C8027 /* celx_frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A060DB29585007C8027 /* celx_frame.cpp */; };
+		88654A1B0DB29585007C8027 /* celx_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A080DB29585007C8027 /* celx_gl.cpp */; };
+		88654A1E0DB29585007C8027 /* celx_object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A0B0DB29585007C8027 /* celx_object.cpp */; };
+		88654A200DB29585007C8027 /* celx_observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A0D0DB29585007C8027 /* celx_observer.cpp */; };
+		88654A220DB29585007C8027 /* celx_phase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A0F0DB29585007C8027 /* celx_phase.cpp */; };
+		88654A240DB29585007C8027 /* celx_position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A110DB29585007C8027 /* celx_position.cpp */; };
+		88654A260DB29585007C8027 /* celx_rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A130DB29585007C8027 /* celx_rotation.cpp */; };
+		88654A280DB29585007C8027 /* celx_vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A150DB29585007C8027 /* celx_vector.cpp */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
@@ -509,6 +518,25 @@
 		8844CF0A0D931D4E0059AA3A /* referencemark.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = referencemark.h; path = ../src/celengine/referencemark.h; sourceTree = SOURCE_ROOT; };
 		886544270DAC3CC4007C8027 /* visibleregion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = visibleregion.cpp; path = ../src/celengine/visibleregion.cpp; sourceTree = SOURCE_ROOT; };
 		886544280DAC3CC4007C8027 /* visibleregion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = visibleregion.h; path = ../src/celengine/visibleregion.h; sourceTree = SOURCE_ROOT; };
+		88654A040DB29585007C8027 /* celx_celestia.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_celestia.cpp; path = ../src/celestia/celx_celestia.cpp; sourceTree = SOURCE_ROOT; };
+		88654A050DB29585007C8027 /* celx_celestia.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_celestia.h; path = ../src/celestia/celx_celestia.h; sourceTree = SOURCE_ROOT; };
+		88654A060DB29585007C8027 /* celx_frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_frame.cpp; path = ../src/celestia/celx_frame.cpp; sourceTree = SOURCE_ROOT; };
+		88654A070DB29585007C8027 /* celx_frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_frame.h; path = ../src/celestia/celx_frame.h; sourceTree = SOURCE_ROOT; };
+		88654A080DB29585007C8027 /* celx_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_gl.cpp; path = ../src/celestia/celx_gl.cpp; sourceTree = SOURCE_ROOT; };
+		88654A090DB29585007C8027 /* celx_gl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_gl.h; path = ../src/celestia/celx_gl.h; sourceTree = SOURCE_ROOT; };
+		88654A0A0DB29585007C8027 /* celx_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_internal.h; path = ../src/celestia/celx_internal.h; sourceTree = SOURCE_ROOT; };
+		88654A0B0DB29585007C8027 /* celx_object.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_object.cpp; path = ../src/celestia/celx_object.cpp; sourceTree = SOURCE_ROOT; };
+		88654A0C0DB29585007C8027 /* celx_object.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_object.h; path = ../src/celestia/celx_object.h; sourceTree = SOURCE_ROOT; };
+		88654A0D0DB29585007C8027 /* celx_observer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_observer.cpp; path = ../src/celestia/celx_observer.cpp; sourceTree = SOURCE_ROOT; };
+		88654A0E0DB29585007C8027 /* celx_observer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_observer.h; path = ../src/celestia/celx_observer.h; sourceTree = SOURCE_ROOT; };
+		88654A0F0DB29585007C8027 /* celx_phase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_phase.cpp; path = ../src/celestia/celx_phase.cpp; sourceTree = SOURCE_ROOT; };
+		88654A100DB29585007C8027 /* celx_phase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_phase.h; path = ../src/celestia/celx_phase.h; sourceTree = SOURCE_ROOT; };
+		88654A110DB29585007C8027 /* celx_position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_position.cpp; path = ../src/celestia/celx_position.cpp; sourceTree = SOURCE_ROOT; };
+		88654A120DB29585007C8027 /* celx_position.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_position.h; path = ../src/celestia/celx_position.h; sourceTree = SOURCE_ROOT; };
+		88654A130DB29585007C8027 /* celx_rotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_rotation.cpp; path = ../src/celestia/celx_rotation.cpp; sourceTree = SOURCE_ROOT; };
+		88654A140DB29585007C8027 /* celx_rotation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_rotation.h; path = ../src/celestia/celx_rotation.h; sourceTree = SOURCE_ROOT; };
+		88654A150DB29585007C8027 /* celx_vector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_vector.cpp; path = ../src/celestia/celx_vector.cpp; sourceTree = SOURCE_ROOT; };
+		88654A160DB29585007C8027 /* celx_vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_vector.h; path = ../src/celestia/celx_vector.h; sourceTree = SOURCE_ROOT; };
 		E50657D70CBFB08500151204 /* imagecapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imagecapture.h; path = ../src/celestia/imagecapture.h; sourceTree = SOURCE_ROOT; };
 		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
 		E50CCA380C065BF900E9C76A /* eclipsefinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eclipsefinder.h; path = ../src/celestia/eclipsefinder.h; sourceTree = SOURCE_ROOT; };
@@ -1370,6 +1398,25 @@
 		F51C6D51029596B4014901DC /* celestia */ = {
 			isa = PBXGroup;
 			children = (
+				88654A040DB29585007C8027 /* celx_celestia.cpp */,
+				88654A050DB29585007C8027 /* celx_celestia.h */,
+				88654A060DB29585007C8027 /* celx_frame.cpp */,
+				88654A070DB29585007C8027 /* celx_frame.h */,
+				88654A080DB29585007C8027 /* celx_gl.cpp */,
+				88654A090DB29585007C8027 /* celx_gl.h */,
+				88654A0A0DB29585007C8027 /* celx_internal.h */,
+				88654A0B0DB29585007C8027 /* celx_object.cpp */,
+				88654A0C0DB29585007C8027 /* celx_object.h */,
+				88654A0D0DB29585007C8027 /* celx_observer.cpp */,
+				88654A0E0DB29585007C8027 /* celx_observer.h */,
+				88654A0F0DB29585007C8027 /* celx_phase.cpp */,
+				88654A100DB29585007C8027 /* celx_phase.h */,
+				88654A110DB29585007C8027 /* celx_position.cpp */,
+				88654A120DB29585007C8027 /* celx_position.h */,
+				88654A130DB29585007C8027 /* celx_rotation.cpp */,
+				88654A140DB29585007C8027 /* celx_rotation.h */,
+				88654A150DB29585007C8027 /* celx_vector.cpp */,
+				88654A160DB29585007C8027 /* celx_vector.h */,
 				F51C6D8B02959960014901DC /* celestiacore.cpp */,
 				E56431450776D52D00E2C4A3 /* celx.cpp */,
 				F51C6D8C02959960014901DC /* configfile.cpp */,
@@ -1967,6 +2014,15 @@
 				8844CBC60D80DB020059AA3A /* precession.cpp in Sources */,
 				8844CF0B0D931D4E0059AA3A /* planetgrid.cpp in Sources */,
 				886544290DAC3CC4007C8027 /* visibleregion.cpp in Sources */,
+				88654A170DB29585007C8027 /* celx_celestia.cpp in Sources */,
+				88654A190DB29585007C8027 /* celx_frame.cpp in Sources */,
+				88654A1B0DB29585007C8027 /* celx_gl.cpp in Sources */,
+				88654A1E0DB29585007C8027 /* celx_object.cpp in Sources */,
+				88654A200DB29585007C8027 /* celx_observer.cpp in Sources */,
+				88654A220DB29585007C8027 /* celx_phase.cpp in Sources */,
+				88654A240DB29585007C8027 /* celx_position.cpp in Sources */,
+				88654A260DB29585007C8027 /* celx_rotation.cpp in Sources */,
+				88654A280DB29585007C8027 /* celx_vector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
