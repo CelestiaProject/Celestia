@@ -34,7 +34,7 @@ void DebugPrint(int level, char *format, ...)
         {
             char buf[1024];
             vsprintf(buf, format, args);
-            OutputDebugString(buf);
+            OutputDebugStringA(buf);
         }
         else
         {
