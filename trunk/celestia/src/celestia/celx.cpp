@@ -1,8 +1,9 @@
 // celx.cpp
 //
-// Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2003-2008, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
-// Lua script extensions for Celestia
+// Lua script extensions for Celestia.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,21 +13,30 @@
 #include <cassert>
 #include <cstring>
 #include <cstdio>
-#include <map>
 #include <ctime>
-#include <celengine/axisarrow.h>
-#include <celengine/visibleregion.h>
-#include <celengine/planetgrid.h>
+#include <map>
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
 #include <celengine/cmdparser.h>
 #include <celengine/execenv.h>
 #include <celengine/execution.h>
 #include <celmath/vecmath.h>
-#include <celengine/gl.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include "imagecapture.h"
+
+#include "celx.h"
+#include "celx_internal.h"
+#include "celx_vector.h"
+#include "celx_rotation.h"
+#include "celx_position.h"
+#include "celx_frame.h"
+#include "celx_phase.h"
+#include "celx_object.h"
+#include "celx_observer.h"
+#include "celx_celestia.h"
+#include "celx_gl.h"
+
 
 // Older gcc versions used <strstream> instead of <sstream>.
 // This has been corrected in GCC 3.2, but name clashing must
@@ -42,7 +52,7 @@
 
 using namespace std;
 
-static const char* ClassNames[] =
+const char* CelxLua::ClassNames[] =
 {
     "class_celestia",
     "class_observer",
@@ -59,19 +69,16 @@ static const char* ClassNames[] =
     "class_phase",
 };
 
-static const int _Celestia = 0;
-static const int _Observer = 1;
-static const int _Object   = 2;
-static const int _Vec3     = 3;
-static const int _Matrix   = 4;
-static const int _Rotation = 5;
-static const int _Position = 6;
-static const int _Frame    = 7;
-static const int _CelScript= 8;
-static const int _Font     = 9;
-static const int _Image    = 10;
-static const int _Texture  = 11;
-static const int _Phase    = 12;
+CelxLua::FlagMap CelxLua::RenderFlagMap;
+CelxLua::FlagMap CelxLua::LabelFlagMap;
+CelxLua::FlagMap CelxLua::LocationFlagMap;
+CelxLua::FlagMap CelxLua::BodyTypeMap;
+CelxLua::FlagMap CelxLua::OverlayElementMap;
+CelxLua::FlagMap CelxLua::OrbitVisibilityMap;
+CelxLua::ColorMap CelxLua::LineColorMap;
+CelxLua::ColorMap CelxLua::LabelColorMap;
+bool CelxLua::mapsInitialized = false;
+
 
 #define CLASS(i) ClassNames[(i)]
 
@@ -90,54 +97,9 @@ static const char* TickHandler       = "tick";
 static const char* MouseDownHandler  = "mousedown";
 static const char* MouseUpHandler    = "mouseup";
 
-typedef map<string, uint32> FlagMap;
-typedef map<string, Color*> ColorMap;
-
-static FlagMap RenderFlagMap;
-static FlagMap LabelFlagMap;
-static FlagMap LocationFlagMap;
-static FlagMap BodyTypeMap;
-static FlagMap OverlayElementMap;
-static FlagMap OrbitVisibilityMap;
-static ColorMap LineColorMap;
-static ColorMap LabelColorMap;
-static bool mapsInitialized = false;
-
-// select which type of error will be fatal (call lua_error) and
-// which will return a default value instead
-enum FatalErrors {
-    NoErrors = 0,
-    WrongType = 1,
-    WrongArgc = 2,
-    AllErrors = WrongType | WrongArgc,
-};
-
-
-// We want to avoid copying TimelinePhase objects, so we can't make them
-// userdata. But, they can't be lightuserdata either because they need to
-// be reference counted, and Lua doesn't garbage collect lightuserdata. The
-// solution is the PhaseReference object, which just wraps a TimelinePhase
-// pointer.
-class PhaseReference
-{
-public:
-    PhaseReference(const TimelinePhase& _phase) :
-        phase(&_phase)
-    {
-        phase->addRef();
-    }
-
-    ~PhaseReference()
-    {
-        phase->release();
-    }
-
-    const TimelinePhase* phase;
-};
-
 
 // Initialize various maps from named keywords to numeric flags used within celestia:
-static void initRenderFlagMap()
+void CelxLua::initRenderFlagMap()
 {
     RenderFlagMap["orbits"] = Renderer::ShowOrbits;
     RenderFlagMap["cloudmaps"] = Renderer::ShowCloudMaps;
@@ -161,7 +123,7 @@ static void initRenderFlagMap()
     RenderFlagMap["cloudshadows"] = Renderer::ShowCloudShadows;
 }
 
-static void initLabelFlagMap()
+void CelxLua::initLabelFlagMap()
 {
     LabelFlagMap["planets"] = Renderer::PlanetLabels;
     LabelFlagMap["moons"] = Renderer::MoonLabels;
@@ -177,7 +139,7 @@ static void initLabelFlagMap()
     LabelFlagMap["i18nconstellations"] = Renderer::I18nConstellationLabels;
 }
 
-static void initBodyTypeMap()
+void CelxLua::initBodyTypeMap()
 {
     BodyTypeMap["Planet"] = Body::Planet;
     BodyTypeMap["Moon"] = Body::Moon;
@@ -189,7 +151,7 @@ static void initBodyTypeMap()
     BodyTypeMap["Unknown"] = Body::Unknown;
 }
 
-static void initLocationFlagMap()
+void CelxLua::initLocationFlagMap()
 {
     LocationFlagMap["city"] = Location::City;
     LocationFlagMap["observatory"] = Location::Observatory;
@@ -222,7 +184,7 @@ static void initLocationFlagMap()
     LocationFlagMap["other"] = Location::Other;
 }
 
-static void initOverlayElementMap()
+void CelxLua::initOverlayElementMap()
 {
     OverlayElementMap["Time"] = CelestiaCore::ShowTime;
     OverlayElementMap["Velocity"] = CelestiaCore::ShowVelocity;
@@ -230,7 +192,7 @@ static void initOverlayElementMap()
     OverlayElementMap["Frame"] = CelestiaCore::ShowFrame;
 }
 
-static void initOrbitVisibilityMap()
+void CelxLua::initOrbitVisibilityMap()
 {
     OrbitVisibilityMap["never"] = Body::NeverVisible;
     OrbitVisibilityMap["normal"] = Body::UseClassVisibility;
@@ -238,7 +200,7 @@ static void initOrbitVisibilityMap()
 }
 
 
-static void initLabelColorMap()
+void CelxLua::initLabelColorMap()
 {
     LabelColorMap["stars"]          = &Renderer::StarLabelColor;
     LabelColorMap["planets"]        = &Renderer::PlanetLabelColor;
@@ -255,7 +217,7 @@ static void initLabelColorMap()
     LabelColorMap["planetographicgrid"] = &Renderer::PlanetographicGridLabelColor;
 }
 
-static void initLineColorMap()
+void CelxLua::initLineColorMap()
 {
     LineColorMap["starorbits"]       = &Renderer::StarOrbitColor;
     LineColorMap["planetorbits"]     = &Renderer::PlanetOrbitColor;
@@ -285,7 +247,7 @@ static void openLuaLibrary(lua_State* l,
 #endif
 
 
-static void initMaps()
+void CelxLua::initMaps()
 {
     if (!mapsInitialized)
     {
@@ -402,23 +364,23 @@ class CelScriptWrapper : public ExecutionEnvironment
 // Push a class name onto the Lua stack
 static void PushClass(lua_State* l, int id)
 {
-    lua_pushlstring(l, ClassNames[id], strlen(ClassNames[id]));
+    lua_pushlstring(l, CelxLua::ClassNames[id], strlen(CelxLua::ClassNames[id]));
 }
 
 // Set the class (metatable) of the object on top of the stack
-static void SetClass(lua_State* l, int id)
+void Celx_SetClass(lua_State* l, int id)
 {
     PushClass(l, id);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
-        cout << "Metatable for " << ClassNames[id] << " not found!\n";
+        cout << "Metatable for " << CelxLua::ClassNames[id] << " not found!\n";
     if (lua_setmetatable(l, -2) == 0)
-        cout << "Error setting metatable for " << ClassNames[id] << '\n';
+        cout << "Error setting metatable for " << CelxLua::ClassNames[id] << '\n';
 }
 
 // Initialize the metatable for a class; sets the appropriate registry
 // entries and __index, leaving the metatable on the stack when done.
-static void CreateClassMetatable(lua_State* l, int id)
+void Celx_CreateClassMetatable(lua_State* l, int id)
 {
     lua_newtable(l);
     PushClass(l, id);
@@ -434,7 +396,7 @@ static void CreateClassMetatable(lua_State* l, int id)
 }
 
 // Register a class 'method' in the metatable (assumed to be on top of the stack)
-static void RegisterMethod(lua_State* l, const char* name, lua_CFunction fn)
+void Celx_RegisterMethod(lua_State* l, const char* name, lua_CFunction fn)
 {
     lua_pushstring(l, name);
     lua_pushvalue(l, -2);
@@ -445,7 +407,7 @@ static void RegisterMethod(lua_State* l, const char* name, lua_CFunction fn)
 
 // Verify that an object at location index on the stack is of the
 // specified class
-static bool istype(lua_State* l, int index, int id)
+static bool Celx_istype(lua_State* l, int index, int id)
 {
     // get registry[metatable]
     if (!lua_getmetatable(l, index))
@@ -454,13 +416,13 @@ static bool istype(lua_State* l, int index, int id)
 
     if (lua_type(l, -1) != LUA_TSTRING)
     {
-        cout << "istype failed!  Unregistered class.\n";
+        cout << "Celx_istype failed!  Unregistered class.\n";
         lua_pop(l, 1);
         return false;
     }
 
     const char* classname = lua_tostring(l, -1);
-    if (classname != NULL && strcmp(classname, ClassNames[id]) == 0)
+    if (classname != NULL && strcmp(classname, CelxLua::ClassNames[id]) == 0)
     {
         lua_pop(l, 1);
         return true;
@@ -471,9 +433,9 @@ static bool istype(lua_State* l, int index, int id)
 
 // Verify that an object at location index on the stack is of the
 // specified class and return pointer to userdata
-static void* CheckUserData(lua_State* l, int index, int id)
+void* Celx_CheckUserData(lua_State* l, int index, int id)
 {
-    if (istype(l, index, id))
+    if (Celx_istype(l, index, id))
         return lua_touserdata(l, index);
     else
         return NULL;
@@ -1054,7 +1016,7 @@ int LuaState::resume()
 
 // get current linenumber of script and create
 // useful error-message
-static void doError(lua_State* l, const char* errorMsg)
+void Celx_DoError(lua_State* l, const char* errorMsg)
 {
     lua_Debug debug;
     if (lua_getstack(l, 1, &debug))
@@ -1197,13 +1159,13 @@ void LuaState::requestIO()
 
 // Check if the number of arguments on the stack matches
 // the allowed range [minArgs, maxArgs]. Cause an error if not.
-static void checkArgs(lua_State* l,
-                      int minArgs, int maxArgs, const char* errorMessage)
+void Celx_CheckArgs(lua_State* l,
+                    int minArgs, int maxArgs, const char* errorMessage)
 {
     int argc = lua_gettop(l);
     if (argc < minArgs || argc > maxArgs)
     {
-        doError(l, errorMessage);
+        Celx_DoError(l, errorMessage);
     }
 }
 
@@ -1234,37 +1196,6 @@ static ObserverFrame::CoordinateSystem parseCoordSys(const string& name)
 }
 
 
-static Marker::Symbol parseMarkerSymbol(const string& name)
-{
-    if (compareIgnoringCase(name, "diamond") == 0)
-        return Marker::Diamond;
-    else if (compareIgnoringCase(name, "triangle") == 0)
-        return Marker::Triangle;
-    else if (compareIgnoringCase(name, "square") == 0)
-        return Marker::Square;
-    else if (compareIgnoringCase(name, "filledsquare") == 0)
-        return Marker::FilledSquare;
-    else if (compareIgnoringCase(name, "plus") == 0)
-        return Marker::Plus;
-    else if (compareIgnoringCase(name, "x") == 0)
-        return Marker::X;
-    else if (compareIgnoringCase(name, "leftarrow") == 0)
-        return Marker::LeftArrow;
-    else if (compareIgnoringCase(name, "rightarrow") == 0)
-        return Marker::RightArrow;
-    else if (compareIgnoringCase(name, "uparrow") == 0)
-        return Marker::UpArrow;
-    else if (compareIgnoringCase(name, "downarrow") == 0)
-        return Marker::DownArrow;
-    else if (compareIgnoringCase(name, "circle") == 0)
-        return Marker::Circle;
-    else if (compareIgnoringCase(name, "disk") == 0)
-        return Marker::Disk;
-    else
-        return Marker::Diamond;
-}
-
-
 // Get a pointer to the LuaState-object from the registry:
 LuaState* getLuaStateObject(lua_State* l)
 {
@@ -1274,12 +1205,12 @@ LuaState* getLuaStateObject(lua_State* l)
 
     if (!lua_islightuserdata(l, -1))
     {
-        doError(l, "Internal Error: Invalid table entry for LuaState-pointer");
+        Celx_DoError(l, "Internal Error: Invalid table entry for LuaState-pointer");
     }
     LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(l, -1));
     if (luastate_ptr == NULL)
     {
-        doError(l, "Internal Error: Invalid LuaState-pointer");
+        Celx_DoError(l, "Internal Error: Invalid LuaState-pointer");
     }
     lua_settop(l, stackSize);
     return luastate_ptr;
@@ -1314,13 +1245,15 @@ void getObservers(CelestiaCore* appCore, vector<Observer*>& list)
 
 // safe wrapper for lua_tostring: fatal errors will terminate script by calling
 // lua_error with errorMsg.
-static const char* safeGetString(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
-                                 const char* errorMsg = "String argument expected")
+static const char* Celx_SafeGetString(lua_State* l,
+                                      int index,
+                                      FatalErrors fatalErrors = AllErrors,
+                                      const char* errorMsg = "String argument expected")
 {
     if (l == NULL)
     {
-        cerr << "Error: LuaState invalid in safeGetString\n";
-        cout << "Error: LuaState invalid in safeGetString\n";
+        cerr << "Error: LuaState invalid in Celx_SafeGetString\n";
+        cout << "Error: LuaState invalid in Celx_SafeGetString\n";
         return NULL;
     }
     int argc = lua_gettop(l);
@@ -1328,7 +1261,7 @@ static const char* safeGetString(lua_State* l, int index, FatalErrors fatalError
     {
         if (fatalErrors & WrongArgc)
         {
-            doError(l, errorMsg);
+            Celx_DoError(l, errorMsg);
         }
         else
             return NULL;
@@ -1337,7 +1270,7 @@ static const char* safeGetString(lua_State* l, int index, FatalErrors fatalError
     {
         if (fatalErrors & WrongType)
         {
-            doError(l, errorMsg);
+            Celx_DoError(l, errorMsg);
         }
         else
             return NULL;
@@ -1345,16 +1278,16 @@ static const char* safeGetString(lua_State* l, int index, FatalErrors fatalError
     return lua_tostring(l, index);
 }
 
-// safe wrapper for lua_tonumber, c.f. safeGetString
+// safe wrapper for lua_tonumber, c.f. Celx_SafeGetString
 // Non-fatal errors will return  defaultValue.
-static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
-                                 const char* errorMsg = "Numeric argument expected",
-                                 lua_Number defaultValue = 0.0)
+lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                              const char* errorMsg = "Numeric argument expected",
+                              lua_Number defaultValue = 0.0)
 {
     if (l == NULL)
     {
-        cerr << "Error: LuaState invalid in safeGetNumber\n";
-        cout << "Error: LuaState invalid in safeGetNumber\n";
+        cerr << "Error: LuaState invalid in Celx_SafeGetNumber\n";
+        cout << "Error: LuaState invalid in Celx_SafeGetNumber\n";
         return 0.0;
     }
     int argc = lua_gettop(l);
@@ -1362,7 +1295,7 @@ static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors
     {
         if (fatalErrors & WrongArgc)
         {
-            doError(l, errorMsg);
+            Celx_DoError(l, errorMsg);
         }
         else
             return defaultValue;
@@ -1371,48 +1304,12 @@ static lua_Number safeGetNumber(lua_State* l, int index, FatalErrors fatalErrors
     {
         if (fatalErrors & WrongType)
         {
-            doError(l, errorMsg);
+            Celx_DoError(l, errorMsg);
         }
         else
             return defaultValue;
     }
     return lua_tonumber(l, index);
-}
-
-// Safe wrapper for lua_tobool, c.f. safeGetString
-// Non-fata errors will return defaultValue
-static bool safeGetBoolean(lua_State* l, 
-                           int index,
-                           FatalErrors fatalErrors = AllErrors,
-                           const char* errorMsg = "Boolean argument expected",
-                           bool defaultValue = false)
-{
-    int argc = lua_gettop(l);
-    if (index < 1 || index > argc)
-    {
-        if (fatalErrors & WrongArgc)
-        {
-            doError(l, errorMsg);
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
-
-    if (!lua_isboolean(l, index))
-    {
-        if (fatalErrors & WrongType)
-        {
-            doError(l, errorMsg);
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
-
-    return lua_toboolean(l, index) != 0;
 }
 
 
@@ -1424,3217 +1321,7 @@ static void setTable(lua_State* l, const char* field, lua_Number value)
     lua_settable(l, -3);
 }
 
-static void setTable(lua_State* l, const char* field, const char* value)
-{
-    lua_pushstring(l, field);
-    lua_pushstring(l, value);
-    lua_settable(l, -3);
-}
 
-// ==================== forward declarations ====================
-
-// must be declared for vector_add:
-static UniversalCoord* to_position(lua_State* l, int index);
-static int position_new(lua_State* l, const UniversalCoord& uc);
-// for frame_getrefobject / gettargetobject
-static int object_new(lua_State* l, const Selection& sel);
-// for vector_mult
-static Quatd* to_rotation(lua_State* l, int index);
-static int rotation_new(lua_State* l, const Quatd& qd);
-
-// ==================== Vector ====================
-static int vector_new(lua_State* l, const Vec3d& v)
-{
-    Vec3d* v3 = reinterpret_cast<Vec3d*>(lua_newuserdata(l, sizeof(Vec3d)));
-    *v3 = v;
-    SetClass(l, _Vec3);
-
-    return 1;
-}
-
-static Vec3d* to_vector(lua_State* l, int index)
-{
-    return static_cast<Vec3d*>(CheckUserData(l, index, _Vec3));
-}
-
-static Vec3d* this_vector(lua_State* l)
-{
-    Vec3d* v3 = to_vector(l, 1);
-    if (v3 == NULL)
-    {
-        doError(l, "Bad vector object!");
-    }
-
-    return v3;
-}
-
-
-static int vector_sub(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for sub");
-    Vec3d* op1 = to_vector(l, 1);
-    Vec3d* op2 = to_vector(l, 2);
-    if (op1 == NULL || op2 == NULL)
-    {
-        doError(l, "Subtraction only defined for two vectors");
-    }
-    else
-    {
-        Vec3d result = *op1 - *op2;
-        vector_new(l, result);
-    }
-    return 1;
-}
-
-static int vector_get(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Invalid access of vector-component");
-    Vec3d* v3 = this_vector(l);
-    string key = safeGetString(l, 2, AllErrors, "Invalid key in vector-access");
-    double value = 0.0;
-    if (key == "x")
-        value = v3->x;
-    else if (key == "y")
-        value = v3->y;
-    else if (key == "z")
-        value = v3->z;
-    else
-    {
-        if (lua_getmetatable(l, 1))
-        {
-            lua_pushvalue(l, 2);
-            lua_rawget(l, -2);
-            return 1;
-        }
-        else
-        {
-            doError(l, "Internal error: couldn't get metatable");
-        }
-    }
-    lua_pushnumber(l, (lua_Number)value);
-    return 1;
-}
-
-static int vector_set(lua_State* l)
-{
-    checkArgs(l, 3, 3, "Invalid access of vector-component");
-    Vec3d* v3 = this_vector(l);
-    string key = safeGetString(l, 2, AllErrors, "Invalid key in vector-access");
-    double value = safeGetNumber(l, 3, AllErrors, "Vector components must be numbers");
-    if (key == "x")
-        v3->x = value;
-    else if (key == "y")
-        v3->y = value;
-    else if (key == "z")
-        v3->z = value;
-    else
-    {
-        doError(l, "Invalid key in vector-access");
-    }
-    return 0;
-}
-
-static int vector_getx(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for vector:getx");
-    Vec3d* v3 = this_vector(l);
-    lua_Number x;
-    x = static_cast<lua_Number>(v3->x);
-    lua_pushnumber(l, x);
-
-    return 1;
-}
-
-static int vector_gety(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for vector:gety");
-    Vec3d* v3 = this_vector(l);
-    lua_Number y;
-    y = static_cast<lua_Number>(v3->y);
-    lua_pushnumber(l, y);
-
-    return 1;
-}
-
-static int vector_getz(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for vector:getz");
-    Vec3d* v3 = this_vector(l);
-    lua_Number z;
-    z = static_cast<lua_Number>(v3->z);
-    lua_pushnumber(l, z);
-
-    return 1;
-}
-
-static int vector_normalize(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for vector:normalize");
-    Vec3d* v = this_vector(l);
-    Vec3d vn(*v);
-    vn.normalize();
-    vector_new(l, vn);
-    return 1;
-}
-
-static int vector_length(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for vector:length");
-    Vec3d* v = this_vector(l);
-    double length = v->length();
-    lua_pushnumber(l, (lua_Number)length);
-    return 1;
-}
-
-static int vector_add(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for addition");
-    Vec3d* v1 = NULL;
-    Vec3d* v2 = NULL;
-    UniversalCoord* p = NULL;
-
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3))
-    {
-        v1 = to_vector(l, 1);
-        v2 = to_vector(l, 2);
-        vector_new(l, *v1 + *v2);
-    }
-    else
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Position))
-    {
-        v1 = to_vector(l, 1);
-        p = to_position(l, 2);
-        position_new(l, *p + *v1);
-    }
-    else
-    {
-        doError(l, "Bad vector addition!");
-    }
-    return 1;
-}
-
-static int vector_mult(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for multiplication");
-    Vec3d* v1 = NULL;
-    Vec3d* v2 = NULL;
-    Quatd* q = NULL;
-    lua_Number s = 0.0;
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3))
-    {
-        v1 = to_vector(l, 1);
-        v2 = to_vector(l, 2);
-        lua_pushnumber(l, *v1 * *v2);
-    }
-    else
-    if (istype(l, 1, _Vec3) && lua_isnumber(l, 2))
-    {
-        v1 = to_vector(l, 1);
-        s = lua_tonumber(l, 2);
-        vector_new(l, *v1 * s);
-    }
-    else
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Rotation))
-    {
-        v1 = to_vector(l, 1);
-        q = to_rotation(l, 2);
-        rotation_new(l, *v1 * *q);
-    }
-    else
-    if (lua_isnumber(l, 1) && istype(l, 2, _Vec3))
-    {
-        s = lua_tonumber(l, 1);
-        v1 = to_vector(l, 2);
-        vector_new(l, *v1 * s);
-    }
-    else
-    {
-        doError(l, "Bad vector multiplication!");
-    }
-    return 1;
-}
-
-static int vector_cross(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for multiplication");
-    Vec3d* v1 = NULL;
-    Vec3d* v2 = NULL;
-    if (istype(l, 1, _Vec3) && istype(l, 2, _Vec3))
-    {
-        v1 = to_vector(l, 1);
-        v2 = to_vector(l, 2);
-        vector_new(l, *v1 ^ *v2);
-    }
-    else
-    {
-        doError(l, "Bad vector multiplication!");
-    }
-    return 1;
-
-}
-
-static int vector_tostring(lua_State* l)
-{
-    lua_pushstring(l, "[Vector]");
-    return 1;
-}
-
-static void CreateVectorMetaTable(lua_State* l)
-{
-    CreateClassMetatable(l, _Vec3);
-
-    RegisterMethod(l, "__tostring", vector_tostring);
-    RegisterMethod(l, "__add", vector_add);
-    RegisterMethod(l, "__sub", vector_sub);
-    RegisterMethod(l, "__mul", vector_mult);
-    RegisterMethod(l, "__pow", vector_cross);
-    RegisterMethod(l, "__index", vector_get);
-    RegisterMethod(l, "__newindex", vector_set);
-    RegisterMethod(l, "getx", vector_getx);
-    RegisterMethod(l, "gety", vector_gety);
-    RegisterMethod(l, "getz", vector_getz);
-    RegisterMethod(l, "normalize", vector_normalize);
-    RegisterMethod(l, "length", vector_length);
-
-    lua_pop(l, 1); // remove metatable from stack
-}
-
-// ==================== Rotation ====================
-static int rotation_new(lua_State* l, const Quatd& qd)
-{
-    Quatd* q = reinterpret_cast<Quatd*>(lua_newuserdata(l, sizeof(Quatd)));
-    *q = qd;
-    SetClass(l, _Rotation);
-
-    return 1;
-}
-
-static Quatd* to_rotation(lua_State* l, int index)
-{
-    return static_cast<Quatd*>(CheckUserData(l, index, _Rotation));
-}
-
-static Quatd* this_rotation(lua_State* l)
-{
-    Quatd* q = to_rotation(l, 1);
-    if (q == NULL)
-    {
-        doError(l, "Bad rotation object!");
-    }
-
-    return q;
-}
-
-
-static int rotation_add(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for add");
-    Quatd* q1 = to_rotation(l, 1);
-    Quatd* q2 = to_rotation(l, 2);
-    if (q1 == NULL || q2 == NULL)
-    {
-        doError(l, "Addition only defined for two rotations");
-    }
-    else
-    {
-        Quatd result = *q1 + *q2;
-        rotation_new(l, result);
-    }
-    return 1;
-}
-
-static int rotation_mult(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for multiplication");
-    Quatd* r1 = NULL;
-    Quatd* r2 = NULL;
-    //Vec3d* v = NULL;
-    lua_Number s = 0.0;
-    if (istype(l, 1, _Rotation) && istype(l, 2, _Rotation))
-    {
-        r1 = to_rotation(l, 1);
-        r2 = to_rotation(l, 2);
-        rotation_new(l, *r1 * *r2);
-    }
-    else
-    if (istype(l, 1, _Rotation) && lua_isnumber(l, 2))
-    {
-        r1 = to_rotation(l, 1);
-        s = lua_tonumber(l, 2);
-        rotation_new(l, *r1 * s);
-    }
-    else
-    if (lua_isnumber(l, 1) && istype(l, 2, _Rotation))
-    {
-        s = lua_tonumber(l, 1);
-        r1 = to_rotation(l, 2);
-        rotation_new(l, *r1 * s);
-    }
-    else
-    {
-        doError(l, "Bad rotation multiplication!");
-    }
-    return 1;
-}
-
-static int rotation_imag(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for rotation_imag");
-    Quatd* q = this_rotation(l);
-    vector_new(l, imag(*q));
-    return 1;
-}
-
-static int rotation_real(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for rotation_real");
-    Quatd* q = this_rotation(l);
-    lua_pushnumber(l, real(*q));
-    return 1;
-}
-
-static int rotation_transform(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected for rotation:transform()");
-    Quatd* q = this_rotation(l);
-    Vec3d* v = to_vector(l, 2);
-    if (v == NULL)
-    {
-        doError(l, "Argument to rotation:transform() must be a vector");
-    }
-    vector_new(l, *v * q->toMatrix3());
-    return 1;
-}
-
-static int rotation_setaxisangle(lua_State* l)
-{
-    checkArgs(l, 3, 3, "Two arguments expected for rotation:setaxisangle()");
-    Quatd* q = this_rotation(l);
-    Vec3d* v = to_vector(l, 2);
-    if (v == NULL)
-    {
-        doError(l, "setaxisangle: first argument must be a vector");
-    }
-    double angle = safeGetNumber(l, 3, AllErrors, "second argument to rotation:setaxisangle must be a number");
-    q->setAxisAngle(*v, angle);
-    return 0;
-}
-
-static int rotation_slerp(lua_State* l)
-{
-    checkArgs(l, 3, 3, "Two arguments expected for rotation:slerp()");
-    Quatd* q1 = this_rotation(l);
-    Quatd* q2 = to_rotation(l, 2);
-    if (q2 == NULL)
-    {
-        doError(l, "slerp: first argument must be a rotation");
-    }
-    double t = safeGetNumber(l, 3, AllErrors, "second argument to rotation:slerp must be a number");
-    rotation_new(l, Quatd::slerp(*q1, *q2, t));
-    return 1;
-}
-
-static int rotation_get(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Invalid access of rotation-component");
-    Quatd* q3 = this_rotation(l);
-    string key = safeGetString(l, 2, AllErrors, "Invalid key in rotation-access");
-    double value = 0.0;
-    if (key == "x")
-        value = imag(*q3).x;
-    else if (key == "y")
-        value = imag(*q3).y;
-    else if (key == "z")
-        value = imag(*q3).z;
-    else if (key == "w")
-        value = real(*q3);
-    else
-    {
-        if (lua_getmetatable(l, 1))
-        {
-            lua_pushvalue(l, 2);
-            lua_rawget(l, -2);
-            return 1;
-        }
-        else
-        {
-            doError(l, "Internal error: couldn't get metatable");
-        }
-    }
-    lua_pushnumber(l, (lua_Number)value);
-    return 1;
-}
-
-static int rotation_set(lua_State* l)
-{
-    checkArgs(l, 3, 3, "Invalid access of rotation-component");
-    Quatd* q3 = this_rotation(l);
-    string key = safeGetString(l, 2, AllErrors, "Invalid key in rotation-access");
-    double value = safeGetNumber(l, 3, AllErrors, "Rotation components must be numbers");
-    Vec3d v = imag(*q3);
-    double w = real(*q3);
-    if (key == "x")
-        v.x = value;
-    else if (key == "y")
-        v.y = value;
-    else if (key == "z")
-        v.z = value;
-    else if (key == "w")
-        w = value;
-    else
-    {
-        doError(l, "Invalid key in rotation-access");
-    }
-    *q3 = Quatd(w, v);
-    return 0;
-}
-
-static int rotation_tostring(lua_State* l)
-{
-    lua_pushstring(l, "[Rotation]");
-    return 1;
-}
-
-static void CreateRotationMetaTable(lua_State* l)
-{
-    CreateClassMetatable(l, _Rotation);
-
-    RegisterMethod(l, "real", rotation_real);
-    RegisterMethod(l, "imag", rotation_imag);
-    RegisterMethod(l, "transform", rotation_transform);
-    RegisterMethod(l, "setaxisangle", rotation_setaxisangle);
-    RegisterMethod(l, "slerp", rotation_slerp);
-    RegisterMethod(l, "__tostring", rotation_tostring);
-    RegisterMethod(l, "__add", rotation_add);
-    RegisterMethod(l, "__mul", rotation_mult);
-    RegisterMethod(l, "__index", rotation_get);
-    RegisterMethod(l, "__newindex", rotation_set);
-
-    lua_pop(l, 1); // remove metatable from stack
-}
-
-// ==================== Position ====================
-// a 128-bit per component universal coordinate
-static int position_new(lua_State* l, const UniversalCoord& uc)
-{
-    UniversalCoord* ud = reinterpret_cast<UniversalCoord*>(lua_newuserdata(l, sizeof(UniversalCoord)));
-    *ud = uc;
-
-    SetClass(l, _Position);
-
-    return 1;
-}
-
-static UniversalCoord* to_position(lua_State* l, int index)
-{
-    return static_cast<UniversalCoord*>(CheckUserData(l, index, _Position));
-}
-
-static UniversalCoord* this_position(lua_State* l)
-{
-    UniversalCoord* uc = to_position(l, 1);
-    if (uc == NULL)
-    {
-        doError(l, "Bad position object!");
-    }
-
-    return uc;
-}
-
-
-static int position_get(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Invalid access of position-component");
-    UniversalCoord* uc = this_position(l);
-    string key = safeGetString(l, 2, AllErrors, "Invalid key in position-access");
-    double value = 0.0;
-    if (key == "x")
-        value = uc->x;
-    else if (key == "y")
-        value = uc->y;
-    else if (key == "z")
-        value = uc->z;
-    else
-    {
-        if (lua_getmetatable(l, 1))
-        {
-            lua_pushvalue(l, 2);
-            lua_rawget(l, -2);
-            return 1;
-        }
-        else
-        {
-            doError(l, "Internal error: couldn't get metatable");
-        }
-    }
-    lua_pushnumber(l, (lua_Number)value);
-    return 1;
-}
-
-static int position_set(lua_State* l)
-{
-    checkArgs(l, 3, 3, "Invalid access of position-component");
-    UniversalCoord* uc = this_position(l);
-    string key = safeGetString(l, 2, AllErrors, "Invalid key in position-access");
-    double value = safeGetNumber(l, 3, AllErrors, "Position components must be numbers");
-    if (key == "x")
-        uc->x = value;
-    else if (key == "y")
-        uc->y = value;
-    else if (key == "z")
-        uc->z = value;
-    else
-    {
-        doError(l, "Invalid key in position-access");
-    }
-    return 0;
-}
-
-static int position_getx(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for position:getx()");
-
-    UniversalCoord* uc = this_position(l);
-    lua_Number x;
-    x = uc->x;
-    lua_pushnumber(l, x);
-
-    return 1;
-}
-
-static int position_gety(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for position:gety()");
-
-    UniversalCoord* uc = this_position(l);
-    lua_Number y;
-    y = uc->y;
-    lua_pushnumber(l, y);
-
-    return 1;
-}
-
-static int position_getz(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for position:getz()");
-
-    UniversalCoord* uc = this_position(l);
-    lua_Number z;
-    z = uc->z;
-    lua_pushnumber(l, z);
-
-    return 1;
-}
-
-static int position_vectorto(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to position:vectorto");
-
-    UniversalCoord* uc = this_position(l);
-    UniversalCoord* uc2 = to_position(l, 2);
-
-    if (uc2 == NULL)
-    {
-        doError(l, "Argument to position:vectorto must be a position");
-    }
-    Vec3d diff = *uc2 - *uc;
-    vector_new(l, diff);
-    return 1;
-}
-
-static int position_orientationto(lua_State* l)
-{
-    checkArgs(l, 3, 3, "Two arguments expected for position:orientationto");
-
-    UniversalCoord* src = this_position(l);
-    UniversalCoord* target = to_position(l, 2);
-
-    if (target == NULL)
-    {
-        doError(l, "First argument to position:orientationto must be a position");
-    }
-
-    Vec3d* upd = to_vector(l, 3);
-    if (upd == NULL)
-    {
-        doError(l, "Second argument to position:orientationto must be a vector");
-    }
-
-    Vec3d src2target = *target - *src;
-    src2target.normalize();
-    Vec3d v = src2target ^ *upd;
-    v.normalize();
-    Vec3d u = v ^ src2target;
-    Quatd qd = Quatd(Mat3d(v, u, -src2target));
-    rotation_new(l, qd);
-
-    return 1;
-}
-
-static int position_tostring(lua_State* l)
-{
-    // TODO: print out the coordinate as it would appear in a cel:// URL
-    lua_pushstring(l, "[Position]");
-
-    return 1;
-}
-
-static int position_distanceto(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to position:distanceto()");
-
-    UniversalCoord* uc = this_position(l);
-    UniversalCoord* uc2 = to_position(l, 2);
-    if (uc2 == NULL)
-    {
-        doError(l, "Position expected as argument to position:distanceto");
-    }
-
-    Vec3d v = *uc2 - *uc;
-    lua_pushnumber(l, astro::microLightYearsToKilometers(v.length()));
-
-    return 1;
-}
-
-static int position_add(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for addition");
-    UniversalCoord* p1 = NULL;
-    UniversalCoord* p2 = NULL;
-    Vec3d* v2 = NULL;
-
-    if (istype(l, 1, _Position) && istype(l, 2, _Position))
-    {
-        p1 = to_position(l, 1);
-        p2 = to_position(l, 2);
-        // this is not very intuitive, as p1-p2 is a vector
-        position_new(l, *p1 + *p2);
-    }
-    else
-    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))
-    {
-        p1 = to_position(l, 1);
-        v2 = to_vector(l, 2);
-        position_new(l, *p1 + *v2);
-    }
-    else
-    {
-        doError(l, "Bad position addition!");
-    }
-    return 1;
-}
-
-static int position_sub(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Need two operands for subtraction");
-    UniversalCoord* p1 = NULL;
-    UniversalCoord* p2 = NULL;
-    Vec3d* v2 = NULL;
-
-    if (istype(l, 1, _Position) && istype(l, 2, _Position))
-    {
-        p1 = to_position(l, 1);
-        p2 = to_position(l, 2);
-        vector_new(l, *p1 - *p2);
-    }
-    else
-    if (istype(l, 1, _Position) && istype(l, 2, _Vec3))
-    {
-        p1 = to_position(l, 1);
-        v2 = to_vector(l, 2);
-        position_new(l, *p1 - *v2);
-    }
-    else
-    {
-        doError(l, "Bad position subtraction!");
-    }
-    return 1;
-}
-
-static int position_addvector(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to position:addvector()");
-    UniversalCoord* uc = this_position(l);
-    Vec3d* v3d = to_vector(l, 2);
-    if (v3d == NULL)
-    {
-        doError(l, "Vector expected as argument to position:addvector");
-    }
-    else
-    if (uc != NULL && v3d != NULL)
-    {
-        UniversalCoord ucnew = *uc + *v3d;
-        position_new(l, ucnew);
-    }
-    return 1;
-}
-
-static void CreatePositionMetaTable(lua_State* l)
-{
-    CreateClassMetatable(l, _Position);
-
-    RegisterMethod(l, "__tostring", position_tostring);
-    RegisterMethod(l, "distanceto", position_distanceto);
-    RegisterMethod(l, "vectorto", position_vectorto);
-    RegisterMethod(l, "orientationto", position_orientationto);
-    RegisterMethod(l, "addvector", position_addvector);
-    RegisterMethod(l, "__add", position_add);
-    RegisterMethod(l, "__sub", position_sub);
-    RegisterMethod(l, "__index", position_get);
-    RegisterMethod(l, "__newindex", position_set);
-    RegisterMethod(l, "getx", position_getx);
-    RegisterMethod(l, "gety", position_gety);
-    RegisterMethod(l, "getz", position_getz);
-
-    lua_pop(l, 1); // remove metatable from stack
-}
-
-// ==================== ObserverFrame ====================
-static int frame_new(lua_State* l, const ObserverFrame& f)
-{
-	// Use placement new to put the new frame in the userdata block.
-	void* block = lua_newuserdata(l, sizeof(ObserverFrame));
-	new (block) ObserverFrame(f);
-
-    SetClass(l, _Frame);
-
-    return 1;
-}
-
-static ObserverFrame* to_frame(lua_State* l, int index)
-{
-    return static_cast<ObserverFrame*>(CheckUserData(l, index, _Frame));
-}
-
-static ObserverFrame* this_frame(lua_State* l)
-{
-    ObserverFrame* f = to_frame(l, 1);
-    if (f == NULL)
-    {
-        doError(l, "Bad frame object!");
-    }
-
-    return f;
-}
-
-
-// Convert from frame coordinates to universal.
-static int frame_from(lua_State* l)
-{
-    checkArgs(l, 2, 3, "Two or three arguments required for frame:from");
-
-    ObserverFrame* frame = this_frame(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    UniversalCoord* uc = NULL;
-    Quatd* q = NULL;
-    double jd = 0.0;
-
-    if (istype(l, 2, _Position))
-    {
-        uc = to_position(l, 2);
-    }
-    else if (istype(l, 2, _Rotation))
-    {
-        q = to_rotation(l, 2);
-    }
-    if (uc == NULL && q == NULL)
-    {
-        doError(l, "Position or rotation expected as second argument to frame:from()");
-    }
-
-    jd = safeGetNumber(l, 3, WrongType, "Second arg to frame:from must be a number", appCore->getSimulation()->getTime());
-
-    if (uc != NULL)
-    {
-        UniversalCoord uc1 = frame->convertToUniversal(*uc, jd);
-        position_new(l, uc1);
-    }
-    else
-    {
-        Quatd q1 = frame->convertToUniversal(*q, jd);
-        rotation_new(l, q1);
-    }
-
-    return 1;
-}
-
-// Convert from universal to frame coordinates.
-static int frame_to(lua_State* l)
-{
-    checkArgs(l, 2, 3, "Two or three arguments required for frame:to");
-
-    ObserverFrame* frame = this_frame(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    UniversalCoord* uc = NULL;
-    Quatd* q = NULL;
-    double jd = 0.0;
-
-    if (istype(l, 2, _Position))
-    {
-        uc = to_position(l, 2);
-    }
-    else
-    if (istype(l, 2, _Rotation))
-    {
-        q = to_rotation(l, 2);
-    }
-
-    if (uc == NULL && q == NULL)
-    {
-        doError(l, "Position or rotation expected as second argument to frame:to()");
-    }
-
-    jd = safeGetNumber(l, 3, WrongType, "Second arg to frame:to must be a number", appCore->getSimulation()->getTime());
-
-    if (uc != NULL)
-    {
-        UniversalCoord uc1 = frame->convertFromUniversal(*uc, jd);
-        position_new(l, uc1);
-    }
-    else
-    {
-        Quatd q1 = frame->convertFromUniversal(*q, jd);
-        rotation_new(l, q1);
-    }
-
-    return 1;
-}
-
-static int frame_getrefobject(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for frame:getrefobject()");
-
-    ObserverFrame* frame = this_frame(l);
-    if (frame->getRefObject().getType() == Selection::Type_Nil)
-    {
-        lua_pushnil(l);
-    }
-    else
-    {
-        object_new(l, frame->getRefObject());
-    }
-    return 1;
-}
-
-static int frame_gettargetobject(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for frame:gettarget()");
-
-    ObserverFrame* frame = this_frame(l);
-    if (frame->getTargetObject().getType() == Selection::Type_Nil)
-    {
-        lua_pushnil(l);
-    }
-    else
-    {
-        object_new(l, frame->getTargetObject());
-    }
-    return 1;
-}
-
-static int frame_getcoordinatesystem(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for frame:getcoordinatesystem()");
-
-    ObserverFrame* frame = this_frame(l);
-    string coordsys;
-    switch (frame->getCoordinateSystem())
-    {
-    case ObserverFrame::Universal:
-        coordsys = "universal"; break;
-    case ObserverFrame::Ecliptical:
-        coordsys = "ecliptic"; break;
-    case ObserverFrame::Equatorial:
-        coordsys = "equatorial"; break;
-    case ObserverFrame::BodyFixed:
-        coordsys = "bodyfixed"; break;
-    case ObserverFrame::ObserverLocal:
-        coordsys = "observer"; break;
-    case ObserverFrame::PhaseLock:
-        coordsys = "lock"; break;
-    case ObserverFrame::Chase:
-        coordsys = "chase"; break;
-    default:
-        coordsys = "invalid";
-    }
-    lua_pushstring(l, coordsys.c_str());
-    return 1;
-}
-
-static int frame_tostring(lua_State* l)
-{
-    // TODO: print out the actual information about the frame
-    lua_pushstring(l, "[Frame]");
-
-    return 1;
-}
-
-
-/*! Garbage collection metamethod frame objects.
- */
-static int frame_gc(lua_State* l)
-{
-	ObserverFrame* frame = this_frame(l);
-
-	// Explicitly call the destructor since the object was created with placement new
-	frame->~ObserverFrame();
-
-	return 0;
-}
-
-
-static void CreateFrameMetaTable(lua_State* l)
-{
-    CreateClassMetatable(l, _Frame);
-
-    RegisterMethod(l, "__tostring", frame_tostring);
-	RegisterMethod(l, "__gc", frame_gc);
-    RegisterMethod(l, "to", frame_to);
-    RegisterMethod(l, "from", frame_from);
-    RegisterMethod(l, "getcoordinatesystem", frame_getcoordinatesystem);
-    RegisterMethod(l, "getrefobject", frame_getrefobject);
-    RegisterMethod(l, "gettargetobject", frame_gettargetobject);
-
-    lua_pop(l, 1); // remove metatable from stack
-}
-
-
-#if 1
-// ==================== TimelinePhase ====================
-static int phase_new(lua_State* l, const TimelinePhase& phase)
-{
-	// Use placement new to put the new phase reference in the userdata block.
-	void* block = lua_newuserdata(l, sizeof(PhaseReference));
-	new (block) PhaseReference(phase);
-
-    SetClass(l, _Phase);
-
-    return 1;
-}
-
-
-static const TimelinePhase* to_phase(lua_State* l, int index)
-{
-    PhaseReference* ref = static_cast<PhaseReference*>(CheckUserData(l, index, _Phase));
-    return ref == NULL ? NULL : ref->phase;
-}
-
-
-static const TimelinePhase* this_phase(lua_State* l)
-{
-    const TimelinePhase* phase = to_phase(l, 1);
-    if (phase == NULL)
-    {
-        doError(l, "Bad phase object!");
-    }
-
-    return phase;
-}
-
-
-/*! phase:timespan()
- *
- * Return the start and end times for this timeline phase.
- *
- * \verbatim
- * -- Example: retrieve the start and end times of the first phase
- * -- of Cassini's timeline:
- * --
- * cassini = celestia:find("Sol/Cassini")
- * phases = cassini:timeline()
- * begintime, endtime = phases[1]:timespan()
- *
- * \endverbatim
- */
-static int phase_timespan(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments allowed for to phase:timespan");
-        
-	const TimelinePhase* phase = this_phase(l);
-    lua_pushnumber(l, phase->startTime());
-    lua_pushnumber(l, phase->endTime());
-
-    return 2;
-}
-
-
-/*! frame phase:orbitframe()
- *
- * Return the orbit frame for this timeline phase.
- */
-static int phase_orbitframe(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments allowed for to phase:orbitframe");
-        
-	const TimelinePhase* phase = this_phase(l);
-    const ReferenceFrame* f = phase->orbitFrame();
-    frame_new(l, ObserverFrame(*f));
-    
-    return 1;
-}
-
-
-/*! frame phase:bodyframe()
- *
- * Return the body frame for this timeline phase.
- */
-static int phase_bodyframe(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments allowed for to phase:bodyframe");
-        
-	const TimelinePhase* phase = this_phase(l);
-    const ReferenceFrame* f = phase->bodyFrame();
-    frame_new(l, ObserverFrame(*f));
-    
-    return 1;
-}
-
-
-/*! position phase:getposition(time: t)
- *
- * Return the position in frame coordinates at the specified time.
- * Times outside the span covered by the phase are automatically clamped
- * to either the beginning or ending of the span.
- */
-static int phase_getposition(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument required for phase:getposition");
-
-    const TimelinePhase* phase = this_phase(l);
-
-    double tdb = safeGetNumber(l, 2, WrongType, "Argument to phase:getposition() must be number", 0.0);
-    if (tdb < phase->startTime())
-        tdb = phase->startTime();
-    else if (tdb > phase->endTime())
-        tdb = phase->endTime();
-    position_new(l, UniversalCoord(phase->orbit()->positionAtTime(tdb) * astro::kilometersToMicroLightYears(1.0)));
-
-    return 1;
-}
-
-
-/*! rotation phase:getorientation(time: t)
- *
- * Return the orientation in frame coordinates at the specified time.
- * Times outside the span covered by the phase are automatically clamped
- * to either the beginning or ending of the span.
- */
-static int phase_getorientation(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument required for phase:getorientation");
-
-    const TimelinePhase* phase = this_phase(l);
-
-    double tdb = safeGetNumber(l, 2, WrongType, "Argument to phase:getorientation() must be number", 0.0);
-    if (tdb < phase->startTime())
-        tdb = phase->startTime();
-    else if (tdb > phase->endTime())
-        tdb = phase->endTime();
-    rotation_new(l, phase->rotationModel()->orientationAtTime(tdb));
-
-    return 1;
-}
-
-
-/*! __tostring metamethod
- * Convert a phase to a string (currently just "[Phase]")
- */
-static int phase_tostring(lua_State* l)
-{
-    lua_pushstring(l, "[Phase]");
-
-    return 1;
-}
-
-
-/*! __gc metamethod 
- * Garbage collection for phases.
- */
-static int phase_gc(lua_State* l)
-{
-    PhaseReference* ref = static_cast<PhaseReference*>(CheckUserData(l, 1, _Phase));
-    if (ref == NULL)
-    {
-        doError(l, "Bad phase object during garbage collection!");
-    }
-    else
-    {
-        // Explicitly call the destructor since the object was created with placement new
-    	ref->~PhaseReference();
-    }
-
-	return 0;
-}
-
-
-static void CreatePhaseMetaTable(lua_State* l)
-{
-    CreateClassMetatable(l, _Phase);
-
-    RegisterMethod(l, "__tostring", phase_tostring);
-	RegisterMethod(l, "__gc", phase_gc);
-    RegisterMethod(l, "timespan", phase_timespan);
-    RegisterMethod(l, "orbitframe", phase_orbitframe);
-    RegisterMethod(l, "bodyframe", phase_bodyframe);
-    RegisterMethod(l, "getposition", phase_getposition);
-    RegisterMethod(l, "getorientation", phase_getorientation);
-
-    lua_pop(l, 1); // remove metatable from stack
-}
-#endif
-
-
-// ==================== Object ====================
-// star, planet, or deep-sky object
-static int object_new(lua_State* l, const Selection& sel)
-{
-    Selection* ud = reinterpret_cast<Selection*>(lua_newuserdata(l, sizeof(Selection)));
-    *ud = sel;
-
-    SetClass(l, _Object);
-
-    return 1;
-}
-
-static Selection* to_object(lua_State* l, int index)
-{
-    return static_cast<Selection*>(CheckUserData(l, index, _Object));
-}
-
-static Selection* this_object(lua_State* l)
-{
-    Selection* sel = to_object(l, 1);
-    if (sel == NULL)
-    {
-        doError(l, "Bad position object!");
-    }
-
-    return sel;
-}
-
-
-static int object_tostring(lua_State* l)
-{
-    lua_pushstring(l, "[Object]");
-
-    return 1;
-}
-
-
-// Return true if the object is visible, false if not.
-static int object_visible(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:visible");
-    
-    Selection* sel = this_object(l);
-    lua_pushboolean(l, sel->isVisible());
-
-    return 1;
-}
-
-
-// Set the object visibility flag.
-static int object_setvisible(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to object:setvisible()");
-    
-    Selection* sel = this_object(l);
-    bool visible = safeGetBoolean(l, 2, AllErrors, "Argument to object:setvisible() must be a boolean");
-    if (sel->body() != NULL)
-    {
-        sel->body()->setVisible(visible);
-    }
-
-    return 0;
-}
-
-
-static int object_setorbitcolor(lua_State* l)
-{
-    checkArgs(l, 4, 4, "Red, green, and blue color values exepected for object:setorbitcolor()");
-
-    Selection* sel = this_object(l);
-    float r = (float) safeGetNumber(l, 2, WrongType, "Argument 1 to object:setorbitcolor() must be a number", 0.0);
-    float g = (float) safeGetNumber(l, 3, WrongType, "Argument 2 to object:setorbitcolor() must be a number", 0.0);
-    float b = (float) safeGetNumber(l, 4, WrongType, "Argument 3 to object:setorbitcolor() must be a number", 0.0);
-    Color orbitColor(r, g, b);
-    
-    if (sel->body() != NULL)
-    {
-        sel->body()->setOrbitColor(orbitColor);
-    }
-
-    return 0;
-}
-
-
-static int object_orbitcoloroverridden(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to object:orbitcoloroverridden");
-    
-    bool isOverridden = false;
-    Selection* sel = this_object(l);
-    if (sel->body() != NULL)
-    {
-        isOverridden = sel->body()->isOrbitColorOverridden();
-    }
-
-    lua_pushboolean(l, isOverridden);
-
-    return 1;
-}
-
-
-static int object_setorbitcoloroverridden(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to object:setorbitcoloroverridden");
-
-    Selection* sel = this_object(l);
-    bool override = safeGetBoolean(l, 2, AllErrors, "Argument to object:setorbitcoloroverridden() must be a boolean");
-
-    if (sel->body() != NULL)
-    {
-        sel->body()->setOrbitColorOverridden(override);
-    }
-
-    return 0;
-}
-
-
-static int object_orbitvisibility(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to object:orbitvisibility");
-    
-    Body::VisibilityPolicy visibility = Body::UseClassVisibility;
-
-    Selection* sel = this_object(l);
-    if (sel->body() != NULL)
-    {
-        visibility = sel->body()->getOrbitVisibility();
-    }
-
-    char* s = "normal";
-    if (visibility == Body::AlwaysVisible)
-        s = "always";
-    else if (visibility == Body::NeverVisible)
-        s = "never";
-    
-    lua_pushstring(l, s);
-
-    return 1;
-}
-
-
-static int object_setorbitvisibility(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to object:setorbitcoloroverridden");
-
-    if (!lua_isstring(l, 2))
-    {
-        doError(l, "First argument to object:setorbitvisibility() must be a string");
-    }
-
-    Selection* sel = this_object(l);
-
-    string key;
-    key = lua_tostring(l, 2);
-
-    if (OrbitVisibilityMap.count(key) == 0)
-    {
-        cerr << "Unknown visibility policy: " << key << endl;
-    }
-    else
-    {
-        Body::VisibilityPolicy visibility = static_cast<Body::VisibilityPolicy>(OrbitVisibilityMap[key]);
-
-        if (sel->body() != NULL)
-        {
-            sel->body()->setOrbitVisibility(visibility);
-        }
-    }
-
-    return 0;
-}
-
-
-static int object_addreferencemark(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Expected one table as argument to object:addreferencemark()");
-
-    if (!lua_istable(l, 2))
-    {
-        doError(l, "Argument to object:addreferencemark() must be a table");
-    }
-
-    Selection* sel = this_object(l);
-    Body* body = sel->body();
-
-    lua_pushstring(l, "type");
-    lua_gettable(l, 2);
-    const char* rmtype = safeGetString(l, 3, NoErrors, "");
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "size");
-    lua_gettable(l, 2);
-    float rmsize = (float) safeGetNumber(l, 3, NoErrors, "", body->getRadius()) + body->getRadius();
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "opacity");
-    lua_gettable(l, 2);
-    float rmopacity = (float) safeGetNumber(l, 3, NoErrors, "", NULL);
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "color");
-    lua_gettable(l, 2);
-    const char* rmcolorstring = safeGetString(l, 3, NoErrors, "");
-    Color rmcolor(0.0f, 1.0f, 0.0f);
-    if (rmcolorstring != NULL)
-        Color::parse(rmcolorstring, rmcolor);
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "tag");
-    lua_gettable(l, 2);
-    const char* rmtag = safeGetString(l, 3, NoErrors, "");
-    if (rmtag == NULL)
-        rmtag = rmtype;
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "target");
-    lua_gettable(l, 2);
-    Selection* rmtarget = to_object(l, 3);
-    lua_settop(l, 2);
-
-    if (rmtype != NULL)
-    {
-        body->removeReferenceMark(rmtype);
-
-        if (compareIgnoringCase(rmtype, "body axes") == 0)
-        {
-            BodyAxisArrows* arrow = new BodyAxisArrows(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmopacity != NULL)
-                arrow->setOpacity(rmopacity);
-            body->addReferenceMark(arrow);
-        }
-        else if (compareIgnoringCase(rmtype, "frame axes") == 0)
-        {
-            FrameAxisArrows* arrow = new FrameAxisArrows(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmopacity != NULL)
-                arrow->setOpacity(rmopacity);
-            body->addReferenceMark(arrow);
-        }
-        else if (compareIgnoringCase(rmtype, "sun direction") == 0)
-        {
-            SunDirectionArrow* arrow = new SunDirectionArrow(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
-        }
-        else if (compareIgnoringCase(rmtype, "velocity vector") == 0)
-        {
-            VelocityVectorArrow* arrow = new VelocityVectorArrow(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
-        }
-        else if (compareIgnoringCase(rmtype, "spin vector") == 0)
-        {
-            SpinVectorArrow* arrow = new SpinVectorArrow(*body);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
-        }
-        else if (compareIgnoringCase(rmtype, "body to body direction") == 0 && rmtarget != NULL)
-        {
-            BodyToBodyDirectionArrow* arrow = new BodyToBodyDirectionArrow(*body, *rmtarget);
-            arrow->setTag(rmtag);
-            arrow->setSize(rmsize);
-            if (rmcolorstring != NULL)
-                arrow->setColor(rmcolor);
-            body->addReferenceMark(arrow);
-        }
-        else if (compareIgnoringCase(rmtype, "visible region") == 0 && rmtarget != NULL)
-        {
-            VisibleRegion* region = new VisibleRegion(*body, *rmtarget);
-            region->setTag(rmtag);
-            if (rmopacity != NULL)
-                region->setOpacity(rmopacity);
-            if (rmcolorstring != NULL)
-                region->setColor(rmcolor);
-            body->addReferenceMark(region);
-        }
-        else if (compareIgnoringCase(rmtype, "planetographic grid") == 0)
-        {
-            PlanetographicGrid* grid = new PlanetographicGrid(*body);
-            body->addReferenceMark(grid);
-        }
-    }
-
-    return 0;
-}
-
-
-static int object_removereferencemark(lua_State* l)
-{
-    checkArgs(l, 1, 1000, "Invalid number of arguments in object:removereferencemark");
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    Selection* sel = this_object(l);
-    Body* body = sel->body();
-
-    int argc = lua_gettop(l);
-    for (int i = 2; i <= argc; i++)
-    {
-        string refMark = safeGetString(l, i, AllErrors, "Arguments to object:removereferencemark() must be strings");
-
-        if (body->findReferenceMark(refMark))
-            appCore->toggleReferenceMark(refMark, *sel);
-    }
-
-    return 0;
-}
-
-
-static int object_radius(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:radius");
-
-    Selection* sel = this_object(l);
-    lua_pushnumber(l, sel->radius());
-
-    return 1;
-}
-
-static int object_setradius(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to object:setradius()");
-
-    Selection* sel = this_object(l);
-    if (sel->body() != NULL)
-    {
-        Body* body = sel->body();
-        float iradius = body->getRadius();
-        double radius = safeGetNumber(l, 2, AllErrors, "Argument to object:setradius() must be a number");
-        if ((radius > 0))
-        {
-            body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
-        }
-
-        if (body->getRings() != NULL)
-        {
-            RingSystem rings(0.0f, 0.0f);
-            rings = *body->getRings();
-            float inner = rings.innerRadius;
-            float outer = rings.outerRadius;
-            rings.innerRadius = inner * (float) radius / iradius;
-            rings.outerRadius = outer * (float) radius / iradius;
-            body->setRings(rings);
-        }
-    }
-
-    return 0;
-}
-
-static int object_type(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:type");
-
-    Selection* sel = this_object(l);
-    const char* tname = "unknown";
-    switch (sel->getType())
-    {
-    case Selection::Type_Body:
-        {
-            int cl = sel->body()->getClassification();
-            switch (cl)
-            {
-            case Body::Planet     : tname = "planet"; break;
-            case Body::Moon       : tname = "moon"; break;
-            case Body::Asteroid   : tname = "asteroid"; break;
-            case Body::Comet      : tname = "comet"; break;
-            case Body::Spacecraft : tname = "spacecraft"; break;
-            case Body::Invisible  : tname = "invisible"; break;
-            }
-        }
-        break;
-
-    case Selection::Type_Star:
-        tname = "star";
-        break;
-
-    case Selection::Type_DeepSky:
-        tname = sel->deepsky()->getObjTypeName();
-        break;
-
-    case Selection::Type_Location:
-        tname = "location";
-        break;
-
-    case Selection::Type_Nil:
-        tname = "null";
-        break;
-    }
-
-    lua_pushstring(l, tname);
-
-    return 1;
-}
-
-static int object_name(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:name");
-
-    Selection* sel = this_object(l);
-    switch (sel->getType())
-    {
-    case Selection::Type_Body:
-        lua_pushstring(l, sel->body()->getName().c_str());
-        break;
-    case Selection::Type_DeepSky:
-        lua_pushstring(l, getAppCore(l, AllErrors)->getSimulation()->getUniverse()
-                         ->getDSOCatalog()->getDSOName(sel->deepsky()).c_str());
-        break;
-    case Selection::Type_Star:
-        lua_pushstring(l, getAppCore(l, AllErrors)->getSimulation()->getUniverse()
-                       ->getStarCatalog()->getStarName(*(sel->star())).c_str());
-        break;
-    case Selection::Type_Location:
-        lua_pushstring(l, sel->location()->getName().c_str());
-        break;
-    default:
-        lua_pushstring(l, "?");
-        break;
-    }
-
-    return 1;
-}
-
-static int object_localname(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:localname");
-
-    Selection* sel = this_object(l);
-    switch (sel->getType())
-    {
-    case Selection::Type_Body:
-        lua_pushstring(l, sel->body()->getName(true).c_str());
-        break;
-    default:
-        lua_pushstring(l, "?");
-        break;
-    }
-
-    return 1;
-}
-
-static int object_spectraltype(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:spectraltype");
-
-    Selection* sel = this_object(l);
-    if (sel->star() != NULL)
-    {
-        char buf[16];
-        strncpy(buf, sel->star()->getSpectralType(), sizeof buf);
-        buf[sizeof(buf) - 1] = '\0'; // make sure it's zero terminate
-        lua_pushstring(l, buf);
-    }
-    else
-    {
-        lua_pushnil(l);
-    }
-
-    return 1;
-}
-
-static int object_getinfo(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:getinfo");
-
-    lua_newtable(l);
-
-    Selection* sel = this_object(l);
-    if (sel->star() != NULL)
-    {
-        Star* star = sel->star();
-        setTable(l, "type", "star");
-        setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
-                       ->getStarCatalog()->getStarName(*(sel->star())).c_str());
-        setTable(l, "catalogNumber", star->getCatalogNumber());
-        setTable(l, "stellarClass", star->getSpectralType());
-        setTable(l, "absoluteMagnitude", (lua_Number)star->getAbsoluteMagnitude());
-        setTable(l, "luminosity", (lua_Number)star->getLuminosity());
-        setTable(l, "radius", (lua_Number)star->getRadius());
-        setTable(l, "temperature", (lua_Number)star->getTemperature());
-        setTable(l, "rotationPeriod", (lua_Number)star->getRotationModel()->getPeriod());
-        setTable(l, "bolometricMagnitude", (lua_Number)star->getBolometricMagnitude());
-
-        if (star->getOrbitBarycenter() != NULL)
-        {
-            Selection parent((Star*)(star->getOrbitBarycenter()));
-            lua_pushstring(l, "parent");
-            object_new(l, parent);
-            lua_settable(l, -3);
-        }
-    }
-    else if (sel->body() != NULL)
-    {
-        Body* body = sel->body();
-        const char* tname = "unknown";
-        switch (body->getClassification())
-        {
-        case Body::Planet     : tname = "planet"; break;
-        case Body::Moon       : tname = "moon"; break;
-        case Body::Asteroid   : tname = "asteroid"; break;
-        case Body::Comet      : tname = "comet"; break;
-        case Body::Spacecraft : tname = "spacecraft"; break;
-        case Body::Invisible  : tname = "invisible"; break;
-		case Body::SurfaceFeature : tname = "surfacefeature"; break;
-		case Body::Component  : tname = "component"; break;
-        }
-
-        setTable(l, "type", tname);
-        setTable(l, "name", body->getName().c_str());
-        setTable(l, "mass", (lua_Number)body->getMass());
-        setTable(l, "albedo", (lua_Number)body->getAlbedo());
-        setTable(l, "infoURL", body->getInfoURL().c_str());
-        setTable(l, "radius", (lua_Number)body->getRadius());
-
-        // TODO: add method to return semiaxes
-        Vec3f semiAxes = body->getSemiAxes();
-        // Note: oblateness is an obsolete field, replaced by semiaxes;
-        // it's only here for backward compatibility.
-        float polarRadius = semiAxes.y;
-        float eqRadius = max(semiAxes.x, semiAxes.z);
-        setTable(l, "oblateness", (eqRadius - polarRadius) / eqRadius);
-
-        double lifespanStart, lifespanEnd;
-        body->getLifespan(lifespanStart, lifespanEnd);
-        setTable(l, "lifespanStart", (lua_Number)lifespanStart);
-        setTable(l, "lifespanEnd", (lua_Number)lifespanEnd);
-        // TODO: atmosphere, surfaces ?
-
-        PlanetarySystem* system = body->getSystem();
-        if (system->getPrimaryBody() != NULL)
-        {
-            Selection parent(system->getPrimaryBody());
-            lua_pushstring(l, "parent");
-            object_new(l, parent);
-            lua_settable(l, -3);
-        }
-        else
-        {
-            Selection parent(system->getStar());
-            lua_pushstring(l, "parent");
-            object_new(l, parent);
-            lua_settable(l, -3);
-        }
-
-        lua_pushstring(l, "hasRings");
-        lua_pushboolean(l, body->getRings() != NULL);
-        lua_settable(l, -3);
-
-        // TIMELINE-TODO: The code to retrieve orbital and rotation periods only works
-        // if the object has a single timeline phase. This should hardly ever
-        // be a problem, but it still may be best to set the periods to zero
-        // for objects with multiple phases.
-        const RotationModel* rm = body->getRotationModel(0.0);
-        setTable(l, "rotationPeriod", (double) rm->getPeriod());
-
-        const Orbit* orbit = body->getOrbit(0.0);
-        setTable(l, "orbitPeriod", orbit->getPeriod());
-        Atmosphere* atmosphere = body->getAtmosphere();
-        if (atmosphere != NULL)
-        {
-            setTable(l, "atmosphereHeight", (double)atmosphere->height);
-            setTable(l, "atmosphereCloudHeight", (double)atmosphere->cloudHeight);
-            setTable(l, "atmosphereCloudSpeed", (double)atmosphere->cloudSpeed);
-        }
-    }
-    else if (sel->deepsky() != NULL)
-    {
-        DeepSkyObject* deepsky = sel->deepsky();
-        const char* objTypeName = deepsky->getObjTypeName();
-        setTable(l, "type", objTypeName);
-
-        setTable(l, "name", getAppCore(l, AllErrors)->getSimulation()->getUniverse()
-                           ->getDSOCatalog()->getDSOName(deepsky).c_str());
-        setTable(l, "catalogNumber", deepsky->getCatalogNumber());
-
-        if (objTypeName == "galaxy")
-            setTable(l, "hubbleType", deepsky->getType());
-
-        setTable(l, "absoluteMagnitude", (lua_Number)deepsky->getAbsoluteMagnitude());
-        setTable(l, "radius", (lua_Number)deepsky->getRadius());
-    }
-    else if (sel->location() != NULL)
-    {
-        setTable(l, "type", "location");
-        Location* location = sel->location();
-        setTable(l, "name", location->getName().c_str());
-        setTable(l, "size", (lua_Number)location->getSize());
-        setTable(l, "importance", (lua_Number)location->getImportance());
-        setTable(l, "infoURL", location->getInfoURL().c_str());
-
-        uint32 featureType = location->getFeatureType();
-        string featureName("Unknown");
-        for (FlagMap::const_iterator it = LocationFlagMap.begin(); it != LocationFlagMap.end(); it++)
-        {
-            if (it->second == featureType)
-            {
-                featureName = it->first;
-                break;
-            }
-        }
-        setTable(l, "featureType", featureName.c_str());
-
-        Body* parent = location->getParentBody();
-        if (parent != NULL)
-        {
-            Selection selection(parent);
-            lua_pushstring(l, "parent");
-            object_new(l, selection);
-            lua_settable(l, -3);
-        }
-    }
-    else
-    {
-        setTable(l, "type", "null");
-    }
-    return 1;
-}
-
-static int object_absmag(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:absmag");
-
-    Selection* sel = this_object(l);
-    if (sel->star() != NULL)
-        lua_pushnumber(l, sel->star()->getAbsoluteMagnitude());
-    else
-        lua_pushnil(l);
-
-    return 1;
-}
-
-static int object_mark(lua_State* l)
-{
-    checkArgs(l, 1, 7, "Need 0 to 6 arguments for object:mark");
-
-    Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    Color markColor(0.0f, 1.0f, 0.0f);
-    const char* colorString = safeGetString(l, 2, WrongType, "First argument to object:mark must be a string");
-    if (colorString != NULL)
-        Color::parse(colorString, markColor);
-
-    Marker::Symbol markSymbol = Marker::Diamond;
-    const char* markerString = safeGetString(l, 3, WrongType, "Second argument to object:mark must be a string");
-    if (markerString != NULL)
-        markSymbol = parseMarkerSymbol(markerString);
-
-    float markSize = (float)safeGetNumber(l, 4, WrongType, "Third arg to object:mark must be a number", 10.0);
-    if (markSize < 1.0f)
-        markSize = 1.0f;
-    else if (markSize > 10000.0f)
-        markSize = 10000.0f;
-
-    float markAlpha = (float)safeGetNumber(l, 5, WrongType, "Fourth arg to object:mark must be a number", 0.9);
-    if (markAlpha < 0.0f)
-        markAlpha = 0.0f;
-    else if (markAlpha > 1.0f)
-        markAlpha = 1.0f;
-
-    Color markColorAlpha(0.0f, 1.0f, 0.0f, 0.9f);
-    markColorAlpha = Color::Color(markColor, markAlpha);
-
-    const char* markLabel = safeGetString(l, 6, WrongType, "Fifth argument to object:mark must be a string");
-    if (markLabel == NULL)
-        markLabel = "";
-
-    bool occludable = safeGetBoolean(l, 7, WrongType, "Sixth argument to object:mark must be a boolean", true);	
-
-    Simulation* sim = appCore->getSimulation();
-    sim->getUniverse()->markObject(*sel, markSize,
-                                   markColorAlpha, markSymbol, 1, markLabel, occludable);
-
-    return 0;
-}
-
-static int object_unmark(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to function object:unmark");
-
-    Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    Simulation* sim = appCore->getSimulation();
-    sim->getUniverse()->unmarkObject(*sel, 1);
-
-    return 0;
-}
-
-// Return the object's current position.  A time argument is optional;
-// if not provided, the current master simulation time is used.
-static int object_getposition(lua_State* l)
-{
-    checkArgs(l, 1, 2, "Expected no or one argument to object:getposition");
-
-    Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:getposition",
-                              appCore->getSimulation()->getTime());
-    position_new(l, sel->getPosition(t));
-
-    return 1;
-}
-
-static int object_getchildren(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for object:getchildren()");
-
-    Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    Simulation* sim = appCore->getSimulation();
-
-    lua_newtable(l);
-    if (sel->star() != NULL)
-    {
-        SolarSystemCatalog* solarSystemCatalog = sim->getUniverse()->getSolarSystemCatalog();
-        SolarSystemCatalog::iterator iter = solarSystemCatalog->find(sel->star()->getCatalogNumber());
-        if (iter != solarSystemCatalog->end())
-        {
-            SolarSystem* solarSys = iter->second;
-            for (int i = 0; i < solarSys->getPlanets()->getSystemSize(); i++)
-            {
-                Body* body = solarSys->getPlanets()->getBody(i);
-                Selection satSel(body);
-                object_new(l, satSel);
-                lua_rawseti(l, -2, i + 1);
-            }
-        }
-    }
-    else if (sel->body() != NULL)
-    {
-        const PlanetarySystem* satellites = sel->body()->getSatellites();
-        if (satellites != NULL && satellites->getSystemSize() != 0)
-        {
-            for (int i = 0; i < satellites->getSystemSize(); i++)
-            {
-                Body* body = satellites->getBody(i);
-                Selection satSel(body);
-                object_new(l, satSel);
-                lua_rawseti(l, -2, i + 1);
-            }
-        }
-    }
-
-    return 1;
-}
-
-static int object_preloadtexture(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No argument expected to object:preloadtexture");
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    Renderer* renderer = appCore->getRenderer();
-    Selection* sel = this_object(l);
-    if (sel->body() != NULL && renderer != NULL)
-    {
-        LuaState* luastate = getLuaStateObject(l);
-        // make sure we don't timeout because of texture-loading:
-        double timeToTimeout = luastate->timeout - luastate->getTime();
-
-        renderer->loadTextures(sel->body());
-
-        // no matter how long it really took, make it look like 0.1s:
-        luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
-    }
-    return 0;
-}
-
-
-/*! object:catalognumber(string: catalog_prefix)
- *
- *  Look up the catalog number for a star in one of the supported catalogs,
- *  currently HIPPARCOS, HD, or SAO. The single argument is a string that
- *  specifies the catalog number, either "HD", "SAO", or "HIP".
- *  If the object is a star, the catalog string is valid, and the star
- *  is present in the catalog, the catalog number is returned on the stack.
- *  Otherwise, nil is returned.
- *
- * \verbatim
- * -- Example: Get the SAO and HD catalog numbers for Rigel
- * --
- * rigel = celestia:find("Rigel")
- * sao = rigel:catalognumber("SAO")
- * hd = rigel:catalognumber("HD")
- *
- * \endverbatim
- */
-static int object_catalognumber(lua_State* l)
-{
-	checkArgs(l, 2, 2, "One argument expected to object:catalognumber");
-	CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-	Selection* sel = this_object(l);
-    const char* catalogName = safeGetString(l, 2, WrongType, "Argument to object:catalognumber must be a string");
-
-	// The argument is a string indicating the catalog.
-	bool validCatalog = false;
-	bool useHIPPARCOS = false;
-	StarDatabase::Catalog catalog = StarDatabase::HenryDraper;
-	if (catalogName != NULL)
-	{
-		if (compareIgnoringCase(catalogName, "HD") == 0)
-		{
-			catalog = StarDatabase::HenryDraper;
-			validCatalog = true;
-		}
-		else if (compareIgnoringCase(catalogName, "SAO") == 0)
-		{
-			catalog = StarDatabase::SAO;
-			validCatalog = true;
-		}
-		else if (compareIgnoringCase(catalogName, "HIP") == 0)
-		{
-			useHIPPARCOS = true;
-			validCatalog = true;
-		}
-	}
-
-	uint32 catalogNumber = Star::InvalidCatalogNumber;
-	if (sel->star() != NULL && validCatalog)
-	{
-		uint32 internalNumber = sel->star()->getCatalogNumber();
-
-		if (useHIPPARCOS)
-		{
-			// Celestia's internal catalog numbers /are/ HIPPARCOS numbers
-			if (internalNumber < StarDatabase::MAX_HIPPARCOS_NUMBER)
-				catalogNumber = internalNumber;
-		}
-		else
-		{
-			const StarDatabase* stardb = appCore->getSimulation()->getUniverse()->getStarCatalog();
-			catalogNumber = stardb->crossIndex(catalog, internalNumber);
-		}
-	}
-
-	if (catalogNumber != Star::InvalidCatalogNumber)
-		lua_pushnumber(l, catalogNumber);
-	else
-		lua_pushnil(l);
-
-	return 1;
-}
-
-
-// Locations iterator function; two upvalues expected. Used by
-// object:locations method.
-static int object_locations_iter(lua_State* l)
-{
-    Selection* sel = to_object(l, lua_upvalueindex(1));
-    if (sel == NULL)
-    {
-        doError(l, "Bad object!");
-        return 0;
-    }
-
-    // Get the current counter value
-    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
-    
-    vector<Location*>* locations = NULL;
-    if (sel->body() != NULL)
-    {
-        locations = sel->body()->getLocations();
-    }
-        
-    if (locations != NULL && i < locations->size())
-    {
-        // Increment the counter
-        lua_pushnumber(l, i + 1);
-        lua_replace(l, lua_upvalueindex(2));
-        
-        Location* loc = locations->at(i);
-        if (loc == NULL)
-            lua_pushnil(l);
-        else
-            object_new(l, Selection(loc));
-        
-        return 1;
-    }
-    else
-    {
-        // Return nil when we've enumerated all the locations (or if
-        // there were no locations associated with the object.)
-        return 0;
-    }
-}
-
-
-/*! object:locations()
- *
- * Return an iterator over all the locations associated with an object.
- * Only solar system bodies have locations; for all other object types,
- * this method will return an empty iterator.
- *
- * \verbatim
- * -- Example: print locations of current selection
- * --
- * for loc in celestia:getselection():locations() do
- *     celestia:log(loc:name())
- * end
- *
- * \endverbatim
- */
-static int object_locations(lua_State* l)
-{
-    // Push a closure with two upvalues: the object and a counter
-    lua_pushvalue(l, 1);    // object
-    lua_pushnumber(l, 0);   // counter
-    lua_pushcclosure(l, object_locations_iter, 2);
-    
-    return 1;
-}
-
-
-/*! object:bodyfixedframe()
- *
- * Return the body-fixed frame for this object.
- *
- * \verbatim
- * -- Example: get the body-fixed frame of the Earth
- * --
- * earth = celestia:find("Sol/Earth")
- * ebf = earth:bodyfixedframe()
- *
- * \endverbatim
- */
-static int object_bodyfixedframe(lua_State* l)
-{
-	checkArgs(l, 1, 1, "No arguments allowed for object:bodyfixedframe");
-
-	Selection* sel = this_object(l);    
-    frame_new(l, ObserverFrame(ObserverFrame::BodyFixed, *sel));
-    
-    return 1;
-}
-    
-
-/*! object:equatorialframe()
- *
- * Return the mean equatorial frame for this object.
- *
- * \verbatim
- * -- Example: getthe equatorial frame of the Earth
- * --
- * earth = celestia:find("Sol/Earth")
- * eme = earth:equatorialframe()
- *
- * \endverbatim
- */
-static int object_equatorialframe(lua_State* l)
-{
-    // TODO: allow one argument specifying a freeze time
-	checkArgs(l, 1, 1, "No arguments allowed for to object:equatorialframe");
-    
-	Selection* sel = this_object(l);    
-    frame_new(l, ObserverFrame(ObserverFrame::Equatorial, *sel));
-    
-    return 1;
-}
-
-
-/*! object:orbitframe(time: t)
- *
- * Return the frame in which the orbit for an object is defined at a particular
- * time. If time isn't specified, the current simulation time is assumed. The
- * positions of stars and deep sky objects are always defined in the universal
- * frame.
- *
- * \verbatim
- * -- Example: get the orbital frame for the Earth at the current time.
- * --
- * earth = celestia:find("Sol/Earth")
- * eof = earth:orbitframe() 
- *
- * \endverbatim
- */
-static int object_orbitframe(lua_State* l)
-{
-	checkArgs(l, 1, 2, "One or no arguments allowed for to object:orbitframe");
-        
-	Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-    
-    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:orbitframe",
-                             appCore->getSimulation()->getTime());
-    
-    if (sel->body() == NULL)
-    {
-        // The default universal frame
-        frame_new(l, ObserverFrame());
-    }
-    else 
-    {
-        const ReferenceFrame* f = sel->body()->getOrbitFrame(t);
-        frame_new(l, ObserverFrame(*f));
-    }
-    
-    return 1;
-}
-
-
-/*! object:bodyframe(time: t)
-*
-* Return the frame in which the orientation for an object is defined at a 
-* particular time. If time isn't specified, the current simulation time is
-* assumed. The positions of stars and deep sky objects are always defined
-* in the universal frame.
-*
-* \verbatim
-* -- Example: get the curren body frame for the International Space Station.
-* --
-* iss = celestia:find("Sol/Earth/ISS")
-* f = iss:bodyframe() 
-*
-* \endverbatim
-*/
-static int object_bodyframe(lua_State* l)
-{
-	checkArgs(l, 1, 2, "One or no arguments allowed for to object:bodyframe");
-    
-	Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-    
-    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:orbitframe",
-                             appCore->getSimulation()->getTime());
-    
-    if (sel->body() == NULL)
-    {
-        // The default universal frame
-        frame_new(l, ObserverFrame());
-    }
-    else 
-    {
-        const ReferenceFrame* f = sel->body()->getBodyFrame(t);
-        frame_new(l, ObserverFrame(*f));
-    }
-    
-    return 1;
-}
-
-
-/*! object:getphase(time: t)
- *
- * Get the active timeline phase at the specified time. If no time is
- * specified, the current simulation time is used. This method returns
- * nil if the object is not a solar system body, or if the time lies
- * outside the range covered by the timeline.
- *
- * \verbatim
- * -- Example: get the timeline phase for Cassini at midnight January 1, 2000 UTC.
- * --
- * cassini = celestia:find("Sol/Cassini")
- * tdb = celestia:utctotdb(2000, 1, 1)
- * phase = cassini:getphase(tdb)
- *
- * \endverbatim
- */
-static int object_getphase(lua_State* l)
-{
-	checkArgs(l, 1, 2, "One or no arguments allowed for to object:getphase");
-    
-	Selection* sel = this_object(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-    
-    double t = safeGetNumber(l, 2, WrongType, "Time expected as argument to object:getphase",
-                             appCore->getSimulation()->getTime());
-    
-    if (sel->body() == NULL)
-    {
-        lua_pushnil(l);
-    }
-    else 
-    {
-        const Timeline* timeline = sel->body()->getTimeline();
-        if (timeline->includes(t))
-        {
-            phase_new(l, *timeline->findPhase(t));
-        }
-        else
-        {
-            lua_pushnil(l);
-        }
-    }
-    
-    return 1;
-}
-
-
-// Phases iterator function; two upvalues expected. Used by
-// object:phases method.
-static int object_phases_iter(lua_State* l)
-{
-    Selection* sel = to_object(l, lua_upvalueindex(1));
-    if (sel == NULL)
-    {
-        doError(l, "Bad object!");
-        return 0;
-    }
-
-    // Get the current counter value
-    uint32 i = (uint32) lua_tonumber(l, lua_upvalueindex(2));
-    
-    const Timeline* timeline = NULL;
-    if (sel->body() != NULL)
-    {
-        timeline = sel->body()->getTimeline();
-    }
-        
-    if (timeline != NULL && i < timeline->phaseCount())
-    {
-        // Increment the counter
-        lua_pushnumber(l, i + 1);
-        lua_replace(l, lua_upvalueindex(2));
-        
-        const TimelinePhase* phase = timeline->getPhase(i);
-        phase_new(l, *phase);
-        
-        return 1;
-    }
-    else
-    {
-        // Return nil when we've enumerated all the phases (or if
-        // if the object wasn't a solar system body.)
-        return 0;
-    }
-}
-
-
-/*! object:phases()
- *
- * Return an iterator over all the phases in an object's timeline.
- * Only solar system bodies have timeline; for all other object types,
- * this method will return an empty iterator. The phases in a timeline
- * are always sorted from earliest to latest, and always coverage a
- * continuous span of time.
- *
- * \verbatim
- * -- Example: copy all of an objects phases into the array timeline
- * --
- * timeline = { }
- * count = 0
- * for phase in celestia:getselection():phases() do
- *     count = count + 1
- *     timeline[count] = phase
- * end
- *
- * \endverbatim
- */
-static int object_phases(lua_State* l)
-{
-    // Push a closure with two upvalues: the object and a counter
-    lua_pushvalue(l, 1);    // object
-    lua_pushnumber(l, 0);   // counter
-    lua_pushcclosure(l, object_phases_iter, 2);
-    
-    return 1;
-}
-
-
-static void CreateObjectMetaTable(lua_State* l)
-{
-    CreateClassMetatable(l, _Object);
-
-    RegisterMethod(l, "__tostring", object_tostring);
-    RegisterMethod(l, "visible", object_visible);
-    RegisterMethod(l, "setvisible", object_setvisible);
-    RegisterMethod(l, "orbitcoloroverridden", object_orbitcoloroverridden);
-    RegisterMethod(l, "setorbitcoloroverridden", object_setorbitcoloroverridden);
-    RegisterMethod(l, "setorbitcolor", object_setorbitcolor);
-    RegisterMethod(l, "orbitvisibility", object_orbitvisibility);
-    RegisterMethod(l, "setorbitvisibility", object_setorbitvisibility);
-    RegisterMethod(l, "addreferencemark", object_addreferencemark);
-    RegisterMethod(l, "removereferencemark", object_removereferencemark);
-    RegisterMethod(l, "radius", object_radius);
-    RegisterMethod(l, "setradius", object_setradius);
-    RegisterMethod(l, "type", object_type);
-    RegisterMethod(l, "spectraltype", object_spectraltype);
-    RegisterMethod(l, "getinfo", object_getinfo);
-    RegisterMethod(l, "catalognumber", object_catalognumber);
-    RegisterMethod(l, "absmag", object_absmag);
-    RegisterMethod(l, "name", object_name);
-    RegisterMethod(l, "localname", object_localname);
-    RegisterMethod(l, "mark", object_mark);
-    RegisterMethod(l, "unmark", object_unmark);
-    RegisterMethod(l, "getposition", object_getposition);
-    RegisterMethod(l, "getchildren", object_getchildren);
-    RegisterMethod(l, "locations", object_locations);
-    RegisterMethod(l, "bodyfixedframe", object_bodyfixedframe);
-    RegisterMethod(l, "equatorialframe", object_equatorialframe);
-    RegisterMethod(l, "orbitframe", object_orbitframe);
-    RegisterMethod(l, "bodyframe", object_bodyframe);
-    RegisterMethod(l, "getphase", object_getphase);
-    RegisterMethod(l, "phases", object_phases);
-    RegisterMethod(l, "preloadtexture", object_preloadtexture);
-
-    lua_pop(l, 1); // pop metatable off the stack
-}
-
-// ==================== Observer ====================
-static int observer_new(lua_State* l, Observer* o)
-{
-    Observer** ud = static_cast<Observer**>(lua_newuserdata(l, sizeof(Observer*)));
-    *ud = o;
-
-    SetClass(l, _Observer);
-
-    return 1;
-}
-
-static Observer* to_observer(lua_State* l, int index)
-{
-    Observer** o = static_cast<Observer**>(lua_touserdata(l, index));
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    // Check if pointer is still valid, i.e. is used by a view:
-    if (o != NULL && getViewByObserver(appCore, *o) != NULL)
-    {
-            return *o;
-    }
-    return NULL;
-}
-
-static Observer* this_observer(lua_State* l)
-{
-    Observer* obs = to_observer(l, 1);
-    if (obs == NULL)
-    {
-        doError(l, "Bad observer object (maybe tried to access a deleted view?)!");
-    }
-
-    return obs;
-}
-
-
-static int observer_isvalid(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for observer:isvalid()");
-    lua_pushboolean(l, to_observer(l, 1) != NULL);
-    return 1;
-}
-
-static int observer_tostring(lua_State* l)
-{
-    lua_pushstring(l, "[Observer]");
-
-    return 1;
-}
-
-static int observer_setposition(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument required for setpos");
-
-    Observer* o = this_observer(l);
-
-    UniversalCoord* uc = to_position(l,2);
-    if (uc == NULL)
-    {
-        doError(l, "Argument to observer:setposition must be a position");
-    }
-    o->setPosition(*uc);
-    return 0;
-}
-
-static int observer_setorientation(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument required for setorientation");
-
-    Observer* o = this_observer(l);
-
-    Quatd* q = to_rotation(l,2);
-    if (q == NULL)
-    {
-        doError(l, "Argument to observer:setorientation must be a rotation");
-    }
-    o->setOrientation(*q);
-    return 0;
-}
-
-static int observer_getorientation(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to observer:getorientation()");
-
-    Observer* o = this_observer(l);
-    rotation_new(l, o->getOrientation());
-
-    return 1;
-}
-
-static int observer_rotate(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument required for rotate");
-
-    Observer* o = this_observer(l);
-
-    Quatd* q = to_rotation(l,2);
-    if (q == NULL)
-    {
-        doError(l, "Argument to observer:setpos must be a rotation");
-    }
-    Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
-    o->rotate(qf);
-    return 0;
-}
-
-static int observer_lookat(lua_State* l)
-{
-    checkArgs(l, 3, 4, "Two or three arguments required for lookat");
-    int argc = lua_gettop(l);
-
-    Observer* o = this_observer(l);
-
-    UniversalCoord* from = NULL;
-    UniversalCoord* to = NULL;
-    Vec3d* upd = NULL;
-    if (argc == 3)
-    {
-        to = to_position(l, 2);
-        upd = to_vector(l, 3);
-        if (to == NULL)
-        {
-            doError(l, "Argument 1 (of 2) to observer:lookat must be of type position");
-        }
-    }
-    else
-    if (argc == 4)
-    {
-        from = to_position(l, 2);
-        to = to_position(l, 3);
-        upd = to_vector(l, 4);
-
-        if (to == NULL || from == NULL)
-        {
-            doError(l, "Argument 1 and 2 (of 3) to observer:lookat must be of type position");
-        }
-    }
-    if (upd == NULL)
-    {
-        doError(l, "Last argument to observer:lookat must be of type vector");
-    }
-    Vec3d nd;
-    if (from == NULL)
-    {
-        nd = (*to) - o->getPosition();
-    }
-    else
-    {
-        nd = (*to) - (*from);
-    }
-    // need Vec3f instead:
-    Vec3f up = Vec3f((float) upd->x, (float) upd->y, (float) upd->z);
-    Vec3f n = Vec3f((float) nd.x, (float) nd.y, (float) nd.z);
-
-    n.normalize();
-    Vec3f v = n ^ up;
-    v.normalize();
-    Vec3f u = v ^ n;
-    Quatf qf = Quatf(Mat3f(v, u, -n));
-    o->setOrientation(qf);
-    return 0;
-}
-
-static int observer_gototable(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Expected one table as argument to goto");
-
-    Observer* o = this_observer(l);
-    if (!lua_istable(l, 2))
-    {
-        lua_pushstring(l, "Argument to goto must be a table");
-    }
-
-    Observer::JourneyParams jparams;
-    jparams.duration = 5.0;
-    jparams.from = o->getPosition();
-    jparams.to = o->getPosition();
-    jparams.initialOrientation = o->getOrientation();
-    jparams.finalOrientation = o->getOrientation();
-    jparams.startInterpolation = 0.25;
-    jparams.endInterpolation = 0.75;
-    jparams.accelTime = 0.5;
-    jparams.traj = Observer::Linear;
-
-    lua_pushstring(l, "duration");
-    lua_gettable(l, 2);
-    jparams.duration = safeGetNumber(l, 3, NoErrors, "", 5.0);
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "from");
-    lua_gettable(l, 2);
-    UniversalCoord* from = to_position(l, 3);
-    if (from != NULL)
-        jparams.from = *from;
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "to");
-    lua_gettable(l, 2);
-    UniversalCoord* to = to_position(l, 3);
-    if (to != NULL)
-        jparams.to = *to;
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "initialOrientation");
-    lua_gettable(l, 2);
-    Quatd* rot1 = to_rotation(l, 3);
-    if (rot1 != NULL)
-        jparams.initialOrientation = *rot1;
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "finalOrientation");
-    lua_gettable(l, 2);
-    Quatd* rot2 = to_rotation(l, 3);
-    if (rot2 != NULL)
-        jparams.finalOrientation = *rot2;
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "startInterpolation");
-    lua_gettable(l, 2);
-    jparams.startInterpolation = safeGetNumber(l, 3, NoErrors, "", 0.25);
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "endInterpolation");
-    lua_gettable(l, 2);
-    jparams.endInterpolation = safeGetNumber(l, 3, NoErrors, "", 0.75);
-    lua_settop(l, 2);
-
-    lua_pushstring(l, "accelTime");
-    lua_gettable(l, 2);
-    jparams.accelTime = safeGetNumber(l, 3, NoErrors, "", 0.5);
-    lua_settop(l, 2);
-
-    jparams.duration = max(0.0, jparams.duration);
-    jparams.accelTime = min(1.0, max(0.1, jparams.accelTime));
-    jparams.startInterpolation = min(1.0, max(0.0, jparams.startInterpolation));
-    jparams.endInterpolation = min(1.0, max(0.0, jparams.endInterpolation));
-
-    // args are in universal coords, let setFrame handle conversion:
-    ObserverFrame tmp = *(o->getFrame());
-    o->setFrame(ObserverFrame::Universal, Selection());
-    o->gotoJourney(jparams);
-    o->setFrame(tmp);
-    
-    return 0;
-}
-
-// First argument is the target object or position; optional second argument
-// is the travel time
-static int observer_goto(lua_State* l)
-{
-    if (lua_gettop(l) == 2 && lua_istable(l, 2))
-    {
-        // handle this in own function
-        return observer_gototable(l);
-    }
-    checkArgs(l, 1, 5, "One to four arguments expected to observer:goto");
-
-    Observer* o = this_observer(l);
-
-    Selection* sel = to_object(l, 2);
-    UniversalCoord* uc = to_position(l, 2);
-    if (sel == NULL && uc == NULL)
-    {
-        doError(l, "First arg to observer:goto must be object or position");
-    }
-
-    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:goto must be a number", 5.0);
-    double startInter = safeGetNumber(l, 4, WrongType, "Third arg to observer:goto must be a number", 0.25);
-    double endInter = safeGetNumber(l, 5, WrongType, "Fourth arg to observer:goto must be a number", 0.75);
-    if (startInter < 0 || startInter > 1) startInter = 0.25;
-    if (endInter < 0 || endInter > 1) startInter = 0.75;
-
-    // The first argument may be either an object or a position
-    if (sel != NULL)
-    {
-        o->gotoSelection(*sel, travelTime, startInter, endInter, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
-    }
-    else
-    {
-        o->gotoLocation(*uc, o->getOrientation(), travelTime);
-    }
-
-    return 0;
-}
-
-static int observer_gotolonglat(lua_State* l)
-{
-    checkArgs(l, 2, 7, "One to five arguments expected to observer:gotolonglat");
-
-    Observer* o = this_observer(l);
-
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First arg to observer:gotolonglat must be an object");
-    }
-    double defaultDistance = sel->radius() * 5.0;
-
-    double longitude  = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotolonglat must be a number", 0.0);
-    double latitude   = safeGetNumber(l, 4, WrongType, "Third arg to observer:gotolonglat must be a number", 0.0);
-    double distance   = safeGetNumber(l, 5, WrongType, "Fourth arg to observer:gotolonglat must be a number", defaultDistance);
-    double travelTime = safeGetNumber(l, 6, WrongType, "Fifth arg to observer:gotolonglat must be a number", 5.0);
-
-    distance = distance / KM_PER_LY;
-
-    Vec3f up(0.0f, 1.0f, 0.0f);
-    if (lua_gettop(l) >= 7)
-    {
-        Vec3d* uparg = to_vector(l, 7);
-        if (uparg == NULL)
-        {
-            doError(l, "Sixth argument to observer:gotolonglat must be a vector");
-        }
-        up = Vec3f((float)uparg->x, (float)uparg->y, (float)uparg->z);
-    }
-    o->gotoSelectionLongLat(*sel, travelTime, distance, (float)longitude, (float)latitude, up);
-
-    return 0;
-}
-
-// deprecated: wrong name, bad interface.
-static int observer_gotolocation(lua_State* l)
-{
-    checkArgs(l, 2, 3,"Expected one or two arguments to observer:gotolocation");
-
-    Observer* o = this_observer(l);
-
-    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotolocation must be a number", 5.0);
-    if (travelTime < 0)
-        travelTime = 0.0;
-
-    UniversalCoord* uc = to_position(l, 2);
-    if (uc != NULL)
-    {
-        o->gotoLocation(*uc, o->getOrientation(), travelTime);
-    }
-    else
-    {
-        doError(l, "First arg to observer:gotolocation must be a position");
-    }
-
-    return 0;
-}
-
-static int observer_gotodistance(lua_State* l)
-{
-    checkArgs(l, 2, 5, "One to four arguments expected to observer:gotodistance");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First arg to observer:gotodistance must be object");
-    }
-
-    double distance = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotodistance must be a number", 20000);
-    double travelTime = safeGetNumber(l, 4, WrongType, "Third arg to observer:gotodistance must be a number", 5.0);
-
-    Vec3f up(0,1,0);
-    if (lua_gettop(l) > 4)
-    {
-        Vec3d* up_arg = to_vector(l, 5);
-        if (up_arg == NULL)
-        {
-            doError(l, "Fourth arg to observer:gotodistance must be a vector");
-        }
-        up.x = (float)up_arg->x;
-        up.y = (float)up_arg->y;
-        up.z = (float)up_arg->z;
-    }
-
-    o->gotoSelection(*sel, travelTime, astro::kilometersToLightYears(distance), up, ObserverFrame::Universal);
-
-    return 0;
-}
-
-static int observer_gotosurface(lua_State* l)
-{
-    checkArgs(l, 2, 3, "One to two arguments expected to observer:gotosurface");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First arg to observer:gotosurface must be object");
-    }
-
-    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:gotosurface must be a number", 5.0);
-
-    // This is needed because gotoSurface expects frame to be geosync:
-    o->geosynchronousFollow(*sel);
-    o->gotoSurface(*sel, travelTime);
-
-    return 0;
-}
-
-static int observer_center(lua_State* l)
-{
-    checkArgs(l, 2, 3, "Expected one or two arguments for to observer:center");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First argument to observer:center must be an object");
-    }
-    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:center must be a number", 5.0);
-
-    o->centerSelection(*sel, travelTime);
-
-    return 0;
-}
-
-static int observer_centerorbit(lua_State* l)
-{
-    checkArgs(l, 2, 3, "Expected one or two arguments for to observer:center");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First argument to observer:centerorbit must be an object");
-    }
-    double travelTime = safeGetNumber(l, 3, WrongType, "Second arg to observer:centerorbit must be a number", 5.0);
-
-    o->centerSelectionCO(*sel, travelTime);
-
-    return 0;
-}
-
-static int observer_cancelgoto(lua_State* l)
-{
-    checkArgs(l, 1, 1, "Expected no arguments to observer:cancelgoto");
-
-    Observer* o = this_observer(l);
-    o->cancelMotion();
-
-    return 0;
-}
-
-static int observer_follow(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected for observer:follow");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First argument to observer:follow must be an object");
-    }
-    o->follow(*sel);
-
-    return 0;
-}
-
-static int observer_synchronous(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected for observer:synchronous");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First argument to observer:synchronous must be an object");
-    }
-    o->geosynchronousFollow(*sel);
-
-    return 0;
-}
-
-static int observer_lock(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected for observer:lock");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First argument to observer:phaseLock must be an object");
-    }
-    o->phaseLock(*sel);
-
-    return 0;
-}
-
-static int observer_chase(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected for observer:chase");
-
-    Observer* o = this_observer(l);
-    Selection* sel = to_object(l, 2);
-    if (sel == NULL)
-    {
-        doError(l, "First argument to observer:chase must be an object");
-    }
-    o->chase(*sel);
-
-    return 0;
-}
-
-static int observer_track(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected for observer:track");
-
-    Observer* o = this_observer(l);
-
-    // If the argument is nil, clear the tracked object
-    if (lua_isnil(l, 2))
-    {
-        o->setTrackedObject(Selection());
-    }
-    else
-    {
-        // Otherwise, turn on tracking and set the tracked object
-        Selection* sel = to_object(l, 2);
-        if (sel == NULL)
-        {
-            doError(l, "First argument to observer:center must be an object");
-        }
-        o->setTrackedObject(*sel);
-    }
-
-    return 0;
-}
-
-static int observer_gettrackedobject(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to observer:gettrackedobject");
-
-    Observer* o = this_observer(l);
-    object_new(l, o->getTrackedObject());
-
-    return 1;
-}
-
-// Return true if the observer is still moving as a result of a goto, center,
-// or similar command.
-static int observer_travelling(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to observer:travelling");
-
-    Observer* o = this_observer(l);
-    if (o->getMode() == Observer::Travelling)
-        lua_pushboolean(l, 1);
-    else
-        lua_pushboolean(l, 0);
-
-    return 1;
-}
-
-// Return the observer's current time as a Julian day number
-static int observer_gettime(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to observer:gettime");
-
-    Observer* o = this_observer(l);
-    lua_pushnumber(l, o->getTime());
-
-    return 1;
-}
-
-// Return the observer's current position
-static int observer_getposition(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected to observer:getposition");
-
-    Observer* o = this_observer(l);
-    position_new(l, o->getPosition());
-
-    return 1;
-}
-
-static int observer_getsurface(lua_State* l)
-{
-    checkArgs(l, 1, 1, "One argument expected to observer:getsurface()");
-
-    Observer* obs = this_observer(l);
-    lua_pushstring(l, obs->getDisplayedSurface().c_str());
-
-    return 1;
-}
-
-static int observer_setsurface(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to observer:setsurface()");
-
-    Observer* obs = this_observer(l);
-    const char* s = lua_tostring(l, 2);
-
-    if (s == NULL)
-        obs->setDisplayedSurface("");
-    else
-        obs->setDisplayedSurface(s);
-
-    return 0;
-}
-
-static int observer_getframe(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for observer:getframe()");
-
-    Observer* obs = this_observer(l);
-
-    const ObserverFrame* frame = obs->getFrame();
-    frame_new(l, *frame);
-    return 1;
-}
-
-static int observer_setframe(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument required for observer:setframe()");
-
-    Observer* obs = this_observer(l);
-
-    ObserverFrame* frame;
-    frame = to_frame(l, 2);
-    if (frame != NULL)
-    {
-        obs->setFrame(*frame);
-    }
-    else
-    {
-        doError(l, "Argument to observer:setframe must be a frame");
-    }
-    return 0;
-}
-
-static int observer_setspeed(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument required for observer:setspeed()");
-
-    Observer* obs = this_observer(l);
-
-    double speed = safeGetNumber(l, 2, AllErrors, "First argument to observer:setspeed must be a number");
-    obs->setTargetSpeed((float)speed);
-    return 0;
-}
-
-static int observer_getspeed(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No argument expected for observer:getspeed()");
-
-    Observer* obs = this_observer(l);
-
-    lua_pushnumber(l, (lua_Number)obs->getTargetSpeed());
-    return 1;
-}
-
-static int observer_setfov(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected to observer:setfov()");
-
-    Observer* obs = this_observer(l);
-    double fov = safeGetNumber(l, 2, AllErrors, "Argument to observer:setfov() must be a number");
-    if ((fov >= degToRad(0.001f)) && (fov <= degToRad(120.0f)))
-    {
-        obs->setFOV((float) fov);
-        getAppCore(l, AllErrors)->setZoomFromFOV();
-    }
-    return 0;
-}
-
-static int observer_getfov(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No argument expected to observer:getfov()");
-
-    Observer* obs = this_observer(l);
-    lua_pushnumber(l, obs->getFOV());
-    return 1;
-}
-
-static int observer_splitview(lua_State* l)
-{
-    checkArgs(l, 2, 3, "One or two arguments expected for observer:splitview()");
-
-    Observer* obs = this_observer(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-    const char* splitType = safeGetString(l, 2, AllErrors, "First argument to observer:splitview() must be a string");
-    View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
-    double splitPos = safeGetNumber(l, 3, WrongType, "Number expected as argument to observer:splitview()", 0.5);
-    if (splitPos < 0.1)
-        splitPos = 0.1;
-    if (splitPos > 0.9)
-        splitPos = 0.9;
-    View* view = getViewByObserver(appCore, obs);
-    appCore->splitView(type, view, (float)splitPos);
-    return 0;
-}
-
-static int observer_deleteview(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No argument expected for observer:deleteview()");
-
-    Observer* obs = this_observer(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-    View* view = getViewByObserver(appCore, obs);
-    appCore->deleteView(view);
-    return 0;
-}
-
-static int observer_singleview(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No argument expected for observer:singleview()");
-
-    Observer* obs = this_observer(l);
-    CelestiaCore* appCore = getAppCore(l, AllErrors);
-    View* view = getViewByObserver(appCore, obs);
-    appCore->singleView(view);
-    return 0;
-}
-
-static int observer_equal(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Wrong number of arguments for comparison!");
-
-    Observer* o1 = this_observer(l);
-    Observer* o2 = to_observer(l, 2);
-
-    lua_pushboolean(l, (o1 == o2));
-    return 1;
-}
-
-static int observer_setlocationflags(lua_State* l)
-{
-    checkArgs(l, 2, 2, "One argument expected for observer:setlocationflags()");
-    Observer* obs = this_observer(l);
-    if (!lua_istable(l, 2))
-    {
-        doError(l, "Argument to observer:setlocationflags() must be a table");
-    }
-
-    lua_pushnil(l);
-    int locationFlags = obs->getLocationFilter();
-    while (lua_next(l, -2) != 0)
-    {
-        string key;
-        bool value = false;
-        if (lua_isstring(l, -2))
-        {
-            key = lua_tostring(l, -2);
-        }
-        else
-        {
-            doError(l, "Keys in table-argument to observer:setlocationflags() must be strings");
-        }
-        if (lua_isboolean(l, -1))
-        {
-            value = lua_toboolean(l, -1) != 0;
-        }
-        else
-        {
-            doError(l, "Values in table-argument to observer:setlocationflags() must be boolean");
-        }
-        if (LocationFlagMap.count(key) == 0)
-        {
-            cerr << "Unknown key: " << key << "\n";
-        }
-        else
-        {
-            int flag = LocationFlagMap[key];
-            if (value)
-            {
-                locationFlags |= flag;
-            }
-            else
-            {
-                locationFlags &= ~flag;
-            }
-        }
-        lua_pop(l,1);
-    }
-    obs->setLocationFilter(locationFlags);
-    return 0;
-}
-
-static int observer_getlocationflags(lua_State* l)
-{
-    checkArgs(l, 1, 1, "No arguments expected for observer:getlocationflags()");
-    Observer* obs = this_observer(l);
-    lua_newtable(l);
-    FlagMap::const_iterator it = LocationFlagMap.begin();
-    const int locationFlags = obs->getLocationFilter();
-    while (it != LocationFlagMap.end())
-    {
-        string key = it->first;
-        lua_pushstring(l, key.c_str());
-        lua_pushboolean(l, (it->second & locationFlags) != 0);
-        lua_settable(l,-3);
-        it++;
-    }
-    return 1;
-}
-
-static void CreateObserverMetaTable(lua_State* l)
-{
-    CreateClassMetatable(l, _Observer);
-
-    RegisterMethod(l, "__tostring", observer_tostring);
-    RegisterMethod(l, "isvalid", observer_isvalid);
-    RegisterMethod(l, "goto", observer_goto);
-    RegisterMethod(l, "gotolonglat", observer_gotolonglat);
-    RegisterMethod(l, "gotolocation", observer_gotolocation);
-    RegisterMethod(l, "gotodistance", observer_gotodistance);
-    RegisterMethod(l, "gotosurface", observer_gotosurface);
-    RegisterMethod(l, "cancelgoto", observer_cancelgoto);
-    RegisterMethod(l, "setposition", observer_setposition);
-    RegisterMethod(l, "lookat", observer_lookat);
-    RegisterMethod(l, "setorientation", observer_setorientation);
-    RegisterMethod(l, "getorientation", observer_getorientation);
-    RegisterMethod(l, "getspeed", observer_getspeed);
-    RegisterMethod(l, "setspeed", observer_setspeed);
-    RegisterMethod(l, "getfov", observer_getfov);
-    RegisterMethod(l, "setfov", observer_setfov);
-    RegisterMethod(l, "rotate", observer_rotate);
-    RegisterMethod(l, "center", observer_center);
-    RegisterMethod(l, "centerorbit", observer_centerorbit);
-    RegisterMethod(l, "follow", observer_follow);
-    RegisterMethod(l, "synchronous", observer_synchronous);
-    RegisterMethod(l, "chase", observer_chase);
-    RegisterMethod(l, "lock", observer_lock);
-    RegisterMethod(l, "track", observer_track);
-    RegisterMethod(l, "gettrackedobject", observer_gettrackedobject);
-    RegisterMethod(l, "travelling", observer_travelling);
-    RegisterMethod(l, "getframe", observer_getframe);
-    RegisterMethod(l, "setframe", observer_setframe);
-    RegisterMethod(l, "gettime", observer_gettime);
-    RegisterMethod(l, "getposition", observer_getposition);
-    RegisterMethod(l, "getsurface", observer_getsurface);
-    RegisterMethod(l, "setsurface", observer_setsurface);
-    RegisterMethod(l, "splitview", observer_splitview);
-    RegisterMethod(l, "deleteview", observer_deleteview);
-    RegisterMethod(l, "singleview", observer_singleview);
-    RegisterMethod(l, "getlocationflags", observer_getlocationflags);
-    RegisterMethod(l, "setlocationflags", observer_setlocationflags);
-    RegisterMethod(l, "__eq", observer_equal);
-
-    lua_pop(l, 1); // remove metatable from stack
-}
 
 
 // ==================== Celscript-object ====================
@@ -4650,13 +1337,13 @@ static int celscript_from_string(lua_State* l, string& script_text)
     {
         string error = celscript->getErrorMessage();
         delete celscript;
-        doError(l, error.c_str());
+        Celx_DoError(l, error.c_str());
     }
     else
     {
         CelScriptWrapper** ud = reinterpret_cast<CelScriptWrapper**>(lua_newuserdata(l, sizeof(CelScriptWrapper*)));
         *ud = celscript;
-        SetClass(l, _CelScript);
+        Celx_SetClass(l, Celx_CelScript);
     }
 
     return 1;
@@ -4664,10 +1351,10 @@ static int celscript_from_string(lua_State* l, string& script_text)
 
 static CelScriptWrapper* this_celscript(lua_State* l)
 {
-    CelScriptWrapper** script = static_cast<CelScriptWrapper**>(CheckUserData(l, 1, _CelScript));
+    CelScriptWrapper** script = static_cast<CelScriptWrapper**>(Celx_CheckUserData(l, 1, Celx_CelScript));
     if (script == NULL)
     {
-        doError(l, "Bad CEL-script object!");
+        Celx_DoError(l, "Bad CEL-script object!");
     }
     return *script;
 }
@@ -4698,11 +1385,11 @@ static int celscript_gc(lua_State* l)
 
 static void CreateCelscriptMetaTable(lua_State* l)
 {
-    CreateClassMetatable(l, _CelScript);
+    Celx_CreateClassMetatable(l, Celx_CelScript);
 
-    RegisterMethod(l, "__tostring", celscript_tostring);
-    RegisterMethod(l, "tick", celscript_tick);
-    RegisterMethod(l, "__gc", celscript_gc);
+    Celx_RegisterMethod(l, "__tostring", celscript_tostring);
+    Celx_RegisterMethod(l, "tick", celscript_tick);
+    Celx_RegisterMethod(l, "__gc", celscript_gc);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -4714,14 +1401,14 @@ static int celestia_new(lua_State* l, CelestiaCore* appCore)
     CelestiaCore** ud = reinterpret_cast<CelestiaCore**>(lua_newuserdata(l, sizeof(CelestiaCore*)));
     *ud = appCore;
 
-    SetClass(l, _Celestia);
+    Celx_SetClass(l, Celx_Celestia);
 
     return 1;
 }
 
 static CelestiaCore* to_celestia(lua_State* l, int index)
 {
-    CelestiaCore** appCore = static_cast<CelestiaCore**>(CheckUserData(l, index, _Celestia));
+    CelestiaCore** appCore = static_cast<CelestiaCore**>(Celx_CheckUserData(l, index, Celx_Celestia));
     if (appCore == NULL)
         return NULL;
     else
@@ -4733,7 +1420,7 @@ static CelestiaCore* this_celestia(lua_State* l)
     CelestiaCore* appCore = to_celestia(l, 1);
     if (appCore == NULL)
     {
-        doError(l, "Bad celestia object!");
+        Celx_DoError(l, "Bad celestia object!");
     }
 
     return appCore;
@@ -4742,11 +1429,11 @@ static CelestiaCore* this_celestia(lua_State* l)
 
 static int celestia_flash(lua_State* l)
 {
-    checkArgs(l, 2, 3, "One or two arguments expected to function celestia:flash");
+    Celx_CheckArgs(l, 2, 3, "One or two arguments expected to function celestia:flash");
 
     CelestiaCore* appCore = this_celestia(l);
-    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:flash must be a string");
-    double duration = safeGetNumber(l, 3, WrongType, "Second argument to celestia:flash must be a number", 1.5);
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:flash must be a string");
+    double duration = Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:flash must be a number", 1.5);
     if (duration < 0.0)
     {
         duration = 1.5;
@@ -4759,15 +1446,15 @@ static int celestia_flash(lua_State* l)
 
 static int celestia_print(lua_State* l)
 {
-    checkArgs(l, 2, 7, "One to six arguments expected to function celestia:print");
+    Celx_CheckArgs(l, 2, 7, "One to six arguments expected to function celestia:print");
 
     CelestiaCore* appCore = this_celestia(l);
-    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:print must be a string");
-    double duration = safeGetNumber(l, 3, WrongType, "Second argument to celestia:print must be a number", 1.5);
-    int horig = (int)safeGetNumber(l, 4, WrongType, "Third argument to celestia:print must be a number", -1.0);
-    int vorig = (int)safeGetNumber(l, 5, WrongType, "Fourth argument to celestia:print must be a number", -1.0);
-    int hoff = (int)safeGetNumber(l, 6, WrongType, "Fifth argument to celestia:print must be a number", 0.0);
-    int voff = (int)safeGetNumber(l, 7, WrongType, "Sixth argument to celestia:print must be a number", 5.0);
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:print must be a string");
+    double duration = Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:print must be a number", 1.5);
+    int horig = (int)Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:print must be a number", -1.0);
+    int vorig = (int)Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:print must be a number", -1.0);
+    int hoff = (int)Celx_SafeGetNumber(l, 6, WrongType, "Fifth argument to celestia:print must be a number", 0.0);
+    int voff = (int)Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:print must be a number", 5.0);
 
     if (duration < 0.0)
     {
@@ -4781,10 +1468,10 @@ static int celestia_print(lua_State* l)
 
 static int celestia_gettextwidth(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:gettextwidth");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:gettextwidth");
 
     CelestiaCore* appCore = this_celestia(l);
-    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:gettextwidth must be a string");
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:gettextwidth must be a string");
 
     lua_pushnumber(l, appCore->getTextWidth(s));
 
@@ -4793,7 +1480,7 @@ static int celestia_gettextwidth(lua_State* l)
 
 static int celestia_getaltazimuthmode(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getaltazimuthmode()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getaltazimuthmode()");
 
     CelestiaCore* appCore = this_celestia(l);
     lua_pushboolean(l, appCore->getAltAzimuthMode());
@@ -4803,7 +1490,7 @@ static int celestia_getaltazimuthmode(lua_State* l)
 
 static int celestia_setaltazimuthmode(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:setaltazimuthmode");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:setaltazimuthmode");
     bool enable = false;
     if (lua_isboolean(l, -1))
      {
@@ -4811,7 +1498,7 @@ static int celestia_setaltazimuthmode(lua_State* l)
     }
     else
     {
-        doError(l, "Argument for celestia:setaltazimuthmode must be a boolean");
+        Celx_DoError(l, "Argument for celestia:setaltazimuthmode must be a boolean");
     }
 
     CelestiaCore* appCore = this_celestia(l);
@@ -4823,19 +1510,18 @@ static int celestia_setaltazimuthmode(lua_State* l)
 
 static int celestia_show(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
+    Celx_CheckArgs(l, 1, 1000, "Wrong number of arguments to celestia:show");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings");
+        string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:show() must be strings");
         if (renderFlag == "lightdelay")
             appCore->setLightDelayActive(true);
-        else
-        if (RenderFlagMap.count(renderFlag) > 0)
-            flags |= RenderFlagMap[renderFlag];
+        else if (CelxLua::RenderFlagMap.count(renderFlag) > 0)
+            flags |= CelxLua::RenderFlagMap[renderFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -4847,19 +1533,18 @@ static int celestia_show(lua_State* l)
 
 static int celestia_hide(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Wrong number of arguments to celestia:hide");
+    Celx_CheckArgs(l, 1, 1000, "Wrong number of arguments to celestia:hide");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string renderFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings");
+        string renderFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hide() must be strings");
         if (renderFlag == "lightdelay")
             appCore->setLightDelayActive(false);
-        else
-        if (RenderFlagMap.count(renderFlag) > 0)
-            flags |= RenderFlagMap[renderFlag];
+        else if (CelxLua::RenderFlagMap.count(renderFlag) > 0)
+            flags |= CelxLua::RenderFlagMap[renderFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -4871,11 +1556,11 @@ static int celestia_hide(lua_State* l)
 
 static int celestia_setrenderflags(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:setrenderflags()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setrenderflags()");
     CelestiaCore* appCore = this_celestia(l);
     if (!lua_istable(l, 2))
     {
-        doError(l, "Argument to celestia:setrenderflags() must be a table");
+        Celx_DoError(l, "Argument to celestia:setrenderflags() must be a table");
     }
 
     int renderFlags = appCore->getRenderer()->getRenderFlags();
@@ -4890,7 +1575,7 @@ static int celestia_setrenderflags(lua_State* l)
         }
         else
         {
-            doError(l, "Keys in table-argument to celestia:setrenderflags() must be strings");
+            Celx_DoError(l, "Keys in table-argument to celestia:setrenderflags() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -4898,15 +1583,15 @@ static int celestia_setrenderflags(lua_State* l)
         }
         else
         {
-            doError(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
+            Celx_DoError(l, "Values in table-argument to celestia:setrenderflags() must be boolean");
         }
         if (key == "lightdelay")
         {
             appCore->setLightDelayActive(value);
         }
-        else if (RenderFlagMap.count(key) > 0)
+        else if (CelxLua::RenderFlagMap.count(key) > 0)
         {
-            int flag = RenderFlagMap[key];
+            int flag = CelxLua::RenderFlagMap[key];
             if (value)
             {
                 renderFlags |= flag;
@@ -4930,12 +1615,12 @@ static int celestia_setrenderflags(lua_State* l)
 
 static int celestia_getrenderflags(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getrenderflags()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getrenderflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    FlagMap::const_iterator it = RenderFlagMap.begin();
+    CelxLua::FlagMap::const_iterator it = CelxLua::RenderFlagMap.begin();
     const int renderFlags = appCore->getRenderer()->getRenderFlags();
-    while (it != RenderFlagMap.end())
+    while (it != CelxLua::RenderFlagMap.end())
     {
         string key = it->first;
         lua_pushstring(l, key.c_str());
@@ -4951,11 +1636,11 @@ static int celestia_getrenderflags(lua_State* l)
 
 int celestia_getscreendimension(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getscreendimension()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getscreendimension()");
     // error checking only:
     this_celestia(l);
     // Get the dimensions of the current viewport
-    int viewport[4];
+    GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
     lua_pushnumber(l, viewport[2]-viewport[0]);
     lua_pushnumber(l, viewport[3]-viewport[1]);
@@ -4964,16 +1649,16 @@ int celestia_getscreendimension(lua_State* l)
 
 static int celestia_showlabel(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Bad method call!");
+    Celx_CheckArgs(l, 1, 1000, "Bad method call!");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings");
-        if (LabelFlagMap.count(labelFlag) > 0)
-            flags |= LabelFlagMap[labelFlag];
+        string labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:showlabel() must be strings");
+        if (CelxLua::LabelFlagMap.count(labelFlag) > 0)
+            flags |= CelxLua::LabelFlagMap[labelFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -4985,16 +1670,16 @@ static int celestia_showlabel(lua_State* l)
 
 static int celestia_hidelabel(lua_State* l)
 {
-    checkArgs(l, 1, 1000, "Invalid number of arguments in celestia:hidelabel");
+    Celx_CheckArgs(l, 1, 1000, "Invalid number of arguments in celestia:hidelabel");
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
     int flags = 0;
     for (int i = 2; i <= argc; i++)
     {
-        string labelFlag = safeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings");
-        if (LabelFlagMap.count(labelFlag) > 0)
-            flags |= LabelFlagMap[labelFlag];
+        string labelFlag = Celx_SafeGetString(l, i, AllErrors, "Arguments to celestia:hidelabel() must be strings");
+        if (CelxLua::LabelFlagMap.count(labelFlag) > 0)
+            flags |= CelxLua::LabelFlagMap[labelFlag];
     }
 
     Renderer* r = appCore->getRenderer();
@@ -5006,11 +1691,11 @@ static int celestia_hidelabel(lua_State* l)
 
 static int celestia_setlabelflags(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:setlabelflags()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setlabelflags()");
     CelestiaCore* appCore = this_celestia(l);
     if (!lua_istable(l, 2))
     {
-        doError(l, "Argument to celestia:setlabelflags() must be a table");
+        Celx_DoError(l, "Argument to celestia:setlabelflags() must be a table");
     }
 
     int labelFlags = appCore->getRenderer()->getLabelMode();
@@ -5025,7 +1710,7 @@ static int celestia_setlabelflags(lua_State* l)
         }
         else
         {
-            doError(l, "Keys in table-argument to celestia:setlabelflags() must be strings");
+            Celx_DoError(l, "Keys in table-argument to celestia:setlabelflags() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -5033,15 +1718,15 @@ static int celestia_setlabelflags(lua_State* l)
         }
         else
         {
-            doError(l, "Values in table-argument to celestia:setlabelflags() must be boolean");
+            Celx_DoError(l, "Values in table-argument to celestia:setlabelflags() must be boolean");
         }
-        if (LabelFlagMap.count(key) == 0)
+        if (CelxLua::LabelFlagMap.count(key) == 0)
         {
             cerr << "Unknown key: " << key << "\n";
         }
         else
         {
-            int flag = LabelFlagMap[key];
+            int flag = CelxLua::LabelFlagMap[key];
             if (value)
             {
                 labelFlags |= flag;
@@ -5061,12 +1746,12 @@ static int celestia_setlabelflags(lua_State* l)
 
 static int celestia_getlabelflags(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getlabelflags()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getlabelflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    FlagMap::const_iterator it = LabelFlagMap.begin();
+    CelxLua::FlagMap::const_iterator it = CelxLua::LabelFlagMap.begin();
     const int labelFlags = appCore->getRenderer()->getLabelMode();
-    while (it != LabelFlagMap.end())
+    while (it != CelxLua::LabelFlagMap.end())
     {
         string key = it->first;
         lua_pushstring(l, key.c_str());
@@ -5079,11 +1764,11 @@ static int celestia_getlabelflags(lua_State* l)
 
 static int celestia_setorbitflags(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:setorbitflags()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setorbitflags()");
     CelestiaCore* appCore = this_celestia(l);
     if (!lua_istable(l, 2))
     {
-        doError(l, "Argument to celestia:setorbitflags() must be a table");
+        Celx_DoError(l, "Argument to celestia:setorbitflags() must be a table");
     }
 
     int orbitFlags = appCore->getRenderer()->getOrbitMask();
@@ -5098,7 +1783,7 @@ static int celestia_setorbitflags(lua_State* l)
         }
         else
         {
-            doError(l, "Keys in table-argument to celestia:setorbitflags() must be strings");
+            Celx_DoError(l, "Keys in table-argument to celestia:setorbitflags() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -5106,15 +1791,15 @@ static int celestia_setorbitflags(lua_State* l)
         }
         else
         {
-            doError(l, "Values in table-argument to celestia:setorbitflags() must be boolean");
+            Celx_DoError(l, "Values in table-argument to celestia:setorbitflags() must be boolean");
         }
-        if (BodyTypeMap.count(key) == 0)
+        if (CelxLua::BodyTypeMap.count(key) == 0)
         {
             cerr << "Unknown key: " << key << "\n";
         }
         else
         {
-            int flag = BodyTypeMap[key];
+            int flag = CelxLua::BodyTypeMap[key];
             if (value)
             {
                 orbitFlags |= flag;
@@ -5132,12 +1817,12 @@ static int celestia_setorbitflags(lua_State* l)
 
 static int celestia_getorbitflags(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getorbitflags()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getorbitflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    FlagMap::const_iterator it = BodyTypeMap.begin();
+    CelxLua::FlagMap::const_iterator it = CelxLua::BodyTypeMap.begin();
     const int orbitFlags = appCore->getRenderer()->getOrbitMask();
-    while (it != BodyTypeMap.end())
+    while (it != CelxLua::BodyTypeMap.end())
     {
         string key = it->first;
         lua_pushstring(l, key.c_str());
@@ -5150,11 +1835,11 @@ static int celestia_getorbitflags(lua_State* l)
 
 static int celestia_setoverlayelements(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:setoverlayelements()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setoverlayelements()");
     CelestiaCore* appCore = this_celestia(l);
     if (!lua_istable(l, 2))
     {
-        doError(l, "Argument to celestia:setoverlayelements() must be a table");
+        Celx_DoError(l, "Argument to celestia:setoverlayelements() must be a table");
     }
 
     int overlayElements = appCore->getOverlayElements();
@@ -5169,7 +1854,7 @@ static int celestia_setoverlayelements(lua_State* l)
         }
         else
         {
-            doError(l, "Keys in table-argument to celestia:setoverlayelements() must be strings");
+            Celx_DoError(l, "Keys in table-argument to celestia:setoverlayelements() must be strings");
         }
         if (lua_isboolean(l, -1))
         {
@@ -5177,15 +1862,15 @@ static int celestia_setoverlayelements(lua_State* l)
         }
         else
         {
-            doError(l, "Values in table-argument to celestia:setoverlayelements() must be boolean");
+            Celx_DoError(l, "Values in table-argument to celestia:setoverlayelements() must be boolean");
         }
-        if (OverlayElementMap.count(key) == 0)
+        if (CelxLua::OverlayElementMap.count(key) == 0)
         {
             cerr << "Unknown key: " << key << "\n";
         }
         else
         {
-            int element = OverlayElementMap[key];
+            int element = CelxLua::OverlayElementMap[key];
             if (value)
             {
                 overlayElements |= element;
@@ -5203,12 +1888,12 @@ static int celestia_setoverlayelements(lua_State* l)
 
 static int celestia_getoverlayelements(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getoverlayelements()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getoverlayelements()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    FlagMap::const_iterator it = OverlayElementMap.begin();
+    CelxLua::FlagMap::const_iterator it = CelxLua::OverlayElementMap.begin();
     const int overlayElements = appCore->getOverlayElements();
-    while (it != OverlayElementMap.end())
+    while (it != CelxLua::OverlayElementMap.end())
     {
         string key = it->first;
         lua_pushstring(l, key.c_str());
@@ -5221,27 +1906,27 @@ static int celestia_getoverlayelements(lua_State* l)
 
 static int celestia_setlabelcolor(lua_State* l)
 {
-    checkArgs(l, 5, 5, "Four arguments expected for celestia:setlabelcolor()");
+    Celx_CheckArgs(l, 5, 5, "Four arguments expected for celestia:setlabelcolor()");
     if (!lua_isstring(l, 2))
     {
-        doError(l, "First argument to celestia:setlabelstyle() must be a string");
+        Celx_DoError(l, "First argument to celestia:setlabelstyle() must be a string");
     }
 
     Color* color = NULL;
     string key;
     key = lua_tostring(l, 2);
-    if (LabelColorMap.count(key) == 0)
+    if (CelxLua::LabelColorMap.count(key) == 0)
     {
         cerr << "Unknown label style: " << key << "\n";
     }
     else
     {
-        color = LabelColorMap[key];
+        color = CelxLua::LabelColorMap[key];
     }
 
-    double red     = safeGetNumber(l, 3, AllErrors, "setlabelcolor: color values must be numbers");
-    double green   = safeGetNumber(l, 4, AllErrors, "setlabelcolor: color values must be numbers");
-    double blue    = safeGetNumber(l, 5, AllErrors, "setlabelcolor: color values must be numbers");
+    double red     = Celx_SafeGetNumber(l, 3, AllErrors, "setlabelcolor: color values must be numbers");
+    double green   = Celx_SafeGetNumber(l, 4, AllErrors, "setlabelcolor: color values must be numbers");
+    double blue    = Celx_SafeGetNumber(l, 5, AllErrors, "setlabelcolor: color values must be numbers");
 
     // opacity currently not settable
     double opacity = 1.0;
@@ -5257,27 +1942,27 @@ static int celestia_setlabelcolor(lua_State* l)
 
 static int celestia_setlinecolor(lua_State* l)
 {
-    checkArgs(l, 5, 5, "Four arguments expected for celestia:setlinecolor()");
+    Celx_CheckArgs(l, 5, 5, "Four arguments expected for celestia:setlinecolor()");
     if (!lua_isstring(l, 2))
     {
-        doError(l, "First argument to celestia:setlinecolor() must be a string");
+        Celx_DoError(l, "First argument to celestia:setlinecolor() must be a string");
     }
 
     Color* color = NULL;
     string key;
     key = lua_tostring(l, 2);
-    if (LineColorMap.count(key) == 0)
+    if (CelxLua::LineColorMap.count(key) == 0)
     {
         cerr << "Unknown line style: " << key << "\n";
     }
     else
     {
-        color = LineColorMap[key];
+        color = CelxLua::LineColorMap[key];
     }
 
-    double red     = safeGetNumber(l, 3, AllErrors, "setlinecolor: color values must be numbers");
-    double green   = safeGetNumber(l, 4, AllErrors, "setlinecolor: color values must be numbers");
-    double blue    = safeGetNumber(l, 5, AllErrors, "setlinecolor: color values must be numbers");
+    double red     = Celx_SafeGetNumber(l, 3, AllErrors, "setlinecolor: color values must be numbers");
+    double green   = Celx_SafeGetNumber(l, 4, AllErrors, "setlinecolor: color values must be numbers");
+    double blue    = Celx_SafeGetNumber(l, 5, AllErrors, "setlinecolor: color values must be numbers");
 
     // opacity currently not settable
     double opacity = 1.0;
@@ -5293,9 +1978,9 @@ static int celestia_setlinecolor(lua_State* l)
 
 static int celestia_setfaintestvisible(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
     CelestiaCore* appCore = this_celestia(l);
-    float faintest = (float)safeGetNumber(l, 2, AllErrors, "Argument to celestia:setfaintestvisible() must be a number");
+    float faintest = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setfaintestvisible() must be a number");
     if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
         faintest = min(15.0f, max(1.0f, faintest));
@@ -5313,7 +1998,7 @@ static int celestia_setfaintestvisible(lua_State* l)
 
 static int celestia_getfaintestvisible(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
     CelestiaCore* appCore = this_celestia(l);
     if ((appCore->getRenderer()->getRenderFlags() & Renderer::ShowAutoMag) == 0)
     {
@@ -5328,8 +2013,8 @@ static int celestia_getfaintestvisible(lua_State* l)
 
 static int celestia_setgalaxylightgain(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:setgalaxylightgain()");
-    float lightgain = (float)safeGetNumber(l, 2, AllErrors, "Argument to celestia:setgalaxylightgain() must be a number");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setgalaxylightgain()");
+    float lightgain = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setgalaxylightgain() must be a number");
     lightgain = min(1.0f, max(0.0f, lightgain));
     Galaxy::setLightGain(lightgain);
 
@@ -5338,7 +2023,7 @@ static int celestia_setgalaxylightgain(lua_State* l)
 
 static int celestia_getgalaxylightgain(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getgalaxylightgain()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getgalaxylightgain()");
     lua_pushnumber(l, Galaxy::getLightGain());
 
     return 1;
@@ -5346,9 +2031,9 @@ static int celestia_getgalaxylightgain(lua_State* l)
 
 static int celestia_setminfeaturesize(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:setminfeaturesize()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setminfeaturesize()");
     CelestiaCore* appCore = this_celestia(l);
-    float minFeatureSize = (float)safeGetNumber(l, 2, AllErrors, "Argument to celestia:setminfeaturesize() must be a number");
+    float minFeatureSize = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setminfeaturesize() must be a number");
     minFeatureSize = max(0.0f, minFeatureSize);
     appCore->getRenderer()->setMinimumFeatureSize(minFeatureSize);
     return 0;
@@ -5356,7 +2041,7 @@ static int celestia_setminfeaturesize(lua_State* l)
 
 static int celestia_getminfeaturesize(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getminfeaturesize()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getminfeaturesize()");
     CelestiaCore* appCore = this_celestia(l);
     lua_pushnumber(l, appCore->getRenderer()->getMinimumFeatureSize());
     return 1;
@@ -5364,7 +2049,7 @@ static int celestia_getminfeaturesize(lua_State* l)
 
 static int celestia_getobserver(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getobserver()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getobserver()");
 
     CelestiaCore* appCore = this_celestia(l);
     Observer* o = appCore->getSimulation()->getActiveObserver();
@@ -5378,7 +2063,7 @@ static int celestia_getobserver(lua_State* l)
 
 static int celestia_getobservers(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getobservers()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getobservers()");
     CelestiaCore* appCore = this_celestia(l);
 
     vector<Observer*> observer_list;
@@ -5395,7 +2080,7 @@ static int celestia_getobservers(lua_State* l)
 
 static int celestia_getselection(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected to celestia:getselection()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected to celestia:getselection()");
     CelestiaCore* appCore = this_celestia(l);
     Selection sel = appCore->getSimulation()->getSelection();
     object_new(l, sel);
@@ -5405,10 +2090,10 @@ static int celestia_getselection(lua_State* l)
 
 static int celestia_find(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for function celestia:find()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for function celestia:find()");
     if (!lua_isstring(l, 2))
     {
-        doError(l, "Argument to find must be a string");
+        Celx_DoError(l, "Argument to find must be a string");
     }
 
     CelestiaCore* appCore = this_celestia(l);
@@ -5422,7 +2107,7 @@ static int celestia_find(lua_State* l)
 
 static int celestia_select(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:select()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:select()");
     CelestiaCore* appCore = this_celestia(l);
 
     Simulation* sim = appCore->getSimulation();
@@ -5440,7 +2125,7 @@ static int celestia_select(lua_State* l)
 
 static int celestia_mark(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:mark");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:mark");
 
     CelestiaCore* appCore = this_celestia(l);
     Simulation* sim = appCore->getSimulation();
@@ -5453,7 +2138,7 @@ static int celestia_mark(lua_State* l)
     }
     else
     {
-        doError(l, "Argument to celestia:mark must be an object");
+        Celx_DoError(l, "Argument to celestia:mark must be an object");
     }
 
     return 0;
@@ -5461,7 +2146,7 @@ static int celestia_mark(lua_State* l)
 
 static int celestia_unmark(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:unmark");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:unmark");
 
     CelestiaCore* appCore = this_celestia(l);
     Simulation* sim = appCore->getSimulation();
@@ -5473,7 +2158,7 @@ static int celestia_unmark(lua_State* l)
     }
     else
     {
-        doError(l, "Argument to celestia:unmark must be an object");
+        Celx_DoError(l, "Argument to celestia:unmark must be an object");
     }
 
     return 0;
@@ -5481,7 +2166,7 @@ static int celestia_unmark(lua_State* l)
 
 static int celestia_gettime(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No argument expected to function celestia:gettime");
+    Celx_CheckArgs(l, 1, 1, "No argument expected to function celestia:gettime");
 
     CelestiaCore* appCore = this_celestia(l);
     Simulation* sim = appCore->getSimulation();
@@ -5492,7 +2177,7 @@ static int celestia_gettime(lua_State* l)
 
 static int celestia_gettimescale(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No argument expected to function celestia:gettimescale");
+    Celx_CheckArgs(l, 1, 1, "No argument expected to function celestia:gettimescale");
 
     CelestiaCore* appCore = this_celestia(l);
     lua_pushnumber(l, appCore->getSimulation()->getTimeScale());
@@ -5502,10 +2187,10 @@ static int celestia_gettimescale(lua_State* l)
 
 static int celestia_settime(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:settime");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:settime");
 
     CelestiaCore* appCore = this_celestia(l);
-    double t = safeGetNumber(l, 2, AllErrors, "First arg to celestia:settime must be a number");
+    double t = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:settime must be a number");
     appCore->getSimulation()->setTime(t);
 
     return 0;
@@ -5513,10 +2198,10 @@ static int celestia_settime(lua_State* l)
 
 static int celestia_settimescale(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:settimescale");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:settimescale");
 
     CelestiaCore* appCore = this_celestia(l);
-    double t = safeGetNumber(l, 2, AllErrors, "Second arg to celestia:settimescale must be a number");
+    double t = Celx_SafeGetNumber(l, 2, AllErrors, "Second arg to celestia:settimescale must be a number");
     appCore->getSimulation()->setTimeScale(t);
 
     return 0;
@@ -5524,17 +2209,17 @@ static int celestia_settimescale(lua_State* l)
 
 static int celestia_tojulianday(lua_State* l)
 {
-    checkArgs(l, 2, 7, "Wrong number of arguments to function celestia:tojulianday");
+    Celx_CheckArgs(l, 2, 7, "Wrong number of arguments to function celestia:tojulianday");
 
     // for error checking only:
     this_celestia(l);
 
-    int year = (int)safeGetNumber(l, 2, AllErrors, "First arg to celestia:tojulianday must be a number", 0.0);
-    int month = (int)safeGetNumber(l, 3, WrongType, "Second arg to celestia:tojulianday must be a number", 1.0);
-    int day = (int)safeGetNumber(l, 4, WrongType, "Third arg to celestia:tojulianday must be a number", 1.0);
-    int hour = (int)safeGetNumber(l, 5, WrongType, "Fourth arg to celestia:tojulianday must be a number", 0.0);
-    int minute = (int)safeGetNumber(l, 6, WrongType, "Fifth arg to celestia:tojulianday must be a number", 0.0);
-    double seconds = safeGetNumber(l, 7, WrongType, "Sixth arg to celestia:tojulianday must be a number", 0.0);
+    int year = (int)Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:tojulianday must be a number", 0.0);
+    int month = (int)Celx_SafeGetNumber(l, 3, WrongType, "Second arg to celestia:tojulianday must be a number", 1.0);
+    int day = (int)Celx_SafeGetNumber(l, 4, WrongType, "Third arg to celestia:tojulianday must be a number", 1.0);
+    int hour = (int)Celx_SafeGetNumber(l, 5, WrongType, "Fourth arg to celestia:tojulianday must be a number", 0.0);
+    int minute = (int)Celx_SafeGetNumber(l, 6, WrongType, "Fifth arg to celestia:tojulianday must be a number", 0.0);
+    double seconds = Celx_SafeGetNumber(l, 7, WrongType, "Sixth arg to celestia:tojulianday must be a number", 0.0);
 
     astro::Date date(year, month, day);
     date.hour = hour;
@@ -5550,12 +2235,12 @@ static int celestia_tojulianday(lua_State* l)
 
 static int celestia_fromjulianday(lua_State* l)
 {
-    checkArgs(l, 2, 2, "Wrong number of arguments to function celestia:fromjulianday");
+    Celx_CheckArgs(l, 2, 2, "Wrong number of arguments to function celestia:fromjulianday");
 
     // for error checking only:
     this_celestia(l);
 
-    double jd = safeGetNumber(l, 2, AllErrors, "First arg to celestia:fromjulianday must be a number", 0.0);
+    double jd = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:fromjulianday must be a number", 0.0);
     astro::Date date(jd);
 
     lua_newtable(l);
@@ -5575,17 +2260,17 @@ static int celestia_fromjulianday(lua_State* l)
 // celestia_tdbtoutc.
 static int celestia_utctotdb(lua_State* l)
 {
-    checkArgs(l, 2, 7, "Wrong number of arguments to function celestia:utctotdb");
+    Celx_CheckArgs(l, 2, 7, "Wrong number of arguments to function celestia:utctotdb");
 
     // for error checking only:
     this_celestia(l);
 
-    int year = (int) safeGetNumber(l, 2, AllErrors, "First arg to celestia:utctotdb must be a number", 0.0);
-    int month = (int) safeGetNumber(l, 3, WrongType, "Second arg to celestia:utctotdb must be a number", 1.0);
-    int day = (int) safeGetNumber(l, 4, WrongType, "Third arg to celestia:utctotdb must be a number", 1.0);
-    int hour = (int)safeGetNumber(l, 5, WrongType, "Fourth arg to celestia:utctotdb must be a number", 0.0);
-    int minute = (int)safeGetNumber(l, 6, WrongType, "Fifth arg to celestia:utctotdb must be a number", 0.0);
-    double seconds = safeGetNumber(l, 7, WrongType, "Sixth arg to celestia:utctotdb must be a number", 0.0);
+    int year = (int) Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:utctotdb must be a number", 0.0);
+    int month = (int) Celx_SafeGetNumber(l, 3, WrongType, "Second arg to celestia:utctotdb must be a number", 1.0);
+    int day = (int) Celx_SafeGetNumber(l, 4, WrongType, "Third arg to celestia:utctotdb must be a number", 1.0);
+    int hour = (int)Celx_SafeGetNumber(l, 5, WrongType, "Fourth arg to celestia:utctotdb must be a number", 0.0);
+    int minute = (int)Celx_SafeGetNumber(l, 6, WrongType, "Fifth arg to celestia:utctotdb must be a number", 0.0);
+    double seconds = Celx_SafeGetNumber(l, 7, WrongType, "Sixth arg to celestia:utctotdb must be a number", 0.0);
 
     astro::Date date(year, month, day);
     date.hour = hour;
@@ -5603,12 +2288,12 @@ static int celestia_utctotdb(lua_State* l)
 // Convert a TDB Julian day to a UTC Julian date (table format)
 static int celestia_tdbtoutc(lua_State* l)
 {
-    checkArgs(l, 2, 2, "Wrong number of arguments to function celestia:tdbtoutc");
+    Celx_CheckArgs(l, 2, 2, "Wrong number of arguments to function celestia:tdbtoutc");
 
     // for error checking only:
     this_celestia(l);
 
-    double jd = safeGetNumber(l, 2, AllErrors, "First arg to celestia:tdbtoutc must be a number", 0.0);
+    double jd = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:tdbtoutc must be a number", 0.0);
     astro::Date date = astro::TDBtoUTC(jd);
 
     lua_newtable(l);
@@ -5625,8 +2310,8 @@ static int celestia_tdbtoutc(lua_State* l)
 
 static int celestia_getsystemtime(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No argument expected to function celestia:getsystemtime");
-
+    Celx_CheckArgs(l, 1, 1, "No argument expected to function celestia:getsystemtime");
+    
     time_t t = time(NULL);
     struct tm *gmt = gmtime(&t);
     if (gmt != NULL)
@@ -5638,17 +2323,17 @@ static int celestia_getsystemtime(lua_State* l)
         d.hour = gmt->tm_hour;
         d.minute = gmt->tm_min;
         d.seconds = (int) gmt->tm_sec;
-
+        
         lua_pushnumber(l, astro::UTCtoTDB(d));
     }
-
+    
     return 1;
 }
 
 
 static int celestia_unmarkall(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected to function celestia:unmarkall");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:unmarkall");
 
     CelestiaCore* appCore = this_celestia(l);
     Simulation* sim = appCore->getSimulation();
@@ -5659,7 +2344,7 @@ static int celestia_unmarkall(lua_State* l)
 
 static int celestia_getstarcount(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected to function celestia:getstarcount");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getstarcount");
 
     CelestiaCore* appCore = this_celestia(l);
     Universe* u = appCore->getSimulation()->getUniverse();
@@ -5675,7 +2360,7 @@ static int celestia_stars_iter(lua_State* l)
     CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
     if (appCore == NULL)
     {
-        doError(l, "Bad celestia object!");
+        Celx_DoError(l, "Bad celestia object!");
         return 0;
     }
 
@@ -5718,7 +2403,7 @@ static int celestia_stars(lua_State* l)
 
 static int celestia_getdsocount(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected to function celestia:getdsocount");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getdsocount");
 
     CelestiaCore* appCore = this_celestia(l);
     Universe* u = appCore->getSimulation()->getUniverse();
@@ -5734,7 +2419,7 @@ static int celestia_dsos_iter(lua_State* l)
     CelestiaCore* appCore = to_celestia(l, lua_upvalueindex(1));
     if (appCore == NULL)
     {
-        doError(l, "Bad celestia object!");
+        Celx_DoError(l, "Bad celestia object!");
         return 0;
     }
 
@@ -5776,11 +2461,11 @@ static int celestia_dsos(lua_State* l)
 
 static int celestia_setambient(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected in celestia:setambient");
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setambient");
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
-    double ambientLightLevel = safeGetNumber(l, 2, AllErrors, "Argument to celestia:setambient must be a number");
+    double ambientLightLevel = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setambient must be a number");
     if (ambientLightLevel > 1.0)
         ambientLightLevel = 1.0;
     if (ambientLightLevel < 0.0)
@@ -5795,13 +2480,13 @@ static int celestia_setambient(lua_State* l)
 
 static int celestia_getambient(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No argument expected in celestia:setambient");
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:setambient");
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        doError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -5812,14 +2497,14 @@ static int celestia_getambient(lua_State* l)
 
 static int celestia_setminorbitsize(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected in celestia:setminorbitsize");
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setminorbitsize");
     CelestiaCore* appCore = this_celestia(l);
 
-    double orbitSize = safeGetNumber(l, 2, AllErrors, "Argument to celestia:setminorbitsize() must be a number");
+    double orbitSize = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setminorbitsize() must be a number");
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        doError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -5831,13 +2516,13 @@ static int celestia_setminorbitsize(lua_State* l)
 
 static int celestia_getminorbitsize(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No argument expected in celestia:getminorbitsize");
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getminorbitsize");
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        doError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -5848,14 +2533,14 @@ static int celestia_getminorbitsize(lua_State* l)
 
 static int celestia_setstardistancelimit(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected in celestia:setstardistancelimit");
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstardistancelimit");
     CelestiaCore* appCore = this_celestia(l);
 
-    double distanceLimit = safeGetNumber(l, 2, AllErrors, "Argument to celestia:setstardistancelimit() must be a number");
+    double distanceLimit = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setstardistancelimit() must be a number");
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        doError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -5866,13 +2551,13 @@ static int celestia_setstardistancelimit(lua_State* l)
 
 static int celestia_getstardistancelimit(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No argument expected in celestia:getstardistancelimit");
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getstardistancelimit");
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        doError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -5883,13 +2568,13 @@ static int celestia_getstardistancelimit(lua_State* l)
 
 static int celestia_getstarstyle(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No argument expected in celestia:getstarstyle");
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getstarstyle");
     CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        doError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -5911,14 +2596,14 @@ static int celestia_getstarstyle(lua_State* l)
 
 static int celestia_setstarstyle(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
     CelestiaCore* appCore = this_celestia(l);
 
-    string starStyle = safeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
+    string starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
     Renderer* renderer = appCore->getRenderer();
     if (renderer == NULL)
     {
-        doError(l, "Internal Error: renderer is NULL!");
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
     }
     else
     {
@@ -5936,7 +2621,7 @@ static int celestia_setstarstyle(lua_State* l)
         }
         else
         {
-            doError(l, "Invalid starstyle");
+            Celx_DoError(l, "Invalid starstyle");
         }
         appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
@@ -5946,10 +2631,10 @@ static int celestia_setstarstyle(lua_State* l)
 
 static int celestia_getstar(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:getstar");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:getstar");
 
     CelestiaCore* appCore = this_celestia(l);
-    double starIndex = safeGetNumber(l, 2, AllErrors, "First arg to celestia:getstar must be a number");
+    double starIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getstar must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
     Star* star = u->getStarCatalog()->getStar((uint32) starIndex);
     if (star == NULL)
@@ -5962,10 +2647,10 @@ static int celestia_getstar(lua_State* l)
 
 static int celestia_getdso(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:getdso");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:getdso");
 
     CelestiaCore* appCore = this_celestia(l);
-    double dsoIndex = safeGetNumber(l, 2, AllErrors, "First arg to celestia:getdso must be a number");
+    double dsoIndex = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:getdso must be a number");
     Universe* u = appCore->getSimulation()->getUniverse();
     DeepSkyObject* dso = u->getDSOCatalog()->getDSO((uint32) dsoIndex);
     if (dso == NULL)
@@ -5979,12 +2664,12 @@ static int celestia_getdso(lua_State* l)
 
 static int celestia_newvector(lua_State* l)
 {
-    checkArgs(l, 4, 4, "Expected 3 arguments for celestia:newvector");
+    Celx_CheckArgs(l, 4, 4, "Expected 3 arguments for celestia:newvector");
     // for error checking only:
     this_celestia(l);
-    double x = safeGetNumber(l, 2, AllErrors, "First arg to celestia:newvector must be a number");
-    double y = safeGetNumber(l, 3, AllErrors, "Second arg to celestia:newvector must be a number");
-    double z = safeGetNumber(l, 4, AllErrors, "Third arg to celestia:newvector must be a number");
+    double x = Celx_SafeGetNumber(l, 2, AllErrors, "First arg to celestia:newvector must be a number");
+    double y = Celx_SafeGetNumber(l, 3, AllErrors, "Second arg to celestia:newvector must be a number");
+    double z = Celx_SafeGetNumber(l, 4, AllErrors, "Third arg to celestia:newvector must be a number");
 
     vector_new(l, Vec3d(x,y,z));
 
@@ -5993,7 +2678,7 @@ static int celestia_newvector(lua_State* l)
 
 static int celestia_newposition(lua_State* l)
 {
-    checkArgs(l, 4, 4, "Expected 3 arguments for celestia:newposition");
+    Celx_CheckArgs(l, 4, 4, "Expected 3 arguments for celestia:newposition");
     // for error checking only:
     this_celestia(l);
     BigFix components[3];
@@ -6010,7 +2695,7 @@ static int celestia_newposition(lua_State* l)
         }
         else
         {
-            doError(l, "Arguments to celestia:newposition must be either numbers or strings");
+            Celx_DoError(l, "Arguments to celestia:newposition must be either numbers or strings");
         }
     }
 
@@ -6021,17 +2706,17 @@ static int celestia_newposition(lua_State* l)
 
 static int celestia_newrotation(lua_State* l)
 {
-    checkArgs(l, 3, 5, "Need 2 or 4 arguments for celestia:newrotation");
+    Celx_CheckArgs(l, 3, 5, "Need 2 or 4 arguments for celestia:newrotation");
     // for error checking only:
     this_celestia(l);
 
     if (lua_gettop(l) > 3)
     {
-        // if (lua_gettop == 4), safeGetNumber will catch the error
-        double w = safeGetNumber(l, 2, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
-        double x = safeGetNumber(l, 3, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
-        double y = safeGetNumber(l, 4, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
-        double z = safeGetNumber(l, 5, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        // if (lua_gettop == 4), Celx_SafeGetNumber will catch the error
+        double w = Celx_SafeGetNumber(l, 2, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        double x = Celx_SafeGetNumber(l, 3, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        double y = Celx_SafeGetNumber(l, 4, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
+        double z = Celx_SafeGetNumber(l, 5, AllErrors, "arguments to celestia:newrotation must either be (vec, number) or four numbers");
         Quatd q(w, x, y, z);
         rotation_new(l, q);
     }
@@ -6040,9 +2725,9 @@ static int celestia_newrotation(lua_State* l)
         Vec3d* v = to_vector(l, 2);
         if (v == NULL)
         {
-            doError(l, "newrotation: first argument must be a vector");
+            Celx_DoError(l, "newrotation: first argument must be a vector");
         }
-        double angle = safeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
+        double angle = Celx_SafeGetNumber(l, 3, AllErrors, "second argument to celestia:newrotation must be a number");
         Quatd q;
         q.setAxisAngle(*v, angle);
         rotation_new(l, q);
@@ -6052,7 +2737,7 @@ static int celestia_newrotation(lua_State* l)
 
 static int celestia_getscripttime(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for celestia:getscripttime");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getscripttime");
     // for error checking only:
     this_celestia(l);
 
@@ -6063,13 +2748,13 @@ static int celestia_getscripttime(lua_State* l)
 
 static int celestia_newframe(lua_State* l)
 {
-    checkArgs(l, 2, 4, "One to three arguments expected for function celestia:newframe");
+    Celx_CheckArgs(l, 2, 4, "One to three arguments expected for function celestia:newframe");
     int argc = lua_gettop(l);
 
     // for error checking only:
     this_celestia(l);
 
-    const char* coordsysName = safeGetString(l, 2, AllErrors, "newframe: first argument must be a string");
+    const char* coordsysName = Celx_SafeGetString(l, 2, AllErrors, "newframe: first argument must be a string");
     ObserverFrame::CoordinateSystem coordSys = parseCoordSys(coordsysName);
     Selection* ref = NULL;
     Selection* target = NULL;
@@ -6088,7 +2773,7 @@ static int celestia_newframe(lua_State* l)
 
         if (ref == NULL || target == NULL)
         {
-            doError(l, "newframe: two objects required for lock frame");
+            Celx_DoError(l, "newframe: two objects required for lock frame");
         }
 
         frame_new(l, ObserverFrame(coordSys, *ref, *target));
@@ -6099,7 +2784,7 @@ static int celestia_newframe(lua_State* l)
             ref = to_object(l, 3);
         if (ref == NULL)
         {
-            doError(l, "newframe: one object argument required for frame");
+            Celx_DoError(l, "newframe: one object argument required for frame");
         }
 
         frame_new(l, ObserverFrame(coordSys, *ref));
@@ -6110,12 +2795,12 @@ static int celestia_newframe(lua_State* l)
 
 static int celestia_requestkeyboard(lua_State* l)
 {
-    checkArgs(l, 2, 2, "Need one arguments for celestia:requestkeyboard");
+    Celx_CheckArgs(l, 2, 2, "Need one arguments for celestia:requestkeyboard");
     CelestiaCore* appCore = this_celestia(l);
 
     if (!lua_isboolean(l, 2))
     {
-        doError(l, "First argument for celestia:requestkeyboard must be a boolean");
+        Celx_DoError(l, "First argument for celestia:requestkeyboard must be a boolean");
     }
 
     int mode = appCore->getTextEnterMode();
@@ -6127,7 +2812,7 @@ static int celestia_requestkeyboard(lua_State* l)
         lua_gettable(l, LUA_GLOBALSINDEX);
         if (lua_isnil(l, -1))
         {
-            doError(l, "script requested keyboard, but did not provide callback");
+            Celx_DoError(l, "script requested keyboard, but did not provide callback");
         }
         lua_remove(l, -1);
 
@@ -6144,17 +2829,17 @@ static int celestia_requestkeyboard(lua_State* l)
 
 static int celestia_registereventhandler(lua_State* l)
 {
-    checkArgs(l, 3, 3, "Two arguments required for celestia:registereventhandler");
+    Celx_CheckArgs(l, 3, 3, "Two arguments required for celestia:registereventhandler");
     //CelestiaCore* appCore = this_celestia(l);
 
     if (!lua_isstring(l, 2))
     {
-        doError(l, "First argument for celestia:registereventhandler must be a string");
+        Celx_DoError(l, "First argument for celestia:registereventhandler must be a string");
     }
 
     if (!lua_isfunction(l, 3) && !lua_isnil(l, 3))
     {
-        doError(l, "Second argument for celestia:registereventhandler must be a function or nil");
+        Celx_DoError(l, "Second argument for celestia:registereventhandler must be a function or nil");
     }
 
     lua_pushstring(l, EventHandlers);
@@ -6163,7 +2848,7 @@ static int celestia_registereventhandler(lua_State* l)
     {
         // This should never happen--the table should be created when a new Celestia Lua
         // state is initialized.
-        doError(l, "Event handler table not created");
+        Celx_DoError(l, "Event handler table not created");
     }
 
     lua_pushvalue(l, 2);
@@ -6176,12 +2861,12 @@ static int celestia_registereventhandler(lua_State* l)
 
 static int celestia_geteventhandler(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for celestia:registereventhandler");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:registereventhandler");
     //CelestiaCore* appCore = this_celestia(l);
 
     if (!lua_isstring(l, 2))
     {
-        doError(l, "Argument to celestia:geteventhandler must be a string");
+        Celx_DoError(l, "Argument to celestia:geteventhandler must be a string");
     }
 
     lua_pushstring(l, EventHandlers);
@@ -6190,7 +2875,7 @@ static int celestia_geteventhandler(lua_State* l)
     {
         // This should never happen--the table should be created when a new Celestia Lua
         // state is initialized.
-        doError(l, "Event handler table not created");
+        Celx_DoError(l, "Event handler table not created");
     }
 
     lua_pushvalue(l, 2);
@@ -6201,18 +2886,18 @@ static int celestia_geteventhandler(lua_State* l)
 
 static int celestia_takescreenshot(lua_State* l)
 {
-    checkArgs(l, 1, 3, "Need 0 to 2 arguments for celestia:takescreenshot");
+    Celx_CheckArgs(l, 1, 3, "Need 0 to 2 arguments for celestia:takescreenshot");
     CelestiaCore* appCore = this_celestia(l);
     LuaState* luastate = getLuaStateObject(l);
     // make sure we don't timeout because of taking a screenshot:
     double timeToTimeout = luastate->timeout - luastate->getTime();
 
-    const char* filetype = safeGetString(l, 2, WrongType, "First argument to celestia:takescreenshot must be a string");
+    const char* filetype = Celx_SafeGetString(l, 2, WrongType, "First argument to celestia:takescreenshot must be a string");
     if (filetype == NULL)
         filetype = "png";
 
     // Let the script safely contribute one part of the filename:
-    const char* fileid_ptr = safeGetString(l, 3, WrongType, "Second argument to celestia:takescreenshot must be a string");
+    const char* fileid_ptr = Celx_SafeGetString(l, 3, WrongType, "Second argument to celestia:takescreenshot must be a string");
     if (fileid_ptr == NULL)
         fileid_ptr = "";
     string fileid(fileid_ptr);
@@ -6245,7 +2930,7 @@ static int celestia_takescreenshot(lua_State* l)
     sprintf(filenamestem, "screenshot-%s%06i", fileid.c_str(), luastate->screenshotCount);
 
     // Get the dimensions of the current viewport
-    int viewport[4];
+    GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
 #ifndef TARGET_OS_MAC
@@ -6273,15 +2958,15 @@ static int celestia_takescreenshot(lua_State* l)
 
 static int celestia_createcelscript(lua_State* l)
 {
-    checkArgs(l, 2, 2, "Need one argument for celestia:createcelscript()");
-    string scripttext = safeGetString(l, 2, AllErrors, "Argument to celestia:createcelscript() must be a string");
+    Celx_CheckArgs(l, 2, 2, "Need one argument for celestia:createcelscript()");
+    string scripttext = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:createcelscript() must be a string");
     return celscript_from_string(l, scripttext);
 }
 
 static int celestia_requestsystemaccess(lua_State* l)
 {
     // ignore possible argument for future extensions
-    checkArgs(l, 1, 2, "No argument expected for celestia:requestsystemaccess()");
+    Celx_CheckArgs(l, 1, 2, "No argument expected for celestia:requestsystemaccess()");
     this_celestia(l);
     LuaState* luastate = getLuaStateObject(l);
     luastate->requestIO();
@@ -6291,7 +2976,7 @@ static int celestia_requestsystemaccess(lua_State* l)
 static int celestia_getscriptpath(lua_State* l)
 {
     // ignore possible argument for future extensions
-    checkArgs(l, 1, 1, "No argument expected for celestia:requestsystemaccess()");
+    Celx_CheckArgs(l, 1, 1, "No argument expected for celestia:requestsystemaccess()");
     this_celestia(l);
     lua_pushstring(l, "celestia-scriptpath");
     lua_gettable(l, LUA_REGISTRYINDEX);
@@ -6307,78 +2992,78 @@ static int celestia_tostring(lua_State* l)
 
 static void CreateCelestiaMetaTable(lua_State* l)
 {
-    CreateClassMetatable(l, _Celestia);
+    Celx_CreateClassMetatable(l, Celx_Celestia);
 
-    RegisterMethod(l, "__tostring", celestia_tostring);
-    RegisterMethod(l, "flash", celestia_flash);
-    RegisterMethod(l, "print", celestia_print);
-    RegisterMethod(l, "gettextwidth", celestia_gettextwidth);
-    RegisterMethod(l, "show", celestia_show);
-    RegisterMethod(l, "setaltazimuthmode", celestia_setaltazimuthmode);
-    RegisterMethod(l, "getaltazimuthmode", celestia_getaltazimuthmode);
-    RegisterMethod(l, "hide", celestia_hide);
-    RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
-    RegisterMethod(l, "setrenderflags", celestia_setrenderflags);
-    RegisterMethod(l, "getscreendimension", celestia_getscreendimension);
-    RegisterMethod(l, "showlabel", celestia_showlabel);
-    RegisterMethod(l, "hidelabel", celestia_hidelabel);
-    RegisterMethod(l, "getlabelflags", celestia_getlabelflags);
-    RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
-    RegisterMethod(l, "getorbitflags", celestia_getorbitflags);
-    RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
-    RegisterMethod(l, "setlabelcolor", celestia_setlabelcolor);
-    RegisterMethod(l, "setlinecolor",  celestia_setlinecolor);
-    RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
-    RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
-    RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
-    RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
-    RegisterMethod(l, "getgalaxylightgain", celestia_getgalaxylightgain);
-    RegisterMethod(l, "setgalaxylightgain", celestia_setgalaxylightgain);
-    RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
-    RegisterMethod(l, "getminfeaturesize", celestia_getminfeaturesize);
-    RegisterMethod(l, "getobserver", celestia_getobserver);
-    RegisterMethod(l, "getobservers", celestia_getobservers);
-    RegisterMethod(l, "getselection", celestia_getselection);
-    RegisterMethod(l, "find", celestia_find);
-    RegisterMethod(l, "select", celestia_select);
-    RegisterMethod(l, "mark", celestia_mark);
-    RegisterMethod(l, "unmark", celestia_unmark);
-    RegisterMethod(l, "unmarkall", celestia_unmarkall);
-    RegisterMethod(l, "gettime", celestia_gettime);
-    RegisterMethod(l, "settime", celestia_settime);
-    RegisterMethod(l, "gettimescale", celestia_gettimescale);
-    RegisterMethod(l, "settimescale", celestia_settimescale);
-    RegisterMethod(l, "getambient", celestia_getambient);
-    RegisterMethod(l, "setambient", celestia_setambient);
-    RegisterMethod(l, "getminorbitsize", celestia_getminorbitsize);
-    RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
-    RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);
-    RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
-    RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
-    RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
-    RegisterMethod(l, "tojulianday", celestia_tojulianday);
-    RegisterMethod(l, "fromjulianday", celestia_fromjulianday);
-    RegisterMethod(l, "utctotdb", celestia_utctotdb);
-    RegisterMethod(l, "tdbtoutc", celestia_tdbtoutc);
-    RegisterMethod(l, "getsystemtime", celestia_getsystemtime);
-    RegisterMethod(l, "getstarcount", celestia_getstarcount);
-    RegisterMethod(l, "getdsocount", celestia_getdsocount);
-    RegisterMethod(l, "getstar", celestia_getstar);
-    RegisterMethod(l, "getdso", celestia_getdso);
-    RegisterMethod(l, "newframe", celestia_newframe);
-    RegisterMethod(l, "newvector", celestia_newvector);
-    RegisterMethod(l, "newposition", celestia_newposition);
-    RegisterMethod(l, "newrotation", celestia_newrotation);
-    RegisterMethod(l, "getscripttime", celestia_getscripttime);
-    RegisterMethod(l, "requestkeyboard", celestia_requestkeyboard);
-    RegisterMethod(l, "takescreenshot", celestia_takescreenshot);
-    RegisterMethod(l, "createcelscript", celestia_createcelscript);
-    RegisterMethod(l, "requestsystemaccess", celestia_requestsystemaccess);
-    RegisterMethod(l, "getscriptpath", celestia_getscriptpath);
-    RegisterMethod(l, "registereventhandler", celestia_registereventhandler);
-    RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
-    RegisterMethod(l, "stars", celestia_stars);
-    RegisterMethod(l, "dsos", celestia_dsos);
+    Celx_RegisterMethod(l, "__tostring", celestia_tostring);
+    Celx_RegisterMethod(l, "flash", celestia_flash);
+    Celx_RegisterMethod(l, "print", celestia_print);
+    Celx_RegisterMethod(l, "gettextwidth", celestia_gettextwidth);
+    Celx_RegisterMethod(l, "show", celestia_show);
+    Celx_RegisterMethod(l, "setaltazimuthmode", celestia_setaltazimuthmode);
+    Celx_RegisterMethod(l, "getaltazimuthmode", celestia_getaltazimuthmode);
+    Celx_RegisterMethod(l, "hide", celestia_hide);
+    Celx_RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
+    Celx_RegisterMethod(l, "setrenderflags", celestia_setrenderflags);
+    Celx_RegisterMethod(l, "getscreendimension", celestia_getscreendimension);
+    Celx_RegisterMethod(l, "showlabel", celestia_showlabel);
+    Celx_RegisterMethod(l, "hidelabel", celestia_hidelabel);
+    Celx_RegisterMethod(l, "getlabelflags", celestia_getlabelflags);
+    Celx_RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
+    Celx_RegisterMethod(l, "getorbitflags", celestia_getorbitflags);
+    Celx_RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
+    Celx_RegisterMethod(l, "setlabelcolor", celestia_setlabelcolor);
+    Celx_RegisterMethod(l, "setlinecolor",  celestia_setlinecolor);
+    Celx_RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
+    Celx_RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
+    Celx_RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
+    Celx_RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
+    Celx_RegisterMethod(l, "getgalaxylightgain", celestia_getgalaxylightgain);
+    Celx_RegisterMethod(l, "setgalaxylightgain", celestia_setgalaxylightgain);
+    Celx_RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
+    Celx_RegisterMethod(l, "getminfeaturesize", celestia_getminfeaturesize);
+    Celx_RegisterMethod(l, "getobserver", celestia_getobserver);
+    Celx_RegisterMethod(l, "getobservers", celestia_getobservers);
+    Celx_RegisterMethod(l, "getselection", celestia_getselection);
+    Celx_RegisterMethod(l, "find", celestia_find);
+    Celx_RegisterMethod(l, "select", celestia_select);
+    Celx_RegisterMethod(l, "mark", celestia_mark);
+    Celx_RegisterMethod(l, "unmark", celestia_unmark);
+    Celx_RegisterMethod(l, "unmarkall", celestia_unmarkall);
+    Celx_RegisterMethod(l, "gettime", celestia_gettime);
+    Celx_RegisterMethod(l, "settime", celestia_settime);
+    Celx_RegisterMethod(l, "gettimescale", celestia_gettimescale);
+    Celx_RegisterMethod(l, "settimescale", celestia_settimescale);
+    Celx_RegisterMethod(l, "getambient", celestia_getambient);
+    Celx_RegisterMethod(l, "setambient", celestia_setambient);
+    Celx_RegisterMethod(l, "getminorbitsize", celestia_getminorbitsize);
+    Celx_RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
+    Celx_RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);
+    Celx_RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
+    Celx_RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
+    Celx_RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
+    Celx_RegisterMethod(l, "tojulianday", celestia_tojulianday);
+    Celx_RegisterMethod(l, "fromjulianday", celestia_fromjulianday);
+    Celx_RegisterMethod(l, "utctotdb", celestia_utctotdb);
+    Celx_RegisterMethod(l, "tdbtoutc", celestia_tdbtoutc);
+    Celx_RegisterMethod(l, "getsystemtime", celestia_getsystemtime);
+    Celx_RegisterMethod(l, "getstarcount", celestia_getstarcount);
+    Celx_RegisterMethod(l, "getdsocount", celestia_getdsocount);
+    Celx_RegisterMethod(l, "getstar", celestia_getstar);
+    Celx_RegisterMethod(l, "getdso", celestia_getdso);
+    Celx_RegisterMethod(l, "newframe", celestia_newframe);
+    Celx_RegisterMethod(l, "newvector", celestia_newvector);
+    Celx_RegisterMethod(l, "newposition", celestia_newposition);
+    Celx_RegisterMethod(l, "newrotation", celestia_newrotation);
+    Celx_RegisterMethod(l, "getscripttime", celestia_getscripttime);
+    Celx_RegisterMethod(l, "requestkeyboard", celestia_requestkeyboard);
+    Celx_RegisterMethod(l, "takescreenshot", celestia_takescreenshot);
+    Celx_RegisterMethod(l, "createcelscript", celestia_createcelscript);
+    Celx_RegisterMethod(l, "requestsystemaccess", celestia_requestsystemaccess);
+    Celx_RegisterMethod(l, "getscriptpath", celestia_getscriptpath);
+    Celx_RegisterMethod(l, "registereventhandler", celestia_registereventhandler);
+    Celx_RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
+    Celx_RegisterMethod(l, "stars", celestia_stars);
+    Celx_RegisterMethod(l, "dsos", celestia_dsos);
 
     lua_pop(l, 1);
 }
@@ -6388,7 +3073,7 @@ static void loadLuaLibs(lua_State* state);
 // ==================== Initialization ====================
 bool LuaState::init(CelestiaCore* appCore)
 {
-    initMaps();
+    CelxLua::initMaps();
 
     // Import the base, table, string, and math libraries
 #if LUA_VER >= 0x050100
@@ -6475,246 +3160,6 @@ void LuaState::setLuaPath(const string& s)
 }
 
 
-// ==================== OpenGL ====================
-
-static int glu_LookAt(lua_State* l)
-{
-    checkArgs(l, 9, 9, "Nine arguments expected for glu.LookAt()");
-    float ix = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Frustum must be a number", 0.0);
-    float iy = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Frustum must be a number", 0.0);
-    float iz = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Frustum must be a number", 0.0);
-    float cx = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
-    float cy = (float)safeGetNumber(l, 5, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
-    float cz = (float)safeGetNumber(l, 6, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
-    float ux = (float)safeGetNumber(l, 7, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
-    float uy = (float)safeGetNumber(l, 8, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
-    float uz = (float)safeGetNumber(l, 9, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
-	gluLookAt(ix,iy,iz,cx,cy,cz,ux,uy,uz);
-    return 0;
-}
-
-static int gl_Frustum(lua_State* l)
-{
-    checkArgs(l, 6, 6, "Six arguments expected for gl.Frustum()");
-    float ll = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Frustum must be a number", 0.0);
-    float r = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Frustum must be a number", 0.0);
-    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Frustum must be a number", 0.0);
-    float t = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Frustum must be a number", 0.0);
-    float n = (float)safeGetNumber(l, 5, WrongType, "argument 5 to gl.Frustum must be a number", 0.0);
-    float f = (float)safeGetNumber(l, 6, WrongType, "argument 6 to gl.Frustum must be a number", 0.0);
-	glFrustum(ll,r,b,t,n,f);
-    return 0;
-}
-
-static int gl_Ortho(lua_State* l)
-{
-    checkArgs(l, 6, 6, "Six arguments expected for gl.Ortho()");
-    float ll = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Ortho must be a number", 0.0);
-    float r = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Ortho must be a number", 0.0);
-    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Ortho must be a number", 0.0);
-    float t = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Ortho must be a number", 0.0);
-    float n = (float)safeGetNumber(l, 5, WrongType, "argument 5 to gl.Ortho must be a number", 0.0);
-    float f = (float)safeGetNumber(l, 6, WrongType, "argument 6 to gl.Ortho must be a number", 0.0);
-	glOrtho(ll,r,b,t,n,f);
-    return 0;
-}
-
-static int glu_Ortho2D(lua_State* l)
-{
-    checkArgs(l, 4, 4, "Six arguments expected for gl.Ortho2D()");
-    float ll = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Ortho must be a number", 0.0);
-    float r = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Ortho must be a number", 0.0);
-    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Ortho must be a number", 0.0);
-    float t = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Ortho must be a number", 0.0);
-	gluOrtho2D(ll,r,b,t);
-    return 0;
-}
-
-static int gl_TexCoord(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Two arguments expected for gl.TexCoord()");
-    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.TexCoord must be a number", 0.0);
-    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.TexCoord must be a number", 0.0);
-	glTexCoord2f(x,y);
-    return 0;
-}
-
-static int gl_TexParameter(lua_State* l)
-{
-    checkArgs(l, 3, 3, "Three arguments expected for gl.TexParameter()");
-
-    // TODO: Need to ensure that these values are integers, or better yet use
-    // names.
-    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.TexParameter must be a number", 0.0);
-    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.TexParameter must be a number", 0.0);
-    float z = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.TexParameter must be a number", 0.0);
-    glTexParameteri((GLint) x, (GLenum) y, (GLenum) z);
-    return 0;
-}
-
-static int gl_Vertex(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Two arguments expected for gl.Vertex()");
-    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Vertex must be a number", 0.0);
-    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Vertex must be a number", 0.0);
-	glVertex2f(x,y);
-    return 0;
-}
-
-static int gl_Color(lua_State* l)
-{
-    checkArgs(l, 4, 4, "Four arguments expected for gl.Color()");
-    float r = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Color must be a number", 0.0);
-    float g = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Color must be a number", 0.0);
-    float b = (float)safeGetNumber(l, 3, WrongType, "argument 3 to gl.Color must be a number", 0.0);
-    float a = (float)safeGetNumber(l, 4, WrongType, "argument 4 to gl.Color must be a number", 0.0);
-	glColor4f(r,g,b,a);
-//	glColor4f(0.8f, 0.5f, 0.5f, 1.0f);
-    return 0;
-}
-
-static int gl_LineWidth(lua_State* l)
-{
-    checkArgs(l, 1, 1, "One argument expected for gl.LineWidth()");
-    float n = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.LineWidth must be a number", 1.0);
-		glLineWidth(n);
-    return 0;
-}
-
-static int gl_Translate(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Two arguments expected for gl.Translate()");
-    float x = (float)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Translate must be a number", 0.0);
-    float y = (float)safeGetNumber(l, 2, WrongType, "argument 2 to gl.Translate must be a number", 0.0);
-	glTranslatef(x,y,0.0f);
-    return 0;
-}
-
-static int gl_BlendFunc(lua_State* l)
-{
-    checkArgs(l, 2, 2, "Two arguments expected for gl.BlendFunc()");
-    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.BlendFunc must be a number", 0.0);
-    int j = (int)safeGetNumber(l, 2, WrongType, "argument 2 to gl.BlendFunc must be a number", 0.0);
-	glBlendFunc(i,j);
-    return 0;
-}
-
-static int gl_Begin(lua_State* l)
-{
-    checkArgs(l, 1, 1, "One argument expected for gl.Begin()");
-    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Begin must be a number", 0.0);
-	glBegin(i);
-    return 0;
-}
-
-static int gl_End(lua_State* l)
-{
-    checkArgs(l, 0, 0, "No arguments expected for gl.PopMatrix()");
-    glEnd();
-    return 0;
-}
-
-static int gl_Enable(lua_State* l)
-{
-    checkArgs(l, 1, 1, "One argument expected for gl.Enable()");
-    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Enable must be a number", 0.0);
-	glEnable(i);
-    return 0;
-}
-
-static int gl_Disable(lua_State* l)
-{
-    checkArgs(l, 1, 1, "One argument expected for gl.Disable()");
-    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.Disable must be a number", 0.0);
-	glDisable(i);
-    return 0;
-}
-
-static int gl_MatrixMode(lua_State* l)
-{
-    checkArgs(l, 1, 1, "One argument expected for gl.MatrixMode()");
-    int i = (int)safeGetNumber(l, 1, WrongType, "argument 1 to gl.MatrixMode must be a number", 0.0);
-	glMatrixMode(i);
-    return 0;
-}
-
-static int gl_PopMatrix(lua_State* l)
-{
-    checkArgs(l, 0, 0, "No arguments expected for gl.PopMatrix()");
-    glPopMatrix();
-    return 0;
-}
-
-static int gl_LoadIdentity(lua_State* l)
-{
-    checkArgs(l, 0, 0, "No arguments expected for gl.LoadIdentity()");
-    glLoadIdentity();
-    return 0;
-}
-
-static int gl_PushMatrix(lua_State* l)
-{
-    checkArgs(l, 0, 0, "No arguments expected for gl.PushMatrix()");
-    glPushMatrix();
-    return 0;
-}
-
-static void RegisterValue(lua_State* l, const char* name, float n)
-{
-	lua_pushstring(l, name);
-	lua_pushnumber(l, n);
-	lua_settable(l, -3);
-}
-
-static void gl_loadlib(lua_State* l)
-{
-    lua_pushstring(l, "gl");
-    lua_newtable(l);
-
-    RegisterMethod(l, "Frustum", gl_Frustum);
-    RegisterMethod(l, "Ortho", gl_Ortho);
-    RegisterMethod(l, "Color", gl_Color);
-    RegisterMethod(l, "LineWidth", gl_LineWidth);
-    RegisterMethod(l, "TexCoord", gl_TexCoord);
-    RegisterMethod(l, "TexParameter", gl_TexParameter);
-    RegisterMethod(l, "Vertex", gl_Vertex);
-    RegisterMethod(l, "Translate", gl_Translate);
-    RegisterMethod(l, "BlendFunc", gl_BlendFunc);
-    RegisterMethod(l, "Begin", gl_Begin);
-    RegisterMethod(l, "End", gl_End);
-    RegisterMethod(l, "Enable", gl_Enable);
-    RegisterMethod(l, "Disable", gl_Disable);
-    RegisterMethod(l, "MatrixMode", gl_MatrixMode);
-    RegisterMethod(l, "PopMatrix", gl_PopMatrix);
-    RegisterMethod(l, "LoadIdentity", gl_LoadIdentity);
-    RegisterMethod(l, "PushMatrix", gl_PushMatrix);
-
-    RegisterValue(l, "QUADS", GL_QUADS);
-    RegisterValue(l, "LIGHTING", GL_LIGHTING);
-    RegisterValue(l, "POINTS", GL_POINTS);
-    RegisterValue(l, "LINES", GL_LINES);
-    RegisterValue(l, "LINE_LOOP", GL_LINE_LOOP);
-    RegisterValue(l, "LINE_SMOOTH", GL_LINE_SMOOTH);
-    RegisterValue(l, "POLYGON", GL_POLYGON);
-    RegisterValue(l, "PROJECTION", GL_PROJECTION);
-    RegisterValue(l, "MODELVIEW", GL_MODELVIEW);
-    RegisterValue(l, "BLEND", GL_BLEND);
-    RegisterValue(l, "TEXTURE_2D", GL_TEXTURE_2D);
-    RegisterValue(l, "TEXTURE_MAG_FILTER", GL_TEXTURE_MAG_FILTER);
-    RegisterValue(l, "TEXTURE_MIN_FILTER", GL_TEXTURE_MIN_FILTER);
-    RegisterValue(l, "LINEAR", GL_LINEAR);
-    RegisterValue(l, "NEAREST", GL_NEAREST);
-    RegisterValue(l, "SRC_ALPHA", GL_SRC_ALPHA);
-    RegisterValue(l, "ONE_MINUS_SRC_ALPHA", GL_ONE_MINUS_SRC_ALPHA);
-    lua_settable(l, LUA_GLOBALSINDEX);
-
-    lua_pushstring(l, "glu");
-    lua_newtable(l);
-    RegisterMethod(l, "LookAt", glu_LookAt);
-    RegisterMethod(l, "Ortho2D", glu_Ortho2D);
-    lua_settable(l, LUA_GLOBALSINDEX);
-}
-
 // ==================== Font Object ====================
 
 static int font_new(lua_State* l, TextureFont* f)
@@ -6722,7 +3167,7 @@ static int font_new(lua_State* l, TextureFont* f)
     TextureFont** ud = static_cast<TextureFont**>(lua_newuserdata(l, sizeof(TextureFont*)));
     *ud = f;
 
-    SetClass(l, _Font);
+    Celx_SetClass(l, Celx_Font);
 
     return 1;
 }
@@ -6744,7 +3189,7 @@ static TextureFont* this_font(lua_State* l)
     TextureFont* f = to_font(l, 1);
     if (f == NULL)
     {
-        doError(l, "Bad font object!");
+        Celx_DoError(l, "Bad font object!");
     }
 
     return f;
@@ -6753,7 +3198,7 @@ static TextureFont* this_font(lua_State* l)
 
 static int font_bind(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for font:bind()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for font:bind()");
 
     TextureFont* font = this_font(l);
     font->bind();
@@ -6762,9 +3207,9 @@ static int font_bind(lua_State* l)
 
 static int font_render(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument required for font:render");
+    Celx_CheckArgs(l, 2, 2, "One argument required for font:render");
 
-    const char* s = safeGetString(l, 2, AllErrors, "First argument to font:render must be a string");
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to font:render must be a string");
     TextureFont* font = this_font(l);
 	font->render(s);
 
@@ -6773,8 +3218,8 @@ static int font_render(lua_State* l)
 
 static int font_getwidth(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected for font:getwidth");
-    const char* s = safeGetString(l, 2, AllErrors, "Argument to font:getwidth must be a string");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for font:getwidth");
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "Argument to font:getwidth must be a string");
     TextureFont* font = this_font(l);
     lua_pushnumber(l, font->getWidth(s));
     return 1;
@@ -6782,7 +3227,7 @@ static int font_getwidth(lua_State* l)
 
 static int font_getheight(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for font:getheight()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for font:getheight()");
 
     TextureFont* font = this_font(l);
     lua_pushnumber(l, font->getHeight());
@@ -6799,13 +3244,13 @@ static int font_tostring(lua_State* l)
 
 static void CreateFontMetaTable(lua_State* l)
 {
-    CreateClassMetatable(l, _Font);
+    Celx_CreateClassMetatable(l, Celx_Font);
 
-    RegisterMethod(l, "__tostring", font_tostring);
-    RegisterMethod(l, "bind", font_bind);
-    RegisterMethod(l, "render", font_render);
-    RegisterMethod(l, "getwidth", font_getwidth);
-    RegisterMethod(l, "getheight", font_getheight);
+    Celx_RegisterMethod(l, "__tostring", font_tostring);
+    Celx_RegisterMethod(l, "bind", font_bind);
+    Celx_RegisterMethod(l, "render", font_render);
+    Celx_RegisterMethod(l, "getwidth", font_getwidth);
+    Celx_RegisterMethod(l, "getheight", font_getheight);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -6817,7 +3262,7 @@ static int image_new(lua_State* l, Image* i)
     Image** ud = static_cast<Image**>(lua_newuserdata(l, sizeof(Image*)));
     *ud = i;
 
-    SetClass(l, _Image);
+    Celx_SetClass(l, Celx_Image);
 
     return 1;
 }
@@ -6840,7 +3285,7 @@ static Image* this_image(lua_State* l)
     Image* image = to_image(l,1);
     if (image == NULL)
     {
-        doError(l, "Bad image object!");
+        Celx_DoError(l, "Bad image object!");
     }
 
     return image;
@@ -6848,7 +3293,7 @@ static Image* this_image(lua_State* l)
 
 static int image_getheight(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for image:getheight()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for image:getheight()");
 
     Image* image = this_image(l);
     lua_pushnumber(l, image->getHeight());
@@ -6857,7 +3302,7 @@ static int image_getheight(lua_State* l)
 
 static int image_getwidth(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for image:getwidth()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for image:getwidth()");
 
     Image* image = this_image(l);
     lua_pushnumber(l, image->getWidth());
@@ -6874,11 +3319,11 @@ static int image_tostring(lua_State* l)
 
 static void CreateImageMetaTable(lua_State* l)
 {
-    CreateClassMetatable(l, _Image);
+    Celx_CreateClassMetatable(l, Celx_Image);
 
-    RegisterMethod(l, "__tostring", image_tostring);
-    RegisterMethod(l, "getheight", image_getheight);
-    RegisterMethod(l, "getwidth", image_getwidth);
+    Celx_RegisterMethod(l, "__tostring", image_tostring);
+    Celx_RegisterMethod(l, "getheight", image_getheight);
+    Celx_RegisterMethod(l, "getwidth", image_getwidth);
 
     lua_pop(l, 1); // remove metatable from stack
 }
@@ -6890,7 +3335,7 @@ static int texture_new(lua_State* l, Texture* t)
     Texture** ud = static_cast<Texture**>(lua_newuserdata(l, sizeof(Texture*)));
     *ud = t;
 
-    SetClass(l, _Texture);
+    Celx_SetClass(l, Celx_Texture);
 
     return 1;
 }
@@ -6912,7 +3357,7 @@ static Texture* this_texture(lua_State* l)
     Texture* texture = to_texture(l,1);
     if (texture == NULL)
     {
-        doError(l, "Bad texture object!");
+        Celx_DoError(l, "Bad texture object!");
     }
 
     return texture;
@@ -6920,7 +3365,7 @@ static Texture* this_texture(lua_State* l)
 
 static int texture_bind(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for texture:bind()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for texture:bind()");
 
     Texture* texture = this_texture(l);
     texture->bind();
@@ -6929,7 +3374,7 @@ static int texture_bind(lua_State* l)
 
 static int texture_getheight(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for texture:getheight()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for texture:getheight()");
 
     Texture* texture = this_texture(l);
     lua_pushnumber(l, texture->getHeight());
@@ -6938,7 +3383,7 @@ static int texture_getheight(lua_State* l)
 
 static int texture_getwidth(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected for texture:getwidth()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for texture:getwidth()");
 
     Texture* texture = this_texture(l);
     lua_pushnumber(l, texture->getWidth());
@@ -6955,100 +3400,32 @@ static int texture_tostring(lua_State* l)
 
 static void CreateTextureMetaTable(lua_State* l)
 {
-    CreateClassMetatable(l, _Texture);
+    Celx_CreateClassMetatable(l, Celx_Texture);
 
-    RegisterMethod(l, "__tostring", texture_tostring);
-    RegisterMethod(l, "getheight", texture_getheight);
-    RegisterMethod(l, "getwidth", texture_getwidth);
-    RegisterMethod(l, "bind", texture_bind);
+    Celx_RegisterMethod(l, "__tostring", texture_tostring);
+    Celx_RegisterMethod(l, "getheight", texture_getheight);
+    Celx_RegisterMethod(l, "getwidth", texture_getwidth);
+    Celx_RegisterMethod(l, "bind", texture_bind);
 
     lua_pop(l, 1); // remove metatable from stack
 }
 
-// ==================== object extensions ====================
-
-// TODO: This should be replaced by an actual Atmosphere object
-static int object_setatmosphere(lua_State* l)
-{
-    checkArgs(l, 23, 23, "22 arguments (!) expected to function object:setatmosphere");
-
-    Selection* sel = this_object(l);
-    //CelestiaCore* appCore = getAppCore(l, AllErrors);
-
-    if (sel->body() != NULL)
-    {
-        Body* body = sel->body();
-        Atmosphere* atmosphere = body->getAtmosphere();
-        if (atmosphere != NULL)
-        {
-            float r = (float) safeGetNumber(l, 2, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            float g = (float) safeGetNumber(l, 3, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            float b = (float) safeGetNumber(l, 4, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            //			Color testColor(0.0f, 1.0f, 0.0f);
-            Color testColor(r, g, b);
-            atmosphere->lowerColor = testColor;
-            r = (float) safeGetNumber(l, 5, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) safeGetNumber(l, 6, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) safeGetNumber(l, 7, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->upperColor = Color(r, g, b);
-            r = (float) safeGetNumber(l, 8, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) safeGetNumber(l, 9, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) safeGetNumber(l, 10, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->skyColor = Color(r, g, b);
-            r = (float) safeGetNumber(l, 11, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) safeGetNumber(l, 12, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) safeGetNumber(l, 13, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->sunsetColor = Color(r, g, b);
-            r = (float) safeGetNumber(l, 14, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) safeGetNumber(l, 15, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) safeGetNumber(l, 16, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            //HWR			atmosphere->rayleighCoeff = Vector3(r, g, b);
-            r = (float) safeGetNumber(l, 17, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            g = (float) safeGetNumber(l, 18, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            b = (float) safeGetNumber(l, 19, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            //HWR			atmosphere->absorptionCoeff = Vector3(r, g, b);
-            b = (float) safeGetNumber(l, 20, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->mieCoeff = b;
-            b = (float) safeGetNumber(l, 21, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->mieScaleHeight = b;
-            b = (float) safeGetNumber(l, 22, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->miePhaseAsymmetry = b;
-            b = (float) safeGetNumber(l, 23, AllErrors, "Arguments to observer:setatmosphere() must be numbers");
-            atmosphere->rayleighScaleHeight = b;
-
-            body->setAtmosphere(*atmosphere);
-            cout << "set atmosphere\n";
-        }
-    }
-
-    return 0;
-}
-
-static void ExtendObjectMetaTable(lua_State* l)
-{
-    PushClass(l, _Object);
-    lua_rawget(l, LUA_REGISTRYINDEX);
-    if (lua_type(l, -1) != LUA_TTABLE)
-        cout << "Metatable for " << ClassNames[_Object] << " not found!\n";
-   RegisterMethod(l, "setatmosphere", object_setatmosphere);
-	lua_pop(l, 1);
-}
 // ==================== celestia extensions ====================
 
 static int celestia_log(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to function celestia:log");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:log");
 
-    const char* s = safeGetString(l, 2, AllErrors, "First argument to celestia:log must be a string");
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:log must be a string");
 	clog << s << "\n"; clog.flush();
 	return 0;
 }
 
 static int celestia_getparamstring(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument expected to celestia:getparamstring()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to celestia:getparamstring()");
     CelestiaCore* appCore = this_celestia(l);
-    const char* s = safeGetString(l, 2, AllErrors, "Argument to celestia:getparamstring must be a string");
+    const char* s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getparamstring must be a string");
     std::string paramString; // HWR
     CelestiaConfig* config = appCore->getConfig();
     config->configParams->getString(s, paramString);
@@ -7058,8 +3435,8 @@ static int celestia_getparamstring(lua_State* l)
 
 static int celestia_loadtexture(lua_State* l)
 {
-    checkArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
-    string s = safeGetString(l, 2, AllErrors, "Argument to celestia:loadtexture() must be a string");
+    Celx_CheckArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
+    string s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:loadtexture() must be a string");
     lua_Debug ar;
     lua_getstack(l, 1, &ar);
     lua_getinfo(l, "S", &ar);
@@ -7074,8 +3451,8 @@ static int celestia_loadtexture(lua_State* l)
 
 static int celestia_loadfont(lua_State* l)
 {
-    checkArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
-    string s = safeGetString(l, 2, AllErrors, "Argument to celestia:loadfont() must be a string");
+    Celx_CheckArgs(l, 2, 2, "Need one argument for celestia:loadtexture()");
+    string s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:loadfont() must be a string");
     TextureFont* font = LoadTextureFont(s);
     if (font == NULL) return 0;
 	font->buildTexture();
@@ -7090,7 +3467,7 @@ TextureFont* getFont(CelestiaCore* appCore)
 
 static int celestia_getfont(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
        TextureFont* font = getFont(appCore);
@@ -7106,7 +3483,7 @@ TextureFont* getTitleFont(CelestiaCore* appCore)
 
 static int celestia_gettitlefont(lua_State* l)
 {
-    checkArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected to function celestia:getTitleFont");
 
     CelestiaCore* appCore = getAppCore(l, AllErrors);
 	TextureFont* font = getTitleFont(appCore);
@@ -7117,14 +3494,14 @@ static int celestia_gettitlefont(lua_State* l)
 
 static int celestia_settimeslice(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument required for celestia:settimeslice");
+    Celx_CheckArgs(l, 2, 2, "One argument required for celestia:settimeslice");
     //CelestiaCore* appCore = this_celestia(l);
 
     if (!lua_isnumber(l, 2) && !lua_isnil(l, 2))
     {
-        doError(l, "Argument for celestia:settimeslice must be a number");
+        Celx_DoError(l, "Argument for celestia:settimeslice must be a number");
     }
-    double timeslice = safeGetNumber(l, 2, AllErrors, "Argument to celestia:settimeslice must be a number");
+    double timeslice = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settimeslice must be a number");
     if (timeslice == 0.0)
         timeslice = 0.1;
 
@@ -7136,12 +3513,12 @@ static int celestia_settimeslice(lua_State* l)
 
 static int celestia_setluahook(lua_State* l)
 {
-    checkArgs(l, 2, 2, "One argument required for celestia:setluahook");
+    Celx_CheckArgs(l, 2, 2, "One argument required for celestia:setluahook");
     CelestiaCore* appCore = this_celestia(l);
 
     if (!lua_istable(l, 2) && !lua_isnil(l, 2))
     {
-        doError(l, "Argument for celestia:setluahook must be a table or nil");
+        Celx_DoError(l, "Argument for celestia:setluahook must be a table or nil");
         return 0;
     }
 
@@ -7160,18 +3537,18 @@ static int celestia_setluahook(lua_State* l)
 
 static void ExtendCelestiaMetaTable(lua_State* l)
 {
-    PushClass(l, _Celestia);
+    PushClass(l, Celx_Celestia);
     lua_rawget(l, LUA_REGISTRYINDEX);
     if (lua_type(l, -1) != LUA_TTABLE)
-        cout << "Metatable for " << ClassNames[_Celestia] << " not found!\n";
-    RegisterMethod(l, "log", celestia_log);
-    RegisterMethod(l, "settimeslice", celestia_settimeslice);
-    RegisterMethod(l, "setluahook", celestia_setluahook);
-    RegisterMethod(l, "getparamstring", celestia_getparamstring);
-    RegisterMethod(l, "getfont", celestia_getfont);
-    RegisterMethod(l, "gettitlefont", celestia_gettitlefont);
-    RegisterMethod(l, "loadtexture", celestia_loadtexture);
-    RegisterMethod(l, "loadfont", celestia_loadfont);
+        cout << "Metatable for " << CelxLua::ClassNames[Celx_Celestia] << " not found!\n";
+    Celx_RegisterMethod(l, "log", celestia_log);
+    Celx_RegisterMethod(l, "settimeslice", celestia_settimeslice);
+    Celx_RegisterMethod(l, "setluahook", celestia_setluahook);
+    Celx_RegisterMethod(l, "getparamstring", celestia_getparamstring);
+    Celx_RegisterMethod(l, "getfont", celestia_getfont);
+    Celx_RegisterMethod(l, "gettitlefont", celestia_gettitlefont);
+    Celx_RegisterMethod(l, "loadtexture", celestia_loadtexture);
+    Celx_RegisterMethod(l, "loadfont", celestia_loadfont);
     lua_pop(l, 1);
 }
 
@@ -7260,7 +3637,7 @@ static void loadLuaLibs(lua_State* state)
     ExtendCelestiaMetaTable(state);
     ExtendObjectMetaTable(state);
 
-    gl_loadlib(state);
+    LoadLuaGraphicsLibrary(state);
 }
 
 
@@ -7513,4 +3890,259 @@ bool LuaState::callLuaHook(void* obj, const char* method, double dt)
     }
 
     return handled;
+}
+
+
+/**** Implementation of Celx LuaState wrapper ****/
+
+CelxLua::CelxLua(lua_State* l) :
+m_lua(l)
+{
+}
+
+
+CelxLua::~CelxLua()
+{
+}
+
+
+bool CelxLua::isType(int index, int type) const
+{
+    return Celx_istype(m_lua, index, type);
+}
+
+
+void CelxLua::setClass(int id)
+{
+    Celx_SetClass(m_lua, id);
+}
+
+
+// Push a class name onto the Lua stack
+void CelxLua::pushClassName(int id)
+{
+    lua_pushlstring(m_lua, ClassNames[id], strlen(ClassNames[id]));
+}
+
+
+void* CelxLua::checkUserData(int index, int id)
+{
+    return Celx_CheckUserData(m_lua, index, id);
+}
+
+
+void CelxLua::doError(const char* errorMessage)
+{
+    Celx_DoError(m_lua, errorMessage);
+}
+
+
+void CelxLua::checkArgs(int minArgs, int maxArgs, const char* errorMessage)
+{
+    Celx_CheckArgs(m_lua, minArgs, maxArgs, errorMessage);
+}
+
+
+void CelxLua::createClassMetatable(int id)
+{
+    Celx_CreateClassMetatable(m_lua, id);
+}
+
+
+void CelxLua::registerMethod(const char* name, lua_CFunction fn)
+{
+    Celx_RegisterMethod(m_lua, name, fn);
+}
+
+
+void CelxLua::registerValue(const char* name, float n)
+{
+	lua_pushstring(m_lua, name);
+	lua_pushnumber(m_lua, n);
+	lua_settable(m_lua, -3);
+}
+
+
+// Add a field to the table on top of the stack
+void CelxLua::setTable(const char* field, lua_Number value)
+{
+    lua_pushstring(m_lua, field);
+    lua_pushnumber(m_lua, value);
+    lua_settable(m_lua, -3);
+}
+
+void CelxLua::setTable(const char* field, const char* value)
+{
+    lua_pushstring(m_lua, field);
+    lua_pushstring(m_lua, value);
+    lua_settable(m_lua, -3);
+}
+
+
+lua_Number CelxLua::safeGetNumber(int index,
+                                  FatalErrors fatalErrors,
+                                  const char* errorMessage,
+                                  lua_Number defaultValue)
+{
+    return Celx_SafeGetNumber(m_lua, index, fatalErrors, errorMessage, defaultValue);
+}
+
+
+const char* CelxLua::safeGetString(int index,
+                                   FatalErrors fatalErrors,
+                                   const char* errorMessage)
+{
+    return Celx_SafeGetString(m_lua, index, fatalErrors, errorMessage);
+}
+
+
+// Safe wrapper for lua_tobool, c.f. safeGetString
+// Non-fatal errors will return defaultValue
+bool CelxLua::safeGetBoolean(int index,
+                             FatalErrors fatalErrors,
+                             const char* errorMsg,
+                             bool defaultValue)
+{
+    int argc = lua_gettop(m_lua);
+    if (index < 1 || index > argc)
+    {
+        if (fatalErrors & WrongArgc)
+        {
+            doError(errorMsg);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+    
+    if (!lua_isboolean(m_lua, index))
+    {
+        if (fatalErrors & WrongType)
+        {
+            doError(errorMsg);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+    
+    return lua_toboolean(m_lua, index) != 0;
+}
+
+
+void CelxLua::newVector(const Vec3d& v)
+{
+    vector_new(m_lua, v);
+}
+
+
+void CelxLua::newPosition(const UniversalCoord& uc)
+{
+    position_new(m_lua, uc);
+}
+
+
+void CelxLua::newRotation(const Quatd& q)
+{
+    rotation_new(m_lua, q);
+}
+
+void CelxLua::newObject(const Selection& sel)
+{
+    object_new(m_lua, sel);
+}
+
+void CelxLua::newFrame(const ObserverFrame& f)
+{
+    frame_new(m_lua, f);
+}
+
+void CelxLua::newPhase(const TimelinePhase& phase)
+{
+    phase_new(m_lua, phase);
+}
+
+Vec3d* CelxLua::toVector(int n)
+{
+    return to_vector(m_lua, n);
+}
+
+Quatd* CelxLua::toRotation(int n)
+{
+    return to_rotation(m_lua, n);
+}
+
+UniversalCoord* CelxLua::toPosition(int n)
+{
+    return to_position(m_lua, n);
+}
+
+Selection* CelxLua::toObject(int n)
+{
+    return to_object(m_lua, n);
+}
+
+ObserverFrame* CelxLua::toFrame(int n)
+{
+    return to_frame(m_lua, n);
+}
+
+void CelxLua::push(const CelxValue& v1)
+{
+    v1.push(m_lua);
+}
+
+
+void CelxLua::push(const CelxValue& v1, const CelxValue& v2)
+{
+    v1.push(m_lua);
+    v2.push(m_lua);
+}
+
+
+CelestiaCore* CelxLua::appCore(FatalErrors fatalErrors)
+{
+    push("celestia-appcore");
+    lua_gettable(m_lua, LUA_REGISTRYINDEX);
+    
+    if (!lua_islightuserdata(m_lua, -1))
+    {
+        if (fatalErrors == NoErrors)
+        {
+            return NULL;
+        }
+        else
+        {
+            lua_pushstring(m_lua, "internal error: invalid appCore");
+            lua_error(m_lua);
+        }
+    }
+    
+    CelestiaCore* appCore = static_cast<CelestiaCore*>(lua_touserdata(m_lua, -1));
+    lua_pop(m_lua, 1);
+    
+    return appCore;
+}
+
+
+// Get a pointer to the LuaState-object from the registry:
+LuaState* CelxLua::getLuaStateObject()
+{
+    int stackSize = lua_gettop(m_lua);
+    lua_pushstring(m_lua, "celestia-luastate");
+    lua_gettable(m_lua, LUA_REGISTRYINDEX);
+    
+    if (!lua_islightuserdata(m_lua, -1))
+    {
+        Celx_DoError(m_lua, "Internal Error: Invalid table entry for LuaState-pointer");
+    }
+    LuaState* luastate_ptr = static_cast<LuaState*>(lua_touserdata(m_lua, -1));
+    if (luastate_ptr == NULL)
+    {
+        Celx_DoError(m_lua, "Internal Error: Invalid LuaState-pointer");
+    }
+    lua_settop(m_lua, stackSize);
+    return luastate_ptr;
 }

@@ -49,7 +49,19 @@ RESOURCES=\
 	$(INTDIR)\celestia.res
 
 !IF "$(CELX)" == "enable"
-OBJS=$(OBJS) $(INTDIR)\celx.obj
+CELX_OBJS = \
+	$(INTDIR)\celx.obj \
+	$(INTDIR)\celx_celestia.cpp \
+	$(INTDIR)\celx_frame.cpp \
+	$(INTDIR)\celx_gl.cpp \
+	$(INTDIR)\celx_object.cpp \
+	$(INTDIR)\celx_observer.cpp \
+	$(INTDIR)\celx_phase.cpp \
+	$(INTDIR)\celx_position.cpp \
+	$(INTDIR)\celx_rotation.cpp \
+	$(INTDIR)\celx_vector.cpp
+
+OBJS=$(OBJS) $(CELX_OBJS)
 EXTRADEFS=/D "CELX" /D "LUA_VER=$(LUA_VER)"
 
 !IF "$(LUA_VER)" == "0x050100"
