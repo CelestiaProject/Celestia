@@ -409,9 +409,8 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
     // Clear out the results of the previous populate() call
     if (stars.size() != 0)
     {
-        beginRemoveRows(QModelIndex(), 0, stars.size());
         stars.clear();
-        endRemoveRows();
+        reset();
     }
 
     if (filteredStars.empty())
@@ -640,8 +639,6 @@ void CelestialBrowser::slotContextMenu(const QPoint& pos)
 void CelestialBrowser::slotMarkSelected()
 {
     QItemSelectionModel* sm = treeView->selectionModel();
-    QModelIndexList rows = sm->selectedRows();
-
     bool labelMarker = labelMarkerBox->checkState() == Qt::Checked;
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
@@ -654,29 +651,30 @@ void CelestialBrowser::slotMarkSelected()
     Universe* universe = appCore->getSimulation()->getUniverse();
     string label;
 
-    for (QModelIndexList::const_iterator iter = rows.begin();
-         iter != rows.end(); iter++)
+    for (int row = 0; row < starModel->rowCount(QModelIndex()); row++)
     {
-        int row = (*iter).row();
-        Selection sel = starModel->itemAtRow((unsigned int) row);
-        if (!sel.empty())
+        if (sm->isRowSelected(row, QModelIndex()))
         {
-            if (convertOK)
+            Selection sel = starModel->itemAtRow((unsigned int) row);
+            if (!sel.empty())
             {
-                if (labelMarker)
+                if (convertOK)
                 {
-                    if (sel.star() != NULL)
-                        label = universe->getStarCatalog()->getStarName(*sel.star());
-                    label = ReplaceGreekLetterAbbr(label);
-                }
+                    if (labelMarker)
+                    {
+                        if (sel.star() != NULL)
+                            label = universe->getStarCatalog()->getStarName(*sel.star());
+                        label = ReplaceGreekLetterAbbr(label);
+                    }
 
-                universe->markObject(sel, 10.0f,
-                                     color,
-                                     markerSymbol, 1, label);
-            }
-            else
-            {
-                universe->unmarkObject(sel, 1);
+                    universe->markObject(sel, 10.0f,
+                                         color,
+                                         markerSymbol, 1, label);
+                }
+                else
+                {
+                    universe->unmarkObject(sel, 1);
+                }
             }
         }
     }

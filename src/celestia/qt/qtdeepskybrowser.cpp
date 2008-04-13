@@ -175,7 +175,7 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
 
 
 // Override QAbstractDataModel::headerData()
-QVariant DSOTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant DSOTableModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -336,9 +336,8 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
     // Clear out the results of the previous populate() call
     if (dsos.size() != 0)
     {
-        beginRemoveRows(QModelIndex(), 0, dsos.size());
         dsos.clear();
-        endRemoveRows();
+        reset();
     }
 
     if (filteredDSOs.empty())
@@ -558,7 +557,6 @@ void DeepSkyBrowser::slotContextMenu(const QPoint& pos)
 void DeepSkyBrowser::slotMarkSelected()
 {
     QItemSelectionModel* sm = treeView->selectionModel();
-    QModelIndexList rows = sm->selectedRows();
 
     bool labelMarker = labelMarkerBox->checkState() == Qt::Checked;
     bool convertOK = false;
@@ -572,31 +570,33 @@ void DeepSkyBrowser::slotMarkSelected()
     Universe* universe = appCore->getSimulation()->getUniverse();
     string label;
 
-    for (QModelIndexList::const_iterator iter = rows.begin();
-         iter != rows.end(); iter++)
+    int nRows = dsoModel->rowCount(QModelIndex());
+    for (int row = 0; row < nRows; row++)
     {
-        int row = (*iter).row();
-        DeepSkyObject* dso = dsoModel->itemAtRow((unsigned int) row);
-        if (dso != NULL)
+        if (sm->isRowSelected(row, QModelIndex()))
         {
-            if (convertOK)
+            DeepSkyObject* dso = dsoModel->itemAtRow((unsigned int) row);
+            if (dso != NULL)
             {
-                if (labelMarker)
+                if (convertOK)
                 {
-                    label = universe->getDSOCatalog()->getDSOName(dso);
-                    label = ReplaceGreekLetterAbbr(label);
-                }
+                    if (labelMarker)
+                    {
+                        label = universe->getDSOCatalog()->getDSOName(dso);
+                        label = ReplaceGreekLetterAbbr(label);
+                    }
 
-                universe->markObject(Selection(dso), 10.0f,
-                                     color,
-                                     markerSymbol, 1, label);
+                    universe->markObject(Selection(dso), 10.0f,
+                                         color,
+                                         markerSymbol, 1, label);
+                }
+                else
+                {
+                    universe->unmarkObject(Selection(dso), 1);
+                }
             }
-            else
-            {
-                universe->unmarkObject(Selection(dso), 1);
-            }
-        }
-    }
+        } // isRowSelected
+    } // for
 }
 
 
