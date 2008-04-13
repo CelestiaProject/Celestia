@@ -103,7 +103,8 @@ SCRIPTOBJS=\
 
 SPICEOBJS=\
 	$(INTDIR)\spiceinterface.obj \
-	$(INTDIR)\spiceorbit.obj
+	$(INTDIR)\spiceorbit.obj \
+	$(INTDIR)\spicerotation.obj
 
 !IF "$(CELX)" == "enable"
 EXTRADEFS=/D "CELX" /D "LUA_VER=$(LUA_VER)"
