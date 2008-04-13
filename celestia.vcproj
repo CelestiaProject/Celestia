@@ -202,6 +202,42 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celestia\celx_celestia.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_frame.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_gl.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_object.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_observer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_phase.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_position.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_rotation.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_vector.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celestia\configfile.cpp"
 					>
 				</File>
@@ -1161,6 +1197,46 @@
 				</File>
 				<File
 					RelativePath=".\src\celestia\celx.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_celestia.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_frame.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_gl.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_internal.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_object.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_observer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_phase.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_position.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_rotation.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\celx_vector.h"
 					>
 				</File>
 				<File
