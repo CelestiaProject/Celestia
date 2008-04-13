@@ -46,7 +46,18 @@ WINSOURCES = \
 	winviewoptsdlg.cpp
 
 if ENABLE_CELX
-CELXSOURCES = celx.cpp
+CELXSOURCES = \
+	celx.cpp \
+	celx_celestia.cpp \
+	celx_frame.cpp \
+	celx_gl.cpp \
+	celx_object.cpp \
+	celx_observer.cpp \
+	celx_phase.cpp \
+	celx_position.cpp \
+	celx_rotation.cpp \
+	celx_vector.cpp
+        
 endif
 
 if ENABLE_GLUT

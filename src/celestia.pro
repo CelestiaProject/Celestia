@@ -284,7 +284,16 @@ APP_SOURCES = \
 	celestia/imagecapture.cpp \
 	celestia/scriptmenu.cpp \
 	celestia/url.cpp \
-	celestia/celx.cpp
+	celestia/celx.cpp \
+        celestia/celx_celestia.cpp \
+        celestia/celx_frame.cpp \
+        celestia/celx_gl.cpp \
+        celestia/celx_object.cpp \
+        celestia/celx_observer.cpp \
+        celestia/celx_phase.cpp \
+        celestia/celx_position.cpp \
+        celestia/celx_rotation.cpp \
+        celestia/celx_vector.cpp
 
 APP_HEADERS = \
 	celestia/celestiacore.h \
@@ -295,7 +304,17 @@ APP_HEADERS = \
 	celestia/imagecapture.h \
 	celestia/scriptmenu.h \
 	celestia/url.h \
-	celestia/celx.h
+	celestia/celx.h \
+        celestia/celx_celestia.h \
+        celestia/celx_internal.h \
+        celestia/celx_frame.h \
+        celestia/celx_gl.h \
+        celestia/celx_object.h \
+        celestia/celx_observer.h \
+        celestia/celx_phase.h \
+        celestia/celx_position.h \
+        celestia/celx_rotation.h \
+        celestia/celx_vector.h
 
 macx {
 	APP_SOURCES -= celestia/imagecapture.cpp
