@@ -11,7 +11,7 @@ EXTRA_DIST = \
 INCLUDES = -I..
 
 if ENABLE_SPICE
-SPICESOURCES = spiceinterface.cpp spiceorbit.cpp
+SPICESOURCES = spiceinterface.cpp spiceorbit.cpp spicerotation.cpp
 endif
 
 if ENABLE_CELX
@@ -96,6 +96,7 @@ libcelengine_a_SOURCES = \
 	vertexlist.cpp \
 	vertexprog.cpp \
 	virtualtex.cpp \
+	visibleregion.cpp \
         vsop87.cpp\
 	$(SPICESOURCES)\
 	$(SCRIPT_OBJ_SOURCES)
