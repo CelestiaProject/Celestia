@@ -102,21 +102,68 @@ class Body
      Body(PlanetarySystem*, const std::string& name);
     ~Body();
 
+    // Object class enumeration:
+    // All of these values must be powers of two so that they can
+    // be used in an object type bit mask.
+    //
+    // The values of object class enumerants cannot be modified
+    // without consequence. The object orbit mask is a stored user
+    // setting, so there will be unexpected results when the user
+    // upgrades if the orbit mask values mean something different
+    // in the new version.
+    //
+    // * Planet, Moon, Asteroid, DwarfPlanet, and MinorMoon all behave
+    // essentially the same. They're distinguished from each other for
+    // user convenience, so that it's possible to assign them different
+    // orbit and label colors, and to categorize them in the solar
+    // system browser.
+    //
+    // * Comet is identical to the asteroid class except that comets may
+    // be rendered with dust and ion tails.
+    //
+    // Other classes have different default settings for the properties
+    // Clickable, VisibleAsPoint, Visible, and SecondaryIlluminator. These
+    // defaults are assigned in the ssc file parser and may be overridden
+    // for a particular body.
+    //
+    // * Invisible is used for barycenters and other reference points.
+    // An invisible object is not clickable, visibleAsPoint, visible, or
+    // a secondary illuminator.
+    //
+    // * SurfaceFeature is meant to be used for buildings and landscape.
+    // SurfaceFeatures is clickable and visible, but not visibleAsPoint or
+    // a secondary illuminator.
+    //
+    // * Component should be used for parts of spacecraft or buildings that
+    // are separate ssc objects. A component is clickable and visible, but
+    // not visibleAsPoint or a secondary illuminator.
+    //
+    // * Diffuse is used for gas clouds, dust plumes, and the like. They are
+    // visible, but other properties are false by default. It is expected
+    // that an observer will move through a diffuse object, so there's no
+    // need for any sort of collision detection to be applied.
+    //
+    // * Stellar is a pseudo-class used only for orbit rendering.
+    //
+    // * Barycenter and SmallBody are not used currently. Invisible is used
+    // instead of barycenter.
     enum
     {
-        Planet      =    0x01,
-        Moon        =    0x02,
-        Asteroid    =    0x04,
-        Comet       =    0x08,
-        Spacecraft  =    0x10,
-        Invisible   =    0x20,
-        Barycenter  =    0x40,
-        SmallBody   =    0x80,
-        DwarfPlanet =   0x100,
-        Stellar     =   0x200, // only used for orbit mask
-        SurfaceFeature = 0x400,
-        Component   = 0x800,
-        Unknown     = 0x10000,
+        Planet         =    0x01,
+        Moon           =    0x02,
+        Asteroid       =    0x04,
+        Comet          =    0x08,
+        Spacecraft     =    0x10,
+        Invisible      =    0x20,
+        Barycenter     =    0x40, // Not used (invisible is used instead)
+        SmallBody      =    0x80, // Not used
+        DwarfPlanet    =   0x100,
+        Stellar        =   0x200, // only used for orbit mask
+        SurfaceFeature =   0x400,
+        Component      =   0x800,
+        MinorMoon      =  0x1000,
+        Diffuse        =  0x2000,
+        Unknown        = 0x10000,
     };
 
     enum VisibilityPolicy
