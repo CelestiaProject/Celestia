@@ -328,6 +328,8 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
 
 void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
 {
+    double tdb = browser->appCore->getSimulation()->getTime();
+
     Star* star = reinterpret_cast<Star*>(nm->item.lParam);
     if (star == NULL)
     {
@@ -346,16 +348,18 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
         break;
             
     case 1:
-        sprintf(callbackScratch, "%.3f",
-                browser->pos.distanceTo(star->getPosition()));
-        nm->item.pszText = callbackScratch;
+        {
+            Vec3d r = star->getPosition(tdb) - browser->ucPos;
+            sprintf(callbackScratch, "%.4g", r.length() * 1.0e-6);
+            nm->item.pszText = callbackScratch;
+        }
         break;
 
     case 2:
         {
-            Vec3f r = toMicroLY(star->getPosition()) - browser->ucPos;
-            float appMag = astro::absToAppMag(star->getAbsoluteMagnitude(),
-                                              r.length() * 1e-6f);
+            Vec3d r = star->getPosition(tdb) - browser->ucPos;
+            double appMag = astro::absToAppMag((double) star->getAbsoluteMagnitude(),
+                                               (r.length() * 1e-6));
             sprintf(callbackScratch, "%.2f", appMag);
             nm->item.pszText = callbackScratch;
         }
