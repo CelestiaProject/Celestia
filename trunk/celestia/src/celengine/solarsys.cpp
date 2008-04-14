@@ -92,6 +92,52 @@ static void sscError(const Tokenizer& tok,
 }
 
 
+// Object class properties
+static const int CLASSES_UNCLICKABLE           = Body::Invisible |
+                                                 Body::Diffuse;
+
+static const int CLASSES_INVISIBLE_AS_POINT    = Body::Invisible      |
+                                                 Body::SurfaceFeature |
+                                                 Body::Component      |
+                                                 Body::Diffuse;
+
+static const int CLASSES_SECONDARY_ILLUMINATOR = Body::Planet      |
+                                                 Body::Moon        |
+                                                 Body::MinorMoon   |
+                                                 Body::DwarfPlanet |
+                                                 Body::Asteroid    |
+                                                 Body::Comet;
+
+typedef map<std::string, int, CompareIgnoringCasePredicate> ClassificationTable;
+static ClassificationTable Classifications;
+
+void InitializeClassifications()
+{
+    Classifications["planet"]         = Body::Planet;
+    Classifications["dwarfplanet"]    = Body::DwarfPlanet;
+    Classifications["moon"]           = Body::Moon;
+    Classifications["minormoon"]      = Body::MinorMoon;
+    Classifications["comet"]          = Body::Comet;
+    Classifications["asteroid"]       = Body::Asteroid;
+    Classifications["spacecraft"]     = Body::Spacecraft;
+    Classifications["invisible"]      = Body::Invisible;
+    Classifications["surfacefeature"] = Body::SurfaceFeature;
+    Classifications["component"]      = Body::Component;
+    Classifications["diffuse"]        = Body::Diffuse;
+}
+
+int GetClassificationId(const string& className)
+{
+    if (Classifications.empty())
+        InitializeClassifications();
+    ClassificationTable::iterator iter = Classifications.find(className);
+    if (iter == Classifications.end())
+        return Body::Unknown;
+    else
+        return iter->second;
+}
+
+
 //! Maximum depth permitted for nested frames.
 static unsigned int MaxFrameDepth = 50;
 
@@ -704,24 +750,7 @@ static Body* CreatePlanet(const string& name,
     int classification = body->getClassification();
     string classificationName;
     if (planetData->getString("Class", classificationName))
-    {
-        if (compareIgnoringCase(classificationName, "planet") == 0)
-            classification = Body::Planet;
-        else if (compareIgnoringCase(classificationName, "moon") == 0)
-            classification = Body::Moon;
-        else if (compareIgnoringCase(classificationName, "comet") == 0)
-            classification = Body::Comet;
-        else if (compareIgnoringCase(classificationName, "asteroid") == 0)
-            classification = Body::Asteroid;
-        else if (compareIgnoringCase(classificationName, "spacecraft") == 0)
-            classification = Body::Spacecraft;
-        else if (compareIgnoringCase(classificationName, "invisible") == 0)
-            classification = Body::Invisible;
-        else if (compareIgnoringCase(classificationName, "surfacefeature") == 0)
-            classification = Body::SurfaceFeature;
-        else if (compareIgnoringCase(classificationName, "component") == 0)
-            classification = Body::Component;
-    }
+        classification = GetClassificationId(classificationName);
 
     if (classification == Body::Unknown)
     {
@@ -746,22 +775,13 @@ static Body* CreatePlanet(const string& name,
     if (classification == Body::Invisible)
         body->setVisible(false);
 
-    // Surface features and component objects are by default not
-    // visible as points at a distance.
-    if (classification == Body::Invisible ||
-        classification == Body::SurfaceFeature ||
-        classification == Body::Component)
-    {
+    // Set default properties for the object based on its classification
+    if (classification & CLASSES_INVISIBLE_AS_POINT)
         body->setVisibleAsPoint(false);
-    }
-
-    if (classification == Body::Invisible ||
-        classification == Body::SurfaceFeature ||
-        classification == Body::Component ||
-        classification == Body::Spacecraft)
-    {
+    if ((classification & CLASSES_SECONDARY_ILLUMINATOR) == 0)
         body->setSecondaryIlluminator(false);
-    }
+    if (classification & CLASSES_UNCLICKABLE)
+        body->setClickable(false);
 
     string infoURL;
     if (planetData->getString("InfoURL", infoURL))
