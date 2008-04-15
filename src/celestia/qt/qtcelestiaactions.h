@@ -57,7 +57,9 @@ Q_OBJECT
     QAction* labelOpenClustersAction;
     QAction* labelStarsAction;
     QAction* labelPlanetsAction;
+    QAction* labelDwarfPlanetsAction;
     QAction* labelMoonsAction;
+    QAction* labelMinorMoonsAction;
     QAction* labelAsteroidsAction;
     QAction* labelCometsAction;
     QAction* labelSpacecraftAction;
@@ -66,7 +68,9 @@ Q_OBJECT
 
     QAction* starOrbitsAction;
     QAction* planetOrbitsAction;
+    QAction* dwarfPlanetOrbitsAction;
     QAction* moonOrbitsAction;
+    QAction* minorMoonOrbitsAction;
     QAction* asteroidOrbitsAction;
     QAction* cometOrbitsAction;
     QAction* spacecraftOrbitsAction;
