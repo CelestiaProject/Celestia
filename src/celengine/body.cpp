@@ -731,6 +731,8 @@ int Body::getOrbitClassification() const
             return DwarfPlanet;
         else if (orbitClass & Moon)
             return Moon;
+        else if (orbitClass & MinorMoon)
+            return MinorMoon;
         else if (orbitClass & Asteroid)
             return Asteroid;
         else if (orbitClass & Spacecraft)
