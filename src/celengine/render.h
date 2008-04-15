@@ -126,6 +126,8 @@ class Renderer
         NebulaLabels        = 0x200,
         OpenClusterLabels   = 0x400,
         I18nConstellationLabels = 0x800,
+        DwarfPlanetLabels   = 0x1000,
+        MinorMoonLabels     = 0x2000,
         BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
 
@@ -713,7 +715,9 @@ class Renderer
     // Colors for all lines and labels
     static Color StarLabelColor;
     static Color PlanetLabelColor;
+    static Color DwarfPlanetLabelColor;
     static Color MoonLabelColor;
+    static Color MinorMoonLabelColor;
     static Color AsteroidLabelColor;
     static Color CometLabelColor;
     static Color SpacecraftLabelColor;
@@ -727,7 +731,9 @@ class Renderer
 
     static Color StarOrbitColor;
     static Color PlanetOrbitColor;
+    static Color DwarfPlanetOrbitColor;
     static Color MoonOrbitColor;
+    static Color MinorMoonOrbitColor;
     static Color AsteroidOrbitColor;
     static Color CometOrbitColor;
     static Color SpacecraftOrbitColor;
