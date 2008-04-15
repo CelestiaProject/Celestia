@@ -29,7 +29,9 @@ CelestiaActions::CelestiaActions(QObject* parent,
     labelGalaxiesAction(NULL),
     labelStarsAction(NULL),
     labelPlanetsAction(NULL),
+    labelDwarfPlanetsAction(NULL),
     labelMoonsAction(NULL),
+    labelMinorMoonsAction(NULL),
     labelAsteroidsAction(NULL),
     labelCometsAction(NULL),
     labelSpacecraftAction(NULL),
@@ -37,7 +39,9 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     starOrbitsAction(NULL),
     planetOrbitsAction(NULL),
+    dwarfPlanetOrbitsAction(NULL),
     moonOrbitsAction(NULL),
+    minorMoonOrbitsAction(NULL),
     asteroidOrbitsAction(NULL),
     cometOrbitsAction(NULL),
     spacecraftOrbitsAction(NULL),
@@ -82,14 +86,18 @@ CelestiaActions::CelestiaActions(QObject* parent,
     QMenu* orbitsMenu = new QMenu();
     starOrbitsAction       = createCheckableAction(tr("Stars"), orbitsMenu, Body::Stellar);
     planetOrbitsAction     = createCheckableAction(tr("Planets"), orbitsMenu, Body::Planet);
+    dwarfPlanetOrbitsAction     = createCheckableAction(tr("Dwarf Planets"), orbitsMenu, Body::DwarfPlanet);
     moonOrbitsAction       = createCheckableAction(tr("Moons"), orbitsMenu, Body::Moon);
+    minorMoonOrbitsAction       = createCheckableAction(tr("Minor Moons"), orbitsMenu, Body::MinorMoon);
     asteroidOrbitsAction   = createCheckableAction(tr("Asteroids"), orbitsMenu, Body::Asteroid);
     cometOrbitsAction      = createCheckableAction(tr("Comets"), orbitsMenu, Body::Comet);
     spacecraftOrbitsAction = createCheckableAction(tr("Spacecraft"), orbitsMenu, Body::Spacecraft);
     
     connect(starOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(planetOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(dwarfPlanetOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(moonOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
+    connect(minorMoonOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(asteroidOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(cometOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(spacecraftOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
@@ -105,7 +113,9 @@ CelestiaActions::CelestiaActions(QObject* parent,
     QMenu* labelsMenu = new QMenu();
     labelStarsAction       = createCheckableAction(tr("Stars"), labelsMenu, Renderer::StarLabels);
     labelPlanetsAction     = createCheckableAction(tr("Planets"), labelsMenu, Renderer::PlanetLabels);
+    labelDwarfPlanetsAction     = createCheckableAction(tr("Dwarf Planets"), labelsMenu, Renderer::DwarfPlanetLabels);
     labelMoonsAction       = createCheckableAction(tr("Moons"), labelsMenu, Renderer::MoonLabels);
+    labelMinorMoonsAction       = createCheckableAction(tr("Minor Moons"), labelsMenu, Renderer::MinorMoonLabels);
     labelAsteroidsAction   = createCheckableAction(tr("Asteroids"), labelsMenu, Renderer::AsteroidLabels);
     labelCometsAction      = createCheckableAction(tr("Comets"), labelsMenu, Renderer::CometLabels);
     labelSpacecraftAction  = createCheckableAction(tr("Spacecraft"), labelsMenu, Renderer::SpacecraftLabels);
@@ -120,7 +130,9 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(labelOpenClustersAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
     connect(labelStarsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
     connect(labelPlanetsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelDwarfPlanetsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
     connect(labelMoonsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
+    connect(labelMinorMoonsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
     connect(labelAsteroidsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
     connect(labelCometsAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
     connect(labelSpacecraftAction, SIGNAL(triggered()), this, SLOT(slotToggleLabel()));
@@ -157,7 +169,9 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
     labelOpenClustersAction->setChecked(labelMode & Renderer::OpenClusterLabels);
     labelStarsAction->setChecked(labelMode & Renderer::StarLabels);
     labelPlanetsAction->setChecked(labelMode & Renderer::PlanetLabels);
+    labelDwarfPlanetsAction->setChecked(labelMode & Renderer::DwarfPlanetLabels);
     labelMoonsAction->setChecked(labelMode & Renderer::MoonLabels);
+    labelMinorMoonsAction->setChecked(labelMode & Renderer::MinorMoonLabels);
     labelAsteroidsAction->setChecked(labelMode & Renderer::AsteroidLabels);
     labelCometsAction->setChecked(labelMode & Renderer::CometLabels);
     labelSpacecraftAction->setChecked(labelMode & Renderer::SpacecraftLabels);
@@ -166,7 +180,9 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
 
     starOrbitsAction->setChecked(orbitMask & Body::Stellar);
     planetOrbitsAction->setChecked(orbitMask & Body::Planet);
+    dwarfPlanetOrbitsAction->setChecked(orbitMask & Body::DwarfPlanet);
     moonOrbitsAction->setChecked(orbitMask & Body::Moon);
+    minorMoonOrbitsAction->setChecked(orbitMask & Body::MinorMoon);
     asteroidOrbitsAction->setChecked(orbitMask & Body::Asteroid);
     cometOrbitsAction->setChecked(orbitMask & Body::Comet);
     spacecraftOrbitsAction->setChecked(orbitMask & Body::Spacecraft);
