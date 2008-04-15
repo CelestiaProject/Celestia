@@ -1,6 +1,7 @@
 // render.cpp
 //
-// Copyright (C) 2001-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2008, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -199,7 +200,9 @@ static const uint32 OrbitCacheRetireAge = 16;
 
 Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
 Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
+Color Renderer::DwarfPlanetLabelColor   (0.407f, 0.333f, 0.964f);
 Color Renderer::MoonLabelColor          (0.231f, 0.733f, 0.792f);
+Color Renderer::MinorMoonLabelColor     (0.231f, 0.733f, 0.792f);
 Color Renderer::AsteroidLabelColor      (0.596f, 0.305f, 0.164f);
 Color Renderer::CometLabelColor         (0.768f, 0.607f, 0.227f);
 Color Renderer::SpacecraftLabelColor    (0.93f,  0.93f,  0.93f);
@@ -214,7 +217,9 @@ Color Renderer::PlanetographicGridLabelColor(0.8f, 0.8f, 0.8f);
 
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
 Color Renderer::PlanetOrbitColor        (0.3f,   0.323f, 0.833f);
+Color Renderer::DwarfPlanetOrbitColor   (0.3f,   0.323f, 0.833f);
 Color Renderer::MoonOrbitColor          (0.08f,  0.407f, 0.392f);
+Color Renderer::MinorMoonOrbitColor     (0.08f,  0.407f, 0.392f);
 Color Renderer::AsteroidOrbitColor      (0.58f,  0.152f, 0.08f);
 Color Renderer::CometOrbitColor         (0.639f, 0.487f, 0.168f);
 Color Renderer::SpacecraftOrbitColor    (0.4f,   0.4f,   0.4f);
@@ -688,8 +693,12 @@ static int translateLabelModeToClassMask(int labelMode)
 
     if (labelMode & Renderer::PlanetLabels)
         classMask |= Body::Planet;
+    if (labelMode & Renderer::DwarfPlanetLabels)
+        classMask |= Body::DwarfPlanet;
     if (labelMode & Renderer::MoonLabels)
         classMask |= Body::Moon;
+    if (labelMode & Renderer::MinorMoonLabels)
+        classMask |= Body::MinorMoon;
     if (labelMode & Renderer::AsteroidLabels)
         classMask |= Body::Asteroid;
     if (labelMode & Renderer::CometLabels)
@@ -1392,6 +1401,9 @@ void renderOrbitColor(const Body *body, bool selected, float opacity)
         case Body::Moon:
             orbitColor = Renderer::MoonOrbitColor;
             break;
+        case Body::MinorMoon:
+            orbitColor = Renderer::MinorMoonOrbitColor;
+            break;
         case Body::Asteroid:
             orbitColor = Renderer::AsteroidOrbitColor;
             break;
@@ -1403,6 +1415,9 @@ void renderOrbitColor(const Body *body, bool selected, float opacity)
             break;
         case Body::Stellar:
             orbitColor = Renderer::StarOrbitColor;
+            break;
+        case Body::DwarfPlanet:
+            orbitColor = Renderer::DwarfPlanetOrbitColor;
             break;
         case Body::Planet:
         default:
@@ -8794,8 +8809,14 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                 case Body::Planet:
                     labelColor = PlanetLabelColor;
                     break;
+                case Body::DwarfPlanet:
+                    labelColor = DwarfPlanetLabelColor;
+                    break;
                 case Body::Moon:
                     labelColor = MoonLabelColor;
+                    break;
+                case Body::MinorMoon:
+                    labelColor = MinorMoonLabelColor;
                     break;
                 case Body::Asteroid:
                     labelColor = AsteroidLabelColor;
