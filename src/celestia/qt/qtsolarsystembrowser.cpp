@@ -256,18 +256,12 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
     vector<Body*> other;
     vector<Body*> normal;
 
-    float minorMoonCutoffRadius = 0.0f;
     bool groupAsteroids = true;
     bool groupSpacecraft = true;
 	bool groupComponents = true;
 	bool groupSurfaceFeatures = true;
     if (parent.body())
     {
-        // TODO: we should define a class for minor moons. Until then,
-        // we'll call a moon 'minor' if its radius is less than 1/1000
-        // times the radius of the planet it orbits.
-        minorMoonCutoffRadius = parent.body()->getRadius() / 1000.0f;
-
         // Don't put asteroid moons in the asteroid group; make them
         // immediate children of the parent.
         if (parent.body()->getClassification() == Body::Asteroid)
@@ -283,14 +277,15 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
         switch (body->getClassification())
         {
         case Body::Planet:
+        case Body::DwarfPlanet:
         case Body::Invisible:
             normal.push_back(body);
             break;
         case Body::Moon:
-            if (body->getRadius() < minorMoonCutoffRadius)
-                minorMoons.push_back(body);
-            else
-                normal.push_back(body);
+            normal.push_back(body);
+            break;
+        case Body::MinorMoon:
+            minorMoons.push_back(body);
             break;
         case Body::Asteroid:
         case Body::Comet:
@@ -368,7 +363,7 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
             // Add the groups
             if (!minorMoons.empty())
             {
-                item->children[childIndex] = createGroupTreeItem(Body::SmallBody,
+                item->children[childIndex] = createGroupTreeItem(Body::MinorMoon,
                                                                  minorMoons,
                                                                  item, childIndex);
                 childIndex++;
@@ -518,7 +513,9 @@ static QString objectTypeName(const Selection& sel)
         int classification = sel.body()->getClassification();
         if (classification == Body::Planet)
             return QObject::tr("Planet");
-        else if (classification == Body::Moon)
+        else if (classification == Body::DwarfPlanet)
+            return QObject::tr("Dwarf planet");
+        else if (classification == Body::Moon || classification == Body::MinorMoon)
             return QObject::tr("Moon");
         else if (classification == Body::Asteroid)
             return QObject::tr("Asteroid");
@@ -550,8 +547,8 @@ static QString classificationName(int classification)
         return QObject::tr("Asteroids & comets");
     else if (classification == Body::Invisible)
         return QObject::tr("Reference points");
-    else if (classification == Body::SmallBody) // TODO: should have a separate
-        return QObject::tr("Minor moons");      // category for this.
+    else if (classification == Body::MinorMoon)
+        return QObject::tr("Minor moons");
 	else if (classification == Body::Component)
 		return QObject::tr("Components");
 	else if (classification == Body::SurfaceFeature)
@@ -609,7 +606,7 @@ QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
 
 
 // Override QAbstractDataModel::headerData()
-QVariant SolarSystemTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orientation */, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -646,7 +643,7 @@ int SolarSystemTreeModel::columnCount(const QModelIndex&) const
 }
 
 
-void SolarSystemTreeModel::sort(int column, Qt::SortOrder order)
+void SolarSystemTreeModel::sort(int /* column */, Qt::SortOrder /* order */)
 {
 }
 

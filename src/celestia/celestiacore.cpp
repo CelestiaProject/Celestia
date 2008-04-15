@@ -1914,7 +1914,10 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         break;
 
     case 'M':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MoonLabels);
+        if (c == 'm')
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MoonLabels);
+        else
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MinorMoonLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1929,7 +1932,10 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         break;
 
     case 'P':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
+        if (c == 'p')
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
+        else
+            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::DwarfPlanetLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
