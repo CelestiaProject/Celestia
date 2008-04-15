@@ -234,10 +234,30 @@ template <typename T> Point3d SampledOrbit<T>::computePosition(double jd) const
                 Vec3d v32((double) s3.x - (double) s2.x,
                           (double) s3.y - (double) s2.y,
                           (double) s3.z - (double) s2.z);
-                Vec3d v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
-                Vec3d v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
-                v0 *= h;
-                v1 *= h;
+                
+                // Estimate velocities by averaging the differences at adjacent spans
+                // (except at the end spans, where we just use a single velocity.)
+                Vec3d v0;
+                if (n > 1)
+                {
+                    v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
+                    v0 *= h;
+                }
+                else
+                {
+                    v0 = v21;
+                }
+                
+                Vec3d v1;
+                if (n < (int) samples.size() - 1)
+                {
+                    v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
+                    v1 *= h;
+                }
+                else
+                {
+                    v1 = v21;
+                }                
 
                 pos = cubicInterpolate(p0, v0, p1, v1, t);
             }
@@ -326,10 +346,30 @@ template <typename T> Vec3d SampledOrbit<T>::computeVelocity(double jd) const
                 Vec3d v32((double) s3.x - (double) s2.x,
                           (double) s3.y - (double) s2.y,
                           (double) s3.z - (double) s2.z);
-                Vec3d v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
-                Vec3d v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
-                v0 *= h;
-                v1 *= h;
+                
+                // Estimate velocities by averaging the differences at adjacent spans
+                // (except at the end spans, where we just use a single velocity.)
+                Vec3d v0;
+                if (n > 1)
+                {
+                    v0 = v10 * (0.5 / (s1.t - s0.t)) + v21 * (0.5 * ih);
+                    v0 *= h;
+                }
+                else
+                {
+                    v0 = v21;
+                }
+                
+                Vec3d v1;
+                if (n < (int) samples.size() - 1)
+                {
+                    v1 = v21 * (0.5 * ih) + v32 * (0.5 / (s3.t - s2.t));
+                    v1 *= h;
+                }
+                else
+                {
+                    v1 = v21;
+                }                
 
                 vel = cubicInterpolateVelocity(p0, v0, p1, v1, t);
                 vel *= 1.0 / h;
@@ -378,11 +418,6 @@ template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
             vec1.normalize();
             vec2.normalize();
             double dot = vec1 * vec2;
-
-            if (dot > 1.0)
-                dot = 1.0;
-            else if (dot < -1.0)
-                dot = -1.0;
 
             if (dot > cosThresholdAngle && dt2 < MaxSampleInterval)
             {
@@ -719,7 +754,7 @@ template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, 
             jd = (double) astro::Date(year, 1, 1) + 365.0 * frac;
         }
         
-        //if (in.good())
+        if (in.good())
         {
             orbit->addSample(jd, x, y, z);
             nSamples++;
