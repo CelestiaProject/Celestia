@@ -43,6 +43,7 @@ class SpiceOrbit : public CachingOrbit
     }
 
     Point3d computePosition(double jd) const;
+    Vec3d computeVelocity(double jd) const;
 
     virtual void getValidRange(double& begin, double& end) const;
 
