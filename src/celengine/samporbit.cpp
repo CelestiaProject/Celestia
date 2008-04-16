@@ -16,6 +16,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
 #include <celengine/orbit.h>
@@ -732,32 +733,24 @@ template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, 
     
     orbit = new SampledOrbit<T>(interpolation);
 
-    int nSamples = 0;
+    double lastSampleTime = -numeric_limits<double>::infinity();
     while (in.good())
     {
-        double t, x, y, z;
-        in >> t;
+        double tdb, x, y, z;
+        in >> tdb;
         in >> x;
         in >> y;
         in >> z;
 
-        double jd = t;
-
-        // A bit of a hack . . .  assume that a time >= 1000000 is a Julian
-        // Day, and anything else is a year + fraction.  This is just here
-        // for backward compatibility.
-        if (jd < 1000000.0)
-        {
-            int year = (int) t;
-            double frac = t - year;
-            // Not quite correct--doesn't account for leap years
-            jd = (double) astro::Date(year, 1, 1) + 365.0 * frac;
-        }
-        
         if (in.good())
         {
-            orbit->addSample(jd, x, y, z);
-            nSamples++;
+            // Skip samples with duplicate times; such trajectories are invalid, but
+            // are unfortunately used in some existing add-ons.
+            if (tdb != lastSampleTime)
+            {
+                orbit->addSample(tdb, x, y, z);
+                lastSampleTime = tdb;
+            }
         }
     }
 
@@ -787,7 +780,7 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& fi
     
     orbit = new SampledOrbitXYZV<T>(interpolation);
 
-    int nSamples = 0;
+    double lastSampleTime = -numeric_limits<double>::infinity();
     while (in.good())
     {
         double tdb = 0.0;
@@ -807,8 +800,11 @@ template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& fi
 
         if (in.good())
         {
-            orbit->addSample(tdb, position, velocity);
-            nSamples++;
+            if (tdb != lastSampleTime)
+            {
+                orbit->addSample(tdb, position, velocity);
+                lastSampleTime = tdb;
+            }
         }
     }
 
