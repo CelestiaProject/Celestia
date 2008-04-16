@@ -151,7 +151,6 @@ SpiceOrbit::init(const string& path,
 		// always at (0, 0, 0).
 		if (targetID != 0)
 		{
-            clog << filename << ", " << targetID << endl;
 			spkcov_c(filename, targetID, &targetCoverage);
 		}
 	}
@@ -281,6 +280,52 @@ SpiceOrbit::computePosition(double jd) const
 
         // Transform into Celestia's coordinate system
         return Point3d(position[0], position[2], -position[1]);
+    }
+}
+
+
+Vec3d
+SpiceOrbit::computeVelocity(double jd) const
+{
+    if (jd < validIntervalBegin)
+        jd = validIntervalBegin;
+    else if (jd > validIntervalEnd)
+        jd = validIntervalEnd;
+
+    if (spiceErr)
+    {
+        return Vec3d(0.0, 0.0, 0.0);
+    }
+    else
+    {
+        // Input time for SPICE is seconds after J2000
+        double t = astro::daysToSecs(jd - astro::J2000);
+        double state[6];
+        double lt;          // One way light travel time
+
+        spkgeo_c(targetID,
+                 t,
+                 "eclipj2000",
+                 originID,
+                 state,
+                 &lt);
+
+        // This shouldn't happen, since we've already computed the valid
+        // coverage interval.
+        if (failed_c())
+        {
+            // Print the error message
+            char errMsg[1024];
+            getmsg_c("long", sizeof(errMsg), errMsg);
+            clog << errMsg << "\n";
+
+            // Reset the error state
+            reset_c();
+        }
+
+        // Transform into Celestia's coordinate system, and from km/s to km/day
+        double d2s = astro::daysToSecs(1.0);
+        return Vec3d(state[3] * d2s, state[5] * d2s, -state[4] * d2s);
     }
 }
 
