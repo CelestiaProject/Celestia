@@ -128,7 +128,7 @@ class Renderer
         I18nConstellationLabels = 0x800,
         DwarfPlanetLabels   = 0x1000,
         MinorMoonLabels     = 0x2000,
-        BodyLabelMask       = (PlanetLabels | MoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
+        BodyLabelMask       = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
     };
 
     enum {
