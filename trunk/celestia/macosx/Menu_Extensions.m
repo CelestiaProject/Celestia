@@ -25,17 +25,7 @@
 - (void) removeRefMarkItems
 {
     int index;
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Body Axes",@"po",@"")];
-    if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Frame Axes",@"po",@"")];
-    if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Sun Direction",@"po",@"")];
-    if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"")];
-    if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Planetographic Grid",@"po",@"")];
-    if (index >= 0) [self removeItemAtIndex: index];
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Show Terminator",@"po",@"")];
+    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
 }
 #endif
@@ -73,48 +63,56 @@
     if ([aSelection body])
     {
         target = [aSelection body];
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Terminator",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        NSMenu *refMarksMenu = [[[NSMenu alloc ] initWithTitle: @"Reference Vectors" ] autorelease];
+        [mi setSubmenu: refMarksMenu];
         if (mi)
         {
-            [mi setTag: 1005];
             [self insertItem: mi atIndex: aIndex];
-            [settings scanForKeys: mi];
         }                
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Planetographic Grid",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Body Axes",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
-            [mi setTag: 1004];
-            [self insertItem: mi atIndex: aIndex];
-            [settings scanForKeys: mi];
-        }        
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"") action: nil keyEquivalent: @""] autorelease];
-        if (mi)
-        {
-            [mi setTag: 1003];
-            [self insertItem: mi atIndex: aIndex];
-            [settings scanForKeys: mi];
-        }
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Sun Direction",@"po",@"") action: nil keyEquivalent: @""] autorelease];
-        if (mi)
-        {
-            [mi setTag: 1002];
-            [self insertItem: mi atIndex: aIndex];
+            [mi setTag: 1000];
+            [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }
         mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Frame Axes",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
             [mi setTag: 1001];
-            [self insertItem: mi atIndex: aIndex];
+            [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Body Axes",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Sun Direction",@"po",@"") action: nil keyEquivalent: @""] autorelease];
         if (mi)
         {
-            [mi setTag: 1000];
-            [self insertItem: mi atIndex: aIndex];
+            [mi setTag: 1002];
+            [refMarksMenu addItem: mi];
             [settings scanForKeys: mi];
         }
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Velocity Vector",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1003];
+            [refMarksMenu addItem: mi];
+            [settings scanForKeys: mi];
+        }
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Planetographic Grid",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1004];
+            [refMarksMenu addItem: mi];
+            [settings scanForKeys: mi];
+        }        
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Show Terminator",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        if (mi)
+        {
+            [mi setTag: 1005];
+            [refMarksMenu addItem: mi];
+            [settings scanForKeys: mi];
+        }                
         result = YES;
     }
     return result;
