@@ -17,6 +17,7 @@
 
 #include <QApplication>
 #include <QSplashScreen>
+#include <QDesktopServices>
 #include <QPixmap>
 #include <QBitmap>
 #include <vector>
@@ -70,6 +71,9 @@ int main(int argc, char *argv[])
     window.show();
 
     splash.finish(&window);
+
+    // Set the main window to be the cel url handler
+    QDesktopServices::setUrlHandler("cel", &window, "handleCelUrl");
 
     return app.exec();
 }

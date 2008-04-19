@@ -35,8 +35,12 @@
 #include <QTextStream>
 #include <QClipboard>
 #include <QApplication>
+#include <QProcess>
+#include <QDesktopServices>
+#include <QUrl>
 #include <vector>
 #include <string>
+#include <cassert>
 #include "qtappwin.h"
 #include "qtglwidget.h"
 #include "qtpreferencesdialog.h"
@@ -54,12 +58,14 @@
 #include "celestia/url.h"
 #include "celengine/gl.h"
 #include "celengine/glext.h"
+#include "qtbookmark.h"
 
 using namespace std;
 
 
 const QGLContext* glctx = NULL;
 QString DEFAULT_CONFIG_FILE = "celestia.cfg";
+QString BOOKMARKS_FILE = "bookmarks.xbel";
 
 const QSize DEFAULT_MAIN_WINDOW_SIZE(800, 600);
 const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
@@ -122,10 +128,18 @@ private:
 CelestiaAppWindow::CelestiaAppWindow() :
     glWidget(NULL),
     celestialBrowser(NULL),
-    appCore(NULL),
+    m_appCore(NULL),
+    actions(NULL),
+    fileMenu(NULL),
+    navMenu(NULL),
+    timeMenu(NULL),
+    bookmarkMenu(NULL),
+    viewMenu(NULL),
+    helpMenu(NULL),
     infoPanel(NULL),
     eventFinder(NULL),
-    alerter(NULL)
+    alerter(NULL),
+    m_bookmarkManager(NULL)
 {
     setObjectName("celestia-mainwin");
 }
@@ -183,15 +197,17 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     }
 #endif
 
-    appCore = new CelestiaCore();
+    initAppDataDirectory();
+
+    m_appCore = new CelestiaCore();
     
     AppProgressNotifier* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
-    appCore->setAlerter(alerter);
+    m_appCore->setAlerter(alerter);
 
 	setWindowIcon(QIcon(":/icons/celestia.png"));
 
-    appCore->initSimulation(&configFileName,
+    m_appCore->initSimulation(&configFileName,
                             &extrasDirectories,
                             progress);
     delete progress;
@@ -199,24 +215,24 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 	// Enable antialiasing if requested in the config file.
 	// TODO: Make this settable via the GUI
 	QGLFormat glformat = QGLFormat::defaultFormat();
-	if (appCore->getConfig()->aaSamples > 1)
+	if (m_appCore->getConfig()->aaSamples > 1)
 	{
 		glformat.setSampleBuffers(true);
-		glformat.setSamples(appCore->getConfig()->aaSamples);
+		glformat.setSamples(m_appCore->getConfig()->aaSamples);
 		QGLFormat::setDefaultFormat(glformat);
 	}
 
-    glWidget = new CelestiaGlWidget(NULL, "Celestia", appCore);
+    glWidget = new CelestiaGlWidget(NULL, "Celestia", m_appCore);
     glctx = glWidget->context();
-    appCore->setCursorHandler(glWidget);
-    appCore->setContextMenuCallback(ContextMenu);
+    m_appCore->setCursorHandler(glWidget);
+    m_appCore->setContextMenuCallback(ContextMenu);
     MainWindowInstance = this; // TODO: Fix context menu callback
 
     setCentralWidget(glWidget);
 
     setWindowTitle("Celestia");
 
-    actions = new CelestiaActions(this, appCore);
+    actions = new CelestiaActions(this, m_appCore);
 
     createMenus();
 
@@ -229,21 +245,21 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
                                Qt::RightDockWidgetArea);
 
     // Create the various browser widgets
-    celestialBrowser = new CelestialBrowser(appCore, NULL);
+    celestialBrowser = new CelestialBrowser(m_appCore, NULL);
     celestialBrowser->setObjectName("celestia-browser");
     connect(celestialBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    QWidget* deepSkyBrowser = new DeepSkyBrowser(appCore, NULL);
+    QWidget* deepSkyBrowser = new DeepSkyBrowser(m_appCore, NULL);
     deepSkyBrowser->setObjectName("deepsky-browser");
     connect(deepSkyBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
 
-    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(appCore, NULL);
+    SolarSystemBrowser* solarSystemBrowser = new SolarSystemBrowser(m_appCore, NULL);
     solarSystemBrowser->setObjectName("ssys-browser");
     connect(solarSystemBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
@@ -264,7 +280,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
                                Qt::RightDockWidgetArea);
     addDockWidget(Qt::RightDockWidgetArea, infoPanel);
 
-    eventFinder = new EventFinder(appCore, tr("Event Finder"), this);
+    eventFinder = new EventFinder(m_appCore, tr("Event Finder"), this);
     eventFinder->setObjectName("event-finder");
     eventFinder->setAllowedAreas(Qt::LeftDockWidgetArea |
                                  Qt::RightDockWidgetArea);
@@ -273,7 +289,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     //addDockWidget(Qt::DockWidgetArea, eventFinder);
 
     // Create the time toolbar
-    TimeToolBar* timeToolBar = new TimeToolBar(appCore, tr("Time"));
+    TimeToolBar* timeToolBar = new TimeToolBar(m_appCore, tr("Time"));
     timeToolBar->setObjectName("time-toolbar");
     timeToolBar->setFloatable(true);
     timeToolBar->setMovable(true);
@@ -319,11 +335,98 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     // Set the full screen check state only after reading settings
     fullScreenAction->setChecked(isFullScreen());
 
+    m_bookmarkManager = new BookmarkManager(this);
+
+    // Load the bookmarks file and nitialize the bookmarks menu
+    if (!loadBookmarks())
+        m_bookmarkManager->initializeBookmarks();
+    populateBookmarkMenu();
+    connect(m_bookmarkManager, SIGNAL(bookmarkTriggered(const QString&)),
+            this, SLOT(slotBookmarkTriggered(const QString&)));
+
     // We use a timer with a null timeout value
-    // to add appCore->tick to Qt's event loop
+    // to add m_appCore->tick to Qt's event loop
     QTimer *t = new QTimer(dynamic_cast<QObject *>(this));
     QObject::connect(t, SIGNAL(timeout()), SLOT(celestia_tick()));
     t->start(0);
+}
+
+
+/*! Set up the application data directory, creating it if necessary. The
+ *  directory contains user-specific, persistent information for Celestia
+ *  (such as bookmarks) which aren't stored in settings. The location
+ *  of the data directory depends on the platform:
+ *
+ *  Win32: %APPDATA%\Celestia
+ *  Unix and Mac OS X: $HOME/.config/Celestia
+ */
+void CelestiaAppWindow::initAppDataDirectory()
+{
+#ifdef _WIN32
+    // On Windows, the Celestia data directory is %APPDATA%\Celestia
+    // First, get the value of the APPDATA environment variable
+    QStringList envVars = QProcess::systemEnvironment();
+    QString appDataPath;
+    foreach (QString envVariable, envVars)
+    {
+        if (envVariable.startsWith("APPDATA"))
+        {
+            QStringList nameValue = envVariable.split("=");
+            if (nameValue.size() == 2)
+                appDataPath = nameValue[1];
+            break;
+        }
+    }
+#else
+    // UNIX or Mac OS X
+    // TODO: Should Mac OS X bookmarks go into $HOME/Library/Preferences instead?
+    QString appDataPath = QDir::home().filePath(".config");
+#endif
+
+    if (appDataPath != "")
+    {
+        // Create a Celestia subdirectory of APPDATA if it doesn't already exist
+        QDir appDataDir(appDataPath);
+        if (appDataDir.exists())
+        {
+            m_dataDirPath = appDataDir.filePath("Celestia");
+            QDir celestiaDataDir(m_dataDirPath);
+            if (!celestiaDataDir.exists())
+            {
+                appDataDir.mkdir("Celestia");
+            }
+
+            // If the doesn't exist even after we tried to create it, give up
+            // on trying to load user data from there.
+            if (!celestiaDataDir.exists())
+            {
+                m_dataDirPath = "";
+            }
+        }
+    }
+#ifdef _DEBUG
+    else
+    {
+        QMessageBox::warning(this, "APPDIR missing", "APPDIR environment variable not found!");
+    }
+#endif
+}
+
+
+void CelestiaAppWindow::readSettings()
+{
+    QSettings settings;
+
+    settings.beginGroup("MainWindow");
+    resize(settings.value("Size", DEFAULT_MAIN_WINDOW_SIZE).toSize());
+    move(settings.value("Pos", DEFAULT_MAIN_WINDOW_POSITION).toPoint());
+    if (settings.contains("State"))
+        restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
+    if (settings.value("Fullscreen", false).toBool())
+        showFullScreen();
+    settings.endGroup();
+
+    // Render settings read in qtglwidget
 }
 
 
@@ -349,7 +452,7 @@ void CelestiaAppWindow::writeSettings()
     settings.endGroup();
 
     // Renderer settings
-    Renderer* renderer = appCore->getRenderer();
+    Renderer* renderer = m_appCore->getRenderer();
     settings.setValue("RenderFlags", renderer->getRenderFlags());
     settings.setValue("OrbitMask", renderer->getOrbitMask());
     settings.setValue("LabelMode", renderer->getLabelMode());
@@ -358,43 +461,68 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("RenderPath", (int) renderer->getGLContext()->getRenderPath());
     settings.setValue("TextureResolution", renderer->getResolution());
 
-    Simulation* simulation = appCore->getSimulation();
+    Simulation* simulation = m_appCore->getSimulation();
     settings.beginGroup("Preferences");
     settings.setValue("SyncTime", simulation->getSyncTime());
-    settings.setValue("FramesVisible", appCore->getFramesVisible());
-    settings.setValue("ActiveFrameVisible", appCore->getActiveFrameVisible());
+    settings.setValue("FramesVisible", m_appCore->getFramesVisible());
+    settings.setValue("ActiveFrameVisible", m_appCore->getActiveFrameVisible());
 
     // TODO: This is not a reliable way determine when local time is enabled, but it's
     // all that CelestiaCore offers right now. useLocalTime won't ever be true when the system
     // time zone is UTC+0. This could be a problem when switching to/from daylight saving
     // time.
-    bool useLocalTime = appCore->getTimeZoneBias() != 0;
+    bool useLocalTime = m_appCore->getTimeZoneBias() != 0;
     settings.setValue("LocalTime", useLocalTime);
-    settings.setValue("TimeZoneName", QString::fromUtf8(appCore->getTimeZoneName().c_str()));
+    settings.setValue("TimeZoneName", QString::fromUtf8(m_appCore->getTimeZoneName().c_str()));
     settings.endGroup();
 }
 
 
-void CelestiaAppWindow::readSettings()
+bool CelestiaAppWindow::loadBookmarks()
 {
-    QSettings settings;
+    bool loadedBookmarks = false;
+    QString bookmarksFilePath = QDir(m_dataDirPath).filePath(BOOKMARKS_FILE);
+    if (!QFile::exists(bookmarksFilePath))
+    {
+        QMessageBox::warning(this, "No Bookmarks File", QString("Bookmarks file %1 does not exist.").arg(bookmarksFilePath));
+    }
+    else
+    {
+        QFile bookmarksFile(bookmarksFilePath);
+        if (!bookmarksFile.open(QIODevice::ReadOnly))
+        {
+            QMessageBox::warning(this, tr("Error opening bookmarks file"), bookmarksFile.errorString());
+        }
+        else
+        {
+            loadedBookmarks = m_bookmarkManager->loadBookmarks(&bookmarksFile);
+            bookmarksFile.close();
+        }
+    }
 
-    settings.beginGroup("MainWindow");
-    resize(settings.value("Size", DEFAULT_MAIN_WINDOW_SIZE).toSize());
-    move(settings.value("Pos", DEFAULT_MAIN_WINDOW_POSITION).toPoint());
-    if (settings.contains("State"))
-        restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
-    if (settings.value("Fullscreen", false).toBool())
-        showFullScreen();
-    settings.endGroup();
+    return loadedBookmarks;
+}
 
-    // Render settings read in qtglwidget
+
+void CelestiaAppWindow::saveBookmarks()
+{
+    QString bookmarksFilePath = QDir(m_dataDirPath).filePath(BOOKMARKS_FILE);
+    QFile bookmarksFile(bookmarksFilePath);
+    if (!bookmarksFile.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::warning(this, tr("Error Saving Bookmarks"), bookmarksFile.errorString());
+    }
+    else
+    {
+        m_bookmarkManager->saveBookmarks(&bookmarksFile);
+        bookmarksFile.close();
+    }
 }
 
 
 void CelestiaAppWindow::celestia_tick()
 {
-    appCore->tick();
+    m_appCore->tick();
     glWidget->updateGL();
 }
 
@@ -402,7 +530,7 @@ void CelestiaAppWindow::celestia_tick()
 void CelestiaAppWindow::slotShowSelectionContextMenu(const QPoint& pos,
                                                      Selection& sel)
 {
-    SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
+    SelectionPopup* menu = new SelectionPopup(sel, m_appCore, this);
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
             this, SLOT(slotShowObjectInfo(Selection&)));
     menu->popupAtCenter(pos);
@@ -426,7 +554,7 @@ void CelestiaAppWindow::slotGrabImage()
     QString saveAsName = QFileDialog::getSaveFileName(this,
                                                       tr("Save Image"),
                                                       dir,
-                                                      tr("Images (*.png)"));
+                                                      tr("Images (*.png *.jpg)"));
 
     if (!saveAsName.isEmpty())
     {
@@ -434,7 +562,7 @@ void CelestiaAppWindow::slotGrabImage()
 
         //glWidget->repaint();
         QImage grabbedImage = glWidget->grabFrameBuffer();
-        grabbedImage.save(saveAsName, "PNG");
+        grabbedImage.save(saveAsName);
 
         settings.setValue("GrabImageDir", saveAsFile.absolutePath());
     }
@@ -467,15 +595,15 @@ void CelestiaAppWindow::slotCopyImage()
     //glWidget->repaint();
     QImage grabbedImage = glWidget->grabFrameBuffer();
     QApplication::clipboard()->setImage(grabbedImage);
-    appCore->flash(tr("Captured screen shot to clipboard").toUtf8().data());
+    m_appCore->flash(tr("Captured screen shot to clipboard").toUtf8().data());
 }
 
 
 void CelestiaAppWindow::slotCopyURL()
 {
-    Url url(appCore);
+    Url url(m_appCore);
     QApplication::clipboard()->setText(url.getAsString().c_str());
-    appCore->flash(tr("Copied URL").toUtf8().data());
+    m_appCore->flash(tr("Copied URL").toUtf8().data());
 }
 
 
@@ -484,33 +612,45 @@ void CelestiaAppWindow::slotPasteURL()
     QString urlText = QApplication::clipboard()->text();
     if (!urlText.isEmpty())
     {
-        appCore->goToUrl(urlText.toUtf8().data());
-        appCore->flash(tr("Pasting URL").toUtf8().data());
+        m_appCore->goToUrl(urlText.toUtf8().data());
+        m_appCore->flash(tr("Pasting URL").toUtf8().data());
     }
 }
 
 
+/*! Cel: URL handler (called from QDesktopServices openURL)
+ */
+void CelestiaAppWindow::handleCelUrl(const QUrl& url)
+{
+    QString urlText = url.toString();
+    if (!urlText.isEmpty())
+    {
+        m_appCore->goToUrl(urlText.toUtf8().data());
+    }
+}
+ 
+
 void CelestiaAppWindow::selectSun()
 {
-    appCore->charEntered("h");
+    m_appCore->charEntered("h");
 }
 
 
 void CelestiaAppWindow::centerSelection()
 {
-    appCore->charEntered("c");
+    m_appCore->charEntered("c");
 }
 
 
 void CelestiaAppWindow::gotoSelection()
 {
-    appCore->charEntered("g");
+    m_appCore->charEntered("g");
 }
 
 
 void CelestiaAppWindow::slotPreferences()
 {
-    PreferencesDialog dlg(this, appCore);
+    PreferencesDialog dlg(this, m_appCore);
 
     dlg.exec();
     //resyncMenus();
@@ -518,50 +658,50 @@ void CelestiaAppWindow::slotPreferences()
 
 void CelestiaAppWindow::slotSplitViewVertically()
 {
-    appCore->charEntered('\025');
+    m_appCore->charEntered('\025');
 }
 
 void CelestiaAppWindow::slotSplitViewHorizontally()
 {
-    appCore->charEntered('\022');
+    m_appCore->charEntered('\022');
 }
 
 void CelestiaAppWindow::slotCycleView()
 {
-    appCore->charEntered('\011');
+    m_appCore->charEntered('\011');
 }
 
 void CelestiaAppWindow::slotSingleView()
 {
-    appCore->charEntered('\004');
+    m_appCore->charEntered('\004');
 }
 
 void CelestiaAppWindow::slotDeleteView()
 {
-    appCore->charEntered(127);
+    m_appCore->charEntered(127);
 }
 
 void CelestiaAppWindow::slotToggleFramesVisible()
 {
-    appCore->setFramesVisible(!appCore->getFramesVisible());
+    m_appCore->setFramesVisible(!m_appCore->getFramesVisible());
 }
 
 void CelestiaAppWindow::slotToggleActiveFrameVisible()
 {
-    appCore->setActiveFrameVisible(!appCore->getActiveFrameVisible());
+    m_appCore->setActiveFrameVisible(!m_appCore->getActiveFrameVisible());
 }
 
 void CelestiaAppWindow::slotToggleSyncTime()
 {
-    appCore->getSimulation()->setSyncTime(!appCore->getSimulation()->getSyncTime());
+    m_appCore->getSimulation()->setSyncTime(!m_appCore->getSimulation()->getSyncTime());
 }
 
 
 void CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
 {
     infoPanel->buildInfoPage(sel,
-                             appCore->getSimulation()->getUniverse(),
-                             appCore->getSimulation()->getTime());
+                             m_appCore->getSimulation()->getUniverse(),
+                             m_appCore->getSimulation()->getTime());
     if (!infoPanel->isVisible())
         infoPanel->setVisible(true);
 }
@@ -576,8 +716,8 @@ void CelestiaAppWindow::slotOpenScriptDialog()
 
     if (!scriptFileName.isEmpty())
     {
-        appCore->cancelScript();
-        appCore->runScript(scriptFileName.toUtf8().data());
+        m_appCore->cancelScript();
+        m_appCore->runScript(scriptFileName.toUtf8().data());
     }
 }
 
@@ -587,15 +727,15 @@ void CelestiaAppWindow::slotOpenScript()
     QAction* action = qobject_cast<QAction*>(sender());
     if (action != NULL)
     {
-        appCore->cancelScript();
-        appCore->runScript(action->data().toString().toUtf8().data());
+        m_appCore->cancelScript();
+        m_appCore->runScript(action->data().toString().toUtf8().data());
     }
 }
 
 
 void CelestiaAppWindow::slotShowTimeDialog()
 {
-    SetTimeDialog* timeDialog = new SetTimeDialog(appCore->getSimulation()->getTime(),
+    SetTimeDialog* timeDialog = new SetTimeDialog(m_appCore->getSimulation()->getTime(),
                                                   this);
     connect(timeDialog, SIGNAL(setTimeTriggered(double)), this, SLOT(slotSetTime(double)));
 
@@ -605,7 +745,7 @@ void CelestiaAppWindow::slotShowTimeDialog()
 
 void CelestiaAppWindow::slotSetTime(double tdb)
 {
-    appCore->getSimulation()->setTime(tdb);
+    m_appCore->getSimulation()->setTime(tdb);
 }
 
 
@@ -615,6 +755,41 @@ void CelestiaAppWindow::slotToggleFullScreen()
         showNormal();
     else
         showFullScreen();
+}
+
+
+void CelestiaAppWindow::slotAddBookmark()
+{
+    // Set the default bookmark title to the name of the current selection
+    Selection sel = m_appCore->getSimulation()->getSelection();
+    QString defaultTitle;   
+    if (sel.empty())
+        defaultTitle = tr("New bookmark");
+    else
+        defaultTitle = sel.getName().c_str();
+
+    Url url(m_appCore);
+    QString urlText(url.getAsString().c_str());
+
+    AddBookmarkDialog dialog(m_bookmarkManager, defaultTitle, urlText);
+    dialog.exec();
+
+    populateBookmarkMenu();
+}
+
+
+void CelestiaAppWindow::slotOrganizeBookmarks()
+{
+    OrganizeBookmarksDialog dialog(m_bookmarkManager);
+    dialog.exec();
+
+    populateBookmarkMenu();
+}
+
+
+void CelestiaAppWindow::slotBookmarkTriggered(const QString& url)
+{
+    QDesktopServices::openUrl(QUrl(url));
 }
 
 
@@ -794,6 +969,8 @@ void CelestiaAppWindow::createMenus()
     connect(setTimeAct, SIGNAL(triggered()), this, SLOT(slotShowTimeDialog()));
     timeMenu->addAction(setTimeAct);
 
+    /****** Bookmark menu ******/
+    bookmarkMenu = menuBar()->addMenu(tr("&Bookmarks"));
 
     /****** View menu ******/
     viewMenu = menuBar()->addMenu(tr("&View"));
@@ -848,10 +1025,10 @@ void CelestiaAppWindow::createMenus()
     }
     else
     {
-        check = appCore->getFramesVisible();
+        check = m_appCore->getFramesVisible();
     }
     framesVisibleAction->setChecked(check);
-    appCore->setFramesVisible(check);
+    m_appCore->setFramesVisible(check);
 
     QAction* activeFrameVisibleAction = new QAction(tr("Active frame visible"), this);
     activeFrameVisibleAction->setCheckable(true);
@@ -864,10 +1041,10 @@ void CelestiaAppWindow::createMenus()
     }
     else
     {
-        check = appCore->getActiveFrameVisible();
+        check = m_appCore->getActiveFrameVisible();
     }
     activeFrameVisibleAction->setChecked(check);
-    appCore->setActiveFrameVisible(check);
+    m_appCore->setActiveFrameVisible(check);
 
     QAction* syncTimeAction = new QAction(tr("Synchronize time"), this);
     syncTimeAction->setCheckable(true);
@@ -880,36 +1057,36 @@ void CelestiaAppWindow::createMenus()
     }
     else
     {
-        check = appCore->getSimulation()->getSyncTime();
+        check = m_appCore->getSimulation()->getSyncTime();
     }
     syncTimeAction->setChecked(check);
-    appCore->getSimulation()->setSyncTime(check);
+    m_appCore->getSimulation()->setSyncTime(check);
 
     // Set up the default time zone name and offset from UTC
     time_t curtime = time(NULL);
-    appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
+    m_appCore->start(astro::UTCtoTDB((double) curtime / 86400.0 + (double) astro::Date(1970, 1, 1)));
     localtime(&curtime); // Only doing this to set timezone as a side effect
 
 #ifdef TARGET_OS_MAC
     CFTimeZoneRef tz = CFTimeZoneCopyDefault();
-    appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
+    m_appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
     CFRelease(tz);
 #else
-    appCore->setTimeZoneBias(-timezone + 3600 * daylight);
+    m_appCore->setTimeZoneBias(-timezone + 3600 * daylight);
 #endif
-    appCore->setTimeZoneName(tzname[daylight?0:1]);
+    m_appCore->setTimeZoneName(tzname[daylight?0:1]);
 
     // If LocalTime is set to false, set the time zone bias to zero.
     if (settings.contains("LocalTime"))
     {
         bool useLocalTime = settings.value("LocalTime").toBool();
         if (!useLocalTime)
-            appCore->setTimeZoneBias(0);
+            m_appCore->setTimeZoneBias(0);
     }
 
     if (settings.contains("TimeZoneName"))
     {
-        appCore->setTimeZoneName(settings.value("TimeZoneName").toString().toUtf8().data());
+        m_appCore->setTimeZoneName(settings.value("TimeZoneName").toString().toUtf8().data());
     }
 
 	/****** Help Menu ******/
@@ -927,15 +1104,40 @@ void CelestiaAppWindow::createMenus()
     settings.endGroup();
 }
 
+
+/*! Rebuild the Bookmarks menu. This method needs to be called after the
+ *  bookmarks file is loaded and whenever the bookmarks lists is changed
+ *  (add bookmarks or organize bookmarks.)
+ */
+void CelestiaAppWindow::populateBookmarkMenu()
+{
+    bookmarkMenu->clear();
+    
+    QAction* addBookmarkAction = new QAction(tr("Add Bookmark..."), bookmarkMenu);
+    bookmarkMenu->addAction(addBookmarkAction);
+    connect(addBookmarkAction, SIGNAL(triggered()), this, SLOT(slotAddBookmark()));
+    
+    QAction* organizeBookmarksAction = new QAction(tr("Organize Bookmarks..."), bookmarkMenu);
+    bookmarkMenu->addAction(organizeBookmarksAction);
+    connect(organizeBookmarksAction, SIGNAL(triggered()), this, SLOT(slotOrganizeBookmarks()));
+   
+    bookmarkMenu->addSeparator();
+
+    m_bookmarkManager->populateBookmarkMenu(bookmarkMenu);
+}
+
+
 void CelestiaAppWindow::closeEvent(QCloseEvent* event)
 {
     writeSettings();
+    saveBookmarks();
+
     event->accept();
 }
 
 void CelestiaAppWindow::contextMenu(float x, float y, Selection sel)
 {
-    SelectionPopup* menu = new SelectionPopup(sel, appCore, this);
+    SelectionPopup* menu = new SelectionPopup(sel, m_appCore, this);
     connect(menu, SIGNAL(selectionInfoRequested(Selection&)),
             this, SLOT(slotShowObjectInfo(Selection&)));
     menu->popupAtCenter(centralWidget()->mapToGlobal(QPoint((int) x, (int) y)));

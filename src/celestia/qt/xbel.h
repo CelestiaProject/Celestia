@@ -14,6 +14,7 @@
 #define _CELESTIA_XBEL_H_
 
 #include <QXmlStreamReader>
+#include <QXmlStreamWriter>
 
 class BookmarkItem;
 
@@ -37,5 +38,16 @@ private:
      void skipUnknownElement();
 };
 
+
+class XbelWriter : public QXmlStreamWriter
+{
+public:
+    XbelWriter(QIODevice*);
+
+    bool write(const BookmarkItem* root);
+
+private:
+    void writeItem(const BookmarkItem* item);
+};
 
 #endif // _CELESTIA_XBEL_H_

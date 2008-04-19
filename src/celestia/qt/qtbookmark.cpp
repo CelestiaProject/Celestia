@@ -17,11 +17,8 @@
 #include <QHeaderView>
 #include <QMimeData>
 #include <QStringList>
-#include <iostream>
-
+#include <QMenu>
 #include "xbel.h"
-
-using namespace std;
 
 
 BookmarkItem::BookmarkItem(Type type, BookmarkItem* parent) :
@@ -118,6 +115,13 @@ BookmarkItem::child(int index) const
         return NULL;
     else
         return m_children[index];
+}
+
+
+bool
+BookmarkItem::isRoot() const
+{
+    return m_parent == NULL;
 }
 
 
@@ -234,7 +238,7 @@ BookmarkTreeModel::getItem(const QModelIndex& index)
 QModelIndex
 BookmarkTreeModel::itemIndex(BookmarkItem* item)
 {
-    if (item->parent() == NULL)
+    if (item->isRoot())
         return QModelIndex();
     else
         return createIndex(item->position(), 0, item);
@@ -451,13 +455,6 @@ BookmarkTreeModel::removeRows(int row, int count, const QModelIndex& parent)
 }
 
 
-bool
-BookmarkTreeModel::insertRows(int row, int count, const QModelIndex& parent)
-{
-    return true;
-}
-
-
 QStringList
 BookmarkTreeModel::mimeTypes() const
 {
@@ -485,6 +482,37 @@ BookmarkTreeModel::mimeData(const QModelIndexList& indexes) const
 }
 
 
+void
+BookmarkTreeModel::addItem(BookmarkItem* item, int position)
+{
+    // Can't insert the root item
+    Q_ASSERT(!item->isRoot());
+
+    BookmarkItem* parentItem = item->parent();
+    QModelIndex parentIndex = itemIndex(parentItem);
+    this->beginInsertRows(parentIndex, position, position);
+    parentItem->insert(item, position);
+    this->endInsertRows();
+}
+
+
+void
+BookmarkTreeModel::removeItem(BookmarkItem* item)
+{
+    Q_ASSERT(!item->isRoot());
+
+    int position = item->position();
+
+    BookmarkItem* parentItem = item->parent();
+    QModelIndex parentIndex = itemIndex(parentItem);
+    this->beginRemoveRows(parentIndex, position, position);
+    parentItem->removeChildren(position, 1);
+    this->endInsertRows();
+}
+
+//    void changeItemTitle(BookmarkItem* item, const QString& newTitle);
+
+
 BookmarkManager::BookmarkManager(QObject* parent) :
     QObject(parent),
     m_root(NULL),
@@ -506,6 +534,16 @@ BookmarkManager::initializeBookmarks()
 {
     m_root = new BookmarkItem(BookmarkItem::Folder, NULL);
     m_root->setTitle("root");
+    
+    BookmarkItem* menuBookmarks = new BookmarkItem(BookmarkItem::Folder, m_root);
+    menuBookmarks->setTitle(tr("Bookmarks Menu"));
+    m_root->append(menuBookmarks);
+
+    BookmarkItem* toolbarBookmarks = new BookmarkItem(BookmarkItem::Folder, m_root);
+    toolbarBookmarks->setTitle(tr("Bookmarks Toolbar"));
+    m_root->append(toolbarBookmarks);
+
+    m_model->m_root = m_root;
 }
 
 
@@ -524,9 +562,70 @@ BookmarkManager::loadBookmarks(QIODevice* device)
 
 
 bool
-BookmarkManager::saveBookmarks(QIODevice* /* device */)
+BookmarkManager::saveBookmarks(QIODevice* device)
 {
-    return false;
+    XbelWriter writer(device);
+    return writer.write(m_model->m_root);
+}
+
+
+void
+BookmarkManager::populateBookmarkMenu(QMenu* menu)
+{
+    appendBookmarkMenuItems(menu, m_root);
+}
+
+
+QMenu*
+BookmarkManager::createBookmarkMenu(QMenu* parent, const BookmarkItem* item)
+{
+    QMenu* menu = new QMenu(item->title(), parent);
+    appendBookmarkMenuItems(menu, item);
+    return menu;
+}
+
+
+void
+BookmarkManager::appendBookmarkMenuItems(QMenu* menu, const BookmarkItem* item)
+{
+    for (int i = 0; i < item->childCount(); i++)
+    {
+        BookmarkItem* child = item->child(i);
+        switch (child->type())
+        {
+        case BookmarkItem::Folder:
+            if (child->childCount() > 0)
+            {
+                QMenu* submenu = createBookmarkMenu(menu, child);
+                menu->addMenu(submenu);
+            }
+            break;
+
+        case BookmarkItem::Bookmark:
+            {
+                QAction* action = new QAction(child->title(), menu);
+                action->setData(child->url());
+                connect(action, SIGNAL(triggered()), this, SLOT(bookmarkMenuItemTriggered()));
+                menu->addAction(action);
+            }
+            break;
+
+        case BookmarkItem::Separator:
+            menu->addSeparator();
+            break;
+        }
+    }   
+}
+
+
+void
+BookmarkManager::bookmarkMenuItemTriggered()
+{
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action != NULL)
+    {
+        emit bookmarkTriggered(action->data().toString());
+    }
 }
 
 
@@ -553,7 +652,8 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
                                      QString defaultTitle,
                                      QString url) :
     m_manager(manager),
-    m_filterModel(NULL)
+    m_filterModel(NULL),
+    m_url(url)
 {
     setupUi(this);
     bookmarkNameEdit->setText(defaultTitle);
@@ -573,6 +673,8 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
     view->setItemsExpandable(false);
 
     createInCombo->setModel(m_filterModel);
+    // Initialize to first index
+    view->setCurrentIndex(m_filterModel->index(0, 0, QModelIndex()));
     view->show();
     createInCombo->setView(view);
 }
@@ -580,6 +682,37 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
 
 void
 AddBookmarkDialog::accept()
+{
+    QModelIndex index = createInCombo->view()->currentIndex();
+    index = m_filterModel->mapToSource(index);
+    if (index.isValid())
+    {
+        BookmarkItem* folder = m_manager->model()->getItem(index);
+        BookmarkItem* newItem = new BookmarkItem(BookmarkItem::Bookmark, folder);
+        newItem->setTitle(bookmarkNameEdit->text());
+        newItem->setUrl(m_url);
+        m_manager->model()->addItem(newItem, folder->childCount());
+    }
+
+    QDialog::accept();
+}
+
+
+OrganizeBookmarksDialog::OrganizeBookmarksDialog(BookmarkManager* manager)
+{
+    setupUi(this);
+    
+    treeView->setSelectionMode(QAbstractItemView::SingleSelection);
+    treeView->setDragEnabled(true);
+    treeView->setAcceptDrops(true);
+    treeView->setDragDropMode(QAbstractItemView::InternalMove);
+    treeView->setDropIndicatorShown(true);
+    treeView->setModel(manager->model());
+}
+
+
+void
+OrganizeBookmarksDialog::accept()
 {
     QDialog::accept();
 }

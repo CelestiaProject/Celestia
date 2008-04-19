@@ -3,6 +3,7 @@ TARGET = celestia-qt4
 DESTDIR = ..\
 
 QT += opengl
+QT += xml
 
 
 #### Utility library ####
@@ -327,6 +328,7 @@ macx {
 QTAPP_SOURCES = \
 	celestia/qt/qtmain.cpp \
 	celestia/qt/qtappwin.cpp \
+	celestia/qt/qtbookmark.cpp \
 	celestia/qt/qtglwidget.cpp \
 	celestia/qt/qtpreferencesdialog.cpp \
 	celestia/qt/qtcelestialbrowser.cpp \
@@ -338,10 +340,12 @@ QTAPP_SOURCES = \
 	celestia/qt/qtcelestiaactions.cpp \
 	celestia/qt/qtinfopanel.cpp \
 	celestia/qt/qteventfinder.cpp \
-	celestia/qt/qtsettimedialog.cpp
+	celestia/qt/qtsettimedialog.cpp \
+	celestia/qt/xbel.cpp
 
 QTAPP_HEADERS = \
 	celestia/qt/qtappwin.h \
+	celestia/qt/qtbookmark.h \
 	celestia/qt/qtglwidget.h \
 	celestia/qt/qtpreferencesdialog.h \
 	celestia/qt/qtcelestialbrowser.h \
@@ -353,7 +357,8 @@ QTAPP_HEADERS = \
 	celestia/qt/qtcelestiaactions.h \
 	celestia/qt/qtinfopanel.h \
 	celestia/qt/qteventfinder.h \
-	celestia/qt/qtsettimedialog.h
+	celestia/qt/qtsettimedialog.h \
+	celestia/qt/xbel.h
 
 SOURCES = \
 	$$UTIL_SOURCES \
@@ -376,11 +381,12 @@ HEADERS = \
 RESOURCES = \
 	 celestia/qt/icons.qrc
 
-#FORMS = \
-#	celestia/qt/celestialbrowserbase.ui
+FORMS = \
+	celestia/qt/addbookmark.ui \
+	celestia/qt/organizebookmarks.ui
 
-#UI_HEADERS_DIR = ./celestia/qt
-#UI_SOURCES_DIR = ./celestia/qt	
+UI_HEADERS_DIR = celestia/qt/ui
+UI_SOURCES_DIR = celestia/qt/ui
 
 # SPICE support
 SOURCES += $$SPICE_SOURCES
@@ -389,6 +395,7 @@ DEFINES += USE_SPICE
 
 INCLUDEPATH += ..
 INCLUDEPATH += ../..
+INCLUDEPATH += .
 
 win32 {
 	INCLUDEPATH += \
