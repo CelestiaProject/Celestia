@@ -12,9 +12,14 @@
 
 #include "qtbookmark.h"
 #include <QAbstractItemModel>
+#include <QSortFilterProxyModel>
+#include <QMessageBox>
+#include <QHeaderView>
 #include <QMimeData>
 #include <QStringList>
 #include <iostream>
+
+#include "xbel.h"
 
 using namespace std;
 
@@ -70,6 +75,34 @@ BookmarkItem::url() const
     return m_url;
 }
 
+
+bool
+BookmarkItem::folded() const
+{
+    return m_folded;
+}
+
+
+void
+BookmarkItem::setFolded(bool folded)
+{
+    m_folded = folded;
+}
+
+
+QString
+BookmarkItem::description() const
+{
+    return m_description;
+}
+
+
+void 
+BookmarkItem::setDescription(const QString& description)
+{
+    m_description = description;
+
+}
 
 int
 BookmarkItem::childCount() const
@@ -133,6 +166,13 @@ BookmarkItem::insert(BookmarkItem* child, int beforeIndex)
 
 
 void
+BookmarkItem::append(BookmarkItem* child)
+{
+    insert(child, m_children.size());
+}
+
+
+void
 BookmarkItem::removeChildren(int index, int count)
 {
     Q_ASSERT(index + count <= m_children.size());
@@ -152,6 +192,8 @@ BookmarkItem::clone(BookmarkItem* withParent) const
     BookmarkItem* newItem = new BookmarkItem(m_type, withParent);
     newItem->m_title = m_title;
     newItem->m_url = m_url;
+    newItem->m_description = m_description;
+    newItem->m_folded = m_folded;
     foreach (BookmarkItem* child, m_children)
     {
         newItem->m_children += child->clone(newItem);
@@ -186,6 +228,16 @@ BookmarkItem*
 BookmarkTreeModel::getItem(const QModelIndex& index)
 {
     return static_cast<BookmarkItem*>(index.internalPointer());
+}
+
+
+QModelIndex
+BookmarkTreeModel::itemIndex(BookmarkItem* item)
+{
+    if (item->parent() == NULL)
+        return QModelIndex();
+    else
+        return createIndex(item->position(), 0, item);
 }
 
 
@@ -245,19 +297,36 @@ BookmarkTreeModel::data(const QModelIndex& index, int role) const
         return QVariant();
     
     const BookmarkItem* item = getItem(index);
-    if (role == Qt::UserRole)
+
+    switch (role)
     {
+    case UrlRole:
         if (item->type() == BookmarkItem::Bookmark)
             return item->url();
         else
             return QVariant();
-    }
-    else if (role == Qt::DisplayRole)
-    {
-        return item->title();
-    }
-    else
-    {
+
+    case TypeRole:
+        return item->type();
+
+    case Qt::DisplayRole:
+        if (item->type() == BookmarkItem::Separator)
+            return QString(40, QChar('-'));
+        else
+            return item->title();
+
+    case Qt::DecorationRole:
+        if (index.column() == 0 &&
+            item->type() == BookmarkItem::Folder)
+        {
+            return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
+        }
+        else
+        {
+            return QVariant();
+        }
+
+    default:
         return QVariant();
     }
 }
@@ -297,6 +366,8 @@ BookmarkTreeModel::flags(const QModelIndex& index) const
         const BookmarkItem* item = getItem(index);
         if (item->type() == BookmarkItem::Folder)
             flags |= Qt::ItemIsDropEnabled;
+        else if (item->type() == BookmarkItem::Separator)
+            flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsEditable);
     }
     else
     {
@@ -408,8 +479,107 @@ BookmarkTreeModel::mimeData(const QModelIndexList& indexes) const
     const BookmarkItem* item = getItem(indexes.at(0));
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
     stream.writeRawData(reinterpret_cast<const char*>(&item), sizeof(item));
-    clog << "mimeData: " << item << endl;
     mimeData->setData("application/celestia.text.list", encodedData);
 
     return mimeData;
+}
+
+
+BookmarkManager::BookmarkManager(QObject* parent) :
+    QObject(parent),
+    m_root(NULL),
+    m_model(NULL)
+{
+    m_model = new BookmarkTreeModel();
+}
+
+
+BookmarkTreeModel*
+BookmarkManager::model() const
+{
+    return m_model;
+}
+
+
+void
+BookmarkManager::initializeBookmarks()
+{
+    m_root = new BookmarkItem(BookmarkItem::Folder, NULL);
+    m_root->setTitle("root");
+}
+
+
+bool
+BookmarkManager::loadBookmarks(QIODevice* device)
+{
+    XbelReader reader(device);
+    m_root = reader.read();
+    if (m_root == NULL)
+        QMessageBox::warning(NULL, tr("Error reading bookmarks file"), reader.errorString());
+
+    m_model->m_root = m_root;
+
+    return m_root != NULL;
+}
+
+
+bool
+BookmarkManager::saveBookmarks(QIODevice* /* device */)
+{
+    return false;
+}
+
+
+// Proxy model which filters out all items in the bookmark list that
+// aren't folders.
+class OnlyFoldersProxyModel : public QSortFilterProxyModel
+{
+public:
+    OnlyFoldersProxyModel(QObject* parent)
+        : QSortFilterProxyModel(parent)
+    {
+    }
+
+    bool filterAcceptsRow(int row, const QModelIndex& parent) const
+    {
+        QModelIndex index = sourceModel()->index(row, 0, parent);
+        BookmarkItem::Type type = static_cast<BookmarkItem::Type>(sourceModel()->data(index, BookmarkTreeModel::TypeRole).toInt());
+        return type == BookmarkItem::Folder;
+    }
+};
+
+
+AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
+                                     QString defaultTitle,
+                                     QString url) :
+    m_manager(manager),
+    m_filterModel(NULL)
+{
+    setupUi(this);
+    bookmarkNameEdit->setText(defaultTitle);
+
+    BookmarkTreeModel* model = manager->model();
+
+    // User is only allowed to create a new bookmark in a folder
+    // Filter out non-folders in the "create in" combo box
+    QTreeView* view = new QTreeView(this); 
+    m_filterModel = new OnlyFoldersProxyModel(this);
+    m_filterModel->setSourceModel(model);
+
+    view->setModel(m_filterModel);
+    view->expandAll();
+    view->header()->hide();
+    view->setRootIsDecorated(false);
+    view->setItemsExpandable(false);
+
+    createInCombo->setModel(m_filterModel);
+    view->show();
+    createInCombo->setView(view);
+}
+
+
+void
+AddBookmarkDialog::accept()
+{
+    QDialog::accept();
 }
