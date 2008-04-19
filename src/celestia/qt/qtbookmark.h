@@ -10,7 +10,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-
 #ifndef _CELESTIA_QTBOOKMARK_H_
 #define _CELESTIA_QTBOOKMARK_H_
 
@@ -18,6 +17,10 @@
 #include <QList>
 #include <QAbstractItemModel>
 
+#include "ui/ui_addbookmark.h"
+#include "ui/ui_organizebookmarks.h"
+
+class QSortFilterProxyModel;
 
 class BookmarkItem
 {
@@ -25,7 +28,8 @@ public:
     enum Type
     {
         Bookmark,
-        Folder
+        Folder,
+        Separator
     };
 
     BookmarkItem(Type type, BookmarkItem* parent);
@@ -36,15 +40,20 @@ public:
     void setTitle(const QString& title);
     QString url() const;
     void setUrl(const QString& url);
+    bool folded() const;
+    void setFolded(bool folded);
+    QString description() const;
+    void setDescription(const QString& description);
 
     BookmarkItem* child(int index) const;
     int childCount() const;
 
     void insert(BookmarkItem* child, int beforeIndex);
+    void append(BookmarkItem* child);
     void removeChildren(int index, int count);
 
     int position() const;
-    int childPosition(const BookmarkItem* child) const;
+    int childPosition(const BookmarkItem* child) const; 
 
     BookmarkItem* clone(BookmarkItem* withParent = NULL) const;
 
@@ -57,6 +66,8 @@ private:
     BookmarkItem* m_parent;
     QString m_title;
     QString m_url;
+    bool m_folded;
+    QString m_description;
     QList<BookmarkItem*> m_children;
     int m_position; // position in parent's child list
 };
@@ -67,6 +78,11 @@ class BookmarkTreeModel : public QAbstractItemModel
 public:
     BookmarkTreeModel();  
     ~BookmarkTreeModel();
+
+    enum {
+        UrlRole = Qt::UserRole,
+        TypeRole = Qt::UserRole + 1
+    };
 
     QModelIndex index(int row, int /* column */, const QModelIndex& parent) const;
     QModelIndex parent(const QModelIndex& index) const;
@@ -88,12 +104,62 @@ public:
     QStringList mimeTypes() const;
     QMimeData* mimeData(const QModelIndexList& indexes) const;
 
+    QModelIndex itemIndex(BookmarkItem* item);
+
 private:
     const BookmarkItem* getItem(const QModelIndex& index) const;
-    BookmarkItem* getItem(const QModelIndex& index);   
+    BookmarkItem* getItem(const QModelIndex& index);
 
 public:
     BookmarkItem* m_root;
 };
+
+
+class BookmarkManager : public QObject
+{
+    Q_OBJECT
+
+public:
+    BookmarkManager(QObject* parent);
+
+    void initializeBookmarks();
+    bool loadBookmarks(QIODevice* device);
+    bool saveBookmarks(QIODevice* device);
+
+    BookmarkTreeModel* model() const;
+
+private:
+    BookmarkItem* m_root;
+    BookmarkTreeModel* m_model;
+};
+
+
+class AddBookmarkDialog : public QDialog, Ui_addBookmarkDialog
+{
+    Q_OBJECT
+
+public:
+    AddBookmarkDialog(BookmarkManager* manager,
+                      QString defaultTitle,
+                      QString url);
+
+public slots:
+    void accept();
+
+private:
+    BookmarkManager* m_manager;
+    QSortFilterProxyModel* m_filterModel;
+};
+
+
+class OrganizeBookmarksDialog : public QDialog, Ui_organizeBookmarksDialog
+{
+    Q_OBJECT
+
+public:
+    OrganizeBookmarksDialog();
+
+};
+
 
 #endif // _CELESTIA_QT_BOOKMARK_H_
