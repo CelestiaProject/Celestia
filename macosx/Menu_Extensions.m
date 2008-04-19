@@ -25,7 +25,7 @@
 - (void) removeRefMarkItems
 {
     int index;
-    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"")];
+    index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Reference Marks",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
 }
 #endif
@@ -63,8 +63,8 @@
     if ([aSelection body])
     {
         target = [aSelection body];
-        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"") action: nil keyEquivalent: @""] autorelease];
-        NSMenu *refMarksMenu = [[[NSMenu alloc ] initWithTitle: @"Reference Vectors" ] autorelease];
+        mi = [[[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable(@"Reference Marks",@"po",@"") action: nil keyEquivalent: @""] autorelease];
+        NSMenu *refMarksMenu = [[[NSMenu alloc ] initWithTitle: @"Reference Marks" ] autorelease];
         [mi setSubmenu: refMarksMenu];
         if (mi)
         {
