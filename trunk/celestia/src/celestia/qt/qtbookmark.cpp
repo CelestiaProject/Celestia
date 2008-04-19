@@ -572,7 +572,13 @@ BookmarkManager::saveBookmarks(QIODevice* device)
 void
 BookmarkManager::populateBookmarkMenu(QMenu* menu)
 {
-    appendBookmarkMenuItems(menu, m_root);
+    // First child of the root should always contain bookmarks for
+    // the main menu.
+    BookmarkItem* bookmarksMenuFolder = m_root->child(0);
+    Q_ASSERT(bookmarksMenuFolder != NULL);
+    
+    if (bookmarksMenuFolder != NULL)
+        appendBookmarkMenuItems(menu, bookmarksMenuFolder);
 }
 
 

@@ -358,6 +358,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
  *  of the data directory depends on the platform:
  *
  *  Win32: %APPDATA%\Celestia
+ *  Mac OS X: $HOME/Library/Application Support/Celestia
  *  Unix and Mac OS X: $HOME/.config/Celestia
  */
 void CelestiaAppWindow::initAppDataDirectory()
@@ -379,8 +380,12 @@ void CelestiaAppWindow::initAppDataDirectory()
     }
 #else
     // UNIX or Mac OS X
-    // TODO: Should Mac OS X bookmarks go into $HOME/Library/Preferences instead?
+#ifdef TARGET_OS_MAC
+    QString appDataPath = QDir::home().filePath("Library/Application Support");
+#else
     QString appDataPath = QDir::home().filePath(".config");
+#endif
+    
 #endif
 
     if (appDataPath != "")
