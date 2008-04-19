@@ -21,6 +21,7 @@
 #include "ui/ui_organizebookmarks.h"
 
 class QSortFilterProxyModel;
+class QMenu;
 
 class BookmarkItem
 {
@@ -52,6 +53,7 @@ public:
     void append(BookmarkItem* child);
     void removeChildren(int index, int count);
 
+    bool isRoot() const;
     int position() const;
     int childPosition(const BookmarkItem* child) const; 
 
@@ -96,7 +98,6 @@ public:
     // Modifying operations
     bool setData(const QModelIndex& index, const QVariant& value, int role);
     bool removeRows(int row, int count, const QModelIndex& parent);
-    bool insertRows(int row, int count, const QModelIndex& parent);
 
     // Drag and drop support
     Qt::DropActions supportedDropActions() const;
@@ -105,10 +106,12 @@ public:
     QMimeData* mimeData(const QModelIndexList& indexes) const;
 
     QModelIndex itemIndex(BookmarkItem* item);
-
-private:
     const BookmarkItem* getItem(const QModelIndex& index) const;
     BookmarkItem* getItem(const QModelIndex& index);
+
+    void addItem(BookmarkItem* item, int position);
+    void removeItem(BookmarkItem* item);
+    void modifyItem(BookmarkItem* item);
 
 public:
     BookmarkItem* m_root;
@@ -126,7 +129,17 @@ public:
     bool loadBookmarks(QIODevice* device);
     bool saveBookmarks(QIODevice* device);
 
+    void populateBookmarkMenu(QMenu* menu);
+    QMenu* createBookmarkMenu(QMenu* parent, const BookmarkItem* item);
+    void appendBookmarkMenuItems(QMenu* menu, const BookmarkItem* item);
+
     BookmarkTreeModel* model() const;
+
+public slots:
+    void bookmarkMenuItemTriggered();
+
+signals:
+    void bookmarkTriggered(const QString& url);
 
 private:
     BookmarkItem* m_root;
@@ -149,6 +162,7 @@ public slots:
 private:
     BookmarkManager* m_manager;
     QSortFilterProxyModel* m_filterModel;
+    QString m_url;
 };
 
 
@@ -157,8 +171,10 @@ class OrganizeBookmarksDialog : public QDialog, Ui_organizeBookmarksDialog
     Q_OBJECT
 
 public:
-    OrganizeBookmarksDialog();
+    OrganizeBookmarksDialog(BookmarkManager* manager);
 
+public slots:
+    void accept();
 };
 
 

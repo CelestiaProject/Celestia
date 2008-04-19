@@ -27,6 +27,9 @@ class EventFinder;
 class CelestiaActions;
 
 
+class BookmarkManager;
+class QUrl;
+
 class CelestiaAppWindow : public QMainWindow
 {
  Q_OBJECT
@@ -38,8 +41,10 @@ class CelestiaAppWindow : public QMainWindow
     void init(const QString& configFileName,
               const QStringList& extrasDirectories);
 
-    void writeSettings();
     void readSettings();
+    void writeSettings();
+    bool loadBookmarks();
+    void saveBookmarks();
 
     void contextMenu(float x, float y, Selection sel);
 
@@ -84,13 +89,22 @@ class CelestiaAppWindow : public QMainWindow
 	void slotShowAbout();
     void slotShowGLInfo();
     
+    void slotAddBookmark();
+    void slotOrganizeBookmarks();
+    void slotBookmarkTriggered(const QString& url);
+
+    void handleCelUrl(const QUrl& url);
+    
  signals:
     void progressUpdate(const QString& s, int align, const QColor& c);
 
  private:
+    void initAppDataDirectory();
+
     void createActions();
     void createMenus();
     QMenu* buildScriptsMenu();
+    void populateBookmarkMenu();
 
     void closeEvent(QCloseEvent* event);
 
@@ -99,13 +113,14 @@ class CelestiaAppWindow : public QMainWindow
     QDockWidget* toolsDock;
     CelestialBrowser* celestialBrowser;
 
-    CelestiaCore* appCore;
+    CelestiaCore* m_appCore;
     
     CelestiaActions* actions;
 
     QMenu* fileMenu;
     QMenu* navMenu;
     QMenu* timeMenu;
+    QMenu* bookmarkMenu;
     QMenu* viewMenu;
 	QMenu* helpMenu;
 
@@ -113,6 +128,9 @@ class CelestiaAppWindow : public QMainWindow
     EventFinder* eventFinder;
 
     CelestiaCore::Alerter* alerter;
+    
+    BookmarkManager* m_bookmarkManager;
+    QString m_dataDirPath;
 };
 
 

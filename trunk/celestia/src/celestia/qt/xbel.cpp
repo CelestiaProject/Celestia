@@ -13,7 +13,7 @@
 #include "xbel.h"
 #include "qtbookmark.h"
 
-#include <iostream>
+
 XbelReader::XbelReader(QIODevice* device) :
     QXmlStreamReader(device)
 {
@@ -22,12 +22,13 @@ XbelReader::XbelReader(QIODevice* device) :
 
 // This code is based on QXmlStreamReader example from Qt 4.3.3
 
+/***** XBelReader *****/
+
 BookmarkItem*
 XbelReader::read()
 {
     BookmarkItem* rootItem = new BookmarkItem(BookmarkItem::Folder, NULL);
 
-    std::clog << "XbelReader::read()\n";
     while (!atEnd())
     {
         readNext();
@@ -82,7 +83,6 @@ XbelReader::readFolder(BookmarkItem* parent)
     BookmarkItem* folder = new BookmarkItem(BookmarkItem::Folder, parent);
     folder->setFolded(attributes().value(QLatin1String("folded")) == QLatin1String("yes"));
 
-    std::clog << "readFolder\n";
     while (!atEnd())
     {
         readNext();
@@ -176,3 +176,66 @@ XbelReader::skipUnknownElement()
             skipUnknownElement();
     }
 }
+
+
+/***** XbelWriter *****/
+
+XbelWriter::XbelWriter(QIODevice* device) :
+    QXmlStreamWriter(device)
+{  
+    setAutoFormatting(true);
+}
+
+
+bool
+XbelWriter::write(const BookmarkItem* root)
+{
+    writeStartDocument();
+    writeDTD("<!DOCTYPE xbel>");
+    writeStartElement("xbel");
+    writeAttribute("version", "1.0");
+
+    for (int i = 0; i < root->childCount(); i++)
+        writeItem(root->child(i));
+
+    writeEndDocument();
+
+    return true;
+}
+
+
+void
+XbelWriter::writeItem(const BookmarkItem* item)
+{
+    switch (item->type())
+    {
+    case BookmarkItem::Folder:
+        writeStartElement("folder");
+        writeAttribute("folded", item->folded() ? "yes" : "no");
+        writeTextElement("title", item->title());
+        for (int i = 0; i < item->childCount(); i++)
+            writeItem(item->child(i));
+        writeEndElement();
+        break;
+
+    case BookmarkItem::Bookmark:
+        writeStartElement("bookmark");
+        if (!item->url().isEmpty())
+            writeAttribute("href", item->url());
+        writeTextElement("title", item->title());
+        if (!item->description().isEmpty())
+            writeAttribute("desc", item->description());
+        writeEndElement();
+        break;
+
+    case BookmarkItem::Separator:
+        writeEmptyElement("separator");
+        break;
+
+    default:
+        break;
+    }
+}
+
+
+
