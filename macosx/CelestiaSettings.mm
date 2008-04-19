@@ -121,6 +121,8 @@ static NSMutableDictionary* tagMap;
         TAGDEF(509,@"showNebulaLabels")
         TAGDEF(510,@"showOpenClusterLabels")
         TAGDEF(511,@"showLatinConstellationLabels")
+        TAGDEF(512,@"showDwarfPlanetLabels")
+        TAGDEF(513,@"showMinorMoonLabels")
         // popups
         TAGDEF(600,@"altSurface")
         TAGDEF(610,@"hudDetail")
@@ -137,6 +139,8 @@ static NSMutableDictionary* tagMap;
         TAGDEF(704,@"showSpacecraftOrbits")
         TAGDEF(703,@"showCometOrbits")
         TAGDEF(705,@"showStellarOrbits")
+        TAGDEF(706,@"showDwarfPlanetOrbits")
+        TAGDEF(707,@"showMinorMoonOrbits")
         // feature labels
         TAGDEF(903,@"minimumFeatureSize")
         TAGDEF(800,@"showCityLabels")
@@ -443,6 +447,8 @@ LABELMETHODS(Location)
 LABELMETHODS(Comet)
 LABELMETHODS(Nebula)
 LABELMETHODS(OpenCluster)
+LABELMETHODS(DwarfPlanet)
+LABELMETHODS(MinorMoon)
 
 -(BOOL) showLatinConstellationLabels {
     return (appCore->getRenderer()->getLabelMode() & Renderer::I18nConstellationLabels) == 0;
@@ -461,6 +467,8 @@ ORBITMETHODS(Asteroid)
 ORBITMETHODS(Spacecraft)
 ORBITMETHODS(Comet)
 ORBITMETHODS(Stellar)
+ORBITMETHODS(DwarfPlanet)
+ORBITMETHODS(MinorMoon)
 
 
 -(float) minimumOrbitSize { return appCore->getRenderer()->getMinimumOrbitSize(); }
