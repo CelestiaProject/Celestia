@@ -277,7 +277,7 @@
     unsigned i;
     for (i = 0; i < [surfaces count]; ++i)
     {
-        newItem = [[NSMenuItem alloc] initWithTitle: [surfaces objectAtIndex: i] action: action keyEquivalent: @""];
+        newItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedStringFromTable([surfaces objectAtIndex: i],@"po",@"") action: action keyEquivalent: @""];
         [newItem setTag:     601+i ];
         [newItem setTarget:  target ];
         [ surfaceMenu addItem: newItem ];
