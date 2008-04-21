@@ -11346,14 +11346,6 @@ Location "Shalbatana Vallis" "Sol/Mars"
     Type "VA"
 }
 
-Location "Simud Vallis" "Sol/Mars"
-{
-    LongLat [ 322.5 10.1 0 ]
-    Size 775.00
-    Importance  68.46
-    Type "VA"
-}
-
 Location "Stura Vallis" "Sol/Mars"
 {
     LongLat [ 142.4 22.7 0 ]
@@ -12351,4 +12343,111 @@ Location "Cerberus Fossae" "Sol/Mars"
     Size 1630.00
     Importance  102.18
     Type "FO"
+}
+
+# Update 2008 Apr 21, Grant Hutchison
+# -----------------------------------
+
+Location "Coimbra" "Sol/Mars"
+{
+	LongLat [ 354.65 4.1 0 ]
+	Size 34.7
+	Importance 25.27
+	Type "AA"
+}
+
+Location "Kalocsa" "Sol/Mars"
+{
+	LongLat [ 353.01 6.83 0 ]
+	Size 35.2
+	Importance 25.33
+	Type "AA"
+}
+
+Location "Mellit" "Sol/Mars"
+{
+	LongLat [ 358.2 7.03 0 ]
+	Size 23.7
+	Importance 23.84
+	Type "AA"
+}
+
+Location "Naruko" "Sol/Mars"
+{
+	LongLat [ 198.19 -35.94 0 ]
+	Size 4.4
+	Importance 20.63
+	Type "AA"
+}
+
+Location "Penticton" "Sol/Mars"
+{
+	LongLat [ 96.65 -38.03 0 ]
+	Size 8
+	Importance 21.34
+	Type "AA"
+}
+
+Location "Phedra" "Sol/Mars"
+{
+	LongLat [ 123.78 13.67 0 ]
+	Size 21.3
+	Importance 23.50
+	Type "AA"
+}
+
+Location "Tavua" "Sol/Mars"
+{
+	LongLat [ 117.52 15.45 0 ]
+	Size 32.3
+	Importance 24.98
+	Type "AA"
+}
+
+Location "Zaranj" "Sol/Mars"
+{
+	LongLat [ 112.98 11.97 0 ]
+	Size 28
+	Importance 24.42
+	Type "AA"
+}
+
+Location "Chryse Chaos" "Sol/Mars"
+{
+	LongLat [ 323.3 10.29 0 ]
+	Size 735
+	Importance 66.70
+	Type "CH"
+}
+
+Location "Avire" "Sol/Mars"
+{
+	LongLat [ 200.1 -40.51 0 ]
+	Size 6.54
+	Importance 21.06
+	Type "AA"
+}
+
+Location "Niquero" "Sol/Mars"
+{
+	LongLat [ 193.91 -38.48 0 ]
+	Size 10.78
+	Importance 21.85
+	Type "AA"
+}
+
+Location "Triolet" "Sol/Mars"
+{
+	LongLat [ 191.86 -36.78 0 ]
+	Size 11.66
+	Importance 21.99
+	Type "AA"
+}
+
+Location "Simud Valles" "Sol/Mars"
+{
+	LongLat [ 322.2 19.59 0 ]
+	Size 945
+	Importance 75.68
+	Type "VA"
 }
