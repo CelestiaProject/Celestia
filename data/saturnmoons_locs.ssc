@@ -838,227 +838,541 @@ Location "Mosul Sulci" "Sol/Saturn/Enceladus"
 
 Location "Adrastus" "Sol/Saturn/Dione"
 {
-    LongLat [ -45.9 -61.7 0 ]
-    Size 31
-    Type "AA"
+	LongLat [ -46. -61.7 0 ]
+	Size 35
+	Type "AA"
 }
 
 Location "Aeneas" "Sol/Saturn/Dione"
 {
-    LongLat [ -46.3 26.1 0 ]
-    Size 166
-    Type "AA"
+	LongLat [ -46.3 26.2 0 ]
+	Size 160
+	Type "AA"
 }
 
 Location "Amata" "Sol/Saturn/Dione"
 {
-    LongLat [ -285.3 7.7 0 ]
-    Size 231
-    Type "AA"
+	LongLat [ -279.9 5.2 0 ]
+	Size 68.5
+	Type "AA"
 }
 
 Location "Anchises" "Sol/Saturn/Dione"
 {
-    LongLat [ -66.1 -33.7 0 ]
-    Size 42
-    Type "AA"
+	LongLat [ -65.3 -33.8 0 ]
+	Size 42
+	Type "AA"
 }
 
 Location "Antenor" "Sol/Saturn/Dione"
 {
-    LongLat [ -10.4 -6.5 0 ]
-    Size 82
-    Type "AA"
+	LongLat [ -11.6 -6.8 0 ]
+	Size 73
+	Type "AA"
 }
 
 Location "Butes" "Sol/Saturn/Dione"
 {
-    LongLat [ -48.8 64.2 0 ]
-    Size 26
-    Type "AA"
+	LongLat [ -46. 65.5 0 ]
+	Size 30
+	Type "AA"
 }
 
 Location "Caieta" "Sol/Saturn/Dione"
 {
-    LongLat [ -80.5 -23.3 0 ]
-    Size 70
-    Type "AA"
-}
-
-Location "Carthage Linea" "Sol/Saturn/Dione"
-{
-    LongLat [ -321.9 12.7 0 ]
-    Size 318
-    Type "LI"
+	LongLat [ -79.9 -24.6 0 ]
+	Size 49
+	Type "AA"
 }
 
 Location "Cassandra" "Sol/Saturn/Dione"
 {
-    LongLat [ -244.1 -39.5 0 ]
-    Size 36
-    Type "AA"
+	LongLat [ -246. -40.2 0 ]
+	Size 11
+	Type "AA"
 }
 
 Location "Catillus" "Sol/Saturn/Dione"
 {
-    LongLat [ -273 -1.6 0 ]
-    Size 35
-    Type "AA"
+	LongLat [ -275.2 -2. 0 ]
+	Size 40
+	Type "AA"
 }
 
 Location "Coras" "Sol/Saturn/Dione"
 {
-    LongLat [ -266.4 0.6 0 ]
-    Size 37
-    Type "AA"
+	LongLat [ -268.4 0.6 0 ]
+	Size 37
+	Type "AA"
 }
 
 Location "Creusa" "Sol/Saturn/Dione"
 {
-    LongLat [ -76.9 48 0 ]
-    Size 35
-    Type "AA"
+	LongLat [ -76.2 49.4 0 ]
+	Size 35
+	Type "AA"
 }
 
 Location "Dido" "Sol/Saturn/Dione"
 {
-    LongLat [ -18.5 -23.7 0 ]
-    Size 118
-    Type "AA"
+	LongLat [ -19.2 -23.7 0 ]
+	Size 122
+	Type "AA"
 }
 
 Location "Halys" "Sol/Saturn/Dione"
 {
-    LongLat [ -53.6 -59.1 0 ]
-    Size 29
-    Type "AA"
+	LongLat [ -53.5 -59.1 0 ]
+	Size 31
+	Type "AA"
 }
 
 Location "Ilia" "Sol/Saturn/Dione"
 {
-    LongLat [ -346 0.1 0 ]
-    Size 51
-    Type "AA"
+	LongLat [ -346.5 -0.4 0 ]
+	Size 50
+	Type "AA"
 }
 
 Location "Italus" "Sol/Saturn/Dione"
 {
-    LongLat [ -77.5 -18.1 0 ]
-    Size 40
-    Type "AA"
+	LongLat [ -76.6 -18.3 0 ]
+	Size 37
+	Type "AA"
 }
 
 Location "Larissa Chasma" "Sol/Saturn/Dione"
 {
-    LongLat [ -69.7 28.0 0 ]
-    Size 315
-    Type "CM"
+	LongLat [ -71.1 30.2 0 ]
+	Size 315
+	Type "CM"
 }
 
 Location "Latagus" "Sol/Saturn/Dione"
 {
-    LongLat [ -26.4 15.7 0 ]
-    Size 37
-    Type "AA"
+	LongLat [ -26.5 14.8 0 ]
+	Size 37
+	Type "AA"
 }
 
 Location "Latium Chasma" "Sol/Saturn/Dione"
 {
-    LongLat [ -64.6 20.1 0 ]
-    Size 381
-    Type "CM"
+	LongLat [ -69.5 21.2 0 ]
+	Size 381
+	Type "CM"
 }
 
 Location "Lausus" "Sol/Saturn/Dione"
 {
-    LongLat [ -23.2 36.2 0 ]
-    Size 28
-    Type "AA"
+	LongLat [ -23.8 36. 0 ]
+	Size 28
+	Type "AA"
 }
 
 Location "Magus" "Sol/Saturn/Dione"
 {
-    LongLat [ -24.4 19.3 0 ]
-    Size 41
-    Type "AA"
+	LongLat [ -24.4 18.7 0 ]
+	Size 41
+	Type "AA"
 }
 
 Location "Massicus" "Sol/Saturn/Dione"
 {
-    LongLat [ -56 -34.8 0 ]
-    Size 43
-    Type "AA"
+	LongLat [ -55.4 -34.9 0 ]
+	Size 35
+	Type "AA"
 }
 
-Location "Padua Linea" "Sol/Saturn/Dione"
+Location "Palatine Chasmata" "Sol/Saturn/Dione"
 {
-    LongLat [ -210.7 -20 0 ]
-    Size 780
-    Type "LI"
-}
-
-Location "Palatine Chasma" "Sol/Saturn/Dione"
-{
-    LongLat [ -25.1 -75.6 0 ]
-    Size 394
-    Type "CM"
-}
-
-Location "Palatine Linea" "Sol/Saturn/Dione"
-{
-    LongLat [ -305.4 -40.6 0 ]
-    Size 645
-    Type "LI"
+	LongLat [ -315. -35. 0 ]
+	Size 850
+	Type "CM"
 }
 
 Location "Palinurus" "Sol/Saturn/Dione"
 {
-    LongLat [ -61.4 -4 0 ]
-    Size 33
-    Type "AA"
+	LongLat [ -63. -3.6 0 ]
+	Size 11.5
+	Type "AA"
 }
-
 
 Location "Remus" "Sol/Saturn/Dione"
 {
-    LongLat [ -31.1 -13.2 0 ]
-    Size 69
-    Type "AA"
+	LongLat [ -31.9 -13.6 0 ]
+	Size 62
+	Type "AA"
 }
 
 Location "Ripheus" "Sol/Saturn/Dione"
 {
-    LongLat [ -35.5 -56.1 0 ]
-    Size 32
-    Type "AA"
+	LongLat [ -36.8 -56.3 0 ]
+	Size 34
+	Type "AA"
 }
 
 Location "Romulus" "Sol/Saturn/Dione"
 {
-    LongLat [ -26.5 -7.3 0 ]
-    Size 81
-    Type "AA"
+	LongLat [ -27. -8. 0 ]
+	Size 80
+	Type "AA"
 }
 
 Location "Sabinus" "Sol/Saturn/Dione"
 {
-    LongLat [ -175.6 -47.8 0 ]
-    Size 79
-    Type "AA"
+	LongLat [ -187. -43.5 0 ]
+	Size 79
+	Type "AA"
 }
 
 Location "Tibur Chasmata" "Sol/Saturn/Dione"
 {
-    LongLat [ -69.1 57.2 0 ]
-    Size 156
-    Type "CM"
+	LongLat [ -69.1 57.2 0 ]
+	Size 156
+	Type "CM"
 }
 
 Location "Turnus" "Sol/Saturn/Dione"
 {
-    LongLat [ -344.6 16.2 0 ]
-    Size 97
-    Type "AA"
+	LongLat [ -345. 15.8 0 ]
+	Size 98
+	Type "AA"
+}
+
+Location "Camilla" "Sol/Saturn/Dione"
+{
+	LongLat [ -60. -4.41 0 ]
+	Size 31.2
+	Type "AA"
+}
+
+Location "Acestes" "Sol/Saturn/Dione"
+{
+	LongLat [ -242.9 50.2 0 ]
+	Size 108
+	Type "AA"
+}
+
+Location "Allecto" "Sol/Saturn/Dione"
+{
+	LongLat [ -223.8 -7.8 0 ]
+	Size 103
+	Type "AA"
+}
+
+Location "Amastrus" "Sol/Saturn/Dione"
+{
+	LongLat [ -236.5 -9.8 0 ]
+	Size 66
+	Type "AA"
+}
+
+Location "Amycus" "Sol/Saturn/Dione"
+{
+	LongLat [ -88. -37.4 0 ]
+	Size 26
+	Type "AA"
+}
+
+Location "Anna" "Sol/Saturn/Dione"
+{
+	LongLat [ -89.2 -63.3 0 ]
+	Size 13.4
+	Type "AA"
+}
+
+Location "Ascanius" "Sol/Saturn/Dione"
+{
+	LongLat [ -231.7 33.5 0 ]
+	Size 98
+	Type "AA"
+}
+
+Location "Aulestes" "Sol/Saturn/Dione"
+{
+	LongLat [ -147. 10. 0 ]
+	Size 48
+	Type "AA"
+}
+
+Location "Cretheus" "Sol/Saturn/Dione"
+{
+	LongLat [ -88. -43.5 0 ]
+	Size 28.5
+	Type "AA"
+}
+
+Location "Daucus" "Sol/Saturn/Dione"
+{
+	LongLat [ -301. -15.2 0 ]
+	Size 72
+	Type "AA"
+}
+
+Location "Dercennus" "Sol/Saturn/Dione"
+{
+	LongLat [ -278.7 29.5 0 ]
+	Size 85
+	Type "AA"
+}
+
+Location "Entellus" "Sol/Saturn/Dione"
+{
+	LongLat [ -210.2 -11. 0 ]
+	Size 63
+	Type "AA"
+}
+
+Location "Erulus" "Sol/Saturn/Dione"
+{
+	LongLat [ -104.6 -35. 0 ]
+	Size 115
+	Type "AA"
+}
+
+Location "Euryalus" "Sol/Saturn/Dione"
+{
+	LongLat [ -359.9 -74.4 0 ]
+	Size 36
+	Type "AA"
+}
+
+Location "Eumelus" "Sol/Saturn/Dione"
+{
+	LongLat [ -65.4 -0.1 0 ]
+	Size 34.6
+	Type "AA"
+}
+
+Location "Evander" "Sol/Saturn/Dione"
+{
+	LongLat [ -147. -58. 0 ]
+	Size 360
+	Type "AA"
+}
+
+Location "Herbesus" "Sol/Saturn/Dione"
+{
+	LongLat [ -155.4 34.7 0 ]
+	Size 55
+	Type "AA"
+}
+
+Location "Lagus" "Sol/Saturn/Dione"
+{
+	LongLat [ -102.5 -13.4 0 ]
+	Size 75.7
+	Type "AA"
+}
+
+Location "Larides" "Sol/Saturn/Dione"
+{
+	LongLat [ -310.8 7.3 0 ]
+	Size 28
+	Type "AA"
+}
+
+Location "Latinus" "Sol/Saturn/Dione"
+{
+	LongLat [ -201. 52. 0 ]
+	Size 124
+	Type "AA"
+}
+
+Location "Liger" "Sol/Saturn/Dione"
+{
+	LongLat [ -126. 24. 0 ]
+	Size 54
+	Type "AA"
+}
+
+Location "Lucagus" "Sol/Saturn/Dione"
+{
+	LongLat [ -130.6 22.2 0 ]
+	Size 45.7
+	Type "AA"
+}
+
+Location "Metiscus" "Sol/Saturn/Dione"
+{
+	LongLat [ -92.8 5.9 0 ]
+	Size 43
+	Type "AA"
+}
+
+Location "Mezentius" "Sol/Saturn/Dione"
+{
+	LongLat [ -182.5 19.2 0 ]
+	Size 50.8
+	Type "AA"
+}
+
+Location "Murranus" "Sol/Saturn/Dione"
+{
+	LongLat [ -90.4 12.6 0 ]
+	Size 55
+	Type "AA"
+}
+
+Location "Nisus" "Sol/Saturn/Dione"
+{
+	LongLat [ -334.4 -68.3 0 ]
+	Size 34
+	Type "AA"
+}
+
+Location "Pagasus" "Sol/Saturn/Dione"
+{
+	LongLat [ -240.8 -3. 0 ]
+	Size 66
+	Type "AA"
+}
+
+Location "Phaleris" "Sol/Saturn/Dione"
+{
+	LongLat [ -169.4 -79.8 0 ]
+	Size 43
+	Type "AA"
+}
+
+Location "Prytanis" "Sol/Saturn/Dione"
+{
+	LongLat [ -287.4 -45.8 0 ]
+	Size 101
+	Type "AA"
+}
+
+Location "Sagaris" "Sol/Saturn/Dione"
+{
+	LongLat [ -103.6 4.8 0 ]
+	Size 49
+	Type "AA"
+}
+
+Location "Silvius" "Sol/Saturn/Dione"
+{
+	LongLat [ -332. -32.7 0 ]
+	Size 70
+	Type "AA"
+}
+
+Location "Tereus" "Sol/Saturn/Dione"
+{
+	LongLat [ -244.4 -2.6 0 ]
+	Size 32
+	Type "AA"
+}
+
+Location "Thymber" "Sol/Saturn/Dione"
+{
+	LongLat [ -308.5 14. 0 ]
+	Size 29
+	Type "AA"
+}
+
+Location "Tiburtus" "Sol/Saturn/Dione"
+{
+	LongLat [ -189.1 29.2 0 ]
+	Size 59
+	Type "AA"
+}
+
+Location "Tyrrhus" "Sol/Saturn/Dione"
+{
+	LongLat [ -287.4 24.7 0 ]
+	Size 46
+	Type "AA"
+}
+
+Location "Aufidus Catena" "Sol/Saturn/Dione"
+{
+	LongLat [ -287.5 -79.1 0 ]
+	Size 310
+	Type "CA"
+}
+
+Location "Pactolus Catena" "Sol/Saturn/Dione"
+{
+	LongLat [ -326.3 8.5 0 ]
+	Size 175
+	Type "CA"
+}
+
+Location "Pantagias Catenae" "Sol/Saturn/Dione"
+{
+	LongLat [ -141.7 -15.3 0 ]
+	Size 200
+	Type "CA"
+}
+
+Location "Aurunca Chasmata" "Sol/Saturn/Dione"
+{
+	LongLat [ -265. 15. 0 ]
+	Size 275
+	Type "CM"
+}
+
+Location "Drepanum Chasma" "Sol/Saturn/Dione"
+{
+	LongLat [ -261.2 -47.4 0 ]
+	Size 360
+	Type "CM"
+}
+
+Location "Eurotas Chasmata" "Sol/Saturn/Dione"
+{
+	LongLat [ -295.1 6.1 0 ]
+	Size 945
+	Type "CM"
+}
+
+Location "Janiculum Dorsa" "Sol/Saturn/Dione"
+{
+	LongLat [ -140. 18. 0 ]
+	Size 900
+	Type "DO"
+}
+
+Location "Arpi Fossae" "Sol/Saturn/Dione"
+{
+	LongLat [ -131. 44.3 0 ]
+	Size 300
+	Type "FO"
+}
+
+Location "Clusium Fossae" "Sol/Saturn/Dione"
+{
+	LongLat [ -303.5 42.5 0 ]
+	Size 250
+	Type "FO"
+}
+
+Location "Fidena Fossae" "Sol/Saturn/Dione"
+{
+	LongLat [ -95.5 1.75 0 ]
+	Size 450
+	Type "FO"
+}
+
+Location "Petelia Fossae" "Sol/Saturn/Dione"
+{
+	LongLat [ -81.6 -8. 0 ]
+	Size 225
+	Type "FO"
+}
+
+Location "Padua Chasmata" "Sol/Saturn/Dione"
+{
+	LongLat [ -247.6 13. 0 ]
+	Size 1025
+	Type "CM"
+}
+
+Location "Carthage Fossae" "Sol/Saturn/Dione"
+{
+	LongLat [ -333. 11. 0 ]
+	Size 470
+	Type "FO"
 }
 
 # 32 records, 8269 lines read.
@@ -1320,6 +1634,13 @@ Location "Qat" "Sol/Saturn/Rhea"
     LongLat [ -351.6 -23.8 0 ]
     Size 150
     Type "AA"
+}
+
+Location "Selk" "Sol/Saturn/Titan"
+{
+	LongLat [ -199. 7. 0 ]
+	Size 80
+	Type "AA"
 }
 
 Location "Sholmo" "Sol/Saturn/Rhea"
@@ -1854,6 +2175,27 @@ Location "Perkunas Virgae" "Sol/Saturn/Titan"
 	LongLat [ -162. -27. 0 ]
 	Size 980
 	Type "VI"
+}
+
+Location "KRAKEN MARE" "Sol/Saturn/Titan"
+{
+	LongLat [ -310. 68. 0 ]
+	Size 1170
+	Type "ME"
+}
+
+Location "LIGEIA MARE" "Sol/Saturn/Titan"
+{
+	LongLat [ -248. 79. 0 ]
+	Size 500
+	Type "ME"
+}
+
+Location "Mayda Insula" "Sol/Saturn/Titan"
+{
+	LongLat [ -312.2 79.1 0 ]
+	Size 168
+	Type "FO"
 }
 
 # (Hyperion coordinates taken from Phil Stooke's
