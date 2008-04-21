@@ -563,13 +563,13 @@ BookmarkManager::initializeBookmarks()
     
     BookmarkItem* menuBookmarks = new BookmarkItem(BookmarkItem::Folder, m_root);
     menuBookmarks->setTitle(tr("Bookmarks Menu"));
-    menuBookmarks->setTitle(tr("Add bookmarks to this folder to see them in the bookmarks menu."));
+    menuBookmarks->setDescription(tr("Add bookmarks to this folder to see them in the bookmarks menu."));
     menuBookmarks->setFolded(false);
     m_root->append(menuBookmarks);
 
     BookmarkItem* toolbarBookmarks = new BookmarkItem(BookmarkItem::Folder, m_root);
     toolbarBookmarks->setTitle(tr("Bookmarks Toolbar"));
-    toolbarBookmarks->setTitle(tr("Add bookmarks to this folder to see them in the bookmarks toolbar."));
+    toolbarBookmarks->setDescription(tr("Add bookmarks to this folder to see them in the bookmarks toolbar."));
     menuBookmarks->setFolded(false);
     m_root->append(toolbarBookmarks);
 
