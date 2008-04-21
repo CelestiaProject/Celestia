@@ -15096,3 +15096,14 @@ Location "Urash Corona" "Sol/Venus"
 	Importance 68.76
 	Type "CR"
 }
+
+# Update 2008 Apr 21, Grant Hutchison
+# -----------------------------------
+
+Location "Minona Corona" "Sol/Venus"
+{
+	LongLat [ -218.5 -23.5 0 ]
+	Size 130
+	Importance  48.34
+	Type "CR"
+}
