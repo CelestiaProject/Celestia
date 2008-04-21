@@ -16,6 +16,7 @@
 #include <QString>
 #include <QList>
 #include <QAbstractItemModel>
+#include <QToolBar>
 
 #include "ui/ui_addbookmark.h"
 #include "ui/ui_newbookmarkfolder.h"
@@ -131,10 +132,13 @@ public:
     bool saveBookmarks(QIODevice* device);
 
     void populateBookmarkMenu(QMenu* menu);
-    QMenu* createBookmarkMenu(QMenu* parent, const BookmarkItem* item);
+    QMenu* createBookmarkMenu(QWidget* parent, const BookmarkItem* item);
     void appendBookmarkMenuItems(QMenu* menu, const BookmarkItem* item);
 
     BookmarkTreeModel* model() const;
+    
+    BookmarkItem* menuRootItem() const;
+    BookmarkItem* toolBarRootItem() const;
 
 public slots:
     void bookmarkMenuItemTriggered();
@@ -145,6 +149,20 @@ signals:
 private:
     BookmarkItem* m_root;
     BookmarkTreeModel* m_model;
+};
+
+
+class BookmarkToolBar : public QToolBar
+{
+    Q_OBJECT
+    
+public:
+    BookmarkToolBar(BookmarkManager *manager, QWidget* parent);
+    
+    void rebuild();
+    
+private:
+    BookmarkManager* m_manager;
 };
 
 
