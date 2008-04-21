@@ -383,6 +383,7 @@ RESOURCES = \
 
 FORMS = \
 	celestia/qt/addbookmark.ui \
+        celestia/qt/newbookmarkfolder.ui \
 	celestia/qt/organizebookmarks.ui
 
 UI_HEADERS_DIR = celestia/qt/ui
