@@ -186,6 +186,7 @@ BookmarkItem::removeChildren(int index, int count)
         //m_children[index + i]->setPosition(0);
     }
 
+    // TODO: delete the child
     m_children.erase(m_children.begin() + index, m_children.begin() + index + count);
 }
 
@@ -613,7 +614,7 @@ BookmarkManager::populateBookmarkMenu(QMenu* menu)
 
 
 QMenu*
-BookmarkManager::createBookmarkMenu(QMenu* parent, const BookmarkItem* item)
+BookmarkManager::createBookmarkMenu(QWidget* parent, const BookmarkItem* item)
 {
     QMenu* menu = new QMenu(item->title(), parent);
     appendBookmarkMenuItems(menu, item);
@@ -665,6 +666,87 @@ BookmarkManager::bookmarkMenuItemTriggered()
 }
 
 
+/*! Return the root folder for the bookmarks menu. */
+BookmarkItem*
+BookmarkManager::menuRootItem() const
+{
+    // Menu root folder is always the first child of the root
+    if (m_root != NULL && m_root->childCount() > 0)
+        return m_root->child(0);
+    else
+        return NULL;
+}
+
+
+/*! Return the root folder for the bookmarks tool bar. */
+BookmarkItem*
+BookmarkManager::toolBarRootItem() const
+{
+    // Tool bar root folder is always the second child of the root
+    if (m_root != NULL && m_root->childCount() > 1)
+        return m_root->child(1);
+    else
+        return NULL;
+}
+
+
+
+/***** BookmarkToolBar class *****/
+
+BookmarkToolBar::BookmarkToolBar(BookmarkManager* manager, QWidget* parent) :
+    QToolBar(parent),
+    m_manager(manager)
+{
+    setWindowTitle(tr("Bookmarks"));
+    setObjectName("bookmark-toolbar");
+    setFloatable(true);
+    setMovable(true);
+    setToolButtonStyle(Qt::ToolButtonTextOnly);        
+}
+
+
+void
+BookmarkToolBar::rebuild()
+{
+    clear();
+    
+    // Toolbar bookmarks
+    BookmarkItem* rootItem = m_manager->toolBarRootItem();
+    if (rootItem != NULL)
+    {
+        for (int i = 0; i < rootItem->childCount(); i++)
+        {
+            BookmarkItem* child = rootItem->child(i);
+            switch (child->type())
+            {
+                case BookmarkItem::Folder:
+                    if (child->childCount() > 0)
+                    {
+                        QAction* menuAction = new QAction(child->title(), this);
+                        QMenu* menu = m_manager->createBookmarkMenu(this, child);
+                        menuAction->setMenu(menu);
+                        addAction(menuAction);
+                    }
+                    break;
+                    
+                case BookmarkItem::Bookmark:
+                {
+                    QAction* action = new QAction(child->title(), this);
+                    action->setData(child->url());
+                    connect(action, SIGNAL(triggered()), m_manager, SLOT(bookmarkMenuItemTriggered()));
+                    addAction(action);
+                }
+                    break;
+                    
+                case BookmarkItem::Separator:
+                    addSeparator();
+                    break;
+            }
+        }   
+    }
+}
+
+
 // Proxy model that filters out all items in the bookmark list which
 // are not folders.
 class OnlyFoldersProxyModel : public QSortFilterProxyModel
@@ -680,6 +762,11 @@ public:
         QModelIndex index = sourceModel()->index(row, 0, parent);
         BookmarkItem::Type type = static_cast<BookmarkItem::Type>(sourceModel()->data(index, BookmarkTreeModel::TypeRole).toInt());
         return type == BookmarkItem::Folder;
+    }
+    
+    int columnCount(const QModelIndex& parent) const
+    {
+        return qMin(QSortFilterProxyModel::columnCount(parent), 1);
     }
 };
 
@@ -790,14 +877,18 @@ OrganizeBookmarksDialog::OrganizeBookmarksDialog(BookmarkManager* manager) :
     m_manager(manager)
 {
     setupUi(this);
-    
+
+    treeView->setModel(manager->model());
     treeView->setSelectionMode(QAbstractItemView::SingleSelection);
+    treeView->setUniformRowHeights(true);
+    
     treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDragDropMode(QAbstractItemView::InternalMove);
     treeView->setDropIndicatorShown(true);
-    treeView->setModel(manager->model());
+    
     treeView->header()->show();
+    treeView->resizeColumnToContents(0);
 }
 
 

@@ -28,6 +28,7 @@ class CelestiaActions;
 
 
 class BookmarkManager;
+class BookmarkToolBar;
 class QUrl;
 
 class CelestiaAppWindow : public QMainWindow
@@ -130,6 +131,8 @@ class CelestiaAppWindow : public QMainWindow
     CelestiaCore::Alerter* alerter;
     
     BookmarkManager* m_bookmarkManager;
+    BookmarkToolBar* m_bookmarkToolBar;
+        
     QString m_dataDirPath;
 };
 
