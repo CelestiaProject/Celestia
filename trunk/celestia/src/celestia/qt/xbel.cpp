@@ -213,6 +213,8 @@ XbelWriter::writeItem(const BookmarkItem* item)
         writeStartElement("folder");
         writeAttribute("folded", item->folded() ? "yes" : "no");
         writeTextElement("title", item->title());
+        if (!item->description().isEmpty())
+            writeTextElement("desc", item->description());
         for (int i = 0; i < item->childCount(); i++)
             writeItem(item->child(i));
         writeEndElement();
@@ -224,7 +226,7 @@ XbelWriter::writeItem(const BookmarkItem* item)
             writeAttribute("href", item->url());
         writeTextElement("title", item->title());
         if (!item->description().isEmpty())
-            writeAttribute("desc", item->description());
+            writeTextElement("desc", item->description());
         writeEndElement();
         break;
 

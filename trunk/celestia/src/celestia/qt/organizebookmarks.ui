@@ -5,27 +5,54 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>500</height>
+    <width>383</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Organize Bookmarks</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QVBoxLayout" >
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout" >
+    <widget class="QTreeView" name="treeView" />
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
      <item>
-      <widget class="QTreeView" name="treeView" />
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox" >
-       <property name="standardButtons" >
-        <set>QDialogButtonBox::Ok</set>
+      <widget class="QPushButton" name="newFolderButton" >
+       <property name="text" >
+        <string>New Folder...</string>
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="newSeparatorButton" >
+       <property name="text" >
+        <string>New Separator</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
