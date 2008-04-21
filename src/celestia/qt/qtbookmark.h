@@ -18,6 +18,7 @@
 #include <QAbstractItemModel>
 
 #include "ui/ui_addbookmark.h"
+#include "ui/ui_newbookmarkfolder.h"
 #include "ui/ui_organizebookmarks.h"
 
 class QSortFilterProxyModel;
@@ -166,6 +167,22 @@ private:
 };
 
 
+class NewBookmarkFolderDialog : public QDialog, Ui_newBookmarkFolderDialog
+{
+    Q_OBJECT
+
+public:
+    NewBookmarkFolderDialog(BookmarkManager* manager);
+
+public slots:
+    void accept();
+
+private:
+    BookmarkManager* m_manager;
+    QSortFilterProxyModel* m_filterModel;
+};
+
+
 class OrganizeBookmarksDialog : public QDialog, Ui_organizeBookmarksDialog
 {
     Q_OBJECT
@@ -175,6 +192,11 @@ public:
 
 public slots:
     void accept();
+    void on_newFolderButton_clicked();
+    void on_newSeparatorButton_clicked();
+
+private:
+    BookmarkManager* m_manager;
 };
 
 
