@@ -72,7 +72,7 @@ const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
 
 // Used when saving and restoring main window state; increment whenever
 // new dockables or toolbars are added.
-static const int CELESTIA_MAIN_WINDOW_VERSION = 9;
+static const int CELESTIA_MAIN_WINDOW_VERSION = 11;
 
 
 // Terrible hack required because context menu callback doesn't retain
@@ -139,7 +139,8 @@ CelestiaAppWindow::CelestiaAppWindow() :
     infoPanel(NULL),
     eventFinder(NULL),
     alerter(NULL),
-    m_bookmarkManager(NULL)
+    m_bookmarkManager(NULL),
+    m_bookmarkToolBar(NULL)
 {
     setObjectName("celestia-mainwin");
 }
@@ -279,6 +280,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     infoPanel->setAllowedAreas(Qt::LeftDockWidgetArea |
                                Qt::RightDockWidgetArea);
     addDockWidget(Qt::RightDockWidgetArea, infoPanel);
+    infoPanel->setVisible(false);
 
     eventFinder = new EventFinder(m_appCore, tr("Event Finder"), this);
     eventFinder->setObjectName("event-finder");
@@ -311,29 +313,10 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 
     addToolBar(Qt::TopToolBarArea, guidesToolBar);
 
-    // Add dockable panels and toolbars to the view menu
-    viewMenu->addAction(timeToolBar->toggleViewAction());
-    viewMenu->addAction(guidesToolBar->toggleViewAction());
-    viewMenu->addSeparator();
-    viewMenu->addAction(toolsDock->toggleViewAction());
-    viewMenu->addAction(infoPanel->toggleViewAction());
-    viewMenu->addAction(eventFinder->toggleViewAction());
-    viewMenu->addSeparator();
-
-    QAction* fullScreenAction = new QAction(tr("Full screen"), this);
-    fullScreenAction->setCheckable(true);
-    fullScreenAction->setShortcut(tr("Shift+F11"));
-
-    connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(slotToggleFullScreen()));
-    viewMenu->addAction(fullScreenAction);
-
     // Give keyboard focus to the 3D view
     glWidget->setFocus();
 
     readSettings();
-
-    // Set the full screen check state only after reading settings
-    fullScreenAction->setChecked(isFullScreen());
 
     m_bookmarkManager = new BookmarkManager(this);
 
@@ -343,7 +326,33 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     populateBookmarkMenu();
     connect(m_bookmarkManager, SIGNAL(bookmarkTriggered(const QString&)),
             this, SLOT(slotBookmarkTriggered(const QString&)));
+    
+    m_bookmarkToolBar = new BookmarkToolBar(m_bookmarkManager, this);
+    m_bookmarkToolBar->rebuild();
+    addToolBar(Qt::TopToolBarArea, m_bookmarkToolBar);
 
+    // Build the view menu
+    // Add dockable panels and toolbars to the view menu
+    viewMenu->addAction(timeToolBar->toggleViewAction());
+    viewMenu->addAction(guidesToolBar->toggleViewAction());
+    viewMenu->addAction(m_bookmarkToolBar->toggleViewAction());
+    viewMenu->addSeparator();
+    viewMenu->addAction(toolsDock->toggleViewAction());
+    viewMenu->addAction(infoPanel->toggleViewAction());
+    viewMenu->addAction(eventFinder->toggleViewAction());
+    viewMenu->addSeparator();
+    
+    QAction* fullScreenAction = new QAction(tr("Full screen"), this);
+    fullScreenAction->setCheckable(true);
+    fullScreenAction->setShortcut(tr("Shift+F11"));
+
+    // Set the full screen check state only after reading settings
+    fullScreenAction->setChecked(isFullScreen());
+    
+    connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(slotToggleFullScreen()));
+    viewMenu->addAction(fullScreenAction);
+    
+    
     // We use a timer with a null timeout value
     // to add m_appCore->tick to Qt's event loop
     QTimer *t = new QTimer(dynamic_cast<QObject *>(this));
@@ -780,6 +789,7 @@ void CelestiaAppWindow::slotAddBookmark()
     dialog.exec();
 
     populateBookmarkMenu();
+    m_bookmarkToolBar->rebuild();
 }
 
 
@@ -789,6 +799,7 @@ void CelestiaAppWindow::slotOrganizeBookmarks()
     dialog.exec();
 
     populateBookmarkMenu();
+    m_bookmarkToolBar->rebuild();
 }
 
 
