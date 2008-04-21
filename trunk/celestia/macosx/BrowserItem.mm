@@ -76,6 +76,7 @@
         int sysSize = sys->getSystemSize();
         BrowserItem *subItem = nil;
         BrowserItem *planets = nil;
+        BrowserItem *dwarfPlanets = nil;
         BrowserItem *minorMoons = nil;
         BrowserItem *asteroids = nil;
         BrowserItem *comets = nil;
@@ -98,8 +99,14 @@
                         planets = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Planets",@"po",@"")] autorelease];
                     subItem = planets;
                     break;
+                case Body::DwarfPlanet:
+                    if (!dwarfPlanets)
+                        dwarfPlanets = [[[BrowserItem alloc] initWithName: NSLocalizedStringFromTable(@"Dwarf Planets",@"po",@"")] autorelease];
+                    subItem = dwarfPlanets;
+                    break;
                 case Body::Moon:
-                    if (body->getRadius() < 100.0f)
+                case Body::MinorMoon:
+                    if (body->getRadius() < 100.0f || Body::MinorMoon == bodyClass)
                     {
                         if (!minorMoons)
                             minorMoons = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")] autorelease];
@@ -132,11 +139,12 @@
             [subItem addChild: item];
         }
         
-        if (planets)     [aStar addChild: planets];
-        if (minorMoons)  [aStar addChild: minorMoons];
-        if (asteroids)   [aStar addChild: asteroids];
-        if (comets)      [aStar addChild: comets];
-        if (spacecrafts) [aStar addChild: spacecrafts];
+        if (planets)      [aStar addChild: planets];
+        if (dwarfPlanets) [aStar addChild: dwarfPlanets];
+        if (minorMoons)   [aStar addChild: minorMoons];
+        if (asteroids)    [aStar addChild: asteroids];
+        if (comets)       [aStar addChild: comets];
+        if (spacecrafts)  [aStar addChild: spacecrafts];
     }
 }
 
@@ -167,7 +175,8 @@
                 case Body::Invisible:
                     continue;
                 case Body::Moon:
-                    if (body->getRadius() < 100.0f)
+                case Body::MinorMoon:
+                    if (body->getRadius() < 100.0f || Body::MinorMoon == bodyClass)
                     {
                         if (!minorMoons)
                             minorMoons = [[[BrowserItem alloc] initWithName: NSLocalizedString(@"Minor Moons",@"")] autorelease];
