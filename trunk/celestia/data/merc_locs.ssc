@@ -2091,3 +2091,86 @@ Location "Simeiz Vallis" "Sol/Mercury"
 	Type "VA"
 }
 
+Location "Raditladi" "Sol/Mercury"
+{
+	LongLat [ -240.93 27.28 0 ]
+	Size 257
+	Type "AA"
+}
+
+Location "Eminescu" "Sol/Mercury"
+{
+	LongLat [ -245.87 10.79 0 ]
+	Size 125
+	Type "AA"
+}
+
+Location "Sveinsdóttir" "Sol/Mercury"
+{
+	LongLat [ -259.96 -2.58 0 ]
+	Size 220
+	Type "AA"
+}
+
+Location "Beagle Rupes" "Sol/Mercury"
+{
+	LongLat [ -258.89 -1.9 0 ]
+	Size 630
+	Type "RU"
+}
+
+Location "Neruda" "Sol/Mercury"
+{
+	LongLat [ -234.55 -52.47 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Xiao Zhao" "Sol/Mercury"
+{
+	LongLat [ -236.21 10.64 0 ]
+	Size 23
+	Type "AA"
+}
+
+Location "Cunningham" "Sol/Mercury"
+{
+	LongLat [ -203.07 30.48 0 ]
+	Size 37
+	Type "AA"
+}
+
+Location "Atget" "Sol/Mercury"
+{
+	LongLat [ -193.93 25.65 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Sander" "Sol/Mercury"
+{
+	LongLat [ -205.6 42.59 0 ]
+	Size 50
+	Type "AA"
+}
+
+Location "Pantheon Fossae" "Sol/Mercury"
+{
+	LongLat [ -197. 30.5 0 ]
+	Size 300
+	Type "FO"
+}
+
+Location "Apollodorus" "Sol/Mercury"
+{
+	LongLat [ -197.01 30.58 0 ]
+	Size 41
+	Type "AA"
+}
+
+Location "Kertész" "Sol/Mercury"
+{
+	LongLat [ -214.06 27.44 0 ]
+	Size 33
+	Type "AA"
+}
