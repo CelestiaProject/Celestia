@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>383</width>
-    <height>470</height>
+    <width>581</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -21,7 +21,7 @@
      <item>
       <widget class="QPushButton" name="newFolderButton" >
        <property name="text" >
-        <string>New Folder...</string>
+        <string>New Folder</string>
        </property>
       </widget>
      </item>
@@ -33,13 +33,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="removeItemButton" >
+       <property name="text" >
+        <string>Remove Item</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" >
         <size>
-         <width>40</width>
+         <width>291</width>
          <height>20</height>
         </size>
        </property>
