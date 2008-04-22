@@ -71,10 +71,15 @@ public slots:
     void slotShowDiagrams(bool);
     void slotShowBoundaries(bool);
 
+    // Date Format
+    void slotDateFormatChanged();
+
 protected:
     CelestiaCore* appCore;
     CelestiaAppWindow* parent;
-    
+
+    QComboBox* dateFormatBox;
+
     int savedRendererFlags;
     int savedLabelMode;
     int savedOrbitMask;
