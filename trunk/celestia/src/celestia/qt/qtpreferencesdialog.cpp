@@ -178,6 +178,37 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     guidesGroupLayout->addStretch();
 
+    // Time page
+    QHBoxLayout* timePageLayout = new QHBoxLayout();
+    timePage->setLayout(timePageLayout);
+
+    QGridLayout* timeLayout = new QGridLayout();
+    timeLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+    QLabel* dateFormatLabel = new QLabel(tr("Date Format: "));
+    timeLayout->addWidget(dateFormatLabel, 0, 0);
+
+    dateFormatBox = new QComboBox(this);
+    dateFormatBox->setEditable(false);
+#ifndef _WIN32
+    dateFormatBox->addItem(tr("Local Format"), 0);
+#endif
+    dateFormatBox->addItem(tr("Time Zone Name"), 1);
+    dateFormatBox->addItem(tr("UTC Offset"), 2);
+
+    astro::Date::Format dateFormat = appCore->getDateFormat();
+#ifndef _WIN32
+    dateFormatBox->setCurrentIndex((int)dateFormat);
+#else
+    dateFormatBox->setCurrentIndex(dateFormat == 2 ? 1 : 0);
+#endif
+    
+    dateFormatBox->setToolTip(tr("Select Date Format"));
+    timeLayout->addWidget(dateFormatBox, 0, 1);
+    connect(dateFormatBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotDateFormatChanged()));
+
+    timePageLayout->addLayout(timeLayout);
+
 #if 0
     // TODO: Make a page dedicated to star brightness control
     QCheckBox* showAutoMagCheck = new QCheckBox(tr("Auto Magnitudes"));
@@ -318,6 +349,17 @@ void PreferencesDialog::slotOk()
     slotApply();
     accept();
 #endif
+}
+
+
+// Date Format
+
+void PreferencesDialog::slotDateFormatChanged()
+{
+    QVariant dateFormatIndex = dateFormatBox->itemData(dateFormatBox->currentIndex());
+    astro::Date::Format dateFormat = (astro::Date::Format) dateFormatIndex.toInt();
+
+    appCore->setDateFormat(dateFormat);
 }
 
 
