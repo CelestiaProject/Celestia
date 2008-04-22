@@ -83,7 +83,6 @@ class CelestiaAppWindow : public QMainWindow
     void slotOpenScript();
 
     void slotShowTimeDialog();
-    void slotSetTime(double tdb);
 
     void slotToggleFullScreen();
 
