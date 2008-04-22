@@ -12,11 +12,32 @@
 
 #include "xbel.h"
 #include "qtbookmark.h"
+#include <QBuffer>
 
 
 XbelReader::XbelReader(QIODevice* device) :
     QXmlStreamReader(device)
 {
+}
+
+
+// Read an PNG image from a base64 encoded string.
+static QIcon CreateBookmarkIcon(const QString& iconBase64Data)
+{
+    QByteArray iconData = QByteArray::fromBase64(iconBase64Data.toAscii());
+    QPixmap iconPixmap;
+    iconPixmap.loadFromData(iconData, "PNG");
+    return QIcon(iconPixmap);
+}
+
+
+// Return a string with icon data as a base64 encoded PNG file.
+static QString BookmarkIconData(const QIcon& icon)
+{
+    QBuffer buffer;
+    buffer.open(QIODevice::WriteOnly);
+    icon.pixmap(BookmarkItem::ICON_SIZE).save(&buffer, "PNG");
+    return QLatin1String(buffer.buffer().toBase64().data());
 }
 
 
@@ -115,6 +136,12 @@ XbelReader::readBookmark(BookmarkItem* parent)
 {
     BookmarkItem* item = new BookmarkItem(BookmarkItem::Bookmark, parent);
     item->setUrl(attributes().value(QLatin1String("href")).toString());
+
+    QString iconData = attributes().value("icon").toString();
+    if (iconData != NULL && !iconData.isEmpty())
+    {
+        item->setIcon(CreateBookmarkIcon(iconData));
+    }
 
     while (!atEnd())
     {
@@ -224,6 +251,8 @@ XbelWriter::writeItem(const BookmarkItem* item)
         writeStartElement("bookmark");
         if (!item->url().isEmpty())
             writeAttribute("href", item->url());
+        if (!item->icon().isNull())
+            writeAttribute("icon", BookmarkIconData(item->icon()));
         writeTextElement("title", item->title());
         if (!item->description().isEmpty())
             writeTextElement("desc", item->description());

@@ -101,6 +101,21 @@ BookmarkItem::setDescription(const QString& description)
 
 }
 
+
+QIcon
+BookmarkItem::icon() const
+{
+    return m_icon;
+}
+
+
+void
+BookmarkItem::setIcon(const QIcon& icon)
+{
+    m_icon = icon;
+}
+
+
 int
 BookmarkItem::childCount() const
 {
@@ -199,6 +214,7 @@ BookmarkItem::clone(BookmarkItem* withParent) const
     newItem->m_url = m_url;
     newItem->m_description = m_description;
     newItem->m_folded = m_folded;
+    newItem->m_icon = m_icon;
     foreach (BookmarkItem* child, m_children)
     {
         newItem->m_children += child->clone(newItem);
@@ -340,9 +356,14 @@ BookmarkTreeModel::data(const QModelIndex& index, int role) const
         }
 
     case Qt::DecorationRole:
-        if (index.column() == 0 && item->type() == BookmarkItem::Folder)
+        if (index.column() == 0)
         {
-            return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
+            if (item->type() == BookmarkItem::Folder)
+                return QApplication::style()->standardIcon(QStyle::SP_DirIcon);
+            else if (item->type() == BookmarkItem::Bookmark)
+                return item->icon();
+            else
+                return QVariant();
         }
         else
         {
@@ -541,7 +562,7 @@ BookmarkTreeModel::removeItem(BookmarkItem* item)
     QModelIndex parentIndex = itemIndex(parentItem);
     this->beginRemoveRows(parentIndex, position, position);
     parentItem->removeChildren(position, 1);
-    this->endInsertRows();
+    this->endRemoveRows();
 }
 
 //    void changeItemTitle(BookmarkItem* item, const QString& newTitle);
@@ -649,6 +670,7 @@ BookmarkManager::appendBookmarkMenuItems(QMenu* menu, const BookmarkItem* item)
             {
                 QAction* action = new QAction(child->title(), menu);
                 action->setData(child->url());
+                action->setIcon(child->icon());
                 connect(action, SIGNAL(triggered()), this, SLOT(bookmarkMenuItemTriggered()));
                 menu->addAction(action);
             }
@@ -708,7 +730,7 @@ BookmarkToolBar::BookmarkToolBar(BookmarkManager* manager, QWidget* parent) :
     setObjectName("bookmark-toolbar");
     setFloatable(true);
     setMovable(true);
-    setToolButtonStyle(Qt::ToolButtonTextOnly);        
+    setToolButtonStyle(Qt::ToolButtonTextBesideIcon);        
 }
 
 
@@ -732,6 +754,7 @@ BookmarkToolBar::rebuild()
                         QAction* menuAction = new QAction(child->title(), this);
                         QMenu* menu = m_manager->createBookmarkMenu(this, child);
                         menuAction->setMenu(menu);
+                        menuAction->setIcon(QApplication::style()->standardIcon(QStyle::SP_DirIcon));
                         addAction(menuAction);
                     }
                     break;
@@ -742,6 +765,7 @@ BookmarkToolBar::rebuild()
                         if (!child->description().isEmpty())
                             action->setToolTip(child->description());
                         action->setData(child->url());
+                        action->setIcon(child->icon());
                         connect(action, SIGNAL(triggered()), m_manager, SLOT(bookmarkMenuItemTriggered()));
                         addAction(action);
                     }
@@ -782,10 +806,12 @@ public:
 
 AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
                                      QString defaultTitle,
-                                     QString url) :
+                                     QString url,
+                                     const QImage& iconImage) :
     m_manager(manager),
     m_filterModel(NULL),
-    m_url(url)
+    m_url(url),
+    m_iconImage(iconImage)
 {
     setupUi(this);
     bookmarkNameEdit->setText(defaultTitle);
@@ -826,6 +852,9 @@ AddBookmarkDialog::accept()
         BookmarkItem* newItem = new BookmarkItem(BookmarkItem::Bookmark, folder);
         newItem->setTitle(bookmarkNameEdit->text());
         newItem->setUrl(m_url);
+        newItem->setIcon(QIcon(QPixmap::fromImage(m_iconImage.scaled(BookmarkItem::ICON_SIZE, BookmarkItem::ICON_SIZE,
+                                                                     Qt::IgnoreAspectRatio,
+                                                                     Qt::SmoothTransformation))));
         m_manager->model()->addItem(newItem, folder->childCount());
     }
 
@@ -992,5 +1021,21 @@ OrganizeBookmarksDialog::on_newSeparatorButton_clicked()
 
         BookmarkItem* newItem = new BookmarkItem(BookmarkItem::Separator, parent);
         m_manager->model()->addItem(newItem, position);
+    }
+}
+
+
+void
+OrganizeBookmarksDialog::on_removeItemButton_clicked()
+{
+    QModelIndex index = treeView->currentIndex();
+
+    if (index.isValid())
+    {
+        QModelIndex parent = index.parent();
+        if (parent.isValid())
+        {
+            m_manager->model()->removeItem(m_manager->model()->getItem(index));
+        }
     }
 }
