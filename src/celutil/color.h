@@ -7,8 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _COLOR_H_
-#define _COLOR_H_
+#ifndef _CELUTIL_COLOR_H_
+#define _CELUTIL_COLOR_H_
+
+#include <map>
+#include <string>
+
 
 class Color
 {
@@ -31,7 +35,7 @@ class Color
     inline float blue() const;
     inline float alpha() const;
     inline void get(unsigned char*) const;
-
+ 
     friend bool operator==(Color, Color);
     friend bool operator!=(Color, Color);
     friend Color operator*(Color, Color);
@@ -42,7 +46,13 @@ class Color
     static bool parse(const char*, Color&);
 
  private:
+    static void buildX11ColorMap();
+
+ private:
     unsigned char c[4];
+
+    typedef std::map<const std::string, Color> ColorMap;
+    static ColorMap x11Colors;
 };
 
 
@@ -93,4 +103,4 @@ inline Color operator*(Color a, Color b)
                  a.alpha() * b.alpha());
 }
 
-#endif // _COLOR_H_
+#endif // _CELUTIL_COLOR_H_
