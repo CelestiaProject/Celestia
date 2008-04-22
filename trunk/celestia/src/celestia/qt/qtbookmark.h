@@ -17,6 +17,8 @@
 #include <QList>
 #include <QAbstractItemModel>
 #include <QToolBar>
+#include <QIcon>
+#include <QImage>
 
 #include "ui/ui_addbookmark.h"
 #include "ui/ui_newbookmarkfolder.h"
@@ -35,6 +37,8 @@ public:
         Separator
     };
 
+    static const int ICON_SIZE = 24;
+
     BookmarkItem(Type type, BookmarkItem* parent);
 
     BookmarkItem::Type type() const;
@@ -47,6 +51,8 @@ public:
     void setFolded(bool folded);
     QString description() const;
     void setDescription(const QString& description);
+    QIcon icon() const;
+    void setIcon(const QIcon& icon);
 
     BookmarkItem* child(int index) const;
     int childCount() const;
@@ -72,6 +78,7 @@ private:
     QString m_url;
     bool m_folded;
     QString m_description;
+    QIcon m_icon;
     QList<BookmarkItem*> m_children;
     int m_position; // position in parent's child list
 };
@@ -173,7 +180,8 @@ class AddBookmarkDialog : public QDialog, Ui_addBookmarkDialog
 public:
     AddBookmarkDialog(BookmarkManager* manager,
                       QString defaultTitle,
-                      QString url);
+                      QString url,
+                      const QImage& iconImage);
 
 public slots:
     void accept();
@@ -182,6 +190,7 @@ private:
     BookmarkManager* m_manager;
     QSortFilterProxyModel* m_filterModel;
     QString m_url;
+    QImage m_iconImage;
 };
 
 
@@ -212,6 +221,7 @@ public slots:
     void accept();
     void on_newFolderButton_clicked();
     void on_newSeparatorButton_clicked();
+    void on_removeItemButton_clicked();
 
 private:
     BookmarkManager* m_manager;

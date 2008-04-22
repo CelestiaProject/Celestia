@@ -776,7 +776,8 @@ void CelestiaAppWindow::slotAddBookmark()
 {
     // Set the default bookmark title to the name of the current selection
     Selection sel = m_appCore->getSimulation()->getSelection();
-    QString defaultTitle;   
+    QString defaultTitle;
+    // TODO: Improve the choice of default bookmark title.
     if (sel.empty())
         defaultTitle = tr("New bookmark");
     else
@@ -785,7 +786,19 @@ void CelestiaAppWindow::slotAddBookmark()
     Url url(m_appCore);
     QString urlText(url.getAsString().c_str());
 
-    AddBookmarkDialog dialog(m_bookmarkManager, defaultTitle, urlText);
+    // Capture the current frame buffer to use as a bookmark icon.
+    QImage grabbedImage = glWidget->grabFrameBuffer();
+    int width = grabbedImage.width();
+    int height = grabbedImage.height();
+
+    // Crop the image to a square.
+    QImage iconImage;
+    if (width > height)
+        iconImage = grabbedImage.copy((width - height) / 2, 0, height, height);
+    else
+        iconImage = grabbedImage.copy(0, (height - width) / 2, width, width);
+
+    AddBookmarkDialog dialog(m_bookmarkManager, defaultTitle, urlText, iconImage);
     dialog.exec();
 
     populateBookmarkMenu();
