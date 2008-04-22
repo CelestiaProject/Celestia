@@ -281,6 +281,9 @@ BookmarkTreeModel::parent(const QModelIndex& index) const
 int 
 BookmarkTreeModel::rowCount(const QModelIndex& parent) const
 {
+    if (parent.column() > 0)
+        return 0;
+
     if (!parent.isValid())
         return m_root->childCount();
     else
@@ -291,14 +294,10 @@ BookmarkTreeModel::rowCount(const QModelIndex& parent) const
 int
 BookmarkTreeModel::columnCount(const QModelIndex& parent) const
 {
-    if (!parent.isValid())
-    {
-        return 2;
-    }
+    if (parent.column() > 0)
+        return 0;
     else
-    {
         return 2;
-    }
 }
 
 
@@ -322,16 +321,22 @@ BookmarkTreeModel::data(const QModelIndex& index, int role) const
         return item->type();
 
     case Qt::DisplayRole:
+    case Qt::EditRole:
         if (item->type() == BookmarkItem::Separator)
         {
-            return QString(40, QChar('-'));
+            if (index.column() == 0)
+                return QString(40, QChar('-'));
+            else
+                return QString();
         }
         else
         {
             if (index.column() == 0)
                 return item->title();
-            else
+            else if (index.column() == 1)
                 return item->description();
+            else
+                return QString();
         }
 
     case Qt::DecorationRole:
@@ -387,11 +392,13 @@ BookmarkTreeModel::headerData(int section, Qt::Orientation /* orientation */, in
 Qt::ItemFlags
 BookmarkTreeModel::flags(const QModelIndex& index) const
 {
-    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+    Qt::ItemFlags flags = 0;
     if (index.isValid())
     {
         const BookmarkItem* item = getItem(index);
-        
+
+        flags |= Qt::ItemIsSelectable;
+
         // Do not permit dragging of top level folders (bookmarks menu, bookmarks toolbar)
         if (item->parent()->parent() != NULL)
             flags |= Qt::ItemIsDragEnabled;
@@ -401,8 +408,8 @@ BookmarkTreeModel::flags(const QModelIndex& index) const
             flags |= Qt::ItemIsDropEnabled;
 
         // No editing permitted for separators
-        if (item->type() == BookmarkItem::Separator)
-            flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsEditable);
+        if (item->type() != BookmarkItem::Separator)
+            flags |= Qt::ItemIsEnabled | Qt::ItemIsEditable;
     }
 
     return flags;
@@ -494,7 +501,7 @@ BookmarkTreeModel::mimeTypes() const
 QMimeData*
 BookmarkTreeModel::mimeData(const QModelIndexList& indexes) const
 {
-    if (indexes.size() != 1)
+    if (indexes.size() < 1)
         return NULL;
 
     QMimeData* mimeData = new QMimeData();
@@ -730,12 +737,14 @@ BookmarkToolBar::rebuild()
                     break;
                     
                 case BookmarkItem::Bookmark:
-                {
-                    QAction* action = new QAction(child->title(), this);
-                    action->setData(child->url());
-                    connect(action, SIGNAL(triggered()), m_manager, SLOT(bookmarkMenuItemTriggered()));
-                    addAction(action);
-                }
+                    {
+                        QAction* action = new QAction(child->title(), this);
+                        if (!child->description().isEmpty())
+                            action->setToolTip(child->description());
+                        action->setData(child->url());
+                        connect(action, SIGNAL(triggered()), m_manager, SLOT(bookmarkMenuItemTriggered()));
+                        addAction(action);
+                    }
                     break;
                     
                 case BookmarkItem::Separator:
@@ -878,7 +887,6 @@ OrganizeBookmarksDialog::OrganizeBookmarksDialog(BookmarkManager* manager) :
 {
     setupUi(this);
 
-    treeView->setModel(manager->model());
     treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     treeView->setUniformRowHeights(true);
     
@@ -888,7 +896,15 @@ OrganizeBookmarksDialog::OrganizeBookmarksDialog(BookmarkManager* manager) :
     treeView->setDropIndicatorShown(true);
     
     treeView->header()->show();
+    treeView->setModel(manager->model());
     treeView->resizeColumnToContents(0);
+
+    // Automatically expand the bookmark menu and bookmark toolbar folders
+    if (manager->model()->rowCount(QModelIndex()) >= 2)
+    {
+        treeView->setExpanded(manager->model()->index(0, 0, QModelIndex()), true);
+        treeView->setExpanded(manager->model()->index(1, 0, QModelIndex()), true);
+    }
 }
 
 
