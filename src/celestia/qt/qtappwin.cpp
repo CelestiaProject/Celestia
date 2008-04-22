@@ -777,11 +777,29 @@ void CelestiaAppWindow::slotAddBookmark()
     // Set the default bookmark title to the name of the current selection
     Selection sel = m_appCore->getSimulation()->getSelection();
     QString defaultTitle;
-    // TODO: Improve the choice of default bookmark title.
-    if (sel.empty())
+
+    if (sel.body() != NULL)
+    {
+        defaultTitle = QString::fromUtf8(sel.body()->getName().c_str());
+    }
+    else if (sel.star() != NULL)
+    {
+        Universe* universe = m_appCore->getSimulation()->getUniverse();
+        defaultTitle = QString::fromUtf8(universe->getStarCatalog()->getStarName(*sel.star()).c_str());
+    }
+    else if (sel.deepsky() != NULL)
+    {
+        Universe* universe = m_appCore->getSimulation()->getUniverse();
+        defaultTitle = QString::fromUtf8(universe->getDSOCatalog()->getDSOName(sel.deepsky()).c_str());
+    }
+    else if (sel.location() != NULL)
+    {
+        defaultTitle = sel.location()->getName().c_str();
+    }
+    
+    if (defaultTitle.isEmpty())
         defaultTitle = tr("New bookmark");
-    else
-        defaultTitle = sel.getName().c_str();
+
 
     Url url(m_appCore);
     QString urlText(url.getAsString().c_str());
