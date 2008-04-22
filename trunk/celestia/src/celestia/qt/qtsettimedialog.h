@@ -14,12 +14,13 @@
 #define _QTSETTIMEDIALOG_H_
 
 #include <QDialog>
-#include <QDateEdit>
-#include <QTimeEdit>
-#include <QDoubleSpinBox>
-#include <QLabel>
 
-class QDateTimeEdit;
+class QAbstractItemModel;
+
+class QComboBox;
+class QSpinBox;
+class QDoubleSpinBox;
+class CelestiaCore;
 
 
 class SetTimeDialog : public QDialog
@@ -28,23 +29,34 @@ Q_OBJECT
 
  public:
     SetTimeDialog(double currentTimeTDB,
-                  QWidget* parent = NULL);
+                  QWidget* parent,
+                  CelestiaCore* _appCore);
     ~SetTimeDialog();
 
  public slots:
-    void slotSetTime();
-    void syncJulianDate();
-    void syncDateTime();
+    void slotSetSimulationTime();
+    void slotSetDateTime();
+    void slotDateTimeChanged();
+    void slotTimeZoneChanged();
+    void slotOk();
 
  signals:
     void setTimeTriggered(double tdb);
 
  private:
-    QDateEdit* dateEdit;
-    QTimeEdit* timeEdit;
+    CelestiaCore* appCore;
 
-    QDoubleSpinBox* julianDateEdit;
-    QLabel* julianDateLabel;
+    QComboBox* timeZoneBox;
+
+    QSpinBox* yearSpin;
+    QSpinBox* monthSpin;
+    QSpinBox* daySpin;
+
+    QSpinBox* hourSpin;
+    QSpinBox* minSpin;
+    QSpinBox* secSpin;
+
+    QDoubleSpinBox* julianDateSpin;
 };
 
 #endif // _QTSETTIMEDIALOG_H_

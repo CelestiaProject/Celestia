@@ -29,7 +29,6 @@
 #include <QCloseEvent>
 #include <QDir>
 #include <QMessageBox>
-#include <QDateTimeEdit>
 #include <QTextEdit>
 #include <QDialogButtonBox>
 #include <QTextStream>
@@ -750,16 +749,9 @@ void CelestiaAppWindow::slotOpenScript()
 void CelestiaAppWindow::slotShowTimeDialog()
 {
     SetTimeDialog* timeDialog = new SetTimeDialog(m_appCore->getSimulation()->getTime(),
-                                                  this);
-    connect(timeDialog, SIGNAL(setTimeTriggered(double)), this, SLOT(slotSetTime(double)));
+                                                  this, m_appCore);
 
     timeDialog->exec();
-}
-
-
-void CelestiaAppWindow::slotSetTime(double tdb)
-{
-    m_appCore->getSimulation()->setTime(tdb);
 }
 
 
