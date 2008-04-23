@@ -134,6 +134,10 @@
 #define IDC_ECLIPSETYPE                 1089
 #define IDC_ECLIPSETARGET               1090
 #define IDC_SHOWCLOUDSHADOWS            1091
+#define IDC_LABELDWARFPLANETS                1092
+#define IDC_LABELMINORMOONS                  1093
+#define IDC_DWARFPLANETORBITS                1094
+#define IDC_MINORMOONORBITS                  1095
 #define IDC_SHOW_CITIES                 1100
 #define IDC_SHOW_OBSERVATORIES          1101
 #define IDC_SHOW_LANDING_SITES          1102
