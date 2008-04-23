@@ -575,6 +575,24 @@ bool astro::parseDate(const string& s, astro::Date& date)
     return false;
 }
 
+
+astro::Date
+astro::Date::systemDate()
+{
+    time_t t = time(NULL);
+    struct tm *gmt = gmtime(&t);
+    astro::Date d;
+    d.year = gmt->tm_year + 1900;
+    d.month = gmt->tm_mon + 1;
+    d.day = gmt->tm_mday;
+    d.hour = gmt->tm_hour;
+    d.minute = gmt->tm_min;
+    d.seconds = (int) gmt->tm_sec;
+    
+    return d;
+}
+
+
 ostream& operator<<(ostream& s, const astro::Date d)
 {
     s << d.toCStr();

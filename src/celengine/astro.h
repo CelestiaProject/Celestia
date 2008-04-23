@@ -44,6 +44,8 @@ namespace astro
         const char* toCStr(Format format = Locale) const;
 
         operator double() const;
+        
+        static Date systemDate();
 
 
     public:
