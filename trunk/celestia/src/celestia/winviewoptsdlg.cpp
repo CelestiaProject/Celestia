@@ -92,11 +92,17 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_PLANETORBITS:
             renderer->setOrbitMask(orbitMask ^ Body::Planet);
             break;
+        case IDC_DWARFPLANETORBITS:
+            renderer->setOrbitMask(orbitMask ^ Body::DwarfPlanet);
+            break;
         case IDC_STARORBITS:
             renderer->setOrbitMask(orbitMask ^ Body::Stellar);
             break;
         case IDC_MOONORBITS:
             renderer->setOrbitMask(orbitMask ^ Body::Moon);
+            break;
+        case IDC_MINORMOONORBITS:
+            renderer->setOrbitMask(orbitMask ^ Body::MinorMoon);
             break;
         case IDC_ASTEROIDORBITS:
             renderer->setOrbitMask(orbitMask ^ Body::Asteroid);
@@ -143,8 +149,14 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_LABELPLANETS:
             renderer->setLabelMode(labelMode ^ Renderer::PlanetLabels);
             break;
+        case IDC_LABELDWARFPLANETS:
+            renderer->setLabelMode(labelMode ^ Renderer::DwarfPlanetLabels);
+            break;
         case IDC_LABELMOONS:
             renderer->setLabelMode(labelMode ^ Renderer::MoonLabels);
+            break;
+        case IDC_LABELMINORMOONS:
+            renderer->setLabelMode(labelMode ^ Renderer::MinorMoonLabels);
             break;
         case IDC_LABELSTARS:
             renderer->setLabelMode(labelMode ^ Renderer::StarLabels);
@@ -286,7 +298,9 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowNightMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     dlgCheck(hDlg, IDC_SHOWORBITS,       renderFlags, Renderer::ShowOrbits);
     dlgCheck(hDlg, IDC_PLANETORBITS,     orbitMask,   Body::Planet);
+    dlgCheck(hDlg, IDC_DWARFPLANETORBITS,     orbitMask,   Body::DwarfPlanet);
     dlgCheck(hDlg, IDC_MOONORBITS,       orbitMask,   Body::Moon);
+    dlgCheck(hDlg, IDC_MINORMOONORBITS,       orbitMask,   Body::MinorMoon);
     dlgCheck(hDlg, IDC_ASTEROIDORBITS,   orbitMask,   Body::Asteroid);
     dlgCheck(hDlg, IDC_COMETORBITS,      orbitMask,   Body::Comet);
     dlgCheck(hDlg, IDC_SPACECRAFTORBITS, orbitMask,   Body::Spacecraft);
@@ -312,7 +326,9 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
 	dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
     dlgCheck(hDlg, IDC_LABELSTARS,      labelMode, Renderer::StarLabels);
     dlgCheck(hDlg, IDC_LABELPLANETS,    labelMode, Renderer::PlanetLabels);
+    dlgCheck(hDlg, IDC_LABELDWARFPLANETS,    labelMode, Renderer::DwarfPlanetLabels);
     dlgCheck(hDlg, IDC_LABELMOONS,      labelMode, Renderer::MoonLabels);
+    dlgCheck(hDlg, IDC_LABELMINORMOONS,      labelMode, Renderer::MinorMoonLabels);
     dlgCheck(hDlg, IDC_LABELASTEROIDS,  labelMode, Renderer::AsteroidLabels);
     dlgCheck(hDlg, IDC_LABELCOMETS,     labelMode, Renderer::CometLabels);
     dlgCheck(hDlg, IDC_LABELSPACECRAFT, labelMode, Renderer::SpacecraftLabels);
