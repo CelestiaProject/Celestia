@@ -104,6 +104,14 @@ static CelestiaBody *eclipseBody;
 
     eclipseBody = [[sel body] retain];
     body = [eclipseBody body];
+    if (nil == body || nil == body->getSystem())
+    {
+        NSRunAlertPanel(NSLocalizedString(@"Object Not Found",@""),
+                        NSLocalizedString(@"Please check that the object name is correct.",@""),
+                        nil,nil,nil);
+        return;
+    }
+
     if (body->getSystem()->getPrimaryBody())
     {
         // Eclipse receiver is a moon -> find lunar eclipses
