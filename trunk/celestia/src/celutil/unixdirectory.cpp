@@ -17,6 +17,14 @@
 using namespace std;
 
 
+#ifdef TARGET_OS_MAC
+#ifdef QT_CORE_LIB
+// Crash on Mac OS X / Qt4 version when calling wordfree.
+// This seems to happen only with Leopard.
+#define WORDEXP_PROBLEM
+#endif
+#endif
+
 class UnixDirectory : public Directory
 {
 public:
@@ -97,7 +105,9 @@ bool IsDirectory(const std::string& filename)
     return S_ISDIR(buf.st_mode);
 }
 
-std::string WordExp(const std::string& filename) {
+std::string WordExp(const std::string& filename) 
+{
+#ifndef WORDEXP_PROBLEM   
     wordexp_t result;
     std::string expanded;
 
@@ -119,6 +129,8 @@ std::string WordExp(const std::string& filename) {
 
     expanded = result.we_wordv[0];
     wordfree(&result);
-
+#else
+    std::string expanded = filename;
+#endif
     return expanded;
 }
