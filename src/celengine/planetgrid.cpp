@@ -47,8 +47,9 @@ PlanetographicGrid::~PlanetographicGrid()
 static void longLatLabel(const string& labelText,
                          double longitude,
                          double latitude,
-                         const Point3d& viewRayOrigin,
-                         const Point3d& bodyPos,
+                         const Vec3d& viewRayOrigin,
+                         const Vec3d& viewNormal,
+                         const Vec3d& bodyCenter,
                          const Quatd& bodyOrientation,
                          const Vec3f& semiAxes,
                          float labelOffset,
@@ -59,18 +60,33 @@ static void longLatLabel(const string& labelText,
     Vec3d pos(cos(phi) * cos(theta) * semiAxes.x,
               sin(phi) * semiAxes.y,
               -cos(phi) * sin(theta) * semiAxes.z);
-
+    
+    float nearDist = renderer->getNearPlaneDistance();
+    
     pos = pos * (1.0 + labelOffset);
+    
+    double boundingRadius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
 
     // Draw the label only if it isn't obscured by the body ellipsoid
     double t = 0.0;
-    if (testIntersection(Ray3d(viewRayOrigin, Point3d(pos.x, pos.y, pos.z) - viewRayOrigin),
+    if (testIntersection(Ray3d(Point3d(0.0, 0.0, 0.0) + viewRayOrigin, pos - viewRayOrigin),
                          Ellipsoidd(Vec3d(semiAxes.x, semiAxes.y, semiAxes.z)), t) && t >= 1.0)
     {
-        Point3d labelPos = bodyPos + (1.0 + labelOffset) * pos * bodyOrientation.toMatrix3();
-        renderer->addForegroundAnnotation(NULL, labelText,
-                                          Renderer::PlanetographicGridLabelColor,
-                                          Point3f((float) labelPos.x, (float) labelPos.y, (float) labelPos.z));
+        // Compute the position of the label
+        Vec3d labelPos = bodyCenter +
+                         (1.0 + labelOffset) * pos * bodyOrientation.toMatrix3();
+        
+        // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
+        // the view normal that touches the front of the objects bounding sphere
+        double planetZ = viewNormal * bodyCenter - boundingRadius;
+        if (planetZ < -nearDist * 1.001)
+            planetZ = -nearDist * 1.001;
+        double z = viewNormal * labelPos;
+        labelPos *= planetZ / z;
+        
+        renderer->addObjectAnnotation(NULL, labelText,
+                                      Renderer::PlanetographicGridLabelColor,
+                                      Point3f((float) labelPos.x, (float) labelPos.y, (float) labelPos.z));                             
     }
 }
 
@@ -93,8 +109,13 @@ PlanetographicGrid::render(Renderer* renderer,
 
     Vec3f semiAxes = body.getSemiAxes();
 
-    Point3d posd(pos.x, pos.y, pos.z);
-    Point3d viewRayOrigin = Point3d(-pos.x, -pos.y, -pos.z) * (~q).toMatrix3();
+    Vec3d posd(pos.x, pos.y, pos.z);
+    Vec3d viewRayOrigin = Vec3d(-pos.x, -pos.y, -pos.z)  * (~q).toMatrix3();
+    
+    // Calculate the view normal; this is used for placement of the long/lat
+    // label text.
+    Vec3f vn  = Vec3f(0.0f, 0.0f, -1.0f) * renderer->getCameraOrientation().toMatrix3();
+    Vec3d viewNormal(vn.x, vn.y, vn.z);
 
     // Enable depth buffering
     glEnable(GL_DEPTH_TEST);
@@ -157,8 +178,8 @@ PlanetographicGrid::render(Renderer* renderer,
                 else
                     ns = northDirection == NorthNormal ? 'N' : 'S';
                 sprintf(buf, "%d%c", (int) fabs((double) latitude), ns);
-                longLatLabel(buf, 0.0, latitude, viewRayOrigin, posd, q, semiAxes, offset, renderer);
-                longLatLabel(buf, 180.0, latitude, viewRayOrigin, posd, q, semiAxes, offset, renderer);
+                longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+                longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
         }
     }
@@ -198,7 +219,7 @@ PlanetographicGrid::render(Renderer* renderer,
 
             char buf[64];
             sprintf(buf, "%d%c", (int) showLongitude, ew);
-            longLatLabel(buf, longitude, 0.0, viewRayOrigin, posd, q, semiAxes, offset, renderer);
+            longLatLabel(buf, longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             if (longitude > 0.0f && longitude < 180.0f)
             {
                 showLongitude = (int) longitude;
@@ -219,7 +240,7 @@ PlanetographicGrid::render(Renderer* renderer,
                 }
 
                 sprintf(buf, "%d%c", showLongitude, ew);       
-                longLatLabel(buf, -longitude, 0.0, viewRayOrigin, posd, q, semiAxes, offset, renderer);
+                longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
             }
         }
     }

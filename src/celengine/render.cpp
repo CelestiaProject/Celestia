@@ -311,7 +311,8 @@ Renderer::Renderer() :
     brightPlus(0.0f),
 #endif
     videoSync(false),
-    settingsChanged(true)
+    settingsChanged(true),
+    objectAnnotationSetOpen(false)
 {
     starVertexBuffer = new StarVertexBuffer(2048);
     pointStarVertexBuffer = new PointStarVertexBuffer(2048);
@@ -1335,6 +1336,90 @@ void Renderer::clearAnnotations(vector<Annotation>& annotations)
 void Renderer::clearSortedAnnotations()
 {
     depthSortedAnnotations.clear();
+}
+
+
+// Return the orientation of the camera used to render the current
+// frame. Available only while rendering a frame.
+Quatf Renderer::getCameraOrientation() const
+{
+    return m_cameraOrientation;
+}
+
+
+float Renderer::getNearPlaneDistance() const
+{
+    return depthPartitions[currentIntervalIndex].nearZ;
+}
+
+
+void Renderer::beginObjectAnnotations()
+{
+    // It's an error to call beginObjectAnnotations a second time
+    // without first calling end.
+    assert(!objectAnnotationSetOpen);
+    assert(objectAnnotations.empty());
+
+    objectAnnotations.clear();
+    objectAnnotationSetOpen = true;
+}
+
+
+void Renderer::endObjectAnnotations()
+{
+    objectAnnotationSetOpen = false;
+    
+    if (!objectAnnotations.empty())
+    {
+        renderAnnotations(objectAnnotations.begin(),
+                          objectAnnotations.end(),
+                          -depthPartitions[currentIntervalIndex].nearZ,
+                          -depthPartitions[currentIntervalIndex].farZ,
+                          FontNormal);
+
+        objectAnnotations.clear();
+    }
+}
+
+
+void Renderer::addObjectAnnotation(const Marker* marker,
+                                   const string& labelText,
+                                   Color color,
+                                   const Point3f& pos)
+{
+    assert(objectAnnotationSetOpen);
+    if (objectAnnotationSetOpen)
+    {
+        double winX, winY, winZ;
+        int view[4] = { 0, 0, 0, 0 };
+        view[0] = -windowWidth / 2;
+        view[1] = -windowHeight / 2;
+        view[2] = windowWidth;
+        view[3] = windowHeight;
+        float depth = (float) (pos.x * modelMatrix[2] +
+                               pos.y * modelMatrix[6] +
+                               pos.z * modelMatrix[10]);
+        if (gluProject(pos.x, pos.y, pos.z,
+                       modelMatrix,
+                       projMatrix,
+                       (const GLint*) view,
+                       &winX, &winY, &winZ) != GL_FALSE)
+        {
+
+            Annotation a;
+            
+            if (marker == NULL)
+            {
+                strncpy(a.labelText, labelText.c_str(), MaxLabelLength);
+                a.labelText[MaxLabelLength - 1] = '\0';
+            }
+            a.marker = marker;
+            a.color = color;
+            a.position = Point3f((float) winX, (float) winY, -depth);
+
+            objectAnnotations.push_back(a);
+        }
+    }
 }
 
 
@@ -2882,7 +2967,7 @@ void Renderer::draw(const Observer& observer,
     // Highlight the selected object
     highlightObject = sel;
 
-    Quatf cameraOrientation = observer.getOrientationf();
+    m_cameraOrientation = observer.getOrientationf();
 
     // Get the view frustum used for culling in camera space.
     float viewAspectRatio = (float) windowWidth / (float) windowHeight;
@@ -2904,7 +2989,7 @@ void Renderer::draw(const Observer& observer,
     observerPosLY.y *= 1e-6f;
     observerPosLY.z *= 1e-6f;
     glPushMatrix();
-    glRotate(cameraOrientation);
+    glRotate(m_cameraOrientation);
 
     // Get the model matrix *before* translation.  We'll use this for
     // positioning star and planet labels.
@@ -3746,6 +3831,9 @@ void Renderer::draw(const Observer& observer,
         i = nEntries - 1;
         for (int interval = 0; interval < nIntervals; interval++)
         {
+            currentIntervalIndex = interval;
+            beginObjectAnnotations();
+
             float nearPlaneDistance = -depthPartitions[interval].nearZ;
             float farPlaneDistance  = -depthPartitions[interval].farZ;
 
@@ -3812,7 +3900,7 @@ void Renderer::draw(const Observer& observer,
                 // Treat objects that are smaller than one pixel as transparent and render
                 // them in the second pass.
                 if (renderList[i].isOpaque && renderList[i].discSizeInPixels > 1.0f)
-                    renderItem(renderList[i], observer, cameraOrientation, nearPlaneDistance, farPlaneDistance);
+                    renderItem(renderList[i], observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
 
                 i--;
             }
@@ -3864,7 +3952,7 @@ void Renderer::draw(const Observer& observer,
                         }
 #endif
                         orbitsRendered++;
-                        renderOrbit(*orbitIter, now, cameraOrientation, intervalFrustum, nearPlaneDistance, farPlaneDistance);
+                        renderOrbit(*orbitIter, now, m_cameraOrientation, intervalFrustum, nearPlaneDistance, farPlaneDistance);
 
 #if DEBUG_COALESCE
                         if (highlightObject.body() == orbitIter->body)
@@ -3887,7 +3975,7 @@ void Renderer::draw(const Observer& observer,
             while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
             {
                 if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
-                    renderItem(renderList[i], observer, cameraOrientation, nearPlaneDistance, farPlaneDistance);
+                    renderItem(renderList[i], observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
 
                 i--;
             }
@@ -3896,6 +3984,7 @@ void Renderer::draw(const Observer& observer,
             if ((renderFlags & ShowSmoothLines) != 0)
                 enableSmoothLines();
             annotation = renderSortedAnnotations(annotation, -depthPartitions[interval].nearZ, -depthPartitions[interval].farZ, FontNormal);
+            endObjectAnnotations();
             if ((renderFlags & ShowSmoothLines) != 0)
                 disableSmoothLines();
             glDisable(GL_DEPTH_TEST);
@@ -4599,7 +4688,11 @@ static Vec3f ellipsoidTangent(const Vec3f& recipSemiAxes,
     // float b = -8 * ee * (ee + ew)  - 4 * (-2 * (ee + ew) * (ee - 1.0f));
     // float c =  4 * ee * ee         - 4 * (ee * (ee - 1.0f));
 
-    float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
+    // Simplify the below expression and eliminate the ee^2 terms; this
+    // prevents precision errors, as ee tends to be a very large value.
+    //T a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1);
+    //float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
+    float a =  4 * (square(ew) - ee * ww + ee + 2 * ew + ww);
     float b = -8 * (ee + ew);
     float c =  4 * ee;
 
@@ -6964,8 +7057,6 @@ setupObjectLighting(const vector<LightSource>& suns,
             ls.lights[i].irradiance = maxIrr;
             ls.lights[i].color = secondaryIlluminators[maxIrrSource].body->getSurface().color;        
             ls.lights[i].apparentSize = -1.0f;
-
-            //clog << "planetshine - " << body.getName() << " / " << parent->getName() << ": " << ls.lights[i].irradiance / ls.lights[0].irradiance << endl;
 
             i++;
             nLights++;
@@ -10278,6 +10369,90 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
     float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
 
     for (; iter != depthSortedAnnotations.end() && iter->position.z > nearDist; iter++)
+    {
+        // Compute normalized device z
+        float ndc_z = d1 + d2 / -iter->position.z;
+        ndc_z = min(1.0f, max(-1.0f, ndc_z)); // Clamp to [-1,1]
+
+        // Offsets to left align label
+        int labelHOffset = 0;
+        int labelVOffset = 0;
+
+        glPushMatrix();
+        if (iter->marker != NULL)
+        {
+            const Marker& marker = *iter->marker;
+            
+            glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
+            glColor(marker.getColor());
+                        
+            glDisable(GL_TEXTURE_2D);
+            marker.render();
+            glEnable(GL_TEXTURE_2D);            
+            
+            if (!marker.getLabel().empty())
+            {
+                int labelOffset = (int) marker.getSize() / 2;
+                glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
+                font[fs]->render(marker.getLabel());
+            }
+        }
+        else
+        {
+            glTranslatef((int) iter->position.x + PixelOffset + labelHOffset,
+                         (int) iter->position.y + PixelOffset + labelVOffset,
+                         ndc_z);
+            glColor(iter->color);
+            font[fs]->render(iter->labelText);
+        }
+        glPopMatrix();
+    }
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glDisable(GL_DEPTH_TEST);
+
+    return iter;
+}
+
+
+vector<Renderer::Annotation>::iterator
+Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
+                            vector<Annotation>::iterator endIter,
+                            float nearDist,
+                            float farDist,
+                            FontStyle fs)
+{
+    if (font[fs] == NULL)
+        return endIter;
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    font[fs]->bind();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, windowWidth, 0, windowHeight);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(GLfloat((int) (windowWidth / 2)),
+                 GLfloat((int) (windowHeight / 2)), 0);
+
+    // Precompute values that will be used to generate the normalized device z value;
+    // we're effectively just handling the projection instead of OpenGL. We use an orthographic
+    // projection matrix in order to get the label text position exactly right but need to mimic
+    // the depth coordinate generation of a perspective projection.
+    float d1 = -(farDist + nearDist) / (farDist - nearDist);
+    float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
+
+    vector<Annotation>::iterator iter = startIter;
+    for (; iter != endIter && iter->position.z > nearDist; iter++)
     {
         // Compute normalized device z
         float ndc_z = d1 + d2 / -iter->position.z;
