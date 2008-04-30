@@ -239,6 +239,14 @@ class Renderer
     void addBackgroundAnnotation(const Marker*, const std::string& labelText, Color, const Point3f&, float depth = -1);
     void addBackgroundAnnotation(const std::string& labelText, Color, const Point3f&, float depth = -1);
     void addSortedAnnotation(const Marker* marker, const std::string& labelText, Color, const Point3f&);
+
+    // Callbacks for renderables; these belong in a special renderer interface
+    // only visible in object's render methods.
+    void beginObjectAnnotations();
+    void addObjectAnnotation(const Marker*, const std::string& labelText, Color, const Point3f&);
+    void endObjectAnnotations();
+    Quatf getCameraOrientation() const;
+    float getNearPlaneDistance() const;
     
     void clearAnnotations(std::vector<Annotation>&);
 	void clearSortedAnnotations();
@@ -556,6 +564,12 @@ class Renderer
                                                               float nearDist,
                                                               float farDist,
                                                               FontStyle fs);
+    std::vector<Renderer::Annotation>::iterator renderAnnotations(std::vector<Annotation>::iterator startIter,
+                                                                  std::vector<Annotation>::iterator endIter,
+                                                                  float nearDist,
+                                                                  float farDist,
+                                                                  FontStyle fs);
+
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& cameraPosition,
 		       const Quatd& cameraOrientation,
@@ -633,6 +647,7 @@ class Renderer
     Color ambientColor;
     std::string displayedSurface;
 
+    Quatf m_cameraOrientation;
     StarVertexBuffer* starVertexBuffer;
     PointStarVertexBuffer* pointStarVertexBuffer;
 	PointStarVertexBuffer* glareVertexBuffer;
@@ -643,6 +658,7 @@ class Renderer
     std::vector<Annotation> backgroundAnnotations;
     std::vector<Annotation> foregroundAnnotations;
     std::vector<Annotation> depthSortedAnnotations;
+    std::vector<Annotation> objectAnnotations;
     std::vector<OrbitPathListEntry> orbitPathList;
     std::vector<EclipseShadow> eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;
@@ -658,12 +674,14 @@ class Renderer
     bool usePointSprite;
     bool useClampToBorder;
     unsigned int textureResolution;
-
     DetailOptions detailOptions;
     
     bool useNewStarRendering;
 
     uint32 frameCount;
+
+    int currentIntervalIndex;
+
 
  public:
     struct OrbitSample 
@@ -708,6 +726,9 @@ class Renderer
 
     bool videoSync;
     bool settingsChanged;
+
+    // True if we're in between a begin/endObjectAnnotations
+    bool objectAnnotationSetOpen;
 
     std::list<RendererWatcher*> watchers;
 
