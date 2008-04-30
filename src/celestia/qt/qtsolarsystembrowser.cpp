@@ -218,7 +218,7 @@ SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
             for (unsigned int i = 0; i < orbitingStars->size(); i++)
             {
                 Selection child(orbitingStars->at(i));
-                item->children[i] = createTreeItem(child, item, childIndex);
+                item->children[childIndex] = createTreeItem(child, item, childIndex);
                 childIndex++;
             }
         }
@@ -229,7 +229,7 @@ SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
             for (int i = 0; i < sys->getSystemSize(); i++)
             {
                 Selection child(sys->getBody(i));
-                item->children[i] = createTreeItem(child, item, childIndex);
+                item->children[childIndex] = createTreeItem(child, item, childIndex);
                 childIndex++;
             }
         }
@@ -348,7 +348,7 @@ SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
                 for (unsigned int i = 0; i < orbitingStars->size(); i++)
                 {
                     Selection child(orbitingStars->at(i));
-                    item->children[i] = createTreeItem(child, item, childIndex);
+                    item->children[childIndex] = createTreeItem(child, item, childIndex);
                     childIndex++;
                 }
             }
