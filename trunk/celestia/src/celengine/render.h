@@ -99,7 +99,7 @@ class Renderer
 
     float calcPixelSize(float fov, float windowHeight);
     void setFaintestAM45deg(float);
-    float getFaintestAM45deg();
+    float getFaintestAM45deg() const;
 
     void setRenderMode(int);
     void autoMag(float& faintestMag);
@@ -219,7 +219,7 @@ class Renderer
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
     void setResolution(unsigned int resolution);
-    unsigned int getResolution();
+    unsigned int getResolution() const;
 
     void loadTextures(Body*);
 
