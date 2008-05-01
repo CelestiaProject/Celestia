@@ -1043,12 +1043,12 @@ void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
     markSettingsChanged();
 }
 
-float Renderer::getFaintestAM45deg()
+float Renderer::getFaintestAM45deg() const
 {
     return faintestAutoMag45deg;
 }
 
-unsigned int Renderer::getResolution()
+unsigned int Renderer::getResolution() const
 {
     return textureResolution;
 }
@@ -6910,13 +6910,6 @@ void Renderer::renderLocations(const vector<Location*>& locations,
 #ifdef USE_HDR
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
-}
-
-
-static float
-getStellarIrradiance(const Star& star, float distance)
-{
-    return star.getLuminosity() / (distance * distance);
 }
 
 
