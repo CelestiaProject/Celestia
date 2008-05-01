@@ -120,6 +120,7 @@ class CelestiaAppWindow : public QMainWindow
     QMenu* fileMenu;
     QMenu* navMenu;
     QMenu* timeMenu;
+    QMenu* displayMenu;
     QMenu* bookmarkMenu;
     QMenu* viewMenu;
 	QMenu* helpMenu;

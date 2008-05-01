@@ -1008,6 +1008,37 @@ void CelestiaAppWindow::createMenus()
     connect(setTimeAct, SIGNAL(triggered()), this, SLOT(slotShowTimeDialog()));
     timeMenu->addAction(setTimeAct);
 
+    timeMenu->addAction(actions->lightTimeDelayAction);
+
+
+    /****** Display menu ******/
+    displayMenu = menuBar()->addMenu(tr("&Display"));
+    displayMenu->addAction(actions->atmospheresAction);
+    displayMenu->addAction(actions->cloudsAction);
+    displayMenu->addAction(actions->cometTailsAction);
+    displayMenu->addAction(actions->nightSideLightsAction);
+
+    QMenu* deepSkyMenu = displayMenu->addMenu(tr("Dee&p Sky Objects"));
+    deepSkyMenu->addAction(actions->galaxiesAction);
+    deepSkyMenu->addAction(actions->nebulaeAction);
+
+    QMenu* shadowMenu = displayMenu->addMenu(tr("&Shadows"));
+    shadowMenu->addAction(actions->ringShadowsAction);
+    shadowMenu->addAction(actions->eclipseShadowsAction);
+    shadowMenu->addAction(actions->cloudShadowsAction);
+
+    displayMenu->addSeparator();
+
+    displayMenu->addAction(actions->increaseLimitingMagAction);
+    displayMenu->addAction(actions->decreaseLimitingMagAction);
+    displayMenu->addAction(actions->autoMagAction);
+
+    QMenu* starStyleMenu = displayMenu->addMenu(tr("Star St&yle"));
+    starStyleMenu->addAction(actions->pointStarAction);
+    starStyleMenu->addAction(actions->fuzzyPointStarAction);
+    starStyleMenu->addAction(actions->scaledDiscStarAction);
+
+
     /****** Bookmark menu ******/
     bookmarkMenu = menuBar()->addMenu(tr("&Bookmarks"));
 

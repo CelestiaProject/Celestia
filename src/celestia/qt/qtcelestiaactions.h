@@ -35,10 +35,16 @@ Q_OBJECT
     void slotToggleRenderFlag();
     void slotToggleLabel();
     void slotToggleOrbit();
+    void slotSetStarStyle();
+    void slotSetTextureResolution();
+    void slotAdjustLimitingMagnitude();
+    void slotSetLightTimeDelay();
 
  private:
     void syncWithRenderer(const Renderer* renderer);
+    void syncWithAppCore();
     QAction* createCheckableAction(const QString& text, QMenu* menu, int data);
+    QAction* createCheckableAction(const QString& text, int data);
     
  public:
     QAction* eqGridAction;
@@ -76,6 +82,32 @@ Q_OBJECT
     QAction* spacecraftOrbitsAction;
 
     QAction* labelsAction;
+
+    QAction* cloudsAction;
+    QAction* cometTailsAction;
+    QAction* atmospheresAction;
+    QAction* nightSideLightsAction;
+    QAction* ringShadowsAction;
+    QAction* eclipseShadowsAction;
+    QAction* cloudShadowsAction;
+
+    QAction* lightTimeDelayAction;
+
+    QAction* verbosityLowAction;
+    QAction* verbosityMediumAction;
+    QAction* verbosityHighAction;
+
+    QAction* lowResAction;
+    QAction* mediumResAction;
+    QAction* highResAction;
+
+    QAction* pointStarAction;
+    QAction* fuzzyPointStarAction;
+    QAction* scaledDiscStarAction;
+
+    QAction* autoMagAction;
+    QAction* increaseLimitingMagAction;
+    QAction* decreaseLimitingMagAction;
 
  private:
     CelestiaCore* appCore;
