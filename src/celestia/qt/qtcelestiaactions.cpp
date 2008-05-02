@@ -142,7 +142,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     labelsAction->setMenu(labelsMenu);
 
     galaxiesAction     = createCheckableAction(tr("Galaxies"),          Renderer::ShowGalaxies);
-    galaxiesAction->setShortcut(QString("U"));
+    //galaxiesAction->setShortcut(QString("U"));
     nebulaeAction      = createCheckableAction(tr("Nebulae"),           Renderer::ShowNebulae);
     nebulaeAction->setShortcut(QString("^"));
     openClustersAction = createCheckableAction(tr("Open Clusters"),     Renderer::ShowOpenClusters);
@@ -151,7 +151,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(openClustersAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
     cloudsAction          = createCheckableAction(tr("Clouds"),            Renderer::ShowCloudMaps);
-    cloudsAction->setShortcut(QString("I"));
+    //cloudsAction->setShortcut(QString("I"));
     nightSideLightsAction = createCheckableAction(tr("Night Side Lights"), Renderer::ShowNightMaps);
     nightSideLightsAction->setShortcut(QString("Ctrl+L"));
     cometTailsAction      = createCheckableAction(tr("Comet Tails"),       Renderer::ShowCometTails);
