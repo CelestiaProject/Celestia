@@ -13,6 +13,9 @@
 #include <cstring>
 #include <cassert>
 
+
+#define DEBUG_COALESCE 0
+
 //#define DEBUG_HDR
 #ifdef DEBUG_HDR
 //#define DEBUG_HDR_FILE
@@ -3696,7 +3699,6 @@ void Renderer::draw(const Observer& observer,
         }
 #endif
 
-#define DEBUG_COALESCE 0
         // Since we're rendering objects of a huge range of sizes spread over
         // vast distances, we can't just rely on the hardware depth buffer to
         // handle hidden surface removal without a little help. We'll partition
@@ -3763,32 +3765,45 @@ void Renderer::draw(const Observer& observer,
 
         // Scan the list of orbit paths and find the closest one. We'll need
         // adjust the nearest interval to accommodate it.
-        float orbitPathNear = prevNear;
+        float zNearest = prevNear;
         for (i = 0; i < (int) orbitPathList.size(); i++)
         {
             const OrbitPathListEntry& o = orbitPathList[i];
             float minNearDistance = min(-o.radius * 0.0001f, o.centerZ + o.radius);
-            if (minNearDistance > orbitPathNear)
-                orbitPathNear = minNearDistance;
+            if (minNearDistance > zNearest)
+                zNearest = minNearDistance;
+        }
+        
+
+        // Adjust the nearest interval to include the closest marker (if it's
+        // closer to the observer than anything else
+        if (!depthSortedAnnotations.empty())
+        {
+            // Factor of 0.999 makes sure ensures that the near plane does not fall
+            // exactly at the marker's z coordinate (in which case the marker 
+            // would be susceptible to being clipped.) 
+            if (-depthSortedAnnotations[0].position.z > zNearest)
+                zNearest = -depthSortedAnnotations[0].position.z * 0.999f;
         }
 
+        
 #if DEBUG_COALESCE
-        clog << "nEntries: " << nEntries << ",   orbitPathNear: " << orbitPathNear << ",   prevNear: " << prevNear << "\n";
+        clog << "nEntries: " << nEntries << ",   zNearest: " << zNearest << ",   prevNear: " << prevNear << "\n";
 #endif
 
-        // If the nearest orbit path distance wasn't set, nothing should appear
+        // If the nearest distance wasn't set, nothing should appear
         // in the frontmost depth buffer interval (so we can set the near plane
         // of the front interval to whatever we want as long as it's less than
         // the far plane distance.
-        if (orbitPathNear == prevNear)
-            orbitPathNear = 0.0f;
+        if (zNearest == prevNear)
+            zNearest = 0.0f;
 
         // Add one last interval for the span from 0 to the front of the
         // nearest object
         {
             // TODO: closest object may not be at entry 0, since objects are
             // sorted by far distance.
-            float closest = orbitPathNear;
+            float closest = zNearest;
             if (nEntries > 0)
             {
                 closest = max(closest, renderList[0].nearZ);
@@ -3874,8 +3889,9 @@ void Renderer::draw(const Observer& observer,
                 //assert(renderList[i].nearZ <= depthPartitions[interval].near);
 
 #if DEBUG_COALESCE
-                if (renderList[i].body != NULL)
+                switch (renderList[i].renderableType)
                 {
+                case RenderListEntry::RenderableBody:
                     if (renderList[i].discSizeInPixels > 1)
                     {
                         clog << renderList[i].body->getName() << "\n";
@@ -3884,9 +3900,9 @@ void Renderer::draw(const Observer& observer,
                     {
                         clog << "point: " << renderList[i].body->getName() << "\n";
                     }
-                }
-                else if (renderList[i].star != NULL)
-                {
+                    break;
+                        
+                case RenderListEntry::RenderableStar:
                     if (renderList[i].discSizeInPixels > 1)
                     {
                         clog << "Star\n";
@@ -3895,6 +3911,10 @@ void Renderer::draw(const Observer& observer,
                     {
                         clog << "point: " << "Star" << "\n";
                     }
+                    break;
+                        
+                default:
+                    break;
                 }
 #endif
                 // Treat objects that are smaller than one pixel as transparent and render
