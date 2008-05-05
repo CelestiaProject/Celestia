@@ -19,6 +19,7 @@
 #include <QStringList>
 #include <QMenu>
 #include "xbel.h"
+#include "celestia/url.h"
 
 
 BookmarkItem::BookmarkItem(Type type, BookmarkItem* parent) :
@@ -804,13 +805,15 @@ public:
 };
 
 
+int AddBookmarkDialog::m_lastTimeSourceIndex = 0;
+
 AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
                                      QString defaultTitle,
-                                     QString url,
+                                     const CelestiaState& appState,
                                      const QImage& iconImage) :
     m_manager(manager),
     m_filterModel(NULL),
-    m_url(url),
+    m_appState(appState),
     m_iconImage(iconImage)
 {
     setupUi(this);
@@ -833,6 +836,11 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
     createInCombo->setModel(m_filterModel);
     view->show();
     createInCombo->setView(view);
+    
+    timeSourceCombo->addItem(tr("Current simulation time"),       (int) Url::UseUrlTime);
+    timeSourceCombo->addItem(tr("Simulation time at activation"), (int) Url::UseSimulationTime);
+    timeSourceCombo->addItem(tr("System time at activation"),     (int) Url::UseSystemTime);    
+    timeSourceCombo->setCurrentIndex(m_lastTimeSourceIndex);
 
     // Initialize to first index
     QModelIndex firstItemIndex = m_filterModel->index(0, 0, QModelIndex());
@@ -848,10 +856,20 @@ AddBookmarkDialog::accept()
     index = m_filterModel->mapToSource(index);
     if (index.isValid())
     {
+        // Preserve the last used time source index
+        m_lastTimeSourceIndex = timeSourceCombo->currentIndex();
+        
+        QVariant itemData = timeSourceCombo->itemData(timeSourceCombo->currentIndex());
+        Url::TimeSource timeSource = (Url::TimeSource) itemData.toInt();
+        Q_ASSERT(timeSource >= 0 && timeSource < Url::TimeSourceCount);
+        
+        // Get the URL string
+        Url url(m_appState, Url::CurrentVersion, timeSource);
+        
         BookmarkItem* folder = m_manager->model()->getItem(index);
         BookmarkItem* newItem = new BookmarkItem(BookmarkItem::Bookmark, folder);
         newItem->setTitle(bookmarkNameEdit->text());
-        newItem->setUrl(m_url);
+        newItem->setUrl(QString::fromUtf8(url.getAsString().c_str()));
         newItem->setIcon(QIcon(QPixmap::fromImage(m_iconImage.scaled(BookmarkItem::ICON_SIZE, BookmarkItem::ICON_SIZE,
                                                                      Qt::IgnoreAspectRatio,
                                                                      Qt::SmoothTransformation))));
