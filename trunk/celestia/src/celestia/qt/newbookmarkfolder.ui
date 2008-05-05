@@ -5,124 +5,106 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
-    <height>235</height>
+    <width>426</width>
+    <height>221</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>New Folder</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>190</y>
-     <width>379</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="orientation" >
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label" >
-   <property name="geometry" >
-    <rect>
-     <x>12</x>
-     <y>23</y>
-     <width>57</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Name:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="nameEdit" >
-   <property name="geometry" >
-    <rect>
-     <x>78</x>
-     <y>23</y>
-     <width>311</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2" >
-   <property name="geometry" >
-    <rect>
-     <x>11</x>
-     <y>141</y>
-     <width>187</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Create in:</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="createInCombo" >
-   <property name="geometry" >
-    <rect>
-     <x>80</x>
-     <y>140</y>
-     <width>186</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QWidget" name="" >
-   <property name="geometry" >
-    <rect>
-     <x>11</x>
-     <y>50</y>
-     <width>379</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" >
-    <item>
-     <layout class="QVBoxLayout" >
-      <item>
-       <widget class="QLabel" name="label_3" >
-        <property name="text" >
-         <string>Description:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QTextEdit" name="descriptionEdit" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="acceptRichText" >
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
+   <item>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLineEdit" name="nameEdit" />
+     </item>
+     <item row="1" column="1" >
+      <widget class="QTextEdit" name="descriptionEdit" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="acceptRichText" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Create in:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QComboBox" name="createInCombo" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <widget class="QLabel" name="label_3" >
+         <property name="text" >
+          <string>Description:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>13</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>399</width>
+       <height>13</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>
