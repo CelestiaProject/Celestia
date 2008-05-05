@@ -614,7 +614,10 @@ void CelestiaAppWindow::slotCopyImage()
 
 void CelestiaAppWindow::slotCopyURL()
 {
-    Url url(m_appCore);
+    CelestiaState appState;
+    appState.captureState(m_appCore);
+    
+    Url url(appState, 3);
     QApplication::clipboard()->setText(url.getAsString().c_str());
     m_appCore->flash(tr("Copied URL").toUtf8().data());
 }
@@ -792,10 +795,9 @@ void CelestiaAppWindow::slotAddBookmark()
     if (defaultTitle.isEmpty())
         defaultTitle = tr("New bookmark");
 
-
-    Url url(m_appCore);
-    QString urlText(url.getAsString().c_str());
-
+    CelestiaState appState;
+    appState.captureState(m_appCore);
+    
     // Capture the current frame buffer to use as a bookmark icon.
     QImage grabbedImage = glWidget->grabFrameBuffer();
     int width = grabbedImage.width();
@@ -808,7 +810,7 @@ void CelestiaAppWindow::slotAddBookmark()
     else
         iconImage = grabbedImage.copy(0, (height - width) / 2, width, width);
 
-    AddBookmarkDialog dialog(m_bookmarkManager, defaultTitle, urlText, iconImage);
+    AddBookmarkDialog dialog(m_bookmarkManager, defaultTitle, appState, iconImage);
     dialog.exec();
 
     populateBookmarkMenu();

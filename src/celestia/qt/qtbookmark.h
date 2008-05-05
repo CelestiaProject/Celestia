@@ -26,6 +26,7 @@
 
 class QSortFilterProxyModel;
 class QMenu;
+class CelestiaState;
 
 class BookmarkItem
 {
@@ -180,7 +181,7 @@ class AddBookmarkDialog : public QDialog, Ui_addBookmarkDialog
 public:
     AddBookmarkDialog(BookmarkManager* manager,
                       QString defaultTitle,
-                      QString url,
+                      const CelestiaState& appState,
                       const QImage& iconImage);
 
 public slots:
@@ -189,8 +190,10 @@ public slots:
 private:
     BookmarkManager* m_manager;
     QSortFilterProxyModel* m_filterModel;
-    QString m_url;
+    const CelestiaState& m_appState;
     QImage m_iconImage;
+    
+    static int m_lastTimeSourceIndex;
 };
 
 

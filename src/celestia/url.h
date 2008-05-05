@@ -18,10 +18,12 @@
 #define _URL_H_
 
 #include <string>
+#include <map>
 #include "celestiacore.h"
 #include "celengine/astro.h"
 
 class CelestiaCore;
+class CelestiaState;
 
 class Url
 {
@@ -32,23 +34,43 @@ public:
         Settings = 2,
     };
     
+    enum TimeSource
+    {
+        UseUrlTime        = 0,
+        UseSimulationTime = 1,
+        UseSystemTime     = 2,
+        TimeSourceCount   = 3,
+    };
+    
     Url();
     
     // parses str
     Url(const std::string& str, CelestiaCore *core);
     // current url of appCore
     Url(CelestiaCore* appCore, UrlType type = Absolute);
+    Url(const CelestiaState& appState,
+        unsigned int version = CurrentVersion,
+        TimeSource _timeSource = UseUrlTime);
     ~Url();
 
     std::string getAsString() const;
     std::string getName() const;
     void goTo();
 
+    static const unsigned int CurrentVersion;
     
 private:
-    std::string urlStr, name;
+    void initVersion2(std::map<std::string, std::string>& params, const std::string& timeString);
+    void initVersion3(std::map<std::string, std::string>& params, const std::string& timeString);
+    
+private:
+    std::string urlStr;
+    std::string name;
     std::string modeStr;
-    std::string body1, body2, selectedStr, trackedStr;
+    std::string body1;
+    std::string body2;
+    std::string selectedStr;
+    std::string trackedStr;
 
     CelestiaCore *appCore;
 
@@ -73,6 +95,8 @@ private:
 
     bool fromString;
     UrlType type;
+    TimeSource timeSource;
+    unsigned int version;
     
     void evalName();
     
@@ -83,6 +107,46 @@ private:
     
     // Variables specific to Relative Urls
     double distance, longitude, latitude;
+};
+
+
+/*! The CelestiaState class holds the current observer position, orientation,
+ *  frame, time, and render settings. It is designed to be serialized as a cel
+ *  URL, thus strings are stored for bodies instead of Selections.
+ *
+ *  Some information is *not* stored in cel URLs, including the current
+ *  lists of reference marks and markers. Such lists can be arbitrarily long,
+ *  and thus not practical to store in a URL.
+ */
+class CelestiaState
+{
+public:
+    CelestiaState();
+    
+    bool loadState(std::map<std::string, std::string>& params);
+    void saveState(std::map<std::string, std::string>& params);
+    void captureState(CelestiaCore* appCore);
+    
+    // Observer frame, position, and orientation. For multiview, there needs
+    // be one instance of these parameters per view saved.
+    ObserverFrame::CoordinateSystem coordSys;
+    string refBodyName;
+    string targetBodyName;
+    string trackedBodyName;
+    UniversalCoord observerPosition;
+    Quatf observerOrientation;
+    float fieldOfView;
+    
+    // Time parameters
+    double tdb;
+    float timeScale;
+    bool pauseState;
+    bool lightTimeDelay;
+    
+    string selectedBodyName;
+    
+    int labelMode;
+    int renderFlags;
 };
 
 #endif
