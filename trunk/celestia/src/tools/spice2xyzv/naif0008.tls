@@ -1,0 +1,136 @@
+KPL/LSK
+
+
+LEAPSECONDS KERNEL FILE
+===========================================================================
+
+Modifications:
+--------------
+
+2005, Aug. 3    NJB  Modified file to account for the leapsecond that
+                     will occur on December 31, 2005.
+                     
+1998, Jul  17   WLT  Modified file to account for the leapsecond that
+                     will occur on December 31, 1998.
+                     
+1997, Feb  22   WLT  Modified file to account for the leapsecond that
+                     will occur on June 30, 1997.
+                     
+1995, Dec  14   KSZ  Corrected date of last leapsecond from 1-1-95
+                     to 1-1-96.
+
+1995, Oct  25   WLT  Modified file to account for the leapsecond that
+                     will occur on Dec 31, 1995.
+
+1994, Jun  16   WLT  Modified file to account for the leapsecond on
+                     June 30, 1994.
+
+1993, Feb. 22  CHA   Modified file to account for the leapsecond on
+                     June 30, 1993.
+
+1992, Mar. 6   HAN   Modified file to account for the leapsecond on
+                     June 30, 1992.
+
+1990, Oct. 8   HAN   Modified file to account for the leapsecond on 
+                     Dec. 31, 1990.  
+
+
+Explanation:
+------------
+
+The contents of this file are used by the routine DELTET to compute the 
+time difference
+
+[1]       DELTA_ET  =  ET - UTC                                         
+          
+the increment to be applied to UTC to give ET. 
+
+The difference between UTC and TAI,
+
+[2]       DELTA_AT  =  TAI - UTC
+
+is always an integral number of seconds. The value of DELTA_AT was 10
+seconds in January 1972, and increases by one each time a leap second
+is declared. Combining [1] and [2] gives
+
+[3]       DELTA_ET  =  ET - (TAI - DELTA_AT)
+
+                    =  (ET - TAI) + DELTA_AT
+
+The difference (ET - TAI) is periodic, and is given by
+
+[4]       ET - TAI  =  DELTA_T_A  + K sin E 
+
+where DELTA_T_A and K are constant, and E is the eccentric anomaly of the 
+heliocentric orbit of the Earth-Moon barycenter. Equation [4], which ignores 
+small-period fluctuations, is accurate to about 0.000030 seconds.
+
+The eccentric anomaly E is given by 
+
+[5]       E = M + EB sin M
+
+where M is the mean anomaly, which in turn is given by 
+
+[6]       M = M  +  M t
+               0     1
+
+where t is the number of ephemeris seconds past J2000.
+
+Thus, in order to compute DELTA_ET, the following items are necessary.
+
+          DELTA_TA
+          K
+          EB
+          M0
+          M1
+          DELTA_AT      after each leap second.
+
+The numbers, and the formulation, are taken from the following sources.
+
+     1) Moyer, T.D., Transformation from Proper Time on Earth to 
+        Coordinate Time in Solar System Barycentric Space-Time Frame
+        of Reference, Parts 1 and 2, Celestial Mechanics 23 (1981),
+        33-56 and 57-68.
+
+     2) Moyer, T.D., Effects of Conversion to the J2000 Astronomical
+        Reference System on Algorithms for Computing Time Differences
+        and Clock Rates, JPL IOM 314.5--942, 1 October 1985.
+
+The variable names used above are consistent with those used in the 
+Astronomical Almanac.
+
+\begindata
+
+DELTET/DELTA_T_A       =   32.184
+DELTET/K               =    1.657D-3
+DELTET/EB              =    1.671D-2
+DELTET/M               = (  6.239996D0   1.99096871D-7 )
+
+DELTET/DELTA_AT        = ( 10,   @1972-JAN-1
+                           11,   @1972-JUL-1     
+                           12,   @1973-JAN-1     
+                           13,   @1974-JAN-1     
+                           14,   @1975-JAN-1          
+                           15,   @1976-JAN-1          
+                           16,   @1977-JAN-1          
+                           17,   @1978-JAN-1          
+                           18,   @1979-JAN-1          
+                           19,   @1980-JAN-1          
+                           20,   @1981-JUL-1          
+                           21,   @1982-JUL-1          
+                           22,   @1983-JUL-1          
+                           23,   @1985-JUL-1          
+                           24,   @1988-JAN-1 
+                           25,   @1990-JAN-1
+                           26,   @1991-JAN-1 
+                           27,   @1992-JUL-1
+                           28,   @1993-JUL-1
+                           29,   @1994-JUL-1
+                           30,   @1996-JAN-1 
+                           31,   @1997-JUL-1
+                           32,   @1999-JAN-1
+                           33,   @2006-JAN-1 )
+
+
+\begintext
+
