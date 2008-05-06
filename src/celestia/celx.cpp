@@ -1837,6 +1837,104 @@ static int celestia_getorbitflags(lua_State* l)
     return 1;
 }
 
+static int celestia_showconstellations(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 2, "Expected no or one argument to celestia:showconstellations()");
+
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    Universe* u = appCore->getSimulation()->getUniverse();
+    AsterismList* asterisms = u->getAsterisms();
+
+    if (lua_type(l,2) == LUA_TNONE) // No argument passed
+    {
+        for (AsterismList::const_iterator iter = asterisms->begin();
+             iter != asterisms->end(); iter++)
+        {
+            Asterism* ast = *iter;
+            ast->setActive(true);
+        }
+    }
+    else if (!lua_istable(l, 2))
+    {
+        Celx_DoError(l, "Argument to celestia:showconstellations() must be a table");
+    }
+    else
+    {
+        lua_pushnil(l);
+        while (lua_next(l, -2) != 0)
+        {
+            const char* constellation;
+            if (lua_isstring(l, -1))
+            {
+                constellation = lua_tostring(l, -1);
+            }
+            else
+            {
+                Celx_DoError(l, "Values in table-argument to celestia:showconstellations() must be strings");
+            }
+            for (AsterismList::const_iterator iter = asterisms->begin();
+                 iter != asterisms->end(); iter++)
+            {
+                Asterism* ast = *iter;
+  		          if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
+                    ast->setActive(true);
+            }
+            lua_pop(l,1);
+        }
+    }
+
+    return 0;
+}
+
+static int celestia_hideconstellations(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 2, "Expected no or one argument to celestia:hideconstellations()");
+
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    Universe* u = appCore->getSimulation()->getUniverse();
+    AsterismList* asterisms = u->getAsterisms();
+
+    if (lua_type(l,2) == LUA_TNONE) // No argument passed
+    {
+        for (AsterismList::const_iterator iter = asterisms->begin();
+             iter != asterisms->end(); iter++)
+        {
+            Asterism* ast = *iter;
+            ast->setActive(false);
+        }
+    }
+    else if (!lua_istable(l, 2))
+    {
+        Celx_DoError(l, "Argument to celestia:hideconstellations() must be a table");
+    }
+    else
+    {
+        lua_pushnil(l);
+        while (lua_next(l, -2) != 0)
+        {
+            const char* constellation;
+            if (lua_isstring(l, -1))
+            {
+                constellation = lua_tostring(l, -1);
+            }
+            else
+            {
+                Celx_DoError(l, "Values in table-argument to celestia:hideconstellations() must be strings");
+            }
+            for (AsterismList::const_iterator iter = asterisms->begin();
+                 iter != asterisms->end(); iter++)
+            {
+                Asterism* ast = *iter;
+  		          if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
+                    ast->setActive(false);
+            }
+            lua_pop(l,1);
+        }
+    }
+
+    return 0;
+}
+
 static int celestia_setoverlayelements(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setoverlayelements()");
@@ -2316,21 +2414,9 @@ static int celestia_getsystemtime(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No argument expected to function celestia:getsystemtime");
     
-    time_t t = time(NULL);
-    struct tm *gmt = gmtime(&t);
-    if (gmt != NULL)
-    {
-        astro::Date d;
-        d.year = gmt->tm_year + 1900;
-        d.month = gmt->tm_mon + 1;
-        d.day = gmt->tm_mday;
-        d.hour = gmt->tm_hour;
-        d.minute = gmt->tm_min;
-        d.seconds = (int) gmt->tm_sec;
-        
-        lua_pushnumber(l, astro::UTCtoTDB(d));
-    }
-    
+    astro::Date d = astro::Date::systemDate();
+    lua_pushnumber(l, astro::UTCtoTDB(d));
+
     return 1;
 }
 
@@ -3015,6 +3101,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setlabelflags", celestia_setlabelflags);
     Celx_RegisterMethod(l, "getorbitflags", celestia_getorbitflags);
     Celx_RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
+    Celx_RegisterMethod(l, "showconstellations", celestia_showconstellations);
+    Celx_RegisterMethod(l, "hideconstellations", celestia_hideconstellations);
     Celx_RegisterMethod(l, "setlabelcolor", celestia_setlabelcolor);
     Celx_RegisterMethod(l, "setlinecolor",  celestia_setlinecolor);
     Celx_RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
