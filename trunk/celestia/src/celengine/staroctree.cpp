@@ -13,6 +13,17 @@
 #include <celengine/staroctree.h>
 
 
+// Maximum permitted orbital radius for stars, in light years. Orbital
+// radii larger than this value are not guaranteed to give correct
+// results. The problem case is extremely faint stars (such as brown
+// dwarfs.) The distance from the viewer to star's barycenter is used
+// rough estimate of the brightness for the purpose of culling. When the
+// star is very faint, this estimate may not work when the star is
+// far from the barycenter. Thus, the star octree traversal will always
+// render stars with orbits that are closer than MAX_STAR_ORBIT_RADIUS.
+static const float MAX_STAR_ORBIT_RADIUS = 1.0f;
+
+
 // The octree node into which a star is placed is dependent on two properties:
 // its obsPosition and its luminosity--the fainter the star, the deeper the node
 // in which it will reside.  Each node stores an absolute magnitude; no child
@@ -111,8 +122,8 @@ void StarOctree::processVisibleObjects(StarHandler&   processor,
         {
             float distance    = obsPosition.distanceTo(obj.getPosition());
             float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
-
-            if (appMag < limitingFactor)
+            
+            if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
                 processor.process(obj, distance, appMag);
         }
     }
@@ -120,8 +131,10 @@ void StarOctree::processVisibleObjects(StarHandler&   processor,
     // See if any of the objects in child nodes are potentially included
     // that we need to recurse deeper.
     if (minDistance <= 0 || astro::absToAppMag(exclusionFactor, minDistance) <= limitingFactor)
+    {
         // Recurse into the child nodes
         if (_children != NULL)
+        {
             for (int i=0; i<8; ++i)
             {
                 _children[i]->processVisibleObjects(processor,
@@ -130,6 +143,8 @@ void StarOctree::processVisibleObjects(StarHandler&   processor,
                                                     limitingFactor,
                                                     scale * 0.5f);
             }
+        }
+    }
 }
 
 
