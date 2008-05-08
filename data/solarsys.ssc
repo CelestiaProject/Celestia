@@ -1300,6 +1300,7 @@ ReferencePoint "Pluto-Charon" "Sol"
 
 "Pluto" "Sol"
 {
+    Class "dwarfplanet"
     Texture "pluto-lok.*"
     SpecularTexture "pluto-lok-spec.*"
     SpecularColor            [ 0.135 0.12 0.08 ]

@@ -7,7 +7,7 @@
 # Data from HST results by Brown et al. ApJ 2006:
 # http://www.gps.caltech.edu/~mbrown/papers/ps/xsize.pdf
 
-	Class "asteroid" 
+	Class "dwarfplanet" 
 	Texture "asteroid.jpg" 
 	Radius  1200
 	# no evidence of reddening
