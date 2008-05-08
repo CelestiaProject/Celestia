@@ -12,6 +12,7 @@
 
 "Metis" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 30 20 20 ]
 
@@ -33,6 +34,7 @@
 
 "Adrastea" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 10 8 7 ]
 
@@ -54,6 +56,7 @@
 
 "Thebe" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 58 49 42 ]
 
@@ -76,6 +79,7 @@
 
 "Themisto" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		4.0
@@ -98,6 +102,7 @@
 
 "Leda" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		10
@@ -120,6 +125,7 @@
 
 "Himalia" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 75 60 60 ]
 
@@ -141,6 +147,7 @@
 
 "Lysithea" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		18
@@ -163,6 +170,7 @@
 
 "Elara" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		43
@@ -185,6 +193,7 @@
 
 "Iocaste" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.6
@@ -207,6 +216,7 @@
 
 "Praxidike" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3.4
@@ -229,6 +239,7 @@
 
 "Harpalyke" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.2
@@ -251,6 +262,7 @@
 
 "Ananke" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		14
@@ -273,6 +285,7 @@
 
 "Isonoe" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.9
@@ -295,6 +308,7 @@
 
 "Erinome" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.6
@@ -317,6 +331,7 @@
 
 "Taygete" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.5
@@ -339,6 +354,7 @@
 
 "Chaldene" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.9
@@ -361,6 +377,7 @@
 
 "Carme" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		23
@@ -383,6 +400,7 @@
 
 "Pasiphae" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		30
@@ -405,6 +423,7 @@
 
 "Kalyke" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.6
@@ -427,6 +446,7 @@
 
 "Megaclite" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.7
@@ -449,6 +469,7 @@
 
 "Sinope" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		19
@@ -471,6 +492,7 @@
 
 "Callirrhoe" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		4.3
@@ -496,6 +518,7 @@
 
 "Pan" "Sol/Saturn"   # Cassini-epoch data
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 17.6 17.3 11.5 ]
 
@@ -520,6 +543,7 @@
 
 "Atlas" "Sol/Saturn"   # Cassini-epoch data
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 22.8 19.0 9.6 ]
 
@@ -545,6 +569,7 @@
 "Telesto" "Sol/Saturn"
 # Leading Lagrange point of Tethys
 {
+	Class "minormoon"
 	Texture		"asteroid.jpg"
 	SemiAxes [ 15 12.5 7.5 ]
 
@@ -569,6 +594,7 @@
 "Calypso" "Sol/Saturn"
 # Trailing Lagrange point of Tethys
 {
+	Class "minormoon"
 	Texture 	"asteroid.jpg"
 	SemiAxes [ 15 8 8 ]
 
@@ -593,6 +619,7 @@
 "Helene" "Sol/Saturn"
 # Leading Lagrange point of Dione
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 18 16 15 ]
 
@@ -617,6 +644,7 @@
 
 "Cordelia" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 25 18 18 ]
 
@@ -638,6 +666,7 @@
 
 "Ophelia" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 27 19 19 ]
 
@@ -659,6 +688,7 @@
 
 "Bianca" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 32 23 23 ]
 
@@ -680,6 +710,7 @@
 
 "Cressida" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 46 37 37 ]
 
@@ -702,6 +733,7 @@
 
 "Desdemona" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 45 27 27 ]
 
@@ -723,6 +755,7 @@
 
 "Juliet" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 75 37 37 ]
 
@@ -744,6 +777,7 @@
 
 "Portia" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 78 63 63 ]
 
@@ -765,6 +799,7 @@
 
 "Rosalind" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		36
@@ -787,6 +822,7 @@
 
 "Belinda" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 64 32 32 ]
 
@@ -808,6 +844,7 @@
 
 "Puck" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		81
@@ -830,6 +867,7 @@
 
 "Caliban" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		49
@@ -852,6 +890,7 @@
 
 "Stephano" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		10
@@ -874,6 +913,7 @@
 
 "Sycorax" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		95
@@ -896,6 +936,7 @@
 
 "Prospero" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		15
@@ -918,6 +959,7 @@
 
 "Setebos" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		15
@@ -943,6 +985,7 @@
 
 "Naiad" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 47 30 26 ]
 
@@ -966,6 +1009,7 @@
 
 "Thalassa" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 54 50 26 ]
 
@@ -987,6 +1031,7 @@
 
 "Despina" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 90 74 64 ]
 
@@ -1008,6 +1053,7 @@
 
 "Galatea" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	SemiAxes [ 102 92 72 ]
 

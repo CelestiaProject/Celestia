@@ -25,6 +25,7 @@
 
 "Autonoe" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.0
@@ -47,6 +48,7 @@
 
 "Thyone" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.0
@@ -69,6 +71,7 @@
 
 "Hermippe" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.0
@@ -91,6 +94,7 @@
 
 "Eurydome" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.5
@@ -113,6 +117,7 @@
 
 "Sponde" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -135,6 +140,7 @@
 
 "Pasithee" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -157,6 +163,7 @@
 
 "Euanthe" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.5
@@ -179,6 +186,7 @@
 
 "Kale" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -201,6 +209,7 @@
 
 "Orthosie" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -223,6 +232,7 @@
 
 "Euporie" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -245,6 +255,7 @@
 
 "Aitne" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.5
@@ -267,6 +278,7 @@
 
 "Arche" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.5
@@ -289,6 +301,7 @@
 
 "Eukelade" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.0
@@ -312,6 +325,7 @@
 
 "2003J2" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -335,6 +349,7 @@
 
 "2003J3" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -358,6 +373,7 @@
 
 "2003J4" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -381,6 +397,7 @@
 
 "2003J5" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.0
@@ -404,6 +421,7 @@
 
 "Helike" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.0
@@ -427,6 +445,7 @@
 
 "Aoede" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.0
@@ -450,6 +469,7 @@
 
 "Hegemone" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.5
@@ -473,6 +493,7 @@
 
 "2003J9" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		0.5
@@ -496,6 +517,7 @@
 
 "2003J10" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -519,6 +541,7 @@
 
 "Kallichore" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -542,6 +565,7 @@
 
 "2003J12" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		0.5
@@ -565,6 +589,7 @@
 
 "Cyllene" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -588,6 +613,7 @@
 
 "Kore" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -611,6 +637,7 @@
 
 "2003J15" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -634,6 +661,7 @@
 
 "2003J16" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -657,6 +685,7 @@
 
 "2003J17" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -680,6 +709,7 @@
 
 "2003J18" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -703,6 +733,7 @@
 
 "2003J19" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -726,6 +757,7 @@
 
 "Carpo" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.5
@@ -749,6 +781,7 @@
 
 "Mneme" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -772,6 +805,7 @@
 
 "Thelxinoe" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -795,6 +829,7 @@
 
 "2003J23" "Sol/Jupiter"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.0
@@ -820,6 +855,7 @@
 
 "Ymir" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		8
@@ -842,6 +878,7 @@
 
 "Paaliaq" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		9.5
@@ -886,6 +923,7 @@
 
 "Tarvos" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		6.5
@@ -908,6 +946,7 @@
 
 "Kiviuq" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		7
@@ -930,6 +969,7 @@
 
 "Ijiraq" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		5
@@ -952,6 +992,7 @@
 
 "Thrymr" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.8
@@ -974,6 +1015,7 @@
 
 "Skathi" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3.2
@@ -996,6 +1038,7 @@
 
 "Mundilfari" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.8
@@ -1018,6 +1061,7 @@
 
 "Erriapus" "Sol/Saturn" # (previously Erriapo)
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		4.3
@@ -1040,6 +1084,7 @@
 
 "Albiorix" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		13
@@ -1062,6 +1107,7 @@
 
 "Suttungr" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.8
@@ -1084,6 +1130,7 @@
 
 "Narvi" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3.3
@@ -1107,6 +1154,7 @@
 
 "Methone" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.5
@@ -1129,6 +1177,7 @@
 
 "Pallene" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2
@@ -1151,6 +1200,7 @@
 
 "2004S3" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.5
@@ -1173,6 +1223,7 @@
 
 "2004S4" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.5
@@ -1194,6 +1245,7 @@
 "Polydeuces" "Sol/Saturn"
 # Trailing Lagrange point of Dione
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		1.75
@@ -1216,6 +1268,7 @@
 
 "2004S6" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.5
@@ -1238,6 +1291,7 @@
 
 "2004S7" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1261,6 +1315,7 @@
 
 "Fornjot" "Sol/Saturn" # MPEC 2006-C74
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1284,6 +1339,7 @@
 
 "Farbauti" "Sol/Saturn" # MPEC 2006-C72
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.5
@@ -1307,6 +1363,7 @@
 
 "Aegir" "Sol/Saturn" # MPEC 2006-C55
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1330,6 +1387,7 @@
 
 "Bebhionn" "Sol/Saturn" # MPEC 2006-C55
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1353,6 +1411,7 @@
 
 "2004S12" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.5
@@ -1376,6 +1435,7 @@
 
 "2004S13" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1399,6 +1459,7 @@
 
 "Hati" "Sol/Saturn" # MPEC 2006-C74
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1422,6 +1483,7 @@
 
 "Bergelmir" "Sol/Saturn" # MPEC 2006-C55
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1445,6 +1507,7 @@
 
 "Fenrir" "Sol/Saturn" # MPEC 2006-C72
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2
@@ -1468,6 +1531,7 @@
 
 "2004S17" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2
@@ -1491,6 +1555,7 @@
 
 "Bestla" "Sol/Saturn" # MPEC 2006-C55
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3.5
@@ -1514,6 +1579,7 @@
 
 "Hyrrokkin" "Sol/Saturn" # (previously Hyrokkin) MPEC 2006-M44
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		4
@@ -1537,6 +1603,7 @@
 
 "Daphnis" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture "asteroid.jpg"
 	Mesh    "asteroid.cms"
 	Radius 3.5
@@ -1557,6 +1624,7 @@
 
 "2006S1" "Sol/Saturn" # MPEC 2006-M45
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1580,6 +1648,7 @@
 
 "Kari" "Sol/Saturn" # MPEC 2006-M48
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3.5
@@ -1603,6 +1672,7 @@
 
 "2006S3" "Sol/Saturn" # MPEC 2006-M45
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1626,6 +1696,7 @@
 
 "Greip" "Sol/Saturn" # MPEC 2006-M45
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1649,6 +1720,7 @@
 
 "Loge" "Sol/Saturn" # MPEC 2006-M48
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1672,6 +1744,7 @@
 
 "Jarnsaxa" "Sol/Saturn" # MPEC 2007-D79
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1695,6 +1768,7 @@
 
 "Surtur" "Sol/Saturn" # MPEC 2006-N06
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1718,6 +1792,7 @@
 
 "Skoll" "Sol/Saturn" # MPEC 2006-M48
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1741,6 +1816,7 @@
 
 "Tarqeq" "Sol/Saturn" # MPEC 2007-G38
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3.5
@@ -1764,6 +1840,7 @@
 
 "2007S2" "Sol/Saturn" # MPEC 2007-J09
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		3
@@ -1787,6 +1864,7 @@
 
 "2007S3" "Sol/Saturn" # MPEC 2007-J09
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		2.5
@@ -1813,6 +1891,7 @@
 
 "Trinculo" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		5
@@ -1835,6 +1914,7 @@
 
 "Ferdinand" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		6
@@ -1858,6 +1938,7 @@
 
 "Francisco" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		6
@@ -1880,6 +1961,7 @@
 
 "Margaret" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		5.5
@@ -1902,6 +1984,7 @@
 
 "Perdita" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture "asteroid.jpg"
 	Mesh    "asteroid.cms"
 	Radius 10
@@ -1924,6 +2007,7 @@
 
 "Mab" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture "asteroid.jpg"
 	Mesh    "asteroid.cms"
 	Radius 5
@@ -1946,6 +2030,7 @@
 
 "Cupid" "Sol/Uranus"
 {
+	Class "minormoon"
 	Texture "asteroid.jpg"
 	Mesh    "asteroid.cms"
 	Radius 5
@@ -1971,6 +2056,7 @@
 
 "Halimede" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		24
@@ -1993,6 +2079,7 @@
 
 "Sao" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		24
@@ -2015,6 +2102,7 @@
 
 "Laomedeia" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		24
@@ -2037,6 +2125,7 @@
 
 "Neso" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		30
@@ -2059,6 +2148,7 @@
 
 "Psamathe" "Sol/Neptune"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		14
