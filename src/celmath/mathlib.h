@@ -1,14 +1,14 @@
 // mathlib.h
 // 
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _MATHLIB_H_
-#define _MATHLIB_H_
+#ifndef _CELMATH_MATHLIB_H_
+#define _CELMATH_MATHLIB_H_
 
 #include <cmath>
 #include <stdlib.h>
@@ -83,7 +83,7 @@ template<class T> T sign(T x)
 // a positive value in the range [ 0, y )
 template<class T> T pfmod(T x, T y)
 {
-    int quotient = (int) abs(x / y);
+    T quotient = std::floor(std::abs(x / y));
     if (x < 0.0)
         return x + (quotient + 1) * y;
     else
