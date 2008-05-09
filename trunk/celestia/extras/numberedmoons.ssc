@@ -901,6 +901,7 @@
 
 "Siarnaq" "Sol/Saturn"
 {
+	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
 	Radius		16
