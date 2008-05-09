@@ -39,7 +39,7 @@
 #136199 Eris I (2005 (2003 UB313) 1)
 "Dysnomia" "Sol/Eris" {
 
-	Class "asteroid" 
+	Class "moon" 
 	Mesh	"asteroid.cms"
 	Texture "asteroid.jpg" 
 	Radius  100             # ~0.2% of Eris brightness
