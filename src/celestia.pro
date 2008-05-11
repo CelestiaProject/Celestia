@@ -383,8 +383,10 @@ RESOURCES = \
 
 FORMS = \
 	celestia/qt/addbookmark.ui \
-        celestia/qt/newbookmarkfolder.ui \
-	celestia/qt/organizebookmarks.ui
+	celestia/qt/newbookmarkfolder.ui \
+	celestia/qt/organizebookmarks.ui \
+	celestia/qt/preferences.ui
+
 
 UI_HEADERS_DIR = celestia/qt/ui
 UI_SOURCES_DIR = celestia/qt/ui
@@ -412,7 +414,11 @@ win32 {
 		-llibjpeg2 \
 		-lintl \
 		-llua5.1 \
-		-lcspice
+		-lcspice \
+		-lvfw32
+
+	SOURCES += celestia/avicapture.cpp
+	HEADERS += celestia/avicapture.h
 
 	RC_FILE = celestia/qt/celestia.rc
 	DEFINES += _CRT_SECURE_NO_WARNINGS

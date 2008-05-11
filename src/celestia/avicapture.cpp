@@ -1,6 +1,6 @@
 // avicapture.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -63,10 +63,10 @@ bool AVICapture::start(const string& filename,
     int rowBytes = (width * 3 + 3) & ~0x3;
     image = new unsigned char[rowBytes * height]; 
 
-    HRESULT hr = AVIFileOpen(&aviFile,
-                             filename.c_str(),
-                             OF_WRITE | OF_CREATE,
-                             NULL);
+    HRESULT hr = AVIFileOpenA(&aviFile,
+                              filename.c_str(),
+                              OF_WRITE | OF_CREATE,
+                              NULL);
     if (hr != AVIERR_OK)
     {
         DPRINTF(0, "Erroring creating avi file for capture.\n");
