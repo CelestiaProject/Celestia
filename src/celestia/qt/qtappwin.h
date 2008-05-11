@@ -27,6 +27,7 @@ class EventFinder;
 class CelestiaActions;
 
 
+class PreferencesDialog;
 class BookmarkManager;
 class BookmarkToolBar;
 class QUrl;
@@ -130,6 +131,7 @@ class CelestiaAppWindow : public QMainWindow
 
     CelestiaCore::Alerter* alerter;
     
+    PreferencesDialog* m_preferencesDialog;
     BookmarkManager* m_bookmarkManager;
     BookmarkToolBar* m_bookmarkToolBar;
         

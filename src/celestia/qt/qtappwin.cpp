@@ -59,6 +59,10 @@
 #include "celengine/glext.h"
 #include "qtbookmark.h"
 
+#ifdef _WIN32
+#include "celestia/avicapture.h"
+#endif
+
 using namespace std;
 
 
@@ -138,6 +142,7 @@ CelestiaAppWindow::CelestiaAppWindow() :
     infoPanel(NULL),
     eventFinder(NULL),
     alerter(NULL),
+    m_preferencesDialog(NULL),
     m_bookmarkManager(NULL),
     m_bookmarkToolBar(NULL)
 {
@@ -597,7 +602,71 @@ void CelestiaAppWindow::slotCaptureVideo()
         dir = QDir::current().path();
     }
 
-    //TODO
+    int videoSizes[8][2] =
+                       {
+                         { 160, 120 },
+                         { 320, 240 },
+                         { 640, 480 },
+                         { 720, 480 },
+                         { 720, 576 },
+                         { 1024, 768 },
+                         { 1280, 720 },
+                         { 1920, 1080 }
+                       };
+
+    float videoFrameRates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
+
+#ifdef _WIN32
+    QString saveAsName = QFileDialog::getSaveFileName(this,
+                                                      tr("Capture Video"),
+                                                      dir,
+                                                      tr("Video (*.avi)"));
+    if (!saveAsName.isEmpty())
+    {
+        QDialog videoInfoDialog(this);
+        videoInfoDialog.setWindowTitle("Capture Video");
+
+        QGridLayout* layout = new QGridLayout(&videoInfoDialog);
+
+        QComboBox* resolutionCombo = new QComboBox(&videoInfoDialog);
+        layout->addWidget(new QLabel(tr("Resolution:"), &videoInfoDialog), 0, 0);
+        layout->addWidget(resolutionCombo, 0, 1);        
+        for (unsigned int i = 0; i < sizeof(videoSizes) / sizeof(videoSizes[0]); i++)
+        {
+            resolutionCombo->addItem(QString("%1 x %2").arg(videoSizes[i][0]).arg(videoSizes[i][1]), QSize(videoSizes[i][0], videoSizes[i][1]));
+        }
+        
+        QComboBox* frameRateCombo = new QComboBox(&videoInfoDialog);
+        layout->addWidget(new QLabel(tr("Frame rate:"), &videoInfoDialog), 1, 0);
+        layout->addWidget(frameRateCombo, 1, 1);
+        for (unsigned int i = 0; i < sizeof(videoFrameRates) / sizeof(videoFrameRates[0]); i++)
+        {
+            frameRateCombo->addItem(QString("%1").arg(videoFrameRates[i]), videoFrameRates[i]);
+        }
+
+        QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &videoInfoDialog);
+        connect(buttons, SIGNAL(accepted()), &videoInfoDialog, SLOT(accept()));
+        connect(buttons, SIGNAL(rejected()), &videoInfoDialog, SLOT(reject()));
+        layout->addWidget(buttons, 2, 0, 1, 2);
+
+        videoInfoDialog.setLayout(layout);
+
+        if (videoInfoDialog.exec() == QDialog::Accepted)
+        {
+            QSize videoSize = resolutionCombo->itemData(resolutionCombo->currentIndex()).toSize();
+            double frameRate = frameRateCombo->itemData(frameRateCombo->currentIndex()).toDouble();
+
+            MovieCapture* movieCapture = new AVICapture();
+            bool ok = movieCapture->start(saveAsName.toAscii().data(),
+                                          videoSize.width(), videoSize.height(),
+                                          (float) frameRate);
+            if (ok)
+                m_appCore->initMovieCapture(movieCapture);
+            else
+                delete movieCapture;
+        }
+    }
+#endif // _WIN32
 
     settings.endGroup();
 }
@@ -667,9 +736,17 @@ void CelestiaAppWindow::gotoSelection()
 void CelestiaAppWindow::slotPreferences()
 {
     PreferencesDialog dlg(this, m_appCore);
-
     dlg.exec();
-    //resyncMenus();
+#if 0
+    if (m_preferencesDialog == NULL)
+    {
+        m_preferencesDialog = new PreferencesDialog(this, m_appCore);
+    }
+
+    m_preferencesDialog->syncState();
+
+    m_preferencesDialog->show();
+#endif
 }
 
 void CelestiaAppWindow::slotSplitViewVertically()
@@ -944,7 +1021,7 @@ void CelestiaAppWindow::createMenus()
 
     QAction* captureVideoAction = new QAction(QIcon(":data/capture-video.png"),
                                               tr("Capture &video"), this);
-    captureVideoAction->setShortcut(tr("F11"));
+    //captureVideoAction->setShortcut(tr("F11"));
     connect(captureVideoAction, SIGNAL(triggered()), this, SLOT(slotCaptureVideo()));
     fileMenu->addAction(captureVideoAction);
 
@@ -976,7 +1053,7 @@ void CelestiaAppWindow::createMenus()
     fileMenu->addSeparator();
 
     QAction* prefAct = new QAction(QIcon(":data/preferences.png"),
-                                   tr("&Preferences"), this);
+                                   tr("&Preferences..."), this);
     connect(prefAct, SIGNAL(triggered()), this, SLOT(slotPreferences()));
     fileMenu->addAction(prefAct);
 
