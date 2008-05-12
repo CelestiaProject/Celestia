@@ -802,16 +802,33 @@ void CelestiaAppWindow::slotShowObjectInfo(Selection& sel)
 
 void CelestiaAppWindow::slotOpenScriptDialog()
 {
+    QString dir;
+    QSettings settings;
+    settings.beginGroup("Preferences");
+    if (settings.contains("OpenScriptDir"))
+    {
+        dir = settings.value("OpenScriptDir").toString();
+    }
+    else
+    {
+        dir = "scripts";
+    }
+
     QString scriptFileName = QFileDialog::getOpenFileName(this,
                                                           tr("Open Script"),
-                                                          "scripts",
+                                                          dir,
                                                           tr("Celestia Scripts (*.celx *.cel)"));
 
     if (!scriptFileName.isEmpty())
     {
         m_appCore->cancelScript();
         m_appCore->runScript(scriptFileName.toUtf8().data());
+
+        QFileInfo scriptFile(scriptFileName);
+        settings.setValue("OpenScriptDir", scriptFile.absolutePath());
     }
+
+    settings.endGroup();
 }
 
 
