@@ -312,9 +312,10 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 {
     const DSODatabase& dsodb = *universe->getDSOCatalog();
     
-    observerPos = _observerPos;
-
+    observerPos = ((Point3d) _observerPos) * 1.0e-6;
+    
     typedef multiset<DeepSkyObject*, DSOPredicate> DSOSet;
+    
     DSOPredicate pred(criterion, observerPos);
 
     // Apply the filter
