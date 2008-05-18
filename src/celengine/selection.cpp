@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <cstdio>
+#include <cassert>
 #include "astro.h"
 #include "selection.h"
 #include "frametree.h"
@@ -59,16 +60,18 @@ UniversalCoord Selection::getPosition(double t) const
     case Type_Location:
         {
             Body* body = location()->getParentBody();
-            const Star* sun = NULL;
-            if (body != NULL && body->getSystem() != NULL)
+            if (body != NULL)
             {
-                sun = body->getSystem()->getStar();
+                Point3d planetocentricPos = location()->getPlanetocentricPosition(t) *
+                    astro::kilometersToMicroLightYears(1.0);
+                return body->getPosition(t) + planetocentricPos;
             }
-
-            if (sun != NULL)
-                return astro::universalPosition(location()->getHeliocentricPosition(t), sun->getPosition(t));
             else
-                return astro::universalPosition(location()->getHeliocentricPosition(t), Point3f(0.0f, 0.0f, 0.0f));
+            {
+                // Bad location; all locations should have a parent.
+                assert(0);
+                return UniversalCoord(0.0, 0.0, 0.0);
+            }
         }
 
     default:
