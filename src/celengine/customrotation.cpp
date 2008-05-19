@@ -69,7 +69,7 @@ public:
         double inclination = 90.0 - poleDec;
         
         if (flipped)
-            return Quatd::xrotation(PI) * Quatd::xrotation(degToRad(-inclination)) * Quatd::yrotation(degToRad(-node));// * Quatd::xrotation(-PI);
+            return Quatd::xrotation(PI) * Quatd::xrotation(degToRad(-inclination)) * Quatd::yrotation(degToRad(-node));
         else
             return Quatd::xrotation(degToRad(-inclination)) * Quatd::yrotation(degToRad(-node));
     }
