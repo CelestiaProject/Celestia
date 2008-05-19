@@ -357,7 +357,7 @@ static float rotperiod_M[3][10] =
 
 
 const char* LumClassNames[StellarClass::Lum_Count] = {
-    "I-a0", "I-a", "I-b", "II", "III", "IV", "V", "VI", ""
+    "I-a0", "I-a", "I-b", "II", "III", "IV", "V", "sd", ""
 };
 
 const char* SubclassNames[11] = {
@@ -439,11 +439,23 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
     if (normalStarDetails[index] == NULL)
     {
         char name[16];
-        sprintf(name, "%s%s%s",
-                SpectralClassNames[specClass],
-                SubclassNames[subclass],
-                LumClassNames[lumClass]);
-
+        if (lumClass == StellarClass::Lum_VI)
+        {
+            // Subdwarf stars are conventionally indicated by prefixing the
+            // luminosity class.
+            sprintf(name, "%s%s%s",
+                    LumClassNames[lumClass],
+                    SpectralClassNames[specClass],
+                    SubclassNames[subclass]);
+        }
+        else
+        {
+            sprintf(name, "%s%s%s",
+                    SpectralClassNames[specClass],
+                    SubclassNames[subclass],
+                    LumClassNames[lumClass]);
+        }
+        
         // Use the same properties for an unknown subclass as for subclass 5
         if (subclass == StellarClass::Subclass_Unknown)
         {
