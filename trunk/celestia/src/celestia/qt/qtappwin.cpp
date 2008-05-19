@@ -36,6 +36,7 @@
 #include <QApplication>
 #include <QProcess>
 #include <QDesktopServices>
+#include <QDesktopWidget>
 #include <QUrl>
 #include <vector>
 #include <string>
@@ -75,7 +76,7 @@ const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
 
 // Used when saving and restoring main window state; increment whenever
 // new dockables or toolbars are added.
-static const int CELESTIA_MAIN_WINDOW_VERSION = 11;
+static const int CELESTIA_MAIN_WINDOW_VERSION = 12;
 
 
 // Terrible hack required because context menu callback doesn't retain
@@ -320,8 +321,6 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     // Give keyboard focus to the 3D view
     glWidget->setFocus();
 
-    readSettings();
-
     m_bookmarkManager = new BookmarkManager(this);
 
     // Load the bookmarks file and nitialize the bookmarks menu
@@ -332,9 +331,13 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
             this, SLOT(slotBookmarkTriggered(const QString&)));
     
     m_bookmarkToolBar = new BookmarkToolBar(m_bookmarkManager, this);
+    m_bookmarkToolBar->setObjectName("bookmark-toolbar");    
     m_bookmarkToolBar->rebuild();
     addToolBar(Qt::TopToolBarArea, m_bookmarkToolBar);
 
+    // Read saved window preferences
+    readSettings();
+    
     // Build the view menu
     // Add dockable panels and toolbars to the view menu
     viewMenu->addAction(timeToolBar->toggleViewAction());
@@ -433,15 +436,39 @@ void CelestiaAppWindow::initAppDataDirectory()
 
 void CelestiaAppWindow::readSettings()
 {
+    QDesktopWidget desktop;
+    
     QSettings settings;
 
     settings.beginGroup("MainWindow");
-    resize(settings.value("Size", DEFAULT_MAIN_WINDOW_SIZE).toSize());
-    move(settings.value("Pos", DEFAULT_MAIN_WINDOW_POSITION).toPoint());
+    
+    QSize windowSize = settings.value("Size", DEFAULT_MAIN_WINDOW_SIZE).toSize();
+    QPoint windowPosition = settings.value("Pos", DEFAULT_MAIN_WINDOW_POSITION).toPoint();
+    
+    // Make sure that the saved size fits on screen; it's possible for the previous saved
+    // position to be off-screen if the monitor settings have changed.
+    bool onScreen = false;
+    for (int screenIndex = 0; screenIndex < desktop.numScreens(); screenIndex++)
+    {
+        QRect screenGeometry = desktop.screenGeometry(screenIndex);
+        if (screenGeometry.contains(windowPosition))
+            onScreen = true;
+    }
+    
+    if (!onScreen)
+    {
+        windowPosition = DEFAULT_MAIN_WINDOW_POSITION;
+        windowSize = DEFAULT_MAIN_WINDOW_SIZE;
+    }
+    
+    resize(windowSize);
+    move(windowPosition);
     if (settings.contains("State"))
         restoreState(settings.value("State").toByteArray(), CELESTIA_MAIN_WINDOW_VERSION);
     if (settings.value("Fullscreen", false).toBool())
         showFullScreen();
+    
+    QPoint winpos = settings.value("Pos", DEFAULT_MAIN_WINDOW_SIZE).toPoint();
     settings.endGroup();
 
     // Render settings read in qtglwidget
@@ -602,6 +629,7 @@ void CelestiaAppWindow::slotCaptureVideo()
         dir = QDir::current().path();
     }
 
+#ifdef _WIN32
     int videoSizes[8][2] =
                        {
                          { 160, 120 },
@@ -616,7 +644,6 @@ void CelestiaAppWindow::slotCaptureVideo()
 
     float videoFrameRates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
 
-#ifdef _WIN32
     QString saveAsName = QFileDialog::getSaveFileName(this,
                                                       tr("Capture Video"),
                                                       dir,
