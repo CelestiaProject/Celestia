@@ -112,7 +112,7 @@ void Overlay::print(wchar_t c)
             if (textBlock > 0)
             {
                 glPopMatrix();
-                glTranslatef(0, -(1 + font->getHeight()), 0);
+                glTranslatef(0.0f, (float) -(1 + font->getHeight()), 0.0f);
                 glPushMatrix();
             }
             break;
@@ -142,7 +142,7 @@ void Overlay::print(char c)
             if (textBlock > 0)
             {
                 glPopMatrix();
-                glTranslatef(0, -(1 + font->getHeight()), 0);
+                glTranslatef(0.0f, (float) -(1 + font->getHeight()), 0.0f);
                 glPushMatrix();
             }
             break;
