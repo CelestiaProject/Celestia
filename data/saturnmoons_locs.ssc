@@ -2195,7 +2195,7 @@ Location "Mayda Insula" "Sol/Saturn/Titan"
 {
 	LongLat [ -312.2 79.1 0 ]
 	Size 168
-	Type "FO"
+	Type "IN"
 }
 
 # (Hyperion coordinates taken from Phil Stooke's
