@@ -149,12 +149,12 @@ void Simulation::setSelection(const Selection& sel)
     {
         universe->unmarkObject(selection, 0);
         selection = sel;
-        universe->markObject(selection,
-                             10.0f,
-                             Color(1.0f, 0.0f, 0.0f, 0.9f),
-                             Marker::Diamond,
-                             0,
-                             "");
+        
+        MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
+        markerRep.setSize(10.0f);
+        markerRep.setColor(Color(1.0f, 0.0f, 0.0f, 0.9f));
+
+        universe->markObject(selection, markerRep, 0);
     }
 }
 

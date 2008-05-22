@@ -234,6 +234,7 @@ Color Renderer::EquatorialGridColor     (0.19f,  0.25f,  0.19f);
 Color Renderer::PlanetographicGridColor (0.8f,   0.8f,   0.8f);
 Color Renderer::PlanetEquatorColor      (0.5f,   1.0f,   1.0f);
 
+
 // Some useful unit conversions
 inline float mmToInches(float mm)
 {
@@ -1230,7 +1231,7 @@ bool Renderer::vertexShaderSupported() const
 
 
 void Renderer::addAnnotation(vector<Annotation>& annotations,
-                             const Marker* marker,
+                             const MarkerRepresentation* markerRep,
                              const string& labelText,
                              Color color,
                              const Point3f& pos,
@@ -1253,14 +1254,15 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
     {
         Annotation a;
         
-        if (marker == NULL)
+        a.labelText[0] = '\0';
+        if (markerRep == NULL)
         {
             ReplaceGreekLetterAbbr(a.labelText, MaxLabelLength, labelText.c_str(), labelText.length());
             // Might be nice to use abbreviations instead of Greek letters
             // strncpy(l.text, text, MaxLabelLength);
             a.labelText[MaxLabelLength - 1] = '\0';
         }
-        a.marker = marker;
+        a.markerRep = markerRep;
         a.color = color;
         a.position = Point3f((float) winX, (float) winY, -depth);
         annotations.push_back(a);
@@ -1268,23 +1270,23 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 }
 
 
-void Renderer::addForegroundAnnotation(const Marker* marker,
+void Renderer::addForegroundAnnotation(const MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
                                        const Point3f& pos,
                                        float depth)
 {
-    addAnnotation(foregroundAnnotations, marker, labelText, color, pos, depth);
+    addAnnotation(foregroundAnnotations, markerRep, labelText, color, pos, depth);
 }
 
 
-void Renderer::addBackgroundAnnotation(const Marker* marker,
+void Renderer::addBackgroundAnnotation(const MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
                                        const Point3f& pos,
                                        float depth)
 {
-    addAnnotation(backgroundAnnotations, marker, labelText, color, pos, depth);
+    addAnnotation(backgroundAnnotations, markerRep, labelText, color, pos, depth);
 }
 
 
@@ -1297,7 +1299,7 @@ void Renderer::addBackgroundAnnotation(const string& labelText,
 }
 
 
-void Renderer::addSortedAnnotation(const Marker* marker, const string& labelText, Color color, const Point3f& pos)
+void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep, const string& labelText, Color color, const Point3f& pos)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -1316,13 +1318,14 @@ void Renderer::addSortedAnnotation(const Marker* marker, const string& labelText
     {
         Annotation a;
         
-        if (marker == NULL)
+        a.labelText[0] = '\0';
+        if (markerRep == NULL)
         {
             //l.text = ReplaceGreekLetterAbbr(_(text.c_str()));
             strncpy(a.labelText, labelText.c_str(), MaxLabelLength);
             a.labelText[MaxLabelLength - 1] = '\0';
         }
-        a.marker = marker;
+        a.markerRep = markerRep;
         a.color = color;
         a.position = Point3f((float) winX, (float) winY, -depth);
         depthSortedAnnotations.push_back(a);
@@ -1385,7 +1388,7 @@ void Renderer::endObjectAnnotations()
 }
 
 
-void Renderer::addObjectAnnotation(const Marker* marker,
+void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
                                    const string& labelText,
                                    Color color,
                                    const Point3f& pos)
@@ -1411,12 +1414,13 @@ void Renderer::addObjectAnnotation(const Marker* marker,
 
             Annotation a;
             
-            if (marker == NULL)
+            a.labelText[0] = '\0';
+            if (!labelText.empty())
             {
                 strncpy(a.labelText, labelText.c_str(), MaxLabelLength);
                 a.labelText[MaxLabelLength - 1] = '\0';
             }
-            a.marker = marker;
+            a.markerRep = markerRep;
             a.color = color;
             a.position = Point3f((float) winX, (float) winY, -depth);
 
@@ -6772,164 +6776,115 @@ renderRingShadowsVS(Model* /*model*/,           //TODO: Remove unused parameters
 }
 
 
-void Renderer::renderLocations(const vector<Location*>& locations,
-                               const Quatf& cameraOrientation,
-                               const Point3d& bodyPosition,
-                               const Quatd& bodyOrientation,
-                               float scale)
+void Renderer::renderLocations(const Body& body,
+                               const Vec3d& bodyPosition,
+                               const Quatd& bodyOrientation)
 {
-    if (font[FontNormal] == NULL)
+    const vector<Location*>* locations = body.getLocations();
+    if (locations == NULL)
         return;
+    
+    Vec3f semiAxes = body.getSemiAxes();
+    
+    float nearDist = getNearPlaneDistance();
+    double boundingRadius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
 
-    double winX, winY, winZ;
-    int view[4] = { 0, 0, 0, 0 };
-    view[0] = -windowWidth / 2;
-    view[1] = -windowHeight / 2;
-    view[2] = windowWidth;
-    view[3] = windowHeight;
+    Vec3d bodyCenter(bodyPosition.x, bodyPosition.y, bodyPosition.z);
+    Vec3d viewRayOrigin = -bodyCenter * (~bodyOrientation).toMatrix3();
+    double labelOffset = 0.0001;
 
-    Vec3f viewNormal = Vec3f(0.0f, 0.0f, -1.0f) *
-        cameraOrientation.toMatrix3();
-    Vec3d viewNormald = Vec3d(viewNormal.x, viewNormal.y, viewNormal.z);
-
-    double modelview[16];
-    double projection[16];
-    glGetDoublev(GL_PROJECTION_MATRIX, projection);
-
-    // Get the camera matrix GL-style for gluProject
+    Vec3f vn  = Vec3f(0.0f, 0.0f, -1.0f) * getCameraOrientation().toMatrix3();
+    Vec3d viewNormal(vn.x, vn.y, vn.z);
+    
+    Ellipsoidd bodyEllipsoid(Vec3d(semiAxes.x, semiAxes.y, semiAxes.z));
+    
+    Mat3d bodyMatrix = bodyOrientation.toMatrix3();
+    
+    for (vector<Location*>::const_iterator iter = locations->begin();
+         iter != locations->end(); iter++)
     {
-        Mat3f cameraMatrix = cameraOrientation.toMatrix3();
-        modelview[0]  = cameraMatrix[0][0];
-        modelview[1]  = cameraMatrix[1][0];
-        modelview[2]  = cameraMatrix[2][0];
-        modelview[3]  = 0.0f;
-        modelview[4]  = cameraMatrix[0][1];
-        modelview[5]  = cameraMatrix[1][1];
-        modelview[6]  = cameraMatrix[2][1];
-        modelview[7]  = 0.0f;
-        modelview[8]  = cameraMatrix[0][2];
-        modelview[9]  = cameraMatrix[1][2];
-        modelview[10] = cameraMatrix[2][2];
-        modelview[11] = 0.0;
-        modelview[12] = 0.0;
-        modelview[13] = 0.0;
-        modelview[14] = 0.0;
-        modelview[15] = 1.0;
-    }
-
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-#endif
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
-    font[FontNormal]->bind();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_LIGHTING);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0, windowWidth, 0, windowHeight, 1.0f, -1.0f);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    // Render the labels very close to the near plane with z=-0.999f.  In fact,
-    // z=-1.0f should work, but I'm concerned that some OpenGL implementations
-    // might clip things placed right on the near plane.
-    glTranslatef(GLfloat((int) (windowWidth / 2)),
-                 GLfloat((int) (windowHeight / 2)), -0.999f);
-
-    Point3d origin(0.0, 0.0, 0.0);
-
-    Ellipsoidd ellipsoid(bodyPosition, Vec3d(scale, scale, scale));
-
-    //float iScale = 1.0f / scale;
-    Mat3d mat = bodyOrientation.toMatrix3();
-
-    for (vector<Location*>::const_iterator iter = locations.begin();
-         iter != locations.end(); iter++)
-    {
-        if ((*iter)->getFeatureType() & locationFilter)
+        const Location& location = **iter;
+        
+        if (location.getFeatureType() & locationFilter)
         {
-            // Get the position of the annotation with respect to the planet center
-            Vec3f ppos = (*iter)->getPosition();
-
-            // Compute the body-centric position of the location
-            Vec3d locPos = Vec3d(ppos.x, ppos.y, ppos.z) * mat;
-
-            // Get the position in camera space.  Add a slight scale factor
+            // Get the position of the location with respect to the planet center
+            Vec3f ppos = location.getPosition();
+            
+            // Compute the bodycentric position of the location
+            Vec3d locPos = Vec3d(ppos.x, ppos.y, ppos.z);
+            
+            // Get the planetocentric position of the label.  Add a slight scale factor
             // to keep the point from being exactly on the surface.
-            Point3d cpos(bodyPosition + locPos * 1.0000001);
-
-            float effSize = (*iter)->getImportance();
+            Vec3d pcLabelPos = locPos * (1.0 + labelOffset);
+            
+            // Get the camera space label position
+            Vec3d labelPos = bodyCenter + locPos * bodyMatrix;
+            
+            float effSize = location.getImportance();
             if (effSize < 0.0f)
-                effSize = (*iter)->getSize();
-
-            float pixSize = effSize / (float) (cpos.distanceFromOrigin() * pixelSize);
-
-            if (pixSize > minFeatureSize && (cpos - origin) * viewNormald > 0.0)
+                effSize = location.getSize();
+            
+            float pixSize = effSize / (float) (labelPos.length() * pixelSize);
+            
+            if (pixSize > minFeatureSize && labelPos * viewNormal > 0.0)
             {
-                double r = locPos.length();
-                if (r < scale * 0.99)
-                    cpos = bodyPosition + locPos * (scale * 1.01 / r);
-
-                double t = 0.0f;
-
+                // Labels on non-ellipsoidal bodies need special handling; the
+                // ellipsoid visibility test will always fail for them, since they
+                // will lie on the surface of the mesh, which is inside the
+                // the bounding ellipsoid. The following code projects location positions
+                // onto the bounding sphere.
+                if (!body.isEllipsoid())
+                {
+                    double r = locPos.length();
+                    if (r < boundingRadius)
+                        pcLabelPos = locPos * (boundingRadius * 1.01 / r);
+                }
+                
+                double t = 0.0;
+                
                 // Test for an intersection of the eye-to-location ray with
                 // the planet ellipsoid.  If we hit the planet first, then
                 // the label is obscured by the planet.  An exact calculation
                 // for irregular objects would be too expensive, and the
                 // ellipsoid approximation works reasonably well for them.
-                bool hit = testIntersection(Ray3d(origin, cpos - origin),
-                                            ellipsoid, t);
-                if (!hit || t >= 1.0)
-                {
-                    if (gluProject(bodyPosition.x + locPos.x,
-                                   bodyPosition.y + locPos.y,
-                                   bodyPosition.z + locPos.z,
-                                   modelview,
-                                   projection,
-                                   (const GLint*) view,
-                                   &winX, &winY, &winZ) != GL_FALSE)
-                    {
-                        glColor(LocationLabelColor);
-                        glPushMatrix();
-                        glTranslatef((int) winX + PixelOffset,
-                                     (int) winY + PixelOffset,
-                                     0.0f);
-#ifdef USE_HDR
-                        glPushMatrix();
-#endif
-                        font[FontNormal]->render((*iter)->getName(true));
-#ifdef USE_HDR
-                        glPopMatrix();
-                        // Write black alpha for glyphs to prevent inclusion in
-                        // post processing steps (bloom, etc)
-                        // TODO: This should be done when loading the font
-                        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
-                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                        font[FontNormal]->render((*iter)->getName(true));
-#endif
-#ifdef USE_HDR
-                        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-                        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#endif
-                        glPopMatrix();
-                    }
+                Ray3d testRay(Point3d(viewRayOrigin.x, viewRayOrigin.y, viewRayOrigin.z),
+                              pcLabelPos - viewRayOrigin);
+                bool hit = testIntersection(testRay, bodyEllipsoid, t);
+                Vec3d blah = labelPos - viewRayOrigin;
+
+                if (hit)
+                    clog << "hit: " << location.getName(true) << ", t=" << t << endl;
+                if (hit && t >= 1.0)
+                {                    
+                    // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
+                    // the view normal that touches the front of the object's bounding sphere
+                    double planetZ = viewNormal * bodyCenter - boundingRadius;
+                    if (planetZ < -nearDist * 1.001)
+                        planetZ = -nearDist * 1.001;
+                    double z = viewNormal * labelPos;
+                    labelPos *= planetZ / z;
+                                        
+                    uint32 featureType = location.getFeatureType();
+                    MarkerRepresentation* locationMarker = NULL;
+                    if (featureType & Location::City)
+                        locationMarker = &cityRep;
+                    else if (featureType & (Location::LandingSite | Location::Observatory))
+                        locationMarker = &observatoryRep;
+                    else if (featureType & (Location::Crater | Location::Patera))
+                        locationMarker = &craterRep;
+                    else if (featureType & (Location::Mons | Location::Tholus))
+                        locationMarker = &mountainRep;
+                    else if (featureType & (Location::EruptiveCenter))
+                        locationMarker = &genericLocationRep;
+                    
+                    addObjectAnnotation(locationMarker,
+                                        location.getName(true),
+                                        LocationLabelColor,
+                                        Point3f((float) labelPos.x, (float) labelPos.y, (float) labelPos.z));
                 }
             }
         }
-    }
-
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-#ifdef USE_HDR
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-#endif
+    }    
 }
 
 
@@ -7884,8 +7839,7 @@ void Renderer::renderPlanet(Body& body,
         rp.orientation = body.getOrientation() *
             Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
-        rp.locations = body.getLocations();
-        if (rp.locations != NULL && (labelMode & LocationLabels) != 0)
+        if (body.getLocations() != NULL && (labelMode & LocationLabels) != 0)
             body.computeLocations();
 
         LightingState lights;
@@ -7989,19 +7943,22 @@ void Renderer::renderPlanet(Body& body,
 
         if (body.getLocations() != NULL && (labelMode & LocationLabels) != 0)
         {
+            // Set up location markers for this body
+            mountainRep    = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, LocationLabelColor);
+            craterRep      = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, LocationLabelColor);
+            observatoryRep = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, LocationLabelColor);
+            cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
+            genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, LocationLabelColor);
+            
             glEnable(GL_DEPTH_TEST);
             glDepthMask(GL_FALSE);
             glDisable(GL_BLEND);
 
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
-            Vec3d posd = (Selection(&body).getPosition(observer.getTime()) -
+            Vec3d posd = (body.getPosition(observer.getTime()) -
                           observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
-            renderLocations(*body.getLocations(),
-                            cameraOrientation,
-                            Point3d(posd.x, posd.y, posd.z),
-                            q,
-                            rp.radius);
+            renderLocations(body, posd, q);
 
             glDisable(GL_DEPTH_TEST);
         }
@@ -10271,29 +10228,31 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 
     for (int i = 0; i < (int) annotations.size(); i++)
     {
-        glPushMatrix();
-
-        if (annotations[i].marker != NULL)
+        if (annotations[i].markerRep != NULL)
         {
-            const Marker& marker = *annotations[i].marker;
+            glPushMatrix();
+            const MarkerRepresentation& markerRep = *annotations[i].markerRep;
 
-            glColor(marker.getColor());
+            glColor(markerRep.color());
             glTranslatef((GLfloat) (int) annotations[i].position.x,
                          (GLfloat) (int) annotations[i].position.y, 0.0f);
 
             glDisable(GL_TEXTURE_2D);
-            marker.render();
+            markerRep.render(markerRep.size());
             glEnable(GL_TEXTURE_2D);
             
-            if (!marker.getLabel().empty())
+            if (!markerRep.label().empty())
             {
-                int labelOffset = (int) marker.getSize() / 2;
+                int labelOffset = (int) markerRep.size() / 2;
                 glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
-                font[fs]->render(marker.getLabel());
-            }            
+                font[fs]->render(markerRep.label());
+            }  
+            glPopMatrix();
         }
-        else
+        
+        if (annotations[i].labelText[0] != '\0')
         {
+            glPushMatrix();
             int labelOffset = 2;
             if (la == AlignCenter)
             {
@@ -10306,13 +10265,16 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
                 labelOffset = (int) -(labelwidth + 2);
             }
             
+            if (annotations[i].markerRep != NULL)
+                labelOffset += (int) annotations[i].markerRep->size() / 2;
+            
             glColor(annotations[i].color);
             glTranslatef((int) annotations[i].position.x + GLfloat((int) labelOffset) + PixelOffset,
                          (int) annotations[i].position.y + PixelOffset, 0.0f);
             // EK TODO: Check where to replace (see '_(' above)
             font[fs]->render(annotations[i].labelText);
+            glPopMatrix();
         }
-        glPopMatrix();
     }
 
     glPopMatrix();
@@ -10392,22 +10354,22 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
         int labelVOffset = 0;
 
         glPushMatrix();
-        if (iter->marker != NULL)
+        if (iter->markerRep != NULL)
         {
-            const Marker& marker = *iter->marker;
+            const MarkerRepresentation& markerRep = *iter->markerRep;
             
             glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
-            glColor(marker.getColor());
+            glColor(markerRep.color());
                         
             glDisable(GL_TEXTURE_2D);
-            marker.render();
+            markerRep.render(markerRep.size());
             glEnable(GL_TEXTURE_2D);            
             
-            if (!marker.getLabel().empty())
+            if (!markerRep.label().empty())
             {
-                int labelOffset = (int) marker.getSize() / 2;
+                int labelOffset = (int) markerRep.size() / 2;
                 glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
-                font[fs]->render(marker.getLabel());
+                font[fs]->render(markerRep.label());
             }
         }
         else
@@ -10475,34 +10437,40 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         int labelHOffset = 0;
         int labelVOffset = 0;
 
-        glPushMatrix();
-        if (iter->marker != NULL)
+        if (iter->markerRep != NULL)
         {
-            const Marker& marker = *iter->marker;
+            glPushMatrix();
+            const MarkerRepresentation& markerRep = *iter->markerRep;
             
             glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
-            glColor(marker.getColor());
+            glColor(markerRep.color());
                         
             glDisable(GL_TEXTURE_2D);
-            marker.render();
+            markerRep.render(markerRep.size());
             glEnable(GL_TEXTURE_2D);            
             
-            if (!marker.getLabel().empty())
+            if (!markerRep.label().empty())
             {
-                int labelOffset = (int) marker.getSize() / 2;
+                int labelOffset = (int) markerRep.size() / 2;
                 glTranslatef(labelOffset + PixelOffset, -labelOffset - font[fs]->getHeight() + PixelOffset, 0.0f);
-                font[fs]->render(marker.getLabel());
+                font[fs]->render(markerRep.label());
             }
+            glPopMatrix();
         }
-        else
+        
+        if (iter->labelText[0] != '\0')
         {
+            if (iter->markerRep != NULL)
+                labelHOffset += (int) iter->markerRep->size() / 2 + 3;
+
+            glPushMatrix();
             glTranslatef((int) iter->position.x + PixelOffset + labelHOffset,
                          (int) iter->position.y + PixelOffset + labelVOffset,
                          ndc_z);
             glColor(iter->color);
             font[fs]->render(iter->labelText);
+            glPopMatrix();
         }
-        glPopMatrix();
     }
 
     glPopMatrix();
@@ -10532,13 +10500,13 @@ void Renderer::renderMarkers(const MarkerList& markers,
     
     for (MarkerList::const_iterator iter = markers.begin(); iter != markers.end(); iter++)
     {
-        UniversalCoord uc = iter->getPosition(jd);
+        UniversalCoord uc = iter->position(jd);
         Vec3d offset = (uc - cameraPosition) * astro::microLightYearsToKilometers(1.0);
                 
         // Only render those markers that lie withing the field of view.
         if ((offset * viewVector) > cosFOV * offset.length())
         {
-            if (iter->isOccludable())
+            if (iter->occludable())
             {
                 // If the marker is occludable, add it to the sorted annotation list if it's relatively
                 // nearby, and to the background list if it's very distant.
@@ -10546,26 +10514,26 @@ void Renderer::renderMarkers(const MarkerList& markers,
                 {
                     // Modify the marker position so that it is always in front of the marked object.
                     double boundingRadius;
-                    if (iter->getObject().body() != NULL)
-                        boundingRadius = iter->getObject().body()->getBoundingRadius();
+                    if (iter->object().body() != NULL)
+                        boundingRadius = iter->object().body()->getBoundingRadius();
                     else
-                        boundingRadius = iter->getObject().radius();                
+                        boundingRadius = iter->object().radius();                
                     offset *= (1.0 - boundingRadius * 1.01 / offset.length());
                 
-                    addSortedAnnotation(&(*iter), EMPTY_STRING, iter->getColor(),
+                    addSortedAnnotation(&(iter->representation()), EMPTY_STRING, iter->representation().color(),
                                         Point3f((float) offset.x, (float) offset.y, (float) offset.z));
                 }
                 else
                 {
                     addAnnotation(backgroundAnnotations,
-                                  &(*iter), EMPTY_STRING, iter->getColor(),
+                                  &(iter->representation()), EMPTY_STRING, iter->representation().color(),
                                   Point3f((float) offset.x, (float) offset.y, (float) offset.z));
                 }
             }
             else
             {
                 addAnnotation(foregroundAnnotations,
-                              &(*iter), EMPTY_STRING, iter->getColor(),
+                              &(iter->representation()), EMPTY_STRING, iter->representation().color(),
                               Point3f((float) offset.x, (float) offset.y, (float) offset.z));                          
             }
         }

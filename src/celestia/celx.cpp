@@ -2235,8 +2235,11 @@ static int celestia_mark(lua_State* l)
 
     if (sel != NULL)
     {
-        sim->getUniverse()->markObject(*sel, 10.0f,
-                                       Color(0.0f, 1.0f, 0.0f), Marker::Diamond, 1, "");
+        MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
+        markerRep.setColor(Color(0.0f, 1.0f, 0.0f));
+        markerRep.setSize(10.0f);
+        
+        sim->getUniverse()->markObject(*sel, markerRep, 1);
     }
     else
     {

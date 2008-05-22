@@ -168,22 +168,19 @@ MarkerList* Universe::getMarkers() const
 
 
 void Universe::markObject(const Selection& sel,
-                          float size,
-                          Color color,
-                          Marker::Symbol symbol,
+                          const MarkerRepresentation& rep,
                           int priority,
-                          string label,
                           bool occludable)
 {
     for (MarkerList::iterator iter = markers->begin();
          iter != markers->end(); iter++)
     {
-        if (iter->getObject() == sel)
+        if (iter->object() == sel)
         {
             // Handle the case when the object is already marked.  If the
             // priority is higher than the existing marker, replace it.
             // Otherwise, do nothing.
-            if (priority > iter->getPriority())
+            if (priority > iter->priority())
             {
                 markers->erase(iter);
                 break;
@@ -196,11 +193,8 @@ void Universe::markObject(const Selection& sel,
     }
 
     Marker marker(sel);
-    marker.setColor(color);
-    marker.setSymbol(symbol);
-    marker.setSize(size);
+    marker.setRepresentation(rep);
     marker.setPriority(priority);
-    marker.setLabel(label);
     marker.setOccludable(occludable);
     markers->insert(markers->end(), marker);
 }
@@ -211,9 +205,9 @@ void Universe::unmarkObject(const Selection& sel, int priority)
     for (MarkerList::iterator iter = markers->begin();
          iter != markers->end(); iter++)
     {
-        if (iter->getObject() == sel)
+        if (iter->object() == sel)
         {
-            if (priority >= iter->getPriority())
+            if (priority >= iter->priority())
                 markers->erase(iter);
             break;
         }
@@ -232,8 +226,8 @@ bool Universe::isMarked(const Selection& sel, int priority) const
     for (MarkerList::iterator iter = markers->begin();
          iter != markers->end(); iter++)
     {
-        if (iter->getObject() == sel)
-            return iter->getPriority() >= priority;
+        if (iter->object() == sel)
+            return iter->priority() >= priority;
     }
 
     return false;

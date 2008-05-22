@@ -45,12 +45,15 @@ FeatureNameEntry FeatureNames[] =
     { "MN", Location::Mensa },
     { "RI", Location::Rima },
     { "UN", Location::Undae },
+    { "TH", Location::Tholus },
     { "RT", Location::Reticulum },
     { "PL", Location::Planitia },
     { "LI", Location::Linea },
     { "FL", Location::Fluctus },
     { "FR", Location::Farrum },
     { "LF", Location::LandingSite },
+    { "ER", Location::EruptiveCenter },
+    { "IN", Location::Insula },
     { "XX", Location::Other },
     { "City", Location::City },
     { "Observatory", Location::Observatory },
@@ -183,6 +186,9 @@ void Location::setParentBody(Body* _parent)
 }
 
 
+/*! Get the position of the location relative to its body in 
+ *  the J2000 ecliptic coordinate system.
+ */
 Point3d Location::getPlanetocentricPosition(double t) const
 {
     if (parent == NULL)

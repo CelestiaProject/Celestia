@@ -4246,12 +4246,13 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 Simulation* sim = appCore->getSimulation();
                 if (sim->getUniverse() != NULL)
                 {
-                    sim->getUniverse()->markObject(sim->getSelection(),
+                    MarkerRepresentation markerRep(MarkerRepresentation::Diamond,
                                                    10.0f,
-                                                   Color(0.0f, 1.0f, 0.0f, 0.9f),
-                                                   Marker::Diamond,
-                                                   1,
-                                                   "");
+                                                   Color(0.0f, 1.0f, 0.0f, 0.9f));
+						 
+                    sim->getUniverse()->markObject(sim->getSelection(),
+                                                   markerRep,
+                                                   1);
 
                     appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);
                 }

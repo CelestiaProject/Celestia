@@ -228,22 +228,22 @@ class Renderer
     struct Annotation
     {
         char labelText[MaxLabelLength];
-        const Marker* marker;
+        const MarkerRepresentation* markerRep;
         Color color;
         Point3f position;
 
         bool operator<(const Annotation&) const;
     };
         
-    void addForegroundAnnotation(const Marker*, const std::string& labelText, Color, const Point3f&, float depth = -1);
-    void addBackgroundAnnotation(const Marker*, const std::string& labelText, Color, const Point3f&, float depth = -1);
+    void addForegroundAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&, float depth = -1);
+    void addBackgroundAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&, float depth = -1);
     void addBackgroundAnnotation(const std::string& labelText, Color, const Point3f&, float depth = -1);
-    void addSortedAnnotation(const Marker* marker, const std::string& labelText, Color, const Point3f&);
+    void addSortedAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&);
 
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
     void beginObjectAnnotations();
-    void addObjectAnnotation(const Marker*, const std::string& labelText, Color, const Point3f&);
+    void addObjectAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&);
     void endObjectAnnotations();
     Quatf getCameraOrientation() const;
     float getNearPlaneDistance() const;
@@ -303,8 +303,7 @@ class Renderer
             radius(1.0f),
             semiAxes(1.0f, 1.0f, 1.0f),
             model(InvalidResource),
-            orientation(1.0f),
-            locations(NULL)
+            orientation(1.0f)
         {};
 
         Surface* surface;
@@ -315,7 +314,6 @@ class Renderer
         ResourceHandle model;
         Quatf orientation;
         std::vector<EclipseShadow>* eclipseShadows;
-        std::vector<Location*>* locations;
     };
 
     class StarVertexBuffer
@@ -526,11 +524,9 @@ class Renderer
                                    float fade,
                                    bool lit);
 
-    void renderLocations(const vector<Location*>& locations,
-                         const Quatf& cameraOrientation,
-                         const Point3d& bodyPosition,
-                         const Quatd& bodyOrientation,
-                         float scale);
+    void renderLocations(const Body& body,
+                         const Vec3d& bodyPosition,
+                         const Quatd& bodyOrientation);
                    
     // Render an item from the render list                   
     void renderItem(const RenderListEntry& rle,
@@ -552,7 +548,7 @@ class Renderer
     
     
     void addAnnotation(std::vector<Annotation>&,
-                       const Marker*,
+                       const MarkerRepresentation*,
                        const std::string& labelText,
                        Color,
                        const Point3f&,
@@ -572,7 +568,7 @@ class Renderer
 
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& cameraPosition,
-		       const Quatd& cameraOrientation,
+                       const Quatd& cameraOrientation,
                        double jd);
 
     void renderOrbit(const OrbitPathListEntry&,
@@ -729,6 +725,13 @@ class Renderer
 
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;
+    
+    // Location markers
+    MarkerRepresentation mountainRep;
+    MarkerRepresentation craterRep;
+    MarkerRepresentation observatoryRep;
+    MarkerRepresentation cityRep;
+    MarkerRepresentation genericLocationRep;
 
     std::list<RendererWatcher*> watchers;
 

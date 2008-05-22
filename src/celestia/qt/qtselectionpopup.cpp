@@ -216,19 +216,19 @@ SelectionPopup::~SelectionPopup()
 
 QMenu* SelectionPopup::createMarkMenu()
 {
-    const Marker::Symbol MARKER_SYMBOLS[] = {
-        Marker::Diamond,
-        Marker::Triangle,
-        Marker::Square,
-        Marker::FilledSquare,
-        Marker::Plus,
-        Marker::X,
-        Marker::LeftArrow,
-        Marker::RightArrow,
-        Marker::UpArrow,
-        Marker::DownArrow,
-        Marker::Circle,
-        Marker::Disk,
+    const MarkerRepresentation::Symbol MARKER_SYMBOLS[] = {
+        MarkerRepresentation::Diamond,
+        MarkerRepresentation::Triangle,
+        MarkerRepresentation::Square,
+        MarkerRepresentation::FilledSquare,
+        MarkerRepresentation::Plus,
+        MarkerRepresentation::X,
+        MarkerRepresentation::LeftArrow,
+        MarkerRepresentation::RightArrow,
+        MarkerRepresentation::UpArrow,
+        MarkerRepresentation::DownArrow,
+        MarkerRepresentation::Circle,
+        MarkerRepresentation::Disk,
     };
 
     const char* MARKER_NAMES[] = {
@@ -543,11 +543,8 @@ void SelectionPopup::slotMark()
         {
             Simulation* sim = appCore->getSimulation();
             sim->getUniverse()->markObject(selection,
-                                           10.0f,
-                                           Color(0.0f, 1.0f, 0.0f, 0.9f),
-                                           (Marker::Symbol) symbol,
-                                           1,
-                                           "");
+                                           MarkerRepresentation(MarkerRepresentation::Symbol(symbol), 10.0f, Color(0.0f, 1.0f, 0.0f, 0.9f)),
+                                           1);
 
             // Automatically enable markers
             appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);

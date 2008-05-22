@@ -613,40 +613,43 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("alpha", alpha);
         Color color((float) colorv.x, (float) colorv.y, (float) colorv.z, (float) alpha);
 
-        Marker::Symbol symbol = Marker::Diamond;
+        MarkerRepresentation rep(MarkerRepresentation::Diamond);
         string symbolString;
         if (paramList->getString("symbol", symbolString))
         {
             if (compareIgnoringCase(symbolString, "diamond") == 0)
-                symbol = Marker::Diamond;
+                rep = MarkerRepresentation(MarkerRepresentation::Diamond);
             else if (compareIgnoringCase(symbolString, "triangle") == 0)
-                symbol = Marker::Triangle;
+                rep = MarkerRepresentation(MarkerRepresentation::Triangle);
             else if (compareIgnoringCase(symbolString, "square") == 0)
-                symbol = Marker::Square;
+                rep = MarkerRepresentation(MarkerRepresentation::Square);
             else if (compareIgnoringCase(symbolString, "filledsquare") == 0)
-                symbol = Marker::FilledSquare;
+                rep = MarkerRepresentation(MarkerRepresentation::FilledSquare);
             else if (compareIgnoringCase(symbolString, "plus") == 0)
-                symbol = Marker::Plus;
+                rep = MarkerRepresentation(MarkerRepresentation::Plus);
             else if (compareIgnoringCase(symbolString, "x") == 0)
-                symbol = Marker::X;
+                rep = MarkerRepresentation(MarkerRepresentation::X);
             else if (compareIgnoringCase(symbolString, "leftarrow") == 0)
-                symbol = Marker::LeftArrow;
+                rep = MarkerRepresentation(MarkerRepresentation::LeftArrow);
             else if (compareIgnoringCase(symbolString, "rightarrow") == 0)
-                symbol = Marker::RightArrow;
+                rep = MarkerRepresentation(MarkerRepresentation::RightArrow);
             else if (compareIgnoringCase(symbolString, "uparrow") == 0)
-                symbol = Marker::UpArrow;
+                rep = MarkerRepresentation(MarkerRepresentation::UpArrow);
             else if (compareIgnoringCase(symbolString, "downarrow") == 0)
-                symbol = Marker::DownArrow;
+                rep = MarkerRepresentation(MarkerRepresentation::DownArrow);
             else if (compareIgnoringCase(symbolString, "circle") == 0)
-                symbol = Marker::Circle;
+                rep = MarkerRepresentation(MarkerRepresentation::Circle);
             else if (compareIgnoringCase(symbolString, "disk") == 0)
-                symbol = Marker::Disk;
+                rep = MarkerRepresentation(MarkerRepresentation::Disk);
         }
-
+        
         string label;
         paramList->getString("label", label);
+        rep.setSize((float) size);
+        rep.setColor(color);
+        rep.setLabel(label);        
 
-        cmd = new CommandMark(object, color, (float) size, symbol, label);
+        cmd = new CommandMark(object, rep);
     }
     else if (commandName == "unmark")
     {
