@@ -357,7 +357,7 @@ static float rotperiod_M[3][10] =
 
 
 const char* LumClassNames[StellarClass::Lum_Count] = {
-    "I-a0", "I-a", "I-b", "II", "III", "IV", "V", "sd", ""
+    "I-a0", "I-a", "I-b", "II", "III", "IV", "V", "VI", ""
 };
 
 const char* SubclassNames[11] = {
@@ -439,12 +439,12 @@ StarDetails::GetNormalStarDetails(StellarClass::SpectralClass specClass,
     if (normalStarDetails[index] == NULL)
     {
         char name[16];
-        if (lumClass == StellarClass::Lum_VI)
+        if ((lumClass == StellarClass::Lum_VI) &&
+            (specClass >= StellarClass::Spectral_O) && (specClass <= StellarClass::Spectral_A))
         {
-            // Subdwarf stars are conventionally indicated by prefixing the
-            // luminosity class.
-            sprintf(name, "%s%s%s",
-                    LumClassNames[lumClass],
+            // Hot subdwarfs are prefixed with "sd", while cool subdwarfs use
+            // luminosity class VI, per recommendations in arXiv:0805.2567v1
+            sprintf(name, "sd%s%s",
                     SpectralClassNames[specClass],
                     SubclassNames[subclass]);
         }
