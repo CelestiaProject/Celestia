@@ -1536,7 +1536,7 @@ static void computeOrbitSectionBoundingVolumes(Renderer::CachedOrbit& orbit)
 
     // Determine the number of trajectory samples to include in each bounding volume; typically,
     // the last volume will contain any leftover samples.
-    unsigned int nSections = max(orbit.trajectory.size() / MinSamplesPerSection, MinOrbitSections);
+    unsigned int nSections = max((unsigned int) orbit.trajectory.size() / MinSamplesPerSection, MinOrbitSections);
     unsigned int samplesPerSection = orbit.trajectory.size() / nSections;
     if (samplesPerSection <= 1)
     {
@@ -1556,7 +1556,7 @@ static void computeOrbitSectionBoundingVolumes(Renderer::CachedOrbit& orbit)
 
         Renderer::OrbitSection section;
         section.firstSample = samplesPerSection * i;
-        unsigned int lastSample = min(orbit.trajectory.size() - 1, section.firstSample + nSamples + 1);
+        unsigned int lastSample = min((unsigned int) orbit.trajectory.size() - 1, section.firstSample + nSamples + 1);
 
         // Set the initial axis and origin of the capsule bounding volume; they will be adjusted
         // to contain all points in the trajectory. The length of the axis may change, but the
@@ -6852,8 +6852,6 @@ void Renderer::renderLocations(const Body& body,
                 bool hit = testIntersection(testRay, bodyEllipsoid, t);
                 Vec3d blah = labelPos - viewRayOrigin;
 
-                if (hit)
-                    clog << "hit: " << location.getName(true) << ", t=" << t << endl;
                 if (hit && t >= 1.0)
                 {                    
                     // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
