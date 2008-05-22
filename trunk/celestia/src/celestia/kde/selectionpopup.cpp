@@ -128,8 +128,8 @@ void SelectionPopup::init()
             for (std::vector<Marker>::iterator i = markers->begin(); i < markers->end(); i++)
             {
                 KPopupMenu *objMenu = new KPopupMenu(this);
-                insert(objMenu, (*i).getObject(), false);
-                markMenu->insertItem(QString::fromUtf8(getSelectionName((*i).getObject())), objMenu);
+                insert(objMenu, (*i).object(), false);
+                markMenu->insertItem(QString::fromUtf8(getSelectionName((*i).object())), objMenu);
                 j++;
             }
             insertItem(i18n("Marked objects"), markMenu);
