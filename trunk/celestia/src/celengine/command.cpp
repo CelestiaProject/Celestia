@@ -598,13 +598,10 @@ void CommandSet::process(ExecutionEnvironment& env)
 ////////////////
 // Mark object command
 
-CommandMark::CommandMark(const string& _target, Color _color, float _size,
-                         Marker::Symbol _symbol, const string& _label) :
+CommandMark::CommandMark(const string& _target,
+                         MarkerRepresentation _rep) :
     target(_target),
-    color(_color),
-    size(_size),
-    symbol(_symbol),
-    label(_label)
+    rep(_rep)
 {
 }
 
@@ -615,7 +612,10 @@ void CommandMark::process(ExecutionEnvironment& env)
         return;
 
     if (env.getSimulation()->getUniverse() != NULL)
-        env.getSimulation()->getUniverse()->markObject(sel, size, color, symbol, 1, label);
+    {
+        
+        env.getSimulation()->getUniverse()->markObject(sel, rep, 1);
+    }
 }
 
 

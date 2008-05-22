@@ -15,13 +15,10 @@ using namespace std;
 
 
 Marker::Marker(const Selection& s) :
-    obj(s),
-    size(10.0f),
-    color(Color::White),
-    priority(0),
-    symbol(Diamond),
-    label(""),
-    occludable(true)
+    m_object(s),
+    m_priority(0),
+    m_representation(MarkerRepresentation::Diamond),
+    m_occludable(true)
 {
 }
 
@@ -30,93 +27,115 @@ Marker::~Marker()
 }
 
 
-UniversalCoord Marker::getPosition(double jd) const
+UniversalCoord Marker::position(double jd) const
 {
-    return obj.getPosition(jd);
+    return m_object.getPosition(jd);
 }
 
 
-Selection Marker::getObject() const
+Selection Marker::object() const
 {
-    return obj;
+    return m_object;
 }
 
 
-Color Marker::getColor() const
+int Marker::priority() const
 {
-    return color;
+    return m_priority;
 }
 
 
-void Marker::setColor(Color _color)
+void Marker::setPriority(int priority)
 {
-    color = _color;
+    m_priority = priority;
 }
 
 
-float Marker::getSize() const
+void Marker::setRepresentation(const MarkerRepresentation& rep)
 {
-    return size;
+    m_representation = rep;
 }
 
 
-void Marker::setSize(float _size)
+bool Marker::occludable() const
 {
-    size = _size;
+    return m_occludable;
 }
 
 
-int Marker::getPriority() const
+void Marker::setOccludable(bool occludable)
 {
-    return priority;
+    m_occludable = occludable;
 }
 
-
-void Marker::setPriority(int _priority)
-{
-    priority = _priority;
-}
-
-
-Marker::Symbol Marker::getSymbol() const
-{
-    return symbol;
-}
-
-void Marker::setSymbol(Marker::Symbol _symbol)
-{
-    symbol = _symbol;
-}
-
-
-string Marker::getLabel() const
-{
-    return label;
-}
-
-
-void Marker::setLabel(string _label)
-{
-    label = _label;
-}
-
-
-bool Marker::isOccludable() const
-{
-    return occludable;
-}
-
-
-void Marker::setOccludable(bool _occludable)
-{
-    occludable = _occludable;
-}
 
 void Marker::render() const
 {
-    float s = getSize() / 2.0f;
+    m_representation.render(m_representation.size());
+}
 
-    switch (symbol)
+
+
+static void DrawCircle(float s)
+{
+    if (s < 1.0f)
+        s = 1.0f; //  0 and negative values are not allowed in the case of circle markers.
+    else if (s > 1024.0f)
+        s = 1024.0f; //  Bigger values would give a too high number of segments in the circle markers.
+
+    int step = (int) (60 / sqrt(s));
+    for (int i = 0; i < 360; i += step)
+    {
+        float degInRad = (float) (i * PI / 180);
+        glVertex3f((float) cos(degInRad) * s, (float) sin(degInRad) * s, 0.0f);
+    }
+}
+
+
+MarkerRepresentation::MarkerRepresentation(const MarkerRepresentation& rep) :
+    m_symbol(rep.m_symbol),
+    m_size(rep.m_size),
+    m_color(rep.m_color),
+    m_label(rep.m_label)
+{
+}
+
+
+MarkerRepresentation&
+MarkerRepresentation::operator=(const MarkerRepresentation& rep)
+{
+    m_symbol = rep.m_symbol;
+    m_size = rep.m_size;
+    m_color = rep.m_color;
+    m_label = rep.m_label;
+    
+    return *this;
+}
+    
+   
+void MarkerRepresentation::setColor(Color color)
+{
+    m_color = color;
+}
+
+
+void MarkerRepresentation::setSize(float size)
+{
+    m_size = size;
+}
+
+
+void MarkerRepresentation::setLabel(const std::string& label)
+{
+    m_label = label;
+}
+
+
+void MarkerRepresentation::render(float size) const
+{
+    float s = size / 2.0f;
+
+    switch (m_symbol)
     {
     case Diamond:
         glBegin(GL_LINE_LOOP);
@@ -224,22 +243,13 @@ void Marker::render() const
 
     case Circle:
         glBegin(GL_LINE_LOOP);
-        
+        DrawCircle(s);
+        glEnd();    
+        break;
+            
     case Disk:
         glBegin(GL_POLYGON);
-
-        if (s < 1.0f)
-            s = 1.0f; //  0 and negative values are not allowed in the case of circle markers.
-        else if (s > 1024.0f)
-            s = 1024.0f; //  Bigger values would give a too high number of segments in the circle markers.
-
-        int step = (int) (60 / sqrt(s));
-        for (int i=0; i < 360; i=i+step)
-        {
-            float degInRad = (float) (i * PI / 180);
-            glVertex3f((float) cos(degInRad) * s, (float) sin(degInRad) * s, 0.0f);
-        }
-        
+        DrawCircle(s);
         glEnd();
         break;
     }

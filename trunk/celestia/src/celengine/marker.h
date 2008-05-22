@@ -1,6 +1,6 @@
 // marker.h
 //
-// Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2003-2008, Chris Laurel <claurel@shatters.net>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -17,25 +17,9 @@
 #include <celengine/selection.h>
 
 
-
-class Marker
+class MarkerRepresentation
 {
- public:
-    Marker(const Selection&);
-    ~Marker();
-
-    UniversalCoord getPosition(double jd) const;
-    Selection getObject() const;
-
-    Color getColor() const;
-    void setColor(Color);
-    float getSize() const;
-    void setSize(float);
-    int getPriority() const;
-    void setPriority(int);
-    bool isOccludable() const;
-    void setOccludable(bool);
-
+public:
     enum Symbol
     {
         Diamond    = 0,
@@ -49,25 +33,66 @@ class Marker
         UpArrow    = 8,
         DownArrow  = 9,
         Circle    = 10,
-        Disk     = 11
-    };
+        Disk      = 11
+    };    
+    
+    MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
+                         float size = 10.0f,
+                         Color color = Color::White,
+                         const std::string& label = "") :
+        m_symbol(symbol),
+        m_size(size),
+        m_color(color),
+        m_label(label)
+    {
+    }
+    
+    MarkerRepresentation(const MarkerRepresentation& rep);
+    
+    MarkerRepresentation& operator=(const MarkerRepresentation& rep);
+    
+    Color color() const { return m_color; }
+    void setColor(Color);
+    float size() const { return m_size; }
+    void setSize(float size);
+    string label() const { return m_label; }
+    void setLabel(const std::string&);
+        
+    void render(float size) const;
+    
+private:
+    Symbol m_symbol;
+    float m_size;
+    Color m_color;
+    string m_label;
+};
 
-    Symbol getSymbol() const;
-    void setSymbol(Symbol);
 
-    string getLabel() const;
-    void setLabel(string);
+class Marker
+{
+ public:
+    Marker(const Selection&);
+    ~Marker();
+
+    UniversalCoord position(double jd) const;
+    Selection object() const;
+
+    int priority() const;
+    void setPriority(int);
+    bool occludable() const;
+    void setOccludable(bool);
+
+    const MarkerRepresentation& representation() const { return m_representation; }
+    MarkerRepresentation& representation() { return m_representation; }
+    void setRepresentation(const MarkerRepresentation& rep);
 
     void render() const;
 
  private:
-    Selection obj;
-    float size;
-    Color color;
-    int priority;
-    Symbol symbol;
-    string label;
-    bool occludable;
+    Selection m_object;
+    int m_priority;
+    MarkerRepresentation m_representation;
+    bool m_occludable;
 };
 
 typedef std::vector<Marker> MarkerList;

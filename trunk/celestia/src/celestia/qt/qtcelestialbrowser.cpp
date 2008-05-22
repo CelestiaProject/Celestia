@@ -550,12 +550,12 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
     markerSymbolBox->addItem(tr("None"));
-    markerSymbolBox->addItem(tr("Diamond"), (int) Marker::Diamond);
-    markerSymbolBox->addItem(tr("Triangle"), (int) Marker::Triangle);
-    markerSymbolBox->addItem(tr("Square"), (int) Marker::Square);
-    markerSymbolBox->addItem(tr("Plus"), (int) Marker::Plus);
-    markerSymbolBox->addItem(tr("X"), (int) Marker::X);
-    markerSymbolBox->addItem(tr("Circle"), (int) Marker::Circle);
+    markerSymbolBox->addItem(tr("Diamond"), (int) MarkerRepresentation::Diamond);
+    markerSymbolBox->addItem(tr("Triangle"), (int) MarkerRepresentation::Triangle);
+    markerSymbolBox->addItem(tr("Square"), (int) MarkerRepresentation::Square);
+    markerSymbolBox->addItem(tr("Plus"), (int) MarkerRepresentation::Plus);
+    markerSymbolBox->addItem(tr("X"), (int) MarkerRepresentation::X);
+    markerSymbolBox->addItem(tr("Circle"), (int) MarkerRepresentation::Circle);
     markerSymbolBox->setCurrentIndex(1);
     markerSymbolBox->setToolTip(tr("Select marker symbol"));
     markGroupLayout->addWidget(markerSymbolBox, 1, 0);
@@ -642,7 +642,7 @@ void CelestialBrowser::slotMarkSelected()
     bool labelMarker = labelMarkerBox->checkState() == Qt::Checked;
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
-    Marker::Symbol markerSymbol = (Marker::Symbol) markerData.toInt(&convertOK);
+    MarkerRepresentation::Symbol markerSymbol = (MarkerRepresentation::Symbol) markerData.toInt(&convertOK);
     QColor markerColor = colorSwatch->color();
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
@@ -667,9 +667,9 @@ void CelestialBrowser::slotMarkSelected()
                         label = ReplaceGreekLetterAbbr(label);
                     }
 
-                    universe->markObject(sel, 10.0f,
-                                         color,
-                                         markerSymbol, 1, label);
+                    universe->markObject(sel,
+                                         MarkerRepresentation(markerSymbol, 10.0f, color, label),
+                                         1);
                 }
                 else
                 {
