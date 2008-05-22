@@ -99,11 +99,8 @@ class Universe
                       std::vector<const Star*>& stars) const;
 
     void markObject(const Selection&,
-                    float size,
-                    Color color,
-                    Marker::Symbol symbol,
+                    const MarkerRepresentation& rep,
                     int priority,
-                    string label,
                     bool occludable = true);
     void unmarkObject(const Selection&, int priority);
     void unmarkAll();

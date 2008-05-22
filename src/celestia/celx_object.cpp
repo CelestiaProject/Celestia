@@ -23,34 +23,34 @@
 using namespace std;
 
 
-static Marker::Symbol parseMarkerSymbol(const string& name)
+static MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
 {
     if (compareIgnoringCase(name, "diamond") == 0)
-        return Marker::Diamond;
+        return MarkerRepresentation::Diamond;
     else if (compareIgnoringCase(name, "triangle") == 0)
-        return Marker::Triangle;
+        return MarkerRepresentation::Triangle;
     else if (compareIgnoringCase(name, "square") == 0)
-        return Marker::Square;
+        return MarkerRepresentation::Square;
     else if (compareIgnoringCase(name, "filledsquare") == 0)
-        return Marker::FilledSquare;
+        return MarkerRepresentation::FilledSquare;
     else if (compareIgnoringCase(name, "plus") == 0)
-        return Marker::Plus;
+        return MarkerRepresentation::Plus;
     else if (compareIgnoringCase(name, "x") == 0)
-        return Marker::X;
+        return MarkerRepresentation::X;
     else if (compareIgnoringCase(name, "leftarrow") == 0)
-        return Marker::LeftArrow;
+        return MarkerRepresentation::LeftArrow;
     else if (compareIgnoringCase(name, "rightarrow") == 0)
-        return Marker::RightArrow;
+        return MarkerRepresentation::RightArrow;
     else if (compareIgnoringCase(name, "uparrow") == 0)
-        return Marker::UpArrow;
+        return MarkerRepresentation::UpArrow;
     else if (compareIgnoringCase(name, "downarrow") == 0)
-        return Marker::DownArrow;
+        return MarkerRepresentation::DownArrow;
     else if (compareIgnoringCase(name, "circle") == 0)
-        return Marker::Circle;
+        return MarkerRepresentation::Circle;
     else if (compareIgnoringCase(name, "disk") == 0)
-        return Marker::Disk;
+        return MarkerRepresentation::Disk;
     else
-        return Marker::Diamond;
+        return MarkerRepresentation::Diamond;
 }
 
 
@@ -734,7 +734,7 @@ static int object_mark(lua_State* l)
     if (colorString != NULL)
         Color::parse(colorString, markColor);
     
-    Marker::Symbol markSymbol = Marker::Diamond;
+    MarkerRepresentation::Symbol markSymbol = MarkerRepresentation::Diamond;
     const char* markerString = celx.safeGetString(3, WrongType, "Second argument to object:mark must be a string");
     if (markerString != NULL)
         markSymbol = parseMarkerSymbol(markerString);
@@ -761,8 +761,12 @@ static int object_mark(lua_State* l)
     bool occludable = celx.safeGetBoolean(7, WrongType, "Sixth argument to object:mark must be a boolean", true);	
     
     Simulation* sim = appCore->getSimulation();
-    sim->getUniverse()->markObject(*sel, markSize,
-                                   markColorAlpha, markSymbol, 1, markLabel, occludable);
+    
+    MarkerRepresentation markerRep(markSymbol);
+    markerRep.setSize(markSize);
+    markerRep.setColor(markColorAlpha);
+    markerRep.setLabel(markLabel);
+    sim->getUniverse()->markObject(*sel, markerRep, 1, occludable);
     
     return 0;
 }

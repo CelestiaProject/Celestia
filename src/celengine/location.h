@@ -74,11 +74,14 @@ class Location
         Mensa          = 0x00100000,
         Rima           = 0x00200000,
         Undae          = 0x00400000,
+        Tholus         = 0x00800000, // Small domical mountain or hill
         Reticulum      = 0x01000000,
         Planitia       = 0x02000000,
         Linea          = 0x04000000,
         Fluctus        = 0x08000000,
         Farrum         = 0x10000000,
+        EruptiveCenter = 0x20000000, // Active volcanic centers on Io
+        Insula         = 0x40000000, // Islands
         Other          = 0x80000000,
     };
 

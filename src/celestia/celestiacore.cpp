@@ -1440,12 +1440,11 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
             }
             else
             {
-                sim->getUniverse()->markObject(sel,
-                                               10.0f,
-                                               Color(0.0f, 1.0f, 0.0f, 0.9f),
-                                               Marker::Diamond,
-                                               1,
-                                               "");
+                MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
+                markerRep.setSize(10.0f);
+                markerRep.setColor(Color(0.0f, 1.0f, 0.0f, 0.9f));
+    
+                sim->getUniverse()->markObject(sel, markerRep, 1);
             }
         }
         break;

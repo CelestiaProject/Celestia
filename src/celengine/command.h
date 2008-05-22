@@ -502,15 +502,12 @@ class CommandPreloadTextures : public InstantaneousCommand
 class CommandMark : public InstantaneousCommand
 {
  public:
-    CommandMark(const std::string&, Color, float, Marker::Symbol, const std::string&);
+    CommandMark(const std::string&, MarkerRepresentation);
     void process(ExecutionEnvironment&);
 
  private:
     std::string target;
-    Color color;
-    float size;
-    Marker::Symbol symbol;
-    std::string label;
+    MarkerRepresentation rep;
 };
 
 
