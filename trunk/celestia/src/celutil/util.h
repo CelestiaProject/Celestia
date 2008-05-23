@@ -21,12 +21,12 @@
 #define COMPILE_TIME_ASSERT(pred) \
     switch(0){case 0: case pred:;}
 
-#ifndef min
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#endif
-
-#ifndef max
-#define max(a, b) ((a) < (b) ? (b) : (a))
+#ifdef _WIN32
+// The Windows header files define min and max macros. We prefer the min and
+// max templates from STL because they don't result in unexpected multiple
+// evaluations of arguments. In order to use them, we need to set NOMINMAX
+// to prevent namespace pollution by the Windows macros.
+#define NOMINMAX
 #endif
 				      
 #ifdef _WIN32
