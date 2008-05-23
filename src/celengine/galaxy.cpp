@@ -386,8 +386,8 @@ void Galaxy::renderGalaxyEllipsoid(const GLContext& context,
     float discSizeInPixels = pixelSize * getRadius() / offset.length();
     unsigned int nRings = (unsigned int) (discSizeInPixels / 4.0f);
     unsigned int nSlices = (unsigned int) (discSizeInPixels / 4.0f);
-    nRings = max(nRings, 100);
-    nSlices = max(nSlices, 100);
+    nRings = max(nRings, 100u);
+    nSlices = max(nSlices, 100u);
 
     VertexProcessor* vproc = context.getVertexProcessor();
     if (vproc == NULL)

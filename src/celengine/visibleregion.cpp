@@ -171,7 +171,7 @@ VisibleRegion::render(Renderer* /* renderer */,
 
     // Base the amount of subdivision on the apparent size
     unsigned int nSections = (unsigned int) (30.0f + discSizeInPixels * 0.5f);
-    nSections = min(nSections, 360);
+    nSections = min(nSections, 360u);
 
     Quatd q = m_body.getEclipticToBodyFixed(tdb);
     Quatf qf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
