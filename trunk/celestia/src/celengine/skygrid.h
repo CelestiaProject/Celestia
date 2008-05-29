@@ -1,6 +1,6 @@
 // skygrid.h
 //
-// Longitude/latitude grids for ellipsoidal bodies.
+// Celestial longitude/latitude grids.
 //
 // Copyright (C) 2008, the Celestia Development Team
 // Initial version by Chris Laurel, <claurel@gmail.com>
@@ -13,6 +13,7 @@
 #ifndef _CELENGINE_SKYGRID_H_
 #define _CELENGINE_SKYGRID_H_
 
+#include <string>
 #include <celutil/color.h>
 #include <celmath/quaternion.h>
 
@@ -23,6 +24,12 @@ class Observer;
 class SkyGrid
 {
 public:
+    enum LatitudeUnits
+    {
+        LatitudeDegrees,
+        LatitudeHours,
+    };
+
     SkyGrid();
     ~SkyGrid();
 
@@ -61,10 +68,27 @@ public:
         m_labelColor = labelColor;
     }
 
+    LatitudeUnits latitudeUnits() const
+    {
+        return m_latitudeUnits;
+    }
+
+    void setLatitudeUnits(LatitudeUnits latitudeUnits)
+    {
+        m_latitudeUnits = latitudeUnits;
+    }
+
+private:
+    std::string latitudeLabel(int latitude, int latitudeStep) const;
+    std::string longitudeLabel(int longitude, int longitudeStep) const;
+    int parallelSpacing(double idealSpacing) const;
+    int meridianSpacing(double idealSpacing) const;
+
 private:
     Quatd m_orientation;
     Color m_lineColor;
     Color m_labelColor;
+    LatitudeUnits m_latitudeUnits;
 };
 
 #endif // _CELENGINE_PLANETGRID_H_
