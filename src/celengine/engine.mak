@@ -75,6 +75,7 @@ OBJS=\
 	$(INTDIR)\selection.obj \
 	$(INTDIR)\shadermanager.obj \
 	$(INTDIR)\simulation.obj \
+	$(INTDIR)\skygrid.obj \
 	$(INTDIR)\solarsys.obj \
 	$(INTDIR)\spheremesh.obj \
 	$(INTDIR)\star.obj \

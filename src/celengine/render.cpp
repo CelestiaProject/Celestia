@@ -12,6 +12,8 @@
 #include <cstdio>
 #include <cstring>
 #include <cassert>
+#include <sstream>
+#include <iomanip>
 
 
 #define DEBUG_COALESCE 0
@@ -69,6 +71,7 @@ std::ofstream hdrlog;
 #include "axisarrow.h"
 #include "frametree.h"
 #include "timelinephase.h"
+#include "skygrid.h"
 
 using namespace std;
 
@@ -178,20 +181,6 @@ static const float CoronaHeight = 0.2f;
 
 static bool buggyVertexProgramEmulation = true;
 
-
-// Controls for the number of circles displayed on celestial coordinate spheres
-static const unsigned int CoordSphereRADivisions = 24;
-static const unsigned int CoordSphereDecDivisions = 18;
-
-// Celestial grid labels
-static const float RALabelSpacing = 1.0f;  // hours between each RA label
-static const float DecLabelSpacing = 10.0f;  // degrees between each declination labels
-static const float DecLabelRASpacing = 6.0f; // hours between meridians with declination labels
-static const unsigned int RALabelCount = (unsigned int) (24.0f / RALabelSpacing);
-static const unsigned int DecLabelCount = (unsigned int) ((int) (90.0f / DecLabelSpacing) - 1) * 2 + 1;
-static string* RACoordLabels;
-static string* DecCoordLabels;
-
 static const int MaxSkyRings = 32;
 static const int MaxSkySlices = 180;
 static const int MinSkySlices = 30;
@@ -214,8 +203,11 @@ Color Renderer::GalaxyLabelColor        (0.0f,   0.45f,  0.5f);
 Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
 Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
 Color Renderer::ConstellationLabelColor (0.225f, 0.301f, 0.36f);
-Color Renderer::EquatorialGridLabelColor(0.32f,  0.44f,  0.36f);
+Color Renderer::EquatorialGridLabelColor(0.64f,  0.72f,  0.88f);
 Color Renderer::PlanetographicGridLabelColor(0.8f, 0.8f, 0.8f);
+Color Renderer::GalacticGridLabelColor  (0.88f,  0.72f,  0.64f);
+Color Renderer::EclipticGridLabelColor  (0.72f,  0.64f,  0.88f);
+Color Renderer::HorizonGridLabelColor(0.88f,  0.72f,  0.64f);
 
 
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
@@ -230,9 +222,12 @@ Color Renderer::SelectionOrbitColor     (1.0f,   0.0f,   0.0f);
 
 Color Renderer::ConstellationColor      (0.0f,   0.24f,  0.36f);
 Color Renderer::BoundaryColor           (0.24f,  0.10f,  0.12f);
-Color Renderer::EquatorialGridColor     (0.19f,  0.25f,  0.19f);
+Color Renderer::EquatorialGridColor     (0.28f,  0.28f,  0.38f);
 Color Renderer::PlanetographicGridColor (0.8f,   0.8f,   0.8f);
 Color Renderer::PlanetEquatorColor      (0.5f,   1.0f,   1.0f);
+Color Renderer::GalacticGridColor       (0.38f,  0.38f,  0.28f);
+Color Renderer::EclipticGridColor       (0.38f,  0.28f,  0.38f);
+Color Renderer::HorizonGridColor     (0.38f,  0.38f,  0.28f);
 
 
 // Some useful unit conversions
@@ -827,31 +822,6 @@ bool Renderer::init(GLContext* _context,
 #endif
         }
 
-        // Create labels for celestial sphere
-        RACoordLabels = new string[RALabelCount];
-        DecCoordLabels = new string[DecLabelCount];
-
-        unsigned int i;
-        for (i = 0; i < RALabelCount; i++)
-        {
-            float ra = i * RALabelSpacing;
-            char buf[32];
-
-            int hours = (int) ra;
-            int minutes = (int) ((ra - hours) * 60);
-
-            sprintf(buf, "%dh %02dm", hours, minutes);
-            RACoordLabels[i] = string(buf);
-        }
-
-        for (i = 0; i < DecLabelCount; i++)
-        {
-            float dec = ((int) i - (int) DecLabelCount / 2) * DecLabelSpacing;
-            char buf[32];
-            sprintf(buf, "%g%s", dec, UTF8_DEGREE_SIGN);
-            DecCoordLabels[i] = string(buf);
-        }
-
 #ifdef USE_HDR
         genSceneTexture();
         genBlurTextures();
@@ -1235,6 +1205,8 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              const string& labelText,
                              Color color,
                              const Point3f& pos,
+                             LabelAlignment halign,
+                             LabelVerticalAlignment valign,
                              float depth)
 {
     double winX, winY, winZ;
@@ -1265,6 +1237,8 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
         a.markerRep = markerRep;
         a.color = color;
         a.position = Point3f((float) winX, (float) winY, -depth);
+        a.halign = halign;
+        a.valign = valign;
         annotations.push_back(a);
     }
 }
@@ -1274,9 +1248,11 @@ void Renderer::addForegroundAnnotation(const MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
                                        const Point3f& pos,
+                                       LabelAlignment halign,
+                                       LabelVerticalAlignment valign,
                                        float depth)
 {
-    addAnnotation(foregroundAnnotations, markerRep, labelText, color, pos, depth);
+    addAnnotation(foregroundAnnotations, markerRep, labelText, color, pos, halign, valign, depth);
 }
 
 
@@ -1284,22 +1260,31 @@ void Renderer::addBackgroundAnnotation(const MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
                                        const Point3f& pos,
+                                       LabelAlignment halign,
+                                       LabelVerticalAlignment valign,                                       
                                        float depth)
 {
-    addAnnotation(backgroundAnnotations, markerRep, labelText, color, pos, depth);
+    addAnnotation(backgroundAnnotations, markerRep, labelText, color, pos, halign, valign, depth);
 }
 
 
 void Renderer::addBackgroundAnnotation(const string& labelText,
                                        Color color,
                                        const Point3f& pos,
+                                       LabelAlignment halign,
+                                       LabelVerticalAlignment valign,
                                        float depth)
 {
-    addAnnotation(backgroundAnnotations, NULL, labelText, color, pos, depth);
+    addAnnotation(backgroundAnnotations, NULL, labelText, color, pos, halign, valign, depth);
 }
 
 
-void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep, const string& labelText, Color color, const Point3f& pos)
+void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
+                                   const string& labelText,
+                                   Color color,
+                                   const Point3f& pos,
+                                   LabelAlignment halign,
+                                   LabelVerticalAlignment valign)
 {
     double winX, winY, winZ;
     int view[4] = { 0, 0, 0, 0 };
@@ -1328,6 +1313,8 @@ void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep, const 
         a.markerRep = markerRep;
         a.color = color;
         a.position = Point3f((float) winX, (float) winY, -depth);
+        a.halign = halign;
+        a.valign = valign;
         depthSortedAnnotations.push_back(a);
     }
 }
@@ -3340,13 +3327,13 @@ void Renderer::draw(const Observer& observer,
     glEnable(GL_TEXTURE_2D);
     
     // Render sky grids first--these will always be in the background
-    if ((renderFlags & ShowCelestialSphere) != 0)
+    if (renderFlags & (ShowCelestialSphere | ShowGalacticGrid | ShowEclipticGrid | ShowHorizonGrid))
     {
         glColor(EquatorialGridColor);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
-        renderCelestialSphere(observer);
+        renderSkyGrids(observer);
         if ((renderFlags & ShowSmoothLines) != 0)
             disableSmoothLines();
         glEnable(GL_BLEND);
@@ -3455,13 +3442,13 @@ void Renderer::draw(const Observer& observer,
     }
 
     // Render star and deep sky object labels
-    renderBackgroundAnnotations(FontNormal, AlignLeft);
+    renderBackgroundAnnotations(FontNormal);
 
     // Render constellations labels
     if ((labelMode & ConstellationLabels) != 0 && universe.getAsterisms() != NULL)
     {
         labelConstellations(*universe.getAsterisms(), observer);
-        renderBackgroundAnnotations(FontLarge, AlignCenter);
+        renderBackgroundAnnotations(FontLarge);
     }
 
     glPopMatrix();
@@ -3475,7 +3462,7 @@ void Renderer::draw(const Observer& observer,
         
         // Render background markers; rendering of other markers is deferred until
         // solar system objects are rendered.
-        renderBackgroundAnnotations(FontNormal, AlignLeft);
+        renderBackgroundAnnotations(FontNormal);
     }    
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
@@ -4030,7 +4017,7 @@ void Renderer::draw(const Observer& observer,
         glDepthRange(0, 1);
     }
     
-    renderForegroundAnnotations(FontNormal, AlignLeft);
+    renderForegroundAnnotations(FontNormal);
 
     // Pop camera orientation matrix
     glPopMatrix();
@@ -10029,78 +10016,40 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 }
 
 
-// TODO: Rewrite this function to use a pregenerated vertex buffer and to
-// be more general so that it can display the equatorial coordinate grid
-// for any planet.
-void Renderer::renderCelestialSphere(const Observer& observer)
+void Renderer::renderSkyGrids(const Observer& observer)
 {
-    int nSections = 60;
-    float radius = 10.0f;
-
-    glLineWidth(1.0f);
-
-    unsigned int i;
-    for (i = 0; i < CoordSphereRADivisions; i++)
+    if (renderFlags & ShowCelestialSphere)
     {
-        if (i == 0 || i == CoordSphereRADivisions / 2)
-            glLineWidth(2.0f);
-        else
-            glLineWidth(1.0f);
-
-        float ra = (float) i / (float) CoordSphereRADivisions * 24.0f;
-
-        glBegin(GL_LINE_STRIP);
-        for (int j = 0; j <= nSections; j++)
-        {
-            float dec = ((float) j / (float) nSections) * 180 - 90;
-            glVertex(astro::equatorialToCelestialCart(ra, dec, radius));
-        }
-        glEnd();
+        SkyGrid grid;
+        grid.setOrientation(Quatd::xrotation(astro::J2000Obliquity));
+        grid.setLineColor(EquatorialGridColor);
+        grid.setLabelColor(EquatorialGridLabelColor);
+        grid.render(*this, observer, windowWidth, windowHeight);
     }
 
-    for (i = 1; i < CoordSphereDecDivisions; i++)
+    if (renderFlags & ShowGalacticGrid)
     {
-        if (i == CoordSphereDecDivisions / 2)
-            glLineWidth(2.0f);
-        else
-            glLineWidth(1.0f);
-
-        float dec = (float) i / (float) CoordSphereDecDivisions * 180 - 90;
-        glBegin(GL_LINE_LOOP);
-        for (int j = 0; j < nSections; j++)
-        {
-            float ra = (float) j / (float) nSections * 24.0f;
-            glVertex(astro::equatorialToCelestialCart(ra, dec, radius));
-        }
-        glEnd();
+        SkyGrid galacticGrid;
+        galacticGrid.setOrientation(~(astro::eclipticToEquatorial() * astro::equatorialToGalactic()));
+        galacticGrid.setLineColor(GalacticGridColor);
+        galacticGrid.setLabelColor(GalacticGridLabelColor);
+        galacticGrid.setLatitudeUnits(SkyGrid::LatitudeDegrees);
+        galacticGrid.render(*this, observer, windowWidth, windowHeight);
     }
 
-    glLineWidth(1.0f);
-
-    Mat3f m = conjugate(observer.getOrientationf()).toMatrix3();
-
-    // Show the declination labels
-    for (i = 0; i < DecLabelCount; i++)
+    if (renderFlags & ShowEclipticGrid)
     {
-        float dec = ((int) i - (int) DecLabelCount / 2) * DecLabelSpacing;
-        if (dec != 0.0f)
-        {
-            for (float ra = 0.0f; ra < 24.0f; ra += DecLabelRASpacing)
-            {
-                Point3f pos = astro::equatorialToCelestialCart(ra, dec, radius);
-                if ((pos * m).z < 0)
-                    addBackgroundAnnotation(DecCoordLabels[i], EquatorialGridLabelColor, pos);
-            }
-        }
+        SkyGrid grid;
+        grid.setOrientation(Quatd(1.0));
+        grid.setLineColor(EclipticGridColor);
+        grid.setLabelColor(EclipticGridLabelColor);
+        grid.setLatitudeUnits(SkyGrid::LatitudeDegrees);
+        grid.render(*this, observer, windowWidth, windowHeight);
     }
 
-    // Show the right ascension labels
-    for (i = 0; i < RALabelCount; i++)
+    if (renderFlags & ShowHorizonGrid)
     {
-        float ra = i * RALabelSpacing;
-        Point3f pos = astro::equatorialToCelestialCart(ra, 0.0f, radius);
-        if ((pos * m).z < 0)
-            addBackgroundAnnotation(RACoordLabels[i], EquatorialGridLabelColor, pos);
+        // TODO: Implement this
     }
 }
 
@@ -10156,7 +10105,8 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
                     addBackgroundAnnotation(ast->getName((labelMode & I18nConstellationLabels) != 0),
                                             Color(labelColor, opacity),
-                                            Point3f(rpos.x, rpos.y, rpos.z));
+                                            Point3f(rpos.x, rpos.y, rpos.z),
+                                            AlignCenter);
                 }
             }
         }
@@ -10197,7 +10147,7 @@ void Renderer::renderParticles(const vector<Particle>& particles,
 }
 
 
-void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyle fs, LabelAlignment la)
+void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyle fs)
 {
     if (font[fs] == NULL)
         return;
@@ -10251,24 +10201,44 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
         if (annotations[i].labelText[0] != '\0')
         {
             glPushMatrix();
-            int labelOffset = 2;
-            if (la == AlignCenter)
+            int labelWidth = 0;
+            int hOffset = 2;
+            int vOffset = 0;
+            
+            switch (annotations[i].halign)
             {
-                int labelwidth = (font[fs]->getWidth(annotations[i].labelText));
-                labelOffset = (int) -labelwidth/2;
-            }
-            else if (la == AlignRight)
-            {
-                int labelwidth = (font[fs]->getWidth(annotations[i].labelText));
-                labelOffset = (int) -(labelwidth + 2);
+            case AlignCenter:
+                labelWidth = (font[fs]->getWidth(annotations[i].labelText));
+                hOffset = -labelWidth / 2;
+                break;
+            
+            case AlignRight:
+                labelWidth = (font[fs]->getWidth(annotations[i].labelText));
+                hOffset = -(labelWidth + 2);
+                break;
+            
+            case AlignLeft:
+                if (annotations[i].markerRep != NULL)
+                    hOffset = 2 + (int) annotations[i].markerRep->size() / 2;
+                break;
             }
             
-            if (annotations[i].markerRep != NULL)
-                labelOffset += (int) annotations[i].markerRep->size() / 2;
+            switch (annotations[i].valign)
+            {
+            case AlignCenter:
+                vOffset = -font[fs]->getHeight() / 2;
+                break;
+            case VerticalAlignTop:
+                vOffset = -font[fs]->getHeight();
+                break;
+            case VerticalAlignBottom:
+                vOffset = 0;
+                break;
+            }
             
             glColor(annotations[i].color);
-            glTranslatef((int) annotations[i].position.x + GLfloat((int) labelOffset) + PixelOffset,
-                         (int) annotations[i].position.y + PixelOffset, 0.0f);
+            glTranslatef((int) annotations[i].position.x + hOffset + PixelOffset,
+                         (int) annotations[i].position.y + vOffset + PixelOffset, 0.0f);
             // EK TODO: Check where to replace (see '_(' above)
             font[fs]->render(annotations[i].labelText);
             glPopMatrix();
@@ -10289,10 +10259,10 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 
 
 void
-Renderer::renderBackgroundAnnotations(FontStyle fs, LabelAlignment la)
+Renderer::renderBackgroundAnnotations(FontStyle fs)
 {
     glEnable(GL_DEPTH_TEST);
-    renderAnnotations(backgroundAnnotations, fs, la);
+    renderAnnotations(backgroundAnnotations, fs);
     glDisable(GL_DEPTH_TEST);
     
     clearAnnotations(backgroundAnnotations);
@@ -10300,10 +10270,10 @@ Renderer::renderBackgroundAnnotations(FontStyle fs, LabelAlignment la)
 
 
 void
-Renderer::renderForegroundAnnotations(FontStyle fs, LabelAlignment la)
+Renderer::renderForegroundAnnotations(FontStyle fs)
 {
     glDisable(GL_DEPTH_TEST);
-    renderAnnotations(foregroundAnnotations, fs, la);
+    renderAnnotations(foregroundAnnotations, fs);
     
     clearAnnotations(foregroundAnnotations);
 }

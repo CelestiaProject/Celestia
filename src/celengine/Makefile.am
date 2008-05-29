@@ -76,6 +76,7 @@ libcelengine_a_SOURCES = \
 	selection.cpp \
 	shadermanager.cpp \
 	simulation.cpp \
+	skygrid.cpp \
 	solarsys.cpp \
 	spheremesh.cpp \
 	star.cpp \
