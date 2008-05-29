@@ -1,6 +1,6 @@
 // skygrid.cpp
 //
-// Longitude/latitude grids for ellipsoidal bodies.
+// Celestial longitude/latitude grids.
 //
 // Copyright (C) 2008, the Celestia Development Team
 // Initial version by Chris Laurel, <claurel@gmail.com>
@@ -139,7 +139,8 @@ static const int DEG_MIN_SEC_STEPS[]  =
 SkyGrid::SkyGrid() :
     m_orientation(1.0),
     m_lineColor(Color::White),
-    m_labelColor(Color::White)
+    m_labelColor(Color::White),
+    m_latitudeUnits(LatitudeHours)
 {
 }
 
@@ -181,6 +182,33 @@ static void updateAngleRange(double a, double b, double* maxDiff, double* minAng
         *minAngle = a;
         *maxAngle = b;
     }
+}
+
+
+// Get the horizontal alignment for the coordinate label along the specified frustum plane
+static Renderer::LabelAlignment
+getCoordLabelHAlign(int planeIndex)
+{
+    switch (planeIndex)
+    {
+    case 2:
+        return Renderer::AlignLeft;
+    case 3:
+        return Renderer::AlignRight;
+    default:
+        return Renderer::AlignCenter;
+    }
+}
+
+
+// Get the vertical alignment for the coordinate label along the specified frustum plane
+static Renderer::LabelVerticalAlignment
+getCoordLabelVAlign(int planeIndex)
+{
+    if (planeIndex == 1)
+        return Renderer::VerticalAlignTop;
+    else
+        return Renderer::VerticalAlignBottom;
 }
 
 
@@ -247,12 +275,135 @@ template<class T> static bool planeCircleIntersection(const Vector3<T>& planeNor
 }
 
 
+// Get the a string with a label for the specified latitude. Both
+// the latitude and latitudeStep are given in milliarcseconds.
+string
+SkyGrid::latitudeLabel(int latitude, int latitudeStep) const
+{
+    // Produce a sexigesimal string
+    ostringstream out;
+    if (latitude < 0)
+        out << '-';
+    out << std::abs(latitude / DEG) << UTF8_DEGREE_SIGN;
+    if (latitudeStep % DEG != 0)
+    {
+        out << ' ' << setw(2) << setfill('0') << std::abs((latitude / MIN) % 60) << '\'';
+        if (latitudeStep % MIN != 0)
+        {
+            out << ' ' << setw(2) << setfill('0') << std::abs((latitude / SEC) % 60);
+            if (latitudeStep % SEC != 0)
+                out << '.' << setw(3) << setfill('0') << latitude % SEC;
+            out << '"';
+        }
+    }
+
+    return out.str();
+}
+
+
+// Get the a string with a label for the specified longitude. Both
+// the longitude and longitude are given in milliarcseconds.
+string
+SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
+{
+    int totalUnits = HOUR_MIN_SEC_TOTAL;
+    int baseUnit = HR;
+    char* baseUnitSymbol = "h";
+    char minuteSymbol = 'm';
+    char secondSymbol = 's';
+
+    if (m_latitudeUnits == LatitudeDegrees)
+    {
+        totalUnits = DEG_MIN_SEC_TOTAL * 2;
+        baseUnit = DEG;
+        baseUnitSymbol = UTF8_DEGREE_SIGN;
+        minuteSymbol = '\'';
+        secondSymbol = '"';
+    }
+
+    // Produce a sexigesimal string
+    ostringstream out;
+    if (longitude < 0)
+        longitude += totalUnits;
+
+    out << longitude / baseUnit << baseUnitSymbol;
+    if (longitudeStep % baseUnit != 0)
+    {
+        out << ' ' << setw(2) << setfill('0') << (longitude / MIN) % 60 << minuteSymbol;
+        if (longitudeStep % MIN != 0)
+        {
+            out << ' ' << setw(2) << setfill('0') << (longitude / SEC) % 60;
+            if (longitudeStep % SEC != 0)
+                out << '.' << setw(3) << setfill('0') << longitude % SEC;
+            out << secondSymbol;
+        }
+    }
+
+    return out.str();
+}
+
+
+// Compute the angular step between parallels
+int 
+SkyGrid::parallelSpacing(double idealSpacing) const
+{
+    // We want to use parallels and meridian spacings that are nice multiples of hours, degrees,
+    // minutes, or seconds. Choose spacings from a table. We take the table entry that gives
+    // the spacing closest to but not less than the ideal spacing.
+    int spacing = DEG_MIN_SEC_TOTAL;
+
+    // Scan the tables to find the best spacings
+    unsigned int tableSize = sizeof(DEG_MIN_SEC_SPACING) / sizeof(DEG_MIN_SEC_SPACING[0]);
+    for (unsigned int i = 0; i < tableSize; i++)
+    {
+        if (PI * (double) DEG_MIN_SEC_SPACING[i] / (double) DEG_MIN_SEC_TOTAL < idealSpacing)
+            break;
+        spacing = DEG_MIN_SEC_SPACING[i];
+    }
+    
+    return spacing;
+}
+
+
+// Compute the angular step between meridians
+int
+SkyGrid::meridianSpacing(double idealSpacing) const
+{
+    const int* spacingTable = HOUR_MIN_SEC_SPACING;
+    unsigned int tableSize = sizeof(HOUR_MIN_SEC_SPACING) / sizeof(HOUR_MIN_SEC_SPACING[0]);
+    int totalUnits = HOUR_MIN_SEC_TOTAL;
+
+    // Use degree spacings if the latitude units are degrees instead of hours
+    if (m_latitudeUnits == LatitudeDegrees)
+    {
+        spacingTable = DEG_MIN_SEC_SPACING;
+        tableSize = sizeof(DEG_MIN_SEC_SPACING) / sizeof(DEG_MIN_SEC_SPACING[0]);
+        totalUnits = DEG_MIN_SEC_TOTAL * 2;
+    }
+
+    int spacing = totalUnits;
+
+    for (unsigned int i = 0; i < tableSize; i++)
+    {
+        if (2 * PI * (double) spacingTable[i] / (double) totalUnits < idealSpacing)
+            break;
+        spacing = spacingTable[i];
+    }
+
+    return spacing;
+}
+
+
 void
 SkyGrid::render(Renderer& renderer,
                 const Observer& observer,
                 int windowWidth,
                 int windowHeight)
 {
+    // 90 degree rotation about the x-axis used to transform coordinates
+    // to Celestia's system.
+    Quatd xrot90 = Quatd::xrotation(-PI / 2.0);
+
     double vfov = observer.getFOV();
     double viewAspectRatio = (double) windowWidth / (double) windowHeight;
 
@@ -283,7 +434,7 @@ SkyGrid::render(Renderer& renderer,
     Vec3d c3( w,  h, -1.0);
 
     Quatd cameraOrientation = observer.getOrientation();
-    Mat3d r = (cameraOrientation * ~m_orientation).toMatrix3();
+    Mat3d r = (cameraOrientation * xrot90 * ~m_orientation * ~xrot90).toMatrix3();
 
     // Transform the frustum corners by the camera and grid
     // rotations.
@@ -378,49 +529,27 @@ SkyGrid::render(Renderer& renderer,
     idealMeridianSpacing /= max(cos(PI / 2.0 - 5.0 * idealParallelSpacing), cos(maxAbsDec));
 #endif
 
-    // We want to use parallels and meridian spacings that are nice multiples of hours, degrees,
-    // minutes, or seconds. Choose spacings from a table. We take the table entry that gives
-    // the spacing closest to but not less than the ideal spacing.
-    int raIncrement  = HOUR_MIN_SEC_TOTAL;
-    int decIncrement = DEG_MIN_SEC_TOTAL;
+    int totalLatitudeUnits = HOUR_MIN_SEC_TOTAL;
+    if (m_latitudeUnits == LatitudeDegrees)
+        totalLatitudeUnits = DEG_MIN_SEC_TOTAL * 2;
 
-    // Scan the tables to find the best spacings
-    {
-        unsigned int i = 0;
-        for (i = 0; i < sizeof(DEG_MIN_SEC_SPACING) / sizeof(DEG_MIN_SEC_SPACING[0]); i++)
-        {
-            if (2 * PI * (double) DEG_MIN_SEC_SPACING[i] / (double) DEG_MIN_SEC_TOTAL < idealParallelSpacing)
-                break;
-            decIncrement = DEG_MIN_SEC_SPACING[i];
-        }
-        
-        for (i = 0; i < sizeof(HOUR_MIN_SEC_SPACING) / sizeof(HOUR_MIN_SEC_SPACING[0]); i++)
-        {
-            if (2 * PI * (double) HOUR_MIN_SEC_SPACING[i] / (double) HOUR_MIN_SEC_TOTAL < idealMeridianSpacing)
-                break;
-            raIncrement = HOUR_MIN_SEC_SPACING[i];
-        }
+    int raIncrement  = meridianSpacing(idealMeridianSpacing);
+    int decIncrement = parallelSpacing(idealParallelSpacing);
 
-#ifdef CONSTRAIN_GRID_BLOCK_ASPECT_RATIO
-        double MAX_BLOCK_ASPECT_RATIO = 3.0;
-        double raSpacingAngle = (double) raIncrement / (double) HOUR_MIN_SEC_TOTAL * 2 * PI;
-        double decSpacingAngle = (double) decIncrement / (double) DEG_MIN_SEC_TOTAL * 2 * PI;
-        if (raSpacingAngle / decSpacingAngle > MAX_BLOCK_ASPECT_RATIO)
-        {
-            if (i < sizeof(HOUR_MIN_SEC_SPACING) / sizeof(HOUR_MIN_SEC_SPACING[0]) - 1)
-                raIncrement = HOUR_MIN_SEC_SPACING[i + 1];
-        }
-#endif
-    }
-
-    int startRa  = (int) std::ceil (HOUR_MIN_SEC_TOTAL * (minTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
-    int endRa    = (int) std::floor(HOUR_MIN_SEC_TOTAL * (maxTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
+    int startRa  = (int) std::ceil (totalLatitudeUnits * (minTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
+    int endRa    = (int) std::floor(totalLatitudeUnits * (maxTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
     int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec / PI) / (float) decIncrement) * decIncrement;
     int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / PI) / (float) decIncrement) * decIncrement;
 
+    // Get the orientation at single precision
+    Quatd q = xrot90 * m_orientation * ~xrot90;
+    Quatf orientationf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+
+    glColor(m_lineColor);
+
     // Render the parallels
     glPushMatrix();
-    glRotate(~m_orientation);
+    glRotate(xrot90 * ~m_orientation * ~xrot90);
 
     // Radius of sphere is arbitrary, with the constraint that it shouldn't
     // intersect the near or far plane of the view frustum.
@@ -454,26 +583,13 @@ SkyGrid::render(Renderer& renderer,
         {
             Vec3d isect0(0.0, 0.0, 0.0);
             Vec3d isect1(0.0, 0.0, 0.0);
+            Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
+            Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
+
             if (planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
                                         &isect0, &isect1))
             {
-                // Generate the coordinate label string
-                ostringstream out;
-                if (dec < 0)
-                    out << '-';
-                out << std::abs(dec / DEG) << UTF8_DEGREE_SIGN;
-                if (decIncrement % DEG != 0)
-                {
-                    out << ' ' << setw(2) << setfill('0') << std::abs((dec / MIN) % 60) << '\'';
-                    if (decIncrement % MIN != 0)
-                    {
-                        out << ' ' << setw(2) << setfill('0') << std::abs((dec / SEC) % 60);
-                        if (decIncrement % SEC != 0)
-                            out << '.' << setw(3) << setfill('0') << dec % SEC;
-                        clog << '"';
-                    }
-                }
-                string labelText = out.str();
+                string labelText = latitudeLabel(dec, decIncrement);
 
                 Point3f p0((float) isect0.x, (float) isect0.z, (float) -isect0.y);
                 Point3f p1((float) isect1.x, (float) isect1.z, (float) -isect1.y);
@@ -489,27 +605,18 @@ SkyGrid::render(Renderer& renderer,
 #endif
                 
                 Mat3f m = conjugate(observer.getOrientationf()).toMatrix3();
-                Quatf gridf((float) m_orientation.w, (float) m_orientation.x,
-                            (float) m_orientation.y, (float) m_orientation.z);
-                p0 = p0 * (gridf).toMatrix3();
-                p1 = p1 * (gridf).toMatrix3();
+                p0 = p0 * orientationf.toMatrix3();
+                p1 = p1 * orientationf.toMatrix3();
                 
-                Renderer::LabelAlignment halign = Renderer::AlignCenter;
-                if (k == 2)
-                    halign = Renderer::AlignLeft;
-                else if (k == 3)
-                    halign = Renderer::AlignRight;
-                Renderer::LabelVerticalAlignment valign = (k == 1) ? Renderer::VerticalAlignTop : Renderer::VerticalAlignBottom;
                 if ((p0 * m).z < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p0, halign, valign);
+                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p0, hAlign, vAlign);
                 }
                 
                 if ((p1 * m).z < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p1, halign, valign);
-                }
-                
+                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p1, hAlign, vAlign);
+                }                
             }
         }
     }
@@ -529,7 +636,7 @@ SkyGrid::render(Renderer& renderer,
     for (int ra = startRa; ra <= endRa; ra += raIncrement)
     {
 
-        double theta = 2.0 * PI * (double) ra / (double) HOUR_MIN_SEC_TOTAL;
+        double theta = 2.0 * PI * (double) ra / (double) totalLatitudeUnits;
         double cosTheta = cos(theta);
         double sinTheta = sin(theta);
 
@@ -553,54 +660,30 @@ SkyGrid::render(Renderer& renderer,
         {
             Vec3d isect0(0.0, 0.0, 0.0);
             Vec3d isect1(0.0, 0.0, 0.0);
+            Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
+            Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
+
             if (planeCircleIntersection(frustumNormal[k], center, axis0, axis1,
                                         &isect0, &isect1))
             {
-                // Generate the coordinate label string
-                ostringstream out;
-                int labelRa = ra;
-                if (labelRa < 0)
-                    labelRa += 24 * HR;
-
-                out << std::abs(labelRa / HR) << 'h';
-                if (raIncrement % HR != 0)
-                {
-                    out << ' ' << setw(2) << setfill('0') << (labelRa / MIN) % 60 << 'm';
-                    if (raIncrement % MIN != 0)
-                    {
-                        out << ' ' << setw(2) << setfill('0') << (labelRa / SEC) % 60;
-                        if (raIncrement % SEC != 0)
-                            out << '.' << setw(3) << setfill('0') << labelRa % SEC;
-                        out << 's';
-                    }
-                }
-                string labelText = out.str();
+                string labelText = longitudeLabel(ra, raIncrement);
 
                 Point3f p0((float) isect0.x, (float) isect0.z, (float) -isect0.y);
                 Point3f p1((float) isect1.x, (float) isect1.z, (float) -isect1.y);
 
                 Mat3f m = conjugate(observer.getOrientationf()).toMatrix3();
-                Quatf gridf((float) m_orientation.w, (float) m_orientation.x,
-                            (float) m_orientation.y, (float) m_orientation.z);
-                p0 = p0 * (gridf).toMatrix3();
-                p1 = p1 * (gridf).toMatrix3();
+                p0 = p0 * orientationf.toMatrix3();
+                p1 = p1 * orientationf.toMatrix3();
                 
-                Renderer::LabelAlignment halign = Renderer::AlignCenter;
-                if (k == 2)
-                    halign = Renderer::AlignLeft;
-                else if (k == 3)
-                    halign = Renderer::AlignRight;
-                Renderer::LabelVerticalAlignment valign = (k == 1) ? Renderer::VerticalAlignTop : Renderer::VerticalAlignBottom;
                 if ((p0 * m).z < 0.0 && axis0 * isect0 >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p0, halign, valign);
+                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p0, hAlign, vAlign);
                 }
                 
                 if ((p1 * m).z < 0.0 && axis0 * isect1 >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p1, halign, valign);
-                }
-                
+                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p1, hAlign, vAlign);
+                }               
             }
         }        
     }
