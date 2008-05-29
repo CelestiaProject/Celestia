@@ -20,7 +20,10 @@ CelestiaActions::CelestiaActions(QObject* parent,
                                  CelestiaCore* _appCore) :
     QObject(parent),
 
-    eqGridAction(NULL),
+    equatorialGridAction(NULL),
+    galacticGridAction(NULL),
+    eclipticGridAction(NULL),
+    horizonGridAction(NULL),
     markersAction(NULL),
     constellationsAction(NULL),
     boundariesAction(NULL),
@@ -51,10 +54,25 @@ CelestiaActions::CelestiaActions(QObject* parent,
     appCore(_appCore)
 {
     // Create the render flags actions
-    eqGridAction = new QAction(QString("Eq"), this);
-    eqGridAction->setToolTip(tr("Equatorial coordinate grid"));
-    eqGridAction->setCheckable(true);
-    eqGridAction->setData(Renderer::ShowCelestialSphere);
+    equatorialGridAction = new QAction(QString("Eq"), this);
+    equatorialGridAction->setToolTip(tr("Equatorial coordinate grid"));
+    equatorialGridAction->setCheckable(true);
+    equatorialGridAction->setData(Renderer::ShowCelestialSphere);
+
+    galacticGridAction = new QAction(QString("Ga"), this);
+    galacticGridAction->setToolTip(tr("Galactic coordinate grid"));
+    galacticGridAction->setCheckable(true);
+    galacticGridAction->setData(Renderer::ShowGalacticGrid);
+
+    eclipticGridAction = new QAction(QString("Ec"), this);
+    eclipticGridAction->setToolTip(tr("Ecliptic coordinate grid"));
+    eclipticGridAction->setCheckable(true);
+    eclipticGridAction->setData(Renderer::ShowEclipticGrid);
+
+    horizonGridAction = new QAction(QString("Hz"), this);
+    horizonGridAction->setToolTip(tr("Horizon coordinate grid"));
+    horizonGridAction->setCheckable(true);
+    horizonGridAction->setData(Renderer::ShowHorizonGrid);
 
     markersAction = new QAction(QString("M"), this);
     markersAction->setToolTip(tr("Markers"));
@@ -76,7 +94,10 @@ CelestiaActions::CelestiaActions(QObject* parent,
     orbitsAction->setCheckable(true);
     orbitsAction->setData(Renderer::ShowOrbits);
 
-    connect(eqGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(equatorialGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(galacticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(eclipticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(horizonGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(markersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(constellationsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(boundariesAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
@@ -223,7 +244,10 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
     int textureRes = renderer->getResolution();
     Renderer::StarStyle starStyle = renderer->getStarStyle();
 
-    eqGridAction->setChecked(renderFlags & Renderer::ShowCelestialSphere);
+    equatorialGridAction->setChecked(renderFlags & Renderer::ShowCelestialSphere);
+    galacticGridAction->setChecked(renderFlags & Renderer::ShowGalacticGrid);
+    eclipticGridAction->setChecked(renderFlags & Renderer::ShowEclipticGrid);
+    horizonGridAction->setChecked(renderFlags & Renderer::ShowHorizonGrid);
     markersAction->setChecked(renderFlags & Renderer::ShowMarkers);
     constellationsAction->setChecked(renderFlags & Renderer::ShowDiagrams);
     boundariesAction->setChecked(renderFlags & Renderer::ShowBoundaries);
