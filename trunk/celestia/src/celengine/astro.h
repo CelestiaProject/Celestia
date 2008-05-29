@@ -14,6 +14,7 @@
 #include <string>
 #include <cmath>
 #include <celmath/vecmath.h>
+#include <celmath/quaternion.h>
 #include <celengine/univcoord.h>
 
 #define SOLAR_ABSMAG  4.83f
@@ -165,6 +166,11 @@ namespace astro
 
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
     Point3d equatorialToCelestialCart(double ra, double dec, double distance);
+
+    Quatd eclipticToEquatorial();
+    Vec3d eclipticToEquatorial(const Vec3d& v);
+    Quatd equatorialToGalactic();
+    Vec3d equatorialToGalactic(const Vec3d& v);
 
     void anomaly(double meanAnomaly, double eccentricity,
                  double& trueAnomaly, double& eccentricAnomaly);
