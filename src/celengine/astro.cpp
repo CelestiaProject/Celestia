@@ -30,14 +30,34 @@ const double astro::SolarMass = 1.989e30;
 const double astro::EarthMass = 5.976e24;
 const double astro::LunarMass = 7.354e22;
 
+const double astro::SOLAR_IRRADIANCE  = 1367.6;        // Watts / m^2
+const double astro::SOLAR_POWER       =    3.8462e26;  // Watts
+
 // Angle between J2000 mean equator and the ecliptic plane.
 // 23 deg 26' 21".448 (Seidelmann, _Explanatory Supplement to the
 // Astronomical Almanac_ (1992), eqn 3.222-1.
 const double astro::J2000Obliquity = degToRad(23.4392911);
 
-const double astro::SOLAR_IRRADIANCE  = 1367.6;        // Watts / m^2
-const double astro::SOLAR_POWER       =    3.8462e26;  // Watts
+static const Quatd ECLIPTIC_TO_EQUATORIAL_ROTATION =
+    Quatd::xrotation(-astro::J2000Obliquity);
+static const Mat3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toMatrix3();
 
+// Equatorial to galactic coordinate transformation
+// North galactic pole at:
+// RA 12h 51m 26.282s (192.85958 deg)
+// Dec 27 d 07' 42.01" (27.1283361 deg)
+// Zero longitude at position angle 122.932
+// (J2000 coordinates)
+static const double GALACTIC_NODE = 282.85958;
+static const double GALACTIC_INCLINATION = 90.0 - 27.1283361;
+static const double GALACTIC_LONGITUDE_AT_NODE = 32.932;
+
+static const Quatd EQUATORIAL_TO_GALACTIC_ROTATION =
+    Quatd::zrotation(degToRad(GALACTIC_NODE)) *
+    Quatd::xrotation(degToRad(GALACTIC_INCLINATION)) *
+    Quatd::zrotation(degToRad(-GALACTIC_LONGITUDE_AT_NODE));
+static const Mat3d EQUATORIAL_TO_GALACTIC_MATRIX = EQUATORIAL_TO_GALACTIC_ROTATION.toMatrix3();
+    
 // epoch B1950: 22:09 UT on 21 Dec 1949
 #define B1950         2433282.423
 
@@ -378,6 +398,43 @@ double astro::meanEclipticObliquity(double jd)
 
     return J2000Obliquity - de;
 }
+
+
+/*! Return a quaternion giving the transformation from the J2000 ecliptic
+ *  coordinate system to the J2000 Earth equatorial coordinate system.
+ */
+Quatd astro::eclipticToEquatorial()
+{
+    return ECLIPTIC_TO_EQUATORIAL_ROTATION;
+}
+
+
+/*! Rotate a vector in the J2000 ecliptic coordinate system to
+ *  the J2000 Earth equatorial coordinate system.
+ */
+Vec3d astro::eclipticToEquatorial(const Vec3d& v)
+{
+    return v * ECLIPTIC_TO_EQUATORIAL_MATRIX;
+}
+
+
+/*! Return a quaternion giving the transformation from the J2000 Earth
+ *  equatorial coordinate system to the galactic coordinate system.
+ */
+Quatd astro::equatorialToGalactic()
+{
+    return EQUATORIAL_TO_GALACTIC_ROTATION;
+}
+
+
+/*! Rotate a vector int the J2000 Earth equatorial coordinate system to
+ *  the galactic coordinate system.
+ */
+Vec3d astro::equatorialToGalactic(const Vec3d& v)
+{
+    return v * EQUATORIAL_TO_GALACTIC_MATRIX;
+}
+
 
 
 astro::Date::Date()
