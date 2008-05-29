@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
+		881336D80DEF5EE0001F3BC5 /* skygrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 881336D60DEF5EE0001F3BC5 /* skygrid.cpp */; };
 		8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844B87C0D5AA3290059AA3A /* customrotation.cpp */; };
 		8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAA80D6D13FE0059AA3A /* frametree.cpp */; };
 		8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAA0D6D13FE0059AA3A /* timeline.cpp */; };
@@ -501,6 +502,8 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		881336D60DEF5EE0001F3BC5 /* skygrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = skygrid.cpp; path = ../src/celengine/skygrid.cpp; sourceTree = SOURCE_ROOT; };
+		881336D70DEF5EE0001F3BC5 /* skygrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = skygrid.h; path = ../src/celengine/skygrid.h; sourceTree = SOURCE_ROOT; };
 		8844B87C0D5AA3290059AA3A /* customrotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = customrotation.cpp; path = ../src/celengine/customrotation.cpp; sourceTree = SOURCE_ROOT; };
 		8844B87D0D5AA3290059AA3A /* customrotation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = customrotation.h; path = ../src/celengine/customrotation.h; sourceTree = SOURCE_ROOT; };
 		8844BAA80D6D13FE0059AA3A /* frametree.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = frametree.cpp; path = ../src/celengine/frametree.cpp; sourceTree = SOURCE_ROOT; };
@@ -1444,6 +1447,8 @@
 		F51C6D52029596B4014901DC /* celengine */ = {
 			isa = PBXGroup;
 			children = (
+				881336D60DEF5EE0001F3BC5 /* skygrid.cpp */,
+				881336D70DEF5EE0001F3BC5 /* skygrid.h */,
 				886544270DAC3CC4007C8027 /* visibleregion.cpp */,
 				886544280DAC3CC4007C8027 /* visibleregion.h */,
 				8844CF080D931D4E0059AA3A /* planetgrid.cpp */,
@@ -1784,6 +1789,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = E532F41D0933316100D7D5B3 /* Build configuration list for PBXProject "celestia" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -2023,6 +2029,7 @@
 				88654A240DB29585007C8027 /* celx_position.cpp in Sources */,
 				88654A260DB29585007C8027 /* celx_rotation.cpp in Sources */,
 				88654A280DB29585007C8027 /* celx_vector.cpp in Sources */,
+				881336D80DEF5EE0001F3BC5 /* skygrid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
