@@ -132,28 +132,31 @@ class Renderer
     };
 
     enum {
-        ShowNothing         = 0x0000,
-        ShowStars           = 0x0001,
-        ShowPlanets         = 0x0002,
-        ShowGalaxies        = 0x0004,
-        ShowDiagrams        = 0x0008,
-        ShowCloudMaps       = 0x0010,
-        ShowOrbits          = 0x0020,
-        ShowCelestialSphere = 0x0040,
-        ShowNightMaps       = 0x0080,
-        ShowAtmospheres     = 0x0100,
-        ShowSmoothLines     = 0x0200,
-        ShowEclipseShadows  = 0x0400,
-        ShowStarsAsPoints   = 0x0800,
-        ShowRingShadows     = 0x1000,
-        ShowBoundaries      = 0x2000,
-        ShowAutoMag         = 0x4000,
-        ShowCometTails      = 0x8000,
-        ShowMarkers         = 0x10000,
+        ShowNothing         =   0x0000,
+        ShowStars           =   0x0001,
+        ShowPlanets         =   0x0002,
+        ShowGalaxies        =   0x0004,
+        ShowDiagrams        =   0x0008,
+        ShowCloudMaps       =   0x0010,
+        ShowOrbits          =   0x0020,
+        ShowCelestialSphere =   0x0040,
+        ShowNightMaps       =   0x0080,
+        ShowAtmospheres     =   0x0100,
+        ShowSmoothLines     =   0x0200,
+        ShowEclipseShadows  =   0x0400,
+        ShowStarsAsPoints   =   0x0800,
+        ShowRingShadows     =   0x1000,
+        ShowBoundaries      =   0x2000,
+        ShowAutoMag         =   0x4000,
+        ShowCometTails      =   0x8000,
+        ShowMarkers         =  0x10000,
         ShowPartialTrajectories = 0x20000,
-        ShowNebulae         = 0x40000,
-        ShowOpenClusters    = 0x80000,
-        ShowCloudShadows    = 0x200000,
+        ShowNebulae         =  0x40000,
+        ShowOpenClusters    =  0x80000,
+        ShowCloudShadows    =  0x200000,
+        ShowGalacticGrid    =  0x400000,
+        ShowEclipticGrid    =  0x800000,
+        ShowHorizonGrid     = 0x1000000,
     };
 
     enum StarStyle 
@@ -224,6 +227,20 @@ class Renderer
     void loadTextures(Body*);
 
     // Label related methods
+    enum LabelAlignment
+    {
+        AlignCenter,
+        AlignLeft,
+        AlignRight
+    };
+    
+    enum LabelVerticalAlignment
+    {
+        VerticalAlignCenter,
+        VerticalAlignBottom,
+        VerticalAlignTop,
+    };
+        
     static const int MaxLabelLength = 32;
     struct Annotation
     {
@@ -231,14 +248,38 @@ class Renderer
         const MarkerRepresentation* markerRep;
         Color color;
         Point3f position;
+        LabelAlignment halign;
+        LabelVerticalAlignment valign;
 
         bool operator<(const Annotation&) const;
     };
         
-    void addForegroundAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&, float depth = -1);
-    void addBackgroundAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&, float depth = -1);
-    void addBackgroundAnnotation(const std::string& labelText, Color, const Point3f&, float depth = -1);
-    void addSortedAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&);
+    void addForegroundAnnotation(const MarkerRepresentation* markerRep,
+                                 const std::string& labelText,
+                                 Color color,
+                                 const Point3f& position,
+                                 LabelAlignment halign = AlignLeft,
+                                 LabelVerticalAlignment valign = VerticalAlignBottom,                                       
+                                 float depth = -1);
+    void addBackgroundAnnotation(const MarkerRepresentation* markerRep,
+                                 const std::string& labelText,
+                                 Color color,
+                                 const Point3f& position,
+                                 LabelAlignment halign = AlignLeft,
+                                 LabelVerticalAlignment valign = VerticalAlignBottom,                                       
+                                 float depth = -1);
+    void addBackgroundAnnotation(const std::string& labelText,
+                                 Color color,
+                                 const Point3f& position,
+                                 LabelAlignment halign = AlignLeft,
+                                 LabelVerticalAlignment valign = VerticalAlignBottom,
+                                 float depth = -1);
+    void addSortedAnnotation(const MarkerRepresentation* markerRep,
+                             const std::string& labelText,
+                             Color color,
+                             const Point3f& position,
+                             LabelAlignment halign = AlignLeft,
+                             LabelVerticalAlignment valign = VerticalAlignBottom);
 
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
@@ -410,12 +451,6 @@ class Renderer
         };
     };
 
-    enum LabelAlignment
-    {
-        AlignCenter,
-        AlignLeft,
-        AlignRight
-    };
     typedef ObjectLabel<Star>          StarLabel;
     typedef ObjectLabel<DeepSkyObject> DSOLabel;    // currently not used
     
@@ -437,7 +472,7 @@ class Renderer
     void renderDeepSkyObjects(const Universe&,
                               const Observer&,
                               float faintestMagNight);
-    void renderCelestialSphere(const Observer& observer);
+    void renderSkyGrids(const Observer& observer);
     void buildRenderLists(const Point3d& astrocentricObserverPos,
                           const Frustum& viewFrustum,
                           const Vec3d& viewPlaneNormal,
@@ -550,12 +585,14 @@ class Renderer
     void addAnnotation(std::vector<Annotation>&,
                        const MarkerRepresentation*,
                        const std::string& labelText,
-                       Color,
-                       const Point3f&,
+                       Color color,
+                       const Point3f& position,
+                       LabelAlignment halign = AlignLeft,
+                       LabelVerticalAlignment = VerticalAlignBottom,
                        float depth = -1);
-    void renderAnnotations(const std::vector<Annotation>&, FontStyle fs, LabelAlignment la);
-    void renderBackgroundAnnotations(FontStyle fs, LabelAlignment la);
-    void renderForegroundAnnotations(FontStyle fs, LabelAlignment la);
+    void renderAnnotations(const std::vector<Annotation>&, FontStyle fs);
+    void renderBackgroundAnnotations(FontStyle fs);
+    void renderForegroundAnnotations(FontStyle fs);
     std::vector<Annotation>::iterator renderSortedAnnotations(std::vector<Annotation>::iterator,
                                                               float nearDist,
                                                               float farDist,
@@ -752,6 +789,9 @@ class Renderer
     static Color ConstellationLabelColor;
     static Color EquatorialGridLabelColor;
     static Color PlanetographicGridLabelColor;
+    static Color GalacticGridLabelColor;
+    static Color EclipticGridLabelColor;
+    static Color HorizonGridLabelColor;
 
     static Color StarOrbitColor;
     static Color PlanetOrbitColor;
@@ -768,6 +808,9 @@ class Renderer
     static Color EquatorialGridColor;
     static Color PlanetographicGridColor;
     static Color PlanetEquatorColor;
+    static Color GalacticGridColor;
+    static Color EclipticGridColor;
+    static Color HorizonGridColor;
 };
 
 
