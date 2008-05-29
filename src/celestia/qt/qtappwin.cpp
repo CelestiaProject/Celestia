@@ -309,7 +309,9 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     guidesToolBar->setMovable(true);
     guidesToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
 
-    guidesToolBar->addAction(actions->eqGridAction);
+    guidesToolBar->addAction(actions->equatorialGridAction);
+    guidesToolBar->addAction(actions->galacticGridAction);
+    guidesToolBar->addAction(actions->eclipticGridAction);
     guidesToolBar->addAction(actions->markersAction);
     guidesToolBar->addAction(actions->constellationsAction);
     guidesToolBar->addAction(actions->boundariesAction);

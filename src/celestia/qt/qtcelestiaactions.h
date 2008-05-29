@@ -47,7 +47,10 @@ Q_OBJECT
     QAction* createCheckableAction(const QString& text, int data);
     
  public:
-    QAction* eqGridAction;
+    QAction* equatorialGridAction;
+    QAction* galacticGridAction;
+    QAction* eclipticGridAction;
+    QAction* horizonGridAction;
     QAction* markersAction;
     QAction* constellationsAction;
     QAction* boundariesAction;
