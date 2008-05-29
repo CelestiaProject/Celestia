@@ -150,6 +150,7 @@ ENGINE_SOURCES = \
 	celengine/selection.cpp \
 	celengine/shadermanager.cpp \
 	celengine/simulation.cpp \
+	celengine/skygrid.cpp \
 	celengine/solarsys.cpp \
 	celengine/spheremesh.cpp \
 	celengine/star.cpp \
@@ -240,6 +241,7 @@ ENGINE_HEADERS = \
 	celengine/selection.h \
 	celengine/shadermanager.h \
 	celengine/simulation.h \
+	celengine/skygrid.h \
 	celengine/solarsys.h \
 	celengine/spheremesh.h \
 	celengine/star.h \
