@@ -116,6 +116,10 @@ void CelxLua::initRenderFlagMap()
     RenderFlagMap["automag"] = Renderer::ShowAutoMag;
     RenderFlagMap["atmospheres"] = Renderer::ShowAtmospheres;
     RenderFlagMap["grid"] = Renderer::ShowCelestialSphere;
+    //RenderFlagMap["equatorialgrid"] = Renderer::ShowCelestialSphere;
+    RenderFlagMap["galacticgrid"] = Renderer::ShowGalacticGrid;
+    RenderFlagMap["eclipticgrid"] = Renderer::ShowEclipticGrid;
+    RenderFlagMap["horizontalgrid"] = Renderer::ShowHorizonGrid;
     RenderFlagMap["smoothlines"] = Renderer::ShowSmoothLines;
     RenderFlagMap["partialtrajectories"] = Renderer::ShowPartialTrajectories;
     RenderFlagMap["nebulae"] = Renderer::ShowNebulae;
@@ -216,6 +220,9 @@ void CelxLua::initLabelColorMap()
     LabelColorMap["openclusters"]   = &Renderer::OpenClusterLabelColor;
     LabelColorMap["constellations"] = &Renderer::ConstellationLabelColor;
     LabelColorMap["equatorialgrid"] = &Renderer::EquatorialGridLabelColor;
+    LabelColorMap["galacticgrid"]   = &Renderer::GalacticGridLabelColor;
+    LabelColorMap["eclipticgrid"]   = &Renderer::EclipticGridLabelColor;
+    LabelColorMap["horizontalgrid"] = &Renderer::HorizonGridLabelColor;
     LabelColorMap["planetographicgrid"] = &Renderer::PlanetographicGridLabelColor;
 }
 
@@ -232,6 +239,9 @@ void CelxLua::initLineColorMap()
     LineColorMap["constellations"]   = &Renderer::ConstellationColor;
     LineColorMap["boundaries"]       = &Renderer::BoundaryColor;
     LineColorMap["equatorialgrid"]   = &Renderer::EquatorialGridColor;
+    LineColorMap["galacticgrid"]     = &Renderer::GalacticGridColor;
+    LineColorMap["eclipticgrid"]     = &Renderer::EclipticGridColor;
+    LineColorMap["horizontalgrid"]   = &Renderer::HorizonGridColor;
     LineColorMap["planetographicgrid"]   = &Renderer::PlanetographicGridColor;
     LineColorMap["planetequator"]   = &Renderer::PlanetEquatorColor;
 }
@@ -1863,7 +1873,7 @@ static int celestia_showconstellations(lua_State* l)
         lua_pushnil(l);
         while (lua_next(l, -2) != 0)
         {
-            const char* constellation;
+            const char* constellation = "";
             if (lua_isstring(l, -1))
             {
                 constellation = lua_tostring(l, -1);
@@ -1912,7 +1922,7 @@ static int celestia_hideconstellations(lua_State* l)
         lua_pushnil(l);
         while (lua_next(l, -2) != 0)
         {
-            const char* constellation;
+            const char* constellation = "";
             if (lua_isstring(l, -1))
             {
                 constellation = lua_tostring(l, -1);
