@@ -1855,7 +1855,7 @@ static int celestia_showconstellations(lua_State* l)
     Universe* u = appCore->getSimulation()->getUniverse();
     AsterismList* asterisms = u->getAsterisms();
 
-    if (lua_type(l,2) == LUA_TNONE) // No argument passed
+    if (lua_type(l, 2) == LUA_TNONE) // No argument passed
     {
         for (AsterismList::const_iterator iter = asterisms->begin();
              iter != asterisms->end(); iter++)
@@ -1904,7 +1904,7 @@ static int celestia_hideconstellations(lua_State* l)
     Universe* u = appCore->getSimulation()->getUniverse();
     AsterismList* asterisms = u->getAsterisms();
 
-    if (lua_type(l,2) == LUA_TNONE) // No argument passed
+    if (lua_type(l, 2) == LUA_TNONE) // No argument passed
     {
         for (AsterismList::const_iterator iter = asterisms->begin();
              iter != asterisms->end(); iter++)
@@ -1937,6 +1937,60 @@ static int celestia_hideconstellations(lua_State* l)
                 Asterism* ast = *iter;
   		          if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
                     ast->setActive(false);
+            }
+            lua_pop(l,1);
+        }
+    }
+
+    return 0;
+}
+
+static int celestia_setconstellationcolor(lua_State* l)
+{
+    Celx_CheckArgs(l, 4, 5, "Expected three or four arguments to celestia:setconstellationcolor()");
+
+    CelestiaCore* appCore = getAppCore(l, AllErrors);
+    Universe* u = appCore->getSimulation()->getUniverse();
+    AsterismList* asterisms = u->getAsterisms();
+
+    float r = (float) Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:setconstellationcolor() must be a number", 0.0);
+    float g = (float) Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:setconstellationcolor() must be a number", 0.0);
+    float b = (float) Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:setconstellationcolor() must be a number", 0.0);
+    Color constellationColor(r, g, b);
+
+    if (lua_type(l, 5) == LUA_TNONE) // Fourth argument omited
+    {
+        for (AsterismList::const_iterator iter = asterisms->begin();
+             iter != asterisms->end(); iter++)
+        {
+            Asterism* ast = *iter;
+            ast->setOverrideColor(constellationColor);
+        }
+    }
+    else if (!lua_istable(l, 5))
+    {
+        Celx_DoError(l, "Fourth argument to celestia:setconstellationcolor() must be a table");
+    }
+    else
+    {
+        lua_pushnil(l);
+        while (lua_next(l, -2) != 0)
+        {
+            const char* constellation;
+            if (lua_isstring(l, -1))
+            {
+                constellation = lua_tostring(l, -1);
+            }
+            else
+            {
+                Celx_DoError(l, "Values in table-argument to celestia:setconstellationcolor() must be strings");
+            }
+            for (AsterismList::const_iterator iter = asterisms->begin();
+                 iter != asterisms->end(); iter++)
+            {
+                Asterism* ast = *iter;
+  		          if (compareIgnoringCase(constellation, ast->getName(false)) == 0)
+                    ast->setOverrideColor(constellationColor);
             }
             lua_pop(l,1);
         }
@@ -2052,6 +2106,29 @@ static int celestia_setlabelcolor(lua_State* l)
 }
 
 
+static int celestia_getlabelcolor(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:getlabelcolor()");
+    string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlabelcolor() must be a string");
+
+    Color* labelColor = NULL;
+    if (CelxLua::LabelColorMap.count(key) == 0)
+    {
+        cerr << "Unknown label style: " << key << "\n";
+        return 0;
+    }
+    else
+    {
+        labelColor = CelxLua::LabelColorMap[key];
+        lua_pushnumber(l, labelColor->red());
+        lua_pushnumber(l, labelColor->green());
+        lua_pushnumber(l, labelColor->blue());
+
+        return 3;
+    }
+}
+
+
 static int celestia_setlinecolor(lua_State* l)
 {
     Celx_CheckArgs(l, 5, 5, "Four arguments expected for celestia:setlinecolor()");
@@ -2085,6 +2162,29 @@ static int celestia_setlinecolor(lua_State* l)
     }
 
     return 1;
+}
+
+
+static int celestia_getlinecolor(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:getlinecolor()");
+    string key = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getlinecolor() must be a string");
+
+    Color* lineColor = NULL;
+    if (CelxLua::LineColorMap.count(key) == 0)
+    {
+        cerr << "Unknown line style: " << key << "\n";
+        return 0;
+    }
+    else
+    {
+        lineColor = CelxLua::LineColorMap[key];
+        lua_pushnumber(l, lineColor->red());
+        lua_pushnumber(l, lineColor->green());
+        lua_pushnumber(l, lineColor->blue());
+
+        return 3;
+    }
 }
 
 
@@ -3116,8 +3216,11 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setorbitflags", celestia_setorbitflags);
     Celx_RegisterMethod(l, "showconstellations", celestia_showconstellations);
     Celx_RegisterMethod(l, "hideconstellations", celestia_hideconstellations);
+    Celx_RegisterMethod(l, "setconstellationcolor", celestia_setconstellationcolor);
     Celx_RegisterMethod(l, "setlabelcolor", celestia_setlabelcolor);
+    Celx_RegisterMethod(l, "getlabelcolor", celestia_getlabelcolor);
     Celx_RegisterMethod(l, "setlinecolor",  celestia_setlinecolor);
+    Celx_RegisterMethod(l, "getlinecolor",  celestia_getlinecolor);
     Celx_RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
     Celx_RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
     Celx_RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
