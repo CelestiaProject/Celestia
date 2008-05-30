@@ -268,7 +268,7 @@ Renderer::Renderer() :
     windowWidth(0),
     windowHeight(0),
     fov(FOV),
-    cosViewConeAngle((float) computeCosViewConeAngle(fov, 1, 1)),
+    cosViewConeAngle(computeCosViewConeAngle(fov, 1, 1)),
     screenDpi(96),
     corrFac(1.12f),
     faintestAutoMag45deg(7.0f),
@@ -977,7 +977,7 @@ void Renderer::resize(int width, int height)
 #endif
     windowWidth = width;
     windowHeight = height;
-    cosViewConeAngle = (float) computeCosViewConeAngle(fov, windowWidth, windowHeight);
+    cosViewConeAngle = computeCosViewConeAngle(fov, windowWidth, windowHeight);
     // glViewport(windowWidth, windowHeight);
 
 #ifdef USE_HDR
@@ -998,7 +998,7 @@ void Renderer::setFieldOfView(float _fov)
 {
     fov = _fov;
     corrFac = (0.12f * fov/FOV * fov/FOV + 1.0f);
-    cosViewConeAngle = (float) computeCosViewConeAngle(fov, windowWidth, windowHeight);
+    cosViewConeAngle = computeCosViewConeAngle(fov, windowWidth, windowHeight);
 }
 
 int Renderer::getScreenDpi() const
