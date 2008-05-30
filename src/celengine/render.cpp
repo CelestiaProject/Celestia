@@ -207,7 +207,7 @@ Color Renderer::EquatorialGridLabelColor(0.64f,  0.72f,  0.88f);
 Color Renderer::PlanetographicGridLabelColor(0.8f, 0.8f, 0.8f);
 Color Renderer::GalacticGridLabelColor  (0.88f,  0.72f,  0.64f);
 Color Renderer::EclipticGridLabelColor  (0.72f,  0.64f,  0.88f);
-Color Renderer::HorizonGridLabelColor(0.88f,  0.72f,  0.64f);
+Color Renderer::HorizonGridLabelColor   (0.72f,  0.72f,  0.72f);
 
 
 Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
@@ -227,7 +227,7 @@ Color Renderer::PlanetographicGridColor (0.8f,   0.8f,   0.8f);
 Color Renderer::PlanetEquatorColor      (0.5f,   1.0f,   1.0f);
 Color Renderer::GalacticGridColor       (0.38f,  0.38f,  0.28f);
 Color Renderer::EclipticGridColor       (0.38f,  0.28f,  0.38f);
-Color Renderer::HorizonGridColor     (0.38f,  0.38f,  0.28f);
+Color Renderer::HorizonGridColor        (0.38f,  0.38f,  0.38f);
 
 
 // Some useful unit conversions
@@ -10016,6 +10016,12 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 }
 
 
+static Vec3d toStandardCoords(const Vec3d& v)
+{
+    return Vec3d(v.x, -v.z, v.y);
+}
+
+
 void Renderer::renderSkyGrids(const Observer& observer)
 {
     if (renderFlags & ShowCelestialSphere)
@@ -10033,7 +10039,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
         galacticGrid.setOrientation(~(astro::eclipticToEquatorial() * astro::equatorialToGalactic()));
         galacticGrid.setLineColor(GalacticGridColor);
         galacticGrid.setLabelColor(GalacticGridLabelColor);
-        galacticGrid.setLatitudeUnits(SkyGrid::LatitudeDegrees);
+        galacticGrid.setLongitudeUnits(SkyGrid::LongitudeDegrees);
         galacticGrid.render(*this, observer, windowWidth, windowHeight);
     }
 
@@ -10043,13 +10049,48 @@ void Renderer::renderSkyGrids(const Observer& observer)
         grid.setOrientation(Quatd(1.0));
         grid.setLineColor(EclipticGridColor);
         grid.setLabelColor(EclipticGridLabelColor);
-        grid.setLatitudeUnits(SkyGrid::LatitudeDegrees);
+        grid.setLongitudeUnits(SkyGrid::LongitudeDegrees);
         grid.render(*this, observer, windowWidth, windowHeight);
     }
 
     if (renderFlags & ShowHorizonGrid)
     {
-        // TODO: Implement this
+        double tdb = observer.getTime();
+        const ObserverFrame* frame = observer.getFrame();
+        Body* body = frame->getRefObject().body();
+        
+        if (body)
+        {
+            SkyGrid grid;
+            grid.setLineColor(HorizonGridColor);
+            grid.setLabelColor(HorizonGridLabelColor);
+            grid.setLongitudeUnits(SkyGrid::LongitudeDegrees);
+            grid.setLongitudeDirection(SkyGrid::IncreasingClockwise);
+            
+            Vec3d zenithDirection = observer.getPosition() - body->getPosition(tdb);
+            zenithDirection.normalize();
+            
+            Vec3d northPole = Vec3d(0.0, 1.0, 0.0) * (body->getEclipticToEquatorial(tdb)).toMatrix3();
+            zenithDirection = toStandardCoords(zenithDirection);
+            northPole = toStandardCoords(northPole);
+            
+            Vec3d v = zenithDirection ^ northPole;
+
+            // Horizontal coordinate system not well defined when observer
+            // is at a pole.
+            double tolerance = 1.0e-10;
+            if (v.length() > tolerance && v.length() < 1.0 - tolerance)
+            {
+                v.normalize();
+                Vec3d u = v ^ zenithDirection;
+                
+                Mat3d m = Mat3d(u, v, zenithDirection);
+                Quatd q = Quatd::matrixToQuaternion(m);
+                grid.setOrientation(q);
+                
+                grid.render(*this, observer, windowWidth, windowHeight);
+            }
+        }
     }
 }
 
