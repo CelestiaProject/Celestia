@@ -24,12 +24,18 @@ class Observer;
 class SkyGrid
 {
 public:
-    enum LatitudeUnits
+    enum LongitudeUnits
     {
-        LatitudeDegrees,
-        LatitudeHours,
+        LongitudeDegrees,
+        LongitudeHours,
     };
 
+    enum LongitudeDirection
+    {
+        IncreasingCounterclockwise,
+        IncreasingClockwise,
+    };
+    
     SkyGrid();
     ~SkyGrid();
 
@@ -68,14 +74,28 @@ public:
         m_labelColor = labelColor;
     }
 
-    LatitudeUnits latitudeUnits() const
+    //! Get the units of longitude (hours or degrees)
+    LongitudeUnits longitudeUnits() const
     {
-        return m_latitudeUnits;
+        return m_longitudeUnits;
     }
 
-    void setLatitudeUnits(LatitudeUnits latitudeUnits)
+    //! Set whether longitude is measured in hours or degrees
+    void setLongitudeUnits(LongitudeUnits longitudeUnits)
     {
-        m_latitudeUnits = latitudeUnits;
+        m_longitudeUnits = longitudeUnits;
+    }
+    
+    //! Get the direction of increasing longitude
+    LongitudeDirection longitudeDirection() const
+    {
+        return m_longitudeDirection;
+    }
+    
+    //! Set the direction of increasing longitude (clockwise or counterclockwise)
+    void setLongitudeDirection(LongitudeDirection longitudeDirection)
+    {
+        m_longitudeDirection = longitudeDirection;
     }
 
 private:
@@ -88,7 +108,8 @@ private:
     Quatd m_orientation;
     Color m_lineColor;
     Color m_labelColor;
-    LatitudeUnits m_latitudeUnits;
+    LongitudeUnits m_longitudeUnits;
+    LongitudeDirection m_longitudeDirection;
 };
 
 #endif // _CELENGINE_PLANETGRID_H_
