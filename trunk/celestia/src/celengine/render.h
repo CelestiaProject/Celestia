@@ -654,7 +654,7 @@ class Renderer
     int windowWidth;
     int windowHeight;
     float fov;
-    float cosViewConeAngle;
+    double cosViewConeAngle;
     int screenDpi;
     float corrFac;
     float pixelSize;
