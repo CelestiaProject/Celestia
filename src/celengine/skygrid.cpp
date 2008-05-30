@@ -140,7 +140,8 @@ SkyGrid::SkyGrid() :
     m_orientation(1.0),
     m_lineColor(Color::White),
     m_labelColor(Color::White),
-    m_latitudeUnits(LatitudeHours)
+    m_longitudeUnits(LongitudeHours),
+    m_longitudeDirection(IncreasingCounterclockwise)
 {
 }
 
@@ -312,7 +313,7 @@ SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
     char minuteSymbol = 'm';
     char secondSymbol = 's';
 
-    if (m_latitudeUnits == LatitudeDegrees)
+    if (m_longitudeUnits == LongitudeDegrees)
     {
         totalUnits = DEG_MIN_SEC_TOTAL * 2;
         baseUnit = DEG;
@@ -326,6 +327,12 @@ SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
     if (longitude < 0)
         longitude += totalUnits;
 
+    // Reverse the labels if the longitude increases clockwise (e.g. for
+    // horizontal coordinate grids, where azimuth is defined to increase
+    // eastward from due north.
+    if (m_longitudeDirection == IncreasingClockwise)
+        longitude = (totalUnits - longitude) % totalUnits;
+    
     out << longitude / baseUnit << baseUnitSymbol;
     if (longitudeStep % baseUnit != 0)
     {
@@ -374,7 +381,7 @@ SkyGrid::meridianSpacing(double idealSpacing) const
     int totalUnits = HOUR_MIN_SEC_TOTAL;
 
     // Use degree spacings if the latitude units are degrees instead of hours
-    if (m_latitudeUnits == LatitudeDegrees)
+    if (m_longitudeUnits == LongitudeDegrees)
     {
         spacingTable = DEG_MIN_SEC_SPACING;
         tableSize = sizeof(DEG_MIN_SEC_SPACING) / sizeof(DEG_MIN_SEC_SPACING[0]);
@@ -492,7 +499,14 @@ SkyGrid::render(Renderer& renderer,
     Vec3d viewCenter(0.0, 0.0, -1.0);
     viewCenter = toStandardCoords(viewCenter * r);
 
-    double centerDec = std::asin(viewCenter.z);
+    double centerDec;
+    if (fabs(viewCenter.z) < 1.0)
+        centerDec = std::asin(viewCenter.z);
+    else if (viewCenter.z < 0.0)
+        centerDec = -PI / 2.0;
+    else
+        centerDec = PI / 2.0;
+    
     double minDec = centerDec - halfFov;
     double maxDec = centerDec + halfFov;
 
@@ -529,15 +543,15 @@ SkyGrid::render(Renderer& renderer,
     idealMeridianSpacing /= max(cos(PI / 2.0 - 5.0 * idealParallelSpacing), cos(maxAbsDec));
 #endif
 
-    int totalLatitudeUnits = HOUR_MIN_SEC_TOTAL;
-    if (m_latitudeUnits == LatitudeDegrees)
-        totalLatitudeUnits = DEG_MIN_SEC_TOTAL * 2;
+    int totalLongitudeUnits = HOUR_MIN_SEC_TOTAL;
+    if (m_longitudeUnits == LongitudeDegrees)
+        totalLongitudeUnits = DEG_MIN_SEC_TOTAL * 2;
 
     int raIncrement  = meridianSpacing(idealMeridianSpacing);
     int decIncrement = parallelSpacing(idealParallelSpacing);
 
-    int startRa  = (int) std::ceil (totalLatitudeUnits * (minTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
-    int endRa    = (int) std::floor(totalLatitudeUnits * (maxTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
+    int startRa  = (int) std::ceil (totalLongitudeUnits * (minTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
+    int endRa    = (int) std::floor(totalLongitudeUnits * (maxTheta / (PI * 2.0f)) / (float) raIncrement) * raIncrement;
     int startDec = (int) std::ceil (DEG_MIN_SEC_TOTAL  * (minDec / PI) / (float) decIncrement) * decIncrement;
     int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / PI) / (float) decIncrement) * decIncrement;
 
@@ -636,7 +650,7 @@ SkyGrid::render(Renderer& renderer,
     for (int ra = startRa; ra <= endRa; ra += raIncrement)
     {
 
-        double theta = 2.0 * PI * (double) ra / (double) totalLatitudeUnits;
+        double theta = 2.0 * PI * (double) ra / (double) totalLongitudeUnits;
         double cosTheta = cos(theta);
         double sinTheta = sin(theta);
 
