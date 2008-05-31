@@ -713,6 +713,51 @@ template <typename T> void SampledOrbitXYZV<T>::sample(double start, double t, i
 }
 
 
+// Scan past comments. A comment begins with the # character and ends
+// with a newline. Return true if the stream state is good. The stream
+// position will be at the first non-comment, non-whitespace character.
+static bool SkipComments(istream& in)
+{
+    bool inComment = false;
+    bool done = false;
+
+    int c = in.get();
+    while (!done)
+    {
+        if (in.eof())
+        {
+            done = true;
+        }
+        else 
+        {
+            if (inComment)
+            {
+                if (c == '\n')
+                    inComment = false;
+                clog << (char) c;
+            }
+            else
+            {
+                if (c == '#')
+                {
+                    inComment = true;
+                }
+                else if (!isspace(c))
+                {
+                    in.unget();
+                    done = true;
+                }
+            }
+        }
+
+        if (!done)
+            c = in.get();
+    }
+
+    return in.good();
+}
+
+
 // Load an ASCII xyz trajectory file. The file contains records with 4 double
 // precision values each:
 //
@@ -722,11 +767,18 @@ template <typename T> void SampledOrbitXYZV<T>::sample(double start, double t, i
 // 4: Position z
 //
 // Positions are in kilometers.
+//
+// The numeric data may be preceeded by a comment block. Commented lines begin
+// with a #; data is read start fromt the first non-whitespace character outside
+// of a comment.
 
 template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, TrajectoryInterpolation interpolation, T)
 {
     ifstream in(filename.c_str());
     if (!in.good())
+        return NULL;
+
+    if (!SkipComments(in))
         return NULL;
 
     SampledOrbit<T>* orbit = NULL;
@@ -770,10 +822,18 @@ template <typename T> SampledOrbit<T>* LoadSampledOrbit(const string& filename, 
 // 7: Velocity z
 //
 // Positions are in kilometers, velocities are kilometers per second.
+//
+// The numeric data may be preceeded by a comment block. Commented lines begin
+// with a #; data is read start fromt the first non-whitespace character outside
+// of a comment.
+
 template <typename T> SampledOrbitXYZV<T>* LoadSampledOrbitXYZV(const string& filename, TrajectoryInterpolation interpolation, T)
 {
     ifstream in(filename.c_str());
     if (!in.good())
+        return NULL;
+
+    if (!SkipComments(in))
         return NULL;
 
     SampledOrbitXYZV<T>* orbit = NULL;
