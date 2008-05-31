@@ -51,7 +51,7 @@ InfoPanel::~InfoPanel()
 
 void InfoPanel::buildInfoPage(Selection sel,
                               Universe* universe,
-                              double t)
+                              double tdb)
 {
     QString pageText;
     QTextStream stream(&pageText, QIODevice::WriteOnly);
@@ -60,11 +60,11 @@ void InfoPanel::buildInfoPage(Selection sel,
 
     if (sel.body() != NULL)
     {
-        buildSolarSystemBodyPage(sel.body(), t, stream);
+        buildSolarSystemBodyPage(sel.body(), tdb, stream);
     }
     else if (sel.star() != NULL)
     {
-        buildStarPage(sel.star(), stream);
+        buildStarPage(sel.star(), universe, tdb, stream);
     }
     else if (sel.deepsky() != NULL)
     {
@@ -227,64 +227,31 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 }
 
 
-void InfoPanel::buildStarPage(const Star* star, QTextStream& stream)
+Vec3d celToJ2000Ecliptic(const Point3d& p)
 {
+    return Vec3d(p.x, -p.z, p.y);
 }
 
 
-Point3d celToJ2000Ecliptic(const Point3d& p)
+Vec3d rectToSpherical(const Vec3d& v)
 {
-    return Point3d(p.x, -p.z, p.y);
-}
-
-
-Point3d J2000EclipticToJ2000Equator(const Point3d& p)
-{
-    return p * Mat3d::xrotation(-astro::J2000Obliquity);
-}
-
-
-Point3d J2000EquatorToGalactic(const Point3d& p)
-{
-    // North galactic pole at:
-    // RA 12h 51m 26.282s (192.85958 deg)
-    // Dec 27 d 07' 42.01" (27.1283361 deg)
-    // Zero longitude at position angle 122.932
-    // (J2000 coordinates)
-
-    double node = 282.85958;
-    double inclination = 90 - 27.1283361;
-    double longitudeAtNode = 32.932;
-
-    Quatd q = Quatd::zrotation(degToRad(node)) *
-              Quatd::xrotation(degToRad(inclination)) *
-              Quatd::zrotation(degToRad(-longitudeAtNode));
-    
-    return p * q.toMatrix3();
-}
-
-
-Point3d rectToSpherical(const Point3d& p)
-{
-    double r = p.distanceFromOrigin();
-    double theta = atan2(p.y, p.x);
+    double r = v.length();
+    double theta = atan2(v.y, v.x);
     if (theta < 0)
         theta = theta + 2 * PI;
-    double phi = asin(p.z / r);
+    double phi = asin(v.z / r);
 
-    return Point3d(theta, phi, r);
+    return Vec3d(theta, phi, r);
 }
 
 
-void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
-                             const Universe* universe,
-                             QTextStream& stream)
+void InfoPanel::buildStarPage(const Star* star, const Universe* universe, double tdb, QTextStream& stream)
 {
-    string name = universe->getDSOCatalog()->getDSOName(dso);
-    stream << "<h1>" << name.c_str() << "</h1><br>\n";
+    string name = universe->getStarCatalog()->getStarNameList(*star);
+    stream << "<b>" << QString::fromUtf8(name.c_str(), name.length()) << "</b><br>\n";
     
-    Point3d eqPos = J2000EclipticToJ2000Equator(celToJ2000Ecliptic(dso->getPosition()));
-    Point3d sph = rectToSpherical(eqPos);
+    Vec3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(star->getPosition(tdb)));
+    Vec3d sph = rectToSpherical(eqPos);
 
     int hours = 0;
     int minutes = 0;
@@ -297,7 +264,31 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
     stream << "Dec: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
         abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
 
-    Point3d galPos = J2000EquatorToGalactic(eqPos);
+}
+
+
+void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
+                             const Universe* universe,
+                             QTextStream& stream)
+{
+    string name = universe->getDSOCatalog()->getDSOName(dso);
+    stream << "<h1>" << name.c_str() << "</h1><br>\n";
+    
+    Vec3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(dso->getPosition()));
+    Vec3d sph = rectToSpherical(eqPos);
+
+    int hours = 0;
+    int minutes = 0;
+    double seconds = 0;
+    astro::decimalToHourMinSec(radToDeg(sph.x), hours, minutes, seconds);
+    stream << "RA: " << hours << "h " << abs(minutes) << "m " << abs(seconds) << "s<br>\n";
+
+    int degrees = 0;
+    astro::decimalToDegMinSec(radToDeg(sph.y), degrees, minutes, seconds);
+    stream << "Dec: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
+        abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
+
+    Vec3d galPos = astro::equatorialToGalactic(eqPos);
     sph = rectToSpherical(galPos);
     
     astro::decimalToDegMinSec(radToDeg(sph.x), degrees, minutes, seconds);
