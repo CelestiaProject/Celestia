@@ -26,13 +26,13 @@ class InfoPanel : public QDockWidget
     InfoPanel(const QString& title, QWidget* parent);
     ~InfoPanel();
 
-    void buildInfoPage(Selection sel, Universe*, double t);
+    void buildInfoPage(Selection sel, Universe*, double tdb);
 
  private:
     void pageHeader(QTextStream&);
     void pageFooter(QTextStream&);
-    void buildSolarSystemBodyPage(const Body* body, double t, QTextStream&);
-    void buildStarPage(const Star* star, QTextStream&);
+    void buildSolarSystemBodyPage(const Body* body, double tdb, QTextStream&);
+    void buildStarPage(const Star* star, const Universe* u, double tdb, QTextStream&);
     void buildDSOPage(const DeepSkyObject* dso, const Universe* u, QTextStream&);
 
  public:
