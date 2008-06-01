@@ -614,6 +614,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\skygrid.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\solarsys.cpp"
 					>
 				</File>
@@ -993,6 +997,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\simulation.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\skygrid.h"
 					>
 				</File>
 				<File
