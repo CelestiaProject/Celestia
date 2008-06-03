@@ -1,4 +1,4 @@
-# Catalog of 274 known extrasolar planets.
+# Catalog of 277 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1261,7 +1261,7 @@ AltSurface "limit of knowledge" "HD 46375/b"
 	EllipticalOrbit {
 		Period          0.0083
 		SemiMajorAxis   0.0393
-		Eccentricity    0.135
+		Eccentricity    0
 		Inclination     85.1
 		AscendingNode   284
 		MeanLongitude   208
@@ -2176,6 +2176,84 @@ AltSurface "limit of knowledge" "HD 102195/b"
 }
 
 
+"b" "TYC 3793-1994-1"   # XO-4
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.7 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.34 jupiters.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       550     # M.sin(i) = 1.72 jupiters
+	Radius     93800
+
+	InfoURL "http://exoplanet.eu/star.php?st=XO-4"
+
+	EllipticalOrbit {
+		Period          0.0113
+		SemiMajorAxis   0.0555
+		Eccentricity    0
+		Inclination     98.7
+		AscendingNode   107.8
+		MeanLongitude   144
+	}
+
+	Obliquity             99 # guess, to match inclination
+	EquatorAscendingNode  108 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 3793-1994-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "XO-5"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 86.8 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.15 jupiters.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       370     # M.sin(i) = 1.15 jupiters
+	Radius     80500
+
+	InfoURL "http://exoplanet.eu/star.php?st=XO-5"
+
+	EllipticalOrbit {
+		Period          0.0115
+		SemiMajorAxis   0.0508
+		Eccentricity    0
+		Inclination     101.3
+		AscendingNode   111.7
+		MeanLongitude   32
+	}
+
+	Obliquity             101 # guess, to match inclination
+	EquatorAscendingNode  112 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "XO-5/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 217014"   # 51 Peg
 {
 	Texture "exo-class4.*"
@@ -2390,6 +2468,45 @@ AltSurface "limit of knowledge" "HD 9826/d"
 }
 
 AltSurface "limit of knowledge" "HD 49674/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 7963-1570-1"   # WASP-7
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.6 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.92 jupiters.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       310     # M.sin(i) = 0.96 jupiters
+	Radius     64400
+
+	InfoURL "http://exoplanet.eu/star.php?st=WASP-7"
+
+	EllipticalOrbit {
+		Period          0.0136
+		SemiMajorAxis   0.0618
+		Eccentricity    0
+		Inclination     74.7
+		AscendingNode   308.2
+		MeanLongitude   260
+	}
+
+	Obliquity             75 # guess, to match inclination
+	EquatorAscendingNode  308 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 7963-1570-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
