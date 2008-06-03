@@ -137,6 +137,24 @@
 	AppMag 9.8
 }
 
+1019943793 "XO-4:GSC 03793-01994"
+{
+	RA  110.388333
+	Dec 58.268055
+	Distance 955
+	SpectralType "F5V"
+	AppMag 10.7
+}
+
+"XO-5:GSC 02959-00729"
+{
+	RA  116.71625
+	Dec 39.094444
+	Distance 880
+	SpectralType "G8V"
+	AppMag 12.13
+}
+
 # HAT-P survey
 
 "HAT-P-1:SAO 72884"
@@ -238,6 +256,15 @@
 	Distance 980
 	SpectralType "G4V"
 	AppMag 12.3
+}
+
+1015707963 "WASP-7"
+{
+	RA 311.042500
+	Dec -39.225278
+	Distance 456
+	SpectralType "F5V"
+	AppMag 9.51
 }
 
 # CoRoT survey
