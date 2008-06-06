@@ -30,7 +30,7 @@ OpenCluster::OpenCluster()
 
 const char* OpenCluster::getType() const
 {
-    return "Cluster";
+    return "Open cluster";
 }
 
 
