@@ -125,6 +125,7 @@ void CelxLua::initRenderFlagMap()
     RenderFlagMap["nebulae"] = Renderer::ShowNebulae;
     RenderFlagMap["openclusters"] = Renderer::ShowOpenClusters;
     RenderFlagMap["cloudshadows"] = Renderer::ShowCloudShadows;
+    RenderFlagMap["ecliptic"] = Renderer::ShowEcliptic;
 }
 
 void CelxLua::initLabelFlagMap()
@@ -243,7 +244,8 @@ void CelxLua::initLineColorMap()
     LineColorMap["eclipticgrid"]     = &Renderer::EclipticGridColor;
     LineColorMap["horizontalgrid"]   = &Renderer::HorizonGridColor;
     LineColorMap["planetographicgrid"]   = &Renderer::PlanetographicGridColor;
-    LineColorMap["planetequator"]   = &Renderer::PlanetEquatorColor;
+    LineColorMap["planetequator"]    = &Renderer::PlanetEquatorColor;
+    LineColorMap["ecliptic"]         = &Renderer::EclipticColor;
 }
 
 

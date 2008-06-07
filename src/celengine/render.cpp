@@ -228,6 +228,7 @@ Color Renderer::PlanetEquatorColor      (0.5f,   1.0f,   1.0f);
 Color Renderer::GalacticGridColor       (0.38f,  0.38f,  0.28f);
 Color Renderer::EclipticGridColor       (0.38f,  0.28f,  0.38f);
 Color Renderer::HorizonGridColor        (0.38f,  0.38f,  0.38f);
+Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
 
 
 // Some useful unit conversions
@@ -3327,9 +3328,7 @@ void Renderer::draw(const Observer& observer,
     glEnable(GL_TEXTURE_2D);
     
     // Render sky grids first--these will always be in the background
-    if (renderFlags & (ShowCelestialSphere | ShowGalacticGrid | ShowEclipticGrid | ShowHorizonGrid))
     {
-        glColor(EquatorialGridColor);
         glDisable(GL_TEXTURE_2D);
         if ((renderFlags & ShowSmoothLines) != 0)
             enableSmoothLines();
@@ -10091,6 +10090,21 @@ void Renderer::renderSkyGrids(const Observer& observer)
                 grid.render(*this, observer, windowWidth, windowHeight);
             }
         }
+    }
+
+    if (renderFlags & ShowEcliptic)
+    {
+        // Draw the J2000.0 ecliptic; trivial, since this forms the basis for
+        // Celestia's coordinate system.
+        const int subdivision = 200;
+        glColor(EclipticColor);
+        glBegin(GL_LINE_LOOP);
+        for (int i = 0; i < subdivision; i++)
+        {
+            double theta = (double) i / (double) subdivision * 2 * PI;
+            glVertex3f((float) cos(theta) * 1000.0f, 0.0f, (float) sin(theta) * 1000.0f);
+        }
+        glEnd();
     }
 }
 
