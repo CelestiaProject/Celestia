@@ -157,6 +157,7 @@ class Renderer
         ShowGalacticGrid    =  0x400000,
         ShowEclipticGrid    =  0x800000,
         ShowHorizonGrid     = 0x1000000,
+        ShowEcliptic        = 0x2000000,
     };
 
     enum StarStyle 
@@ -811,6 +812,7 @@ class Renderer
     static Color GalacticGridColor;
     static Color EclipticGridColor;
     static Color HorizonGridColor;
+    static Color EclipticColor;
 };
 
 
