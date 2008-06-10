@@ -363,8 +363,8 @@ Vec3d CachingOrbit::velocityAtTime(double jd) const
 {
 	if (jd != lastTime)
 	{
-		lastTime = jd;
 		lastVelocity = computeVelocity(jd);
+		lastTime = jd;  // must be set *after* call to computeVelocity
 		positionCacheValid = false;
 		velocityCacheValid = true;
 	}
