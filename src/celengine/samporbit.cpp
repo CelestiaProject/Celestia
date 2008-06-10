@@ -647,7 +647,7 @@ template <typename T> Vec3d SampledOrbitXYZV<T>::computeVelocity(double jd) cons
                 Vec3d v0(s0.velocity.x, s0.velocity.y, s0.velocity.z);
                 Vec3d v1(s1.velocity.x, s1.velocity.y, s1.velocity.z);
 
-                vel = cubicInterpolate(p0, v0 * h, p1, v1 * h, t) * ih;
+                vel = cubicInterpolateVelocity(p0, v0 * h, p1, v1 * h, t) * ih;
             }
             else
             {
@@ -734,7 +734,6 @@ static bool SkipComments(istream& in)
             {
                 if (c == '\n')
                     inComment = false;
-                clog << (char) c;
             }
             else
             {
