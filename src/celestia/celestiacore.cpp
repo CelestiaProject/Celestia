@@ -2884,17 +2884,46 @@ static void displayDuration(Overlay& overlay, double days)
 }
 
 
+// Display a positive angle as degrees, minutes, and seconds. If the angle is less than one
+// degree, only minutes and seconds are shown; if the angle is less than one minute, only
+// seconds are displayed.
 static void displayAngle(Overlay& overlay, double angle)
 {
     int degrees, minutes;
     double seconds;
     astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
 
-    overlay.oprintf("%d%s %02d' %.1f\"",
+    if (degrees > 0)
+    {
+        overlay.oprintf("%d%s %02d' %.1f\"",
                         degrees, UTF8_DEGREE_SIGN, abs(minutes), abs(seconds));
+    }
+    else if (minutes > 0)
+    {
+        overlay.oprintf("%02d' %.1f\"", abs(minutes), abs(seconds));
+    }
+    else
+    {
+        overlay.oprintf("%.2f\"", abs(seconds));
+    }
 }
 
-static void displayAngleInHourMinSec(Overlay& overlay, double angle)
+static void displayDeclination(Overlay& overlay, double angle)
+{
+    int degrees, minutes;
+    double seconds;
+    astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
+
+    char sign = '+';
+    if (angle < 0.0)
+        sign = '-';
+
+    overlay.oprintf("%c%d%s %02d' %.1f\"",
+                    sign, abs(degrees), UTF8_DEGREE_SIGN, abs(minutes), abs(seconds));
+}
+
+
+static void displayRightAscension(Overlay& overlay, double angle)
 {
     int hours, minutes;
     double seconds;
@@ -2959,10 +2988,10 @@ static void displayRADec(Overlay& overlay, Vec3d v)
 
     overlay << _("RA: ");
     overlay << " ";
-    displayAngleInHourMinSec(overlay, ra);
+    displayRightAscension(overlay, ra);
     overlay << endl;
     overlay << _("Dec: ");
-    displayAngle(overlay, dec);
+    displayDeclination(overlay, dec);
     overlay << endl;
 }
 
