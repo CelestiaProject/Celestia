@@ -1134,13 +1134,14 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
 // Get the center object of a frame definition. Return an empty selection
 // if it's missing or refers to an object that doesn't exist.
 static Selection
-getFrameCenter(const Universe& universe, Hash* frameData)
+getFrameCenter(const Universe& universe, Hash* frameData, const Selection& defaultCenter)
 {
     string centerName;
     if (!frameData->getString("Center", centerName))
     {
-        cerr << "No center specified for reference frame.\n";
-        return Selection();
+        if (defaultCenter.empty())
+            cerr << "No center specified for reference frame.\n";
+        return defaultCenter;
     }
 
     Selection centerObject = universe.findPath(centerName, NULL, 0);
@@ -1160,9 +1161,10 @@ getFrameCenter(const Universe& universe, Hash* frameData)
 
 static BodyFixedFrame*
 CreateBodyFixedFrame(const Universe& universe,
-                     Hash* frameData)
+                     Hash* frameData,
+                     const Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData);
+    Selection center = getFrameCenter(universe, frameData, defaultCenter);
     if (center.empty())
         return NULL;
     else
@@ -1172,9 +1174,10 @@ CreateBodyFixedFrame(const Universe& universe,
 
 static BodyMeanEquatorFrame*
 CreateMeanEquatorFrame(const Universe& universe,
-                       Hash* frameData)
+                       Hash* frameData,
+                       const Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData);
+    Selection center = getFrameCenter(universe, frameData, defaultCenter);
     if (center.empty())
         return NULL;
 
@@ -1389,7 +1392,7 @@ CreateFrameVector(const Universe& universe,
         Value* frameValue = constVecData->getValue("Frame");
         if (frameValue != NULL)
         {
-            f = CreateReferenceFrame(universe, frameValue);
+            f = CreateReferenceFrame(universe, frameValue, center);
             if (f == NULL)
                 return NULL;
         }
@@ -1406,9 +1409,10 @@ CreateFrameVector(const Universe& universe,
 
 static TwoVectorFrame*
 CreateTwoVectorFrame(const Universe& universe,
-                     Hash* frameData)
+                     Hash* frameData,
+                     const Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData);
+    Selection center = getFrameCenter(universe, frameData, defaultCenter);
     if (center.empty())
         return NULL;
 
@@ -1482,9 +1486,11 @@ CreateTwoVectorFrame(const Universe& universe,
 
 static J2000EclipticFrame*
 CreateJ2000EclipticFrame(const Universe& universe,
-                         Hash* frameData)
+                         Hash* frameData,
+                         const Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData);
+    Selection center = getFrameCenter(universe, frameData, defaultCenter);
+    
     if (center.empty())
         return NULL;
     else
@@ -1494,9 +1500,11 @@ CreateJ2000EclipticFrame(const Universe& universe,
 
 static J2000EquatorFrame*
 CreateJ2000EquatorFrame(const Universe& universe,
-                        Hash* frameData)
+                        Hash* frameData,
+                        const Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData);
+    Selection center = getFrameCenter(universe, frameData, defaultCenter);
+    
     if (center.empty())
         return NULL;
     else
@@ -1505,7 +1513,7 @@ CreateJ2000EquatorFrame(const Universe& universe,
 
 
 static ReferenceFrame*
-CreateComplexFrame(const Universe& universe, Hash* frameData)
+CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& defaultCenter)
 {
     Value* value = frameData->getValue("BodyFixed");
     if (value != NULL)
@@ -1517,7 +1525,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         }
         else
         {
-            return CreateBodyFixedFrame(universe, value->getHash());
+            return CreateBodyFixedFrame(universe, value->getHash(), defaultCenter);
         }
     }
 
@@ -1531,7 +1539,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         }
         else
         {
-            return CreateMeanEquatorFrame(universe, value->getHash());
+            return CreateMeanEquatorFrame(universe, value->getHash(), defaultCenter);
         }
     }
 
@@ -1545,7 +1553,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         }
         else
         {
-            return CreateTwoVectorFrame(universe, value->getHash());
+            return CreateTwoVectorFrame(universe, value->getHash(), defaultCenter);
         }
     }
 
@@ -1559,7 +1567,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         }
         else
         {
-            return CreateJ2000EclipticFrame(universe, value->getHash());
+            return CreateJ2000EclipticFrame(universe, value->getHash(), defaultCenter);
         }
     }
 
@@ -1573,7 +1581,7 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
         }
         else
         {
-            return CreateJ2000EquatorFrame(universe, value->getHash());
+            return CreateJ2000EquatorFrame(universe, value->getHash(), defaultCenter);
         }
     }
 
@@ -1584,16 +1592,18 @@ CreateComplexFrame(const Universe& universe, Hash* frameData)
 
 
 ReferenceFrame* CreateReferenceFrame(const Universe& universe,
-                                     Value* frameValue)
+                                     Value* frameValue,
+                                     const Selection& defaultCenter)
 {
     if (frameValue->getType() == Value::StringType)
     {
         // TODO: handle named frames
+        clog << "Invalid syntax for frame definition.\n";
         return NULL;
     }
     else if (frameValue->getType() == Value::HashType)
     {
-        return CreateComplexFrame(universe, frameValue->getHash());
+        return CreateComplexFrame(universe, frameValue->getHash(), defaultCenter);
     }
     else
     {
