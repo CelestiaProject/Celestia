@@ -338,7 +338,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     Value* frameValue = phaseData->getValue("OrbitFrame");
     if (frameValue != NULL)
     {
-        orbitFrame = CreateReferenceFrame(universe, frameValue);
+        orbitFrame = CreateReferenceFrame(universe, frameValue, defaultFrame->getCenter());
         if (orbitFrame == NULL)
         {
             return NULL;
@@ -356,7 +356,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     Value* bodyFrameValue = phaseData->getValue("BodyFrame");
     if (bodyFrameValue != NULL)
     {
-        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue);
+        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultFrame->getCenter());
         if (bodyFrame == NULL)
         {
             orbitFrame->release();
@@ -544,7 +544,7 @@ static bool CreateTimeline(Body* body,
     Value* frameValue = planetData->getValue("OrbitFrame");
     if (frameValue != NULL)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue);
+        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue, orbitBarycenter);
         if (frame != NULL)
         {
             orbitFrame = frame;
@@ -558,7 +558,7 @@ static bool CreateTimeline(Body* body,
     Value* bodyFrameValue = planetData->getValue("BodyFrame");
     if (bodyFrameValue != NULL)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue);
+        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue, orbitBarycenter);
         if (frame != NULL)
         {
             bodyFrame = frame;

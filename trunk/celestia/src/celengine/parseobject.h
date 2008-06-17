@@ -20,6 +20,7 @@
 
 class ReferenceFrame;
 class Universe;
+class Selection;
 
 bool ParseDate(Hash* hash, const string& name, double& jd);
 
@@ -35,6 +36,7 @@ RotationModel* CreateRotationModel(Hash* rotationData,
 RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
 
 ReferenceFrame* CreateReferenceFrame(const Universe& universe,
-                                     Value* frameValue);
+                                     Value* frameValue,
+                                     const Selection& defaultCenter);
 
 #endif // _CELENGINE_PARSEOBJECT_H_
