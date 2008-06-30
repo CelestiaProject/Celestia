@@ -211,6 +211,15 @@
 	AppMag 10.5
 }
 
+"HAT-P-9:GSC 02463-00281"
+{
+	RA 110.168333
+	Dec 37.140556
+	Distance 1560
+	SpectralType "F5V" # from mass, radius, temperature, luminosity
+	AppMag 12.3
+}
+
 # WASP survey
 
 "WASP-1"
@@ -265,6 +274,24 @@
 	Distance 456
 	SpectralType "F5V"
 	AppMag 9.51
+}
+
+"WASP-10:GSC 2752-00114"
+{
+	RA 348.992917
+	Dec 31.462778
+	Distance 290
+	SpectralType "K5"
+	AppMag 12.7
+}
+
+"WASP-14"
+{
+	RA 218.276250
+	Dec 21.894722
+	Distance 520
+	SpectralType "F5V"
+	AppMag 9.75
 }
 
 # CoRoT survey
