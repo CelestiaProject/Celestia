@@ -1,4 +1,4 @@
-# Catalog of 285 known extrasolar planets.
+# Catalog of 288 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -4963,6 +4963,35 @@ AltSurface "limit of knowledge" "HD 81688/b"
 }
 
 
+"b" "HD 221345"   # 14 And
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       1530     # M.sin(i) = 4.8 jupiters
+	Radius     84000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=14+And"
+
+	EllipticalOrbit {
+		Period          0.5088
+		SemiMajorAxis   0.83
+		Eccentricity    0
+		MeanLongitude   60
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 221345/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 73526"
 {
 	Texture "exo-class2.*"
@@ -7297,6 +7326,36 @@ AltSurface "limit of knowledge" "HD 213240/b"
 }
 
 
+"b" "HD 45410"   # 6 Lyn
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       760     # M.sin(i) = 2.4 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=6+Lyn"
+
+	EllipticalOrbit {
+		Period          2.4613
+		SemiMajorAxis   2.2
+		Eccentricity    0.134
+		ArgOfPericenter 212
+		MeanAnomaly     14
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 45410/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 222404"   # Gam Cep A
 {
 	Texture "exo-class2.*"
@@ -7352,6 +7411,36 @@ AltSurface "limit of knowledge" "HD 222404/b"
 }
 
 AltSurface "limit of knowledge" "HD 114386/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 16400"   # 81 Cet
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       1690     # M.sin(i) = 5.3 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=81+Cet"
+
+	EllipticalOrbit {
+		Period          2.6084
+		SemiMajorAxis   2.5
+		Eccentricity    0.206
+		ArgOfPericenter 301
+		MeanAnomaly     4
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 16400/b"
 {
 	Texture "extrasolar-lok.*"
 }
