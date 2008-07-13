@@ -213,11 +213,16 @@ own start-up settings.  Simply open the file "start.cel" in a plain text
 editor and follow the in-file instructions.  Also, view the celestia.cfg file
 in a plain text editor to see additional settings.
 
-Celestia allows you to create an entirely fictional universe, by modifying its
-solarsys.ssc, stars.dat, and hdnames.dat files.  The easiest file to modify is
-the solar system catalog (solarsys.ssc), since it's a plain text file and the
-format is very text-editor friendly.  It's also quite verbose, but that's not
-a problem yet.
+Celestia allows you to easily add real, hypothetical, or fictional objects
+by creating new catalog files. It is *not* recommended that you alter the
+built-in data files; nearly all desired modifications and additions can be
+made by placing new catalog files in Celestia's extras folders. There are three
+types of catalog files:
+ - ssc (solar system catalog: planets, moons, spacecraft, etc.)
+ - stc (star catalog)
+ - dsc (deep sky catalog: galaxies, star clusters, and nebulae)
+All three types of catalog file are text files that can be updated with your
+favorite text editing program.
 
 The units used for the solar system data may not be obvious.  All angle fields
 in the catalog are in degrees.  For planets, the period is specified in earth
@@ -265,25 +270,21 @@ fractal displacement map likenesses of asteroids and small moons.  3DS meshes
 are normalized to fit within a unit cube -- the Radius field determines how
 big they appear within Celestia.
 
-The stars.dat file is a binary database of stars, processed from the 50+ meg
-HIPPARCOS data set.  The first four bytes are an integer (int) value
-containing the number of stars in the database.  Following that are a bunch of
-records of this form:
-  4 byte int   : catalog number
-  4 byte float : right ascension
-  4 byte float : declination
-  4 byte float : parallax
-  2 byte int   : apparent magnitude
-  2 byte int   : stellar class
-  1 byte       : parallax error
+Most of the stars in Celestia are defined in the binary file stars.dat.
+The binary format is used instead of a text stc file because it's more
+compact and faster to load; the size and speed advantages of a binary file
+are significant with the over 100,000 stars in the Celestia.  Stars.dat was
+generated from the HIPPARCOS data set. Revisions and additions to the
+HIPPARCOS data set appear in the stc files revised.stc, nearstars.stc, 
+visbins.stc (visual binary stars), and spectbins.stc (spectroscopic binary
+stars.)
 
-RA, declination, and parallax are converted to x, y, z coordinates, and
-apparent magnitude is converted to absolute magnitude when the database is
-read.
-
-For more detailed information about creating add-ons for Celestia, please
-visit Selden's "Introduction to Celestia Add-ons" web page at:
+There are two very helpful resources with much more detailed information
+about creating add-ons for Celestia:
+Selden's "Introduction to Celestia Add-ons" web page:
   http://www.lns.cornell.edu/~seb/celestia/addon-intro.html
+The catalog file reference on the Celestia Wikibook:
+  http://en.wikibooks.org/wiki/Celestia/Catalog_File_Reference
 
 
 CELESTIA RESOURCES
