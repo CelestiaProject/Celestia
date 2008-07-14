@@ -62,9 +62,10 @@
 	}
 }
 
-"2005 FY9" "Sol" { 
+#13672 Makemake (2005 FY9)
+"Makemake" "Sol" { 
 
-	Class "asteroid" 
+	Class "dwarf planet" 
 	Texture "asteroid.jpg" 
 	Radius  850              # estimate
 
@@ -89,7 +90,11 @@
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
-#	Radius  750              # estimate
+#	Dimensions below taken from Rabinowitz et al. Photometric observations
+#	constraining the size, shape and albedo of 2003 EL62, a rapidly rotating,
+#	Pluto-sized object in the Kuiper Belt.
+#	http://arxiv.org/ftp/astro-ph/papers/0509/0509401.pdf
+
 	SemiAxes [ 980 760 500 ] # estimate
 
 	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
