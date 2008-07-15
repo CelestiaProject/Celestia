@@ -65,7 +65,7 @@
 #13672 Makemake (2005 FY9)
 "Makemake" "Sol" { 
 
-	Class "dwarf planet" 
+	Class "dwarfplanet" 
 	Texture "asteroid.jpg" 
 	Radius  850              # estimate
 
