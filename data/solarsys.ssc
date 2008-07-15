@@ -1,4 +1,67 @@
-# Data for our solar system.
+# Planets and major natural satellites of the solar system. Though the IAU
+# reclassified Pluto as a dwarf planet in 2006, it is still present in this
+# file for historical reasons. There's no defined distinction between 'major'
+# and 'minor' satellites. For the most part, the moons included in this file
+# are the ones known before the era of Solar System exploration by spacecraft.
+# The rest of the solarsystem's natural satellites are in minormoons.ssc and
+# numberedmoons.ssc.
+#
+# The orbital and physical data for the planets necessarily come from a
+# variety of sources.
+#
+#
+# === Orbits ===
+#
+# CustomOrbits are used for most of the large bodies in the solar system.
+# These are orbital calculations built into Celestia. In most cases,
+# EllipticalOrbits are provided as well in order to give the reader of this
+# file some rough idea of the shape and size of a body's orbit. If a body has
+# a CustomOrbit defined, its EllipticalOrbit is *not* used by Celestia; the
+# CustomOrbit will override the EllipticalOrbit.
+#
+# For the planets, the orbits are calculated using the VSOP87 theory
+# (P. Bretagnon and G. Francou, "Planetary theories in rectangular and
+# spherical variables. VSOP87 solutions", Astronomy & Astrophysics 202
+# (1988) 309–315.
+#
+# The orbits of the Galilean satellites are from J. H. Lieske's "E5" theory
+# as given in Jean Meeus's _Astronomical Algorithms_, pp. 301-315
+#
+# The orbits of the following Saturnian satellites are from Gerard Dourneau
+# (1987), "Observations et etude du mouvement des huit premiers satellites
+# de Saturne":
+# Mimas, Enceladus, Tethys, Dione, Rhea, Titan, Hyperion, Iapetus
+#
+# The orbits of the five largest Uranian satellites are from Laskar and
+# Jacobson (1978), "An Analytical Ephemeris of the Uranian Satellites"
+# (Miranda, Ariel, Umbriel, Titania, and Oberon)
+#
+# **** IMPORTANT ****
+# For applications where more accuracy is required, the orbits of any solar
+# system body may be replaced by a SPICE kernel or a file of postion/velocity
+# samples. Detailed documentation on how to do this may be found on the
+# Celestia WikiBook:
+#    http://en.wikibooks.org/wiki/Celestia/Trajectories#CustomOrbit
+# It is also possible to use JPL's DE405 or DE406 ephemeris For the positions
+# of the  planets, Moon, and Pluto. Details are here:
+#    http://en.wikibooks.org/wiki/Celestia/JPL_Ephemerides
+# *******************
+#
+#
+# === Rotational Elements ===
+#
+# For most bodies, IAU rotational elements are used. These are implemented
+# internally by Celestia and selected by using a CustomRotation. The IAU
+# rotational elements are given here:
+#  http://astrogeology.usgs.gov/Projects/WGCCRE/
+#
+# UniformRotations are also listed for purely informational reasons; they are
+# overridden by CustomRotations (when present.)
+#
+#
+# When alternate data sources are used for orbits or rotational elements, the
+# source is noted by a comment in the body definition
+
 
 "Mercury" "Sol"
 {
@@ -6,23 +69,29 @@
 	Radius 2440
 
 	CustomOrbit "vsop87-mercury"
-	EllipticalOrbit {
-	Period            0.2408
-	SemiMajorAxis     0.3871
-	Eccentricity      0.2056
-	Inclination       7.0049
-	AscendingNode    48.33167
-	LongOfPericenter 77.456
-        MeanLongitude   252.251
-	}
 
-	UniformRotation
-	{
-	    Period 1407.509405
-	    Inclination         7.01
-	    AscendingNode 48.42
-	    MeridianAngle 291.20
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit {
+	#    Period            0.2408
+	#    SemiMajorAxis     0.3871
+	#    Eccentricity      0.2056
+	#    Inclination       7.0049
+	#    AscendingNode    48.33167
+	#    LongOfPericenter 77.456
+        #    MeanLongitude   252.251
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-mercury"
+
+	# Overridden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period 1407.509405
+	#    Inclination         7.01
+	#    AscendingNode 48.42
+	#    MeridianAngle 291.20
+	# }
 
 	Albedo            0.06
 }
@@ -52,23 +121,30 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	}
 
 	CustomOrbit "vsop87-venus"
-	EllipticalOrbit {
-		Period            0.6152
-		SemiMajorAxis     0.7233
-		Eccentricity      0.0068
-		Inclination       3.3947
-		AscendingNode     76.681
-		LongOfPericenter 131.533
-	        MeanLongitude    181.979
-	}
 
-	UniformRotation
-	{
-	Period  5832.479839
-	Inclination       178.78
-	AscendingNode 300.22
-	MeridianAngle       137.45
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+        # {
+	#	Period            0.6152
+	#	SemiMajorAxis     0.7233
+	#	Eccentricity      0.0068
+	#	Inclination       3.3947
+	#	AscendingNode     76.681
+	#	LongOfPericenter 131.533
+	#        MeanLongitude    181.979
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-venus"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period  5832.479839
+	#    Inclination       178.78
+	#    AscendingNode 300.22
+	#    MeridianAngle       137.45
+	# }
 
 	Albedo            0.77
 }
@@ -104,31 +180,30 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	}
 
 	CustomOrbit "vsop87-earth"
-	EllipticalOrbit {	
-		Period            1.0000
-		SemiMajorAxis     1.0000
-		Eccentricity      0.0167
-		Inclination       0.0001
-		AscendingNode   348.739
-		LongOfPericenter 102.947
-	        MeanLongitude   100.464
-	}
 
-#       Very approximate precession for Earth
-#	PrecessingRotation
-#	{
-#		Period           23.9344694
-#		Inclination     -23.4392911
-#		Offset          280.5    # offset at default epoch J2000
-#		PrecessionPeriod 26000
-#	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit {	
+	#	Period            1.0000
+	#	SemiMajorAxis     1.0000
+	#	Eccentricity      0.0167
+	#	Inclination       0.0001
+	#	AscendingNode   348.739
+	#	LongOfPericenter 102.947
+	#        MeanLongitude   100.464
+	# }
 
-	UniformRotation
-	{
-	Period              23.9344694
-	Inclination        -23.4392911
-	MeridianAngle      280.5    # offset at default epoch J2000
-	}
+        # Orientation of Earth's axis with respect to the ecliptic plane and
+        # equinox of J2000 is computed with the long period extension of
+        # extension of the the P03 precession model presented in
+        # "Long-periodic Precession Parameters", J. Vondrak (2006)
+	CustomRotation "earth-p03lp"
+
+	# UniformRotation
+	# {
+	#    Period              23.9344694
+	#    Inclination        -23.4392911
+	#    MeridianAngle      280.5    # offset at default epoch J2000
+	# }
 
 	Albedo            0.30
 }
@@ -145,23 +220,29 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	InfoURL "http://www.nineplanets.org/luna.html"
 
 	CustomOrbit "moon"
-	EllipticalOrbit {
-		Period           27.321661
-		SemiMajorAxis    384400
-		Eccentricity     0.054900
-		Inclination      5.15
-	}
+
+	# Overridden by CustomOrbit
+	# EllipticalOrbit {
+	#	Period           27.321661
+	#	SemiMajorAxis    384400
+	#	Eccentricity     0.054900
+	#	Inclination      5.15
+	# }
 
 	OrbitFrame {
 		EquatorJ2000 { Center "Sol/Earth" }
 	}
 
-	UniformRotation
-	{
-	    Inclination        23.45
-            AscendingNode       0.0
-            MeridianAngle      38
-	}
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-moon"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination        23.45
+        #    AscendingNode       0.0
+        #    MeridianAngle      38
+	# }
 
 	LunarLambert 1.0
 
@@ -199,24 +280,30 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	}
 
 	CustomOrbit "vsop87-mars"
-	EllipticalOrbit
-	{
-	Period            1.8809
-	SemiMajorAxis     1.5237
-	Eccentricity      0.0934
-	Inclination       1.8506
-	AscendingNode     49.479
-	LongOfPericenter 336.041
-        MeanLongitude    355.453
-	}
 
-	UniformRotation
-	{
-	Period    	 24.622962
-	Inclination         	 26.72
-	AscendingNode	 82.91
-	MeridianAngle    	136.005
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period            1.8809
+	#    SemiMajorAxis     1.5237
+	#    Eccentricity      0.0934
+	#    Inclination       1.8506
+	#    AscendingNode     49.479
+	#    LongOfPericenter 336.041
+        #    MeanLongitude    355.453
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-mars"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period    	         24.622962
+	#    Inclination         26.72
+	#    AscendingNode	 82.91
+	#    MeridianAngle    	136.005
+	# }
 
 	Albedo            0.150
 }
@@ -231,20 +318,24 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 	EllipticalOrbit
 	{
-	Period         0.318910
-	SemiMajorAxis  9377.2
-	Eccentricity   0.0151
-	Inclination    1.075
-	AscendingNode  128.694   # J2000
-	ArgOfPericenter 213.804  # J2000
-	MeanAnomaly    191.771   # J2000
+	    Period         0.318910
+	    SemiMajorAxis  9377.2
+	    Eccentricity   0.0151
+	    Inclination    1.075
+	    AscendingNode  128.694   # J2000
+	    ArgOfPericenter 213.804  # J2000
+	    MeanAnomaly    191.771   # J2000
 	}
 
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle	      	354.2
-	}
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-phobos"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination		  0.0
+	#    MeridianAngle	      	354.2
+	# }
 
 	Albedo         0.07
 }
@@ -258,21 +349,25 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 	EllipticalOrbit
 	{
-	Period            1.262441
-	SemiMajorAxis     23463.2
-	Eccentricity      0.00033
-	Inclination       1.793
-	AscendingNode    25.229
-	ArgOfPericenter 208.213 
-	MeanAnomaly     344.128
+	    Period            1.262441
+	    SemiMajorAxis     23463.2
+	    Eccentricity      0.00033
+	    Inclination       1.793
+	    AscendingNode    25.229
+	    ArgOfPericenter 208.213 
+	    MeanAnomaly     344.128
 	}
 
-	UniformRotation
-	{
-	Inclination		  0.9
-	AscendingNode	183.0
-	MeridianAngle		214.7
-	}
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-deimos"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination          0.9
+	#    AscendingNode	183.0
+	#    MeridianAngle      214.7
+	# }
 
 	Albedo         0.08
 }
@@ -287,16 +382,18 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Oblateness 0.0649
 
 	CustomOrbit "vsop87-jupiter"
-	EllipticalOrbit
-	{
-	Period           11.8622
-	SemiMajorAxis     5.2034
-	Eccentricity      0.0484
-	Inclination       1.3053
-	AscendingNode   100.556
-	LongOfPericenter 14.7539
-        MeanLongitude    34.404
-	}
+
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period           11.8622
+	#    SemiMajorAxis     5.2034
+	#    Eccentricity      0.0484
+	#    Inclination       1.3053
+	#    AscendingNode   100.556
+	#    LongOfPericenter 14.7539
+        #    MeanLongitude    34.404
+	# }
 
 	Atmosphere {
 		Height 300
@@ -306,6 +403,10 @@ AltSurface "limit of knowledge" "Sol/Mercury"
                 Sunset [ 1.0 0.6 0.2 ]
 	}
 
+	# IAU rotation not used for Jupiter; it is based on System III
+	# (radio emissions), not the cloud positions. In Celestia, we're
+	# more interested in having the Great Red Spot appear in the
+	# (approximately) correct place.
 	UniformRotation
 	{
 	Period		9.927953 # System II (for GRS)
@@ -341,14 +442,19 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	MeanAnomaly     315.352094   # at epoch
 	}
 
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle		252.1
-	}
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-amalthea"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination		  0.0
+	#    MeridianAngle		252.1
+	# }
 
 	Albedo          0.06
 }
+
 
 "Io" "Sol/Jupiter"
 {
@@ -356,23 +462,29 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Radius   1821.6
 
 	CustomOrbit "io"
-	EllipticalOrbit
-	{
-	Epoch 2443000.00038375
-	Period         1.769138
-	SemiMajorAxis  421600
-	Eccentricity   0.0041
-	Inclination    0.040
-	AscendingNode    312.981
-	LongOfPericenter  97.735
-	MeanLongitude    106.724
-	}
 
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle		220.8
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Epoch 2443000.00038375
+	#    Period         1.769138
+	#    SemiMajorAxis  421600
+	#    Eccentricity   0.0041
+	#    Inclination    0.040
+	#    AscendingNode    312.981
+	#    LongOfPericenter  97.735
+	#    MeanLongitude    106.724
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-io"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination		  0.0
+	#    MeridianAngle		220.8
+	# }
 
 	Albedo         0.61
 }
@@ -389,23 +501,29 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Io"
 	Radius   1560.8
 
 	CustomOrbit "europa"
-	EllipticalOrbit
-	{
-	Epoch 2443000.00038375
-	Period         3.551810
-	SemiMajorAxis  670900
-	Eccentricity   0.0101
-	Inclination    0.470
-	AscendingNode    101.087
-	LongOfPericenter 155.512
-	MeanLongitude    176.377
-	}
 
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle 		 56.2
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Epoch 2443000.00038375
+	#    Period         3.551810
+	#    SemiMajorAxis  670900
+	#    Eccentricity   0.0101
+	#    Inclination    0.470
+	#    AscendingNode    101.087
+	#    LongOfPericenter 155.512
+	#    MeanLongitude    176.377
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-europa"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination		  0.0
+	#    MeridianAngle 		 56.2
+	# }
 
 	Albedo         0.64
 }
@@ -422,24 +540,30 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
 	Radius   2631.2
 
 	CustomOrbit "ganymede"
-	EllipticalOrbit
-	{
-	Epoch 2443000.00038375
-	Period         7.154553
-	SemiMajorAxis  1070000
-	Eccentricity   0.0015
-	Inclination    0.195
-	AscendingNode    119.841
-	LongOfPericenter 188.831
-	MeanLongitude    121.206
-	}
 
-	UniformRotation
-	{
-	Inclination		  0.1
-	AscendingNode	161.6
-	MeridianAngle		262.1
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Epoch 2443000.00038375
+	#    Period         7.154553
+	#    SemiMajorAxis  1070000
+	#    Eccentricity   0.0015
+	#    Inclination    0.195
+	#    AscendingNode    119.841
+	#    LongOfPericenter 188.831
+	#    MeanLongitude    121.206
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-ganymede"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination		  0.1
+	#    AscendingNode	161.6
+	#    MeridianAngle		262.1
+	# }
 
 	Albedo         0.42
 }
@@ -456,24 +580,30 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
 	Radius   2410.3
 
 	CustomOrbit "callisto"
-	EllipticalOrbit
-	{
-	Epoch 2443000.00038375
-	Period        16.689018
-	SemiMajorAxis  1883000
-	Eccentricity   0.007
-	Inclination    0.281
-	AscendingNode    323.265
-	LongOfPericenter 335.933
-	MeanLongitude     85.091
-	}
 
-	UniformRotation
-	{
-	Inclination		  0.4
-	AscendingNode	160.6
-	MeridianAngle		120.1
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Epoch 2443000.00038375
+	#    Period        16.689018
+	#    SemiMajorAxis  1883000
+	#    Eccentricity   0.007
+	#    Inclination    0.281
+	#    AscendingNode    323.265
+	#    LongOfPericenter 335.933
+	#    MeanLongitude     85.091
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-callisto"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination	  0.4
+	#    AscendingNode	160.6
+	#    MeridianAngle	120.1
+	# }
 
 	Albedo         0.20
 }
@@ -494,16 +624,18 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Oblateness 0.0980
 
 	CustomOrbit "vsop87-saturn"
-	EllipticalOrbit
-	{
-	Period           29.4577
-	SemiMajorAxis     9.5371
-	Eccentricity      0.0542
-	Inclination       2.4845
-	AscendingNode   113.715
-	LongOfPericenter 92.432
-        MeanLongitude    49.944
-	}
+
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period           29.4577
+	#    SemiMajorAxis     9.5371
+	#    Eccentricity      0.0542
+	#    Inclination       2.4845
+	#    AscendingNode   113.715
+	#    LongOfPericenter 92.432
+        #    MeanLongitude    49.944
+	# }
 
 	Atmosphere {
 		Height 300
@@ -514,10 +646,10 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	UniformRotation
 	{	
-	Period        10.65622 # System III (magnetic field)
-	Inclination             28.049   # 28.052   # old value: 26.73
-	AscendingNode 169.530   # 168.8112 # 169.53
-        MeridianAngle       358.922   # correct System III prime meridian
+	    Period          10.65622 # System III (magnetic field)
+	    Inclination     28.049   # 28.052   # old value: 26.73
+	    AscendingNode  169.530   # 168.8112 # 169.53
+            MeridianAngle  358.922   # correct System III prime meridian
 	}
 
 	Albedo            0.50
@@ -548,11 +680,15 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	MeanLongitude	266.2144
 	}
 
-	UniformRotation
-	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	MeridianAngle  	86
-	}
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-prometheus"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	#    MeridianAngle  	86
+	# }
 
 	Albedo 0.6
 }
@@ -566,21 +702,25 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	EllipticalOrbit
 	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	Period		0.6285
-	SemiMajorAxis	141710
-	Eccentricity	0.0042
-	Inclination	0.0522
-	AscendingNode	290.0163
-	LongOfPericenter 10.4899
-	MeanLongitude	212.6961     
+	    Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	    Period		0.6285
+	    SemiMajorAxis	141710
+	    Eccentricity	0.0042
+	    Inclination         0.0522
+	    AscendingNode     290.0163
+	    LongOfPericenter   10.4899
+	    MeanLongitude     212.6961     
 	}
 
-	UniformRotation
-	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	MeridianAngle          33
-	}
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-pandora"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	#    MeridianAngle          33
+	# }
 
 	Albedo 0.5
 }
@@ -592,16 +732,16 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Radius    72 # maximum semi-axis
 	MeshCenter [ -5.196 -2.241 -1.878 ]
 
-	EllipticalOrbit
+	 EllipticalOrbit
 	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	Period		0.6945      # 0.6943: period set to Janus/Epimetheus average
-	SemiMajorAxis	151410
-	Eccentricity	0.0098
-	Inclination	0.3541
-	AscendingNode	45.5973
-	LongOfPericenter 358.5774
-	MeanLongitude	306.0531
+	    Epoch		2453005.5   # 2004 Jan 1 00:00UT
+	    Period		0.6945      # 0.6943: period set to Janus/Epimetheus average
+	    SemiMajorAxis	151410
+	    Eccentricity	0.0098
+	    Inclination	0.3541
+	    AscendingNode	45.5973
+	    LongOfPericenter 358.5774
+	    MeanLongitude	306.0531
 	}
 
 	UniformRotation
@@ -657,21 +797,27 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	Radius    198.6
 
 	CustomOrbit "mimas"
-	EllipticalOrbit
-	{
-	Period         0.9424218
-	SemiMajorAxis  185520
-	Eccentricity   0.0202
-	Inclination    1.53
-	MeanAnomaly    23
-	}
 
-	UniformRotation
-	{
-	Inclination		  1.5 #J2000.0
-	AscendingNode	137.8 #J2000.0
-	MeridianAngle		190.7 #J2000.0
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         0.9424218
+	#    SemiMajorAxis  185520
+	#    Eccentricity   0.0202
+	#    Inclination    1.53
+	#    MeanAnomaly    23
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-mimas"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination          1.5 #J2000.0
+	#    AscendingNode	137.8 #J2000.0
+	#    MeridianAngle	190.7 #J2000.0
+	# }
 
 	Albedo         0.5
 }
@@ -690,20 +836,26 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Radius     249.4
 
 	CustomOrbit "enceladus"
-	EllipticalOrbit
-	{
-	Period         1.370218
-	SemiMajorAxis  238020
-	Eccentricity   0.0045
-	Inclination    0.02
-	MeanAnomaly    215
-	}
 
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle		322.9
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         1.370218
+	#    SemiMajorAxis  238020
+	#    Eccentricity   0.0045
+	#    Inclination    0.02
+	#    MeanAnomaly    215
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-enceladus"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination		  0.0
+	#    MeridianAngle		322.9
+	# }
 
 	Albedo         0.99
 }
@@ -714,20 +866,26 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Radius     529.9
 
 	CustomOrbit "tethys"
-	EllipticalOrbit
-	{
-	Period         1.887802
-	SemiMajorAxis  294660
-	Eccentricity   0.0
-	Inclination    1.09
-	MeanAnomaly    98
-	}
 
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle		330.6
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         1.887802
+	#    SemiMajorAxis  294660
+	#    Eccentricity   0.0
+	#    Inclination    1.09
+	#    MeanAnomaly    98
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-tethys"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Inclination		  0.0
+	#    MeridianAngle		330.6
+	# }
 
 	Albedo         0.9
 }
@@ -738,15 +896,21 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Radius     559
 
 	CustomOrbit "dione"
-	EllipticalOrbit
-	{
-	Period         2.736915
-	SemiMajorAxis  377400
-	Eccentricity   0.0022
-	Inclination    0.02
-	MeanAnomaly    310
-	}
 
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         2.736915
+	#    SemiMajorAxis  377400
+	#    Eccentricity   0.0022
+	#    Inclination    0.02
+	#    MeanAnomaly    310
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-dione"
+
+	# Overriden by CustomRotation
 	UniformRotation
 	{
 	Inclination		  0.0
@@ -762,15 +926,21 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Radius     764
 
 	CustomOrbit "rhea"
-	EllipticalOrbit
-	{
-	Period         4.517500
-	SemiMajorAxis  527040
-	Eccentricity   0.0010
-	Inclination    0.35
-	MeanAnomaly    190
-	}
 
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         4.517500
+	#    SemiMajorAxis  527040
+	#    Eccentricity   0.0010
+	#    Inclination    0.35
+	#    MeanAnomaly    190
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-rhea"
+
+	# Overriden by CustomRotation
 	UniformRotation
 	{
 	Inclination		  0.0
@@ -805,15 +975,21 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
     }
     
 	CustomOrbit "titan"
-	EllipticalOrbit
-	{
-	Period            15.945421
-	SemiMajorAxis 1221850
-	Eccentricity       0.0292
-	Inclination        0.33
-	MeanAnomaly      120
-	}
 
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period            15.945421
+	#    SemiMajorAxis 1221850
+	#    Eccentricity       0.0292
+	#    Inclination        0.33
+	#    MeanAnomaly      120
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-titan"
+
+	# Overriden by CustomRotation
 	UniformRotation
 	{
 	Inclination		  0.6
@@ -832,14 +1008,16 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	MeshCenter [ -3.424 10.938 4.498 ]
 
 	CustomOrbit "hyperion"
-	EllipticalOrbit
-	{
-	Period        21.276609
-	SemiMajorAxis  1481100
-	Eccentricity   0.1042
-	Inclination    0.43
-	MeanAnomaly    350
-	}
+
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period        21.276609
+	#    SemiMajorAxis  1481100
+	#    Eccentricity   0.1042
+	#    Inclination    0.43
+	#    MeanAnomaly    350
+	# }
 
 	# The rotation of Hyperion is chaotic; we don't attempt to model
 	# the rotation exactly, but instead use non-zero precession rate to
@@ -863,18 +1041,24 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 "Iapetus" "Sol/Saturn"
 {
 	Texture "iapetus.*"
-    Radius     718
+        Radius     718
 
 	CustomOrbit "iapetus"
-	EllipticalOrbit
-	{
-	Period         79.330183
-	SemiMajorAxis  3561300
-	Eccentricity   0.0283
-	Inclination    7.52
-	MeanAnomaly    245
-	}
 
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         79.330183
+	#    SemiMajorAxis  3561300
+	#    Eccentricity   0.0283
+	#    Inclination    7.52
+	#    MeanAnomaly    245
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-iapetus"
+
+	# Overriden by CustomRotation
 	UniformRotation
 	{
 	Inclination		 15.5
@@ -903,12 +1087,19 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	MeanAnomaly      31.776215      # at epoch
 	}
     
+	BodyFrame { EquatorJ2000 {} }
+
+
+	# Not used; IAU elements appear to be based on pre-Cassini
+	# information.
+	# CustomRotation "iau-phoebe"
+
 	UniformRotation
 	{
-	Period          9.2735 # Bauer et al, Astrophysical Journal 2004; 610(2): L57-L60 
-	Inclination               8.7    # Porco et al, Science 2005; 307: 1237-42 
-	AscendingNode  245.3    # Porco et al, Science 2005; 307: 1237-42 
-	MeridianAngle        135.0    # approximate, from encounter images 
+	    Period          9.2735 # Bauer et al, Astrophysical Journal 2004; 610(2): L57-L60 
+	    Inclination               8.7    # Porco et al, Science 2005; 307: 1237-42 
+	    AscendingNode  245.3    # Porco et al, Science 2005; 307: 1237-42 
+	    MeridianAngle        135.0    # approximate, from encounter images 
 	}
 
 	Albedo         0.05
@@ -925,16 +1116,18 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	Oblateness 0.0229
 
 	CustomOrbit "vsop87-uranus"
-	EllipticalOrbit
-	{
-	Period           84.0139
-	SemiMajorAxis    19.1913
-	Eccentricity      0.0472
-	Inclination       0.7699
-	AscendingNode     74.230
-	LongOfPericenter 170.964
-        MeanLongitude    313.232
-	}
+
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period           84.0139
+	#    SemiMajorAxis    19.1913
+	#    Eccentricity      0.0472
+	#    Inclination       0.7699
+	#    AscendingNode     74.230
+	#    LongOfPericenter 170.964
+        #    MeanLongitude    313.232
+	# }
 
 	Atmosphere {
 		Height 130
@@ -946,10 +1139,10 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 
 	UniformRotation
 	{
-	Period        17.24 # System III (magnetic field)
-	Inclination             97.81
-	AscendingNode 167.76
-	MeridianAngle       331.18 # correct System III prime meridian
+	    Period          17.24 # System III (magnetic field)
+	    Inclination     97.81
+	    AscendingNode  167.76
+	    MeridianAngle  331.18 # correct System III prime meridian
 	}
 
 	Albedo            0.66
@@ -968,21 +1161,27 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	Radius   235.8
 
 	CustomOrbit "miranda"
-	EllipticalOrbit
-	{
-	Period         1.413
-	SemiMajorAxis  129800
-	Eccentricity   0.0027
-	Inclination    4.22
-	MeanAnomaly    120
-	}
 
-	UniformRotation
-	{
-	Period		 33.92350159 # enforce sync rotation
-	Inclination		  0.0
-	MeridianAngle 		144.3
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         1.413
+	#    SemiMajorAxis  129800
+	#    Eccentricity   0.0027
+	#    Inclination    4.22
+	#    MeanAnomaly    120
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-miranda"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period	     33.92350159 # enforce sync rotation
+	#    Inclination      0.0
+	#    MeridianAngle  144.3
+	# }
 
 	Albedo         0.32
 }
@@ -999,21 +1198,27 @@ AltSurface "limit of knowledge" "Sol/Uranus/Miranda"
 	Radius   578.9
 
 	CustomOrbit "ariel"
-	EllipticalOrbit
-	{
-	Period         2.520
-	SemiMajorAxis  191200
-	Eccentricity   0.0034
-	Inclination    0.31
-	MeanAnomaly    56
-	}
 
-	UniformRotation
-	{
-	Period		 60.48909292 # enforce sync rotation
-	Inclination		  0.0
-	MeridianAngle 		 18.8
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         2.520
+	#    SemiMajorAxis  191200
+	#    Eccentricity   0.0034
+	#    Inclination    0.31
+	#    MeanAnomaly    56
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-ariel"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period		 60.48909292 # enforce sync rotation
+	#    Inclination		  0.0
+	#    MeridianAngle 		 18.8
+	# }
 
 	Albedo         0.39
 }
@@ -1030,21 +1235,27 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	Radius   584.7
 
 	CustomOrbit "umbriel"
-	EllipticalOrbit
-	{
-	Period         4.144
-	SemiMajorAxis  266000
-	Eccentricity   0.0050
-	Inclination    0.36
-	MeanAnomaly    280
-	}
 
-	UniformRotation
-	{
-	Period		 99.46022991 # enforce sync rotation
-	Inclination		  0.0
-	MeridianAngle 		 66.9
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         4.144
+	#    SemiMajorAxis  266000
+	#    Eccentricity   0.0050
+	#    Inclination    0.36
+	#    MeanAnomaly    280
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-umbriel"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period		 99.46022991 # enforce sync rotation
+	#    Inclination		  0.0
+	#    MeridianAngle 		 66.9
+	# }
 
 	Albedo         0.21
 }
@@ -1061,21 +1272,27 @@ AltSurface "limit of knowledge" "Sol/Uranus/Umbriel"
 	Radius   788.9
 
 	CustomOrbit "titania"
-	EllipticalOrbit
-	{
-	Period         8.706
-	SemiMajorAxis  435800
-	Eccentricity   0.0022
-	Inclination    0.10
-	MeanAnomaly    30
-	}
 
-	UniformRotation
-	{
-	Period		208.94077099 # enforce sync rotation
-	Inclination		  0.0
-	MeridianAngle 		 97.2
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period         8.706
+	#    SemiMajorAxis  435800
+	#    Eccentricity   0.0022
+	#    Inclination    0.10
+	#    MeanAnomaly    30
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-titania"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period		208.94077099 # enforce sync rotation
+	#    Inclination		  0.0
+	#    MeridianAngle 		 97.2
+	# }
 
 	Albedo         0.27
 }
@@ -1092,21 +1309,27 @@ AltSurface "limit of knowledge" "Sol/Uranus/Titania"
 	Radius   761.4
 
 	CustomOrbit "oberon"
-	EllipticalOrbit
-	{
-	Period        13.463
-	SemiMajorAxis  583600
-	Eccentricity   0.0008
-	Inclination    0.10
-	MeanAnomaly    150
-	}
 
-	UniformRotation
-	{
-	Period		323.117567539 # enforce sync rotation
-	Inclination		  0.0
-	MeridianAngle 		168.2
-	}
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period        13.463
+	#    SemiMajorAxis  583600
+	#    Eccentricity   0.0008
+	#    Inclination    0.10
+	#    MeanAnomaly    150
+	# }
+
+	BodyFrame { EquatorJ2000 {} }
+	CustomRotation "iau-oberon"
+
+	# Overriden by CustomRotation
+	# UniformRotation
+	# {
+	#    Period          323.117567539 # enforce sync rotation
+	#    Inclination       0.0
+	#    MeridianAngle   168.2
+	# }
 
 	Albedo         0.23
 }
@@ -1128,16 +1351,18 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	Oblateness 0.017
 
 	CustomOrbit "vsop87-neptune"
-	EllipticalOrbit
-	{
-	Period           164.793
-	SemiMajorAxis     30.0690
-	Eccentricity      0.0086
-	Inclination       1.7692
-	AscendingNode   131.722
-	LongOfPericenter 44.971
-        MeanLongitude   304.880
-	}
+
+	# Overridden by CustomOrbit
+	# EllipticalOrbit
+	# {
+	#    Period           164.793
+	#    SemiMajorAxis     30.0690
+	#    Eccentricity      0.0086
+	#    Inclination       1.7692
+	#    AscendingNode   131.722
+	#    LongOfPericenter 44.971
+        #    MeanLongitude   304.880
+	# }
 
 	Atmosphere {
 		Height 130
@@ -1148,10 +1373,10 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 	UniformRotation
 	{
-	Period        16.11 # System III (magnetic field)
-	Inclination             28.03
-	AscendingNode  49.235
-	MeridianAngle       228.65 # correct System III prime meridian
+	    Period          16.11 # System III (magnetic field)
+	    Inclination     28.03
+	    AscendingNode   49.235
+	    MeridianAngle  228.65 # correct System III prime meridian
 	}
 
 	Albedo                 0.62
@@ -1172,20 +1397,20 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 	EllipticalOrbit
 	{
-	Period		0.554654
-	SemiMajorAxis	73548
-	Eccentricity	0.0014
-	Inclination	0.744	#
-	AscendingNode	324.857	#
-	ArgOfPericenter	215.004	# J2000.0
-	MeanAnomaly     157.543	#
+	    Period		0.554654
+	    SemiMajorAxis	73548
+	    Eccentricity	0.0014
+	    Inclination	        0.744
+	    AscendingNode	324.857
+	    ArgOfPericenter	215.004	# J2000.0
+	    MeanAnomaly         157.543
 	}
 
 	UniformRotation
 	{
-	Inclination              	  0.1
-	AscendingNode 	349.1
-	MeridianAngle          165.8
+	    Inclination           0.1
+	    AscendingNode       349.1
+	    MeridianAngle       165.8
 	}
 
 	Albedo 0.056
@@ -1200,21 +1425,21 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 	EllipticalOrbit
 	{
-	Epoch		2450085.5 # 1996 Jan 3 00:00UT
-	Period		1.122315  # mean
-	SemiMajorAxis	117647    # mean
-	Eccentricity	0.0005    # mean
-	Inclination	1.090     # at epoch
-	AscendingNode	330.943   # at epoch
-	ArgOfPericenter	267.246   # at epoch 
-	MeanAnomaly	213.916   # at epoch 
+  	    Epoch		2450085.5 # 1996 Jan 3 00:00UT
+	    Period		1.122315  # mean
+	    SemiMajorAxis	117647    # mean
+	    Eccentricity	0.0005    # mean
+	    Inclination         1.090     # at epoch
+	    AscendingNode	330.943   # at epoch
+	    ArgOfPericenter	267.246   # at epoch 
+	    MeanAnomaly         213.916   # at epoch 
 	}
 
 	UniformRotation
 	{
-	Inclination              	  0.6
-	AscendingNode 	331.0
-	MeridianAngle       	 97.8
+	    Inclination           0.6
+	    AscendingNode       331.0
+	    MeridianAngle      	 97.8
 	}
 
 	Albedo         0.061
@@ -1234,23 +1459,23 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 	EllipticalOrbit
 	{
-	Epoch		2447763.5  # 1989 Aug 25 00:00UT (Voyager encounter)
-	Period		5.8768541  #  mean
-	SemiMajorAxis	354765.286 # at epoch
-	Eccentricity	0.00002285 # at epoch
-	Inclination	156.826240 # at epoch
-	#AscendingNode	172.426656 # at epoch
-	AscendingNode	147.899288 # at epoch
-	ArgOfPericenter	293.092400 # at epoch
-	MeanAnomaly	315.726316 # at epoch
+	    Epoch		2447763.5  # 1989 Aug 25 00:00UT (Voyager encounter)
+	    Period		  5.8768541  #  mean
+	    SemiMajorAxis	354765.286 # at epoch
+	    Eccentricity	  0.00002285 # at epoch
+	    Inclination	        156.826240 # at epoch
+	    #AscendingNode	172.426656 # at epoch
+	    AscendingNode	147.899288 # at epoch
+	    ArgOfPericenter	293.092400 # at epoch
+	    MeanAnomaly 	315.726316 # at epoch
 	}
 
 	UniformRotation
 	{
-	Epoch	    2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
-	Inclination		156.8 # at epoch
-	AscendingNode	147.9 # at epoch
-	MeridianAngle		 71.5 # at epoch
+	    Epoch	    2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
+	    Inclination		156.8 # at epoch
+	    AscendingNode	147.9 # at epoch
+	    MeridianAngle		 71.5 # at epoch
 	}
 
 	Albedo         0.756
@@ -1270,21 +1495,21 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 
 	UniformRotation
 	{
-	# Figure of 11.52 +/- 0.14 hours from Grav, T. et al. (2003)
-        # "The Short Rotation Period of Nereid", ApJ 591
-	Period 11.52	
+	    # Figure of 11.52 +/- 0.14 hours from Grav, T. et al. (2003)
+            # "The Short Rotation Period of Nereid", ApJ 591
+	    Period 11.52	
 	}
 
 	EllipticalOrbit
 	{
-	Epoch		2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
-	Period		360.13619 # mean
-	SemiMajorAxis	5513400   # mean
-	Eccentricity	0.7512    # mean
-	Inclination	28.385    # at epoch
-	AscendingNode	190.678   # at epoch
-	ArgOfPericenter 17.690    # at epoch
-	MeanAnomaly    	36.056    # at epoch
+	    Epoch		2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
+	    Period		360.13619 # mean
+	    SemiMajorAxis	5513400   # mean
+	    Eccentricity	0.7512    # mean
+	    Inclination	28.385    # at epoch
+	    AscendingNode	190.678   # at epoch
+	    ArgOfPericenter 17.690    # at epoch
+	    MeanAnomaly    	36.056    # at epoch
 	}
 
 	Albedo          0.155
