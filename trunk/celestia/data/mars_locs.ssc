@@ -12451,3 +12451,47 @@ Location "Simud Valles" "Sol/Mars"
 	Importance 75.68
 	Type "VA"
 }
+
+# Update 2008 Jul 16, Grant Hutchison
+# -----------------------------------
+
+Location "Corinto" "Sol/Mars"
+{
+	LongLat [ 141.61 16.75 0 ]
+	Size 13.5
+	Importance 22.30
+	Type "AA"
+}
+
+Location "Naryn" "Sol/Mars"
+{
+	LongLat [ 123.21 14.73 0 ]
+	Size 3.7
+	Importance 20.49
+	Type "AA"
+}
+
+Location "Thila" "Sol/Mars"
+{
+	LongLat [ 155.42 17.9 0 ]
+	Size 5.3
+	Importance 20.82
+	Type "AA"
+}
+
+Location "Wiltz" "Sol/Mars"
+{
+	LongLat [ 159.09 15.34 0 ]
+	Size 1.2
+	Importance 19.95
+	Type "AA"
+}
+
+Location "Heimdal" "Sol/Mars"
+{
+	LongLat [ 235.27 68.08 0 ]
+	Size 11.5
+	Importance 21.97
+	Type "AA"
+}
+
