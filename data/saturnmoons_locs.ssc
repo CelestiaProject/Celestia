@@ -293,146 +293,417 @@ Location "Uther" "Sol/Saturn/Mimas"
     Type "AA"
 }
 
-# 36 records, 8269 lines read.
+Location "Dagonet" "Sol/Saturn/Mimas"
+{
+	LongLat [ -261.29 47.78 0 ]
+	Size 26
+	Type "AA"
+}
+
+Location "Lucas" "Sol/Saturn/Mimas"
+{
+	LongLat [ -220.53 41.26 0 ]
+	Size 38.8
+	Type "AA"
+}
+
+Location "Marhaus" "Sol/Saturn/Mimas"
+{
+	LongLat [ -2.58 -9.98 0 ]
+	Size 34.5
+	Type "AA"
+}
+
+Location "Melyodas" "Sol/Saturn/Mimas"
+{
+	LongLat [ -77.32 -74.54 0 ]
+	Size 45
+	Type "AA"
+}
+
+Location "Nero" "Sol/Saturn/Mimas"
+{
+	LongLat [ -307.46 -0.33 0 ]
+	Size 24
+	Type "AA"
+}
+
+Location "Royns" "Sol/Saturn/Mimas"
+{
+	LongLat [ -347.38 32.34 0 ]
+	Size 22.5
+	Type "AA"
+}
+
 Location "Ajax" "Sol/Saturn/Tethys"
 {
-    LongLat [ -282 -29.1 0 ]
-    Size 100
-    Type "AA"
+	LongLat [ -282. -28.41 0 ]
+	Size 88
+	Type "AA"
 }
 
 Location "Anticleia" "Sol/Saturn/Tethys"
 {
-    LongLat [ -34.4 52.3 0 ]
-    Size 100
-    Type "AA"
+	LongLat [ -32.37 51.31 0 ]
+	Size 100.7
+	Type "AA"
 }
 
 Location "Antinous" "Sol/Saturn/Tethys"
 {
-    LongLat [ -275 -62 0 ]
-    Size 250
-    Type "AA"
+	LongLat [ -286.15 -59.89 0 ]
+	Size 138
+	Type "AA"
 }
 
 Location "Arete" "Sol/Saturn/Tethys"
 {
-    LongLat [ -299.7 -4.6 0 ]
-    Size 10
-    Type "AA"
+	LongLat [ -299. -4.67 0 ]
+	Size 13
+	Type "AA"
 }
 
 Location "Circe" "Sol/Saturn/Tethys"
 {
-    LongLat [ -53.7 -12.1 0 ]
-    Size 50
-    Type "AA"
+	LongLat [ -54.66 -12.6 0 ]
+	Size 79
+	Type "AA"
 }
 
 Location "Elpenor" "Sol/Saturn/Tethys"
 {
-    LongLat [ -263.3 54.8 0 ]
-    Size 50
-    Type "AA"
+	LongLat [ -263.69 53.43 0 ]
+	Size 60
+	Type "AA"
 }
 
 Location "Eumaeus" "Sol/Saturn/Tethys"
 {
-    LongLat [ -53.4 22.8 0 ]
-    Size 25
-    Type "AA"
+	LongLat [ -51.12 23.1 0 ]
+	Size 30
+	Type "AA"
 }
 
 Location "Eurycleia" "Sol/Saturn/Tethys"
 {
-    LongLat [ -245.9 52.7 0 ]
-    Size 50
-    Type "AA"
+	LongLat [ -246.5 52.54 0 ]
+	Size 31
+	Type "AA"
 }
 
 Location "Ithaca Chasma" "Sol/Saturn/Tethys"
 {
-    LongLat [ -3 -10.3 0 ]
-    Size 800
-    Type "CM"
+	LongLat [ -6.1 -14. 0 ]
+	Size 1219
+	Type "CM"
 }
 
 Location "Laertes" "Sol/Saturn/Tethys"
 {
-    LongLat [ -66.4 -47.6 0 ]
-    Size 50
-    Type "AA"
+	LongLat [ -67.46 -46.36 0 ]
+	Size 51.13
+	Type "AA"
 }
 
 Location "Melanthius" "Sol/Saturn/Tethys"
 {
-    LongLat [ -204 -62 0 ]
-    Size 300
-    Type "AA"
+	LongLat [ -192.61 -58.5 0 ]
+	Size 250
+	Type "AA"
 }
 
 Location "Mentor" "Sol/Saturn/Tethys"
 {
-    LongLat [ -45 -1.3 0 ]
-    Size 100
-    Type "AA"
+	LongLat [ -44.16 0.25 0 ]
+	Size 62
+	Type "AA"
 }
 
 Location "Nausicaa" "Sol/Saturn/Tethys"
 {
-    LongLat [ -357.3 82.3 0 ]
-    Size 100
-    Type "AA"
+	LongLat [ -5. 84.4 0 ]
+	Size 69
+	Type "AA"
 }
 
 Location "Nestor" "Sol/Saturn/Tethys"
 {
-    LongLat [ -61.7 -54.6 0 ]
-    Size 50
-    Type "AA"
+	LongLat [ -64.81 -54. 0 ]
+	Size 38.2
+	Type "AA"
 }
 
 Location "Odysseus" "Sol/Saturn/Tethys"
 {
-    LongLat [ -130 30 0 ]
-    Size 400
-    Type "AA"
+	LongLat [ -128.89 32.82 0 ]
+	Size 445
+	Type "AA"
 }
 
 Location "Penelope" "Sol/Saturn/Tethys"
 {
-    LongLat [ -248 -11.5 0 ]
-    Size 250
-    Type "AA"
+	LongLat [ -249.22 -10.83 0 ]
+	Size 207.5
+	Type "AA"
 }
 
 Location "Phemius" "Sol/Saturn/Tethys"
 {
-    LongLat [ -285.8 12 0 ]
-    Size 100
-    Type "AA"
+	LongLat [ -286.22 11.32 0 ]
+	Size 75.9
+	Type "AA"
 }
 
 Location "Polyphemus" "Sol/Saturn/Tethys"
 {
-    LongLat [ -282.8 -4.6 0 ]
-    Size 100
-    Type "AA"
+	LongLat [ -282.98 -3.48 0 ]
+	Size 73
+	Type "AA"
 }
 
 Location "Teiresias" "Sol/Saturn/Tethys"
 {
-    LongLat [ -5.7 59.6 0 ]
-    Size 50
-    Type "AA"
+	LongLat [ -0.83 60.39 0 ]
+	Size 14.5
+	Type "AA"
 }
 
 Location "Telemachus" "Sol/Saturn/Tethys"
 {
+	LongLat [ -339.38 54. 0 ]
+	Size 92
+	Type "AA"
+}
 
-    LongLat [ -338.7 54 0 ]
-    Size 150
-    Type "AA"
+Location "Achilles" "Sol/Saturn/Tethys"
+{
+	LongLat [ -324.38 0.6 0 ]
+	Size 58.6
+	Type "AA"
+}
+
+Location "Aietes" "Sol/Saturn/Tethys"
+{
+	LongLat [ -6.23 -41.44 0 ]
+	Size 91
+	Type "AA"
+}
+
+Location "Alcinous" "Sol/Saturn/Tethys"
+{
+	LongLat [ -212.61 30.31 0 ]
+	Size 50
+	Type "AA"
+}
+
+Location "Amphinomus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -128.7 -14.87 0 ]
+	Size 13.6
+	Type "AA"
+}
+
+Location "Demodocus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -18.21 -59.37 0 ]
+	Size 125
+	Type "AA"
+}
+
+Location "Diomedes" "Sol/Saturn/Tethys"
+{
+	LongLat [ -289.42 38.12 0 ]
+	Size 48.57
+	Type "AA"
+}
+
+Location "Dolius" "Sol/Saturn/Tethys"
+{
+	LongLat [ -210.33 -30.15 0 ]
+	Size 190
+	Type "AA"
+}
+
+Location "Euanthes" "Sol/Saturn/Tethys"
+{
+	LongLat [ -238.91 7.86 0 ]
+	Size 33
+	Type "AA"
+}
+
+Location "Eupithes" "Sol/Saturn/Tethys"
+{
+	LongLat [ -171.21 18.71 0 ]
+	Size 22.3
+	Type "AA"
+}
+
+Location "Eurylochus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -27.68 -5.07 0 ]
+	Size 44.8
+	Type "AA"
+}
+
+Location "Eurymachus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -65. -35.65 0 ]
+	Size 38.4
+	Type "AA"
+}
+
+Location "Halius" "Sol/Saturn/Tethys"
+{
+	LongLat [ -4.96 44.4 0 ]
+	Size 29.5
+	Type "AA"
+}
+
+Location "Hermione" "Sol/Saturn/Tethys"
+{
+	LongLat [ -148.69 -38.4 0 ]
+	Size 68.2
+	Type "AA"
+}
+
+Location "Icarius" "Sol/Saturn/Tethys"
+{
+	LongLat [ -305.85 -5.89 0 ]
+	Size 54.4
+	Type "AA"
+}
+
+Location "Irus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -244.81 -27. 0 ]
+	Size 26.5
+	Type "AA"
+}
+
+Location "Leocritus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -118.66 21.53 0 ]
+	Size 12.5
+	Type "AA"
+}
+
+Location "Leucothea" "Sol/Saturn/Tethys"
+{
+	LongLat [ -123.84 -4.26 0 ]
+	Size 13.8
+	Type "AA"
+}
+
+Location "Maron" "Sol/Saturn/Tethys"
+{
+	LongLat [ -119.33 2.52 0 ]
+	Size 11.8
+	Type "AA"
+}
+
+Location "Medon" "Sol/Saturn/Tethys"
+{
+	LongLat [ -143.31 25.5 0 ]
+	Size 18.7
+	Type "AA"
+}
+
+Location "Neleus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -25.72 -19.38 0 ]
+	Size 37.6
+	Type "AA"
+}
+
+Location "Naubolos" "Sol/Saturn/Tethys"
+{
+	LongLat [ -305.18 -72.19 0 ]
+	Size 54.5
+	Type "AA"
+}
+
+Location "Ormenus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -43.85 -20.39 0 ]
+	Size 39.8
+	Type "AA"
+}
+
+Location "Oenops" "Sol/Saturn/Tethys"
+{
+	LongLat [ -93.44 28.13 0 ]
+	Size 25.7
+	Type "AA"
+}
+
+Location "Periboea" "Sol/Saturn/Tethys"
+{
+	LongLat [ -34.86 8. 0 ]
+	Size 51
+	Type "AA"
+}
+
+Location "Philoetius" "Sol/Saturn/Tethys"
+{
+	LongLat [ -184.71 2.32 0 ]
+	Size 28.3
+	Type "AA"
+}
+
+Location "Polycaste" "Sol/Saturn/Tethys"
+{
+	LongLat [ -86.41 1.38 0 ]
+	Size 23
+	Type "AA"
+}
+
+Location "Poseidon" "Sol/Saturn/Tethys"
+{
+	LongLat [ -101.3 -55.71 0 ]
+	Size 63
+	Type "AA"
+}
+
+Location "Rhexenor" "Sol/Saturn/Tethys"
+{
+	LongLat [ -65.22 -75.63 0 ]
+	Size 38
+	Type "AA"
+}
+
+Location "Salmoneus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -335.18 -1.77 0 ]
+	Size 93
+	Type "AA"
+}
+
+Location "Telemus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -356.89 -34.53 0 ]
+	Size 320
+	Type "AA"
+}
+
+Location "Theoclymenus" "Sol/Saturn/Tethys"
+{
+	LongLat [ -205.63 -14.43 0 ]
+	Size 34.3
+	Type "AA"
+}
+
+Location "Ogygia Chasma" "Sol/Saturn/Tethys"
+{
+	LongLat [ -95.2 56. 0 ]
+	Size 120
+	Type "CM"
+}
+
+Location "Scheria Montes" "Sol/Saturn/Tethys"
+{
+	LongLat [ -131. 30. 0 ]
+	Size 185
+	Type "MO"
 }
 
 # 20 records, 8269 lines read.
