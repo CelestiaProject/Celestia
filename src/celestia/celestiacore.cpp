@@ -3654,8 +3654,16 @@ void CelestiaCore::renderOverlay()
 
         case Selection::Type_Body:
             {
+                // Show all names for the body
                 overlay->setFont(titleFont);
-                *overlay << sel.body()->getName(true).c_str();
+                const vector<string>& names = sel.body()->getNames();
+                for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+                {
+                    if (iter != names.begin())
+                        *overlay << " / ";
+                    *overlay << *iter;
+                }
+                
                 overlay->setFont(font);
                 *overlay << '\n';
                 displayPlanetInfo(*overlay,
