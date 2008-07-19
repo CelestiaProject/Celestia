@@ -85,7 +85,8 @@
 }
 -(void)setName:(NSString*)s
 {
-    [self body]->setName([s stdString]);
+    // Body::setName method is now private
+    //[self body]->setName([s stdString]);
 }
 -(void)setMass:(NSNumber*)m
 {
