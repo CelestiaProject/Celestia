@@ -40,6 +40,9 @@ class PlanetarySystem
     Body* getPrimaryBody() const { return primary; };
     int getSystemSize() const { return satellites.size(); };
     Body* getBody(int i) const { return satellites[i]; };
+    
+    void addAlias(Body* body, const std::string& alias);
+    void removeAlias(const Body* body, const std::string& alias);
     void addBody(Body* body);
     void removeBody(Body* body);
     void replaceBody(Body* oldBody, Body* newBody);
@@ -59,6 +62,10 @@ class PlanetarySystem
     std::vector<std::string> getCompletion(const std::string& _name, bool rec = true) const;
 
  private:
+    void addBodyToNameIndex(const Body* body);
+    void removeBodyFromNameIndex(const Body* body);
+    
+ private:
     typedef std::map<std::string, Body*, UTF8StringOrderingPredicate> ObjectIndex;
 
  private:
@@ -66,7 +73,6 @@ class PlanetarySystem
     Body* primary;
     std::vector<Body*> satellites;
     ObjectIndex objectIndex;  // index of bodies by name
-    ObjectIndex i18nObjectIndex;
 };
 
 
@@ -176,8 +182,11 @@ class Body
     void setDefaultProperties();
 
     PlanetarySystem* getSystem() const;
+    const std::vector<std::string>& getNames() const;
     std::string getName(bool i18n = false) const;
-    void setName(const std::string);
+    std::string getLocalizedName() const;
+    bool hasLocalizedName() const;
+    void addAlias(const std::string& alias);
 
     void setTimeline(Timeline* timeline);
     const Timeline* getTimeline() const;
@@ -320,11 +329,12 @@ class Body
     void markUpdated();
 
  private:
+    void setName(const std::string& _name);
     void recomputeCullingRadius();
 
  private:
-    std::string name;
-    std::string i18nName;
+    std::vector<std::string> names;
+    unsigned int localizedNameIndex;
 
     // Parent in the name hierarchy
     PlanetarySystem* system;

@@ -25,6 +25,8 @@
 using namespace std;
 
 Body::Body(PlanetarySystem* _system, const string& _name) :
+    names(1),
+    localizedNameIndex(0),
     system(_system),
     satellites(NULL),
     timeline(NULL),
@@ -105,18 +107,71 @@ void Body::setDefaultProperties()
 }
 
 
-string Body::getName(bool i18n) const
+/*! Return the list of all names (non-localized) by which this
+ *  body is known.
+ */
+const vector<string>& Body::getNames() const
 {
-    if (!i18n || i18nName == "") return name;
-    return i18nName;
+    return names; 
 }
 
 
-void Body::setName(const string _name)
+/*! Return the primary name for the body; if i18n, return the
+ *  localized name of the body.
+ */
+string Body::getName(bool i18n) const
 {
-    name = _name;
-    i18nName = _(_name.c_str());
-    if (name == i18nName) i18nName = "";
+    if (!i18n) 
+        return names[0];
+    else
+        return names[localizedNameIndex];
+}
+
+
+/*! Get the localized name for the body. If no localized name
+ *  has been set, the primary name is returned.
+ */
+string Body::getLocalizedName() const
+{
+    return names[localizedNameIndex];
+}
+
+
+bool Body::hasLocalizedName() const
+{
+    return localizedNameIndex != 0;
+}
+
+
+/*! Set the primary name of the body. The localized name is updated
+ *  automatically as well.
+ *  Note: setName() is private, and only called from the Body constructor.
+ *  It shouldn't be called elsewhere.
+ */
+void Body::setName(const string& name)
+{
+    names[0] = name;
+    string localizedName = _(name.c_str());
+    if (name == localizedName)
+    {
+        // No localized name; set the localized name index to zero to
+        // indicate this.
+        localizedNameIndex = 0;
+    }
+    else
+    {
+        names.push_back(localizedName);
+        localizedNameIndex = names.size() - 1;
+    }
+}
+
+
+/*! Add a new name for this body. Aliases are non localized.
+ */
+void Body::addAlias(const string& alias)
+{
+    names.push_back(alias);
+    system->addAlias(this, alias);
 }
 
 
@@ -1089,11 +1144,64 @@ PlanetarySystem::~PlanetarySystem()
 }
 
 
+/*! Add a new alias for an object. If an object with the specified
+ *  alias already exists in the planetary system, the old entry will
+ *  be replaced.
+ */
+void PlanetarySystem::addAlias(Body* body, const string& alias)
+{
+    assert(body->getSystem() == this);
+    
+    objectIndex.insert(make_pair(alias, body));
+}
+
+
+/*! Remove the an alias for an object. This method does nothing
+ *  if the alias is not present in the index, or if the alias
+ *  refers to a different object.
+ */
+void PlanetarySystem::removeAlias(const Body* body, const string& alias)
+{
+    assert(body->getSystem() == this);
+    
+    ObjectIndex::iterator iter = objectIndex.find(alias);
+    if (iter != objectIndex.end())
+    {
+        if (iter->second == body)
+            objectIndex.erase(iter);
+    }
+}
+
+
 void PlanetarySystem::addBody(Body* body)
 {
     satellites.insert(satellites.end(), body);
-    objectIndex.insert(make_pair(body->getName(), body));
-    i18nObjectIndex.insert(make_pair(body->getName(true), body));
+    addBodyToNameIndex(body);
+}
+
+
+// Add all aliases for the body to the name index
+void PlanetarySystem::addBodyToNameIndex(const Body* body)
+{
+    const vector<string>& names = body->getNames();
+    for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+    {
+        objectIndex.insert(make_pair(*iter, body));
+    }
+}
+
+
+// Remove all references to the body in the name index.
+void PlanetarySystem::removeBodyFromNameIndex(const Body* body)
+{
+    assert(body->getSystem() == this);
+    
+    // Erase the object from the object indices
+    const vector<string>& names = body->getNames();
+    for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+    {
+        removeAlias(body, *iter);
+    } 
 }
 
 
@@ -1108,28 +1216,8 @@ void PlanetarySystem::removeBody(Body* body)
             break;
         }
     }
-
-    // Erase the object from the object indices
-    for (ObjectIndex::iterator iter = objectIndex.begin();
-         iter != objectIndex.end(); iter++)
-    {
-        if (iter->second == body)
-        {
-            objectIndex.erase(iter);
-            break;
-        }
-    }
-
-    for (ObjectIndex::iterator iter = i18nObjectIndex.begin();
-         iter != i18nObjectIndex.end(); iter++)
-    {
-        if (iter->second == body)
-        {
-            i18nObjectIndex.erase(iter);
-            break;
-        }
-    }
-
+    
+    removeBodyFromNameIndex(body);
 }
 
 
@@ -1145,40 +1233,36 @@ void PlanetarySystem::replaceBody(Body* oldBody, Body* newBody)
         }
     }
 
-    // Erase the object from the object indices
-    for (ObjectIndex::iterator iter = objectIndex.begin();
-         iter != objectIndex.end(); iter++)
-    {
-        if (iter->second == oldBody)
-        {
-            objectIndex.erase(iter);
-            break;
-        }
-    }
-
-    for (ObjectIndex::iterator iter = i18nObjectIndex.begin();
-         iter != i18nObjectIndex.end(); iter++)
-    {
-        if (iter->second == oldBody)
-        {
-            i18nObjectIndex.erase(iter);
-            break;
-        }
-    }
-
-    // Add the replacement to the object indices
-    objectIndex.insert(make_pair(newBody->getName(), newBody));
-    i18nObjectIndex.insert(make_pair(newBody->getName(true), newBody));
+    removeBodyFromNameIndex(oldBody);
+    addBodyToNameIndex(newBody);
 }
 
 
+/*! Find a body with the specified name within a planetary system.
+ * 
+ *  deepSearch: if true, recursively search the systems of child objects
+ *  i18n: if true, allow matching of localized body names. When responding
+ *    to a user query, this flag should be true. In other cases--such
+ *    as resolving an object name in an ssc file--it should be false. Otherwise,
+ *    object lookup will behave differently based on the locale.
+ */
 Body* PlanetarySystem::find(const string& _name, bool deepSearch, bool i18n) const
 {
-    ObjectIndex index = i18n?i18nObjectIndex:objectIndex;
-    ObjectIndex::const_iterator firstMatch = index.find(_name);
-    if (firstMatch != index.end())
+    ObjectIndex::const_iterator firstMatch = objectIndex.find(_name);
+    if (firstMatch != objectIndex.end())
     {
-        return firstMatch->second;
+        Body* matchedBody = firstMatch->second;
+        
+        if (i18n)
+        {
+            return matchedBody;
+        }
+        else
+        {
+            // Ignore localized names
+            if (!matchedBody->hasLocalizedName() || _name != matchedBody->getLocalizedName())
+                return matchedBody;
+        }
     }
 
     if (deepSearch)
@@ -1221,25 +1305,37 @@ bool PlanetarySystem::traverse(TraversalFunc func, void* info) const
     return true;
 }
 
-std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool rec) const
+std::vector<std::string> PlanetarySystem::getCompletion(const std::string& _name, bool deepSearch) const
 {
     std::vector<std::string> completion;
     int _name_length = UTF8Length(_name);
 
-    for (vector<Body*>::const_iterator iter = satellites.begin();
-         iter != satellites.end(); iter++)
+    // Search through all names in this planetary system.
+    for (ObjectIndex::const_iterator iter = objectIndex.begin();
+         iter != objectIndex.end(); iter++)
     {
-        if (UTF8StringCompare((*iter)->getName(true), _name, _name_length) == 0)
+        const string& alias = iter->first;
+        
+        if (UTF8StringCompare(alias, _name, _name_length) == 0)
         {
-            completion.push_back((*iter)->getName(true));
-        }
-        if (rec && (*iter)->getSatellites() != NULL)
-        {
-            std::vector<std::string> bodies = (*iter)->getSatellites()->getCompletion(_name);
-            completion.insert(completion.end(), bodies.begin(), bodies.end());
+            completion.push_back(alias);
         }
     }
-
+    
+    // Scan child objects
+    if (deepSearch)
+    {
+        for (vector<Body*>::const_iterator iter = satellites.begin();
+             iter != satellites.end(); iter++)
+        {
+            if ((*iter)->getSatellites() != NULL)
+            {
+                vector<string> bodies = (*iter)->getSatellites()->getCompletion(_name);
+                completion.insert(completion.end(), bodies.begin(), bodies.end());
+            }
+        }
+    }
+    
     return completion;
 }
 
