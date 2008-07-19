@@ -1055,7 +1055,10 @@ bool LoadSolarSystemObjects(istream& in,
             sscError(tokenizer, "object name expected");
             return false;
         }
-        string name = tokenizer.getStringValue().c_str();
+        
+        // The name list is a string with zero more names. Multiple names are
+        // delimited by colons.
+        string nameList = tokenizer.getStringValue().c_str();
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
@@ -1081,6 +1084,31 @@ bool LoadSolarSystemObjects(istream& in,
 
         Selection parent = universe.findPath(parentName, NULL, 0);
         PlanetarySystem* parentSystem = NULL;
+        
+        vector<string> names;
+        // Iterate through the string for names delimited
+        // by ':', and insert them into the name list.
+        if (nameList.empty())
+        {
+            names.push_back("");
+        }
+        else
+        {
+            string::size_type startPos   = 0;
+            while (startPos != string::npos)
+            {
+                string::size_type next    = nameList.find(':', startPos);
+                string::size_type length  = string::npos;
+                if (next != string::npos)
+                {
+                    length   = next - startPos;
+                    ++next;
+                }
+                names.push_back(nameList.substr(startPos, length));
+                startPos   = next;
+            }
+        }
+        string primaryName = names.front();
 
         if (itemType == "Body" || itemType == "ReferencePoint")
         {
@@ -1112,19 +1140,19 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << _("parent body '") << parentName << _("' of '") << name << _("' not found.\n");
+                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.") << endl;
             }
 
             if (parentSystem != NULL)
             {
-                Body* existingBody = parentSystem->find(name);
+                Body* existingBody = parentSystem->find(primaryName);
                 if (existingBody)
                 {
                     if (disposition == AddObject)
                     {
                         errorMessagePrelude(tokenizer);
                         cerr << _("warning duplicate definition of ") <<
-                            parentName << " " <<  name << '\n';
+                            parentName << " " <<  primaryName << '\n';
                     }
                     else if (disposition == ReplaceObject)
                     {
@@ -1134,9 +1162,20 @@ bool LoadSolarSystemObjects(istream& in,
 
                 Body* body;
                 if (itemType == "ReferencePoint")
-                    body = CreateReferencePoint(name, parentSystem, universe, existingBody, objectData, directory, disposition);
+                    body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
-                    body = CreatePlanet(name, parentSystem, universe, existingBody, objectData, directory, disposition);
+                    body = CreatePlanet(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
+                
+                if (body != NULL && disposition == AddObject)
+                {
+                    vector<string>::const_iterator iter = names.begin();
+                    iter++;
+                    while (iter != names.end())
+                    {
+                        body->addAlias(*iter);
+                        iter++;
+                    }
+                }
             }
         }
         else if (itemType == "AltSurface")
@@ -1146,7 +1185,7 @@ bool LoadSolarSystemObjects(istream& in,
             surface->hazeColor = Color(0.0f, 0.0f, 0.0f, 0.0f);
             FillinSurface(objectData, surface, directory);
             if (surface != NULL && parent.body() != NULL)
-                parent.body()->addAlternateSurface(name, surface);
+                parent.body()->addAlternateSurface(primaryName, surface);
             else
                 sscError(tokenizer, _("bad alternate surface"));
         }
@@ -1157,7 +1196,7 @@ bool LoadSolarSystemObjects(istream& in,
                 Location* location = CreateLocation(objectData, parent.body());
                 if (location != NULL)
                 {
-                    location->setName(name);
+                    location->setName(primaryName);
                     parent.body()->addLocation(location);
                 }
                 else
@@ -1168,7 +1207,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << _("parent body '") << parentName << _("' of '") << name << _("' not found.\n");
+                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.\n");
             }
         }
         delete objectDataValue;
