@@ -62,7 +62,7 @@ class PlanetarySystem
     std::vector<std::string> getCompletion(const std::string& _name, bool rec = true) const;
 
  private:
-    void addBodyToNameIndex(const Body* body);
+    void addBodyToNameIndex(Body* body);
     void removeBodyFromNameIndex(const Body* body);
     
  private:

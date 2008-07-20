@@ -1181,7 +1181,7 @@ void PlanetarySystem::addBody(Body* body)
 
 
 // Add all aliases for the body to the name index
-void PlanetarySystem::addBodyToNameIndex(const Body* body)
+void PlanetarySystem::addBodyToNameIndex(Body* body)
 {
     const vector<string>& names = body->getNames();
     for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
