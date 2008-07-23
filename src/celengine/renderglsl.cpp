@@ -259,7 +259,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
 
 
 // Render a mesh object
-void renderModel_GLSL(Model* model,
+void renderGeometry_GLSL(Geometry* geometry,
                       const RenderInfo& ri,
                       ResourceHandle texOverride,
                       const LightingState& ls,
@@ -283,7 +283,7 @@ void renderModel_GLSL(Model* model,
     rc.setLunarLambert(ri.lunarLambert);
 
     // Handle material override; a texture specified in an ssc file will
-    // override all materials specified in the model file.
+    // override all materials specified in the geometry file.
     if (texOverride != InvalidResource)
     {
         Mesh::Material m;
@@ -295,14 +295,14 @@ void renderModel_GLSL(Model* model,
         rc.lock();
     }
 
-    model->render(rc);
+    geometry->render(rc);
 
     glx::glUseProgramObjectARB(0);
 }
 
 
 // Render a mesh object unlit
-void renderModel_GLSL_Unlit(Model* model,
+void renderGeometry_GLSL_Unlit(Geometry* geometry,
                             const RenderInfo& ri,
                             ResourceHandle texOverride,
                             float radius,
@@ -328,7 +328,7 @@ void renderModel_GLSL_Unlit(Model* model,
         rc.lock();
     }
 
-    model->render(rc);
+    geometry->render(rc);
 
     glx::glUseProgramObjectARB(0);
 }

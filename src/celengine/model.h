@@ -12,6 +12,35 @@
 
 #include "mesh.h"
 
+class Geometry
+{
+public:
+    Geometry() {};
+    virtual ~Geometry() {};
+
+    //! Render the geometry in the specified OpenGL context
+    virtual void render(RenderContext& rc, double t = 0.0) = 0;
+
+    /*! Find the closest intersection between the ray and the
+     *  model.  If the ray intersects the model, return true
+     *  and set distance; otherwise return false and leave
+     *  distance unmodified.
+     */
+    virtual bool pick(const Ray3d& r, double& distance) const = 0;
+    
+    virtual bool isOpaque() const = 0;
+    
+    /*! Return true if the specified texture map type is used at
+     *  all within this geometry object. This information is used
+     *  to decide whether multiple rendering passes are required.
+     */
+    virtual bool usesTextureType(Mesh::TextureSemantic) const
+    {
+        return false;
+    }
+};
+
+
 /*!
  * Model is the standard geometry object in Celestia.  A Model
  * consists of a library of materials together with a list of
@@ -21,7 +50,7 @@
  * structure is exactly the one used in Celestia model (.cmod)
  * files.
  */
-class Model
+class Model : public Geometry
 {
  public:
     Model();
@@ -64,10 +93,10 @@ class Model
      *  and set distance; otherwise return false and leave
      *  distance unmodified.
      */
-    bool pick(const Ray3d& r, double& distance) const;
+    virtual bool pick(const Ray3d& r, double& distance) const;
 
     //! Render the model in the current OpenGL context
-    void render(RenderContext&);
+    virtual void render(RenderContext&, double t = 0.0);
 
     /*! Apply a uniform scale to the model so that it fits into
      *  a box with a center at centerOffset and a maximum side
@@ -79,10 +108,10 @@ class Model
      *  all within a mesh. This information is used to decide
      *  if multiple rendering passes are required.
      */
-    bool usesTextureType(Mesh::TextureSemantic) const;
+    virtual bool usesTextureType(Mesh::TextureSemantic) const;
 
     /*! Return true if the model has no translucent components. */
-    bool isOpaque() const
+    virtual bool isOpaque() const
     {
         return opaque;
     }

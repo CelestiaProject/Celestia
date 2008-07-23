@@ -36,8 +36,8 @@ class Nebula : public DeepSkyObject
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;
 
-    void setModel(ResourceHandle);
-    ResourceHandle getModel() const;
+    void setGeometry(ResourceHandle);
+    ResourceHandle getGeometry() const;
     
     virtual const char* getObjTypeName() const;
 
@@ -55,7 +55,7 @@ class Nebula : public DeepSkyObject
     };
 
  private:
-    ResourceHandle model;
+    ResourceHandle geometry;
 };
 
 #endif // CELENGINE_NEBULA_H_

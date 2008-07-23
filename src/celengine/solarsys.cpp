@@ -825,19 +825,18 @@ static Body* CreatePlanet(const string& name,
     body->setSurface(surface);
 
     {
-        string model("");
-        if (planetData->getString("Mesh", model))
+        string geometry("");
+        if (planetData->getString("Mesh", geometry))
         {
-            Vec3f modelCenter(0.0f, 0.0f, 0.0f);
-            if (planetData->getVector("MeshCenter", modelCenter))
+            Vec3f geometryCenter(0.0f, 0.0f, 0.0f);
+            if (planetData->getVector("MeshCenter", geometryCenter))
             {
                 // TODO: Adjust bounding radius if model center isn't
                 // (0.0f, 0.0f, 0.0f)
             }
 
-            ResourceHandle modelHandle = GetModelManager()->getHandle(ModelInfo(model, path, modelCenter));
-            body->setModel(modelHandle);
-
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(geometry, path, geometryCenter));
+            body->setGeometry(geometryHandle);
         }
     }
 

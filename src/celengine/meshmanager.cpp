@@ -33,19 +33,27 @@ using namespace std;
 static Model* LoadCelestiaMesh(const string& filename);
 static Model* Convert3DSModel(const M3DScene& scene, const string& texPath);
 
-static ModelManager* modelManager = NULL;
+static GeometryManager* geometryManager = NULL;
+
+static const char UniqueSuffixChar = '!';
 
 
-ModelManager* GetModelManager()
+GeometryManager* GetGeometryManager()
 {
-    if (modelManager == NULL)
-        modelManager = new ModelManager("models");
-    return modelManager;
+    if (geometryManager == NULL)
+        geometryManager = new GeometryManager("models");
+    return geometryManager;
 }
 
 
-string ModelInfo::resolve(const string& baseDir)
+string GeometryInfo::resolve(const string& baseDir)
 {
+    // Ensure that models with different centers get resolved to different objects by
+    // adding a 'uniquifying' suffix to the filename that encodes the center value.
+    // This suffix is stripped before the file is actually loaded.
+    char uniquifyingSuffix[64];
+    sprintf(uniquifyingSuffix, "%c%f%f%f", UniqueSuffixChar, center.x, center.y, center.z);
+    
     if (!path.empty())
     {
         string filename = path + "/models/" + source;
@@ -53,16 +61,20 @@ string ModelInfo::resolve(const string& baseDir)
         if (in.good())
         {
             resolvedToPath = true;
-            return filename;
+            return filename + uniquifyingSuffix;
         }
     }
 
-    return baseDir + "/" + source;
+    return baseDir + "/" + source + uniquifyingSuffix;
 }
 
 
-Model* ModelInfo::load(const string& filename)
+Geometry* GeometryInfo::load(const string& resolvedFilename)
 {
+    // Strip off the uniquifying suffix
+    string::size_type uniquifyingSuffixStart = resolvedFilename.rfind(UniqueSuffixChar);
+    string filename(resolvedFilename, 0, uniquifyingSuffixStart);
+    
     clog << _("Loading model: ") << filename << '\n';
     Model* model = NULL;
     ContentType fileType = DetermineFileType(filename);
