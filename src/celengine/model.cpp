@@ -176,8 +176,11 @@ Model::pick(const Ray3d& r, double& distance) const
 }
 
 
+/*! Render the model; the time parameter is ignored right now
+ *  since this class doesn't currently support animation.
+ */
 void
-Model::render(RenderContext& rc)
+Model::render(RenderContext& rc, double /* t */)
 {
     for (vector<Mesh*>::const_iterator iter = meshes.begin();
          iter != meshes.end(); iter++)

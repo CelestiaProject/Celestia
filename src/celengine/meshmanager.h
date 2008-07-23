@@ -7,8 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _CELENGINE_MODELMANAGER_H_
-#define _CELENGINE_MODELMANAGER_H_
+#ifndef _CELENGINE_MESHMANAGER_H_
+#define _CELENGINE_MESHMANAGER_H_
 
 #include <string>
 #include <map>
@@ -16,7 +16,7 @@
 #include <celengine/model.h>
 
 
-class ModelInfo : public ResourceInfo<Model>
+class GeometryInfo : public ResourceInfo<Geometry>
 {
  public:
     std::string source;
@@ -24,17 +24,17 @@ class ModelInfo : public ResourceInfo<Model>
     bool resolvedToPath;
     Vec3f center;
 
-    ModelInfo(const std::string _source,
-              const std::string _path = "") :
+    GeometryInfo(const std::string _source,
+                 const std::string _path = "") :
         source(_source),
         path(_path),
         resolvedToPath(false),
-        center(0.0, 0.0f, 0.0f)
+        center(0.0f, 0.0f, 0.0f)
         {};
 
-    ModelInfo(const std::string _source,
-              const std::string _path,
-              const Vec3f& _center) :
+    GeometryInfo(const std::string _source,
+                 const std::string _path,
+                 const Vec3f& _center) :
         source(_source),
         path(_path),
         resolvedToPath(false),
@@ -42,26 +42,26 @@ class ModelInfo : public ResourceInfo<Model>
         {};
 
     virtual std::string resolve(const std::string&);
-    virtual Model* load(const std::string&);
+    virtual Geometry* load(const std::string&);
 };
 
-inline bool operator<(const ModelInfo& mi0, const ModelInfo& mi1)
+inline bool operator<(const GeometryInfo& g0, const GeometryInfo& g1)
 {
-    if (mi0.source != mi1.source)
-        return mi0.source < mi1.source;
-    else if (mi0.path != mi1.path)
-        return mi0.path < mi1.path;
-    else if (mi0.center.x != mi1.center.x)
-        return mi0.center.x < mi1.center.x;
-    else if (mi0.center.y != mi1.center.y)
-        return mi0.center.y < mi1.center.y;
+    if (g0.source != g1.source)
+        return g0.source < g1.source;
+    else if (g0.path != g1.path)
+        return g0.path < g1.path;
+    else if (g0.center.x != g1.center.x)
+        return g0.center.x < g1.center.x;
+    else if (g0.center.y != g1.center.y)
+        return g0.center.y < g1.center.y;
     else
-        return mi0.center.z < mi1.center.z;
+        return g0.center.z < g1.center.z;
 }
 
-typedef ResourceManager<ModelInfo> ModelManager;
+typedef ResourceManager<GeometryInfo> GeometryManager;
 
-extern ModelManager* GetModelManager();
+extern GeometryManager* GetGeometryManager();
 
-#endif // _CELENGINE_MODELMANAGER_H_
+#endif // _CELENGINE_MESHMANAGER_H_
 

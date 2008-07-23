@@ -364,7 +364,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         body->isClickable() &&
         testIntersection(pickInfo->pickRay, Sphered(bpos, radius), distance))
     {
-        if (body->getModel() == InvalidResource)
+        if (body->getGeometry() == InvalidResource)
         {
             // There's no mesh, so the object is an ellipsoid.  If it's
             // spherical, we've already done all the work we need to. Otherwise,
@@ -401,10 +401,10 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             r.origin.z *= s;
             r.direction *= s;
 
-            Model* model = GetModelManager()->find(body->getModel());
-            if (model != NULL)
+            Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
+            if (geometry != NULL)
             {
-                if (!model->pick(r, distance))
+                if (!geometry->pick(r, distance))
                     distance = -1.0;
             }
         }

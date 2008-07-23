@@ -26,7 +26,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
                        const Frustum& frustum,
                        const GLContext& context);
                        
-void renderModel_GLSL(Model* model,
+void renderGeometry_GLSL(Geometry* geometry,
                       const RenderInfo& ri,
                       ResourceHandle texOverride,
                       const LightingState& ls,
@@ -66,7 +66,7 @@ void renderRings_GLSL(RingSystem& rings,
                       bool renderShadow,
                       unsigned int nSections);
 
-void renderModel_GLSL_Unlit(Model* model,
+void renderGeometry_GLSL_Unlit(Geometry* geometry,
                             const RenderInfo& ri,
                             ResourceHandle texOverride,
                             float radius,

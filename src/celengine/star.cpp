@@ -756,7 +756,7 @@ StarDetails::StarDetails() :
     knowledge(0u),
     visible(true),
     texture(texture),
-    model(InvalidResource),
+    geometry(InvalidResource),
     orbit(NULL),
     orbitalRadius(0.0f),
     barycenter(NULL),
@@ -777,7 +777,7 @@ StarDetails::StarDetails(const StarDetails& sd) :
     knowledge(sd.knowledge),
     visible(sd.visible),
     texture(sd.texture),
-    model(sd.model),
+    geometry(sd.geometry),
     orbit(sd.orbit),
     orbitalRadius(sd.orbitalRadius),
     barycenter(sd.barycenter),
@@ -865,9 +865,9 @@ StarDetails::setTexture(const MultiResTexture& tex)
 
 
 void
-StarDetails::setModel(ResourceHandle rh)
+StarDetails::setGeometry(ResourceHandle rh)
 {
-    model = rh;
+    geometry = rh;
 }
 
 
@@ -1105,9 +1105,9 @@ Star::getTexture() const
 
 
 ResourceHandle
-Star::getModel() const
+Star::getGeometry() const
 {
-    return details->getModel();
+    return details->getGeometry();
 }
 
 
