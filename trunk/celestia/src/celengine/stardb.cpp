@@ -956,8 +956,8 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
 
         if (hasModel)
         {
-            ResourceHandle modelHandle = GetModelManager()->getHandle(ModelInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f)));
-            details->setModel(modelHandle);
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f)));
+            details->setGeometry(geometryHandle);
         }
 
         if (hasSemiAxes)

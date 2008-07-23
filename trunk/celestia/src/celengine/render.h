@@ -344,7 +344,7 @@ class Renderer
             rings(NULL),
             radius(1.0f),
             semiAxes(1.0f, 1.0f, 1.0f),
-            model(InvalidResource),
+            geometry(InvalidResource),
             orientation(1.0f)
         {};
 
@@ -353,7 +353,7 @@ class Renderer
         RingSystem* rings;
         float radius;
         Vec3f semiAxes;
-        ResourceHandle model;
+        ResourceHandle geometry;
         Quatf orientation;
         std::vector<EclipseShadow>* eclipseShadows;
     };

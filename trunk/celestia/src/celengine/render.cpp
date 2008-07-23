@@ -3130,7 +3130,7 @@ void Renderer::draw(const Observer& observer,
                 convex = false;
             }
 
-            if (iter->body->getModel() != InvalidResource)
+            if (!iter->body->isEllipsoid())
                 convex = false;
 
             cullRadius = radius;
@@ -3522,7 +3522,7 @@ void Renderer::draw(const Observer& observer,
                     convex = false;
                 }
 
-                if (iter->body->getModel() != InvalidResource)
+                if (!iter->body->isEllipsoid())
                     convex = false;
 
                 cullRadius = radius;
@@ -5277,7 +5277,7 @@ static void setLightParameters_VP(VertexProcessor& vproc,
 }
 
 
-static void renderModelDefault(Model* model,
+static void renderModelDefault(Geometry* geometry,
                                const RenderInfo& ri,
                                bool lit)
 {
@@ -5301,8 +5301,8 @@ static void renderModelDefault(Model* model,
     if (ri.baseTex != NULL)
         rc.lock();
 
-    model->render(rc);
-    if (model->usesTextureType(Mesh::EmissiveMap))
+    geometry->render(rc);
+    if (geometry->usesTextureType(Mesh::EmissiveMap))
     {
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
@@ -5311,7 +5311,7 @@ static void renderModelDefault(Model* model,
         rc.setRenderPass(RenderContext::EmissivePass);
         rc.setMaterial(NULL);
 
-        model->render(rc);
+        geometry->render(rc);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -6112,7 +6112,7 @@ static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
     glTexGenfv(coord, mode, f);
 }
 
-static void renderShadowedModelDefault(Model* model,
+static void renderShadowedGeometryDefault(Geometry* geometry,
                                        const RenderInfo& ri,
                                        const Frustum& frustum,
                                        float *sPlane,
@@ -6142,7 +6142,7 @@ static void renderShadowedModelDefault(Model* model,
     glColor4f(1, 1, 1, 1);
     glDisable(GL_LIGHTING);
 
-    if (model == NULL)
+    if (geometry == NULL)
     {
         g_lodSphere->render(context,
                             LODSphereMesh::Normals | LODSphereMesh::Multipass,
@@ -6151,7 +6151,7 @@ static void renderShadowedModelDefault(Model* model,
     else
     {
         FixedFunctionRenderContext rc;
-        model->render(rc);
+        geometry->render(rc);
     }
     glEnable(GL_LIGHTING);
 
@@ -6166,7 +6166,7 @@ static void renderShadowedModelDefault(Model* model,
 }
 
 
-static void renderShadowedModelVertexShader(const RenderInfo& ri,
+static void renderShadowedGeometryVertexShader(const RenderInfo& ri,
                                             const Frustum& frustum,
                                             float* sPlane, float* tPlane,
                                             Vec3f& lightDir,
@@ -6409,7 +6409,7 @@ static void renderRings(RingSystem& rings,
 
 
 static void
-renderEclipseShadows(Model* model,
+renderEclipseShadows(Geometry* geometry,
                      vector<EclipseShadow>& eclipseShadows,
                      RenderInfo& ri,
                      float planetRadius,
@@ -6418,7 +6418,7 @@ renderEclipseShadows(Model* model,
                      const GLContext& context)
 {
     // Eclipse shadows on mesh objects aren't working yet.
-    if (model != NULL)
+    if (geometry != NULL)
         return;
 
     for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
@@ -6520,16 +6520,16 @@ renderEclipseShadows(Model* model,
         // standard transformation pipeline isn't guaranteed, we have to
         // make sure to use the same transformation engine on subsequent
         // rendering passes as we did on the initial one.
-        if (context.getVertexPath() != GLContext::VPath_Basic && model == NULL)
+        if (context.getVertexPath() != GLContext::VPath_Basic && geometry == NULL)
         {
-            renderShadowedModelVertexShader(ri, viewFrustum,
+            renderShadowedGeometryVertexShader(ri, viewFrustum,
                                            sPlane, tPlane,
                                            dir,
                                            context);
         }
         else
         {
-            renderShadowedModelDefault(model, ri, viewFrustum,
+            renderShadowedGeometryDefault(geometry, ri, viewFrustum,
                                        sPlane, tPlane,
                                        dir,
                                        ri.useTexEnvCombine,
@@ -6556,7 +6556,7 @@ renderEclipseShadows(Model* model,
 
 
 static void
-renderEclipseShadows_Shaders(Model* model,
+renderEclipseShadows_Shaders(Geometry* geometry,
                              vector<EclipseShadow>& eclipseShadows,
                              RenderInfo& ri,
                              float planetRadius,
@@ -6565,7 +6565,7 @@ renderEclipseShadows_Shaders(Model* model,
                              const GLContext& context)
 {
     // Eclipse shadows on mesh objects aren't working yet.
-    if (model != NULL)
+    if (geometry != NULL)
         return;
 
     glEnable(GL_TEXTURE_2D);
@@ -6675,7 +6675,7 @@ renderEclipseShadows_Shaders(Model* model,
 
 
 static void
-renderRingShadowsVS(Model* /*model*/,           //TODO: Remove unused parameters??
+renderRingShadowsVS(Geometry* /*geometry*/,           //TODO: Remove unused parameters??
                     const RingSystem& rings,
                     const Vec3f& /*sunDir*/,
                     RenderInfo& ri,
@@ -7268,7 +7268,7 @@ void Renderer::renderObject(Point3f pos,
     // be seen, make the far plane of the frustum as close to the viewer
     // as possible.
     float frustumFarPlane = farPlaneDistance;
-    if (obj.model == InvalidResource)
+    if (obj.geometry == InvalidResource)
     {
         // Only adjust the far plane for ellipsoidal objects
         float d = pos.distanceFromOrigin();
@@ -7327,8 +7327,8 @@ void Renderer::renderObject(Point3f pos,
             cloudTexOffset = (float) (-pfmod(now * atmosphere->cloudSpeed / (2 * PI), 1.0));
     }
 
-    Model* model = NULL;
-    if (obj.model == InvalidResource)
+    Geometry* geometry = NULL;
+    if (obj.geometry == InvalidResource)
     {
         // A null model indicates that this body is a sphere
         if (lit)
@@ -7373,16 +7373,16 @@ void Renderer::renderObject(Point3f pos,
     else
     {
         // This is a model loaded from a file
-        model = GetModelManager()->find(obj.model);
+        geometry = GetGeometryManager()->find(obj.geometry);
 
-        if (model != NULL)
+        if (geometry != NULL)
         {
             if (context->getRenderPath() == GLContext::GLPath_GLSL)
             {
                 ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
                 if (lit)
                 {
-                    renderModel_GLSL(model,
+                    renderGeometry_GLSL(geometry,
                                      ri,
                                      texOverride,
                                      ls,
@@ -7393,7 +7393,7 @@ void Renderer::renderObject(Point3f pos,
                 }
                 else
                 {
-                    renderModel_GLSL_Unlit(model,
+                    renderGeometry_GLSL_Unlit(geometry,
                                            ri,
                                            texOverride,
                                            obj.radius,
@@ -7412,7 +7412,7 @@ void Renderer::renderObject(Point3f pos,
             }
             else
             {
-                renderModelDefault(model, ri, lit);
+                renderModelDefault(geometry, ri, lit);
             }
         }
     }
@@ -7621,7 +7621,7 @@ void Renderer::renderObject(Point3f pos,
         if (context->getVertexProcessor() != NULL &&
             context->getFragmentProcessor() != NULL)
         {
-            renderEclipseShadows_Shaders(model,
+            renderEclipseShadows_Shaders(geometry,
                                          *ls.shadows[0],
                                          ri,
                                          radius, planetMat, viewFrustum,
@@ -7629,7 +7629,7 @@ void Renderer::renderObject(Point3f pos,
         }
         else
         {
-            renderEclipseShadows(model,
+            renderEclipseShadows(geometry,
                                  *ls.shadows[0],
                                  ri,
                                  radius, planetMat, viewFrustum,
@@ -7653,7 +7653,7 @@ void Renderer::renderObject(Point3f pos,
                 context->getVertexPath() != GLContext::VPath_Basic &&
                 context->getRenderPath() != GLContext::GLPath_GLSL)
             {
-                renderRingShadowsVS(model,
+                renderRingShadowsVS(geometry,
                                     *obj.rings,
                                     sunDir,
                                     ri,
@@ -7711,7 +7711,7 @@ bool Renderer::testEclipse(const Body& receiver,
     if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
         caster.isVisible() &&
         caster.extant(now) &&
-        caster.getModel() == InvalidResource)
+        caster.isEllipsoid())
     {
         // All of the eclipse related code assumes that both the caster
         // and receiver are spherical.  Irregular receivers will work more
@@ -7814,7 +7814,7 @@ void Renderer::renderPlanet(Body& body,
         rp.rings = body.getRings();
         rp.radius = body.getRadius();
         rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
-        rp.model = body.getModel();
+        rp.geometry = body.getGeometry();
 
         // Compute the orientation of the planet before axial rotation
         Quatd q = body.getRotationModel(now)->spin(now) *
@@ -8025,7 +8025,7 @@ void Renderer::renderStar(const Star& star,
         rp.rings = NULL;
         rp.radius = star.getRadius();
         rp.semiAxes = star.getEllipsoidSemiAxes();
-        rp.model = star.getModel();
+        rp.geometry = star.getGeometry();
 
 #ifndef USE_HDR
         Atmosphere atmosphere;
@@ -8036,7 +8036,7 @@ void Renderer::renderStar(const Star& star,
         atmosphere.skyColor = atmColor;
 
         // Use atmosphere effect to give stars a fuzzy fringe
-        if (rp.model == InvalidResource)
+        if (rp.geometry == InvalidResource)
             rp.atmosphere = &atmosphere;
         else
 #endif
@@ -8442,13 +8442,13 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         rle.renderableType = RenderListEntry::RenderableBody;
         rle.body = &body;
 
-        if (body.getModel() != InvalidResource && rle.discSizeInPixels > 1)
+        if (body.getGeometry() != InvalidResource && rle.discSizeInPixels > 1)
         {
-            Model* model = GetModelManager()->find(body.getModel());
-            if (model == NULL)
+            Geometry* geometry = GetGeometryManager()->find(body.getGeometry());
+            if (geometry == NULL)
                 rle.isOpaque = true;
             else
-                rle.isOpaque = model->isOpaque();
+                rle.isOpaque = geometry->isOpaque();
         }
         else
         {

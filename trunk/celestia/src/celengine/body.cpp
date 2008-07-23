@@ -36,7 +36,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     mass(0.0f),
     albedo(0.5f),
     orientation(1.0f),
-    model(InvalidResource),
+    geometry(InvalidResource),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
     rings(NULL),
@@ -91,7 +91,7 @@ void Body::setDefaultProperties()
     mass = 0.0f;
     albedo = 0.5f;
     orientation = Quatf(1.0f);
-    model = InvalidResource;
+    geometry = InvalidResource;
     surface = Surface(Color::White);
     delete atmosphere;
     atmosphere = NULL;
@@ -263,7 +263,7 @@ const RotationModel* Body::getRotationModel(double tdb) const
  */
 float Body::getBoundingRadius() const
 {
-    if (model == InvalidResource)
+    if (geometry == InvalidResource)
         return radius;
     else
         return radius * 1.7320508f; // sqrt(3)
@@ -355,7 +355,7 @@ float Body::getRadius() const
 */
 bool Body::isSphere() const
 {
-    return (model == InvalidResource) &&
+    return (geometry == InvalidResource) &&
            (semiAxes.x == semiAxes.y) && 
            (semiAxes.x == semiAxes.z);
 }
@@ -366,7 +366,7 @@ bool Body::isSphere() const
  */
 bool Body::isEllipsoid() const
 {
-    return model == InvalidResource;
+    return geometry == InvalidResource;
 }
 
 
@@ -388,14 +388,14 @@ void Body::setSurface(const Surface& surf)
 }
 
 
-ResourceHandle Body::getModel() const
+ResourceHandle Body::getGeometry() const
 {
-    return model;
+    return geometry;
 }
 
-void Body::setModel(ResourceHandle _model)
+void Body::setGeometry(ResourceHandle _geometry)
 {
-    model = _model;
+    geometry = _geometry;
 }
 
 
@@ -896,10 +896,10 @@ void Body::computeLocations()
     locationsComputed = true;
 
     // No work to do if there's no mesh, or if the mesh cannot be loaded
-    if (model == InvalidResource)
+    if (geometry == InvalidResource)
         return;
-    Model* m = GetModelManager()->find(model);
-    if (m == NULL)
+    Geometry* g = GetGeometryManager()->find(geometry);
+    if (g == NULL)
         return;
 
     // TODO: Implement separate radius and bounding radius so that this hack is
@@ -917,7 +917,7 @@ void Body::computeLocations()
 
         Ray3d ray(Point3d(v.x, v.y, v.z), Vec3d(-v.x, -v.y, -v.z));
         double t = 0.0;
-        if (m->pick(ray, t))
+        if (g->pick(ray, t))
         {
             v *= (float) ((1.0 - t) * radius + alt);
             (*iter)->setPosition(v);

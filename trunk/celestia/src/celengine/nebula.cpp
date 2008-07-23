@@ -26,7 +26,7 @@ using namespace std;
 
 
 Nebula::Nebula() :
-    model(InvalidResource)
+    geometry(InvalidResource)
 {
 }
 
@@ -48,15 +48,15 @@ size_t Nebula::getDescription(char* buf, size_t bufLength) const
 }
 
 
-ResourceHandle Nebula::getModel() const
+ResourceHandle Nebula::getGeometry() const
 {
-    return model;
+    return geometry;
 }
 
 
-void Nebula::setModel(ResourceHandle _model)
+void Nebula::setGeometry(ResourceHandle _geometry)
 {
-    model = _model;
+    geometry = _geometry;
 }
 
 const char* Nebula::getObjTypeName() const
@@ -76,12 +76,12 @@ bool Nebula::pick(const Ray3d& ray,
 
 bool Nebula::load(AssociativeArray* params, const string& resPath)
 {
-    string model;
-    if (params->getString("Mesh", model))
+    string geometryFileName;
+    if (params->getString("Mesh", geometryFileName))
     {
-        ResourceHandle modelHandle =
-            GetModelManager()->getHandle(ModelInfo(model, resPath));
-        setModel(modelHandle);
+        ResourceHandle geometryHandle =
+            GetGeometryManager()->getHandle(GeometryInfo(geometryFileName, resPath));
+        setGeometry(geometryHandle);
     }
 
     return DeepSkyObject::load(params, resPath);
@@ -94,10 +94,10 @@ void Nebula::render(const GLContext& glcontext,
                     float,
                     float pixelSize)
 {
-    Model* m = NULL;
-    if (model != InvalidResource)
-        m = GetModelManager()->find(model);
-    if (m == NULL)
+    Geometry* g = NULL;
+    if (geometry != InvalidResource)
+        g = GetGeometryManager()->find(geometry);
+    if (g == NULL)
         return;
 
     glDisable(GL_BLEND);
@@ -109,14 +109,14 @@ void Nebula::render(const GLContext& glcontext,
     {
         GLSLUnlit_RenderContext rc(getRadius());
         rc.setPointScale(2.0f * getRadius() / pixelSize);
-        m->render(rc);
+        g->render(rc);
         glx::glUseProgramObjectARB(0);
     }
     else
     {
         FixedFunctionRenderContext rc;
         rc.setLighting(false);
-        m->render(rc);
+        g->render(rc);
 
         // Reset the material
         float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

@@ -49,7 +49,7 @@ bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
     if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        caster.getModel() == InvalidResource)
+        caster.isEllipsoid())
     {
         // All of the eclipse related code assumes that both the caster
         // and receiver are spherical.  Irregular receivers will work more

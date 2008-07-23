@@ -41,7 +41,7 @@ class StarDetails
  public:
     inline float getRadius() const;
     inline float getTemperature() const;
-    inline ResourceHandle getModel() const;
+    inline ResourceHandle getGeometry() const;
     inline MultiResTexture getTexture() const;
     inline Orbit* getOrbit() const;
     inline float getOrbitalRadius() const;
@@ -58,7 +58,7 @@ class StarDetails
     void setSpectralType(const std::string&);
     void setBolometricCorrection(float);
     void setTexture(const MultiResTexture&);
-    void setModel(ResourceHandle);
+    void setGeometry(ResourceHandle);
     void setOrbit(Orbit*);
     void setOrbitBarycenter(Star*);
     void setOrbitalRadius(float);
@@ -93,7 +93,7 @@ class StarDetails
     char spectralType[8];
 
     MultiResTexture texture;
-    ResourceHandle model;
+    ResourceHandle geometry;
 
     Orbit* orbit;
     float orbitalRadius;
@@ -151,9 +151,9 @@ StarDetails::getTemperature() const
 }
 
 ResourceHandle
-StarDetails::getModel() const
+StarDetails::getGeometry() const
 {
-    return model;
+    return geometry;
 }
 
 MultiResTexture
@@ -264,7 +264,7 @@ public:
     inline const char* getSpectralType() const;
     inline float getBolometricMagnitude() const;
     MultiResTexture getTexture() const;
-    ResourceHandle getModel() const;
+    ResourceHandle getGeometry() const;
     inline Orbit* getOrbit() const;
     inline float getOrbitalRadius() const;
     inline Star* getOrbitBarycenter() const;

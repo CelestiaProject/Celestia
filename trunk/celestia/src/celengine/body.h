@@ -230,8 +230,8 @@ class Body
     Atmosphere* getAtmosphere();
     void setAtmosphere(const Atmosphere&);
 
-    void setModel(ResourceHandle);
-    ResourceHandle getModel() const;
+    void setGeometry(ResourceHandle);
+    ResourceHandle getGeometry() const;
     void setSurface(const Surface&);
     const Surface& getSurface() const;
     Surface& getSurface();
@@ -353,7 +353,7 @@ class Body
 
     float cullingRadius;
 
-    ResourceHandle model;
+    ResourceHandle geometry;
     Surface surface;
 
     Atmosphere* atmosphere;
