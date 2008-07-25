@@ -4400,31 +4400,7 @@ static void renderBumpMappedMesh(const GLContext& context,
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
     // this vector.
-    Quatf lightOrientation;
-    {
-        Vec3f zeroLightDirection(0, 0, 1);
-        Vec3f axis = lightDirection ^ zeroLightDirection;
-        float cosAngle = zeroLightDirection * lightDirection;
-        float angle = 0.0f;
-        float epsilon = 1e-5f;
-
-        if (cosAngle + 1 < epsilon)
-        {
-            axis = Vec3f(0, 1, 0);
-            angle = (float) PI;
-        }
-        else if (cosAngle - 1 > -epsilon)
-        {
-            axis = Vec3f(0, 1, 0);
-            angle = 0.0f;
-        }
-        else
-        {
-            axis.normalize();
-            angle = (float) acos(cosAngle);
-        }
-        lightOrientation.setAxisAngle(axis, angle);
-    }
+    Quatf lightOrientation = Quatf::vecToVecRotation(Vec3f(0.0f, 0.0f, 1.0f), lightDirection);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_DST_COLOR, GL_ZERO);
@@ -4495,31 +4471,7 @@ static void renderSmoothMesh(const GLContext& context,
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
     // this vector.
-    Quatf lightOrientation;
-    {
-        Vec3f zeroLightDirection(0, 0, 1);
-        Vec3f axis = lightDirection ^ zeroLightDirection;
-        float cosAngle = zeroLightDirection * lightDirection;
-        float angle = 0.0f;
-        float epsilon = 1e-5f;
-
-        if (cosAngle + 1 < epsilon)
-        {
-            axis = Vec3f(0, 1, 0);
-            angle = (float) PI;
-        }
-        else if (cosAngle - 1 > -epsilon)
-        {
-            axis = Vec3f(0, 1, 0);
-            angle = 0.0f;
-        }
-        else
-        {
-            axis.normalize();
-            angle = (float) acos(cosAngle);
-        }
-        lightOrientation.setAxisAngle(axis, angle);
-    }
+    Quatf lightOrientation = Quatf::vecToVecRotation(Vec3f(0.0f, 0.0f, 1.0f), lightDirection);
 
     SetupCombinersSmooth(baseTexture, *normalizationTex, ambientColor, invert);
 
@@ -6861,9 +6813,10 @@ void Renderer::renderLocations(const Body& body,
                     else if (featureType & (Location::EruptiveCenter))
                         locationMarker = &genericLocationRep;
                     
+                    Color labelColor = location.isLabelColorOverridden() ? location.getLabelColor() : LocationLabelColor;
                     addObjectAnnotation(locationMarker,
                                         location.getName(true),
-                                        LocationLabelColor,
+                                        labelColor,
                                         Point3f((float) labelPos.x, (float) labelPos.y, (float) labelPos.z));
                 }
             }
@@ -7187,7 +7140,7 @@ void Renderer::renderObject(Point3f pos,
                             -pos.y / semiAxes.y,
                             -pos.z / semiAxes.z) * planetMat;
 
-    ri.orientation = cameraOrientation;
+    ri.orientation = cameraOrientation * ~obj.orientation;
 
     ri.pixWidth = discSizeInPixels;
     ri.pointScale = 2.0f * obj.radius / pixelSize;
@@ -7383,13 +7336,14 @@ void Renderer::renderObject(Point3f pos,
                 if (lit)
                 {
                     renderGeometry_GLSL(geometry,
-                                     ri,
-                                     texOverride,
-                                     ls,
-                                     obj.atmosphere,
-                                     obj.radius,
-                                     renderFlags,
-                                     planetMat);
+                                        ri,
+                                        texOverride,
+                                        ls,
+                                        obj.atmosphere,
+                                        obj.radius,
+                                        renderFlags,
+                                        planetMat,
+                                        astro::daysToSecs(now - astro::J2000));
                 }
                 else
                 {
@@ -7398,7 +7352,8 @@ void Renderer::renderObject(Point3f pos,
                                            texOverride,
                                            obj.radius,
                                            renderFlags,
-                                           planetMat);
+                                           planetMat,
+                                           astro::daysToSecs(now - astro::J2000));
                 }
 
                 for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)

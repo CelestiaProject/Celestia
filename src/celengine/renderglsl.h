@@ -33,7 +33,8 @@ void renderGeometry_GLSL(Geometry* geometry,
                       const Atmosphere* atmosphere,
                       float radius,
                       int renderFlags,
-                      const Mat4f& planetMat);
+                      const Mat4f& planetMat,
+                      double tsec);
                       
 void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
@@ -71,7 +72,8 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                             ResourceHandle texOverride,
                             float radius,
                             int renderFlags,
-                            const Mat4f& planetMat);
+                            const Mat4f& planetMat,
+                            double tsec);
 
                            
 #endif // _CELENGINE_RENDERGLSL_H_
