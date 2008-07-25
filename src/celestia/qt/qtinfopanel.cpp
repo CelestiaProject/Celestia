@@ -26,6 +26,7 @@ struct OrbitalElements
     double longAscendingNode;
     double argPericenter;
     double meanAnomaly;
+    double period;
 };
 
 static void CalculateOsculatingElements(const Orbit& orbit,
@@ -130,8 +131,7 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
         radius *= 1000.0;
     }
 
-    //if (body->isEllipsoid())
-    if (body->getModel() == InvalidResource)
+    if (body->isEllipsoid())
         stream << boldText(tr("Equatorial radius: "));
     else
         stream << boldText(tr("Size: "));
@@ -184,8 +184,11 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     }
 
     // Orbit information
-    if (orbitalPeriod != 0.0)
+    if (orbitalPeriod != 0.0 || 1)
     {
+        if (orbitalPeriod == 0.0)
+            orbitalPeriod = 365.25;
+
         OrbitalElements elements;
         CalculateOsculatingElements(*body->getOrbit(t),
                                     t,
@@ -223,6 +226,13 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
         stream << boldText(tr("Inclination: ")) << radToDeg(elements.inclination) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
         stream << boldText(tr("Pericenter distance: ")) << sma * (1 - elements.eccentricity) << " " << units << "<br>\n";
         stream << boldText(tr("Apocenter distance: ")) << sma * (1 + elements.eccentricity) << " " << units << "<br>\n";
+
+#if 1
+        stream << boldText(tr("Ascending node: ")) << radToDeg(elements.longAscendingNode) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText(tr("Argument of periapsis: ")) << radToDeg(elements.argPericenter) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText(tr("Mean anomaly: ")) << radToDeg(elements.meanAnomaly) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText(tr("Period (calculated): ")) << elements.period << "d<br>\n";
+#endif
     }
 }
 
@@ -351,7 +361,6 @@ static void StateVectorToElements(const Point3d& position,
 
     // Compute the period
     double T = 2 * PI * sqrt(cube(a) / GM);
-    T = T / 86400.0; // Convert from seconds to days
 
     elements->semimajorAxis     = a;
     elements->eccentricity      = e;
@@ -359,6 +368,7 @@ static void StateVectorToElements(const Point3d& position,
     elements->longAscendingNode = Om;
     elements->argPericenter     = om;
     elements->meanAnomaly       = M;
+    elements->period            = T;
 }
 
 
@@ -367,19 +377,37 @@ static void CalculateOsculatingElements(const Orbit& orbit,
                                         double dt,
                                         OrbitalElements* elements)
 {
-    Point3d p0 = orbit.positionAtTime(t - dt);
-    Point3d p1 = orbit.positionAtTime(t);
-    Point3d p2 = orbit.positionAtTime(t + dt);
+    double sdt = dt;
 
-    Vec3d v0 = (p1 - p0) / dt;
-    Vec3d v1 = (p2 - p1) / dt;
-    Vec3d v = (p2 - p0) / (dt * 2);
+    // If the trajectory is finite, make sure we sample
+    // it inside the valid time interval.
+    if (!orbit.isPeriodic())
+    {
+        double beginTime = 0.0;
+        double endTime = 0.0;
+        orbit.getValidRange(beginTime, endTime);
+        clog << "t+dt: " << t + dt << ", endTime: " << endTime << endl;
+        if (t + dt > endTime)
+        {
+            clog << "REVERSE\n";
+            sdt = -dt;
+        }
+    }
 
-    double accel = ((v1 - v0) / dt).length();
-    Vec3d r = p1 - Point3d(0.0, 0.0, 0.0);
+    Point3d p0 = orbit.positionAtTime(t);
+    Point3d p1 = orbit.positionAtTime(t + sdt);
+    Vec3d v0 = orbit.velocityAtTime(t);
+    Vec3d v1 = orbit.velocityAtTime(t + sdt);
+
+    double accel = ((v1 - v0) / sdt).length();
+    Vec3d r = p0 - Point3d(0.0, 0.0, 0.0);
     double GM = accel * (r * r);
 
-    StateVectorToElements(p1, v, GM, elements);
+    clog << "vel: " << v0.length() / 86400.0 << endl;
+    clog << "vel (est): " << (p1 - p0).length() / sdt / 86400 << endl;
+    clog << "osc: " << t << ", " << dt << ", " << accel << ", GM=" << GM << endl;
+
+    StateVectorToElements(p0, v0, GM, elements);
 }
 
 
