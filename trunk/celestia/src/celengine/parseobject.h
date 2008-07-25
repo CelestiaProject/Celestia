@@ -24,7 +24,7 @@ class Selection;
 
 bool ParseDate(Hash* hash, const string& name, double& jd);
 
-Orbit* CreateOrbit(PlanetarySystem* system,
+Orbit* CreateOrbit(const Selection& centralObject,
                    Hash* planetData,
                    const std::string& path,
                    bool usePlanetUnits);
@@ -37,6 +37,7 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod);
 
 ReferenceFrame* CreateReferenceFrame(const Universe& universe,
                                      Value* frameValue,
-                                     const Selection& defaultCenter);
+                                     const Selection& defaultCenter,
+                                     Body* defaultObserver);
 
 #endif // _CELENGINE_PARSEOBJECT_H_
