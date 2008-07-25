@@ -120,7 +120,7 @@ bool QtEclipseFinder::testEclipse(const Body& receiver, const Body& occulter,
     // ignore eclipses where the occulter is not an ellipsoid, since we can't
     // generate correct shadows in this case.
     if (occulter.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        occulter.getModel() == InvalidResource)
+        occulter.isEllipsoid())
     {
         // All of the eclipse related code assumes that both the occulter
         // and receiver are spherical.  Irregular receivers will work more
