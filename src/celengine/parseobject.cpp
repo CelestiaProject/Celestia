@@ -214,6 +214,57 @@ CreateSampledTrajectory(Hash* trajData, const string& path)
 }
 
 
+// Create a new FixedPosition trajectory. A FixedPosition is a property list
+// with one of the following 3-vector properties:
+//     Rectangular
+//     Planetographic
+//     Planetocentric
+// Planetographic and planetocentric coordinates are given in the order longitude,
+// latitude, altitude. Units of altitude are kilometers. Planetographic and
+// and planetocentric coordinates are only practical when the coordinate system
+// is BodyFixed.
+static Orbit*
+CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlanetUnits)
+{
+    Vec3d position(0.0, 0.0, 0.0);
+
+    Vec3d v(0.0, 0.0, 0.0);
+    if (trajData->getVector("Rectangular", v))
+    {       
+        if (usePlanetUnits)
+            v = v * astro::AUtoKilometers(1.0);
+        // Convert to Celestia's coordinate system
+        position = Vec3d(v.x, v.z, -v.y);
+    }
+    else if (trajData->getVector("Planetographic", v))
+    {
+        if (centralObject.getType() != Selection::Type_Body)
+        {
+            clog << "FixedPosition planetographic coordinates aren't valid for stars.\n";
+            return NULL;
+        }
+        position = centralObject.body()->planetocentricToCartesian(v.x, v.y, v.z);
+    }
+    else if (trajData->getVector("Planetocentric", v))
+    {
+        if (centralObject.getType() != Selection::Type_Body)
+        {
+            clog << "FixedPosition planetographic coordinates aren't valid for stars.\n";
+            return NULL;
+        }
+        // TODO: Need function to calculate planetographic coordinates
+        position = centralObject.body()->planetocentricToCartesian(v.x, v.y, v.z);
+    }
+    else
+    {
+        clog << "Missing coordinates for FixedPosition\n";
+        return NULL;
+    }
+
+    return new FixedOrbit(Point3d(v.x, v.y, v.z));
+}
+
+
 // Parse a string list--either a single string or an array of strings is permitted.
 static bool
 ParseStringList(Hash* table,
@@ -558,7 +609,7 @@ CreateScriptedOrbit(Hash* orbitData,
 
 
 Orbit*
-CreateOrbit(PlanetarySystem* system,
+CreateOrbit(const Selection& centralObject,
             Hash* planetData,
             const string& path,
             bool usePlanetUnits)
@@ -668,33 +719,56 @@ CreateOrbit(PlanetarySystem* system,
     }
 
     // Create an 'orbit' that places the object at a fixed point in its
-    // reference frame.
-    Vec3d fixedPosition(0.0, 0.0, 0.0);
-    if (planetData->getVector("FixedPosition", fixedPosition))
+    // reference frame. There are two forms for FixedPosition: a simple
+    // form with an 3-vector value, and complex form with a properlist
+    // value. The simple form:
+    //
+    // FixedPosition [ x y z ]
+    //
+    // is a shorthand for:
+    //
+    // FixedPosition { Rectangular [ x y z ] }
+    //
+    // In addition to Rectangular, other coordinate types for fixed position are
+    // Planetographic and Planetocentric.
+    Value* fixedPositionValue = planetData->getValue("FixedPosition");
+    if (fixedPositionValue != NULL)
     {
-        // Convert to Celestia's coordinate system
-        fixedPosition = Vec3d(fixedPosition.x,
-                              fixedPosition.z,
-                              -fixedPosition.y);
+        Vec3d fixedPosition(0.0, 0.0, 0.0);
+        if (planetData->getVector("FixedPosition", fixedPosition))
+        {
+            // Convert to Celestia's coordinate system
+            fixedPosition = Vec3d(fixedPosition.x,
+                                  fixedPosition.z,
+                                  -fixedPosition.y);
 
-        if (usePlanetUnits)
-            fixedPosition = fixedPosition * astro::AUtoKilometers(1.0);
+            if (usePlanetUnits)
+                fixedPosition = fixedPosition * astro::AUtoKilometers(1.0);
 
-        return new FixedOrbit(Point3d(0.0, 0.0, 0.0) + fixedPosition);
+            return new FixedOrbit(Point3d(0.0, 0.0, 0.0) + fixedPosition);
+        }
+        else if (fixedPositionValue->getType() == Value::HashType)
+        {
+            return CreateFixedPosition(fixedPositionValue->getHash(), centralObject, usePlanetUnits);
+        }
+        else
+        {
+            clog << "Object has incorrect FixedPosition syntax.\n";
+        }
     }
 
-    // LongLat will make an object fixed relative to the surface of its parent
+    // LongLat will make an object fixed relative to the surface of its center
     // object. This is done by creating an orbit with a period equal to the
     // rotation rate of the parent object. A body-fixed reference frame is a
     // much better way to accomplish this.
     Vec3d longlat(0.0, 0.0, 0.0);
     if (planetData->getVector("LongLat", longlat) && system != NULL)
     {
-        Body* parent = system->getPrimaryBody();
-        if (parent != NULL)
+        Body* centralBody = centralObject.body();
+        if (centralBody != NULL)
         {
-            Vec3d pos = parent->planetocentricToCartesian(longlat.x, longlat.y, longlat.z);
-            return new SynchronousOrbit(*parent, Point3d(pos.x, pos.y, pos.z));
+            Vec3d pos = centralBody->planetocentricToCartesian(longlat.x, longlat.y, longlat.z);
+            return new SynchronousOrbit(*centralBody, Point3d(pos.x, pos.y, pos.z));
         }
         else
         {
@@ -1392,7 +1466,7 @@ CreateFrameVector(const Universe& universe,
         Value* frameValue = constVecData->getValue("Frame");
         if (frameValue != NULL)
         {
-            f = CreateReferenceFrame(universe, frameValue, center);
+            f = CreateReferenceFrame(universe, frameValue, center, NULL);
             if (f == NULL)
                 return NULL;
         }
@@ -1512,8 +1586,94 @@ CreateJ2000EquatorFrame(const Universe& universe,
 }
 
 
+static TwoVectorFrame*
+CreateTopocentricFrame(const Universe& universe,
+                       Hash* frameData,
+                       const Selection& defaultTarget,
+                       const Selection& defaultObserver)
+{
+    Selection target;
+    Selection observer;
+    Selection center;
+
+    string centerName;
+    if (frameData->getString("Center", centerName))
+    {
+        // If a center is provided, the default observer is the center and
+        // the default target is the center's parent. This gives sensible results
+        // when a topocentric frame is used as an orbit frame.
+        center = universe.findPath(centerName, NULL, 0);
+        if (center.empty())
+        {
+            cerr << "Center object '" << centerName << "' for topocentric frame not found.\n";
+            return NULL;
+       }
+
+       observer = center;
+       target = center.parent();
+    }  
+    else
+    {
+        // When no center is provided, use the default observer as the center. This
+        // is typical when a topocentric frame is the body frame. The default obsever
+        // is usually the object itself.
+        target = defaultTarget;
+        observer = defaultObserver;
+        center = defaultObserver;
+    }
+
+    string targetName;
+    if (!frameData->getString("Target", targetName))
+    {
+        if (target.empty())
+        {
+            cerr << "No target specified for topocentric frame.\n";
+            return NULL;
+        }
+    }
+    else
+    {
+        target = universe.findPath(targetName, NULL, 0);
+        if (target.empty())
+        {
+            cerr << "Target object '" << targetName << "' for topocentric frame not found.\n";
+            return NULL;
+        }
+
+        // Should verify that center object is a star or planet, and
+        // that it is a member of the same star system as the body in which
+        // the frame will be used.
+    }
+
+    string observerName;
+    if (!frameData->getString("Observer", observerName))
+    {
+        if (observer.empty())
+        {
+            cerr << "No observer specified for topocentric frame.\n";
+            return NULL;
+        }
+    }
+    else
+    {
+        observer = universe.findPath(observerName, NULL, 0);
+        if (observer.empty())
+        {
+            cerr << "Observer object '" << observerName << "' for topocentric frame not found.\n";
+            return NULL;
+        }
+    }
+
+    BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
+    FrameVector north = FrameVector::createConstantVector(Vec3d(0.0, 1.0, 0.0), eqFrame);
+    FrameVector up = FrameVector::createRelativePositionVector(observer, target);
+
+    return new TwoVectorFrame(center, up, -2, north, 1);
+}
+
+
 static ReferenceFrame*
-CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& defaultCenter)
+CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& defaultCenter, Body* defaultObserver)
 {
     Value* value = frameData->getValue("BodyFixed");
     if (value != NULL)
@@ -1557,6 +1717,20 @@ CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& d
         }
     }
 
+    value = frameData->getValue("Topocentric");
+    if (value != NULL)
+    {
+        if (value->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect topocentric frame syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            return CreateTopocentricFrame(universe, value->getHash(), defaultCenter, Selection(defaultObserver));
+        }
+    }
+
     value = frameData->getValue("EclipticJ2000");
     if (value != NULL)
     {
@@ -1593,7 +1767,8 @@ CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& d
 
 ReferenceFrame* CreateReferenceFrame(const Universe& universe,
                                      Value* frameValue,
-                                     const Selection& defaultCenter)
+                                     const Selection& defaultCenter,
+                                     Body* defaultObserver)
 {
     if (frameValue->getType() == Value::StringType)
     {
@@ -1603,7 +1778,7 @@ ReferenceFrame* CreateReferenceFrame(const Universe& universe,
     }
     else if (frameValue->getType() == Value::HashType)
     {
-        return CreateComplexFrame(universe, frameValue->getHash(), defaultCenter);
+        return CreateComplexFrame(universe, frameValue->getHash(), defaultCenter, defaultObserver);
     }
     else
     {
