@@ -135,6 +135,20 @@ RenderContext::getPointScale() const
 
 
 void
+RenderContext::setCameraOrientation(const Quatf& q)
+{
+    cameraOrientation = q;
+}
+
+
+Quatf
+RenderContext::getCameraOrientation() const
+{
+    return cameraOrientation;
+}
+
+
+void
 RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
 {
     // Skip rendering if this is the emissive pass but there's no
