@@ -936,7 +936,7 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
     string infoURL;
     bool hasInfoURL = starData->getString("InfoURL", infoURL);
 
-    Orbit* orbit = CreateOrbit(NULL, starData, path, true);
+    Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
 
     if (hasTexture      ||
         hasModel        ||
