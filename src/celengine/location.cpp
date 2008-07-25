@@ -68,6 +68,8 @@ Location::Location() :
     size(0.0f),
     importance(-1.0f),
     featureType(Other),
+    overrideLabelColor(false),
+    labelColor(1.0f, 1.0f, 1.0f),
     infoURL(NULL)
 {
 }

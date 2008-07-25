@@ -173,6 +173,13 @@ static Location* CreateLocation(Hash* locationData,
     if (locationData->getString("Type", featureTypeName))
         location->setFeatureType(Location::parseFeatureType(featureTypeName));
 
+    Color labelColor;
+    if (locationData->getColor("LabelColor", labelColor))
+    {
+        location->setLabelColor(labelColor);
+        location->setLabelColorOverridden(true);
+    }
+
     return location;
 }
 
@@ -338,7 +345,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     Value* frameValue = phaseData->getValue("OrbitFrame");
     if (frameValue != NULL)
     {
-        orbitFrame = CreateReferenceFrame(universe, frameValue, defaultFrame->getCenter());
+        orbitFrame = CreateReferenceFrame(universe, frameValue, defaultFrame->getCenter(), body);
         if (orbitFrame == NULL)
         {
             return NULL;
@@ -356,7 +363,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     Value* bodyFrameValue = phaseData->getValue("BodyFrame");
     if (bodyFrameValue != NULL)
     {
-        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultFrame->getCenter());
+        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultFrame->getCenter(), body);
         if (bodyFrame == NULL)
         {
             orbitFrame->release();
@@ -375,7 +382,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     bool usePlanetUnits = orbitFrame->getCenter().star() != NULL;
 
     // Get the orbit
-    Orbit* orbit = CreateOrbit(NULL, phaseData, path, usePlanetUnits);
+    Orbit* orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
     if (!orbit)
     {
         clog << "Error: missing orbit in timeline phase.\n";
@@ -544,7 +551,7 @@ static bool CreateTimeline(Body* body,
     Value* frameValue = planetData->getValue("OrbitFrame");
     if (frameValue != NULL)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue, orbitBarycenter);
+        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue, orbitBarycenter, body);
         if (frame != NULL)
         {
             orbitFrame = frame;
@@ -558,7 +565,7 @@ static bool CreateTimeline(Body* body,
     Value* bodyFrameValue = planetData->getValue("BodyFrame");
     if (bodyFrameValue != NULL)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue, orbitBarycenter);
+        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue, orbitBarycenter, body);
         if (frame != NULL)
         {
             bodyFrame = frame;
@@ -580,7 +587,7 @@ static bool CreateTimeline(Body* body,
     else
         orbitsPlanet = true;
 
-    Orbit* newOrbit = CreateOrbit(system, planetData, path, !orbitsPlanet);
+    Orbit* newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
     if (newOrbit == NULL && orbit == NULL)
     {
         clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.\n";

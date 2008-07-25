@@ -12,6 +12,7 @@
 
 #include <string>
 #include <celutil/basictypes.h>
+#include <celutil/color.h>
 #include <celmath/vecmath.h>
 
 
@@ -40,6 +41,12 @@ class Location
 
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
+
+    bool isLabelColorOverridden() const { return overrideLabelColor; }
+    void setLabelColorOverridden(bool override) { overrideLabelColor = override; }
+
+    Color getLabelColor() const { return labelColor; }
+    void setLabelColor(Color color) { labelColor = color; }
 
     void setParentBody(Body*);
     Body* getParentBody() const;
@@ -93,6 +100,8 @@ class Location
     float size;
     float importance;
     uint32 featureType;
+    bool overrideLabelColor;
+    Color labelColor;
     std::string* infoURL;
 };
 
