@@ -258,15 +258,19 @@ void renderSphere_GLSL(const RenderInfo& ri,
 }
 
 
-// Render a mesh object
+/*! Render a mesh object
+ *  Parameters:
+ *    tsec : animation clock time in seconds
+ */
 void renderGeometry_GLSL(Geometry* geometry,
-                      const RenderInfo& ri,
-                      ResourceHandle texOverride,
-                      const LightingState& ls,
-                      const Atmosphere* atmosphere,
-                      float radius,
-                      int renderFlags,
-                      const Mat4f& planetMat)
+                         const RenderInfo& ri,
+                         ResourceHandle texOverride,
+                         const LightingState& ls,
+                         const Atmosphere* atmosphere,
+                         float radius,
+                         int renderFlags,
+                         const Mat4f& planetMat,
+                         double tsec)
 {
     glDisable(GL_LIGHTING);
 
@@ -277,6 +281,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         rc.setAtmosphere(atmosphere);
     }
 
+    rc.setCameraOrientation(ri.orientation);
     rc.setPointScale(ri.pointScale);
 
     // Handle extended material attributes (per model only, not per submesh)
@@ -295,19 +300,23 @@ void renderGeometry_GLSL(Geometry* geometry,
         rc.lock();
     }
 
-    geometry->render(rc);
+    geometry->render(rc, tsec);
 
     glx::glUseProgramObjectARB(0);
 }
 
 
-// Render a mesh object unlit
+/*! Render a mesh object without lighting.
+ *  Parameters:
+ *    tsec : animation clock time in seconds
+ */
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
-                            const RenderInfo& ri,
-                            ResourceHandle texOverride,
-                            float radius,
-                            int renderFlags,
-                            const Mat4f& planetMat)
+                               const RenderInfo& ri,
+                               ResourceHandle texOverride,
+                               float radius,
+                               int renderFlags,
+                               const Mat4f& planetMat,
+                               double tsec)
 {
     glDisable(GL_LIGHTING);
 
@@ -328,7 +337,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
         rc.lock();
     }
 
-    geometry->render(rc);
+    geometry->render(rc, tsec);
 
     glx::glUseProgramObjectARB(0);
 }
