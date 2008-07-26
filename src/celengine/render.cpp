@@ -10191,7 +10191,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             glPushMatrix();
             const MarkerRepresentation& markerRep = *annotations[i].markerRep;
 
-            glColor(markerRep.color());
+            glColor(annotations[i].color);
             glTranslatef((GLfloat) (int) annotations[i].position.x,
                          (GLfloat) (int) annotations[i].position.y, 0.0f);
 
@@ -10421,7 +10421,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
             const MarkerRepresentation& markerRep = *iter->markerRep;
             
             glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
-            glColor(markerRep.color());
+            glColor(iter->color);
                         
             glDisable(GL_TEXTURE_2D);
             markerRep.render(markerRep.size());
