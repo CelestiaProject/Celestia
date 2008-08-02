@@ -390,6 +390,12 @@ bool CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
 
 void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
 {
+    int modifiers = 0;
+    if (e->modifiers() & ShiftModifier)
+        modifiers |= CelestiaCore::ShiftKey;
+    if (e->modifiers() & ControlModifier)
+        modifiers |= CelestiaCore::ControlKey;
+
     switch (e->key())
     {
     case Key_Escape:
@@ -403,7 +409,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         {
             if ((e->text() != 0) && (e->text() != ""))
             {
-                appCore->charEntered(e->text().toUtf8().data());
+                appCore->charEntered(e->text().toUtf8().data(), modifiers);
             }
         }
     }
