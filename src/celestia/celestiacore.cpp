@@ -1183,7 +1183,7 @@ void CelestiaCore::keyUp(int key, int)
 }
 
 #ifdef CELX
-static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
+static bool getKeyName(const char* c, int modifiers, char* keyName, unsigned int keyNameLength)
 {
     unsigned int length = strlen(c);
 
@@ -1193,6 +1193,12 @@ static bool getKeyName(const char* c, char* keyName, unsigned int keyNameLength)
         if (keyNameLength < 4)
             return false;
         sprintf(keyName, "C-%c", '\140' + c[0]);
+    }
+    else if (modifiers & CelestiaCore::ControlKey)
+    {
+        if (keyNameLength < length + 4)
+            return false;
+        sprintf(keyName, "C-%s", c);
     }
     else
     {
@@ -1214,7 +1220,7 @@ void CelestiaCore::charEntered(char c, int modifiers)
     charEntered(C, modifiers);
 }
 
-void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
+void CelestiaCore::charEntered(const char *c_p, int modifiers)
 {
     setViewChanged();
 
@@ -1342,15 +1348,20 @@ void CelestiaCore::charEntered(const char *c_p, int /*modifiers*/)
         if (c != '\033')
         {
             char keyName[8];
-            getKeyName(c_p, keyName, sizeof(keyName));
+            getKeyName(c_p, modifiers, keyName, sizeof(keyName));
             if (celxScript->handleKeyEvent(keyName))
                 return;
         }
     }
 
-    if (luaHook && luaHook->callLuaHook(this,"charentered", c))
+    if (luaHook)
     {
-        return;
+        char keyName[8];
+        getKeyName(c_p, modifiers, keyName, sizeof(keyName));
+        if (luaHook->callLuaHook(this, "charentered", keyName))
+        {
+            return;
+        }
     }
 #endif
 
