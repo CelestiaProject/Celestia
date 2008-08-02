@@ -3929,7 +3929,7 @@ bool LuaState::callLuaHook(void* obj, const char* method)
 }
 
 
-bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
+bool LuaState::callLuaHook(void* obj, const char* method, const char* keyName)
 {
     if (!eventHandlerEnabled)
         return false;
@@ -3948,9 +3948,9 @@ bool LuaState::callLuaHook(void* obj, const char* method, const char ch)
     if (lua_isfunction(costate, -1))
     {
         lua_pushvalue(costate, -2);          // push the Lua object onto the stack
-        lua_remove(costate, -3);        // remove the Lua object from the stack
+        lua_remove(costate, -3);             // remove the Lua object from the stack
 
-        lua_pushlstring(costate, &ch, 1);          // push the char onto the stack
+        lua_pushstring(costate, keyName);    // push the char onto the stack
 
         timeout = getTime() + 1.0;
         if (lua_pcall(costate, 2, 1, 0) != 0)
