@@ -72,7 +72,7 @@ public:
     void allowLuaPackageAccess();
     void setLuaHookEventHandlerEnabled(bool);
     bool callLuaHook(void* obj, const char* method);
-    bool callLuaHook(void* obj, const char* method, const char ch);
+    bool callLuaHook(void* obj, const char* method, const char* keyName);
     bool callLuaHook(void* obj, const char* method, float x, float y);
     bool callLuaHook(void* obj, const char* method, float x, float y, int b);
     bool callLuaHook(void* obj, const char* method, double dt);
