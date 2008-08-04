@@ -115,10 +115,11 @@ class Mesh
 
     enum BlendMode
     {
-        NormalBlend            = 0,
-        AdditiveBlend          = 1,
-        BlendMax               = 2,
-        InvalidBlend           = -1,
+        NormalBlend             = 0,
+        AdditiveBlend           = 1,
+        PremultipliedAlphaBlend = 2,
+        BlendMax                = 3,
+        InvalidBlend            = -1,
     };
 
     class Material
