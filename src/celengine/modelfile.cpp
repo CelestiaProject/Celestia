@@ -63,7 +63,7 @@ defined here--they have the obvious definitions.
 
 <string>              ::= """ { letter } """
 
-<blendmode>           ::= normal | add
+<blendmode>           ::= normal | add | premultiplied
 
 <mesh_definition>     ::= mesh
                           <vertex_description>
@@ -357,6 +357,8 @@ AsciiModelLoader::loadMaterial()
                     blendMode = Mesh::NormalBlend;
                 else if (blendModeName == "add")
                     blendMode = Mesh::AdditiveBlend;
+                else if (blendModeName == "premultiplied")
+                    blendMode = Mesh::PremultipliedAlphaBlend;
             }
 
             if (blendMode == Mesh::InvalidBlend)
@@ -1049,6 +1051,9 @@ AsciiModelWriter::writeMaterial(const Mesh::Material& material)
             break;
         case Mesh::AdditiveBlend:
             out << "add";
+            break;
+        case Mesh::PremultipliedAlphaBlend:
+            out << "premultiplied";
             break;
         default:
             assert(0);

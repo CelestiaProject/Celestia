@@ -249,6 +249,11 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
                 glDepthMask(GL_FALSE);
                 break;
+            case Mesh::PremultipliedAlphaBlend:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                glDepthMask(GL_FALSE);
+                break;
             default:
                 glDisable(GL_BLEND);
                 glDepthMask(GL_TRUE);
@@ -721,6 +726,11 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
             break;
+        case Mesh::PremultipliedAlphaBlend:
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glDepthMask(GL_FALSE);
+            break;                
         default:
             glDisable(GL_BLEND);
             glDepthMask(GL_TRUE);
@@ -885,6 +895,11 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             glDepthMask(GL_FALSE);
             break;
+        case Mesh::PremultipliedAlphaBlend:
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glDepthMask(GL_FALSE);
+            break;                
         default:
             glDisable(GL_BLEND);
             glDepthMask(GL_TRUE);
