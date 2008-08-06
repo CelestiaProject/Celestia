@@ -34,6 +34,7 @@ static const string CelestiaLegacyScriptExt(".cel");
 static const string CelestiaScriptExt(".clx");
 static const string CelestiaScriptExt2(".celx");
 static const string CelestiaModelExt(".cmod");
+static const string CelestiaParticleSystemExt(".cpart");
 static const string CelestiaXYZTrajectoryExt(".xyz");
 static const string CelestiaXYZVTrajectoryExt(".xyzv");
 
@@ -77,6 +78,8 @@ ContentType DetermineFileType(const string& filename)
         return Content_CelestiaScript;
     else if (compareIgnoringCase(CelestiaModelExt, ext) == 0)
         return Content_CelestiaModel;
+    else if (compareIgnoringCase(CelestiaParticleSystemExt, ext) == 0)
+        return Content_CelestiaParticleSystem;
     else if (compareIgnoringCase(DXT5NormalMapExt, ext) == 0)
         return Content_DXT5NormalMap;
     else if (compareIgnoringCase(CelestiaXYZTrajectoryExt, ext) == 0)
