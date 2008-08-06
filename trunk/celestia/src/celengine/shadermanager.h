@@ -46,6 +46,7 @@ class ShaderProperties
      CloudShadowTexture      =   0x80,
      CompressedNormalTexture =  0x100,
      EmissiveTexture         =  0x200,
+     VertexOpacities         =  0x800,
      VertexColors            = 0x1000,
      Scattering              = 0x2000,
      PointSprite             = 0x4000,
@@ -63,6 +64,7 @@ class ShaderProperties
      LunarLambertModel     = 6,
      ParticleDiffuseModel  = 7,
      EmissiveModel         = 8,
+     ParticleModel         = 9,
  };
  
  enum
@@ -223,6 +225,9 @@ class ShaderManager
 
     GLVertexShader* buildEmissiveVertexShader(const ShaderProperties&);
     GLFragmentShader* buildEmissiveFragmentShader(const ShaderProperties&);
+
+    GLVertexShader* buildParticleVertexShader(const ShaderProperties&);
+    GLFragmentShader* buildParticleFragmentShader(const ShaderProperties&);
 
     std::map<ShaderProperties, CelestiaGLProgram*> shaders;
 };

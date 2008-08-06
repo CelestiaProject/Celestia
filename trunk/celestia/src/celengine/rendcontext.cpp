@@ -446,6 +446,7 @@ setStandardVertexArrays(const Mesh::VertexDescription& desc,
                        GLComponentTypes[color0.format],
                        desc.stride,
                        reinterpret_cast<char*>(vertexData) + color0.offset);
+            //clog << "format: " << color0.format << ", offset: " << color0.offset << endl;
         break;
     default:
         glDisableClientState(GL_COLOR_ARRAY);
@@ -586,9 +587,15 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     }
     else
     {
-        // "particle diffuse" lighting is the only type that doesn't
+        // "particle" lighting is the only type that doesn't
         // depend on having a surface normal.
-        shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
+        // Enable alternate particle model when vertex colors are present;
+        // eventually, a render context method will enable the particle
+        // model.
+        if (useColors)
+            shaderProps.lightModel = ShaderProperties::ParticleModel;
+        else
+            shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
     }
 
     if (m.maps[Mesh::DiffuseMap] != InvalidResource)
@@ -643,6 +650,8 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     if (usePointSize)
         shaderProps.texUsage |= ShaderProperties::PointSprite;
+    if (useColors)
+        shaderProps.texUsage |= ShaderProperties::VertexColors;
 
     if (atmosphere != NULL)
     {
@@ -729,7 +738,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         case Mesh::PremultipliedAlphaBlend:
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glDepthMask(GL_FALSE);
+            glDepthMask(disableDepthWriteOnBlend ? GL_FALSE : GL_TRUE);
             break;                
         default:
             glDisable(GL_BLEND);

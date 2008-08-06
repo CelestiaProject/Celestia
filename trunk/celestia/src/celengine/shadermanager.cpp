@@ -1995,6 +1995,148 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 }
 
 
+// Build the vertex shader used for rendering particle systems.
+GLVertexShader*
+ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
+{
+    string source = CommonHeader;
+    
+    source += "// shadow count: ";
+    char buf[32];
+    sprintf(buf, "%d", props.shadowCounts);
+    source += buf;
+    source += "\n";
+    
+    source += DeclareLights(props);
+    
+    source += "uniform vec3 eyePosition;\n";
+
+    // TODO: scattering constants
+    
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += "uniform float pointScale;\n";
+        source += "attribute float pointSize;\n";
+    }
+    
+    // Shadow parameters
+    if (props.shadowCounts != 0)
+    {
+        source += "varying vec3 position_obj;\n";
+    }
+    
+    //source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+    
+    // Begin main() function
+    source += "\nvoid main(void)\n{\n";
+    
+    // Optional texture coordinates (generated automatically for point
+    // sprites.)
+    if ((props.texUsage & ShaderProperties::DiffuseTexture) &&
+        !(props.texUsage & ShaderProperties::PointSprite))
+    {
+        source += "    gl_TexCoord[0].st = " + TexCoord2D(0) + ";\n";
+    }
+    
+    // Set the color. Should *always* use vertex colors for color and opacity.
+    source += "    gl_FrontColor = gl_Color;\n";
+    
+    // Optional point size
+    if ((props.texUsage & ShaderProperties::PointSprite) != 0)
+        source += PointSizeCalculation();
+    
+    source += "    gl_Position = ftransform();\n";
+    
+    source += "}\n";
+    // End of main()
+    
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Vertex shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+    
+    GLVertexShader* vs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return vs;
+}
+
+
+GLFragmentShader*
+ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
+{
+    string source = CommonHeader;
+    
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    {
+        source += "uniform sampler2D diffTex;\n";
+    }
+
+    if (props.usesShadows())
+    {
+        source += "uniform vec3 ambientColor;\n";
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+        }        
+    }
+    
+    // Declare shadow parameters
+    if (props.shadowCounts != 0)
+    {
+        source += "varying vec3 position_obj;\n";
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            {
+                source += "uniform vec4 " +
+                IndexedParameter("shadowTexGenS", i, j) + ";\n";
+                source += "uniform vec4 " +
+                IndexedParameter("shadowTexGenT", i, j) + ";\n";
+                source += "uniform float " +
+                IndexedParameter("shadowScale", i, j) + ";\n";
+                source += "uniform float " +
+                IndexedParameter("shadowBias", i, j) + ";\n";
+            }
+        }
+    }
+    
+    // Begin main()
+    source += "\nvoid main(void)\n";
+    source += "{\n";
+    
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    {
+        source += "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0].st);\n";
+    }
+    else
+    {
+        source += "    gl_FragColor = gl_Color;\n";
+    }
+    
+    source += "}\n";
+    // End of main()
+    
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+    
+    GLFragmentShader* fs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return fs;
+}
+
+
 CelestiaGLProgram*
 ShaderManager::buildProgram(const ShaderProperties& props)
 {
@@ -2018,6 +2160,11 @@ ShaderManager::buildProgram(const ShaderProperties& props)
     {
         vs = buildEmissiveVertexShader(props);
         fs = buildEmissiveFragmentShader(props);
+    }
+    else if (props.lightModel == ShaderProperties::ParticleModel)
+    {
+        vs = buildParticleVertexShader(props);
+        fs = buildParticleFragmentShader(props);
     }
     else
     {
