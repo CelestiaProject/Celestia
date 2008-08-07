@@ -154,7 +154,7 @@ public:
     
     double getPeriod() const
     {
-        return 24.0 / 23.9344694;
+        return 23.9344694 / 24.0;
     }
 
     bool isPeriodic() const
