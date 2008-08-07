@@ -121,6 +121,10 @@ static int object_setvisible(lua_State* l)
     {
         sel->body()->setVisible(visible);
     }
+    else if (sel->deepsky() != NULL)
+    {
+        sel->deepsky()->setVisible(visible);
+    }
     
     return 0;
 }

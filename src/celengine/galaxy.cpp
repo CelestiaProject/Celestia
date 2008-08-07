@@ -217,6 +217,9 @@ bool Galaxy::pick(const Ray3d& ray,
                   double& distanceToPicker,
                   double& cosAngleToBoundCenter) const
 {
+    if (!isVisible())
+        return false;
+    
     // The ellipsoid should be slightly larger to compensate for the fact
     // that blobs are considered points when galaxies are built, but have size
     // when they are drawn.

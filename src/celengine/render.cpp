@@ -9774,7 +9774,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
 
-    if (renderFlags & dso->getRenderMask())
+    if ((renderFlags & dso->getRenderMask()) && dso->isVisible())
     {
     	double  dsoRadius = dso->getRadius();
         if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
