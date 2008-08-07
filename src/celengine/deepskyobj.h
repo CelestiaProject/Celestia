@@ -56,6 +56,9 @@ class DeepSkyObject
     std::string getInfoURL() const;
     void setInfoURL(const std::string&);
 
+    bool isVisible() const { return visible; }
+    void setVisible(bool _visible) { visible = _visible; }
+
     virtual const char* getObjTypeName() const = 0;
 
     virtual bool pick(const Ray3d& ray,
@@ -83,6 +86,8 @@ class DeepSkyObject
     float        radius;
     float        absMag;
     std::string* infoURL;
+    
+    bool visible : 1;
 };
 
 typedef std::vector<DeepSkyObject*> DeepSkyCatalog;
