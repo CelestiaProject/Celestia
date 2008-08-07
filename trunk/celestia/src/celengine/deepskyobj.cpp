@@ -32,7 +32,8 @@ DeepSkyObject::DeepSkyObject() :
     orientation(1),
     radius(1),
     absMag(DSO_DEFAULT_ABS_MAGNITUDE),
-    infoURL(NULL)
+    infoURL(NULL),
+    visible(true)
 {
 }
 
@@ -113,7 +114,10 @@ bool DeepSkyObject::pick(const Ray3d& ray,
                          double& distanceToPicker,
                          double& cosAngleToBoundCenter) const
 {
-    return testIntersection(ray, Sphered(position, (double) radius), distanceToPicker, cosAngleToBoundCenter);
+    if (isVisible())
+        return testIntersection(ray, Sphered(position, (double) radius), distanceToPicker, cosAngleToBoundCenter);
+    else
+        return false;
 }
 
 
@@ -170,5 +174,12 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
         }
         setInfoURL(infoURL);
     }
+    
+    bool visible = true;
+    if (params->getBoolean("Visible", visible))
+    {
+        setVisible(visible);
+    }
+    
     return true;
 }

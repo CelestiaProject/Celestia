@@ -210,8 +210,9 @@ bool Selection::isVisible() const
     case Type_Body:
         return body()->isVisible();
     case Type_Star:
-    case Type_DeepSky:
         return true;
+    case Type_DeepSky:
+        return deepsky()->isVisible();
     default:
         return false;
     }
