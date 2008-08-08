@@ -1,4 +1,4 @@
-# Catalog of 288 known extrasolar planets.
+# Catalog of 289 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -779,7 +779,7 @@ AltSurface "limit of knowledge" "TYC 3549-2811-1/TrES-2"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 83.9 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.44 jupiters.
+# From transit dimming, radius is estimated at 1.36 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -791,8 +791,7 @@ AltSurface "limit of knowledge" "TYC 3549-2811-1/TrES-2"
 	Albedo 0.5
 
 	Mass       280     # M.sin(i) = 0.89 jupiters
-	Radius     100800
-	Oblateness 0.01
+	Radius     95200
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-1"
 
@@ -1851,6 +1850,7 @@ AltSurface "limit of knowledge" "HD 209458/b"
 	EllipticalOrbit {
 		Period          0.0097
 		SemiMajorAxis   0.0488
+		Eccentricity    0
 		Inclination     96.9
 		AscendingNode   264.9
 		MeanLongitude   239
@@ -3195,6 +3195,47 @@ AltSurface "limit of knowledge" "HD 69830/c"
 }
 
 AltSurface "limit of knowledge" "HD 69830/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "CoRoT-Exo-4"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 90 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.19 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       230     # M.sin(i) = 0.72 jupiters
+	Radius     83300
+
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-4"
+
+	EllipticalOrbit {
+		Period          0.0252
+		SemiMajorAxis   0.09
+		Eccentricity    0
+		Inclination     94.8
+		AscendingNode   101.2
+		MeanLongitude   12
+	}
+
+	Obliquity             95 # guess, to match inclination
+	EquatorAscendingNode  101 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "CoRoT-Exo-4/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -7753,18 +7794,18 @@ AltSurface "limit of knowledge" "HD 95128/b"
 	Color  [0.96 0.96 1]
 	Albedo 0.5
 
-	Mass       430     # M.sin(i) = 1.34 jupiters
-	Radius     70000
-	Oblateness 0.04
+	Mass       150     # M.sin(i) = 0.46 jupiters
+	Radius     56000
+	Oblateness 0.07
 
 	InfoURL "http://exoplanet.eu/star.php?st=47+Uma"
 
 	EllipticalOrbit {
-		Period          20.7693
-		SemiMajorAxis   7.73
-		Eccentricity    0.005
-		ArgOfPericenter 6
-		MeanAnomaly     332
+		Period          5.9962
+		SemiMajorAxis   3.39
+		Eccentricity    0.22
+		ArgOfPericenter 59
+		MeanAnomaly     89
 	}
 
 	RotationPeriod  10 # plausible guess
