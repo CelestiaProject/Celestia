@@ -1,5 +1,5 @@
 # Comets
-"Halley" "Sol" 
+"Halley:1P Halley" "Sol" 
 { 
 	Class "comet" 
 	Mesh "halley.cmod"
@@ -32,7 +32,7 @@
 	Albedo 0.04 
 } 
 
-"Borrelly" "Sol" 
+"Borrelly:19P Borrelly" "Sol" 
 { 
 	Class "comet" 
 	Mesh "borrelly.cms" 
@@ -63,7 +63,7 @@
 	Albedo 0.04 
 } 
 
-"Ikeya-Zhang" "Sol" 
+"Ikeya-Zhang:153P Ikeya-Zhang" "Sol" 
 { 
 	Class "comet" 
 	Texture "asteroid.jpg" 
