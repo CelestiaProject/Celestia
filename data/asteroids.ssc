@@ -3,7 +3,7 @@
 # that is distributed with the Celestia source package.
 
 # A few main belt asteroids . . 
-"Ceres" "Sol" 
+"1 Ceres:Ceres:A899 OF" "Sol" 
 { 
 	Class "dwarfplanet" 
 	Texture "asteroid.jpg" 
@@ -36,7 +36,7 @@
 	Albedo 0.113 
 } 
 
-"Pallas" "Sol" 
+"2 Pallas:Pallas" "Sol" 
 # Pole and shape from Schmidt et al
 # "Hubble takes a look at Pallas: Shape, Size and Surface"
 # (2008) http://www.lpi.usra.edu/meetings/lpsc2008/pdf/2502.pdf
@@ -70,7 +70,7 @@
 	Albedo 0.159 
 } 
 
-"Juno" "Sol"
+"3 Juno:Juno" "Sol"
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -100,7 +100,7 @@
 	Albedo 0.238 
 } 
 
-"Vesta" "Sol" 
+"4 Vesta:Vesta" "Sol" 
 { 
 	Class "asteroid" 
 	Mesh   "vesta.cmod" 
@@ -139,7 +139,7 @@
 
 
 # Some of the asteroids visited by spacecraft
-"Gaspra" "Sol"
+"951 Gaspra:Gaspra:A913 YA" "Sol"
 {
 	Class "asteroid"
 	Mesh "gaspra.cmod"
@@ -172,7 +172,7 @@
 	Albedo 0.1
 }
 
-"Ida" "Sol"
+"243 Ida:Ida:A910 CD" "Sol"
 {
 	Class "asteroid"
 	Mesh "ida.cmod"
@@ -205,7 +205,7 @@
 	Albedo 0.24
 }
 
-"Dactyl" "Sol/Ida"
+"Dactyl:243 Ida I:Ida I:1993 (243) 1" "Sol/Ida"
 {
 	# Data for Dactyl taken from: 
 	# Petit et al.: The Long-Term Dynamics of Dactyl's Orbit
@@ -242,7 +242,7 @@
 }
 
 
-"Eros" "Sol"
+"433 Eros:Eros:1898 DQ" "Sol"
 {
 	Class "asteroid"
 	Mesh   "eros.cmod"
@@ -279,7 +279,7 @@
 
 
 # Radar-imaged asteroids
-"Toutatis" "Sol"
+"4179 Toutatis:Toutatis:1989 AC" "Sol"
 {
 	Class "asteroid"
 	Mesh   "toutatis.cmod"
@@ -313,7 +313,7 @@
 	Albedo 0.16
 }
 
-"Geographos" "Sol"
+"1620 Geographos:Geographos:1951 RA" "Sol"
 {
 	Class "asteroid"
 	Mesh   "geographos.cmod"
@@ -347,7 +347,7 @@
 	Albedo 0.326 
 }
 
-"Kleopatra" "Sol"
+"216 Kleopatra:Kleopatra:A905 OA" "Sol"
 {
 	Class "asteroid"
 	Mesh   "kleopatra.cmod"
@@ -414,7 +414,7 @@
 
 }
 
-"Bacchus" "Sol"
+"2063 Bacchus:Bacchus:1977 HB" "Sol"
 {
 	Class "asteroid"
 	Mesh   "bacchus.cmod"
@@ -448,7 +448,7 @@
 	Albedo 0.15
 }
 
-"Golevka" "Sol"
+"6489 Golevka:Golevka:1991 JX" "Sol"
 {
 	Class "asteroid"
 	Mesh   "golevka.cmod"
@@ -482,7 +482,7 @@
 	Albedo 0.15 
 }
 
-"Castalia" "Sol"
+"4769 Castalia:Castalia:1989 PB" "Sol"
 { 
 	Class "asteroid"
 	Mesh   "castalia.cmod"
@@ -516,7 +516,7 @@
 }
 
 # Centaurs
-"Chiron" "Sol" 
+"2060 Chiron:Chiron:1977 UB:95P Chiron" "Sol" 
 { 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -543,4 +543,3 @@
 
 	Albedo 0.048 
 }
-
