@@ -1,7 +1,6 @@
 # The largest Edgeworth-Kuiper belt objects
 
-#136199 Eris (2003 UB313)
-"Eris" "Sol" {
+"136199 Eris:Eris:2003 UB313" "Sol" {
  
 # Higher albedo and lower radius than first reported. 
 # Data from HST results by Brown et al. ApJ 2006:
@@ -36,8 +35,7 @@
 	}
 }
 
-#136199 Eris I (2005 (2003 UB313) 1)
-"Dysnomia" "Sol/Eris" {
+"Dysnomia:136199 Eris I:Eris I:2005 (2003 UB313) 1" "Sol/Eris" {
 
 	Class "moon" 
 	Mesh	"asteroid.cms"
@@ -62,8 +60,7 @@
 	}
 }
 
-#13672 Makemake (2005 FY9)
-"Makemake" "Sol" { 
+"13672 Makemake:Makemake:2005 FY9" "Sol" { 
 
 	Class "dwarfplanet" 
 	Texture "asteroid.jpg" 
@@ -177,8 +174,7 @@
 	EquatorAscendingNode	25   #
 }
 
-# 90482 Orcus (2004 DW)
-"Orcus" "Sol" { 
+"90482 Orcus:Orcus:2004 DW" "Sol" { 
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -232,8 +228,7 @@
 	}
 }
 
-# 50000 Quaoar (2002 LM60)
-"Quaoar" "Sol" {
+"50000 Quaoar:Quaoar:2002 LM60" "Sol" {
 
 	Class "asteroid"
 	Texture "asteroid.jpg"
@@ -263,9 +258,7 @@
 	}
 }
 
-
-# 28978 Ixion (2001 KX76)
-"Ixion" "Sol" { 
+"28978 Ixion:Ixion:(2001 KX76" "Sol" { 
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -294,8 +287,7 @@
 	}
 }
 
-# 20000 Varuna (2000 WR106)
-"Varuna" "Sol" { 
+"20000 Varuna:Varuna:2000 WR106" "Sol" { 
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -325,8 +317,7 @@
 	}
 } 
 
-# 55565 (2002 AW197)
-"2002 AW197" "Sol" { 
+"55565 2002 AW197:2002 AW197" "Sol" { 
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -357,8 +348,7 @@
 
 # Inner Oort cloud
 
-# 90377 Sedna (2003 VB12)
-"Sedna" "Sol" { 
+"90377 Sedna:Sedna:2003 VB12" "Sol" { 
 
 	Class "asteroid" 
 	Texture "asteroid.jpg" 
@@ -386,4 +376,3 @@
 	Period 10 # (much shorter than previously thought)
 	}
 } 
-
