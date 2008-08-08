@@ -10,7 +10,7 @@
  
 # Minor moons of Jupiter
 
-"Metis" "Sol/Jupiter"
+"Metis:Jupiter XVI:1979 J 3" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -32,7 +32,7 @@
 	Albedo 0.061
 }
 
-"Adrastea" "Sol/Jupiter"
+"Adrastea:Jupiter XV:1979 J 1" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -54,7 +54,7 @@
 	Albedo 0.1
 }
 
-"Thebe" "Sol/Jupiter"
+"Thebe:Jupiter XIV:1979 J 2" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -77,7 +77,7 @@
 	Albedo 0.047
 }
 
-"Themisto" "Sol/Jupiter"
+"Themisto:Jupiter XVIII:2000 J 1" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -100,7 +100,7 @@
 	Albedo 0.04
 }
 
-"Leda" "Sol/Jupiter"
+"Leda:Jupiter XIII" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -123,7 +123,7 @@
 	Albedo 0.04
 }
 
-"Himalia" "Sol/Jupiter"
+"Himalia:Jupiter VI" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -145,7 +145,7 @@
 	Albedo 0.04
 }
 
-"Lysithea" "Sol/Jupiter"
+"Lysithea:Jupiter X" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -168,7 +168,7 @@
 	Albedo 0.04
 }
 
-"Elara" "Sol/Jupiter"
+"Elara:Jupiter VII" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -191,7 +191,7 @@
 	Albedo 0.04
 }
 
-"Iocaste" "Sol/Jupiter"
+"Iocaste:Jupiter XXIV:2000 J 3" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -214,7 +214,7 @@
 	Albedo 0.04
 }
 
-"Praxidike" "Sol/Jupiter"
+"Praxidike:Jupiter XXVII:2000 J 7" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -237,7 +237,7 @@
 	Albedo 0.04
 }
 
-"Harpalyke" "Sol/Jupiter"
+"Harpalyke:Jupiter XXII:2000 J 5" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -260,7 +260,7 @@
 	Albedo 0.04
 }
 
-"Ananke" "Sol/Jupiter"
+"Ananke:Jupiter XII" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -283,7 +283,7 @@
 	Albedo 0.04
 }
 
-"Isonoe" "Sol/Jupiter"
+"Isonoe:Jupiter XXVI:2000 J 6" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -306,7 +306,7 @@
 	Albedo 0.04
 }
 
-"Erinome" "Sol/Jupiter"
+"Erinome:Jupiter XXV:2000 J 4" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -329,7 +329,7 @@
 	Albedo 0.04
 }
 
-"Taygete" "Sol/Jupiter"
+"Taygete:Jupiter XX:2000 J 9" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -352,7 +352,7 @@
 	Albedo 0.04
 }
 
-"Chaldene" "Sol/Jupiter"
+"Chaldene:Jupiter XXI:2000 J 10" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -375,7 +375,7 @@
 	Albedo 0.04
 }
 
-"Carme" "Sol/Jupiter"
+"Carme:Jupiter XI" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -398,7 +398,7 @@
 	Albedo 0.04
 }
 
-"Pasiphae" "Sol/Jupiter"
+"Pasiphae:Jupiter VIII" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -421,7 +421,7 @@
 	Albedo 0.04
 }
 
-"Kalyke" "Sol/Jupiter"
+"Kalyke:Jupiter XXIII:2000 J 2" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -444,7 +444,7 @@
 	Albedo 0.04
 }
 
-"Megaclite" "Sol/Jupiter"
+"Megaclite:Jupiter XIX:2000 J 8" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -467,7 +467,7 @@
 	Albedo 0.04
 }
 
-"Sinope" "Sol/Jupiter"
+"Sinope:Jupiter IX" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -490,7 +490,7 @@
 	Albedo 0.04
 }
 
-"Callirrhoe" "Sol/Jupiter"
+"Callirrhoe:Jupiter XVII:1999 J 1" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -516,7 +516,7 @@
 
 # Minor moons of Saturn
 
-"Pan" "Sol/Saturn"   # Cassini-epoch data
+"Pan:Saturn XVIII:1981 S 13" "Sol/Saturn"   # Cassini-epoch data
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -541,7 +541,7 @@
 	Albedo 0.5
 }
 
-"Atlas" "Sol/Saturn"   # Cassini-epoch data
+"Atlas:Saturn XV:1980 S 28" "Sol/Saturn"   # Cassini-epoch data
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -566,7 +566,7 @@
 	Albedo 0.4
 }
 
-"Telesto" "Sol/Saturn"
+"Telesto:Saturn XIII:1980 S 13" "Sol/Saturn"
 # Leading Lagrange point of Tethys
 {
 	Class "minormoon"
@@ -591,7 +591,7 @@
 	Albedo 1.0
 }
 
-"Calypso" "Sol/Saturn"
+"Calypso:Saturn XIV:1980 S 25" "Sol/Saturn"
 # Trailing Lagrange point of Tethys
 {
 	Class "minormoon"
@@ -616,7 +616,7 @@
 	Albedo 0.7
 }
 
-"Helene" "Sol/Saturn"
+"Helene:Saturn XII:1980 S 6" "Sol/Saturn"
 # Leading Lagrange point of Dione
 {
 	Class "minormoon"
@@ -642,7 +642,7 @@
 
 # Minor moons of Uranus
 
-"Cordelia" "Sol/Uranus"
+"Cordelia:Uranus VI:1986 U 7" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -664,7 +664,7 @@
 	Albedo 0.07
 }
 
-"Ophelia" "Sol/Uranus"
+"Ophelia:Uranus VII:1986 U 8" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -686,7 +686,7 @@
 	Albedo 0.07
 }
 
-"Bianca" "Sol/Uranus"
+"Bianca:Uranus VIII:1986 U 9" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -708,7 +708,7 @@
 	Albedo 0.07
 }
 
-"Cressida" "Sol/Uranus"
+"Cressida:Uranus IX:1986 U 3" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -731,7 +731,7 @@
 	Albedo 0.07
 }
 
-"Desdemona" "Sol/Uranus"
+"Desdemona:Uranus X:1986 U 6" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -753,7 +753,7 @@
 	Albedo 0.07
 }
 
-"Juliet" "Sol/Uranus"
+"Juliet:Uranus XI:1986 U 2" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -775,7 +775,7 @@
 	Albedo 0.07
 }
 
-"Portia" "Sol/Uranus"
+"Portia:Uranus XII:1986 U 1" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -797,7 +797,7 @@
 	Albedo 0.07
 }
 
-"Rosalind" "Sol/Uranus"
+"Rosalind:Uranus XIII:1986 U 4" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -820,7 +820,7 @@
 	Albedo 0.07
 }
 
-"Belinda" "Sol/Uranus"
+"Belinda:Uranus XIV:1986 U 5" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -842,7 +842,7 @@
 	Albedo 0.07
 }
 
-"Puck" "Sol/Uranus"
+"Puck:Uranus XV:1985 U 1" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -865,7 +865,7 @@
 	Albedo 0.07
 }
 
-"Caliban" "Sol/Uranus"
+"Caliban:Uranus XVI:1997 U 1" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -888,7 +888,7 @@
 	Albedo 0.07
 }
 
-"Stephano" "Sol/Uranus"
+"Stephano:Uranus XX:1999 U 2" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -911,7 +911,7 @@
 	Albedo 0.07
 }
 
-"Sycorax" "Sol/Uranus"
+"Sycorax:Uranus XVII:1997 U 2" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -934,7 +934,7 @@
 	Albedo 0.07
 }
 
-"Prospero" "Sol/Uranus"
+"Prospero:Uranus XVIII:1999 U 3" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -957,7 +957,7 @@
 	Albedo 0.07
 }
 
-"Setebos" "Sol/Uranus"
+"Setebos:Uranus XIX:1999 U 1" "Sol/Uranus"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -983,7 +983,7 @@
 
 # Minor satellites of Neptune
 
-"Naiad" "Sol/Neptune"
+"Naiad:Neptune III:1989 N 6" "Sol/Neptune"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -1007,7 +1007,7 @@
 	Albedo 0.060
 }
 
-"Thalassa" "Sol/Neptune"
+"Thalassa:Neptune IV:1989 N 5" "Sol/Neptune"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -1029,7 +1029,7 @@
 	Albedo 0.060
 }
 
-"Despina" "Sol/Neptune"
+"Despina:Neptune V:1989 N 3" "Sol/Neptune"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -1051,7 +1051,7 @@
 	Albedo 0.059
 }
 
-"Galatea" "Sol/Neptune"
+"Galatea:Neptune VI:1989 N 4" "Sol/Neptune"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
