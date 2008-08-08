@@ -209,7 +209,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 }
 
 
-"Moon" "Sol/Earth"
+"Moon:Earth I" "Sol/Earth"
 {
 	Texture "moon.*"
 	BumpMap "moonbump.*"
@@ -309,7 +309,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 }
 
 
-"Phobos" "Sol/Mars"
+"Phobos:Mars I" "Sol/Mars"
 {
 	Mesh "phobos.cmod"
 	Texture "phobos.*"
@@ -340,7 +340,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	Albedo         0.07
 }
 
-"Deimos" "Sol/Mars"
+"Deimos:Mars II" "Sol/Mars"
 {
 	Mesh "deimos.cmod"
 	Texture "deimos.*"
@@ -422,7 +422,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 }
 
 
-"Amalthea" "Sol/Jupiter"
+"Amalthea:Jupiter V" "Sol/Jupiter"
 {
 	Texture "amalthea.*"
 	Color   [ 0.63 0.45 0.35 ]
@@ -456,7 +456,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 }
 
 
-"Io" "Sol/Jupiter"
+"Io:Jupiter I" "Sol/Jupiter"
 {
 	Texture "io.*"
 	Radius   1821.6
@@ -495,7 +495,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Io"
 	OverlayTexture "io-lok-mask.png"
 }
 
-"Europa" "Sol/Jupiter"
+"Europa:Jupiter II" "Sol/Jupiter"
 {
 	Texture "europa.*"
 	Radius   1560.8
@@ -534,7 +534,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
 	OverlayTexture "europa-lok-mask.png"
 }
 
-"Ganymede" "Sol/Jupiter"
+"Ganymede:Jupiter III" "Sol/Jupiter"
 {
 	Texture "ganymede.*"
 	Radius   2631.2
@@ -574,7 +574,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
 	OverlayTexture "ganymede-lok-mask.png"
 }
 
-"Callisto" "Sol/Jupiter"
+"Callisto:Jupiter IV" "Sol/Jupiter"
 {
 	Texture "callisto.*"
 	Radius   2410.3
@@ -661,7 +661,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	}
 }
 
-"Prometheus" "Sol/Saturn"
+"Prometheus:Saturn XVI:1980 S 27" "Sol/Saturn"
 {
 	Texture	 	"prometheus.*"
 	Mesh		"prometheus.cmod"
@@ -693,7 +693,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Albedo 0.6
 }
 
-"Pandora" "Sol/Saturn"
+"Pandora:Saturn XVII:1980 S 26" "Sol/Saturn"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"pandora.cmod"
@@ -725,7 +725,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	Albedo 0.5
 }
 
-"Epimetheus" "Sol/Saturn"
+"Epimetheus:Saturn XI:1980 S 3" "Sol/Saturn"
 {
 	Texture	 	"epimetheus.*"
 	Mesh		"epimetheus.cmod"
@@ -758,7 +758,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	Texture "epimetheus-lok.*"
 }
 
-"Janus" "Sol/Saturn"
+"Janus:Saturn X:1980 S 1" "Sol/Saturn"
 {
 	Texture	 	"janus.*"
 	Mesh		"janus.cmod"
@@ -786,7 +786,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	Albedo 0.6
 }
 
-"Mimas" "Sol/Saturn"
+"Mimas:Saturn I" "Sol/Saturn"
 {
 	Texture "mimas.*"
 	# Texture "white.jpg"
@@ -830,7 +830,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	BlendTexture true
 }
 
-"Enceladus" "Sol/Saturn"
+"Enceladus:Saturn II" "Sol/Saturn"
 {
 	Texture "enceladus.*"
 	Radius     249.4
@@ -860,7 +860,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Albedo         0.99
 }
 
-"Tethys" "Sol/Saturn"
+"Tethys:Saturn III" "Sol/Saturn"
 {
 	Texture "tethys.*"
 	Radius     529.9
@@ -890,7 +890,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Albedo         0.9
 }
 
-"Dione" "Sol/Saturn"
+"Dione:Saturn IV" "Sol/Saturn"
 {
 	Texture "dione.*"
 	Radius     559
@@ -920,7 +920,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Albedo         0.7
 }
 
-"Rhea" "Sol/Saturn"
+"Rhea:Saturn V" "Sol/Saturn"
 {
 	Texture "rhea.*"
 	Radius     764
@@ -950,7 +950,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Albedo         0.7
 }
 
-"Titan" "Sol/Saturn"
+"Titan:Saturn VI" "Sol/Saturn"
 {
 	Texture  "titan.*"
         Color      [0.96 0.805 0.461 ]
@@ -1000,7 +1000,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	Albedo                    0.21
 }
 
-"Hyperion" "Sol/Saturn"
+"Hyperion:Saturn VII" "Sol/Saturn"
 {
 	Mesh "hyperion.cmod"
 	Texture "hyperion.*" # Phil Stooke
@@ -1038,7 +1038,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	Texture "hyperion-lok.*" # Phil Stooke
 }
 
-"Iapetus" "Sol/Saturn"
+"Iapetus:Saturn VIII" "Sol/Saturn"
 {
 	Texture "iapetus.*"
         Radius     718
@@ -1069,7 +1069,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	Albedo         0.2
 }
 
-"Phoebe" "Sol/Saturn"
+"Phoebe:Saturn IX" "Sol/Saturn"
 {
 	Mesh "phoebe.cmod"
 	Texture "phoebe.*"
@@ -1155,7 +1155,7 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 }
 
 
-"Miranda" "Sol/Uranus"
+"Miranda:Uranus V" "Sol/Uranus"
 {
 	Texture "miranda.*"
 	Radius   235.8
@@ -1192,7 +1192,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Miranda"
 	OverlayTexture "miranda-lok-mask.png"
 }
 
-"Ariel" "Sol/Uranus"
+"Ariel:Uranus I" "Sol/Uranus"
 {
 	Texture "ariel.*"
 	Radius   578.9
@@ -1229,7 +1229,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	OverlayTexture "ariel-lok-mask.png"
 }
 
-"Umbriel" "Sol/Uranus"
+"Umbriel:Uranus II" "Sol/Uranus"
 {
 	Texture "umbriel.*"
 	Radius   584.7
@@ -1266,7 +1266,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Umbriel"
 	OverlayTexture "umbriel-lok-mask.png"
 }
 
-"Titania" "Sol/Uranus"
+"Titania:Uranus III" "Sol/Uranus"
 {
 	Texture "titania.*"
 	Radius   788.9
@@ -1303,7 +1303,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Titania"
 	OverlayTexture "titania-lok-mask.png"
 }
 
-"Oberon" "Sol/Uranus"
+"Oberon:Uranus IV" "Sol/Uranus"
 {
 	Texture "oberon.*"
 	Radius   761.4
@@ -1388,7 +1388,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	}
 }
 
-"Larissa" "Sol/Neptune"
+"Larissa:Neptune VII:1989 N 2" "Sol/Neptune"
 {
 	Texture	 	"asteroid.jpg"
 	Mesh		"larissa.cmod"
@@ -1416,7 +1416,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	Albedo 0.056
 }
 
-"Proteus" "Sol/Neptune"
+"Proteus:Neptune VIII:1989 N 1" "Sol/Neptune"
 {
 	Mesh "proteus.cmod"
 	Texture "proteus.*" # Phil Stooke
@@ -1445,7 +1445,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	Albedo         0.061
 }
 
-"Triton" "Sol/Neptune"
+"Triton:Neptune I" "Sol/Neptune"
 {
 	Texture "triton.*"
 	Radius   1353.4
@@ -1487,7 +1487,7 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	OverlayTexture "triton-lok-mask.png"
 }
 
-"Nereid" "Sol/Neptune"
+"Nereid:Neptune II" "Sol/Neptune"
 {
 	Mesh "asteroid.cms"
 	Texture "asteroid.jpg"
@@ -1523,7 +1523,7 @@ ReferencePoint "Pluto-Charon" "Sol"
 # Updated from "Masses of Nix and Hydra" Tholen et al. 
 # http://arxiv.org/ftp/arxiv/papers/0712/0712.1261.pdf
 
-"Pluto" "Sol"
+"Pluto:134340 Pluto" "Sol"
 {
     Class "dwarfplanet"
     Texture "pluto-lok.*"
@@ -1572,7 +1572,7 @@ AltSurface "limit of knowledge" "Sol/Pluto"
     SpecularPower             9.5
 }
 
-"Charon" "Sol/Pluto"
+"Charon:Pluto I:134340 Pluto I:1978 P 1" "Sol/Pluto"
 {
     Texture "charon-lok.*"
     SpecularTexture "charon-lok-spec.*"
