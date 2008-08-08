@@ -314,6 +314,15 @@
 	AppMag 12.57
 }
 
+"CoRoT-Exo-4:GSC 04800-02187"
+{
+	RA 102.194583
+	Dec -0.672778
+	Distance 5160 # from spectral class and magnitude
+	SpectralType "F0V"
+	AppMag 13.7
+}
+
 # HD stars without Hip numbers
 
 1000370197 # HD 70573
