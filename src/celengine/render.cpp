@@ -6790,7 +6790,7 @@ void Renderer::renderLocations(const Body& body,
                 bool hit = testIntersection(testRay, bodyEllipsoid, t);
                 Vec3d blah = labelPos - viewRayOrigin;
 
-                if (hit && t >= 1.0)
+                if (!hit || t >= 1.0)
                 {                    
                     // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
                     // the view normal that touches the front of the object's bounding sphere
