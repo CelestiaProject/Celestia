@@ -762,7 +762,7 @@ CreateOrbit(const Selection& centralObject,
     // rotation rate of the parent object. A body-fixed reference frame is a
     // much better way to accomplish this.
     Vec3d longlat(0.0, 0.0, 0.0);
-    if (planetData->getVector("LongLat", longlat) && system != NULL)
+    if (planetData->getVector("LongLat", longlat))
     {
         Body* centralBody = centralObject.body();
         if (centralBody != NULL)
