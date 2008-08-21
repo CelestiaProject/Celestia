@@ -5,7 +5,7 @@
 # Builds the stars.dat and revised.stc files for Celestia
 # For usage instructions, run with the -? command line switch
 #
-# Version 1.0 - Andrew Tribick (2008-07-17)
+# Version 1.1 - Andrew Tribick (2008-08-21)
 
 # This code makes use of the following datasets:
 #
@@ -467,7 +467,7 @@ sub CheckStars {
 		if($badness <= 3) {
 			# good stars are fine
 			$good++;
-		} elsif(($DROP_LEVEL < 3) && (($badness <= 6) || (($badness < 100) && (($DROP_LEVEL == 0) || ($stars{$HIP}{'Vmag'} <= 6))))) {
+		} elsif(($DROP_LEVEL < 3) && (($badness <= 5) || (($badness < 100) && (($DROP_LEVEL == 0) || ($stars{$HIP}{'Vmag'} <= 6))))) {
 			# star is dubious but included
 			$dubious++;
 		} else {
