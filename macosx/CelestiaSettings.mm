@@ -171,6 +171,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(826,@"showLineaLabels")
         TAGDEF(827,@"showFluctusLabels")
         TAGDEF(828,@"showFarrumLabels")
+        TAGDEF(829,@"showEruptiveCenterLabels")
         TAGDEF(831,@"showOtherLabels")
         // stars
 //        TAGDEF(999,@"distanceLimit")
@@ -506,6 +507,7 @@ FEATUREMETHODS(Planitia)
 FEATUREMETHODS(Linea)
 FEATUREMETHODS(Fluctus)
 FEATUREMETHODS(Farrum)
+FEATUREMETHODS(EruptiveCenter)
 FEATUREMETHODS(Other)
 
 -(float) minimumFeatureSize { return appCore->getRenderer()->getMinimumFeatureSize(); }
