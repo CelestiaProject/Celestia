@@ -18,33 +18,47 @@
 
 #import "CelestiaController.h"
 #include "celestiacore.h"
+#include "render.h"
 #include "qtcapture.h"
 #import <Carbon/Carbon.h>
 
-class MacSettingsWatcher : public CelestiaWatcher
+class MacSettingsWatcher : public CelestiaWatcher, public RendererWatcher
 {
 private:
     CelestiaSettings *settings;
+    CelestiaCore *appCore;
 
 public:
     MacSettingsWatcher(CelestiaAppCore *_appCore,
                        CelestiaSettings* _settings) :
-        CelestiaWatcher(*[_appCore appCore]), settings(_settings)
-    {};
+        CelestiaWatcher(*[_appCore appCore]), settings(_settings), appCore([_appCore appCore])
+    {
+        appCore->getRenderer()->addWatcher(this);
+    };
+    
+    virtual ~MacSettingsWatcher()
+    {
+        appCore->getRenderer()->removeWatcher(this);
+    };
 
     void notifyChange(CelestiaCore *, int flags)
     {
         if ( 0 != (flags & (
-              CelestiaCore::LabelFlagsChanged
-            | CelestiaCore::RenderFlagsChanged
-            | CelestiaCore::VerbosityLevelChanged
+//              CelestiaCore::LabelFlagsChanged
+//            | CelestiaCore::RenderFlagsChanged
+            CelestiaCore::VerbosityLevelChanged
             | CelestiaCore::TimeZoneChanged
-            | CelestiaCore::AmbientLightChanged
+//            | CelestiaCore::AmbientLightChanged
             | CelestiaCore::FaintestChanged
             )) )
         {
             [settings validateItems];
         }
+    };
+
+    virtual void notifyRenderSettingsChanged(const Renderer *renderer)
+    {
+        [settings validateItems];
     };
 };
 
