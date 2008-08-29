@@ -74,6 +74,7 @@ class StarDetails
     {
         KnowRadius   = 0x1,
         KnowRotation = 0x2,
+        KnowTexture  = 0x4,
     };
     inline uint32 getKnowledge() const;
     inline bool getKnowledge(uint32) const;
@@ -249,6 +250,7 @@ public:
     void setAbsoluteMagnitude(float);
     void setLuminosity(float);
 
+    StarDetails* getDetails() const;
     void setDetails(StarDetails*);
     void setOrbitBarycenter(Star*);
     void computeOrbitalRadius();

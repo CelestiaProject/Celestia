@@ -1158,6 +1158,11 @@ void Star::setLuminosity(float lum)
     absMag = astro::lumToAbsMag(lum);
 }
 
+StarDetails* Star::getDetails() const
+{
+    return details;
+}
+
 void Star::setDetails(StarDetails* sd)
 {
     // TODO: delete existing details if they aren't shared
