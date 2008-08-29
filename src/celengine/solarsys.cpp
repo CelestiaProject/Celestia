@@ -46,6 +46,15 @@ enum Disposition
 };
 
 
+enum BodyType
+{
+    ReferencePoint,
+    NormalBody,
+    SurfaceObject,
+    UnknownBodyType,
+};
+
+
 /*!
   Solar system catalog (.ssc) files contain items of three different types:
   bodies, locations, and alternate surfaces.  Bodies planets, moons, asteroids,
@@ -276,37 +285,16 @@ static void FillinSurface(Hash* surfaceData,
 }
 
 
-// Set up the orbit barycenter for a body. By default, it is the parent of the
-// object
-static Selection GetOrbitBarycenter(const string& name,
-                                    PlanetarySystem* system)
+static Selection GetParentObject(PlanetarySystem* system)
 {
-    Selection orbitBarycenter;
+    Selection parent;
     Body* primary = system->getPrimaryBody();
     if (primary != NULL)
-        orbitBarycenter = Selection(primary);
+        parent = Selection(primary);
     else
-        orbitBarycenter = Selection(system->getStar());
+        parent = Selection(system->getStar());
 
-    // The barycenter must be in the same star system as the object we're creating
-    if (orbitBarycenter.body())
-    {
-        if (system->getStar() != orbitBarycenter.body()->getSystem()->getStar())
-        {
-            cerr << "OrbitBarycenter" << _(" of ") << name << _(" must be in same star system\n");
-            return Selection();
-        }
-    }
-    else if (orbitBarycenter.star())
-    {
-        if (system->getStar() != orbitBarycenter.star())
-        {
-            cerr << "OrbitBarycenter" << _(" of ") << name << _(" must be in same star system\n");
-            return Selection();
-        }
-    }
-
-    return orbitBarycenter;
+    return parent;
 }
 
 
@@ -314,7 +302,8 @@ TimelinePhase* CreateTimelinePhase(Body* body,
                                    Universe& universe,
                                    Hash* phaseData,
                                    const string& path,
-                                   ReferenceFrame* defaultFrame,
+                                   ReferenceFrame* defaultOrbitFrame,
+                                   ReferenceFrame* defaultBodyFrame,
                                    bool isFirstPhase,
                                    bool isLastPhase,
                                    double previousPhaseEnd)
@@ -345,7 +334,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     Value* frameValue = phaseData->getValue("OrbitFrame");
     if (frameValue != NULL)
     {
-        orbitFrame = CreateReferenceFrame(universe, frameValue, defaultFrame->getCenter(), body);
+        orbitFrame = CreateReferenceFrame(universe, frameValue, defaultOrbitFrame->getCenter(), body);
         if (orbitFrame == NULL)
         {
             return NULL;
@@ -354,7 +343,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     else
     {
         // No orbit frame specified; use the default frame.
-        orbitFrame = defaultFrame;
+        orbitFrame = defaultOrbitFrame;
     }
     orbitFrame->addRef();
 
@@ -363,7 +352,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     Value* bodyFrameValue = phaseData->getValue("BodyFrame");
     if (bodyFrameValue != NULL)
     {
-        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultFrame->getCenter(), body);
+        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultBodyFrame->getCenter(), body);
         if (bodyFrame == NULL)
         {
             orbitFrame->release();
@@ -373,7 +362,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
     else
     {
         // No body frame specified; use the default frame.
-        bodyFrame = defaultFrame;
+        bodyFrame = defaultBodyFrame;
     }
     bodyFrame->addRef();
 
@@ -423,7 +412,8 @@ Timeline* CreateTimelineFromArray(Body* body,
                                   Universe& universe,
                                   Array* timelineArray,
                                   const string& path,
-                                  ReferenceFrame* defaultFrame)
+                                  ReferenceFrame* defaultOrbitFrame,
+                                  ReferenceFrame* defaultBodyFrame)
 {
     Timeline* timeline = new Timeline();
     double previousEnding = -numeric_limits<double>::infinity();
@@ -443,7 +433,8 @@ Timeline* CreateTimelineFromArray(Body* body,
 
         TimelinePhase* phase = CreateTimelinePhase(body, universe, phaseData,
                                                    path,
-                                                   defaultFrame,
+                                                   defaultOrbitFrame,
+                                                   defaultBodyFrame,
                                                    isFirstPhase, isLastPhase, previousEnding);
         if (phase == NULL)
         {
@@ -466,21 +457,22 @@ static bool CreateTimeline(Body* body,
                            Universe& universe,
                            Hash* planetData,
                            const string& path,
-                           Disposition disposition)
+                           Disposition disposition,
+                           BodyType bodyType)
 {
     FrameTree* parentFrameTree = NULL;
-    Selection orbitBarycenter = GetOrbitBarycenter(body->getName(), system);
+    Selection parentObject = GetParentObject(system);
     bool orbitsPlanet = false;
-    if (orbitBarycenter.body())
+    if (parentObject.body())
     {
-        parentFrameTree = orbitBarycenter.body()->getOrCreateFrameTree();
+        parentFrameTree = parentObject.body()->getOrCreateFrameTree();
         orbitsPlanet = true;
     }
-    else if (orbitBarycenter.star())
+    else if (parentObject.star())
     {
-        SolarSystem* solarSystem = universe.getSolarSystem(orbitBarycenter.star());
+        SolarSystem* solarSystem = universe.getSolarSystem(parentObject.star());
         if (solarSystem == NULL)
-            solarSystem = universe.createSolarSystem(orbitBarycenter.star());
+            solarSystem = universe.createSolarSystem(parentObject.star());
         parentFrameTree = solarSystem->getFrameTree();
     }
     else
@@ -489,6 +481,21 @@ static bool CreateTimeline(Body* body,
         return false;
     }
 
+    ReferenceFrame* defaultOrbitFrame = NULL;
+    ReferenceFrame* defaultBodyFrame = NULL;
+    if (bodyType == SurfaceObject)
+    {
+        defaultOrbitFrame = new BodyFixedFrame(parentObject, parentObject);
+        defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
+        defaultOrbitFrame->addRef();
+        defaultBodyFrame->addRef();
+    }
+    else
+    {
+        defaultOrbitFrame = parentFrameTree->getDefaultReferenceFrame();
+        defaultBodyFrame = parentFrameTree->getDefaultReferenceFrame();
+    }
+    
     // If there's an explicit timeline definition, parse that. Otherwise, we'll do
     // things the old way.
     Value* value = planetData->getValue("Timeline");
@@ -501,7 +508,7 @@ static bool CreateTimeline(Body* body,
         }
 
         Timeline* timeline = CreateTimelineFromArray(body, universe, value->getArray(), path,
-                                                     parentFrameTree->getDefaultReferenceFrame());
+                                                     defaultOrbitFrame, defaultBodyFrame);
         if (timeline == NULL)
         {
             return false;
@@ -551,7 +558,7 @@ static bool CreateTimeline(Body* body,
     Value* frameValue = planetData->getValue("OrbitFrame");
     if (frameValue != NULL)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue, orbitBarycenter, body);
+        ReferenceFrame* frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
         if (frame != NULL)
         {
             orbitFrame = frame;
@@ -565,7 +572,7 @@ static bool CreateTimeline(Body* body,
     Value* bodyFrameValue = planetData->getValue("BodyFrame");
     if (bodyFrameValue != NULL)
     {
-        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue, orbitBarycenter, body);
+        ReferenceFrame* frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
         if (frame != NULL)
         {
             bodyFrame = frame;
@@ -576,9 +583,9 @@ static bool CreateTimeline(Body* body,
 
     // If no orbit or body frame was specified, use the default ones
     if (orbitFrame == NULL)
-        orbitFrame = parentFrameTree->getDefaultReferenceFrame();
+        orbitFrame = defaultOrbitFrame;
     if (bodyFrame == NULL)
-        bodyFrame = parentFrameTree->getDefaultReferenceFrame();
+        bodyFrame = defaultBodyFrame;
 
     // If the center of the is a star, orbital element units are
     // in AU; otherwise, use kilometers.
@@ -684,16 +691,17 @@ static bool CreateTimeline(Body* body,
 }
 
 
-// Create a body (planet or moon) using the values from a hash
-// The usePlanetsUnits flags specifies whether period and semi-major axis
-// are in years and AU rather than days and kilometers
-static Body* CreatePlanet(const string& name,
-                          PlanetarySystem* system,
-                          Universe& universe,
-                          Body* existingBody,
-                          Hash* planetData,
-                          const string& path,
-                          Disposition disposition)
+// Create a body (planet, moon, spacecraft, etc.) using the values from a
+// property list. The usePlanetsUnits flags specifies whether period and
+// semi-major axis are in years and AU rather than days and kilometers.
+static Body* CreateBody(const string& name,
+                        PlanetarySystem* system,
+                        Universe& universe,
+                        Body* existingBody,
+                        Hash* planetData,
+                        const string& path,
+                        Disposition disposition,
+                        BodyType bodyType)
 {
     Body* body = NULL;
 
@@ -707,9 +715,16 @@ static Body* CreatePlanet(const string& name,
         body = new Body(system, name);
         // If the body doesn't exist, always treat the disposition as 'Add'
         disposition = AddObject;
+        
+        // Set the default classification for new objects based on the body type.
+        // This may be overridden by the Class property.
+        if (bodyType == SurfaceObject)
+        {
+            body->setClassification(Body::SurfaceFeature);
+        }
     }
 
-    if (!CreateTimeline(body, system, universe, planetData, path, disposition))
+    if (!CreateTimeline(body, system, universe, planetData, path, disposition, bodyType))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -1006,7 +1021,7 @@ static Body* CreateReferencePoint(const string& name,
     body->setVisibleAsPoint(false);
     body->setClickable(false);
 
-    if (!CreateTimeline(body, system, universe, refPointData, path, disposition))
+    if (!CreateTimeline(body, system, universe, refPointData, path, disposition, ReferencePoint))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -1116,7 +1131,15 @@ bool LoadSolarSystemObjects(istream& in,
         }
         string primaryName = names.front();
 
-        if (itemType == "Body" || itemType == "ReferencePoint")
+        BodyType bodyType = UnknownBodyType;
+        if (itemType == "Body")
+            bodyType = NormalBody;
+        else if (itemType == "ReferencePoint")
+            bodyType = ReferencePoint;
+        else if (itemType == "SurfaceObject")
+            bodyType = SurfaceObject;
+        
+        if (bodyType != UnknownBodyType)
         {
             //bool orbitsPlanet = false;
             if (parent.star() != NULL)
@@ -1167,10 +1190,10 @@ bool LoadSolarSystemObjects(istream& in,
                 }
 
                 Body* body;
-                if (itemType == "ReferencePoint")
+                if (bodyType == ReferencePoint)
                     body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
-                    body = CreatePlanet(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
+                    body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType);
                 
                 if (body != NULL && disposition == AddObject)
                 {
