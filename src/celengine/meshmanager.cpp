@@ -7,6 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+// Experimental particle system support
+#define PARTICLE_SYSTEM 0
+
+// Experimental support for optionally unnormalized meshes
+#define UNNORMALIZED_MESHES 0
+
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -19,8 +25,11 @@
 #include <celmath/perlin.h>
 #include <cel3ds/3dsread.h>
 
-//#include "3dsmesh.h"
 #include "modelfile.h"
+#if PARTICLE_SYSTEM
+#include "particlesystem.h"
+#include "particlesystemfile.h"
+#endif
 #include "vertexlist.h"
 #include "parser.h"
 #include "spheremesh.h"
@@ -51,8 +60,12 @@ string GeometryInfo::resolve(const string& baseDir)
     // Ensure that models with different centers get resolved to different objects by
     // adding a 'uniquifying' suffix to the filename that encodes the center value.
     // This suffix is stripped before the file is actually loaded.
-    char uniquifyingSuffix[64];
+    char uniquifyingSuffix[128];
+#if UNNORMALIZED_MESHES
+    sprintf(uniquifyingSuffix, "%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x, center.y, center.z, scale, (int) isNormalized);
+#else
     sprintf(uniquifyingSuffix, "%c%f%f%f", UniqueSuffixChar, center.x, center.y, center.z);
+#endif
     
     if (!path.empty())
     {
@@ -88,7 +101,16 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
                 model = Convert3DSModel(*scene, path);
             else
                 model = Convert3DSModel(*scene, "");
+
+#if UNNORMALIZED_MESHES
+            if (isNormalized)
+                model->normalize(center);
+            else
+                model->transform(center, scale);
+#else
             model->normalize(center);
+#endif
+
 
             delete scene;
         }
@@ -100,14 +122,33 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
         {
             model = LoadModel(in, path);
             if (model != NULL)
+            {
+#if UNNORMALIZED_MESHES
+                if (isNormalized)
+                    model->normalize(center);
+                else
+                    model->transform(center, scale);
+#else
                 model->normalize(center);
+#endif
+            }
         }
     }
     else if (fileType == Content_CelestiaMesh)
     {
         model = LoadCelestiaMesh(filename);
     }
-
+#if PARTICLE_SYSTEM
+    else if (fileType == Content_CelestiaParticleSystem)
+    {
+        ifstream in(filename.c_str());
+        if (in.good())
+        {
+            return LoadParticleSystem(in, path);
+        }
+    }
+#endif
+        
     // Condition the model for optimal rendering
     if (model != NULL)
     {
