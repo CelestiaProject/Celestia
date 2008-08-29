@@ -19,6 +19,7 @@
 #include "parser.h"
 
 class ReferenceFrame;
+class TwoVectorFrame;
 class Universe;
 class Selection;
 
@@ -39,5 +40,10 @@ ReferenceFrame* CreateReferenceFrame(const Universe& universe,
                                      Value* frameValue,
                                      const Selection& defaultCenter,
                                      Body* defaultObserver);
+
+TwoVectorFrame* CreateTopocentricFrame(const Selection& center,
+                                       const Selection& target,
+                                       const Selection& observer);
+
 
 #endif // _CELENGINE_PARSEOBJECT_H_

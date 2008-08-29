@@ -1,6 +1,6 @@
 // parseobject.cpp
 //
-// Copyright (C) 2004-2007 Chris Laurel <claurel@gmail.com>
+// Copyright (C) 2004-2008 Chris Laurel <claurel@gmail.com>
 //
 // Functions for parsing objects common to star, solar system, and
 // deep sky catalogs.
@@ -261,7 +261,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
         return NULL;
     }
 
-    return new FixedOrbit(Point3d(v.x, v.y, v.z));
+    return new FixedOrbit(Point3d(position.x, position.y, position.z));
 }
 
 
@@ -874,6 +874,35 @@ CreateFixedRotationModel(Hash* rotationData)
 }
 
 
+static ConstantOrientation*
+CreateFixedAttitudeRotationModel(Hash* rotationData)
+{
+    double heading = 0.0;
+    if (rotationData->getNumber("Heading", heading))
+    {
+        heading = degToRad(heading);
+    }
+    
+    double tilt = 0.0;
+    if (rotationData->getNumber("Tilt", tilt))
+    {
+        tilt = degToRad(tilt);
+    }
+    
+    double roll = 0.0;
+    if (rotationData->getNumber("Roll", roll))
+    {
+        roll = degToRad(roll);
+    }
+    
+    Quatd q = Quatd::yrotation(-PI - heading) *
+              Quatd::xrotation(-tilt) *
+              Quatd::zrotation(-roll);
+    
+    return new ConstantOrientation(q);
+}
+
+
 static RotationModel*
 CreatePrecessingRotationModel(Hash* rotationData,
                               double syncRotationPeriod)
@@ -1079,7 +1108,7 @@ CreateRotationModel(Hash* planetData,
     {
         if (uniformRotationValue->getType() != Value::HashType)
         {
-            clog << "Object has incorrect uniform rotation syntax.\n";
+            clog << "Object has incorrect UniformRotation syntax.\n";
             return NULL;
         }
         else
@@ -1094,12 +1123,26 @@ CreateRotationModel(Hash* planetData,
     {
         if (fixedRotationValue->getType() != Value::HashType)
         {
-            clog << "Object has incorrect fixed rotation syntax.\n";
+            clog << "Object has incorrect FixedRotation syntax.\n";
             return NULL;
         }
         else
         {
             return CreateFixedRotationModel(fixedRotationValue->getHash());
+        }
+    }
+    
+    Value* fixedAttitudeValue = planetData->getValue("FixedAttitude");
+    if (fixedAttitudeValue != NULL)
+    {
+        if (fixedAttitudeValue->getType() != Value::HashType)
+        {
+            clog << "Object has incorrect FixedAttitude syntax.\n";
+            return NULL;
+        }
+        else
+        {
+            return CreateFixedAttitudeRotationModel(fixedAttitudeValue->getHash());
         }
     }
 
@@ -1586,6 +1629,61 @@ CreateJ2000EquatorFrame(const Universe& universe,
 }
 
 
+/* Helper function for CreateTopocentricFrame().
+ * Creates a two-vector frame with the specified center, target, and observer.
+ */
+TwoVectorFrame*
+CreateTopocentricFrame(const Selection& center,
+                       const Selection& target,
+                       const Selection& observer)
+{
+    BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
+    FrameVector north = FrameVector::createConstantVector(Vec3d(0.0, 1.0, 0.0), eqFrame);
+    FrameVector up = FrameVector::createRelativePositionVector(observer, target);
+    
+    return new TwoVectorFrame(center, up, -2, north, -3);    
+}
+
+
+/* Create a new Topocentric frame. The topocentric frame is designed to make it easy
+ * to place objects on the surface of a planet or moon. The z-axis will point toward
+ * the observer's zenith (which here is the direction away from the center of the
+ * planet.) The x-axis will point in the local north direction. The equivalent
+ * two-vector frame is:
+ *
+ * TwoVector
+ * {
+ *    Center <center>
+ *    Primary   
+ *    {
+ *       Axis "z"
+ *       RelativePosition { Target <target> Observer <observer> }
+ *    }
+ *    Secondary   
+ *    {
+ *       Axis "x"
+ *       ConstantVector   
+ *       {
+ *          Vector [ 0 0 1]
+ *          Frame { BodyFixed { Center <target> } }
+ *       }
+ *    }
+ * }
+ *
+ * Typically, the topocentric frame is used as a BodyFrame to orient an
+ * object on the surface of a planet. In this situation, the observer is
+ * object itself and the target object is the planet. In fact, these are
+ * the defaults: when no target, observer, or center is specified, the
+ * observer and center are both 'self' and the target is the parent
+ * object. Thus, for a Mars rover, using a topocentric frame is as simple
+ * as:
+ *
+ * "Rover" "Sol/Mars"
+ * {
+ *     BodyFrame { Topocentric { } }
+ *     ...
+ * }
+ */
 static TwoVectorFrame*
 CreateTopocentricFrame(const Universe& universe,
                        Hash* frameData,
@@ -1615,7 +1713,7 @@ CreateTopocentricFrame(const Universe& universe,
     else
     {
         // When no center is provided, use the default observer as the center. This
-        // is typical when a topocentric frame is the body frame. The default obsever
+        // is typical when a topocentric frame is the body frame. The default observer
         // is usually the object itself.
         target = defaultTarget;
         observer = defaultObserver;
@@ -1664,11 +1762,7 @@ CreateTopocentricFrame(const Universe& universe,
         }
     }
 
-    BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
-    FrameVector north = FrameVector::createConstantVector(Vec3d(0.0, 1.0, 0.0), eqFrame);
-    FrameVector up = FrameVector::createRelativePositionVector(observer, target);
-
-    return new TwoVectorFrame(center, up, -2, north, 1);
+    return CreateTopocentricFrame(center, target, observer);
 }
 
 
