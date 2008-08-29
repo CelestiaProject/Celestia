@@ -178,11 +178,12 @@ bool StarDatabase::CrossIndexEntry::operator<(const StarDatabase::CrossIndexEntr
 
 StarDatabase::StarDatabase():
     nStars               (0),
-    capacity             (0),
     stars                (NULL),
     namesDB              (NULL),
     octreeRoot           (NULL),
-    nextAutoCatalogNumber(0xfffffffe)
+    nextAutoCatalogNumber(0xfffffffe),
+    binFileCatalogNumberIndex(NULL),
+    binFileStarCount(0)
 {
     crossIndexes.resize(MaxCatalog);
 }
@@ -204,7 +205,7 @@ StarDatabase::~StarDatabase()
 }
 
 
-Star* StarDatabase::find(const uint32 catalogNumber) const
+Star* StarDatabase::find(uint32 catalogNumber) const
 {
     Star refStar;
     refStar.setCatalogNumber(catalogNumber);
@@ -618,6 +619,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
 
 bool StarDatabase::loadOldFormatBinary(istream& in)
 {
+#if 0
     uint32 nStarsInFile = 0;
     in.read((char *) &nStarsInFile, sizeof nStarsInFile);
     LE_TO_CPU_INT32(nStarsInFile, nStarsInFile);
@@ -648,48 +650,48 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
 
     while (((unsigned int) nStars) < totalStars)
     {
-	uint32 catNo = 0;
+        uint32 catNo = 0;
         uint32 hdCatNo = 0;
-	float RA = 0, dec = 0, parallax = 0;
-	int16 appMag;
-	uint16 spectralType;
-	uint8 parallaxError;
+        float RA = 0, dec = 0, parallax = 0;
+        int16 appMag;
+        uint16 spectralType;
+        uint8 parallaxError;
 
-	in.read((char *) &catNo, sizeof catNo);
+        in.read((char *) &catNo, sizeof catNo);
         LE_TO_CPU_INT32(catNo, catNo);
         in.read((char *) &hdCatNo, sizeof hdCatNo);
         LE_TO_CPU_INT32(hdCatNo, hdCatNo);
-	in.read((char *) &RA, sizeof RA);
+        in.read((char *) &RA, sizeof RA);
         LE_TO_CPU_FLOAT(RA, RA);
-	in.read((char *) &dec, sizeof dec);
+        in.read((char *) &dec, sizeof dec);
         LE_TO_CPU_FLOAT(dec, dec);
-	in.read((char *) &parallax, sizeof parallax);
+        in.read((char *) &parallax, sizeof parallax);
         LE_TO_CPU_FLOAT(parallax, parallax);
-	in.read((char *) &appMag, sizeof appMag);
+        in.read((char *) &appMag, sizeof appMag);
         LE_TO_CPU_INT16(appMag, appMag);
-	in.read((char *) &spectralType, sizeof spectralType);
+        in.read((char *) &spectralType, sizeof spectralType);
         LE_TO_CPU_INT16(spectralType, spectralType);
-	in.read((char *) &parallaxError, sizeof parallaxError);
-        if ( in.bad() )
-	    break;
+        in.read((char *) &parallaxError, sizeof parallaxError);
+        if (in.bad())
+            break;
 
-	Star* star = &stars[nStars];
+        Star* star = &stars[nStars];
 
-	// Compute distance based on parallax
-	double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
-#ifdef DEBUG
-	if (distance > 50000.0)
-	{
-	    DPRINTF(0, "Warning, distance of star # %ld of %12.2f ly seems excessive (parallax: %2.5f)!\n", catNo, distance, parallax);
-	}
-#endif // DEBUG
+        // Compute distance based on parallax
+        double distance = LY_PER_PARSEC / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
+        #ifdef DEBUG
+        if (distance > 50000.0)
+        {
+            DPRINTF(0, "Warning, distance of star # %ld of %12.2f ly seems excessive (parallax: %2.5f)!\n", catNo, distance, parallax);
+        }
+        #endif // DEBUG
         Point3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
         star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
 
-	// Use apparent magnitude and distance to determine the absolute
-	// magnitude of the star.
-	star->setAbsoluteMagnitude((float) (appMag / 256.0 + 5 -
-					    5 * log10(distance / 3.26)));
+        // Use apparent magnitude and distance to determine the absolute
+        // magnitude of the star.
+        star->setAbsoluteMagnitude((float) (appMag / 256.0 + 5 -
+                        5 * log10(distance / 3.26)));
 
 
         StarDetails* details = NULL;
@@ -706,17 +708,17 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
         star->setDetails(details);
         star->setCatalogNumber(catNo);
 
-	// TODO: Use a photometric estimate of distance if parallaxError is
-	// greater than 25%.
-	if (parallaxError > 50)
+        // TODO: Use a photometric estimate of distance if parallaxError is
+        // greater than 25%.
+        if (parallaxError > 50)
         {
-	    if (appMag / 256.0 > 6)
-		throwOut++;
-	    else
-		fixUp++;
-	}
+            if (appMag / 256.0 > 6)
+                throwOut++;
+            else
+                fixUp++;
+        }
 
-	nStars++;
+        nStars++;
     }
 
     if (in.bad())
@@ -726,6 +728,9 @@ bool StarDatabase::loadOldFormatBinary(istream& in)
     cout << "nStars: " << nStars << '\n';
 
     return true;
+#else
+    return false;
+#endif
 }
 
 
@@ -758,52 +763,33 @@ bool StarDatabase::loadBinary(istream& in)
     if (!in.good())
         return false;
 
-    int requiredCapacity = (int) ((nStars + nStarsInFile) * (1.0 + STAR_EXTRA_ROOM));
-    if (capacity < requiredCapacity)
-    {
-        Star* newStars = new Star[requiredCapacity];
-        if (newStars == NULL)
-            return false;
-
-        if (stars != NULL)
-        {
-            copy(stars, stars + nStars, newStars);
-            delete[] stars;
-        }
-
-        stars = newStars;
-
-        capacity = requiredCapacity;
-    }
-
     unsigned int totalStars = nStars + nStarsInFile;
 
     while (((unsigned int) nStars) < totalStars)
     {
-	uint32 catNo = 0;
-	float x = 0.0f, y = 0.0f, z = 0.0f;
-	int16 absMag;
-	uint16 spectralType;
+        uint32 catNo = 0;
+        float x = 0.0f, y = 0.0f, z = 0.0f;
+        int16 absMag;
+        uint16 spectralType;
 
-	in.read((char *) &catNo, sizeof catNo);
+        in.read((char *) &catNo, sizeof catNo);
         LE_TO_CPU_INT32(catNo, catNo);
-	in.read((char *) &x, sizeof x);
+        in.read((char *) &x, sizeof x);
         LE_TO_CPU_FLOAT(x, x);
-	in.read((char *) &y, sizeof y);
+        in.read((char *) &y, sizeof y);
         LE_TO_CPU_FLOAT(y, y);
-	in.read((char *) &z, sizeof z);
+        in.read((char *) &z, sizeof z);
         LE_TO_CPU_FLOAT(z, z);
-	in.read((char *) &absMag, sizeof absMag);
+        in.read((char *) &absMag, sizeof absMag);
         LE_TO_CPU_INT16(absMag, absMag);
-	in.read((char *) &spectralType, sizeof spectralType);
+        in.read((char *) &spectralType, sizeof spectralType);
         LE_TO_CPU_INT16(spectralType, spectralType);
         if (in.bad())
-	    break;
+        break;
 
-	Star* star = &stars[nStars];
-
-        star->setPosition(x, y, z);
-	star->setAbsoluteMagnitude((float) absMag / 256.0f);
+        Star star;
+        star.setPosition(x, y, z);
+        star.setAbsoluteMagnitude((float) absMag / 256.0f);
 
         StarDetails* details = NULL;
         StellarClass sc;
@@ -816,10 +802,11 @@ bool StarDatabase::loadBinary(istream& in)
             return false;
         }
 
-        star->setDetails(details);
-	star->setCatalogNumber(catNo);
-
-	nStars++;
+        star.setDetails(details);
+        star.setCatalogNumber(catNo);
+        unsortedStars.add(star);
+        
+        nStars++;
     }
 
     if (in.bad())
@@ -827,29 +814,38 @@ bool StarDatabase::loadBinary(istream& in)
 
     DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
     clog << nStars << _(" stars in binary database\n");
-
+    
+    // Create the temporary list of stars sorted by catalog number; this
+    // will be used to lookup stars during file loading. After loading is
+    // complete, the stars are sorted into an octree and this list gets
+    // replaced.
+    if (unsortedStars.size() > 0)
+    {
+        binFileStarCount = unsortedStars.size();
+        binFileCatalogNumberIndex = new Star*[binFileStarCount];
+        for (unsigned int i = 0; i < binFileStarCount; i++)
+        {
+            binFileCatalogNumberIndex[i] = &unsortedStars[i];    
+        }
+        sort(binFileCatalogNumberIndex, binFileCatalogNumberIndex + binFileStarCount,
+             PtrCatalogNumberOrderingPredicate());
+    }
+        
     return true;
 }
 
 
 void StarDatabase::finish()
 {
-    // Eliminate duplicate stars; reverse the list so that for stars with
-    // identical catalog numbers, the most recently added one is kept.
-    reverse(stars, stars + nStars);
-    stable_sort(stars, stars + nStars, CatalogNumberOrderingPredicate());
-    Star* lastStar = unique(stars, stars + nStars,
-                            CatalogNumberEquivalencePredicate());
-
-    int nUniqueStars = lastStar - stars;
-    clog << _("Total star count: ") << nUniqueStars <<
-        " (" << (nStars - nUniqueStars) <<
-        _(" star(s) with duplicate catalog numbers deleted.)\n");
-    nStars = nUniqueStars;
-
+    clog << _("Total star count: ") << nStars << endl;
+    
     buildOctree();
     buildIndexes();
 
+    // Delete the temporary indices used only during loading
+    delete binFileCatalogNumberIndex;
+    stcFileCatalogNumberIndex.clear();
+    
     // Resolve all barycenters; this can't be done before star sorting. There's
     // still a bug here: final orbital radii aren't available until after
     // the barycenters have been resolved, and these are required when building
@@ -886,37 +882,78 @@ static void stcError(const Tokenizer& tok,
 }
 
 
-Star* StarDatabase::createStar(const uint32 catalogNumber,
-                               Hash* starData,
-                               const string& path,
-                               bool isBarycenter)
+/*! Load star data from a property list into a star instance.
+ */
+bool StarDatabase::createStar(Star* star,
+                              StcDisposition disposition,
+                              uint32 catalogNumber,
+                              Hash* starData,
+                              const string& path,
+                              bool isBarycenter)
 {
     StarDetails* details = NULL;
     string spectralType;
 
     // Get the magnitude and spectral type; if the star is actually
     // a barycenter placeholder, these fields are ignored.
-    /*double magnitude = 0.0;   Unused*/
     if (isBarycenter)
     {
         details = StarDetails::GetBarycenterDetails();
     }
     else
     {
-        if (!starData->getString("SpectralType", spectralType))
+        if (starData->getString("SpectralType", spectralType))
         {
-            cerr << _("Invalid star: missing spectral type.\n");
-            return NULL;
+            StellarClass sc = StellarClass::parse(spectralType);
+            details = StarDetails::GetStarDetails(sc);
+            if (details == NULL)
+            {
+                cerr << _("Invalid star: bad spectral type.\n");
+                return false;
+            }
         }
-        StellarClass sc = StellarClass::parse(spectralType);
-        details = StarDetails::GetStarDetails(sc);
-        if (details == NULL)
+        else
         {
-            cerr << _("Invalid star: bad spectral type.\n");
-            return NULL;
+            // Spectral type is required for new stars
+            if (disposition != ModifyStar)
+            {
+                cerr << _("Invalid star: missing spectral type.\n");
+                return false;
+            }
         }
     }
-
+    
+    bool modifyExistingDetails = false;
+    if (disposition == ModifyStar)
+    {
+        StarDetails* existingDetails = star->getDetails();
+        
+        // If we're modifying and existing star and it already has a
+        // customized details record, we'll just modify that.
+        if (!existingDetails->shared())
+        {
+            modifyExistingDetails = true;
+            if (details != NULL)
+            {
+                // If the spectral type was modified, copy the new data
+                // to the custom details record.
+                existingDetails->setSpectralType(details->getSpectralType());
+                existingDetails->setTemperature(details->getTemperature());
+                existingDetails->setBolometricCorrection(details->getBolometricCorrection());
+                if ((existingDetails->getKnowledge() & StarDetails::KnowTexture) == 0)
+                    existingDetails->setTexture(details->getTexture());
+                if ((existingDetails->getKnowledge() & StarDetails::KnowRotation) == 0)
+                    existingDetails->setRotationModel(details->getRotationModel());
+            }
+            
+            details = existingDetails;
+        }
+        else if (details == NULL)
+        {
+            details = existingDetails;
+        }
+    }
+    
     string modelName;
     string textureName;
     bool hasTexture = starData->getString("Texture", textureName);
@@ -949,10 +986,14 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
         // If the star definition has extended information, clone the
         // star details so we can customize it without affecting other
         // stars of the same spectral type.
-        details = new StarDetails(*details);
+        if (!modifyExistingDetails)
+            details = new StarDetails(*details);
 
         if (hasTexture)
+        {
             details->setTexture(MultiResTexture(textureName, path));
+            details->addKnowledge(StarDetails::KnowTexture);
+        }
 
         if (hasModel)
         {
@@ -1011,34 +1052,19 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
                     barycenters.push_back(bc);
 
                     // Even though we can't actually get the Star pointer for
-                    // the barycenter, we can get the star information.  We
-                    // need this in order to get the star's position.  Since
-                    // the stars aren't sorted, we're stuck doing a linear
-                    // search of the currently loaded stars. But, since
-                    // barycenters are typically defined immediately before
-                    // stars that use them, a reverse linear search will have
-                    // very good performance most of the time.
-                    if (nStars > 0)
+                    // the barycenter, we can get the star information.
+                    Star* barycenter = findWhileLoading(barycenterCatNo);
+                    if (barycenter != NULL)
                     {
-                        uint32 starIndex = nStars;
-                        do
-                        {
-                            starIndex--;
-                            if (stars[starIndex].getCatalogNumber() ==
-                                barycenterCatNo)
-                            {
-                                hasBarycenter = true;
-                                barycenterPosition = stars[starIndex].getPosition();
-                                break;
-                            }
-                        } while (starIndex != 0);
-                    }
+                        hasBarycenter = true;
+                        barycenterPosition = barycenter->getPosition();
+                    }                    
                 }
 
                 if (!hasBarycenter)
                 {
                     cerr << _("Barycenter ") << barycenterName << _(" does not exist.\n");
-                    return NULL;
+                    return false;
                 }
             }
         }
@@ -1047,9 +1073,10 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
             details->setRotationModel(rm);
     }
 
-    Star* star = new Star();
-    star->setDetails(details);
-    star->setCatalogNumber(catalogNumber);
+    if (!modifyExistingDetails)
+        star->setDetails(details);
+    if (disposition != ModifyStar)
+        star->setCatalogNumber(catalogNumber);
 
     // Compute the position in rectangular coordinates.  If a star has an
     // orbit and barycenter, it's position is the position of the barycenter.
@@ -1062,35 +1089,72 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
         double ra = 0.0;
         double dec = 0.0;
         double distance = 0.0;
+        if (disposition == ModifyStar)
+        {
+            Point3f pos = star->getPosition();
+            // Convert from Celestia's coordinate system
+            Vec3f v = Vec3f(pos.x, -pos.z, pos.y);
+            v = v * Mat3f::xrotation(-astro::J2000Obliquity);
+            distance = v.length();
+            if (distance > 0.0)
+            {
+                v.normalize();
+                ra = radToDeg(std::atan2(v.y, v.x));
+                dec = radToDeg(std::asin(v.z));
+            }
+        }
+        
+        bool modifyPosition = false;
         if (!starData->getNumber("RA", ra))
         {
-            cerr << _("Invalid star: missing right ascension\n");
-            delete star;
-            return NULL;
+            if (disposition != ModifyStar)
+            {
+                cerr << _("Invalid star: missing right ascension\n");
+                return false;
+            }
+        }
+        else
+        {
+            modifyPosition = true;
         }
 
         if (!starData->getNumber("Dec", dec))
         {
-            cerr << _("Invalid star: missing declination.\n");
-            delete star;
-            return NULL;
+            if (disposition != ModifyStar)
+            {
+                cerr << _("Invalid star: missing declination.\n");
+                return false;
+            }
+        }
+        else
+        {
+            modifyPosition = true;
         }
 
         if (!starData->getNumber("Distance", distance))
         {
-            cerr << _("Invalid star: missing distance.\n");
-            delete star;
-            return NULL;
+            if (disposition != ModifyStar)
+            {
+                cerr << _("Invalid star: missing distance.\n");
+                return false;
+            }
+        }
+        else
+        {
+            modifyPosition = true;
         }
 
         // Truncate to floats to match behavior of reading from binary file.
         // The conversion to rectangular coordinates is still performed at
         // double precision, however.
-        float raf = ((float) (ra * 24.0 / 360.0));
-        float decf = ((float) dec);
-        float distancef = ((float) distance);
-        Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
-        star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
+        if (modifyPosition)
+        {
+            float raf = ((float) (ra * 24.0 / 360.0));
+            float decf = ((float) dec);
+            float distancef = ((float) distance);
+            Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
+            star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
+        }
     }
 
     if (isBarycenter)
@@ -1099,14 +1163,21 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
     }
     else
     {
-        double magnitude;
+        double magnitude = 0.0;
+        bool magnitudeModified = true;
         if (!starData->getNumber("AbsMag", magnitude))
         {
             if (!starData->getNumber("AppMag", magnitude))
             {
-                clog << _("Invalid star: missing magnitude.\n");
-                delete star;
-                return NULL;
+                if (disposition != ModifyStar)
+                {
+                    clog << _("Invalid star: missing magnitude.\n");
+                    return false;
+                }
+                else
+                {
+                    magnitudeModified = false;
+                }
             }
             else
             {
@@ -1118,20 +1189,53 @@ Star* StarDatabase::createStar(const uint32 catalogNumber,
                 if (distance < 1e-5f)
                 {
                     clog << _("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n");
-                    delete star;
-                    return NULL;
+                    return false;
                 }
                 magnitude = astro::appToAbsMag((float) magnitude, distance);
             }
         }
 
-        star->setAbsoluteMagnitude((float) magnitude);
+        if (magnitudeModified)
+            star->setAbsoluteMagnitude((float) magnitude);
     }
 
-    return star;
+    return true;
 }
 
 
+/*! Load an STC file with star definitions. Each definition has the form:
+ *
+ *  [disposition] [object type] [catalog number] [name]
+ *  {
+ *      [properties]
+ *  }
+ *
+ *  Disposition is either Add, Replace, or Modify; Add is the default.
+ *  Object type is either Star or Barycenter, with Star the default
+ *  It is an error to omit both the catalog number and the name.
+ *
+ *  The dispositions are slightly more complicated than suggested by
+ *  their names. Every star must have an unique catalog number. But
+ *  instead of generating an error, Adding a star with a catalog
+ *  number that already exists will actually replace that star. Here
+ *  are how all of the possibilities are handled:
+ *
+ *  <name> or <number> already exists:
+ *  Add <name>        : new star
+ *  Add <number>      : replace star
+ *  Replace <name>    : replace star
+ *  Replace <number>  : replace star
+ *  Modify <name>     : modify star
+ *  Modify <number>   : modify star
+ *
+ *  <name> or <number> doesn't exist:
+ *  Add <name>        : new star
+ *  Add <number>      : new star
+ *  Replace <name>    : new star
+ *  Replace <number>  : new star
+ *  Modify <name>     : error
+ *  Modify <number>   : error
+ */
 bool StarDatabase::load(istream& in, const string& resourcePath)
 {
     Tokenizer tokenizer(&in);
@@ -1140,6 +1244,31 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
     while (tokenizer.nextToken() != Tokenizer::TokenEnd)
     {
         bool isStar = true;
+        
+        // Parse the disposition--either Add, Replace, or Modify. The disposition
+        // may be omitted. The default value is Add.
+        StcDisposition disposition = AddStar;
+        if (tokenizer.getTokenType() == Tokenizer::TokenName)
+        {
+            if (tokenizer.getNameValue() == "Modify")
+            {
+                disposition = ModifyStar;
+                tokenizer.nextToken();
+            }
+            else if (tokenizer.getNameValue() == "Replace")
+            {
+                disposition = ReplaceStar;
+                tokenizer.nextToken();
+            }
+            else if (tokenizer.getNameValue() == "Add")
+            {
+                disposition = AddStar;
+                tokenizer.nextToken();
+            }
+        }
+        
+        // Parse the object type--either Star or Barycenter. The object type
+        // may be omitted. The default is Star.
         if (tokenizer.getTokenType() == Tokenizer::TokenName)
         {
             if (tokenizer.getNameValue() == "Star")
@@ -1158,37 +1287,90 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             tokenizer.nextToken();
         }
 
-        bool autoGenCatalogNumber = true;
+        // Parse the catalog number; it may be omitted if a name is supplied.
         uint32 catalogNumber = Star::InvalidCatalogNumber;
         if (tokenizer.getTokenType() == Tokenizer::TokenNumber)
         {
-            autoGenCatalogNumber = false;
             catalogNumber = (uint32) tokenizer.getNumberValue();
             tokenizer.nextToken();
         }
 
-        if (autoGenCatalogNumber)
-        {
-            catalogNumber = nextAutoCatalogNumber--;
-        }
-
         string objName;
+        string firstName;
         if (tokenizer.getTokenType() == Tokenizer::TokenString)
         {
             // A star name (or names) is present
             objName    = tokenizer.getStringValue();
             tokenizer.nextToken();
+            if (!objName.empty())
+            {
+                string::size_type next = objName.find(':', 0);
+                firstName = objName.substr(0, next);
+            }
         }
+        
+        Star* star = NULL;
+
+        switch (disposition)
+        {
+        case AddStar:
+            // Automatically generate a catalog number for the star if one isn't
+            // supplied.
+            if (catalogNumber == Star::InvalidCatalogNumber)
+            {
+                catalogNumber = nextAutoCatalogNumber--;
+            }
+            else
+            {
+                star = findWhileLoading(catalogNumber);
+            }
+            break;
+
+        case ReplaceStar:
+            if (catalogNumber == Star::InvalidCatalogNumber)
+            {
+                if (!firstName.empty())
+                {
+                    catalogNumber = namesDB->findCatalogNumberByName(firstName);
+                }
+            }
+                
+            if (catalogNumber == Star::InvalidCatalogNumber)
+            {
+                catalogNumber = nextAutoCatalogNumber--;
+            }
+            else
+            {
+                star = findWhileLoading(catalogNumber);
+            }
+            break;
+                
+        case ModifyStar:
+            // If no catalog number was specified, try looking up the star by name
+            if (catalogNumber == Star::InvalidCatalogNumber && !firstName.empty())
+            {
+                catalogNumber = namesDB->findCatalogNumberByName(firstName);
+            }
+                
+            if (catalogNumber != Star::InvalidCatalogNumber)
+            {
+                star = findWhileLoading(catalogNumber);
+            }
+                
+            break;
+        }
+        
+        bool isNewStar = star == NULL;
 
         tokenizer.pushBack();
 
         Value* starDataValue = parser.readValue();
         if (starDataValue == NULL)
         {
-            DPRINTF(0, "Error reading star.\n");
+            clog << "Error reading star." << endl;
             return false;
         }
-
+        
         if (starDataValue->getType() != Value::HashType)
         {
             DPRINTF(0, "Bad star definition.\n");
@@ -1197,40 +1379,31 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         }
         Hash* starData = starDataValue->getHash();
 
-        Star* star   = createStar(catalogNumber, starData, resourcePath, !isStar);
+        if (isNewStar)
+            star = new Star();
+        
+        bool ok = false;
+        if (isNewStar && disposition == ModifyStar)
+        {
+            clog << "Modify requested for nonexistent star." << endl;
+        }
+        else
+        {
+            ok = createStar(star, disposition, catalogNumber, starData, resourcePath, !isStar);
+        }
         delete starDataValue;
 
-        if (star != NULL)
+        if (ok)
         {
-            // Ensure that the star array is large enough
-            if (nStars == capacity)
+            if (isNewStar)
             {
-                // Grow the array by 5%--this may be too little, but the
-                // assumption here is that there will be small numbers of
-                // stars in text files added to a big collection loaded from
-                // a binary file.
-                capacity = (int) (capacity * 1.05);
-
-                // 100 stars seems like a reasonable minimum
-                if (capacity < 100)
-                    capacity = 100;
-
-                Star* newStars = new Star[capacity];
-                if (newStars == NULL)
-                {
-                    DPRINTF(0, "Out of memory!");
-                    return false;
-                }
-
-                if (stars != NULL)
-                {
-                    copy(stars, stars + nStars, newStars);
-                    delete[] stars;
-                }
-                stars = newStars;
+                unsortedStars.add(*star);
+                nStars++;
+                delete star;
+                
+                // Add the new star to the temporary (load time) index.
+                stcFileCatalogNumberIndex[catalogNumber] = &unsortedStars[unsortedStars.size() - 1];
             }
-            stars[nStars++] = *star;
-            delete star;
 
             if (namesDB != NULL && !objName.empty())
             {
@@ -1260,6 +1433,8 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         }
         else
         {
+            if (isNewStar)
+                delete star;
             DPRINTF(1, "Bad star definition--will continue parsing file.\n");
         }
     }
@@ -1278,10 +1453,11 @@ void StarDatabase::buildOctree()
                                       STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
     DynamicStarOctree* root = new DynamicStarOctree(Point3f(1000, 1000, 1000),
                                                     absMag);
-    for (int i=0; i<nStars; ++i)
+    for (unsigned int i = 0; i < unsortedStars.size(); ++i)
     {
-        root->insertObject(stars[i], STAR_OCTREE_ROOT_SIZE);
+        root->insertObject(unsortedStars[i], STAR_OCTREE_ROOT_SIZE);
     }
+    
     DPRINTF(1, "Spatially sorting stars for improved locality of reference . . .\n");
     Star* sortedStars    = new Star[nStars];
     Star* firstStar      = sortedStars;
@@ -1305,7 +1481,8 @@ void StarDatabase::buildOctree()
 #endif
 
     // Clean up . . .
-    delete[] stars;
+    //delete[] stars;
+    unsortedStars.clear();
     delete root;
 
     stars = sortedStars;
@@ -1325,3 +1502,44 @@ void StarDatabase::buildIndexes()
 
     sort(catalogNumberIndex, catalogNumberIndex + nStars, PtrCatalogNumberOrderingPredicate());
 }
+
+
+/*! While loading the star catalogs, this function must be called instead of
+ *  find(). The final catalog number index for stars cannot be built until
+ *  after all stars have been loaded. During catalog loading, there are two
+ *  separate indexes: one for the binary catalog and another index for stars
+ *  loaded from stc files. They binary catalog index is a sorted array, while
+ *  the stc catalog index is an STL map. Since the binary file can be quite
+ *  large, we want to avoid creating a map with as many nodes as there are
+ *  stars. Stc files should collectively contain many fewer stars, and stars
+ *  in an stc file may reference each other (barycenters). Thus, a dynamic
+ *  structure like a map is both practical and essential.
+ */
+Star* StarDatabase::findWhileLoading(uint32 catalogNumber) const
+{
+    // First check for stars loaded from the binary database
+    if (binFileCatalogNumberIndex != NULL)
+    {
+        Star refStar;
+        refStar.setCatalogNumber(catalogNumber);
+        
+        Star** star   = lower_bound(binFileCatalogNumberIndex,
+                                    binFileCatalogNumberIndex + binFileStarCount,
+                                    &refStar,
+                                    PtrCatalogNumberOrderingPredicate());
+        
+        if (star != binFileCatalogNumberIndex + binFileStarCount && (*star)->getCatalogNumber() == catalogNumber)
+            return *star;
+    }
+    
+    // Next check for stars loaded from an stc file
+    map<uint32, Star*>::const_iterator iter = stcFileCatalogNumberIndex.find(catalogNumber);
+    if (iter != stcFileCatalogNumberIndex.end())
+    {
+        return iter->second;
+    }
+    
+    // Star not found
+    return NULL;
+}
+

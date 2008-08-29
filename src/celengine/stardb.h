@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <celengine/constellation.h>
 #include <celengine/starname.h>
 #include <celengine/star.h>
@@ -20,6 +21,82 @@
 
 
 static const unsigned int MAX_STAR_NAMES = 10;
+
+// TODO: Move BlockArray to celutil; consider making it a full STL
+// style container with iterator support.
+
+/*! BlockArray is a container class that is similar to an STL vector
+ *  except for two very important differences:
+ *  - The elements of a BlockArray are not necessarily in one
+ *    contiguous block of memory.
+ *  - The address of a BlockArray element is guaranteed not to
+ *    change over the lifetime of the BlockArray (or until the
+ *    BlockArray is cleared.)
+ */
+template<class T> class BlockArray
+{
+public:
+    BlockArray() :
+        m_blockSize(1000),
+        m_elementCount(0)
+    {
+    }
+    
+    ~BlockArray()
+    {
+        clear();
+    }
+    
+    unsigned int size() const
+    {
+        return m_elementCount;
+    }
+    
+    /*! Append an item to the BlockArray. */
+    void add(T& element)
+    {
+        unsigned int blockIndex = m_elementCount / m_blockSize;
+        if (blockIndex == m_blocks.size())
+        {
+            T* newBlock = new T[m_blockSize];
+            m_blocks.push_back(newBlock);
+        }
+        
+        unsigned int elementIndex = m_elementCount % m_blockSize;
+        m_blocks.back()[elementIndex] = element;
+        
+        ++m_elementCount;
+    }
+    
+    void clear()
+    {
+        for (typename std::vector<T*>::const_iterator iter = m_blocks.begin(); iter != m_blocks.end(); ++iter)
+        {
+            delete[] *iter;
+        }
+        m_elementCount = 0;
+        m_blocks.clear();
+    }
+    
+    T& operator[](int index)
+    {
+        unsigned int blockNumber = index / m_blockSize;
+        unsigned int elementNumber = index % m_blockSize;
+        return m_blocks[blockNumber][elementNumber];
+    }
+
+    const T& operator[](int index) const
+    {
+        unsigned int blockNumber = index / m_blockSize;
+        unsigned int elementNumber = index % m_blockSize;
+        return m_blocks[blockNumber][elementNumber];
+    }
+    
+private:
+    unsigned int m_blockSize;
+    unsigned int m_elementCount;
+    std::vector<T*> m_blocks;
+};
 
 
 class StarDatabase
@@ -32,7 +109,7 @@ class StarDatabase
     inline Star*  getStar(const uint32) const;
     inline uint32 size() const;
 
-    Star* find(const uint32 catalogNumber) const;
+    Star* find(uint32 catalogNumber) const;
     Star* find(const std::string&) const;
     uint32 findCatalogNumberByName(const std::string&) const;
 
@@ -60,11 +137,6 @@ class StarDatabase
     bool loadBinary(std::istream&);
     bool loadOldFormatBinary(std::istream&);
 
-    Star* createStar(const uint32 catalogNumber,
-                     Hash* starData,
-                     const std::string& path,
-                     const bool isBarycenter);
-
     enum Catalog
     {
         HenryDraper = 0,
@@ -73,6 +145,13 @@ class StarDatabase
         MaxCatalog  = 3,
     };
 
+    enum StcDisposition
+    {
+        AddStar,
+        ReplaceStar,
+        ModifyStar,
+    };
+    
 	// Not exact, but any star with a catalog number greater than this is assumed to not be
 	// a HIPPARCOS stars.
 	static const uint32 MAX_HIPPARCOS_NUMBER = 999999;
@@ -99,20 +178,36 @@ class StarDatabase
     static const char* FILE_HEADER;
     static const char* CROSSINDEX_FILE_HEADER;
 
- private:
+private:
+    bool createStar(Star* star,
+                    StcDisposition disposition,
+                    uint32 catalogNumber,
+                    Hash* starData,
+                    const std::string& path,
+                    const bool isBarycenter);
+
     void buildOctree();
     void buildIndexes();
+    Star* findWhileLoading(uint32 catalogNumber) const;
 
     int nStars;
-    int capacity;
-    Star* stars;
+        
+    Star*             stars;
     StarNameDatabase* namesDB;
-    Star** catalogNumberIndex;
-    StarOctree* octreeRoot;
+    Star**            catalogNumberIndex;
+    StarOctree*       octreeRoot;
     uint32            nextAutoCatalogNumber;
 
     std::vector<CrossIndex*> crossIndexes;
 
+    // These values are used by the star database loader; they are
+    // not used after loading is complete.
+    BlockArray<Star> unsortedStars;
+    // List of stars loaded from binary file, sorted by catalog number
+    Star** binFileCatalogNumberIndex;
+    unsigned int binFileStarCount;
+    // Catalog number -> star mapping for stars loaded from stc files
+    std::map<uint32, Star*> stcFileCatalogNumberIndex;    
 
     struct BarycenterUsage
     {
