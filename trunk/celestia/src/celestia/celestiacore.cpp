@@ -355,7 +355,7 @@ CelestiaCore::CelestiaCore() :
     cursorHandler(NULL),
     defaultCursorShape(CelestiaCore::CrossCursor),
     historyCurrent(0),
-    activeView(0),
+    activeView(NULL),
     showActiveViewFrame(false),
     showViewFrames(true),
     resizeSplit(0),
@@ -670,25 +670,28 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
     if (views.size() > 1 && button == LeftButton) // look if click is near a view border
     {
         View *v1 = 0, *v2 = 0;
-        for (vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+        for (list<View*>::iterator i = views.begin(); i != views.end(); i++)
         {
             View* v = *i;
-            float vx, vy, vxp, vyp;
-            vx = ( x / width - v->x ) / v->width;
-            vy = ( (1 - y / height ) - v->y ) / v->height;
-            vxp = vx * v->width * width;
-            vyp = vy * v->height * height;
-            if ( vx >=0 && vx <= 1 && ( abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2)
-              || vy >=0 && vy <= 1 && ( abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)   )
+            if (v->type == View::ViewWindow)
             {
-                if (v1 == 0)
+                float vx, vy, vxp, vyp;
+                vx = ( x / width - v->x ) / v->width;
+                vy = ( (1 - y / height ) - v->y ) / v->height;
+                vxp = vx * v->width * width;
+                vyp = vy * v->height * height;
+                if ( vx >=0 && vx <= 1 && ( abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2)
+                  || vy >=0 && vy <= 1 && ( abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)   )
                 {
-                    v1 = v;
-                }
-                else
-                {
-                    v2 = v;
-                    break;
+                    if (v1 == 0)
+                    {
+                        v1 = v;
+                    }
+                    else
+                    {
+                        v2 = v;
+                        break;
+                    }
                 }
             }
         }
@@ -745,9 +748,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
             float pickX, pickY;
             float aspectRatio = ((float) width / (float) height);
-            views[activeView]->mapWindowToView((float) x / (float) width,
-                                               (float) y / (float) height,
-                                               pickX, pickY);
+            (*activeView)->mapWindowToView((float) x / (float) width,
+                                        (float) y / (float) height,
+                                        pickX, pickY);
             Vec3f pickRay =
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
@@ -762,9 +765,9 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         {
             float pickX, pickY;
             float aspectRatio = ((float) width / (float) height);
-            views[activeView]->mapWindowToView((float) x / (float) width,
-                                               (float) y / (float) height,
-                                               pickX, pickY);
+            (*activeView)->mapWindowToView((float) x / (float) width,
+                                        (float) y / (float) height,
+                                        pickX, pickY);
             Vec3f pickRay =
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
@@ -777,14 +780,14 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
         }
         else if (button == MiddleButton)
 	    {
-            if (views[activeView]->zoom != 1)
+            if ((*activeView)->zoom != 1)
 	        {
-                views[activeView]->alternateZoom = views[activeView]->zoom;
-                views[activeView]->zoom = 1;
+                (*activeView)->alternateZoom = (*activeView)->zoom;
+                (*activeView)->zoom = 1;
             }
             else
             {
-                views[activeView]->zoom = views[activeView]->alternateZoom;
+                (*activeView)->zoom = (*activeView)->alternateZoom;
             }
             setFOVFromZoom();
 
@@ -825,24 +828,27 @@ void CelestiaCore::mouseMove(float x, float y)
         /*View* v1 = 0;     Unused*/
         /*View* v2 = 0;     Unused*/
 
-        for (vector<View*>::iterator i = views.begin(); i != views.end(); i++)
+        for (list<View*>::iterator i = views.begin(); i != views.end(); i++)
         {
             View* v = *i;
-            float vx, vy, vxp, vyp;
-            vx = (x / width - v->x) / v->width;
-            vy = ((1 - y / height) - v->y ) / v->height;
-            vxp = vx * v->width * width;
-            vyp = vy * v->height * height;
+            if (v->type == View::ViewWindow)
+            {
+                float vx, vy, vxp, vyp;
+                vx = (x / width - v->x) / v->width;
+                vy = ((1 - y / height) - v->y ) / v->height;
+                vxp = vx * v->width * width;
+                vyp = vy * v->height * height;
 
-            if (vx >=0 && vx <= 1 && (abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2))
-            {
-                cursorHandler->setCursorShape(CelestiaCore::SizeVerCursor);
-                return;
-            }
-            else if (vy >=0 && vy <= 1 && (abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2))
-            {
-                cursorHandler->setCursorShape(CelestiaCore::SizeHorCursor);
-                return;
+                if (vx >=0 && vx <= 1 && (abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2))
+                {
+                    cursorHandler->setCursorShape(CelestiaCore::SizeVerCursor);
+                    return;
+                }
+                else if (vy >=0 && vy <= 1 && (abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2))
+                {
+                    cursorHandler->setCursorShape(CelestiaCore::SizeHorCursor);
+                    return;
+                }
             }
         }
         cursorHandler->setCursorShape(defaultCursorShape);
@@ -1005,18 +1011,22 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 /// Makes the view under x, y the active view.
 void CelestiaCore::pickView(float x, float y)
 {
-    if (x+2 < views[activeView]->x * width || x-2 > (views[activeView]->x + views[activeView]->width) * width
-        || (height - y)+2 < views[activeView]->y * height ||  (height - y)-2 > (views[activeView]->y + views[activeView]->height) * height)
+    if (x+2 < (*activeView)->x * width || x-2 > ((*activeView)->x + (*activeView)->width) * width
+        || (height - y)+2 < (*activeView)->y * height ||  (height - y)-2 > ((*activeView)->y + (*activeView)->height) * height)
     {
-        vector<View*>::iterator i = views.begin();
-        int n = 0;
-        while (i < views.end() && (x+2 < (*i)->x * width || x-2 > ((*i)->x + (*i)->width) * width
-                                    || (height - y)+2 < (*i)->y * height ||  (height - y)-2 > ((*i)->y + (*i)->height) * height))
+        activeView = views.begin();
+        while ( (activeView != views.end())
+                &&
+                ( (x+2 < (*activeView)->x * width || x-2 > ((*activeView)->x + (*activeView)->width) * width || (height - y)+2 < (*activeView)->y * height ||  (height - y)-2 > ((*activeView)->y + (*activeView)->height) * height)
+                  ||
+                  ((*activeView)->type != View::ViewWindow)
+                )
+              )
         {
-                i++; n++;
+                activeView++;
         }
-        activeView = n;
-        sim->setActiveObserver(views[activeView]->observer);
+        
+        sim->setActiveObserver((*activeView)->observer);
         if (!showActiveViewFrame)
             flashFrameStart = currentTime;
         return;
@@ -1433,10 +1443,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\011': // TAB
-        activeView++;
-        if (activeView >= (int) views.size())
-            activeView = 0;
-        sim->setActiveObserver(views[activeView]->observer);
+        do
+        {
+            activeView++;
+            if (activeView == views.end())
+                activeView = views.begin();
+        } while ((*activeView)->type != View::ViewWindow);
+        sim->setActiveObserver((*activeView)->observer);
         if (!showActiveViewFrame)
             flashFrameStart = currentTime;
         break;
@@ -2467,22 +2480,24 @@ void CelestiaCore::draw()
     else
     {
         glEnable(GL_SCISSOR_TEST);
-        for (vector<View*>::iterator iter = views.begin();
+        for (list<View*>::iterator iter = views.begin();
              iter != views.end(); iter++)
         {
             View* view = *iter;
-
-            glScissor((GLint) (view->x * width),
-                      (GLint) (view->y * height),
-                      (GLsizei) (view->width * width),
-                      (GLsizei) (view->height * height));
-            glViewport((GLint) (view->x * width),
-                       (GLint) (view->y * height),
-                       (GLsizei) (view->width * width),
-                       (GLsizei) (view->height * height));
-            renderer->resize((int) (view->width * width),
-                             (int) (view->height * height));
-            sim->render(*renderer, *view->observer);
+            if (view->type == View::ViewWindow)
+            {
+                glScissor((GLint) (view->x * width),
+                          (GLint) (view->y * height),
+                          (GLsizei) (view->width * width),
+                          (GLsizei) (view->height * height));
+                glViewport((GLint) (view->x * width),
+                           (GLint) (view->y * height),
+                           (GLsizei) (view->width * width),
+                           (GLsizei) (view->height * height));
+                renderer->resize((int) (view->width * width),
+                                 (int) (view->height * height));
+                sim->render(*renderer, *view->observer);
+            }
         }
         glDisable(GL_SCISSOR_TEST);
         glViewport(0, 0, width, height);
@@ -2596,7 +2611,7 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
     setViewChanged();
 
     if (av == NULL)
-        av = views[activeView];
+        av = (*activeView);
     bool vertical = ( type == View::VerticalSplit );
     Observer* o = sim->addObserver();
     bool tooSmall = false;
@@ -2671,6 +2686,7 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
     view->parent = split;
     view->zoom = av->zoom;
 
+    views.insert(views.end(), split);
     views.insert(views.end(), view);
 
     setFOVFromZoom();
@@ -2678,7 +2694,7 @@ void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 
 void CelestiaCore::setFOVFromZoom()
 {
-    for (vector<View*>::iterator i = views.begin(); i < views.end(); i++)
+    for (list<View*>::iterator i = views.begin(); i != views.end(); i++)
         if ((*i)->type == View::ViewWindow)
         {
             double fov = 2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) / (*i)->zoom;
@@ -2688,7 +2704,7 @@ void CelestiaCore::setFOVFromZoom()
 
 void CelestiaCore::setZoomFromFOV()
 {
-    for (vector<View*>::iterator i = views.begin(); i < views.end(); i++)
+    for (list<View*>::iterator i = views.begin(); i != views.end(); i++)
         if ((*i)->type == View::ViewWindow)
         {
             (*i)->zoom = (float) (2 * atan(height * (*i)->height / (screenDpi / 25.4) / 2. / distanceToScreen) /  (*i)->observer->getFOV());
@@ -2700,16 +2716,20 @@ void CelestiaCore::singleView(View* av)
     setViewChanged();
 
     if (av == NULL)
-        av = views[activeView];
+        av = (*activeView);
 
-    for (unsigned int i = 0; i < views.size(); i++)
+    list<View*>::iterator i = views.begin();
+    while(i != views.end())
     {
-        if (views[i] != av)
+        if ((*i) != av)
         {
-            sim->removeObserver(views[i]->observer);
-            delete views[i]->observer;
-            delete views[i];
+            sim->removeObserver((*i)->observer);
+            delete (*i)->observer;
+            delete (*i);
+            i=views.erase(i);
         }
+        else
+            i++;
     }
 
     av->x = 0.0f;
@@ -2717,28 +2737,29 @@ void CelestiaCore::singleView(View* av)
     av->width = 1.0f;
     av->height = 1.0f;
     av->parent = 0;
+    av->child1 = 0;
+    av->child2 = 0;
 
-    views.clear();
-    views.insert(views.end(), av);
-    activeView = 0;
-    sim->setActiveObserver(views[activeView]->observer);
+    activeView = views.begin();
+    sim->setActiveObserver((*activeView)->observer);
     setFOVFromZoom();
 }
 
 void CelestiaCore::deleteView(View* v)
 {
     if (v == NULL)
-        v = views[activeView];
+        v = (*activeView);
 
     if (v->parent == 0) return;
 
-    for(vector<View*>::iterator i = views.begin(); i < views.end() ; i++)
+    //Erase view and parent view from views
+    list<View*>::iterator i = views.begin();
+    while(i != views.end())
     {
-        if (*i == v)
-        {
-            views.erase(i);
-            break;
-        }
+        if ((*i == v) || (*i == v->parent))
+            i=views.erase(i);
+        else
+            i++;
     }
 
     int sign;
@@ -2765,8 +2786,11 @@ void CelestiaCore::deleteView(View* v)
 
     sim->removeObserver(v->observer);
     delete(v->observer);
-    activeView = 0;
-    sim->setActiveObserver(views[activeView]->observer);
+    View* nextActiveView = sibling;
+    while (nextActiveView->type != View::ViewWindow)
+        nextActiveView = nextActiveView->child1;
+    activeView = find(views.begin(),views.end(),nextActiveView);
+    sim->setActiveObserver((*activeView)->observer);
 
     delete(v->parent);
     delete(v);
@@ -3392,15 +3416,14 @@ void CelestiaCore::renderOverlay()
             glLineWidth(1.0f);
             glDisable(GL_TEXTURE_2D);
             glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
-            for(vector<View*>::iterator i = views.begin(); i != views.end(); i++)
-            {
-                showViewFrame(*i, width, height);
-            }
+            for(list<View*>::iterator i = views.begin(); i != views.end(); i++)
+                if ((*i)->type == View::ViewWindow)
+                    showViewFrame(*i, width, height);
         }
         glLineWidth(1.0f);
 
         // Render a very simple border around the active view
-        View* av = views[activeView];
+        View* av = (*activeView);
 
         if (showActiveViewFrame)
         {
@@ -3607,7 +3630,7 @@ void CelestiaCore::renderOverlay()
         float fov = radToDeg(sim->getActiveObserver()->getFOV());
         overlay->oprintf(_("FOV: "));
         displayAngle(*overlay, fov);
-        overlay->oprintf(" (%.2f%s)\n", views[activeView]->zoom,
+        overlay->oprintf(" (%.2f%s)\n", (*activeView)->zoom,
                         UTF8_MULTIPLICATION_SIGN);
         overlay->endText();
         glPopMatrix();
@@ -4260,6 +4283,7 @@ bool CelestiaCore::initSimulation(const string* configFileName,
 
     View* view = new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f);
     views.insert(views.end(), view);
+    activeView = views.begin();
 
     if (!compareIgnoringCase(getConfig()->cursor, "inverting crosshair"))
     {
