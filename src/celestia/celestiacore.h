@@ -451,8 +451,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     std::vector<Url>::size_type historyCurrent;
     std::string startURL;
 
-    std::vector<View*> views;
-    int activeView;
+    std::list<View*> views;
+    std::list<View*>::iterator activeView;
     bool showActiveViewFrame;
     bool showViewFrames;
     View *resizeSplit;
