@@ -1237,23 +1237,18 @@ LuaState* getLuaStateObject(lua_State* l)
 // for this observer (anymore).
 View* getViewByObserver(CelestiaCore* appCore, Observer* obs)
 {
-    for (unsigned int i = 0; i < appCore->views.size(); i++)
-    {
-        if ((appCore->views[i])->observer == obs)
-        {
-            return appCore->views[i];
-        }
-    }
+    for (list<View*>::iterator i = appCore->views.begin(); i != appCore->views.end(); i++)
+        if ((*i)->observer == obs)
+            return *i;
     return NULL;
 }
 
 // Fill list with all Observers
-void getObservers(CelestiaCore* appCore, vector<Observer*>& list)
+void getObservers(CelestiaCore* appCore, vector<Observer*>& observerList)
 {
-    for (unsigned int i = 0; i < appCore->views.size(); i++)
-    {
-        list.push_back(appCore->views[i]->observer);
-    }
+    for (list<View*>::iterator i = appCore->views.begin(); i != appCore->views.end(); i++)
+        if ((*i)->type == View::ViewWindow)
+            observerList.push_back((*i)->observer);
 }
 
 
