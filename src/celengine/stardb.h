@@ -135,7 +135,6 @@ class StarDatabase
     
     bool load(std::istream&, const std::string& resourcePath);
     bool loadBinary(std::istream&);
-    bool loadOldFormatBinary(std::istream&);
 
     enum Catalog
     {
