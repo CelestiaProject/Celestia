@@ -13,6 +13,7 @@ pkgdata_DATA = \
 	$(wildcard *.ssc) \
 	$(wildcard *.dat) \
 	$(wildcard *.xyz) \
+	$(wildcard *.xyzv) \
 	$(wildcard *.dsc) \
 	$(wildcard *.stc) \
 	stars.dat
