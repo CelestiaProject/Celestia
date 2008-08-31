@@ -355,7 +355,7 @@ CelestiaCore::CelestiaCore() :
     cursorHandler(NULL),
     defaultCursorShape(CelestiaCore::CrossCursor),
     historyCurrent(0),
-    activeView(NULL),
+    activeView(views.begin()),
     showActiveViewFrame(false),
     showViewFrames(true),
     resizeSplit(0),
