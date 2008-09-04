@@ -1653,8 +1653,8 @@ int celestia_getscreendimension(lua_State* l)
     // Get the dimensions of the current viewport
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    lua_pushnumber(l, viewport[2]-viewport[0]);
-    lua_pushnumber(l, viewport[3]-viewport[1]);
+    lua_pushnumber(l, viewport[2]);
+    lua_pushnumber(l, viewport[3]);
     return 2;
 }
 
@@ -1973,7 +1973,7 @@ static int celestia_setconstellationcolor(lua_State* l)
         lua_pushnil(l);
         while (lua_next(l, -2) != 0)
         {
-            const char* constellation;
+            const char* constellation = NULL;
             if (lua_isstring(l, -1))
             {
                 constellation = lua_tostring(l, -1);
