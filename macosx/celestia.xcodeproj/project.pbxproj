@@ -35,6 +35,9 @@
 		E532F4F30933331800D7D5B3 /* dsoname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EA0933331800D7D5B3 /* dsoname.cpp */; };
 		E532F4F50933331800D7D5B3 /* dsooctree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EC0933331800D7D5B3 /* dsooctree.cpp */; };
 		E532F4F80933331800D7D5B3 /* staroctree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E532F4EF0933331800D7D5B3 /* staroctree.cpp */; };
+		E53D2A150E70256A0055BC71 /* cassini-cruise.xyzv in Resources */ = {isa = PBXBuildFile; fileRef = E53D2A120E70256A0055BC71 /* cassini-cruise.xyzv */; };
+		E53D2A160E70256A0055BC71 /* cassini-orbit.xyzv in Resources */ = {isa = PBXBuildFile; fileRef = E53D2A130E70256A0055BC71 /* cassini-orbit.xyzv */; };
+		E53D2A170E70256A0055BC71 /* huygens.xyzv in Resources */ = {isa = PBXBuildFile; fileRef = E53D2A140E70256A0055BC71 /* huygens.xyzv */; };
 		E53E619B0C0CA105003CD767 /* scriptmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E53E61990C0CA105003CD767 /* scriptmenu.cpp */; };
 		E53E61AD0C0CA444003CD767 /* ScriptsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E53E61AB0C0CA444003CD767 /* ScriptsController.mm */; };
 		E54343120783C3F200053094 /* BrowserWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = E54343100783C3F200053094 /* BrowserWindow.nib */; };
@@ -161,7 +164,6 @@
 		E567F072099112EC00D05031 /* asterisms.dat in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF6A09910E8F00D05031 /* asterisms.dat */; };
 		E567F073099112EC00D05031 /* asteroids.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF6B09910E8F00D05031 /* asteroids.ssc */; };
 		E567F074099112EC00D05031 /* boundaries.dat in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF6C09910E8F00D05031 /* boundaries.dat */; };
-		E567F075099112EC00D05031 /* cassini.xyz in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF6D09910E8F00D05031 /* cassini.xyz */; };
 		E567F076099112EC00D05031 /* comets.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF6E09910E8F00D05031 /* comets.ssc */; };
 		E567F077099112EC00D05031 /* deepsky.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF6F09910E8F00D05031 /* deepsky.dsc */; };
 		E567F078099112EC00D05031 /* earth_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7009910E8F00D05031 /* earth_locs.ssc */; };
@@ -171,7 +173,6 @@
 		E567F07C099112EC00D05031 /* galileo.xyz in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7409910E8F00D05031 /* galileo.xyz */; };
 		E567F07D099112EC00D05031 /* gaspra_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7509910E8F00D05031 /* gaspra_locs.ssc */; };
 		E567F07E099112EC00D05031 /* hdxindex.dat in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7609910E8F00D05031 /* hdxindex.dat */; };
-		E567F07F099112EC00D05031 /* huygens.xyz in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7709910E8F00D05031 /* huygens.xyz */; };
 		E567F080099112EC00D05031 /* ida_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7809910E8F00D05031 /* ida_locs.ssc */; };
 		E567F081099112EC00D05031 /* jupitermoons_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7909910E8F00D05031 /* jupitermoons_locs.ssc */; };
 		E567F082099112EC00D05031 /* mars_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7B09910E8F00D05031 /* mars_locs.ssc */; };
@@ -319,7 +320,6 @@
 				E567F072099112EC00D05031 /* asterisms.dat in Copy Data */,
 				E567F073099112EC00D05031 /* asteroids.ssc in Copy Data */,
 				E567F074099112EC00D05031 /* boundaries.dat in Copy Data */,
-				E567F075099112EC00D05031 /* cassini.xyz in Copy Data */,
 				E567F076099112EC00D05031 /* comets.ssc in Copy Data */,
 				E567F077099112EC00D05031 /* deepsky.dsc in Copy Data */,
 				E567F078099112EC00D05031 /* earth_locs.ssc in Copy Data */,
@@ -329,7 +329,6 @@
 				E567F07C099112EC00D05031 /* galileo.xyz in Copy Data */,
 				E567F07D099112EC00D05031 /* gaspra_locs.ssc in Copy Data */,
 				E567F07E099112EC00D05031 /* hdxindex.dat in Copy Data */,
-				E567F07F099112EC00D05031 /* huygens.xyz in Copy Data */,
 				E567F080099112EC00D05031 /* ida_locs.ssc in Copy Data */,
 				E567F081099112EC00D05031 /* jupitermoons_locs.ssc in Copy Data */,
 				E567F082099112EC00D05031 /* mars_locs.ssc in Copy Data */,
@@ -564,6 +563,9 @@
 		E532F4EE0933331800D7D5B3 /* name.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = name.h; path = ../src/celengine/name.h; sourceTree = SOURCE_ROOT; };
 		E532F4EF0933331800D7D5B3 /* staroctree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = staroctree.cpp; path = ../src/celengine/staroctree.cpp; sourceTree = SOURCE_ROOT; };
 		E532F4F00933331800D7D5B3 /* staroctree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = staroctree.h; path = ../src/celengine/staroctree.h; sourceTree = SOURCE_ROOT; };
+		E53D2A120E70256A0055BC71 /* cassini-cruise.xyzv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "cassini-cruise.xyzv"; sourceTree = "<group>"; };
+		E53D2A130E70256A0055BC71 /* cassini-orbit.xyzv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "cassini-orbit.xyzv"; sourceTree = "<group>"; };
+		E53D2A140E70256A0055BC71 /* huygens.xyzv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = huygens.xyzv; sourceTree = "<group>"; };
 		E53E61990C0CA105003CD767 /* scriptmenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptmenu.cpp; path = ../src/celestia/scriptmenu.cpp; sourceTree = SOURCE_ROOT; };
 		E53E619A0C0CA105003CD767 /* scriptmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scriptmenu.h; path = ../src/celestia/scriptmenu.h; sourceTree = SOURCE_ROOT; };
 		E53E61AA0C0CA444003CD767 /* ScriptsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptsController.h; sourceTree = "<group>"; };
@@ -577,7 +579,7 @@
 		E561FC2D0B47910800668CFE /* CelestiaLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaLocation.h; sourceTree = "<group>"; };
 		E561FC2E0B47910800668CFE /* CelestiaLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaLocation.mm; sourceTree = "<group>"; };
 		E564312D07769C9000E2C4A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
-		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56431450776D52D00E2C4A3 /* celx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = celx.cpp; path = ../src/celestia/celx.cpp; sourceTree = SOURCE_ROOT; };
 		E56431460776D52D00E2C4A3 /* celx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celx.h; path = ../src/celestia/celx.h; sourceTree = SOURCE_ROOT; };
 		E56431490776D5C800E2C4A3 /* jpleph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jpleph.cpp; path = ../src/celengine/jpleph.cpp; sourceTree = SOURCE_ROOT; };
@@ -604,7 +606,6 @@
 		E567EF6A09910E8F00D05031 /* asterisms.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asterisms.dat; sourceTree = "<group>"; };
 		E567EF6B09910E8F00D05031 /* asteroids.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asteroids.ssc; sourceTree = "<group>"; };
 		E567EF6C09910E8F00D05031 /* boundaries.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = boundaries.dat; sourceTree = "<group>"; };
-		E567EF6D09910E8F00D05031 /* cassini.xyz */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cassini.xyz; sourceTree = "<group>"; };
 		E567EF6E09910E8F00D05031 /* comets.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = comets.ssc; sourceTree = "<group>"; };
 		E567EF6F09910E8F00D05031 /* deepsky.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = deepsky.dsc; sourceTree = "<group>"; };
 		E567EF7009910E8F00D05031 /* earth_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = earth_locs.ssc; sourceTree = "<group>"; };
@@ -614,7 +615,6 @@
 		E567EF7409910E8F00D05031 /* galileo.xyz */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = galileo.xyz; sourceTree = "<group>"; };
 		E567EF7509910E8F00D05031 /* gaspra_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gaspra_locs.ssc; sourceTree = "<group>"; };
 		E567EF7609910E8F00D05031 /* hdxindex.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = hdxindex.dat; sourceTree = "<group>"; };
-		E567EF7709910E8F00D05031 /* huygens.xyz */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = huygens.xyz; sourceTree = "<group>"; };
 		E567EF7809910E8F00D05031 /* ida_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ida_locs.ssc; sourceTree = "<group>"; };
 		E567EF7909910E8F00D05031 /* jupitermoons_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = jupitermoons_locs.ssc; sourceTree = "<group>"; };
 		E567EF7B09910E8F00D05031 /* mars_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mars_locs.ssc; sourceTree = "<group>"; };
@@ -1182,7 +1182,8 @@
 				E567EF6A09910E8F00D05031 /* asterisms.dat */,
 				E567EF6B09910E8F00D05031 /* asteroids.ssc */,
 				E567EF6C09910E8F00D05031 /* boundaries.dat */,
-				E567EF6D09910E8F00D05031 /* cassini.xyz */,
+				E53D2A120E70256A0055BC71 /* cassini-cruise.xyzv */,
+				E53D2A130E70256A0055BC71 /* cassini-orbit.xyzv */,
 				E567EF6E09910E8F00D05031 /* comets.ssc */,
 				E567EF6F09910E8F00D05031 /* deepsky.dsc */,
 				E567EF7009910E8F00D05031 /* earth_locs.ssc */,
@@ -1192,7 +1193,7 @@
 				E567EF7409910E8F00D05031 /* galileo.xyz */,
 				E567EF7509910E8F00D05031 /* gaspra_locs.ssc */,
 				E567EF7609910E8F00D05031 /* hdxindex.dat */,
-				E567EF7709910E8F00D05031 /* huygens.xyz */,
+				E53D2A140E70256A0055BC71 /* huygens.xyzv */,
 				E567EF7809910E8F00D05031 /* ida_locs.ssc */,
 				E567EF7909910E8F00D05031 /* jupitermoons_locs.ssc */,
 				E567EF7B09910E8F00D05031 /* mars_locs.ssc */,
@@ -1826,6 +1827,9 @@
 				E5CC204709AA843300CFFF2C /* Localizable.strings in Resources */,
 				E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */,
 				E5E2BDD20C24F7B6000D6E83 /* TextWindow.nib in Resources */,
+				E53D2A150E70256A0055BC71 /* cassini-cruise.xyzv in Resources */,
+				E53D2A160E70256A0055BC71 /* cassini-orbit.xyzv in Resources */,
+				E53D2A170E70256A0055BC71 /* huygens.xyzv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
