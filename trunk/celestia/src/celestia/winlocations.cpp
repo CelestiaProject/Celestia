@@ -25,6 +25,7 @@ static const uint32 FilterOther = ~(Location::City |
                                     Location::Crater |
                                     Location::Mons |
                                     Location::Terra |
+                                    Location::EruptiveCenter |
                                     Location::Vallis |
                                     Location::Mare);
 
@@ -86,6 +87,9 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
             break;
         case IDC_SHOW_TERRAE:
             obs->setLocationFilter(locationFilter ^ Location::Terra);
+            break;
+        case IDC_SHOW_VOLCANOES:
+            obs->setLocationFilter(locationFilter ^ Location::EruptiveCenter);
             break;
         case IDC_SHOW_OTHERS:
             obs->setLocationFilter(locationFilter ^ FilterOther);
@@ -188,6 +192,7 @@ void LocationsDialog::SetControls(HWND hDlg)
     dlgCheck(hDlg, IDC_SHOW_CRATERS,       locFilter, Location::Crater);
     dlgCheck(hDlg, IDC_SHOW_VALLES,        locFilter, Location::Vallis);
     dlgCheck(hDlg, IDC_SHOW_TERRAE,        locFilter, Location::Terra);
+    dlgCheck(hDlg, IDC_SHOW_VOLCANOES,        locFilter, Location::EruptiveCenter);
     dlgCheck(hDlg, IDC_SHOW_OTHERS,        locFilter, Location::Other);
 
     uint32 labelMode = appCore->getRenderer()->getLabelMode();
