@@ -9856,7 +9856,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     //
     unsigned int labelMask = dso->getLabelMask();
 
-    if ((labelMask & labelMode) && dot(relPos, viewNormal) > 0)
+    if ((labelMask & labelMode) && dot(relPos, viewNormal) > 0 && dso->isVisible())
     {
         Color labelColor;
         float appMagEff = 6.0f;
