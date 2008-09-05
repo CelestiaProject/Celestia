@@ -173,6 +173,7 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["regio"] = Location::Regio;
     LocationFlagMap["chaos"] = Location::Chaos;
     LocationFlagMap["terra"] = Location::Terra;
+    LocationFlagMap["volcano"] = Location::EruptiveCenter;
     LocationFlagMap["astrum"] = Location::Astrum;
     LocationFlagMap["corona"] = Location::Corona;
     LocationFlagMap["dorsum"] = Location::Dorsum;
