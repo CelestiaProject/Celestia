@@ -119,6 +119,7 @@
 #define IDC_LABELNEBULAE                1074
 #define IDC_LABELOPENCLUSTERS           1075
 #define IDC_LABELCONSTELLATIONSLATIN    1076
+#define IDC_SHOWOPENCLUSTERS                 1077
 #define IDCOMPUTE                       1078
 #define IDC_DATEFROM                    1079
 #define IDC_ECLIPSEFROM                 1079
@@ -146,8 +147,9 @@
 #define IDC_SHOW_CRATERS                1105
 #define IDC_SHOW_VALLES                 1106
 #define IDC_SHOW_TERRAE                 1107
-#define IDC_SHOW_OTHERS                 1108
-#define IDC_LABELFEATURES               1109
+#define IDC_SHOW_VOLCANOES                 1108
+#define IDC_SHOW_OTHERS                 1109
+#define IDC_LABELFEATURES               1110
 #define IDC_SLIDER_FEATURE_SIZE         1150
 #define IDC_EDIT_FEATURE_SIZE           1151
 #define IDC_CELESTIALINK                1152
