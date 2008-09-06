@@ -1868,34 +1868,6 @@ AltSurface "limit of knowledge" "TYC 2620-0648-1/TrES-4"
 }
 
 
-"b" "TW Hya"
-{
-	Texture "exo-class4.*"
-
-	Color  [0 0.36 1]
-	Albedo 0.05
-
-	Mass       380     # M.sin(i) = 1.2 jupiters
-	Radius     84000
-
-	InfoURL "http://exoplanet.eu/star.php?st=TW+Hya"
-
-	EllipticalOrbit {
-		Period          0.0097
-		SemiMajorAxis   0.041
-		Eccentricity    0.04
-		ArgOfPericenter 18
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "TW Hya/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
 "b" "OGLE-TR-211"
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -3359,22 +3331,19 @@ AltSurface "limit of knowledge" "HD 160691/e"
 
 "b" "HD 285968"   # Gliese 176
 {
-	Texture "exo-class2.*"
+	Texture "venuslike.*"
 
-	Color  [0.98 0.97 1]
-	Albedo 0.75
-
-	Mass       20     # M.sin(i) = 0.0757 jupiters
-	Radius     56000
+	Mass      8     # M.sin(i) = 8 earths
+	Radius     13300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+285968"
 
 	EllipticalOrbit {
-		Period          0.028
-		SemiMajorAxis   0.0727
-		Eccentricity    0.23
+		Period          0.024
+		SemiMajorAxis   0.066
+		Eccentricity    0
 		ArgOfPericenter 12
-		MeanAnomaly     286
+		MeanAnomaly     355
 	}
 
 	# likely to be in captured synchronous rotation
@@ -8828,6 +8797,36 @@ AltSurface "limit of knowledge" "HD 89307/b"
 }
 
 AltSurface "limit of knowledge" "HD 154345/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 204961"   # Gliese 832
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       200     # M.sin(i) = 0.64 jupiters
+	Radius     56000
+	Oblateness 0.05
+
+	InfoURL "http://exoplanet.eu/star.php?st=GJ+832"
+
+	EllipticalOrbit {
+		Period          9.3525
+		SemiMajorAxis   3.4
+		Eccentricity    0.12
+		ArgOfPericenter 343
+		MeanAnomaly     35
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 204961/b"
 {
 	Texture "extrasolar-lok.*"
 }
