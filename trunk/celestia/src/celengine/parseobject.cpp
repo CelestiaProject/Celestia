@@ -243,17 +243,21 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
             clog << "FixedPosition planetographic coordinates aren't valid for stars.\n";
             return NULL;
         }
-        position = centralObject.body()->planetocentricToCartesian(v.x, v.y, v.z);
+
+        // TODO: Need function to calculate planetographic coordinates
+        // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
+        position = centralObject.body()->planetocentricToCartesian(180.0 - v.x, v.y, v.z);
     }
     else if (trajData->getVector("Planetocentric", v))
     {
         if (centralObject.getType() != Selection::Type_Body)
         {
-            clog << "FixedPosition planetographic coordinates aren't valid for stars.\n";
+            clog << "FixedPosition planetocentric coordinates aren't valid for stars.\n";
             return NULL;
         }
-        // TODO: Need function to calculate planetographic coordinates
-        position = centralObject.body()->planetocentricToCartesian(v.x, v.y, v.z);
+
+        // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
+        position = centralObject.body()->planetocentricToCartesian(180.0 - v.x, v.y, v.z);
     }
     else
     {
