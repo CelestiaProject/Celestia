@@ -1269,15 +1269,15 @@ Barycenter "Stein 2051:Gliese 169.1" # orbit of A & B unknown
 
 Barycenter "Luyten 668-21:LPM 230:Gliese 229" # orbit of A & B unknown
 {
-	RA 92.644342    # mass ratio 0.556:0.05
-	Dec -21.863920  #
+	RA 92.644265    # mass ratio 0.556:0.05
+	Dec -21.864482  #
 	Distance 18.835
 }
 
 29295 "Luyten 668-21 A:LPM 230 A:Gliese 229 A"
 {
-	RA 92.644167
-	Dec -21.864722
+	RA 92.644231
+	Dec -21.864643
 	Distance 18.835
 	SpectralType "M1.0V"
 	AppMag 8.12
@@ -1285,8 +1285,8 @@ Barycenter "Luyten 668-21:LPM 230:Gliese 229" # orbit of A & B unknown
 
 "Luyten 668-21 B:LPM 230 B:Gliese 229 B"
 {
-	RA 92.646292
-	Dec -21.855000
+	RA 92.644643
+	Dec -21.862692
 	Distance 18.835
 	SpectralType "T6.5V"
 	AbsMag 33 # very approx
@@ -2512,6 +2512,9 @@ Barycenter "Giclas 203-47:GJ 3991"
 	AppMag 13.61
 }
 
+# Drummond JD, Christou JC, Fugate RQ. Full adaptive optics images of
+# ADS 9731 and mu Cassiopeiae: Orbits and masses. ApJ 1995; 450: 380-91
+# http://cdsads.u-strasbg.fr//full/1995ApJ...450..380D/0000380.000.html
 Barycenter "MU Cas:30 Cas:Gliese 53"
 {
 	RA 17.068333
@@ -2526,13 +2529,13 @@ Barycenter "MU Cas:30 Cas:Gliese 53"
 	AppMag 5.17
 
 	EllipticalOrbit {		# fully specified orientation
-		Period          21.43
-		SemiMajorAxis   0.28    # mass ratio 0.6:0.15
-		Eccentricity    0.61
-		Inclination	25.4
-		AscendingNode   336.4
-		ArgOfPericenter 316.6
-		MeanAnomaly     47.0
+		Period          21.753
+		SemiMajorAxis   1.437   # mass ratio 0.742:0.173
+		Eccentricity    0.561
+		Inclination	28.0
+		AscendingNode   334.7
+		ArgOfPericenter 135.0
+		MeanAnomaly     41.52
 	}
 }
 
@@ -2543,13 +2546,13 @@ Barycenter "MU Cas:30 Cas:Gliese 53"
 	AppMag 11.00
 
 	EllipticalOrbit {		# fully specified orientation
-		Period          21.43
-		SemiMajorAxis   1.12    # mass ratio 0.6:0.15
-		Eccentricity    0.61
-		Inclination	25.4
-		AscendingNode   336.4
-		ArgOfPericenter 136.6
-		MeanAnomaly     47.0
+		Period          21.753
+		SemiMajorAxis   6.165   # mass ratio 0.742:0.173
+		Eccentricity    0.561
+		Inclination	28.0
+		AscendingNode   334.7
+		ArgOfPericenter 315.0
+		MeanAnomaly     41.52
 	}
 }
 
