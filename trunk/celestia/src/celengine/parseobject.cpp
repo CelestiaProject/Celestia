@@ -246,7 +246,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
 
         // TODO: Need function to calculate planetographic coordinates
         // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
-        position = centralObject.body()->planetocentricToCartesian(180.0 - v.x, v.y, v.z);
+        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z);
     }
     else if (trajData->getVector("Planetocentric", v))
     {
@@ -257,7 +257,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
         }
 
         // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
-        position = centralObject.body()->planetocentricToCartesian(180.0 - v.x, v.y, v.z);
+        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z);
     }
     else
     {
