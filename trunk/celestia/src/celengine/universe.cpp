@@ -787,7 +787,7 @@ DSOPicker::DSOPicker(const Point3d& pickOrigin,
 
 void DSOPicker::process(DeepSkyObject* const & dso, double, float)
 {
-    if (!(dso->getRenderMask() & renderFlags))
+    if (!(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
 
     Vec3d relativeDSOPos = dso->getPosition() - pickOrigin;
@@ -857,7 +857,7 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
                              double distance,
                              float)
 {
-    if (distance > maxDistance || !(dso->getRenderMask() & renderFlags))
+    if (distance > maxDistance || !(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
 
     double  distanceToPicker       = 0.0;
