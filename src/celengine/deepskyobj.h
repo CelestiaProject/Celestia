@@ -58,6 +58,8 @@ class DeepSkyObject
 
     bool isVisible() const { return visible; }
     void setVisible(bool _visible) { visible = _visible; }
+    bool isClickable() const { return clickable; }
+    void setClickable(bool _clickable) { clickable = _clickable; }
 
     virtual const char* getObjTypeName() const = 0;
 
@@ -88,6 +90,7 @@ class DeepSkyObject
     std::string* infoURL;
     
     bool visible : 1;
+    bool clickable : 1;
 };
 
 typedef std::vector<DeepSkyObject*> DeepSkyCatalog;

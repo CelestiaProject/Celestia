@@ -33,7 +33,8 @@ DeepSkyObject::DeepSkyObject() :
     radius(1),
     absMag(DSO_DEFAULT_ABS_MAGNITUDE),
     infoURL(NULL),
-    visible(true)
+    visible(true),
+    clickable(true)
 {
 }
 
@@ -179,6 +180,12 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     if (params->getBoolean("Visible", visible))
     {
         setVisible(visible);
+    }
+    
+    bool clickable = true;
+    if (params->getBoolean("Clickable", clickable))
+    {
+        setClickable(clickable);
     }
     
     return true;
