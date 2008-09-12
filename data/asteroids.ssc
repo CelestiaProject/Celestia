@@ -277,6 +277,49 @@
 	Albedo 0.16
 }
 
+"25143 Itokawa:Itokawa:1998 SF36" "Sol"
+{
+    Class "asteroid"
+
+    Mesh "itokawa.cmod"
+    Radius 0.315
+
+    InfoURL "http://en.wikipedia.org/wiki/25143_Itokawa"
+
+    # Osculating elements from HORIZONS
+    EllipticalOrbit
+    {
+        Epoch             2453625.5 # 2005 Sep 12--Hayabusa arrival
+        Period 	          1.523231392
+        SemiMajorAxis     1.323849003
+        Eccentricity      0.2801215972
+        Inclination       1.622265921
+        AscendingNode    69.09461308
+        ArgOfPericenter 162.7594572
+        MeanAnomaly     310.6795025
+    }
+
+    # Retrograde rotation pole with RA 90.53 and Dec -66.30
+    # From "Pole and global shape of 25143 Itokawa",
+    # Demura et al, Science, 2 Jun 2006
+    BodyFrame { EquatorJ2000 {} }      
+    UniformRotation
+    {
+        Inclination    156.30
+        AscendingNode  180.53
+        Period          12.132
+    }
+
+    Color [ 1 0.96 0.80 ] # Approximation based on natural color images
+    LunarLambert 0.5      # Approximate a dusty surface
+
+    # Align model with Celestia's coordinate system
+    Orientation [ 90 1 0 0 ]
+
+    Albedo 0.53
+}
+
+
 
 # Radar-imaged asteroids
 "4179 Toutatis:Toutatis:1989 AC" "Sol"
