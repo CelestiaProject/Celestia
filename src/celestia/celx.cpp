@@ -3287,6 +3287,9 @@ bool LuaState::init(CelestiaCore* appCore)
     openLuaLibrary(state, LUA_MATHLIBNAME, luaopen_math);
     openLuaLibrary(state, LUA_TABLIBNAME, luaopen_table);
     openLuaLibrary(state, LUA_STRLIBNAME, luaopen_string);
+    // Make the package library, except the loadlib function, available
+    // for celx regardless of script system access policy.
+		allowLuaPackageAccess();
 #else
     lua_baselibopen(state);
     lua_mathlibopen(state);
