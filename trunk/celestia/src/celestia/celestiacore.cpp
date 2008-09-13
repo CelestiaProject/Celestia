@@ -3691,9 +3691,16 @@ void CelestiaCore::renderOverlay()
                 // Show all names for the body
                 overlay->setFont(titleFont);
                 const vector<string>& names = sel.body()->getNames();
-                for (vector<string>::const_iterator iter = names.begin(); iter != names.end(); iter++)
+
+                // Skip displaying the primary name if there's a localized version
+                // of the name.
+                vector<string>::const_iterator firstName = names.begin();
+                if (sel.body()->hasLocalizedName())
+                    firstName++;
+
+                for (vector<string>::const_iterator iter = firstName; iter != names.end(); iter++)
                 {
-                    if (iter != names.begin())
+                    if (iter != firstName)
                         *overlay << " / ";
                     *overlay << *iter;
                 }
