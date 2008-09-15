@@ -7,9 +7,8 @@
 //
 
 #import "ScriptsController.h"
-#import "CelestiaAppCore.h"
+#import "CelestiaController.h"
 #import "NSString_ObjCPlusPlus.h"
-#import "celestiacore.h"
 #import "scriptmenu.h"
 
 #define CEL_SCRIPTS_FOLDER  @"scripts"
@@ -104,11 +103,11 @@
 {
     if (aSender && [aSender respondsToSelector: @selector(representedObject)])
     {
-        CelestiaCore *appCore = (CelestiaCore*) [[CelestiaAppCore sharedAppCore] appCore];
+        CelestiaController *controller = [CelestiaController shared];
         id filename = [aSender representedObject];
         if (filename)
         {
-            appCore->runScript([(NSString *)filename stdString]);
+            [controller runScript: filename];
         }
     }
 }
