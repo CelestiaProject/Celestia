@@ -774,6 +774,18 @@ static int observer_singleview(lua_State* l)
     return 0;
 }
 
+static int observer_makeactiveview(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "No argument expected for observer:makeactiveview()");
+
+    Observer* obs = this_observer(l);
+    CelestiaCore* appCore = celx.appCore(AllErrors);
+    View* view = getViewByObserver(appCore, obs);
+    appCore->setActiveView(view);
+    return 0;
+}
+
 static int observer_equal(lua_State* l)
 {
     CelxLua celx(l);
@@ -899,6 +911,7 @@ void CreateObserverMetaTable(lua_State* l)
     celx.registerMethod("splitview", observer_splitview);
     celx.registerMethod("deleteview", observer_deleteview);
     celx.registerMethod("singleview", observer_singleview);
+    celx.registerMethod("makeactiveview", observer_makeactiveview);
     celx.registerMethod("getlocationflags", observer_getlocationflags);
     celx.registerMethod("setlocationflags", observer_setlocationflags);
     celx.registerMethod("__eq", observer_equal);
