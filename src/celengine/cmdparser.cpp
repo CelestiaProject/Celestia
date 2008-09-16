@@ -595,6 +595,12 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("brightness", brightness);
         cmd = new CommandSetAmbientLight((float) brightness);
     }
+    else if (commandName == "setgalaxylightgain")
+    {
+        double gain = 0.0;
+        paramList->getNumber("gain", gain);
+        cmd = new CommandSetGalaxyLightGain((float) gain);
+    }
     else if (commandName == "preloadtex")
     {
         string object;
@@ -687,6 +693,58 @@ Command* CommandParser::parseCommand()
             glcpath = GLContext::GLPath_GLSL;
 
         cmd = new CommandRenderPath(glcpath);
+    }
+    else if (commandName == "splitview")
+    {
+        unsigned int view = 1;
+        paramList->getNumber("view", view);
+        string splitType;
+        paramList->getString("type", splitType);
+        double splitPos = 0.5;
+        paramList->getNumber("position", splitPos);
+        cmd = new CommandSplitView(view, splitType, (float) splitPos);
+    }
+    else if (commandName == "deleteview")
+    {
+        unsigned int view = 1;
+        paramList->getNumber("view", view);
+        cmd = new CommandDeleteView(view);
+    }
+    else if (commandName == "singleview")
+    {
+        cmd = new CommandSingleView();
+    }
+    else if (commandName == "setactiveview")
+    {
+        unsigned int view = 1;
+        paramList->getNumber("view", view);
+        cmd = new CommandSetActiveView(view);
+    }
+    else if (commandName == "setradius")
+    {
+        string object;
+        paramList->getString("object", object);
+        double radius = 1.0;
+        paramList->getNumber("radius", radius);
+        cmd = new CommandSetRadius(object, (float) radius);
+    }
+    else if (commandName == "setlinecolor")
+    {
+        string item;
+        paramList->getString("item", item);
+        Vec3d colorv(1.0f, 0.0f, 0.0f);
+        paramList->getVector("color", colorv);
+        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
+        cmd = new CommandSetLineColor(item, color);
+    }
+    else if (commandName == "setlabelcolor")
+    {
+        string item;
+        paramList->getString("item", item);
+        Vec3d colorv(1.0f, 0.0f, 0.0f);
+        paramList->getVector("color", colorv);
+        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
+        cmd = new CommandSetLabelColor(item, color);
     }
     else
     {
