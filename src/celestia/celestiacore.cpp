@@ -2745,6 +2745,12 @@ void CelestiaCore::singleView(View* av)
     setFOVFromZoom();
 }
 
+void CelestiaCore::setActiveView(View* v)
+{
+    activeView = find(views.begin(),views.end(),v);
+    sim->setActiveObserver((*activeView)->observer);
+}
+
 void CelestiaCore::deleteView(View* v)
 {
     if (v == NULL)

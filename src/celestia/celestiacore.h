@@ -296,6 +296,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     void splitView(View::Type type, View* av = NULL, float splitPos = 0.5f);
     void singleView(View* av = NULL);
     void deleteView(View* v = NULL);
+    void setActiveView(View* v = NULL);
     bool getFramesVisible() const;
     void setFramesVisible(bool);
     bool getActiveFrameVisible() const;
