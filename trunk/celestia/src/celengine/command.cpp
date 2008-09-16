@@ -11,6 +11,7 @@
 #include <celutil/util.h>
 #include <celestia/celestiacore.h>
 #include <celestia/imagecapture.h>
+#include <celestia/celx_internal.h>
 #include "astro.h"
 #include "command.h"
 #include "execution.h"
@@ -553,6 +554,19 @@ void CommandSetAmbientLight::process(ExecutionEnvironment& env)
         r->setAmbientLightLevel(lightLevel);
 }
 
+////////////////
+// Set galaxy light gain command
+
+CommandSetGalaxyLightGain::CommandSetGalaxyLightGain(float gain) :
+    lightGain(gain)
+{
+}
+
+void CommandSetGalaxyLightGain::process(ExecutionEnvironment& env)
+{
+    Galaxy::setLightGain(lightGain);
+}
+
 
 ////////////////
 // Set command
@@ -722,6 +736,168 @@ void CommandRenderPath::process(ExecutionEnvironment& env)
     {
         context->setRenderPath(path);
         env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+    }
+}
+
+
+////////////////
+// SplitView command
+
+CommandSplitView::CommandSplitView(unsigned int _view, const string& _splitType, double _splitPos) :
+    view(_view),
+    splitType(_splitType),
+    splitPos(_splitPos)
+{
+}
+
+void CommandSplitView::process(ExecutionEnvironment& env)
+{
+    vector<Observer*> observer_list;
+    getObservers(env.getCelestiaCore(), observer_list);
+
+    if (view >= 1 && view <= observer_list.size())
+    {
+        Observer* obs = observer_list[view - 1];
+        View* view = getViewByObserver(env.getCelestiaCore(), obs);
+        View::Type type = (compareIgnoringCase(splitType, "h") == 0) ? View::HorizontalSplit : View::VerticalSplit;
+        env.getCelestiaCore()->splitView(type, view, (float)splitPos);
+    }
+}
+
+
+////////////////
+// DeleteView command
+
+CommandDeleteView::CommandDeleteView(unsigned int _view) :
+    view(_view)
+{
+}
+
+void CommandDeleteView::process(ExecutionEnvironment& env)
+{
+    vector<Observer*> observer_list;
+    getObservers(env.getCelestiaCore(), observer_list);
+
+    if (view >= 1 && view <= observer_list.size())
+    {
+        Observer* obs = observer_list[view - 1];
+        View* view = getViewByObserver(env.getCelestiaCore(), obs);
+        env.getCelestiaCore()->deleteView(view);
+    }
+}
+
+
+////////////////
+// SingleView command
+
+CommandSingleView::CommandSingleView()
+{
+}
+
+void CommandSingleView::process(ExecutionEnvironment& env)
+{
+    View* view = getViewByObserver(env.getCelestiaCore(), env.getSimulation()->getActiveObserver());
+    env.getCelestiaCore()->singleView(view);
+}
+
+
+////////////////
+// SetActiveView command
+
+CommandSetActiveView::CommandSetActiveView(unsigned int _view) :
+    view(_view)
+{
+}
+
+void CommandSetActiveView::process(ExecutionEnvironment& env)
+{
+    vector<Observer*> observer_list;
+    getObservers(env.getCelestiaCore(), observer_list);
+
+    if (view >= 1 && view <= observer_list.size())
+    {
+        Observer* obs = observer_list[view - 1];
+        View* view = getViewByObserver(env.getCelestiaCore(), obs);
+        env.getCelestiaCore()->setActiveView(view);
+    }
+}
+
+
+////////////////
+// SetRadius command
+
+CommandSetRadius::CommandSetRadius(const string& _object, double _radius) :
+    object(_object),
+    radius(_radius)
+{
+}
+
+void CommandSetRadius::process(ExecutionEnvironment& env)
+{
+    Selection sel = env.getSimulation()->findObjectFromPath(object);
+    if (sel.body() != NULL)
+    {
+        Body* body = sel.body();
+        float iradius = body->getRadius();
+        if ((radius > 0))
+        {
+            body->setSemiAxes(body->getSemiAxes() * ((float) radius / iradius));
+        }
+        
+        if (body->getRings() != NULL)
+        {
+            RingSystem rings(0.0f, 0.0f);
+            rings = *body->getRings();
+            float inner = rings.innerRadius;
+            float outer = rings.outerRadius;
+            rings.innerRadius = inner * (float) radius / iradius;
+            rings.outerRadius = outer * (float) radius / iradius;
+            body->setRings(rings);
+        }
+    }
+}
+
+
+////////////////
+// SetLineColor command
+
+CommandSetLineColor::CommandSetLineColor(const string& _item, Color _color) :
+    item(_item),
+    color(_color)
+{
+}
+
+void CommandSetLineColor::process(ExecutionEnvironment& env)
+{
+    if (CelxLua::LineColorMap.count(item) == 0)
+    {
+        cerr << "Unknown line style: " << item << "\n";
+    }
+    else
+    {
+        *CelxLua::LineColorMap[item] = color;
+    }
+}
+
+
+////////////////
+// SetLabelColor command
+
+CommandSetLabelColor::CommandSetLabelColor(const string& _item, Color _color) :
+    item(_item),
+    color(_color)
+{
+}
+
+void CommandSetLabelColor::process(ExecutionEnvironment& env)
+{
+    if (CelxLua::LabelColorMap.count(item) == 0)
+    {
+        cerr << "Unknown label style: " << item << "\n";
+    }
+    else
+    {
+        *CelxLua::LabelColorMap[item] = color;
     }
 }
 

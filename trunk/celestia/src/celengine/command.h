@@ -476,6 +476,17 @@ class CommandSetAmbientLight : public InstantaneousCommand
 };
 
 
+class CommandSetGalaxyLightGain : public InstantaneousCommand
+{
+ public:
+    CommandSetGalaxyLightGain(float);
+    void process(ExecutionEnvironment&);
+
+ private:
+    float lightGain;
+};
+
+
 class CommandSet : public InstantaneousCommand
 {
  public:
@@ -553,6 +564,85 @@ class CommandRenderPath : public InstantaneousCommand
 
  private:
     GLContext::GLRenderPath path;
+};
+
+
+class CommandSplitView : public InstantaneousCommand
+{
+ public:
+    CommandSplitView(unsigned int, const std::string&, double);
+    void process(ExecutionEnvironment&);
+
+ private:
+    unsigned int view;
+    std::string splitType;
+    double splitPos;
+};
+
+
+class CommandDeleteView : public InstantaneousCommand
+{
+ public:
+    CommandDeleteView(unsigned int);
+    void process(ExecutionEnvironment&);
+
+ private:
+    unsigned int view;
+};
+
+
+class CommandSingleView : public InstantaneousCommand
+{
+ public:
+    CommandSingleView();
+    void process(ExecutionEnvironment&);
+};
+
+
+class CommandSetActiveView : public InstantaneousCommand
+{
+ public:
+    CommandSetActiveView(unsigned int);
+    void process(ExecutionEnvironment&);
+
+ private:
+    unsigned int view;
+};
+
+
+class CommandSetRadius : public InstantaneousCommand
+{
+ public:
+    CommandSetRadius(const std::string&, double);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string object;
+    double radius;
+};
+
+
+class CommandSetLineColor : public InstantaneousCommand
+{
+ public:
+    CommandSetLineColor(const std::string&, Color);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string item;
+    Color color;
+};
+
+
+class CommandSetLabelColor : public InstantaneousCommand
+{
+ public:
+    CommandSetLabelColor(const std::string&, Color);
+    void process(ExecutionEnvironment&);
+
+ private:
+    std::string item;
+    Color color;
 };
 
 
