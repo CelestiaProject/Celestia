@@ -8392,7 +8392,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 {
     bool visibleAsPoint = rle.appMag < faintestPlanetMag && body.isVisibleAsPoint();
 
-    if ((rle.discSizeInPixels > 1 || visibleAsPoint || isLabeled) && body.isVisible())
+    if (rle.discSizeInPixels > 1 || visibleAsPoint || isLabeled)
     {
         rle.renderableType = RenderListEntry::RenderableBody;
         rle.body = &body;
@@ -8563,9 +8563,22 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             }
 
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
-            bool isLabeled = (body->getClassification() & labelClassMask) != 0;
-
-            if ((discSize > 1 || visibleAsPoint || isLabeled) && body->isVisible())
+            bool isLabeled = (body->getOrbitClassification() & labelClassMask) != 0;
+            bool visible = body->isVisible();
+            
+            // Special case for barycenters of planetary systems. Ordinarily, labels of invisible
+            // objects should not be shown, but we do want them to be shown for planetary system
+            // barycenters (e.g. Pluto-Charon)
+            if (!visible && isLabeled)
+            {
+                if (body->getClassification() == Body::Invisible &&
+                    (body->getOrbitClassification() & (Body::Planet | Body::DwarfPlanet | Body::Moon)))
+                {
+                    visible = true;
+                }
+            }
+                        
+            if ((discSize > 1 || visibleAsPoint || isLabeled) && visible)
             {
                 RenderListEntry rle;
 
@@ -10810,6 +10823,11 @@ void Renderer::loadTextures(Body* body)
         body->getRings()->texture.tex[textureResolution] != InvalidResource)
     {
         body->getRings()->texture.find(textureResolution);
+    }
+    
+    if (body->getGeometry() != InvalidResource)
+    {
+        GetGeometryManager()->find(body->getGeometry());
     }
 }
 
