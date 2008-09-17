@@ -27,14 +27,14 @@ void renderSphere_GLSL(const RenderInfo& ri,
                        const GLContext& context);
                        
 void renderGeometry_GLSL(Geometry* geometry,
-                      const RenderInfo& ri,
-                      ResourceHandle texOverride,
-                      const LightingState& ls,
-                      const Atmosphere* atmosphere,
-                      float radius,
-                      int renderFlags,
-                      const Mat4f& planetMat,
-                      double tsec);
+                         const RenderInfo& ri,
+                         ResourceHandle texOverride,
+                         const LightingState& ls,
+                         const Atmosphere* atmosphere,
+                         float geometryScale,
+                         int renderFlags,
+                         const Mat4f& planetMat,
+                         double tsec);
                       
 void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
@@ -68,12 +68,12 @@ void renderRings_GLSL(RingSystem& rings,
                       unsigned int nSections);
 
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
-                            const RenderInfo& ri,
-                            ResourceHandle texOverride,
-                            float radius,
-                            int renderFlags,
-                            const Mat4f& planetMat,
-                            double tsec);
+                               const RenderInfo& ri,
+                               ResourceHandle texOverride,
+                               float geometryScale,
+                               int renderFlags,
+                               const Mat4f& planetMat,
+                               double tsec);
 
                            
 #endif // _CELENGINE_RENDERGLSL_H_

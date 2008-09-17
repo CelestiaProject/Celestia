@@ -300,8 +300,6 @@ ParticleEmitter::render(double tsec,
     bool startBounded = m_startTime > -numeric_limits<double>::infinity();
     bool endBounded = m_endTime < numeric_limits<double>::infinity();
 
-    clog << "particles: " << t << endl;
-    
     // Return immediately if we're far enough past the end time that no
     // particles remain.
     if (endBounded)
