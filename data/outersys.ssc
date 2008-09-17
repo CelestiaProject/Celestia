@@ -83,9 +83,9 @@
 	}
 }
 
-"2003 EL61" "Sol" { 
+"136108 Haumea:Haumea:2003 EL61" "Sol" { 
 
-	Class "asteroid" 
+	Class "dwarfplanet" 
 	Texture "asteroid.jpg" 
 #	Dimensions below taken from Rabinowitz et al. Photometric observations
 #	constraining the size, shape and albedo of 2003 EL62, a rapidly rotating,
@@ -116,9 +116,9 @@
 	}
 }
 
-"2005 (2003 EL61) 1" "Sol/2003 EL61" { 
+"Hi'iaka:136108 Haumea I:Haumea I:2005 (2003 EL61) 1" "Sol/2003 EL61" { 
 
-	Class "asteroid" 
+	Class "moon" 
 	Mesh	"asteroid.cms"
 	Texture "asteroid.jpg" 
 	Radius  150             # ~1% of system mass
@@ -147,9 +147,9 @@
 	EquatorAscendingNode	25   #
 }
 
-"2005 (2003 EL61) 2" "Sol/2003 EL61" { 
+"Namaka:136108 Haumea II:Haumea II:2005 (2003 EL61) 2" "Sol/2003 EL61" { 
 
-	Class "asteroid" 
+	Class "moon" 
 	Mesh	"asteroid.cms"
 	Texture "asteroid.jpg" 
 	Radius  90             # ~0.2% of system mass
