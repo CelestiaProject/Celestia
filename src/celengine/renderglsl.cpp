@@ -267,14 +267,14 @@ void renderGeometry_GLSL(Geometry* geometry,
                          ResourceHandle texOverride,
                          const LightingState& ls,
                          const Atmosphere* atmosphere,
-                         float radius,
+                         float geometryScale,
                          int renderFlags,
                          const Mat4f& planetMat,
                          double tsec)
 {
     glDisable(GL_LIGHTING);
 
-    GLSL_RenderContext rc(ls, radius, planetMat);
+    GLSL_RenderContext rc(ls, geometryScale, planetMat);
 
     if (renderFlags & Renderer::ShowAtmospheres)
     {
@@ -313,14 +313,14 @@ void renderGeometry_GLSL(Geometry* geometry,
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,
                                ResourceHandle texOverride,
-                               float radius,
-                               int renderFlags,
-                               const Mat4f& planetMat,
+                               float geometryScale,
+                               int /* renderFlags */,
+                               const Mat4f& /* planetMat */,
                                double tsec)
 {
     glDisable(GL_LIGHTING);
 
-    GLSLUnlit_RenderContext rc(radius);
+    GLSLUnlit_RenderContext rc(geometryScale);
 
     rc.setPointScale(ri.pointScale);
 
