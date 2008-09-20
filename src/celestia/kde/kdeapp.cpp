@@ -313,6 +313,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showStars"))->setChecked(rFlags & Renderer::ShowStars);
     ((KToggleAction*)action("showPlanets"))->setChecked(rFlags & Renderer::ShowPlanets);
     ((KToggleAction*)action("showGalaxies"))->setChecked(rFlags & Renderer::ShowGalaxies);
+    ((KToggleAction*)action("showGlobulars"))->setChecked(rFlags & Renderer::ShowGlobulars);
     ((KToggleAction*)action("showPartialTrajectories"))->setChecked(rFlags & Renderer::ShowPartialTrajectories);
     ((KToggleAction*)action("showNebulae"))->setChecked(rFlags & Renderer::ShowNebulae);
     ((KToggleAction*)action("showOpenClusters"))->setChecked(rFlags & Renderer::ShowOpenClusters);
@@ -345,6 +346,7 @@ void KdeApp::resyncMenus() {
     ((KToggleAction*)action("showConstellationLabels"))->setChecked(lMode & Renderer::ConstellationLabels);
     ((KToggleAction*)action("showI18nConstellationLabels"))->setChecked(!(lMode & Renderer::I18nConstellationLabels));
     ((KToggleAction*)action("showGalaxyLabels"))->setChecked(lMode & Renderer::GalaxyLabels);
+    ((KToggleAction*)action("showGlobularLabels"))->setChecked(lMode & Renderer::GlobularLabels);
     ((KToggleAction*)action("showNebulaLabels"))->setChecked(lMode & Renderer::NebulaLabels);
     ((KToggleAction*)action("showOpenClusterLabels"))->setChecked(lMode & Renderer::OpenClusterLabels);
     ((KToggleAction*)action("showAsteroidLabels"))->setChecked(lMode & Renderer::AsteroidLabels);
@@ -548,6 +550,9 @@ void KdeApp::initActions()
     KToggleAction* showGalaxies = new KToggleAction(i18n("Show Galaxies"), Key_U, this, SLOT(slotShowGalaxies()), actionCollection(), "showGalaxies");
     showGalaxies->setChecked(rFlags & Renderer::ShowGalaxies);
 
+    KToggleAction* showGlobulars = new KToggleAction(i18n("Show Globulars"), SHIFT + Key_U, this, SLOT(slotShowGlobulars()), actionCollection(), "showGlobulars");
+    showGlobulars->setChecked(rFlags & Renderer::ShowGlobulars);
+
     KToggleAction* showPartialTrajectories = new KToggleAction(i18n("Show Partial Trajectories"), 0, this, SLOT(slotShowPartialTrajectories()), actionCollection(), "showPartialTrajectories");
     showPartialTrajectories->setChecked(rFlags & Renderer::ShowPartialTrajectories);
 
@@ -641,6 +646,9 @@ void KdeApp::initActions()
 
     KToggleAction* showGalaxyLabels = new KToggleAction(i18n("Show Galaxy Labels"), Key_E, this, SLOT(slotShowGalaxyLabels()), actionCollection(), "showGalaxyLabels");
     showGalaxyLabels->setChecked(lMode & Renderer::GalaxyLabels);
+
+    KToggleAction* showGlobularLabels = new KToggleAction(i18n("Show Globular Labels"), SHIFT + Key_E, this, SLOT(slotShowGlobularLabels()), actionCollection(), "showGlobularLabels");
+    showGlobularLabels->setChecked(lMode & Renderer::GlobularLabels);
 
     KToggleAction* showNebulaLabels = new KToggleAction(i18n("Show Nebula Labels"), 0, this, SLOT(slotShowNebulaLabels()), actionCollection(), "showNebulaLabels");
     showNebulaLabels->setChecked(lMode & Renderer::NebulaLabels);
@@ -1063,6 +1071,11 @@ void KdeApp::slotShowGalaxies() {
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowGalaxies);
 }
 
+void KdeApp::slotShowGlobulars() {
+     appCore->getRenderer()->setRenderFlags(
+            appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowGlobulars);
+}
+
 void KdeApp::slotShowPartialTrajectories() {
      appCore->getRenderer()->setRenderFlags(
             appCore->getRenderer()->getRenderFlags() ^ Renderer::ShowPartialTrajectories);
@@ -1213,6 +1226,11 @@ void KdeApp::slotShowI18nConstellationLabels() {
 void KdeApp::slotShowGalaxyLabels() {
      appCore->getRenderer()->setLabelMode(
             appCore->getRenderer()->getLabelMode() ^ Renderer::GalaxyLabels);
+}
+
+void KdeApp::slotShowGlobularLabels() {
+     appCore->getRenderer()->setLabelMode(
+            appCore->getRenderer()->getLabelMode() ^ Renderer::GlobularLabels);
 }
 
 void KdeApp::slotShowNebulaLabels() {
