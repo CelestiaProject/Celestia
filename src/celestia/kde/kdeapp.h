@@ -121,6 +121,7 @@ public slots:
     void slotShowStars();
     void slotShowPlanets();
     void slotShowGalaxies();
+    void slotShowGlobulars();
     void slotShowNebulae();
     void slotShowOpenClusters();
     void slotShowPartialTrajectories();
@@ -154,6 +155,7 @@ public slots:
     void slotShowConstellationLabels();
     void slotShowI18nConstellationLabels();
     void slotShowGalaxyLabels();
+    void slotShowGlobularLabels();
     void slotShowNebulaLabels();
     void slotShowOpenClusterLabels();
     void slotShowAsteroidLabels();
