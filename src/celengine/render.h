@@ -128,8 +128,9 @@ class Renderer
         I18nConstellationLabels = 0x800,
         DwarfPlanetLabels   = 0x1000,
         MinorMoonLabels     = 0x2000,
-        BodyLabelMask       = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
-    };
+		GlobularLabels      = 0x4000,		        
+		BodyLabelMask       = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),	   
+	};
 
     enum {
         ShowNothing         =   0x0000,
@@ -153,7 +154,8 @@ class Renderer
         ShowPartialTrajectories = 0x20000,
         ShowNebulae         =  0x40000,
         ShowOpenClusters    =  0x80000,
-        ShowCloudShadows    =  0x200000,
+		ShowGlobulars       =  0x100000,			        
+		ShowCloudShadows    =  0x200000,
         ShowGalacticGrid    =  0x400000,
         ShowEclipticGrid    =  0x800000,
         ShowHorizonGrid     = 0x1000000,
@@ -172,6 +174,7 @@ class Renderer
     static const int DefaultRenderFlags = Renderer::ShowStars          |
                                           Renderer::ShowPlanets        |
                                           Renderer::ShowGalaxies       |
+										  Renderer::ShowGlobulars      |	 
                                           Renderer::ShowCloudMaps      |
                                           Renderer::ShowAtmospheres    |
                                           Renderer::ShowEclipseShadows |
@@ -785,7 +788,8 @@ class Renderer
     static Color SpacecraftLabelColor;
     static Color LocationLabelColor;
     static Color GalaxyLabelColor;
-    static Color NebulaLabelColor;
+    static Color GlobularLabelColor;	    
+	static Color NebulaLabelColor;
     static Color OpenClusterLabelColor;
     static Color ConstellationLabelColor;
     static Color EquatorialGridLabelColor;

@@ -113,6 +113,7 @@ ENGINE_SOURCES = \
 	celengine/frame.cpp \
 	celengine/frametree.cpp \
 	celengine/galaxy.cpp \
+	celengine/globular.cpp \	
 	celengine/glcontext.cpp \
 	celengine/glext.cpp \
 	celengine/glshader.cpp \
@@ -199,6 +200,7 @@ ENGINE_HEADERS = \
 	celengine/frame.h \
 	celengine/frametree.h \
 	celengine/galaxy.h \
+	celengine/globular.h \	
 	celengine/gl.h \
 	celengine/glcontext.h \
 	celengine/glext.h \

@@ -779,9 +779,11 @@ int parseRenderFlags(string s)
                 flags |= Renderer::ShowDiagrams;
             else if (compareIgnoringCase(name, "galaxies") == 0)
                 flags |= Renderer::ShowGalaxies;
-            else if (compareIgnoringCase(name, "nebulae") == 0)
-                flags |= Renderer::ShowNebulae;
-            else if (compareIgnoringCase(name, "planets") == 0)
+            else if (compareIgnoringCase(name, "globulars") == 0)
+                flags |= Renderer::ShowGlobulars;				            
+			else if (compareIgnoringCase(name, "nebulae") == 0)    
+				flags |= Renderer::ShowNebulae;				            
+			else if (compareIgnoringCase(name, "planets") == 0)
                 flags |= Renderer::ShowPlanets;
             else if (compareIgnoringCase(name, "stars") == 0)
                 flags |= Renderer::ShowStars;
@@ -846,22 +848,24 @@ int parseLabelFlags(string s)
                 flags |= Renderer::SpacecraftLabels;
             else if (compareIgnoringCase(name, "asteroids") == 0)
                 flags |= Renderer::AsteroidLabels;
-	    else if (compareIgnoringCase(name, "comets") == 0)
-		flags |= Renderer::CometLabels;
+		    else if (compareIgnoringCase(name, "comets") == 0)
+				flags |= Renderer::CometLabels;
             else if (compareIgnoringCase(name, "constellations") == 0)
                 flags |= Renderer::ConstellationLabels;
             else if (compareIgnoringCase(name, "stars") == 0)
                 flags |= Renderer::StarLabels;
-	    else if (compareIgnoringCase(name, "galaxies") == 0)
-		flags |= Renderer::GalaxyLabels;
-	    else if (compareIgnoringCase(name, "locations") == 0)
-		flags |= Renderer::LocationLabels;
-	    else if (compareIgnoringCase(name, "nebulae") == 0)
-		flags |= Renderer::NebulaLabels;
-	    else if (compareIgnoringCase(name, "openclusters") == 0)
-		flags |= Renderer::OpenClusterLabels;
-	    else if (compareIgnoringCase(name, "i18nconstellations") == 0)
-		flags |= Renderer::I18nConstellationLabels;
+	    	else if (compareIgnoringCase(name, "galaxies") == 0)
+				flags |= Renderer::GalaxyLabels;
+	    	else if (compareIgnoringCase(name, "globulars") == 0)
+				flags |= Renderer::GlobularLabels;			    
+			else if (compareIgnoringCase(name, "locations") == 0)
+				flags |= Renderer::LocationLabels;
+	    	else if (compareIgnoringCase(name, "nebulae") == 0)
+				flags |= Renderer::NebulaLabels;
+	    	else if (compareIgnoringCase(name, "openclusters") == 0)
+				flags |= Renderer::OpenClusterLabels;
+	    	else if (compareIgnoringCase(name, "i18nconstellations") == 0)
+				flags |= Renderer::I18nConstellationLabels;
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)

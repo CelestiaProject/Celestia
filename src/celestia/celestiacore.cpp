@@ -1867,10 +1867,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
            runScript(config->demoScriptFile);
         break;
 
-    case 'E':
-	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
+	case 'E':
+		if (c == 'e')
+			renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
+		else
+        	renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GlobularLabels);		
         notifyWatchers(LabelFlagsChanged);
-	break;
+		break;
 
     case 'F':
         addToHistory();
@@ -1998,8 +2001,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             sim->setTrackedObject(Selection());
         break;
 
-    case 'U':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
+	case 'U':
+		if (c == 'u')
+			renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
+		else
+			renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGlobulars);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -4149,38 +4155,29 @@ bool CelestiaCore::initSimulation(const string* configFileName,
     DSONameDatabase* dsoNameDB  = new DSONameDatabase;
     DSODatabase*     dsoDB      = new DSODatabase;
     dsoDB->setNameDatabase(dsoNameDB);
-
-    // We'll first read a very large DSO catalog from a bundled file:
-    if (config->deepSkyCatalog != "")
+	    
+	// Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc, globulars.dsc,...):
+	 
+	for (vector<string>::const_iterator iter = config->dsoCatalogFiles.begin();
+    iter != config->dsoCatalogFiles.end(); iter++)
     {
-        ifstream dsoFile(config->deepSkyCatalog.c_str(), ios::in);
-
-        if (progressNotifier)
-            progressNotifier->update(config->deepSkyCatalog);
-
-#if 0 //TODO: define a binary file format for DSOs !!
-        if (!dsoDB->loadBinary(deepSkyFile))
-        {
-            cerr << _("Error reading deep sky file\n");
-            delete dsoDB;
-            return false;
-        }
-#endif
+    	if (progressNotifier)
+        	progressNotifier->update(*iter);
+	
+		ifstream dsoFile(iter->c_str(), ios::in);
         if (!dsoFile.good())
         {
-            cerr << _("Error opening ") << config->deepSkyCatalog << '\n';
+        	cerr<< _("Error opening deepsky catalog file.") << '\n';
             delete dsoDB;
             return false;
-        }
-        else if (!dsoDB->load(dsoFile, ""))
-        {
-            cerr << "Cannot read Deep Sky Objects database." << config->deepSkyCatalog << '\n';
-            delete dsoDB;
-            return false;
+		}
+        else if (!dsoDB->load(dsoFile, ""))		
+	    {
+    		cerr << "Cannot read Deep Sky Objects database." << '\n';
+        	delete dsoDB;
+           	return false;
         }
     }
-
-    // TODO:add support for additional catalogs declared in the config file.
 
     // Next, read all the deep sky files in the extras directories
     {
