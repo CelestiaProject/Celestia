@@ -105,7 +105,8 @@ void CelxLua::initRenderFlagMap()
     RenderFlagMap["cloudmaps"] = Renderer::ShowCloudMaps;
     RenderFlagMap["constellations"] = Renderer::ShowDiagrams;
     RenderFlagMap["galaxies"] = Renderer::ShowGalaxies;
-    RenderFlagMap["planets"] = Renderer::ShowPlanets;
+	RenderFlagMap["globulars"] = Renderer::ShowGlobulars;	    
+	RenderFlagMap["planets"] = Renderer::ShowPlanets;
     RenderFlagMap["stars"] = Renderer::ShowStars;
     RenderFlagMap["nightmaps"] = Renderer::ShowNightMaps;
     RenderFlagMap["eclipseshadows"] = Renderer::ShowEclipseShadows;
@@ -138,6 +139,7 @@ void CelxLua::initLabelFlagMap()
     LabelFlagMap["constellations"] = Renderer::ConstellationLabels;
     LabelFlagMap["stars"] = Renderer::StarLabels;
     LabelFlagMap["galaxies"] = Renderer::GalaxyLabels;
+	LabelFlagMap["globulars"] = Renderer::GlobularLabels;	
     LabelFlagMap["locations"] = Renderer::LocationLabels;
     LabelFlagMap["nebulae"] = Renderer::NebulaLabels;
     LabelFlagMap["openclusters"] = Renderer::OpenClusterLabels;
@@ -218,6 +220,7 @@ void CelxLua::initLabelColorMap()
     LabelColorMap["spacecraft"]     = &Renderer::SpacecraftLabelColor;
     LabelColorMap["locations"]      = &Renderer::LocationLabelColor;
     LabelColorMap["galaxies"]       = &Renderer::GalaxyLabelColor;
+	LabelColorMap["globulars"]      = &Renderer::GlobularLabelColor;	
     LabelColorMap["nebulae"]        = &Renderer::NebulaLabelColor;
     LabelColorMap["openclusters"]   = &Renderer::OpenClusterLabelColor;
     LabelColorMap["constellations"] = &Renderer::ConstellationLabelColor;

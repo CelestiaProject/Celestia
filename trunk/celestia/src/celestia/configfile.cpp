@@ -90,8 +90,6 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     config->asterismsFile = WordExp(config->asterismsFile);
     configParams->getString("BoundariesFile", config->boundariesFile);
     config->boundariesFile = WordExp(config->boundariesFile);
-    configParams->getString("DeepSkyCatalog", config->deepSkyCatalog);
-    config->deepSkyCatalog = WordExp(config->deepSkyCatalog);
     configParams->getString("StarDatabase", config->starDatabaseFile);
     config->starDatabaseFile = WordExp(config->starDatabaseFile);
     configParams->getString("StarNameDatabase", config->starNamesFile);
@@ -189,6 +187,38 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
                 else
                 {
                     DPRINTF(0, "%s: Star catalog name must be a string.\n",
+                            filename.c_str());
+                }
+            }
+        }
+    }
+	    
+	Value* dsoCatalogsVal = configParams->getValue("DeepSkyCatalogs");
+    if (dsoCatalogsVal != NULL)
+    {
+        if (dsoCatalogsVal->getType() != Value::ArrayType)
+        {
+            DPRINTF(0, "%s: DeepSkyCatalogs must be an array.\n",
+                    filename.c_str());
+        }
+        else
+        {
+            Array* dsoCatalogs = dsoCatalogsVal->getArray();
+            assert(dsoCatalogs != NULL);
+
+            for (Array::iterator iter = dsoCatalogs->begin();
+                 iter != dsoCatalogs->end(); iter++)
+            {
+                Value* catalogNameVal = *iter;
+                assert(catalogNameVal != NULL);
+
+                if (catalogNameVal->getType() == Value::StringType)
+                {
+                    config->dsoCatalogFiles.push_back(WordExp(catalogNameVal->getString()));
+                }
+                else
+                {
+                    DPRINTF(0, "%s: DeepSky catalog name must be a string.\n",
                             filename.c_str());
                 }
             }

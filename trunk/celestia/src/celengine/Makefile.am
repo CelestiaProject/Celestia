@@ -44,6 +44,7 @@ libcelengine_a_SOURCES = \
 	galaxy.cpp \
 	glcontext.cpp \
 	glext.cpp \
+	globular.cpp \	
 	glshader.cpp \
 	image.cpp \
 	jpleph.cpp \

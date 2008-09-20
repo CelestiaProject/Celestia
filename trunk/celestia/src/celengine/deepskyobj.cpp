@@ -14,6 +14,7 @@
 #include "astro.h"
 #include "deepskyobj.h"
 #include "galaxy.h"
+#include "globular.h"
 #include "nebula.h"
 #include "opencluster.h"
 #include <celutil/util.h>

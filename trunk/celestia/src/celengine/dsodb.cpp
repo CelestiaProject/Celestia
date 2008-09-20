@@ -30,6 +30,7 @@
 #include <celutil/debug.h>
 
 #include <celengine/galaxy.h>
+#include <celengine/globular.h>
 #include <celengine/opencluster.h>
 #include <celengine/nebula.h>
 
@@ -278,11 +279,12 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         DeepSkyObject* obj = NULL;
         if (compareIgnoringCase(objType, "Galaxy") == 0)
             obj = new Galaxy();
-        else if (compareIgnoringCase(objType, "Nebula") == 0)
+		else if (compareIgnoringCase(objType, "Globular") == 0)
+			obj = new Globular();
+		else if (compareIgnoringCase(objType, "Nebula") == 0)        
             obj = new Nebula();
         else if (compareIgnoringCase(objType, "OpenCluster") == 0)
             obj = new OpenCluster();
-
 
         if (obj != NULL && obj->load(objParams, resourcePath))
         {
