@@ -23,6 +23,7 @@ extern const float DSO_DEFAULT_ABS_MAGNITUDE;
 
 class Nebula;
 class Galaxy;
+class Globular;
 class OpenCluster;
 
 class DeepSkyObject

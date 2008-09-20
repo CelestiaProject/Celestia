@@ -200,6 +200,7 @@ Color Renderer::CometLabelColor         (0.768f, 0.607f, 0.227f);
 Color Renderer::SpacecraftLabelColor    (0.93f,  0.93f,  0.93f);
 Color Renderer::LocationLabelColor      (0.24f,  0.89f,  0.43f);
 Color Renderer::GalaxyLabelColor        (0.0f,   0.45f,  0.5f);
+Color Renderer::GlobularLabelColor      (0.8f,   0.45f,  0.5f);
 Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
 Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
 Color Renderer::ConstellationLabelColor (0.225f, 0.301f, 0.36f);
@@ -3340,7 +3341,8 @@ void Renderer::draw(const Observer& observer,
     }
 
     // Render deep sky objects
-    if ((renderFlags & (ShowGalaxies |
+    if ((renderFlags & (ShowGalaxies | 
+						ShowGlobulars |
                         ShowNebulae |
                         ShowOpenClusters)) != 0 &&
         universe.getDSOCatalog() != NULL)
@@ -9800,7 +9802,15 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             // the parameters in the 'close' correction function are fixed by matching
             // the gradients at 10 pc and by: close (10 pc) = 0.
             // ri adjusts the Milky Way brightness as viewed from "inside" (e.g. from Earth).
-
+		
+			if(!strcmp(dso->getObjTypeName(),"globular"))		
+			{
+				avgAbsMag =  -6.86;   // average over 150 globulars in globulars.dsc.
+			} 
+			else if (!strcmp(dso->getObjTypeName(),"galaxy"))
+			{
+				avgAbsMag = -19.0401; // average over 10937 galaxies in deepsky.dsc.
+			} 
             double ri  = -0.1, pc10 = 32.6167;
             double r   = absMag / avgAbsMag;
             double num = 5 * (absMag - faintestMag);
@@ -9894,6 +9904,11 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             appMagEff = appMag;
             step = 6.0f;
             break;
+		case Renderer::GlobularLabels:
+            labelColor = Renderer::GlobularLabelColor;
+            appMagEff = appMag;
+            step = 3.0f;
+            break;	        			
         default:
             // Unrecognized object class
             labelColor = Color::White;
@@ -9962,7 +9977,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
-    dsoRenderer.labelThresholdMag = 1.8f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
+    dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * (float) log10(effDistanceToScreen)));
 
     // Render any line primitives with smooth lines
     // (mostly to make graticules look good.)

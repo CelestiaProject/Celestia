@@ -1339,3 +1339,8 @@ translations to be used
 * GTK: Save star rendering limit distance
 * GTK: Add texture resolution setting to preferences and save value
 * fix to admit absolute directory notation in VT ImageDirectory
+* Implemented code package rendering globular clusters
+* Implemented data base globulars.dsc with all known 150 globulars around the Milky Way
+* Renamed galaxy database deepsky.dsc into galaxies.dsc
+* Added Perl script globulars.pl used to extract the globular data from scientific publications and as documentation 
+* Implemented SIMBAD compatible cross-listing for globular clusters

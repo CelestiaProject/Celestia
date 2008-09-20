@@ -19,6 +19,7 @@
 #include <celengine/universe.h>
 #include <celengine/astro.h>
 #include <celengine/galaxy.h>
+#include <celengine/globular.h>
 #include <celengine/texmanager.h>
 #include <celengine/render.h>
 #include <celengine/frame.h>
