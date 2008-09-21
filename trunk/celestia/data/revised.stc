@@ -17,215 +17,137 @@
 # The SIMBAD stellar database:
 #   http://simbad.u-strasbg.fr/sim-fid.pl
 
-3829 # van Maanen's Star: improved spectral class from McCook & Sion
+Modify 3829 # van Maanen's Star: improved spectral class from McCook & Sion
 {
-	RA 12.288236701
-	Dec 5.395204979
-	Distance 12.3801
 	SpectralType "DZ8"
-	AppMag 12.37
 }
 
-4266 # Spectral class from SIMBAD, replacing "R..."
+4266 # Missing star - data from original Hipparcos catalog
+     # Spectral class from SIMBAD, replacing "R..."
 {
-	RA 13.639934925
-	Dec -82.669320585
-	Distance 18120.4
-	SpectralType "M0"
+	RA 13.63993371
+	Dec -82.66931994
+	Distance 1707.6806
 	AppMag 8.39
+	SpectralType "M0"
 }
 
-5336 # Mu Cas: Revised luminosity class from RECONS; subdwarf
+Modify 5336 # Mu Cas: Revised luminosity class from RECONS; subdwarf
 {
-	RA 17.053838143
-	Dec 54.924227821
-	Distance 24.6387
 	SpectralType "G5VIp"
-	AppMag 5.17
 }
 
-8709 # Improved spectral class from McCook & Sion
+Modify 8709 # Improved spectral class from McCook & Sion
 {
-	RA 28.012326651
-	Dec 47.001547883
-	Distance 47.9305
 	SpectralType "DA3"
-	AppMag 12.44
 }
 
-9640 # Almaak: Spectral class of primary component from SIMBAD
+Modify 9640 # Almaak: Spectral class of primary component from SIMBAD
 {
-	RA 30.974661542
-	Dec +42.329848300
-	Distance 411.827
 	SpectralType "K3II"
-	AppMag 2.10
 }
 
-10267 # Spectral class from SIMBAD, replacing "DF"
+Modify 10267 # Spectral class from SIMBAD, replacing "DF"
 {
-	RA 33.040148364
-	Dec 63.498367705
-	Distance 248.225
 	SpectralType "G0"
-	AppMag 9.94
 }
 
-10280 # 6 Tri: spectral class from SIMBAD, replacing "F5V"
+Modify 10280 # 6 Tri: spectral class from SIMBAD, replacing "F5V"
 {
-	RA 33.093016864
-	Dec 30.303214210
-	Distance 274.783
 	SpectralType "G5III"
-	AppMag 4.94
 }
 
-11644 # Spectral class from SIMBAD, replacing "DAn"
+Modify 11644 # Spectral class from SIMBAD, replacing "DAn"
 {
-	RA 37.556974333
-	Dec -25.186517707
-	Distance 318.834
 	SpectralType "A9V"
-	AppMag 6.5
 }
 
-11650 # Improved spectral class from McCook & Sion
+Modify 11650 # Improved spectral class from McCook & Sion
 {
-	RA 37.569098699
-	Dec 5.264142190
-	Distance 126.618
 	SpectralType "DA3"
-	AppMag 12.79
 }
 
-12031 # Improved spectral class from McCook & Sion
-      # Parallax from Hipparcos 1 for plausible luminosity
+12031 # Missing star - data from original Hipparcos catalog
+      # Improved spectral class from McCook & Sion
 {
-	RA 38.781438627
-	Dec 3.732432120
+	RA 38.78144144
+	Dec 3.73243056
 	Distance 242.681
+	AppMag 8.39
 	SpectralType "DA1"
-	AppMag 12.41
 }
 
-14754 # Improved spectral class from McCook & Sion
+Modify 14754 # Improved spectral class from McCook & Sion
 {
-	RA 47.628983027
-	Dec -68.600688531
-	Distance 33.5701
 	SpectralType "DA3"
-	AppMag 11.39
 }
 
-17797 # Spectral class of primary component from SIMBAD
+Modify 17797 # Spectral class of primary component from SIMBAD
 {
-	RA 57.149258575
-	Dec -37.620127781
-	Distance 180.502
 	SpectralType "B9V"
-	AppMag 4.30
 }
 
-21088 # Stein 2051: Spectral class of primary component from RECONS
+Modify 21088 # Stein 2051: Spectral class of primary component from RECONS
 {
-	RA 67.791860375
-	Dec 58.982052860
-	Distance 18.7033
 	SpectralType "M4V"
-	AppMag 10.82
 }
 
-21392 # Spectral class from SIMBAD, replacing "R..."
+Modify 21392 # Spectral class from SIMBAD, replacing "R..."
 {
-	RA 68.886720779
-	Dec -74.371204259
-	Distance 2280.89
 	SpectralType "K5"
-	AppMag 8.77
 }
 
-22767 # Spectral class from SIMBAD, replacing "N..."
+Modify 22767 # Spectral class from SIMBAD, replacing "N..."
 {
-	RA 73.465801930
-	Dec 22.771042166
-	Distance 348.842
 	SpectralType "A0"
-	AppMag 9.82
 }
 
-23692 # Improved spectral class from McCook & Sion
+Modify 23692 # Improved spectral class from McCook & Sion
 {
-	RA 76.377522807
-	Dec 52.831316506
-	Distance 140.954
 	SpectralType "DA1"
-	AppMag 11.86
 }
 
-24186 # Kapteyn's Star: Spectral/luminosity class from RECONS; subdwarf
+Modify 24186 # Kapteyn's Star: Spectral/luminosity class from RECONS; subdwarf
 {
-	RA 77.896720888
-	Dec -45.004486878
-	Distance 12.7067
 	SpectralType "M1VI"
-	AppMag 8.86
 }
 
-24608 # Capella: Spectral class from SIMBAD, replacing "M1:"
+Modify 24608 # Capella: Spectral class from SIMBAD, replacing "M1:"
 {
-	RA 79.172064659
-	Dec 45.999029048
-	Distance 42.8041
 	SpectralType "G5III"
-	AppMag 0.08
 }
 
-26220 # Tet1 Ori A: Hipparcos parallax unreliable; distance set to 1400ly
+Modify 26220 # Tet1 Ori A: Hipparcos parallax unreliable; distance set to 1400ly
 {
-	RA 83.815887073
-	Dec -5.387279712
 	Distance 1400
-	SpectralType "O7"
-	AppMag 4.98
 }
 
-26221 # Tet1 Ori C: Hipparcos parallax unreliable; distance set to 1400ly
+Modify 26221 # Tet1 Ori C: Hipparcos parallax unreliable; distance set to 1400ly
 {
-	RA 83.818609063
-	Dec -5.389696734
 	Distance 1400
-	SpectralType "O6pe"
-	AppMag 5.13
 }
 
-26224 # Tet1 Ori D: Hipparcos parallax unreliable; distance set to 1400ly
-      # The position was taken from the GSFC/NASA XML/NVO Project Data Archive
-      # at http://nvo.gsfc.nasa.gov//archive/. It gives a better correspondence
-      # with photographs of the Tet1 Ori stars than does the Hipparcos position
+26224 # Tet1 Ori D: missing star - Hipparcos parallax unreliable; distance set
+      # to 1400ly. The position was taken from the GSFC/NASA XML/NVO Project
+      # Data Archive at http://nvo.gsfc.nasa.gov//archive/. It gives a better
+      # correspondence with photographs of the Tet1 Ori stars than does the
+      # Hipparcos position
 {
 	RA 83.82186
 	Dec -5.388025
 	Distance 1400
+	AppMag 6.71
 	SpectralType "B0.5Vp..."
-	AppMag 6.71094
 }
 
-26235 # Tet2 Ori: Distance set to 1400ly, to match Tet1 Ori stars
+Modify 26235 # Tet2 Ori: Distance set to 1400ly, to match Tet1 Ori stars
 {
-	RA 83.845415891
-	Dec -5.416063977
 	Distance 1400
-	SpectralType "O9.5Vpe"
-	AppMag 4.98
 }
 
-29564 # Spectral class from SIMBAD, replacing "R..."
+Modify 29564 # Spectral class from SIMBAD, replacing "R..."
 {
-	RA 93.427770424
-	Dec -66.799862763
-	Distance 985.399
 	SpectralType "K5"
-	AppMag 9.14
 }
 
 30756 # Star missing from stars.dat - added using Hipparcos data
@@ -237,70 +159,61 @@
 	AppMag 8.31
 }
 
-32349 # Sirius A: Spectral class of primary from SIMBAD, replacing "A0m..."
+Modify 32349 # Sirius A: Spectral class of primary from SIMBAD,
+             # replacing "A0m..."
 {
-	RA 101.288541052
-	Dec -16.713143063
-	Distance 8.60122
 	SpectralType "A1V"
-	AppMag -1.44
 }
 
-32560 # Improved spectral class from Gliese catalogue (Gliese 246)
+Modify 32560 # Improved spectral class from Gliese catalogue (Gliese 246)
 {
-	RA 101.908992711
-	Dec 37.518132693
-	Distance 68.4219
 	SpectralType "DA2"
-	AppMag 12.06
 }
 
-33226 # Wolf 294: Spectral class from RECONS, replacing "K:..."
+Modify 33226 # Wolf 294: Spectral class from RECONS, replacing "K:..."
 {
-	RA 103.706105214
-	Dec 33.269146170
-	Distance 18.4986
 	SpectralType "M3V"
-	AppMag 9.89
 }
 
-40765 # Spectral class from SIMBAD, replacing "R..."
+Modify 40765 # Spectral class from SIMBAD, replacing "R..."
 {
-	RA 124.812903251
-	Dec -5.619613393
-	Distance 122.114
 	SpectralType "G1V"
-	AppMag 7.43
 }
 
-43177 # Luminosity class from Extra-solar Planets Catalog at
-      # http://www.obspm.fr/encycl/cat1.html (The Hipparcos 
-      # luminosity class of 1a0 is incompatible with the
-      # observed distance and luminosity.)
+Modify 43177 # Luminosity class from Extra-solar Planets Catalog at
+             # http://www.obspm.fr/encycl/cat1.html (The Hipparcos 
+             # luminosity class of 1a0 is incompatible with the
+             # observed distance and luminosity.)
 {
-	RA 131.918355770
-	Dec -41.736238831
-	Distance 96.1577
 	SpectralType "G0V"
-	AppMag 6.35
 }
 
-45343 # Struve 1321: Improved spectral class from SIMBAD
+Modify 45343 # Struve 1321: Improved spectral class from SIMBAD
 {
-	RA 138.601123842
-	Dec 52.687981477
-	Distance 15.28
 	SpectralType "K7"
-	AppMag 7.64
 }
 
-54061 # Dubhe: Spectral class from SIMBAD, replaces "F7V comp"
+45982 # HD 80606: Missing star - data from original Hipparcos catalog
 {
-	RA 165.932653251
-	Dec 61.751119250
-	Distance 120.669
+	RA 140.65635304
+	Dec 50.60370444
+	AppMag 9.06
+	Distance 190.4068885
+	SpectralType "G5"
+}
+
+45983 # HD 80607: Missing star - data from original Hipparcos catalog
+{
+	RA 140.66536376
+	Dec 50.60384845
+	AppMag 9.17
+	Distance 190.4068885
+	SpectralType "G5"
+}
+
+Modify 54061 # Dubhe: Spectral class from SIMBAD, replaces "F7V comp"
+{
 	SpectralType "K0Ib"
-	AppMag 1.81
 }
 
 55203 # Alula Australis: Missing star - data from SIMBAD and NStars
@@ -312,49 +225,29 @@
 	AppMag 3.78
 }
 
-56662 # Improved spectral class from Gliese catalogue (Gliese 433.1)
+Modify 56662 # Improved spectral class from Gliese catalogue (Gliese 433.1)
 {
-	RA 174.271684974
-	Dec 29.799551208
-	Distance 60.943
 	SpectralType "DA3"
-	AppMag 12.49
 }
 
-57367 # Luyten 145-141: Improved spectral class from McCook & Sion
+Modify 57367 # Luyten 145-141: Improved spectral class from McCook & Sion
 {
-	RA 176.413598837
-	Dec -64.840675191
-	Distance 15.1375
 	SpectralType "DQ6"
-	AppMag 11.50
 }
 
-65877 # Improved spectral class from McCook & Sion
+Modify 65877 # Improved spectral class from McCook & Sion
 {
-	RA 202.559551698
-	Dec -8.573704482
-	Distance 49.8193
 	SpectralType "DA5"
-	AppMag 12.31
 }
 
-66578 # Improved spectral class from McCook & Sion
+Modify 66578 # Improved spectral class from McCook & Sion
 {
-	RA 204.713227886
-	Dec 70.285516667
-	Distance 91.8522
 	SpectralType "DA3"
-	AppMag 12.79
 }
 
-72105 # Eps Boo: Primary spectral class from SIMBAD
+Modify 72105 # Eps Boo: Primary spectral class from SIMBAD
 {
-	RA 221.246878220
-	Dec 27.074173733
-	Distance 194.843
 	SpectralType "K0III"
-	AppMag 2.35
 }
 
 78727 # Xi Sco: missing parallax taken from companion star Hip 78738
@@ -366,86 +259,50 @@
 	AppMag 4.16016
 }
 
-79607 # Sig CrB: revised spectral class from SIMBAD
+Modify 79607 # Sig CrB: revised spectral class from SIMBAD
 {
-	RA 243.671001574
-	Dec 33.858821218
-	Distance 68.3072
 	SpectralType "G0V"
-	AppMag 5.23
 }
 
-80300 # Improved spectral class from McCook & Sion
+Modify 80300 # Improved spectral class from McCook & Sion
 {
-	RA 245.890750516
-	Dec -39.229489669
-	Distance 45.5286
 	SpectralType "DA2"
-	AppMag 11.01
 }
 
-82257 # Improved spectral class from McCook & Sion
+Modify 82257 # Improved spectral class from McCook & Sion
 {
-	RA 252.106175203
-	Dec 59.057017564
-	Distance 32.345
 	SpectralType "DAV4"
-	AppMag 12.24
 }
 
-83404 # Spectral Class from SIMBAD; replaces "Ne"
+Modify 83404 # Spectral Class from SIMBAD; replaces "Ne"
 {
-	RA 255.692816785
-	Dec -32.670720819
-	Distance 409.243
 	SpectralType "B7II"
-	AppMag 9.83
 }
 
-84123 # Spectral class from ARCINS; replaces "G"
-      # http://www.ari.uni-heidelberg.de/aricns/cnspages/4c01372.htm
+Modify 84123 # Spectral class from ARCINS; replaces "G"
+             # http://www.ari.uni-heidelberg.de/aricns/cnspages/4c01372.htm
 {
-	RA 257.969070017
-	Dec -1.850960956
-	Distance 32.477
 	SpectralType "M3V"
-	AppMag 11.45
 }
 
-84140 # Spectral class from RECONS
+Modify 84140 # Spectral class from RECONS
 {
-	RA 258.031811382
-	Dec 45.669864227
-	Distance 26.8252
 	SpectralType "M3V"
-	AppMag 9.31
 }
 
-84405 # 36 Oph A: Spectral class from RECONS
+Modify 84405 # 36 Oph A: Spectral class from RECONS
 {
-	RA 258.838699216
-	Dec -26.600047789
-	Distance 19.2895
 	SpectralType "K1V"
-	AppMag 4.33
 }
 
-84720 # 41 Ara: Spectral class from SIMBAD; replaces "M0V"
+Modify 84720 # 41 Ara: Spectral class from SIMBAD; replaces "M0V"
 {
-	RA 259.762309823
-	Dec -46.636500126
-	Distance 28.722
 	SpectralType "G8V"
-	AppMag 5.47
 }
 
-85523 # Spectral class from RECONS; replaces "K5"
+Modify 85523 # Spectral class from RECONS; replaces "K5"
 {
-	RA 262.164404061
-	Dec -46.893051392
-	Distance 14.8521
 	SpectralType "M3V"
-	AppMag 9.38
 }
 
 86961 # GJ 2130 A: Missing star - data from Hipparcos & RECONS
@@ -467,13 +324,9 @@
 	AppMag 6.198
 }
 
-88267 # 95 Her: Spectral class from SIMBAD; replaces "G5"
+Modify 88267 # 95 Her: Spectral class from SIMBAD; replaces "G5"
 {
-	RA 270.376678109
-	Dec 21.595689700
-	Distance 319.146
 	SpectralType "A5III"
-	AppMag 4.26
 }
 
 88522 # Missing star - data from Hipparcos and SIMBAD
@@ -486,31 +339,19 @@
 	AppMag 6.15
 }
 
-91768 # Struve 2398 A: Spectral class from RECONS; replaces "K5"
+Modify 91768 # Struve 2398 A: Spectral class from RECONS; replaces "K5"
 {
-	RA 280.700893662
-	Dec 59.626015997
-	Distance 11.6397
 	SpectralType "M3V"
-	AppMag 8.94
 }
 
-91772 # Struve 2398 B: Spectral class from RECONS; replaces "K5"
+Modify 91772 # Struve 2398 B: Spectral class from RECONS; replaces "K5"
 {
-	RA 280.702136173
-	Dec 59.622376982
-	Distance 10.9042
 	SpectralType "M3V"
-	AppMag 9.70
 }
 
-95071 # Improved spectral class from McCook & Sion
+Modify 95071 # Improved spectral class from McCook & Sion
 {
-	RA 290.145663732
-	Dec -7.666293500
-	Distance 32.3162
 	SpectralType "DBZ5"
-	AppMag 12.28
 }
 
 101120 # Omi Cap B: Missing star - data from Hipparcos and SIMBAD
@@ -523,66 +364,38 @@
 	AppMag 6.74
 }
 
-101516 # Improved spectral class from McCook & Sion
+Modify 101516 # Improved spectral class from McCook & Sion
 {
-	RA 308.592267416
-	Dec 25.065187322
-	Distance 57.3228
 	SpectralType "DA3"
-	AppMag 11.53
 }
 
-102207 # Improved spectral class from McCook & Sion
+Modify 102207 # Improved spectral class from McCook & Sion
 {
-	RA 310.643870880
-	Dec -20.076414006
-	Distance 65.0772
 	SpectralType "DA3"
-	AppMag 12.38
 }
 
-103039 # Spectral class from RECONS
+Modify 103039 # Spectral class from RECONS
 {
-	RA 313.138351051
-	Dec -16.974817448
-	Distance 22.2442
 	SpectralType "M"
-	AppMag 11.41
 }
 
-105259 # Spectral class from SIMBAD; replaces "B3Vv comp"
+Modify 105259 # Spectral class from SIMBAD; replaces "B3Vv comp"
 {
-	RA 319.815381254
-	Dec 58.623510408
-	Distance 1347.8
 	SpectralType "M1Ib"
-	AppMag 5.51
 }
 
-105680 # Spectral class from SIMBAD; replaces "G0"
+Modify 105680 # Spectral class from SIMBAD; replaces "G0"
 {
-	RA 321.080170724
-	Dec 61.271377311
-	Distance 1853.22
 	SpectralType "B"
-	AppMag 8.79
 }
 
-107968 # Improved spectral class from McCook & Sion
+Modify 107968 # Improved spectral class from McCook & Sion
 {
-	RA 328.105708746
-	Dec 2.389499755
-	Distance 125.691
 	SpectralType "DA3"
-	AppMag 12.74
 }
 
-108317 # VV Cep: Spectral class from SIMBAD; replaces "M2 comp"
+Modify 108317 # VV Cep: Spectral class from SIMBAD; replaces "M2 comp"
 {
-	RA 329.163100901
-	Dec 63.625566748
-	Distance 1364.72
 	SpectralType "M2Ia"
-	AppMag 5.11
 }
 
