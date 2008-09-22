@@ -229,6 +229,13 @@ uint32 StarDatabase::findCatalogNumberByName(const string& name) const
 
     uint32 catalogNumber = Star::InvalidCatalogNumber;
 
+    if (namesDB != NULL)
+    {
+        catalogNumber = namesDB->findCatalogNumberByName(name);
+        if (catalogNumber != Star::InvalidCatalogNumber)
+            return catalogNumber;
+    }
+    
     if (parseCelestiaCatalogNumber(name, &catalogNumber))
     {
         return catalogNumber;
@@ -252,10 +259,7 @@ uint32 StarDatabase::findCatalogNumberByName(const string& name) const
     }
     else
     {
-        if (namesDB != NULL)
-            return namesDB->findCatalogNumberByName(name);
-        else
-            return Star::InvalidCatalogNumber;
+        return Star::InvalidCatalogNumber;
     }
 }
 
@@ -1214,7 +1218,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             {
                 if (!firstName.empty())
                 {
-                    catalogNumber = namesDB->findCatalogNumberByName(firstName);
+                    catalogNumber = findCatalogNumberByName(firstName);
                 }
             }
                 
@@ -1232,7 +1236,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
             // If no catalog number was specified, try looking up the star by name
             if (catalogNumber == Star::InvalidCatalogNumber && !firstName.empty())
             {
-                catalogNumber = namesDB->findCatalogNumberByName(firstName);
+                catalogNumber = findCatalogNumberByName(firstName);
             }
                 
             if (catalogNumber != Star::InvalidCatalogNumber)
