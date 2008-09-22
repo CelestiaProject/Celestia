@@ -95,6 +95,7 @@ struct CelestiaGLProgramLight
     Vec3ShaderParameter diffuse;
     Vec3ShaderParameter specular;
     Vec3ShaderParameter halfVector;
+    FloatShaderParameter brightness; // max of diffuse r, g, b
 };
 
 struct CelestiaGLProgramShadow
@@ -132,6 +133,7 @@ class CelestiaGLProgram
     CelestiaGLProgramLight lights[MaxShaderLights];
     Vec3ShaderParameter fragLightColor[MaxShaderLights];
     Vec3ShaderParameter fragLightSpecColor[MaxShaderLights];
+    FloatShaderParameter fragLightBrightness[MaxShaderLights];
     Vec3ShaderParameter eyePosition;
     FloatShaderParameter shininess;
     Vec3ShaderParameter ambientColor;

@@ -12,6 +12,7 @@
 #include "shadermanager.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <iomanip>
 #include <cstdio>
 #include <cassert>
@@ -317,35 +318,31 @@ DeclareLights(const ShaderProperties& props)
     if (props.nLights == 0)
         return string("");
 
-    char lightSourceBuf[128];
-
 #ifndef USE_GLSL_STRUCTS
-    string lightSourceDecl;
+    ostringstream stream;
 
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        sprintf(lightSourceBuf,
-                "uniform vec3 light%d_direction;\n"
-                "uniform vec3 light%d_diffuse;\n"
-                "uniform vec3 light%d_specular;\n"
-                "uniform vec3 light%d_halfVector;\n",
-                i, i, i, i);
-        lightSourceDecl += string(lightSourceBuf);
+        stream << "uniform vec3 light" << i << "_direction;\n";
+        stream << "uniform vec3 light" << i << "_diffuse;\n";
+        stream << "uniform vec3 light" << i << "_specular;\n";
+        stream << "uniform vec3 light" << i << "_halfVector;\n";
+        if (props.texUsage & ShaderProperties::NightTexture)
+            stream << "uniform float light" << i << "_brightness;\n";
     }
 
-    return lightSourceDecl;
 #else
-    sprintf(lightSourceBuf,
-            "uniform struct {\n"
-            "   vec3 direction;\n"
-            "   vec3 diffuse;\n"
-            "   vec3 specular;\n"
-            "   vec3 halfVector;\n"
-            "} lights[%d];\n",
-            props.nLights);
-
-    return string(lightSourceBuf);
+    stream << "uniform struct {\n";
+    stream << "   vec3 direction;\n";
+    stream << "   vec3 diffuse;\n";
+    stream << "   vec3 specular;\n";
+    stream << "   vec3 halfVector;\n";
+    if (props.texUsage & ShaderProperties::NightTexture)
+        stream << "   float brightness;\n";
+    stream << "} lights[%d];\n";
 #endif
+
+    return stream.str();
 }
 
 
@@ -432,9 +429,14 @@ TangentSpaceTransform(const string& dst, const string& src)
 static string
 NightTextureBlend()
 {
+#if 1
     // Output the blend factor for night lights textures
     return string("totalLight = 1.0 - totalLight;\n"
                   "totalLight = totalLight * totalLight * totalLight * totalLight;\n");
+#else
+    // Alternate night light blend function; much sharper falloff near terminator.
+    return string("totalLight = clamp(10.0 * (0.1 - totalLight), 0.0, 1.0);\n");
+#endif
 }
 
 
@@ -557,7 +559,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
 
     if ((props.texUsage & ShaderProperties::NightTexture) && VSComputesColorSum(props))
     {
-        source += "totalLight += NL;\n";
+        source += "totalLight += NL * " + LightProperty(i, "brightness") + ";\n";
     }
 
 
@@ -1275,6 +1277,10 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
             {
                 source += "uniform vec3 " + FragLightProperty(i, "specColor") + ";\n";
             }
+            if (props.texUsage & ShaderProperties::NightTexture)
+            {
+                source += "uniform float " + FragLightProperty(i, "brightness") + ";\n";
+            }
         }
     }
     else if (props.lightModel == ShaderProperties::PerPixelSpecularModel)
@@ -1453,9 +1459,10 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 !VSComputesColorSum(props))
             {
                 if (i == 0)
-                    source += "float totalLight = l;\n";
+                    source += "float totalLight = ";
                 else
-                    source += "totalLight += l;\n";
+                    source += "totalLight += ";
+                source += "l * " + FragLightProperty(i, "brightness") + ";\n";
             }
 
             string illum;
@@ -1999,66 +2006,83 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
 GLVertexShader*
 ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 {
-    string source = CommonHeader;
+    ostringstream source;
     
-    source += "// shadow count: ";
-    char buf[32];
-    sprintf(buf, "%d", props.shadowCounts);
-    source += buf;
-    source += "\n";
+    source << CommonHeader;
     
-    source += DeclareLights(props);
+    source << "// PARTICLE SHADER\n";
+    source << "// shadow count: " << props.shadowCounts << endl;
     
-    source += "uniform vec3 eyePosition;\n";
+    source << DeclareLights(props);
+    
+    source << "uniform vec3 eyePosition;\n";
 
     // TODO: scattering constants
     
     if (props.texUsage & ShaderProperties::PointSprite)
     {
-        source += "uniform float pointScale;\n";
-        source += "attribute float pointSize;\n";
+        source << "uniform float pointScale;\n";
+        source << "attribute float pointSize;\n";
     }
     
     // Shadow parameters
     if (props.shadowCounts != 0)
     {
-        source += "varying vec3 position_obj;\n";
+        source << "varying vec3 position_obj;\n";
     }
     
-    //source += "vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
-    
     // Begin main() function
-    source += "\nvoid main(void)\n{\n";
-    
+    source << "\nvoid main(void)\n{\n";
+
+#define PARTICLE_PHASE_PARAMETER 0
+#if PARTICLE_PHASE_PARAMETER
+    float g = -0.4f;
+    float miePhaseAsymmetry = 1.55f * g - 0.55f * g * g * g;
+    source << "    float mieK = " << miePhaseAsymmetry << ";\n";
+
+    source << "    vec3 eyeDir = normalize(eyePosition - gl_Vertex.xyz);\n";
+    source << "    float brightness = 0.0;\n";
+    for (unsigned int i = 0; i < min(1u, props.nLights); i++)
+    {
+        source << "    {\n";
+        source << "         float cosTheta = dot(" << LightProperty(i, "direction") << ", eyeDir);\n";
+        source << "         float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
+        source << "         brightness += phMie;\n";
+        source << "    }\n";
+    }
+#else
+    source << "    float brightness = 1.0;\n";
+#endif
+
     // Optional texture coordinates (generated automatically for point
     // sprites.)
     if ((props.texUsage & ShaderProperties::DiffuseTexture) &&
         !(props.texUsage & ShaderProperties::PointSprite))
     {
-        source += "    gl_TexCoord[0].st = " + TexCoord2D(0) + ";\n";
+        source << "    gl_TexCoord[0].st = " << TexCoord2D(0) << ";\n";
     }
     
     // Set the color. Should *always* use vertex colors for color and opacity.
-    source += "    gl_FrontColor = gl_Color;\n";
+    source << "    gl_FrontColor = gl_Color * brightness;\n";
     
     // Optional point size
     if ((props.texUsage & ShaderProperties::PointSprite) != 0)
-        source += PointSizeCalculation();
+        source << PointSizeCalculation();
     
-    source += "    gl_Position = ftransform();\n";
+    source << "    gl_Position = ftransform();\n";
     
-    source += "}\n";
+    source << "}\n";
     // End of main()
     
     if (g_shaderLogFile != NULL)
     {
         *g_shaderLogFile << "Vertex shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
+        DumpShaderSource(*g_shaderLogFile, source.str());
+        *g_shaderLogFile << endl;
     }
     
     GLVertexShader* vs = NULL;
-    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
+    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source.str(), &vs);
     if (status != ShaderStatus_OK)
         return NULL;
     else
@@ -2069,67 +2093,65 @@ ShaderManager::buildParticleVertexShader(const ShaderProperties& props)
 GLFragmentShader*
 ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
 {
-    string source = CommonHeader;
+    ostringstream source;
+
+    source << CommonHeader;
     
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "uniform sampler2D diffTex;\n";
+        source << "uniform sampler2D diffTex;\n";
     }
 
     if (props.usesShadows())
     {
-        source += "uniform vec3 ambientColor;\n";
+        source << "uniform vec3 ambientColor;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+            source << "uniform vec3 " << FragLightProperty(i, "color") << ";\n";
         }        
     }
     
     // Declare shadow parameters
     if (props.shadowCounts != 0)
     {
-        source += "varying vec3 position_obj;\n";
+        source << "varying vec3 position_obj;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
             for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
             {
-                source += "uniform vec4 " +
-                IndexedParameter("shadowTexGenS", i, j) + ";\n";
-                source += "uniform vec4 " +
-                IndexedParameter("shadowTexGenT", i, j) + ";\n";
-                source += "uniform float " +
-                IndexedParameter("shadowScale", i, j) + ";\n";
-                source += "uniform float " +
-                IndexedParameter("shadowBias", i, j) + ";\n";
+                source << "uniform vec4 " << IndexedParameter("shadowTexGenS", i, j) << ";\n";
+                source << "uniform vec4 " << IndexedParameter("shadowTexGenT", i, j) << ";\n";
+                source << "uniform float " << IndexedParameter("shadowScale", i, j) << ";\n";
+                source << "uniform float " << IndexedParameter("shadowBias", i, j) << ";\n";
             }
         }
     }
     
     // Begin main()
-    source += "\nvoid main(void)\n";
-    source += "{\n";
+    source << "\nvoid main(void)\n";
+    source << "{\n";
     
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0].st);\n";
+        source << "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0].st);\n";
     }
     else
     {
-        source += "    gl_FragColor = gl_Color;\n";
+        source << "    gl_FragColor = gl_Color;\n";
     }
     
-    source += "}\n";
+    source << "}\n";
     // End of main()
     
     if (g_shaderLogFile != NULL)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
+        DumpShaderSource(*g_shaderLogFile, source.str());
         *g_shaderLogFile << '\n';
     }
     
     GLFragmentShader* fs = NULL;
-    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
+    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source.str(), &fs);
     if (status != ShaderStatus_OK)
         return NULL;
     else
@@ -2272,9 +2294,13 @@ CelestiaGLProgram::initParameters()
         lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse"));
         lights[i].specular   = vec3Param(LightProperty(i, "specular"));
         lights[i].halfVector = vec3Param(LightProperty(i, "halfVector"));
+        if (props.texUsage & ShaderProperties::NightTexture)
+            lights[i].brightness = floatParam(LightProperty(i, "brightness"));
 
         fragLightColor[i] = vec3Param(FragLightProperty(i, "color"));
         fragLightSpecColor[i] = vec3Param(FragLightProperty(i, "specColor"));
+        if (props.texUsage & ShaderProperties::NightTexture)
+            fragLightBrightness[i] = floatParam(FragLightProperty(i, "brightness"));
 
         for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
         {
@@ -2450,6 +2476,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                               lightColor.y * specularColor.y,
                                               lightColor.z * specularColor.z);
             }
+            fragLightBrightness[i] = max(lightColor.x, max(lightColor.y, lightColor.z));
         }
         else
         {
@@ -2458,6 +2485,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                       lightColor.z * diffuseColor.z);
         }
 
+        lights[i].brightness = max(lightColor.x, max(lightColor.y, lightColor.z));
         lights[i].specular = Vec3f(lightColor.x * specularColor.x,
                                    lightColor.y * specularColor.y,
                                    lightColor.z * specularColor.z);

@@ -31,6 +31,7 @@ public:
     // distance instead of position.
     Point3d position;
     float apparentSize;
+    bool castsShadows;
 };
 
 class EclipseShadow
