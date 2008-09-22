@@ -37,6 +37,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     albedo(0.5f),
     orientation(1.0f),
     geometry(InvalidResource),
+    geometryScale(1.0f),
     surface(Color(1.0f, 1.0f, 1.0f)),
     atmosphere(NULL),
     rings(NULL),
@@ -44,7 +45,6 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     altSurfaces(NULL),
     locations(NULL),
     locationsComputed(false),
-    refMarks(0),
     referenceMarks(NULL),
     visible(1),
     clickable(1),
@@ -388,14 +388,18 @@ void Body::setSurface(const Surface& surf)
 }
 
 
-ResourceHandle Body::getGeometry() const
-{
-    return geometry;
-}
-
 void Body::setGeometry(ResourceHandle _geometry)
 {
     geometry = _geometry;
+}
+
+
+/*! Set the scale factor for geometry; this is only used with unnormalized meshes.
+ *  When a mesh is normalized, the effective scale factor is the radius.
+ */
+void Body::setGeometryScale(float scale)
+{
+    geometryScale = scale;
 }
 
 
@@ -923,27 +927,6 @@ void Body::computeLocations()
             (*iter)->setPosition(v);
         }
     }
-}
-
-
-bool
-Body::referenceMarkVisible(uint32 refmark) const
-{
-    return (refMarks & refmark) != 0;
-}
-
-
-uint32
-Body::getVisibleReferenceMarks() const
-{
-    return refMarks;
-}
-
-
-void
-Body::setVisibleReferenceMarks(uint32 refmarks)
-{
-	refMarks = refmarks;
 }
 
 

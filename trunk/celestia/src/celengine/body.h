@@ -230,8 +230,11 @@ class Body
     Atmosphere* getAtmosphere();
     void setAtmosphere(const Atmosphere&);
 
+    ResourceHandle getGeometry() const { return geometry; }
     void setGeometry(ResourceHandle);
-    ResourceHandle getGeometry() const;
+    float getGeometryScale() const { return geometryScale; }
+    void setGeometryScale(float scale);
+
     void setSurface(const Surface&);
     const Surface& getSurface() const;
     Surface& getSurface();
@@ -354,6 +357,7 @@ class Body
     float cullingRadius;
 
     ResourceHandle geometry;
+    float geometryScale;
     Surface surface;
 
     Atmosphere* atmosphere;
@@ -369,7 +373,6 @@ class Body
     std::vector<Location*>* locations;
     mutable bool locationsComputed;
 
-    uint32 refMarks;
     std::list<ReferenceMark*>* referenceMarks;
 
     Color orbitColor;
