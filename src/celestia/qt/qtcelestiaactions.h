@@ -51,6 +51,7 @@ Q_OBJECT
     QAction* galacticGridAction;
     QAction* eclipticGridAction;
     QAction* horizonGridAction;
+    QAction* eclipticAction;
     QAction* markersAction;
     QAction* constellationsAction;
     QAction* boundariesAction;
@@ -58,12 +59,14 @@ Q_OBJECT
     QAction* starsAction;
     QAction* planetsAction;
     QAction* galaxiesAction;
-    QAction* nebulaeAction;
+    QAction* globularsAction;
     QAction* openClustersAction;
+    QAction* nebulaeAction;
     
     QAction* labelGalaxiesAction;
-    QAction* labelNebulaeAction;
+    QAction* labelGlobularsAction;
     QAction* labelOpenClustersAction;
+    QAction* labelNebulaeAction;
     QAction* labelStarsAction;
     QAction* labelPlanetsAction;
     QAction* labelDwarfPlanetsAction;
