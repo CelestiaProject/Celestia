@@ -222,6 +222,9 @@ void SelectionPopup::process(int id)
     }
     if (actionId >=25 && actionId < 30 && sel.body() != NULL) 
     {
+#if 0
+        // TODO: Need to switch to new reference mark implementation;
+        // getVisibleReferenceMarks no longer supported.
         switch(actionId)
         {
         case 25:
@@ -237,6 +240,7 @@ void SelectionPopup::process(int id)
             sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::VelocityVector);
             break;
         }
+#endif
     }
     if (actionId == 30) {
         sim->getActiveObserver()->setDisplayedSurface("");
@@ -318,14 +322,16 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
         KPopupMenu *refVectorMenu = new KPopupMenu(this);
         refVectorMenu->setCheckable(true);
         popup->insertItem(i18n("&Reference Vectors"), refVectorMenu);
+        // TODO: Need to switch to new reference mark implementation;
+        // getVisibleReferenceMarks no longer supported.
         refVectorMenu->insertItem(i18n("Show Body Axes"), baseId + 25);
-        refVectorMenu->setItemChecked(baseId + 25, sel.body()->getVisibleReferenceMarks() & Body::BodyAxes);
+        //refVectorMenu->setItemChecked(baseId + 25, sel.body()->getVisibleReferenceMarks() & Body::BodyAxes);
         refVectorMenu->insertItem(i18n("Show Frame Axes"), baseId + 26);
-        refVectorMenu->setItemChecked(baseId + 26, sel.body()->getVisibleReferenceMarks() & Body::FrameAxes);
+        //refVectorMenu->setItemChecked(baseId + 26, sel.body()->getVisibleReferenceMarks() & Body::FrameAxes);
         refVectorMenu->insertItem(i18n("Show Sun Direction"), baseId + 27);
-        refVectorMenu->setItemChecked(baseId + 27, sel.body()->getVisibleReferenceMarks() & Body::SunDirection);
+        //refVectorMenu->setItemChecked(baseId + 27, sel.body()->getVisibleReferenceMarks() & Body::SunDirection);
         refVectorMenu->insertItem(i18n("Show Velocity Vector"), baseId + 28);
-        refVectorMenu->setItemChecked(baseId + 28, sel.body()->getVisibleReferenceMarks() & Body::VelocityVector);
+        //refVectorMenu->setItemChecked(baseId + 28, sel.body()->getVisibleReferenceMarks() & Body::VelocityVector);
     }
 
     baseId += 30;
