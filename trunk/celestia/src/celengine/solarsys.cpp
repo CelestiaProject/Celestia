@@ -857,8 +857,15 @@ static Body* CreateBody(const string& name,
                 // (0.0f, 0.0f, 0.0f)
             }
 
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(geometry, path, geometryCenter));
+            bool isNormalized = true;
+            planetData->getBoolean("NormalizeMesh", isNormalized);
+
+            float geometryScale = 1.0f;
+            planetData->getNumber("MeshScale", geometryScale);
+
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(geometry, path, geometryCenter, 1.0f, isNormalized));
             body->setGeometry(geometryHandle);
+            body->setGeometryScale(geometryScale);
         }
     }
 

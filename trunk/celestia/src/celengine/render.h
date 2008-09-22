@@ -252,8 +252,9 @@ class Renderer
         const MarkerRepresentation* markerRep;
         Color color;
         Point3f position;
-        LabelAlignment halign;
-        LabelVerticalAlignment valign;
+        LabelAlignment halign : 3;
+        LabelVerticalAlignment valign : 3;
+        float size;
 
         bool operator<(const Annotation&) const;
     };
@@ -263,27 +264,22 @@ class Renderer
                                  Color color,
                                  const Point3f& position,
                                  LabelAlignment halign = AlignLeft,
-                                 LabelVerticalAlignment valign = VerticalAlignBottom,                                       
-                                 float depth = -1);
+                                 LabelVerticalAlignment valign = VerticalAlignBottom,
+                                 float size = 0.0f);
     void addBackgroundAnnotation(const MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
                                  const Point3f& position,
                                  LabelAlignment halign = AlignLeft,
-                                 LabelVerticalAlignment valign = VerticalAlignBottom,                                       
-                                 float depth = -1);
-    void addBackgroundAnnotation(const std::string& labelText,
-                                 Color color,
-                                 const Point3f& position,
-                                 LabelAlignment halign = AlignLeft,
                                  LabelVerticalAlignment valign = VerticalAlignBottom,
-                                 float depth = -1);
+                                 float size = 0.0f);
     void addSortedAnnotation(const MarkerRepresentation* markerRep,
                              const std::string& labelText,
                              Color color,
                              const Point3f& position,
                              LabelAlignment halign = AlignLeft,
-                             LabelVerticalAlignment valign = VerticalAlignBottom);
+                             LabelVerticalAlignment valign = VerticalAlignBottom,
+                             float size = 0.0f);
 
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
@@ -346,6 +342,7 @@ class Renderer
             atmosphere(NULL),
             rings(NULL),
             radius(1.0f),
+            geometryScale(1.0f),
             semiAxes(1.0f, 1.0f, 1.0f),
             geometry(InvalidResource),
             orientation(1.0f)
@@ -355,6 +352,7 @@ class Renderer
         const Atmosphere* atmosphere;
         RingSystem* rings;
         float radius;
+        float geometryScale;
         Vec3f semiAxes;
         ResourceHandle geometry;
         Quatf orientation;
@@ -593,7 +591,7 @@ class Renderer
                        const Point3f& position,
                        LabelAlignment halign = AlignLeft,
                        LabelVerticalAlignment = VerticalAlignBottom,
-                       float depth = -1);
+                       float size = 0.0f);
     void renderAnnotations(const std::vector<Annotation>&, FontStyle fs);
     void renderBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
@@ -768,11 +766,16 @@ class Renderer
     bool objectAnnotationSetOpen;
     
     // Location markers
+ public:
     MarkerRepresentation mountainRep;
     MarkerRepresentation craterRep;
     MarkerRepresentation observatoryRep;
     MarkerRepresentation cityRep;
     MarkerRepresentation genericLocationRep;
+    MarkerRepresentation galaxyRep;
+    MarkerRepresentation nebulaRep;
+    MarkerRepresentation openClusterRep;
+    MarkerRepresentation globularRep;
 
     std::list<RendererWatcher*> watchers;
 

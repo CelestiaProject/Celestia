@@ -41,7 +41,8 @@ static size_t VertexAttributeFormatSizes[Mesh::FormatMax] =
 
 
 Model::Model() :
-    opaque(true)
+    opaque(true),
+    normalized(false)
 {
     for (int i = 0; i < Mesh::TextureSemanticMax; i++)
         textureUsage[i] = false;
@@ -190,13 +191,24 @@ Model::render(RenderContext& rc, double /* t */)
 }
 
 
+/*! Translate and scale a model. The transformation applied to
+ *  each vertex in the model is:
+ *     v' = (v + translation) * scale
+ */
+void
+Model::transform(const Vec3f& translation, float scale)
+{
+    for (vector<Mesh*>::const_iterator iter = meshes.begin(); iter != meshes.end(); iter++)
+        (*iter)->transform(translation, scale);
+}
+
+
 void
 Model::normalize(const Vec3f& centerOffset)
 {
     AxisAlignedBox bbox;
 
-    vector<Mesh*>::const_iterator iter;
-    for (iter = meshes.begin(); iter != meshes.end(); iter++)
+    for (vector<Mesh*>::const_iterator iter = meshes.begin(); iter != meshes.end(); iter++)
         bbox.include((*iter)->getBoundingBox());
 
     Point3f center = bbox.getCenter() + centerOffset;
@@ -207,13 +219,9 @@ Model::normalize(const Vec3f& centerOffset)
     if (extents.z > maxExtent)
         maxExtent = extents.z;
 
-    for (iter = meshes.begin(); iter != meshes.end(); iter++)
-        (*iter)->transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
+    transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
 
-#if 0
-    for (i = vertexLists.begin(); i != vertexLists.end(); i++)
-        (*i)->transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
-#endif
+    normalized = true;
 }
 
 
