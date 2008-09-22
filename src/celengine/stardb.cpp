@@ -884,7 +884,7 @@ bool StarDatabase::createStar(Star* star,
 
         if (hasModel)
         {
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f)));
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f), 1.0f, true));
             details->setGeometry(geometryHandle);
         }
 
@@ -981,7 +981,7 @@ bool StarDatabase::createStar(Star* star,
             Point3f pos = star->getPosition();
             // Convert from Celestia's coordinate system
             Vec3f v = Vec3f(pos.x, -pos.z, pos.y);
-            v = v * Mat3f::xrotation(-astro::J2000Obliquity);
+            v = v * Mat3f::xrotation((float) -astro::J2000Obliquity);
             distance = v.length();
             if (distance > 0.0)
             {

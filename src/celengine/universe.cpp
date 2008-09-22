@@ -170,7 +170,8 @@ MarkerList* Universe::getMarkers() const
 void Universe::markObject(const Selection& sel,
                           const MarkerRepresentation& rep,
                           int priority,
-                          bool occludable)
+                          bool occludable,
+                          MarkerSizing sizing)
 {
     for (MarkerList::iterator iter = markers->begin();
          iter != markers->end(); iter++)
@@ -196,6 +197,7 @@ void Universe::markObject(const Selection& sel,
     marker.setRepresentation(rep);
     marker.setPriority(priority);
     marker.setOccludable(occludable);
+    marker.setSizing(sizing);
     markers->insert(markers->end(), marker);
 }
 
@@ -392,16 +394,20 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
                     pickInfo->pickRay.direction);
             r = r * m;
 
+            Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
+            float scaleFactor = body->getGeometryScale();
+            if (geometry != NULL && geometry->isNormalized())
+                scaleFactor = radius;
+
             // The mesh vertices are normalized, then multiplied by a scale
             // factor.  Thus, the ray needs to be multiplied by the inverse of
             // the mesh scale factor.
-            double s = 1.0 / radius;
-            r.origin.x *= s;
-            r.origin.y *= s;
-            r.origin.z *= s;
-            r.direction *= s;
+            double is = 1.0 / scaleFactor;
+            r.origin.x *= is;
+            r.origin.y *= is;
+            r.origin.z *= is;
+            r.direction *= is;
 
-            Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
             if (geometry != NULL)
             {
                 if (!geometry->pick(r, distance))

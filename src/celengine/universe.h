@@ -101,7 +101,8 @@ class Universe
     void markObject(const Selection&,
                     const MarkerRepresentation& rep,
                     int priority,
-                    bool occludable = true);
+                    bool occludable = true,
+                    MarkerSizing sizing = ConstantSize);
     void unmarkObject(const Selection&, int priority);
     void unmarkAll();
     bool isMarked(const Selection&, int priority) const;

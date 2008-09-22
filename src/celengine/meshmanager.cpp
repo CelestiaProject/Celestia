@@ -11,7 +11,7 @@
 #define PARTICLE_SYSTEM 0
 
 // Experimental support for optionally unnormalized meshes
-#define UNNORMALIZED_MESHES 0
+#define UNNORMALIZED_MESHES 1
 
 #include <iostream>
 #include <fstream>
