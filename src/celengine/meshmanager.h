@@ -23,22 +23,30 @@ class GeometryInfo : public ResourceInfo<Geometry>
     std::string path;
     bool resolvedToPath;
     Vec3f center;
+    float scale;
+    bool isNormalized;
 
     GeometryInfo(const std::string _source,
                  const std::string _path = "") :
         source(_source),
         path(_path),
         resolvedToPath(false),
-        center(0.0f, 0.0f, 0.0f)
+        center(0.0f, 0.0f, 0.0f),
+        scale(1.0f),
+        isNormalized(true)
         {};
 
     GeometryInfo(const std::string _source,
                  const std::string _path,
-                 const Vec3f& _center) :
+                 const Vec3f& _center,
+                 float _scale,
+                 bool _isNormalized) :
         source(_source),
         path(_path),
         resolvedToPath(false),
-        center(_center)
+        center(_center),
+        scale(_scale),
+        isNormalized(_isNormalized)
         {};
 
     virtual std::string resolve(const std::string&);
@@ -51,6 +59,10 @@ inline bool operator<(const GeometryInfo& g0, const GeometryInfo& g1)
         return g0.source < g1.source;
     else if (g0.path != g1.path)
         return g0.path < g1.path;
+    else if (g0.isNormalized != g1.isNormalized)
+        return (int) g0.isNormalized < (int) g1.isNormalized;
+    else if (g0.scale != g1.scale)
+        return g0.scale < g1.scale;
     else if (g0.center.x != g1.center.x)
         return g0.center.x < g1.center.x;
     else if (g0.center.y != g1.center.y)

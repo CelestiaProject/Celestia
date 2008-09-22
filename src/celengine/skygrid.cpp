@@ -63,7 +63,6 @@ static const int HOUR_MIN_SEC_SPACING[] =
     2*SEC,
     1*SEC,
     500*MSEC,
-    300*MSEC,
     200*MSEC,
     100*MSEC
 };
@@ -92,7 +91,6 @@ static const int DEG_MIN_SEC_SPACING[]  =
     2*SEC,
     1*SEC,
     500*MSEC,
-    300*MSEC,
     200*MSEC,
     100*MSEC
 };
@@ -614,7 +612,7 @@ SkyGrid::render(Renderer& renderer,
                 glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
                 glVertex3f(p0.x, p0.y, p0.z);
                 glVertex3f(p1.x, p1.y, p1.z);
-                glColor(EquatorialGridColor);
+                glColor(m_lineColor);
                 glEnd();
 #endif
                 
@@ -624,12 +622,12 @@ SkyGrid::render(Renderer& renderer,
                 
                 if ((p0 * m).z < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p0, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
                 
                 if ((p1 * m).z < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p1, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
                 }                
             }
         }
@@ -685,18 +683,28 @@ SkyGrid::render(Renderer& renderer,
                 Point3f p0((float) isect0.x, (float) isect0.z, (float) -isect0.y);
                 Point3f p1((float) isect1.x, (float) isect1.z, (float) -isect1.y);
 
+#ifdef DEBUG_LABEL_PLACEMENT
+                glPointSize(5.0);
+                glBegin(GL_POINTS);
+                glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+                glVertex3f(p0.x, p0.y, p0.z);
+                glVertex3f(p1.x, p1.y, p1.z);
+                glColor(m_lineColor);
+                glEnd();
+#endif
+
                 Mat3f m = conjugate(observer.getOrientationf()).toMatrix3();
                 p0 = p0 * orientationf.toMatrix3();
                 p1 = p1 * orientationf.toMatrix3();
                 
                 if ((p0 * m).z < 0.0 && axis0 * isect0 >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p0, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
                 
                 if ((p1 * m).z < 0.0 && axis0 * isect1 >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(labelText, m_labelColor, p1, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
                 }               
             }
         }        

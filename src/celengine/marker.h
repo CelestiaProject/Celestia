@@ -68,6 +68,20 @@ private:
 };
 
 
+/*! Options for marker sizing:
+ *    When the sizing is set to ConstantSize, the marker size is interpreted
+ *    as a fixed size in pixels.
+ *    When the sizing is set to DistancedBasedSize, the marker size is
+ *    in kilometers, and the size of the marker on screen is based on
+ *    the size divided by the marker's distance from the observer.
+ */
+enum MarkerSizing
+{
+    ConstantSize,
+    DistanceBasedSize,
+};
+
+
 class Marker
 {
  public:
@@ -81,18 +95,21 @@ class Marker
     void setPriority(int);
     bool occludable() const;
     void setOccludable(bool);
+    MarkerSizing sizing() const;
+    void setSizing(MarkerSizing);
 
     const MarkerRepresentation& representation() const { return m_representation; }
     MarkerRepresentation& representation() { return m_representation; }
     void setRepresentation(const MarkerRepresentation& rep);
 
-    void render() const;
+    void render(float size) const;
 
  private:
     Selection m_object;
     int m_priority;
     MarkerRepresentation m_representation;
-    bool m_occludable;
+    bool m_occludable : 1;
+    MarkerSizing m_sizing : 2;
 };
 
 typedef std::vector<Marker> MarkerList;

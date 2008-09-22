@@ -29,6 +29,11 @@ public:
     virtual bool pick(const Ray3d& r, double& distance) const = 0;
     
     virtual bool isOpaque() const = 0;
+
+    virtual bool isNormalized() const
+    {
+        return true;
+    }
     
     /*! Return true if the specified texture map type is used at
      *  all within this geometry object. This information is used
@@ -98,6 +103,8 @@ class Model : public Geometry
     //! Render the model in the current OpenGL context
     virtual void render(RenderContext&, double t = 0.0);
 
+    void transform(const Vec3f& translation, float scale);
+
     /*! Apply a uniform scale to the model so that it fits into
      *  a box with a center at centerOffset and a maximum side
      *  length of one.
@@ -114,6 +121,11 @@ class Model : public Geometry
     virtual bool isOpaque() const
     {
         return opaque;
+    }
+
+    virtual bool isNormalized() const
+    {
+        return normalized;
     }
 
     /*! Set the opacity flag based on material usage within the model */
@@ -165,6 +177,7 @@ class Model : public Geometry
 
     bool textureUsage[Mesh::TextureSemanticMax];
     bool opaque;
+    bool normalized;
 };
 
 #endif // !_CELENGINE_MODEL_H_

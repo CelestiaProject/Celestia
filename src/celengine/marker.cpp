@@ -18,7 +18,8 @@ Marker::Marker(const Selection& s) :
     m_object(s),
     m_priority(0),
     m_representation(MarkerRepresentation::Diamond),
-    m_occludable(true)
+    m_occludable(true),
+    m_sizing(ConstantSize)
 {
 }
 
@@ -69,9 +70,21 @@ void Marker::setOccludable(bool occludable)
 }
 
 
-void Marker::render() const
+MarkerSizing Marker::sizing() const
 {
-    m_representation.render(m_representation.size());
+    return m_sizing;
+}
+
+
+void Marker::setSizing(MarkerSizing sizing)
+{
+    m_sizing = sizing;
+}
+
+
+void Marker::render(float size) const
+{
+    m_representation.render(m_sizing == DistanceBasedSize ? size : m_representation.size());
 }
 
 
@@ -131,6 +144,9 @@ void MarkerRepresentation::setLabel(const std::string& label)
 }
 
 
+/*! Render the marker symbol at the specified size. The size is
+ *  the diameter of the marker in pixels.
+ */
 void MarkerRepresentation::render(float size) const
 {
     float s = size / 2.0f;
