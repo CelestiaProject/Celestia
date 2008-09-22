@@ -24,12 +24,21 @@ CelestiaActions::CelestiaActions(QObject* parent,
     galacticGridAction(NULL),
     eclipticGridAction(NULL),
     horizonGridAction(NULL),
+    eclipticAction(NULL),
     markersAction(NULL),
     constellationsAction(NULL),
     boundariesAction(NULL),
     orbitsAction(NULL),
 
+    galaxiesAction(NULL),
+    globularsAction(NULL),
+    openClustersAction(NULL),
+    nebulaeAction(NULL),
+
     labelGalaxiesAction(NULL),
+    labelGlobularsAction(NULL),
+    labelOpenClustersAction(NULL),
+    labelNebulaeAction(NULL),
     labelStarsAction(NULL),
     labelPlanetsAction(NULL),
     labelDwarfPlanetsAction(NULL),
@@ -70,9 +79,14 @@ CelestiaActions::CelestiaActions(QObject* parent,
     eclipticGridAction->setData(Renderer::ShowEclipticGrid);
 
     horizonGridAction = new QAction(QString("Hz"), this);
-    horizonGridAction->setToolTip(tr("Horizon coordinate grid"));
+    horizonGridAction->setToolTip(tr("Horizontal coordinate grid"));
     horizonGridAction->setCheckable(true);
     horizonGridAction->setData(Renderer::ShowHorizonGrid);
+
+    eclipticAction = new QAction(QString("Ecl"), this);
+    eclipticAction->setToolTip(tr("Ecliptic line"));
+    eclipticAction->setCheckable(true);
+    eclipticAction->setData(Renderer::ShowEcliptic);
 
     markersAction = new QAction(QString("M"), this);
     markersAction->setToolTip(tr("Markers"));
@@ -98,6 +112,7 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(galacticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(eclipticGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(horizonGridAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(eclipticAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(markersAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(constellationsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(boundariesAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
@@ -141,14 +156,16 @@ CelestiaActions::CelestiaActions(QObject* parent,
     labelCometsAction      = createCheckableAction(tr("Comets"), labelsMenu, Renderer::CometLabels);
     labelSpacecraftAction  = createCheckableAction(tr("Spacecraft"), labelsMenu, Renderer::SpacecraftLabels);
     labelGalaxiesAction    = createCheckableAction(tr("Galaxies"), labelsMenu, Renderer::GalaxyLabels);
-    labelNebulaeAction     = createCheckableAction(tr("Nebulae"), labelsMenu, Renderer::NebulaLabels);
+    labelGlobularsAction   = createCheckableAction(tr("Globulars"), labelsMenu, Renderer::GlobularLabels);
     labelOpenClustersAction = createCheckableAction(tr("Open clusters"), labelsMenu, Renderer::OpenClusterLabels);
+    labelNebulaeAction     = createCheckableAction(tr("Nebulae"), labelsMenu, Renderer::NebulaLabels);
     labelLocationsAction   = createCheckableAction(tr("Locations"), labelsMenu, Renderer::LocationLabels);
     labelConstellationsAction = createCheckableAction(tr("Constellations"), labelsMenu, Renderer::ConstellationLabels);
 
     connect(labelGalaxiesAction, SIGNAL(triggered()),       this, SLOT(slotToggleLabel()));
-    connect(labelNebulaeAction, SIGNAL(triggered()),        this, SLOT(slotToggleLabel()));
+    connect(labelGlobularsAction, SIGNAL(triggered()),      this, SLOT(slotToggleLabel()));
     connect(labelOpenClustersAction, SIGNAL(triggered()),   this, SLOT(slotToggleLabel()));
+    connect(labelNebulaeAction, SIGNAL(triggered()),        this, SLOT(slotToggleLabel()));
     connect(labelStarsAction, SIGNAL(triggered()),          this, SLOT(slotToggleLabel()));
     connect(labelPlanetsAction, SIGNAL(triggered()),        this, SLOT(slotToggleLabel()));
     connect(labelDwarfPlanetsAction, SIGNAL(triggered()),   this, SLOT(slotToggleLabel()));
@@ -164,12 +181,14 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     galaxiesAction     = createCheckableAction(tr("Galaxies"),          Renderer::ShowGalaxies);
     //galaxiesAction->setShortcut(QString("U"));
+    globularsAction    = createCheckableAction(tr("Globulars"),         Renderer::ShowGlobulars);
+    openClustersAction = createCheckableAction(tr("Open Clusters"),     Renderer::ShowOpenClusters);
     nebulaeAction      = createCheckableAction(tr("Nebulae"),           Renderer::ShowNebulae);
     nebulaeAction->setShortcut(QString("^"));
-    openClustersAction = createCheckableAction(tr("Open Clusters"),     Renderer::ShowOpenClusters);
     connect(galaxiesAction,        SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
-    connect(nebulaeAction,         SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(globularsAction,       SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(openClustersAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
+    connect(nebulaeAction,         SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
     cloudsAction          = createCheckableAction(tr("Clouds"),            Renderer::ShowCloudMaps);
     //cloudsAction->setShortcut(QString("I"));
@@ -248,14 +267,16 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
     galacticGridAction->setChecked(renderFlags & Renderer::ShowGalacticGrid);
     eclipticGridAction->setChecked(renderFlags & Renderer::ShowEclipticGrid);
     horizonGridAction->setChecked(renderFlags & Renderer::ShowHorizonGrid);
+    eclipticAction->setChecked(renderFlags & Renderer::ShowEcliptic);
     markersAction->setChecked(renderFlags & Renderer::ShowMarkers);
     constellationsAction->setChecked(renderFlags & Renderer::ShowDiagrams);
     boundariesAction->setChecked(renderFlags & Renderer::ShowBoundaries);
     orbitsAction->setChecked(renderFlags & Renderer::ShowOrbits);
     
     labelGalaxiesAction->setChecked(labelMode & Renderer::GalaxyLabels);
-    labelNebulaeAction->setChecked(labelMode & Renderer::NebulaLabels);
+    labelGlobularsAction->setChecked(labelMode & Renderer::GlobularLabels);
     labelOpenClustersAction->setChecked(labelMode & Renderer::OpenClusterLabels);
+    labelNebulaeAction->setChecked(labelMode & Renderer::NebulaLabels);
     labelStarsAction->setChecked(labelMode & Renderer::StarLabels);
     labelPlanetsAction->setChecked(labelMode & Renderer::PlanetLabels);
     labelDwarfPlanetsAction->setChecked(labelMode & Renderer::DwarfPlanetLabels);
@@ -294,8 +315,9 @@ void CelestiaActions::syncWithRenderer(const Renderer* renderer)
 
     // Deep sky object visibility
     galaxiesAction->setChecked(renderFlags & Renderer::ShowGalaxies);
-    nebulaeAction->setChecked(renderFlags & Renderer::ShowNebulae);
+    globularsAction->setChecked(renderFlags & Renderer::ShowGlobulars);
     openClustersAction->setChecked(renderFlags & Renderer::ShowOpenClusters);
+    nebulaeAction->setChecked(renderFlags & Renderer::ShowNebulae);
 
     // Shadows
     ringShadowsAction->setChecked(renderFlags & Renderer::ShowRingShadows);

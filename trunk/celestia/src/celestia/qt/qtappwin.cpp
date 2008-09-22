@@ -312,6 +312,8 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
     guidesToolBar->addAction(actions->equatorialGridAction);
     guidesToolBar->addAction(actions->galacticGridAction);
     guidesToolBar->addAction(actions->eclipticGridAction);
+    guidesToolBar->addAction(actions->horizonGridAction);
+    guidesToolBar->addAction(actions->eclipticAction);
     guidesToolBar->addAction(actions->markersAction);
     guidesToolBar->addAction(actions->constellationsAction);
     guidesToolBar->addAction(actions->boundariesAction);
@@ -1145,6 +1147,8 @@ void CelestiaAppWindow::createMenus()
 
     QMenu* deepSkyMenu = displayMenu->addMenu(tr("Dee&p Sky Objects"));
     deepSkyMenu->addAction(actions->galaxiesAction);
+    deepSkyMenu->addAction(actions->globularsAction);
+    deepSkyMenu->addAction(actions->openClustersAction);
     deepSkyMenu->addAction(actions->nebulaeAction);
 
     QMenu* shadowMenu = displayMenu->addMenu(tr("&Shadows"));
