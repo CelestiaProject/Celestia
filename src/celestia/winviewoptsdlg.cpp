@@ -65,6 +65,15 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWCELESTIALGRID:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowCelestialSphere);
             break;
+        case IDC_SHOWHORIZONGRID:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowHorizonGrid);
+            break;
+        case IDC_SHOWGALACTICGRID:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowGalacticGrid);
+            break;
+        case IDC_SHOWECLIPTICGRID:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowEclipticGrid);
+            break;
         case IDC_SHOWCLOUDS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowCloudMaps);
             break;
@@ -79,6 +88,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             break;
         case IDC_SHOWGALAXIES:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowGalaxies);
+            break;
+        case IDC_SHOWGLOBULARS:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowGlobulars);
             break;
         case IDC_SHOWNEBULAE:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowNebulae);
@@ -143,12 +155,15 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_LABELGALAXIES:
             renderer->setLabelMode(labelMode ^ Renderer::GalaxyLabels);
             break;
-		case IDC_LABELNEBULAE:
-			renderer->setLabelMode(labelMode ^ Renderer::NebulaLabels);
-			break;
-		case IDC_LABELOPENCLUSTERS:
-			renderer->setLabelMode(labelMode ^ Renderer::OpenClusterLabels);
-			break;
+		    case IDC_LABELGLOBULARS:
+			      renderer->setLabelMode(labelMode ^ Renderer::GlobularLabels);
+			      break;
+		    case IDC_LABELNEBULAE:
+			      renderer->setLabelMode(labelMode ^ Renderer::NebulaLabels);
+			      break;
+		    case IDC_LABELOPENCLUSTERS:
+			      renderer->setLabelMode(labelMode ^ Renderer::OpenClusterLabels);
+			      break;
         case IDC_LABELPLANETS:
             renderer->setLabelMode(labelMode ^ Renderer::PlanetLabels);
             break;
@@ -285,6 +300,12 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowAtmospheres)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCELESTIALGRID, BM_SETCHECK,
         (renderFlags & Renderer::ShowCelestialSphere)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWHORIZONGRID, BM_SETCHECK,
+        (renderFlags & Renderer::ShowHorizonGrid)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWGALACTICGRID, BM_SETCHECK,
+        (renderFlags & Renderer::ShowGalacticGrid)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWECLIPTICGRID, BM_SETCHECK,
+        (renderFlags & Renderer::ShowEclipticGrid)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCLOUDS, BM_SETCHECK,
         (renderFlags & Renderer::ShowCloudMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCLOUDSHADOWS, BM_SETCHECK,
@@ -295,6 +316,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowEclipseShadows)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWGALAXIES, BM_SETCHECK,
         (renderFlags & Renderer::ShowGalaxies)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWGLOBULARS, BM_SETCHECK,
+        (renderFlags & Renderer::ShowGlobulars)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWNEBULAE, BM_SETCHECK,
         (renderFlags & Renderer::ShowNebulae)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWOPENCLUSTERS, BM_SETCHECK,
@@ -327,8 +350,9 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
     SendDlgItemMessage(hDlg, IDC_LABELCONSTELLATIONSLATIN, BM_SETCHECK,
                        ((labelMode & Renderer::I18nConstellationLabels) == 0) ? BST_CHECKED : BST_UNCHECKED, 0);
     dlgCheck(hDlg, IDC_LABELGALAXIES,   labelMode, Renderer::GalaxyLabels);
-	dlgCheck(hDlg, IDC_LABELNEBULAE,    labelMode, Renderer::NebulaLabels);
-	dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
+	  dlgCheck(hDlg, IDC_LABELGLOBULARS, labelMode, Renderer::GlobularLabels);
+	  dlgCheck(hDlg, IDC_LABELNEBULAE,    labelMode, Renderer::NebulaLabels);
+	  dlgCheck(hDlg, IDC_LABELOPENCLUSTERS, labelMode, Renderer::OpenClusterLabels);
     dlgCheck(hDlg, IDC_LABELSTARS,      labelMode, Renderer::StarLabels);
     dlgCheck(hDlg, IDC_LABELPLANETS,    labelMode, Renderer::PlanetLabels);
     dlgCheck(hDlg, IDC_LABELDWARFPLANETS,    labelMode, Renderer::DwarfPlanetLabels);
