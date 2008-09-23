@@ -27,6 +27,8 @@
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
+#include <celestia/celx.h>
+#include <celestia/celx_internal.h>
 #include "astro.h"
 #include "cmdparser.h"
 #include "glcontext.h"
@@ -771,55 +773,15 @@ int parseRenderFlags(string s)
         if (ttype == Tokenizer::TokenName)
         {
             string name = tokenizer.getNameValue();
-            if (compareIgnoringCase(name, "orbits") == 0)
-                flags |= Renderer::ShowOrbits;
-            else if (compareIgnoringCase(name, "cloudmaps") == 0)
-                flags |= Renderer::ShowCloudMaps;
-            else if (compareIgnoringCase(name, "constellations") == 0)
-                flags |= Renderer::ShowDiagrams;
-            else if (compareIgnoringCase(name, "galaxies") == 0)
-                flags |= Renderer::ShowGalaxies;
-            else if (compareIgnoringCase(name, "globulars") == 0)
-                flags |= Renderer::ShowGlobulars;				            
-			else if (compareIgnoringCase(name, "nebulae") == 0)    
-				flags |= Renderer::ShowNebulae;				            
-			else if (compareIgnoringCase(name, "planets") == 0)
-                flags |= Renderer::ShowPlanets;
-            else if (compareIgnoringCase(name, "stars") == 0)
-                flags |= Renderer::ShowStars;
-	    else if (compareIgnoringCase(name, "nightmaps") == 0)
-		flags |= Renderer::ShowNightMaps;
-            else if (compareIgnoringCase(name, "eclipseshadows") == 0)
-                flags |= Renderer::ShowEclipseShadows;
-            else if (compareIgnoringCase(name, "ringshadows") == 0)
-                flags |= Renderer::ShowRingShadows;
-            else if (compareIgnoringCase(name, "comettails") == 0)
-                flags |= Renderer::ShowCometTails;
-            else if (compareIgnoringCase(name, "boundaries") == 0)
-                flags |= Renderer::ShowBoundaries;
-            else if (compareIgnoringCase(name, "markers") == 0)
-                flags |= Renderer::ShowMarkers;
-            else if (compareIgnoringCase(name, "automag") == 0)
-                flags |= Renderer::ShowAutoMag;
-            else if (compareIgnoringCase(name, "atmospheres") == 0)
-                flags |= Renderer::ShowAtmospheres;
-            else if (compareIgnoringCase(name, "grid") == 0)
-                flags |= Renderer::ShowCelestialSphere;
-            else if (compareIgnoringCase(name, "partialtrajectories") == 0)
-                flags |= Renderer::ShowPartialTrajectories;
-            else if (compareIgnoringCase(name, "openclusters") == 0)
-                flags |= Renderer::ShowOpenClusters;
-            else if (compareIgnoringCase(name, "cloudshadows") == 0)
-                flags |= Renderer::ShowCloudShadows;
+
+            if (CelxLua::RenderFlagMap.count(name) == 0)
+                cerr << "Unknown render flag: " << name << "\n";
+            else
+                flags |= CelxLua::RenderFlagMap[name];
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
                 ttype = tokenizer.nextToken();
-        }
-        else
-        {
-            DPRINTF(0, "Command Parser: error parsing render flags\n");
-            return 0;
         }
     }
 
@@ -840,41 +802,15 @@ int parseLabelFlags(string s)
         if (ttype == Tokenizer::TokenName)
         {
             string name = tokenizer.getNameValue();
-            if (compareIgnoringCase(name, "planets") == 0)
-                flags |= Renderer::PlanetLabels;
-            else if (compareIgnoringCase(name, "moons") == 0)
-                flags |= Renderer::MoonLabels;
-            else if (compareIgnoringCase(name, "spacecraft") == 0)
-                flags |= Renderer::SpacecraftLabels;
-            else if (compareIgnoringCase(name, "asteroids") == 0)
-                flags |= Renderer::AsteroidLabels;
-		    else if (compareIgnoringCase(name, "comets") == 0)
-				flags |= Renderer::CometLabels;
-            else if (compareIgnoringCase(name, "constellations") == 0)
-                flags |= Renderer::ConstellationLabels;
-            else if (compareIgnoringCase(name, "stars") == 0)
-                flags |= Renderer::StarLabels;
-	    	else if (compareIgnoringCase(name, "galaxies") == 0)
-				flags |= Renderer::GalaxyLabels;
-	    	else if (compareIgnoringCase(name, "globulars") == 0)
-				flags |= Renderer::GlobularLabels;			    
-			else if (compareIgnoringCase(name, "locations") == 0)
-				flags |= Renderer::LocationLabels;
-	    	else if (compareIgnoringCase(name, "nebulae") == 0)
-				flags |= Renderer::NebulaLabels;
-	    	else if (compareIgnoringCase(name, "openclusters") == 0)
-				flags |= Renderer::OpenClusterLabels;
-	    	else if (compareIgnoringCase(name, "i18nconstellations") == 0)
-				flags |= Renderer::I18nConstellationLabels;
+
+            if (CelxLua::LabelFlagMap.count(name) == 0)
+                cerr << "Unknown label flag: " << name << "\n";
+            else
+                flags |= CelxLua::LabelFlagMap[name];
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
                 ttype = tokenizer.nextToken();
-        }
-        else
-        {
-            DPRINTF(0, "Command Parser: error parsing label flags\n");
-            return 0;
         }
     }
 
@@ -895,25 +831,16 @@ int parseOrbitFlags(string s)
         if (ttype == Tokenizer::TokenName)
         {
             string name = tokenizer.getNameValue();
-            if (compareIgnoringCase(name, "planet") == 0)
-                flags |= Body::Planet;
-            else if (compareIgnoringCase(name, "moon") == 0)
-                flags |= Body::Moon;
-            else if (compareIgnoringCase(name, "asteroid") == 0)
-                flags |= Body::Asteroid;
-            else if (compareIgnoringCase(name, "comet") == 0)
-                flags |= Body::Comet;
-            else if (compareIgnoringCase(name, "spacecraft") == 0)
-                flags |= Body::Spacecraft;
+            name[0] = toupper(name[0]);
+
+            if (CelxLua::BodyTypeMap.count(name) == 0)
+                cerr << "Unknown orbit flag: " << name << "\n";
+            else
+                flags |= CelxLua::BodyTypeMap[name];
 
             ttype = tokenizer.nextToken();
             if (ttype == Tokenizer::TokenBar)
                 ttype = tokenizer.nextToken();
-        }
-        else
-        {
-            DPRINTF(0, "Command Parser: error parsing orbit flags\n");
-            return 0;
         }
     }
 
