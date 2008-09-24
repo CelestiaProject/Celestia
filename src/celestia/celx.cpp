@@ -132,7 +132,9 @@ void CelxLua::initRenderFlagMap()
 void CelxLua::initLabelFlagMap()
 {
     LabelFlagMap["planets"] = Renderer::PlanetLabels;
+    LabelFlagMap["dwarfplanets"] = Renderer::DwarfPlanetLabels;
     LabelFlagMap["moons"] = Renderer::MoonLabels;
+    LabelFlagMap["minormoons"] = Renderer::MinorMoonLabels;
     LabelFlagMap["spacecraft"] = Renderer::SpacecraftLabels;
     LabelFlagMap["asteroids"] = Renderer::AsteroidLabels;
     LabelFlagMap["comets"] = Renderer::CometLabels;
@@ -149,7 +151,9 @@ void CelxLua::initLabelFlagMap()
 void CelxLua::initBodyTypeMap()
 {
     BodyTypeMap["Planet"] = Body::Planet;
+    BodyTypeMap["DwarfPlanet"] = Body::DwarfPlanet;
     BodyTypeMap["Moon"] = Body::Moon;
+    BodyTypeMap["MinorMoon"] = Body::MinorMoon;
     BodyTypeMap["Asteroid"] = Body::Asteroid;
     BodyTypeMap["Comet"] = Body::Comet;
     BodyTypeMap["Spacecraft"] = Body::Spacecraft;
