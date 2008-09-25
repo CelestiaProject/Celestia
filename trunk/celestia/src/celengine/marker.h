@@ -33,7 +33,8 @@ public:
         UpArrow    = 8,
         DownArrow  = 9,
         Circle    = 10,
-        Disk      = 11
+        Disk      = 11,
+        Crosshair = 12,
     };    
     
     MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
@@ -51,6 +52,7 @@ public:
     
     MarkerRepresentation& operator=(const MarkerRepresentation& rep);
     
+    Symbol symbol() const { return m_symbol; }
     Color color() const { return m_color; }
     void setColor(Color);
     float size() const { return m_size; }

@@ -475,6 +475,11 @@ class Renderer
                               const Observer&,
                               float faintestMagNight);
     void renderSkyGrids(const Observer& observer);
+    void renderSelectionPointer(const Observer& observer,
+                                double now,
+                                const Frustum& viewFrustum,
+                                const Selection& sel);
+
     void buildRenderLists(const Point3d& astrocentricObserverPos,
                           const Frustum& viewFrustum,
                           const Vec3d& viewPlaneNormal,
@@ -764,6 +769,8 @@ class Renderer
 
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;
+
+    double uiAnimationTime;
     
     // Location markers
  public:
@@ -820,6 +827,8 @@ class Renderer
     static Color EclipticGridColor;
     static Color HorizonGridColor;
     static Color EclipticColor;
+
+    static Color SelectionCursorColor;
 };
 
 

@@ -145,17 +145,7 @@ Selection Simulation::getSelection() const
 
 void Simulation::setSelection(const Selection& sel)
 {
-    if (sel != selection)
-    {
-        universe->unmarkObject(selection, 0);
-        selection = sel;
-        
-        MarkerRepresentation markerRep(MarkerRepresentation::Diamond);
-        markerRep.setSize(10.0f);
-        markerRep.setColor(Color(1.0f, 0.0f, 0.0f, 0.9f));
-
-        universe->markObject(selection, markerRep, 0);
-    }
+    selection = sel;
 }
 
 
