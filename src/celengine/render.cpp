@@ -52,6 +52,7 @@ std::ofstream hdrlog;
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
+#include <celutil/timer.h>
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"
@@ -190,6 +191,9 @@ static const unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
 static const uint32 OrbitCacheRetireAge = 16;
 
+// Timer used for animating UI elements such as the selection cursor
+static Timer* UiAnimationTimer = NULL;
+
 Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
 Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
 Color Renderer::DwarfPlanetLabelColor   (0.407f, 0.333f, 0.964f);
@@ -230,6 +234,8 @@ Color Renderer::GalacticGridColor       (0.38f,  0.38f,  0.28f);
 Color Renderer::EclipticGridColor       (0.38f,  0.28f,  0.38f);
 Color Renderer::HorizonGridColor        (0.38f,  0.38f,  0.38f);
 Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
+
+Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
 
 
 // Some useful unit conversions
@@ -824,6 +830,8 @@ bool Renderer::init(GLContext* _context,
 #endif
         }
 
+        UiAnimationTimer = CreateTimer();
+
 #ifdef USE_HDR
         genSceneTexture();
         genBlurTextures();
@@ -1400,6 +1408,7 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
             a.markerRep = markerRep;
             a.color = color;
             a.position = Point3f((float) winX, (float) winY, -depth);
+            a.size = 0.0f;
 
             objectAnnotations.push_back(a);
         }
@@ -2917,16 +2926,14 @@ void Renderer::draw(const Observer& observer,
     double now = observer.getTime();
 
     frameCount++;
+    uiAnimationTime = UiAnimationTimer->getTime();
     settingsChanged = false;
 
     // Compute the size of a pixel
     setFieldOfView(radToDeg(observer.getFOV()));
     pixelSize = calcPixelSize(fov, (float) windowHeight);
+
     // Set up the projection we'll use for rendering stars.
-#if 0
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-#endif
     gluPerspective(fov,
                    (float) windowWidth / (float) windowHeight,
                    NEAR_DIST, FAR_DIST);
@@ -3440,6 +3447,7 @@ void Renderer::draw(const Observer& observer,
         renderBackgroundAnnotations(FontLarge);
     }
 
+    // Pop observer translation
     glPopMatrix();
 
     if ((renderFlags & ShowMarkers) != 0)
@@ -3453,6 +3461,45 @@ void Renderer::draw(const Observer& observer,
         // solar system objects are rendered.
         renderBackgroundAnnotations(FontNormal);
     }    
+
+    // Draw the selection cursor
+    bool selectionVisible = false;
+    if (!sel.empty() && (renderFlags & ShowMarkers))
+    {
+        UniversalCoord uc = sel.getPosition(now);
+        Vec3d offset = (uc - observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
+        static MarkerRepresentation cursorRep(MarkerRepresentation::Crosshair);
+        selectionVisible = xfrustum.testSphere(Point3d(0, 0, 0) + offset, sel.radius()) != Frustum::Outside;
+
+        if (selectionVisible)
+        {
+            double distance = offset.length();
+            float symbolSize = (float) (sel.radius() / distance) / pixelSize;
+
+            // Modify the marker position so that it is always in front of the marked object.
+            double boundingRadius;
+            if (sel.body() != NULL)
+                boundingRadius = sel.body()->getBoundingRadius();
+            else
+                boundingRadius = sel.radius();                
+            offset *= (1.0 - boundingRadius * 1.01 / distance);
+
+            // The selection cursor is only partially visible when the selected object is obscured. To implement
+            // this behavior we'll draw two markers at the same position: one that's always visible, and another one
+            // that's depth sorted. When the selection is occluded, only the foreground marker is visible. Otherwise,
+            // both markers are drawn and cursor appears much brighter as a result.
+            addSortedAnnotation(&cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
+                                Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                                AlignLeft, VerticalAlignTop, symbolSize);
+
+            // Brighten the 
+            Color occludedCursorColor(SelectionCursorColor.red(), SelectionCursorColor.green() + 0.3f, SelectionCursorColor.blue());
+            addAnnotation(foregroundAnnotations,
+                          &cursorRep, EMPTY_STRING, Color(occludedCursorColor, 0.4f),
+                          Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                          AlignLeft, VerticalAlignTop, symbolSize);
+        }
+    }
 
     glPolygonMode(GL_FRONT, (GLenum) renderMode);
     glPolygonMode(GL_BACK, (GLenum) renderMode);
@@ -4007,6 +4054,16 @@ void Renderer::draw(const Observer& observer,
     }
     
     renderForegroundAnnotations(FontNormal);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(fov,
+                   (float) windowWidth / (float) windowHeight,
+                   NEAR_DIST, FAR_DIST);
+    glMatrixMode(GL_MODELVIEW);
+
+    if (!selectionVisible && (renderFlags & ShowMarkers))
+        renderSelectionPointer(observer, now, xfrustum, sel);
 
     // Pop camera orientation matrix
     glPopMatrix();
@@ -10127,6 +10184,88 @@ void Renderer::renderSkyGrids(const Observer& observer)
 }
 
 
+/*! Draw an arrow at the view border pointing to an offscreen selection. This method
+ *  should only be called when the selection lies outside the view frustum.
+ */
+void Renderer::renderSelectionPointer(const Observer& observer,
+                                      double now,
+                                      const Frustum& viewFrustum,
+                                      const Selection& sel)
+{
+    const float cursorDistance = 20.0f;
+    if (sel.empty())
+        return;
+
+    Mat3f m = observer.getOrientationf().toMatrix3();
+    Vec3f u = Vec3f(1, 0, 0) * m;
+    Vec3f v = Vec3f(0, 1, 0) * m;
+
+    // Get the position of the cursor relative to the eye
+    Vec3d position = (sel.getPosition(now) - observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
+    double distance = position.length();
+    bool isVisible = viewFrustum.testSphere(Point3d(0, 0, 0) + position, sel.radius()) != Frustum::Outside;
+    position *= cursorDistance / distance;
+
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+#endif
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    if (!isVisible)
+    {
+        double viewAspectRatio = (double) windowWidth / (double) windowHeight;
+        double vfov = observer.getFOV();
+        float h = (float) tan(vfov / 2);
+        float w = (float) (h * viewAspectRatio);
+        float diag = std::sqrt(h * h + w * w);
+
+        Vec3f posf((float) position.x, (float) position.y, (float) position.z);
+        posf *= (1.0f / cursorDistance);
+        float x = u * posf;
+        float y = v * posf;
+        float angle = std::atan2(y, x);
+        float c = std::cos(angle);
+        float s = std::sin(angle);
+
+        float t = 1.0f;
+        float x0 = c * diag;
+        float y0 = s * diag;
+        if (std::abs(x0) < w)
+            t = h / std::abs(y0);
+        else
+            t = w / std::abs(x0);
+        x0 *= t;
+        y0 *= t;
+        glColor(SelectionCursorColor, 0.6f);
+        Vec3f center = Vec3f(0, 0, -1) * m;
+
+        glPushMatrix();
+        glTranslatef((float) center.x, (float) center.y, (float) center.z);
+
+        Vec3f p0(0.0f, 0.0f, 0.0f);
+        Vec3f p1(-20.0f * pixelSize,  6.0f * pixelSize, 0.0f);
+        Vec3f p2(-20.0f * pixelSize, -6.0f * pixelSize, 0.0f);
+
+        glBegin(GL_TRIANGLES);
+        glVertex((p0.x * c - p0.y * s + x0) * u + (p0.x * s + p0.y * c + y0) * v); 
+        glVertex((p1.x * c - p1.y * s + x0) * u + (p1.x * s + p1.y * c + y0) * v); 
+        glVertex((p2.x * c - p2.y * s + x0) * u + (p2.x * s + p2.y * c + y0) * v); 
+        glEnd();
+
+        glPopMatrix();
+    }
+
+#ifdef USE_HDR
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+#endif
+
+    glEnable(GL_TEXTURE_2D);
+}
+
+
 void Renderer::labelConstellations(const AsterismList& asterisms,
                                    const Observer& observer)
 {
@@ -10221,6 +10360,45 @@ void Renderer::renderParticles(const vector<Particle>& particles,
 }
 
 
+static void renderCrosshair(float pixelSize, double tsec)
+{
+    const float cursorMinRadius = 6.0f;
+    const float cursorRadiusVariability = 4.0f;
+    const float minCursorWidth = 7.0f;
+    const float cursorPulsePeriod = 1.5f;
+
+    float selectionSizeInPixels = pixelSize;
+    float cursorRadius = selectionSizeInPixels + cursorMinRadius;
+    cursorRadius += cursorRadiusVariability * (float) (0.5 + 0.5 * std::sin(tsec * 2 * PI / cursorPulsePeriod));
+
+    // Enlarge the size of the cross hair sligtly when the selection
+    // has a large apparent size
+    float cursorGrow = max(1.0f, min(2.5f, (selectionSizeInPixels - 10.0f) / 100.0f));
+
+    float h = 2.0f * cursorGrow;
+    float cursorWidth = minCursorWidth * cursorGrow;
+    float r0 = cursorRadius;
+    float r1 = cursorRadius + cursorWidth;
+
+    const unsigned int markCount = 4;
+    Vec3f p0(r0, 0.0f, 0.0f);
+    Vec3f p1(r1, -h, 0.0f);
+    Vec3f p2(r1,  h, 0.0f);
+
+    glBegin(GL_TRIANGLES);
+    for (int i = 0; i < markCount; i++)
+    {
+        float theta = (float) i / (float) markCount * (float) (2 * PI);
+        float c = std::cos(theta);
+        float s = std::sin(theta);
+        glVertex3f(p0.x * c - p0.y * s, p0.x * s + p0.y * c, 0.0f); 
+        glVertex3f(p1.x * c - p1.y * s, p1.x * s + p1.y * c, 0.0f); 
+        glVertex3f(p2.x * c - p2.y * s, p2.x * s + p2.y * c, 0.0f); 
+    }
+    glEnd();
+}
+
+
 void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyle fs)
 {
     if (font[fs] == NULL)
@@ -10266,7 +10444,10 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
                          (GLfloat) (int) annotations[i].position.y, 0.0f);
 
             glDisable(GL_TEXTURE_2D);
-            markerRep.render(size);
+            if (markerRep.symbol() == MarkerRepresentation::Crosshair)
+                renderCrosshair(size, uiAnimationTime);
+            else
+                markerRep.render(size);
             glEnable(GL_TEXTURE_2D);
             
             if (!markerRep.label().empty())
@@ -10415,7 +10596,10 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
             glColor(iter->color);
                         
             glDisable(GL_TEXTURE_2D);
-            markerRep.render(size);
+            if (markerRep.symbol() == MarkerRepresentation::Crosshair)
+                renderCrosshair(size, uiAnimationTime);
+            else
+                markerRep.render(size);
             glEnable(GL_TEXTURE_2D);            
             
             if (!markerRep.label().empty())
@@ -10494,12 +10678,20 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         {
             glPushMatrix();
             const MarkerRepresentation& markerRep = *iter->markerRep;
+            float size = markerRep.size();
+            if (iter->size > 0.0f)
+            {
+                size = iter->size;
+            }
             
             glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
             glColor(iter->color);
                         
             glDisable(GL_TEXTURE_2D);
-            markerRep.render(markerRep.size());
+            if (markerRep.symbol() == MarkerRepresentation::Crosshair)
+                renderCrosshair(size, uiAnimationTime);
+            else
+                markerRep.render(size);
             glEnable(GL_TEXTURE_2D);            
             
             if (!markerRep.label().empty())

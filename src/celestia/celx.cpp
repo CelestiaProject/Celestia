@@ -216,9 +216,9 @@ void CelxLua::initLabelColorMap()
 {
     LabelColorMap["stars"]          = &Renderer::StarLabelColor;
     LabelColorMap["planets"]        = &Renderer::PlanetLabelColor;
-    LabelColorMap["dwarfplanets"]        = &Renderer::DwarfPlanetLabelColor;
+    LabelColorMap["dwarfplanets"]   = &Renderer::DwarfPlanetLabelColor;
     LabelColorMap["moons"]          = &Renderer::MoonLabelColor;
-    LabelColorMap["minormoons"]          = &Renderer::MinorMoonLabelColor;
+    LabelColorMap["minormoons"]     = &Renderer::MinorMoonLabelColor;
     LabelColorMap["asteroids"]      = &Renderer::AsteroidLabelColor;
     LabelColorMap["comets"]         = &Renderer::CometLabelColor;
     LabelColorMap["spacecraft"]     = &Renderer::SpacecraftLabelColor;
@@ -254,6 +254,7 @@ void CelxLua::initLineColorMap()
     LineColorMap["planetographicgrid"]   = &Renderer::PlanetographicGridColor;
     LineColorMap["planetequator"]    = &Renderer::PlanetEquatorColor;
     LineColorMap["ecliptic"]         = &Renderer::EclipticColor;
+    LineColorMap["selectioncursor"]  = &Renderer::SelectionCursorColor;
 }
 
 
