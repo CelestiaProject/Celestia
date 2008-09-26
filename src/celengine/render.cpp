@@ -8271,7 +8271,6 @@ void Renderer::renderCometTail(const Body& body,
 
     float dustTailLength = cometDustTailLength((float) pos0.distanceFromOrigin(), body.getRadius());
     float dustTailRadius = dustTailLength * 0.1f;
-    /*float comaRadius = dustTailRadius * 0.5f;     Unused*/
 
     Point3f origin(0, 0, 0);
     origin -= sunDir * (body.getRadius() * 100);
@@ -8357,8 +8356,18 @@ void Renderer::renderCometTail(const Body& body,
             dustTailRadius;
         float dr = (dustTailRadius / (float) nTailPoints) /
             sectionLength;
+
         float w0 = (float) atan(dr);
-        float w1 = (float) sqrt(1.0f - square(w0));
+        float d = std::sqrt(1.0f + w0 * w0);
+        float w1 = 1.0f / d;
+        w0 = w0 / d;
+
+        // Special case the first vertex in the comet tail
+        if (i == 0)
+        {
+            w0 = 1;
+            w1 = 0.0f;
+        }
 
         for (int j = 0; j < nTailSlices; j++)
         {
