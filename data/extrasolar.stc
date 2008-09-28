@@ -220,6 +220,15 @@
 	AppMag 12.3
 }
 
+1017142340 "HAT-P-10:WASP-11:GSC 02340-01714"
+{
+	RA 47.368958
+	Dec 30.673611
+	Distance 408
+	SpectralType "K3V"
+	AppMag 11.89
+}
+
 # WASP survey
 
 "WASP-1"
