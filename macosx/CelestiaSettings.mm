@@ -91,6 +91,7 @@ static NSMutableDictionary* tagMap;
         TAGDEF(401,@"showPlanets")
         TAGDEF(402,@"showGalaxies")
         TAGDEF(430,@"showGlobulars")
+        TAGDEF(417,@"showNebulae")
         TAGDEF(403,@"showDiagrams")
         TAGDEF(413,@"showBoundaries")
         TAGDEF(404,@"showCloudMaps")
