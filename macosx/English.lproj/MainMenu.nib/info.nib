@@ -1,103 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>IBDocumentLocation</key>
-	<string>3 42 701 386 0 0 1280 832 </string>
-	<key>IBEditorPositions</key>
-	<dict>
-		<key>242</key>
-		<string>441 337 270 342 0 0 1152 746 </string>
-		<key>29</key>
-		<string>11 788 761 44 0 0 1280 832 </string>
-		<key>335</key>
-		<string>585 666 103 118 0 0 1280 832 </string>
-		<key>342</key>
-		<string>576 564 123 68 0 0 1280 832 </string>
-		<key>792</key>
-		<string>464 392 220 287 0 0 1280 832 </string>
-	</dict>
 	<key>IBFramework Version</key>
-	<string>446.1</string>
-	<key>IBGroupedObjects</key>
-	<dict>
-		<key>10</key>
-		<array>
-			<string>1673</string>
-			<string>1672</string>
-			<string>1662</string>
-			<string>1667</string>
-		</array>
-		<key>12</key>
-		<array>
-			<string>1685</string>
-			<string>1678</string>
-			<string>1684</string>
-			<string>1679</string>
-			<string>1677</string>
-			<string>1676</string>
-		</array>
-		<key>13</key>
-		<array>
-			<string>1730</string>
-			<string>1727</string>
-			<string>1726</string>
-			<string>1713</string>
-			<string>1729</string>
-			<string>1718</string>
-			<string>1723</string>
-			<string>1724</string>
-			<string>1715</string>
-			<string>1707</string>
-			<string>1712</string>
-			<string>1705</string>
-			<string>1719</string>
-			<string>1709</string>
-			<string>1731</string>
-			<string>1703</string>
-			<string>1722</string>
-			<string>1704</string>
-			<string>1725</string>
-			<string>1711</string>
-			<string>1717</string>
-			<string>1708</string>
-			<string>1702</string>
-			<string>1721</string>
-			<string>1714</string>
-			<string>1716</string>
-			<string>1710</string>
-			<string>1706</string>
-			<string>1720</string>
-			<string>1728</string>
-		</array>
-		<key>14</key>
-		<array>
-			<string>1734</string>
-			<string>1733</string>
-			<string>1732</string>
-		</array>
-		<key>9</key>
-		<array>
-			<string>1660</string>
-			<string>1661</string>
-			<string>1659</string>
-			<string>1651</string>
-		</array>
-	</dict>
-	<key>IBLastGroupID</key>
-	<string>15</string>
-	<key>IBLockedObjects</key>
-	<array>
-		<integer>352</integer>
-	</array>
+	<string>672</string>
+	<key>IBLastKnownRelativeProjectPath</key>
+	<string>../celestia.xcodeproj</string>
 	<key>IBOldestOS</key>
 	<integer>2</integer>
 	<key>IBOpenObjects</key>
 	<array>
 		<integer>29</integer>
-		<integer>1566</integer>
+		<integer>1565</integer>
+		<integer>2271</integer>
 	</array>
 	<key>IBSystem Version</key>
-	<string>8S165</string>
+	<string>9F33</string>
+	<key>targetFramework</key>
+	<string>IBCocoaFramework</string>
 </dict>
 </plist>
