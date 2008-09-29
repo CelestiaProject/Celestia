@@ -180,7 +180,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
                 }
             }
 
-            if (cloudTex != NULL && allowCloudShadows)
+            if (cloudTex != NULL && allowCloudShadows && atmosphere->cloudShadowDepth > 0.0f)
             {
                 shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
                 textures[nTextures++] = cloudTex;

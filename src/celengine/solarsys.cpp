@@ -932,6 +932,13 @@ static Body* CreateBody(const string& name,
                                                            TextureInfo::WrapTexture);
                 }
 
+                double cloudShadowDepth = 0.0;
+                if (atmosData->getNumber("CloudShadowDepth", cloudShadowDepth))
+                {
+                    cloudShadowDepth = max(0.0, min(1.0, cloudShadowDepth));  // clamp to [0, 1]
+                    atmosphere->cloudShadowDepth = (float) cloudShadowDepth;
+                }
+
                 body->setAtmosphere(*atmosphere);
                 if (disposition != ModifyObject)
                     delete atmosphere;
@@ -1034,6 +1041,20 @@ static Body* CreateReferencePoint(const string& name,
         if (body != existingBody)
             delete body;
         return NULL;
+    }
+
+    // Reference points can be marked visible; no geometry is shown, but the label and orbit
+    // will be.
+    bool visible = false;
+    if (refPointData->getBoolean("Visible", visible))
+    {
+        body->setVisible(visible);
+    }
+
+    bool clickable = false;
+    if (refPointData->getBoolean("Clickable", clickable))
+    {
+        body->setClickable(clickable);
     }
 
     return body;

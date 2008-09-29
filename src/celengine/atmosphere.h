@@ -34,7 +34,8 @@ class Atmosphere
         miePhaseAsymmetry(0.0f),
         rayleighCoeff(0.0f, 0.0f, 0.0f),
         rayleighScaleHeight(0.0f),
-        absorptionCoeff(0.0f, 0.0f, 0.0f)
+        absorptionCoeff(0.0f, 0.0f, 0.0f),
+        cloudShadowDepth(0.0f)
     {};
 
  public:
@@ -55,6 +56,8 @@ class Atmosphere
     Vec3f rayleighCoeff;
     float rayleighScaleHeight;
     Vec3f absorptionCoeff;
+
+    float cloudShadowDepth;
 };
 
 // Atmosphere density is modeled with a exp(-y/H) falloff, where
