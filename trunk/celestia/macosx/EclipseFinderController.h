@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "NSWindowController_Extensions.h"
 
 @interface EclipseFinderController : NSWindowController
 {
