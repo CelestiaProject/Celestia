@@ -16,7 +16,6 @@
     IBOutlet id favoritesDrawerController;
     CelestiaFavorite* _fav;
 }
--(IBAction)showWindow:(id)sender;
 -(IBAction)navigateTo:(id)sender;
 -(void)updateFavorite:(CelestiaFavorite*)fav;
 @end

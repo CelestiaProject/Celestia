@@ -218,6 +218,7 @@
 		E589B6DF078AC511005B8DD9 /* shadermanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6DB078AC511005B8DD9 /* shadermanager.cpp */; };
 		E599A78E097CAB390079C254 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E599A78C097CAB390079C254 /* Credits.rtf */; };
 		E59AD8160AAB361400E2841D /* hubble.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E59AD8150AAB361400E2841D /* hubble.cmod */; };
+		E59F0B920E93A62F001A985D /* NSWindowController_Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = E59F0B900E93A62F001A985D /* NSWindowController_Extensions.m */; };
 		E5A994750B1482FE009F40FA /* scriptrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994710B1482FE009F40FA /* scriptrotation.cpp */; };
 		E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994730B1482FE009F40FA /* scriptobject.cpp */; };
 		E5B48EBA0C22065E00C6FBD7 /* MacInputWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5B48EB80C22065E00C6FBD7 /* MacInputWatcher.mm */; };
@@ -586,12 +587,12 @@
 		E54343110783C3F200053094 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E54343140783C42500053094 /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserWindowController.h; sourceTree = "<group>"; };
 		E54343150783C42500053094 /* BrowserWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserWindowController.mm; sourceTree = "<group>"; };
-		E54742CF09631D3600E89E09 /* defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = defaults.plist; sourceTree = "<group>"; };
+		E54742CF09631D3600E89E09 /* defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaults.plist; sourceTree = "<group>"; };
 		E561FB5D0B46164000668CFE /* CelestiaDSO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaDSO.h; sourceTree = "<group>"; };
 		E561FB5E0B46164000668CFE /* CelestiaDSO.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaDSO.mm; sourceTree = "<group>"; };
 		E561FC2D0B47910800668CFE /* CelestiaLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaLocation.h; sourceTree = "<group>"; };
 		E561FC2E0B47910800668CFE /* CelestiaLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaLocation.mm; sourceTree = "<group>"; };
-		E564312D07769C9000E2C4A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E564312D07769C9000E2C4A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56431450776D52D00E2C4A3 /* celx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = celx.cpp; path = ../src/celestia/celx.cpp; sourceTree = SOURCE_ROOT; };
 		E56431460776D52D00E2C4A3 /* celx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celx.h; path = ../src/celestia/celx.h; sourceTree = SOURCE_ROOT; };
@@ -677,6 +678,8 @@
 		E589B6DC078AC511005B8DD9 /* shadermanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shadermanager.h; path = ../src/celengine/shadermanager.h; sourceTree = SOURCE_ROOT; };
 		E599A78D097CAB390079C254 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E59AD8150AAB361400E2841D /* hubble.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = hubble.cmod; sourceTree = "<group>"; };
+		E59F0B8F0E93A62F001A985D /* NSWindowController_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSWindowController_Extensions.h; sourceTree = "<group>"; };
+		E59F0B900E93A62F001A985D /* NSWindowController_Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSWindowController_Extensions.m; sourceTree = "<group>"; };
 		E59FE8FD0934DC66000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		E59FE8FE0934DC7C000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E59FE90E0934E27B000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1733,6 +1736,7 @@
 				F578B7A102B3E2DD0100020A /* NSArray_Extensions.m */,
 				F578B7A002B3E2DD0100020A /* NSOutlineView_Extensions.m */,
 				F55F041E02B152180100020A /* NSString_ObjCPlusPlus.mm */,
+				E59F0B900E93A62F001A985D /* NSWindowController_Extensions.m */,
 				F57F9FD302B94A0B01000006 /* ContextOutlineView.h */,
 				E56A5AEA0848F92200A21D7E /* FullScreenWindow.h */,
 				F578B7A202B3E2DD0100020A /* ImageAndTextCell.h */,
@@ -1741,6 +1745,7 @@
 				F578B7A302B3E2DD0100020A /* NSArray_Extensions.h */,
 				F578B79F02B3E2DD0100020A /* NSOutlineView_Extensions.h */,
 				F55F041D02B152180100020A /* NSString_ObjCPlusPlus.h */,
+				E59F0B8F0E93A62F001A985D /* NSWindowController_Extensions.h */,
 			);
 			name = "Cocoa Extensions";
 			sourceTree = "<group>";
@@ -1824,7 +1829,6 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = E532F41D0933316100D7D5B3 /* Build configuration list for PBXProject "celestia" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -2067,6 +2071,7 @@
 				88654A280DB29585007C8027 /* celx_vector.cpp in Sources */,
 				881336D80DEF5EE0001F3BC5 /* skygrid.cpp in Sources */,
 				FF7B2B0E0E89B0D90089BF43 /* globular.cpp in Sources */,
+				E59F0B920E93A62F001A985D /* NSWindowController_Extensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

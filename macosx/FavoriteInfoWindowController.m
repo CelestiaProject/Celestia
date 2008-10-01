@@ -1,15 +1,7 @@
 #import "FavoriteInfoWindowController.h"
 
 @implementation FavoriteInfoWindowController
--(void)awakeFromNib
-{
-    _fav = nil;
-}
-- (IBAction)showWindow:(id)sender
-{
-    NSLog(@"[FavoriteInfoWindowController showWindow:%@]",sender);
-    [super showWindow:sender];
-}
+
 -(void)updateFavorite:(CelestiaFavorite*)fav
 {
     _fav = fav;

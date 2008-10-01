@@ -3,9 +3,10 @@
 #import "CelestiaFavorite.h";
 #import "ContextOutlineView.h";
 #import "FavoriteInfoWindowController.h"
+#import "NSWindowController_Extensions.h"
 
 
-@interface FavoritesDrawerController : NSObject
+@interface FavoritesDrawerController : NSWindowController
 {
     NSArray *draggedNodes;
     IBOutlet ContextOutlineView *outlineView;
@@ -30,10 +31,6 @@ contextMenuForItem:(id)item;
 -(void)outlineView:(NSOutlineView*)olv deleteItem:(id)item;
 -(void)outlineView:(NSOutlineView*)olv editItem:(id)item;
 -(void)outlineViewSelectionDidChange:(NSNotification*)notification;
-/*
--(BOOL)outlineView:(NSOutlineView *)olv shouldExpandItem:(id)item;
--(void)outlineView:(NSOutlineView *)olv willDisplayCell:(NSCell *)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item;
-*/
 -(BOOL)outlineView:(NSOutlineView *)olv writeItems:(NSArray*)items toPasteboard:(NSPasteboard*)pboard;
 -(unsigned int)outlineView:(NSOutlineView*)olv validateDrop:(id <NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(int)childIndex;
 -(void)_performDropOperation:(id <NSDraggingInfo>)info onNode:(id)pnode atIndex:(int)childIndex;

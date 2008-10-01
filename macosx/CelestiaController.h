@@ -65,6 +65,7 @@
 -(void)finishInitialization;
 -(void)display;
 -(void)awakeFromNib;
+-(void)delegateKeyDown:(NSEvent *)theEvent;
 -(void)keyPress:(int)code hold:(int)time;
 -(void)setupResourceDirectory;
 +(CelestiaController*) shared;
