@@ -300,6 +300,8 @@ class Body
     bool isSecondaryIlluminator() const { return secondaryIlluminator; }
     void setSecondaryIlluminator(bool enable);
 
+    bool hasVisibleGeometry() const { return classification != Invisible && visible != 0; }
+
     VisibilityPolicy getOrbitVisibility() const { return orbitVisibility; }
     void setOrbitVisibility(VisibilityPolicy _orbitVisibility);
 
