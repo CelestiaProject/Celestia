@@ -474,6 +474,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\globular.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\glshader.cpp"
 					>
 				</File>
@@ -837,6 +841,10 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\glext.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celengine\globular.h"
 					>
 				</File>
 				<File
