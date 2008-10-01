@@ -169,9 +169,11 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 		Upper [ 0.26 0.47 0.84 ]
 		Sky [ 0.40 0.6 1.0 ]
 		Sunset [ 1.0 0.6 0.2 ]
+
 		CloudHeight 7
 		CloudSpeed 65
 		CloudMap "earth-clouds.*"
+		CloudShadowDepth 1.0
 
 		Mie 0.001
 		MieAsymmetry -0.25
@@ -1518,6 +1520,10 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 ReferencePoint "Pluto-Charon" "Sol"
 {
     CustomOrbit "pluto"
+
+    # Make the orbit and label visible
+    Visible true
+    Clickable true
 }
 
 # Updated from "Masses of Nix and Hydra" Tholen et al. 
