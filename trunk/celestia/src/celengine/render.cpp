@@ -7728,7 +7728,7 @@ bool Renderer::testEclipse(const Body& receiver,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
     if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        caster.isVisible() &&
+        caster.hasVisibleGeometry() &&
         caster.extant(now) &&
         caster.isEllipsoid())
     {
@@ -7892,7 +7892,7 @@ void Renderer::renderPlanet(Body& body,
 
         // Calculate eclipse circumstances
         if ((renderFlags & ShowEclipseShadows) != 0 &&
-            body.isVisible() &&
+            body.hasVisibleGeometry() &&
             body.getSystem() != NULL)
         {
             PlanetarySystem* system = body.getSystem();
@@ -8655,19 +8655,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
             bool isLabeled = (body->getOrbitClassification() & labelClassMask) != 0;
             bool visible = body->isVisible();
-            
-            // Special case for barycenters of planetary systems. Ordinarily, labels of invisible
-            // objects should not be shown, but we do want them to be shown for planetary system
-            // barycenters (e.g. Pluto-Charon)
-            if (!visible && isLabeled)
-            {
-                if (body->getClassification() == Body::Invisible &&
-                    (body->getOrbitClassification() & (Body::Planet | Body::DwarfPlanet | Body::Moon)))
-                {
-                    visible = true;
-                }
-            }
-                        
+
             if ((discSize > 1 || visibleAsPoint || isLabeled) && visible)
             {
                 RenderListEntry rle;
@@ -8809,9 +8797,11 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
 
         // Only show orbits for major bodies or selected objects. 
         Body::VisibilityPolicy orbitVis = body->getOrbitVisibility();
-        if (body == highlightObject.body() ||
-            orbitVis == Body::AlwaysVisible ||
-            (orbitVis == Body::UseClassVisibility && (body->getOrbitClassification() & orbitMask) != 0))
+
+        if (body->isVisible() &&
+            (body == highlightObject.body() ||
+             orbitVis == Body::AlwaysVisible ||
+             (orbitVis == Body::UseClassVisibility && (body->getOrbitClassification() & orbitMask) != 0)))
         {
             Point3d orbitOrigin(0.0, 0.0, 0.0);
             Selection centerObject = phase->orbitFrame()->getCenter();
