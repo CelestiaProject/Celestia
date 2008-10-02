@@ -3689,6 +3689,16 @@ void CelestiaCore::renderOverlay()
                     selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
                 }
 
+                // Skip displaying 'Milky Way' if there's a localized version of this name.
+                // 'Milky Way' is the only DSO name which is localized so far.
+                const char* locDSO = "Milky Way";
+                if (selectionNames.find(locDSO) != string::npos && string(locDSO) != _(locDSO))
+                {
+                    string::size_type startPos = selectionNames.find(locDSO);
+                    string::size_type endPos = selectionNames.find(_(locDSO));
+                    selectionNames = selectionNames.erase(startPos, endPos - startPos);
+                }
+
                 overlay->setFont(titleFont);
                 *overlay << selectionNames;
                 overlay->setFont(font);
