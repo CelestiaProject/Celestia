@@ -13,14 +13,14 @@
 @implementation MyVector
 -(void)encodeWithCoder:(NSCoder*)coder
 {
-    NSLog(@"[MyVector encodeWithCoder:%@]",coder);
+//    NSLog(@"[MyVector encodeWithCoder:%@]",coder);
     //[super encodeWithCoder:coder];
     [coder encodeObject:_array];
     //[coder encodeValueOfObjCType:@encode(Class) at:&_myClass];
 }
 -(id)initWithCoder:(NSCoder*)coder
 {
-    NSLog(@"[MyVector initWithCoder:%@]",coder);
+//    NSLog(@"[MyVector initWithCoder:%@]",coder);
     //self = [super initWithCoder:coder];
     self = [self init];
     _array = [[coder decodeObject] retain];
@@ -84,14 +84,14 @@
 @implementation MyTree
 -(void)encodeWithCoder:(NSCoder*)coder
 {
-    NSLog(@"[MyTree encodeWithCoder:%@]",coder);
+//    NSLog(@"[MyTree encodeWithCoder:%@]",coder);
     //[super encodeWithCoder:coder];
     [coder encodeObject:_nodeValue];
     [coder encodeObject:_children];
 }
 -(id)initWithCoder:(NSCoder*)coder
 {
-    NSLog(@"[MyTree initWithCoder:%@]",coder);
+//    NSLog(@"[MyTree initWithCoder:%@]",coder);
     //self = [super initWithCoder:coder];
     self = [self init];
     _parent = nil;
@@ -110,8 +110,8 @@
 }
 -(void)dealloc
 {
-    NSLog(@"[MyTree dealloc]");
-    NSLog(@"%@",self);
+//    NSLog(@"[MyTree dealloc]");
+//    NSLog(@"%@",self);
     if ([self nodeValue] != nil)
         [[self nodeValue] autorelease];
     if ([self children] != nil)

@@ -6,6 +6,7 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
+#import "NSWindowController_Extensions.h"
 
 @interface RenderPanelController : NSWindowController
 {

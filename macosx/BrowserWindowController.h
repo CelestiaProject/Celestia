@@ -6,6 +6,8 @@
 //  Copyright (c) 2002 Chris Laurel et al. All rights reserved.
 //
 
+#import "NSWindowController_Extensions.h"
+
 @interface BrowserWindowController : NSWindowController
 {
     IBOutlet NSTabView *tabView;

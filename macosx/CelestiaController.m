@@ -493,6 +493,12 @@ NSString* fatalErrorMessage;
     isDirty = NO;
 }
 
+// Catch key events even when gl window is not key
+-(void)delegateKeyDown:(NSEvent *)theEvent
+{
+	[glView keyDown: theEvent];
+}
+
 // Held Key Simulation Methods ----------------------------------------------------------
 
 -(void) keyPress:(int) code hold: (int) time
