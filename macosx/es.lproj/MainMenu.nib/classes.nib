@@ -48,7 +48,7 @@
             SUPERCLASS = NSWindowController; 
         }, 
         {
-            ACTIONS = {addNewFavorite = id; addNewFolder = id; }; 
+            ACTIONS = {addNewFavorite = id; addNewFolder = id; doubleClick = id; }; 
             CLASS = FavoritesDrawerController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
@@ -57,7 +57,7 @@
                 favoritesMenu = NSMenu; 
                 outlineView = ContextOutlineView; 
             }; 
-            SUPERCLASS = NSObject; 
+            SUPERCLASS = NSWindowController; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
