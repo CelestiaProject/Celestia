@@ -2007,6 +2007,13 @@ Location "Yu-Ti" "Sol/Saturn/Rhea"
 
 # 50 records, 8269 lines read.
 
+Location "Afekan" "Sol/Saturn/Titan"
+{
+	LongLat [ -200.3 25.8 0 ]
+	Size 115
+	Type "AA"
+}
+
 Location "Menrva" "Sol/Saturn/Titan"
 {
 	LongLat [ -87.2 20.1 0 ]
@@ -2510,142 +2517,485 @@ Location "Meri" "Sol/Saturn/Hyperion"
 # 5 records, 8269 lines read.
 Location "Almeric" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -276.6 53.4 0 ]
-    Size 43
-    Type "AA"
+	LongLat [ -276. 53.4 0 ]
+	Size 43
+	Type "AA"
 }
 
 Location "Baligant" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -224.9 16.4 0 ]
-    Size 66
-    Type "AA"
+	LongLat [ -224.9 16.4 0 ]
+	Size 66
+	Type "AA"
 }
 
 Location "Basan" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -194.7 33.3 0 ]
-    Size 76
-    Type "AA"
+	LongLat [ -194.7 33.3 0 ]
+	Size 76
+	Type "AA"
 }
 
 Location "Berenger" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -219.7 62.1 0 ]
-    Size 84
-    Type "AA"
+	LongLat [ -219.7 62.1 0 ]
+	Size 84
+	Type "AA"
 }
 
 Location "Besgun" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -309.8 76 0 ]
-    Size 56
-    Type "AA"
-}
-
-Location "CASSINI REGIO" "Sol/Saturn/Iapetus"
-{
-    LongLat [ -92.6 -28.1 0 ]
-    Size 1000
-    Type "RE"
+	LongLat [ -309.8 76. 0 ]
+	Size 56
+	Type "AA"
 }
 
 Location "Charlemagne" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -258.8 55 0 ]
-    Size 95
-    Type "AA"
+	LongLat [ -258.8 55. 0 ]
+	Size 95
+	Type "AA"
 }
 
 Location "Geboin" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -173.4 58.6 0 ]
-    Size 81
-    Type "AA"
+	LongLat [ -173.4 58.6 0 ]
+	Size 81
+	Type "AA"
 }
 
 Location "Godefroy" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -249.1 71.9 0 ]
-    Size 63
-    Type "AA"
+	LongLat [ -249.1 71.9 0 ]
+	Size 63
+	Type "AA"
 }
 
 Location "Grandoyne" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -214.5 17.7 0 ]
-    Size 65
-    Type "AA"
+	LongLat [ -214.5 17.7 0 ]
+	Size 65
+	Type "AA"
 }
 
 Location "Hamon" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -270 10.6 0 ]
-    Size 96
-    Type "AA"
+	LongLat [ -270. 10.6 0 ]
+	Size 96
+	Type "AA"
 }
 
 Location "Lorant" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -159.8 65.2 0 ]
-    Size 44
-    Type "AA"
+	LongLat [ -159.8 65.2 0 ]
+	Size 44
+	Type "AA"
 }
 
 Location "Marsilion" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -176.1 39.2 0 ]
-    Size 136
-    Type "AA"
+	LongLat [ -176.1 39.2 0 ]
+	Size 136
+	Type "AA"
 }
 
 Location "Milon" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -270.2 67.9 0 ]
-    Size 119
-    Type "AA"
+	LongLat [ -270.2 67.9 0 ]
+	Size 119
+	Type "AA"
 }
 
 Location "Ogier" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -275.1 42.5 0 ]
-    Size 100
-    Type "AA"
+	LongLat [ -275.1 42.5 0 ]
+	Size 100
+	Type "AA"
 }
 
 Location "Oliver" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -200.8 62.5 0 ]
-    Size 113
-    Type "AA"
+	LongLat [ -200.8 62.5 0 ]
+	Size 113
+	Type "AA"
 }
 
 Location "Othon" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -347.8 33.3 0 ]
-    Size 86
-    Type "AA"
+	LongLat [ -347.8 33.3 0 ]
+	Size 86
+	Type "AA"
 }
 
 Location "Roland" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -25.2 73.3 0 ]
-    Size 144
-    Type "AA"
-}
-
-Location "RONCEVAUX TERRA" "Sol/Saturn/Iapetus"
-{
-    LongLat [ -239.5 37 0 ]
-    Size 1284
-    Type "TA"
+	LongLat [ -25.2 73.3 0 ]
+	Size 144
+	Type "AA"
 }
 
 Location "Turpin" "Sol/Saturn/Iapetus"
 {
-    LongLat [ -1.4 47.7 0 ]
-    Size 87
-    Type "AA"
+	LongLat [ -1.4 47.7 0 ]
+	Size 87
+	Type "AA"
+}
+
+Location "Acelin" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -154.9 42.7 0 ]
+	Size 38
+	Type "AA"
+}
+
+Location "Adelroth" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -183.6 6.6 0 ]
+	Size 57
+	Type "AA"
+}
+
+Location "Anseïs" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -290.8 -40.7 0 ]
+	Size 48
+	Type "AA"
+}
+
+Location "Astor" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -321.2 14.9 0 ]
+	Size 122
+	Type "AA"
+}
+
+Location "Basbrun" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -111.8 -52. 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Basile" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -187.9 -0.7 0 ]
+	Size 6
+	Type "AA"
+}
+
+Location "Bevon" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -93. 70.7 0 ]
+	Size 48
+	Type "AA"
+}
+
+Location "Bramimond" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -178. 38. 0 ]
+	Size 200
+	Type "AA"
+}
+
+Location "Clarin" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -71.6 18.3 0 ]
+	Size 84
+	Type "AA"
+}
+
+Location "Climborin" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -116.9 30.4 0 ]
+	Size 49
+	Type "AA"
+}
+
+Location "Corsablis" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -114.2 0.9 0 ]
+	Size 73
+	Type "AA"
+}
+
+Location "Dapamort" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -84.9 36.6 0 ]
+	Size 49
+	Type "AA"
+}
+
+Location "Engelier" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -264.7 -40.5 0 ]
+	Size 504
+	Type "AA"
+}
+
+Location "Escremiz" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -173.5 1.6 0 ]
+	Size 0.06
+	Type "AA"
+}
+
+Location "Eudropin" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -220.7 0.9 0 ]
+	Size 42
+	Type "AA"
+}
+
+Location "Falsaron" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -82.6 33.8 0 ]
+	Size 424
+	Type "AA"
+}
+
+Location "Ganelon" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -19.8 -44.3 0 ]
+	Size 230
+	Type "AA"
+}
+
+Location "Garlon" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -240.5 -3.2 0 ]
+	Size 47
+	Type "AA"
+}
+
+Location "Gerin" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -233. -45.6 0 ]
+	Size 445
+	Type "AA"
+}
+
+Location "Ivon" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -315. 18. 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Johun" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -83.4 12.4 0 ]
+	Size 64
+	Type "AA"
+}
+
+Location "Jurfaleu" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -2.5 13. 0 ]
+	Size 107
+	Type "AA"
+}
+
+Location "Malprimis" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -118.2 -15.2 0 ]
+	Size 377
+	Type "AA"
+}
+
+Location "Malun" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -41.3 5.9 0 ]
+	Size 121
+	Type "AA"
+}
+
+Location "Margaris" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -135.8 27.7 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Matthay" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -187.4 -3.5 0 ]
+	Size 58
+	Type "AA"
+}
+
+Location "Naimon" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -329.3 9.3 0 ]
+	Size 244
+	Type "AA"
+}
+
+Location "Nevelon" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -197. -33.2 0 ]
+	Size 49
+	Type "AA"
+}
+
+Location "Pinabel" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -33. -39. 0 ]
+	Size 83
+	Type "AA"
+}
+
+Location "Priamon" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -187. 1.5 0 ]
+	Size 17
+	Type "AA"
+}
+
+Location "Rabel" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -166.2 -64.4 0 ]
+	Size 91
+	Type "AA"
+}
+
+Location "Rugis" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -99. -0.1 0 ]
+	Size 19
+	Type "AA"
+}
+
+Location "Samson" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -298.6 6.5 0 ]
+	Size 33
+	Type "AA"
+}
+
+Location "Thierry" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -8. -55. 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Tibbald" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -358. 57. 0 ]
+	Size 160
+	Type "AA"
+}
+
+Location "Timozel" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -212.3 -9.9 0 ]
+	Size 58
+	Type "AA"
+}
+
+Location "Torleu" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -188.4 -0.2 0 ]
+	Size 8
+	Type "AA"
+}
+
+Location "Turgis" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -28.4 16.9 0 ]
+	Size 580
+	Type "AA"
+}
+
+Location "Valdebron" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -104.4 29.6 0 ]
+	Size 49
+	Type "AA"
+}
+
+Location "Carcassone Montes" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -216.7 0. 0 ]
+	Size 740
+	Type "MO"
+}
+
+Location "Cordova Mons" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -206.2 0. 0 ]
+	Size 85
+	Type "MO"
+}
+
+Location "Gayne Mons" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -176. 0. 0 ]
+	Size 65
+	Type "MO"
+}
+
+Location "Haltile Mons" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -190.4 0. 0 ]
+	Size 45
+	Type "MO"
+}
+
+Location "Seville Mons" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -346.3 0. 0 ]
+	Size 69
+	Type "MO"
+}
+
+Location "Sorence Mons" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -193.7 0. 0 ]
+	Size 46
+	Type "MO"
+}
+
+Location "Toledo Montes" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -136. 0. 0 ]
+	Size 1100
+	Type "MO"
+}
+
+Location "Tortelosa Montes" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -64.7 0. 0 ]
+	Size 294
+	Type "MO"
+}
+
+Location "Valterne Mons" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -170.6 0. 0 ]
+	Size 50
+	Type "MO"
+}
+
+Location "CASSINI REGIO" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -92.6 -28.1 0 ]
+	Size 1000
+	Type "RE"
+}
+
+Location "RONCEVAUX TERRA" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -239.5 37. 0 ]
+	Size 1284
+	Type "TA"
+}
+
+Location "SARAGOSSA TERRA" "Sol/Saturn/Iapetus"
+{
+	LongLat [ -180. -45. 0 ]
+	Size 2300
+	Type "TA"
 }
 
 # Celestia format generated by phoebe-locs.pl Revision: 1.0 
