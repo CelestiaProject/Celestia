@@ -323,6 +323,15 @@
 	AppMag 12.57
 }
 
+"CoRoT-Exo-3"
+{
+	RA 292.054167
+	Dec 0.121944
+	Distance 2220
+	SpectralType "G0V"
+	AppMag 13.3
+}
+
 "CoRoT-Exo-4:GSC 04800-02187"
 {
 	RA 102.194583
@@ -390,7 +399,7 @@
 	AppMag 12.0
 }
 
-"Cha Hα 8:Cha Ha 8"
+"Cha H\u03b1 8:Cha Ha 8"
 {
 	RA 166.949167
 	Dec -77.668889
@@ -522,7 +531,7 @@ Barycenter "UPS And:50 And"
 	RA 32.600829       # from measured separation 
 	Dec -50.825444     # position angle
 	Distance 35.596
-	SpectralType "DC9" # "cool white dwarf, 5000±500K"
+	SpectralType "DC9" # "cool white dwarf, 5000�500K"
 	AbsMag 14.5        # typical for class
 }
 
