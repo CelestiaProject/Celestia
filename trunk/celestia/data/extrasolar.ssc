@@ -1,4 +1,4 @@
-# Catalog of 292 known extrasolar planets.
+# Catalog of 293 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -2327,7 +2327,7 @@ AltSurface "limit of knowledge" "TYC 3793-1994-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.15 jupiters.
+# From transit dimming, radius is estimated at 1.09 jupiters.
 
 {
 	Texture "exo-class4.*"
@@ -2336,18 +2336,18 @@ AltSurface "limit of knowledge" "TYC 3793-1994-1/b"
 	Color  [0 0.36 1]
 	Albedo 0.05
 
-	Mass       370     # M.sin(i) = 1.15 jupiters
-	Radius     80500
+	Mass       340     # M.sin(i) = 1.077 jupiters
+	Radius     76300
 
 	InfoURL "http://exoplanet.eu/star.php?st=XO-5"
 
 	EllipticalOrbit {
 		Period          0.0115
-		SemiMajorAxis   0.0508
+		SemiMajorAxis   0.0487
 		Eccentricity    0
 		Inclination     101.3
 		AscendingNode   111.7
-		MeanLongitude   32
+		MeanLongitude   33
 	}
 
 	Obliquity             101 # guess, to match inclination
@@ -2387,6 +2387,45 @@ AltSurface "limit of knowledge" "XO-5/b"
 }
 
 AltSurface "limit of knowledge" "HD 217014/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "CoRoT-Exo-3"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.9 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.01 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       6890     # M.sin(i) = 21.66 jupiters
+	Radius     70700
+
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-3"
+
+	EllipticalOrbit {
+		Period          0.0117
+		SemiMajorAxis   0.057
+		Eccentricity    0
+		Inclination     83
+		AscendingNode   286.6
+		MeanLongitude   27
+	}
+
+	Obliquity             83 # guess, to match inclination
+	EquatorAscendingNode  287 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "CoRoT-Exo-3/b"
 {
 	Texture "extrasolar-lok.*"
 }
