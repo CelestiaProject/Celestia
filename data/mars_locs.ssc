@@ -12495,3 +12495,21 @@ Location "Heimdal" "Sol/Mars"
 	Type "AA"
 }
 
+# Update 2008 Oct 06, Grant Hutchison
+# -----------------------------------
+
+Location "Morava Valles" "Sol/Mars"
+{
+	LongLat [ 335.55 -13.29 0 ]
+	Size 325
+	Importance 46.63
+	Type "VA"
+}
+
+Location "Bogia" "Sol/Mars"
+{
+	LongLat [ 83.16 -43.98 0 ]
+	Size 38
+	Importance 25.67
+	Type "AA"
+}
