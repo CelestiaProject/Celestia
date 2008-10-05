@@ -2062,6 +2062,8 @@ void handleKey(WPARAM key, bool down)
 
     if (GetKeyState(VK_SHIFT) & 0x8000)
         modifiers |= CelestiaCore::ShiftKey;
+    if (GetKeyState(VK_CONTROL) & 0x8000)
+        modifiers |= CelestiaCore::ControlKey;
 
     switch (key)
     {
@@ -2151,6 +2153,23 @@ void handleKey(WPARAM key, bool down)
         if (!down)
             appCore->charEntered('\177');
         break;
+
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+        // Special handling required to send Ctrl+number keys to
+        // Celestia keyboard handler.
+        if (!down && (modifiers & CelestiaCore::ControlKey))
+            appCore->charEntered((char) key, modifiers);
+        break;
+
     case 'A':
     case 'Z':
         if ((GetKeyState(VK_CONTROL) & 0x8000) == 0)
@@ -3779,7 +3798,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                 appCore->flash(_("Copied URL"));
             }
             break;
-
         default:
             handleKey(wParam, true);
             break;

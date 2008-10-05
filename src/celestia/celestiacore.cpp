@@ -1835,7 +1835,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '8':
     case '9':
         addToHistory();
-        sim->selectPlanet(c - '1');
+        if (!(modifiers & ControlKey))
+            sim->selectPlanet(c - '1');
         break;
 
     case ';':
