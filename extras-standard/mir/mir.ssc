@@ -1,0 +1,28 @@
+"Mir" "Sol/Earth"
+{
+    Class "spacecraft"
+    Mesh "mir.3ds"
+    Radius 0.0165            # Mir is 33 meters long
+    Beginning  2446482.0     # Launched 20 Feb 1986
+    Ending     2451989.77083 # Reentered 21 Mar 2001
+
+    # Assuming these elements to be constant isn't accurate . . .
+    EllipticalOrbit {
+        Period            0.06415338
+        SemiMajorAxis  6769
+        Eccentricity      0.0000831
+        Inclination      51.6461
+        AscendingNode    83.8459
+        ArgOfPericenter 296.4901
+        MeanAnomaly      63.6005
+    }
+
+    UniformRotation
+    {
+        Inclination       51.6461
+        MeridianAngle    180
+        AscendingNode     83.8459
+    }
+
+    Albedo          0.10
+}

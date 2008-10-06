@@ -1,0 +1,42 @@
+"Galileo" "Sol"
+{
+    Class "spacecraft"
+    Mesh "galileo.3ds"
+    Radius   0.01
+
+    InfoURL "http://galileo.jpl.nasa.gov"
+
+    Beginning "1989 10 19 02:47"   # Launch
+    Ending    "2003  9 21 10:44"   # Crash into Jupiter
+
+    SampledOrbit "galileo.xyz"
+
+    # Use a two vector frame to keep the spacecraft's High Gain Antenna
+    # pointed toward the Earth. The secondary axis is chosen (arbitrarily) as
+    # ecliptic north.
+    BodyFrame {
+        TwoVector {
+            Primary {
+                Axis "-z"
+                RelativePosition {
+                    Observer "Sol/Galileo"
+                    Target "Sol/Earth"
+                }
+            }
+            Secondary {
+                Axis "x"
+                ConstantVector {
+                    Vector [ 0 0 1 ]
+                    Frame { EclipticJ2000 { } }
+                }
+            }
+        }
+    }
+    FixedRotation { }
+
+    # Orient the model so that the High Gain Antenna points in -z
+    # and the sensor boom points in +y
+    Orientation     [ -90 1 0 0 ]
+
+    Albedo         0.50
+}
