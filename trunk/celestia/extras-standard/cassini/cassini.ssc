@@ -1,0 +1,87 @@
+"Cassini" "Sol"
+{
+    Class "spacecraft"
+    Mesh "cassini.3ds"
+    Radius 0.011
+
+    InfoURL "http://saturn.jpl.nasa.gov/home/index.cfm"
+
+    # Orient the model according to the specification here:
+    # http://mapsview.engin.umich.edu/data_descriptions/spacecraft_overview.php
+    # Remote sensing pallet mounted on +X side of spacecraft
+    # Magnetometer boom extends in +Y direction
+    # Primary remote sensing boresight view is -Y
+    # Main engine firing direction is +Z
+    # High-gain antenna points -Z
+    # Huygens probe ejected in -X direction
+    Orientation [ 180 1 0 0 ]
+
+    Timeline [
+
+    # Phase 1: Launch and cruise
+    {
+        Beginning "1997 10 15 09:27:11"
+        Ending    "2004  6 20 12:00:00"
+
+        OrbitFrame { EclipticJ2000 { Center "Sol" } }
+        SampledTrajectory { Source "cassini-cruise.xyzv" }
+        FixedRotation { Inclination 70 AscendingNode -90 }
+    }
+
+    # Phase 2: Saturn orbit
+    {
+        #Ending    "2010  7 21 12:00:00"
+
+        OrbitFrame { EclipticJ2000 { Center "Sol/Saturn" } }
+        SampledTrajectory { Source "cassini-orbit.xyzv" }
+        FixedRotation { Inclination 70 AscendingNode -90 }
+    }
+
+    ]
+}
+
+
+"Huygens" "Sol/Cassini" 
+{
+    Class "spacecraft"
+    Mesh "huygens.3ds"
+    Radius 0.00135
+    
+    Orientation [ 90 0 0 1 ]
+
+    InfoURL "http://saturn.jpl.nasa.gov/home/index.cfm"
+
+    Timeline [
+    
+    # Phase 1: With Cassini
+    {
+        Beginning 2450736.893877314 # 1997 Oct 15 09:27:11
+        Ending    "2004 12 25 02:01:05.183"
+
+        OrbitFrame { BodyFixed { Center "Sol/Cassini" } }
+        BodyFrame { BodyFixed { Center "Sol/Cassini" } }
+        FixedPosition [ -0.0014 0 0.0002 ]
+        FixedRotation { Inclination 90 AscendingNode 90 } 
+    }
+
+    # Phase 2: Free flight to Titan
+    {
+        Ending "2005 01 14 09:07:00"
+
+        OrbitFrame { EclipticJ2000 { Center "Sol/Saturn" } }
+        BodyFrame { EclipticJ2000 { Center "Sol" } }
+
+        SampledTrajectory { Source "huygens.xyzv" }
+        
+        UniformRotation
+        {
+            AscendingNode 0
+            Inclination 90
+            MeridianAngle 0
+            Epoch 2453364.5847      # 2004 Dec 25 02:01:58
+            Period 0.125            # 7.5 revolutions per minute
+        }
+    }
+
+    ] # End Timeline
+}

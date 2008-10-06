@@ -1,0 +1,21 @@
+"Hubble" "Sol/Earth"
+{
+	Class "spacecraft"
+	Mesh "hubble.cmod"
+	Radius 0.007                  # 14 meters across
+	Beginning         2448007     # Deployed 25 April 1990
+	# Ending 2010?
+
+	EllipticalOrbit {
+		Period          0.06903
+		SemiMajorAxis   6767
+		Eccentricity    0.0012082
+		Inclination      28.4675
+		AscendingNode    51.0100
+		ArgOfPericenter  27.0378
+		MeanAnomaly     333.0836
+		Epoch           2452028.18381755
+	}
+
+	Albedo       0.10
+}

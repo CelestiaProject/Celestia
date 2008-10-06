@@ -1,0 +1,44 @@
+# International Space Station
+
+# The model is a deconstruction of Andrew Farnaby's complete ISS model located
+# on bh's website (http://www.bobhundley.com/celestia/iss.html).
+#
+# "New ISS" is a modification of the model that can be found here:
+# http://www.celestiamotherlode.net/catalog/show_addon_details.php?addon_id=1199
+# the ISS model of June 2008 (with Kibo) by krisci3 (modified in order to work
+# with JPG by Ulrich Dickmann, a.k.a. Adirondack)
+# All required textures by Bob Hundley (converted from BMP to JPG by
+# Ulrich Dickmann)
+
+Modify "ISS" "Sol/Earth"
+{
+    Class "spacecraft"
+    Mesh "iss.cmod"
+    Radius 0.040
+
+    Beginning           2451138    # Zarya module launched 20 Nov 1998
+
+    EllipticalOrbit {
+        Period          0.064176392
+        SemiMajorAxis   6767
+        Eccentricity    0.0016886
+        Inclination      51.5684
+        AscendingNode   343.1518
+        ArgOfPericenter 346.2476
+        MeanAnomaly      13.8216
+        Epoch           2452028.18381755
+    }
+
+    UniformRotation
+    {
+        Inclination    51.5684
+        MeridianAngle  -90
+        AscendingNode 343.1518
+    }
+
+    Orientation [ 90 0 0 1 ]
+
+    Albedo        0.10
+}
+
+	
