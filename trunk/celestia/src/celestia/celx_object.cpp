@@ -667,7 +667,7 @@ static int object_getinfo(lua_State* l)
                  ->getDSOCatalog()->getDSOName(deepsky).c_str());
         celx.setTable("catalogNumber", deepsky->getCatalogNumber());
         
-        if (objTypeName == "galaxy")
+        if (!strcmp(objTypeName, "galaxy"))
             celx.setTable("hubbleType", deepsky->getType());
         
         celx.setTable("absoluteMagnitude", (lua_Number)deepsky->getAbsoluteMagnitude());
