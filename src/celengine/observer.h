@@ -201,6 +201,7 @@ public:
     double getArrivalTime() const;
 
     double getTime() const;
+    double getRealTime() const;
     void setTime(double);
 
     enum ObserverMode

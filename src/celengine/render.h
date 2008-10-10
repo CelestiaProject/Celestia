@@ -770,7 +770,7 @@ class Renderer
     // True if we're in between a begin/endObjectAnnotations
     bool objectAnnotationSetOpen;
 
-    double uiAnimationTime;
+    double realTime;
     
     // Location markers
  public:

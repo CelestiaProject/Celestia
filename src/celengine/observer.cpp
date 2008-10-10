@@ -139,6 +139,15 @@ double Observer::getTime() const
 };
 
 
+/*! Get the current real time. The time returned is a Julian date,
+ *  and the time standard is TDB.
+ */
+double Observer::getRealTime() const
+{
+    return realTime;
+};
+
+
 /*! Set the simulation time (Julian date, TDB time standard)
 */
 void Observer::setTime(double jd)
