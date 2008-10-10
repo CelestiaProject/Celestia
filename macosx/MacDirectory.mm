@@ -106,7 +106,8 @@ bool MacDirectory::enumFiles(EnumFilesHandler &handler, bool deep)
 
 std::string WordExp(const std::string &filename)
 {
-    return filename;
+    NSString *expandedPath = [[NSString stringWithStdString: filename] stringByStandardizingPath];
+    return [expandedPath stdString];
 }
 
 Directory* OpenDirectory(const std::string &dirname)
