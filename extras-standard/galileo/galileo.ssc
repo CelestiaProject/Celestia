@@ -1,8 +1,11 @@
 "Galileo" "Sol"
 {
     Class "spacecraft"
-    Mesh "galileo.3ds"
     Radius   0.01
+
+    Mesh "galileo.3ds"
+    NormalizeMesh false
+    MeshScale 0.000001  # Mesh units are apparently mm
 
     InfoURL "http://galileo.jpl.nasa.gov"
 
