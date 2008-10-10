@@ -191,9 +191,6 @@ static const unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
 static const uint32 OrbitCacheRetireAge = 16;
 
-// Timer used for animating UI elements such as the selection cursor
-static Timer* UiAnimationTimer = NULL;
-
 Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
 Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
 Color Renderer::DwarfPlanetLabelColor   (0.407f, 0.333f, 0.964f);
@@ -829,8 +826,6 @@ bool Renderer::init(GLContext* _context,
             rectToSphericalTexture = CreateProceduralCubeMap(128, GL_RGBA, RectToSphericalMapEval);
 #endif
         }
-
-        UiAnimationTimer = CreateTimer();
 
 #ifdef USE_HDR
         genSceneTexture();
@@ -2924,9 +2919,9 @@ void Renderer::draw(const Observer& observer,
 {
     // Get the observer's time
     double now = observer.getTime();
+    realTime = observer.getRealTime();
 
     frameCount++;
-    uiAnimationTime = UiAnimationTimer->getTime();
     settingsChanged = false;
 
     // Compute the size of a pixel
@@ -9869,7 +9864,8 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 
     if ((renderFlags & dso->getRenderMask()) && dso->isVisible())
     {
-    	double  dsoRadius = dso->getRadius();
+    	double  dsoRadius = dso->getBoundingSphereRadius();
+
         if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
         {
             // display looks satisfactory for 0.2 < brightness < O(1.0)
@@ -10444,7 +10440,7 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
 
             glDisable(GL_TEXTURE_2D);
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, uiAnimationTime);
+                renderCrosshair(size, realTime);
             else
                 markerRep.render(size);
             glEnable(GL_TEXTURE_2D);
@@ -10596,7 +10592,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
                         
             glDisable(GL_TEXTURE_2D);
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, uiAnimationTime);
+                renderCrosshair(size, realTime);
             else
                 markerRep.render(size);
             glEnable(GL_TEXTURE_2D);            
@@ -10688,7 +10684,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
                         
             glDisable(GL_TEXTURE_2D);
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
-                renderCrosshair(size, uiAnimationTime);
+                renderCrosshair(size, realTime);
             else
                 markerRep.render(size);
             glEnable(GL_TEXTURE_2D);            
