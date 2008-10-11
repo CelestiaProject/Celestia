@@ -9864,7 +9864,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 
     if ((renderFlags & dso->getRenderMask()) && dso->isVisible())
     {
-    	double  dsoRadius = dso->getBoundingSphereRadius();
+    	double  dsoRadius = dso->getRadius();
 
         if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
         {
