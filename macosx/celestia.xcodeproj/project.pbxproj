@@ -166,7 +166,6 @@
 		E567F079099112EC00D05031 /* eros_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7109910E8F00D05031 /* eros_locs.ssc */; };
 		E567F07A099112EC00D05031 /* extrasolar.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7209910E8F00D05031 /* extrasolar.ssc */; };
 		E567F07B099112EC00D05031 /* extrasolar.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7309910E8F00D05031 /* extrasolar.stc */; };
-		E567F07C099112EC00D05031 /* galileo.xyz in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7409910E8F00D05031 /* galileo.xyz */; };
 		E567F07D099112EC00D05031 /* gaspra_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7509910E8F00D05031 /* gaspra_locs.ssc */; };
 		E567F07E099112EC00D05031 /* hdxindex.dat in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7609910E8F00D05031 /* hdxindex.dat */; };
 		E567F080099112EC00D05031 /* ida_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF7809910E8F00D05031 /* ida_locs.ssc */; };
@@ -183,7 +182,6 @@
 		E567F08B099112EC00D05031 /* saoxindex.dat in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8409910E8F00D05031 /* saoxindex.dat */; };
 		E567F08C099112EC00D05031 /* saturnmoons_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8509910E8F00D05031 /* saturnmoons_locs.ssc */; };
 		E567F08D099112EC00D05031 /* solarsys.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8609910E8F00D05031 /* solarsys.ssc */; };
-		E567F08E099112EC00D05031 /* spacecraft.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8809910E8F00D05031 /* spacecraft.ssc */; };
 		E567F08F099112EC00D05031 /* spectbins.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8909910E8F00D05031 /* spectbins.stc */; };
 		E567F090099112EC00D05031 /* starnames.dat in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8A09910E8F00D05031 /* starnames.dat */; };
 		E567F091099112EC00D05031 /* stars.dat in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8B09910E8F00D05031 /* stars.dat */; };
@@ -217,7 +215,6 @@
 		E589B6DD078AC511005B8DD9 /* glshader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6D9078AC511005B8DD9 /* glshader.cpp */; };
 		E589B6DF078AC511005B8DD9 /* shadermanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6DB078AC511005B8DD9 /* shadermanager.cpp */; };
 		E599A78E097CAB390079C254 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E599A78C097CAB390079C254 /* Credits.rtf */; };
-		E59AD8160AAB361400E2841D /* hubble.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E59AD8150AAB361400E2841D /* hubble.cmod */; };
 		E59F0B920E93A62F001A985D /* NSWindowController_Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = E59F0B900E93A62F001A985D /* NSWindowController_Extensions.m */; };
 		E5A994750B1482FE009F40FA /* scriptrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994710B1482FE009F40FA /* scriptrotation.cpp */; };
 		E5A994770B1482FE009F40FA /* scriptobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5A994730B1482FE009F40FA /* scriptobject.cpp */; };
@@ -241,21 +238,17 @@
 		E5D766720982B4660099DBBD /* asteroid.cms in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766290982B3300099DBBD /* asteroid.cms */; };
 		E5D766730982B4660099DBBD /* bacchus.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7662B0982B3300099DBBD /* bacchus.cmod */; };
 		E5D766740982B4660099DBBD /* borrelly.cms in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7662C0982B3300099DBBD /* borrelly.cms */; };
-		E5D766750982B4660099DBBD /* cassini.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7662D0982B3300099DBBD /* cassini.3ds */; };
 		E5D766760982B4660099DBBD /* castalia.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7662F0982B3300099DBBD /* castalia.cmod */; };
 		E5D766770982B4660099DBBD /* deimos.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766310982B3300099DBBD /* deimos.cmod */; };
 		E5D766780982B4660099DBBD /* epimetheus.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766330982B3300099DBBD /* epimetheus.cmod */; };
 		E5D766790982B4660099DBBD /* eros.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766350982B3300099DBBD /* eros.cmod */; };
-		E5D7667A0982B4660099DBBD /* galileo.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766370982B3300099DBBD /* galileo.3ds */; };
 		E5D7667B0982B4660099DBBD /* gaspra.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766390982B3300099DBBD /* gaspra.cmod */; };
 		E5D7667C0982B4660099DBBD /* gemini.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7663A0982B3300099DBBD /* gemini.3ds */; };
 		E5D7667D0982B4660099DBBD /* geographos.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7663C0982B3300099DBBD /* geographos.cmod */; };
 		E5D7667E0982B4660099DBBD /* golevka.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7663E0982B3300099DBBD /* golevka.cmod */; };
 		E5D7667F0982B4660099DBBD /* halley.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766400982B3300099DBBD /* halley.cmod */; };
-		E5D766810982B4660099DBBD /* huygens.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766420982B3300099DBBD /* huygens.3ds */; };
 		E5D766820982B4660099DBBD /* hyperion.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766440982B3300099DBBD /* hyperion.cmod */; };
 		E5D766830982B4660099DBBD /* ida.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766470982B3300099DBBD /* ida.cmod */; };
-		E5D766840982B4660099DBBD /* iss.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766480982B3300099DBBD /* iss.3ds */; };
 		E5D766850982B4660099DBBD /* janus.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7664A0982B3300099DBBD /* janus.cmod */; };
 		E5D766860982B4660099DBBD /* kleopatra.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7664C0982B3300099DBBD /* kleopatra.cmod */; };
 		E5D766870982B4660099DBBD /* ky26.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7664E0982B3300099DBBD /* ky26.cmod */; };
@@ -263,7 +256,6 @@
 		E5D766890982B4660099DBBD /* marsglobalsurvr.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766520982B3300099DBBD /* marsglobalsurvr.3ds */; };
 		E5D7668A0982B4660099DBBD /* marsodyssey.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766530982B3300099DBBD /* marsodyssey.3ds */; };
 		E5D7668B0982B4660099DBBD /* mercury7.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766540982B3300099DBBD /* mercury7.3ds */; };
-		E5D7668C0982B4660099DBBD /* mir.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766550982B3300099DBBD /* mir.3ds */; };
 		E5D7668D0982B4660099DBBD /* pandora.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766570982B3300099DBBD /* pandora.cmod */; };
 		E5D7668E0982B4660099DBBD /* phobos.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766590982B3300099DBBD /* phobos.cmod */; };
 		E5D7668F0982B4660099DBBD /* phoebe.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7665B0982B3300099DBBD /* phoebe.cmod */; };
@@ -296,12 +288,9 @@
 		E5F8C9E70795239600D1DAF2 /* liblua.dylib in Copy Libraries */ = {isa = PBXBuildFile; fileRef = E5F8C9E30795235E00D1DAF2 /* liblua.dylib */; };
 		E5F8C9E90795239600D1DAF2 /* libpng.dylib in Copy Libraries */ = {isa = PBXBuildFile; fileRef = E5D471260778E33C007731C3 /* libpng.dylib */; };
 		FF7B2B0E0E89B0D90089BF43 /* globular.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF7B2B0C0E89B0D90089BF43 /* globular.cpp */; };
-		FF7B2B190E89B2240089BF43 /* cassini-cruise.xyzv in Copy Data */ = {isa = PBXBuildFile; fileRef = E53D2A120E70256A0055BC71 /* cassini-cruise.xyzv */; };
-		FF7B2B1A0E89B2240089BF43 /* cassini-orbit.xyzv in Copy Data */ = {isa = PBXBuildFile; fileRef = E53D2A130E70256A0055BC71 /* cassini-orbit.xyzv */; };
 		FF7B2B1B0E89B22D0089BF43 /* charm2.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B110E89B1A30089BF43 /* charm2.stc */; };
 		FF7B2B1C0E89B23D0089BF43 /* galaxies.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B120E89B1A30089BF43 /* galaxies.dsc */; };
 		FF7B2B1D0E89B23D0089BF43 /* globulars.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B130E89B1A30089BF43 /* globulars.dsc */; };
-		FF7B2B1E0E89B24F0089BF43 /* huygens.xyzv in Copy Data */ = {isa = PBXBuildFile; fileRef = E53D2A140E70256A0055BC71 /* huygens.xyzv */; };
 		FF7B2B1F0E89B2530089BF43 /* itokawa_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B140E89B1A30089BF43 /* itokawa_locs.ssc */; };
 		FF7B2B220E89B3250089BF43 /* itokawa.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = FF7B2B210E89B2F20089BF43 /* itokawa.cmod */; };
 		FFACF2C10E75F1BD007AE5CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
@@ -327,8 +316,6 @@
 				E567F072099112EC00D05031 /* asterisms.dat in Copy Data */,
 				E567F073099112EC00D05031 /* asteroids.ssc in Copy Data */,
 				E567F074099112EC00D05031 /* boundaries.dat in Copy Data */,
-				FF7B2B190E89B2240089BF43 /* cassini-cruise.xyzv in Copy Data */,
-				FF7B2B1A0E89B2240089BF43 /* cassini-orbit.xyzv in Copy Data */,
 				FF7B2B1B0E89B22D0089BF43 /* charm2.stc in Copy Data */,
 				E567F076099112EC00D05031 /* comets.ssc in Copy Data */,
 				E567F078099112EC00D05031 /* earth_locs.ssc in Copy Data */,
@@ -336,11 +323,9 @@
 				E567F07A099112EC00D05031 /* extrasolar.ssc in Copy Data */,
 				E567F07B099112EC00D05031 /* extrasolar.stc in Copy Data */,
 				FF7B2B1C0E89B23D0089BF43 /* galaxies.dsc in Copy Data */,
-				E567F07C099112EC00D05031 /* galileo.xyz in Copy Data */,
 				E567F07D099112EC00D05031 /* gaspra_locs.ssc in Copy Data */,
 				FF7B2B1D0E89B23D0089BF43 /* globulars.dsc in Copy Data */,
 				E567F07E099112EC00D05031 /* hdxindex.dat in Copy Data */,
-				FF7B2B1E0E89B24F0089BF43 /* huygens.xyzv in Copy Data */,
 				E567F080099112EC00D05031 /* ida_locs.ssc in Copy Data */,
 				FF7B2B1F0E89B2530089BF43 /* itokawa_locs.ssc in Copy Data */,
 				E567F081099112EC00D05031 /* jupitermoons_locs.ssc in Copy Data */,
@@ -356,7 +341,6 @@
 				E567F08B099112EC00D05031 /* saoxindex.dat in Copy Data */,
 				E567F08C099112EC00D05031 /* saturnmoons_locs.ssc in Copy Data */,
 				E567F08D099112EC00D05031 /* solarsys.ssc in Copy Data */,
-				E567F08E099112EC00D05031 /* spacecraft.ssc in Copy Data */,
 				E567F08F099112EC00D05031 /* spectbins.stc in Copy Data */,
 				E567F090099112EC00D05031 /* starnames.dat in Copy Data */,
 				E567F091099112EC00D05031 /* stars.dat in Copy Data */,
@@ -441,22 +425,17 @@
 				E5D766720982B4660099DBBD /* asteroid.cms in Copy Models */,
 				E5D766730982B4660099DBBD /* bacchus.cmod in Copy Models */,
 				E5D766740982B4660099DBBD /* borrelly.cms in Copy Models */,
-				E5D766750982B4660099DBBD /* cassini.3ds in Copy Models */,
 				E5D766760982B4660099DBBD /* castalia.cmod in Copy Models */,
 				E5D766770982B4660099DBBD /* deimos.cmod in Copy Models */,
 				E5D766780982B4660099DBBD /* epimetheus.cmod in Copy Models */,
 				E5D766790982B4660099DBBD /* eros.cmod in Copy Models */,
-				E5D7667A0982B4660099DBBD /* galileo.3ds in Copy Models */,
 				E5D7667B0982B4660099DBBD /* gaspra.cmod in Copy Models */,
 				E5D7667C0982B4660099DBBD /* gemini.3ds in Copy Models */,
 				E5D7667D0982B4660099DBBD /* geographos.cmod in Copy Models */,
 				E5D7667E0982B4660099DBBD /* golevka.cmod in Copy Models */,
 				E5D7667F0982B4660099DBBD /* halley.cmod in Copy Models */,
-				E59AD8160AAB361400E2841D /* hubble.cmod in Copy Models */,
-				E5D766810982B4660099DBBD /* huygens.3ds in Copy Models */,
 				E5D766820982B4660099DBBD /* hyperion.cmod in Copy Models */,
 				E5D766830982B4660099DBBD /* ida.cmod in Copy Models */,
-				E5D766840982B4660099DBBD /* iss.3ds in Copy Models */,
 				FF7B2B220E89B3250089BF43 /* itokawa.cmod in Copy Models */,
 				E5D766850982B4660099DBBD /* janus.cmod in Copy Models */,
 				E5D766860982B4660099DBBD /* kleopatra.cmod in Copy Models */,
@@ -465,7 +444,6 @@
 				E5D766890982B4660099DBBD /* marsglobalsurvr.3ds in Copy Models */,
 				E5D7668A0982B4660099DBBD /* marsodyssey.3ds in Copy Models */,
 				E5D7668B0982B4660099DBBD /* mercury7.3ds in Copy Models */,
-				E5D7668C0982B4660099DBBD /* mir.3ds in Copy Models */,
 				E5D7668D0982B4660099DBBD /* pandora.cmod in Copy Models */,
 				E5D7668E0982B4660099DBBD /* phobos.cmod in Copy Models */,
 				E5D7668F0982B4660099DBBD /* phoebe.cmod in Copy Models */,
@@ -577,9 +555,6 @@
 		E532F4EE0933331800D7D5B3 /* name.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = name.h; path = ../src/celengine/name.h; sourceTree = SOURCE_ROOT; };
 		E532F4EF0933331800D7D5B3 /* staroctree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = staroctree.cpp; path = ../src/celengine/staroctree.cpp; sourceTree = SOURCE_ROOT; };
 		E532F4F00933331800D7D5B3 /* staroctree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = staroctree.h; path = ../src/celengine/staroctree.h; sourceTree = SOURCE_ROOT; };
-		E53D2A120E70256A0055BC71 /* cassini-cruise.xyzv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "cassini-cruise.xyzv"; sourceTree = "<group>"; };
-		E53D2A130E70256A0055BC71 /* cassini-orbit.xyzv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "cassini-orbit.xyzv"; sourceTree = "<group>"; };
-		E53D2A140E70256A0055BC71 /* huygens.xyzv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = huygens.xyzv; sourceTree = "<group>"; };
 		E53E61990C0CA105003CD767 /* scriptmenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptmenu.cpp; path = ../src/celestia/scriptmenu.cpp; sourceTree = SOURCE_ROOT; };
 		E53E619A0C0CA105003CD767 /* scriptmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scriptmenu.h; path = ../src/celestia/scriptmenu.h; sourceTree = SOURCE_ROOT; };
 		E53E61AA0C0CA444003CD767 /* ScriptsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptsController.h; sourceTree = "<group>"; };
@@ -593,7 +568,7 @@
 		E561FC2D0B47910800668CFE /* CelestiaLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaLocation.h; sourceTree = "<group>"; };
 		E561FC2E0B47910800668CFE /* CelestiaLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaLocation.mm; sourceTree = "<group>"; };
 		E564312D07769C9000E2C4A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
-		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56431450776D52D00E2C4A3 /* celx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = celx.cpp; path = ../src/celestia/celx.cpp; sourceTree = SOURCE_ROOT; };
 		E56431460776D52D00E2C4A3 /* celx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celx.h; path = ../src/celestia/celx.h; sourceTree = SOURCE_ROOT; };
 		E56431490776D5C800E2C4A3 /* jpleph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jpleph.cpp; path = ../src/celengine/jpleph.cpp; sourceTree = SOURCE_ROOT; };
@@ -625,7 +600,6 @@
 		E567EF7109910E8F00D05031 /* eros_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = eros_locs.ssc; sourceTree = "<group>"; };
 		E567EF7209910E8F00D05031 /* extrasolar.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = extrasolar.ssc; sourceTree = "<group>"; };
 		E567EF7309910E8F00D05031 /* extrasolar.stc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = extrasolar.stc; sourceTree = "<group>"; };
-		E567EF7409910E8F00D05031 /* galileo.xyz */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = galileo.xyz; sourceTree = "<group>"; };
 		E567EF7509910E8F00D05031 /* gaspra_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gaspra_locs.ssc; sourceTree = "<group>"; };
 		E567EF7609910E8F00D05031 /* hdxindex.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = hdxindex.dat; sourceTree = "<group>"; };
 		E567EF7809910E8F00D05031 /* ida_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ida_locs.ssc; sourceTree = "<group>"; };
@@ -642,7 +616,6 @@
 		E567EF8409910E8F00D05031 /* saoxindex.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = saoxindex.dat; sourceTree = "<group>"; };
 		E567EF8509910E8F00D05031 /* saturnmoons_locs.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = saturnmoons_locs.ssc; sourceTree = "<group>"; };
 		E567EF8609910E8F00D05031 /* solarsys.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = solarsys.ssc; sourceTree = "<group>"; };
-		E567EF8809910E8F00D05031 /* spacecraft.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spacecraft.ssc; sourceTree = "<group>"; };
 		E567EF8909910E8F00D05031 /* spectbins.stc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spectbins.stc; sourceTree = "<group>"; };
 		E567EF8A09910E8F00D05031 /* starnames.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = starnames.dat; sourceTree = "<group>"; };
 		E567EF8B09910E8F00D05031 /* stars.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = stars.dat; sourceTree = "<group>"; };
@@ -677,7 +650,6 @@
 		E589B6DB078AC511005B8DD9 /* shadermanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shadermanager.cpp; path = ../src/celengine/shadermanager.cpp; sourceTree = SOURCE_ROOT; };
 		E589B6DC078AC511005B8DD9 /* shadermanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = shadermanager.h; path = ../src/celengine/shadermanager.h; sourceTree = SOURCE_ROOT; };
 		E599A78D097CAB390079C254 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
-		E59AD8150AAB361400E2841D /* hubble.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = hubble.cmod; sourceTree = "<group>"; };
 		E59F0B8F0E93A62F001A985D /* NSWindowController_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSWindowController_Extensions.h; sourceTree = "<group>"; };
 		E59F0B900E93A62F001A985D /* NSWindowController_Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSWindowController_Extensions.m; sourceTree = "<group>"; };
 		E59FE8FD0934DC66000F7BDA /* fr */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = fr; path = fr.lproj/MainMenu.nib; sourceTree = "<group>"; };
@@ -720,21 +692,17 @@
 		E5D766290982B3300099DBBD /* asteroid.cms */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = asteroid.cms; sourceTree = "<group>"; };
 		E5D7662B0982B3300099DBBD /* bacchus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = bacchus.cmod; sourceTree = "<group>"; };
 		E5D7662C0982B3300099DBBD /* borrelly.cms */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = borrelly.cms; sourceTree = "<group>"; };
-		E5D7662D0982B3300099DBBD /* cassini.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = cassini.3ds; sourceTree = "<group>"; };
 		E5D7662F0982B3300099DBBD /* castalia.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = castalia.cmod; sourceTree = "<group>"; };
 		E5D766310982B3300099DBBD /* deimos.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = deimos.cmod; sourceTree = "<group>"; };
 		E5D766330982B3300099DBBD /* epimetheus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = epimetheus.cmod; sourceTree = "<group>"; };
 		E5D766350982B3300099DBBD /* eros.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = eros.cmod; sourceTree = "<group>"; };
-		E5D766370982B3300099DBBD /* galileo.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = galileo.3ds; sourceTree = "<group>"; };
 		E5D766390982B3300099DBBD /* gaspra.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = gaspra.cmod; sourceTree = "<group>"; };
 		E5D7663A0982B3300099DBBD /* gemini.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = gemini.3ds; sourceTree = "<group>"; };
 		E5D7663C0982B3300099DBBD /* geographos.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = geographos.cmod; sourceTree = "<group>"; };
 		E5D7663E0982B3300099DBBD /* golevka.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = golevka.cmod; sourceTree = "<group>"; };
 		E5D766400982B3300099DBBD /* halley.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = halley.cmod; sourceTree = "<group>"; };
-		E5D766420982B3300099DBBD /* huygens.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = huygens.3ds; sourceTree = "<group>"; };
 		E5D766440982B3300099DBBD /* hyperion.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = hyperion.cmod; sourceTree = "<group>"; };
 		E5D766470982B3300099DBBD /* ida.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = ida.cmod; sourceTree = "<group>"; };
-		E5D766480982B3300099DBBD /* iss.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = iss.3ds; sourceTree = "<group>"; };
 		E5D7664A0982B3300099DBBD /* janus.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = janus.cmod; sourceTree = "<group>"; };
 		E5D7664C0982B3300099DBBD /* kleopatra.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = kleopatra.cmod; sourceTree = "<group>"; };
 		E5D7664E0982B3300099DBBD /* ky26.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = ky26.cmod; sourceTree = "<group>"; };
@@ -742,7 +710,6 @@
 		E5D766520982B3300099DBBD /* marsglobalsurvr.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = marsglobalsurvr.3ds; sourceTree = "<group>"; };
 		E5D766530982B3300099DBBD /* marsodyssey.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = marsodyssey.3ds; sourceTree = "<group>"; };
 		E5D766540982B3300099DBBD /* mercury7.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = mercury7.3ds; sourceTree = "<group>"; };
-		E5D766550982B3300099DBBD /* mir.3ds */ = {isa = PBXFileReference; lastKnownFileType = file; path = mir.3ds; sourceTree = "<group>"; };
 		E5D766570982B3300099DBBD /* pandora.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = pandora.cmod; sourceTree = "<group>"; };
 		E5D766590982B3300099DBBD /* phobos.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = phobos.cmod; sourceTree = "<group>"; };
 		E5D7665B0982B3300099DBBD /* phoebe.cmod */ = {isa = PBXFileReference; lastKnownFileType = file; path = phoebe.cmod; sourceTree = "<group>"; };
@@ -1212,8 +1179,6 @@
 				E567EF6A09910E8F00D05031 /* asterisms.dat */,
 				E567EF6B09910E8F00D05031 /* asteroids.ssc */,
 				E567EF6C09910E8F00D05031 /* boundaries.dat */,
-				E53D2A120E70256A0055BC71 /* cassini-cruise.xyzv */,
-				E53D2A130E70256A0055BC71 /* cassini-orbit.xyzv */,
 				FF7B2B110E89B1A30089BF43 /* charm2.stc */,
 				E567EF6E09910E8F00D05031 /* comets.ssc */,
 				E567EF7009910E8F00D05031 /* earth_locs.ssc */,
@@ -1221,11 +1186,9 @@
 				E567EF7209910E8F00D05031 /* extrasolar.ssc */,
 				E567EF7309910E8F00D05031 /* extrasolar.stc */,
 				FF7B2B120E89B1A30089BF43 /* galaxies.dsc */,
-				E567EF7409910E8F00D05031 /* galileo.xyz */,
 				E567EF7509910E8F00D05031 /* gaspra_locs.ssc */,
 				FF7B2B130E89B1A30089BF43 /* globulars.dsc */,
 				E567EF7609910E8F00D05031 /* hdxindex.dat */,
-				E53D2A140E70256A0055BC71 /* huygens.xyzv */,
 				E567EF7809910E8F00D05031 /* ida_locs.ssc */,
 				FF7B2B140E89B1A30089BF43 /* itokawa_locs.ssc */,
 				E567EF7909910E8F00D05031 /* jupitermoons_locs.ssc */,
@@ -1241,7 +1204,6 @@
 				E567EF8409910E8F00D05031 /* saoxindex.dat */,
 				E567EF8509910E8F00D05031 /* saturnmoons_locs.ssc */,
 				E567EF8609910E8F00D05031 /* solarsys.ssc */,
-				E567EF8809910E8F00D05031 /* spacecraft.ssc */,
 				E567EF8909910E8F00D05031 /* spectbins.stc */,
 				E567EF8A09910E8F00D05031 /* starnames.dat */,
 				E567EF8B09910E8F00D05031 /* stars.dat */,
@@ -1296,22 +1258,17 @@
 				E5D766290982B3300099DBBD /* asteroid.cms */,
 				E5D7662B0982B3300099DBBD /* bacchus.cmod */,
 				E5D7662C0982B3300099DBBD /* borrelly.cms */,
-				E5D7662D0982B3300099DBBD /* cassini.3ds */,
 				E5D7662F0982B3300099DBBD /* castalia.cmod */,
 				E5D766310982B3300099DBBD /* deimos.cmod */,
 				E5D766330982B3300099DBBD /* epimetheus.cmod */,
 				E5D766350982B3300099DBBD /* eros.cmod */,
-				E5D766370982B3300099DBBD /* galileo.3ds */,
 				E5D766390982B3300099DBBD /* gaspra.cmod */,
 				E5D7663A0982B3300099DBBD /* gemini.3ds */,
 				E5D7663C0982B3300099DBBD /* geographos.cmod */,
 				E5D7663E0982B3300099DBBD /* golevka.cmod */,
 				E5D766400982B3300099DBBD /* halley.cmod */,
-				E59AD8150AAB361400E2841D /* hubble.cmod */,
-				E5D766420982B3300099DBBD /* huygens.3ds */,
 				E5D766440982B3300099DBBD /* hyperion.cmod */,
 				E5D766470982B3300099DBBD /* ida.cmod */,
-				E5D766480982B3300099DBBD /* iss.3ds */,
 				FF7B2B210E89B2F20089BF43 /* itokawa.cmod */,
 				E5D7664A0982B3300099DBBD /* janus.cmod */,
 				E5D7664C0982B3300099DBBD /* kleopatra.cmod */,
@@ -1320,7 +1277,6 @@
 				E5D766520982B3300099DBBD /* marsglobalsurvr.3ds */,
 				E5D766530982B3300099DBBD /* marsodyssey.3ds */,
 				E5D766540982B3300099DBBD /* mercury7.3ds */,
-				E5D766550982B3300099DBBD /* mir.3ds */,
 				E5D766570982B3300099DBBD /* pandora.cmod */,
 				E5D766590982B3300099DBBD /* phobos.cmod */,
 				E5D7665B0982B3300099DBBD /* phoebe.cmod */,
