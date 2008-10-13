@@ -52,7 +52,7 @@ class DSODatabase
                        const Point3d& obsPosition,
                        float radius) const;
 
-    std::string getDSOName    (const DeepSkyObject* const &) const;
+    std::string getDSOName    (const DeepSkyObject* const &, bool i18n = false) const;
     std::string getDSONameList(const DeepSkyObject* const &, const unsigned int maxNames = MAX_DSO_NAMES) const;
 
     DSONameDatabase* getNameDatabase() const;

@@ -377,7 +377,7 @@ static void catalogNumberToString(uint32 catalogNumber, char* buf, unsigned int 
 // mind that calling this method could possibly incur the overhead
 // of a memory allocation (though no explcit deallocation is
 // required as it's all wrapped in the string class.)
-string StarDatabase::getStarName(const Star& star) const
+string StarDatabase::getStarName(const Star& star, bool i18n) const
 {
     uint32 catalogNumber = star.getCatalogNumber();
 
@@ -386,7 +386,10 @@ string StarDatabase::getStarName(const Star& star) const
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            return iter->second;
+            if (i18n && iter->second != _(iter->second.c_str()))
+                return _(iter->second.c_str());
+            else
+                return iter->second;
         }
     }
 
@@ -405,7 +408,7 @@ string StarDatabase::getStarName(const Star& star) const
 // A less convenient version of getStarName that writes to a char
 // array instead of a string. The advantage is that no memory allocation
 // will every occur.
-void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int bufferSize) const
+void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int bufferSize, bool i18n) const
 {
     assert(bufferSize != 0);
 
@@ -416,7 +419,11 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            strncpy(nameBuffer, iter->second.c_str(), bufferSize);
+            if (i18n && iter->second != _(iter->second.c_str()))
+                strncpy(nameBuffer, _(iter->second.c_str()), bufferSize);
+            else
+                strncpy(nameBuffer, iter->second.c_str(), bufferSize);
+
             nameBuffer[bufferSize - 1] = '\0';
             return;
         }
@@ -1311,9 +1318,10 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                         length = next - startPos;
                         ++next;
                     }
-                    if (catalogNumber == 0 && objName.substr(startPos, length) == "Sun" && string("Sun") != _("Sun"))
-                        namesDB->add(0, _("Sun"));
-                    namesDB->add(catalogNumber, objName.substr(startPos, length));
+                    string starName = objName.substr(startPos, length);
+                    namesDB->add(catalogNumber, starName);
+                    if (starName != _(starName.c_str()))
+                        namesDB->add(catalogNumber, _(starName.c_str()));
                     startPos = next;
                 }
             }
