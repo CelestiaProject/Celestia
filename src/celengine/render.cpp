@@ -9242,7 +9242,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             if (dot(starDir, viewNormal) > cosFOV)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
-                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
+                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer), true);
                 float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
                 if (distr > 1.0f)
                     distr = 1.0f;
@@ -9499,7 +9499,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             if (dot(starDir, viewNormal) > cosFOV)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
-                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer));
+                starDB->getStarName(star, nameBuffer, sizeof(nameBuffer), true);
                 float distr = 3.5f * (labelThresholdMag - appMag)/labelThresholdMag;
                 if (distr > 1.0f)
                     distr = 1.0f;
@@ -10005,7 +10005,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                 distr = 1.0f;
 
             renderer->addBackgroundAnnotation(rep,
-                                              dsoDB->getDSOName(dso),
+                                              dsoDB->getDSOName(dso, true),
                                               Color(labelColor, distr * labelColor.alpha()),
                                               Point3f(relPos.x, relPos.y, relPos.z),
                                               Renderer::AlignLeft, Renderer::VerticalAlignCenter, symbolSize);

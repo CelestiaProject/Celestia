@@ -3670,6 +3670,21 @@ void CelestiaCore::renderOverlay()
                     selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
                 }
 
+                // Skip displaying the English name if a localized version is present.
+                string starName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
+                string locStarName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true);
+								if (selectionNames.find("Sun") != string::npos && "Sun" != _("Sun"))
+                {
+                    string::size_type startPos = selectionNames.find("Sun");
+                    string::size_type endPos = selectionNames.find(_("Sun"));
+                    selectionNames = selectionNames.erase(startPos, endPos - startPos);
+                }
+                else if (selectionNames.find(starName) != string::npos && starName != locStarName)
+                {
+                    string::size_type startPos = selectionNames.find(locStarName);
+                    selectionNames = selectionNames.substr(startPos);
+                }
+
                 overlay->setFont(titleFont);
                 *overlay << selectionNames;
                 overlay->setFont(font);
@@ -3690,14 +3705,13 @@ void CelestiaCore::renderOverlay()
                     selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
                 }
 
-                // Skip displaying 'Milky Way' if there's a localized version of this name.
-                // 'Milky Way' is the only DSO name which is localized so far.
-                const char* locDSO = "Milky Way";
-                if (selectionNames.find(locDSO) != string::npos && string(locDSO) != _(locDSO))
+                // Skip displaying the English name if a localized version is present.
+                string DSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+                string locDSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true);
+                if (selectionNames.find(DSOName) != string::npos && DSOName != locDSOName)
                 {
-                    string::size_type startPos = selectionNames.find(locDSO);
-                    string::size_type endPos = selectionNames.find(_(locDSO));
-                    selectionNames = selectionNames.erase(startPos, endPos - startPos);
+                    string::size_type startPos = selectionNames.find(locDSOName);
+                    selectionNames = selectionNames.substr(startPos);
                 }
 
                 overlay->setFont(titleFont);

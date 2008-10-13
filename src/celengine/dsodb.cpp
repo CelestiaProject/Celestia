@@ -128,7 +128,7 @@ vector<string> DSODatabase::getCompletion(const string& name) const
 }
 
 
-string DSODatabase::getDSOName(const DeepSkyObject* const & dso) const
+string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) const
 {
     uint32 catalogNumber    = dso->getCatalogNumber();
 
@@ -137,7 +137,10 @@ string DSODatabase::getDSOName(const DeepSkyObject* const & dso) const
         DSONameDatabase::NumberIndex::const_iterator iter   = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            return iter->second;
+            if (i18n && iter->second != _(iter->second.c_str()))
+                return _(iter->second.c_str());
+            else
+                return iter->second;
         }
     }
 
@@ -341,9 +344,10 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
                         length   = next - startPos;
                         ++next;
                     }
-                    namesDB->add(objCatalogNumber, objName.substr(startPos, length));
-                    if (objName.substr(startPos, length) == "Milky Way" && string("Milky Way") != _("Milky Way"))
-                        namesDB->add(objCatalogNumber, _("Milky Way"));
+                    string DSOName = objName.substr(startPos, length);
+                    namesDB->add(objCatalogNumber, DSOName);
+                    if (DSOName != _(DSOName.c_str()))
+                        namesDB->add(objCatalogNumber, _(DSOName.c_str()));
                     startPos   = next;
                 }
             }
