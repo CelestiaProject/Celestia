@@ -523,6 +523,14 @@ static int object_localname(lua_State* l)
         case Selection::Type_Body:
             lua_pushstring(l, sel->body()->getName(true).c_str());
             break;
+        case Selection::Type_DeepSky:
+            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
+                           ->getDSOCatalog()->getDSOName(sel->deepsky(), true).c_str());
+            break;
+        case Selection::Type_Star:
+            lua_pushstring(l, celx.appCore(AllErrors)->getSimulation()->getUniverse()
+                           ->getStarCatalog()->getStarName(*(sel->star()), true).c_str());
+            break;
         default:
             lua_pushstring(l, "?");
             break;
