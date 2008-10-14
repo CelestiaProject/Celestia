@@ -696,6 +696,8 @@ void CelestiaAppWindow::slotCaptureVideo()
             else
                 delete movieCapture;
         }
+
+        settings.setValue("CaptureVideoDir", QFileInfo(saveAsName).absolutePath());
     }
 #endif // _WIN32
 
