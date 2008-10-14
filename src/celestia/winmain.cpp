@@ -2230,6 +2230,7 @@ static void syncMenusWithRendererState()
     int renderFlags = appCore->getRenderer()->getRenderFlags();
     int labelMode = appCore->getRenderer()->getLabelMode();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
+    unsigned int textureRes = appCore->getRenderer()->getResolution();
 
     setMenuItemCheck(ID_VIEW_SHOW_FRAMES,
                      appCore->getFramesVisible());
@@ -2262,6 +2263,13 @@ static void syncMenusWithRendererState()
                   style == Renderer::PointStars ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
                   style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
+
+    CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
+                  textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_MEDIUM,
+                  textureRes == 1 ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_HIGH,
+                  textureRes == 2 ? MF_CHECKED : MF_UNCHECKED);
 
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);
@@ -4098,6 +4106,19 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_RENDER_STARSTYLE_DISCS:
             appCore->getRenderer()->setStarStyle(Renderer::ScaledDiscStars);
+            syncMenusWithRendererState();
+            break;
+
+        case ID_RENDER_TEXTURERES_LOW:
+            appCore->getRenderer()->setResolution(0);
+            syncMenusWithRendererState();
+            break;
+        case ID_RENDER_TEXTURERES_MEDIUM:
+            appCore->getRenderer()->setResolution(1);
+            syncMenusWithRendererState();
+            break;
+        case ID_RENDER_TEXTURERES_HIGH:
+            appCore->getRenderer()->setResolution(2);
             syncMenusWithRendererState();
             break;
 
