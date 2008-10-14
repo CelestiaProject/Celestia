@@ -270,6 +270,24 @@ BEGIN
         END
 
 
+        POPUP "&Texture Resolution"
+
+
+        BEGIN
+
+
+            MENUITEM "&Low",                       ID_RENDER_TEXTURERES_LOW
+
+
+            MENUITEM "&Medium",                        ID_RENDER_TEXTURERES_MEDIUM
+
+
+            MENUITEM "&High",                     ID_RENDER_TEXTURERES_HIGH, CHECKED
+
+
+        END
+
+
         MENUITEM "Antialiasing\tCtrl+X",        ID_RENDER_ANTIALIASING
 
 
