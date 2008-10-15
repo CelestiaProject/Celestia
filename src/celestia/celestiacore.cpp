@@ -1970,26 +1970,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         sim->setTargetSpeed(-sim->getTargetSpeed());
         break;
 
-    case 'R':
-        if (c == 'r') // Skip rangechecking as setResolution does it already
-            renderer->setResolution(renderer->getResolution() - 1);
-        else
-            renderer->setResolution(renderer->getResolution() + 1);
-        switch (renderer->getResolution())
-        {
-        case 0:
-            flash(_("Low res textures"));
-            break;
-        case 1:
-            flash(_("Medium res textures"));
-            break;
-        case 2:
-            flash(_("High res textures"));
-            break;
-        }
-        notifyWatchers(RenderFlagsChanged);
-        break;
-
     case 'S':
         sim->setTargetSpeed(0);
         break;
