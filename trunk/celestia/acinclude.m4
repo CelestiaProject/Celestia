@@ -2786,7 +2786,7 @@ AC_DEFUN(AC_CHECK_COMPILERS,
   if test "$GXX" = "yes" || test "$CXX" = "KCC"; then
     if test "$kde_use_debug_code" != "no"; then
       if test "$CXX" = "KCC"; then
-        CXXFLAGS="+K0 -Wall -W -Wpointer-arith -Wmissing-prototypes -Wwrite-strings $CXXFLAGS"
+        CXXFLAGS="+K0 -Wall -W -Wpointer-arith -Wwrite-strings $CXXFLAGS"
       else
         if test "$kde_use_debug_code" = "full"; then
           CXXFLAGS="-g3 $CXXFLAGS"
@@ -2832,11 +2832,11 @@ AC_DEFUN(AC_CHECK_COMPILERS,
       if test "$GCC" = "yes"; then
         case $host in
           *-*-linux-gnu)	
-            CFLAGS="-ansi -W -Wall -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -D_XOPEN_SOURCE=500 -D_BSD_SOURCE $CFLAGS"
+            CFLAGS="-ansi -W -Wall -Wshadow -Wpointer-arith -Wwrite-strings -D_XOPEN_SOURCE=500 -D_BSD_SOURCE $CFLAGS"
             CXXFLAGS="-ansi -D_XOPEN_SOURCE=500 -D_BSD_SOURCE -Wcast-align -Wconversion $CXXFLAGS"
           ;;
         esac
-        CXXFLAGS="-Wall -W -Wpointer-arith -Wmissing-prototypes -Wwrite-strings $CXXFLAGS"
+        CXXFLAGS="-Wall -W -Wpointer-arith -Wwrite-strings $CXXFLAGS"
         KDE_CHECK_COMPILER_FLAG(Wundef,[CXXFLAGS="-Wundef $CXXFLAGS"])
         KDE_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="-Wno-long-long $CXXFLAGS"])
         KDE_CHECK_COMPILER_FLAG(Wnon-virtual-dtor,[CXXFLAGS="-Wnon-virtual-dtor $CXXFLAGS"])
@@ -3244,7 +3244,7 @@ __argz_count __argz_stringify __argz_next])
    AC_CACHE_VAL(kde_cv_func_stpcpy,
    [
    kde_safe_cxxflags=$CXXFLAGS
-   CXXFLAGS="-Wmissing-prototypes -Werror"
+   CXXFLAGS="-Werror"
    AC_LANG_SAVE
    AC_LANG_CPLUSPLUS
    AC_TRY_COMPILE([
