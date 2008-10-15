@@ -101,6 +101,7 @@ static const LeapSecondRecord LeapSeconds[] =
     { 31, 2450630.5 }, // 1 Jul 1997
     { 32, 2451179.5 }, // 1 Jan 1999
     { 33, 2453736.5 }, // 1 Jan 2006
+    { 34, 2454832.5 }, // 1 Jan 2009
 };
 
 
