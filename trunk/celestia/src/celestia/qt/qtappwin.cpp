@@ -1169,6 +1169,13 @@ void CelestiaAppWindow::createMenus()
     starStyleMenu->addAction(actions->fuzzyPointStarAction);
     starStyleMenu->addAction(actions->scaledDiscStarAction);
 
+    displayMenu->addSeparator();
+
+    QMenu* textureResolutionMenu = displayMenu->addMenu(tr("Texture &Resolution"));
+    textureResolutionMenu->addAction(actions->lowResAction);
+    textureResolutionMenu->addAction(actions->mediumResAction);
+    textureResolutionMenu->addAction(actions->highResAction);
+
 
     /****** Bookmark menu ******/
     bookmarkMenu = menuBar()->addMenu(tr("&Bookmarks"));

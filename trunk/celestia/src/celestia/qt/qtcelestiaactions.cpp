@@ -211,8 +211,8 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(cloudShadowsAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
     lowResAction          = createCheckableAction(tr("Low"),    lores);
-    mediumResAction       = createCheckableAction(tr("Medium"), lores);
-    highResAction         = createCheckableAction(tr("High"),   lores);
+    mediumResAction       = createCheckableAction(tr("Medium"), medres);
+    highResAction         = createCheckableAction(tr("High"),   hires);
     connect(lowResAction,    SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
