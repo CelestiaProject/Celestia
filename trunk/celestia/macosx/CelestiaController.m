@@ -73,8 +73,13 @@ NSString* fatalErrorMessage;
         return;
     }
     
+	BOOL nosplash = [[NSUserDefaults standardUserDefaults] boolForKey:@"nosplash"];
     startupCondition = [[NSConditionLock alloc] initWithCondition: 0];
 
+	if (!nosplash)
+	{
+		[splashWindowController showWindow];
+	}
     if (threaded)
     {
         // start initialization thread
@@ -146,7 +151,6 @@ NSString* fatalErrorMessage;
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    if (!threaded) [splashWindowController showWindow];
     [[glView openGLContext] makeCurrentContext];
 #ifdef DEBUG
     NSDate *t = [NSDate date];
@@ -210,8 +214,7 @@ NSString* fatalErrorMessage;
             return;
         // beginModalSession also displays the window, but the centering
         // is wrong so do the display and centering beforehand
-        [splashWindowController showWindow];
-        session = [NSApp beginModalSessionForWindow: [splashWindowController window]];
+        session = [NSApp beginModalSessionForWindow: [glView window]];
         for (;;) 
         {
             if ( fatalErrorMessage != nil )
@@ -223,10 +226,10 @@ NSString* fatalErrorMessage;
         }
         [NSApp endModalSession:session];
     }
+    [splashWindowController close];
     // check for fatal error in loading thread
     [self fatalError: nil];
     // complete startup
-    [splashWindowController close];
     [self finishInitialization];
 }
 
