@@ -1037,7 +1037,7 @@ void Renderer::setResolution(unsigned int resolution)
 {
     if (resolution < TEXTURE_RESOLUTION)
         textureResolution = resolution;
-    //markSettingsChanged();
+    markSettingsChanged();
 }
 
 
