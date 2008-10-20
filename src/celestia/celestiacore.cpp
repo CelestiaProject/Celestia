@@ -3139,52 +3139,58 @@ static void displayStarInfo(Overlay& overlay,
     if (!star.getVisibility())
     {
         overlay << _("Star system barycenter\n");
-        return;
     }
-
-    overlay.oprintf(_("Abs (app) mag: %.2f (%.2f)\n"),
-                   star.getAbsoluteMagnitude(),
-                   astro::absToAppMag(star.getAbsoluteMagnitude(),
-                                      (float) distance));
-
-    if (star.getLuminosity() > 1.0e-10f)
-        overlay << _("Luminosity: ") << SigDigitNum(star.getLuminosity(), 3) << _("x Sun") << "\n";
-    overlay << _("Class: ");
-    if (star.getSpectralType()[0] == 'Q')
-        overlay << _("Neutron star");
-    else if (star.getSpectralType()[0] == 'X')
-        overlay << _("Black hole");
     else
-        overlay << star.getSpectralType();
-    overlay << '\n';
+    {
+        overlay.oprintf(_("Abs (app) mag: %.2f (%.2f)\n"),
+                       star.getAbsoluteMagnitude(),
+                       astro::absToAppMag(star.getAbsoluteMagnitude(),
+                                          (float) distance));
 
-    displayApparentDiameter(overlay, star.getRadius(),
-                            astro::lightYearsToKilometers(distance));
+        if (star.getLuminosity() > 1.0e-10f)
+            overlay << _("Luminosity: ") << SigDigitNum(star.getLuminosity(), 3) << _("x Sun") << "\n";
+        overlay << _("Class: ");
+        if (star.getSpectralType()[0] == 'Q')
+            overlay << _("Neutron star");
+        else if (star.getSpectralType()[0] == 'X')
+            overlay << _("Black hole");
+        else
+            overlay << star.getSpectralType();
+        overlay << '\n';
 
+        displayApparentDiameter(overlay, star.getRadius(),
+                                astro::lightYearsToKilometers(distance));
+
+        if (detail > 1)
+        {
+            overlay << _("Surface temp: ") << SigDigitNum(star.getTemperature(), 3) << " K\n";
+            float solarRadii = star.getRadius() / 6.96e5f;
+
+            overlay << _("Radius: ");
+            if (solarRadii > 0.01f)
+            {
+                overlay << SigDigitNum(star.getRadius() / 696000.0f, 2) << " " << _("Rsun")
+                        << "  (" << SigDigitNum(star.getRadius(), 3) << " km" << ")\n";
+            }
+            else
+            {
+                overlay << SigDigitNum(star.getRadius(), 3) << " km\n";
+            }
+
+            if (star.getRotationModel()->isPeriodic())
+            {
+                overlay << _("Rotation period: ");
+                float period = (float) star.getRotationModel()->getPeriod();
+                displayDuration(overlay, period);
+                overlay << '\n';
+            }
+
+
+        }
+    }
+    
     if (detail > 1)
     {
-        overlay << _("Surface temp: ") << SigDigitNum(star.getTemperature(), 3) << " K\n";
-        float solarRadii = star.getRadius() / 6.96e5f;
-
-        overlay << _("Radius: ");
-        if (solarRadii > 0.01f)
-        {
-            overlay << SigDigitNum(star.getRadius() / 696000.0f, 2) << " " << _("Rsun")
-                    << "  (" << SigDigitNum(star.getRadius(), 3) << " km" << ")\n";
-        }
-        else
-        {
-            overlay << SigDigitNum(star.getRadius(), 3) << " km\n";
-        }
-
-        if (star.getRotationModel()->isPeriodic())
-        {
-            overlay << _("Rotation period: ");
-            float period = (float) star.getRotationModel()->getPeriod();
-            displayDuration(overlay, period);
-            overlay << '\n';
-        }
-
         SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != NULL && sys->getPlanets()->getSystemSize() != 0)
             overlay << _("Planetary companions present\n");
