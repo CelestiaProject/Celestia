@@ -13,8 +13,8 @@ This README file accompanies the release of Celestia for Mac OS X. It includes i
 Celestia is a cross-platform program. Versions are currently available for Windows and various flavors of Unix as well as Mac OS X. Additional information which applies generally to all versions of the program will be found in the the following files that should be distributed along with this file: AUTHORS, ChangeLog, COPYING, README.\
 \
 
-\f1\b \cf2 TROUBLESHOOTING
-\f0\b0 \cf0 \
+\b \cf2 TROUBLESHOOTING
+\b0 \cf0 \
 \
 If you have problems with freezes or crashes, you can try the following:\
 \
@@ -34,14 +34,13 @@ You will need at least Mac OS X 10.3 (Panther), but it is well-advised to have t
 \
 INSTALLATION\
 \
-The distribution disk image includes two items needed to run Celestia:\
+The distribution disk image includes one item needed to run Celestia:\
 \
 * Celestia - the applcation package\
-* CelestiaResources - the resource folder\
 \
-You should mount the disk image and copy these files to your hard disk. You may want to put the "Celestia" application package in your "Applications" folder ('~/Applications'), but you can put it somewhere else if you prefer. It is probably simplest to put the "CelestiaResources" resource folder in the same folder where you put the application, but there are a few other places where you may put it. When you run Celestia, the application looks for the resource folder in several places. First it looks in the folder which contains the application. If the resource folder is not there, the application then looks in the "Application Support" folder in your "Library" folder ('~/Library/Application Support'). If the resource folder is not there, the application then looks in the shared "Application Support" folder on your computer ('/Library/Application Support'). Finally, the application looks for the resource files in the "Resources" folder in the "Contents" folder inside the application package.\
+You should mount the disk image and copy this file to your hard disk. You may want to put the "Celestia" application package in your "Applications" folder ('~/Applications'), but you can put it somewhere else if you prefer.\
 \
-Note that to put the resource files inside the application package, you must copy the CONTENTS of the "CelestiaResources" folder into the "Resources" folder in the "Contents" folder inside the application package. (To get to these folders, control-click the "Celestia" application package  to see its contextual menu and choose the "Show Package Contents" item.) This is not generally recommended because it complicates user customization.\
+As of Celestia 1.6.0, standard data files needed to run Celestia are now included inside the application package instead of provided as a separate folder.\
 \
 STARTUP\
 \
@@ -58,6 +57,12 @@ If you need further information or assistance, or wish to contribute to the Cele
      http://www.shatters.net/forum\
 \
 CHANGES\
+\
+Version 1.6.0:\
+\
+   * Data files (CelestiaResources) moved inside application bundle to simplify installation. Celestia will still recognize user-customized extras and scripts folders under ~/Library/Application Support/CelestiaResources or /Library/Application Support/CelestiaResources.\
+   * Preference panel usability improvements\
+   * Fixed issue where Radeon 9200 vertex program workaround could not be installed when running Celestia from the installation disk image\
 \
 Version 1.5.1:\
 \
@@ -87,7 +92,7 @@ Version 1.4.1:\
    * Couple of French translation fixes\
    * Changed wording of "Subtract Light Travel Delay" menu item to "Add/Subtract Light Travel Delay" to more accurately reflect its function\
    * Default values for preferences more closely match the GTK version's as suggested by 
-\f2\fs25 Pat Suwalski\
+\f1\fs25 Pat Suwalski\
 
 \f0\fs24    * Bug fixes to favorites, info URL handling\
    * Full screen mode pauses when various panels are shown\

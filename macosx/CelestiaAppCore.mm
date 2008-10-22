@@ -347,9 +347,10 @@ CelestiaCore *appCore;
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSString *confFileSetting;
     std::string confFile;
+    NSArray *existingResourceDirsSetting;
     NSArray *extrasDirsSetting;
     std::vector<std::string> extrasDirs;
-    NSString *extrasDir;
+    NSString *extrasDir = nil;
     MacOSXSplashProgressNotifier progressNotifier;
 
     if ((confFileSetting = [prefs stringForKey:@"conf"]))
@@ -357,6 +358,36 @@ CelestiaCore *appCore;
         confFile = [confFileSetting stdString];
     }
 
+    if ((existingResourceDirsSetting = [prefs stringArrayForKey:@"existingResourceDirs"]))
+    {
+        NSFileManager *fm = [NSFileManager defaultManager];
+        BOOL isFolder = NO;
+        NSEnumerator *resouceDirEnum = [existingResourceDirsSetting objectEnumerator];
+        NSString *resourceDir = nil;
+        NSString *existingConfFile = nil;
+        while ((resourceDir = [resouceDirEnum nextObject]))
+        {
+            existingConfFile = [resourceDir stringByAppendingPathComponent:@"celestia.cfg"];
+            CelestiaConfig *config = ReadCelestiaConfig([existingConfFile stdString], NULL);
+            if (config)
+            {
+                for (vector<string>::const_iterator iter = config->extrasDirs.begin();
+                     iter != config->extrasDirs.end(); iter++)
+                {
+                    if (*iter != "")
+                    {
+                        extrasDir = [NSString stringWithStdString: (*iter)];
+                        if (([fm fileExistsAtPath: extrasDir = [extrasDir stringByStandardizingPath] isDirectory: &isFolder] && isFolder) ||
+                            [fm fileExistsAtPath: extrasDir = [resourceDir stringByAppendingPathComponent:extrasDir] isDirectory: &isFolder] && isFolder)
+                        {
+                            extrasDirs.push_back([extrasDir stdString]);
+                        }
+                    }
+                }
+                delete config;
+            }
+        }
+    }
     if ((extrasDirsSetting = [prefs stringArrayForKey:@"extrasDirs"]))
     {
         NSEnumerator *iter = [extrasDirsSetting objectEnumerator];
@@ -367,7 +398,7 @@ CelestiaCore *appCore;
     appCore->setAlerter(new MacOSXAlerter());
     appCore->setCursorHandler(new MacOSXCursorHandler());
     result = appCore->initSimulation(!confFile.empty() ? &confFile : nil,
-                                     extrasDirsSetting ? &extrasDirs : nil,
+                                     &extrasDirs,
                                      &progressNotifier);
     if (result)
     {
