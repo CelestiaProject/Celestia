@@ -292,6 +292,9 @@ CELESTIA RESOURCES
 Celestia Web Site:
   http://www.shatters.net/celestia/
 
+Celestia Source Repository (SourceForge.net):
+  http://sourceforge.net/projects/celestia/
+
 Celestia User Forums:
   http://www.shatters.net/forum/
 
@@ -307,9 +310,6 @@ Celestia Developer Center
 
 Celestia for Gnome
   http://pat.suwalski.net/celestia/
-
-Celestia Source Code (SourceForge.net):
-  http://sourceforge.net/projects/celestia/
 
 
 CREDITS
@@ -497,7 +497,6 @@ information, developed by Caltech/JPL under contract to NASA.
 A special thank you goes to all Celestia users who submit bug reports,
 suggestions, and fixes.  Celestia wouldn't be the program it is today, without
 your help.
-
 
 Chris Laurel
   <claurel@gmail.com>

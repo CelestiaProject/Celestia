@@ -135,6 +135,7 @@ ENGINE_SOURCES = \
 	celengine/overlay.cpp \
 	celengine/parseobject.cpp \
 	celengine/parser.cpp \
+        celengine/particlesystem.cpp \
 	celengine/planetgrid.cpp \
 	celengine/precession.cpp \
 	celengine/regcombine.cpp \
@@ -225,6 +226,7 @@ ENGINE_HEADERS = \
 	celengine/overlay.h \
 	celengine/parseobject.h \
 	celengine/parser.h \
+        celengine/particlesystem.h \
 	celengine/planetgrid.h \
 	celengine/precession.h \
 	celengine/referencemark.h \
@@ -438,7 +440,7 @@ macx {
 
 	QMAKE_CXXFLAGS += -fpermissive
 	QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
-	CONFIG += x86 ppc
+	CONFIG += x86
 	PRECOMPILED_HEADER += ../macosx/Util.h
 	FRAMEWORKPATH = ../macosx/Frameworks
 	LIBS -= -ljpeg
@@ -448,6 +450,9 @@ macx {
 	FRAMEWORKS.files = $$FRAMEWORKPATH/liblua.dylib $$FRAMEWORKPATH/libpng.dylib
 	FRAMEWORKS.path = Contents/Frameworks
 	QMAKE_BUNDLE_DATA += FRAMEWORKS
+
+	INCLUDEPATH += /usr/local/cspice/include
+	LIBS += /usr/local/cspice/lib/cspice.a
 }
 
 DEFINES += CELX LUA_VER=0x050100

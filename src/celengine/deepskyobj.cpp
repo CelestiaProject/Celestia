@@ -68,11 +68,6 @@ void DeepSkyObject::setOrientation(const Quatf& q)
     orientation = q;
 }
 
-float DeepSkyObject::getRadius() const
-{
-    return radius;
-}
-
 void DeepSkyObject::setRadius(float r)
 {
     radius = r;
