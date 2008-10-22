@@ -219,7 +219,7 @@ Model::normalize(const Vec3f& centerOffset)
     if (extents.z > maxExtent)
         maxExtent = extents.z;
     
-    clog << "Extents: " << extents.x << ", " << extents.y << ", " << extents.z << endl;
+    // clog << "Extents: " << extents.x << ", " << extents.y << ", " << extents.z << endl;
 
     transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
 
