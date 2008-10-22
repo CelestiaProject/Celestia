@@ -6327,9 +6327,14 @@ static void renderRings(RingSystem& rings,
     Texture* ringsTex = rings.texture.find(textureResolution);
 
     if (ringsTex != NULL)
+    {
+        glEnable(GL_TEXTURE_2D);
         ringsTex->bind();
+    }
     else
+    {
         glDisable(GL_TEXTURE_2D);
+    }
 
     // Perform our own lighting for the rings.
     // TODO: Don't forget about light source color (required when we
@@ -7661,6 +7666,7 @@ void Renderer::renderObject(Point3f pos,
             Vec3f sunDir = pos - Point3f(0, 0, 0);
             sunDir.normalize();
 
+            glEnable(GL_TEXTURE_2D);
             ringsTex->bind();
 
             if (useClampToBorder &&
