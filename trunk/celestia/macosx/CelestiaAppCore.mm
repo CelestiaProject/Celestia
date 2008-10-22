@@ -587,7 +587,10 @@ CelestiaCore *appCore;
 
 -(NSString *) currentURL
 {
-    Url currentUrl = Url(appCore, Url::Absolute);
+    CelestiaState appState;
+    appState.captureState(appCore);
+    Url currentUrl(appState, Url::CurrentVersion);
+    
     NSString *url = [ NSString stringWithStdString: currentUrl.getAsString() ];
     return url;
 }
