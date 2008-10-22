@@ -48,8 +48,18 @@ class DeepSkyObject
     Quatf getOrientation() const;
     void setOrientation(const Quatf&);
 
-    float getRadius() const;
-    void setRadius(float);
+    /*! Return the radius of a bounding sphere large enough to contain the object.
+     *  For correct rendering, all of the geometry must fit within this sphere radius.
+     *  DSO subclasses an alternate radius that more closely matches the conventional
+     *  astronomical definition for the size of the object (e.g. mu25 isophote radius.)
+     */
+    virtual float getBoundingSphereRadius() const { return radius; }
+
+    /*! Return the radius of the object. This radius will be displayed in the UI and
+     *  should match the conventional astronomical definition of the object size.
+     */    
+    float getRadius() const { return radius; }
+    void setRadius(float r);
 
     float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
