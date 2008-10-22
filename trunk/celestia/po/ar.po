@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ar \n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-01-29 22:52+0100\n"
+"POT-Creation-Date: 2008-10-21 22:25-0400\n"
 "PO-Revision-Date: 2006-06-05 22:00+0100\n"
 "Last-Translator: Ali Al-Khudair <saudilink@lycos.com>\n"
 "Language-Team: Arabic <ar@li.org>\n"
@@ -16,24 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/celengine/astro.cpp:738
+#: src/celengine/astro.cpp:819
 msgid "DST"
 msgstr ""
 
-#: src/celengine/astro.cpp:738
+#: src/celengine/astro.cpp:819
 msgid "STD"
 msgstr ""
 
-#: src/celengine/dsodb.cpp:342 src/celengine/dsodb.cpp:343
-msgid "Milky Way"
-msgstr ""
-
-#: src/celengine/dsodb.cpp:380
+#: src/celengine/dsodb.cpp:386
 #, fuzzy
 msgid "Loaded "
 msgstr "التحميل قائم "
 
-#: src/celengine/dsodb.cpp:380
+#: src/celengine/dsodb.cpp:386
 #, fuzzy
 msgid " deep space objects"
 msgstr "العناصر المعلّمة"
@@ -62,7 +58,7 @@ msgstr "تم تحميل جميع جزئيات برامج NV بنجاح.\n"
 msgid "Initializing ARB fragment programs . . .\n"
 msgstr "تشغيل جزئية برنامج ARB . . .\n"
 
-#: src/celengine/galaxy.cpp:190
+#: src/celengine/galaxy.cpp:196
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
 msgstr "مجرة (نوع Hubble: %s)"
@@ -91,31 +87,31 @@ msgstr "ليس ملف من نوع PNG.\n"
 msgid "Error reading PNG image file "
 msgstr "خطأ في قراءة ملف من نوع PNG"
 
-#: src/celengine/meshmanager.cpp:66
+#: src/celengine/meshmanager.cpp:91
 msgid "Loading model: "
 msgstr "تحميل نموذج : "
 
-#: src/celengine/meshmanager.cpp:118
+#: src/celengine/meshmanager.cpp:171
 msgid "   Model statistics: "
 msgstr ""
 
-#: src/celengine/meshmanager.cpp:119
+#: src/celengine/meshmanager.cpp:172
 msgid " vertices, "
 msgstr ""
 
-#: src/celengine/meshmanager.cpp:120
+#: src/celengine/meshmanager.cpp:173
 msgid " primitives, "
 msgstr ""
 
-#: src/celengine/meshmanager.cpp:121
+#: src/celengine/meshmanager.cpp:174
 msgid " materials "
 msgstr ""
 
-#: src/celengine/meshmanager.cpp:122
+#: src/celengine/meshmanager.cpp:175
 msgid " unique)\n"
 msgstr ""
 
-#: src/celengine/meshmanager.cpp:126
+#: src/celengine/meshmanager.cpp:179
 msgid "Error loading model '"
 msgstr "خطأ في تحميل النموذج '"
 
@@ -124,121 +120,104 @@ msgstr "خطأ في تحميل النموذج '"
 msgid "%s"
 msgstr "%s"
 
-#: src/celengine/solarsys.cpp:80
+#: src/celengine/solarsys.cpp:93
 msgid "Error in .ssc file (line "
 msgstr "خطأ في ملف من نوع .ssc (السطر"
 
-#: src/celengine/solarsys.cpp:236 src/celengine/solarsys.cpp:244
-#, fuzzy
-msgid " of "
-msgstr "' عن '"
-
-#: src/celengine/solarsys.cpp:236 src/celengine/solarsys.cpp:244
-msgid " must be in same star system\n"
-msgstr ""
-
-#: src/celengine/solarsys.cpp:796 src/celengine/solarsys.cpp:859
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
 msgid "parent body '"
 msgstr "بدن الأصل '"
 
-#: src/celengine/solarsys.cpp:796 src/celengine/solarsys.cpp:859
+#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
 msgid "' of '"
 msgstr "' عن '"
 
-#: src/celengine/solarsys.cpp:796 src/celengine/solarsys.cpp:859
-msgid "' not found.\n"
+#: src/celengine/solarsys.cpp:1200
+#, fuzzy
+msgid "' not found."
 msgstr "' غير موجود.\n"
 
-#: src/celengine/solarsys.cpp:805
+#: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
 msgstr "تحذير، تعريف مكرر من "
 
-#: src/celengine/solarsys.cpp:839
+#: src/celengine/solarsys.cpp:1247
 msgid "bad alternate surface"
 msgstr "سطح بديل سيء"
 
-#: src/celengine/solarsys.cpp:853
+#: src/celengine/solarsys.cpp:1261
 msgid "bad location"
 msgstr "موقع سيء"
 
-#: src/celengine/stardb.cpp:560
+#: src/celengine/solarsys.cpp:1267
+msgid "' not found.\n"
+msgstr "' غير موجود.\n"
+
+#: src/celengine/stardb.cpp:578
 msgid "Bad header for cross index\n"
 msgstr "عنوان رئسي سيء للفهرس المتقاطع\n"
 
-#: src/celengine/stardb.cpp:573
+#: src/celengine/stardb.cpp:591
 msgid "Bad version for cross index\n"
 msgstr "اصدار سيء للفهرس المتقاطع\n"
 
-#: src/celengine/stardb.cpp:595
+#: src/celengine/stardb.cpp:613
 msgid "Loading cross index failed at record "
 msgstr "تشغيل الفهرس المتقاطع فشل في السجل "
 
-#: src/celengine/stardb.cpp:696
-msgid "Bad spectral type in star database, star #\n"
-msgstr "نوع طيف سيء في قاعدة بيانات النجمة , النجمة #\n"
-
-#: src/celengine/stardb.cpp:809
+#: src/celengine/stardb.cpp:695
 msgid "Bad spectral type in star database, star #"
 msgstr "نوع طيف سيء في قاعدة بيانات النجمة , النجمة #"
 
-#: src/celengine/stardb.cpp:823
+#: src/celengine/stardb.cpp:710
 msgid " stars in binary database\n"
 msgstr "النجوم في قاعدة البيانات الثنائية\n"
 
-#: src/celengine/stardb.cpp:839
+#: src/celengine/stardb.cpp:734
 msgid "Total star count: "
 msgstr "إجمالي عدد النجوم: "
 
-#: src/celengine/stardb.cpp:841
-msgid " star(s) with duplicate catalog numbers deleted.)\n"
-msgstr "النجوم ذات التكرار في أرقام الدليل حذفت.)\n"
-
-#: src/celengine/stardb.cpp:872
+#: src/celengine/stardb.cpp:768
 msgid "Error in .stc file (line "
 msgstr "خطأ في ملف من نوع .stc (السطر"
 
-#: src/celengine/stardb.cpp:902
-msgid "Invalid star: missing spectral type.\n"
-msgstr "نجمة غير صحيحة : نوع الطيف مفقود.\n"
-
-#: src/celengine/stardb.cpp:909
+#: src/celengine/stardb.cpp:805
 msgid "Invalid star: bad spectral type.\n"
 msgstr "نجمة غير صحيحة : نوع الطيف سيء.\n"
 
-#: src/celengine/stardb.cpp:1025
+#: src/celengine/stardb.cpp:814
+msgid "Invalid star: missing spectral type.\n"
+msgstr "نجمة غير صحيحة : نوع الطيف مفقود.\n"
+
+#: src/celengine/stardb.cpp:960
 msgid "Barycenter "
 msgstr "نقطة المنتصف "
 
-#: src/celengine/stardb.cpp:1025
+#: src/celengine/stardb.cpp:960
 msgid " does not exist.\n"
 msgstr " غير موجود.\n"
 
-#: src/celengine/stardb.cpp:1052
+#: src/celengine/stardb.cpp:1006
 msgid "Invalid star: missing right ascension\n"
 msgstr "نجمة غير صحيحة: المطلع المستقيم مفقود\n"
 
-#: src/celengine/stardb.cpp:1059
+#: src/celengine/stardb.cpp:1019
 msgid "Invalid star: missing declination.\n"
 msgstr "نجمة غير صحيحة: البعد الزاوي مفقود\n"
 
-#: src/celengine/stardb.cpp:1066
+#: src/celengine/stardb.cpp:1032
 msgid "Invalid star: missing distance.\n"
 msgstr "نجمة غير صحيحة: المسافة مفقودة\n"
 
-#: src/celengine/stardb.cpp:1092
+#: src/celengine/stardb.cpp:1068
 msgid "Invalid star: missing magnitude.\n"
 msgstr "نجمة غير صحيحة: مقدار مفقود\n"
 
-#: src/celengine/stardb.cpp:1105
+#: src/celengine/stardb.cpp:1085
 msgid ""
 "Invalid star: absolute (not apparent) magnitude must be specified for star "
 "near origin\n"
 msgstr ""
-
-#: src/celengine/stardb.cpp:1239 src/celengine/stardb.cpp:1240
-#, fuzzy
-msgid "Sun"
-msgstr "زحل"
 
 #: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
@@ -252,458 +231,460 @@ msgstr ""
 msgid "Creating ordinary texture: "
 msgstr ""
 
-#: src/celengine/vertexprog.cpp:108
+#: src/celengine/vertexprog.cpp:114
 msgid "Loading NV vertex program: "
 msgstr "تشغيل برنامج القمة NV: "
 
-#: src/celengine/vertexprog.cpp:113
+#: src/celengine/vertexprog.cpp:119
 msgid "Error loading NV vertex program: "
 msgstr "خطأ في تشغيل برنامج القمة NV: "
 
-#: src/celengine/vertexprog.cpp:130 src/celengine/vertexprog.cpp:189
+#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
 msgstr "خطأ في برنامج القمة "
 
-#: src/celengine/vertexprog.cpp:157
+#: src/celengine/vertexprog.cpp:163
 msgid "Loading ARB vertex program: "
 msgstr "تشغير برنامج قمة ARB: "
 
-#: src/celengine/vertexprog.cpp:162
+#: src/celengine/vertexprog.cpp:168
 msgid "Error loading ARB vertex program: "
 msgstr "خطأ في تشغيل برنامج قمة ARB: "
 
-#: src/celengine/vertexprog.cpp:190
+#: src/celengine/vertexprog.cpp:196
 msgid ", line "
 msgstr ", السطر"
 
-#: src/celengine/vertexprog.cpp:202
+#: src/celengine/vertexprog.cpp:208
 msgid "Initializing NV vertex programs . . .\n"
 msgstr "تشغيل برنامج القمة NV ...\n"
 
-#: src/celengine/vertexprog.cpp:234
+#: src/celengine/vertexprog.cpp:240
 msgid "All NV vertex programs loaded successfully.\n"
 msgstr "تم تشغيل جميع برامج المقة NV بنجاح.\n"
 
-#: src/celengine/vertexprog.cpp:247
+#: src/celengine/vertexprog.cpp:253
 msgid "Initializing ARB vertex programs . . .\n"
 msgstr "تشغيل برنامج القمة ARB . . .\n"
 
-#: src/celengine/vertexprog.cpp:298
+#: src/celengine/vertexprog.cpp:314
 msgid "All ARB vertex programs loaded successfully.\n"
 msgstr "تم تشغيل جميع برامج المقة ARB بنجاح.\n"
 
-#: src/celestia/celestiacore.cpp:416
+#: src/celestia/celestiacore.cpp:419
 msgid "Error reading favorites file."
 msgstr "خطأ في قراءة المفضلة."
 
-#: src/celestia/celestiacore.cpp:506
+#: src/celestia/celestiacore.cpp:509
 msgid "Orientation: "
 msgstr "التوجيه: "
 
-#: src/celestia/celestiacore.cpp:553 src/celestia/celestiacore.cpp:555
+#: src/celestia/celestiacore.cpp:556 src/celestia/celestiacore.cpp:558
 msgid "Error opening script file."
 msgstr "خطأ في فتح مستند."
 
-#: src/celestia/celestiacore.cpp:586
+#: src/celestia/celestiacore.cpp:589
 #, c-format
 msgid "Error opening script '%s'"
 msgstr "خطأ في فتح المستند '%s'"
 
-#: src/celestia/celestiacore.cpp:604
+#: src/celestia/celestiacore.cpp:607
 msgid "Unknown error opening script"
 msgstr "خطأ غير معروف في فتح المستند"
 
-#: src/celestia/celestiacore.cpp:616
+#: src/celestia/celestiacore.cpp:619
 msgid "Script coroutine initialization failed"
 msgstr "خطأ في انشاء مستند برنامج جزئي"
 
-#: src/celestia/celestiacore.cpp:632 src/celestia/celestiacore.cpp:634
+#: src/celestia/celestiacore.cpp:635 src/celestia/celestiacore.cpp:637
 msgid "Invalid filetype"
 msgstr "نوع الملف خاطئ"
 
-#: src/celestia/celestiacore.cpp:970 src/celestia/celestiacore.cpp:1752
-#: src/celestia/celestiacore.cpp:1770 src/celestia/celestiacore.cpp:2018
-#: src/celestia/celestiacore.cpp:2049
+#: src/celestia/celestiacore.cpp:980 src/celestia/celestiacore.cpp:1779
+#: src/celestia/celestiacore.cpp:1797 src/celestia/celestiacore.cpp:2038
+#: src/celestia/celestiacore.cpp:2069
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "حد المقدار: %.2f"
 
-#: src/celestia/celestiacore.cpp:1384
+#: src/celestia/celestiacore.cpp:1409
 msgid "Markers enabled"
 msgstr "تفعيل المعلّم"
 
-#: src/celestia/celestiacore.cpp:1387
+#: src/celestia/celestiacore.cpp:1412
 msgid "Markers disabled"
 msgstr "تبطيل المعلّم"
 
-#: src/celestia/celestiacore.cpp:1397
+#: src/celestia/celestiacore.cpp:1422
 msgid "Goto surface"
 msgstr "ذهاب الى السطح"
 
-#: src/celestia/celestiacore.cpp:1410
+#: src/celestia/celestiacore.cpp:1435
 #, fuzzy
 msgid "Alt-azimuth mode enabled"
 msgstr "وضعية منظار Alt-azimuth"
 
-#: src/celestia/celestiacore.cpp:1413
+#: src/celestia/celestiacore.cpp:1438
 #, fuzzy
 msgid "Alt-azimuth mode disabled"
 msgstr "وضعية منظار Alt-azimuth"
 
-#: src/celestia/celestiacore.cpp:1467
+#: src/celestia/celestiacore.cpp:1494
 msgid "Star style: fuzzy points"
 msgstr "طراز النجمة: نقاط غير واضحة"
 
-#: src/celestia/celestiacore.cpp:1470
+#: src/celestia/celestiacore.cpp:1497
 msgid "Star style: points"
 msgstr "طراز النجمة: نقاط"
 
-#: src/celestia/celestiacore.cpp:1473
+#: src/celestia/celestiacore.cpp:1500
 msgid "Star style: scaled discs"
 msgstr "طراز النجمة: اسطوانات من القشرة الجافة"
 
-#: src/celestia/celestiacore.cpp:1486
+#: src/celestia/celestiacore.cpp:1513
 msgid "Comet tails enabled"
 msgstr "تفعيل ذيل المذنب"
 
-#: src/celestia/celestiacore.cpp:1489
+#: src/celestia/celestiacore.cpp:1516
 msgid "Comet tails disabled"
 msgstr "تبطيل ذيل المذنب"
 
-#: src/celestia/celestiacore.cpp:1504
+#: src/celestia/celestiacore.cpp:1531
 msgid "Render path: Basic"
 msgstr "مسار التمثيل: أساسي"
 
-#: src/celestia/celestiacore.cpp:1507
+#: src/celestia/celestiacore.cpp:1534
 msgid "Render path: Multitexture"
 msgstr "مسار التمثيل: متعدد القوام"
 
-#: src/celestia/celestiacore.cpp:1510
+#: src/celestia/celestiacore.cpp:1537
 msgid "Render path: NVIDIA combiners"
 msgstr "مسار التمثيل: مجموعة NVIDIA"
 
-#: src/celestia/celestiacore.cpp:1513
+#: src/celestia/celestiacore.cpp:1540
 msgid "Render path: OpenGL vertex program"
 msgstr "مسار التمثيل: برنامج قمة OpenGL"
 
-#: src/celestia/celestiacore.cpp:1516
+#: src/celestia/celestiacore.cpp:1543
 msgid "Render path: NVIDIA vertex program and combiners"
 msgstr "مسار التمثيل: مجموعة و برنامج قمة NVIDIA"
 
-#: src/celestia/celestiacore.cpp:1519
+#: src/celestia/celestiacore.cpp:1546
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
 msgstr "مسار التمثيل: مجموعة NVIDIA\\ برنامج قمة OpenGL"
 
-#: src/celestia/celestiacore.cpp:1522
+#: src/celestia/celestiacore.cpp:1549
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
 msgstr "مسار التمثيل: برنامج قمة/جزئي من OpenGL 1.5"
 
-#: src/celestia/celestiacore.cpp:1525
+#: src/celestia/celestiacore.cpp:1552
 msgid "Render path: NVIDIA GeForce FX"
 msgstr "مسار التمثيل: NVIDIA GeForce FX"
 
-#: src/celestia/celestiacore.cpp:1528
+#: src/celestia/celestiacore.cpp:1555
 msgid "Render path: OpenGL 2.0"
 msgstr "مسار التمثيل: OpenGL 2.0"
 
-#: src/celestia/celestiacore.cpp:1551
+#: src/celestia/celestiacore.cpp:1578
 msgid "Auto-magnitude enabled"
 msgstr "المقدار الآلي مفعل"
 
-#: src/celestia/celestiacore.cpp:1556
+#: src/celestia/celestiacore.cpp:1583
 msgid "Auto-magnitude disabled"
 msgstr "المقدار الآلي معطل"
 
-#: src/celestia/celestiacore.cpp:1578 src/celestia/res/resource_strings.cpp:82
-#: src/celestia/res/resource_strings.cpp:96
+#: src/celestia/celestiacore.cpp:1605 src/celestia/res/resource_strings.cpp:86
 #: src/celestia/res/resource_strings.cpp:100
-#: src/celestia/res/resource_strings.cpp:128
-#: src/celestia/res/resource_strings.cpp:138
-#: src/celestia/res/resource_strings.cpp:169
+#: src/celestia/res/resource_strings.cpp:104
+#: src/celestia/res/resource_strings.cpp:132
+#: src/celestia/res/resource_strings.cpp:142
 #: src/celestia/res/resource_strings.cpp:191
-#: src/celestia/res/resource_strings.cpp:196
-#: src/celestia/res/resource_strings.cpp:200
-#: src/celestia/res/resource_strings.cpp:206
+#: src/celestia/res/resource_strings.cpp:205
+#: src/celestia/res/resource_strings.cpp:210
+#: src/celestia/res/resource_strings.cpp:214
+#: src/celestia/res/resource_strings.cpp:220
 msgid "Cancel"
 msgstr "إلغاء الامر"
 
-#: src/celestia/celestiacore.cpp:1614
+#: src/celestia/celestiacore.cpp:1641
 msgid "Time and script are paused"
 msgstr "تم إيقاف الوقت والمستند مؤقتا"
 
-#: src/celestia/celestiacore.cpp:1616
+#: src/celestia/celestiacore.cpp:1643
 msgid "Time is paused"
 msgstr "تم إيقاف الوقت مؤقتا"
 
-#: src/celestia/celestiacore.cpp:1620
+#: src/celestia/celestiacore.cpp:1647
 msgid "Resume"
 msgstr "استئناف"
 
-#: src/celestia/celestiacore.cpp:1695
+#: src/celestia/celestiacore.cpp:1722
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "وقت انتقال الضوء %.4f سنة "
 
-#: src/celestia/celestiacore.cpp:1704
+#: src/celestia/celestiacore.cpp:1731
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "وقت انتقال الضوء %d دقيقة %.1f ثانية"
 
-#: src/celestia/celestiacore.cpp:1707
+#: src/celestia/celestiacore.cpp:1734
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "وقت انتقال الضوء %d ساعة %d دقيقة %.1f ثانية"
 
-#: src/celestia/celestiacore.cpp:1726
+#: src/celestia/celestiacore.cpp:1753
 msgid "Light travel delay included"
 msgstr "تأخير وقت انتقال الضوء متضمن"
 
-#: src/celestia/celestiacore.cpp:1731
+#: src/celestia/celestiacore.cpp:1758
 msgid "Light travel delay switched off"
 msgstr "تأخير وقت انتقال الضوء مغلق"
 
-#: src/celestia/celestiacore.cpp:1737
+#: src/celestia/celestiacore.cpp:1764
 msgid "Light travel delay ignored"
 msgstr "وقت انتقال الضوء مهمل"
 
-#: src/celestia/celestiacore.cpp:1782
+#: src/celestia/celestiacore.cpp:1809
 msgid "Using normal surface textures."
 msgstr "استعمال قوام السطح الطبيعي."
 
-#: src/celestia/celestiacore.cpp:1786
+#: src/celestia/celestiacore.cpp:1813
 msgid "limit of knowledge"
 msgstr "محدودية في المعرفة"
 
-#: src/celestia/celestiacore.cpp:1787
+#: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "استعمال قوام سطح حد المعرفة."
 
-#: src/celestia/celestiacore.cpp:1850
+#: src/celestia/celestiacore.cpp:1881
 msgid "Follow"
 msgstr "يتبع"
 
-#: src/celestia/celestiacore.cpp:1875
+#: src/celestia/celestiacore.cpp:1906
 msgid "Time: Forward"
 msgstr "الوقت: تقدم"
 
-#: src/celestia/celestiacore.cpp:1877
+#: src/celestia/celestiacore.cpp:1908
 msgid "Time: Backward"
 msgstr "الوقت: تراجع"
 
-#: src/celestia/celestiacore.cpp:1890 src/celestia/celestiacore.cpp:1906
+#: src/celestia/celestiacore.cpp:1921 src/celestia/celestiacore.cpp:1937
 #, fuzzy
 msgid "Time rate"
 msgstr "معدل الإطار"
 
-#: src/celestia/celestiacore.cpp:1944
-msgid "Low res textures"
-msgstr "قوام منخفض الدقة"
-
-#: src/celestia/celestiacore.cpp:1947
-msgid "Medium res textures"
-msgstr "قوام متوسط الدقة"
-
-#: src/celestia/celestiacore.cpp:1950
-msgid "High res textures"
-msgstr "قوام مرتفع الدقة"
-
-#: src/celestia/celestiacore.cpp:1990
+#: src/celestia/celestiacore.cpp:2010
 msgid "Sync Orbit"
 msgstr "مدار مصاحب"
 
-#: src/celestia/celestiacore.cpp:1996
+#: src/celestia/celestiacore.cpp:2016
 msgid "Lock"
 msgstr "قفل"
 
-#: src/celestia/celestiacore.cpp:2002
+#: src/celestia/celestiacore.cpp:2022
 msgid "Chase"
 msgstr "ملاحقة"
 
-#: src/celestia/celestiacore.cpp:2029 src/celestia/celestiacore.cpp:2060
+#: src/celestia/celestiacore.cpp:2049 src/celestia/celestiacore.cpp:2080
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "حد المقدار الآلي عند 45 درجة: %.2f"
 
-#: src/celestia/celestiacore.cpp:2079 src/celestia/celestiacore.cpp:2094
+#: src/celestia/celestiacore.cpp:2099 src/celestia/celestiacore.cpp:2114
 #, fuzzy, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "الضوء البيئي"
 
-#: src/celestia/celestiacore.cpp:2105 src/celestia/celestiacore.cpp:2117
+#: src/celestia/celestiacore.cpp:2125 src/celestia/celestiacore.cpp:2137
 msgid "Light gain"
 msgstr "إكساب الضوء"
 
-#: src/celestia/celestiacore.cpp:2477
+#: src/celestia/celestiacore.cpp:2157
+#, fuzzy
+msgid "Bloom enabled"
+msgstr "تفعيل ذيل المذنب"
+
+#: src/celestia/celestiacore.cpp:2159
+#, fuzzy
+msgid "Bloom disabled"
+msgstr "تبطيل ذيل المذنب"
+
+#: src/celestia/celestiacore.cpp:2165 src/celestia/celestiacore.cpp:2173
+msgid "Exposure"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:2521
 msgid "GL error: "
 msgstr "خطأ GL: "
 
-#: src/celestia/celestiacore.cpp:2577
+#: src/celestia/celestiacore.cpp:2621
 msgid "View too small to be split"
 msgstr "العرض صغير جداً ليقسم"
 
-#: src/celestia/celestiacore.cpp:2580
+#: src/celestia/celestiacore.cpp:2624
 msgid "Added view"
 msgstr "العرض المضاف"
 
-#: src/celestia/celestiacore.cpp:2821
+#: src/celestia/celestiacore.cpp:2880
 #: src/celestia/kde/celestialbrowser.cpp:132
 #: src/celestia/kde/selectionpopup.cpp:74
 msgid "ly"
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2825
+#: src/celestia/celestiacore.cpp:2884
 #: src/celestia/kde/celestialbrowser.cpp:161
 #: src/celestia/kde/selectionpopup.cpp:76
-#: src/celestia/res/resource_strings.cpp:126
+#: src/celestia/res/resource_strings.cpp:130
 msgid "au"
 msgstr "وحدة قياس فضائية"
 
-#: src/celestia/celestiacore.cpp:2846
+#: src/celestia/celestiacore.cpp:2905
 msgid " days"
 msgstr " الأيام"
 
-#: src/celestia/celestiacore.cpp:2848
+#: src/celestia/celestiacore.cpp:2907
 msgid " hours"
 msgstr " الساعات"
 
-#: src/celestia/celestiacore.cpp:2850
+#: src/celestia/celestiacore.cpp:2909
 msgid " minutes"
 msgstr " الدقائق"
 
-#: src/celestia/celestiacore.cpp:2888
+#: src/celestia/celestiacore.cpp:2976
 msgid "Apparent diameter: "
 msgstr "القطر الظاهر: "
 
-#: src/celestia/celestiacore.cpp:2903
+#: src/celestia/celestiacore.cpp:2991
 msgid "Apparent magnitude: "
 msgstr "المقدار الظاهر: "
 
-#: src/celestia/celestiacore.cpp:2907
+#: src/celestia/celestiacore.cpp:2995
 msgid "Absolute magnitude: "
 msgstr "القيمة المطلقة: "
 
-#: src/celestia/celestiacore.cpp:2929
+#: src/celestia/celestiacore.cpp:3017
 msgid "RA: "
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:2933
+#: src/celestia/celestiacore.cpp:3021
 #, fuzzy
 msgid "Dec: "
 msgstr "عنصر: "
 
-#: src/celestia/celestiacore.cpp:2997 src/celestia/kde/kdeapp.cpp:1593
-#: src/celestia/res/resource_strings.cpp:124
+#: src/celestia/celestiacore.cpp:3085 src/celestia/kde/kdeapp.cpp:1611
+#: src/celestia/res/resource_strings.cpp:128
 msgid "km"
 msgstr "كيلومتر"
 
-#: src/celestia/celestiacore.cpp:3047 src/celestia/celestiacore.cpp:3115
-#: src/celestia/celestiacore.cpp:3147 src/celestia/celestiacore.cpp:3207
+#: src/celestia/celestiacore.cpp:3135 src/celestia/celestiacore.cpp:3209
+#: src/celestia/celestiacore.cpp:3241 src/celestia/celestiacore.cpp:3342
 #: src/celestia/kde/selectionpopup.cpp:82
 msgid "Distance: "
 msgstr "المسافة: "
 
-#: src/celestia/celestiacore.cpp:3053
+#: src/celestia/celestiacore.cpp:3141
 msgid "Star system barycenter\n"
 msgstr "نقطة منتصف نظام النجوم\n"
 
-#: src/celestia/celestiacore.cpp:3057
+#: src/celestia/celestiacore.cpp:3145
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Abs (app) mag: %.2f (%.2f)\n"
 
-#: src/celestia/celestiacore.cpp:3063
+#: src/celestia/celestiacore.cpp:3151
 msgid "Luminosity: "
 msgstr "اللمعان: "
 
-#: src/celestia/celestiacore.cpp:3063
+#: src/celestia/celestiacore.cpp:3151
 #, fuzzy
 msgid "x Sun"
 msgstr "زحل"
 
-#: src/celestia/celestiacore.cpp:3064 src/celestia/kde/selectionpopup.cpp:92
+#: src/celestia/celestiacore.cpp:3152 src/celestia/kde/selectionpopup.cpp:92
 msgid "Class: "
 msgstr "الفصل: "
 
-#: src/celestia/celestiacore.cpp:3066
+#: src/celestia/celestiacore.cpp:3154
 msgid "Neutron star"
 msgstr "نجم نيوترون"
 
-#: src/celestia/celestiacore.cpp:3068
+#: src/celestia/celestiacore.cpp:3156
 msgid "Black hole"
 msgstr "فجوة سوداء"
 
-#: src/celestia/celestiacore.cpp:3078
+#: src/celestia/celestiacore.cpp:3166
 msgid "Surface temp: "
 msgstr "حرارة السطح: "
 
-#: src/celestia/celestiacore.cpp:3081 src/celestia/celestiacore.cpp:3124
-#: src/celestia/celestiacore.cpp:3157 src/celestia/kde/selectionpopup.cpp:100
+#: src/celestia/celestiacore.cpp:3169 src/celestia/celestiacore.cpp:3218
+#: src/celestia/celestiacore.cpp:3251 src/celestia/kde/selectionpopup.cpp:100
 msgid "Radius: "
 msgstr "نصف القطر: "
 
-#: src/celestia/celestiacore.cpp:3084 src/celestia/kde/selectionpopup.cpp:101
+#: src/celestia/celestiacore.cpp:3172 src/celestia/kde/selectionpopup.cpp:101
 #, fuzzy
 msgid "Rsun"
 msgstr "استئناف"
 
-#: src/celestia/celestiacore.cpp:3094
+#: src/celestia/celestiacore.cpp:3182
 msgid "Rotation period: "
 msgstr "فترة الدوران: "
 
-#: src/celestia/celestiacore.cpp:3102
+#: src/celestia/celestiacore.cpp:3196
 msgid "Planetary companions present\n"
 msgstr "تواجد كواكب مرافقه\n"
 
-#: src/celestia/celestiacore.cpp:3120
+#: src/celestia/celestiacore.cpp:3214
 msgid "Distance from center: "
 msgstr "المسافة من المركز: "
 
-#: src/celestia/celestiacore.cpp:3168
+#: src/celestia/celestiacore.cpp:3303
 msgid "Day length: "
 msgstr "مدة اليوم: "
 
-#: src/celestia/celestiacore.cpp:3184
+#: src/celestia/celestiacore.cpp:3319
 msgid "Temperature: "
 msgstr "درجة الحرارة: "
 
-#: src/celestia/celestiacore.cpp:3196
+#: src/celestia/celestiacore.cpp:3331
 #, c-format
 msgid "Apparent mag: %.2f\n"
 msgstr "المقدار الظاهر %.2f\n"
 
-#: src/celestia/celestiacore.cpp:3355
+#: src/celestia/celestiacore.cpp:3488
 msgid "  LT"
 msgstr "  LT"
 
-#: src/celestia/celestiacore.cpp:3364
+#: src/celestia/celestiacore.cpp:3497
 msgid "Real time"
 msgstr "الوقت الحقيقي"
 
-#: src/celestia/celestiacore.cpp:3366
+#: src/celestia/celestiacore.cpp:3499
 msgid "-Real time"
 msgstr "-الوقت الحقيقي"
 
-#: src/celestia/celestiacore.cpp:3370
+#: src/celestia/celestiacore.cpp:3503
 msgid "Time stopped"
 msgstr "تم ايقاف الوقت"
 
-#: src/celestia/celestiacore.cpp:3375
+#: src/celestia/celestiacore.cpp:3508
 msgid " faster"
 msgstr " أسرع"
 
-#: src/celestia/celestiacore.cpp:3380
+#: src/celestia/celestiacore.cpp:3513
 msgid " slower"
 msgstr " أبطأ"
 
-#: src/celestia/celestiacore.cpp:3386
+#: src/celestia/celestiacore.cpp:3519
 msgid " (Paused)"
 msgstr " (ايقاف موقت)"
 
-#: src/celestia/celestiacore.cpp:3404
+#: src/celestia/celestiacore.cpp:3537
 msgid "FPS: "
 msgstr "FPS: "
 
-#: src/celestia/celestiacore.cpp:3406
+#: src/celestia/celestiacore.cpp:3539
 msgid ""
 "\n"
 "Speed: "
@@ -711,137 +692,142 @@ msgstr ""
 "\n"
 "السرعة: "
 
-#: src/celestia/celestiacore.cpp:3435
+#: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
 msgstr "الانتقال "
 
-#: src/celestia/celestiacore.cpp:3448
+#: src/celestia/celestiacore.cpp:3581
 msgid "Track "
 msgstr "تتبع "
 
-#: src/celestia/celestiacore.cpp:3460
+#: src/celestia/celestiacore.cpp:3595
 msgid "Follow "
 msgstr "يتبع "
 
-#: src/celestia/celestiacore.cpp:3465
+#: src/celestia/celestiacore.cpp:3600
 msgid "Sync Orbit "
 msgstr "مدار مصاحب"
 
-#: src/celestia/celestiacore.cpp:3470
+#: src/celestia/celestiacore.cpp:3605
 msgid "Lock "
 msgstr "قفل "
 
-#: src/celestia/celestiacore.cpp:3479
+#: src/celestia/celestiacore.cpp:3614
 msgid "Chase "
 msgstr "ملاحقة "
 
-#: src/celestia/celestiacore.cpp:3495
+#: src/celestia/celestiacore.cpp:3630
 msgid "FOV: "
 msgstr "FOV: "
 
-#: src/celestia/celestiacore.cpp:3646
+#: src/celestia/celestiacore.cpp:3662 src/celestia/celestiacore.cpp:3665
+#, fuzzy
+msgid "Sun"
+msgstr "زحل"
+
+#: src/celestia/celestiacore.cpp:3820
 msgid "Target name: "
 msgstr "اسم الهدف: "
 
-#: src/celestia/celestiacore.cpp:3728
+#: src/celestia/celestiacore.cpp:3902
 msgid " at "
 msgstr " في "
 
-#: src/celestia/celestiacore.cpp:3729
+#: src/celestia/celestiacore.cpp:3903
 msgid " fps"
 msgstr " fps"
 
-#: src/celestia/celestiacore.cpp:3731 src/celestia/kde/videocapturedlg.cpp:283
+#: src/celestia/celestiacore.cpp:3905 src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
 msgstr "  تسجيل"
 
-#: src/celestia/celestiacore.cpp:3733 src/celestia/kde/videocapturedlg.cpp:66
+#: src/celestia/celestiacore.cpp:3907 src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
 msgstr " ايقاف مؤقت"
 
-#: src/celestia/celestiacore.cpp:3752
+#: src/celestia/celestiacore.cpp:3926
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 بدأ/ايقاف مؤقت    F12 ايقاف"
 
-#: src/celestia/celestiacore.cpp:3761 src/celestia/celestiacore.cpp:3764
+#: src/celestia/celestiacore.cpp:3935 src/celestia/celestiacore.cpp:3938
 msgid "Edit Mode"
 msgstr "وضع التنسيق"
 
-#: src/celestia/celestiacore.cpp:3830
+#: src/celestia/celestiacore.cpp:4004
 msgid "Loading solar system catalog: "
 msgstr "تحميل دليل النظام الشمسي: "
 
-#: src/celestia/celestiacore.cpp:3871
+#: src/celestia/celestiacore.cpp:4045
 msgid "Loading "
 msgstr "التحميل قائم "
 
-#: src/celestia/celestiacore.cpp:3906
+#: src/celestia/celestiacore.cpp:4080
 msgid "License file 'License.txt' is missing!"
 msgstr "ملف الترخيص 'License.txt' مفقود!"
 
-#: src/celestia/celestiacore.cpp:3927
+#: src/celestia/celestiacore.cpp:4101
 msgid "Error reading configuration file."
 msgstr "خطأ في قراءة ملف التركيبة"
 
-#: src/celestia/celestiacore.cpp:3934
+#: src/celestia/celestiacore.cpp:4112
 msgid "Initialization of SPICE library failed."
 msgstr ""
 
-#: src/celestia/celestiacore.cpp:3981
+#: src/celestia/celestiacore.cpp:4159
 msgid "Cannot read star database."
 msgstr "لا يمكن قراءة قاعدة بيانات النجمة"
 
-#: src/celestia/celestiacore.cpp:4003
-msgid "Error reading deep sky file\n"
-msgstr "خطأ في قراءة ملف عمق الفضاء\n"
+#: src/celestia/celestiacore.cpp:4181
+#, fuzzy
+msgid "Error opening deepsky catalog file."
+msgstr "خطأ في فتح دليل النجوم "
 
-#: src/celestia/celestiacore.cpp:4010 src/celestia/celestiacore.cpp:4278
-#: src/celestia/celestiacore.cpp:4300
-msgid "Error opening "
-msgstr "خطأ في الفتح "
-
-#: src/celestia/celestiacore.cpp:4064
+#: src/celestia/celestiacore.cpp:4233
 msgid "Error opening solar system catalog.\n"
 msgstr "خطأ في تحميل دليل النظام الشمسي.\n"
 
-#: src/celestia/celestiacore.cpp:4097
+#: src/celestia/celestiacore.cpp:4266
 msgid "Error opening asterisms file."
 msgstr "خطأ في فتح ملف الشكل النجمي."
 
-#: src/celestia/celestiacore.cpp:4112
+#: src/celestia/celestiacore.cpp:4281
 msgid "Error opening constellation boundaries files."
 msgstr "خطأ في فتح ملف حدود الابراج."
 
-#: src/celestia/celestiacore.cpp:4178
+#: src/celestia/celestiacore.cpp:4348
 msgid "render path: "
 msgstr "مسار التمثيل: "
 
-#: src/celestia/celestiacore.cpp:4189
+#: src/celestia/celestiacore.cpp:4359
 msgid "Failed to initialize renderer"
 msgstr "فشل في انشاء الممثل"
 
-#: src/celestia/celestiacore.cpp:4205
+#: src/celestia/celestiacore.cpp:4375
 msgid "Error loading font; text will not be visible.\n"
 msgstr "خطأ في تحميل الخط; النص سيكون غير مرئي.\n"
 
-#: src/celestia/celestiacore.cpp:4262
+#: src/celestia/celestiacore.cpp:4432
 msgid "Error reading cross index "
 msgstr "خطأ في قراءة الفهرس المتقاطع "
 
-#: src/celestia/celestiacore.cpp:4264
+#: src/celestia/celestiacore.cpp:4434
 msgid "Loaded cross index "
 msgstr "الفهرس المتقاطع محمل "
 
-#: src/celestia/celestiacore.cpp:4285
+#: src/celestia/celestiacore.cpp:4448 src/celestia/celestiacore.cpp:4470
+msgid "Error opening "
+msgstr "خطأ في الفتح "
+
+#: src/celestia/celestiacore.cpp:4455
 msgid "Error reading star names file\n"
 msgstr "خطأ في قراءة ملف اسماء النجوم\n"
 
-#: src/celestia/celestiacore.cpp:4308
+#: src/celestia/celestiacore.cpp:4478
 msgid "Error reading stars file\n"
 msgstr "خطأ في قراءة ملف النجوم\n"
 
-#: src/celestia/celestiacore.cpp:4335
+#: src/celestia/celestiacore.cpp:4505
 msgid "Error opening star catalog "
 msgstr "خطأ في فتح دليل النجوم "
 
@@ -866,199 +852,206 @@ msgstr ""
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
 msgstr ""
 
-#: src/celestia/url.cpp:333 src/celestia/kde/rc.cpp:133
-#, no-c-format
+#: src/celestia/url.cpp:652
 msgid "Settings"
 msgstr ""
 
-#: src/celestia/winmain.cpp:620 src/celestia/kde/kdeapp.cpp:940
+#: src/celestia/winmain.cpp:622 src/celestia/kde/kdeapp.cpp:948
 msgid "Vendor: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:625 src/celestia/kde/kdeapp.cpp:945
+#: src/celestia/winmain.cpp:627 src/celestia/kde/kdeapp.cpp:953
 #, fuzzy
 msgid "Renderer: "
 msgstr "&عرض"
 
-#: src/celestia/winmain.cpp:630 src/celestia/kde/kdeapp.cpp:950
+#: src/celestia/winmain.cpp:632 src/celestia/kde/kdeapp.cpp:958
 msgid "Version: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:640
+#: src/celestia/winmain.cpp:642
 #, fuzzy
 msgid "GLSL version: "
 msgstr "خطأ GL: "
 
-#: src/celestia/winmain.cpp:651 src/celestia/kde/kdeapp.cpp:959
+#: src/celestia/winmain.cpp:653 src/celestia/kde/kdeapp.cpp:967
 #, fuzzy
 msgid "Max simultaneous textures: "
 msgstr "قوام متوسط الدقة"
 
-#: src/celestia/winmain.cpp:658 src/celestia/kde/kdeapp.cpp:964
+#: src/celestia/winmain.cpp:660 src/celestia/kde/kdeapp.cpp:972
 msgid "Max texture size: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:667
+#: src/celestia/winmain.cpp:669
 msgid "Max cube map size: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:675 src/celestia/kde/kdeapp.cpp:970
+#: src/celestia/winmain.cpp:677 src/celestia/kde/kdeapp.cpp:978
 msgid "Point size range: "
 msgstr ""
 
-#: src/celestia/winmain.cpp:680 src/celestia/kde/kdeapp.cpp:974
+#: src/celestia/winmain.cpp:682 src/celestia/kde/kdeapp.cpp:982
 msgid "Supported Extensions:"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1381
+#: src/celestia/winmain.cpp:1383
 msgid "Windowed Mode"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1503 src/celestia/kde/kdepreferencesdialog.cpp:236
-#: src/celestia/kde/selectionpopup.cpp:400
-#: src/celestia/res/resource_strings.cpp:156
+#: src/celestia/winmain.cpp:1505 src/celestia/kde/kdepreferencesdialog.cpp:236
+#: src/celestia/kde/selectionpopup.cpp:403
+#: src/celestia/res/resource_strings.cpp:171
 msgid "Asteroids"
 msgstr "الكويكبات"
 
-#: src/celestia/winmain.cpp:1505 src/celestia/kde/kdepreferencesdialog.cpp:202
-#: src/celestia/kde/selectionpopup.cpp:402
-#: src/celestia/res/resource_strings.cpp:177
+#: src/celestia/winmain.cpp:1507 src/celestia/kde/kdepreferencesdialog.cpp:202
+#: src/celestia/kde/selectionpopup.cpp:405
+#: src/celestia/res/resource_strings.cpp:172
 msgid "Comets"
 msgstr "المذنبات"
 
-#: src/celestia/winmain.cpp:1507
+#: src/celestia/winmain.cpp:1509
 msgid "Invisibles"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1509 src/celestia/kde/kdepreferencesdialog.cpp:193
-#: src/celestia/kde/selectionpopup.cpp:404
-#: src/celestia/res/resource_strings.cpp:160
+#: src/celestia/winmain.cpp:1511 src/celestia/kde/kdepreferencesdialog.cpp:193
+#: src/celestia/kde/selectionpopup.cpp:407
+#: src/celestia/res/resource_strings.cpp:169
 msgid "Moons"
 msgstr "الأقمار"
 
-#: src/celestia/winmain.cpp:1511 src/celestia/winmain.cpp:1546
-#: src/celestia/winmain.cpp:1661 src/celestia/kde/kdepreferencesdialog.cpp:82
+#: src/celestia/winmain.cpp:1513 src/celestia/winmain.cpp:1548
+#: src/celestia/winmain.cpp:1665 src/celestia/kde/kdepreferencesdialog.cpp:82
 #: src/celestia/kde/kdepreferencesdialog.cpp:184
-#: src/celestia/kde/selectionpopup.cpp:406
-#: src/celestia/kde/selectionpopup.cpp:484
-#: src/celestia/res/resource_strings.cpp:152
-#: src/celestia/res/resource_strings.cpp:161
+#: src/celestia/kde/selectionpopup.cpp:409
+#: src/celestia/kde/selectionpopup.cpp:487
+#: src/celestia/res/resource_strings.cpp:150
+#: src/celestia/res/resource_strings.cpp:167
 msgid "Planets"
 msgstr "الكواب"
 
-#: src/celestia/winmain.cpp:1513 src/celestia/kde/celestialbrowser.cpp:193
-#: src/celestia/kde/selectionpopup.cpp:408
-#: src/celestia/res/resource_strings.cpp:162
+#: src/celestia/winmain.cpp:1515 src/celestia/kde/celestialbrowser.cpp:193
+#: src/celestia/kde/selectionpopup.cpp:411
+#: src/celestia/res/resource_strings.cpp:173
 msgid "Spacecraft"
 msgstr "مركبة فضائية"
 
-#: src/celestia/winmain.cpp:1603 src/celestia/winmain.cpp:1649
-#: src/celestia/winmain.cpp:1672 src/celestia/kde/eclipsefinderdlg.cpp:117
-#: src/celestia/kde/selectionpopup.cpp:290
+#: src/celestia/winmain.cpp:1605 src/celestia/winmain.cpp:1653
+#: src/celestia/winmain.cpp:1676 src/celestia/kde/eclipsefinderdlg.cpp:117
+#: src/celestia/kde/selectionpopup.cpp:291
 msgid "&Goto"
 msgstr "&ذهاب الى"
 
-#: src/celestia/winmain.cpp:1604 src/celestia/winmain.cpp:1673
-#: src/celestia/kde/selectionpopup.cpp:291
+#: src/celestia/winmain.cpp:1606 src/celestia/winmain.cpp:1677
+#: src/celestia/kde/selectionpopup.cpp:292
 msgid "&Follow"
 msgstr "&التابع"
 
-#: src/celestia/winmain.cpp:1605
+#: src/celestia/winmain.cpp:1607
 #, fuzzy
 msgid "S&ync Orbit"
 msgstr "ت&زامن المدار"
 
-#: src/celestia/winmain.cpp:1606 src/celestia/winmain.cpp:1650
-#: src/celestia/winmain.cpp:1674 src/celestia/kde/selectionpopup.cpp:294
+#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1654
+#: src/celestia/winmain.cpp:1678 src/celestia/kde/selectionpopup.cpp:295
 msgid "&Info"
 msgstr "&معلومات"
 
-#: src/celestia/winmain.cpp:1609 src/celestia/kde/selectionpopup.cpp:323
+#: src/celestia/winmain.cpp:1610 src/celestia/kde/selectionpopup.cpp:324
 msgid "&Reference Vectors"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1610 src/celestia/kde/selectionpopup.cpp:324
+#: src/celestia/winmain.cpp:1611 src/celestia/kde/selectionpopup.cpp:327
 #, fuzzy
 msgid "Show Body Axes"
 msgstr "إظهار الحدود الفاصلة"
 
-#: src/celestia/winmain.cpp:1611 src/celestia/kde/selectionpopup.cpp:326
+#: src/celestia/winmain.cpp:1612 src/celestia/kde/selectionpopup.cpp:329
 #, fuzzy
 msgid "Show Frame Axes"
 msgstr "عرض &الإطارات"
 
-#: src/celestia/winmain.cpp:1612 src/celestia/kde/selectionpopup.cpp:328
+#: src/celestia/winmain.cpp:1613 src/celestia/kde/selectionpopup.cpp:331
 #, fuzzy
 msgid "Show Sun Direction"
 msgstr "عرض مواقع الجبال"
 
-#: src/celestia/winmain.cpp:1613 src/celestia/kde/selectionpopup.cpp:330
+#: src/celestia/winmain.cpp:1614 src/celestia/kde/selectionpopup.cpp:333
 #, fuzzy
 msgid "Show Velocity Vector"
 msgstr "إظهار مواقع المدن"
 
-#: src/celestia/winmain.cpp:1626
+#: src/celestia/winmain.cpp:1615
+#, fuzzy
+msgid "Show Planetographic Grid"
+msgstr "إظهار مدار الكواكب"
+
+#: src/celestia/winmain.cpp:1616
+#, fuzzy
+msgid "Show Terminator"
+msgstr "مميزات العرض"
+
+#: src/celestia/winmain.cpp:1630
 #, fuzzy
 msgid "&Satellites"
 msgstr "قمر صناعي"
 
-#: src/celestia/winmain.cpp:1636 src/celestia/kde/selectionpopup.cpp:352
+#: src/celestia/winmain.cpp:1640 src/celestia/kde/selectionpopup.cpp:355
 msgid "&Alternate Surfaces"
 msgstr "أسطح بديلة"
 
-#: src/celestia/winmain.cpp:1659 src/celestia/kde/selectionpopup.cpp:463
+#: src/celestia/winmain.cpp:1663 src/celestia/kde/selectionpopup.cpp:466
 msgid "Orbiting Bodies"
 msgstr ""
 
-#: src/celestia/winmain.cpp:1686 src/celestia/kde/selectionpopup.cpp:300
+#: src/celestia/winmain.cpp:1690 src/celestia/kde/selectionpopup.cpp:301
 msgid "&Unmark"
 msgstr "&إلغاء التحديد"
 
-#: src/celestia/winmain.cpp:1688 src/celestia/kde/selectionpopup.cpp:317
+#: src/celestia/winmain.cpp:1692 src/celestia/kde/selectionpopup.cpp:318
 msgid "&Mark"
 msgstr "&تحديد"
 
-#: src/celestia/winmain.cpp:3100
+#: src/celestia/winmain.cpp:3134
 #, fuzzy
 msgid "Loading: "
 msgstr "التحميل قائم "
 
-#: src/celestia/winmain.cpp:3268 src/celutil/util.cpp:72
+#: src/celestia/winmain.cpp:3302 src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
 msgstr "ar"
 
-#: src/celestia/winmain.cpp:3270 src/celestia/res/resource_strings.cpp:218
+#: src/celestia/winmain.cpp:3304 src/celestia/res/resource_strings.cpp:232
 msgid "WinLangID"
 msgstr "401"
 
-#: src/celestia/winmain.cpp:3772
+#: src/celestia/winmain.cpp:3806
 #, fuzzy
 msgid "Copied URL"
 msgstr "نسخ"
 
-#: src/celestia/winmain.cpp:3867
+#: src/celestia/winmain.cpp:3900
 #, fuzzy
 msgid "Loading URL"
 msgstr "التحميل قائم "
 
-#: src/celestia/winmain.cpp:3879
+#: src/celestia/winmain.cpp:3912
 #, fuzzy
 msgid "Error opening script"
 msgstr "خطأ في فتح المستند '%s'"
 
-#: src/celestia/winmain.cpp:3898
+#: src/celestia/winmain.cpp:3931
 #, fuzzy
 msgid "Error loading script"
 msgstr "خطأ في فتح المستند '%s'"
 
-#: src/celestia/winmain.cpp:3903
+#: src/celestia/winmain.cpp:3936
 msgid "Running script"
 msgstr ""
 
 #: src/celestia/wineclipses.cpp:58 src/celestia/kde/celestialbrowser.cpp:181
-#: src/celestia/kde/rc.cpp:73
-#, no-c-format
 msgid "Planet"
 msgstr "كوكب"
 
@@ -1067,13 +1060,11 @@ msgstr "كوكب"
 msgid "Satellite"
 msgstr "قمر صناعي"
 
-#: src/celestia/wineclipses.cpp:62 src/celestia/kde/rc.cpp:79
-#, no-c-format
+#: src/celestia/wineclipses.cpp:62
 msgid "Date"
 msgstr "تاريخ"
 
-#: src/celestia/wineclipses.cpp:64 src/celestia/kde/rc.cpp:82
-#, no-c-format
+#: src/celestia/wineclipses.cpp:64
 msgid "Start"
 msgstr "البدء"
 
@@ -1082,44 +1073,32 @@ msgstr "البدء"
 msgid "Duration"
 msgstr "دايون"
 
-#: src/celestia/wineclipses.cpp:316 src/celestia/kde/rc.cpp:97 data/data.cpp:3
-#, no-c-format
+#: src/celestia/wineclipses.cpp:316 data/data.cpp:3
 msgid "Earth"
 msgstr "الأرض"
 
-#: src/celestia/wineclipses.cpp:317 src/celestia/kde/rc.cpp:100
-#: data/data.cpp:8
-#, no-c-format
+#: src/celestia/wineclipses.cpp:317 data/data.cpp:8
 msgid "Jupiter"
 msgstr "المشتري"
 
-#: src/celestia/wineclipses.cpp:318 src/celestia/kde/rc.cpp:103
-#: data/data.cpp:14
-#, no-c-format
+#: src/celestia/wineclipses.cpp:318 data/data.cpp:14
 msgid "Saturn"
 msgstr "زحل"
 
-#: src/celestia/wineclipses.cpp:319 src/celestia/kde/rc.cpp:106
-#: data/data.cpp:28
-#, no-c-format
+#: src/celestia/wineclipses.cpp:319 data/data.cpp:28
 msgid "Uranus"
 msgstr "أورانس"
 
-#: src/celestia/wineclipses.cpp:320 src/celestia/kde/rc.cpp:109
-#: data/data.cpp:34
-#, no-c-format
+#: src/celestia/wineclipses.cpp:320 data/data.cpp:34
 msgid "Neptune"
 msgstr "نبتون"
 
-#: src/celestia/wineclipses.cpp:321 src/celestia/kde/rc.cpp:112
-#: data/data.cpp:40
-#, no-c-format
+#: src/celestia/wineclipses.cpp:321
 msgid "Pluto"
 msgstr "بلوتو"
 
-#: src/celestia/winstarbrowser.cpp:70 src/celestia/kde/rc.cpp:34
-#: src/celestia/res/resource_strings.cpp:98
-#, no-c-format
+#: src/celestia/winstarbrowser.cpp:70
+#: src/celestia/res/resource_strings.cpp:102
 msgid "Name"
 msgstr "الاسم"
 
@@ -1138,8 +1117,7 @@ msgstr "مقدار البرنامج"
 msgid "Abs. mag"
 msgstr "القيمة المطلقة"
 
-#: src/celestia/winstarbrowser.cpp:79 src/celestia/kde/rc.cpp:46
-#, no-c-format
+#: src/celestia/winstarbrowser.cpp:79
 msgid "Type"
 msgstr "النوع"
 
@@ -1162,20 +1140,11 @@ msgstr "منطقة الوقت"
 msgid "UTC Offset"
 msgstr ""
 
-#: src/celestia/winsplash.cpp:143
-#, fuzzy
-msgid "Version"
-msgstr "هابريون"
-
-#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:497
-#: src/celestia/kde/rc.cpp:30
-#, no-c-format
+#: src/celestia/kde/celestialbrowser.cpp:28 src/celestia/kde/kdeapp.cpp:499
 msgid "Celestial Browser"
 msgstr "المتصفح السماوي"
 
-#: src/celestia/kde/celestialbrowser.cpp:184 src/celestia/kde/rc.cpp:76
-#: data/data.cpp:4
-#, no-c-format
+#: src/celestia/kde/celestialbrowser.cpp:184
 msgid "Moon"
 msgstr "قمر"
 
@@ -1209,9 +1178,8 @@ msgstr "كوكب"
 msgid "-"
 msgstr "-"
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:498
-#: src/celestia/kde/rc.cpp:70 src/celestia/res/resource_strings.cpp:208
-#, no-c-format
+#: src/celestia/kde/eclipsefinderdlg.cpp:20 src/celestia/kde/kdeapp.cpp:500
+#: src/celestia/res/resource_strings.cpp:222
 msgid "Eclipse Finder"
 msgstr "كاشف الكسوف أو الخسوف"
 
@@ -1268,451 +1236,461 @@ msgstr ""
 "البدء سوف يكمل, لكن البرنامج سوف يفقد بعض البياناتوبعض الملفات لن تقوم "
 "بالعمل بالشكل المطلوب, تأكد من التحميل"
 
-#: src/celestia/kde/kdeapp.cpp:404
+#: src/celestia/kde/kdeapp.cpp:406
 msgid "Go to &URL..."
 msgstr "إذهب إلى &موقع..."
 
-#: src/celestia/kde/kdeapp.cpp:405
+#: src/celestia/kde/kdeapp.cpp:407
 msgid "Go to &Long/Lat..."
 msgstr "إذهب إلى &خط طول/خط عرض"
 
-#: src/celestia/kde/kdeapp.cpp:407
+#: src/celestia/kde/kdeapp.cpp:409
 msgid "&Back"
 msgstr "&خلف"
 
-#: src/celestia/kde/kdeapp.cpp:410
+#: src/celestia/kde/kdeapp.cpp:412
 msgid "&Forward"
 msgstr "&تقدم"
 
-#: src/celestia/kde/kdeapp.cpp:417
+#: src/celestia/kde/kdeapp.cpp:419
 msgid "Home"
 msgstr "البداية"
 
-#: src/celestia/kde/kdeapp.cpp:424
+#: src/celestia/kde/kdeapp.cpp:426
 msgid "Bookmarks"
 msgstr "المفضلة"
 
-#: src/celestia/kde/kdeapp.cpp:436
+#: src/celestia/kde/kdeapp.cpp:438
 msgid "Full Screen"
 msgstr "شاشة كاملة"
 
-#: src/celestia/kde/kdeapp.cpp:440
+#: src/celestia/kde/kdeapp.cpp:442
 msgid "Copy URL"
 msgstr "نسخ"
 
-#: src/celestia/kde/kdeapp.cpp:443
+#: src/celestia/kde/kdeapp.cpp:445
 msgid "Set Time..."
 msgstr "ضبط الوقت..."
 
-#: src/celestia/kde/kdeapp.cpp:444
+#: src/celestia/kde/kdeapp.cpp:446
 msgid "Set Time to Now"
 msgstr "ضبط الوقت للوقت الآن"
 
-#: src/celestia/kde/kdeapp.cpp:445
+#: src/celestia/kde/kdeapp.cpp:447
 msgid "Accelerate Time"
 msgstr "تسريع الوقت"
 
-#: src/celestia/kde/kdeapp.cpp:446
+#: src/celestia/kde/kdeapp.cpp:448
 msgid "Decelerate Time"
 msgstr "تبطيء الوقت"
 
-#: src/celestia/kde/kdeapp.cpp:447
+#: src/celestia/kde/kdeapp.cpp:449
 #, fuzzy
 msgid "Accelerate Time (x2)"
 msgstr "تسريع الوقت"
 
-#: src/celestia/kde/kdeapp.cpp:448
+#: src/celestia/kde/kdeapp.cpp:450
 #, fuzzy
 msgid "Decelerate Time (/2)"
 msgstr "تبطيء الوقت"
 
-#: src/celestia/kde/kdeapp.cpp:449
+#: src/celestia/kde/kdeapp.cpp:451
 msgid "Pause Time"
 msgstr "ايقاف الوقت مؤقتاً"
 
-#: src/celestia/kde/kdeapp.cpp:450
+#: src/celestia/kde/kdeapp.cpp:452
 msgid "Reverse Time"
 msgstr "عكس الوقت"
 
-#: src/celestia/kde/kdeapp.cpp:452
+#: src/celestia/kde/kdeapp.cpp:454
 msgid "Split View Vertically"
 msgstr "تقسيم العرض عامودياً"
 
-#: src/celestia/kde/kdeapp.cpp:453
+#: src/celestia/kde/kdeapp.cpp:455
 msgid "Split View Horizontally"
 msgstr "تقسيم العرض أفقياً"
 
-#: src/celestia/kde/kdeapp.cpp:454
+#: src/celestia/kde/kdeapp.cpp:456
 msgid "Cycle View"
 msgstr "عرض كامل"
 
-#: src/celestia/kde/kdeapp.cpp:455
+#: src/celestia/kde/kdeapp.cpp:457
 msgid "Single View"
 msgstr "عرض وحيد"
 
-#: src/celestia/kde/kdeapp.cpp:456
+#: src/celestia/kde/kdeapp.cpp:458
 msgid "Delete View"
 msgstr "حذف العرض"
 
-#: src/celestia/kde/kdeapp.cpp:457
+#: src/celestia/kde/kdeapp.cpp:459
 msgid "Frames Visible"
 msgstr "الإطارات مرئية"
 
-#: src/celestia/kde/kdeapp.cpp:470
+#: src/celestia/kde/kdeapp.cpp:472
 msgid "Active Frame Visible"
 msgstr "الإطارات الفعّالة مرئية"
 
-#: src/celestia/kde/kdeapp.cpp:482
+#: src/celestia/kde/kdeapp.cpp:484
 msgid "Synchronize Time"
 msgstr "تزامن الوقت"
 
-#: src/celestia/kde/kdeapp.cpp:494
+#: src/celestia/kde/kdeapp.cpp:496
 msgid "Alt-Azimuth Mode"
 msgstr "وضعية منظار Alt-azimuth"
 
-#: src/celestia/kde/kdeapp.cpp:495
+#: src/celestia/kde/kdeapp.cpp:497
 msgid "Go To Surface"
 msgstr "ذهاب إلى السطح"
 
-#: src/celestia/kde/kdeapp.cpp:542
+#: src/celestia/kde/kdeapp.cpp:544
 msgid "Show Stars"
 msgstr "إظهار النجوم"
 
-#: src/celestia/kde/kdeapp.cpp:545
+#: src/celestia/kde/kdeapp.cpp:547
 msgid "Show Planets"
 msgstr "إظهار الكواكب"
 
-#: src/celestia/kde/kdeapp.cpp:548
+#: src/celestia/kde/kdeapp.cpp:550
 msgid "Show Galaxies"
 msgstr "إظهار المجرّات"
 
-#: src/celestia/kde/kdeapp.cpp:551
+#: src/celestia/kde/kdeapp.cpp:553
+#, fuzzy
+msgid "Show Globulars"
+msgstr "إظهار خرائط الغيوم"
+
+#: src/celestia/kde/kdeapp.cpp:556
 msgid "Show Partial Trajectories"
 msgstr "إظهار جزء من المسار المنحني"
 
-#: src/celestia/kde/kdeapp.cpp:554
+#: src/celestia/kde/kdeapp.cpp:559
 msgid "Show Nebulae"
 msgstr "إظهار السديم"
 
-#: src/celestia/kde/kdeapp.cpp:557
+#: src/celestia/kde/kdeapp.cpp:562
 msgid "Show Open Clusters"
 msgstr "إظهار المجموعات المفتوحة"
 
-#: src/celestia/kde/kdeapp.cpp:560
+#: src/celestia/kde/kdeapp.cpp:565
 msgid "Show Constellations"
 msgstr "إظهار الأبراج الفلكية"
 
-#: src/celestia/kde/kdeapp.cpp:563
+#: src/celestia/kde/kdeapp.cpp:568
 msgid "Show CloudMaps"
 msgstr "إظهار خرائط الغيوم"
 
-#: src/celestia/kde/kdeapp.cpp:566
+#: src/celestia/kde/kdeapp.cpp:571
 #, fuzzy
 msgid "Show Cloud Shadows"
 msgstr "إظهار خرائط الغيوم"
 
-#: src/celestia/kde/kdeapp.cpp:569
+#: src/celestia/kde/kdeapp.cpp:574
 msgid "Show Orbits"
 msgstr "إظهار مدار الدوران"
 
-#: src/celestia/kde/kdeapp.cpp:572
+#: src/celestia/kde/kdeapp.cpp:577
 msgid "Show Asteroid Orbits"
 msgstr "إظهار مدار السيير"
 
-#: src/celestia/kde/kdeapp.cpp:575
+#: src/celestia/kde/kdeapp.cpp:580
 msgid "Show Comet Orbits"
 msgstr "إظهار مدار المذنب"
 
-#: src/celestia/kde/kdeapp.cpp:578
+#: src/celestia/kde/kdeapp.cpp:583
 msgid "Show Moon Orbits"
 msgstr "إظهار مدار القمر"
 
-#: src/celestia/kde/kdeapp.cpp:581
+#: src/celestia/kde/kdeapp.cpp:586
 #, fuzzy
 msgid "Show Star Orbits"
 msgstr "إظهار مدار الدوران"
 
-#: src/celestia/kde/kdeapp.cpp:584
+#: src/celestia/kde/kdeapp.cpp:589
 msgid "Show Planet Orbits"
 msgstr "إظهار مدار الكواكب"
 
-#: src/celestia/kde/kdeapp.cpp:587
+#: src/celestia/kde/kdeapp.cpp:592
 msgid "Show Spacecraft Orbits"
 msgstr "إظهار مدار المركبة الفضائية"
 
-#: src/celestia/kde/kdeapp.cpp:590
+#: src/celestia/kde/kdeapp.cpp:595
 msgid "Show Celestial Grid"
 msgstr "إظهار شبكة الملاحة الفلكية بواسطة النجوم"
 
-#: src/celestia/kde/kdeapp.cpp:593
+#: src/celestia/kde/kdeapp.cpp:598
 msgid "Show Night Side Lights"
 msgstr "إظهار أنوار الجانب المظلم"
 
-#: src/celestia/kde/kdeapp.cpp:596
+#: src/celestia/kde/kdeapp.cpp:601
 msgid "Show Markers"
 msgstr "إظهار المعلم"
 
-#: src/celestia/kde/kdeapp.cpp:599
+#: src/celestia/kde/kdeapp.cpp:604
 msgid "Show Atmospheres"
 msgstr "إظهار الغلاق الجوي"
 
-#: src/celestia/kde/kdeapp.cpp:602
+#: src/celestia/kde/kdeapp.cpp:607
 msgid "Show Smooth Orbit Lines"
 msgstr "إظهار خطوط المدار"
 
-#: src/celestia/kde/kdeapp.cpp:605
+#: src/celestia/kde/kdeapp.cpp:610
 msgid "Show Eclipse Shadows"
 msgstr "إظهار ظل الكسوف أو الخسوف"
 
-#: src/celestia/kde/kdeapp.cpp:608
+#: src/celestia/kde/kdeapp.cpp:613
 msgid "Cycle Star Mode"
 msgstr "وضع سلسلة النجوم الكاملة"
 
-#: src/celestia/kde/kdeapp.cpp:610
+#: src/celestia/kde/kdeapp.cpp:615
 msgid "Show Ring Shadows"
 msgstr "إظهار ظلال الحلقة"
 
-#: src/celestia/kde/kdeapp.cpp:613
+#: src/celestia/kde/kdeapp.cpp:618
 msgid "Show Boundaries"
 msgstr "إظهار الحدود الفاصلة"
 
-#: src/celestia/kde/kdeapp.cpp:616
+#: src/celestia/kde/kdeapp.cpp:621
 #: src/celestia/kde/kdepreferencesdialog.cpp:78
 msgid "Auto Magnitudes"
 msgstr "المقادير الآلية"
 
-#: src/celestia/kde/kdeapp.cpp:619
+#: src/celestia/kde/kdeapp.cpp:624
 msgid "Show Comet Tails"
 msgstr "إظهار ذيل المذنب"
 
-#: src/celestia/kde/kdeapp.cpp:622
+#: src/celestia/kde/kdeapp.cpp:627
 msgid "Show Star Labels"
 msgstr "إظهار أسماء النجوم"
 
-#: src/celestia/kde/kdeapp.cpp:627
+#: src/celestia/kde/kdeapp.cpp:632
 msgid "Show Planet Labels"
 msgstr "إظهار اسماء الكواكب"
 
-#: src/celestia/kde/kdeapp.cpp:630
+#: src/celestia/kde/kdeapp.cpp:635
 msgid "Show Moon Labels"
 msgstr "إظهار اسماء الأقمار"
 
-#: src/celestia/kde/kdeapp.cpp:633
+#: src/celestia/kde/kdeapp.cpp:638
 msgid "Show Comet Labels"
 msgstr "إظهار أسماء المذنبات"
 
-#: src/celestia/kde/kdeapp.cpp:636
+#: src/celestia/kde/kdeapp.cpp:641
 msgid "Show Constellation Labels"
 msgstr "إظهار أسماء مجموعات النجوم"
 
-#: src/celestia/kde/kdeapp.cpp:639
+#: src/celestia/kde/kdeapp.cpp:644
 msgid "Constellation Labels in Latin"
 msgstr "أسماء مجموعات النجوم باللغة اللاتينية"
 
-#: src/celestia/kde/kdeapp.cpp:642
+#: src/celestia/kde/kdeapp.cpp:647
 msgid "Show Galaxy Labels"
 msgstr "إظهار أسماء المجرات"
 
-#: src/celestia/kde/kdeapp.cpp:645
+#: src/celestia/kde/kdeapp.cpp:650
+#, fuzzy
+msgid "Show Globular Labels"
+msgstr "إظهار لوحات اسماء السديم"
+
+#: src/celestia/kde/kdeapp.cpp:653
 msgid "Show Nebula Labels"
 msgstr "إظهار لوحات اسماء السديم"
 
-#: src/celestia/kde/kdeapp.cpp:648
+#: src/celestia/kde/kdeapp.cpp:656
 msgid "Show Open Cluster Labels"
 msgstr "إظهار أسماء المجموعات المفتوحة"
 
-#: src/celestia/kde/kdeapp.cpp:651
+#: src/celestia/kde/kdeapp.cpp:659
 msgid "Show Asteroid Labels"
 msgstr "إظهار أسماء السيير"
 
-#: src/celestia/kde/kdeapp.cpp:654
+#: src/celestia/kde/kdeapp.cpp:662
 msgid "Show Spacecraft Labels"
 msgstr "إظهار أسماء المركبات الفضائية"
 
-#: src/celestia/kde/kdeapp.cpp:657
+#: src/celestia/kde/kdeapp.cpp:665
 msgid "Show Location Labels"
 msgstr "إظهار أسماء المواقع"
 
-#: src/celestia/kde/kdeapp.cpp:660
+#: src/celestia/kde/kdeapp.cpp:668
 msgid "Display Local Time"
 msgstr "إظهار الوقت المحلي"
 
-#: src/celestia/kde/kdeapp.cpp:665
+#: src/celestia/kde/kdeapp.cpp:673
 msgid "Show City Locations"
 msgstr "إظهار مواقع المدن"
 
-#: src/celestia/kde/kdeapp.cpp:668
+#: src/celestia/kde/kdeapp.cpp:676
 msgid "Show Observatory Locations"
 msgstr "إظهار مواقع المراصد"
 
-#: src/celestia/kde/kdeapp.cpp:671
+#: src/celestia/kde/kdeapp.cpp:679
 msgid "Show Landing Sites Locations"
 msgstr "اظهار أماكن مواقع الهبوط"
 
-#: src/celestia/kde/kdeapp.cpp:674
+#: src/celestia/kde/kdeapp.cpp:682
 msgid "Show Crater Locations"
 msgstr "إظهار مواقع فوهات البراكين"
 
-#: src/celestia/kde/kdeapp.cpp:677
+#: src/celestia/kde/kdeapp.cpp:685
 msgid "Show Mons Locations"
 msgstr "عرض مواقع الجبال"
 
-#: src/celestia/kde/kdeapp.cpp:680
+#: src/celestia/kde/kdeapp.cpp:688
 msgid "Show Terra Locations"
 msgstr "عرض مواقع التيرا"
 
-#: src/celestia/kde/kdeapp.cpp:683
+#: src/celestia/kde/kdeapp.cpp:691
 msgid "Show Vallis Locations"
 msgstr "عرض مواقع الوديال"
 
-#: src/celestia/kde/kdeapp.cpp:686
+#: src/celestia/kde/kdeapp.cpp:694
 msgid "Show Mare Locations"
 msgstr "عرض مواقع البحار المقصورة على دولة واحدة"
 
-#: src/celestia/kde/kdeapp.cpp:689
+#: src/celestia/kde/kdeapp.cpp:697
 msgid "Show Other Locations"
 msgstr "إظهار مواقع أخرى"
 
-#: src/celestia/kde/kdeapp.cpp:693
+#: src/celestia/kde/kdeapp.cpp:701
 msgid "Wireframe Mode"
 msgstr "وضع التشكيل الثلاثي الابعاد"
 
-#: src/celestia/kde/kdeapp.cpp:695
+#: src/celestia/kde/kdeapp.cpp:703
 msgid "Center on Orbit"
 msgstr "المركز أثناء المدار"
 
-#: src/celestia/kde/kdeapp.cpp:699
+#: src/celestia/kde/kdeapp.cpp:707
 #: src/celestia/kde/kdepreferencesdialog.cpp:500
 msgid "Basic"
 msgstr "أساسي"
 
-#: src/celestia/kde/kdeapp.cpp:701
+#: src/celestia/kde/kdeapp.cpp:709
 #: src/celestia/kde/kdepreferencesdialog.cpp:502
 msgid "Multitexture"
 msgstr "متعدّد القوام"
 
-#: src/celestia/kde/kdeapp.cpp:703
+#: src/celestia/kde/kdeapp.cpp:711
 #: src/celestia/kde/kdepreferencesdialog.cpp:504
 msgid "NvCombiners"
 msgstr "مجمعات Nv"
 
-#: src/celestia/kde/kdeapp.cpp:705
+#: src/celestia/kde/kdeapp.cpp:713
 #: src/celestia/kde/kdepreferencesdialog.cpp:506
 msgid "DOT3 ARBVP"
 msgstr "DOT3 ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:707
+#: src/celestia/kde/kdeapp.cpp:715
 #: src/celestia/kde/kdepreferencesdialog.cpp:508
 msgid "NvCombiner NvVP"
 msgstr "NvCombiner NvVP"
 
-#: src/celestia/kde/kdeapp.cpp:709
+#: src/celestia/kde/kdeapp.cpp:717
 #: src/celestia/kde/kdepreferencesdialog.cpp:510
 msgid "NvCombiner ARBVP"
 msgstr "NvCombiner ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:711
+#: src/celestia/kde/kdeapp.cpp:719
 #: src/celestia/kde/kdepreferencesdialog.cpp:512
 msgid "ARBFP ARBVP"
 msgstr "ARBFP ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:713
+#: src/celestia/kde/kdeapp.cpp:721
 #: src/celestia/kde/kdepreferencesdialog.cpp:514
 msgid "NV30"
 msgstr "NV30"
 
-#: src/celestia/kde/kdeapp.cpp:715
+#: src/celestia/kde/kdeapp.cpp:723
 #: src/celestia/kde/kdepreferencesdialog.cpp:516
 msgid "OpenGL 2.0"
 msgstr "OpenGL 2.0"
 
-#: src/celestia/kde/kdeapp.cpp:717
+#: src/celestia/kde/kdeapp.cpp:725
 msgid "Cycle OpenGL Render Path"
 msgstr "مسار تمثيل OpenGL الدوراني"
 
-#: src/celestia/kde/kdeapp.cpp:719
+#: src/celestia/kde/kdeapp.cpp:727
 #: src/celestia/kde/kdepreferencesdialog.cpp:535
 msgid "Sync framerate to video refresh rate"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:724
+#: src/celestia/kde/kdeapp.cpp:732
 msgid "Grab Image"
 msgstr "انتزاع صورة"
 
-#: src/celestia/kde/kdeapp.cpp:725
+#: src/celestia/kde/kdeapp.cpp:733
 msgid "Capture Video"
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:727
+#: src/celestia/kde/kdeapp.cpp:735
 msgid "OpenGL info"
 msgstr "معلومات عن OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:735
+#: src/celestia/kde/kdeapp.cpp:743
 msgid "Show Bookmark Toolbar"
 msgstr "إظهار قائمة المفضلة"
 
-#: src/celestia/kde/kdeapp.cpp:991
+#: src/celestia/kde/kdeapp.cpp:999
 msgid "OpenGL Info"
 msgstr "معلومات عن OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:1344
+#: src/celestia/kde/kdeapp.cpp:1362
 #: src/celestia/kde/kdepreferencesdialog.cpp:376
 #: src/celestia/kde/kdepreferencesdialog.cpp:397
 msgid "UTC"
 msgstr "UTC"
 
-#: src/celestia/kde/kdeapp.cpp:1443
+#: src/celestia/kde/kdeapp.cpp:1461
 msgid ""
 "This version of Celestia was not built with support for movie recording."
 msgstr ""
 
-#: src/celestia/kde/kdeapp.cpp:1469
+#: src/celestia/kde/kdeapp.cpp:1487
 #, fuzzy
 msgid "Go to URL"
 msgstr "إذهب إلى &موقع..."
 
-#: src/celestia/kde/kdeapp.cpp:1469
+#: src/celestia/kde/kdeapp.cpp:1487
 msgid "Enter URL"
 msgstr "ادخل الموقع"
 
-#: src/celestia/kde/kdeapp.cpp:1565
+#: src/celestia/kde/kdeapp.cpp:1583
 msgid "Object: "
 msgstr "عنصر: "
 
-#: src/celestia/kde/kdeapp.cpp:1570
+#: src/celestia/kde/kdeapp.cpp:1588
 msgid "Longitude: "
 msgstr "الطول: "
 
-#: src/celestia/kde/kdeapp.cpp:1576
+#: src/celestia/kde/kdeapp.cpp:1594
 msgid "East"
 msgstr "الشرق"
 
-#: src/celestia/kde/kdeapp.cpp:1577
+#: src/celestia/kde/kdeapp.cpp:1595
 msgid "West"
 msgstr "الغرب"
 
-#: src/celestia/kde/kdeapp.cpp:1579
+#: src/celestia/kde/kdeapp.cpp:1597
 msgid "Latitude: "
 msgstr "العرض: "
 
-#: src/celestia/kde/kdeapp.cpp:1585
+#: src/celestia/kde/kdeapp.cpp:1603
 msgid "North"
 msgstr "الشمال"
 
-#: src/celestia/kde/kdeapp.cpp:1586
+#: src/celestia/kde/kdeapp.cpp:1604
 msgid "South"
 msgstr "الجنوب"
 
-#: src/celestia/kde/kdeapp.cpp:1588
+#: src/celestia/kde/kdeapp.cpp:1606
 msgid "Altitude: "
 msgstr "الإرتفاع"
 
-#: src/celestia/kde/kdeapp.cpp:1663
+#: src/celestia/kde/kdeapp.cpp:1681
 msgid "Celestia encountered an error while processing your script"
 msgstr "واجه البرنامج خطأ أثناء القيام بعمليات على مستندك"
 
 #: src/celestia/kde/kdemain.cpp:25 src/celestia/kde/kdemain.cpp:43
-#: src/celestia/res/resource_strings.cpp:64
+#: src/celestia/res/resource_strings.cpp:68
 msgid "Celestia"
 msgstr "Celestia"
 
@@ -1740,11 +1718,6 @@ msgstr "تعطيل شاشة الاضاءة"
 msgid "Start and go to url"
 msgstr "ابدأ وانتقل الى الموقع"
 
-#: src/celestia/kde/kdemain.cpp:45 src/celestia/res/resource_strings.cpp:65
-#, fuzzy
-msgid "Copyright (C) 2001-2008, Celestia Development Team"
-msgstr "جميع الحقوق محفوظة 2001-2006, Chris Laurel"
-
 #: src/celestia/kde/kdemain.cpp:71
 msgid "_: NAME OF TRANSLATORS\\nYour names"
 msgstr ""
@@ -1763,71 +1736,72 @@ msgid "Rendering"
 msgstr "الإعادة"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:72
-#: src/celestia/res/resource_strings.cpp:171
+#: src/celestia/res/resource_strings.cpp:144
 msgid "Show"
 msgstr "إظهار"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:74
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/res/resource_strings.cpp:154
-#: src/celestia/res/resource_strings.cpp:163
+#: src/celestia/res/resource_strings.cpp:149
+#: src/celestia/res/resource_strings.cpp:166
 msgid "Stars"
 msgstr "النجوم"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:86
 #: src/celestia/kde/kdepreferencesdialog.cpp:217
-#: src/celestia/res/resource_strings.cpp:148
-#: src/celestia/res/resource_strings.cpp:158
+#: src/celestia/res/resource_strings.cpp:145
+#: src/celestia/res/resource_strings.cpp:175
 msgid "Galaxies"
 msgstr "المجرّات"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:90
 #: src/celestia/kde/kdepreferencesdialog.cpp:222
-#: src/celestia/res/resource_strings.cpp:149
-#: src/celestia/res/resource_strings.cpp:164
+#: src/celestia/res/resource_strings.cpp:148
+#: src/celestia/res/resource_strings.cpp:178
 msgid "Nebulae"
 msgstr "السديم"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:94
 #: src/celestia/kde/kdepreferencesdialog.cpp:227
-#: src/celestia/res/resource_strings.cpp:159
+#: src/celestia/res/resource_strings.cpp:147
+#: src/celestia/res/resource_strings.cpp:177
 msgid "Open Clusters"
 msgstr "المجموعات المفتوحة"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:98
-#: src/celestia/res/resource_strings.cpp:140
+#: src/celestia/res/resource_strings.cpp:151
 msgid "Atmospheres"
 msgstr "الغلاف الجوي"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:102
-#: src/celestia/res/resource_strings.cpp:142
+#: src/celestia/res/resource_strings.cpp:152
 msgid "Clouds"
 msgstr "سحب"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:106
-#: src/celestia/res/resource_strings.cpp:143
+#: src/celestia/res/resource_strings.cpp:153
 #, fuzzy
 msgid "Cloud Shadows"
 msgstr "ظلال الكسوف أو الخسوف"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:110
-#: src/celestia/res/resource_strings.cpp:150
+#: src/celestia/res/resource_strings.cpp:156
 msgid "Night Side Lights"
 msgstr "أنوار الجانب المظلم"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:114
-#: src/celestia/res/resource_strings.cpp:147
+#: src/celestia/res/resource_strings.cpp:155
 msgid "Eclipse Shadows"
 msgstr "ظلال الكسوف أو الخسوف"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:118
-#: src/celestia/res/resource_strings.cpp:144
+#: src/celestia/res/resource_strings.cpp:157
 msgid "Comet Tails"
 msgstr "أذيال المذنبات"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:122
 #: src/celestia/kde/kdepreferencesdialog.cpp:165
-#: src/celestia/res/resource_strings.cpp:151
+#: src/celestia/res/resource_strings.cpp:158
 msgid "Orbits"
 msgstr "المسارات"
 
@@ -1840,24 +1814,22 @@ msgid "Smooth Orbit Lines"
 msgstr "خطوط المدار"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:134
-#: src/celestia/res/resource_strings.cpp:141
 msgid "Celestial Grid"
 msgstr "شبكة الملاحة الفلكية"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:138
 #: src/celestia/kde/kdepreferencesdialog.cpp:207
-#: src/celestia/res/resource_strings.cpp:146
-#: src/celestia/res/resource_strings.cpp:157
+#: src/celestia/res/resource_strings.cpp:179
 msgid "Constellations"
 msgstr "برج فلكي"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:142
-#: src/celestia/res/resource_strings.cpp:155
+#: src/celestia/res/resource_strings.cpp:159
 msgid "Markers"
 msgstr "المعلّم"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:146
-#: src/celestia/res/resource_strings.cpp:153
+#: src/celestia/res/resource_strings.cpp:154
 msgid "Ring Shadows"
 msgstr "ظلال الحلقة"
 
@@ -1866,17 +1838,16 @@ msgid "Constellation Boundaries"
 msgstr "حدود البرج الفلكي"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:161
-#: src/celestia/res/resource_strings.cpp:172
+#: src/celestia/res/resource_strings.cpp:165
 msgid "Orbits / Labels"
 msgstr "المدارات / أسماء"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:167 src/celestia/kde/rc.cpp:12
-#, no-c-format
+#: src/celestia/kde/kdepreferencesdialog.cpp:167
+#: src/celestia/res/resource_strings.cpp:182
 msgid "Labels"
 msgstr "أسماء"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:212
-#: src/celestia/res/resource_strings.cpp:178
 msgid "Constellations in Latin"
 msgstr "الأبراج الفلكية باللاتينية"
 
@@ -1886,7 +1857,7 @@ msgstr "المركبات الفضائية"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:250
 #: src/celestia/kde/kdepreferencesdialog.cpp:312
-#: src/celestia/res/resource_strings.cpp:179
+#: src/celestia/res/resource_strings.cpp:192
 msgid "Locations"
 msgstr "المواقع"
 
@@ -1907,17 +1878,17 @@ msgid "Level: "
 msgstr "المرحلة: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:282
-#: src/celestia/res/resource_strings.cpp:165
+#: src/celestia/res/resource_strings.cpp:185
 msgid "None"
 msgstr "لا شيء"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:283
-#: src/celestia/res/resource_strings.cpp:166
+#: src/celestia/res/resource_strings.cpp:186
 msgid "Terse"
 msgstr "مصقول"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:284
-#: src/celestia/res/resource_strings.cpp:167
+#: src/celestia/res/resource_strings.cpp:187
 msgid "Verbose"
 msgstr "مضجر"
 
@@ -1958,22 +1929,22 @@ msgid "Viewing Distance (cm): "
 msgstr "مسافة العرض (سنتمتر): "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:318
-#: src/celestia/res/resource_strings.cpp:180
+#: src/celestia/res/resource_strings.cpp:193
 msgid "Cities"
 msgstr "مدن"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:322
-#: src/celestia/res/resource_strings.cpp:181
+#: src/celestia/res/resource_strings.cpp:194
 msgid "Observatories"
 msgstr "مراصد"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:326
-#: src/celestia/res/resource_strings.cpp:182
+#: src/celestia/res/resource_strings.cpp:195
 msgid "Landing Sites"
 msgstr "مواقع الهبوط"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:330
-#: src/celestia/res/resource_strings.cpp:185
+#: src/celestia/res/resource_strings.cpp:198
 msgid "Craters"
 msgstr "فوهة بركان"
 
@@ -2015,7 +1986,7 @@ msgid "Timezone: "
 msgstr "منطقة زمنية: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
-#: src/celestia/res/resource_strings.cpp:92
+#: src/celestia/res/resource_strings.cpp:96
 #, fuzzy
 msgid "Format: "
 msgstr "معدل الإطار"
@@ -2034,12 +2005,11 @@ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
 msgstr "يدعم الوقت المحلي تاريخ بين 1902 و 2037 فقط.\n"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:438
-#: src/celestia/res/resource_strings.cpp:93
+#: src/celestia/res/resource_strings.cpp:97
 msgid "Julian Date: "
 msgstr ""
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:456 src/celestia/kde/rc.cpp:27
-#, no-c-format
+#: src/celestia/kde/kdepreferencesdialog.cpp:456
 msgid "Now"
 msgstr "الآن"
 
@@ -2139,84 +2109,85 @@ msgstr "حرارة السطح: "
 msgid "Marked objects"
 msgstr "العناصر المعلّمة"
 
-#: src/celestia/kde/selectionpopup.cpp:288
+#: src/celestia/kde/selectionpopup.cpp:289
 msgid "&Select"
 msgstr "&اختيار"
 
-#: src/celestia/kde/selectionpopup.cpp:289
-#: src/celestia/res/resource_strings.cpp:106
-#: src/celestia/res/resource_strings.cpp:113
+#: src/celestia/kde/selectionpopup.cpp:290
+#: src/celestia/res/resource_strings.cpp:110
+#: src/celestia/res/resource_strings.cpp:117
 msgid "&Center"
 msgstr "&المركز"
 
-#: src/celestia/kde/selectionpopup.cpp:293
+#: src/celestia/kde/selectionpopup.cpp:294
 msgid "S&ynch Orbit"
 msgstr "ت&زامن المدار"
 
-#: src/celestia/kde/selectionpopup.cpp:296
+#: src/celestia/kde/selectionpopup.cpp:297
 msgid "Unmark &All"
 msgstr "إلغاء التحديد &للكل"
 
-#: src/celestia/kde/selectionpopup.cpp:305
+#: src/celestia/kde/selectionpopup.cpp:306
 msgid "Diamond"
 msgstr "جوهرة"
 
-#: src/celestia/kde/selectionpopup.cpp:306
+#: src/celestia/kde/selectionpopup.cpp:307
 msgid "Triangle"
 msgstr "مثلث"
 
-#: src/celestia/kde/selectionpopup.cpp:307
+#: src/celestia/kde/selectionpopup.cpp:308
 msgid "Square"
 msgstr "مربع"
 
-#: src/celestia/kde/selectionpopup.cpp:308
+#: src/celestia/kde/selectionpopup.cpp:309
 #, fuzzy
 msgid "Filled Square"
 msgstr "تصفية النجوم"
 
-#: src/celestia/kde/selectionpopup.cpp:309
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "Plus"
 msgstr "زائد"
 
-#: src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/kde/selectionpopup.cpp:311
 msgid "X"
 msgstr "X"
 
-#: src/celestia/kde/selectionpopup.cpp:311
+#: src/celestia/kde/selectionpopup.cpp:312
 msgid "Left Arrow"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:312
+#: src/celestia/kde/selectionpopup.cpp:313
 msgid "Right Arrow"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:313
+#: src/celestia/kde/selectionpopup.cpp:314
 msgid "Up Arrow"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:314
+#: src/celestia/kde/selectionpopup.cpp:315
 msgid "Down Arrow"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:315
+#: src/celestia/kde/selectionpopup.cpp:316
 msgid "Circle"
 msgstr ""
 
-#: src/celestia/kde/selectionpopup.cpp:316
+#: src/celestia/kde/selectionpopup.cpp:317
 #, fuzzy
 msgid "Disk"
 msgstr "الوجهة"
 
-#: src/celestia/kde/selectionpopup.cpp:344
+#: src/celestia/kde/selectionpopup.cpp:347
 msgid "Normal"
 msgstr "عادي"
 
-#: src/celestia/kde/selectionpopup.cpp:410
+#: src/celestia/kde/selectionpopup.cpp:413
 #, fuzzy
 msgid "Small Bodies"
 msgstr "قمر صناعي"
 
-#: src/celestia/kde/selectionpopup.cpp:412
+#: src/celestia/kde/selectionpopup.cpp:415
+#: src/celestia/res/resource_strings.cpp:168
 #, fuzzy
 msgid "Dwarf Planets"
 msgstr "كوكب"
@@ -2257,221 +2228,6 @@ msgstr ""
 msgid "Error initializing movie capture."
 msgstr ""
 
-#: src/celestia/kde/rc.cpp:3 src/celestia/res/resource_strings.cpp:8
-#, no-c-format
-msgid "&Navigation"
-msgstr "&ملاحة"
-
-#: src/celestia/kde/rc.cpp:6
-#, no-c-format
-msgid "Options"
-msgstr "خيارات"
-
-#: src/celestia/kde/rc.cpp:9
-#, no-c-format
-msgid "Objects"
-msgstr "عناصر"
-
-#: src/celestia/kde/rc.cpp:15
-#, no-c-format
-msgid "OpenGL Render Path"
-msgstr "مسار عرض OpenGL"
-
-#: src/celestia/kde/rc.cpp:18
-#, no-c-format
-msgid "Time"
-msgstr "وقت"
-
-#: src/celestia/kde/rc.cpp:21
-#, no-c-format
-msgid "MultiView"
-msgstr "عرض متعدد"
-
-#: src/celestia/kde/rc.cpp:24
-#, no-c-format
-msgid "Main Toolbar"
-msgstr "القائمة الأساسية"
-
-#: src/celestia/kde/rc.cpp:37
-#, no-c-format
-msgid "Dist."
-msgstr "الوجهة"
-
-#: src/celestia/kde/rc.cpp:40
-#, no-c-format
-msgid "App. Mag."
-msgstr "مقدار البرنامج"
-
-#: src/celestia/kde/rc.cpp:43
-#, no-c-format
-msgid "Abs. Mag."
-msgstr "القيمة المطلقة"
-
-#: src/celestia/kde/rc.cpp:49
-#, no-c-format
-msgid "With Planets"
-msgstr "مع الكواكب"
-
-#: src/celestia/kde/rc.cpp:52
-#, no-c-format
-msgid "Brightest (Abs.)"
-msgstr "السطوع (مطلقا)"
-
-#: src/celestia/kde/rc.cpp:55
-#, no-c-format
-msgid "Brightest (App.)"
-msgstr "السطوع (البرنامج)"
-
-#: src/celestia/kde/rc.cpp:58 src/celestia/res/resource_strings.cpp:110
-#, no-c-format
-msgid "Nearest"
-msgstr "الأقرب"
-
-#: src/celestia/kde/rc.cpp:61
-#, no-c-format
-msgid "&Close"
-msgstr "&إغلاق"
-
-#: src/celestia/kde/rc.cpp:64
-#, no-c-format
-msgid "Alt+C"
-msgstr "Alt+C"
-
-#: src/celestia/kde/rc.cpp:67
-#, no-c-format
-msgid "Refresh"
-msgstr "تحديث"
-
-#: src/celestia/kde/rc.cpp:85
-#, no-c-format
-msgid "End"
-msgstr "إنهاء"
-
-#: src/celestia/kde/rc.cpp:88 src/celestia/res/resource_strings.cpp:215
-#, no-c-format
-msgid "Search parameters"
-msgstr "البحث عن العوامل"
-
-#: src/celestia/kde/rc.cpp:91 src/celestia/res/resource_strings.cpp:216
-#, no-c-format
-msgid "Solar Eclipses"
-msgstr "كسوف الشمس"
-
-#: src/celestia/kde/rc.cpp:94 src/celestia/res/resource_strings.cpp:214
-#, no-c-format
-msgid "On:"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:115
-#, no-c-format
-msgid "Moon Eclipses"
-msgstr "خسوف القمر"
-
-#: src/celestia/kde/rc.cpp:118
-#, no-c-format
-msgid "Search"
-msgstr "بحث"
-
-#: src/celestia/kde/rc.cpp:121 src/celestia/res/resource_strings.cpp:213
-#, no-c-format
-msgid "To:"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:124 src/celestia/res/resource_strings.cpp:212
-#, fuzzy, no-c-format
-msgid "From:"
-msgstr "من"
-
-#: src/celestia/kde/rc.cpp:127 src/celestia/res/resource_strings.cpp:211
-#, no-c-format
-msgid "Close"
-msgstr "إغلاق"
-
-#: src/celestia/kde/rc.cpp:130
-#, no-c-format
-msgid "Video Capture"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:136
-#, no-c-format
-msgid "Save As:"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:139
-#, no-c-format
-msgid "*.ogg"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:142
-#, no-c-format
-msgid "Aspect Ratio:"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:145
-#, no-c-format
-msgid "Current"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:148
-#, no-c-format
-msgid "11:9"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:151
-#, no-c-format
-msgid "4:3"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:154
-#, no-c-format
-msgid "16:9"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:157
-#, fuzzy, no-c-format
-msgid "Image Size:"
-msgstr "الحجم:"
-
-#: src/celestia/kde/rc.cpp:160
-#, fuzzy, no-c-format
-msgid "Frame Rate:"
-msgstr "معدل الإطار"
-
-#: src/celestia/kde/rc.cpp:163
-#, no-c-format
-msgid "Video Quality:"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:166
-#, no-c-format
-msgid "Play Video when capture is done"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:169
-#, no-c-format
-msgid "Usage"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:172
-#, no-c-format
-msgid ""
-"<p>Press <b>F11</b> to start/pause recording<br>\n"
-"Press <b>F12</b> to stop</p>\n"
-"\n"
-"<p>Note that resizing the main window will not be possible until the end of "
-"the capture</p>"
-msgstr ""
-
-#: src/celestia/kde/rc.cpp:178
-#, fuzzy, no-c-format
-msgid "&OK"
-msgstr "موافق"
-
-#: src/celestia/kde/rc.cpp:182
-#, fuzzy, no-c-format
-msgid "&Cancel"
-msgstr "إلغاء الامر"
-
 #: data/data.cpp:1
 msgid "Mercury"
 msgstr "عطارد"
@@ -2480,134 +2236,152 @@ msgstr "عطارد"
 msgid "Venus"
 msgstr "الزهرة"
 
+#: data/data.cpp:4
+msgid "Moon:Earth I"
+msgstr ""
+
 #: data/data.cpp:5
 msgid "Mars"
 msgstr "المريخ"
 
 #: data/data.cpp:6
-msgid "Phobos"
+#, fuzzy
+msgid "Phobos:Mars I"
 msgstr "فوبوس"
 
 #: data/data.cpp:7
-msgid "Deimos"
+#, fuzzy
+msgid "Deimos:Mars II"
 msgstr "دياموس"
 
 #: data/data.cpp:9
-msgid "Amalthea"
+#, fuzzy
+msgid "Amalthea:Jupiter V"
 msgstr "أمالثيا"
 
 #: data/data.cpp:10
-msgid "Io"
-msgstr "آيو"
+#, fuzzy
+msgid "Io:Jupiter I"
+msgstr "المشتري"
 
 #: data/data.cpp:11
-msgid "Europa"
-msgstr "يوروبا"
+msgid "Europa:Jupiter II"
+msgstr ""
 
 #: data/data.cpp:12
-msgid "Ganymede"
-msgstr "جنايميد"
+msgid "Ganymede:Jupiter III"
+msgstr ""
 
 #: data/data.cpp:13
-msgid "Callisto"
-msgstr "كاليستو"
+msgid "Callisto:Jupiter IV"
+msgstr ""
 
 #: data/data.cpp:15
-msgid "Prometheus"
-msgstr "بروميثياس"
+msgid "Prometheus:Saturn XVI:1980 S 27"
+msgstr ""
 
 #: data/data.cpp:16
-msgid "Pandora"
-msgstr "باندورا"
+msgid "Pandora:Saturn XVII:1980 S 26"
+msgstr ""
 
 #: data/data.cpp:17
-msgid "Epimetheus"
-msgstr "ايبيماثيوس"
+msgid "Epimetheus:Saturn XI:1980 S 3"
+msgstr ""
 
 #: data/data.cpp:18
-msgid "Janus"
-msgstr "جينوس"
+msgid "Janus:Saturn X:1980 S 1"
+msgstr ""
 
 #: data/data.cpp:19
-msgid "Mimas"
-msgstr "ميميس"
+#, fuzzy
+msgid "Mimas:Saturn I"
+msgstr "زحل"
 
 #: data/data.cpp:20
-msgid "Enceladus"
+#, fuzzy
+msgid "Enceladus:Saturn II"
 msgstr "انساليدس"
 
 #: data/data.cpp:21
-msgid "Tethys"
-msgstr "تَثيز"
+msgid "Tethys:Saturn III"
+msgstr ""
 
 #: data/data.cpp:22
-msgid "Dione"
-msgstr "دايون"
+msgid "Dione:Saturn IV"
+msgstr ""
 
 #: data/data.cpp:23
-msgid "Rhea"
-msgstr "ريَا"
+#, fuzzy
+msgid "Rhea:Saturn V"
+msgstr "زحل"
 
 #: data/data.cpp:24
-msgid "Titan"
-msgstr "تيتان"
+msgid "Titan:Saturn VI"
+msgstr ""
 
 #: data/data.cpp:25
-msgid "Hyperion"
-msgstr "هابريون"
+msgid "Hyperion:Saturn VII"
+msgstr ""
 
 #: data/data.cpp:26
-msgid "Iapetus"
-msgstr "أيابوتس"
+msgid "Iapetus:Saturn VIII"
+msgstr ""
 
 #: data/data.cpp:27
-msgid "Phoebe"
-msgstr "فيبي"
+msgid "Phoebe:Saturn IX"
+msgstr ""
 
 #: data/data.cpp:29
-msgid "Miranda"
+#, fuzzy
+msgid "Miranda:Uranus V"
 msgstr "ميرندا"
 
 #: data/data.cpp:30
-msgid "Ariel"
-msgstr "أريال"
+#, fuzzy
+msgid "Ariel:Uranus I"
+msgstr "أورانس"
 
 #: data/data.cpp:31
-msgid "Umbriel"
-msgstr "أمبيريال"
+msgid "Umbriel:Uranus II"
+msgstr ""
 
 #: data/data.cpp:32
-msgid "Titania"
-msgstr "تيتانيا"
+msgid "Titania:Uranus III"
+msgstr ""
 
 #: data/data.cpp:33
-msgid "Oberon"
-msgstr "أوبيران"
+msgid "Oberon:Uranus IV"
+msgstr ""
 
 #: data/data.cpp:35
-msgid "Larissa"
-msgstr "لاريسّا"
+msgid "Larissa:Neptune VII:1989 N 2"
+msgstr ""
 
 #: data/data.cpp:36
-msgid "Proteus"
-msgstr "بروتياس"
+msgid "Proteus:Neptune VIII:1989 N 1"
+msgstr ""
 
 #: data/data.cpp:37
-msgid "Triton"
-msgstr "تراتون"
+#, fuzzy
+msgid "Triton:Neptune I"
+msgstr "نبتون"
 
 #: data/data.cpp:38
-msgid "Nereid"
-msgstr "نِريد"
+msgid "Nereid:Neptune II"
+msgstr ""
 
 #: data/data.cpp:39
 #, fuzzy
 msgid "Pluto-Charon"
 msgstr "كارن"
 
+#: data/data.cpp:40
+msgid "Pluto:134340 Pluto"
+msgstr ""
+
 #: data/data.cpp:41
-msgid "Charon"
-msgstr "كارن"
+msgid "Charon:Pluto I:134340 Pluto I:1978 P 1"
+msgstr ""
 
 #: data/data.cpp:42
 msgid "NORTH AMERICA"
@@ -2686,6 +2460,10 @@ msgstr "التقاط &فيديو...\tShift+F10"
 #: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "خ&روج"
+
+#: src/celestia/res/resource_strings.cpp:8
+msgid "&Navigation"
+msgstr "&ملاحة"
 
 #: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
@@ -2824,446 +2602,716 @@ msgid "&None"
 msgstr "&لا شيء"
 
 #: src/celestia/res/resource_strings.cpp:43
+#: src/celestia/res/resource_strings.cpp:46
 msgid "&Low"
 msgstr "&ضئيل"
 
 #: src/celestia/res/resource_strings.cpp:44
+#: src/celestia/res/resource_strings.cpp:47
 msgid "&Medium"
 msgstr "&متوسط"
 
 #: src/celestia/res/resource_strings.cpp:45
+#, fuzzy
+msgid "&Texture Resolution"
+msgstr "الدقة"
+
+#: src/celestia/res/resource_strings.cpp:48
+msgid "&High"
+msgstr ""
+
+#: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
 msgstr "رسومات\tCtrl+X"
 
-#: src/celestia/res/resource_strings.cpp:46
+#: src/celestia/res/resource_strings.cpp:50
 msgid "&View"
 msgstr "&عرض"
 
-#: src/celestia/res/resource_strings.cpp:47
+#: src/celestia/res/resource_strings.cpp:51
 msgid "Split &Horizontally\tCtrl+R"
 msgstr "تقسيم أفقي\tCtrl+R"
 
-#: src/celestia/res/resource_strings.cpp:48
+#: src/celestia/res/resource_strings.cpp:52
 msgid "Split &Vertically\tCtrl+U"
 msgstr "تقسيم عامودي\tCtrl+U"
 
-#: src/celestia/res/resource_strings.cpp:49
+#: src/celestia/res/resource_strings.cpp:53
 msgid "&Delete Active View\tDEL"
 msgstr "&حذف العرض المفعّل\tDEL"
 
-#: src/celestia/res/resource_strings.cpp:50
+#: src/celestia/res/resource_strings.cpp:54
 msgid "&Single View\tCtrl+D"
 msgstr "&عرض وحيد"
 
-#: src/celestia/res/resource_strings.cpp:51
+#: src/celestia/res/resource_strings.cpp:55
 msgid "Show &Frames"
 msgstr "عرض &الإطارات"
 
-#: src/celestia/res/resource_strings.cpp:52
+#: src/celestia/res/resource_strings.cpp:56
 msgid "Synchronize &Time"
 msgstr "تزامن &الوقت"
 
-#: src/celestia/res/resource_strings.cpp:53
+#: src/celestia/res/resource_strings.cpp:57
 msgid "&Bookmarks"
 msgstr "&المفضلة"
 
-#: src/celestia/res/resource_strings.cpp:54
+#: src/celestia/res/resource_strings.cpp:58
 msgid "&Add Bookmarks..."
 msgstr "&إضافة مفضلة..."
 
-#: src/celestia/res/resource_strings.cpp:55
+#: src/celestia/res/resource_strings.cpp:59
 msgid "&Organize Bookmarks..."
 msgstr "&تنظيم المفضلة..."
 
-#: src/celestia/res/resource_strings.cpp:56
+#: src/celestia/res/resource_strings.cpp:60
 msgid "&Help"
 msgstr "&مساعدة"
 
-#: src/celestia/res/resource_strings.cpp:57
+#: src/celestia/res/resource_strings.cpp:61
 msgid "Run &Demo"
 msgstr "تشغيل التجربة الإيضاحية"
 
-#: src/celestia/res/resource_strings.cpp:58
+#: src/celestia/res/resource_strings.cpp:62
 msgid "&Controls"
 msgstr "&التحكم"
 
-#: src/celestia/res/resource_strings.cpp:59
+#: src/celestia/res/resource_strings.cpp:63
 msgid "&OpenGL Info"
 msgstr "معلومات &OpenGL"
 
-#: src/celestia/res/resource_strings.cpp:60
+#: src/celestia/res/resource_strings.cpp:64
 msgid "&License"
 msgstr "&الرخصة"
 
-#: src/celestia/res/resource_strings.cpp:61
+#: src/celestia/res/resource_strings.cpp:65
 msgid "&About Celestia"
 msgstr "&عن Celestia"
 
-#: src/celestia/res/resource_strings.cpp:62
+#: src/celestia/res/resource_strings.cpp:66
 msgid "About Celestia"
 msgstr "عن Celestia"
 
-#: src/celestia/res/resource_strings.cpp:63
-#: src/celestia/res/resource_strings.cpp:81
+#: src/celestia/res/resource_strings.cpp:67
 #: src/celestia/res/resource_strings.cpp:85
-#: src/celestia/res/resource_strings.cpp:87
 #: src/celestia/res/resource_strings.cpp:89
-#: src/celestia/res/resource_strings.cpp:95
+#: src/celestia/res/resource_strings.cpp:91
+#: src/celestia/res/resource_strings.cpp:93
 #: src/celestia/res/resource_strings.cpp:99
-#: src/celestia/res/resource_strings.cpp:104
-#: src/celestia/res/resource_strings.cpp:116
+#: src/celestia/res/resource_strings.cpp:103
+#: src/celestia/res/resource_strings.cpp:108
 #: src/celestia/res/resource_strings.cpp:120
-#: src/celestia/res/resource_strings.cpp:137
-#: src/celestia/res/resource_strings.cpp:168
+#: src/celestia/res/resource_strings.cpp:124
+#: src/celestia/res/resource_strings.cpp:141
 #: src/celestia/res/resource_strings.cpp:190
-#: src/celestia/res/resource_strings.cpp:195
-#: src/celestia/res/resource_strings.cpp:199
-#: src/celestia/res/resource_strings.cpp:205
+#: src/celestia/res/resource_strings.cpp:204
+#: src/celestia/res/resource_strings.cpp:209
+#: src/celestia/res/resource_strings.cpp:213
+#: src/celestia/res/resource_strings.cpp:219
 msgid "OK"
 msgstr "موافق"
 
-#: src/celestia/res/resource_strings.cpp:66
+#: src/celestia/res/resource_strings.cpp:69
+#, fuzzy
+msgid "Copyright (C) 2001-2008, Celestia Development Team"
+msgstr "جميع الحقوق محفوظة 2001-2006, Chris Laurel"
+
+#: src/celestia/res/resource_strings.cpp:70
 msgid "http://www.shatters.net/celestia"
 msgstr "http://www.shatters.net/celestia"
 
-#: src/celestia/res/resource_strings.cpp:67
+#: src/celestia/res/resource_strings.cpp:71
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr "Celestia هو برنامج مجاني ويأتي بدون أي ضمان بالتأكيد"
 
-#: src/celestia/res/resource_strings.cpp:68
+#: src/celestia/res/resource_strings.cpp:72
 msgid "Authors"
 msgstr "المؤلفون"
 
-#: src/celestia/res/resource_strings.cpp:69
+#: src/celestia/res/resource_strings.cpp:73
 msgid "Chris Laurel"
 msgstr "Chris Laurel"
 
-#: src/celestia/res/resource_strings.cpp:70
+#: src/celestia/res/resource_strings.cpp:74
 msgid "Clint Weisbrod"
 msgstr "Clint Weisbrod"
 
-#: src/celestia/res/resource_strings.cpp:71
+#: src/celestia/res/resource_strings.cpp:75
 msgid "Fridger Schrempp"
 msgstr "Fridger Schrempp"
 
-#: src/celestia/res/resource_strings.cpp:72
+#: src/celestia/res/resource_strings.cpp:76
 msgid "Christophe Teyssier"
 msgstr "Christophe Teyssier"
 
-#: src/celestia/res/resource_strings.cpp:73
+#: src/celestia/res/resource_strings.cpp:77
 msgid "Grant Hutchison"
 msgstr "Grant Hutchison"
 
-#: src/celestia/res/resource_strings.cpp:74
+#: src/celestia/res/resource_strings.cpp:78
 msgid "Pat Suwalski"
 msgstr "Pat Suwalski"
 
-#: src/celestia/res/resource_strings.cpp:75
+#: src/celestia/res/resource_strings.cpp:79
 msgid "Toti"
 msgstr "Toti"
 
-#: src/celestia/res/resource_strings.cpp:76
+#: src/celestia/res/resource_strings.cpp:80
 msgid "Da Woon Jung"
 msgstr "Da Woon Jung"
 
-#: src/celestia/res/resource_strings.cpp:77
+#: src/celestia/res/resource_strings.cpp:81
 msgid "Hank Ramsey"
 msgstr "Hank Ramsey"
 
-#: src/celestia/res/resource_strings.cpp:78
+#: src/celestia/res/resource_strings.cpp:82
 msgid "Bob Ippolito"
 msgstr "Bob Ippolito"
 
-#: src/celestia/res/resource_strings.cpp:79
+#: src/celestia/res/resource_strings.cpp:83
 msgid "Vincent Giangiulio"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:80
+#: src/celestia/res/resource_strings.cpp:84
 msgid "Select Object"
 msgstr "اختيار عنصر"
 
-#: src/celestia/res/resource_strings.cpp:83
+#: src/celestia/res/resource_strings.cpp:87
 msgid "Object Name"
 msgstr "اسم العنصر"
 
-#: src/celestia/res/resource_strings.cpp:84
+#: src/celestia/res/resource_strings.cpp:88
 msgid "License"
 msgstr "الرخصة"
 
-#: src/celestia/res/resource_strings.cpp:86
+#: src/celestia/res/resource_strings.cpp:90
 msgid "Celestia Controls"
 msgstr "تحكم Celestia"
 
-#: src/celestia/res/resource_strings.cpp:88
+#: src/celestia/res/resource_strings.cpp:92
 msgid "OpenGL Driver Info"
 msgstr "معلومات جهاز OpenGL"
 
-#: src/celestia/res/resource_strings.cpp:90
+#: src/celestia/res/resource_strings.cpp:94
 msgid "Set Simulation Time"
 msgstr "ضبط وقت المحاكاة"
 
-#: src/celestia/res/resource_strings.cpp:91
+#: src/celestia/res/resource_strings.cpp:95
 msgid "Time Zone: "
 msgstr "منطقة الوقت"
 
-#: src/celestia/res/resource_strings.cpp:94
+#: src/celestia/res/resource_strings.cpp:98
 msgid "Set To Current Time"
 msgstr "ضبط إلى الوقت الحالي"
 
-#: src/celestia/res/resource_strings.cpp:97
+#: src/celestia/res/resource_strings.cpp:101
 msgid "Add Bookmark"
 msgstr "اضافة مفضلة"
 
-#: src/celestia/res/resource_strings.cpp:101
+#: src/celestia/res/resource_strings.cpp:105
 msgid "Create in >>"
 msgstr "انشاء في >>"
 
-#: src/celestia/res/resource_strings.cpp:102
-#: src/celestia/res/resource_strings.cpp:201
+#: src/celestia/res/resource_strings.cpp:106
+#: src/celestia/res/resource_strings.cpp:215
 msgid "New Folder..."
 msgstr "مجلد جديد..."
 
-#: src/celestia/res/resource_strings.cpp:103
+#: src/celestia/res/resource_strings.cpp:107
 msgid "Solar System Browser"
 msgstr "باحث نظام الخلية الشمسية"
 
-#: src/celestia/res/resource_strings.cpp:105
+#: src/celestia/res/resource_strings.cpp:109
 msgid "Solar System"
 msgstr "نظام الخلية الشمسية"
 
-#: src/celestia/res/resource_strings.cpp:107
-#: src/celestia/res/resource_strings.cpp:114
+#: src/celestia/res/resource_strings.cpp:111
+#: src/celestia/res/resource_strings.cpp:118
 msgid "&Go To"
 msgstr "&ذهاب إلى"
 
-#: src/celestia/res/resource_strings.cpp:108
+#: src/celestia/res/resource_strings.cpp:112
 msgid "Solar System Objects"
 msgstr "عناصر نظام الخلية الشمسية"
 
-#: src/celestia/res/resource_strings.cpp:109
+#: src/celestia/res/resource_strings.cpp:113
 msgid "Star Browser"
 msgstr "باحث النجوم"
 
-#: src/celestia/res/resource_strings.cpp:111
+#: src/celestia/res/resource_strings.cpp:114
+msgid "Nearest"
+msgstr "الأقرب"
+
+#: src/celestia/res/resource_strings.cpp:115
 msgid "Brightest"
 msgstr "السطوع"
 
-#: src/celestia/res/resource_strings.cpp:112
+#: src/celestia/res/resource_strings.cpp:116
 msgid "With planets"
 msgstr "مع الكواكب"
 
-#: src/celestia/res/resource_strings.cpp:115
+#: src/celestia/res/resource_strings.cpp:119
 msgid "&Refresh"
 msgstr "&تحديث"
 
-#: src/celestia/res/resource_strings.cpp:117
+#: src/celestia/res/resource_strings.cpp:121
 msgid "Star Search Criteria"
 msgstr "معيار بحث النجوم"
 
-#: src/celestia/res/resource_strings.cpp:118
+#: src/celestia/res/resource_strings.cpp:122
 msgid "Maximum Stars Displayed in List"
 msgstr "أقصى عدد عرض للنجوم في القائمة"
 
-#: src/celestia/res/resource_strings.cpp:119
+#: src/celestia/res/resource_strings.cpp:123
 msgid "Tour Guide"
 msgstr "مرشد الجولة"
 
-#: src/celestia/res/resource_strings.cpp:121
-#: src/celestia/res/resource_strings.cpp:127
+#: src/celestia/res/resource_strings.cpp:125
+#: src/celestia/res/resource_strings.cpp:131
 msgid "Go To"
 msgstr "ذهاب إلى"
 
-#: src/celestia/res/resource_strings.cpp:122
+#: src/celestia/res/resource_strings.cpp:126
 msgid "Select your destination:"
 msgstr "اختيار وجهتك:"
 
-#: src/celestia/res/resource_strings.cpp:123
+#: src/celestia/res/resource_strings.cpp:127
 msgid "Go to Object"
 msgstr "ذهاب إلى عنصر"
 
-#: src/celestia/res/resource_strings.cpp:125
+#: src/celestia/res/resource_strings.cpp:129
 msgid "radii"
 msgstr "انصاف الاقطار"
 
-#: src/celestia/res/resource_strings.cpp:129
+#: src/celestia/res/resource_strings.cpp:133
 msgid "Object"
 msgstr "عنصر"
 
-#: src/celestia/res/resource_strings.cpp:130
+#: src/celestia/res/resource_strings.cpp:134
 msgid "Long."
 msgstr "خط الطول"
 
-#: src/celestia/res/resource_strings.cpp:131
+#: src/celestia/res/resource_strings.cpp:135
 msgid "Lat."
 msgstr "خط العرض"
 
-#: src/celestia/res/resource_strings.cpp:132
-#: src/celestia/res/resource_strings.cpp:170
+#: src/celestia/res/resource_strings.cpp:136
+#: src/celestia/res/resource_strings.cpp:189
 msgid "Distance"
 msgstr "المسافة"
 
-#: src/celestia/res/resource_strings.cpp:133
+#: src/celestia/res/resource_strings.cpp:137
 msgid "Size:"
 msgstr "الحجم:"
 
-#: src/celestia/res/resource_strings.cpp:134
+#: src/celestia/res/resource_strings.cpp:138
 msgid "Frame rate:"
 msgstr "معدل الإطار"
 
-#: src/celestia/res/resource_strings.cpp:135
+#: src/celestia/res/resource_strings.cpp:139
 msgid "Select Display Mode"
 msgstr "نمط عرض الاختيار"
 
-#: src/celestia/res/resource_strings.cpp:136
+#: src/celestia/res/resource_strings.cpp:140
 msgid "Resolution"
 msgstr "الدقة"
 
-#: src/celestia/res/resource_strings.cpp:139
+#: src/celestia/res/resource_strings.cpp:143
 msgid "View Options"
 msgstr "خيارات العرض"
 
-#: src/celestia/res/resource_strings.cpp:145
-msgid "Constellation Borders"
-msgstr "أطراف البرج الفلكي"
+#: src/celestia/res/resource_strings.cpp:146
+#: src/celestia/res/resource_strings.cpp:176
+msgid "Globulars"
+msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:173
+#: src/celestia/res/resource_strings.cpp:160
+msgid "Grids"
+msgstr ""
+
+#: src/celestia/res/resource_strings.cpp:161
+#, fuzzy
+msgid "Celestial"
+msgstr "Celestia"
+
+#: src/celestia/res/resource_strings.cpp:162
+#, fuzzy
+msgid "Horizontal"
+msgstr "تقسيم العرض أفقياً"
+
+#: src/celestia/res/resource_strings.cpp:163
+#, fuzzy
+msgid "Galactic"
+msgstr "المجرّات"
+
+#: src/celestia/res/resource_strings.cpp:164
+msgid "Ecliptic"
+msgstr ""
+
+#: src/celestia/res/resource_strings.cpp:170
+#, fuzzy
+msgid "Minor Moons"
+msgstr "الأقمار"
+
+#: src/celestia/res/resource_strings.cpp:174
+#, fuzzy
+msgid "DSO Labels"
+msgstr "أسماء"
+
+#: src/celestia/res/resource_strings.cpp:180
+msgid "Diagrams"
+msgstr ""
+
+#: src/celestia/res/resource_strings.cpp:181
+#, fuzzy
+msgid "Boundaries"
+msgstr "إظهار الحدود الفاصلة"
+
+#: src/celestia/res/resource_strings.cpp:183
+#, fuzzy
+msgid "Latin Names"
+msgstr "المواقع"
+
+#: src/celestia/res/resource_strings.cpp:184
 msgid "Information Text"
 msgstr "نص المعلومات"
 
-#: src/celestia/res/resource_strings.cpp:174
+#: src/celestia/res/resource_strings.cpp:188
 msgid "Filter Stars"
 msgstr "تصفية النجوم"
 
-#: src/celestia/res/resource_strings.cpp:175
-#: src/celestia/res/resource_strings.cpp:176
-msgid "Orbit / Label"
-msgstr "المدار / الاسم"
-
-#: src/celestia/res/resource_strings.cpp:183
+#: src/celestia/res/resource_strings.cpp:196
 msgid "Montes (Mountains)"
 msgstr "الجبال"
 
-#: src/celestia/res/resource_strings.cpp:184
+#: src/celestia/res/resource_strings.cpp:197
 msgid "Maria (Seas)"
 msgstr "البحار"
 
-#: src/celestia/res/resource_strings.cpp:186
+#: src/celestia/res/resource_strings.cpp:199
 msgid "Valles (Valleys)"
 msgstr "الوديان"
 
-#: src/celestia/res/resource_strings.cpp:187
+#: src/celestia/res/resource_strings.cpp:200
 msgid "Terrae (Land masses)"
 msgstr "اثار التعرية"
 
-#: src/celestia/res/resource_strings.cpp:188
+#: src/celestia/res/resource_strings.cpp:201
+#, fuzzy
+msgid "Volcanoes"
+msgstr "الكواب"
+
+#: src/celestia/res/resource_strings.cpp:202
 msgid "Other features"
 msgstr "مميزات اخرى"
 
-#: src/celestia/res/resource_strings.cpp:189
+#: src/celestia/res/resource_strings.cpp:203
 msgid "Label Features"
 msgstr "مميزات الأسماء"
 
-#: src/celestia/res/resource_strings.cpp:192
+#: src/celestia/res/resource_strings.cpp:206
 msgid "Show Features"
 msgstr "مميزات العرض"
 
-#: src/celestia/res/resource_strings.cpp:193
+#: src/celestia/res/resource_strings.cpp:207
 msgid "Minimum Labeled Feature Size"
 msgstr "الميزة المعلّمة الأقل حجماً"
 
-#: src/celestia/res/resource_strings.cpp:194
+#: src/celestia/res/resource_strings.cpp:208
 msgid "Add New Bookmark Folder"
 msgstr "إضافة مجلد مفضلة جديد"
 
-#: src/celestia/res/resource_strings.cpp:197
+#: src/celestia/res/resource_strings.cpp:211
 msgid "Folder Name"
 msgstr "مجلد جديد"
 
-#: src/celestia/res/resource_strings.cpp:198
+#: src/celestia/res/resource_strings.cpp:212
 msgid "Organize Bookmarks"
 msgstr "تنظيم المفضلة"
 
-#: src/celestia/res/resource_strings.cpp:202
+#: src/celestia/res/resource_strings.cpp:216
 msgid "Rename..."
 msgstr "إعادة تسمية..."
 
-#: src/celestia/res/resource_strings.cpp:203
+#: src/celestia/res/resource_strings.cpp:217
 msgid "Delete"
 msgstr "حذف"
 
-#: src/celestia/res/resource_strings.cpp:204
+#: src/celestia/res/resource_strings.cpp:218
 msgid "Rename Bookmark or Folder"
 msgstr "إعادة تسمية مفضلة أو مجلد"
 
-#: src/celestia/res/resource_strings.cpp:207
+#: src/celestia/res/resource_strings.cpp:221
 msgid "New Name"
 msgstr "اسم جديد"
 
-#: src/celestia/res/resource_strings.cpp:209
+#: src/celestia/res/resource_strings.cpp:223
 msgid "Compute"
 msgstr "حساب"
 
-#: src/celestia/res/resource_strings.cpp:210
+#: src/celestia/res/resource_strings.cpp:224
 msgid "Set Date and Go to Planet"
 msgstr "ضبط التاريخ و ذهاب إلى كوكب"
 
-#: src/celestia/res/resource_strings.cpp:217
+#: src/celestia/res/resource_strings.cpp:225
+msgid "Close"
+msgstr "إغلاق"
+
+#: src/celestia/res/resource_strings.cpp:226
+#, fuzzy
+msgid "From:"
+msgstr "من"
+
+#: src/celestia/res/resource_strings.cpp:227
+msgid "To:"
+msgstr ""
+
+#: src/celestia/res/resource_strings.cpp:228
+msgid "On:"
+msgstr ""
+
+#: src/celestia/res/resource_strings.cpp:229
+msgid "Search parameters"
+msgstr "البحث عن العوامل"
+
+#: src/celestia/res/resource_strings.cpp:230
+msgid "Solar Eclipses"
+msgstr "كسوف الشمس"
+
+#: src/celestia/res/resource_strings.cpp:231
 #, fuzzy
 msgid "Lunar Eclipses"
 msgstr "كسوف الشمس"
 
-#: src/celestia/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:233
 #, fuzzy
 msgid "Jan"
 msgstr "جينوس"
 
-#: src/celestia/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:233
 msgid "Feb"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:233
 #, fuzzy
 msgid "Mar"
 msgstr "المريخ"
 
-#: src/celestia/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:233
 msgid "Apr"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:233
 msgid "May"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:233
 msgid "Jun"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:234
 msgid "Jul"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:234
 msgid "Aug"
 msgstr ""
 
-#: src/celestia/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:234
 #, fuzzy
 msgid "Sep"
 msgstr "ضبط"
 
-#: src/celestia/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:234
 #, fuzzy
 msgid "Oct"
 msgstr "عنصر"
 
-#: src/celestia/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:234
 #, fuzzy
 msgid "Nov"
 msgstr "الآن"
 
-#: src/celestia/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr ""
+
+#, fuzzy
+#~ msgid " of "
+#~ msgstr "' عن '"
+
+#~ msgid "Bad spectral type in star database, star #\n"
+#~ msgstr "نوع طيف سيء في قاعدة بيانات النجمة , النجمة #\n"
+
+#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
+#~ msgstr "النجوم ذات التكرار في أرقام الدليل حذفت.)\n"
+
+#~ msgid "Low res textures"
+#~ msgstr "قوام منخفض الدقة"
+
+#~ msgid "Medium res textures"
+#~ msgstr "قوام متوسط الدقة"
+
+#~ msgid "High res textures"
+#~ msgstr "قوام مرتفع الدقة"
+
+#~ msgid "Error reading deep sky file\n"
+#~ msgstr "خطأ في قراءة ملف عمق الفضاء\n"
+
+#, fuzzy
+#~ msgid "Version"
+#~ msgstr "هابريون"
+
+#~ msgid "Options"
+#~ msgstr "خيارات"
+
+#~ msgid "Objects"
+#~ msgstr "عناصر"
+
+#~ msgid "OpenGL Render Path"
+#~ msgstr "مسار عرض OpenGL"
+
+#~ msgid "Time"
+#~ msgstr "وقت"
+
+#~ msgid "MultiView"
+#~ msgstr "عرض متعدد"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "القائمة الأساسية"
+
+#~ msgid "Dist."
+#~ msgstr "الوجهة"
+
+#~ msgid "App. Mag."
+#~ msgstr "مقدار البرنامج"
+
+#~ msgid "Abs. Mag."
+#~ msgstr "القيمة المطلقة"
+
+#~ msgid "With Planets"
+#~ msgstr "مع الكواكب"
+
+#~ msgid "Brightest (Abs.)"
+#~ msgstr "السطوع (مطلقا)"
+
+#~ msgid "Brightest (App.)"
+#~ msgstr "السطوع (البرنامج)"
+
+#~ msgid "&Close"
+#~ msgstr "&إغلاق"
+
+#~ msgid "Alt+C"
+#~ msgstr "Alt+C"
+
+#~ msgid "Refresh"
+#~ msgstr "تحديث"
+
+#~ msgid "End"
+#~ msgstr "إنهاء"
+
+#~ msgid "Moon Eclipses"
+#~ msgstr "خسوف القمر"
+
+#~ msgid "Search"
+#~ msgstr "بحث"
+
+#, fuzzy
+#~ msgid "Image Size:"
+#~ msgstr "الحجم:"
+
+#, fuzzy
+#~ msgid "Frame Rate:"
+#~ msgstr "معدل الإطار"
+
+#, fuzzy
+#~ msgid "&OK"
+#~ msgstr "موافق"
+
+#, fuzzy
+#~ msgid "&Cancel"
+#~ msgstr "إلغاء الامر"
+
+#~ msgid "Io"
+#~ msgstr "آيو"
+
+#~ msgid "Europa"
+#~ msgstr "يوروبا"
+
+#~ msgid "Ganymede"
+#~ msgstr "جنايميد"
+
+#~ msgid "Callisto"
+#~ msgstr "كاليستو"
+
+#~ msgid "Prometheus"
+#~ msgstr "بروميثياس"
+
+#~ msgid "Pandora"
+#~ msgstr "باندورا"
+
+#~ msgid "Epimetheus"
+#~ msgstr "ايبيماثيوس"
+
+#~ msgid "Janus"
+#~ msgstr "جينوس"
+
+#~ msgid "Mimas"
+#~ msgstr "ميميس"
+
+#~ msgid "Tethys"
+#~ msgstr "تَثيز"
+
+#~ msgid "Dione"
+#~ msgstr "دايون"
+
+#~ msgid "Rhea"
+#~ msgstr "ريَا"
+
+#~ msgid "Titan"
+#~ msgstr "تيتان"
+
+#~ msgid "Hyperion"
+#~ msgstr "هابريون"
+
+#~ msgid "Iapetus"
+#~ msgstr "أيابوتس"
+
+#~ msgid "Phoebe"
+#~ msgstr "فيبي"
+
+#~ msgid "Ariel"
+#~ msgstr "أريال"
+
+#~ msgid "Umbriel"
+#~ msgstr "أمبيريال"
+
+#~ msgid "Titania"
+#~ msgstr "تيتانيا"
+
+#~ msgid "Oberon"
+#~ msgstr "أوبيران"
+
+#~ msgid "Larissa"
+#~ msgstr "لاريسّا"
+
+#~ msgid "Proteus"
+#~ msgstr "بروتياس"
+
+#~ msgid "Triton"
+#~ msgstr "تراتون"
+
+#~ msgid "Nereid"
+#~ msgstr "نِريد"
+
+#~ msgid "Charon"
+#~ msgstr "كارن"
+
+#~ msgid "Constellation Borders"
+#~ msgstr "أطراف البرج الفلكي"
+
+#~ msgid "Orbit / Label"
+#~ msgstr "المدار / الاسم"
 
 #~ msgid "Mark Features"
 #~ msgstr "مميزات التحديد"
