@@ -144,8 +144,10 @@ Globular::Globular() :
     customTmpName (NULL),
     form (NULL),
 	r_c (R_c_ref),
-	c (C_ref)
+	c (C_ref),
+    tidalRadius(0.0f)
 {
+    recomputeTidalRadius();
 }
 
 const char* Globular::getType() const
@@ -193,6 +195,7 @@ float Globular::getCoreRadius() const
 void Globular::setCoreRadius(float coreRadius)
 {
 	r_c = coreRadius;
+    recomputeTidalRadius();
 }
 	
 float Globular::getHalfMassRadius(float c, float r_c)
@@ -206,6 +209,7 @@ float Globular::getConcentration() const
 {
 	return c;
 }
+
 void Globular::setConcentration(float conc)
 {
 	int cslot;
@@ -216,7 +220,10 @@ void Globular::setConcentration(float conc)
 	//account for the actual c values via 8 bins only, for saving time 
 	cslot = (int)floor((conc - 0.5)/0.35 + 0.5);		
 	form = globularForms[cslot];
+    
+    recomputeTidalRadius();
 }
+
 
 size_t Globular::getDescription(char* buf, size_t bufLength) const
 {
@@ -263,6 +270,11 @@ bool Globular::pick(const Ray3d& ray,
 }
 bool Globular::load(AssociativeArray* params, const string& resPath)
 {
+    // Load the basic DSO parameters first
+    bool ok = DeepSkyObject::load(params, resPath);
+    if (!ok)
+        return false;
+    
     if(params->getNumber("Detail", detail))
     	setDetail((float) detail);
 			
@@ -275,8 +287,8 @@ bool Globular::load(AssociativeArray* params, const string& resPath)
 			
 	if(params->getNumber("KingConcentration", c))
 		setConcentration(c);
-		
-    return DeepSkyObject::load(params, resPath);
+    
+    return true;
 }
 
 
@@ -305,7 +317,7 @@ void Globular::renderGlobularPointSprites(const GLContext&,
 			
 	float minimumFeatureSize = 0.5f * pixelSize * distanceToDSO;
 
-	float size0 = 2 * getRadius(); // mu25 isophote radius 	
+	float size0 = 2 * getRadius(); // mu25 isophote radius
 		
 	DiskSizeInPixels = size0 / minimumFeatureSize;
 	
@@ -547,6 +559,17 @@ void Globular::hsv2rgb( float *r, float *g, float *b, float h, float s, float v 
      break;
    }
 }
+
+
+// Compute the tidal radius in light years
+void
+Globular::recomputeTidalRadius()
+{
+    // Convert the core radius from arcminutes to light years
+    float coreRadiusLy = std::tan(degToRad(r_c / 60.0)) * (float) getPosition().distanceFromOrigin();
+    tidalRadius = coreRadiusLy * std::pow(10.0f, c);
+}
+
 
 GlobularForm* buildGlobularForms(float c)
 {

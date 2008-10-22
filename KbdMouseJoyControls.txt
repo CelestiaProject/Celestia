@@ -108,10 +108,12 @@ Time Control
 Spacebar ......... Pause/Resume the flow of time and scripts (toggle)
 Spacebar+Shift.... Pause the flow of time only
 J ................ Reverse/Forward time (toggle)
-\ ................ Set time: 1x forward (norm), cancels faster/slower x factors
-L ................ Set time: 10x faster
-K ................ Set time: 10x slower
-! ................ Set time: to current date and time
+\ ................ Set time rate: 1x forward (norm), cancels faster/slower x factors
+L ................ Change time rate: 2x faster
+K ................ Change time rate: 2x slower
+l ................ Change time rate: 10x faster
+k ................ Change time rate: 10x slower
+! ................ Set time: to current system date and time
 
 ? ................ Display light-travel delay between observer / selected object
 - (hyphen)........ Subtract light-travel delay from current simulation time

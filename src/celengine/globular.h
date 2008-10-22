@@ -47,7 +47,9 @@ class Globular : public DeepSkyObject
 	void  setConcentration(const float);	
 	float getConcentration() const;
 	float getHalfMassRadius(float c, float r_c);
-   
+    
+    virtual float getBoundingSphereRadius() const { return tidalRadius; }
+    
     virtual bool pick(const Ray3d& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
@@ -67,13 +69,17 @@ class Globular : public DeepSkyObject
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;
     virtual const char* getObjTypeName() const;
-
- public:
+    
+ private:
+    void recomputeTidalRadius();
+    
  private:
     float detail; 
     std::string* customTmpName;     
     GlobularForm* form;    
- 	float  r_c, c;  
+ 	float r_c;
+    float c;  
+    float tidalRadius;
 };
 
 #endif // _GLOBULAR_H_
