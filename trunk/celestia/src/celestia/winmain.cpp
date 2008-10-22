@@ -453,7 +453,10 @@ static bool CopyStateURLToClipboard()
     if (!b)
         return false;
 
-    Url url(appCore);
+    CelestiaState appState;
+    appState.captureState(appCore);
+    
+    Url url(appState, Url::CurrentVersion);
     string urlString = url.getAsString();
 
     char* s = const_cast<char*>(urlString.c_str());
@@ -3898,7 +3901,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
                     if (!urlString.substr(0,4).compare("cel:"))
                     {
                         appCore->flash(_("Loading URL"));
-			appCore->goToUrl(urlString);
+                        appCore->goToUrl(urlString);
                     }
                     else if (DetermineFileType(urlString) == Content_CelestiaScript)
                     {
