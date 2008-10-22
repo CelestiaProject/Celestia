@@ -101,49 +101,56 @@ NSString* fatalErrorMessage;
     // Change directory to resource dir so Celestia can find cfg files and textures
     NSFileManager *fileManager = [NSFileManager defaultManager]; 
     NSString* path;
+    NSMutableArray *resourceDirs = [NSMutableArray array];
     BOOL isFolder = NO;
 
-    if ( [ fileManager fileExistsAtPath: path = [[[ mainBundle bundlePath ]  stringByDeletingLastPathComponent] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder ] && isFolder )
-        [fileManager changeCurrentDirectoryPath: path];
-    else
+    if ( [ fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder ] && isFolder )
     {
-        FSRef folder;
-        CFURLRef url;
-        static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
-        unsigned i;
-        path = nil;
+        [resourceDirs addObject: path];
+    }
+    if ( [ fileManager fileExistsAtPath: path = [[[ mainBundle bundlePath ]  stringByDeletingLastPathComponent] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder ] && isFolder )
+    {
+        [resourceDirs addObject: path];
+    }
+    FSRef folder;
+    CFURLRef url;
+    static short domains[] = { kUserDomain, kLocalDomain, kNetworkDomain };
+    unsigned i;
+    path = nil;
 
-        for (i = 0; i < (sizeof domains / sizeof(short)); ++i)
+    for (i = 0; i < (sizeof domains / sizeof(short)); ++i)
+    {
+        if (FSFindFolder(domains[i], kApplicationSupportFolderType, FALSE, &folder) == noErr)
         {
-            if (FSFindFolder(domains[i], kApplicationSupportFolderType, FALSE, &folder) == noErr)
-            {
-                url = CFURLCreateFromFSRef(nil, &folder);
-                path = [(NSURL *)url path];
-                CFRelease(url);
+            url = CFURLCreateFromFSRef(nil, &folder);
+            path = [(NSURL *)url path];
+            CFRelease(url);
 
-                if (path)
+            if (path)
+            {
+                if ([fileManager fileExistsAtPath: path = [path stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER] isDirectory: &isFolder] && isFolder)
                 {
-                    if ([fileManager fileExistsAtPath: path = [path stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER] isDirectory: &isFolder] && isFolder)
-                    {
-                        break;
-                    }
+                    [resourceDirs addObject: path];
                 }
-
-                path = nil;
             }
-        }
 
-        if (path == nil)
-        {
-            if (![fileManager fileExistsAtPath: path = [[ mainBundle resourcePath ] stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER ] isDirectory: &isFolder] || !isFolder)
-            {
-                [self fatalError: NSLocalizedString(@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",@"")];
-                [self fatalError: nil];
-            }
+            path = nil;
         }
+    }
 
-        if (path)
-            [fileManager changeCurrentDirectoryPath: path];
+    if ([resourceDirs count] > 0)
+    {
+        [fileManager changeCurrentDirectoryPath: [resourceDirs objectAtIndex: 0]];
+        [resourceDirs removeObjectAtIndex: 0];
+        if ([resourceDirs count] > 0) {
+            NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+            [prefs registerDefaults:[NSDictionary dictionaryWithObject:[NSArray arrayWithObject:[resourceDirs objectAtIndex:0]] forKey:@"existingResourceDirs"]];
+        }
+    }
+    else 
+    {
+        [self fatalError: NSLocalizedString(@"It appears that the \"CelestiaResources\" directory has not been properly installed in the correct location as indicated in the installation instructions. \n\nPlease correct this and try again.",@"")];
+        [self fatalError: nil];
     }
 }
 
@@ -283,7 +290,7 @@ NSString* fatalErrorMessage;
     NSString *VP_PROBLEM_EXT  = @"GL_ARB_vertex_program";
     NSString *VP_PATCH_SCRIPT = @"vp_patch.sh";
     NSString *VP_PATCH_SHELL  = @"/bin/zsh";
-    NSString *CELESTIA_CFG    = @"celestia.cfg";
+    NSString *CELESTIA_CFG    = @"~/.celestia.cfg";
 
     const char *VP_PROBLEM_RENDERERS[] = { "ATI Radeon 9200" };
     const char *glRenderer = (const char *) glGetString(GL_RENDERER);
@@ -311,12 +318,11 @@ NSString* fatalErrorMessage;
                             nil) == NSAlertDefaultReturn)
         {
             // Install it
-            NSFileManager *fm = [NSFileManager defaultManager];
-            NSString *cfgPath = [[fm currentDirectoryPath] stringByAppendingPathComponent: CELESTIA_CFG];
+            NSString *cfgPath = [CELESTIA_CFG stringByStandardizingPath];
             NSString *toolPath = [[NSBundle mainBundle] pathForResource: VP_PATCH_SCRIPT ofType: @""];
             BOOL patchInstalled = NO;
 
-            if ([fm isWritableFileAtPath: cfgPath] && toolPath)
+            if (toolPath)
             {
                 NSArray *taskArgs = [NSArray arrayWithObjects:
                     toolPath, cfgPath, nil];
@@ -339,7 +345,7 @@ NSString* fatalErrorMessage;
             }
             else
             {
-                [[CelestiaController shared] fatalError: NSLocalizedString(@"There was a problem installing the workaround. You may be running from a disk image, which is write-protected. Please try copying the CelestiaResources folder to your home directory as described in the README. You can also attempt to perform the workaround manually by following the instructions in the README.",nil)];
+                [[CelestiaController shared] fatalError: NSLocalizedString(@"There was a problem installing the workaround. You can attempt to perform the workaround manually by following the instructions in the README.",nil)];
                 [[CelestiaController shared] fatalError: nil];
             }
         }
