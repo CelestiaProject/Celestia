@@ -3300,7 +3300,7 @@ static void displayPlanetInfo(Overlay& overlay,
     {
         if (body.getRotationModel(t)->isPeriodic())
         {
-            overlay << _("Day length: ");
+            overlay << _("Rotation period: ");
             displayDuration(overlay, body.getRotationModel(t)->getPeriod());
             overlay << '\n';
         }
