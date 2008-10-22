@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
+		3D8726810EA84D260069EBBA /* extras-standard in Copy Misc */ = {isa = PBXBuildFile; fileRef = 3D8726800EA84D260069EBBA /* extras-standard */; };
 		881336D80DEF5EE0001F3BC5 /* skygrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 881336D60DEF5EE0001F3BC5 /* skygrid.cpp */; };
 		8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844B87C0D5AA3290059AA3A /* customrotation.cpp */; };
 		8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAA80D6D13FE0059AA3A /* frametree.cpp */; };
@@ -189,13 +190,9 @@
 		E567F093099112EC00D05031 /* venus_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8E09910E8F00D05031 /* venus_locs.ssc */; };
 		E567F094099112EC00D05031 /* visualbins.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8F09910E8F00D05031 /* visualbins.stc */; };
 		E567F095099112EC00D05031 /* world-capitals.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF9009910E8F00D05031 /* world-capitals.ssc */; };
-		E567F096099112FE00D05031 /* apollo.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFE409910F0D00D05031 /* apollo.ssc */; };
 		E567F097099112FE00D05031 /* comets.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFE509910F0D00D05031 /* comets.ssc */; };
 		E567F098099112FE00D05031 /* minormoons.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFEE09910F0D00D05031 /* minormoons.ssc */; };
 		E567F099099112FE00D05031 /* numberedmoons.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFF109910F0D00D05031 /* numberedmoons.ssc */; };
-		E567F09A099112FE00D05031 /* shroxclassic.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFF409910F0D00D05031 /* shroxclassic.ssc */; };
-		E567F09B099112FE00D05031 /* shroxmars.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFF509910F0D00D05031 /* shroxmars.ssc */; };
-		E567F09C099112FE00D05031 /* skylab.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFF609910F0D00D05031 /* skylab.ssc */; };
 		E56A3DB80848C19800A21D7E /* MacDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E56A3DB70848C19800A21D7E /* MacDirectory.mm */; };
 		E56A5AD10848F24D00A21D7E /* caution.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E56A5AD00848F24D00A21D7E /* caution.tiff */; };
 		E56A5AED0848F92200A21D7E /* FullScreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */; };
@@ -234,7 +231,6 @@
 		E5D542770D0B87EA00E8C513 /* Menu_Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = E5D5425F0D0B86B200E8C513 /* Menu_Extensions.m */; };
 		E5D766140982B1860099DBBD /* HelpWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = E5D7660E0982B1860099DBBD /* HelpWindow.nib */; };
 		E5D766700982B4660099DBBD /* amalthea.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766270982B3300099DBBD /* amalthea.cmod */; };
-		E5D766710982B4660099DBBD /* apollo.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766280982B3300099DBBD /* apollo.3ds */; };
 		E5D766720982B4660099DBBD /* asteroid.cms in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766290982B3300099DBBD /* asteroid.cms */; };
 		E5D766730982B4660099DBBD /* bacchus.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7662B0982B3300099DBBD /* bacchus.cmod */; };
 		E5D766740982B4660099DBBD /* borrelly.cms in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7662C0982B3300099DBBD /* borrelly.cms */; };
@@ -243,7 +239,6 @@
 		E5D766780982B4660099DBBD /* epimetheus.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766330982B3300099DBBD /* epimetheus.cmod */; };
 		E5D766790982B4660099DBBD /* eros.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766350982B3300099DBBD /* eros.cmod */; };
 		E5D7667B0982B4660099DBBD /* gaspra.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766390982B3300099DBBD /* gaspra.cmod */; };
-		E5D7667C0982B4660099DBBD /* gemini.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7663A0982B3300099DBBD /* gemini.3ds */; };
 		E5D7667D0982B4660099DBBD /* geographos.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7663C0982B3300099DBBD /* geographos.cmod */; };
 		E5D7667E0982B4660099DBBD /* golevka.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7663E0982B3300099DBBD /* golevka.cmod */; };
 		E5D7667F0982B4660099DBBD /* halley.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766400982B3300099DBBD /* halley.cmod */; };
@@ -253,16 +248,12 @@
 		E5D766860982B4660099DBBD /* kleopatra.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7664C0982B3300099DBBD /* kleopatra.cmod */; };
 		E5D766870982B4660099DBBD /* ky26.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7664E0982B3300099DBBD /* ky26.cmod */; };
 		E5D766880982B4660099DBBD /* larissa.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766500982B3300099DBBD /* larissa.cmod */; };
-		E5D766890982B4660099DBBD /* marsglobalsurvr.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766520982B3300099DBBD /* marsglobalsurvr.3ds */; };
-		E5D7668A0982B4660099DBBD /* marsodyssey.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766530982B3300099DBBD /* marsodyssey.3ds */; };
-		E5D7668B0982B4660099DBBD /* mercury7.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766540982B3300099DBBD /* mercury7.3ds */; };
 		E5D7668D0982B4660099DBBD /* pandora.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766570982B3300099DBBD /* pandora.cmod */; };
 		E5D7668E0982B4660099DBBD /* phobos.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766590982B3300099DBBD /* phobos.cmod */; };
 		E5D7668F0982B4660099DBBD /* phoebe.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7665B0982B3300099DBBD /* phoebe.cmod */; };
 		E5D766900982B4660099DBBD /* prometheus.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7665D0982B3300099DBBD /* prometheus.cmod */; };
 		E5D766910982B4660099DBBD /* proteus.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7665F0982B3300099DBBD /* proteus.cmod */; };
 		E5D766920982B4660099DBBD /* roughsphere.cms in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766610982B3300099DBBD /* roughsphere.cms */; };
-		E5D7669A0982B4660099DBBD /* skylab.3ds in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D766690982B3300099DBBD /* skylab.3ds */; };
 		E5D7669B0982B4660099DBBD /* toutatis.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7666B0982B3300099DBBD /* toutatis.cmod */; };
 		E5D7669C0982B4660099DBBD /* vesta.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = E5D7666D0982B3310099DBBD /* vesta.cmod */; };
 		E5D767FD0982B7930099DBBD /* flare.jpg in Copy Textures */ = {isa = PBXBuildFile; fileRef = E5D766A40982B6DF0099DBBD /* flare.jpg */; };
@@ -310,8 +301,8 @@
 		E567F018099110C000D05031 /* Copy Data */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = Celestia/CelestiaResources/data;
-			dstSubfolderSpec = 16;
+			dstPath = CelestiaResources/data;
+			dstSubfolderSpec = 7;
 			files = (
 				E567F072099112EC00D05031 /* asterisms.dat in Copy Data */,
 				E567F073099112EC00D05031 /* asteroids.ssc in Copy Data */,
@@ -355,16 +346,12 @@
 		E567F0400991111C00D05031 /* Copy Extras */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = Celestia/CelestiaResources/extras;
-			dstSubfolderSpec = 16;
+			dstPath = CelestiaResources/extras;
+			dstSubfolderSpec = 7;
 			files = (
-				E567F096099112FE00D05031 /* apollo.ssc in Copy Extras */,
 				E567F097099112FE00D05031 /* comets.ssc in Copy Extras */,
 				E567F098099112FE00D05031 /* minormoons.ssc in Copy Extras */,
 				E567F099099112FE00D05031 /* numberedmoons.ssc in Copy Extras */,
-				E567F09A099112FE00D05031 /* shroxclassic.ssc in Copy Extras */,
-				E567F09B099112FE00D05031 /* shroxmars.ssc in Copy Extras */,
-				E567F09C099112FE00D05031 /* skylab.ssc in Copy Extras */,
 			);
 			name = "Copy Extras";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -384,10 +371,11 @@
 		E572837407939F2500C1F239 /* Copy Misc */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = Celestia/CelestiaResources;
-			dstSubfolderSpec = 16;
+			dstPath = CelestiaResources;
+			dstSubfolderSpec = 7;
 			files = (
 				E572837D0793A03800C1F239 /* demo.cel in Copy Misc */,
+				3D8726810EA84D260069EBBA /* extras-standard in Copy Misc */,
 				E572837F0793A03800C1F239 /* fonts in Copy Misc */,
 				E57283800793A03800C1F239 /* guide.cel in Copy Misc */,
 				E5E198B00C1D9C2E0094D8BB /* scripts in Copy Misc */,
@@ -417,11 +405,10 @@
 		E5D7666E0982B4480099DBBD /* Copy Models */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = Celestia/CelestiaResources/models;
-			dstSubfolderSpec = 16;
+			dstPath = CelestiaResources/models;
+			dstSubfolderSpec = 7;
 			files = (
 				E5D766700982B4660099DBBD /* amalthea.cmod in Copy Models */,
-				E5D766710982B4660099DBBD /* apollo.3ds in Copy Models */,
 				E5D766720982B4660099DBBD /* asteroid.cms in Copy Models */,
 				E5D766730982B4660099DBBD /* bacchus.cmod in Copy Models */,
 				E5D766740982B4660099DBBD /* borrelly.cms in Copy Models */,
@@ -430,7 +417,6 @@
 				E5D766780982B4660099DBBD /* epimetheus.cmod in Copy Models */,
 				E5D766790982B4660099DBBD /* eros.cmod in Copy Models */,
 				E5D7667B0982B4660099DBBD /* gaspra.cmod in Copy Models */,
-				E5D7667C0982B4660099DBBD /* gemini.3ds in Copy Models */,
 				E5D7667D0982B4660099DBBD /* geographos.cmod in Copy Models */,
 				E5D7667E0982B4660099DBBD /* golevka.cmod in Copy Models */,
 				E5D7667F0982B4660099DBBD /* halley.cmod in Copy Models */,
@@ -441,16 +427,12 @@
 				E5D766860982B4660099DBBD /* kleopatra.cmod in Copy Models */,
 				E5D766870982B4660099DBBD /* ky26.cmod in Copy Models */,
 				E5D766880982B4660099DBBD /* larissa.cmod in Copy Models */,
-				E5D766890982B4660099DBBD /* marsglobalsurvr.3ds in Copy Models */,
-				E5D7668A0982B4660099DBBD /* marsodyssey.3ds in Copy Models */,
-				E5D7668B0982B4660099DBBD /* mercury7.3ds in Copy Models */,
 				E5D7668D0982B4660099DBBD /* pandora.cmod in Copy Models */,
 				E5D7668E0982B4660099DBBD /* phobos.cmod in Copy Models */,
 				E5D7668F0982B4660099DBBD /* phoebe.cmod in Copy Models */,
 				E5D766900982B4660099DBBD /* prometheus.cmod in Copy Models */,
 				E5D766910982B4660099DBBD /* proteus.cmod in Copy Models */,
 				E5D766920982B4660099DBBD /* roughsphere.cms in Copy Models */,
-				E5D7669A0982B4660099DBBD /* skylab.3ds in Copy Models */,
 				E5D7669B0982B4660099DBBD /* toutatis.cmod in Copy Models */,
 				E5D7669C0982B4660099DBBD /* vesta.cmod in Copy Models */,
 				E585E9790B27864300812512 /* E0.png in Copy Models */,
@@ -469,8 +451,8 @@
 		E5D767FB0982B75B0099DBBD /* Copy Textures */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
-			dstPath = Celestia/CelestiaResources/textures;
-			dstSubfolderSpec = 16;
+			dstPath = CelestiaResources/textures;
+			dstSubfolderSpec = 7;
 			files = (
 				E5D767FD0982B7930099DBBD /* flare.jpg in Copy Textures */,
 				E5D767FE0982B7930099DBBD /* logo.png in Copy Textures */,
@@ -493,6 +475,7 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		3D8726800EA84D260069EBBA /* extras-standard */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "extras-standard"; path = "../extras-standard"; sourceTree = SOURCE_ROOT; };
 		881336D60DEF5EE0001F3BC5 /* skygrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = skygrid.cpp; path = ../src/celengine/skygrid.cpp; sourceTree = SOURCE_ROOT; };
 		881336D70DEF5EE0001F3BC5 /* skygrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = skygrid.h; path = ../src/celengine/skygrid.h; sourceTree = SOURCE_ROOT; };
 		8844B87C0D5AA3290059AA3A /* customrotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = customrotation.cpp; path = ../src/celengine/customrotation.cpp; sourceTree = SOURCE_ROOT; };
@@ -562,13 +545,13 @@
 		E54343110783C3F200053094 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		E54343140783C42500053094 /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserWindowController.h; sourceTree = "<group>"; };
 		E54343150783C42500053094 /* BrowserWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserWindowController.mm; sourceTree = "<group>"; };
-		E54742CF09631D3600E89E09 /* defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = defaults.plist; sourceTree = "<group>"; };
+		E54742CF09631D3600E89E09 /* defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = defaults.plist; sourceTree = "<group>"; };
 		E561FB5D0B46164000668CFE /* CelestiaDSO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaDSO.h; sourceTree = "<group>"; };
 		E561FB5E0B46164000668CFE /* CelestiaDSO.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaDSO.mm; sourceTree = "<group>"; };
 		E561FC2D0B47910800668CFE /* CelestiaLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestiaLocation.h; sourceTree = "<group>"; };
 		E561FC2E0B47910800668CFE /* CelestiaLocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CelestiaLocation.mm; sourceTree = "<group>"; };
-		E564312D07769C9000E2C4A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
-		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E564312D07769C9000E2C4A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E564312E07769C9000E2C4A3 /* Celestia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Celestia.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56431450776D52D00E2C4A3 /* celx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = celx.cpp; path = ../src/celestia/celx.cpp; sourceTree = SOURCE_ROOT; };
 		E56431460776D52D00E2C4A3 /* celx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celx.h; path = ../src/celestia/celx.h; sourceTree = SOURCE_ROOT; };
 		E56431490776D5C800E2C4A3 /* jpleph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jpleph.cpp; path = ../src/celengine/jpleph.cpp; sourceTree = SOURCE_ROOT; };
@@ -1711,6 +1694,7 @@
 			children = (
 				E567EF6909910E8F00D05031 /* data */,
 				E567EFE309910F0D00D05031 /* extras */,
+				3D8726800EA84D260069EBBA /* extras-standard */,
 				F5626A0402A49B8B014901DC /* fonts */,
 				E5D766250982B3300099DBBD /* models */,
 				E5E198960C1D9BB90094D8BB /* scripts */,
@@ -1747,6 +1731,7 @@
 				E57283A00793F93500C1F239 /* Copy App */,
 				E572837407939F2500C1F239 /* Copy Misc */,
 				E567F018099110C000D05031 /* Copy Data */,
+				3D23D0CF0EAC7655002E305C /* Copy Localized Data */,
 				E567F0400991111C00D05031 /* Copy Extras */,
 				E5D7666E0982B4480099DBBD /* Copy Models */,
 				E5D767FB0982B75B0099DBBD /* Copy Textures */,
@@ -1785,6 +1770,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = E532F41D0933316100D7D5B3 /* Build configuration list for PBXProject "celestia" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1829,6 +1815,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3D23D0CF0EAC7655002E305C /* Copy Localized Data */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../locale",
+			);
+			name = "Copy Localized Data";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/CelestiaResources",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/Celestia\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\ncp $SRCROOT/../locale/COPYING_* $BUILT_PRODUCTS_DIR/Celestia\ncp $SRCROOT/../locale/demo_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\ncp $SRCROOT/../locale/guide_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\ncp $SRCROOT/../locale/start_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\n";
+			showEnvVarsInLog = 0;
+		};
 		E572837307939E0200C1F239 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -1844,6 +1847,7 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "find $BUILT_PRODUCTS_DIR/Celestia -name 'Makefile*' -delete\nhdiutil create -srcfolder $BUILT_PRODUCTS_DIR/Celestia -format UDRW -ov $TARGET_BUILD_DIR/$PRODUCT_NAME.dmg\n";
+			showEnvVarsInLog = 0;
 		};
 		E5CC203B09AA83A900CFFF2C /* Convert PO */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1858,6 +1862,7 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "for po in $SRCROOT/../po/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/po.strings\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    cp $SRCROOT/$s.lproj/po.strings $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/celestia_constellations.strings\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    cp $SRCROOT/$s.lproj/celestia_constellations.strings $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\ndone";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 

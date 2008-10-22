@@ -15,6 +15,7 @@
 
 
 @interface ScriptsController(Private)
++ (NSDictionary *)scriptsForFolderRoot: (NSString *)root;
 - (void)runScript: (id)aSender;
 - (void)addItems: (NSDictionary *)aItems
           toMenu: (NSMenu *)aMenu;
@@ -22,15 +23,21 @@
 
 @implementation ScriptsController
 
-- (void)buildScriptMenu
++ (NSDictionary *)scriptsForFolderRoot: (NSString *)root
 {
-    std::vector<ScriptMenuItem> *scripts = ScanScriptsDirectory([CEL_SCRIPTS_FOLDER stdString], true);
-    int count = [scriptMenu numberOfItems];
-    while (count-- > 0)
-        [scriptMenu removeItemAtIndex: 0];
+    NSString *scriptsFolder = nil;
+    unsigned baseDirLevel = [[CEL_SCRIPTS_FOLDER pathComponents] count];
+    BOOL isAbsoluteFolder = (root && [root length] > 0);
+    if (isAbsoluteFolder)
+        scriptsFolder = [root stringByAppendingPathComponent: CEL_SCRIPTS_FOLDER];
+    else
+        scriptsFolder = CEL_SCRIPTS_FOLDER;
+
+    std::vector<ScriptMenuItem> *scripts = ScanScriptsDirectory([scriptsFolder stdString], true);
+    if (NULL == scripts)
+        return nil;
 
     NSMutableDictionary *itemDict = [NSMutableDictionary dictionary];
-    unsigned baseDirLevel = [[CEL_SCRIPTS_FOLDER pathComponents] count];
     NSString *title;
     id path;
     size_t i;
@@ -39,6 +46,17 @@
     {
         title = [NSString stringWithStdString: (*scripts)[i].title];
         path  = [NSString stringWithStdString: (*scripts)[i].filename];
+        if (isAbsoluteFolder)
+        {
+            NSRange pathRange = [path rangeOfString:root options:NSAnchoredSearch];
+            if (NSNotFound != pathRange.location &&
+                pathRange.location < [path length])
+            {
+                pathRange.location += pathRange.length + 1;
+                pathRange.length = [path length] - pathRange.length - 1;
+                path = [path substringWithRange:pathRange];
+            }
+        }
         // Build submenus for nested directories
         NSArray *subPaths = [[path stringByDeletingLastPathComponent] pathComponents];
         if (subPaths && [subPaths count] > baseDirLevel)
@@ -60,10 +78,44 @@
         }
         [itemDict setObject: path forKey: title];
     }
-
-    [self addItems: itemDict toMenu: scriptMenu];
-
     delete scripts;
+    return itemDict;
+}
+
+- (void)buildScriptMenu
+{
+    NSDictionary *itemDict = nil;
+    NSArray *existingResourceDirsSetting = nil;
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    BOOL addSeparator = NO;
+
+    int count = [scriptMenu numberOfItems];
+    while (count-- > 0)
+        [scriptMenu removeItemAtIndex: 0];
+
+    if (itemDict = [ScriptsController scriptsForFolderRoot: @""])
+    {
+        [self addItems:itemDict toMenu:scriptMenu];
+        addSeparator = YES;
+    }
+
+    if ((existingResourceDirsSetting = [prefs stringArrayForKey:@"existingResourceDirs"]))
+    {
+        NSEnumerator *iter = [existingResourceDirsSetting objectEnumerator];
+        NSString *dir = nil;
+        while ((dir = [iter nextObject]))
+        {
+            if (itemDict = [ScriptsController scriptsForFolderRoot: dir])
+            {
+                if (addSeparator)
+                {
+                    [scriptMenu addItem: [NSMenuItem separatorItem]];
+                    addSeparator = NO;
+                }
+                [self addItems:[NSDictionary dictionaryWithObject:itemDict forKey:[dir stringByAbbreviatingWithTildeInPath]] toMenu:scriptMenu];
+            }
+        }
+    }
 }
 
 - (void)addItems: (NSDictionary *)aItems
