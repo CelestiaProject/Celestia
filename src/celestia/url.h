@@ -28,12 +28,22 @@ class CelestiaState;
 class Url
 {
 public:
-    enum UrlType {
+    enum UrlType
+    {
         Absolute = 0,
         Relative = 1,
         Settings = 2,
     };
-    
+
+    /*! The TimeSource specifies what the time will be set to when the user
+     *  activates the URL.
+     *  - UseUrlTime indicates that the simulation time should be set to whatever
+     *    value was stored in the URL.
+     *  - UseSimulationTime means that the simulation time at activation is not
+     *    changed.
+     *  - UseSystemTime means that the simulation time will be set to whatever the
+     *    current system time is when the URL is activated.
+     */
     enum TimeSource
     {
         UseUrlTime        = 0,
