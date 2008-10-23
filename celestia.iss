@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.5.0
+AppVerName=Celestia 1.6.0
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
@@ -39,6 +39,21 @@ Name: "{app}\textures\lores"
 Name: "{app}\tools\binaries"
 Name: "{app}\tools\galaxies"
 Name: "{app}\scripts"
+Name: "{app}\extras-standard"
+Name: "{app}\extras-standard\cassini"
+Name: "{app}\extras-standard\cassini\models"
+Name: "{app}\extras-standard\cassini\data"
+Name: "{app}\extras-standard\galileo"
+Name: "{app}\extras-standard\galileo\models"
+Name: "{app}\extras-standard\galileo\data"
+Name: "{app}\extras-standard\hubble"
+Name: "{app}\extras-standard\hubble\models"
+Name: "{app}\extras-standard\iss"
+Name: "{app}\extras-standard\iss\models"
+Name: "{app}\extras-standard\iss\textures"
+Name: "{app}\extras-standard\iss\textures\medres"
+Name: "{app}\extras-standard\mir"
+Name: "{app}\extras-standard\mir\models"
 
 [Files]
 Source: "celestia.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -136,14 +151,14 @@ Source: "data\nearstars.stc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\visualbins.stc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\spectbins.stc";      DestDir: "{app}/data"; Flags: ignoreversion
 
-Source: "data\deepsky.dsc";        DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\galaxies.dsc";       DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\globulars.dsc";      DestDir: "{app}/data"; Flags: ignoreversion
 
 Source: "data\asteroids.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\comets.ssc";         DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\extrasolar.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\outersys.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\solarsys.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\spacecraft.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\merc_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\venus_locs.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\earth_locs.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
@@ -159,10 +174,6 @@ Source: "data\eros_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\gaspra_locs.ssc";    DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\ida_locs.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\world-capitals.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
-
-Source: "data\cassini.xyz";        DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\galileo.xyz";        DestDir: "{app}/data"; Flags: ignoreversion
-Source: "data\huygens.xyz";        DestDir: "{app}/data"; Flags: ignoreversion
 
 ; Textures (General)
 Source: "textures\flare.jpg";      DestDir: "{app}/textures"; Flags: ignoreversion
@@ -291,10 +302,6 @@ Source: "textures\medres\hyperion-lok.jpg";    DestDir: "{app}/textures/medres";
 Source: "textures\medres\iapetus.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\idamosaic.jpg";       DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\io.jpg";              DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\iss-cap1.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\iss-mc1.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\iss-mc31.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
-Source: "textures\medres\iss-sol1.jpg";        DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\janus.jpg";           DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\jupiter.jpg";         DestDir: "{app}/textures/medres"; Flags: ignoreversion
 Source: "textures\medres\mars.jpg";            DestDir: "{app}/textures/medres"; Flags: ignoreversion
@@ -398,26 +405,20 @@ Source: "models\amalthea.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\asteroid.cms";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\bacchus.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\borrelly.cms";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\cassini.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\castalia.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\deimos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\epimetheus.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\eros.cmod";        DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\galileo.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\gaspra.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\geographos.cmod";  DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\golevka.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\halley.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\hubble.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\huygens.3ds";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\hyperion.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\ida.cmod";         DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\iss.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\janus.cmod";       DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\kleopatra.cmod";   DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\ky26.cmod";        DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\larissa.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
-Source: "models\mir.3ds";          DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\pandora.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\phobos.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\phoebe.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
@@ -444,6 +445,27 @@ Source: "fonts\sansbold14.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold20.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 
 ; Standard extras
+Source: "extras-standard\cassini\cassini.ssc"; DestDir: "{app}/extras-standard/cassini"; Flags: ignoreversion
+Source: "extras-standard\cassini\models\cassini.3ds"; DestDir: "{app}/extras-standard/cassini/models"; Flags: ignoreversion
+Source: "extras-standard\cassini\models\huygens.3ds"; DestDir: "{app}/extras-standard/cassini/models"; Flags: ignoreversion
+Source: "extras-standard\cassini\data\cassini-cruise.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "extras-standard\cassini\data\cassini-orbit.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "extras-standard\cassini\data\huygens.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
+
+Source: "extras-standard\galileo\galileo.ssc"; DestDir: "{app}/extras-standard/galileo"; Flags: ignoreversion
+Source: "extras-standard\galileo\models\galileo.3ds"; DestDir: "{app}/extras-standard/galileo/models"; Flags: ignoreversion
+Source: "extras-standard\galileo\data\galileo.xyz"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
+
+Source: "extras-standard\hubble\hubble.ssc"; DestDir: "{app}/extras-standard/hubble"; Flags: ignoreversion
+Source: "extras-standard\hubble\models\hubble.cmod"; DestDir: "{app}/extras-standard/hubble/models"; Flags: ignoreversion
+
+Source: "extras-standard\iss\iss.ssc"; DestDir: "{app}/extras-standard/iss"; Flags: ignoreversion
+Source: "extras-standard\iss\models\iss.cmod"; DestDir: "{app}/extras-standard/iss/models"; Flags: ignoreversion
+Source: "extras-standard\iss\textures\medres\*.jpg"; DestDir: "{app}/extras-standard/iss/textures/medres"; Flags: ignoreversion
+
+Source: "extras-standard\mir\mir.ssc"; DestDir: "{app}/extras-standard/mir"; Flags: ignoreversion
+Source: "extras-standard\mir\models\mir.3ds"; DestDir: "{app}/extras-standard/mir/models"; Flags: ignoreversion
+
 Source: "extras\minormoons.ssc"; DestDir: "{app}/extras"; Flags: ignoreversion
 
 ; celx scripts
