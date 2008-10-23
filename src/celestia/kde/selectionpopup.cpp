@@ -29,6 +29,10 @@
 #include <krun.h>
 
 #include "celutil/utf8.h"
+#include "celestia/celestiacore.h"
+#include "celengine/axisarrow.h"
+#include "celengine/planetgrid.h"
+
 
 SelectionPopup::SelectionPopup(QWidget* parent, CelestiaCore* _appCore, Selection _sel):
 KPopupMenu(parent),
@@ -220,37 +224,41 @@ void SelectionPopup::process(int id)
         }
         return;
     }
-    if (actionId >=25 && actionId < 30 && sel.body() != NULL) 
+    if (actionId >=25 && actionId < 31 && sel.body() != NULL) 
     {
-#if 0
-        // TODO: Need to switch to new reference mark implementation;
-        // getVisibleReferenceMarks no longer supported.
+
         switch(actionId)
         {
         case 25:
-            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::BodyAxes);
+		appCore->toggleReferenceMark("body axes");
             break;
         case 26:
-            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::FrameAxes);
+		appCore->toggleReferenceMark("frame axes");
             break;
         case 27:
-            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::SunDirection);
+		appCore->toggleReferenceMark("sun direction");
             break;
         case 28:
-            sel.body()->setVisibleReferenceMarks(sel.body()->getVisibleReferenceMarks() ^ Body::VelocityVector);
+		appCore->toggleReferenceMark("velocity vector");
             break;
+	case 29:
+		appCore->toggleReferenceMark("planetographic grid");
+	    break;
+	case 30:
+		appCore->toggleReferenceMark("terminator");
+	    break;
         }
-#endif
+
     }
-    if (actionId == 30) {
+    if (actionId == 31) {
         sim->getActiveObserver()->setDisplayedSurface("");
         return;
     }
-    if (actionId > 30) {
+    if (actionId > 31) {
         std::vector<std::string>* altSurfaces = sel.body()->getAlternateSurfaceNames();
-        if (altSurfaces != NULL && (int) altSurfaces->size() > actionId - 31)
+        if (altSurfaces != NULL && (int) altSurfaces->size() > actionId - 32)
         {
-            sim->getActiveObserver()->setDisplayedSurface((*altSurfaces)[actionId - 31]);
+            sim->getActiveObserver()->setDisplayedSurface((*altSurfaces)[actionId - 32]);
         }
     }
 }
@@ -322,19 +330,21 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
         KPopupMenu *refVectorMenu = new KPopupMenu(this);
         refVectorMenu->setCheckable(true);
         popup->insertItem(i18n("&Reference Vectors"), refVectorMenu);
-        // TODO: Need to switch to new reference mark implementation;
-        // getVisibleReferenceMarks no longer supported.
         refVectorMenu->insertItem(i18n("Show Body Axes"), baseId + 25);
-        //refVectorMenu->setItemChecked(baseId + 25, sel.body()->getVisibleReferenceMarks() & Body::BodyAxes);
+        refVectorMenu->setItemChecked(baseId + 25, sel.body()->findReferenceMark("body axes"));
         refVectorMenu->insertItem(i18n("Show Frame Axes"), baseId + 26);
-        //refVectorMenu->setItemChecked(baseId + 26, sel.body()->getVisibleReferenceMarks() & Body::FrameAxes);
+        refVectorMenu->setItemChecked(baseId + 26, sel.body()->findReferenceMark("frame axes"));
         refVectorMenu->insertItem(i18n("Show Sun Direction"), baseId + 27);
-        //refVectorMenu->setItemChecked(baseId + 27, sel.body()->getVisibleReferenceMarks() & Body::SunDirection);
+        refVectorMenu->setItemChecked(baseId + 27, sel.body()->findReferenceMark("sun direction"));
         refVectorMenu->insertItem(i18n("Show Velocity Vector"), baseId + 28);
-        //refVectorMenu->setItemChecked(baseId + 28, sel.body()->getVisibleReferenceMarks() & Body::VelocityVector);
+        refVectorMenu->setItemChecked(baseId + 28, sel.body()->findReferenceMark("velocity vector"));
+        refVectorMenu->insertItem(i18n("Show Planetographic Grid"), baseId + 29);
+        refVectorMenu->setItemChecked(baseId + 29, sel.body()->findReferenceMark("planetographic grid"));
+        refVectorMenu->insertItem(i18n("Show Terminator"), baseId + 30);
+        refVectorMenu->setItemChecked(baseId + 30, sel.body()->findReferenceMark("terminator"));
     }
 
-    baseId += 30;
+    baseId += 31;
 
     if (showSubObjects && sel.body() != NULL)
     {
@@ -344,12 +354,12 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
             if (!altSurfaces->empty())
             {
                 KPopupMenu *surfaces = new KPopupMenu(this);
-                surfaces->insertItem(i18n("Normal"), locBaseId + 30);
+                surfaces->insertItem(i18n("Normal"), locBaseId + 31);
                 int j=0;
                 for (std::vector<std::string>::const_iterator i = altSurfaces->begin();
                      i < altSurfaces->end(); i++, j++)
                 {
-                    surfaces->insertItem(QString((*i).c_str()), locBaseId + 31 + j);
+                    surfaces->insertItem(QString((*i).c_str()), locBaseId + 32 + j);
                 }
                 baseId += 7 + j;
                 popup->insertItem(i18n("&Alternate Surfaces"), surfaces);
