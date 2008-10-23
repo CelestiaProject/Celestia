@@ -10,9 +10,6 @@
 // Experimental particle system support
 #define PARTICLE_SYSTEM 0
 
-// Experimental support for optionally unnormalized meshes
-#define UNNORMALIZED_MESHES 1
-
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -61,11 +58,7 @@ string GeometryInfo::resolve(const string& baseDir)
     // adding a 'uniquifying' suffix to the filename that encodes the center value.
     // This suffix is stripped before the file is actually loaded.
     char uniquifyingSuffix[128];
-#if UNNORMALIZED_MESHES
     sprintf(uniquifyingSuffix, "%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x, center.y, center.z, scale, (int) isNormalized);
-#else
-    sprintf(uniquifyingSuffix, "%c%f%f%f", UniqueSuffixChar, center.x, center.y, center.z);
-#endif
     
     if (!path.empty())
     {
@@ -102,15 +95,10 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
             else
                 model = Convert3DSModel(*scene, "");
 
-#if UNNORMALIZED_MESHES
             if (isNormalized)
                 model->normalize(center);
             else
                 model->transform(center, scale);
-#else
-            model->normalize(center);
-#endif
-
 
             delete scene;
         }
@@ -123,20 +111,23 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
             model = LoadModel(in, path);
             if (model != NULL)
             {
-#if UNNORMALIZED_MESHES
                 if (isNormalized)
                     model->normalize(center);
                 else
                     model->transform(center, scale);
-#else
-                model->normalize(center);
-#endif
             }
         }
     }
     else if (fileType == Content_CelestiaMesh)
     {
         model = LoadCelestiaMesh(filename);
+        if (model != NULL)
+        {
+            if (isNormalized)
+                model->normalize(center);
+            else
+                model->transform(center, scale);
+        }
     }
 #if PARTICLE_SYSTEM
     else if (fileType == Content_CelestiaParticleSystem)
