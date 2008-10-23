@@ -69,7 +69,9 @@ static void setLabelMode(AppData* a, int mode, gboolean state);
 void actionCopyURL(GtkAction*, AppData* app)
 {
 	GtkClipboard* cb = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-	Url url(app->core);
+	CelestiaState appState;
+	appState.captureState(app->core);
+	Url url(appState, Url::CurrentVersion);
 	gtk_clipboard_set_text(cb, url.getAsString().c_str(), -1);
 }
 
