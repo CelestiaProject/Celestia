@@ -21,7 +21,7 @@
 #include "selection.h"
 #include "starbrowser.h"
 
-#define BROWSER_MAX_DSO_COUNT   500
+#define BROWSER_MAX_DSO_COUNT   300
 #define BROWSER_MAX_STAR_COUNT  100
 
 
@@ -58,6 +58,7 @@ static CelestiaCore *appCore;
 {
     int objCount;
     int i = 0;
+    NSMutableDictionary *countPerType;
     NSMutableDictionary *result;
     NSMutableDictionary *tempDict;
     NSDictionary *typeMap;
@@ -69,14 +70,13 @@ static CelestiaCore *appCore;
     NSString *type;
 
     objCount = catalog->size();
-    if (objCount > BROWSER_MAX_DSO_COUNT)
-        objCount = BROWSER_MAX_DSO_COUNT;
     typeMap = [[NSDictionary alloc] initWithObjectsAndKeys:
         NSLocalizedString(@"Galaxies (Barred Spiral)",@""), @"SB",
         NSLocalizedString(@"Galaxies (Spiral)",@""),        @"S",
         NSLocalizedString(@"Galaxies (Elliptical)",@""),    @"E",
         NSLocalizedString(@"Galaxies (Irregular)",@""),     @"Irr",
         NSLocalizedString(@"Nebulae",@""),                  @"Neb",
+        NSLocalizedString(@"Globulars",@""),                @"Glob",
         NSLocalizedString(@"Open Clusters",@""),            @"Clust",
         NSLocalizedString(@"Unknown",@""),                  @"Unknown",
         nil];
@@ -86,9 +86,11 @@ static CelestiaCore *appCore;
         [NSMutableDictionary dictionary], @"E",
         [NSMutableDictionary dictionary], @"Irr",
         [NSMutableDictionary dictionary], @"Neb",
+        [NSMutableDictionary dictionary], @"Glob",
         [NSMutableDictionary dictionary], @"Clust",
         [NSMutableDictionary dictionary], @"Unknown",
         nil];
+    countPerType = [NSMutableDictionary dictionaryWithCapacity: [tempDict count]];
     result = [NSMutableDictionary dictionaryWithCapacity: [tempDict count]];
 
     for (; i < objCount; ++i)
@@ -97,8 +99,14 @@ static CelestiaCore *appCore;
         if (obj)
         {
             dsoWrapper = [[[CelestiaDSO alloc] initWithDSO: obj] autorelease];
-            name = [NSString stringWithStdString: catalog->getDSOName(obj)];
             type = [dsoWrapper type];
+            NSNumber *typeCount = [countPerType objectForKey: type];
+            if (nil == typeCount)
+            {
+                typeCount = [NSNumber numberWithInt: 0];
+            }
+            if ([typeCount intValue] == BROWSER_MAX_DSO_COUNT) continue;
+            [countPerType setObject:[NSNumber numberWithInt:([typeCount intValue]+1)] forKey:type];
             if ([type hasPrefix: @"SB"])
                 group = [tempDict objectForKey: @"SB"];
             else if ([type hasPrefix: @"S"])
@@ -111,9 +119,12 @@ static CelestiaCore *appCore;
                 group = [tempDict objectForKey: @"Neb"];
             else if ([type hasPrefix: @"Clust"])
                 group = [tempDict objectForKey: @"Clust"];
+            else if ([type hasPrefix: @"Glob"])
+                group = [tempDict objectForKey: @"Glob"];
             else
                 group = [tempDict objectForKey: @"Unknown"];
 
+            name = [NSString stringWithStdString: catalog->getDSOName(obj)];
             [group setObject: [[[BrowserItem alloc] initWithCelestiaDSO: dsoWrapper] autorelease]
                       forKey: name];
         }
