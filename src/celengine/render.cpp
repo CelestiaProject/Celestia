@@ -3611,7 +3611,7 @@ void Renderer::draw(const Observer& observer,
 
                     // Account for ellipsoidal objects
                     float eradius = radius;
-                    if (iter->body != NULL)
+                    if (iter->renderableType == RenderListEntry::RenderableBody)
                     {
                         Vec3f semiAxes = iter->body->getSemiAxes();
                         float minSemiAxis = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
