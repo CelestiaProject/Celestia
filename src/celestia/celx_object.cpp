@@ -450,12 +450,17 @@ static int object_type(lua_State* l)
             int cl = sel->body()->getClassification();
             switch (cl)
             {
-                case Body::Planet     : tname = "planet"; break;
-                case Body::Moon       : tname = "moon"; break;
-                case Body::Asteroid   : tname = "asteroid"; break;
-                case Body::Comet      : tname = "comet"; break;
+                case Body::Planet : tname = "planet"; break;
+                case Body::DwarfPlanet : tname = "dwarfplanet"; break;
+                case Body::Moon : tname = "moon"; break;
+                case Body::MinorMoon : tname = "minormoon"; break;
+                case Body::Asteroid : tname = "asteroid"; break;
+                case Body::Comet : tname = "comet"; break;
                 case Body::Spacecraft : tname = "spacecraft"; break;
-                case Body::Invisible  : tname = "invisible"; break;
+                case Body::Invisible : tname = "invisible"; break;
+                case Body::SurfaceFeature : tname = "surfacefeature"; break;
+                case Body::Component : tname = "component"; break;
+                case Body::Diffuse : tname = "diffuse"; break;
             }
         }
             break;
@@ -597,14 +602,17 @@ static int object_getinfo(lua_State* l)
         const char* tname = "unknown";
         switch (body->getClassification())
         {
-            case Body::Planet     : tname = "planet"; break;
-            case Body::Moon       : tname = "moon"; break;
-            case Body::Asteroid   : tname = "asteroid"; break;
-            case Body::Comet      : tname = "comet"; break;
+            case Body::Planet : tname = "planet"; break;
+            case Body::DwarfPlanet : tname = "dwarfplanet"; break;
+            case Body::Moon : tname = "moon"; break;
+            case Body::MinorMoon : tname = "minormoon"; break;
+            case Body::Asteroid : tname = "asteroid"; break;
+            case Body::Comet : tname = "comet"; break;
             case Body::Spacecraft : tname = "spacecraft"; break;
-            case Body::Invisible  : tname = "invisible"; break;
+            case Body::Invisible : tname = "invisible"; break;
             case Body::SurfaceFeature : tname = "surfacefeature"; break;
-            case Body::Component  : tname = "component"; break;
+            case Body::Component : tname = "component"; break;
+            case Body::Diffuse : tname = "diffuse"; break;
         }
         
         celx.setTable("type", tname);
