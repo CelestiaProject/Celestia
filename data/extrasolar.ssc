@@ -1,4 +1,4 @@
-# Catalog of 299 known extrasolar planets.
+# Catalog of 302 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -7447,6 +7447,36 @@ AltSurface "limit of knowledge" "HD 23079/b"
 }
 
 
+"b" "HD 48265"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       380     # M.sin(i) = 1.2 jupiters
+	Radius     70000
+	Oblateness 0.05
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+48265"
+
+	EllipticalOrbit {
+		Period          2.0862
+		SemiMajorAxis   1.6
+		Eccentricity    0.24
+		ArgOfPericenter 130
+		MeanAnomaly     84
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 48265/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 186427"   # 16 Cyg B
 {
 	Texture "exo-class2.*"
@@ -8044,6 +8074,36 @@ AltSurface "limit of knowledge" "HD 95128/b"
 }
 
 AltSurface "limit of knowledge" "HD 95128/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 143361"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       950     # M.sin(i) = 3 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+143361"
+
+	EllipticalOrbit {
+		Period          2.9733
+		SemiMajorAxis   2
+		Eccentricity    0.18
+		ArgOfPericenter 164
+		MeanAnomaly     92
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 143361/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -8910,6 +8970,34 @@ AltSurface "limit of knowledge" "HD 70642/b"
 }
 
 AltSurface "limit of knowledge" "HD 39091/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 43848"
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       7950     # M.sin(i) = 25 jupiters
+	Radius     70000
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+43848"
+
+	EllipticalOrbit {
+		Period          6.4914
+		SemiMajorAxis   3.4
+		Eccentricity    0.69
+		ArgOfPericenter 56
+		MeanAnomaly     105
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 43848/b"
 {
 	Texture "extrasolar-lok.*"
 }
