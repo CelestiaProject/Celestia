@@ -29,7 +29,7 @@ public:
 
     // Required for eclipse shadows only--may be able to use
     // distance instead of position.
-    Point3d position;
+    Vec3d position;  // position relative to the lit object
     float apparentSize;
     bool castsShadows;
 };

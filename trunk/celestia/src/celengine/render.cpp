@@ -6946,6 +6946,7 @@ setupObjectLighting(const vector<LightSource>& suns,
     for (i = 0; i < nLights; i++)
     {
         Vec3d dir = suns[i].position - Vec3d(objPosition_eye.x, objPosition_eye.y, objPosition_eye.z);
+
         ls.lights[i].direction_eye =
             Vec3f((float) dir.x, (float) dir.y, (float) dir.z);
         float distance = ls.lights[i].direction_eye.length();
@@ -6956,7 +6957,7 @@ setupObjectLighting(const vector<LightSource>& suns,
 
         // Store the position and apparent size because we'll need them for
         // testing for eclipses.
-        ls.lights[i].position = Point3d(suns[i].position.x, suns[i].position.y, suns[i].position.z);
+        ls.lights[i].position = dir;
         ls.lights[i].apparentSize = (float) (suns[i].radius / dir.length());
         ls.lights[i].castsShadows = true;
     }
@@ -7772,14 +7773,18 @@ bool Renderer::testEclipse(const Body& receiver,
         // radii, then we have an eclipse. We also need to verify that the
         // receiver is behind the caster when seen from the light source.
         float R = receiver.getRadius() + shadowRadius;
-        Vec3d lightToCasterDir = posCaster - light.position;
+
+        // The stored light position is receiver-relative; thus the caster-to-light
+        // direction is casterPos - (receiverPos + lightPos)
+        Point3d lightPosition = posReceiver + light.position;
+        Vec3d lightToCasterDir = posCaster - lightPosition;
         Vec3d receiverToCasterDir = posReceiver - posCaster;
 
         double dist = distance(posReceiver,
                                Ray3d(posCaster, lightToCasterDir));
         if (dist < R && lightToCasterDir * receiverToCasterDir > 0.0)
         {
-            Vec3d sunDir = posCaster - light.position;
+            Vec3d sunDir = lightToCasterDir;
             sunDir.normalize();
 
             EclipseShadow shadow;
@@ -9870,7 +9875,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 
     if ((renderFlags & dso->getRenderMask()) && dso->isVisible())
     {
-    	double  dsoRadius = dso->getRadius();
+    	double  dsoRadius = dso->getBoundingSphereRadius();
 
         if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
         {
