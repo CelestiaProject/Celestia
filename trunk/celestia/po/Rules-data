@@ -3,5 +3,7 @@
 celestia.pot-update: ../data/data.cpp
 
 ../data/data.cpp:
-	egrep '^(\"|ReferencePoint)' ../data/solarsys.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' > ../data/data.cpp
+	egrep '^(\"|ReferencePoint)' ../data/solarsys.ssc | awk -F'\"|:' '{ print "_(\"" $$2 "\");" }' > ../data/data.cpp
 	grep \"Sol/Earth\" ../data/earth_locs.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	egrep '\"Milky Way\"|\"LMC\"|\"SMC\"' ../data/galaxies.dsc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+	egrep '\"Solar System Barycenter\"' ../data/nearstars.stc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
