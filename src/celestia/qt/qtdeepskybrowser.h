@@ -53,6 +53,7 @@ Q_OBJECT
 
     QLabel* searchResultLabel;
 
+    QRadioButton* globularsButton;
     QRadioButton* galaxiesButton;
     QRadioButton* nebulaeButton;
     QRadioButton* openClustersButton;
@@ -60,6 +61,7 @@ Q_OBJECT
     QLineEdit* objectTypeFilterBox;
 
     QComboBox* markerSymbolBox;
+    QComboBox* markerSizeBox;
     QCheckBox* labelMarkerBox;
 
     ColorSwatchWidget* colorSwatch;
