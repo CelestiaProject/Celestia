@@ -396,6 +396,7 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     dsoModel(NULL),
     treeView(NULL),
     searchResultLabel(NULL),
+    globularsButton(NULL),
     galaxiesButton(NULL),
     nebulaeButton(NULL),
     openClustersButton(NULL)
@@ -421,19 +422,29 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     searchResultLabel = new QLabel("");
     layout->addWidget(searchResultLabel);
 
+    QGroupBox* dsoGroup = new QGroupBox();
+    QGridLayout* dsoGroupLayout = new QGridLayout();
+
     // Buttons to select filtering criterion for dsos
+    globularsButton = new QRadioButton(tr("Globulars"));
+    connect(globularsButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
+    dsoGroupLayout->addWidget(globularsButton, 0, 0);
+
     galaxiesButton = new QRadioButton(tr("Galaxies"));
     connect(galaxiesButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    layout->addWidget(galaxiesButton);
+    dsoGroupLayout->addWidget(galaxiesButton, 0, 1);
 
     nebulaeButton = new QRadioButton(tr("Nebulae"));
     connect(nebulaeButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    layout->addWidget(nebulaeButton);
+    dsoGroupLayout->addWidget(nebulaeButton, 1, 0);
 
     openClustersButton = new QRadioButton(tr("Open Clusters"));
     connect(openClustersButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    layout->addWidget(openClustersButton);
-    
+    dsoGroupLayout->addWidget(openClustersButton, 1, 1);
+
+    dsoGroup->setLayout(dsoGroupLayout);
+    layout->addWidget(dsoGroup);
+
     galaxiesButton->setChecked(true);
 
     // Additional filtering controls
@@ -458,14 +469,14 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QGridLayout* markGroupLayout = new QGridLayout();
 
     QPushButton* markSelectedButton = new QPushButton(tr("Mark Selected"));
-    markSelectedButton->setToolTip(tr("Mark stars selected in list view"));
+    markSelectedButton->setToolTip(tr("Mark DSOs selected in list view"));
     connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
-    markGroupLayout->addWidget(markSelectedButton, 0, 0);
+    markGroupLayout->addWidget(markSelectedButton, 0, 0, 1, 2);
 
     QPushButton* clearMarkersButton = new QPushButton(tr("Clear Markers"));
     connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
     clearMarkersButton->setToolTip(tr("Remove all existing markers"));
-    markGroupLayout->addWidget(clearMarkersButton, 0, 1);
+    markGroupLayout->addWidget(clearMarkersButton, 0, 2, 1, 2);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
@@ -476,16 +487,33 @@ DeepSkyBrowser::DeepSkyBrowser(CelestiaCore* _appCore, QWidget* parent) :
     markerSymbolBox->addItem(tr("Plus"), (int) MarkerRepresentation::Plus);
     markerSymbolBox->addItem(tr("X"), (int) MarkerRepresentation::X);
     markerSymbolBox->addItem(tr("Circle"), (int) MarkerRepresentation::Circle);
+    markerSymbolBox->addItem(tr("Left Arrow"), (int) MarkerRepresentation::LeftArrow);
+    markerSymbolBox->addItem(tr("Right Arrow"), (int) MarkerRepresentation::RightArrow);
+    markerSymbolBox->addItem(tr("Up Arrow"), (int) MarkerRepresentation::UpArrow);
+    markerSymbolBox->addItem(tr("Down Arrow"), (int) MarkerRepresentation::DownArrow);
     markerSymbolBox->setCurrentIndex(1);
     markerSymbolBox->setToolTip(tr("Select marker symbol"));
     markGroupLayout->addWidget(markerSymbolBox, 1, 0);
 
+    markerSizeBox = new QComboBox();
+    markerSizeBox->setEditable(true);
+    markerSizeBox->addItem(tr("3"), 3.0);
+    markerSizeBox->addItem(tr("5"), 5.0);
+    markerSizeBox->addItem(tr("10"), 10.0);
+    markerSizeBox->addItem(tr("20"), 20.0);
+    markerSizeBox->addItem(tr("50"), 50.0);
+    markerSizeBox->addItem(tr("100"), 100.0);
+    markerSizeBox->addItem(tr("200"), 200.0);
+    markerSizeBox->setCurrentIndex(3);
+    markerSizeBox->setToolTip(tr("Select marker size"));
+    markGroupLayout->addWidget(markerSizeBox, 1, 1);
+
     colorSwatch = new ColorSwatchWidget(QColor("cyan"));
     colorSwatch->setToolTip(tr("Click to select marker color"));
-    markGroupLayout->addWidget(colorSwatch, 1, 1);
+    markGroupLayout->addWidget(colorSwatch, 1, 2);
 
     labelMarkerBox = new QCheckBox(tr("Label"));
-    markGroupLayout->addWidget(labelMarkerBox, 2, 0);
+    markGroupLayout->addWidget(labelMarkerBox, 1, 3);
 
     markGroup->setLayout(markGroupLayout);
     layout->addWidget(markGroup);
@@ -515,7 +543,9 @@ void DeepSkyBrowser::slotRefreshTable()
     // Set up the filter
     DSOFilterPredicate filterPred;
 
-    if (galaxiesButton->isChecked())
+    if (globularsButton->isChecked())
+        filterPred.objectTypeMask = Renderer::ShowGlobulars;
+    else if (galaxiesButton->isChecked())
         filterPred.objectTypeMask = Renderer::ShowGalaxies;
     else if (nebulaeButton->isChecked())
         filterPred.objectTypeMask = Renderer::ShowNebulae;
@@ -563,6 +593,8 @@ void DeepSkyBrowser::slotMarkSelected()
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
     MarkerRepresentation::Symbol markerSymbol = (MarkerRepresentation::Symbol) markerData.toInt(&convertOK);
+    QVariant markerSize = markerSizeBox->itemData(markerSizeBox->currentIndex());
+    float size = (float) markerSize.toInt(&convertOK);
     QColor markerColor = colorSwatch->color();
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
@@ -588,7 +620,7 @@ void DeepSkyBrowser::slotMarkSelected()
                     }
 
                     universe->markObject(Selection(dso), 
-                                         MarkerRepresentation(markerSymbol, 10.0f, color, label),
+                                         MarkerRepresentation(markerSymbol, size, color, label),
                                          1);
                 }
                 else
