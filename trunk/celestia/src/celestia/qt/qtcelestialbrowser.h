@@ -60,6 +60,7 @@ Q_OBJECT
     QLineEdit* spectralTypeFilterBox;
 
     QComboBox* markerSymbolBox;
+    QComboBox* markerSizeBox;
     QCheckBox* labelMarkerBox;
 
     ColorSwatchWidget* colorSwatch;

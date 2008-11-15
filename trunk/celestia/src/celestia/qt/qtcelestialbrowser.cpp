@@ -499,14 +499,20 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     searchResultLabel = new QLabel("");
     layout->addWidget(searchResultLabel);
 
+    QGroupBox* starGroup = new QGroupBox();
+    QGridLayout* starGroupLayout = new QGridLayout();
+
     // Buttons to select filtering criterion for stars
     closestButton = new QRadioButton(tr("Closest Stars"));
     connect(closestButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    layout->addWidget(closestButton);
+    starGroupLayout->addWidget(closestButton, 0, 0);
 
     brightestButton = new QRadioButton(tr("Brightest Stars"));
     connect(brightestButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    layout->addWidget(brightestButton);
+    starGroupLayout->addWidget(brightestButton, 0, 1);
+
+    starGroup->setLayout(starGroupLayout);
+    layout->addWidget(starGroup);
 
     closestButton->setChecked(true);
 
@@ -540,12 +546,12 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QPushButton* markSelectedButton = new QPushButton(tr("Mark Selected"));
     connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
     markSelectedButton->setToolTip(tr("Mark stars selected in list view"));
-    markGroupLayout->addWidget(markSelectedButton, 0, 0);
+    markGroupLayout->addWidget(markSelectedButton, 0, 0, 1, 2);
 
     QPushButton* clearMarkersButton = new QPushButton(tr("Clear Markers"));
     connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
     clearMarkersButton->setToolTip(tr("Remove all existing markers"));
-    markGroupLayout->addWidget(clearMarkersButton, 0, 1);
+    markGroupLayout->addWidget(clearMarkersButton, 0, 2, 1, 2);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
@@ -556,16 +562,33 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     markerSymbolBox->addItem(tr("Plus"), (int) MarkerRepresentation::Plus);
     markerSymbolBox->addItem(tr("X"), (int) MarkerRepresentation::X);
     markerSymbolBox->addItem(tr("Circle"), (int) MarkerRepresentation::Circle);
+    markerSymbolBox->addItem(tr("Left Arrow"), (int) MarkerRepresentation::LeftArrow);
+    markerSymbolBox->addItem(tr("Right Arrow"), (int) MarkerRepresentation::RightArrow);
+    markerSymbolBox->addItem(tr("Up Arrow"), (int) MarkerRepresentation::UpArrow);
+    markerSymbolBox->addItem(tr("Down Arrow"), (int) MarkerRepresentation::DownArrow);
     markerSymbolBox->setCurrentIndex(1);
     markerSymbolBox->setToolTip(tr("Select marker symbol"));
     markGroupLayout->addWidget(markerSymbolBox, 1, 0);
 
+    markerSizeBox = new QComboBox();
+    markerSizeBox->setEditable(true);
+    markerSizeBox->addItem(tr("3"), 3.0);
+    markerSizeBox->addItem(tr("5"), 5.0);
+    markerSizeBox->addItem(tr("10"), 10.0);
+    markerSizeBox->addItem(tr("20"), 20.0);
+    markerSizeBox->addItem(tr("50"), 50.0);
+    markerSizeBox->addItem(tr("100"), 100.0);
+    markerSizeBox->addItem(tr("200"), 200.0);
+    markerSizeBox->setCurrentIndex(3);
+    markerSizeBox->setToolTip(tr("Select marker size"));
+    markGroupLayout->addWidget(markerSizeBox, 1, 1);
+
     colorSwatch = new ColorSwatchWidget(QColor("cyan"));
     colorSwatch->setToolTip(tr("Click to select marker color"));
-    markGroupLayout->addWidget(colorSwatch, 1, 1);
+    markGroupLayout->addWidget(colorSwatch, 1, 2);
     
     labelMarkerBox = new QCheckBox(tr("Label"));
-    markGroupLayout->addWidget(labelMarkerBox, 2, 0);
+    markGroupLayout->addWidget(labelMarkerBox, 1, 3);
 
     markGroup->setLayout(markGroupLayout);
     layout->addWidget(markGroup);
@@ -643,6 +666,8 @@ void CelestialBrowser::slotMarkSelected()
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
     MarkerRepresentation::Symbol markerSymbol = (MarkerRepresentation::Symbol) markerData.toInt(&convertOK);
+    QVariant markerSize = markerSizeBox->itemData(markerSizeBox->currentIndex());
+    float size = (float) markerSize.toInt(&convertOK);
     QColor markerColor = colorSwatch->color();
     Color color((float) markerColor.redF(),
                 (float) markerColor.greenF(),
@@ -668,7 +693,7 @@ void CelestialBrowser::slotMarkSelected()
                     }
 
                     universe->markObject(sel,
-                                         MarkerRepresentation(markerSymbol, 10.0f, color, label),
+                                         MarkerRepresentation(markerSymbol, size, color, label),
                                          1);
                 }
                 else
