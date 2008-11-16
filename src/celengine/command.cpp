@@ -562,7 +562,7 @@ CommandSetGalaxyLightGain::CommandSetGalaxyLightGain(float gain) :
 {
 }
 
-void CommandSetGalaxyLightGain::process(ExecutionEnvironment& env)
+void CommandSetGalaxyLightGain::process(ExecutionEnvironment& /* env */)
 {
     Galaxy::setLightGain(lightGain);
 }
@@ -697,8 +697,9 @@ CommandCapture::CommandCapture(const std::string& _type,
 
 void CommandCapture::process(ExecutionEnvironment&)
 {
-    bool success = false;
 #ifndef TARGET_OS_MAC
+    bool success = false;
+
 
     // Get the dimensions of the current viewport
     int viewport[4];
@@ -867,7 +868,7 @@ CommandSetLineColor::CommandSetLineColor(const string& _item, Color _color) :
 {
 }
 
-void CommandSetLineColor::process(ExecutionEnvironment& env)
+void CommandSetLineColor::process(ExecutionEnvironment& /* env */)
 {
     if (CelxLua::LineColorMap.count(item) == 0)
     {
@@ -889,7 +890,7 @@ CommandSetLabelColor::CommandSetLabelColor(const string& _item, Color _color) :
 {
 }
 
-void CommandSetLabelColor::process(ExecutionEnvironment& env)
+void CommandSetLabelColor::process(ExecutionEnvironment& /* env */)
 {
     if (CelxLua::LabelColorMap.count(item) == 0)
     {

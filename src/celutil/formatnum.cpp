@@ -9,7 +9,8 @@
 
 #include <cmath>
 #include <cstdio>
-#include <string>
+#include <cstring>
+#include <climits>
 #include "formatnum.h"
 
 // HACK: MS Visual C++ has _snprintf declared in stdio.h but not snprintf

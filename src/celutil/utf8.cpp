@@ -9,6 +9,7 @@
 
 #include "utf8.h"
 #include <cctype>
+#include <cstring>
 #include "util.h"
 
 unsigned int WGL4_Normalization_00[256] = {
