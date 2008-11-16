@@ -42,6 +42,7 @@ public:
     bool operator()(const Star* star) const;
 
     bool planetsFilterEnabled;
+    bool multipleFilterEnabled;
     bool omitBarycenters;
     bool spectralTypeFilterEnabled;
     QRegExp spectralTypeFilter;
@@ -306,6 +307,7 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
 
 StarFilterPredicate::StarFilterPredicate() :
     planetsFilterEnabled(false),
+    multipleFilterEnabled(false),
     omitBarycenters(true),
     spectralTypeFilterEnabled(false),
     solarSystems(NULL)
@@ -328,6 +330,12 @@ bool StarFilterPredicate::operator()(const Star* star) const
 
         SolarSystemCatalog::iterator iter = solarSystems->find(star->getCatalogNumber());
         if (iter == solarSystems->end())
+            return true;
+    }
+
+    if (multipleFilterEnabled)
+    {
+        if (!star->getOrbitBarycenter() || star->getCatalogNumber() == 0)
             return true;
     }
 
@@ -518,18 +526,20 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
 
     // Additional filtering controls
     QGroupBox* filterGroup = new QGroupBox(tr("Filter"));
-    QHBoxLayout* filterGroupLayout = new QHBoxLayout();
+    QGridLayout* filterGroupLayout = new QGridLayout();
     
     withPlanetsFilterBox = new QCheckBox(tr("With Planets"));
     connect(withPlanetsFilterBox, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
-    filterGroupLayout->addWidget(withPlanetsFilterBox);
+    filterGroupLayout->addWidget(withPlanetsFilterBox, 0, 0);
 
-    filterGroupLayout->addStretch();
+    multipleFilterBox = new QCheckBox(tr("Multiple Stars"));
+    connect(multipleFilterBox, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
+    filterGroupLayout->addWidget(multipleFilterBox, 1, 0);
 
-    filterGroupLayout->addWidget(new QLabel(tr("Spectral Type")));
+    filterGroupLayout->addWidget(new QLabel(tr("Spectral Type")), 0, 1);
     spectralTypeFilterBox = new QLineEdit();
     connect(spectralTypeFilterBox, SIGNAL(editingFinished()), this, SLOT(slotRefreshTable()));
-    filterGroupLayout->addWidget(spectralTypeFilterBox);
+    filterGroupLayout->addWidget(spectralTypeFilterBox, 0, 2);
 
     filterGroup->setLayout(filterGroupLayout);
     layout->addWidget(filterGroup);
@@ -621,6 +631,7 @@ void CelestialBrowser::slotRefreshTable()
     // Set up the filter
     StarFilterPredicate filterPred;
     filterPred.planetsFilterEnabled = withPlanetsFilterBox->checkState() == Qt::Checked;
+    filterPred.multipleFilterEnabled = multipleFilterBox->checkState() == Qt::Checked;
     filterPred.omitBarycenters = true;
     filterPred.solarSystems = appCore->getSimulation()->getUniverse()->getSolarSystemCatalog();
 
