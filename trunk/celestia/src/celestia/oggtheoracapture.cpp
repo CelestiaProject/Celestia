@@ -66,6 +66,7 @@
 #include <celutil/util.h>
 #include "../celengine/gl.h"
 #include <string>
+#include <cstring>
 #include "theora/theora.h"
 
 using namespace std;
@@ -159,7 +160,12 @@ bool OggTheoraCapture::start(const std::string& filename,
         return false;
     }
     /* Set up Ogg output stream */
-    std::srand(std::time(NULL));
+#ifdef _WIN32
+	std::srand(std::time(NULL));
+#else
+	std::srand(time(NULL));
+#endif
+
     ogg_stream_init(&to,std::rand());
 
     frame_x = w;

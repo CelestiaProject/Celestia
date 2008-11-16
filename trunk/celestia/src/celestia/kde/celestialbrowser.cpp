@@ -1,3 +1,4 @@
+#include <libintl.h>
 #include <qradiobutton.h>
 #include <klistview.h>
 #include <kpopupmenu.h>

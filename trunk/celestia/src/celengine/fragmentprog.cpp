@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <celutil/util.h>
 #include "gl.h"
 #include "glext.h"
 #include "fragmentprog.h"

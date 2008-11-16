@@ -16,10 +16,12 @@
  ***************************************************************************/
 
 #include <string>
+#include <cstring>
 #include <cstdio>
 #include <cassert>
 #include <sstream>
 #include "celestiacore.h"
+#include "celutil/util.h"
 #include "celengine/astro.h"
 #include "url.h"
 

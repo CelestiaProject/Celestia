@@ -1,3 +1,4 @@
+#include <libintl.h>
 #include <klocale.h>
 #include <qstatusbar.h>
 #include <qdatetime.h>

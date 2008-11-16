@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 
+#include <libintl.h>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
