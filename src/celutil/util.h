@@ -9,8 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _UTIL_H_
-#define _UTIL_H_
+#ifndef _CELUTIL_UTIL_H_
+#define _CELUTIL_UTIL_H_
 
 #include <string>
 #include <vector>
@@ -28,12 +28,20 @@
 // to prevent namespace pollution by the Windows macros.
 #define NOMINMAX
 #endif
-				      
+
+// gettext / libintl setup
+#define _(string) gettext (string)
+
 #ifdef _WIN32
+
 #include "libintl.h"
-#define _(string) gettext (string)
+
 #else
-#define _(string) gettext (string)
+
+#ifndef TARGET_OS_MAC
+#include <libintl.h>
+#endif /* TARGET_OS_MAC */
+
 #endif
 
 extern int compareIgnoringCase(const std::string& s1, const std::string& s2);
@@ -60,4 +68,4 @@ template <class T> struct deleteFunc : public std::unary_function<T, void>
     int dummy;
 };
 
-#endif // _UTIL_H_
+#endif // _CELUTIL_UTIL_H_
