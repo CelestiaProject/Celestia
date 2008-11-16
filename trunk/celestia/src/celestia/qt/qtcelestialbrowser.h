@@ -57,6 +57,7 @@ Q_OBJECT
     QRadioButton* brightestButton;
 
     QCheckBox* withPlanetsFilterBox;
+    QCheckBox* multipleFilterBox;
     QLineEdit* spectralTypeFilterBox;
 
     QComboBox* markerSymbolBox;
