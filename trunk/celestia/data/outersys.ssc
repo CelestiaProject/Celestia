@@ -28,7 +28,7 @@
 
 	UniformRotation
 	{
-	Period     48.0   # guess
+	Period     25.92   # Estimate from Icarus 2008. 198: 2; 459-64
 	
 	Inclination	79.8   # spin axis assumed to match
 	AscendingNode	144    # orbit of Dysnomia
