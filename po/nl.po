@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-20 00:40-0500\n"
-"PO-Revision-Date: 2008-05-17 12:08+0100\n"
+"PO-Revision-Date: 2008-11-21 21:38+0100\n"
 "Last-Translator: Myckel Habets <myckel@sdf.lonestar.org>\n"
 "Language-Team: Dutch <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -131,9 +131,8 @@ msgid "' of '"
 msgstr "' van '"
 
 #: src/celengine/solarsys.cpp:1200
-#, fuzzy
 msgid "' not found."
-msgstr "' niet gevonden.\n"
+msgstr "' niet gevonden."
 
 #: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
@@ -317,7 +316,7 @@ msgstr "Markeringen non-actief"
 
 #: src/celestia/celestiacore.cpp:1422
 msgid "Goto surface"
-msgstr "Ga naar oppervlak"
+msgstr "Ga naar oppervlakte"
 
 #: src/celestia/celestiacore.cpp:1435
 msgid "Alt-azimuth mode enabled"
@@ -498,18 +497,16 @@ msgid "Light gain"
 msgstr "lichtopbrengst"
 
 #: src/celestia/celestiacore.cpp:2157
-#, fuzzy
 msgid "Bloom enabled"
-msgstr "Komeetstaarten weergeven"
+msgstr "Bloom aan"
 
 #: src/celestia/celestiacore.cpp:2159
-#, fuzzy
 msgid "Bloom disabled"
-msgstr "Komeetstaarten niet weergeven"
+msgstr "Bloom uit"
 
 #: src/celestia/celestiacore.cpp:2165 src/celestia/celestiacore.cpp:2173
 msgid "Exposure"
-msgstr ""
+msgstr "Blootstelling"
 
 #: src/celestia/celestiacore.cpp:2521
 msgid "GL error: "
@@ -768,9 +765,8 @@ msgid "Cannot read star database."
 msgstr "Kan sterrendatabase niet lezen."
 
 #: src/celestia/celestiacore.cpp:4181
-#, fuzzy
 msgid "Error opening deepsky catalog file."
-msgstr "Fout tijdens lezen van sterrencatalogus"
+msgstr "Fout bij openen deepsky catalogusbestand."
 
 #: src/celestia/celestiacore.cpp:4233
 msgid "Error opening solar system catalog.\n"
@@ -865,11 +861,11 @@ msgstr "GLSL versie: "
 
 #: src/celestia/winmain.cpp:656 src/celestia/kde/kdeapp.cpp:968
 msgid "Max simultaneous textures: "
-msgstr "Max gelijktijdig geladen textures: "
+msgstr "Max gelijktijdig geladen texturen: "
 
 #: src/celestia/winmain.cpp:663 src/celestia/kde/kdeapp.cpp:973
 msgid "Max texture size: "
-msgstr "Max texture grootte: "
+msgstr "Max textuurgrootte: "
 
 #: src/celestia/winmain.cpp:672
 msgid "Max cube map size: "
@@ -966,14 +962,12 @@ msgid "Show Velocity Vector"
 msgstr "Toon snelheidsvector"
 
 #: src/celestia/winmain.cpp:1618 src/celestia/kde/selectionpopup.cpp:342
-#, fuzzy
 msgid "Show Planetographic Grid"
-msgstr "Planeet omloopbanen weergeven"
+msgstr "Planetografisch raster weergeven"
 
 #: src/celestia/winmain.cpp:1619 src/celestia/kde/selectionpopup.cpp:344
-#, fuzzy
 msgid "Show Terminator"
-msgstr "Weergavefeatures"
+msgstr "Dag/Nacht-grens weergeven"
 
 #: src/celestia/winmain.cpp:1633
 msgid "&Satellites"
@@ -1331,9 +1325,8 @@ msgid "Show Galaxies"
 msgstr "Sterrenstelsels weergeven"
 
 #: src/celestia/kde/kdeapp.cpp:554
-#, fuzzy
 msgid "Show Globulars"
-msgstr "Wolkenlagen weergeven"
+msgstr "Bolvormige sterrenhopen weergeven"
 
 #: src/celestia/kde/kdeapp.cpp:557
 msgid "Show Partial Trajectories"
@@ -1461,9 +1454,8 @@ msgid "Show Galaxy Labels"
 msgstr "Sterrenstelnamen weergeven"
 
 #: src/celestia/kde/kdeapp.cpp:651
-#, fuzzy
 msgid "Show Globular Labels"
-msgstr "Nevelnamen weergeven"
+msgstr "Labels bij bolvormige sterrenhopen weergeven"
 
 #: src/celestia/kde/kdeapp.cpp:654
 msgid "Show Nebula Labels"
@@ -1787,7 +1779,7 @@ msgstr "Gladde omloopbaanlijnen"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:134
 msgid "Celestial Grid"
-msgstr "HemelRaster"
+msgstr "Hemelraster"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:138
 #: src/celestia/kde/kdepreferencesdialog.cpp:207
@@ -2090,11 +2082,11 @@ msgstr "&Centreren"
 
 #: src/celestia/kde/selectionpopup.cpp:303
 msgid "S&ynch Orbit"
-msgstr "S&ynchronizeer Omloopbaan"
+msgstr "S&ynchronizeer omloopbaan"
 
 #: src/celestia/kde/selectionpopup.cpp:306
 msgid "Unmark &All"
-msgstr "Verwijder &Alles"
+msgstr "Verwijder &alles"
 
 #: src/celestia/kde/selectionpopup.cpp:315
 msgid "Diamond"
@@ -2205,7 +2197,7 @@ msgstr "Objecten"
 
 #: src/celestia/kde/rc.cpp:15
 msgid "OpenGL Render Path"
-msgstr "OpenGL RenderPad"
+msgstr "OpenGL Weergavemethode"
 
 #: src/celestia/kde/rc.cpp:18
 msgid "Time"
@@ -2382,17 +2374,14 @@ msgid "Mars"
 msgstr "Mars"
 
 #: data/data.cpp:6
-#, fuzzy
 msgid "Phobos"
-msgstr "Phoebe"
+msgstr "Phobos"
 
 #: data/data.cpp:7
-#, fuzzy
 msgid "Deimos"
-msgstr "Diamant"
+msgstr "Deimos"
 
 #: data/data.cpp:9
-#, fuzzy
 msgid "Amalthea"
 msgstr "Amalthea"
 
@@ -2433,7 +2422,6 @@ msgid "Mimas"
 msgstr "Mimas"
 
 #: data/data.cpp:20
-#, fuzzy
 msgid "Enceladus"
 msgstr "Enceladus"
 
@@ -2466,7 +2454,6 @@ msgid "Phoebe"
 msgstr "Phoebe"
 
 #: data/data.cpp:29
-#, fuzzy
 msgid "Miranda"
 msgstr "Miranda"
 
@@ -2564,16 +2551,15 @@ msgstr "Melkweg"
 
 #: data/data.cpp:55
 msgid "SMC"
-msgstr ""
+msgstr "Kleine Magellaanse Wolken"
 
 #: data/data.cpp:56
 msgid "LMC"
-msgstr ""
+msgstr "Grote Magellaanse Wolken"
 
 #: data/data.cpp:57
-#, fuzzy
 msgid "Solar System Barycenter"
-msgstr "Massamiddelpunt van zonnestelsel\n"
+msgstr "Massamiddelpunt van zonnestelsel"
 
 #: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
@@ -2750,14 +2736,12 @@ msgid "&Medium"
 msgstr "Ge&middeld"
 
 #: src/celestia/res/resource_strings.cpp:45
-#, fuzzy
 msgid "&Texture Resolution"
-msgstr "Resolutie"
+msgstr "&Textuurresolutie"
 
 #: src/celestia/res/resource_strings.cpp:48
-#, fuzzy
 msgid "&High"
-msgstr "Hoog"
+msgstr "&Hoog"
 
 #: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
@@ -2957,7 +2941,7 @@ msgstr "Nieuwe map..."
 
 #: src/celestia/res/resource_strings.cpp:107
 msgid "Solar System Browser"
-msgstr "Zonnestelsel browser"
+msgstr "Zonnestelsel verkenner"
 
 #: src/celestia/res/resource_strings.cpp:109
 msgid "Solar System"
@@ -2994,7 +2978,7 @@ msgstr "Sterren zoekcriteria"
 
 #: src/celestia/res/resource_strings.cpp:122
 msgid "Maximum Stars Displayed in List"
-msgstr "Maximum aantal sterren dat weeegegeven wordt in de lijst"
+msgstr "Maximum aantal sterren dat in de lijst weergegeven wordt"
 
 #: src/celestia/res/resource_strings.cpp:123
 msgid "Tour Guide"
@@ -3044,7 +3028,7 @@ msgstr "Frame snelheid:"
 
 #: src/celestia/res/resource_strings.cpp:139
 msgid "Select Display Mode"
-msgstr "Selecteer weergave-modus"
+msgstr "Selecteer weergavemodus"
 
 #: src/celestia/res/resource_strings.cpp:140
 msgid "Resolution"
@@ -3052,59 +3036,52 @@ msgstr "Resolutie"
 
 #: src/celestia/res/resource_strings.cpp:143
 msgid "View Options"
-msgstr "Weergave-opties"
+msgstr "Weergaveopties"
 
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:176
 msgid "Globulars"
-msgstr ""
+msgstr "Bolvormige sterrenhopen"
 
 #: src/celestia/res/resource_strings.cpp:160
 msgid "Grids"
-msgstr ""
+msgstr "Rasters"
 
 #: src/celestia/res/resource_strings.cpp:161
-#, fuzzy
 msgid "Celestial"
-msgstr "Celestia"
+msgstr "Hemellijk"
 
 #: src/celestia/res/resource_strings.cpp:162
-#, fuzzy
 msgid "Horizontal"
-msgstr "Splits weergave horizontaal"
+msgstr "Horizontaal"
 
 #: src/celestia/res/resource_strings.cpp:163
-#, fuzzy
 msgid "Galactic"
-msgstr "Sterrenstelsels"
+msgstr "Galactisch"
 
 #: src/celestia/res/resource_strings.cpp:164
 msgid "Ecliptic"
-msgstr ""
+msgstr "Zonneweg"
 
 #: src/celestia/res/resource_strings.cpp:170
-#, fuzzy
 msgid "Minor Moons"
-msgstr "Manen"
+msgstr "Kleine manen"
 
 #: src/celestia/res/resource_strings.cpp:174
-#, fuzzy
 msgid "DSO Labels"
-msgstr "Labels"
+msgstr "DSO labels"
 
 #: src/celestia/res/resource_strings.cpp:180
 msgid "Diagrams"
-msgstr ""
+msgstr "Diagrammen"
 
 #: src/celestia/res/resource_strings.cpp:181
-#, fuzzy
 msgid "Boundaries"
-msgstr "Grenzen weergeven"
+msgstr "Grenzen"
 
 #: src/celestia/res/resource_strings.cpp:183
-#, fuzzy
 msgid "Latin Names"
-msgstr "Lokaties"
+msgstr "Latijnse namen"
 
 #: src/celestia/res/resource_strings.cpp:184
 msgid "Information Text"
@@ -3131,9 +3108,8 @@ msgid "Terrae (Land masses)"
 msgstr "Terrae (Landmassa's)"
 
 #: src/celestia/res/resource_strings.cpp:201
-#, fuzzy
 msgid "Volcanoes"
-msgstr "Planeten"
+msgstr "Vulkanen"
 
 #: src/celestia/res/resource_strings.cpp:202
 msgid "Other features"
