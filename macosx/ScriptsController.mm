@@ -11,8 +11,6 @@
 #import "NSString_ObjCPlusPlus.h"
 #import "scriptmenu.h"
 
-#define CEL_SCRIPTS_FOLDER  @"scripts"
-
 
 @interface ScriptsController(Private)
 + (NSDictionary *)scriptsForFolderRoot: (NSString *)root;
@@ -79,7 +77,7 @@
         [itemDict setObject: path forKey: title];
     }
     delete scripts;
-    return itemDict;
+    return [itemDict count] > 0 ? itemDict : nil;
 }
 
 - (void)buildScriptMenu
