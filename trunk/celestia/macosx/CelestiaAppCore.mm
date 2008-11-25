@@ -386,6 +386,12 @@ CelestiaCore *appCore;
                 }
                 delete config;
             }
+            else
+            {
+                if ([fm fileExistsAtPath: extrasDir = [resourceDir stringByAppendingPathComponent: @"extras"] isDirectory: &isFolder] && isFolder)
+                    extrasDirs.push_back([extrasDir stdString]);
+            }
+
         }
     }
     if ((extrasDirsSetting = [prefs stringArrayForKey:@"extrasDirs"]))
