@@ -128,7 +128,16 @@ NSString* fatalErrorMessage;
 
             if (path)
             {
-                if ([fileManager fileExistsAtPath: path = [path stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER] isDirectory: &isFolder] && isFolder)
+                if (![fileManager fileExistsAtPath: path = [path stringByAppendingPathComponent: CELESTIA_RESOURCES_FOLDER]] &&
+                    kUserDomain==domains[i])
+                {
+                    if ([fileManager createDirectoryAtPath:path attributes:nil])
+                    {
+                        [fileManager createDirectoryAtPath:[path stringByAppendingPathComponent:@"extras"] attributes:nil];
+                        [fileManager createDirectoryAtPath:[path stringByAppendingPathComponent:CEL_SCRIPTS_FOLDER] attributes:nil];
+                    }
+                }
+                if ([fileManager fileExistsAtPath:path isDirectory:&isFolder] && isFolder)
                 {
                     [resourceDirs addObject: path];
                 }

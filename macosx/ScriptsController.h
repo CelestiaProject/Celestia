@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#define CEL_SCRIPTS_FOLDER  @"scripts"
+
 @interface ScriptsController : NSObject
 {
     IBOutlet NSMenu *scriptMenu;
