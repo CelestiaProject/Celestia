@@ -6,7 +6,7 @@
 	print { text "Startar demo . . .\nTryck ESC för att avsluta." origin "center" duration 2 }
 	wait { duration 2.0 }
 
-	print { text "Let's start near home . . ." row -3 }
+	print { text "Vår resa börjar nära vår hemplanet . . ." row -3 }
 	select { object "Sol/Earth" }
 	cancel {}
 	# goto { time 0 distance 3 upframe "ecliptical" }
@@ -29,14 +29,14 @@
 	select { object "Moon" }
 	goto { time 5 distance 4 upframe "equatorial" }
 	wait { duration 5.5 }
-	print { text "Titta efter jorden och solen medan vi kretsar runt månen." row -3}
+	print { text "Håll utkik efter jorden och solen medan vi kretsar runt månen." row -3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
 	
 	print { text "Mot solen!" row -3}
 	select { object "Sol" }
 	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
 	wait { duration 8.5 }
-	print { text "På det här avståndet så kan vi de de mörka solfläckarna på solens yta." row -3}
+	print { text "På det här avståndet så kan vi se de mörka solfläckarna på solens yta." row -3}
 	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
 
 	print { text "Låt oss zooma ut så att vi får en överblick över det inre solsystemet." row -3}
@@ -88,11 +88,11 @@
 	select { object "Polaris" }
 	center { time 2 }
 	wait { duration 2 }
-	print { text "WE'RE NOW CENTERED ON Polaris, nordstjärnan." row -3}
+	print { text "Vi befinner oss nu rakt över Polaris, Polstjärnan." row -3}
 	wait { duration 1 }
 	labels { set "stars" }
 	wait { duration 2 }
-	print { text "Polaris är en del av den  asterism som vanligtvis kallas Lilla Björnen." row -3}
+	print { text "Polaris är en del av den asterism som vanligtvis kallas Lilla Björnen." row -3}
 	wait { duration 2 }
 	print { text "För att hjälpa oss med orienteringen på himlavalvet så kan Celestia rita upp diagram över sjärnbilderna . . ." row -3}
 	renderflags { set "constellations" }
