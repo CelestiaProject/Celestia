@@ -1,7 +1,7 @@
 {
 	Name   "Jupiter"
 	Target "Sol/Jupiter"
-	Description "Jupiter är den största planeten i vårt solsysten och den femte från solen.  I likhet med de andra yttre, stora planerterna så består Jupiter av gas och har ingen fast yta.  Den stora röda fläcken är den största och mest långlivade stormen i Jupiters turbulenta atmosfär; Denna storm i jordens storlek har funnits i minst 300 år."
+	Description "Jupiter är den största planeten i vårt solsystem och den femte från solen.  I likhet med de andra yttre, stora planeterna så består Jupiter av gas och har ingen fast yta.  Den stora röda fläcken är den största och mest långlivade stormen i Jupiters turbulenta atmosfär; Denna storm i jordens storlek har funnits i minst 300 år."
 }
 
 {
@@ -15,7 +15,7 @@
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros är en potatisformad NEAR-EARTH asteroid med en längd på ungefär 33 km.  Tack vare farkosten NEAR Shoemaker så vet vi mer om Eros än om någon annan asteroid.  Den 14 februari 2001 så DESCENDED NEAR på Eros och blev den första farkosten någonsin att landa på en asteroid."
+	Description "Eros är en potatisformad jordnära asteroid med en längd på ungefär 33 km.  Tack vare farkosten NEAR Shoemaker så vet vi mer om Eros än om någon annan asteroid.  Den 14 februari 2001 så landade NEAR på Eros och blev den första farkosten någonsin att landa på en asteroid."
 }
 
 {
@@ -23,7 +23,7 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alpha Centauri A och B är, tillsammans med Proxima Centauri, det stjärnsystem som ligger närmast vårt.   Alpha Cen A påminner mycket om vår egen sol, om än något äldre och mer ljusstark.  B är svagare och mer rödaktig, och Proxima är så svag att den inte kan ses med blotta ögat trots att den är den stjärna som befinner sig närmast vår sol."
+	Description "Alpha Centauri A och B är, tillsammans med Proxima Centauri, det stjärnsystem som ligger närmast vårt.   Alpha Cen A påminner mycket om vår egen sol, om än något äldre och mer ljusstark.  B är svagare och mer rödaktig och Proxima är så svag att den inte kan ses med blotta ögat trots att den är den stjärna som befinner sig närmast vår sol."
 }
 
 {
@@ -39,7 +39,7 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Hyades har fått namn efter Atlas och Aethras fem döttrar och är en av de mest PROMINENT öppna stjärnhoparna på himlavalvet.  Det uppskattas att Hyades stjärnor är ungefär 660 miljoner år gamla--över sex gånger äldre än de hetare, blåare Pleiaderna WHICH APPEAR NEARBY IN OUR NIGHT SKY."
+	Description "Hyades har fått namn efter Atlas och Aethras fem döttrar och är en av de mest framträdande öppna stjärnhoparna på himlavalvet.  Det uppskattas att Hyades stjärnor är ungefär 660 miljoner år gamla--över sex gånger äldre än de hetare, blåare Pleiaderna som befinner sig i närheten av oss på vår natthimmel."
 }
 
 {
