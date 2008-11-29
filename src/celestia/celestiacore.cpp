@@ -1810,7 +1810,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         else
         {
-            observer->setDisplayedSurface(_("limit of knowledge"));
+            observer->setDisplayedSurface("limit of knowledge");
             flash(_("Using limit of knowledge surface textures."));
         }
         break;
@@ -3540,15 +3540,15 @@ void CelestiaCore::renderOverlay()
 
         double speed = sim->getObserver().getVelocity().length();
         if (speed < astro::kilometersToMicroLightYears(1.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) * 1000.0f, 3) << " m/s";
+            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) * 1000.0f, 3) << _(" m/s");
         else if (speed < astro::kilometersToMicroLightYears(10000.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed), 3) << " km/s";
+            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed), 3) << _(" km/s");
         else if (speed < astro::kilometersToMicroLightYears((float) astro::speedOfLight * 100.0f))
             *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) / astro::speedOfLight, 3) << 'c';
         else if (speed < astro::AUtoMicroLightYears(1000.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToAU(speed), 3) << " AU/s";
+            *overlay << SigDigitNum(astro::microLightYearsToAU(speed), 3) << _(" AU/s");
         else
-            *overlay << SigDigitNum(speed * 1e-6, 3) << " ly/s";
+            *overlay << SigDigitNum(speed * 1e-6, 3) << _(" ly/s");
 
         overlay->endText();
         glPopMatrix();
