@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ko\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2006-03-21 11:18+0900\n"
 "Last-Translator: Jacob Lee <jacoblee@freechal.com>\n"
 "Language-Team: Korean<ko@li.org>\n"
@@ -452,10 +452,6 @@ msgstr "광속고려는 무시됩니다."
 msgid "Using normal surface textures."
 msgstr "Normal texture를 사용"
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr ""
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "limit of knowledge texture를 사용"
@@ -689,6 +685,23 @@ msgid ""
 msgstr ""
 "\n"
 "속도: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " 일"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
