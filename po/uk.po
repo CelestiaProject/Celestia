@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: uk\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2008-02-06 13:37+0200\n"
 "Last-Translator: Serhij Dubyk <dubyk@library.lviv.ua>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
@@ -449,10 +449,6 @@ msgstr "Світлове запізнювання ігнорується"
 msgid "Using normal surface textures."
 msgstr "Використання нормальних текстур поверхонь."
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "межа знань"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "Використання межі знань текстур поверхонь"
@@ -683,6 +679,23 @@ msgid ""
 msgstr ""
 "\n"
 "Швидкість: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " днів"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3240,6 +3253,9 @@ msgstr "Лис"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "Гру"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "межа знань"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"

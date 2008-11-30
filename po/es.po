@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2008-01-28 00:23-0200\n"
 "Last-Translator: Guillermo Abramosn <abrmson@cab.cnea.gov.ar>\n"
 "Language-Team: Spanish\n"
@@ -448,10 +448,6 @@ msgstr "Demora temporal ignorada"
 msgid "Using normal surface textures."
 msgstr "Uso de texturas de superficie normales"
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "límite del mundo conocido"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "Usando texturas de superficie del mundo conocido"
@@ -682,6 +678,23 @@ msgid ""
 msgstr ""
 "\n"
 "Velocidad: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " días"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3238,6 +3251,9 @@ msgstr "Nov"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "Dic"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "límite del mundo conocido"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"

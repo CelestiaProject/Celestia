@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia 1.4.1 (ru)\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2008-01-27 23:10+0200\n"
 "Last-Translator: Sergey Leonov <leserg@ua.fm>\n"
 "Language-Team: Russian <leserg@ua.fm>\n"
@@ -449,10 +449,6 @@ msgstr "Световое запаздывание не учитывается"
 msgid "Using normal surface textures."
 msgstr "Использование нормальных текстур поверхности."
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "ограниченные текстуры"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "Использование ограниченных текстур."
@@ -683,6 +679,23 @@ msgid ""
 msgstr ""
 "\n"
 "Скорость: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " дней"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3237,6 +3250,9 @@ msgstr "ноя"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "дек"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "ограниченные текстуры"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"

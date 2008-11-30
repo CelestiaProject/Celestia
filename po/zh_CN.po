@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CELESTIA-Chinese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2008-01-29 02:15+0800\n"
 "Last-Translator: Thruth Wang <gubotruth@gmail.com>\n"
 "Language-Team: Chinese <zhaozhengxu@yahoo.com>\n"
@@ -445,10 +445,6 @@ msgstr "忽略光的传播时间补偿"
 msgid "Using normal surface textures."
 msgstr "调用正常表面纹理。"
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "有限信息"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "调用表面有限纹理信息"
@@ -679,6 +675,23 @@ msgid ""
 msgstr ""
 "\n"
 "速度："
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " 天"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3230,6 +3243,9 @@ msgstr "11 月"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "12 月"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "有限信息"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"

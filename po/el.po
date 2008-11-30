@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: celestia-kde\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2003-06-19 14:08+0300\n"
 "Last-Translator: ironhell3 <ironhell3@hotmail.com>\n"
 "Language-Team: Hellenic <el@li.org>\n"
@@ -456,10 +456,6 @@ msgstr "Καθυστέρηση του χρόνου διάνυσης απόστα
 msgid "Using normal surface textures."
 msgstr "Χρήση κανονικής σύστασης επιφάνειας."
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "περιορισμός στη γνώση"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "Χρήση περιορισμένης γνώσης για τη σύσταση επιφάνειας. "
@@ -705,6 +701,23 @@ msgid ""
 msgstr ""
 "\n"
 "Ταχύτητα: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " μέρες"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3442,6 +3455,9 @@ msgstr "Τώρα"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr ""
+
+#~ msgid "limit of knowledge"
+#~ msgstr "περιορισμός στη γνώση"
 
 #, fuzzy
 #~ msgid "Deimos:Mars II"

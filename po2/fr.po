@@ -375,4 +375,3 @@ msgstr "Le Poisson volant"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Le Renard"
-
