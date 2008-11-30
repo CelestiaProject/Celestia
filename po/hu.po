@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2007-12-19 19:46+0100\n"
 "Last-Translator: Székely Zoltán <zoltanszekely@hotmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -453,10 +453,6 @@ msgstr "Utazás fénysebességgel: mellőzve "
 msgid "Using normal surface textures."
 msgstr "Normál felületi textúrák alkalmazása."
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "Ismereteink határa"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "Ismereteink határa textúrák "
@@ -689,6 +685,23 @@ msgid ""
 msgstr ""
 "\n"
 "Sebesség:  "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr "nap"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3253,6 +3266,9 @@ msgstr "Nov"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "Dec"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "Ismereteink határa"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"

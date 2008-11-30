@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia-Japanese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2008-01-25 19:30+0900\n"
 "Last-Translator: Sui Ota <aqua@aqsp.net>\n"
 "Language-Team: Japanese\n"
@@ -449,10 +449,6 @@ msgstr "光速考慮は無視されます。"
 msgid "Using normal surface textures."
 msgstr "通常テクスチャを使用"
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "limit of knowledge"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "limit of knowledgeテクスチャを使用"
@@ -683,6 +679,23 @@ msgid ""
 msgstr ""
 "\n"
 "速度: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " 日"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3237,6 +3250,9 @@ msgstr "11"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "12"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "limit of knowledge"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"

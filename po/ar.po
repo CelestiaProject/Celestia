@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ar \n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2006-06-05 22:00+0100\n"
 "Last-Translator: Ali Al-Khudair <saudilink@lycos.com>\n"
 "Language-Team: Arabic <ar@li.org>\n"
@@ -449,10 +449,6 @@ msgstr "وقت انتقال الضوء مهمل"
 msgid "Using normal surface textures."
 msgstr "استعمال قوام السطح الطبيعي."
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "محدودية في المعرفة"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "استعمال قوام سطح حد المعرفة."
@@ -687,6 +683,23 @@ msgid ""
 msgstr ""
 "\n"
 "السرعة: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " الأيام"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3288,6 +3301,9 @@ msgstr "الآن"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr ""
+
+#~ msgid "limit of knowledge"
+#~ msgstr "محدودية في المعرفة"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"

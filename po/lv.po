@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2008-11-20 00:40-0500\n"
+"POT-Creation-Date: 2008-11-29 23:29-0500\n"
 "PO-Revision-Date: 2008-02-13 12:29+0200\n"
 "Last-Translator: \n"
 "Language-Team: Latviešu <LL@li.org>\n"
@@ -449,10 +449,6 @@ msgstr "Gaismas ceļošanas ilgums ignorēts"
 msgid "Using normal surface textures."
 msgstr "Izmanto normālās virsmu tekstūras"
 
-#: src/celestia/celestiacore.cpp:1813
-msgid "limit of knowledge"
-msgstr "zināmā robeža"
-
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
 msgstr "Izmanto zināmā robežu tekstūras."
@@ -683,6 +679,23 @@ msgid ""
 msgstr ""
 "\n"
 "Ātrums: "
+
+#: src/celestia/celestiacore.cpp:3543
+msgid " m/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3545
+msgid " km/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3549
+msgid " AU/s"
+msgstr ""
+
+#: src/celestia/celestiacore.cpp:3551
+#, fuzzy
+msgid " ly/s"
+msgstr " dienas"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -3240,6 +3253,9 @@ msgstr "Nov"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "Dec"
+
+#~ msgid "limit of knowledge"
+#~ msgstr "zināmā robeža"
 
 #, fuzzy
 #~ msgid "Phobos:Mars I"
