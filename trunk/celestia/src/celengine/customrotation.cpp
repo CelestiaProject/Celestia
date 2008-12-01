@@ -31,6 +31,11 @@ static bool CustomRotationModelsInitialized = false;
 // doesn't produce obviously absurd results.
 static const double IAU_SECULAR_TERM_VALID_CENTURIES = 50.0;
 
+// The P03 long period precession theory for Earth is valid for a one
+// million year time span centered on J2000. For dates outside far outside
+// that range, the polynomial terms produce absurd results.
+static const double P03LP_VALID_CENTURIES = 5000.0;
+
 /*! Base class for IAU rotation models. All IAU rotation models are in the
  *  J2000.0 Earth equatorial frame.
  */
@@ -125,6 +130,13 @@ public:
     Quatd computeEquatorOrientation(double tjd) const
     {
         double T = (tjd - astro::J2000) / 36525.0;
+        
+        // Clamp T to the valid time range of the precession theory.
+        if (T < -P03LP_VALID_CENTURIES)
+            T = -P03LP_VALID_CENTURIES;
+        else if (T > P03LP_VALID_CENTURIES)
+            T = P03LP_VALID_CENTURIES;
+        
         astro::PrecessionAngles prec = astro::PrecObliquity_P03LP(T);
         astro::EclipticPole pole = astro::EclipticPrecession_P03LP(T);
         
