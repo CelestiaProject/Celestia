@@ -11,6 +11,7 @@
 #import "CelestiaBody_PrivateAPI.h"
 #import "CelestiaGalaxy_PrivateAPI.h"
 #import "CelestiaStar_PrivateAPI.h"
+#import "CelestiaLocation.h"
 #import "NSString_ObjCPlusPlus.h"
 #import "CelestiaUniversalCoord_PrivateAPI.h"
 #import "CelestiaAppCore.h"
@@ -61,6 +62,10 @@
 {
     return [self initWithSelection:Selection([g galaxy])];
 }
+-(CelestiaSelection*)initWithCelestiaLocation:(CelestiaLocation*)g
+{
+    return [self initWithSelection:Selection([g location])];
+}
 -(CelestiaBody *)body
 {
     if ([self selection].getType() != Selection::Type_Body) return nil;
@@ -88,6 +93,11 @@
 {
     if ([self selection].getType() != Selection::Type_DeepSky) return nil;
     return [[[CelestiaGalaxy alloc] initWithGalaxy:((Galaxy*)[self selection].deepsky())] autorelease];
+}
+-(CelestiaLocation*)location
+{
+    if ([self selection].getType() != Selection::Type_Location) return nil;
+    return [[[CelestiaLocation alloc] initWithLocation:((Location*)[self selection].location())] autorelease];
 }
 -(NSString *)name
 {
@@ -118,32 +128,10 @@
     else if ([self body] != NULL)
     {
         name = [[self body] name];
-/*
-        PlanetarySystem* system = body->getSystem();
-        while (system != NULL)
-        {
-            Body* parent = system->getPrimaryBody();
-            if (parent != NULL)
-            {
-                name = parent->getName() + '/' + name;
-                system = parent->getSystem();
-            }
-            else
-            {
-                const Star* parentStar = system->getStar();
-                if (parentStar != NULL)
-                {
-
-                    char buf[20];
-                    sprintf(buf, "#%d", parentStar->getCatalogNumber());
-                    name = string(buf) + '/' + name;
-
-
-                }
-                system = NULL;
-            }
-        }
-*/
+    }
+    else if ([self location] != NULL)
+    {
+        name = [[self location] name];
     }
     else
     {
