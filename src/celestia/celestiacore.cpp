@@ -3272,7 +3272,7 @@ static void displayPlanetInfo(Overlay& overlay,
 		{
 			showPhaseAngle = true;
 		}
-		else
+		else if (sun->getOrbitingStars())
 		{
 			// The planet's orbit is defined with respect to a barycenter. If there's
 			// a single star orbiting the barycenter, we'll compute the phase angle
