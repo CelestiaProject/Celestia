@@ -7880,7 +7880,7 @@ void Renderer::renderPlanet(Body& body,
                             appMag,
 #endif
                             lights);
-        assert(lights.nLights < MaxLights);
+        assert(lights.nLights <= MaxLights);
 
         lights.ambientColor = Vec3f(ambientColor.red(),
                                     ambientColor.green(),
