@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the celestia package.
 # Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008.
 # Tobias Svedberg <sleepylion@gmail.com>, 2006, 2007, 2008.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: celestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2008-11-25 19:21+0100\n"
-"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"PO-Revision-Date: 2008-11-29 17:28+0100\n"
+"Last-Translator: Anders Pamdal <anders@pamdal.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -26,7 +26,7 @@ msgstr "Standardtid"
 
 #: src/celengine/dsodb.cpp:386
 msgid "Loaded "
-msgstr "Läste in "
+msgstr "Lästa "
 
 #: src/celengine/dsodb.cpp:386
 msgid " deep space objects"
@@ -34,11 +34,11 @@ msgstr " rymdobjekt"
 
 #: src/celengine/fragmentprog.cpp:93
 msgid "Loading NV fragment program: "
-msgstr "Läser in NV-fragmentprogram: "
+msgstr "Läser NV-fragmentprogram: "
 
 #: src/celengine/fragmentprog.cpp:98
 msgid "Error loading NV fragment program: "
-msgstr "Fel vid inläsning av NV-fragmentprogram: "
+msgstr "Fel vid läsning av NV-fragmentprogram: "
 
 #: src/celengine/fragmentprog.cpp:115
 msgid "Error in fragment program "
@@ -50,7 +50,7 @@ msgstr "Initierar NV-fragmentprogram . . .\n"
 
 #: src/celengine/fragmentprog.cpp:142
 msgid "All NV fragment programs loaded successfully.\n"
-msgstr "Alla NV-fragmentprogram inlästa.\n"
+msgstr "Alla NV-fragmentprogram lästa.\n"
 
 #: src/celengine/fragmentprog.cpp:150
 msgid "Initializing ARB fragment programs . . .\n"
@@ -63,7 +63,7 @@ msgstr "Galax (Hubble-typ: %s)"
 
 #: src/celengine/image.cpp:373
 msgid "Loading image from file "
-msgstr "Läser in bild från fil "
+msgstr "Läser bild från fil "
 
 #: src/celengine/image.cpp:391
 msgid ": unrecognized or unsupported image file type.\n"
@@ -79,7 +79,7 @@ msgstr "Fel: "
 
 #: src/celengine/image.cpp:661
 msgid " is not a PNG file.\n"
-msgstr " är inte en PNG-fil.\n"
+msgstr " är ej en PNG-fil.\n"
 
 #: src/celengine/image.cpp:688
 msgid "Error reading PNG image file "
@@ -87,7 +87,7 @@ msgstr "Fel vid läsning av PNG-bildfil "
 
 #: src/celengine/meshmanager.cpp:84
 msgid "Loading model: "
-msgstr "Läser in modell: "
+msgstr "Läser modell: "
 
 #: src/celengine/meshmanager.cpp:162
 msgid "   Model statistics: "
@@ -95,7 +95,7 @@ msgstr "   Modellstatistik: "
 
 #: src/celengine/meshmanager.cpp:163
 msgid " vertices, "
-msgstr "vertex, "
+msgstr " vertex, "
 
 #: src/celengine/meshmanager.cpp:164
 msgid " primitives, "
@@ -111,7 +111,7 @@ msgstr " unika)\n"
 
 #: src/celengine/meshmanager.cpp:170
 msgid "Error loading model '"
-msgstr "Fel vid inläsning av modell \""
+msgstr "Fel vid inläsning av modell '"
 
 #: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
 #, c-format
@@ -124,15 +124,15 @@ msgstr "Fel i .ssc-fil (rad "
 
 #: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
 msgid "parent body '"
-msgstr "föräldrakropp \""
+msgstr "föräldrakropp '"
 
 #: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
 msgid "' of '"
-msgstr "\" av \""
+msgstr "' av '"
 
 #: src/celengine/solarsys.cpp:1200
 msgid "' not found."
-msgstr "' hittades inte."
+msgstr "' hittades ej."
 
 #: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
@@ -148,7 +148,7 @@ msgstr "felaktig plats"
 
 #: src/celengine/solarsys.cpp:1267
 msgid "' not found.\n"
-msgstr "\" hittades inte.\n"
+msgstr "' hittades ej.\n"
 
 #: src/celengine/stardb.cpp:579
 msgid "Bad header for cross index\n"
@@ -160,7 +160,7 @@ msgstr "Felaktig version för korsindex\n"
 
 #: src/celengine/stardb.cpp:614
 msgid "Loading cross index failed at record "
-msgstr "Inläsning av korsindex misslyckades på post "
+msgstr "Läsning av korsindex misslyckades på post "
 
 #: src/celengine/stardb.cpp:696
 msgid "Bad spectral type in star database, star #"
@@ -192,7 +192,7 @@ msgstr "Masscentrum "
 
 #: src/celengine/stardb.cpp:961
 msgid " does not exist.\n"
-msgstr " finns inte.\n"
+msgstr " finns ej.\n"
 
 #: src/celengine/stardb.cpp:1007
 msgid "Invalid star: missing right ascension\n"
@@ -216,7 +216,7 @@ msgid ""
 "near origin\n"
 msgstr ""
 "Felaktig stjärna: absolut (inte apparent) magnitud måste anges för en "
-"stjärna nära origo\n"
+"stjärna nära ursprung\n"
 
 #: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
@@ -232,11 +232,11 @@ msgstr "Skapar vanlig textur: "
 
 #: src/celengine/vertexprog.cpp:114
 msgid "Loading NV vertex program: "
-msgstr "Läser in NV-vertexprogram: "
+msgstr "Läser NV-vertexprogram: "
 
 #: src/celengine/vertexprog.cpp:119
 msgid "Error loading NV vertex program: "
-msgstr "Fel vid inläsning av NV-vertexprogram: "
+msgstr "Fel vid läsning av NV-vertexprogram: "
 
 #: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
@@ -244,7 +244,7 @@ msgstr "Fel i vertexprogram "
 
 #: src/celengine/vertexprog.cpp:163
 msgid "Loading ARB vertex program: "
-msgstr "Läser in ARB-vertexprogram: "
+msgstr "Läser ARB-vertexprogram: "
 
 #: src/celengine/vertexprog.cpp:168
 msgid "Error loading ARB vertex program: "
@@ -260,7 +260,7 @@ msgstr "Initierar NV-vertexprogram . . .\n"
 
 #: src/celengine/vertexprog.cpp:240
 msgid "All NV vertex programs loaded successfully.\n"
-msgstr "Alla NV-vertexprogram inlästa.\n"
+msgstr "Alla NV-vertexprogram lästa.\n"
 
 #: src/celengine/vertexprog.cpp:253
 msgid "Initializing ARB vertex programs . . .\n"
@@ -268,11 +268,11 @@ msgstr "Initierar ARB-vertexprogram . . .\n"
 
 #: src/celengine/vertexprog.cpp:314
 msgid "All ARB vertex programs loaded successfully.\n"
-msgstr "Alla ARB-vertexprogram inlästa.\n"
+msgstr "Alla ARB-vertexprogram lästa.\n"
 
 #: src/celestia/celestiacore.cpp:419
 msgid "Error reading favorites file."
-msgstr "Fel vid inläsning av favoritfil."
+msgstr "Fel vid läsning av favoritfil."
 
 #: src/celestia/celestiacore.cpp:509
 msgid "Orientation: "
@@ -348,39 +348,39 @@ msgstr "Kometsvansar inaktiverade"
 
 #: src/celestia/celestiacore.cpp:1531
 msgid "Render path: Basic"
-msgstr "Uppritningsläge: Enkel"
+msgstr "Renderingsläge: Enkel"
 
 #: src/celestia/celestiacore.cpp:1534
 msgid "Render path: Multitexture"
-msgstr "Uppritningsläge: Multitextur"
+msgstr "Renderingsläge: Multitextur"
 
 #: src/celestia/celestiacore.cpp:1537
 msgid "Render path: NVIDIA combiners"
-msgstr "Uppritningsläge: NVIDIA-kombinerare"
+msgstr "Renderingsläge: NVIDIA-kombinerare"
 
 #: src/celestia/celestiacore.cpp:1540
 msgid "Render path: OpenGL vertex program"
-msgstr "Uppritningsläge: OpenGL-vertexprogram"
+msgstr "Renderingsläge: OpenGL-vertexprogram"
 
 #: src/celestia/celestiacore.cpp:1543
 msgid "Render path: NVIDIA vertex program and combiners"
-msgstr "Uppritningsläge: NVIDIA-vertexprogram och kombinerare"
+msgstr "Renderingsläge: NVIDIA-vertexprogram och kombinerare"
 
 #: src/celestia/celestiacore.cpp:1546
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
-msgstr "Uppritningsläge: OpenGL-vertexprogram/NVIDIA-kombinerare"
+msgstr "Renderingsläge: OpenGL-vertexprogram/NVIDIA-kombinerare"
 
 #: src/celestia/celestiacore.cpp:1549
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
-msgstr "Uppritningsläge: OpenGL 1.5 vertex-/fragmentprogram"
+msgstr "Renderingsläge: OpenGL 1.5 vertex-/fragmentprogram"
 
 #: src/celestia/celestiacore.cpp:1552
 msgid "Render path: NVIDIA GeForce FX"
-msgstr "Uppritningsläge: NVIDIA GeForce FX"
+msgstr "Renderingsläge: NVIDIA GeForce FX"
 
 #: src/celestia/celestiacore.cpp:1555
 msgid "Render path: OpenGL 2.0"
-msgstr "Uppritningsläge: OpenGL 2.0"
+msgstr "Renderingsläge: OpenGL 2.0"
 
 #: src/celestia/celestiacore.cpp:1578
 msgid "Auto-magnitude enabled"
@@ -493,12 +493,10 @@ msgid "Light gain"
 msgstr "Ljusförstärkning"
 
 #: src/celestia/celestiacore.cpp:2157
-#, fuzzy
 msgid "Bloom enabled"
 msgstr "Överstrålning aktiverad"
 
 #: src/celestia/celestiacore.cpp:2159
-#, fuzzy
 msgid "Bloom disabled"
 msgstr "Överstrålning inaktiverad"
 
@@ -667,7 +665,7 @@ msgstr " (Pausad)"
 
 #: src/celestia/celestiacore.cpp:3537
 msgid "FPS: "
-msgstr "Bilder/s: "
+msgstr "FPS: "
 
 #: src/celestia/celestiacore.cpp:3539
 msgid ""
@@ -736,7 +734,7 @@ msgstr " i "
 
 #: src/celestia/celestiacore.cpp:3903
 msgid " fps"
-msgstr " bilder/s"
+msgstr " fps"
 
 #: src/celestia/celestiacore.cpp:3905 src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
@@ -757,15 +755,15 @@ msgstr "Redigeringsläge"
 
 #: src/celestia/celestiacore.cpp:4004
 msgid "Loading solar system catalog: "
-msgstr "Läser in solsystemskatalog: "
+msgstr "Läser solsystemskatalog: "
 
 #: src/celestia/celestiacore.cpp:4045
 msgid "Loading "
-msgstr "Läser in "
+msgstr "Läser "
 
 #: src/celestia/celestiacore.cpp:4080
 msgid "License file 'License.txt' is missing!"
-msgstr "Licensfil \"License.txt\" saknas!"
+msgstr "Licensfil 'License.txt' saknas!"
 
 #: src/celestia/celestiacore.cpp:4101
 msgid "Error reading configuration file."
@@ -777,7 +775,7 @@ msgstr "Initiering av SPICE-biblioteket misslyckades."
 
 #: src/celestia/celestiacore.cpp:4159
 msgid "Cannot read star database."
-msgstr "Kan inte läsa stjärndatabas."
+msgstr "Kan ej läsa stjärndatabas."
 
 #: src/celestia/celestiacore.cpp:4181
 msgid "Error opening deepsky catalog file."
@@ -797,7 +795,7 @@ msgstr "Fel vid öppning av filer för begränsning av stjärnbilder."
 
 #: src/celestia/celestiacore.cpp:4348
 msgid "render path: "
-msgstr "uppritningsläge: "
+msgstr "renderingsläge: "
 
 #: src/celestia/celestiacore.cpp:4359
 msgid "Failed to initialize renderer"
@@ -805,11 +803,11 @@ msgstr "Misslyckades med att initiera renderare"
 
 #: src/celestia/celestiacore.cpp:4375
 msgid "Error loading font; text will not be visible.\n"
-msgstr "Fel vid inläsning av typsnitt; text kommer inte att vara synlig.\n"
+msgstr "Fel vid läsning av typsnitt; text kommer ej att vara synlig.\n"
 
 #: src/celestia/celestiacore.cpp:4432
 msgid "Error reading cross index "
-msgstr "Fel vid inläsning av korsindex "
+msgstr "Fel vid läsning av korsindex "
 
 #: src/celestia/celestiacore.cpp:4434
 msgid "Loaded cross index "
@@ -977,9 +975,8 @@ msgid "Show Velocity Vector"
 msgstr "Visa hastighetsvektor"
 
 #: src/celestia/winmain.cpp:1618 src/celestia/kde/selectionpopup.cpp:342
-#, fuzzy
 msgid "Show Planetographic Grid"
-msgstr "Visa planeters omloppsbanor"
+msgstr "Visa planetografiskt rutnät"
 
 #: src/celestia/winmain.cpp:1619 src/celestia/kde/selectionpopup.cpp:344
 msgid "Show Terminator"
@@ -1007,7 +1004,7 @@ msgstr "&Markera"
 
 #: src/celestia/winmain.cpp:3137
 msgid "Loading: "
-msgstr "Läser in: "
+msgstr "Läser: "
 
 #: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
@@ -1024,7 +1021,7 @@ msgstr "Kopierad URL"
 
 #: src/celestia/winmain.cpp:3903
 msgid "Loading URL"
-msgstr "Läser in url"
+msgstr "Läser url"
 
 #: src/celestia/winmain.cpp:3915
 msgid "Error opening script"
@@ -1032,7 +1029,7 @@ msgstr "Fel vid öppning av skript"
 
 #: src/celestia/winmain.cpp:3934
 msgid "Error loading script"
-msgstr "Fel vid inläsning av skript"
+msgstr "Fel vid läsning av skript"
 
 #: src/celestia/winmain.cpp:3939
 msgid "Running script"
@@ -1209,7 +1206,7 @@ msgstr "Skapa en ny bokmärkesmapp i denna meny"
 #: src/celestia/kde/kcelbookmarkmenu.cpp:354
 #: src/celestia/kde/kcelbookmarkmenu.cpp:401
 msgid "Can't add bookmark with empty URL"
-msgstr "Kan inte lägga till bokmärke med tom URL"
+msgstr "Kan ej lägga till bokmärke med tom URL"
 
 #: src/celestia/kde/kdeapp.cpp:129
 msgid ""
@@ -1219,9 +1216,9 @@ msgid ""
 "files and may not work correctly, please check your installation."
 msgstr ""
 "Något verkar vara fel med din installation av Celestia. Katalogen för "
-"uppstartsbilder kunde inte hittas. \n"
+"uppstartsbilder kunde ej hittas. \n"
 "Uppstarten kommer att fortsätta men Celestia kommer antagligen att sakna "
-"vissa datafiler och fungerar kanske inte korrekt, vänligen kontrollera din "
+"vissa datafiler och fungerar kanske ej korrekt, vänligen kontrollera din "
 "installation."
 
 #: src/celestia/kde/kdeapp.cpp:407
@@ -1258,11 +1255,11 @@ msgstr "Kopiera URL"
 
 #: src/celestia/kde/kdeapp.cpp:446
 msgid "Set Time..."
-msgstr "Ställ in tid..."
+msgstr "Ställ tid..."
 
 #: src/celestia/kde/kdeapp.cpp:447
 msgid "Set Time to Now"
-msgstr "Ställ in tid till nu"
+msgstr "Ställ tid till nu"
 
 #: src/celestia/kde/kdeapp.cpp:448
 msgid "Accelerate Time"
@@ -1341,9 +1338,8 @@ msgid "Show Galaxies"
 msgstr "Visa galaxer"
 
 #: src/celestia/kde/kdeapp.cpp:554
-#, fuzzy
 msgid "Show Globulars"
-msgstr "Visa klotformiga"
+msgstr "Visa klotformiga stjärnhopar"
 
 #: src/celestia/kde/kdeapp.cpp:557
 msgid "Show Partial Trajectories"
@@ -1471,9 +1467,8 @@ msgid "Show Galaxy Labels"
 msgstr "Visa etiketter på galaxer"
 
 #: src/celestia/kde/kdeapp.cpp:651
-#, fuzzy
 msgid "Show Globular Labels"
-msgstr "Visa etiketter för klotformiga"
+msgstr "Visa etiketter för klotformiga stjärnhopar"
 
 #: src/celestia/kde/kdeapp.cpp:654
 msgid "Show Nebula Labels"
@@ -1626,7 +1621,7 @@ msgstr "UTC"
 #: src/celestia/kde/kdeapp.cpp:1462
 msgid ""
 "This version of Celestia was not built with support for movie recording."
-msgstr "Denna version av Celestia byggdes inte med stöd för fångst av video."
+msgstr "Denna version av Celestia byggdes ej med stöd för fångst av video."
 
 #: src/celestia/kde/kdeapp.cpp:1488
 msgid "Go to URL"
@@ -1704,12 +1699,14 @@ msgstr "Starta och gå till URL"
 #: src/celestia/kde/kdemain.cpp:71
 msgid "_: NAME OF TRANSLATORS\\nYour names"
 msgstr ""
+"Anders Pamdal\n"
 "Daniel Nylander\n"
 "Tobias Svedberg"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
 msgstr ""
+"anders@pamdal.se\n"
 "po@danielnylander.se\n"
 "sleepylion@gmail.com"
 
@@ -2067,16 +2064,15 @@ msgstr "<b>OpenGL 2.0-skuggspråk</b>"
 #: src/celestia/kde/kdeuniquecelestia.cpp:44
 msgid ""
 "File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr ""
-"Filen %1 finns inte, använder förvald konfigurationsfil %2/celestia.cfg"
+msgstr "Filen %1 finns ej, använder förvald konfigurationsfil %2/celestia.cfg"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:54
 msgid "Directory %1 does not exist, using default %2"
-msgstr "Katalogen %1 finns inte, använder förvald %2"
+msgstr "Katalogen %1 finns ej, använder förvald %2"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:66
 msgid "Extras directory %1 does not exist"
-msgstr "Katalogen för extrafiler %1 finns inte"
+msgstr "Katalogen för extrafiler %1 finns ej"
 
 #: src/celestia/kde/selectionpopup.cpp:89
 msgid "Abs (app) mag: "
@@ -2142,11 +2138,11 @@ msgstr "Högerpil"
 
 #: src/celestia/kde/selectionpopup.cpp:323
 msgid "Up Arrow"
-msgstr "Pil uppåt"
+msgstr "Uppåtpil"
 
 #: src/celestia/kde/selectionpopup.cpp:324
 msgid "Down Arrow"
-msgstr "Pil nedåt"
+msgstr "Nedåtpil"
 
 #: src/celestia/kde/selectionpopup.cpp:325
 msgid "Circle"
@@ -2371,7 +2367,7 @@ msgstr ""
 "<p>Tryck <b>F11</b> för att starta/pausa inspelningen<br>\n"
 "Tryck <b>F12</b> för att stoppa</p>\n"
 "\n"
-"<p>Notera att ändring av huvudfönstrets storlek inte är möjlig till efter "
+"<p>Notera att ändring av huvudfönstrets storlek ej är möjlig till efter "
 "fångsten är klar</p>"
 
 #: src/celestia/kde/rc.cpp:178
@@ -3063,16 +3059,14 @@ msgstr "Visningsalternativ"
 
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:176
-#, fuzzy
 msgid "Globulars"
-msgstr "Klotformiga"
+msgstr "Klotformiga stjärnhopar"
 
 #: src/celestia/res/resource_strings.cpp:160
 msgid "Grids"
 msgstr "Rutnät"
 
 #: src/celestia/res/resource_strings.cpp:161
-#, fuzzy
 msgid "Celestial"
 msgstr "Celest"
 
@@ -3089,7 +3083,6 @@ msgid "Ecliptic"
 msgstr "Ekliptika"
 
 #: src/celestia/res/resource_strings.cpp:170
-#, fuzzy
 msgid "Minor Moons"
 msgstr "Mindre månar"
 
