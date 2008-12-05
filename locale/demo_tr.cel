@@ -1,0 +1,157 @@
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print {text "Lutfen smulasyon penceresini Tam Ekran goruntusune getirin."origin "center" duration 7 }
+	wait { duration 7.0 }
+	print { text "Demo Basliyor . . .\n  ESC Tusu ile Demo'dan cikabilirsiniz" origin "center" duration 4 }
+	wait { duration 4.0 }
+
+	print { text "Hadi Dunyanin Yanina Gidelim . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "Biz simdi Dunyanin 12,500km Uzagindayiz" row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Dunyayi biraz daha bulutlu gormeye alisigiz..." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 7 }
+
+	print { text "Sradaki Durak: Ay." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	labels { set "planets" }
+	print { text "Ay'i Dunyanin Yorungesinde Goruyorsunuz." row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Gunese Dogru Gidelim." row -3}
+	labels { clear "planets" }
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "Bu mesafeden cok net bir sekilde yuzey uzerindeki gunes lekelerini gorebiliyoruz.." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Simdi Gunes Sistemine goz atalim." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Gezegen isimlerini goruyorsunuz" row -3}
+	labels { set "planets" }
+	wait { duration 3.0 }
+	print { text "Simdi Gezegen hareketlerini gormek icin biraz hizi artiralim.." row -3}
+	wait { duration 2.0 }
+	timerate { rate 2592000 }
+	wait { duration 5.0 }
+	print { text "Her saniye icin Simulasyonda bir ay zaman geciyor." row -3}
+	wait { duration 15.0 }
+	timerate { rate 1 }
+	print { text "Simdi Zamani normal hale getirelim." row -3}
+
+	wait { duration 4.0 }
+	print { text "Simdiki duragimiz Saturn. . ." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Saturn'un birkac Ayi var. Ancak bu mesafeden kucucuk noktalar olarak gorunurler.." row -3 duration 8}
+	orbit { axis [ 0 1 0 ] rate 30 duration 17 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "Saturn'un ondegelen aylarindan biri Midas'tir. Uzerinde Herschel isminde Dev bir krater bulunur." row -3 duration 11 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 7.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Not Bu mesafede Gunes cok soluk gozukuyor.." row -3 duration 4 }
+	wait { duration 4 }
+
+	print { text "Hadi simdi Gokyuzundeki Yildizlara bakalim." row -3 duration 6 }
+	wait { duration 4 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	wait { duration 3 }
+	print { text "Kuzey Yarim kuredekiler Buyuk Ayi takim yildizi(Ursa Major) icindeki \n Buyuk kepce(Big Dipper) Seklinlini gorebilirler..." row -3 duration 10 }
+	wait { duration 2 }
+
+	select { object "Polaris" }
+	center { time 3 }
+	wait { duration 7 }
+	print { text "Su anda Kutup Yildizina Bakiyoruz." row -3 duration 5}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 4 }
+	print { text "Kutupyildizi(Polaris), Kucuk Kepce denen 3'lu yildizlarin bir parcasidir.." row -3 duration 6}
+	wait { duration 6 }
+	print { text "Gokyuzu hakkinda bilgi edinmemize yardimci olan, \n Celestia programi takimyildizlarinin cizdigi sekilleri bize gosterebilir. . ." row -3 duration 4}
+	wait { duration 1 }
+	renderflags { set "constellations" }
+	wait { duration 4 }
+	print { text ". . . Ve takim yildizi isimlerinide gosterebilir" row -3 duration 8}
+	labels { set "constellations" }
+	wait { duration 8 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orion gokyuzunde dikkat ceken bir baska Takim Yildizidir." row -3 duration 8 }
+	wait { duration 6 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Guney Haci ( Southern Cross) Guney Yarim kurede yasayanlar icin bilinen bir manzaradir." row -3 duration 9 }
+	wait { duration 7 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Hadi galaksi gorunusunu acalim boylece Samanyolunu gorebiliriz..." row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Simdi, Akrep Yuregi(Antares)'e seyahat edecegiz, Akrep Takimyildizi'ndaki, bir kizil dev(red giant) yildizi." row -3 duration 10 }
+	wait { duration 4 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 2 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 3.0 }
+	print { text "Akrep Takimyildizina(Antares) Gunesle Dunya arasindaki mesafenin 10 kati kadar uzakta olmamiza ragmen, \n bu buyuk kizil(red giant) yildiz gok yuzunde parlamaktadir..." row -3 duration 12}
+	wait { duration 12.0 }
+
+	print { text "Hadi biraz uzaklaSalim ve buyuk tabloyu gOrelim." row -3 duration 5}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Su anda Samanyolu Galaksisini goruyoruz..." row -3 duration 9 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Eve gitme vakti . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Demo Tamamlandi" row -3 duration 5}
+	wait { duration 3.0 }
+}
