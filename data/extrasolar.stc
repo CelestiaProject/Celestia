@@ -70,6 +70,15 @@
 	AppMag 15          # estimated from I magnitude and spectral class
 }
 
+"OGLE2-TR-L9"
+{
+	RA 166.98042
+	Dec -61.14611
+	Distance 2900
+	SpectralType "F3V" 
+	AbsMag 3.6		# estimated from spectral class
+}
+
 # TrES survey
 
 1013242652 "TrES-1 (parent star):GSC 02652-01324"
@@ -155,7 +164,7 @@
 	AppMag 12.13
 }
 
-# HAT-P survey
+# HAT-Net survey
 
 "HAT-P-1:SAO 72884"
 {
