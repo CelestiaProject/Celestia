@@ -1,0 +1,376 @@
+# Russian translations for celestia package
+# Copyright (C) 2006 The SIMOfOR, Inc.
+# This file is distributed under the same license as the celestia package.
+# Sergey Leonov <leserg@ua.fm>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Celestia 1.4.1\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2008-12-05 10:41+0200\n"
+"Last-Translator: Marius Mikalainis <neoromancer@gmail.com>\n"
+"Language-Team: Russian <leserg@ua.fm>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-Language: Russian\n"
+"X-Poedit-Country: UKRAINE\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "Andromeda"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "Siurblys"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "Rojaus Paukštis"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "Vandenis"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "Erelis"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "Aukuras"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "Avinas"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "Vežėjas"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "Jaučiaganis"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "Skaptukas"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "Žirafa"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "Vėžys"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "Skalikai"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "Šuo"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "Šuniukas"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "Ožiaragis"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "Kilis"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "Kasiopėja"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "Kentauras"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "Cefėjas"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "Banginis"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "Chameleonas"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "Skriestuvas"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "Balandis"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "Berenikės Garbanos"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "Pietinis Vainikas"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "Šiaurės Vainikas"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "Varnas"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "Taurė"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "Kryžius"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "Gulbė"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "Delfinas"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "Auksinė Žuvis"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "Slibinas"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "Žirgelis"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "Eridanas"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "Krosnis"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "Dvyniai"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "Gervė"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "Heraklis"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "Laikrodis"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr "Hidra"
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "Pietinė Hidra"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "Indėnas"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "Driežas"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "Lūtas"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "Liūtukas"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "Kiškis"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "Svarstyklės"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "Vilkas"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "Lūšis"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "Lyra"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "Stalkalnis"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "Mikroskopas"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "Vienaragis"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "Musė"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "Kampainis"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "Oktantas"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "Gyvatnešis"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "Orionas"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "Povas"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "Pegasas"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "Persėjas"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "Feniksas"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "Tapytojas"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "Žuvys"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "Pietinė Žuvis"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "Laivagalis"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "Kompasas"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "Tinklelis"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "Strėlė"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "Šaulys"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "Skorpionas"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "Skulptorius"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "Skydas"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "Gyvatės Galva"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "Gyvatės Uodega"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "Sekstantas"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "Tauras"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "Teleskopas"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "Trikampis"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "Pietinis Trikampis"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "Tukana"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "Grįžulo Ratai"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "Grįžulo Rateliai"
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "Burės"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "Mergelė"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "Skraidančioji Žuvis"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "Laputė"
+
