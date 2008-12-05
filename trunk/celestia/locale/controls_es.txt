@@ -1,0 +1,143 @@
+Controles de Ratón y de Teclado para Celestia
+
+Funciones de Ratón:
+
+Botón izquierdo y arrastrar: Orientar la cámara
+Botón derecho y arrastrar: Orbitar el objeto seleccionado
+Rueda: Ajustar distancia al objeto
+Botones der. + izq. y arrastrar: Ajustar distancia a selección
+Ctrl + Botón izq. y arastrar: Ajustar distancia a selección
+Shift + Botón izq. y arrastrar: Cambiar ancho de campo (p.ej. => visión telescópica)
+Botón rueda (botón central): Cambiar ancho del campo entre 45 grados y el ancho 
+anterior (p.ej. visión telescópica)
+Botón izquierdo: Seleccionar objeto
+Botón izquierdo (doble click): Centrar selección
+Botón derecho: Menú contextual
+
+Comandos de teclado:
+
+Navegación:
+H    : Seleccionar el Sol (Hogar)
+C    : Centrar el objeto seleccionado
+G    : Ir al objeto seleccionado
+F    : Seguir al objeto seleccionado
+Y    : Orbitar el objeto seleccionado a velocidad sincrónica con su rotación
+:    : Trabar el objeto seleccionado
+"    : Perseguir al objeto seleccionado (con orientación basada en la velocidad 
+       de la selección)
+T    : Rastrear el objeto seleccionado (mantenerlo centrado en la vista)
+HOME : Acercarse
+*    : Mirar hacia atrás
+END  : Move farther from object
+ESC  : Cancelar movimiento o script
+Shift+C : Centrar/orbitar--centrar el objeto seleccionado sin cambiar la posición 
+       del objeto de referencia
+Flechas Izquierda/Derecha : Rolar la cámara
+Flechas Arriba/Abajo : Apuntar hacia arriba/abajo
+Shift+Flechas : Orbitar objecto
+1-9 : Seleccionar planetas alrededor de un sol cercano
+
+Tiempo:
+Barra espaciadora : detener el tiempo
+L       : Tiempo 10x más rápido
+Shift+L : Tiempo 2x más rápido
+K       : Tiempo 10x más lento
+Shift+K : Tiempo 2x más lento
+J       : Invertir el tiempo
+!       : Establecer tiempo actual
+?       : Mostrar la demora por velocidad de la luz entre el observador y el 
+          objeto seleccionado
+-       : Substraer del tiempo de simulación la demora por velocidad de la luz
+
+Etiquetas:
+=  : Constelaciones
+B  : Estrellas
+E  : Galaxias
+M  : Lunas
+W  : Asteroides y cometas
+N  : Naves espaciales
+P  : Planetas
+&  : Referencias topográficas
+
+V  : Detalle del texto informativo
+
+Opciones:
+I  : Mostrar nubes
+U  : Mostrar galaxias
+O  : Mostrar órbitas
+/  : Mostrar diagramas de las constelaciones
+^  : Mostrar nebulosas
+%  : Saturación de colores de las estrellas
+;  : Mostrar una esfera de coordenadas ecuatoriales terrestres
+[  : Si autoMag OFF: Reducir la magnitud límite (menos estrellas visibles)
+     Si autoMag ON : Reducir la magnitud límite a 45 grados de campo visual
+]  : Si autoMag OFF: Aumentar la magnitud límite (más estrellas visibles)
+     Si autoMag ON : Aumentar la magnitud límite a 45 grados de campo visual
+{  : Reducir la luz ambiente
+}  : Increase ambient illumination
+(  : Reducir el brillo de las galaxias independientemente del de las estrellas
+)  : Aumentar el brillo de las galaxias independientemente del de las estrellas
+,  : Reducir el campo visual
+.  : Ensanchar el campo visual
+Backspace: Cancelar la selección actual
+Ctrl+A : Mostrar atmósferas
+Ctrl+B : Mostrar límites de las constelaciones
+Ctrl+E : Mostrar sombras de eclipses
+Ctrl+K : Mostrar marcadores
+Ctrl+L : Mostrar el lado nocturno de los planetas (contaminación lumínica)
+Ctrl+P : Marcar el objeto seleccionado
+Ctrl+S : Cambiar el estilo de las estrellas entre discos difusos, puntos y discos a escala
+Ctrl+T : Mostrar colas de cometas
+Ctrl+V : Cambiar entre los procesos OpenGL soportados
+Ctrl+W : Cambiar a modo alambres
+Ctrl+X : Cambiar a suavizado de líneas
+Ctrl+Y : Cambiar autoMag = adaptación automática de la visibilidad estelar al 
+campo visual
+r R: Reducir o aumentar la resolución de las texturas
++  : Cambiar entre representación artística y límite del conocimiento en las 
+     texturas planetarias
+
+Multivisión:
+Ctrl+R : Separar la visión verticalmente
+Ctrl+U : Separar la visión horizontalmente
+TAB    : Ciclar la visión activa
+DEL    : Borrar la visión activa
+Ctrl+D : Borrar todas las visiones excepto la activa
+
+Vuelo espacial:
+F1 : Detenerse
+F2 : Velocidad 1 km/s
+F3 : Velocidad 1000 km/s
+F4 : Velocidad de la luz
+F5 : Velocidad 10x velocidad de la luz
+F6 : Velocidad 1 unidad astronómica/s
+F7 : Velocidad 1 año luz/s
+A  : Aumentar la velocidad
+Z  : Reducir la velocidad
+Q  : Invertir la dirección
+X  : Moverse hacia el centro de la pantalla
+
+Teclado numérico:
+4  : Girar a izquierda
+6  : Girar a derecha
+8  : Apuntar hacia arriba
+2  : Apuntar hacia abajo
+7  : Girar en sentido anti-horario
+9  : Girar en sentido horario
+5  : Detener la rotación
+
+Joystick:
+Eje X : Girar a los lados
+Eje Y : Girar arriba y abajo
+Gatillo L : Rolar antihorario
+Gatillo R : Rolar horario
+Botón 1 : Más lento
+Botón 2 : Más rápido
+
+Otros:
+D   : Correr script de demostración
+F8  : Habilitar joystick
+F10 : Capturar imagen
+`   : Mostrar cuadros por segundo
+ENTER : Seleccionar una estrella o planeta tipeando su nombre
+Ctrl+C, Ctrl+INS : Copiar dirección URL al portapapel
