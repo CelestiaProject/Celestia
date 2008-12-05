@@ -1,149 +1,212 @@
-Commandes de contrôle Souris/Clavier pour Celestia
+Commandes de contrôle Souris/Clavier/Joystick pour Celestia
 
-Commandes de contrôle Souris :
+============================
+     CONTRÔLE À LA SOURIS   
+============================
+Drag gauche .......................	Orientation de la caméra (haut, bas, gauche droite)
+clic sur aucun objet..............	Désélectionne l'objet actuellement sélectionné
+Clic droit sur un objet............	Affiche le menu contextuel de l'objet si il existe
+Faire tourner la roulette.........	S'approche ou s'éloigne de l'objet sélectionné
 
-Clique-gauche maintenu avec déplacement :    orienter la caméra
-Clique-droit maintenu avec déplacement :    orbiter l'objet sélectionné
-Roulette :    ajuster la distance par rapport à la sélection
-Clique-droit + Clique-gauche maintenus avec déplacement :    ajuster la
-                                                      distance par rapport à la sélection
-Ctrl  + Clique-gauche maintenu avec déplacement :   ajuster la distance
-                                                                   par rapport à la sélection
-Maj + Clique-gauche maintenu avec déplacement :   changer le champ
-                                                       de vue (ex. => vue télescopique)
-Clique-roulette :  basculer le champ de vue entre 45 degrés et le champ
-                                                    précédent (ex. => vue télescopique)
-Clique-gauche :    sélectionner un objet
-Double clique-gauche :    centrer la sélection
-Clique-droit :    afficher le menu contextuel
+(Ctrl + drag gauche) ou bien ( drag avec les 2 boutons enfoncés) :
+	- en bougeant la souris d'avant en arrière on s'approche ou on s'éloigne
+	- en bougeant latéralement on fait pivoter la vue.
+
+Maj + drag gauche................	Ajuste le champ de vision (CdV)
+Clic avec bouton du milieu.....	Permute le CdV entre la valeur par défaut et
+			la précédente.
+Drag droit..............................	Orbite autour de l'objet sélectionné
+Double-clic sur un objet.........	Sélectionne et centre l'objet
+Clic gauche sur un objet........	Sélectionne l'objet
+
+=================================
+       CONTRÔLE AU CLAVIER
+=================================
+_________
+Navigation
+¯¯¯¯¯¯¯¯¯
+ 1 à 9 .....................	Sélectionne la planète N°1 à 9 de l'étoile la plus proche
+ 0 (zéro)..................	Sélectionne l'étoile de la planète ou du système actuel
+
+ Échap ..................	Annule : 	scripts, Aller à, Suivre, Pister, Verrouiller,
+			et Orbite Synchrone
+ C ..........................	Centre l'objet sélectionné à l'écran
+ Maj+C....................	Centre/orbite : centre l'objet sélectionné sans changer la
+			position de l'objet de référence.
+ " ...........................	Chasser l'objet sélectionné. (L'orientation est basée sur la
+			vitesse de l'objet).
+ Retour arrière .......	Sélectionne le parent de l'obj. courant ou annule la sélection 
+		si l'objet est une étoile ou un objet du ciel lointain : annule
+		sinon :	- sélectionne le parent de l'objet
+ F ...........................	Suivre la sélection
+ G ..........................	Aller à l'objet sélectionné
+ Ctrl + G .................	Aller à la surface de l'obj. sélectionné
+ : (deux points) .......	Bloquer. Verrouille ensemble 2 objets.
+		     sélectionner le 1er et appuyez sur ......... "F'
+		     sélectionner le 2ème et pressez ............ ":"
+ Début (Home) .......	Se rapproche de la sélection
+ Fin ........................	S'éloigne de l'objet
+ * ...........................	Tourne la vue de 180° (rétroviseur)
+ H ..........................	Sélection notre Soleil. 
+ Y ..........................	Orbite synchrone. (synchro avec la rotation de l'objet)
+ T ..........................	Pister l'objet (il reste centré à l'écran)
+
+_____________________________
+Navigation par les flèches du clavier
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Flèche ..................	Incline l'observateur dans le sens de la flèche
+		( l'objet part dans la direction opposée)
+
+Maj + flèche .........	En orbite autour de l'objet dans le sens de la flèche.
+
+_________________________________________________
+Navigation par les touches du pavé numérique (Verr num actif)
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 8 ...........................	Tangage vers le bas (l'objet remonte)
+ 2 ...........................	Tangage vers le haut  (l'objet redescend)
+ 7 ...........................	Roulis à gauche (droite pour l'objet)
+ 9 ...........................	Roulis à droite    (gauche pour l'objet)
+ 5 ...........................	Stoppe la rotation
+
+ 4 ...........................	Virage à gauche (lacet)
+ 6 ...........................	Virage à droite
+
+___________________
+Mouvement (vol spatial)
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ Z ..........................	Diminue la vitesse
+ A ..........................	Augmente la vitesse
+ Q ..........................	Inverse la direction (marche arrière)
+ X ..........................	Règle la direction vers le centre de l'écran
+ F2 ........................	Règle la vitesse à 1 km/s
+ F3 .........................	Règle la vitesse à 1000 km/s
+ F4 .........................	Règle la vitesse à la vitesse de la lumière (c)
+ F5 .........................	Règle la vitesse à 10 x la vitesse de la lumière (10 . c)
+ F6 .........................	Règle la vitesse à 1 UA (Unité Astronomique) par seconde
+ F7 .........................	Règle la vitesse à 1 al/s (année lumière par seconde)
+
+F1 ou S...................	Arrête le mouvement 
+
+_______________
+Contrôle du  temps
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ Espace .................	Arrête / reprend le cours du temps et des script (bascule)
+ J ........................... Permute l'écoulement du temps vers l'avenir ou vers le passé
+ \ ...........................	Cours du temps normal. Annule un défilement + ou - rapide
+ L ...........................	Accélère 10 fois l'écoulement du temps ( avant ou arrière)
+ Maj + L .................	Accélère  2  fois l'écoulement du temps 
+ K ..........................	Ralentit   10 fois l'écoulement du temps ( avant ou arrière)
+ Maj + K .................	Ralentit    2  fois l'écoulement du temps 
+ ! ............................	Remet Celestia à au jour et à l'heure actuels (du système)
+
+ ? ........................ Affiche le trajet de la lumière de l'observateur à l'objet sélect.
+ - (tiret)................. Soustrait le temps de trajet de la lumière à celui de la simulation
+
+_________________________________________
+Pour afficher ou masquer le NOM des objets (on/off)
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ W .........................	Astéroïdes
+ Maj + W ...............	Comètes
+ = ...........................	Constellations
+ E ..........................	Galaxies
+ Maj + E .................	Amas globulaires
+ & ...........................	Points de repères
+ M ..........................	Lunes
+ Maj + M ................	Lunes mineures
+ P ..........................	Planètes
+ Maj + P .................	Planètes naines
+ N ..........................	Astronefs
+ B ..........................	Étoiles
+
+______________________________________
+Pour afficher ou masquer certains objets (on/off)
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ Ctrl + A .................	Atmosphères
+ I ............................	Nuages
+ Ctrl + T .................	Queues des comètes
+ Ctrl + B .................	Limites des constellations
+ / ...........................	Dessin des constellations
+ ; (point virgule) ......	Grille céleste
+ Ctrl + E ................	Ombre des éclipses
+ U .........................	Galaxies
+ Maj + U ................	Amas globulaires
+ Ctrl + K .................	Marqueurs sur les objets
+ ^ (+ espace) .........	Nébuleuses
+ Ctrl + L ..................	Lumières nocturnes
+ O (comme Orbite) 	Affiche TOUTES les orbites sélectionnées (v. plus bas)
+
+_________________________
+Options d'affichage et de rendu
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ { ...........................	Diminue la lumière ambiante
+ } ...........................	Augmente la lumière ambiante
+ Ctrl + X .................	Anticrénelage. Lisse les lignes affichées ( ex : orbites)
+ Ctrl + Y .................	Auto Magnitude (on/off). Adaptation automatique de la
+		visibilité des étoiles en fonction du CdV. Parfait avec l'addon
+		contenant une base de données de 2 millions d'étoiles.
+ Alt + Entrée ..........	Bascule Plein écran / mode fenêtré
+ , (virgule) ..............	Diminue le champ de vision (CdV). (aussi avec Maj + drag).
+ . (point) .................	Augmente le CdV. (également possible avec Maj + drag)
+ ( ............................	Diminue     l'éclat des galaxies - indépendant des étoiles
+ ) ............................	Augmente  l'éclat des galaxies - indépendant des étoiles
+ [ ............................	Diminue la magnitude limite d'affichage des étoiles.
+		- Si AutoMag=Off : Il s'agit de la magnitude apparente réelle
+		- Sinon il s'agit de la magnitude pour un CdV de 45 degrés.
+ ] ...........................	Augmente la magnitude limite (on voit plus d'étoiles)
+		- Même fonctionnement que ci-dessus
+ Ctrl + P .................	Marque l'objet sélectionné. L'option d'activation des 
+		marqueurs doit être active (Ctrl + K)
+ R .........................	Diminue la résolution des textures
+ Maj + R ...............	Augmente la résolution des textures
+ Ctrl + V ................	Cycle parmi les différents modes de rendu disponibles.
+ + ..........................	Bascule entre les textures de surface normales/ connues
+ % .........................	Bascule  entre les différentes tables de couleur des étoiles
+ Ctrl + S .................	Cycle entre les styles d'étoiles : 
+		points flous, points et échelle de disques.
+ V ..........................	Contrôle du texte d'information (aucun, concis, complet).
+ Ctr + W .................	Affichage "fil de fer"
+
+____________________
+Options de vues multiples
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Tabulation ............	Parcourt les différentes vues affichées
+ Suppr ...................	Supprime la vue active
+ Ctrl + D .................	Supprime toutes les vues sauf la vue active. 
+ Ctrl + U .................	Partage la vue horizontalement
+ Ctrl + U ................. Partage la vue verticalement
+
+_____________
+Autres fonctions
+¯¯¯¯¯¯¯¯¯¯¯¯¯
+ Ctrl + F ..................	Permute le mode Alt-azimuth. Utilisé avec Ctrl-G
+ F10 .......................	Capture d'image (copie d'écran)
+ Maj + F10 .............	Enregistre une animation. (vidéo)
+ F11 .......................	Pendant l'enregistrement d'une vidéo : Pause / Reprise
+ F12 ...................... 	Arrêter l'enregistrement de la vidéo
+ Ctrl + C .................	Copie la situation actuelle dans le presse-papiers (Cel://URL)
+ Ctrl + Insert ............		Idem
+ ~ + Espace .........	Informations de chargement des textures (débogage)
+		Utilisez les flèches haut-bas pour faire défiler la liste.
 
 
-Commandes de contrôle (raccourcis) Clavier :
+ `  + Espace............	Bascule l'affichage du nombre d'images par secondes
+ Ctrl + O .................	Affichage de la boîte de dialogue "sélectionner un objet" 
+ @ .........................	Bascule le mode Édition (pour aider au placement des objets)
+ F8 .........................	Active / désactive le joystick
+ D ..........................	Lance le script de démo. (/celestia/demo.cel )
+ Entrée ..................	Active le mode d'entrée d'un objet par son nom.
+	Échap pour annuler. Tapez le nom d'un objet ou d'un point de repère et
+	tapez Entrée de nouveau. Vous pouvez saisir le nom partiellement et
+	utiliser les touches Tab et Maj+Tab pour naviguer dans la liste et choisir
+	un élément. Entrée pour sélectionner l'élément en surbrillance.
 
-Navigation :
-H :    Sélectionner le Soleil (Home)
-C :    Centrer l'objet sélectionné (Center)
-G :    Aller à l'objet sélectionné (Goto)
-F :    Suivre l'objet sélectionné (Follow)
-Y :    Se mettre en orbite synchrone par rapport à l'objet sélectionné
-:  :    Verrouiller l'objet sélectionné
-"  :    Chasser l'objet sélectionné (l'orientation est basée sur la vitesse de la
-        sélection)
-T :    Pister l'objet sélectionné (garder l'objet sélectionné centré sur l'écran)
-DEBUT :    Se rapprocher d'un objet
-*  :    Vue à 180° (regarder en arrière)
-FIN :    S'éloigner d'un objet
-Echap :    Annuler un déplacement ou un script
-Maj+C :    Centrer/orbiter -- centrer l'objet sélectionné sans changer la position
-               de l'object de référence.
-Flèches directionnelles Gauche / Droite :    Pivoter la caméra dans le plan de
-                                                               l'écran
-Flèches directionnelles Haut / Bas :    Pivoter la caméra dans un plan vertical
-Maj+Flèches :    Orbiter un objet
-1-9 :    Sélectionner les planètes présentes autour d'une étoile
+===================================
+         CONTRÔLES AU JOYSTICK
+===================================
 
-Temps :
-Espace :    Arrêter le temps
-L :    Accélérer le temps > 10x plus vite
-K :    Rallentir le temps > 10x moins vite
-J :    Inverser le temps
-! :    Régler le temps sur la date actuelle 
-? :    Afficher le temps de trajet de la lumière entre l'observateur et l'objet
-       sélectionné
-- :    Activer / Désactiver l'inclusion du temps de trajet de la lumière dans
-       la date de simulation actuelle.
-
-Affichage des Noms et Repères :
-= :    Activer / Désactiver l'affichage du nom des constellations
-B :    Activer / Désactiver l'affichage du nom des étoiles
-E :    Activer / Désactiver l'affichage du nom des galaxies
-M :    Activer / Désactiver l'affichage du nom des lunes
-W :    Activer / Désactiver l'affichage du nom des comètes et astéroïdes
-N :    Activer / Désactiver l'affichage du nom des astronefs
-P :    Activer / Désactiver l'affichage du nom des planètes
-& :    Activer / Désactiver l'affichage du nom des repères
-
-V :    Basculer entre les différents niveaux d'affichage du texte d'information
-
-Options de rendu :
-I :     Activer / Désactiver l'affichage des textures de nuages
-U :    Activer / Désactiver l'affichage des galaxies
-O :    Activer / Désactiver l'affichage des orbites des planètes
-/ :    Activer / Désactiver l'affichage des constellations
-^ :    Activer / Désactiver l'affichage des nébuleuses
-% :    Basculer entre les différentes tables de couleur des étoiles
-; :    Activer / Désactiver l'affichage de la grille céleste
-[ :    Si Magnitudes Automatiques DESACTIVÉES : baisser la magnitude limite
-       (moins d'étoiles visibles)
-       Si Magnitudes Automatiques ACTIVÉES : baisser la magnitude limite à 45°
-] :    Si Magnitudes Automatiques DESACTIVÉES : augmenter la magnitude limite
-       (plus d'étoiles visibles)
-       Si Magnitudes Automatiques ACTIVÉES : augmenter la magnitude limite à 45°
-{ :    Diminuer l'intensité de la lumière ambiante
-} :    Augmenter l'intensité de la lumière ambiante
-( :    Diminuer la luminosité des galaxies indépendemment de celle des étoiles
-) :    Augmenter la luminosité des galaxies indépendemment de celle des étoiles
-, :    Réduire le champ de vue
-. :    Élargir le champ de vue
-Retour arrière :    Annuler la sélection courante
-Ctrl+A :    Activer / Désactiver l'affichage des atmosphères
-Ctrl+B :    Activer / Désactiver l'affichage des limites des constellations
-Ctrl+E :    Activer / Désactiver l'affichage du rendu des ombres des éclipses
-Ctrl+K :    Activer / Désactiver l'affichage des marqueurs
-Ctrl+L :    Activer / Désactiver l'affichage des textures nocturnes
-Ctrl+P :    Activer / Désactiver le marquage de l'objet sélectionné
-Ctrl+S :    Basculer entre les différents styles de rendu des étoiles : 
-               points flous, points, échelles de disques
-Ctrl+T :    Activer / Désactiver l'affichage du rendu des queues des comètes
-Ctrl+V :    Basculer entre les différents chemins de rendu supportés
-Ctrl+W :    Activer / Désactiver l'affichage en mode "fil de fer"
-Ctrl+X :    Activer / Désactiver l'anticrénelage
-Ctrl+Y :    Activer / Désactiver les Magnitudes automatiques = adaptation
-               automatique de la visibilité des étoiles en fonction du champ de vue
-r R :    Diminuer ou augmenter la résolution des textures
-+  :    Basculer entre les textures "artistique" et "monde connu" des planètes
-
-Vues multiples :
-Ctrl+R : Scinder la vue verticalement
-Ctrl+U : Scinder la vue horizontalement
-TAB    : Basculer entre les différentes vues actives
-DEL    : Supprimer la vue active
-Ctrl+D    : Supprimer toutes les vues sauf la vue active
-
-Voyage spatial :
-F1 :    S'arrêter 
-F2 :    Régler la vitesse sur 1 km/s
-F3 :    Régler la vitesse 1,000 km/s
-F4 :    Régler la vitesse sur celle de la lumière
-F5 :    Régler la vitesse sur 10x la vitesse de la lumière
-F6 :    Régler la vitesse 1 ua/s
-F7 :    Régler la vitesse 1 al/s
-A  :    Augmenter la vitesse
-Z  :    Diminuer la vitesse
-Q  :    Inverser la direction du déplacement
-X  :    Régler la direction du déplacement vers le centre de l'écran
-
-Clavier numérique :
-4  : Virer à gauche
-6  : Virer à droite
-8  : Pivoter vers le bas
-2  : Pivoter vers le haut
-7  : Pivoter vers la gauche
-9  : Pivoter vers la droite
-5  : Arrêter la rotation
-
-Manette de jeu :
-axe X  : Pivoter horizontalement
-axe Y : Pivoter verticalement
-bouton de gauche :    Pivoter vers la gauche
-bouton de droite :    Pivoter vers la droite
-bouton 1 :    Plus lentement
-bouton 2 :    Plus vite
-
-Autres :
-D :    Lancer la démo
-F8 :    Activer / Désactiver l'utilisation de la manette de jeu
-F10 :    Effectuer une capture d'image
-` :    Afficher le nombre d'images rendues par seconde
-Entrée :    Sélectionner un objet en tapant son nom
-Ctrl+C, Ctrl+Inser :    Copier une URL dans le Presse-Papier
+ Axe X ...................	Tourner à gauche ou à droite
+ Axe Y ..................	Incliner (tangage) vers le haut ou vers le bas
+ Manette L .............	Rotation (roulis) à gauche
+ Manette R ............	Rotation (roulis) à droite
+ Bouton 1 ..............	Ralentir
+ Bouton 2 ..............	Accélérer
