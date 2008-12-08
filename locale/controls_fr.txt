@@ -1,8 +1,8 @@
 Commandes de contrôle Souris/Clavier/Joystick pour Celestia
 
-============================
+------------------------------------------------------
      CONTRÔLE À LA SOURIS   
-============================
+------------------------------------------------------
 Drag gauche .......................	Orientation de la caméra (haut, bas, gauche droite)
 clic sur aucun objet..............	Désélectionne l'objet actuellement sélectionné
 Clic droit sur un objet............	Affiche le menu contextuel de l'objet si il existe
@@ -19,12 +19,13 @@ Drag droit..............................	Orbite autour de l'objet sélectionné
 Double-clic sur un objet.........	Sélectionne et centre l'objet
 Clic gauche sur un objet........	Sélectionne l'objet
 
-=================================
+
+------------------------------------------------------
        CONTRÔLE AU CLAVIER
-=================================
-_________
-Navigation
-¯¯¯¯¯¯¯¯¯
+------------------------------------------------------
+
+--- Navigation ---
+
  1 à 9 .....................	Sélectionne la planète N°1 à 9 de l'étoile la plus proche
  0 (zéro)..................	Sélectionne l'étoile de la planète ou du système actuel
 
@@ -51,17 +52,17 @@ Navigation
  Y ..........................	Orbite synchrone. (synchro avec la rotation de l'objet)
  T ..........................	Pister l'objet (il reste centré à l'écran)
 
-_____________________________
-Navigation par les flèches du clavier
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 
+--- Navigation par les flèches du clavier ---
+
 Flèche ..................	Incline l'observateur dans le sens de la flèche
 		( l'objet part dans la direction opposée)
 
 Maj + flèche .........	En orbite autour de l'objet dans le sens de la flèche.
 
-_________________________________________________
-Navigation par les touches du pavé numérique (Verr num actif)
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
+--- Navigation par les touches du pavé numérique (Verr num actif) ---
+
  8 ...........................	Tangage vers le bas (l'objet remonte)
  2 ...........................	Tangage vers le haut  (l'objet redescend)
  7 ...........................	Roulis à gauche (droite pour l'objet)
@@ -71,9 +72,9 @@ Navigation par les touches du pavé numérique (Verr num actif)
  4 ...........................	Virage à gauche (lacet)
  6 ...........................	Virage à droite
 
-___________________
-Mouvement (vol spatial)
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 
+--- Mouvement (vol spatial) ---
+
  Z ..........................	Diminue la vitesse
  A ..........................	Augmente la vitesse
  Q ..........................	Inverse la direction (marche arrière)
@@ -87,9 +88,9 @@ Mouvement (vol spatial)
 
 F1 ou S...................	Arrête le mouvement 
 
-_______________
-Contrôle du  temps
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
+--- Contrôle du  temps ---
+
  Espace .................	Arrête / reprend le cours du temps et des script (bascule)
  J ........................... Permute l'écoulement du temps vers l'avenir ou vers le passé
  \ ...........................	Cours du temps normal. Annule un défilement + ou - rapide
@@ -102,9 +103,9 @@ Contrôle du  temps
  ? ........................ Affiche le trajet de la lumière de l'observateur à l'objet sélect.
  - (tiret)................. Soustrait le temps de trajet de la lumière à celui de la simulation
 
-_________________________________________
-Pour afficher ou masquer le NOM des objets (on/off)
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 
+--- Pour afficher ou masquer le NOM des objets (on/off) ---
+
  W .........................	Astéroïdes
  Maj + W ...............	Comètes
  = ...........................	Constellations
@@ -118,9 +119,9 @@ Pour afficher ou masquer le NOM des objets (on/off)
  N ..........................	Astronefs
  B ..........................	Étoiles
 
-______________________________________
-Pour afficher ou masquer certains objets (on/off)
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 
+--- Pour afficher ou masquer certains objets (on/off) ---
+
  Ctrl + A .................	Atmosphères
  I ............................	Nuages
  Ctrl + T .................	Queues des comètes
@@ -135,9 +136,9 @@ Pour afficher ou masquer certains objets (on/off)
  Ctrl + L ..................	Lumières nocturnes
  O (comme Orbite) 	Affiche TOUTES les orbites sélectionnées (v. plus bas)
 
-_________________________
-Options d'affichage et de rendu
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 
+--- Options d'affichage et de rendu ---
+
  { ...........................	Diminue la lumière ambiante
  } ...........................	Augmente la lumière ambiante
  Ctrl + X .................	Anticrénelage. Lisse les lignes affichées ( ex : orbites)
@@ -156,8 +157,6 @@ Options d'affichage et de rendu
 		- Même fonctionnement que ci-dessus
  Ctrl + P .................	Marque l'objet sélectionné. L'option d'activation des 
 		marqueurs doit être active (Ctrl + K)
- R .........................	Diminue la résolution des textures
- Maj + R ...............	Augmente la résolution des textures
  Ctrl + V ................	Cycle parmi les différents modes de rendu disponibles.
  + ..........................	Bascule entre les textures de surface normales/ connues
  % .........................	Bascule  entre les différentes tables de couleur des étoiles
@@ -166,18 +165,17 @@ Options d'affichage et de rendu
  V ..........................	Contrôle du texte d'information (aucun, concis, complet).
  Ctr + W .................	Affichage "fil de fer"
 
-____________________
-Options de vues multiples
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+--- Options de vues multiples ---
+
 Tabulation ............	Parcourt les différentes vues affichées
  Suppr ...................	Supprime la vue active
  Ctrl + D .................	Supprime toutes les vues sauf la vue active. 
  Ctrl + U .................	Partage la vue horizontalement
  Ctrl + U ................. Partage la vue verticalement
 
-_____________
-Autres fonctions
-¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 
+--- Autres fonctions ---
+
  Ctrl + F ..................	Permute le mode Alt-azimuth. Utilisé avec Ctrl-G
  F10 .......................	Capture d'image (copie d'écran)
  Maj + F10 .............	Enregistre une animation. (vidéo)
@@ -200,9 +198,10 @@ Autres fonctions
 	utiliser les touches Tab et Maj+Tab pour naviguer dans la liste et choisir
 	un élément. Entrée pour sélectionner l'élément en surbrillance.
 
-===================================
+    
+-------------------------------------------------------------
          CONTRÔLES AU JOYSTICK
-===================================
+-------------------------------------------------------------
 
  Axe X ...................	Tourner à gauche ou à droite
  Axe Y ..................	Incliner (tangage) vers le haut ou vers le bas
