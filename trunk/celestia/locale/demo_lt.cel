@@ -1,0 +1,150 @@
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Demonstracijs pradžia . . .\nSpauskite ESC norėdami nutraukti demonstraciją." origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "Pradėkime nuo gimtųjų namų . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "Atstumas iki Žemės apie 12,500km " row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Su debesimis Žemė atrodo žymiai įspūdingiau." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Sekantis sustojimas: Mėnulis." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Pažvelkite į Žemę ir Saulę iš Mėnulio orbitos" row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Aplankykime Saulę." row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "Iš šio atstumo puikiai matosi tamsiosios Saulės dėmės." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Nutolkime nuo Saulės sistemos, kad galėtume ją apžvelgti." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Įjunkime planetų pavadinimus . . ." row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "Mes galime paspartinti laiką, kad išvystume planetų judėjimą." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "Šioje simuliacijoje kiekviena sekundė prabėga kaip mėnuo." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Laikas visiškai sustabdytas." row -3}
+
+	wait { duration 1.0 }
+	print { text "Sekanti stotelė Saturnas." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Keletas Saturno palydovų matomi kaip ryškūs taškai" row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "Vienas įdomesnių Saturno palydovų yra Mimas turintis įspūdingą kraterį Heršelis." row - duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Atkreipkime dėmesį, kaip atrodo mūsų Saulė iš tokio atstumo." row -3 }
+	wait { duration 2 }
+
+	print { text "Pasižvalgykime po žvaigždes." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Šiauriniame dangaus skliaute matomas Didžiųjų Grįžulo ratų žvaigždynas." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "Centre Poleris, Šiaurinė žvaigždė." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Polaris įeina į Mažųjų Grįžulo ratų žvaigždyną." row -3}
+	wait { duration 2 }
+	print { text "Kad geriau orientuotumėmės danguje, Celestia gali parodyti žvaigždynų kontūrus . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . ir žvaigždynų pavadinimus" row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orionas vienas pastebimiausių žvaigždynų danguje." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Pietiniame dangaus skliaute išsiskiria Kryžius." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Kad išvystume Paukščių Taką įjunkime galaktikų vaizdavimą" row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Keliaukime prie Antario, tai raudonoji milžinė Skorpiono žvaigždyne." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "Nors mes esame 10 kartų toliau nuo Antario nei\nŽemė nuo Saulės, masyvi raudonoji milžinė danguje atrodo išties įspūdingai." row -3}
+	wait { duration 4.0 }
+
+	print { text "Nutolkime, kad išvystume visatos didybę . . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Ekrane Paukščių Tako galaktika." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Laikas keliauti namo . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Demonstracija baigta." row -3}
+	wait { duration 3.0 }
+}

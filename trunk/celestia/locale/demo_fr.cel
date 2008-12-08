@@ -24,7 +24,7 @@
 
 	print { text "Nous sommes en orbite autour de\nla Terre à une altitude d'environ 20 000 km." row -5 column 2 duration 5 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
-	print { text "C'est encore mieux avec des nuages." row -5 column 2}
+	print { text "Voici le Terre avec ses nuages." row -5 column 2}
 	renderflags { set "cloudmaps" }
 	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
 	wait { duration 3 }
@@ -59,7 +59,7 @@
 	timerate { rate 1 }
 	print { text "Revenons en temps réel." row -5 column 2}
 	wait { duration 1.0 }
-	print { text "Prochaine destination : Saturne." row -5 column 2}
+	print { text "Destination suivante : Saturne." row -5 column 2}
 	select { object "Saturn" }
 	center { time 2 }
 	renderflags { clear "orbits" }
@@ -96,7 +96,7 @@
 	print { text "Polaris fait partie de la constellation de la Petite Ourse." row -5 column 2}
 	wait { duration 3 }
 	
-	print { text "Affichons les limites des constellations..." row -5 column 2}
+	print { text "Affichons les lignes des constellations..." row -5 column 2}
 	renderflags { set "constellations" }
 	wait { duration 3 }
 	print { text "...ainsi que leurs noms..." row -5 column 2}
@@ -132,7 +132,7 @@
 	select { object "Antares" }
 	center { time 5 }
 	wait { duration 3 }
-	print { text "Approchons nous d'Antarès,\nune étoile de la constellation du Scorpion." row -5 column 2 duration 5 }
+	print { text "Rapprochons-nous d'Antarès,\nune étoile de la constellation du Scorpion." row -5 column 2 duration 5 }
 	wait { duration 2 }
 	renderflags { clear "constellations" }
 	labels { clear "constellations|stars" }
@@ -148,9 +148,9 @@
 	changedistance { duration 10.5 rate 2.0 }
 
 	select { object "Milky Way" }
-	print { text "Voici la Voie Lactée dans sa totalité.\nC'est là que nous habitons." row -5 column 2 duration 6 }
+	print { text "Voici la Voie Lactée.\nC'est dans cette galaxie que nous habitons." row -5 column 2 duration 6 }
 	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
-	print { text "Il est temps de rentrer à la maison.\nEn avant toute, distorsion 2" row -5 column 2}
+	print { text "Il est temps de rentrer à la maison." row -5 column 2}
 
 	select { object "Sol/Earth" }
 	goto { time 20 distance 10 upframe "equatorial" }
