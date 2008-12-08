@@ -1,0 +1,76 @@
+{
+	Name   "Jupiteris"
+	Target "Sol/Jupiter"
+	Description "Jupiteris penktoji pagal nuotolá nuo Saulës planeta, dujinë milþinë. Kaip ir kitos dujinës milþinës neturi kieto pavirðiaus. Iðskirtinis akcentas Raudonoji dëmë daugiau kaip 300 metø Jupiteryje vykstantis audros sûkurys."
+}
+
+{
+	Name "Plutonas ir Charonas"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "Plutonas ir Charonas aplink Saulæ skrieja iðtásusia elipsine orbita. Tai Saulës sistemos nykðtukinë planeta. Turi palydovà Charonas, kuris panaðaus dydþio, todël neretai ðie dankaus kûnai vadinami dvinare sistema"
+}
+
+{
+	Name "Eros"
+	Target "Sol/Eros"
+	Description "Eros apytiksliai yra 33 km ilgio bulvës formos asteroidas skriejantis santykinai netoli Þemës orbitos. Kosminio aparato NEAR dëka buvo daugiau suþinota apie ðá ir kitus asteroidus.  2001 m. vasario 14 d. NEAR tapo pirmuoju kosminiu aparatu praskriejusiu ðalia asteroido ir pateikusio á þemæ daugiau informacijos."
+}
+
+{
+	Name "Alpha Centauri"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "Kentauro alfa – treèia pagal ryðká þvaigþdþiø sistema,ðviesiausia Kentauro þvaigþdyne.Nors þiûrint plika akimi Kentauro Alfa atrodo kaip vienas taðkas,ið tikrøjø tai yra þvaigþdþiø sistema,sudaryta ið trijø þvaigþdþiø.Kentauro Alfa yra artimiausia þvaigþdþiø sistema Saulei."
+}
+
+{
+	Name "Plejadës"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "Plejados – labai jaunas ir nespëjæs iðsisklaidyti spieèius. Jame gausu baltøjø milþiniø ir raudonøjø nykðtukiø. Tarp spieèiaus þvaigþdþiø yra apyskaidris atspindþio ûkas"
+}
+
+{
+	Name "Hajadës"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "Hajadës graikø mitologijoje - nimfos, neðanèios lietø, Hijo ir plejadþiø seserys, Atlanto ir Plejonës. Hajadës yra vienos ið ádomiausiø þvaigþdþiø spieèiø danguje. Manoma, kad Hajadës yra apytiksliai 660 milijonø metø senesnës nei Plajedës."
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b planeta gigantas raudonosios nykðtukës sistemoje.  Ji yra 2:1 masës kitai ðios sistemos planetai"
+}
+
+{
+	Name "Ida ir Daktilis"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "Atrado ir nufotografavo  Galilëjo zondas 1993 metais skriedamas pakeliui link Jupiterio. Nuotraukose paaiðkëjo, kad Ida turi maþà palydovà, kurá vëliau pavadino Daktiliu. Vëliau buvo atrasta dar keletas asteroidø turinèiø palydovus."
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "51 Pegasi b pirmoji atrasta planeta kitose sistemose. Tai dujø milþinas su ekstremaliai artima savo þvaigþdei orbita-atstumas maþesnis nei Merkurijaus ir Saulës. Toks netipiðkai artimas dujø milþino egziztavimas prie þvaigþdës privertë astronomus perþiûrëti Saulës sistemos formavimosi teoremas."
+}
+
+{
+	Name "Albireo"
+	Target "Albireo"
+	Distance 0.6
+	Description "Dël orandþiniø ir baltai mëlynø spalvø ði dvinariø þvaigþdþiø sistema danguje laikoma vienu graþiausiø dariniø. Orandþinë þvaigþdë K klasës milþinë, o jos kompanjonë B tipo nykðtukë"
+}
+
+{
+	Name "Boreli kometa"
+	Target "Sol/Borrelly"
+	Description "2001 metø spalio 22 dienà Boreli kometa tapo antràja kometa, kurià ið arti nufotografavo kosminis zondas. Kosminis zondas Deep Space 1 priartëjo iki 2200 kilometrø ir padarë aukðtos rezoliucijos itin detaliø kometos branduolio nuotraukø."
+}
