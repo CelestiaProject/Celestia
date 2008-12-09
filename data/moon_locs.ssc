@@ -15194,4 +15194,21 @@ Location "Vallis Snellius" "Sol/Earth/Moon"
     Type "VA"
 }
 
+# Update 2008 Dec 08, Grant Hutchison
+# -----------------------------------
 
+Location "Haworth" "Sol/Earth/Moon"
+{
+	LongLat [ -4.0 -86.9 0 ]
+	Size 35
+	Importance 14.37
+	Type "AA"
+}
+
+Location "Lenard" "Sol/Earth/Moon"
+{
+	LongLat [ 105.0 85.2 0 ]
+	Size 48
+	Importance 17.42
+	Type "AA"
+}
