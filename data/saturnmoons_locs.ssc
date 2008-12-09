@@ -2301,6 +2301,13 @@ Location "Feia Lacus" "Sol/Saturn/Titan"
 	Type "LC"
 }
 
+Location "Kivu Lacus" "Sol/Saturn/Titan"
+{
+	LongLat [ -121.0 87.0 0 ]
+	Size 77.5
+	Type "LC"
+}
+
 Location "Koitere Lacus" "Sol/Saturn/Titan"
 {
 	LongLat [ -36.1 79.4 0 ]
@@ -2466,6 +2473,13 @@ Location "LIGEIA MARE" "Sol/Saturn/Titan"
 {
 	LongLat [ -248. 79. 0 ]
 	Size 500
+	Type "ME"
+}
+
+Location "PUNGA MARE" "Sol/Saturn/Titan"
+{
+	LongLat [ -339.7 85.1 0 ]
+	Size 380
 	Type "ME"
 }
 
