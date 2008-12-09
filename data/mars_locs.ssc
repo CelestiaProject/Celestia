@@ -12513,3 +12513,22 @@ Location "Bogia" "Sol/Mars"
 	Importance 25.67
 	Type "AA"
 }
+
+# Update 2008 Dec 08, Grant Hutchison
+# -----------------------------------
+
+Location "Endeavour" "Sol/Mars"
+{
+	LongLat [ 354.77 -2.25 0 ]
+	Size 22.5
+	Importance 23.67
+	Type "AA"
+}
+
+Location "Toro" "Sol/Mars"
+{
+	LongLat [ 71.76 16.87 0 ]
+	Size 42.2
+	Importance 26.16
+	Type "AA"
+}
