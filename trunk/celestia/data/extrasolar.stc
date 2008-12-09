@@ -220,6 +220,15 @@
 	AppMag 10.5
 }
 
+1011522757 "HAT-P-8:GSC 02757-01152"
+{
+	RA 343.041250
+	Dec 5.447222
+	Distance 750
+	SpectralType "F8V" # from mass, radius, temperature, luminosity
+	AppMag 10.17
+}
+
 "HAT-P-9:GSC 02463-00281"
 {
 	RA 110.168333
