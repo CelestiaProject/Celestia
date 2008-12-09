@@ -235,8 +235,13 @@ void KdeApp::openBookmarkURL(const QString& _url) {
     appCore->goToUrl(url.prettyURL().latin1());
 }
 
-Url KdeApp::currentUrl(Url::UrlType type) const {
-    return Url(appCore, type);
+Url KdeApp::currentUrl(Url::UrlType type) const
+{
+    CelestiaState appState;
+    appState.captureState(appCore);
+    return Url(appState,
+               Url::CurrentVersion,
+               type == Url::Relative ? Url::UseSimulationTime : Url::UseUrlTime);
 }
 
 QString KdeApp::currentIcon() const {
@@ -1478,9 +1483,11 @@ void KdeApp::slotForward() {
 }
 
 void KdeApp::slotCopyUrl() {
-    Url url(appCore);
-    static QClipboard *cb = QApplication::clipboard();
-    cb->setText(url.getAsString().c_str());
+    CelestiaState appState;
+    appState.captureState(appCore);
+
+    Url url(appState, 3);
+    QApplication::clipboard()->setText(url.getAsString().c_str());
 }
 
 void KdeApp::slotGoTo() {
