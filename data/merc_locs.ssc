@@ -2174,3 +2174,108 @@ Location "Kertész" "Sol/Mercury"
 	Size 33
 	Type "AA"
 }
+
+Location "Amaral" "Sol/Mercury"
+{
+	LongLat [ -242.3 -26.4 0 ]
+	Size 106
+	Type "AA"
+}
+
+Location "Dali" "Sol/Mercury"
+{
+	LongLat [ -240.6 45.3 0 ]
+	Size 175
+	Type "AA"
+}
+
+Location "Enwonwu" "Sol/Mercury"
+{
+	LongLat [ -238.4 -9.9 0 ]
+	Size 38
+	Type "AA"
+}
+
+Location "Glinka" "Sol/Mercury"
+{
+	LongLat [ -111.7 14.8 0 ]
+	Size 86
+	Type "AA"
+}
+
+Location "Hovnatanian" "Sol/Mercury"
+{
+	LongLat [ -187.5 -7.6 0 ]
+	Size 34
+	Type "AA"
+}
+
+Location "Beckett" "Sol/Mercury"
+{
+	LongLat [ -248.8 -40.1 0 ]
+	Size 57
+	Type "AA"
+}
+
+Location "Moody" "Sol/Mercury"
+{
+	LongLat [ -215.4 -13.1 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Munch" "Sol/Mercury"
+{
+	LongLat [ -207.3 40.6 0 ]
+	Size 54
+	Type "AA"
+}
+
+Location "Navoi" "Sol/Mercury"
+{
+	LongLat [ -200. 59. 0 ]
+	Size 66
+	Type "AA"
+}
+
+Location "Nawahi" "Sol/Mercury"
+{
+	LongLat [ -214.9 36.1 0 ]
+	Size 34
+	Type "AA"
+}
+
+Location "Oskison" "Sol/Mercury"
+{
+	LongLat [ -215.3 60.6 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Poe" "Sol/Mercury"
+{
+	LongLat [ -201.2 44. 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Qi Baishi" "Sol/Mercury"
+{
+	LongLat [ -196. -4.2 0 ]
+	Size 15
+	Type "AA"
+}
+
+Location "Raden Saleh" "Sol/Mercury"
+{
+	LongLat [ -201.3 2.2 0 ]
+	Size 25
+	Type "AA"
+}
+
+Location "Sher-Gil" "Sol/Mercury"
+{
+	LongLat [ -225.5 -45.1 0 ]
+	Size 73
+	Type "AA"
+}
