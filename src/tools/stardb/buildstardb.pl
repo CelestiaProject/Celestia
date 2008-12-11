@@ -383,7 +383,7 @@ sub WriteDat {
 		my $absMag = AppMagToAbsMag($stars{$HIP}{'Vmag'}, $stars{$HIP}{'Plx'});
 		my $spType = ParseSpType($stars{$HIP}{'SpType'});
 		print DATFILE pack('LfffsS', $HIP, $xc, $yc, $zc, $absMag * 256, $spType);
-		print TXTFILE sprintf("%u  %.9f %+.9f %.6g %.2f %s\n", $HIP,
+		print TXTFILE sprintf("%u  %.9f %+.9f %.6f %.2f %s\n", $HIP,
 		                      rad2deg($stars{$HIP}{'RArad'}), rad2deg($stars{$HIP}{'DErad'}),
 							  $dist, $stars{$HIP}{'Vmag'}, $stars{$HIP}{'SpType'});
 	}
@@ -674,7 +674,7 @@ sub ParseSpType {
 			if($c eq 'I') {
 				$state = 'LumClassIIState';
 			} elsif($c eq 'V') {
-				$lumClass = $SC_LumClass{'V'};
+				$lumClass = $SC_LumClass{'IV'};
 				$state = 'EndState';
 			} elsif($c eq 'a') {
 				$state = 'LumClassIaState';
