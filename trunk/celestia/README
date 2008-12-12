@@ -50,8 +50,8 @@ COPYING).  If not, request a copy from:
   USA
 
 
-INSTALLING IN UNIX
-------------------
+INSTALLING IN UNIX AND LINUX
+----------------------------
 Type "./configure --help" for a list of options.  The basic commands are shown
 below.  For more detailed information, refer to the INSTALL file.
 
@@ -123,8 +123,8 @@ Japanese.
 
 MOUSE, KEYBOARD & JOYSTICK CONTROLS
 -----------------------------------
-See the included file: KbdMouseJoyControls.txt.  In Windows, you can also use
-the Help menu to display the Controls list.
+See the included file: controls.txt OR use the Help menu to display the Controls 
+list.
 
 
 SOLAR SYSTEM BROWSER
@@ -174,36 +174,10 @@ the prefix "HIP" should be used.
 
 KNOWN ISSUES
 ------------
-Many people have reported problems running Celestia with Matrox G400/G450 3D
-accelerator cards.  As I don't have a Matrox card, I haven't made much
-progress on this bug.  If you do have a G400, have Visual C++ installed, and
-would be interested in testing a debug version of Celestia, please contact me.
-
-The maximum texture size supported by the Voodoo 1/2/3 is 256x256, so many of
-the planet textures will look blurry when running Celestia on one of these
-cards.
-
-On 3D accelerator cards with a limited amount of memory, resizing the main
-Celestia window can cause textures to disappear.  This occurs because so much
-memory is required for the frame buffer that there's not enough left for
-textures.  There are a several workarounds:
-  - Use a smaller window
-  - Make sure your display is set to 16-bit (high color) mode
-  - Try running Celestia in full screen mode
-
-Celestia only barely works in 256 color mode.  If your display is set to 256
-colors, change it to 16-bit or 32-bit if at all possible.
-
-If objects look good at a distance but get too dark when you approach them
-closely, your OpenGL driver does not support a required extension.  Try
-upgrading to the most current version of drivers available for your card.  For
-some older cards, this still won't fix the problem.  The next version of
-Celestia will feature a workaround.
-
 For up-to-the-minute answers to some common problems encountered when running
-Celestia, please view the "preliminary Celestia User's FAQ" located on the
-Celestia User's Forum:
-  http://www.shatters.net/forum/viewtopic.php?t=2291
+Celestia, please view either the FAQ in the Help menu or take a look at the 
+"Celestia User's FAQ" located on the Celestia User's Forum: 
+http://www.shatters.net/forum/
 
 
 USER MODIFIABLE ELEMENTS
@@ -224,76 +198,11 @@ types of catalog files:
 All three types of catalog file are text files that can be updated with your
 favorite text editing program.
 
-The units used for the solar system data may not be obvious.  All angle fields
-in the catalog are in degrees.  For planets, the period is specified in earth
-years, and the semi-major axis in AU; for satellites, days and kilometers are
-used instead.
-
-When adding objects, they should be included in their own sub-directory under
-Celestia's "extras" directory.  For example:
-  celestia <dir>
-    extras <dir>
-      yourNewObject <dir>
-        about.txt
-        install.txt
-        object.dsc
-        object.ssc
-        object.stc
-        models <dir>
-          object.3ds
-          object.cmod
-          object.cms
-        textures <dir>
-          medres <dir>
-            objectTexture.??? (jpg, png, dds, or bmp)
-
-YOU create each of the directories under the extras directory.  By using this
-structure, activating and de-activating your new objects will be easy.  Simply
-move the sub-directory "yourNewObject" outside of the extras directory.  Some
-users have found that adding category-name sub-directories under extras to be
-useful, such as:
-  celestia
-    extras
-      Deep Sky Objects
-        yourNewObject
-      Galaxies
-        yourNewObject
-      Spacecraft
-        yourNewObject
-
-Texture files should be placed in textures/medres, as shown above.  Currently,
-JPEG, PNG, BMP, and DDS are the only formats supported.
-
-Models belong in the models directory.  Celestia can read 3DS models, and two
-custom formats (.cms and .cmod).  The .cms files are currently used for rough
-fractal displacement map likenesses of asteroids and small moons.  3DS meshes
-are normalized to fit within a unit cube -- the Radius field determines how
-big they appear within Celestia.
-
-Most of the stars in Celestia are defined in the binary file stars.dat.
-The binary format is used instead of a text stc file because it's more
-compact and faster to load; the size and speed advantages of a binary file
-are significant with the over 100,000 stars in the Celestia.  Stars.dat was
-generated from the HIPPARCOS data set. Revisions and additions to the
-HIPPARCOS data set appear in the stc files revised.stc, nearstars.stc, 
-visbins.stc (visual binary stars), and spectbins.stc (spectroscopic binary
-stars.)
-
-There are two very helpful resources with much more detailed information
-about creating add-ons for Celestia:
-Selden's "Introduction to Celestia Add-ons" web page:
-  http://www.lns.cornell.edu/~seb/celestia/addon-intro.html
-The catalog file reference on the Celestia Wikibook:
-  http://en.wikibooks.org/wiki/Celestia/Catalog_File_Reference
-
 
 CELESTIA RESOURCES
 ------------------
 Celestia Web Site:
   http://www.shatters.net/celestia/
-
-Celestia Source Repository (SourceForge.net):
-  http://sourceforge.net/projects/celestia/
 
 Celestia User Forums:
   http://www.shatters.net/forum/
@@ -301,15 +210,24 @@ Celestia User Forums:
 Selden's List of Resources for Celestia :
   http://www.lepp.cornell.edu/~seb/celestia/
 
+Celestia WikiBook: 
+  http://en.wikibooks.org/wiki/Celestia      
+
 Celestial Matters Website and Forums:
   http://www.celestialmatters.org/
   http://forum.celestialmatters.org/
+
+Celestia Motherlode:
+  http://www.celestiamotherlode.net/
 
 Celestia Developer Center
   http://celestia.teyssier.org/
 
 Celestia for Gnome
   http://pat.suwalski.net/celestia/
+
+Celestia Source Code (SourceForge.net):
+  http://sourceforge.net/projects/celestia/
 
 
 CREDITS
@@ -352,7 +270,8 @@ in gaps.  The model of the Galileo spacecraft is also from David Seal's site
 (though it was converted from Inventor to 3DS format.)
 
 The Mars, Neptune, and Uranus textures and Mars, Moon and Mercury bump maps are
-all from James Hastings-Trew's collection, and the Mercury texture is a recolored 
+all from James Hastings-Trew's collection, and the Mercury texture is a 
+recolored 
 version of his. Some of the prettiest planet maps around are at: 
   http://gw.marketingden.com/planets/planets.html
 
@@ -466,7 +385,8 @@ merged with reprojected images from earlier Voyager missions. It was
 color-mapped by computer, using the near true-color template, 
 http://photojournal.jpl.nasa.gov/catalog/PIA06167
   
-Fridger Schrempp created the Lunar topography map, using Clementine laser altimeter
+Fridger Schrempp created the Lunar topography map, using Clementine laser 
+altimeter
 data, merged in the polar regions with topographic data  from Clementine 750 nm 
 oblique and nadir images, 
 ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/
@@ -497,6 +417,7 @@ information, developed by Caltech/JPL under contract to NASA.
 A special thank you goes to all Celestia users who submit bug reports,
 suggestions, and fixes.  Celestia wouldn't be the program it is today, without
 your help.
+
 
 Chris Laurel
   <claurel@gmail.com>
