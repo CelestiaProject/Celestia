@@ -1,0 +1,153 @@
+# Celestia標準のdemo.celの日本語訳です。UTF-8で保存されています。
+# 日本語フォントを適用して実行してください。
+
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "デモを始めています。\n終了するにはEscを押してください。" origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "ではまず我々の星、地球から見てみましょう。" row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "ただいま地球上空12500kmを回っています。" row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "雲があるとより馴染み深く見えてきます。" row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "次は月です。" row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "月を回りながら、地球と太陽を見てみましょう。" row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "では、太陽に向かいます。" row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "この距離からならば、太陽の表面に黒点があるのがはっきりと見えます。" row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "それではズームアウトして、太陽系内側の惑星全体を見てみましょう。" row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "惑星表示をONにします。" row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "時間を縮めて見てみれば、惑星が太陽の周りを回っているのが見えてきます。" row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "ただいま1ヶ月を1秒で表示しています。" row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "時間の速さを元に戻します。" row -3}
+
+	wait { duration 1.0 }
+	print { text "次は土星です。" row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "土星のいくつかの衛星が明るい点となって見えています。" row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "土星の衛星の1つ、ミマスの大きな特徴は、ハーシェルと名づけられた大きなクレーターです。" row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "この距離だと太陽も随分小さくなりました。" row -3 }
+	wait { duration 2 }
+
+	print { text "この辺で星空でも眺めてみましょう。" row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "おおぐま座の北斗七星が見えているのがお分かりでしょう。" row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "北極星をご覧ください。" row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "北極星は小北斗とも呼ばれるこぐま座の一部です。" row -3}
+	wait { duration 2 }
+	print { text "Celestiaでは星空を分かりやすくする為に…" row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text "星座線や星座名を表示する事ができます。" row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "オリオン座は全天で最も目立つ星座です。" row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "みなみじゅうじ星は南天では非常に目立ちます。" row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "銀河・星雲の表示をONにして、天の川を眺めてみましょう。" row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "ではさそり座の巨星・アンタレスまで行ってみましょう。" row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "太陽と地球の10倍の距離から見ていますが、\nそれでもなお大きく見えています。" row -3}
+	wait { duration 4.0 }
+
+	print { text "では、もっと遠くまで行ってみましょう。" row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "われわれの銀河系の全体像です。" row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "さてもう帰る時間です…" row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "終了です、おつかれさまでした。" row -3}
+	wait { duration 3.0 }
+}
