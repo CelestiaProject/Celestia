@@ -1,0 +1,139 @@
+Muis en toetsenbord besturing in Celestia
+
+Muis Functies:
+
+Links slepen:                orienteer camera
+Rechts slepen:               omloopbaan om het geselecteerde object
+Wiel:                        afstand tot selectie aanpassen
+Rechts + links slepen:       afstand tot selectie aanpassen
+Ctrl  + links slepen:        afstand tot selectie aanpassen
+Shift + links slepen:        verander weergaveveld (bijv. => telescoop weergave)
+Wiel (middelste knop) klik:  verander weergaveveld tussen 45 graden
+                             en het vorige weergaveveld (bijv. telescoop weergave)
+Links - klik:                selecteer object 
+Links dubbelklik:            selectie centreren
+Rechts - klik:               context menu weergeven
+
+Toetsenbord commando's:
+
+Navigatie:
+H    : Selecteer de Zon (Thuis)
+C    : Centreer op geselecteerd object
+G    : Ga naar geselecteerd object
+F    : Achtervolg geselecteerd object
+Y    : Ga in omloopbaan van het geselecteerde object gesynchroniseerd met zijn rotatiesnelheid
+:    : Vastzetten op geselecteerd object
+"    : Geselecteerd object najagen (orientatie is gebaseerd op selectie's snelheid)
+T    : Volg geselecteerd object (houd geselecteerd object gecentreerd in weergave)
+HOME : Verplaats dichterbij naar object
+*    : Kijk terug
+END  : Verplaats verderaf van object
+ESC  : Annuleer beweging of script
+Shift+C : Centreer/omloopbaan--centreer het geselecteerde object zonder de positie van het referentie
+          object te veranderen.
+Left/Right Arrows : Roll camera
+Up / Down Arrows  : Verander Camera Pitch
+Shift+Arrows      : Omloopbaan om object
+1-9  : Selecteer planeten om de dichtsbijzinde ster
+
+Tijd:
+Space   : stop tijd
+L       : Tijd 10x sneller
+Shift+L : Tijd 2x sneller
+K       : Tijd 10x langzamer
+Shift+K : Tijd 2x langzamer
+J       : Tijd omkeren
+!       : Zet tijd naar nu
+?       : Geeft licht-reis vertraging tussen observator en geselecteerd object weer
+-       : Trek licht-reis vertraging van huidige simulatietijd af
+
+Labels:
+=  : Sterrenbeeld labels (de)activeren
+B  : Ster labels (de)activeren
+E  : Sterrenstelsel labels (de)activeren
+M  : Maan labels (de)activeren
+W  : Asteroïde en komeet labels (de)activeren
+N  : Ruimtevaartuig labels (de)activeren
+P  : Planeet labels (de)activeren
+&  : Lokatie labels (de)activeren
+
+V  : Hoeveelheid van informatie tekst veranderen
+
+Opties:
+I  : Wolken weergave (de)activeren
+U  : Sterrenstelsel weergave (de)activeren
+O  : Planeetomloopbanen weergave (de)activeren
+/  : Sterrenbeelddiagrammen weergave (de)activeren
+^  : Nevellen weergave (de)activeren
+%  : Sterrenkleur tabellen (de)activeren
+;  : Een Aarde-gebaseerd equatoriaal coordinaten bol weergeven (de)activeren
+[  : Als autoMag UIT is: Verminder schijnbare helderheid limiet (minder sterren zichtbaar)
+     Als autoMag AAN is: Verminder schijnbare helderheid limiet bij 45 graden zichtsveld 
+]  : Als autoMag UIT is: Vergroot schijnbare helderheid limiet (meer sterren zichtbaar)
+     Als autoMag AAN is: Vergroot schijnbare helderheid limiet bij 45 graden zichtsveld 
+{  : Verminder omgevingslicht
+}  : Vergroot omgevingslicht
+(  : Verminder sterrenstelsel helderheid onafhankelijk van helderheid van sterren
+)  : Vergroot sterrenstelsel helderheid onafhankelijk van helderheid van sterren
+,  : Zichtsveld verminderen
+.  : Zichtsveld vergroten
+Backspace: Huidige selectie annuleren
+Ctrl+A : Atmosferen weergave (de)activeren
+Ctrl+B : Sterrenbeeldgrenzen weergave (de)activeren 
+Ctrl+E : Eclips schaduw weergave (de)activeren
+Ctrl+K : Markers weergave (de)activeren
+Ctrl+L : Nachtzijde (lichtvervuiling) van planeetkaarten weergave (de)activeren
+Ctrl+P : Markeer geselecteerd object
+Ctrl+S : Verander de sterrenstijl tussen vage punten, punten en geschaalde schijven
+Ctrl+T : weergave van komeetstaarten (de)activeren
+Ctrl+V : Verander ondersteunde OpenGL weergave methoden
+Ctrl+W : Draadmodel modus (de)activeren
+Ctrl+X : Antialias lijnen (de)activeren
+Ctrl+Y : autoMag (de)activeren = auto adaptatie van ster zichtbaarheid aan zichtsveld   
+r R: verlaag of verhoog de texture resolutie
++  : Verander tussen artistieke en limiet van kennis planeet texturen
+
+MeerdereVensters:
+Ctrl+R : Verdeel weergave vertikaal
+Ctrl+U : Verdeel weergave horizontaal
+TAB    : Verander actieve weergave
+DEL    : Verwijder actieve weergave
+Ctrl+D : Verwijder alle weergaves behalve de actieve weergave
+
+Ruimtevlucht:
+F1 : Stop 
+F2 : Zet snelheid naar 1 km/s
+F3 : Zet snelheid naar 1,000 km/s
+F4 : Zet snelheid naar lichtsnelheid
+F5 : Zet snelheid naar 10x lichtsnelheid
+F6 : Zet snelheid naar 1 AU/s
+F7 : Zet snelheid naar 1 ly/s
+A  : Vergroot snelheid
+Z  : Verklein snelheid
+Q  : Richting omkeren
+X  : Zet verplaatsrichting naar midden van het scherm
+
+Nummeriek toetsenbord:
+4  : Yaw links
+6  : Yaw rechts
+8  : Pitch omlaag
+2  : Pitch omhoog
+7  : Roll links
+9  : Roll rechts
+5  : Stop rotatie
+
+Joystick:
+X as : yaw
+Y as : pitch
+L knop : roll links
+R knop : roll rechts
+Button 1 : langzamer
+Button 2 : sneller
+
+Andere:
+D   : Start demo
+F8  : Joystick activeren
+F10 : Afbeelding naar bestand opslaan
+`   : Weergegeven frames per seconde weergeven
+ENTER : Selecteer een ster of planeet door zijn naam te typen
+Ctrl+C, Ctrl+INS : Lokatie URL naar klembord kopiëren

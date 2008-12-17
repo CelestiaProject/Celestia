@@ -1,0 +1,153 @@
+#Deutsche Überstzung von Ulrich Dickmann, Andreas Wagner und Christian Lenz, März 2008
+
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps|galaxies" }
+	print { text "Starte Demo . . .\nZum Beenden ESC drücken." origin "center" duration 2 }
+	wait { duration 2.5 }
+
+	print { text "Beginnen wir die Reise in der Nähe der Erde . . ." row -3 duration 3}
+	wait { }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 4.0 position [ 0 0 20000 ] }
+	wait { duration 4.1 }
+	center { time 0.1 }
+	wait { duration 0.1 }
+	follow {}
+
+	print { text "Wir sind nun in einer Umlaufbahn um die Erde,\nin ungefähr 13.600 km Höhe." row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Die Erde sieht mit Wolken deulich vertrauter aus." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Nächster Halt: der Mond." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Halten Sie Ausschau nach der Erde und der Sonne,\nwährend wir den Mond umkreisen." row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Auf zur Sonne." row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "In dieser Entfernung sind die dunklen Sonnenflecken\nauf der Oberfläche sichtbar." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Verschaffen wir uns nun einen Überblick über das innere Sonnensystem." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Planetenbezeichnungen werden eingeschaltet . . ." duration 3.0 row -3}
+	labels { set "planets" }
+	wait { duration 4.0 }
+	print { text "Wir können die Zeit beschleunigen, um die Bewegung der\nPlaneten um die Sonne zu beobachten." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "In der Simulation vergeht nun pro Sekunde ein ganzer Monat." row -3}
+        wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Jetzt steht die Zeit komplett still." row -3}
+
+	wait { duration 2.0 }
+	print { text "Unser nächstes Ziel ist der Saturn." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Einige der Saturnmonde sind als helle Punkte sichtbar." row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "Das hervorstechendste Merkmal des Saturnmondes Mimas\nist der riesige Einschlagskrater Herschel." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Beachten Sie, wie schwach leuchtend die Sonne in dieser Entfernung erscheint." row -3 }
+	wait { duration 4 }
+
+	print { text "Werfen wir nun einen Blick auf die Sterne am Himmel." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Bewohner der Nordhalbkugel sollten den großen Wagen\nim Sternbild 'Großer Bär' erkennen." row -3 duration 3 }
+	wait { duration 5 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "Jetzt sehen wir in der Mitte den Polarstern." row -3}
+	wait { duration 2 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Der Polarstern ist Teil des Sternbilds 'Kleiner Wagen'." row -3}
+	wait { duration 2 }
+	print { text "Um uns die Orientierung am Himmel zu erleichtern, kann\nCelestia die Linien der Sternbilder anzeigen . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 4 }
+	print { text ". . . und die Namen der Sternbilder." row -3}
+	labels { set "constellations" }
+	wait { duration 4 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orion ist das hervorstechendste Sternbild am Himmel." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Das Kreuz des Südens ist ein vertrauter Anblick auf der Südhalbkugel." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Schalten wir nun die Darstellung von Galaxien ein,\nso dass wir die Milchstraße sehen können." row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Wir fliegen nun zu Antares, einem roten Riesen im Sternbild Skorpion." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "Obwohl wir nun 23-mal weiter von Antares entfernt sind\nals die Erde von der Sonne, erscheint der rote Riese \nvon gewaltiger Größe im All." row -4}
+	wait { duration 6.0 }
+
+	print { text "Betrachten wir das Ganze einmal aus größerer Entfernung . . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Wir sehen nun die gesamte Milchstraße." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Es ist an der Zeit, nach Hause zurückzukehren . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Demo beendet." row -3}
+	wait { duration 3.0 }
+}
