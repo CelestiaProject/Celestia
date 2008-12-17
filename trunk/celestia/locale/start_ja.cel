@@ -1,0 +1,302 @@
+{
+# スクリプト開始
+
+#****************************************************************************
+#                                                                           *
+#                     START.CEL - Celestia起動スクリプト                    *
+#                           (version 2.1 日本語版)                          *
+#                                                                           *
+#---------------------------------------------------------------------------*
+#                                                                           *
+#  このスクリプトはCelestia起動の際に自動的に読み込まれます。　             *
+#                                                                           *
+#  注意: 最初の行と最後の行にある中括弧"{"と"}"は消さないでください。       *
+#        これによりCELスクリプトを認識しています。                          *
+#                                                                           *
+#  必要に応じて好きなようにこのスクリプトをカスタマイズできます。           *
+#  下に記述してあるコマンド行のコメントを単に外すだけです。                 *
+#  各コマンドにその動作について書かれています。                             *
+#  コメントを外すには，行頭の"#"を 消してください。                         *
+#                                                                           *
+#  もしこのスクリプトを修正したいのならば，後で見直せるようにコピーを       *
+#  とっておくことを強く推奨します。                                         *
+#                                                                           *
+#****************************************************************************
+
+  preloadtex { object "Sol/Earth" }
+  preloadtex { object "Sol/Earth/Moon" }
+
+  select {object "Sol"}
+  goto   {time 3.0 distance 30}
+  wait   {duration 3.0}
+
+  select {object "Sol/Earth"}
+  follow {}
+  goto   {time 3.0  distance 6.0}
+  wait   {duration 2.0}
+
+  print  {text "Celestiaへようこそ!"  row -3  column 1  duration 3}
+  wait   {duration 3.0}
+
+#****************************************************************************
+#  上の行にはstart.celの動作全体が書かれています。次にそれぞれのコマンドの  *
+#  動作を解説します。スクリプトではまず太陽に移動します。よって地球に移動   *
+#  する際には現在の時刻設定如何に関わらず，太陽の光が当たっている面が表示   *
+#  されます。                                                               *
+#                                                                           *
+#  preloadtex: 指定した天体のテクスチャを読み込みます。                     *
+#          通常は天体に接近した時に読み込みますが，事前に行う事によって     *
+#          この時の表示の遅れを回避する事ができます。                       *
+#                                                                           *
+#  select: 天体を選択します。"Sol"は太陽です。スラッシュ記号"/"に続けて     *
+#          その子天体を選択できます。地球は"Sol/Earth"となります。          *
+#          月を選択する場合は次の様にしてください:                          *
+#           select {object "Sol/Earth/Moon"}                                *
+#                                                                           *
+#  goto:   選択中の天体に移動します。"G"キーを押したのと同様です。          *
+#          time項では移動するのにかける時間を指定します。distance項では     *
+#          天体との距離を指定します。天体の中心が基準で，天体の半径が       *
+#          単位になっています。例えば天体の半径が10000kmで，distance項に    *
+#          6.0を設定した場合は，到達する距離は50000kmと表示されます。       *
+#                                                                           *
+#  wait:   gotoコマンドは視点移動を伴うため，実際に動作させるには同じ       *
+#          時間だけ待つ必要があります。この例では太陽に移動する場合，       *
+#          gotoコマンドに3秒かかるのでwaitコマンドで3秒待っています。       *
+#          duration項の値は通常gotoコマンドの同項と同じにします。           *
+#          しかし例外もあります。                                           *
+#                                                                           *
+#          上の例で地球に移動している場合，gotoコマンドの後に来ている       *
+#          waitコマンドは2秒しか待っていません。次のコマンドはテキストを    *
+#          表示するprintコマンドであり，そこでまたその後に3秒待っています。 *
+#          すべてはタイミングの問題です。gotoコマンドは実行中にprintコマ    *
+#          ンドを実行する事ができ，移動中にテキストを表示する事ができます。 *
+#          よって，gotoコマンドの後に続く複数個のwaitコマンドのduration項の *
+#          値の合計が，duration項のgotoコマンドの継続時間と少なくとも同じに *
+#          なるようにしてください。もちろん必要ならばそれより多くしても     *
+#          構いません。                                                     *
+#                                                                           *
+#  follow: 選択中の天体に春分点同期で追尾します。"F"キーを押したのと同様    *
+#          です。コマンドをfollow {} とする代わりにsynchronous {}とすると   *
+#          自転同期で追尾します。静止衛星の様に選択中の天体を周回します。   *
+#                                                                           *
+#   print: テキストを表示させます。text項は表示するテキストを指定します。   *
+#          row項ではCelestia画面の下から何行ずらして表示させるかを指定しま  *
+#          す。column項ではCelestia画面の左から何行ずらして表示させるかを   *
+#          指定します。duration項はテキストを表示する時間の長さを設定し     *
+#          ます。そして上の例では更にwaitコマンドが続きます。               *
+#****************************************************************************
+
+
+#****************************************************************************
+#  地球の特定の地点に移動したい場合は，次のgotolonglatコマンドを使用して    *
+#  ください。順を追って説明します。                                         *
+#                                                                           *
+#  * 行全体をコピーしてください。                                           *
+#                                                                           *
+#  * 行頭の"#"を削除してください。これによりコマンドが実行されるように      *
+#    なります。                                                             *
+#                                                                           *
+#  * オリジナルのgotoコマンドの行頭に"#"を追加してください。これによりコマ  *
+#    ンドがコメントアウトされ，実行されなくなります。                       *
+#                                                                           *
+#  * 移動したい場所にlongitude項(経度)とlatitude項(緯度)を設定してください。*
+#                                                                           *
+#  * 地球の特定の場所へ飛ぶ場合，そこは常に昼間とも限りません。ファイルの   *
+#    頭にある次の行は先頭に"#"を追加してコメントアウトしてください。        *
+#      select {object "Sol"}                                                *
+#      goto   {time 3.0 distance 30}                                        *
+#      wait   {duration 3.0}                                                *
+#    もしも指定した場所を常に昼間の状態で移動させたい場合は，次のtimeコマ   *
+#    ンドを使用して適切な時間を指定してください。                           *
+#****************************************************************************
+
+#  gotolonglat {time 5.0  distance 4.0  longitude 0.0  latitude 0.0}
+
+
+#****************************************************************************
+#  常にある決まったシミュレーション時刻でCelestiaを起動したい場合は，       *
+#  次に示すtimeコマンドを使ってください。                                   *
+#                                                                           *
+#  警告: 常に決まった時刻でCelestiaを起動している時に，現在時刻に設定したい *
+#  場合は"!"キーを押す必要があります。                                      *
+#                                                                           *
+#  順を追って説明します。                                                   *
+#                                                                           *
+#  * 設定する日時の形式を年月日時分秒かユリウス日か決めてください。         *
+#    (下記参照)                                                             *
+#                                                                           *
+#  * 使用したいtimeコマンドの行をコピーしてください。                       *
+#                                                                           *
+#  * ファイルの先頭の方の"goto"コマンドの上にペーストしてください。         *
+#                                                                           *
+#  * 行頭の"#"を削除してください。コマンドが実行されるようになります。      *
+#                                                                           *
+#  * 日時の値を設定してください。                                           *
+#****************************************************************************
+
+# 時刻を年月日時分秒(UTC)で指定する場合
+#  time { utc "2003-08-11T09:29:24.0000" }
+#              YYYY-MM-DDTHH:MM:SS.SSSS
+#                        ↑日付と時刻の間に"T"の字が必要です。
+# ユリウス日で指定する場合
+#  time { jd JulianDate }
+#    アメリカ海軍サイトによるユリウス日コンバータ(英語): 
+#    http://aa.usno.navy.mil/data/docs/JulianDate.html
+
+
+#****************************************************************************
+#  次のコマンドではCelestiaの表示設定をします。Celestiaを起動する度に       *
+#  指定した値で設定されます。必要に応じて修正してください。                 *
+#****************************************************************************
+
+# 視野 (必要に応じてコメントを外して修正してください)
+# デフォルトは画面サイズが1024 x 768の時で25°です。
+#  set {name "FOV" value 25.0}
+
+
+# 周辺光の強さ (必要に応じてコメントを外して修正してください)
+# 0.0から0.5あたりが適当です。
+#  set {name "AmbientLightLevel" value 0.1}
+
+
+# 限界等級 (明るさ)
+# (必要に応じてコメントを外して修正してください)
+# 0.8から15.2の間で変化します。デフォルトは6.0です。
+#
+#  setvisibilitylimit {magnitude 6.0}
+
+
+# 自動限界等級調整で45°での限界等級です。デフォルトは8.5です。
+# (必要に応じてコメントを外して修正してください)
+#  setfaintestautomag45deg {magnitude 8.5}
+
+
+# 表示の調整:
+# 表示しない場合 (必要に応じてコメントを外してください)
+#  renderflags {clear "atmospheres"}
+#  renderflags {clear "automag"}
+#  renderflags {clear "boundaries"}
+#  renderflags {clear "cloudmaps"}
+#  renderflags {clear "comettails"}
+#  renderflags {clear "constellations"}
+#  renderflags {clear "eclipseshadows"}
+#  renderflags {clear "galaxies"}
+#  renderflags {clear "nebulae"}
+#  renderflags {clear "grid"}
+#  renderflags {clear "markers"}
+#  renderflags {clear "nightmaps"}
+#  renderflags {clear "orbits"}
+#  renderflags {clear "planets"}
+#  renderflags {clear "pointstars"}
+#  renderflags {clear "ringshadows"}
+#  renderflags {clear "stars"}
+#  renderflags {clear "partialtrajectories"}
+
+
+# 表示の調整:
+# 表示する場合 (必要に応じてコメントを外してください)
+#  renderflags {set "atmospheres"}
+#  renderflags {set "automag"}
+#  renderflags {set "boundaries"}
+#  renderflags {set "cloudmaps"}
+#  renderflags {set "comettails"}
+#  renderflags {set "constellations"}
+#  renderflags {set "eclipseshadows"}
+#  renderflags {set "galaxies"}
+#  renderflags {set "nebulae"}
+#  renderflags {set "grid"}
+#  renderflags {set "markers"}
+#  renderflags {set "nightmaps"}
+#  renderflags {set "orbits"}
+#  renderflags {set "planets"}
+#  renderflags {set "pointstars"}
+#  renderflags {set "ringshadows"}
+#  renderflags {set "stars"}
+#  renderflags {set "partialtrajectories"}
+
+
+# 名称表示:
+# 表示しない場合 (必要に応じてコメントを外してください)
+#  labels {clear "asteroids"}
+#  labels {clear "constellations"}
+#  labels {clear "galaxies"}
+#  labels {clear "moons"}
+#  labels {clear "planets"}
+#  labels {clear "spacecraft"}
+#  labels {clear "stars"}
+
+
+# 名称表示:
+# 表示する場合 (必要に応じてコメントを外してください)
+#  labels {set "asteroids"}
+#  labels {set "constellations"}
+#  labels {set "galaxies"}
+#  labels {set "moons"}
+#  labels {set "planets"}
+#  labels {set "spacecraft"}
+#  labels {set "stars"}
+
+
+# マーカー制御:
+# マーカーをすべて解除し，マーカー表示をOFFにします。
+# (必要に応じてコメントを外してください)
+#  unmarkall { }
+
+
+# 軌道を表示する最小の直径の大きさ (ピクセル)。
+# (必要に応じてコメントを外して修正してください)
+#  set {name "MinOrbitSize"  value 1.0}
+
+
+# 表示する恒星の限界距離。デフォルトは1000000です。
+# (必要に応じてコメントを外して修正してください)
+#  set {name "StarDistanceLimit"  value 1000000}
+
+
+# シミュレーション時間の速さ (1倍，100倍，1000倍，...)。
+# (必要に応じてコメントを外して修正してください)
+#          負の数値 = 逆方向
+#               0   = 時間を停止
+#               1.0 = 実時間の速さ
+#            1000.0 = 公転を見るのに適した速さ
+#
+#  timerate {rate 1.0}
+
+
+#****************************************************************************
+#  もし大きなサイズのテクスチャを使う場合は，下記の様にリストする事によって *
+#  事前にグラフィックカードのメモリに読み込む事ができます。                 *
+#****************************************************************************
+# 例
+#  preloadtex {object "earth.*"}
+#  preloadtex {object "earth.png"}
+
+
+#****************************************************************************
+#  天体を周回するコマンドです。回転軸は[X Y Z]の順に書かれ，値は0か1のどち  *
+#  らかを取ります。rate項は回転の速さを指定し，duration項は回転する時間を   *
+#  指定します。なお，必ず何かしらの天体が選択されているようにしてください。 *
+#****************************************************************************
+#  orbit {axis [0 1 0]  rate 10.0  duration 7.0}
+
+
+#****************************************************************************
+#  Celestiaでのスクリプトについての詳細                                     *
+#                                                                           *
+#   * 公式掲示板(英語): (http://www.shatters.net/forum/viewforum.php?f=9)   *
+#   * Don G's Celestia page(英語): (http://www.donandcarla.com/Celestia/)   *
+#   * Harald's Celestia page(英語): (http://www.h-schmidt.net/celestia/)    *
+#                                                                           *
+#  Don G氏によるページには.CELスクリプトについて，Harald氏によるページには  *
+#  .CELX(Lua)スクリプトについて書かれています。どちらのページにも           *
+#  サンプルスクリプトやその他便利なコンテンツがあります。                   *
+#                                                                           *
+#  (訳注)                                                                   *
+#  日本語による解説はこちらを参照してください。                             *
+#  Celestia解説ページ: http://celestia.aqsp.net/                            *
+#                                                                           *
+#****************************************************************************
+
+
+# スクリプト終了
+}

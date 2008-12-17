@@ -1,0 +1,142 @@
+Контролиране на Селестия с мишката и клавиатурата
+
+Функци на мишката:
+
+Влачене на ляво:                     ориентира камерата
+Влачене на дясно:                    влизане в орбита около избрания обект
+Колело:                              наглася дистанцията до избрания обект
+Дясно + Влачене на ляво:             наглася дистанцията до избрания обект
+Ctrl  + Влачене на ляво:             наглася дистанцията до избрания обект
+Shift + Влачене на ляво:             променя зрителното поле (например =>
+                                     телескопичен изглед)
+Натискане на колело (среден бутон):  сменя зрителното поле от 45 градуса
+                                     с предишното поле (примерно
+                                     телескопичен изглед)
+                                     
+Ляво - натискане:        избира обект
+Ляво двойно натискане:   сентрира селекцията
+Дясно - натискане:       показва контекстното меню
+
+Команди от клавиатурата:
+
+Навигация:
+H    : Избира Слънцето (Начало)
+C    : Центриране върху избрания обект
+G    : Отива до избрания обект
+F    : Следва избрания обект
+Y    : Влиза в орбита около избрания обект със скорост, синхронизирана с
+       тази на обекта
+:    : Заключва избрания обект
+"    : Гони избрания обект (ориентацията е базирана на скоростта на селекцията)
+T    : Следи избрания обект (запазва избраните обекти в центъра)
+HOME : Приближава се към обекта
+*    : Поглед назад
+END  : Отдалечава се от обект
+ESC  : Отказва движение или разходка
+Shift+C : Center/orbit--center the selected object without changing the
+           position of the reference object.
+Лява/Дясна стрелки : Върти камерата
+Горна / Долна стрелки  : Променя начина на спускане на камерата
+Shift+Стрелки     : Орбита около обект
+1-9  : Избира планети около близко слънце
+
+Време:
+Space : спира времето
+L     : Време 10x по-бързо
+K     : Време 10x по-бавно
+J     : Обръща времето
+!     : Задава времето на сегашното време
+?     : Показва забавянето на светлината между обекта и наблюдателя
+-     : Изважда забавянето на светлината от настоящата симулация
+
+Етикети:
+=  : Включва/изключва етикетите на съзвездията
+B  : Включва/изключва етикетите на звездите
+E  : Включва/изключва етикетите на галактиките
+M  : Включва/изключва етикетите на луните
+W  : Включва/изключва етикетите на астероидите и кометите
+N  : Включва/изключва етикетите на космическите апарати
+P  : Включва/изключва етикетите на планетите
+&  : Включва/изключва етикетите на местоположенията
+
+V  : 
+
+Опции:
+I  : Включва/изключва на текстурите на облаците
+U  : Включва/изключва рендерирането на галактиките
+O  : Включва/изключва орбитите на планетите
+/  : Включва/изключва диаграмите на съзвездията
+^  : Включва/изключва рендериране на мъглявините
+%  : Включва/изключва таблицата с цветовете на звездите
+;  : Показва земнобазирана координатна сфера
+[  : В автоЗв.вел OFF: Decrease limiting magnitude (fewer stars visible)
+     В автоЗв.вел ON : Decrease limiting magnitude at 45 deg field of view 
+]  : В автоЗв.вел OFF: Increase limiting magnitude (more stars visible)
+     В автоЗв.вел ON : Increase limiting magnitude at 45 deg field of view 
+{  : Намаля околната илюминация
+}  : Увеличава околната илюминация
+(  : Намаля яркостта на галактиките независимо от яркостта на звездите
+)  : Увеличава яркостта на галактиките независимо от яркостта на звездите
+,  : Тясно полезрение
+.  : Широко полезрение
+Backspace: Отменя актуалната селекция
+Ctrl+A : Включва/изключва атмосфери
+Ctrl+B : Включва/изключва граници на съзвездия 
+Ctrl+E : Включва/изключва рендериране на сянката на затъмнение
+Ctrl+K : Включва/изключва показване на маркери
+Ctrl+L : Включва/изключва карта на нощната страна на планетата (светлинно замърсяване)
+Ctrl+P : Маркира избрания обект
+Ctrl+S : Cycle the star style between fuzzy discs, points, and scaled discs
+Ctrl+T : Включва/изключва рендериране на опашките на кометите
+Ctrl+V : Cycle between supported OpenGL render paths
+Ctrl+W : Toggle wireframe mode
+Ctrl+X : Toggle antialias lines
+Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
+         of view   
+r R: Намаля/увеличава резолюцията на текстурите
++  : Включва между артистични или научни текстури на планетите
+
+Multiview:
+Ctrl+R : Split view vertically
+Ctrl+U : Split view horizontally
+TAB    : Cycle active view
+DEL    : Delete active view
+Ctrl+D : Delete all views except active one
+
+Spaceflight:
+F1 : Stop 
+F2 : Set velocity to 1 km/s
+F3 : Set velocity to 1,000 km/s
+F4 : Set velocity to speed of light
+F5 : Set velocity to 10x the speed of light.
+F6 : Set velocity to 1 AU/s
+F7 : Set velocity to 1 ly/s
+A  : Increase velocity
+Z  : Decrease velocity
+Q  : Reverse direction
+X  : Set movement direction toward center of screen
+
+Number pad:
+4  : Yaw left
+6  : Yaw right
+8  : Pitch down
+2  : Pitch up
+7  : Roll left
+9  : Roll right
+5  : Stop rotation
+
+Joystick:
+X axis : yaw
+Y axis : pitch
+L trigger : roll left
+R trigger : roll right
+Button 1 : slower
+Button 2 : faster
+
+Other:
+D   : Run demo
+F8  : Enable joystick
+F10 : Capture image to file
+`   : Show frames rendered per second
+ENTER : Select a star or planet by typing its name
+Ctrl+C, Ctrl+INS : Copy location URL to clipboard
