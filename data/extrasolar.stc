@@ -312,6 +312,15 @@
 	AppMag 12.7
 }
 
+"WASP-12"
+{
+	RA 97.637667
+	Dec 29.672222
+	Distance 870
+	SpectralType "G0"
+	AppMag 11.69
+}
+
 "WASP-14"
 {
 	RA 218.276250
