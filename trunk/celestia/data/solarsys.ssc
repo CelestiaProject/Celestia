@@ -320,13 +320,14 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 	EllipticalOrbit
 	{
-	    Period         0.318910
-	    SemiMajorAxis  9377.2
-	    Eccentricity   0.0151
-	    Inclination    1.075
-	    AscendingNode  128.694   # J2000
-	    ArgOfPericenter 213.804  # J2000
-	    MeanAnomaly    191.771   # J2000
+		Epoch	    2455198		# 2010 Jan 1 12:00
+		Period		  0.31891023	# mean
+		SemiMajorAxis  9377.2		# mean
+		Eccentricity      0.0151	# mean
+		Inclination       1.082		# mean
+		AscendingNode    16.946
+		ArgOfPericenter 157.116
+		MeanAnomaly     271.138
 	}
 
 	BodyFrame { EquatorJ2000 {} }
@@ -351,13 +352,14 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 
 	EllipticalOrbit
 	{
-	    Period            1.262441
-	    SemiMajorAxis     23463.2
-	    Eccentricity      0.00033
-	    Inclination       1.793
-	    AscendingNode    25.229
-	    ArgOfPericenter 208.213 
-	    MeanAnomaly     344.128
+		Epoch	    2455198		# 2010 Jan 1 12:00
+		Period            1.2624407 	# mean
+		SemiMajorAxis 23463.2		# mean
+		Eccentricity	  0.00033	# mean
+		Inclination       1.791		# mean
+		AscendingNode   318.370 
+		ArgOfPericenter 358.233
+		MeanAnomaly     158.554
 	}
 
 	BodyFrame { EquatorJ2000 {} }
