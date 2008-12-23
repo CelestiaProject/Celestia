@@ -403,7 +403,16 @@ The MacOS X icon was designed by Chris Alford: http://www.chrisalford.com/
 
 The txf font format used by Celestia was devised by Mark Kilgard.
 
-The star database (stars.dat) was derived from the ESA's HIPPARCOS data set.
+The star database (stars.dat) was derived from F. van Leeuwen's "Hipparcos, the
+New Reduction of the Raw Data":
+  http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/311
+with stellar spectral types and apparent magnitudes taken from ESA's original
+version of the Hipparcos catalogue:
+  http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/239
+
+The HD and SAO cross-indices were generated using the SIMBAD astronomical
+database:
+  http://simbad.u-strasbg.fr/simbad/
 
 Constellation boundaries are drawn from Davenhall & Leggett's "Catalogue of 
 Constellation Boundary Data": 
