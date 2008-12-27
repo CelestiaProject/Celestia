@@ -15,7 +15,7 @@
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros is een aardappelvormig nabij-Aarde asteroide van ongeveer 33 km lang. Dankzij de NEAR Shoermaker ruimtevaartuig is er meer te weten gekomen van Eros dan van elke andere asteroïde. Op 14 Februari 2001 daalde NEAR neer op Eros en werd daarmee het eerste ruimtevaartuig dat ooit op een asteroïde landde."
+	Description "Eros is een aardappelvormig nabij-Aarde asteroide van ongeveer 33 km lang. Dankzij de NEAR Shoermaker ruimtevaartuig is er meer te weten gekomen van Eros dan van elke andere asteroÃ¯de. Op 14 Februari 2001 daalde NEAR neer op Eros en werd daarmee het eerste ruimtevaartuig dat ooit op een asteroÃ¯de landde."
 }
 
 {
@@ -53,13 +53,13 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "Het Galileo ruimtevaartuig fotografeerde de asteroïde 243 Ida in 1993 op zijn weg naar Jupiter. Deze foto's onthulden dat Ida een kleine satelliet had die later Dactyl genoemd werd. Van verscheidene andere asteroïden is sindsdien ook ontdekt dat ze satellieten hebben."
+	Description "Het Galileo ruimtevaartuig fotografeerde de asteroÃ¯de 243 Ida in 1993 op zijn weg naar Jupiter. Deze foto's onthulden dat Ida een kleine satelliet had die later Dactyl genoemd werd. Van verscheidene andere asteroÃ¯den is sindsdien ook ontdekt dat ze satellieten hebben."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b is de eerst ontdekte planeet die een omloopbaan rond een normale ster, die niet onze Zon is, heeft. Het is een gasreusplaneet en cirkelt extreem dicht rond zijn ster -- minder dan een vijfde van de afstand tussen Mercurius en onze Zon. Dat een gasreus zo dichtbij een ster kan bestaan heeft astronomen gedwongen om hun theorieën over zonnestelselvorming serieus te herzien."
+	Description "51 Pegasi b is de eerst ontdekte planeet die een omloopbaan rond een normale ster, die niet onze Zon is, heeft. Het is een gasreusplaneet en cirkelt extreem dicht rond zijn ster -- minder dan een vijfde van de afstand tussen Mercurius en onze Zon. Dat een gasreus zo dichtbij een ster kan bestaan heeft astronomen gedwongen om hun theorieÃ«n over zonnestelselvorming serieus te herzien."
 }
 
 {

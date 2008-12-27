@@ -1,7 +1,7 @@
 {
 	Name   "Jupiteris"
 	Target "Sol/Jupiter"
-	Description "Jupiteris penktoji pagal nuotolá nuo Saulës planeta, dujinë milşinë. Kaip ir kitos dujinës milşinës neturi kieto pavirğiaus. Iğskirtinis akcentas Raudonoji dëmë daugiau kaip 300 metø Jupiteryje vykstantis audros sûkurys."
+	Description "Jupiteris penktoji pagal nuotolÃ¡ nuo SaulÃ«s planeta, dujinÃ« milÃ¾inÃ«. Kaip ir kitos dujinÃ«s milÃ¾inÃ«s neturi kieto pavirÃ°iaus. IÃ°skirtinis akcentas Raudonoji dÃ«mÃ« daugiau kaip 300 metÃ¸ Jupiteryje vykstantis audros sÃ»kurys."
 }
 
 {
@@ -9,13 +9,13 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Plutonas ir Charonas aplink Saulæ skrieja iğtásusia elipsine orbita. Tai Saulës sistemos nykğtukinë planeta. Turi palydovà Charonas, kuris panağaus dydşio, todël neretai ğie dankaus kûnai vadinami dvinare sistema"
+	Description "Plutonas ir Charonas aplink SaulÃ¦ skrieja iÃ°tÃ¡susia elipsine orbita. Tai SaulÃ«s sistemos nykÃ°tukinÃ« planeta. Turi palydovÃ  Charonas, kuris panaÃ°aus dydÃ¾io, todÃ«l neretai Ã°ie dankaus kÃ»nai vadinami dvinare sistema"
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros apytiksliai yra 33 km ilgio bulvës formos asteroidas skriejantis santykinai netoli Şemës orbitos. Kosminio aparato NEAR dëka buvo daugiau suşinota apie ğá ir kitus asteroidus.  2001 m. vasario 14 d. NEAR tapo pirmuoju kosminiu aparatu praskriejusiu ğalia asteroido ir pateikusio á şemæ daugiau informacijos."
+	Description "Eros apytiksliai yra 33 km ilgio bulvÃ«s formos asteroidas skriejantis santykinai netoli ÃemÃ«s orbitos. Kosminio aparato NEAR dÃ«ka buvo daugiau suÃ¾inota apie Ã°Ã¡ ir kitus asteroidus.  2001 m. vasario 14 d. NEAR tapo pirmuoju kosminiu aparatu praskriejusiu Ã°alia asteroido ir pateikusio Ã¡ Ã¾emÃ¦ daugiau informacijos."
 }
 
 {
@@ -23,29 +23,29 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Kentauro alfa – treèia pagal ryğká şvaigşdşiø sistema,ğviesiausia Kentauro şvaigşdyne.Nors şiûrint plika akimi Kentauro Alfa atrodo kaip vienas tağkas,iğ tikrøjø tai yra şvaigşdşiø sistema,sudaryta iğ trijø şvaigşdşiø.Kentauro Alfa yra artimiausia şvaigşdşiø sistema Saulei."
+	Description "Kentauro alfa â€“ treÃ¨ia pagal ryÃ°kÃ¡ Ã¾vaigÃ¾dÃ¾iÃ¸ sistema,Ã°viesiausia Kentauro Ã¾vaigÃ¾dyne.Nors Ã¾iÃ»rint plika akimi Kentauro Alfa atrodo kaip vienas taÃ°kas,iÃ° tikrÃ¸jÃ¸ tai yra Ã¾vaigÃ¾dÃ¾iÃ¸ sistema,sudaryta iÃ° trijÃ¸ Ã¾vaigÃ¾dÃ¾iÃ¸.Kentauro Alfa yra artimiausia Ã¾vaigÃ¾dÃ¾iÃ¸ sistema Saulei."
 }
 
 {
-	Name "Plejadës"
+	Name "PlejadÃ«s"
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Plejados – labai jaunas ir nespëjæs iğsisklaidyti spieèius. Jame gausu baltøjø milşiniø ir raudonøjø nykğtukiø. Tarp spieèiaus şvaigşdşiø yra apyskaidris atspindşio ûkas"
+	Description "Plejados â€“ labai jaunas ir nespÃ«jÃ¦s iÃ°sisklaidyti spieÃ¨ius. Jame gausu baltÃ¸jÃ¸ milÃ¾iniÃ¸ ir raudonÃ¸jÃ¸ nykÃ°tukiÃ¸. Tarp spieÃ¨iaus Ã¾vaigÃ¾dÃ¾iÃ¸ yra apyskaidris atspindÃ¾io Ã»kas"
 }
 
 {
-	Name "Hajadës"
+	Name "HajadÃ«s"
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Hajadës graikø mitologijoje - nimfos, neğanèios lietø, Hijo ir plejadşiø seserys, Atlanto ir Plejonës. Hajadës yra vienos iğ ádomiausiø şvaigşdşiø spieèiø danguje. Manoma, kad Hajadës yra apytiksliai 660 milijonø metø senesnës nei Plajedës."
+	Description "HajadÃ«s graikÃ¸ mitologijoje - nimfos, neÃ°anÃ¨ios lietÃ¸, Hijo ir plejadÃ¾iÃ¸ seserys, Atlanto ir PlejonÃ«s. HajadÃ«s yra vienos iÃ° Ã¡domiausiÃ¸ Ã¾vaigÃ¾dÃ¾iÃ¸ spieÃ¨iÃ¸ danguje. Manoma, kad HajadÃ«s yra apytiksliai 660 milijonÃ¸ metÃ¸ senesnÃ«s nei PlajedÃ«s."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b planeta gigantas raudonosios nykğtukës sistemoje.  Ji yra 2:1 masës kitai ğios sistemos planetai"
+	Description "Gliese 876 b planeta gigantas raudonosios nykÃ°tukÃ«s sistemoje.  Ji yra 2:1 masÃ«s kitai Ã°ios sistemos planetai"
 }
 
 {
@@ -53,24 +53,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "Atrado ir nufotografavo  Galilëjo zondas 1993 metais skriedamas pakeliui link Jupiterio. Nuotraukose paaiğkëjo, kad Ida turi maşà palydovà, kurá vëliau pavadino Daktiliu. Vëliau buvo atrasta dar keletas asteroidø turinèiø palydovus."
+	Description "Atrado ir nufotografavo  GalilÃ«jo zondas 1993 metais skriedamas pakeliui link Jupiterio. Nuotraukose paaiÃ°kÃ«jo, kad Ida turi maÃ¾Ã  palydovÃ , kurÃ¡ vÃ«liau pavadino Daktiliu. VÃ«liau buvo atrasta dar keletas asteroidÃ¸ turinÃ¨iÃ¸ palydovus."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b pirmoji atrasta planeta kitose sistemose. Tai dujø milşinas su ekstremaliai artima savo şvaigşdei orbita-atstumas maşesnis nei Merkurijaus ir Saulës. Toks netipiğkai artimas dujø milşino egziztavimas prie şvaigşdës privertë astronomus perşiûrëti Saulës sistemos formavimosi teoremas."
+	Description "51 Pegasi b pirmoji atrasta planeta kitose sistemose. Tai dujÃ¸ milÃ¾inas su ekstremaliai artima savo Ã¾vaigÃ¾dei orbita-atstumas maÃ¾esnis nei Merkurijaus ir SaulÃ«s. Toks netipiÃ°kai artimas dujÃ¸ milÃ¾ino egziztavimas prie Ã¾vaigÃ¾dÃ«s privertÃ« astronomus perÃ¾iÃ»rÃ«ti SaulÃ«s sistemos formavimosi teoremas."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "Dël orandşiniø ir baltai mëlynø spalvø ği dvinariø şvaigşdşiø sistema danguje laikoma vienu graşiausiø dariniø. Orandşinë şvaigşdë K klasës milşinë, o jos kompanjonë B tipo nykğtukë"
+	Description "DÃ«l orandÃ¾iniÃ¸ ir baltai mÃ«lynÃ¸ spalvÃ¸ Ã°i dvinariÃ¸ Ã¾vaigÃ¾dÃ¾iÃ¸ sistema danguje laikoma vienu graÃ¾iausiÃ¸ dariniÃ¸. OrandÃ¾inÃ« Ã¾vaigÃ¾dÃ« K klasÃ«s milÃ¾inÃ«, o jos kompanjonÃ« B tipo nykÃ°tukÃ«"
 }
 
 {
 	Name "Boreli kometa"
 	Target "Sol/Borrelly"
-	Description "2001 metø spalio 22 dienà Boreli kometa tapo antràja kometa, kurià iğ arti nufotografavo kosminis zondas. Kosminis zondas Deep Space 1 priartëjo iki 2200 kilometrø ir padarë aukğtos rezoliucijos itin detaliø kometos branduolio nuotraukø."
+	Description "2001 metÃ¸ spalio 22 dienÃ  Boreli kometa tapo antrÃ ja kometa, kuriÃ  iÃ° arti nufotografavo kosminis zondas. Kosminis zondas Deep Space 1 priartÃ«jo iki 2200 kilometrÃ¸ ir padarÃ« aukÃ°tos rezoliucijos itin detaliÃ¸ kometos branduolio nuotraukÃ¸."
 }

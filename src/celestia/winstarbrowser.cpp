@@ -342,7 +342,7 @@ void StarBrowserDisplayItem(LPNMLVDISPINFOA nm, StarBrowser* browser)
     case 0:
         {
             Universe* u = browser->appCore->getSimulation()->getUniverse();
-            starNameString = u->getStarCatalog()->getStarName(*star);
+            starNameString = UTF8ToCurrentCP(u->getStarCatalog()->getStarName(*star));
             nm->item.pszText = const_cast<char*>(starNameString.c_str());
         }
         break;

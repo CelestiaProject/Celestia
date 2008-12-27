@@ -1,7 +1,7 @@
 {
 	Name   "Jupiter"
 	Target "Sol/Jupiter"
-	Description "Jupiter är den största planeten i vårt solsystem och den femte från solen.  I likhet med de andra yttre, stora planeterna så består Jupiter av gas och har ingen fast yta.  Den stora röda fläcken är den största och mest långlivade stormen i Jupiters turbulenta atmosfär; Denna storm i jordens storlek har funnits i minst 300 år."
+	Description "Jupiter Ã¤r den stÃ¶rsta planeten i vÃ¥rt solsystem och den femte frÃ¥n solen.  I likhet med de andra yttre, stora planeterna sÃ¥ bestÃ¥r Jupiter av gas och har ingen fast yta.  Den stora rÃ¶da flÃ¤cken Ã¤r den stÃ¶rsta och mest lÃ¥nglivade stormen i Jupiters turbulenta atmosfÃ¤r; Denna storm i jordens storlek har funnits i minst 300 Ã¥r."
 }
 
 {
@@ -9,13 +9,13 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Pluto kretsar kring solen på ett medelavstånd av nästan sex miljarder kilometer.  Dess enda kända måne, Charon, är så stor att de två ibland klassas som en 'dubbelplanet'."
+	Description "Pluto kretsar kring solen pÃ¥ ett medelavstÃ¥nd av nÃ¤stan sex miljarder kilometer.  Dess enda kÃ¤nda mÃ¥ne, Charon, Ã¤r sÃ¥ stor att de tvÃ¥ ibland klassas som en 'dubbelplanet'."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros är en potatisformad jordnära asteroid med en längd på ungefär 33 km.  Tack vare farkosten NEAR Shoemaker så vet vi mer om Eros än om någon annan asteroid.  Den 14 februari 2001 så landade NEAR på Eros och blev den första farkosten någonsin att landa på en asteroid."
+	Description "Eros Ã¤r en potatisformad jordnÃ¤ra asteroid med en lÃ¤ngd pÃ¥ ungefÃ¤r 33 km.  Tack vare farkosten NEAR Shoemaker sÃ¥ vet vi mer om Eros Ã¤n om nÃ¥gon annan asteroid.  Den 14 februari 2001 sÃ¥ landade NEAR pÃ¥ Eros och blev den fÃ¶rsta farkosten nÃ¥gonsin att landa pÃ¥ en asteroid."
 }
 
 {
@@ -23,7 +23,7 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alpha Centauri A och B är, tillsammans med Proxima Centauri, det stjärnsystem som ligger närmast vårt.   Alpha Cen A påminner mycket om vår egen sol, om än något äldre och mer ljusstark.  B är svagare och mer rödaktig och Proxima är så svag att den inte kan ses med blotta ögat trots att den är den stjärna som befinner sig närmast vår sol."
+	Description "Alpha Centauri A och B Ã¤r, tillsammans med Proxima Centauri, det stjÃ¤rnsystem som ligger nÃ¤rmast vÃ¥rt.   Alpha Cen A pÃ¥minner mycket om vÃ¥r egen sol, om Ã¤n nÃ¥got Ã¤ldre och mer ljusstark.  B Ã¤r svagare och mer rÃ¶daktig och Proxima Ã¤r sÃ¥ svag att den inte kan ses med blotta Ã¶gat trots att den Ã¤r den stjÃ¤rna som befinner sig nÃ¤rmast vÃ¥r sol."
 }
 
 {
@@ -31,7 +31,7 @@
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Stjärnhopen Pleiaderna är en grupp av unga, starkt lysande stjärnor.  Pleiaderna har fått sitt namn från de sju systrarna i den grekiska mytologin, trots att teleskop har avslöjat att hopen består av betydligt fler än sju stjärnor."
+	Description "StjÃ¤rnhopen Pleiaderna Ã¤r en grupp av unga, starkt lysande stjÃ¤rnor.  Pleiaderna har fÃ¥tt sitt namn frÃ¥n de sju systrarna i den grekiska mytologin, trots att teleskop har avslÃ¶jat att hopen bestÃ¥r av betydligt fler Ã¤n sju stjÃ¤rnor."
 }
 
 {
@@ -39,13 +39,13 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Hyades har fått namn efter Atlas och Aethras fem döttrar och är en av de mest framträdande öppna stjärnhoparna på himlavalvet.  Det uppskattas att Hyades stjärnor är ungefär 660 miljoner år gamla--över sex gånger äldre än de hetare, blåare Pleiaderna som befinner sig i närheten av oss på vår natthimmel."
+	Description "Hyades har fÃ¥tt namn efter Atlas och Aethras fem dÃ¶ttrar och Ã¤r en av de mest framtrÃ¤dande Ã¶ppna stjÃ¤rnhoparna pÃ¥ himlavalvet.  Det uppskattas att Hyades stjÃ¤rnor Ã¤r ungefÃ¤r 660 miljoner Ã¥r gamla--Ã¶ver sex gÃ¥nger Ã¤ldre Ã¤n de hetare, blÃ¥are Pleiaderna som befinner sig i nÃ¤rheten av oss pÃ¥ vÃ¥r natthimmel."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b är en jätteplanet som kretsar kring en röd dvärgstjärna.  Den befinner sig i en 2:1-resonans med den andra planeten i systemet."
+	Description "Gliese 876 b Ã¤r en jÃ¤tteplanet som kretsar kring en rÃ¶d dvÃ¤rgstjÃ¤rna.  Den befinner sig i en 2:1-resonans med den andra planeten i systemet."
 }
 
 {
@@ -53,24 +53,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "Rymdfarkosten Galileo fotograferade år 1993 asteroiden 243 Ida på sin väg mot Jupiter. Dessa bilder avslöjade att Ida hade en liten satellit som senare fick namnet Dactyl.  Sedan dess har det avslöjats att åtskilliga andra asteroider också har satelliter."
+	Description "Rymdfarkosten Galileo fotograferade Ã¥r 1993 asteroiden 243 Ida pÃ¥ sin vÃ¤g mot Jupiter. Dessa bilder avslÃ¶jade att Ida hade en liten satellit som senare fick namnet Dactyl.  Sedan dess har det avslÃ¶jats att Ã¥tskilliga andra asteroider ocksÃ¥ har satelliter."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b var den första planeten man upptäckte som kretsar runt en normal stjärna annan än vår sol.  Planeten är en gasjätte som kretsar extremt nära sin stjärna -- mindre än en femtedel av avståndet mellan Merkurius och solen.  Det faktum att en gasjätte kunde existera så nära en stjärna fick astronomerna att allvarligt revidera sina teorier om solsystemet."
+	Description "51 Pegasi b var den fÃ¶rsta planeten man upptÃ¤ckte som kretsar runt en normal stjÃ¤rna annan Ã¤n vÃ¥r sol.  Planeten Ã¤r en gasjÃ¤tte som kretsar extremt nÃ¤ra sin stjÃ¤rna -- mindre Ã¤n en femtedel av avstÃ¥ndet mellan Merkurius och solen.  Det faktum att en gasjÃ¤tte kunde existera sÃ¥ nÃ¤ra en stjÃ¤rna fick astronomerna att allvarligt revidera sina teorier om solsystemet."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "På grund av kontrasten mellan de brandgula och blåvita färgerna hos de ingående stjärnorna så är dubbelstjärnsystemet Albireo ansett som ett av de vackraste paren på himlavalvet.  Den brandgula stjärnan är en klass K-jätte och dess partner är en dvärg av klass B."
+	Description "PÃ¥ grund av kontrasten mellan de brandgula och blÃ¥vita fÃ¤rgerna hos de ingÃ¥ende stjÃ¤rnorna sÃ¥ Ã¤r dubbelstjÃ¤rnsystemet Albireo ansett som ett av de vackraste paren pÃ¥ himlavalvet.  Den brandgula stjÃ¤rnan Ã¤r en klass K-jÃ¤tte och dess partner Ã¤r en dvÃ¤rg av klass B."
 }
 
 {
 	Name "Kometen Borrelly"
 	Target "Sol/Borrelly"
-	Description "Den 22 september 2001 så blev kometen Borrely den andra kometen att bli fotograferad på nära håll av en rymdfarkost.  Trots att den inte var konstruerad för en förbiflygning av kometen så kom Deep Space 1 mindre än 2 200 kilometer från Borrellys kärna och sände tillbaka de mest högupplösta bilder vi har av en kometkärna."
+	Description "Den 22 september 2001 sÃ¥ blev kometen Borrely den andra kometen att bli fotograferad pÃ¥ nÃ¤ra hÃ¥ll av en rymdfarkost.  Trots att den inte var konstruerad fÃ¶r en fÃ¶rbiflygning av kometen sÃ¥ kom Deep Space 1 mindre Ã¤n 2 200 kilometer frÃ¥n Borrellys kÃ¤rna och sÃ¤nde tillbaka de mest hÃ¶gupplÃ¶sta bilder vi har av en kometkÃ¤rna."
 }

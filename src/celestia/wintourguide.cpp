@@ -17,6 +17,8 @@
 #include <commctrl.h>
 #include "wintourguide.h"
 
+#include <celutil/winutil.h>
+
 #include "res/resource.h"
 
 using namespace std;
@@ -51,7 +53,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                     if (dest != NULL)
                     {
                         SendMessage(hwnd, CB_INSERTSTRING, -1,
-                                    reinterpret_cast<LPARAM>(dest->name.c_str()));
+                                    reinterpret_cast<LPARAM>(UTF8ToCurrentCP(dest->name).c_str()));
                     }
                 }
 
@@ -60,7 +62,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                     SendMessage(hwnd, CB_SETCURSEL, 0, 0);
                     SetDlgItemText(hDlg,
                                    IDC_TEXT_DESCRIPTION,
-                                   (*destinations)[0]->description.c_str());
+                                   UTF8ToCurrentCP((*destinations)[0]->description).c_str());
                 }
             }
         }
@@ -124,7 +126,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                     Destination* dest = (*destinations)[item];
                     SetDlgItemText(hDlg,
                                    IDC_TEXT_DESCRIPTION,
-                                   dest->description.c_str());
+                                   UTF8ToCurrentCP(dest->description).c_str());
                     tourGuide->selectedDest = dest;
                 }
             }

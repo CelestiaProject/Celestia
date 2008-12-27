@@ -1,15 +1,15 @@
-#Überarbeitete und erweiterte deutsche Fassung von Ulrich 'Adirondack' Dickmann, Andreas Wagner und Christian Lenz, März 2008
+#Ãœberarbeitete und erweiterte deutsche Fassung von Ulrich 'Adirondack' Dickmann, Andreas Wagner und Christian Lenz, MÃ¤rz 2008
 
 {
-	Name   "Bitte auswählen"
+	Name   "Bitte auswÃ¤hlen"
 	Target "Sol"
-	Description "Bitte wählen Sie Ihr Ziel aus der Liste oben aus. Dazu klicken Sie zuerst auf den kleinen Pfeil neben dem Auswahlfeld und klicken anschließend Ihr Ziel an. Nach dem Klick auf den Schalter 'Gehe zu' fliegt Sie Celestia an den gewünschten Ort."
+	Description "Bitte wÃ¤hlen Sie Ihr Ziel aus der Liste oben aus. Dazu klicken Sie zuerst auf den kleinen Pfeil neben dem Auswahlfeld und klicken anschlieÃŸend Ihr Ziel an. Nach dem Klick auf den Schalter 'Gehe zu' fliegt Sie Celestia an den gewÃ¼nschten Ort."
 }
 
 {
 	Name   "Jupiter"
 	Target "Sol/Jupiter"
-	Description "Jupiter ist der größte Planet in unserem Sonnen-\nsystem und der fünfte von der Sonne aus gesehen.\nWie die anderen großen äußeren Planeten ist auch Jupiter ein Gasriese ohne feste Oberfläche.\nDer 'Große Rote Fleck' ist der größte und lang-\nlebigste der vielen Stürme in Jupiters Atmosphäre. Der 'Große Rote Fleck' hat in etwa die Größe der Erde und tobt schon seit mindestens 300 Jahren."
+	Description "Jupiter ist der grÃ¶ÃŸte Planet in unserem Sonnen-\nsystem und der fÃ¼nfte von der Sonne aus gesehen.\nWie die anderen groÃŸen Ã¤uÃŸeren Planeten ist auch Jupiter ein Gasriese ohne feste OberflÃ¤che.\nDer 'GroÃŸe Rote Fleck' ist der grÃ¶ÃŸte und lang-\nlebigste der vielen StÃ¼rme in Jupiters AtmosphÃ¤re. Der 'GroÃŸe Rote Fleck' hat in etwa die GrÃ¶ÃŸe der Erde und tobt schon seit mindestens 300 Jahren."
 }
 
 {
@@ -17,21 +17,21 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Pluto umkreist unsere Sonne in einer mittleren Entfernung von fast 6 Milliarden Kilometern.\nSein größter Mond Charon ist so groß, dass die beiden oft als 'Doppel-Planet' bezeichnet werden. Inzwischen wurde Pluto jedoch der Status eines Planeten aberkannt.\nPluto verfügt über zwei weitere (kleinere) Monde: Hydra und Nix."
+	Description "Pluto umkreist unsere Sonne in einer mittleren Entfernung von fast 6 Milliarden Kilometern.\nSein grÃ¶ÃŸter Mond Charon ist so groÃŸ, dass die beiden oft als 'Doppel-Planet' bezeichnet werden. Inzwischen wurde Pluto jedoch der Status eines Planeten aberkannt.\nPluto verfÃ¼gt Ã¼ber zwei weitere (kleinere) Monde: Hydra und Nix."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros ist ein kartoffelfömiger, erdnaher Asteroid von rund 33 km Länge.\nDank der Sonde 'NEAR Shoemaker' ist über Eros mehr bekannt als über jeden anderen Asteroiden.\nAm 14. Februar 2001 sank NEAR auf Eros nieder und wurde damit zur ersten Sonde, die auf einem Asteroiden gelandet ist."
+	Description "Eros ist ein kartoffelfÃ¶miger, erdnaher Asteroid von rund 33 km LÃ¤nge.\nDank der Sonde 'NEAR Shoemaker' ist Ã¼ber Eros mehr bekannt als Ã¼ber jeden anderen Asteroiden.\nAm 14. Februar 2001 sank NEAR auf Eros nieder und wurde damit zur ersten Sonde, die auf einem Asteroiden gelandet ist."
 }
 
 {
-	Name "Milchstraße"
+	Name "MilchstraÃŸe"
 	Target "Milky Way"
 	Distance 270000
 	DistanceUnits "ly"
-	Description "Die Milchstraße ist die Galaxie, in der sich unser Sonnensystem befindet.\nUnser Sonnensystem liegt dabei in einem der Spiralarme, die aus einer Entfernung von 270.000 Lichtjahren hübsch anzusehen sind. Wenn Sie diesen Ort aufsuchen, müssen Sie gegebenenfalls mit gedrückter rechter Maustaste die Galaxie etwas drehen, um die Spiralarme sehen zu können."
+	Description "Die MilchstraÃŸe ist die Galaxie, in der sich unser Sonnensystem befindet.\nUnser Sonnensystem liegt dabei in einem der Spiralarme, die aus einer Entfernung von 270.000 Lichtjahren hÃ¼bsch anzusehen sind. Wenn Sie diesen Ort aufsuchen, mÃ¼ssen Sie gegebenenfalls mit gedrÃ¼ckter rechter Maustaste die Galaxie etwas drehen, um die Spiralarme sehen zu kÃ¶nnen."
 }
 
 {
@@ -39,7 +39,7 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alpha Centauri A und B bilden zusammen mit Proxima Centauri das uns nächstgelegene Sternsystem.\nAlpha Centauri A ist unserer Sonne sehr ähnlich, jedoch geringfügig älter und heller. Alpha Centauri B ist dunkler und rötlicher.\nProxima ist so leuchtschwach, dass er mit bloßem Auge nicht erkennbar ist, obwohl er der sonnen-\nnächste Stern ist."
+	Description "Alpha Centauri A und B bilden zusammen mit Proxima Centauri das uns nÃ¤chstgelegene Sternsystem.\nAlpha Centauri A ist unserer Sonne sehr Ã¤hnlich, jedoch geringfÃ¼gig Ã¤lter und heller. Alpha Centauri B ist dunkler und rÃ¶tlicher.\nProxima ist so leuchtschwach, dass er mit bloÃŸem Auge nicht erkennbar ist, obwohl er der sonnen-\nnÃ¤chste Stern ist."
 }
 
 {
@@ -47,7 +47,7 @@
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Die Plejaden sind eine Gruppe von hellen, jungen Sternen. Die Sterne sind nach den sieben Schwestern der griechischen Mythologie benannt, obwohl der Blick durch ein Teleskop deutlich mehr als sieben Sterne in diesem Sternhaufen erkennen lässt."
+	Description "Die Plejaden sind eine Gruppe von hellen, jungen Sternen. Die Sterne sind nach den sieben Schwestern der griechischen Mythologie benannt, obwohl der Blick durch ein Teleskop deutlich mehr als sieben Sterne in diesem Sternhaufen erkennen lÃ¤sst."
 }
 
 {
@@ -55,13 +55,13 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Benannt nach den fünf Töchtern von Atlas und Aethra, stellen die Hyaden den hervorstechendsten offenen Sternhaufen am Himmel dar.\nEs wird angenommen, dass die Hyaden etwa 660 Millionen Jahre alt sind und damit sechsmal älter als die heißeren, bläulicheren Plejaden, die ganz in der Nähe am Himmel zu finden sind."
+	Description "Benannt nach den fÃ¼nf TÃ¶chtern von Atlas und Aethra, stellen die Hyaden den hervorstechendsten offenen Sternhaufen am Himmel dar.\nEs wird angenommen, dass die Hyaden etwa 660 Millionen Jahre alt sind und damit sechsmal Ã¤lter als die heiÃŸeren, blÃ¤ulicheren Plejaden, die ganz in der NÃ¤he am Himmel zu finden sind."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b ist ein riesiger Planet, der einen so genannten Roten Zwerg umläuft.\nEr steht in einer Umlaufkopplung von 2:1 mit den anderen bekannten Planeten in diesem System."
+	Description "Gliese 876 b ist ein riesiger Planet, der einen so genannten Roten Zwerg umlÃ¤uft.\nEr steht in einer Umlaufkopplung von 2:1 mit den anderen bekannten Planeten in diesem System."
 }
 
 {
@@ -69,24 +69,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "Die Galileo-Raumsonde hat 1993 auf ihrem Weg\nzum Jupiter den Asteroiden '243 Ida' fotografiert.\nDiese Fotos haben offenbart, dass Ida einen winzigen Mond besitzt, der später 'Daktyl' benannt wurde. Seitdem sind einige weitere Asteroiden entdeckt worden, die ebenfalls Monde besitzen."
+	Description "Die Galileo-Raumsonde hat 1993 auf ihrem Weg\nzum Jupiter den Asteroiden '243 Ida' fotografiert.\nDiese Fotos haben offenbart, dass Ida einen winzigen Mond besitzt, der spÃ¤ter 'Daktyl' benannt wurde. Seitdem sind einige weitere Asteroiden entdeckt worden, die ebenfalls Monde besitzen."
 }
 
 {
 	Name "51 Pegasi b"
 	Target "51 Peg/b"
-	Description "1995 wurde mit 51 Pegasi b der erste Planet außer-\nhalb unseres Sonnensystems entdeckt, der um einen sonnenähnlichen Stern kreist.\nEs ist ein riesiger Gasplanet, der seinen Mutterstern extrem nahe umläuft - mit weniger als einem Fünftel der Distanz zwischen Merkur und Sonne. Dass ein Gasriese so nahe an einem Stern existieren kann, hat die Astronomen dazu gezwungen,  die Theorien über die Formation von Sonnensystemen ernsthaft zu überdenken."
+	Description "1995 wurde mit 51 Pegasi b der erste Planet auÃŸer-\nhalb unseres Sonnensystems entdeckt, der um einen sonnenÃ¤hnlichen Stern kreist.\nEs ist ein riesiger Gasplanet, der seinen Mutterstern extrem nahe umlÃ¤uft - mit weniger als einem FÃ¼nftel der Distanz zwischen Merkur und Sonne. Dass ein Gasriese so nahe an einem Stern existieren kann, hat die Astronomen dazu gezwungen,  die Theorien Ã¼ber die Formation von Sonnensystemen ernsthaft zu Ã¼berdenken."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "Wegen der kontrastreichen orange und blau-weißen Farbe der zusammengehörenden Sterne wird der Doppelstern Albireo für eines der schönsten Paare am Himmel gehalten. Der orange Stern ist ein Riese des Typs K und sein Begleiter ist ein Zwerg der Klasse B."
+	Description "Wegen der kontrastreichen orange und blau-weiÃŸen Farbe der zusammengehÃ¶renden Sterne wird der Doppelstern Albireo fÃ¼r eines der schÃ¶nsten Paare am Himmel gehalten. Der orange Stern ist ein Riese des Typs K und sein Begleiter ist ein Zwerg der Klasse B."
 }
 
 {
 	Name "Komet Borrelly"
 	Target "Sol/Borrelly"
-	Description "Am 22. September 2001 wurde der Komet Borelly zum zweiten Kometen, der jemals von einer Sonde aus geringer Entfernung fotografiert wurde.\nObwohl Deep Space 1 nicht für einen Vorbeiflug an einem Kometen entwickelt wurde, erreichte die Sonde eine Annäherung bis auf 2200 Kilometer an den Kern des Kometen und lieferte die höchst-\nauflösenden Fotos, die von einem Kometenkern vorliegen."
+	Description "Am 22. September 2001 wurde der Komet Borelly zum zweiten Kometen, der jemals von einer Sonde aus geringer Entfernung fotografiert wurde.\nObwohl Deep Space 1 nicht fÃ¼r einen Vorbeiflug an einem Kometen entwickelt wurde, erreichte die Sonde eine AnnÃ¤herung bis auf 2200 Kilometer an den Kern des Kometen und lieferte die hÃ¶chst-\nauflÃ¶senden Fotos, die von einem Kometenkern vorliegen."
 }
