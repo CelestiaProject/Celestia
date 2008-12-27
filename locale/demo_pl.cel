@@ -3,7 +3,7 @@
 	labels { clear "planets|minorplanets|stars|constellations" }
 	renderflags { set "stars|planets"
                       clear "constellations|orbits|cloudmaps" }
-	print { text "Uruchamiam demo. . .\nNaciœnij ESC aby zakoñczyæ.." origin "center" duration 2 }
+	print { text "Uruchamiam demo . . .\nNaciśnij ESC aby zakończyć." origin "center" duration 2 }
 	wait { duration 2.0 }
 
 	print { text "Zacznijmy blisko ziemi . . ." row -3 }
@@ -18,45 +18,45 @@
 	wait { duration 1.0 }
 	follow {}
 
-	print { text "Orbitujemy aktualnie oko³o 13.600 km nad powierzchni¹ Ziemi" row -3 duration 5 }
+	print { text "Orbitujemy aktualnie około 13.600 km nad powierzchnią Ziemi" row -3 duration 5 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
-	print { text "Ziemia wygl¹da o wiele bardziej przyjazna z chmurami." row -3}
+	print { text "Ziemia wygląda o wiele bardziej przyjazna z chmurami." row -3}
 	wait { duration 0.1 }
 	renderflags { set "cloudmaps" }
 	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
 
-	print { text "Nastêpny przystanek: Ksiê¿yc." row -3 }
+	print { text "Następny przystanek: Księżyc." row -3 }
 	select { object "Moon" }
 	goto { time 5 distance 4 upframe "equatorial" }
 	wait { duration 5.5 }
-	print { text "Rozgl¹daj siê za Ziemi¹ i S³oñcem gdy orbitujemy nad Ksiê¿ycem" row -3}
+	print { text "Rozglądaj się za Ziemią i Słońcem gdy orbitujemy nad Księżycem" row -3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
 	
-	print { text "Start w kierunku S³oñca." row -3}
+	print { text "Start w kierunku Słońca." row -3}
 	select { object "Sol" }
 	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
 	wait { duration 8.5 }
-	print { text "W tej odleg³oœci, widoczne s¹ ciemne plamy s³oneczne na powierzchni S³oñca." row -3}
+	print { text "W tej odległości, widoczne są ciemne plamy słoneczne na powierzchni Słońca." row -3}
 	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
 
-	print { text "Powiêksz dla przegl¹du wewnêtrznego Uk³adu S³onecznego." row -3}
+	print { text "Powiększ dla przeglądu wewnętrznego Układu Słonecznego." row -3}
 	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
 	renderflags { set "orbits" }
 	changedistance { duration 4.0 rate 1.0 }
 	
-	print { text "W³¹czanie nazwy planety . . ." row -3}
+	print { text "Włączanie nazwy planety . . ." row -3}
 	labels { set "planets" }
 	wait { duration 1.0 }
-	print { text "Mo¿emy przyspieszyæ czas aby przygl¹daæ siê orbitowaniu planet wokó³ s³oñca." row -3}
+	print { text "Możemy przyspieszyć czas aby przyglądać się orbitowaniu planet wokół słońca." row -3}
 	timerate { rate 2592000 }
 	wait { duration 3.0 }
-	print { text "Na ka¿d¹ sekundê, up³ywa miesi¹c czasu w symulacji." row -3}
+	print { text "Na każdą sekundę, upływa miesiąc czasu w symulacji." row -3}
 	wait { duration 12.0 }
 	timerate { rate 1 }
-	print { text "Teraz czas zosta³ ca³kowicie zatrzymany." row -3}
+	print { text "Teraz czas został całkowicie zatrzymany." row -3}
 
 	wait { duration 1.0 }
-	print { text "Naszym nastêpnym celem jest Saturn." row -3}
+	print { text "Naszym następnym celem jest Saturn." row -3}
 	select { object "Saturn" }
 	center { time 2 }
 	wait { duration 2 }
@@ -64,37 +64,37 @@
 	wait { duration 6.5 }
 	renderflags { clear "orbits" }
 	labels { clear "planets" }
-	print { text "Kilka z ksiê¿yców Saturna widoczne s¹ jako jasne punkty" row -3 duration 3}
+	print { text "Kilka z księżyców Saturna widoczne są jako jasne punkty" row -3 duration 3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	
 	select { object "Mimas" }
 	goto { time 5 distance 4 upframe "equatorial" }
-	print { text "Najbardziej widocznym elementem na ksiê¿ycu Saturna Mimas jest ogromny krater uderzeniowy Herschel." row -3 duration 9 }
+	print { text "Najbardziej widocznym elementem na księżycu Saturna Mimas jest ogromny krater uderzeniowy Herschel." row -3 duration 9 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	changedistance { duration 6.0 rate 0.5 }
 
 	select { object "Sol" }
 	center { time 2 }
-	print { text "Zauwa¿, jak s³abo œwieci S³oñce w tej odleg³oœci." row -3 }
+	print { text "Zauważ, jak słabo świeci Słońce w tej odległości." row -3 }
 	wait { duration 2 }
 
 	print { text "Spójrzmy na gwiazdy na niebie." row -3 duration 2 }
 	wait { duration 2 }
 	select { object "Alpha UMa" }
 	center { time 2 }
-	print { text "Mieszkañcy pó³nocnej pó³kuli powinni rozpoznaæ Wielki Wóz z gwiazdozbioru Wielkiej NiedŸwiedzicy." row -3 duration 3 }
+	print { text "Mieszkańcy północnej półkuli powinni rozpoznać Wielki Wóz z gwiazdozbioru Wielkiej Niedźwiedzicy." row -3 duration 3 }
 	wait { duration 4 }
 
 	select { object "Polaris" }
 	center { time 2 }
 	wait { duration 2 }
-	print { text "Teraz widzimy na œrodku Gwiazdê Polarn¹." row -3}
+	print { text "Teraz widzimy na środku Gwiazdę Polarną." row -3}
 	wait { duration 1 }
 	labels { set "stars" }
 	wait { duration 2 }
-	print { text "Gwiazda Polarna jest czêœci¹ gwiazdozbioru Ma³ej NiedŸwiedzicy." row -3}
+	print { text "Gwiazda Polarna jest częścią gwiazdozbioru Małej Niedźwiedzicy." row -3}
 	wait { duration 2 }
-	print { text "Aby pomóc nam w orientacji na niebie, Celestia mo¿e wyœwietliæ schematy gwiazdozbioru . . ." row -3}
+	print { text "Aby pomóc nam w orientacji na niebie, Celestia może wyświetlić schematy gwiazdozbioru . . ." row -3}
 	renderflags { set "constellations" }
 	wait { duration 2 }
 	print { text ". . . i nazwy gwiazdozbioru" row -3}
@@ -110,11 +110,11 @@
 	select { object "Beta Cru" }
 	center { time 4 }
 	wait { duration 2 }
-	print { text "Gwiazdozbiór Krzy¿a Po³udnia jest przyjaznym znakiem na po³udniowej pó³kuli nieba." row -3 duration 4 }
+	print { text "Gwiazdozbiór Krzyża Południa jest przyjaznym znakiem na południowej półkuli nieba." row -3 duration 4 }
 	wait { duration 4 }
 
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
-	print { text "W³¹czymy renderowanie galaktyki, dziêki czemu bêdziemy mogli zobaczyæ Drogê Mleczn¹" row -3 duration 4 }
+	print { text "Włączymy renderowanie galaktyki, dzięki czemu będziemy mogli zobaczyć Drogę Mleczną" row -3 duration 4 }
 	renderflags { set "galaxies" }
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
@@ -122,7 +122,7 @@
 	select { object "Antares" }
 	center { time 5 }
 	wait { duration 3 }
-	print { text "Bêdziemy podró¿owaæ teraz do Antares, czerwon¹ olbrzymi¹ gwiazdê w gwiazdozbiorze Skorpiona." row -3 duration 5 }
+	print { text "Będziemy podróżować teraz do Antares, czerwoną olbrzymią gwiazdę w gwiazdozbiorze Skorpiona." row -3 duration 5 }
 	wait { duration 2 }
 	renderflags { clear "constellations" }
 	labels { clear "constellations|stars" }
@@ -131,20 +131,20 @@
 	wait { duration 8.5 }
 	goto { time 5 distance 10 }
 	wait { duration 5.0 }
-	print { text "Nawet jeœli jesteœmy ju¿ o 10 razy dalej od Antaresa ni¿\nZiemia oddalona jest od S³oñca, to ta olbrzymia czerwona gwiazda nadal œwieci ogromne na niebie." row -3}
+	print { text "Nawet jeśli jesteśmy już o 10 razy dalej od Antaresa niż\nZiemia oddalona jest od Słońca, to ta olbrzymia czerwona gwiazda nadal świeci ogromne na niebie." row -3}
 	wait { duration 4.0 }
 
-	print { text "Popatrzmy sobie na to z dalszej odleg³oœci . . ." row -3}
+	print { text "Popatrzmy sobie na to z dalszej odległości . . ." row -3}
 	changedistance { duration 10.0 rate 2.0 }
 
 	select { object "Milky Way" }
-	print { text "Widzimy teraz ca³¹ Drogê Mleczn¹." row -3 duration 6 }
+	print { text "Widzimy teraz całą Drogę Mleczną." row -3 duration 6 }
 	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
-	print { text "Czas aby wracaæ do domu . . ." row -3}
+	print { text "Czas aby wracać do domu . . ." row -3}
 
 	select { object "Sol/Earth" }
 	goto { time 20 distance 10 upframe "equatorial" }
 	wait { duration 20.0 }
-	print { text "Demo zakoñczone." row -3}
+	print { text "Demo zakończone." row -3}
 	wait { duration 3.0 }
 }

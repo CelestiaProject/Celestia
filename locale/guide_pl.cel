@@ -1,13 +1,13 @@
 {
-	Name   "Proszê wybraæ"
+	Name   "ProszÄ™ wybraÄ‡"
 	Target "Sol"
-	Description "Proszê wybraæ cel podró¿y z górnej listy. Kliknij najpierw na ma³¹ strza³kê obok pola wyboru, a nastêpnie kliknij miejsce docelowe. Po klikniêciu na przycisk \"PrzejdŸ do\" Celestia leci do ¿¹danego miejsca."
+	Description "ProszÄ™ wybraÄ‡ cel podrÃ³Å¼y z gÃ³rnej listy. Kliknij najpierw na maÅ‚Ä… strzaÅ‚kÄ™ obok pola wyboru, a nastÄ™pnie kliknij miejsce docelowe. Po klikniÄ™ciu na przycisk \"PrzejdÅº do\" Celestia leci do Å¼Ä…danego miejsca."
 }
 
 {
 	Name   "Jowisz"
 	Target "Sol/Jupiter"
-	Description "Jowisz jest najwiêksz¹ planet¹ naszego Uk³adu S³onecznego i pi¹ty od s³oñca. Podobnie jak inne du¿e zewnêtrzne planety, Jowisz jest gazowym gigantem, bez sta³ej powierzchni. Wielka czerwona plama jest najwiêksz¹ i najd³u¿ej istniej¹c¹ burz¹ w burzliwej atmosferze Jowisza; ta plama wielkoœci Ziemi szaleje ju¿ od co najmniej 300 lat."
+	Description "Jowisz jest najwiÄ™kszÄ… planetÄ… naszego UkÅ‚adu SÅ‚onecznego i piÄ…ty od sÅ‚oÅ„ca. Podobnie jak inne duÅ¼e zewnÄ™trzne planety, Jowisz jest gazowym gigantem, bez staÅ‚ej powierzchni. Wielka czerwona plama jest najwiÄ™kszÄ… i najdÅ‚uÅ¼ej istniejÄ…cÄ… burzÄ… w burzliwej atmosferze Jowisza; ta plama wielkoÅ›ci Ziemi szaleje juÅ¼ od co najmniej 300 lat."
 }
 
 {
@@ -15,13 +15,13 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Pluton orbituje wokó³ naszego s³oñca w œredniej odleg³oœci blisko szeœæ miliardów kilometrów. Jego ksiê¿yc Charon jest tak du¿y, ¿e oba s¹ czêsto okreœlane jako 'podwójne planety'. Tymczasem jednak, anulowano status planety Plutona.\nPluton ma dwa inne (mniejsze) ksiê¿yce: Hydra i Nix."
+	Description "Pluton orbituje wokÃ³Å‚ naszego sÅ‚oÅ„ca w Å›redniej odlegÅ‚oÅ›ci blisko szeÅ›Ä‡ miliardÃ³w kilometrÃ³w. Jego ksiÄ™Å¼yc Charon jest tak duÅ¼y, Å¼e oba sÄ… czÄ™sto okreÅ›lane jako 'podwÃ³jne planety'. Tymczasem jednak, anulowano status planety Plutona.\nPluton ma dwa inne (mniejsze) ksiÄ™Å¼yce: Hydra i Nix."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros jest blisko ziemi asteroid¹ w kszta³cie ziemniaka oko³o 33 km d³ugoœci. Dziêki sondzie NEAR Shoemaker, wiadomo na ten temat wiêcej o Erosie ni¿ o jakichkolwiek innych asteroidach. W dniu 14 lutego 2001 wyl¹dowa³ na Erosie NEAR i sta³ siê pierwszym statkiem kosmicznym który kiedykolwiek wyl¹dowa³ na asteroidzie."
+	Description "Eros jest blisko ziemi asteroidÄ… w ksztaÅ‚cie ziemniaka okoÅ‚o 33 km dÅ‚ugoÅ›ci. DziÄ™ki sondzie NEAR Shoemaker, wiadomo na ten temat wiÄ™cej o Erosie niÅ¼ o jakichkolwiek innych asteroidach. W dniu 14 lutego 2001 wylÄ…dowaÅ‚ na Erosie NEAR i staÅ‚ siÄ™ pierwszym statkiem kosmicznym ktÃ³ry kiedykolwiek wylÄ…dowaÅ‚ na asteroidzie."
 }
 
 {
@@ -29,7 +29,7 @@
 	Target "Milky Way"
 	Distance 270000
 	DistanceUnits "ly"
-	Description "Droga Mleczna to galaktyka, w której znajduje siê nasz Uk³ad S³oneczny.\nNasz Uk³ad S³oneczny znajduje siê w jednym z ramion spiralnych, które piêknie wygl¹da z odleg³oœci 270000 lat œwietlnych. Jeœli odwiedzasz to miejsce, mo¿e konieczne byæ lekkie obrócenie galaktyki przy przytrzymaniu prawego przycisku myszy, aby zobaczyæ mo¿na ramiê spirali."
+	Description "Droga Mleczna to galaktyka, w ktÃ³rej znajduje siÄ™ nasz UkÅ‚ad SÅ‚oneczny.\nNasz UkÅ‚ad SÅ‚oneczny znajduje siÄ™ w jednym z ramion spiralnych, ktÃ³re piÄ™knie wyglÄ…da z odlegÅ‚oÅ›ci 270000 lat Å›wietlnych. JeÅ›li odwiedzasz to miejsce, moÅ¼e konieczne byÄ‡ lekkie obrÃ³cenie galaktyki przy przytrzymaniu prawego przycisku myszy, aby zobaczyÄ‡ moÅ¼na ramiÄ™ spirali."
 }
 
 {
@@ -37,7 +37,7 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alfa Centauri A i B s¹ razem z Proxima Centauri, najbli¿szym systemem gwiazd od nas. Alfa Cen A jest bardzo podobna do naszego S³oñca, choæ nieco starsza i jaœniejsza. Alfa Centauri B jest ciemniejsza i czerwieñsza a Proxima jest tak ciemna, ¿e nie mo¿e byæ dojrzana go³ym okiem, nawet jeœli jest to najbli¿sza gwiazda od S³oñca."
+	Description "Alfa Centauri A i B sÄ… razem z Proxima Centauri, najbliÅ¼szym systemem gwiazd od nas. Alfa Cen A jest bardzo podobna do naszego SÅ‚oÅ„ca, choÄ‡ nieco starsza i jaÅ›niejsza. Alfa Centauri B jest ciemniejsza i czerwieÅ„sza a Proxima jest tak ciemna, Å¼e nie moÅ¼e byÄ‡ dojrzana goÅ‚ym okiem, nawet jeÅ›li jest to najbliÅ¼sza gwiazda od SÅ‚oÅ„ca."
 }
 
 {
@@ -45,7 +45,7 @@
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Plejady to grupa m³odych jasnych gwiazd. Plejady nazwane s¹ po siedmiu siostrach z mitologii greckiej, nawet teleskopem da siê spojrzeæ, ¿e istnieje znaczne wiêcej ni¿ siedem gwiazd w tej gromadzie."
+	Description "Plejady to grupa mÅ‚odych jasnych gwiazd. Plejady nazwane sÄ… po siedmiu siostrach z mitologii greckiej, nawet teleskopem da siÄ™ spojrzeÄ‡, Å¼e istnieje znaczne wiÄ™cej niÅ¼ siedem gwiazd w tej gromadzie."
 }
 
 {
@@ -53,13 +53,13 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Nazwany po piêciu córek Atlasa i Ajtry, Hiady s¹ jedn¹ z najbardziej widocznych otwartych gromad gwiazd na niebie. Szacuje siê, ¿e gwiazdy  Hiady maj¹ oko³o 660 milionów lat - ponad szeœæ razy wiêcej ni¿ gorêtsze, b³êkitniej¿e gwiazdy Plejad, które znajduj¹ siê w pobli¿u naszego nocnego nieba."
+	Description "Nazwany po piÄ™ciu cÃ³rek Atlasa i Ajtry, Hiady sÄ… jednÄ… z najbardziej widocznych otwartych gromad gwiazd na niebie. Szacuje siÄ™, Å¼e gwiazdy  Hiady majÄ… okoÅ‚o 660 milionÃ³w lat - ponad szeÅ›Ä‡ razy wiÄ™cej niÅ¼ gorÄ™tsze, bÅ‚Ä™kitniejÅ¼e gwiazdy Plejad, ktÃ³re znajdujÄ… siÄ™ w pobliÅ¼u naszego nocnego nieba."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b jest wielk¹ planet¹ orbituj¹c¹ czerwon¹ gwiazdê kar³owat¹. Orbituje w stosunku 2:1 do innych planet w tym systemie."
+	Description "Gliese 876 b jest wielkÄ… planetÄ… orbitujÄ…cÄ… czerwonÄ… gwiazdÄ™ karÅ‚owatÄ…. Orbituje w stosunku 2:1 do innych planet w tym systemie."
 }
 
 {
@@ -67,24 +67,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "Sonda kosmiczna Galileo fotografowa³a asteroida 243 Ida w roku 1993 w drodze do Jowisza. Te zdjêcia ujawni³y, ¿e Ida ma niewielk¹ satelitê, któr¹ nazwano póŸniej Daktyl. Odkryto póŸniej kilka innych asteroid które tak¿e maj¹ satelity."
+	Description "Sonda kosmiczna Galileo fotografowaÅ‚a asteroida 243 Ida w roku 1993 w drodze do Jowisza. Te zdjÄ™cia ujawniÅ‚y, Å¼e Ida ma niewielkÄ… satelitÄ™, ktÃ³rÄ… nazwano pÃ³Åºniej Daktyl. Odkryto pÃ³Åºniej kilka innych asteroid ktÃ³re takÅ¼e majÄ… satelity."
 }
 
 {
 	Name "51 Pegasi b"
 	Target "51 Peg/b"
-	Description "W roku 1995 51 Pegasi b by³a pierwsz¹ odkryt¹ planet¹ orbituj¹c¹ nad normaln¹ gwiazd¹ zamiast s³oñca. Jest to ogromna planeta gazowa, która orbituje nad swoj¹ gwiazd¹ domow¹ niezwykle blisko - mniej ni¿ jedna pi¹ta odleg³oœci pomiêdzy Merkury i S³oñca. ¯e ten olbrzym gazowy, mo¿e istnieæ tak blisko gwiazdy, zmusi³o astronomów do ponownego rozpatrzenia ich teorii powstawania Uk³adu S³onecznego."
+	Description "W roku 1995 51 Pegasi b byÅ‚a pierwszÄ… odkrytÄ… planetÄ… orbitujÄ…cÄ… nad normalnÄ… gwiazdÄ… zamiast sÅ‚oÅ„ca. Jest to ogromna planeta gazowa, ktÃ³ra orbituje nad swojÄ… gwiazdÄ… domowÄ… niezwykle blisko - mniej niÅ¼ jedna piÄ…ta odlegÅ‚oÅ›ci pomiÄ™dzy Merkury i SÅ‚oÅ„ca. Å»e ten olbrzym gazowy, moÅ¼e istnieÄ‡ tak blisko gwiazdy, zmusiÅ‚o astronomÃ³w do ponownego rozpatrzenia ich teorii powstawania UkÅ‚adu SÅ‚onecznego."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "Ze wzglêdu na pomarañczowe i niebiesko-bia³e barwne kolory swoich gwiazd, podwójna gwiazda Albireo uwa¿ana jest za jedn¹ z naj³adniejszych par na niebie. Pomarañczowa gwiazda to olbrzym typu K, a jej towarzysz to karze³ klasy B."
+	Description "Ze wzglÄ™du na pomaraÅ„czowe i niebiesko-biaÅ‚e barwne kolory swoich gwiazd, podwÃ³jna gwiazda Albireo uwaÅ¼ana jest za jednÄ… z najÅ‚adniejszych par na niebie. PomaraÅ„czowa gwiazda to olbrzym typu K, a jej towarzysz to karzeÅ‚ klasy B."
 }
 
 {
 	Name "Kometa Borrelly'ego"
 	Target "Sol/Borrelly"
-	Description "22 Wrzeœnia 2001 roku Kometa Borrelly'ego zosta³a drug¹ komet¹ która kiedykolwiek zosta³a fotografowana przez sondê z bliskiej odleg³oœci. Pomimo Deep Space 1 nie zosta³a stworzona do asysty grawitacyjnej komety, to sonda osi¹gnê³a zbli¿eniu o 2200 km do j¹dra komety i wykona³a najwy¿szej rozdzielczoœci zdjêcia j¹dra komety które s¹ dotychczas dostêpne."
+	Description "22 WrzeÅ›nia 2001 roku Kometa Borrelly'ego zostaÅ‚a drugÄ… kometÄ… ktÃ³ra kiedykolwiek zostaÅ‚a fotografowana przez sondÄ™ z bliskiej odlegÅ‚oÅ›ci. Pomimo Deep Space 1 nie zostaÅ‚a stworzona do asysty grawitacyjnej komety, to sonda osiÄ…gnÄ™Å‚a zbliÅ¼eniu o 2200 km do jÄ…dra komety i wykonaÅ‚a najwyÅ¼szej rozdzielczoÅ›ci zdjÄ™cia jÄ…dra komety ktÃ³re sÄ… dotychczas dostÄ™pne."
 }

@@ -1,21 +1,21 @@
 {
-	Name   "J˙piter"
+	Name   "J√∫piter"
 	Target "Sol/Jupiter"
-	Description "J˙piter es el planeta m·s grande de nuestro sistema solar, y el quinto desde el Sol.  Como los dem·s grandes planetas exteriores, J˙piter es un gigante gaseoso, sin superficie sÛlida. La Gran Mancha Roja es la mayor y m·s antigua de las muchas tormentas en la turbulenta atmÛsfera de J˙piter; esta tempestad, del tamaÒo de la Tierra, persiste desde hace al menos 300 aÒos."
+	Description "J√∫piter es el planeta m√°s grande de nuestro sistema solar, y el quinto desde el Sol.  Como los dem√°s grandes planetas exteriores, J√∫piter es un gigante gaseoso, sin superficie s√≥lida. La Gran Mancha Roja es la mayor y m√°s antigua de las muchas tormentas en la turbulenta atm√≥sfera de J√∫piter; esta tempestad, del tama√±o de la Tierra, persiste desde hace al menos 300 a√±os."
 }
 
 {
-	Name "PlutÛn y Caronte"
+	Name "Plut√≥n y Caronte"
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "PlutÛn orbita nuestro Sol a una distancia promedio de casi seis mil millones de kilÛmetros.  Su luna Caronte es tan grande que se suele hablar de los dos como de un 'planeta doble'."
+	Description "Plut√≥n orbita nuestro Sol a una distancia promedio de casi seis mil millones de kil√≥metros.  Su luna Caronte es tan grande que se suele hablar de los dos como de un 'planeta doble'."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros es un asteroide cercano a la Tierra, con forma de papa y de unos 33 km de largo.  Gracias a la sonda espacial NEAR Shoemaker, sabemos m·s de Eros que de cualquier otro asteroide.  El 14 de febrero de 2001, NEAR descendiÛ en Eros, convirtiÈndose en la primera nave espacial en aterrizar sobre un asteroide."
+	Description "Eros es un asteroide cercano a la Tierra, con forma de papa y de unos 33 km de largo.  Gracias a la sonda espacial NEAR Shoemaker, sabemos m√°s de Eros que de cualquier otro asteroide.  El 14 de febrero de 2001, NEAR descendi√≥ en Eros, convirti√©ndose en la primera nave espacial en aterrizar sobre un asteroide."
 }
 
 {
@@ -23,54 +23,54 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alfa Centauri A y B son, junto con Proxima Centauri, el sistema estelar m·s prÛximo a nosotros.  Alfa Cen A es muy similar a nuestro Sol, aunque ligeramente m·s viejo y brillante.  B es menos brillante y m·s rojo, y Proxima es tan tenue que, a pesar de ser la estrella m·s cercana al Sol, no se la ve a simple vista."
+	Description "Alfa Centauri A y B son, junto con Proxima Centauri, el sistema estelar m√°s pr√≥ximo a nosotros.  Alfa Cen A es muy similar a nuestro Sol, aunque ligeramente m√°s viejo y brillante.  B es menos brillante y m√°s rojo, y Proxima es tan tenue que, a pesar de ser la estrella m√°s cercana al Sol, no se la ve a simple vista."
 }
 
 {
-	Name "Las PlÈyades"
+	Name "Las Pl√©yades"
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Las PlÈyades son un c˙mulo estelar, un grupo de estrellas brillantes de formaciÛn reciente.  Las PlÈyades reciben su nombre por las siete hermanas de la mitologÌa griega, si bien las observaciones telescÛpicas revelan que hay muchas m·s que siete estrellas en el c˙mulo."
+	Description "Las Pl√©yades son un c√∫mulo estelar, un grupo de estrellas brillantes de formaci√≥n reciente.  Las Pl√©yades reciben su nombre por las siete hermanas de la mitolog√≠a griega, si bien las observaciones telesc√≥picas revelan que hay muchas m√°s que siete estrellas en el c√∫mulo."
 }
 
 {
-	Name "Las HÌades"
+	Name "Las H√≠ades"
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Reciben su nombre por las cinco hijas de Atlas y Aeth. Las HÌades son uno de los m·s prominentes c˙mulos estelares abierots del cielo.  Se estima que las estrellas de las HÌades tienen unos 660 milliones de aÒos de edad--unas seis veces m·s que las m·s calientes y azules PlÈyades, cercanas a ellas en nuestro cielo."
+	Description "Reciben su nombre por las cinco hijas de Atlas y Aeth. Las H√≠ades son uno de los m√°s prominentes c√∫mulos estelares abierots del cielo.  Se estima que las estrellas de las H√≠ades tienen unos 660 milliones de a√±os de edad--unas seis veces m√°s que las m√°s calientes y azules Pl√©yades, cercanas a ellas en nuestro cielo."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b es un planeta gigante en Ûrbita de una estrella enana roja.  Est· en resonancia orbital 2:1 con otro planeta del sistema."
+	Description "Gliese 876 b es un planeta gigante en √≥rbita de una estrella enana roja.  Est√° en resonancia orbital 2:1 con otro planeta del sistema."
 }
 
 {
-	Name "Ida y D·ctilo"
+	Name "Ida y D√°ctilo"
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "La sonda espacial Galileo fotografiÛ el asteroide 243 Ida en 1993, en su camino a J˙piter.  Estas fotos revelaron que Ida tenÌa un pequeÒo satÈlite, llamado posteriormente D·ctilo.  Desde entonces, se han descubierto varios otros asteroides que tambiÈn tienen satÈlites."
+	Description "La sonda espacial Galileo fotografi√≥ el asteroide 243 Ida en 1993, en su camino a J√∫piter.  Estas fotos revelaron que Ida ten√≠a un peque√±o sat√©lite, llamado posteriormente D√°ctilo.  Desde entonces, se han descubierto varios otros asteroides que tambi√©n tienen sat√©lites."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b fue el primer planeta descubierto en Ûrbita de una estrella distinta del Sol.  Es un gigante gaseoso y orbita extremadamente prÛximo a su estrella--menos de un quinto de la distancia entre Mercurio y el Sol.  El hecho de que un gigante gaseoso pueda existir tan cercano a una estrella ha forzado a los astrÛnomos a revisar seriamente las teorÌas de formaciÛn de sistemas estelares."
+	Description "51 Pegasi b fue el primer planeta descubierto en √≥rbita de una estrella distinta del Sol.  Es un gigante gaseoso y orbita extremadamente pr√≥ximo a su estrella--menos de un quinto de la distancia entre Mercurio y el Sol.  El hecho de que un gigante gaseoso pueda existir tan cercano a una estrella ha forzado a los astr√≥nomos a revisar seriamente las teor√≠as de formaci√≥n de sistemas estelares."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "Debido al contraste entre los colores anaranjado y blanco azulado de sus estrellas componentes, el sistema estelar doble Albireo se considera uno de los pares m·s hermosos del cielo.  La estrella anaranjada es una gigante tipo K, y su compaÒera es una enana B."
+	Description "Debido al contraste entre los colores anaranjado y blanco azulado de sus estrellas componentes, el sistema estelar doble Albireo se considera uno de los pares m√°s hermosos del cielo.  La estrella anaranjada es una gigante tipo K, y su compa√±era es una enana B."
 }
 
 {
 	Name "Cometa Borrelly"
 	Target "Sol/Borrelly"
-	Description "El 22 de septiembre de 2001, el cometa Borrelly se convirtiÛ en el segundo cometa en ser fotografiado de cerca por una nave espacial.  A pesar de no haber sido diseÒada para el encuentro con un cometa, la sonda Deep Space 1 se aproximÛ a 2200 kilÛmetros del n˙cleo de Borrely, para enviarnos las im·genes de m·s alta resoluciÛn de un n˙ucleo cometario."
+	Description "El 22 de septiembre de 2001, el cometa Borrelly se convirti√≥ en el segundo cometa en ser fotografiado de cerca por una nave espacial.  A pesar de no haber sido dise√±ada para el encuentro con un cometa, la sonda Deep Space 1 se aproxim√≥ a 2200 kil√≥metros del n√∫cleo de Borrely, para enviarnos las im√°genes de m√°s alta resoluci√≥n de un n√∫ucleo cometario."
 }

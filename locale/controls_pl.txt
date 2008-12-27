@@ -3,45 +3,45 @@ Kontrole myszy i klawiatury w programie Celestia
 
 Funkcje myszy:
 
-Lewe przeci¹gniêcie			Orientacja kamery
-Prawe przeci¹gniêcie			Orbitowanie nad wybranym obiektem
-Kó³ko				Zmiana odleg³oœci do wybranego obiektu
-Prawe + lewe przeci¹gniêcie		Zmiana odleg³oœci do wybranego obiektu
-Ctrl + lewe przeci¹gniêcie		Zmiana odleg³oœci do wybranego obiektu
-Shift + lewe przeci¹gniêcie		Zmiana pola widzenia
-Kó³ko (œrodkowy przycisk)		Prze³¹czenie o 45 stopni pomiêdzy bie¿¹cym
-				i poprzednim polem widzenia
-Lewy przycisk			Wybór obiektu
-Podwójne klikniêcie lewym przyciskiem	Centrowanie wyboru
-Prawy przycisk			Wywo³anie menu kontekstowego
+Lewe przeciągnięcie	Orientacja kamery
+Prawe przeciągnięcie	Orbitowanie nad wybranym obiektem
+Kółko			Zmiana odległości do wybranego obiektu
+Prawe + lewe przeciągnięcie	Zmiana odległości do wybranego obiektu
+Ctrl + lewe przeciągnięcie	Zmiana odległości do wybranego obiektu
+Shift + lewe przeciągnięcie	Zmiana pola widzenia
+Kółko (środkowy przycisk)	Przełączenie o 45 stopni pomiędzy bieżącym
+			i poprzednim polem widzenia
+Lewy przycisk		Wybór obiektu
+Podwójne lewym przyciskiem	Centrowanie wyboru
+Prawy przycisk		Wywołanie menu kontekstowego
 
 Komendy klawiatury:
 
 Nawigacja:
-H		Wybierz s³oñce (g³ówne s³oñce)
+H		Wybierz słońce (główne słońce)
 C		Centruj na wybranym obiekcie
 Shift+C		Centruj na wybranym obiekcie bez zmiany
           		pozycji obiektu referencyjnego.	
-Ctrl+O		Poka¿ okno dialogowe "Wybierz obiekt"
-G		PrzejdŸ do wybranego obiektu
-Ctrl+G		Wyl¹duj na powierzchni wybranego obiektu
-Ctrl+F		Prze³¹cz tryb altazymuta na powierzchni obiektu
-F		ŒledŸ wybrany obiekt
-Y		Orbituj nad wybranym obiektem z godnie z prêdkoœci¹ jego rotacji
-:		Po³¹cz wybrany obiekt z poprzednim
-"		Goñ wybrany obiekt (orientuje siê wektorem prêdkoœci wyboru)
-T		Schwyæ wybrany obiekt (centruje na wybranym obiekcie)
-HOME		Zbli¿ siê do obiektu
+Ctrl+O		Pokaż okno dialogowe "Wybierz obiekt"
+G		Przejdź do wybranego obiektu
+Ctrl+G		Wyląduj na powierzchni wybranego obiektu
+Ctrl+F		Przełącz tryb altazymuta na powierzchni obiektu
+F		Śledź wybrany obiekt
+Y		Orbituj nad wybranym obiektem z prędkością jego rotacji
+:		Połącz wybrany obiekt z poprzednim
+"		Goń wybrany obiekt (orientuje się wektorem prędkości)
+T		Schwyć wybrany obiekt (centruje na wybranym obiekcie)
+HOME		Zbliż się do obiektu
 *		Spójrz wstecz
-END		Oddal siê od obiektu
-ESC		Prze³¹cz do wolnego lotu lub anuluj skrypt
+END		Oddal się od obiektu
+ESC		Przełącz do wolnego lotu lub anuluj skrypt
 
-Prawa/lewa strza³ka		Obróæ kamer¹
-Górna/dolna strza³ka		Zmieñ pochylenie kamery
-Shift+Strza³ki	Orbituj nad obiektem
-1-9		Wybierz planetê wed³ug odleg³oœci od s³oñca
-0		Wybierz gwiazdê domow¹ w aktualnym uk³adzie s³onecznym
-ENTER		Wybierz gwiazdê lub planetê, wpisuj¹c jej nazwê
+Prawa/lewa strzałka	Obróć kamerą
+Górna/dolna strzałka	Zmień pochylenie kamery
+Shift+Strzałki	Orbituj nad obiektem
+1-9		Wybierz planetę według odległości od słońca
+0		Wybierz gwiazdę domową w bieżącym układzie słonecznym
+ENTER		Wybierz gwiazdę lub planetę, wpisując jej nazwę
 
 Czas:
 Spacja		Zatrzymaj czas i skrypty
@@ -49,92 +49,95 @@ Shift+L		2x szybciej
 Shift+K		2x wolniej
 L		10x szybciej
 K		10x wolniej
-J		Odwróæ czas
-!		Ustaw czas do bie¿¹cego czasu
-?		Pokaz odleg³oœæ œwietln¹ pomiêdzy obserwatorem i wybranym obiektem
--		Odejmij odleg³oœæ œwietln¹ od bie¿¹cego czasu symulacji
+J		Odwróć czas
+!		Ustaw czas do bieżącego czasu
+?		Pokaż odległość świetlną pomiędzy obserwatorem i wyborem
+-		Odejmij odległość świetlną od bieżącego czasu symulacji
 
 Nazwy:
-=		Prze³¹cz nazwy gwiazdozbiorów
-B		Prze³¹cz nazwy gwiazd
-E		Prze³¹cz nazwy galaktyk
-M		Prze³¹cz nazwy ksiê¿yc
-W		Prze³¹cz nazwy asteroid
-Shift+W		Prze³¹cz nazwy komet
-N		Prze³¹cz nazwy statków kosmicznych
-P		Prze³¹cz nazwy planet
-&		Prze³¹cz nazwy miejsc
+=		Przełącz nazwy gwiazdozbiorów
+B		Przełącz nazwy gwiazd
+E		Przełącz nazwy galaktyk
+M		Przełącz nazwy księżyc
+W		Przełącz nazwy asteroid
+Shift+W		Przełącz nazwy komet
+N		Przełącz nazwy statków kosmicznych
+P		Przełącz nazwy planet
+&		Przełącz nazwy miejsc
 
-V		Zmieñ szczegó³owoœæ tekstu informacji
+V		Zmień szczegółowość tekstu informacji
 
 Opcje:
-I		Prze³¹cz tekstury chmur
-U		Prze³¹cz galaktyki
-O		Prze³¹cz orbity planet
-/		Prze³¹cz schematy gwiazdozbiorów
-^		Prze³¹cz mg³awice
-%		Prze³¹cz kolory gwiazd
-;		Poka¿ siatkê nieba opartej na ziemi
-[	AutoMag OFF: Zmniejsz ograniczenie wielkoœci (mniej widocznych gwiazd)
-	AutoMag ON: Zmniejsz ograniczenie wielkoœci o 45 stopni pola widzenia
-]	AutoMag OFF: Zwiêksz ograniczenie wielkoœci (wiêcej widocznych gwiazd)
-	AutoMag ON: Zwiêksz ograniczenie wielkoœci o 45 stopni pola widzenia
-{		Zmniejsz oœwietlenie otoczenia
-}		Zwiêksz oœwietlenie otoczenia
-(		Zmniejsz jasnoœæ galaktyki, niezale¿nie od jasnoœci gwiazd
-)		Zwiêksz jasnoœæ galaktyki, niezale¿nie od jasnoœci gwiazd
+I		Przełącz tekstury chmur
+U		Przełącz galaktyki
+O		Przełącz orbity planet
+/		Przełącz schematy gwiazdozbiorów
+^		Przełącz mgławice
+%		Przełącz kolory gwiazd
+;		Pokaż siatkę nieba opartej na ziemi
+[       AutoMag OFF: Zmniejsz ograniczenie wielkości (mniej widocznych gwiazd)
+        AutoMag ON:  Zmniejsz ograniczenie wielkości o 45 stopni pola widzenia
+]       AutoMag OFF: Zwiększ ograniczenie wielkości (więcej widocznych gwiazd)
+        AutoMag ON:  Zwiększ ograniczenie wielkości o 45 stopni pola widzenia
+{		Zmniejsz oświetlenie otoczenia
+}		Zwiększ oświetlenie otoczenia
+(		Zmniejsz jasność galaktyki, niezależnie od jasności gwiazd
+)		Zwiększ jasność galaktyki, niezależnie od jasności gwiazd
 ,		Zmniejsz pole widzenia
-.		Zwiêksz pole widzenia
-Backspace	Anuluj bie¿¹cy wybór
-Ctrl+A		Prze³¹cz atmosfery
-Ctrl+B		Prze³¹cz granice gwiazdozbioru 
-Ctrl+E		Prze³¹cz cienie zaæmienia
-Ctrl+K		Prze³¹cz wyœwietlanie markerów
-Ctrl+L		Prze³¹cz iluminacjê na nieoœwietlonej czêœci
+.		Zwiększ pole widzenia
+Backspace	Anuluj bieżący wybór
+Ctrl+A		Przełącz atmosfery
+Ctrl+B		Przełącz granice gwiazdozbioru 
+Ctrl+E		Przełącz cienie zaćmienia
+Ctrl+K		Przełącz wyświetlanie markerów
+Ctrl+L		Przełącz iluminację na nieoświetlonej części
 Ctrl+P		Zaznacz wybrany obiekt
-Ctrl+S		Prze³¹cz styl gwiazd (niewyraŸne dyski, punkty, i skalowane tarcze)
-Ctrl+T		Prze³¹cz ogony komet
-Ctrl+V		Prze³¹cz miêdzy wspieranymi metodami OpenGL
-Ctrl+W		Prze³¹cz tryb obrazu szkieletowego
-Ctrl+X		Prze³¹cz linie antialias
-Ctrl+Y		Prze³¹cz autoMag (auto dostosowanie widoku do pola widzenia)
-Shift+R		Zwiêksz rozdzielczoœæ tekstur
-R		Zmniejsz rozdzielczoœæ tekstur
-+		Prze³¹cz miêdzy artystycznymi lub ograniczonymi wiedz¹ teksturami planety
+Ctrl+S		Przełącz styl gwiazd
+		(niewyraźne dyski, punkty, i skalowane tarcze)
+Ctrl+T		Przełącz ogony komet
+Ctrl+V		Przełącz między wspieranymi metodami OpenGL
+Ctrl+W		Przełącz tryb obrazu szkieletowego
+Ctrl+X		Przełącz linie antialias
+Ctrl+Y		Przełącz autoMag
+		(auto dostosowanie widoku do pola widzenia)
+Shift+R		Zwiększ rozdzielczość tekstur
+R		Zmniejsz rozdzielczość tekstur
++		Przełącz między artystycznymi lub ograniczonymi wiedzą
+		teksturami planety
 
 Multiwidok:
 Ctrl+R		Podziel widok w pionie
 Ctrl+U		Podziel widok poziomo
-TAB		Prze³¹cz aktywny widok
-DEL		Usuñ aktywny widok
-Ctrl+D		Usuñ wszystkie widoki z wyj¹tkiem aktywnego
+TAB		Przełącz aktywny widok
+DEL		Usuń aktywny widok
+Ctrl+D		Usuń wszystkie widoki z wyjątkiem aktywnego
 
 Lot statkiem kosmicznym:
 F1		Zatrzymaj
-F2		Ustaw prêdkoœæ na 1 km/s
-F3		Ustaw prêdkoœæ na 1000 km/s
-F4		Ustaw prêdkoœæ na prêdkoœæ œwiat³a (1 c)
-F5		Ustaw prêdkoœæ na dziesiêciokrotn¹ prêdkoœæ œwiat³a.
-F6		Ustaw prêdkoœæ na 1 AU/s
-F7		Ustaw prêdkoœæ na 1 ly/s
+F2		Ustaw prędkość na 1 km/s
+F3		Ustaw prędkość na 1000 km/s
+F4		Ustaw prędkość na prędkość światła (1 c)
+F5		Ustaw prędkość na dziesięciokrotną prędkość światła.
+F6		Ustaw prędkość na 1 AU/s
+F7		Ustaw prędkość na 1 ly/s
 A		Przyspiesz
 S		Zatrzymaj
 Z		Zwolnij
-Q		Zmieñ kierunek lotu (zawróæ o 180°)
-X		Ustaw kierunek lotu na œrodku ekranu
+Q		Zmień kierunek lotu (zawróć o 180°)
+X		Ustaw kierunek lotu na środku ekranu
 
 Klawiatura numeryczna:
 4		Lot w lewo
 6		Lot w prawo
-8		Lot w dó³
-2		Lot w górê
+8		Lot w dół
+2		Lot w górę
 7		Obrót w lewo
 9		Obrót w prawo
-5		Zatrzymaj zmianê kursu
+5		Zatrzymaj zmianę kursu
 
 Joystick:
-Oœ X		Lot w lewo/prawo
-Oœ Y		Lot w dó³/górê
+Oś X		Lot w lewo/prawo
+Oś Y		Lot w dół/górę
 Lewy spust	Obrót w lewo
 Prawy spust	Obrót w prawo
 Przycisk 1	Zwolnij
@@ -142,12 +145,12 @@ Przycisk 2	Przyspiesz
 
 Inne:
 D		Uruchom demo
-F8		W³¹cz joystick
+F8		Włącz joystick
 F10		Zrzut ekranu do pliku
 Shift+F10		Przechwytywanie ekranu (nagrywanie filmu)
 F11		W trybie nagrywania filmu: wstrzymaj / wznów nagrywanie
-F12		W trybie nagrywania filmu: zakoñcz nagrywanie
-AltGr+~		Poka¿ plik dziennika (³adowania, komunikaty b³êdów)
-`		Poka¿ renderowane klatki na sekundê (FPS)
+F12		W trybie nagrywania filmu: zakończ nagrywanie
+AltGr+~		Pokaż plik dziennika (ładowania, komunikaty błędów)
+`		Pokaż renderowane klatki na sekundę (FPS)
 Ctrl+C		Kopiuj URL miejsca do schowka
 Ctrl+INS		Kopiuj URL miejsca do schowka

@@ -91,7 +91,7 @@ F1 ou S...................	Arrête le mouvement
 
 --- Contrôle du  temps ---
 
- Espace .................	Arrête / reprend le cours du temps et des script (bascule)
+ Espace .................	Arrête / reprend le cours du temps et des scripts (bascule)
  J ........................... Permute l'écoulement du temps vers l'avenir ou vers le passé
  \ ...........................	Cours du temps normal. Annule un défilement + ou - rapide
  L ...........................	Accélère 10 fois l'écoulement du temps ( avant ou arrière)
