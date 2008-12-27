@@ -1,12 +1,12 @@
 {
 	Name   "Jupiter"
 	Target "Sol/Jupiter"
-	Description "Jupiter, la 5ème planète, est la plus grande de notre
-système solaire. Comme les autres grandes planètes
-externes, Jupiter est une géante gazeuse, sans
-surface solide.  La grande tâche rouge est le plus
-vaste et le plus ancien des ouragans de l'atmosphère
-turbulente de Jupiter; Cette tempête de la taille de la
+	Description "Jupiter, la 5Ã¨me planÃ¨te, est la plus grande de notre
+systÃ¨me solaire. Comme les autres grandes planÃ¨tes
+externes, Jupiter est une gÃ©ante gazeuse, sans
+surface solide.  La grande tÃ¢che rouge est le plus
+vaste et le plus ancien des ouragans de l'atmosphÃ¨re
+turbulente de Jupiter; Cette tempÃªte de la taille de la
 Terre dure depuis au moins 300 ans."
 }
 
@@ -15,22 +15,22 @@ Terre dure depuis au moins 300 ans."
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Pluton tourne autour du soleil à une distance
-moyenne de près de six milliards de kilomètres.
+	Description "Pluton tourne autour du soleil Ã  une distance
+moyenne de prÃ¨s de six milliards de kilomÃ¨tres.
 Charon, sa principale lune, est si grande que le
-couple a souvent été considéré comme un système
-de 'planètes doubles'."
+couple a souvent Ã©tÃ© considÃ©rÃ© comme un systÃ¨me
+de 'planÃ¨tes doubles'."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros est un astéroïde de forme patatoïde d'environ
-33 km de long. Grace à la sonde 'NEAR Shoemaker',
-on en sait plus sur lui que sur tout autre astéroïde.
-Le 14 Février 2001 'NEAR' est descendue sur Eros,
-devenant ainsi la première sonde de l'histoire à
-'atterrir' sur un astéroïde."
+	Description "Eros est un astÃ©roÃ¯de de forme patatoÃ¯de d'environ
+33 km de long. Grace Ã  la sonde 'NEAR Shoemaker',
+on en sait plus sur lui que sur tout autre astÃ©roÃ¯de.
+Le 14 FÃ©vrier 2001 'NEAR' est descendue sur Eros,
+devenant ainsi la premiÃ¨re sonde de l'histoire Ã 
+'atterrir' sur un astÃ©roÃ¯de."
 }
 
 {
@@ -39,24 +39,24 @@ devenant ainsi la première sonde de l'histoire à
 	Distance 90
 	DistanceUnits "au"
 	Description "Alpha du Centaure A et B sont, avec Proxima du
-Centaure, nos plus proches étoiles. Alpha Cen A
-est très similaire à notre soleil, quoiqu'un peu plus
-vieille et plus brillante. Alpha Cen B est plus pâle et
-plus rouge. Quant à la lueur de Proxima, elle est si
-faible qu'elle n'est pas visible à l'oeil nu, même
-si elle est l'étoile la plus proche de notre soleil."
+Centaure, nos plus proches Ã©toiles. Alpha Cen A
+est trÃ¨s similaire Ã  notre soleil, quoiqu'un peu plus
+vieille et plus brillante. Alpha Cen B est plus pÃ¢le et
+plus rouge. Quant Ã  la lueur de Proxima, elle est si
+faible qu'elle n'est pas visible Ã  l'oeil nu, mÃªme
+si elle est l'Ã©toile la plus proche de notre soleil."
 }
 
 {
-	Name "Les Pléïades"
+	Name "Les PlÃ©Ã¯ades"
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Le groupe des Pleiades est composé d'étoiles
-brillantes récemment formées. 'Pleiades' est le nom
-donné à sept soeurs de la mythologie grecque.
-Cependant, les télescopes ont révélés qu'il y avait
-beaucoup plus que sept étoiles dans cet ensemble."
+	Description "Le groupe des Pleiades est composÃ© d'Ã©toiles
+brillantes rÃ©cemment formÃ©es. 'Pleiades' est le nom
+donnÃ© Ã  sept soeurs de la mythologie grecque.
+Cependant, les tÃ©lescopes ont rÃ©vÃ©lÃ©s qu'il y avait
+beaucoup plus que sept Ã©toiles dans cet ensemble."
 }
 
 {
@@ -64,12 +64,12 @@ beaucoup plus que sept étoiles dans cet ensemble."
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Les Hyades forment le groupement d'étoiles le plus
-visible de notre ciel nocturne. 'Hyades' était le nom
-donné aux cinq filles d'Atlas et d'Aethra. On estime
-que l'age des étoiles qui composent le groupe des
-Hyades est d'environ 660 millions d'années, soit
-plus de 6 fois plus vieilles que l'étoile la plus chaude
+	Description "Les Hyades forment le groupement d'Ã©toiles le plus
+visible de notre ciel nocturne. 'Hyades' Ã©tait le nom
+donnÃ© aux cinq filles d'Atlas et d'Aethra. On estime
+que l'age des Ã©toiles qui composent le groupe des
+Hyades est d'environ 660 millions d'annÃ©es, soit
+plus de 6 fois plus vieilles que l'Ã©toile la plus chaude
 et bleue des Pleiades qui apparait dans notre ciel
 nocturne."
 
@@ -78,9 +78,9 @@ nocturne."
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b est une exoplanète qui tourne autour
-d'une naine rouge. Son orbite est en résonnance 2:1
-avec une autre planète connue de ce système."
+	Description "Gliese 876 b est une exoplanÃ¨te qui tourne autour
+d'une naine rouge. Son orbite est en rÃ©sonnance 2:1
+avec une autre planÃ¨te connue de ce systÃ¨me."
 }
 
 {
@@ -88,24 +88,24 @@ avec une autre planète connue de ce système."
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "La sonde Galileo a photographié l'astéroïde Ida 243
+	Description "La sonde Galileo a photographiÃ© l'astÃ©roÃ¯de Ida 243
 lors de son voyage vers Jupiter en 1993. Les photos
-ont révélé qu'Ida avait un petit satellite appelé
-Dactyl. Depuis, on a découvert que plusieurs autres
-astéroïdes avaient aussi des satellites."
+ont rÃ©vÃ©lÃ© qu'Ida avait un petit satellite appelÃ©
+Dactyl. Depuis, on a dÃ©couvert que plusieurs autres
+astÃ©roÃ¯des avaient aussi des satellites."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b a été la première planète découverte
-tournant autour d'une étoile 'normale' autre que notre
-soleil. C'est une géante gazeuse dont l'orbite est très
-proche de son soleil : moins d'un cinquième de la
-distance entre Mercure et notre soleil. Qu'une géante
-gazeuse puisse exister si près d'une étoile a forcé les
-astronomes à sérieusement revoir leurs théories sur la
-formation des systèmes solaires."
+	Description "51 Pegasi b a Ã©tÃ© la premiÃ¨re planÃ¨te dÃ©couverte
+tournant autour d'une Ã©toile 'normale' autre que notre
+soleil. C'est une gÃ©ante gazeuse dont l'orbite est trÃ¨s
+proche de son soleil : moins d'un cinquiÃ¨me de la
+distance entre Mercure et notre soleil. Qu'une gÃ©ante
+gazeuse puisse exister si prÃ¨s d'une Ã©toile a forcÃ© les
+astronomes Ã  sÃ©rieusement revoir leurs thÃ©ories sur la
+formation des systÃ¨mes solaires."
 }
 
 {
@@ -113,21 +113,21 @@ formation des systèmes solaires."
 	Target "Albireo"
 	Distance 0.6
 	Description "A cause du contraste entre les couleurs orange et
-blanc-bleu des étoiles qui le composent, le système
-double d'Albireo est considéré comme le plus beau
-couple de notre ciel nocturne. L'étoile orange est une
-géante de type K, et sa compagne une étoile naine
+blanc-bleu des Ã©toiles qui le composent, le systÃ¨me
+double d'Albireo est considÃ©rÃ© comme le plus beau
+couple de notre ciel nocturne. L'Ã©toile orange est une
+gÃ©ante de type K, et sa compagne une Ã©toile naine
 de type B."
 }
 
 {
-	Name "Comète Borrelly"
+	Name "ComÃ¨te Borrelly"
 	Target "Sol/Borrelly"
-	Description "Le 22 Septembre 2001, la comète Borrelly est
-devenue la deuxième comète photographiée de près
-par une sonde. Bien que son vol n'ait pas été prévu
-pour cela, Deep Space 1 s'est approchée à
-seulement 2200 kilomètres du noyau de Borrelly,
-nous offrant ainsi les premières images haute
-résolution du noyau d'une comète."
+	Description "Le 22 Septembre 2001, la comÃ¨te Borrelly est
+devenue la deuxiÃ¨me comÃ¨te photographiÃ©e de prÃ¨s
+par une sonde. Bien que son vol n'ait pas Ã©tÃ© prÃ©vu
+pour cela, Deep Space 1 s'est approchÃ©e Ã 
+seulement 2200 kilomÃ¨tres du noyau de Borrelly,
+nous offrant ainsi les premiÃ¨res images haute
+rÃ©solution du noyau d'une comÃ¨te."
 }

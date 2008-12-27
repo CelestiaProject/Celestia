@@ -1,7 +1,7 @@
 {
 	Name   "Giove"
 	Target "Sol/Jupiter"
-	Description "Giove è il pianeta più grande del nostro sistema solare ed è il quinto dal Sole.  Come gli altri grandi pianeti esterni, Giove è un gigante gassoso, senza una superficie solida.  La Grande Macchia Rossa è la più grande e longeva delle molte tempeste dell'atmosfera turbolenta di Giove; questa tempesta delle dimensioni della Terra è in corso da almeno 300 anni."
+	Description "Giove Ã¨ il pianeta piÃ¹ grande del nostro sistema solare ed Ã¨ il quinto dal Sole.  Come gli altri grandi pianeti esterni, Giove Ã¨ un gigante gassoso, senza una superficie solida.  La Grande Macchia Rossa Ã¨ la piÃ¹ grande e longeva delle molte tempeste dell'atmosfera turbolenta di Giove; questa tempesta delle dimensioni della Terra Ã¨ in corso da almeno 300 anni."
 }
 
 {
@@ -9,13 +9,13 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Plutone orbita intorno al Sole ad una distanza media di circa sei miliardi di chilometri.  La sua sola luna conosciuta, Caronte, è così grande che ai due ci si riferisce spesso come ad un 'pianeta doppio'."
+	Description "Plutone orbita intorno al Sole ad una distanza media di circa sei miliardi di chilometri.  La sua sola luna conosciuta, Caronte, Ã¨ cosÃ¬ grande che ai due ci si riferisce spesso come ad un 'pianeta doppio'."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros è un asteroide a forma di patata vicino alla Terra, lungo circa 33km.  Grazie alla sonda NEAR Shoemaker si possiedono più conoscenze su Eros che su ogni altro Asteroide.  Il 14 Febbraio 2001 NEAR è discesa su Eros ed è divenuto il primo veicolo spaziale mai atterrato su un asteroide."
+	Description "Eros Ã¨ un asteroide a forma di patata vicino alla Terra, lungo circa 33km.  Grazie alla sonda NEAR Shoemaker si possiedono piÃ¹ conoscenze su Eros che su ogni altro Asteroide.  Il 14 Febbraio 2001 NEAR Ã¨ discesa su Eros ed Ã¨ divenuto il primo veicolo spaziale mai atterrato su un asteroide."
 }
 
 {
@@ -23,7 +23,7 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alpha Centauri A e B sono, assieme a Proxima Centauri, il sistema stellare più vicino a noi.  Alpha Cen A è molto simile al nostro Sole, anche se leggermente più vecchia e brillante.  B è più fioca e più rossa, e Proxima è così fioca che non può essere vista ad occhio nudo, nonostante sia la stella più vicina al Sole."
+	Description "Alpha Centauri A e B sono, assieme a Proxima Centauri, il sistema stellare piÃ¹ vicino a noi.  Alpha Cen A Ã¨ molto simile al nostro Sole, anche se leggermente piÃ¹ vecchia e brillante.  B Ã¨ piÃ¹ fioca e piÃ¹ rossa, e Proxima Ã¨ cosÃ¬ fioca che non puÃ² essere vista ad occhio nudo, nonostante sia la stella piÃ¹ vicina al Sole."
 }
 
 {
@@ -31,7 +31,7 @@
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "L'ammasso stellare delle Pleiadi è un gruppo di stelle brillanti  formatesi recentemente.  Le Pleiadi prendono il nome dalle sette sorelle della mitologia greca, nonostante i telescopi abbiano rivelato che ci siano considerevolmente più di sette stelle nell'ammasso."
+	Description "L'ammasso stellare delle Pleiadi Ã¨ un gruppo di stelle brillanti  formatesi recentemente.  Le Pleiadi prendono il nome dalle sette sorelle della mitologia greca, nonostante i telescopi abbiano rivelato che ci siano considerevolmente piÃ¹ di sette stelle nell'ammasso."
 }
 
 {
@@ -39,13 +39,13 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Chiamate come le cinque figlie di Atlante ed Aethra, le Iadi sono uno dei principali ammassi aperti del cielo.  È stimato che le stelle delle Iadi abbiano approssimativamente un'età di 660 milioni di anni--oltre sei volte più antiche delle più calde stelle blu delle Pleiadi che appaiono vicine nel nostro cielo notturno."
+	Description "Chiamate come le cinque figlie di Atlante ed Aethra, le Iadi sono uno dei principali ammassi aperti del cielo.  Ãˆ stimato che le stelle delle Iadi abbiano approssimativamente un'etÃ  di 660 milioni di anni--oltre sei volte piÃ¹ antiche delle piÃ¹ calde stelle blu delle Pleiadi che appaiono vicine nel nostro cielo notturno."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b è un pianeta gigante orbitante intorno ad una stella nana rossa.  È in una risonanza orbitale di 2:1 con gli altri pianeti conosciuti del sistema."
+	Description "Gliese 876 b Ã¨ un pianeta gigante orbitante intorno ad una stella nana rossa.  Ãˆ in una risonanza orbitale di 2:1 con gli altri pianeti conosciuti del sistema."
 }
 
 {
@@ -53,24 +53,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "La sonda Galileo ha fotografato l'asteroide 243 Ida in 1993 nel suo viaggio per Giove.  Queste immagini hanno rivelato che Ida possiede un piccolo satellite, chiamato successivamente Dactyl.  È stato scoperto che anche altri asteroidi possiedono satelliti."
+	Description "La sonda Galileo ha fotografato l'asteroide 243 Ida in 1993 nel suo viaggio per Giove.  Queste immagini hanno rivelato che Ida possiede un piccolo satellite, chiamato successivamente Dactyl.  Ãˆ stato scoperto che anche altri asteroidi possiedono satelliti."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b fu il primo pianeta scoperto ad orbitare intorno ad una stella normale che non fosse il Sole.  È un pianeta gigante gassoso ed orbita estremamente vicino alla sua stella madre--meno di un quinto della distanza fra Mercurio ed il nostro Sole.  Il fatto che un gigante gassoso possa esistere così vicino ad una stella ha forzato gli astronomi a riconsiderare seriamente le loro teorie sulla formazione dei sistemi solari."
+	Description "51 Pegasi b fu il primo pianeta scoperto ad orbitare intorno ad una stella normale che non fosse il Sole.  Ãˆ un pianeta gigante gassoso ed orbita estremamente vicino alla sua stella madre--meno di un quinto della distanza fra Mercurio ed il nostro Sole.  Il fatto che un gigante gassoso possa esistere cosÃ¬ vicino ad una stella ha forzato gli astronomi a riconsiderare seriamente le loro teorie sulla formazione dei sistemi solari."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "Per via del contrasto dei colori arancio e bianco-blu delle stelle che lo compongono, il sistema di stelle doppie Albireo è considerato una delle più belle coppie del cielo.  La stella arancio è una gigante di tipo K, e la sua compagna è una nana B."
+	Description "Per via del contrasto dei colori arancio e bianco-blu delle stelle che lo compongono, il sistema di stelle doppie Albireo Ã¨ considerato una delle piÃ¹ belle coppie del cielo.  La stella arancio Ã¨ una gigante di tipo K, e la sua compagna Ã¨ una nana B."
 }
 
 {
 	Name "Cometa Borrelly"
 	Target "Sol/Borrelly"
-	Description "Il 22 Settembre 2001, la cometa Borrelly divenne la seconda cometa ad essere fotografata da vicino da una sonda spaziale.  Nonostante non fosse stata progettata per il flyby con la cometa, Deep Space 1 si avvicinò entro 2200 chilometri dal nucleo della Borrelly per restituire le fotografie a più alta risoluzione che abbiamo di un nucleo di cometa."
+	Description "Il 22 Settembre 2001, la cometa Borrelly divenne la seconda cometa ad essere fotografata da vicino da una sonda spaziale.  Nonostante non fosse stata progettata per il flyby con la cometa, Deep Space 1 si avvicinÃ² entro 2200 chilometri dal nucleo della Borrelly per restituire le fotografie a piÃ¹ alta risoluzione che abbiamo di un nucleo di cometa."
 }
