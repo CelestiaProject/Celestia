@@ -1674,7 +1674,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
         {
             Simulation* sim = appCore->getSimulation();
             name = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
-            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, name.c_str());
+            AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_CENTER, UTF8ToCurrentCP(name).c_str());
             AppendMenu(hMenu, MF_SEPARATOR, 0, 0);
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_GOTO, UTF8ToCurrentCP(_("&Goto")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_FOLLOW, UTF8ToCurrentCP(_("&Follow")).c_str());
