@@ -4,7 +4,7 @@
 	Description "Jupiter, la 5ème planète, est la plus grande de notre
 système solaire. Comme les autres grandes planètes
 externes, Jupiter est une géante gazeuse, sans
-surface solide.  La grande tâche rouge est le plus
+surface solide.  La grande tache rouge est le plus
 vaste et le plus ancien des ouragans de l'atmosphère
 turbulente de Jupiter; Cette tempête de la taille de la
 Terre dure depuis au moins 300 ans."
@@ -52,10 +52,10 @@ si elle est l'étoile la plus proche de notre soleil."
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Le groupe des Pleiades est composé d'étoiles
-brillantes récemment formées. 'Pleiades' est le nom
+	Description "Le groupe des Pléïades est composé d'étoiles
+brillantes récemment formées. 'Pléïades' est le nom
 donné à sept soeurs de la mythologie grecque.
-Cependant, les télescopes ont révélés qu'il y avait
+Cependant, les télescopes ont révélé qu'il y avait
 beaucoup plus que sept étoiles dans cet ensemble."
 }
 
@@ -67,10 +67,10 @@ beaucoup plus que sept étoiles dans cet ensemble."
 	Description "Les Hyades forment le groupement d'étoiles le plus
 visible de notre ciel nocturne. 'Hyades' était le nom
 donné aux cinq filles d'Atlas et d'Aethra. On estime
-que l'age des étoiles qui composent le groupe des
+que l'âge des étoiles qui composent le groupe des
 Hyades est d'environ 660 millions d'années, soit
 plus de 6 fois plus vieilles que l'étoile la plus chaude
-et bleue des Pleiades qui apparait dans notre ciel
+et bleue des Pléïades qui apparait dans notre ciel
 nocturne."
 
 }
@@ -112,7 +112,7 @@ formation des systèmes solaires."
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "A cause du contraste entre les couleurs orange et
+	Description "À cause du contraste entre les couleurs orange et
 blanc-bleu des étoiles qui le composent, le système
 double d'Albireo est considéré comme le plus beau
 couple de notre ciel nocturne. L'étoile orange est une
