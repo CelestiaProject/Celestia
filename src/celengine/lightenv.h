@@ -41,6 +41,7 @@ public:
     Vec3f direction;
     float penumbraRadius;
     float umbraRadius;
+    float maxDepth;
 };
 
 class LightingState

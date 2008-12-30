@@ -102,8 +102,8 @@ struct CelestiaGLProgramShadow
 {
     Vec4ShaderParameter texGenS;
     Vec4ShaderParameter texGenT;
-    FloatShaderParameter scale;
-    FloatShaderParameter bias;
+    FloatShaderParameter falloff;
+    FloatShaderParameter maxDepth;
 };
 
 class CelestiaGLProgram
