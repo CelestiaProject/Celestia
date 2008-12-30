@@ -115,7 +115,7 @@
 	
 	select { object "Alioth" }
 	center { time 2 }
-	print { text "Les habitants de l'hémisphère nord\nreconnaîtrons la Grande Ourse." row -5 column 2 duration 4 }
+	print { text "Les habitants de l'hémisphère nord\nreconnaîtront la Grande Ourse." row -5 column 2 duration 4 }
 	wait { duration 6 }
 
 	select { object "Beta Cru" }
