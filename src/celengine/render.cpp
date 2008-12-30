@@ -7795,9 +7795,20 @@ bool Renderer::testEclipse(const Body& receiver,
                                      (float) sunDir.y,
                                      (float) sunDir.z);
             shadow.penumbraRadius = shadowRadius;
+
+            // The umbra radius will be positive if the apparent size of the occluder
+            // is greater than the apparent size of the sun, zero if they're equal,
+            // and negative when the eclipse is partial. The absolute value of the
+            // umbra radius is the radius of the shadow region with constant depth:
+            // for total eclipses, this area is actually the umbra, with a depth of
+            // 1. For annular eclipses and transits, it is less than 1.
             shadow.umbraRadius = caster.getRadius() *
                 (appOccluderRadius - appSunRadius) / appOccluderRadius;
-            shadows.push_back(shadow);
+            shadow.maxDepth = std::min(1.0f, square(appOccluderRadius / appSunRadius));
+
+            // Ignore transits that don't produce a visible shadow.
+            if (shadow.maxDepth > 1.0f / 256.0f)
+                shadows.push_back(shadow);
 
             return true;
         }

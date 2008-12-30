@@ -648,17 +648,21 @@ void renderRings_GLSL(RingSystem& rings,
         Vec4f texGenS(sAxis.x, sAxis.y, sAxis.z, 0.5f);
         Vec4f texGenT(tAxis.x, tAxis.y, tAxis.z, 0.5f);
 
-        // r0 and r1 determine the size of the penumbra and the umbra
-        // shadow size.
+        // r0 and r1 determine the size of the planet's shadow and penumbra
+        // on the rings.
+        // TODO: A more accurate ring shadow calculation would set r1 / r0
+        // to the ratio of the apparent sizes of the planet and sun as seen
+        // from the rings. Even more realism could be attained by letting
+        // this ratio vary across the rings, though it may not make enough
+        // of a visual difference to be worth the extra effort.
         float r0 = 0.24f;
         float r1 = 0.25f;
         float bias = 1.0f / (1.0f - r1 / r0);
-        /*float scale = -bias / r0;     Unused*/
 
         prog->shadows[li][0].texGenS = texGenS;
         prog->shadows[li][0].texGenT = texGenT;
-        prog->shadows[li][0].bias = bias;
-        prog->shadows[li][0].scale = -bias / r0;
+        prog->shadows[li][0].maxDepth = 1.0f;
+        prog->shadows[li][0].falloff = bias / r0;
     }
 
     glEnable(GL_BLEND);

@@ -7,9 +7,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celutil/util.h"
 #include "gl.h"
 #include "glext.h"
 #include "shadermanager.h"
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -598,6 +600,19 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 }
 
 
+// Calculate the depth of an eclipse shadow at the current fragment. Eclipse
+// shadows are circular, decreasing in depth from maxDepth at the center to
+// zero at the edge of the penumbra.
+// Eclipse shadows are approximate. They assume that the both the sun and
+// occluding body are spherical. An oblate planet is treated as if its polar
+// radius were equal to its equatorial radius. This produces quite accurate
+// eclipses for major moons around giant planets, which orbit close to the
+// equatorial plane of the planet.
+//
+// The radius of the shadow umbra and penumbra are computed accurately
+// (to the limit of the spherical approximation.) The maximum shadow depth
+// is also calculated accurately. However, the shadow falloff from from
+// the umbra to the edge of the penumbra is approximated as linear.
 static string
 Shadow(unsigned int light, unsigned int shadow)
 {
@@ -607,10 +622,22 @@ Shadow(unsigned int light, unsigned int shadow)
         IndexedParameter("shadowTexGenS", light, shadow) + ") - 0.5;\n";
     source += "shadowCenter.t = dot(vec4(position_obj, 1.0), " +
         IndexedParameter("shadowTexGenT", light, shadow) + ") - 0.5;\n";
-    source += "shadowR = clamp(dot(shadowCenter, shadowCenter) * " +
-        IndexedParameter("shadowScale", light, shadow) + " + " +
-        IndexedParameter("shadowBias", light, shadow) + ", 0.0, 1.0);\n";
-    source += "shadow *= sqrt(shadowR);\n";
+
+    // The shadow shadow consists of a circular region of constant depth (maxDepth),
+    // surrounded by a ring of linear falloff from maxDepth to zero. For a total
+    // eclipse, maxDepth is zero. In reality, the falloff function is much more complex:
+    // to calculate the exact amount of sunlight blocked, we need to calculate the
+    // a circle-circle intersection area. 
+    // (See http://mathworld.wolfram.com/Circle-CircleIntersection.html)
+    
+    // The code generated below will compute:
+    // r = 2 * sqrt(dot(shadowCenter, shadowCenter));
+    // shadowR = clamp((r - 1) * shadowFalloff, 0, shadowMaxDepth)
+    source += "shadowR = clamp((2.0 * sqrt(dot(shadowCenter, shadowCenter)) - 1.0) * " +
+        IndexedParameter("shadowFalloff", light, shadow) + ", 0.0, " +
+        IndexedParameter("shadowMaxDepth", light, shadow) + ");\n";
+    
+    source += "shadow *= 1.0 - shadowR;\n";
 
     return source;
 }
@@ -1357,9 +1384,9 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
                 source += "uniform vec4 " +
                     IndexedParameter("shadowTexGenT", i, j) + ";\n";
                 source += "uniform float " +
-                    IndexedParameter("shadowScale", i, j) + ";\n";
+                    IndexedParameter("shadowFalloff", i, j) + ";\n";
                 source += "uniform float " +
-                    IndexedParameter("shadowBias", i, j) + ";\n";
+                    IndexedParameter("shadowMaxDepth", i, j) + ";\n";
             }
         }
     }
@@ -1724,9 +1751,9 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
                 source += "uniform vec4 " +
                     IndexedParameter("shadowTexGenT", i, j) + ";\n";
                 source += "uniform float " +
-                    IndexedParameter("shadowScale", i, j) + ";\n";
+                    IndexedParameter("shadowFalloff", i, j) + ";\n";
                 source += "uniform float " +
-                    IndexedParameter("shadowBias", i, j) + ";\n";
+                    IndexedParameter("shadowMaxDepth", i, j) + ";\n";
             }
         }
     }
@@ -2121,8 +2148,8 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
             {
                 source << "uniform vec4 " << IndexedParameter("shadowTexGenS", i, j) << ";\n";
                 source << "uniform vec4 " << IndexedParameter("shadowTexGenT", i, j) << ";\n";
-                source << "uniform float " << IndexedParameter("shadowScale", i, j) << ";\n";
-                source << "uniform float " << IndexedParameter("shadowBias", i, j) << ";\n";
+                source << "uniform float " << IndexedParameter("shadowFalloff", i, j) << ";\n";
+                source << "uniform float " << IndexedParameter("shadowMaxDepth", i, j) << ";\n";
             }
         }
     }
@@ -2308,10 +2335,10 @@ CelestiaGLProgram::initParameters()
                 vec4Param(IndexedParameter("shadowTexGenS", i, j));
             shadows[i][j].texGenT =
                 vec4Param(IndexedParameter("shadowTexGenT", i, j));
-            shadows[i][j].scale =
-                floatParam(IndexedParameter("shadowScale", i, j));
-            shadows[i][j].bias =
-                floatParam(IndexedParameter("shadowBias", i, j));
+            shadows[i][j].falloff =
+                floatParam(IndexedParameter("shadowFalloff", i, j));
+            shadows[i][j].maxDepth =
+                floatParam(IndexedParameter("shadowMaxDepth", i, j));
         }
     }
 
@@ -2527,19 +2554,12 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                 EclipseShadow& shadow = ls.shadows[li]->at(i);
                 CelestiaGLProgramShadow& shadowParams = shadows[li][i];
 
-                float R2 = 0.25f;
-                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
-                umbra = umbra * umbra;
-                if (umbra < 0.0001f)
-                    umbra = 0.0001f;
-                else if (umbra > 0.99f)
-                    umbra = 0.99f;
-
-                float umbraRadius = R2 * umbra;
-                float penumbraRadius = R2;
-                float shadowBias = 1.0f / (1.0f - penumbraRadius / umbraRadius);
-                shadowParams.bias = shadowBias;
-                shadowParams.scale = -shadowBias / umbraRadius;
+                // Compute shadow parameters: max depth of at the center of the shadow
+                // (always 1 if an eclipse is total) and the linear falloff
+                // rate from the center to the outer endge of the penumbra.
+                float u = shadow.umbraRadius / shadow.penumbraRadius;
+                shadowParams.falloff = -shadow.maxDepth / std::max(0.001f, 1.0f - std::fabs(u));
+                shadowParams.maxDepth = shadow.maxDepth;
 
                 // Compute the transformation to use for generating texture
                 // coordinates from the object vertices.
