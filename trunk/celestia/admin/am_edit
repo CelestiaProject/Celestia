@@ -351,7 +351,7 @@ sub processMakefile ($)
     my $tmp = "force-reedit:\n";
     $tmp   .= "\t$automkCall\n\tcd \$(top_srcdir) && perl $thisProg $printname\n\n";
     appendLines($tmp);
-    
+
     make_bcheck_target();
     make_meta_classes();
     tag_COMPILE_FIRST();
@@ -422,10 +422,6 @@ sub processMakefile ($)
       substituteLine($lookup, "RECURSIVE_TARGETS = $1 nmcheck-recursive bcheck-recursive");
     }
 
-    my $cvs_lines = "cvs-clean:\n";
-    $cvs_lines .= "\t\$(MAKE) admindir=\$(top_srcdir)/admin -f \$(top_srcdir)/admin/Makefile.common cvs-clean\n";
-    appendLines($cvs_lines);
-
     $cvs_lines  = "kde-rpo-clean:\n";
     $cvs_lines .= "\t-rm -f *.rpo\n";
     appendLines($cvs_lines);
@@ -483,6 +479,7 @@ sub processMakefile ($)
             $MakefileData =~ s/$lookup/$replacement/;
             $lookup =~ s/\\\$\\\(CXXFLAGS\\\)/\\\$\\\(KCXXFLAGS\\\)/;
             $replacement = "$stuff_before\$(KCXXFLAGS) \$(KDE_CXXFLAGS)$stuff_after";
+            next if ($stuff_before =~ /\$\(KDE_CXXFLAGS\)/ or $stuff_after =~ /\$\(KDE_CXXFLAGS\)/);
             substituteLine($lookup, $replacement);
         } else {
             $found = 0;
@@ -634,7 +631,7 @@ sub initialise ()
 		if ($pre eq '' && exists($varcontent{$variable})) {
 		    my @addlist = split(/[\034\s]+/, $varcontent{$variable});
 		    push(@objlist, @addlist);
-                } elsif ($variable !~ 'OBJEXT') {
+                } elsif ($variable !~ 'OBJEXT' && $variable !~ /am__objects_\d+/ ) {
                     $ocv = 1;
 		}
             }
@@ -875,8 +872,9 @@ sub tag_KDEINIT()
                 $lines .= "\techo 'int main(int argc, char* argv[]) { return kdemain(argc,argv); }' >> ${kdeinit}.la.$cxxsuffix\n";
 
                 $lines .= "\n${kdeinit}_dummy.$cxxsuffix:\n";
-                $lines .= "\techo 'extern \"C\" int kdemain(int argc, char* argv[]);' > ${kdeinit}_dummy.$cxxsuffix; \\\n";
-                $lines .= "\techo 'extern \"C\" int kdeinitmain(int argc, char* argv[]) { return kdemain(argc,argv); }' >> ${kdeinit}_dummy.$cxxsuffix\n";
+                $lines .= "\techo '#include <kdemacros.h>' > ${kdeinit}_dummy.$cxxsuffix; \\\n";
+                $lines .= "\techo 'extern \"C\" int kdemain(int argc, char* argv[]);' >> ${kdeinit}_dummy.$cxxsuffix; \\\n";
+                $lines .= "\techo 'extern \"C\" KDE_EXPORT int kdeinitmain(int argc, char* argv[]) { return kdemain(argc,argv); }' >> ${kdeinit}_dummy.$cxxsuffix\n";
 
                 push(@cleanfiles, "${kdeinit}.la.$cxxsuffix");
                 push(@cleanfiles, "${kdeinit}_dummy.$cxxsuffix");
@@ -1368,14 +1366,19 @@ sub tag_UIFILES ()
                     my ($mangled_source) = $source;
                     $mangled_source =~ s/[^A-Za-z0-9]/_/g;  # get rid of garbage
                     $dep_lines .= "\t\$(UIC) -tr \${UIC_TR} -i $source.h $sourcedir$source.ui > $source.$cxxsuffix.temp ; ret=\$\$?; \\\n";
-                    $dep_lines .= "\t\$(PERL) -pe \"s,\${UIC_TR}( \\\"\\\" ),QString::null,g\" $source.$cxxsuffix.temp | \$(PERL) -pe \"s,\${UIC_TR}( \\\"\\\"\\, \\\"\\\" ),QString::null,g\" | \$(PERL) -pe \"s,image([0-9][0-9]*)_data,img\\\$\$1_" . $mangled_source . ",g\" >> $source.$cxxsuffix ;\\\n";
+                    $dep_lines .= "\t\$(PERL) -pe \"s,\${UIC_TR}( \\\"\\\" ),QString::null,g\" $source.$cxxsuffix.temp | \$(PERL) -pe \"s,\${UIC_TR}( \\\"\\\"\\, \\\"\\\" ),QString::null,g\" | \$(PERL) -pe \"s,image([0-9][0-9]*)_data,img\\\$\$1_" . $mangled_source . ",g\" | \$(PERL) -pe \"s,: QWizard\\(,: KWizard(,g\" >> $source.$cxxsuffix ;\\\n";
 		    $dep_lines .= "\trm -f $source.$cxxsuffix.temp ;\\\n";
                 } else {
                     $dep_lines .= "\t\$(UIC) -i $source.h $sourcedir$source.ui > $source.$cxxsuffix; ret=\$\$?; \\\n";
                 }
 		$dep_lines .= "\tif test \"\$\$ret\" = 0; then echo '#include \"$source.moc\"' >> $source.$cxxsuffix; else rm -f $source.$cxxsuffix ; exit \$\$ret ; fi\n\n";
                 $dep_lines .= "$source.h: $sourcedir$source.ui\n";
-                $dep_lines .= "\t\$(UIC) -o $source.h $sourcedir$source.ui\n\n";
+                $dep_lines .= "\trm -rf $source.h;\n";
+                if (!$kdeopts{"qtonly"}) {
+                    $dep_lines .= "\t\$(UIC) $sourcedir$source.ui | \$(PERL) -pi -e \"s,public QWizard,public KWizard,g; s,#include <qwizard.h>,#include <kwizard.h>,g\" >> $source.h ;\n";
+                } else {
+                    $dep_lines .= "\t\$(UIC) -o $source.h $sourcedir$source.ui\n";
+                }
                 $dep_lines .= "$source.moc: $source.h\n";
                 $dep_lines .= "\t\$(MOC) $source.h -o $source.moc\n";
 
@@ -2025,7 +2028,7 @@ sub tag_DOCFILES ()
 
       $lines .= "\n";
       $lines .= "uninstall-docs:\n";
-      $lines .= "\t-rm -rf \$(kde_htmldir)/$kdelang/$appname\n";
+      $lines .= "\t-rm -rf \$(DESTDIR)\$(kde_htmldir)/$kdelang/$appname\n";
       $lines .= "\n";
       $lines .= "clean-docs:\n";
       $lines .= "\t-rm -f index.cache.bz2\n";
@@ -2274,7 +2277,7 @@ sub make_bcheck_target()
            "\t        echo \"\$\$i\"; \\\n" . 
            "\t        if ! ";
     $t .=  $cxxsuffix eq "KKK" ?
-           "\$(CXX) \$(DEFS) -I. -I\$(srcdir) -I\$(top_builddir) \$(INCLUDES) \$(AM_CPPFLAGS) \$(CPPFLAGS) \$(KDE_CXXFLAGS) " :
+           "\$(CXX) \$(DEFS) -I. -I\$(srcdir) -I\$(top_builddir) \$(INCLUDES) \$(AM_CPPFLAGS) \$(CPPFLAGS) \$(CXXFLAGS) \$(KDE_CXXFLAGS) " :
            "\$(CXXCOMPILE) ";
     $t .=  " --dump-class-hierarchy -c \$\$i.bchecktest.cc; then \\\n" .
            "\t            rm -f \$\$i.bchecktest.cc; exit 1; \\\n" .
@@ -2350,7 +2353,7 @@ sub updateMakefile ()
     $MakefileData =~ s/\034/\\\n/g;    # Restore continuation lines
     # Append our $progId line, _below_ the "generated by automake" line
     # because automake-1.6 relies on the first line to be his own.
-    my $progIdLine = "\# $progId - " . '$Revision: 1.3 $ '."\n";
+    my $progIdLine = "\# $progId - " . '$Revision: 483858 $ '."\n";
     if ( !( $MakefileData =~ s/^(.*generated .*by automake.*\n)/$1$progIdLine/ ) ) {
         warn "automake line not found in $makefile\n";
 	# Fallback: first line

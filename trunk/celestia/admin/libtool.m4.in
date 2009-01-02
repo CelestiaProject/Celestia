@@ -15,7 +15,7 @@
 ##
 ## You should have received a copy of the GNU General Public License
 ## along with this program; if not, write to the Free Software
-## Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 ##
 ## As a special exception to the GNU General Public License, if you
 ## distribute this file as part of a program that contains a
@@ -1273,7 +1273,7 @@ freebsd1*)
   dynamic_linker=no
   ;;
 
-freebsd*-gnu*)
+kfreebsd*-gnu*)
   version_type=linux
   need_lib_prefix=no
   need_version=no
@@ -1424,7 +1424,7 @@ linux*)
   libsuff=
   if test "x$LINUX_64_MODE" = x64; then
     # Some platforms are per default 64-bit, so there's no /lib64
-    if test -d /lib64; then
+    if test -d /lib64 -a ! -h /lib64; then
       libsuff=64
     fi
   fi
@@ -2119,7 +2119,7 @@ darwin* | rhapsody*)
   lt_cv_deplibs_check_method=pass_all
   ;;
 
-freebsd*)
+freebsd* | kfreebsd*-gnu)
   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
     case $host_cpu in
     i*86 )
@@ -2560,18 +2560,29 @@ aix4*)
     _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
     case "$host_os" in
     rhapsody* | darwin1.[[012]])
-      _LT_AC_TAGVAR(allow_undefined_flag, $1)='-undefined suppress'
+      _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-undefined -Wl,suppress'
       ;;
     *) # Darwin 1.3 on
-      test -z ${LD_TWOLEVEL_NAMESPACE} && _LT_AC_TAGVAR(allow_undefined_flag, $1)='-flat_namespace -undefined suppress'
+      if test -z ${MACOSX_DEPLOYMENT_TARGET} ; then
+	_LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-flat_namespace -Wl,-undefined -Wl,suppress'
+      else
+	case ${MACOSX_DEPLOYMENT_TARGET} in
+	  10.[012])
+	    _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-flat_namespace -Wl,-undefined -Wl,suppress'
+	    ;;
+	  10.*)
+	    _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-undefined -Wl,dynamic_lookup'
+	    ;;
+	esac
+      fi
       ;;
     esac
     output_verbose_link_cmd='echo'
-    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -dynamiclib $allow_undefined_flag -o $lib $libobjs $deplibs$compiler_flags -install_name $rpath/$soname $verstring'
-    _LT_AC_TAGVAR(module_cmds, $1)='$CC $allow_undefined_flag -o $lib -bundle $libobjs $deplibs$compiler_flags'
+    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -dynamiclib $allow_undefined_flag -o $lib $compiler_flags $libobjs $deplibs -install_name $rpath/$soname $verstring'
+    _LT_AC_TAGVAR(module_cmds, $1)='$CC $allow_undefined_flag -o $lib -bundle $compiler_flags $libobjs $deplibs'
     # Don't fix this by using the ld -exported_symbols_list flag, it doesn't exist in older darwin ld's
-    _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -dynamiclib $allow_undefined_flag  -o $lib $libobjs $deplibs$compiler_flags -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
-    _LT_AC_TAGVAR(module_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC $allow_undefined_flag  -o $lib -bundle $libobjs $deplibs$compiler_flags~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+    _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -dynamiclib $allow_undefined_flag  -o $lib $compiler_flags $libobjs $deplibs -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+    _LT_AC_TAGVAR(module_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC $allow_undefined_flag  -o $lib -bundle $compiler_flags $libobjs $deplibs~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
     _LT_AC_TAGVAR(hardcode_direct, $1)=no
     _LT_AC_TAGVAR(hardcode_automatic, $1)=yes
     _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=unsupported
@@ -2688,8 +2699,8 @@ if test "$GXX" = yes; then
   # Check if GNU C++ uses GNU ld as the underlying linker, since the
   # archiving commands below assume that GNU ld is being used.
   if test "$with_gnu_ld" = yes; then
-    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname -o $lib'
-    _LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname $wl$soname -o $lib'
+    _LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared -nostdlib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
 
     _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}--rpath ${wl}$libdir'
     _LT_AC_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
@@ -2715,7 +2726,7 @@ if test "$GXX" = yes; then
     # linker, instead of GNU ld.  If possible, this setting should
     # overridden to take advantage of the native linker features on
     # the platform it is being used on.
-    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -o $lib'
+    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects -o $lib'
   fi
 
   # Commands to make compiler produce verbose output that lists
@@ -2809,13 +2820,13 @@ case $host_os in
       _LT_AC_SYS_LIBPATH_AIX
       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-blibpath:$libdir:'"$aix_libpath"
 
-      _LT_AC_TAGVAR(archive_cmds, $1)="\$CC"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '" $shared_flag"
-      _LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '"\${wl}$exp_sym_flag:\$export_symbols $shared_flag"
+      _LT_AC_TAGVAR(archive_cmds, $1)="\$CC"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '" $shared_flag"
+      _LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '"\${wl}$exp_sym_flag:\$export_symbols $shared_flag"
      else
       if test "$host_cpu" = ia64; then
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-R $libdir:/usr/lib:/lib'
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)="-z nodefs"
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags ${wl}${allow_undefined_flag} '"\${wl}$no_entry_flag \${wl}$exp_sym_flag:\$export_symbols"
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs ${wl}${allow_undefined_flag} '"\${wl}$no_entry_flag \${wl}$exp_sym_flag:\$export_symbols"
       else
 	# Determine the default libpath from the value encoded in an empty executable.
 	_LT_AC_SYS_LIBPATH_AIX
@@ -2830,7 +2841,7 @@ case $host_os in
 	_LT_AC_TAGVAR(whole_archive_flag_spec, $1)=' '
 	_LT_AC_TAGVAR(archive_cmds_need_lc, $1)=yes
 	# This is similar to how AIX traditionally builds it's shared libraries.
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags ${wl}-bE:$export_symbols ${wl}-bnoentry${allow_undefined_flag}~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs ${wl}-bE:$export_symbols ${wl}-bnoentry${allow_undefined_flag}~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
       fi
     fi
     ;;
@@ -2852,7 +2863,7 @@ case $host_os in
     _LT_AC_TAGVAR(enable_shared_with_static_runtimes, $1)=yes
 
     if $LD --help 2>&1 | grep 'auto-import' > /dev/null; then
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -o $output_objdir/$soname ${wl}--image-base=0x10000000 ${wl}--out-implib,$lib'
+      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects -o $output_objdir/$soname ${wl}--image-base=0x10000000 ${wl}--out-implib,$lib'
       # If the export-symbols file already is a .def file (1st line
       # is EXPORTS), use it as is; otherwise, prepend...
       _LT_AC_TAGVAR(archive_expsym_cmds, $1)='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
@@ -2861,7 +2872,7 @@ case $host_os in
 	echo EXPORTS > $output_objdir/$soname.def;
 	cat $export_symbols >> $output_objdir/$soname.def;
       fi~
-      $CC -shared -nostdlib $output_objdir/$soname.def $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -o $output_objdir/$soname ${wl}--image-base=0x10000000 ${wl}--out-implib,$lib'
+      $CC -shared -nostdlib $output_objdir/$soname.def $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects -o $output_objdir/$soname ${wl}--image-base=0x10000000 ${wl}--out-implib,$lib'
     else
       _LT_AC_TAGVAR(ld_shlibs, $1)=no
     fi
@@ -2872,10 +2883,21 @@ case $host_os in
     _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
     case "$host_os" in
     rhapsody* | darwin1.[[012]])
-      _LT_AC_TAGVAR(allow_undefined_flag, $1)='-undefined suppress'
+      _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-undefined -Wl,suppress'
       ;;
     *) # Darwin 1.3 on
-      test -z ${LD_TWOLEVEL_NAMESPACE} && _LT_AC_TAGVAR(allow_undefined_flag, $1)='-flat_namespace -undefined suppress'
+      if test -z ${MACOSX_DEPLOYMENT_TARGET} ; then
+	_LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-flat_namespace -Wl,-undefined -Wl,suppress'
+      else
+	case ${MACOSX_DEPLOYMENT_TARGET} in
+	  10.[012])
+	    _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-flat_namespace -Wl,-undefined -Wl,suppress'
+	    ;;
+	  10.*)
+	    _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-undefined -Wl,dynamic_lookup'
+	    ;;
+	esac
+      fi
       ;;
     esac
     lt_int_apple_cc_single_mod=no
@@ -2884,19 +2906,19 @@ case $host_os in
       lt_int_apple_cc_single_mod=yes
     fi
     if test "X$lt_int_apple_cc_single_mod" = Xyes ; then
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $libobjs $deplibs $compiler_flags -install_name $rpath/$soname $verstring'
+      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $compiler_flags $libobjs $deplibs -install_name $rpath/$soname $verstring'
     else
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $deplibs $compiler_flags -install_name $rpath/$soname $verstring'
+      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $compiler_flags $deplibs -install_name $rpath/$soname $verstring'
     fi
-    _LT_AC_TAGVAR(module_cmds, $1)='$CC ${wl}-bind_at_load $allow_undefined_flag -o $lib -bundle $libobjs $deplibs$compiler_flags'
+    _LT_AC_TAGVAR(module_cmds, $1)='$CC ${wl}-bind_at_load $allow_undefined_flag -o $lib -bundle $compiler_flags $libobjs $deplibs'
 
     # Don't fix this by using the ld -exported_symbols_list flag, it doesn't exist in older darwin ld's
     if test "X$lt_int_apple_cc_single_mod" = Xyes ; then
-      _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $libobjs $deplibs $compiler_flags -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+      _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $compiler_flags $libobjs $deplibs -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
     else
-      _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $deplibs $compiler_flags -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+      _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $compiler_flags $deplibs -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
     fi
-    _LT_AC_TAGVAR(module_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC $allow_undefined_flag  -o $lib -bundle $libobjs $deplibs$compiler_flags~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+    _LT_AC_TAGVAR(module_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC $allow_undefined_flag  -o $lib -bundle $compiler_flags $libobjs $deplibs~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
     _LT_AC_TAGVAR(hardcode_direct, $1)=no
     _LT_AC_TAGVAR(hardcode_automatic, $1)=yes
     _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=unsupported
@@ -2931,7 +2953,7 @@ case $host_os in
   freebsd-elf*)
     _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
     ;;
-  freebsd*)
+  freebsd* | kfreebsd*-gnu)
     # FreeBSD 3 and later use GNU C++ and GNU ld with standard ELF
     # conventions
     _LT_AC_TAGVAR(ld_shlibs, $1)=yes
@@ -2953,7 +2975,7 @@ case $host_os in
       _LT_AC_TAGVAR(ld_shlibs, $1)=no
       ;;
     aCC)
-      _LT_AC_TAGVAR(archive_cmds, $1)='$rm $output_objdir/$soname~$CC -b ${wl}+b ${wl}$install_libdir -o $output_objdir/$soname $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~test $output_objdir/$soname = $lib || mv $output_objdir/$soname $lib'
+      _LT_AC_TAGVAR(archive_cmds, $1)='$rm $output_objdir/$soname~$CC -b ${wl}+b ${wl}$install_libdir -o $output_objdir/$soname $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects~test $output_objdir/$soname = $lib || mv $output_objdir/$soname $lib'
       # Commands to make compiler produce verbose output that lists
       # what "hidden" libraries, object files and flags are used when
       # linking a shared library.
@@ -2966,7 +2988,7 @@ case $host_os in
       ;;
     *)
       if test "$GXX" = yes; then
-        _LT_AC_TAGVAR(archive_cmds, $1)='$rm $output_objdir/$soname~$CC -shared -nostdlib -fPIC ${wl}+b ${wl}$install_libdir -o $output_objdir/$soname $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~test $output_objdir/$soname = $lib || mv $output_objdir/$soname $lib'
+        _LT_AC_TAGVAR(archive_cmds, $1)='$rm $output_objdir/$soname~$CC -shared -nostdlib -fPIC ${wl}+b ${wl}$install_libdir -o $output_objdir/$soname $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects~test $output_objdir/$soname = $lib || mv $output_objdir/$soname $lib'
       else
         # FIXME: insert proper C++ library support
         _LT_AC_TAGVAR(ld_shlibs, $1)=no
@@ -3023,7 +3045,7 @@ case $host_os in
 	  _LT_AC_TAGVAR(archive_cmds, $1)='$LD -b +h $soname -o $lib $linker_flags $libobjs $deplibs'
 	  ;;
 	*)
-	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -b ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
+	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -b ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects'
 	  ;;
 	esac
 	# Commands to make compiler produce verbose output that lists
@@ -3044,7 +3066,7 @@ case $host_os in
 	      _LT_AC_TAGVAR(archive_cmds, $1)='$LD -b +h $soname -o $lib $linker_flags $libobjs $deplibs'
 	      ;;
 	    *)
-	      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib -fPIC ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
+	      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib -fPIC ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects'
 	      ;;
 	    esac
 	  fi
@@ -3059,7 +3081,7 @@ case $host_os in
     case $cc_basename in
       CC)
 	# SGI C++
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -all -multigot $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -soname $soname `test -n "$verstring" && echo -set_version $verstring` -update_registry ${objdir}/so_locations -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -all -multigot $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects -soname $soname `test -n "$verstring" && echo -set_version $verstring` -update_registry ${objdir}/so_locations -o $lib'
 
 	# Archives containing C++ object files must be created using
 	# "CC -ar", where "CC" is the IRIX C++ compiler.  This is
@@ -3070,9 +3092,9 @@ case $host_os in
       *)
 	if test "$GXX" = yes; then
 	  if test "$with_gnu_ld" = no; then
-	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${objdir}/so_locations -o $lib'
+	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${objdir}/so_locations -o $lib'
 	  else
-	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` -o $lib'
+	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` -o $lib'
 	  fi
 	fi
 	_LT_AC_TAGVAR(link_all_deplibs, $1)=yes
@@ -3089,8 +3111,8 @@ case $host_os in
 	# KCC will only create a shared library if the output file
 	# ends with ".so" (or ".sl" for HP-UX), so rename the library
 	# to its proper name (with version) after linking.
-	_LT_AC_TAGVAR(archive_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags --soname $soname -o \$templib; mv \$templib $lib'
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags --soname $soname -o \$templib ${wl}-retain-symbols-file,$export_symbols; mv \$templib $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects --soname $soname -o \$templib; mv \$templib $lib'
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects --soname $soname -o \$templib ${wl}-retain-symbols-file,$export_symbols; mv \$templib $lib'
 	# Commands to make compiler produce verbose output that lists
 	# what "hidden" libraries, object files and flags are used when
 	# linking a shared library.
@@ -3112,16 +3134,16 @@ case $host_os in
 	# Intel C++
 	with_gnu_ld=yes
 	_LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname -o $lib'
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath,$libdir'
 	_LT_AC_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
 	_LT_AC_TAGVAR(whole_archive_flag_spec, $1)='${wl}--whole-archive$convenience ${wl}--no-whole-archive'
 	;;
       cxx)
 	# Compaq C++
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname -o $lib'
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname  -o $lib ${wl}-retain-symbols-file $wl$export_symbols'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname $wl$soname  -o $lib ${wl}-retain-symbols-file $wl$export_symbols'
 
 	runpath_var=LD_RUN_PATH
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-rpath $libdir'
@@ -3178,7 +3200,7 @@ case $host_os in
 	# KCC will only create a shared library if the output file
 	# ends with ".so" (or ".sl" for HP-UX), so rename the library
 	# to its proper name (with version) after linking.
-	_LT_AC_TAGVAR(archive_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags --soname $soname -o \$templib; mv \$templib $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects --soname $soname -o \$templib; mv \$templib $lib'
 
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath,$libdir'
 	_LT_AC_TAGVAR(hardcode_libdir_separator, $1)=:
@@ -3195,7 +3217,7 @@ case $host_os in
 	;;
       cxx)
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)=' ${wl}-expect_unresolved ${wl}\*'
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $soname `test -n "$verstring" && echo ${wl}-set_version $verstring` -update_registry ${objdir}/so_locations -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname $soname `test -n "$verstring" && echo ${wl}-set_version $verstring` -update_registry ${objdir}/so_locations -o $lib'
 
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
 	_LT_AC_TAGVAR(hardcode_libdir_separator, $1)=:
@@ -3213,7 +3235,7 @@ case $host_os in
       *)
 	if test "$GXX" = yes && test "$with_gnu_ld" = no; then
 	  _LT_AC_TAGVAR(allow_undefined_flag, $1)=' ${wl}-expect_unresolved ${wl}\*'
-	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib ${allow_undefined_flag} $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${objdir}/so_locations -o $lib'
+	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib ${allow_undefined_flag} $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${objdir}/so_locations -o $lib'
 
 	  _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
 	  _LT_AC_TAGVAR(hardcode_libdir_separator, $1)=:
@@ -3238,7 +3260,7 @@ case $host_os in
 	# KCC will only create a shared library if the output file
 	# ends with ".so" (or ".sl" for HP-UX), so rename the library
 	# to its proper name (with version) after linking.
-	_LT_AC_TAGVAR(archive_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags --soname $soname -o \$templib; mv \$templib $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='tempext=`echo $shared_ext | $SED -e '\''s/\([[^()0-9A-Za-z{}]]\)/\\\\\1/g'\''`; templib=`echo $lib | $SED -e "s/\${tempext}\..*/.so/"`; $CC $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects --soname $soname -o \$templib; mv \$templib $lib'
 
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath,$libdir'
 	_LT_AC_TAGVAR(hardcode_libdir_separator, $1)=:
@@ -3254,10 +3276,10 @@ case $host_os in
 	;;
       cxx)
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)=' -expect_unresolved \*'
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -msym -soname $soname `test -n "$verstring" && echo -set_version $verstring` -update_registry ${objdir}/so_locations -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects -msym -soname $soname `test -n "$verstring" && echo -set_version $verstring` -update_registry ${objdir}/so_locations -o $lib'
 	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='for i in `cat $export_symbols`; do printf "%s %s\\n" -exported_symbol "\$i" >> $lib.exp; done~
 	  echo "-hidden">> $lib.exp~
-	  $CC -shared$allow_undefined_flag $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -msym -soname $soname -Wl,-input -Wl,$lib.exp  `test -n "$verstring" && echo -set_version	$verstring` -update_registry $objdir/so_locations -o $lib~
+	  $CC -shared$allow_undefined_flag $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects -msym -soname $soname -Wl,-input -Wl,$lib.exp  `test -n "$verstring" && echo -set_version	$verstring` -update_registry $objdir/so_locations -o $lib~
 	  $rm $lib.exp'
 
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-rpath $libdir'
@@ -3276,7 +3298,7 @@ case $host_os in
       *)
 	if test "$GXX" = yes && test "$with_gnu_ld" = no; then
 	  _LT_AC_TAGVAR(allow_undefined_flag, $1)=' ${wl}-expect_unresolved ${wl}\*'
-	 _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib ${allow_undefined_flag} $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-msym ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${objdir}/so_locations -o $lib'
+	 _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib ${allow_undefined_flag} $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-msym ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${objdir}/so_locations -o $lib'
 
 	  _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
 	  _LT_AC_TAGVAR(hardcode_libdir_separator, $1)=:
@@ -3333,9 +3355,9 @@ case $host_os in
       CC)
 	# Sun C++ 4.2, 5.x and Centerline C++
 	_LT_AC_TAGVAR(no_undefined_flag, $1)=' -zdefs'
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G${allow_undefined_flag} -nolib -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G${allow_undefined_flag} -nolib -h$soname -o $lib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects'
 	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
-	$CC -G${allow_undefined_flag} -nolib ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
+	$CC -G${allow_undefined_flag} -nolib ${wl}-M ${wl}$lib.exp -h$soname -o $lib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects~$rm $lib.exp'
 
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
 	_LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
@@ -3369,7 +3391,7 @@ case $host_os in
 	;;
       gcx)
 	# Green Hills C++ Compiler
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-h $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-h $wl$soname -o $lib'
 
 	# The C++ compiler must be used to create the archive.
 	_LT_AC_TAGVAR(old_archive_cmds, $1)='$CC $LDFLAGS -archive -o $oldlib $oldobjs'
@@ -3379,9 +3401,9 @@ case $host_os in
 	if test "$GXX" = yes && test "$with_gnu_ld" = no; then
 	  _LT_AC_TAGVAR(no_undefined_flag, $1)=' ${wl}-z ${wl}defs'
 	  if $CC --version | grep -v '^2\.7' > /dev/null; then
-	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $LDFLAGS $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-h $wl$soname -o $lib'
+	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $LDFLAGS $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-h $wl$soname -o $lib'
 	    _LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
-		$CC -shared -nostdlib ${wl}-M $wl$lib.exp -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
+		$CC -shared -nostdlib ${wl}-M $wl$lib.exp -o $lib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects~$rm $lib.exp'
 
 	    # Commands to make compiler produce verbose output that lists
 	    # what "hidden" libraries, object files and flags are used when
@@ -3390,9 +3412,9 @@ case $host_os in
 	  else
 	    # g++ 2.7 appears to require `-G' NOT `-shared' on this
 	    # platform.
-	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -G -nostdlib $LDFLAGS $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-h $wl$soname -o $lib'
+	    _LT_AC_TAGVAR(archive_cmds, $1)='$CC -G -nostdlib $LDFLAGS $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects ${wl}-h $wl$soname -o $lib'
 	    _LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
-		$CC -G -nostdlib ${wl}-M $wl$lib.exp -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
+		$CC -G -nostdlib ${wl}-M $wl$lib.exp -o $lib $compiler_flags $predep_objects $libobjs $deplibs $postdep_objects~$rm $lib.exp'
 
 	    # Commands to make compiler produce verbose output that lists
 	    # what "hidden" libraries, object files and flags are used when
@@ -3920,7 +3942,7 @@ ifelse([$1], [],
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # As a special exception to the GNU General Public License, if you
 # distribute this file as part of a program that contains a
@@ -4577,7 +4599,7 @@ AC_MSG_CHECKING([for $compiler option to produce PIC])
 	    ;;
 	esac
 	;;
-      freebsd*)
+      freebsd* | kfreebsd*-gnu)
 	# FreeBSD uses GNU C++
 	;;
       hpux9* | hpux10* | hpux11*)
@@ -5062,7 +5084,7 @@ EOF
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)=unsupported
 	# Joseph Beckenbach <jrb3@best.com> says some releases of gcc
 	# support --undefined.  This deserves some investigation.  FIXME
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -nostart $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -nostart $compiler_flags $libobjs $deplibs ${wl}-soname $wl$soname -o $lib'
       else
 	_LT_AC_TAGVAR(ld_shlibs, $1)=no
       fi
@@ -5078,7 +5100,7 @@ EOF
       _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGS]] /s/.* \([[^ ]]*\)/\1 DATA/'\'' | $SED -e '\''/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
 
       if $LD --help 2>&1 | grep 'auto-import' > /dev/null; then
-        _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--image-base=0x10000000 ${wl}--out-implib,$lib'
+        _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs -o $output_objdir/$soname ${wl}--image-base=0x10000000 ${wl}--out-implib,$lib'
 	# If the export-symbols file already is a .def file (1st line
 	# is EXPORTS), use it as is; otherwise, prepend...
 	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
@@ -5087,7 +5109,7 @@ EOF
 	  echo EXPORTS > $output_objdir/$soname.def;
 	  cat $export_symbols >> $output_objdir/$soname.def;
 	fi~
-	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--image-base=0x10000000  ${wl}--out-implib,$lib'
+	$CC -shared $output_objdir/$soname.def $compiler_flags $libobjs $deplibs -o $output_objdir/$soname ${wl}--image-base=0x10000000  ${wl}--out-implib,$lib'
       else
 	ld_shlibs=no
       fi
@@ -5098,8 +5120,8 @@ EOF
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
 	wlarc=
       else
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs ${wl}-soname $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
       fi
       ;;
 
@@ -5117,8 +5139,8 @@ EOF
 
 EOF
       elif $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs ${wl}-soname $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
       else
 	_LT_AC_TAGVAR(ld_shlibs, $1)=no
       fi
@@ -5133,8 +5155,8 @@ EOF
 
     *)
       if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs ${wl}-soname $wl$soname -o $lib'
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
       else
 	_LT_AC_TAGVAR(ld_shlibs, $1)=no
       fi
@@ -5248,13 +5270,13 @@ EOF
        # Determine the default libpath from the value encoded in an empty executable.
 	_LT_AC_SYS_LIBPATH_AIX
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-blibpath:$libdir:'"$aix_libpath"
-	_LT_AC_TAGVAR(archive_cmds, $1)="\$CC"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '" $shared_flag"
-	_LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '"\${wl}$exp_sym_flag:\$export_symbols $shared_flag"
+	_LT_AC_TAGVAR(archive_cmds, $1)="\$CC"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '" $shared_flag"
+	_LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs `if test "x${allow_undefined_flag}" != "x"; then echo "${wl}${allow_undefined_flag}"; else :; fi` '"\${wl}$exp_sym_flag:\$export_symbols $shared_flag"
        else
 	if test "$host_cpu" = ia64; then
 	  _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-R $libdir:/usr/lib:/lib'
 	  _LT_AC_TAGVAR(allow_undefined_flag, $1)="-z nodefs"
-	  _LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags ${wl}${allow_undefined_flag} '"\${wl}$no_entry_flag \${wl}$exp_sym_flag:\$export_symbols"
+	  _LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs ${wl}${allow_undefined_flag} '"\${wl}$no_entry_flag \${wl}$exp_sym_flag:\$export_symbols"
 	else
 	 # Determine the default libpath from the value encoded in an empty executable.
 	 _LT_AC_SYS_LIBPATH_AIX
@@ -5269,7 +5291,7 @@ EOF
 	  _LT_AC_TAGVAR(whole_archive_flag_spec, $1)=' '
 	  _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=yes
 	  # This is similar to how AIX traditionally builds it's shared libraries.
-	  _LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags ${wl}-bE:$export_symbols ${wl}-bnoentry${allow_undefined_flag}~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
+	  _LT_AC_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $compiler_flags $libobjs $deplibs ${wl}-bE:$export_symbols ${wl}-bnoentry${allow_undefined_flag}~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
 	fi
       fi
       ;;
@@ -5298,7 +5320,7 @@ EOF
       # Tell ltmain to make .dll files, not .so files.
       shrext=".dll"
       # FIXME: Setting linknames here is a bad hack.
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -o $lib $libobjs $compiler_flags `echo "$deplibs" | $SED -e '\''s/ -lc$//'\''` -link -dll~linknames='
+      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -o $lib $compiler_flags $libobjs `echo "$deplibs" | $SED -e '\''s/ -lc$//'\''` -link -dll~linknames='
       # The linker will automatically build a .lib file if we build a DLL.
       _LT_AC_TAGVAR(old_archive_From_new_cmds, $1)='true'
       # FIXME: Should let the user specify the lib program.
@@ -5312,10 +5334,21 @@ EOF
       _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
       case "$host_os" in
       rhapsody* | darwin1.[[012]])
-	_LT_AC_TAGVAR(allow_undefined_flag, $1)='-undefined suppress'
+	_LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-undefined -Wl,suppress'
 	;;
       *) # Darwin 1.3 on
-	test -z ${LD_TWOLEVEL_NAMESPACE} && _LT_AC_TAGVAR(allow_undefined_flag, $1)='-flat_namespace -undefined suppress'
+	if test -z ${MACOSX_DEPLOYMENT_TARGET} ; then
+	  _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-flat_namespace -Wl,-undefined -Wl,suppress'
+	else
+	  case ${MACOSX_DEPLOYMENT_TARGET} in
+	    10.[012])
+	      _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-flat_namespace -Wl,-undefined -Wl,suppress'
+	      ;;
+	    10.*)
+	      _LT_AC_TAGVAR(allow_undefined_flag, $1)='-Wl,-undefined -Wl,dynamic_lookup'
+	      ;;
+	  esac
+	fi
 	;;
       esac
     	lt_int_apple_cc_single_mod=no
@@ -5324,18 +5357,18 @@ EOF
     	  lt_int_apple_cc_single_mod=yes
     	fi
     	if test "X$lt_int_apple_cc_single_mod" = Xyes ; then
-    	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $libobjs $deplibs $compiler_flags -install_name $rpath/$soname $verstring'
+    	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $compiler_flags $libobjs $deplibs -install_name $rpath/$soname $verstring'
     	else
-        _LT_AC_TAGVAR(archive_cmds, $1)='$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $deplibs $compiler_flags -install_name $rpath/$soname $verstring'
+        _LT_AC_TAGVAR(archive_cmds, $1)='$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $compiler_flags $deplibs -install_name $rpath/$soname $verstring'
       fi
-      _LT_AC_TAGVAR(module_cmds, $1)='$CC ${wl}-bind_at_load $allow_undefined_flag -o $lib -bundle $libobjs $deplibs$compiler_flags'
+      _LT_AC_TAGVAR(module_cmds, $1)='$CC ${wl}-bind_at_load $allow_undefined_flag -o $lib -bundle $compiler_flags $libobjs $deplibs'
       # Don't fix this by using the ld -exported_symbols_list flag, it doesn't exist in older darwin ld's
         if test "X$lt_int_apple_cc_single_mod" = Xyes ; then
-          _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $libobjs $deplibs $compiler_flags -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+          _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -dynamiclib -single_module $allow_undefined_flag -o $lib $compiler_flags $libobjs $deplibs -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
         else
-          _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $deplibs $compiler_flags -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+          _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC -r ${wl}-bind_at_load -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs~$CC -dynamiclib $allow_undefined_flag -o $lib ${lib}-master.o $compiler_flags $deplibs -install_name $rpath/$soname $verstring~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
         fi
-          _LT_AC_TAGVAR(module_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC $allow_undefined_flag  -o $lib -bundle $libobjs $deplibs$compiler_flags~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
+          _LT_AC_TAGVAR(module_expsym_cmds, $1)='sed -e "s,#.*,," -e "s,^[    ]*,," -e "s,^\(..*\),_&," < $export_symbols > $output_objdir/${libname}-symbols.expsym~$CC $allow_undefined_flag  -o $lib -bundle $compiler_flags $libobjs $deplibs~nmedit -s $output_objdir/${libname}-symbols.expsym ${lib}'
       _LT_AC_TAGVAR(hardcode_direct, $1)=no
       _LT_AC_TAGVAR(hardcode_automatic, $1)=yes
       _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=unsupported
@@ -5376,8 +5409,8 @@ EOF
       ;;
 
     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
-    freebsd*)
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
+    freebsd* | kfreebsd*-gnu)
+      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $compiler_flags $libobjs $deplibs'
       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
       _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
@@ -5385,7 +5418,7 @@ EOF
 
     hpux9*)
       if test "$GCC" = yes; then
-	_LT_AC_TAGVAR(archive_cmds, $1)='$rm $output_objdir/$soname~$CC -shared -fPIC ${wl}+b ${wl}$install_libdir -o $output_objdir/$soname $libobjs $deplibs $compiler_flags~test $output_objdir/$soname = $lib || mv $output_objdir/$soname $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$rm $output_objdir/$soname~$CC -shared -fPIC ${wl}+b ${wl}$install_libdir -o $output_objdir/$soname $compiler_flags $libobjs $deplibs~test $output_objdir/$soname = $lib || mv $output_objdir/$soname $lib'
       else
 	_LT_AC_TAGVAR(archive_cmds, $1)='$rm $output_objdir/$soname~$LD -b +b $install_libdir -o $output_objdir/$soname $libobjs $deplibs $linker_flags~test $output_objdir/$soname = $lib || mv $output_objdir/$soname $lib'
       fi
@@ -5403,10 +5436,10 @@ EOF
       if test "$GCC" = yes -a "$with_gnu_ld" = no; then
 	case "$host_cpu" in
 	hppa*64*|ia64*)
-	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}+h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
+	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}+h ${wl}$soname -o $lib $compiler_flags $libobjs $deplibs'
 	  ;;
 	*)
-	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -fPIC ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $libobjs $deplibs $compiler_flags'
+	  _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -fPIC ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $compiler_flags $libobjs $deplibs'
 	  ;;
 	esac
       else
@@ -5453,7 +5486,7 @@ EOF
 
     irix5* | irix6* | nonstopux*)
       if test "$GCC" = yes; then
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $compiler_flags $libobjs $deplibs ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
       else
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -shared $libobjs $deplibs $linker_flags -soname $soname `test -n "$verstring" && echo -set_version $verstring` -update_registry ${output_objdir}/so_locations -o $lib'
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec_ld, $1)='-rpath $libdir'
@@ -5486,7 +5519,7 @@ EOF
       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
       _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
       if test -z "`echo __ELF__ | $CC -E - | grep __ELF__`" || test "$host_os-$host_cpu" = "openbsd2.8-powerpc"; then
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag -o $lib $libobjs $deplibs $compiler_flags'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag -o $lib $compiler_flags $libobjs $deplibs'
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath,$libdir'
 	_LT_AC_TAGVAR(export_dynamic_flag_spec, $1)='${wl}-E'
       else
@@ -5496,7 +5529,7 @@ EOF
 	   _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
 	   ;;
 	 *)
-	   _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag -o $lib $libobjs $deplibs $compiler_flags'
+	   _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag -o $lib $compiler_flags $libobjs $deplibs'
 	   _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath,$libdir'
 	   ;;
        esac
@@ -5507,14 +5540,14 @@ EOF
       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-L$libdir'
       _LT_AC_TAGVAR(hardcode_minus_L, $1)=yes
       _LT_AC_TAGVAR(allow_undefined_flag, $1)=unsupported
-      _LT_AC_TAGVAR(archive_cmds, $1)='$echo "LIBRARY $libname INITINSTANCE" > $output_objdir/$libname.def~$echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~$echo DATA >> $output_objdir/$libname.def~$echo " SINGLE NONSHARED" >> $output_objdir/$libname.def~$echo EXPORTS >> $output_objdir/$libname.def~emxexp $libobjs >> $output_objdir/$libname.def~$CC -Zdll -Zcrtdll -o $lib $libobjs $deplibs $compiler_flags $output_objdir/$libname.def'
+      _LT_AC_TAGVAR(archive_cmds, $1)='$echo "LIBRARY $libname INITINSTANCE" > $output_objdir/$libname.def~$echo "DESCRIPTION \"$libname\"" >> $output_objdir/$libname.def~$echo DATA >> $output_objdir/$libname.def~$echo " SINGLE NONSHARED" >> $output_objdir/$libname.def~$echo EXPORTS >> $output_objdir/$libname.def~emxexp $libobjs >> $output_objdir/$libname.def~$CC -Zdll -Zcrtdll -o $lib $compiler_flags $libobjs $deplibs$output_objdir/$libname.def'
       _LT_AC_TAGVAR(old_archive_From_new_cmds, $1)='emximp -o $output_objdir/$libname.a $output_objdir/$libname.def'
       ;;
 
     osf3*)
       if test "$GCC" = yes; then
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)=' ${wl}-expect_unresolved ${wl}\*'
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $libobjs $deplibs $compiler_flags ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $compiler_flags $libobjs $deplibs ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
       else
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)=' -expect_unresolved \*'
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -shared${allow_undefined_flag} $libobjs $deplibs $linker_flags -soname $soname `test -n "$verstring" && echo -set_version $verstring` -update_registry ${output_objdir}/so_locations -o $lib'
@@ -5526,7 +5559,7 @@ EOF
     osf4* | osf5*)	# as osf3* with the addition of -msym flag
       if test "$GCC" = yes; then
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)=' ${wl}-expect_unresolved ${wl}\*'
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $libobjs $deplibs $compiler_flags ${wl}-msym ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared${allow_undefined_flag} $compiler_flags $libobjs $deplibs ${wl}-msym ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
       else
 	_LT_AC_TAGVAR(allow_undefined_flag, $1)=' -expect_unresolved \*'
@@ -5551,9 +5584,9 @@ EOF
     solaris*)
       _LT_AC_TAGVAR(no_undefined_flag, $1)=' -z text'
       if test "$GCC" = yes; then
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}-h ${wl}$soname -o $lib $compiler_flags $libobjs $deplibs'
 	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
-	  $CC -shared ${wl}-M ${wl}$lib.exp ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags~$rm $lib.exp'
+	  $CC -shared ${wl}-M ${wl}$lib.exp ${wl}-h ${wl}$soname -o $lib $compiler_flags $libobjs $deplibs~$rm $lib.exp'
       else
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -G${allow_undefined_flag} -h $soname -o $lib $libobjs $deplibs $linker_flags'
 	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
@@ -5573,7 +5606,7 @@ EOF
       if test "x$host_vendor" = xsequent; then
 	# Use $CC to link under sequent, because it throws in some extra .o
 	# files that make .init and .fini sections work.
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G ${wl}-h $soname -o $lib $libobjs $deplibs $compiler_flags'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G ${wl}-h $soname -o $lib $compiler_flags $libobjs $deplibs'
       else
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -assert pure-text -Bstatic -o $lib $libobjs $deplibs $linker_flags'
       fi
@@ -5633,9 +5666,9 @@ EOF
    sysv5OpenUNIX8* | sysv5UnixWare7* |  sysv5uw[[78]]* | unixware7*)
       _LT_AC_TAGVAR(no_undefined_flag, $1)='${wl}-z ${wl}text'
       if test "$GCC" = yes; then
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}-h ${wl}$soname -o $lib $compiler_flags $libobjs $deplibs'
       else
-	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
+	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G ${wl}-h ${wl}$soname -o $lib $compiler_flags $libobjs $deplibs'
       fi
       runpath_var='LD_RUN_PATH'
       _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no

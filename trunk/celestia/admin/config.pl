@@ -25,8 +25,8 @@
 
 #   You should have received a copy of the GNU Library General Public License
 #   along with this library; see the file COPYING.LIB.  If not, write to
-#   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-#   Boston, MA 02111-1307, USA.
+#   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+#   Boston, MA 02110-1301, USA.
 
 use strict;
 
@@ -53,6 +53,7 @@ my $created_file_count = 0;
 
 open(CF, "< $ac_subs") || die "can't open $ac_subs: $!";
 my @subs = <CF>;
+my $pat;
 close(CF);
 chomp @subs;
 @comp_match=();
@@ -60,7 +61,7 @@ chomp @subs;
 
 if ($bad_perl) {
     print "Using perl older than version 5.005\n";
-    foreach my $pat (@subs) {
+    foreach $pat (@subs) {
 	if (  ($pat =~ m/s%([^%]*)%([^%]*)%g/ )
 	   || ($pat =~ m/s%([^%]*)%([^%]*)%;t/ )
            || ($pat =~ m/s,([^,]*),(.*),;t/)
@@ -85,7 +86,7 @@ if ($bad_perl) {
 	}
     }
 } else {
-    foreach my $pat (@subs) {
+    foreach $pat (@subs) {
        if ( ($pat =~ /s%([^%]*)%([^%]*)%g/ ) ||
             ($pat =~ /s%([^%]*)%([^%]*)%;t/ ) ||
             ($pat =~ /s,([^,]*),(.*),;t/) ) {
@@ -192,8 +193,9 @@ sub patch_file {
     my $filedata;
     my @infiles=split(' ', $infiles);
     my $i=0;
+    my $name;
 
-    foreach my $name (@infiles) {
+    foreach $name (@infiles) {
 	if (open(CF, "< $name")) {
 	    while (<CF>) {
 		$filedata .= $_;

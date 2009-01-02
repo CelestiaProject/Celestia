@@ -16,6 +16,21 @@ if test -n "$kde_libs_prefix" -a -n "$given_prefix"; then
   fi
 fi
 
+if test x$GXX = "xyes" -a x$kde_have_gcc_visibility = "xyes" -a x$kde_cv_val_qt_gcc_visibility_patched = "xno"; then
+  echo ""
+  echo "Your GCC supports symbol visibility, but the patch for Qt supporting visibility"
+  echo "was not included. Therefore, GCC symbol visibility support remains disabled."
+  echo ""
+  echo "For better performance, consider including the Qt visibility supporting patch"
+  echo "located at:"
+  echo ""
+  echo "http://bugs.kde.org/show_bug.cgi?id=109386"
+  echo ""
+  echo "and recompile all of Qt and KDE. Note, this is entirely optional and"
+  echo "everything will continue to work just fine without it."
+  echo ""
+fi
+
 if test "$all_tests" = "bad"; then
   if test ! "$cache_file" = "/dev/null"; then
     echo ""
