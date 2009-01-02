@@ -57,6 +57,11 @@ AC_ARG_ENABLE([theora],
 dnl For KDE interface
 AC_CONFIG_AUX_DIR(admin)
 
+dnl "admin/acinclude.m4.in" generates "acinclude.m4", which has a broken
+dnl conditional define for Qt embedded. This does not apply to Celestia
+dnl anyway.
+include_x11_FALSE='#'
+
 dnl This ksh/zsh feature conflicts with `cd blah ; pwd`
 unset CDPATH
 
