@@ -19,8 +19,8 @@
 
 #   You should have received a copy of the GNU Library General Public License
 #   along with this library; see the file COPYING.LIB.  If not, write to
-#   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-#   Boston, MA 02111-1307, USA.
+#   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+#   Boston, MA 02110-1301, USA.
 
 # we have to change two places
 # 1. the splitting of the substitutions into chunks of 90 (or even 48 in
@@ -81,7 +81,7 @@ while (<>) {
 # on autoconf 250, it ends with '# CONFIG_HEADER section'
 #
 # gg: if a post-processing commands section is found first, 
-#    stop there and insert a new loop to honour the case/esac.
+#    stop there and insert a new loop to honor the case/esac.
 # (pattern: /^\s+#\sRun the commands associated with the file./)
 
 	if (/^\s*for\s+ac_file\s+in\s+.*CONFIG_FILES/ ) {
