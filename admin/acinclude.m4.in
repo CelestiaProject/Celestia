@@ -1226,7 +1226,15 @@ if test $kde_qtver = 4; then
   kde_qt_dirs="$QTDIR /usr/lib/qt4 /usr/lib/qt /usr/share/qt4"
 fi
 if test $kde_qtver = 3; then
-  kde_qt_dirs="$QTDIR /usr/lib/qt3 /usr/lib/qt /usr/share/qt3"
+  kde_qt_dirs="$QTDIR /usr/lib/qt3 /usr/lib/qt /usr/share/qt3 /usr/lib${kdelibsuff}/qt-3.3"
+  if test -z "$PKG_CONFIG"; then
+      AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+  fi
+  if test "$PKG_CONFIG" != "no" ; then
+    if $PKG_CONFIG --exists qt-mt ; then
+       kde_qt_dirs="$kde_qt_dirs `$PKG_CONFIG --variable=prefix qt-mt`"
+    fi
+  fi
 fi
 if test $kde_qtver = 2; then
    kde_qt_dirs="$QTDIR /usr/lib/qt2 /usr/lib/qt"
@@ -1443,6 +1451,14 @@ qt_incdirs=""
 for dir in $kde_qt_dirs; do
    qt_incdirs="$qt_incdirs $dir/include $dir"
 done
+if test -z "$PKG_CONFIG"; then
+    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+fi
+if test "$PKG_CONFIG" != "no" ; then
+  if $PKG_CONFIG --exists qt-mt ; then
+      qt_incdirs="$qt_incdirs `$PKG_CONFIG --variable=includedir qt-mt`"
+  fi
+fi
 qt_incdirs="$QTINC $qt_incdirs /usr/local/qt/include /usr/include/qt /usr/include /usr/X11R6/include/X11/qt /usr/X11R6/include/qt /usr/X11R6/include/qt2 /usr/include/qt3 $x_includes"
 if test ! "$ac_qt_includes" = "NO"; then
    qt_incdirs="$ac_qt_includes $qt_incdirs"
@@ -1459,8 +1475,16 @@ ac_qt_includes="$qt_incdir"
 
 qt_libdirs=""
 for dir in $kde_qt_dirs; do
-   qt_libdirs="$qt_libdirs $dir/lib${kdelibsuff} $dir"
+   qt_libdirs="$qt_libdirs $dir/lib${kdelibsuff} $dir/lib $dir"
 done
+if test -z "$PKG_CONFIG"; then
+    AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+fi
+if test "$PKG_CONFIG" != "no" ; then
+  if $PKG_CONFIG --exists qt-mt ; then
+      qt_libdirs="$qt_incdirs `$PKG_CONFIG --variable=libdir qt-mt`"
+  fi
+fi
 qt_libdirs="$QTLIB $qt_libdirs /usr/X11R6/lib /usr/lib /usr/local/qt/lib $x_libraries"
 if test ! "$ac_qt_libraries" = "NO"; then
   qt_libdir=$ac_qt_libraries
@@ -2631,6 +2655,7 @@ CFLAGS="$CFLAGS $all_includes $USER_INCLUDES"
 AC_TRY_LINK(dnl
 [
 #include<zlib.h>
+#include<string.h>
 ],
 [
   char buf[42];
@@ -2638,7 +2663,7 @@ AC_TRY_LINK(dnl
   /* this would segfault.. but we only link, don't run */
   (void) gzgets(f, buf, sizeof(buf));
 
-  return (zlibVersion() == ZLIB_VERSION); 
+  return (strcmp(zlibVersion(), ZLIB_VERSION) == 0);
 ],
             eval "ac_cv_lib_z='-lz'",
             eval "ac_cv_lib_z=no")
@@ -2738,11 +2763,11 @@ AC_CACHE_VAL(ac_cv_libexr,
      echo "*** to the full path to pkg-config."
      echo "*** Or see http://www.freedesktop.org/software/pkgconfig to get pkg-config."
   else
-     if !(`$PKG_CONFIG --exists OpenEXR`) ; then
+     if ! $PKG_CONFIG --exists OpenEXR ; then
         AC_MSG_RESULT(no)
         EXRSTATUS=no
      else
-        if !(`$PKG_CONFIG --atleast-version="1.1.1" OpenEXR`) ; then
+        if ! $PKG_CONFIG --atleast-version="1.1.1" OpenEXR ; then
            AC_MSG_RESULT(no)
            EXRSTATUS=old
         else
@@ -3197,7 +3222,7 @@ AC_DEFUN([AC_CHECK_COMPILERS],
         CXXFLAGS="-Wall -W -Wpointer-arith $CXXFLAGS"
         case $host in
           *-*-linux-gnu)	
-            CFLAGS="-std=iso9899:1990 -W -Wall -Wchar-subscripts -Wshadow -Wpointer-arith -Wwrite-strings -D_XOPEN_SOURCE=500 -D_BSD_SOURCE $CFLAGS"
+            CFLAGS="-std=iso9899:1990 -W -Wall -Wchar-subscripts -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -D_XOPEN_SOURCE=500 -D_BSD_SOURCE $CFLAGS"
             CXXFLAGS="-ansi -D_XOPEN_SOURCE=500 -D_BSD_SOURCE -Wcast-align -Wchar-subscripts $CXXFLAGS"
             KDE_CHECK_COMPILER_FLAG(Wmissing-format-attribute, [CXXFLAGS="$CXXFLAGS -Wformat-security -Wmissing-format-attribute"])
             KDE_CHECK_C_COMPILER_FLAG(Wmissing-format-attribute, [CFLAGS="$CFLAGS -Wformat-security -Wmissing-format-attribute"])
@@ -4624,18 +4649,20 @@ fi
 
 AC_DEFUN([KDE_CHECK_PYTHON],
 [
-  KDE_CHECK_PYTHON_INTERN("2.5",
-    [KDE_CHECK_PYTHON_INTERN("2.4",
-     [KDE_CHECK_PYTHON_INTERN("2.3", 
-       [KDE_CHECK_PYTHON_INTERN("2.2", 
-         [KDE_CHECK_PYTHON_INTERN("2.1", 
-           [KDE_CHECK_PYTHON_INTERN("2.0", 
-             [KDE_CHECK_PYTHON_INTERN($1, $2) ])
-           ])
-         ])
-       ])
-     ])
-  ])
+  KDE_CHECK_PYTHON_INTERN("2.6",
+    [KDE_CHECK_PYTHON_INTERN("2.5",
+      [KDE_CHECK_PYTHON_INTERN("2.4",
+        [KDE_CHECK_PYTHON_INTERN("2.3", 
+          [KDE_CHECK_PYTHON_INTERN("2.2", 
+            [KDE_CHECK_PYTHON_INTERN("2.1", 
+              [KDE_CHECK_PYTHON_INTERN("2.0", 
+                [KDE_CHECK_PYTHON_INTERN($1, $2) ])
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
 ])
 
 AC_DEFUN([KDE_CHECK_STL],
