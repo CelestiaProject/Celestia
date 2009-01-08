@@ -1,153 +1,224 @@
-Controlli Mouse e Tastiera di Celestia
+  CONTROLLI DI CELESTIA MEDIANTE MOUSE, TASTIERA E JOYSTICK
 
-Funzioni Mouse:
+------------------------------------------------
+  CONTROLLI DA MOUSE:
+------------------------------------------------
 
-    Trascinamento Sinistro:	orientamento telecamera
-    Trascinamento Destro:	ruota l'oggetto selezionato
-    Rotella (rotazione):	modifica distanza dalla selezione
-    Trascinamento DX + SX:	modifica distanza dalla selezione
-    Ctrl + Trascinamento SX:	modifica distanza dalla selezione
-    Shift + Trascinamento SX:	cambio ampiezza visuale (es: vista telescopica)
-    Rotella (pulsante centrale):	scambia l'ampiezza visuale fra 45° e l'ampiezza 
-                               		precedente (es: vista telescopica)
-    Tasto Sinistro:             	seleziona oggetto 
-    Doppio click (sinistro):    	centra selezione
-    Tasto Destro:               	mostra menu contestuale
+  Trascinamento Sinistro  ....... orientamento telecamera
+  Trascinamento Destro  ......... orbita l'oggetto selezionato 
+                                  [tasti Shift+Arrow]
+  Rotella (rotazione)  .......... modifica distanza dalla selezione 
+                                  [Home/End]
+  Ctrl+Trascinamento SX  ........ modifica distanza dalla selezione 
+                                  [Home/End]
+  Shift+Trascinamento SX  ....... cambio ampiezza visuale (es: 
+                                  vista telescopica) (FOV) [. / ,]
+  Rotella (pulsante centrale) ... scambia l'ampiezza visuale fra 45° 
+                                  e l'ampiezza precedente (es: vista 
+                               	  telescopica)
+  Trascinamento DX+SX DX/SX  .... ruota la vista destra/sinistra 
+                                  [freccia destra/sinistra]
+  Tasto Sinistro  ............... seleziona oggetto 
+  Doppio click (sinistro)  ...... seleziona e centra l'oggetto
+  Tasto Destro  ................. mostra menu contestuale
 
-Comandi da Tastiera:
 
-    Navigazione:
+------------------------------------------------
+  CONTROLLI DA TASTIERA:
+------------------------------------------------
 
-        H		: Seleziona il Sole (Home)
-        C		: Centra l'oggetto selezionato
-        G		: Vai all'oggetto selezionato
-        F		: Segui l'oggetto selezionato
-        Y		: Orbita l'oggetto selezionato ad una velocità 
-        		  sincronizzata con la sua rotazione
-        :		: Aggancia l'oggetto selezionato
-        "		: Insegui l'oggetto selezionato (l'orientamento è basato 
-        		  sulla velocità della selezione)
-        T		: Traccia l'oggetto selezionato (mantieni centrato nella
-        		  vista l'oggetto selezionato)
-        HOME	: Avvicinamento all'oggetto
-        *		: Guarda indietro
-        END		: Allontanamento dall'oggetto
-        ESC		: Annulla il movimento o l'esecuzione dello script
-        Shift+C	: Centra/centra sull'orbita l'oggetto selezionato senza 
-        		  cambiare la posizione dell'oggetto di riferimento.
-        Freccie DX/SX	: Rollìo Telecamera
-        Freccie Su/Giù	: Beccheggio Telecamera
-        Shift+Freccie	: Ruota oggetto
-        1-9		: Seleziona i pianeti attorno al sole vicino
+---- Navigazione ----
 
-    Tempo:
-        Spazio	: Ferma il tempo
-        L		: Tempo 10x più veloce
-        K		: Tempo 10x più lento
-        J		: Inverti il tempo
-        !		: Imposta il Tempo all'istante attuale
-        ?		: Visualizza il tempo di viaggio della luce fra l'osservatore
-         		  e l'oggetto selezionato
-        -		: Sottrae il tempo di viaggio della luce dal tempo di
-         		  simulazione corrente
+  1 - 9  ............ seleziona il pianeta intorno alla stella più vicina
+  0 (zero)  ......... seleziona la stella madre dell'attuale pianeta 
+                      o sistema
+  H	 ................ seleziona il Sole (Sistema Solare)
+  C  ................ centra l'oggetto selezionato
+  G	 ................ vai all'oggetto selezionato
+  F	 ................ segui l'oggetto selezionato
+  T	 ................ traccia l'oggetto selezionato (mantiene centrato 
+                      nella vista l'oggetto selezionato)
+  Y	 ................ orbita l'oggetto selezionato ad una velocità 
+                      sincronizzata con la sua rotazione
+  :	 ................ aggancia l'oggetto selezionato
+  "	 ................ insegue l'oggetto selezionato 
+  Shift+C	 .......... centra/centra sull'orbita l'oggetto selezionato senza 
+                      variare la posizione dell'oggetto di riferimento.
+  Ctrl+G  ........... va sulla superficie dell'oggetto selezionato
+  Ctrl+F  ........... inizia-termina la modalità Altazimutale
+  HOME  ............. avvicinamento all'oggetto
+  END	 .............. allontanamento dall'oggetto
+  *		 .............. guarda indietro
+  Backspace ......... seleziona il parente dell'oggetto corrente o 
+                      cancella la selezione  
+  ESC	 .............. annulla il movimento o l'esecuzione dello script
 
-    Nomi:
-        =		: Mostra/nasconde i nomi delle constellazioni
-        B		: Mostra/nasconde i nomi delle stelle
-        E		: Mostra/nasconde i nomi delle galassie
-        M		: Mostra/nasconde i nomi delle lune
-        W		: Mostra/nasconde i nomi di asteroidi e comete
-        N		: Mostra/nasconde i nomi dei veicoli spaziali
-        P		: Mostra/nasconde i nomi dei pianeti
-        &		: Mostra/nasconde i nomi dei luoghi
 
-        V		: Cambia il livello di dettaglio del testo informativo
+---- Tempo ----
 
-    Opzioni:
-        I		: Mostra/nasconde le textures delle nubi
-        U		: Attiva/disattiva il rendering delle galassie
-        O		: Mostra/nasconde le orbite dei pianeti
-        /		: Mostra/nasconde i disegni delle costellazioni
-        ^		: Attiva/disattiva il rendering delle nebulose
-        %		: Mostra/nasconde le tabelle fei colori delle stelle
-        ;		: Mostra la sfera delle coordinate equatoriali riferite alla Terra
-        [		: Se autoMag OFF	: Diminuisce il limite di magnitudine 
-        				  (meno stelle visibli)
-          		  Se autoMag ON	: Diminuisce il limite di magnitudine 
-        				  ad un campo visivo di 45°
-        ]		: Se autoMag OFF	: Aumenta il limite di magnitudine
-        				  (più stelle visibli)
-          		  Se autoMag ON	: Aumenta il limite di magnitudine
-        				  ad un campo visivo di 45°
-        {		: Diminuisce la luminosità ambientale
-        }		: Aumenta la luminosità ambientale
-        (		: Diminuisce la luminosità delle galassie, indipendentemente 
-         		  dalla luminosità delle stelle 
-        )		: Aumenta la luminosità delle galassie, indipendentemente
-         		  dalla luminosità delle stelle
-        ,		: Restringe il campo visivo
-        .		: Allarga il campo visivo
-        Backspace	: Annulla la selezione corrente
-        Ctrl+A	: Mostra/nasconde le atmosfere
-        Ctrl+B	: Mostra/nasconde i confini delle costellazioni
-        Ctrl+E	: Mostra/nasconde le ombre delle eclissi
-        Ctrl+K	: Mostra/nasconde i marcatori
-        Ctrl+L	: Mostra/nasconde le luci notturne (inquinamento luminoso)
-        Ctrl+P	: Marca l'oggetto selezionato
-        Ctrl+S	: Seleziona ciclicamente lo stile delle stelle tra  
-            		  dischi sfocati, punti o dischi in scala
-        Ctrl+T	: Mostra/nasconde la coda delle comete
-        Ctrl+V	: Seleziona ciclicamente i percorsi render OpenGL supportati
-        Ctrl+W	: Attiva/disattiva la modalità wireframe
-        Ctrl+X	: Attiva/disattiva l'antialias delle linee
-        Ctrl+Y	: Attiva/disattiva autoMag = adattamento automatico 
-        		  della visibilità delle stelle al campo visivo
-        r R		: Aumenta o diminuisce la risoluzione della texture
-        +		: Scambia la texture dei pianeti fra artistica ed ai limiti delle 
-         		  conoscenze
+  Spazio  ........... ferma/fa ripartire il tempo e lo script
+  J	 ................ inverte il tempo (tempo avanti/tempo indietro)
+  \  ................ inserisce il tempo standard (1x, avanti) e 
+                      annulla i settaggi accelerati avanti o indietro
+  L	 ................ cambia la velocità del tempo: 10x più veloce
+  K	 ................ cambia la velocità del tempo: 10x più lento
+  Shift+L  .......... cambia la velocità del tempo: 2x più veloce
+  Shift+K  .......... cambia la velocità del tempo: 2x più lento
+  !	 ................ imposta il Tempo all'istante e data attuale
+  ? 	............... visualizza il tempo di viaggio della luce fra 
+                      l'osservatore e l'oggetto selezionato
+  -	(segno meno)..... sottrae il tempo di viaggio della luce dal 
+                      tempo di simulazione corrente
 
-    Multivista:
-        Ctrl+R	: Dividi verticalmente la vista
-        Ctrl+U	: Dividi orizzontalmente la vista
-        TAB 	: Seleziona ciclicamente la vista attiva
-        DEL 	: Cancella la vista attiva
-        Ctrl+D	: Cancella tutte le viste eccetto quella attiva
 
-    Volo spaziale:
-        F1		: Stop 
-        F2		: Imposta la velocità a 1 km/s
-        F3		: Imposta la velocità a 1,000 km/s
-        F4		: Imposta la velocità alla velocità della luce
-        F5		: Imposta la velocità alla velocità della luce x10
-        F6		: Imposta la velocità a 1 UA/s
-        F7		: Imposta la velocità a 1 ly/s
-        A 		: Aumenta la velocità
-        Z 		: Diminuisci la velocità
-        Q 		: Inverti la direzione
-        X 		: Imposta la direzione di movimento verso il centro
-        		  dello schermo
+---- Etichette dei nomi (Mostra/Nasconde) ----
+    
+  E	 .............. mostra/nasconde i nomi delle galassie
+  Shift+E  ........ mostra/nasconde i nomi degli ammassi globulari 
+  B	 .............. mostra/nasconde i nomi delle stelle
+  P ............... mostra/nasconde i nomi dei pianeti  
+  Shift+P  ........ mostra/nasconde i nomi dei pianeti nani 
+  M	 .............. mostra/nasconde i nomi delle lune  
+  Shift+M  ........ mostra/nasconde i nomi delle lune Minori 
+  W 	............. mostra/nasconde i nomi degli asteroidi
+  Shift+W ......... mostra/nasconde i nomi delle comete
+  N	 .............. mostra/nasconde i nomi dei veicoli spaziali
+  =	 .............. mostra/nasconde i nomi delle costellazioni
+  &	 .............. mostra/nasconde i nomi dei luoghi
 
-    Tastierino numerico:
-        4		: Imbardata sinistra
-        6		: Imbardata destra
-        8		: Picchiata
-        2		: Cabrata
-        7		: Rollìo sinistro
-        9		: Rollìo destro
-        5		: Ferma la rotazione
 
-    Joystick:
-        Asse X	: Imbardata
-        Asse Y	: Beccheggio
-        Grilletto + SX	: Rollìo sinistro
-        Grilletto + DX	: Rollìo destro
-        Pulsante 1	: Rallenta
-        Pulsante 2	: Accelera
+---- Oggetti (mostra/nasconde) ----
 
-    Altro:
-        D 		: Avvia la demo
-        F8		: Abilita il joystick
-        F10		: Cattura l'immagine in un file
-        ` 		: Visualizza il numero di fotogrammi al secondo
-        ENTER	: Seleziona una stella o un pianeta scrivendo il suo nome
-        Ctrl+C, Ctrl+INS	: Copia  l'URL del luogo negli appunti
+  U	 .............. mostra/nasconde le galassie 
+  Shift+U  ........ mostra/nasconde gli ammassi globulari  
+  ^  .............. mostra/nasconde le nebulose
+  Ctrl+Shift+A  ... mostra/nasconde le atmosfere
+  I	 .............. mostra/nasconde le nuvole
+  Ctrl+L  ......... mostra/nasconde la mappa del lato notturno
+  Ctrl+T  ......... mostra/nasconde la coda delle comete
+  Ctrl+E  ......... mostra/nasconde le ombre delle eclissi
+  Ctrl+B  ......... mostra/nasconde i limiti delle costellazioni
+  /	 .............. mostra/nasconde i disegni delle costellazioni
+  ;  .............. sfera di coordinate equatoriali basate sulla Terra
+  Ctrl+K  ......... mostra/Nasconde i marcatori (messi su oggetti)
+  O	 .............. mostra/nasconde le orbite dei pianeti
+
+
+--- Opzioni di Rendering ---
+
+  {	............ diminuisce la luminosità ambientale
+  }	............ aumenta la luminosità ambientale
+  (	............ diminuisce la luminosità delle galassie, 
+                 indipendentemente dalla luminosità delle stelle 
+  )	............ aumenta la luminosità delle galassie, 
+                 indipendentemente dalla luminosità delle stelle
+  [	............ diminuisce il limite di magnitudine:
+                 - se autoMag OFF: diminuisce il limite di 
+                   magnitudine (meno stelle visibili)
+                 - se autoMag ON: diminuisce il limite di 
+                   magnitudine per un campo visivo di 45°
+  ]	............ aumenta il limite di magnitudine:
+                 - se autoMag OFF	: Aumenta il limite di 
+                   magnitudine (più stelle visibili)
+                 - se autoMag ON	: Aumenta il limite di 
+                   magnitudine per un campo visivo di 45°
+  Ctrl+Y ....... attiva/disattiva AutoMagnitudine = adattamento 
+                 automatico della visibilità delle stelle al 
+        		     campo visivo (FOV)
+  , 	.......... restringe il campo visivo
+  . 	.......... allarga il campo visivo        		  
+  Ctrl+X  ...... attiva/disattiva l'antialias delle linee        		  
+  Alt+Enter  ... seleziona ciclicamente i percorsi Render OpenGL 
+                 supportati dalla scheda grafica presente
+  Ctrl+P  ...... marca l'oggetto selezionato
+  Ctrl+V  ...... cicla tra i render path OpenGL supportati                 
+  +		.......... scambia la texture dei pianeti fra artistica 
+                 ed ai limiti delle conoscenze  
+  %	 ........... mostra/nasconde le tabelle dei colori delle stelle  
+  Ctrl+S  ...... seleziona ciclicamente lo stile delle stelle tra  
+            		 dischi sfocati, punti o dischi in scala    
+  V	 ........... cambia il livello di dettaglio delle informazioni         		  
+  Ctrl+W  ...... mostra/nasconde la modalità Wireframe 
+
+
+---- Opzioni Multivista ----
+
+  Ctrl+U	......... divide orizzontalmente la vista    
+  Ctrl+R	......... divide verticalmente la vista
+  TAB 	........... seleziona ciclicamente la vista attiva
+  DEL 	........... cancella la vista attiva
+  Ctrl+D	......... cancella tutte le viste eccetto quella attiva
+
+
+--- Navigazione con i tasti freccia ---
+
+  Freccia Su/Giù  ................. cabrata/picchiata
+  Freccia destra/sinistra  ........ rollio a destra/sinistra
+  Shift+Freccia destra/sinistra ... orbita l'oggetto a destra/sinistra
+  Shift+freccia su/giù  ........... orbita l'oggetto in basso/alto   
+  
+ 
+ ---- Navigazione con Tastierino numerico (NumLock attivo) ----
+
+  8		............. picchiata [freccia in basso] 
+  2		............. cabrata [freccia in alto] 
+  7		............. rollìo sinistro [freccia a sinistra] 
+  9		............. rollìo destro [freccia a destro] 
+  5		............. ferma la rotazione   
+  4		............. imbardata sinistra
+  6		............. imbardata destra
+
+
+---- Volo spaziale ----
+    
+  Z 		........... diminuisci la velocità
+  A 		........... aumenta la velocità  
+  Q 		........... inverti la direzione
+  X 		........... imposta la direzione di movimento verso il 
+                    centro dello schermo  
+  F2		........... imposta la velocità a 1 km/s
+  F3		........... imposta la velocità a 1,000 km/s
+  F4		........... imposta la velocità alla velocità della luce 
+                    (=299.792 Km/secondo= c)
+  F5		........... imposta la velocità alla velocità della luce x10
+  F6		........... imposta la velocità a 1 UA/s (UA= Unità 
+                    Astronomica, =distanza media Terra-Sole= 
+                    150.000.000 Km)
+  F7		........... imposta la velocità a 1 ly/s (ly= Anno Luce, 
+                    9.460.800.000.000 Km)
+  F1		........... ferma il movimento 
+  S 		........... ferma il movimento 
+
+
+---- Altre funzioni ----
+
+  Ctrl+C   .......... copia  l'URL del luogo negli appunti    
+  Ctrl+INS  ......... copia  l'URL del luogo negli appunti 
+  F10  .............. cattura l'immagine dello schermo in un file 
+                      (screenshot)
+  Shift+F10  ........ cattura un filmato su un file (video)
+  F11  .............. durante la cattura filmato: Inizia/interrompi la cattura
+  F12  .............. durante la cattura filmato: ferma la cattura 
+  ~   ............... mostra/nascondi la console di debug (usare frecce 
+                      up/down per muoversi nella lista)
+  `   ............... mostra/nascondi il numero di "fotogrammi al secondo" 
+                      (FPS) renderizzatI sullo schermo
+  Ctrl+O (lettera) ...mostra la finestra di dialogo "Seleziona oggetto"
+  @  ................ edita le variazioni di Mode (aiuto nel posizionare gli oggetti)
+  F8  ............... attiva/disattiva il controllo mediante Joystick
+  D 	............... avvia la demo (/celestia/demo.cel)
+  ENTER	 ............ seleziona un oggetto (stella, pianeta, asteroide ecc.) 
+                      scrivendo il suo nome (usare Tab/Shift+Tab per 
+                      evidenziare un oggetto, Esc per uscire)  
+                      
+                           		 
+------------------------------------------------
+  CONTROLLI DA JOYSTICK
+------------------------------------------------
+    
+  Asse X	......... imbardata
+  Asse Y	......... beccheggio
+  Grilletto+SX  ... rollìo sinistro
+  Grilletto+DX	... rollìo destro
+  Pulsante 1	..... rallenta
+  Pulsante 2	..... accelera

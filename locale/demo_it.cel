@@ -73,7 +73,7 @@
 	
 	select { object "Mimas" }
 	goto { time 5 distance 4 upframe "equatorial" }
-	print { text "La caratteristica principale lella luna di Saturno Mimas è l'enorme cratere d'impatto Herschel." row -3 duration 9 }
+	print { text "La caratteristica principale della luna di Saturno Mimante è l'enorme cratere d'impatto Herschel." row -3 duration 9 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	changedistance { duration 6.0 rate 0.5 }
 
@@ -82,7 +82,7 @@
 	print { text "Notate come appare debole il Sole a questa distanza." row -3 }
 	wait { duration 2 }
 
-	print { text "Diamo uno sguardo intorno alle stelle nel cielo." row -3 duration 2 }
+	print { text "Diamo uno sguardo alle stelle nel cielo." row -3 duration 2 }
 	wait { duration 2 }
 	select { object "Alpha UMa" }
 	center { time 2 }
@@ -92,7 +92,7 @@
 	select { object "Polaris" }
 	center { time 2 }
 	wait { duration 2 }
-	print { text "Ora siamo centrati sulla Polare, la Stella del Nord." row -3}
+	print { text "Ora siamo centrati sulla Polare, la Stella che indica il Polo Nord." row -3}
 	wait { duration 1 }
 	labels { set "stars" }
 	wait { duration 2 }
@@ -142,7 +142,7 @@ print { text "Pur essendo lontani da Antares più di 10 volte la distanza della 
 	changedistance { duration 10.0 rate 2.0 }
 
 	select { object "Milky Way" }
-	print { text "Stiamo osservando l'intera galassia della Via Lattea." row -3 duration 6 }
+	print { text "Stiamo osservando l'intera nostra galassia, la Via Lattea." row -3 duration 6 }
 	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
 	print { text "È ora di tornare a casa . . ." row -3}
 
