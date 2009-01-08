@@ -1,16 +1,16 @@
 # translation of celestia-kde.po to Korean
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
-# Jacob Lee <jacoblee@freechal.com>, 2006.
-# 
+# Jacob Lee <jaeuck@gmail.com>, 2006.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: ko\n"
+"Project-Id-Version: Celestia-Korean\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: 2006-03-21 11:18+0900\n"
-"Last-Translator: Jacob Lee <jacoblee@freechal.com>\n"
-"Language-Team: Korean<ko@li.org>\n"
+"PO-Revision-Date: 2009-01-07 10:57+0900\n"
+"Last-Translator: Jacob Lee <jaeuck@gmail.com>\n"
+"Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -52,7 +52,6 @@ msgid "Auriga"
 msgstr "마차부"
 
 #: data/constellations.cpp:9
-#, fuzzy
 msgid "Boötes"
 msgstr "목자"
 
@@ -375,3 +374,4 @@ msgstr "날치"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "여우"
+

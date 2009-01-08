@@ -1,4 +1,6 @@
-﻿{
+# 셀레스티아 표준 demo.cel의 한국어 번역입니다. UTF-8으로 되어 있습니다. 
+# 한국어 폰트를 설치하고 실행하십시오. 
+{
 	timerate { rate 0 }
 	labels { clear "planets|minorplanets|stars|constellations" }
 	renderflags { set "stars|planets"
@@ -6,7 +8,7 @@
 	print { text "데모를 시작합니다 . . .\nESC키를 누르면 종료합니다." origin "center" duration 2 }
 	wait { duration 2.0 }
 
-	print { text "가까운 곳부터 시작합시다 . . .\nLet's start near home . . ." row -3 }
+	print { text "가까운 곳부터 시작합시다 . . ." row -3 }
 	select { object "Sol/Earth" }
 	cancel {}
 	# goto { time 0 distance 3 upframe "ecliptical" }
@@ -18,45 +20,45 @@
 	wait { duration 1.0 }
 	follow {}
 
-	print { text "지구위 12,500km 궤도에 있습니다\nWe're now orbiting about 12,500km above the Earth" row -3 duration 5 }
+	print { text "지구위 12,500km 궤도에 있습니다." row -3 duration 5 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
-	print { text "구름이 있으면 좀더 익숙한 모습입니다\nEarth looks much more familiar with clouds." row -3}
+	print { text "구름이 있으면 좀더 익숙한 모습입니다." row -3}
 	wait { duration 0.1 }
 	renderflags { set "cloudmaps" }
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
 
-	print { text "다음은 달입니다.\nNext stop: the Moon." row -3 }
+	print { text "다음은 달입니다." row -3 }
 	select { object "Moon" }
 	goto { time 5 distance 4 upframe "equatorial" }
 	wait { duration 5.5 }
-	print { text "Watch for the Earth and Sun as we orbit the Moon" row -3}
+	print { text "달을 돌며 지구와 태양을 살펴봅시다." row -3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
 	
-	print { text "자, 다음은 태양으로 갑니다.\nOff toward the Sun." row -3}
+	print { text "자, 다음은 태양으로 갑니다." row -3}
 	select { object "Sol" }
 	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
 	wait { duration 8.5 }
-	print { text "여기에서는 태양표면의 흑점을 볼수 있습니다.\nAt this distance, dark sunspots are visible on the Sun's surface." row -3}
+	print { text "여기에서는 태양표면의 흑점을 볼수 있습니다." row -3}
 	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
 
-	print { text "태양계 안쪽을 잘수있게 확대를 해 보겠습니다.\nLet's zoom out for an overview of the inner solar system." row -3}
+	print { text "태양계 안쪽을 잘 볼수 있게 확대 해 봅시다." row -3}
 	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
 	renderflags { set "orbits" }
 	changedistance { duration 4.0 rate 1.0 }
 	
-	print { text "행성들의 이름을 봅시다 . . .\nTurning on planet labels . . ." row -3}
+	print { text "행성들의 이름을 봅시다 . . ." row -3}
 	labels { set "planets" }
 	wait { duration 1.0 }
-	print { text "행성들이 태양주위를 도는 모습을 보기위해\n 시간을 빨리가도록 하겠습니다.\nWe can speed up time to watch the planets orbit the sun." row -3}
+	print { text "행성들이 태양주위를 도는 모습을 보기위해\n 시간을 빨리가도록 하겠습니다." row -3}
 	timerate { rate 2592000 }
 	wait { duration 3.0 }
-	print { text "1초마다 월식이 보입니다.\nFor each second, a month of time elapses in the simulation." row -3}
+	print { text "1초에 1개월씩 시간이 지나 갑니다." row -3}
 	wait { duration 12.0 }
 	timerate { rate 1 }
-	print { text "자, 시간이 멈추었습니다.\nNow, time has been stopped completely." row -3}
+	print { text "자, 시간이 멈추었습니다." row -3}
 
 	wait { duration 1.0 }
-	print { text "다음 목적지는 토성입니다.\nOur next destination is Saturn." row -3}
+	print { text "다음은 토성입니다." row -3}
 	select { object "Saturn" }
 	center { time 2 }
 	wait { duration 2 }
@@ -64,21 +66,21 @@
 	wait { duration 6.5 }
 	renderflags { clear "orbits" }
 	labels { clear "planets" }
-	print { text "몇몇 토성의 달은 밝은 점으로 보입니다\nSeveral of the moons of Saturn are visible as bright dots" row -3 duration 3}
+	print { text "토성의 달들이 반짝입니다." row -3 duration 3}
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	
 	select { object "Mimas" }
 	goto { time 5 distance 4 upframe "equatorial" }
-	print { text "토성 달 '미마스'에서 가장 잘알려진 특징은 거대한 충돌 분화구 '허셜'입니다.\nThe most prominent feature on Saturn's moon Mimas is the huge impact crater Herschel." row -3 duration 9 }
+	print { text "토성 달 '미마스'에서 가장 잘알려진 특징은 거대한 충돌 분화구 '허셜'입니다." row -3 duration 9 }
 	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
 	changedistance { duration 6.0 rate 0.5 }
 
 	select { object "Sol" }
 	center { time 2 }
-	print { text "이 거리에서 태양이 얼마나 희미한지 잘 보시기 바랍니다.\nNote how faint the Sun appears at this distance." row -3 }
+	print { text "이 거리에서 태양이 얼마나 희미한지 잘 보시기 바랍니다." row -3 }
 	wait { duration 2 }
 
-	print { text "하늘의 별을 보세요.\nLet's look around at the stars in the sky." row -3 duration 2 }
+	print { text "하늘의 별을 보세요." row -3 duration 2 }
 	wait { duration 2 }
 
 	select { object "Earth" }
@@ -90,22 +92,22 @@
 
 	select { object "Alpha UMa" }
 	center { time 2 }
-	print { text "지구의 북반구 사는 사라들은 '큰곰'자리의 북두칠성을 알겁니다.\nNorthern Hemisphere residents should recognize the Big Dipper in the constellation Ursa Major." row -3 duration 3 }
+	print { text "지구의 북반구에 사는 사람들은 큰곰자리의 북두칠성을 알고 있습니다." row -3 duration 3 }
 	wait { duration 4 }
 
 	select { object "Polaris" }
 	center { time 2 }
 	wait { duration 2 }
-	print { text "북극성을 중심으로 봅시다.\nWe're now centered on Polaris, the North Star." row -3}
+	print { text "북극성을 중심으로 봅시다." row -3}
 	wait { duration 1 }
 	labels { set "stars" }
 	wait { duration 2 }
-	print { text "북극성은 '작은곰'자리의 일부분입니다.\nPolaris is part of the asterism commonly called the Little Dipper." row -3}
+	print { text "북극성은 작은곰자리의 일부분입니다." row -3}
 	wait { duration 2 }
-	print { text "셀레스티아는 별자리도 그려줍니다.\nTo help us get oriented in the sky, Celestia can draw constellation diagrams for us . . ." row -3}
+	print { text "셀레스티아는 별자리도 그려줍니다." row -3}
 	renderflags { set "constellations" }
 	wait { duration 2 }
-	print { text "그리고 별자리 이름도 . . .\n. . . and constellation names" row -3}
+	print { text "그리고 별자리 이름도 . . ." row -3}
 	labels { set "constellations" }
 	wait { duration 2 }
 
@@ -116,17 +118,17 @@
 	select { object "Alnilam" }
 	center { time 4 }
 	wait { duration 2 }
-	print { text "오리온은 하늘을 가장 유명한 별자리 입니다.\nOrion is the sky's most prominent constellation." row -3 duration 3 }
+	print { text "오리온자리는 하늘에서 가장 유명한 별자리 입니다." row -3 duration 3 }
 	wait { duration 4 }
 
 	select { object "Beta Cru" }
 	center { time 4 }
 	wait { duration 2 }
-	print { text "남십자자리는 남반구에서 잘 볼이는 별자리입니다.\nThe Southern Cross is a familiar sight in Southern Hemisphere skies." row -3 duration 4 }
+	print { text "남십자자리는 남반구에서 잘 보이는 별자리입니다." row -3 duration 4 }
 	wait { duration 4 }
 
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
-	print { text "다음은 은하수를 보겠습니다.\nLet's enable galaxy rendering so that we can see the Milky Way" row -3 duration 4 }
+	print { text "다음은 은하수를 보겠습니다." row -3 duration 4 }
 	renderflags { set "galaxies" }
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
@@ -134,7 +136,7 @@
 	select { object "Antares" }
 	center { time 5 }
 	wait { duration 3 }
-	print { text "전갈자리의 적생거성 안타레스로 가겠습니다.\nWe'll now travel to Antares, a red giant star in Scorpius." row -3 duration 5 }
+	print { text "전갈자리의 적생거성 안타레스로 가겠습니다." row -3 duration 5 }
 	wait { duration 2 }
 	renderflags { clear "nubulae"}
 	renderflags { clear "constellations" }
@@ -144,20 +146,20 @@
 	wait { duration 8.5 }
 	goto { time 5 distance 10 }
 	wait { duration 5.0 }
-	print { text "태양에서 지구까지 거리의 10배보다 더 큰, 많은 적색거성이 \nEven though we are now 10 times farther from Antares than\nEarth is from the Sun, the massive red giant star still looms huge in the sky." row -3}
+	print { text "태양에서 지구까지 거리의 10배보다 더 큰 안타레스 입니다.\n우주에는 수없이 많은 적색거성이 있습니다." row -3}
 	wait { duration 4.0 }
 
-	print { text "넓게 봅시다\nLet's zoom out and get the big picture . . ." row -3}
+	print { text "좀 더 넓게 봅시다" row -3}
 	changedistance { duration 10.0 rate 2.0 }
 
 	select { object "Milky Way" }
-	print { text "우리은하의 모습입니다.\nWe're viewing the entire Milky Way galaxy." row -3 duration 6 }
+	print { text "우리은하의 모습입니다.." row -3 duration 6 }
 	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
-	print { text "이제 집으로 돌아갈 시간입니다.\nTime to go home . . ." row -3}
+	print { text "이제 집으로 돌아갈 시간입니다." row -3}
 
 	select { object "Sol/Earth" }
 	goto { time 20 distance 10 upframe "equatorial" }
 	wait { duration 20.0 }
-	print { text "데모를 마칩니다.\nDemo completed." row -3}
+	print { text "데모를 마칩니다." row -3}
 	wait { duration 3.0 }
 }
