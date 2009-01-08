@@ -47,7 +47,7 @@
 	renderflags { set "orbits" }
 	changedistance { duration 4.0 rate 1.0 }
 	
-	print { text "惑星表示をONにします。" row -3}
+	print { text "惑星名表示をONにします。" row -3}
 	labels { set "planets" }
 	wait { duration 1.0 }
 	print { text "時間を縮めて見てみれば、惑星が太陽の周りを回っているのが見えてきます。" row -3}
@@ -113,7 +113,7 @@
 	select { object "Beta Cru" }
 	center { time 4 }
 	wait { duration 2 }
-	print { text "みなみじゅうじ星は南天では非常に目立ちます。" row -3 duration 4 }
+	print { text "みなみじゅうじ座は南天では非常に目立ちます。" row -3 duration 4 }
 	wait { duration 4 }
 
 	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
@@ -134,7 +134,7 @@
 	wait { duration 8.5 }
 	goto { time 5 distance 10 }
 	wait { duration 5.0 }
-	print { text "太陽と地球の10倍の距離から見ていますが、\nそれでもなお大きく見えています。" row -3}
+	print { text "太陽と地球の23倍の距離から見ていますが、\nそれでもなお大きく見えています。" row -3}
 	wait { duration 4.0 }
 
 	print { text "では、もっと遠くまで行ってみましょう。" row -3}

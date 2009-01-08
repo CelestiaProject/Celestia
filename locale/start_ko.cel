@@ -1,26 +1,23 @@
-﻿{
-# ... Beginning of script
+{
+# ... 스크립트 시작
 
 #****************************************************************************
 #                                                                           *
-#                 START.CEL - Startup script for Celestia                   *
-#                             (version 2.1)                                 *
+#                 START.CEL - 셀레스티아 시작 스크립트                      *
+#                          (version 2.1 한국어버전)                         *
 #                                                                           *
 #---------------------------------------------------------------------------*
 #                                                                           *
-#  This script is run automatically, every time you run Celestia.           *
+#  이 스크립트는 셀레스티아 시작시 자동으로 로드됩니다.                     *
 #                                                                           *
-#  NOTE: Do not remove the curly braces located as the first and last       *
-#        characters of this file. They define this file as a CEL script.    *
+#  주의: 첫 번째 행과 마지막 행에 있는 중괄호 "{"와 "}"는 삭제하지 마시오.  *
+#        이 파일이 CEL 스크립트라고 명시하고 있습니다.                      *
 #                                                                           *
-#  You can modify this script in many ways, to suit your specific needs.    *
-#  Simply uncomment one or more of the lines below, as noted. Each line or  *
-#  section of code contains comments describing what it does. To UNcomment  *
-#  a line of code, simply remove the "#" character from the beginning of    *
-#  that line.                                                               *
+#  필요에 따라 원하는데로 스크립트를 정의할 수 있습니다. 밑에 사용 할 명령  *
+#  행의 주석(#)을 삭제하여 쉽게 사용할수 있습니다.                          *
 #                                                                           *
-#  If you decide to modify this script, please copy it to a safe place      *
-#  BEFORE you begin, so you will have it to refer to at a later date.       *
+#  스크립트를 수정할 경우 나중에 참조를 위하여 원본을 복사해 두시기 바랍니If*
+#  다.                                                                      *
 #                                                                           *
 #****************************************************************************
 
@@ -36,7 +33,7 @@
   goto   {time 3.0  distance 6.0}
   wait   {duration 2.0}
 
-  print  {text "Celestia를 시작합니다!"  row -3  column 1  duration 3}
+  print  {text "셀레스티아를 시작합니다!"  row -3  column 1  duration 3}
   wait   {duration 3.0}
 
 #****************************************************************************

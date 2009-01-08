@@ -1,7 +1,7 @@
 {
 	Name   "Giove"
 	Target "Sol/Jupiter"
-	Description "Giove è il pianeta più grande del nostro sistema solare ed è il quinto dal Sole.  Come gli altri grandi pianeti esterni, Giove è un gigante gassoso, senza una superficie solida.  La Grande Macchia Rossa è la più grande e longeva delle molte tempeste dell'atmosfera turbolenta di Giove; questa tempesta delle dimensioni della Terra è in corso da almeno 300 anni."
+	Description "Giove è il pianeta più grande del nostro Sistema Solare ed è il quinto dal Sole.  Come gli altri grandi pianeti esterni, Giove è un gigante gassoso, senza una superficie solida.  La Grande Macchia Rossa è la più grande e longeva delle molte tempeste dell'atmosfera turbolenta di Giove; questa tempesta delle dimensioni della Terra è in corso da almeno 300 anni."
 }
 
 {
@@ -9,7 +9,7 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Plutone orbita intorno al Sole ad una distanza media di circa sei miliardi di chilometri.  La sua sola luna conosciuta, Caronte, è così grande che ai due ci si riferisce spesso come ad un 'pianeta doppio'."
+	Description "Plutone, uno dei 5 Pianeti Nani del Sistema Solare, assieme a Cerere, Haumea, Makemake ed Eris, orbita intorno al Sole ad una distanza media di circa sei miliardi di chilometri.  La sua luna maggiore Caronte (ce ne sono altre due piccole, Idra e Notte), è così grande che ai due ci si riferisce spesso come ad un 'pianeta doppio'."
 }
 
 {
@@ -31,7 +31,7 @@
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "L'ammasso stellare delle Pleiadi è un gruppo di stelle brillanti  formatesi recentemente.  Le Pleiadi prendono il nome dalle sette sorelle della mitologia greca, nonostante i telescopi abbiano rivelato che ci siano considerevolmente più di sette stelle nell'ammasso."
+	Description "L'ammasso stellare delle Pleiadi è un gruppo di stelle brillanti  formatesi recentemente.  Le Pleiadi prendono il nome dalle sette sorelle della mitologia greca, nonostante i telescopi abbiano rivelato che ci siano molte più stelle nell'ammasso."
 }
 
 {
@@ -39,7 +39,7 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Chiamate come le cinque figlie di Atlante ed Aethra, le Iadi sono uno dei principali ammassi aperti del cielo.  È stimato che le stelle delle Iadi abbiano approssimativamente un'età di 660 milioni di anni--oltre sei volte più antiche delle più calde stelle blu delle Pleiadi che appaiono vicine nel nostro cielo notturno."
+	Description "Chiamate come le cinque figlie di Atlante ed Aethra, le Iadi sono uno dei principali ammassi aperti del cielo.  È stimato che le stelle delle Iadi abbiano approssimativamente un'età di 660 milioni di anni, oltre sei volte più antiche delle più calde stelle blu delle Pleiadi che appaiono vicine nel nostro cielo notturno."
 }
 
 {
@@ -53,13 +53,13 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "La sonda Galileo ha fotografato l'asteroide 243 Ida in 1993 nel suo viaggio per Giove.  Queste immagini hanno rivelato che Ida possiede un piccolo satellite, chiamato successivamente Dactyl.  È stato scoperto che anche altri asteroidi possiedono satelliti."
+	Description "La sonda Galileo ha fotografato l'asteroide 243 Ida in 1993 nel suo viaggio per Giove.  Queste immagini hanno rivelato che Ida possiede un piccolo satellite, chiamato Dactyl.  È stato scoperto che molti altri asteroidi possiedono satelliti."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b fu il primo pianeta scoperto ad orbitare intorno ad una stella normale che non fosse il Sole.  È un pianeta gigante gassoso ed orbita estremamente vicino alla sua stella madre--meno di un quinto della distanza fra Mercurio ed il nostro Sole.  Il fatto che un gigante gassoso possa esistere così vicino ad una stella ha forzato gli astronomi a riconsiderare seriamente le loro teorie sulla formazione dei sistemi solari."
+	Description "51 Pegasi b fu il primo pianeta scoperto intorno ad una stella normale diversa dal Sole.  È un pianeta gigante gassoso ed orbita estremamente vicino alla sua stella madre, meno di un quinto della distanza fra Mercurio ed il nostro Sole.  Il fatto che un gigante gassoso possa esistere così vicino ad una stella ha forzato gli astronomi a riconsiderare seriamente le loro teorie sulla formazione dei sistemi solari."
 }
 
 {
@@ -72,5 +72,5 @@
 {
 	Name "Cometa Borrelly"
 	Target "Sol/Borrelly"
-	Description "Il 22 Settembre 2001, la cometa Borrelly divenne la seconda cometa ad essere fotografata da vicino da una sonda spaziale.  Nonostante non fosse stata progettata per il flyby con la cometa, Deep Space 1 si avvicinò entro 2200 chilometri dal nucleo della Borrelly per restituire le fotografie a più alta risoluzione che abbiamo di un nucleo di cometa."
+	Description "Il 22 Settembre 2001, la cometa Borrelly divenne la seconda cometa ad essere fotografata da vicino da una sonda spaziale.  Nonostante non fosse stata progettata per il flyby con la cometa, Deep Space 1 si avvicinò entro 2200 chilometri dal nucleo della Borrelly per darci le fotografie a più alta risoluzione che abbiamo di un nucleo di cometa."
 }
