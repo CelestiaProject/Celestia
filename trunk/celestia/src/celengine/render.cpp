@@ -7832,7 +7832,7 @@ void Renderer::renderPlanet(Body& body,
     float discSizeInPixels = body.getRadius() /
         (max(nearPlaneDistance, altitude) * pixelSize);
 
-    if (discSizeInPixels > 1)
+    if (discSizeInPixels > 1 && body.hasVisibleGeometry())
     {
         RenderProperties rp;
 
@@ -7909,7 +7909,6 @@ void Renderer::renderPlanet(Body& body,
 
         // Calculate eclipse circumstances
         if ((renderFlags & ShowEclipseShadows) != 0 &&
-            body.hasVisibleGeometry() &&
             body.getSystem() != NULL)
         {
             PlanetarySystem* system = body.getSystem();
