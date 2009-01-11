@@ -1,12 +1,12 @@
 # translation of uk.po to Ukrainian
-# Yuri Chornoivan <yurchor@ukr.net>, 2008.
+# Yuri Chornoivan <yurchor@ukr.net>, 2008, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: uk\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2008-02-06 13:37+0200\n"
-"Last-Translator: Serhij Dubyk <dubyk@library.lviv.ua>\n"
+"PO-Revision-Date: 2009-01-10 20:37+0200\n"
+"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,8 +15,7 @@ msgstr ""
 "X-Poedit-Country: UKRAINE\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: KBabel 1.11.4\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: src/celengine/astro.cpp:820
 msgid "DST"
@@ -133,9 +132,8 @@ msgid "' of '"
 msgstr "\" з \""
 
 #: src/celengine/solarsys.cpp:1200
-#, fuzzy
 msgid "' not found."
-msgstr "\" не знайдено.\n"
+msgstr "\" не знайдено."
 
 #: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
@@ -496,18 +494,16 @@ msgid "Light gain"
 msgstr "Підсилення світла"
 
 #: src/celestia/celestiacore.cpp:2157
-#, fuzzy
 msgid "Bloom enabled"
-msgstr "Хвости комет дозволені"
+msgstr "Блимання дозволено"
 
 #: src/celestia/celestiacore.cpp:2159
-#, fuzzy
 msgid "Bloom disabled"
-msgstr "Хвости комет заборонені"
+msgstr "Блимання заборонено"
 
 #: src/celestia/celestiacore.cpp:2165 src/celestia/celestiacore.cpp:2173
 msgid "Exposure"
-msgstr ""
+msgstr "Експозиція"
 
 #: src/celestia/celestiacore.cpp:2521
 msgid "GL error: "
@@ -682,20 +678,19 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3543
 msgid " m/s"
-msgstr ""
+msgstr " м/с"
 
 #: src/celestia/celestiacore.cpp:3545
 msgid " km/s"
-msgstr ""
+msgstr " км/с"
 
 #: src/celestia/celestiacore.cpp:3549
 msgid " AU/s"
-msgstr ""
+msgstr " а.о./с"
 
 #: src/celestia/celestiacore.cpp:3551
-#, fuzzy
 msgid " ly/s"
-msgstr " днів"
+msgstr " св. років/с"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -783,9 +778,8 @@ msgid "Cannot read star database."
 msgstr "Неможливо прочитати зоряну базу даних."
 
 #: src/celestia/celestiacore.cpp:4181
-#, fuzzy
 msgid "Error opening deepsky catalog file."
-msgstr "Помилка під час відкриття каталогу зірок "
+msgstr "Помилка під час відкриття каталогу віддалених об’єктів."
 
 #: src/celestia/celestiacore.cpp:4233
 msgid "Error opening solar system catalog.\n"
@@ -981,14 +975,12 @@ msgid "Show Velocity Vector"
 msgstr "Показувати вектор швидкості"
 
 #: src/celestia/winmain.cpp:1618 src/celestia/kde/selectionpopup.cpp:342
-#, fuzzy
 msgid "Show Planetographic Grid"
-msgstr "Показувати орбіти планет"
+msgstr "Показувати планетографічну сітку"
 
 #: src/celestia/winmain.cpp:1619 src/celestia/kde/selectionpopup.cpp:344
-#, fuzzy
 msgid "Show Terminator"
-msgstr "Показувати об’єкти"
+msgstr "Показувати термінатор"
 
 #: src/celestia/winmain.cpp:1633
 msgid "&Satellites"
@@ -1346,9 +1338,8 @@ msgid "Show Galaxies"
 msgstr "Показувати галактики"
 
 #: src/celestia/kde/kdeapp.cpp:554
-#, fuzzy
 msgid "Show Globulars"
-msgstr "Показувати карти хмар"
+msgstr "Показувати сферичні скупчення"
 
 #: src/celestia/kde/kdeapp.cpp:557
 msgid "Show Partial Trajectories"
@@ -1476,9 +1467,8 @@ msgid "Show Galaxy Labels"
 msgstr "Показувати мітки галактик"
 
 #: src/celestia/kde/kdeapp.cpp:651
-#, fuzzy
 msgid "Show Globular Labels"
-msgstr "Показувати мітки туманностей"
+msgstr "Показувати мітки сферичних скупчень"
 
 #: src/celestia/kde/kdeapp.cpp:654
 msgid "Show Nebula Labels"
@@ -1629,8 +1619,7 @@ msgid "UTC"
 msgstr "UTC"
 
 #: src/celestia/kde/kdeapp.cpp:1462
-msgid ""
-"This version of Celestia was not built with support for movie recording."
+msgid "This version of Celestia was not built with support for movie recording."
 msgstr "Цю версію Celestia не було зібрано з підтримкою запису відеороликів."
 
 #: src/celestia/kde/kdeapp.cpp:1488
@@ -2066,10 +2055,8 @@ msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr "<b>Мова затінювання OpenGL 2.0</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:44
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr ""
-"Файла %1 не існує, використовується файл типових налаштувань %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgstr "Файла %1 не існує, використовується файл типових налаштувань %2/celestia.cfg"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:54
 msgid "Directory %1 does not exist, using default %2"
@@ -2395,17 +2382,14 @@ msgid "Mars"
 msgstr "Марс"
 
 #: data/data.cpp:6
-#, fuzzy
 msgid "Phobos"
-msgstr "Феба"
+msgstr "Фобос"
 
 #: data/data.cpp:7
-#, fuzzy
 msgid "Deimos"
-msgstr "Ромб"
+msgstr "Деймос"
 
 #: data/data.cpp:9
-#, fuzzy
 msgid "Amalthea"
 msgstr "Амальтея"
 
@@ -2446,9 +2430,8 @@ msgid "Mimas"
 msgstr "Мімас"
 
 #: data/data.cpp:20
-#, fuzzy
 msgid "Enceladus"
-msgstr "Енкелад"
+msgstr "Енцелад"
 
 #: data/data.cpp:21
 msgid "Tethys"
@@ -2479,7 +2462,6 @@ msgid "Phoebe"
 msgstr "Феба"
 
 #: data/data.cpp:29
-#, fuzzy
 msgid "Miranda"
 msgstr "Міранда"
 
@@ -2577,16 +2559,15 @@ msgstr "Молочний шлях"
 
 #: data/data.cpp:55
 msgid "SMC"
-msgstr ""
+msgstr "Мала Магелланова Хмара"
 
 #: data/data.cpp:56
 msgid "LMC"
-msgstr ""
+msgstr "Велика Магелланова Хмара"
 
 #: data/data.cpp:57
-#, fuzzy
 msgid "Solar System Barycenter"
-msgstr "Центр тяжіння зоряної системи \n"
+msgstr "Центр тяжіння зоряної системи"
 
 #: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
@@ -2763,14 +2744,12 @@ msgid "&Medium"
 msgstr "&Помірний"
 
 #: src/celestia/res/resource_strings.cpp:45
-#, fuzzy
 msgid "&Texture Resolution"
-msgstr "Роздільна здатність"
+msgstr "Р&оздільна здатність"
 
 #: src/celestia/res/resource_strings.cpp:48
-#, fuzzy
 msgid "&High"
-msgstr "Висока"
+msgstr "&Висока"
 
 #: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
@@ -3072,54 +3051,47 @@ msgstr "Перегляд параметрів"
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:176
 msgid "Globulars"
-msgstr ""
+msgstr "Сферичні скупчення"
 
 #: src/celestia/res/resource_strings.cpp:160
 msgid "Grids"
-msgstr ""
+msgstr "Сітки"
 
 #: src/celestia/res/resource_strings.cpp:161
-#, fuzzy
 msgid "Celestial"
-msgstr "Celestia"
+msgstr "Небесні"
 
 #: src/celestia/res/resource_strings.cpp:162
-#, fuzzy
 msgid "Horizontal"
-msgstr "Розділити перегляд горизонтально"
+msgstr "По горизонталі"
 
 #: src/celestia/res/resource_strings.cpp:163
-#, fuzzy
 msgid "Galactic"
-msgstr "Галактики"
+msgstr "Галактика"
 
 #: src/celestia/res/resource_strings.cpp:164
 msgid "Ecliptic"
-msgstr ""
+msgstr "Екліптика"
 
 #: src/celestia/res/resource_strings.cpp:170
-#, fuzzy
 msgid "Minor Moons"
-msgstr "Місяці"
+msgstr "Малі планети"
 
 #: src/celestia/res/resource_strings.cpp:174
-#, fuzzy
 msgid "DSO Labels"
-msgstr "Мітки"
+msgstr "Мітки віддалених об’єктів"
 
 #: src/celestia/res/resource_strings.cpp:180
 msgid "Diagrams"
-msgstr ""
+msgstr "Діаграми"
 
 #: src/celestia/res/resource_strings.cpp:181
-#, fuzzy
 msgid "Boundaries"
-msgstr "Показувати межі"
+msgstr "Межі"
 
 #: src/celestia/res/resource_strings.cpp:183
-#, fuzzy
 msgid "Latin Names"
-msgstr "Місця"
+msgstr "Назви латиною"
 
 #: src/celestia/res/resource_strings.cpp:184
 msgid "Information Text"
@@ -3146,9 +3118,8 @@ msgid "Terrae (Land masses)"
 msgstr "Terrae (Масиви материків)"
 
 #: src/celestia/res/resource_strings.cpp:201
-#, fuzzy
 msgid "Volcanoes"
-msgstr "Планети"
+msgstr "Вулкани"
 
 #: src/celestia/res/resource_strings.cpp:202
 msgid "Other features"
@@ -3254,69 +3225,3 @@ msgstr "Лис"
 msgid "Dec"
 msgstr "Гру"
 
-#~ msgid "limit of knowledge"
-#~ msgstr "межа знань"
-
-#, fuzzy
-#~ msgid "Phobos:Mars I"
-#~ msgstr "Фобос"
-
-#, fuzzy
-#~ msgid "Deimos:Mars II"
-#~ msgstr "Деймос"
-
-#, fuzzy
-#~ msgid "Io:Jupiter I"
-#~ msgstr "Юпітер"
-
-#, fuzzy
-#~ msgid "Mimas:Saturn I"
-#~ msgstr "Сатурн"
-
-#, fuzzy
-#~ msgid "Rhea:Saturn V"
-#~ msgstr "Сатурн"
-
-#, fuzzy
-#~ msgid "Ariel:Uranus I"
-#~ msgstr "Уран"
-
-#, fuzzy
-#~ msgid "Triton:Neptune I"
-#~ msgstr "Нептун"
-
-#~ msgid "Day length: "
-#~ msgstr "Тривалість дня:"
-
-#~ msgid " of "
-#~ msgstr " з "
-
-#~ msgid " must be in same star system\n"
-#~ msgstr " має бути у тій же зоряній системі\n"
-
-#~ msgid "Bad spectral type in star database, star #\n"
-#~ msgstr "Неправильний спектральний тип у базі даних зірок, зірка #\n"
-
-#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
-#~ msgstr " зірок з номерами у каталозі, що повторюються, вилучено.)\n"
-
-#~ msgid "Low res textures"
-#~ msgstr "Текстури низької роздільної здатності"
-
-#~ msgid "Medium res textures"
-#~ msgstr "Текстури середньої роздільної здатності"
-
-#~ msgid "High res textures"
-#~ msgstr "Текстури високої роздільної здатності"
-
-#~ msgid "Error reading deep sky file\n"
-#~ msgstr "Помилка під час читання файла далеких об’єктів\n"
-
-#~ msgid "Version"
-#~ msgstr "Версія"
-
-#~ msgid "Constellation Borders"
-#~ msgstr "Межі сузір’їв"
-
-#~ msgid "Orbit / Label"
-#~ msgstr "Орбіта / Мітка"
