@@ -1,4 +1,4 @@
-# Catalog of 311 known extrasolar planets.
+# Catalog of 313 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -2873,6 +2873,45 @@ AltSurface "limit of knowledge" "HD 9826/d"
 }
 
 AltSurface "limit of knowledge" "HD 49674/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HIP 97657"   # HAT-P-11
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.5 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.42 jupiters.
+
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       30     # M.sin(i) = 0.081 jupiters
+	Radius     29400
+
+	InfoURL "http://exoplanet.eu/star.php?st=WASP-7"
+
+	EllipticalOrbit {
+		Period          0.0134
+		SemiMajorAxis   0.053
+		Eccentricity    0.198
+		Inclination     80.7
+		AscendingNode   295.2
+		ArgOfPericenter 154
+		MeanAnomaly     278
+	}
+
+	Obliquity             81 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HIP 97657/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -6124,6 +6163,36 @@ AltSurface "limit of knowledge" "HD 17051/b"
 }
 
 AltSurface "limit of knowledge" "HD 59686/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 173416"
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       860     # M.sin(i) = 2.7 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+173416"
+
+	EllipticalOrbit {
+		Period          0.886
+		SemiMajorAxis   1.16
+		Eccentricity    0.21
+		ArgOfPericenter 344
+		MeanAnomaly     23
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 173416/b"
 {
 	Texture "extrasolar-lok.*"
 }
