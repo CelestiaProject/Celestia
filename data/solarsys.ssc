@@ -87,10 +87,10 @@
 	# Overridden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period 1407.509405
-	#    Inclination         7.01
-	#    AscendingNode 48.42
-	#    MeridianAngle 291.20
+	#    Period       1407.509405
+	#    Inclination    28.55
+	#    AscendingNode  11.01
+	#    MeridianAngle 329.71
 	# }
 
 	Albedo            0.06
@@ -140,10 +140,10 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period  5832.479839
-	#    Inclination       178.78
-	#    AscendingNode 300.22
-	#    MeridianAngle       137.45
+	#    Period       5832.479839
+	#    Inclination   157.15
+	#    AscendingNode 182.72
+	#    MeridianAngle  19.74
 	# }
 
 	Albedo            0.77
@@ -198,13 +198,15 @@ AltSurface "limit of knowledge" "Sol/Mercury"
         # equinox of J2000 is computed with the long period extension of
         # extension of the the P03 precession model presented in
         # "Long-periodic Precession Parameters", J. Vondrak (2006)
+	BodyFrame { EclipticJ2000 {} }
 	CustomRotation "earth-p03lp"
 
+	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period              23.9344694
-	#    Inclination        -23.4392911
-	#    MeridianAngle      280.5    # offset at default epoch J2000
+	#    Period         23.934469594
+	#    Inclination   -23.4392911
+	#    MeridianAngle 280.147
 	# }
 
 	Albedo            0.30
@@ -241,9 +243,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination        23.45
-        #    AscendingNode       0.0
-        #    MeridianAngle      38
+	#    Inclination    23.4608
+        #    AscendingNode 359.9949
+        #    MeridianAngle  38.3213
 	# }
 
 	LunarLambert 1.0
@@ -301,10 +303,10 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period    	         24.622962
-	#    Inclination         26.72
-	#    AscendingNode	 82.91
-	#    MeridianAngle    	136.005
+	#    Period    	    24.622962
+	#    Inclination    37.114
+	#    AscendingNode  47.681
+	#    MeridianAngle 176.868
 	# }
 
 	Albedo            0.150
@@ -336,8 +338,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination		  0.0
-	#    MeridianAngle	      	354.2
+	#    Inclination    37.10
+	#    AscendingNode  47.68
+	#    MeridianAngle  35.06
 	# }
 
 	Albedo         0.07
@@ -368,9 +371,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination          0.9
-	#    AscendingNode	183.0
-	#    MeridianAngle      214.7
+	#    Inclination    36.48
+	#    AscendingNode  47.65
+	#    MeridianAngle  79.41
 	# }
 
 	Albedo         0.08
@@ -411,13 +414,15 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# (radio emissions), not the cloud positions. In Celestia, we're
 	# more interested in having the Great Red Spot appear in the
 	# (approximately) correct place.
+
+	BodyFrame { EclipticJ2000 {} }
 	UniformRotation
 	{
-	Period		9.927953 # System II (for GRS)
-	# Period	9.92425  # System III (radio emissions)
-	Inclination	2.222461 # 1.82246 # 2.22246
-	AscendingNode	-22.203  # -1.87785 # -22.203
-	MeridianAngle	342      # for correct location of GRS 
+	Period	        9.927953 # System II (for GRS)
+	# Period        9.92425  # System III (radio emissions)
+	Inclination     2.222461
+	AscendingNode 337.797
+	MeridianAngle 342        # for correct location of GRS 
 	                         # (equal to 461 minus current W longitude of GRS)
 	# MeridianAngle	305.40   # correct System III prime meridian
 	}
@@ -452,8 +457,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination		  0.0
-	#    MeridianAngle		252.1
+	#    Inclination    25.51
+	#    AscendingNode 358.05
+	#    MeridianAngle 231.67
 	# }
 
 	Albedo          0.06
@@ -486,8 +492,9 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination		  0.0
-	#    MeridianAngle		220.8
+	#    Inclination    25.50
+	#    AscendingNode 358.05
+	#    MeridianAngle 200.39
 	# }
 
 	Albedo         0.61
@@ -525,8 +532,9 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Io"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination		  0.0
-	#    MeridianAngle 		 56.2
+	#    Inclination    25.49
+	#    AscendingNode 358.08
+	#    MeridianAngle  35.72
 	# }
 
 	Albedo         0.64
@@ -564,9 +572,9 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination		  0.1
-	#    AscendingNode	161.6
-	#    MeridianAngle		262.1
+	#    Inclination    25.43
+	#    AscendingNode 358.20
+	#    MeridianAngle  43.14
 	# }
 
 	Albedo         0.42
@@ -604,9 +612,9 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination	  0.4
-	#    AscendingNode	160.6
-	#    MeridianAngle	120.1
+	#    Inclination    25.17
+	#    AscendingNode 358.72
+	#    MeridianAngle 259.67
 	# }
 
 	Albedo         0.20
@@ -648,6 +656,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 		Sky [ 0.8 0.8 0.5 ]
 	}
 
+	BodyFrame { EclipticJ2000 {} }
 	UniformRotation
 	{	
 	    Period          10.65622 # System III (magnetic field)
@@ -690,8 +699,9 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	#    MeridianAngle  	86
+	#    Inclination     6.47
+	#    AscendingNode 130.58
+	#    MeridianAngle 296.14
 	# }
 
 	Albedo 0.6
@@ -722,8 +732,9 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	#    MeridianAngle          33
+	#    Inclination     6.47
+	#    AscendingNode 130.58
+	#    MeridianAngle 162.92
 	# }
 
 	Albedo 0.5
@@ -748,10 +759,11 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	    MeanLongitude	306.0531
 	}
 
+	# orientate meridian at epoch
 	UniformRotation
 	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	MeridianAngle  	126
+	    Epoch     2453005.5   # 2004 Jan 1 00:00UT
+	    MeridianAngle 126
 	}
 
 	Albedo 0.5
@@ -781,10 +793,11 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	MeanLongitude	131.5137
 	}
 
+	# orientate meridian at epoch
 	UniformRotation
 	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	MeridianAngle  	312
+	    Epoch     2453005.5   # 2004 Jan 1 00:00UT
+	    MeridianAngle 312
 	}
 
 	Albedo 0.6
@@ -813,9 +826,9 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination          1.5 #J2000.0
-	#    AscendingNode	137.8 #J2000.0
-	#    MeridianAngle	190.7 #J2000.0
+	#    Inclination     6.48
+	#    AscendingNode 130.66
+	#    MeridianAngle 337.46
 	# }
 
 	Albedo         0.5
@@ -852,8 +865,9 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination		  0.0
-	#    MeridianAngle		322.9
+	#    Inclination     6.48
+	#    AscendingNode 130.66
+	#    MeridianAngle   2.82
 	# }
 
 	Albedo         0.99
@@ -882,8 +896,9 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Inclination		  0.0
-	#    MeridianAngle		330.6
+	#    Inclination     6.48
+	#    AscendingNode 130.66
+	#    MeridianAngle  10.45
 	# }
 
 	Albedo         0.9
@@ -910,11 +925,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	CustomRotation "iau-dione"
 
 	# Overriden by CustomRotation
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle		317.1
-	}
+	# UniformRotation
+	# {
+	#    Inclination     6.48
+	#    AscendingNode 130.66
+	#    MeridianAngle 357.00
+	# }
 
 	Albedo         0.7
 }
@@ -940,11 +956,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	CustomRotation "iau-rhea"
 
 	# Overriden by CustomRotation
-	UniformRotation
-	{
-	Inclination		  0.0
-	MeridianAngle 		195.0
-	}
+	# UniformRotation
+	# {
+	#    Inclination     6.45
+	#    AscendingNode 130.38
+	#    MeridianAngle 235.16
+	# }
 
 	Albedo         0.7
 }
@@ -989,12 +1006,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	CustomRotation "iau-titan"
 
 	# Overriden by CustomRotation
-	UniformRotation
-	{
-	Inclination		  0.6
-	AscendingNode	186.6
-	MeridianAngle		318.9
-	}
+	# UniformRotation
+	# {
+	#    Inclination     6.06
+	#    AscendingNode 126.41
+	#    MeridianAngle 189.64
+	# }
 
 	Albedo                    0.21
 }
@@ -1023,10 +1040,10 @@ AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
 	# make the rotation appear somewhat irregular.
 	PrecessingRotation
 	{
-	Inclination       61    # pole at time of 
-	AscendingNode    145    # Voyager 2 encounter
-	Period  	 120    # 5-day best-fit rotation
-	PrecessionPeriod   0.0192 # 7-day wobble in light curve
+	    Inclination       61      # pole at time of 
+	    AscendingNode    145      # Voyager 2 encounter
+	    Period  	     120      # 5-day best-fit rotation
+	    PrecessionPeriod   0.0192 # 7-day wobble in light curve
 	}
 
 	Albedo         0.3
@@ -1058,12 +1075,12 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	CustomRotation "iau-iapetus"
 
 	# Overriden by CustomRotation
-	UniformRotation
-	{
-	Inclination		 15.5
-	AscendingNode	213.7
-	MeridianAngle		 14.9
-	}
+	# UniformRotation
+	# {
+	#    Inclination    14.97
+	#    AscendingNode  48.16
+	#    MeridianAngle 350.20
+	# }
 
 	Albedo         0.2
 }
@@ -1088,7 +1105,6 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
     
 	BodyFrame { EquatorJ2000 {} }
 
-
 	# Not used; IAU elements appear to be based on pre-Cassini
 	# information.
 	# CustomRotation "iau-phoebe"
@@ -1096,9 +1112,9 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	UniformRotation
 	{
 	    Period          9.2735 # Bauer et al, Astrophysical Journal 2004; 610(2): L57-L60 
-	    Inclination               8.7    # Porco et al, Science 2005; 307: 1237-42 
-	    AscendingNode  245.3    # Porco et al, Science 2005; 307: 1237-42 
-	    MeridianAngle        135.0    # approximate, from encounter images 
+	    Inclination    12.1    # Porco et al, Science 2005; 307: 1237-42 
+	    AscendingNode  86.6    # Porco et al, Science 2005; 307: 1237-42 
+	    MeridianAngle  95      # approximate, from encounter images 
 	}
 
 	Albedo         0.05
@@ -1136,12 +1152,13 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 
 	}
 
+	BodyFrame { EclipticJ2000 {} }
 	UniformRotation
 	{
-	    Period          17.24 # System III (magnetic field)
-	    Inclination     97.81
-	    AscendingNode  167.76
-	    MeridianAngle  331.18 # correct System III prime meridian
+	    Period         17.24 # System III (magnetic field)
+	    Inclination    97.81
+	    AscendingNode 167.76
+	    MeridianAngle 331.18 # correct System III prime meridian
 	}
 
 	Albedo            0.66
@@ -1177,9 +1194,10 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period	     33.92350159 # enforce sync rotation
-	#    Inclination      0.0
-	#    MeridianAngle  144.3
+	#    Period         33.92350159 # enforce sync rotation
+	#    Inclination    74.92
+	#    AscendingNode 167.43
+	#    MeridianAngle 149.30
 	# }
 
 	Albedo         0.32
@@ -1214,9 +1232,10 @@ AltSurface "limit of knowledge" "Sol/Uranus/Miranda"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period		 60.48909292 # enforce sync rotation
-	#    Inclination		  0.0
-	#    MeridianAngle 		 18.8
+	#    Period         60.48909292 # enforce sync rotation
+	#    Inclination    74.90
+	#    AscendingNode 167.43
+	#    MeridianAngle  23.78
 	# }
 
 	Albedo         0.39
@@ -1251,9 +1270,10 @@ AltSurface "limit of knowledge" "Sol/Uranus/Ariel"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period		 99.46022991 # enforce sync rotation
-	#    Inclination		  0.0
-	#    MeridianAngle 		 66.9
+	#    Period         99.46022991 # enforce sync rotation
+	#    Inclination    74.90
+	#    AscendingNode 167.43
+	#    MeridianAngle  71.95
 	# }
 
 	Albedo         0.21
@@ -1288,9 +1308,10 @@ AltSurface "limit of knowledge" "Sol/Uranus/Umbriel"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period		208.94077099 # enforce sync rotation
-	#    Inclination		  0.0
-	#    MeridianAngle 		 97.2
+	#    Period        208.94077099 # enforce sync rotation
+	#    Inclination    74.90
+	#    AscendingNode 167.43
+	#    MeridianAngle 102.26
 	# }
 
 	Albedo         0.27
@@ -1325,9 +1346,10 @@ AltSurface "limit of knowledge" "Sol/Uranus/Titania"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period          323.117567539 # enforce sync rotation
-	#    Inclination       0.0
-	#    MeridianAngle   168.2
+	#    Period        323.117567539 # enforce sync rotation
+	#    Inclination    74.90
+	#    AscendingNode 167.43
+	#    MeridianAngle 173.23
 	# }
 
 	Albedo         0.23
@@ -1370,6 +1392,7 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 		Sky [ 0.5 0.7 0.9 ]
 	}
 
+	BodyFrame { EclipticJ2000 {} }
 	UniformRotation
 	{
 	    Period          16.11 # System III (magnetic field)
@@ -1405,11 +1428,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	    MeanAnomaly         157.543
 	}
 
+	BodyFrame { EquatorJ2000 {} }
 	UniformRotation
 	{
-	    Inclination           0.1
-	    AscendingNode       349.1
-	    MeridianAngle       165.8
+	    Inclination    46.60
+	    AscendingNode  29.38
+	    MeridianAngle 179.41
 	}
 
 	Albedo 0.056
@@ -1434,11 +1458,12 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	    MeanAnomaly         213.916   # at epoch 
 	}
 
+	BodyFrame { EquatorJ2000 {} }
 	UniformRotation
 	{
-	    Inclination           0.6
-	    AscendingNode       331.0
-	    MeridianAngle      	 97.8
+	    Inclination    47.10
+	    AscendingNode  29.30
+	    MeridianAngle  93.38
 	}
 
 	Albedo         0.061
@@ -1458,23 +1483,23 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 
 	EllipticalOrbit
 	{
-	    Epoch		2447763.5  # 1989 Aug 25 00:00UT (Voyager encounter)
+	    Epoch		2447763.5    # 1989 Aug 25 00:00UT (Voyager encounter)
 	    Period		  5.8768541  #  mean
-	    SemiMajorAxis	354765.286 # at epoch
+	    SemiMajorAxis	354765.286   # at epoch
 	    Eccentricity	  0.00002285 # at epoch
-	    Inclination	        156.826240 # at epoch
-	    #AscendingNode	172.426656 # at epoch
-	    AscendingNode	147.899288 # at epoch
-	    ArgOfPericenter	293.092400 # at epoch
-	    MeanAnomaly 	315.726316 # at epoch
+	    Inclination	        156.826240   # at epoch
+	    AscendingNode	147.899288   # at epoch
+	    ArgOfPericenter	293.092400   # at epoch
+	    MeanAnomaly 	315.726316   # at epoch
 	}
 
+	BodyFrame { EquatorJ2000 {} }
 	UniformRotation
 	{
-	    Epoch	    2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
-	    Inclination		156.8 # at epoch
-	    AscendingNode	147.9 # at epoch
-	    MeridianAngle		 71.5 # at epoch
+	    Epoch     2447763.5  # 1989 Aug 25 00:00UT (Voyager encounter)
+	    Inclination   110.44 # at epoch
+	    AscendingNode 206.17 # at epoch
+	    MeridianAngle  77.41 # at epoch
 	}
 
 	Albedo         0.756
@@ -1492,25 +1517,24 @@ AltSurface "limit of knowledge" "Sol/Neptune/Triton"
 	Texture "asteroid.jpg"
 	Radius   170
 
-	UniformRotation
-	{
-	    # Figure of 11.52 +/- 0.14 hours from Grav, T. et al. (2003)
-            # "The Short Rotation Period of Nereid", ApJ 591
-	    Period 11.52	
-	}
-
 	EllipticalOrbit
 	{
 	    Epoch		2447763.5 # 1989 Aug 25 00:00UT (Voyager encounter)
 	    Period		360.13619 # mean
 	    SemiMajorAxis	5513400   # mean
-	    Eccentricity	0.7512    # mean
-	    Inclination	28.385    # at epoch
+	    Eccentricity	  0.7512  # mean
+	    Inclination		 28.385   # at epoch
 	    AscendingNode	190.678   # at epoch
-	    ArgOfPericenter 17.690    # at epoch
-	    MeanAnomaly    	36.056    # at epoch
+	    ArgOfPericenter 	 17.690   # at epoch
+	    MeanAnomaly    	 36.056   # at epoch
 	}
 
+        # Figure of 11.52 +/- 0.14 hours from Grav, T. et al. (2003)
+        # "The Short Rotation Period of Nereid", ApJ 591
+	UniformRotation
+	{
+	    Period 11.52	
+	}
 	Albedo          0.155
 }
 
