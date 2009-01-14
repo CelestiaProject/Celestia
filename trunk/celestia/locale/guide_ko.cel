@@ -1,7 +1,7 @@
 {
 	Name   "목성"
 	Target "Sol/Jupiter"
-	Description "Jupiter is the largest planet in our solar system and the fifth from the sun.  Like the other large outer planets, Jupiter is a gas giant, with no solid surface.  The Great Red Spot is the biggest and longest-lived of the many storms in Jupiter's turbulent atmosphere; this Earth-sized tempest has been around for at least 300 years."
+	Description "목성(木星)은 태양계의 다섯째 행성이자 가장 큰 행성이다. 금성 다음 밝은 행성이다. 밝기는 -1.4등에서 -2.5등까지 변한다. 목성의 목 (木)은 목요일 (木曜日)에도 쓰인다.\n태양으로부터 거리가 5.2AU로 약 7억 7833만km이다. 공전주기는 11.862년이고, 회합주기는 398.88일이다. 크기는 지구의 약 11배가 된다. 부피는 지구의 1320배이고 질량은 317.9배이다. 그러나 밀도는 지구의 1/4밖에 지니지 않는다. 또한 적도반지름의 길이가 7만 1400km, 극반지름은 6만 6750km이다."
 }
 
 {
@@ -9,13 +9,13 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Pluto orbits our sun at a average distance of nearly six billion kilometers.  Its moon Charon is so large that the two are often referred to as a 'double planet'."
+	Description "그리스·로마 신화에 나오는 저승신의 이름을 딴 것이다. 태양계의 9번째 행성이었으나 2006년 행성에서 제외되고 왜소 행성(dwarf planet)으로 분류되면서 국제소행성센터(MPC)로부터 134340이라는 번호를 부여받았다.\n태양과의 평균거리가 약 5.913×109㎞이다. 명왕성의 궤도는 이심률(離心率)이 커서(0.246) 약 248년마다 근일점(近日點) 근처에서 해왕성보다 태양에 더 가까워진다. 예를 들어 1979~99년의 20년 동안은 해왕성 궤도의 안쪽에 있게 된다."
 }
 
 {
 	Name "에로스"
 	Target "Sol/Eros"
-	Description "Eros is a potato-shaped near-Earth asteroid about 33 km long.  Thanks to the NEAR Shoemaker spacecraft, more is known about Eros than any other Asteroid.  On Feb 14, 2001 NEAR descended on Eros and became the first spacecraft ever to land on an asteroid."
+	Description "433 에로스(Eros)는 그리스 신화에 나오는 사랑의 신 에로스의 이름이 붙여진 소행성이다. S형 소행성이며 크기는 약 13 × 13 × 33 km로 지구 근접 소행성 가운데 두 번째로 크다. 이 소행성은 또한 화성횡단 소행성이다.\n니어 슈메이커 우주선은 에로스를 방문해 궤도를 돌면서 표면에 대한 세밀한 사진을 찍었다. 그리고 2001년 2월 12일 마지막 임무로 소행성의 표면에 착륙하였는데, 이는 우주선이 소행성을 착륙한 최초의 사례이다."
 }
 
 {
@@ -23,7 +23,7 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alpha Centauri A and B are together with Proxima Centauri, the nearest star system to us.  Alpha Cen A is very similar to our own Sun, though slightly older and brighter.  B is dimmer and redder, and Proxima is so dim that it is can't be seen by the naked eye even though it is the star nearest to the Sun."
+	Description "알파 센타우리 또는 센타우루스자리 알파(α Centauri, 또는 α Cen)는 센타우루스자리에서 가장 밝은 별로, 주계열성이다. 실시등급(實視等級)은 -0.01등성으로, 천구에서 네 번째로 밝은 별이다.\n센타우루스자리 알파 A,B는 태양에서 가장 가까운 항성계로, 4.37광년(光年) 떨어져 있다. 센타우루스자리 프록시마는 태양에서 가장 가까운 별로, 4.22광년(光年) 떨어져 있다."
 }
 
 {
@@ -31,7 +31,7 @@
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "The Pleiades star cluster is a group of bright recently-formed stars.  The Pleiades are named for the seven sisters from Greek mythology, though telescopes have revealed that there are considerable more than seven stars in the cluster."
+	Description "플레이아데스성단(M45)은 황소자리에 있는 산개 성단이다. 이십팔수 가운데 묘수(昴宿)에 해당하며, 다른 이름으로 좀생이별이 있다. 영어권에서는 일곱 자매, 일곱 별, 뉴질랜드에서는 마타리키, 일본에서는 스바루라고 부른다. 마이아 성운이라고도 하는데, 마이아 주위를 둘러싸고 있는 성운에서 유래한 이름으로 보인다.\n이 성단은 태양계에서 가장 가깝고 인류에게 가장 잘 알려져 있으며, 맨눈으로도 가장 뚜렷하게 보인다. 겉보기 등급은 1.4등급으로 밝은 산개 성단이다."
 }
 
 {
@@ -39,13 +39,13 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Named for the five daughters of Atlas and Aethra, the Hyades is one of the most prominent open star clusters in the sky.  It is estimated that the stars of the Hyades are approximately 660 million years old--over six times older than the hotter, bluer Pleiades stars which appear nearby in our night sky."
+	Description "히아데스 성단(Mel 25)은 황소자리에 있는 산개 성단과 운동 성단이다. 이 성단에 속한 밝은 별들은 알데바란과 함께 ‘V’자 형을 이루고 있으며 맨눈으로 볼 수 있다. 그러나 알데바란은 우연히 같은 위치에 있을 뿐 성단의 일부는 아니다. 히아데스 성단은 우리로부터 46 파섹 떨어져 있으며, 나이는 약 6억년이다. 프레세페 성단과 같이 생겨났으나 이후에 나뉘어진 것으로 보인다.."
 }
 
 {
 	Name "글리스 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b is a giant planet orbiting a red dwarf star.  It is in a 2:1 orbital resonance with another planet in the system."
+	Description "태양계 밖에서 지구처럼 암석으로 뒤덮인 행성이 처음으로 발견됐다. 그동안 인간이 찾은 155개 외계 행성들은 태양계의 토성이나 목성처럼 가스로 구성돼, 지구와는 판이하게 달랐다. 따라서 이 행성은 ‘지구의 사촌’이라 불린다.\n이번 행성은 지구에서 15광년 떨어진 물병자리의 왜성 ‘글리스(Gliese) 876’ 주위를 1.94일에 한 번꼴로 돌고 있다. \n반경은 지구의 2배, 질량은 지구의 7.5배다. 추정 표면온도가 섭씨 204~371도에 달한다."
 }
 
 {
@@ -53,24 +53,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "The Galileo spacecraft photographed the asteroid 243 Ida in 1993 on its way to Jupiter.  These pictures revealed that Ida had a tiny satellite that was later named Dactyl.  Several other asteroids have since been discovered also to have satellites."
+	Description "243 이다(Ida)는 소행성대에 위치하는 소행성이다. 1993년 8월 28일 갈릴레오 우주선이 지나가며 촬영한 바 있으며, 최초로 발견된 짝소행성이다.\n243 (1) 다크틸(Dactyl)은 243 이다 주위를 공전하는 소행성 위성이다.\n1993년 8월 23일 갈릴레오 우주선이 우연히 지나가면서 사진을 찍고 1994년 2월 17일 전송된 사진을 탐사팀 연구원인 앤 하치(Ann Harch)가 판독하면서 발견했다."
 }
 
 {
 	Name "페가수스 자리 51번항성 b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b was the first planet discovered orbiting a normal star other than our Sun.  It is a gas giant planet and orbits extremely close to its parent star--less than one fifth the distance between Mercury and our sun.  That a gas giant could exist so close to a star has forced astronomers to seriously revise their theories of solar system formation."
+	Description "페가수스자리 51b는 태양과 비슷한 별 주위를 도는 행성으로는 최초로 발견된 존재이다. 51b의 어머니 항성인 페가수스자리 51은 태양과 비슷한 항성이다.\n로마자 b는 동반천체 중 첫 번째라는 의미이다. 여기서 추가로 행성이 발견될 때마다 c, d, e, f....가 붙게 된다.\n행성의 표면 온도는 섭씨 1000도 이상으로 달구어져 있다. 또한 가까운 거리 때문에 4일에 한 번 공전한다."
 }
 
 {
 	Name "알비레오"
 	Target "Albireo"
 	Distance 0.6
-	Description "Because of the contrasting orange and blue-white colors of its component stars, the Albireo double star system is considered one of the most beautiful pairs in the sky.  The orange star is a Type K giant, and its companion is a B dwarf."
+	Description "알비레오(β Cyg / β Cygni / 고니자리 베타)는 고니자리에서 세번째로 밝은 별이다. 고니자리의 머리 부분에 있다. 데네브, 고니자리 델타, 고니자리 에타와 '북십자가'를 이룬다.\n지구에서 385 광년 떨어져 있다. 맨눈으로 봤을 때에는 하나의 별로 보이지만, 망원경이나 쌍안경으로 보면 이중성이라는 것을 알 수 있다. 겉보기 등급으로 3.1인 노란색 고니자리 베타 A와 5.1 등급의 푸른색 고니자리 베타 B가 34초만큼 떨어져 있다."
 }
 
 {
 	Name "보렐리 혜성"
 	Target "Sol/Borrelly"
-	Description "One September 22, 2001, Comet Borrelly became the second comet to be imaged at close range by a spacecraft.  Despite not being designed for a comet flyby, Deep Space 1 approached within 2200 kilometers of the Borrelly's nucleus to return the highest resolution pictures we have of a cometary core."
+	Description "나사(NASA)가 1998년 발사한 딥스페이스1호는 22일 보렐리 혜성에 2156㎞까지 접근해 볼링 핀처럼 생긴 핵을 촬영하는 데 성공했다.\n에베레스트산 덩치만한 지름 8㎞의 핵은 표면이 울퉁불퉁했고, 깊게 파인 부분이 있었으며 바깥은 유기 분자로 보이는 검은 물질로 덮혀 있었다.\n얼음과 먼지로 이루어진 혜성의 핵은 태양빛에 녹으면서 우물처럼 파인 부분에서 3방향으로 제트 먼지를 분출하면서 긴 꼬리를 만들어내고 있었다."
 }
