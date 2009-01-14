@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Celestia-Korean\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2009-01-08 21:24+0900\n"
+"PO-Revision-Date: 2009-01-12 22:00+0900\n"
 "Last-Translator: Jacob Lee <jaeuck@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -823,7 +823,7 @@ msgstr "렌더링 패스: "
 
 #: src/celestia/celestiacore.cpp:4359
 msgid "Failed to initialize renderer"
-msgstr "렌더러 초기화 실패"
+msgstr "렌더링 엔진 초기화 실패"
 
 #: src/celestia/celestiacore.cpp:4375
 msgid "Error loading font; text will not be visible.\n"
@@ -882,12 +882,12 @@ msgstr "설정"
 #: src/celestia/winmain.cpp:625
 #: src/celestia/kde/kdeapp.cpp:949
 msgid "Vendor: "
-msgstr "벤더: "
+msgstr "제조사: "
 
 #: src/celestia/winmain.cpp:630
 #: src/celestia/kde/kdeapp.cpp:954
 msgid "Renderer: "
-msgstr "렌더러"
+msgstr "렌더링 엔진:"
 
 #: src/celestia/winmain.cpp:635
 #: src/celestia/kde/kdeapp.cpp:959
