@@ -230,7 +230,7 @@ NSString* fatalErrorMessage;
             return;
         // beginModalSession also displays the window, but the centering
         // is wrong so do the display and centering beforehand
-        session = [NSApp beginModalSessionForWindow: [glView window]];
+        session = [NSApp beginModalSessionForWindow: [splashWindowController window]];
         for (;;) 
         {
             if ( fatalErrorMessage != nil )
@@ -514,7 +514,8 @@ NSString* fatalErrorMessage;
 // Catch key events even when gl window is not key
 -(void)delegateKeyDown:(NSEvent *)theEvent
 {
-	[glView keyDown: theEvent];
+    if (ready)
+        [glView keyDown: theEvent];
 }
 
 // Held Key Simulation Methods ----------------------------------------------------------
