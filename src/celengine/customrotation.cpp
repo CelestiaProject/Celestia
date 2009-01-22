@@ -196,7 +196,7 @@ public:
                                double _poleDecRate,
                                double _meridianAtEpoch,
                                double _rotationRate) :
-        IAURotationModel(360.0 / _rotationRate),
+    IAURotationModel(std::abs(360.0 / _rotationRate)),
         poleRA(_poleRA),
         poleRARate(_poleRARate),
         poleDec(_poleDec),
@@ -204,6 +204,8 @@ public:
         meridianAtEpoch(_meridianAtEpoch),
         rotationRate(_rotationRate)
     {
+        if (rotationRate < 0.0)
+            setFlipped(true);
     }
     
     void pole(double d, double& ra, double &dec) const
@@ -737,7 +739,7 @@ public:
     {
         double T = t / 36525.0;
         double S7 = degToRad(345.20 - 1016.3 * T);
-        return 235.16 + 79.6900478 * t - 1.651 - 3.08 * S7;
+        return 235.16 + 79.6900478 * t - 1.651 - 3.08 * sin(S7);
     }
 };
 
@@ -957,7 +959,7 @@ GetCustomRotationModel(const std::string& name)
         CustomRotationModels["iau-pluto"]   = new IAUPrecessingRotationModel(313.02, 0.0,
                                                                              9.09, 0.0,
                                                                              236.77, -56.3623195);
-        
+       
         // IAU elements for satellite of Earth
         CustomRotationModels["iau-moon"] = new IAULunarRotationModel();
         
