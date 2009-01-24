@@ -823,7 +823,7 @@ bool StarDatabase::createStar(Star* star,
     {
         StarDetails* existingDetails = star->getDetails();
         
-        // If we're modifying and existing star and it already has a
+        // If we're modifying an existing star and it already has a
         // customized details record, we'll just modify that.
         if (!existingDetails->shared())
         {
@@ -839,6 +839,7 @@ bool StarDatabase::createStar(Star* star,
                     existingDetails->setTexture(details->getTexture());
                 if ((existingDetails->getKnowledge() & StarDetails::KnowRotation) == 0)
                     existingDetails->setRotationModel(details->getRotationModel());
+                existingDetails->setVisibility(details->getVisibility());
             }
             
             details = existingDetails;
