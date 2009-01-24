@@ -578,7 +578,7 @@ CreateSpiceRotation(Hash* rotationData,
 
 static ScriptedOrbit*
 CreateScriptedOrbit(Hash* orbitData,
-                    const string& /*path*/)
+                    const string& path)
 {
 #if !defined(CELX)
     clog << "ScriptedOrbit not usable without scripting support.\n";
@@ -596,6 +596,10 @@ CreateScriptedOrbit(Hash* orbitData,
     // Module name is optional
     string moduleName;
     orbitData->getString("Module", moduleName);
+
+    string* pathCopy = new string(path);
+    Value* pathValue = new Value(*pathCopy);
+    orbitData->addValue("AddonPath", *pathValue);
 
     ScriptedOrbit* scriptedOrbit = new ScriptedOrbit();
     if (scriptedOrbit != NULL)
@@ -971,7 +975,7 @@ CreatePrecessingRotationModel(Hash* rotationData,
 
 static ScriptedRotation*
 CreateScriptedRotation(Hash* rotationData,
-                       const string& /*path*/)
+                       const string& path)
 {
 #if !defined(CELX)
     clog << "ScriptedRotation not usable without scripting support.\n";
@@ -989,6 +993,10 @@ CreateScriptedRotation(Hash* rotationData,
     // Module name is optional
     string moduleName;
     rotationData->getString("Module", moduleName);
+
+    string* pathCopy = new string(path);
+    Value* pathValue = new Value(*pathCopy);
+    rotationData->addValue("AddonPath", *pathValue);
 
     ScriptedRotation* scriptedRotation = new ScriptedRotation();
     if (scriptedRotation != NULL)
