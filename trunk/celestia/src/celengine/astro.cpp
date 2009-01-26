@@ -1,6 +1,6 @@
 // astro.cpp
 //
-// Copyright (C) 2001-2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -106,8 +106,10 @@ static const LeapSecondRecord LeapSeconds[] =
 };
 
 
+#if !defined(__GNUC__) || defined(_WIN32)
 static const char* MonthAbbrList[12] =
 { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+#endif
 
 
 static Mat3d equatorialToCelestiald = Mat3d::xrotation(astro::J2000Obliquity);
@@ -522,7 +524,7 @@ const char* astro::Date::toCStr(Format format) const
     cal_time.tm_gmtoff = utc_offset;
     cal_time.tm_zone = tzname.c_str();
 
-    char* strftime_format;
+    const char* strftime_format;
     switch(format)
     {
     case Locale:
@@ -531,7 +533,7 @@ const char* astro::Date::toCStr(Format format) const
     case TZName:
         strftime_format = "%Y %b %d %H:%M:%S %Z";
         break;
-    case UTCOffset:
+    default:
         strftime_format = "%Y %b %d %H:%M:%S %z";
         break;
     }

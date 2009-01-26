@@ -1,6 +1,6 @@
 // celx_object.cpp
 //
-// Copyright (C) 2003-2008, the Celestia Development Team
+// Copyright (C) 2003-2009, the Celestia Development Team
 //
 // Lua script extensions for Celestia: object
 //
@@ -199,7 +199,7 @@ static int object_orbitvisibility(lua_State* l)
         visibility = sel->body()->getOrbitVisibility();
     }
     
-    char* s = "normal";
+    const char* s = "normal";
     if (visibility == Body::AlwaysVisible)
         s = "always";
     else if (visibility == Body::NeverVisible)

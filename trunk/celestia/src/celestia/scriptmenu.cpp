@@ -1,6 +1,6 @@
 // scriptmenu.cpp
 //
-// Copyright (C) 2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2007-2009, the Celestia Development Team
 //
 // Scan a directory and build a list of Celestia script files.
 //
@@ -49,7 +49,7 @@ public:
 
                 // Read the first line, handling various newline conventions
                 char firstLineBuf[512];
-                int count = 0;
+                unsigned int count = 0;
                 while (count < sizeof(firstLineBuf) - 1 && in.good())
                 {
                     int c = in.get();
