@@ -1,6 +1,6 @@
 // rendcontext.cpp
 //
-// Copyright (C) 2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2009, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -829,9 +829,6 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
 
     // Set up the textures used by this object
     Texture* baseTex = NULL;
-    Texture* bumpTex = NULL;
-    Texture* specTex = NULL;
-    Texture* emissiveTex = NULL;
 
     shaderProps.lightModel = ShaderProperties::EmissiveModel;
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;

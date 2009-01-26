@@ -2,7 +2,7 @@
 //
 // Celestial longitude/latitude grids.
 //
-// Copyright (C) 2008, the Celestia Development Team
+// Copyright (C) 2008-2009, the Celestia Development Team
 // Initial version by Chris Laurel, <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -307,7 +307,7 @@ SkyGrid::longitudeLabel(int longitude, int longitudeStep) const
 {
     int totalUnits = HOUR_MIN_SEC_TOTAL;
     int baseUnit = HR;
-    char* baseUnitSymbol = "h";
+    const char* baseUnitSymbol = "h";
     char minuteSymbol = 'm';
     char secondSymbol = 's';
 
