@@ -6,7 +6,7 @@
 // keyboard events.  CelestiaCore then turns those events into calls
 // to Renderer and Simulation.
 //
-// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -680,8 +680,8 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
                 vy = ( (1 - y / height ) - v->y ) / v->height;
                 vxp = vx * v->width * width;
                 vyp = vy * v->height * height;
-                if ( vx >=0 && vx <= 1 && ( abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2)
-                  || vy >=0 && vy <= 1 && ( abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)   )
+                if ( (vx >=0 && vx <= 1 && ( abs(vyp) <= 2 || abs(vyp - v->height * height) <= 2))
+                  || (vy >=0 && vy <= 1 && ( abs(vxp) <= 2 || abs(vxp - v->width * width) <= 2)) )
                 {
                     if (v1 == 0)
                     {
@@ -3105,27 +3105,6 @@ static void displayObserverPlanetocentricCoords(Overlay& overlay,
 #endif
 
 
-static void displayAcronym(Overlay& overlay, char* s)
-{
-    if (strchr(s, ' ') != NULL)
-    {
-        int length = strlen(s);
-        char lastChar = ' ';
-
-        for (int i = 0; i < length; i++)
-        {
-            if (lastChar == ' ' && s[i] != ' ')
-                overlay << s[i];
-            lastChar = s[i];
-        }
-    }
-    else
-    {
-        overlay << s;
-    }
-}
-
-
 static void displayStarInfo(Overlay& overlay,
                             int detail,
                             Star& star,
@@ -3659,7 +3638,7 @@ void CelestiaCore::renderOverlay()
                 // Skip displaying the English name if a localized version is present.
                 string starName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
                 string locStarName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true);
-                if (sel.star()->getCatalogNumber() == 0 && selectionNames.find("Sun") != string::npos && "Sun" != _("Sun"))
+                if (sel.star()->getCatalogNumber() == 0 && selectionNames.find("Sun") != string::npos && (const char*) "Sun" != _("Sun"))
                 {
                     string::size_type startPos = selectionNames.find("Sun");
                     string::size_type endPos = selectionNames.find(_("Sun"));
