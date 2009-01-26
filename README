@@ -4,7 +4,7 @@
 *  A real-time space simulation that lets you experience our universe in  *
 *  three dimensions.                                                      *
 *                                                                         *
-* Copyright (c) 2001-2008, Celestia Development Team                      *
+*  Copyright (c) 2001-2009, Celestia Development Team                     *
 *                                                                         *
 *-------------------------------------------------------------------------*
 *  Celestia web site: http://www.shatters.net/celestia/                   *
@@ -20,16 +20,16 @@
 CONTENTS
 --------
   License
-  Installing in Unix
+  Installing in Unix and Linux
   Getting Started
   Mouse, Keyboard & Joystick Controls
-  Solar System Browser
-  Star Browser
+  Star & Solar System Browser
   Selecting Objects by Name
   Known Issues
   User Modifiable Elements
   Celestia Resources
-  Credits
+  Contributions
+  Acknowledgements
  
 
 LICENSE
@@ -55,7 +55,7 @@ INSTALLING IN UNIX AND LINUX
 Type "./configure --help" for a list of options.  The basic commands are shown
 below.  For more detailed information, refer to the INSTALL file.
 
-This GTK version is built with...
+The GTK version is built with...
   ./configure --with-gtk
   make
   make install
@@ -123,22 +123,17 @@ Japanese.
 
 MOUSE, KEYBOARD & JOYSTICK CONTROLS
 -----------------------------------
-See the included file: controls.txt OR use the Help menu to display the Controls 
+See the included file: controls.txt OR use the Help menu to display the Controls
 list.
 
 
-SOLAR SYSTEM BROWSER
+STAR & SOLAR SYSTEM BROWSER
 -------------------------------------------
 The Navigation menu contains 'Solar System Browser' and 'Star Browser'
-options.  The Solar System Browser displays a window with a tree view of all
-the objects in the nearest solar system (if there is one within a light year
-of your current position.)  Clicking on the name of any object in the window
-will select it.  You can then use the Center or Go To buttons to display that
-object in the main Celestia window.
-
+options.  
 
 STAR BROWSER
------------------------------------
+
 By default, the Star Browser window displays a table of the 100 nearest stars,
 along with their Distance, Apparent and Absolute Magnitude, and Type. Clicking
 on the column headers will sort the stars.  The table is not continuously
@@ -148,6 +143,14 @@ table let you switch between viewing a list of Nearest, Brightest, or 'With
 planets' stars.  As with the solar system browser, clicking on any star name
 in the table will select it.  Use this feature along with the Center and Go
 To buttons to tour the stars visible from any night sky in the galaxy.
+
+SOLAR SYSTEM BROWSER
+
+The Solar System Browser displays a window with a tree view of all the objects 
+in the nearest solar system (if there is one within a light year of your current
+position.)  Clicking on the name of any object in the window will select it.  
+You can then use the Center or Go To buttons to display that object in the main 
+Celestia window.
 
 
 SELECTING OBJECTS BY NAME
@@ -162,14 +165,9 @@ Celestia provides several ways to select an object by name...
      press the Tab key to move through the displayed listing until the
      object is highlighted, then press Enter again.
  
-You can use common names, Bayer designations, or HD catalog numbers for
-stars.  HD catalog numbers must be entered with a space between HD and the
-number.  Celestia handles star catalog numbers in a slightly kludgy way, to
-keep the star database size to minimum -- only one catalog number is stored.
-Normally, this will be a number from the HD catalog, but if a star isn't in
-the HD catalog the number from another catalog will be used instead.
-Currently, the secondary catalog is always the HIPPARCOS data set, for which
-the prefix "HIP" should be used.
+You can use common names, Bayer designations or catalog numbers for stars.
+Celestia currently supports the HIP, HD and SAO catalogs. Catalog numbers must 
+be entered with a space between the prefix and the catalog number.
 
 
 KNOWN ISSUES
@@ -220,22 +218,32 @@ Celestial Matters Website and Forums:
 Celestia Motherlode:
   http://www.celestiamotherlode.net/
 
-Celestia Developer Center
-  http://celestia.teyssier.org/
-
-Celestia for Gnome
-  http://pat.suwalski.net/celestia/
-
 Celestia Source Code (SourceForge.net):
   http://sourceforge.net/projects/celestia/
 
+Celestia Bug Tracking (SourceForge.net):
+  http://sourceforge.net/tracker/?atid=121302&group_id=21302&func=browse
 
-CREDITS
--------
+Celestia Feature Requests (SourceForge.net):
+  http://sourceforge.net/tracker/?atid=371302&group_id=21302&func=browse
+
+
+CONTRIBUTIONS
+-------------
 
 Authors
 -------
-  See the AUTHORS file
+  Chris Laurel        <claurel@gmail.com>
+  Clint Weisbrod      <cweisbrod@cogeco.ca>
+  Fridger Schrempp    <t00fri@mail.desy.de>
+  Bob Ippolito        <bob@redivi.com>
+  Christophe Teyssier <chris@teyssier.org>
+  Hank Ramsey         <hramsey@users.sourceforge.net>
+  Grant Hutchison     <grant.celestia@xemaps.com>
+  Pat Suwalski        <pat@suwalski.net>
+  Toti 
+  Da Woon Jung        <dirkpitt2050@users.sf.net>
+  Vincent Giangiulio  <vince.gian@free.fr>
 
 Contributors
 ------------
@@ -256,179 +264,219 @@ Documentation
   Harald Schmidt ........ Celx/Lua Scripting Guide
 
 
-Other Contributors
-------------------
-Models of Mars Global Surveyor and Mars Odyssey were created by Shrox:
-  http://www.shrox.com/
-The Cassini and Huygens models are by Jack Higgins:
-  http://homepage.eircom.net/~jackcelestia/
+Scientific Data Base
+--------------------
 
-Most of the planet maps are from David Seal's site:
-  http://maps.jpl.nasa.gov/.
-A few of these maps were modified by me, with fictional terrain added to fill
-in gaps.  The model of the Galileo spacecraft is also from David Seal's site
-(though it was converted from Inventor to 3DS format.)
+# Grant Hutchison
+    Supplied the correct orientations for the major planets, their moons, and a 
+    number of asteroids and also worked on these data files:
+	Solarsys.ssc, nearstars.stc, extrasolar.ssc, extrasolar.stc, earth_locs.ssc
 
-The Mars, Neptune, and Uranus textures and Mars, Moon and Mercury bump maps are
-all from James Hastings-Trew's collection, and the Mercury texture is a 
-recolored 
-version of his. Some of the prettiest planet maps around are at: 
-  http://gw.marketingden.com/planets/planets.html
+# Fridger Schrempp
+    Complete NGC/IC galaxy database + local group galaxies (galaxies.dsc)
+    
+	Data base on globular clusters (globulars.dsc)
+    
+	Data base on visual and spectroscopic binaries (visualbins.stc, 
+    
+	spectbins.stc)
+    
+	World-capitals.ssc
 
-Fridger Schrempp produced the 'available data' Pluto and Charon textures using
-maps created by Marc Buie at Lowell Observatory.  Buie's maps were generated
-from photometric data gathered during six years of mutual occultations of
-Pluto and Charon.
+    Asterisms.dat
 
-Venus's clouds and the textures for Ganymede, Callisto and Saturn are from
-Bjï¿½n Jï¿½sson. His site at http://www.mmedia.is/~bjj/ is an excellent
-resource for solar system rendering.
+# Andrew Tribick
+    Significant update of the star.dat base based on new HIP Reduction of the
+    Raw data, Floor van Leeuwen, 2007. 
+    
+	CHARM2 stellar radii (charm2.stc)
 
-The Io and Europa maps are by Steve Albers. His planetary maps are at:
+
+Texture maps
+------------
+
+# Most of the planet maps are from David Seal's site:
+    http://maps.jpl.nasa.gov/.
+  A few of these maps were modified by me, with fictional terrain added to fill
+  in gaps. The model of the Galileo spacecraft is also from David Seal's site
+  (though it was converted from Inventor to 3DS format.)
+
+# The Mars, Neptune, and Uranus textures and Mars, Moon and Mercury bump maps   
+  are all from James Hastings-Trew's collection, and the Mercury texture is a 
+  recolored version of his. Some of the prettiest planet maps around are at: 
+    http://gw.marketingden.com/planets/planets.html
+
+# Grant Hutchison
+
+   Tethys is a USGS map colored and modified by him.
+
+   Saturn's rings were built by Grant Hutchison from Cassini imaging, with
+   transparency information derived from stellar transit data obtained from:
+     http://pds-rings.arc.nasa.gov/ringocc/ringocc.html
+
+   The Eros map is a shaded relief generated from the NEAR laser rangefinder 
+   shape model at:
+     http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
+
+# Jens Meyer
+
+   Dione and Rhea are USGS maps colored and modified by Jens Meyer.
+
+   The Moon map is based on data from PDS Map-A-Planet at
+   http://pdsmaps.wr.usgs.gov/maps.html with colors from Mark Robinson at
+   http://www.earth.northwestern.edu/research/robinson/MOON/clem_color.html.
+
+# Fridger Schrempp 
+
+   'Available data' Pluto and Charon textures using maps created by Marc Buie at 
+   Lowell Observatory.  Buie's maps were generated from photometric data 
+   gathered during six years of mutual occultations of Pluto and Charon.
+
+   Titan's cloud texture in natural colors and its surface map at near-infrared 
+   wavelength. They are based on resources available from the imaging site 
+   (Ciclops) of the Cassini mission,  
+     http://ciclops.lpl.arizona.edu/index.php
+
+   The texture of Iapetus was created by using all available imaging resources 
+   both from the Voyager mission and the recent Cassini fly-bys from
+     http://photojournal.jpl.nasa.gov
+
+   The Phoebe base texture was created from the cylindrical map published by the 
+   Cassini imaging team, 
+     http://photojournal.jpl.nasa.gov/catalog/PIA07775
+  
+   The Tethys texture was created from Cassini imaging, 
+     http://photojournal.jpl.nasa.gov/catalog/PIA07781
+   merged with reprojected images from earlier Voyager missions. It was 
+   color-mapped by computer, using the natural color template, 
+     http://photojournal.jpl.nasa.gov/catalog/PIA06140
+  
+   The Iapetus texture was created from Cassini imaging, 
+     http://photojournal.jpl.nasa.gov/catalog/PIA07778
+   merged with reprojected images from earlier Voyager missions. It was 
+   color-mapped by computer, using the near true-color template, 
+     http://photojournal.jpl.nasa.gov/catalog/PIA06167
+  
+   The Lunar topography map, using Clementine laser altimeter data, merged in 
+   the polar regions with topographic data  from Clementine 750 nm oblique and 
+   nadir images, 
+     ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/
+
+# Phil Stooke
+
+   Proteus, Janus, Prometheus and Epimetheus maps are from Phil Stooke.
+
+   The Ida and Gaspra photomosaic maps are by Phil Stooke.
+
+# Venus's clouds and the textures for Ganymede, Callisto and Saturn are from
+  Björn Jónsson. His site at http://www.mmedia.is/~bjj/ is an excellent
+  resource for solar system rendering.
+
+# Venus's surface is a copyright-free NASA image, prepared from Magellan radar
+  data. The original is available at 
+    http://www.solarviews.com/cap/venus/venmap.htm
+
+# The Earth texture was created by NASA using data from the MODIS instrument
+  aboard the Terra satellite.  Further information is available from:
+    http://earthobservatory.nasa.gov/Newsroom/BlueMarble/
+
+# The Io and Europa maps are by Steve Albers. His planetary maps are at:
    http://laps.fsl.noaa.gov/albers/sos/sos.html
 
-Saturn's rings were built by Grant Hutchison from Cassini imaging, with
-transparency information derived from stellar transit data obtained from:
-  http://pds-rings.arc.nasa.gov/ringocc/ringocc.html
+# The textures for the Uranian satellites were created by Ivan Rivera from JPL
+  data. His Celestia page is: http://bruckner.homelinux.net/celestia.html
 
-Titan's cloud texture in natural colors and its surface map at
-near-infrared wavelength were created by Fridger Schrempp. They are
-based on resources available from the imaging site (Ciclops) of the
-Cassini mission,  
-  http://ciclops.lpl.arizona.edu/index.php
+# The Hyperion and Enceladus maps are photomosaics assembled by Phil Stooke and
+  colored by Jens Meyer.
 
-The texture of Iapetus was created by Fridger Schrempp, using all available
-imaging resources both from the Voyager mission and the recent Cassini fly-bys
-from
-  http://photojournal.jpl.nasa.gov
+# Amalthea is a shaded relief map by Phil Stooke, colored by Wm. Robert Johnston
+  (http://www.johnstonsarchive.net/spaceart/cylmaps.html), and further modified
+  by Jens Meyer and Grant Hutchison.
 
-Many cylindrical projections of photographs were performed by Fridger
-Schrempp with Matthew Arcus 'mmps' software, 
-  http://www.users.globalnet.co.uk/~arcus/mmps/
+# The asteroid.jpg texture was created by Paul Roberts.
 
-Venus's surface is a copyright-free NASA image, prepared from Magellan radar
-data. The original is available at 
-  http://www.solarviews.com/cap/venus/venmap.htm
-
-The Earth texture was created by NASA using data from the MODIS instrument
-aboard the Terra satellite.  Further information is available from:
-  http://earthobservatory.nasa.gov/Newsroom/BlueMarble/
-
-The textures for the Uranian satellites were created by Ivan Rivera from JPL
-data.  His Celestia page is: http://bruckner.homelinux.net/celestia.html
-
-The Hyperion and Enceladus maps are photomosaics assembled by Phil Stooke and
-colored by Jens Meyer.
-
-Amalthea is a shaded relief map by Phil Stooke, colored by Wm. Robert Johnston
-(http://www.johnstonsarchive.net/spaceart/cylmaps.html), and further modified
-by Jens Meyer and Grant Hutchison.
-
-Proteus, Janus, Prometheus and Epimetheus maps are by Phil Stooke.
-
-Dione and Rhea are USGS maps colored and modified by Jens Meyer.
-
-Tethys is a USGS map colored and modified by Grant Hutchison.
-
-The Moon map by Jens Meyer is based on data from PDS Map-A-Planet at
-http://pdsmaps.wr.usgs.gov/maps.html with colors from Mark Robinson at
-http://www.earth.northwestern.edu/research/robinson/MOON/clem_color.html.
-
-The Ida and Gaspra photomosaic maps are by Phil Stooke.
-
-The Eros map is a shaded relief generated by Grant Hutchison from the NEAR
-laser rangefinder shape model at:
-  http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
-
-The asteroid.jpg texture was created by Paul Roberts.
-
-The textures for the five classes of extrasolar giant planet were created by 
-Andrew Tribick.
-
-The lower resolution textures were all converted from their higher resolution
-versions using Gimp.
-
-3D asteroid models of Toutatis, Kleopatra, Geographos, 1998 KY26, Bacchus,
-Castalia and Golevka are courtesy of Scott Hudson, Washington State
-University.  His site is:
-  http://www.eecs.wsu.edu/~hudson/Research/Asteroids/models.html
-
-3D models of Phobos, Deimos, Amalthea, Janus, Epimetheus, Prometheus, Pandora,
-Hyperion, Larissa, Proteus, Vesta, Ida, Gaspra and Halley are derived from
-Phil Stooke's Cartography of Non-Spherical Worlds at:
-  http://publish.uwo.ca/~pjstooke/plancart.htm
-and optical shape model dataset at:
- 
-http://pdssbn.astro.umd.edu/SBNast/holdings/EAR-A-5-DDR-STOOKE-SHAPE-MODELS-
-V1.0.html
-
-The 3D model of Eros was prepared from the NEAR laser rangefinder shape model
-at: http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
-
-The Phoebe base texture was created by Fridger Schrempp from 
-the cylindrical map recently published by the Cassini imaging team, 
-http://photojournal.jpl.nasa.gov/catalog/PIA07775
-
-The Phoebe mesh was designed by Jerry Gardner aka Jestr, jestr@ntlworld.com, 
-based on Phoebe's bumpy topography display from Cassini, 
-http://photojournal.jpl.nasa.gov/catalog/PIA06070
-  
-The Tethys texture was created by Fridger Schrempp from recent Cassini imaging, 
-http://photojournal.jpl.nasa.gov/catalog/PIA07781
-merged with reprojected images from earlier Voyager missions. It was 
-color-mapped by computer, using the natural color template, 
-http://photojournal.jpl.nasa.gov/catalog/PIA06140
-  
-The Iapetus texture was created by Fridger Schrempp from recent Cassini imaging, 
-http://photojournal.jpl.nasa.gov/catalog/PIA07778
-merged with reprojected images from earlier Voyager missions. It was 
-color-mapped by computer, using the near true-color template, 
-http://photojournal.jpl.nasa.gov/catalog/PIA06167
-  
-Fridger Schrempp created the Lunar topography map, using Clementine laser 
-altimeter
-data, merged in the polar regions with topographic data  from Clementine 750 nm 
-oblique and nadir images, 
-ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/
-
-Grant Hutchison supplied the correct orientations for the major planets, their
-moons, and a number of asteroids.
-
-Selden Ball deserves a special mention for suffering more prerelease versions
-finding more bugs, and giving more feedback than anyone else.
-
-Christophe Campos aka ElChristou created the splash screen for Celestia.
-
-The MacOS X icon was designed by Chris Alford: http://www.chrisalford.com/
-
-The txf font format used by Celestia was devised by Mark Kilgard.
-
-The star database (stars.dat) was derived from F. van Leeuwen's "Hipparcos, the
-New Reduction of the Raw Data":
-  http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/311
-with stellar spectral types and apparent magnitudes taken from ESA's original
-version of the Hipparcos catalogue:
-  http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/239
-
-The HD and SAO cross-indices were generated using the SIMBAD astronomical
-database:
-  http://simbad.u-strasbg.fr/simbad/
-
-Constellation boundaries are drawn from Davenhall & Leggett's "Catalogue of 
-Constellation Boundary Data": 
-  http://cdsweb.u-strasbg.fr/viz-bin/ftp-index?/ftp/cats/VI/49
-
-This software is based in part on the work of the Independent JPEG Group.
-
-Some versions of Celestia may use the SPICE system for spacecraft and planetary
-information, developed by Caltech/JPL under contract to NASA.
-
-A special thank you goes to all Celestia users who submit bug reports,
-suggestions, and fixes.  Celestia wouldn't be the program it is today, without
-your help.
+# The textures for the five classes of extrasolar giant planet were created by 
+  Andrew Tribick.
 
 
-Chris Laurel
+3D Models
+---------
+
+# Models of Mars Global Surveyor and Mars Odyssey were created by Shrox:
+    http://www.shrox.com/
+
+# The Cassini and Huygens models are by Jack Higgins:
+    http://homepage.eircom.net/~jackcelestia/
+
+# 3D asteroid models of Toutatis, Kleopatra, Geographos, 1998 KY26, Bacchus,
+  Castalia and Golevka are courtesy of Scott Hudson, Washington State
+  University.  His site is:
+    http://www.eecs.wsu.edu/~hudson/Research/Asteroids/models.html
+
+# 3D models of Phobos, Deimos, Amalthea, Janus, Epimetheus, Prometheus, Pandora,
+  Hyperion, Larissa, Proteus, Vesta, Ida, Gaspra and Halley are derived from
+  Phil Stooke's Cartography of Non-Spherical Worlds at:
+    http://publish.uwo.ca/~pjstooke/plancart.htm
+  and optical shape model dataset at:
+  http://pdssbn.astro.umd.edu/SBNast/holdings/EAR-A-5-DDR-STOOKE-SHAPE-MODELS-
+  V1.0.html
+
+# The 3D model of Eros was prepared from the NEAR laser rangefinder shape model
+  at: http://pdssbn.astro.umd.edu/NEARdb/nlr/#shape
+
+# The Phoebe mesh was designed by Jerry Gardner aka Jestr, jestr@ntlworld.com, 
+  based on Phoebe's bumpy topography display from Cassini, 
+  http://photojournal.jpl.nasa.gov/catalog/PIA06070
+
+
+Libraries
+---------
+
+# This software is based in part on the work of the Independent JPEG Group.
+
+# Some versions of Celestia may use the SPICE system for spacecraft and 
+  planetary information, developed by Caltech/JPL under contract to NASA.
+
+# Many cylindrical projections of photographs were performed by Fridger
+  Schrempp with Matthew Arcus 'mmps' software, 
+    http://www.users.globalnet.co.uk/~arcus/mmps/
+
+# The lower resolution textures were all converted from their higher resolution
+  versions using Gimp.
+
+# The star database (stars.dat) was derived from the ESA's HIPPARCOS data set.
+
+# Constellation boundaries are drawn from Davenhall & Leggett's "Catalogue of 
+  Constellation Boundary Data": 
+    http://cdsweb.u-strasbg.fr/viz-bin/ftp-index?/ftp/cats/VI/49
+
+
+Other work
+----------
+
+# Selden Ball deserves a special mention for suffering more prerelease versions
+ finding more bugs, and giving more feedback than anyone else.
+
+# Christophe Campos aka ElChristou created the splash screen for Celestia.
+
+# The MacOS X icon was designed by Chris Alford: http://www.chrisalford.com/
+
+# The txf font format used by Celestia was devised by Mark Kilgard.
+
+
+ACKNOWLEDGEMENTS
+----------------
+
+A very big thank you for creating Celestia goes to Chris Laurel who started this
+program in the year 2001.
   <claurel@gmail.com>
   http://www.shatters.net/~claurel/
   http://www.shatters.net/celestia/
+
+Special thanks go to all Celestia users who submit bug reports, suggestions, and
+fixes. Celestia wouldn't be the program it is today, without their help.
+
+
+
+
+The Celestia Development Team
