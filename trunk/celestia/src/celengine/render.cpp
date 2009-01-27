@@ -10404,7 +10404,7 @@ static void renderCrosshair(float pixelSize, double tsec)
     glBegin(GL_TRIANGLES);
     for (unsigned int i = 0; i < markCount; i++)
     {
-        float theta = (float) i / (float) markCount * (float) (2 * PI);
+        float theta = (float) (PI / 4.0) + (float) i / (float) markCount * (float) (2 * PI);
         float c = std::cos(theta);
         float s = std::sin(theta);
         glVertex3f(p0.x * c - p0.y * s, p0.x * s + p0.y * c, 0.0f); 
