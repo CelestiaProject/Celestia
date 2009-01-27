@@ -188,6 +188,7 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["mensa"] = Location::Mensa;
     LocationFlagMap["rima"] = Location::Rima;
     LocationFlagMap["undae"] = Location::Undae;
+    LocationFlagMap["tholus"] = Location::Tholus;
     LocationFlagMap["reticulum"] = Location::Reticulum;
     LocationFlagMap["planitia"] = Location::Planitia;
     LocationFlagMap["linea"] = Location::Linea;
