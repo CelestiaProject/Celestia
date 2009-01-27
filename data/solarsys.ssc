@@ -90,7 +90,7 @@
 	#    Period       1407.509405
 	#    Inclination    28.55
 	#    AscendingNode  11.01
-	#    MeridianAngle 329.71
+	#    MeridianAngle 329.548
 	# }
 
 	Albedo            0.06
@@ -135,16 +135,16 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# }
 
 	BodyFrame { EquatorJ2000 {} }
-	CustomRotation "iau-venus"
+	# CustomRotation "iau-venus"
 
-	# Overriden by CustomRotation
-	# UniformRotation
-	# {
-	#    Period       5832.479839
-	#    Inclination   157.15
-	#    AscendingNode 182.72
-	#    MeridianAngle  19.74
-	# }
+	# IAU Venus definition is simple uniform rotation
+	UniformRotation
+	{
+	    Period       5832.443616
+	    Inclination   157.16
+	    AscendingNode 182.76
+	    MeridianAngle  19.80
+	}
 
 	Albedo            0.77
 }
@@ -204,7 +204,7 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period         23.934469594
+	#    Period         23.93447117
 	#    Inclination   -23.4392911
 	#    MeridianAngle 280.147
 	# }
@@ -303,10 +303,10 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	# Overriden by CustomRotation
 	# UniformRotation
 	# {
-	#    Period    	    24.622962
-	#    Inclination    37.114
-	#    AscendingNode  47.681
-	#    MeridianAngle 176.868
+	#    Period    	    24.622962156
+	#    Inclination    37.11350
+	#    AscendingNode  47.68143
+	#    MeridianAngle 176.630
 	# }
 
 	Albedo            0.150
@@ -418,13 +418,13 @@ AltSurface "limit of knowledge" "Sol/Mercury"
 	BodyFrame { EclipticJ2000 {} }
 	UniformRotation
 	{
-	Period	        9.927953 # System II (for GRS)
-	# Period        9.92425  # System III (radio emissions)
-	Inclination     2.222461
-	AscendingNode 337.797
-	MeridianAngle 342        # for correct location of GRS 
+	Period	        9.927953    # System II (for GRS)
+	# Period        9.92491250  # System III (radio emissions)
+	Inclination     2.22
+	AscendingNode 337.80
+	MeridianAngle 334        # for correct position of GRS, July 2008
 	                         # (equal to 461 minus current W longitude of GRS)
-	# MeridianAngle	305.40   # correct System III prime meridian
+	# MeridianAngle	305.38   # correct System III prime meridian
 	}
 
 	Albedo 0.51
@@ -534,7 +534,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Io"
 	# {
 	#    Inclination    25.49
 	#    AscendingNode 358.08
-	#    MeridianAngle  35.72
+	#    MeridianAngle  36.022
 	# }
 
 	Albedo         0.64
@@ -574,7 +574,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Europa"
 	# {
 	#    Inclination    25.43
 	#    AscendingNode 358.20
-	#    MeridianAngle  43.14
+	#    MeridianAngle  44.064
 	# }
 
 	Albedo         0.42
@@ -614,7 +614,7 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Ganymede"
 	# {
 	#    Inclination    25.17
 	#    AscendingNode 358.72
-	#    MeridianAngle 259.67
+	#    MeridianAngle 259.51
 	# }
 
 	Albedo         0.20
@@ -659,10 +659,10 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 	BodyFrame { EclipticJ2000 {} }
 	UniformRotation
 	{	
-	    Period          10.65622 # System III (magnetic field)
-	    Inclination     28.049   # 28.052   # old value: 26.73
-	    AscendingNode  169.530   # 168.8112 # 169.53
-            MeridianAngle  358.922   # correct System III prime meridian
+	    Period          10.65622222 # System III (magnetic field)
+	    Inclination     28.052
+	    AscendingNode  169.528
+	    MeridianAngle  358.93       # correct System III prime meridian
 	}
 
 	Albedo            0.50
@@ -683,26 +683,22 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	EllipticalOrbit
 	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	Period		0.6130
-	SemiMajorAxis	139380
-	Eccentricity	0.0023
-	Inclination	0.0056
-	AscendingNode	226.1099
-	LongOfPericenter 23.3280 
-	MeanLongitude	266.2144
+	    Epoch             2453005.5   # 2004 Jan 1 00:00UT
+	    Period	      0.612986
+	    SemiMajorAxis     139380
+	    Eccentricity      0.0023
+	    Inclination	      0.0056
+	    AscendingNode   226.1099
+	    LongOfPericenter 23.3280
+	    MeanLongitude   266.2144
 	}
 
-	BodyFrame { EquatorJ2000 {} }
-	CustomRotation "iau-prometheus"
-
-	# Overriden by CustomRotation
-	# UniformRotation
-	# {
-	#    Inclination     6.47
-	#    AscendingNode 130.58
-	#    MeridianAngle 296.14
-	# }
+	# orientate meridian at epoch
+	UniformRotation
+	{
+	    Epoch    2453005.5   # 2004 Jan 1 00:00UT
+	    MeridianAngle 86
+	}
 
 	Albedo 0.6
 }
@@ -716,26 +712,22 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	EllipticalOrbit
 	{
-	    Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	    Period		0.6285
-	    SemiMajorAxis	141710
-	    Eccentricity	0.0042
-	    Inclination         0.0522
-	    AscendingNode     290.0163
-	    LongOfPericenter   10.4899
-	    MeanLongitude     212.6961     
+	    Epoch             2453005.5   # 2004 Jan 1 00:00UT
+	    Period            0.6285036
+	    SemiMajorAxis     141710
+	    Eccentricity      0.0042
+	    Inclination       0.0522
+	    AscendingNode   290.0163
+	    LongOfPericenter 10.4899
+	    MeanLongitude   212.6961
 	}
 
-	BodyFrame { EquatorJ2000 {} }
-	CustomRotation "iau-pandora"
-
-	# Overriden by CustomRotation
-	# UniformRotation
-	# {
-	#    Inclination     6.47
-	#    AscendingNode 130.58
-	#    MeridianAngle 162.92
-	# }
+	# orientate meridian at epoch
+	UniformRotation
+	{
+	    Epoch    2453005.5   # 2004 Jan 1 00:00UT
+	    MeridianAngle 33
+	}
 
 	Albedo 0.5
 }
@@ -749,14 +741,14 @@ AltSurface "limit of knowledge" "Sol/Jupiter/Callisto"
 
 	 EllipticalOrbit
 	{
-	    Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	    Period		0.6945      # 0.6943: period set to Janus/Epimetheus average
-	    SemiMajorAxis	151410
-	    Eccentricity	0.0098
-	    Inclination	0.3541
-	    AscendingNode	45.5973
+	    Epoch              2453005.5   # 2004 Jan 1 00:00UT
+	    Period             0.6945      # 0.6943: period set to Janus/Epimetheus average
+	    SemiMajorAxis      151410
+	    Eccentricity       0.0098
+	    Inclination	       0.3541
+	    AscendingNode     45.5973
 	    LongOfPericenter 358.5774
-	    MeanLongitude	306.0531
+	    MeanLongitude    306.0531
 	}
 
 	# orientate meridian at epoch
@@ -783,14 +775,14 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 
 	EllipticalOrbit
 	{
-	Epoch		2453005.5   # 2004 Jan 1 00:00UT
-	Period		0.6945      # 0.6947: period set to Janus/Epimetheus average
-	SemiMajorAxis	151460
-	Eccentricity	0.0067
-	Inclination	0.1649
-	AscendingNode	8.1758
+	Epoch              2453005.5   # 2004 Jan 1 00:00UT
+	Period             0.6945      # 0.6947: period set to Janus/Epimetheus average
+	SemiMajorAxis      151460
+	Eccentricity       0.0067
+	Inclination        0.1649
+	AscendingNode      8.1758
 	LongOfPericenter 248.2856
-	MeanLongitude	131.5137
+	MeanLongitude    131.5137
 	}
 
 	# orientate meridian at epoch
@@ -1155,10 +1147,10 @@ AltSurface "limit of knowledge" "Sol/Saturn/Hyperion"
 	BodyFrame { EclipticJ2000 {} }
 	UniformRotation
 	{
-	    Period         17.24 # System III (magnetic field)
-	    Inclination    97.81
-	    AscendingNode 167.76
-	    MeridianAngle 331.18 # correct System III prime meridian
+	    Period         17.24  # System III (magnetic field)
+	    Inclination    97.722
+	    AscendingNode 167.647
+	    MeridianAngle 331.13  # correct System III prime meridian
 	}
 
 	Albedo            0.66
@@ -1397,8 +1389,8 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	{
 	    Period          16.11 # System III (magnetic field)
 	    Inclination     28.03
-	    AscendingNode   49.235
-	    MeridianAngle  228.65 # correct System III prime meridian
+	    AscendingNode   49.24
+	    MeridianAngle  228.66 # correct System III prime meridian
 	}
 
 	Albedo                 0.62
@@ -1431,8 +1423,8 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	BodyFrame { EquatorJ2000 {} }
 	UniformRotation
 	{
-	    Inclination    46.60
-	    AscendingNode  29.38
+	    Inclination    46.59
+	    AscendingNode  29.36
 	    MeridianAngle 179.41
 	}
 
@@ -1461,8 +1453,8 @@ AltSurface "limit of knowledge" "Sol/Uranus/Oberon"
 	BodyFrame { EquatorJ2000 {} }
 	UniformRotation
 	{
-	    Inclination    47.10
-	    AscendingNode  29.30
+	    Inclination    47.09
+	    AscendingNode  29.27
 	    MeridianAngle  93.38
 	}
 
