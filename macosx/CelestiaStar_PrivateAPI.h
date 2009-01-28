@@ -9,6 +9,6 @@
 
 #include <celengine/star.h>
 @interface CelestiaStar(PrivateAPI)
--(CelestiaStar*)initWithStar:(Star*)s;
+-(CelestiaStar*)initWithStar:(const Star*)s;
 -(Star*)star;
 @end
