@@ -3,17 +3,18 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Aron Novak <aaron@szentimre.hu>, 2005.
+# Székely Zoltán <zoltanszekely@hotmail.com>, 2009
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2007-12-19 19:46+0100\n"
+"PO-Revision-Date: 2009-01-15 15:34+0100\n"
 "Last-Translator: Székely Zoltán <zoltanszekely@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.3.1\n"
 "X-Poedit-Language: Hungarian\n"
@@ -22,21 +23,19 @@ msgstr ""
 
 #: src/celengine/astro.cpp:820
 msgid "DST"
-msgstr ""
+msgstr "Nyári idő"
 
 #: src/celengine/astro.cpp:820
 msgid "STD"
-msgstr ""
+msgstr "Téli idő"
 
 #: src/celengine/dsodb.cpp:386
-#, fuzzy
 msgid "Loaded "
-msgstr "Betöltés"
+msgstr "Betöltve"
 
 #: src/celengine/dsodb.cpp:386
-#, fuzzy
 msgid " deep space objects"
-msgstr "Megjelölt objektumok"
+msgstr "Mélyég objektumok"
 
 #: src/celengine/fragmentprog.cpp:93
 msgid "Loading NV fragment program: "
@@ -85,7 +84,7 @@ msgstr "Hiba: "
 
 #: src/celengine/image.cpp:661
 msgid " is not a PNG file.\n"
-msgstr "Nem PNG fájl.\n"
+msgstr "nem PNG fájl.\n"
 
 #: src/celengine/image.cpp:688
 msgid "Error reading PNG image file "
@@ -101,7 +100,7 @@ msgstr "   Modell statisztika:  "
 
 #: src/celengine/meshmanager.cpp:163
 msgid " vertices, "
-msgstr " vertices, "
+msgstr " vertexek, "
 
 #: src/celengine/meshmanager.cpp:164
 msgid " primitives, "
@@ -109,7 +108,7 @@ msgstr "primitívek, "
 
 #: src/celengine/meshmanager.cpp:165
 msgid " materials "
-msgstr "anyagok"
+msgstr "materiálok"
 
 #: src/celengine/meshmanager.cpp:166
 msgid " unique)\n"
@@ -119,7 +118,8 @@ msgstr " egyedüli)\n"
 msgid "Error loading model '"
 msgstr "Hiba a modell betöltésekor '"
 
-#: src/celengine/nebula.cpp:47 src/celengine/opencluster.cpp:44
+#: src/celengine/nebula.cpp:47
+#: src/celengine/opencluster.cpp:44
 #, c-format
 msgid "%s"
 msgstr "%s"
@@ -128,18 +128,19 @@ msgstr "%s"
 msgid "Error in .ssc file (line "
 msgstr "Hiba az .ssc fájlban (sor"
 
-#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+#: src/celengine/solarsys.cpp:1200
+#: src/celengine/solarsys.cpp:1267
 msgid "parent body '"
 msgstr "fő égitest '"
 
-#: src/celengine/solarsys.cpp:1200 src/celengine/solarsys.cpp:1267
+#: src/celengine/solarsys.cpp:1200
+#: src/celengine/solarsys.cpp:1267
 msgid "' of '"
-msgstr ""
+msgstr " "
 
 #: src/celengine/solarsys.cpp:1200
-#, fuzzy
 msgid "' not found."
-msgstr "' nem található.\n"
+msgstr "' nem található."
 
 #: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
@@ -167,11 +168,11 @@ msgstr "Rossz keresztindex verzió\n"
 
 #: src/celengine/stardb.cpp:614
 msgid "Loading cross index failed at record "
-msgstr ""
+msgstr "Hiba a rekord keresztindex betöltésekor"
 
 #: src/celengine/stardb.cpp:696
 msgid "Bad spectral type in star database, star #"
-msgstr ""
+msgstr "Rossz spektráltípus a csillag adatbázisban "
 
 #: src/celengine/stardb.cpp:711
 msgid " stars in binary database\n"
@@ -207,27 +208,23 @@ msgstr "Érvénytelen csillag: missing right ascension\n"
 
 #: src/celengine/stardb.cpp:1020
 msgid "Invalid star: missing declination.\n"
-msgstr ""
+msgstr "Érvénytelen csillag: hiányzó deklináció. \n"
 
 #: src/celengine/stardb.cpp:1033
 msgid "Invalid star: missing distance.\n"
-msgstr ""
+msgstr "Érvénytelen csillag: hiányzó távolság. \n"
 
 #: src/celengine/stardb.cpp:1069
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Érvénytelen csillag: hiányzó magnitúdó.\n"
 
 #: src/celengine/stardb.cpp:1086
-msgid ""
-"Invalid star: absolute (not apparent) magnitude must be specified for star "
-"near origin\n"
-msgstr ""
-"Érvénytelen csillag: az abszolút (nem a látszó fényesség) magnitúdot meg "
-"kell adni a közelli csillagnál\n"
+msgid "Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n"
+msgstr "Érvénytelen csillag: az abszolút (nem a látszó fényesség) magnitúdot meg kell adni a közelli csillagnál\n"
 
 #: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
-msgstr ""
+msgstr "Darabolt textúra készítése. Szélesség="
 
 #: src/celengine/texture.cpp:1019
 msgid ", max="
@@ -235,7 +232,7 @@ msgstr ", max="
 
 #: src/celengine/texture.cpp:1024
 msgid "Creating ordinary texture: "
-msgstr ""
+msgstr "Textúra készítése:"
 
 #: src/celengine/vertexprog.cpp:114
 msgid "Loading NV vertex program: "
@@ -245,7 +242,8 @@ msgstr "NV vertex program betöltése:"
 msgid "Error loading NV vertex program: "
 msgstr "Hiba az NV vertex program betöltésekor:"
 
-#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+#: src/celengine/vertexprog.cpp:136
+#: src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
 msgstr "Hiba a vertex programban: "
 
@@ -285,7 +283,8 @@ msgstr "Hiba a \"favorites\" fájl olvasásakor."
 msgid "Orientation: "
 msgstr "Irány: "
 
-#: src/celestia/celestiacore.cpp:556 src/celestia/celestiacore.cpp:558
+#: src/celestia/celestiacore.cpp:556
+#: src/celestia/celestiacore.cpp:558
 msgid "Error opening script file."
 msgstr "Hiba a szkript fájl megnyitásakor."
 
@@ -300,14 +299,17 @@ msgstr "Ismeretlen hiba a szkript megnyitásakor"
 
 #: src/celestia/celestiacore.cpp:619
 msgid "Script coroutine initialization failed"
-msgstr ""
+msgstr "Hiba a co-routin szkript inicializálásánál"
 
-#: src/celestia/celestiacore.cpp:635 src/celestia/celestiacore.cpp:637
+#: src/celestia/celestiacore.cpp:635
+#: src/celestia/celestiacore.cpp:637
 msgid "Invalid filetype"
 msgstr "Érvénytelen fájltípus"
 
-#: src/celestia/celestiacore.cpp:980 src/celestia/celestiacore.cpp:1779
-#: src/celestia/celestiacore.cpp:1797 src/celestia/celestiacore.cpp:2038
+#: src/celestia/celestiacore.cpp:980
+#: src/celestia/celestiacore.cpp:1779
+#: src/celestia/celestiacore.cpp:1797
+#: src/celestia/celestiacore.cpp:2038
 #: src/celestia/celestiacore.cpp:2069
 #, c-format
 msgid "Magnitude limit: %.2f"
@@ -397,7 +399,8 @@ msgstr "Önműködő fényességállítás be"
 msgid "Auto-magnitude disabled"
 msgstr "Önműködő fényességállítás ki"
 
-#: src/celestia/celestiacore.cpp:1605 src/celestia/res/resource_strings.cpp:86
+#: src/celestia/celestiacore.cpp:1605
+#: src/celestia/res/resource_strings.cpp:86
 #: src/celestia/res/resource_strings.cpp:100
 #: src/celestia/res/resource_strings.cpp:104
 #: src/celestia/res/resource_strings.cpp:132
@@ -467,12 +470,12 @@ msgstr "Idő: Előre"
 
 #: src/celestia/celestiacore.cpp:1908
 msgid "Time: Backward"
-msgstr "Idő: vissza"
+msgstr "Idő: Vissza"
 
-#: src/celestia/celestiacore.cpp:1921 src/celestia/celestiacore.cpp:1937
-#, fuzzy
+#: src/celestia/celestiacore.cpp:1921
+#: src/celestia/celestiacore.cpp:1937
 msgid "Time rate"
-msgstr "Képkocka/másodperc: "
+msgstr "Idő múlása: "
 
 #: src/celestia/celestiacore.cpp:2010
 msgid "Sync Orbit"
@@ -486,37 +489,39 @@ msgstr "Rögzít"
 msgid "Chase"
 msgstr "Követés"
 
-#: src/celestia/celestiacore.cpp:2049 src/celestia/celestiacore.cpp:2080
+#: src/celestia/celestiacore.cpp:2049
+#: src/celestia/celestiacore.cpp:2080
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Önműködő fényességállítás 45 foknál:  %.2f"
 
-#: src/celestia/celestiacore.cpp:2099 src/celestia/celestiacore.cpp:2114
+#: src/celestia/celestiacore.cpp:2099
+#: src/celestia/celestiacore.cpp:2114
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "Környező fények:  %.2f"
 
-#: src/celestia/celestiacore.cpp:2125 src/celestia/celestiacore.cpp:2137
+#: src/celestia/celestiacore.cpp:2125
+#: src/celestia/celestiacore.cpp:2137
 msgid "Light gain"
 msgstr "Megvilágítás javulása"
 
 #: src/celestia/celestiacore.cpp:2157
-#, fuzzy
 msgid "Bloom enabled"
-msgstr "Üstököscsóvák bekapcsolva"
+msgstr "Bloom hatás bekapcsolva"
 
 #: src/celestia/celestiacore.cpp:2159
-#, fuzzy
 msgid "Bloom disabled"
-msgstr "Üstököscsóvák kikapcsolva"
+msgstr "Bloom hatás kikapcsolva"
 
-#: src/celestia/celestiacore.cpp:2165 src/celestia/celestiacore.cpp:2173
+#: src/celestia/celestiacore.cpp:2165
+#: src/celestia/celestiacore.cpp:2173
 msgid "Exposure"
-msgstr ""
+msgstr "Megvilágítottság"
 
 #: src/celestia/celestiacore.cpp:2521
 msgid "GL error: "
-msgstr "GL hiba: "
+msgstr "OpenGL hiba: "
 
 #: src/celestia/celestiacore.cpp:2621
 msgid "View too small to be split"
@@ -565,20 +570,22 @@ msgstr "Abszolút fényesség: "
 
 #: src/celestia/celestiacore.cpp:3017
 msgid "RA: "
-msgstr ""
+msgstr "RA:"
 
 #: src/celestia/celestiacore.cpp:3021
-#, fuzzy
 msgid "Dec: "
-msgstr "Dec"
+msgstr "Dec:"
 
-#: src/celestia/celestiacore.cpp:3085 src/celestia/kde/kdeapp.cpp:1612
+#: src/celestia/celestiacore.cpp:3085
+#: src/celestia/kde/kdeapp.cpp:1612
 #: src/celestia/res/resource_strings.cpp:128
 msgid "km"
 msgstr "km"
 
-#: src/celestia/celestiacore.cpp:3135 src/celestia/celestiacore.cpp:3209
-#: src/celestia/celestiacore.cpp:3241 src/celestia/celestiacore.cpp:3342
+#: src/celestia/celestiacore.cpp:3135
+#: src/celestia/celestiacore.cpp:3209
+#: src/celestia/celestiacore.cpp:3241
+#: src/celestia/celestiacore.cpp:3342
 #: src/celestia/kde/selectionpopup.cpp:87
 msgid "Distance: "
 msgstr "Távolság: "
@@ -590,7 +597,7 @@ msgstr "Csillagrendszer tömegközéppontja\n"
 #: src/celestia/celestiacore.cpp:3145
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "Absz. (látsz.) fényesség: %.2f (%.2f)\n"
+msgstr "Absz. (látszó) fényesség: %.2f (%.2f)\n"
 
 #: src/celestia/celestiacore.cpp:3151
 msgid "Luminosity: "
@@ -600,7 +607,8 @@ msgstr "Fényesség: "
 msgid "x Sun"
 msgstr "x Nap"
 
-#: src/celestia/celestiacore.cpp:3152 src/celestia/kde/selectionpopup.cpp:97
+#: src/celestia/celestiacore.cpp:3152
+#: src/celestia/kde/selectionpopup.cpp:97
 msgid "Class: "
 msgstr "Osztály:"
 
@@ -616,16 +624,20 @@ msgstr "Fekete lyuk"
 msgid "Surface temp: "
 msgstr "Felszíni hőm.: "
 
-#: src/celestia/celestiacore.cpp:3169 src/celestia/celestiacore.cpp:3218
-#: src/celestia/celestiacore.cpp:3251 src/celestia/kde/selectionpopup.cpp:105
+#: src/celestia/celestiacore.cpp:3169
+#: src/celestia/celestiacore.cpp:3218
+#: src/celestia/celestiacore.cpp:3251
+#: src/celestia/kde/selectionpopup.cpp:105
 msgid "Radius: "
 msgstr "Sugár: "
 
-#: src/celestia/celestiacore.cpp:3172 src/celestia/kde/selectionpopup.cpp:106
+#: src/celestia/celestiacore.cpp:3172
+#: src/celestia/kde/selectionpopup.cpp:106
 msgid "Rsun"
 msgstr "RNap"
 
-#: src/celestia/celestiacore.cpp:3182 src/celestia/celestiacore.cpp:3303
+#: src/celestia/celestiacore.cpp:3182
+#: src/celestia/celestiacore.cpp:3303
 msgid "Rotation period: "
 msgstr "Tengely forgási idő: "
 
@@ -668,7 +680,7 @@ msgstr "gyorsabb"
 
 #: src/celestia/celestiacore.cpp:3513
 msgid " slower"
-msgstr "lassúbb"
+msgstr "lassabb"
 
 #: src/celestia/celestiacore.cpp:3519
 msgid " (Paused)"
@@ -688,20 +700,19 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3543
 msgid " m/s"
-msgstr ""
+msgstr " m/s"
 
 #: src/celestia/celestiacore.cpp:3545
 msgid " km/s"
-msgstr ""
+msgstr " km/s"
 
 #: src/celestia/celestiacore.cpp:3549
 msgid " AU/s"
-msgstr ""
+msgstr " AU/s"
 
 #: src/celestia/celestiacore.cpp:3551
-#, fuzzy
 msgid " ly/s"
-msgstr "nap"
+msgstr " fényév/s"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
@@ -731,7 +742,8 @@ msgstr "Üldöz"
 msgid "FOV: "
 msgstr "FOV:"
 
-#: src/celestia/celestiacore.cpp:3662 src/celestia/celestiacore.cpp:3665
+#: src/celestia/celestiacore.cpp:3662
+#: src/celestia/celestiacore.cpp:3665
 msgid "Sun"
 msgstr "Nap"
 
@@ -741,17 +753,19 @@ msgstr "Cél neve: "
 
 #: src/celestia/celestiacore.cpp:3902
 msgid " at "
-msgstr ""
+msgstr " "
 
 #: src/celestia/celestiacore.cpp:3903
 msgid " fps"
 msgstr "fps"
 
-#: src/celestia/celestiacore.cpp:3905 src/celestia/kde/videocapturedlg.cpp:283
+#: src/celestia/celestiacore.cpp:3905
+#: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
 msgstr "Felvétel"
 
-#: src/celestia/celestiacore.cpp:3907 src/celestia/kde/videocapturedlg.cpp:66
+#: src/celestia/celestiacore.cpp:3907
+#: src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
 msgstr " Szünet"
@@ -760,7 +774,8 @@ msgstr " Szünet"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Start/Szünet    F12 Stop"
 
-#: src/celestia/celestiacore.cpp:3935 src/celestia/celestiacore.cpp:3938
+#: src/celestia/celestiacore.cpp:3935
+#: src/celestia/celestiacore.cpp:3938
 msgid "Edit Mode"
 msgstr "Edit Mode"
 
@@ -789,9 +804,8 @@ msgid "Cannot read star database."
 msgstr "Csillag adatbázis nem olvasható."
 
 #: src/celestia/celestiacore.cpp:4181
-#, fuzzy
 msgid "Error opening deepsky catalog file."
-msgstr "Hiba a csillag katalógus megnyitásakor"
+msgstr "Hiba a mélyég katalógus megnyitásakor"
 
 #: src/celestia/celestiacore.cpp:4233
 msgid "Error opening solar system catalog.\n"
@@ -825,7 +839,8 @@ msgstr "Hiba a keresztindex olvasásakor"
 msgid "Loaded cross index "
 msgstr "Cross index betöltve"
 
-#: src/celestia/celestiacore.cpp:4448 src/celestia/celestiacore.cpp:4470
+#: src/celestia/celestiacore.cpp:4448
+#: src/celestia/celestiacore.cpp:4470
 msgid "Error opening "
 msgstr "Hiba a megnyitáskor"
 
@@ -846,37 +861,38 @@ msgstr "Hiba a csillag katalógus megnyitásakor"
 msgid "Error in creating ogg file %s for capture.\n"
 msgstr "Error in creating ogg file %s for capture.\n"
 
-#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+#: src/celestia/oggtheoracapture.cpp:253
+#: src/celestia/oggtheoracapture.cpp:273
 msgid "Internal Ogg library error."
 msgstr "Internal Ogg library error."
 
 #: src/celestia/oggtheoracapture.cpp:308
 #, c-format
-msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
-"d offset (%dx%d)\n"
-msgstr ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
-"d offset (%dx%d)\n"
+msgid "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"
+msgstr "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"
 
 #: src/celestia/oggtheoracapture.cpp:423
 #, c-format
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
 msgstr "OggTheoraCapture::cleanup() - wrote %d frames\n"
 
-#: src/celestia/url.cpp:654 src/celestia/kde/rc.cpp:133
+#: src/celestia/url.cpp:654
+#: src/celestia/kde/rc.cpp:133
 msgid "Settings"
 msgstr "Beállítások"
 
-#: src/celestia/winmain.cpp:625 src/celestia/kde/kdeapp.cpp:949
+#: src/celestia/winmain.cpp:625
+#: src/celestia/kde/kdeapp.cpp:949
 msgid "Vendor: "
-msgstr "Eladó:"
+msgstr "Forgalmazó:"
 
-#: src/celestia/winmain.cpp:630 src/celestia/kde/kdeapp.cpp:954
+#: src/celestia/winmain.cpp:630
+#: src/celestia/kde/kdeapp.cpp:954
 msgid "Renderer: "
 msgstr "Megjelenítés"
 
-#: src/celestia/winmain.cpp:635 src/celestia/kde/kdeapp.cpp:959
+#: src/celestia/winmain.cpp:635
+#: src/celestia/kde/kdeapp.cpp:959
 msgid "Version: "
 msgstr "Verzió:"
 
@@ -884,11 +900,13 @@ msgstr "Verzió:"
 msgid "GLSL version: "
 msgstr "GLSL verzió:"
 
-#: src/celestia/winmain.cpp:656 src/celestia/kde/kdeapp.cpp:968
+#: src/celestia/winmain.cpp:656
+#: src/celestia/kde/kdeapp.cpp:968
 msgid "Max simultaneous textures: "
 msgstr "Max simultaneous textures: "
 
-#: src/celestia/winmain.cpp:663 src/celestia/kde/kdeapp.cpp:973
+#: src/celestia/winmain.cpp:663
+#: src/celestia/kde/kdeapp.cpp:973
 msgid "Max texture size: "
 msgstr "Max texture size: "
 
@@ -896,11 +914,13 @@ msgstr "Max texture size: "
 msgid "Max cube map size: "
 msgstr "Max cube map size: "
 
-#: src/celestia/winmain.cpp:680 src/celestia/kde/kdeapp.cpp:979
+#: src/celestia/winmain.cpp:680
+#: src/celestia/kde/kdeapp.cpp:979
 msgid "Point size range: "
 msgstr "Point size range: "
 
-#: src/celestia/winmain.cpp:685 src/celestia/kde/kdeapp.cpp:983
+#: src/celestia/winmain.cpp:685
+#: src/celestia/kde/kdeapp.cpp:983
 msgid "Supported Extensions:"
 msgstr "Supported Extensions:"
 
@@ -908,13 +928,15 @@ msgstr "Supported Extensions:"
 msgid "Windowed Mode"
 msgstr "Ablakos mód"
 
-#: src/celestia/winmain.cpp:1508 src/celestia/kde/kdepreferencesdialog.cpp:236
+#: src/celestia/winmain.cpp:1508
+#: src/celestia/kde/kdepreferencesdialog.cpp:236
 #: src/celestia/kde/selectionpopup.cpp:414
 #: src/celestia/res/resource_strings.cpp:171
 msgid "Asteroids"
 msgstr "Kisbolygók"
 
-#: src/celestia/winmain.cpp:1510 src/celestia/kde/kdepreferencesdialog.cpp:202
+#: src/celestia/winmain.cpp:1510
+#: src/celestia/kde/kdepreferencesdialog.cpp:202
 #: src/celestia/kde/selectionpopup.cpp:416
 #: src/celestia/res/resource_strings.cpp:172
 msgid "Comets"
@@ -924,14 +946,17 @@ msgstr "Üstökösök"
 msgid "Invisibles"
 msgstr "Láthatatlan objektumok"
 
-#: src/celestia/winmain.cpp:1514 src/celestia/kde/kdepreferencesdialog.cpp:193
+#: src/celestia/winmain.cpp:1514
+#: src/celestia/kde/kdepreferencesdialog.cpp:193
 #: src/celestia/kde/selectionpopup.cpp:418
 #: src/celestia/res/resource_strings.cpp:169
 msgid "Moons"
 msgstr "Holdak"
 
-#: src/celestia/winmain.cpp:1516 src/celestia/winmain.cpp:1551
-#: src/celestia/winmain.cpp:1668 src/celestia/kde/kdepreferencesdialog.cpp:82
+#: src/celestia/winmain.cpp:1516
+#: src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
+#: src/celestia/kde/kdepreferencesdialog.cpp:82
 #: src/celestia/kde/kdepreferencesdialog.cpp:184
 #: src/celestia/kde/selectionpopup.cpp:420
 #: src/celestia/kde/selectionpopup.cpp:498
@@ -940,19 +965,23 @@ msgstr "Holdak"
 msgid "Planets"
 msgstr "Bolygók"
 
-#: src/celestia/winmain.cpp:1518 src/celestia/kde/celestialbrowser.cpp:194
+#: src/celestia/winmain.cpp:1518
+#: src/celestia/kde/celestialbrowser.cpp:194
 #: src/celestia/kde/selectionpopup.cpp:422
 #: src/celestia/res/resource_strings.cpp:173
 msgid "Spacecraft"
 msgstr "Űrhajók"
 
-#: src/celestia/winmain.cpp:1608 src/celestia/winmain.cpp:1656
-#: src/celestia/winmain.cpp:1679 src/celestia/kde/eclipsefinderdlg.cpp:118
+#: src/celestia/winmain.cpp:1608
+#: src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+#: src/celestia/kde/eclipsefinderdlg.cpp:118
 #: src/celestia/kde/selectionpopup.cpp:300
 msgid "&Goto"
 msgstr "U&grás"
 
-#: src/celestia/winmain.cpp:1609 src/celestia/winmain.cpp:1680
+#: src/celestia/winmain.cpp:1609
+#: src/celestia/winmain.cpp:1680
 #: src/celestia/kde/selectionpopup.cpp:301
 msgid "&Follow"
 msgstr "Követ"
@@ -961,58 +990,69 @@ msgstr "Követ"
 msgid "S&ync Orbit"
 msgstr "Pálya szinkronizálása"
 
-#: src/celestia/winmain.cpp:1611 src/celestia/winmain.cpp:1657
-#: src/celestia/winmain.cpp:1681 src/celestia/kde/selectionpopup.cpp:304
+#: src/celestia/winmain.cpp:1611
+#: src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+#: src/celestia/kde/selectionpopup.cpp:304
 msgid "&Info"
 msgstr "&Adatok"
 
-#: src/celestia/winmain.cpp:1613 src/celestia/kde/selectionpopup.cpp:333
+#: src/celestia/winmain.cpp:1613
+#: src/celestia/kde/selectionpopup.cpp:333
 msgid "&Reference Vectors"
-msgstr ""
+msgstr "&Referencia vektorok"
 
-#: src/celestia/winmain.cpp:1614 src/celestia/kde/selectionpopup.cpp:334
+#: src/celestia/winmain.cpp:1614
+#: src/celestia/kde/selectionpopup.cpp:334
 msgid "Show Body Axes"
 msgstr "Objektumok tengelyének mutatása"
 
-#: src/celestia/winmain.cpp:1615 src/celestia/kde/selectionpopup.cpp:336
+#: src/celestia/winmain.cpp:1615
+#: src/celestia/kde/selectionpopup.cpp:336
 msgid "Show Frame Axes"
 msgstr "Váz tegelyeinek mutatása"
 
-#: src/celestia/winmain.cpp:1616 src/celestia/kde/selectionpopup.cpp:338
+#: src/celestia/winmain.cpp:1616
+#: src/celestia/kde/selectionpopup.cpp:338
 msgid "Show Sun Direction"
 msgstr "Nap irányának mutatása"
 
-#: src/celestia/winmain.cpp:1617 src/celestia/kde/selectionpopup.cpp:340
+#: src/celestia/winmain.cpp:1617
+#: src/celestia/kde/selectionpopup.cpp:340
 msgid "Show Velocity Vector"
 msgstr "Sebességvektor mutatása"
 
-#: src/celestia/winmain.cpp:1618 src/celestia/kde/selectionpopup.cpp:342
-#, fuzzy
+#: src/celestia/winmain.cpp:1618
+#: src/celestia/kde/selectionpopup.cpp:342
 msgid "Show Planetographic Grid"
-msgstr "Bolygópályák mutatása"
+msgstr "Planetáris háló mutatása"
 
-#: src/celestia/winmain.cpp:1619 src/celestia/kde/selectionpopup.cpp:344
-#, fuzzy
+#: src/celestia/winmain.cpp:1619
+#: src/celestia/kde/selectionpopup.cpp:344
 msgid "Show Terminator"
-msgstr "Tereptárgyak mutatása"
+msgstr "Lezáró mutatása"
 
 #: src/celestia/winmain.cpp:1633
 msgid "&Satellites"
 msgstr "Mellékbolygók"
 
-#: src/celestia/winmain.cpp:1643 src/celestia/kde/selectionpopup.cpp:366
+#: src/celestia/winmain.cpp:1643
+#: src/celestia/kde/selectionpopup.cpp:366
 msgid "&Alternate Surfaces"
 msgstr "&Alternatív Felületek"
 
-#: src/celestia/winmain.cpp:1666 src/celestia/kde/selectionpopup.cpp:477
+#: src/celestia/winmain.cpp:1666
+#: src/celestia/kde/selectionpopup.cpp:477
 msgid "Orbiting Bodies"
 msgstr "Keringő Égitestek"
 
-#: src/celestia/winmain.cpp:1693 src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/winmain.cpp:1693
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Unmark"
 msgstr "Jelölés törlése"
 
-#: src/celestia/winmain.cpp:1695 src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/winmain.cpp:1695
+#: src/celestia/kde/selectionpopup.cpp:327
 msgid "&Mark"
 msgstr "Jelöl"
 
@@ -1020,12 +1060,14 @@ msgstr "Jelöl"
 msgid "Loading: "
 msgstr "Betöltés: "
 
-#: src/celestia/winmain.cpp:3305 src/celutil/util.cpp:72
+#: src/celestia/winmain.cpp:3305
+#: src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
 msgstr "hu"
 
-#: src/celestia/winmain.cpp:3307 src/celestia/res/resource_strings.cpp:232
+#: src/celestia/winmain.cpp:3307
+#: src/celestia/res/resource_strings.cpp:232
 msgid "WinLangID"
 msgstr "40e"
 
@@ -1049,7 +1091,8 @@ msgstr "Hiba a szkript betöltésekor"
 msgid "Running script"
 msgstr "Szkript futtatása"
 
-#: src/celestia/wineclipses.cpp:58 src/celestia/kde/celestialbrowser.cpp:182
+#: src/celestia/wineclipses.cpp:58
+#: src/celestia/kde/celestialbrowser.cpp:182
 #: src/celestia/kde/rc.cpp:73
 msgid "Planet"
 msgstr "Bolygó"
@@ -1058,11 +1101,13 @@ msgstr "Bolygó"
 msgid "Satellite"
 msgstr "Égitest"
 
-#: src/celestia/wineclipses.cpp:62 src/celestia/kde/rc.cpp:79
+#: src/celestia/wineclipses.cpp:62
+#: src/celestia/kde/rc.cpp:79
 msgid "Date"
 msgstr "Dátum"
 
-#: src/celestia/wineclipses.cpp:64 src/celestia/kde/rc.cpp:82
+#: src/celestia/wineclipses.cpp:64
+#: src/celestia/kde/rc.cpp:82
 msgid "Start"
 msgstr "Indítás"
 
@@ -1070,36 +1115,44 @@ msgstr "Indítás"
 msgid "Duration"
 msgstr "Időtartam"
 
-#: src/celestia/wineclipses.cpp:316 src/celestia/kde/rc.cpp:97 data/data.cpp:3
+#: src/celestia/wineclipses.cpp:316
+#: src/celestia/kde/rc.cpp:97
+#: data/data.cpp:3
 msgid "Earth"
 msgstr "Föld"
 
-#: src/celestia/wineclipses.cpp:317 src/celestia/kde/rc.cpp:100
+#: src/celestia/wineclipses.cpp:317
+#: src/celestia/kde/rc.cpp:100
 #: data/data.cpp:8
 msgid "Jupiter"
 msgstr "Jupiter"
 
-#: src/celestia/wineclipses.cpp:318 src/celestia/kde/rc.cpp:103
+#: src/celestia/wineclipses.cpp:318
+#: src/celestia/kde/rc.cpp:103
 #: data/data.cpp:14
 msgid "Saturn"
 msgstr "Szaturnusz"
 
-#: src/celestia/wineclipses.cpp:319 src/celestia/kde/rc.cpp:106
+#: src/celestia/wineclipses.cpp:319
+#: src/celestia/kde/rc.cpp:106
 #: data/data.cpp:28
 msgid "Uranus"
 msgstr "Uránusz"
 
-#: src/celestia/wineclipses.cpp:320 src/celestia/kde/rc.cpp:109
+#: src/celestia/wineclipses.cpp:320
+#: src/celestia/kde/rc.cpp:109
 #: data/data.cpp:34
 msgid "Neptune"
 msgstr "Neptunusz"
 
-#: src/celestia/wineclipses.cpp:321 src/celestia/kde/rc.cpp:112
+#: src/celestia/wineclipses.cpp:321
+#: src/celestia/kde/rc.cpp:112
 #: data/data.cpp:40
 msgid "Pluto"
 msgstr "Plútó"
 
-#: src/celestia/winstarbrowser.cpp:70 src/celestia/kde/rc.cpp:34
+#: src/celestia/winstarbrowser.cpp:70
+#: src/celestia/kde/rc.cpp:34
 #: src/celestia/res/resource_strings.cpp:102
 msgid "Name"
 msgstr "Név"
@@ -1116,7 +1169,8 @@ msgstr "Látsz. magn."
 msgid "Abs. mag"
 msgstr "Absz. magn."
 
-#: src/celestia/winstarbrowser.cpp:79 src/celestia/kde/rc.cpp:46
+#: src/celestia/winstarbrowser.cpp:79
+#: src/celestia/kde/rc.cpp:46
 msgid "Type"
 msgstr "Típus"
 
@@ -1124,26 +1178,28 @@ msgstr "Típus"
 msgid "Universal Time"
 msgstr "Csillagidő"
 
-#: src/celestia/wintime.cpp:96 src/celestia/kde/kdepreferencesdialog.cpp:377
+#: src/celestia/wintime.cpp:96
+#: src/celestia/kde/kdepreferencesdialog.cpp:377
 #: src/celestia/kde/kdepreferencesdialog.cpp:398
 msgid "Local Time"
 msgstr "Helyi idő"
 
 #: src/celestia/wintime.cpp:97
-#, fuzzy
 msgid "Time Zone Name"
-msgstr "Időzóna: "
+msgstr "Időzóna neve: "
 
 #: src/celestia/wintime.cpp:98
 msgid "UTC Offset"
-msgstr ""
+msgstr "UTC eltérés"
 
-#: src/celestia/kde/celestialbrowser.cpp:29 src/celestia/kde/kdeapp.cpp:500
+#: src/celestia/kde/celestialbrowser.cpp:29
+#: src/celestia/kde/kdeapp.cpp:500
 #: src/celestia/kde/rc.cpp:30
 msgid "Celestial Browser"
 msgstr "Égi objektumok"
 
-#: src/celestia/kde/celestialbrowser.cpp:185 src/celestia/kde/rc.cpp:76
+#: src/celestia/kde/celestialbrowser.cpp:185
+#: src/celestia/kde/rc.cpp:76
 #: data/data.cpp:4
 msgid "Moon"
 msgstr "Hold"
@@ -1157,30 +1213,29 @@ msgid "Comet"
 msgstr "Üstökös"
 
 #: src/celestia/kde/celestialbrowser.cpp:197
-#, fuzzy
 msgid "Invisible"
-msgstr "Láthatatlan objektumok"
+msgstr "Láthatatlan"
 
 #: src/celestia/kde/celestialbrowser.cpp:200
-#, fuzzy
 msgid "Barycenter"
 msgstr "Tömegközéppont"
 
 #: src/celestia/kde/celestialbrowser.cpp:203
 msgid "Small Body"
-msgstr ""
+msgstr "Kis égitest"
 
 #: src/celestia/kde/celestialbrowser.cpp:206
-#, fuzzy
 msgid "Dwarf Planet"
-msgstr "Bolygó"
+msgstr "Törpe bolygó"
 
 #: src/celestia/kde/celestialbrowser.cpp:210
 msgid "-"
 msgstr "-"
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:21 src/celestia/kde/kdeapp.cpp:501
-#: src/celestia/kde/rc.cpp:70 src/celestia/res/resource_strings.cpp:222
+#: src/celestia/kde/eclipsefinderdlg.cpp:21
+#: src/celestia/kde/kdeapp.cpp:501
+#: src/celestia/kde/rc.cpp:70
+#: src/celestia/res/resource_strings.cpp:222
 msgid "Eclipse Finder"
 msgstr "Fogyatkozás-kereső"
 
@@ -1228,14 +1283,11 @@ msgstr "Nem lehet üres URL-lel könyvjelzőt létrehozni"
 
 #: src/celestia/kde/kdeapp.cpp:129
 msgid ""
-"Something seems to be wrong with your installation of Celestia. The splash "
-"screen directory couldn't be found. \n"
-"Start-up will continue, but Celestia will probably be missing some data "
-"files and may not work correctly, please check your installation."
+"Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \n"
+"Start-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."
 msgstr ""
 "Hiba történt a Celestia telepítésekor. A nyitókép könyvtár nem található.\n"
-"Az indítás folytatódik, de a Celestia valószínűleg nem fog tökéletesen "
-"működni a hiányzó adatfájlok miatt. Ellenőrizd a telepített mappákat."
+"Az indítás folytatódik, de a Celestia valószínűleg nem fog tökéletesen működni a hiányzó adatfájlok miatt. Ellenőrizd a telepített mappákat."
 
 #: src/celestia/kde/kdeapp.cpp:407
 msgid "Go to &URL..."
@@ -1354,9 +1406,8 @@ msgid "Show Galaxies"
 msgstr "Galaxisok mutatása"
 
 #: src/celestia/kde/kdeapp.cpp:554
-#, fuzzy
 msgid "Show Globulars"
-msgstr "Felhőréteg mutatása"
+msgstr "Gömbhalmazok mutatása"
 
 #: src/celestia/kde/kdeapp.cpp:557
 msgid "Show Partial Trajectories"
@@ -1484,9 +1535,8 @@ msgid "Show Galaxy Labels"
 msgstr "Galaxisok címkéinek mutatása"
 
 #: src/celestia/kde/kdeapp.cpp:651
-#, fuzzy
 msgid "Show Globular Labels"
-msgstr "Nebulák címkéinek mutatása"
+msgstr "Gömbhalmazok címkéinek mutatása"
 
 #: src/celestia/kde/kdeapp.cpp:654
 msgid "Show Nebula Labels"
@@ -1637,8 +1687,7 @@ msgid "UTC"
 msgstr "UTC"
 
 #: src/celestia/kde/kdeapp.cpp:1462
-msgid ""
-"This version of Celestia was not built with support for movie recording."
+msgid "This version of Celestia was not built with support for movie recording."
 msgstr "Ez a Celestia verzió nincs a mozgókép felvételére felkészítve."
 
 #: src/celestia/kde/kdeapp.cpp:1488
@@ -1685,7 +1734,8 @@ msgstr "Magasság: "
 msgid "Celestia encountered an error while processing your script"
 msgstr "A Celestia hibát észlelt a parancsfájl feldolgozása közben"
 
-#: src/celestia/kde/kdemain.cpp:25 src/celestia/kde/kdemain.cpp:43
+#: src/celestia/kde/kdemain.cpp:25
+#: src/celestia/kde/kdemain.cpp:43
 #: src/celestia/res/resource_strings.cpp:68
 msgid "Celestia"
 msgstr "Celestia"
@@ -1715,11 +1765,15 @@ msgid "Start and go to url"
 msgstr "Indít és URL-re lép"
 
 #: src/celestia/kde/kdemain.cpp:71
-msgid "_: NAME OF TRANSLATORS\\nYour names"
+msgid ""
+"_: NAME OF TRANSLATORS\\n"
+"Your names"
 msgstr "Novák Áron, Székely Zoltán"
 
 #: src/celestia/kde/kdemain.cpp:71
-msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
+msgid ""
+"_: EMAIL OF TRANSLATORS\\n"
+"Your emails"
 msgstr "aaron@szentimre.hu, zoltanszekely@hotmail.com"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:58
@@ -1836,7 +1890,8 @@ msgstr "Csillagképek határai"
 msgid "Orbits / Labels"
 msgstr "Pályák / Címkék"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:167 src/celestia/kde/rc.cpp:12
+#: src/celestia/kde/kdepreferencesdialog.cpp:167
+#: src/celestia/kde/rc.cpp:12
 #: src/celestia/res/resource_strings.cpp:182
 msgid "Labels"
 msgstr "Címkék"
@@ -1887,28 +1942,24 @@ msgid "Verbose"
 msgstr "Bőséges"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:289
-#, fuzzy
 msgid "Textures"
-msgstr "Tömör"
+msgstr "Textúrák"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:290
-#, fuzzy
 msgid "Resolution: "
-msgstr "Felbontás"
+msgstr "Felbontás:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:292
-#, fuzzy
 msgid "Low"
-msgstr "A&lacsony"
+msgstr "Alacsony"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:293
-#, fuzzy
 msgid "Medium"
-msgstr "Közepes"
+msgstr "Közepes "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:294
 msgid "High"
-msgstr ""
+msgstr "Nagy"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:299
 msgid "Automatic FOV"
@@ -1981,14 +2032,12 @@ msgstr "Időzóna: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
 #: src/celestia/res/resource_strings.cpp:96
-#, fuzzy
 msgid "Format: "
-msgstr "Képkocka/másodperc:"
+msgstr "Formátum:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:385
-#, fuzzy
 msgid "Local Format"
-msgstr "Helyi idő"
+msgstr "Helyi formátum"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:392
 msgid "Set"
@@ -2001,9 +2050,10 @@ msgstr "A helyi idő 1902 és 2037 között lehetséges.\n"
 #: src/celestia/kde/kdepreferencesdialog.cpp:438
 #: src/celestia/res/resource_strings.cpp:97
 msgid "Julian Date: "
-msgstr ""
+msgstr "Julián dátum:"
 
-#: src/celestia/kde/kdepreferencesdialog.cpp:456 src/celestia/kde/rc.cpp:27
+#: src/celestia/kde/kdepreferencesdialog.cpp:456
+#: src/celestia/kde/rc.cpp:27
 msgid "Now"
 msgstr "Most"
 
@@ -2048,28 +2098,16 @@ msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
 msgstr "<b>ARB_texenv_DOT3 kiterjesztés, ARB_vertex_program kiterjesztés</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:800
-msgid ""
-"<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
-"mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
-"graphics card, though NvCombiner ARBVP is a slightly better option for "
-"Geforce users"
-msgstr ""
-"<b>NVIDIA Combiners, NV_vertex_program extension</b><br>bump mapping-gel, "
-"gyűrű árnyékok és tükröződő körvonalak bármilyen Geforce vagy ATI Radeon "
-"videokártyán, bár az NvCombiner ARBVP sokkal jobb választás a Geforce "
-"felhasználóknak."
+msgid "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon graphics card, though NvCombiner ARBVP is a slightly better option for Geforce users"
+msgstr "<b>NVIDIA Combiners, NV_vertex_program extension</b><br>bump mapping-gel, gyűrű árnyékok és tükröződő körvonalak bármilyen Geforce vagy ATI Radeon videokártyán, bár az NvCombiner ARBVP sokkal jobb választás a Geforce felhasználóknak."
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:806
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
 msgstr "<b>NVIDIA Combiners, ARB_vertex_program kiegészítés</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:809
-msgid ""
-"<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
-"advanced effects on Geforce FX and Radeon 9700 cards"
-msgstr ""
-"<b>ARB_fragment_program és ARB_vertex_program kiterjesztések</"
-"b><br>összetett hatásokat nyújtanak Geforce FX és Radeon 9700 videokártyákon"
+msgid "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide advanced effects on Geforce FX and Radeon 9700 cards"
+msgstr "<b>ARB_fragment_program és ARB_vertex_program kiterjesztések</b><br>összetett hatásokat nyújtanak Geforce FX és Radeon 9700 videokártyákon"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:813
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
@@ -2080,10 +2118,8 @@ msgid "<b>OpenGL 2.0 Shading Language</b>"
 msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:44
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr ""
-"Fájl %1 nem létezik, alapértelmezett konfigurációs fájl %2/celestia.cfg"
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgstr "Fájl %1 nem létezik, alapértelmezett konfigurációs fájl %2/celestia.cfg"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:54
 msgid "Directory %1 does not exist, using default %2"
@@ -2176,15 +2212,13 @@ msgid "Normal"
 msgstr "Alap"
 
 #: src/celestia/kde/selectionpopup.cpp:424
-#, fuzzy
 msgid "Small Bodies"
-msgstr "Mellékbolygók"
+msgstr "Kis égitestek"
 
 #: src/celestia/kde/selectionpopup.cpp:426
 #: src/celestia/res/resource_strings.cpp:168
-#, fuzzy
 msgid "Dwarf Planets"
-msgstr "Bolygók mutatása"
+msgstr "Törpe bolygók"
 
 #: src/celestia/kde/videocapturedlg.cpp:64
 #: src/celestia/kde/videocapturedlg.cpp:276
@@ -2220,9 +2254,10 @@ msgstr "Meg kell adni egy fájlnevet."
 msgid "Error initializing movie capture."
 msgstr "Hiba a mozgókép-felvétel inicializálásánál."
 
-#: src/celestia/kde/rc.cpp:3 src/celestia/res/resource_strings.cpp:8
+#: src/celestia/kde/rc.cpp:3
+#: src/celestia/res/resource_strings.cpp:8
 msgid "&Navigation"
-msgstr "&Navigálás"
+msgstr "&Navigáció"
 
 #: src/celestia/kde/rc.cpp:6
 msgid "Options"
@@ -2272,7 +2307,8 @@ msgstr "Legfényesebb (absz.)"
 msgid "Brightest (App.)"
 msgstr "Legfényesebb (láth.)"
 
-#: src/celestia/kde/rc.cpp:58 src/celestia/res/resource_strings.cpp:114
+#: src/celestia/kde/rc.cpp:58
+#: src/celestia/res/resource_strings.cpp:114
 msgid "Nearest"
 msgstr "Legközelebbi"
 
@@ -2292,15 +2328,18 @@ msgstr "Frissítés"
 msgid "End"
 msgstr "Vége"
 
-#: src/celestia/kde/rc.cpp:88 src/celestia/res/resource_strings.cpp:229
+#: src/celestia/kde/rc.cpp:88
+#: src/celestia/res/resource_strings.cpp:229
 msgid "Search parameters"
 msgstr "Keresési beállítások"
 
-#: src/celestia/kde/rc.cpp:91 src/celestia/res/resource_strings.cpp:230
+#: src/celestia/kde/rc.cpp:91
+#: src/celestia/res/resource_strings.cpp:230
 msgid "Solar Eclipses"
 msgstr "Napfogyatkozások"
 
-#: src/celestia/kde/rc.cpp:94 src/celestia/res/resource_strings.cpp:228
+#: src/celestia/kde/rc.cpp:94
+#: src/celestia/res/resource_strings.cpp:228
 msgid "On:"
 msgstr "Mire:"
 
@@ -2312,15 +2351,18 @@ msgstr "Holdfogyatkozások"
 msgid "Search"
 msgstr "Keresés"
 
-#: src/celestia/kde/rc.cpp:121 src/celestia/res/resource_strings.cpp:227
+#: src/celestia/kde/rc.cpp:121
+#: src/celestia/res/resource_strings.cpp:227
 msgid "To:"
 msgstr "Meddig:"
 
-#: src/celestia/kde/rc.cpp:124 src/celestia/res/resource_strings.cpp:226
+#: src/celestia/kde/rc.cpp:124
+#: src/celestia/res/resource_strings.cpp:226
 msgid "From:"
 msgstr "Mettől:"
 
-#: src/celestia/kde/rc.cpp:127 src/celestia/res/resource_strings.cpp:225
+#: src/celestia/kde/rc.cpp:127
+#: src/celestia/res/resource_strings.cpp:225
 msgid "Close"
 msgstr "Bezár"
 
@@ -2381,8 +2423,7 @@ msgid ""
 "<p>Press <b>F11</b> to start/pause recording<br>\n"
 "Press <b>F12</b> to stop</p>\n"
 "\n"
-"<p>Note that resizing the main window will not be possible until the end of "
-"the capture</p>"
+"<p>Note that resizing the main window will not be possible until the end of the capture</p>"
 msgstr ""
 "<p>Press <b>F11</b> to start/pause recording<br>\n"
 "Press <b>F12</b> to stop</p>\n"
@@ -2410,17 +2451,14 @@ msgid "Mars"
 msgstr "Mars"
 
 #: data/data.cpp:6
-#, fuzzy
 msgid "Phobos"
-msgstr "Phoebe"
+msgstr "Phobos"
 
 #: data/data.cpp:7
-#, fuzzy
 msgid "Deimos"
-msgstr "Gyémánt"
+msgstr "Deimos"
 
 #: data/data.cpp:9
-#, fuzzy
 msgid "Amalthea"
 msgstr "Amalthea"
 
@@ -2461,7 +2499,6 @@ msgid "Mimas"
 msgstr "Mimas"
 
 #: data/data.cpp:20
-#, fuzzy
 msgid "Enceladus"
 msgstr "Enceladus"
 
@@ -2494,7 +2531,6 @@ msgid "Phoebe"
 msgstr "Phoebe"
 
 #: data/data.cpp:29
-#, fuzzy
 msgid "Miranda"
 msgstr "Miranda"
 
@@ -2588,20 +2624,19 @@ msgstr "ÉSZAKI ÓCEÁN"
 
 #: data/data.cpp:54
 msgid "Milky Way"
-msgstr ""
+msgstr "Tejút"
 
 #: data/data.cpp:55
 msgid "SMC"
-msgstr ""
+msgstr "Kis Magellán Felhő"
 
 #: data/data.cpp:56
 msgid "LMC"
-msgstr ""
+msgstr "Nagy Magellán Felhő"
 
 #: data/data.cpp:57
-#, fuzzy
 msgid "Solar System Barycenter"
-msgstr "Csillagrendszer tömegközéppontja\n"
+msgstr "Csillagrendszer tömegközéppontja"
 
 #: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
@@ -2778,17 +2813,16 @@ msgid "&Medium"
 msgstr "Közepes"
 
 #: src/celestia/res/resource_strings.cpp:45
-#, fuzzy
 msgid "&Texture Resolution"
-msgstr "Felbontás"
+msgstr "&Textúra felbontás"
 
 #: src/celestia/res/resource_strings.cpp:48
 msgid "&High"
-msgstr ""
+msgstr "&Nagy"
 
 #: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
-msgstr "Vonalsimítás (Antialiasing)\tCtrl+X"
+msgstr "Élsimítás (Antialiasing)\tCtrl+X"
 
 #: src/celestia/res/resource_strings.cpp:50
 msgid "&View"
@@ -2878,9 +2912,8 @@ msgid "OK"
 msgstr "OK"
 
 #: src/celestia/res/resource_strings.cpp:69
-#, fuzzy
 msgid "Copyright (C) 2001-2008, Celestia Development Team"
-msgstr "Copyright (C) 2001-2006, Chris Laurel"
+msgstr "Copyright (C) 2001-2008, Celestia Development Team"
 
 #: src/celestia/res/resource_strings.cpp:70
 msgid "http://www.shatters.net/celestia"
@@ -3085,54 +3118,47 @@ msgstr "Megjelenítési beállítások"
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:176
 msgid "Globulars"
-msgstr ""
+msgstr "Gömbhalmazok"
 
 #: src/celestia/res/resource_strings.cpp:160
 msgid "Grids"
-msgstr ""
+msgstr "Rácsok"
 
 #: src/celestia/res/resource_strings.cpp:161
-#, fuzzy
 msgid "Celestial"
-msgstr "Celestia"
+msgstr "Csillagászati"
 
 #: src/celestia/res/resource_strings.cpp:162
-#, fuzzy
 msgid "Horizontal"
 msgstr "Nézet függőleges felosztása"
 
 #: src/celestia/res/resource_strings.cpp:163
-#, fuzzy
 msgid "Galactic"
-msgstr "Galaxisok"
+msgstr "Galaktikus"
 
 #: src/celestia/res/resource_strings.cpp:164
 msgid "Ecliptic"
-msgstr ""
+msgstr "Ekliptikus"
 
 #: src/celestia/res/resource_strings.cpp:170
-#, fuzzy
 msgid "Minor Moons"
-msgstr "Holdak"
+msgstr "Kis holdak"
 
 #: src/celestia/res/resource_strings.cpp:174
-#, fuzzy
 msgid "DSO Labels"
-msgstr "Címkék"
+msgstr "DSO címkék"
 
 #: src/celestia/res/resource_strings.cpp:180
 msgid "Diagrams"
-msgstr ""
+msgstr "Diagrammok"
 
 #: src/celestia/res/resource_strings.cpp:181
-#, fuzzy
 msgid "Boundaries"
-msgstr "Határok mutatása"
+msgstr "Határok"
 
 #: src/celestia/res/resource_strings.cpp:183
-#, fuzzy
 msgid "Latin Names"
-msgstr "Helyek"
+msgstr "Latin nevek"
 
 #: src/celestia/res/resource_strings.cpp:184
 msgid "Information Text"
@@ -3159,9 +3185,8 @@ msgid "Terrae (Land masses)"
 msgstr "Terrae (Szárazföldek)"
 
 #: src/celestia/res/resource_strings.cpp:201
-#, fuzzy
 msgid "Volcanoes"
-msgstr "Bolygók"
+msgstr "Vulkánok"
 
 #: src/celestia/res/resource_strings.cpp:202
 msgid "Other features"
@@ -3267,134 +3292,3 @@ msgstr "Nov"
 msgid "Dec"
 msgstr "Dec"
 
-#~ msgid "limit of knowledge"
-#~ msgstr "Ismereteink határa"
-
-#, fuzzy
-#~ msgid "Phobos:Mars I"
-#~ msgstr "Phobos"
-
-#, fuzzy
-#~ msgid "Deimos:Mars II"
-#~ msgstr "Deimos"
-
-#, fuzzy
-#~ msgid "Io:Jupiter I"
-#~ msgstr "Jupiter"
-
-#, fuzzy
-#~ msgid "Mimas:Saturn I"
-#~ msgstr "Szaturnusz"
-
-#, fuzzy
-#~ msgid "Rhea:Saturn V"
-#~ msgstr "Szaturnusz"
-
-#, fuzzy
-#~ msgid "Ariel:Uranus I"
-#~ msgstr "Uránusz"
-
-#, fuzzy
-#~ msgid "Triton:Neptune I"
-#~ msgstr "Neptunusz"
-
-#~ msgid "Day length: "
-#~ msgstr "Nap hossza: "
-
-#~ msgid " must be in same star system\n"
-#~ msgstr "ugyanabban a csillagrendszerben kell lennie\n"
-
-#~ msgid "Low res textures"
-#~ msgstr "Alacsony felbontású textúrák"
-
-#~ msgid "Medium res textures"
-#~ msgstr "Közepes felbontású textúrák"
-
-#~ msgid "High res textures"
-#~ msgstr "Nagy felbontású textúrák"
-
-#~ msgid "Error reading deep sky file\n"
-#~ msgstr "Hiba a deep sky fájlban\n"
-
-#, fuzzy
-#~ msgid "Version"
-#~ msgstr "Verzió:"
-
-#~ msgid "Constellation Borders"
-#~ msgstr "Csillagképek határai"
-
-#~ msgid "Orbit / Label"
-#~ msgstr "Pálya / Címke"
-
-#~ msgid "Mark Features"
-#~ msgstr "Tereptárgyak megjelölése"
-
-#~ msgid "' is not a star or planet.\n"
-#~ msgstr "' nem csillag, vagy bolygó.\n"
-
-#~ msgid "Time rate: %'.12g"
-#~ msgstr "Idő múlása: %'.12g"
-
-#~ msgid " UTC"
-#~ msgstr "UTC"
-
-#, fuzzy
-#~ msgid "Radius: %.2f Rsun\n"
-#~ msgstr "Sugár: "
-
-#, fuzzy
-#~ msgid "moon"
-#~ msgstr "Hold"
-
-#, fuzzy
-#~ msgid "Solar eclipses"
-#~ msgstr "Napfogyatkozások"
-
-#~ msgid "<p align=\"right\">On:</p>"
-#~ msgstr "<p align=\"right\">Helye:</p>"
-
-#~ msgid "<p align=\"right\">To:</p>"
-#~ msgstr "<p align=\"right\">Eddig:</p>"
-
-#~ msgid "<p align=\"right\">From:</p>"
-#~ msgstr "<p align=\"right\">Ettől:</p>"
-
-#, fuzzy
-#~ msgid "eclipse on"
-#~ msgstr "Fogyatkozáskereső"
-
-#~ msgid "buttonGroup1"
-#~ msgstr "gombCsoport1"
-
-#~ msgid "EclipseFinderDlgBase"
-#~ msgstr "FogyatkozásKeresőPárbeszédAblak"
-
-#~ msgid "EclipseFinderDlg"
-#~ msgstr "FogyatkozáskeresőAbl"
-
-#~ msgid "CelestialBrowserBase"
-#~ msgstr "CelestialBöngészőAbl"
-
-#~ msgid "CelestialBrowser"
-#~ msgstr "CelestialBöngésző"
-
-#~ msgid "KdeApp"
-#~ msgstr "KdeApp"
-
-#~ msgid "LongLatDialog"
-#~ msgstr "SzélHosszPárb"
-
-#~ msgid "KdeGlWidget"
-#~ msgstr "KdeGlWidget"
-
-#~ msgid "KdePreferencesDialog"
-#~ msgstr "KdeBeállításPárbeszédablak"
-
-#~ msgid "KdeUniqueCelestia"
-#~ msgstr "KdeEgyediCelestia"
-
-#~ msgid "KCelBookmarkMenu"
-#~ msgstr "KCelKönyvjelzőMenü"
-
-#~ msgid "SelectionPopup"
-#~ msgstr "KijelölésFelugróablak"
