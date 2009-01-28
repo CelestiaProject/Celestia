@@ -1,0 +1,76 @@
+{
+	Name   "木星"
+	Target "Sol/Jupiter"
+	Description "木星是太阳系最大的行星也是太阳系的第五个行星，和其他大行星一样，木星是个气体行星。木星上的大红斑是木星大气中最大时间最长的风暴，这个地球大小的风暴已经持续了至少300年。"
+}
+
+{
+	Name "冥王星和卡戎"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "冥王星的轨道离太阳的平均距离近60亿公里，因为其已知的卫星卡戎是如此之大，所以它们常被称为“双行星”。"
+}
+
+{
+	Name "爱神星"
+	Target "Sol/Eros"
+	Description "爱神星是个近地的土豆形状33公里长的小行星，因为NEAR 苏梅克航天器，我们了解了爱神星。2001年2月14日在爱神星着陆，成为有史以来第一个降落小行星上的航天器。"
+}
+
+{
+	Name "阿尔法半人马座"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "阿尔法半人马座和A星和B星和比邻星(离我们最近的恒星系）在一起。虽然比起太阳，A星稍年长，光明，但A星和太阳十分相似。B星更暗。尽管比邻星离太阳最近，但它过于暗以至于我们无法肉眼看到。"
+}
+
+{
+	Name "昴宿星团"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "昴宿星团是一组明亮的最近形成的恒星。尽管望远镜中发现了许多七星级群，但唯有它们被命名为希腊神话中的七姐妹。"
+}
+
+{
+	Name "金牛座中的五星"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "命名为Atlas和Aethra的五个女儿的金牛座五星是天空中最突出的开放星团。据估计，金牛座五星大约6.60亿岁，比我们附近夜空中蓝昴星热六倍以上。"
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b是一个红矮星。与其他行星系统的轨道共振为2:1。"
+}
+
+{
+	Name "小行星艾达和戴克泰"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "在1993年，伽利略航天器前往木星的途中拍摄到小行星243伊达。这些照片显示，伊达了一个小卫星，后来被命名为戴克泰。其他一些小行星已经被发现也有其卫星。"
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "Pegasi b是首先发现的太阳系外绕着恒星旋转的行星。是一个巨大气体行星，轨道极为接近恒星（不少于1/5的太阳-水星距离）。迫使天文学家认真探讨太阳系的形成。"
+}
+
+{
+	Name "天鹅座β"
+	Target "Albireo"
+	Distance 0.6
+	Description "由于对比鲜明的橙色和蓝白颜色组成，所以天鹅座β双星系被认为是天空中最漂亮的一对，橙色星是个K型巨星，另一个星则是一颗B型矮星。"
+}
+
+{
+	Name "包瑞利彗星"
+	Target "Sol/Borrelly"
+	Description "2001年9月22日，彗星包瑞利称为第二个被航天器近距离拍摄的彗星，尽管没有飞行计划，但深空一号靠近2200公里内包瑞利彗星的核心，拍摄了最高分辨率的照片，并返回。"
+}
