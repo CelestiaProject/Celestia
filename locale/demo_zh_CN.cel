@@ -1,0 +1,153 @@
+# Translated to Chinese by F.R.C. on Jan 2006.
+# Markerz 修改
+
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "演示开始……\n按ESC键结束。" origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "让我们从家开始吧……" row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "现在我们在地球上空约12,500km处运动。" row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "加上云时的地球更让人眼熟。" row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "下一站：月球。" row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "在我们绕月球公转时，观察地球和太阳。" row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "离开月球向太阳运动。" row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "在这个距离，我们可以看到太阳表面的太阳黑子。" row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "让我们缩小视图以总览內太阳系。" row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "打开行星标签显示……" row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "我们可以加快时间来观察行星绕太阳公转。" row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "每秒都有一个月的虚拟时间流逝。" row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "现在，时间完全停止了。" row -3}
+
+	wait { duration 1.0 }
+	print { text "我们的下一个目的地是土星。" row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "土星的几个卫星以亮点的形式表现出来。。" row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "土卫一(Mimas)上最明显的景观是巨大的撞击环形山赫歇尔环形山(Herschel)。" row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "注意到太阳在这个距离上有多暗。" row -3 }
+	wait { duration 2 }
+
+	print { text "让我们到处去看看天上的星星。" row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "北半球的居民应该可以辨认出大熊座(Ursa Major)的北斗七星(the Big Dipper)。" row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "我们现在对准的是北极星(Polaris)。" row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "北极星属于通常所说的小北斗七星(the Little Dipper)。" row -3}
+	wait { duration 2 }
+	print { text "为了帮助我们找到方向，Celestia可以为我们显示星座图……" row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text "……和星座名。" row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "猎户座(Orion)是天空中最明显的星座。" row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "南十字座(the Southern Cross)是南半球天空最熟悉的景物。" row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "让我们打开星系渲染以观察银河(the Milky Way)。" row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "现在我们去看大火(Antares，心宿二，天蝎座α星，\n七月流火就是流它" row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "虽然我们现在到心宿二的距离比日地距离远10倍，\n这个巨大的红巨星在空中看起来仍然很大。" row -3}
+	wait { duration 4.0 }
+
+	print { text "让我们缩小视图来看大图……" row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "我们现在在看整个银河系(the Milky Way galaxy)。" row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "该回家了……" row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "演示结束。" row -3}
+	wait { duration 3.0 }
+}
