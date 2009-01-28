@@ -14,7 +14,7 @@
 #import "NSString_ObjCPlusPlus.h"
 
 @implementation CelestiaStar(PrivateAPI)
--(CelestiaStar*)initWithStar:(Star*)s
+-(CelestiaStar*)initWithStar:(const Star*)s
 {
     self = [super init];
     _data = [[NSValue alloc] initWithBytes:reinterpret_cast<void*>(&s) objCType:@encode(Star*)];
