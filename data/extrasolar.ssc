@@ -1,4 +1,4 @@
-# Catalog of 313 known extrasolar planets.
+# Catalog of 314 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -3059,6 +3059,32 @@ AltSurface "limit of knowledge" "Gliese 581/c"
 }
 
 AltSurface "limit of knowledge" "Gliese 581/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 7924"   # Gliese 56.5
+{
+	Texture "venuslike.*"
+
+	Mass      9     # M.sin(i) = 9 earths
+	Radius     13300
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+7924"
+
+	EllipticalOrbit {
+		Period          0.0148
+		SemiMajorAxis   0.057
+		Eccentricity    0.17
+		ArgOfPericenter 180
+		MeanAnomaly     162
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 7924/b"
 {
 	Texture "extrasolar-lok.*"
 }
