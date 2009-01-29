@@ -14,6 +14,8 @@
 #include <vector>
 #include <iostream>
 #include <celmath/vecmath.h>
+#include "gl.h"
+#include "glext.h"
 
 class GLShaderLoader;
 
@@ -29,14 +31,14 @@ enum GLShaderStatus
 class GLShader
 {
  protected:
-    GLShader(int _id);
+    GLShader(GLhandleARB _id);
     virtual ~GLShader();
 
  public:
-    int getID() const;
+    GLhandleARB getID() const;
 
  private:
-    int id;
+    GLhandleARB id;
 
     GLShaderStatus compile(const std::vector<std::string>& source);
 
@@ -47,7 +49,7 @@ class GLShader
 class GLVertexShader : public GLShader
 {
  private:
-    GLVertexShader(int _id) : GLShader(_id) {};
+    GLVertexShader(GLhandleARB _id) : GLShader(_id) {};
 
  friend class GLShaderLoader;
 };
@@ -56,7 +58,7 @@ class GLVertexShader : public GLShader
 class GLFragmentShader : public GLShader
 {
  private:
-    GLFragmentShader(int _id) : GLShader(_id) {};
+    GLFragmentShader(GLhandleARB _id) : GLShader(_id) {};
 
  friend class GLShaderLoader;
 };
@@ -65,7 +67,7 @@ class GLFragmentShader : public GLShader
 class GLProgram
 {
  private:
-    GLProgram(int _id);
+    GLProgram(GLhandleARB _id);
 
     void attach(const GLShader&);
 
@@ -75,10 +77,10 @@ class GLProgram
     GLShaderStatus link();
 
     void use() const;
-    int getID() const { return id; }
+    GLhandleARB getID() const { return id; }
 
  private:
-    int id;
+    GLhandleARB id;
 
  friend class GLShaderLoader;
 };
@@ -88,7 +90,7 @@ class FloatShaderParameter
 {
  public:
     FloatShaderParameter();
-    FloatShaderParameter(int _obj, const char* name);
+    FloatShaderParameter(GLhandleARB _obj, const char* name);
 
     FloatShaderParameter& operator=(float);
     
@@ -101,7 +103,7 @@ class Vec3ShaderParameter
 {
  public:
     Vec3ShaderParameter();
-    Vec3ShaderParameter(int _obj, const char* name);
+    Vec3ShaderParameter(GLhandleARB _obj, const char* name);
 
     Vec3ShaderParameter& operator=(const Vec3f&);
     Vec3ShaderParameter& operator=(const Point3f&);
@@ -115,7 +117,7 @@ class Vec4ShaderParameter
 {
  public:
     Vec4ShaderParameter();
-    Vec4ShaderParameter(int _obj, const char* name);
+    Vec4ShaderParameter(GLhandleARB _obj, const char* name);
 
     Vec4ShaderParameter& operator=(const Vec4f&);
 
