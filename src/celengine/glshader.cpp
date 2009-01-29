@@ -15,19 +15,19 @@
 using namespace std;
 
 
-static const string GetInfoLog(int obj);
+static const string GetInfoLog(GLhandleARB obj);
 
 
 ostream* g_shaderLogFile = NULL;
 
 
-GLShader::GLShader(int _id) :
+GLShader::GLShader(GLhandleARB _id) :
     id(_id)
 {
 }
 
 
-int
+GLhandleARB
 GLShader::getID() const
 {
     return id;
@@ -76,7 +76,7 @@ FloatShaderParameter::FloatShaderParameter() :
 {
 }
 
-FloatShaderParameter::FloatShaderParameter(int obj, const char* name)
+FloatShaderParameter::FloatShaderParameter(GLhandleARB obj, const char* name)
 {
     slot = glx::glGetUniformLocationARB(obj, name);
 }
@@ -95,7 +95,7 @@ Vec3ShaderParameter::Vec3ShaderParameter() :
 {
 }
 
-Vec3ShaderParameter::Vec3ShaderParameter(int obj, const char* name)
+Vec3ShaderParameter::Vec3ShaderParameter(GLhandleARB obj, const char* name)
 {
     slot = glx::glGetUniformLocationARB(obj, name);
 }
@@ -122,7 +122,7 @@ Vec4ShaderParameter::Vec4ShaderParameter() :
 {
 }
 
-Vec4ShaderParameter::Vec4ShaderParameter(int obj, const char* name)
+Vec4ShaderParameter::Vec4ShaderParameter(GLhandleARB obj, const char* name)
 {
     slot = glx::glGetUniformLocationARB(obj, name);
 }
@@ -138,7 +138,7 @@ Vec4ShaderParameter::operator=(const Vec4f& v)
 
 //************* GLProgram **************
 
-GLProgram::GLProgram(int _id) :
+GLProgram::GLProgram(GLhandleARB _id) :
     id(_id)
 {
 }
@@ -192,7 +192,7 @@ GLShaderStatus
 GLShaderLoader::CreateVertexShader(const vector<string>& source,
                                    GLVertexShader** vs)
 {
-    GLint vsid = glx::glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    GLhandleARB vsid = glx::glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
 
     GLVertexShader* shader = new GLVertexShader(vsid);
     if (!shader)
@@ -219,7 +219,7 @@ GLShaderStatus
 GLShaderLoader::CreateFragmentShader(const vector<string>& source,
                                      GLFragmentShader** fs)
 {
-    GLint fsid = glx::glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+    GLhandleARB fsid = glx::glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
     GLFragmentShader* shader = new GLFragmentShader(fsid);
     if (!shader)
@@ -268,7 +268,7 @@ GLShaderLoader::CreateProgram(const GLVertexShader& vs,
                               const GLFragmentShader& fs,
                               GLProgram** progOut)
 {
-    GLint progid = glx::glCreateProgramObjectARB();
+    GLhandleARB progid = glx::glCreateProgramObjectARB();
 
     GLProgram* prog = new GLProgram(progid);
     if (!prog)
@@ -335,10 +335,10 @@ GLShaderLoader::CreateProgram(const string& vsSource,
 
 
 const string
-GetInfoLog(int obj)
+GetInfoLog(GLhandleARB obj)
 {
-    int logLength = 0;
-    int charsWritten = 0;
+    GLint logLength = 0;
+    GLsizei charsWritten = 0;
 
     glx::glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB,
                                    &logLength);
