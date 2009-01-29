@@ -17,6 +17,7 @@
 #include <celmath/aabox.h>
 #include <vector>
 #include <string>
+#include "gl.h"
 
 
 class RenderContext;
@@ -217,7 +218,7 @@ class Mesh
 
     uint32 nVertices;
     void* vertices;
-    mutable uint32 vbObject;
+    mutable GLuint vbObject;
     mutable bool vbInitialized;
 
     std::vector<PrimitiveGroup*> groups;
