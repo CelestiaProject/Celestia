@@ -436,7 +436,6 @@ unix {
 macx {
         ICON = ../macosx/celestia.icns
 
-	QMAKE_CXXFLAGS += -fpermissive
 	QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
 	CONFIG += x86 ppc
 	PRECOMPILED_HEADER += ../macosx/Util.h
