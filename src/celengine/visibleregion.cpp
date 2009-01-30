@@ -159,6 +159,14 @@ VisibleRegion::render(Renderer* /* renderer */,
                       float discSizeInPixels,
                       double tdb) const
 {
+    // Don't render anything if the current time is not within the
+    // target object's time window.
+    if (m_target.body() != NULL)
+    {
+        if (!m_target.body()->extant(tdb))
+            return;
+    }
+
     // Fade in the terminator when the planet is small
     const float minDiscSize = 5.0f;
     const float fullOpacityDiscSize = 10.0f;
