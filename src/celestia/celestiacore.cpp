@@ -1026,6 +1026,12 @@ void CelestiaCore::pickView(float x, float y)
                 activeView++;
         }
         
+        // Make sure that we're left with a valid view
+        if (activeView == views.end())
+        {
+            activeView = views.begin();
+        }
+
         sim->setActiveObserver((*activeView)->observer);
         if (!showActiveViewFrame)
             flashFrameStart = currentTime;
@@ -4947,15 +4953,15 @@ class LuaPathFinder : public EnumFilesHandler
 
     bool process(const string& filename)
     {
-        if ( getPath() != lastPath )
+        if (getPath() != lastPath)
         {
-            lastPath = getPath();
             int extPos = filename.rfind('.');
             if (extPos != (int)string::npos)
             {
                 string ext = string(filename, extPos, filename.length() - extPos + 1);
                 if (ext == ".lua")
                 {
+                    lastPath = getPath();
                     string newPatt = getPath()+"/?.lua;";
                     extPos = luaPath.rfind(newPatt);
                     if (extPos < 0)
@@ -4964,7 +4970,7 @@ class LuaPathFinder : public EnumFilesHandler
                     }
                 }
             }
-	}
+	    }
         return true;
     };
 };
