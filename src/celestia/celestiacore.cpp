@@ -3633,21 +3633,20 @@ void CelestiaCore::renderOverlay()
                 {
                     lastSelection = sel;
                     selectionNames = sim->getUniverse()->getStarCatalog()->getStarNameList(*sel.star());
-                }
-
-                // Skip displaying the English name if a localized version is present.
-                string starName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
-                string locStarName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true);
-                if (sel.star()->getCatalogNumber() == 0 && selectionNames.find("Sun") != string::npos && (const char*) "Sun" != _("Sun"))
-                {
-                    string::size_type startPos = selectionNames.find("Sun");
-                    string::size_type endPos = selectionNames.find(_("Sun"));
-                    selectionNames = selectionNames.erase(startPos, endPos - startPos);
-                }
-                else if (selectionNames.find(starName) != string::npos && starName != locStarName)
-                {
-                    string::size_type startPos = selectionNames.find(locStarName);
-                    selectionNames = selectionNames.substr(startPos);
+                    // Skip displaying the English name if a localized version is present.
+                    string starName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star());
+                    string locStarName = sim->getUniverse()->getStarCatalog()->getStarName(*sel.star(), true);
+                    if (sel.star()->getCatalogNumber() == 0 && selectionNames.find("Sun") != string::npos && (const char*) "Sun" != _("Sun"))
+                    {
+                        string::size_type startPos = selectionNames.find("Sun");
+                        string::size_type endPos = selectionNames.find(_("Sun"));
+                        selectionNames = selectionNames.erase(startPos, endPos - startPos);
+                    }
+                    else if (selectionNames.find(starName) != string::npos && starName != locStarName)
+                    {
+                        string::size_type startPos = selectionNames.find(locStarName);
+                        selectionNames = selectionNames.substr(startPos);
+                    }
                 }
 
                 overlay->setFont(titleFont);
@@ -3668,15 +3667,14 @@ void CelestiaCore::renderOverlay()
                 {
                     lastSelection = sel;
                     selectionNames = sim->getUniverse()->getDSOCatalog()->getDSONameList(sel.deepsky());
-                }
-
-                // Skip displaying the English name if a localized version is present.
-                string DSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
-                string locDSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true);
-                if (selectionNames.find(DSOName) != string::npos && DSOName != locDSOName)
-                {
-                    string::size_type startPos = selectionNames.find(locDSOName);
-                    selectionNames = selectionNames.substr(startPos);
+                    // Skip displaying the English name if a localized version is present.
+                    string DSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky());
+                    string locDSOName = sim->getUniverse()->getDSOCatalog()->getDSOName(sel.deepsky(), true);
+                    if (selectionNames.find(DSOName) != string::npos && DSOName != locDSOName)
+                    {
+                        string::size_type startPos = selectionNames.find(locDSOName);
+                        selectionNames = selectionNames.substr(startPos);
+                    }
                 }
 
                 overlay->setFont(titleFont);
@@ -3691,22 +3689,41 @@ void CelestiaCore::renderOverlay()
         case Selection::Type_Body:
             {
                 // Show all names for the body
-                overlay->setFont(titleFont);
-                const vector<string>& names = sel.body()->getNames();
-
-                // Skip displaying the primary name if there's a localized version
-                // of the name.
-                vector<string>::const_iterator firstName = names.begin();
-                if (sel.body()->hasLocalizedName())
-                    firstName++;
-
-                for (vector<string>::const_iterator iter = firstName; iter != names.end(); iter++)
+                if (sel != lastSelection)
                 {
-                    if (iter != firstName)
-                        *overlay << " / ";
-                    *overlay << *iter;
+                    lastSelection = sel;
+                    selectionNames = "";
+                    const vector<string>& names = sel.body()->getNames();
+
+                    // Skip displaying the primary name if there's a localized version
+                    // of the name.
+                    vector<string>::const_iterator firstName = names.begin();
+                    if (sel.body()->hasLocalizedName())
+                        firstName++;
+
+                    for (vector<string>::const_iterator iter = firstName; iter != names.end(); iter++)
+                    {
+                        if (iter != firstName)
+                            selectionNames += " / ";
+
+                        // Use localized version of parent name in alternative names.
+                        string alias = *iter;
+                        Selection parent = sel.parent();
+                        if (parent.body() != NULL)
+                        {
+                            string parentName = parent.body()->getName();
+                            string locParentName = parent.body()->getName(true);
+                            string::size_type startPos = alias.find(parentName);
+                            if (startPos != string::npos)
+                                alias.replace(startPos, parentName.length(), locParentName);
+                        }
+
+                        selectionNames += alias;
+                    }
                 }
-                
+
+                overlay->setFont(titleFont);
+                *overlay << selectionNames;
                 overlay->setFont(font);
                 *overlay << '\n';
                 displayPlanetInfo(*overlay,
