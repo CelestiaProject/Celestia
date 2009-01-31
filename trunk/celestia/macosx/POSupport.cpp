@@ -22,9 +22,14 @@
 
 #include <Carbon/Carbon.h>
 #include "POSupport.h"
+#include <string>
+#include <map>
 
 #define LOCALIZED_STR_BUFSIZE   1024
-char localizedStr[LOCALIZED_STR_BUFSIZE];
+
+typedef std::map<std::string, std::string> StringMap;
+typedef std::map<std::string, StringMap> MapMap;
+MapMap domainDict;
 
 const char *localizedUTF8String(const char *key)
 {
@@ -33,21 +38,31 @@ const char *localizedUTF8String(const char *key)
 
 const char *localizedUTF8StringWithDomain(const char *domain, const char *key)
 {
-    const char *result = key;
-    CFStringRef keyStr = CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull);
-    CFStringRef domainStr = CFStringCreateWithCStringNoCopy(NULL, domain, kCFStringEncodingUTF8, kCFAllocatorNull);
-    CFStringRef str = CFCopyLocalizedStringFromTable(keyStr, domainStr, "");
-    CFRelease(keyStr);
-    CFRelease(domainStr);
-
-    if (str)
+    std::string domainStr(domain);
+    std::string keyStr(key);
+    MapMap::iterator iter = domainDict.find(domainStr);
+    if (iter == domainDict.end())
     {
-        if (CFStringGetCString(str, localizedStr, LOCALIZED_STR_BUFSIZE, kCFStringEncodingUTF8))
-        {
-            result = localizedStr;
-        }
+        StringMap strMap;
+        domainDict[domainStr] = strMap;
+        iter = domainDict.find(domainStr);
     }
-
-    CFRelease(str);
-    return result;
+    StringMap &localizedDict = iter->second;
+    StringMap::iterator strIter = localizedDict.find(keyStr);
+    if (strIter == localizedDict.end())
+    {
+        CFStringRef domainRef = CFStringCreateWithCStringNoCopy(NULL, domain, kCFStringEncodingUTF8, kCFAllocatorNull);
+        CFStringRef keyRef = CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull);
+        CFStringRef localizedRef = CFCopyLocalizedStringFromTable(keyRef, domainRef, "");
+        char localizedBuf[LOCALIZED_STR_BUFSIZE];
+        CFStringGetCString(localizedRef, localizedBuf, LOCALIZED_STR_BUFSIZE, kCFStringEncodingUTF8);
+        std::string localizedStr(localizedBuf);
+        localizedDict[keyStr] = localizedStr;
+        CFRelease(localizedRef);
+        CFRelease(keyRef);
+        CFRelease(domainRef);
+        strIter = localizedDict.find(keyStr);
+    }
+    std::string &localized = strIter->second;
+    return localized.c_str();
 }
