@@ -183,16 +183,6 @@ Modify 1821
 	Radius 51050000 # Limb darkened angular diameter = 2.02 mas
 }
 
-Modify 1834
-{
-	Radius 1297000000 # Limb darkened angular diameter = 14.22 mas
-}
-
-Modify 1901
-{
-	Radius 244300000 # Limb darkened angular diameter = 8.46 mas
-}
-
 Modify 2021
 {
 	Radius 1241000 # Uniform disk angular diameter = 2.22 mas
@@ -201,11 +191,6 @@ Modify 2021
 Modify 2081
 {
 	Radius 10200000 # Limb darkened angular diameter = 5.25 mas
-}
-
-Modify 2180
-{
-	Radius 716100000 # Uniform disk angular diameter = 3.64 mas
 }
 
 Modify 2224
@@ -231,11 +216,6 @@ Modify 2497
 Modify 2517
 {
 	Radius 37320000 # Uniform disk angular diameter = 1.50 mas
-}
-
-Modify 2546
-{
-	Radius 132000000 # Uniform disk angular diameter = 2.93 mas
 }
 
 Modify 2611
@@ -428,11 +408,6 @@ Modify 5002
 	Radius 63420000 # Uniform disk angular diameter = 2.34 mas
 }
 
-Modify 5091
-{
-	Radius 332500000 # Uniform disk angular diameter = 2.00 mas
-}
-
 Modify 5121
 {
 	Radius 5816000 # Uniform disk angular diameter = 0.84 mas
@@ -440,7 +415,7 @@ Modify 5121
 
 Modify 5165
 {
-	Radius 471200000 # Uniform disk angular diameter = 2.52 mas
+	Radius 11440000 # Uniform disk angular diameter = 2.52 mas
 }
 
 Modify 5198
@@ -906,11 +881,6 @@ Modify 10340
 Modify 10347
 {
 	Radius 51710000 # Uniform disk angular diameter = 1.03 mas
-}
-
-Modify 10472
-{
-	Radius 315400000 # Uniform disk angular diameter = 3.50 mas
 }
 
 Modify 10642
@@ -1918,11 +1888,6 @@ Modify 22565
 	Radius 3834000 # Uniform disk angular diameter = 1.00 mas
 }
 
-Modify 22670
-{
-	Radius 314000000 # Uniform disk angular diameter = 3.40 mas
-}
-
 Modify 22678
 {
 	Radius 37680000 # Uniform disk angular diameter = 2.73 mas
@@ -2248,11 +2213,6 @@ Modify 25606
 	Radius 10920000 # Uniform disk angular diameter = 2.97 mas
 }
 
-Modify 25673
-{
-	Radius 865900000 # Uniform disk angular diameter = 10.30 mas
-}
-
 Modify 25708
 {
 	Radius 13110000 # Uniform disk angular diameter = 1.16 mas
@@ -2301,11 +2261,6 @@ Modify 26200
 Modify 26311
 {
 	Radius 31280000 # Limb darkened angular diameter = 0.69 mas
-}
-
-Modify 26327
-{
-	Radius 62770000 # Uniform disk angular diameter = 2.40 mas
 }
 
 Modify 26344
@@ -2546,11 +2501,6 @@ Modify 28041
 Modify 28139
 {
 	Radius 7171000 # Uniform disk angular diameter = 1.01 mas
-}
-
-Modify 28164
-{
-	Radius 394800000 # Uniform disk angular diameter = 1.90 mas
 }
 
 Modify 28166
@@ -2813,11 +2763,6 @@ Modify 30565
 	Radius 6997000 # Uniform disk angular diameter = 1.13 mas
 }
 
-Modify 30599
-{
-	Radius 412000000 # Uniform disk angular diameter = 1.16 mas
-}
-
 Modify 30669
 {
 	Radius 12110000 # Uniform disk angular diameter = 0.95 mas
@@ -2835,7 +2780,7 @@ Modify 30780
 
 Modify 30827
 {
-	Radius 153300000 # Uniform disk angular diameter = 0.82 mas
+	Radius 29360000 # Uniform disk angular diameter = 0.82 mas
 }
 
 Modify 30962
@@ -2915,7 +2860,7 @@ Modify 31469
 
 Modify 31579
 {
-	Radius 2265000000 # Uniform disk angular diameter = 12.11 mas
+	Radius 503400000 # Uniform disk angular diameter = 12.11 mas
 }
 
 Modify 31592
@@ -2981,11 +2926,6 @@ Modify 32002
 Modify 32064
 {
 	Radius 21560000 # Limb darkened angular diameter = 2.73 mas
-}
-
-Modify 32083
-{
-	Radius 291200000 # Uniform disk angular diameter = 2.18 mas
 }
 
 Modify 32173
@@ -3173,11 +3113,6 @@ Modify 33929
 	Radius 76760000 # Uniform disk angular diameter = 4.16 mas
 }
 
-Modify 33959
-{
-	Radius 79060000 # Uniform disk angular diameter = 0.87 mas
-}
-
 Modify 34033
 {
 	Radius 28750000 # Limb darkened angular diameter = 2.11 mas
@@ -3323,11 +3258,6 @@ Modify 35170
 	Radius 58490000 # Uniform disk angular diameter = 1.04 mas
 }
 
-Modify 35188
-{
-	Radius 351700000 # Uniform disk angular diameter = 1.32 mas
-}
-
 Modify 35288
 {
 	Radius 11720000 # Uniform disk angular diameter = 0.84 mas
@@ -3466,11 +3396,6 @@ Modify 36544
 Modify 36616
 {
 	Radius 9350000 # Uniform disk angular diameter = 1.29 mas
-}
-
-Modify 36776
-{
-	Radius 108500000 # Uniform disk angular diameter = 0.83 mas
 }
 
 Modify 36918
@@ -4036,11 +3961,6 @@ Modify 42821
 Modify 42884
 {
 	Radius 9081000 # Uniform disk angular diameter = 1.73 mas
-}
-
-Modify 42900
-{
-	Radius 142400000 # Uniform disk angular diameter = 0.99 mas
 }
 
 Modify 42911
@@ -5653,11 +5573,6 @@ Modify 63950
 	Radius 114800000 # Uniform disk angular diameter = 6.80 mas
 }
 
-Modify 63980
-{
-	Radius 88890000 # Uniform disk angular diameter = 0.82 mas
-}
-
 Modify 64022
 {
 	Radius 22470000 # Uniform disk angular diameter = 2.96 mas
@@ -5828,11 +5743,6 @@ Modify 66023
 	Radius 31430000 # Uniform disk angular diameter = 1.00 mas
 }
 
-Modify 66100
-{
-	Radius 593500000 # Uniform disk angular diameter = 7.14 mas
-}
-
 Modify 66249
 {
 	Radius 1444000 # Uniform disk angular diameter = 0.85 mas
@@ -5896,11 +5806,6 @@ Modify 67107
 Modify 67275
 {
 	Radius 991600 # Uniform disk angular diameter = 0.85 mas
-}
-
-Modify 67410
-{
-	Radius 537300000 # Uniform disk angular diameter = 7.47 mas
 }
 
 Modify 67419
@@ -6418,11 +6323,6 @@ Modify 74087
 	Radius 16860000 # Uniform disk angular diameter = 1.42 mas
 }
 
-Modify 74195
-{
-	Radius 185200000 # Uniform disk angular diameter = 1.04 mas
-}
-
 Modify 74386
 {
 	Radius 126100000 # Uniform disk angular diameter = 7.60 mas
@@ -6643,11 +6543,6 @@ Modify 76939
 	Radius 7315000 # Uniform disk angular diameter = 1.22 mas
 }
 
-Modify 77027
-{
-	Radius 343800000 # Uniform disk angular diameter = 6.71 mas
-}
-
 Modify 77048
 {
 	Radius 6103000 # Uniform disk angular diameter = 1.09 mas
@@ -6666,11 +6561,6 @@ Modify 77354
 Modify 77450
 {
 	Radius 46680000 # Uniform disk angular diameter = 5.33 mas
-}
-
-Modify 77501
-{
-	Radius 826800000 # Uniform disk angular diameter = 4.09 mas
 }
 
 Modify 77578
@@ -6816,11 +6706,6 @@ Modify 79120
 Modify 79219
 {
 	Radius 6437000 # Uniform disk angular diameter = 0.69 mas
-}
-
-Modify 79233
-{
-	Radius 659500000 # Uniform disk angular diameter = 8.46 mas
 }
 
 Modify 79349
@@ -7213,11 +7098,6 @@ Modify 85008
 	Radius 63820000 # Uniform disk angular diameter = 0.93 mas
 }
 
-Modify 85029
-{
-	Radius 108700000 # Uniform disk angular diameter = 1.13 mas
-}
-
 Modify 85084
 {
 	Radius 48490000 # Uniform disk angular diameter = 2.58 mas
@@ -7308,11 +7188,6 @@ Modify 86317
 	Radius 85890000 # Uniform disk angular diameter = 2.54 mas
 }
 
-Modify 86406
-{
-	Radius 168300000 # Uniform disk angular diameter = 1.08 mas
-}
-
 Modify 86462
 {
 	Radius 31980000 # Uniform disk angular diameter = 2.21 mas
@@ -7326,16 +7201,6 @@ Modify 86698
 Modify 86742
 {
 	Radius 8423000 # Uniform disk angular diameter = 4.49 mas
-}
-
-Modify 86873
-{
-	Radius 488800000 # Uniform disk angular diameter = 3.27 mas
-}
-
-Modify 86943
-{
-	Radius 262100000 # Uniform disk angular diameter = 1.44 mas
 }
 
 Modify 86974
@@ -7391,11 +7256,6 @@ Modify 87564
 Modify 87585
 {
 	Radius 8079000 # Limb darkened angular diameter = 3.13 mas
-}
-
-Modify 87668
-{
-	Radius 704400000 # Uniform disk angular diameter = 5.65 mas
 }
 
 Modify 87808
@@ -8148,11 +8008,6 @@ Modify 96255
 	Radius 152800000 # Uniform disk angular diameter = 6.13 mas
 }
 
-Modify 96274
-{
-	Radius 241900000 # Uniform disk angular diameter = 1.62 mas
-}
-
 Modify 96310
 {
 	Radius 67010000 # Limb darkened angular diameter = 2.84 mas
@@ -8263,11 +8118,6 @@ Modify 97402
 	Radius 8417000 # Uniform disk angular diameter = 0.89 mas
 }
 
-Modify 97460
-{
-	Radius 420100000 # Uniform disk angular diameter = 3.37 mas
-}
-
 Modify 97484
 {
 	Radius 78020000 # Limb darkened angular diameter = 1.94 mas
@@ -8368,11 +8218,6 @@ Modify 98162
 	Radius 56860000 # Limb darkened angular diameter = 2.98 mas
 }
 
-Modify 98220
-{
-	Radius 418000000 # Uniform disk angular diameter = 10.73 mas
-}
-
 Modify 98242
 {
 	Radius 52050000 # Uniform disk angular diameter = 0.95 mas
@@ -8401,11 +8246,6 @@ Modify 98526
 Modify 98682
 {
 	Radius 14230000 # Uniform disk angular diameter = 0.91 mas
-}
-
-Modify 98719
-{
-	Radius 561000000 # Uniform disk angular diameter = 5.40 mas
 }
 
 Modify 98761
@@ -8510,7 +8350,7 @@ Modify 99990
 
 Modify 100044
 {
-	Radius 1032000000 # Uniform disk angular diameter = 5.52 mas
+	Radius 1290000000 # Uniform disk angular diameter = 5.52 mas
 }
 
 Modify 100064
@@ -8626,11 +8466,6 @@ Modify 101490
 Modify 101515
 {
 	Radius 20570000 # Uniform disk angular diameter = 0.93 mas
-}
-
-Modify 101527
-{
-	Radius 454300000 # Uniform disk angular diameter = 2.49 mas
 }
 
 Modify 101692
@@ -9098,11 +8933,6 @@ Modify 107235
 	Radius 46680000 # Uniform disk angular diameter = 3.17 mas
 }
 
-Modify 107242
-{
-	Radius 898000000 # Uniform disk angular diameter = 7.68 mas
-}
-
 Modify 107259
 {
 	Radius 2687000000 # Uniform disk angular diameter = 19.76 mas
@@ -9143,19 +8973,9 @@ Modify 107956
 	Radius 88160000 # Uniform disk angular diameter = 4.29 mas
 }
 
-Modify 108205
-{
-	Radius 546300000 # Uniform disk angular diameter = 4.09 mas
-}
-
 Modify 108479
 {
 	Radius 41680000 # Uniform disk angular diameter = 1.44 mas
-}
-
-Modify 108556
-{
-	Radius 103000000 # Uniform disk angular diameter = 0.95 mas
 }
 
 Modify 108779
@@ -9291,11 +9111,6 @@ Modify 110873
 Modify 110882
 {
 	Radius 5817000 # Uniform disk angular diameter = 1.71 mas
-}
-
-Modify 110972
-{
-	Radius 177900000 # Uniform disk angular diameter = 2.83 mas
 }
 
 Modify 110991
@@ -9790,7 +9605,7 @@ Modify 117737
 
 Modify 117863
 {
-	Radius 461900000 # Limb darkened angular diameter = 2.47 mas
+	Radius 659900000 # Limb darkened angular diameter = 2.47 mas
 }
 
 Modify 117887
