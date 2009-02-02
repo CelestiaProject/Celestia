@@ -16,6 +16,17 @@
 #   http://joy.chara.gsu.edu/RECONS/TOP100.htm
 # The SIMBAD stellar database:
 #   http://simbad.u-strasbg.fr/sim-fid.pl
+# WEBDA database of open clusters:
+#   http://www.univie.ac.at/webda/
+
+207 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 0.65034381
+	Dec 66.09896232
+	Distance 2077 # Parallax 1.57 +/- 1.67
+	AppMag 5.87
+	SpectralType "G8III"
+}
 
 Modify 3829 # van Maanen's Star: improved spectral class from McCook & Sion
 {
@@ -32,9 +43,27 @@ Modify 3829 # van Maanen's Star: improved spectral class from McCook & Sion
 	SpectralType "M0"
 }
 
+5165 # Bet Phe: missing bright star - used Hipparcos 1 parallax
+{
+	RA 16.52128448
+	Dec -46.71849569
+	Distance 198 # Parallax 16.46 +/- 22.22
+	AppMag 3.32
+	SpectralType "G8IIIvar"
+}
+
 Modify 5336 # Mu Cas: Revised luminosity class from RECONS; subdwarf
 {
 	SpectralType "G5VIp"
+}
+
+6242 # Phi Cas: missing bright star - used Hipparcos 1 parallax
+{
+	RA 20.02049032
+	Dec 58.23161618
+	Distance 2330 # Parallax 1.4 +/- 0.68
+	AppMag 4.95
+	SpectralType "F0Ia"
 }
 
 Modify 8709 # Improved spectral class from McCook & Sion
@@ -92,9 +121,36 @@ Modify 21088 # Stein 2051: Spectral class of primary component from RECONS
 	SpectralType "M4V"
 }
 
+21148 # 1 Cam: missing bright star (negative parallax) - used Tycho value
+{
+	RA 68.00768144
+	Dec 53.91084624
+	Distance 3262 # Parallax 1.00 +/- 5.20
+	AppMag 5.78
+	SpectralType "B0III SB"
+}
+
 Modify 21392 # Spectral class from SIMBAD, replacing "R..."
 {
 	SpectralType "K5"
+}
+
+21986 # 55 Eri: missing bright star - used Hipparcos 1 parallax
+{
+	RA 70.89469834
+	Dec -8.79424599
+	Distance 406 # Parallax 8.04 +/- 1.39
+	AppMag 5.98
+	SpectralType "F4IIIp (Sr)"
+}
+
+22024 # 56 Eri: missing bright star - used Hipparcos 1 parallax
+{
+	RA 71.02215831
+	Dec -8.50357398
+	Distance 1342 # Parallax 2.43 +/- 0.82
+	AppMag 5.78
+	SpectralType "B2Ve"
 }
 
 Modify 22767 # Spectral class from SIMBAD, replacing "N..."
@@ -117,14 +173,44 @@ Modify 24608 # Capella: Spectral class from SIMBAD, replacing "M1:"
 	SpectralType "G5III"
 }
 
-Modify 26220 # Tet1 Ori A: Hipparcos parallax unreliable; distance set to 1400ly
+25950 # missing bright star - used Hipparcos 1 parallax
 {
-	Distance 1400
+	RA 83.05893615
+	Dec 17.05815344
+	Distance 1117 # Parallax 2.92 +/- 1.57
+	AppMag 5.5
+	SpectralType "B7III"
 }
 
-Modify 26221 # Tet1 Ori C: Hipparcos parallax unreliable; distance set to 1400ly
+25984 # Chi Aur: missing bright star - used Hipparcos 1 parallax
 {
+	RA 83.18197569
+	Dec 32.19203144
+	Distance 4077 # Parallax 0.8 +/- 0.89
+	AppMag 4.71
+	SpectralType "B5Iab"
+}
+
+26220 # Tet1 Ori A: missing star - Hipparcos parallax unreliable; distance set
+      # to 1400ly. RA/Dec from 2007 reduction of Hipparcos catalog, AppMag and
+      # spectral type from original version of Hipparcos catalog.
+{
+	RA 83.81588707
+	Dec -5.38727971
 	Distance 1400
+	AppMag 4.98
+	SpectralType "O7"
+}
+
+26221 # Tet1 Ori C: missing star - Hipparcos parallax unreliable; distance set
+      # to 1400ly. RA/Dec from 2007 reduction of Hipparcos catalog, AppMag and
+      # spectral type from original version of Hipparcos catalog.
+{
+	RA 83.81860906
+	Dec -5.38969673
+	Distance 1400
+	AppMag 5.13
+	SpectralType "O6"
 }
 
 26224 # Tet1 Ori D: missing star - Hipparcos parallax unreliable; distance set
@@ -145,6 +231,42 @@ Modify 26235 # Tet2 Ori: Distance set to 1400ly, to match Tet1 Ori stars
 	Distance 1400
 }
 
+26536 # 26 Aur: missing bright star - used Hipparcos 1 parallax
+{
+	RA 84.65874804
+	Dec 30.49244271
+	Distance 447 # Parallax 7.29 +/- 0.96
+	AppMag 5.4
+	SpectralType "A2V + GIII"
+}
+
+26549 # Sig Ori: missing bright star - used Hipparcos 1 parallax
+{
+	RA 84.68652551
+	Dec -2.60006563
+	Distance 1148 # Parallax 2.84 +/- 0.91
+	AppMag 3.77
+	SpectralType "O9.5V..."
+}
+
+28814 # 66 Ori: missing bright star - used Hipparcos 1 parallax
+{
+	RA 91.24316612
+	Dec 4.15867686
+	Distance 2490 # Parallax 1.31 +/- 0.76
+	AppMag 5.63
+	SpectralType "G4III"
+}
+
+29225 # 3 Gem: missing bright star - used Hipparcos 2 parallax
+{
+	RA 92.43327249
+	Dec 23.11346968
+	Distance 14181 # Parallax 0.23 +/- 0.88
+	AppMag 5.75
+	SpectralType "B2.5Ib"
+}
+
 Modify 29564 # Spectral class from SIMBAD, replacing "R..."
 {
 	SpectralType "K5"
@@ -159,6 +281,24 @@ Modify 29564 # Spectral class from SIMBAD, replacing "R..."
 	AppMag 8.31
 }
 
+30827 # 48 Aur: missing bright star (negative parallax) - used HIP1 value
+{
+	RA 97.14203611
+	Dec 30.49306995
+	Distance 1561 # Parallax 2.09 +/- 0.89
+	AppMag 5.75
+	SpectralType "F5.5Ibv"
+}
+
+31579 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 99.13682390
+	Dec 38.44555222
+	Distance 1812 # Parallax 1.8 +/- 0.81
+	AppMag 5.4
+	SpectralType "C5II"
+}
+
 Modify 32349 # Sirius A: Spectral class of primary from SIMBAD,
              # replacing "A0m..."
 {
@@ -170,14 +310,61 @@ Modify 32560 # Improved spectral class from Gliese catalogue (Gliese 246)
 	SpectralType "DA2"
 }
 
+33152 # Omi1 CMa: missing bright star - used Hipparcos 1 parallax
+{
+	RA 103.53314510
+	Dec -24.18422314
+	Distance 1977 # Parallax 1.65 +/- 0.62
+	AppMag 3.89
+	SpectralType "K3Iab"
+}
+
 Modify 33226 # Wolf 294: Spectral class from RECONS, replacing "K:..."
 {
 	SpectralType "M3V"
 }
 
+34360 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 106.84412146
+	Dec -23.84073455
+	Distance 2965 # Parallax 1.1 +/- 0.74
+	AppMag 5.75
+	SpectralType "B2V:nn"
+}
+
+35783 # 19 Lyn B: missing star (negative parallax) - used weighted average of
+      # HIP1 parallaxes for 19 Lyn A and 19 Lyn B
+{
+	RA 110.71187894
+	Dec 55.28439050
+	Distance 458 # Average parallax 7.12 +/- 1.86
+	AppMag 6.86
+	SpectralType "B9V"
+}
+
+35785 # 19 Lyn A: missing bright star (negative parallax) - used weighted
+      # average of HIP1 parallaxes for 19 Lyn A and 19 Lyn B
+{
+	RA 110.71692441
+	Dec 55.28147059
+	Distance 458 # Parallax 7.12 +/- 1.86
+	AppMag 5.8
+	SpectralType "B8V"
+}
+
 Modify 40765 # Spectral class from SIMBAD, replacing "R..."
 {
 	SpectralType "G1V"
+}
+
+41074 # missing bright star (negative parallax) - used Tycho value
+{
+	RA 125.70808191
+	Dec -26.34823502
+	Distance 2965 # Parallax 1.10 +/- 2.70
+	AppMag 5.88
+	SpectralType "F2Iab"
 }
 
 Modify 43177 # Luminosity class from Extra-solar Planets Catalog at
@@ -193,27 +380,65 @@ Modify 45343 # Struve 1321: Improved spectral class from SIMBAD
 	SpectralType "K7"
 }
 
-45982 # HD 80606: Missing star - data from original Hipparcos catalog
+45982 # HD 80606: Missing star - use weighted average of HIP1 parallaxes for
+      # stars HD 80606 and HD 80607
 {
 	RA 140.65635304
 	Dec 50.60370444
 	AppMag 9.06
-	Distance 190.4068885
+	Distance 220.1 # Parallax 14.82 +/- 4.82
 	SpectralType "G5"
 }
 
-45983 # HD 80607: Missing star - data from original Hipparcos catalog
+45983 # HD 80607: missing star - use weighted average of HIP1 parallaxes for
+      # stars HD 80606 and HD 80607
 {
 	RA 140.66536376
 	Dec 50.60384845
 	AppMag 9.17
-	Distance 190.4068885
+	Distance 220.1 # Parallax 14.82 +/- 4.82
 	SpectralType "G5"
+}
+
+51192 # missing bright star - used cluster distance to IC 2581 from WEBDA
+{
+	RA 156.85199266
+	Dec -57.63881366
+	Distance 8000
+	AppMag 4.65
+	SpectralType "A6Ia"
+}
+
+52004 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 159.36281803
+	Dec -58.73334693
+	Distance 8154 # Parallax 0.4 +/- 0.53
+	AppMag 5.47
+	SpectralType "A0Ia"
 }
 
 Modify 54061 # Dubhe: Spectral class from SIMBAD, replaces "F7V comp"
 {
 	SpectralType "K0Ib"
+}
+
+54461 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 167.14169020
+	Dec -61.94717967
+	Distance 5528 # Parallax 0.59 +/- 0.55
+	AppMag 5.11
+	SpectralType "B9Ia"
+}
+
+54751 # missing bright star (negative parallax) - used Hipparcos 1 value
+{
+	RA 168.15008446
+	Dec -60.31763067
+	Distance 12545 # Parallax 0.26 +/- 0.55
+	AppMag 4.59
+	SpectralType "A6Ia"
 }
 
 55203 # Alula Australis: Missing star - data from SIMBAD and NStars
@@ -235,6 +460,52 @@ Modify 57367 # Luyten 145-141: Improved spectral class from McCook & Sion
 	SpectralType "DQ6"
 }
 
+57741 # missing bright star (negative parallax) - used Hipparcos 1 value
+{
+	RA 177.61368703
+	Dec -62.64938345
+	Distance 3077 # Parallax 1.06 +/- 0.54
+	AppMag 5.68
+	SpectralType "A3Iab"
+}
+
+58427 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 179.69861993
+	Dec -64.33955671
+	Distance 2836 # Parallax 1.15 +/- 0.54
+	AppMag 5.59
+	SpectralType "A3Ib"
+}
+
+59517 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 183.09161071
+	Dec -62.95077297
+	Distance 4868 # Parallax 0.67 +/- 0.55
+	AppMag 5.91
+	SpectralType "B9Ia"
+}
+
+62931 # Kap Cru: missing bright star (negative parallax) - used cluster
+      # distance to NGC 4755 from WEBDA
+{
+	RA 193.45384769
+	Dec -60.37624006
+	Distance 6400
+	AppMag 5.89
+	SpectralType "B5Ia"
+}
+
+64094 # Tet Mus: missing bright star - used Hipparcos 2 parallax
+{
+	RA 197.02982835
+	Dec -65.30601745
+	Distance 12545 # Parallax 0.26 +/- 0.48
+	AppMag 5.44
+	SpectralType "WC6 + O9.5I"
+}
+
 Modify 65877 # Improved spectral class from McCook & Sion
 {
 	SpectralType "DA5"
@@ -245,9 +516,54 @@ Modify 66578 # Improved spectral class from McCook & Sion
 	SpectralType "DA3"
 }
 
+66984 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 205.91706324
+	Dec -42.06750984
+	Distance 1591 # Parallax 2.05 +/- 1.47
+	AppMag 5.96
+	SpectralType "B8III"
+}
+
+67861 # missing bright star (negative parallax) - used Tycho value
+{
+	RA 208.48852964
+	Dec -47.12815338
+	Distance 2330 # Parallax 1.40 +/- 3.00
+	AppMag 5.83
+	SpectralType "B2IIIe"
+}
+
+71500 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 219.33402274
+	Dec -46.13341420
+	Distance 1337 # Parallax 2.44 +/- 1.25
+	AppMag 5.39
+	SpectralType "K0III"
+}
+
 Modify 72105 # Eps Boo: Primary spectral class from SIMBAD
 {
 	SpectralType "K0III"
+}
+
+74184 # missing bright star - used Hipparcos 2 parallax
+{
+	RA 227.37466412
+	Dec -67.08412720
+	Distance 9319 # Parallax 0.35 +/- 0.42
+	AppMag 5.76
+	SpectralType "F8Iab-Ib"
+}
+
+77442 # R CrB: missing bright star - used Hipparcos 1 parallax
+{
+	RA 237.14340123
+	Dec 28.15677697
+	Distance 6040 # Parallax 0.54 +/- 0.72
+	AppMag 5.89
+	SpectralType "F8"
 }
 
 78727 # Xi Sco: missing parallax taken from companion star Hip 78738
@@ -269,14 +585,19 @@ Modify 80300 # Improved spectral class from McCook & Sion
 	SpectralType "DA2"
 }
 
+81702 # missing bright star (negative parallax) - used cluster distance to
+      # NGC 6193 from WEBDA
+{
+	RA 250.33506521
+	Dec -48.76296807
+	Distance 3800
+	AppMag 5.57
+	SpectralType "O5"
+}
+
 Modify 82257 # Improved spectral class from McCook & Sion
 {
 	SpectralType "DAV4"
-}
-
-Modify 83404 # Spectral Class from SIMBAD; replaces "Ne"
-{
-	SpectralType "B7II"
 }
 
 Modify 84123 # Spectral class from ARCINS; replaces "G"
@@ -329,6 +650,16 @@ Modify 88267 # 95 Her: Spectral class from SIMBAD; replaces "G5"
 	SpectralType "A5III"
 }
 
+88298 # missing bright star (negative parallax) - used cluster distance to
+      # NGC 6514 from WEBDA
+{
+	RA 270.47658705
+	Dec -22.78029073
+	Distance 2700
+	AppMag 5.72
+	SpectralType "B0Iab..."
+}
+
 88522 # Missing star - data from Hipparcos and SIMBAD
       # distance estimated from spectral class and app mag
 {
@@ -337,6 +668,34 @@ Modify 88267 # 95 Her: Spectral class from SIMBAD; replaces "G5"
 	Distance 5800
 	SpectralType "B0III"
 	AppMag 6.15
+}
+
+89341 # Mu Sgr: missing bright star - used approximate distance to Sgr OB1
+      # association
+{
+	RA 273.44086939
+	Dec -21.05883052
+	Distance 4000
+	AppMag 3.84
+	SpectralType "B2III:"
+}
+
+89439 # 15 Sgr: missing bright star - used approximate distance to Sgr OB1
+{
+	RA 273.80377253
+	Dec -20.72826682
+	Distance 4000
+	AppMag 5.29
+	SpectralType "B0/1Ia/ab"
+}
+
+89440 # 16 Sgr: missing bright star - used approximate distance to Sgr OB1
+{
+	RA 273.80403813
+	Dec -20.38796944
+	Distance 4000
+	AppMag 5.96
+	SpectralType "B0.5Ib/II"
 }
 
 Modify 91768 # Struve 2398 A: Spectral class from RECONS; replaces "K5"
@@ -352,6 +711,15 @@ Modify 91772 # Struve 2398 B: Spectral class from RECONS; replaces "K5"
 Modify 95071 # Improved spectral class from McCook & Sion
 {
 	SpectralType "DBZ5"
+}
+
+96840 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 295.27303472
+	Dec 13.81570849
+	Distance 1647 # Parallax 1.98 +/- 0.82
+	AppMag 5.98
+	SpectralType "B5V"
 }
 
 101120 # Omi Cap B: Missing star - data from Hipparcos and SIMBAD
@@ -379,6 +747,15 @@ Modify 103039 # Spectral class from RECONS
 	SpectralType "M"
 }
 
+103312 # missing bright star (negative parallax) - used HIP1 value
+{
+	RA 313.95752469
+	Dec 47.41766580
+	Distance 9319 # Parallax 0.35 +/- 0.58
+	AppMag 5.68
+	SpectralType "B8Ia"
+}
+
 Modify 105259 # Spectral class from SIMBAD; replaces "B3Vv comp"
 {
 	SpectralType "M1Ib"
@@ -387,6 +764,33 @@ Modify 105259 # Spectral class from SIMBAD; replaces "B3Vv comp"
 Modify 105680 # Spectral class from SIMBAD; replaces "G0"
 {
 	SpectralType "B"
+}
+
+105811 # 69 Cyg: missing bright star - used Hipparcos 1 parallax
+{
+	RA 321.44591739
+	Dec 36.66740768
+	Distance 2764 # Parallax 1.18 +/- 0.58
+	AppMag 5.93
+	SpectralType "B0Ib"
+}
+
+106801 # 9 Cep: missing bright star (zero parallax) - used HIP1 value
+{
+	RA 324.48011139
+	Dec 62.08194691
+	Distance 4530 # Parallax 0.72 +/- 0.49
+	AppMag 4.76
+	SpectralType "B2Ib"
+}
+
+107930 # missing bright star - used Hipparcos 1 parallax
+{
+	RA 328.00425773
+	Dec 55.79674473
+	Distance 643 # Parallax 5.07 +/- 1.52
+	AppMag 5.7
+	SpectralType "B6IV-V"
 }
 
 Modify 107968 # Improved spectral class from McCook & Sion
