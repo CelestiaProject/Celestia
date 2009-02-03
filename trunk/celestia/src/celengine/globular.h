@@ -46,7 +46,8 @@ class Globular : public DeepSkyObject
     void  setCoreRadius(const float);
 	void  setConcentration(const float);	
 	float getConcentration() const;
-	float getHalfMassRadius(float c, float r_c);
+	float getHalfMassRadius() const;
+    unsigned int cSlot(float) const;
     
     virtual float getBoundingSphereRadius() const { return tidalRadius; }
     
@@ -65,7 +66,7 @@ class Globular : public DeepSkyObject
                                           float brightness,
                                           float pixelSize);
 	GlobularForm* getForm() const;
-    static void hsv2rgb( float *r, float *g, float *b, float h, float s, float v );
+
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;
     virtual const char* getObjTypeName() const;

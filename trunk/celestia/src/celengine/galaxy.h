@@ -67,7 +67,6 @@ class Galaxy : public DeepSkyObject
     static void  decreaseLightGain();
     static float getLightGain();
     static void  setLightGain(float);
-    static void hsv2rgb( float *r, float *g, float *b, float h, float s, float v );
 
     virtual unsigned int getRenderMask() const;
     virtual unsigned int getLabelMask() const;
