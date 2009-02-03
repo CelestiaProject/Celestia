@@ -1367,3 +1367,4 @@ translations to be used
 * Added Perl script globulars.pl used to extract the globular data from scientific publications and as documentation 
 * Implemented SIMBAD compatible cross-listing for globular clusters
 * Implemented a major upgrade of globular cluster code
+* Updated Iapetus texture based on a new Ciclops map from Oct 2008
