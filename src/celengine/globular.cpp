@@ -30,25 +30,32 @@
 #include <math.h>
 using namespace std;
 
-static int width = 128, height = 128;
+static int cntrTexWidth = 512, cntrTexHeight = 512; 
+static int starTexWidth = 128, starTexHeight = 128;
 static Color colorTable[256];
 static const unsigned int GLOBULAR_POINTS  = 8192;
+static const float LumiShape = 3.0f, Lumi0 = exp(-LumiShape);
 
-// Reference values ( = data base averages) of core radius and  
-// King concentration:  
-static const float R_c_ref = 0.83f, C_ref = 1.47f, R_mu25 = 40.32f;  
-static const float R_end = 7.0f * R_c_ref, XI = 1.0f/sqrt(1.0f + pow(100.0f, C_ref));
+// Reference values ( = data base averages) of core radius, King concentration 
+// and mu25 isophote radius:  
+ 
+static const float R_c_ref = 0.83f, C_ref = 2.1f, R_mu25 = 40.32f;  
 
-// P1 determines zoom level (pixels) where individual cluster stars appear
-// FoV decreases (zoom increases) when P1 increases.
-static const float P1 = 65.0f, P2 = 0.1f;
+// min/max c-values of globular cluster data
 
-static float DiskSizeInPixels, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
+static const float MinC = 0.50f, MaxC = 2.58f, BinWidth = (MaxC - MinC) / 8.0f + 0.02f;
+
+// P1 determines the zoom level, where individual cluster stars start to appear.
+// The smaller P2 (< 1), the faster stars show up when resolution increases.
+
+static const float P1 = 65.0f, P2 = 0.75f;
+
+static const float RRatio_min = pow(10.0f, 1.7f);
+static float CBin, RRatio, XI, DiskSizeInPixels, Rr = 1.0f, Gg = 1.0f, Bb = 1.0f;
 
 static GlobularForm** globularForms = NULL;
 static Texture* globularTex = NULL;
-static Texture* centerTex = NULL;
-
+static Texture* centerTex[8] = {NULL};
 static void InitializeForms();
 static GlobularForm* buildGlobularForms(float);
 static bool formsInitialized = false;
@@ -57,98 +64,118 @@ static bool decreasing (const GBlob& b1, const GBlob& b2)
 {
 	return (b1.radius_2d > b2.radius_2d);
 }
-  
+
 static void GlobularTextureEval(float u, float v, float /*w*/, unsigned char *pixel)
 {
-	// use a Gaussian luminosity shape for the individual stars
-	float r = exp(- 2 * (u * u + v * v)) - 0.13533528f; // = exp(-2.0f)
-	if (r <= 0.0f)
-		r = 0.0f;
+	// use an exponential luminosity shape for the individual stars
+    // giving sort of a halo for the brighter (i.e.bigger) stars.
 
-    int pixVal = (int) (r * 255.99f);
+    float lumi = exp(- LumiShape * sqrt(u * u + v * v)) - Lumi0;
+
+	if (lumi <= 0.0f)
+		lumi = 0.0f;
+
+    int pixVal = (int) (lumi * 255.99f);
 #ifdef HDR_COMPRESS
     pixel[0] = 127;
     pixel[1] = 127;
     pixel[2] = 127;
 #else
-    pixel[0] = 255;//65;
-    pixel[1] = 255;//64;
-    pixel[2] = 255;//65;
+    pixel[0] = 255;
+    pixel[1] = 255;
+    pixel[2] = 255;
 #endif
     pixel[3] = pixVal;
 }
 
-float relStarDensity(float rho)
-{
-	/*
-	
-	As alpha blending weight (relStarDensity) I take the theoretical number of 
-    globular stars in 2d projection within a distance rho from the center, divided 
-	by the area = PI * rho * rho. This number density of stars I normalized to 1 at rho=0. 
-    (cf. King_1962's expression (Eq.(18)).
 
-	The resulting blending weight increases strongly -> 1 if the 2d number density of stars
-	rises, i.e for rho -> 0. 
-	
-	A typical globular concentration parameter c = C_ref (M4) is entered via XI.
-	
-	*/
-    float XI2 = XI * XI; 
-	float rho2 = 1.0001f + rho * rho; //add 1e-4 as regulator near rho=0
-	 
-	return ((log(rho2) + 4.0f * (1.0f - sqrt(rho2)) * XI) / (rho2 - 1.0f) + XI2) / (1.0f - 2.0f * XI + XI2);
+float relStarDensity(float eta)
+{
+	/*! As alpha blending weight (relStarDensity) I take the theoretical
+	 *  number of globular stars in 2d projection at a distance 
+	 *  rho = r / r_c = eta * r_t from the center (cf. King_1962's Eq.(18)), 
+	 *  divided by the area = PI * rho * rho . This number density of stars 
+	 *  I normalized to 1 at rho=0.   
+
+	 *  The resulting blending weight increases strongly -> 1 if the 
+	 *  2d number density of stars rises, i.e for rho -> 0. 
+	 */	 	 
+     // Since the central "cloud" is due to lack of visual resolution,
+	 // rather than cluster morphology, we limit it's size by
+	 // taking max(C_ref, CBin). Smaller c gives a shallower distribution!
+     
+     float rRatio = max(RRatio_min, RRatio);
+     float Xi = 1.0f / sqrt(1.0f + rRatio * rRatio);           	 
+     float XI2 = Xi * Xi; 
+	 float rho2 = 1.0001f + eta * eta * rRatio * rRatio; //add 1e-4 as regulator near rho=0
+
+	 return ((log(rho2) + 4.0f * (1.0f - sqrt(rho2)) * Xi) / (rho2 - 1.0f) + XI2) / (1.0f - 2.0f * Xi + XI2);
 }
 
 static void CenterCloudTexEval(float u, float v, float /*w*/, unsigned char *pixel)
-{
-	/*
-
-	Calculate central "cloud" texture with fixed /typical/ King_1962 parameters
-	XI(c = C_ref) and r_c = R_c_ref (<=> M 4) for reasons of speed. Since it is 
-	used only for the central regime, details are not very important...
-	
-	*/
-	
-	// 2d projected King_1962 profile at center (rho = 0)	
-
+{	
+	/*! For reasons of speed, calculate central "cloud" texture only for  
+	 *  8 bins of King_1962 concentration, c = CBin, XI(CBin), RRatio(CBin). 
+	 */
+	 
+	// Skyplane projected King_1962 profile at center (rho = eta = 0):	
 	float c2d   = 1.0f - XI;	
 		
-	// 2d projected King_1962 profile (Eq.(14))		
+	float eta = sqrt(u * u + v * v);  // u,v = (-1..1)
+	
+	// eta^2 = u * u  + v * v = 1 is the biggest circle fitting into the quadratic
+	// procedural texture. Hence clipping 
 		
-	float rho   = R_end * sqrt(0.5f *(u * u + v * v)) / R_c_ref;
-	float rho2  = 1.0f + rho * rho;		
-	float profile_2d = (1.0f / sqrt(rho2) - 1.0f)/c2d + 1.0f ;
-	
-	// absolutely no globular stars for r > r_t, where r_t = tidal radius:
+	if (eta >= 1.0f)
+		eta  = 1.0f;
 
-	if (profile_2d < 0.0f) 
-		  profile_2d = 0.0f; 
-	
-	profile_2d = profile_2d * profile_2d;
-	int pixVal  = (int) (relStarDensity(rho) * profile_2d * 255.99f);
+	// eta = 1 corresponds to tidalRadius:
+
+	float rho   = eta  * RRatio;
+	float rho2  = 1.0f + rho * rho;		
+
+    // Skyplane projected King_1962 profile (Eq.(14)), vanishes for eta = 1:
+	// i.e. absolutely no globular stars for r > tidalRadius:	
+		
+	float profile_2d = (1.0f / sqrt(rho2) - 1.0f)/c2d + 1.0f ;	
+	profile_2d = profile_2d * profile_2d;	
 
 #ifdef HDR_COMPRESS
     pixel[0] = 127;
-    pixel[1] = 127;
+    pixel[1] = 127; 
     pixel[2] = 127;
-#else
-    pixel[0] = 255;//65;
-    pixel[1] = 255;//64;
-    pixel[2] = 255;//65;
+#else    
+    pixel[0] = 255;
+    pixel[1] = 255;
+    pixel[2] = 255;
 #endif
-    pixel[3] = pixVal;
+	pixel[3] = (int) (relStarDensity(eta) * profile_2d * 255.99f);
 }
-	
+
 Globular::Globular() :
     detail (1.0f),
     customTmpName (NULL),
     form (NULL),
 	r_c (R_c_ref),
 	c (C_ref),
-    tidalRadius(0.0f)
+	tidalRadius(0.0f)
 {
-    recomputeTidalRadius();
+	recomputeTidalRadius();
 }
+
+unsigned int Globular::cSlot(float conc) const
+{
+	// map the physical range of c, minC <= c <= maxC, 
+	// to 8 integers (bin numbers), 0 < cSlot <= 7:
+	
+	if (conc <= MinC)
+		conc  = MinC;
+	if (conc >= MaxC)
+		conc  = MaxC;
+  	 
+    return (unsigned int) floor((conc - MinC) / BinWidth);
+}
+		
 
 const char* Globular::getType() const
 {
@@ -192,35 +219,33 @@ float Globular::getCoreRadius() const
     return r_c;
 }
 
-void Globular::setCoreRadius(float coreRadius)
+void Globular::setCoreRadius(const float coreRadius)
 {
 	r_c = coreRadius;
-    recomputeTidalRadius();
+	recomputeTidalRadius();
 }
 	
-float Globular::getHalfMassRadius(float c, float r_c)
+float Globular::getHalfMassRadius() const
 {
-	// Aproximation to the half-mass radius r_h [arcmin]
-	// formula (~ 20% accuracy) 
-    return r_c * pow(10.0f, 0.6f * c - 0.4f); 	  
+	// Aproximation to the half-mass radius r_h [ly]
+	// (~ 20% accuracy) 
+    
+	return std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().distanceFromOrigin() *                                 pow(10.0f, 0.6f * c - 0.4f); 	  
 }
 
 float Globular::getConcentration() const
 {
 	return c;
 }
-
-void Globular::setConcentration(float conc)
+void Globular::setConcentration(const float conc)
 {
-	int cslot;
     c = conc;
     if (!formsInitialized)
 		InitializeForms();
 	
-	//account for the actual c values via 8 bins only, for saving time 
-	cslot = (int)floor((conc - 0.5)/0.35 + 0.5);		
-	form = globularForms[cslot];
-    
+	// For saving time, account for the c dependence via 8 bins only,
+
+	form = globularForms[cSlot(conc)];
     recomputeTidalRadius();
 }
 
@@ -250,15 +275,13 @@ bool Globular::pick(const Ray3d& ray,
     if (!isVisible())
         return false;
 	/*
-
-    The ellipsoid should be slightly larger to compensate for the fact
-    that blobs are considered points when globulars are built, but have size
-    when they are drawn.
-    
-	*/
-	Vec3d ellipsoidAxes(getRadius()*(form->scale.x + RADIUS_CORRECTION),
-                        getRadius()*(form->scale.y + RADIUS_CORRECTION),
-                        getRadius()*(form->scale.z + RADIUS_CORRECTION));
+     * The selection ellipsoid should be slightly larger to compensate for the fact
+     * that blobs are considered points when globulars are built, but have size
+     * when they are drawn. 
+	 */
+	Vec3d ellipsoidAxes(getRadius() * (form->scale.x + RADIUS_CORRECTION),
+                        getRadius() * (form->scale.y + RADIUS_CORRECTION),
+                        getRadius() * (form->scale.z + RADIUS_CORRECTION));
 
     Quatf qf= getOrientation();
     Quatd qd(qf.w, qf.x, qf.y, qf.z);
@@ -271,10 +294,11 @@ bool Globular::pick(const Ray3d& ray,
 bool Globular::load(AssociativeArray* params, const string& resPath)
 {
     // Load the basic DSO parameters first
+
     bool ok = DeepSkyObject::load(params, resPath);
     if (!ok)
-        return false;
-    
+		return false;
+
     if(params->getNumber("Detail", detail))
     	setDetail((float) detail);
 			
@@ -287,7 +311,7 @@ bool Globular::load(AssociativeArray* params, const string& resPath)
 			
 	if(params->getNumber("KingConcentration", c))
 		setConcentration(c);
-    
+	
     return true;
 }
 
@@ -315,42 +339,45 @@ void Globular::renderGlobularPointSprites(const GLContext&,
 	if (distanceToDSO < 0)
     	distanceToDSO = 0;
 			
-	float minimumFeatureSize = 0.5f * pixelSize * distanceToDSO;
-
-	float size0 = 2 * getRadius(); // mu25 isophote radius
-		
-	DiskSizeInPixels = size0 / minimumFeatureSize;
+	float minimumFeatureSize = 0.5f * pixelSize * distanceToDSO;    
+	
+	DiskSizeInPixels = getRadius() / minimumFeatureSize;
 	
 	/*
-
-	Is the globular's apparent size big enough to
-    be noticeable on screen? If it's not, break right here to
-    avoid all the overhead of the matrix transformations and
-	GL state changes: 
+     * Is the globular's apparent size big enough to
+     * be noticeable on screen? If it's not, break right here to
+     * avoid all the overhead of the matrix transformations and
+	 * GL state changes: 
+	 */
 	
-	*/
-
 	if (DiskSizeInPixels < 1.0f)	
 		return;	    			
     /*
-
-	The factor pixelWeight affects the blended texture opacity, depending on
-	whether resolution increases or decreases. It approaches 0 if
-	DiskSizeInPixels >= P1 pixels, ie if the resolution increases sufficiently! 
-	
-	*/	
-	
-	float pixelWeight = (DiskSizeInPixels >= P1)? 1.0f/(P2 + (1.0f - P2) * DiskSizeInPixels / P1): 1.0f;
+	 * When resolution (zoom) varies, the blended texture opacity is controlled by the 
+	 * factor 'pixelWeight'. At low resolution, the latter starts at 1, but tends to 0,  
+     * if the resolution increases sufficiently (DiskSizeInPixels >= P1 pixels)! 
+	 * The smaller P2 (<1), the faster pixelWeight -> 0, for DiskSizeInPixels >= P1.
+	 */	
 			
-	if (centerTex == NULL)
-    {		
-		centerTex = CreateProceduralTexture( width, height, GL_RGBA, 		CenterCloudTexEval);
-    }
-    assert(centerTex != NULL);
+	float pixelWeight = (DiskSizeInPixels >= P1)? 1.0f/(P2 + (1.0f - P2) * DiskSizeInPixels / P1): 1.0f;
+							
+    // Use same 8 c-bins as in globularForms below!        
+    
+    unsigned int ic = cSlot(c); 
+    CBin = MinC + ((float) ic + 0.5f) * BinWidth; // center value of (ic+1)th c-bin
+
+	RRatio = pow(10.0f, CBin); 
+    XI = 1.0f / sqrt(1.0f + RRatio * RRatio);           
+    
+    if(centerTex[ic] == NULL)
+	{
+		centerTex[ic] = CreateProceduralTexture( cntrTexWidth, cntrTexHeight, GL_RGBA, CenterCloudTexEval);
+	}
+	assert(centerTex[ic] != NULL);
 		
 	if (globularTex == NULL)
     {
-        globularTex = CreateProceduralTexture( width, height, GL_RGBA,
+        globularTex = CreateProceduralTexture( starTexWidth, starTexHeight, GL_RGBA,
                                                GlobularTextureEval);
     }
     assert(globularTex != NULL);
@@ -359,138 +386,110 @@ void Globular::renderGlobularPointSprites(const GLContext&,
 	glEnable (GL_TEXTURE_2D);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 					    
-	
     Mat3f viewMat = viewerOrientation.toMatrix3();
     Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
     Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
     Vec3f v2 = Vec3f( 1,  1, 0) * viewMat;
     Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
-		    
-    // Rescale globular clusters to actual core radius r_c:
 	
-	float rescale = R_c_ref / r_c;
-	form->scale = Vec3f(rescale, rescale, rescale);
-	    
+	float tidalSize = 2 * tidalRadius;
 	Mat3f m =
-        Mat3f::scaling(form->scale) * getOrientation().toMatrix3() * Mat3f::scaling(size0);
+        Mat3f::scaling(form->scale) * getOrientation().toMatrix3() * 
+		Mat3f::scaling(tidalSize);
 				     
     vector<GBlob>* points = form->gblobs;
     unsigned int nPoints = 
 				 (unsigned int) (points->size() * clamp(getDetail()));
 				 				 	
-	/* 
-
-	Render central cloud sprite (centerTex). It is designed to fade away when
-     i) resolution increases
-	ii) distance from center increases 
+	/* Render central cloud sprite (centerTex). It fades away when
+	 * distance from center or resolution increases sufficiently. 	
+	 */
 	
-	*/
-				 		
-	centerTex->bind();	
-			 	
-	float size = size0;
-		
-	float A =  3.0f  * pixelWeight;
-	
-	if (A > 1.0f)
-    	A = 1.0f;
+	centerTex[ic]->bind();	
+    
+	float br = 2 * brightness;
 
-    float br = 2 * brightness;
-	if (br > 1.0f) 
-		br = 1.0f;
+	glColor4f(Rr, Gg, Bb, min(br * pixelWeight, 1.0f));	
 
-	glColor4f(Rr * br, Gg * br, Bb * br, A);	
-		
 	glBegin(GL_QUADS);		
 		
-	glTexCoord2f(0, 0);          glVertex((v0 * size));
-    glTexCoord2f(1, 0);          glVertex((v1 * size));
-    glTexCoord2f(1, 1);          glVertex((v2 * size));
-    glTexCoord2f(1, 0);          glVertex((v3 * size));   					
+	glTexCoord2f(0, 0);          glVertex(v0 * tidalSize);
+    glTexCoord2f(1, 0);          glVertex(v1 * tidalSize);
+    glTexCoord2f(1, 1);          glVertex(v2 * tidalSize);
+    glTexCoord2f(0, 1);          glVertex(v3 * tidalSize);   					
 		
 	glEnd();						     
-		 				
-	/*
+			 				
+	/*! Next, render globular cluster via distinct "star" sprites (globularTex) 
+	 * for sufficiently large resolution and distance from center of globular.
+	 *  
+	 * This RGBA texture fades away when resolution decreases (e.g. via automag!), 
+	 * or when distance from globular center decreases.
+	 */
+	
+	
+	globularTex->bind();
+	
+	
+	int pow2 = 128;			     // Associate "Red Giants" with the 128 biggest star-sprites  
 
-	Next, render globular cluster via distinct "star" sprites (globularTex) for
-	sufficiently large resolution and distance from center of globular. 
-	
-	This RGBA texture fades away when
-     i) resolution decreases (e.g. via automag!)
-	ii) distance from globular center decreases
-	
-	*/
-		
-	globularTex->bind();			 	
-	
-	size = size0 / 64.0f; // Initialize size of small "star" sprites						
-	
-	int pow2 = 128;		  // "Red Giants" will come from 128 biggest stars with 128 <= pow2 < 256 
-
+	float starSize =  br * 0.5f; // Maximal size of star sprites -> "Red Giants"
+	float clipDistance = 100.0f; // observer distance [ly] from globular, where we 
+		                         // start "morphing" the star-sprite sizes towards 
+			                     // their physical values
 	glBegin(GL_QUADS);
-	
+    
 	for (unsigned int i = 0; i < nPoints; ++i)
-    {  						  
+	{  						  
 		GBlob         b  = (*points)[i];
-		Point3f       p  = b.position * m;
-		float      r_3d  = b.position.distanceFromOrigin();		
-		float      r_2d  = b.radius_2d;
+		Point3f       p  = b.position * m;		
+		float    eta_2d  = b.radius_2d;
 		
 		/*! Note that the [axis,angle] input in globulars.dsc transforms the 
-		 *  2d star distance r_2d in the globular frame to refer to the 
+		 *  2d projected star distance r_2d in the globular frame to refer to the 
 		 *  skyplane frame for each globular! That's what I need here.
-		 *
-		 *  The [axis,angle] input will be needed anyway, when upgrading to 
+	     *
+	     *  The [axis,angle] input will be needed anyway, when upgrading to 
 		 *  account for  ellipticities, with corresponding  inclinations and 
 		 *  position angles...
-		 */
-		       
+	     */
+
 
 		if ((i & pow2) != 0)
-        {
-			pow2 <<=   1;		   
-			size /= 1.2f;
-			
-			//cout<< i <<"  "<< pow2 <<"  "<< size0/size <<endl;
-				
-            if (size < minimumFeatureSize)
-            	break;
+		{      
+			pow2    <<=   1;		   
+			starSize /= 1.25f;			
+	   			
+			if (starSize < minimumFeatureSize)
+           		break;
 		} 
-		
-		float wgt = A * relStarDensity(r_2d * rescale);
-	
-		// Culling: Don't render overlapping stars that would be hidden under the central "cloud" texture
-				
-		if (wgt < 0.95f)
-		{    
-			// Colors of normal globular stars according to size-rescaled color profile:		
-			unsigned int iR = (unsigned int) (rescale * b.colorIndex);
-		
-			if (iR >= 254)
-				iR  = 254;
-		
-			// Associate orange "Red Giant" stars with the largest sprite sizes. 
-			// Don't allow them to lie RG's too far off center in 3d:
-		
-			Color col  = (r_3d < 2 * r_c && pow2 < 256)? colorTable[255]: colorTable[iR];		
-		
-			glColor4f(col.red() * br, col.green() * br, col.blue() * br, 1.0f - wgt);
-						
-			Point3f relPos = p + offset;
-			float screenFrac = size / relPos.distanceFromOrigin();         
+
+		float obsDistanceToStarRatio = (p + offset).distanceFromOrigin() / clipDistance;		
+		float saveSize = starSize;
+
+		if (obsDistanceToStarRatio < 1.0f)
+		{  
+			// "Morph" the star-sprite sizes at close observer distance such that
+			// the overdense globular core is dissolved upon closing in.
             
-			// clamp star sprite sizes at close distance
-			float size_hold = size;
-			if (screenFrac >= 0.006f)   
-    			size = 0.006f * relPos.distanceFromOrigin();
-            	
-			glTexCoord2f(0, 0);          glVertex(p + (v0 * size));
-        	glTexCoord2f(1, 0);          glVertex(p + (v1 * size));
-        	glTexCoord2f(1, 1);          glVertex(p + (v2 * size));
-			glTexCoord2f(0, 1);          glVertex(p + (v3 * size));
-						        
-            size = size_hold;
+			starSize = starSize * min(obsDistanceToStarRatio, 1.0f);     
 		}	
+         
+		/* Colors of normal globular stars are given by color profile.
+		 * Associate orange "Red Giant" stars with the largest sprite
+		 * sizes (while pow2 = 128).
+		 */
+
+		Color col  = (pow2 < 256)? colorTable[255]: colorTable[b.colorIndex];		
+		glColor4f(col.red(), col.green(), col.blue(), 
+			      min(br * (1.0f - pixelWeight * relStarDensity(eta_2d)), 1.0f));
+	   
+		glTexCoord2f(0, 0);          glVertex(p + (v0 * starSize));
+		glTexCoord2f(1, 0);          glVertex(p + (v1 * starSize));
+		glTexCoord2f(1, 1);          glVertex(p + (v2 * starSize));
+		glTexCoord2f(0, 1);          glVertex(p + (v3 * starSize));
+	   					        
+		starSize = saveSize;	
 	}
 	glEnd();
 }
@@ -505,69 +504,14 @@ unsigned int Globular::getLabelMask() const
     return Renderer::GlobularLabels;
 }
 		
-void Globular::hsv2rgb( float *r, float *g, float *b, float h, float s, float v )
+
+void Globular::recomputeTidalRadius()
 {
-// r,g,b values are from 0 to 1
-// h = [0,360], s = [0,1], v = [0,1]
-
-   int i;
-   float f, p, q, t;
-
-   if( s == 0 ) {
-       // achromatic (grey)
-       *r = *g = *b = v;
-   return;
-   }
-
-   h /= 60;            // sector 0 to 5
-   i = (int) floorf( h );
-   f = h - (float) i;            // factorial part of h
-   p = v * ( 1 - s );
-   q = v * ( 1 - s * f );
-   t = v * ( 1 - s * ( 1 - f ) );
-
-   switch( i ) {
-   case 0:
-     *r = v;
-     *g = t;
-     *b = p;
-     break;
-   case 1:
-     *r = q;
-     *g = v;
-     *b = p;
-     break;
-   case 2:
-     *r = p;
-     *g = v;
-     *b = t;
-     break;
-   case 3:
-     *r = p;
-     *g = q;
-     *b = v;
-     break;
-   case 4:
-     *r = t;
-     *g = p;
-     *b = v;
-     break;
-   default:
-     *r = v;
-     *g = p;
-     *b = q;
-     break;
-   }
-}
-
-
-// Compute the tidal radius in light years
-void
-Globular::recomputeTidalRadius()
-{
-    // Convert the core radius from arcminutes to light years
-    float coreRadiusLy = std::tan(degToRad(r_c / 60.0)) * (float) getPosition().distanceFromOrigin();
-    tidalRadius = coreRadiusLy * std::pow(10.0f, c);
+	// Convert the core radius from arcminutes to light years
+	// Compute the tidal radius in light years
+        
+	float coreRadiusLy = std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().distanceFromOrigin();
+    tidalRadius = coreRadiusLy * std::pow(10.0f, c);     
 }
 
 
@@ -575,81 +519,101 @@ GlobularForm* buildGlobularForms(float c)
 {
 	GBlob b;
 	vector<GBlob>* globularPoints = new vector<GBlob>;
-	
-	float prob;
-	float cc =  1.0f + pow(100.0f,c);
-	unsigned int i = 0;
-	
-	// 3d King_1962 profile at center:	
-	
-	float prob0 = acos(1.0f/sqrt(cc)) - pow(10.0f,c)/cc; 
-	
-	/*
 
-	Generate 3d star distribution of globulars following King_1962, 
-	The probability prob is proportional to King's phi(rho); rho =r/r_c
-	King concentration parameter: c=log10(r_t/r_c). 
+	float rRatio = pow(10.0f, c); //  = r_t / r_c
+	float prob;
+	float cc =  1.0f + rRatio * rRatio;
+	unsigned int i = 0, k = 0;
 	
-	*/	
+	// Value of King_1962 luminosity profile at center:	
+	
+	float prob0 = sqrt(cc) - 1.0f;
+
+	/*! Generate the globular star distribution randomly, according 
+	 *  to the  King_1962 surface density profile f(r), eq.(14).
+	 *
+	 *  rho = r / r_c = eta r_t / r_c, 0 <= eta <= 1,  
+  	 *  coreRadius r_c, tidalRadius r_t, King concentration c = log10(r_t/r_c). 
+	 */	
 	
 	while (i < GLOBULAR_POINTS)
 	{	
-		float r = R_end * Mathf::frand();
-	    float rho = r / R_c_ref;
-		float rho2 = 1.0f + rho * rho;
+	    /*!  
+		 *  Use a combination of the Inverse Transform method and 
+		 *  Von Neumann's Acceptance-Rejection method for generating sprite stars 
+		 *  with eta distributed according to the exact King luminosity profile.    
+		 *
+		 * This algorithm leads to almost 100% efficiency for all values of  
+		 * parameters and variables!
+		 */
+	
+		float uu = Mathf::frand();
 		
-		// 3d profile from King_1962 (derived independently by me as a cross-check):  
-				
-		prob = (acos(sqrt(rho2/cc))/sqrt(rho2) - sqrt(cc-rho2)/cc)/rho2;
+		/* First step: eta distributed as inverse power distribution (~1/Z^2) 
+		 * that majorizes the exact King profile. Compute eta in terms of uniformly 
+		 * distributed variable uu! Normalization to 1 for eta -> 0.
+         */ 				
 		
-		/*	
+		float eta = tan(uu *atan(rRatio))/rRatio;
 
-		Generate 3d points of globular cluster stars in polar coordinates:
-		Distribution in r according to King's 3d profile. 
-		Uniform distribution on any spherical surface for given r. 
-				
-  	    Use acceptance-rejection method (Von Neumann) for generating points 
-	    
-		*/
+		float rho = eta * rRatio;		
+		float  cH = 1.0f/(1.0f + rho * rho);
+        float   Z = sqrt((1.0f + rho * rho)/cc); // scaling variable
+		
+	    // Express King_1962 profile in terms of the UNIVERSAL variable 0 < Z <= 1,		
+		
+		prob = (1.0f - 1.0f / Z) / prob0;
+		prob = prob * prob;
+								
+  	    /* Second step: Use Acceptance-Rejection method (Von Neumann) for
+		 * correcting the power distribution of eta into the exact, 
+		 * desired King form 'prob'!
+		 */
 
-		if (Mathf::frand() < prob/prob0)
+        k++;
+
+		if (Mathf::frand() < prob / cH)
 		{
-			// Note: u = cos(phi) must be used as a stochastic variable to get uniformity!
+		   	/* Generate 3d points of globular cluster stars in polar coordinates:
+			 * Distribution in eta (<=> r) according to King's profile. 
+		     * Uniform distribution on any spherical surface for given eta. 
+			 * Note: u = cos(phi) must be used as a stochastic variable to get uniformity in angle!
+			 */
 			float u = Mathf::sfrand(); 
 			float theta = 2 * (float) PI * Mathf::frand();
 			float sthetu2 = sin(theta) * sqrt(1.0f - u * u);
-			b.position = Point3f(r * sqrt(1.0f - u * u) * cos(theta), r * sthetu2 , r * u);
-
-			// note: 2d projection in x-z plane, according to Celestia's
-			// conventions! Hence...
-						
-			b.radius_2d = r * sqrt(1.0f - sthetu2 * sthetu2);
 			
-			/*
+			// x,y,z points within -0.5..+0.5, as required for consistency: 
+			b.position = 0.5f * Point3f(eta * sqrt(1.0f - u * u) * cos(theta), eta * sthetu2 , eta * u);
+			            
+			/* 
+			 * Note: 2d projection in x-z plane, according to Celestia's
+			 * conventions! Hence...
+			 */			
+			b.radius_2d = eta * sqrt(1.0f - sthetu2 * sthetu2);
 
-			For now, implement only a generic spectrum for normal cluster stars, modelled from best Hubble photo of M80. 
-			Blue Stragglers are qualitatively accounted for...
-            Need 3d radius r in b.colorIndex, since colororation must 
-			be OK also at close distance.
+			/* For now, implement only a generic spectrum for normal cluster
+			 * stars, modelled from Hubble photo of M80. 
+			 * Blue Stragglers are qualitatively accounted for...
+   			 * assume color index poportional to Z as function of which the King profile
+			 * becomes universal!
+			 */
+			  
+			b.colorIndex  = (unsigned int) (Z * 254);
             
-			*/
-
-			b.colorIndex  = (unsigned int) (r / R_end * 254);
-						
-			globularPoints->push_back(b);					
+		    globularPoints->push_back(b);					
 			i++;		
 		}
-	} 
+	}
+	
+	// Check for efficiency of sprite-star generation => close to 100 %!
+	//cout << "c =  "<< c <<"  i =  " << i - 1 <<"  k =  " << k - 1 <<                                                       "  Efficiency:  " << 100.0f * i / (float)k<<"%" << endl;	
+	
 	GlobularForm* globularForm  = new GlobularForm();
 	globularForm->gblobs        = globularPoints;
-	globularForm->scale         = Vec3f(1.0f,1.0f,1.0f);	
+	globularForm->scale         = Vec3f(1.0f, 1.0f, 1.0f);	
 		
 	return globularForm;
-}
-float transit(int i, int i0, int i_width, float x0, float x1)
-{
-	// Fast transition from x0 to x1 at i = i0 within a width i_width.
-	return x0 + 0.5f * (x1 -x0) * (tanh((float)(i - i0) / (float) i_width) + 1.0f);
 }
 
 void InitializeForms()
@@ -658,20 +622,22 @@ void InitializeForms()
 	// Build RGB color table, using hue, saturation, value as input.
 	// Hue in degrees.
 	
-	int i0 = 24, i_satmax = 24; // location of hue transition and saturation peak in color index space 
-	int i_width = 4;			// width of hue transition in color index space 
-	float sat_l = 0.05f, sat_h = 0.18f, hue_r = 27.0f, hue_b = 220.0f;
-	
+	// Location of hue transition and saturation peak in color index space: 
+	int i0 = 36, i_satmax = 16; 
+	// Width of hue transition in color index space: 	
+	int i_width = 3;
+				
+	float sat_l = 0.08f, sat_h = 0.1f, hue_r = 27.0f, hue_b = 220.0f;
 	
 	// Red Giant star color: i = 255:
 	// -------------------------------
 	// Convert hue, saturation and value to RGB
 
-	Globular::hsv2rgb(&Rr, &Gg, &Bb, 25.0f, 0.55f, 1.0f);
+	DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, 25.0f, 0.65f, 1.0f);
 	colorTable[255]  = Color(Rr, Gg, Bb);
 		
-	// normal stars: i < 255, only generic color profile for now, improve later
-	// ------------------------------------------------------------------------
+	// normal stars: i < 255, generic color profile for now, improve later
+	// --------------------------------------------------------------------
     // Convert hue, saturation, value to RGB
 		
 	for (int i = 254; i >=0; i--)
@@ -681,19 +647,24 @@ void InitializeForms()
 
 	    float x = (float) i / (float) i_satmax, x2 = x ;
 		float sat = sat_l + 2 * sat_h /(x2 + 1.0f / x2);
-         
- 	    Globular::hsv2rgb(&Rr, &Gg, &Bb, transit(i, i0, i_width, hue_r, hue_b), sat, 0.85f);    
+				
+		// Fast transition from hue_r to hue_b at i = i0 within a width
+		// i_width in color index space:
+
+		float hue = hue_r + 0.5f * (hue_b - hue_r) * (std::tanh((float)(i - i0) / (float) i_width) + 1.0f);
+		
+		DeepSkyObject::hsv2rgb(&Rr, &Gg, &Bb, hue, sat, 0.85f);
 		colorTable[i]  = Color(Rr, Gg, Bb);
 	}
 	// Define globularForms corresponding to 8 different bins of King concentration c 
-	   
-	globularForms = new GlobularForm*[8];
-    for (unsigned int cslot  = 0; cslot <= 7; ++cslot)
+   
+	globularForms = new GlobularForm*[8];   
+
+	for (unsigned int ic  = 0; ic <= 7; ++ic)
     {
-        float c = 0.5f + (float) cslot * 0.35f;
-		globularForms[cslot] = buildGlobularForms(c);			    
+        float CBin = MinC + ((float) ic + 0.5f) * BinWidth;
+		globularForms[ic] = buildGlobularForms(CBin); 
 	}				
 	formsInitialized = true;
 
 }
-	

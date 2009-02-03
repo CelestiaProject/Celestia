@@ -9869,62 +9869,62 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 {
     if (distanceToDSO > distanceLimit)
         return;
-
+    
     Point3d dsoPos = dso->getPosition();
     Vec3f   relPos = Vec3f((float)(dsoPos.x - obsPos.x),
                            (float)(dsoPos.y - obsPos.y),
                            (float)(dsoPos.z - obsPos.z));
 
     Point3d center = Point3d(0.0f, 0.0f, 0.0f) + relPos * orientationMatrix;
-    float appMag = astro::absToAppMag(absMag, (float) distanceToDSO);
+	
+	double enhance = 4.0, pc10 = 32.6167;
+	
+	// The parameter 'enhance' adjusts the DSO brightness as viewed from "inside" 
+	// (e.g. MilkyWay as seen from Earth). It provides an enhanced apparent  core  
+	// brightness appMag  ~ absMag - enhance. 'enhance' thus serves to uniformly  
+	// enhance the too low sprite luminosity at close distance.
 
-    // Test the object's bounding sphere against the view frustum. If we
+    float  appMag = (distanceToDSO >= pc10)? (float) astro::absToAppMag((double) absMag, distanceToDSO): absMag + enhance * tanh(distanceToDSO/pc10 - 1.0);
+    
+	// Test the object's bounding sphere against the view frustum. If we
     // avoid this stage, overcrowded octree cells may hit performance badly:
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
-
+    
+	
     if ((renderFlags & dso->getRenderMask()) && dso->isVisible())
     {
-    	double  dsoRadius = dso->getBoundingSphereRadius();
+		double dsoRadius = dso->getBoundingSphereRadius(); 
 
         if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
         {
-            // display looks satisfactory for 0.2 < brightness < O(1.0)
-            // Ansatz: brightness = a - b*appMag(distanceToDSO), emulates eye sensitivity...
+            // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
+            // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
             // determine a,b such that
-            // a-b*absMag = absMag/avgAbsMag ~ 1; a-b*faintestMag = 0.2
-            // the 2nd eqn guarantees that the faintest galaxies are still visible.
-            // the parameters in the 'close' correction function are fixed by matching
-            // the gradients at 10 pc and by: close (10 pc) = 0.
-            // ri adjusts the Milky Way brightness as viewed from "inside" (e.g. from Earth).
-		
+            // a - b * absMag = absMag / avgAbsMag ~ 1; a - b * faintestMag = 0.2.
+            // The 2nd eq. guarantees that the faintest galaxies are still visible.            
+            
 			if(!strcmp(dso->getObjTypeName(),"globular"))		
-			{
-				avgAbsMag =  -6.86;   // average over 150 globulars in globulars.dsc.
-			} 
+				avgAbsMag =  -6.86;    // average over 150  globulars in globulars.dsc.
 			else if (!strcmp(dso->getObjTypeName(),"galaxy"))
-			{
-				avgAbsMag = -19.0401; // average over 10937 galaxies in deepsky.dsc.
-			} 
-            double ri  = -0.1, pc10 = 32.6167;
-            double r   = absMag / avgAbsMag;
-            double num = 5 * (absMag - faintestMag);
-            double a   = r * (avgAbsMag - 5 * faintestMag) / num;
-            double b   = (1.0 - 5 * r) / num;
-            double close = (distanceToDSO > -10.0)?
-            	-4.3429448 * b * log((pc10 + distanceToDSO)/(2 * pc10)): ri;
-            // note: 10.0 / log(10.0) = 4.3429448
-            if (distanceToDSO < 0)
-            	distanceToDSO = 0;
-            double brightness = (distanceToDSO  >= pc10)? a - b * appMag: r + close;
-            brightness = 2.3 * brightness * (faintestMag - 4.75)/renderer->getFaintestAM45deg();
+				avgAbsMag = -19.04;    // average over 10937 galaxies in galaxies.dsc.
+            
+			
+            float r   = absMag / (float) avgAbsMag;			  
+			float brightness = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
+	
+			// obviously, brightness(appMag = absMag) = r and 
+			// brightness(appMag = faintestMag) = 0.2, as desired.
+
+			brightness = 2.3f * brightness * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
+
 #ifdef USE_HDR
             brightness *= exposure;
 #endif
-            if (brightness < 0.0)
-                brightness = 0.0;
-
-            if (dsoRadius < 1000.0)
+            if (brightness < 0)
+				brightness = 0;
+						
+			if (dsoRadius < 1000.0)
             {
                 // Small objects may be prone to clipping; give them special
                 // handling.  We don't want to always set the projection

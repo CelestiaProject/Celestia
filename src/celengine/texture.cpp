@@ -849,8 +849,8 @@ Texture* CreateProceduralTexture(int width, int height,
     {
         for (int x = 0; x < width; x++)
         {
-            float u = (float) x / (float) width * 2 - 1;
-            float v = (float) y / (float) height * 2 - 1;
+            float u = ((float) x + 0.5f) / (float) width * 2 - 1;
+            float v = ((float) y + 0.5f) / (float) height * 2 - 1;
             func(u, v, 0, img->getPixelRow(y) + x * img->getComponents());
         }
     }
@@ -876,8 +876,8 @@ Texture* CreateProceduralTexture(int width, int height,
     {
         for (int x = 0; x < width; x++)
         {
-            float u = (float) x / (float) width * 2 - 1;
-            float v = (float) y / (float) height * 2 - 1;
+            float u = ((float) x + 0.5f) / (float) width * 2 - 1;
+            float v = ((float) y + 0.5f) / (float) height * 2 - 1;
             func(u, v, 0, img->getPixelRow(y) + x * img->getComponents());
         }
     }
