@@ -486,62 +486,6 @@ void Galaxy::setLightGain(float lg)
 }
 
 
-void Galaxy::hsv2rgb( float *r, float *g, float *b, float h, float s, float v )
-{
-// r,g,b values are from 0 to 1
-// h = [0,360], s = [0,1], v = [0,1]
-
-   int i;
-   float f, p, q, t;
-
-   if( s == 0 ) {
-       // achromatic (grey)
-       *r = *g = *b = v;
-   return;
-   }
-
-   h /= 60;            // sector 0 to 5
-   i = (int) floorf( h );
-   f = h - (float) i;            // factorial part of h
-   p = v * ( 1 - s );
-   q = v * ( 1 - s * f );
-   t = v * ( 1 - s * ( 1 - f ) );
-
-   switch( i ) {
-   case 0:
-     *r = v;
-     *g = t;
-     *b = p;
-     break;
-   case 1:
-     *r = q;
-     *g = v;
-     *b = p;
-     break;
-   case 2:
-     *r = p;
-     *g = v;
-     *b = t;
-     break;
-   case 3:
-     *r = p;
-     *g = q;
-     *b = v;
-     break;
-   case 4:
-     *r = t;
-     *g = p;
-     *b = v;
-     break;
-   default:
-     *r = v;
-     *g = p;
-     *b = q;
-     break;
-   }
-}
-
-
 GalacticForm* buildGalacticForms(const std::string& filename)
 {
 	Blob b;
@@ -651,7 +595,7 @@ void InitializeForms()
 
         //convert Hue to RGB
 
-        Galaxy::hsv2rgb(&rr, &gg, &bb, hue, 0.20f, 1.0f);
+		DeepSkyObject::hsv2rgb(&rr, &gg, &bb, hue, 0.20f, 1.0f);
         colorTable[i]  = Color(rr, gg, bb);
     }
     // Spiral Galaxies, 7 classical Hubble types
