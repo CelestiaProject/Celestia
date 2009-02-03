@@ -514,6 +514,11 @@
 		88654A140DB29585007C8027 /* celx_rotation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_rotation.h; path = ../src/celestia/celx_rotation.h; sourceTree = SOURCE_ROOT; };
 		88654A150DB29585007C8027 /* celx_vector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_vector.cpp; path = ../src/celestia/celx_vector.cpp; sourceTree = SOURCE_ROOT; };
 		88654A160DB29585007C8027 /* celx_vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = celx_vector.h; path = ../src/celestia/celx_vector.h; sourceTree = SOURCE_ROOT; };
+		CE70D6BC0F3856880020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = zh_CN; path = zh_CN.lproj/Credits.rtf; sourceTree = "<group>"; };
+		CE70D6BD0F38568E0020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		CE70D6BE0F3856930020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
+		CE70D6BF0F3856970020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
+		CE70D6C00F38569C0020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/HelpWindow.nib; sourceTree = "<group>"; };
 		CEDE1E960F0FC29700C95690 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
 		E50657D70CBFB08500151204 /* imagecapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imagecapture.h; path = ../src/celestia/imagecapture.h; sourceTree = SOURCE_ROOT; };
 		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
@@ -1781,6 +1786,7 @@
 				fr,
 				es,
 				ja,
+				zh_CN,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* celestia */;
 			projectDirPath = "";
@@ -2074,6 +2080,7 @@
 				E59FE8FD0934DC66000F7BDA /* fr */,
 				E5E365B0095C12BD00B14224 /* es */,
 				E5EAAE530A1A0B3000848446 /* ja */,
+				CE70D6BD0F38568E0020C34D /* zh_CN */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -2085,6 +2092,7 @@
 				E50CCA5C0C065F4000E9C76A /* fr */,
 				E50CCA5D0C065F4300E9C76A /* es */,
 				CEDE1E960F0FC29700C95690 /* ja */,
+				CE70D6BF0F3856970020C34D /* zh_CN */,
 			);
 			name = EclipseFinder.nib;
 			sourceTree = "<group>";
@@ -2096,6 +2104,7 @@
 				E59FE8FE0934DC7C000F7BDA /* fr */,
 				E5E365B1095C12C900B14224 /* es */,
 				E5EAAE540A1A0B3F00848446 /* ja */,
+				CE70D6BE0F3856930020C34D /* zh_CN */,
 			);
 			name = BrowserWindow.nib;
 			sourceTree = "<group>";
@@ -2107,6 +2116,7 @@
 				E5D7660B0982B15C0099DBBD /* es */,
 				E5D7660C0982B1630099DBBD /* fr */,
 				E579D3130A1A1949008F3BC8 /* ja */,
+				CE70D6BC0F3856880020C34D /* zh_CN */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
@@ -2128,6 +2138,7 @@
 				E5D7660F0982B1860099DBBD /* English */,
 				E5D766150982B19F0099DBBD /* fr */,
 				E5EAAE550A1A0B4600848446 /* ja */,
+				CE70D6C00F38569C0020C34D /* zh_CN */,
 			);
 			name = HelpWindow.nib;
 			sourceTree = "<group>";
