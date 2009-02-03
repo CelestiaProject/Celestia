@@ -1366,3 +1366,4 @@ translations to be used
 * Renamed galaxy database deepsky.dsc into galaxies.dsc
 * Added Perl script globulars.pl used to extract the globular data from scientific publications and as documentation 
 * Implemented SIMBAD compatible cross-listing for globular clusters
+* Implemented a major upgrade of globular cluster code
