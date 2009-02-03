@@ -2174,10 +2174,6 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = Frameworks;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fpermissive",
-				);
 				PRODUCT_NAME = Celestia;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -2227,10 +2223,6 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = Frameworks;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fpermissive",
-				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Celestia;
 				WRAPPER_EXTENSION = app;
@@ -2349,10 +2341,6 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = Frameworks;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fpermissive",
-				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Celestia;
 				WRAPPER_EXTENSION = app;
@@ -2391,10 +2379,6 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = Frameworks;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-fpermissive",
-				);
 				PRODUCT_NAME = Celestia;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
