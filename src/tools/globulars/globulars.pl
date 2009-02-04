@@ -326,6 +326,7 @@ for ($k=1; $k<=150;$k++){
 	if ($id[$k]   =~/Eridanus/){$altname[$k] = &flipnm(1,2,$altname[$k]);}
 	if ($id[$k]   =~/Pal 3/){$altname[$k]    = &flipnm(0,2,$altname[$k]);}
 		
+          
 	$id[$k]       =~ s/Name E 3/Name E3/g;
 	$altname[$k]  =~ s/Name E3/Name E 3/g;	
 	$altname[$k]  =~ s/Arp 1/Cl Arp 1/g;	
@@ -345,7 +346,36 @@ for ($k=1; $k<=150;$k++){
 	# Ready for printout!
 	#
 	$Radius = deg2rad($R_mu25/60.0) * $R_Sun[$k];	
-	if ($altname[$k] eq ""){
+    
+    #
+    # Terzan 11 = Terzan 12 (SIMBAD), <> Terzan 5 (Harris), avoid Terzan 12 (SIMBAD)
+    # => Frommert's mu25 radius for Terzan 12 should be that of Terzan 11 (Harris) 
+    # Apparently, from King profiles:
+    # mu25 radius for Terzan 5 too small by ~ factor of two;
+    # mu25 radii for Terzan 4, 9, 10 too small by ~ factor of three;
+    # Note: mu25 radius estimates are uncertain!    
+    #
+    
+    if ($id[$k] =~ /Terzan 12/)
+    {
+        $id[$k]      =~ s/Terzan 12/Terzan 11/g;
+        $altname[$k] =~ s/Terzan 11/Terzan 12/g;
+        $Radius      =  deg2rad(1.2/60.0) * $R_Sun[$k];        
+    }
+    
+    if ($name[$k] =~ /Terzan 11/)
+    {
+        $name[$k]    =~ s/Terzan 11://g;
+        $Radius      =  2 * $Radius;
+    }
+    
+    if ($id[$k] =~ /Terzan 4/ || $id[$k] =~ /Terzan 9/ || $id[$k] =~ /Terzan 10/)
+    {
+        $Radius      =  3 * $Radius;
+    }    
+    #
+    	
+    if ($altname[$k] eq ""){
 		print  DSC "Globular \"$name[$k]$id[$k]\"\n";
 	} else {
 		print  DSC "Globular \"$name[$k]$id[$k]:$altname[$k]\"\n";	
