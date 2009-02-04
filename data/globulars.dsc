@@ -17,8 +17,8 @@
 # using the batch interface
 # http://simbad.u-strasbg.fr/simbad/sim-fscript.
 #
-# Adapted for Celestia with Perl script: globularsSB.pl Revision: 1.0.0 
-# Processed 2008-9-14 0 257 0 18:50:44 UTC
+# Adapted for Celestia with Perl script: globulars.pl Revision: 1.0.0 
+# Processed 2009-2-4 3 34 0 11:41:11 UTC
 #
 # by Dr. Fridger Schrempp, fridger.schrempp@desy.de
 # ------------------------------------------------------ 
@@ -1079,7 +1079,7 @@ Globular "Haute-Provence 4:Terzan 4:GCl 66.1:C 1727-315"
         RA          	   17.5108  # [hours]
         Dec         	  -31.5956  # [degrees]
         Distance    	 2.968e+04  # [ly]
-        Radius      	     3.022  # [ly], mu25 Isophote
+        Radius      	     9.066  # [ly], mu25 Isophote
         CoreRadius            0.83  # unknown!! Data base average used
         KingConcentration     1.47  # unknown!! Data base average used
         AbsMag      	     -6.09  # [V mags]
@@ -1270,12 +1270,12 @@ Globular "Djorg 1"
         InfoURL  "http://simbad.u-strasbg.fr/sim-id.pl?Ident=Djorg 1"
 }
 
-Globular "Terzan 11:Terzan 5:GCl 76.1:ESO 520-27:C 1745-247"
+Globular "Terzan 5:GCl 76.1:ESO 520-27:C 1745-247"
 {
         RA          	   17.8011  # [hours]
         Dec         	  -24.7792  # [degrees]
         Distance    	  3.36e+04  # [ly]
-        Radius      	     11.73  # [ly], mu25 Isophote
+        Radius      	     23.45  # [ly], mu25 Isophote
         CoreRadius  	      0.18  # [arcmin]
         KingConcentration     1.87  # c = log10(r_t/r_c)
         AbsMag      	     -7.87  # [V mags]
@@ -1373,7 +1373,7 @@ Globular "Terzan 9:GCl 80.1:C 1758-268"
         RA          	   18.0272  # [hours]
         Dec         	  -26.8397  # [degrees]
         Distance    	  2.12e+04  # [ly]
-        Radius      	    0.6167  # [ly], mu25 Isophote
+        Radius      	      1.85  # [ly], mu25 Isophote
         CoreRadius  	      0.03  # [arcmin]
         KingConcentration     2.44  # c = log10(r_t/r_c)
         AbsMag      	     -3.85  # [V mags]
@@ -1415,7 +1415,7 @@ Globular "Terzan 10:GCl 82.1:ESO 521-16:C 1800-260"
         RA          	   18.0492  # [hours]
         Dec         	  -26.0667  # [degrees]
         Distance    	 1.859e+04  # [ly]
-        Radius      	     4.056  # [ly], mu25 Isophote
+        Radius      	     12.17  # [ly], mu25 Isophote
         CoreRadius            0.83  # unknown!! Data base average used
         KingConcentration     1.47  # unknown!! Data base average used
         AbsMag      	     -6.31  # [V mags]
@@ -1606,18 +1606,18 @@ Globular "Pal 7:IC 1276:GCl 90:C 1808-072"
         InfoURL  "http://simbad.u-strasbg.fr/sim-id.pl?Ident=IC 1276"
 }
 
-Globular "Terzan 12:Terzan 11:GCl 90.1:ESO 522-1:C 1809-227"
+Globular "Terzan 11:Terzan 12:GCl 90.1:ESO 522-1:C 1809-227"
 {
         RA          	   18.2042  # [hours]
         Dec         	  -22.7419  # [degrees]
         Distance    	 1.566e+04  # [ly]
-        Radius      	     2.277  # [ly], mu25 Isophote
+        Radius      	     5.465  # [ly], mu25 Isophote
         CoreRadius  	      0.83  # [arcmin]
         KingConcentration     0.57  # c = log10(r_t/r_c)
         AbsMag      	     -4.14  # [V mags]
         Axis       	[ 0.02479   0.7112   0.7026]
         Angle       	     178.9  # [degrees]
-        InfoURL  "http://simbad.u-strasbg.fr/sim-id.pl?Ident=Terzan 12"
+        InfoURL  "http://simbad.u-strasbg.fr/sim-id.pl?Ident=Terzan 11"
 }
 
 Globular "NGC 6569:VDBH 260:GCl 91:ESO 456-77:C 1810-318"
