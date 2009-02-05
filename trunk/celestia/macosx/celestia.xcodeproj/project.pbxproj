@@ -206,7 +206,6 @@
 		E572838D0793DBB500C1F239 /* Celestia.app in Copy App */ = {isa = PBXBuildFile; fileRef = E564312E07769C9000E2C4A3 /* Celestia.app */; };
 		E572839B0793F84000C1F239 /* AUTHORS in Copy App */ = {isa = PBXBuildFile; fileRef = E57283980793F82A00C1F239 /* AUTHORS */; };
 		E572839C0793F84000C1F239 /* ChangeLog in Copy App */ = {isa = PBXBuildFile; fileRef = E57283990793F82A00C1F239 /* ChangeLog */; };
-		E572839D0793F84000C1F239 /* COPYING in Copy App */ = {isa = PBXBuildFile; fileRef = E572839A0793F82A00C1F239 /* COPYING */; };
 		E57283AE0793FC7E00C1F239 /* README in Copy App */ = {isa = PBXBuildFile; fileRef = E57283AD0793FC7300C1F239 /* README */; };
 		E585E9790B27864300812512 /* E0.png in Copy Models */ = {isa = PBXBuildFile; fileRef = E585E9780B27864300812512 /* E0.png */; };
 		E589B6DD078AC511005B8DD9 /* glshader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E589B6D9078AC511005B8DD9 /* glshader.cpp */; };
@@ -396,7 +395,6 @@
 				E572839B0793F84000C1F239 /* AUTHORS in Copy App */,
 				E572838D0793DBB500C1F239 /* Celestia.app in Copy App */,
 				E572839C0793F84000C1F239 /* ChangeLog in Copy App */,
-				E572839D0793F84000C1F239 /* COPYING in Copy App */,
 				E5C9B478084909E40071B1EE /* README for Mac OS X.rtf in Copy App */,
 			);
 			name = "Copy App";
@@ -1736,14 +1734,15 @@
 				E564312907769C9000E2C4A3 /* Frameworks */,
 				E56917DA0778217300F0F0AF /* Copy Libraries */,
 				E5CC203B09AA83A900CFFF2C /* Convert PO */,
-				E57283A00793F93500C1F239 /* Copy App */,
 				E572837407939F2500C1F239 /* Copy Misc */,
 				E567F018099110C000D05031 /* Copy Data */,
-				3D23D0CF0EAC7655002E305C /* Copy Localized Data */,
+				3D23D0CF0EAC7655002E305C /* Copy Localized Scripts */,
 				E567F0400991111C00D05031 /* Copy Extras */,
 				E5D7666E0982B4480099DBBD /* Copy Models */,
 				E5D767FB0982B75B0099DBBD /* Copy Textures */,
-				E572837307939E0200C1F239 /* ShellScript */,
+				E57283A00793F93500C1F239 /* Copy App */,
+				CEB6409B0F3AC82800D8C90C /* Copy License Files */,
+				E572837307939E0200C1F239 /* Make dmg */,
 			);
 			buildRules = (
 			);
@@ -1824,24 +1823,37 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3D23D0CF0EAC7655002E305C /* Copy Localized Data */ = {
+		3D23D0CF0EAC7655002E305C /* Copy Localized Scripts */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/../locale",
 			);
-			name = "Copy Localized Data";
+			name = "Copy Localized Scripts";
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/CelestiaResources",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/Celestia\nmkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\ncp $SRCROOT/../locale/COPYING_* $BUILT_PRODUCTS_DIR/Celestia\ncp $SRCROOT/../locale/demo_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\ncp $SRCROOT/../locale/guide_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\ncp $SRCROOT/../locale/start_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources\n";
+			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources/locale\ncp $SRCROOT/../locale/demo_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources/locale\ncp $SRCROOT/../locale/guide_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources/locale\ncp $SRCROOT/../locale/start_*.cel $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/CelestiaResources/locale\n";
 			showEnvVarsInLog = 0;
 		};
-		E572837307939E0200C1F239 /* ShellScript */ = {
+		CEB6409B0F3AC82800D8C90C /* Copy License Files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy License Files";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p $BUILT_PRODUCTS_DIR/Celestia/License\ncp $SRCROOT/../COPYING $BUILT_PRODUCTS_DIR/Celestia/License\ncp $SRCROOT/../locale/COPYING_* $BUILT_PRODUCTS_DIR/Celestia/License";
+			showEnvVarsInLog = 0;
+		};
+		E572837307939E0200C1F239 /* Make dmg */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			comments = "1. Removes extraneous files from CelestiaResources\n2. Creates writable disk image containing Celestia.app, CelestiaResources, and readme files.";
@@ -1850,6 +1862,7 @@
 			inputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/Celestia/$(PRODUCT_NAME).app",
 			);
+			name = "Make dmg";
 			outputPaths = (
 				"$(TARGET_BUILD_DIR)/$(PRODUCT_NAME).dmg",
 			);
@@ -1870,7 +1883,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "for po in $SRCROOT/../po/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/po.strings\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    cp $SRCROOT/$s.lproj/po.strings $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    else mkdir -p $SRCROOT/$s.lproj;\n    fi\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $SRCROOT/$s.lproj/celestia_constellations.strings\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    cp $SRCROOT/$s.lproj/celestia_constellations.strings $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\ndone";
+			shellScript = "for po in $SRCROOT/../po/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    fi\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj/po.strings\ndone\n\nfor po in $SRCROOT/../po2/*.po; do\n    s=`echo $po |sed -n 's/^.*\\/\\([^\\/]\\{1,\\}\\).po$/\\1/p'`\n    if [ $s == 'en' ];then s='English';\n    fi\n    mkdir -p $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj\n    $BUILT_PRODUCTS_DIR/POConverter -sn $po $BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$s.lproj/celestia_constellations.strings\ndone";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
