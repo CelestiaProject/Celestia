@@ -36,7 +36,7 @@
   goto   {time 3.0  distance 6.0}
   wait   {duration 2.0}
 
-  print  {text "欢迎使用天际遨游！"  row -3  column 1  duration 3}
+  print  {text "欢迎使用Celestia！"  row -3  column 1  duration 3}
   wait   {duration 3.0}
 
 #****************************************************************************
