@@ -519,6 +519,8 @@
 		CE70D6BE0F3856930020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
 		CE70D6BF0F3856970020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
 		CE70D6C00F38569C0020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/HelpWindow.nib; sourceTree = "<group>"; };
+		CEBD084F0F3A8F0500B3A535 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		CEBD08500F3A8F0B00B3A535 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CEDE1E960F0FC29700C95690 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
 		E50657D70CBFB08500151204 /* imagecapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imagecapture.h; path = ../src/celestia/imagecapture.h; sourceTree = SOURCE_ROOT; };
 		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
@@ -2069,6 +2071,7 @@
 				E59FE90E0934E27B000F7BDA /* fr */,
 				E5E365B2095C12D200B14224 /* es */,
 				E5EAAE650A1A0E9700848446 /* ja */,
+				CEBD084F0F3A8F0500B3A535 /* zh_CN */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2128,6 +2131,7 @@
 				E5CC204809AA846600CFFF2C /* fr */,
 				E5FB63B20A0F80FA00A60759 /* es */,
 				E5EAAE660A1A0E9B00848446 /* ja */,
+				CEBD08500F3A8F0B00B3A535 /* zh_CN */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
