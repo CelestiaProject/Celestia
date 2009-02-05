@@ -194,6 +194,7 @@ void CelxLua::initLocationFlagMap()
     LocationFlagMap["linea"] = Location::Linea;
     LocationFlagMap["fluctus"] = Location::Fluctus;
     LocationFlagMap["farrum"] = Location::Farrum;
+    LocationFlagMap["insula"] = Location::Insula;
     LocationFlagMap["other"] = Location::Other;
 }
 
