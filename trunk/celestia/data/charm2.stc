@@ -6563,6 +6563,11 @@ Modify 77450
 	Radius 46680000 # Uniform disk angular diameter = 5.33 mas
 }
 
+Modify 77501
+{
+	Radius 258900000 # Uniform disk angular diameter = 4.09 mas
+}
+
 Modify 77578
 {
 	Radius 7921000 # Uniform disk angular diameter = 1.26 mas
