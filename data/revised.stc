@@ -630,13 +630,16 @@ Modify 72105 # Eps Boo: Primary spectral class from SIMBAD
 	SpectralType "F8"
 }
 
-77501 # V CrB: missing named star - used (high error) Hipparcos 1 parallax
+77501 # V CrB: missing named star - used distance from
+      # Bergeat and Chevallier (2005), A&A 429, 235
+      # "The mass loss of C-rich giants"
+      # Spectral type chosen to match effective temperature
 {
 	RA 237.38044772
 	Dec 39.57167223
-	Distance 6400 # Parallax 0.51 +/- 0.93
-	AppMag 10.10
-	SpectralType "N2"
+	Distance 2760
+	AppMag 9.33
+	SpectralType "N9"
 }
 
 78727 # Xi Sco: missing parallax taken from companion star Hip 78738
