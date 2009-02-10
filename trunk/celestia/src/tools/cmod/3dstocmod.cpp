@@ -78,7 +78,7 @@ Convert3DSMesh(Model& model,
     int nVertices = mesh3ds.getVertexCount();
     int nTexCoords = mesh3ds.getTexCoordCount();
     bool smooth = (mesh3ds.getSmoothingGroupCount() == nFaces);
-    bool hasTexCoords = (nTexCoords == nVertices);
+    bool hasTexCoords = (nTexCoords >= nVertices);
     int vertexSize = hasTexCoords ? 8 : 6;
     int i;
 

@@ -1132,7 +1132,8 @@ mergeModelMeshes(const Model& model)
 {
     vector<Mesh*> meshes;
 
-    for (uint32 i = 0; model.getMesh(i) != NULL; i++)
+    uint32 i;
+    for (i = 0; model.getMesh(i) != NULL; i++)
     {
         meshes.push_back(model.getMesh(i));
     }
