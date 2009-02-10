@@ -556,7 +556,7 @@ int LODSphereMesh::renderPatches(int phi0, int theta0,
         normal = (p2 - p1) ^ v2;
 
     // If the normal is near zero length, something's going wrong
-    assert(normal.length() > 1.0e-6);
+    assert(normal.length() != 0.0f);
     normal.normalize();
     Planef separatingPlane(normal, p0);
 
