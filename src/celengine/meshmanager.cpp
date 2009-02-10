@@ -289,7 +289,7 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
     int i;
 
     uint32 parts = VertexList::VertexNormal;
-    if (nTexCoords == nVertices)
+    if (nTexCoords >= nVertices)
         parts |= VertexList::TexCoord0;
     VertexList* vl = new VertexList(parts);
 
