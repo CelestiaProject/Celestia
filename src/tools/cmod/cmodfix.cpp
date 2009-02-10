@@ -77,7 +77,7 @@ struct Face
 };
 
 
-typedef public std::binary_function<const Vertex&, const Vertex&, bool> VertexComparator;
+typedef std::binary_function<const Vertex&, const Vertex&, bool> VertexComparator;
 
 
 class FullComparator : public VertexComparator
@@ -514,9 +514,9 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
 
 template <typename T> void
 joinVertices(vector<Face>& faces,
-              const void* vertexData,
-              const Mesh::VertexDescription& desc,
-              T& comparator)
+             const void* vertexData,
+             const Mesh::VertexDescription& desc,
+             const T& comparator)
 {
     // Don't do anything if we're given no data
     if (faces.size() == 0)
@@ -1508,7 +1508,7 @@ int main(int argc, char* argv[])
     else
     {
         ofstream out(outputFilename.c_str(),
-                     ios::out | (outputBinary ? ios::binary : 0));
+                     outputBinary ? (ios::binary|ios::out) : ios::out);
         if (!out.good())
         {
             cerr << "Error opening output file " << outputFilename << "\n";
