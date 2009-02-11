@@ -91,6 +91,7 @@
     NSString *errorString = nil;
     NSString* dateString = [dateField stringValue];
     NSString* timeString = [timeField stringValue];
+    BOOL useUTC = (0 != [[CelestiaSettings shared] timeZone]);
 
     if ( [timeString isEqualToString: @""] )
     {
@@ -126,6 +127,17 @@
     inputString = [ [  dateString stringByAppendingString: @" " ]  
                              stringByAppendingString: timeString ];  
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
+    if (useUTC)
+    {
+        [dateTimeFormat setTimeZone: [NSTimeZone timeZoneWithAbbreviation: @"GMT"]];
+    }
+    else
+    {
+        [NSTimeZone resetSystemTimeZone];
+        [dateTimeFormat setTimeZone: [NSTimeZone systemTimeZone]];
+    }
+#endif
     dateValid = [ dateTimeFormat getObjectValue: &date
                                       forString: inputString
                                errorDescription: &errorString ];
@@ -157,13 +169,23 @@
         if (dtParts && tmParts &&
             [dtParts count] > 0 && [tmParts count] > 0)
         {
+            NSTimeZone *tz = nil;
+            if (useUTC)
+            {
+                tz = [NSTimeZone timeZoneWithAbbreviation: @"GMT"];
+            }
+            else
+            {
+                [NSTimeZone resetSystemTimeZone];
+                tz = [NSTimeZone systemTimeZone];
+            }
             date = [NSCalendarDate dateWithYear: [[dtParts objectAtIndex: 2] intValue]
                                           month: [[dtParts objectAtIndex: 0] intValue]
                                             day: [[dtParts objectAtIndex: 1] intValue]
                                            hour: [[tmParts objectAtIndex: 0] intValue]
                                          minute: [[tmParts objectAtIndex: 1] intValue]
                                          second: [[tmParts objectAtIndex: 2] intValue]
-                                       timeZone: [NSTimeZone defaultTimeZone]];
+                                       timeZone: tz];
         }
 #endif
         jd = [ Astro julianDate: date];

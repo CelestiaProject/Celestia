@@ -39,6 +39,8 @@
 
 -(double) time ;
 -(void) setTime: (double) value ;
+-(int)  timeZone ;
+-(void) setTimeZone: (int) value ;
 
 -(double) timeScale ;
 -(void) setTimeScale: (double) value ;
