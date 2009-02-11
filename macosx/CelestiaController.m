@@ -377,13 +377,14 @@ NSString* fatalErrorMessage;
         [ appCore setStartURL: pendingUrl ];
     }
 
+    // Settings used to be loaded after starting simulation due to
+    // timezone setting requiring simulation time, but this dependency
+    // has been removed. In fact timezone needs to be set in order to
+    // correctly set the simulation time so settings loaded before starting.
+    [settings loadUserDefaults];
+
     [appCore start:[NSDate date]];
 
-    // load settings
-    // Delay applying settings until after setting simulation time
-    // This allows the timezone to be set correctly
-    [settings loadUserDefaults];
-    
     ready = YES;
     timer = [[NSTimer timerWithTimeInterval: 0.01 target: self selector:@selector(timeDisplay) userInfo:nil repeats:YES] retain];
     [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];

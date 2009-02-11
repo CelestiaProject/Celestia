@@ -3,7 +3,7 @@
 //  celestia
 //
 //  Created by Hank Ramsey on Fri Oct 29 2004.
-//  Copyright (C) 2007, Celestia Development Team
+//  Copyright (C) 2001-9, the Celestia Development Team
 //
 
 #import "CelestiaSettings.h"
@@ -642,20 +642,11 @@ FEATUREMETHODS(Other)
 
 // Time settings
 
+// Timezone values are inverted to maintain backward compatibility
 -(int)  timeZone { return appCore->getTimeZoneBias()==0 ? 1 : 0; }
 -(void) setTimeZone: (int) value
 {
-    NSTimeZone *tz;
-    NSDate *date = [NSDate dateWithJulian: [NSNumber numberWithDouble: [self time]]];
-    if (0 == value)
-    {
-        tz = [NSTimeZone defaultTimeZone];
-    }
-    else
-    {
-        tz = [NSTimeZone timeZoneWithAbbreviation: @"GMT"];
-    }
-    [[CelestiaAppCore sharedAppCore] setTimeZone: tz withDate: date];
+    appCore->setTimeZoneBias(0==value ? 1 : 0);
 }
 
 -(int)  dateFormat { return appCore->getDateFormat(); }
