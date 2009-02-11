@@ -3,11 +3,10 @@
 //  celestia
 //
 //  Created by Bob Ippolito on Fri Jun 07 2002.
-//  Copyright (c) 2002 Chris Laurel. All rights reserved.
+//  Copyright (C) 2001-9, the Celestia Development Team
 //
 
 #import "Astro.h"
-#import "Astro_PrivateAPI.h"
 #import "Observer.h"
 #import "CelestiaUniversalCoord_PrivateAPI.h"
 #import "CelestiaVector_PrivateAPI.h"
@@ -52,8 +51,6 @@ NSDictionary* coordinateDict;
 }
 @end
 
-@implementation Astro(PrivateAPI)
-@end
 
 @implementation Astro
 +(NSString*)stringWithCoordinateSystem:(NSNumber*)n
@@ -69,7 +66,15 @@ NSDictionary* coordinateDict;
 +(void)initialize
 {
     // compiler macro would be prettier I guess
-    coordinateDict = [[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:ObserverFrame::Universal],@"Universal",[NSNumber numberWithInt:ObserverFrame::Ecliptical],@"Ecliptical",[NSNumber numberWithInt:ObserverFrame::Equatorial],@"Equatorial",[NSNumber numberWithInt:ObserverFrame::BodyFixed],@"Geographic",[NSNumber numberWithInt:ObserverFrame::ObserverLocal],@"ObserverLocal",[NSNumber numberWithInt:ObserverFrame::PhaseLock],@"PhaseLock",[NSNumber numberWithInt:ObserverFrame::Chase],@"Chase",nil,nil] retain];
+    coordinateDict = [[NSDictionary alloc] initWithObjectsAndKeys:
+                       [NSNumber numberWithInt:ObserverFrame::Universal],  @"Universal",
+                       [NSNumber numberWithInt:ObserverFrame::Ecliptical], @"Ecliptical",
+                       [NSNumber numberWithInt:ObserverFrame::Equatorial], @"Equatorial",
+                       [NSNumber numberWithInt:ObserverFrame::BodyFixed],  @"Geographic",
+                       [NSNumber numberWithInt:ObserverFrame::ObserverLocal], @"ObserverLocal",
+                       [NSNumber numberWithInt:ObserverFrame::PhaseLock],  @"PhaseLock",
+                       [NSNumber numberWithInt:ObserverFrame::Chase],      @"Chase",
+                       nil];
 }
 +(NSNumber*)sphereIlluminationFraction:(CelestiaVector*)spherePos viewerPosition:(CelestiaVector*)viewerPos
 {
@@ -96,9 +101,13 @@ NSDictionary* coordinateDict;
 
 +(NSNumber*)julianDate:(NSDate *)date
 {
+    NSTimeZone *prevTimeZone = [NSTimeZone defaultTimeZone];
+    // UTCtoTDB() expects GMT
+    [NSTimeZone setDefaultTimeZone: [NSTimeZone timeZoneWithAbbreviation: @"GMT"]];
+    NSDate *roundedDate = nil;
+
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4
-    NSCalendar *currentCalendar = [NSCalendar currentCalendar];
-    [currentCalendar setTimeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    NSCalendar *currentCalendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar];
     NSDateComponents *comps = [currentCalendar components:
         NSEraCalendarUnit  |
         NSYearCalendarUnit | NSMonthCalendarUnit  | NSDayCalendarUnit | 
@@ -111,18 +120,26 @@ NSDictionary* coordinateDict;
     astroDate.hour    = [comps hour];
     astroDate.minute  = [comps minute];
     astroDate.seconds = [comps second];
+    // -[NSDateComponents second] is rounded to an integer,
+    // so have to calculate and add decimal part
+    roundedDate = [currentCalendar dateFromComponents: comps];
+    [currentCalendar release];
 #else
-    NSCalendarDate *cd =  [date dateWithCalendarFormat: nil timeZone: [NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
-    // astro::Date requires GMT (UTC) times
+    NSCalendarDate *cd =  [date dateWithCalendarFormat: nil timeZone: nil];
     astro::Date astroDate([cd yearOfCommonEra],
                           [cd monthOfYear],
                           [cd dayOfMonth]);
     astroDate.hour    = [cd hourOfDay];    // takes DST in to account
     astroDate.minute  = [cd minuteOfHour];
     astroDate.seconds = [cd secondOfMinute];
+    roundedDate = cd;
 #endif
 
-    double jd = (double)astroDate;
+    NSTimeInterval extraSeconds = [date timeIntervalSinceDate: roundedDate];
+    astroDate.seconds += extraSeconds;
+
+    [NSTimeZone setDefaultTimeZone: prevTimeZone];
+    double jd = astro::UTCtoTDB(astroDate);
     return [NSNumber numberWithDouble: jd];
 }
 
