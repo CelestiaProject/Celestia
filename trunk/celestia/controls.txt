@@ -1,140 +1,191 @@
-Mouse and Keyboard Controls for Celestia
+  Celestia Mouse, Keyboard and Joystick Controls
 
-Mouse Functions:
 
-Left drag:           orient camera
-Right drag:          orbit the selected object
-Wheel:               adjust distance to selection
-Right + Left drag:   adjust distance to selection
-Ctrl  + Left drag:   adjust distance to selection
-Shift + Left drag:   change field of view (e.g. => telescopic view)
-Wheel (middle button) click:  toggle field of view between 45 degrees 
-                              and the previous field (e.g. telescopic view)
-Left - click:        select object 
-Left double click:   center selection
-Right - click:       bring up context menu
+------------------------------------------
+    MOUSE CONTROLS
+------------------------------------------
+ Left Drag ................................. Orient camera
+ Right drag ............................... Orbit selected object [Shift+Arrow keys]
+ Left+Right Drag left/right ........ Roll view left/right [Left/Right arrows]
+ Left+Right Drag up/down ....... Adjust distance to selection [Home/End]
+ Wheel ..................................... Adjust distance to selection [Home/End]
+ Ctrl+Left Drag up/down .......... Adjust distance to selection [Home/End]
+ Shift+Left Drag ....................... Change Field of View (FOV) [. / ,]
+ Middle Button ......................... Toggle FOV between 45 degrees and previous setting
+ Left Click (on object) .............. Select object [Enter key -- by object name]
+ Left Click (on no object) ......... Cancel selection
+ Left Double Click (on object) ...Select and Center object
+ Right Click .............................. Bring up context menu
 
-Keyboard Commands:
 
-Navigation:
-H    : Select the sun (Home)
-C    : Center on selected object
-G    : Goto selected object
-F    : Follow selected object
-Y    : Orbit the selected object at a rate synced to its rotation
-:    : Lock on selected object
-"    : Chase selected object (orientation is based on selection's velocity)
-T    : Track selected object (keep selected object centered in view)
-HOME : Move closer to object
-*    : Look back
-END  : Move farther from object
-ESC  : Cancel motion or script
-Shift+C : Center/orbit--center the selected object without changing the
-           position of the reference object.
-Left/Right Arrows : Roll Camera
-Up / Down Arrows  : Change Camera Pitch
-Shift+Arrows      : Orbit object
-1-9  : Select planets around nearby sun
+------------------------------------------------
+    KEYBOARD CONTROLS
+------------------------------------------------
 
-Time:
-Space   : stop time
-L       : Time 10x faster
-Shift+L : Time 2x faster
-K       : Time 10x slower
-Shift+K : Time 2x slower
-J       : Reverse time
-!       : Set time to now
-?       : Display light-travel delay between observer and selected object
--       : Subtract light-travel delay from current simulation time
+--- Navigation ---
 
-Labels:
-=  : Toggle constellation labels
-B  : Toggle star labels
-E  : Toggle galaxy labels
-M  : Toggle moon labels
-W  : Toggle asteroid & comet labels
-N  : Toggle spacecraft labels
-P  : Toggle planet labels
-&  : Toggle location labels
+ 1 - 9 .................................. Select planet around the nearest star
+ 0 (zero) ............................. Select parent star of current planet or system
+ H ...................................... Select Sol (Home system)
+ C ....................................... Center on selected object
+ G ...................................... Goto selected object
+ F ....................................... Follow selected object
+ T ....................................... Track selected object
+ Y ....................................... Sync Orbit selected object at a rate synced to its rotation
+ : ........................................ Lock on selected object
+ " ........................................ Chase selected object
+ Shift+C .............................. Center/orbit --center the selected object without changing
+                                            the position of the reference object
+ Ctrl+G ............................... Goto surface of selected object
+ Ctrl+F ................................ Toggle Alt-azimuth mode
+ Home ................................ Move closer to object
+ End ................................... Move further away from object
+ * ........................................ Look back
+ Backspace ....................... Select parent of current object or clear the selection
+ Esc ................................... Cancel motion or script
 
-V  : Toggle verbosity of info text
 
-Options:
-I  : Toggle cloud textures
-U  : Toggle galaxy rendering
-O  : Toggle planet orbits
-/  : Toggle constellation diagrams
-^  : Toggle nebula rendering
-%  : Toggle star color tables
-;  : Show an earth-based equatorial coordinate sphere
-[  : If autoMag OFF: Decrease limiting magnitude (fewer stars visible)
-     If autoMag ON : Decrease limiting magnitude at 45 deg field of view 
-]  : If autoMag OFF: Increase limiting magnitude (more stars visible)
-     If autoMag ON : Increase limiting magnitude at 45 deg field of view 
-{  : Decrease ambient illumination
-}  : Increase ambient illumination
-(  : Decrease galaxy brightness independently of star brightness
-)  : Increase galaxy brightness independently of star brightness
-,  : Narrow field of view
-.  : Widen field of view
-Backspace: Cancel current selection
-Ctrl+A : Toggle atmospheres
-Ctrl+B : Toggle constellation boundaries 
-Ctrl+E : Toggle eclipse shadow rendering
-Ctrl+K : Toggle display of markers
-Ctrl+L : Toggle night side planet maps (light pollution)
-Ctrl+P : Mark selected object
-Ctrl+S : Cycle the star style between fuzzy discs, points, and scaled discs
-Ctrl+T : Toggle rendering of comet tails
-Ctrl+V : Cycle between supported OpenGL render paths
-Ctrl+W : Toggle wireframe mode
-Ctrl+X : Toggle antialias lines
-Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
-         of view   
-r R: lower or raise texture resolution
-+  : Switch between artistic and limit of knowledge planet textures
+--- Time Control ---
 
-Multiview:
-Ctrl+R : Split view vertically
-Ctrl+U : Split view horizontally
-TAB    : Cycle active view
-DEL    : Delete active view
-Ctrl+D : Delete all views except active one
+ Spacebar .......................... Pause/Resume the flow of time and scripts (toggle)
+ J ....................................... Reverse/Forward time (toggle)
+ \ ....................................... Set time rate: 1x forward (norm), cancels faster/slower x factors
+ L ....................................... Change time rate: 10x faster
+ K ....................................... Change time rate: 10x slower
+ Shift+L .............................. Change time rate: 2x faster
+ Shift+K .............................. Change time rate: 2x slower
+ ! ........................................ Set time to current system date and time
+ ? ....................................... Display light-travel delay between observer / selected object
+ - (hyphen).......................... Subtract light-travel delay from current simulation time
 
-Spaceflight:
-F1 : Stop 
-F2 : Set velocity to 1 km/s
-F3 : Set velocity to 1,000 km/s
-F4 : Set velocity to speed of light
-F5 : Set velocity to 10x the speed of light.
-F6 : Set velocity to 1 AU/s
-F7 : Set velocity to 1 ly/s
-A  : Increase velocity
-Z  : Decrease velocity
-Q  : Reverse direction
-X  : Set movement direction toward center of screen
 
-Number pad:
-4  : Yaw left
-6  : Yaw right
-8  : Pitch down
-2  : Pitch up
-7  : Roll left
-9  : Roll right
-5  : Stop rotation
+--- Labels (on/off Toggles) ---
 
-Joystick:
-X axis : yaw
-Y axis : pitch
-L trigger : roll left
-R trigger : roll right
-Button 1 : slower
-Button 2 : faster
+E ...................................... Galaxies
+Shift+E ............................. Globulars
+B ...................................... Stars
+P ...................................... Planets
+Shift+P ............................. Dwarf Planets
+M ...................................... Moons
+Shift+M ............................. Minor Moons
+W ..................................... Asteroids
+Shift+W ............................ Comets
+N ...................................... Spacecraft
+= ....................................... Constellations
+& ....................................... Locations
 
-Other:
-D   : Run demo
-F8  : Enable joystick
-F10 : Capture image to file
-`   : Show frames rendered per second
-ENTER : Select a star or planet by typing its name
-Ctrl+C, Ctrl+INS : Copy location URL to clipboard
+
+--- Render/Display (on/off Toggles) --
+
+ U ..................................... Galaxies
+ Shift+U ............................ Globulars
+ ^ ...................................... Nebulae
+ Ctrl+A .............................. Atmospheres
+ I ....................................... Clouds
+ Ctrl+L ............................... Night side maps
+ Ctrl+T ............................... Comet tails
+ Ctrl+E ............................... Eclipse shadows
+ Ctrl+B ............................... Constellation boundaries
+ / ....................................... Constellation diagrams
+ ; ........................................ Earth-based equatorial coordinate sphere
+ Ctrl+K ............................... Markers (placed on objects)
+ O ...................................... Orbits (toggle ALL selected orbits)
+
+
+--- Render Options ---
+
+ { ....................................... Decrease Ambient Light
+ } ....................................... Increase Ambient Light
+ ( ....................................... Decrease Galaxy Light Gain
+ ) ....................................... Increase Galaxy Light Gain
+ [ ....................................... Decrease Magnitude Limit :
+                                           - If AutoMag OFF: Decrease limiting magnitude (fewer stars)
+                                           - If AutoMag ON : Decrease limiting magnitude at 45 deg FOV
+ ] ....................................... Increase Magnitude :
+                                           - If AutoMag OFF: Increase limiting magnitude (more stars)
+                                           - If AutoMag ON : Increase limiting magnitude at 45 deg FOV
+ Ctrl+Y ............................... Toggle Auto Magnitude (auto adaptation of star visibility to FOV
+ , ....................................... Narrow Field Of View [Shift+Left Drag]
+ . ....................................... Widen Field Of View [Shift+Left Drag]
+ Ctrl+X ............................... Toggle Antialias lines
+ Alt+Enter .......................... Toggle Display mode (Full-Screen / Windowed)
+ Ctrl+P ............................... Mark selected object
+ Ctrl+V ............................... Cycle among supported OpenGL render paths
+ + ...................................... Toggle Planet Texture type (Artistic / Limit of Knowledge)
+ % ..................................... Star color table toggle
+ Ctrl+S ............................... Cycle the Star Style (points / fuzzy discs / scaled discs)
+ V ...................................... Cycle the Info text verbosity (None / Terse / Verbose)
+ Ctrl+W .............................. Toggle Wireframe mode
+
+
+--- Multiview Options ---
+
+Ctrl+U ................................ Split view horizontally
+Ctrl+R ................................ Split view vertically
+Tab ................................... Cycle through all active views
+Del .................................... Delete active view
+Ctrl+D ................................ Delete all views except active one (reset to Single view)
+
+
+--- Navigation via Arrow Keys ---
+
+ Up/Down Arrow ................. Pitch down/up
+ Left/Right Arrow ................. Roll left/right
+ Shift+Left/Right Arrow ........ Orbit object: right/left
+ Shift+Up/Down Arrow ........ Orbit object: down/up
+
+ 
+--- Navigation via number Pad Keys (with NumLock active) ---
+
+ 8 ...................................... Pitch down [Down arrow]
+ 2 ...................................... Pitch up [Up arrow]
+ 7 ...................................... Roll left  [Left arrow]
+ 9 ...................................... Roll right [Right arrow]
+ 5 ...................................... Stop rotation
+ 4 ...................................... Yaw left
+ 6 ...................................... Yaw right
+
+
+--- Motion (Spaceflight) ---
+
+ Z ...................................... Decrease velocity
+ A ...................................... Increase velocity
+ Q ...................................... Reverse direction
+ X ...................................... Set movement direction toward center of screen
+ F2 .................................... Set velocity to 1 km/second
+ F3 .................................... Set velocity to 1,000 km/second
+ F4 .................................... Set velocity to speed of light (1 c)
+ F5 .................................... Set velocity to 10x the speed of light (10 c)
+ F6 .................................... Set velocity to 1 AU/second
+ F7 .................................... Set velocity to 1 light year/second
+ F1 .................................... Stop motion
+ S ...................................... Stop motion
+
+--- Other Functions ---
+
+ Ctrl+C .............................. Copy location URL to clipboard (Cel:// URL)
+ Ctrl+Insert ........................ Copy location URL to clipboard (Cel:// URL)
+ F10 .................................. Capture Image to file (screenshot)
+ Shift+F10 ......................... Capture Movie to file (video)
+ F11 .................................. While in Movie Capture: Start / Pause capture
+ F12 .................................. While in Movie Capture: Stop capture
+ ~ ..................................... Toggle debug console (use Up/Down arrow keys to scroll list)
+ ` ...................................... Toggle display of "frames per second" (FPS) being rendered
+ Ctrl+O .............................. Display "Select Object" dialog box
+ @ .................................... Edit Mode toggle (to assist in the placement of objects)
+ D ..................................... Run demo script (/celestia/demo.cel)
+ Enter ............................... Toggle Name entry Mode (use Tab / Shift+Tab to highlight
+                                          an item, Esc to exit)
+
+
+--------------------------------------------
+    JOYSTICK CONTROLS
+--------------------------------------------
+ F8 .................................... Toggle Joystick control
+ X axis ............................... Yaw Left/Right
+ Y axis ............................... Pitch Up/Down
+ L trigger ............................ Roll Left
+ R trigger ........................... Roll Right
+ Button 1 ........................... Move slower
+ Button 2 ........................... Move faster
+
