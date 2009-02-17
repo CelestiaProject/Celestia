@@ -2419,6 +2419,16 @@ static int celestia_settime(lua_State* l)
     return 0;
 }
 
+static int celestia_ispaused(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected to function celestia:ispaused");
+
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushboolean(l, appCore->getSimulation()->getPauseState());
+
+    return 1;
+}
+
 static int celestia_settimescale(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:settimescale");
@@ -3247,6 +3257,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "unmarkall", celestia_unmarkall);
     Celx_RegisterMethod(l, "gettime", celestia_gettime);
     Celx_RegisterMethod(l, "settime", celestia_settime);
+    Celx_RegisterMethod(l, "ispaused", celestia_ispaused);
     Celx_RegisterMethod(l, "gettimescale", celestia_gettimescale);
     Celx_RegisterMethod(l, "settimescale", celestia_settimescale);
     Celx_RegisterMethod(l, "getambient", celestia_getambient);
