@@ -144,7 +144,8 @@ void renderSphere_GLSL(const RenderInfo& ri,
         if (renderFlags & Renderer::ShowAtmospheres)
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            if (atmosphere->mieScaleHeight > 0.0f)
+            // ... but don't show atmospheres when there are no light sources.
+            if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
                 shadprop.texUsage |= ShaderProperties::Scattering;
         }
 
@@ -408,7 +409,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
         if (renderFlags & Renderer::ShowAtmospheres)
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            if (atmosphere->mieScaleHeight > 0.0f)
+            // ... but don't show atmospheres when there are no light sources.
+            if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
                 shadprop.texUsage |= ShaderProperties::Scattering;
         }
     }
@@ -481,7 +483,11 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                       const Frustum& frustum,
                       const GLContext& context)
 {
-    /*unsigned int nTextures = 0;   Unused*/
+    // Currently, we just skip rendering an atmosphere when there are no
+    // light sources, even though the atmosphere would still the light
+    // of planets and stars behind it.
+    if (ls.nLights == 0)
+        return;
 
     glDisable(GL_LIGHTING);
 
