@@ -3483,11 +3483,19 @@ void Renderer::draw(const Observer& observer,
             // this behavior we'll draw two markers at the same position: one that's always visible, and another one
             // that's depth sorted. When the selection is occluded, only the foreground marker is visible. Otherwise,
             // both markers are drawn and cursor appears much brighter as a result.
-            addSortedAnnotation(&cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
-                                Point3f((float) offset.x, (float) offset.y, (float) offset.z),
-                                AlignLeft, VerticalAlignTop, symbolSize);
+            if (distance < astro::lightYearsToKilometers(1.0))
+            {
+                addSortedAnnotation(&cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
+                                    Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                                    AlignLeft, VerticalAlignTop, symbolSize);
+            }
+            else
+            {
+                addAnnotation(backgroundAnnotations, &cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
+                              Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                              AlignLeft, VerticalAlignTop, symbolSize);
+            }
 
-            // Brighten the 
             Color occludedCursorColor(SelectionCursorColor.red(), SelectionCursorColor.green() + 0.3f, SelectionCursorColor.blue());
             addAnnotation(foregroundAnnotations,
                           &cursorRep, EMPTY_STRING, Color(occludedCursorColor, 0.4f),
@@ -4727,7 +4735,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                                          const Quatf& orientation,
                                          Vec3f semiAxes,
                                          const Vec3f& sunDirection,
-                                         Color /*ambientColor*/,
+                                         const LightingState& ls,
                                          float pixSize,
                                          bool lit)
 {
@@ -4882,6 +4890,12 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             topColor = skyColor;
         else
             topColor = skyColor + (topColor - skyColor) * (ellipDist / height);
+    }
+
+    if (ls.nLights == 0 && lit)
+    {
+        Vec3f black(0.0f, 0.0f, 0.0f);
+        botColor = topColor = sunsetColor = black;
     }
 
     Vec3f zenith = (skyContour[0].v + skyContour[nSlices / 2].v);
@@ -7505,12 +7519,13 @@ void Renderer::renderObject(Point3f pos,
                 glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
                 glRotate(cameraOrientation);
+
                 renderEllipsoidAtmosphere(*atmosphere,
                                           pos,
                                           obj.orientation,
                                           scaleFactors,
                                           ri.sunDir_eye,
-                                          ri.ambientColor * ri.color,
+                                          ls,
                                           thicknessInPixels,
                                           lit);
                 glEnable(GL_TEXTURE_2D);
@@ -9884,7 +9899,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
 	// brightness appMag  ~ absMag - enhance. 'enhance' thus serves to uniformly  
 	// enhance the too low sprite luminosity at close distance.
 
-    float  appMag = (distanceToDSO >= pc10)? (float) astro::absToAppMag((double) absMag, distanceToDSO): absMag + enhance * tanh(distanceToDSO/pc10 - 1.0);
+    float  appMag = (distanceToDSO >= pc10)? (float) astro::absToAppMag((double) absMag, distanceToDSO): absMag + (float) (enhance * tanh(distanceToDSO/pc10 - 1.0));
     
 	// Test the object's bounding sphere against the view frustum. If we
     // avoid this stage, overcrowded octree cells may hit performance badly:

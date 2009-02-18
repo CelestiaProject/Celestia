@@ -562,7 +562,7 @@ class Renderer
                                    const Quatf& orientation,
                                    Vec3f semiAxes,
                                    const Vec3f& sunDirection,
-                                   Color ambientColor,
+                                   const LightingState& ls,
                                    float fade,
                                    bool lit);
 
