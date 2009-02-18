@@ -339,6 +339,15 @@
 	AppMag 9.75
 }
 
+1011627283 "WASP-15"
+{
+	RA 208.927917
+	Dec -32.159722
+	Distance 1004
+	SpectralType "F5"
+	AppMag 11.0
+}
+
 # CoRoT survey
 
 "CoRoT-Exo-1"
@@ -350,7 +359,7 @@
 	AppMag 13.6
 }
 
-"CoRoT-Exo-2"
+"CoRoT-Exo-2:GSC 00465-01282"
 {
 	RA 291.777083
 	Dec 1.38375
