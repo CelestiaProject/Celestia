@@ -10,10 +10,8 @@ dosstuff = \
 	$(wildcard *.bat)
 
 noinst_DATA = \
-	CelestiaKeyAssignments.txt \
 	coding-standards.html \
 	devguide.txt \
-	KbdMouseJoyControls.txt \
 	$(dosstuff)
 
 pkgdata_DATA = \
