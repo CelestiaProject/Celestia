@@ -73,7 +73,6 @@ Source: "README";       DestDir: "{app}"; Flags: ignoreversion isreadme;   DestN
 Source: "AUTHORS";      DestDir: "{app}"; Flags: ignoreversion;            DestName: "AUTHORS.txt"
 Source: "TRANSLATORS";  DestDir: "{app}"; Flags: ignoreversion;            DestName: "TRANSLATORS.txt"
 Source: "ChangeLog";    DestDir: "{app}"; Flags: ignoreversion;            DestName: "ChangeLog.txt"
-Source: "KbdMouseJoyControls.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "splash.png";   DestDir: "{app}"; Flags: ignoreversion
 
 
