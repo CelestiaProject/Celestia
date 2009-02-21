@@ -21,14 +21,12 @@
     return index;
 }
 
-#if REFMARKS
 - (void) removeRefMarkItems
 {
     int index;
     index = [self indexOfItemWithTitle: NSLocalizedStringFromTable(@"Reference Vectors",@"po",@"")];
     if (index >= 0) [self removeItemAtIndex: index];
 }
-#endif
 
 - (void) removePlanetarySystemItem
 {
@@ -51,7 +49,6 @@
         [self removeItemAtIndex: surfMenuIndex];
 }
 
-#if REFMARKS
 - (BOOL) insertRefMarkItemsForSelection: (CelestiaSelection *) aSelection
                                 atIndex: (int) aIndex
 {
@@ -117,7 +114,6 @@
     }
     return result;
 }
-#endif
 
 - (BOOL) insertPlanetarySystemItemForSelection: (CelestiaSelection *) aSelection
                                         target: (id) aTarget

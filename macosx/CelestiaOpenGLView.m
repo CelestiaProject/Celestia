@@ -168,9 +168,8 @@
 
     [[self menu] removePlanetarySystemItem];
     [[self menu] removeAltSurfaceItem];
-#if REFMARKS
     [[self menu] removeRefMarkItems];
-#endif
+
     separatorIndex = [[self menu] numberOfItems] - 4;
     if (separatorIndex < 0) separatorIndex = 0;
     if ([[[self menu] itemAtIndex: separatorIndex] isSeparatorItem])
@@ -180,13 +179,11 @@
 
     selection = [[appCore simulation] selection];
 
-#if REFMARKS
     auxItemIndex   = [[self menu] numberOfItems] - 2;
     if (auxItemIndex < 0) auxItemIndex = 0;
     insertedAuxItem =
         [[self menu] insertRefMarkItemsForSelection: selection
                                             atIndex: auxItemIndex];
-#endif
     auxItemIndex   = [[self menu] numberOfItems] - 2;
     if (auxItemIndex < 0) auxItemIndex = 0;
     insertedAuxItem =

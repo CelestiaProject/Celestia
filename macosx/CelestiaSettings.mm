@@ -188,7 +188,6 @@ static NSMutableDictionary* tagMap;
         nil];
     keyArray = [[tagDict allValues] retain];
 
-#if REFMARKS
     NSDictionary *volatileTagDict = [NSDictionary dictionaryWithObjectsAndKeys:
         TAGDEF(1000,@"showBodyAxes")
         TAGDEF(1001,@"showFrameAxes")
@@ -198,7 +197,6 @@ static NSMutableDictionary* tagMap;
         TAGDEF(1005,@"showTerminator")
         nil];
     [tagDict addEntriesFromDictionary: volatileTagDict];
-#endif
 
     return self;
 }
@@ -522,7 +520,6 @@ FEATUREMETHODS(Other)
 -(float) minimumFeatureSize { return appCore->getRenderer()->getMinimumFeatureSize(); }
 -(void)  setMinimumFeatureSize: (float) value { appCore->getRenderer()->setMinimumFeatureSize(value); }
 
-#if REFMARKS
 // Refmark Settings
 
 -(BOOL) showBodyAxes
@@ -585,8 +582,6 @@ FEATUREMETHODS(Other)
     appCore->toggleReferenceMark("terminator");
 }
 
-
-#endif
 
 // Lighting Settings
 
