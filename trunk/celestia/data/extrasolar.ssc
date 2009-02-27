@@ -1,4 +1,4 @@
-# Catalog of 318 known extrasolar planets.
+# Catalog of 319 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -4082,6 +4082,32 @@ AltSurface "limit of knowledge" "HD 190360/b"
 }
 
 
+"b" "HD 16417"   # Lam 2 For
+{
+	Texture "venuslike.*"
+
+	Mass      22     # M.sin(i) = 22 earths
+	Radius     18200
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+16417"
+
+	EllipticalOrbit {
+		Period          0.0472
+		SemiMajorAxis   0.14
+		Eccentricity    0.2
+		ArgOfPericenter 189
+		MeanAnomaly     299
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 16417/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 27894"
 {
 	Texture "exo-class3.*"
@@ -4919,19 +4945,24 @@ AltSurface "limit of knowledge" "HD 145377/b"
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       1370     # M.sin(i) = 4.31 jupiters
-	Radius     70000
-	Oblateness 0.01
+	Mass       1270     # M.sin(i) = 4 jupiters
+	Radius     72100
+	Oblateness 0.02
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+80606"
 
 	EllipticalOrbit {
 		Period          0.3051
-		SemiMajorAxis   0.468
-		Eccentricity    0.9349
-		ArgOfPericenter 157
-		MeanAnomaly     57
+		SemiMajorAxis   0.453
+		Eccentricity    0.9336
+		Inclination     108.3
+		AscendingNode   137.6
+		ArgOfPericenter 66
+		MeanAnomaly     56
 	}
+
+	Obliquity             108 # guess, to match inclination
+	EquatorAscendingNode  138 # guess, to match ascending node
 
 	RotationPeriod  10 # plausible guess
 }
