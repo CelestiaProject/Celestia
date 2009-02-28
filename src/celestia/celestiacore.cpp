@@ -3349,11 +3349,11 @@ static void displaySelectionName(Overlay& overlay,
         overlay << sel.body()->getName(true).c_str();
         break;
     case Selection::Type_DeepSky:
-        overlay << univ.getDSOCatalog()->getDSOName(sel.deepsky());
+        overlay << univ.getDSOCatalog()->getDSOName(sel.deepsky(), true);
         break;
     case Selection::Type_Star:
         //displayStarName(overlay, *(sel.star()), *univ.getStarCatalog());
-        overlay << ReplaceGreekLetterAbbr(univ.getStarCatalog()->getStarName(*sel.star()));
+        overlay << ReplaceGreekLetterAbbr(univ.getStarCatalog()->getStarName(*sel.star(), true));
         break;
     case Selection::Type_Location:
         overlay << sel.location()->getName(true).c_str();
