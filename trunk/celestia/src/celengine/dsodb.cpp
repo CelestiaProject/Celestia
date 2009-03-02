@@ -179,24 +179,25 @@ void DSODatabase::findVisibleDSOs(DSOHandler&    dsoHandler,
                                   float limitingMag) const
 {
     // Compute the bounding planes of an infinite view frustum
-    Planef frustumPlanes[5];
-    Vec3f  planeNormals[5];
+    Planed frustumPlanes[5];
+    Vec3d  planeNormals[5];
 
-    Mat3f  rot    = obsOrient.toMatrix3();
-    float  h      = (float) tan(fovY / 2);
-    float  w      = h * aspectRatio;
+    Quatd obsOrientd(obsOrient.w, obsOrient.x, obsOrient.y, obsOrient.z);
+    Mat3d   rot    = obsOrientd.toMatrix3();
+    double  h      = tan(fovY / 2);
+    double  w      = h * aspectRatio;
 
-    planeNormals[0] = Vec3f(0,  1, -h);
-    planeNormals[1] = Vec3f(0, -1, -h);
-    planeNormals[2] = Vec3f(1,  0, -w);
-    planeNormals[3] = Vec3f(-1, 0, -w);
-    planeNormals[4] = Vec3f(0,  0, -1);
+    planeNormals[0] = Vec3d( 0,  1, -h);
+    planeNormals[1] = Vec3d( 0, -1, -h);
+    planeNormals[2] = Vec3d( 1,  0, -w);
+    planeNormals[3] = Vec3d(-1,  0, -w);
+    planeNormals[4] = Vec3d( 0,  0, -1);
 
-    for (int i=0; i<5; ++i)
+    for (int i = 0; i < 5; ++i)
     {
         planeNormals[i].normalize();                        //TODO: prenormalize ?
         planeNormals[i]    = planeNormals[i] * rot;
-        frustumPlanes[i]   = Planef(planeNormals[i], Point3f((float) obsPos.x, (float) obsPos.y, (float) obsPos.z) );
+        frustumPlanes[i]   = Planed(planeNormals[i], obsPos);
     }
 
     octreeRoot->processVisibleObjects(dsoHandler,
