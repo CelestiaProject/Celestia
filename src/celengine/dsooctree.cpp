@@ -70,26 +70,24 @@ template<> DynamicDSOOctree::ExclusionFactorDecayFunction*
 template<>
 void DSOOctree::processVisibleObjects(DSOHandler&    processor,
                                       const Point3d& obsPosition,
-                                      const Planef*  frustumPlanes,
+                                      const Planed*  frustumPlanes,
                                       float          limitingFactor,
                                       double         scale) const
 {
     // See if this node lies within the view frustum
 
-        // Test the cubic octree node against each one of the five
-        // planes that define the infinite view frustum.
-        for (int i=0; i<5; ++i)
-        {
-            const Planef* plane = frustumPlanes + i;
-                  double  r     = scale * (abs(plane->normal.x) +
-                                           abs(plane->normal.y) +
-                                           abs(plane->normal.z));
+    // Test the cubic octree node against each one of the five
+    // planes that define the infinite view frustum.
+    for (int i = 0; i < 5; ++i)
+    {
+        const Planed* plane = frustumPlanes + i;
+        double  r     = scale * (abs(plane->normal.x) +
+                                 abs(plane->normal.y) +
+                                 abs(plane->normal.z));
 
-            Vec3d vecDbl((double) plane->normal.x, (double) plane->normal.y, (double) plane->normal.z);
-
-            if (vecDbl * Vec3d(cellCenterPos.x, cellCenterPos.y, cellCenterPos.z) - plane->d < -r)
-                return;
-        }
+        if (plane->normal * Vec3d(cellCenterPos.x, cellCenterPos.y, cellCenterPos.z) - plane->d < -r)
+            return;
+    }
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
