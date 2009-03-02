@@ -108,7 +108,7 @@ template <class OBJ, class PREC> class StaticOctree
     // (if one is required) is the responsibility of the callback method.
     void processVisibleObjects(OctreeProcessor<OBJ, PREC>& processor,
                                const Point3<PREC>&         obsPosition,
-                               const Plane<float>*         frustumPlanes,
+                               const Plane<PREC>*          frustumPlanes,
                                float                       limitingFactor,
                                PREC                        scale) const;
 
