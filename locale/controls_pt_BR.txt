@@ -1,0 +1,144 @@
+Controles do Mouse e Teclado para o Celestia
+
+Funções do Mouse:
+
+Botão esquerdo e arrastar:			orientar a câmara
+Botão direito e arrastar:			orbitar o objeto selecionado
+Roda:						ajustar a distância ao objeto selecionado
+Botão direito + Botão esquerdo e arrastar:	ajustar a distância ao objeto selecionado
+Ctrl + Botão esquerdo e arrastar:		ajustar a distância ao objeto selecionado
+Shift + Botão esquerdo e arrastar:		alterar o campo de visão (e.g. => visão telescópica)
+Clicar na Roda (botão do meio):		alternar o campo de visão entre 45 graus e o campo de visão anterior (e.g. visão telescópica)
+Botão esquerdo:					selecionar objeto
+Botão esquerdo duplo clique:			centrar na seleção
+Botão direito:					fazer aparecer menu contextual
+
+Comandos do Teclado:
+
+Navegação:
+H	: Selecionar o Sol (Home)
+C	: Centrar no objeto selecionado
+G	: Ir para o objeto selecionado
+F	: Seguir o objeto selecionado
+Y	: Orbitar o objeto selecionado sincronizado com a sua rotação (Órbita Geoestacionária)
+:	: Fixar no objeto selecionado
+"	: Perseguir o objeto selecionado (a orientação é baseada na velocidade do objeto selecionado)
+T	: Seguir a órbita do objeto selecionado (manter o objecto selecionado centrado na visão)
+HOME	: Aproximar do objeto
+*	: Olhar para trás
+END	: Afastar do objeto
+ESC	: Cancelar o movimento ou o script
+Shift+C	: Centrar/orbitar -- Centrar o objeto selecionado sem mudar a posição do objeto de referência.
+Setas Direita/Esquerda	: Rolar a câmara
+Setas Cima/Baixo	: Alterar a inclinação vertical da câmara
+Shift + Setas		: Orbitar o objeto
+1-9	: Selecionar planetas em volta da estrela mais próxima
+
+Tempo:
+Espaço	: Parar o tempo
+L	: Tempo 10x mais rápido
+K	: Tempo 10x mais lento
+J	: Inverter o tempo
+!	: Definir o tempo para a hora atual
+?	: Mostrar o atraso da viagem da luz entre o observador e o objeto seleccionado
+-	: Subtrair o atraso da viagem da luz para a hora da simulação atual
+
+Legendas:
+=	: Ligar/Desligar legendas das constelações
+B	: Ligar/Desligar legendas das estrelas
+E	: Ligar/Desligar legendas das galáxias
+M	: Ligar/Desligar legendas das luas
+W	: Ligar/Desligar legendas dos asteróides e dos cometas
+N	: Ligar/Desligar legendas das naves espaciais
+P	: Ligar/Desligar legendas dos planetas
+&	: Ligar/Desligar legendas dos lugares
+
+V	: Alterar a quantidade de texto informativo
+
+Opções:
+I	: Ligar/Desligar texturas de nuvens
+U	: Ligar/Desligar renderização de galáxias
+O	: Ligar/Desligar órbitas dos planetas
+/	: Ligar/Desligar diagramas das constelações
+^	: Ligar/Desligar renderização de nebulosas
+%	: Ligar/Desligar tabelas de cores estelares
+;	: Mostrar um esfera equatorial de coordenadas baseada na Terra
+[	: Se a magnitude automática estiver OFF: Diminuir a magnitude limite (menos estrelas visíveis)
+	  Se a magnitude automática estiver ON : Diminuir a magnitude limite num campo de visão de 45 graus
+]	: Se a magnitude automática estiver OFF: Aumentar a magnitude limite (mais estrelas visíveis)
+	: Se a magnitude automática estiver ON : Aumentar a magnitude limite num campo de visão de 45 graus
+{	: Diminuir a iluminação ambiente
+}	: Aumentar a iluminação ambiente
+(	: Dimunuir o brilho das galáxias independentemente do brilho das estrelas
+)	: Aumentar o brilho das galáxias independentemente do brilho das estrelas
+,	: Apertar o campo de visão
+.	: Alargar o campo de visão
+BACKSPACE: Cancelar a atual seleção
+Ctrl+A	: Ligar/Desligar atmosferas
+Ctrl+B	: Ligar/Desligar os limites das constelações
+Ctrl+E	: Ligar/Desligar a renderização de sombras de eclipses
+Ctrl+K	: Ligar/Desligar os marcadores
+Ctrl+L	: Ligar/Desligar os mapas dos lados noturnos dos planetas (poluição luminosa)
+Ctrl+P	: Marcar o objecto selecionado
+Ctrl+S	: Alternar o estilo de estrelas entre pontos indistintos, pontos e discos em escala.
+Ctrl+T	: Ligar/Desligar a renderização de caudas de cometas
+Ctrl+V	: Alternar entre os caminhos de renderização OpenGL suportados
+Ctrl+W	: Ligar/Desligar modo wireframe
+Ctrl+X	: Ligar/Desligar linhas anti-serrilhadas
+Ctrl+Y	: Ligar/Desligar magnitude automática, ou seja, a adaptação automática da visibilidade estelar ao campo de visão
+r R	: Baixar ou aumentar a resolução das texturas
++	: Alternar entre as texturas artísticas e as do limite do conhecimento nos planetas
+
+Multivisão:
+Ctrl+R	: Dividir a visão verticalmente
+Ctrl+U	: Dividir a visão horizontalmente
+TAB	: Alternar o panorama ativo
+DEL	: Apagar o panorama ativo
+Ctrl+D	: Apagar todos os panoramas exceto o ativo
+
+Comandos da nave:
+F1	: Parar
+F2	: Definir a velocidade para 1 km/s
+F3	: Definir a velocidade para 1 000 km/s
+F4	: Definir a velocidade para a velocidade da luz
+F5	: Definir a velocidade para 10x a velocidade da luz
+F6	: Definir a velocidade para 1 UA/s
+F7	: Definir a velocidade para 1 a.l./s
+A	: Aumentar a velocidade
+Z	: Diminuir a velocidade
+Q	: Inverter o sentido
+X	: Definir a direcção do movimento para o centro da tela
+
+Bloco numérico:
+4	: Guinar para a esquerda
+6	: Guinar para a direita
+8	: Descer
+2	: Subir
+7	: Rolar à esquerda
+9	: Rolar à direita
+5	: Parar a rotação
+
+Joystick:
+Eixo X 	: Guinar
+Eixo Y	: Subir/Descer
+Gatilho Esq : Rolar à esquerda
+Gatilho Dir : Rolar à direita
+Botão 1	: mais devagar
+Botão 2	: mais depressa
+
+Outros:
+D	: Rodar demonstração
+F8 	: Ativar o joystick
+F10	: Capturar imagem para arquivo
+`	: Mostrar os frames renderizados por segundo
+ENTER	: Escolher um objeto escrevendo o seu nome
+Ctrl+C, Ctrl+INS : Copiar localização de um URL para o clipboard
+
+
+
+
+
+
+
+
+

@@ -1,168 +1,251 @@
-Maus- und Tastaturbefehle für  Celestia
-===============================
+Maus-, Tastatur- und Joystickbefehle für Celestia 
+----------------------------------------------
 
-MAUSFUNKTIONEN:
+------------------------------------------
+    STEUERUNG MIT DER MAUS
+------------------------------------------
 
-Links (ziehen)		Orientierung der Ansicht
-Rechts (ziehen)		Gewähltes Objekt umkreisen
-Mausrad (drehen)		Entfernung zum gewählten Objekt einstellen
-Rechts + Links (ziehen)	Entfernung zum gewählten Objekt einstellen
-Strg  + Links (ziehen)	Entfernung zum gewählten Objekt einstellen
-Shift + Links (ziehen)	Blickfeld ändern
-Rad/mittlere Taste (Klick)	Blickfeld umschalten zwischen aktuellem und
-			vorherigem Blickfeld
-Linksklick			Objekt auswählen
-Links-Doppelklick		Auswahl zentrieren
-Rechtsklick		Kontextmenü aufrufen
-
-
-TASTATURBEFEHLE:
-
-Navigation:
-H	Unsere Sonne auswählen (Heimatsonne)
-C	Zentriert das gewählte Objekt
-Shift+C	Zentriert zwei Objekte in der Ansicht (das aktuelle Referenzobjekt und
-	ein zweites gewähltes Objekt)
-Strg+O	Dialogbox "Objekt auswählen" aufrufen
-G	Gehe zum gewählten Objekt
-Strg+G	Auf der Oberfläche des gewählten Objekts landen
-Strg+F	Alt-Azimut-Modus auf Objektoberfläche ein-/ausschalten
-F	Folge dem gewählten Objekt
-Y	Umkreisen des gewählten Objekts synchron zu seiner Eigenrotation
-:	Gewähltes Objekt mit vorherigem Objekt verbinden
-"	Gewähltem Objekt nacheilen (Orientierung basiert auf Geschwindig-
-	keitsvektor des gewählten Objekts)
-T	Gewähltes Objekt einfangen (hält das gewählte Objekt zentriert)
-Pos1	Näher zum Objekt bewegen
-*	Zurück blicken (aus dem Heckfenster)
-Ende	Vom Objekt entfernen
-Esc	In freien Flug umschalten oder Skript abbrechen
-
-Pfeiltasten links/rechts	Ansicht rollen
-Pfeiltasten oben/unten	Neigung der Ansicht einstellen
-Shift+Pfeiltasten		Objekt umkreisen
-1-9 (Ziffernreihe)		Auswahl der Planeten im aktuellen Sonnensystem
-0 (Null)			Auswahl des Heimatsterns im akt. Sonnensystem
-Eingabetaste		Objekt durch Eingabe des Namens auswählen
-
-Zeiteinstellung:
-Leertaste	  Zeitablauf und Skripte anhalten/fortsetzen
-Shift+L	  Zeitablauf 2x schneller
-Shift+K	  Zeitablauf 2x langsamer
-L	  Zeitablauf 10x schneller
-K	  Zeitablauf 10x langsamer
-J	  Zeitablauf umkehren
-!	  Auf aktuelle Zeit setzen
-?	  Lichtlaufzeit zwischen Beobachter und gewähltem Objekt anzeigen
--	  Lichtlaufzeit von der aktuellen Simulationszeit abziehen
-
-Bezeichnungen:
-=	Bezeichnungen der Sternbilder ein-/ausschalten
-B	Bezeichnungen der Sterne ein-/ausschalten
-E	Bezeichnungen der Galaxien ein-/ausschalten
-M	Bezeichnungen der Monde ein-/ausschalten
-W	Bezeichnungen der Asteroiden ein-/ausschalten
-Shift+W	Bezeichnungen der Kometen ein-/ausschalten
-N	Bezeichnungen der Raumfahrzeuge ein-/ausschalten
-P	Bezeichnungen der Planeten ein-/ausschalten
-&	Bezeichnungen der Bezugspunkte und Orte ein-/ausschalten
-V	Umfang des Informationstextes verändern
-
-Optionen:
-I	Wolken ein-/ausschalten
-U	Galaxien ein-/ausschalten
-O	Umlaufbahnen ein-/ausschalten
-/	Sternbilder ein-/ausschalten
-^	Nebel ein-/ausschalten
-%	Farben für die Sterndarstellung umschalten
-;	Erdbasiertes Himmelsraster ein-/ausschalten
-AltGr + [	Wenn autoMag AUS: Magnitude verringern (weniger Sterne sichtbar)
-	Wenn autoMag EIN: Magnitude verringern bei 45° Blickfeld
-AltGr + ]	Wenn autoMag AUS: Magnitude vergrößern (mehr Sterne sichtbar)
-	Wenn autoMag EIN: Magnitude vergrößern bei 45° Blickfeld
-AltGr + {	Streulichtanteil verringern
-AltGr + }	Streulichtanteil erhöhen
-(	Galaxienhelligkeit verringern (unabhängig von Sternhelligkeit)
-)	Galaxienhelligkeit erhöhen (unabhängig von Sternhelligkeit)
-,	Blickfeld verkleinern
-.	Blickfeld vergrößern
-Zurück	Aktuelle Auswahl aufheben
-Strg+A	Atmosphären ein-/ausschalten
-Strg+B	Sternbildgrenzen ein-/ausschalten 
-Strg+E	Finsternisschatten ein-/ausschalten
-Strg+K	Anzeige der Markierungen ein-/ausschalten
-Strg+L	Lichter auf Nachtseite ein-/ausschalten
-Strg+P	Ausgewähltes Objekt markieren
-Strg+S	Aussehen der Sterne ändern (verschwommene Punkte, Punkte, 
-	skalierte Scheiben)
-Strg+T	Kometenschweife ein-/ausschalten
-Strg+V	Unterstützte OpenGL-Methoden durchschalten
-Strg+W	Drahtgitter-Modus ein-/ausschalten
-Strg+X	Kantenglättung (Antialiasing) ein-/ausschalten
-Strg+Y	autoMag ein-/ausschalten (autoMag = Automatische Anpassung der
-	Sternensichtbarkeit an das Blickfeld)
-Shift+R	Auflösung der Texturen erhöhen (falls möglich)
-R	Auflösung der Texturen verringern (falls möglich)
-+	Zwischen 'Limit Of Knowledge'-Texturen und interpretierenden
-	Texturen umschalten
-
-Mehrfachansichten:
-Strg+R	Bildschirm vertikal teilen
-Strg+U	Bildschirm horizontal teilen
-TAB	Aktive Ansicht umschalten
-Entf	Aktive Ansicht löschen
-Strg+D	Alle Ansichten löschen (außer aktive Ansicht)
-
-Raumflug:
-F1	Stopp
-F2	Geschwindigkeit einstellen auf 1 km/s
-F3	Geschwindigkeit einstellen auf 1.000 km/s
-F4	Geschwindigkeit einstellen auf Lichtgeschwindigkeit (1 c)
-F5	Geschwindigkeit einstellen auf 10fache Lichtgeschwindigkeit
-F6	Geschwindigkeit einstellen auf 1 AE/s
-F7	Geschwindigkeit einstellen auf 1 LJ/s
-A	Geschwindigkeit erhöhen ("Gas geben")
-S	Stopp
-Z	Geschwindigkeit verringern ("Bremsen")
-Q	Flugrichtung umkehren (Raumschiff um 180° drehen)
-X	Flugrichtung auf die Mitte des Bildschirms setzen
-
-Zahlenblock (rechts auf Tastatur) - "NumLock" einschalten:
-4	Nach links schwenken
-6	Nach rechts schwenken
-8	Nach unten neigen
-2	Nach oben neigen
-7	Nach links rollen (gegen Uhrzeigersinn)
-9	Nach rechts rollen (im Uhrzeigersinn)
-5	Kursänderung stoppen
+"Links" und "Rechts" bezeichnen die jeweils gedrückt zu haltende Maustaste.
+ 
+Links (ziehen) ................................. Orientierung der Ansicht (Auch nutzbar:
+                                                         Pfeiltasten oben & unten, sowie 2/8/4/6
+                                                         im Ziffernblock mit eingeschaltetem 
+                                                         NumLock)
+Rechts (ziehen) .............................. Gewähltes Objekt umkreisen (Umschalt+
+                                                         Pfeiltasten)
+Links+Rechts (links/rechts ziehen) . Ansicht nach links/rechts rollen (Linke/rechte
+                                                         Pfeiltaste)
+Links+Rechts (oben/unten ziehen)  Entfernung zum gewählten Objekt einstellen 
+                                                         (Pos1/Ende)
+Mausrad (drehen) ........................... Entfernung zum gewählten Objekt einstellen 
+                                                         (Pos1/Ende)
+Strg+Links (oben/unten ziehen) ..... Entfernung zum gewählten Objekt einstellen
+                                                         (Pos1/Ende) 
+Umschalt+Links (ziehen) ................. Blickfeld ändern (FOV; auch mit . und ,)
+Rad/mittlere Taste (Klick) ............... Blickfeld umschalten zwischen 45 Grad und
+                                                         vorherigem Wert
+Linksklick auf ein Objekt ................ Objekt auswählen (Eingabetaste -- mit 
+                                                         Objektname)
+Linksklick ins Leere ........................ Auswahl aufheben
+Links-Doppelklick auf ein Objekt .... Objekt auswählen und zentrieren
+Rechtsklick auf ein Objekt .............. Kontextmenü des Objekts aufrufen
 
 
-JOYSTICK:
+------------------------------------------------
+    TASTATURBEFEHLE
+------------------------------------------------
 
-X-Achse		Schwenken (links/rechts)
-Y-Achse		Neigen (nach oben/unten)
-Linker Abzug	Nach links rollen (gegen Uhrzeigersinn)
-Rechter Abzug	Nach rechts rollen (im Uhrzeigersinn)
-Knopf 1		Langsamer ("bremsen")
-Knopf 2		Schneller ("Gas geben")
+ --- Navigation ---
+
+1-9 (Ziffernreihe) . Auswahl der Planeten im aktuellen Sonnensystem
+0 (Null) ................ Auswahl des Zentralgestirns im aktuellen Sonnensystem
+H ........................ Unsere Sonne auswählen (home)
+C ......................... Zentriert das gewählte Objekt auf dem Bildschirm
+G ........................ Gehe zum gewählten Objekt
+F ......................... Folge dem gewählten Objekt
+T ........................ Gewähltes Objekt einfangen (hält das gewählte Objekt zentriert)
+Y ........................ Umkreisen des gewählten Objekts synchron zu seiner
+                             Eigenrotation
+: .......................... Zwei Objekte miteinander verbinden (Objekt 1 auswählen, "F" 
+                             drücken, Objekt 2 auswählen und ":" drücken)
+" ......................... Gewähltem Objekt nacheilen (Orientierung basiert auf
+                             Geschwindigkeitsvektor des gewählten Objekts)
+Umschalt+C ........ Zentriert das gewählte Objekt, ohne die Position des 
+                             Referenzobjektes zu verändern
+Strg+G ................ Auf der Oberfläche des gewählten Objekts landen
+Strg+F ................. Alt-Azimut-Modus auf Objektoberfläche ein-/ausschalten. 
+                             Zusammen mit Strg+G verwenden. Die Pfeiltasten "Links" und
+                             "Rechts" werden zu "Nach links/rechts" schwenken.
+Pos1 ................... Näher zum Objekt bewegen
+Ende ................... Vom Objekt entfernen
+* .......................... Zurück blicken (Blickrichtung umkehren)
+Rücktaste ........... Wähle das übergeordnete Objekt des aktuellen Objekts oder hebe die 
+                             Auswahl auf:
+                             - Falls die Auswahl ein Ort ist, wähle das übergeordnete
+                               Objekt
+                             - Falls die Auswahl ein Objekt ist, wähle das übergeordnete
+                               Objekt
+                             - Falls die Auswahl ein Stern ist, hebe die Auswahl auf
+Esc ..................... Skript abbrechen oder in freien Flug umschalten (folgende 
+                             Befehle werden aufgehoben: Gehe zu, Folge, Einfangen, 
+                             Verbinden, Synchroner Orbit)
 
 
-SONSTIGES:
+ --- Navigation mit Pfeiltasten ---
 
-D	  Demo starten
-F8	  Joystick einschalten
-F10	  Bildschirmfoto erstellen
-Shift+F10	  Film-Modus aktivieren (Videoaufzeichnung)
-F11	  Im Film-Modus: Aufzeichnung starten / pausieren 
-F12	  Im Film-Modus: Aufzeichnung beenden
-AltGr + ~	  Logdatei anzeigen (Ladevorgänge, Fehlermeldungen)
-`	  Anzahl der Bilder pro Sekunde anzeigen (FPS)
-	  (Um ` zu erhalten, nacheinander Shift+` und Leertaste drücken)
-Strg+C	  URL der aktuellen Szene in Zwischenablage kopieren
-Strg+Einfg  URL der aktuellen Szene in Zwischenablage kopieren
+Pfeiltaste oben ... Ansicht nach unten neigen (Objekt bewegt sich nach oben)
+Pfeiltaste unten .. Ansicht nach oben neigen (Objekt bewegt sich nach unten)
+Pfeiltaste links .... Ansicht nach links rollen (Objekt rollt nach rechts)
+Pfeiltaste rechts . Ansicht nach rechts rollen (Objekt rollt nach links)
+
+Umschalt+Pfeiltaste links .... Objekt umkreisen: Rechtsherum (Objekt rotiert nach 
+                                                                                                  links)
+Umschalt+Pfeiltaste rechts . Objekt umkreisen: Linksherum (Objekt rotiert nach 
+                                                                                               rechts)
+Umschalt+Pfeiltaste oben ... Objekt umkreisen: nach unten (Objekt rotiert nach 
+                                                                                               oben)
+Umschalt+Pfeiltaste unten .. Objekt umkreisen: nach oben (Objekt rotiert nach 
+                                                                                               unten)
 
 
-     Deutsche Hilfedatei von Ulrich Dickmann, Christian Lenz, Andreas Wagner
+ --- Navigation mit Tasten des Ziffernblocks -- NumLock eingeschaltet ---
+
+8 ................ Ansicht nach unten neigen (Objekt bewegt sich nach oben)
+2 ................ Ansicht nach oben neigen (Objekt bewegt sich nach unten)
+7 ................ Ansicht nach links rollen (Objekt rollt nach rechts)
+9 ................ Ansicht nach rechts rollen (Objekt rollt nach links)
+5 ................ Rotation anhalten
+4 ................ Nach links schwenken (Objekt bewegt sich nach rechts)
+6 ................ Nach rechts schwenken (Objekt bewegt sich nach links)
+
+
+ --- Bewegung (Raumflug) ---
+
+Z ................ Geschwindigkeit verringern ("Bremsen")
+A ................ Geschwindigkeit erhöhen ("Gas geben")
+Q ................ Bewegungsrichtung umkehren (bei gleicher Blickrichtung)
+X ................ Flugrichtung auf die Mitte des Bildschirms setzen
+S ................ Stopp
+F1 .............. Stopp
+F2 .............. Geschwindigkeit einstellen auf 1 km/s
+F3 .............. Geschwindigkeit einstellen auf 1.000 km/s
+F4 .............. Geschwindigkeit einstellen auf Lichtgeschwindigkeit (1 c)
+F5 .............. Geschwindigkeit einstellen auf 10fache Lichtgeschwindigkeit
+F6 .............. Geschwindigkeit einstellen auf 1 AE/s
+F7 .............. Geschwindigkeit einstellen auf 1 LJ/s
+
+
+ --- Zeiteinstellung ---
+
+Leertaste ........ Zeitablauf und Skripte anhalten/fortsetzen
+J ..................... Zeitablauf umkehren
+\ ..................... Auf Echtzeit umschalten (Hebt schnelleren/langsameren 
+                         Zeitablauf auf)
+Umschalt+L .... Zeitablauf 2x schneller
+Umschalt+K .... Zeitablauf 2x langsamer
+L ..................... Zeitablauf 10x schneller
+K ..................... Zeitablauf 10x langsamer
+! ...................... Auf aktuelle Zeit setzen (Systemzeit des Computers)
+? ..................... Lichtlaufzeit zwischen Beobachter und gewähltem Objekt 
+                         anzeigen
+- (Bindestrich) .. Lichtlaufzeit von der aktuellen Simulationszeit abziehen
+
+
+ --- Bezeichnungen von Objekten anzeigen (Ein-/Ausschalter) ---
+
+E ..................... Galaxien
+Umschalt+E .... Kugelsternhaufen
+B ..................... Sterne
+P ..................... Planeten
+Umschalt+P .... Zwergplaneten
+M .................... Monde
+Umschalt+M ... Kleine Monde
+W ................... Asteroiden
+Umschalt+W .. Kometen
+N .................... Raumfahrzeuge
+= ..................... Sternbilder
+& ..................... Bezugspunkte und Orte
+
+
+ --- Objektanzeige (Ein-/Ausschalter) ---
+
+U ........................... Galaxien
+Umschalt+U .......... Kugelsternhaufen
+^ ........................... Nebel
+Strg+A ................... Atmosphären
+I ............................ Wolken
+Strg+L ................... Lichter auf der Nachtseite des Planeten (Lichtverschmutzung)
+Strg+T ................... Kometenschweife
+Strg+E ................... Finsternisschatten
+Strg+B ................... Sternbildgrenzen
+/ ............................ Sternbilder
+; ............................. Erdbasiertes äquatoriales Koordinatennetz
+Strg+K ................... Anzeige der Markierungen
+O ........................... Umlaufbahnen (Zeige ALLE im Menü Darstellung/Anzeigeoptionen
+                                ausgewählten Umlaufbahnen an)
+
+
+ --- Darstellung/Anzeigeoptionen ---
+
+AltGr+{ ............. Streulichtanteil verringern
+AltGr+} ............. Streulichtanteil erhöhen
+Umschalt+( ...... Galaxienhelligkeit verringern (unabhängig von Sternhelligkeit)
+Umschalt+) ...... Galaxienhelligkeit erhöhen (unabhängig von Sternhelligkeit)
+AltGr+[ ............. Grenzmagnitude verringern:
+                           - Wenn autoMag AUS: Magnitude verringern (weniger Sterne 
+                                                                        sichtbar)
+                           - Wenn autoMag EIN: Magnitude verringern bei 45° Blickfeld
+AltGr+] ............. Grenzmagnitude erhöhen:
+                           - Wenn autoMag AUS: Magnitude vergrößern (mehr Sterne 
+                                                                        sichtbar)
+                           - Wenn autoMag EIN: Magnitude vergrößern bei 45° Blickfeld
+Strg+Y ............. autoMag ein-/ausschalten (autoMag = Automatische Anpassung 
+                          der Sternensichtbarkeit an das Blickfeld)
+, ....................... Blickfeld verkleinern (oder Umschalt+Linke Maustaste (ziehen))
+. ....................... Blickfeld vergrößern (oder Umschalt+Linke Maustaste (ziehen))
+Strg+X ............. Kantenglättung (Antialiasing) ein-/ausschalten (z. B. für die 
+                          Umlaufbahnen)
+Alt+Eingabetaste  Anzeigemodus umschalten (Vollbild/Fenstermodus)
+Strg+P .............. Ausgewähltes Objekt markieren (Markierungsanzeige muss aktiv 
+                          sein -- Strg+K)
+Strg+V .............. Unterstützte OpenGL-Methoden durchschalten
++ ....................... Zwischen 'Limit Of Knowledge'-Texturen und interpretierenden
+                           Texturen umschalten
+% ....................... Farben für die Sterndarstellung umschalten
+Strg+S .............. Aussehen der Sterne ändern (verschwommene Punkte, Punkte, 
+                           skalierte Scheiben)
+V ....................... Umfang des Informationstextes verändern (knapp/ ausführlich/ 
+                           kein Text)
+Strg+W ............. Drahtgitter-Modus ein-/ausschalten
+
+
+ --- Mehrfachansichten ---
+
+Strg+U ........... Bildschirm horizontal teilen
+Strg+R ........... Bildschirm vertikal teilen
+Tab ................ Durch aktive Ansichten wechseln
+Entf ................ Aktive Ansicht löschen
+Strg+D ........... Alle Ansichten löschen (außer aktive Ansicht)
+
+
+Andere Funktionen
+---------------
+F10 .................. Bildschirmfoto erstellen
+Umschalt+F10 . Film-Modus aktivieren (Videoaufzeichnung)
+F11 .................. Im Film-Modus: Aufzeichnung starten/pausieren 
+F12 .................. Im Film-Modus: Aufzeichnung beenden
+Strg+C ............. URL der aktuellen Szene in Zwischenablage kopieren
+Strg+Einfg ........ URL der aktuellen Szene in Zwischenablage kopieren
+AltGr+~ ............ Logdatei anzeigen (Ladevorgänge, Fehlermeldungen). Nützlich
+                          bei Ladeproblemen von Texturen. Scrollen mit Pfeiltasten 
+                          möglich.
+` ....................... Anzahl der Bilder pro Sekunde anzeigen (FPS). (Um ` zu 
+                          erhalten, nacheinander Umschalt+` und Leertaste drücken)
+Strg+O ............. Dialogbox "Objekt auswählen" aufrufen
+AltGr+@ ........... Editiermodus ein-/ausschalten (Hilfe zum Platzieren von 
+                          Objekten)
+D ...................... Demo starten (/celestia/demo.cel)
+Eingabetaste .... Objekt/Ort durch Eingabe des Namens auswählen. Esc zum 
+                          abbrechen. Methode funktioniert wie folgt:
+                          Eingabetaste drücken, Objekt- oder Ortsnamen eingeben und 
+                          nochmals Eingabetaste drücken. Bei nur teilweise eingegebenem
+                          Namen mit Tab und Umschalt+Tab durch die Liste der Vorschläge 
+                          navigieren. Wenn der richtige Name hervogehoben ist, durch 
+                          drücken der Eingabetaste auswählen.
+
+
+--------------------------------------------
+    STEUERUNG MIT DEM JOYSTICK
+--------------------------------------------
+
+F8 ..................... Joystick ein-/ausschalten
+X-Achse ........... Schwenken (links/rechts)
+Y-Achse ........... Neigen (nach oben/unten)
+Linker Abzug .... Nach links rollen (gegen Uhrzeigersinn)
+Rechter Abzug . Nach rechts rollen (im Uhrzeigersinn)
+Knopf 1	.......... Langsamer ("bremsen")
+Knopf 2 ............. Schneller ("Gas geben")
+
+Deutsche Hilfedatei von Ulrich Dickmann, Christian Lenz, Andreas Wagner
      
 Deutschsprachige Webseite zum Thema Celestia: http://www.celestia.info/
-			    

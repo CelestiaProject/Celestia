@@ -1,0 +1,154 @@
+# Script de Demonstração do Celestia
+# Tradução Português do Brasil: Igor Borgo
+# contacto : igorborgo@gmail.com
+
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Iniciando a Demonstração . . .\nPressione ESC para terminar." origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "Vamos começar perto de casa . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "Estamos agora orbitando a cerca de 12 500km acima da Terra" row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "A Terra é muito mais familiar com nuvens." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Próximo destino: a Lua." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Observe a Terra e o Sol enquanto orbitamos a Lua" row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "A caminho do Sol!" row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "A esta distância, as manchas solares escuras são visíveis na superfície do Sol." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Vamos nos afastar para uma visão geral do Sistema Solar interior." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Colocando os nomes dos planetas . . ." row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "Podemos acelerar o tempo para ver os planetas orbitando o Sol." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "Em cada segundo, passa um mês na simulação." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Agora, o tempo parou completamente." row -3}
+
+	wait { duration 1.0 }
+	print { text "O nosso próximo destino é Saturno." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Várias das luas de Saturno são visíveis como pontos brilhantes" row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "A feiçao mais proeminente em Mimas, uma lua de Saturno, é a enorme cratera de impacto Herschel." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Repare o quão tênue o Sol aparece a esta distância." row -3 }
+	wait { duration 2 }
+
+	print { text "Vamos olhar à volta para as estrelas do céu." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Os habitantes do Hemisfério Norte deverão reconhecer o Arado na constelação da Ursa Maior." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "Estamos agora centrados na Polar, a Estrela do Norte." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "A Polar é parte da constelação conhecida como ursa menor." row -3}
+	wait { duration 2 }
+	print { text "Para ajudar a nossa orientação no céu, o Celestia pode desenhar para nós os diagramas das constelações . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . e os respectivos nomes." row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Órion é a constelação mais proeminente do céu." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "O Cruzeiro do Sul é familiar nos céus do Hemisfério Sul." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Vamos ativar a renderização de galáxias para podermos ver a Via Láctea" row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Iremos agora viajar até Antares, um estrela gigante-vermelha no Escorpião." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "Apesar de estarmos 10 vezes mais longe de antares do que a\nTerra está do Sol, a massiva estrela gigante-vermelha avulta-se gigantesca no céu." row -3}
+	wait { duration 4.0 }
+
+	print { text "Vamos afastar-nos para ver o panorama geral . . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Estamos a ver toda a nossa Galáxia, a Via Láctea." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "São horas de ir para casa . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Demonstração completa." row -3}
+	wait { duration 3.0 }
+}
