@@ -5287,10 +5287,11 @@ static void setLightParameters_VP(VertexProcessor& vproc,
 
 static void renderModelDefault(Geometry* geometry,
                                const RenderInfo& ri,
-                               bool lit)
+                               bool lit,
+                               ResourceHandle texOverride)
 {
     FixedFunctionRenderContext rc;
-    //rc.makeCurrent();
+    Mesh::Material m;
 
     rc.setLighting(lit);
 
@@ -5307,7 +5308,14 @@ static void renderModelDefault(Geometry* geometry,
     glColor(ri.color);
 
     if (ri.baseTex != NULL)
+    {
+        m.diffuse = ri.color;
+        m.specular = ri.specularColor;
+        m.specularPower = ri.specularPower;
+        m.maps[Mesh::DiffuseMap] = texOverride;
+        rc.setMaterial(&m);
         rc.lock();
+    }
 
     geometry->render(rc);
     if (geometry->usesTextureType(Mesh::EmissiveMap))
@@ -7409,9 +7417,10 @@ void Renderer::renderObject(Point3f pos,
     {
         if (geometry != NULL)
         {
+            ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
+
             if (context->getRenderPath() == GLContext::GLPath_GLSL)
             {
-                ResourceHandle texOverride = obj.surface->baseTexture.tex[textureResolution];
                 if (lit)
                 {
                     renderGeometry_GLSL(geometry,
@@ -7427,12 +7436,12 @@ void Renderer::renderObject(Point3f pos,
                 else
                 {
                     renderGeometry_GLSL_Unlit(geometry,
-                                           ri,
-                                           texOverride,
-                                           geometryScale,
-                                           renderFlags,
-                                           planetMat,
-                                           astro::daysToSecs(now - astro::J2000));
+                                              ri,
+                                              texOverride,
+                                              geometryScale,
+                                              renderFlags,
+                                              planetMat,
+                                              astro::daysToSecs(now - astro::J2000));
                 }
 
                 for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
@@ -7446,7 +7455,7 @@ void Renderer::renderObject(Point3f pos,
             }
             else
             {
-                renderModelDefault(geometry, ri, lit);
+                renderModelDefault(geometry, ri, lit, texOverride);
             }
         }
     }
@@ -8107,7 +8116,7 @@ void Renderer::renderStar(const Star& star,
             rp.atmosphere = &atmosphere;
         else
 #endif
-            rp.atmosphere = NULL;
+        rp.atmosphere = NULL;
 
         Quatd q = star.getRotationModel()->orientationAtTime(now);
         rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
