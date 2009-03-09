@@ -59,6 +59,7 @@ class RenderContext
     bool usePointSize;
     bool useNormals;
     bool useColors;
+    bool useTexCoords;
 };
 
 

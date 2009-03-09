@@ -70,7 +70,8 @@ RenderContext::RenderContext() :
     pointScale(1.0f),
     usePointSize(false),
     useNormals(true),
-    useColors(false)
+    useColors(false),
+    useTexCoords(true)
 {
 }
 
@@ -207,13 +208,14 @@ FixedFunctionRenderContext::~FixedFunctionRenderContext()
 }
 
 
+static int blah = 0;
 void
 FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
 {
     if (getRenderPass() == PrimaryPass)
     {
         Texture* t = NULL;
-        if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+        if (m.maps[Mesh::DiffuseMap] != InvalidResource && useTexCoords)
             t = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
 
         if (t == NULL)
@@ -332,7 +334,7 @@ FixedFunctionRenderContext::makeCurrent(const Mesh::Material& m)
     else if (getRenderPass() == EmissivePass)
     {
         Texture* t = NULL;
-        if (m.maps[Mesh::EmissiveMap] != InvalidResource)
+        if (m.maps[Mesh::EmissiveMap] != InvalidResource && useTexCoords)
             t = GetTextureManager()->find(m.maps[Mesh::EmissiveMap]);
 
         if (t == NULL)
@@ -354,18 +356,16 @@ FixedFunctionRenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     // Update the material if normals appear or disappear in the vertex
     // description.
     bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
+    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
+    bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
 
-    if (useNormalsNow != useNormals)
+    if (useNormalsNow != useNormals ||
+        useColorsNow != useColors ||
+        useTexCoordsNow != useTexCoords)
     {
         useNormals = useNormalsNow;
-        if (getMaterial() != NULL)
-            makeCurrent(*getMaterial());
-    }
-
-    bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
-    if (useColorsNow != useColors)
-    {
         useColors = useColorsNow;
+        useTexCoords = useTexCoordsNow;
         if (getMaterial() != NULL)
             makeCurrent(*getMaterial());
     }
@@ -446,7 +446,6 @@ setStandardVertexArrays(const Mesh::VertexDescription& desc,
                        GLComponentTypes[color0.format],
                        desc.stride,
                        reinterpret_cast<char*>(vertexData) + color0.offset);
-            //clog << "format: " << color0.format << ", offset: " << color0.offset << endl;
         break;
     default:
         glDisableClientState(GL_COLOR_ARRAY);
@@ -563,7 +562,6 @@ GLSL_RenderContext::initLightingEnvironment()
 
 }
 
-
 void
 GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 {
@@ -598,7 +596,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
             shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
     }
 
-    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource && useTexCoords)
     {
         baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
         if (baseTex != NULL)
@@ -763,14 +761,17 @@ GLSL_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
     bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
     bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
+    bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
 
     if (usePointSizeNow != usePointSize ||
         useNormalsNow   != useNormals   ||
-        useColorsNow    != useColors)
+        useColorsNow    != useColors    ||
+        useTexCoordsNow != useTexCoords)
     {
         usePointSize = usePointSizeNow;
         useNormals = useNormalsNow;
         useColors = useColorsNow;
+        useTexCoords = useTexCoordsNow;
         if (getMaterial() != NULL)
             makeCurrent(*getMaterial());
     }
@@ -833,7 +834,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
     shaderProps.lightModel = ShaderProperties::EmissiveModel;
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
 
-    if (m.maps[Mesh::DiffuseMap] != InvalidResource)
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource && useTexCoords)
     {
         baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
         if (baseTex != NULL)
@@ -929,14 +930,17 @@ GLSLUnlit_RenderContext::setVertexArrays(const Mesh::VertexDescription& desc,
     bool usePointSizeNow = (desc.getAttribute(Mesh::PointSize).format == Mesh::Float1);
     bool useNormalsNow = (desc.getAttribute(Mesh::Normal).format == Mesh::Float3);
     bool useColorsNow = (desc.getAttribute(Mesh::Color0).format != Mesh::InvalidFormat);
+    bool useTexCoordsNow = (desc.getAttribute(Mesh::Texture0).format != Mesh::InvalidFormat);
 
     if (usePointSizeNow != usePointSize ||
         useNormalsNow   != useNormals   ||
-        useColorsNow    != useColors)
+        useColorsNow    != useColors    ||
+        useTexCoordsNow != useTexCoords)
     {
         usePointSize = usePointSizeNow;
         useNormals = useNormalsNow;
         useColors = useColorsNow;
+        useTexCoords = useTexCoordsNow;
         if (getMaterial() != NULL)
             makeCurrent(*getMaterial());
     }

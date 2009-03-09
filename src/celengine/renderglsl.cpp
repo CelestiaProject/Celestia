@@ -297,11 +297,14 @@ void renderGeometry_GLSL(Geometry* geometry,
         m.specular = ri.specularColor;
         m.specularPower = ri.specularPower;
         m.maps[Mesh::DiffuseMap] = texOverride;
-        rc.makeCurrent(m);
+        rc.setMaterial(&m);
         rc.lock();
+        geometry->render(rc, tsec);
     }
-
-    geometry->render(rc, tsec);
+    else
+    {
+        geometry->render(rc, tsec);
+    }
 
     glx::glUseProgramObjectARB(0);
 }
@@ -334,11 +337,14 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
         m.specular = ri.specularColor;
         m.specularPower = ri.specularPower;
         m.maps[Mesh::DiffuseMap] = texOverride;
-        rc.makeCurrent(m);
+        rc.setMaterial(&m);
         rc.lock();
+        geometry->render(rc, tsec);
     }
-
-    geometry->render(rc, tsec);
+    else
+    {
+        geometry->render(rc, tsec);
+    }
 
     glx::glUseProgramObjectARB(0);
 }
