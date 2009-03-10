@@ -350,7 +350,7 @@
 
 # CoRoT survey
 
-"CoRoT-Exo-1"
+"CoRoT-1"
 {
 	RA 102.079875
 	Dec -3.102161
@@ -359,7 +359,7 @@
 	AppMag 13.6
 }
 
-"CoRoT-Exo-2:GSC 00465-01282"
+"CoRoT-2:GSC 00465-01282"
 {
 	RA 291.777083
 	Dec 1.38375
@@ -368,7 +368,7 @@
 	AppMag 12.57
 }
 
-"CoRoT-Exo-3"
+"CoRoT-3"
 {
 	RA 292.054167
 	Dec 0.121944
@@ -377,7 +377,7 @@
 	AppMag 13.3
 }
 
-"CoRoT-Exo-4:GSC 04800-02187"
+"CoRoT-4:GSC 04800-02187"
 {
 	RA 102.194583
 	Dec -0.672778
