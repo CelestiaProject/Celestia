@@ -264,7 +264,7 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 }
 
 
-"b" "CoRoT-Exo-1"
+"b" "CoRoT-1"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.1 degrees, so mass can be determined.
@@ -283,7 +283,7 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 	Radius     104300
 	Oblateness 0.01
 
-	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-1"
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-1"
 
 	EllipticalOrbit {
 		Period          0.0041
@@ -300,7 +300,7 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "CoRoT-Exo-1/b"
+AltSurface "limit of knowledge" "CoRoT-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -389,7 +389,7 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 }
 
 
-"b" "CoRoT-Exo-2"
+"b" "CoRoT-2"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.84 degrees, so mass can be determined.
@@ -407,7 +407,7 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 	Mass       1050     # M.sin(i) = 3.31 jupiters
 	Radius     102900
 
-	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-2"
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-2"
 
 	EllipticalOrbit {
 		Period          0.0048
@@ -424,7 +424,7 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "CoRoT-Exo-2/b"
+AltSurface "limit of knowledge" "CoRoT-2/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2660,7 +2660,7 @@ AltSurface "limit of knowledge" "HD 217014/b"
 }
 
 
-"b" "CoRoT-Exo-3"
+"b" "CoRoT-3"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.9 degrees, so mass can be determined.
@@ -2676,7 +2676,7 @@ AltSurface "limit of knowledge" "HD 217014/b"
 	Mass       6890     # M.sin(i) = 21.66 jupiters
 	Radius     70700
 
-	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-3"
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-3"
 
 	EllipticalOrbit {
 		Period          0.0117
@@ -2693,7 +2693,7 @@ AltSurface "limit of knowledge" "HD 217014/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "CoRoT-Exo-3/b"
+AltSurface "limit of knowledge" "CoRoT-3/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -3556,7 +3556,7 @@ AltSurface "limit of knowledge" "HD 69830/d"
 }
 
 
-"b" "CoRoT-Exo-4"
+"b" "CoRoT-4"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 90 degrees, so mass can be determined.
@@ -3574,7 +3574,7 @@ AltSurface "limit of knowledge" "HD 69830/d"
 	Mass       230     # M.sin(i) = 0.72 jupiters
 	Radius     83300
 
-	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-Exo-4"
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-4"
 
 	EllipticalOrbit {
 		Period          0.0252
@@ -3591,7 +3591,7 @@ AltSurface "limit of knowledge" "HD 69830/d"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "CoRoT-Exo-4/b"
+AltSurface "limit of knowledge" "CoRoT-4/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -8634,7 +8634,7 @@ AltSurface "limit of knowledge" "HD 95128/b"
 	InfoURL "http://exoplanet.eu/star.php?st=47+Uma"
 
 	EllipticalOrbit {
-		Period          5.9962
+		Period          5.9959
 		SemiMajorAxis   3.39
 		Eccentricity    0.22
 		ArgOfPericenter 59
