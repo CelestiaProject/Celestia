@@ -68,6 +68,9 @@ public:
     void goTo();
 
     static const unsigned int CurrentVersion;
+
+    static std::string decodeString(const std::string& str);
+    static std::string encodeString(const std::string& str);
     
 private:
     void initVersion2(std::map<std::string, std::string>& params, const std::string& timeString);
@@ -99,9 +102,8 @@ private:
 
     std::map<std::string, std::string> parseUrlParams(const std::string& url) const;
     std::string getCoordSysName(ObserverFrame::CoordinateSystem mode) const;
-    std::string getSelectionName(const Selection& selection) const;
     std::string getBodyShortName(const std::string& body) const;
-    static std::string decode_string(const std::string& str);
+    std::string getEncodedObjectName(const Selection& selection);
 
     bool fromString;
     UrlType type;
