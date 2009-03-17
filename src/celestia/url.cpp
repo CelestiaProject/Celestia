@@ -20,6 +20,7 @@
 #include <cstdio>
 #include <cassert>
 #include <sstream>
+#include <iomanip>
 #include "celestiacore.h"
 #include "celutil/util.h"
 #include "celengine/astro.h"
@@ -30,9 +31,7 @@ using namespace std;
 const unsigned int Url::CurrentVersion = 3;
 
 
-
-static string getSelectionName(const Selection& sel, CelestiaCore* appCore);
-
+const string getEncodedObjectName(const Selection& sel, const CelestiaCore* appCore);
 
 CelestiaState::CelestiaState() :
     coordSys(ObserverFrame::Universal),
@@ -60,10 +59,10 @@ CelestiaState::captureState(CelestiaCore* appCore)
     coordSys = frame->getCoordinateSystem();
     if (coordSys != ObserverFrame::Universal)
     {
-        refBodyName = getSelectionName(frame->getRefObject(), appCore);
+        refBodyName = getEncodedObjectName(frame->getRefObject(), appCore);
         if (coordSys == ObserverFrame::PhaseLock) 
         {
-            targetBodyName = getSelectionName(frame->getTargetObject(), appCore);
+            targetBodyName = getEncodedObjectName(frame->getTargetObject(), appCore);
         }
     }
     
@@ -79,9 +78,9 @@ CelestiaState::captureState(CelestiaCore* appCore)
     observerOrientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
         
     Selection tracked = sim->getTrackedObject();
-    trackedBodyName = getSelectionName(tracked, appCore);
+    trackedBodyName = getEncodedObjectName(tracked, appCore);
     Selection selected = sim->getSelection();
-    selectedBodyName = getSelectionName(selected, appCore);
+    selectedBodyName = getEncodedObjectName(selected, appCore);
     fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
     timeScale = (float) sim->getTimeScale();
     pauseState = sim->getPauseState();
@@ -201,7 +200,7 @@ Url::Url(const std::string& str, CelestiaCore *core):
     if (pos == std::string::npos)
         modeStr = urlStr.substr(6);
     else
-        modeStr = decode_string(urlStr.substr(6, pos - 6));
+        modeStr = decodeString(urlStr.substr(6, pos - 6));
 
     if (!compareIgnoringCase(modeStr, std::string("Freeflight")))
     {
@@ -250,7 +249,7 @@ Url::Url(const std::string& str, CelestiaCore *core):
         else bodyName = urlStr.substr(endPrevious + 1, pos - endPrevious - 1);
         endPrevious = pos;
         
-        bodyName = decode_string(bodyName);
+        bodyName = decodeString(bodyName);
         pos = 0;
         if (i==1) body1 = bodyName;
         if (i==2) body2 = bodyName;
@@ -280,7 +279,7 @@ Url::Url(const std::string& str, CelestiaCore *core):
     if (pos == std::string::npos)
         time = urlStr.substr(endPrevious + 1);
     else time = urlStr.substr(endPrevious + 1, pos - endPrevious -1);
-        time = decode_string(time);
+        time = decodeString(time);
         
     switch (version)
     {
@@ -316,10 +315,10 @@ Url::Url(CelestiaCore* core, UrlType type)
     ref = *sim->getFrame();
     urlStr += "cel://" + modeStr;
     if (type != Settings && sim->getFrame()->getCoordinateSystem() != ObserverFrame::Universal) {
-        body1 = getSelectionName(sim->getFrame()->getRefObject());
+        body1 = getEncodedObjectName(sim->getFrame()->getRefObject());
         urlStr += "/" + body1;
         if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::PhaseLock) {
-            body2 = getSelectionName(sim->getFrame()->getTargetObject());
+            body2 = getEncodedObjectName(sim->getFrame()->getTargetObject());
             urlStr += "/" + body2;
         }
     }
@@ -358,11 +357,11 @@ Url::Url(CelestiaCore* core, UrlType type)
     case Absolute: // Intentional Fall-Through
     case Relative:
         tracked = sim->getTrackedObject();
-        trackedStr = getSelectionName(tracked);
+        trackedStr = getEncodedObjectName(tracked);
         if (trackedStr != "") urlStr += "&track=" + trackedStr;
 
         selected = sim->getSelection();
-        selectedStr = getSelectionName(selected);
+        selectedStr = getEncodedObjectName(selected);
         if (selectedStr != "") urlStr += "&select=" + selectedStr;
 
         fieldOfView = radToDeg(sim->getActiveObserver()->getFOV());
@@ -682,9 +681,9 @@ std::map<std::string, std::string> Url::parseUrlParams(const std::string& url) c
         if (startValue != std::string::npos) {
              startValue++;
              if (pos != std::string::npos)
-                 params[url.substr(startName, startValue - startName -1)] = decode_string(url.substr(startValue, pos - startValue));
+                 params[url.substr(startName, startValue - startName -1)] = decodeString(url.substr(startValue, pos - startValue));
              else
-                 params[url.substr(startName, startValue - startName -1)] = decode_string(url.substr(startValue));
+                 params[url.substr(startName, startValue - startName -1)] = decodeString(url.substr(startValue));
         }
     }
 
@@ -745,36 +744,6 @@ static std::string getBodyName(Universe* universe, Body* body)
     }
 
     return name;
-}
-
-
-std::string Url::getSelectionName(const Selection& selection) const
-{
-    Universe *universe = appCore->getSimulation()->getUniverse();
-
-    switch (selection.getType())
-    {
-    case Selection::Type_Body:
-        return getBodyName(universe, selection.body());
-
-    case Selection::Type_Star:
-        return universe->getStarCatalog()->getStarName(*selection.star());
-
-    case Selection::Type_DeepSky:
-        return universe->getDSOCatalog()->getDSOName(selection.deepsky());
-
-    case Selection::Type_Location:
-        {
-            std::string name = selection.location()->getName();
-            Body* parentBody = selection.location()->getParentBody();
-            if (parentBody != NULL)
-                name = getBodyName(universe, parentBody) + ":" + name;
-            return name;
-        }
-
-    default:
-        return "";
-    }
 }
 
 
@@ -888,7 +857,7 @@ Url::~Url()
 }
 
 
-std::string Url::decode_string(const std::string& str)
+std::string Url::decodeString(const std::string& str)
 {
     std::string::size_type a=0, b;
     std::string out = "";
@@ -900,43 +869,103 @@ std::string Url::decode_string(const std::string& str)
         out += str.substr(a, b-a);
         std::string c_code = str.substr(b+1, 2);
         sscanf(c_code.c_str(), "%02x", &c);
-        out += c;
+        clog << "char: " << c << endl;
+        out += (char) c;
         a = b + 3;
         b = str.find("%", a);
     }
     out += str.substr(a);
+    clog << "decode: " << out << endl;
 
     return out;
 }
 
 
+string Url::encodeString(const string& str)
+{
+    ostringstream enc;
+
+    for (string::const_iterator iter = str.begin(); iter != str.end(); iter++)
+    {
+        int ch = *iter;
+        bool encode = false;
+        if (ch <= 32 || ch >= 128)
+        {
+            encode = true;
+        }
+        else
+        {
+            switch (ch)
+            {
+            case '%':
+            case '?':
+            case '"':
+            case '#':
+            case '+':
+            case ',':
+            case '=':
+            case '@':
+            case '[':
+            case ']':
+                encode = true;
+                break;
+            }
+        }
+
+        if (encode)
+        {
+            enc << '%' << setw(2) << hex << (unsigned int) ch;
+        }
+        else
+        {
+            enc << *iter;
+        }
+    }
+
+    return enc.str();
+}
+
+
 // Utility function that returns the complete path for a selection.
 string
-getSelectionName(const Selection& selection, CelestiaCore* appCore)
+Url::getEncodedObjectName(const Selection& selection)
+{
+    return ::getEncodedObjectName(selection, appCore);
+}
+
+
+const string
+getEncodedObjectName(const Selection& selection, const CelestiaCore* appCore)
 {
     Universe *universe = appCore->getSimulation()->getUniverse();
+    string name;
     
     switch (selection.getType())
     {
         case Selection::Type_Body:
-            return getBodyName(universe, selection.body());
+            name = getBodyName(universe, selection.body());
+            break;
             
         case Selection::Type_Star:
-            return universe->getStarCatalog()->getStarName(*selection.star());
-            
+            name = universe->getStarCatalog()->getStarName(*selection.star());
+            break;
+
         case Selection::Type_DeepSky:
-            return universe->getDSOCatalog()->getDSOName(selection.deepsky());
-            
+            name = universe->getDSOCatalog()->getDSOName(selection.deepsky());
+            break;
+
         case Selection::Type_Location:
-        {
-            std::string name = selection.location()->getName();
-            Body* parentBody = selection.location()->getParentBody();
-            if (parentBody != NULL)
-                name = getBodyName(universe, parentBody) + ":" + name;
-            return name;
-        }
+            name = selection.location()->getName();
+            {
+                Body* parentBody = selection.location()->getParentBody();
+                if (parentBody != NULL)
+                    name = getBodyName(universe, parentBody) + ":" + name;
+            }
+            break;
             
         default:
             return "";
     }
+
+    return Url::encodeString(name);
 }
