@@ -137,7 +137,7 @@ msgstr "' de '"
 
 #: src/celengine/solarsys.cpp:1200
 msgid "' not found."
-msgstr "' não encontrado.\n"
+msgstr "' não encontrado."
 
 #: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
@@ -2640,7 +2640,7 @@ msgstr "LMC"
 
 #: data/data.cpp:57
 msgid "Solar System Barycenter"
-msgstr "Baricentro do sistema solar\n"
+msgstr "Baricentro do sistema solar"
 
 #: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
