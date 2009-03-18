@@ -596,7 +596,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
             shaderProps.lightModel = ShaderProperties::ParticleDiffuseModel;
     }
 
-    if (m.maps[Mesh::DiffuseMap] != InvalidResource && useTexCoords)
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
         if (baseTex != NULL)
@@ -834,7 +834,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
     shaderProps.lightModel = ShaderProperties::EmissiveModel;
     shaderProps.texUsage = ShaderProperties::SharedTextureCoords;
 
-    if (m.maps[Mesh::DiffuseMap] != InvalidResource && useTexCoords)
+    if (m.maps[Mesh::DiffuseMap] != InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(m.maps[Mesh::DiffuseMap]);
         if (baseTex != NULL)
