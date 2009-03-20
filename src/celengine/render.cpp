@@ -4129,14 +4129,14 @@ static void renderRingSystem(float innerRadius,
 // jarring, however . . . so we'll blend in the particle view of the
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
-void Renderer::renderBodyAsParticle(Point3f position,
-                                    float appMag,
-                                    float _faintestMag,
-                                    float discSizeInPixels,
-                                    Color color,
-                                    const Quatf& orientation,
-                                    float /* renderZ */,
-                                    bool useHalos)
+void Renderer::renderObjectAsPoint_nosprite(Point3f position,
+                                            float radius,
+                                            float appMag,
+                                            float _faintestMag,
+                                            float discSizeInPixels,
+                                            Color color,
+                                            const Quatf& cameraOrientation,
+                                            bool useHalos)
 {
     float maxDiscSize = 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
@@ -4167,8 +4167,17 @@ void Renderer::renderBodyAsParticle(Point3f position,
         // We scale up the particle by a factor of 1.6 (at fov = 45deg)
         // so that it's more visible--the texture we use has fuzzy edges,
         // and if we render it in just one pixel, it's likely to disappear.
-        Mat3f m = orientation.toMatrix3();
+        Mat3f m = cameraOrientation.toMatrix3();
         Point3f center = position;
+
+        // Offset the glare sprite so that it lies in front of the object
+        Vec3f direction(center.x, center.y, center.z);
+        direction.normalize();
+
+        // Position the sprite on the the line between the viewer and the
+        // object, and on a plane normal to the view direction.
+        center = center + direction * (radius / ((Vec3f(0, 0, 1.0f) * m) * direction));
+
         float centerZ = (center * m.transpose()).z;
         float size = discSize * pixelSize * 1.6f * centerZ / corrFac;
 
@@ -8046,13 +8055,13 @@ void Renderer::renderPlanet(Body& body,
         }
         else
         {
-            renderBodyAsParticle(pos,
+            renderObjectAsPoint_nosprite(pos,
+                                 body.getRadius(),
                                  appMag,
                                  faintestMag,
                                  discSizeInPixels,
                                  body.getSurface().color,
                                  cameraOrientation,
-                                 (nearPlaneDistance + farPlaneDistance) / 2.0f,
                                  false);
         }
     }
@@ -8148,14 +8157,14 @@ void Renderer::renderStar(const Star& star,
     }
     else
     {
-        renderBodyAsParticle(pos,
-                             appMag,
-                             faintestPlanetMag,
-                             discSizeInPixels,
-                             color,
-                             cameraOrientation,
-                             (nearPlaneDistance + farPlaneDistance) / 2.0f,
-                             true);
+        renderObjectAsPoint_nosprite(pos,
+                                     star.getRadius(),
+                                     appMag,
+                                     faintestPlanetMag,
+                                     discSizeInPixels,
+                                     color,
+                                     cameraOrientation,
+                                     true);
     }
 #endif
 #ifdef USE_HDR
