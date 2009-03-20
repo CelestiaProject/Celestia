@@ -869,13 +869,11 @@ std::string Url::decodeString(const std::string& str)
         out += str.substr(a, b-a);
         std::string c_code = str.substr(b+1, 2);
         sscanf(c_code.c_str(), "%02x", &c);
-        clog << "char: " << c << endl;
         out += (char) c;
         a = b + 3;
         b = str.find("%", a);
     }
     out += str.substr(a);
-    clog << "decode: " << out << endl;
 
     return out;
 }
