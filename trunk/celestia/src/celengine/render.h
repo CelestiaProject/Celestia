@@ -539,14 +539,14 @@ class Renderer
                          double now,
                          float discSizeInPixels);
 
-    void renderBodyAsParticle(Point3f center,
-                              float appMag,
-                              float _faintestMag,
-                              float discSizeInPixels,
-                              Color color,
-                              const Quatf& cameraOrientation,
-                              float renderDistance,
-                              bool useHalos);
+    void renderObjectAsPoint_nosprite(Point3f center,
+                                      float radius,
+                                      float appMag,
+                                      float _faintestMag,
+                                      float discSizeInPixels,
+                                      Color color,
+                                      const Quatf& cameraOrientation,
+                                      bool useHalos);
     void renderObjectAsPoint(Point3f center,
                              float radius,
                              float appMag,
