@@ -603,6 +603,19 @@ Command* CommandParser::parseCommand()
         paramList->getNumber("gain", gain);
         cmd = new CommandSetGalaxyLightGain((float) gain);
     }
+    else if (commandName == "settextureresolution")
+    {
+        string textureRes;
+        unsigned int res = 1;
+        paramList->getString("resolution", textureRes);
+        if (compareIgnoringCase(textureRes, "low") == 0)
+            res = 0;
+        else if (compareIgnoringCase(textureRes, "medium") == 0)
+            res = 1;
+        else if (compareIgnoringCase(textureRes, "high") == 0)
+            res = 2;
+        cmd = new CommandSetTextureResolution(res);
+    }
     else if (commandName == "preloadtex")
     {
         string object;

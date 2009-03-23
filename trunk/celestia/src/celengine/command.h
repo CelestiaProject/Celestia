@@ -556,6 +556,17 @@ class CommandCapture : public InstantaneousCommand
 };
 
 
+class CommandSetTextureResolution : public InstantaneousCommand
+{
+ public:
+    CommandSetTextureResolution(unsigned int);
+    void process(ExecutionEnvironment&);
+
+ private:
+    unsigned int res;
+};
+
+
 class CommandRenderPath : public InstantaneousCommand
 {
  public:
