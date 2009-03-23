@@ -722,6 +722,24 @@ void CommandCapture::process(ExecutionEnvironment&)
 
 
 ////////////////
+// Set texture resolution command
+
+CommandSetTextureResolution::CommandSetTextureResolution(unsigned int _res) :
+    res(_res)
+{
+}
+
+void CommandSetTextureResolution::process(ExecutionEnvironment& env)
+{
+    if (env.getRenderer() != NULL)
+    {
+        env.getRenderer()->setResolution(res);
+        env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+    }
+}
+
+
+////////////////
 // Set RenderPath command
 
 CommandRenderPath::CommandRenderPath(GLContext::GLRenderPath _path) :

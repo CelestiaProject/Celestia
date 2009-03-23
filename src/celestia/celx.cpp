@@ -2850,6 +2850,38 @@ static int celestia_setstarstyle(lua_State* l)
     return 0;
 }
 
+static int celestia_gettextureresolution(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:gettextureresolution");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
+    else
+        lua_pushnumber(l, renderer->getResolution());
+
+    return 1;
+}
+
+static int celestia_settextureresolution(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settextureresolution");
+    CelestiaCore* appCore = this_celestia(l);
+
+    unsigned int textureRes = (unsigned int) Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
+    else
+    {
+        renderer->setResolution(textureRes);
+        appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+    }
+
+    return 0;
+}
+
 static int celestia_getstar(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:getstar");
@@ -3268,6 +3300,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
     Celx_RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
     Celx_RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
+    Celx_RegisterMethod(l, "gettextureresolution", celestia_gettextureresolution);
+    Celx_RegisterMethod(l, "settextureresolution", celestia_settextureresolution);
     Celx_RegisterMethod(l, "tojulianday", celestia_tojulianday);
     Celx_RegisterMethod(l, "fromjulianday", celestia_fromjulianday);
     Celx_RegisterMethod(l, "utctotdb", celestia_utctotdb);
