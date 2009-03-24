@@ -3351,10 +3351,18 @@ void Renderer::draw(const Observer& observer,
 
     if ((renderFlags & ShowStars) != 0 && universe.getStarCatalog() != NULL)
     {
+        // Disable multisample rendering when drawing point stars
+        bool toggleAA = (starStyle == Renderer::PointStars && glIsEnabled(GL_MULTISAMPLE_ARB));
+        if (toggleAA)
+            glDisable(GL_MULTISAMPLE_ARB);
+
         if (useNewStarRendering)
             renderPointStars(*universe.getStarCatalog(), faintestMag, observer);
         else
             renderStars(*universe.getStarCatalog(), faintestMag, observer);
+
+        if (toggleAA)
+            glEnable(GL_MULTISAMPLE_ARB);
     }
 
 #ifdef USE_HDR
