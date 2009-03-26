@@ -38,25 +38,27 @@
     NSMutableDictionary *itemDict = [NSMutableDictionary dictionary];
     NSString *title;
     id path;
+    NSString *menuPath;
     size_t i;
 
     for (i = 0; i < scripts->size(); ++i)
     {
         title = [NSString stringWithStdString: (*scripts)[i].title];
         path  = [NSString stringWithStdString: (*scripts)[i].filename];
+        menuPath = [NSString stringWithString: path];
         if (isAbsoluteFolder)
         {
-            NSRange pathRange = [path rangeOfString:root options:NSAnchoredSearch];
+            NSRange pathRange = [menuPath rangeOfString:scriptsFolder options:NSAnchoredSearch];
             if (NSNotFound != pathRange.location &&
-                pathRange.location < [path length])
+                pathRange.location < [menuPath length])
             {
                 pathRange.location += pathRange.length + 1;
-                pathRange.length = [path length] - pathRange.length - 1;
-                path = [path substringWithRange:pathRange];
+                pathRange.length = [menuPath length] - pathRange.length - 1;
+                menuPath = [menuPath substringWithRange:pathRange];
             }
         }
         // Build submenus for nested directories
-        NSArray *subPaths = [[path stringByDeletingLastPathComponent] pathComponents];
+        NSArray *subPaths = [[menuPath stringByDeletingLastPathComponent] pathComponents];
         if (subPaths && [subPaths count] > baseDirLevel)
         {
             id parentDict = itemDict;
