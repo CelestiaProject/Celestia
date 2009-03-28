@@ -356,7 +356,7 @@ Texture maps
    merged with reprojected images from earlier Voyager missions. It was 
    color-mapped by computer, using the near true-color template, 
      http://photojournal.jpl.nasa.gov/catalog/PIA06167
-  
+
    The Lunar topography map, using Clementine laser altimeter data, merged in 
    the polar regions with topographic data  from Clementine 750 nm oblique and 
    nadir images, 
@@ -386,7 +386,7 @@ Texture maps
 # The textures for the Uranian satellites were created by Ivan Rivera from JPL
   data. His Celestia page is: http://bruckner.homelinux.net/celestia.html
 
-# The Hyperion and Enceladus maps are photomosaics assembled by Phil Stooke and
+# The Hyperion map is a photomosaic assembled by Phil Stooke and
   colored by Jens Meyer.
 
 # Amalthea is a shaded relief map by Phil Stooke, colored by Wm. Robert Johnston
@@ -397,6 +397,11 @@ Texture maps
 
 # The textures for the five classes of extrasolar giant planet were created by 
   Andrew Tribick.
+
+# CICLOPS
+
+  The map of Enceladus is derived from the December 2008 CICLOPS map: 
+  http://ciclops.org/view/5447/Map_of_Enceladus_December_2008
 
 
 3D Models
