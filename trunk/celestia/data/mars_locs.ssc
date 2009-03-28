@@ -11552,7 +11552,7 @@ Location "Karzok" "Sol/Mars"
 
 Location "Pangboche" "Sol/Mars"
 {
-	LongLat [ 226.4 17. 0 ]
+	LongLat [ 226.4 17.0 0 ]
 	Size 10.4
 	Importance 21.78
 	Type "AA"
@@ -11560,7 +11560,7 @@ Location "Pangboche" "Sol/Mars"
 
 Location "Abalos Mensa" "Sol/Mars"
 {
-	LongLat [ 284.4 81. 0 ]
+	LongLat [ 284.4 81.0 0 ]
 	Size 130
 	Importance 34.13
 	Type "MN"
@@ -11608,7 +11608,7 @@ Location "Chryse Colles" "Sol/Mars"
 
 Location "Crotone" "Sol/Mars"
 {
-	LongLat [ 290. 82.2 0 ]
+	LongLat [ 290.0 82.2 0 ]
 	Size 6.4
 	Importance 21.03
 	Type "AA"
@@ -11616,7 +11616,7 @@ Location "Crotone" "Sol/Mars"
 
 Location "Daga Vallis" "Sol/Mars"
 {
-	LongLat [ 317.6 -12. 0 ]
+	LongLat [ 317.6 -12.0 0 ]
 	Size 70
 	Importance 29.05
 	Type "VA"
@@ -11640,7 +11640,7 @@ Location "Jojutla" "Sol/Mars"
 
 Location "Olympia Cavi" "Sol/Mars"
 {
-	LongLat [ 182. 84.9 0 ]
+	LongLat [ 182.0 84.9 0 ]
 	Size 860
 	Importance 72.11
 	Type "CB"
@@ -11648,7 +11648,7 @@ Location "Olympia Cavi" "Sol/Mars"
 
 Location "Olympia Mensae" "Sol/Mars"
 {
-	LongLat [ 124. 78.3 0 ]
+	LongLat [ 124.0 78.3 0 ]
 	Size 380
 	Importance 49.65
 	Type "MN"
@@ -11664,7 +11664,7 @@ Location "Puyo" "Sol/Mars"
 
 Location "Tenuis Mensa" "Sol/Mars"
 {
-	LongLat [ 266.2 81. 0 ]
+	LongLat [ 266.2 81.0 0 ]
 	Size 130
 	Importance 34.13
 	Type "MN"
@@ -11688,7 +11688,7 @@ Location "Cerberus Palus" "Sol/Mars"
 
 Location "Lethe Vallis" "Sol/Mars"
 {
-	LongLat [ 153.5 4. 0 ]
+	LongLat [ 153.5 4.0 0 ]
 	Size 225
 	Importance 40.69
 	Type "VA"
@@ -11696,7 +11696,7 @@ Location "Lethe Vallis" "Sol/Mars"
 
 Location "Zephyria Planum" "Sol/Mars"
 {
-	LongLat [ 153.1 -1. 0 ]
+	LongLat [ 153.1 -1.0 0 ]
 	Size 550
 	Importance 58.22
 	Type "PM"
@@ -11704,7 +11704,7 @@ Location "Zephyria Planum" "Sol/Mars"
 
 Location "Aeolis Planum" "Sol/Mars"
 {
-	LongLat [ 145. -0.8 0 ]
+	LongLat [ 145.0 -0.8 0 ]
 	Size 820
 	Importance 70.41
 	Type "PM"
@@ -11784,7 +11784,7 @@ Location "Promethei Mons" "Sol/Mars"
 
 Location "Ada" "Sol/Mars"
 {
-	LongLat [ 356.8 -3. 0 ]
+	LongLat [ 356.8 -3.0 0 ]
 	Size 1
 	Importance 19.91
 	Type "AA"
@@ -11808,7 +11808,7 @@ Location "Beruri" "Sol/Mars"
 
 Location "Bopolu" "Sol/Mars"
 {
-	LongLat [ 353.7 -3. 0 ]
+	LongLat [ 353.7 -3.0 0 ]
 	Size 19.3
 	Importance 23.21
 	Type "AA"
@@ -11816,7 +11816,7 @@ Location "Bopolu" "Sol/Mars"
 
 Location "Cefalù" "Sol/Mars"
 {
-	LongLat [ 321. 23.4 0 ]
+	LongLat [ 321.0 23.4 0 ]
 	Size 5.3
 	Importance 20.82
 	Type "AA"
@@ -11864,7 +11864,7 @@ Location "Hargraves" "Sol/Mars"
 
 Location "Hashir" "Sol/Mars"
 {
-	LongLat [ 85. 3.2 0 ]
+	LongLat [ 85.0 3.2 0 ]
 	Size 16.5
 	Importance 22.78
 	Type "AA"
@@ -11944,7 +11944,7 @@ Location "Ohara" "Sol/Mars"
 
 Location "Pebas" "Sol/Mars"
 {
-	LongLat [ 359. -2.6 0 ]
+	LongLat [ 359.0 -2.6 0 ]
 	Size 5.2
 	Importance 20.80
 	Type "AA"
@@ -11960,7 +11960,7 @@ Location "Runanga" "Sol/Mars"
 
 Location "Sefadu" "Sol/Mars"
 {
-	LongLat [ 325. 28.4 0 ]
+	LongLat [ 325.0 28.4 0 ]
 	Size 10.8
 	Importance 21.85
 	Type "AA"
@@ -11968,7 +11968,7 @@ Location "Sefadu" "Sol/Mars"
 
 Location "Shardi" "Sol/Mars"
 {
-	LongLat [ 344.6 10. 0 ]
+	LongLat [ 344.6 10.0 0 ]
 	Size 18
 	Importance 23.01
 	Type "AA"
@@ -12000,7 +12000,7 @@ Location "Uzer" "Sol/Mars"
 
 Location "Woking" "Sol/Mars"
 {
-	LongLat [ 82.9 5. 0 ]
+	LongLat [ 82.9 5.0 0 ]
 	Size 9.8
 	Importance 21.67
 	Type "AA"
@@ -12008,7 +12008,7 @@ Location "Woking" "Sol/Mars"
 
 Location "Xainza" "Sol/Mars"
 {
-	LongLat [ 356. 0.8 0 ]
+	LongLat [ 356.0 0.8 0 ]
 	Size 24.6
 	Importance 23.96
 	Type "AA"
@@ -12091,7 +12091,7 @@ Location "Louth" "Sol/Mars"
 
 Location "Aspledon Undae" "Sol/Mars"
 {
-	LongLat [ -51.3 73. 0 ]
+	LongLat [ -51.3 73.0 0 ]
 	Size 214
 	Importance 39.99
 	Type "UN"
@@ -12107,7 +12107,7 @@ Location "Siton Undae" "Sol/Mars"
 
 Location "Olympia Planum" "Sol/Mars"
 {
-	LongLat [ -165. 82. 0 ]
+	LongLat [ -165.0 82.0 0 ]
 	Size 1000
 	Importance 77.93
 	Type "PM"
@@ -12123,7 +12123,7 @@ Location "Henbury" "Sol/Mars"
 
 Location "Laylá" "Sol/Mars"
 {
-	LongLat [ -253. -61. 0 ]
+	LongLat [ -253.0 -61.0 0 ]
 	Size 20.8
 	Importance 23.42
 	Type "AA"
@@ -12131,7 +12131,7 @@ Location "Laylá" "Sol/Mars"
 
 Location "Lonar" "Sol/Mars"
 {
-	LongLat [ -321.7 73. 0 ]
+	LongLat [ -321.7 73.0 0 ]
 	Size 11.3
 	Importance 21.94
 	Type "AA"
@@ -12155,7 +12155,7 @@ Location "Steinheim" "Sol/Mars"
 
 Location "Gemina Lingula" "Sol/Mars"
 {
-	LongLat [ -355. 82. 0 ]
+	LongLat [ -355.0 82.0 0 ]
 	Size 865
 	Importance 72.15
 	Type "LN"
@@ -12323,7 +12323,7 @@ Location "Erythraeum Chaos" "Sol/Mars"
 
 Location "Miyamoto" "Sol/Mars"
 {
-	LongLat [ -7. -2.9 0 ]
+	LongLat [ -7.0 -2.9 0 ]
 	Size 160
 	Importance 36.34
 	Type "AA"
@@ -12530,5 +12530,72 @@ Location "Toro" "Sol/Mars"
 	LongLat [ 71.76 16.87 0 ]
 	Size 42.2
 	Importance 26.16
+	Type "AA"
+}
+
+# Update 2009 Mar 12, Grant Hutchison
+# -----------------------------------
+
+Location "Victoria" "Sol/Mars"
+{
+	LongLat [ 354.5 -2.03 0 ]
+	Size 0.8
+	Importance 19.88
+	Type "AA"
+}
+
+Location "Saravan" "Sol/Mars"
+{
+	LongLat [ 306.0 -16.78 0 ]
+	Size 47.8
+	Importance 26.78
+	Type "AA"
+}
+
+Location "Sungari Vallis" "Sol/Mars"
+{
+	LongLat [ 88.84 -40.03 0 ]
+	Size 430
+	Importance 52.27
+	Type "VA"
+}
+
+Location "Danielson" "Sol/Mars"
+{
+	LongLat [ 352.89 7.84 0 ]
+	Size 66.7
+	Importance 28.73
+	Type "AA"
+}
+
+Location "Galap" "Sol/Mars"
+{
+	LongLat [ 192.81 -37.36 0 ]
+	Size 5.9
+	Importance 20.94
+	Type "AA"
+}
+
+Location "Lipik" "Sol/Mars"
+{
+	LongLat [ 111.57 -38.1 0 ]
+	Size 56
+	Importance 27.66
+	Type "AA"
+}
+
+Location "Sarh" "Sol/Mars"
+{
+	LongLat [ 345.43 -64.85 0 ]
+	Size 54
+	Importance 27.45
+	Type "AA"
+}
+
+Location "Cross" "Sol/Mars"
+{
+	LongLat [ 202.21 -29.95 0 ]
+	Size 67.5
+	Importance 28.81
 	Type "AA"
 }

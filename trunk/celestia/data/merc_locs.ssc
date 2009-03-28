@@ -2156,7 +2156,7 @@ Location "Sander" "Sol/Mercury"
 
 Location "Pantheon Fossae" "Sol/Mercury"
 {
-	LongLat [ -197. 30.5 0 ]
+	LongLat [ -197.0 30.5 0 ]
 	Size 300
 	Type "FO"
 }
@@ -2233,7 +2233,7 @@ Location "Munch" "Sol/Mercury"
 
 Location "Navoi" "Sol/Mercury"
 {
-	LongLat [ -200. 59. 0 ]
+	LongLat [ -200.0 59.0 0 ]
 	Size 66
 	Type "AA"
 }
@@ -2254,14 +2254,14 @@ Location "Oskison" "Sol/Mercury"
 
 Location "Poe" "Sol/Mercury"
 {
-	LongLat [ -201.2 44. 0 ]
+	LongLat [ -201.2 44.0 0 ]
 	Size 75
 	Type "AA"
 }
 
 Location "Qi Baishi" "Sol/Mercury"
 {
-	LongLat [ -196. -4.2 0 ]
+	LongLat [ -196.0 -4.2 0 ]
 	Size 15
 	Type "AA"
 }
@@ -2277,5 +2277,12 @@ Location "Sher-Gil" "Sol/Mercury"
 {
 	LongLat [ -225.5 -45.1 0 ]
 	Size 73
+	Type "AA"
+}
+
+Location "Rembrandt" "Sol/Mercury"
+{
+	LongLat [ -271.8 -33.2 0 ]
+	Size 720
 	Type "AA"
 }
