@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2008-11-30 10:13+0100\n"
+"PO-Revision-Date: 2009-03-28 13:31+0100\n"
 "Last-Translator: vincent <vince.gian@free.fr>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2655,11 +2655,11 @@ msgstr "Placeholder"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
-msgstr "Capture d'&image...\tF10"
+msgstr "Capturer une &image...\tF10"
 
 #: src/celestia/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
-msgstr "&Capture un film...\tShift+F10"
+msgstr "&Capturer un film...\tShift+F10"
 
 #: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
