@@ -1368,3 +1368,4 @@ translations to be used
 * Implemented SIMBAD compatible cross-listing for globular clusters
 * Implemented a major upgrade of globular cluster code
 * Updated Iapetus texture based on a new Ciclops map from Oct 2008
+* Significant update of the database on binary orbits, including SIMBAD compatibility of barycenter nomenclature and alternative names
