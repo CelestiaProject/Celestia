@@ -1,1646 +1,1665 @@
-# Celestia binary orbit elements for spectroscopic binaries:
-# generated with Perl extraction script: spectbins.pl Revision: 1.50 
-# from D. Poubaix, Astron. Astrophys. Suppl. Ser. 145, 2000, 215-222
-# http://www.edpsciences.org/journal/index.cfm?v_url=aas/full/2000/14/ds9259/ds9259.html
-# Processed 2007-10-22 21:28:43 UTC
+# ---------------------------------------------
+# Orbits of spectroscopic binaries for Celestia: spectbins.pl, Revision: 1.6.0 ,
+# ---------------------------------------------
+# from D. Pourbaix, Astron. Astrophys. Suppl. Ser. 145, 2000, 215-222.
+# Refereed publication freely available at
+# http://aas.aanda.org/index.php?option=article&access=standard&Itemid=129&url=/articles/aas/pdf/2000/14/ds9259.pdf
+
+# Binaries within 25 ly distance have been commented out here.
+# They are included in Celestia's 'nearstars.stc'.
+# Entries appearing also in 'visualbins.stc' are commented out here as well
+# to avoid redoubling. Data on spectral types were moved to 'visualbins.stc'.
+# This update features SIMBAD-compatible nomenclature for all barycenters.
+# Leading and alternative star designations were extracted via SIMBAD's
+# scripting facility, available at http://simbad.u-strasbg.fr/simbad/,
+# and from Celestia's 'starnames.dat'. Missing spectral types
+# and visual magnitudes for components were added from scanning the
+# '9th Catalogue of Spectroscopic Binary Orbits (SB9) (Pourbaix+ 2004-2009)',
+# http://cdsarc.u-strasbg.fr/viz-bin/Cat?B/sb9,
+# Coordinates and distances for barycenters and some spectral types are from
+# Celestia's stars, ('stars.txt' merged with 'revised.stc'), based on
+# Floor van Leeuwen, 2007 'Hipparcos, the New Reduction of the Raw Data',
+# Astrophysics & Space Science Library #350.
+# available at http://cdsarc.u-strasbg.fr/viz-bin/Cat?I/311
+#
+# Processed 2009-4-2 13:38:20 UTC
 # by Dr. Fridger Schrempp, fridger.schrempp@desy.de
 # ------------------------------------------------------ 
 
- Barycenter 677 "ALF And"
+ Barycenter 677 "Alpheratz:Sirrah:ALF And:21 And:ADS 94 A:CCDM J00083+2905A"
  {
- RA         2.096533
- Dec       29.090828
- Distance  97.073516
+     RA         2.096534
+     Dec       29.090828
+     Distance  97.015764
+ }
+ 
+ "Alpheratz A:Sirrah A:ALF And A:21 And A:ADS 94 Aa:CCDM J00083+2905Aa" 
+ {
+     OrbitBarycenter "Alpheratz"
+     SpectralType    "A0"                                             
+     AppMag          2.17                                             
+ 
+     EllipticalOrbit {
+         Period               0.265
+         SemiMajorAxis        0.218 # mass ratio 3.80 : 1.63
+         Eccentricity         0.535
+         Inclination        122.874
+         AscendingNode       56.072
+         ArgOfPericenter    213.139
+         MeanAnomaly         43.946
+     }
  }
 
- 
- "ALF And A" 
+ "Alpheratz B:Sirrah B:ALF And B:21 And B:ADS 94 Ab:CCDM J00083+2905Ab" 
  {
- OrbitBarycenter "ALF And"
- SpectralType "B8IV"
- AppMag 2.22
+     OrbitBarycenter "Alpheratz"
+     SpectralType    "B9"     # lacking, used HIP data of the entire system!
+     AppMag          4.21                                             
  
-        EllipticalOrbit {
-                Period               0.265
-                SemiMajorAxis        0.218 # mass ratio 3.80 : 1.63
-                Eccentricity         0.535
-                Inclination        122.874
-                AscendingNode       56.072
-                ArgOfPericenter    213.139
-                MeanAnomaly         43.946
-        }
-}
-
- "ALF And B"
- {
- OrbitBarycenter "ALF And"
- SpectralType "?"
- AppMag 4.21
- 
-        EllipticalOrbit {
-                Period               0.265
-                SemiMajorAxis        0.509 # mass ratio 3.80 : 1.63
-                Eccentricity         0.535
-                Inclination        122.874
-                AscendingNode       56.072
-                ArgOfPericenter     33.139
-                MeanAnomaly         43.946
-        }
+     EllipticalOrbit {
+         Period               0.265
+         SemiMajorAxis        0.509 # mass ratio 3.80 : 1.63
+         Eccentricity         0.535
+         Inclination        122.874
+         AscendingNode       56.072
+         ArgOfPericenter     33.139
+         MeanAnomaly         43.946
+     }
  }
 
-#  Barycenter 2941 "ADS 520"
+# Commented out to avoid redoubling
+#
+#  Barycenter 2941 "GJ 25:ADS 520 AB:CCDM J00373-2446AB"
 #  {
-#  RA         9.332446
-#  Dec      -24.767225
-#  Distance  50.662786
+#      RA         9.332449
+#      Dec      -24.767226
+#      Distance  50.233636
+#  }
+#  
+#  "GJ 25 A:ADS 520 A:CCDM J00373-2446A" 
+#  {
+#      OrbitBarycenter "GJ 25"
+#      SpectralType    "G8V"                                            
+#      AppMag          6.32                                             
+#  
+#      EllipticalOrbit {
+#          Period              25.090
+#          SemiMajorAxis        4.314 # mass ratio 0.94 : 0.70
+#          Eccentricity         0.235
+#          Inclination        119.570
+#          AscendingNode      324.225
+#          ArgOfPericenter    186.746
+#          MeanAnomaly         16.357
+#      }
 #  }
 
-#  
-#  "ADS 520 A" 
+#  "GJ 25 B:ADS 520 B:CCDM J00373-2446B" 
 #  {
-#  OrbitBarycenter "ADS 520"
-#  SpectralType "G8V"
-#  AppMag 5.57
+#      OrbitBarycenter "GJ 25"
+#      SpectralType    "G9V"                                            
+#      AppMag          6.64                                             
 #  
-#         EllipticalOrbit {
-#                 Period              25.090
-#                 SemiMajorAxis        4.314 # mass ratio 0.94 : 0.70
-#                 Eccentricity         0.235
-#                 Inclination        119.570
-#                 AscendingNode      324.225
-#                 ArgOfPericenter    186.746
-#                 MeanAnomaly         16.357
-#         }
-# }
-
-#  "ADS 520 B"
-#  {
-#  OrbitBarycenter "ADS 520"
-#  SpectralType "G8V"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period              25.090
-#                 SemiMajorAxis        5.792 # mass ratio 0.94 : 0.70
-#                 Eccentricity         0.235
-#                 Inclination        119.570
-#                 AscendingNode      324.225
-#                 ArgOfPericenter      6.746
-#                 MeanAnomaly         16.357
-#         }
+#      EllipticalOrbit {
+#          Period              25.090
+#          SemiMajorAxis        5.792 # mass ratio 0.94 : 0.70
+#          Eccentricity         0.235
+#          Inclination        119.570
+#          AscendingNode      324.225
+#          ArgOfPericenter      6.746
+#          MeanAnomaly         16.357
+#      }
 #  }
 
- Barycenter 4463 "ETA And"
+ Barycenter 4463 "ETA And:38 And:CCDM J00572+2325A"
  {
- RA        14.301783
- Dec       23.417761
- Distance 242.683790
+     RA        14.301783
+     Dec       23.417760
+     Distance 229.695070
+ }
+ 
+ "ETA And A:38 And A:CCDM J00572+2325Aa" 
+ {
+     OrbitBarycenter "ETA And"
+     SpectralType    "G8III"                                          
+     AppMag          4.42                                             
+ 
+     EllipticalOrbit {
+         Period               0.317
+         SemiMajorAxis        0.373 # mass ratio 2.60 : 2.30
+         Eccentricity         0.008
+         Inclination         74.989
+         AscendingNode      290.441
+         ArgOfPericenter    213.615
+         MeanAnomaly        193.124
+     }
  }
 
- 
- "ETA And A" 
+ "ETA And B:38 And B:CCDM J00572+2325Ab" 
  {
- OrbitBarycenter "ETA And"
- SpectralType "G8III-IV"
- AppMag 4.42
+     OrbitBarycenter "ETA And"
+     SpectralType    "G8III"                                          
+     AppMag          4.40     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.317
-                SemiMajorAxis        0.373 # mass ratio 2.60 : 2.30
-                Eccentricity         0.008
-                Inclination         74.989
-                AscendingNode      290.441
-                ArgOfPericenter    213.615
-                MeanAnomaly        193.124
-        }
-}
-
- "ETA And B"
- {
- OrbitBarycenter "ETA And"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.317
-                SemiMajorAxis        0.421 # mass ratio 2.60 : 2.30
-                Eccentricity         0.008
-                Inclination         74.989
-                AscendingNode      290.441
-                ArgOfPericenter     33.615
-                MeanAnomaly        193.124
-        }
+     EllipticalOrbit {
+         Period               0.317
+         SemiMajorAxis        0.421 # mass ratio 2.60 : 2.30
+         Eccentricity         0.008
+         Inclination         74.989
+         AscendingNode      290.441
+         ArgOfPericenter     33.615
+         MeanAnomaly        193.124
+     }
  }
 
-#  Barycenter 7580 "Kui 7"
+# Commented out to avoid redoubling
+#
+#  Barycenter 7580 "CCDM J01376-0924AB"
 #  {
-#  RA        24.406489
-#  Dec       -9.404052
-#  Distance 124.729260
+#      RA        24.406489
+#      Dec       -9.404052
+#      Distance 131.731422
+#  }
+#  
+#  "CCDM J01376-0924A" 
+#  {
+#      OrbitBarycenter "CCDM J01376-0924AB"
+#      SpectralType    "F7V"                                            
+#      AppMag          7.00                                             
+#  
+#      EllipticalOrbit {
+#          Period              28.800
+#          SemiMajorAxis        5.333 # mass ratio 1.20 : 0.96
+#          Eccentricity         0.798
+#          Inclination         93.957
+#          AscendingNode      193.326
+#          ArgOfPericenter    359.472
+#          MeanAnomaly        126.000
+#      }
 #  }
 
-#  
-#  "Kui 7 A" 
+#  "CCDM J01376-0924B" 
 #  {
-#  OrbitBarycenter "Kui 7"
-#  SpectralType "F5V"
-#  AppMag 6.54
+#      OrbitBarycenter "CCDM J01376-0924AB"
+#      SpectralType    "F7V"    # lacking, used HIP data of the entire system!
+#      AppMag          7.40                                             
 #  
-#         EllipticalOrbit {
-#                 Period              28.800
-#                 SemiMajorAxis        5.333 # mass ratio 1.20 : 0.96
-#                 Eccentricity         0.798
-#                 Inclination         93.957
-#                 AscendingNode      193.326
-#                 ArgOfPericenter    359.472
-#                 MeanAnomaly        126.000
-#         }
-# }
-
-#  "Kui 7 B"
-#  {
-#  OrbitBarycenter "Kui 7"
-#  SpectralType "?"
-#  AppMag 7.77
-#  
-#         EllipticalOrbit {
-#                 Period              28.800
-#                 SemiMajorAxis        6.667 # mass ratio 1.20 : 0.96
-#                 Eccentricity         0.798
-#                 Inclination         93.957
-#                 AscendingNode      193.326
-#                 ArgOfPericenter    179.472
-#                 MeanAnomaly        126.000
-#         }
+#      EllipticalOrbit {
+#          Period              28.800
+#          SemiMajorAxis        6.667 # mass ratio 1.20 : 0.96
+#          Eccentricity         0.798
+#          Inclination         93.957
+#          AscendingNode      193.326
+#          ArgOfPericenter    179.472
+#          MeanAnomaly        126.000
+#      }
 #  }
 
- Barycenter 8903 "BET Ari"
+ Barycenter 8903 "Sheratan:Elscheratain:BET Ari:6 Ari:GJ 80"
  {
- RA        28.659788
- Dec       20.808300
- Distance  59.584763
+     RA        28.659789
+     Dec       20.808300
+     Distance  58.663129
+ }
+ 
+ "Sheratan A:Elscheratain A:BET Ari A:6 Ari A:GJ 80 A" 
+ {
+     OrbitBarycenter "Sheratan"
+     SpectralType    "A5V"                                            
+     AppMag          2.60                                             
+ 
+     EllipticalOrbit {
+         Period               0.293
+         SemiMajorAxis        0.213 # mass ratio 2.00 : 1.02
+         Eccentricity         0.880
+         Inclination         52.560
+         AscendingNode      291.020
+         ArgOfPericenter    222.395
+         MeanAnomaly        342.447
+     }
  }
 
- 
- "BET Ari A" 
+ "Sheratan B:Elscheratain B:BET Ari B:6 Ari B:GJ 80 B" 
  {
- OrbitBarycenter "BET Ari"
- SpectralType "A5V"
- AppMag 2.64
+     OrbitBarycenter "Sheratan"
+     SpectralType    "A5V"    # lacking, used HIP data of the entire system!
+     AppMag          2.64     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.293
-                SemiMajorAxis        0.213 # mass ratio 2.00 : 1.02
-                Eccentricity         0.880
-                Inclination         52.560
-                AscendingNode      291.020
-                ArgOfPericenter    222.395
-                MeanAnomaly        342.447
-        }
-}
-
- "BET Ari B"
- {
- OrbitBarycenter "BET Ari"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.293
-                SemiMajorAxis        0.418 # mass ratio 2.00 : 1.02
-                Eccentricity         0.880
-                Inclination         52.560
-                AscendingNode      291.020
-                ArgOfPericenter     42.395
-                MeanAnomaly        342.447
-        }
+     EllipticalOrbit {
+         Period               0.293
+         SemiMajorAxis        0.418 # mass ratio 2.00 : 1.02
+         Eccentricity         0.880
+         Inclination         52.560
+         AscendingNode      291.020
+         ArgOfPericenter     42.395
+         MeanAnomaly        342.447
+     }
  }
 
- Barycenter 10064 "BET Tri"
+ Barycenter 10064 "BET Tri:4 Tri"
  {
- RA        32.385507
- Dec       34.987392
- Distance 124.301450
+     RA        32.385504
+     Dec       34.987392
+     Distance 126.863866
+ }
+ 
+ "BET Tri A:4 Tri A" 
+ {
+     OrbitBarycenter "BET Tri"
+     SpectralType    "A5III"                                          
+     AppMag          3.00                                             
+ 
+     EllipticalOrbit {
+         Period               0.086
+         SemiMajorAxis        0.095 # mass ratio 3.50 : 1.40
+         Eccentricity         0.433
+         Inclination        119.317
+         AscendingNode      135.666
+         ArgOfPericenter    122.151
+         MeanAnomaly        198.241
+     }
  }
 
- 
- "BET Tri A" 
+ "BET Tri B:4 Tri B" 
  {
- OrbitBarycenter "BET Tri"
- SpectralType "A5III"
- AppMag 3.0
+     OrbitBarycenter "BET Tri"
+     SpectralType    "A5III"  # lacking, used HIP data of the entire system!
+     AppMag          3.00     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.086
-                SemiMajorAxis        0.095 # mass ratio 3.50 : 1.40
-                Eccentricity         0.433
-                Inclination        119.317
-                AscendingNode      135.667
-                ArgOfPericenter    122.151
-                MeanAnomaly        198.241
-        }
-}
-
- "BET Tri B"
- {
- OrbitBarycenter "BET Tri"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.086
-                SemiMajorAxis        0.237 # mass ratio 3.50 : 1.40
-                Eccentricity         0.433
-                Inclination        119.317
-                AscendingNode      135.667
-                ArgOfPericenter    302.151
-                MeanAnomaly        198.241
-        }
+     EllipticalOrbit {
+         Period               0.086
+         SemiMajorAxis        0.237 # mass ratio 3.50 : 1.40
+         Eccentricity         0.433
+         Inclination        119.317
+         AscendingNode      135.666
+         ArgOfPericenter    302.151
+         MeanAnomaly        198.241
+     }
  }
 
- Barycenter 10644 "DEL Tri"
+ Barycenter 10644 "DEL Tri:8 Tri:GJ 92:ADS 1739 A:CCDM J02170+3414A"
  {
- RA        34.260074
- Dec       34.224831
- Distance  23.982609
+     RA        34.260073
+     Dec       34.224830
+     Distance  35.173838
+ }
+ 
+ "DEL Tri A:8 Tri A:GJ 92 A:ADS 1739 Aa:CCDM J02170+3414Aa" 
+ {
+     OrbitBarycenter "DEL Tri"
+     SpectralType    "G0V"                                            
+     AppMag          4.87                                             
+ 
+     EllipticalOrbit {
+         Period               0.027
+         SemiMajorAxis        0.036 # mass ratio 0.20 : 0.20
+         Eccentricity         0.011
+         Inclination         56.714
+         AscendingNode      122.736
+         ArgOfPericenter     28.474
+         MeanAnomaly          7.270
+     }
  }
 
- 
- "DEL Tri A" 
+ "DEL Tri B:8 Tri B:GJ 92 B:ADS 1739 Ab:CCDM J02170+3414Ab" 
  {
- OrbitBarycenter "DEL Tri"
- SpectralType "G0V"
- AppMag 4.85
+     OrbitBarycenter "DEL Tri"
+     SpectralType    "G0V"    # lacking, used HIP data of the entire system!
+     AppMag          6.87     # mentioned in D.Pourbaix's paper (discussion)
  
-        EllipticalOrbit {
-                Period               0.027
-                SemiMajorAxis        0.036 # mass ratio 0.20 : 0.20
-                Eccentricity         0.011
-                Inclination         56.714
-                AscendingNode      122.736
-                ArgOfPericenter     28.474
-                MeanAnomaly          7.270
-        }
-}
-
- "DEL Tri B"
- {
- OrbitBarycenter "DEL Tri"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.027
-                SemiMajorAxis        0.036 # mass ratio 0.20 : 0.20
-                Eccentricity         0.011
-                Inclination         56.714
-                AscendingNode      122.736
-                ArgOfPericenter    208.474
-                MeanAnomaly          7.270
-        }
+     EllipticalOrbit {
+         Period               0.027
+         SemiMajorAxis        0.036 # mass ratio 0.20 : 0.20
+         Eccentricity         0.011
+         Inclination         56.714
+         AscendingNode      122.736
+         ArgOfPericenter    208.474
+         MeanAnomaly          7.270
+     }
  }
 
- Barycenter 10952 "SIG 248"
+ Barycenter 10952 "ADS 1786:CCDM J02211+4246AB"
  {
- RA        35.265287
- Dec       42.774185
- Distance 199.368570
+     RA        35.265284
+     Dec       42.774185
+     Distance 181.405451
+ }
+ 
+ "ADS 1786 A:CCDM J02211+4246A" 
+ {
+     OrbitBarycenter "ADS 1786"
+     SpectralType    "K0V"                                            
+     AppMag          9.55                                             
+ 
+     EllipticalOrbit {
+         Period             318.000
+         SemiMajorAxis       21.503 # mass ratio 1.10 : 0.70
+         Eccentricity         0.802
+         Inclination         67.270
+         AscendingNode      173.904
+         ArgOfPericenter    249.950
+         MeanAnomaly         12.226
+     }
  }
 
- 
- "SIG 248 A" 
+ "ADS 1786 B:CCDM J02211+4246B" 
  {
- OrbitBarycenter "SIG 248"
- SpectralType "K0V"
- AppMag 8.5
+     OrbitBarycenter "ADS 1786"
+     SpectralType    "K0V"                                            
+     AppMag          9.83                                             
  
-        EllipticalOrbit {
-                Period             318.000
-                SemiMajorAxis       21.503 # mass ratio 1.10 : 0.70
-                Eccentricity         0.802
-                Inclination         67.270
-                AscendingNode      173.904
-                ArgOfPericenter    249.950
-                MeanAnomaly         12.226
-        }
-}
-
- "SIG 248 B"
- {
- OrbitBarycenter "SIG 248"
- SpectralType "K0V"
- AppMag 10.5
- 
-        EllipticalOrbit {
-                Period             318.000
-                SemiMajorAxis       33.791 # mass ratio 1.10 : 0.70
-                Eccentricity         0.802
-                Inclination         67.270
-                AscendingNode      173.904
-                ArgOfPericenter     69.950
-                MeanAnomaly         12.226
-        }
+     EllipticalOrbit {
+         Period             318.000
+         SemiMajorAxis       33.791 # mass ratio 1.10 : 0.70
+         Eccentricity         0.802
+         Inclination         67.270
+         AscendingNode      173.904
+         ArgOfPericenter     69.950
+         MeanAnomaly         12.226
+     }
  }
 
-#  Barycenter 12390 "EPS Cet"
+# Commented out to avoid redoubling
+#
+#  Barycenter 12390 "EPS Cet:83 Cet:CCDM J02396-1152AB"
 #  {
-#  RA        39.890549
-#  Dec      -11.871582
-#  Distance  88.177071
+#      RA        39.890551
+#      Dec      -11.871582
+#      Distance  70.068099
+#  }
+#  
+#  "EPS Cet A:83 Cet A:CCDM J02396-1152A" 
+#  {
+#      OrbitBarycenter "EPS Cet"
+#      SpectralType    "F5IV"                                           
+#      AppMag          4.84                                             
+#  
+#      EllipticalOrbit {
+#          Period               2.651
+#          SemiMajorAxis        1.211 # mass ratio 2.40 : 1.60
+#          Eccentricity         0.230
+#          Inclination         86.753
+#          AscendingNode      311.292
+#          ArgOfPericenter    238.800
+#          MeanAnomaly        128.193
+#      }
 #  }
 
-#  
-#  "EPS Cet A" 
+#  "EPS Cet B:83 Cet B:CCDM J02396-1152B" 
 #  {
-#  OrbitBarycenter "EPS Cet"
-#  SpectralType "F5V"
-#  AppMag 4.84
+#      OrbitBarycenter "EPS Cet"
+#      SpectralType    "F6V"                                            
+#      AppMag          4.83     # lacking, used HIP data of the entire system!
 #  
-#         EllipticalOrbit {
-#                 Period               2.651
-#                 SemiMajorAxis        1.211 # mass ratio 2.40 : 1.60
-#                 Eccentricity         0.230
-#                 Inclination         86.753
-#                 AscendingNode      311.292
-#                 ArgOfPericenter    238.800
-#                 MeanAnomaly        128.193
-#         }
-# }
-
-#  "EPS Cet B"
-#  {
-#  OrbitBarycenter "EPS Cet"
-#  SpectralType "F6V"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period               2.651
-#                 SemiMajorAxis        1.817 # mass ratio 2.40 : 1.60
-#                 Eccentricity         0.230
-#                 Inclination         86.753
-#                 AscendingNode      311.292
-#                 ArgOfPericenter     58.800
-#                 MeanAnomaly        128.193
-#         }
+#      EllipticalOrbit {
+#          Period               2.651
+#          SemiMajorAxis        1.817 # mass ratio 2.40 : 1.60
+#          Eccentricity         0.230
+#          Inclination         86.753
+#          AscendingNode      311.292
+#          ArgOfPericenter     58.800
+#          MeanAnomaly        128.193
+#      }
 #  }
 
- Barycenter 12623 "12 Per"
+ Barycenter 12623 "12 Per:GJ 9095"
  {
- RA        40.562203
- Dec       40.194386
- Distance  80.495310
+     RA        40.562203
+     Dec       40.194387
+     Distance  78.898645
+ }
+ 
+ "12 Per A:GJ 9095 A" 
+ {
+     OrbitBarycenter "12 Per"
+     SpectralType    "F9V"                                            
+     AppMag          4.92                                             
+ 
+     EllipticalOrbit {
+         Period               0.906
+         SemiMajorAxis        0.596 # mass ratio 1.34 : 1.18
+         Eccentricity         0.663
+         Inclination         23.040
+         AscendingNode       92.431
+         ArgOfPericenter    329.268
+         MeanAnomaly        125.318
+     }
  }
 
- 
- "12 Per A" 
+ "12 Per B:GJ 9095 B" 
  {
- OrbitBarycenter "12 Per"
- SpectralType "F9V"
- AppMag 4.91
+     OrbitBarycenter "12 Per"
+     SpectralType    "F9V"    # lacking, used HIP data of the entire system!
+     AppMag          4.91     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.906
-                SemiMajorAxis        0.596 # mass ratio 1.34 : 1.18
-                Eccentricity         0.663
-                Inclination         23.040
-                AscendingNode       92.431
-                ArgOfPericenter    329.268
-                MeanAnomaly        125.318
-        }
-}
-
- "12 Per B"
- {
- OrbitBarycenter "12 Per"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.906
-                SemiMajorAxis        0.677 # mass ratio 1.34 : 1.18
-                Eccentricity         0.663
-                Inclination         23.040
-                AscendingNode       92.431
-                ArgOfPericenter    149.268
-                MeanAnomaly        125.318
-        }
+     EllipticalOrbit {
+         Period               0.906
+         SemiMajorAxis        0.677 # mass ratio 1.34 : 1.18
+         Eccentricity         0.663
+         Inclination         23.040
+         AscendingNode       92.431
+         ArgOfPericenter    149.268
+         MeanAnomaly        125.318
+     }
  }
 
- Barycenter 14328 "GAM Per"
+ Barycenter 14328 "GAM Per:23 Per:ADS 2324 AP:CCDM J03048+5331AP"
  {
- RA        46.199126
- Dec       53.506451
- Distance 221.879918
+     RA        46.199126
+     Dec       53.506450
+     Distance 243.226696
+ }
+ 
+ "GAM Per A:23 Per A:ADS 2324 A:CCDM J03048+5331A" 
+ {
+     OrbitBarycenter "GAM Per"
+     SpectralType    "G8III"                                          
+     AppMag          2.94                                             
+ 
+     EllipticalOrbit {
+         Period              14.593
+         SemiMajorAxis        4.176 # mass ratio 2.50 : 1.86
+         Eccentricity         0.786
+         Inclination        144.381
+         AscendingNode      160.840
+         ArgOfPericenter    178.496
+         MeanAnomaly        220.593
+     }
  }
 
- 
- "GAM Per A" 
+ "GAM Per B:23 Per B:ADS 2324 P:CCDM J03048+5331P" 
  {
- OrbitBarycenter "GAM Per"
- SpectralType "G8III"
- AppMag 3.25
+     OrbitBarycenter "GAM Per"
+     SpectralType    "A3V"                                            
+     AppMag          4.49                                             
  
-        EllipticalOrbit {
-                Period              14.593
-                SemiMajorAxis        4.176 # mass ratio 2.50 : 1.86
-                Eccentricity         0.786
-                Inclination        144.381
-                AscendingNode      160.840
-                ArgOfPericenter    178.496
-                MeanAnomaly        220.593
-        }
-}
-
- "GAM Per B"
- {
- OrbitBarycenter "GAM Per"
- SpectralType "A3V"
- AppMag 4.49
- 
-        EllipticalOrbit {
-                Period              14.593
-                SemiMajorAxis        5.613 # mass ratio 2.50 : 1.86
-                Eccentricity         0.786
-                Inclination        144.381
-                AscendingNode      160.840
-                ArgOfPericenter    358.496
-                MeanAnomaly        220.593
-        }
+     EllipticalOrbit {
+         Period              14.593
+         SemiMajorAxis        5.613 # mass ratio 2.50 : 1.86
+         Eccentricity         0.786
+         Inclination        144.381
+         AscendingNode      160.840
+         ArgOfPericenter    358.496
+         MeanAnomaly        220.593
+     }
  }
 
-#  Barycenter 20087 "51 Tau"
+# Commented out to avoid redoubling
+#
+#  Barycenter 20087 "51 Tau:CCDM J04184+2135AP"
 #  {
-#  RA        64.596426
-#  Dec       21.579376
-#  Distance 178.721640
+#      RA        64.596423
+#      Dec       21.579379
+#      Distance 176.306486
+#  }
+#  
+#  "51 Tau A:CCDM J04184+2135A" 
+#  {
+#      OrbitBarycenter "51 Tau"
+#      SpectralType    "A8V"                                            
+#      AppMag          5.65                                             
+#  
+#      EllipticalOrbit {
+#          Period              11.350
+#          SemiMajorAxis        3.350 # mass ratio 1.90 : 1.50
+#          Eccentricity         0.167
+#          Inclination         89.462
+#          AscendingNode      101.989
+#          ArgOfPericenter    248.849
+#          MeanAnomaly        346.044
+#      }
 #  }
 
-#  
-#  "51 Tau A" 
+#  "51 Tau B:CCDM J04184+2135P" 
 #  {
-#  OrbitBarycenter "51 Tau"
-#  SpectralType "A8V"
-#  AppMag 5.64
+#      OrbitBarycenter "51 Tau"
+#      SpectralType    "G0"                                             
+#      AppMag          5.64     # lacking, used HIP data of the entire system!
 #  
-#         EllipticalOrbit {
-#                 Period              11.350
-#                 SemiMajorAxis        3.350 # mass ratio 1.90 : 1.50
-#                 Eccentricity         0.167
-#                 Inclination         89.462
-#                 AscendingNode      101.989
-#                 ArgOfPericenter    248.849
-#                 MeanAnomaly        346.044
-#         }
-# }
-
-#  "51 Tau B"
-#  {
-#  OrbitBarycenter "51 Tau"
-#  SpectralType "G0V"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period              11.350
-#                 SemiMajorAxis        4.244 # mass ratio 1.90 : 1.50
-#                 Eccentricity         0.167
-#                 Inclination         89.462
-#                 AscendingNode      101.989
-#                 ArgOfPericenter     68.849
-#                 MeanAnomaly        346.044
-#         }
+#      EllipticalOrbit {
+#          Period              11.350
+#          SemiMajorAxis        4.244 # mass ratio 1.90 : 1.50
+#          Eccentricity         0.167
+#          Inclination         89.462
+#          AscendingNode      101.989
+#          ArgOfPericenter     68.849
+#          MeanAnomaly        346.044
+#      }
 #  }
 
-#  Barycenter 20661 "Fin 342"
+# Commented out to avoid redoubling
+#
+#  Barycenter 20661 "70 Tau:CCDM J04256+1557AP"
 #  {
-#  RA        66.405222
-#  Dec       15.941080
-#  Distance 151.917560
+#      RA        66.405223
+#      Dec       15.941080
+#      Distance 153.852358
+#  }
+#  
+#  "70 Tau A:CCDM J04256+1557A" 
+#  {
+#      OrbitBarycenter "70 Tau"
+#      SpectralType    "F7V"                                            
+#      AppMag          6.44                                             
+#  
+#      EllipticalOrbit {
+#          Period               6.280
+#          SemiMajorAxis        2.227 # mass ratio 1.40 : 1.23
+#          Eccentricity         0.716
+#          Inclination        128.674
+#          AscendingNode      206.021
+#          ArgOfPericenter    338.022
+#          MeanAnomaly        286.968
+#      }
 #  }
 
-#  
-#  "Fin 342 A" 
+#  "70 Tau B:CCDM J04256+1557P" 
 #  {
-#  OrbitBarycenter "Fin 342"
-#  SpectralType "F7V"
-#  AppMag 6.44
+#      OrbitBarycenter "70 Tau"
+#      SpectralType    "F7V"    # lacking, used HIP data of the entire system!
+#      AppMag          6.44     # lacking, used HIP data of the entire system!
 #  
-#         EllipticalOrbit {
-#                 Period               6.280
-#                 SemiMajorAxis        2.227 # mass ratio 1.40 : 1.23
-#                 Eccentricity         0.716
-#                 Inclination        128.674
-#                 AscendingNode      206.021
-#                 ArgOfPericenter    338.022
-#                 MeanAnomaly        286.968
-#         }
-# }
-
-#  "Fin 342 B"
-#  {
-#  OrbitBarycenter "Fin 342"
-#  SpectralType "?"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period               6.280
-#                 SemiMajorAxis        2.535 # mass ratio 1.40 : 1.23
-#                 Eccentricity         0.716
-#                 Inclination        128.674
-#                 AscendingNode      206.021
-#                 ArgOfPericenter    158.022
-#                 MeanAnomaly        286.968
-#         }
+#      EllipticalOrbit {
+#          Period               6.280
+#          SemiMajorAxis        2.535 # mass ratio 1.40 : 1.23
+#          Eccentricity         0.716
+#          Inclination        128.674
+#          AscendingNode      206.021
+#          ArgOfPericenter    158.022
+#          MeanAnomaly        286.968
+#      }
 #  }
 
- Barycenter 24608 "ALF Aur"
+ Barycenter 24608 "Capella:Alhajot:ALF Aur:13 Aur:GJ 194:ADS 3841 AP:CCDM J05168+4559AP"
  {
- RA        79.172065
- Dec       45.999031
- Distance  42.200414
+     RA        79.172065
+     Dec       45.999029
+     Distance  42.804068
+ }
+ 
+ "Capella A:Alhajot A:ALF Aur A:13 Aur A:GJ 194 A:ADS 3841 A:CCDM J05168+4559A" 
+ {
+     OrbitBarycenter "Capella"
+     SpectralType    "G5III"                                          
+     AppMag          0.06                                             
+ 
+     EllipticalOrbit {
+         Period               0.285
+         SemiMajorAxis        0.366 # mass ratio 2.70 : 2.56
+         Eccentricity         0.002
+         Inclination         99.313
+         AscendingNode      200.683
+         ArgOfPericenter    309.833
+         MeanAnomaly        129.410
+     }
  }
 
- 
- "ALF Aur A" 
+ "Capella B:Alhajot B:ALF Aur B:13 Aur B:GJ 194 B:ADS 3841 P:CCDM J05168+4559P" 
  {
- OrbitBarycenter "ALF Aur"
- SpectralType "G8III"
- AppMag 0.08
+     OrbitBarycenter "Capella"
+     SpectralType    "G0III"                                          
+     AppMag          0.08     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.285
-                SemiMajorAxis        0.366 # mass ratio 2.70 : 2.56
-                Eccentricity         0.002
-                Inclination         99.313
-                AscendingNode      200.683
-                ArgOfPericenter    309.833
-                MeanAnomaly        129.410
-        }
-}
-
- "ALF Aur B"
- {
- OrbitBarycenter "ALF Aur"
- SpectralType "G0III"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.285
-                SemiMajorAxis        0.386 # mass ratio 2.70 : 2.56
-                Eccentricity         0.002
-                Inclination         99.313
-                AscendingNode      200.683
-                ArgOfPericenter    129.833
-                MeanAnomaly        129.410
-        }
+     EllipticalOrbit {
+         Period               0.285
+         SemiMajorAxis        0.386 # mass ratio 2.70 : 2.56
+         Eccentricity         0.002
+         Inclination         99.313
+         AscendingNode      200.683
+         ArgOfPericenter    129.833
+         MeanAnomaly        129.410
+     }
  }
 
- Barycenter 28360 "BET Aur"
+ Barycenter 28360 "Menkalinan:BET Aur:34 Aur:GJ 3375:ADS 4556 A:CCDM J05596+4457A"
  {
- RA        89.882369
- Dec       44.947433
- Distance  82.116563
+     RA        89.882373
+     Dec       44.947435
+     Distance  81.115892
+ }
+ 
+ "Menkalinan A:BET Aur A:34 Aur A:GJ 3375 A:ADS 4556 Aa:CCDM J05596+4457Aa" 
+ {
+     OrbitBarycenter "Menkalinan"
+     SpectralType    "A2IV"                                           
+     AppMag          1.90                                             
+ 
+     EllipticalOrbit {
+         Period               0.011
+         SemiMajorAxis        0.042 # mass ratio 2.40 : 2.44
+         Eccentricity         0.000
+         Inclination        155.827
+         AscendingNode      101.366
+         ArgOfPericenter    248.266
+         MeanAnomaly        305.147
+     }
  }
 
- 
- "BET Aur A" 
+ "Menkalinan B:BET Aur B:34 Aur B:GJ 3375 B:ADS 4556 Ab:CCDM J05596+4457Ab" 
  {
- OrbitBarycenter "BET Aur"
- SpectralType "A2IV"
- AppMag 1.96
+     OrbitBarycenter "Menkalinan"
+     SpectralType    "A2IV"                                           
+     AppMag          2.83                                             
  
-        EllipticalOrbit {
-                Period               0.011
-                SemiMajorAxis        0.042 # mass ratio 2.40 : 2.44
-                Eccentricity         0.000
-                Inclination        155.827
-                AscendingNode      101.366
-                ArgOfPericenter    248.266
-                MeanAnomaly        305.147
-        }
-}
-
- "BET Aur B"
- {
- OrbitBarycenter "BET Aur"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.011
-                SemiMajorAxis        0.041 # mass ratio 2.40 : 2.44
-                Eccentricity         0.000
-                Inclination        155.827
-                AscendingNode      101.366
-                ArgOfPericenter     68.266
-                MeanAnomaly        305.147
-        }
+     EllipticalOrbit {
+         Period               0.011
+         SemiMajorAxis        0.041 # mass ratio 2.40 : 2.44
+         Eccentricity         0.000
+         Inclination        155.827
+         AscendingNode      101.366
+         ArgOfPericenter     68.266
+         MeanAnomaly        305.147
+     }
  }
 
-#  Barycenter 38382 "9 Pup"
+# Commented out to avoid redoubling
+#
+#  Barycenter 38382 "9 Pup:GJ 291:ADS 6420 AB:CCDM J07518-1354AB"
 #  {
-#  RA       117.943100
-#  Dec      -13.897190
-#  Distance  54.379294
+#      RA       117.943099
+#      Dec      -13.897190
+#      Distance  53.831820
+#  }
+#  
+#  "9 Pup A:GJ 291 A:ADS 6420 A:CCDM J07518-1354A" 
+#  {
+#      OrbitBarycenter "9 Pup"
+#      SpectralType    "G1V"                                            
+#      AppMag          5.16                                             
+#  
+#      EllipticalOrbit {
+#          Period              22.700
+#          SemiMajorAxis        4.775 # mass ratio 0.93 : 0.90
+#          Eccentricity         0.741
+#          Inclination         24.558
+#          AscendingNode      213.067
+#          ArgOfPericenter    253.335
+#          MeanAnomaly        223.295
+#      }
 #  }
 
-#  
-#  "9 Pup A" 
+#  "9 Pup B:GJ 291 B:ADS 6420 B:CCDM J07518-1354B" 
 #  {
-#  OrbitBarycenter "9 Pup"
-#  SpectralType "G2V"
-#  AppMag 5.72
+#      OrbitBarycenter "9 Pup"
+#      SpectralType    "G2V"    # lacking, used HIP data of the entire system!
+#      AppMag          6.17                                             
 #  
-#         EllipticalOrbit {
-#                 Period              22.700
-#                 SemiMajorAxis        4.775 # mass ratio 0.93 : 0.90
-#                 Eccentricity         0.741
-#                 Inclination         24.558
-#                 AscendingNode      213.067
-#                 ArgOfPericenter    253.335
-#                 MeanAnomaly        223.295
-#         }
-# }
-
-#  "9 Pup B"
-#  {
-#  OrbitBarycenter "9 Pup"
-#  SpectralType "?"
-#  AppMag 6.17
-#  
-#         EllipticalOrbit {
-#                 Period              22.700
-#                 SemiMajorAxis        4.934 # mass ratio 0.93 : 0.90
-#                 Eccentricity         0.741
-#                 Inclination         24.558
-#                 AscendingNode      213.067
-#                 ArgOfPericenter     73.335
-#                 MeanAnomaly        223.295
-#         }
+#      EllipticalOrbit {
+#          Period              22.700
+#          SemiMajorAxis        4.934 # mass ratio 0.93 : 0.90
+#          Eccentricity         0.741
+#          Inclination         24.558
+#          AscendingNode      213.067
+#          ArgOfPericenter     73.335
+#          MeanAnomaly        223.295
+#      }
 #  }
 
-#  Barycenter 45170 "Fin 347Aa"
+# Commented out to avoid redoubling
+#
+#  Barycenter 45170 "PI1 Cnc:81 Cnc:GJ 337 A:CCDM J09123+1459AP"
 #  {
-#  RA       138.074430
-#  Dec       14.995441
-#  Distance  66.796434
+#      RA       138.074439
+#      Dec       14.995441
+#      Distance  66.415598
+#  }
+#  
+#  "PI1 Cnc A:81 Cnc A:GJ 337 Aa:CCDM J09123+1459A" 
+#  {
+#      OrbitBarycenter "PI1 Cnc"
+#      SpectralType    "G9V"                                            
+#      AppMag          6.51                                             
+#  
+#      EllipticalOrbit {
+#          Period               2.705
+#          SemiMajorAxis        1.141 # mass ratio 0.89 : 0.85
+#          Eccentricity         0.433
+#          Inclination        136.473
+#          AscendingNode      188.503
+#          ArgOfPericenter    303.457
+#          MeanAnomaly        143.564
+#      }
 #  }
 
-#  
-#  "Fin 347Aa A" 
+#  "PI1 Cnc B:81 Cnc B:GJ 337 Ab:CCDM J09123+1459P" 
 #  {
-#  OrbitBarycenter "Fin 347Aa"
-#  SpectralType "G8V"
-#  AppMag 6.49
+#      OrbitBarycenter "PI1 Cnc"
+#      SpectralType    "G8V"                                            
+#      AppMag          6.49     # lacking, used HIP data of the entire system!
 #  
-#         EllipticalOrbit {
-#                 Period               2.705
-#                 SemiMajorAxis        1.141 # mass ratio 0.89 : 0.85
-#                 Eccentricity         0.433
-#                 Inclination        136.473
-#                 AscendingNode      188.503
-#                 ArgOfPericenter    303.457
-#                 MeanAnomaly        143.564
-#         }
-# }
-
-#  "Fin 347Aa B"
-#  {
-#  OrbitBarycenter "Fin 347Aa"
-#  SpectralType "G8V"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period               2.705
-#                 SemiMajorAxis        1.195 # mass ratio 0.89 : 0.85
-#                 Eccentricity         0.433
-#                 Inclination        136.473
-#                 AscendingNode      188.503
-#                 ArgOfPericenter    123.457
-#                 MeanAnomaly        143.564
-#         }
+#      EllipticalOrbit {
+#          Period               2.705
+#          SemiMajorAxis        1.195 # mass ratio 0.89 : 0.85
+#          Eccentricity         0.433
+#          Inclination        136.473
+#          AscendingNode      188.503
+#          ArgOfPericenter    123.457
+#          MeanAnomaly        143.564
+#      }
 #  }
 
- Barycenter 46404 "HR 3750"
+ Barycenter 46404 "CCDM J09278-0604AB"
  {
- RA       141.945480
- Dec       -6.071029
- Distance 101.895350
+     RA       141.945488
+     Dec       -6.071029
+     Distance  99.199209
+ }
+ 
+ "CCDM J09278-0604A" 
+ {
+     OrbitBarycenter "CCDM J09278-0604AB"
+     SpectralType    "G0V"                                            
+     AppMag          5.75                                             
+ 
+     EllipticalOrbit {
+         Period              34.500
+         SemiMajorAxis        5.370 # mass ratio 1.70 : 1.00
+         Eccentricity         0.250
+         Inclination         42.510
+         AscendingNode      312.880
+         ArgOfPericenter    285.227
+         MeanAnomaly        249.391
+     }
  }
 
- 
- "HR 3750 A" 
+ "CCDM J09278-0604B" 
  {
- OrbitBarycenter "HR 3750"
- SpectralType "G2V"
- AppMag 5.80
+     OrbitBarycenter "CCDM J09278-0604AB"
+     SpectralType    "G9V"                                            
+     AppMag          7.25                                             
  
-        EllipticalOrbit {
-                Period              34.500
-                SemiMajorAxis        5.370 # mass ratio 1.70 : 1.00
-                Eccentricity         0.250
-                Inclination         42.510
-                AscendingNode      312.880
-                ArgOfPericenter    285.227
-                MeanAnomaly        249.391
-        }
-}
-
- "HR 3750 B"
- {
- OrbitBarycenter "HR 3750"
- SpectralType "G9V"
- AppMag 6.60
- 
-        EllipticalOrbit {
-                Period              34.500
-                SemiMajorAxis        9.130 # mass ratio 1.70 : 1.00
-                Eccentricity         0.250
-                Inclination         42.510
-                AscendingNode      312.880
-                ArgOfPericenter    105.227
-                MeanAnomaly        249.391
-        }
+     EllipticalOrbit {
+         Period              34.500
+         SemiMajorAxis        9.130 # mass ratio 1.70 : 1.00
+         Eccentricity         0.250
+         Inclination         42.510
+         AscendingNode      312.880
+         ArgOfPericenter    105.227
+         MeanAnomaly        249.391
+     }
  }
 
- Barycenter 57565 "93 Leo"
+ Barycenter 57565 "DQ Leo:93 Leo:CCDM J11480+2014A"
  {
- RA       176.996780
- Dec       20.218941
- Distance 226.504870
+     RA       176.996777
+     Dec       20.218941
+     Distance 232.644080
+ }
+ 
+ "DQ Leo A:93 Leo A:CCDM J11480+2014Aa" 
+ {
+     OrbitBarycenter "DQ Leo"
+     SpectralType    "A7V"                                            
+     AppMag          4.53                                             
+ 
+     EllipticalOrbit {
+         Period               0.196
+         SemiMajorAxis        0.262 # mass ratio 2.20 : 2.00
+         Eccentricity         0.000
+         Inclination        147.780
+         AscendingNode      116.380
+         ArgOfPericenter    147.374
+         MeanAnomaly        356.013
+     }
  }
 
- 
- "93 Leo A" 
+ "DQ Leo B:93 Leo B:CCDM J11480+2014Ab" 
  {
- OrbitBarycenter "93 Leo"
- SpectralType "G8III"
- AppMag 4.60
+     OrbitBarycenter "DQ Leo"
+     SpectralType    "G5III"                                          
+     AppMag          4.50     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.196
-                SemiMajorAxis        0.262 # mass ratio 2.20 : 2.00
-                Eccentricity         0.000
-                Inclination        147.780
-                AscendingNode      116.380
-                ArgOfPericenter    147.374
-                MeanAnomaly        356.013
-        }
-}
-
- "93 Leo B"
- {
- OrbitBarycenter "93 Leo"
- SpectralType "A7V"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.196
-                SemiMajorAxis        0.289 # mass ratio 2.20 : 2.00
-                Eccentricity         0.000
-                Inclination        147.780
-                AscendingNode      116.380
-                ArgOfPericenter    327.374
-                MeanAnomaly        356.013
-        }
+     EllipticalOrbit {
+         Period               0.196
+         SemiMajorAxis        0.289 # mass ratio 2.20 : 2.00
+         Eccentricity         0.000
+         Inclination        147.780
+         AscendingNode      116.380
+         ArgOfPericenter    327.374
+         MeanAnomaly        356.013
+     }
  }
 
- Barycenter 65378 "ZET UMa"
+ Barycenter 65378 "Mizar:ZET UMa A:ZET1 UMa:79 UMa A:GJ 3783 A:ADS 8891 A:CCDM J13240+5456AB"
  {
- RA       200.980910
- Dec       54.925415
- Distance  78.161276
+     RA       200.980915
+     Dec       54.925415
+     Distance  85.810839
+ }
+ 
+ "Mizar A:ZET UMa Aa:ZET1 UMa A:79 UMa Aa:GJ 3783 Aa:ADS 8891 Aa:CCDM J13240+5456A" 
+ {
+     OrbitBarycenter "Mizar"
+     SpectralType    "A"                                              
+     AppMag          3.95                                             
+ 
+     EllipticalOrbit {
+         Period               0.056
+         SemiMajorAxis        0.125 # mass ratio 2.50 : 2.50
+         Eccentricity         0.529
+         Inclination         88.219
+         AscendingNode       98.364
+         ArgOfPericenter     91.381
+         MeanAnomaly        104.896
+     }
  }
 
- 
- "ZET UMa A" 
+ "Mizar B:ZET UMa Ab:ZET1 UMa B:79 UMa Ab:GJ 3783 Ab:ADS 8891 Ab:CCDM J13240+5456B" 
  {
- OrbitBarycenter "ZET UMa"
- SpectralType "A1VpSrSi"
- AppMag 2.27
+     OrbitBarycenter "Mizar"
+     SpectralType    "A2V"    # lacking, used HIP data of the entire system!
+     AppMag          2.23     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.056
-                SemiMajorAxis        0.125 # mass ratio 2.50 : 2.50
-                Eccentricity         0.529
-                Inclination         88.219
-                AscendingNode       98.364
-                ArgOfPericenter     91.381
-                MeanAnomaly        104.896
-        }
-}
-
- "ZET UMa B"
- {
- OrbitBarycenter "ZET UMa"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.056
-                SemiMajorAxis        0.125 # mass ratio 2.50 : 2.50
-                Eccentricity         0.529
-                Inclination         88.219
-                AscendingNode       98.364
-                ArgOfPericenter    271.381
-                MeanAnomaly        104.896
-        }
+     EllipticalOrbit {
+         Period               0.056
+         SemiMajorAxis        0.125 # mass ratio 2.50 : 2.50
+         Eccentricity         0.529
+         Inclination         88.219
+         AscendingNode       98.364
+         ArgOfPericenter    271.381
+         MeanAnomaly        104.896
+     }
  }
 
-#  Barycenter 71683 "ALF Cen"
+#  Star already in 'nearstars.stc', since d < 25 ly
+#
+#  Barycenter 71683 "ALF Cen A:ALF1 Cen:GJ 559 A:CCDM J14396-6050A"
 #  {
-#  RA       219.920400
-#  Dec      -60.835147
-#  Distance   4.395071
+#      RA       219.920408
+#      Dec      -60.835145
+#      Distance   4.321180
+#  }
+#  
+#  "ALF Cen Aa:ALF1 Cen A:GJ 559 Aa:CCDM J14396-6050Aa" 
+#  {
+#      OrbitBarycenter "ALF Cen A"
+#      SpectralType    "G2V"                                            
+#      AppMag          -0.01                                            
+#  
+#      EllipticalOrbit {
+#          Period              79.900
+#          SemiMajorAxis       10.869 # mass ratio 1.16 : 0.97
+#          Eccentricity         0.519
+#          Inclination         82.982
+#          AscendingNode       67.688
+#          ArgOfPericenter      3.920
+#          MeanAnomaly        200.095
+#      }
 #  }
 
-#  
-#  "ALF Cen A" 
+#  "ALF Cen Ab:ALF1 Cen B:GJ 559 Ab:CCDM J14396-6050Ab" 
 #  {
-#  OrbitBarycenter "ALF Cen"
-#  SpectralType "G2V"
-#  AppMag -0.01
+#      OrbitBarycenter "ALF Cen A"
+#      SpectralType    "K1V"                                            
+#      AppMag          1.33                                             
 #  
-#         EllipticalOrbit {
-#                 Period              79.900
-#                 SemiMajorAxis       10.869 # mass ratio 1.16 : 0.97
-#                 Eccentricity         0.519
-#                 Inclination         82.982
-#                 AscendingNode       67.688
-#                 ArgOfPericenter      3.920
-#                 MeanAnomaly        200.095
-#         }
-# }
-
-#  71681 "ALF Cen B"
-#  {
-#  OrbitBarycenter "ALF Cen"
-#  SpectralType "K0V"
-#  AppMag 1.34
-#  
-#         EllipticalOrbit {
-#                 Period              79.900
-#                 SemiMajorAxis       12.998 # mass ratio 1.16 : 0.97
-#                 Eccentricity         0.519
-#                 Inclination         82.982
-#                 AscendingNode       67.688
-#                 ArgOfPericenter    183.920
-#                 MeanAnomaly        200.095
-#         }
+#      EllipticalOrbit {
+#          Period              79.900
+#          SemiMajorAxis       12.998 # mass ratio 1.16 : 0.97
+#          Eccentricity         0.519
+#          Inclination         82.982
+#          AscendingNode       67.688
+#          ArgOfPericenter    183.920
+#          MeanAnomaly        200.095
+#      }
 #  }
 
-#  Barycenter 75312 "ETA CrB"
+#  Star already in 'nearstars.stc', since d < 25 ly
+#
+#  Barycenter 73182 "GJ 570 B:ADS 9446 B:CCDM J14574-2124B"
 #  {
-#  RA       230.800950
-#  Dec       30.288240
-#  Distance  60.738733
+#      RA       224.358045
+#      Dec      -21.407472
+#      Distance  19.326124
+#  }
+#  
+#  "GJ 570 Ba:ADS 9446 Ba:CCDM J14574-2124Ba" 
+#  {
+#      OrbitBarycenter "GJ 570 B"
+#      SpectralType    "M1.5V"                                          
+#      AppMag          8.33                                             
+#  
+#      EllipticalOrbit {
+#          Period               0.843
+#          SemiMajorAxis        0.361 # mass ratio 0.51 : 0.37
+#          Eccentricity         0.765
+#          Inclination         90.151
+#          AscendingNode      248.167
+#          ArgOfPericenter    216.418
+#          MeanAnomaly         63.040
+#      }
 #  }
 
-#  
-#  "ETA CrB A" 
+#  "GJ 570 Bb:ADS 9446 Bb:CCDM J14574-2124Bb" 
 #  {
-#  OrbitBarycenter "ETA CrB"
-#  SpectralType "G2V"
-#  AppMag 5.62
+#      OrbitBarycenter "GJ 570 B"
+#      SpectralType    "M3V"                                            
+#      AppMag          9.44                                             
 #  
-#         EllipticalOrbit {
-#                 Period              41.586
-#                 SemiMajorAxis        7.343 # mass ratio 1.19 : 1.05
-#                 Eccentricity         0.277
-#                 Inclination        111.398
-#                 AscendingNode      193.697
-#                 ArgOfPericenter    171.886
-#                 MeanAnomaly        212.186
-#         }
-# }
-
-#  ETA CrB B
-#  {
-#  OrbitBarycenter "ETA CrB"
-#  SpectralType "G2V"
-#  AppMag 5.96
-#  
-#         EllipticalOrbit {
-#                 Period              41.586
-#                 SemiMajorAxis        8.322 # mass ratio 1.19 : 1.05
-#                 Eccentricity         0.277
-#                 Inclination        111.398
-#                 AscendingNode      193.697
-#                 ArgOfPericenter    351.886
-#                 MeanAnomaly        212.186
-#         }
+#      EllipticalOrbit {
+#          Period               0.843
+#          SemiMajorAxis        0.497 # mass ratio 0.51 : 0.37
+#          Eccentricity         0.765
+#          Inclination         90.151
+#          AscendingNode      248.167
+#          ArgOfPericenter     36.418
+#          MeanAnomaly         63.040
+#      }
 #  }
 
-#  Barycenter 85667 "SIG 2173"
+# Commented out to avoid redoubling
+#
+#  Barycenter 75312 "ETA CrB:2 CrB:ADS 9617 AB:CCDM J15233+3018AB"
 #  {
-#  RA       262.599450
-#  Dec       -1.062504
-#  Distance  53.645889
+#      RA       230.800943
+#      Dec       30.288242
+#      Distance  58.264916
+#  }
+#  
+#  "ETA CrB A:2 CrB A:ADS 9617 A:CCDM J15233+3018A" 
+#  {
+#      OrbitBarycenter "ETA CrB"
+#      SpectralType    "G0V"                                            
+#      AppMag          4.98                                             
+#  
+#      EllipticalOrbit {
+#          Period              41.586
+#          SemiMajorAxis        7.343 # mass ratio 1.19 : 1.05
+#          Eccentricity         0.277
+#          Inclination        111.398
+#          AscendingNode      193.697
+#          ArgOfPericenter    171.886
+#          MeanAnomaly        212.186
+#      }
 #  }
 
-#  
-#  "SIG 2173 A" 
+#  "ETA CrB B:2 CrB B:ADS 9617 B:CCDM J15233+3018B" 
 #  {
-#  OrbitBarycenter "SIG 2173"
-#  SpectralType "G9IV-V"
-#  AppMag 6.02
+#      OrbitBarycenter "ETA CrB"
+#      SpectralType    "G2V"                                            
+#      AppMag          5.96                                             
 #  
-#         EllipticalOrbit {
-#                 Period              46.340
-#                 SemiMajorAxis        7.667 # mass ratio 0.98 : 0.90
-#                 Eccentricity         0.168
-#                 Inclination        114.174
-#                 AscendingNode      283.730
-#                 ArgOfPericenter     87.395
-#                 MeanAnomaly        289.927
-#         }
-# }
-
-#  "SIG 2173 B"
-#  {
-#  OrbitBarycenter "SIG 2173"
-#  SpectralType "G9IV-V"
-#  AppMag 5.93
-#  
-#         EllipticalOrbit {
-#                 Period              46.340
-#                 SemiMajorAxis        8.349 # mass ratio 0.98 : 0.90
-#                 Eccentricity         0.168
-#                 Inclination        114.174
-#                 AscendingNode      283.730
-#                 ArgOfPericenter    267.395
-#                 MeanAnomaly        289.927
-#         }
+#      EllipticalOrbit {
+#          Period              41.586
+#          SemiMajorAxis        8.322 # mass ratio 1.19 : 1.05
+#          Eccentricity         0.277
+#          Inclination        111.398
+#          AscendingNode      193.697
+#          ArgOfPericenter    351.886
+#          MeanAnomaly        212.186
+#      }
 #  }
 
-#  Barycenter 87895 "HR 6697"
+# Commented out to avoid redoubling
+#
+#  Barycenter 85667 "GJ 678:ADS 10598 AB:CCDM J17304-0104AB"
 #  {
-#  RA       269.309720
-#  Dec       23.995710
-#  Distance  93.137349
+#      RA       262.599465
+#      Dec       -1.062504
+#      Distance  53.303971
+#  }
+#  
+#  "GJ 678 A:ADS 10598 A:CCDM J17304-0104A" 
+#  {
+#      OrbitBarycenter "GJ 678"
+#      SpectralType    "G8IV"                                           
+#      AppMag          5.30                                             
+#  
+#      EllipticalOrbit {
+#          Period              46.340
+#          SemiMajorAxis        7.667 # mass ratio 0.98 : 0.90
+#          Eccentricity         0.168
+#          Inclination        114.174
+#          AscendingNode      283.730
+#          ArgOfPericenter     87.395
+#          MeanAnomaly        289.927
+#      }
 #  }
 
-#  
-#  "HR 6697 A" 
+#  "GJ 678 B:ADS 10598 B:CCDM J17304-0104B" 
 #  {
-#  OrbitBarycenter "HR 6697"
-#  SpectralType "G0-2V"
-#  AppMag 6.39
+#      OrbitBarycenter "GJ 678"
+#      SpectralType    "G8IV"                                           
+#      AppMag          5.93                                             
 #  
-#         EllipticalOrbit {
-#                 Period               2.414
-#                 SemiMajorAxis        0.908 # mass ratio 1.20 : 0.80
-#                 Eccentricity         0.410
-#                 Inclination        106.935
-#                 AscendingNode      254.745
-#                 ArgOfPericenter    270.016
-#                 MeanAnomaly        123.584
-#         }
-# }
-
-#  "HR 6697 B"
-#  {
-#  OrbitBarycenter "HR 6697"
-#  SpectralType "K2-5V"
-#  AppMag 9.19
-#  
-#         EllipticalOrbit {
-#                 Period               2.414
-#                 SemiMajorAxis        1.362 # mass ratio 1.20 : 0.80
-#                 Eccentricity         0.410
-#                 Inclination        106.935
-#                 AscendingNode      254.745
-#                 ArgOfPericenter     90.016
-#                 MeanAnomaly        123.584
-#         }
+#      EllipticalOrbit {
+#          Period              46.340
+#          SemiMajorAxis        8.349 # mass ratio 0.98 : 0.90
+#          Eccentricity         0.168
+#          Inclination        114.174
+#          AscendingNode      283.730
+#          ArgOfPericenter    267.395
+#          MeanAnomaly        289.927
+#      }
 #  }
 
-#  Barycenter 88601 "70 Oph"
+# Commented out to avoid redoubling
+#
+#  Barycenter 87895 "GJ 4039:CCDM J17572+2400A"
 #  {
-#  RA       271.363360
-#  Dec        2.502439
-#  Distance  16.588699
+#      RA       269.309736
+#      Dec       23.995710
+#      Distance  92.137571
+#  }
+#  
+#  "GJ 4039 A:CCDM J17572+2400Aa" 
+#  {
+#      OrbitBarycenter "GJ 4039"
+#      SpectralType    "G0V"                                            
+#      AppMag          6.39                                             
+#  
+#      EllipticalOrbit {
+#          Period               2.414
+#          SemiMajorAxis        0.908 # mass ratio 1.20 : 0.80
+#          Eccentricity         0.410
+#          Inclination        106.935
+#          AscendingNode      254.745
+#          ArgOfPericenter    270.016
+#          MeanAnomaly        123.584
+#      }
 #  }
 
-#  
-#  "70 Oph A" 
+#  "GJ 4039 B:CCDM J17572+2400Ab" 
 #  {
-#  OrbitBarycenter "70 Oph"
-#  SpectralType "K0V"
-#  AppMag 4.2
+#      OrbitBarycenter "GJ 4039"
+#      SpectralType    "K3V"                                            
+#      AppMag          9.19                                             
 #  
-#         EllipticalOrbit {
-#                 Period              88.380
-#                 SemiMajorAxis       10.955 # mass ratio 0.90 : 0.78
-#                 Eccentricity         0.499
-#                 Inclination        114.905
-#                 AscendingNode      330.850
-#                 ArgOfPericenter    341.589
-#                 MeanAnomaly         63.870
-#         }
-# }
-
-#  "70 Oph B"
-#  {
-#  OrbitBarycenter "70 Oph"
-#  SpectralType "K5V"
-#  AppMag 6.0
-#  
-#         EllipticalOrbit {
-#                 Period              88.380
-#                 SemiMajorAxis       12.641 # mass ratio 0.90 : 0.78
-#                 Eccentricity         0.499
-#                 Inclination        114.905
-#                 AscendingNode      330.850
-#                 ArgOfPericenter    161.589
-#                 MeanAnomaly         63.870
-#         }
+#      EllipticalOrbit {
+#          Period               2.414
+#          SemiMajorAxis        1.362 # mass ratio 1.20 : 0.80
+#          Eccentricity         0.410
+#          Inclination        106.935
+#          AscendingNode      254.745
+#          ArgOfPericenter     90.016
+#          MeanAnomaly        123.584
+#      }
 #  }
 
-#  Barycenter 89937 "CHI Dra"
+#  Star already in 'nearstars.stc', since d < 25 ly
+#
+#  Barycenter 88601 "V2391 Oph:70 Oph:GJ 702:ADS 11046 AB:CCDM J18055+0230AB"
 #  {
-#  RA       275.259730
-#  Dec       72.733696
-#  Distance  26.280477
+#      RA       271.363386
+#      Dec        2.502439
+#      Distance  16.580266
+#  }
+#  
+#  "V2391 Oph A:70 Oph A:GJ 702 A:ADS 11046 A:CCDM J18055+0230A" 
+#  {
+#      OrbitBarycenter "V2391 Oph"
+#      SpectralType    "K0V"                                            
+#      AppMag          4.02                                             
+#  
+#      EllipticalOrbit {
+#          Period              88.380
+#          SemiMajorAxis       10.955 # mass ratio 0.90 : 0.78
+#          Eccentricity         0.499
+#          Inclination        114.905
+#          AscendingNode      330.850
+#          ArgOfPericenter    341.589
+#          MeanAnomaly         63.870
+#      }
 #  }
 
-#  
-#  "CHI Dra A" 
+#  "V2391 Oph B:70 Oph B:GJ 702 B:ADS 11046 B:CCDM J18055+0230B" 
 #  {
-#  OrbitBarycenter "CHI Dra"
-#  SpectralType "F7V"
-#  AppMag 3.57
+#      OrbitBarycenter "V2391 Oph"
+#      SpectralType    "K5V"                                            
+#      AppMag          6.00                                             
 #  
-#         EllipticalOrbit {
-#                 Period               0.768
-#                 SemiMajorAxis        0.418 # mass ratio 1.03 : 0.73
-#                 Eccentricity         0.414
-#                 Inclination        108.484
-#                 AscendingNode      226.116
-#                 ArgOfPericenter    305.680
-#                 MeanAnomaly        268.594
-#         }
-# }
-
-#  "CHI Dra B"
-#  {
-#  OrbitBarycenter "CHI Dra"
-#  SpectralType "?"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period               0.768
-#                 SemiMajorAxis        0.590 # mass ratio 1.03 : 0.73
-#                 Eccentricity         0.414
-#                 Inclination        108.484
-#                 AscendingNode      226.116
-#                 ArgOfPericenter    125.680
-#                 MeanAnomaly        268.594
-#         }
+#      EllipticalOrbit {
+#          Period              88.380
+#          SemiMajorAxis       12.641 # mass ratio 0.90 : 0.78
+#          Eccentricity         0.499
+#          Inclination        114.905
+#          AscendingNode      330.850
+#          ArgOfPericenter    161.589
+#          MeanAnomaly         63.870
+#      }
 #  }
 
- Barycenter 91636 "SIG 2367"
+# Commented out to avoid redoubling
+#
+#  Barycenter 89937 "CHI Dra A:44 Dra:GJ 713:CCDM J18211+7245A"
+#  {
+#      RA       275.259744
+#      Dec       72.733698
+#      Distance  26.280477
+#  }
+#  
+#  "CHI Dra Aa:44 Dra A:GJ 713 A:CCDM J18211+7245Aa" 
+#  {
+#      OrbitBarycenter "CHI Dra A"
+#      SpectralType    "F7V"                                            
+#      AppMag          3.57                                             
+#  
+#      EllipticalOrbit {
+#          Period               0.768
+#          SemiMajorAxis        0.418 # mass ratio 1.03 : 0.73
+#          Eccentricity         0.414
+#          Inclination        108.484
+#          AscendingNode      226.116
+#          ArgOfPericenter    305.680
+#          MeanAnomaly        268.594
+#      }
+#  }
+
+#  "CHI Dra Ab:44 Dra B:GJ 713 B:CCDM J18211+7245Ab" 
+#  {
+#      OrbitBarycenter "CHI Dra A"
+#      SpectralType    "F7V"    # lacking, used HIP data of the entire system!
+#      AppMag          3.55     # lacking, used HIP data of the entire system!
+#  
+#      EllipticalOrbit {
+#          Period               0.768
+#          SemiMajorAxis        0.590 # mass ratio 1.03 : 0.73
+#          Eccentricity         0.414
+#          Inclination        108.484
+#          AscendingNode      226.116
+#          ArgOfPericenter    125.680
+#          MeanAnomaly        268.594
+#      }
+#  }
+
+# Commented out to avoid redoubling
+#
+#  Barycenter 95995 "CCDM J19311+5835A"
+#  {
+#      RA       292.785603
+#      Dec       58.586977
+#      Distance  55.320047
+#  }
+#  
+#  "CCDM J19311+5835Aa" 
+#  {
+#      OrbitBarycenter "CCDM J19311+5835A"
+#      SpectralType    "K1V"                                            
+#      AppMag          6.59                                             
+#  
+#      EllipticalOrbit {
+#          Period               1.353
+#          SemiMajorAxis        0.729 # mass ratio 0.80 : 0.80
+#          Eccentricity         0.360
+#          Inclination         48.664
+#          AscendingNode       50.868
+#          ArgOfPericenter    351.244
+#          MeanAnomaly        319.604
+#      }
+#  }
+
+#  "CCDM J19311+5835Ab" 
+#  {
+#      OrbitBarycenter "CCDM J19311+5835A"
+#      SpectralType    "K1V"    # lacking, used HIP data of the entire system!
+#      AppMag          6.60     # lacking, used HIP data of the entire system!
+#  
+#      EllipticalOrbit {
+#          Period               1.353
+#          SemiMajorAxis        0.729 # mass ratio 0.80 : 0.80
+#          Eccentricity         0.360
+#          Inclination         48.664
+#          AscendingNode       50.868
+#          ArgOfPericenter    171.244
+#          MeanAnomaly        319.604
+#      }
+#  }
+
+ Barycenter 96683 "PHI Cyg:12 Cyg"
  {
- RA       280.318140
- Dec       30.294699
- Distance 388.289857
+     RA       294.844184
+     Dec       30.153234
+     Distance 266.258776
+ }
+ 
+ "PHI Cyg A:12 Cyg A" 
+ {
+     OrbitBarycenter "PHI Cyg"
+     SpectralType    "G8III"                                          
+     AppMag          4.66                                             
+ 
+     EllipticalOrbit {
+         Period               1.189
+         SemiMajorAxis        0.934 # mass ratio 2.46 : 2.39
+         Eccentricity         0.542
+         Inclination        138.463
+         AscendingNode       40.487
+         ArgOfPericenter     37.565
+         MeanAnomaly        251.012
+     }
  }
 
- 
- "SIG 2367 A" 
+ "PHI Cyg B:12 Cyg B" 
  {
- OrbitBarycenter "SIG 2367"
- SpectralType "G5IV"
- AppMag 7.47
+     OrbitBarycenter "PHI Cyg"
+     SpectralType    "G8III"                                          
+     AppMag          5.60                                             
  
-        EllipticalOrbit {
-                Period              92.200
-                SemiMajorAxis       15.548 # mass ratio 1.22 : 1.47
-                Eccentricity         0.910
-                Inclination         94.163
-                AscendingNode       31.353
-                ArgOfPericenter    359.374
-                MeanAnomaly         74.889
-        }
-}
-
- "SIG 2367 B"
- {
- OrbitBarycenter "SIG 2367"
- SpectralType "G5IV"
- AppMag 7.97
- 
-        EllipticalOrbit {
-                Period              92.200
-                SemiMajorAxis       12.904 # mass ratio 1.22 : 1.47
-                Eccentricity         0.910
-                Inclination         94.163
-                AscendingNode       31.353
-                ArgOfPericenter    179.374
-                MeanAnomaly         74.889
-        }
+     EllipticalOrbit {
+         Period               1.189
+         SemiMajorAxis        0.961 # mass ratio 2.46 : 2.39
+         Eccentricity         0.542
+         Inclination        138.463
+         AscendingNode       40.487
+         ArgOfPericenter    217.565
+         MeanAnomaly        251.012
+     }
  }
 
-#  Barycenter 95995 "Gl 762.1"
+# Commented out to avoid redoubling
+#
+#  Barycenter 98416 "GJ 9678:CCDM J19598-0957AB"
 #  {
-#  RA       292.785620
-#  Dec       58.586975
-#  Distance  54.506517
+#      RA       299.947871
+#      Dec       -9.957286
+#      Distance  72.417185
+#  }
+#  
+#  "GJ 9678 A:CCDM J19598-0957A" 
+#  {
+#      OrbitBarycenter "GJ 9678"
+#      SpectralType    "F8V"                                            
+#      AppMag          6.22                                             
+#  
+#      EllipticalOrbit {
+#          Period               4.895
+#          SemiMajorAxis        6.108 # mass ratio 53.00 : 43.00
+#          Eccentricity         0.592
+#          Inclination         98.187
+#          AscendingNode      204.351
+#          ArgOfPericenter    209.735
+#          MeanAnomaly        184.229
+#      }
 #  }
 
-#  
-#  "Gl 762.1 A" 
+#  "GJ 9678 B:CCDM J19598-0957B" 
 #  {
-#  OrbitBarycenter "Gl 762.1"
-#  SpectralType "K1V"
-#  AppMag 6.59
+#      OrbitBarycenter "GJ 9678"
+#      SpectralType    "F8V"    # lacking, used HIP data of the entire system!
+#      AppMag          7.83                                             
 #  
-#         EllipticalOrbit {
-#                 Period               1.353
-#                 SemiMajorAxis        0.729 # mass ratio 0.80 : 0.80
-#                 Eccentricity         0.360
-#                 Inclination         48.664
-#                 AscendingNode       50.868
-#                 ArgOfPericenter    351.244
-#                 MeanAnomaly        319.604
-#         }
-# }
-
-#  "Gl 762.1 B"
-#  {
-#  OrbitBarycenter "Gl 762.1"
-#  SpectralType "?"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period               1.353
-#                 SemiMajorAxis        0.729 # mass ratio 0.80 : 0.80
-#                 Eccentricity         0.360
-#                 Inclination         48.664
-#                 AscendingNode       50.868
-#                 ArgOfPericenter    171.244
-#                 MeanAnomaly        319.604
-#         }
+#      EllipticalOrbit {
+#          Period               4.895
+#          SemiMajorAxis        7.528 # mass ratio 53.00 : 43.00
+#          Eccentricity         0.592
+#          Inclination         98.187
+#          AscendingNode      204.351
+#          ArgOfPericenter     29.735
+#          MeanAnomaly        184.229
+#      }
 #  }
 
- Barycenter 96683 "PHI Cyg"
- {
- RA       294.844180
- Dec       30.153233
- Distance 250.897690
- }
-
- 
- "PHI Cyg A" 
- {
- OrbitBarycenter "PHI Cyg"
- SpectralType "K0III"
- AppMag 5.31
- 
-        EllipticalOrbit {
-                Period               1.189
-                SemiMajorAxis        0.934 # mass ratio 2.46 : 2.39
-                Eccentricity         0.542
-                Inclination        138.463
-                AscendingNode       40.487
-                ArgOfPericenter     37.565
-                MeanAnomaly        251.012
-        }
-}
-
- "PHI Cyg B"
- {
- OrbitBarycenter "PHI Cyg"
- SpectralType "K0III"
- AppMag 5.6
- 
-        EllipticalOrbit {
-                Period               1.189
-                SemiMajorAxis        0.961 # mass ratio 2.46 : 2.39
-                Eccentricity         0.542
-                Inclination        138.463
-                AscendingNode       40.487
-                ArgOfPericenter    217.565
-                MeanAnomaly        251.012
-        }
- }
-
-#  Barycenter 98416 "Gl 773.3"
+# Commented out to avoid redoubling
+#
+#  Barycenter 99376 "ADS 13461 AB:CCDM J20102+4357AB"
 #  {
-#  RA       299.947870
-#  Dec       -9.957284
-#  Distance  80.040982
+#      RA       302.555479
+#      Dec       43.945381
+#      Distance 167.436858
+#  }
+#  
+#  "ADS 13461 A:CCDM J20102+4357A" 
+#  {
+#      OrbitBarycenter "ADS 13461 AB"
+#      SpectralType    "G4V"                                            
+#      AppMag          8.06                                             
+#  
+#      EllipticalOrbit {
+#          Period              85.200
+#          SemiMajorAxis       10.905 # mass ratio 1.20 : 0.90
+#          Eccentricity         0.492
+#          Inclination         73.300
+#          AscendingNode      346.525
+#          ArgOfPericenter    129.718
+#          MeanAnomaly        125.070
+#      }
 #  }
 
-#  
-#  "Gl 773.3 A" 
+#  "ADS 13461 B:CCDM J20102+4357B" 
 #  {
-#  OrbitBarycenter "Gl 773.3"
-#  SpectralType "F8V"
-#  AppMag 5.88
+#      OrbitBarycenter "ADS 13461 AB"
+#      SpectralType    "G8V"                                            
+#      AppMag          8.60                                             
 #  
-#         EllipticalOrbit {
-#                 Period               4.895
-#                 SemiMajorAxis        6.108 # mass ratio 53.00 : 43.00
-#                 Eccentricity         0.592
-#                 Inclination         98.187
-#                 AscendingNode      204.351
-#                 ArgOfPericenter    209.735
-#                 MeanAnomaly        184.229
-#         }
-# }
-
-#  "Gl 773.3 B"
-#  {
-#  OrbitBarycenter "Gl 773.3"
-#  SpectralType "?"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period               4.895
-#                 SemiMajorAxis        7.528 # mass ratio 53.00 : 43.00
-#                 Eccentricity         0.592
-#                 Inclination         98.187
-#                 AscendingNode      204.351
-#                 ArgOfPericenter     29.735
-#                 MeanAnomaly        184.229
-#         }
+#      EllipticalOrbit {
+#          Period              85.200
+#          SemiMajorAxis       14.540 # mass ratio 1.20 : 0.90
+#          Eccentricity         0.492
+#          Inclination         73.300
+#          AscendingNode      346.525
+#          ArgOfPericenter    309.718
+#          MeanAnomaly        125.070
+#      }
 #  }
 
-#  Barycenter 99376 "ADS 13461"
+ Barycenter 99473 "TET Aql:65 Aql:CCDM J20113-0049A"
+ {
+     RA       302.826103
+     Dec       -0.821476
+     Distance 286.362599
+ }
+ 
+ "TET Aql A:65 Aql A:CCDM J20113-0049Aa" 
+ {
+     OrbitBarycenter "TET Aql"
+     SpectralType    "B9III"                                          
+     AppMag          3.24                                             
+ 
+     EllipticalOrbit {
+         Period               0.047
+         SemiMajorAxis        0.100 # mass ratio 3.20 : 2.50
+         Eccentricity         0.590
+         Inclination         36.193
+         AscendingNode       53.877
+         ArgOfPericenter      1.008
+         MeanAnomaly        213.002
+     }
+ }
+
+ "TET Aql B:65 Aql B:CCDM J20113-0049Ab" 
+ {
+     OrbitBarycenter "TET Aql"
+     SpectralType    "B9III"                                          
+     AppMag          3.24     # lacking, used HIP data of the entire system!
+ 
+     EllipticalOrbit {
+         Period               0.047
+         SemiMajorAxis        0.128 # mass ratio 3.20 : 2.50
+         Eccentricity         0.590
+         Inclination         36.193
+         AscendingNode       53.877
+         ArgOfPericenter    181.008
+         MeanAnomaly        213.002
+     }
+ }
+
+ Barycenter 103655 "V1396 Cyg:GJ 815:CCDM J21001+4004A"
+ {
+     RA       315.020326
+     Dec       40.070879
+     Distance  49.872630
+ }
+ 
+ "V1396 Cyg A:GJ 815 A:CCDM J21001+4004Aa" 
+ {
+     OrbitBarycenter "V1396 Cyg"
+     SpectralType    "M3"                                             
+     AppMag          10.10                                            
+ 
+     EllipticalOrbit {
+         Period              29.500
+         SemiMajorAxis        3.833 # mass ratio 3.00 : 1.00
+         Eccentricity         0.720
+         Inclination        112.100
+         AscendingNode      205.400
+         ArgOfPericenter    162.750
+         MeanAnomaly        282.142
+     }
+ }
+
+ "V1396 Cyg B:GJ 815 B:CCDM J21001+4004Ab" 
+ {
+     OrbitBarycenter "V1396 Cyg"
+     SpectralType    "M3V"    # lacking, used HIP data of the entire system!
+     AppMag          12.19                                            
+ 
+     EllipticalOrbit {
+         Period              29.500
+         SemiMajorAxis       11.500 # mass ratio 3.00 : 1.00
+         Eccentricity         0.720
+         Inclination        112.100
+         AscendingNode      205.400
+         ArgOfPericenter    342.750
+         MeanAnomaly        282.142
+     }
+ }
+
+# Commented out to avoid redoubling
+#
+#  Barycenter 104858 "GJ 822:ADS 14773 AB:CCDM J21145+1001AB"
 #  {
-#  RA       302.555490
-#  Dec       43.945381
-#  Distance 167.695110
+#      RA       318.619959
+#      Dec       10.007719
+#      Distance  60.300795
+#  }
+#  
+#  "GJ 822 A:ADS 14773 A:CCDM J21145+1001A" 
+#  {
+#      OrbitBarycenter "GJ 822"
+#      SpectralType    "F5V"                                            
+#      AppMag          4.49                                             
+#  
+#      EllipticalOrbit {
+#          Period               5.703
+#          SemiMajorAxis        2.045 # mass ratio 1.19 : 1.12
+#          Eccentricity         0.440
+#          Inclination        123.106
+#          AscendingNode      114.049
+#          ArgOfPericenter     60.485
+#          MeanAnomaly         89.700
+#      }
 #  }
 
-#  
-#  "ADS 13461 A" 
+#  "GJ 822 B:ADS 14773 B:CCDM J21145+1001B" 
 #  {
-#  OrbitBarycenter "ADS 13461"
-#  SpectralType "G4V"
-#  AppMag 8.058
+#      OrbitBarycenter "GJ 822"
+#      SpectralType    "G0V"                                            
+#      AppMag          5.25                                             
 #  
-#         EllipticalOrbit {
-#                 Period              85.200
-#                 SemiMajorAxis       10.905 # mass ratio 1.20 : 0.90
-#                 Eccentricity         0.492
-#                 Inclination         73.300
-#                 AscendingNode      346.525
-#                 ArgOfPericenter    129.718
-#                 MeanAnomaly        125.070
-#         }
-# }
-
-#  "ADS 13461 B"
-#  {
-#  OrbitBarycenter "ADS 13461"
-#  SpectralType "G8V"
-#  AppMag 8.598
-#  
-#         EllipticalOrbit {
-#                 Period              85.200
-#                 SemiMajorAxis       14.540 # mass ratio 1.20 : 0.90
-#                 Eccentricity         0.492
-#                 Inclination         73.300
-#                 AscendingNode      346.525
-#                 ArgOfPericenter    309.718
-#                 MeanAnomaly        125.070
-#         }
+#      EllipticalOrbit {
+#          Period               5.703
+#          SemiMajorAxis        2.173 # mass ratio 1.19 : 1.12
+#          Eccentricity         0.440
+#          Inclination        123.106
+#          AscendingNode      114.049
+#          ArgOfPericenter    240.485
+#          MeanAnomaly         89.700
+#      }
 #  }
 
- Barycenter 99473 "TET Aql"
+ Barycenter 104987 "Kitalpha:Kitel Phard:CCDM J21158+0515AB"
  {
- RA       302.826120
- Dec       -0.821476
- Distance 232.973914
+     RA       318.955820
+     Dec        5.248074
+     Distance 190.295799
+ }
+ 
+ "Kitalpha A:Kitel Phard A:CCDM J21158+0515A" 
+ {
+     OrbitBarycenter "Kitalpha"
+     SpectralType    "G2III"                                          
+     AppMag          3.92                                             
+ 
+     EllipticalOrbit {
+         Period               0.271
+         SemiMajorAxis        0.310 # mass ratio 2.30 : 2.00
+         Eccentricity         0.004
+         Inclination         49.810
+         AscendingNode       31.975
+         ArgOfPericenter    348.244
+         MeanAnomaly        148.386
+     }
  }
 
- 
- "TET Aql A" 
+ "Kitalpha B:Kitel Phard B:CCDM J21158+0515B" 
  {
- OrbitBarycenter "TET Aql"
- SpectralType "B9.5III"
- AppMag 3.23
+     OrbitBarycenter "Kitalpha"
+     SpectralType    "A5V"                                            
+     AppMag          3.92     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               0.047
-                SemiMajorAxis        0.100 # mass ratio 3.20 : 2.50
-                Eccentricity         0.590
-                Inclination         36.193
-                AscendingNode       53.877
-                ArgOfPericenter      1.008
-                MeanAnomaly        213.002
-        }
-}
-
- "TET Aql B"
- {
- OrbitBarycenter "TET Aql"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.047
-                SemiMajorAxis        0.128 # mass ratio 3.20 : 2.50
-                Eccentricity         0.590
-                Inclination         36.193
-                AscendingNode       53.877
-                ArgOfPericenter    181.008
-                MeanAnomaly        213.002
-        }
+     EllipticalOrbit {
+         Period               0.271
+         SemiMajorAxis        0.357 # mass ratio 2.30 : 2.00
+         Eccentricity         0.004
+         Inclination         49.810
+         AscendingNode       31.975
+         ArgOfPericenter    168.244
+         MeanAnomaly        148.386
+     }
  }
 
- Barycenter 103655 "Gl 815AB"
+ Barycenter 108917 "Kurhah:XI Cep:17 Cep:ADS 15600 A:CCDM J22038+6437A"
  {
- RA       315.020310
- Dec       40.070881
- Distance  49.262499
+     RA       330.946507
+     Dec       64.627754
+     Distance  96.527671
+ }
+ 
+ "Kurhah A:XI Cep A:17 Cep A:ADS 15600 Aa:CCDM J22038+6437Aa" 
+ {
+     OrbitBarycenter "Kurhah"
+     SpectralType    "A"                                              
+     AppMag          4.29                                             
+ 
+     EllipticalOrbit {
+         Period               2.241
+         SemiMajorAxis        0.502 # mass ratio 1.00 : 0.36
+         Eccentricity         0.500
+         Inclination         96.404
+         AscendingNode      246.180
+         ArgOfPericenter    292.233
+         MeanAnomaly        339.920
+     }
  }
 
- 
- "Gl 815AB A" 
+ "Kurhah B:XI Cep B:17 Cep B:ADS 15600 Ab:CCDM J22038+6437Ab" 
  {
- OrbitBarycenter "Gl 815AB"
- SpectralType "dM3e"
- AppMag 10.29
+     OrbitBarycenter "Kurhah"
+     SpectralType    "F2III"                                          
+     AppMag          4.26     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period              29.500
-                SemiMajorAxis        3.833 # mass ratio 3.00 : 1.00
-                Eccentricity         0.720
-                Inclination        112.100
-                AscendingNode      205.400
-                ArgOfPericenter    162.750
-                MeanAnomaly        282.142
-        }
-}
-
- "Gl 815AB B"
- {
- OrbitBarycenter "Gl 815AB"
- SpectralType "?"
- AppMag 12.19
- 
-        EllipticalOrbit {
-                Period              29.500
-                SemiMajorAxis       11.500 # mass ratio 3.00 : 1.00
-                Eccentricity         0.720
-                Inclination        112.100
-                AscendingNode      205.400
-                ArgOfPericenter    342.750
-                MeanAnomaly        282.142
-        }
+     EllipticalOrbit {
+         Period               2.241
+         SemiMajorAxis        1.393 # mass ratio 1.00 : 0.36
+         Eccentricity         0.500
+         Inclination         96.404
+         AscendingNode      246.180
+         ArgOfPericenter    112.233
+         MeanAnomaly        339.920
+     }
  }
 
- Barycenter 104858 "DEL Equ"
+ Barycenter 111170 "GJ 9786"
  {
- RA       318.619970
- Dec       10.007718
- Distance  60.278506
+     RA       337.825908
+     Dec       -6.554888
+     Distance  82.888691
+ }
+ 
+ "GJ 9786 A" 
+ {
+     OrbitBarycenter "GJ 9786"
+     SpectralType    "F7V"                                            
+     AppMag          6.27                                             
+ 
+     EllipticalOrbit {
+         Period               1.725
+         SemiMajorAxis        0.674 # mass ratio 1.40 : 0.78
+         Eccentricity         0.380
+         Inclination        155.435
+         AscendingNode      279.541
+         ArgOfPericenter    207.652
+         MeanAnomaly        352.989
+     }
  }
 
- 
- "DEL Equ A" 
+ "GJ 9786 B" 
  {
- OrbitBarycenter "DEL Equ"
- SpectralType "F8V"
- AppMag 5.25
+     OrbitBarycenter "GJ 9786"
+     SpectralType    "F7V"    # lacking, used HIP data of the entire system!
+     AppMag          6.15     # lacking, used HIP data of the entire system!
  
-        EllipticalOrbit {
-                Period               5.703
-                SemiMajorAxis        2.045 # mass ratio 1.19 : 1.12
-                Eccentricity         0.440
-                Inclination        123.106
-                AscendingNode      114.049
-                ArgOfPericenter     60.485
-                MeanAnomaly         89.700
-        }
-}
-
- "DEL Equ B"
- {
- OrbitBarycenter "DEL Equ"
- SpectralType "?"
- AppMag 5.25
- 
-        EllipticalOrbit {
-                Period               5.703
-                SemiMajorAxis        2.173 # mass ratio 1.19 : 1.12
-                Eccentricity         0.440
-                Inclination        123.106
-                AscendingNode      114.049
-                ArgOfPericenter    240.485
-                MeanAnomaly         89.700
-        }
+     EllipticalOrbit {
+         Period               1.725
+         SemiMajorAxis        1.210 # mass ratio 1.40 : 0.78
+         Eccentricity         0.380
+         Inclination        155.435
+         AscendingNode      279.541
+         ArgOfPericenter     27.652
+         MeanAnomaly        352.989
+     }
  }
 
- Barycenter 104987 "ALF Equ"
- {
- RA       318.955820
- Dec        5.248074
- Distance 186.274700
- }
-
- 
- "ALF Equ A" 
- {
- OrbitBarycenter "ALF Equ"
- SpectralType "G2III"
- AppMag 3.92
- 
-        EllipticalOrbit {
-                Period               0.271
-                SemiMajorAxis        0.310 # mass ratio 2.30 : 2.00
-                Eccentricity         0.004
-                Inclination         49.810
-                AscendingNode       31.975
-                ArgOfPericenter    348.244
-                MeanAnomaly        148.386
-        }
-}
-
- "ALF Equ B"
- {
- OrbitBarycenter "ALF Equ"
- SpectralType "A5V"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               0.271
-                SemiMajorAxis        0.357 # mass ratio 2.30 : 2.00
-                Eccentricity         0.004
-                Inclination         49.810
-                AscendingNode       31.975
-                ArgOfPericenter    168.244
-                MeanAnomaly        148.386
-        }
- }
-
- Barycenter 108917 "XI Cep A"
- {
- RA       330.946510
- Dec       64.627754
- Distance  85.832495
- }
-
- 
- "XI Cep A A" 
- {
- OrbitBarycenter "XI Cep A"
- SpectralType "A3m"
- AppMag 4.29
- 
-        EllipticalOrbit {
-                Period               2.241
-                SemiMajorAxis        0.502 # mass ratio 1.00 : 0.36
-                Eccentricity         0.500
-                Inclination         96.404
-                AscendingNode      246.180
-                ArgOfPericenter    292.233
-                MeanAnomaly        339.920
-        }
-}
-
- "XI Cep A B"
- {
- OrbitBarycenter "XI Cep A"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               2.241
-                SemiMajorAxis        1.393 # mass ratio 1.00 : 0.36
-                Eccentricity         0.500
-                Inclination         96.404
-                AscendingNode      246.180
-                ArgOfPericenter    112.233
-                MeanAnomaly        339.920
-        }
- }
-
- Barycenter 111170 "Gl 862.1"
- {
- RA       337.825930
- Dec       -6.554885
- Distance  83.248340
- }
-
- 
- "Gl 862.1 A" 
- {
- OrbitBarycenter "Gl 862.1"
- SpectralType "F7V"
- AppMag 6.14
- 
-        EllipticalOrbit {
-                Period               1.725
-                SemiMajorAxis        0.674 # mass ratio 1.40 : 0.78
-                Eccentricity         0.380
-                Inclination        155.435
-                AscendingNode      279.541
-                ArgOfPericenter    207.652
-                MeanAnomaly        352.989
-        }
-}
-
- "Gl 862.1 B"
- {
- OrbitBarycenter "Gl 862.1"
- SpectralType "?"
- AppMag 5.0
- 
-        EllipticalOrbit {
-                Period               1.725
-                SemiMajorAxis        1.210 # mass ratio 1.40 : 0.78
-                Eccentricity         0.380
-                Inclination        155.435
-                AscendingNode      279.541
-                ArgOfPericenter     27.652
-                MeanAnomaly        352.989
-        }
- }
-
-#  Barycenter 111528 "ADS 16098"
+# Commented out to avoid redoubling
+#
+#  Barycenter 111528 "ADS 16098 AB:CCDM J22357+5312AB"
 #  {
-#  RA       338.927510
-#  Dec       53.203896
-#  Distance 236.695940
+#      RA       338.927510
+#      Dec       53.203895
+#      Distance 230.506714
+#  }
+#  
+#  "ADS 16098 A:CCDM J22357+5312A" 
+#  {
+#      OrbitBarycenter "ADS 16098 AB"
+#      SpectralType    "G1V"                                            
+#      AppMag          9.08                                             
+#  
+#      EllipticalOrbit {
+#          Period              22.300
+#          SemiMajorAxis        5.167 # mass ratio 1.22 : 1.16
+#          Eccentricity         0.360
+#          Inclination        128.579
+#          AscendingNode       13.694
+#          ArgOfPericenter    282.693
+#          MeanAnomaly        238.924
+#      }
 #  }
 
-#  
-#  "ADS 16098 A" 
+#  "ADS 16098 B:CCDM J22357+5312B" 
 #  {
-#  OrbitBarycenter "ADS 16098"
-#  SpectralType "G0IV"
-#  AppMag 8.4
+#      OrbitBarycenter "ADS 16098 AB"
+#      SpectralType    "G1V"                                            
+#      AppMag          9.08                                             
 #  
-#         EllipticalOrbit {
-#                 Period              22.300
-#                 SemiMajorAxis        5.167 # mass ratio 1.22 : 1.16
-#                 Eccentricity         0.360
-#                 Inclination        128.579
-#                 AscendingNode       13.694
-#                 ArgOfPericenter    282.693
-#                 MeanAnomaly        238.924
-#         }
-# }
-
-#  "ADS 16098 B"
-#  {
-#  OrbitBarycenter "ADS 16098"
-#  SpectralType "?"
-#  AppMag 5.0
-#  
-#         EllipticalOrbit {
-#                 Period              22.300
-#                 SemiMajorAxis        5.434 # mass ratio 1.22 : 1.16
-#                 Eccentricity         0.360
-#                 Inclination        128.579
-#                 AscendingNode       13.694
-#                 ArgOfPericenter    102.693
-#                 MeanAnomaly        238.924
-#         }
+#      EllipticalOrbit {
+#          Period              22.300
+#          SemiMajorAxis        5.434 # mass ratio 1.22 : 1.16
+#          Eccentricity         0.360
+#          Inclination        128.579
+#          AscendingNode       13.694
+#          ArgOfPericenter    102.693
+#          MeanAnomaly        238.924
+#      }
 #  }
 
- Barycenter 114576 "ADS 16591"
+ Barycenter 114576 "ADS 16591:CCDM J23126+0241AB"
  {
- RA       348.160660
- Dec        2.686579
- Distance 214.442470
+     RA       348.160645
+     Dec        2.686579
+     Distance 228.088811
+ }
+ 
+ "ADS 16591 A:CCDM J23126+0241A" 
+ {
+     OrbitBarycenter "ADS 16591"
+     SpectralType    "G2V"                                            
+     AppMag          7.72                                             
+ 
+     EllipticalOrbit {
+         Period              29.100
+         SemiMajorAxis        4.795 # mass ratio 1.30 : 0.84
+         Eccentricity         0.410
+         Inclination         38.992
+         AscendingNode      156.728
+         ArgOfPericenter    225.971
+         MeanAnomaly        207.835
+     }
  }
 
- 
- "ADS 16591 A" 
+ "ADS 16591 B:CCDM J23126+0241B" 
  {
- OrbitBarycenter "ADS 16591"
- SpectralType "G2V"
- AppMag 8.4
+     OrbitBarycenter "ADS 16591"
+     SpectralType    "G4V"                                            
+     AppMag          8.60                                             
  
-        EllipticalOrbit {
-                Period              29.100
-                SemiMajorAxis        4.795 # mass ratio 1.30 : 0.84
-                Eccentricity         0.410
-                Inclination         38.992
-                AscendingNode      156.728
-                ArgOfPericenter    225.971
-                MeanAnomaly        207.835
-        }
-}
-
- "ADS 16591 B"
- {
- OrbitBarycenter "ADS 16591"
- SpectralType "G4V"
- AppMag 8.6
- 
-        EllipticalOrbit {
-                Period              29.100
-                SemiMajorAxis        7.421 # mass ratio 1.30 : 0.84
-                Eccentricity         0.410
-                Inclination         38.992
-                AscendingNode      156.728
-                ArgOfPericenter     45.971
-                MeanAnomaly        207.835
-        }
+     EllipticalOrbit {
+         Period              29.100
+         SemiMajorAxis        7.421 # mass ratio 1.30 : 0.84
+         Eccentricity         0.410
+         Inclination         38.992
+         AscendingNode      156.728
+         ArgOfPericenter     45.971
+         MeanAnomaly        207.835
+     }
  }
 
