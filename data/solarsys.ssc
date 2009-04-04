@@ -96,12 +96,6 @@
 	Albedo            0.06
 }
 
-AltSurface "limit of knowledge" "Sol/Mercury"
-{
-	Texture "mercury.*"
-	OverlayTexture "mercury-lok-mask.png"
-}
-
 "Venus" "Sol"
 {
 	Texture "venussurface.*"
