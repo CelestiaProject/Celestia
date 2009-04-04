@@ -301,9 +301,8 @@ Texture maps
   in gaps. The model of the Galileo spacecraft is also from David Seal's site
   (though it was converted from Inventor to 3DS format.)
 
-# The Mars, Neptune, and Uranus textures and Mars, Moon and Mercury bump maps   
-  are all from James Hastings-Trew's collection, and the Mercury texture is a 
-  recolored version of his. Some of the prettiest planet maps around are at: 
+# The Mars, Neptune, and Uranus textures and Mars and Moon bump maps   
+  are all from James Hastings-Trew's collection. His maps may be found here: 
     http://gw.marketingden.com/planets/planets.html
 
 # Grant Hutchison
@@ -380,8 +379,13 @@ Texture maps
   aboard the Terra satellite.  Further information is available from:
     http://earthobservatory.nasa.gov/Newsroom/BlueMarble/
 
-# The Io and Europa maps are by Steve Albers. His planetary maps are at:
-   http://laps.fsl.noaa.gov/albers/sos/sos.html
+# Steve Albers 
+   The Io and Europa maps are by Steve Albers. His planetary maps are at:
+   http://laps.noaa.gov/albers/sos/sos.html
+
+   The Mercury map was created from Mariner 10 images and MESSENGER WAC images
+   from the first two flybys. The partial color information was removed by
+   Chris Laurel in a global conversion to grayscale.
 
 # The textures for the Uranian satellites were created by Ivan Rivera from JPL
   data. His Celestia page is: http://bruckner.homelinux.net/celestia.html
