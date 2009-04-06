@@ -38,6 +38,10 @@ Name: "{app}\textures\medres"
 Name: "{app}\textures\lores"
 Name: "{app}\tools\binaries"
 Name: "{app}\tools\galaxies"
+Name: "{app}\tools\globulars"
+Name: "{app}\tools\xindex"
+Name: "{app}\tools\stardb"
+Name: "{app}\tools\charm2"
 Name: "{app}\scripts"
 Name: "{app}\extras-standard"
 Name: "{app}\extras-standard\cassini"
@@ -62,8 +66,6 @@ Source: "start.cel";    DestDir: "{app}"; Flags: ignoreversion
 Source: "celestia.cfg"; DestDir: "{app}"; Flags: ignoreversion
 Source: "demo.cel";     DestDir: "{app}"; Flags: ignoreversion
 Source: "guide.cel";    DestDir: "{app}"; Flags: ignoreversion
-Source: "libpng1.dll";  DestDir: "{app}"; Flags: ignoreversion
-Source: "zlib.dll";     DestDir: "{app}"; Flags: ignoreversion
 Source: "intl.dll";     DestDir: "{app}"; Flags: ignoreversion
 Source: "iconv.dll";    DestDir: "{app}"; Flags: ignoreversion
 Source: "lua5.1.dll";   DestDir: "{app}"; Flags: ignoreversion
@@ -241,6 +243,7 @@ Source: "data\extrasolar.stc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\nearstars.stc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\visualbins.stc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\spectbins.stc";      DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\charm2.stc";         DestDir: "{app}/data"; Flags: ignoreversion
 
 Source: "data\galaxies.dsc";       DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\globulars.dsc";      DestDir: "{app}/data"; Flags: ignoreversion
@@ -264,6 +267,7 @@ Source: "data\ring_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\eros_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\gaspra_locs.ssc";    DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\ida_locs.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
+;Source: "data\itokawa_locs.ssc";   DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\world-capitals.ssc"; DestDir: "{app}/data"; Flags: ignoreversion
 
 ; Textures (General)
@@ -319,9 +323,7 @@ Source: "textures\lores\jupiter.jpg";           DestDir: "{app}/textures/lores";
 Source: "textures\lores\mars.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\marsbump.jpg";          DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\mercury.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\mercury-lok-mask.png";  DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\mimas.jpg";             DestDir: "{app}/textures/lores"; Flags: ignoreversion
-Source: "textures\lores\mimas-lok-mask.png";    DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\miranda.jpg";           DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\miranda-lok-mask.png";  DestDir: "{app}/textures/lores"; Flags: ignoreversion
 Source: "textures\lores\moon.jpg";              DestDir: "{app}/textures/lores"; Flags: ignoreversion
@@ -424,10 +426,15 @@ Source: "textures\medres\venuslikenight.jpg";  DestDir: "{app}/textures/medres";
 Source: "textures\medres\venussurface.jpg";    DestDir: "{app}/textures/medres"; Flags: ignoreversion
 
 ; Textures (High resolution)
+Source: "textures\hires\dione.jpg";            DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\enceladus.jpg";        DestDir: "{app}/textures/hires"; Flags: ignoreversion
 Source: "textures\hires\iapetus.jpg";          DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\mercury.jpg";          DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\mimas.jpg";            DestDir: "{app}/textures/hires"; Flags: ignoreversion
 Source: "textures\hires\moon.jpg";             DestDir: "{app}/textures/hires"; Flags: ignoreversion
 Source: "textures\hires\moonbump.jpg";         DestDir: "{app}/textures/hires"; Flags: ignoreversion
 Source: "textures\hires\phoebe.jpg";           DestDir: "{app}/textures/hires"; Flags: ignoreversion
+Source: "textures\hires\rhea.jpg";             DestDir: "{app}/textures/hires"; Flags: ignoreversion
 Source: "textures\hires\tethys.jpg";           DestDir: "{app}/textures/hires"; Flags: ignoreversion
 Source: "textures\hires\titan.jpg";            DestDir: "{app}/textures/hires"; Flags: ignoreversion
 
@@ -506,6 +513,7 @@ Source: "models\golevka.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\halley.cmod";      DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\hyperion.cmod";    DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\ida.cmod";         DestDir: "{app}/models"; Flags: ignoreversion
+Source: "models\itokawa.cmod";     DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\janus.cmod";       DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\kleopatra.cmod";   DestDir: "{app}/models"; Flags: ignoreversion
 Source: "models\ky26.cmod";        DestDir: "{app}/models"; Flags: ignoreversion
@@ -549,9 +557,9 @@ Source: "fonts\sansbold20_ru.txf";      DestDir: "{app}/fonts"; Flags: ignorever
 Source: "fonts\sans12_uk.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans14_uk.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold20_uk.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans12_zh.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sans14_zh.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
-Source: "fonts\sansbold20_zh.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans12_zh_CN.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_zh_CN.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_zh_CN.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 
 ; Standard extras
 Source: "extras-standard\cassini\cassini.ssc"; DestDir: "{app}/extras-standard/cassini"; Flags: ignoreversion
@@ -583,9 +591,15 @@ Source: "scripts\z-dist.celx";       DestDir: "{app}/scripts"; Flags: ignorevers
 
 
 ; Data extraction scripts (PERL)
-Source: "src\tools\binaries\spectbins.pl";   DestDir: "{app}/tools/binaries"; Flags: ignoreversion
-Source: "src\tools\binaries\visualbins.pl";  DestDir: "{app}/tools/binaries"; Flags: ignoreversion
-Source: "src\tools\galaxies\deepsky.pl";     DestDir: "{app}/tools/galaxies"; Flags: ignoreversion
+Source: "src\tools\binaries\spectbins.pl";    DestDir: "{app}/tools/binaries"; Flags: ignoreversion
+Source: "src\tools\binaries\visualbins.pl";   DestDir: "{app}/tools/binaries"; Flags: ignoreversion
+Source: "src\tools\galaxies\deepsky.pl";      DestDir: "{app}/tools/galaxies"; Flags: ignoreversion
+Source: "src\tools\globulars\globulars.pl";   DestDir: "{app}/tools/globulars"; Flags: ignoreversion
+Source: "src\tools\charm2\charm2.pl";         DestDir: "{app}/tools/charm2"; Flags: ignoreversion
+Source: "src\tools\charm2\charm2simbatch.pl"; DestDir: "{app}/tools/charm2"; Flags: ignoreversion
+Source: "src\tools\xindex\buildxindices.pl";  DestDir: "{app}/tools/xindex"; Flags: ignoreversion
+Source: "src\tools\xindex\readme.txt";        DestDir: "{app}/tools/xindex"; Flags: ignoreversion
+Source: "src\tools\stardb\buildstardb.pl";    DestDir: "{app}/tools/stardb"; Flags: ignoreversion
 
 
 [INI]
