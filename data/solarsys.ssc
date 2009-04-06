@@ -820,13 +820,6 @@ AltSurface "limit of knowledge" "Sol/Saturn/Epimetheus"
 	Albedo         0.5
 }
 
-AltSurface "limit of knowledge" "Sol/Saturn/Mimas"
-{
-	Texture "mimas.*"
-	OverlayTexture "mimas-lok-mask.png"
-	Color [ 0.75 0.63 0.58 ]
-	BlendTexture true
-}
 
 "Enceladus:Saturn II" "Sol/Saturn"
 {
