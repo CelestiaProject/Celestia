@@ -1360,12 +1360,218 @@ translations to be used
 
 
 1.6.0
-* fix to admit absolute directory notation in VT ImageDirectory
-* Implemented code package rendering globular clusters
+Bug fixes
+* Fix to admit absolute directory notation in VT ImageDirectory
+* Implemented encoding of special characters when saving cel URLs
+* Fixed flickering of models with missing texture coordinates
+* Fixed appearance non-ellipsoid star geometry in pre-OGL2 render paths
+* Improved appearance of point stars when multisample antialiasing is enabled
+* Fix for crash when viewing a star barycenter in an empty system
+* Fixed off by one error assertion testing for number of lights used by shaders
+* Windows: fixed UTF8 bugs in tour guide, star browser, and context menu
+* Fixed crash bug that was triggerred by xyz and xyzv files with duplicate
+  times
+* Fixed bug that caused dim stars in orbits distant from the primary to not
+  be drawn.
+* Fixed strange appearance of cloud textures at times in the distant
+  past/future.
+* Fixed memory leak in multiview handling
+* Fixed ambient light in the ARB shader path
+* Fixed bugs in comet rendering (corrects overbright coma)
+* Fixed code to compile without errors with gcc 4.3; fixed some warnings
+* Fixed g++ compier errors in cmodfix tool
+* Fixed search path for Lua scripts
+* Fixed numerous bugs that occurred when an object's orbit center was different
+* Fixed a bug in the celx function celestia:getscreendimension
+* Fixed bug with returning Hubble type for galaxies 
+* Eliminated error-prone min/max macros; use STL functions instead
+* Fixed discrepancy between apparent magnitudes shown in the 3D view and
+  the star browser.
+* Change "Day Length" string to the correct and more general term "Rotation
+  Period"
+* Show 'planetary companions' message for stellar barycenters (instead of
+  just stars.)
+* Improved location drawing so that location labels can be occluded by
+  foreground objects.
+
+Data file updates
 * Implemented data base globulars.dsc with all known 150 globulars around the Milky Way
 * Renamed galaxy database deepsky.dsc into galaxies.dsc
-* Added Perl script globulars.pl used to extract the globular data from scientific publications and as documentation 
 * Implemented SIMBAD compatible cross-listing for globular clusters
-* Implemented a major upgrade of globular cluster code
 * Updated Iapetus texture based on a new Ciclops map from Oct 2008
-* Significant update of the database on binary orbits, including SIMBAD compatibility of barycenter nomenclature and alternative names
+* Significant update of the database on binary orbits, including SIMBAD
+  compatibility of barycenter nomenclature and alternative names
+* Updated the near stars catalog
+* Updated texture for Mercury; includes imagery from MESSENGER
+* Updated textures for some Saturnian moons: Tethys, Dione, Mimas,
+  Enceladus, and Rhea
+* Added CHARM2 catalog of measured stellar radii
+* Added model of asteroid Itokawa
+* Regenerated star catalog using the new reduction of the HIPPARCOS data
+* Cassini updates:
+  - Updated Cassini trajectory to include extended mission
+  - Switched to using xyz+velocity files for a more accurate trajectory
+  - Separated Cassini mission into cruise and orbital phases
+  - Improved appearance of Huygens separation from Cassini
+* Added IAU rotational elements for most major solar system bodies
+* Made visible the orbit and label for Pluto-Charon barycenter
+* Correctly centered Galileo spacecraft
+* Rebuilt cross-indices from SIMBAD data
+* Added alternative names for many solar system bodies (e.g. preliminary
+  designations for asteroids in addition to proper names.)
+* Updated extrasolar planet catalog with discoveries made up to Apr 2009
+* Changed class of Pluto, Ceres, Eris, ... to dwarf planet
+* Changed class of small outer planet moons to minormoon
+* Included new and updated solar system body features from the IAU
+* Added provisional rotation period for Eris
+	
+Tools
+* Added Perl script globulars.pl used to extract the globular data from scientific publications and as documentation 
+* Added spice2xyzv tool for extracting xyzv files from a pool of SPICE kernels
+* Added Perl script to build cross-indices
+* Added Perl script to generate CHARM2 catalog
+* Added Perl script to build star database
+
+Platform-specific changes
+* Mac OS X: Fixed rerun script menu item
+* Mac OS X: fixed issue with some checkbox settings not getting saved properly
+* Mac OS X: Fixed potential crash in eclipse finder if the user specified
+  an object that wasn't a planet or moon
+* Mac OS X: Fixed keyboard shortcuts not working when GL window not frontmost
+* Mac OS X: eliminated beep when clicking splash screen on multi-core machines
+* Mac OS X: fixed compiler warnings, removed -fpermissive flag
+* Mac OS X: Refactored Mac disk image build into separate target, made default
+  builds more efficient.
+* Mac OS X: Fixed bug where time zone was ignored when setting time zone
+* Mac OS X: look for user config file in ~/.celestia.cfg
+* Mac OS X: Fixed blank names for location bookmarks
+* Mac OS X & Windows: Added texture resolution setting to GUI
+* BSD: Fixed tm_zone handling
+* Linux: Install scripts at during "make install"
+* Linux: Added workaround for broken include_x11 define from acinclude.m4
+* Linux: Updated admin directory to KDE 3.5.10, regenerated acinclude.m4
+
+Internationalization
+* Added Polish translation
+* Added Lithuanian translation
+* Added Romanian translation of constellation names
+* Mac OS X: Japanese localation of eclipse finder added
+* Added Chinese localization
+* Localize surface names in alternate surfaces menu
+* Prevented English name 'Milky Way' from being displayed when a translated
+  version is present.
+* Extended localization to DSO and star names
+
+Features
+* Added light from secondary sources (i.e. "planetshine")
+* Implemented depth sorting for markers so that they are correctly occluded
+  by foreground objects.
+* Implemented code package rendering globular clusters
+* Implemented new cel URL version with observer position and orientation stored
+  in frame coordinates (for forward compatibility)
+* Added a long term (+-5000 centuries) precession model for Earth based on
+  work by Jan Vondrak
+* Improved celestial coordinate grids:
+  - Added new grid types: ecliptic, horizontal, and galactic
+  - Made grid resolution adapt to the field of view
+  - Positioned coordinate labels at edges of field of view
+* Added animated selection indicator
+  - Switches to direction pointer when the selection is off screen
+  - Changes color when the selected object is occluded
+* Implemented more flexible system for reference marks and added new
+  reference marks:
+  - Planetographic grid
+  - Terminator
+  - VisibleRegion
+* Enabled display of the phase angle for the currently selected object
+* Improved eclipse rendering: correctly calculate depth and umbra radius
+  for eclipses.
+* Improved star handling code so that stars can be placed more than 16k light
+  years from Earth.
+* Switched to using sd prefix for hot subdwarfs per arXiv:0805.2567v1
+* Added symbols for locations
+
+Add-on features:
+* Added SemiAxes property for ssc objects, which allows triaxial ellipsoid
+  geometry for solar system objects like Haumea and Mimas.
+* Added new boolean properties for ssc/stc/dsc objects: Visible and Clickable
+* Added new classes for solar system objects: dwarfplanet, minormoon,
+  surfacefeature, component, and diffuse
+* Implemented Modify and Replace dispositions for star catalogs
+* Added SPICE rotation model, allowing the orientation of an ssc object to
+  be controlled by a SPICE frame.
+* SPICE orbit improvements:
+  - Allow multiple kernels to be specified for a SPICE orbit
+  - Automatically calculate start and end times when possible
+* Added Timeline, which allows multiple frame, trajectory, and rotation
+  models for a single ssc object.
+* Implemented CustomRotation, the rotation model analogue of CustomOrbit
+* Added support for InfoURL for stars (already exists for deep sky objects and
+  solar system objects)
+* Improved SampledTrajectory to handle files with positions and velocities
+* Added LabelColor property for locations
+* Implemented new Topocentric frame (a simplified two vector frame for placing
+  objects on the surface of a planet.)
+* Added support for premultiplied alpha blend mode in cmod files
+* Extended FixedPosition to support spherical coordinates as well as
+  cartesian coordinates.
+* Added FixedAttitude rotation model, with more intuitive paramters for
+  orientation
+* Added new SurfaceObject type for ssc files--like an ordinary body except
+  with different default frames that make it easy to position an object on
+  the surface of a planet.
+* Added CloudShadowDepth property for atmospheres
+* Improved control over mesh scaling with NormalizeMesh and MeshScale
+  properties for ssc objects.
+* Added new locations types: eruptive center, insula (islands), and
+  tholus (domical hills and mountains)
+* Added support for comment headers in xyz and xyzv files
+
+Code optimization and reorganization
+* Reimplemented observer frames in terms of Celestia 1.5.0 frames
+* Improved performance of complex frames by caching last calculated orientation
+* Added velocity method for all classes derived from Orbit
+* Added angularVelocity method for rotation models
+* Optimized solar system rendering by maintaining a bounding sphere hierarchy
+* Switched to using 2 64-bit integers for storing high precision coordinates;
+  simplifies code and improves performance of operations using high precision
+  coordinates (dramatically on 64-bit systems)
+* Optimized creation of render lists
+
+Scripting
+* Celx scripting functions:
+  - object:addreferencemark, object:removereferencemark
+  - new phase object type (for timeline phases)
+  - permit any X11 color name
+  - showconstellations, hideconstellations, setconstellationcolor
+  - getlabelcolor, getlinecolor
+  - observer:makeactiveview
+* Split celx scripting support into several modules
+* Cel scripting
+  - splitview, deleteview, singleview, setactiveview 
+  - setgalaxylightgain
+  - setradius
+  - setlinecolor
+  - setlabelcolor
+  - settextureresolution
+* Made the package library (except loadlib) available for celx scripting
+  regardless of the ScriptSystemAccessPolicy setting
+* Added an "AddonPath" value that is available to a ScriptedOrbit or
+  ScriptedRotation when it is created.
+* Pass control modifier to Lua keyboard handlingfunctions
+
+Miscellaneous:
+* Bound P and M keys to toggle dwarf planet and minor moon labels
+* Bound U and E keys to toggle globular clusters and globular cluster labels
+* Group reference mark menu items in a separate submenu
+* Changed star name lookup priority in stc parser: check proper names before
+  cross indices.
+* Eliminated R and Shift+R key bindings for changing texture resolution
+* Added new leap second 31-Dec-2008 23:59:60
+
+Cleanup:
+* Removed obsolete 'LabelledStars' section from standard celestia.cfg
+* Updated README: removed obsolete sections, reorganized credits, added
+  information application to 1.6.0
+* Purged out of date controls documentation
+* Reorganized spacecraft add-ons in standard package
