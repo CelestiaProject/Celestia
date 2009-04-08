@@ -302,7 +302,6 @@
 		FF7B2B1B0E89B22D0089BF43 /* charm2.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B110E89B1A30089BF43 /* charm2.stc */; };
 		FF7B2B1C0E89B23D0089BF43 /* galaxies.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B120E89B1A30089BF43 /* galaxies.dsc */; };
 		FF7B2B1D0E89B23D0089BF43 /* globulars.dsc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B130E89B1A30089BF43 /* globulars.dsc */; };
-		FF7B2B1F0E89B2530089BF43 /* itokawa_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = FF7B2B140E89B1A30089BF43 /* itokawa_locs.ssc */; };
 		FF7B2B220E89B3250089BF43 /* itokawa.cmod in Copy Models */ = {isa = PBXBuildFile; fileRef = FF7B2B210E89B2F20089BF43 /* itokawa.cmod */; };
 		FFACF2C10E75F1BD007AE5CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 /* End PBXBuildFile section */
@@ -360,7 +359,6 @@
 				FF7B2B1D0E89B23D0089BF43 /* globulars.dsc in Copy Data */,
 				E567F07E099112EC00D05031 /* hdxindex.dat in Copy Data */,
 				E567F080099112EC00D05031 /* ida_locs.ssc in Copy Data */,
-				FF7B2B1F0E89B2530089BF43 /* itokawa_locs.ssc in Copy Data */,
 				E567F081099112EC00D05031 /* jupitermoons_locs.ssc in Copy Data */,
 				E567F082099112EC00D05031 /* mars_locs.ssc in Copy Data */,
 				E567F083099112EC00D05031 /* marsmoons_locs.ssc in Copy Data */,
