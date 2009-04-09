@@ -184,11 +184,16 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 
 ShaderManager::ShaderManager()
 {
+#if defined(_DEBUG) || defined(DEBUG)
+    // Only write to shader log file if this is a debug build
+
     if (g_shaderLogFile == NULL)
 #ifdef _WIN32
         g_shaderLogFile = new ofstream("shaders.log");
 #else
         g_shaderLogFile = new ofstream("/tmp/celestia-shaders.log");
+#endif
+
 #endif
 }
 
