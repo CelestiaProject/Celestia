@@ -1334,6 +1334,45 @@ lua_Number Celx_SafeGetNumber(lua_State* l, int index, FatalErrors fatalErrors =
     return lua_tonumber(l, index);
 }
 
+// Safe wrapper for lua_tobool, c.f. safeGetString
+// Non-fatal errors will return defaultValue
+bool Celx_SafeGetBoolean(lua_State* l, int index, FatalErrors fatalErrors = AllErrors,
+                              const char* errorMsg = "Boolean argument expected",
+                              bool defaultValue = false)
+{
+    if (l == NULL)
+    {
+        cerr << "Error: LuaState invalid in Celx_SafeGetBoolean\n";
+        cout << "Error: LuaState invalid in Celx_SafeGetBoolean\n";
+        return 0.0;
+    }
+    int argc = lua_gettop(l);
+    if (index < 1 || index > argc)
+    {
+        if (fatalErrors & WrongArgc)
+        {
+            Celx_DoError(l, errorMsg);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+    
+    if (!lua_isboolean(l, index))
+    {
+        if (fatalErrors & WrongType)
+        {
+            Celx_DoError(l, errorMsg);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+    
+    return lua_toboolean(l, index) != 0;
+}
 
 // Add a field to the table on top of the stack
 static void setTable(lua_State* l, const char* field, lua_Number value)
@@ -3243,6 +3282,28 @@ static int celestia_tostring(lua_State* l)
     return 1;
 }
 
+static int celestia_windowbordersvisible(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected for celestia:windowbordersvisible");
+    CelestiaCore* appCore = this_celestia(l);
+
+    lua_pushboolean(l, appCore->getFramesVisible());
+
+    return 1;
+}
+
+static int celestia_setwindowbordersvisible(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:windowbordersvisible");
+    CelestiaCore* appCore = this_celestia(l);
+
+    bool visible = Celx_SafeGetBoolean(l, 2, AllErrors, "Argument to celestia:setwindowbordersvisible must be a boolean", true);
+    appCore->setFramesVisible(visible);
+
+    return 0;
+}
+
+
 static void CreateCelestiaMetaTable(lua_State* l)
 {
     Celx_CreateClassMetatable(l, Celx_Celestia);
@@ -3325,6 +3386,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
     Celx_RegisterMethod(l, "stars", celestia_stars);
     Celx_RegisterMethod(l, "dsos", celestia_dsos);
+    Celx_RegisterMethod(l, "windowbordersvisible", celestia_windowbordersvisible);
+    Celx_RegisterMethod(l, "setwindowbordersvisible", celestia_setwindowbordersvisible);
 
     lua_pop(l, 1);
 }
@@ -4260,39 +4323,12 @@ const char* CelxLua::safeGetString(int index,
 }
 
 
-// Safe wrapper for lua_tobool, c.f. safeGetString
-// Non-fatal errors will return defaultValue
 bool CelxLua::safeGetBoolean(int index,
                              FatalErrors fatalErrors,
-                             const char* errorMsg,
+                             const char* errorMessage,
                              bool defaultValue)
 {
-    int argc = lua_gettop(m_lua);
-    if (index < 1 || index > argc)
-    {
-        if (fatalErrors & WrongArgc)
-        {
-            doError(errorMsg);
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
-    
-    if (!lua_isboolean(m_lua, index))
-    {
-        if (fatalErrors & WrongType)
-        {
-            doError(errorMsg);
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
-    
-    return lua_toboolean(m_lua, index) != 0;
+    return Celx_SafeGetBoolean(m_lua, index, fatalErrors, errorMessage, defaultValue);
 }
 
 
