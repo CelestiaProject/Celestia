@@ -1541,11 +1541,18 @@ Code optimization and reorganization
 Scripting
 * Celx scripting functions:
   - object:addreferencemark, object:removereferencemark
+  - object:visible, object:setvisible, object:catalognumber
+  - object:setorbitcolor, object:orbitcoloroverridden, object:setorbitcoloroverridden
+  - object:orbitvisibility, object:setorbitvisibility
+  - object:locations (returns an iterator over all the locations associated with an object)
   - new phase object type (for timeline phases)
   - permit any X11 color name
+  - observer:makeactiveview
   - showconstellations, hideconstellations, setconstellationcolor
   - getlabelcolor, getlinecolor
-  - observer:makeactiveview
+  - getsystemtime, ispaused
+  - gettextureresolution, settextureresolution
+  - windowbordersvisible, setwindowbordersvisible
 * Split celx scripting support into several modules
 * Cel scripting
   - splitview, deleteview, singleview, setactiveview 
