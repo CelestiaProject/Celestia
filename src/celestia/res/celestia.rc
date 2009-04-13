@@ -536,6 +536,7 @@ BEGIN
 
     LTEXT           "Bob Ippolito",IDC_STATIC,160,132,100,9
     LTEXT           "Vincent Giangiulio",IDC_STATIC,160,142,100,9
+    LTEXT           "Andrew Tribick",IDC_STATIC,160,152,100,9
 
 
 END
