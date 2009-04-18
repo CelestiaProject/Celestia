@@ -10,7 +10,7 @@
 # All required textures by Bob Hundley (converted from BMP to JPG by
 # Ulrich Dickmann)
 
-Modify "ISS" "Sol/Earth"
+"ISS" "Sol/Earth"
 {
     Class "spacecraft"
     Mesh "iss.cmod"
