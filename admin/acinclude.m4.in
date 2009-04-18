@@ -807,7 +807,8 @@ support])
 
    KDE_CHECK_TYPES
    KDE_CHECK_LIBDL
-   KDE_CHECK_STRLCPY
+   # This breaks on BSD. Celestia doesn't use strlcat/strlcpy anywhere anyway.
+   # KDE_CHECK_STRLCPY
    KDE_CHECK_PIE_SUPPORT
 
 # darwin needs this to initialize the environment
