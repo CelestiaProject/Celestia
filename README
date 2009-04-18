@@ -301,13 +301,11 @@ Texture maps
   in gaps. The model of the Galileo spacecraft is also from David Seal's site
   (though it was converted from Inventor to 3DS format.)
 
-# The Mars, Neptune, and Uranus textures and Mars and Moon bump maps   
-  are all from James Hastings-Trew's collection. His maps may be found here: 
+# The Mars, Neptune, and Uranus textures and Mars bump maps are all from James 
+  Hastings-Trew's collection. His maps may be found here: 
     http://gw.marketingden.com/planets/planets.html
 
 # Grant Hutchison
-
-   Tethys is a USGS map colored and modified by him.
 
    Saturn's rings were built by Grant Hutchison from Cassini imaging, with
    transparency information derived from stellar transit data obtained from:
@@ -344,11 +342,8 @@ Texture maps
    Cassini imaging team, 
      http://photojournal.jpl.nasa.gov/catalog/PIA07775
   
-   The Tethys texture was created from Cassini imaging, 
-     http://photojournal.jpl.nasa.gov/catalog/PIA07781
-   merged with reprojected images from earlier Voyager missions. It was 
-   color-mapped by computer, using the natural color template, 
-     http://photojournal.jpl.nasa.gov/catalog/PIA06140
+   The Tethys textures are based on the Oct 2008 Ciclops map 
+(http://photojournal.jpl.nasa.gov/catalog/PIA11116)
   
    The Iapetus texture was created from Cassini imaging, 
      http://photojournal.jpl.nasa.gov/catalog/PIA07778
@@ -356,9 +351,9 @@ Texture maps
    color-mapped by computer, using the near true-color template, 
      http://photojournal.jpl.nasa.gov/catalog/PIA06167
 
-   The Lunar topography map, using Clementine laser altimeter data, merged in 
-   the polar regions with topographic data  from Clementine 750 nm oblique and 
-   nadir images, 
+   The Lunar topography and bump maps, using Clementine laser altimeter data, 
+merged in the polar regions with topographic data  from Clementine 750 nm 
+oblique and nadir images, 
      ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/
 
 # Phil Stooke
@@ -416,6 +411,15 @@ Texture maps
 
 # The Cassini and Huygens models are by Jack Higgins:
     http://homepage.eircom.net/~jackcelestia/
+
+# The 3D model of ISS is a deconstruction of Andrew Farnaby's
+  complete ISS model with textures by Bob Hundley. The model
+  represents the ISS as of June 2008 and is a modification of
+  the model that can be found here:
+    http://www.celestiamotherlode.net/catalog/show_addon_details.php?addon_id=1199
+   ISS model of June 2008 (with Kibo) by krisci3 (modified and
+   converted in order to work with JPG by Ulrich Dickmann, a.k.a.
+   Adirondack)
 
 # 3D asteroid models of Toutatis, Kleopatra, Geographos, 1998 KY26, Bacchus,
   Castalia and Golevka are courtesy of Scott Hudson, Washington State
