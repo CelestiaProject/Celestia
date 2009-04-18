@@ -505,7 +505,7 @@ acinclude_m4()
   fi
   # if it wasn't created up to now, then we do it better
   if test ! -f acinclude.m4; then
-     cat admin/acinclude.m4.in admin/libtool.m4.in admin/pkg.m4.in $adds > acinclude.m4
+     cat admin/acinclude.m4.in $adds > acinclude.m4
   fi
 }
 
