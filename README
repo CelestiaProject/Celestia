@@ -334,22 +334,15 @@ Texture maps
    (Ciclops) of the Cassini mission,  
      http://ciclops.lpl.arizona.edu/index.php
 
-   The texture of Iapetus was created by using all available imaging resources 
-   both from the Voyager mission and the recent Cassini fly-bys from
-     http://photojournal.jpl.nasa.gov
-
    The Phoebe base texture was created from the cylindrical map published by the 
    Cassini imaging team, 
      http://photojournal.jpl.nasa.gov/catalog/PIA07775
   
    The Tethys textures are based on the Oct 2008 Ciclops map 
-(http://photojournal.jpl.nasa.gov/catalog/PIA11116)
+   (http://photojournal.jpl.nasa.gov/catalog/PIA11116)
   
-   The Iapetus texture was created from Cassini imaging, 
-     http://photojournal.jpl.nasa.gov/catalog/PIA07778
-   merged with reprojected images from earlier Voyager missions. It was 
-   color-mapped by computer, using the near true-color template, 
-     http://photojournal.jpl.nasa.gov/catalog/PIA06167
+   The Iapetus texture was created from the Oct 2008 Ciclops map
+   (http://photojournal.jpl.nasa.gov/catalog/PIA11116)
 
    The Lunar topography and bump maps, using Clementine laser altimeter data, 
 merged in the polar regions with topographic data  from Clementine 750 nm 
