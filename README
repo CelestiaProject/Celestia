@@ -326,18 +326,18 @@ Texture maps
 
 # Fridger Schrempp 
 
-   'Available data' Pluto and Charon textures using maps created by Marc Buie at 
-   Lowell Observatory.  Buie's maps were generated from photometric data 
+   'Available data' Pluto and Charon textures using maps created by Marc Buie
+   at Lowell Observatory.  Buie's maps were generated from photometric data 
    gathered during six years of mutual occultations of Pluto and Charon.
 
    Titan's cloud texture in natural colors and its surface map at near-infrared 
    wavelength. They are based on resources available from the imaging site 
-   (Ciclops) of the Cassini mission,  
-     http://ciclops.lpl.arizona.edu/index.php
+   (Ciclops) of the Cassini mission  
+   (http://ciclops.lpl.arizona.edu/index.php)
 
-   The Phoebe base texture was created from the cylindrical map published by the 
-   Cassini imaging team, 
-     http://photojournal.jpl.nasa.gov/catalog/PIA07775
+   The Phoebe base texture was created from the cylindrical map published by
+   the Cassini imaging team 
+   (http://photojournal.jpl.nasa.gov/catalog/PIA07775)
   
    The Tethys textures are based on the Oct 2008 Ciclops map 
    (http://photojournal.jpl.nasa.gov/catalog/PIA11116)
@@ -345,11 +345,16 @@ Texture maps
    The Iapetus texture was created from the Oct 2008 Ciclops map
    (http://photojournal.jpl.nasa.gov/catalog/PIA11116)
 
-   The Lunar topography and bump maps, using Clementine laser altimeter data, 
-merged in the polar regions with topographic data  from Clementine 750 nm 
-oblique and nadir images, 
-     ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/
+   The Lunar topography and bump maps, using Clementine laser altimeter data,
+   merged in the polar regions with topographic data  from Clementine 750 nm 
+   oblique and nadir images 
+   (ftp://ftpflag.wr.usgs.gov/dist/pigpen/moon/usgs/topo/global/)
 
+   The Mercury map was created from a combination of Mariner 10 imaging
+   with recent MESSENGER WAC images from the first two flybys, as collected 
+   and reprojected by Steve Albers: 
+   See http://laps.noaa.gov/albers/sos/sos.html.
+    
 # Phil Stooke
 
    Proteus, Janus, Prometheus and Epimetheus maps are from Phil Stooke.
@@ -357,7 +362,7 @@ oblique and nadir images,
    The Ida and Gaspra photomosaic maps are by Phil Stooke.
 
 # Venus's clouds and the textures for Ganymede, Callisto and Saturn are from
-  Björn Jónsson. His site at http://www.mmedia.is/~bjj/ is an excellent
+  Bjï¿½rn Jï¿½nsson. His site at http://www.mmedia.is/~bjj/ is an excellent
   resource for solar system rendering.
 
 # Venus's surface is a copyright-free NASA image, prepared from Magellan radar
@@ -371,10 +376,6 @@ oblique and nadir images,
 # Steve Albers 
    The Io and Europa maps are by Steve Albers. His planetary maps are at:
    http://laps.noaa.gov/albers/sos/sos.html
-
-   The Mercury map was created from Mariner 10 images and MESSENGER WAC images
-   from the first two flybys. The partial color information was removed by
-   Chris Laurel in a global conversion to grayscale.
 
 # The textures for the Uranian satellites were created by Ivan Rivera from JPL
   data. His Celestia page is: http://bruckner.homelinux.net/celestia.html
