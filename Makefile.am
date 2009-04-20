@@ -23,7 +23,6 @@ pkgdata_DATA = \
 EXTRA_DIST = \
 	$(pkgdata_DATA) \
 	$(noinst_DATA) \
-	admin \
 	splash.png \
 	po/extract_resource_strings.pl \
 	po/translate_resources.pl \
@@ -35,7 +34,7 @@ splash_DATA = splash.png
 SUBDIRS = src data extras extras-standard textures models shaders fonts po po2 locale scripts
 
 # Non-automake directories
-NONAUTO = macosx
+NONAUTO = admin macosx
 
 # From KDE app template
 
@@ -57,18 +56,18 @@ package-messages:
 	$(MAKE) -C po merge
 
 dist-hook:
-	cd $(top_distdir) && perl admin/am_edit -padmin
-	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
-
 	( \
 	  cd $(srcdir) && \
 	  ( \
 	    for dir in $(NONAUTO) ; do \
-	      find $$dir -depth -print | egrep -v '(~$$)|(/CVS)|(/\.#)|(/\.deps)' \
+	      find $$dir -depth -print | egrep -v '(~$$)|(/CVS)|(/\.svn)|(/\.#)|(/\.deps)' \
 	      | cpio -pdum $(distdir) 2>/dev/null ; \
 	    done \
 	  ) \
 	)
+
+	cd $(top_distdir) && perl admin/am_edit -padmin
+	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
 
 install-data-hook:
 	if [ "$(kde_datadir)" -a -d $(DESTDIR)/$(kde_datadir)/@PACKAGE@ -a ! -h $(DESTDIR)/$(kde_datadir)/@PACKAGE@ ] ; then \
