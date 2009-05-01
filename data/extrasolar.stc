@@ -247,6 +247,15 @@
 	AppMag 11.89
 }
 
+"HAT-P-12:GSC 03033-00706"
+{
+	RA 209.389583
+	Dec 43.493611
+	Distance 464.5
+	SpectralType "K4V" # from mass, radius and temperature
+	AppMag 12.84
+}
+
 # WASP survey
 
 "WASP-1"
@@ -384,6 +393,15 @@
 	Distance 5160 # from spectral class and magnitude
 	SpectralType "F0V"
 	AppMag 13.7
+}
+
+1017334799 "CoRoT-7"
+{
+	RA 100.95625
+	Dec -1.063056
+	Distance 460
+	SpectralType "K0V"
+	AppMag 11.73
 }
 
 # HD stars without Hip numbers
