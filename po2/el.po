@@ -1,0 +1,374 @@
+# translation of en_US.po to Français
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Chris Laurel.
+# Christophe Teyssier <chris@teyssier.org>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: en\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2009-05-08 13:14+0200\n"
+"Last-Translator: Kouzinopoulos Charis <ckouz@uom.gr>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.10\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "Ανδρομέδα"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "Αντλία"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "Πτηνόν"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "Υδροχόος"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "Αετός"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "Βωμός"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "Κριός"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "Ηνίοχος"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "Βοώτης"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "Γλυφείον"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "Καμηλοπάρδαλη"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "Καρκίνος"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "Κύνες Θηρευτικοί"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "Κύων Μέγας"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "Κύων Μικρός"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "Αιγόκερω"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "Τρόπις"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "Κασσιόπη"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "Κένταυρος"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "Κηφέας"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "Κήτος"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "Χαμαιλέων"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "Διαβήτης"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "Περιστερά"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "Κόμη Βερενίκης"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "Στέφανος Νότιος"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "Στέφανος Βόρειος"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "Κόραξ"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "Κρατήρ"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "Νότιος Σταυρός"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "Κύκνος"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "Δελφίν"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "Δοράς"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "Δράκων"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "Ιππάριον"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "Ηριδανός"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "Κάμινος"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "Δίδυμοι"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "Γερανός"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "Ηρακλής"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "Ωρολόγιον"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr "Ύδρα"
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "Ύδρος"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "Ινδός"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "Σαύρα"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "Λέων"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "Λέων Μικρός"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "Λαγωός"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "Ζυγός"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "Λύκος"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "Λυγξ"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "Λύρα"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "Τράπεζα"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "Μικροσκόπιον"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "Μονόκερως"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "Μυία"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "Γνώμων"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "Οκτάς"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "Οφιούχος"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "Ωρίων"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "Ταώς"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "Πήγασος"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "Περσέας"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "Φοίνιξ"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "Οκρίβας"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "Ιχθύες"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "Ιχθύς Νότιος"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "Πρύμνη"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "Πυξίς"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "Δίκτυον"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "Βέλος"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "Τοξότης"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "Σκορπιός"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "Γλύπτης"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "Ασπίς"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "Κεφαλή του Όφεως"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "Ουρά του Όφεως"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "Εξάς"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "Ταύρος"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "Τηλεσκόπιον"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "Τρίγωνον"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "Τρίγωνον Νότιον"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "Τουκάνα"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "Μεγάλη Άρκτος"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "Μικρή Άρκτος"
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "Ιστία"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "Παρθένος"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "Ιχθύς Ιπτάμενος"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "Αλώπηξ"
+
