@@ -109,7 +109,7 @@ Source: "locale\bg\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app
 Source: "locale\de\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/de/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\de\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/de/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\el\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/el/LC_MESSAGES"; Flags: ignoreversion
-; no translation available yet -- Source: "locale\el\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/el/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\el\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/el/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\en\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/en/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\es\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/es/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\es\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/es/LC_MESSAGES"; Flags: ignoreversion
