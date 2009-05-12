@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Celestia-Korean\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2009-01-12 22:00+0900\n"
-"Last-Translator: Jacob Lee <jaeuck@gmail.com>\n"
+"PO-Revision-Date: 2009-04-25 10:06-0000\n"
+"Last-Translator: Jacob Lee and Seung-Bum Lee <jaeuck@gmail.com and blcktgr73@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,7 +33,7 @@ msgstr "로드됨 "
 
 #: src/celengine/dsodb.cpp:386
 msgid " deep space objects"
-msgstr " 선택한 천체"
+msgstr " 먼 우주 천체(DSO)"
 
 #: src/celengine/fragmentprog.cpp:93
 msgid "Loading NV fragment program: "
@@ -460,7 +460,7 @@ msgstr "limit of knowledge 텍스처를 사용"
 
 #: src/celestia/celestiacore.cpp:1881
 msgid "Follow"
-msgstr "춘분점 동기"
+msgstr "천체 추적"
 
 #: src/celestia/celestiacore.cpp:1906
 msgid "Time: Forward"
@@ -506,11 +506,11 @@ msgstr "광도 이득"
 
 #: src/celestia/celestiacore.cpp:2157
 msgid "Bloom enabled"
-msgstr "혜성꼬리: ON"
+msgstr "블룸 필터 적용"
 
 #: src/celestia/celestiacore.cpp:2159
 msgid "Bloom disabled"
-msgstr "혜성꼬리: OFF"
+msgstr "블룸 필터 해제"
 
 #: src/celestia/celestiacore.cpp:2165
 #: src/celestia/celestiacore.cpp:2173
@@ -568,7 +568,7 @@ msgstr "절대등급: "
 
 #: src/celestia/celestiacore.cpp:3017
 msgid "RA: "
-msgstr "적경"
+msgstr "적경:"
 
 #: src/celestia/celestiacore.cpp:3021
 msgid "Dec: "
@@ -706,7 +706,7 @@ msgstr " km/s"
 
 #: src/celestia/celestiacore.cpp:3549
 msgid " AU/s"
-msgstr "AU/s"
+msgstr " AU/s"
 
 #: src/celestia/celestiacore.cpp:3551
 msgid " ly/s"
@@ -722,7 +722,7 @@ msgstr "화면중앙에 유지: "
 
 #: src/celestia/celestiacore.cpp:3595
 msgid "Follow "
-msgstr "춘분점 동기: "
+msgstr "추적: "
 
 #: src/celestia/celestiacore.cpp:3600
 msgid "Sync Orbit "
@@ -738,7 +738,7 @@ msgstr "공전 동기: "
 
 #: src/celestia/celestiacore.cpp:3630
 msgid "FOV: "
-msgstr "시야: "
+msgstr "시야각: "
 
 #: src/celestia/celestiacore.cpp:3662
 #: src/celestia/celestiacore.cpp:3665
@@ -968,7 +968,7 @@ msgstr "행성"
 #: src/celestia/kde/selectionpopup.cpp:422
 #: src/celestia/res/resource_strings.cpp:173
 msgid "Spacecraft"
-msgstr "인공위성"
+msgstr "우주선"
 
 #: src/celestia/winmain.cpp:1608
 #: src/celestia/winmain.cpp:1656
@@ -982,7 +982,7 @@ msgstr "이동(&G)"
 #: src/celestia/winmain.cpp:1680
 #: src/celestia/kde/selectionpopup.cpp:301
 msgid "&Follow"
-msgstr "춘분점동기(&F)"
+msgstr "추적(&F)"
 
 #: src/celestia/winmain.cpp:1610
 msgid "S&ync Orbit"
@@ -1003,12 +1003,12 @@ msgstr "벡터 참조(&R)"
 #: src/celestia/winmain.cpp:1614
 #: src/celestia/kde/selectionpopup.cpp:334
 msgid "Show Body Axes"
-msgstr "별자리 경계선 보기"
+msgstr "천체 축 보기"
 
 #: src/celestia/winmain.cpp:1615
 #: src/celestia/kde/selectionpopup.cpp:336
 msgid "Show Frame Axes"
-msgstr "춘분점 기준 축 보기"
+msgstr "프레임 축 보기"
 
 #: src/celestia/winmain.cpp:1616
 #: src/celestia/kde/selectionpopup.cpp:338
@@ -1028,7 +1028,7 @@ msgstr "행성그리드 보기"
 #: src/celestia/winmain.cpp:1619
 #: src/celestia/kde/selectionpopup.cpp:344
 msgid "Show Terminator"
-msgstr "지명 보기"
+msgstr "밤낮 경계선 보기"
 
 #: src/celestia/winmain.cpp:1633
 msgid "&Satellites"
@@ -1405,7 +1405,7 @@ msgstr "은하 보기"
 
 #: src/celestia/kde/kdeapp.cpp:554
 msgid "Show Globulars"
-msgstr "구름 보기"
+msgstr "구상성단 보기"
 
 #: src/celestia/kde/kdeapp.cpp:557
 msgid "Show Partial Trajectories"
@@ -1766,13 +1766,13 @@ msgstr "지정한 URL로 이동"
 msgid ""
 "_: NAME OF TRANSLATORS\\n"
 "Your names"
-msgstr "Jacob Lee(이 재억)"
+msgstr "Jacob Lee(이 재억) and Seung-Bum Lee (이승범)"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid ""
 "_: EMAIL OF TRANSLATORS\\n"
 "Your emails"
-msgstr "jacoblee@freechal.com"
+msgstr "jaeuck@gmail.com and blcktgr73@gmail.com"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:58
 msgid "Celestia Preferences"
@@ -2646,7 +2646,7 @@ msgstr "스크립트 열기(&O)..."
 
 #: src/celestia/res/resource_strings.cpp:3
 msgid "Scripts"
-msgstr "궤도"
+msgstr "스크립트"
 
 #: src/celestia/res/resource_strings.cpp:4
 msgid "Placeholder"
@@ -2690,11 +2690,11 @@ msgstr "선택한 천체로 이동(&G)\tG"
 
 #: src/celestia/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
-msgstr "선택한 천체를 춘분점에 맞춰 추척(&F)\tF"
+msgstr "선택한 천체를 추적(&F)\tF"
 
 #: src/celestia/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
-msgstr "선택한 천체의 자전에 맞춰 추척(&Y)\tY"
+msgstr "선택한 천체의 자전에 맞춰 추적(&Y)\tY"
 
 #: src/celestia/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
@@ -3116,7 +3116,7 @@ msgstr "보기설정"
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:176
 msgid "Globulars"
-msgstr "구름"
+msgstr "구상성단"
 
 #: src/celestia/res/resource_strings.cpp:160
 msgid "Grids"
@@ -3140,11 +3140,11 @@ msgstr "황도"
 
 #: src/celestia/res/resource_strings.cpp:170
 msgid "Minor Moons"
-msgstr "위성"
+msgstr "소 위성"
 
 #: src/celestia/res/resource_strings.cpp:174
 msgid "DSO Labels"
-msgstr "이름"
+msgstr "DSO 이름"
 
 #: src/celestia/res/resource_strings.cpp:180
 msgid "Diagrams"
@@ -3156,7 +3156,7 @@ msgstr "별자리 경계선 보기"
 
 #: src/celestia/res/resource_strings.cpp:183
 msgid "Latin Names"
-msgstr "지명"
+msgstr "라틴 별자리명"
 
 #: src/celestia/res/resource_strings.cpp:184
 msgid "Information Text"
@@ -3240,7 +3240,7 @@ msgstr "시간 설정 및 이동"
 
 #: src/celestia/res/resource_strings.cpp:231
 msgid "Lunar Eclipses"
-msgstr "일식"
+msgstr "월식"
 
 #: src/celestia/res/resource_strings.cpp:233
 msgid "Jan"
