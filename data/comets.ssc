@@ -91,3 +91,27 @@
 
 	Albedo 0.04 
 } 
+
+"Hale-Bopp:C1995 O1 Hale-Bopp" "Sol"
+{
+	Class "comet"
+	Mesh "asteroid.cms"
+	Texture "asteroid.jpg"
+	Radius 13
+
+	EllipticalOrbit
+	{
+	Period          2523.4
+	PericenterDistance 0.914142
+	Eccentricity      0.995068
+	Inclination      89.4300
+	AscendingNode   282.4707
+	ArgOfPericenter 130.5887
+        MeanAnomaly       -0.007
+	Epoch       2450520.5
+	}
+
+	# Estimate of rotation period from here: http://www.usafa.af.mil/dfp/research/astro/papers/icqpaper.htm
+	RotationPeriod  11.47
+	Albedo            0.1
+}
