@@ -2658,6 +2658,9 @@ static void HandleCaptureImage(HWND hWnd)
             }
         }
 
+        // Redraw to make sure that the back buffer is up to date
+        appCore->draw();
+
         if (nFileType == 1)
         {
             success = CaptureGLBufferToJPEG(string(Ofn.lpstrFile),
