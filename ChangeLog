@@ -1450,6 +1450,7 @@ Platform-specific changes
 * Linux: Install scripts at during "make install"
 * Linux: Added workaround for broken include_x11 define from acinclude.m4
 * Linux: Updated admin directory to KDE 3.5.10, regenerated acinclude.m4
+* Linux: Added the missing menu entries related to globulars for KDE version
 
 Internationalization
 * Added Polish translation

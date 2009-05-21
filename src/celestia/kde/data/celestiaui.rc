@@ -27,6 +27,7 @@
 	 <Action name="showAutoMag"/>
          <Action name="showPlanets"/>
          <Action name="showGalaxies"/>
+         <Action name="showGlobulars"/>
          <Action name="showNebulae"/>
          <Action name="showOpenClusters"/>
 	 <Action name="showAtmospheres"/>
@@ -53,6 +54,7 @@
          <Action name="showConstellationLabels"/>
 	 <Action name="showI18nConstellationLabels"/>
          <Action name="showGalaxyLabels"/>
+         <Action name="showGlobularLabels"/>
          <Action name="showNebulaLabels"/>
          <Action name="showOpenClusterLabels"/>
          <Action name="showAsteroidLabels"/>
