@@ -216,7 +216,6 @@
 		E567F093099112EC00D05031 /* venus_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8E09910E8F00D05031 /* venus_locs.ssc */; };
 		E567F094099112EC00D05031 /* visualbins.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8F09910E8F00D05031 /* visualbins.stc */; };
 		E567F095099112EC00D05031 /* world-capitals.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF9009910E8F00D05031 /* world-capitals.ssc */; };
-		E567F097099112FE00D05031 /* comets.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFE509910F0D00D05031 /* comets.ssc */; };
 		E567F098099112FE00D05031 /* minormoons.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFEE09910F0D00D05031 /* minormoons.ssc */; };
 		E567F099099112FE00D05031 /* numberedmoons.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFF109910F0D00D05031 /* numberedmoons.ssc */; };
 		E56A3DB80848C19800A21D7E /* MacDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E56A3DB70848C19800A21D7E /* MacDirectory.mm */; };
@@ -389,7 +388,6 @@
 			dstPath = CelestiaResources/extras;
 			dstSubfolderSpec = 7;
 			files = (
-				E567F097099112FE00D05031 /* comets.ssc in Copy Extras */,
 				E567F098099112FE00D05031 /* minormoons.ssc in Copy Extras */,
 				E567F099099112FE00D05031 /* numberedmoons.ssc in Copy Extras */,
 			);
@@ -657,7 +655,6 @@
 		E567EF8F09910E8F00D05031 /* visualbins.stc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = visualbins.stc; sourceTree = "<group>"; };
 		E567EF9009910E8F00D05031 /* world-capitals.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "world-capitals.ssc"; sourceTree = "<group>"; };
 		E567EFE409910F0D00D05031 /* apollo.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = apollo.ssc; sourceTree = "<group>"; };
-		E567EFE509910F0D00D05031 /* comets.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = comets.ssc; sourceTree = "<group>"; };
 		E567EFEE09910F0D00D05031 /* minormoons.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = minormoons.ssc; sourceTree = "<group>"; };
 		E567EFF109910F0D00D05031 /* numberedmoons.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = numberedmoons.ssc; sourceTree = "<group>"; };
 		E567EFF409910F0D00D05031 /* shroxclassic.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shroxclassic.ssc; sourceTree = "<group>"; };
@@ -1290,7 +1287,6 @@
 			isa = PBXGroup;
 			children = (
 				E567EFE409910F0D00D05031 /* apollo.ssc */,
-				E567EFE509910F0D00D05031 /* comets.ssc */,
 				E567EFEE09910F0D00D05031 /* minormoons.ssc */,
 				E567EFF109910F0D00D05031 /* numberedmoons.ssc */,
 				E567EFF409910F0D00D05031 /* shroxclassic.ssc */,
