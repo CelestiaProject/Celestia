@@ -174,6 +174,7 @@ void gcSetRenderFlag(int flag, gboolean state, GConfClient* client)
 		case Renderer::ShowPartialTrajectories: gcSetFlag(Render, "partialTrajectories", state, client); break;
 		case Renderer::ShowNebulae: gcSetFlag(Render, "nebulae", state, client); break;
 		case Renderer::ShowOpenClusters: gcSetFlag(Render, "openClusters", state, client); break;
+		case Renderer::ShowGlobulars: gcSetFlag(Render, "globulars", state, client); break;
 	}
 }
 
@@ -211,6 +212,7 @@ void gcSetLabelMode(int flag, gboolean state, GConfClient* client)
 		case Renderer::NebulaLabels: gcSetFlag(Label, "nebula", state, client); break;
 		case Renderer::OpenClusterLabels: gcSetFlag(Label, "openCluster", state, client); break;
 		case Renderer::I18nConstellationLabels: gcSetFlag(Label, "i18n", state, client); break;
+		case Renderer::GlobularLabels: gcSetFlag(Label, "globular", state, client); break;
 	}
 }
 
@@ -460,6 +462,7 @@ static int readGConfRender(GConfClient* client)
 	rf |= Renderer::ShowPartialTrajectories * gconf_client_get_bool(client, "/apps/celestia/render/partialTrajectories",  NULL);
 	rf |= Renderer::ShowNebulae * gconf_client_get_bool(client, "/apps/celestia/render/nebulae",  NULL);
 	rf |= Renderer::ShowOpenClusters * gconf_client_get_bool(client, "/apps/celestia/render/openClusters",  NULL);
+	rf |= Renderer::ShowGlobulars * gconf_client_get_bool(client, "/apps/celestia/render/globulars",  NULL);
 	
 	return rf;
 }
@@ -497,6 +500,7 @@ static int readGConfLabels(GConfClient* client)
 	lm |= Renderer::NebulaLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/nebula", NULL);
 	lm |= Renderer::OpenClusterLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/openCluster", NULL);
 	lm |= Renderer::I18nConstellationLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/i18n", NULL);
+	lm |= Renderer::GlobularLabels  * gconf_client_get_bool(client, "/apps/celestia/labels/globular", NULL);
 	
 	return lm;
 }

@@ -159,6 +159,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	getFlag(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
 	getFlag(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
 	getFlag(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
+	getFlag(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "Globulars", &errors);
 	
 	/* If any flag is missing, use defaults for all. */
 	if (errors > 0)
@@ -197,6 +198,7 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	getFlag(file, &lm, Renderer::NebulaLabels, "LabelMode", "nebula", &errors);
 	getFlag(file, &lm, Renderer::OpenClusterLabels, "LabelMode", "opencluster", &errors);
 	getFlag(file, &lm, Renderer::I18nConstellationLabels, "LabelMode", "i18n", &errors);
+	getFlag(file, &lm, Renderer::GlobularLabels, "LabelMode", "globular", &errors);
 	
 	/* If any label is missing, use core defaults for all (do nothing). */
 	if (errors == 0)
@@ -258,6 +260,7 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_boolean(file, "RenderFlags", "partialTrajectories", rf & Renderer::ShowPartialTrajectories);
 	g_key_file_set_boolean(file, "RenderFlags", "nebulae", rf & Renderer::ShowNebulae);
 	g_key_file_set_boolean(file, "RenderFlags", "openClusters", rf & Renderer::ShowOpenClusters);
+	g_key_file_set_boolean(file, "RenderFlags", "globulars", rf & Renderer::ShowGlobulars);
 	
 	om = app->renderer->getOrbitMask();
 	g_key_file_set_boolean(file, "OrbitMask", "planet", om & Body::Planet);
@@ -281,6 +284,7 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_boolean(file, "LabelMode", "nebula", lm & Renderer::NebulaLabels);
 	g_key_file_set_boolean(file, "LabelMode", "opencluster", lm & Renderer::OpenClusterLabels);
 	g_key_file_set_boolean(file, "LabelMode", "i18n", lm & Renderer::I18nConstellationLabels);
+	g_key_file_set_boolean(file, "LabelMode", "globular", lm & Renderer::GlobularLabels);
 	
 	g_key_file_set_comment(file, "RenderFlags", NULL, "All Render Flag values must be true or false", NULL);
 	g_key_file_set_comment(file, "OrbitMask", NULL, "All Orbit Mask values must be true or false", NULL);

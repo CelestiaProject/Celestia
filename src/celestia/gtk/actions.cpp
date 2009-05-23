@@ -829,6 +829,12 @@ void actionRenderGalaxies(GtkToggleAction* action, AppData* app)
 }
 
 
+void actionRenderGlobulars(GtkToggleAction* action, AppData* app)
+{
+	setRenderFlag(app, Renderer::ShowGlobulars, gtk_toggle_action_get_active(action));
+}
+
+
 void actionRenderMarkers(GtkToggleAction* action, AppData* app)
 {
 	setRenderFlag(app, Renderer::ShowMarkers, gtk_toggle_action_get_active(action));
@@ -928,6 +934,12 @@ void actionLabelConstellations(GtkToggleAction* action, AppData* app)
 void actionLabelGalaxies(GtkToggleAction* action, AppData* app)
 {
 	setLabelMode(app, Renderer::GalaxyLabels, gtk_toggle_action_get_active(action));
+}
+
+
+void actionLabelGlobulars(GtkToggleAction* action, AppData* app)
+{
+	setLabelMode(app, Renderer::GlobularLabels, gtk_toggle_action_get_active(action));
 }
 
 
@@ -1221,7 +1233,7 @@ void resyncLabelActions(AppData* app)
 	/* Simply for readability */
 	int f = app->renderer->getLabelMode();
 	
-	for (int i = Renderer::StarLabels; i <= Renderer::I18nConstellationLabels; i *= 2)
+	for (int i = Renderer::StarLabels; i <= Renderer::GlobularLabels; i *= 2)
 	{
 		switch (i)
 		{
@@ -1236,6 +1248,7 @@ void resyncLabelActions(AppData* app)
 			case Renderer::CometLabels: actionName = "LabelComets"; break;
 			case Renderer::NebulaLabels: actionName = "LabelNebulae"; break;
 			case Renderer::OpenClusterLabels: actionName = "LabelOpenClusters"; break;
+			case Renderer::GlobularLabels: actionName = "LabelGlobulars"; break;
 			case Renderer::I18nConstellationLabels: /* Not used yet */
 			default: actionName = NULL;
 		}
@@ -1263,9 +1276,9 @@ void resyncRenderActions(AppData* app)
 	
 	/* Unlike the other interfaces, which go through each menu item and set
 	 * the corresponding renderFlag, we go the other way and set the menu
-	 * based on the renderFlag. Last one is ShowOpenClusters. */
+	 * based on the renderFlag. Last one is ShowGlobulars. */
 	
-	for (int i = Renderer::ShowStars; i <= Renderer::ShowOpenClusters; i *= 2)
+	for (int i = Renderer::ShowStars; i <= Renderer::ShowGlobulars; i *= 2)
 	{
 		switch (i)
 		{
@@ -1289,6 +1302,7 @@ void resyncRenderActions(AppData* app)
 			case Renderer::ShowPartialTrajectories: actionName = NULL; break; /* Not useful yet */
 			case Renderer::ShowNebulae: actionName = "RenderNebulae"; break;
 			case Renderer::ShowOpenClusters: actionName = "RenderOpenClusters"; break;
+			case Renderer::ShowGlobulars: actionName = "RenderGlobulars"; break;
 			default: actionName = NULL;
 		}
 		
