@@ -48,6 +48,7 @@
         <menuitem action='RenderConstellations'/>
         <menuitem action='RenderEclipseShadows'/>
         <menuitem action='RenderGalaxies'/>
+        <menuitem action='RenderGlobulars'/>
         <menuitem action='RenderNebulae'/>
         <menuitem action='RenderNightLights'/>
         <menuitem action='RenderOpenClusters'/>
@@ -60,6 +61,7 @@
         <menuitem action='LabelComets'/>
         <menuitem action='LabelConstellations'/>
         <menuitem action='LabelGalaxies'/>
+        <menuitem action='LabelGlobulars'/>
         <menuitem action='LabelLocations'/>
         <menuitem action='LabelMoons'/>
         <menuitem action='LabelNebulae'/>
