@@ -22,7 +22,7 @@
 # For the planets, the orbits are calculated using the VSOP87 theory
 # (P. Bretagnon and G. Francou, "Planetary theories in rectangular and
 # spherical variables. VSOP87 solutions", Astronomy & Astrophysics 202
-# (1988) 309–315.
+# (1988) 309-315.
 #
 # The orbits of the Galilean satellites are from J. H. Lieske's "E5" theory
 # as given in Jean Meeus's _Astronomical Algorithms_, pp. 301-315
