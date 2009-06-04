@@ -53,6 +53,8 @@
 		CEC000D70F3BD70E00E518E0 /* ChangeLog in Copy App */ = {isa = PBXBuildFile; fileRef = E57283990793F82A00C1F239 /* ChangeLog */; };
 		CEC000D80F3BD70E00E518E0 /* README in Copy App */ = {isa = PBXBuildFile; fileRef = E57283AD0793FC7300C1F239 /* README */; };
 		CEC000D90F3BD70E00E518E0 /* README for Mac OS X.rtf in Copy App */ = {isa = PBXBuildFile; fileRef = E5C9B46B084909B90071B1EE /* README for Mac OS X.rtf */; };
+		CED3D1880FD803CC003B4562 /* minormoons.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = CED3D1860FD8036C003B4562 /* minormoons.ssc */; };
+		CED3D1890FD803D6003B4562 /* numberedmoons.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = CED3D1870FD8036C003B4562 /* numberedmoons.ssc */; };
 		E50CCA390C065BF900E9C76A /* eclipsefinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */; };
 		E50CCA590C065F0100E9C76A /* EclipseFinder.nib in Resources */ = {isa = PBXBuildFile; fileRef = E50CCA530C065F0100E9C76A /* EclipseFinder.nib */; };
 		E50CCA6A0C06632A00E9C76A /* EclipseFinderController.mm in Sources */ = {isa = PBXBuildFile; fileRef = E50CCA680C06632A00E9C76A /* EclipseFinderController.mm */; };
@@ -216,8 +218,6 @@
 		E567F093099112EC00D05031 /* venus_locs.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8E09910E8F00D05031 /* venus_locs.ssc */; };
 		E567F094099112EC00D05031 /* visualbins.stc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF8F09910E8F00D05031 /* visualbins.stc */; };
 		E567F095099112EC00D05031 /* world-capitals.ssc in Copy Data */ = {isa = PBXBuildFile; fileRef = E567EF9009910E8F00D05031 /* world-capitals.ssc */; };
-		E567F098099112FE00D05031 /* minormoons.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFEE09910F0D00D05031 /* minormoons.ssc */; };
-		E567F099099112FE00D05031 /* numberedmoons.ssc in Copy Extras */ = {isa = PBXBuildFile; fileRef = E567EFF109910F0D00D05031 /* numberedmoons.ssc */; };
 		E56A3DB80848C19800A21D7E /* MacDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = E56A3DB70848C19800A21D7E /* MacDirectory.mm */; };
 		E56A5AD10848F24D00A21D7E /* caution.tiff in Resources */ = {isa = PBXBuildFile; fileRef = E56A5AD00848F24D00A21D7E /* caution.tiff */; };
 		E56A5AED0848F92200A21D7E /* FullScreenWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E56A5AEB0848F92200A21D7E /* FullScreenWindow.m */; };
@@ -362,9 +362,11 @@
 				E567F082099112EC00D05031 /* mars_locs.ssc in Copy Data */,
 				E567F083099112EC00D05031 /* marsmoons_locs.ssc in Copy Data */,
 				E567F084099112EC00D05031 /* merc_locs.ssc in Copy Data */,
+				CED3D1880FD803CC003B4562 /* minormoons.ssc in Copy Data */,
 				E567F085099112EC00D05031 /* moon_locs.ssc in Copy Data */,
 				E567F086099112EC00D05031 /* nearstars.stc in Copy Data */,
 				E567F087099112EC00D05031 /* neptunemoons_locs.ssc in Copy Data */,
+				CED3D1890FD803D6003B4562 /* numberedmoons.ssc in Copy Data */,
 				E567F088099112EC00D05031 /* outersys.ssc in Copy Data */,
 				E567F089099112EC00D05031 /* revised.stc in Copy Data */,
 				E567F08A099112EC00D05031 /* ring_locs.ssc in Copy Data */,
@@ -388,8 +390,6 @@
 			dstPath = CelestiaResources/extras;
 			dstSubfolderSpec = 7;
 			files = (
-				E567F098099112FE00D05031 /* minormoons.ssc in Copy Extras */,
-				E567F099099112FE00D05031 /* numberedmoons.ssc in Copy Extras */,
 			);
 			name = "Copy Extras";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -561,6 +561,8 @@
 		CE70D6C00F38569C0020C34D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_CN; path = zh_CN.lproj/HelpWindow.nib; sourceTree = "<group>"; };
 		CEBD084F0F3A8F0500B3A535 /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CEBD08500F3A8F0B00B3A535 /* zh_CN */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CED3D1860FD8036C003B4562 /* minormoons.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = minormoons.ssc; sourceTree = "<group>"; };
+		CED3D1870FD8036C003B4562 /* numberedmoons.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = numberedmoons.ssc; sourceTree = "<group>"; };
 		CEDE1E960F0FC29700C95690 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
 		E50657D70CBFB08500151204 /* imagecapture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imagecapture.h; path = ../src/celestia/imagecapture.h; sourceTree = SOURCE_ROOT; };
 		E50CCA370C065BF900E9C76A /* eclipsefinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclipsefinder.cpp; path = ../src/celestia/eclipsefinder.cpp; sourceTree = SOURCE_ROOT; };
@@ -655,8 +657,6 @@
 		E567EF8F09910E8F00D05031 /* visualbins.stc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = visualbins.stc; sourceTree = "<group>"; };
 		E567EF9009910E8F00D05031 /* world-capitals.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "world-capitals.ssc"; sourceTree = "<group>"; };
 		E567EFE409910F0D00D05031 /* apollo.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = apollo.ssc; sourceTree = "<group>"; };
-		E567EFEE09910F0D00D05031 /* minormoons.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = minormoons.ssc; sourceTree = "<group>"; };
-		E567EFF109910F0D00D05031 /* numberedmoons.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = numberedmoons.ssc; sourceTree = "<group>"; };
 		E567EFF409910F0D00D05031 /* shroxclassic.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shroxclassic.ssc; sourceTree = "<group>"; };
 		E567EFF509910F0D00D05031 /* shroxmars.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shroxmars.ssc; sourceTree = "<group>"; };
 		E567EFF609910F0D00D05031 /* skylab.ssc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skylab.ssc; sourceTree = "<group>"; };
@@ -1262,9 +1262,11 @@
 				E567EF7B09910E8F00D05031 /* mars_locs.ssc */,
 				E567EF7C09910E8F00D05031 /* marsmoons_locs.ssc */,
 				E567EF7D09910E8F00D05031 /* merc_locs.ssc */,
+				CED3D1860FD8036C003B4562 /* minormoons.ssc */,
 				E567EF7E09910E8F00D05031 /* moon_locs.ssc */,
 				E567EF7F09910E8F00D05031 /* nearstars.stc */,
 				E567EF8009910E8F00D05031 /* neptunemoons_locs.ssc */,
+				CED3D1870FD8036C003B4562 /* numberedmoons.ssc */,
 				E567EF8109910E8F00D05031 /* outersys.ssc */,
 				E567EF8209910E8F00D05031 /* revised.stc */,
 				E567EF8309910E8F00D05031 /* ring_locs.ssc */,
@@ -1287,8 +1289,6 @@
 			isa = PBXGroup;
 			children = (
 				E567EFE409910F0D00D05031 /* apollo.ssc */,
-				E567EFEE09910F0D00D05031 /* minormoons.ssc */,
-				E567EFF109910F0D00D05031 /* numberedmoons.ssc */,
 				E567EFF409910F0D00D05031 /* shroxclassic.ssc */,
 				E567EFF509910F0D00D05031 /* shroxmars.ssc */,
 				E567EFF609910F0D00D05031 /* skylab.ssc */,
