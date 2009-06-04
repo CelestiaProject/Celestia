@@ -6442,7 +6442,8 @@ AltSurface "limit of knowledge" "HD 73108/b"
 	EllipticalOrbit {
 		Period          0.7435
 		SemiMajorAxis   0.36
-		ArgOfPericenter 60
+		Inclination     45.4
+		AscendingNode   273.2
 	}
 
 	RotationPeriod  10 # plausible guess
