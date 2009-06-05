@@ -415,7 +415,7 @@ win32 {
 	LIBS += -L../lib \
 		-lzlib \
 		-llibpng \
-		-llibjpeg2 \
+		-llibjpeg \
 		-lintl \
 		-llua5.1 \
 		-lcspice \
