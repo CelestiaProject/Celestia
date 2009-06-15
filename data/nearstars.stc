@@ -24,7 +24,7 @@
 # or away from the Earth.
 # For a few orbits the nature of the node is known - these are
 # marked with the phrase "fully specified orientation".
-# Barycenters positions are based on mass estimates from Söderhjelm or RECONS:
+# Barycenter positions are based on mass estimates from Söderhjelm or RECONS:
 # the figures used are added as comments below.
 
 Barycenter "Solar System Barycenter:SSB"
@@ -110,7 +110,7 @@ Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
 	AppMag 9.53
 }
 
-"Wolf 359:CN Leo:Gliese 406"
+"CN Leo:Gliese 406:Wolf 359"
 {
 	RA 164.121783
 	Dec 7.014722
@@ -128,14 +128,14 @@ Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
 	AppMag 7.47
 }
 
-Barycenter "Sirius:Alhabor:ALF CMa:9 CMa:Gliese 244"
+Barycenter 32349 "Sirius:Alhabor:ALF CMa:9 CMa:Gliese 244:ADS 5423"
 {
 	RA 101.287083
 	Dec -16.716111
 	Distance 8.583
 }
 
-32349 "Sirius A:Alhabor A:ALF CMa A:9 CMa A:Gliese 244 A"
+"Sirius A:Alhabor A:ALF CMa A:9 CMa A:Gliese 244 A:ADS 5423 A"
 {
 	OrbitBarycenter "Sirius"
 	SpectralType "A1V"
@@ -152,7 +152,7 @@ Barycenter "Sirius:Alhabor:ALF CMa:9 CMa:Gliese 244"
 	}
 }
 
-"Sirius B:Alhabor B:ALF CMa B:9 CMa B:Gliese 244 B"
+"Sirius B:Alhabor B:ALF CMa B:9 CMa B:Gliese 244 B:ADS 5423 B"
 {
 	OrbitBarycenter "Sirius"
 	SpectralType "DA2"
@@ -169,16 +169,16 @@ Barycenter "Sirius:Alhabor:ALF CMa:9 CMa:Gliese 244"
 	}
 }
 
-Barycenter "Luyten 726-8:Gliese 65"
+Barycenter "Gliese 65:Luyten 726-8"
 {
 	RA 24.755529
 	Dec -17.950278
 	Distance 8.728
 }
 
-"Luyten 726-8 A:Gliese 65 A:BL Cet"
+"BL Cet:Gliese 65 A:Luyten 726-8 A"
 {
-	OrbitBarycenter "Luyten 726-8"
+	OrbitBarycenter "Gliese 65"
 	SpectralType "M5.5V"
 	AppMag 12.54
 
@@ -193,9 +193,9 @@ Barycenter "Luyten 726-8:Gliese 65"
 	}
 }
 
-"Luyten 726-8 B:Gliese 65 B:UV Cet"
+"UV Cet:Gliese 65 B:Luyten 726-8 B"
 {
-	OrbitBarycenter "Luyten 726-8"
+	OrbitBarycenter "Gliese 65"
 	SpectralType "M6.0V"
 	AppMag 12.99
 
@@ -219,7 +219,7 @@ Barycenter "Luyten 726-8:Gliese 65"
 	AppMag 10.43
 }
 
-"Ross 248:HH And:Gliese 905"
+"HH And:Gliese 905:Ross 248"
 {
 	RA 355.479875
 	Dec 44.177222
@@ -258,16 +258,16 @@ Barycenter "Luyten 726-8:Gliese 65"
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
 # companions to nearby M dwarfs" A&A, 344, 897
 # (http://arxiv.org/abs/astro-ph/9812008)
-Barycenter "Luyten 789-6:Gliese 866"
+Barycenter "Gliese 866:Luyten 789-6"
 {
 	RA 339.640833
 	Dec -15.300806
 	Distance 11.266
 }
 
-Barycenter "Luyten 789-6 A:Gliese 866 A"
+Barycenter ":Gliese 866 A:Luyten 789-6 A"
 {
-	OrbitBarycenter "Luyten 789-6"
+	OrbitBarycenter "Gliese 866"
 
 	EllipticalOrbit {
 		Period          2.2506
@@ -280,9 +280,9 @@ Barycenter "Luyten 789-6 A:Gliese 866 A"
 	}
 }
 
-"Luyten 789-6 Aa:Gliese 866 Aa:EZ Aqr"
+"EZ Aqr:Gliese 866 Aa:Luyten 789-6 Aa"
 {
-	OrbitBarycenter "Luyten 789-6 A"
+	OrbitBarycenter "Gliese 866 A"
 	SpectralType "M5.0V"
 	AppMag 13.33
 
@@ -294,9 +294,9 @@ Barycenter "Luyten 789-6 A:Gliese 866 A"
 	}
 }
 
-"Luyten 789-6 Ab:Gliese 866 Ab"
+"Gliese 866 Ab:Luyten 789-6 Ab"
 {
-	OrbitBarycenter "Luyten 789-6 A"
+	OrbitBarycenter "Gliese 866 A"
 	SpectralType "M6V" # from apparent magnitude
 	AppMag 14.03
 
@@ -309,9 +309,9 @@ Barycenter "Luyten 789-6 A:Gliese 866 A"
 	}
 }
 
-"Luyten 789-6 B:Gliese 866 B"
+"Gliese 866 B:Luyten 789-6 B"
 {
-	OrbitBarycenter "Luyten 789-6"
+	OrbitBarycenter "Gliese 866"
 	SpectralType "M5V" # from apparent magnitude
 	AppMag 13.27
 
@@ -326,14 +326,14 @@ Barycenter "Luyten 789-6 A:Gliese 866 A"
 	}
 }
 
-Barycenter "Procyon:Elgomaisa:ALF CMi:10 CMi:Gliese 280"
+Barycenter 37279 "Procyon:Elgomaisa:ALF CMi:10 CMi:Gliese 280:ADS 6251"
 {
 	RA 114.82724
 	Dec 5.2275076
 	Distance 11.402
 }
 
-37279 "Procyon A:Elgomaisa A:ALF CMi A:10 CMi A:Gliese 280 A"
+"Procyon A:Elgomaisa A:ALF CMi A:10 CMi A:Gliese 280 A:ADS 6251 A"
 {
 	OrbitBarycenter "Procyon"
 	SpectralType "F5IV"
@@ -350,7 +350,7 @@ Barycenter "Procyon:Elgomaisa:ALF CMi:10 CMi:Gliese 280"
 	}
 }
 
-"Procyon B:Elgomaisa B:ALF CMi B:10 CMi B:Gliese 280 B"
+"Procyon B:Elgomaisa B:ALF CMi B:10 CMi B:Gliese 280 B:ADS 6251 B"
 {
 	OrbitBarycenter "Procyon"
 	SpectralType "DA"
@@ -367,14 +367,14 @@ Barycenter "Procyon:Elgomaisa:ALF CMi:10 CMi:Gliese 280"
 	}
 }
 
-Barycenter "61 Cyg:Gliese 820"
+Barycenter "61 Cyg:Gliese 820:ADS 14636"
 {
 	RA 316.714507   # mass ratio 0.7:0.63
 	Dec 38.738139   #
 	Distance 11.403
 }
 
-104214 # 61 Cyg A
+104214 "61 Cyg A:V1803 Cyg:Gliese 820 A:ADS 14636 A"
 {
 	OrbitBarycenter "61 Cyg"
 	SpectralType "K5V"
@@ -391,7 +391,7 @@ Barycenter "61 Cyg:Gliese 820"
 	}
 }
 
-104217 # 61 Cyg B
+104217 "61 Cyg B:Gliese 820 B:ADS 14636 B"
 {
 	OrbitBarycenter "61 Cyg"
 	SpectralType "K7V"
@@ -408,16 +408,16 @@ Barycenter "61 Cyg:Gliese 820"
 	}
 }
 
-Barycenter "Struve 2398:Gliese 725"
+Barycenter "Gliese 725:ADS 11632:Struve 2398"
 {
 	RA 280.701371   # mass ratio 0.35:0.26
 	Dec 59.624455   #
 	Distance 11.525
 }
 
-91768 # Struve 2398 A
+91768 "Gliese 725 A:ADS 11632 A:Struve 2398 A"
 {
-	OrbitBarycenter "Struve 2398"
+	OrbitBarycenter "Gliese 725"
 	SpectralType "M3.0V"
 	AppMag 8.90
 
@@ -432,9 +432,9 @@ Barycenter "Struve 2398:Gliese 725"
 	}
 }
 
-91772 # Struve 2398 B
+91772 "Gliese 725 B:ADS 11632 B:Struve 2398 B"
 {
-	OrbitBarycenter "Struve 2398"
+	OrbitBarycenter "Gliese 725"
 	SpectralType "M3.5V"
 	AppMag 9.69
 
@@ -449,14 +449,14 @@ Barycenter "Struve 2398:Gliese 725"
 	}
 }
 
-Barycenter "Groombridge 34:Gliese 15"
+Barycenter 1475 "Gliese 15:ADS 246:Groombridge 34"
 {
 	RA 4.595417
 	Dec 44.023056
 	Distance 11.624
 }
 
-1475 "Groombridge 34 A:Gliese 15 A:GX And"
+"GX And:Gliese 15 A:ADS 246 A:Groombridge 34 A"
 {
 	OrbitBarycenter "Groombridge 34"
 	SpectralType "M1.5V"
@@ -472,7 +472,7 @@ Barycenter "Groombridge 34:Gliese 15"
 	}
 }
 
-"Groombridge 34 B:Gliese 15 B:GQ And"
+"GQ And:Gliese 15 B:ADS 246 B:Groombridge 34 B"
 {
 	OrbitBarycenter "Groombridge 34"
 	SpectralType "M3.5V"
@@ -507,14 +507,14 @@ Barycenter "EPS Ind:Gliese 845" # orbit of A & B components unknown
 # McCaughrean, M.J. et al.(2004) "Eps Indi Ba,Bb: The nearest binary
 # brown dwarf" A&A 413, 1029.
 # (http://arxiv.org/PS_cache/astro-ph/pdf/0309/0309256.pdf)
-Barycenter "EPS Ind B:Gliese 845 B"
+Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 {
 	RA 331.043833
 	Dec -56.782694
 	Distance 11.824
 }
 
-"EPS Ind Ba:Gliese 845 Ba"
+"EPS Ind Ba:CI Ind A:Gliese 845 Ba"
 {
 	OrbitBarycenter "EPS Ind B"
 	SpectralType "T1V"
@@ -526,7 +526,7 @@ Barycenter "EPS Ind B:Gliese 845 B"
 	}
 }
 
-"EPS Ind Bb:Gliese 845 Bb"
+"EPS Ind Bb:CI Ind B:Gliese 845 Bb"
 {
 	OrbitBarycenter "EPS Ind B"
 	SpectralType "T6V"
@@ -539,7 +539,7 @@ Barycenter "EPS Ind B:Gliese 845 B"
 	}
 }
 
-"DX Cnc:Giclas 51-15:GJ 1111"
+"DX Cnc:GJ 1111:Giclas 51-15"
 {
 	RA 127.456125
 	Dec 26.775611
@@ -557,7 +557,7 @@ Barycenter "EPS Ind B:Gliese 845 B"
 	AppMag 3.49
 }
 
-"Luyten 372-58:RECONS 1:GJ 1061"
+"GJ 1061:Luyten 372-58:RECONS 1"
 {
 	RA 53.998750
 	Dec -44.512500
@@ -648,14 +648,14 @@ Barycenter "SCR 1845-6357"
 	AppMag 6.67
 }
 
-Barycenter "Kruger 60:Gliese 860"
+Barycenter 110893 "Gliese 860:ADS 15972:Kruger 60"
 {
 	RA 336.997917
 	Dec 57.695833
 	Distance 13.149
 }
 
-110893 "Kruger 60 A:Gliese 860 A"
+"Gliese 860 A:ADS 15972 A:Kruger 60 A"
 {
 	OrbitBarycenter "Kruger 60"
 	SpectralType "M3.0V"
@@ -672,7 +672,7 @@ Barycenter "Kruger 60:Gliese 860"
 	}
 }
 
-"Kruger 60 B:DO Cep:Gliese 860 B"
+"DO Cep:Gliese 860 B:ADS 15972 B:Kruger 60 B"
 {
 	OrbitBarycenter "Kruger 60"
 	SpectralType "M4.0V"
@@ -699,14 +699,14 @@ Barycenter "Kruger 60:Gliese 860"
 	AppMag 17.29
 }
 
-Barycenter "Ross 614:Gliese 234"
+Barycenter 30920 "Gliese 234:Ross 614"
 {
 	RA  97.347500
 	Dec -2.813889
 	Distance 13.349
 }
 
-30920 "Ross 614 A:V577 Mon:Gliese 234 A"
+"V577 Mon:Gliese 234 A:Ross 614 A"
 {
 	OrbitBarycenter "Ross 614"
 	SpectralType "M4.5V"
@@ -723,7 +723,7 @@ Barycenter "Ross 614:Gliese 234"
 	}
 }
 
-"Ross 614 B:Gliese 234 B"
+"Gliese 234 B:Ross 614 B"
 {
 	OrbitBarycenter "Ross 614"
 	SpectralType "M7V"
@@ -768,14 +768,14 @@ Barycenter "Ross 614:Gliese 234"
 	AppMag 8.55
 }
 
-Barycenter "Wolf 424:Gliese 473"
+Barycenter "Gliese 473:Wolf 424"
 {
 	RA 188.321667
 	Dec 9.020833
 	Distance 14.312
 }
 
-"Wolf 424 A:Gliese 473 A"
+"Gliese 473 A:Wolf 424 A"
 {
 	OrbitBarycenter "Wolf 424"
 	SpectralType "M5.5V"
@@ -792,7 +792,7 @@ Barycenter "Wolf 424:Gliese 473"
 	}
 }
 
-"Wolf 424 B:FL Vir:Gliese 473 B"
+"FL Vir:Gliese 473 B:Wolf 424 B"
 {
 	OrbitBarycenter "Wolf 424"
 	SpectralType "M5.5V"
@@ -809,7 +809,7 @@ Barycenter "Wolf 424:Gliese 473"
 	}
 }
 
-"Luyten 1159-16:TZ Ari:Gliese 83.1"
+"TZ Ari:Gliese 83.1:Luyten 1159-16"
 {
 	RA 30.055000
 	Dec 13.052222
@@ -827,7 +827,7 @@ Barycenter "Wolf 424:Gliese 473"
 	AppMag 9.17
 }
 
-"LP 731-58:GJ 3622"
+"GJ 3622:LP 731-58"
 {
 	RA 162.052500
 	Dec -11.337222
@@ -860,7 +860,7 @@ Barycenter "GJ 1245 A"
 }
 
 
-"GJ 1245 Aa:V1581 Cyg"
+"V1581 Cyg:GJ 1245 Aa"
 {
 	OrbitBarycenter "GJ 1245 A"
 	SpectralType "M5.5V"
@@ -930,7 +930,7 @@ Barycenter "GJ 1245 A"
 	AppMag 10.17
 }
 
-"Luyten 143-23:GJ 3618"
+"GJ 3618:Luyten 143-23"
 {
 	RA 161.132500
 	Dec -61.193889
@@ -939,14 +939,14 @@ Barycenter "GJ 1245 A"
 	AppMag 13.92
 }
 
-Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
+Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 {
 	RA 166.370443   # mass ratio 0.48:0.10
 	Dec 43.525816   #
 	Distance 15.832
 }
 
-54211 "Lalande 21258 A:Gliese 412 A"
+"Gliese 412 A:Lalande 21258 A"
 {
 	RA 166.369167
 	Dec 43.526667
@@ -955,7 +955,7 @@ Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
 	AppMag 8.77
 }
 
-"Lalande 21258 B:WX UMa:Gliese 412 B"
+"WX UMa:Gliese 412 B:Lalande 21258 B"
 {
 	RA 166.376667
 	Dec 43.521667
@@ -1019,14 +1019,14 @@ Barycenter "Lalande 21258:Gliese 412" # orbits of A & B unknown
 	AppMag 10.95
 }
 
-Barycenter "Keid:OMI2 Eri:40 Eri:Gliese 166" # Orbits of A & (BC) unknown
+Barycenter 19849 "Keid:OMI2 Eri:40 Eri:Gliese 166:ADS 3093" # Orbits of A & (BC) unknown
 {
 	RA 63.828351    # mass ratio 0.89:(0.5+0.20)
 	Dec -7.655829   #
 	Distance 16.390
 }
 
-19849 "Keid A:OMI2 Eri A:40 Eri A:Gliese 166 A"
+"Keid A:OMI2 Eri A:40 Eri A:Gliese 166 A:ADS 3093 A"
 {
 	RA 63.817917
 	Dec -7.652778
@@ -1042,7 +1042,7 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 	Distance 16.390
 }
 
-"Keid B:OMI2 Eri B:40 Eri B:Gliese 166 B"
+"Keid B:OMI2 Eri B:40 Eri B:Gliese 166 B:ADS 3093 B"
 {
 	OrbitBarycenter "Keid B-C"
 	SpectralType "DA4"
@@ -1059,7 +1059,7 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 	}
 }
 
-"Keid C:OMI2 Eri C:40 Eri C:DY Eri:Gliese 166 C"
+"Keid C:OMI2 Eri C:40 Eri C:DY Eri:Gliese 166 C:ADS 3093 C"
 {
 	OrbitBarycenter "Keid B-C"
 	SpectralType "M4.5V"
@@ -1085,14 +1085,14 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 	AppMag 10.06
 }
 
-Barycenter "70 Oph:Struve 2272:Gliese 702"
+Barycenter 88601 "70 Oph:Gliese 702:ADS 11046:Struve 2272"
 {
 	RA 271.363750 
 	Dec 2.500000
 	Distance 16.644
 }
 
-88601 "70 Oph A:Struve 2272 A:Gliese 702 A"
+"70 Oph A:Gliese 702 A:ADS 11046 A:Struve 2272 A"
 {
 	OrbitBarycenter "70 Oph"
 	SpectralType "K0V"
@@ -1109,7 +1109,7 @@ Barycenter "70 Oph:Struve 2272:Gliese 702"
 	}
 }
 
-"70 Oph B:Struve 2272 B:Gliese 702 B"
+"70 Oph B:Gliese 702 B:ADS 11046 B:Struve 2272 B"
 {
 	OrbitBarycenter "70 Oph"
 	SpectralType "K5V"
@@ -1145,7 +1145,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	Distance 17.059
 }
 
-"GJ 1116 A:EI Cnc"
+"EI Cnc:GJ 1116 A"
 {
 	RA 134.562083
 	Dec 19.761944
@@ -1163,7 +1163,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	AppMag 14.92
 }
 
-"Giclas 99-49:GJ 3379"
+"GJ 3379:Giclas 99-49"
 {
 	RA 90.015000
 	Dec 2.705556
@@ -1172,7 +1172,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	AppMag 11.31
 }
 
-"LP 656-38:RECONS 3:GJ 3323"
+"GJ 3323:LP 656-38:RECONS 3"
 {
 	RA 75.487500
 	Dec -6.946389
@@ -1208,14 +1208,14 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	AppMag 11.41
 }
 
-Barycenter "Stein 2051:Gliese 169.1" # orbit of A & B unknown
+Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 {
 	RA 67.796397    # mass ratio 0.224:0.50
 	Dec 58.977167   # 
 	Distance 18.057
 }
 
-21088 "Stein 2051 A:Gliese 169.1 A"
+"Gliese 169.1 A:Stein 2051 A"
 {
 	RA 67.799375
 	Dec 58.977167
@@ -1224,7 +1224,7 @@ Barycenter "Stein 2051:Gliese 169.1" # orbit of A & B unknown
 	AppMag 11.04
 }
 
-"Stein 2051 B:Gliese 169.1 B"
+"Gliese 169.1 B:Stein 2051 B"
 {
 	RA 67.795063
 	Dec 58.977167
@@ -1278,14 +1278,14 @@ Barycenter "Stein 2051:Gliese 169.1" # orbit of A & B unknown
 	AppMag 4.68
 }
 
-Barycenter "Luyten 668-21:LPM 230:Gliese 229" # orbit of A & B unknown
+Barycenter 29295 "Gliese 229:Luyten 668-21:LPM 230" # orbit of A & B unknown
 {
 	RA 92.644265    # mass ratio 0.556:0.05
 	Dec -21.864482  #
 	Distance 18.835
 }
 
-29295 "Luyten 668-21 A:LPM 230 A:Gliese 229 A"
+"Gliese 229 A:Luyten 668-21 A:LPM 230 A"
 {
 	RA 92.644231
 	Dec -21.864643
@@ -1294,7 +1294,7 @@ Barycenter "Luyten 668-21:LPM 230:Gliese 229" # orbit of A & B unknown
 	AppMag 8.12
 }
 
-"Luyten 668-21 B:LPM 230 B:Gliese 229 B"
+"Gliese 229 B:Luyten 668-21 B:LPM 230 B"
 {
 	RA 92.644643
 	Dec -21.862692
@@ -1312,14 +1312,14 @@ Barycenter "Luyten 668-21:LPM 230:Gliese 229" # orbit of A & B unknown
 	AppMag 10.75
 }
 
-Barycenter "Ross 652:Wolf 1055:Gliese 752" # orbit of A & B unknown
+Barycenter 94761 "Gliese 752:Ross 652:Wolf 1055" # orbit of A & B unknown
 {
 	RA 289.232026   # mass ratio 0.494:0.073
 	Dec 5.166493    #
 	Distance 19.073
 }
 
-94761 "Ross 652 A:Wolf 1055 A:V1428 Aql:Gliese 752 A"
+"V1428 Aql:Gliese 752 A:Ross 652 A:Wolf 1055 A"
 {
 	RA 289.230417
 	Dec 5.1688889
@@ -1328,7 +1328,7 @@ Barycenter "Ross 652:Wolf 1055:Gliese 752" # orbit of A & B unknown
 	AppMag 9.11
 }
 
-"Ross 652 B:Wolf 1055 B:Van Biesbroek's Star:VB 10:V1298 Aql:Gliese 752 B"
+"Van Biesbroek's Star:V1298 Aql:Gliese 752 B:Ross 652 B:Wolf 1055 B:VB 10"
 {
 	RA 289.242917
 	Dec 5.150278
@@ -1346,14 +1346,14 @@ Barycenter "Ross 652:Wolf 1055:Gliese 752" # orbit of A & B unknown
 	AppMag 11.51
 }
 
-Barycenter "Gliese 570"
+Barycenter "Gliese 570:ADS 9446"
 {
 	RA  224.363404  # mass ratio 0.76:(0.49+0.34)
 	Dec -21.413381  #
 	Distance 19.203
 }
 
-73184 "Gliese 570 A:KX Lib"		# fully specified orientation
+73184 "KX Lib:Gliese 570 A:ADS 9446 A"	# fully specified orientation
 {
 	OrbitBarycenter "Gliese 570"
 	SpectralType "K5V"
@@ -1370,7 +1370,7 @@ Barycenter "Gliese 570"
 	}
 }
 
-Barycenter "Gliese 570 B-C"         # fully specified orientation
+Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 {
 	OrbitBarycenter "Gliese 570"
 
@@ -1385,7 +1385,7 @@ Barycenter "Gliese 570 B-C"         # fully specified orientation
 	}
 }
 
-73182 "Gliese 570 B"
+"Gliese 570 B:ADS 9446 B"
 {
 	OrbitBarycenter "Gliese 570 B-C"
 	SpectralType "M1V"
@@ -1402,7 +1402,7 @@ Barycenter "Gliese 570 B-C"         # fully specified orientation
 	}
 }
 
-"Gliese 570 C"
+"Gliese 570 C::ADS 9446 C"
 {
 	OrbitBarycenter "Gliese 570 B-C"
 	SpectralType "M3V"
@@ -1419,7 +1419,7 @@ Barycenter "Gliese 570 B-C"         # fully specified orientation
 	}
 }
 
-"Gliese 570 D"
+"Gliese 570 D:ADS 9446 D"
 {
 	RA 224.312500
 	Dec -21.363889
@@ -1428,7 +1428,7 @@ Barycenter "Gliese 570 B-C"         # fully specified orientation
 	AbsMag 38 # very approx
 }
 
-"Luyten 347-14:Gliese 754"
+"Gliese 754:Luyten 347-14"
 {
 	RA 290.200833
 	Dec -45.558889
@@ -1446,14 +1446,14 @@ Barycenter "Gliese 570 B-C"         # fully specified orientation
 	AppMag 8.99
 }
 
-Barycenter "Achird:ETA Cas:24 Cas:Gliese 34"
+Barycenter 3821 "Achird:ETA Cas:24 Cas:Gliese 34:ADS 671"
 {
 	RA 12.27625
 	Dec 57.815278
 	Distance 19.371
 }
 
-3821 "Achird A:ETA Cas A:24 Cas A:Gliese 34 A"
+"Achird A:ETA Cas A:24 Cas A:Gliese 34 A:ADS 671 A"
 {
 	OrbitBarycenter "Achird"
 	SpectralType "G3V"
@@ -1470,7 +1470,7 @@ Barycenter "Achird:ETA Cas:24 Cas:Gliese 34"
 	}
 }
 
-"Achird B:ETA Cas B:24 Cas B:Gliese 34 B"
+"Achird B:ETA Cas B:24 Cas B:Gliese 34 B:ADS 671 B"
 {
 	OrbitBarycenter "Achird"
 	SpectralType "K7.0V"
@@ -1496,14 +1496,14 @@ Barycenter "Achird:ETA Cas:24 Cas:Gliese 34"
 	AppMag 9.31
 }
 
-Barycenter "Luyten 722-22:GJ 1005"
+Barycenter 1242 "GJ 1005:Luyten 722-22"
 {
 	RA 3.867083
 	Dec -16.133889
 	Distance 19.408
 }
 
-1242 "Luyten 722-22 A:GJ 1005 A"
+"GJ 1005 A:Luyten 722-22 A"
 {
 	OrbitBarycenter "Luyten 722-22"
 	SpectralType "M4.0V"
@@ -1520,7 +1520,7 @@ Barycenter "Luyten 722-22:GJ 1005"
 	}
 }
 
-"Luyten 722-22 B:GJ 1005 B"
+"GJ 1005 B:Luyten 722-22 B"
 {
 	OrbitBarycenter "Luyten 722-22"
 	SpectralType "M7V"
@@ -1546,21 +1546,21 @@ Barycenter "Luyten 722-22:GJ 1005"
 	AppMag 11.19
 }
 
-Barycenter "36 Oph:Gliese 663" # orbit of (AB) & C unknown
+Barycenter "36 Oph:Gliese 663:ADS 10417" # orbit of (AB) & C unknown
 {
 	RA 258.901180   # mass ratio (0.85+0.85):0.7
 	Dec -26.586250  #
 	Distance 19.471
 }
 
-Barycenter "36 Oph A-B:Gliese 663 A-B"
+Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
 {
 	RA 258.837500
 	Dec -26.602778
 	Distance 19.471
 }
 
-84405 "36 Oph A:Gliese 663 A"
+"36 Oph A:Gliese 663 A:ADS 10417 A"
 {
 	OrbitBarycenter "36 Oph A-B"
 	SpectralType "K1V"
@@ -1577,7 +1577,7 @@ Barycenter "36 Oph A-B:Gliese 663 A-B"
 	}
 }
 
-"36 Oph B:Gliese 663 B"
+"36 Oph B:Gliese 663 B:ADS 10417 B"
 {
 	OrbitBarycenter "36 Oph A-B"
 	SpectralType "K1V"
@@ -1594,7 +1594,7 @@ Barycenter "36 Oph A-B:Gliese 663 A-B"
 	}
 }
 
-84478 # 36 Oph C
+84478 "36 Oph C:V2215 Oph:Gliese 664:Gliese 663 C:ADS 10417 C"
 {
 	RA 259.055833
 	Dec -26.546111
@@ -1603,14 +1603,14 @@ Barycenter "36 Oph A-B:Gliese 663 A-B"
 	AppMag 6.33
 }
 
-Barycenter "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A & B unknown
+Barycenter 99461 "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A & B unknown
 {
 	RA 302.798770   # mass ratio 0.82:0.20
 	Dec -36.097603  #
 	Distance 19.728
 }
 
-99461 "Gliese 783 A:CD-36 13940 A:J Herschel 5173 A:HJ 5173 A"
+"Gliese 783 A:CD-36 13940 A:J Herschel 5173 A:HJ 5173 A"
 {
 	RA 302.79837
 	Dec -36.097385
@@ -1637,7 +1637,7 @@ Barycenter "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A & B unk
 	AppMag 4.26
 }
 
-"LP 44-113:GJ 1221"
+"GJ 1221:LP 44-113"
 {
 	RA 267.027917
 	Dec 70.874722
@@ -1658,14 +1658,14 @@ Barycenter "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A & B unk
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
 # companions to nearby M dwarfs" A&A, 344, 897
 # (http://arxiv.org/abs/astro-ph/9812008)
-Barycenter "Ross 986:Gliese 268"
+Barycenter 34603 "Gliese 268:Ross 986"
 {
 	RA 107.5075
 	Dec 38.529444
 	Distance 20.019
 }
 
-34603 "Ross 986 A:QY Aur:Gliese 268 A"
+"QY Aur:Gliese 268 A:Ross 986 A"
 {
 	OrbitBarycenter "Ross 986"
 	SpectralType "M5V"
@@ -1678,7 +1678,7 @@ Barycenter "Ross 986:Gliese 268"
 	}
 }
 
-"Ross 986 B:Gliese 268 B"
+"Gliese 268 B:Ross 986 B"
 {
 	OrbitBarycenter "Ross 986"
 	SpectralType "M6V"
@@ -1708,14 +1708,14 @@ Barycenter "Ross 986:Gliese 268"
 	AbsMag 33  # estimate
 }
 
-Barycenter "Struve 1321:Gliese 338"
+Barycenter "Gliese 338:ADS 7251:Struve 1321"
 {
 	RA 138.598959
 	Dec 52.775278
 	Distance 20.117
 }
 
-45343 "Struve 1321 A:Gliese 338 A"
+45343 "Gliese 338 A:ADS 7251 A:Struve 1321 A"
 {
 	OrbitBarycenter "Struve 1321"
 	SpectralType "K7V"
@@ -1732,7 +1732,7 @@ Barycenter "Struve 1321:Gliese 338"
 	}
 }
 
-120005 "Struve 1321 B:Gliese 338 B"
+120005 "Gliese 338 B:ADS 7251 B:Struve 1321 B"
 {
 	OrbitBarycenter "Struve 1321"
 	SpectralType "K7V"
@@ -1767,7 +1767,7 @@ Barycenter "Struve 1321:Gliese 338"
 	AppMag 10.56
 }
 
-Barycenter "Gliese 896"
+Barycenter 116132 "Gliese 896"
 {
 	RA 352.967500
 	Dec 19.937222
@@ -1804,7 +1804,7 @@ Barycenter "Gliese 896 B"
 	}
 }
 
-116132 "Gliese 896 Aa:EQ Peg"
+"EQ Peg:Gliese 896 Aa"
 {
 	OrbitBarycenter "Gliese 896 A"
 	SpectralType "M3.5V"
@@ -1881,14 +1881,14 @@ Barycenter "Gliese 896 B"
 	AppMag 12.74
 }
 
-Barycenter "Gliese 661:BD+45 2505"
+Barycenter 84140 "Gliese 661:BD+45 2505"
 {
 	RA 258.032917
 	Dec 45.665833
 	Distance 20.865
 }
 
-84140 "Gliese 661 A:BD+45 2505 A"
+"Gliese 661 A:BD+45 2505 A"
 {
 	OrbitBarycenter "Gliese 661"
 	SpectralType "M3V"
@@ -1922,7 +1922,7 @@ Barycenter "Gliese 661:BD+45 2505"
 	}
 }
 
-"LP 914-54:GJ 3877"
+"GJ 3877:LP 914-54"
 {
 	RA 224.160417
 	Dec -28.164167
@@ -1931,7 +1931,7 @@ Barycenter "Gliese 661:BD+45 2505"
 	AppMag 17.05
 }
 
-"Giclas 180-60:GJ 3959"
+"GJ 3959:Giclas 180-60"
 {
 	RA 247.826667
 	Dec 40.865000
@@ -1940,7 +1940,7 @@ Barycenter "Gliese 661:BD+45 2505"
 	AppMag 14.79
 }
 
-"LP 658-2:Gliese 223.2"
+"Gliese 223.2:LP 658-2"
 {
 	RA 88.790417
 	Dec -4.171389
@@ -1955,21 +1955,21 @@ Barycenter "Gliese 661:BD+45 2505"
 # Mazeh, T. et al. (2001) "Studies of multiple stellar systems - IV. The
 # triple-lined spectroscopic system Gliese 644" MNRAS, 325, 343.
 # (http://arxiv.org/abs/astro-ph/0102451)
-Barycenter "Wolf 630:Gliese 644" # orbit of (AB) & C unknown
+Barycenter "Gliese 644:Wolf 630" # orbit of (AB) & C unknown
 {
 	RA 253.872083 # mass ratio (0.41+0.34+0.30):0.08
 	Dec -8.340536 #
 	Distance 21.047
 }
 
-Barycenter "Wolf 630 A-B:Gliese 644 A-B"
+Barycenter 82817 "Gliese 644 A-B:Wolf 630 A-B"
 {
 	RA 253.870000
 	Dec -8.336389
 	Distance 21.047
 }
 
-82817 "Wolf 630 A:Gliese 644 A:V1054 Oph"
+"V1054 Oph:Gliese 644 A:Wolf 630 A"
 {
 	OrbitBarycenter "Wolf 630 A-B"
 	SpectralType "M2.5V"
@@ -1986,7 +1986,7 @@ Barycenter "Wolf 630 A-B:Gliese 644 A-B"
 	}
 }
 
-Barycenter "Wolf 630 B:Gliese 644 B"
+Barycenter "Gliese 644 B:Wolf 630 B"
 {
 	OrbitBarycenter "Wolf 630 A-B"
 
@@ -2001,7 +2001,7 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	}
 }
 
-"Wolf 630 Ba:Gliese 644 Ba"
+"Gliese 644 Ba:Wolf 630 Ba"
 {
 	OrbitBarycenter "Wolf 630 B"
 	SpectralType "M3V"
@@ -2016,7 +2016,7 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	}
 }
 
-"Wolf 630 Bb:Gliese 644 Bb"
+"Gliese 644 Bb:Wolf 630 Bb"
 {
 	OrbitBarycenter "Wolf 630 B"
 	SpectralType "M4V"
@@ -2032,7 +2032,7 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	}
 }
 
-"Wolf 630 C:Gliese 644 C:VB 8"
+"Gliese 644 C:Wolf 630 C:VB 8"
 {
 	RA 253.899167
 	Dec -8.394444
@@ -2041,7 +2041,7 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	AppMag 16.80
 }
 
-82809 "Wolf 629:Gliese 643"
+82809 "Gliese 643:Wolf 629"
 {
 	RA 253.855000
 	Dec -8.322500
@@ -2059,7 +2059,7 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	AppMag 5.56
 }
 
-"LHS 271:Luyten 100-115:GJ 1128"
+"GJ 1128:LHS 271:Luyten 100-115"
 {
 	RA 145.693333
 	Dec -68.885000
@@ -2068,7 +2068,7 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 	AppMag 12.78
 }
 
-"Luyten 1190-34:GL Vir:GJ 1156"
+"GL Vir:GJ 1156:Luyten 1190-34"
 {
 	RA 184.751250
 	Dec 11.125278
@@ -2098,14 +2098,14 @@ Barycenter "Wolf 630 B:Gliese 644 B"
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
 # companions to nearby M dwarfs" A&A, 344, 897
 # (http://arxiv.org/abs/astro-ph/9812008)
-Barycenter "Ross 775:Gliese 829"
+Barycenter 106106 "Gliese 829:Ross 775"
 {
 	RA 322.400816
 	Dec 17.642376
 	Distance 22.001
 }
 
-106106 "Ross 775 A:Gliese 829 A"
+"Gliese 829 A:Ross 775 A"
 {
 	OrbitBarycenter "Ross 775"
 	SpectralType "M3.5V"
@@ -2118,7 +2118,7 @@ Barycenter "Ross 775:Gliese 829"
 	}
 }
 
-"Ross 775 B:Gliese 829 B"
+"Gliese 829 B:Ross 775 B"
 {
 	OrbitBarycenter "Ross 775"
 	SpectralType "M3.5V"
@@ -2133,14 +2133,14 @@ Barycenter "Ross 775:Gliese 829"
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
 # companions to nearby M dwarfs" A&A, 344, 897
 # (http://arxiv.org/abs/astro-ph/9812008)
-Barycenter "Giclas 41-14:GJ 3522"
+Barycenter "GJ 3522:Giclas 41-14"
 {
 	RA 134.734583
 	Dec 8.473889
 	Distance 22.089
 }
 
-Barycenter "Giclas 41-14 A:GJ 3522 A"
+Barycenter "GJ 3522 A:Giclas 41-14 A"
 {
 	OrbitBarycenter "Giclas 41-14"
 
@@ -2150,7 +2150,7 @@ Barycenter "Giclas 41-14 A:GJ 3522 A"
 	}
 }
 
-"Giclas 41-14 Aa:GJ 3522 Aa"
+"GJ 3522 Aa:Giclas 41-14 Aa"
 {
 	OrbitBarycenter "Giclas 41-14 A"
 	SpectralType "M5.5V" # from estimated mass
@@ -2162,7 +2162,7 @@ Barycenter "Giclas 41-14 A:GJ 3522 A"
 	}
 }
 
-"Giclas 41-14 Ab:GJ 3522 Ab"
+"GJ 3522 Ab:Giclas 41-14 Ab"
 {
 	OrbitBarycenter "Giclas 41-14 A"
 	SpectralType "M6V" # from estimated mass
@@ -2175,7 +2175,7 @@ Barycenter "Giclas 41-14 A:GJ 3522 A"
 	}
 }
 
-"Giclas 41-14 B:GJ 3522 B"
+"GJ 3522 B:Giclas 41-14 B"
 {
 	OrbitBarycenter "Giclas 41-14"
 	SpectralType "M6V" # from mass
@@ -2188,14 +2188,14 @@ Barycenter "Giclas 41-14 A:GJ 3522 A"
 	}
 }
 
-Barycenter "XI Boo:37 Boo:Gliese 566"
+Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 {
 	RA 222.847018
 	Dec 19.100634
 	Distance 22.102
 }
 
-72659 "XI Boo A:37 Boo A:Gliese 566 A"
+"XI Boo A:37 Boo A:Gliese 566 A:ADS 9413 A"
 {
 	OrbitBarycenter "XI Boo"
 	SpectralType "G8V"
@@ -2212,7 +2212,7 @@ Barycenter "XI Boo:37 Boo:Gliese 566"
 	}
 }
 
-"XI Boo B:37 Boo B:Gliese 566 B"
+"XI Boo B:37 Boo B:Gliese 566 B::ADS 9413 B"
 {
 	OrbitBarycenter "XI Boo"
 	SpectralType "K4V"
@@ -2238,7 +2238,7 @@ Barycenter "XI Boo:37 Boo:Gliese 566"
 	AppMag 11.67
 }
 
-"Ross 619:Gliese 299"
+"Gliese 299:Ross 619"
 {
 	RA 122.989583
 	Dec 8.774444
@@ -2254,14 +2254,14 @@ Barycenter "Gliese 667:CD-34 11626" # orbit of (AB) & C unknown
 	Distance 22.296
 }
 
-Barycenter "Gliese 667 A-B:CD-34 11626 A-B"
+Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 {
 	RA  259.734835
 	Dec -34.989574
 	Distance 22.296
 }
 
-84709 "Gliese 667 A:CD-34 11626 A"
+"Gliese 667 A:CD-34 11626 A"
 {
 	OrbitBarycenter "Gliese 667 A-B"
 	SpectralType "K4V"
@@ -2313,7 +2313,7 @@ Barycenter "Gliese 667 A-B:CD-34 11626 A-B"
 	AppMag 8.66
 }
 
-14101 "LP 771-95 A:Luyten 730-18:GJ 3192 A:RECONS 4"
+14101 "GJ 3192:LP 771-95 A:Luyten 730-18:RECONS 4"
 {
 	RA 45.46411209
 	Dec -16.593372777
@@ -2322,7 +2322,7 @@ Barycenter "Gliese 667 A-B:CD-34 11626 A-B"
 	AppMag 11.22
 }
 
-"LP 771-96:LP 771-95 B:GJ 3193"
+"GJ 3193:LP 771-95 B:LP 771-96"
 {
 	RA 45.46547306
 	Dec -16.59479288
@@ -2344,7 +2344,7 @@ Barycenter "Gliese 667 A-B:CD-34 11626 A-B"
 # Additional stars between end of RECONS Top 100 and 25 ly: 
 # Non-Hipparcos and Hip stars with additional definitions
 
-"Luyten 97-12:Gliese 293"
+"Gliese 293:Luyten 97-12"
 {
 	RA 118.311250
 	Dec -67.791944
@@ -2353,7 +2353,7 @@ Barycenter "Gliese 667 A-B:CD-34 11626 A-B"
 	AppMag 14.08
 }
 
-Barycenter "Gliese 105" # orbit of A & B unknown
+Barycenter 12114 "Gliese 105" # orbit of A & B unknown
 {
 	RA 39.023977    # mass ratio (0.81+0.08):0.21
 	Dec 6.880494    #
@@ -2367,7 +2367,7 @@ Barycenter "Gliese 105 A"
 	Distance 23.420
 }
 
-12114 "Gliese 105 Aa"
+"Gliese 105 Aa"
 {
 	OrbitBarycenter "Gliese 105 A"
 	SpectralType "K3V"
@@ -2398,7 +2398,7 @@ Barycenter "Gliese 105 A"
 	}
 }
 
-"Gliese 105 B:BX Cet"
+"BX Cet:Gliese 105 B"
 {
 	RA 39.057917
 	Dec 6.868333
@@ -2416,7 +2416,7 @@ Barycenter "Gliese 105 A"
 	AppMag 14.67
 }
 
-"LP 71-165:GJ 4083"
+"GJ 4083:LP 71-165"
 {
 	RA 274.740417
 	Dec 66.192222
@@ -2425,7 +2425,7 @@ Barycenter "Gliese 105 A"
 	AppMag 13.49
 }
 
-"Luyten 788-34:GJ 4274"
+"GJ 4274:Luyten 788-34"
 {
 	RA 335.777500
 	Dec -17.606944
@@ -2437,14 +2437,14 @@ Barycenter "Gliese 105 A"
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
 # companions to nearby M dwarfs" A&A, 344, 897
 # (http://arxiv.org/abs/astro-ph/9812008)
-Barycenter "Giclas 203-47:GJ 3991"
+Barycenter 83945 "GJ 3991:Giclas 203-47"
 {
 	RA 257.380309
 	Dec 43.682026
 	Distance 24.284
 }
 
-83945 "Giclas 203-47 A:GJ 3991 A"
+"GJ 3991 A:Giclas 203-47 A"
 {
 	OrbitBarycenter "Giclas 203-47"
 	SpectralType "M3.5V"
@@ -2458,7 +2458,7 @@ Barycenter "Giclas 203-47:GJ 3991"
 	}
 }
 
-"Giclas 203-47 B:GJ 3991 B"
+"GJ 3991 B:Giclas 203-47 B"
 {
 
 	OrbitBarycenter "Giclas 203-47"
@@ -2484,14 +2484,14 @@ Barycenter "Giclas 203-47:GJ 3991"
 # Drummond JD, Christou JC, Fugate RQ. Full adaptive optics images of
 # ADS 9731 and mu Cassiopeiae: Orbits and masses. ApJ 1995; 450: 380-91
 # http://cdsads.u-strasbg.fr//full/1995ApJ...450..380D/0000380.000.html
-Barycenter "MU Cas:30 Cas:Gliese 53"
+Barycenter 5336 "MU Cas:30 Cas:Gliese 53"
 {
 	RA 17.053838
 	Dec 54.924228
 	Distance 24.638
 }
 
-5336 "MU Cas A:30 Cas A:Gliese 53 A"
+"MU Cas A:30 Cas A:Gliese 53 A"
 {
 	OrbitBarycenter "MU Cas"
 	SpectralType "G5VI"
@@ -2525,7 +2525,7 @@ Barycenter "MU Cas:30 Cas:Gliese 53"
 	}
 }
 
-"Luyten 1813-21:GJ 3378"
+"GJ 3378:Luyten 1813-21"
 {
 	RA 90.290417
 	Dec 59.598333
@@ -2546,17 +2546,27 @@ Modify 91262 # Vega 
 	}
 }
 
+Modify 113368 # Fomalhaut 
+{
+	UniformRotation
+	{
+	    Inclination    81.8    # rotation pole matches debris disk
+	    AscendingNode  176.6   # Bouquin et al. (2009) A&A 498, L41-44
+# (http://www.aanda.org/index.php?option=article&access=doi&doi=10.1051/0004-6361/200911854)
+ 	}
+}
+
 #========================================================================
 # Nearby multiple star with poor Hipparcos parallax
 
-Barycenter "Alula Australis:XI UMa:53 UMa:Gliese 423"
+Barycenter 55203 "Alula Australis:XI UMa:53 UMa:Gliese 423:ADS 8119"
 {
 	RA 169.54545
 	Dec 31.529134
 	Distance 27.294
 }
 
-Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A"
+Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A::ADS 8119 A"
 {
 	OrbitBarycenter "Alula Australis"
 
@@ -2571,7 +2581,7 @@ Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A"
 	}
 }
 
-Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B"
+Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B::ADS 8119 B"
 {
 	OrbitBarycenter "Alula Australis"
 
@@ -2586,7 +2596,7 @@ Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B"
 	}
 }
 
-55203 "Alula Australis Aa:XI UMa Aa:53 UMa Aa:Gliese 423 Aa"
+"Alula Australis Aa:XI UMa Aa:53 UMa Aa:Gliese 423 Aa"
 {
 	OrbitBarycenter "Alula Australis A"
 	SpectralType "G0V"
@@ -2680,7 +2690,14 @@ Barycenter "GJ 2130" # orbit of A & B unknown
 	AppMag 10.49
 }
 
-86963 "GJ 2130 Ba:CD-32 13298 A"
+Barycenter 86963 "GJ 2130 B" #true separation of Bab not known
+{
+	RA 266.56015
+	Dec -32.102222
+	Distance 48.536
+}
+
+"GJ 2130 Ba:CD-32 13298 A"
 {
 	RA 266.560000
 	Dec -32.102222
@@ -2689,7 +2706,7 @@ Barycenter "GJ 2130" # orbit of A & B unknown
 	AppMag 11.75
 }
 
-"GJ 2130 Bb:CD-32 13298 B"        #true separation of Bab not known
+"GJ 2130 Bb:CD-32 13298 B"
 {
 	RA 266.5603
 	Dec -32.102222
