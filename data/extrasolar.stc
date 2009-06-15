@@ -442,6 +442,15 @@
 	AppMag 8.31
 }
 
+1009804006 # HD 240210
+{
+	RA 347.621667
+	Dec 57.029444
+	Distance 466
+	SpectralType "K2III"
+	AppMag 8.33
+}
+
 # Other non-Hip stars
 
 1009465503 "BD-10 3166"
@@ -460,6 +469,15 @@
 	Distance 2500
 	SpectralType "GIV"
 	AppMag 9.45
+}
+
+1007901422 "BD+20 2457:GSC 01422-00790"
+{
+	RA 154.187083
+	Dec 19.891389
+	Distance 650
+	SpectralType "K2"
+	AppMag 9.75
 }
 
 "Gliese 317"
@@ -502,7 +520,7 @@
 "GD 66:V361 Aur:WD 0517+307"
 {
 	RA 80.159583
-	Dec +30.806667
+	Dec 30.806667
 	Distance 166
 	SpectralType "DA"
 	AppMag 15.6
