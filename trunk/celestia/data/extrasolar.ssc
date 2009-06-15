@@ -1,4 +1,4 @@
-# Catalog of 328 known extrasolar planets.
+# Catalog of 333 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -6396,6 +6396,36 @@ AltSurface "limit of knowledge" "HD 150706/b"
 }
 
 
+"b" "HIP 104780"   # BD+14 4559
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       470     # M.sin(i) = 1.47 jupiters
+	Radius     70000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=BD14+4559"
+
+	EllipticalOrbit {
+		Period          0.7363
+		SemiMajorAxis   0.777
+		Eccentricity    0.29
+		ArgOfPericenter 144
+		MeanAnomaly     179
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HIP 104780/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 73108"   # Pi2 UMa
 {
 	Texture "exo-class4.*"
@@ -6446,7 +6476,11 @@ AltSurface "limit of knowledge" "HD 73108/b"
 		AscendingNode   273.2
 	}
 
-	RotationPeriod  10 # plausible guess
+	UniformRotation {
+		Period		10 # plausible guess
+		Inclination	45 # to match orbital plane
+		AscendingNode  273 # to match orbital plane
+ 	}
 }
 
 AltSurface "limit of knowledge" "VB 10/b"
@@ -6809,6 +6843,67 @@ AltSurface "limit of knowledge" "HD 156846/b"
 }
 
 AltSurface "limit of knowledge" "TYC 3304-0101-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 1422-790-1"   # BD+20 2457
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       6810     # M.sin(i) = 21.42 jupiters
+	Radius     70000
+
+	InfoURL "http://exoplanet.eu/star.php?st=BD20+2457"
+
+	EllipticalOrbit {
+		Period          1.0394
+		SemiMajorAxis   1.45
+		Eccentricity    0.15
+		ArgOfPericenter 87
+		MeanAnomaly     206
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "TYC 1422-790-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "TYC 1422-790-1"   # BD+20 2457
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
+
+	Mass       3960     # M.sin(i) = 12.47 jupiters
+	Radius     70000
+
+	InfoURL "http://exoplanet.eu/star.php?st=BD20+2457"
+
+	EllipticalOrbit {
+		Period          1.7029
+		SemiMajorAxis   2.01
+		Eccentricity    0.18
+		ArgOfPericenter 5
+		MeanAnomaly     96
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "TYC 1422-790-1/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -7614,6 +7709,38 @@ AltSurface "limit of knowledge" "HD 96167/b"
 }
 
 AltSurface "limit of knowledge" "HD 153950/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 4006-980-1"   # HD 240210
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       2190     # M.sin(i) = 6.9 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+240210"
+
+	EllipticalOrbit {
+		Period          1.3737
+		SemiMajorAxis   1.33
+		Eccentricity    0.15
+		ArgOfPericenter 31
+		MeanAnomaly     49
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "TYC 4006-980-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -10159,6 +10286,43 @@ AltSurface "limit of knowledge" "HD 72659/b"
 }
 
 AltSurface "limit of knowledge" "HD 24040/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 216956"   # Fomalhaut
+# Orbit orientation from Bouquin et al. (2009) A&A 498, L41-L44
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       950     # M.sin(i) = 3 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=Fomalhaut"
+
+	EllipticalOrbit {
+		Period          876
+		SemiMajorAxis   115
+		Eccentricity    0.11
+		Inclination     81.8
+		AscendingNode   176.6
+		MeanAnomaly	60 # for approximate position
+	}
+
+	UniformRotation
+	{
+		Period		10 # plausible guess
+		Inclination	82 # to match orbital plane
+		AscendingNode  177 # to match orbital plane
+ 	}
+}
+
+AltSurface "limit of knowledge" "HD 216956/b"
 {
 	Texture "extrasolar-lok.*"
 }
