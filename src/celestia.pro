@@ -406,13 +406,13 @@ INCLUDEPATH += .
 
 win32 {
 	INCLUDEPATH += \
-		../inc/libintl \
-		../inc/libz \
-		../inc/libpng \
-		../inc/libjpeg \
-		../inc/lua-5.1 \
-  		../inc/spice
-	LIBS += -L../lib \
+		../windows/inc/libintl \
+		../windows/inc/libz \
+		../windows/inc/libpng \
+		../windows/inc/libjpeg \
+		../windows/inc/lua-5.1 \
+  		../windows/inc/spice
+	LIBS += -L../windows/lib/x86 \
 		-lzlib \
 		-llibpng \
 		-llibjpeg \
