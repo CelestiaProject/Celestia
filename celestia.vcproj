@@ -52,11 +52,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="intl.lib user32.lib gdi32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib libjpegd.lib zlibd.lib libpngd.lib lua5.1.lib cspice.lib"
+				AdditionalDependencies="intl.lib user32.lib gdi32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib libjpeg.lib zlibd.lib libpngd.lib lua5.1.lib cspice.lib"
+				OutputFile="$(ProjectName).exe"
 				AdditionalLibraryDirectories=".\windows\lib\x86"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -103,12 +105,14 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg"
 				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="0"
+				FloatingPointModel="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -122,10 +126,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="intl.lib user32.lib gdi32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib libjpeg.lib zlib.lib libpng.lib lua5.1.lib cspice.lib"
+				OutputFile="$(ProjectName).exe"
 				AdditionalLibraryDirectories=".\windows\lib\x86"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
