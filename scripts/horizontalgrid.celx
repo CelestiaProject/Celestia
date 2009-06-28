@@ -1,0 +1,8 @@
+t = {} -- create table
+t.equatorialgrid = 	false
+t.galacticgrid = 	false
+t.eclipticgrid = 	false
+t.horizontalgrid = 	not celestia:getrenderflags().horizontalgrid
+
+celestia:setrenderflags(t)
+
