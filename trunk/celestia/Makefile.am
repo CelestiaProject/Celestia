@@ -34,7 +34,7 @@ splash_DATA = splash.png
 SUBDIRS = src data extras extras-standard textures models shaders fonts po po2 locale scripts
 
 # Non-automake directories
-NONAUTO = admin macosx
+NONAUTO = admin macosx windows
 
 # From KDE app template
 
