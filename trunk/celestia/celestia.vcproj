@@ -39,7 +39,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg"
 				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -55,6 +55,7 @@
 				AdditionalDependencies="intl.lib user32.lib gdi32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib libjpeg.lib zlibd.lib libpngd.lib lua5.1.lib cspice.lib"
 				OutputFile="$(ProjectName).exe"
 				AdditionalLibraryDirectories=".\windows\lib\x86"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
