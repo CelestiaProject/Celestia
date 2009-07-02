@@ -77,6 +77,10 @@ Source: "TRANSLATORS";  DestDir: "{app}"; Flags: ignoreversion;            DestN
 Source: "ChangeLog";    DestDir: "{app}"; Flags: ignoreversion;            DestName: "ChangeLog.txt"
 Source: "splash.png";   DestDir: "{app}"; Flags: ignoreversion
 
+Source: "lib\microsoft.vc90.crt.manifest";   DestDir: "{app}"; Flags: ignoreversion
+Source: "lib\msvcm90.dll";   DestDir: "{app}"; Flags: ignoreversion
+Source: "lib\msvcp90.dll";   DestDir: "{app}"; Flags: ignoreversion
+Source: "lib\msvcr90.dll";   DestDir: "{app}"; Flags: ignoreversion
 
 ; Languages
 Source: "locale\res_ar.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -258,6 +262,8 @@ Source: "data\comets.ssc";         DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\extrasolar.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\outersys.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\solarsys.ssc";       DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\minormoons.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
+Source: "data\numberedmoons.ssc";  DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\merc_locs.ssc";      DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\venus_locs.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
 Source: "data\earth_locs.ssc";     DestDir: "{app}/data"; Flags: ignoreversion
@@ -588,8 +594,6 @@ Source: "extras-standard\iss\textures\medres\*.jpg"; DestDir: "{app}/extras-stan
 Source: "extras-standard\mir\mir.ssc"; DestDir: "{app}/extras-standard/mir"; Flags: ignoreversion
 Source: "extras-standard\mir\models\mir.3ds"; DestDir: "{app}/extras-standard/mir/models"; Flags: ignoreversion
 
-Source: "extras\minormoons.ssc"; DestDir: "{app}/extras"; Flags: ignoreversion
-
 ; celx scripts
 Source: "scripts\mark-lg.celx";      DestDir: "{app}/scripts"; Flags: ignoreversion
 Source: "scripts\z-dist.celx";       DestDir: "{app}/scripts"; Flags: ignoreversion
@@ -606,6 +610,9 @@ Source: "src\tools\xindex\buildxindices.pl";  DestDir: "{app}/tools/xindex"; Fla
 Source: "src\tools\xindex\readme.txt";        DestDir: "{app}/tools/xindex"; Flags: ignoreversion
 Source: "src\tools\stardb\buildstardb.pl";    DestDir: "{app}/tools/stardb"; Flags: ignoreversion
 
+[InstallDelete]
+Type: files; Name: "{app}\extras\minormoons.ssc";
+Type: files; Name: "{app}\extras\numberedmoons.ssc";
 
 [INI]
 Filename: "{app}\celestia.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://www.shatters.net/celestia/"
