@@ -175,6 +175,9 @@ void gcSetRenderFlag(int flag, gboolean state, GConfClient* client)
 		case Renderer::ShowNebulae: gcSetFlag(Render, "nebulae", state, client); break;
 		case Renderer::ShowOpenClusters: gcSetFlag(Render, "openClusters", state, client); break;
 		case Renderer::ShowGlobulars: gcSetFlag(Render, "globulars", state, client); break;
+		case Renderer::ShowGalacticGrid: gcSetFlag(Render, "gridGalactic", state, client); break;
+		case Renderer::ShowEclipticGrid: gcSetFlag(Render, "gridEcliptic", state, client); break;
+		case Renderer::ShowHorizonGrid: gcSetFlag(Render, "gridHorizontal", state, client); break;
 	}
 }
 
@@ -463,6 +466,9 @@ static int readGConfRender(GConfClient* client)
 	rf |= Renderer::ShowNebulae * gconf_client_get_bool(client, "/apps/celestia/render/nebulae",  NULL);
 	rf |= Renderer::ShowOpenClusters * gconf_client_get_bool(client, "/apps/celestia/render/openClusters",  NULL);
 	rf |= Renderer::ShowGlobulars * gconf_client_get_bool(client, "/apps/celestia/render/globulars",  NULL);
+	rf |= Renderer::ShowGalacticGrid * gconf_client_get_bool(client, "/apps/celestia/render/gridGalactic",  NULL);
+	rf |= Renderer::ShowEclipticGrid * gconf_client_get_bool(client, "/apps/celestia/render/gridEcliptic",  NULL);
+	rf |= Renderer::ShowHorizonGrid * gconf_client_get_bool(client, "/apps/celestia/render/gridHorizontal",  NULL);
 	
 	return rf;
 }

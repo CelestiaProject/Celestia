@@ -159,7 +159,10 @@ void applySettingsFileMain(AppData* app, GKeyFile* file)
 	getFlag(file, &rf, Renderer::ShowPartialTrajectories, "RenderFlags", "partialTrajectories", &errors);
 	getFlag(file, &rf, Renderer::ShowNebulae, "RenderFlags", "nebulae", &errors);
 	getFlag(file, &rf, Renderer::ShowOpenClusters, "RenderFlags", "openClusters", &errors);
-	getFlag(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "Globulars", &errors);
+	getFlag(file, &rf, Renderer::ShowGlobulars, "RenderFlags", "globulars", &errors);
+	getFlag(file, &rf, Renderer::ShowGalacticGrid, "RenderFlags", "gridGalactic", &errors);
+	getFlag(file, &rf, Renderer::ShowEclipticGrid, "RenderFlags", "gridEcliptic", &errors);
+	getFlag(file, &rf, Renderer::ShowHorizonGrid, "RenderFlags", "gridHorizontal", &errors);
 	
 	/* If any flag is missing, use defaults for all. */
 	if (errors > 0)
@@ -261,6 +264,9 @@ void saveSettingsFile(AppData* app)
 	g_key_file_set_boolean(file, "RenderFlags", "nebulae", rf & Renderer::ShowNebulae);
 	g_key_file_set_boolean(file, "RenderFlags", "openClusters", rf & Renderer::ShowOpenClusters);
 	g_key_file_set_boolean(file, "RenderFlags", "globulars", rf & Renderer::ShowGlobulars);
+	g_key_file_set_boolean(file, "RenderFlags", "gridGalactic", rf & Renderer::ShowGalacticGrid);
+	g_key_file_set_boolean(file, "RenderFlags", "gridEcliptic", rf & Renderer::ShowEclipticGrid);
+	g_key_file_set_boolean(file, "RenderFlags", "gridHorizontal", rf & Renderer::ShowHorizonGrid);
 	
 	om = app->renderer->getOrbitMask();
 	g_key_file_set_boolean(file, "OrbitMask", "planet", om & Body::Planet);

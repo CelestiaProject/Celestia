@@ -817,9 +817,21 @@ void actionRenderConstellations(GtkToggleAction* action, AppData* app)
 }
 
 
+void actionRenderEclipticGrid(GtkToggleAction* action, AppData* app)
+{
+	setRenderFlag(app, Renderer::ShowEclipticGrid, gtk_toggle_action_get_active(action));
+}
+
+
 void actionRenderEclipseShadows(GtkToggleAction* action, AppData* app)
 {
 	setRenderFlag(app, Renderer::ShowEclipseShadows, gtk_toggle_action_get_active(action));
+}
+
+
+void actionRenderGalacticGrid(GtkToggleAction* action, AppData* app)
+{
+	setRenderFlag(app, Renderer::ShowGalacticGrid, gtk_toggle_action_get_active(action));
 }
 
 
@@ -832,6 +844,12 @@ void actionRenderGalaxies(GtkToggleAction* action, AppData* app)
 void actionRenderGlobulars(GtkToggleAction* action, AppData* app)
 {
 	setRenderFlag(app, Renderer::ShowGlobulars, gtk_toggle_action_get_active(action));
+}
+
+
+void actionRenderHorizontalGrid(GtkToggleAction* action, AppData* app)
+{
+	setRenderFlag(app, Renderer::ShowHorizonGrid, gtk_toggle_action_get_active(action));
 }
 
 
@@ -1276,9 +1294,9 @@ void resyncRenderActions(AppData* app)
 	
 	/* Unlike the other interfaces, which go through each menu item and set
 	 * the corresponding renderFlag, we go the other way and set the menu
-	 * based on the renderFlag. Last one is ShowGlobulars. */
+	 * based on the renderFlag. Last one is ShowEcliptic. */
 	
-	for (int i = Renderer::ShowStars; i <= Renderer::ShowGlobulars; i *= 2)
+	for (int i = Renderer::ShowStars; i <= Renderer::ShowEcliptic; i *= 2)
 	{
 		switch (i)
 		{
@@ -1303,6 +1321,11 @@ void resyncRenderActions(AppData* app)
 			case Renderer::ShowNebulae: actionName = "RenderNebulae"; break;
 			case Renderer::ShowOpenClusters: actionName = "RenderOpenClusters"; break;
 			case Renderer::ShowGlobulars: actionName = "RenderGlobulars"; break;
+			case Renderer::ShowCloudShadows: actionName = NULL; break; /* Not implemented yet */
+			case Renderer::ShowGalacticGrid: actionName = "RenderGalacticGrid"; break;
+			case Renderer::ShowEclipticGrid: actionName = "RenderEclipticGrid"; break;
+			case Renderer::ShowHorizonGrid: actionName = "RenderHorizontalGrid"; break;
+			case Renderer::ShowEcliptic: actionName = NULL; break; /* Not implemented yet */
 			default: actionName = NULL;
 		}
 		
