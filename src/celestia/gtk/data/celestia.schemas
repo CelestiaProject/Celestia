@@ -359,6 +359,36 @@
         <short>Render globulars.</short>
       </locale>
     </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/gridEcliptic</key>
+      <applyto>/apps/celestia/render/gridEcliptic</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render ecliptic grid lines.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/gridHorizontal</key>
+      <applyto>/apps/celestia/render/gridHorizontal</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render horizontal grid lines.</short>
+      </locale>
+    </schema>
+    <schema>
+      <key>/schemas/apps/celestia/render/gridGalactic</key>
+      <applyto>/apps/celestia/render/gridGalactic</applyto>
+      <owner>celestia</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Render galactic grid lines.</short>
+      </locale>
+    </schema>
 
 
     <!-- LABEL OPTIONS -->

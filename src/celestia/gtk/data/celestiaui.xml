@@ -41,7 +41,6 @@
       <separator/>
       <menu action='ShowObjectsMenu'>
         <menuitem action='RenderAtmospheres'/>
-        <menuitem action='RenderCelestialGrid'/>
         <menuitem action='RenderClouds'/>
         <menuitem action='RenderCometTails'/>
         <menuitem action='RenderConstellationBoundaries'/>
@@ -55,6 +54,12 @@
         <menuitem action='RenderPlanets'/>
         <menuitem action='RenderRingShadows'/>
         <menuitem action='RenderStars'/>
+      </menu>
+      <menu action='ShowGridsMenu'>
+        <menuitem action='RenderCelestialGrid'/>
+        <menuitem action='RenderEclipticGrid'/>
+        <menuitem action='RenderGalacticGrid'/>
+        <menuitem action='RenderHorizontalGrid'/>
       </menu>
       <menu action='ShowLabelsMenu'>
         <menuitem action='LabelAsteroids'/>
