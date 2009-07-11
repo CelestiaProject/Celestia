@@ -1,0 +1,9 @@
+FILE(GLOB Eigen_Core_SRCS "*.h")
+
+INSTALL(FILES
+  ${Eigen_Core_SRCS}
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Eigen/src/Core
+  )
+
+ADD_SUBDIRECTORY(util)
+ADD_SUBDIRECTORY(arch)
