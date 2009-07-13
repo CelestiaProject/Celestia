@@ -330,7 +330,7 @@ void SelectionPopup::insert(KPopupMenu *popup, Selection sel, bool showSubObject
     if (sel.body() != NULL) {
         KPopupMenu *refVectorMenu = new KPopupMenu(this);
         refVectorMenu->setCheckable(true);
-        popup->insertItem(i18n("&Reference Vectors"), refVectorMenu);
+        popup->insertItem(i18n("&Reference Marks"), refVectorMenu);
         refVectorMenu->insertItem(i18n("Show Body Axes"), baseId + 25);
         refVectorMenu->setItemChecked(baseId + 25, sel.body()->findReferenceMark("body axes"));
         refVectorMenu->insertItem(i18n("Show Frame Axes"), baseId + 26);
