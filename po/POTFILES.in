@@ -19,6 +19,7 @@ src/celengine/frame.cpp
 src/celengine/galaxy.cpp
 src/celengine/glcontext.cpp
 src/celengine/glext.cpp
+src/celengine/globular.cpp
 src/celengine/glshader.cpp
 src/celengine/image.cpp
 src/celengine/jpleph.cpp
