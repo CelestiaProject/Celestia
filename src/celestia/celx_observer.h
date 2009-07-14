@@ -17,5 +17,6 @@ class Observer;
 
 extern void CreateObserverMetaTable(lua_State* l);
 extern int observer_new(lua_State* l, Observer* obs);
+extern Observer* to_observer(lua_State* l, int index);
 
 #endif // _CELX_OBSERVER_H_
