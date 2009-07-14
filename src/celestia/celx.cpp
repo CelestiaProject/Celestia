@@ -24,6 +24,7 @@
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include "imagecapture.h"
+#include "url.h"
 
 #include "celx.h"
 #include "celx_internal.h"
@@ -2468,6 +2469,28 @@ static int celestia_ispaused(lua_State* l)
     return 1;
 }
 
+static int celestia_synchronizetime(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:synchronizetime");
+
+    CelestiaCore* appCore = this_celestia(l);
+    bool sync = Celx_SafeGetBoolean(l, 2, AllErrors, "Argument to celestia:synchronizetime must be a boolean");
+    appCore->getSimulation()->setSyncTime(sync);
+
+    return 0;
+}
+
+static int celestia_istimesynchronized(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected to function celestia:istimesynchronized");
+
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushboolean(l, appCore->getSimulation()->getSyncTime());
+
+    return 1;
+}
+
+
 static int celestia_settimescale(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:settimescale");
@@ -3303,6 +3326,43 @@ static int celestia_setwindowbordersvisible(lua_State* l)
     return 0;
 }
 
+static int celestia_seturl(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 3, "One or two arguments expected for celestia:seturl");
+    CelestiaCore* appCore = this_celestia(l);
+
+    string url = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:seturl must be a string");
+    Observer* obs = to_observer(l, 3);
+    if (obs == NULL)
+        obs = appCore->getSimulation()->getActiveObserver();
+    View* view = getViewByObserver(appCore, obs);
+    appCore->setActiveView(view);
+
+    appCore->goToUrl(url);
+
+    return 0;
+}
+
+static int celestia_geturl(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 2, "None or one argument expected for celestia:geturl");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Observer* obs = to_observer(l, 2);
+    if (obs == NULL)
+        obs = appCore->getSimulation()->getActiveObserver();
+    View* view = getViewByObserver(appCore, obs);
+    appCore->setActiveView(view);
+
+    CelestiaState appState;
+    appState.captureState(appCore);
+
+    Url url(appState, 3);
+    lua_pushstring(l, url.getAsString().c_str());
+
+    return 1;
+}
+
 
 static void CreateCelestiaMetaTable(lua_State* l)
 {
@@ -3351,6 +3411,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "gettime", celestia_gettime);
     Celx_RegisterMethod(l, "settime", celestia_settime);
     Celx_RegisterMethod(l, "ispaused", celestia_ispaused);
+    Celx_RegisterMethod(l, "synchronizetime", celestia_synchronizetime);
+    Celx_RegisterMethod(l, "istimesynchronized", celestia_istimesynchronized);
     Celx_RegisterMethod(l, "gettimescale", celestia_gettimescale);
     Celx_RegisterMethod(l, "settimescale", celestia_settimescale);
     Celx_RegisterMethod(l, "getambient", celestia_getambient);
@@ -3388,6 +3450,8 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "dsos", celestia_dsos);
     Celx_RegisterMethod(l, "windowbordersvisible", celestia_windowbordersvisible);
     Celx_RegisterMethod(l, "setwindowbordersvisible", celestia_setwindowbordersvisible);
+    Celx_RegisterMethod(l, "seturl", celestia_seturl);
+    Celx_RegisterMethod(l, "geturl", celestia_geturl);
 
     lua_pop(l, 1);
 }
