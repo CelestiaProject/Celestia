@@ -13,7 +13,6 @@
 #define _CELUTIL_UTIL_H_
 
 #include <string>
-#include <vector>
 #include <iostream>
 #include <functional>
 
@@ -36,11 +35,17 @@
 
 #include "libintl.h"
 
+#elif defined(TARGET_OS_MAC)
+
+#ifndef gettext
+#include "POSupport.h"
+#define gettext(s)      localizedUTF8String(s)
+#define dgettext(d,s)   localizedUTF8StringWithDomain(d,s)
+#endif
+
 #else
 
-#ifndef TARGET_OS_MAC
 #include <libintl.h>
-#endif /* TARGET_OS_MAC */
 
 #endif
 
