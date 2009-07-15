@@ -17,26 +17,26 @@
 #include <celmath/vecmath.h>
 
 
-template<class T> class Quaternion
+template<class T> class Quat
 {
 public:
-    inline Quaternion();
-    inline Quaternion(const Quaternion<T>&);
-    inline Quaternion(T);
-    inline Quaternion(const Vector3<T>&);
-    inline Quaternion(T, const Vector3<T>&);
-    inline Quaternion(T, T, T, T);
+    inline Quat();
+    inline Quat(const Quat<T>&);
+    inline Quat(T);
+    inline Quat(const Vector3<T>&);
+    inline Quat(T, const Vector3<T>&);
+    inline Quat(T, T, T, T);
 
-    inline Quaternion(const Matrix3<T>&);
+    inline Quat(const Matrix3<T>&);
 
-    inline Quaternion& operator+=(Quaternion);
-    inline Quaternion& operator-=(Quaternion);
-    inline Quaternion& operator*=(T);
-    Quaternion& operator*=(Quaternion);
+    inline Quat& operator+=(Quat);
+    inline Quat& operator-=(Quat);
+    inline Quat& operator*=(T);
+    Quat& operator*=(Quat);
 
-    inline Quaternion operator~() const;    // conjugate
-    inline Quaternion operator-() const;
-    inline Quaternion operator+() const;
+    inline Quat operator~() const;    // conjugate
+    inline Quat operator-() const;
+    inline Quat operator+() const;
 
     void setAxisAngle(Vector3<T> axis, T angle);
 
@@ -44,10 +44,10 @@ public:
     Matrix4<T> toMatrix4() const;
     Matrix3<T> toMatrix3() const;
 
-    static Quaternion<T> slerp(const Quaternion<T>&, const Quaternion<T>&, T);
-    static Quaternion<T> vecToVecRotation(const Vector3<T>& v0,
+    static Quat<T> slerp(const Quat<T>&, const Quat<T>&, T);
+    static Quat<T> vecToVecRotation(const Vector3<T>& v0,
                                           const Vector3<T>& v1);
-    static Quaternion<T> matrixToQuaternion(const Matrix3<T>& m);
+    static Quat<T> matrixToQuaternion(const Matrix3<T>& m);
 
     void rotate(Vector3<T> axis, T angle);
     void xrotate(T angle);
@@ -58,46 +58,46 @@ public:
     bool isReal() const;
     T normalize();
 
-    static Quaternion<T> xrotation(T);
-    static Quaternion<T> yrotation(T);
-    static Quaternion<T> zrotation(T);
+    static Quat<T> xrotation(T);
+    static Quat<T> yrotation(T);
+    static Quat<T> zrotation(T);
 
-	static Quaternion<T> lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up);
+	static Quat<T> lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up);
 
     T w, x, y, z;
 };
 
 
-typedef Quaternion<float> Quatf;
-typedef Quaternion<double> Quatd;
+typedef Quat<float> Quatf;
+typedef Quat<double> Quatd;
 
 
-template<class T> Quaternion<T>::Quaternion() : w(0), x(0), y(0), z(0)
+template<class T> Quat<T>::Quat() : w(0), x(0), y(0), z(0)
 {
 }
 
-template<class T> Quaternion<T>::Quaternion(const Quaternion<T>& q) :
+template<class T> Quat<T>::Quat(const Quat<T>& q) :
     w(q.w), x(q.x), y(q.y), z(q.z)
 {
 }
 
-template<class T> Quaternion<T>::Quaternion(T re) :
+template<class T> Quat<T>::Quat(T re) :
     w(re), x(0), y(0), z(0)
 {
 }
 
 // Create a 'pure' quaternion
-template<class T> Quaternion<T>::Quaternion(const Vector3<T>& im) :
+template<class T> Quat<T>::Quat(const Vector3<T>& im) :
      w(0), x(im.x), y(im.y), z(im.z)
 {
 }
 
-template<class T> Quaternion<T>::Quaternion(T re, const Vector3<T>& im) :
+template<class T> Quat<T>::Quat(T re, const Vector3<T>& im) :
      w(re), x(im.x), y(im.y), z(im.z)
 {
 }
 
-template<class T> Quaternion<T>::Quaternion(T _w, T _x, T _y, T _z) :
+template<class T> Quat<T>::Quat(T _w, T _x, T _y, T _z) :
     w(_w), x(_x), y(_y), z(_z)
 {
 }
@@ -105,7 +105,7 @@ template<class T> Quaternion<T>::Quaternion(T _w, T _x, T _y, T _z) :
 // Create a quaternion from a rotation matrix
 // TODO: purge this from code--it is replaced by the matrixToQuaternion()
 // function.
-template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
+template<class T> Quat<T>::Quat(const Matrix3<T>& m)
 {
     T trace = m[0][0] + m[1][1] + m[2][2];
     T root;
@@ -140,21 +140,21 @@ template<class T> Quaternion<T>::Quaternion(const Matrix3<T>& m)
     }
 }
 
-template<class T> Quaternion<T>& Quaternion<T>::operator+=(Quaternion<T> a)
+template<class T> Quat<T>& Quat<T>::operator+=(Quat<T> a)
 {
     x += a.x; y += a.y; z += a.z; w += a.w;
     return *this;
 }
 
-template<class T> Quaternion<T>& Quaternion<T>::operator-=(Quaternion<T> a)
+template<class T> Quat<T>& Quat<T>::operator-=(Quat<T> a)
 {
     x -= a.x; y -= a.y; z -= a.z; w -= a.w;
     return *this;
 }
 
-template<class T> Quaternion<T>& Quaternion<T>::operator*=(Quaternion<T> q)
+template<class T> Quat<T>& Quat<T>::operator*=(Quat<T> q)
 {
-    *this = Quaternion<T>(w * q.w - x * q.x - y * q.y - z * q.z,
+    *this = Quat<T>(w * q.w - x * q.x - y * q.y - z * q.z,
                           w * q.x + x * q.w + y * q.z - z * q.y,
                           w * q.y + y * q.w + z * q.x - x * q.z,
                           w * q.z + z * q.w + x * q.y - y * q.x);
@@ -162,109 +162,109 @@ template<class T> Quaternion<T>& Quaternion<T>::operator*=(Quaternion<T> q)
     return *this;
 }
 
-template<class T> Quaternion<T>& Quaternion<T>::operator*=(T s)
+template<class T> Quat<T>& Quat<T>::operator*=(T s)
 {
     x *= s; y *= s; z *= s; w *= s;
     return *this;
 }
 
 // conjugate operator
-template<class T> Quaternion<T> Quaternion<T>::operator~() const
+template<class T> Quat<T> Quat<T>::operator~() const
 {
-    return Quaternion<T>(w, -x, -y, -z);
+    return Quat<T>(w, -x, -y, -z);
 }
 
-template<class T> Quaternion<T> Quaternion<T>::operator-() const
+template<class T> Quat<T> Quat<T>::operator-() const
 {
-    return Quaternion<T>(-w, -x, -y, -z);
+    return Quat<T>(-w, -x, -y, -z);
 }
 
-template<class T> Quaternion<T> Quaternion<T>::operator+() const
+template<class T> Quat<T> Quat<T>::operator+() const
 {
     return *this;
 }
 
 
-template<class T> Quaternion<T> operator+(Quaternion<T> a, Quaternion<T> b)
+template<class T> Quat<T> operator+(Quat<T> a, Quat<T> b)
 {
-    return Quaternion<T>(a.w + b.w, a.x + b.x, a.y + b.y, a.z + b.z);
+    return Quat<T>(a.w + b.w, a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-template<class T> Quaternion<T> operator-(Quaternion<T> a, Quaternion<T> b)
+template<class T> Quat<T> operator-(Quat<T> a, Quat<T> b)
 {
-    return Quaternion<T>(a.w - b.w, a.x - b.x, a.y - b.y, a.z - b.z);
+    return Quat<T>(a.w - b.w, a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-template<class T> Quaternion<T> operator*(Quaternion<T> a, Quaternion<T> b)
+template<class T> Quat<T> operator*(Quat<T> a, Quat<T> b)
 {
-    return Quaternion<T>(a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,
+    return Quat<T>(a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,
                          a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
                          a.w * b.y + a.y * b.w + a.z * b.x - a.x * b.z,
                          a.w * b.z + a.z * b.w + a.x * b.y - a.y * b.x);
 }
 
-template<class T> Quaternion<T> operator*(T s, Quaternion<T> q)
+template<class T> Quat<T> operator*(T s, Quat<T> q)
 {
-    return Quaternion<T>(s * q.w, s * q.x, s * q.y, s * q.z);
+    return Quat<T>(s * q.w, s * q.x, s * q.y, s * q.z);
 }
 
-template<class T> Quaternion<T> operator*(Quaternion<T> q, T s)
+template<class T> Quat<T> operator*(Quat<T> q, T s)
 {
-    return Quaternion<T>(s * q.w, s * q.x, s * q.y, s * q.z);
+    return Quat<T>(s * q.w, s * q.x, s * q.y, s * q.z);
 }
 
 // equivalent to multiplying by the quaternion (0, v)
-template<class T> Quaternion<T> operator*(Vector3<T> v, Quaternion<T> q)
+template<class T> Quat<T> operator*(Vector3<T> v, Quat<T> q)
 {
-    return Quaternion<T>(-v.x * q.x - v.y * q.y - v.z * q.z,
+    return Quat<T>(-v.x * q.x - v.y * q.y - v.z * q.z,
                          v.x * q.w + v.y * q.z - v.z * q.y,
                          v.y * q.w + v.z * q.x - v.x * q.z,
                          v.z * q.w + v.x * q.y - v.y * q.x);
 }
 
-template<class T> Quaternion<T> operator/(Quaternion<T> q, T s)
+template<class T> Quat<T> operator/(Quat<T> q, T s)
 {
     return q * (1 / s);
 }
 
-template<class T> Quaternion<T> operator/(Quaternion<T> a, Quaternion<T> b)
+template<class T> Quat<T> operator/(Quat<T> a, Quat<T> b)
 {
     return a * (~b / abs(b));
 }
 
 
-template<class T> bool operator==(Quaternion<T> a, Quaternion<T> b)
+template<class T> bool operator==(Quat<T> a, Quat<T> b)
 {
     return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
 }
 
-template<class T> bool operator!=(Quaternion<T> a, Quaternion<T> b)
+template<class T> bool operator!=(Quat<T> a, Quat<T> b)
 {
     return a.x != b.x || a.y != b.y || a.z != b.z || a.w != b.w;
 }
 
 
 // elementary functions
-template<class T> Quaternion<T> conjugate(Quaternion<T> q)
+template<class T> Quat<T> conjugate(Quat<T> q)
 {
-    return Quaternion<T>(q.w, -q.x, -q.y, -q.z);
+    return Quat<T>(q.w, -q.x, -q.y, -q.z);
 }
 
-template<class T> T norm(Quaternion<T> q)
+template<class T> T norm(Quat<T> q)
 {
     return q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
 }
 
-template<class T> T abs(Quaternion<T> q)
+template<class T> T abs(Quat<T> q)
 {
     return (T) sqrt(norm(q));
 }
 
-template<class T> Quaternion<T> exp(Quaternion<T> q)
+template<class T> Quat<T> exp(Quat<T> q)
 {
     if (q.isReal())
     {
-        return Quaternion<T>((T) exp(q.w));
+        return Quat<T>((T) exp(q.w));
     }
     else
     {
@@ -273,17 +273,17 @@ template<class T> Quaternion<T> exp(Quaternion<T> q)
         T c = (T) cos(l);
         T e = (T) exp(q.w);
         T t = e * s / l;
-        return Quaternion<T>(e * c, t * q.x, t * q.y, t * q.z);
+        return Quat<T>(e * c, t * q.x, t * q.y, t * q.z);
     }
 }
 
-template<class T> Quaternion<T> log(Quaternion<T> q)
+template<class T> Quat<T> log(Quat<T> q)
 {
     if (q.isReal())
     {
         if (q.w > 0)
         {
-            return Quaternion<T>((T) log(q.w));
+            return Quat<T>((T) log(q.w));
         }
         else if (q.w < 0)
         {
@@ -293,12 +293,12 @@ template<class T> Quaternion<T> log(Quaternion<T> q)
             // of (1, 0, 0) here and whereever else a similar choice is
             // necessary.  Geometrically, the set of roots is a sphere
             // of radius PI centered at ln(-w) on the real axis.
-            return Quaternion<T>((T) log(-q.w), (T) PI, 0, 0);
+            return Quat<T>((T) log(-q.w), (T) PI, 0, 0);
         }
         else
         {
             // error . . . ln(0) not defined
-            return Quaternion<T>(0);
+            return Quat<T>(0);
         }
     }
     else
@@ -307,28 +307,28 @@ template<class T> Quaternion<T> log(Quaternion<T> q)
         T r = (T) sqrt(l * l + q.w * q.w);
         T theta = (T) atan2(l, q.w);
         T t = theta / l;
-        return Quaternion<T>((T) log(r), t * q.x, t * q.y, t * q.z);
+        return Quat<T>((T) log(r), t * q.x, t * q.y, t * q.z);
     }
 }
 
 
-template<class T> Quaternion<T> pow(Quaternion<T> q, T s)
+template<class T> Quat<T> pow(Quat<T> q, T s)
 {
     return exp(s * log(q));
 }
 
 
-template<class T> Quaternion<T> pow(Quaternion<T> q, Quaternion<T> p)
+template<class T> Quat<T> pow(Quat<T> q, Quat<T> p)
 {
     return exp(p * log(q));
 }
 
 
-template<class T> Quaternion<T> sin(Quaternion<T> q)
+template<class T> Quat<T> sin(Quat<T> q)
 {
     if (q.isReal())
     {
-        return Quaternion<T>((T) sin(q.w));
+        return Quat<T>((T) sin(q.w));
     }
     else
     {
@@ -343,16 +343,16 @@ template<class T> Quaternion<T> sin(Quaternion<T> q)
         T c0 = (T) -0.5 * e0 * il * c;
         T c1 = (T)  0.5 * e1 * il * c;
 
-        return Quaternion<T>((T) 0.5 * e0 * s, c0 * q.x, c0 * q.y, c0 * q.z) +
-            Quaternion<T>((T) 0.5 * e1 * s, c1 * q.x, c1 * q.y, c1 * q.z);
+        return Quat<T>((T) 0.5 * e0 * s, c0 * q.x, c0 * q.y, c0 * q.z) +
+            Quat<T>((T) 0.5 * e1 * s, c1 * q.x, c1 * q.y, c1 * q.z);
     }
 }
 
-template<class T> Quaternion<T> cos(Quaternion<T> q)
+template<class T> Quat<T> cos(Quat<T> q)
 {
     if (q.isReal())
     {
-        return Quaternion<T>((T) cos(q.w));
+        return Quat<T>((T) cos(q.w));
     }
     else
     {
@@ -367,12 +367,12 @@ template<class T> Quaternion<T> cos(Quaternion<T> q)
         T c0 = (T)  0.5 * e0 * il * s;
         T c1 = (T) -0.5 * e1 * il * s;
 
-        return Quaternion<T>((T) 0.5 * e0 * c, c0 * q.x, c0 * q.y, c0 * q.z) +
-            Quaternion<T>((T) 0.5 * e1 * c, c1 * q.x, c1 * q.y, c1 * q.z);
+        return Quat<T>((T) 0.5 * e0 * c, c0 * q.x, c0 * q.y, c0 * q.z) +
+            Quat<T>((T) 0.5 * e1 * c, c1 * q.x, c1 * q.y, c1 * q.z);
     }
 }
 
-template<class T> Quaternion<T> sqrt(Quaternion<T> q)
+template<class T> Quat<T> sqrt(Quat<T> q)
 {
     // In general, the square root of a quaternion has two values, one
     // of which is the negative of the other.  However, any negative purely
@@ -382,9 +382,9 @@ template<class T> Quaternion<T> sqrt(Quaternion<T> q)
     if (q.isReal())
     {
         if (q.w >= 0)
-            return Quaternion<T>((T) sqrt(q.w), 0, 0, 0);
+            return Quat<T>((T) sqrt(q.w), 0, 0, 0);
         else
-            return Quaternion<T>(0, (T) sqrt(-q.w), 0, 0);
+            return Quat<T>(0, (T) sqrt(-q.w), 0, 0);
     }
     else
     {
@@ -395,42 +395,42 @@ template<class T> Quaternion<T> sqrt(Quaternion<T> q)
             T m = (T) sqrt((T) 0.5 * (r + q.w));
             T l = b / (2 * m);
             T t = l / b;
-            return Quaternion<T>(m, q.x * t, q.y * t, q.z * t);
+            return Quat<T>(m, q.x * t, q.y * t, q.z * t);
         }
         else
         {
             T l = (T) sqrt((T) 0.5 * (r - q.w));
             T m = b / (2 * l);
             T t = l / b;
-            return Quaternion<T>(m, q.x * t, q.y * t, q.z * t);
+            return Quat<T>(m, q.x * t, q.y * t, q.z * t);
         }
     }
 }
 
-template<class T> T real(Quaternion<T> q)
+template<class T> T real(Quat<T> q)
 {
     return q.w;
 }
 
-template<class T> Vector3<T> imag(Quaternion<T> q)
+template<class T> Vector3<T> imag(Quat<T> q)
 {
     return Vector3<T>(q.x, q.y, q.z);
 }
 
 
-// Quaternion methods
+// Quat methods
 
-template<class T> bool Quaternion<T>::isReal() const
+template<class T> bool Quat<T>::isReal() const
 {
     return (x == 0 && y == 0 && z == 0);
 }
 
-template<class T> bool Quaternion<T>::isPure() const
+template<class T> bool Quat<T>::isPure() const
 {
     return w == 0;
 }
 
-template<class T> T Quaternion<T>::normalize()
+template<class T> T Quat<T>::normalize()
 {
     T s = (T) sqrt(w * w + x * x + y * y + z * z);
     T invs = (T) 1 / (T) s;
@@ -444,7 +444,7 @@ template<class T> T Quaternion<T>::normalize()
 
 // Set to the unit quaternion representing an axis angle rotation.  Assume
 // that axis is a unit vector
-template<class T> void Quaternion<T>::setAxisAngle(Vector3<T> axis, T angle)
+template<class T> void Quat<T>::setAxisAngle(Vector3<T> axis, T angle)
 {
     T s, c;
     
@@ -458,7 +458,7 @@ template<class T> void Quaternion<T>::setAxisAngle(Vector3<T> axis, T angle)
 
 // Assuming that this a unit quaternion, return the in axis/angle form the
 // orientation which it represents.
-template<class T> void Quaternion<T>::getAxisAngle(Vector3<T>& axis,
+template<class T> void Quat<T>::getAxisAngle(Vector3<T>& axis,
                                                    T& angle) const
 {
     // The quaternion has the form:
@@ -488,7 +488,7 @@ template<class T> void Quaternion<T>::getAxisAngle(Vector3<T>& axis,
 
 
 // Convert this (assumed to be normalized) quaternion to a rotation matrix
-template<class T> Matrix4<T> Quaternion<T>::toMatrix4() const
+template<class T> Matrix4<T> Quat<T>::toMatrix4() const
 {
     T wx = w * x * 2;
     T wy = w * y * 2;
@@ -508,7 +508,7 @@ template<class T> Matrix4<T> Quaternion<T>::toMatrix4() const
 
 
 // Convert this (assumed to be normalized) quaternion to a rotation matrix
-template<class T> Matrix3<T> Quaternion<T>::toMatrix3() const
+template<class T> Matrix3<T> Quat<T>::toMatrix3() const
 {
     T wx = w * x * 2;
     T wy = w * y * 2;
@@ -526,7 +526,7 @@ template<class T> Matrix3<T> Quaternion<T>::toMatrix3() const
 }
 
 
-template<class T> T dot(Quaternion<T> a, Quaternion<T> b)
+template<class T> T dot(Quat<T> a, Quat<T> b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 }
@@ -536,8 +536,8 @@ template<class T> T dot(Quaternion<T> a, Quaternion<T> b)
  *  interpolating rotations, so shortest path between rotations will be
  *  taken.
  */
-template<class T> Quaternion<T> Quaternion<T>::slerp(const Quaternion<T>& q0,
-                                                     const Quaternion<T>& q1,
+template<class T> Quat<T> Quat<T>::slerp(const Quat<T>& q0,
+                                                     const Quat<T>& q1,
                                                      T t)
 {
     const double Nlerp_Threshold = 0.99999;
@@ -547,7 +547,7 @@ template<class T> Quaternion<T> Quaternion<T>::slerp(const Quaternion<T>& q0,
     // Assuming the quaternions representat rotations, ensure that we interpolate
     // through the shortest path by inverting one of the quaternions if the
     // angle between them is negative.
-    Quaternion qstart;
+    Quat qstart;
     if (cosAngle < 0)
     {
         qstart = -q0;
@@ -563,7 +563,7 @@ template<class T> Quaternion<T> Quaternion<T>::slerp(const Quaternion<T>& q0,
     // very small angles.
     if (cosAngle > (T) Nlerp_Threshold)
     {
-        Quaternion<T> q = (1 - t) * qstart + t * q1;
+        Quat<T> q = (1 - t) * qstart + t * q1;
         q.normalize();
         return q;
     }
@@ -581,7 +581,7 @@ template<class T> Quaternion<T> Quaternion<T>::slerp(const Quaternion<T>& q0,
     T interpolatedAngle = t * angle;
 
     // qstart and q2 will form an orthonormal basis in the plane of interpolation.
-    Quaternion q2 = q1 - qstart * cosAngle;
+    Quat q2 = q1 - qstart * cosAngle;
     q2.normalize();
 
     return qstart * (T) cos(interpolatedAngle) + q2 * (T) sin(interpolatedAngle);
@@ -600,7 +600,7 @@ template<class T> Quaternion<T> Quaternion<T>::slerp(const Quaternion<T>& q0,
  *  vectors point in opposite directions, there is no unique axis and
  *  (arbitrarily) a rotation about the x axis will be chosen.
  */
-template<class T> Quaternion<T> Quaternion<T>::vecToVecRotation(const Vector3<T>& v0,
+template<class T> Quat<T> Quat<T>::vecToVecRotation(const Vector3<T>& v0,
                                                                 const Vector3<T>& v1)
 {
     // We need sine and cosine of half the angle between v0 and v1, so
@@ -619,23 +619,23 @@ template<class T> Quaternion<T> Quaternion<T>::vecToVecRotation(const Vector3<T>
         // v0 and v1.
         Vector3<T> rotAxis = half ^ v1;
         T cosAngle = half * v1;
-        return Quaternion<T>(cosAngle, rotAxis.x, rotAxis.y, rotAxis.z);
+        return Quat<T>(cosAngle, rotAxis.x, rotAxis.y, rotAxis.z);
     }
     else
     {
         // The vectors point in exactly opposite directions, so there is
         // no unique axis of rotation. Rotating v0 180 degrees about any
         // axis will map it to v1; we'll choose the x-axis.
-        return Quaternion<T>((T) 0.0, (T) 1.0, (T) 0.0, (T) 0.0);
+        return Quat<T>((T) 0.0, (T) 1.0, (T) 0.0, (T) 0.0);
     }
 }
 
 
 /*! Create a quaternion from a rotation matrix
  */
-template<class T> Quaternion<T> Quaternion<T>::matrixToQuaternion(const Matrix3<T>& m)
+template<class T> Quat<T> Quat<T>::matrixToQuaternion(const Matrix3<T>& m)
 {
-    Quaternion<T> q;
+    Quat<T> q;
     T trace = m[0][0] + m[1][1] + m[2][2];
     T root;
     T epsilon = std::numeric_limits<T>::epsilon() * (T) 1e3;
@@ -676,9 +676,9 @@ template<class T> Quaternion<T> Quaternion<T>::matrixToQuaternion(const Matrix3<
 /*! Assuming that this is a unit quaternion representing an orientation,
  *  apply a rotation of angle radians about the specfied axis
  */
-template<class T> void Quaternion<T>::rotate(Vector3<T> axis, T angle)
+template<class T> void Quat<T>::rotate(Vector3<T> axis, T angle)
 {
-    Quaternion q;
+    Quat q;
     q.setAxisAngle(axis, angle);
     *this = q * *this;
 }
@@ -686,62 +686,62 @@ template<class T> void Quaternion<T>::rotate(Vector3<T> axis, T angle)
 
 // Assuming that this is a unit quaternion representing an orientation,
 // apply a rotation of angle radians about the x-axis
-template<class T> void Quaternion<T>::xrotate(T angle)
+template<class T> void Quat<T>::xrotate(T angle)
 {
     T s, c;
 
     Math<T>::sincos(angle * (T) 0.5, s, c);
-    *this = Quaternion<T>(c, s, 0, 0) * *this;
+    *this = Quat<T>(c, s, 0, 0) * *this;
 }
 
 // Assuming that this is a unit quaternion representing an orientation,
 // apply a rotation of angle radians about the y-axis
-template<class T> void Quaternion<T>::yrotate(T angle)
+template<class T> void Quat<T>::yrotate(T angle)
 {
     T s, c;
 
     Math<T>::sincos(angle * (T) 0.5, s, c);
-    *this = Quaternion<T>(c, 0, s, 0) * *this;
+    *this = Quat<T>(c, 0, s, 0) * *this;
 }
 
 // Assuming that this is a unit quaternion representing an orientation,
 // apply a rotation of angle radians about the z-axis
-template<class T> void Quaternion<T>::zrotate(T angle)
+template<class T> void Quat<T>::zrotate(T angle)
 {
     T s, c;
 
     Math<T>::sincos(angle * (T) 0.5, s, c);
-    *this = Quaternion<T>(c, 0, 0, s) * *this;
+    *this = Quat<T>(c, 0, 0, s) * *this;
 }
 
 
-template<class T> Quaternion<T> Quaternion<T>::xrotation(T angle)
+template<class T> Quat<T> Quat<T>::xrotation(T angle)
 {
     T s, c;
     Math<T>::sincos(angle * (T) 0.5, s, c);
-    return Quaternion<T>(c, s, 0, 0);
+    return Quat<T>(c, s, 0, 0);
 }
 
-template<class T> Quaternion<T> Quaternion<T>::yrotation(T angle)
+template<class T> Quat<T> Quat<T>::yrotation(T angle)
 {
     T s, c;
     Math<T>::sincos(angle * (T) 0.5, s, c);
-    return Quaternion<T>(c, 0, s, 0);
+    return Quat<T>(c, 0, s, 0);
 }
 
-template<class T> Quaternion<T> Quaternion<T>::zrotation(T angle)
+template<class T> Quat<T> Quat<T>::zrotation(T angle)
 {
     T s, c;
     Math<T>::sincos(angle * (T) 0.5, s, c);
-    return Quaternion<T>(c, 0, 0, s);
+    return Quat<T>(c, 0, 0, s);
 }
 
 /*! Determine an orientation that will make the negative z-axis point from
  *  from the observer to the target, with the y-axis pointing in direction
  *  of the component of 'up' that is orthogonal to the z-axis.
  */
-template<class T> Quaternion<T> 
-Quaternion<T>::lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up)
+template<class T> Quat<T> 
+Quat<T>::lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<T>& up)
 {
     Vector3<T> n = to - from;
     n.normalize();
@@ -749,7 +749,7 @@ Quaternion<T>::lookAt(const Point3<T>& from, const Point3<T>& to, const Vector3<
     v.normalize();
     Vector3<T> u = v ^ n;
 
-    return Quaternion<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
+    return Quat<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
 }
 
 #endif // _QUATERNION_H_

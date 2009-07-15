@@ -450,6 +450,11 @@ win32 {
 
     RC_FILE = celestia/qt/celestia.rc
     DEFINES += _CRT_SECURE_NO_WARNINGS
+
+    # Disable the regrettable min and max macros in windows.h
+    DEFINES += NOMINMAX
+
+    LIBS += /nodefaultlib:libcmt.lib
 }
 
 unix {
