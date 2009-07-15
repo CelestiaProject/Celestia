@@ -18,31 +18,7 @@
 #include <celmath/plane.h>
 #include <celengine/observer.h>
 #include <vector>
-
-
-// Compatibility
-template<typename T>
-Eigen::Matrix<T, 3, 1> toEigen(const Vector3<T>& v)
-{
-    return Eigen::Matrix<T, 3, 1>(v.x, v.y, v.z);
-}
-
-template<typename T>
-Eigen::Matrix<T, 3, 1> toEigen(const Point3<T>& p)
-{
-    return Eigen::Matrix<T, 3, 1>(p.x, p.y, p.z);
-}
-
-inline Eigen::Quaternionf toEigen(const Quatf& q)
-{
-    return Eigen::Quaternionf(q.w, q.x, q.y, q.z);
-}
-
-inline Eigen::Quaterniond toEigen(const Quatd& q)
-{
-    return Eigen::Quaterniond(q.w, q.x, q.y, q.z);
-}
-
+#include "eigenport.h"
 
 // The DynamicOctree and StaticOctree template arguments are:
 // OBJ:  object hanging from the node,

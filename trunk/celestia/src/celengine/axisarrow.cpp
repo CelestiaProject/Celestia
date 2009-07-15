@@ -1,6 +1,7 @@
 // axisarrow.cpp
 //
-// Copyright (C) 2007, Celestia Development Team
+// Copyright (C) 2007-2009, Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -16,7 +17,9 @@
 #include "frame.h"
 #include "body.h"
 #include "timelinephase.h"
+#include "eigenport.h"
 
+using namespace Eigen;
 using namespace std;
 
 static const unsigned int MaxArrowSections = 100;
@@ -122,118 +125,6 @@ static void RenderZ()
 }
 
 
-#if 0
-void RenderAxisArrows(const Quatf& orientation, float scale, float opacity)
-{
-    glPushMatrix();
-    glRotate(orientation);
-    glScalef(scale, scale, scale);
-	
-    glDisable(GL_LIGHTING);
-
-#if 0
-    // Simple line axes
-    glBegin(GL_LINES);
-	
-    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-1.0f, 0.0f, 0.0f);
-
-    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 1.0f);
-
-    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 1.0f, 0.0f);
-	
-    glEnd();
-#endif
-
-    float shaftLength = 0.85f;
-    float headLength = 0.10f;
-    float shaftRadius = 0.010f;
-    float headRadius = 0.025f;
-    unsigned int nSections = 30;
-    float labelScale = 0.1f;
-	
-    // x-axis
-    glPushMatrix();
-    glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-    glColor4f(1.0f, 0.0f, 0.0f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
-    glTranslatef(0.1f, 0.0f, 0.75f);
-    glScalef(labelScale, labelScale, labelScale);
-    RenderX();
-    glPopMatrix();
-
-    // y-axis
-    glPushMatrix();
-    glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
-    glColor4f(0.0f, 1.0f, 0.0f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
-    glTranslatef(0.1f, 0.0f, 0.75f);
-    glScalef(labelScale, labelScale, labelScale);
-    RenderY();
-    glPopMatrix();
-
-    // z-axis
-    glPushMatrix();
-    glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-    glColor4f(0.0f, 0.0f, 1.0f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
-    glTranslatef(0.1f, 0.0f, 0.75f);
-    glScalef(labelScale, labelScale, labelScale);
-    RenderZ();
-    glPopMatrix();
-	
-    glPopMatrix();
-}
-#endif
-
-
-void RenderSunDirectionArrow(const Vec3f& direction, float scale, float opacity)
-{
-    glPushMatrix();
-    glRotate(Quatf::vecToVecRotation(Vec3f(0.0f, 0.0f, 1.0f), direction));
-    glScalef(scale, scale, scale);
-	
-    glDisable(GL_LIGHTING);
-
-    float shaftLength = 0.85f;
-    float headLength = 0.10f;
-    float shaftRadius = 0.010f;
-    float headRadius = 0.025f;
-    unsigned int nSections = 30;
-	
-    glColor4f(1.0f, 1.0f, 0.0f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
-	
-    glPopMatrix();
-}
-
-
-void RenderVelocityArrow(const Vec3f& direction, float scale, float opacity)
-{
-    glPushMatrix();
-    glRotate(Quatf::vecToVecRotation(Vec3f(0.0f, 0.0f, 1.0f), direction));
-    glScalef(scale, scale, scale);
-	
-    glDisable(GL_LIGHTING);
-
-    float shaftLength = 0.85f;
-    float headLength = 0.10f;
-    float shaftRadius = 0.010f;
-    float headRadius = 0.025f;
-    unsigned int nSections = 30;
-	
-    glColor4f(0.6f, 0.6f, 0.9f, opacity);
-    RenderArrow(shaftLength, headLength, shaftRadius, headRadius, nSections);
-	
-    glPopMatrix();
-}
-
-
 /****** ArrowReferenceMark base class ******/
 
 ArrowReferenceMark::ArrowReferenceMark(const Body& _body) :
@@ -269,15 +160,16 @@ ArrowReferenceMark::render(Renderer* /* renderer */,
                            float /* discSize */,
                            double tdb) const
 {
-    Vec3d v = getDirection(tdb);
-    if (v.length() < 1.0e-12)
+    Vector3d v = getDirection(tdb);
+    if (v.norm() < 1.0e-12)
     {
         // Skip rendering of zero-length vectors
         return;
     }
 
     v.normalize();
-    Quatd q = Quatd::vecToVecRotation(Vec3d(0.0, 0.0, 1.0), v);
+    Quaterniond q;
+    q.setFromTwoVectors(Vector3d::UnitZ(), v);
 
     if (opacity == 1.0f)
     {
@@ -299,7 +191,7 @@ ArrowReferenceMark::render(Renderer* /* renderer */,
     }
 
     glPushMatrix();
-    glRotate(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
+    glRotate(q.cast<float>());
     glScalef(size, size, size);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
@@ -360,7 +252,7 @@ AxesReferenceMark::render(Renderer* /* renderer */,
                           float /* discSize */,
                           double tdb) const
 {
-    Quatd q = getOrientation(tdb);
+    Quaterniond q = getOrientation(tdb);
 
     if (opacity == 1.0f)
     {
@@ -384,7 +276,7 @@ AxesReferenceMark::render(Renderer* /* renderer */,
     glDisable(GL_TEXTURE_2D);
 
     glPushMatrix();
-    glRotate(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
+    glRotate(q.cast<float>());
     glScalef(size, size, size);
 	
     glDisable(GL_LIGHTING);
@@ -465,12 +357,12 @@ VelocityVectorArrow::VelocityVectorArrow(const Body& _body) :
     setSize(body.getRadius() * 2.0f);
 }
 
-Vec3d
+Vector3d
 VelocityVectorArrow::getDirection(double tdb) const
 {
     const TimelinePhase* phase = body.getTimeline()->findPhase(tdb);
-    return phase->orbit()->velocityAtTime(tdb) *
-        phase->orbitFrame()->getOrientation(tdb).toMatrix3();
+    return toEigen(phase->orbit()->velocityAtTime(tdb) *
+                   phase->orbitFrame()->getOrientation(tdb).toMatrix3());
 }
 
 
@@ -484,7 +376,7 @@ SunDirectionArrow::SunDirectionArrow(const Body& _body) :
     setSize(body.getRadius() * 2.0f);
 }
 
-Vec3d
+Vector3d
 SunDirectionArrow::getDirection(double tdb) const
 {
     const Body* b = &body;
@@ -499,11 +391,11 @@ SunDirectionArrow::getDirection(double tdb) const
 
     if (sun != NULL)
     {
-        return Selection(sun).getPosition(tdb) - body.getPosition(tdb);
+        return toEigen(Selection(sun).getPosition(tdb) - body.getPosition(tdb));
     }
     else
     {
-        return Vec3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }
 }
 
@@ -518,12 +410,12 @@ SpinVectorArrow::SpinVectorArrow(const Body& _body) :
     setSize(body.getRadius() * 2.0f);
 }
 
-Vec3d
+Vector3d
 SpinVectorArrow::getDirection(double tdb) const
 {
     const TimelinePhase* phase = body.getTimeline()->findPhase(tdb);
-    return phase->rotationModel()->angularVelocityAtTime(tdb) *
-        phase->bodyFrame()->getOrientation(tdb).toMatrix3();
+    return toEigen(phase->rotationModel()->angularVelocityAtTime(tdb) *
+                   phase->bodyFrame()->getOrientation(tdb).toMatrix3());
 #if 0
     return body.getRotationModel(tdb)->angularVelocityAtTime(tdb) *
         body.getEclipticToFrame(tdb).toMatrix3();
@@ -546,10 +438,10 @@ BodyToBodyDirectionArrow::BodyToBodyDirectionArrow(const Body& _body, const Sele
 }
 
 
-Vec3d
+Vector3d
 BodyToBodyDirectionArrow::getDirection(double tdb) const
 {
-    return target.getPosition(tdb) - body.getPosition(tdb);
+    return toEigen(target.getPosition(tdb) - body.getPosition(tdb));
 }
 
 
@@ -563,10 +455,10 @@ BodyAxisArrows::BodyAxisArrows(const Body& _body) :
     setSize(body.getRadius() * 2.0f);
 }
 
-Quatd
+Quaterniond
 BodyAxisArrows::getOrientation(double tdb) const
 {
-    return ~(Quatd::yrotation(PI) * body.getEclipticToBodyFixed(tdb));
+    return (Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * toEigen(body.getEclipticToBodyFixed(tdb))).conjugate();
 }
 
 
@@ -580,8 +472,8 @@ FrameAxisArrows::FrameAxisArrows(const Body& _body) :
     setSize(body.getRadius() * 2.0f);
 }
 
-Quatd
+Quaterniond
 FrameAxisArrows::getOrientation(double tdb) const
 {
-    return ~body.getEclipticToFrame(tdb);
+    return toEigen(~body.getEclipticToFrame(tdb));
 }
