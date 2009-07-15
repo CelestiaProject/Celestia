@@ -2320,7 +2320,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = NO;
-				HEADER_SEARCH_PATHS = ../src;
+				HEADER_SEARCH_PATHS = (
+					../src,
+					../thirdparty/Eigen,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -2372,7 +2375,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = NO;
-				HEADER_SEARCH_PATHS = ../src;
+				HEADER_SEARCH_PATHS = (
+					../src,
+					../thirdparty/Eigen,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -2494,7 +2500,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = NO;
-				HEADER_SEARCH_PATHS = ../src;
+				HEADER_SEARCH_PATHS = (
+					../src,
+					../thirdparty/Eigen,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -2536,7 +2545,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PKGINFO_FILE = NO;
-				HEADER_SEARCH_PATHS = ../src;
+				HEADER_SEARCH_PATHS = (
+					../src,
+					../thirdparty/Eigen,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
