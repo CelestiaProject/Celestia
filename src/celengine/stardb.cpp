@@ -1,6 +1,7 @@
 // stardb.cpp
 //
-// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,6 +27,7 @@
 #include "meshmanager.h"
 #include <celutil/debug.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -513,25 +515,24 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
                                     float limitingMag) const
 {
     // Compute the bounding planes of an infinite view frustum
-    Planef frustumPlanes[5];
-    Vec3f planeNormals[5];
-    Mat3f rot = orientation.toMatrix3();
+    Hyperplane<float, 3> frustumPlanes[5];
+    Vector3f planeNormals[5];
+    Eigen::Matrix3f rot = toEigen(orientation).toRotationMatrix();
     float h = (float) tan(fovY / 2);
     float w = h * aspectRatio;
-    planeNormals[0] = Vec3f(0, 1, -h);
-    planeNormals[1] = Vec3f(0, -1, -h);
-    planeNormals[2] = Vec3f(1, 0, -w);
-    planeNormals[3] = Vec3f(-1, 0, -w);
-    planeNormals[4] = Vec3f(0, 0, -1);
+    planeNormals[0] = Vector3f(0, 1, -h);
+    planeNormals[1] = Vector3f(0, -1, -h);
+    planeNormals[2] = Vector3f(1, 0, -w);
+    planeNormals[3] = Vector3f(-1, 0, -w);
+    planeNormals[4] = Vector3f(0, 0, -1);
     for (int i = 0; i < 5; i++)
     {
-        planeNormals[i].normalize();
-        planeNormals[i] = planeNormals[i] * rot;
-        frustumPlanes[i] = Planef(planeNormals[i], position);
+        planeNormals[i] = rot.transpose() * planeNormals[i].normalized();
+        frustumPlanes[i] = Hyperplane<float, 3>(planeNormals[i], toEigen(position));
     }
 
     octreeRoot->processVisibleObjects(starHandler,
-                                      position,
+                                      toEigen(position),
                                       frustumPlanes,
                                       limitingMag,
                                       STAR_OCTREE_ROOT_SIZE);
@@ -543,7 +544,7 @@ void StarDatabase::findCloseStars(StarHandler& starHandler,
                                   float radius) const
 {
     octreeRoot->processCloseObjects(starHandler,
-                                    position,
+                                    toEigen(position),
                                     radius,
                                     STAR_OCTREE_ROOT_SIZE);
 }
@@ -1348,7 +1349,7 @@ void StarDatabase::buildOctree()
     DPRINTF(1, "Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
-    DynamicStarOctree* root = new DynamicStarOctree(Point3f(1000, 1000, 1000),
+    DynamicStarOctree* root = new DynamicStarOctree(Vector3f(1000.0f, 1000.0f, 1000.0f),
                                                     absMag);
     for (unsigned int i = 0; i < unsortedStars.size(); ++i)
     {

@@ -28,6 +28,7 @@
 #include "render.h"
 #include "texture.h"
 #include <math.h>
+#include <Eigen/Geometry>
 using namespace std;
 
 static int cntrTexWidth = 512, cntrTexHeight = 512; 
@@ -286,11 +287,14 @@ bool Globular::pick(const Ray3d& ray,
     Quatf qf= getOrientation();
     Quatd qd(qf.w, qf.x, qf.y, qf.z);
 
-    return testIntersection(Ray3d(Point3d() + (ray.origin - getPosition()), ray.direction) * conjugate(qd).toMatrix3(),
+    Eigen::Vector3d p(getPosition().x, getPosition().y, getPosition().z);
+    return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(Eigen::Quaterniond(qf.w, qf.x, qf.y, qf.z).toRotationMatrix()),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
                             cosAngleToBoundCenter);
 }
+
+
 bool Globular::load(AssociativeArray* params, const string& resPath)
 {
     // Load the basic DSO parameters first
@@ -345,8 +349,8 @@ void Globular::renderGlobularPointSprites(const GLContext&,
 	
 	/*
      * Is the globular's apparent size big enough to
-     * be noticeable on screen? If it's not, break right here to
-     * avoid all the overhead of the matrix transformations and
+     * be noticeable on screen? If it's not, break right here to
+     * avoid all the overhead of the matrix transformations and
 	 * GL state changes: 
 	 */
 	

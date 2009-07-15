@@ -1,6 +1,7 @@
 // universe.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,7 +11,6 @@
 #ifndef _UNIVERSE_H_
 #define _UNIVERSE_H_
 
-#include <vector>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celengine/univcoord.h>
@@ -18,11 +18,13 @@
 #include <celengine/dsodb.h>
 #include <celengine/solarsys.h>
 #include <celengine/deepskyobj.h>
-#include <celengine/asterism.h>
-#include <celengine/boundaries.h>
 #include <celengine/marker.h>
 #include <celengine/selection.h>
+#include <vector>
 
+
+class ConstellationBoundaries;
+class Asterism;
 
 class Universe
 {
@@ -39,8 +41,8 @@ class Universe
     DSODatabase* getDSOCatalog() const;
     void setDSOCatalog(DSODatabase*);
 
-    AsterismList* getAsterisms() const;
-    void setAsterisms(AsterismList*);
+    std::vector<Asterism*>* getAsterisms() const;
+    void setAsterisms(std::vector<Asterism*>*);
 
     ConstellationBoundaries* getBoundaries() const;
     void setBoundaries(ConstellationBoundaries*);
@@ -120,7 +122,7 @@ class Universe
     StarDatabase* starCatalog;
     DSODatabase*             dsoCatalog;
     SolarSystemCatalog* solarSystemCatalog;
-    AsterismList* asterisms;
+    std::vector<Asterism*>* asterisms;
     ConstellationBoundaries* boundaries;
     MarkerList* markers;
 

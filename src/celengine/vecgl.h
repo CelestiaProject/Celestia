@@ -1,6 +1,7 @@
 // vecgl.h
 //
-// Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2000-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // Overloaded versions of GL functions
 //
@@ -9,13 +10,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _VECGL_H_
-#define _VECGL_H_
+#ifndef _CELENGINE_VECGL_H_
+#define _CELENGINE_VECGL_H_
 
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celutil/color.h>
-
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 inline void glVertex(const Point3f& p)
 {
@@ -120,5 +122,37 @@ inline void glAmbientLightColor(const Color& color)
                            color.alpha()).x));
 }
 
-#endif // _VECGL_H_
+
+/**** Eigen helpers for OpenGL ****/
+
+inline void glMatrix(const Eigen::Matrix4f& m)
+{
+    glMultMatrixf(m.data());
+}
+
+inline void glMatrix(const Eigen::Matrix4d& m)
+{
+    glMultMatrixd(m.data());
+}
+
+inline void glScale(const Eigen::Vector3f& scale)
+{
+    glScalef(scale.x(), scale.y(), scale.z());
+}
+
+inline void glRotate(const Eigen::Quaternionf& q)
+{
+    Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
+    m.corner<3, 3>(Eigen::TopLeft) = q.toRotationMatrix();
+    glMultMatrixf(m.data());
+}
+
+inline void glRotate(const Eigen::Quaterniond& q)
+{
+    Eigen::Matrix4d m = Eigen::Matrix4d::Identity();
+    m.corner<3, 3>(Eigen::TopLeft) = q.toRotationMatrix();
+    glMultMatrixd(m.data());
+}
+
+#endif // _CELENGINE_VECGL_H_
 

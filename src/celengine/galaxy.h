@@ -1,6 +1,7 @@
 // galaxy.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel, Fridger Schrempp, and Toti
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

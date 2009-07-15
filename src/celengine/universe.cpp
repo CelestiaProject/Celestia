@@ -1,6 +1,7 @@
 // universe.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // A container for catalogs of galaxies, stars, and planets.
 //
@@ -14,6 +15,8 @@
 #include <celutil/utf8.h>
 #include <cassert>
 #include "astro.h"
+#include "asterism.h"
+#include "boundaries.h"
 #include "3dsmesh.h"
 #include "meshmanager.h"
 #include "render.h"
@@ -23,6 +26,7 @@
 
 #define ANGULAR_RES 3.5e-6
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -321,7 +325,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
         return true;
 
     Point3d bpos = body->getAstrocentricPosition(pickInfo->jd);
-    Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
+    Vec3d bodyDir = bpos - Point3d(pickInfo->pickRay.origin.x(), pickInfo->pickRay.origin.y(), pickInfo->pickRay.origin.z());
     double distance = bodyDir.length();
 
     // Check the apparent radius of the orbit against our tolerance factor.
@@ -337,7 +341,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     }
 
     bodyDir.normalize();
-    Vec3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
+    Vec3d bodyMiss = bodyDir - Vec3d(pickInfo->pickRay.direction.x(), pickInfo->pickRay.direction.y(), pickInfo->pickRay.direction.z());
     double sinAngle2 = sqrt(bodyMiss * bodyMiss)/2.0;
 
     if (sinAngle2 <= pickInfo->sinAngle2Closest)
@@ -356,7 +360,8 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
-    Point3d bpos = body->getAstrocentricPosition(pickInfo->jd);
+    Point3d bpos_old = body->getAstrocentricPosition(pickInfo->jd);
+    Vector3d bpos(bpos_old.x, bpos_old.y, bpos_old.z);
     float radius = body->getRadius();
     double distance = -1.0;
 
@@ -377,8 +382,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
                 Vec3d ellipsoidAxes(semiAxes.x, semiAxes.y, semiAxes.z);
                 // Transform rotate the pick ray into object coordinates
                 Mat3d m = conjugate(body->getEclipticToEquatorial(pickInfo->jd)).toMatrix3();
-                Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
-                        pickInfo->pickRay.direction);
+                Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
                 r = r * m;
                 if (!testIntersection(r, Ellipsoidd(ellipsoidAxes), distance))
                     distance = -1.0;
@@ -390,8 +394,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             Quatf qf = body->getOrientation();
             Quatd qd(qf.w, qf.x, qf.y, qf.z);
             Mat3d m = conjugate(qd * body->getEclipticToBodyFixed(pickInfo->jd)).toMatrix3();
-            Ray3d r(Point3d(0, 0, 0) + (pickInfo->pickRay.origin - bpos),
-                    pickInfo->pickRay.direction);
+            Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
             r = r * m;
 
             Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
@@ -403,9 +406,7 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // factor.  Thus, the ray needs to be multiplied by the inverse of
             // the mesh scale factor.
             double is = 1.0 / scaleFactor;
-            r.origin.x *= is;
-            r.origin.y *= is;
-            r.origin.z *= is;
+            r.origin *= is;
             r.direction *= is;
 
             if (geometry != NULL)
@@ -417,10 +418,10 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         // Make also sure that the pickRay does not intersect the body in the
         // opposite hemisphere! Hence, need again the "bodyMiss" angle
 
-        Vec3d bodyDir = bpos - pickInfo->pickRay.origin;
+        Vector3d bodyDir = bpos - pickInfo->pickRay.origin;
         bodyDir.normalize();
-        Vec3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
-        double sinAngle2 = sqrt(bodyMiss * bodyMiss)/2.0;
+        Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
+        double sinAngle2 = bodyMiss.norm() / 2.0;
 
 
         if (sinAngle2 < sin(PI/4.0) && distance > 0.0 &&
@@ -896,7 +897,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
 
     CloseDSOPicker closePicker(orig, dir, renderFlags, 1e9, tolerance);
 
-    dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
+    dsoCatalog->findCloseDSOs(closePicker, toEigen(orig), 1e9);
     if (closePicker.closestDSO != NULL)
     {
         return Selection(const_cast<DeepSkyObject*>(closePicker.closestDSO));

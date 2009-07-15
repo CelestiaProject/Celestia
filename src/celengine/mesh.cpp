@@ -1,6 +1,7 @@
 // mesh.cpp
 //
-// Copyright (C) 2004-2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,7 +15,10 @@
 #include <cassert>
 #include <iostream>
 #include <algorithm>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -406,40 +410,37 @@ Mesh::pick(const Ray3d& ray, double& distance) const
             do
             {
                 // Get the triangle vertices v0, v1, and v2
-                float* f0 = reinterpret_cast<float*>(vdata + i0 * vertexDesc.stride + posOffset);
-                float* f1 = reinterpret_cast<float*>(vdata + i1 * vertexDesc.stride + posOffset);
-                float* f2 = reinterpret_cast<float*>(vdata + i2 * vertexDesc.stride + posOffset);
-                Point3d v0(f0[0], f0[1], f0[2]);
-                Point3d v1(f1[0], f1[1], f1[2]);
-                Point3d v2(f2[0], f2[1], f2[2]);
+                Vector3d v0 = Map<Vector3f>(reinterpret_cast<float*>(vdata + i0 * vertexDesc.stride + posOffset)).cast<double>();
+                Vector3d v1 = Map<Vector3f>(reinterpret_cast<float*>(vdata + i1 * vertexDesc.stride + posOffset)).cast<double>();
+                Vector3d v2 = Map<Vector3f>(reinterpret_cast<float*>(vdata + i2 * vertexDesc.stride + posOffset)).cast<double>();
 
                 // Compute the edge vectors e0 and e1, and the normal n
-                Vec3d e0 = v1 - v0;
-                Vec3d e1 = v2 - v0;
-                Vec3d n = e0 ^ e1;
+                Vector3d e0 = v1 - v0;
+                Vector3d e1 = v2 - v0;
+                Vector3d n = e0.cross(e1);
 
                 // c is the cosine of the angle between the ray and triangle normal
-                double c = n * ray.direction;
+                double c = n.dot(ray.direction);
 
                 // If the ray is parallel to the triangle, it either misses the
                 // triangle completely, or is contained in the triangle's plane.
                 // If it's contained in the plane, we'll still call it a miss.
                 if (c != 0.0)
                 {
-                    double t = (n * (v0 - ray.origin)) / c;
+                    double t = (n.dot(v0 - ray.origin)) / c;
                     if (t < closest && t > 0.0)
                     {
-                        double m00 = e0 * e0;
-                        double m01 = e0 * e1;
-                        double m10 = e1 * e0;
-                        double m11 = e1 * e1;
+                        double m00 = e0.dot(e0);
+                        double m01 = e0.dot(e1);
+                        double m10 = e1.dot(e0);
+                        double m11 = e1.dot(e1);
                         double det = m00 * m11 - m01 * m10;
                         if (det != 0.0)
                         {
-                            Point3d p = ray.point(t);
-                            Vec3d q = p - v0;
-                            double q0 = e0 * q;
-                            double q1 = e1 * q;
+                            Vector3d p = ray.point(t);
+                            Vector3d q = p - v0;
+                            double q0 = e0.dot(q);
+                            double q1 = e1.dot(q);
                             double d = 1.0 / det;
                             double s0 = (m11 * q0 - m01 * q1) * d;
                             double s1 = (m00 * q1 - m10 * q0) * d;

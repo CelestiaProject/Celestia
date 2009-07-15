@@ -34,6 +34,10 @@
 #include <celengine/opencluster.h>
 #include <celengine/nebula.h>
 
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+using namespace Eigen;
 using namespace std;
 
 
@@ -172,32 +176,34 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
 
 
 void DSODatabase::findVisibleDSOs(DSOHandler&    dsoHandler,
-                                  const Point3d& obsPos,
-                                  const Quatf&   obsOrient,
+                                  const Point3d& obsPos2,
+                                  const Quatf&   obsOrient2,
                                   float fovY,
                                   float aspectRatio,
                                   float limitingMag) const
 {
+    Vector3d obsPos(obsPos2.x, obsPos2.y, obsPos2.z);
+    Quaternionf obsOrient(obsOrient2.w, obsOrient2.x, obsOrient2.y, obsOrient2.z);
+
     // Compute the bounding planes of an infinite view frustum
-    Planed frustumPlanes[5];
-    Vec3d  planeNormals[5];
+    Hyperplane<double, 3> frustumPlanes[5];
+    Vector3d  planeNormals[5];
 
-    Quatd obsOrientd(obsOrient.w, obsOrient.x, obsOrient.y, obsOrient.z);
-    Mat3d   rot    = obsOrientd.toMatrix3();
-    double  h      = tan(fovY / 2);
-    double  w      = h * aspectRatio;
+    Quaterniond obsOrientd = obsOrient.cast<double>();
+    Matrix3d    rot    = obsOrientd.toRotationMatrix().transpose();
+    double      h      = tan(fovY / 2);
+    double      w      = h * aspectRatio;
 
-    planeNormals[0] = Vec3d( 0,  1, -h);
-    planeNormals[1] = Vec3d( 0, -1, -h);
-    planeNormals[2] = Vec3d( 1,  0, -w);
-    planeNormals[3] = Vec3d(-1,  0, -w);
-    planeNormals[4] = Vec3d( 0,  0, -1);
+    planeNormals[0] = Vector3d( 0,  1, -h);
+    planeNormals[1] = Vector3d( 0, -1, -h);
+    planeNormals[2] = Vector3d( 1,  0, -w);
+    planeNormals[3] = Vector3d(-1,  0, -w);
+    planeNormals[4] = Vector3d( 0,  0, -1);
 
     for (int i = 0; i < 5; ++i)
     {
-        planeNormals[i].normalize();                        //TODO: prenormalize ?
-        planeNormals[i]    = planeNormals[i] * rot;
-        frustumPlanes[i]   = Planed(planeNormals[i], obsPos);
+        planeNormals[i]    = rot * planeNormals[i].normalized();
+        frustumPlanes[i]   = Hyperplane<double, 3>(planeNormals[i], obsPos);
     }
 
     octreeRoot->processVisibleObjects(dsoHandler,
@@ -208,9 +214,9 @@ void DSODatabase::findVisibleDSOs(DSOHandler&    dsoHandler,
 }
 
 
-void DSODatabase::findCloseDSOs(DSOHandler&    dsoHandler,
-                                const Point3d& obsPos,
-                                float radius) const
+void DSODatabase::findCloseDSOs(DSOHandler&     dsoHandler,
+                                const Vector3d& obsPos,
+                                float           radius) const
 {
     octreeRoot->processCloseObjects(dsoHandler,
                                     obsPos,
@@ -396,7 +402,7 @@ void DSODatabase::buildOctree()
     // TODO: investigate using a different center--it's possible that more
     // objects end up straddling the base level nodes when the center of the
     // octree is at the origin.
-    DynamicDSOOctree* root   = new DynamicDSOOctree(Point3d(0, 0, 0), absMag);
+    DynamicDSOOctree* root   = new DynamicDSOOctree(Vector3d::Zero(), absMag);
     for (int i = 0; i < nDSOs; ++i)
     {
         root->insertObject(DSOs[i], DSO_OCTREE_ROOT_SIZE);

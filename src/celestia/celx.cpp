@@ -16,6 +16,7 @@
 #include <ctime>
 #include <map>
 #include <celengine/astro.h>
+#include <celengine/asterism.h>
 #include <celengine/celestia.h>
 #include <celengine/cmdparser.h>
 #include <celengine/execenv.h>

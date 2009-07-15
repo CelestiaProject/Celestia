@@ -49,7 +49,7 @@ class DSODatabase
                          float limitingMag) const;
 
     void findCloseDSOs(DSOHandler&    dsoHandler,
-                       const Point3d& obsPosition,
+                       const Eigen::Vector3d& obsPosition,
                        float radius) const;
 
     std::string getDSOName    (const DeepSkyObject* const &, bool i18n = false) const;

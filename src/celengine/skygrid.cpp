@@ -20,6 +20,7 @@
 #include "vecgl.h"
 #include "skygrid.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -135,7 +136,7 @@ static const int DEG_MIN_SEC_STEPS[]  =
 
 
 SkyGrid::SkyGrid() :
-    m_orientation(1.0),
+    m_orientation(Quaterniond::Identity()),
     m_lineColor(Color::White),
     m_labelColor(Color::White),
     m_longitudeUnits(LongitudeHours),
@@ -149,10 +150,10 @@ SkyGrid::~SkyGrid()
 }
 
 
-static Vec3d 
-toStandardCoords(const Vec3d& v)
+static Vector3d
+toStandardCoords(const Vector3d& v)
 {
-    return Vec3d(v.x, -v.z, v.y);
+    return Vector3d(v.x(), -v.z(), v.y());
 }
 
 // Compute the difference between two angles in [-PI, PI]
@@ -217,20 +218,20 @@ getCoordLabelVAlign(int planeIndex)
 // u and v are orthogonal vectors with magnitudes equal to the radius of the
 // circle.
 // Return true if there are two solutions.
-template<class T> static bool planeCircleIntersection(const Vector3<T>& planeNormal,
-                                                      const Vector3<T>& center,
-                                                      const Vector3<T>& u,
-                                                      const Vector3<T>& v,
-                                                      Vector3<T>* sol0,
-                                                      Vector3<T>* sol1)
+template<typename T> static bool planeCircleIntersection(const Matrix<T, 3, 1>& planeNormal,
+                                                         const Matrix<T, 3, 1>& center,
+                                                         const Matrix<T, 3, 1>& u,
+                                                         const Matrix<T, 3, 1>& v,
+                                                         Matrix<T, 3, 1>* sol0,
+                                                         Matrix<T, 3, 1>* sol1)
 {
     // Any point p on the plane must satisfy p*N = 0. Thus the intersection points
     // satisfy (center + cos(t)U + sin(t)V)*N = 0
     // This simplifies to an equation of the form:
     // a*cos(t)+b*sin(t)+c = 0, with a=N*U, b=N*V, and c=N*center
-    T a = u * planeNormal;
-    T b = v * planeNormal;
-    T c = center * planeNormal;
+    T a = u.dot(planeNormal);
+    T b = v.dot(planeNormal);
+    T c = center.dot(planeNormal);
     
     // The solution is +-acos((-ac +- sqrt(a^2+b^2-c^2))/(a^2+b^2))
     T s = a * a + b * b;
@@ -260,12 +261,12 @@ template<class T> static bool planeCircleIntersection(const Vector3<T>& planeNor
     
     // Check that we've chosen a solution that produces a point on the
     // plane. If not, we need to use the -acos solution.
-    if (fabs(*sol0 * planeNormal) > 1.0e-8)
+    if (std::abs(sol0->dot(planeNormal)) > 1.0e-8)
     {
         *sol0 = center + cosTheta0 * u - sinTheta0 * v;
     }
     
-    if (fabs(*sol1 * planeNormal) > 1.0e-8)
+    if (std::abs(sol1->dot(planeNormal)) > 1.0e-8)
     {
         *sol1 = center + cosTheta1 * u - sinTheta1 * v;
     }
@@ -407,7 +408,7 @@ SkyGrid::render(Renderer& renderer,
 {
     // 90 degree rotation about the x-axis used to transform coordinates
     // to Celestia's system.
-    Quatd xrot90 = Quatd::xrotation(-PI / 2.0);
+    Quaterniond xrot90 = Quaterniond(AngleAxis<double>(-PI / 2.0, Vector3d::UnitX()));//Quatd::xrotation(-PI / 2.0);
 
     double vfov = observer.getFOV();
     double viewAspectRatio = (double) windowWidth / (double) windowHeight;
@@ -433,25 +434,25 @@ SkyGrid::render(Renderer& renderer,
     // longitude range containing all corners of the view frustum.
 
     // View frustum corners
-    Vec3d c0(-w, -h, -1.0);
-    Vec3d c1( w, -h, -1.0);
-    Vec3d c2(-w,  h, -1.0);
-    Vec3d c3( w,  h, -1.0);
+    Vector3d c0(-w, -h, -1.0);
+    Vector3d c1( w, -h, -1.0);
+    Vector3d c2(-w,  h, -1.0);
+    Vector3d c3( w,  h, -1.0);
 
-    Quatd cameraOrientation = observer.getOrientation();
-    Mat3d r = (cameraOrientation * xrot90 * ~m_orientation * ~xrot90).toMatrix3();
+    Quaterniond cameraOrientation = toEigen(observer.getOrientation());
+    Matrix3d r = (cameraOrientation * xrot90 * m_orientation.conjugate() * xrot90.conjugate()).toRotationMatrix().transpose();
 
     // Transform the frustum corners by the camera and grid
     // rotations.
-    c0 = toStandardCoords(c0 * r);
-    c1 = toStandardCoords(c1 * r);
-    c2 = toStandardCoords(c2 * r);
-    c3 = toStandardCoords(c3 * r);
+    c0 = toStandardCoords(r * c0);
+    c1 = toStandardCoords(r * c1);
+    c2 = toStandardCoords(r * c2);
+    c3 = toStandardCoords(r * c3);
 
-    double thetaC0 = atan2(c0.y, c0.x);
-    double thetaC1 = atan2(c1.y, c1.x);
-    double thetaC2 = atan2(c2.y, c2.x);
-    double thetaC3 = atan2(c3.y, c3.x);
+    double thetaC0 = atan2(c0.y(), c0.x());
+    double thetaC1 = atan2(c1.y(), c1.x());
+    double thetaC2 = atan2(c2.y(), c2.x());
+    double thetaC3 = atan2(c3.y(), c3.x());
 
     // Compute the minimum longitude range containing the corners; slightly
     // tricky because of the wrapping at PI/-PI.
@@ -480,27 +481,26 @@ SkyGrid::render(Renderer& renderer,
     // Calculate the normals to the view frustum planes; we'll use these to
     // when computing intersection points with the parallels and meridians of the
     // grid. Coordinate labels will be drawn at the intersection points.
-    Vec3d frustumNormal[4];    
-    frustumNormal[0] = Vec3d( 0,  1, -h);
-    frustumNormal[1] = Vec3d( 0, -1, -h);
-    frustumNormal[2] = Vec3d( 1,  0, -w);
-    frustumNormal[3] = Vec3d(-1,  0, -w);
+    Vector3d frustumNormal[4];
+    frustumNormal[0] = Vector3d( 0,  1, -h);
+    frustumNormal[1] = Vector3d( 0, -1, -h);
+    frustumNormal[2] = Vector3d( 1,  0, -w);
+    frustumNormal[3] = Vector3d(-1,  0, -w);
     
     {
         for (int i = 0; i < 4; i++)
         {
-            frustumNormal[i].normalize();
-            frustumNormal[i] = toStandardCoords(frustumNormal[i] * r);
+            frustumNormal[i] = toStandardCoords(r * frustumNormal[i].normalized());
         }
     }
 
-    Vec3d viewCenter(0.0, 0.0, -1.0);
-    viewCenter = toStandardCoords(viewCenter * r);
+    Vector3d viewCenter(0.0, 0.0, -1.0);
+    viewCenter = toStandardCoords(r * viewCenter);
 
     double centerDec;
-    if (fabs(viewCenter.z) < 1.0)
-        centerDec = std::asin(viewCenter.z);
-    else if (viewCenter.z < 0.0)
+    if (fabs(viewCenter.z()) < 1.0)
+        centerDec = std::asin(viewCenter.z());
+    else if (viewCenter.z() < 0.0)
         centerDec = -PI / 2.0;
     else
         centerDec = PI / 2.0;
@@ -554,14 +554,14 @@ SkyGrid::render(Renderer& renderer,
     int endDec   = (int) std::floor(DEG_MIN_SEC_TOTAL  * (maxDec / PI) / (float) decIncrement) * decIncrement;
 
     // Get the orientation at single precision
-    Quatd q = xrot90 * m_orientation * ~xrot90;
-    Quatf orientationf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    Quaterniond q = xrot90 * m_orientation * xrot90.conjugate();
+    Quaternionf orientationf = q.cast<float>();
 
     glColor(m_lineColor);
 
     // Render the parallels
     glPushMatrix();
-    glRotate(xrot90 * ~m_orientation * ~xrot90);
+    glRotate(xrot90 * m_orientation.conjugate() * xrot90.conjugate());
 
     // Radius of sphere is arbitrary, with the constraint that it shouldn't
     // intersect the near or far plane of the view frustum.
@@ -588,13 +588,13 @@ SkyGrid::render(Renderer& renderer,
         
         // Place labels at the intersections of the view frustum planes
         // and the parallels.
-        Vec3d center(0.0, 0.0, sinPhi);
-        Vec3d axis0(cosPhi, 0.0, 0.0);
-        Vec3d axis1(0.0, cosPhi, 0.0);
+        Vector3d center(0.0, 0.0, sinPhi);
+        Vector3d axis0(cosPhi, 0.0, 0.0);
+        Vector3d axis1(0.0, cosPhi, 0.0);
         for (int k = 0; k < 4; k += 2)
         {
-            Vec3d isect0(0.0, 0.0, 0.0);
-            Vec3d isect1(0.0, 0.0, 0.0);
+            Vector3d isect0(0.0, 0.0, 0.0);
+            Vector3d isect1(0.0, 0.0, 0.0);
             Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
             Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 
@@ -603,31 +603,31 @@ SkyGrid::render(Renderer& renderer,
             {
                 string labelText = latitudeLabel(dec, decIncrement);
 
-                Point3f p0((float) isect0.x, (float) isect0.z, (float) -isect0.y);
-                Point3f p1((float) isect1.x, (float) isect1.z, (float) -isect1.y);
+                Vector3f p0((float) isect0.x(), (float) isect0.z(), (float) -isect0.y());
+                Vector3f p1((float) isect1.x(), (float) isect1.z(), (float) -isect1.y());
 
 #ifdef DEBUG_LABEL_PLACEMENT
                 glPointSize(5.0);
                 glBegin(GL_POINTS);
                 glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-                glVertex3f(p0.x, p0.y, p0.z);
-                glVertex3f(p1.x, p1.y, p1.z);
+                glVertex3fv(p0.data());
+                glVertex3fv(p1.data());
                 glColor(m_lineColor);
                 glEnd();
 #endif
                 
-                Mat3f m = conjugate(observer.getOrientationf()).toMatrix3();
-                p0 = p0 * orientationf.toMatrix3();
-                p1 = p1 * orientationf.toMatrix3();
+                Matrix3f m = toEigen(observer.getOrientationf()).toRotationMatrix();
+                p0 = orientationf.conjugate() * p0;
+                p1 = orientationf.conjugate() * p1;
                 
-                if ((p0 * m).z < 0.0)
+                if ((m * p0).z() < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p0.x(), p0.y(), p0.z()), hAlign, vAlign);
                 }
                 
-                if ((p1 * m).z < 0.0)
+                if ((m * p1).z() < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p1.x(), p1.y(), p1.z()), hAlign, vAlign);
                 }                
             }
         }
@@ -647,7 +647,6 @@ SkyGrid::render(Renderer& renderer,
 
     for (int ra = startRa; ra <= endRa; ra += raIncrement)
     {
-
         double theta = 2.0 * PI * (double) ra / (double) totalLongitudeUnits;
         double cosTheta = cos(theta);
         double sinTheta = sin(theta);
@@ -665,13 +664,13 @@ SkyGrid::render(Renderer& renderer,
         
         // Place labels at the intersections of the view frustum planes
         // and the meridians.
-        Vec3d center(0.0, 0.0, 0.0);
-        Vec3d axis0(cosTheta, sinTheta, 0.0);
-        Vec3d axis1(0.0, 0.0, 1.0);
+        Vector3d center(0.0, 0.0, 0.0);
+        Vector3d axis0(cosTheta, sinTheta, 0.0);
+        Vector3d axis1(0.0, 0.0, 1.0);
         for (int k = 1; k < 4; k += 2)
         {
-            Vec3d isect0(0.0, 0.0, 0.0);
-            Vec3d isect1(0.0, 0.0, 0.0);
+            Vector3d isect0(0.0, 0.0, 0.0);
+            Vector3d isect1(0.0, 0.0, 0.0);
             Renderer::LabelAlignment hAlign = getCoordLabelHAlign(k);
             Renderer::LabelVerticalAlignment vAlign = getCoordLabelVAlign(k);
 
@@ -680,31 +679,31 @@ SkyGrid::render(Renderer& renderer,
             {
                 string labelText = longitudeLabel(ra, raIncrement);
 
-                Point3f p0((float) isect0.x, (float) isect0.z, (float) -isect0.y);
-                Point3f p1((float) isect1.x, (float) isect1.z, (float) -isect1.y);
+                Vector3f p0((float) isect0.x(), (float) isect0.z(), (float) -isect0.y());
+                Vector3f p1((float) isect1.x(), (float) isect1.z(), (float) -isect1.y());
 
 #ifdef DEBUG_LABEL_PLACEMENT
                 glPointSize(5.0);
                 glBegin(GL_POINTS);
                 glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-                glVertex3f(p0.x, p0.y, p0.z);
-                glVertex3f(p1.x, p1.y, p1.z);
+                glVertex3fv(p0.data());
+                glVertex3fv(p1.data());
                 glColor(m_lineColor);
                 glEnd();
 #endif
 
-                Mat3f m = conjugate(observer.getOrientationf()).toMatrix3();
-                p0 = p0 * orientationf.toMatrix3();
-                p1 = p1 * orientationf.toMatrix3();
+                Matrix3f m = toEigen(observer.getOrientationf()).toRotationMatrix();
+                p0 = orientationf.conjugate() * p0;
+                p1 = orientationf.conjugate() * p1;
                 
-                if ((p0 * m).z < 0.0 && axis0 * isect0 >= cosMaxMeridianAngle)
+                if ((m * p0).z() < 0.0 && axis0.dot(isect0) >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p0.x(), p0.y(), p0.z()), hAlign, vAlign);
                 }
                 
-                if ((p1 * m).z < 0.0 && axis0 * isect1 >= cosMaxMeridianAngle)
+                if ((m * p1).z() < 0.0 && axis0.dot(isect1) >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p1.x(), p1.y(), p1.z()), hAlign, vAlign);
                 }               
             }
         }        
