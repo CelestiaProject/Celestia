@@ -11,37 +11,45 @@
 #define _CELMATH_SPHERE_H_
 
 #include "vecmath.h"
+#include <Eigen/Core>
 
 template<class T> class Sphere
 {
  public:
-    Sphere();
-    Sphere(T);
-    Sphere(const Point3<T>&, T);
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    Sphere() :
+        center(0, 0, 0),
+        radius(1)
+    {
+    }
+
+    Sphere(T _radius) :
+        center(0, 0, 0),
+        radius(_radius)
+    {
+    }
+
+    Sphere(const Eigen::Matrix<T, 3, 1> _center, T _radius) :
+        center(_center),
+        radius(_radius)
+    {
+    }
+
+    // Compatibility
+    Sphere(const Point3<T>& _center, T _radius) :
+        center(_center.x, _center.y, _center.z),
+        radius(_radius)
+    {
+    }
  
  public:
-    Point3<T> center;
+    Eigen::Matrix<T, 3, 1> center;
     T radius;
 };
 
 typedef Sphere<float>   Spheref;
 typedef Sphere<double>  Sphered;
-
-
-template<class T> Sphere<T>::Sphere() :
-    center(0, 0, 0), radius(1)
-{
-}
-
-template<class T> Sphere<T>::Sphere(T _radius) :
-    center(0, 0, 0), radius(_radius)
-{
-}
-
-template<class T> Sphere<T>::Sphere(const Point3<T>& _center, T _radius) :
-    center(_center), radius(_radius)
-{
-}
 
 #endif // _CELMATH_SPHERE_H_
 

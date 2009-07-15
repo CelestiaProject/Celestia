@@ -30,11 +30,12 @@ template<class T> T distance(const Point3<T>& p, const Ellipsoid<T>& e)
 
 template<class T> T distance(const Point3<T>& p, const Ray3<T>& r)
 {
-    T t = ((p - r.origin) * r.direction) / (r.direction * r.direction);
+    Eigen::Matrix<T, 3, 1> p2(p.x, p.y, p.z);
+    T t = ((p2 - r.origin).dot(r.direction)) / r.direction.squaredNorm();
     if (t <= 0)
-        return p.distanceTo(r.origin);
+        return (p2 - r.origin).norm();
     else
-        return p.distanceTo(r.point(t));
+        return (p2 - r.point(t)).norm();
 }
 
 // Distance between a point and a segment defined by orig+dir*t, 0 <= t <= 1

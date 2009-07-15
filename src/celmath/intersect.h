@@ -15,17 +15,19 @@
 #include "ray.h"
 #include "sphere.h"
 #include "ellipsoid.h"
+#include <Eigen/Core>
+#include <Eigen/Array>
 
 
 template<class T> bool testIntersection(const Ray3<T>& ray,
                                         const Sphere<T>& sphere,
                                         T& distance)
 {
-    Vector3<T> diff = ray.origin - sphere.center;
+    Eigen::Matrix<T, 3, 1> diff = ray.origin - sphere.center;
     T s = (T) 1.0 / square(sphere.radius);
-    T a = ray.direction * ray.direction * s;
-    T b = ray.direction * diff * s;
-    T c = diff * diff * s - (T) 1.0;
+    T a = ray.direction.squaredNorm() * s;
+    T b = ray.direction.dot(diff) * s;
+    T c = diff.squaredNorm() * s - (T) 1.0;
     T disc = b * b - a * c;
     if (disc < 0.0)
         return false;
@@ -61,7 +63,7 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
 {
     if (testIntersection(ray, sphere, distanceToTester))
     {
-        cosAngleToCenter    = (sphere.center - ray.origin)*ray.direction/(sphere.center - ray.origin).length();
+        cosAngleToCenter = (sphere.center - ray.origin).dot(ray.direction) / (sphere.center - ray.origin).norm();
         return true;
     }
     return false;
@@ -72,17 +74,13 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
                                         const Ellipsoid<T>& e,
                                         T& distance)
 {
-    Vector3<T> diff = ray.origin - e.center;
-    Vector3<T> s((T) 1.0 / square(e.axes.x),
-                 (T) 1.0 / square(e.axes.y),
-                 (T) 1.0 / square(e.axes.z));
-    Vector3<T> sdir(ray.direction.x * s.x,
-                    ray.direction.y * s.y,
-                    ray.direction.z * s.z);
-    Vector3<T> sdiff(diff.x * s.x, diff.y * s.y, diff.z * s.z);
-    T a = ray.direction * sdir;
-    T b = ray.direction * sdiff;
-    T c = diff * sdiff - (T) 1.0;
+    Eigen::Matrix<T, 3, 1> diff = ray.origin - e.center;
+    Eigen::Matrix<T, 3, 1> s = e.axes.cwise().inverse().cwise().square();
+    Eigen::Matrix<T, 3, 1> sdir = ray.direction.cwise() * s;
+    Eigen::Matrix<T, 3, 1> sdiff = diff.cwise() * s;
+    T a = ray.direction.dot(sdir);
+    T b = ray.direction.dot(sdiff);
+    T c = diff.dot(sdiff) - (T) 1.0;
     T disc = b * b - a * c;
     if (disc < 0.0)
         return false;
@@ -118,7 +116,7 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
 {
     if (testIntersection(ray, ellipsoid, distanceToTester))
     {
-        cosAngleToCenter  = (ellipsoid.center - ray.origin)*ray.direction/(ellipsoid.center - ray.origin).length();
+        cosAngleToCenter = (ellipsoid.center - ray.origin).dot(ray.direction) / (ellipsoid.center - ray.origin).norm();
         return true;
     }
     return false;
