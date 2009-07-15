@@ -19,6 +19,10 @@
 #include "gl.h"
 #include "vecgl.h"
 #include "render.h"
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
+using namespace Eigen;
 
 
 
@@ -83,11 +87,11 @@ VisibleRegion::setOpacity(float opacity)
 }
 
 
-template <typename T> static Vector3<T>
-ellipsoidTangent(const Vector3<T>& recipSemiAxes,
-                 const Vector3<T>& w,
-                 const Vector3<T>& e,
-                 const Vector3<T>& e_,
+template <typename T> static Matrix<T, 3, 1>
+ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
+                 const Matrix<T, 3, 1>& w,
+                 const Matrix<T, 3, 1>& e,
+                 const Matrix<T, 3, 1>& e_,
                  T ee)
 {
     // We want to find t such that -E(1-t) + Wt is the direction of a ray
@@ -96,9 +100,9 @@ ellipsoidTangent(const Vector3<T>& recipSemiAxes,
     // ellipsoid ultimately requires using the quadratic formula, which has
     // one solution when the discriminant (b^2 - 4ac) is zero.  The code below
     // computes the value of t that results in a discriminant of zero.
-    Vector3<T> w_(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
-    T ww = w_ * w_;
-    T ew = w_ * e_;
+    Matrix<T, 3, 1> w_ = w.cwise() * recipSemiAxes;//(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
+    T ww = w_.dot(w_);
+    T ew = w_.dot(e_);
 
     // Before elimination of terms:
     // double a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
@@ -124,10 +128,10 @@ ellipsoidTangent(const Vector3<T>& recipSemiAxes,
     // which we obtain by solving the quadratic equation for the ray-ellipse
     // intersection.  Since we already know that the discriminant is zero,
     // the solution is just -b/2a
-    Vector3<T> v = -e * (1 - t) + w * t;
-    Vector3<T> v_(v.x * recipSemiAxes.x, v.y * recipSemiAxes.y, v.z * recipSemiAxes.z);
-    T a1 = v_ * v_;
-    T b1 = (T) 2 * v_ * e_;
+    Matrix<T, 3, 1> v = -e * (1 - t) + w * t;
+    Matrix<T, 3, 1> v_ = v.cwise() * recipSemiAxes;
+    T a1 = v_.dot(v_);
+    T b1 = (T) 2 * v_.dot(e_);
     T t1 = -b1 / (2 * a1);
 
     return e + v * t1;
@@ -135,21 +139,19 @@ ellipsoidTangent(const Vector3<T>& recipSemiAxes,
 
 
 // Get a vector orthogonal to the specified one
-template <typename T> static Vector3<T>
-orthogonalUnitVector(const Vector3<T>& v)
+template <typename T> static Matrix<T, 3, 1>
+orthogonalUnitVector(const Matrix<T, 3, 1>& v)
 {
-    Vec3d w;
+    Matrix<T, 3, 1> w;
 
-    if (abs(v.x) < abs(v.y) && abs(v.x) < abs(v.z))
-        w = Vec3d(1, 0, 0) ^ v;
-    else if (abs(v.y) < abs(v.z))
-        w = Vec3d(0, 1, 0) ^ v;
+    if (abs(v.x()) < abs(v.y()) && abs(v.x()) < abs(v.z()))
+        w = Matrix<T, 3, 1>::UnitX().cross(v);
+    else if (abs(v.y()) < abs(v.z()))
+        w = Matrix<T, 3, 1>::UnitY().cross(v);
     else
-        w = Vec3d(0, 0, 1) ^ v;
+        w = Matrix<T, 3, 1>::UnitZ().cross(v);
 
-    w.normalize();
-
-    return w;
+    return w.normalized();
 }
 
 
@@ -181,8 +183,8 @@ VisibleRegion::render(Renderer* /* renderer */,
     unsigned int nSections = (unsigned int) (30.0f + discSizeInPixels * 0.5f);
     nSections = min(nSections, 360u);
 
-    Quatd q = m_body.getEclipticToBodyFixed(tdb);
-    Quatf qf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    Quaterniond q = toEigen(m_body.getEclipticToBodyFixed(tdb));
+    Quaternionf qf = q.cast<float>();
 
     // The outline can't be rendered exactly on the planet sphere, or
     // there will be z-fighting problems. Render it at a height above the
@@ -190,7 +192,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     float scale = (discSizeInPixels + 1) / discSizeInPixels;
     scale = max(scale, 1.0001f);
 
-    Vec3f semiAxes = m_body.getSemiAxes();
+    Vector3f semiAxes = toEigen(m_body.getSemiAxes());
 
     // Enable depth buffering
     glEnable(GL_DEPTH_TEST);
@@ -206,33 +208,32 @@ VisibleRegion::render(Renderer* /* renderer */,
     glDisable(GL_LIGHTING);
 
     glPushMatrix();
-    glRotate(~qf);
+    glRotate(qf.conjugate());
 
     double maxSemiAxis = m_body.getRadius();
 
     // In order to avoid precision problems and extremely large values, scale
     // the target position and semiaxes such that the largest semiaxis is 1.0.
-    Vec3d lightDir = m_body.getPosition(tdb) - m_target.getPosition(tdb);
+    Vector3d lightDir = toEigen(m_body.getPosition(tdb) - m_target.getPosition(tdb));
     lightDir = lightDir * (astro::microLightYearsToKilometers(1.0) / maxSemiAxis);
-    lightDir = lightDir * (~q).toMatrix3();
+    lightDir = q * lightDir;
 
     // Another measure to prevent precision problems: if the distance to the
     // object is much greater than the largest semi axis, clamp it to 1e4 times
     // the radius, as body-to-target rays at that distance are nearly parallel anyhow.
-    if (lightDir.length() > 10000.0)
-        lightDir *= (10000.0 / lightDir.length());
+    if (lightDir.norm() > 10000.0)
+        lightDir *= (10000.0 / lightDir.norm());
 
     // Pick two orthogonal axes both normal to the light direction
-    Vec3d lightDirNorm = lightDir;
-    lightDirNorm.normalize();
+    Vector3d lightDirNorm = lightDir.normalized();
 
-    Vec3d uAxis = orthogonalUnitVector(lightDirNorm);
-    Vec3d vAxis = uAxis ^ lightDirNorm;
+    Vector3d uAxis = orthogonalUnitVector(lightDirNorm);
+    Vector3d vAxis = uAxis.cross(lightDirNorm);
 
-    Vec3d recipSemiAxes(maxSemiAxis / semiAxes.x, maxSemiAxis / semiAxes.y, maxSemiAxis / semiAxes.z);
-    Vec3d e = -lightDir;
-    Vec3d e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
-    double ee = e_ * e_;
+    Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwise().inverse();
+    Vector3d e = -lightDir;
+    Vector3d e_ = e.cwise() * recipSemiAxes;
+    double ee = e_.squaredNorm();
 
     glColor4f(m_color.red(), m_color.green(), m_color.blue(), opacity);
     glBegin(GL_LINE_LOOP);
@@ -240,11 +241,11 @@ VisibleRegion::render(Renderer* /* renderer */,
     for (unsigned i = 0; i < nSections; i++)
     {
         double theta = (double) i / (double) (nSections) * 2.0 * PI;
-        Vec3d w = cos(theta) * uAxis + sin(theta) * vAxis;
+        Vector3d w = cos(theta) * uAxis + sin(theta) * vAxis;
         
-        Vec3d toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        Vector3d toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
         toCenter *= maxSemiAxis * scale;
-        glVertex3f((GLfloat) toCenter.x, (GLfloat) toCenter.y, (GLfloat) toCenter.z);
+        glVertex3dv(toCenter.data());
     }
 
     glEnd();
