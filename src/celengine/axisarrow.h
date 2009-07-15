@@ -1,6 +1,7 @@
 // axisarrow.h
 //
-// Copyright (C) 2007, Celestia Development Team
+// Copyright (C) 2007-2009, Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,9 +12,10 @@
 #define _CELENGINE_AXISARROW_H_
 
 #include <celutil/color.h>
-#include <celmath/quaternion.h>
 #include <celengine/referencemark.h>
 #include <celengine/selection.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class Body;
 
@@ -37,7 +39,7 @@ class ArrowReferenceMark : public ReferenceMark
         return opacity == 1.0f;
     }
 
-    virtual Vec3d getDirection(double tdb) const = 0;
+    virtual Eigen::Vector3d getDirection(double tdb) const = 0;
 
  protected:
     const Body& body;
@@ -68,7 +70,7 @@ class AxesReferenceMark : public ReferenceMark
         return opacity == 1.0f;
     }
 
-    virtual Quatd getOrientation(double tdb) const = 0;
+    virtual Eigen::Quaterniond getOrientation(double tdb) const = 0;
 
  protected:
     const Body& body;
@@ -83,7 +85,7 @@ class BodyAxisArrows : public AxesReferenceMark
 {
 public:
     BodyAxisArrows(const Body& _body);
-    Quatd getOrientation(double tdb) const;
+    Eigen::Quaterniond getOrientation(double tdb) const;
 };
 
 
@@ -91,7 +93,7 @@ class FrameAxisArrows : public AxesReferenceMark
 {
 public:
     FrameAxisArrows(const Body& _body);
-    Quatd getOrientation(double tdb) const;
+    Eigen::Quaterniond getOrientation(double tdb) const;
 };
 
 
@@ -99,7 +101,7 @@ class SunDirectionArrow : public ArrowReferenceMark
 {
 public:
     SunDirectionArrow(const Body& _body);
-    Vec3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const;
 };
 
 
@@ -107,7 +109,7 @@ class VelocityVectorArrow : public ArrowReferenceMark
 {
 public:
     VelocityVectorArrow(const Body& _body);
-    Vec3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const;
 };
 
 
@@ -115,7 +117,7 @@ class SpinVectorArrow : public ArrowReferenceMark
 {
 public:
     SpinVectorArrow(const Body& _body);
-    Vec3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const;
 };
 
 
@@ -126,7 +128,7 @@ class BodyToBodyDirectionArrow : public ArrowReferenceMark
 {
 public:
     BodyToBodyDirectionArrow(const Body& _body, const Selection& _target);
-    Vec3d getDirection(double tdb) const;
+    Eigen::Vector3d getDirection(double tdb) const;
 
 private:
     Selection target;
