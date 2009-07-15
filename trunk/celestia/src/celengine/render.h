@@ -11,17 +11,17 @@
 #ifndef _CELENGINE_RENDER_H_
 #define _CELENGINE_RENDER_H_
 
-#include <vector>
-#include <list>
-#include <string>
 #include <celmath/frustum.h>
-#include <celengine/observer.h>
 #include <celengine/universe.h>
+#include <celengine/observer.h>
 #include <celengine/selection.h>
 #include <celengine/glcontext.h>
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
+#include <vector>
+#include <list>
+#include <string>
 
 
 class RendererWatcher;
@@ -583,7 +583,7 @@ class Renderer
                      double now,
                      vector<EclipseShadow>& shadows);
 
-    void labelConstellations(const AsterismList& asterisms,
+    void labelConstellations(const std::vector<Asterism*>& asterisms,
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
                          Quatf orientation);

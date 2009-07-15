@@ -7,15 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <iostream>
 #include <celutil/util.h>
-#include <celestia/celestiacore.h>
-#include <celestia/imagecapture.h>
-#include <celestia/celx_internal.h>
 #include "astro.h"
+#include "asterism.h"
 #include "command.h"
 #include "execution.h"
 #include "glcontext.h"
+#include <celestia/celestiacore.h>
+#include <celestia/imagecapture.h>
+#include <celestia/celx_internal.h>
+#include <iostream>
 
 using namespace std;
 

@@ -1,6 +1,7 @@
 // boundaries.cpp
 //
-// Copyright (C) 2002, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2002-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -8,11 +9,12 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
-#include <celengine/boundaries.h>
-#include <celengine/astro.h>
-#include <celengine/gl.h>
-#include <celengine/vecgl.h>
+#include "boundaries.h"
+#include "astro.h"
+#include "gl.h"
+#include "vecgl.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -23,7 +25,7 @@ ConstellationBoundaries::ConstellationBoundaries() :
     currentChain(NULL)
 {
     currentChain = new Chain();
-    currentChain->insert(currentChain->end(), Point3f(0.0f, 0.0f, 0.0f));
+    currentChain->insert(currentChain->end(), Vector3f::Zero());
 }
 
 ConstellationBoundaries::~ConstellationBoundaries()
@@ -42,24 +44,23 @@ void ConstellationBoundaries::moveto(float ra, float dec)
 {
     assert(currentChain != NULL);
 
-    Point3f p = astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance);
+    Vector3f v = astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance);
     if (currentChain->size() > 1)
     {
         chains.insert(chains.end(), currentChain);
         currentChain = new Chain();
-        currentChain->insert(currentChain->end(), p);
+        currentChain->insert(currentChain->end(), v);
     }
     else
     {
-        (*currentChain)[0] = p;
+        (*currentChain)[0] = v;
     }
 }
 
 
 void ConstellationBoundaries::lineto(float ra, float dec)
 {
-    currentChain->insert(currentChain->end(),
-                         astro::equatorialToCelestialCart(ra, dec, BoundariesDrawDistance));
+    currentChain->push_back(astro::equatorialToEclipticCartesian(ra, dec, BoundariesDrawDistance));
 }
 
 
@@ -73,7 +74,7 @@ void ConstellationBoundaries::render()
         for (Chain::iterator citer = chain->begin(); citer != chain->end();
              citer++)
         {
-            glVertex(*citer);
+            glVertex3fv(citer->data());
         }
         glEnd();
     }

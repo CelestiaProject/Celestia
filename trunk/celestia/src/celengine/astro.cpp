@@ -1,6 +1,7 @@
 // astro.cpp
 //
 // Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -17,7 +18,9 @@
 #include "celestia.h"
 #include "astro.h"
 #include <celutil/util.h>
+#include <Eigen/Geometry>
 
+using namespace Eigen;
 using namespace std;
 
 const double astro::speedOfLight = 299792.458; // km/s
@@ -42,6 +45,11 @@ const double astro::J2000Obliquity = degToRad(23.4392911);
 static const Quatd ECLIPTIC_TO_EQUATORIAL_ROTATION =
     Quatd::xrotation(-astro::J2000Obliquity);
 static const Mat3d ECLIPTIC_TO_EQUATORIAL_MATRIX = ECLIPTIC_TO_EQUATORIAL_ROTATION.toMatrix3();
+
+static const Quaterniond EQUATORIAL_TO_ECLIPTIC_ROTATION =
+    Quaterniond(AngleAxis<double>(-astro::J2000Obliquity, Vector3d::UnitX()));
+static const Matrix3d EQUATORIAL_TO_ECLIPTIC_MATRIX = EQUATORIAL_TO_ECLIPTIC_ROTATION.toRotationMatrix();
+static const Matrix3f EQUATORIAL_TO_ECLIPTIC_MATRIX_F = EQUATORIAL_TO_ECLIPTIC_MATRIX.cast<float>();
 
 // Equatorial to galactic coordinate transformation
 // North galactic pole at:
@@ -363,6 +371,22 @@ Point3d astro::equatorialToCelestialCart(double ra, double dec, double distance)
     double z = -sin(theta) * sin(phi) * distance;
 
     return (Point3d(x, y, z) * equatorialToCelestiald);
+}
+
+
+/** Convert spherical coordinates in the J2000 equatorial frame to cartesian
+  * coordinates in the J2000 ecliptic frame. RA in hours, dec in degrees.
+  */
+Eigen::Vector3f
+astro::equatorialToEclipticCartesian(float ra, float dec, float distance)
+{
+    double theta = ra / 24.0 * PI * 2 + PI;
+    double phi = (dec / 90.0 - 1.0) * PI / 2;
+    double x = cos(theta) * sin(phi) * distance;
+    double y = cos(phi) * distance;
+    double z = -sin(theta) * sin(phi) * distance;
+
+    return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f((float) x, (float) y, (float) z);
 }
 
 

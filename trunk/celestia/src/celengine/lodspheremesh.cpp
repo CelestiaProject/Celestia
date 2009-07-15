@@ -1,6 +1,7 @@
 // lodspheremesh.cpp
 //
-// Copyright (C) 2000-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2000-2009, theCelestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

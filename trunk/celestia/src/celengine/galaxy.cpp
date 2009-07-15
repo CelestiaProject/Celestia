@@ -1,6 +1,7 @@
 // galaxy.cpp
 //
-// Copyright (C) 2001-2005, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel, Fridger Schrempp, and Toti
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -24,6 +25,8 @@
 #include "vecgl.h"
 #include "render.h"
 #include "texture.h"
+
+#include <Eigen/Geometry>
 
 using namespace std;
 
@@ -232,7 +235,8 @@ bool Galaxy::pick(const Ray3d& ray,
     Quatf qf= getOrientation();
     Quatd qd(qf.w, qf.x, qf.y, qf.z);
 
-    return testIntersection(Ray3d(Point3d() + (ray.origin - getPosition()), ray.direction) * conjugate(qd).toMatrix3(),
+    Eigen::Vector3d p(getPosition().x, getPosition().y, getPosition().z);
+    return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(Eigen::Quaterniond(qf.w, qf.x, qf.y, qf.z).toRotationMatrix()),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
                             cosAngleToBoundCenter);
@@ -280,9 +284,9 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
         return;
 
     /* We'll first see if the galaxy's apparent size is big enough to
-       be noticeable on screen; if it's not we'll break right here,
-       avoiding all the overhead of the matrix transformations and
-       GL state changes: */
+       be noticeable on screen; if it's not we'll break right here,
+       avoiding all the overhead of the matrix transformations and
+       GL state changes: */
         float distanceToDSO = offset.length() - getRadius();
         if (distanceToDSO < 0)
             distanceToDSO = 0;

@@ -2,20 +2,46 @@
 //
 // Octree-based visibility determination for objects.
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _OCTREE_H_
-#define _OCTREE_H_
+#ifndef _CELENGINE_OCTREE_H_
+#define _CELENGINE_OCTREE_H_
 
-#include <vector>
-#include <celmath/quaternion.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <celmath/plane.h>
 #include <celengine/observer.h>
+#include <vector>
+
+
+// Compatibility
+template<typename T>
+Eigen::Matrix<T, 3, 1> toEigen(const Vector3<T>& v)
+{
+    return Eigen::Matrix<T, 3, 1>(v.x, v.y, v.z);
+}
+
+template<typename T>
+Eigen::Matrix<T, 3, 1> toEigen(const Point3<T>& p)
+{
+    return Eigen::Matrix<T, 3, 1>(p.x, p.y, p.z);
+}
+
+inline Eigen::Quaternionf toEigen(const Quatf& q)
+{
+    return Eigen::Quaternionf(q.w, q.x, q.y, q.z);
+}
+
+inline Eigen::Quaterniond toEigen(const Quatd& q)
+{
+    return Eigen::Quaterniond(q.w, q.x, q.y, q.z);
+}
 
 
 // The DynamicOctree and StaticOctree template arguments are:
@@ -47,14 +73,19 @@ struct OctreeLevelStatistics
 template <class OBJ, class PREC> class StaticOctree;
 template <class OBJ, class PREC> class DynamicOctree
 {
- typedef std::vector<const OBJ*> ObjectList;
+public:
+    typedef Eigen::Matrix<PREC, 3, 1> PointType;
 
- typedef bool (LimitingFactorPredicate)     (const OBJ&, const float);
- typedef bool (StraddlingPredicate)         (const Point3<PREC>&, const OBJ&, const float);
- typedef PREC (ExclusionFactorDecayFunction)(const PREC);
+private:
+    typedef std::vector<const OBJ*> ObjectList;
+
+
+    typedef bool (LimitingFactorPredicate)     (const OBJ&, const float);
+    typedef bool (StraddlingPredicate)         (const Eigen::Matrix<PREC, 3, 1>&, const OBJ&, const float);
+    typedef PREC (ExclusionFactorDecayFunction)(const PREC);
 
  public:
-    DynamicOctree(const Point3<PREC>& cellCenterPos,
+    DynamicOctree(const Eigen::Matrix<PREC, 3, 1>& cellCenterPos,
                   const float         exclusionFactor);
     ~DynamicOctree();
 
@@ -72,12 +103,12 @@ template <class OBJ, class PREC> class DynamicOctree
     void           add  (const OBJ&);
     void           split(const PREC);
     void           sortIntoChildNodes();
-    DynamicOctree* getChild(const OBJ&, const Point3<PREC>&);
+    DynamicOctree* getChild(const OBJ&, const Eigen::Matrix<PREC, 3, 1>&);
 
-    DynamicOctree** _children;
-    Point3<PREC>    cellCenterPos;
-    PREC            exclusionFactor;
-    ObjectList*     _objects;
+    DynamicOctree**            _children;
+    Eigen::Matrix<PREC, 3, 1>  cellCenterPos;
+    PREC                       exclusionFactor;
+    ObjectList*                _objects;
 };
 
 
@@ -89,7 +120,10 @@ template <class OBJ, class PREC> class StaticOctree
  friend class DynamicOctree<OBJ, PREC>;
 
  public:
-    StaticOctree(const Point3<PREC>& cellCenterPos,
+    typedef Eigen::Matrix<PREC, 3, 1> PointType;
+
+ public:
+    StaticOctree(const PointType&    cellCenterPos,
                  const float         exclusionFactor,
                  OBJ*                _firstObject,
                  unsigned int        nObjects);
@@ -106,16 +140,16 @@ template <class OBJ, class PREC> class StaticOctree
     // objects that are outside the view frustum may be.  Frustum tests are performed
     // only at the node level to optimize the octree traversal, so an exact test
     // (if one is required) is the responsibility of the callback method.
-    void processVisibleObjects(OctreeProcessor<OBJ, PREC>& processor,
-                               const Point3<PREC>&         obsPosition,
-                               const Plane<PREC>*          frustumPlanes,
-                               float                       limitingFactor,
-                               PREC                        scale) const;
+    void processVisibleObjects(OctreeProcessor<OBJ, PREC>&       processor,
+                               const PointType&                  obsPosition,
+                               const Eigen::Hyperplane<PREC, 3>* frustumPlanes,
+                               float                             limitingFactor,
+                               PREC                              scale) const;
 
-    void processCloseObjects(OctreeProcessor<OBJ, PREC>& processor,
-                             const Point3<PREC>&         obsPosition,
-                             PREC                        boundingRadius,
-                             PREC                        scale) const;
+    void processCloseObjects(OctreeProcessor<OBJ, PREC>&        processor,
+                             const PointType&                   obsPosition,
+                             PREC                               boundingRadius,
+                             PREC                               scale) const;
 
     int countChildren() const;
     int countObjects()  const;
@@ -127,7 +161,7 @@ template <class OBJ, class PREC> class StaticOctree
 
  private:
     StaticOctree** _children;
-    Point3<PREC>   cellCenterPos;
+    Eigen::Matrix<PREC, 3, 1>   cellCenterPos;
     float          exclusionFactor;
     OBJ*           _firstObject;
     unsigned int   nObjects;
@@ -159,12 +193,12 @@ enum
 // octree nodes in the tree, which will use less memory but make culling less
 // efficient.
 template <class OBJ, class PREC>
-inline DynamicOctree<OBJ, PREC>::DynamicOctree(const Point3<PREC>& cellCenterPos,
-                                               const float         exclusionFactor):
-        _children      (NULL),
-        cellCenterPos  (cellCenterPos),
-        exclusionFactor(exclusionFactor),
-        _objects       (NULL)
+inline DynamicOctree<OBJ, PREC>::DynamicOctree(const Eigen::Matrix<PREC, 3, 1>& cellCenterPos,
+                                               const float                      exclusionFactor):
+    _children      (NULL),
+    cellCenterPos  (cellCenterPos),
+    exclusionFactor(exclusionFactor),
+    _objects       (NULL)
 {
 }
 
@@ -174,7 +208,7 @@ inline DynamicOctree<OBJ, PREC>::~DynamicOctree()
 {
     if (_children != NULL)
     {
-        for (int i=0; i<8; ++i)
+        for (int i = 0; i < 8; ++i)
         {
             delete _children[i];
         }
@@ -230,13 +264,19 @@ inline void DynamicOctree<OBJ, PREC>::split(const PREC scale)
 {
     _children = new DynamicOctree*[8];
 
-    for (int i=0; i<8; ++i)
+    for (int i = 0; i < 8; ++i)
     {
-        Point3<PREC> centerPos    = cellCenterPos;
+        Eigen::Matrix<PREC, 3, 1> centerPos    = cellCenterPos;
 
+        centerPos += Eigen::Matrix<PREC, 3, 1>(((i & XPos) != 0) ? scale : -scale,
+                                               ((i & YPos) != 0) ? scale : -scale,
+                                               ((i & ZPos) != 0) ? scale : -scale);
+
+#if 0
         centerPos.x     += ((i & XPos) != 0) ? scale : -scale;
         centerPos.y     += ((i & YPos) != 0) ? scale : -scale;
         centerPos.z     += ((i & ZPos) != 0) ? scale : -scale;
+#endif
 
         _children[i] = new DynamicOctree(centerPos,
                                          decayFunction(exclusionFactor));
@@ -263,7 +303,9 @@ inline void DynamicOctree<OBJ, PREC>::sortIntoChildNodes()
             (*_objects)[nKeptInParent++] = (*_objects)[i];
         }
         else
+        {
             this->getChild(obj, cellCenterPos)->add(obj);
+        }
     }
 
     _objects->resize(nKeptInParent);
@@ -300,7 +342,7 @@ const PREC StaticOctree<OBJ, PREC>::SQRT3 = (PREC) 1.732050807568877;
 
 
 template <class OBJ, class PREC>
-inline StaticOctree<OBJ, PREC>::StaticOctree(const Point3<PREC>& cellCenterPos,
+inline StaticOctree<OBJ, PREC>::StaticOctree(const Eigen::Matrix<PREC, 3, 1>& cellCenterPos,
                                              const float         exclusionFactor,
                                              OBJ*                _firstObject,
                                              unsigned int        nObjects):
@@ -318,7 +360,7 @@ inline StaticOctree<OBJ, PREC>::~StaticOctree()
 {
     if (_children != NULL)
     {
-        for (int i=0; i<8; ++i)
+        for (int i = 0; i < 8; ++i)
             delete _children[i];
 
         delete[] _children;
@@ -331,7 +373,7 @@ inline int StaticOctree<OBJ, PREC>::countChildren() const
 {
     int count    = 0;
 
-    for (int i=0; i<8; ++i)
+    for (int i = 0; i < 8; ++i)
         count    += _children != NULL ? 1 + _children[i]->countChildren() : 0;
 
     return count;
@@ -344,7 +386,7 @@ inline int StaticOctree<OBJ, PREC>::countObjects() const
     int count    = nObjects;
 
     if (_children != NULL)
-        for (int i=0; i<8; ++i)
+        for (int i = 0; i < 8; ++i)
             count    += _children[i]->countObjects();
 
     return count;

@@ -8,14 +8,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
-#include <cassert>
-#include <sstream>
-#include <iomanip>
-
-
 #define DEBUG_COALESCE 0
 
 //#define DEBUG_HDR
@@ -46,13 +38,8 @@ std::ofstream hdrlog;
 #endif
 #endif /* _WIN32 */
 
-#include <celutil/debug.h>
-#include <celmath/frustum.h>
-#include <celmath/distance.h>
-#include <celmath/intersect.h>
-#include <celutil/utf8.h>
-#include <celutil/util.h>
-#include <celutil/timer.h>
+#include "boundaries.h"
+#include "asterism.h"
 #include "gl.h"
 #include "astro.h"
 #include "glext.h"
@@ -73,7 +60,21 @@ std::ofstream hdrlog;
 #include "frametree.h"
 #include "timelinephase.h"
 #include "skygrid.h"
+#include <celutil/debug.h>
+#include <celmath/frustum.h>
+#include <celmath/distance.h>
+#include <celmath/intersect.h>
+#include <celutil/utf8.h>
+#include <celutil/util.h>
+#include <celutil/timer.h>
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
+#include <sstream>
+#include <iomanip>
 
+using namespace Eigen;
 using namespace std;
 
 #define FOV           45.0f
@@ -2966,7 +2967,7 @@ void Renderer::draw(const Observer& observer,
     Frustum xfrustum(degToRad(fov),
                      viewAspectRatio,
                      MinNearPlaneDistance);
-    xfrustum.transform(conjugate(observer.getOrientationf()).toMatrix3());
+    xfrustum.transform(observer.getOrientationf().toMatrix3());
 
     // Set up the camera for star rendering; the units of this phase
     // are light years.
@@ -9049,9 +9050,9 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                             // Not rejected. Compute the plane tangent to
                             // the primary at the viewer-to-primary
                             // intersection point.
-                            Vec3d primaryVec(primarySphere.center.x,
-                                             primarySphere.center.y,
-                                             primarySphere.center.z);
+                            Vec3d primaryVec(primarySphere.center.x(),
+                                             primarySphere.center.y(),
+                                             primarySphere.center.z());
                             double distToPrimary = primaryVec.length();
                             Planed primaryTangentPlane(primaryVec, primaryVec * (primaryVec * (1.0 - primarySphere.radius / distToPrimary)));
 
@@ -10158,7 +10159,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
     if (renderFlags & ShowCelestialSphere)
     {
         SkyGrid grid;
-        grid.setOrientation(Quatd::xrotation(astro::J2000Obliquity));
+        grid.setOrientation(Quaterniond(AngleAxis<double>(astro::J2000Obliquity, Vector3d::UnitX())));
         grid.setLineColor(EquatorialGridColor);
         grid.setLabelColor(EquatorialGridLabelColor);
         grid.render(*this, observer, windowWidth, windowHeight);
@@ -10167,7 +10168,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
     if (renderFlags & ShowGalacticGrid)
     {
         SkyGrid galacticGrid;
-        galacticGrid.setOrientation(~(astro::eclipticToEquatorial() * astro::equatorialToGalactic()));
+        galacticGrid.setOrientation(toEigen(astro::eclipticToEquatorial() * astro::equatorialToGalactic()).conjugate());
         galacticGrid.setLineColor(GalacticGridColor);
         galacticGrid.setLabelColor(GalacticGridLabelColor);
         galacticGrid.setLongitudeUnits(SkyGrid::LongitudeDegrees);
@@ -10177,7 +10178,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
     if (renderFlags & ShowEclipticGrid)
     {
         SkyGrid grid;
-        grid.setOrientation(Quatd(1.0));
+        grid.setOrientation(Quaterniond::Identity());
         grid.setLineColor(EclipticGridColor);
         grid.setLabelColor(EclipticGridLabelColor);
         grid.setLongitudeUnits(SkyGrid::LongitudeDegrees);
@@ -10215,9 +10216,11 @@ void Renderer::renderSkyGrids(const Observer& observer)
                 v.normalize();
                 Vec3d u = v ^ zenithDirection;
                 
-                Mat3d m = Mat3d(u, v, zenithDirection);
-                Quatd q = Quatd::matrixToQuaternion(m);
-                grid.setOrientation(q);
+                Matrix3d m;
+                m.row(0) = toEigen(u);
+                m.row(1) = toEigen(v);
+                m.row(2) = toEigen(zenithDirection);
+                grid.setOrientation(Quaterniond(m));
                 
                 grid.render(*this, observer, windowWidth, windowHeight);
             }

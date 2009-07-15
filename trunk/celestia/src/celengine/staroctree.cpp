@@ -1,17 +1,18 @@
-//
-// C++ Implementation: staroctree
+// staroctree.cpp
 //
 // Description:
 //
+// Copyright (C) 2005-2009, Celestia Development Team
+// Original version by Toti <root@totibox>
 //
-// Author: Toti <root@totibox>, (C) 2005
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 
 #include <celengine/staroctree.h>
 
+using namespace Eigen;
 
 // Maximum permitted orbital radius for stars, in light years. Orbital
 // radii larger than this value are not guaranteed to give correct
@@ -36,18 +37,21 @@ bool starAbsoluteMagnitudePredicate(const Star& star, const float absMag)
 }
 
 
-bool starOrbitStraddlesNodesPredicate(const Point3f& cellCenterPos, const Star& star, const float)
+bool starOrbitStraddlesNodesPredicate(const Vector3f& cellCenterPos, const Star& star, const float)
 {
     //checks if this star's orbit straddles child nodes
     float orbitalRadius    = star.getOrbitalRadius();
     if (orbitalRadius == 0.0f)
         return false;
 
-    Point3f starPos    = star.getPosition();
+    Vector3f starPos    = toEigen(star.getPosition());
 
+    return (starPos - cellCenterPos).cwise().abs().minCoeff() < orbitalRadius;
+#if 0
     return  abs(starPos.x - cellCenterPos.x) < orbitalRadius    ||
             abs(starPos.y - cellCenterPos.y) < orbitalRadius    ||
             abs(starPos.z - cellCenterPos.z) < orbitalRadius;
+#endif
 }
 
 
@@ -59,14 +63,14 @@ float starAbsoluteMagnitudeDecayFunction(const float excludingFactor)
 
 template<>
 DynamicStarOctree* DynamicStarOctree::getChild(const Star&          obj,
-                                               const Point3f& cellCenterPos)
+                                               const Vector3f& cellCenterPos)
 {
-    Point3f objPos    = obj.getPosition();
+    Vector3f objPos    = toEigen(obj.getPosition());
 
     int child = 0;
-    child     |= objPos.x < cellCenterPos.x ? 0 : XPos;
-    child     |= objPos.y < cellCenterPos.y ? 0 : YPos;
-    child     |= objPos.z < cellCenterPos.z ? 0 : ZPos;
+    child     |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
+    child     |= objPos.y() < cellCenterPos.y() ? 0 : YPos;
+    child     |= objPos.z() < cellCenterPos.z() ? 0 : ZPos;
 
     return _children[child];
 }
@@ -86,30 +90,36 @@ template<> DynamicStarOctree::ExclusionFactorDecayFunction*
 
 // total specialization of the StaticOctree template process*() methods for stars:
 template<>
-void StarOctree::processVisibleObjects(StarHandler&   processor,
-                                       const Point3f& obsPosition,
-                                       const Planef*  frustumPlanes,
-                                       float          limitingFactor,
-                                       float          scale) const
+void StarOctree::processVisibleObjects(StarHandler&    processor,
+                                       const Vector3f& obsPosition,
+                                       const Hyperplane<float, 3>*   frustumPlanes,
+                                       float           limitingFactor,
+                                       float           scale) const
 {
     // See if this node lies within the view frustum
 
-        // Test the cubic octree node against each one of the five
-        // planes that define the infinite view frustum.
-        for (int i=0; i<5; ++i)
-        {
-            const Planef* plane = frustumPlanes + i;
-                  float   r     = scale * (abs(plane->normal.x) +
-                                           abs(plane->normal.y) +
-                                           abs(plane->normal.z));
+    // Test the cubic octree node against each one of the five
+    // planes that define the infinite view frustum.
+    for (unsigned int i = 0; i < 5; ++i)
+    {
+        const Hyperplane<float, 3>& plane = frustumPlanes[i];
+        double r = scale * plane.normal().cwise().abs().sum();
+        if (plane.signedDistance(cellCenterPos) < -r)
+            return;
+#if 0
+        const Planef* plane = frustumPlanes + i;
+        float r = scale * (abs(plane->normal.x) +
+                           abs(plane->normal.y) +
+                           abs(plane->normal.z));
 
-            if (plane->normal * Vec3f(cellCenterPos.x, cellCenterPos.y, cellCenterPos.z) - plane->d < -r)
-                return;
-        }
+        if (plane->normal * cellCenterPos - plane->d < -r)
+            return;
+#endif
+    }
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float minDistance = (obsPosition - cellCenterPos).length() - scale * StarOctree::SQRT3;
+    float minDistance = (obsPosition - cellCenterPos).norm() - scale * StarOctree::SQRT3;
 
     // Process the objects in this node
     float dimmest     = minDistance > 0 ? astro::appToAbsMag(limitingFactor, minDistance) : 1000;
@@ -120,7 +130,7 @@ void StarOctree::processVisibleObjects(StarHandler&   processor,
 
         if (obj.getAbsoluteMagnitude() < dimmest)
         {
-            float distance    = obsPosition.distanceTo(obj.getPosition());
+            float distance    = (obsPosition - toEigen(obj.getPosition())).norm();
             float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
             
             if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
@@ -149,14 +159,14 @@ void StarOctree::processVisibleObjects(StarHandler&   processor,
 
 
 template<>
-void StarOctree::processCloseObjects(StarHandler&   processor,
-                                     const Point3f& obsPosition,
-                                     float          boundingRadius,
-                                     float          scale) const
+void StarOctree::processCloseObjects(StarHandler&    processor,
+                                     const Vector3f& obsPosition,
+                                     float           boundingRadius,
+                                     float           scale) const
 {
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float nodeDistance    = (obsPosition - cellCenterPos).length() - scale * StarOctree::SQRT3;
+    float nodeDistance    = (obsPosition - cellCenterPos).norm() - scale * StarOctree::SQRT3;
 
     if (nodeDistance > boundingRadius)
         return;
@@ -173,9 +183,9 @@ void StarOctree::processCloseObjects(StarHandler&   processor,
     {
         Star& obj = _firstObject[i];
 
-        if (obsPosition.distanceToSquared(obj.getPosition()) < radiusSquared)
+        if ((obsPosition - toEigen(obj.getPosition())).squaredNorm() < radiusSquared)
         {
-            float distance    = obsPosition.distanceTo(obj.getPosition());
+            float distance    = (obsPosition - toEigen(obj.getPosition())).norm();
             float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
 
             processor.process(obj, distance, appMag);

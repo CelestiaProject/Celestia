@@ -32,6 +32,8 @@
 #include <celutil/directory.h>
 #include <celutil/formatnum.h>
 #include <celengine/astro.h>
+#include <celengine/asterism.h>
+#include <celengine/boundaries.h>
 #include <celengine/overlay.h>
 #include <celengine/console.h>
 #include <celengine/execution.h>
