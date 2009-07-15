@@ -15,7 +15,8 @@
 
 #include <string>
 #include <celutil/color.h>
-#include <celmath/quaternion.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class Renderer;
 class Observer;
@@ -44,12 +45,12 @@ public:
                 int windowWidth,
                 int windowHeight);
 
-    Quatd orientation() const
+    Eigen::Quaterniond orientation() const
     {
         return m_orientation;
     }
 
-    void setOrientation(const Quatd& orientation)
+    void setOrientation(const Eigen::Quaterniond& orientation)
     {
         m_orientation = orientation;
     }
@@ -105,7 +106,7 @@ private:
     int meridianSpacing(double idealSpacing) const;
 
 private:
-    Quatd m_orientation;
+    Eigen::Quaterniond m_orientation;
     Color m_lineColor;
     Color m_labelColor;
     LongitudeUnits m_longitudeUnits;

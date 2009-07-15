@@ -12,9 +12,9 @@
 #ifndef _CMDPARSER_H_
 #define _CMDPARSER_H_
 
-#include <iostream>
-#include <celengine/parser.h>
 #include <celengine/command.h>
+#include <celengine/parser.h>
+#include <iostream>
 
 
 class CommandParser

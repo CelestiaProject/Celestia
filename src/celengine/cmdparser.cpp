@@ -9,10 +9,19 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestia.h"
+
+#include "astro.h"
+#include "cmdparser.h"
+#include "glcontext.h"
+#include <celutil/util.h>
+#include <celutil/debug.h>
+#include <celmath/mathlib.h>
+#include <celengine/astro.h>
+#include <celestia/celx.h>
+#include <celestia/celx_internal.h>
 #include <algorithm>
 #include <cstdio>
-
-#include "celestia.h"
 
 // Older gcc versions used <strstream> instead of <sstream>.
 // This has been corrected in GCC 3.2, but name clashing must
@@ -22,16 +31,6 @@
 #undef max
 #endif
 #include <sstream>
-
-#include <celutil/util.h>
-#include <celutil/debug.h>
-#include <celmath/mathlib.h>
-#include <celengine/astro.h>
-#include <celestia/celx.h>
-#include <celestia/celx_internal.h>
-#include "astro.h"
-#include "cmdparser.h"
-#include "glcontext.h"
 
 using namespace std;
 

@@ -17,8 +17,8 @@
 
 #include <celutil/util.h>
 #include <celutil/debug.h>
-#include "parser.h"
 #include "asterism.h"
+#include "parser.h"
 
 using namespace std;
 

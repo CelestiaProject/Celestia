@@ -1,6 +1,7 @@
 // vertexlist.cpp
 //
-// Copyright (C) 2001, Chris Laurel
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -54,66 +55,6 @@ VertexList::~VertexList()
     if (vertices != NULL)
         delete[] vertices;
 #endif
-}
-
-
-void VertexList::render()
-{
-    GLsizei stride = sizeof(VertexPart) * vertexSize;
-    uint32 start = 3;
-
-    // Vertex points
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, static_cast<void*>(vertices));
-    
-    // Vertex normals
-    if ((parts & VertexNormal) != 0)
-    {
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, stride, static_cast<void*>(&vertices[start]));
-        start += 3;
-    }
-    else
-    {
-        glDisableClientState(GL_NORMAL_ARRAY);
-    }
-
-    // Vertex color
-    if ((parts & VertexColor0) != 0)
-    {
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(4, GL_UNSIGNED_BYTE, stride,
-                       static_cast<void*>(&vertices[start]));
-        start += 1;
-    }
-    else
-    {
-        glDisableClientState(GL_COLOR_ARRAY);
-        glColor(diffuseColor);
-    }
-
-    // Texture coordinates
-    if ((parts & TexCoord0) != 0)
-    {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, stride,
-                          static_cast<void*>(&vertices[start]));
-        start += 2;
-    }
-    else
-    {
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-
-    if ((parts & TexCoord1) != 0)
-    {
-        // glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, stride,
-                          static_cast<void*>(&vertices[start]));
-        start += 2;
-    }
-
-    glDrawArrays(GL_TRIANGLES, 0, nVertices);
 }
 
 
@@ -236,71 +177,6 @@ void VertexList::transform(Vec3f translation, float scale)
     Point3f tr(-translation.x, -translation.y, -translation.z);
     bbox = AxisAlignedBox(Point3f(0, 0, 0) + ((mn - tr) * scale),
                           Point3f(0, 0, 0) + ((mx - tr) * scale));
-}
-
-
-bool VertexList::pick(const Ray3d& ray, double& distance)
-{
-    double maxDistance = 1.0e30;
-    double closest = maxDistance;
-
-    uint32 k = 0;
-    for (uint32 i = 0; i < nVertices; i += 3)
-    {
-        // Get the triangle vertices v0, v1, and v2
-        Point3d v0(vertices[k + 0].f, vertices[k + 1].f, vertices[k + 2].f);
-        k += vertexSize;
-        Point3d v1(vertices[k + 0].f, vertices[k + 1].f, vertices[k + 2].f);
-        k += vertexSize;
-        Point3d v2(vertices[k + 0].f, vertices[k + 1].f, vertices[k + 2].f);
-        k += vertexSize;
-
-        // Compute the edge vectors e0 and e1, and the normal n
-        Vec3d e0 = v1 - v0;
-        Vec3d e1 = v2 - v0;
-        Vec3d n = e0 ^ e1;
-
-        // c is the cosine of the angle between the ray and triangle normal
-        double c = n * ray.direction;
-
-        // If the ray is parallel to the triangle, it either misses the
-        // triangle completely, or is contained in the triangle's plane.
-        // If it's contained in the plane, we'll still call it a miss.
-        if (c != 0.0)
-        {
-            double t = (n * (v0 - ray.origin)) / c;
-            if (t < closest && t > 0.0)
-            {
-                double m00 = e0 * e0;
-                double m01 = e0 * e1;
-                double m10 = e1 * e0;
-                double m11 = e1 * e1;
-                double det = m00 * m11 - m01 * m10;
-                if (det != 0.0)
-                {
-                    Point3d p = ray.point(t);
-                    Vec3d q = p - v0;
-                    double q0 = e0 * q;
-                    double q1 = e1 * q;
-                    double d = 1.0 / det;
-                    double s0 = (m11 * q0 - m01 * q1) * d;
-                    double s1 = (m00 * q1 - m10 * q0) * d;
-                    if (s0 >= 0.0 && s1 >= 0.0 && s0 + s1 <= 1.0)
-                        closest = t;
-                }
-            }
-        }
-    }
-
-    if (closest != maxDistance)
-    {
-        distance = closest;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
 }
 
 

@@ -1,6 +1,7 @@
 // astro.h
 //
-// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,12 +11,13 @@
 #ifndef _CELENGINE_ASTRO_H_
 #define _CELENGINE_ASTRO_H_
 
-#include <iostream>
-#include <string>
-#include <cmath>
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celengine/univcoord.h>
+#include <Eigen/Core>
+#include <iostream>
+#include <string>
+#include <cmath>
 
 #define SOLAR_ABSMAG  4.83f
 #define LN_MAG        1.085736
@@ -164,8 +166,11 @@ namespace astro
     UniversalCoord universalPosition(const Point3d& heliocentric,
                                      const UniversalCoord& starPosition);
 
+    // Compatibility
     Point3f equatorialToCelestialCart(float ra, float dec, float distance);
     Point3d equatorialToCelestialCart(double ra, double dec, double distance);
+
+    Eigen::Vector3f equatorialToEclipticCartesian(float ra, float dec, float distance);
 
     Quatd eclipticToEquatorial();
     Vec3d eclipticToEquatorial(const Vec3d& v);

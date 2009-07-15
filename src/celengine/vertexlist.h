@@ -1,6 +1,7 @@
 // vertexlist.h
 //
-// Copyright (C) 2001, Chris Laurel
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -59,9 +60,6 @@ class VertexList
     void setShininess(float);
     ResourceHandle getTexture() const;
     void setTexture(ResourceHandle);
-
-    void render();
-    bool pick(const Ray3d& ray, double& distance);
 
     AxisAlignedBox getBoundingBox() const;
     void transform(Vec3f translation, float scale);
