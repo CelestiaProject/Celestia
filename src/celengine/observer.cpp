@@ -259,7 +259,7 @@ void Observer::setAngularVelocity(const Vec3d& v)
  */
 // TODO: This is a generally useful function that should be moved to
 // the celmath package.
-template<class T> static Quaternion<T> 
+template<class T> static Quat<T> 
 lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
 {
     Vector3<T> n = to - from;
@@ -268,7 +268,7 @@ lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
     v.normalize();
     Vector3<T> u = v ^ n;
 
-    return Quaternion<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
+    return Quat<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
 }
 
 

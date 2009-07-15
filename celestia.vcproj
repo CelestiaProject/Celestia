@@ -37,8 +37,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparth\Eigen"
-				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparty\Eigen"
+				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX"
 				RuntimeLibrary="3"
 				DebugInformationFormat="3"
 			/>
@@ -111,7 +111,7 @@
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparty\Eigen"
-				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="0"
 				FloatingPointModel="0"
