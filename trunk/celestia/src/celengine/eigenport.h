@@ -34,4 +34,11 @@ inline Eigen::Quaterniond toEigen(const Quatd& q)
     return Eigen::Quaterniond(q.w, q.x, q.y, q.z);
 }
 
+template<typename SCALAR>
+Quat<SCALAR> fromEigen(const Eigen::Quaternion<SCALAR>& q)
+{
+    return Quat<SCALAR>(q.w(), q.x(), q.y(), q.z());
+}
+
+
 

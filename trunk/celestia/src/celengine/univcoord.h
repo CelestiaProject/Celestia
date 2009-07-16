@@ -16,6 +16,8 @@
 
 #include <celutil/bigfix.h>
 #include <celmath/vecmath.h>
+#include "astro.h"
+#include <Eigen/Core>
 
 class UniversalCoord
 {
@@ -40,6 +42,23 @@ class UniversalCoord
     friend UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
 
     friend UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
+
+    /** Get the offset in kilometers of this coordinate from another coordinate.
+      * The result is double precision, calculated as (this - uc) * scale, where
+      * scale is a factor that converts from Celestia's internal units to kilometers.
+      */
+    Eigen::Vector3d offsetFromKm(const UniversalCoord& uc) const
+    {
+        return Eigen::Vector3d((double) (x - uc.x), (double) (y - uc.y), (double) (z - uc.z)) * astro::microLightYearsToKilometers(1.0);
+    }
+
+    /** Get the value of the coordinate in light years. The result is truncated to
+      * double precision.
+      */
+    Eigen::Vector3d toLy() const
+    {
+        return Eigen::Vector3d((double) x, (double) y, (double) z) * 1.0e-6;
+    }
 
     double distanceTo(const UniversalCoord&);
     UniversalCoord difference(const UniversalCoord&) const;
