@@ -13,7 +13,6 @@
 
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
-#include <celengine/univcoord.h>
 #include <Eigen/Core>
 #include <iostream>
 #include <string>
@@ -27,6 +26,8 @@
 // #define OLD_KM_PER_LY     9466411842000.000
 #define KM_PER_AU     149597870.7
 #define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
+
+class UniversalCoord;
 
 namespace astro
 {

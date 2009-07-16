@@ -8,8 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _UNIVERSE_H_
-#define _UNIVERSE_H_
+#ifndef _CELENGINE_UNIVERSE_H_
+#define _CELENGINE_UNIVERSE_H_
 
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
@@ -54,17 +54,6 @@ class Universe
                    float faintestMag,
                    float tolerance = 0.0f);
 
-    Selection pickStar(const UniversalCoord& origin,
-                       const Vec3f& direction,
-                       double when,
-                       float faintest,
-                       float tolerance = 0.0f);
-
-    Selection pickDeepSkyObject(const UniversalCoord& origin,
-                                const Vec3f& direction,
-                                int   renderFlags,
-                                float faintest,
-                                float tolerance = 0.0f);
 
     Selection find(const std::string& s,
                    Selection* contexts = NULL,
@@ -112,11 +101,23 @@ class Universe
 
  private:
     Selection pickPlanet(SolarSystem& solarSystem,
-                         const UniversalCoord&,
-                         const Vec3f&,
+                         const UniversalCoord& origin,
+                         const Eigen::Vector3f& direction,
                          double when,
                          float faintestMag,
                          float tolerance);
+
+    Selection pickStar(const UniversalCoord& origin,
+                       const Eigen::Vector3f& direction,
+                       double when,
+                       float faintest,
+                       float tolerance = 0.0f);
+
+    Selection pickDeepSkyObject(const UniversalCoord& origin,
+                                const Eigen::Vector3f& direction,
+                                int   renderFlags,
+                                float faintest,
+                                float tolerance = 0.0f);
 
  private:
     StarDatabase* starCatalog;
@@ -129,4 +130,4 @@ class Universe
     std::vector<const Star*> closeStars;
 };
 
-#endif // UNIVERSE_H_
+#endif // _CELENGINE_UNIVERSE_H_

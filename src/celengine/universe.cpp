@@ -24,7 +24,7 @@
 #include "timelinephase.h"
 #include "frametree.h"
 
-#define ANGULAR_RES 3.5e-6
+static const double ANGULAR_RES = 3.5e-6;
 
 using namespace Eigen;
 using namespace std;
@@ -35,7 +35,7 @@ Universe::Universe() :
     dsoCatalog(NULL),
     solarSystemCatalog(NULL),
     asterisms(NULL),
-    /*boundaries(NULL),*/
+    boundaries(NULL),
     markers(NULL)
 {
     markers = new MarkerList();
@@ -316,6 +316,7 @@ struct PlanetPickInfo
     float atanTolerance;
 };
 
+
 static bool ApproxPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = (PlanetPickInfo*) info;
@@ -324,30 +325,27 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     if (!body->isVisible() || !body->extant(pickInfo->jd) || !body->isClickable())
         return true;
 
-    Point3d bpos = body->getAstrocentricPosition(pickInfo->jd);
-    Vec3d bodyDir = bpos - Point3d(pickInfo->pickRay.origin.x(), pickInfo->pickRay.origin.y(), pickInfo->pickRay.origin.z());
-    double distance = bodyDir.length();
+    Vector3d bpos = toEigen(body->getAstrocentricPosition(pickInfo->jd));
+    Vector3d bodyDir = bpos - pickInfo->pickRay.origin;
+    double distance = bodyDir.norm();
 
     // Check the apparent radius of the orbit against our tolerance factor.
     // This check exists to make sure than when picking a distant, we select
     // the planet rather than one of its satellites.
-    float appOrbitRadius = (float) (body->getOrbit(pickInfo->jd)->getBoundingRadius() /
-                                    distance);
+    float appOrbitRadius = (float) (body->getOrbit(pickInfo->jd)->getBoundingRadius() / distance);
 
-    if ((pickInfo->atanTolerance > ANGULAR_RES ? pickInfo->atanTolerance:
-        ANGULAR_RES) > appOrbitRadius)
+    if (std::max((double) pickInfo->atanTolerance, ANGULAR_RES) > appOrbitRadius)
     {
         return true;
     }
 
     bodyDir.normalize();
-    Vec3d bodyMiss = bodyDir - Vec3d(pickInfo->pickRay.direction.x(), pickInfo->pickRay.direction.y(), pickInfo->pickRay.direction.z());
-    double sinAngle2 = sqrt(bodyMiss * bodyMiss)/2.0;
+    Vector3d bodyMiss = bodyDir - pickInfo->pickRay.direction;
+    double sinAngle2 = bodyMiss.norm() / 2.0;
 
     if (sinAngle2 <= pickInfo->sinAngle2Closest)
     {
-        pickInfo->sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 :
-	                                         ANGULAR_RES;
+        pickInfo->sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
         pickInfo->closestBody = body;
         pickInfo->closestApproxDistance = distance;
     }
@@ -360,8 +358,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
-    Point3d bpos_old = body->getAstrocentricPosition(pickInfo->jd);
-    Vector3d bpos(bpos_old.x, bpos_old.y, bpos_old.z);
+    Vector3d bpos = toEigen(body->getAstrocentricPosition(pickInfo->jd));
     float radius = body->getRadius();
     double distance = -1.0;
 
@@ -378,12 +375,12 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // we need to perform a ray-ellipsoid intersection test.
             if (!body->isSphere())
             {
-                Vec3f semiAxes = body->getSemiAxes();
-                Vec3d ellipsoidAxes(semiAxes.x, semiAxes.y, semiAxes.z);
+                Vector3d ellipsoidAxes = toEigen(body->getSemiAxes()).cast<double>();
+
                 // Transform rotate the pick ray into object coordinates
-                Mat3d m = conjugate(body->getEclipticToEquatorial(pickInfo->jd)).toMatrix3();
+                Matrix3d m = toEigen(body->getEclipticToEquatorial(pickInfo->jd)).toRotationMatrix();
                 Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
-                r = r * m;
+                r = r.transform(m);
                 if (!testIntersection(r, Ellipsoidd(ellipsoidAxes), distance))
                     distance = -1.0;
             }
@@ -391,11 +388,10 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         else
         {
             // Transform rotate the pick ray into object coordinates
-            Quatf qf = body->getOrientation();
-            Quatd qd(qf.w, qf.x, qf.y, qf.z);
-            Mat3d m = conjugate(qd * body->getEclipticToBodyFixed(pickInfo->jd)).toMatrix3();
+            Quaterniond qd = toEigen(body->getOrientation()).cast<double>();
+            Matrix3d m = (qd * toEigen(body->getEclipticToBodyFixed(pickInfo->jd))).toRotationMatrix();
             Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
-            r = r * m;
+            r = r.transform(m);
 
             Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
             float scaleFactor = body->getGeometryScale();
@@ -470,28 +466,21 @@ static bool traverseFrameTree(FrameTree* frameTree,
 
 Selection Universe::pickPlanet(SolarSystem& solarSystem,
                                const UniversalCoord& origin,
-                               const Vec3f& direction,
+                               const Vector3f& direction,
                                double when,
                                float /*faintestMag*/,
                                float tolerance)
 {
-    double sinTol2 = (sin(tolerance/2.0) >  ANGULAR_RES ?
-	              sin(tolerance/2.0) : ANGULAR_RES);
+    double sinTol2 = std::max(sin(tolerance / 2.0), ANGULAR_RES);
     PlanetPickInfo pickInfo;
 
     Star* star = solarSystem.getStar();
     assert(star != NULL);
 
     // Transform the pick ray origin into astrocentric coordinates
-    UniversalCoord starPos = star->getPosition(when);
-    Vec3d v = origin - starPos;
-    Point3d astrocentricOrigin(astro::microLightYearsToKilometers(v.x),
-                               astro::microLightYearsToKilometers(v.y),
-                               astro::microLightYearsToKilometers(v.z));
+    Vector3d astrocentricOrigin = origin.offsetFromKm(star->getPosition(when));
 
-    pickInfo.pickRay = Ray3d(astrocentricOrigin,
-                             Vec3d(direction.x, direction.y, direction.z));
-
+    pickInfo.pickRay = Ray3d(astrocentricOrigin, direction.cast<double>());
     pickInfo.sinAngle2Closest = 1.0;
     pickInfo.closestDistance = 1.0e50;
     pickInfo.closestApproxDistance = 1.0e50;
@@ -545,37 +534,35 @@ Selection Universe::pickPlanet(SolarSystem& solarSystem,
 class StarPicker : public StarHandler
 {
 public:
-    StarPicker(const Point3f&, const Vec3f&, double, float);
+    StarPicker(const Vector3f&, const Vector3f&, double, float);
     ~StarPicker() {};
 
     void process(const Star&, float, float);
 
 public:
     const Star* pickedStar;
-    Point3f pickOrigin;
-    Vec3f pickRay;
+    Vector3f pickOrigin;
+    Vector3f pickRay;
     double sinAngle2Closest;
     double when;
 };
 
-StarPicker::StarPicker(const Point3f& _pickOrigin,
-                       const Vec3f& _pickRay,
+StarPicker::StarPicker(const Vector3f& _pickOrigin,
+                       const Vector3f& _pickRay,
                        double _when,
                        float angle) :
     pickedStar(NULL),
     pickOrigin(_pickOrigin),
     pickRay(_pickRay),
-    sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) :
-                                                    ANGULAR_RES ),
+    sinAngle2Closest(std::max(sin(angle / 2.0), ANGULAR_RES)),
     when(_when)
 {
 }
 
 void StarPicker::process(const Star& star, float, float)
 {
-    Vec3f relativeStarPos = star.getPosition() - pickOrigin;
-    Vec3f starDir = relativeStarPos;
-    starDir.normalize();
+    Vector3f relativeStarPos = toEigen(star.getPosition()) - pickOrigin;
+    Vector3f starDir = relativeStarPos.normalized();
 
     double sinAngle2 = 0.0;
 
@@ -583,32 +570,28 @@ void StarPicker::process(const Star& star, float, float)
     float orbitalRadius = star.getOrbitalRadius();
     if (orbitalRadius != 0.0f)
     {
-        float distance;
+        float distance = 0.0f;
 
         // Check for an intersection with orbital bounding sphere; if there's
         // no intersection, then just use normal calculation.  We actually test
         // intersection with a larger sphere to make sure we don't miss a star
         // right on the edge of the sphere.
-        if (testIntersection(Ray3f(Point3f(0.0f, 0.0f, 0.0f), pickRay),
-                             Spheref(Point3f(0.0f, 0.0f, 0.0f) + relativeStarPos,
-                                     orbitalRadius * 2.0f),
+        if (testIntersection(Ray3f(Vector3f::Zero(), pickRay),
+                             Spheref(relativeStarPos, orbitalRadius * 2.0f),
                              distance))
         {
-            Point3d starPos = star.getPosition(when);
-            starDir = Vec3f((float) (starPos.x * 1.0e-6 - pickOrigin.x),
-                            (float) (starPos.y * 1.0e-6 - pickOrigin.y),
-                            (float) (starPos.z * 1.0e-6 - pickOrigin.z));
-            starDir.normalize();
+            Vector3d starPos = star.getPosition(when).toLy();
+            starDir = (starPos - pickOrigin.cast<double>()).cast<float>();
         }
     }
 
-    Vec3f starMiss = starDir - pickRay;
-    Vec3d sMd = Vec3d(starMiss.x, starMiss.y, starMiss.z);
-    sinAngle2 = sqrt(sMd * sMd)/2.0;
+    Vector3f starMiss = starDir - pickRay;
+    Vector3d sMd = starMiss.cast<double>();
+    sinAngle2 = sMd.norm() / 2.0;
 
     if (sinAngle2 <= sinAngle2Closest)
     {
-        sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : ANGULAR_RES;
+        sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
         pickedStar = &star;
         if (pickedStar->getOrbitBarycenter() != NULL)
             pickedStar = pickedStar->getOrbitBarycenter();
@@ -620,7 +603,7 @@ class CloseStarPicker : public StarHandler
 {
 public:
     CloseStarPicker(const UniversalCoord& pos,
-                    const Vec3f& dir,
+                    const Vector3f& dir,
                     double t,
                     float _maxDistance,
                     float angle);
@@ -629,7 +612,7 @@ public:
 
 public:
     UniversalCoord pickOrigin;
-    Vec3f pickDir;
+    Vector3f pickDir;
     double now;
     float maxDistance;
     const Star* closestStar;
@@ -639,7 +622,7 @@ public:
 
 
 CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
-                                 const Vec3f& dir,
+                                 const Vector3f& dir,
                                  double t,
                                  float _maxDistance,
                                  float angle) :
@@ -649,8 +632,7 @@ CloseStarPicker::CloseStarPicker(const UniversalCoord& pos,
     maxDistance(_maxDistance),
     closestStar(NULL),
     closestDistance(0.0f),
-    sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) :
-                                      ANGULAR_RES )
+    sinAngle2Closest(std::max(sin(angle/2.0), ANGULAR_RES))
 {
 }
 
@@ -661,21 +643,20 @@ void CloseStarPicker::process(const Star& star,
     if (lowPrecDistance > maxDistance)
         return;
 
-    Vec3d hPos = (star.getPosition(now) - pickOrigin) *
-        astro::microLightYearsToKilometers(1.0);
-    Vec3f starDir((float) hPos.x, (float) hPos.y, (float) hPos.z);
+    Vector3d hPos = star.getPosition(now).offsetFromKm(pickOrigin);
+    Vector3f starDir = hPos.cast<float>();
+
     float distance = 0.0f;
 
-     if (testIntersection(Ray3f(Point3f(0, 0, 0), pickDir),
-                         Spheref(Point3f(starDir.x, starDir.y, starDir.z),
-                                 star.getRadius()), distance))
+     if (testIntersection(Ray3f(Vector3f::Zero(), pickDir),
+                          Spheref(starDir, star.getRadius()), distance))
     {
         if (distance > 0.0f)
         {
             if (closestStar == NULL || distance < closestDistance)
             {
                 closestStar = &star;
-                closestDistance = starDir.length();
+                closestDistance = starDir.norm();
                 sinAngle2Closest = ANGULAR_RES;
                 // An exact hit--set the angle to "zero"
             }
@@ -684,34 +665,31 @@ void CloseStarPicker::process(const Star& star,
     else
     {
         // We don't have an exact hit; check to see if we're close enough
-        float distance = starDir.length();
+        float distance = starDir.norm();
         starDir.normalize();
-        Vec3f starMiss = starDir - pickDir;
-        Vec3d sMd = Vec3d(starMiss.x, starMiss.y, starMiss.z );
+        Vector3f starMiss = starDir - pickDir;
+        Vector3d sMd = starMiss.cast<double>();
 
-        double sinAngle2 = sqrt(sMd * sMd)/2.0;
+        double sinAngle2 = sMd.norm() / 2.0;
 
         if (sinAngle2 <= sinAngle2Closest &&
             (closestStar == NULL || distance < closestDistance))
         {
             closestStar = &star;
             closestDistance = distance;
-            sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : ANGULAR_RES;
+            sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
         }
     }
 }
 
 
 Selection Universe::pickStar(const UniversalCoord& origin,
-                             const Vec3f& direction,
+                             const Vector3f& direction,
                              double when,
                              float faintestMag,
                              float tolerance)
 {
-    Point3f o = (Point3f) origin;
-    o.x *= 1e-6f;
-    o.y *= 1e-6f;
-    o.z *= 1e-6f;
+    Vector3f o = origin.toLy().cast<float>();
 
     // Use a high precision pick test for any stars that are close to the
     // observer.  If this test fails, use a low precision pick test for stars
@@ -720,37 +698,20 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     // precision test isn't nearly fast enough to use on our database of
     // over 100k stars.
     CloseStarPicker closePicker(origin, direction, when, 1.0f, tolerance);
-    starCatalog->findCloseStars(closePicker, o, 1.0f);
+    starCatalog->findCloseStars(closePicker, Point3f(o.x(), o.y(), o.z()), 1.0f);
     if (closePicker.closestStar != NULL)
         return Selection(const_cast<Star*>(closePicker.closestStar));
 
     // Find visible stars expects an orientation, but we just have a direction
     // vector.  Convert the direction vector into an orientation by computing
-    // the rotation required to map (0, 0, -1) to the direction.
-    Quatf rotation;
-    Vec3f n(0, 0, -1);
-    Vec3f Missf = n - direction;
-    Vec3d Miss = Vec3d(Missf.x, Missf.y, Missf.z);
-    double sinAngle2 = sqrt(Miss * Miss)/2.0;
+    // the rotation required to map -Z to the direction.
+    Quaternionf rotation;
+    rotation.setFromTwoVectors(-Vector3f::UnitZ(), direction);
 
-    if (sinAngle2 <= ANGULAR_RES)
-    {
-        rotation.setAxisAngle(Vec3f(1, 0, 0), 0);
-    }
-    else if (sinAngle2 >= 1.0 - 0.5 * ANGULAR_RES * ANGULAR_RES)
-    {
-        rotation.setAxisAngle(Vec3f(1, 0, 0), (float) PI);
-    }
-    else
-    {
-        Vec3f axis = direction ^ n;
-        axis.normalize();
-        rotation.setAxisAngle(axis, (float) (2.0 * asin(sinAngle2)));
-    }
     StarPicker picker(o, direction, when, tolerance);
     starCatalog->findVisibleStars(picker,
-                                  o,
-                                  rotation,
+                                  Point3f(o.x(), o.y(), o.z()),
+                                  fromEigen(rotation),
                                   tolerance, 1.0f,
                                   faintestMag);
     if (picker.pickedStar != NULL)
@@ -763,31 +724,30 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 class DSOPicker : public DSOHandler
 {
 public:
-    DSOPicker(const Point3d&, const Vec3d&, int, float);
+    DSOPicker(const Vector3d& pickOrigin, const Vector3d& pickDir, int renderFlags, float angle);
     ~DSOPicker() {};
 
     void process(DeepSkyObject* const &, double, float);
 
 public:
-    Point3d pickOrigin;
-    Vec3d   pickDir;
-    int     renderFlags;
+    Vector3d pickOrigin;
+    Vector3d pickDir;
+    int      renderFlags;
 
     const DeepSkyObject* pickedDSO;
     double  sinAngle2Closest;
 };
 
 
-DSOPicker::DSOPicker(const Point3d& pickOrigin,
-                     const Vec3d&   pickDir,
+DSOPicker::DSOPicker(const Vector3d& pickOrigin,
+                     const Vector3d&   pickDir,
                      int   renderFlags,
                      float angle) :
     pickOrigin      (pickOrigin),
     pickDir         (pickDir),
     renderFlags     (renderFlags),
     pickedDSO       (NULL),
-    sinAngle2Closest(sin(angle/2.0) > ANGULAR_RES ? sin(angle/2.0) :
-                                                    ANGULAR_RES )
+    sinAngle2Closest(std::max(sin(angle / 2.0), ANGULAR_RES))
 {
 }
 
@@ -797,26 +757,24 @@ void DSOPicker::process(DeepSkyObject* const & dso, double, float)
     if (!(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
 
-    Vec3d relativeDSOPos = dso->getPosition() - pickOrigin;
-    Vec3d dsoDir = relativeDSOPos;
+    Vector3d relativeDSOPos = toEigen(dso->getPosition()) - pickOrigin;
+    Vector3d dsoDir = relativeDSOPos;
 
-    double distance2;
-    if (testIntersection(Ray3d(Point3d(0.0, 0.0, 0.0), pickDir),
-                         Sphered(Point3d(0.0, 0.0, 0.0) + relativeDSOPos, (double) dso->getRadius()), distance2))
+    double distance2 = 0.0;
+    if (testIntersection(Ray3d(Vector3d::Zero(), pickDir),
+                         Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
     {
-        Point3d dsoPos = dso->getPosition();
-        dsoDir         = Vec3d(dsoPos.x * 1.0e-6 - pickOrigin.x,
-                               dsoPos.y * 1.0e-6 - pickOrigin.y,
-                               dsoPos.z * 1.0e-6 - pickOrigin.z);
+        Vector3d dsoPos = toEigen(dso->getPosition());
+        dsoDir = dsoPos * 1.0e-6 - pickOrigin;
     }
     dsoDir.normalize();
 
-    Vec3d dsoMissd   = dsoDir - Vec3d(pickDir.x, pickDir.y, pickDir.z);
-    double sinAngle2 = sqrt(dsoMissd * dsoMissd)/2.0;
+    Vector3d dsoMissd   = dsoDir - pickDir;
+    double sinAngle2 = dsoMissd.norm() / 2.0;
 
     if (sinAngle2 <= sinAngle2Closest)
     {
-        sinAngle2Closest = sinAngle2 > ANGULAR_RES ? sinAngle2 : ANGULAR_RES;
+        sinAngle2Closest = std::max(sinAngle2, ANGULAR_RES);
         pickedDSO        = dso;
     }
 }
@@ -825,8 +783,8 @@ void DSOPicker::process(DeepSkyObject* const & dso, double, float)
 class CloseDSOPicker : public DSOHandler
 {
 public:
-    CloseDSOPicker(const Point3d& pos,
-                   const Vec3d& dir,
+    CloseDSOPicker(const  Vector3d& pos,
+                   const  Vector3d& dir,
                    int    renderFlags,
                    double maxDistance,
                    float);
@@ -835,18 +793,18 @@ public:
     void process(DeepSkyObject* const & dso, double distance, float appMag);
 
 public:
-    Point3d pickOrigin;
-    Vec3d   pickDir;
-    int     renderFlags;
-    double  maxDistance;
+    Vector3d  pickOrigin;
+    Vector3d  pickDir;
+    int       renderFlags;
+    double    maxDistance;
 
     const DeepSkyObject* closestDSO;
     double largestCosAngle;
 };
 
 
-CloseDSOPicker::CloseDSOPicker(const Point3d& pos,
-                               const Vec3d& dir,
+CloseDSOPicker::CloseDSOPicker(const Vector3d& pos,
+                               const Vector3d& dir,
                                int    renderFlags,
                                double maxDistance,
                                float) :
@@ -872,7 +830,7 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
     if (dso->pick(Ray3d(pickOrigin, pickDir), distanceToPicker, cosAngleToBoundCenter))
     {
         // Don't select the object the observer is currently in:
-        if (pickOrigin.distanceTo(dso->getPosition()) > dso->getRadius() &&
+        if ((pickOrigin - toEigen(dso->getPosition())).norm() > dso->getRadius() &&
             cosAngleToBoundCenter > largestCosAngle)
         {
             closestDSO      = dso;
@@ -883,50 +841,29 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
 
 
 Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
-                                      const Vec3f& direction,
+                                      const Vector3f& direction,
                                       int   renderFlags,
                                       float faintestMag,
                                       float tolerance)
 {
-    Point3d orig = (Point3d) origin;
-    orig.x *= 1e-6;
-    orig.y *= 1e-6;
-    orig.z *= 1e-6;
-
-    Vec3d dir   = Vec3d(direction.x, direction.y, direction.z);
+    Vector3d orig = origin.toLy();
+    Vector3d dir = direction.cast<double>();
 
     CloseDSOPicker closePicker(orig, dir, renderFlags, 1e9, tolerance);
 
-    dsoCatalog->findCloseDSOs(closePicker, toEigen(orig), 1e9);
+    dsoCatalog->findCloseDSOs(closePicker, orig, 1e9);
     if (closePicker.closestDSO != NULL)
     {
         return Selection(const_cast<DeepSkyObject*>(closePicker.closestDSO));
     }
 
-    Quatf rotation;
-    Vec3d n(0, 0, -1);
-    Vec3d Miss       = n - dir;
-    double sinAngle2 = sqrt(Miss * Miss)/2.0;
-
-    if (sinAngle2 <= ANGULAR_RES)
-    {
-        rotation.setAxisAngle(Vec3f(1, 0, 0), 0);
-    }
-    else if (sinAngle2 >= 1.0 - 0.5 * ANGULAR_RES * ANGULAR_RES)
-    {
-        rotation.setAxisAngle(Vec3f(1, 0, 0), (float) PI);
-    }
-    else
-    {
-        Vec3f axis = direction ^ Vec3f((float)n.x, (float)n.y, (float)n.z);
-        axis.normalize();
-        rotation.setAxisAngle(axis, (float) (2.0 * asin(sinAngle2)));
-    }
+    Quaternionf rotation;
+    rotation.setFromTwoVectors(-Vector3f::UnitZ(), direction);
 
     DSOPicker picker(orig, dir, renderFlags, tolerance);
     dsoCatalog->findVisibleDSOs(picker,
-                                orig,
-                                rotation,
+                                Point3d(orig.x(), orig.y(), orig.z()),
+                                fromEigen(rotation),
                                 tolerance,
                                 1.0f,
                                 faintestMag);
@@ -957,7 +894,7 @@ Selection Universe::pick(const UniversalCoord& origin,
             if (solarSystem != NULL)
             {
                 sel = pickPlanet(*solarSystem,
-                                origin, direction,
+                                origin, toEigen(direction),
                                 when,
                                 faintestMag,
                                 tolerance);
@@ -967,23 +904,15 @@ Selection Universe::pick(const UniversalCoord& origin,
         }
     }
 
-#if 0
-    SolarSystem* closestSolarSystem = getNearestSolarSystem(origin);
-    if (closestSolarSystem != NULL)
-    {
-        sel = pickPlanet(*closestSolarSystem,
-                         origin, direction,
-                         when,
-                         faintestMag,
-                         tolerance);
-    }
-#endif
-
     if (sel.empty() && (renderFlags & Renderer::ShowStars))
-        sel = pickStar(origin, direction, when, faintestMag, tolerance);
+    {
+        sel = pickStar(origin, toEigen(direction), when, faintestMag, tolerance);
+    }
 
     if (sel.empty())
-        sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
+    {
+        sel = pickDeepSkyObject(origin, toEigen(direction), renderFlags, faintestMag, tolerance);
+    }
 
     return sel;
 }
@@ -1066,7 +995,7 @@ Selection Universe::findObjectInContext(const Selection& sel,
         break;
     }
 
-    // First, search for bodies . . .
+    // First, search for bodies...
     SolarSystem* sys = getSolarSystem(sel);
     if (sys != NULL)
     {
@@ -1079,7 +1008,7 @@ Selection Universe::findObjectInContext(const Selection& sel,
         }
     }
 
-    // . . . and then locations.
+    // ...and then locations.
     if (contextBody != NULL)
     {
         Location* loc = contextBody->findLocation(name, i18n);
@@ -1208,7 +1137,7 @@ vector<string> Universe::getCompletion(const string& s,
 
     // Deep sky objects:
     if (dsoCatalog != NULL)
-        {
+    {
         vector<string> dsos  = dsoCatalog->getCompletion(s);
         completion.insert(completion.end(), dsos.begin(), dsos.end());
     }
@@ -1217,7 +1146,7 @@ vector<string> Universe::getCompletion(const string& s,
     if (starCatalog != NULL)
     {
         vector<string> stars  = starCatalog->getCompletion(s);
-    completion.insert(completion.end(), stars.begin(), stars.end());
+        completion.insert(completion.end(), stars.begin(), stars.end());
     }
 
     return completion;
@@ -1225,9 +1154,9 @@ vector<string> Universe::getCompletion(const string& s,
 
 
 vector<string> Universe::getCompletionPath(const string& s,
-                                                     Selection* contexts,
-                                                     int nContexts,
-                                                     bool withLocations)
+                                           Selection* contexts,
+                                           int nContexts,
+                                           bool withLocations)
 {
     vector<string> completion;
     vector<string> locationCompletion;
@@ -1289,11 +1218,10 @@ vector<string> Universe::getCompletionPath(const string& s,
 // with in one light year.
 SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) const
 {
-    Point3f pos = (Point3f) position;
-    Point3f lyPos(pos.x * 1.0e-6f, pos.y * 1.0e-6f, pos.z * 1.0e-6f);
+    Vector3f pos = position.toLy().cast<float>();
     ClosestStarFinder closestFinder(1.0f, this);
     closestFinder.withPlanets = true;
-    starCatalog->findCloseStars(closestFinder, lyPos, 1.0f);
+    starCatalog->findCloseStars(closestFinder, Point3f(pos.x(), pos.y(), pos.z()), 1.0f);
     return getSolarSystem(closestFinder.closestStar);
 }
 
@@ -1303,8 +1231,7 @@ Universe::getNearStars(const UniversalCoord& position,
                        float maxDistance,
                        vector<const Star*>& nearStars) const
 {
-    Point3f pos = (Point3f) position;
-    Point3f lyPos(pos.x * 1.0e-6f, pos.y * 1.0e-6f, pos.z * 1.0e-6f);
+    Vector3f pos = position.toLy().cast<float>();
     NearStarFinder finder(1.0f, nearStars);
-    starCatalog->findCloseStars(finder, lyPos, maxDistance);
+    starCatalog->findCloseStars(finder, Point3f(pos.x(), pos.y(), pos.z()), maxDistance);
 }
