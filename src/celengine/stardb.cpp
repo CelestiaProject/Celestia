@@ -862,7 +862,7 @@ bool StarDatabase::createStar(Star* star,
     Vec3d semiAxes;
     bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
     bool hasBarycenter = false;
-    Point3f barycenterPosition;
+    Eigen::Vector3f barycenterPosition;
 
     double radius;
     bool hasRadius = starData->getNumber("Radius", radius);
@@ -900,9 +900,7 @@ bool StarDatabase::createStar(Star* star,
 
         if (hasSemiAxes)
         {
-            details->setEllipsoidSemiAxes(Vec3f((float) semiAxes.x,
-                                                (float) semiAxes.y,
-                                                (float) semiAxes.z));
+            details->setEllipsoidSemiAxes(toEigen(semiAxes).cast<float>());
         }
 
         if (hasRadius)
@@ -988,16 +986,18 @@ bool StarDatabase::createStar(Star* star,
         double distance = 0.0;
         if (disposition == ModifyStar)
         {
-            Point3f pos = star->getPosition();
+            Vector3f pos = star->getPosition();
+
             // Convert from Celestia's coordinate system
-            Vec3f v = Vec3f(pos.x, -pos.z, pos.y);
-            v = v * Mat3f::xrotation((float) -astro::J2000Obliquity);
-            distance = v.length();
+            Vector3f v(pos.x(), -pos.z(), pos.y());
+            v = Quaternionf(AngleAxis<float>((float) astro::J2000Obliquity, Vector3f::UnitX())) * v;
+
+            distance = v.norm();
             if (distance > 0.0)
             {
                 v.normalize();
-                ra = radToDeg(std::atan2(v.y, v.x));
-                dec = radToDeg(std::asin(v.z));
+                ra = radToDeg(std::atan2(v.y(), v.x()));
+                dec = radToDeg(std::asin(v.z()));
             }
         }
         
@@ -1050,7 +1050,7 @@ bool StarDatabase::createStar(Star* star,
             float decf = ((float) dec);
             float distancef = ((float) distance);
             Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
-            star->setPosition(Point3f((float) pos.x, (float) pos.y, (float) pos.z));
+            star->setPosition(toEigen(pos).cast<float>());
         }
     }
 
@@ -1078,7 +1078,7 @@ bool StarDatabase::createStar(Star* star,
             }
             else
             {
-                float distance = star->getPosition().distanceFromOrigin();
+                float distance = star->getPosition().norm();
 
                 // We can't compute the intrinsic brightness of the star from
                 // the apparent magnitude if the star is within a few AU of the

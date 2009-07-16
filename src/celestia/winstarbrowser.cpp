@@ -22,6 +22,7 @@
 
 extern void SetMouseCursor(LPCTSTR lpCursor);
 
+using namespace Eigen;
 using namespace std;
 
 static const int MinListStars = 10;
@@ -46,6 +47,16 @@ static Point3f toMicroLY(const Point3f& p)
 static Point3f fromMicroLY(const Point3f& p)
 {
     return Point3f(p.x * 1e-6f, p.y * 1e-6f, p.z * 1e-6f);
+}
+
+static Vector3f toMicroLY(const Vector3f& p)
+{
+    return 1e6f * p;
+}
+
+static Vector3f fromMicroLY(const Vector3f& p)
+{
+    return 1e-6f * p;
 }
 
 
@@ -93,30 +104,30 @@ bool InitStarBrowserColumns(HWND listView)
 
 struct CloserStarPredicate
 {
-    Point3f pos;
+    Vector3f pos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        return ((pos - star0->getPosition()).lengthSquared() <
-                (pos - star1->getPosition()).lengthSquared());
+        return ((pos - star0->getPosition()).squaredNorm() <
+                (pos - star1->getPosition()).squaredNorm());
                                
     }
 };
 
 struct BrighterStarPredicate
 {
-    Point3f pos;
+    Vector3f pos;
     UniversalCoord ucPos;
     bool operator()(const Star* star0, const Star* star1) const
     {
-        float d0 = pos.distanceTo(star0->getPosition());
-        float d1 = pos.distanceTo(star1->getPosition());
+        float d0 = (pos - star0->getPosition()).norm();
+        float d1 = (pos - star1->getPosition()).norm();
 
         // If the stars are closer than one light year, use
         // a more precise distance estimate.
         if (d0 < 1.0f)
-            d0 = (toMicroLY(star0->getPosition()) - ucPos).length() * 1e-6f;
+            d0 = (toMicroLY(star0->getPosition()) - toEigen((Point3f) ucPos)).norm() * 1e-6f;
         if (d1 < 1.0f)
-            d1 = (toMicroLY(star1->getPosition()) - ucPos).length() * 1e-6f;
+            d1 = (toMicroLY(star1->getPosition()) - toEigen((Point3f) ucPos)).norm() * 1e-6f;
 
         return (star0->getApparentMagnitude(d0) <
                 star1->getApparentMagnitude(d1));
@@ -125,7 +136,7 @@ struct BrighterStarPredicate
 
 struct SolarSystemPredicate
 {
-    Point3f pos;
+    Vector3f pos;
     SolarSystemCatalog* solarSystems;
 
     bool operator()(const Star* star0, const Star* star1) const
@@ -138,8 +149,8 @@ struct SolarSystemPredicate
         bool hasPlanets1 = (iter != solarSystems->end());
         if (hasPlanets1 == hasPlanets0)
         {
-            return ((pos - star0->getPosition()).lengthSquared() <
-                    (pos - star1->getPosition()).lengthSquared());
+            return ((pos - star0->getPosition()).squaredNorm() <
+                    (pos - star1->getPosition()).squaredNorm());
         }
         else
         {
@@ -235,7 +246,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
     case BrightestStars:
         {
             BrighterStarPredicate brighterPred;
-            brighterPred.pos = browser->pos;
+            brighterPred.pos = toEigen(browser->pos);
             brighterPred.ucPos = browser->ucPos;
             stars = FindStars(*stardb, brighterPred, browser->nStars);
         }
@@ -244,7 +255,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
     case NearestStars:
         {
             CloserStarPredicate closerPred;
-            closerPred.pos = browser->pos;
+            closerPred.pos = toEigen(browser->pos);
             stars = FindStars(*stardb, closerPred, browser->nStars);
         }
         break;
@@ -254,7 +265,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
             if (solarSystems == NULL)
                 return false;
             SolarSystemPredicate solarSysPred;
-            solarSysPred.pos = browser->pos;
+            solarSysPred.pos = toEigen(browser->pos);
             solarSysPred.solarSystems = solarSystems;
             stars = FindStars(*stardb, solarSysPred,
                               min((unsigned int) browser->nStars, solarSystems->size()));
@@ -279,7 +290,7 @@ static char callbackScratch[256];
 struct StarBrowserSortInfo
 {
     int subItem;
-    Point3f pos;
+    Vector3f pos;
     UniversalCoord ucPos;
 };
 
@@ -297,19 +308,19 @@ int CALLBACK StarBrowserCompareFunc(LPARAM lParam0, LPARAM lParam1,
 
     case 1:
         {
-            float d0 = sortInfo->pos.distanceTo(star0->getPosition());
-            float d1 = sortInfo->pos.distanceTo(star1->getPosition());
+            float d0 = (sortInfo->pos - star0->getPosition()).norm();
+            float d1 = (sortInfo->pos - star1->getPosition()).norm();
             return (int) sign(d0 - d1);
         }
 
     case 2:
         {
-            float d0 = sortInfo->pos.distanceTo(star0->getPosition());
-            float d1 = sortInfo->pos.distanceTo(star1->getPosition());
+            float d0 = (sortInfo->pos - star0->getPosition()).norm();
+            float d1 = (sortInfo->pos - star1->getPosition()).norm();
             if (d0 < 1.0f)
-                d0 = (toMicroLY(star0->getPosition()) - sortInfo->ucPos).length() * 1e-6f;
+                d0 = (toMicroLY(star0->getPosition()) - toEigen((Point3f) sortInfo->ucPos)).norm() * 1e-6f;
             if (d1 < 1.0f)
-                d1 = (toMicroLY(star1->getPosition()) - sortInfo->ucPos).length() * 1e-6f;
+                d1 = (toMicroLY(star1->getPosition()) - toEigen((Point3f) sortInfo->ucPos)).norm() * 1e-6f;
             return (int) sign(astro::absToAppMag(star0->getAbsoluteMagnitude(), d0) -
                               astro::absToAppMag(star1->getAbsoluteMagnitude(), d1));
         }
@@ -559,7 +570,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
                             StarBrowserSortInfo sortInfo;
                             sortInfo.subItem = nm->iSubItem;
                             sortInfo.ucPos = browser->ucPos;
-                            sortInfo.pos = browser->pos;
+                            sortInfo.pos = toEigen(browser->pos);
                             ListView_SortItems(hwnd, StarBrowserCompareFunc,
                                                reinterpret_cast<LPARAM>(&sortInfo));
                         }

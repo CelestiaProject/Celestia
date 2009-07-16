@@ -3409,7 +3409,7 @@ void Renderer::draw(const Observer& observer,
 					glBegin(GL_LINE_STRIP);
 					for (Asterism::Chain::const_iterator iter = chain.begin();
 						 iter != chain.end(); iter++)
-						glVertex(*iter);
+						glVertex3fv(iter->data());
 					glEnd();
 				}
 			}
@@ -8118,7 +8118,7 @@ void Renderer::renderStar(const Star& star,
         rp.surface = &surface;
         rp.rings = NULL;
         rp.radius = star.getRadius();
-        rp.semiAxes = star.getEllipsoidSemiAxes();
+        rp.semiAxes = fromEigen(star.getEllipsoidSemiAxes());
         rp.geometry = star.getGeometry();
 
 #ifndef USE_HDR
@@ -9234,7 +9234,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 {
     nProcessed++;
 
-    Point3f starPos = star.getPosition();
+    Point3f starPos = ptFromEigen(star.getPosition());
     Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
                    (float) ((double) starPos.y - obsPos.y),
                    (float) ((double) starPos.z - obsPos.z));    
@@ -9484,7 +9484,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 {
     nProcessed++;
 
-    Point3f starPos = star.getPosition();
+    Point3f starPos = ptFromEigen(star.getPosition());
     Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
                    (float) ((double) starPos.y - obsPos.y),
                    (float) ((double) starPos.z - obsPos.z));
@@ -10329,7 +10329,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
 void Renderer::labelConstellations(const AsterismList& asterisms,
                                    const Observer& observer)
 {
-    Point3f observerPos = (Point3f) observer.getPosition();
+    Vector3f observerPos = toEigen((Point3f) observer.getPosition());
 
     for (AsterismList::const_iterator iter = asterisms.begin();
          iter != asterisms.end(); iter++)
@@ -10344,10 +10344,10 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                 // The constellation label is positioned at the average
                 // position of all stars in the first chain.  This usually
                 // gives reasonable results.
-                Vec3f avg(0, 0, 0);
+                Vector3f avg = Vector3f::Zero();
                 for (Asterism::Chain::const_iterator iter = chain.begin();
                      iter != chain.end(); iter++)
-                    avg += (*iter - Point3f(0, 0, 0));
+                    avg += *iter;
 
                 avg = avg / (float) chain.size();
 
@@ -10355,14 +10355,14 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                 avg.normalize();
                 avg = avg * 1.0e10f;
 
-                Vec3f rpos = Point3f(avg.x, avg.y, avg.z) - observerPos;
+                Vector3f rpos = avg - observerPos;
 
-                if ((observer.getOrientationf().toMatrix3() * rpos).z < 0)
+                if ((observer.getOrientationf().toMatrix3() * fromEigen(rpos)).z < 0)
                 {
                     // We'll linearly fade the labels as a function of the
                     // observer's distance to the origin of coordinates:
                     float opacity = 1.0f;
-                    float dist = observerPos.distanceFromOrigin();
+                    float dist = observerPos.norm();
                     if (dist > MaxAsterismLabelsConstDist)
                     {
                         opacity = clamp((MaxAsterismLabelsConstDist - dist) /
@@ -10378,7 +10378,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     addBackgroundAnnotation(NULL,
                                             ast->getName((labelMode & I18nConstellationLabels) != 0),
                                             Color(labelColor, opacity),
-                                            Point3f(rpos.x, rpos.y, rpos.z),
+                                            ptFromEigen(rpos),
                                             AlignCenter, VerticalAlignCenter);
                 }
             }

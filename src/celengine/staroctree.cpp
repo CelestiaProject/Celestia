@@ -44,14 +44,9 @@ bool starOrbitStraddlesNodesPredicate(const Vector3f& cellCenterPos, const Star&
     if (orbitalRadius == 0.0f)
         return false;
 
-    Vector3f starPos    = toEigen(star.getPosition());
+    Vector3f starPos    = star.getPosition();
 
     return (starPos - cellCenterPos).cwise().abs().minCoeff() < orbitalRadius;
-#if 0
-    return  abs(starPos.x - cellCenterPos.x) < orbitalRadius    ||
-            abs(starPos.y - cellCenterPos.y) < orbitalRadius    ||
-            abs(starPos.z - cellCenterPos.z) < orbitalRadius;
-#endif
 }
 
 
@@ -65,7 +60,7 @@ template<>
 DynamicStarOctree* DynamicStarOctree::getChild(const Star&          obj,
                                                const Vector3f& cellCenterPos)
 {
-    Vector3f objPos    = toEigen(obj.getPosition());
+    Vector3f objPos    = obj.getPosition();
 
     int child = 0;
     child     |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
@@ -106,15 +101,6 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
         double r = scale * plane.normal().cwise().abs().sum();
         if (plane.signedDistance(cellCenterPos) < -r)
             return;
-#if 0
-        const Planef* plane = frustumPlanes + i;
-        float r = scale * (abs(plane->normal.x) +
-                           abs(plane->normal.y) +
-                           abs(plane->normal.z));
-
-        if (plane->normal * cellCenterPos - plane->d < -r)
-            return;
-#endif
     }
 
     // Compute the distance to node; this is equal to the distance to
@@ -130,7 +116,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
 
         if (obj.getAbsoluteMagnitude() < dimmest)
         {
-            float distance    = (obsPosition - toEigen(obj.getPosition())).norm();
+            float distance    = (obsPosition - obj.getPosition()).norm();
             float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
             
             if (appMag < limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
@@ -183,9 +169,9 @@ void StarOctree::processCloseObjects(StarHandler&    processor,
     {
         Star& obj = _firstObject[i];
 
-        if ((obsPosition - toEigen(obj.getPosition())).squaredNorm() < radiusSquared)
+        if ((obsPosition - obj.getPosition()).squaredNorm() < radiusSquared)
         {
-            float distance    = (obsPosition - toEigen(obj.getPosition())).norm();
+            float distance    = (obsPosition - obj.getPosition()).norm();
             float appMag      = astro::absToAppMag(obj.getAbsoluteMagnitude(), distance);
 
             processor.process(obj, distance, appMag);

@@ -40,5 +40,16 @@ Quat<SCALAR> fromEigen(const Eigen::Quaternion<SCALAR>& q)
     return Quat<SCALAR>(q.w(), q.x(), q.y(), q.z());
 }
 
+template<typename SCALAR>
+Vector3<SCALAR> fromEigen(const Eigen::Matrix<SCALAR, 3, 1>& v)
+{
+    return Vector3<SCALAR>(v.x(), v.y(), v.z());
+}
+
+template<typename SCALAR>
+Point3<SCALAR> ptFromEigen(const Eigen::Matrix<SCALAR, 3, 1>& v)
+{
+    return Point3<SCALAR>(v.x(), v.y(), v.z());
+}
 
 
