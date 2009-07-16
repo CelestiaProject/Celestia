@@ -1,16 +1,16 @@
 // star.h
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _STAR_H_
-#define _STAR_H_
+#ifndef _CELENGINE_STAR_H_
+#define _CELENGINE_STAR_H_
 
-#include <vector>
 #include <celutil/basictypes.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
@@ -20,6 +20,8 @@
 #include <celengine/stellarclass.h>
 #include <celengine/rotation.h>
 #include <celengine/multitexture.h>
+#include <Eigen/Core>
+#include <vector>
 
 class Orbit;
 class Star;
@@ -50,7 +52,7 @@ class StarDetails
     inline Star* getOrbitBarycenter() const;
     inline bool getVisibility() const;
     inline const RotationModel* getRotationModel() const;
-    inline Vec3f getEllipsoidSemiAxes() const;
+    inline Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
 
     void setRadius(float);
@@ -65,7 +67,7 @@ class StarDetails
     void computeOrbitalRadius();
     void setVisibility(bool);
     void setRotationModel(const RotationModel*);
-    void setEllipsoidSemiAxes(const Vec3f&);
+    void setEllipsoidSemiAxes(const Eigen::Vector3f&);
     void setInfoURL(const std::string& _infoURL);
 
     bool shared() const;
@@ -102,7 +104,7 @@ class StarDetails
 
     const RotationModel* rotationModel;
 
-    Vec3f semiAxes;
+    Eigen::Vector3f semiAxes;
 
     std::string* infoURL;
     
@@ -217,7 +219,7 @@ StarDetails::getRotationModel() const
     return rotationModel;
 }
 
-Vec3f
+Eigen::Vector3f
 StarDetails::getEllipsoidSemiAxes() const
 {
     return semiAxes;
@@ -231,10 +233,26 @@ public:
     inline Star();
     ~Star();
 
-    // Accessor methods for members of the star class
-    inline uint32 getCatalogNumber() const;
-    inline Point3f getPosition() const;
-    inline float getAbsoluteMagnitude() const;
+    inline uint32 getCatalogNumber() const
+    {
+        return catalogNumber;
+    }
+
+    /** This getPosition() method returns the approximate star position; that is,
+     *  star position without any orbital motion taken into account.  For a
+     *  star in an orbit, the position should be set to the 'root' barycenter
+     *  of the system.
+     */
+    Eigen::Vector3f getPosition() const
+    {
+        return position;
+    }
+
+    float getAbsoluteMagnitude() const
+    {
+        return absMag;
+    }
+
     float getApparentMagnitude(float) const;
     float getLuminosity() const;
 
@@ -246,7 +264,7 @@ public:
 
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);
-    void setPosition(Point3f);
+    void setPosition(const Eigen::Vector3f& positionLy);
     void setAbsoluteMagnitude(float);
     void setLuminosity(float);
 
@@ -273,7 +291,7 @@ public:
     inline bool getVisibility() const;
     inline uint32 getKnowledge() const;
     inline const RotationModel* getRotationModel() const;
-    inline Vec3f getEllipsoidSemiAxes() const;
+    inline Eigen::Vector3f getEllipsoidSemiAxes() const;
     const std::string& getInfoURL() const;
 
     enum {
@@ -283,7 +301,7 @@ public:
 
 private:
     uint32 catalogNumber;
-    Point3f position;
+    Eigen::Vector3f position;
     float absMag;
     StarDetails* details;
 };
@@ -295,29 +313,6 @@ Star::Star() :
     absMag(4.83f),
     details(NULL)
 {
-}
-
-uint32
-Star::getCatalogNumber() const
-{
-    return catalogNumber;
-}
-
-float
-Star::getAbsoluteMagnitude() const
-{
-    return absMag;
-}
-
-
-// This getPosition() method returns the approximate star position; that is,
-// star position without any orbital motion taken into account.  For a
-// star in an orbit, the position should be set to the 'root' barycenter
-// of the system.
-Point3f
-Star::getPosition() const
-{
-    return position;
 }
 
 float
@@ -368,7 +363,7 @@ Star::getRotationModel() const
     return details->getRotationModel();
 }
 
-Vec3f
+Eigen::Vector3f
 Star::getEllipsoidSemiAxes() const
 {
     return details->getEllipsoidSemiAxes();
@@ -380,4 +375,4 @@ Star::getOrbitingStars() const
     return details->orbitingStars;
 }
 
-#endif // _STAR_H_
+#endif // _CELENGINE_STAR_H_

@@ -16,6 +16,7 @@
 #include "star.h"
 #include "texmanager.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -987,7 +988,7 @@ float Star::getRadius() const
 
 
 void
-StarDetails::setEllipsoidSemiAxes(const Vec3f& v)
+StarDetails::setEllipsoidSemiAxes(const Vector3f& v)
 {
     semiAxes = v;
 }
@@ -1018,9 +1019,9 @@ Star::getPosition(double t) const
     const Orbit* orbit = getOrbit();
     if (!orbit)
     {
-        return UniversalCoord(position.x * 1.0e6,
-                              position.y * 1.0e6,
-                              position.z * 1.0e6);
+        return UniversalCoord(position.x() * 1.0e6,
+                              position.y() * 1.0e6,
+                              position.z() * 1.0e6);
     }
     else
     {
@@ -1028,9 +1029,9 @@ Star::getPosition(double t) const
 
         if (barycenter == NULL)
         {
-            Point3d barycenterPos(position.x * 1.0e6,
-                                  position.y * 1.0e6,
-                                  position.z * 1.0e6);
+            Point3d barycenterPos(position.x() * 1.0e6,
+                                  position.y() * 1.0e6,
+                                  position.z() * 1.0e6);
 
             return UniversalCoord(barycenterPos) +
                 ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
@@ -1053,9 +1054,9 @@ Star::getOrbitBarycenterPosition(double t) const
 
     if (barycenter == NULL)
     {
-        Point3d barycenterPos(position.x * 1.0e6,
-                              position.y * 1.0e6,
-                              position.z * 1.0e6);
+        Point3d barycenterPos(position.x() * 1.0e6,
+                              position.y() * 1.0e6,
+                              position.z() * 1.0e6);
 
         return UniversalCoord(barycenterPos);
     }
@@ -1128,12 +1129,12 @@ void Star::setCatalogNumber(uint32 n)
 
 void Star::setPosition(float x, float y, float z)
 {
-    position = Point3f(x, y, z);
+    position = Vector3f(x, y, z);
 }
 
-void Star::setPosition(Point3f p)
+void Star::setPosition(const Vector3f& positionLy)
 {
-    position = p;
+    position = positionLy;
 }
 
 void Star::setAbsoluteMagnitude(float mag)
