@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <celestia/celestiacore.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -68,7 +69,7 @@ public:
     
 private:
     Criterion criterion;
-    Point3f pos;
+    Vector3f pos;
     UniversalCoord ucPos;
 };
 
@@ -246,14 +247,14 @@ int StarTableModel::columnCount(const QModelIndex&) const
 }
 
 
-static Point3f toMicroLY(const Point3f& p)
+static Vector3f toMicroLY(const Vector3f& p)
 {
-    return Point3f(p.x * 1e6f, p.y * 1e6f, p.z * 1e6f);
+    return p * 1e6f;
 }
 
-static Point3f fromMicroLY(const Point3f& p)
+static Vector3f fromMicroLY(const Vector3f& p)
 {
-    return Point3f(p.x * 1e-6f, p.y * 1e-6f, p.z * 1e-6f);
+    return p * 1e-6f;
 }
 
 
@@ -262,7 +263,7 @@ StarPredicate::StarPredicate(Criterion _criterion,
     criterion(_criterion),
     ucPos(_observerPos)
 {
-    pos = fromMicroLY((Point3f) ucPos);
+    pos = toEigen((Point3f) ucPos) * 1.0e-6f;
 }
 
 
@@ -271,21 +272,21 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
     switch (criterion)
     {
     case Distance:
-        return ((pos - star0->getPosition()).lengthSquared() <
-                (pos - star1->getPosition()).lengthSquared());
+        return ((pos - star0->getPosition()).squaredNorm() <
+                (pos - star1->getPosition()).squaredNorm());
 
     case Brightness:
         {
-            float d0 = pos.distanceTo(star0->getPosition());
-            float d1 = pos.distanceTo(star1->getPosition());
+            float d0 = (pos - star0->getPosition()).norm();
+            float d1 = (pos - star1->getPosition()).norm();
 
             // If the stars are closer than one light year, use
             // a more precise distance estimate.
             if (d0 < 1.0f)
-                d0 = (toMicroLY(star0->getPosition()) - ucPos).length() * 1e-6f;
+                d0 = ucPos.offsetFromLy(star0->getPosition()).norm();
             if (d1 < 1.0f)
-                d1 = (toMicroLY(star1->getPosition()) - ucPos).length() * 1e-6f;
-            
+                d1 = ucPos.offsetFromLy(star1->getPosition()).norm();
+
             return (star0->getApparentMagnitude(d0) <
                     star1->getApparentMagnitude(d1));
         }
