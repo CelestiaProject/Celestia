@@ -25,7 +25,7 @@ template<class T> class Ray3
  
     Eigen::Matrix<T, 3, 1> point(T) const;
 
-    Ray3<T> transform(const Eigen::Matrix<T, 3, 3>& m)
+    Ray3<T> transform(const Eigen::Matrix<T, 3, 3>& m) const
     {
         return Ray3<T>(m * origin, m * direction);
     }

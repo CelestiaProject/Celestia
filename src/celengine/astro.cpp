@@ -17,6 +17,7 @@
 #include <celmath/mathlib.h>
 #include "celestia.h"
 #include "astro.h"
+#include "univcoord.h"
 #include <celutil/util.h>
 #include <Eigen/Geometry>
 
