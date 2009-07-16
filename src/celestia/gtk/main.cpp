@@ -88,7 +88,7 @@ static GOptionEntry optionEntries[] =
 	{ "extrasdir", 'e', 0, G_OPTION_ARG_FILENAME_ARRAY, &extrasDir, "Additional \"extras\" directory", "directory" },
 	{ "fullscreen", 'f', 0, G_OPTION_ARG_NONE, &fullScreen, "Start full-screen", NULL },
 	{ "nosplash", 's', 0, G_OPTION_ARG_NONE, &noSplash, "Disable splash screen", NULL },
-	{ NULL },
+	{ NULL, NULL, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
 };
 
 
