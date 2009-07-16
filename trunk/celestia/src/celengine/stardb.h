@@ -117,14 +117,14 @@ class StarDatabase
     std::vector<std::string> getCompletion(const std::string&) const;
 
     void findVisibleStars(StarHandler& starHandler,
-                          const Point3f& obsPosition,
-                          const Quatf&   obsOrientation,
+                          const Eigen::Vector3f& obsPosition,
+                          const Eigen::Quaternionf&   obsOrientation,
                           float fovY,
                           float aspectRatio,
                           float limitingMag) const;
 
     void findCloseStars(StarHandler& starHandler,
-                        const Point3f& obsPosition,
+                        const Eigen::Vector3f& obsPosition,
                         float radius) const;
 
     std::string getStarName    (const Star&, bool i18n = false) const;
