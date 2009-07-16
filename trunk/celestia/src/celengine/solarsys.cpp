@@ -35,6 +35,7 @@
 #include "timeline.h"
 #include "timelinephase.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -1295,7 +1296,7 @@ Point3f SolarSystem::getCenter() const
     // TODO: This is a very simple method at the moment, but it will get
     // more complex when planets around multistar systems are supported
     // where the planets may orbit the center of mass of two stars.
-    return star->getPosition();
+    return ptFromEigen(star->getPosition());
 }
 
 PlanetarySystem* SolarSystem::getPlanets() const

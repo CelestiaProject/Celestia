@@ -22,7 +22,7 @@ class Asterism
     Asterism(std::string);
     ~Asterism();
 
-    typedef std::vector<Point3f> Chain;
+    typedef std::vector<Eigen::Vector3f> Chain;
 
     std::string getName(bool i18n = false) const;
     int getChainCount() const;

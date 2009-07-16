@@ -561,7 +561,7 @@ StarPicker::StarPicker(const Vector3f& _pickOrigin,
 
 void StarPicker::process(const Star& star, float, float)
 {
-    Vector3f relativeStarPos = toEigen(star.getPosition()) - pickOrigin;
+    Vector3f relativeStarPos = star.getPosition() - pickOrigin;
     Vector3f starDir = relativeStarPos.normalized();
 
     double sinAngle2 = 0.0;
