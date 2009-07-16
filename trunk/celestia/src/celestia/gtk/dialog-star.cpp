@@ -159,7 +159,7 @@ void dialogStarBrowser(AppData* app)
 /* CALLBACK: When Star is selected in Star Browser */
 static void listStarSelect(GtkTreeSelection* sel, AppData* app)
 {
-	GValue value = { 0, 0 }; /* Initialize GValue to 0 */
+	GValue value = { 0, {{0}} }; /* Initialize GValue to 0 */
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 
@@ -276,16 +276,12 @@ static void addStars(sbData* sb)
 		const Star *star=(*stars)[i];
 		values[0] = g_strdup(ReplaceGreekLetterAbbr((stardb->getStarName(*star))).c_str());
 
-		Point3f pStar = star->getPosition();
-		Vec3d v(pStar.x * 1e6 - (float)ucPos.x, 
-		        pStar.y * 1e6 - (float)ucPos.y, 
-		        pStar.z * 1e6 - (float)ucPos.z);
-		float d = v.length() * 1e-6;
+		/* Calculate distance to star */
+		float d = (star->getPosition() - (toEigen((Point3f)ucPos) * 1e-6)).norm();
 
 		sprintf(buf, " %.3f ", d);
 		values[1] = g_strdup(buf);
 
-		Vec3f r = star->getPosition() - ucPos;
 		sprintf(buf, " %.2f ", astro::absToAppMag(star->getAbsoluteMagnitude(), d));
 		values[2] = g_strdup(buf);
 
