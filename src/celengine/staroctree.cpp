@@ -98,7 +98,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
     for (unsigned int i = 0; i < 5; ++i)
     {
         const Hyperplane<float, 3>& plane = frustumPlanes[i];
-        double r = scale * plane.normal().cwise().abs().sum();
+        float r = scale * plane.normal().cwise().abs().sum();
         if (plane.signedDistance(cellCenterPos) < -r)
             return;
     }
@@ -112,7 +112,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
 
     for (unsigned int i=0; i<nObjects; ++i)
     {
-        Star& obj = _firstObject[i];
+        const Star& obj = _firstObject[i];
 
         if (obj.getAbsoluteMagnitude() < dimmest)
         {

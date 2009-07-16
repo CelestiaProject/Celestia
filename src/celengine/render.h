@@ -78,6 +78,9 @@ struct SecondaryIlluminator
 };
 
 
+class StarVertexBuffer;
+class PointStarVertexBuffer;
+
 class Renderer
 {
  public:
@@ -357,56 +360,6 @@ class Renderer
         ResourceHandle geometry;
         Quatf orientation;
         std::vector<EclipseShadow>* eclipseShadows;
-    };
-
-    class StarVertexBuffer
-    {
-    public:
-        StarVertexBuffer(unsigned int _capacity);
-        ~StarVertexBuffer();
-        void start();
-        void render();
-        void finish();
-        void addStar(const Vec3f&, const Color&, float);
-        void setBillboardOrientation(const Quatf&);
-
-    private:
-        unsigned int capacity;
-        unsigned int nStars;
-        float* vertices;
-        float* texCoords;
-        unsigned char* colors;
-        Vec3f v0, v1, v2, v3;
-    };
-
-
-    class PointStarVertexBuffer
-    {
-    public:
-        PointStarVertexBuffer(unsigned int _capacity);
-        ~PointStarVertexBuffer();
-        void startPoints(const GLContext&);
-        void startSprites(const GLContext&);
-        void render();
-        void finish();
-        void addStar(const Eigen::Vector3f& pos, const Color&, float);
-		void setTexture(Texture*);
-
-    private:
-        struct StarVertex
-        {
-            Eigen::Vector3f position;
-            float size;
-            unsigned char color[4];
-            float pad;
-        };
-
-        unsigned int capacity;
-        unsigned int nStars;
-        StarVertex* vertices;
-        const GLContext* context;
-        bool useSprites;
-		Texture* texture;
     };
 
  private:
