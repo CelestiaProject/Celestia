@@ -30,7 +30,7 @@ if ENABLE_KDE
 noinst_LIBRARIES = libkdegui.a
 noinst_HEADERS = $(wildcard *.h)
 
-INCLUDES = -I../.. -I.. $(QT_INCLUDES) $(KDE_INCLUDES)
+INCLUDES = -I../.. -I.. -I$(top_srcdir)/thirdparty/Eigen $(QT_INCLUDES) $(KDE_INCLUDES)
 
 libkdegui_a_SOURCES = \
                  celsplashscreen.moc.cpp \

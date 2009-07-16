@@ -1,7 +1,7 @@
 SUBDIRS = res
 
 bin_PROGRAMS = celestia
-INCLUDES = -I..
+INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
 
 DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DEFS@
 
