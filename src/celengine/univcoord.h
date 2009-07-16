@@ -52,6 +52,19 @@ class UniversalCoord
         return Eigen::Vector3d((double) (x - uc.x), (double) (y - uc.y), (double) (z - uc.z)) * astro::microLightYearsToKilometers(1.0);
     }
 
+    /** Get the offset in light years of this coordinate from a point (also with
+      * units of light years.) The difference is calculated at high precision and
+      * the reduced to single precision.
+      */
+    Eigen::Vector3f offsetFromLy(const Eigen::Vector3f& v) const
+    {
+        Eigen::Vector3f vUly = v * 1.0e6f;
+        Eigen::Vector3f offsetUly((float) (x - (BigFix) vUly.x()),
+                                  (float) (y - (BigFix) vUly.y()),
+                                  (float) (z - (BigFix) vUly.z()));
+        return offsetUly * 1.0e-6f;
+    }
+
     /** Get the value of the coordinate in light years. The result is truncated to
       * double precision.
       */
