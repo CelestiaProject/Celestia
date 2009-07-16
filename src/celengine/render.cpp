@@ -269,6 +269,313 @@ double computeCosViewConeAngle(double verticalFOV, double width, double height)
 }
 
 
+/**** Star vertex buffer classes ****/
+
+class StarVertexBuffer
+{
+public:
+    StarVertexBuffer(unsigned int _capacity);
+    ~StarVertexBuffer();
+    void start();
+    void render();
+    void finish();
+    void addStar(const Vec3f&, const Color&, float);
+    void setBillboardOrientation(const Quatf&);
+
+private:
+    unsigned int capacity;
+    unsigned int nStars;
+    float* vertices;
+    float* texCoords;
+    unsigned char* colors;
+    Vec3f v0, v1, v2, v3;
+};
+
+
+// PointStarVertexBuffer is used instead of StarVertexBuffer when the
+// hardware supports point sprites.
+class PointStarVertexBuffer
+{
+public:
+    PointStarVertexBuffer(unsigned int _capacity);
+    ~PointStarVertexBuffer();
+    void startPoints(const GLContext&);
+    void startSprites(const GLContext&);
+    void render();
+    void finish();
+    inline void addStar(const Eigen::Vector3f& pos, const Color&, float);
+	void setTexture(Texture*);
+
+private:
+    struct StarVertex
+    {
+        Eigen::Vector3f position;
+        float size;
+        unsigned char color[4];
+        float pad;
+    };
+
+    unsigned int capacity;
+    unsigned int nStars;
+    StarVertex* vertices;
+    const GLContext* context;
+    bool useSprites;
+	Texture* texture;
+};
+
+
+StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
+    capacity(_capacity),
+    vertices(NULL),
+    texCoords(NULL),
+    colors(NULL)
+{
+    nStars = 0;
+    vertices = new float[capacity * 12];
+    texCoords = new float[capacity * 8];
+    colors = new unsigned char[capacity * 16];
+
+    // Fill the texture coordinate array now, since it will always have
+    // the same contents.
+    for (unsigned int i = 0; i < capacity; i++)
+    {
+        unsigned int n = i * 8;
+        texCoords[n    ] = 0; texCoords[n + 1] = 0;
+        texCoords[n + 2] = 1; texCoords[n + 3] = 0;
+        texCoords[n + 4] = 1; texCoords[n + 5] = 1;
+        texCoords[n + 6] = 0; texCoords[n + 7] = 1;
+    }
+}
+
+StarVertexBuffer::~StarVertexBuffer()
+{
+    if (vertices != NULL)
+        delete[] vertices;
+    if (colors != NULL)
+        delete[] colors;
+    if (texCoords != NULL)
+        delete[] texCoords;
+}
+
+void StarVertexBuffer::start()
+{
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
+    glDisableClientState(GL_NORMAL_ARRAY);
+}
+
+void StarVertexBuffer::render()
+{
+    if (nStars != 0)
+    {
+        glDrawArrays(GL_QUADS, 0, nStars * 4);
+        nStars = 0;
+    }
+}
+
+void StarVertexBuffer::finish()
+{
+    render();
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void StarVertexBuffer::addStar(const Vec3f& pos,
+                                         const Color& color,
+                                         float size)
+{
+    if (nStars < capacity)
+    {
+        int n = nStars * 12;
+        vertices[n + 0]  = pos.x + v0.x * size;
+        vertices[n + 1]  = pos.y + v0.y * size;
+        vertices[n + 2]  = pos.z + v0.z * size;
+        vertices[n + 3]  = pos.x + v1.x * size;
+        vertices[n + 4]  = pos.y + v1.y * size;
+        vertices[n + 5]  = pos.z + v1.z * size;
+        vertices[n + 6]  = pos.x + v2.x * size;
+        vertices[n + 7]  = pos.y + v2.y * size;
+        vertices[n + 8]  = pos.z + v2.z * size;
+        vertices[n + 9]  = pos.x + v3.x * size;
+        vertices[n + 10] = pos.y + v3.y * size;
+        vertices[n + 11] = pos.z + v3.z * size;
+        n = nStars * 16;
+        color.get(colors + n);
+        color.get(colors + n + 4);
+        color.get(colors + n + 8);
+        color.get(colors + n + 12);
+
+        nStars++;
+    }
+
+    if (nStars == capacity)
+    {
+        render();
+        nStars = 0;
+    }
+}
+
+void StarVertexBuffer::setBillboardOrientation(const Quatf& q)
+{
+    Mat3f m = q.toMatrix3();
+    v0 = Vec3f(-1, -1, 0) * m;
+    v1 = Vec3f( 1, -1, 0) * m;
+    v2 = Vec3f( 1,  1, 0) * m;
+    v3 = Vec3f(-1,  1, 0) * m;
+}
+
+
+PointStarVertexBuffer::PointStarVertexBuffer(unsigned int _capacity) :
+    capacity(_capacity),
+    nStars(0),
+    vertices(NULL),
+    context(NULL),
+    useSprites(false),
+	texture(NULL)
+{
+    vertices = new StarVertex[capacity];
+}
+
+PointStarVertexBuffer::~PointStarVertexBuffer()
+{
+    if (vertices != NULL)
+        delete[] vertices;
+}
+
+void PointStarVertexBuffer::startSprites(const GLContext& _context)
+{
+    context = &_context;
+    assert(context->getVertexProcessor() != NULL || !useSprites); // vertex shaders required for new star rendering
+
+    unsigned int stride = sizeof(StarVertex);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
+
+    VertexProcessor* vproc = context->getVertexProcessor();
+    vproc->enable();
+    vproc->use(vp::starDisc);
+    vproc->enableAttribArray(6);
+    vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    glEnable(GL_POINT_SPRITE_ARB);
+    glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+
+    useSprites = true;
+}
+
+void PointStarVertexBuffer::startPoints(const GLContext& _context)
+{
+    context = &_context;
+
+    unsigned int stride = sizeof(StarVertex);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
+
+    // An option to control the size of the stars would be helpful.
+    // Which size looks best depends a lot on the resolution and the
+    // type of display device.
+    // glPointSize(2.0f);
+    // glEnable(GL_POINT_SMOOTH);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisable(GL_TEXTURE_2D);
+
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    useSprites = false;
+}
+
+void PointStarVertexBuffer::render()
+{
+    if (nStars != 0)
+    {
+        unsigned int stride = sizeof(StarVertex);
+        if (useSprites)
+        {
+            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glEnable(GL_TEXTURE_2D);
+        }
+        else
+        {
+            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+            glDisable(GL_TEXTURE_2D);
+            glPointSize(1.0f);
+        }
+        glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
+        glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
+
+        if (useSprites)
+        {
+            VertexProcessor* vproc = context->getVertexProcessor();
+            vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
+        }
+
+        if (texture != NULL)
+            texture->bind();
+        glDrawArrays(GL_POINTS, 0, nStars);
+        nStars = 0;
+    }
+}
+
+void PointStarVertexBuffer::finish()
+{
+    render();
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    if (useSprites)
+    {
+        VertexProcessor* vproc = context->getVertexProcessor();
+        vproc->disableAttribArray(6);
+        vproc->disable();
+
+        glDisable(GL_POINT_SPRITE_ARB);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D);
+    }
+}
+
+inline void PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,
+                                           const Color& color,
+                                           float size)
+{
+    if (nStars < capacity)
+    {
+        vertices[nStars].position = pos;
+        vertices[nStars].size = size;
+        color.get(vertices[nStars].color);
+        nStars++;
+    }
+
+    if (nStars == capacity)
+    {
+        render();
+        nStars = 0;
+    }
+}
+
+void PointStarVertexBuffer::setTexture(Texture* _texture)
+{
+	texture = _texture;
+}
+
+/**** End star vertex buffer classes ****/
+
+
 Renderer::Renderer() :
     context(0),
     windowWidth(0),
@@ -9193,8 +9500,8 @@ class StarRenderer : public ObjectRenderer<Star, float>
 
     vector<Renderer::Particle>*      glareParticles;
     vector<RenderListEntry>*         renderList;
-    Renderer::StarVertexBuffer*      starVertexBuffer;
-    Renderer::PointStarVertexBuffer* pointStarVertexBuffer;
+    StarVertexBuffer*      starVertexBuffer;
+    PointStarVertexBuffer* pointStarVertexBuffer;
 
     const StarDatabase* starDB;
 
@@ -9446,8 +9753,8 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     Vector3d obsPos;
 
     vector<RenderListEntry>*         renderList;
-    Renderer::PointStarVertexBuffer* starVertexBuffer;
-    Renderer::PointStarVertexBuffer* glareVertexBuffer;
+    PointStarVertexBuffer* starVertexBuffer;
+    PointStarVertexBuffer* glareVertexBuffer;
 
     const StarDatabase* starDB;
 
@@ -10859,256 +11166,6 @@ void Renderer::setStarStyle(StarStyle style)
 Renderer::StarStyle Renderer::getStarStyle() const
 {
     return starStyle;
-}
-
-
-Renderer::StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
-    capacity(_capacity),
-    vertices(NULL),
-    texCoords(NULL),
-    colors(NULL)
-{
-    nStars = 0;
-    vertices = new float[capacity * 12];
-    texCoords = new float[capacity * 8];
-    colors = new unsigned char[capacity * 16];
-
-    // Fill the texture coordinate array now, since it will always have
-    // the same contents.
-    for (unsigned int i = 0; i < capacity; i++)
-    {
-        unsigned int n = i * 8;
-        texCoords[n    ] = 0; texCoords[n + 1] = 0;
-        texCoords[n + 2] = 1; texCoords[n + 3] = 0;
-        texCoords[n + 4] = 1; texCoords[n + 5] = 1;
-        texCoords[n + 6] = 0; texCoords[n + 7] = 1;
-    }
-}
-
-Renderer::StarVertexBuffer::~StarVertexBuffer()
-{
-    if (vertices != NULL)
-        delete[] vertices;
-    if (colors != NULL)
-        delete[] colors;
-    if (texCoords != NULL)
-        delete[] texCoords;
-}
-
-void Renderer::StarVertexBuffer::start()
-{
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, 0, colors);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-    glDisableClientState(GL_NORMAL_ARRAY);
-}
-
-void Renderer::StarVertexBuffer::render()
-{
-    if (nStars != 0)
-    {
-        glDrawArrays(GL_QUADS, 0, nStars * 4);
-        nStars = 0;
-    }
-}
-
-void Renderer::StarVertexBuffer::finish()
-{
-    render();
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-}
-
-void Renderer::StarVertexBuffer::addStar(const Vec3f& pos,
-                                         const Color& color,
-                                         float size)
-{
-    if (nStars < capacity)
-    {
-        int n = nStars * 12;
-        vertices[n + 0]  = pos.x + v0.x * size;
-        vertices[n + 1]  = pos.y + v0.y * size;
-        vertices[n + 2]  = pos.z + v0.z * size;
-        vertices[n + 3]  = pos.x + v1.x * size;
-        vertices[n + 4]  = pos.y + v1.y * size;
-        vertices[n + 5]  = pos.z + v1.z * size;
-        vertices[n + 6]  = pos.x + v2.x * size;
-        vertices[n + 7]  = pos.y + v2.y * size;
-        vertices[n + 8]  = pos.z + v2.z * size;
-        vertices[n + 9]  = pos.x + v3.x * size;
-        vertices[n + 10] = pos.y + v3.y * size;
-        vertices[n + 11] = pos.z + v3.z * size;
-        n = nStars * 16;
-        color.get(colors + n);
-        color.get(colors + n + 4);
-        color.get(colors + n + 8);
-        color.get(colors + n + 12);
-
-        nStars++;
-    }
-
-    if (nStars == capacity)
-    {
-        render();
-        nStars = 0;
-    }
-}
-
-void Renderer::StarVertexBuffer::setBillboardOrientation(const Quatf& q)
-{
-    Mat3f m = q.toMatrix3();
-    v0 = Vec3f(-1, -1, 0) * m;
-    v1 = Vec3f( 1, -1, 0) * m;
-    v2 = Vec3f( 1,  1, 0) * m;
-    v3 = Vec3f(-1,  1, 0) * m;
-}
-
-
-Renderer::PointStarVertexBuffer::PointStarVertexBuffer(unsigned int _capacity) :
-    capacity(_capacity),
-    nStars(0),
-    vertices(NULL),
-    context(NULL),
-    useSprites(false),
-	texture(NULL)
-{
-    vertices = new StarVertex[capacity];
-}
-
-Renderer::PointStarVertexBuffer::~PointStarVertexBuffer()
-{
-    if (vertices != NULL)
-        delete[] vertices;
-}
-
-void Renderer::PointStarVertexBuffer::startSprites(const GLContext& _context)
-{
-    context = &_context;
-    assert(context->getVertexProcessor() != NULL || !useSprites); // vertex shaders required for new star rendering
-
-    unsigned int stride = sizeof(StarVertex);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
-
-    VertexProcessor* vproc = context->getVertexProcessor();
-    vproc->enable();
-    vproc->use(vp::starDisc);
-    vproc->enableAttribArray(6);
-    vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
-
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-    glEnable(GL_POINT_SPRITE_ARB);
-    glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
-
-    useSprites = true;
-}
-
-void Renderer::PointStarVertexBuffer::startPoints(const GLContext& _context)
-{
-    context = &_context;
-
-    unsigned int stride = sizeof(StarVertex);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
-
-    // An option to control the size of the stars would be helpful.
-    // Which size looks best depends a lot on the resolution and the
-    // type of display device.
-    // glPointSize(2.0f);
-    // glEnable(GL_POINT_SMOOTH);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-    useSprites = false;
-}
-
-void Renderer::PointStarVertexBuffer::render()
-{
-    if (nStars != 0)
-    {
-        unsigned int stride = sizeof(StarVertex);
-        if (useSprites)
-        {
-            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
-            glEnable(GL_TEXTURE_2D);
-        }
-        else
-        {
-            glDisable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
-            glDisable(GL_TEXTURE_2D);
-            glPointSize(1.0f);
-        }
-        glVertexPointer(3, GL_FLOAT, stride, &vertices[0].position);
-        glColorPointer(4, GL_UNSIGNED_BYTE, stride, &vertices[0].color);
-
-        if (useSprites)
-        {
-            VertexProcessor* vproc = context->getVertexProcessor();
-            vproc->attribArray(6, 1, GL_FLOAT, stride, &vertices[0].size);
-        }
-
-        if (texture != NULL)
-            texture->bind();
-        glDrawArrays(GL_POINTS, 0, nStars);
-        nStars = 0;
-    }
-}
-
-void Renderer::PointStarVertexBuffer::finish()
-{
-    render();
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    if (useSprites)
-    {
-        VertexProcessor* vproc = context->getVertexProcessor();
-        vproc->disableAttribArray(6);
-        vproc->disable();
-
-        glDisable(GL_POINT_SPRITE_ARB);
-    }
-    else
-    {
-        glEnable(GL_TEXTURE_2D);
-    }
-}
-
-void Renderer::PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,
-                                              const Color& color,
-                                              float size)
-{
-    if (nStars < capacity)
-    {
-        vertices[nStars].position = pos;
-        vertices[nStars].size = size;
-        color.get(vertices[nStars].color);
-        nStars++;
-    }
-
-    if (nStars == capacity)
-    {
-        render();
-        nStars = 0;
-    }
-}
-
-void Renderer::PointStarVertexBuffer::setTexture(Texture* _texture)
-{
-	texture = _texture;
 }
 
 
