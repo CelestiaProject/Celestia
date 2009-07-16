@@ -9134,7 +9134,7 @@ template <class OBJ, class PREC> class ObjectRenderer : public OctreeProcessor<O
     GLContext* context;
     Renderer*  renderer;
 
-    Vec3f viewNormal;
+    Eigen::Vector3f viewNormal;
 
     float fov;
     float size;
@@ -9189,7 +9189,7 @@ class StarRenderer : public ObjectRenderer<Star, float>
     void process(const Star& star, float distance, float appMag);
 
  public:
-    Point3d obsPos;
+    Vector3d obsPos;
 
     vector<Renderer::Particle>*      glareParticles;
     vector<RenderListEntry>*         renderList;
@@ -9234,17 +9234,20 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 {
     nProcessed++;
 
-    Point3f starPos = ptFromEigen(star.getPosition());
+    Vector3f starPos = star.getPosition();
+    Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
+#if 0
     Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
                    (float) ((double) starPos.y - obsPos.y),
                    (float) ((double) starPos.z - obsPos.z));    
+#endif
     float   orbitalRadius = star.getOrbitalRadius();
     bool    hasOrbit = orbitalRadius > 0.0f;
 
     if (distance > distanceLimit)
         return;
 
-    if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f || hasOrbit)
+    if (relPos.dot(viewNormal) > 0.0f || relPos.x() * relPos.x() < 0.1f || hasOrbit)
     {
 #ifdef HDR_COMPRESS
         Color starColorFull = colorTemp->lookupColor(star.getTemperature());
@@ -9278,19 +9281,18 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // This is a much more accurate (and expensive) distance
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
-            Point3d hPos = astrocentricPosition(observer->getPosition(),
-                                                star,
-                                                observer->getTime());
-            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
-                -astro::kilometersToLightYears(1.0f),
-            distance = relPos.length();
+            Vector3d hPos = toEigen(astrocentricPosition(observer->getPosition(),
+                                                         star,
+                                                         observer->getTime()));
+            relPos =  hPos.cast<float>() * -astro::kilometersToLightYears(1.0f),
+            distance = relPos.norm();
 
             // Recompute apparent magnitude using new distance computation
             appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
 
             float f        = RenderDistance / distance;
             renderDistance = RenderDistance;
-            starPos        = obsPos + relPos * f;
+            starPos        = obsPos.cast<float>() + relPos * f;
 
             float radius = star.getRadius();
             discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
@@ -9300,9 +9302,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         // Place labels for stars brighter than the specified label threshold brightness
         if ((labelMode & Renderer::StarLabels) && appMag < labelThresholdMag)
         {
-            Vec3f starDir = relPos;
+            Vector3f starDir = relPos;
             starDir.normalize();
-            if (dot(starDir, viewNormal) > cosFOV)
+            if (starDir.dot(viewNormal) > cosFOV)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
                 starDB->getStarName(star, nameBuffer, sizeof(nameBuffer), true);
@@ -9311,7 +9313,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                     distr = 1.0f;
                 renderer->addBackgroundAnnotation(NULL, nameBuffer,
                                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                                  Point3f(relPos.x, relPos.y, relPos.z));
+                                                  ptFromEigen(relPos));
                 nLabelled++;
             }
         }
@@ -9370,7 +9372,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             }
             else
             {
-                starVertexBuffer->addStar(relPos,
+                starVertexBuffer->addStar(fromEigen(relPos),
                                           Color(starColor, alpha),
                                           pointSize * renderDistance);
             }
@@ -9383,7 +9385,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             if (appMag < saturationMag)
             {
                 Renderer::Particle p;
-                p.center = Point3f(relPos.x, relPos.y, relPos.z);
+                p.center = ptFromEigen(relPos);
                 p.size = size;
                 p.color = Color(starColor, alpha);
 
@@ -9421,7 +9423,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // a viewer at the origin--this is different than for distant
             // stars.
             float scale = astro::lightYearsToKilometers(1.0f);
-            rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
+            rle.position = Point3f(relPos.x() * scale, relPos.y() * scale, relPos.z() * scale);
             rle.centerZ = Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
             rle.distance = rle.position.distanceFromOrigin();
             rle.radius = star.getRadius();
@@ -9441,7 +9443,7 @@ class PointStarRenderer : public ObjectRenderer<Star, float>
     void process(const Star& star, float distance, float appMag);
 
  public:
-    Point3d obsPos;
+    Vector3d obsPos;
 
     vector<RenderListEntry>*         renderList;
     Renderer::PointStarVertexBuffer* starVertexBuffer;
@@ -9484,10 +9486,8 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 {
     nProcessed++;
 
-    Point3f starPos = ptFromEigen(star.getPosition());
-    Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
-                   (float) ((double) starPos.y - obsPos.y),
-                   (float) ((double) starPos.z - obsPos.z));
+    Vector3f starPos = star.getPosition();
+    Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
     float   orbitalRadius = star.getOrbitalRadius();
     bool    hasOrbit = orbitalRadius > 0.0f;
 
@@ -9501,7 +9501,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
     // TODO: consider normalizing relPos and comparing relPos*viewNormal against
     // cosFOV--this will cull many more stars than relPos*viewNormal, at the
     // cost of a normalize per star.
-    if (relPos * viewNormal > 0 || relPos.x * relPos.x < 0.1f || hasOrbit)
+    if (relPos.dot(viewNormal) > 0.0f || relPos.x() * relPos.x() < 0.1f || hasOrbit)
     {
 #ifdef HDR_COMPRESS
         Color starColorFull = colorTemp->lookupColor(star.getTemperature());
@@ -9535,19 +9535,18 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             // This is a much more accurate (and expensive) distance
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
-            Point3d hPos = astrocentricPosition(observer->getPosition(),
-                                                star,
-                                                observer->getTime());
-            relPos = Vec3f((float) hPos.x, (float) hPos.y, (float) hPos.z) *
-                -astro::kilometersToLightYears(1.0f),
-            distance = relPos.length();
+            Vector3d hPos = toEigen(astrocentricPosition(observer->getPosition(),
+                                                         star,
+                                                         observer->getTime()));
+            relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f),
+            distance = relPos.norm();
 
             // Recompute apparent magnitude using new distance computation
             appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
 
             float f        = RenderDistance / distance;
             renderDistance = RenderDistance;
-            starPos        = obsPos + relPos * f;
+            starPos        = obsPos.cast<float>() + relPos * f;
 
             float radius = star.getRadius();
             discSizeInPixels = radius / astro::lightYearsToKilometers(distance) / pixelSize;
@@ -9557,9 +9556,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // Place labels for stars brighter than the specified label threshold brightness
         if ((labelMode & Renderer::StarLabels) && appMag < labelThresholdMag)
         {
-            Vec3f starDir = relPos;
+            Vector3f starDir = relPos;
             starDir.normalize();
-            if (dot(starDir, viewNormal) > cosFOV)
+            if (starDir.dot(viewNormal) > cosFOV)
             {
                 char nameBuffer[Renderer::MaxLabelLength];
                 starDB->getStarName(star, nameBuffer, sizeof(nameBuffer), true);
@@ -9568,7 +9567,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     distr = 1.0f;
                 renderer->addBackgroundAnnotation(NULL, nameBuffer,
                                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                                  Point3f(relPos.x, relPos.y, relPos.z));
+                                                  ptFromEigen(relPos));
                 nLabelled++;
             }
         }
@@ -9649,7 +9648,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             // a viewer at the origin--this is different than for distant
             // stars.
             float scale = astro::lightYearsToKilometers(1.0f);
-            rle.position = Point3f(relPos.x * scale, relPos.y * scale, relPos.z * scale);
+            rle.position = Point3f(relPos.x() * scale, relPos.y() * scale, relPos.z() * scale);
             rle.centerZ = Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
             rle.distance = rle.position.distanceFromOrigin();
             rle.radius = star.getRadius();
@@ -9683,7 +9682,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
                            const Observer& observer)
 {
     StarRenderer starRenderer;
-    Point3d obsPos = microLYToLY((Point3d) observer.getPosition());
+    Vector3d obsPos = toEigen(microLYToLY((Point3d) observer.getPosition()));
 
 
     starRenderer.context          = context;
@@ -9691,7 +9690,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
     starRenderer.starDB           = &starDB;
     starRenderer.observer         = &observer;
     starRenderer.obsPos           = obsPos;
-    starRenderer.viewNormal       = Vec3f(0, 0, -1) * observer.getOrientationf().toMatrix3();
+    starRenderer.viewNormal       = toEigen(observer.getOrientationf()).conjugate() * -Vector3f::UnitZ();
     starRenderer.glareParticles   = &glareParticles;
     starRenderer.renderList       = &renderList;
     starRenderer.starVertexBuffer = starVertexBuffer;
@@ -9770,8 +9769,8 @@ void Renderer::renderStars(const StarDatabase& starDB,
         starRenderer.starVertexBuffer->start();
     }
     starDB.findVisibleStars(starRenderer,
-                            Point3f((float) obsPos.x, (float) obsPos.y, (float) obsPos.z),
-                            observer.getOrientationf(),
+                            obsPos.cast<float>(),
+                            toEigen(observer.getOrientationf()),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestMagNight);
@@ -9797,7 +9796,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                 float faintestMagNight,
                                 const Observer& observer)
 {
-    Point3d obsPos = microLYToLY((Point3d) observer.getPosition());
+    Vector3d obsPos = toEigen(microLYToLY((Point3d) observer.getPosition()));
 
     PointStarRenderer starRenderer;
     starRenderer.context           = context;
@@ -9805,7 +9804,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.starDB            = &starDB;
     starRenderer.observer          = &observer;
     starRenderer.obsPos            = obsPos;
-    starRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientationf().toMatrix3();
+    starRenderer.viewNormal        = toEigen(observer.getOrientationf()).conjugate() * -Vector3f::UnitZ();
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer;
     starRenderer.glareVertexBuffer = glareVertexBuffer;
@@ -9864,8 +9863,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         starRenderer.starVertexBuffer->startSprites(*context);
 
     starDB.findVisibleStars(starRenderer,
-                            Point3f((float) obsPos.x, (float) obsPos.y, (float) obsPos.z),
-                            observer.getOrientationf(),
+                            obsPos.cast<float>(),
+                            toEigen(observer.getOrientationf()),
                             degToRad(fov),
                             (float) windowWidth / (float) windowHeight,
                             faintestMagNight);
@@ -9885,11 +9884,11 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
     void process(DeepSkyObject* const &, double, float);
 
  public:
-    Point3d      obsPos;
+    Vector3d     obsPos;
     DSODatabase* dsoDB;
     Frustum      frustum;
 
-    Mat3f orientationMatrix;
+    Matrix3f orientationMatrix;
 
     int wWidth;
     int wHeight;
@@ -9912,12 +9911,10 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     if (distanceToDSO > distanceLimit)
         return;
     
-    Point3d dsoPos = dso->getPosition();
-    Vec3f   relPos = Vec3f((float)(dsoPos.x - obsPos.x),
-                           (float)(dsoPos.y - obsPos.y),
-                           (float)(dsoPos.z - obsPos.z));
+    Vector3d dsoPos = toEigen(dso->getPosition());
+    Vector3f relPos = (dsoPos - obsPos).cast<float>();
 
-    Point3d center = Point3d(0.0f, 0.0f, 0.0f) + relPos * orientationMatrix;
+    Vector3f center = orientationMatrix.transpose() * relPos;
 	
 	double enhance = 4.0, pc10 = 32.6167;
 	
@@ -9933,12 +9930,11 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
     
-	
     if ((renderFlags & dso->getRenderMask()) && dso->isVisible())
     {
 		double dsoRadius = dso->getBoundingSphereRadius(); 
 
-        if (frustum.testSphere(center, dsoRadius) != Frustum::Outside)
+        if (frustum.testSphere(center, (float) dsoRadius) != Frustum::Outside)
         {
             // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
             // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
@@ -9994,7 +9990,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             glTranslate(relPos);
 
             dso->render(*context,
-                        relPos,
+                        fromEigen(relPos),
                         observer->getOrientationf(),
                         (float) brightness,
                         pixelSize);
@@ -10016,7 +10012,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     //
     unsigned int labelMask = dso->getLabelMask();
 
-    if ((labelMask & labelMode) && dot(relPos, viewNormal) > 0 && dso->isVisible())
+    if ((labelMask & labelMode) && relPos.dot(viewNormal) > 0 && dso->isVisible())
     {
         Color labelColor;
         float appMagEff = 6.0f;
@@ -10070,7 +10066,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
             renderer->addBackgroundAnnotation(rep,
                                               dsoDB->getDSOName(dso, true),
                                               Color(labelColor, distr * labelColor.alpha()),
-                                              Point3f(relPos.x, relPos.y, relPos.z),
+                                              ptFromEigen(relPos),
                                               Renderer::AlignLeft, Renderer::VerticalAlignCenter, symbolSize);
         }
     }
@@ -10083,20 +10079,17 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 {
     DSORenderer dsoRenderer;
 
-    Point3d obsPos    = (Point3d) observer.getPosition();
-    obsPos.x         *= 1e-6;
-    obsPos.y         *= 1e-6;
-    obsPos.z         *= 1e-6;
+    Vector3d obsPos    = toEigen((Point3d) observer.getPosition()) * 1e-6;
 
     DSODatabase* dsoDB  = universe.getDSOCatalog();
 
     dsoRenderer.context          = context;
     dsoRenderer.renderer         = this;
     dsoRenderer.dsoDB            = dsoDB;
-    dsoRenderer.orientationMatrix = conjugate(observer.getOrientationf()).toMatrix3();
+    dsoRenderer.orientationMatrix = toEigen(observer.getOrientationf()).conjugate().toRotationMatrix();
     dsoRenderer.observer          = &observer;
     dsoRenderer.obsPos            = obsPos;
-    dsoRenderer.viewNormal        = Vec3f(0, 0, -1) * observer.getOrientationf().toMatrix3();
+    dsoRenderer.viewNormal        = toEigen(observer.getOrientationf()).conjugate() * -Vector3f::UnitZ();
     dsoRenderer.fov              = fov;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     dsoRenderer.size             = pixelSize * 1.6f / corrFac;
@@ -10138,7 +10131,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
-                           observer.getOrientationf(),
+                           toEigen(observer.getOrientationf()),
                            degToRad(fov),
                            (float) windowWidth / (float) windowHeight,
                            2 * faintestMagNight);
@@ -11094,7 +11087,7 @@ void Renderer::PointStarVertexBuffer::finish()
     }
 }
 
-void Renderer::PointStarVertexBuffer::addStar(const Vec3f& pos,
+void Renderer::PointStarVertexBuffer::addStar(const Eigen::Vector3f& pos,
                                               const Color& color,
                                               float size)
 {

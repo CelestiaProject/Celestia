@@ -389,13 +389,13 @@ class Renderer
         void startSprites(const GLContext&);
         void render();
         void finish();
-        void addStar(const Vec3f& f, const Color&, float);
+        void addStar(const Eigen::Vector3f& pos, const Color&, float);
 		void setTexture(Texture*);
 
     private:
         struct StarVertex
         {
-            Vec3f position;
+            Eigen::Vector3f position;
             float size;
             unsigned char color[4];
             float pad;

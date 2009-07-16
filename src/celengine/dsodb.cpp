@@ -176,15 +176,12 @@ string DSODatabase::getDSONameList(const DeepSkyObject* const & dso, const unsig
 
 
 void DSODatabase::findVisibleDSOs(DSOHandler&    dsoHandler,
-                                  const Point3d& obsPos2,
-                                  const Quatf&   obsOrient2,
+                                  const Vector3d& obsPos,
+                                  const Quaternionf& obsOrient,
                                   float fovY,
                                   float aspectRatio,
                                   float limitingMag) const
 {
-    Vector3d obsPos(obsPos2.x, obsPos2.y, obsPos2.z);
-    Quaternionf obsOrient(obsOrient2.w, obsOrient2.x, obsOrient2.y, obsOrient2.z);
-
     // Compute the bounding planes of an infinite view frustum
     Hyperplane<double, 3> frustumPlanes[5];
     Vector3d  planeNormals[5];

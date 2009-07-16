@@ -140,6 +140,16 @@ inline void glScale(const Eigen::Vector3f& scale)
     glScalef(scale.x(), scale.y(), scale.z());
 }
 
+inline void glTranslate(const Eigen::Vector3f& offset)
+{
+    glTranslatef(offset.x(), offset.y(), offset.z());
+}
+
+inline void glTranslate(const Eigen::Vector3d& offset)
+{
+    glTranslated(offset.x(), offset.y(), offset.z());
+}
+
 inline void glRotate(const Eigen::Quaternionf& q)
 {
     Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
