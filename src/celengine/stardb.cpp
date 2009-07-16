@@ -508,8 +508,8 @@ string StarDatabase::getStarNameList(const Star& star, const unsigned int maxNam
 
 
 void StarDatabase::findVisibleStars(StarHandler& starHandler,
-                                    const Point3f& position,
-                                    const Quatf& orientation,
+                                    const Vector3f& position,
+                                    const Quaternionf& orientation,
                                     float fovY,
                                     float aspectRatio,
                                     float limitingMag) const
@@ -517,22 +517,22 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
     // Compute the bounding planes of an infinite view frustum
     Hyperplane<float, 3> frustumPlanes[5];
     Vector3f planeNormals[5];
-    Eigen::Matrix3f rot = toEigen(orientation).toRotationMatrix();
+    Eigen::Matrix3f rot = orientation.toRotationMatrix();
     float h = (float) tan(fovY / 2);
     float w = h * aspectRatio;
-    planeNormals[0] = Vector3f(0, 1, -h);
-    planeNormals[1] = Vector3f(0, -1, -h);
-    planeNormals[2] = Vector3f(1, 0, -w);
-    planeNormals[3] = Vector3f(-1, 0, -w);
-    planeNormals[4] = Vector3f(0, 0, -1);
+    planeNormals[0] = Vector3f(0.0f, 1.0f, -h);
+    planeNormals[1] = Vector3f(0.0f, -1.0f, -h);
+    planeNormals[2] = Vector3f(1.0f, 0.0f, -w);
+    planeNormals[3] = Vector3f(-1.0f, 0.0f, -w);
+    planeNormals[4] = Vector3f(0.0f, 0.0f, -1.0f);
     for (int i = 0; i < 5; i++)
     {
         planeNormals[i] = rot.transpose() * planeNormals[i].normalized();
-        frustumPlanes[i] = Hyperplane<float, 3>(planeNormals[i], toEigen(position));
+        frustumPlanes[i] = Hyperplane<float, 3>(planeNormals[i], position);
     }
 
     octreeRoot->processVisibleObjects(starHandler,
-                                      toEigen(position),
+                                      position,
                                       frustumPlanes,
                                       limitingMag,
                                       STAR_OCTREE_ROOT_SIZE);
@@ -540,11 +540,11 @@ void StarDatabase::findVisibleStars(StarHandler& starHandler,
 
 
 void StarDatabase::findCloseStars(StarHandler& starHandler,
-                                  const Point3f& position,
+                                  const Vector3f& position,
                                   float radius) const
 {
     octreeRoot->processCloseObjects(starHandler,
-                                    toEigen(position),
+                                    position,
                                     radius,
                                     STAR_OCTREE_ROOT_SIZE);
 }

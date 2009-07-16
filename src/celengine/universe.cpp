@@ -698,7 +698,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     // precision test isn't nearly fast enough to use on our database of
     // over 100k stars.
     CloseStarPicker closePicker(origin, direction, when, 1.0f, tolerance);
-    starCatalog->findCloseStars(closePicker, Point3f(o.x(), o.y(), o.z()), 1.0f);
+    starCatalog->findCloseStars(closePicker, o, 1.0f);
     if (closePicker.closestStar != NULL)
         return Selection(const_cast<Star*>(closePicker.closestStar));
 
@@ -710,8 +710,8 @@ Selection Universe::pickStar(const UniversalCoord& origin,
 
     StarPicker picker(o, direction, when, tolerance);
     starCatalog->findVisibleStars(picker,
-                                  Point3f(o.x(), o.y(), o.z()),
-                                  fromEigen(rotation),
+                                  o,
+                                  rotation,
                                   tolerance, 1.0f,
                                   faintestMag);
     if (picker.pickedStar != NULL)
@@ -862,8 +862,8 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
 
     DSOPicker picker(orig, dir, renderFlags, tolerance);
     dsoCatalog->findVisibleDSOs(picker,
-                                Point3d(orig.x(), orig.y(), orig.z()),
-                                fromEigen(rotation),
+                                orig,
+                                rotation,
                                 tolerance,
                                 1.0f,
                                 faintestMag);
@@ -1221,7 +1221,7 @@ SolarSystem* Universe::getNearestSolarSystem(const UniversalCoord& position) con
     Vector3f pos = position.toLy().cast<float>();
     ClosestStarFinder closestFinder(1.0f, this);
     closestFinder.withPlanets = true;
-    starCatalog->findCloseStars(closestFinder, Point3f(pos.x(), pos.y(), pos.z()), 1.0f);
+    starCatalog->findCloseStars(closestFinder, pos, 1.0f);
     return getSolarSystem(closestFinder.closestStar);
 }
 
@@ -1233,5 +1233,5 @@ Universe::getNearStars(const UniversalCoord& position,
 {
     Vector3f pos = position.toLy().cast<float>();
     NearStarFinder finder(1.0f, nearStars);
-    starCatalog->findCloseStars(finder, Point3f(pos.x(), pos.y(), pos.z()), maxDistance);
+    starCatalog->findCloseStars(finder, pos, maxDistance);
 }
