@@ -130,8 +130,8 @@ bool QtEclipseFinder::testEclipse(const Body& receiver, const Body& occulter,
         // less than the distance between the sun and the receiver.  This
         // approximation works everywhere in the solar system, and likely
         // works for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = receiver.getAstrocentricPosition(now);
-        Point3d posOcculter = occulter.getAstrocentricPosition(now);
+        Point3d posReceiver = ptFromEigen(receiver.getAstrocentricPosition(now));
+        Point3d posOcculter = ptFromEigen(occulter.getAstrocentricPosition(now));
 
         const Star* sun = receiver.getSystem()->getStar();
         assert(sun != NULL);
@@ -809,7 +809,7 @@ void EventFinder::slotViewNearEclipsed()
 	Vec3d maxEclipsePoint = findMaxEclipsePoint(toCasterDir, toReceiver,
 												astro::kilometersToMicroLightYears(receiver.radius()));
 
-	Vec3d up = Vec3d(0.0, 1.0, 0.0) * (activeEclipse->receiver->getEclipticToBodyFixed(now)).toMatrix3();
+    Vec3d up = Vec3d(0.0, 1.0, 0.0) * (fromEigen(activeEclipse->receiver->getEclipticToBodyFixed(now))).toMatrix3();
 	Point3d viewerPos = Point3d(0.0, 0.0, 0.0) + maxEclipsePoint * 4.0; // 4 radii from center
 	Quatd viewOrientation = Quatd::lookAt(viewerPos, 
 										  Point3d(0.0, 0.0, 0.0) + maxEclipsePoint,
@@ -870,7 +870,7 @@ void EventFinder::slotViewOccluderSurface()
     Selection sun(activeEclipse->receiver->getSystem()->getStar());
 
 	Vec3d toCasterDir = caster.getPosition(now) - sun.getPosition(now);
-	Vec3d up = Vec3d(0.0, 1.0, 0.0) * activeEclipse->receiver->getEclipticToBodyFixed(now).toMatrix3();
+    Vec3d up = Vec3d(0.0, 1.0, 0.0) * fromEigen(activeEclipse->receiver->getEclipticToBodyFixed(now)).toMatrix3();
 
 	Vec3d toReceiverDir = receiver.getPosition(now) - caster.getPosition(now);
 
@@ -902,7 +902,7 @@ void EventFinder::slotViewBehindOccluder()
     Selection sun(activeEclipse->receiver->getSystem()->getStar());
 
 	Vec3d toCasterDir = caster.getPosition(now) - sun.getPosition(now);
-	Vec3d up = Vec3d(0.0, 1.0, 0.0) * activeEclipse->receiver->getEclipticToBodyFixed(now).toMatrix3();
+    Vec3d up = Vec3d(0.0, 1.0, 0.0) * fromEigen(activeEclipse->receiver->getEclipticToBodyFixed(now)).toMatrix3();
 
 	Vec3d toReceiverDir = receiver.getPosition(now) - caster.getPosition(now);
 

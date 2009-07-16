@@ -14,7 +14,6 @@
 #include <celutil/basictypes.h>
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
-#include <celmath/vecmath.h>
 #include <celengine/univcoord.h>
 #include <celengine/celestia.h>
 #include <celengine/stellarclass.h>
@@ -260,7 +259,7 @@ public:
     UniversalCoord getPosition(double t) const;
     UniversalCoord getOrbitBarycenterPosition(double t) const;
 
-	Vec3d getVelocity(double t) const;
+    Eigen::Vector3d getVelocity(double t) const;
 
     void setCatalogNumber(uint32);
     void setPosition(float, float, float);

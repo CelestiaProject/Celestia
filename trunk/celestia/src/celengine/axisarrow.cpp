@@ -458,7 +458,7 @@ BodyAxisArrows::BodyAxisArrows(const Body& _body) :
 Quaterniond
 BodyAxisArrows::getOrientation(double tdb) const
 {
-    return (Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * toEigen(body.getEclipticToBodyFixed(tdb))).conjugate();
+    return (Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb)).conjugate();
 }
 
 
@@ -475,5 +475,5 @@ FrameAxisArrows::FrameAxisArrows(const Body& _body) :
 Quaterniond
 FrameAxisArrows::getOrientation(double tdb) const
 {
-    return toEigen(~body.getEclipticToFrame(tdb));
+    return body.getEclipticToFrame(tdb).conjugate();
 }
