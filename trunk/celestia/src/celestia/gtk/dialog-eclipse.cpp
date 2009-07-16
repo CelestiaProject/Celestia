@@ -286,7 +286,7 @@ static void showCalPopup(GtkToggleButton *button, EclipseData *ed)
 /* CALLBACK: "SetTime/Goto" in Eclipse Finder */
 static gint eclipseGoto(GtkButton*, EclipseData* ed)
 {
-	GValue value = { 0, 0 }; /* Initialize GValue to 0 */
+	GValue value = { 0, {{0}} }; /* Initialize GValue to 0 */
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 	int time[6];
