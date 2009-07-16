@@ -59,6 +59,7 @@
 #define TIMERATE_PRINTF_FORMAT "%'.12g"
 #endif
 
+using namespace Eigen;
 using namespace std;
 
 static const int DragThreshold = 3;
@@ -505,7 +506,7 @@ void showSelectionInfo(const Selection& sel)
     if (sel.deepsky() != NULL)
         sel.deepsky()->getOrientation().getAxisAngle(axis, angle);
     else if (sel.body() != NULL)
-        sel.body()->getOrientation().getAxisAngle(axis, angle);
+        fromEigen(sel.body()->getGeometryOrientation()).getAxisAngle(axis, angle);
 
     cout << sel.getName() << '\n';
     cout << _("Orientation: ") << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
@@ -908,7 +909,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if (sel.getType() == Selection::Type_DeepSky)
                 q = sel.deepsky()->getOrientation();
             else if (sel.getType() == Selection::Type_Body)
-                q = sel.body()->getOrientation();
+                q = fromEigen(sel.body()->getGeometryOrientation());
 
             q.yrotate(dx / width);
             q.xrotate(dy / height);
@@ -916,7 +917,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if (sel.getType() == Selection::Type_DeepSky)
                 sel.deepsky()->setOrientation(q);
             else if (sel.getType() == Selection::Type_Body)
-                sel.body()->setOrientation(q);
+                sel.body()->setGeometryOrientation(toEigen(q));
         }
         else if (editMode && checkMask(modifiers, RightButton | ShiftKey | ControlKey))
         {
@@ -3067,7 +3068,7 @@ static void displayPlanetocentricCoords(Overlay& overlay,
     else
     {
         // Swap hemispheres if the object is a retrograde rotator
-        Quatd q = ~body.getEclipticToEquatorial(astro::J2000);
+        Quatd q = fromEigen(body.getEclipticToEquatorial(astro::J2000).conjugate());
         bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
 
         if ((latitude < 0.0) ^ retrograde)
@@ -3298,7 +3299,7 @@ static void displayPlanetInfo(Overlay& overlay,
             const Star* sun = system->getStar();
             if (sun != NULL)
             {
-                double distFromSun = body.getAstrocentricPosition(t).distanceFromOrigin();
+                double distFromSun = body.getAstrocentricPosition(t).norm();
                 float planetTemp = sun->getTemperature() *
                     (float) (::pow(1.0 - body.getAlbedo(), 0.25) *
                              sqrt(sun->getRadius() / (2.0 * distFromSun)));
@@ -3333,10 +3334,10 @@ static void displayLocationInfo(Overlay& overlay,
     Body* body = location.getParentBody();
     if (body != NULL)
     {
-        Vec3f locPos = location.getPosition();
-        Vec3d lonLatAlt = body->cartesianToPlanetocentric(Vec3d(locPos.x, locPos.y, locPos.z));
+        Vector3f locPos = toEigen(location.getPosition());
+        Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
         displayPlanetocentricCoords(overlay, *body,
-                                    lonLatAlt.x, lonLatAlt.y, lonLatAlt.z, false);
+                                    lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false);
     }
 }
 

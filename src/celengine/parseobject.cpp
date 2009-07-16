@@ -23,7 +23,9 @@
 #include "trajmanager.h"
 #include "rotationmanager.h"
 #include "universe.h"
+#include "eigenport.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -246,7 +248,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
 
         // TODO: Need function to calculate planetographic coordinates
         // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
-        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z);
+        position = fromEigen(centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z));
     }
     else if (trajData->getVector("Planetocentric", v))
     {
@@ -257,7 +259,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
         }
 
         // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
-        position = centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z);
+        position = fromEigen(centralObject.body()->planetocentricToCartesian(180.0 + v.x, v.y, v.z));
     }
     else
     {
@@ -775,8 +777,8 @@ CreateOrbit(const Selection& centralObject,
         Body* centralBody = centralObject.body();
         if (centralBody != NULL)
         {
-            Vec3d pos = centralBody->planetocentricToCartesian(longlat.x, longlat.y, longlat.z);
-            return new SynchronousOrbit(*centralBody, Point3d(pos.x, pos.y, pos.z));
+            Vector3d pos = centralBody->planetocentricToCartesian(longlat.x, longlat.y, longlat.z);
+            return new SynchronousOrbit(*centralBody, Point3d(pos.x(), pos.y(), pos.z()));
         }
         else
         {

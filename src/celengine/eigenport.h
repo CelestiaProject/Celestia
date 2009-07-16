@@ -12,6 +12,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <Eigen/Geometry>
+
+#ifndef _EIGENPORT_
+#define _EIGENPORT_
+
 template<typename T>
 Eigen::Matrix<T, 3, 1> toEigen(const Vector3<T>& v)
 {
@@ -52,4 +57,5 @@ Point3<SCALAR> ptFromEigen(const Eigen::Matrix<SCALAR, 3, 1>& v)
     return Point3<SCALAR>(v.x(), v.y(), v.z());
 }
 
+#endif // _EIGENPORT_
 

@@ -325,7 +325,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
     if (!body->isVisible() || !body->extant(pickInfo->jd) || !body->isClickable())
         return true;
 
-    Vector3d bpos = toEigen(body->getAstrocentricPosition(pickInfo->jd));
+    Vector3d bpos = body->getAstrocentricPosition(pickInfo->jd);
     Vector3d bodyDir = bpos - pickInfo->pickRay.origin;
     double distance = bodyDir.norm();
 
@@ -358,7 +358,7 @@ static bool ApproxPlanetPickTraversal(Body* body, void* info)
 static bool ExactPlanetPickTraversal(Body* body, void* info)
 {
     PlanetPickInfo* pickInfo = reinterpret_cast<PlanetPickInfo*>(info);
-    Vector3d bpos = toEigen(body->getAstrocentricPosition(pickInfo->jd));
+    Vector3d bpos = body->getAstrocentricPosition(pickInfo->jd);
     float radius = body->getRadius();
     double distance = -1.0;
 
@@ -375,10 +375,10 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
             // we need to perform a ray-ellipsoid intersection test.
             if (!body->isSphere())
             {
-                Vector3d ellipsoidAxes = toEigen(body->getSemiAxes()).cast<double>();
+                Vector3d ellipsoidAxes = body->getSemiAxes().cast<double>();
 
                 // Transform rotate the pick ray into object coordinates
-                Matrix3d m = toEigen(body->getEclipticToEquatorial(pickInfo->jd)).toRotationMatrix();
+                Matrix3d m = body->getEclipticToEquatorial(pickInfo->jd).toRotationMatrix();
                 Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
                 r = r.transform(m);
                 if (!testIntersection(r, Ellipsoidd(ellipsoidAxes), distance))
@@ -388,8 +388,8 @@ static bool ExactPlanetPickTraversal(Body* body, void* info)
         else
         {
             // Transform rotate the pick ray into object coordinates
-            Quaterniond qd = toEigen(body->getOrientation()).cast<double>();
-            Matrix3d m = (qd * toEigen(body->getEclipticToBodyFixed(pickInfo->jd))).toRotationMatrix();
+            Quaterniond qd = body->getGeometryOrientation().cast<double>();
+            Matrix3d m = (qd * body->getEclipticToBodyFixed(pickInfo->jd)).toRotationMatrix();
             Ray3d r(pickInfo->pickRay.origin - bpos, pickInfo->pickRay.direction);
             r = r.transform(m);
 

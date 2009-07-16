@@ -12,7 +12,9 @@
 #include "astro.h"
 #include "selection.h"
 #include "frametree.h"
+#include "eigenport.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -52,9 +54,14 @@ UniversalCoord Selection::getPosition(double t) const
 
     case Type_DeepSky:
         {
-            Point3d p = deepsky()->getPosition();
+            Vector3d p = toEigen(deepsky()->getPosition());
+            // NOTE: cast to single precision is only present to maintain compatibility with
+            // Celestia 1.6.0.
+            return UniversalCoord::CreateLy(p.cast<float>());
+#if CELVEC
             return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
                                             Point3f((float) p.x, (float) p.y, (float) p.z));
+#endif
         }
         
     case Type_Location:
@@ -62,46 +69,52 @@ UniversalCoord Selection::getPosition(double t) const
             Body* body = location()->getParentBody();
             if (body != NULL)
             {
+#if CELVEC
                 Point3d planetocentricPos = location()->getPlanetocentricPosition(t) *
                     astro::kilometersToMicroLightYears(1.0);
                 return body->getPosition(t) + planetocentricPos;
+#endif
+                return body->getPosition(t).offsetKm(toEigen(location()->getPlanetocentricPosition(t)));
             }
             else
             {
                 // Bad location; all locations should have a parent.
                 assert(0);
-                return UniversalCoord(0.0, 0.0, 0.0);
+                return UniversalCoord::Zero();
             }
         }
 
     default:
-        return UniversalCoord(Point3d(0.0, 0.0, 0.0));
+        return UniversalCoord::Zero();
     }
 }
 
 
-Vec3d Selection::getVelocity(double t) const
+Vector3d Selection::getVelocity(double t) const
 {
     switch (type)
     {
     case Type_Body:
-		return body()->getVelocity(t);
+        return body()->getVelocity(t);
         
     case Type_Star:
         return star()->getVelocity(t);
 
     case Type_DeepSky:
-		return Vec3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
 
     case Type_Location:
 		{
 			// For now, just use differentiation for location velocities.
+#if CELVEC
 			Vec3d ulyPerJD = (getPosition(t) - getPosition(t - VELOCITY_DIFF_DELTA)) * (1.0 / VELOCITY_DIFF_DELTA);
 			return ulyPerJD * astro::microLightYearsToKilometers(1.0);
+#endif
+            return getPosition(t).offsetFromKm(getPosition(t - VELOCITY_DIFF_DELTA)) / VELOCITY_DIFF_DELTA;
 		}
 
     default:
-        return Vec3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }
 }
 

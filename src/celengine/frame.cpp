@@ -2,7 +2,8 @@
 // 
 // Reference frame base class.
 //
-// Copyright (C) 2003-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2003-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,7 +12,9 @@
 
 #include <cassert>
 #include <celengine/frame.h>
+#include "eigenport.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -114,7 +117,7 @@ ReferenceFrame::convertFromAstrocentric(const Point3d& p, double tjd) const
 {
     if (centerObject.getType() == Selection::Type_Body)
     {
-        Point3d center = centerObject.body()->getAstrocentricPosition(tjd);
+        Point3d center = ptFromEigen(centerObject.body()->getAstrocentricPosition(tjd));
         return Point3d(0.0, 0.0, 0.0) + (p - center) * conjugate(getOrientation(tjd)).toMatrix3();
     }
     else if (centerObject.getType() == Selection::Type_Star)
@@ -136,7 +139,7 @@ ReferenceFrame::convertToAstrocentric(const Point3d& p, double tjd) const
 {
     if (centerObject.getType() == Selection::Type_Body)
     {
-        Point3d center = centerObject.body()->getAstrocentricPosition(tjd);
+        Point3d center = ptFromEigen(centerObject.body()->getAstrocentricPosition(tjd));
         return center + p * getOrientation(tjd).toMatrix3();
     }
     else if (centerObject.getType() == Selection::Type_Star)
@@ -290,16 +293,16 @@ BodyFixedFrame::getOrientation(double tjd) const
 {
     // Rotation of 180 degrees about the y axis is required
     // TODO: this rotation could go in getEclipticalToBodyFixed()
-    Quatd yrot180 = Quatd(0.0, 0.0, 1.0, 0.0);
+    Quaterniond yrot180(0.0, 0.0, 1.0, 0.0);
 
     switch (fixObject.getType())
     {
     case Selection::Type_Body:
-        return yrot180 * fixObject.body()->getEclipticToBodyFixed(tjd);
+        return fromEigen(yrot180 * fixObject.body()->getEclipticToBodyFixed(tjd));
     case Selection::Type_Star:
-        return yrot180 * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
+        return fromEigen(yrot180 * toEigen(fixObject.star()->getRotationModel()->orientationAtTime(tjd)));
     default:
-        return yrot180;
+        return fromEigen(yrot180);
     }
 }
 
@@ -310,7 +313,7 @@ BodyFixedFrame::getAngularVelocity(double tjd) const
 	switch (fixObject.getType())
 	{
 	case Selection::Type_Body:
-		return fixObject.body()->getAngularVelocity(tjd);
+        return fromEigen(fixObject.body()->getAngularVelocity(tjd));
 	case Selection::Type_Star:
 		return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
 	default:
@@ -375,7 +378,7 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
     switch (equatorObject.getType())
     {
     case Selection::Type_Body:
-        return equatorObject.body()->getEclipticToEquatorial(t);
+        return fromEigen(equatorObject.body()->getEclipticToEquatorial(t));
     case Selection::Type_Star:
         return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
@@ -757,36 +760,36 @@ FrameVector::createConstantVector(const Vec3d& _vec,
 Vec3d
 FrameVector::direction(double tjd) const
 {
-    Vec3d v;
+    Vector3d v;
 
     switch (vecType)
     {
     case RelativePosition:
-        v = target.getPosition(tjd) - observer.getPosition(tjd);
+        v = target.getPosition(tjd).offsetFromKm(observer.getPosition(tjd));
         break;
 
     case RelativeVelocity:
         {
-			Vec3d v0 = observer.getVelocity(tjd);
-			Vec3d v1 = target.getVelocity(tjd);
+            Vector3d v0 = observer.getVelocity(tjd);
+            Vector3d v1 = target.getVelocity(tjd);
             v = v1 - v0;
         }
         break;
 
     case ConstantVector:
         if (frame == NULL)
-            v = vec;
+            v = toEigen(vec);
         else
-            v = vec * frame->getOrientation(tjd).toMatrix3();
+            v = toEigen(vec * frame->getOrientation(tjd).toMatrix3());
         break;
 
     default:
         // unhandled vector type
-        v = Vec3d(0.0, 0.0, 0.0);
+        v = Vector3d::Zero();
         break;
     }
 
-    return v;
+    return fromEigen(v);
 }
 
 

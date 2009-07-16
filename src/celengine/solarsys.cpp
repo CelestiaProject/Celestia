@@ -166,10 +166,8 @@ static Location* CreateLocation(Hash* locationData,
     Vec3d longlat(0.0, 0.0, 0.0);
     locationData->getVector("LongLat", longlat);
 
-    Vec3d position = body->planetocentricToCartesian(longlat.x,
-                                                     longlat.y,
-                                                     longlat.z);
-    location->setPosition(Vec3f((float) position.x, (float) position.y, (float) position.z));
+    Vector3f position = body->planetocentricToCartesian(toEigen(longlat)).cast<float>();
+    location->setPosition(fromEigen(position));
 
     double size = 1.0;
     locationData->getNumber("Size", size);
@@ -748,7 +746,7 @@ static Body* CreateBody(const string& name,
     bool radiusSpecified = false;
     if (planetData->getNumber("Radius", radius))
     {
-        body->setSemiAxes(Vec3f((float) radius, (float) radius, (float) radius));
+        body->setSemiAxes(Vector3f::Constant((float) radius));
         radiusSpecified = true;
     }
 
@@ -758,14 +756,14 @@ static Body* CreateBody(const string& name,
         if (radiusSpecified)
             semiAxes *= radius;
         // Swap y and z to match internal coordinate system
-        body->setSemiAxes(Vec3f((float) semiAxes.x, (float) semiAxes.z, (float) semiAxes.y));
+        body->setSemiAxes(toEigen(semiAxes).cast<float>());
     }
     else
     {
         double oblateness = 0.0;
         if (planetData->getNumber("Oblateness", oblateness))
         {
-            body->setSemiAxes((float) body->getRadius() * Vec3f(1.0f, 1.0f - (float) oblateness, 1.0f));
+            body->setSemiAxes((float) body->getRadius() * Vector3f(1.0f, 1.0f - (float) oblateness, 1.0f));
         }
     }
 
@@ -832,7 +830,7 @@ static Body* CreateBody(const string& name,
 
     Quatf orientation;
     if (planetData->getRotation("Orientation", orientation))
-        body->setOrientation(orientation);
+        body->setGeometryOrientation(toEigen(orientation));
 
     Surface surface;
     if (disposition == ModifyObject)
@@ -1030,7 +1028,7 @@ static Body* CreateReferencePoint(const string& name,
         disposition = AddObject;
     }
 
-    body->setSemiAxes(Vec3f(1.0f, 1.0f, 1.0f));
+    body->setSemiAxes(Vector3f::Ones());
     body->setClassification(Body::Invisible);
     body->setVisible(false);
     body->setVisibleAsPoint(false);
