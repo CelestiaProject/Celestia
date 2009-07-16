@@ -268,5 +268,8 @@ void MarkerRepresentation::render(float size) const
         DrawCircle(s);
         glEnd();
         break;
+
+    default:
+        break;
     }
 }

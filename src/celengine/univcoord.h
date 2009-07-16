@@ -28,6 +28,11 @@ class UniversalCoord
     UniversalCoord(const Point3d&);
     UniversalCoord(const Point3f&);
 
+    explicit UniversalCoord(const Eigen::Vector3d& v) :
+        x(v.x()), y(v.y()), z(v.z())
+    {
+    }
+
     operator Point3d() const;
     operator Point3f() const;
 
@@ -42,6 +47,20 @@ class UniversalCoord
     friend UniversalCoord operator-(const UniversalCoord&, const Vec3f&);
 
     friend UniversalCoord operator+(const UniversalCoord&, const UniversalCoord&);
+
+    /** Compute a universal coordinate that is the sum of this coordinate and
+      * an offset in kilometers.
+      */
+    UniversalCoord offsetKm(const Eigen::Vector3d& v)
+    {
+        Eigen::Vector3d vUly = v * astro::kilometersToMicroLightYears(1.0);
+#if 0
+        return UniversalCoord(x + (BigFix) vUly.x(),
+                              y + (BigFix) vUly.y(),
+                              z + (BigFix) vUly.z());
+#endif
+        return *this + UniversalCoord(vUly);
+    }
 
     /** Get the offset in kilometers of this coordinate from another coordinate.
       * The result is double precision, calculated as (this - uc) * scale, where
@@ -76,6 +95,31 @@ class UniversalCoord
     double distanceTo(const UniversalCoord&);
     UniversalCoord difference(const UniversalCoord&) const;
 
+    static UniversalCoord Zero()
+    {
+        // Default constructor returns zero, but this static method is clearer
+        return UniversalCoord();
+    }
+
+    /** Convert double precision coordinates in kilometers to high precision
+      * universal coordinates.
+      */
+    static UniversalCoord CreateKm(const Eigen::Vector3d& v)
+    {
+        Eigen::Vector3d vUly = v * astro::microLightYearsToKilometers(1.0);
+        return UniversalCoord(vUly.x(), vUly.y(), vUly.z());
+    }
+
+    /** Convert single precision coordinates in light years to high precision
+      * universal coordinates.
+      */
+    static UniversalCoord CreateLy(const Eigen::Vector3f& v)
+    {
+        Eigen::Vector3f vUly = v * 1.0e6f;
+        return UniversalCoord(vUly.x(), vUly.y(), vUly.z());
+    }
+
+public:
     BigFix x, y, z;
 };
 

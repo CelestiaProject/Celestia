@@ -151,6 +151,8 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
                 out << "phaselock"; break;
             case ObserverFrame::Chase:
                 out << "chase"; break;
+            default:
+                out << "universal"; break;
             }
             out << "\"\n";
         }

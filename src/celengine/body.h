@@ -15,7 +15,6 @@
 #include <map>
 #include <list>
 #include <celutil/utf8.h>
-#include <celmath/quaternion.h>
 #include <celengine/surface.h>
 #include <celengine/atmosphere.h>
 #include <celengine/orbit.h>
@@ -23,6 +22,8 @@
 #include <celengine/location.h>
 #include <celengine/rotation.h>
 #include <celengine/timeline.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class ReferenceFrame;
 class Body;
@@ -200,8 +201,8 @@ class Body
     const RotationModel* getRotationModel(double tdb) const;
  
     // Size methods
-    void setSemiAxes(const Vec3f&);
-    Vec3f getSemiAxes() const;
+    void setSemiAxes(const Eigen::Vector3f&);
+    Eigen::Vector3f getSemiAxes() const;
     float getRadius() const;
 
     bool isSphere() const;
@@ -211,8 +212,6 @@ class Body
     void setMass(float);
     float getAlbedo() const;
     void setAlbedo(float);
-    Quatf getOrientation() const;
-    void setOrientation(const Quatf&);
     int getClassification() const;
     void setClassification(int);
     std::string getInfoURL() const;
@@ -232,6 +231,8 @@ class Body
 
     ResourceHandle getGeometry() const { return geometry; }
     void setGeometry(ResourceHandle);
+    Eigen::Quaternionf getGeometryOrientation() const;
+    void setGeometryOrientation(const Eigen::Quaternionf& orientation);
     float getGeometryScale() const { return geometryScale; }
     void setGeometryScale(float scale);
 
@@ -251,30 +252,30 @@ class Body
                                float distanceFromSun,
                                float distanceFromViewer) const;
     float getApparentMagnitude(const Star& sun,
-                               const Vec3d& sunPosition,
-                               const Vec3d& viewerPosition) const;
+                               const Eigen::Vector3d& sunPosition,
+                               const Eigen::Vector3d& viewerPosition) const;
     float getApparentMagnitude(float sunLuminosity,
-                               const Vec3d& sunPosition,
-                               const Vec3d& viewerPosition) const;
+                               const Eigen::Vector3d& sunPosition,
+                               const Eigen::Vector3d& viewerPosition) const;
 
     UniversalCoord getPosition(double tdb) const;
-    Quatd getOrientation(double tdb) const;
-	Vec3d getVelocity(double tdb) const;
-	Vec3d getAngularVelocity(double tdb) const;
+    Eigen::Quaterniond getOrientation(double tdb) const;
+    Eigen::Vector3d getVelocity(double tdb) const;
+    Eigen::Vector3d getAngularVelocity(double tdb) const;
 
-    Mat4d getLocalToAstrocentric(double) const;
-    Point3d getAstrocentricPosition(double) const;
-    Quatd getEquatorialToBodyFixed(double) const;
-    Quatd getEclipticToFrame(double) const;
-    Quatd getEclipticToEquatorial(double) const;
-    Quatd getEclipticToBodyFixed(double) const;
-    Mat4d getBodyFixedToAstrocentric(double) const;
+    Eigen::Matrix4d getLocalToAstrocentric(double) const;
+    Eigen::Vector3d getAstrocentricPosition(double) const;
+    Eigen::Quaterniond getEquatorialToBodyFixed(double) const;
+    Eigen::Quaterniond getEclipticToFrame(double) const;
+    Eigen::Quaterniond getEclipticToEquatorial(double) const;
+    Eigen::Quaterniond getEclipticToBodyFixed(double) const;
+    Eigen::Matrix4d getBodyFixedToAstrocentric(double) const;
 
-    Vec3d planetocentricToCartesian(double lon, double lat, double alt) const;
-    Vec3d planetocentricToCartesian(const Vec3d& lonLatAlt) const;
-    Vec3d cartesianToPlanetocentric(const Vec3d& v) const;
+    Eigen::Vector3d planetocentricToCartesian(double lon, double lat, double alt) const;
+    Eigen::Vector3d planetocentricToCartesian(const Eigen::Vector3d& lonLatAlt) const;
+    Eigen::Vector3d cartesianToPlanetocentric(const Eigen::Vector3d& v) const;
 
-    Vec3d eclipticToPlanetocentric(const Vec3d& ecl, double tdb) const;  
+    Eigen::Vector3d eclipticToPlanetocentric(const Eigen::Vector3d& ecl, double tdb) const;
 
     bool extant(double) const;
     void setLifespan(double, double);
@@ -351,10 +352,10 @@ class Body
     FrameTree* frameTree;
 
     float radius;
-    Vec3f semiAxes;
+    Eigen::Vector3f semiAxes;
     float mass;
     float albedo;
-    Quatf orientation;
+    Eigen::Quaternionf geometryOrientation;
 
     float cullingRadius;
 

@@ -16,6 +16,7 @@
 #include "astro.h"
 #include "orbit.h"
 #include "body.h"
+#include "eigenport.h"
 
 using namespace std;
 
@@ -617,7 +618,7 @@ SynchronousOrbit::~SynchronousOrbit()
 
 Point3d SynchronousOrbit::positionAtTime(double jd) const
 {
-    Quatd q = body.getEquatorialToBodyFixed(jd);
+    Quatd q = fromEigen(body.getEquatorialToBodyFixed(jd));
     return position * q.toMatrix3();
 }
 

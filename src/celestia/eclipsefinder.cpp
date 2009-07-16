@@ -59,8 +59,8 @@ bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
         // less than the distance between the sun and the receiver.  This
         // approximation works everywhere in the solar system, and likely
         // works for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = receiver.getAstrocentricPosition(now);
-        Point3d posCaster = caster.getAstrocentricPosition(now);
+        Point3d posReceiver = ptFromEigen(receiver.getAstrocentricPosition(now));
+        Point3d posCaster = ptFromEigen(caster.getAstrocentricPosition(now));
 
         const Star* sun = receiver.getSystem()->getStar();
         assert(sun != NULL);

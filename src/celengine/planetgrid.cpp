@@ -101,9 +101,7 @@ PlanetographicGrid::render(Renderer* renderer,
                            double tdb) const
 {
     // Compatibility
-    Quatd q_old = Quatd::yrotation(PI) * body.getEclipticToBodyFixed(tdb);
-
-    Quaterniond q(q_old.w, q_old.x, q_old.y, q_old.z);
+    Quaterniond q = Quaterniond(AngleAxis<double>(PI, Vector3d::UnitY())) * body.getEclipticToBodyFixed(tdb);
     Quaternionf qf = q.cast<float>();
 
     // The grid can't be rendered exactly on the planet sphere, or
@@ -113,8 +111,7 @@ PlanetographicGrid::render(Renderer* renderer,
     scale = max(scale, 1.001f);
     float offset = scale - 1.0f;
 
-    Vec3f semiAxes_old = body.getSemiAxes();
-    Vector3f semiAxes(semiAxes_old.x, semiAxes_old.y, semiAxes_old.z);
+    Vector3f semiAxes = body.getSemiAxes();
     Vector3d posd(pos.x, pos.y, pos.z);
     Vector3d viewRayOrigin = q * Vector3d(-pos.x, -pos.y, -pos.z);
     
@@ -286,7 +283,7 @@ PlanetographicGrid::setIAULongLatConvention()
     }
     else
     {
-        if (body.getAngularVelocity(astro::J2000).y >= 0.0)
+        if (body.getAngularVelocity(astro::J2000).y() >= 0.0)
         {
             northDirection = NorthNormal;
             longitudeConvention = Westward;

@@ -183,7 +183,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     unsigned int nSections = (unsigned int) (30.0f + discSizeInPixels * 0.5f);
     nSections = min(nSections, 360u);
 
-    Quaterniond q = toEigen(m_body.getEclipticToBodyFixed(tdb));
+    Quaterniond q = m_body.getEclipticToBodyFixed(tdb);
     Quaternionf qf = q.cast<float>();
 
     // The outline can't be rendered exactly on the planet sphere, or
@@ -192,7 +192,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     float scale = (discSizeInPixels + 1) / discSizeInPixels;
     scale = max(scale, 1.0001f);
 
-    Vector3f semiAxes = toEigen(m_body.getSemiAxes());
+    Vector3f semiAxes = m_body.getSemiAxes();
 
     // Enable depth buffering
     glEnable(GL_DEPTH_TEST);

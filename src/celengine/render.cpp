@@ -1,6 +1,6 @@
 // render.cpp
 //
-// Copyright (C) 2001-2008, the Celestia Development Team
+// Copyright (C) 2001-2009, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -1971,90 +1971,6 @@ static Point3d renderOrbitSplineSegment(const Renderer::OrbitSample& p0,
 }
 
 
-#if 0
-// Not yet used
-static Point3d renderOrbitSplineAdaptive(const Renderer::OrbitSample& p0,
-                                         const Renderer::OrbitSample& p1,
-                                         const Renderer::OrbitSample& p2,
-                                         const Renderer::OrbitSample& p3,
-                                         double nearZ,
-                                         double farZ,
-                                         unsigned int minSubdivisions,
-                                         unsigned int maxSubdivisions,
-                                         int lastOutcode,
-                                         bool drawLastSegment)
-{
-    Vec3d v0 = (p2.pos - p0.pos) * ((p2.t - p1.t) / (p2.t - p0.t));
-    Vec3d v1 = (p3.pos - p1.pos) * ((p2.t - p1.t) / (p3.t - p1.t));
-    double minDt = 1.0 / (double) maxSubdivisions;
-    double maxDt = 1.0 / (double) minSubdivisions;
-    double g = (p2.pos - p1.pos).length() * maxSubdivisions;
-    double t = 0.0;
-
-    splinesRendered += 10000;
-
-    Point3d lastP = p1.pos;
-
-    while (t < 1.0)
-    {
-        t += max(minDt, max(lastP.distanceFromOrigin() / g, maxDt));
-        if (drawLastSegment && t > 1.0)
-            t = 1.0;
-        else
-            break;
-
-        Point3d p = cubicInterpolate(p1.pos, v0, p2.pos, v1, t);
-        int outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
-
-        if ((outcode | lastOutcode) == 0)
-        {
-            glVertex3d(p.x, p.y, p.z);
-        }
-        else if ((outcode & lastOutcode) == 0)
-        {
-            // Need to clip
-            Point3d q0 = lastP;
-            Point3d q1 = p;
-
-            if (lastOutcode != 0)
-            {
-                glBegin(GL_LINE_STRIP);
-                double t;
-                if (lastOutcode == 1)
-                    t = (nearZ - lastP.z) / (p.z - lastP.z);
-                else
-                    t = (farZ - lastP.z) / (p.z - lastP.z);
-                q0 = lastP + t * (p - lastP);
-            }
-
-            if (outcode != 0)
-            {
-                double t;
-                if (outcode == 1)
-                    t = (nearZ - lastP.z) / (p.z - lastP.z);
-                else
-                    t = (farZ - lastP.z) / (p.z - lastP.z);
-                q1 = lastP + t * (p - lastP);
-            }
-
-            glVertex3d(q0.x, q0.y, q0.z);
-            glVertex3d(q1.x, q1.y, q1.z);
-
-            if (outcode != 0)
-            {
-                glEnd();
-            }
-        }
-
-        lastOutcode = outcode;
-        lastP = p;
-    }
-
-    return lastP;
-}
-#endif
-
-
 static Point3d renderOrbitSection(const Orbit& orbit,
                                   Renderer::CachedOrbit& cachedOrbit,
                                   unsigned int sectionNumber,
@@ -3525,7 +3441,7 @@ void Renderer::draw(const Observer& observer,
                 // to sphere calculation will not suffice.
                 const Atmosphere* atmosphere = iter->body->getAtmosphere();
                 float radius = iter->body->getRadius();
-                Vec3f semiAxes = iter->body->getSemiAxes() * (1.0f / radius);
+                Vec3f semiAxes = fromEigen(iter->body->getSemiAxes()) * (1.0f / radius);
                 Vec3f recipSemiAxes(1.0f / semiAxes.x,
                                     1.0f / semiAxes.y,
                                     1.0f / semiAxes.z);
@@ -3534,7 +3450,7 @@ void Renderer::draw(const Observer& observer,
                 eyeVec *= (1.0f / radius);
 
                 // Compute the orientation of the planet before axial rotation
-                Quatd qd = iter->body->getEclipticToEquatorial(now);
+                Quatd qd = fromEigen(iter->body->getEclipticToEquatorial(now));
                 Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
                 eyeVec = eyeVec * conjugate(q).toMatrix3();
 
@@ -3937,8 +3853,9 @@ void Renderer::draw(const Observer& observer,
                     float eradius = radius;
                     if (iter->renderableType == RenderListEntry::RenderableBody)
                     {
-                        Vec3f semiAxes = iter->body->getSemiAxes();
-                        float minSemiAxis = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
+                        float minSemiAxis = iter->body->getSemiAxes().minCoeff();
+                        //Vec3f semiAxes = iter->body->getSemiAxes();
+                        //float minSemiAxis = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
                         eradius *= minSemiAxis / radius;
                     }
 
@@ -7116,7 +7033,7 @@ void Renderer::renderLocations(const Body& body,
     if (locations == NULL)
         return;
     
-    Vec3f semiAxes = body.getSemiAxes();
+    Vec3f semiAxes = fromEigen(body.getSemiAxes());
     
     float nearDist = getNearPlaneDistance();
     double boundingRadius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
@@ -8091,8 +8008,8 @@ bool Renderer::testEclipse(const Body& receiver,
         // less than the distance between the sun and the receiver.  This
         // approximation works everywhere in the solar system, and is likely
         // valid for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = receiver.getAstrocentricPosition(now);
-        Point3d posCaster = caster.getAstrocentricPosition(now);
+        Point3d posReceiver = ptFromEigen(receiver.getAstrocentricPosition(now));
+        Point3d posCaster = ptFromEigen(caster.getAstrocentricPosition(now));
 
         //const Star* sun = receiver.getSystem()->getStar();
         //assert(sun != NULL);
@@ -8199,13 +8116,13 @@ void Renderer::renderPlanet(Body& body,
         rp.rings = body.getRings();
         rp.radius = body.getRadius();
         rp.geometry = body.getGeometry();
-        rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
+        rp.semiAxes = fromEigen(body.getSemiAxes()) * (1.0f / rp.radius);
         rp.geometryScale = body.getGeometryScale();
 
         Quatd q = body.getRotationModel(now)->spin(now) *
-            body.getEclipticToEquatorial(now);
+            fromEigen(body.getEclipticToEquatorial(now));
 
-        rp.orientation = body.getOrientation() *
+        rp.orientation = fromEigen(body.getGeometryOrientation()) *
             Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
 
         if (body.getLocations() != NULL && (labelMode & LocationLabels) != 0)
@@ -8652,7 +8569,7 @@ void Renderer::renderCometTail(const Body& body,
     // comet.  The first axis is the velocity.  We choose the second one
     // based on the orientation of the comet.  And the third is just the cross
     // product of the first and second axes.
-    Quatd qd = body.getEclipticToEquatorial(t);
+    Quatd qd = fromEigen(body.getEclipticToEquatorial(t));
     Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
     Vec3f v = cometPoints[1] - cometPoints[0];
     v.normalize();
@@ -9013,8 +8930,8 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             float appMag = 100.0f;
             for (unsigned int li = 0; li < lightSourceList.size(); li++)
             {
-                Vec3d sunPos = pos_v - lightSourceList[li].position;
-                appMag = min(appMag, body->getApparentMagnitude(lightSourceList[li].luminosity, sunPos, pos_v));
+                Vector3d sunPos = toEigen(pos_v - lightSourceList[li].position);
+                appMag = min(appMag, body->getApparentMagnitude(lightSourceList[li].luminosity, sunPos, toEigen(pos_v)));
             }
 
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
@@ -9153,7 +9070,7 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
         // pos_v: viewer-relative position of object
 
         // Get the position of the body relative to the sun.
-        Point3d pos_s = body->getAstrocentricPosition(now);
+        Point3d pos_s = ptFromEigen(body->getAstrocentricPosition(now));
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the body
@@ -9172,7 +9089,7 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
             Selection centerObject = phase->orbitFrame()->getCenter();
             if (centerObject.body() != NULL)
             {
-                orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
+                orbitOrigin = ptFromEigen(centerObject.body()->getAstrocentricPosition(now));
             }
 
             // Calculate the origin of the orbit relative to the observer
@@ -9543,7 +9460,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
 
     Vector3f starPos = star.getPosition();
     Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
-#if 0
+#if CELVEC
     Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
                    (float) ((double) starPos.y - obsPos.y),
                    (float) ((double) starPos.z - obsPos.z));    
@@ -10448,9 +10365,9 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 }
 
 
-static Vec3d toStandardCoords(const Vec3d& v)
+static Vector3d toStandardCoords(const Vector3d& v)
 {
-    return Vec3d(v.x, -v.z, v.y);
+    return Vector3d(v.x(), -v.z(), v.y());
 }
 
 
@@ -10499,27 +10416,26 @@ void Renderer::renderSkyGrids(const Observer& observer)
             grid.setLongitudeUnits(SkyGrid::LongitudeDegrees);
             grid.setLongitudeDirection(SkyGrid::IncreasingClockwise);
             
-            Vec3d zenithDirection = observer.getPosition() - body->getPosition(tdb);
-            zenithDirection.normalize();
+            Vector3d zenithDirection = observer.getPosition().offsetFromKm(body->getPosition(tdb)).normalized();
             
-            Vec3d northPole = Vec3d(0.0, 1.0, 0.0) * (body->getEclipticToEquatorial(tdb)).toMatrix3();
+            Vector3d northPole = body->getEclipticToEquatorial(tdb).conjugate() * Vector3d::UnitY();
             zenithDirection = toStandardCoords(zenithDirection);
             northPole = toStandardCoords(northPole);
             
-            Vec3d v = zenithDirection ^ northPole;
+            Vector3d v = zenithDirection.cross(northPole);
 
             // Horizontal coordinate system not well defined when observer
             // is at a pole.
             double tolerance = 1.0e-10;
-            if (v.length() > tolerance && v.length() < 1.0 - tolerance)
+            if (v.norm() > tolerance && v.norm() < 1.0 - tolerance)
             {
                 v.normalize();
-                Vec3d u = v ^ zenithDirection;
+                Vector3d u = v.cross(zenithDirection);
                 
                 Matrix3d m;
-                m.row(0) = toEigen(u);
-                m.row(1) = toEigen(v);
-                m.row(2) = toEigen(zenithDirection);
+                m.row(0) = u;
+                m.row(1) = v;
+                m.row(2) = zenithDirection;
                 grid.setOrientation(Quaterniond(m));
                 
                 grid.render(*this, observer, windowWidth, windowHeight);
