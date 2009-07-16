@@ -5,7 +5,7 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = $(noinst_DATA)
 
-INCLUDES = -I..
+INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
 
 libcelmath_a_SOURCES = \
 	frustum.cpp \
