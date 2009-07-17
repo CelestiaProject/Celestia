@@ -247,23 +247,12 @@ int StarTableModel::columnCount(const QModelIndex&) const
 }
 
 
-static Vector3f toMicroLY(const Vector3f& p)
-{
-    return p * 1e6f;
-}
-
-static Vector3f fromMicroLY(const Vector3f& p)
-{
-    return p * 1e-6f;
-}
-
-
 StarPredicate::StarPredicate(Criterion _criterion,
                              const UniversalCoord& _observerPos) :
     criterion(_criterion),
     ucPos(_observerPos)
 {
-    pos = toEigen((Point3f) ucPos) * 1.0e-6f;
+    pos = ucPos.toLy().cast<float>();
 }
 
 
