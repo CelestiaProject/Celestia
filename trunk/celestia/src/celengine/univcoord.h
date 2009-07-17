@@ -54,11 +54,6 @@ class UniversalCoord
     UniversalCoord offsetKm(const Eigen::Vector3d& v)
     {
         Eigen::Vector3d vUly = v * astro::kilometersToMicroLightYears(1.0);
-#if 0
-        return UniversalCoord(x + (BigFix) vUly.x(),
-                              y + (BigFix) vUly.y(),
-                              z + (BigFix) vUly.z());
-#endif
         return *this + UniversalCoord(vUly);
     }
 

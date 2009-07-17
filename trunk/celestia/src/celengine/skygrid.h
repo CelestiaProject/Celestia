@@ -25,6 +25,8 @@ class Observer;
 class SkyGrid
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     enum LongitudeUnits
     {
         LongitudeDegrees,
