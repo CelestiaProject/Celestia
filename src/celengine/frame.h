@@ -71,6 +71,8 @@ class ReferenceFrame
 class CachingFrame : public ReferenceFrame
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     CachingFrame(Selection _center);
     virtual ~CachingFrame() {};
 
