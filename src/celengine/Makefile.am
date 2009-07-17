@@ -8,7 +8,7 @@ EXTRA_DIST = \
 	3dsmesh.cpp \
 	solarsysxml.cpp
 
-INCLUDES = -I..
+INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
 
 if ENABLE_SPICE
 SPICESOURCES = spiceinterface.cpp spiceorbit.cpp spicerotation.cpp
