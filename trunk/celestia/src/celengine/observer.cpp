@@ -16,6 +16,7 @@
 static const double maximumSimTime = 730486721060.00073; // 2000000000 Jan 01 12:00:00 UTC
 static const double minimumSimTime = -730498278941.99951; // -2000000000 Jan 01 12:00:00 UTC
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -603,7 +604,7 @@ void Observer::computeGotoParameters(const Selection& destination,
     else
     {
         ObserverFrame offsetFrame(offsetCoordSys, destination);
-        offset = offset * offsetFrame.getFrame()->getOrientation(getTime()).toMatrix3();
+        offset = offset * fromEigen(offsetFrame.getFrame()->getOrientation(getTime())).toMatrix3();
     }
     jparams.to = targetPosition + offset;
     
@@ -615,7 +616,7 @@ void Observer::computeGotoParameters(const Selection& destination,
     else
     {
         ObserverFrame upFrame(upCoordSys, destination);
-        upd = upd * upFrame.getFrame()->getOrientation(getTime()).toMatrix3();
+        upd = upd * fromEigen(upFrame.getFrame()->getOrientation(getTime())).toMatrix3();
     }
     
     jparams.initialOrientation = getOrientation();
@@ -667,7 +668,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     jparams.from = getPosition();
 
     ObserverFrame offsetFrame(offsetCoordSys, destination);
-    offset = offset * offsetFrame.getFrame()->getOrientation(getTime()).toMatrix3();
+    offset = offset * fromEigen(offsetFrame.getFrame()->getOrientation(getTime())).toMatrix3();
     
     jparams.to = targetPosition + offset;
 
@@ -679,7 +680,7 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     else
     {
         ObserverFrame upFrame(upCoordSys, destination);
-        upd = upd * upFrame.getFrame()->getOrientation(getTime()).toMatrix3();
+        upd = upd * fromEigen(upFrame.getFrame()->getOrientation(getTime())).toMatrix3();
     }
     
     jparams.initialOrientation = getOrientation();
@@ -1557,14 +1558,14 @@ ObserverFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
 Quatd 
 ObserverFrame::convertFromUniversal(const Quatd& q, double tjd) const
 {
-    return frame->convertFromUniversal(q, tjd);
+    return fromEigen(frame->convertFromUniversal(toEigen(q), tjd));
 }
 
 
 Quatd
 ObserverFrame::convertToUniversal(const Quatd& q, double tjd) const
 {
-    return frame->convertToUniversal(q, tjd);
+    return fromEigen(frame->convertToUniversal(toEigen(q), tjd));
 }
 
 
@@ -1630,7 +1631,7 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
         
     case PhaseLock_Old:
     {
-        FrameVector rotAxis(FrameVector::createConstantVector(Vec3d(0, 1, 0),
+        FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
                                                               new BodyMeanEquatorFrame(_refObject, _refObject)));
         return new TwoVectorFrame(_refObject,
                                   FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
@@ -1639,7 +1640,7 @@ ObserverFrame::createFrame(CoordinateSystem _coordSys,
         
     case Chase_Old:
     {
-        FrameVector rotAxis(FrameVector::createConstantVector(Vec3d(0, 1, 0),
+        FrameVector rotAxis(FrameVector::createConstantVector(Vector3d::UnitY(),
                                                               new BodyMeanEquatorFrame(_refObject, _refObject)));
         
         return new TwoVectorFrame(_refObject,
