@@ -1637,7 +1637,7 @@ void Renderer::clearSortedAnnotations()
 // frame. Available only while rendering a frame.
 Quatf Renderer::getCameraOrientation() const
 {
-    return m_cameraOrientation;
+    return fromEigen(m_cameraOrientation);
 }
 
 
@@ -2466,16 +2466,19 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
 
 // Convert a position in the universal coordinate system to astrocentric
 // coordinates, taking into account possible orbital motion of the star.
-static Point3d astrocentricPosition(const UniversalCoord& pos,
-                                    const Star& star,
-                                    double t)
+static Vector3d astrocentricPosition(const UniversalCoord& pos,
+                                     const Star& star,
+                                     double t)
 {
+    return pos.offsetFromKm(star.getPosition(t));
+#if 0
     UniversalCoord starPos = star.getPosition(t);
 
     Vec3d v = pos - starPos;
     return Point3d(astro::microLightYearsToKilometers(v.x),
                    astro::microLightYearsToKilometers(v.y),
                    astro::microLightYearsToKilometers(v.z));
+#endif
 }
 
 
@@ -2565,7 +2568,7 @@ setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
 // Render an item from the render list
 void Renderer::renderItem(const RenderListEntry& rle,
                           const Observer& observer,
-                          const Quatf& cameraOrientation,
+                          const Quaternionf& cameraOrientation,
                           float nearPlaneDistance,
                           float farPlaneDistance)
 {
@@ -3177,7 +3180,7 @@ void Renderer::draw(const Observer& observer,
     // Highlight the selected object
     highlightObject = sel;
 
-    m_cameraOrientation = observer.getOrientationf();
+    m_cameraOrientation = toEigen(observer.getOrientationf());
 
     // Get the view frustum used for culling in camera space.
     float viewAspectRatio = (float) windowWidth / (float) windowHeight;
@@ -3265,19 +3268,19 @@ void Renderer::draw(const Observer& observer,
                     }
 
                     // Compute the position of the observer in astrocentric coordinates
-                    Point3d astrocentricObserverPos = astrocentricPosition(observer.getPosition(), *sun, now);
+                    Vector3d astrocentricObserverPos = astrocentricPosition(observer.getPosition(), *sun, now);
 
                     // Build render lists for bodies and orbits paths
                     buildRenderLists(astrocentricObserverPos,
                                      xfrustum,
-                                     Vec3d(0.0, 0.0, -1.0) * observer.getOrientation().toMatrix3(),
-                                     Vec3d(0.0, 0.0, 0.0),
+                                     toEigen(observer.getOrientation()).conjugate() * -Vector3d::UnitZ(),
+                                     Vector3d::Zero(),
                                      solarSysTree,
                                      observer,
                                      now);
                     if (renderFlags & ShowOrbits)
                     {
-                        buildOrbitLists(astrocentricObserverPos,
+                        buildOrbitLists(ptFromEigen(astrocentricObserverPos),
                                         observer.getOrientationf(),
                                         xfrustum,
                                         solarSysTree,
@@ -3441,24 +3444,33 @@ void Renderer::draw(const Observer& observer,
                 // to sphere calculation will not suffice.
                 const Atmosphere* atmosphere = iter->body->getAtmosphere();
                 float radius = iter->body->getRadius();
-                Vec3f semiAxes = fromEigen(iter->body->getSemiAxes()) * (1.0f / radius);
+                Vector3f semiAxes = iter->body->getSemiAxes() / radius;
+
+                Vector3f recipSemiAxes = semiAxes.cwise().inverse();
+#if CELVEC
                 Vec3f recipSemiAxes(1.0f / semiAxes.x,
                                     1.0f / semiAxes.y,
                                     1.0f / semiAxes.z);
                 Mat3f A = Mat3f::scaling(recipSemiAxes);
-                Vec3f eyeVec = iter->position - Point3f(0.0f, 0.0f, 0.0f);
-                eyeVec *= (1.0f / radius);
+#endif
+                Vector3f eyeVec = iter->position / radius;
 
                 // Compute the orientation of the planet before axial rotation
-                Quatd qd = fromEigen(iter->body->getEclipticToEquatorial(now));
-                Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
+                Quaterniond qd = iter->body->getEclipticToEquatorial(now);
+                Quaternionf q = qd.cast<float>();
+                eyeVec = q * eyeVec;
+#if CELVEC
                 eyeVec = eyeVec * conjugate(q).toMatrix3();
+#endif
 
                 // ellipDist is not the true distance from the surface unless
                 // the planet is spherical.  The quantity that we do compute
                 // is the distance to the surface along a line from the eye
                 // position to the center of the ellipsoid.
+#if CELVEC
                 float ellipDist = (float) sqrt((eyeVec * A) * (eyeVec * A)) - 1.0f;
+#endif
+                float ellipDist = (eyeVec.cwise() * recipSemiAxes).norm() - 1.0f;
                 if (ellipDist < atmosphere->height / radius &&
                     atmosphere->height > 0.0f)
                 {
@@ -3467,17 +3479,15 @@ void Renderer::draw(const Observer& observer,
                     if (density > 1.0f)
                         density = 1.0f;
 
-                    Vec3f sunDir = iter->sun;
-                    Vec3f normal = Point3f(0.0f, 0.0f, 0.0f) - iter->position;
-                    sunDir.normalize();
-                    normal.normalize();
+                    Vector3f sunDir = iter->sun.normalized();
+                    Vector3f normal = -iter->position.normalized();
 #ifdef USE_HDR
                     // Ignore magnitude of planet underneath when lighting atmosphere
                     // Could be changed to simulate light pollution, etc
                     maxBodyMag = maxBodyMagPrev;
                     saturationMag = maxBodyMag;
 #endif
-                    float illumination = Math<float>::clamp((sunDir * normal) + 0.2f);
+                    float illumination = Math<float>::clamp(sunDir.dot(normal) + 0.2f);
 
                     float lightness = illumination * density;
                     faintestMag = faintestMag  - 15.0f * lightness;
@@ -3740,7 +3750,7 @@ void Renderer::draw(const Observer& observer,
     glPolygonMode(GL_BACK, (GLenum) renderMode);
 
     {
-        Mat3f viewMat = conjugate(observer.getOrientationf()).toMatrix3();
+        Matrix3f viewMat = toEigen(observer.getOrientationf()).conjugate().toRotationMatrix();
 
         // Remove objects from the render list that lie completely outside the
         // view frustum.
@@ -3765,7 +3775,7 @@ void Renderer::draw(const Observer& observer,
                 continue;
             }
 #endif
-            Point3f center = iter->position * viewMat;
+            Vector3f center = viewMat.transpose() * iter->position;
 
             bool convex = true;
             float radius = 1.0f;
@@ -3823,7 +3833,7 @@ void Renderer::draw(const Observer& observer,
             // Test the object's bounding sphere against the view frustum
             if (frustum.testSphere(center, cullRadius) != Frustum::Outside)
             {
-                float nearZ = center.distanceFromOrigin() - radius;
+                float nearZ = center.norm() - radius;
 #ifdef USE_HDR
                 nearZ = -nearZ * nearZcoeff;
 #else
@@ -3840,14 +3850,14 @@ void Renderer::draw(const Observer& observer,
 
                 if (!convex)
                 {
-                    iter->farZ = center.z - radius;
+                    iter->farZ = center.z() - radius;
                     if (iter->farZ / iter->nearZ > MaxFarNearRatio * 0.5f)
                         iter->nearZ = iter->farZ / (MaxFarNearRatio * 0.5f);
                 }
                 else
                 {
                     // Make the far plane as close as possible
-                    float d = center.distanceFromOrigin();
+                    float d = center.norm();
 
                     // Account for ellipsoidal objects
                     float eradius = radius;
@@ -4235,7 +4245,7 @@ void Renderer::draw(const Observer& observer,
                         }
 #endif
                         orbitsRendered++;
-                        renderOrbit(*orbitIter, now, m_cameraOrientation, intervalFrustum, nearPlaneDistance, farPlaneDistance);
+                        renderOrbit(*orbitIter, now, fromEigen(m_cameraOrientation), intervalFrustum, nearPlaneDistance, farPlaneDistance);
 
 #if DEBUG_COALESCE
                         if (highlightObject.body() == orbitIter->body)
@@ -4362,13 +4372,13 @@ static void renderRingSystem(float innerRadius,
 // jarring, however . . . so we'll blend in the particle view of the
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
-void Renderer::renderObjectAsPoint_nosprite(Point3f position,
+void Renderer::renderObjectAsPoint_nosprite(const Vector3f& position,
                                             float radius,
                                             float appMag,
                                             float _faintestMag,
                                             float discSizeInPixels,
                                             Color color,
-                                            const Quatf& cameraOrientation,
+                                            const Quaternionf& cameraOrientation,
                                             bool useHalos)
 {
     float maxDiscSize = 1.0f;
@@ -4400,24 +4410,23 @@ void Renderer::renderObjectAsPoint_nosprite(Point3f position,
         // We scale up the particle by a factor of 1.6 (at fov = 45deg)
         // so that it's more visible--the texture we use has fuzzy edges,
         // and if we render it in just one pixel, it's likely to disappear.
-        Mat3f m = cameraOrientation.toMatrix3();
-        Point3f center = position;
+        Matrix3f m = cameraOrientation.conjugate().toRotationMatrix();
+        Vector3f center = position;
 
         // Offset the glare sprite so that it lies in front of the object
-        Vec3f direction(center.x, center.y, center.z);
-        direction.normalize();
+        Vector3f direction = center.normalized();
 
         // Position the sprite on the the line between the viewer and the
         // object, and on a plane normal to the view direction.
-        center = center + direction * (radius / ((Vec3f(0, 0, 1.0f) * m) * direction));
+        center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
 
-        float centerZ = (center * m.transpose()).z;
+        float centerZ = (m * center).z();
         float size = discSize * pixelSize * 1.6f * centerZ / corrFac;
 
-        Vec3f v0 = Vec3f(-1, -1, 0) * m;
-        Vec3f v1 = Vec3f( 1, -1, 0) * m;
-        Vec3f v2 = Vec3f( 1,  1, 0) * m;
-        Vec3f v3 = Vec3f(-1,  1, 0) * m;
+        Vector3f v0 = m * Vector3f(-1, -1, 0);
+        Vector3f v1 = m * Vector3f( 1, -1, 0);
+        Vector3f v2 = m * Vector3f( 1,  1, 0);
+        Vector3f v3 = m * Vector3f(-1,  1, 0);
 
         glEnable(GL_DEPTH_TEST);
 
@@ -4439,7 +4448,7 @@ void Renderer::renderObjectAsPoint_nosprite(Point3f position,
         // limited dynamic range of monitors.
         if (useHalos && appMag < satPoint)
         {
-            float dist = center.distanceFromOrigin();
+            float dist = center.norm();
             float s    = dist * 0.001f * (3 - (appMag - satPoint)) * 2;
             if (s > size * 3)
                 size = s * 2.0f/(1.0f + FOV/fov);
@@ -4476,13 +4485,13 @@ void Renderer::renderObjectAsPoint_nosprite(Point3f position,
 // jarring, however . . . so we'll blend in the particle view of the
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
-void Renderer::renderObjectAsPoint(Point3f position,
+void Renderer::renderObjectAsPoint(const Vector3f& position,
                                    float radius,
                                    float appMag,
                                    float _faintestMag,
                                    float discSizeInPixels,
                                    Color color,
-                                   const Quatf& cameraOrientation,
+                                   const Quaternionf& cameraOrientation,
                                    bool useHalos,
                                    bool emissive)
 {
@@ -4562,27 +4571,26 @@ void Renderer::renderObjectAsPoint(Point3f position,
             glareAlpha *= fade;
         }
 
-        Mat3f m = cameraOrientation.toMatrix3();
-        Point3f center = position;
+        Matrix3f m = cameraOrientation.conjugate().toRotationMatrix();
+        Vector3f center = position;
 
         // Offset the glare sprite so that it lies in front of the object
-        Vec3f direction(center.x, center.y, center.z);
-        direction.normalize();
+        Vector3f direction = center.normalized();
 
         // Position the sprite on the the line between the viewer and the
         // object, and on a plane normal to the view direction.
-        center = center + direction * (radius / ((Vec3f(0, 0, 1.0f) * m) * direction));
+        center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
 
         glEnable(GL_DEPTH_TEST);
 #if !defined(NO_MAX_POINT_SIZE)
         // TODO: OpenGL appears to limit the max point size unless we
         // actually set up a shader that writes the pointsize values. To get
         // around this, we'll use billboards.
-        Vec3f v0 = Vec3f(-1, -1, 0) * m;
-        Vec3f v1 = Vec3f( 1, -1, 0) * m;
-        Vec3f v2 = Vec3f( 1,  1, 0) * m;
-        Vec3f v3 = Vec3f(-1,  1, 0) * m;
-        float distanceAdjust = pixelSize * center.distanceFromOrigin() * 0.5f;
+        Vector3f v0 = m * Vector3f(-1, -1, 0);
+        Vector3f v1 = m * Vector3f( 1, -1, 0);
+        Vector3f v2 = m * Vector3f( 1,  1, 0);
+        Vector3f v3 = m * Vector3f(-1,  1, 0);
+        float distanceAdjust = pixelSize * center.norm() * 0.5f;
 
         if (starStyle == PointStars)
         {
@@ -7385,10 +7393,10 @@ setupObjectLighting(const vector<LightSource>& suns,
 }
 
 
-void Renderer::renderObject(Point3f pos,
+void Renderer::renderObject(const Vector3f& pos,
                             float distance,
                             double now,
-                            Quatf cameraOrientation,
+                            const Quaternionf& cameraOrientation,
                             float nearPlaneDistance,
                             float farPlaneDistance,
                             RenderProperties& obj,
@@ -7443,7 +7451,7 @@ void Renderer::renderObject(Point3f pos,
     // Apply the modelview transform for the object
     glPushMatrix();
     glTranslate(pos);
-    glRotate(~obj.orientation);
+    glRotate(obj.orientation.conjugate());
 
     // Scaling will be nonuniform for nonspherical planets. As long as the
     // deviation from spherical isn't too large, the nonuniform scale factor
@@ -7451,7 +7459,7 @@ void Renderer::renderObject(Point3f pos,
     // (and we turn on renormalization anyhow, which most graphics cards
     // support.)
     float radius = obj.radius;
-    Vec3f scaleFactors;
+    Vector3f scaleFactors;
     float geometryScale;
     if (geometry == NULL || geometry->isNormalized())
     {
@@ -7462,19 +7470,22 @@ void Renderer::renderObject(Point3f pos,
     else
     {
         geometryScale = obj.geometryScale;
-        scaleFactors = Vec3f(geometryScale, geometryScale, geometryScale);
+        scaleFactors = Vector3f::Constant(geometryScale);
         ri.pointScale = 2.0f * geometryScale / pixelSize;
     }
     glScale(scaleFactors);
 
-    Mat4f planetMat = (~obj.orientation).toMatrix4();
-    ri.eyeDir_obj = (Point3f(0, 0, 0) - pos) * planetMat;
+    Mat4f planetMat = fromEigen(obj.orientation.conjugate()).toMatrix4();
+    ri.eyeDir_obj = -fromEigen(pos) * planetMat;
     ri.eyeDir_obj.normalize();
-    ri.eyePos_obj = Point3f(-pos.x / scaleFactors.x,
-                            -pos.y / scaleFactors.y,
-                            -pos.z / scaleFactors.z) * planetMat;
+    ri.eyePos_obj = ptFromEigen(pos.cwise() / -scaleFactors) * planetMat;
+#if CELVEC
+    ri.eyePos_obj = Point3f(-pos.x() / scaleFactors.x,
+                            -pos.y() / scaleFactors.y,
+                            -pos.z() / scaleFactors.z) * planetMat;
+#endif
 
-    ri.orientation = cameraOrientation * ~obj.orientation;
+    ri.orientation = fromEigen(cameraOrientation * obj.orientation.conjugate());
 
     ri.pixWidth = discSizeInPixels;
 
@@ -7544,8 +7555,8 @@ void Renderer::renderObject(Point3f pos,
     }
 
     // Compute the inverse model/view matrix
-    Mat4f invMV = (cameraOrientation.toMatrix4() *
-                   Mat4f::translation(Point3f(-pos.x, -pos.y, -pos.z)) *
+    Mat4f invMV = (fromEigen(cameraOrientation).toMatrix4() *
+                   Mat4f::translation(Point3f(-pos.x(), -pos.y(), -pos.z())) *
                    planetMat *
                    Mat4f::scaling(1.0f / radius));
 
@@ -7557,10 +7568,10 @@ void Renderer::renderObject(Point3f pos,
     if (obj.geometry == InvalidResource)
     {
         // Only adjust the far plane for ellipsoidal objects
-        float d = pos.distanceFromOrigin();
+        float d = pos.norm();
 
         // Account for non-spherical objects
-        float eradius = min(scaleFactors.x, min(scaleFactors.y, scaleFactors.z));
+        float eradius = scaleFactors.minCoeff();
 
         if (d > eradius)
         {
@@ -7707,14 +7718,14 @@ void Renderer::renderObject(Point3f pos,
         if (context->getRenderPath() == GLContext::GLPath_GLSL)
         {
             renderRings_GLSL(*obj.rings, ri, ls,
-                             radius, 1.0f - obj.semiAxes.y,
+                             radius, 1.0f - obj.semiAxes.y(),
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
                              detailOptions.ringSystemSections);
         }
         else
         {
-            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
+            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y(),
                         textureResolution,
                         context->getMaxTextures() > 1 &&
                         (renderFlags & ShowRingShadows) != 0 && lit,
@@ -7772,9 +7783,9 @@ void Renderer::renderObject(Point3f pos,
                 glRotate(cameraOrientation);
 
                 renderEllipsoidAtmosphere(*atmosphere,
-                                          pos,
-                                          obj.orientation,
-                                          scaleFactors,
+                                          ptFromEigen(pos),
+                                          fromEigen(obj.orientation),
+                                          fromEigen(scaleFactors),
                                           ri.sunDir_eye,
                                           ls,
                                           thicknessInPixels,
@@ -7930,8 +7941,7 @@ void Renderer::renderObject(Point3f pos,
         Texture* ringsTex = obj.rings->texture.find(textureResolution);
         if (ringsTex != NULL)
         {
-            Vec3f sunDir = pos - Point3f(0, 0, 0);
-            sunDir.normalize();
+            Vector3f sunDir = pos.normalized();
 
             glEnable(GL_TEXTURE_2D);
             ringsTex->bind();
@@ -7942,9 +7952,9 @@ void Renderer::renderObject(Point3f pos,
             {
                 renderRingShadowsVS(geometry,
                                     *obj.rings,
-                                    sunDir,
+                                    fromEigen(sunDir),
                                     ri,
-                                    radius, 1.0f - obj.semiAxes.y,
+                                    radius, 1.0f - obj.semiAxes.y(),
                                     planetMat, viewFrustum,
                                     *context);
             }
@@ -7957,14 +7967,14 @@ void Renderer::renderObject(Point3f pos,
         if (context->getRenderPath() == GLContext::GLPath_GLSL)
         {
             renderRings_GLSL(*obj.rings, ri, ls,
-                             radius, 1.0f - obj.semiAxes.y,
+                             radius, 1.0f - obj.semiAxes.y(),
                              textureResolution,
                              (renderFlags & ShowRingShadows) != 0 && lit,
                              detailOptions.ringSystemSections);
         }
         else
         {
-            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y,
+            renderRings(*obj.rings, ri, radius, 1.0f - obj.semiAxes.y(),
                         textureResolution,
                         (context->hasMultitexture() &&
                          (renderFlags & ShowRingShadows) != 0 && lit),
@@ -8085,11 +8095,11 @@ bool Renderer::testEclipse(const Body& receiver,
 
 
 void Renderer::renderPlanet(Body& body,
-                            Point3f pos,
+                            const Vector3f& pos,
                             float distance,
                             float appMag,
                             const Observer& observer,
-                            const Quatf& cameraOrientation,
+                            const Quaternionf& cameraOrientation,
                             float nearPlaneDistance,
                             float farPlaneDistance)
 {
@@ -8116,19 +8126,18 @@ void Renderer::renderPlanet(Body& body,
         rp.rings = body.getRings();
         rp.radius = body.getRadius();
         rp.geometry = body.getGeometry();
-        rp.semiAxes = fromEigen(body.getSemiAxes()) * (1.0f / rp.radius);
+        rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
         rp.geometryScale = body.getGeometryScale();
 
-        Quatd q = body.getRotationModel(now)->spin(now) *
-            fromEigen(body.getEclipticToEquatorial(now));
+        Quaterniond q = toEigen(body.getRotationModel(now)->spin(now)) *
+                        body.getEclipticToEquatorial(now);
 
-        rp.orientation = fromEigen(body.getGeometryOrientation()) *
-            Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+        rp.orientation = body.getGeometryOrientation() * q.cast<float>();
 
         if (body.getLocations() != NULL && (labelMode & LocationLabels) != 0)
             body.computeLocations();
 
-        Vec3f scaleFactors;
+        Vector3f scaleFactors;
         bool isNormalized = false;
         Geometry* geometry = NULL;
         if (rp.geometry != InvalidResource)
@@ -8140,16 +8149,15 @@ void Renderer::renderPlanet(Body& body,
         }
         else
         {
-            float scale = rp.geometryScale;
-            scaleFactors = Vec3f(scale, scale, scale);
+            scaleFactors = Vector3f::Constant(rp.geometryScale);
         }
 
         LightingState lights;
         setupObjectLighting(lightSourceList,
                             secondaryIlluminators,
-                            rp.orientation,
-                            scaleFactors,
-                            pos,
+                            fromEigen(rp.orientation),
+                            fromEigen(scaleFactors),
+                            ptFromEigen(pos),
                             isNormalized,
 #ifdef USE_HDR
                             faintestMag,
@@ -8260,7 +8268,7 @@ void Renderer::renderPlanet(Body& body,
             // observer, otherwise location labels will tend to jitter.
             Vec3d posd = (body.getPosition(observer.getTime()) -
                           observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
-            renderLocations(body, posd, q);
+            renderLocations(body, posd, fromEigen(q));
 
             glDisable(GL_DEPTH_TEST);
         }
@@ -8305,10 +8313,10 @@ void Renderer::renderPlanet(Body& body,
 
 
 void Renderer::renderStar(const Star& star,
-                          Point3f pos,
+                          const Vector3f& pos,
                           float distance,
                           float appMag,
-                          Quatf cameraOrientation,
+                          const Quaternionf& cameraOrientation,
                           double now,
                           float nearPlaneDistance,
                           float farPlaneDistance)
@@ -8342,7 +8350,7 @@ void Renderer::renderStar(const Star& star,
         rp.surface = &surface;
         rp.rings = NULL;
         rp.radius = star.getRadius();
-        rp.semiAxes = fromEigen(star.getEllipsoidSemiAxes());
+        rp.semiAxes = star.getEllipsoidSemiAxes();
         rp.geometry = star.getGeometry();
 
 #ifndef USE_HDR
@@ -8360,8 +8368,7 @@ void Renderer::renderStar(const Star& star,
 #endif
         rp.atmosphere = NULL;
 
-        Quatd q = star.getRotationModel()->orientationAtTime(now);
-        rp.orientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+        rp.orientation = toEigen(star.getRotationModel()->orientationAtTime(now)).cast<float>();
 
         renderObject(pos, distance, now,
                      cameraOrientation, nearPlaneDistance, farPlaneDistance,
@@ -8507,7 +8514,7 @@ static float cometDustTailLength(float distanceToSun,
 
 // TODO: Remove unused parameters??
 void Renderer::renderCometTail(const Body& body,
-                               Point3f pos,
+                               const Vector3f& pos,
                                double now,
                                float discSizeInPixels)
 {
@@ -8535,7 +8542,7 @@ void Renderer::renderCometTail(const Body& body,
 
     for (unsigned int li = 0; li < lightSourceList.size(); li++)
     {
-        distanceFromSun = (float) (Vec3d(pos.x, pos.y, pos.z) - lightSourceList[li].position).length();
+        distanceFromSun = (float) (Vec3d(pos.x(), pos.y(), pos.z()) - lightSourceList[li].position).length();
         float irradiance = lightSourceList[li].luminosity / square(distanceFromSun);
         if (irradiance > irradiance_max)
         {
@@ -8547,7 +8554,7 @@ void Renderer::renderCometTail(const Body& body,
 
     // direction to sun with dominant light irradiance:
 
-    Vec3d sd = Vec3d(pos.x, pos.y, pos.z) - lightSourceList[li_eff].position;
+    Vec3d sd = Vec3d(pos.x(), pos.y(), pos.z()) - lightSourceList[li_eff].position;
     Vec3f sunDir = Vec3f((float) sd.x, (float) sd.y, (float) sd.z);
     sunDir.normalize();
 
@@ -8670,8 +8677,7 @@ void Renderer::renderCometTail(const Body& body,
         }
     }
 
-    Vec3f viewDir = pos - Point3f(0.0f, 0.0f, 0.0f);
-    viewDir.normalize();
+    Vec3f viewDir = fromEigen(pos.normalized());
 
     glDisable(GL_CULL_FACE);
     for (i = 0; i < nTailPoints - 1; i++)
@@ -8707,7 +8713,7 @@ void Renderer::renderCometTail(const Body& body,
 
 // Render a reference mark
 void Renderer::renderReferenceMark(const ReferenceMark& refMark,
-                                   Point3f pos,
+                                   const Vector3f& pos,
                                    float distance,
                                    double now,
                                    float nearPlaneDistance)
@@ -8723,7 +8729,7 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
     glPushMatrix();
     glTranslate(pos);
 
-    refMark.render(this, pos, discSizeInPixels, now);
+    refMark.render(this, ptFromEigen(pos), discSizeInPixels, now);
 
     glPopMatrix();
 
@@ -8787,7 +8793,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 
     if (body.getClassification() == Body::Comet && (renderFlags & ShowCometTails) != 0)
     {
-        float radius = cometDustTailLength(rle.sun.length(), body.getRadius());
+        float radius = cometDustTailLength(rle.sun.norm(), body.getRadius());
         float discSize = (radius / (float) rle.distance) / pixelSize;
         if (discSize > 1)
         {
@@ -8818,18 +8824,21 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
 }
 
 
-void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
+void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                                 const Frustum& viewFrustum,
-                                const Vec3d& viewPlaneNormal,
-                                const Vec3d& frameCenter,
+                                const Vector3d& viewPlaneNormal,
+                                const Vector3d& frameCenter,
                                 const FrameTree* tree,
                                 const Observer& observer,
                                 double now)
 {
     int labelClassMask = translateLabelModeToClassMask(labelMode);
 
-    Mat3f viewMat = observer.getOrientationf().toMatrix3();
+    Matrix3f viewMat = toEigen(observer.getOrientationf()).toRotationMatrix();
+#if CELVEC
     Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+#endif
+    Vector3f viewMatZ = viewMat.row(2);
     double invCosViewAngle = 1.0 / cosViewConeAngle;
     double sinViewAngle = sqrt(1.0 - square(cosViewConeAngle));   
 
@@ -8848,21 +8857,21 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
         // pos_v: viewer-relative position of object
 
         // Get the position of the body relative to the sun.
-        Point3d p = phase->orbit()->positionAtTime(now);
+        Vector3d p = toEigen(phase->orbit()->positionAtTime(now));
         ReferenceFrame* frame = phase->orbitFrame();
-        Vec3d pos_s = frameCenter + Vec3d(p.x, p.y, p.z) * fromEigen(frame->getOrientation(now)).toMatrix3();
+        Vector3d pos_s = frameCenter + frame->getOrientation(now).conjugate() * p;
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the body
         // relative to the observer.
-        Vec3d pos_v = Point3d(pos_s.x, pos_s.y, pos_s.z) - astrocentricObserverPos;
+        Vector3d pos_v = pos_s - astrocentricObserverPos;
 
         // dist_vn: distance along view normal from the viewer to the
         // projection of the object's center.
-        double dist_vn = viewPlaneNormal * pos_v;
+        double dist_vn = viewPlaneNormal.dot(pos_v);
 
         // Vector from object center to its projection on the view normal.
-        Vec3d toViewNormal = pos_v - dist_vn * viewPlaneNormal;
+        Vector3d toViewNormal = pos_v - dist_vn * viewPlaneNormal;
 
         float cullingRadius = body->getCullingRadius();
 
@@ -8876,10 +8885,10 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             if (dist_vn > -influenceRadius)
             {
                 double maxPerpDist = (influenceRadius + dist_vn * sinViewAngle) * invCosViewAngle;
-                double perpDistSq = toViewNormal * toViewNormal;
+                double perpDistSq = toViewNormal.squaredNorm();
                 if (perpDistSq < maxPerpDist * maxPerpDist)
                 {
-                    if ((body->getRadius() / (float) pos_v.length()) / pixelSize > PLANETSHINE_PIXEL_SIZE_LIMIT)
+                    if ((body->getRadius() / (float) pos_v.norm()) / pixelSize > PLANETSHINE_PIXEL_SIZE_LIMIT)
                     {
                         // add to planetshine list if larger than 1/10 pixel
 #if DEBUG_SECONDARY_ILLUMINATION
@@ -8888,7 +8897,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
 #endif
                         SecondaryIlluminator illum;
                         illum.body = body;
-                        illum.position_v = pos_v;
+                        illum.position_v = fromEigen(pos_v);
                         illum.radius = body->getRadius();
                         secondaryIlluminators.push_back(illum);
                     }
@@ -8911,7 +8920,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             if (dist_vn > -radius)
             {
                 double maxPerpDist = (radius + dist_vn * sinViewAngle) * invCosViewAngle;
-                double perpDistSq = toViewNormal * toViewNormal;
+                double perpDistSq = toViewNormal.squaredNorm();
                 insideViewCone = perpDistSq < maxPerpDist * maxPerpDist;
             }
         }
@@ -8919,7 +8928,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
         if (insideViewCone)
         {
             // Calculate the distance to the viewer
-            double dist_v = pos_v.length();
+            double dist_v = pos_v.norm();
 
             // Calculate the size of the planet/moon disc in pixels
             float discSize = (body->getCullingRadius() / (float) dist_v) / pixelSize;
@@ -8930,8 +8939,8 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             float appMag = 100.0f;
             for (unsigned int li = 0; li < lightSourceList.size(); li++)
             {
-                Vector3d sunPos = toEigen(pos_v - lightSourceList[li].position);
-                appMag = min(appMag, body->getApparentMagnitude(lightSourceList[li].luminosity, sunPos, toEigen(pos_v)));
+                Vector3d sunPos = pos_v - toEigen(lightSourceList[li].position);
+                appMag = min(appMag, body->getApparentMagnitude(lightSourceList[li].luminosity, sunPos, pos_v));
             }
 
             bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
@@ -8942,9 +8951,9 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             {
                 RenderListEntry rle;
 
-                rle.position = Point3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z);
+                rle.position = pos_v.cast<float>();
                 rle.distance = (float) dist_v;
-                rle.centerZ = Vec3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z) * viewMatZ;
+                rle.centerZ = pos_v.cast<float>().dot(viewMatZ);
                 rle.appMag   = appMag;
                 rle.discSizeInPixels = body->getRadius() / ((float) dist_v * pixelSize);
 
@@ -8952,7 +8961,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                 // length, and for calculating sky brightness to adjust the limiting magnitude.
                 // In both cases, it's the wrong quantity to use (e.g. for objects with orbits
                 // defined relative to the SSB.)
-                rle.sun = Vec3f((float) -pos_s.x, (float) -pos_s.y, (float) -pos_s.z);
+                rle.sun = -pos_s.cast<float>();
 
                 addRenderListEntries(rle, *body, isLabeled);
             }
@@ -8961,7 +8970,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
         const FrameTree* subtree = body->getFrameTree();
         if (subtree != NULL)
         {
-            double dist_v = pos_v.length();
+            double dist_v = pos_v.norm();
             bool traverseSubtree = false;
 
             // There are two different tests available to determine whether we can reject
@@ -8987,8 +8996,8 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                 float lum = 0.0f;                
                 for (unsigned int li = 0; li < lightSourceList.size(); li++)
                 {
-                    Vec3d sunPos = pos_v - lightSourceList[li].position;
-                    lum += luminosityAtOpposition(lightSourceList[li].luminosity, (float) sunPos.length(), (float) subtree->maxChildRadius());
+                    Vector3d sunPos = pos_v - toEigen(lightSourceList[li].position);
+                    lum += luminosityAtOpposition(lightSourceList[li].luminosity, (float) sunPos.norm(), (float) subtree->maxChildRadius());
                 }
                 brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
                 largestPossible = (float) subtree->maxChildRadius() / (float) minPossibleDistance / pixelSize;
@@ -9005,7 +9014,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
             if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
             {
                 // See if the object or any of its children are within the view frustum
-                if (viewFrustum.testSphere(Point3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
+                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
                 {
                     traverseSubtree = true;
                 }
@@ -9024,7 +9033,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
                 if (dist_vn > -influenceRadius)
                 {
                     double maxPerpDist = (influenceRadius + dist_vn * sinViewAngle) * invCosViewAngle;
-                    double perpDistSq = toViewNormal * toViewNormal;
+                    double perpDistSq = toViewNormal.squaredNorm();
                     if (perpDistSq < maxPerpDist * maxPerpDist)                   
                         traverseSubtree = true;
                 }
@@ -9171,7 +9180,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
             viewFrustum.testSphere(iter->position, iter->radius) != Frustum::Outside)
         {
             const Body* body = iter->body;
-            Vec3f pos(iter->position.x, iter->position.y, iter->position.z);
+            Vector3f pos = iter->position;
 
             float boundingRadiusSize = (float) (body->getOrbit(now)->getBoundingRadius() / iter->distance) / pixelSize;
             if (boundingRadiusSize > minOrbitSize)
@@ -9224,7 +9233,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
 
                     // Position the label slightly in front of the object along a line from
                     // object center to viewer.
-                    pos = pos * (1.0f - body->getBoundingRadius() * 1.01f / pos.length());
+                    pos = pos * (1.0f - body->getBoundingRadius() * 1.01f / pos.norm());
 
                     // Try and position the label so that it's not partially
                     // occluded by other objects. We'll consider just the object
@@ -9248,16 +9257,15 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                         // position.
                         if (primary != lastPrimary)
                         {
-                            Point3d p = phase->orbit()->positionAtTime(now) * 
-                                        fromEigen(phase->orbitFrame()->getOrientation(now)).toMatrix3();
-                            Vec3d v(iter->position.x - p.x, iter->position.y - p.y, iter->position.z - p.z);
-                            
-                            primarySphere = Sphered(Point3d(v.x, v.y, v.z),
-                                                    primary->getRadius());
+                            Vector3d p = phase->orbitFrame()->getOrientation(now).conjugate() *
+                                         toEigen(phase->orbit()->positionAtTime(now));
+                            Vector3d v = iter->position.cast<double>() - p;//v(iter->position.x - p.x, iter->position.y - p.y, iter->position.z - p.z);
+
+                            primarySphere = Sphered(v, primary->getRadius());
                             lastPrimary = primary;
                         }
 
-                        Ray3d testRay(Point3d(0.0, 0.0, 0.0), Vec3d(pos.x, pos.y, pos.z));
+                        Ray3d testRay(Vector3d::Zero(), pos.cast<double>());
 
                         // Test the viewer-to-labeled object ray against
                         // the primary sphere (TODO: handle ellipsoids)
@@ -9282,7 +9290,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
 
                             // Compute the intersection of the viewer-to-labeled
                             // object ray with the tangent plane.
-                            float u = (float) (primaryTangentPlane.d / (primaryTangentPlane.normal * Vec3d(pos.x, pos.y, pos.z)));
+                            float u = (float) (primaryTangentPlane.d / (primaryTangentPlane.normal * Vec3d(pos.x(), pos.y(), pos.z())));
 
                             // If the intersection point is closer to the viewer
                             // than the label, then project the label onto the
@@ -9294,8 +9302,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                         }
                     }
 
-                    addSortedAnnotation(NULL, body->getName(true), labelColor,
-                                        Point3f(pos.x, pos.y, pos.z));
+                    addSortedAnnotation(NULL, body->getName(true), labelColor, ptFromEigen(pos));
                 }
             }
         }
@@ -9505,9 +9512,9 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // This is a much more accurate (and expensive) distance
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
-            Vector3d hPos = toEigen(astrocentricPosition(observer->getPosition(),
-                                                         star,
-                                                         observer->getTime()));
+            Vector3d hPos = astrocentricPosition(observer->getPosition(),
+                                                 star,
+                                                 observer->getTime());
             relPos =  hPos.cast<float>() * -astro::kilometersToLightYears(1.0f),
             distance = relPos.norm();
 
@@ -9635,8 +9642,12 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
+#if CELVEC
             Mat3f viewMat = observer->getOrientationf().toMatrix3();
             Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+#endif
+            Matrix3f viewMat = toEigen(observer->getOrientationf()).toRotationMatrix();
+            Vector3f viewMatZ = viewMat.row(2);
 
             RenderListEntry rle;
             rle.renderableType = RenderListEntry::RenderableStar;
@@ -9647,13 +9658,13 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // a viewer at the origin--this is different than for distant
             // stars.
             float scale = astro::lightYearsToKilometers(1.0f);
-            rle.position = Point3f(relPos.x() * scale, relPos.y() * scale, relPos.z() * scale);
-            rle.centerZ = Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
-            rle.distance = rle.position.distanceFromOrigin();
+            rle.position = relPos * scale;
+            rle.centerZ = rle.position.dot(viewMatZ);//Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
+            rle.distance = rle.position.norm();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
             rle.appMag = appMag;
-            renderList->insert(renderList->end(), rle);
+            renderList->push_back(rle);
         }
     }
 }
@@ -9759,9 +9770,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             // This is a much more accurate (and expensive) distance
             // calculation than the previous one which used the observer's
             // position rounded off to floats.
-            Vector3d hPos = toEigen(astrocentricPosition(observer->getPosition(),
-                                                         star,
-                                                         observer->getTime()));
+            Vector3d hPos = astrocentricPosition(observer->getPosition(),
+                                                 star,
+                                                 observer->getTime());
             relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f),
             distance = relPos.norm();
 
@@ -9861,8 +9872,12 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
+#if CELVEC
             Mat3f viewMat = observer->getOrientationf().toMatrix3();
             Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+#endif
+            Matrix3f viewMat = toEigen(observer->getOrientationf()).toRotationMatrix();
+            Vector3f viewMatZ = viewMat.row(2);
 
             RenderListEntry rle;
             rle.renderableType = RenderListEntry::RenderableStar;
@@ -9872,9 +9887,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             // a viewer at the origin--this is different than for distant
             // stars.
             float scale = astro::lightYearsToKilometers(1.0f);
-            rle.position = Point3f(relPos.x() * scale, relPos.y() * scale, relPos.z() * scale);
-            rle.centerZ = Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
-            rle.distance = rle.position.distanceFromOrigin();
+            rle.position = relPos * scale;
+            rle.centerZ = rle.position.dot(viewMatZ);
+            rle.distance = rle.position.norm();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
             rle.appMag = appMag;
