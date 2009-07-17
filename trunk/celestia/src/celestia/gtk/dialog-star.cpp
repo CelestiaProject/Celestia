@@ -277,7 +277,7 @@ static void addStars(sbData* sb)
 		values[0] = g_strdup(ReplaceGreekLetterAbbr((stardb->getStarName(*star))).c_str());
 
 		/* Calculate distance to star */
-		float d = (star->getPosition() - (toEigen((Point3f)ucPos) * 1e-6)).norm();
+		float d = ucPos.offsetFromLy(star->getPosition()).norm();
 
 		sprintf(buf, " %.3f ", d);
 		values[1] = g_strdup(buf);
