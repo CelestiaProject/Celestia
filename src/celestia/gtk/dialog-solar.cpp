@@ -105,7 +105,7 @@ static void treeSolarSelect(GtkTreeSelection* sel, AppData* app)
 	gpointer item;
 	gint type;
 	
-	GValue value = { 0, 0 }; /* Initialize empty GValue */
+	GValue value = { 0, {{0}} }; /* Initialize empty GValue */
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 	
