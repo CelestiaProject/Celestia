@@ -1528,7 +1528,7 @@ CreateFrameVector(const Universe& universe,
                 return NULL;
         }
 
-        return new FrameVector(FrameVector::createConstantVector(vec, f));
+        return new FrameVector(FrameVector::createConstantVector(toEigen(vec), f));
     }
     else
     {
@@ -1652,7 +1652,7 @@ CreateTopocentricFrame(const Selection& center,
                        const Selection& observer)
 {
     BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
-    FrameVector north = FrameVector::createConstantVector(Vec3d(0.0, 1.0, 0.0), eqFrame);
+    FrameVector north = FrameVector::createConstantVector(Vector3d::UnitY(), eqFrame);
     FrameVector up = FrameVector::createRelativePositionVector(observer, target);
     
     return new TwoVectorFrame(center, up, -2, north, -3);    
