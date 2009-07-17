@@ -2604,7 +2604,7 @@ static void HandleCaptureImage(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
+    //Ofn.lpstrTitle = "Save As - Specify File to Capture Image";
 
     // OFN_HIDEREADONLY - Do not display read-only JPEG or PNG files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
@@ -2726,7 +2726,7 @@ static void HandleCaptureMovie(HWND hWnd)
     Ofn.lpstrInitialDir = (LPSTR)NULL;
 
     // Comment this out if you just want the standard "Save As" caption.
-    Ofn.lpstrTitle = "Save As - Specify Output File for Capture Movie";
+    //Ofn.lpstrTitle = "Save As - Specify Output File for Capture Movie";
 
     // OFN_HIDEREADONLY - Do not display read-only video files
     // OFN_OVERWRITEPROMPT - If user selected a file, prompt for overwrite confirmation.
@@ -3294,12 +3294,17 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         return false;
     }
 
+    // Get Application Path
+    char appPath[_MAX_PATH];
+    GetCurrentDirectory(_MAX_PATH - 1, appPath);
+
     // Gettext integration
     setlocale(LC_ALL, ""); 
     setlocale(LC_NUMERIC, "C"); 
-    bindtextdomain("celestia","locale");
+    string localeDir = (string)appPath + "/locale";
+    bindtextdomain("celestia", localeDir.c_str());
     bind_textdomain_codeset("celestia", "UTF-8"); 
-    bindtextdomain("celestia_constellations","locale");
+    bindtextdomain("celestia_constellations", localeDir.c_str());
     bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
     textdomain("celestia");
 
