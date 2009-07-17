@@ -476,12 +476,12 @@ UniversalCoord Body::getPosition(double tdb) const
     while (frame->getCenter().getType() == Selection::Type_Body)
     {
         phase = frame->getCenter().body()->timeline->findPhase(tdb);
-        position += toEigen(frame->getOrientation(tdb)).conjugate() * p;
+        position += frame->getOrientation(tdb).conjugate() * p;
         p = toEigen(phase->orbit()->positionAtTime(tdb));
         frame = phase->orbitFrame();
     }
 
-    position += toEigen(frame->getOrientation(tdb)).conjugate() * p;
+    position += frame->getOrientation(tdb).conjugate() * p;
 
 #if 0
     if (frame->getCenter().star())
@@ -504,8 +504,8 @@ Quaterniond Body::getOrientation(double tdb) const
     // different things. The other method should be renamed to
     // getModelOrientation().
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return toEigen(phase->rotationModel()->orientationAtTime(tdb) *
-                   phase->bodyFrame()->getOrientation(tdb));
+    return toEigen(phase->rotationModel()->orientationAtTime(tdb)) *
+                   phase->bodyFrame()->getOrientation(tdb);
 }
 
 
@@ -518,7 +518,7 @@ Vector3d Body::getVelocity(double tdb) const
     ReferenceFrame* orbitFrame = phase->orbitFrame();
 
     Vector3d v = toEigen(phase->orbit()->velocityAtTime(tdb));
-    v = toEigen(orbitFrame->getOrientation(tdb)).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
+    v = orbitFrame->getOrientation(tdb).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
 
 	if (!orbitFrame->isInertial())
 	{
@@ -528,7 +528,7 @@ Vector3d Body::getVelocity(double tdb) const
 		v += cross(orbitFrame->getAngularVelocity(tdb), r);
 #endif
         Vector3d r = Selection(const_cast<Body*>(this)).getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
-        v += toEigen(orbitFrame->getAngularVelocity(tdb)).cross(r);
+        v += orbitFrame->getAngularVelocity(tdb).cross(r);
     }
 
 	return v;
@@ -544,10 +544,10 @@ Vector3d Body::getAngularVelocity(double tdb) const
     Vector3d v = toEigen(phase->rotationModel()->angularVelocityAtTime(tdb));
 
     ReferenceFrame* bodyFrame = phase->bodyFrame();
-    v = toEigen(bodyFrame->getOrientation(tdb)).conjugate() * v;
+    v = bodyFrame->getOrientation(tdb).conjugate() * v;
 	if (!bodyFrame->isInertial())
 	{
-        v += toEigen(bodyFrame->getAngularVelocity(tdb));
+        v += bodyFrame->getAngularVelocity(tdb);
 	}
 
     return v;
@@ -563,7 +563,7 @@ Vector3d Body::getAngularVelocity(double tdb) const
 Matrix4d Body::getLocalToAstrocentric(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    Vector3d p = toEigen(phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb));
+    Vector3d p = phase->orbitFrame()->convertToAstrocentric(toEigen(phase->orbit()->positionAtTime(tdb)), tdb);
     return Transform3d(Translation3d(p)).matrix();
 }
 
@@ -574,7 +574,7 @@ Vector3d Body::getAstrocentricPosition(double tdb) const
 {
     // TODO: Switch the iterative method used in getPosition
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return toEigen(phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb));
+    return phase->orbitFrame()->convertToAstrocentric(toEigen(phase->orbit()->positionAtTime(tdb)), tdb);
 }
 
 
@@ -583,7 +583,7 @@ Vector3d Body::getAstrocentricPosition(double tdb) const
 Quaterniond Body::getEclipticToFrame(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return toEigen(phase->bodyFrame()->getOrientation(tdb));
+    return phase->bodyFrame()->getOrientation(tdb);
 }
 
 
@@ -594,7 +594,7 @@ Quaterniond Body::getEclipticToEquatorial(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
     return toEigen(phase->rotationModel()->equatorOrientationAtTime(tdb)) *
-           toEigen(phase->bodyFrame()->getOrientation(tdb));
+           phase->bodyFrame()->getOrientation(tdb);
 }
 
 
@@ -605,7 +605,7 @@ Quaterniond Body::getEclipticToBodyFixed(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
     return toEigen(phase->rotationModel()->orientationAtTime(tdb)) *
-           toEigen(phase->bodyFrame()->getOrientation(tdb));
+           phase->bodyFrame()->getOrientation(tdb);
 }
 
 

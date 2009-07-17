@@ -1,6 +1,7 @@
 // frame.h
 // 
-// Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2003-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,10 +11,10 @@
 #ifndef _CELENGINE_FRAME_H_
 #define _CELENGINE_FRAME_H_
 
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
 #include <celengine/astro.h>
 #include <celengine/selection.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 
 /*! A ReferenceFrame object has a center and set of orthogonal axes.
@@ -33,16 +34,16 @@ class ReferenceFrame
     
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
-    Quatd convertFromUniversal(const Quatd& q, double tjd) const;
-    Quatd convertToUniversal(const Quatd& q, double tjd) const;
+    Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
+    Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
 
-    Point3d convertFromAstrocentric(const Point3d& p, double tjd) const;
-    Point3d convertToAstrocentric(const Point3d& p, double tjd) const;
+    Eigen::Vector3d convertFromAstrocentric(const Eigen::Vector3d& p, double tjd) const;
+    Eigen::Vector3d convertToAstrocentric(const Eigen::Vector3d& p, double tjd) const;
     
     Selection getCenter() const;
 
-    virtual Quatd getOrientation(double tjd) const = 0;
-	virtual Vec3d getAngularVelocity(double tdb) const;
+    virtual Eigen::Quaterniond getOrientation(double tjd) const = 0;
+    virtual Eigen::Vector3d getAngularVelocity(double tdb) const;
 
 	virtual bool isInertial() const = 0;
 
@@ -73,15 +74,15 @@ class CachingFrame : public ReferenceFrame
     CachingFrame(Selection _center);
     virtual ~CachingFrame() {};
 
-    Quatd getOrientation(double tjd) const;
-	Vec3d getAngularVelocity(double tjd) const;
-    virtual Quatd computeOrientation(double tjd) const = 0;
-	virtual Vec3d computeAngularVelocity(double tjd) const;
+    Eigen::Quaterniond getOrientation(double tjd) const;
+    Eigen::Vector3d getAngularVelocity(double tjd) const;
+    virtual Eigen::Quaterniond computeOrientation(double tjd) const = 0;
+    virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
 
  private:
     mutable double lastTime;
-    mutable Quatd lastOrientation;
-	mutable Vec3d lastAngularVelocity;
+    mutable Eigen::Quaterniond lastOrientation;
+    mutable Eigen::Vector3d lastAngularVelocity;
 	mutable bool orientationCacheValid;
 	mutable bool angularVelocityCacheValid;
 };
@@ -94,9 +95,9 @@ class J2000EclipticFrame : public ReferenceFrame
     J2000EclipticFrame(Selection center);
     virtual ~J2000EclipticFrame() {};
 
-    Quatd getOrientation(double /* tjd */) const
+    Eigen::Quaterniond getOrientation(double /* tjd */) const
     {
-        return Quatd(1.0);
+        return Eigen::Quaterniond::Identity();
     }
 
 	virtual bool isInertial() const;
@@ -113,7 +114,7 @@ class J2000EquatorFrame : public ReferenceFrame
  public:
     J2000EquatorFrame(Selection center);
     virtual ~J2000EquatorFrame() {};
-    Quatd getOrientation(double tjd) const;
+    Eigen::Quaterniond getOrientation(double tjd) const;
 	virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
@@ -132,8 +133,8 @@ class BodyFixedFrame : public ReferenceFrame
  public:
     BodyFixedFrame(Selection center, Selection obj);
     virtual ~BodyFixedFrame() {};
-    Quatd getOrientation(double tjd) const;
-	virtual Vec3d getAngularVelocity(double tjd) const;
+    Eigen::Quaterniond getOrientation(double tjd) const;
+    virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
 	virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
@@ -150,8 +151,8 @@ class BodyMeanEquatorFrame : public ReferenceFrame
     BodyMeanEquatorFrame(Selection center, Selection obj, double freeze);
     BodyMeanEquatorFrame(Selection center, Selection obj);
     virtual ~BodyMeanEquatorFrame() {};
-    Quatd getOrientation(double tjd) const;
-	virtual Vec3d getAngularVelocity(double tjd) const;
+    Eigen::Quaterniond getOrientation(double tjd) const;
+    virtual Eigen::Vector3d getAngularVelocity(double tjd) const;
 	virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
@@ -169,11 +170,13 @@ class BodyMeanEquatorFrame : public ReferenceFrame
 class FrameVector
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     FrameVector(const FrameVector& fv);
     ~FrameVector();
     FrameVector& operator=(const FrameVector&);
 
-    Vec3d direction(double tjd) const;
+    Eigen::Vector3d direction(double tjd) const;
 
     /*! Frames can be defined in reference to other frames; this method
      *  counts the depth of such nesting, up to some specified maximum
@@ -193,7 +196,7 @@ class FrameVector
                                                     const Selection& _target);
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
                                                     const Selection& _target);
-    static FrameVector createConstantVector(const Vec3d& _vec,
+    static FrameVector createConstantVector(const Eigen::Vector3d& _vec,
                                             const ReferenceFrame* _frame);
 
  private:
@@ -205,7 +208,7 @@ class FrameVector
     FrameVectorType vecType;
     Selection observer;
     Selection target;
-    Vec3d vec;                   // constant vector
+    Eigen::Vector3d vec;                   // constant vector
     const ReferenceFrame* frame; // frame for constant vector
 };
 
@@ -231,7 +234,7 @@ class TwoVectorFrame : public CachingFrame
                    int secAxis);
     virtual ~TwoVectorFrame() {};
 
-    Quatd computeOrientation(double tjd) const;
+    Eigen::Quaterniond computeOrientation(double tjd) const;
 	virtual bool isInertial() const;
     virtual unsigned int nestingDepth(unsigned int depth,
                                       unsigned int maxDepth,
@@ -247,6 +250,5 @@ class TwoVectorFrame : public CachingFrame
     int secondaryAxis;
     int tertiaryAxis;
 };
-
 
 #endif // _CELENGINE_FRAME_H_

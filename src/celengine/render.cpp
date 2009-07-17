@@ -2245,7 +2245,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         Quatd orientation(1.0);
         if (body != NULL)
         {
-            orientation = body->getOrbitFrame(t)->getOrientation(t);
+            orientation = fromEigen(body->getOrbitFrame(t)->getOrientation(t));
         }
 
         // Equivalent to:
@@ -8850,7 +8850,7 @@ void Renderer::buildRenderLists(const Point3d& astrocentricObserverPos,
         // Get the position of the body relative to the sun.
         Point3d p = phase->orbit()->positionAtTime(now);
         ReferenceFrame* frame = phase->orbitFrame();
-        Vec3d pos_s = frameCenter + Vec3d(p.x, p.y, p.z) * frame->getOrientation(now).toMatrix3();
+        Vec3d pos_s = frameCenter + Vec3d(p.x, p.y, p.z) * fromEigen(frame->getOrientation(now)).toMatrix3();
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the body
@@ -9249,7 +9249,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                         if (primary != lastPrimary)
                         {
                             Point3d p = phase->orbit()->positionAtTime(now) * 
-                                        phase->orbitFrame()->getOrientation(now).toMatrix3();
+                                        fromEigen(phase->orbitFrame()->getOrientation(now)).toMatrix3();
                             Vec3d v(iter->position.x - p.x, iter->position.y - p.y, iter->position.z - p.z);
                             
                             primarySphere = Sphered(Point3d(v.x, v.y, v.z),
