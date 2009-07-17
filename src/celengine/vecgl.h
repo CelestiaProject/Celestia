@@ -164,5 +164,17 @@ inline void glRotate(const Eigen::Quaterniond& q)
     glMultMatrixd(m.data());
 }
 
+inline void glVertex(const Eigen::Vector3f& v)
+{
+    glVertex3fv(v.data());
+}
+
+#if 0
+inline void glVertex(const Eigen::Vector3d& v)
+{
+    glVertex3dv(v.data());
+}
+#endif
+
 #endif // _CELENGINE_VECGL_H_
 

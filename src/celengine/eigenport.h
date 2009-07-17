@@ -51,10 +51,10 @@ Vector3<SCALAR> fromEigen(const Eigen::Matrix<SCALAR, 3, 1>& v)
     return Vector3<SCALAR>(v.x(), v.y(), v.z());
 }
 
-template<typename SCALAR>
-Point3<SCALAR> ptFromEigen(const Eigen::Matrix<SCALAR, 3, 1>& v)
+template<typename DERIVED>
+Point3<typename DERIVED::Scalar> ptFromEigen(const Eigen::MatrixBase<DERIVED>& v)
 {
-    return Point3<SCALAR>(v.x(), v.y(), v.z());
+    return Point3<typename DERIVED::Scalar>(v.x(), v.y(), v.z());
 }
 
 #endif // _EIGENPORT_
