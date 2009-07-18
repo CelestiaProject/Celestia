@@ -16,6 +16,7 @@
 #include "ray.h"
 #include "sphere.h"
 #include "ellipsoid.h"
+#include <Eigen/Core>
 
 
 template<class T> T distance(const Point3<T>& p, const Sphere<T>& s)
@@ -36,6 +37,15 @@ template<class T> T distance(const Point3<T>& p, const Ray3<T>& r)
         return (p2 - r.origin).norm();
     else
         return (p2 - r.point(t)).norm();
+}
+
+template<class T> T distance(const Eigen::Matrix<T, 3, 1>& p, const Ray3<T>& r)
+{
+    T t = ((p - r.origin).dot(r.direction)) / r.direction.squaredNorm();
+    if (t <= 0)
+        return (p - r.origin).norm();
+    else
+        return (p - r.point(t)).norm();
 }
 
 // Distance between a point and a segment defined by orig+dir*t, 0 <= t <= 1
