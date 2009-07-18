@@ -176,5 +176,15 @@ inline void glVertex(const Eigen::Vector3d& v)
 }
 #endif
 
+inline void glLightDirection(GLenum light, const Eigen::Vector3f& dir)
+{
+    glLightfv(light, GL_POSITION, Eigen::Vector4f(dir.x(), dir.y(), dir.z(), 0.0f).data());
+}
+
+inline void glLightPosition(GLenum light, const Eigen::Vector3f& pos)
+{
+    glLightfv(light, GL_POSITION, Eigen::Vector4f(pos.x(), pos.y(), pos.z(), 1.0f).data());
+}
+
 #endif // _CELENGINE_VECGL_H_
 

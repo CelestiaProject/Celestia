@@ -13,6 +13,7 @@
 #include <celmath/vecmath.h>
 #include <celutil/color.h>
 #include <celengine/gl.h>
+#include <Eigen/Core>
 
 class VertexProcessor;
 
@@ -24,6 +25,8 @@ namespace vp
     void disable();
     void use(unsigned int);
 
+    void parameter(unsigned int, const Eigen::Vector4f&);
+    void parameter(unsigned int, const Eigen::Vector3f&);
     void parameter(unsigned int, const Vec3f&);
     void parameter(unsigned int, const Point3f&);
     void parameter(unsigned int, const Color&);
@@ -88,6 +91,8 @@ namespace vp
 
 namespace arbvp
 {
+    void parameter(unsigned int, const Eigen::Vector4f&);
+    void parameter(unsigned int, const Eigen::Vector3f&);
     void parameter(unsigned int, const Vec3f&);
     void parameter(unsigned int, const Point3f&);
     void parameter(unsigned int, const Color&);
@@ -105,6 +110,8 @@ class VertexProcessor
     virtual void enable() = 0;
     virtual void disable() = 0;
     virtual void use(unsigned int) = 0;
+    virtual void parameter(vp::Parameter, const Eigen::Vector4f&);
+    virtual void parameter(vp::Parameter, const Eigen::Vector3f&);
     virtual void parameter(vp::Parameter, const Vec3f&);
     virtual void parameter(vp::Parameter, const Point3f&);
     virtual void parameter(vp::Parameter, const Color&);

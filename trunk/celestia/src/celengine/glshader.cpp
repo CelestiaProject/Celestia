@@ -101,6 +101,14 @@ Vec3ShaderParameter::Vec3ShaderParameter(GLhandleARB obj, const char* name)
 }
 
 Vec3ShaderParameter&
+Vec3ShaderParameter::operator=(const Eigen::Vector3f& v)
+{
+    if (slot != -1)
+        glx::glUniform3fvARB(slot, 1, v.data());
+    return *this;
+}
+
+Vec3ShaderParameter&
 Vec3ShaderParameter::operator=(const Vec3f& v)
 {
     if (slot != -1)
@@ -125,6 +133,14 @@ Vec4ShaderParameter::Vec4ShaderParameter() :
 Vec4ShaderParameter::Vec4ShaderParameter(GLhandleARB obj, const char* name)
 {
     slot = glx::glGetUniformLocationARB(obj, name);
+}
+
+Vec4ShaderParameter&
+Vec4ShaderParameter::operator=(const Eigen::Vector4f& v)
+{
+    if (slot != -1)
+        glx::glUniform4fvARB(slot, 1, v.data());
+    return *this;
 }
 
 Vec4ShaderParameter&

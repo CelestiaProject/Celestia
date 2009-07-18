@@ -2506,9 +2506,7 @@ setupLightSources(const vector<const Star*>& nearStars,
     {
         if ((*iter)->getVisibility())
         {
-            Vec3d v = ((*iter)->getPosition(t) - observerPos) *
-                astro::microLightYearsToKilometers(1.0);
-
+            Vector3d v = (*iter)->getPosition(t).offsetFromKm(observerPos);
             LightSource ls;
             ls.position = v;
             ls.luminosity = (*iter)->getLuminosity();
@@ -2557,7 +2555,7 @@ setupSecondaryLightSources(vector<SecondaryIlluminator>& secondaryIlluminators,
         for (vector<LightSource>::const_iterator j = primaryIlluminators.begin();
              j != primaryIlluminators.end(); j++)
         {
-            i->reflectedIrradiance += j->luminosity / ((float) (i->position_v - j->position).lengthSquared() * au2);
+            i->reflectedIrradiance += j->luminosity / ((float) (i->position_v - j->position).squaredNorm() * au2);
         }
 
         i->reflectedIrradiance *= i->body->getAlbedo();
@@ -3447,29 +3445,17 @@ void Renderer::draw(const Observer& observer,
                 Vector3f semiAxes = iter->body->getSemiAxes() / radius;
 
                 Vector3f recipSemiAxes = semiAxes.cwise().inverse();
-#if CELVEC
-                Vec3f recipSemiAxes(1.0f / semiAxes.x,
-                                    1.0f / semiAxes.y,
-                                    1.0f / semiAxes.z);
-                Mat3f A = Mat3f::scaling(recipSemiAxes);
-#endif
                 Vector3f eyeVec = iter->position / radius;
 
                 // Compute the orientation of the planet before axial rotation
                 Quaterniond qd = iter->body->getEclipticToEquatorial(now);
                 Quaternionf q = qd.cast<float>();
                 eyeVec = q * eyeVec;
-#if CELVEC
-                eyeVec = eyeVec * conjugate(q).toMatrix3();
-#endif
 
                 // ellipDist is not the true distance from the surface unless
                 // the planet is spherical.  The quantity that we do compute
                 // is the distance to the surface along a line from the eye
                 // position to the center of the ellipsoid.
-#if CELVEC
-                float ellipDist = (float) sqrt((eyeVec * A) * (eyeVec * A)) - 1.0f;
-#endif
                 float ellipDist = (eyeVec.cwise() * recipSemiAxes).norm() - 1.0f;
                 if (ellipDist < atmosphere->height / radius &&
                     atmosphere->height > 0.0f)
@@ -4681,8 +4667,8 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 static void renderBumpMappedMesh(const GLContext& context,
                                  Texture& baseTexture,
                                  Texture& bumpTexture,
-                                 Vec3f lightDirection,
-                                 Quatf orientation,
+                                 const Vector3f& lightDirection,
+                                 const Quaternionf& orientation,
                                  Color ambientColor,
                                  const Frustum& frustum,
                                  float lod)
@@ -4700,7 +4686,8 @@ static void renderBumpMappedMesh(const GLContext& context,
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
     // this vector.
-    Quatf lightOrientation = Quatf::vecToVecRotation(Vec3f(0.0f, 0.0f, 1.0f), lightDirection);
+    Quaternionf lightOrientation;
+    lightOrientation.setFromTwoVectors(Vector3f::UnitZ(), lightDirection);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_DST_COLOR, GL_ZERO);
@@ -4731,7 +4718,7 @@ static void renderBumpMappedMesh(const GLContext& context,
     // viewer orientation both need to be considered.
     glMatrixMode(GL_TEXTURE);
     glScalef(-1.0f, 1.0f, 1.0f);
-    glRotate(lightOrientation * ~orientation);
+    glRotate(lightOrientation * orientation.conjugate());
     glMatrixMode(GL_MODELVIEW);
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -4756,8 +4743,8 @@ static void renderBumpMappedMesh(const GLContext& context,
 
 static void renderSmoothMesh(const GLContext& context,
                              Texture& baseTexture,
-                             Vec3f lightDirection,
-                             Quatf orientation,
+                             const Vector3f& lightDirection,
+                             const Quaternionf& orientation,
                              Color ambientColor,
                              float lod,
                              const Frustum& frustum,
@@ -4771,7 +4758,8 @@ static void renderSmoothMesh(const GLContext& context,
     // The 'default' light vector for the bump map is (0, 0, 1).  Determine
     // a rotation transformation that will move the sun direction to
     // this vector.
-    Quatf lightOrientation = Quatf::vecToVecRotation(Vec3f(0.0f, 0.0f, 1.0f), lightDirection);
+    Quaternionf lightOrientation;
+    lightOrientation.setFromTwoVectors(Vector3f::UnitZ(), lightDirection);
 
     SetupCombinersSmooth(baseTexture, *normalizationTex, ambientColor, invert);
 
@@ -4797,7 +4785,7 @@ static void renderSmoothMesh(const GLContext& context,
     // Set up the texture transformation--the light direction and the
     // viewer orientation both need to be considered.
     glMatrixMode(GL_TEXTURE);
-    glRotate(lightOrientation * ~orientation);
+    glRotate(lightOrientation * orientation.conjugate());
     glMatrixMode(GL_MODELVIEW);
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
 
@@ -6221,8 +6209,8 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
     }
 
     // Compute the half angle vector required for specular lighting
-    Vec3f halfAngle_obj = ri.eyeDir_obj + ri.sunDir_obj;
-    if (halfAngle_obj.length() != 0.0f)
+    Vector3f halfAngle_obj = ri.eyeDir_obj + ri.sunDir_obj;
+    if (halfAngle_obj.norm() != 0.0f)
         halfAngle_obj.normalize();
 
     // Set up the fog parameters if the haze density is non-zero
@@ -6371,37 +6359,30 @@ static void renderSphere_FP_VP(const RenderInfo& ri,
 }
 
 
-static void texGenPlane(GLenum coord, GLenum mode, const Vec4f& plane)
-{
-    float f[4];
-    f[0] = plane.x; f[1] = plane.y; f[2] = plane.z; f[3] = plane.w;
-    glTexGenfv(coord, mode, f);
-}
-
 static void renderShadowedGeometryDefault(Geometry* geometry,
-                                       const RenderInfo& ri,
-                                       const Frustum& frustum,
-                                       float *sPlane,
-                                       float *tPlane,
-                                       const Vec3f& lightDir,
-                                       bool useShadowMask,
-                                       const GLContext& context)
+                                          const RenderInfo& ri,
+                                          const Frustum& frustum,
+                                          const Vector4f& texGenS,
+                                          const Vector4f& texGenT,
+                                          const Vector3f& lightDir,
+                                          bool useShadowMask,
+                                          const GLContext& context)
 {
     glEnable(GL_TEXTURE_GEN_S);
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGenfv(GL_S, GL_OBJECT_PLANE, sPlane);
+    glTexGenfv(GL_S, GL_OBJECT_PLANE, texGenS.data());
     //texGenPlane(GL_S, GL_OBJECT_PLANE, sPlane);
     glEnable(GL_TEXTURE_GEN_T);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);
+    glTexGenfv(GL_T, GL_OBJECT_PLANE, texGenT.data());
 
     if (useShadowMask)
     {
         glx::glActiveTextureARB(GL_TEXTURE1_ARB);
         glEnable(GL_TEXTURE_GEN_S);
         glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        texGenPlane(GL_S, GL_OBJECT_PLANE,
-                    Vec4f(lightDir.x, lightDir.y, lightDir.z, 0.5f));
+        glTexGenfv(GL_S, GL_OBJECT_PLANE,
+                    Vector4f(lightDir.x(), lightDir.y(), lightDir.z(), 0.5f).data());
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
@@ -6433,18 +6414,19 @@ static void renderShadowedGeometryDefault(Geometry* geometry,
 
 
 static void renderShadowedGeometryVertexShader(const RenderInfo& ri,
-                                            const Frustum& frustum,
-                                            float* sPlane, float* tPlane,
-                                            Vec3f& lightDir,
-                                            const GLContext& context)
+                                               const Frustum& frustum,
+                                               const Vector4f& texGenS,
+                                               const Vector4f& texGenT,
+                                               const Vector3f& lightDir,
+                                               const GLContext& context)
 {
     VertexProcessor* vproc = context.getVertexProcessor();
     assert(vproc != NULL);
 
     vproc->enable();
     vproc->parameter(vp::LightDirection0, lightDir);
-    vproc->parameter(vp::TexGen_S, sPlane);
-    vproc->parameter(vp::TexGen_T, tPlane);
+    vproc->parameter(vp::TexGen_S, texGenS);
+    vproc->parameter(vp::TexGen_T, texGenT);
     vproc->use(vp::shadowTexture);
 
     g_lodSphere->render(context,
@@ -6481,7 +6463,7 @@ static void renderRings(RingSystem& rings,
     // approximation breaks down when you get close to the planet.
     float ringIllumination = 0.0f;
     {
-        float illumFraction = (1.0f + ri.eyeDir_obj * ri.sunDir_obj) / 2.0f;
+        float illumFraction = (1.0f + ri.eyeDir_obj.dot(ri.sunDir_obj)) / 2.0f;
         // Just use the illuminated fraction for now . . .
         ringIllumination = illumFraction;
     }
@@ -6511,18 +6493,14 @@ static void renderRings(RingSystem& rings,
         glEnable(GL_TEXTURE_2D);
         shadowTex->bind();
 
-        float sPlane[4] = { 0, 0, 0, 0.5f };
-        float tPlane[4] = { 0, 0, 0, 0.5f };
-
         // Compute the projection vectors based on the sun direction.
         // I'm being a little careless here--if the sun direction lies
         // along the y-axis, this will fail.  It's unlikely that a
         // planet would ever orbit underneath its sun (an orbital
         // inclination of 90 degrees), but this should be made
         // more robust anyway.
-        Vec3f axis = Vec3f(0, 1, 0) ^ ri.sunDir_obj;
-        float cosAngle = Vec3f(0.0f, 1.0f, 0.0f) * ri.sunDir_obj;
-        /*float angle = (float) acos(cosAngle);     Unused*/
+        Vector3f axis = Vector3f::UnitY().cross(ri.sunDir_obj);
+        float cosAngle = Vector3f::UnitY().dot(ri.sunDir_obj);
         axis.normalize();
 
         float sScale = 1.0f;
@@ -6556,11 +6534,15 @@ static void renderRings(RingSystem& rings,
 
         // The s axis is perpendicular to the shadow axis in the plane of the
         // of the rings, and the t axis completes the orthonormal basis.
-        Vec3f sAxis = axis * 0.5f;
-        Vec3f tAxis = (axis ^ ri.sunDir_obj) * 0.5f * tScale;
+        Vector3f sAxis = axis * 0.5f;
+        Vector3f tAxis = axis.cross(ri.sunDir_obj) * 0.5f * tScale;
 
-        sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
-        tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
+        Vector4f sPlane;
+        Vector4f tPlane;
+        sPlane.start<3>() = sAxis;
+        sPlane[3] = 0.5f;
+        tPlane.start<3>() = tAxis;
+        tPlane[3] = 0.5f;
 
         if (vproc != NULL)
         {
@@ -6571,10 +6553,10 @@ static void renderRings(RingSystem& rings,
         {
             glEnable(GL_TEXTURE_GEN_S);
             glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
+            glTexGenfv(GL_S, GL_EYE_PLANE, sPlane.data());
             glEnable(GL_TEXTURE_GEN_T);
             glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-            glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+            glTexGenfv(GL_T, GL_EYE_PLANE, tPlane.data());
         }
 
         glx::glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -6631,7 +6613,7 @@ static void renderRings(RingSystem& rings,
     // behind the planet.
 
     // Compute the angle of the sun projected on the ring plane
-    float sunAngle = (float) atan2(ri.sunDir_obj.z, ri.sunDir_obj.x);
+    float sunAngle = std::atan2(ri.sunDir_obj.z(), ri.sunDir_obj.x());
 
     // If there's a fragment program, it will handle the ambient term--make
     // sure that we don't add it both in the fragment and vertex programs.
@@ -6688,6 +6670,8 @@ renderEclipseShadows(Geometry* geometry,
                      Frustum& viewFrustum,
                      const GLContext& context)
 {
+    Transform3f planetTransform;
+    planetTransform.matrix() = Map<Matrix4f>(&planetMat[0][0]);
     // Eclipse shadows on mesh objects aren't working yet.
     if (geometry != NULL)
         return;
@@ -6735,22 +6719,22 @@ renderEclipseShadows(Geometry* geometry,
 
         // Compute the transformation to use for generating texture
         // coordinates from the object vertices.
-        Point3f origin = shadow.origin * planetMat;
-        Vec3f dir = shadow.direction * planetMat;
+        Vector3f origin = planetTransform * shadow.origin;
+        Vector3f dir    = planetTransform.linear() * shadow.direction;
         float scale = planetRadius / shadow.penumbraRadius;
-        Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-        float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+        Vector3f axis = Vector3f::UnitY().cross(dir);
+        float angle = std::acos(Vector3f::UnitY().dot(dir));
         axis.normalize();
-        Mat4f mat = Mat4f::rotation(axis, -angle);
-        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
+        Matrix3f mat = AngleAxisf(angle, axis).toRotationMatrix();
+        Vector3f sAxis = mat * Vector3f::UnitX() * (0.5f * scale);
+        Vector3f tAxis = mat * Vector3f::UnitZ() * (0.5f * scale);
 
-        float sPlane[4] = { 0, 0, 0, 0 };
-        float tPlane[4] = { 0, 0, 0, 0 };
-        sPlane[0] = sAxis.x; sPlane[1] = sAxis.y; sPlane[2] = sAxis.z;
-        tPlane[0] = tAxis.x; tPlane[1] = tAxis.y; tPlane[2] = tAxis.z;
-        sPlane[3] = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
-        tPlane[3] = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
+        Vector4f texGenS;
+        Vector4f texGenT;
+        texGenS.start<3>() = sAxis;
+        texGenT.start<3>() = tAxis;
+        texGenS[3] = -origin.dot(sAxis) / planetRadius + 0.5f;
+        texGenT[3] = -origin.dot(tAxis) / planetRadius + 0.5f;
 
         // TODO: Multiple eclipse shadows should be rendered in a single
         // pass using multitexture.
@@ -6794,17 +6778,17 @@ renderEclipseShadows(Geometry* geometry,
         if (context.getVertexPath() != GLContext::VPath_Basic && geometry == NULL)
         {
             renderShadowedGeometryVertexShader(ri, viewFrustum,
-                                           sPlane, tPlane,
-                                           dir,
-                                           context);
+                                               texGenS, texGenT,
+                                               dir,
+                                               context);
         }
         else
         {
             renderShadowedGeometryDefault(geometry, ri, viewFrustum,
-                                       sPlane, tPlane,
-                                       dir,
-                                       ri.useTexEnvCombine,
-                                       context);
+                                          texGenS, texGenT,
+                                          dir,
+                                          ri.useTexEnvCombine,
+                                          context);
         }
 
         if (ri.useTexEnvCombine)
@@ -6831,11 +6815,14 @@ renderEclipseShadows_Shaders(Geometry* geometry,
                              vector<EclipseShadow>& eclipseShadows,
                              RenderInfo& ri,
                              float planetRadius,
-                             Mat4f& planetMat,
+                             const Mat4f& planetMat,
                              Frustum& viewFrustum,
                              const GLContext& context)
 {
-    // Eclipse shadows on mesh objects aren't working yet.
+    Transform3f planetTransform;
+    planetTransform.matrix() = Map<Matrix4f>(&planetMat[0][0]);
+
+    // Eclipse shadows on mesh objects are only implemented in the GLSL path
     if (geometry != NULL)
         return;
 
@@ -6845,9 +6832,9 @@ renderEclipseShadows_Shaders(Geometry* geometry,
     glEnable(GL_BLEND);
     glBlendFunc(GL_ZERO, GL_SRC_COLOR);
 
-    float sPlanes[4][4];
-    float tPlanes[4][4];
-    float shadowParams[4][4];
+    Vector4f texGenS[4];
+    Vector4f texGenT[4];
+    Vector4f shadowParams[4];
 
     int n = 0;
     for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
@@ -6875,24 +6862,21 @@ renderEclipseShadows_Shaders(Geometry* geometry,
 
         // Compute the transformation to use for generating texture
         // coordinates from the object vertices.
-        Point3f origin = shadow.origin * planetMat;
-        Vec3f dir = shadow.direction * planetMat;
+        Vector3f origin = planetTransform * shadow.origin;
+        Vector3f dir    = planetTransform.linear() * shadow.direction;
         float scale = planetRadius / shadow.penumbraRadius;
-        Vec3f axis = Vec3f(0, 1, 0) ^ dir;
-        float angle = (float) acos(Vec3f(0, 1, 0) * dir);
+        Vector3f axis = Vector3f::UnitY().cross(dir);
+        float angle = (float) acos(Vector3f::UnitY().dot(dir));
         axis.normalize();
-        Mat4f mat = Mat4f::rotation(axis, -angle);
-        Vec3f sAxis = Vec3f(0.5f * scale, 0, 0) * mat;
-        Vec3f tAxis = Vec3f(0, 0, 0.5f * scale) * mat;
 
-        sPlanes[n][0] = sAxis.x;
-        sPlanes[n][1] = sAxis.y;
-        sPlanes[n][2] = sAxis.z;
-        sPlanes[n][3] = (Point3f(0, 0, 0) - origin) * sAxis / planetRadius + 0.5f;
-        tPlanes[n][0] = tAxis.x;
-        tPlanes[n][1] = tAxis.y;
-        tPlanes[n][2] = tAxis.z;
-        tPlanes[n][3] = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
+        Matrix3f mat = AngleAxisf(angle, axis).toRotationMatrix();
+        Vector3f sAxis = mat * Vector3f::UnitX() * (0.5f * scale);
+        Vector3f tAxis = mat * Vector3f::UnitZ() * (0.5f * scale);
+
+        texGenS[n].start<3>() = sAxis;
+        texGenT[n].start<3>() = tAxis;
+        texGenS[n][3] = -origin.dot(sAxis) / planetRadius + 0.5f;
+        texGenT[n][3] = -origin.dot(tAxis) / planetRadius + 0.5f;
     }
 
 
@@ -6909,25 +6893,25 @@ renderEclipseShadows_Shaders(Geometry* geometry,
         fproc->use(fp::eclipseShadow2);
 
     fproc->parameter(fp::ShadowParams0, shadowParams[0]);
-    vproc->parameter(vp::TexGen_S, sPlanes[0]);
-    vproc->parameter(vp::TexGen_T, tPlanes[0]);
+    vproc->parameter(vp::TexGen_S, texGenS[0]);
+    vproc->parameter(vp::TexGen_T, texGenT[0]);
     if (n >= 2)
     {
         fproc->parameter(fp::ShadowParams1, shadowParams[1]);
-        vproc->parameter(vp::TexGen_S2, sPlanes[1]);
-        vproc->parameter(vp::TexGen_T2, tPlanes[1]);
+        vproc->parameter(vp::TexGen_S2, texGenS[1]);
+        vproc->parameter(vp::TexGen_T2, texGenT[1]);
     }
     if (n >= 3)
     {
         //fproc->parameter(fp::ShadowParams2, shadowParams[2]);
-        vproc->parameter(vp::TexGen_S3, sPlanes[2]);
-        vproc->parameter(vp::TexGen_T3, tPlanes[2]);
+        vproc->parameter(vp::TexGen_S3, texGenS[2]);
+        vproc->parameter(vp::TexGen_T3, texGenT[2]);
     }
     if (n >= 4)
     {
         //fproc->parameter(fp::ShadowParams3, shadowParams[3]);
-        vproc->parameter(vp::TexGen_S4, sPlanes[3]);
-        vproc->parameter(vp::TexGen_T4, tPlanes[3]);
+        vproc->parameter(vp::TexGen_S4, texGenS[3]);
+        vproc->parameter(vp::TexGen_T4, texGenT[3]);
     }
 
     //vproc->parameter(vp::LightDirection0, lightDir);
@@ -6959,7 +6943,7 @@ renderRingShadowsVS(Geometry* /*geometry*/,           //TODO: Remove unused para
     // Compute the transformation to use for generating texture
     // coordinates from the object vertices.
     float ringWidth = rings.outerRadius - rings.innerRadius;
-    float s = ri.sunDir_obj.y;
+    float s = ri.sunDir_obj.y();
     float scale = (abs(s) < 0.001f) ? 1000.0f : 1.0f / s;
 
     if (abs(s) > 1.0f - 1.0e-4f)
@@ -7163,12 +7147,12 @@ void Renderer::renderLocations(const Body& body,
 // The reflecting object is assumed to be spherical and perfectly
 // Lambertian.
 static float
-estimateReflectedLightFraction(const Vec3d& toSun,
-                               const Vec3d& toObject,
+estimateReflectedLightFraction(const Vector3d& toSun,
+                               const Vector3d& toObject,
                                float radius)
 {
     // Theta is half the arc length visible to the reflector
-    double d = toObject.length();
+    double d = toObject.norm();
     float cosTheta = (float) (radius / d);
     if (cosTheta > 0.999f)
         cosTheta = 0.999f;
@@ -7176,7 +7160,7 @@ estimateReflectedLightFraction(const Vec3d& toSun,
     // Phi is the angle between the light vector and receiver-to-reflector vector.
     // cos(phi) is thus the illumination at the sub-point. The horizon points are
     // at phi+theta and phi-theta.
-    float cosPhi = (float) ((toSun * toObject) / (d * toSun.length()));
+    float cosPhi = (float) (toSun.dot(toObject) / (d * toSun.norm()));
 
     // Use a trigonometric identity to compute cos(phi +/- theta):
     //   cos(phi + theta) = cos(phi) * cos(theta) - sin(phi) * sin(theta)
@@ -7195,9 +7179,9 @@ estimateReflectedLightFraction(const Vec3d& toSun,
 static void
 setupObjectLighting(const vector<LightSource>& suns,
                     const vector<SecondaryIlluminator>& secondaryIlluminators,
-                    const Quatf& objOrientation,
-                    const Vec3f& objScale,
-                    const Point3f& objPosition_eye,
+                    const Quaternionf& objOrientation,
+                    const Vector3f& objScale,
+                    const Vector3f& objPosition_eye,
                     bool isNormalized,
 #ifdef USE_HDR
                     const float faintestMag,
@@ -7217,20 +7201,19 @@ setupObjectLighting(const vector<LightSource>& suns,
     unsigned int i;
     for (i = 0; i < nLights; i++)
     {
-        Vec3d dir = suns[i].position - Vec3d(objPosition_eye.x, objPosition_eye.y, objPosition_eye.z);
+        Vector3d dir = suns[i].position - objPosition_eye.cast<double>();
 
-        ls.lights[i].direction_eye =
-            Vec3f((float) dir.x, (float) dir.y, (float) dir.z);
-        float distance = ls.lights[i].direction_eye.length();
+        ls.lights[i].direction_eye = dir.cast<float>();
+        float distance = ls.lights[i].direction_eye.norm();
         ls.lights[i].direction_eye *= 1.0f / distance;
-        distance = astro::kilometersToAU((float) dir.length());
+        distance = astro::kilometersToAU((float) dir.norm());
         ls.lights[i].irradiance = suns[i].luminosity / (distance * distance);
         ls.lights[i].color = suns[i].color;
 
         // Store the position and apparent size because we'll need them for
         // testing for eclipses.
         ls.lights[i].position = dir;
-        ls.lights[i].apparentSize = (float) (suns[i].radius / dir.length());
+        ls.lights[i].apparentSize = (float) (suns[i].radius / dir.norm());
         ls.lights[i].castsShadows = true;
     }
 
@@ -7239,14 +7222,14 @@ setupObjectLighting(const vector<LightSource>& suns,
     {
         float maxIrr = 0.0f;
         unsigned int maxIrrSource = 0;
-        Vec3d objpos(objPosition_eye.x, objPosition_eye.y, objPosition_eye.z);
+        Vector3d objpos = objPosition_eye.cast<double>();
 
         // Only account for light from the brightest secondary source
         for (vector<SecondaryIlluminator>::const_iterator iter = secondaryIlluminators.begin();
              iter != secondaryIlluminators.end(); iter++)
         {
-            Vec3d toIllum = iter->position_v - objpos;  // reflector-to-object vector
-            float distSquared = (float) toIllum.lengthSquared() / square(iter->radius);
+            Vector3d toIllum = iter->position_v - objpos;  // reflector-to-object vector
+            float distSquared = (float) toIllum.squaredNorm() / square(iter->radius);
 
             if (distSquared > 0.01f)
             {
@@ -7259,7 +7242,7 @@ setupObjectLighting(const vector<LightSource>& suns,
                 if (irr > maxIrr)
                 {
                     // Account for the phase
-                    Vec3d toSun = objpos - suns[0].position;
+                    Vector3d toSun = objpos - suns[0].position;
                     irr *= estimateReflectedLightFraction(toSun, toIllum, iter->radius);              
                     if (irr > maxIrr)
                     {
@@ -7277,9 +7260,9 @@ setupObjectLighting(const vector<LightSource>& suns,
 
         if (maxIrr > 0.0f)
         {
-            Vec3d toIllum = secondaryIlluminators[maxIrrSource].position_v - objpos;
+            Vector3d toIllum = secondaryIlluminators[maxIrrSource].position_v - objpos;
 
-            ls.lights[i].direction_eye = Vec3f((float) toIllum.x, (float) toIllum.y, (float) toIllum.z);
+            ls.lights[i].direction_eye = toIllum.cast<float>();
             ls.lights[i].direction_eye.normalize();
             ls.lights[i].irradiance = maxIrr;
             ls.lights[i].color = secondaryIlluminators[maxIrrSource].body->getSurface().color;        
@@ -7320,7 +7303,8 @@ setupObjectLighting(const vector<LightSource>& suns,
     float gamma = (float) (log(minDisplayableValue) / log(minVisibleFraction));
     float minVisibleIrradiance = minVisibleFraction * totalIrradiance;
 
-    Mat3f m = (~objOrientation).toMatrix3();
+    //Mat3f m = (~objOrientation).toMatrix3();
+    Matrix3f m = objOrientation.toRotationMatrix();
 
     // Gamma scale and normalize the light sources; cull light sources that
     // aren't bright enough to contribute the final pixels rendered into the
@@ -7336,16 +7320,13 @@ setupObjectLighting(const vector<LightSource>& suns,
 #endif
 
         // Compute the direction of the light in object space
-        ls.lights[i].direction_obj = ls.lights[i].direction_eye * m;
+        ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
 
         ls.nLights++;
     }
 
-    ls.eyePos_obj = Point3f(-objPosition_eye.x / objScale.x,
-                            -objPosition_eye.y / objScale.y,
-                            -objPosition_eye.z / objScale.z) * m;
-    ls.eyeDir_obj = (Point3f(0.0f, 0.0f, 0.0f) - objPosition_eye) * m;
-    ls.eyeDir_obj.normalize();
+    ls.eyePos_obj = m * -(objPosition_eye.cwise() / objScale);
+    ls.eyeDir_obj = (m * -objPosition_eye).normalized();
 
     // When the camera is very far from the object, some view-dependent
     // calculations in the shaders can exhibit precision problems. This
@@ -7354,42 +7335,13 @@ setupObjectLighting(const vector<LightSource>& suns,
     // we'll clamp the eye distance to some maximum value. The effect of the
     // adjustment should be impercetible, since at large distances rays from
     // the camera to object vertices are all nearly parallel to each other.
-    float eyeFromCenterDistance = ls.eyePos_obj.distanceFromOrigin();
+    float eyeFromCenterDistance = ls.eyePos_obj.norm();
     if (eyeFromCenterDistance > 100.0f && isNormalized)
     {
-        float s = 100.0f / eyeFromCenterDistance;
-        ls.eyePos_obj.x *= s;
-        ls.eyePos_obj.y *= s;
-        ls.eyePos_obj.z *= s;
+        ls.eyePos_obj *= 100.0f / eyeFromCenterDistance;
     }
 
-    ls.ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
-
-#if 0
-    // Old code: linear scaling approach
-
-    // After sorting, the first light is always the brightest
-    float maxIrradiance = ls.lights[0].irradiance;
-
-    // Normalize the brightnesses of the light sources.
-    // TODO: Investigate logarithmic functions for scaling light brightness, to
-    //   better simulate what the human eye would see.
-    ls.nLights = 0;
-    for (i = 0; i < nLights; i++)
-    {
-        ls.lights[i].irradiance /= maxIrradiance;
-
-        // Cull light sources that don't contribute significantly (less than
-        // the resolution of an 8-bit color channel.)
-        if (ls.lights[i].irradiance < 1.0f / 255.0f)
-            break;
-
-        // Compute the direction of the light in object space
-        ls.lights[i].direction_obj = ls.lights[i].direction_eye * m;
-
-        ls.nLights++;
-    }
-#endif
+    ls.ambientColor = Vector3f::Zero();
 }
 
 
@@ -7408,8 +7360,8 @@ void Renderer::renderObject(const Vector3f& pos,
     float discSizeInPixels = obj.radius /
         (max(nearPlaneDistance, altitude) * pixelSize);
 
-    ri.sunDir_eye = Vec3f(0.0f, 1.0f, 0.0f);
-    ri.sunDir_obj = Vec3f(0.0f, 1.0f, 0.0f);
+    ri.sunDir_eye = Vector3f::UnitY();
+    ri.sunDir_obj = Vector3f::UnitY();
     ri.sunColor = Color(0.0f, 0.0f, 0.0f);
     if (ls.nLights > 0)
     {
@@ -7476,16 +7428,12 @@ void Renderer::renderObject(const Vector3f& pos,
     glScale(scaleFactors);
 
     Mat4f planetMat = fromEigen(obj.orientation.conjugate()).toMatrix4();
-    ri.eyeDir_obj = -fromEigen(pos) * planetMat;
-    ri.eyeDir_obj.normalize();
-    ri.eyePos_obj = ptFromEigen(pos.cwise() / -scaleFactors) * planetMat;
-#if CELVEC
-    ri.eyePos_obj = Point3f(-pos.x() / scaleFactors.x,
-                            -pos.y() / scaleFactors.y,
-                            -pos.z() / scaleFactors.z) * planetMat;
-#endif
+    Matrix3f planetRotation = obj.orientation.toRotationMatrix();
 
-    ri.orientation = fromEigen(cameraOrientation * obj.orientation.conjugate());
+    ri.eyeDir_obj = -(planetRotation * pos).normalized();
+    ri.eyePos_obj = -(planetRotation * (pos.cwise() / scaleFactors));
+
+    ri.orientation = cameraOrientation * obj.orientation.conjugate();
 
     ri.pixWidth = discSizeInPixels;
 
@@ -7786,7 +7734,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                           ptFromEigen(pos),
                                           fromEigen(obj.orientation),
                                           fromEigen(scaleFactors),
-                                          ri.sunDir_eye,
+                                          fromEigen(ri.sunDir_eye),
                                           ls,
                                           thicknessInPixels,
                                           lit);
@@ -8018,8 +7966,8 @@ bool Renderer::testEclipse(const Body& receiver,
         // less than the distance between the sun and the receiver.  This
         // approximation works everywhere in the solar system, and is likely
         // valid for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = ptFromEigen(receiver.getAstrocentricPosition(now));
-        Point3d posCaster = ptFromEigen(caster.getAstrocentricPosition(now));
+        Vector3d posReceiver = receiver.getAstrocentricPosition(now);
+        Vector3d posCaster = caster.getAstrocentricPosition(now);
 
         //const Star* sun = receiver.getSystem()->getStar();
         //assert(sun != NULL);
@@ -8027,8 +7975,8 @@ bool Renderer::testEclipse(const Body& receiver,
         //float appSunRadius = (float) (sun->getRadius() / distToSun);
         float appSunRadius = light.apparentSize;
 
-        Vec3d dir = posCaster - posReceiver;
-        double distToCaster = dir.length() - receiver.getRadius();
+        Vector3d dir = posCaster - posReceiver;
+        double distToCaster = dir.norm() - receiver.getRadius();
         float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
 
         // The shadow radius is the radius of the occluder plus some additional
@@ -8052,24 +8000,19 @@ bool Renderer::testEclipse(const Body& receiver,
 
         // The stored light position is receiver-relative; thus the caster-to-light
         // direction is casterPos - (receiverPos + lightPos)
-        Point3d lightPosition = posReceiver + light.position;
-        Vec3d lightToCasterDir = posCaster - lightPosition;
-        Vec3d receiverToCasterDir = posReceiver - posCaster;
+        Vector3d lightPosition = posReceiver + light.position;
+        Vector3d lightToCasterDir = posCaster - lightPosition;
+        Vector3d receiverToCasterDir = posReceiver - posCaster;
 
         double dist = distance(posReceiver,
                                Ray3d(posCaster, lightToCasterDir));
-        if (dist < R && lightToCasterDir * receiverToCasterDir > 0.0)
+        if (dist < R && lightToCasterDir.dot(receiverToCasterDir) > 0.0)
         {
-            Vec3d sunDir = lightToCasterDir;
-            sunDir.normalize();
+            Vector3d sunDir = lightToCasterDir.normalized();
 
             EclipseShadow shadow;
-            shadow.origin = Point3f((float) dir.x,
-                                    (float) dir.y,
-                                    (float) dir.z);
-            shadow.direction = Vec3f((float) sunDir.x,
-                                     (float) sunDir.y,
-                                     (float) sunDir.z);
+            shadow.origin = dir.cast<float>();
+            shadow.direction = sunDir.cast<float>();
             shadow.penumbraRadius = shadowRadius;
 
             // The umbra radius will be positive if the apparent size of the occluder
@@ -8155,9 +8098,9 @@ void Renderer::renderPlanet(Body& body,
         LightingState lights;
         setupObjectLighting(lightSourceList,
                             secondaryIlluminators,
-                            fromEigen(rp.orientation),
-                            fromEigen(scaleFactors),
-                            ptFromEigen(pos),
+                            rp.orientation,
+                            scaleFactors,
+                            pos,
                             isNormalized,
 #ifdef USE_HDR
                             faintestMag,
@@ -8167,9 +8110,9 @@ void Renderer::renderPlanet(Body& body,
                             lights);
         assert(lights.nLights <= MaxLights);
 
-        lights.ambientColor = Vec3f(ambientColor.red(),
-                                    ambientColor.green(),
-                                    ambientColor.blue());
+        lights.ambientColor = Vector3f(ambientColor.red(),
+                                       ambientColor.green(),
+                                       ambientColor.blue());
 
         {
             // Clear out the list of eclipse shadows
@@ -8542,7 +8485,7 @@ void Renderer::renderCometTail(const Body& body,
 
     for (unsigned int li = 0; li < lightSourceList.size(); li++)
     {
-        distanceFromSun = (float) (Vec3d(pos.x(), pos.y(), pos.z()) - lightSourceList[li].position).length();
+        distanceFromSun = (float) (pos.cast<double>() - lightSourceList[li].position).norm();
         float irradiance = lightSourceList[li].luminosity / square(distanceFromSun);
         if (irradiance > irradiance_max)
         {
@@ -8553,23 +8496,19 @@ void Renderer::renderCometTail(const Body& body,
     float fadeDistance = 1.0f / (float) (COMET_TAIL_ATTEN_DIST_SOL * sqrt(irradiance_max));
 
     // direction to sun with dominant light irradiance:
-
-    Vec3d sd = Vec3d(pos.x(), pos.y(), pos.z()) - lightSourceList[li_eff].position;
-    Vec3f sunDir = Vec3f((float) sd.x, (float) sd.y, (float) sd.z);
-    sunDir.normalize();
+    Vector3f sunDir = (pos.cast<double>() - lightSourceList[li_eff].position).cast<float>().normalized();
 
     float dustTailLength = cometDustTailLength((float) pos0.distanceFromOrigin(), body.getRadius());
     float dustTailRadius = dustTailLength * 0.1f;
 
-    Point3f origin(0, 0, 0);
-    origin -= sunDir * (body.getRadius() * 100);
+    Vector3f origin = -sunDir * (body.getRadius() * 100);
 
     int i;
     for (i = 0; i < nTailPoints; i++)
     {
         float alpha = (float) i / (float) nTailPoints;
         alpha = alpha * alpha;
-        cometPoints[i] = origin + sunDir * (dustTailLength * alpha);
+        cometPoints[i] = ptFromEigen(origin + sunDir * (dustTailLength * alpha));
     }
 
     // We need three axes to define the coordinate system for rendering the
@@ -8835,9 +8774,6 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
     int labelClassMask = translateLabelModeToClassMask(labelMode);
 
     Matrix3f viewMat = toEigen(observer.getOrientationf()).toRotationMatrix();
-#if CELVEC
-    Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
-#endif
     Vector3f viewMatZ = viewMat.row(2);
     double invCosViewAngle = 1.0 / cosViewConeAngle;
     double sinViewAngle = sqrt(1.0 - square(cosViewConeAngle));   
@@ -8897,7 +8833,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 #endif
                         SecondaryIlluminator illum;
                         illum.body = body;
-                        illum.position_v = fromEigen(pos_v);
+                        illum.position_v = pos_v;
                         illum.radius = body->getRadius();
                         secondaryIlluminators.push_back(illum);
                     }
@@ -8939,7 +8875,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             float appMag = 100.0f;
             for (unsigned int li = 0; li < lightSourceList.size(); li++)
             {
-                Vector3d sunPos = pos_v - toEigen(lightSourceList[li].position);
+                Vector3d sunPos = pos_v - lightSourceList[li].position;
                 appMag = min(appMag, body->getApparentMagnitude(lightSourceList[li].luminosity, sunPos, pos_v));
             }
 
@@ -8996,7 +8932,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                 float lum = 0.0f;                
                 for (unsigned int li = 0; li < lightSourceList.size(); li++)
                 {
-                    Vector3d sunPos = pos_v - toEigen(lightSourceList[li].position);
+                    Vector3d sunPos = pos_v - lightSourceList[li].position;
                     lum += luminosityAtOpposition(lightSourceList[li].luminosity, (float) sunPos.norm(), (float) subtree->maxChildRadius());
                 }
                 brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
@@ -9466,12 +9402,10 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
     nProcessed++;
 
     Vector3f starPos = star.getPosition();
+
+    // Calculate the difference at double precision *before* converting to float.
+    // This is very important for stars that are far from the origin.
     Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
-#if CELVEC
-    Vec3f   relPos((float) ((double) starPos.x - obsPos.x),
-                   (float) ((double) starPos.y - obsPos.y),
-                   (float) ((double) starPos.z - obsPos.z));    
-#endif
     float   orbitalRadius = star.getOrbitalRadius();
     bool    hasOrbit = orbitalRadius > 0.0f;
 
@@ -9642,10 +9576,6 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
-#if CELVEC
-            Mat3f viewMat = observer->getOrientationf().toMatrix3();
-            Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
-#endif
             Matrix3f viewMat = toEigen(observer->getOrientationf()).toRotationMatrix();
             Vector3f viewMatZ = viewMat.row(2);
 
@@ -9722,6 +9652,9 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
     nProcessed++;
 
     Vector3f starPos = star.getPosition();
+
+    // Calculate the difference at double precision *before* converting to float.
+    // This is very important for stars that are far from the origin.
     Vector3f relPos = (starPos.cast<double>() - obsPos).cast<float>();
     float   orbitalRadius = star.getOrbitalRadius();
     bool    hasOrbit = orbitalRadius > 0.0f;
@@ -9872,10 +9805,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         }
         else
         {
-#if CELVEC
-            Mat3f viewMat = observer->getOrientationf().toMatrix3();
-            Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
-#endif
             Matrix3f viewMat = toEigen(observer->getOrientationf()).toRotationMatrix();
             Vector3f viewMatZ = viewMat.row(2);
 
