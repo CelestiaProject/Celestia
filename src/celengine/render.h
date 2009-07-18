@@ -19,6 +19,7 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
+#include <Eigen/Core>
 #include <vector>
 #include <list>
 #include <string>
@@ -30,7 +31,7 @@ class ReferenceMark;
 
 struct LightSource
 {
-    Vec3d position;
+    Eigen::Vector3d position;
     Color color;
     float luminosity;
     float radius;
@@ -72,10 +73,10 @@ struct RenderListEntry
 
 struct SecondaryIlluminator
 {
-    const Body* body;
-    Vec3d position_v;       // viewer relative position
-    float radius;           // radius in km
-    float reflectedIrradiance;  // albedo times total irradiance from direct sources
+    const Body*     body;
+    Eigen::Vector3d position_v;       // viewer relative position
+    float           radius;           // radius in km
+    float           reflectedIrradiance;  // albedo times total irradiance from direct sources
 };
 
 

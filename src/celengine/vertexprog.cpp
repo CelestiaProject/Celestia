@@ -395,6 +395,16 @@ VertexProcessor::~VertexProcessor()
 {
 }
 
+void VertexProcessor::parameter(vp::Parameter param, const Eigen::Vector3f& v)
+{
+    parameter(param, v.x(), v.y(), v.z(), 0.0f);
+}
+
+void VertexProcessor::parameter(vp::Parameter param, const Eigen::Vector4f& v)
+{
+    parameter(param, v.x(), v.y(), v.z(), v.w());
+}
+
 void VertexProcessor::parameter(vp::Parameter param, const Vec3f& v)
 {
     parameter(param, v.x, v.y, v.z, 0.0f);

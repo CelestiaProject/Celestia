@@ -9,6 +9,8 @@
 
 struct RenderInfo
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     Color color;
     Texture* baseTex;
     Texture* bumpTex;
@@ -18,17 +20,17 @@ struct RenderInfo
     Color hazeColor;
     Color specularColor;
     float specularPower;
-    Vec3f sunDir_eye;
-    Vec3f sunDir_obj;
-    Vec3f eyeDir_obj;
-    Point3f eyePos_obj;
+    Eigen::Vector3f sunDir_eye;
+    Eigen::Vector3f sunDir_obj;
+    Eigen::Vector3f eyeDir_obj;
+    Eigen::Vector3f eyePos_obj;
     Color sunColor;
     Color ambientColor;
 #ifdef USE_HDR
     float nightLightScale;
 #endif
     float lunarLambert;
-    Quatf orientation;
+    Eigen::Quaternionf orientation;
     float pixWidth;
     float pointScale;
     bool useTexEnvCombine;
@@ -47,17 +49,17 @@ struct RenderInfo
                    hazeColor(0.0f, 0.0f, 0.0f),
                    specularColor(0.0f, 0.0f, 0.0f),
                    specularPower(0.0f),
-                   sunDir_eye(0.0f, 0.0f, 1.0f),
-                   sunDir_obj(0.0f, 0.0f, 1.0f),
-                   eyeDir_obj(0.0f, 0.0f, 1.0f),
-                   eyePos_obj(0.0f, 0.0f, 0.0f),
+                   sunDir_eye(Eigen::Vector3f::UnitZ()),
+                   sunDir_obj(Eigen::Vector3f::UnitZ()),
+                   eyeDir_obj(Eigen::Vector3f::UnitZ()),
+                   eyePos_obj(Eigen::Vector3f::Zero()),
                    sunColor(1.0f, 1.0f, 1.0f),
                    ambientColor(0.0f, 0.0f, 0.0f),
 #ifdef USE_HDR
                    nightLightScale(1.0f),
 #endif
                    lunarLambert(0.0f),
-                   orientation(1.0f, 0.0f, 0.0f, 0.0f),
+                   orientation(Eigen::Quaternionf::Identity()),
                    pixWidth(1.0f),
                    useTexEnvCombine(false)
     {};

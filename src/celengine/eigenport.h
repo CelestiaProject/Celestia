@@ -45,10 +45,10 @@ Quat<SCALAR> fromEigen(const Eigen::Quaternion<SCALAR>& q)
     return Quat<SCALAR>(q.w(), q.x(), q.y(), q.z());
 }
 
-template<typename SCALAR>
-Vector3<SCALAR> fromEigen(const Eigen::Matrix<SCALAR, 3, 1>& v)
+template<typename DERIVED>
+Vector3<typename DERIVED::Scalar> fromEigen(const Eigen::MatrixBase<DERIVED>& v)
 {
-    return Vector3<SCALAR>(v.x(), v.y(), v.z());
+    return Vector3<typename DERIVED::Scalar>(v.x(), v.y(), v.z());
 }
 
 template<typename DERIVED>
