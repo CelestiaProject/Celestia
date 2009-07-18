@@ -43,7 +43,7 @@
 #include "renderinfo.h"
 #include "renderglsl.h"
 
-
+using namespace Eigen;
 using namespace std;
 
 
@@ -282,7 +282,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         rc.setAtmosphere(atmosphere);
     }
 
-    rc.setCameraOrientation(ri.orientation);
+    rc.setCameraOrientation(fromEigen(ri.orientation));
     rc.setPointScale(ri.pointScale);
 
     // Handle extended material attributes (per model only, not per submesh)
@@ -516,7 +516,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
     float atmScale = atmosphereRadius / radius;
 
-    prog->eyePosition = Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
+    prog->eyePosition = ls.eyePos_obj / atmScale;//Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
     prog->setAtmosphereParameters(*atmosphere, radius, atmosphereRadius);
 
 #if 0
@@ -629,9 +629,8 @@ void renderRings_GLSL(RingSystem& rings,
         // planet would ever orbit underneath its sun (an orbital
         // inclination of 90 degrees), but this should be made
         // more robust anyway.
-        Vec3f axis = Vec3f(0, 1, 0) ^ light.direction_obj;
-        float cosAngle = Vec3f(0.0f, 1.0f, 0.0f) * light.direction_obj;
-        /*float angle = (float) acos(cosAngle);     Unused*/
+        Vector3f axis = Vector3f::UnitY().cross(light.direction_obj);
+        float cosAngle = Vector3f::UnitY().dot(light.direction_obj);
         axis.normalize();
 
         float tScale = 1.0f;
@@ -655,10 +654,14 @@ void renderRings_GLSL(RingSystem& rings,
 
         // The s axis is perpendicular to the shadow axis in the plane of the
         // of the rings, and the t axis completes the orthonormal basis.
-        Vec3f sAxis = axis * 0.5f;
-        Vec3f tAxis = (axis ^ light.direction_obj) * 0.5f * tScale;
-        Vec4f texGenS(sAxis.x, sAxis.y, sAxis.z, 0.5f);
-        Vec4f texGenT(tAxis.x, tAxis.y, tAxis.z, 0.5f);
+        Vector3f sAxis = axis * 0.5f;
+        Vector3f tAxis = (axis.cross(light.direction_obj)) * 0.5f * tScale;
+        Vector4f texGenS;
+        texGenS.start(3) = sAxis;
+        texGenS[3] = 0.5f;
+        Vector4f texGenT;
+        texGenT.start(3) = tAxis;
+        texGenT[3] = 0.5f;
 
         // r0 and r1 determine the size of the planet's shadow and penumbra
         // on the rings.

@@ -18,7 +18,9 @@
 #include <iomanip>
 #include <cstdio>
 #include <cassert>
+#include <Eigen/Geometry>
 
+using namespace Eigen;
 using namespace std;
 
 // GLSL on Mac OS X appears to have a bug that precludes us from using structs
@@ -2479,26 +2481,33 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
 {
     unsigned int nLights = min(MaxShaderLights, ls.nLights);
 
-    Vec3f diffuseColor(materialDiffuse.red(),
-                       materialDiffuse.green(),
-                       materialDiffuse.blue());
-    Vec3f specularColor(materialSpecular.red(),
-                        materialSpecular.green(),
-                        materialSpecular.blue());
+    Vector3f diffuseColor(materialDiffuse.red(),
+                          materialDiffuse.green(),
+                          materialDiffuse.blue());
+    Vector3f specularColor(materialSpecular.red(),
+                           materialSpecular.green(),
+                           materialSpecular.blue());
 
     for (unsigned int i = 0; i < nLights; i++)
     {
         const DirectionalLight& light = ls.lights[i];
 
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
+        Vector3f lightColor = Vector3f(light.color.red(),
+                                       light.color.green(),
+                                       light.color.blue()) * light.irradiance;
         lights[i].direction = light.direction_obj;
 
         if (props.usesShadows() ||
             props.usesFragmentLighting() ||
             props.lightModel == ShaderProperties::RingIllumModel)
         {
+            fragLightColor[i] = lightColor.cwise() * diffuseColor;
+            if (props.hasSpecular())
+            {
+                fragLightSpecColor[i] = lightColor.cwise() * specularColor;
+            }
+            fragLightBrightness[i] = lightColor.maxCoeff();
+#if CELVEC
             fragLightColor[i] = Vec3f(lightColor.x * diffuseColor.x,
                                       lightColor.y * diffuseColor.y,
                                       lightColor.z * diffuseColor.z);
@@ -2509,29 +2518,41 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                               lightColor.z * specularColor.z);
             }
             fragLightBrightness[i] = max(lightColor.x, max(lightColor.y, lightColor.z));
+#endif
         }
         else
         {
+            lights[i].diffuse = lightColor.cwise() * diffuseColor;
+#if CELVEC
             lights[i].diffuse = Vec3f(lightColor.x * diffuseColor.x,
                                       lightColor.y * diffuseColor.y,
                                       lightColor.z * diffuseColor.z);
+#endif
         }
 
+        lights[i].brightness = lightColor.maxCoeff();
+        lights[i].specular = lightColor.cwise() * specularColor;
+#if CELVEC
         lights[i].brightness = max(lightColor.x, max(lightColor.y, lightColor.z));
         lights[i].specular = Vec3f(lightColor.x * specularColor.x,
                                    lightColor.y * specularColor.y,
                                    lightColor.z * specularColor.z);
+#endif
 
-        Vec3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
-        if (halfAngle_obj.length() != 0.0f)
+        Vector3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
+        if (halfAngle_obj.norm() != 0.0f)
             halfAngle_obj.normalize();
         lights[i].halfVector = halfAngle_obj;
     }
 
     eyePosition = ls.eyePos_obj;
+    ambientColor = ls.ambientColor.cwise() * diffuseColor + 
+        Vector3f(materialEmissive.red(), materialEmissive.green(), materialEmissive.blue());
+#if CELVEC
     ambientColor = Vec3f(ls.ambientColor.x * diffuseColor.x + materialEmissive.red(),
                          ls.ambientColor.y * diffuseColor.y + materialEmissive.green(),
                          ls.ambientColor.z * diffuseColor.z + materialEmissive.blue());
+#endif
     opacity = materialDiffuse.alpha();
 #ifdef USE_HDR
     nightLightScale = _nightLightScale;
@@ -2546,6 +2567,9 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                                               float planetRadius,
                                               const Mat4f& planetMat)
 {
+    Transform3f planetTransform;
+    planetTransform.matrix() = Map<Matrix4f>(&planetMat[0][0]);
+
     for (unsigned int li = 0;
          li < min(ls.nLights, MaxShaderLights);
          li++)
@@ -2568,7 +2592,30 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
 
                 // Compute the transformation to use for generating texture
                 // coordinates from the object vertices.
-                Point3f origin = shadow.origin * planetMat;
+                Vector3f origin = planetTransform * shadow.origin;
+                Vector3f dir    = planetTransform.linear() * shadow.direction;
+                float scale = planetRadius / shadow.penumbraRadius;
+                Vector3f axis = Vector3f::UnitY().cross(dir);
+                float angle = (float) acos(Vector3f::UnitY().dot(dir));
+                axis.normalize();
+
+                Matrix3f mat = AngleAxisf(angle, axis).toRotationMatrix();
+                Vector3f sAxis = mat * Vector3f::UnitX() * (0.5f * scale);
+                Vector3f tAxis = mat * Vector3f::UnitZ() * (0.5f * scale);
+
+                Vector4f texGenS;
+                Vector4f texGenT;
+                texGenS.start<3>() = sAxis;
+                texGenT.start<3>() = tAxis;
+                texGenS[3] = -origin.dot(sAxis) / planetRadius + 0.5f;
+                texGenT[3] = -origin.dot(tAxis) / planetRadius + 0.5f;
+                shadowParams.texGenS = texGenS;
+                shadowParams.texGenT = texGenT;
+
+#if CELVEC
+                // Compute the transformation to use for generating texture
+                // coordinates from the object vertices.
+                Vec3f origin = shadow.origin * planetMat;
                 Vec3f dir = shadow.direction * planetMat;
                 float scale = planetRadius / shadow.penumbraRadius;
                 Vec3f axis = Vec3f(0, 1, 0) ^ dir;
@@ -2582,6 +2629,7 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                 float tw = (Point3f(0, 0, 0) - origin) * tAxis / planetRadius + 0.5f;
                 shadowParams.texGenS = Vec4f(sAxis.x, sAxis.y, sAxis.z, sw);
                 shadowParams.texGenT = Vec4f(tAxis.x, tAxis.y, tAxis.z, tw);
+#endif
             }
         }
     }

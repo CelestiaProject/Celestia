@@ -14,7 +14,7 @@
 #define _CELENGINE_LIGHTENV_H_
 
 #include <celutil/color.h>
-#include <celmath/vecmath.h>
+#include <Eigen/Core>
 #include <vector>
 
 static const unsigned int MaxLights = 8;
@@ -24,12 +24,12 @@ class DirectionalLight
 public:
     Color color;
     float irradiance;
-    Vec3f direction_eye;
-    Vec3f direction_obj;
+    Eigen::Vector3f direction_eye;
+    Eigen::Vector3f direction_obj;
 
     // Required for eclipse shadows only--may be able to use
     // distance instead of position.
-    Vec3d position;  // position relative to the lit object
+    Eigen::Vector3d position;  // position relative to the lit object
     float apparentSize;
     bool castsShadows;
 };
@@ -37,8 +37,8 @@ public:
 class EclipseShadow
 {
 public:
-    Point3f origin;
-    Vec3f direction;
+    Eigen::Vector3f origin;
+    Eigen::Vector3f direction;
     float penumbraRadius;
     float umbraRadius;
     float maxDepth;
@@ -47,19 +47,20 @@ public:
 class LightingState
 {
 public:
-    LightingState() : nLights(0),
-                      eyeDir_obj(0.0f, 0.0f, -1.0f),
-                      eyePos_obj(0.0f, 0.0f, -1.0f)
+    LightingState() :
+        nLights(0),
+        eyeDir_obj(-Eigen::Vector3f::UnitZ()),
+        eyePos_obj(-Eigen::Vector3f::UnitZ())
     { shadows[0] = NULL; };
 
     unsigned int nLights;
     DirectionalLight lights[MaxLights];
     std::vector<EclipseShadow>* shadows[MaxLights];
 
-    Vec3f eyeDir_obj;
-    Point3f eyePos_obj;
+    Eigen::Vector3f eyeDir_obj;
+    Eigen::Vector3f eyePos_obj;
     
-    Vec3f ambientColor;
+    Eigen::Vector3f ambientColor;
 };
 
 #endif // _CELENGINE_LIGHTENV_H_
