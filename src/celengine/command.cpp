@@ -614,9 +614,11 @@ void CommandSet::process(ExecutionEnvironment& env)
 // Mark object command
 
 CommandMark::CommandMark(const string& _target,
-                         MarkerRepresentation _rep) :
+                         MarkerRepresentation _rep,
+                         bool _occludable) :
     target(_target),
-    rep(_rep)
+    rep(_rep),
+    occludable(_occludable)
 {
 }
 
@@ -629,7 +631,7 @@ void CommandMark::process(ExecutionEnvironment& env)
     if (env.getSimulation()->getUniverse() != NULL)
     {
         
-        env.getSimulation()->getUniverse()->markObject(sel, rep, 1);
+        env.getSimulation()->getUniverse()->markObject(sel, rep, 1, occludable);
     }
 }
 

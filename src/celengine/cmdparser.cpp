@@ -669,7 +669,10 @@ Command* CommandParser::parseCommand()
         rep.setColor(color);
         rep.setLabel(label);        
 
-        cmd = new CommandMark(object, rep);
+        bool occludable = true;
+        paramList->getBoolean("occludable", occludable);
+
+        cmd = new CommandMark(object, rep, occludable);
     }
     else if (commandName == "unmark")
     {
