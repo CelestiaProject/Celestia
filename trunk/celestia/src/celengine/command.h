@@ -513,12 +513,13 @@ class CommandPreloadTextures : public InstantaneousCommand
 class CommandMark : public InstantaneousCommand
 {
  public:
-    CommandMark(const std::string&, MarkerRepresentation);
+    CommandMark(const std::string&, MarkerRepresentation, bool);
     void process(ExecutionEnvironment&);
 
  private:
     std::string target;
     MarkerRepresentation rep;
+    bool occludable;
 };
 
 
