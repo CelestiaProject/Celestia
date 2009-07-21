@@ -284,7 +284,7 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
     string name = universe->getDSOCatalog()->getDSOName(dso);
     stream << "<h1>" << name.c_str() << "</h1><br>\n";
     
-    Vec3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(dso->getPosition()));
+    Vec3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(ptFromEigen(dso->getPosition())));
     Vec3d sph = rectToSpherical(eqPos);
 
     int hours = 0;
