@@ -54,7 +54,7 @@ UniversalCoord Selection::getPosition(double t) const
 
     case Type_DeepSky:
         {
-            Vector3d p = toEigen(deepsky()->getPosition());
+            Vector3d p = deepsky()->getPosition();
             // NOTE: cast to single precision is only present to maintain compatibility with
             // Celestia 1.6.0.
             return UniversalCoord::CreateLy(p.cast<float>());
