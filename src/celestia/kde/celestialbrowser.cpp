@@ -18,6 +18,9 @@
 #include "selectionpopup.h"
 #include "celutil/utf8.h"
 
+using namespace Eigen;
+
+
 /*
  *  Constructs a CelestialBrowser which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
@@ -124,14 +127,16 @@ void CelestialBrowser::slotRefresh()
 
         if (starClass == "Bary") continue;
 
-        Point3f starPos = star->getPosition();
+        /* Point3f starPos = star->getPosition();
         Vec3d v(starPos.x - obsPos.x,
                 starPos.y - obsPos.y,
                 starPos.z - obsPos.z);
-        float dist = v.length();
-
-        CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, _("ly"),
-                astro::absToAppMag(star->getAbsoluteMagnitude(), dist),
+        float dist = v.length();*/
+        float d = (star->getPosition() - (toEigen((Point3f)ucPos) * 1e-6)).norm();
+        //CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), dist, _("ly"),
+        //        astro::absToAppMag(star->getAbsoluteMagnitude(), dist),
+        CelListViewItem *starItem = new CelListViewItem(listStars, stardb->getStarName(*star), d, _("ly"),        
+                astro::absToAppMag(star->getAbsoluteMagnitude(), d),
                 star->getAbsoluteMagnitude(), starClass);
 
         SolarSystemCatalog::iterator iter = solarSystemCatalog->find(star->getCatalogNumber());
@@ -153,7 +158,8 @@ void CelestialBrowser::addPlanetarySystem(CelListViewItem* parentItem, const Pla
     {
         const Body* body = system->getBody(i);
         if (body->getClassification() & (Body::Barycenter | Body::Invisible)) continue;
-        Point3d bodyPos = body->getAstrocentricPosition(appSim->getTime());
+        //Point3d bodyPos = body->getAstrocentricPosition(appSim->getTime());
+        Point3d bodyPos = body->getPosition(appSim->getTime());
         CelListViewItem* item = NULL;
         if (parentBodyPos == NULL) 
         {
