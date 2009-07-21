@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <celestia/celestiacore.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -60,13 +61,13 @@ public:
         ObjectType
     };
 
-    DSOPredicate(Criterion _criterion, const Point3d& _observerPos);
+    DSOPredicate(Criterion _criterion, const Vector3d& _observerPos);
 
     bool operator()(const DeepSkyObject* dso0, const DeepSkyObject* dso1) const;
     
 private:
     Criterion criterion;
-    Point3d pos;
+    Vector3d pos;
 };
 
 
@@ -108,14 +109,14 @@ public:
 
 private:
     const Universe* universe;
-    Point3d observerPos;
+    Vector3d observerPos;
     vector<DeepSkyObject*> dsos;
 };
 
 
 DSOTableModel::DSOTableModel(const Universe* _universe) :
     universe(_universe),
-    observerPos(0.0, 0.0, 0.0)
+    observerPos(Vector3d::Zero())
 {
 }
 
@@ -158,12 +159,11 @@ QVariant DSOTableModel::data(const QModelIndex& index, int role) const
         }
     case DistanceColumn:
         {
-            //return QVariant(observerPos.distanceTo(dso->getPosition()));
-            return QString("%L1").arg(observerPos.distanceTo(dso->getPosition()), 0, 'g', 4);
+            return QString("%L1").arg((observerPos - dso->getPosition()).norm(), 0, 'g', 4);
         }
     case AppMagColumn:
         {
-            double distance = observerPos.distanceTo(dso->getPosition());
+            double distance = (observerPos - dso->getPosition()).norm();
             return QString("%1").arg(astro::absToAppMag((double) dso->getAbsoluteMagnitude(), distance), 0, 'f', 2);
         }
     case TypeColumn:
@@ -211,7 +211,7 @@ int DSOTableModel::columnCount(const QModelIndex&) const
 
 
 DSOPredicate::DSOPredicate(Criterion _criterion,
-                           const Point3d& _observerPos) :
+                           const Vector3d& _observerPos) :
     criterion(_criterion),
     pos(_observerPos)
 {
@@ -223,13 +223,13 @@ bool DSOPredicate::operator()(const DeepSkyObject* dso0, const DeepSkyObject* ds
     switch (criterion)
     {
     case Distance:
-        return ((pos - dso0->getPosition()).lengthSquared() <
-                (pos - dso1->getPosition()).lengthSquared());
+        return ((pos - dso0->getPosition()).squaredNorm() <
+                (pos - dso1->getPosition()).squaredNorm());
 
     case Brightness:
         {
-            double d0 = pos.distanceTo(dso0->getPosition());
-            double d1 = pos.distanceTo(dso1->getPosition());
+            double d0 = (pos - dso0->getPosition()).norm();
+            double d1 = (pos - dso1->getPosition()).norm();
             return astro::absToAppMag((double) dso0->getAbsoluteMagnitude(), d0) <
                    astro::absToAppMag((double) dso1->getAbsoluteMagnitude(), d1);
         }
@@ -312,7 +312,7 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
 {
     const DSODatabase& dsodb = *universe->getDSOCatalog();
     
-    observerPos = ((Point3d) _observerPos) * 1.0e-6;
+    observerPos = _observerPos.offsetFromKm(UniversalCoord::Zero()) * astro::kilometersToLightYears(1.0);
     
     typedef multiset<DeepSkyObject*, DSOPredicate> DSOSet;
     
