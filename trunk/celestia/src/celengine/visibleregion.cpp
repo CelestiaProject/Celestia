@@ -157,7 +157,7 @@ orthogonalUnitVector(const Matrix<T, 3, 1>& v)
 
 void
 VisibleRegion::render(Renderer* /* renderer */,
-                      const Point3f& /* pos */,
+                      const Vector3f& /* pos */,
                       float discSizeInPixels,
                       double tdb) const
 {

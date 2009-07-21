@@ -622,12 +622,12 @@ SkyGrid::render(Renderer& renderer,
                 
                 if ((m * p0).z() < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p0.x(), p0.y(), p0.z()), hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
                 
                 if ((m * p1).z() < 0.0)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p1.x(), p1.y(), p1.z()), hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
                 }                
             }
         }
@@ -698,12 +698,12 @@ SkyGrid::render(Renderer& renderer,
                 
                 if ((m * p0).z() < 0.0 && axis0.dot(isect0) >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p0.x(), p0.y(), p0.z()), hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p0, hAlign, vAlign);
                 }
                 
                 if ((m * p1).z() < 0.0 && axis0.dot(isect1) >= cosMaxMeridianAngle)
                 {
-                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, Point3f(p1.x(), p1.y(), p1.z()), hAlign, vAlign);
+                    renderer.addBackgroundAnnotation(NULL, labelText, m_labelColor, p1, hAlign, vAlign);
                 }               
             }
         }        

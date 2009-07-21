@@ -14,7 +14,7 @@
 #define _CELENGINE_REFERENCEMARK_H_
 
 #include <string>
-#include <celmath/vecmath.h>
+#include <Eigen/Core>
 
 class Renderer;
 
@@ -38,7 +38,7 @@ class ReferenceMark
     /*! Draw the reference mark geometry at the specified time.
      */
     virtual void render(Renderer* renderer,
-                        const Point3f& position,
+                        const Eigen::Vector3f& position,
                         float discSizeInPixels,
                         double tdb) const = 0;
 
