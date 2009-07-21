@@ -28,7 +28,7 @@ class ArrowReferenceMark : public ReferenceMark
     void setSize(float _size);
     void setColor(Color _color);
 
-    void render(Renderer* renderer, const Point3f& position, float discSize, double tdb) const;
+    void render(Renderer* renderer, const Eigen::Vector3f& position, float discSize, double tdb) const;
     float boundingSphereRadius() const
     {
         return size;
@@ -59,7 +59,7 @@ class AxesReferenceMark : public ReferenceMark
     void setSize(float _size);
     void setOpacity(float _opacity);
 
-    void render(Renderer* renderer, const Point3f& position, float discSize, double tdb) const;
+    void render(Renderer* renderer, const Eigen::Vector3f& position, float discSize, double tdb) const;
     float boundingSphereRadius() const
     {
         return size;

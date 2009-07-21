@@ -31,7 +31,7 @@ public:
     ~VisibleRegion();
 
     void render(Renderer* renderer,
-                const Point3f& pos,
+                const Eigen::Vector3f& pos,
                 float discSizeInPixels,
                 double tdb) const;
     float boundingSphereRadius() const;
