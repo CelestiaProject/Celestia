@@ -89,14 +89,14 @@ static void longLatLabel(const string& labelText,
         
         renderer->addObjectAnnotation(NULL, labelText,
                                       Renderer::PlanetographicGridLabelColor,
-                                      Point3f((float) labelPos.x(), (float) labelPos.y(), (float) labelPos.z()));
+                                      labelPos.cast<float>());
     }
 }
 
 
 void
 PlanetographicGrid::render(Renderer* renderer,
-                           const Point3f& pos,
+                           const Eigen::Vector3f& pos,
                            float discSizeInPixels,
                            double tdb) const
 {
@@ -112,13 +112,13 @@ PlanetographicGrid::render(Renderer* renderer,
     float offset = scale - 1.0f;
 
     Vector3f semiAxes = body.getSemiAxes();
-    Vector3d posd(pos.x, pos.y, pos.z);
-    Vector3d viewRayOrigin = q * Vector3d(-pos.x, -pos.y, -pos.z);
+    Vector3d posd = pos.cast<double>();
+    Vector3d viewRayOrigin = q * -pos.cast<double>();
     
     // Calculate the view normal; this is used for placement of the long/lat
     // label text.
-    Vec3f vn  = Vec3f(0.0f, 0.0f, -1.0f) * renderer->getCameraOrientation().toMatrix3();
-    Vector3d viewNormal(vn.x, vn.y, vn.z);
+    Vector3f vn  = renderer->getCameraOrientation().conjugate() * -Vector3f::UnitZ();
+    Vector3d viewNormal = vn.cast<double>();
 
     // Enable depth buffering
     glEnable(GL_DEPTH_TEST);

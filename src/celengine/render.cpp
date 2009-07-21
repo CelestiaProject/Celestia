@@ -396,20 +396,7 @@ void StarVertexBuffer::addStar(const Vector3f& pos,
         vertices[n + 1]  = pos + v1 * size;
         vertices[n + 2]  = pos + v2 * size;
         vertices[n + 3] = pos + v3 * size;
-#if 0
-        vertices[n + 0]  = pos.x + v0.x * size;
-        vertices[n + 1]  = pos.y + v0.y * size;
-        vertices[n + 2]  = pos.z + v0.z * size;
-        vertices[n + 3]  = pos.x + v1.x * size;
-        vertices[n + 4]  = pos.y + v1.y * size;
-        vertices[n + 5]  = pos.z + v1.z * size;
-        vertices[n + 6]  = pos.x + v2.x * size;
-        vertices[n + 7]  = pos.y + v2.y * size;
-        vertices[n + 8]  = pos.z + v2.z * size;
-        vertices[n + 9]  = pos.x + v3.x * size;
-        vertices[n + 10] = pos.y + v3.y * size;
-        vertices[n + 11] = pos.z + v3.z * size;
-#endif
+
         n = nStars * 16;
         color.get(colors + n);
         color.get(colors + n + 4);
@@ -1045,7 +1032,7 @@ bool operator<(const RenderListEntry& a, const RenderListEntry& b)
 bool Renderer::Annotation::operator<(const Annotation& a) const
 {
     // Operation is reversed because -z axis points into the screen
-    return position.z > a.position.z;
+    return position.z() > a.position.z();
 }
 
 // Depth comparison for orbit paths
@@ -1523,7 +1510,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              const MarkerRepresentation* markerRep,
                              const string& labelText,
                              Color color,
-                             const Point3f& pos,
+                             const Vector3f& pos,
                              LabelAlignment halign,
                              LabelVerticalAlignment valign,
                              float size)
@@ -1534,10 +1521,10 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
     view[1] = -windowHeight / 2;
     view[2] = windowWidth;
     view[3] = windowHeight;
-    float depth = (float) (pos.x * modelMatrix[2] +
-                           pos.y * modelMatrix[6] +
-                           pos.z * modelMatrix[10]);
-    if (gluProject(pos.x, pos.y, pos.z,
+    float depth = (float) (pos.x() * modelMatrix[2] +
+                           pos.y() * modelMatrix[6] +
+                           pos.z() * modelMatrix[10]);
+    if (gluProject(pos.x(), pos.y(), pos.z(),
                    modelMatrix,
                    projMatrix,
                    (const GLint*) view,
@@ -1551,7 +1538,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 
         a.markerRep = markerRep;
         a.color = color;
-        a.position = Point3f((float) winX, (float) winY, -depth);
+        a.position = Vector3f((float) winX, (float) winY, -depth);
         a.halign = halign;
         a.valign = valign;
         a.size = size;
@@ -1563,7 +1550,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 void Renderer::addForegroundAnnotation(const MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
-                                       const Point3f& pos,
+                                       const Vector3f& pos,
                                        LabelAlignment halign,
                                        LabelVerticalAlignment valign,
                                        float size)
@@ -1575,7 +1562,7 @@ void Renderer::addForegroundAnnotation(const MarkerRepresentation* markerRep,
 void Renderer::addBackgroundAnnotation(const MarkerRepresentation* markerRep,
                                        const string& labelText,
                                        Color color,
-                                       const Point3f& pos,
+                                       const Vector3f& pos,
                                        LabelAlignment halign,
                                        LabelVerticalAlignment valign,
                                        float size)
@@ -1587,7 +1574,7 @@ void Renderer::addBackgroundAnnotation(const MarkerRepresentation* markerRep,
 void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
                                    const string& labelText,
                                    Color color,
-                                   const Point3f& pos,
+                                   const Vector3f& pos,
                                    LabelAlignment halign,
                                    LabelVerticalAlignment valign,
                                    float size)
@@ -1598,10 +1585,10 @@ void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
     view[1] = -windowHeight / 2;
     view[2] = windowWidth;
     view[3] = windowHeight;
-    float depth = (float) (pos.x * modelMatrix[2] +
-                           pos.y * modelMatrix[6] +
-                           pos.z * modelMatrix[10]);
-    if (gluProject(pos.x, pos.y, pos.z,
+    float depth = (float) (pos.x() * modelMatrix[2] +
+                           pos.y() * modelMatrix[6] +
+                           pos.z() * modelMatrix[10]);
+    if (gluProject(pos.x(), pos.y(), pos.z(),
                    modelMatrix,
                    projMatrix,
                    (const GLint*) view,
@@ -1618,7 +1605,7 @@ void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
         }
         a.markerRep = markerRep;
         a.color = color;
-        a.position = Point3f((float) winX, (float) winY, -depth);
+        a.position = Vector3f((float) winX, (float) winY, -depth);
         a.halign = halign;
         a.valign = valign;
         a.size = size;
@@ -1641,9 +1628,9 @@ void Renderer::clearSortedAnnotations()
 
 // Return the orientation of the camera used to render the current
 // frame. Available only while rendering a frame.
-Quatf Renderer::getCameraOrientation() const
+Quaternionf Renderer::getCameraOrientation() const
 {
-    return fromEigen(m_cameraOrientation);
+    return m_cameraOrientation;
 }
 
 
@@ -1685,7 +1672,7 @@ void Renderer::endObjectAnnotations()
 void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
                                    const string& labelText,
                                    Color color,
-                                   const Point3f& pos)
+                                   const Vector3f& pos)
 {
     assert(objectAnnotationSetOpen);
     if (objectAnnotationSetOpen)
@@ -1696,10 +1683,10 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
         view[1] = -windowHeight / 2;
         view[2] = windowWidth;
         view[3] = windowHeight;
-        float depth = (float) (pos.x * modelMatrix[2] +
-                               pos.y * modelMatrix[6] +
-                               pos.z * modelMatrix[10]);
-        if (gluProject(pos.x, pos.y, pos.z,
+        float depth = (float) (pos.x() * modelMatrix[2] +
+                               pos.y() * modelMatrix[6] +
+                               pos.z() * modelMatrix[10]);
+        if (gluProject(pos.x(), pos.y(), pos.z(),
                        modelMatrix,
                        projMatrix,
                        (const GLint*) view,
@@ -1716,7 +1703,7 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
             }
             a.markerRep = markerRep;
             a.color = color;
-            a.position = Point3f((float) winX, (float) winY, -depth);
+            a.position = Vector3f((float) winX, (float) winY, -depth);
             a.size = 0.0f;
 
             objectAnnotations.push_back(a);
@@ -2260,7 +2247,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         // glRotate(~orientation);
         modelview =
             (orientation).toMatrix4() *
-            Mat4d::translation(Point3d(orbitPath.origin.x, orbitPath.origin.y, orbitPath.origin.z)) *
+            Mat4d::translation(Point3d(orbitPath.origin.x(), orbitPath.origin.y(), orbitPath.origin.z())) *
             (~cameraOrientation).toMatrix4();
     }
 
@@ -3202,12 +3189,6 @@ void Renderer::draw(const Observer& observer,
     // Set up the camera for star rendering; the units of this phase
     // are light years.
     Vector3f observerPosLY = observer.getPosition().offsetFromLy(Vector3f::Zero());
-#if CELVEC
-    Point3f observerPosLy = (Point3f) observer.getPosition();
-    observerPosLY.x *= 1e-6f;
-    observerPosLY.y *= 1e-6f;
-    observerPosLY.z *= 1e-6f;
-#endif
     glPushMatrix();
     glRotate(m_cameraOrientation);
 
@@ -3686,7 +3667,7 @@ void Renderer::draw(const Observer& observer,
     {
         renderMarkers(*universe.getMarkers(),
                       observer.getPosition(),
-        		      observer.getOrientation(),
+        		      toEigen(observer.getOrientation()),
                       now);
         
         // Render background markers; rendering of other markers is deferred until
@@ -3698,14 +3679,14 @@ void Renderer::draw(const Observer& observer,
     bool selectionVisible = false;
     if (!sel.empty() && (renderFlags & ShowMarkers))
     {
-        UniversalCoord uc = sel.getPosition(now);
-        Vec3d offset = (uc - observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
+        Vector3d offset = sel.getPosition(now).offsetFromKm(observer.getPosition());
+
         static MarkerRepresentation cursorRep(MarkerRepresentation::Crosshair);
-        selectionVisible = xfrustum.testSphere(Point3d(0, 0, 0) + offset, sel.radius()) != Frustum::Outside;
+        selectionVisible = xfrustum.testSphere(offset, sel.radius()) != Frustum::Outside;
 
         if (selectionVisible)
         {
-            double distance = offset.length();
+            double distance = offset.norm();
             float symbolSize = (float) (sel.radius() / distance) / pixelSize;
 
             // Modify the marker position so that it is always in front of the marked object.
@@ -3723,20 +3704,20 @@ void Renderer::draw(const Observer& observer,
             if (distance < astro::lightYearsToKilometers(1.0))
             {
                 addSortedAnnotation(&cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
-                                    Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                                    offset.cast<float>(),
                                     AlignLeft, VerticalAlignTop, symbolSize);
             }
             else
             {
                 addAnnotation(backgroundAnnotations, &cursorRep, EMPTY_STRING, Color(SelectionCursorColor, 1.0f),
-                              Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                              offset.cast<float>(),
                               AlignLeft, VerticalAlignTop, symbolSize);
             }
 
             Color occludedCursorColor(SelectionCursorColor.red(), SelectionCursorColor.green() + 0.3f, SelectionCursorColor.blue());
             addAnnotation(foregroundAnnotations,
                           &cursorRep, EMPTY_STRING, Color(occludedCursorColor, 0.4f),
-                          Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                          offset.cast<float>(),
                           AlignLeft, VerticalAlignTop, symbolSize);
         }
     }
@@ -4050,8 +4031,8 @@ void Renderer::draw(const Observer& observer,
             // Factor of 0.999 makes sure ensures that the near plane does not fall
             // exactly at the marker's z coordinate (in which case the marker 
             // would be susceptible to being clipped.) 
-            if (-depthSortedAnnotations[0].position.z > zNearest)
-                zNearest = -depthSortedAnnotations[0].position.z * 0.999f;
+            if (-depthSortedAnnotations[0].position.z() > zNearest)
+                zNearest = -depthSortedAnnotations[0].position.z() * 0.999f;
         }
 
         
@@ -6955,28 +6936,28 @@ renderRingShadowsVS(Geometry* /*geometry*/,           //TODO: Remove unused para
 
 
 void Renderer::renderLocations(const Body& body,
-                               const Vec3d& bodyPosition,
-                               const Quatd& bodyOrientation)
+                               const Vector3d& bodyPosition,
+                               const Quaterniond& bodyOrientation)
 {
     const vector<Location*>* locations = body.getLocations();
     if (locations == NULL)
         return;
     
-    Vec3f semiAxes = fromEigen(body.getSemiAxes());
+    Vector3f semiAxes = body.getSemiAxes();
     
     float nearDist = getNearPlaneDistance();
-    double boundingRadius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
+    double boundingRadius = semiAxes.maxCoeff();
 
-    Vec3d bodyCenter(bodyPosition.x, bodyPosition.y, bodyPosition.z);
-    Vec3d viewRayOrigin = -bodyCenter * (~bodyOrientation).toMatrix3();
+    Vector3d bodyCenter = bodyPosition;
+    Vector3d viewRayOrigin = bodyOrientation * -bodyCenter;
     double labelOffset = 0.0001;
 
-    Vec3f vn  = Vec3f(0.0f, 0.0f, -1.0f) * getCameraOrientation().toMatrix3();
-    Vec3d viewNormal(vn.x, vn.y, vn.z);
+    Vector3f vn  = getCameraOrientation().conjugate() * -Vector3f::UnitZ();
+    Vector3d viewNormal = vn.cast<double>();
     
-    Ellipsoidd bodyEllipsoid(Vec3d(semiAxes.x, semiAxes.y, semiAxes.z));
+    Ellipsoidd bodyEllipsoid(semiAxes.cast<double>());
     
-    Mat3d bodyMatrix = bodyOrientation.toMatrix3();
+    Matrix3d bodyMatrix = bodyOrientation.conjugate().toRotationMatrix();
     
     for (vector<Location*>::const_iterator iter = locations->begin();
          iter != locations->end(); iter++)
@@ -6986,25 +6967,25 @@ void Renderer::renderLocations(const Body& body,
         if (location.getFeatureType() & locationFilter)
         {
             // Get the position of the location with respect to the planet center
-            Vec3f ppos = location.getPosition();
+            Vector3f ppos = toEigen(location.getPosition());
             
             // Compute the bodycentric position of the location
-            Vec3d locPos = Vec3d(ppos.x, ppos.y, ppos.z);
+            Vector3d locPos = ppos.cast<double>();
             
             // Get the planetocentric position of the label.  Add a slight scale factor
             // to keep the point from being exactly on the surface.
-            Vec3d pcLabelPos = locPos * (1.0 + labelOffset);
+            Vector3d pcLabelPos = locPos * (1.0 + labelOffset);
             
             // Get the camera space label position
-            Vec3d labelPos = bodyCenter + locPos * bodyMatrix;
+            Vector3d labelPos = bodyCenter + bodyMatrix * locPos;
             
             float effSize = location.getImportance();
             if (effSize < 0.0f)
                 effSize = location.getSize();
             
-            float pixSize = effSize / (float) (labelPos.length() * pixelSize);
+            float pixSize = effSize / (float) (labelPos.norm() * pixelSize);
             
-            if (pixSize > minFeatureSize && labelPos * viewNormal > 0.0)
+            if (pixSize > minFeatureSize && labelPos.dot(viewNormal) > 0.0)
             {
                 // Labels on non-ellipsoidal bodies need special handling; the
                 // ellipsoid visibility test will always fail for them, since they
@@ -7013,7 +6994,7 @@ void Renderer::renderLocations(const Body& body,
                 // onto the bounding sphere.
                 if (!body.isEllipsoid())
                 {
-                    double r = locPos.length();
+                    double r = locPos.norm();
                     if (r < boundingRadius)
                         pcLabelPos = locPos * (boundingRadius * 1.01 / r);
                 }
@@ -7025,19 +7006,17 @@ void Renderer::renderLocations(const Body& body,
                 // the label is obscured by the planet.  An exact calculation
                 // for irregular objects would be too expensive, and the
                 // ellipsoid approximation works reasonably well for them.
-                Ray3d testRay(Point3d(viewRayOrigin.x, viewRayOrigin.y, viewRayOrigin.z),
-                              pcLabelPos - viewRayOrigin);
+                Ray3d testRay(viewRayOrigin, pcLabelPos - viewRayOrigin);
                 bool hit = testIntersection(testRay, bodyEllipsoid, t);
-                Vec3d blah = labelPos - viewRayOrigin;
 
                 if (!hit || t >= 1.0)
                 {                    
                     // Calculate the intersection of the eye-to-label ray with the plane perpendicular to
                     // the view normal that touches the front of the object's bounding sphere
-                    double planetZ = viewNormal * bodyCenter - boundingRadius;
+                    double planetZ = viewNormal.dot(bodyCenter) - boundingRadius;
                     if (planetZ < -nearDist * 1.001)
                         planetZ = -nearDist * 1.001;
-                    double z = viewNormal * labelPos;
+                    double z = viewNormal.dot(labelPos);
                     labelPos *= planetZ / z;
                                         
                     uint32 featureType = location.getFeatureType();
@@ -7057,7 +7036,7 @@ void Renderer::renderLocations(const Body& body,
                     addObjectAnnotation(locationMarker,
                                         location.getName(true),
                                         labelColor,
-                                        Point3f((float) labelPos.x, (float) labelPos.y, (float) labelPos.z));
+                                        labelPos.cast<float>());
                 }
             }
         }
@@ -8146,9 +8125,8 @@ void Renderer::renderPlanet(Body& body,
 
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
-            Vec3d posd = (body.getPosition(observer.getTime()) -
-                          observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
-            renderLocations(body, posd, fromEigen(q));
+            Vector3d posd = body.getPosition(observer.getTime()).offsetFromKm(observer.getPosition());
+            renderLocations(body, posd, q);
 
             glDisable(GL_DEPTH_TEST);
         }
@@ -8605,7 +8583,7 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
     glPushMatrix();
     glTranslate(pos);
 
-    refMark.render(this, ptFromEigen(pos), discSizeInPixels, now);
+    refMark.render(this, pos, discSizeInPixels, now);
 
     glPopMatrix();
 
@@ -8991,7 +8969,7 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
                 path.star = NULL;
                 path.centerZ = origf * viewMatZ;
                 path.radius = (float) boundingRadius;
-                path.origin = Point3f(origf.x, origf.y, origf.z);
+                path.origin = toEigen(origf);
                 path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
                 orbitPathList.push_back(path);
             }
@@ -9175,7 +9153,7 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                         }
                     }
 
-                    addSortedAnnotation(NULL, body->getName(true), labelColor, ptFromEigen(pos));
+                    addSortedAnnotation(NULL, body->getName(true), labelColor, pos);
                 }
             }
         }
@@ -9216,7 +9194,7 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
                 path.body = NULL;
                 path.centerZ = origf * viewMatZ;
                 path.radius = (float) boundingRadius;
-                path.origin = Point3f(origf.x, origf.y, origf.z);
+                path.origin = toEigen(origf);
                 path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
                 orbitPathList.push_back(path);
             }
@@ -9415,7 +9393,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
                     distr = 1.0f;
                 renderer->addBackgroundAnnotation(NULL, nameBuffer,
                                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                                  ptFromEigen(relPos));
+                                                  relPos);
                 nLabelled++;
             }
         }
@@ -9487,7 +9465,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             if (appMag < saturationMag)
             {
                 Renderer::Particle p;
-                p.center = ptFromEigen(relPos);
+                p.center = relPos;
                 p.size = size;
                 p.color = Color(starColor, alpha);
 
@@ -9672,7 +9650,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     distr = 1.0f;
                 renderer->addBackgroundAnnotation(NULL, nameBuffer,
                                                   Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha()),
-                                                  ptFromEigen(relPos));
+                                                  relPos);
                 nLabelled++;
             }
         }
@@ -9893,7 +9871,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
         starRenderer.starVertexBuffer->finish();
 
     gaussianGlareTex->bind();
-    renderParticles(glareParticles, observer.getOrientationf());
+    renderParticles(glareParticles, toEigen(observer.getOrientationf()));
 }
 
 
@@ -10178,7 +10156,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                     renderer->addBackgroundAnnotation(rep,
                                                       dsoDB->getDSOName(dso, true),
                                                       Color(labelColor, distr * labelColor.alpha()),
-                                                      ptFromEigen(relPos),
+                                                      relPos,
                                                       Renderer::AlignLeft, Renderer::VerticalAlignCenter, symbolSize);
                 }
             } // labels enabled
@@ -10486,7 +10464,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
                     addBackgroundAnnotation(NULL,
                                             ast->getName((labelMode & I18nConstellationLabels) != 0),
                                             Color(labelColor, opacity),
-                                            ptFromEigen(rpos),
+                                            rpos,
                                             AlignCenter, VerticalAlignCenter);
                 }
             }
@@ -10496,21 +10474,21 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
 
 void Renderer::renderParticles(const vector<Particle>& particles,
-                               Quatf orientation)
+                               const Quaternionf& orientation)
 {
     int nParticles = particles.size();
 
     {
-        Mat3f m = orientation.toMatrix3();
-        Vec3f v0 = Vec3f(-1, -1, 0) * m;
-        Vec3f v1 = Vec3f( 1, -1, 0) * m;
-        Vec3f v2 = Vec3f( 1,  1, 0) * m;
-        Vec3f v3 = Vec3f(-1,  1, 0) * m;
+        Matrix3f m = orientation.conjugate().toRotationMatrix();
+        Vector3f v0 = m * Vector3f(-1, -1, 0);
+        Vector3f v1 = m * Vector3f( 1, -1, 0);
+        Vector3f v2 = m * Vector3f( 1,  1, 0);
+        Vector3f v3 = m * Vector3f(-1,  1, 0);
 
         glBegin(GL_QUADS);
         for (int i = 0; i < nParticles; i++)
         {
-            Point3f center = particles[i].center;
+            Vector3f center = particles[i].center;
             float size = particles[i].size;
 
             glColor(particles[i].color);
@@ -10608,8 +10586,8 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             }
 
             glColor(annotations[i].color);
-            glTranslatef((GLfloat) (int) annotations[i].position.x,
-                         (GLfloat) (int) annotations[i].position.y, 0.0f);
+            glTranslatef((GLfloat) (int) annotations[i].position.x(),
+                         (GLfloat) (int) annotations[i].position.y(), 0.0f);
 
             glDisable(GL_TEXTURE_2D);
             if (markerRep.symbol() == MarkerRepresentation::Crosshair)
@@ -10666,8 +10644,8 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
             }
             
             glColor(annotations[i].color);
-            glTranslatef((int) annotations[i].position.x + hOffset + PixelOffset,
-                         (int) annotations[i].position.y + vOffset + PixelOffset, 0.0f);
+            glTranslatef((int) annotations[i].position.x() + hOffset + PixelOffset,
+                         (int) annotations[i].position.y() + vOffset + PixelOffset, 0.0f);
             // EK TODO: Check where to replace (see '_(' above)
             font[fs]->render(annotations[i].labelText);
             glPopMatrix();
@@ -10740,10 +10718,10 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
     float d1 = -(farDist + nearDist) / (farDist - nearDist);
     float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
 
-    for (; iter != depthSortedAnnotations.end() && iter->position.z > nearDist; iter++)
+    for (; iter != depthSortedAnnotations.end() && iter->position.z() > nearDist; iter++)
     {
         // Compute normalized device z
-        float ndc_z = d1 + d2 / -iter->position.z;
+        float ndc_z = d1 + d2 / -iter->position.z();
         ndc_z = min(1.0f, max(-1.0f, ndc_z)); // Clamp to [-1,1]
 
         // Offsets to left align label
@@ -10760,7 +10738,7 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
                 size = iter->size;
             }
             
-            glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
+            glTranslatef((GLfloat) (int) iter->position.x(), (GLfloat) (int) iter->position.y(), ndc_z);
             glColor(iter->color);
                         
             glDisable(GL_TEXTURE_2D);
@@ -10779,8 +10757,8 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
         }
         else
         {
-            glTranslatef((int) iter->position.x + PixelOffset + labelHOffset,
-                         (int) iter->position.y + PixelOffset + labelVOffset,
+            glTranslatef((int) iter->position.x() + PixelOffset + labelHOffset,
+                         (int) iter->position.y() + PixelOffset + labelVOffset,
                          ndc_z);
             glColor(iter->color);
             font[fs]->render(iter->labelText);
@@ -10832,10 +10810,10 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     float d2 = -2.0f * nearDist * farDist / (farDist - nearDist);
 
     vector<Annotation>::iterator iter = startIter;
-    for (; iter != endIter && iter->position.z > nearDist; iter++)
+    for (; iter != endIter && iter->position.z() > nearDist; iter++)
     {
         // Compute normalized device z
-        float ndc_z = d1 + d2 / -iter->position.z;
+        float ndc_z = d1 + d2 / -iter->position.z();
         ndc_z = min(1.0f, max(-1.0f, ndc_z)); // Clamp to [-1,1]
 
         // Offsets to left align label
@@ -10852,7 +10830,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
                 size = iter->size;
             }
             
-            glTranslatef((GLfloat) (int) iter->position.x, (GLfloat) (int) iter->position.y, ndc_z);
+            glTranslatef((GLfloat) (int) iter->position.x(), (GLfloat) (int) iter->position.y(), ndc_z);
             glColor(iter->color);
                         
             glDisable(GL_TEXTURE_2D);
@@ -10877,8 +10855,8 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
                 labelHOffset += (int) iter->markerRep->size() / 2 + 3;
 
             glPushMatrix();
-            glTranslatef((int) iter->position.x + PixelOffset + labelHOffset,
-                         (int) iter->position.y + PixelOffset + labelVOffset,
+            glTranslatef((int) iter->position.x() + PixelOffset + labelHOffset,
+                         (int) iter->position.y() + PixelOffset + labelVOffset,
                          ndc_z);
             glColor(iter->color);
             font[fs]->render(iter->labelText);
@@ -10898,7 +10876,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 
 void Renderer::renderMarkers(const MarkerList& markers,
                              const UniversalCoord& cameraPosition,
-			                 const Quatd& cameraOrientation,
+			                 const Quaterniond& cameraOrientation,
                              double jd)
 {
     // Calculate the cosine of half the maximum field of view. We'll use this for
@@ -10909,17 +10887,16 @@ void Renderer::renderMarkers(const MarkerList& markers,
     double diag = sqrt(1.0 + square(h) + square(h * (double) windowWidth / (double) windowHeight));
     double cosFOV = 1.0 / diag;
     
-    Vec3d viewVector = Vec3d(0.0, 0.0, -1.0) * cameraOrientation.toMatrix3();
+    Vector3d viewVector = cameraOrientation.conjugate() * -Vector3d::UnitZ();
     
     for (MarkerList::const_iterator iter = markers.begin(); iter != markers.end(); iter++)
     {
-        UniversalCoord uc = iter->position(jd);
-        Vec3d offset = (uc - cameraPosition) * astro::microLightYearsToKilometers(1.0);
+        Vector3d offset = iter->position(jd).offsetFromKm(cameraPosition);
                 
         // Only render those markers that lie withing the field of view.
-        if ((offset * viewVector) > cosFOV * offset.length())
+        if ((offset.dot(viewVector)) > cosFOV * offset.norm())
         {
-            double distance = offset.length();
+            double distance = offset.norm();
             float symbolSize = 0.0f;
             if (iter->sizing() == DistanceBasedSize)
             {
@@ -10941,14 +10918,14 @@ void Renderer::renderMarkers(const MarkerList& markers,
                     offset *= (1.0 - boundingRadius * 1.01 / distance);
                 
                     addSortedAnnotation(&(iter->representation()), EMPTY_STRING, iter->representation().color(),
-                                        Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                                        offset.cast<float>(),
                                         AlignLeft, VerticalAlignTop, symbolSize);
                 }
                 else
                 {
                     addAnnotation(backgroundAnnotations,
                                   &(iter->representation()), EMPTY_STRING, iter->representation().color(),
-                                  Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                                  offset.cast<float>(),
                                   AlignLeft, VerticalAlignTop, symbolSize);
                 }
             }
@@ -10956,7 +10933,7 @@ void Renderer::renderMarkers(const MarkerList& markers,
             {
                 addAnnotation(foregroundAnnotations,
                               &(iter->representation()), EMPTY_STRING, iter->representation().color(),
-                              Point3f((float) offset.x, (float) offset.y, (float) offset.z),
+                              offset.cast<float>(),
                               AlignLeft, VerticalAlignTop, symbolSize);
             }
         }

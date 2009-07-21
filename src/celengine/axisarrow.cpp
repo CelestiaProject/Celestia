@@ -156,7 +156,7 @@ ArrowReferenceMark::setColor(Color _color)
 
 void
 ArrowReferenceMark::render(Renderer* /* renderer */,
-                           const Point3f& /* position */,
+                           const Vector3f& /* position */,
                            float /* discSize */,
                            double tdb) const
 {
@@ -248,7 +248,7 @@ AxesReferenceMark::setOpacity(float _opacity)
 
 void
 AxesReferenceMark::render(Renderer* /* renderer */,
-                          const Point3f& /* position */,
+                          const Vector3f& /* position */,
                           float /* discSize */,
                           double tdb) const
 {

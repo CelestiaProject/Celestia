@@ -258,7 +258,7 @@ class Renderer
         char labelText[MaxLabelLength];
         const MarkerRepresentation* markerRep;
         Color color;
-        Point3f position;
+        Eigen::Vector3f position;
         LabelAlignment halign : 3;
         LabelVerticalAlignment valign : 3;
         float size;
@@ -269,21 +269,21 @@ class Renderer
     void addForegroundAnnotation(const MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
-                                 const Point3f& position,
+                                 const Eigen::Vector3f& position,
                                  LabelAlignment halign = AlignLeft,
                                  LabelVerticalAlignment valign = VerticalAlignBottom,
                                  float size = 0.0f);
     void addBackgroundAnnotation(const MarkerRepresentation* markerRep,
                                  const std::string& labelText,
                                  Color color,
-                                 const Point3f& position,
+                                 const Eigen::Vector3f& position,
                                  LabelAlignment halign = AlignLeft,
                                  LabelVerticalAlignment valign = VerticalAlignBottom,
                                  float size = 0.0f);
     void addSortedAnnotation(const MarkerRepresentation* markerRep,
                              const std::string& labelText,
                              Color color,
-                             const Point3f& position,
+                             const Eigen::Vector3f& position,
                              LabelAlignment halign = AlignLeft,
                              LabelVerticalAlignment valign = VerticalAlignBottom,
                              float size = 0.0f);
@@ -291,9 +291,9 @@ class Renderer
     // Callbacks for renderables; these belong in a special renderer interface
     // only visible in object's render methods.
     void beginObjectAnnotations();
-    void addObjectAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Point3f&);
+    void addObjectAnnotation(const MarkerRepresentation* markerRep, const std::string& labelText, Color, const Eigen::Vector3f&);
     void endObjectAnnotations();
-    Quatf getCameraOrientation() const;
+    Eigen::Quaternionf getCameraOrientation() const;
     float getNearPlaneDistance() const;
     
     void clearAnnotations(std::vector<Annotation>&);
@@ -307,7 +307,7 @@ class Renderer
         float radius;
         Body* body;
         const Star* star;
-        Point3f origin;
+        Eigen::Vector3f origin;
         float opacity;
 
         bool operator<(const OrbitPathListEntry&) const;
@@ -336,7 +336,7 @@ class Renderer
     // 
     struct Particle
     {
-        Point3f center;
+        Eigen::Vector3f center;
         float size;
         Color color;
         float pad0, pad1, pad2;
@@ -526,8 +526,8 @@ class Renderer
                                    bool lit);
 
     void renderLocations(const Body& body,
-                         const Vec3d& bodyPosition,
-                         const Quatd& bodyOrientation);
+                         const Eigen::Vector3d& bodyPosition,
+                         const Eigen::Quaterniond& bodyOrientation);
                    
     // Render an item from the render list                   
     void renderItem(const RenderListEntry& rle,
@@ -545,14 +545,14 @@ class Renderer
     void labelConstellations(const std::vector<Asterism*>& asterisms,
                              const Observer& observer);
     void renderParticles(const std::vector<Particle>& particles,
-                         Quatf orientation);
+                         const Eigen::Quaternionf& orientation);
     
     
     void addAnnotation(std::vector<Annotation>&,
                        const MarkerRepresentation*,
                        const std::string& labelText,
                        Color color,
-                       const Point3f& position,
+                       const Eigen::Vector3f& position,
                        LabelAlignment halign = AlignLeft,
                        LabelVerticalAlignment = VerticalAlignBottom,
                        float size = 0.0f);
@@ -571,7 +571,7 @@ class Renderer
 
     void renderMarkers(const MarkerList&,
                        const UniversalCoord& cameraPosition,
-                       const Quatd& cameraOrientation,
+                       const Eigen::Quaterniond& cameraOrientation,
                        double jd);
 
     void renderOrbit(const OrbitPathListEntry&,
