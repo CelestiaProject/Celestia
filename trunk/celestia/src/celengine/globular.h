@@ -34,6 +34,8 @@ struct GlobularForm
 class Globular : public DeepSkyObject
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
  	Globular();
     virtual const char* getType() const;
     virtual void setType(const std::string&);

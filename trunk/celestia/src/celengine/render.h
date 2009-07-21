@@ -377,8 +377,8 @@ class Renderer
 
     struct SkyContourPoint
     {
-        Vec3f v;
-        Vec3f eyeDir;
+        Eigen::Vector3f v;
+        Eigen::Vector3f eyeDir;
         float centerDist;
         float eyeDist;
         float cosSkyCapAltitude;
@@ -517,10 +517,10 @@ class Renderer
                              bool emissive);
 
     void renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
-                                   Point3f center,
-                                   const Quatf& orientation,
-                                   Vec3f semiAxes,
-                                   const Vec3f& sunDirection,
+                                   const Eigen::Vector3f& center,
+                                   const Eigen::Quaternionf& orientation,
+                                   const Eigen::Vector3f& semiAxes,
+                                   const Eigen::Vector3f& sunDirection,
                                    const LightingState& ls,
                                    float fade,
                                    bool lit);

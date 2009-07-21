@@ -231,7 +231,7 @@ float Globular::getHalfMassRadius() const
 	// Aproximation to the half-mass radius r_h [ly]
 	// (~ 20% accuracy) 
     
-	return std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().distanceFromOrigin() *                                 pow(10.0f, 0.6f * c - 0.4f); 	  
+	return std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().norm() * pow(10.0f, 0.6f * c - 0.4f); 	  
 }
 
 float Globular::getConcentration() const
@@ -284,11 +284,8 @@ bool Globular::pick(const Ray3d& ray,
                         getRadius() * (form->scale.y + RADIUS_CORRECTION),
                         getRadius() * (form->scale.z + RADIUS_CORRECTION));
 
-    Quatf qf= getOrientation();
-    Quatd qd(qf.w, qf.x, qf.y, qf.z);
-
-    Eigen::Vector3d p(getPosition().x, getPosition().y, getPosition().z);
-    return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(Eigen::Quaterniond(qf.w, qf.x, qf.y, qf.z).toRotationMatrix()),
+    Eigen::Vector3d p = getPosition();
+    return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(getOrientation().cast<double>().toRotationMatrix()),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
                             cosAngleToBoundCenter);
@@ -398,7 +395,7 @@ void Globular::renderGlobularPointSprites(const GLContext&,
 	
 	float tidalSize = 2 * tidalRadius;
 	Mat3f m =
-        Mat3f::scaling(form->scale) * getOrientation().toMatrix3() * 
+        Mat3f::scaling(form->scale) * fromEigen(getOrientation()).toMatrix3() * 
 		Mat3f::scaling(tidalSize);
 				     
     vector<GBlob>* points = form->gblobs;
@@ -514,7 +511,7 @@ void Globular::recomputeTidalRadius()
 	// Convert the core radius from arcminutes to light years
 	// Compute the tidal radius in light years
         
-	float coreRadiusLy = std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().distanceFromOrigin();
+	float coreRadiusLy = std::tan(degToRad(r_c / 60.0f)) * (float) getPosition().norm();
     tidalRadius = coreRadiusLy * std::pow(10.0f, c);     
 }
 

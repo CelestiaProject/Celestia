@@ -279,16 +279,16 @@ public:
     void start();
     void render();
     void finish();
-    void addStar(const Vec3f&, const Color&, float);
-    void setBillboardOrientation(const Quatf&);
+    void addStar(const Eigen::Vector3f&, const Color&, float);
+    void setBillboardOrientation(const Eigen::Quaternionf&);
 
 private:
     unsigned int capacity;
     unsigned int nStars;
-    float* vertices;
+    Eigen::Vector3f* vertices;
     float* texCoords;
     unsigned char* colors;
-    Vec3f v0, v1, v2, v3;
+    Eigen::Vector3f v0, v1, v2, v3;
 };
 
 
@@ -331,7 +331,7 @@ StarVertexBuffer::StarVertexBuffer(unsigned int _capacity) :
     colors(NULL)
 {
     nStars = 0;
-    vertices = new float[capacity * 12];
+    vertices = new Vector3f[capacity * 4];
     texCoords = new float[capacity * 8];
     colors = new unsigned char[capacity * 16];
 
@@ -385,13 +385,18 @@ void StarVertexBuffer::finish()
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void StarVertexBuffer::addStar(const Vec3f& pos,
-                                         const Color& color,
-                                         float size)
+void StarVertexBuffer::addStar(const Vector3f& pos,
+                               const Color& color,
+                               float size)
 {
     if (nStars < capacity)
     {
-        int n = nStars * 12;
+        int n = nStars * 4;
+        vertices[n + 0]  = pos + v0 * size;
+        vertices[n + 1]  = pos + v1 * size;
+        vertices[n + 2]  = pos + v2 * size;
+        vertices[n + 3] = pos + v3 * size;
+#if 0
         vertices[n + 0]  = pos.x + v0.x * size;
         vertices[n + 1]  = pos.y + v0.y * size;
         vertices[n + 2]  = pos.z + v0.z * size;
@@ -404,6 +409,7 @@ void StarVertexBuffer::addStar(const Vec3f& pos,
         vertices[n + 9]  = pos.x + v3.x * size;
         vertices[n + 10] = pos.y + v3.y * size;
         vertices[n + 11] = pos.z + v3.z * size;
+#endif
         n = nStars * 16;
         color.get(colors + n);
         color.get(colors + n + 4);
@@ -420,13 +426,13 @@ void StarVertexBuffer::addStar(const Vec3f& pos,
     }
 }
 
-void StarVertexBuffer::setBillboardOrientation(const Quatf& q)
+void StarVertexBuffer::setBillboardOrientation(const Quaternionf& q)
 {
-    Mat3f m = q.toMatrix3();
-    v0 = Vec3f(-1, -1, 0) * m;
-    v1 = Vec3f( 1, -1, 0) * m;
-    v2 = Vec3f( 1,  1, 0) * m;
-    v3 = Vec3f(-1,  1, 0) * m;
+    Matrix3f m = q.conjugate().toRotationMatrix();
+    v0 = m * Vector3f(-1, -1, 0);
+    v1 = m * Vector3f( 1, -1, 0);
+    v2 = m * Vector3f( 1,  1, 0);
+    v3 = m * Vector3f(-1,  1, 0);
 }
 
 
@@ -3195,10 +3201,13 @@ void Renderer::draw(const Observer& observer,
 
     // Set up the camera for star rendering; the units of this phase
     // are light years.
-    Point3f observerPosLY = (Point3f) observer.getPosition();
+    Vector3f observerPosLY = observer.getPosition().offsetFromLy(Vector3f::Zero());
+#if CELVEC
+    Point3f observerPosLy = (Point3f) observer.getPosition();
     observerPosLY.x *= 1e-6f;
     observerPosLY.y *= 1e-6f;
     observerPosLY.z *= 1e-6f;
+#endif
     glPushMatrix();
     glRotate(m_cameraOrientation);
 
@@ -3589,7 +3598,7 @@ void Renderer::draw(const Observer& observer,
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 #endif
 
-    glTranslatef(-observerPosLY.x, -observerPosLY.y, -observerPosLY.z);
+    glTranslatef(-observerPosLY.x(), -observerPosLY.y(), -observerPosLY.z());
 
     // Render asterisms
     if ((renderFlags & ShowDiagrams) != 0 && universe.getAsterisms() != NULL)
@@ -3597,7 +3606,7 @@ void Renderer::draw(const Observer& observer,
         /* We'll linearly fade the lines as a function of the observer's
            distance to the origin of coordinates: */
         float opacity = 1.0f;
-        float dist = observerPosLY.distanceFromOrigin() * 1e6f;
+        float dist = observerPosLY.norm() * 1e6f;
         if (dist > MaxAsterismLinesConstDist)
         {
             opacity = clamp((MaxAsterismLinesConstDist - dist) /
@@ -3643,7 +3652,7 @@ void Renderer::draw(const Observer& observer,
         /* We'll linearly fade the boundaries as a function of the
            observer's distance to the origin of coordinates: */
         float opacity = 1.0f;
-        float dist = observerPosLY.distanceFromOrigin() * 1e6f;
+        float dist = observerPosLY.norm() * 1e6f;
         if (dist > MaxAsterismLabelsConstDist)
         {
             opacity = clamp((MaxAsterismLabelsConstDist - dist) /
@@ -4824,9 +4833,9 @@ struct LightIrradiancePredicate
 
 
 void renderAtmosphere(const Atmosphere& atmosphere,
-                      Point3f center,
+                      const Vector3f& center,
                       float radius,
-                      const Vec3f& sunDirection,
+                      const Vector3f& sunDirection,
                       Color ambientColor,
                       float fade,
                       bool lit)
@@ -4836,35 +4845,32 @@ void renderAtmosphere(const Atmosphere& atmosphere,
 
     glDepthMask(GL_FALSE);
 
-    Vec3f eyeVec = center - Point3f(0.0f, 0.0f, 0.0f);
-    double centerDist = eyeVec.length();
-    // double surfaceDist = (double) centerDist - (double) radius;
+    Vector3f eyeVec = center;
+    double centerDist = eyeVec.norm();
 
-    Vec3f normal = eyeVec;
+    Vector3f normal = eyeVec;
     normal = normal / (float) centerDist;
 
     float tangentLength = (float) sqrt(square(centerDist) - square(radius));
     float atmRadius = tangentLength * radius / (float) centerDist;
     float atmOffsetFromCenter = square(radius) / (float) centerDist;
-    Point3f atmCenter = center - atmOffsetFromCenter * normal;
+    Vector3f atmCenter = center - atmOffsetFromCenter * normal;
 
-    Vec3f uAxis, vAxis;
-    if (abs(normal.x) < abs(normal.y) && abs(normal.x) < abs(normal.z))
+    Vector3f uAxis, vAxis;
+    if (abs(normal.x()) < abs(normal.y()) && abs(normal.x()) < abs(normal.z()))
     {
-        uAxis = Vec3f(1, 0, 0) ^ normal;
-        uAxis.normalize();
+        uAxis = Vector3f::UnitX().cross(normal);
     }
-    else if (abs(eyeVec.y) < abs(normal.z))
+    else if (abs(eyeVec.y()) < abs(normal.z()))
     {
-        uAxis = Vec3f(0, 1, 0) ^ normal;
-        uAxis.normalize();
+        uAxis = Vector3f::UnitY().cross(normal);
     }
     else
     {
-        uAxis = Vec3f(0, 0, 1) ^ normal;
-        uAxis.normalize();
+        uAxis = Vector3f::UnitZ().cross(normal);
     }
-    vAxis = uAxis ^ normal;
+    uAxis.normalize();
+    vAxis = uAxis.cross(normal);
 
     float height = atmosphere.height / radius;
 
@@ -4873,11 +4879,11 @@ void renderAtmosphere(const Atmosphere& atmosphere,
     for (int i = 0; i <= divisions; i++)
     {
         float theta = (float) i / (float) divisions * 2 * (float) PI;
-        Vec3f v = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
-        Point3f base = atmCenter + v * atmRadius;
-        Vec3f toCenter = base - center;
+        Vector3f v = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
+        Vector3f base = atmCenter + v * atmRadius;
+        Vector3f toCenter = base - center;
 
-        float cosSunAngle = (toCenter * sunDirection) / radius;
+        float cosSunAngle = toCenter.dot(sunDirection) / radius;
         float brightness = 1.0f;
         float botColor[3];
         float topColor[3];
@@ -4917,6 +4923,7 @@ void renderAtmosphere(const Atmosphere& atmosphere,
 }
 
 
+#if 0
 static Vec3f ellipsoidTangent(const Vec3f& recipSemiAxes,
                               const Vec3f& w,
                               const Vec3f& e,
@@ -4966,13 +4973,63 @@ static Vec3f ellipsoidTangent(const Vec3f& recipSemiAxes,
 
     return e + v * t1;
 }
+#endif
+template <typename T> static Matrix<T, 3, 1>
+ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
+                 const Matrix<T, 3, 1>& w,
+                 const Matrix<T, 3, 1>& e,
+                 const Matrix<T, 3, 1>& e_,
+                 T ee)
+{
+    // We want to find t such that -E(1-t) + Wt is the direction of a ray
+    // tangent to the ellipsoid.  A tangent ray will intersect the ellipsoid
+    // at exactly one point.  Finding the intersection between a ray and an
+    // ellipsoid ultimately requires using the quadratic formula, which has
+    // one solution when the discriminant (b^2 - 4ac) is zero.  The code below
+    // computes the value of t that results in a discriminant of zero.
+    Matrix<T, 3, 1> w_ = w.cwise() * recipSemiAxes;//(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
+    T ww = w_.dot(w_);
+    T ew = w_.dot(e_);
+
+    // Before elimination of terms:
+    // double a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
+    // double b = -8 * ee * (ee + ew)  - 4 * (-2 * (ee + ew) * (ee - 1.0f));
+    // double c =  4 * ee * ee         - 4 * (ee * (ee - 1.0f));
+
+    // Simplify the below expression and eliminate the ee^2 terms; this
+    // prevents precision errors, as ee tends to be a very large value.
+    //T a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1);
+    T a =  4 * (square(ew) - ee * ww + ee + 2 * ew + ww);
+    T b = -8 * (ee + ew);
+    T c =  4 * ee;
+
+    T t = 0;
+    T discriminant = b * b - 4 * a * c;
+
+    if (discriminant < 0)
+        t = (-b + (T) sqrt(-discriminant)) / (2 * a); // Bad!
+    else
+        t = (-b + (T) sqrt(discriminant)) / (2 * a);
+
+    // V is the direction vector.  We now need the point of intersection,
+    // which we obtain by solving the quadratic equation for the ray-ellipse
+    // intersection.  Since we already know that the discriminant is zero,
+    // the solution is just -b/2a
+    Matrix<T, 3, 1> v = -e * (1 - t) + w * t;
+    Matrix<T, 3, 1> v_ = v.cwise() * recipSemiAxes;
+    T a1 = v_.dot(v_);
+    T b1 = (T) 2 * v_.dot(e_);
+    T t1 = -b1 / (2 * a1);
+
+    return e + v * t1;
+}
 
 
 void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
-                                         Point3f center,
-                                         const Quatf& orientation,
-                                         Vec3f semiAxes,
-                                         const Vec3f& sunDirection,
+                                         const Vector3f& center,
+                                         const Quaternionf& orientation,
+                                         const Vector3f& semiAxes,
+                                         const Vector3f& sunDirection,
                                          const LightingState& ls,
                                          float pixSize,
                                          bool lit)
@@ -4986,22 +5043,23 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     // over one pixel.
     float fade = clamp(pixSize - 2);
 
-    Mat3f rot = orientation.toMatrix3();
-    Mat3f irot = conjugate(orientation).toMatrix3();
+    Matrix3f rot = orientation.toRotationMatrix();
+    Matrix3f irot = orientation.conjugate().toRotationMatrix();
 
-    Point3f eyePos(0.0f, 0.0f, 0.0f);
-    float radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
-    Vec3f eyeVec = center - eyePos;
-    eyeVec = eyeVec * irot;
-    double centerDist = eyeVec.length();
+    Vector3f eyePos = Vector3f::Zero();
+    float radius = semiAxes.maxCoeff();
+    Vector3f eyeVec = center - eyePos;
+    eyeVec = rot * eyeVec;
+    double centerDist = eyeVec.norm();
 
     float height = atmosphere.height / radius;
-    Vec3f recipSemiAxes(1.0f / semiAxes.x, 1.0f / semiAxes.y, 1.0f / semiAxes.z);
+    Vector3f recipSemiAxes = semiAxes.cwise().inverse();
 
-    Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
+    Vector3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
+#if CELVEC
     Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
     Mat3f A1 = Mat3f::scaling(recipSemiAxes);
-
+#endif
     // ellipDist is not the true distance from the surface unless the
     // planet is spherical.  Computing the true distance requires finding
     // the roots of a sixth degree polynomial, and isn't actually what we
@@ -5009,7 +5067,10 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     // multiplied by a uniform scale factor.  The value that we do compute
     // is the distance to the surface along a line from the eye position to
     // the center of the ellipsoid.
+#if CELVEC
     float ellipDist = (float) sqrt((eyeVec * A1) * (eyeVec * A1)) - 1.0f;
+#endif
+    float ellipDist = (eyeVec.cwise() * recipSemiAxes).norm() - 1.0f;
     bool within = ellipDist < height;
 
     // Adjust the tesselation of the sky dome/ring based on distance from the
@@ -5035,16 +5096,16 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
             horizonHeight *= max((float) pow(ellipDist / height, 0.33f), 0.001f);
     }
 
-    Vec3f e = -eyeVec;
-    Vec3f e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
-    float ee = e_ * e_;
+    Vector3f e = -eyeVec;
+    Vector3f e_ = e.cwise() * recipSemiAxes;//(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
+    float ee = e_.dot(e_);
 
     // Compute the cosine of the altitude of the sun.  This is used to compute
     // the degree of sunset/sunrise coloration.
     float cosSunAltitude = 0.0f;
     {
         // Check for a sun either directly behind or in front of the viewer
-        float cosSunAngle = (float) ((sunDirection * e) / centerDist);
+        float cosSunAngle = (float) (sunDirection.dot(e) / centerDist);
         if (cosSunAngle < -1.0f + 1.0e-6f)
         {
             cosSunAltitude = 0.0f;
@@ -5055,36 +5116,34 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         }
         else
         {
-            Point3f tangentPoint = center +
-                ellipsoidTangent(recipSemiAxes,
-                                 (-sunDirection * irot) * (float) centerDist,
-                                 e, e_, ee) * rot;
-            Vec3f tangentDir = tangentPoint - eyePos;
-            tangentDir.normalize();
-            cosSunAltitude = sunDirection * tangentDir;
+            Vector3f v = (rot * -sunDirection) * (float) centerDist;
+            Vector3f tangentPoint = center +
+                irot * ellipsoidTangent(recipSemiAxes,
+                                        v,
+                                        e, e_, ee);
+            Vector3f tangentDir = (tangentPoint - eyePos).normalized();
+            cosSunAltitude = sunDirection.dot(tangentDir);
         }
     }
 
-    Vec3f normal = eyeVec;
+    Vector3f normal = eyeVec;
     normal = normal / (float) centerDist;
 
-    Vec3f uAxis, vAxis;
-    if (abs(normal.x) < abs(normal.y) && abs(normal.x) < abs(normal.z))
+    Vector3f uAxis, vAxis;
+    if (abs(normal.x()) < abs(normal.y()) && abs(normal.x()) < abs(normal.z()))
     {
-        uAxis = Vec3f(1, 0, 0) ^ normal;
-        uAxis.normalize();
+        uAxis = Vector3f::UnitX().cross(normal);
     }
-    else if (abs(eyeVec.y) < abs(normal.z))
+    else if (abs(eyeVec.y()) < abs(normal.z()))
     {
-        uAxis = Vec3f(0, 1, 0) ^ normal;
-        uAxis.normalize();
+        uAxis = Vector3f::UnitY().cross(normal);
     }
     else
     {
-        uAxis = Vec3f(0, 0, 1) ^ normal;
-        uAxis.normalize();
+        uAxis = Vector3f::UnitZ().cross(normal);
     }
-    vAxis = uAxis ^ normal;
+    uAxis.normalize();
+    vAxis = uAxis.cross(normal);
 
     // Compute the contour of the ellipsoid
     int i;
@@ -5093,14 +5152,14 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
         // We want rays with an origin at the eye point and tangent to the the
         // ellipsoid.
         float theta = (float) i / (float) nSlices * 2 * (float) PI;
-        Vec3f w = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
+        Vector3f w = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
         w = w * (float) centerDist;
 
-        Vec3f toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
-        skyContour[i].v = toCenter * rot;
-        skyContour[i].centerDist = skyContour[i].v.length();
+        Vector3f toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        skyContour[i].v = irot * toCenter;
+        skyContour[i].centerDist = skyContour[i].v.norm();
         skyContour[i].eyeDir = skyContour[i].v + (center - eyePos);
-        skyContour[i].eyeDist = skyContour[i].eyeDir.length();
+        skyContour[i].eyeDist = skyContour[i].eyeDir.norm();
         skyContour[i].eyeDir.normalize();
 
         float skyCapDist = (float) sqrt(square(skyContour[i].eyeDist) +
@@ -5110,20 +5169,20 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     }
 
 
-    Vec3f botColor(atmosphere.lowerColor.red(),
-                   atmosphere.lowerColor.green(),
-                   atmosphere.lowerColor.blue());
-    Vec3f topColor(atmosphere.upperColor.red(),
-                   atmosphere.upperColor.green(),
-                   atmosphere.upperColor.blue());
-    Vec3f sunsetColor(atmosphere.sunsetColor.red(),
-                      atmosphere.sunsetColor.green(),
-                      atmosphere.sunsetColor.blue());
+    Vector3f botColor(atmosphere.lowerColor.red(),
+                      atmosphere.lowerColor.green(),
+                      atmosphere.lowerColor.blue());
+    Vector3f topColor(atmosphere.upperColor.red(),
+                      atmosphere.upperColor.green(),
+                      atmosphere.upperColor.blue());
+    Vector3f sunsetColor(atmosphere.sunsetColor.red(),
+                         atmosphere.sunsetColor.green(),
+                         atmosphere.sunsetColor.blue());
     if (within)
     {
-        Vec3f skyColor(atmosphere.skyColor.red(),
-                       atmosphere.skyColor.green(),
-                       atmosphere.skyColor.blue());
+        Vector3f skyColor(atmosphere.skyColor.red(),
+                          atmosphere.skyColor.green(),
+                          atmosphere.skyColor.blue());
         if (ellipDist < 0.0f)
             topColor = skyColor;
         else
@@ -5132,11 +5191,10 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
     if (ls.nLights == 0 && lit)
     {
-        Vec3f black(0.0f, 0.0f, 0.0f);
-        botColor = topColor = sunsetColor = black;
+        botColor = topColor = sunsetColor = Vector3f::Zero();
     }
 
-    Vec3f zenith = (skyContour[0].v + skyContour[nSlices / 2].v);
+    Vector3f zenith = (skyContour[0].v + skyContour[nSlices / 2].v);
     zenith.normalize();
     zenith *= skyContour[0].centerDist * (1.0f + horizonHeight * 2.0f);
 
@@ -5156,18 +5214,16 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 
         for (int j = 0; j < nSlices; j++)
         {
-            Vec3f v;
+            Vector3f v;
             if (i <= nHorizonRings)
                 v = skyContour[j].v * r;
             else
                 v = (skyContour[j].v * (1.0f - u) + zenith * u) * r;
-            Point3f p = center + v;
+            Vector3f p = center + v;
 
-
-            Vec3f viewDir(p.x, p.y, p.z);
-            viewDir.normalize();
-            float cosSunAngle = viewDir * sunDirection;
-            float cosAltitude = viewDir * skyContour[j].eyeDir;
+            Vector3f viewDir = p.normalized();
+            float cosSunAngle = viewDir.dot(sunDirection);
+            float cosAltitude = viewDir.dot(skyContour[j].eyeDir);
             float brightness = 1.0f;
             float coloration = 0.0f;
             if (lit)
@@ -5179,7 +5235,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                     coloration *= sunset;
                 }
 
-                cosSunAngle = (skyContour[j].v * sunDirection) / skyContour[j].centerDist;
+                cosSunAngle = skyContour[j].v.dot(sunDirection) / skyContour[j].centerDist;
                 if (cosSunAngle > -0.2f)
                 {
                     if (cosSunAngle < 0.3f)
@@ -5193,31 +5249,12 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
                 }
             }
 
-            vtx->x = p.x;
-            vtx->y = p.y;
-            vtx->z = p.z;
-
-#if 0
-            // Better way of generating sky color gradients--based on
-            // altitude angle.
-            if (!within)
-            {
-                hh = (1.0f - cosAltitude) / (1.0f - skyContour[j].cosSkyCapAltitude);
-            }
-            else
-            {
-                float top = pow((ellipDist / height), 0.125f) * skyContour[j].cosSkyCapAltitude;
-                if (cosAltitude < top)
-                    hh = 1.0f;
-                else
-                    hh = (1.0f - cosAltitude) / (1.0f - top);
-            }
-            hh = sqrt(hh);
-            //hh = (float) pow(hh, 0.25f);
-#endif
+            vtx->x = p.x();
+            vtx->y = p.y();
+            vtx->z = p.z();
 
             atten = 1.0f - hh;
-            Vec3f color = (1.0f - hh) * botColor + hh * topColor;
+            Vector3f color = (1.0f - hh) * botColor + hh * topColor;
             brightness *= minOpacity + (1.0f - minOpacity) * fade * atten;
             if (coloration != 0.0f)
                 color = (1.0f - coloration) * color + coloration * sunsetColor;
@@ -5225,9 +5262,9 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
 #ifdef HDR_COMPRESS
             brightness *= 0.5f;
 #endif
-            Color(brightness * color.x,
-                  brightness * color.y,
-                  brightness * color.z,
+            Color(brightness * color.x(),
+                  brightness * color.y(),
+                  brightness * color.z(),
                   fade * (minOpacity + (1.0f - minOpacity)) * atten).get(vtx->color);
             vtx++;
         }
@@ -5262,90 +5299,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     }
 
     glDisableClientState(GL_COLOR_ARRAY);
-}
-
-
-void renderCompass(Point3f center,
-                   const Quatf& orientation,
-                   Vec3f semiAxes,
-                   float pixelSize)
-{
-    Mat3f rot = orientation.toMatrix3();
-    Mat3f irot = conjugate(orientation).toMatrix3();
-
-    Point3f eyePos(0.0f, 0.0f, 0.0f);
-    float radius = max(semiAxes.x, max(semiAxes.y, semiAxes.z));
-    Vec3f eyeVec = center - eyePos;
-    eyeVec = eyeVec * irot;
-    double centerDist = eyeVec.length();
-
-    float height = 1.0f / radius;
-    Vec3f recipSemiAxes(1.0f / semiAxes.x,
-                        1.0f / semiAxes.y,
-                        1.0f / semiAxes.z);
-
-    Vec3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
-    Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
-    Mat3f A1 = Mat3f::scaling(recipSemiAxes);
-
-    const int nCompassPoints = 16;
-    Vec3f compassPoints[nCompassPoints];
-
-
-    // ellipDist is not the true distance from the surface unless the
-    // planet is spherical.  Computing the true distance requires finding
-    // the roots of a sixth degree polynomial, and isn't actually what we
-    // want anyhow since the atmosphere region is just the planet ellipsoid
-    // multiplied by a uniform scale factor.  The value that we do compute
-    // is the distance to the surface along a line from the eye position to
-    // the center of the ellipsoid.
-
-    /*float ellipDist = (float) sqrt((eyeVec * A1) * (eyeVec * A1)) - 1.0f; Unused*/
-
-    Vec3f e = -eyeVec;
-    Vec3f e_(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
-    float ee = e_ * e_;
-
-    Vec3f normal = eyeVec;
-    normal = normal / (float) centerDist;
-
-    Vec3f uAxis, vAxis;
-    Vec3f northPole(0.0f, 1.0f, 0.0f);
-    vAxis = normal ^ northPole;
-    vAxis.normalize();
-    uAxis = vAxis ^ normal;
-
-    // Compute the compass points
-    int i;
-    for (i = 0; i < nCompassPoints; i++)
-    {
-        // We want rays with an origin at the eye point and tangent to the the
-        // ellipsoid.
-        float theta = (float) i / (float) nCompassPoints * 2 * (float) PI;
-        Vec3f w = (float) cos(theta) * uAxis + (float) sin(theta) * vAxis;
-        w = w * (float) centerDist;
-
-        Vec3f toCenter = ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
-        compassPoints[i] = toCenter * rot;
-    }
-
-    glColor(compassColor);
-    glBegin(GL_LINES);
-    glDisable(GL_LIGHTING);
-    for (i = 0; i < nCompassPoints; i++)
-    {
-        float distance = (center + compassPoints[i]).distanceFromOrigin();
-
-        float length = distance * pixelSize * 8.0f;
-        if (i % 4 == 0)
-            length *= 3.0f;
-        else if (i % 2 == 0)
-            length *= 2.0f;
-
-        glVertex(center + compassPoints[i]);
-        glVertex(center + compassPoints[i] * (1.0f + length));
-    }
-    glEnd();
 }
 
 
@@ -6681,22 +6634,6 @@ renderEclipseShadows(Geometry* geometry,
     {
         EclipseShadow shadow = *iter;
 
-#ifdef DEBUG_ECLIPSE_SHADOWS
-        // Eclipse debugging: render the central axis of the eclipse
-        // shadow volume.
-        glDisable(GL_TEXTURE_2D);
-        glColor4f(1, 0, 0, 1);
-        Point3f blorp = shadow.origin * planetMat;
-        Vec3f blah = shadow.direction * planetMat;
-        blorp.x /= planetRadius; blorp.y /= planetRadius; blorp.z /= planetRadius;
-        float foo = blorp.distanceFromOrigin();
-        glBegin(GL_LINES);
-        glVertex(blorp);
-        glVertex(blorp + foo * blah);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
-#endif
-
         // Determine which eclipse shadow texture to use.  This is only
         // a very rough approximation to reality.  Since there are an
         // infinite number of possible eclipse volumes, what we should be
@@ -7731,10 +7668,10 @@ void Renderer::renderObject(const Vector3f& pos,
                 glRotate(cameraOrientation);
 
                 renderEllipsoidAtmosphere(*atmosphere,
-                                          ptFromEigen(pos),
-                                          fromEigen(obj.orientation),
-                                          fromEigen(scaleFactors),
-                                          fromEigen(ri.sunDir_eye),
+                                          pos,
+                                          obj.orientation,
+                                          scaleFactors,
+                                          ri.sunDir_eye,
                                           ls,
                                           thicknessInPixels,
                                           lit);
@@ -9537,7 +9474,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             }
             else
             {
-                starVertexBuffer->addStar(fromEigen(relPos),
+                starVertexBuffer->addStar(relPos,
                                           Color(starColor, alpha),
                                           pointSize * renderDistance);
             }
@@ -9915,7 +9852,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
 
     glareParticles.clear();
 
-    starVertexBuffer->setBillboardOrientation(observer.getOrientationf());
+    starVertexBuffer->setBillboardOrientation(toEigen(observer.getOrientationf()));
 
     glEnable(GL_TEXTURE_2D);
 
@@ -10062,12 +9999,15 @@ class DSORenderer : public ObjectRenderer<DeepSkyObject*, double>
     int wHeight;
 
     double avgAbsMag;
+
+    unsigned int dsosProcessed;
 };
 
 
 DSORenderer::DSORenderer() :
     ObjectRenderer<DeepSkyObject*, double>(DSO_OCTREE_ROOT_SIZE),
-    frustum(degToRad(45.0f), 1.0f, 1.0f)
+    frustum(degToRad(45.0f), 1.0f, 1.0f),
+    dsosProcessed(0)
 {
 }
 
@@ -10079,7 +10019,7 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     if (distanceToDSO > distanceLimit)
         return;
     
-    Vector3d dsoPos = toEigen(dso->getPosition());
+    Vector3d dsoPos = dso->getPosition();
     Vector3f relPos = (dsoPos - obsPos).cast<float>();
 
     Vector3f center = orientationMatrix.transpose() * relPos;
@@ -10098,146 +10038,152 @@ void DSORenderer::process(DeepSkyObject* const & dso,
     // each object (even if it's not visible) would be sent to the OpenGL
     // pipeline.
     
-    if ((renderFlags & dso->getRenderMask()) && dso->isVisible())
+    if (dso->isVisible())
     {
-		double dsoRadius = dso->getBoundingSphereRadius(); 
+        double dsoRadius = dso->getBoundingSphereRadius(); 
+        bool inFrustum = frustum.testSphere(center, (float) dsoRadius) != Frustum::Outside;
 
-        if (frustum.testSphere(center, (float) dsoRadius) != Frustum::Outside)
+        if (inFrustum)
         {
-            // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
-            // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
-            // determine a,b such that
-            // a - b * absMag = absMag / avgAbsMag ~ 1; a - b * faintestMag = 0.2.
-            // The 2nd eq. guarantees that the faintest galaxies are still visible.            
-            
-			if(!strcmp(dso->getObjTypeName(),"globular"))		
-				avgAbsMag =  -6.86;    // average over 150  globulars in globulars.dsc.
-			else if (!strcmp(dso->getObjTypeName(),"galaxy"))
-				avgAbsMag = -19.04;    // average over 10937 galaxies in galaxies.dsc.
-            
-			
-            float r   = absMag / (float) avgAbsMag;			  
-			float brightness = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
-	
-			// obviously, brightness(appMag = absMag) = r and 
-			// brightness(appMag = faintestMag) = 0.2, as desired.
+            if ((renderFlags & dso->getRenderMask()))
+            {
+                dsosProcessed++;
 
-			brightness = 2.3f * brightness * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
+                // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
+                // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
+                // determine a,b such that
+                // a - b * absMag = absMag / avgAbsMag ~ 1; a - b * faintestMag = 0.2.
+                // The 2nd eq. guarantees that the faintest galaxies are still visible.            
+                
+			    if(!strcmp(dso->getObjTypeName(),"globular"))		
+				    avgAbsMag =  -6.86;    // average over 150  globulars in globulars.dsc.
+			    else if (!strcmp(dso->getObjTypeName(),"galaxy"))
+				    avgAbsMag = -19.04;    // average over 10937 galaxies in galaxies.dsc.
+                
+    			
+                float r   = absMag / (float) avgAbsMag;			  
+			    float brightness = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
+    	
+			    // obviously, brightness(appMag = absMag) = r and 
+			    // brightness(appMag = faintestMag) = 0.2, as desired.
+
+			    brightness = 2.3f * brightness * (faintestMag - 4.75f) / renderer->getFaintestAM45deg();
 
 #ifdef USE_HDR
-            brightness *= exposure;
+                brightness *= exposure;
 #endif
-            if (brightness < 0)
-				brightness = 0;
-						
-			if (dsoRadius < 1000.0)
-            {
-                // Small objects may be prone to clipping; give them special
-                // handling.  We don't want to always set the projection
-                // matrix, since that could be expensive with large galaxy
-                // catalogs.
-                float nearZ = (float) (distanceToDSO / 2);
-                float farZ  = (float) (distanceToDSO + dsoRadius * 2 * CubeCornerToCenterDistance);
-                if (nearZ < dsoRadius * 0.001)
+                if (brightness < 0)
+				    brightness = 0;
+    						
+			    if (dsoRadius < 1000.0)
                 {
-                    nearZ = (float) (dsoRadius * 0.001);
-                    farZ  = nearZ * 10000.0f;
+                    // Small objects may be prone to clipping; give them special
+                    // handling.  We don't want to always set the projection
+                    // matrix, since that could be expensive with large galaxy
+                    // catalogs.
+                    float nearZ = (float) (distanceToDSO / 2);
+                    float farZ  = (float) (distanceToDSO + dsoRadius * 2 * CubeCornerToCenterDistance);
+                    if (nearZ < dsoRadius * 0.001)
+                    {
+                        nearZ = (float) (dsoRadius * 0.001);
+                        farZ  = nearZ * 10000.0f;
+                    }
+
+                    glMatrixMode(GL_PROJECTION);
+                    glPushMatrix();
+                    glLoadIdentity();
+                    gluPerspective(fov,
+                                   (float) wWidth / (float) wHeight,
+                                   nearZ,
+                                   farZ);
+                    glMatrixMode(GL_MODELVIEW);
                 }
 
-                glMatrixMode(GL_PROJECTION);
                 glPushMatrix();
-                glLoadIdentity();
-                gluPerspective(fov,
-                               (float) wWidth / (float) wHeight,
-                               nearZ,
-                               farZ);
-                glMatrixMode(GL_MODELVIEW);
-            }
+                glTranslate(relPos);
 
-            glPushMatrix();
-            glTranslate(relPos);
-
-            dso->render(*context,
-                        fromEigen(relPos),
-                        observer->getOrientationf(),
-                        (float) brightness,
-                        pixelSize);
-            glPopMatrix();
-
-#if 1
-            if (dsoRadius < 1000.0)
-            {
-                glMatrixMode(GL_PROJECTION);
+                dso->render(*context,
+                            fromEigen(relPos),
+                            observer->getOrientationf(),
+                            (float) brightness,
+                            pixelSize);
                 glPopMatrix();
-                glMatrixMode(GL_MODELVIEW);
-            }
-#endif
-        } // frustum test
-    } // renderFlags check
 
-    // Only render those labels that are in front of the camera:
-    // Place labels for DSOs brighter than the specified label threshold brightness
-    //
-    unsigned int labelMask = dso->getLabelMask();
+    #if 1
+                if (dsoRadius < 1000.0)
+                {
+                    glMatrixMode(GL_PROJECTION);
+                    glPopMatrix();
+                    glMatrixMode(GL_MODELVIEW);
+                }
+    #endif
+            } // renderFlags check
 
-    if ((labelMask & labelMode) && relPos.dot(viewNormal) > 0 && dso->isVisible())
-    {
-        Color labelColor;
-        float appMagEff = 6.0f;
-        float step = 6.0f;
-        float symbolSize = 0.0f;
-        MarkerRepresentation* rep = NULL;
+            // Only render those labels that are in front of the camera:
+            // Place labels for DSOs brighter than the specified label threshold brightness
+            //
+            unsigned int labelMask = dso->getLabelMask();
 
-        // Use magnitude based fading for galaxies, and distance based
-        // fading for nebulae and open clusters.
-        switch (labelMask)
-        {
-        case Renderer::NebulaLabels:
-            rep = &renderer->nebulaRep;
-            labelColor = Renderer::NebulaLabelColor;
-            appMagEff = astro::absToAppMag(-7.5f, (float) distanceToDSO);
-            symbolSize = (float) (dso->getRadius() / distanceToDSO) / pixelSize;
-            step = 6.0f;
-            break;
-        case Renderer::OpenClusterLabels:
-            rep = &renderer->openClusterRep;
-            labelColor = Renderer::OpenClusterLabelColor;
-            appMagEff = astro::absToAppMag(-6.0f, (float) distanceToDSO);
-            symbolSize = (float) (dso->getRadius() / distanceToDSO) / pixelSize;
-            step = 4.0f;
-            break;
-        case Renderer::GalaxyLabels:
-            labelColor = Renderer::GalaxyLabelColor;
-            appMagEff = appMag;
-            step = 6.0f;
-            break;
-		case Renderer::GlobularLabels:
-            labelColor = Renderer::GlobularLabelColor;
-            appMagEff = appMag;
-            step = 3.0f;
-            break;	        			
-        default:
-            // Unrecognized object class
-            labelColor = Color::White;
-            appMagEff = appMag;
-            step = 6.0f;
-            break;
-        }
+            if ((labelMask & labelMode))
+            {
+                Color labelColor;
+                float appMagEff = 6.0f;
+                float step = 6.0f;
+                float symbolSize = 0.0f;
+                MarkerRepresentation* rep = NULL;
 
-        if (appMagEff < labelThresholdMag)
-        {
-            // introduce distance dependent label transparency.
-            float distr = step * (labelThresholdMag - appMagEff) / labelThresholdMag;
-            if (distr > 1.0f)
-                distr = 1.0f;
+                // Use magnitude based fading for galaxies, and distance based
+                // fading for nebulae and open clusters.
+                switch (labelMask)
+                {
+                case Renderer::NebulaLabels:
+                    rep = &renderer->nebulaRep;
+                    labelColor = Renderer::NebulaLabelColor;
+                    appMagEff = astro::absToAppMag(-7.5f, (float) distanceToDSO);
+                    symbolSize = (float) (dso->getRadius() / distanceToDSO) / pixelSize;
+                    step = 6.0f;
+                    break;
+                case Renderer::OpenClusterLabels:
+                    rep = &renderer->openClusterRep;
+                    labelColor = Renderer::OpenClusterLabelColor;
+                    appMagEff = astro::absToAppMag(-6.0f, (float) distanceToDSO);
+                    symbolSize = (float) (dso->getRadius() / distanceToDSO) / pixelSize;
+                    step = 4.0f;
+                    break;
+                case Renderer::GalaxyLabels:
+                    labelColor = Renderer::GalaxyLabelColor;
+                    appMagEff = appMag;
+                    step = 6.0f;
+                    break;
+		        case Renderer::GlobularLabels:
+                    labelColor = Renderer::GlobularLabelColor;
+                    appMagEff = appMag;
+                    step = 3.0f;
+                    break;	        			
+                default:
+                    // Unrecognized object class
+                    labelColor = Color::White;
+                    appMagEff = appMag;
+                    step = 6.0f;
+                    break;
+                }
 
-            renderer->addBackgroundAnnotation(rep,
-                                              dsoDB->getDSOName(dso, true),
-                                              Color(labelColor, distr * labelColor.alpha()),
-                                              ptFromEigen(relPos),
-                                              Renderer::AlignLeft, Renderer::VerticalAlignCenter, symbolSize);
-        }
-    }
+                if (appMagEff < labelThresholdMag)
+                {
+                    // introduce distance dependent label transparency.
+                    float distr = step * (labelThresholdMag - appMagEff) / labelThresholdMag;
+                    if (distr > 1.0f)
+                        distr = 1.0f;
+
+                    renderer->addBackgroundAnnotation(rep,
+                                                      dsoDB->getDSOName(dso, true),
+                                                      Color(labelColor, distr * labelColor.alpha()),
+                                                      ptFromEigen(relPos),
+                                                      Renderer::AlignLeft, Renderer::VerticalAlignCenter, symbolSize);
+                }
+            } // labels enabled
+        } // in frustum
+    } // isVisible()
 }
 
 
@@ -10303,6 +10249,8 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
                            degToRad(fov),
                            (float) windowWidth / (float) windowHeight,
                            2 * faintestMagNight);
+
+    // clog << "DSOs processed: " << dsoRenderer.dsosProcessed << endl;
 
     if ((renderFlags & ShowSmoothLines) != 0)
         disableSmoothLines();

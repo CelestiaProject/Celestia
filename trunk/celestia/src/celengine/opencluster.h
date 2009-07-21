@@ -17,6 +17,8 @@
 class OpenCluster : public DeepSkyObject
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     OpenCluster();
 
     virtual const char* getType() const;

@@ -504,7 +504,7 @@ void showSelectionInfo(const Selection& sel)
     float angle = 0.0f;
 
     if (sel.deepsky() != NULL)
-        sel.deepsky()->getOrientation().getAxisAngle(axis, angle);
+        fromEigen(sel.deepsky()->getOrientation()).getAxisAngle(axis, angle);
     else if (sel.body() != NULL)
         fromEigen(sel.body()->getGeometryOrientation()).getAxisAngle(axis, angle);
 
@@ -907,7 +907,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             Selection sel = sim->getSelection();
             Quatf q(1);
             if (sel.getType() == Selection::Type_DeepSky)
-                q = sel.deepsky()->getOrientation();
+                q = fromEigen(sel.deepsky()->getOrientation());
             else if (sel.getType() == Selection::Type_Body)
                 q = fromEigen(sel.body()->getGeometryOrientation());
 
@@ -915,7 +915,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             q.xrotate(dy / height);
 
             if (sel.getType() == Selection::Type_DeepSky)
-                sel.deepsky()->setOrientation(q);
+                sel.deepsky()->setOrientation(toEigen(q));
             else if (sel.getType() == Selection::Type_Body)
                 sel.body()->setGeometryOrientation(toEigen(q));
         }
@@ -934,8 +934,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 Quatf r;
                 r.setAxisAngle(axis, dx / width);
 
-                Quatf q = sel.deepsky()->getOrientation();
-                sel.deepsky()->setOrientation(r * q);
+                Quatf q = fromEigen(sel.deepsky()->getOrientation());
+                sel.deepsky()->setOrientation(toEigen(r * q));
             }
         }
         else if (checkMask(modifiers, LeftButton | RightButton) ||
