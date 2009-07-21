@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
+#include <Eigen/StdVector>
 #include "celestia.h"
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
@@ -25,14 +26,14 @@
 #include "vecgl.h"
 #include "render.h"
 #include "texture.h"
+#include "eigenport.h"
 
-#include <Eigen/Geometry>
-
+using namespace Eigen;
 using namespace std;
 
 
 static int width = 128, height = 128;
-static Color colorTable[256];
+static Vector3f colorTable[256];
 static const unsigned int GALAXY_POINTS  = 3500;
 
 static bool formsInitialized = false;
@@ -50,8 +51,14 @@ float Galaxy::lightGain  = 0.0f;
 
 bool operator < (const Blob& b1, const Blob& b2)
 {
-  return (b1.position.distanceFromOrigin() < b2.position.distanceFromOrigin());
+  return (b1.position.squaredNorm() < b2.position.squaredNorm());
 }
+
+struct GalacticForm
+{
+    std::vector<Blob>* blobs;
+    Vector3f scale;
+};
 
 struct GalaxyTypeName
 {
@@ -227,16 +234,13 @@ bool Galaxy::pick(const Ray3d& ray,
     // The ellipsoid should be slightly larger to compensate for the fact
     // that blobs are considered points when galaxies are built, but have size
     // when they are drawn.
-    float yscale = (type < E0 )? MAX_SPIRAL_THICKNESS: form->scale.y + RADIUS_CORRECTION;
-    Vec3d ellipsoidAxes(getRadius()*(form->scale.x + RADIUS_CORRECTION),
-                        getRadius()* yscale,
-                        getRadius()*(form->scale.z + RADIUS_CORRECTION));
+    float yscale = (type < E0 )? MAX_SPIRAL_THICKNESS: form->scale.y() + RADIUS_CORRECTION;
+    Vector3d ellipsoidAxes(getRadius()*(form->scale.x() + RADIUS_CORRECTION),
+                           getRadius()* yscale,
+                           getRadius()*(form->scale.z() + RADIUS_CORRECTION));
 
-    Quatf qf= getOrientation();
-    Quatd qd(qf.w, qf.x, qf.y, qf.z);
-
-    Eigen::Vector3d p(getPosition().x, getPosition().y, getPosition().z);
-    return testIntersection(Ray3d(ray.origin - p, ray.direction).transform(Eigen::Quaterniond(qf.w, qf.x, qf.y, qf.z).toRotationMatrix()),
+    Matrix3d rotation = getOrientation().cast<double>().toRotationMatrix();
+    return testIntersection(Ray3d(ray.origin - getPosition(), ray.direction).transform(rotation),
                             Ellipsoidd(ellipsoidAxes),
                             distanceToPicker,
                             cosAngleToBoundCenter);
@@ -268,15 +272,24 @@ void Galaxy::render(const GLContext& context,
                     float pixelSize)
 {
     if (form == NULL)
-        renderGalaxyEllipsoid(context, offset, viewerOrientation, brightness, pixelSize);
+    {
+        //renderGalaxyEllipsoid(context, offset, viewerOrientation, brightness, pixelSize);
+    }
     else
-        renderGalaxyPointSprites(context, offset, viewerOrientation, brightness, pixelSize);
+    {
+        renderGalaxyPointSprites(context, toEigen(offset), toEigen(viewerOrientation), brightness, pixelSize);
+    }
 }
 
 
+inline void glVertex4(const Vector4f& v)
+{
+    glVertex3fv(v.data());
+}
+
 void Galaxy::renderGalaxyPointSprites(const GLContext&,
-                                      const Vec3f& offset,
-                                      const Quatf& viewerOrientation,
+                                      const Vector3f& offset,
+                                      const Quaternionf& viewerOrientation,
                                       float brightness,
                                       float pixelSize)
 {
@@ -287,15 +300,15 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
        be noticeable on screen; if it's not we'll break right here,
        avoiding all the overhead of the matrix transformations and
        GL state changes: */
-        float distanceToDSO = offset.length() - getRadius();
-        if (distanceToDSO < 0)
-            distanceToDSO = 0;
+    float distanceToDSO = offset.norm() - getRadius();
+    if (distanceToDSO < 0)
+        distanceToDSO = 0;
 
-        float minimumFeatureSize = pixelSize * distanceToDSO;
-        float size  = 2 * getRadius();
+    float minimumFeatureSize = pixelSize * distanceToDSO;
+    float size  = 2 * getRadius();
 
-        if (size < minimumFeatureSize)
-            return;
+    if (size < minimumFeatureSize)
+        return;
 
     if (galaxyTex == NULL)
     {
@@ -307,21 +320,32 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     glEnable(GL_TEXTURE_2D);
     galaxyTex->bind();
 
-    Mat3f viewMat = viewerOrientation.toMatrix3();
-    Vec3f v0 = Vec3f(-1, -1, 0) * viewMat;
-    Vec3f v1 = Vec3f( 1, -1, 0) * viewMat;
-    Vec3f v2 = Vec3f( 1,  1, 0) * viewMat;
-    Vec3f v3 = Vec3f(-1,  1, 0) * viewMat;
+    Matrix3f viewMat = viewerOrientation.conjugate().toRotationMatrix();
+    Vector4f v0(Vector4f::Zero());
+    Vector4f v1(Vector4f::Zero());
+    Vector4f v2(Vector4f::Zero());
+    Vector4f v3(Vector4f::Zero());
+    v0.start<3>() = viewMat * Vector3f(-1, -1, 0) * size;
+    v1.start<3>() = viewMat * Vector3f( 1, -1, 0) * size;
+    v2.start<3>() = viewMat * Vector3f( 1,  1, 0) * size;
+    v3.start<3>() = viewMat * Vector3f(-1,  1, 0) * size;
 
     //Mat4f m = (getOrientation().toMatrix4() *
     //           Mat4f::scaling(form->scale) *
     //           Mat4f::scaling(getRadius()));
 
+    Quaternionf orientation = getOrientation().conjugate();
+
+#if 0
     Mat3f m =
         Mat3f::scaling(form->scale)*getOrientation().toMatrix3()*Mat3f::scaling(size);
+#endif
+    Matrix3f mScale = form->scale.asDiagonal() * size;
+    Matrix3f mLinear = orientation.toRotationMatrix() * mScale;
 
-    // Note: fixed missing factor of 2 in getRadius() scaling of galaxy diameter!
-    // Note: fixed correct ordering of (non-commuting) operations!
+    Matrix4f m = Matrix4f::Identity();
+    m.corner<3,3>(TopLeft) = mLinear;
+    m.block<3,1>(0, 3) = offset;
 
     int   pow2  = 1;
 
@@ -334,20 +358,24 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
 
     if (type < E0 || type > E3) //all galaxies, except ~round elliptics
     {
-        cosi = Vec3f(0,1,0) * getOrientation().toMatrix3()
-                            * offset/offset.length();
-        brightness_corr = (float) sqrt(abs(cosi));
+        cosi = (orientation * Vector3f::UnitY()).dot(offset) / offset.norm();
+        brightness_corr = std::sqrt(std::abs(cosi));
         if (brightness_corr < 0.2f)
             brightness_corr = 0.2f;
     }
     if (type > E3) // only elliptics with higher ellipticities
     {
-        cosi = Vec3f(1,0,0) * getOrientation().toMatrix3()
-                            * offset/offset.length();
-        brightness_corr = brightness_corr * (float) abs((cosi));
+        cosi = (orientation * Vector3f::UnitX()).dot(offset) / offset.norm();
+        brightness_corr = brightness_corr * std::abs(cosi);
         if (brightness_corr < 0.45f)
             brightness_corr = 0.45f;
     }
+
+    glPushMatrix();
+    glTranslatef(-offset.x(), -offset.y(), -offset.z());
+
+    float btot = ((type > SBc) && (type < Irr))? 2.5f: 5.0f;
+    const float spriteScaleFactor = 1.0f / 1.55f;
 
     glBegin(GL_QUADS);
     for (unsigned int i = 0; i < nPoints; ++i)
@@ -355,36 +383,39 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
         if ((i & pow2) != 0)
         {
             pow2 <<= 1;
-            size /= 1.55f;
+            size *= spriteScaleFactor;
+            v0 *= spriteScaleFactor;
+            v1 *= spriteScaleFactor;
+            v2 *= spriteScaleFactor;
+            v3 *= spriteScaleFactor;
             if (size < minimumFeatureSize)
                 break;
         }
 
-        Blob    b  = (*points)[i];
-        Point3f p  = b.position * m;
-        float   br = b.brightness / 255.0f;
+        const Blob& b  = (*points)[i];
+        Vector4f    p  = m * b.position;
+        float       br = b.brightness / 255.0f;
 
-        Color   c      = colorTable[b.colorIndex];     // lookup static color table
-        Point3f relPos = p + offset;
+        Vector3f   c      = colorTable[b.colorIndex];     // lookup static color table
 
-        float screenFrac = size / relPos.distanceFromOrigin();
+        float screenFrac = size / p.norm();
         if (screenFrac < 0.1f)
         {
-            float btot = ((type > SBc) && (type < Irr))? 2.5f: 5.0f;
             float a  = btot * (0.1f - screenFrac) * brightness_corr * brightness * br;
-
-            glColor4f(c.red(), c.green(), c.blue(), (4.0f*lightGain + 1.0f)*a);
-
-            glTexCoord2f(0, 0);          glVertex(p + (v0 * size));
-            glTexCoord2f(1, 0);          glVertex(p + (v1 * size));
-            glTexCoord2f(1, 1);          glVertex(p + (v2 * size));
-            glTexCoord2f(0, 1);          glVertex(p + (v3 * size));
+            glColor4f(c.x(), c.y(), c.z(), (4.0f * lightGain + 1.0f) * a);
+            glTexCoord2f(0, 0);          glVertex4(p + v0);
+            glTexCoord2f(1, 0);          glVertex4(p + v1);
+            glTexCoord2f(1, 1);          glVertex4(p + v2);
+            glTexCoord2f(0, 1);          glVertex4(p + v3);
         }
     }
     glEnd();
+
+    glPopMatrix();
 }
 
 
+#if 0
 void Galaxy::renderGalaxyEllipsoid(const GLContext& context,
                                    const Vec3f& offset,
                                    const Quatf&,
@@ -443,6 +474,7 @@ void Galaxy::renderGalaxyEllipsoid(const GLContext& context,
 
     vproc->disable();
 }
+#endif
 
 
 unsigned int Galaxy::getRenderMask() const
@@ -555,8 +587,8 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 					kmin = 12;
 				}
 
-				b.position    = Point3f(x, y, z);
-				unsigned int rr =  (unsigned int) (b.position.distanceFromOrigin() * 511);
+				b.position    = Vector4f(x, y, z, 1.0f);
+				unsigned int rr =  (unsigned int) (b.position.start<3>().norm() * 511);
 				b.colorIndex  = rr < 256? rr: 255;
 				galacticPoints->push_back(b);
 				j++;
@@ -578,7 +610,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 
 	GalacticForm* galacticForm  = new GalacticForm();
 	galacticForm->blobs         = galacticPoints;
-	galacticForm->scale         = Vec3f(1.0f, 1.0f, 1.0f);
+    galacticForm->scale         = Vector3f::Ones();
 
 	return galacticForm;
 }
@@ -600,7 +632,8 @@ void InitializeForms()
         //convert Hue to RGB
 
 		DeepSkyObject::hsv2rgb(&rr, &gg, &bb, hue, 0.20f, 1.0f);
-        colorTable[i]  = Color(rr, gg, bb);
+        Color c(rr, gg, bb);
+        colorTable[i]  = Vector3f(c.red(), c.green(), c.blue());
     }
     // Spiral Galaxies, 7 classical Hubble types
 
@@ -629,7 +662,7 @@ void InitializeForms()
 
    		ellipticalForms[eform] = buildGalacticForms("models/E0.png");
    		if (*ellipticalForms)
-   			ellipticalForms[eform]->scale = Vec3f(ell, ell, 1.0f);
+   			ellipticalForms[eform]->scale = Vector3f(ell, ell, 1.0f);
 
         // account for reddening of ellipticals rel.to spirals
         if (*ellipticalForms)
@@ -658,7 +691,7 @@ void InitializeForms()
             float prob = (1 - r) * (fractalsum(Point3f(p.x + 5, p.y + 5, p.z + 5), 8) + 1) * 0.5f;
             if (Mathf::frand() < prob)
             {
-                b.position   = p;
+                b.position   = Vector4f(p.x, p.y, p.z, 1.0f);
                 b.brightness = 64u;
                 unsigned int rr =  (unsigned int) (r * 511);
         	    b.colorIndex  = rr < 256? rr: 255;
@@ -669,7 +702,7 @@ void InitializeForms()
     }
     irregularForm        = new GalacticForm();
     irregularForm->blobs = irregularPoints;
-    irregularForm->scale = Vec3f(0.5f, 0.5f, 0.5f);
+    irregularForm->scale = Vector3f::Constant(0.5f);
 
     formsInitialized = true;
 }

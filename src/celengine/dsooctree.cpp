@@ -33,11 +33,8 @@ bool dsoStraddlesNodesPredicate(const Vector3d& cellCenterPos, DeepSkyObject* co
     //checks if this dso's radius straddles child nodes
     float dsoRadius    = _dso->getBoundingSphereRadius();
 
-    Point3d dsoPos2     = _dso->getPosition();
-    Vector3d dsoPos(dsoPos2.x, dsoPos2.y, dsoPos2.z);
-
-    return (dsoPos - cellCenterPos).cwise().abs().minCoeff() < dsoRadius;
-#if 0
+    return (_dso->getPosition() - cellCenterPos).cwise().abs().minCoeff() < dsoRadius;
+#if CELVEC
     return abs(dsoPos.x - cellCenterPos.x) < dsoRadius    ||
            abs(dsoPos.y - cellCenterPos.y) < dsoRadius    ||
            abs(dsoPos.z - cellCenterPos.z) < dsoRadius;
@@ -54,8 +51,7 @@ double dsoAbsoluteMagnitudeDecayFunction(const double excludingFactor)
 template <>
 DynamicDSOOctree* DynamicDSOOctree::getChild(DeepSkyObject* const & _obj, const PointType& cellCenterPos)
 {
-    Point3d objPos2    = _obj->getPosition();
-    PointType objPos(objPos2.x, objPos2.y, objPos2.z);
+    PointType objPos = _obj->getPosition();
 
     int child = 0;
     child     |= objPos.x() < cellCenterPos.x() ? 0 : XPos;
@@ -91,7 +87,11 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
     {
         const Hyperplane<double, 3>& plane = frustumPlanes[i];
 
-#if 0
+        double r = scale * plane.normal().cwise().abs().sum();
+        if (plane.signedDistance(cellCenterPos) < -r)
+            return;
+
+#if CELVEC
         double  r     = scale * (abs(plane->normal.x) +
                                  abs(plane->normal.y) +
                                  abs(plane->normal.z));
@@ -99,9 +99,6 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
         if (plane->normal * cellCenterPos - plane->d < -r)
             return;
 #endif
-        double r = scale * plane.normal().cwise().abs().sum();
-        if (plane.signedDistance(cellCenterPos) < -r)
-            return;
     }
 
     // Compute the distance to node; this is equal to the distance to
@@ -117,7 +114,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
         float  absMag      = _obj->getAbsoluteMagnitude();
         if (absMag < dimmest)
         {
-            double distance    = (obsPosition - toEigen(_obj->getPosition())).norm() - _obj->getBoundingSphereRadius();
+            double distance    = (obsPosition - _obj->getPosition()).norm() - _obj->getBoundingSphereRadius();
             float appMag = (float) ((distance >= 32.6167) ? astro::absToAppMag((double) absMag, distance) : absMag);
 
             if ( appMag < limitingFactor)
@@ -128,9 +125,11 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
     // See if any of the objects in child nodes are potentially included
     // that we need to recurse deeper.
     if (minDistance <= 0.0 || astro::absToAppMag((double) exclusionFactor, minDistance) <= limitingFactor)
+    {
         // Recurse into the child nodes
         if (_children != NULL)
-            for (int i=0; i<8; ++i)
+        {
+            for (int i = 0; i < 8; ++i)
             {
                 _children[i]->processVisibleObjects(processor,
                                                     obsPosition,
@@ -138,6 +137,8 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
                                                     limitingFactor,
                                                     scale * 0.5f);
             }
+        }
+    }
 }
 
 
@@ -166,10 +167,10 @@ void DSOOctree::processCloseObjects(DSOHandler&    processor,
     {
         DeepSkyObject* _obj = _firstObject[i];        //
 
-        if ((obsPosition - toEigen(_obj->getPosition())).squaredNorm() < radiusSquared)    //
+        if ((obsPosition - _obj->getPosition()).squaredNorm() < radiusSquared)    //
         {
             float  absMag      = _obj->getAbsoluteMagnitude();
-            double distance    = (obsPosition - toEigen(_obj->getPosition())).norm() - _obj->getBoundingSphereRadius();
+            double distance    = (obsPosition - _obj->getPosition()).norm() - _obj->getBoundingSphereRadius();
 
             processor.process(_obj, distance, absMag);
         }

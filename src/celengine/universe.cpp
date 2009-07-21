@@ -757,14 +757,14 @@ void DSOPicker::process(DeepSkyObject* const & dso, double, float)
     if (!(dso->getRenderMask() & renderFlags) || !dso->isVisible() || !dso->isClickable())
         return;
 
-    Vector3d relativeDSOPos = toEigen(dso->getPosition()) - pickOrigin;
+    Vector3d relativeDSOPos = dso->getPosition() - pickOrigin;
     Vector3d dsoDir = relativeDSOPos;
 
     double distance2 = 0.0;
     if (testIntersection(Ray3d(Vector3d::Zero(), pickDir),
                          Sphered(relativeDSOPos, (double) dso->getRadius()), distance2))
     {
-        Vector3d dsoPos = toEigen(dso->getPosition());
+        Vector3d dsoPos = dso->getPosition();
         dsoDir = dsoPos * 1.0e-6 - pickOrigin;
     }
     dsoDir.normalize();
@@ -830,7 +830,7 @@ void CloseDSOPicker::process(DeepSkyObject* const & dso,
     if (dso->pick(Ray3d(pickOrigin, pickDir), distanceToPicker, cosAngleToBoundCenter))
     {
         // Don't select the object the observer is currently in:
-        if ((pickOrigin - toEigen(dso->getPosition())).norm() > dso->getRadius() &&
+        if ((pickOrigin - dso->getPosition()).norm() > dso->getRadius() &&
             cosAngleToBoundCenter > largestCosAngle)
         {
             closestDSO      = dso;
