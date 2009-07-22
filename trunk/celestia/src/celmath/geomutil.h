@@ -19,21 +19,24 @@
 template<class T> Eigen::Quaternion<T>
 XRotation(T radians)
 {
-    return Eigen::Quaternion<T>(std::cos(radians), std::sin(radians), 0, 0);
+    T halfAngle = radians * T(0.5);
+    return Eigen::Quaternion<T>(std::cos(halfAngle), std::sin(halfAngle), 0, 0);
 }
 
 
 template<class T> Eigen::Quaternion<T>
 YRotation(T radians)
 {
-    return Eigen::Quaternion<T>(std::cos(radians), 0, std::sin(radians), 0);
+    T halfAngle = radians * T(0.5);
+    return Eigen::Quaternion<T>(std::cos(halfAngle), 0, std::sin(halfAngle), 0);
 }
 
 
 template<class T> Eigen::Quaternion<T>
 ZRotation(T radians)
 {
-    return Eigen::Quaternion<T>(std::cos(radians), 0, 0, std::sin(radians));
+    T halfAngle = radians * T(0.5);
+    return Eigen::Quaternion<T>(std::cos(halfAngle), 0, 0, std::sin(halfAngle));
 }
 
 
