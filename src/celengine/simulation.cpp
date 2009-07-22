@@ -13,6 +13,7 @@
 #include <algorithm>
 #include "simulation.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -161,10 +162,10 @@ void Simulation::setTrackedObject(const Selection& sel)
 }
 
 
-Selection Simulation::pickObject(Vec3f pickRay, int renderFlags, float tolerance)
+Selection Simulation::pickObject(const Vector3f& pickRay, int renderFlags, float tolerance)
 {
     return universe->pick(activeObserver->getPosition(),
-                          pickRay * activeObserver->getOrientationf().toMatrix4(),
+                          activeObserver->getOrientationf().conjugate() * pickRay,
                           activeObserver->getTime(),
                           renderFlags,
                           faintestVisible,
@@ -218,7 +219,7 @@ void Simulation::setObserverPosition(const UniversalCoord& pos)
     activeObserver->setPosition(pos);
 }
 
-void Simulation::setObserverOrientation(const Quatf& orientation)
+void Simulation::setObserverOrientation(const Quaternionf& orientation)
 {
     activeObserver->setOrientation(orientation);
 }
@@ -253,14 +254,14 @@ const ObserverFrame* Simulation::getFrame() const
 }
 
 // Rotate the observer about its center.
-void Simulation::rotate(Quatf q)
+void Simulation::rotate(const Quaternionf& q)
 {
     activeObserver->rotate(q);
 }
 
 // Orbit around the selection (if there is one.)  This involves changing
 // both the observer's position and orientation.
-void Simulation::orbit(Quatf q)
+void Simulation::orbit(const Quaternionf& q)
 {
     activeObserver->orbit(selection, q);
 }
@@ -285,7 +286,7 @@ float Simulation::getTargetSpeed()
 }
 
 void Simulation::gotoSelection(double gotoTime,
-                               Vec3f up,
+                               const Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
 {
     if (selection.getType() == Selection::Type_Location)
@@ -302,7 +303,7 @@ void Simulation::gotoSelection(double gotoTime,
 
 void Simulation::gotoSelection(double gotoTime,
                                double distance,
-                               Vec3f up,
+                               const Vector3f& up,
                                ObserverFrame::CoordinateSystem upCoordSys)
 {
     activeObserver->gotoSelection(selection, gotoTime, distance, up, upCoordSys);
@@ -312,7 +313,7 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
                                       double distance,
                                       float longitude,
                                       float latitude,
-                                      Vec3f up)
+                                      const Vector3f& up)
 {
     activeObserver->gotoSelectionLongLat(selection, gotoTime, distance,
                                          longitude, latitude, up);
@@ -320,7 +321,7 @@ void Simulation::gotoSelectionLongLat(double gotoTime,
 
 
 void Simulation::gotoLocation(const UniversalCoord& position,
-                              const Quatd& orientation,
+                              const Quaterniond& orientation,
                               double duration)
 {
     activeObserver->gotoLocation(position, orientation, duration);

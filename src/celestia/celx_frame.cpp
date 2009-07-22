@@ -14,6 +14,9 @@
 #include "celx_frame.h"
 #include "celestiacore.h"
 #include <celengine/observer.h>
+#include <celengine/eigenport.h>
+
+using namespace Eigen;
 
 
 int frame_new(lua_State* l, const ObserverFrame& f)
@@ -88,7 +91,7 @@ static int frame_from(lua_State* l)
     }
     else
     {
-        Quatd q1 = frame->convertToUniversal(*q, jd);
+        Quatd q1 = fromEigen(frame->convertToUniversal(toEigen(*q), jd));
         celx.newRotation(q1);
     }
     
@@ -132,8 +135,8 @@ static int frame_to(lua_State* l)
     }
     else
     {
-        Quatd q1 = frame->convertFromUniversal(*q, jd);
-        celx.newRotation(q1);
+        Quaterniond q1 = frame->convertFromUniversal(toEigen(*q), jd);
+        celx.newRotation(fromEigen(q1));
     }
     
     return 1;

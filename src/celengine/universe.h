@@ -48,7 +48,7 @@ class Universe
     void setBoundaries(ConstellationBoundaries*);
 
     Selection pick(const UniversalCoord& origin,
-                   const Vec3f& direction,
+                   const Eigen::Vector3f& direction,
                    double when,
                    int   renderFlags,
                    float faintestMag,

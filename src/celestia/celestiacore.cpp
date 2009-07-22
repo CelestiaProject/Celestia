@@ -440,7 +440,7 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
     sim->cancelMotion();
     sim->setTime(fav.jd);
     sim->setObserverPosition(fav.position);
-    sim->setObserverOrientation(fav.orientation);
+    sim->setObserverOrientation(toEigen(fav.orientation));
     sim->setSelection(sim->findObjectFromPath(fav.selectionName));
     sim->setFrame(fav.coordSys, sim->getSelection());
 }
@@ -455,7 +455,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     FavoritesEntry* fav = new FavoritesEntry();
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
-    fav->orientation = sim->getObserver().getOrientationf();
+    fav->orientation = fromEigen(sim->getObserver().getOrientationf());
     fav->name = name;
     fav->isFolder = false;
     fav->parentFolder = parentFolder;
@@ -754,7 +754,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             (*activeView)->mapWindowToView((float) x / (float) width,
                                         (float) y / (float) height,
                                         pickX, pickY);
-            Vec3f pickRay =
+            Vector3f pickRay =
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
             Selection oldSel = sim->getSelection();
@@ -771,7 +771,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
             (*activeView)->mapWindowToView((float) x / (float) width,
                                         (float) y / (float) height,
                                         pickX, pickY);
-            Vec3f pickRay =
+            Vector3f pickRay =
                 sim->getActiveObserver()->getPickRay(pickX * aspectRatio, pickY);
 
             Selection sel = sim->pickObject(pickRay, renderer->getRenderFlags(), pickTolerance);
@@ -948,11 +948,12 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             if (dx * dx > dy * dy)
             {
                 Observer& observer = sim->getObserver();
-                Vec3d v = Vec3d(0, 0, dx * -MouseRotationSensitivity);
+                Vector3d v(0, 0, dx * -MouseRotationSensitivity);
+                v *= 0.5;
 
-                Quatd obsOrientation = observer.getOrientation();
-                Quatd dr = 0.5 * (v * obsOrientation);
-                obsOrientation += dr;
+                Quaterniond obsOrientation = observer.getOrientation();
+                Quaterniond dr = Quaterniond(0.0, v.x(), v.y(), v.z()) * obsOrientation;
+                obsOrientation = Quaterniond(dr.coeffs() + obsOrientation.coeffs());
                 obsOrientation.normalize();
                 observer.setOrientation(obsOrientation);
             }
@@ -1002,9 +1003,9 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
             q.yrotate(dx / width * coarseness);
             q.xrotate(dy / height * coarseness);
             if ((modifiers & RightButton) != 0)
-                sim->orbit(q);
+                sim->orbit(toEigen(q));
             else
-                sim->rotate(~q);
+                sim->rotate(toEigen(q).conjugate());
         }
 
         mouseMotion += abs(dy) + abs(dx);
@@ -1112,22 +1113,22 @@ void CelestiaCore::keyDown(int key, int modifiers)
         sim->setTargetSpeed(0);
         break;
     case Key_F2:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1.0f));
+        sim->setTargetSpeed(1.0f);
         break;
     case Key_F3:
-        sim->setTargetSpeed(astro::kilometersToMicroLightYears(1000.0f));
+        sim->setTargetSpeed(1000.0f);
         break;
     case Key_F4:
-        sim->setTargetSpeed((float) astro::kilometersToMicroLightYears(astro::speedOfLight));
+        sim->setTargetSpeed((float) astro::speedOfLight);
         break;
     case Key_F5:
-        sim->setTargetSpeed((float) astro::kilometersToMicroLightYears(astro::speedOfLight * 10.0));
+        sim->setTargetSpeed((float) astro::speedOfLight * 10.0f);
         break;
     case Key_F6:
-        sim->setTargetSpeed(astro::AUtoMicroLightYears(1.0f));
+        sim->setTargetSpeed(astro::AUtoKilometers(1.0f));
         break;
     case Key_F7:
-        sim->setTargetSpeed(1e6);
+        sim->setTargetSpeed(astro::lightYearsToKilometers(1.0f));
         break;
     case Key_F11:
         if (movieCapture != NULL)
@@ -1751,8 +1752,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
 
         if (sim->getSelection().body() &&
-            (sim->getTargetSpeed() < 0.99 *
-            astro::kilometersToMicroLightYears(astro::speedOfLight)))
+            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
         {
             Vec3d v = sim->getSelection().getPosition(sim->getTime()) -
                       sim->getObserver().getPosition();
@@ -1895,7 +1895,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         addToHistory();
         if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::Universal)
             sim->follow();
-        sim->gotoSelection(5.0, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+        sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
         break;
 
     case 'H':
@@ -2315,7 +2315,7 @@ void CelestiaCore::tick()
         sim->changeOrbitDistance((float) (dt * 2));
 
     // Keyboard rotate
-    Vec3d av = sim->getObserver().getAngularVelocity();
+    Vector3d av = sim->getObserver().getAngularVelocity();
 
     av = av * exp(-dt * RotationDecay);
 
@@ -2329,49 +2329,49 @@ void CelestiaCore::tick()
         if (!altAzimuthMode)
         {
             if (keysPressed[Key_Left])
-                av += Vec3d(0.0, 0.0, dt * -KeyRotationAccel);
+                av += Vector3d::UnitZ() * (dt * -KeyRotationAccel);
             if (keysPressed[Key_Right])
-                av += Vec3d(0.0, 0.0, dt * KeyRotationAccel);
+                av += Vector3d::UnitZ() * (dt * KeyRotationAccel);
             if (keysPressed[Key_Down])
-                av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
+                av += Vector3d::UnitX() * (dt * fov * -KeyRotationAccel);
             if (keysPressed[Key_Up])
-                av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
+                av += Vector3d::UnitX() * (dt * fov * KeyRotationAccel);
         }
         else
         {
             if (!refObject.empty())
             {
-                Quatd orientation = sim->getObserver().getOrientation();
-                Vec3d up = sim->getObserver().getPosition() - refObject.getPosition(sim->getTime());
+                Quaterniond orientation = sim->getObserver().getOrientation();
+                Vector3d up = sim->getObserver().getPosition().offsetFromKm(refObject.getPosition(sim->getTime()));
                 up.normalize();
 
-                Vec3d v = up * (KeyRotationAccel * dt);
-                v = v * (~orientation).toMatrix3();
+                Vector3d v = up * (KeyRotationAccel * dt);
+                v = orientation * v;
 
                 if (keysPressed[Key_Left])
                     av -= v;
                 if (keysPressed[Key_Right])
                     av += v;
                 if (keysPressed[Key_Down])
-                    av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
+                    av += Vector3d::UnitX() * (dt * fov * -KeyRotationAccel);
                 if (keysPressed[Key_Up])
-                    av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
+                    av += Vector3d::UnitX() * (dt * fov * KeyRotationAccel);
             }
         }
     }
 
     if (keysPressed[Key_NumPad4])
-        av += Vec3d(0.0, dt * fov * -KeyRotationAccel, 0.0);
+        av += Vector3d(0.0, dt * fov * -KeyRotationAccel, 0.0);
     if (keysPressed[Key_NumPad6])
-        av += Vec3d(0.0, dt * fov * KeyRotationAccel, 0.0);
+        av += Vector3d(0.0, dt * fov * KeyRotationAccel, 0.0);
     if (keysPressed[Key_NumPad2])
-        av += Vec3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
+        av += Vector3d(dt * fov * -KeyRotationAccel, 0.0, 0.0);
     if (keysPressed[Key_NumPad8])
-        av += Vec3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
+        av += Vector3d(dt * fov * KeyRotationAccel, 0.0, 0.0);
     if (keysPressed[Key_NumPad7] || joyButtonsPressed[JoyButton7])
-        av += Vec3d(0.0, 0.0, dt * -KeyRotationAccel);
+        av += Vector3d(0.0, 0.0, dt * -KeyRotationAccel);
     if (keysPressed[Key_NumPad9] || joyButtonsPressed[JoyButton8])
-        av += Vec3d(0.0, 0.0, dt * KeyRotationAccel);
+        av += Vector3d(0.0, 0.0, dt * KeyRotationAccel);
 
     //Use Boolean to indicate if sim->setTargetSpeed() is called
     bool bSetTargetSpeed = false;
@@ -2379,7 +2379,7 @@ void CelestiaCore::tick()
     {
         bSetTargetSpeed = true;
 
-        av += (dt * KeyRotationAccel) * Vec3d(joystickRotation.x, joystickRotation.y, joystickRotation.z);
+        av += (dt * KeyRotationAccel) * Vector3d(joystickRotation.x, joystickRotation.y, joystickRotation.z);
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
@@ -2393,7 +2393,7 @@ void CelestiaCore::tick()
         bSetTargetSpeed = true;
 
         if (sim->getTargetSpeed() == 0.0f)
-            sim->setTargetSpeed(astro::kilometersToMicroLightYears(0.1f));
+            sim->setTargetSpeed(0.1f);
         else
             sim->setTargetSpeed(sim->getTargetSpeed() * (float) exp(dt * 3));
     }
@@ -2403,10 +2403,10 @@ void CelestiaCore::tick()
 
         sim->setTargetSpeed(sim->getTargetSpeed() / (float) exp(dt * 3));
     }
-    if (!bSetTargetSpeed && av.length() > 0.0f)
+    if (!bSetTargetSpeed && av.norm() > 0.0f)
     {
-        //Force observer velocity vector to align with observer direction if an observer
-        //angular velocity still exists.
+        // Force observer velocity vector to align with observer direction if an observer
+        // angular velocity still exists.
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
@@ -2423,7 +2423,7 @@ void CelestiaCore::tick()
             q = q * Quatf::xrotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Down])
             q = q * Quatf::xrotation((float) (dt *  KeyRotationAccel * coarseness));
-        sim->orbit(q);
+        sim->orbit(toEigen(q));
     }
 
     // If there's a script running, tick it
@@ -3438,8 +3438,7 @@ void CelestiaCore::renderOverlay()
         double lt = 0.0;
  
         if (sim->getSelection().getType() == Selection::Type_Body &&
-            (sim->getTargetSpeed() < 0.99 *
-             astro::kilometersToMicroLightYears(astro::speedOfLight)))
+            (sim->getTargetSpeed() < 0.99 * astro::speedOfLight))
         {
     	    if (lightTravelFlag)
     	    {
@@ -3526,17 +3525,17 @@ void CelestiaCore::renderOverlay()
         overlay->setf(ios::fixed);
         *overlay << _("\nSpeed: ");
 
-        double speed = sim->getObserver().getVelocity().length();
-        if (speed < astro::kilometersToMicroLightYears(1.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) * 1000.0f, 3) << _(" m/s");
-        else if (speed < astro::kilometersToMicroLightYears(10000.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed), 3) << _(" km/s");
-        else if (speed < astro::kilometersToMicroLightYears((float) astro::speedOfLight * 100.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToKilometers(speed) / astro::speedOfLight, 3) << 'c';
-        else if (speed < astro::AUtoMicroLightYears(1000.0f))
-            *overlay << SigDigitNum(astro::microLightYearsToAU(speed), 3) << _(" AU/s");
+        double speed = sim->getObserver().getVelocity().norm();
+        if (speed < 1.0f)
+            *overlay << SigDigitNum(speed * 1000.0f, 3) << _(" m/s");
+        else if (speed < 10000.0f)
+            *overlay << SigDigitNum(speed, 3) << _(" km/s");
+        else if (speed < (float) astro::speedOfLight * 100.0f)
+            *overlay << SigDigitNum(speed / astro::speedOfLight, 3) << 'c';
+        else if (speed < astro::AUtoKilometers(1000.0f))
+            *overlay << SigDigitNum(astro::kilometersToAU(speed), 3) << _(" AU/s");
         else
-            *overlay << SigDigitNum(speed * 1e-6, 3) << _(" ly/s");
+            *overlay << SigDigitNum(astro::kilometersToLightYears(speed), 3) << _(" ly/s");
 
         overlay->endText();
         glPopMatrix();

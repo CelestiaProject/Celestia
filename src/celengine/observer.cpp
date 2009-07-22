@@ -23,18 +23,18 @@ using namespace std;
 #define VELOCITY_CHANGE_TIME      0.25f
 
 
-static Vec3d slerp(double t, const Vec3d& v0, const Vec3d& v1)
+static Vector3d slerp(double t, const Vector3d& v0, const Vector3d& v1)
 {
-    double r0 = v0.length();
-    double r1 = v1.length();
-    Vec3d u = v0 / r0;
-    Vec3d n = u ^ (v1 / r1);
+    double r0 = v0.norm();
+    double r1 = v1.norm();
+    Vector3d u = v0 / r0;
+    Vector3d n = u.cross(v1 / r1);
     n.normalize();
-    Vec3d v = n ^ u;
-    if (v * v1 < 0.0)
+    Vector3d v = n.cross(u);
+    if (v.dot(v1) < 0.0)
         v = -v;
 
-    double cosTheta = u * (v1 / r1);
+    double cosTheta = u.dot(v1 / r1);
     double theta = acos(cosTheta);
 
     return (cos(theta * t) * u + sin(theta * t) * v) * Mathd::lerp(t, r0, r1);
@@ -57,7 +57,7 @@ static Vec3d slerp(double t, const Vec3d& v0, const Vec3d& v1)
 Observer::Observer() :
     simTime(0.0),
     position(0.0, 0.0, 0.0),
-    orientation(1.0),
+    orientation(Quaternionf::Identity()),
     velocity(0.0, 0.0, 0.0),
     angularVelocity(0.0, 0.0, 0.0),
     frame(NULL),
@@ -67,7 +67,7 @@ Observer::Observer() :
     initialVelocity(0.0, 0.0, 0.0),
     beginAccelTime(0.0),
     observerMode(Free),
-    trackingOrientation(1.0f, 0.0f, 0.0f, 0.0f),
+    trackingOrientation(Quaternionf::Identity()),
     fov((float) (PI / 4.0)),
     reverseFlag(false),
     locationFilter(~0u)
@@ -167,13 +167,13 @@ UniversalCoord Observer::getPosition() const
     return positionUniv;
 }
 
-
+#if 0
 // TODO: Low-precision set position that should be removed
-void Observer::setPosition(const Point3d& p)
+void Observer::setPosition(const Vector3d& p)
 {
     setPosition(UniversalCoord(p));
 }
-
+#endif
 
 /*! Set the position of the observer; position is specified in the universal
  *  coordinate system.
@@ -188,38 +188,37 @@ void Observer::setPosition(const UniversalCoord& p)
 /*! Return the orientation of the observer in the universal coordinate
  *  system.
  */
-Quatd Observer::getOrientation() const
+Quaterniond Observer::getOrientation() const
 {
     return orientationUniv;
 }
 
 /*! Reduced precision version of getOrientation()
  */
-Quatf Observer::getOrientationf() const
+Quaternionf Observer::getOrientationf() const
 {
-    Quatd q = getOrientation();
-    return Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    return getOrientation().cast<float>();
 }
 
 
 /* Set the orientation of the observer. The orientation is specified in
  * the universal coordinate system.
  */
-void Observer::setOrientation(const Quatf& q)
+void Observer::setOrientation(const Quaternionf& q)
 {
     /*
     RigidTransform rt = frame.toUniversal(situation, getTime());
     rt.rotation = Quatd(q.w, q.x, q.y, q.z);
     situation = frame.fromUniversal(rt, getTime());
      */
-    setOrientation(Quatd(q.w, q.x, q.y, q.z));
+    setOrientation(q.cast<double>());
 }
 
 
 /*! Set the orientation of the observer. The orientation is specified in
  *  the universal coordinate system.
  */
-void Observer::setOrientation(const Quatd& q)
+void Observer::setOrientation(const Quaterniond& q)
 {
     orientationUniv = q;
     orientation = frame->convertFromUniversal(q, getTime());
@@ -228,7 +227,7 @@ void Observer::setOrientation(const Quatd& q)
 
 /*! Get the velocity of the observer within the observer's reference frame.
  */
-Vec3d Observer::getVelocity() const
+Vector3d Observer::getVelocity() const
 {
     return velocity;
 }
@@ -236,19 +235,19 @@ Vec3d Observer::getVelocity() const
 
 /*! Set the velocity of the observer within the observer's reference frame.
 */
-void Observer::setVelocity(const Vec3d& v)
+void Observer::setVelocity(const Vector3d& v)
 {
     velocity = v;
 }
 
 
-Vec3d Observer::getAngularVelocity() const
+Vector3d Observer::getAngularVelocity() const
 {
     return angularVelocity;
 }
 
 
-void Observer::setAngularVelocity(const Vec3d& v)
+void Observer::setAngularVelocity(const Vector3d& v)
 {
     angularVelocity = v;
 }
@@ -260,6 +259,23 @@ void Observer::setAngularVelocity(const Vec3d& v)
  */
 // TODO: This is a generally useful function that should be moved to
 // the celmath package.
+template<class T> static Quaternion<T> 
+lookAt(Matrix<T, 3, 1> from, Matrix<T, 3, 1> to, Matrix<T, 3, 1> up)
+{
+    Matrix<T, 3, 1> n = to - from;
+    n.normalize();
+    Matrix<T, 3, 1> v = n.cross(up).normalized();
+    Matrix<T, 3, 1> u = v.cross(n);
+
+    Matrix<T, 3, 3> m;
+    m.col(0) = v;
+    m.col(1) = u;
+    m.col(2) = -n;
+
+    return Quaternion<T>(m).conjugate();
+}
+
+#if CELVEC
 template<class T> static Quat<T> 
 lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
 {
@@ -271,7 +287,7 @@ lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
 
     return Quat<T>::matrixToQuaternion(Matrix3<T>(v, u, -n));
 }
-
+#endif
 
 double Observer::getArrivalTime() const
 {
@@ -304,7 +320,10 @@ void Observer::update(double dt, double timeScale)
         if (journey.duration > 0)
             t = (float) clamp((realTime - journey.startTime) / journey.duration);
 
-        Vec3d jv = journey.to - journey.from;
+        Vector3d jv = journey.to.offsetFromKm(journey.from);
+#if CELVEC
+        Vector3d jv = journey.to - journey.from;
+#endif
         UniversalCoord p;
 
         // Another interpolation method . . . accelerate exponentially,
@@ -328,8 +347,8 @@ void Observer::update(double dt, double timeScale)
 
             if (journey.traj == Linear)
             {
-                Vec3d v = jv;
-                if (v.length() == 0.0)
+                Vector3d v = jv;
+                if (v.norm() == 0.0)
                 {
                     p = journey.from;
                 }
@@ -337,9 +356,15 @@ void Observer::update(double dt, double timeScale)
                 {
                     v.normalize();
                     if (t < 0.5)
+                        p = journey.from.offsetKm(v * x);
+                    else
+                        p = journey.to.offsetKm(-v * x);
+#if CELVEC
+                    if (t < 0.5)
                         p = journey.from + v * astro::kilometersToMicroLightYears(x);
                     else
                         p = journey.to - v * astro::kilometersToMicroLightYears(x);
+#endif
                 }
             }
             else if (journey.traj == GreatCircle)
@@ -360,17 +385,27 @@ void Observer::update(double dt, double timeScale)
                 UniversalCoord ufrom  = frame->convertToUniversal(journey.from, simTime);
                 UniversalCoord uto    = frame->convertToUniversal(journey.to, simTime);
                 UniversalCoord origin = centerObj.getPosition(simTime);
-                Vec3d v0 = ufrom - origin;
-                Vec3d v1 = uto - origin;
+                Vector3d v0 = ufrom.offsetFromKm(origin);
+                Vector3d v1 = uto.offsetFromKm(origin);
 
-                if (jv.length() == 0.0)
+                if (jv.norm() == 0.0)
                 {
                     p = journey.from;
                 }
                 else
                 {
+                    x /= jv.norm();
+                    Vector3d v;
+
+                    if (t < 0.5)
+                        v = slerp(x, v0, v1);
+                    else
+                        v = slerp(x, v1, v0);
+
+                    p = frame->convertFromUniversal(origin.offsetKm(v), simTime);
+#if CELVEC
                     x = astro::kilometersToMicroLightYears(x / jv.length());
-                    Vec3d v;
+                    Vector3d v;
 
                     if (t < 0.5)
                         v = slerp(x, v0, v1);
@@ -378,6 +413,7 @@ void Observer::update(double dt, double timeScale)
                         v = slerp(x, v1, v0);
 
                     p = frame->convertFromUniversal(origin + v, simTime);
+#endif
                 }
             }
             else if (journey.traj == CircularOrbit)
@@ -387,20 +423,19 @@ void Observer::update(double dt, double timeScale)
                 UniversalCoord ufrom = frame->convertToUniversal(journey.from, simTime);
                 UniversalCoord uto   = frame->convertToUniversal(journey.to, simTime);
                 UniversalCoord origin = centerObj.getPosition(simTime);
-                Vec3d v0 = ufrom - origin;
-                Vec3d v1 = uto - origin;
 
-                if (jv.length() == 0.0)
+                Vector3d v0 = ufrom.offsetFromKm(origin);
+                Vector3d v1 = uto.offsetFromKm(origin);
+
+                if (jv.norm() == 0.0)
                 {
                     p = journey.from;
                 }
                 else
                 {
-                    //x = astro::kilometersToMicroLightYears(x / jv.length());
-                    Quatd q0(1.0);
-                    Quatd q1(journey.rotation1.w, journey.rotation1.x,
-                             journey.rotation1.y, journey.rotation1.z);
-                    p = origin + v0 * Quatd::slerp(q0, q1, t).toMatrix3();
+                    Quaterniond q0(Quaterniond::Identity());
+                    Quaterniond q1 = journey.rotation1;
+                    p = origin.offsetKm(q0.slerp(t, q1).conjugate() * v0);
                     p = frame->convertFromUniversal(p, simTime);
                 }
             }
@@ -408,7 +443,7 @@ void Observer::update(double dt, double timeScale)
 
         // Spherically interpolate the orientation over the first half
         // of the journey.
-        Quatd q;
+        Quaterniond q;
         if (t >= journey.startInterpolation && t < journey.endInterpolation )
         {
             // Smooth out the interpolation to avoid jarring changes in
@@ -426,18 +461,19 @@ void Observer::update(double dt, double timeScale)
                             (journey.endInterpolation - journey.startInterpolation) * PI / 2), 2);
             }
 
+            q = journey.initialOrientation.slerp(v, journey.finalOrientation);
+#if CELVEC
             // Be careful to choose the shortest path when interpolating
-            if (norm(journey.initialOrientation - journey.finalOrientation) <
-                norm(journey.initialOrientation + journey.finalOrientation))
+            if ((journey.initialOrientation.coeffs() - journey.finalOrientation.coeffs()).norm() <
+                (journey.initialOrientation.coeffs() + journey.finalOrientation.coeffs()).norm())
             {
-                q = Quatd::slerp(journey.initialOrientation,
-                                 journey.finalOrientation, v);
+                q = journey.initialOrientation.slerp(v, journey.finalOrientation);
             }
             else
             {
-                q = Quatd::slerp(journey.initialOrientation,
-                                -journey.finalOrientation, v);
+                q = journey.initialOrientation.slerp(v, journey.finalOrientation * -1.0);
             }
+#endif
         }
         else if (t < journey.startInterpolation)
         {
@@ -461,33 +497,37 @@ void Observer::update(double dt, double timeScale)
                 orientation = journey.finalOrientation;
             }
             observerMode = Free;
-            setVelocity(Vec3d(0, 0, 0));
-//            targetVelocity = Vec3d(0, 0, 0);
+            setVelocity(Vector3d::Zero());
         }
     }
 
     if (getVelocity() != targetVelocity)
     {
         double t = clamp((realTime - beginAccelTime) / VELOCITY_CHANGE_TIME);
-        Vec3d v = getVelocity() * (1.0 - t) + targetVelocity * t;
+        Vector3d v = getVelocity() * (1.0 - t) + targetVelocity * t;
 
         // At some threshold, we just set the velocity to zero; otherwise,
         // we'll end up with ridiculous velocities like 10^-40 m/s.
-        if (v.length() < 1.0e-12)
-            v = Vec3d(0.0, 0.0, 0.0);
+        if (v.norm() < 1.0e-12)
+            v = Vector3d::Zero();
         setVelocity(v);
     }
 
     // Update the position
-    position = position + getVelocity() * dt;
+    position = position.offsetKm(getVelocity() * dt);
 
     if (observerMode == Free)
     {
         // Update the observer's orientation
-        Vec3d AV = getAngularVelocity();
-        Quatd dr = 0.5 * (AV * orientation);
+        Vector3d halfAV = getAngularVelocity() * 0.5;
+        Quaterniond dr = Quaterniond(0.0, halfAV.x(), halfAV.y(), halfAV.z()) * orientation;
+        orientation = Quaterniond(orientation.coeffs() + dt * dr.coeffs());
+        orientation.normalize();
+#if CELVEC
+        Quaterniond dr = 0.5 * (AV * orientation);
         orientation += dt * dr;
         orientation.normalize();
+#endif
     }
    
     updateUniversal();
@@ -496,12 +536,10 @@ void Observer::update(double dt, double timeScale)
     // relies on the universal position and orientation of the observer.
     if (!trackObject.empty())
     {
-        Vec3d up = Vec3d(0, 1, 0) * getOrientation().toMatrix3();
-        Vec3d viewDir = trackObject.getPosition(getTime()) - getPosition();
+        Vector3d up = getOrientation().conjugate() * Vector3d::UnitY();
+        Vector3d viewDir = trackObject.getPosition(getTime()).offsetFromKm(getPosition()).normalized();
         
-        setOrientation(lookAt(Point3d(0, 0, 0),
-                              Point3d(viewDir.x, viewDir.y, viewDir.z),
-                              up));
+        setOrientation(lookAt<double>(Vector3d::Zero(), viewDir, up));
     }
 }
 
@@ -544,9 +582,12 @@ void Observer::setLocationFilter(uint32 _locationFilter)
 
 void Observer::reverseOrientation()
 {
+    setOrientation(getOrientation() * Quaterniond(AngleAxisd(PI, Vector3d::UnitY())));
+#if CELVEC
     Quatd q = getOrientation();
     q.yrotate(PI);
     setOrientation(q);
+#endif
     reverseFlag = !reverseFlag;
 }
 
@@ -571,9 +612,9 @@ void Observer::computeGotoParameters(const Selection& destination,
                                      double gotoTime,
                                      double startInter,
                                      double endInter,
-                                     Vec3d offset,
+                                     const Vector3d& offset,
                                      ObserverFrame::CoordinateSystem offsetCoordSys,
-                                     Vec3f up,
+                                     const Vector3f& up,
                                      ObserverFrame::CoordinateSystem upCoordSys)
 {
     if (frame->getCoordinateSystem() == ObserverFrame::PhaseLock)
@@ -587,8 +628,7 @@ void Observer::computeGotoParameters(const Selection& destination,
     }
     
     UniversalCoord targetPosition = destination.getPosition(getTime());
-    Vec3d v = targetPosition - getPosition();
-    v.normalize();
+    Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
     
     jparams.traj = Linear;
     jparams.duration = gotoTime;
@@ -599,35 +639,33 @@ void Observer::computeGotoParameters(const Selection& destination,
     
     if (offsetCoordSys == ObserverFrame::ObserverLocal)
     {
-        offset = offset * orientationUniv.toMatrix3();
+        jparams.to = targetPosition.offsetKm(orientationUniv.conjugate() * offset);
     }
     else
     {
         ObserverFrame offsetFrame(offsetCoordSys, destination);
-        offset = offset * fromEigen(offsetFrame.getFrame()->getOrientation(getTime())).toMatrix3();
+        jparams.to = targetPosition.offsetKm(offsetFrame.getFrame()->getOrientation(getTime()).conjugate() * offset);
     }
-    jparams.to = targetPosition + offset;
     
-    Vec3d upd(up.x, up.y, up.z);
+    Vector3d upd = up.cast<double>();
     if (upCoordSys == ObserverFrame::ObserverLocal)
     {
-        upd = upd * orientationUniv.toMatrix3();
+        upd = orientationUniv.conjugate() * upd;
     }
     else
     {
         ObserverFrame upFrame(upCoordSys, destination);
-        upd = upd * fromEigen(upFrame.getFrame()->getOrientation(getTime())).toMatrix3();
+        upd = upFrame.getFrame()->getOrientation(getTime()).conjugate() * upd;
     }
     
     jparams.initialOrientation = getOrientation();
-    Vec3d vn = targetPosition - jparams.to;
-    Point3d focus(vn.x, vn.y, vn.z);
-    jparams.finalOrientation = lookAt(Point3d(0, 0, 0), focus, upd);
+    Vector3d focus = targetPosition.offsetFromKm(jparams.to);
+    jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
     
     jparams.accelTime = 0.5;
-    double distance = astro::microLightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
+    double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
                                                1e-10);
@@ -646,17 +684,16 @@ void Observer::computeGotoParametersGC(const Selection& destination,
                                        double gotoTime,
                                        double startInter,
                                        double endInter,
-                                       Vec3d offset,
+                                       const Vector3d& offset,
                                        ObserverFrame::CoordinateSystem offsetCoordSys,
-                                       Vec3f up,
+                                       const Vector3f& up,
                                        ObserverFrame::CoordinateSystem upCoordSys,
                                        const Selection& centerObj)
 {
     setFrame(frame->getCoordinateSystem(), destination);
 
     UniversalCoord targetPosition = destination.getPosition(getTime());
-    Vec3d v = targetPosition - getPosition();
-    v.normalize();
+    Vector3d v = targetPosition.offsetFromKm(getPosition()).normalized();
 
     jparams.traj = GreatCircle;
     jparams.duration = gotoTime;
@@ -668,30 +705,29 @@ void Observer::computeGotoParametersGC(const Selection& destination,
     jparams.from = getPosition();
 
     ObserverFrame offsetFrame(offsetCoordSys, destination);
-    offset = offset * fromEigen(offsetFrame.getFrame()->getOrientation(getTime())).toMatrix3();
+    Vector3d offsetTransformed = offsetFrame.getFrame()->getOrientation(getTime()).conjugate() * offset;
     
-    jparams.to = targetPosition + offset;
+    jparams.to = targetPosition.offsetKm(offsetTransformed);
 
-    Vec3d upd(up.x, up.y, up.z);
+    Vector3d upd = up.cast<double>();
     if (upCoordSys == ObserverFrame::ObserverLocal)
     {
-        upd = upd * orientationUniv.toMatrix3();
+        upd = orientationUniv.conjugate() * upd;
     }
     else
     {
         ObserverFrame upFrame(upCoordSys, destination);
-        upd = upd * fromEigen(upFrame.getFrame()->getOrientation(getTime())).toMatrix3();
+        upd = upFrame.getFrame()->getOrientation(getTime()).conjugate() * upd;
     }
     
     jparams.initialOrientation = getOrientation();
-    Vec3d vn = targetPosition - jparams.to;
-    Point3d focus(vn.x, vn.y, vn.z);
-    jparams.finalOrientation = lookAt(Point3d(0, 0, 0), focus, upd);
+    Vector3d focus = targetPosition.offsetFromKm(jparams.to);
+    jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, upd);
     jparams.startInterpolation = min(startInter, endInter);
     jparams.endInterpolation   = max(startInter, endInter);
 
     jparams.accelTime = 0.5;
-    double distance = astro::microLightYearsToKilometers(jparams.from.distanceTo(jparams.to)) / 2.0;
+    double distance = jparams.from.offsetFromKm(jparams.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, jparams.accelTime),
                                                0.0001, 100.0,
                                                1e-10);
@@ -719,15 +755,13 @@ void Observer::computeCenterParameters(const Selection& destination,
     jparams.from = getPosition();
     jparams.to = jparams.from;
 
-    Vec3d up = Vec3d(0, 1, 0) * getOrientation().toMatrix3();
+    Vector3d up = getOrientation().conjugate() * Vector3d::UnitY();
 
     jparams.initialOrientation = getOrientation();
-    Vec3d vn = targetPosition - jparams.to;
-    Point3d focus(vn.x, vn.y, vn.z);
-    jparams.finalOrientation = lookAt(Point3d(0, 0, 0), focus, up);
+    Vector3d focus = targetPosition.offsetFromKm(jparams.to);
+    jparams.finalOrientation = lookAt<double>(Vector3d::Zero(), focus, up);
     jparams.startInterpolation = 0;
     jparams.endInterpolation   = 1;
-
 
     jparams.accelTime = 0.5;
     jparams.expFactor = 0;
@@ -751,18 +785,18 @@ void Observer::computeCenterCOParameters(const Selection& destination,
     jparams.centerObject = frame->getRefObject();
     jparams.expFactor = 0.5;
 
-    Vec3d v = destination.getPosition(getTime()) - getPosition();
-    Vec3d w = Vec3d(0.0, 0.0, -1.0) * getOrientation().toMatrix3();
-    v.normalize();
+    Vector3d v = destination.getPosition(getTime()).offsetFromKm(getPosition()).normalized();
+    Vector3d w = getOrientation().conjugate() * -Vector3d::UnitZ();
 
     Selection centerObj = frame->getRefObject();
     UniversalCoord centerPos = centerObj.getPosition(getTime());
     UniversalCoord targetPosition = destination.getPosition(getTime());
 
-    Quatd q = Quatd::vecToVecRotation(v, w);
+    Quaterniond q;
+    q.setFromTwoVectors(v, w);
 
     jparams.from = getPosition();
-    jparams.to = centerPos + ((getPosition() - centerPos) * q.toMatrix3());
+    jparams.to = centerPos.offsetKm(q.conjugate() * getPosition().offsetFromKm(centerPos));
     jparams.initialOrientation = getOrientation();
     jparams.finalOrientation = getOrientation() * q;
 
@@ -880,10 +914,9 @@ const ObserverFrame* Observer::getFrame() const
 
 /*! Rotate the observer about its center.
  */
-void Observer::rotate(Quatf q)
+void Observer::rotate(const Quaternionf& q)
 {
-    Quatd qd(q.w, q.x, q.y, q.z);
-    orientation = qd * orientation;
+    orientation = q.cast<double>() * orientation;
     updateUniversal();
 }
 
@@ -893,7 +926,7 @@ void Observer::rotate(Quatf q)
  *  object, the specified selection will be used as the center of rotation, and
  *  the observer reference frame will be modified.
  */
-void Observer::orbit(const Selection& selection, Quatf q)
+void Observer::orbit(const Selection& selection, const Quaternionf& q)
 {
     Selection center = frame->getRefObject();
     if (center.empty() && !selection.empty())
@@ -915,31 +948,27 @@ void Observer::orbit(const Selection& selection, Quatf q)
 
         // v = the vector from the observer's position to the focus
         //Vec3d v = situation.translation - focusPosition;
-        Vec3d v = position - focusPosition;
+        Vector3d v = position.offsetFromKm(focusPosition);
 
-        // Get a double precision version of the rotation
-        Quatd qd(q.w, q.x, q.y, q.z);
+        Quaterniond qd = q.cast<double>();
 
         // To give the right feel for rotation, we want to premultiply
         // the current orientation by q.  However, because of the order in
         // which we apply transformations later on, we can't pre-multiply.
         // To get around this, we compute a rotation q2 such
         // that q1 * r = r * q2.
-        Quatd qd2 = ~orientation * qd * orientation;
+        Quaterniond qd2 = orientation.conjugate() * qd * orientation;
         qd2.normalize();
 
         // Roundoff errors will accumulate and cause the distance between
         // viewer and focus to drift unless we take steps to keep the
         // length of v constant.
-        double distance = v.length();
-        v = v * qd2.toMatrix3();
-        v.normalize();
-        v *= distance;
+        double distance = v.norm();
+        v = qd2.conjugate() * v;
+        v = v.normalized() * distance;
 
-        //situation.rotation = situation.rotation * qd2;
-        //situation.translation = focusPosition + v;
         orientation = orientation * qd2;
-        position = focusPosition + v;
+        position = focusPosition.offsetKm(v);
         updateUniversal();
     }
 }
@@ -965,12 +994,12 @@ void Observer::changeOrbitDistance(const Selection& selection, float d)
 
         // Somewhat arbitrary parameters to chosen to give the camera movement
         // a nice feel.  They should probably be function parameters.
-        double minOrbitDistance = astro::kilometersToMicroLightYears(size);
-        double naturalOrbitDistance = astro::kilometersToMicroLightYears(4.0 * size);
+        double minOrbitDistance = size;
+        double naturalOrbitDistance = 4.0 * size;
 
         // Determine distance and direction to the selected object
-        Vec3d v = getPosition() - focusPosition;
-        double currentDistance = v.length();
+        Vector3d v = getPosition().offsetFromKm(focusPosition);
+        double currentDistance = v.norm();
 
         if (currentDistance < minOrbitDistance)
             minOrbitDistance = currentDistance * 0.5;
@@ -981,7 +1010,7 @@ void Observer::changeOrbitDistance(const Selection& selection, float d)
             double newDistance = minOrbitDistance + naturalOrbitDistance * exp(log(r) + d);
             v = v * (newDistance / currentDistance);
 
-            position = frame->convertFromUniversal(focusPosition + v, getTime());
+            position = frame->convertFromUniversal(focusPosition.offsetKm(v), getTime());
             updateUniversal();
         }
     }
@@ -991,7 +1020,8 @@ void Observer::changeOrbitDistance(const Selection& selection, float d)
 void Observer::setTargetSpeed(float s)
 {
     targetSpeed = s;
-    Vec3d v;
+    Vector3d v;
+
     if (reverseFlag)
         s = -s;
     if (trackObject.empty())
@@ -999,12 +1029,12 @@ void Observer::setTargetSpeed(float s)
         trackingOrientation = getOrientation();
         // Generate vector for velocity using current orientation
         // and specified speed.
-        v = Vec3d(0, 0, -s) * getOrientation().toMatrix4();
+        v = getOrientation().conjugate() * Vector3d(0, 0, -s);
     }
     else
     {
         // Use tracking orientation vector to generate target velocity
-        v = Vec3d(0, 0, -s) * trackingOrientation.toMatrix4();
+        v = trackingOrientation.conjugate() * Vector3d(0, 0, -s);
     }
 
     targetVelocity = v;
@@ -1022,7 +1052,7 @@ float Observer::getTargetSpeed()
 void Observer::gotoJourney(const JourneyParams& params)
 {
     journey = params;
-    double distance = astro::microLightYearsToKilometers(journey.from.distanceTo(journey.to)) / 2.0;
+    double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
                                                0.0001, 100.0,
                                                1e-10);
@@ -1033,14 +1063,14 @@ void Observer::gotoJourney(const JourneyParams& params)
 
 void Observer::gotoSelection(const Selection& selection,
                              double gotoTime,
-                             Vec3f up,
+                             const Vector3f& up,
                              ObserverFrame::CoordinateSystem upFrame)
 {
     gotoSelection(selection, gotoTime, 0.0, 0.5, up, upFrame);
 }
 
 
-// Return the preferred distance for viewing an object
+// Return the preferred distance (in kilometers) for viewing an object
 static double getPreferredDistance(const Selection& selection)
 {
     switch (selection.getType())
@@ -1115,8 +1145,8 @@ static double getOrbitDistance(const Selection& selection,
     // If further than 10 times the preferrred distance, goto the
     // preferred distance.  If closer, zoom in 10 times closer or to the
     // minimum distance.
-    double maxDist = astro::kilometersToMicroLightYears(getPreferredDistance(selection));
-    double minDist = astro::kilometersToMicroLightYears(1.01 * selection.radius());
+    double maxDist = getPreferredDistance(selection);
+    double minDist = 1.01 * selection.radius();
     double dist = (currentDistance > maxDist * 10.0) ? maxDist : currentDistance * 0.1;
 
     return max(dist, minDist);
@@ -1127,14 +1157,14 @@ void Observer::gotoSelection(const Selection& selection,
                              double gotoTime,
                              double startInter,
                              double endInter,
-                             Vec3f up,
+                             const Vector3f& up,
                              ObserverFrame::CoordinateSystem upFrame)
 {
     if (!selection.empty())
     {
         UniversalCoord pos = selection.getPosition(getTime());
-        Vec3d v = pos - getPosition();
-        double distance = v.length();
+        Vector3d v = pos.offsetFromKm(getPosition());
+        double distance = v.norm();
 
         double orbitDistance = getOrbitDistance(selection, distance);
 
@@ -1156,7 +1186,7 @@ void Observer::gotoSelectionGC(const Selection& selection,
                                double gotoTime,
                                double /*startInter*/,       //TODO: remove parameter??
                                double /*endInter*/,         //TODO: remove parameter??
-                               Vec3f up,
+                               const Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
 {
     if (!selection.empty())
@@ -1164,18 +1194,17 @@ void Observer::gotoSelectionGC(const Selection& selection,
         Selection centerObj = selection.parent();
 
         UniversalCoord pos = selection.getPosition(getTime());
-        Vec3d v = pos - centerObj.getPosition(getTime());
-        double distanceToCenter = v.length();
-        Vec3d viewVec = pos - getPosition();
-        double orbitDistance = getOrbitDistance(selection,
-                                                viewVec.length());
+        Vector3d v = pos.offsetFromKm(centerObj.getPosition(getTime()));
+        double distanceToCenter = v.norm();
+        Vector3d viewVec = pos.offsetFromKm(getPosition());
+        double orbitDistance = getOrbitDistance(selection, viewVec.norm());
+
         if (selection.location() != NULL)
         {
             Selection parent = selection.parent();
-            double maintainDist = astro::kilometersToMicroLightYears(getPreferredDistance(parent));
-            Vec3d parentPos = parent.getPosition(getTime()) - getPosition();
-            double parentDist = parentPos.length() -
-                astro::kilometersToMicroLightYears(parent.radius());
+            double maintainDist = getPreferredDistance(parent);
+            Vector3d parentPos = parent.getPosition(getTime()).offsetFromKm(getPosition());
+            double parentDist = parentPos.norm() - parent.radius();
 
             if (parentDist <= maintainDist && parentDist > orbitDistance)
             {
@@ -1198,7 +1227,7 @@ void Observer::gotoSelectionGC(const Selection& selection,
 void Observer::gotoSelection(const Selection& selection,
                              double gotoTime,
                              double distance,
-                             Vec3f up,
+                             const Vector3f& up,
                              ObserverFrame::CoordinateSystem upFrame)
 {
     if (!selection.empty())
@@ -1206,11 +1235,11 @@ void Observer::gotoSelection(const Selection& selection,
         UniversalCoord pos = selection.getPosition(getTime());
         // The destination position lies along the line between the current
         // position and the star
-        Vec3d v = pos - getPosition();
+        Vector3d v = pos.offsetFromKm(getPosition());
         v.normalize();
 
         computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
-                              v * -distance * 1e6, ObserverFrame::Universal,
+                              v * -distance, ObserverFrame::Universal,
                               up, upFrame);
         observerMode = Travelling;
     }
@@ -1220,7 +1249,7 @@ void Observer::gotoSelection(const Selection& selection,
 void Observer::gotoSelectionGC(const Selection& selection,
                                double gotoTime,
                                double distance,
-                               Vec3f up,
+                               const Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame)
 {
     if (!selection.empty())
@@ -1228,13 +1257,13 @@ void Observer::gotoSelectionGC(const Selection& selection,
         Selection centerObj = selection.parent();
 
         UniversalCoord pos = selection.getPosition(getTime());
-        Vec3d v = pos - centerObj.getPosition(getTime());
+        Vector3d v = pos.offsetFromKm(centerObj.getPosition(getTime()));
         v.normalize();
 
         // The destination position lies along a line extended from the center
         // object to the target object
         computeGotoParametersGC(selection, journey, gotoTime, 0.25, 0.75,
-                                v * -distance * 1e6, ObserverFrame::Universal,
+                                v * -distance, ObserverFrame::Universal,
                                 up, upFrame,
                                 centerObj);
         observerMode = Travelling;
@@ -1247,7 +1276,7 @@ void Observer::gotoSelectionLongLat(const Selection& selection,
                                     double distance,
                                     float longitude,
                                     float latitude,
-                                    Vec3f up)
+                                    const Vector3f& up)
 {
     if (!selection.empty())
     {
@@ -1257,7 +1286,7 @@ void Observer::gotoSelectionLongLat(const Selection& selection,
         double y = cos(phi);
         double z = -sin(theta) * sin(phi);
         computeGotoParameters(selection, journey, gotoTime, 0.25, 0.75,
-                              Vec3d(x, y, z) * distance * 1e6, ObserverFrame::BodyFixed,
+                              Vector3d(x, y, z) * distance, ObserverFrame::BodyFixed,
                               up, ObserverFrame::BodyFixed);
         observerMode = Travelling;
     }
@@ -1265,7 +1294,7 @@ void Observer::gotoSelectionLongLat(const Selection& selection,
 
 
 void Observer::gotoLocation(const UniversalCoord& toPosition,
-                            const Quatd& toOrientation,
+                            const Quaterniond& toOrientation,
                             double duration)
 {
     journey.startTime = realTime;
@@ -1280,7 +1309,7 @@ void Observer::gotoLocation(const UniversalCoord& toPosition,
     journey.endInterpolation   = 0.75f;
 
     journey.accelTime = 0.5;
-    double distance = astro::microLightYearsToKilometers(journey.from.distanceTo(journey.to)) / 2.0;
+    double distance = journey.from.offsetFromKm(journey.to).norm() / 2.0;
     pair<double, double> sol = solve_bisection(TravelExpFunc(distance, journey.accelTime),
                                                0.0001, 100.0,
                                                1e-10);
@@ -1300,46 +1329,40 @@ void Observer::getSelectionLongLat(const Selection& selection,
     if (!selection.empty())
     {
         ObserverFrame frame(ObserverFrame::BodyFixed, selection);
-        Point3d bfPos = (Point3d) frame.convertFromUniversal(positionUniv, getTime());
+        Vector3d bfPos = frame.convertFromUniversal(positionUniv, getTime()).offsetFromKm(UniversalCoord::Zero());
         
-        distance = bfPos.distanceFromOrigin();
-
         // Convert from Celestia's coordinate system
-        double x = bfPos.x;
-        double y = -bfPos.z;
-        double z = bfPos.y;
+        double x = bfPos.x();
+        double y = -bfPos.z();
+        double z = bfPos.y();
 
         longitude = radToDeg(atan2(y, x));
         latitude = radToDeg(PI/2 - acos(z / distance));
-        
-        // Convert distance from light years to kilometers.
-        distance = astro::microLightYearsToKilometers(distance);
+        distance = bfPos.norm();
     }
 }
 
 
 void Observer::gotoSurface(const Selection& sel, double duration)
 {
-    Vec3d v = getPosition() - sel.getPosition(getTime());
+    Vector3d v = getPosition().offsetFromKm(sel.getPosition(getTime()));
     v.normalize();
     
-    Vec3d viewDir = Vec3d(0, 0, -1) * orientationUniv.toMatrix3();
-    Vec3d up = Vec3d(0, 1, 0) * orientationUniv.toMatrix3();
-    Quatd q = orientationUniv;
-    if (v * viewDir < 0.0)
+    Vector3d viewDir = orientationUniv.conjugate() * -Vector3d::UnitZ();
+    Vector3d up      = orientationUniv.conjugate() * Vector3d::UnitY();
+    Quaterniond q = orientationUniv;
+    if (v.dot(viewDir) < 0.0)
     {
-        q = lookAt(Point3d(0.0, 0.0, 0.0), Point3d(0.0, 0.0, 0.0) + up, v);
+        q = lookAt<double>(Vector3d::Zero(), up, v);
     }
     
     ObserverFrame frame(ObserverFrame::BodyFixed, sel);
     UniversalCoord bfPos = frame.convertFromUniversal(positionUniv, getTime());
     q = frame.convertFromUniversal(q, getTime());
     
-    double height = 1.0001 * astro::kilometersToMicroLightYears(sel.radius());
-    Vec3d dir = bfPos - Point3d(0.0, 0.0, 0.0);
-    dir.normalize();
-    dir *= height;
-    UniversalCoord nearSurfacePoint(dir.x, dir.y, dir.z);
+    double height = 1.0001 * sel.radius();
+    Vector3d dir = bfPos.offsetFromKm(UniversalCoord::Zero()).normalized() * height;
+    UniversalCoord nearSurfacePoint = UniversalCoord::Zero().offsetKm(dir);
     
     gotoLocation(nearSurfacePoint, q, duration);    
 };
@@ -1422,14 +1445,12 @@ void Observer::setFOV(float _fov)
 }
 
 
-Vec3f Observer::getPickRay(float x, float y) const
+Vector3f Observer::getPickRay(float x, float y) const
 {
     float s = 2 * (float) tan(fov / 2.0);
+    Vector3f pickDirection(x * s, y * s, -1.0f);
 
-    Vec3f pickDirection = Vec3f(x * s, y * s, -1.0f);
-    pickDirection.normalize();
-
-    return pickDirection;
+    return pickDirection.normalized();
 }
 
 
@@ -1555,17 +1576,17 @@ ObserverFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
 }
 
 
-Quatd 
-ObserverFrame::convertFromUniversal(const Quatd& q, double tjd) const
+Quaterniond 
+ObserverFrame::convertFromUniversal(const Quaterniond& q, double tjd) const
 {
-    return fromEigen(frame->convertFromUniversal(toEigen(q), tjd));
+    return frame->convertFromUniversal(q, tjd);
 }
 
 
-Quatd
-ObserverFrame::convertToUniversal(const Quatd& q, double tjd) const
+Quaterniond
+ObserverFrame::convertToUniversal(const Quaterniond& q, double tjd) const
 {
-    return fromEigen(frame->convertToUniversal(toEigen(q), tjd));
+    return frame->convertToUniversal(q, tjd);
 }
 
 
@@ -1584,10 +1605,10 @@ ObserverFrame::convert(const ObserverFrame* fromFrame,
 
 /*! Convert an orientation from one frame to another.
 */
-Quatd
+Quaterniond
 ObserverFrame::convert(const ObserverFrame* fromFrame,
                        const ObserverFrame* toFrame,
-                       const Quatd& q,
+                       const Quaterniond& q,
                        double t)
 {
     // Perform the conversion fromFrame -> universal -> toFrame
