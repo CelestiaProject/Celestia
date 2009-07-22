@@ -19,6 +19,9 @@
 #define _CELENGINE_OBSERVER_H_
 
 #include <celengine/frame.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 
 class ObserverFrame
 {
@@ -66,17 +69,17 @@ public:
     
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
-    Quatd convertFromUniversal(const Quatd& q, double tjd) const;
-    Quatd convertToUniversal(const Quatd& q, double tjd) const;
+    Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
+    Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
     
     static UniversalCoord convert(const ObserverFrame* fromFrame,
                                   const ObserverFrame* toFrame,
                                   const UniversalCoord& uc,
                                   double t);
-    static Quatd          convert(const ObserverFrame* fromFrame,
-                                  const ObserverFrame* toFrame,
-                                  const Quatd& q,
-                                  double t);
+    static Eigen::Quaterniond convert(const ObserverFrame* fromFrame,
+                                      const ObserverFrame* toFrame,
+                                      const Eigen::Quaterniond& q,
+                                      double t);
     
 private:
     ReferenceFrame* createFrame(CoordinateSystem _coordSys,
@@ -101,6 +104,8 @@ private:
 class Observer
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     Observer();
 	Observer(const Observer& o);
 
@@ -108,28 +113,28 @@ public:
         
     UniversalCoord getPosition() const;
     void          setPosition(const UniversalCoord&);
-    void          setPosition(const Point3d&);    
+    void          setPosition(const Eigen::Vector3d&);    
     
-    Quatd         getOrientation() const;
-    Quatf         getOrientationf() const;
-    void          setOrientation(const Quatf&);
-    void          setOrientation(const Quatd&);
+    Eigen::Quaterniond getOrientation() const;
+    Eigen::Quaternionf getOrientationf() const;
+    void          setOrientation(const Eigen::Quaternionf&);
+    void          setOrientation(const Eigen::Quaterniond&);
     
-    Vec3d         getVelocity() const;
-    void          setVelocity(const Vec3d&);
-    Vec3d         getAngularVelocity() const;
-    void          setAngularVelocity(const Vec3d&);
+    Eigen::Vector3d getVelocity() const;
+    void          setVelocity(const Eigen::Vector3d&);
+    Eigen::Vector3d getAngularVelocity() const;
+    void          setAngularVelocity(const Eigen::Vector3d&);
     
     float          getFOV() const;
     void           setFOV(float);
 
     void           update(double dt, double timeScale);
 
-    Vec3f          getPickRay(float x, float y) const;
+    Eigen::Vector3f getPickRay(float x, float y) const;
 
 
-    void orbit(const Selection&, Quatf q);
-    void rotate(Quatf q);
+    void orbit(const Selection&, const Eigen::Quaternionf& q);
+    void rotate(const Eigen::Quaternionf& q);
     void changeOrbitDistance(const Selection&, float d);
     void setTargetSpeed(float s);
     float getTargetSpeed();
@@ -145,32 +150,32 @@ public:
 
     void gotoSelection(const Selection&,
                        double gotoTime,
-                       Vec3f up,
+                       const Eigen::Vector3f& up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
                        double gotoTime,
                        double startInter,
                        double endInter,
-                       Vec3f up,
+                       const Eigen::Vector3f& up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionGC(const Selection&,
                          double gotoTime,
                          double startInter,
                          double endInter,
-                         Vec3f up,
+                         const Eigen::Vector3f& up,
                          ObserverFrame::CoordinateSystem upFrame);
     void gotoSelection(const Selection&,
                        double gotoTime,
                        double distance,
-                       Vec3f up,
+                       const Eigen::Vector3f& up,
                        ObserverFrame::CoordinateSystem upFrame);
     void gotoSelectionLongLat(const Selection&,
                               double gotoTime,
                               double distance,
                               float longitude, float latitude,
-                              Vec3f up);
+                              const Eigen::Vector3f& up);
     void gotoLocation(const UniversalCoord& toPosition,
-                      const Quatd& toOrientation,
+                      const Eigen::Quaterniond& toOrientation,
                       double duration);
     void getSelectionLongLat(const Selection&,
                              double& distance,
@@ -179,7 +184,7 @@ public:
     void gotoSelectionGC(const Selection& selection,
                          double gotoTime,
                          double distance,
-                         Vec3f up,
+                         const Eigen::Vector3f& up,
                          ObserverFrame::CoordinateSystem upFrame);
     void gotoSurface(const Selection&, double duration);
     void centerSelection(const Selection&, double centerTime = 0.5);
@@ -222,17 +227,18 @@ public:
 
     struct JourneyParams
     {
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         double duration;
         double startTime;
         UniversalCoord from;
         UniversalCoord to;
-        Quatd initialOrientation;
-        Quatd finalOrientation;
+        Eigen::Quaterniond initialOrientation;
+        Eigen::Quaterniond finalOrientation;
         double startInterpolation; // start of orientation interpolation phase [0-1]
         double endInterpolation;   // end of orientation interpolation phase [0-1]
         double expFactor;
         double accelTime;
-        Quatd rotation1; // rotation on the CircularOrbit around centerObject
+        Eigen::Quaterniond rotation1; // rotation on the CircularOrbit around centerObject
 
         Selection centerObject;
         
@@ -248,18 +254,18 @@ public:
                                double gotoTime,
                                double startInter,
                                double endInter,
-                               Vec3d offset,
+                               const Eigen::Vector3d& offset,
                                ObserverFrame::CoordinateSystem offsetFrame,
-                               Vec3f up,
+                               const Eigen::Vector3f& up,
                                ObserverFrame::CoordinateSystem upFrame);
     void computeGotoParametersGC(const Selection& sel,
                                  JourneyParams& jparams,
                                  double gotoTime,
                                  double startInter,
                                  double endInter,
-                                 Vec3d offset,
+                                 const Eigen::Vector3d& offset,
                                  ObserverFrame::CoordinateSystem offsetFrame,
-                                 Vec3f up,
+                                 const Eigen::Vector3f& up,
                                  ObserverFrame::CoordinateSystem upFrame,
                                  const Selection& centerObj);
     void computeCenterParameters(const Selection& sel,
@@ -276,30 +282,30 @@ public:
     double         simTime;
 
     // Position, orientation, and velocity in the observer's reference frame
-    UniversalCoord position;
-    Quatd          orientation;
-    Vec3d          velocity;
-    Vec3d          angularVelocity;
+    UniversalCoord      position;
+    Eigen::Quaterniond  orientation;
+    Eigen::Vector3d     velocity;
+    Eigen::Vector3d     angularVelocity;
     
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.
     UniversalCoord positionUniv;
-    Quatd          orientationUniv;
+    Eigen::Quaterniond  orientationUniv;
     
     ObserverFrame* frame;
     
-    double         realTime;
+    double          realTime;
 
-    double         targetSpeed;
-    Vec3d          targetVelocity;
-    Vec3d          initialVelocity;
-    double         beginAccelTime;
+    double          targetSpeed;
+    Eigen::Vector3d targetVelocity;
+    Eigen::Vector3d initialVelocity;
+    double          beginAccelTime;
 
     ObserverMode     observerMode;
     JourneyParams    journey;    
     Selection        trackObject;
 
-    Quatd trackingOrientation;   // orientation prior to selecting tracking
+    Eigen::Quaterniond trackingOrientation;   // orientation prior to selecting tracking
 
     float fov;
     bool reverseFlag;

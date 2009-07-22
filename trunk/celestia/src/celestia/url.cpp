@@ -26,6 +26,7 @@
 #include "celengine/astro.h"
 #include "url.h"
 
+using namespace Eigen;
 using namespace std;
 
 const unsigned int Url::CurrentVersion = 3;
@@ -73,9 +74,9 @@ CelestiaState::captureState(CelestiaCore* appCore)
     observerPosition = sim->getObserver().getPosition();
     observerPosition = frame->convertFromUniversal(observerPosition, tdb);
         
-    Quatd q = sim->getObserver().getOrientation();
+    Quaterniond q = sim->getObserver().getOrientation();
     q = frame->convertFromUniversal(q, tdb);
-    observerOrientation = Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z);
+    observerOrientation = fromEigen(q.cast<float>());
         
     Selection tracked = sim->getTrackedObject();
     trackedBodyName = getEncodedObjectName(tracked, appCore);
@@ -339,7 +340,7 @@ Url::Url(CelestiaCore* core, UrlType type)
         urlStr += "&y=" +  coord.y.toString();
         urlStr += "&z=" +  coord.z.toString();
 
-        orientation = sim->getObserver().getOrientationf();
+        orientation = fromEigen(sim->getObserver().getOrientationf());
         sprintf(buff, "&ow=%f&ox=%f&oy=%f&oz=%f", orientation.w, orientation.x, orientation.y, orientation.z);
         urlStr += buff;
         break;
@@ -829,10 +830,9 @@ void Url::goTo()
         // to universal and set the observer position.
         double tdb = sim->getTime();
         coord = sim->getObserver().getFrame()->convertToUniversal(coord, tdb);
-        Quatd q(orientation.w, orientation.x, orientation.y, orientation.z);
-        q = sim->getObserver().getFrame()->convertToUniversal(q, tdb);
+        Quaterniond q = sim->getObserver().getFrame()->convertToUniversal(toEigen(orientation).cast<double>(), tdb);
         sim->setObserverPosition(coord);
-        sim->setObserverOrientation(Quatf((float) q.w, (float) q.x, (float) q.y, (float) q.z));
+        sim->setObserverOrientation(q.cast<float>());
     }
     else
     {
@@ -840,10 +840,10 @@ void Url::goTo()
         case Absolute:
             sim->setTime((double) date);
             sim->setObserverPosition(coord);
-            sim->setObserverOrientation(orientation);
+            sim->setObserverOrientation(toEigen(orientation));
             break;
         case Relative:
-            sim->gotoSelectionLongLat(0, astro::kilometersToLightYears(distance), (float) (longitude * PI / 180), (float) (latitude * PI / 180), Vec3f(0, 1, 0));
+            sim->gotoSelectionLongLat(0, distance, (float) (longitude * PI / 180), (float) (latitude * PI / 180), Vector3f::UnitY());
             break;
         case Settings:
             break;

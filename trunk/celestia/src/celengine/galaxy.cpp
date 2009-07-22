@@ -8,12 +8,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <Eigen/StdVector>
 #include <cstring>
 #include <fstream>
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
-#include <Eigen/StdVector>
 #include "celestia.h"
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
@@ -30,7 +30,6 @@
 
 using namespace Eigen;
 using namespace std;
-
 
 static int width = 128, height = 128;
 static Vector3f colorTable[256];
@@ -49,14 +48,15 @@ static GalacticForm* buildGalacticForms(const std::string& filename);
 
 float Galaxy::lightGain  = 0.0f;
 
-bool operator < (const Blob& b1, const Blob& b2)
+bool operator< (const Blob& b1, const Blob& b2)
 {
   return (b1.position.squaredNorm() < b2.position.squaredNorm());
 }
 
-struct GalacticForm
+class GalacticForm
 {
-    std::vector<Blob>* blobs;
+public:
+    vector<Blob>* blobs;
     Vector3f scale;
 };
 
@@ -336,10 +336,6 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
 
     Quaternionf orientation = getOrientation().conjugate();
 
-#if 0
-    Mat3f m =
-        Mat3f::scaling(form->scale)*getOrientation().toMatrix3()*Mat3f::scaling(size);
-#endif
     Matrix3f mScale = form->scale.asDiagonal() * size;
     Matrix3f mLinear = orientation.toRotationMatrix() * mScale;
 
