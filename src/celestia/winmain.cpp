@@ -2910,7 +2910,7 @@ vector<DEVMODE>* EnumerateDisplayModes(unsigned int minBPP)
     sort(modes->begin(), modes->end());
 
     // Bail out early if EnumDisplaySettings fails for some messed up reason
-    if (i == 0)
+    if (modes->empty())
         return modes;
 
     // Go through the sorted list and eliminate modes that differ only

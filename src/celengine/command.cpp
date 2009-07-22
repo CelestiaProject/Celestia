@@ -17,6 +17,7 @@
 #include <celestia/imagecapture.h>
 #include <celestia/celx_internal.h>
 #include <iostream>
+#include "eigenport.h"
 
 using namespace std;
 
@@ -75,8 +76,8 @@ void CommandGoto::process(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->getSelection();
     env.getSimulation()->gotoSelection(gotoTime,
-                                       astro::kilometersToLightYears(sel.radius() * distance),
-                                       up, upFrame);
+                                       sel.radius() * distance,
+                                       toEigen(up), upFrame);
 }
 
 
@@ -104,9 +105,9 @@ void CommandGotoLongLat::process(ExecutionEnvironment& env)
 {
     Selection sel = env.getSimulation()->getSelection();
     env.getSimulation()->gotoSelectionLongLat(gotoTime,
-                                              astro::kilometersToLightYears(sel.radius() * distance),
+                                              sel.radius() * distance,
                                               longitude, latitude,
-                                              up);
+                                              toEigen(up));
 }
 
 
@@ -128,7 +129,7 @@ void CommandGotoLocation::process(ExecutionEnvironment& env)
 {
     Quatd toOrientation = Quatd(rotation.w, rotation.x, rotation.y, rotation.z);
     UniversalCoord toPosition = translation;
-    env.getSimulation()->gotoLocation(toPosition, toOrientation, gotoTime);
+    env.getSimulation()->gotoLocation(toPosition, toEigen(toOrientation), gotoTime);
 }
 
 /////////////////////////////
@@ -380,7 +381,7 @@ void CommandOrbit::process(ExecutionEnvironment& env, double, double dt)
     {
         Quatf q;
         q.setAxisAngle(spin / v, (float) (v * dt));
-        env.getSimulation()->orbit(q);
+        env.getSimulation()->orbit(toEigen(q));
     }
 }
 
@@ -398,7 +399,7 @@ void CommandRotate::process(ExecutionEnvironment& env, double, double dt)
     {
         Quatf q;
         q.setAxisAngle(spin / v, (float) (v * dt));
-        env.getSimulation()->rotate(q);
+        env.getSimulation()->rotate(toEigen(q));
     }
 }
 
@@ -440,7 +441,7 @@ void CommandSetOrientation::process(ExecutionEnvironment& env)
 {
     Quatf q(1);
     q.setAxisAngle(axis, angle);
-    env.getSimulation()->setObserverOrientation(q);
+    env.getSimulation()->setObserverOrientation(toEigen(q));
 }
 
 ////////////////

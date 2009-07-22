@@ -581,7 +581,7 @@ void StarPicker::process(const Star& star, float, float)
                              distance))
         {
             Vector3d starPos = star.getPosition(when).toLy();
-            starDir = (starPos - pickOrigin.cast<double>()).cast<float>();
+            starDir = (starPos - pickOrigin.cast<double>()).cast<float>().normalized();
         }
     }
 
@@ -711,7 +711,7 @@ Selection Universe::pickStar(const UniversalCoord& origin,
     StarPicker picker(o, direction, when, tolerance);
     starCatalog->findVisibleStars(picker,
                                   o,
-                                  rotation,
+                                  rotation.conjugate(),
                                   tolerance, 1.0f,
                                   faintestMag);
     if (picker.pickedStar != NULL)
@@ -863,7 +863,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
     DSOPicker picker(orig, dir, renderFlags, tolerance);
     dsoCatalog->findVisibleDSOs(picker,
                                 orig,
-                                rotation,
+                                rotation.conjugate(),
                                 tolerance,
                                 1.0f,
                                 faintestMag);
@@ -875,7 +875,7 @@ Selection Universe::pickDeepSkyObject(const UniversalCoord& origin,
 
 
 Selection Universe::pick(const UniversalCoord& origin,
-                         const Vec3f& direction,
+                         const Vector3f& direction,
                          double when,
                          int    renderFlags,
                          float  faintestMag,
@@ -894,7 +894,7 @@ Selection Universe::pick(const UniversalCoord& origin,
             if (solarSystem != NULL)
             {
                 sel = pickPlanet(*solarSystem,
-                                origin, toEigen(direction),
+                                origin, direction,
                                 when,
                                 faintestMag,
                                 tolerance);
@@ -906,12 +906,12 @@ Selection Universe::pick(const UniversalCoord& origin,
 
     if (sel.empty() && (renderFlags & Renderer::ShowStars))
     {
-        sel = pickStar(origin, toEigen(direction), when, faintestMag, tolerance);
+        sel = pickStar(origin, direction, when, faintestMag, tolerance);
     }
 
     if (sel.empty())
     {
-        sel = pickDeepSkyObject(origin, toEigen(direction), renderFlags, faintestMag, tolerance);
+        sel = pickDeepSkyObject(origin, direction, renderFlags, faintestMag, tolerance);
     }
 
     return sel;

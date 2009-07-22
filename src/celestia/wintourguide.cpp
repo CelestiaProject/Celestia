@@ -21,6 +21,7 @@
 
 #include "res/resource.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -101,14 +102,14 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                     {
                         // Use the default distance
                         sim->gotoSelection(5.0,
-                                           Vec3f(0, 1, 0),
+                                           Vector3f::UnitY(),
                                            ObserverFrame::ObserverLocal);
                     }
                     else
                     {
                         sim->gotoSelection(5.0,
                                            tourGuide->selectedDest->distance,
-                                           Vec3f(0, 1, 0),
+                                           Vector3f::UnitY(),
                                            ObserverFrame::ObserverLocal);
                     }
                 }

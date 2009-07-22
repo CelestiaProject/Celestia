@@ -15,6 +15,9 @@
 //#include <celengine/body.h>
 //#include <celengine/timelinephase.h>
 #include "celestiacore.h"
+#include <celengine/eigenport.h>
+
+using namespace Eigen;
 
 
 // ==================== Observer ====================
@@ -104,7 +107,7 @@ static int observer_setorientation(lua_State* l)
     {
         celx.doError("Argument to observer:setorientation must be a rotation");
     }
-    o->setOrientation(*q);
+    o->setOrientation(toEigen(*q));
     return 0;
 }
 
@@ -114,7 +117,7 @@ static int observer_getorientation(lua_State* l)
     celx.checkArgs(1, 1, "No arguments expected to observer:getorientation()");
     
     Observer* o = this_observer(l);
-    celx.newRotation(o->getOrientation());
+    celx.newRotation(fromEigen(o->getOrientation()));
     
     return 1;
 }
@@ -132,7 +135,7 @@ static int observer_rotate(lua_State* l)
         celx.doError("Argument to observer:setpos must be a rotation");
     }
     Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
-    o->rotate(qf);
+    o->rotate(toEigen(qf));
     return 0;
 }
 
@@ -193,7 +196,7 @@ static int observer_lookat(lua_State* l)
     v.normalize();
     Vec3f u = v ^ n;
     Quatf qf = Quatf(Mat3f(v, u, -n));
-    o->setOrientation(qf);
+    o->setOrientation(toEigen(qf));
     return 0;
 }
 
@@ -242,14 +245,14 @@ static int observer_gototable(lua_State* l)
     lua_gettable(l, 2);
     Quatd* rot1 = celx.toRotation(3);
     if (rot1 != NULL)
-        jparams.initialOrientation = *rot1;
+        jparams.initialOrientation = toEigen(*rot1);
     lua_settop(l, 2);
     
     lua_pushstring(l, "finalOrientation");
     lua_gettable(l, 2);
     Quatd* rot2 = celx.toRotation(3);
     if (rot2 != NULL)
-        jparams.finalOrientation = *rot2;
+        jparams.finalOrientation = toEigen(*rot2);
     lua_settop(l, 2);
     
     lua_pushstring(l, "startInterpolation");
@@ -311,7 +314,7 @@ static int observer_goto(lua_State* l)
     // The first argument may be either an object or a position
     if (sel != NULL)
     {
-        o->gotoSelection(*sel, travelTime, startInter, endInter, Vec3f(0, 1, 0), ObserverFrame::ObserverLocal);
+        o->gotoSelection(*sel, travelTime, startInter, endInter, Vector3f::UnitY(), ObserverFrame::ObserverLocal);
     }
     else
     {
@@ -342,7 +345,7 @@ static int observer_gotolonglat(lua_State* l)
     
     distance = distance / KM_PER_LY;
     
-    Vec3f up(0.0f, 1.0f, 0.0f);
+    Vector3f up = Vector3f::UnitY();
     if (lua_gettop(l) >= 7)
     {
         Vec3d* uparg = celx.toVector(7);
@@ -350,7 +353,7 @@ static int observer_gotolonglat(lua_State* l)
         {
             celx.doError("Sixth argument to observer:gotolonglat must be a vector");
         }
-        up = Vec3f((float)uparg->x, (float)uparg->y, (float)uparg->z);
+        up = toEigen(*uparg).cast<float>();
     }
     o->gotoSelectionLongLat(*sel, travelTime, distance, (float)longitude, (float)latitude, up);
     
@@ -397,7 +400,7 @@ static int observer_gotodistance(lua_State* l)
     double distance = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotodistance must be a number", 20000);
     double travelTime = celx.safeGetNumber(4, WrongType, "Third arg to observer:gotodistance must be a number", 5.0);
     
-    Vec3f up(0,1,0);
+    Vector3f up = Vector3f::UnitY();
     if (lua_gettop(l) > 4)
     {
         Vec3d* up_arg = celx.toVector(5);
@@ -405,12 +408,11 @@ static int observer_gotodistance(lua_State* l)
         {
             celx.doError("Fourth arg to observer:gotodistance must be a vector");
         }
-        up.x = (float)up_arg->x;
-        up.y = (float)up_arg->y;
-        up.z = (float)up_arg->z;
+
+        up = toEigen(*up_arg).cast<float>();
     }
     
-    o->gotoSelection(*sel, travelTime, astro::kilometersToLightYears(distance), up, ObserverFrame::Universal);
+    o->gotoSelection(*sel, travelTime, distance, up, ObserverFrame::Universal);
     
     return 0;
 }

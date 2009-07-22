@@ -439,7 +439,7 @@ SkyGrid::render(Renderer& renderer,
     Vector3d c2(-w,  h, -1.0);
     Vector3d c3( w,  h, -1.0);
 
-    Quaterniond cameraOrientation = toEigen(observer.getOrientation());
+    Quaterniond cameraOrientation = observer.getOrientation();
     Matrix3d r = (cameraOrientation * xrot90 * m_orientation.conjugate() * xrot90.conjugate()).toRotationMatrix().transpose();
 
     // Transform the frustum corners by the camera and grid
@@ -616,7 +616,7 @@ SkyGrid::render(Renderer& renderer,
                 glEnd();
 #endif
                 
-                Matrix3f m = toEigen(observer.getOrientationf()).toRotationMatrix();
+                Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
                 
@@ -692,7 +692,7 @@ SkyGrid::render(Renderer& renderer,
                 glEnd();
 #endif
 
-                Matrix3f m = toEigen(observer.getOrientationf()).toRotationMatrix();
+                Matrix3f m = observer.getOrientationf().toRotationMatrix();
                 p0 = orientationf.conjugate() * p0;
                 p1 = orientationf.conjugate() * p1;
                 
