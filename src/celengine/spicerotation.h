@@ -38,12 +38,12 @@ class SpiceRotation : public CachingRotationModel
     double getPeriod() const;
 
     // No notion of an equator for SPICE rotation models
-    Quatd computeEquatorOrientation(double /* tdb */) const
+    Eigen::Quaterniond computeEquatorOrientation(double /* tdb */) const
     {
-        return Quatd(1.0);
+        return Eigen::Quaterniond::Identity();
     }
 
-    Quatd computeSpin(double jd) const;
+    Eigen::Quaterniond computeSpin(double jd) const;
 
  private:
     const std::string m_frameName;

@@ -10,6 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <Eigen/StdVector>
 #include <cmath>
 #include <cassert>
 #include <string>
@@ -18,14 +19,18 @@
 #include <iostream>
 #include <fstream>
 #include <celmath/mathlib.h>
+#include <celmath/geomutil.h>
 #include <celengine/samporient.h>
 
+using namespace Eigen;
 using namespace std;
 
 struct OrientationSample
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    Eigen::Quaternionf q;
     double t;
-    Quatf q;
 };
 
 /*!
@@ -53,7 +58,7 @@ struct OrientationSample
 
 // 90 degree rotation about x-axis to convert orientation to Celestia's
 // coordinate system.
-static Quatf coordSysCorrection = Quatf::xrotation((float) (PI / 2.0));
+static Quaternionf coordSysCorrection = XRotation((float) (PI / 2.0));
 
 
 bool operator<(const OrientationSample& a, const OrientationSample& b)
@@ -74,12 +79,12 @@ public:
     /*! Add another quaternion key to the sampled orientation. The keys
      *  should have monotonically increasing time values.
      */
-    void addSample(double tjd, Quatf q);
+    void addSample(double tjd, const Quaternionf& q);
 
     /*! The orientation of a sampled rotation model is entirely due
      *  to spin (i.e. there's no notion of an equatorial frame.)
      */
-    virtual Quatd spin(double tjd) const;
+    virtual Eigen::Quaterniond spin(double tjd) const;
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
@@ -87,7 +92,7 @@ public:
     virtual void getValidRange(double& begin, double& end) const;
 
 private:
-    Quatf getOrientation(double tjd) const;
+    Quaternionf getOrientation(double tjd) const;
 
 private:
     vector<OrientationSample> samples;
@@ -115,7 +120,8 @@ SampledOrientation::~SampledOrientation()
 }
 
 
-void SampledOrientation::addSample(double t, Quatf q)
+void
+SampledOrientation::addSample(double t, const Eigen::Quaternionf& q)
 {
     // TODO: add a check for out of sequence samples
     OrientationSample samp;
@@ -125,11 +131,11 @@ void SampledOrientation::addSample(double t, Quatf q)
 }
 
 
-Quatd SampledOrientation::spin(double tjd) const
+Eigen::Quaterniond
+SampledOrientation::spin(double tjd) const
 {
     // TODO: cache the last value returned
-    Quatf q = getOrientation(tjd);
-    return Quatd(q.w, q.x, q.y, q.z);
+    return getOrientation(tjd).cast<double>();
 }
 
 
@@ -152,12 +158,13 @@ void SampledOrientation::getValidRange(double& begin, double& end) const
 }
 
 
-Quatf SampledOrientation::getOrientation(double tjd) const
+Quaternionf
+SampledOrientation::getOrientation(double tjd) const
 {
-    Quatf orientation;
+    Quaternionf orientation;
     if (samples.size() == 0)
     {
-        orientation = Quatf(1.0f);
+        orientation = Quaternionf::Identity();
     }
     else if (samples.size() == 1)
     {
@@ -198,7 +205,7 @@ Quatf SampledOrientation::getOrientation(double tjd) const
                 OrientationSample s1 = samples[n];
 
                 float t = (float) ((tjd - s0.t) / (s1.t - s0.t));
-                orientation = Quatf::slerp(s0.q, s1.q, t);
+                orientation = s0.q.slerp(t, s1.q);
             }
             else if (interpolation == Cubic)
             {
@@ -208,7 +215,7 @@ Quatf SampledOrientation::getOrientation(double tjd) const
             else
             {
                 // Unknown interpolation type
-                orientation = Quatf(1.0f);
+                orientation = Quaternionf::Identity();
             }
         }
         else
@@ -232,12 +239,12 @@ RotationModel* LoadSampledOrientation(const string& filename)
     while (in.good())
     {
         double tjd;
-        Quatf q;
+        Quaternionf q;
         in >> tjd;
-        in >> q.w;
-        in >> q.x;
-        in >> q.y;
-        in >> q.z;
+        in >> q.w();
+        in >> q.x();
+        in >> q.y();
+        in >> q.z();
         q.normalize();
 
         if (in.good())
