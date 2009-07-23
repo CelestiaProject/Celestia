@@ -1,18 +1,24 @@
-// mesh.cpp
+// spheremesh.cpp
 //
-// Copyright (C) 2000, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+// IMPORTANT: This file is a relic from the early days of Celestia.
+// It's sole function now is to handle the now-deprecated .cms mesh files;
+// it will eventually be removed from Celestia.
+
 #include <cmath>
-#include <celmath/mathlib.h>
-#include <celmath/vecmath.h>
 #include "gl.h"
 #include "glext.h"
 #include "spheremesh.h"
+#include <celmath/mathlib.h>
+
+using namespace Eigen;
 
 
 SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices) :
@@ -21,14 +27,14 @@ SphereMesh::SphereMesh(float radius, int _nRings, int _nSlices) :
     createSphere(radius, _nRings, _nSlices);
 }
 
-SphereMesh::SphereMesh(Vec3f size, int _nRings, int _nSlices) :
+SphereMesh::SphereMesh(const Vector3f& size, int _nRings, int _nSlices) :
     vertices(NULL), normals(NULL), texCoords(NULL), indices(NULL)
 {
     createSphere(1.0f, _nRings, _nSlices);
     scale(size);
 }
 
-SphereMesh::SphereMesh(Vec3f size,
+SphereMesh::SphereMesh(const Vector3f& size,
                        const DisplacementMap& dispmap,
                        float height) :
     vertices(NULL), normals(NULL), texCoords(NULL), indices(NULL)
@@ -40,7 +46,7 @@ SphereMesh::SphereMesh(Vec3f size,
     fixNormals();
 }
 
-SphereMesh::SphereMesh(Vec3f size,
+SphereMesh::SphereMesh(const Vector3f& size,
                        int _nRings, int _nSlices,
                        DisplacementMapFunc func,
                        void* info)
@@ -123,7 +129,7 @@ void SphereMesh::createSphere(float radius, int _nRings, int _nSlices)
 void SphereMesh::generateNormals()
 {
     int nQuads = nSlices * (nRings - 1);
-    Vec3f* faceNormals = new Vec3f[nQuads];
+    Vector3f* faceNormals = new Vector3f[nQuads];
     int i;
 
     // Compute face normals for the mesh
@@ -139,21 +145,21 @@ void SphereMesh::generateNormals()
             // Compute the face normal.  Watch out for degenerate (zero-length)
             // edges.  If there are two degenerate edges, the entire face must
             // be degenerate and we'll handle that later
-            Vec3f v0(p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]);
-            Vec3f v1(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
-            if (v0.length() < 1e-6f)
+            Vector3f v0(p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]);
+            Vector3f v1(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
+            if (v0.norm() < 1e-6f)
             {
-                v0 = Vec3f(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
-                v1 = Vec3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
+                v0 = Vector3f(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
+                v1 = Vector3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
             }
-            else if (v1.length() < 1e-6f)
+            else if (v1.norm() < 1e-6f)
             {
-                v0 = Vec3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
-                v1 = Vec3f(p0[0] - p3[0], p0[1] - p3[1], p0[2] - p3[2]);
+                v0 = Vector3f(p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]);
+                v1 = Vector3f(p0[0] - p3[0], p0[1] - p3[1], p0[2] - p3[2]);
             }
 
-            Vec3f faceNormal = cross(v0, v1);
-            float length = faceNormal.length();
+            Vector3f faceNormal = v0.cross(v1);
+            float length = faceNormal.norm();
             if (length != 0)
                 faceNormal *= (1 / length);
 
@@ -178,21 +184,21 @@ void SphereMesh::generateNormals()
             faceCounts[vertex] = 4;
 
             int face = (i - 1) * nSlices + j % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x;
-            normals[vertex * 3 + 1] += faceNormals[face].y;
-            normals[vertex * 3 + 2] += faceNormals[face].z;
+            normals[vertex * 3]     += faceNormals[face].x();
+            normals[vertex * 3 + 1] += faceNormals[face].y();
+            normals[vertex * 3 + 2] += faceNormals[face].z();
             face = (i - 1) * nSlices + (j + nSlices - 1) % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x;
-            normals[vertex * 3 + 1] += faceNormals[face].y;
-            normals[vertex * 3 + 2] += faceNormals[face].z;
+            normals[vertex * 3]     += faceNormals[face].x();
+            normals[vertex * 3 + 1] += faceNormals[face].y();
+            normals[vertex * 3 + 2] += faceNormals[face].z();
             face = i * nSlices + (j + nSlices - 1) % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x;
-            normals[vertex * 3 + 1] += faceNormals[face].y;
-            normals[vertex * 3 + 2] += faceNormals[face].z;
+            normals[vertex * 3]     += faceNormals[face].x();
+            normals[vertex * 3 + 1] += faceNormals[face].y();
+            normals[vertex * 3 + 2] += faceNormals[face].z();
             face = i * nSlices + j % nSlices;
-            normals[vertex * 3]     += faceNormals[face].x;
-            normals[vertex * 3 + 1] += faceNormals[face].y;
-            normals[vertex * 3 + 2] += faceNormals[face].z;
+            normals[vertex * 3]     += faceNormals[face].x();
+            normals[vertex * 3 + 1] += faceNormals[face].y();
+            normals[vertex * 3 + 2] += faceNormals[face].z();
         }
     }
 
@@ -205,9 +211,9 @@ void SphereMesh::generateNormals()
         for (j = 0; j < nSlices; j++)
         {
             int face = j;
-            normals[vertex * 3]     += faceNormals[face].x;
-            normals[vertex * 3 + 1] += faceNormals[face].y;
-            normals[vertex * 3 + 2] += faceNormals[face].z;
+            normals[vertex * 3]     += faceNormals[face].x();
+            normals[vertex * 3 + 1] += faceNormals[face].y();
+            normals[vertex * 3 + 2] += faceNormals[face].z();
         }
 
         vertex = (nRings - 1) * (nSlices + 1) + i;
@@ -215,9 +221,9 @@ void SphereMesh::generateNormals()
         for (j = 0; j < nSlices; j++)
         {
             int face = nQuads - j - 1;
-            normals[vertex * 3]     += faceNormals[face].x;
-            normals[vertex * 3 + 1] += faceNormals[face].y;
-            normals[vertex * 3 + 2] += faceNormals[face].z;
+            normals[vertex * 3]     += faceNormals[face].x();
+            normals[vertex * 3 + 1] += faceNormals[face].y();
+            normals[vertex * 3 + 2] += faceNormals[face].z();
         }
     }
 
@@ -252,28 +258,28 @@ void SphereMesh::fixNormals()
     {
         float* v0 = normals + (i * (nSlices + 1)) * 3;
         float* v1 = normals + ((i + 1) * (nSlices + 1) - 1) * 3;
-        Vec3f n0(v0[0], v0[1], v0[2]);
-        Vec3f n1(v0[0], v0[1], v0[2]);
-        Vec3f normal = n0 + n1;
+        Vector3f n0(v0[0], v0[1], v0[2]);
+        Vector3f n1(v0[0], v0[1], v0[2]);
+        Vector3f normal = n0 + n1;
         normal.normalize();
-        v0[0] = normal.x;
-        v0[1] = normal.y;
-        v0[2] = normal.z;
-        v1[0] = normal.x;
-        v1[1] = normal.y;
-        v1[2] = normal.z;
+        v0[0] = normal.x();
+        v0[1] = normal.y();
+        v0[2] = normal.z();
+        v1[0] = normal.x();
+        v1[1] = normal.y();
+        v1[2] = normal.z();
     }
 }
 
 
-void SphereMesh::scale(Vec3f s)
+void SphereMesh::scale(const Vector3f& s)
 {
     int i;
     for (i = 0; i < nVertices; i++)
     {
-        vertices[i * 3]     *= s.x;
-        vertices[i * 3 + 1] *= s.y;
-        vertices[i * 3 + 2] *= s.z;
+        vertices[i * 3]     *= s.x();
+        vertices[i * 3 + 1] *= s.y();
+        vertices[i * 3 + 2] *= s.z();
     }
 
     // Modify the normals
@@ -281,15 +287,15 @@ void SphereMesh::scale(Vec3f s)
     {
         // TODO: Make a fast special case for uniform scale factors, where
         // renormalization is not required.
-        Vec3f is(1.0f / s.x, 1.0f / s.y, 1.0f / s.z);
+        Vector3f is = s.cwise().inverse();
         for (i = 0; i < nVertices; i++)
         {
             int n = i * 3;
-            Vec3f normal(normals[n] * is.x, normals[n + 1] * is.y, normals[n + 2] * is.z);
+            Vector3f normal(normals[n] * is.x(), normals[n + 1] * is.y(), normals[n + 2] * is.z());
             normal.normalize();
-            normals[n]     = normal.x;
-            normals[n + 1] = normal.y;
-            normals[n + 2] = normal.z;
+            normals[n]     = normal.x();
+            normals[n + 1] = normal.y();
+            normals[n + 2] = normal.z();
         }
     }
 }
@@ -312,13 +318,13 @@ void SphereMesh::displace(const DisplacementMap& dispmap,
             float y = (float) sin(phi);
             float z = (float) (cos(phi) * sin(theta));
             */
-            Vec3f normal(normals[n], normals[n + 1], normals[n + 2]);
+            Vector3f normal(normals[n], normals[n + 1], normals[n + 2]);
 
             int k = (j == nSlices) ? 0 : j;
-            Vec3f v = normal * dispmap.getDisplacement(k, i) * height;
-            vertices[n] += v.x;
-            vertices[n + 1] += v.y;
-            vertices[n + 2] += v.z;
+            Vector3f v = normal * dispmap.getDisplacement(k, i) * height;
+            vertices[n]     += v.x();
+            vertices[n + 1] += v.y();
+            vertices[n + 2] += v.z();
         }
     }
 }
@@ -333,11 +339,11 @@ void SphereMesh::displace(DisplacementMapFunc func, void* info)
         {
             float u = (float) j / (float) nSlices;
             int n = (i * (nSlices + 1) + j) * 3;
-            Vec3f normal(normals[n], normals[n + 1], normals[n + 2]);
-            Vec3f vert = normal * func(u, v, info);
-            vertices[n] += vert.x;
-            vertices[n + 1] += vert.y;
-            vertices[n + 2] += vert.z;
+            Vector3f normal(normals[n], normals[n + 1], normals[n + 2]);
+            Vector3f vert = normal * func(u, v, info);
+            vertices[n]     += vert.x();
+            vertices[n + 1] += vert.y();
+            vertices[n + 2] += vert.z();
         }
     }
 }

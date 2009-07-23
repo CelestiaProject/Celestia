@@ -282,7 +282,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         rc.setAtmosphere(atmosphere);
     }
 
-    rc.setCameraOrientation(fromEigen(ri.orientation));
+    rc.setCameraOrientation(ri.orientation);
     rc.setPointScale(ri.pointScale);
 
     // Handle extended material attributes (per model only, not per submesh)

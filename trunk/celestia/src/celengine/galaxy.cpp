@@ -684,7 +684,7 @@ void InitializeForms()
         float r  = p.distanceFromOrigin();
         if (r < 1)
         {
-            float prob = (1 - r) * (fractalsum(Point3f(p.x + 5, p.y + 5, p.z + 5), 8) + 1) * 0.5f;
+            float prob = (1 - r) * (fractalsum(Vector3f(p.x + 5, p.y + 5, p.z + 5), 8) + 1) * 0.5f;
             if (Mathf::frand() < prob)
             {
                 b.position   = Vector4f(p.x, p.y, p.z, 1.0f);
