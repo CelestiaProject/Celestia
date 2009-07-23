@@ -413,7 +413,7 @@ Vector3d
 SpinVectorArrow::getDirection(double tdb) const
 {
     const TimelinePhase* phase = body.getTimeline()->findPhase(tdb);
-    return phase->bodyFrame()->getOrientation(tdb).conjugate() * toEigen(phase->rotationModel()->angularVelocityAtTime(tdb));
+    return phase->bodyFrame()->getOrientation(tdb).conjugate() * phase->rotationModel()->angularVelocityAtTime(tdb);
 }
 
 

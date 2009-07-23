@@ -496,8 +496,7 @@ UniversalCoord Body::getPosition(double tdb) const
 Quaterniond Body::getOrientation(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return toEigen(phase->rotationModel()->orientationAtTime(tdb)) *
-                   phase->bodyFrame()->getOrientation(tdb);
+    return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
 
@@ -533,7 +532,7 @@ Vector3d Body::getAngularVelocity(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
 
-    Vector3d v = toEigen(phase->rotationModel()->angularVelocityAtTime(tdb));
+    Vector3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
 
     ReferenceFrame* bodyFrame = phase->bodyFrame();
     v = bodyFrame->getOrientation(tdb).conjugate() * v;
@@ -585,8 +584,7 @@ Quaterniond Body::getEclipticToFrame(double tdb) const
 Quaterniond Body::getEclipticToEquatorial(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return toEigen(phase->rotationModel()->equatorOrientationAtTime(tdb)) *
-           phase->bodyFrame()->getOrientation(tdb);
+    return phase->rotationModel()->equatorOrientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
 
@@ -596,8 +594,7 @@ Quaterniond Body::getEclipticToEquatorial(double tdb) const
 Quaterniond Body::getEclipticToBodyFixed(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return toEigen(phase->rotationModel()->orientationAtTime(tdb)) *
-           phase->bodyFrame()->getOrientation(tdb);
+    return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
 }
 
 
@@ -607,7 +604,7 @@ Quaterniond Body::getEclipticToBodyFixed(double tdb) const
 Quaterniond Body::getEquatorialToBodyFixed(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return toEigen(phase->rotationModel()->spin(tdb));
+    return phase->rotationModel()->spin(tdb);
 }
 
 

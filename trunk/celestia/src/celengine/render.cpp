@@ -7219,7 +7219,6 @@ setupObjectLighting(const vector<LightSource>& suns,
     float gamma = (float) (log(minDisplayableValue) / log(minVisibleFraction));
     float minVisibleIrradiance = minVisibleFraction * totalIrradiance;
 
-    //Mat3f m = (~objOrientation).toMatrix3();
     Matrix3f m = objOrientation.toRotationMatrix();
 
     // Gamma scale and normalize the light sources; cull light sources that
@@ -7988,7 +7987,7 @@ void Renderer::renderPlanet(Body& body,
         rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
         rp.geometryScale = body.getGeometryScale();
 
-        Quaterniond q = toEigen(body.getRotationModel(now)->spin(now)) *
+        Quaterniond q = body.getRotationModel(now)->spin(now) *
                         body.getEclipticToEquatorial(now);
 
         rp.orientation = body.getGeometryOrientation() * q.cast<float>();
@@ -8226,7 +8225,7 @@ void Renderer::renderStar(const Star& star,
 #endif
         rp.atmosphere = NULL;
 
-        rp.orientation = toEigen(star.getRotationModel()->orientationAtTime(now)).cast<float>();
+        rp.orientation = star.getRotationModel()->orientationAtTime(now).cast<float>();
 
         renderObject(pos, distance, now,
                      cameraOrientation, nearPlaneDistance, farPlaneDistance,

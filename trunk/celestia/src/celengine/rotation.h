@@ -1,6 +1,7 @@
 // rotation.h
 //
-// Copyright (C) 2004-2006 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,8 +11,8 @@
 #ifndef _CELENGINE_ROTATION_H_
 #define _CELENGINE_ROTATION_H_
 
-#include <celmath/quaternion.h>
 #include <celengine/astro.h>
+#include <Eigen/Geometry>
 
 
 /*! A RotationModel object describes the orientation of an object
@@ -31,28 +32,28 @@ class RotationModel
      * in this way, the overall orientation = spin * equator. Otherwise,
      * orientation = spin.
      */
-    Quatd orientationAtTime(double tjd) const
+    Eigen::Quaterniond orientationAtTime(double tjd) const
     {
         return spin(tjd) * equatorOrientationAtTime(tjd);
     }
 
-	virtual Vec3d angularVelocityAtTime(double tjd) const;
+    virtual Eigen::Vector3d angularVelocityAtTime(double tjd) const;
 
     /*! Return the orientation of the equatorial plane (normal to the primary
      *  axis of rotation.) The overall orientation of the object is
      *  spin * equator. If there is no primary axis of rotation, equator = 1
      *  and orientation = spin.
      */
-    virtual Quatd equatorOrientationAtTime(double /*tjd*/) const
+    virtual Eigen::Quaterniond equatorOrientationAtTime(double /*tjd*/) const
     {
-        return Quatd(1.0, 0.0, 0.0, 0.0);
+        return Eigen::Quaterniond::Identity();
     }
 
     /*! Return the rotation about primary axis of rotation (if there is one.)
      *  The overall orientation is spin * equator. For objects without a
      *  primary axis of rotation, spin *is* the orientation.
      */
-    virtual Quatd spin(double tjd) const = 0;
+    virtual Eigen::Quaterniond spin(double tjd) const = 0;
 
     virtual double getPeriod() const
     {
@@ -87,23 +88,25 @@ class RotationModel
 class CachingRotationModel : public RotationModel
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     CachingRotationModel();
     virtual ~CachingRotationModel();
     
-    Quatd spin(double tjd) const;
-    Quatd equatorOrientationAtTime(double tjd) const;
-    Vec3d angularVelocityAtTime(double tjd) const;
+    Eigen::Quaterniond spin(double tjd) const;
+    Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
+    Eigen::Vector3d angularVelocityAtTime(double tjd) const;
     
-    virtual Quatd computeEquatorOrientation(double tjd) const = 0;
-    virtual Quatd computeSpin(double tjd) const = 0;
-    virtual Vec3d computeAngularVelocity(double tjd) const;
+    virtual Eigen::Quaterniond computeEquatorOrientation(double tjd) const = 0;
+    virtual Eigen::Quaterniond computeSpin(double tjd) const = 0;
+    virtual Eigen::Vector3d computeAngularVelocity(double tjd) const;
     virtual double getPeriod() const = 0;
     virtual bool isPeriodic() const = 0;
     
 private:
-    mutable Quatd lastSpin;
-    mutable Quatd lastEquator;
-    mutable Vec3d lastAngularVelocity;
+    mutable Eigen::Quaterniond lastSpin;
+    mutable Eigen::Quaterniond lastEquator;
+    mutable Eigen::Vector3d lastAngularVelocity;
     mutable double lastTime;
     mutable bool spinCacheValid;
     mutable bool equatorCacheValid;
@@ -117,14 +120,16 @@ private:
 class ConstantOrientation : public RotationModel
 {
  public:
-    ConstantOrientation(const Quatd& q);
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    ConstantOrientation(const Eigen::Quaterniond& q);
     virtual ~ConstantOrientation();
 
-    virtual Quatd spin(double tjd) const;
-	virtual Vec3d angularVelocityAtTime(double tjd) const;
+    virtual Eigen::Quaterniond spin(double tjd) const;
+    virtual Eigen::Vector3d angularVelocityAtTime(double tjd) const;
 
  private:
-    Quatd orientation;
+    Eigen::Quaterniond orientation;
 };
 
 
@@ -143,9 +148,9 @@ class UniformRotationModel : public RotationModel
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
-    virtual Quatd equatorOrientationAtTime(double tjd) const;
-    virtual Quatd spin(double tjd) const;
-	virtual Vec3d angularVelocityAtTime(double tjd) const;
+    virtual Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
+    virtual Eigen::Quaterniond spin(double tjd) const;
+    virtual Eigen::Vector3d angularVelocityAtTime(double tjd) const;
 
  private:
     double period;       // sidereal rotation period
@@ -172,8 +177,8 @@ class PrecessingRotationModel : public RotationModel
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
-    virtual Quatd equatorOrientationAtTime(double tjd) const;
-    virtual Quatd spin(double tjd) const;
+    virtual Eigen::Quaterniond equatorOrientationAtTime(double tjd) const;
+    virtual Eigen::Quaterniond spin(double tjd) const;
 
  private:
     double period;       // sidereal rotation period (in Julian days)

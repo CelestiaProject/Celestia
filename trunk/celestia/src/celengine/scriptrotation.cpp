@@ -14,7 +14,7 @@
 #include "scriptobject.h"
 #include "scriptrotation.h"
 
-
+using namespace Eigen;
 using namespace std;
 
 
@@ -24,7 +24,7 @@ ScriptedRotation::ScriptedRotation() :
     validRangeBegin(0.0),
     validRangeEnd(0.0),
     lastTime(-1.0e50),
-    lastOrientation(1.0),
+    lastOrientation(Quaterniond::Identity()),
     cacheable(true) // non-cacheable rotations not yet supported
 {
 }
@@ -155,7 +155,7 @@ ScriptedRotation::initialize(const std::string& moduleName,
 
 
 // Call the position method of the ScriptedRotation object
-Quatd
+Quaterniond
 ScriptedRotation::spin(double tjd) const
 {
     if (tjd != lastTime || !cacheable)
@@ -172,10 +172,16 @@ ScriptedRotation::spin(double tjd) const
                 lua_pushnumber(luaState, tjd);
                 if (lua_pcall(luaState, 2, 4, 0) == 0)
                 {
+                    lastOrientation = Quaterniond(lua_tonumber(luaState, -4),
+                                                  lua_tonumber(luaState, -3),
+                                                  lua_tonumber(luaState, -2),
+                                                  lua_tonumber(luaState, -1));
+#if CELVEC
                     lastOrientation.w = lua_tonumber(luaState, -4);
                     lastOrientation.x = lua_tonumber(luaState, -3);
                     lastOrientation.y = lua_tonumber(luaState, -2);
                     lastOrientation.z = lua_tonumber(luaState, -1);
+#endif
                     lua_pop(luaState, 4);
                     lastTime = tjd;
                 }

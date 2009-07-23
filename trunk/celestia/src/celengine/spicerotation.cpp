@@ -17,12 +17,15 @@
 #include "astro.h"
 #include "spicerotation.h"
 #include "spiceinterface.h"
+#include <celmath/geomutil.h>
 
+using namespace Eigen;
 using namespace std;
 
 
 static const double MILLISEC = astro::secsToDays(0.001);
-static const Quatd Rx90 = Quatd::xrotation(PI / 2.0);
+static const Quaterniond Rx90 = XRotation(PI / 2.0);
+static const Quaterniond Ry180 = YRotation(PI);
 
 /*! Create a new rotation model based on a SPICE frame. The 
  *  orientation of the rotation model is the orientation of the
@@ -138,7 +141,7 @@ SpiceRotation::init(const string& path,
 }
 
 
-Quatd
+Quaterniond
 SpiceRotation::computeSpin(double jd) const
 {
     if (jd < m_validIntervalBegin)
@@ -148,7 +151,7 @@ SpiceRotation::computeSpin(double jd) const
 
     if (m_spiceErr)
     {
-        return Quatd(1.0);
+        return Quaterniond::Identity();
     }
     else
     {
@@ -169,6 +172,14 @@ SpiceRotation::computeSpin(double jd) const
             reset_c();
         }
 
+        double matrixData[9] =
+        {
+            xform[0][0], xform[0][1], xform[0][2],
+            xform[1][0], xform[1][1], xform[1][2],
+            xform[2][0], xform[2][1], xform[2][2]
+        };
+        Quaterniond q = Quaterniond(Map<Matrix3d>(matrixData));
+#if CELVEC
 #if 1
         Mat3d m(Vec3d(xform[0][0], xform[0][1], xform[0][2]),
                 Vec3d(xform[1][0], xform[1][1], xform[1][2]),
@@ -179,8 +190,9 @@ SpiceRotation::computeSpin(double jd) const
                 Vec3d(xform[0][2], xform[1][2], xform[2][2]));
 #endif
         Quatd q = Quatd::matrixToQuaternion(m);
+#endif
 
         // Transform into Celestia's coordinate system
-        return Quatd::yrotation(PI) * Quatd::xrotation(-PI / 2.0) * ~q * Quatd::xrotation(PI / 2.0);
+        return Ry180 * Rx90.conjugate() * q.conjugate() * Rx90;
     }
 }

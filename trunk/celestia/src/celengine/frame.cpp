@@ -303,7 +303,7 @@ BodyFixedFrame::getOrientation(double tjd) const
     case Selection::Type_Body:
         return yrot180 * fixObject.body()->getEclipticToBodyFixed(tjd);
     case Selection::Type_Star:
-        return yrot180 * toEigen(fixObject.star()->getRotationModel()->orientationAtTime(tjd));
+        return yrot180 * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
     default:
         return yrot180;
     }
@@ -318,7 +318,7 @@ BodyFixedFrame::getAngularVelocity(double tjd) const
 	case Selection::Type_Body:
         return fixObject.body()->getAngularVelocity(tjd);
 	case Selection::Type_Star:
-        return toEigen(fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd));
+        return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
 	default:
         return Vector3d::Zero();
 	}
@@ -383,7 +383,7 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
     case Selection::Type_Body:
         return equatorObject.body()->getEclipticToEquatorial(t);
     case Selection::Type_Star:
-        return toEigen(equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t));
+        return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
         return Quaterniond::Identity();
     }

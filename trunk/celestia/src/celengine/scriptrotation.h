@@ -20,6 +20,7 @@ struct lua_State;
 class ScriptedRotation : public RotationModel
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     ScriptedRotation();
     ~ScriptedRotation();
 
@@ -27,7 +28,7 @@ class ScriptedRotation : public RotationModel
                     const std::string& funcName,
                     Hash* parameters);
 
-    virtual Quatd spin(double tjd) const;
+    virtual Eigen::Quaterniond spin(double tjd) const;
 
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;
@@ -42,7 +43,7 @@ class ScriptedRotation : public RotationModel
 
     // Cached values
     mutable double lastTime;
-    mutable Quatd lastOrientation;
+    mutable Eigen::Quaterniond lastOrientation;
 
     bool cacheable;
 };

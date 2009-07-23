@@ -3,7 +3,8 @@
 // Implementation of basic RotationModel class hierarchy for describing
 // the orientation of objects over time.
 //
-// Copyright (C) 2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -11,7 +12,10 @@
 // of the License, or (at your option) any later version.
 
 #include "rotation.h"
+#include <celmath/geomutil.h>
+#include <cmath>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -32,20 +36,23 @@ static double chooseDiffTimeDelta(const RotationModel& rm)
 /*! Return the angular velocity at the specified time (TDB). The default
  *  implementation computes the angular velocity via differentiation.
  */
-Vec3d
+Vector3d
 RotationModel::angularVelocityAtTime(double tdb) const
 {
     double dt = chooseDiffTimeDelta(*this);
-	Quatd q0 = orientationAtTime(tdb);
-	Quatd q1 = orientationAtTime(tdb + dt);
-	Quatd dq = ~q1 * q0;
+    Quaterniond q0 = orientationAtTime(tdb);
+    Quaterniond q1 = orientationAtTime(tdb + dt);
+    Quaterniond dq = q1.conjugate() * q0;
 
-	if (fabs(dq.w) > 0.99999999)
-		return Vec3d(0.0, 0.0, 0.0);
+    if (std::abs(dq.w()) > 0.99999999)
+        return Vector3d::Zero();
 
-	Vec3d v(dq.x, dq.y, dq.z);
+    return dq.vec().normalized() * (2.0 * acos(dq.w()) / dt);
+#if CELVEC
+    Vector3d v(dq.x, dq.y, dq.z);
 	v.normalize();
 	return v * (2.0 * acos(dq.w) / dt);
+#endif
 }
 
 
@@ -65,7 +72,7 @@ CachingRotationModel::~CachingRotationModel()
 }
 
 
-Quatd
+Quaterniond
 CachingRotationModel::spin(double tjd) const
 {
     if (tjd != lastTime)
@@ -86,7 +93,7 @@ CachingRotationModel::spin(double tjd) const
 }
 
 
-Quatd
+Quaterniond
 CachingRotationModel::equatorOrientationAtTime(double tjd) const
 {
     if (tjd != lastTime)
@@ -107,7 +114,7 @@ CachingRotationModel::equatorOrientationAtTime(double tjd) const
 }
 
 
-Vec3d
+Vector3d
 CachingRotationModel::angularVelocityAtTime(double tjd) const
 {
     if (tjd != lastTime)
@@ -128,31 +135,34 @@ CachingRotationModel::angularVelocityAtTime(double tjd) const
 }
 
 
-Vec3d
+Vector3d
 CachingRotationModel::computeAngularVelocity(double tjd) const
 {
     double dt = chooseDiffTimeDelta(*this);
-    Quatd q0 = orientationAtTime(tjd);
+    Quaterniond q0 = orientationAtTime(tjd);
     
     // Call computeSpin/computeEquatorOrientation instead of orientationAtTime
     // in order to avoid affecting the cache.
-    Quatd spin = computeSpin(tjd + dt);
-    Quatd equator = computeEquatorOrientation(tjd + dt);
-	Quatd q1 = spin * equator;
-    Quatd dq = ~q1 * q0;
+    Quaterniond spin = computeSpin(tjd + dt);
+    Quaterniond equator = computeEquatorOrientation(tjd + dt);
+    Quaterniond q1 = spin * equator;
+    Quaterniond dq = q1.conjugate() * q0;
     
-	if (fabs(dq.w) > 0.99999999)
-		return Vec3d(0.0, 0.0, 0.0);
+    if (std::abs(dq.w()) > 0.99999999)
+        return Vector3d::Zero();
     
+    return dq.vec().normalized() * (2.0 * acos(dq.w()) / dt);
+#if CELVEC
 	Vec3d v(dq.x, dq.y, dq.z);
 	v.normalize();
-	return v * (2.0 * acos(dq.w) / dt);    
+    return v * (2.0 * acos(dq.w) / dt);
+#endif
 }
 
 
 /***** ConstantOrientation implementation *****/
 
-ConstantOrientation::ConstantOrientation(const Quatd& q) :
+ConstantOrientation::ConstantOrientation(const Quaterniond& q) :
     orientation(q)
 {
 }
@@ -163,17 +173,17 @@ ConstantOrientation::~ConstantOrientation()
 }
 
 
-Quatd
+Quaterniond
 ConstantOrientation::spin(double) const
 {
     return orientation;
 }
 
 
-Vec3d
+Vector3d
 ConstantOrientation::angularVelocityAtTime(double /* tdb */) const
 {
-	return Vec3d(0.0, 0.0, 0.0);
+    return Vector3d::Zero();
 }
 
 
@@ -212,7 +222,7 @@ UniformRotationModel::getPeriod() const
 }
 
 
-Quatd
+Quaterniond
 UniformRotationModel::spin(double tjd) const
 {
     double rotations = (tjd - epoch) / period;
@@ -225,22 +235,21 @@ UniformRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
     
-    return Quatd::yrotation(-remainder * 2 * PI - offset);
+    return YRotation(-remainder * 2 * PI - offset);
 }
 
 
-Quatd
+Quaterniond
 UniformRotationModel::equatorOrientationAtTime(double) const
 {
-    return Quatd::xrotation(-inclination) * Quatd::yrotation(-ascendingNode);
+    return XRotation((double) -inclination) * YRotation((double) -ascendingNode);
 }
 
 
-Vec3d
+Vector3d
 UniformRotationModel::angularVelocityAtTime(double tdb) const
 {
-	Vec3d v(0.0, 1.0, 0.0);
-	v = v * equatorOrientationAtTime(tdb).toMatrix3();
+    Vector3d v = equatorOrientationAtTime(tdb).conjugate() * Vector3d::UnitY();;
 	return v * (2.0 * PI / period);
 }
 
@@ -282,7 +291,7 @@ PrecessingRotationModel::getPeriod() const
 }
 
 
-Quatd
+Quaterniond
 PrecessingRotationModel::spin(double tjd) const
 {
     double rotations = (tjd - epoch) / period;
@@ -295,22 +304,26 @@ PrecessingRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
     
-    return Quatd::yrotation(-remainder * 2 * PI - offset);
+    return YRotation(-remainder * 2 * PI - offset);
 }
 
 
-Quatd
+Quaterniond
 PrecessingRotationModel::equatorOrientationAtTime(double tjd) const
 {
     double nodeOfDate;
 
     // A precession rate of zero indicates no precession
     if (precessionPeriod == 0.0)
+    {
         nodeOfDate = ascendingNode;
+    }
     else
+    {
         nodeOfDate = (double) ascendingNode -
             (2.0 * PI / precessionPeriod) * (tjd - epoch);
+    }
 
-    return Quatd::xrotation(-inclination) * Quatd::yrotation(-nodeOfDate);
+    return XRotation((double) -inclination) * YRotation(-nodeOfDate);
 }
 

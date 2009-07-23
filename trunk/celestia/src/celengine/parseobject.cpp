@@ -24,6 +24,7 @@
 #include "rotationmanager.h"
 #include "universe.h"
 #include "eigenport.h"
+#include <celmath/geomutil.h>
 
 using namespace Eigen;
 using namespace std;
@@ -796,9 +797,9 @@ CreateFixedRotationModel(double offset,
                          double inclination,
                          double ascendingNode)
 {
-    Quatd q = Quatd::yrotation(-PI - offset) *
-              Quatd::xrotation(-inclination) *
-              Quatd::yrotation(-ascendingNode);
+    Quaterniond q = YRotation(-PI - offset) *
+                    XRotation(-inclination) *
+                    YRotation(-ascendingNode);
 
     return new ConstantOrientation(q);
 }
@@ -876,9 +877,9 @@ CreateFixedRotationModel(Hash* rotationData)
         ascendingNode = degToRad(ascendingNode);
     }
 
-    Quatd q = Quatd::yrotation(-PI - offset) *
-              Quatd::xrotation(-inclination) *
-              Quatd::yrotation(-ascendingNode);
+    Quaterniond q = YRotation(-PI - offset) *
+                    XRotation(-inclination) *
+                    YRotation(-ascendingNode);
 
     return new ConstantOrientation(q);
 }
@@ -905,10 +906,10 @@ CreateFixedAttitudeRotationModel(Hash* rotationData)
         roll = degToRad(roll);
     }
     
-    Quatd q = Quatd::yrotation(-PI - heading) *
-              Quatd::xrotation(-tilt) *
-              Quatd::zrotation(-roll);
-    
+    Quaterniond q = YRotation(-PI - heading) *
+                    XRotation(-tilt) *
+                    ZRotation(-roll);
+
     return new ConstantOrientation(q);
 }
 
@@ -1249,7 +1250,7 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
     {
         // If syncRotationPeriod is 0, the orbit of the object is
         // aperiodic and we'll just return a FixedRotation.
-        return new ConstantOrientation(Quatd(1.0));
+        return new ConstantOrientation(Quaterniond::Identity());
     }
     else
     {
