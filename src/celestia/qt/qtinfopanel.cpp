@@ -238,21 +238,21 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 }
 
 
-Vec3d celToJ2000Ecliptic(const Point3d& p)
+Vector3d celToJ2000Ecliptic(const Vector3d& p)
 {
-    return Vec3d(p.x, -p.z, p.y);
+    return Vector3d(p.x(), -p.z(), p.y());
 }
 
 
-Vec3d rectToSpherical(const Vec3d& v)
+Vector3d rectToSpherical(const Vector3d& v)
 {
-    double r = v.length();
-    double theta = atan2(v.y, v.x);
+    double r = v.norm();
+    double theta = atan2(v.y(), v.x());
     if (theta < 0)
         theta = theta + 2 * PI;
-    double phi = asin(v.z / r);
+    double phi = asin(v.z() / r);
 
-    return Vec3d(theta, phi, r);
+    return Vector3d(theta, phi, r);
 }
 
 
@@ -261,17 +261,22 @@ void InfoPanel::buildStarPage(const Star* star, const Universe* universe, double
     string name = universe->getStarCatalog()->getStarNameList(*star);
     stream << "<b>" << QString::fromUtf8(name.c_str(), name.length()) << "</b><br>\n";
     
-    Vec3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(star->getPosition(tdb)));
-    Vec3d sph = rectToSpherical(eqPos);
+    // Compute the star's position relative to the Solar System Barycenter. Note that
+    // this will ignore the effect of parallax in the star's position.
+    // TODO: Use either the observer's position or the Earth's position as the
+    // origin instead.
+    Vector3d celPos = star->getPosition(tdb).offsetFromKm(UniversalCoord::Zero());
+    Vector3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(celPos));
+    Vector3d sph = rectToSpherical(eqPos);
 
     int hours = 0;
     int minutes = 0;
     double seconds = 0;
-    astro::decimalToHourMinSec(radToDeg(sph.x), hours, minutes, seconds);
+    astro::decimalToHourMinSec(radToDeg(sph.x()), hours, minutes, seconds);
     stream << "RA: " << hours << "h " << abs(minutes) << "m " << abs(seconds) << "s<br>\n";
 
     int degrees = 0;
-    astro::decimalToDegMinSec(radToDeg(sph.y), degrees, minutes, seconds);
+    astro::decimalToDegMinSec(radToDeg(sph.y()), degrees, minutes, seconds);
     stream << "Dec: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
         abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
 
@@ -285,27 +290,27 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
     string name = universe->getDSOCatalog()->getDSOName(dso);
     stream << "<h1>" << name.c_str() << "</h1><br>\n";
     
-    Vec3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(ptFromEigen(dso->getPosition())));
-    Vec3d sph = rectToSpherical(eqPos);
+    Vector3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(dso->getPosition()));
+    Vector3d sph = rectToSpherical(eqPos);
 
     int hours = 0;
     int minutes = 0;
     double seconds = 0;
-    astro::decimalToHourMinSec(radToDeg(sph.x), hours, minutes, seconds);
+    astro::decimalToHourMinSec(radToDeg(sph.x()), hours, minutes, seconds);
     stream << "RA: " << hours << "h " << abs(minutes) << "m " << abs(seconds) << "s<br>\n";
 
     int degrees = 0;
-    astro::decimalToDegMinSec(radToDeg(sph.y), degrees, minutes, seconds);
+    astro::decimalToDegMinSec(radToDeg(sph.y()), degrees, minutes, seconds);
     stream << "Dec: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
         abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
 
-    Vec3d galPos = astro::equatorialToGalactic(eqPos);
+    Vector3d galPos = astro::equatorialToGalactic(eqPos);
     sph = rectToSpherical(galPos);
     
-    astro::decimalToDegMinSec(radToDeg(sph.x), degrees, minutes, seconds);
+    astro::decimalToDegMinSec(radToDeg(sph.x()), degrees, minutes, seconds);
     stream << "L: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
         abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
-    astro::decimalToDegMinSec(radToDeg(sph.y), degrees, minutes, seconds);
+    astro::decimalToDegMinSec(radToDeg(sph.y()), degrees, minutes, seconds);
     stream << "B: " << degrees << QString::fromUtf8(UTF8_DEGREE_SIGN) << " " <<
         abs(minutes) << "' " << abs(seconds) << "\"<br>\n";
 }
