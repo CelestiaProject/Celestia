@@ -1,19 +1,20 @@
 // atmosphere.h
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _ATMOSPHERE_H_
-#define _ATMOSPHERE_H_
+#ifndef _CELENGINE_ATMOSPHERE_H_
+#define _CELENGINE_ATMOSPHERE_H_
 
 #include <celutil/reshandle.h>
 #include <celutil/color.h>
-#include <celmath/vecmath.h>
 #include <celengine/multitexture.h>
+#include <Eigen/Core>
 
 
 class Atmosphere
@@ -32,9 +33,9 @@ class Atmosphere
         mieCoeff(0.0f),
         mieScaleHeight(0.0f),
         miePhaseAsymmetry(0.0f),
-        rayleighCoeff(0.0f, 0.0f, 0.0f),
+        rayleighCoeff(Eigen::Vector3f::Zero()),
         rayleighScaleHeight(0.0f),
-        absorptionCoeff(0.0f, 0.0f, 0.0f),
+        absorptionCoeff(Eigen::Vector3f::Zero()),
         cloudShadowDepth(0.0f)
     {};
 
@@ -53,9 +54,9 @@ class Atmosphere
     float mieCoeff;
     float mieScaleHeight;
     float miePhaseAsymmetry;
-    Vec3f rayleighCoeff;
+    Eigen::Vector3f rayleighCoeff;
     float rayleighScaleHeight;
-    Vec3f absorptionCoeff;
+    Eigen::Vector3f absorptionCoeff;
 
     float cloudShadowDepth;
 };
@@ -68,5 +69,5 @@ class Atmosphere
 // -H * ln(extinctionThreshold)
 extern const double AtmosphereExtinctionThreshold;
 
-#endif // _ATMOSPHERE_H_
+#endif // _CELENGINE_ATMOSPHERE_H_
 
