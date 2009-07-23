@@ -361,7 +361,7 @@ Vector3d
 VelocityVectorArrow::getDirection(double tdb) const
 {
     const TimelinePhase* phase = body.getTimeline()->findPhase(tdb);
-    return phase->orbitFrame()->getOrientation(tdb).conjugate() * toEigen(phase->orbit()->velocityAtTime(tdb));
+    return phase->orbitFrame()->getOrientation(tdb).conjugate() * phase->orbit()->velocityAtTime(tdb);
 }
 
 

@@ -16,6 +16,7 @@
 #include <QTextBrowser>
 #include "qtinfopanel.h"
 
+using namespace Eigen;
 
 // TODO: This should be moved to astro.cpp
 struct OrbitalElements
@@ -312,26 +313,26 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
 
 
 
-static void StateVectorToElements(const Point3d& position,
-                                  const Vec3d& v,
+static void StateVectorToElements(const Vector3d& position,
+                                  const Vector3d& v,
                                   double GM,
                                   OrbitalElements* elements)
 {
-    Vec3d R = position - Point3d(0.0, 0.0, 0.0);
-    Vec3d L = R ^ v;
-    double magR = R.length();
-    double magL = L.length();
-    double magV = v.length();
+    Vector3d R = position;
+    Vector3d L = R.cross(v);
+    double magR = R.norm();
+    double magL = L.norm();
+    double magV = v.norm();
     L *= (1.0 / magL);
 
-    Vec3d W = L ^ (R / magR);
+    Vector3d W = L.cross(R / magR);
 
     // Compute the semimajor axis
     double a = 1.0 / (2.0 / magR - square(magV) / GM);
 
     // Compute the eccentricity
     double p = square(magL) / GM;
-    double q = R * v;
+    double q = R.dot(v);
     double ex = 1.0 - magR / a;
     double ey = q / sqrt(a * GM);
     double e = sqrt(ex * ex + ey * ey);
@@ -341,23 +342,23 @@ static void StateVectorToElements(const Point3d& position,
     double M = E - e * sin(E);
 
     // Compute the inclination
-    double cosi = L * Vec3d(0, 1.0, 0);
+    double cosi = L.dot(Vector3d::UnitY());
     double i = 0.0;
     if (cosi < 1.0)
         i = acos(cosi);
 
     // Compute the longitude of ascending node
-    double Om = atan2(L.x, L.z);
+    double Om = atan2(L.x(), L.z());
 
     // Compute the argument of pericenter
-    Vec3d U = R / magR;
-    double s_nu = (v * U) * sqrt(p / GM);
-    double c_nu = (v * W) * sqrt(p / GM) - 1;
+    Vector3d U = R / magR;
+    double s_nu = v.dot(U) * sqrt(p / GM);
+    double c_nu = v.dot(W) * sqrt(p / GM) - 1;
     s_nu /= e;
     c_nu /= e;
-    Vec3d P = U * c_nu - W * s_nu;
-    Vec3d Q = U * s_nu + W * c_nu;
-    double om = atan2(P.y, Q.y);
+    Vector3d P = U * c_nu - W * s_nu;
+    Vector3d Q = U * s_nu + W * c_nu;
+    double om = atan2(P.y(), Q.y());
 
     // Compute the period
     double T = 2 * PI * sqrt(cube(a) / GM);
@@ -394,17 +395,17 @@ static void CalculateOsculatingElements(const Orbit& orbit,
         }
     }
 
-    Point3d p0 = orbit.positionAtTime(t);
-    Point3d p1 = orbit.positionAtTime(t + sdt);
-    Vec3d v0 = orbit.velocityAtTime(t);
-    Vec3d v1 = orbit.velocityAtTime(t + sdt);
+    Vector3d p0 = orbit.positionAtTime(t);
+    Vector3d p1 = orbit.positionAtTime(t + sdt);
+    Vector3d v0 = orbit.velocityAtTime(t);
+    Vector3d v1 = orbit.velocityAtTime(t + sdt);
 
-    double accel = ((v1 - v0) / sdt).length();
-    Vec3d r = p0 - Point3d(0.0, 0.0, 0.0);
-    double GM = accel * (r * r);
+    double accel = ((v1 - v0) / sdt).norm();
+    Vector3d r = p0;
+    double GM = accel * r.squaredNorm();
 
-    clog << "vel: " << v0.length() / 86400.0 << endl;
-    clog << "vel (est): " << (p1 - p0).length() / sdt / 86400 << endl;
+    clog << "vel: " << v0.norm() / 86400.0 << endl;
+    clog << "vel (est): " << (p1 - p0).norm() / sdt / 86400 << endl;
     clog << "osc: " << t << ", " << dt << ", " << accel << ", GM=" << GM << endl;
 
     StateVectorToElements(p0, v0, GM, elements);

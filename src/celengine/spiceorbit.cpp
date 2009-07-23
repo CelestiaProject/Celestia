@@ -16,6 +16,7 @@
 #include "spiceorbit.h"
 #include "spiceinterface.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -239,7 +240,7 @@ SpiceOrbit::init(const string& path,
 }
 
 
-Point3d
+Vector3d
 SpiceOrbit::computePosition(double jd) const
 {
     if (jd < validIntervalBegin)
@@ -249,7 +250,7 @@ SpiceOrbit::computePosition(double jd) const
 
     if (spiceErr)
     {
-        return Point3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }
     else
     {
@@ -279,12 +280,12 @@ SpiceOrbit::computePosition(double jd) const
         }
 
         // Transform into Celestia's coordinate system
-        return Point3d(position[0], position[2], -position[1]);
+        return Vector3d(position[0], position[2], -position[1]);
     }
 }
 
 
-Vec3d
+Vector3d
 SpiceOrbit::computeVelocity(double jd) const
 {
     if (jd < validIntervalBegin)
@@ -294,7 +295,7 @@ SpiceOrbit::computeVelocity(double jd) const
 
     if (spiceErr)
     {
-        return Vec3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }
     else
     {
@@ -325,7 +326,7 @@ SpiceOrbit::computeVelocity(double jd) const
 
         // Transform into Celestia's coordinate system, and from km/s to km/day
         double d2s = astro::daysToSecs(1.0);
-        return Vec3d(state[3] * d2s, state[5] * d2s, -state[4] * d2s);
+        return Vector3d(state[3] * d2s, state[5] * d2s, -state[4] * d2s);
     }
 }
 

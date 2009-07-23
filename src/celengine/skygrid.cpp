@@ -15,7 +15,8 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include "celutil/util.h"
+#include <celutil/util.h>
+#include <celmath/geomutil.h>
 #include "render.h"
 #include "vecgl.h"
 #include "skygrid.h"
@@ -408,7 +409,7 @@ SkyGrid::render(Renderer& renderer,
 {
     // 90 degree rotation about the x-axis used to transform coordinates
     // to Celestia's system.
-    Quaterniond xrot90 = Quaterniond(AngleAxis<double>(-PI / 2.0, Vector3d::UnitX()));//Quatd::xrotation(-PI / 2.0);
+    Quaterniond xrot90 = XRotation(-PI / 2.0);//Quaterniond(AngleAxis<double>(-PI / 2.0, Vector3d::UnitX()));//Quatd::xrotation(-PI / 2.0);
 
     double vfov = observer.getFOV();
     double viewAspectRatio = (double) windowWidth / (double) windowHeight;

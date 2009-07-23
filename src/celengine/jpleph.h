@@ -15,8 +15,7 @@
 
 #include <iostream>
 #include <vector>
-#include <celmath/vecmath.h>
-
+#include <Eigen/Core>
 
 enum JPLEphemItem
 {
@@ -65,7 +64,7 @@ private:
 public:
     ~JPLEphemeris();
 
-    Point3d getPlanetPosition(JPLEphemItem, double t) const;
+    Eigen::Vector3d getPlanetPosition(JPLEphemItem, double t) const;
 
     static JPLEphemeris* load(std::istream&);
 

@@ -1030,19 +1030,26 @@ Star::getPosition(double t) const
 
         if (barycenter == NULL)
         {
-            Point3d barycenterPos(position.x() * 1.0e6,
+            UniversalCoord barycenterPos = UniversalCoord::CreateLy(position);
+            return UniversalCoord(barycenterPos).offsetKm(orbit->positionAtTime(t));
+#if CELVEC
+            Vector3d barycenterPos(position.x() * 1.0e6,
                                   position.y() * 1.0e6,
                                   position.z() * 1.0e6);
 
             return UniversalCoord(barycenterPos) +
                 ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
                  astro::kilometersToMicroLightYears(1.0));
+#endif
         }
         else
         {
+            return barycenter->getPosition(t).offsetKm(orbit->positionAtTime(t));
+#if 0
             return barycenter->getPosition(t) +
                 ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
                  astro::kilometersToMicroLightYears(1.0));
+#endif
         }
     }
 }
@@ -1088,12 +1095,12 @@ Star::getVelocity(double t) const
         {
 			// Star orbit is defined around a fixed point, so the total velocity
 			// is just the star's orbit velocity.
-            return toEigen(orbit->velocityAtTime(t));
+            return orbit->velocityAtTime(t);
         }
         else
         {
 			// Sum the star's orbital velocity and the velocity of the barycenter.
-            return barycenter->getVelocity(t) + toEigen(orbit->velocityAtTime(t));
+            return barycenter->getVelocity(t) + orbit->velocityAtTime(t);
         }
     }
 }

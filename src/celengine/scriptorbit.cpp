@@ -14,6 +14,7 @@
 #include "scriptobject.h"
 #include "scriptorbit.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -201,10 +202,10 @@ ScriptedOrbit::initialize(const std::string& moduleName,
 
 
 // Call the position method of the ScriptedOrbit object
-Point3d
+Vector3d
 ScriptedOrbit::computePosition(double tjd) const
 {
-    Point3d pos(0.0, 0.0, 0.0);
+    Vector3d pos(Vector3d::Zero());
 
     lua_pushstring(luaState, luaOrbitObjectName.c_str());
     lua_gettable(luaState, LUA_GLOBALSINDEX);
@@ -218,9 +219,12 @@ ScriptedOrbit::computePosition(double tjd) const
             lua_pushnumber(luaState, tjd);
             if (lua_pcall(luaState, 2, 3, 0) == 0)
             {
+                pos = Vector3d(lua_tonumber(luaState, -3), lua_tonumber(luaState, -2), lua_tonumber(luaState, -1));
+#if CELVEC
                 pos.x = lua_tonumber(luaState, -3);
                 pos.y = lua_tonumber(luaState, -2);
                 pos.z = lua_tonumber(luaState, -1);
+#endif
                 lua_pop(luaState, 3);
             }
             else
@@ -245,7 +249,7 @@ ScriptedOrbit::computePosition(double tjd) const
     lua_pop(luaState, 1);
 
     // Convert to Celestia's internal coordinate system
-    return Point3d(pos.x, pos.z, -pos.y);
+    return Vector3d(pos.x(), pos.z(), -pos.y());
 }
 
 
