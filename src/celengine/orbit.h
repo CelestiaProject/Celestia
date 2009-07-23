@@ -10,7 +10,8 @@
 #ifndef _CELENGINE_ORBIT_H_
 #define _CELENGINE_ORBIT_H_
 
-#include <celmath/vecmath.h>
+#include <Eigen/Core>
+
 
 class OrbitSampleProc;
 
@@ -22,14 +23,14 @@ class Orbit
     /*! Return the position in the orbit's reference frame at the specified
      * time (TDB). Units are kilometers.
      */
-    virtual Point3d positionAtTime(double jd) const = 0;
+    virtual Eigen::Vector3d positionAtTime(double jd) const = 0;
 
     /*! Return the orbital velocity in the orbit's reference frame at the
      * specified time (TDB). Units are kilometers per day. If the method
 	 * is not overridden, the velocity will be computed by differentiation
 	 * of position.
      */
-    virtual Vec3d velocityAtTime(double) const;
+    virtual Eigen::Vector3d velocityAtTime(double) const;
 
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
@@ -52,16 +53,16 @@ class EllipticalOrbit : public Orbit
     virtual ~EllipticalOrbit() {};
 
     // Compute the orbit for a specified Julian date
-    virtual Point3d positionAtTime(double) const;
-    virtual Vec3d velocityAtTime(double) const;
+    virtual Eigen::Vector3d positionAtTime(double) const;
+    virtual Eigen::Vector3d velocityAtTime(double) const;
     double getPeriod() const;
     double getBoundingRadius() const;
     virtual void sample(double, double, int, OrbitSampleProc&) const;
 
  private:
     double eccentricAnomaly(double) const;
-    Point3d positionAtE(double) const;
-    Vec3d velocityAtE(double) const;
+    Eigen::Vector3d positionAtE(double) const;
+    Eigen::Vector3d velocityAtE(double) const;
 
     double pericenterDistance;
     double eccentricity;
@@ -72,7 +73,7 @@ class EllipticalOrbit : public Orbit
     double period;
     double epoch;
 
-    Mat3d orbitPlaneRotation;
+    Eigen::Matrix3d orbitPlaneRotation;
 };
 
 
@@ -81,7 +82,7 @@ class OrbitSampleProc
  public:
     virtual ~OrbitSampleProc() {};
 
-    virtual void sample(double t, const Point3d&) = 0;
+    virtual void sample(double t, const Eigen::Vector3d& p) = 0;
 };
 
 
@@ -99,19 +100,19 @@ class CachingOrbit : public Orbit
     CachingOrbit();
     virtual ~CachingOrbit();
 
-    virtual Point3d computePosition(double jd) const = 0;
-    virtual Vec3d computeVelocity(double jd) const;
+    virtual Eigen::Vector3d computePosition(double jd) const = 0;
+    virtual Eigen::Vector3d computeVelocity(double jd) const;
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
 
-    Point3d positionAtTime(double jd) const;
-	Vec3d velocityAtTime(double jd) const;
+    Eigen::Vector3d positionAtTime(double jd) const;
+    Eigen::Vector3d velocityAtTime(double jd) const;
 
     virtual void sample(double, double, int, OrbitSampleProc& proc) const;
 
  private:
-    mutable Point3d lastPosition;
-	mutable Vec3d lastVelocity;
+    mutable Eigen::Vector3d lastPosition;
+    mutable Eigen::Vector3d lastVelocity;
     mutable double lastTime;
 	mutable bool positionCacheValid;
 	mutable bool velocityCacheValid;
@@ -130,8 +131,8 @@ class MixedOrbit : public Orbit
     MixedOrbit(Orbit* orbit, double t0, double t1, double mass);
     virtual ~MixedOrbit();
 
-    virtual Point3d positionAtTime(double jd) const;
-    virtual Vec3d velocityAtTime(double jd) const;
+    virtual Eigen::Vector3d positionAtTime(double jd) const;
+    virtual Eigen::Vector3d velocityAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
     virtual void sample(double t0, double t1,
@@ -158,17 +159,17 @@ class Body;
 class SynchronousOrbit : public Orbit
 {
  public:
-    SynchronousOrbit(const Body& _body, const Point3d& _position);
+    SynchronousOrbit(const Body& _body, const Eigen::Vector3d& _position);
     virtual ~SynchronousOrbit();
 
-    virtual Point3d positionAtTime(double jd) const;
+    virtual Eigen::Vector3d positionAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
     virtual void sample(double, double, int, OrbitSampleProc& proc) const;
 
  private:
     const Body& body;
-    Point3d position;
+    Eigen::Vector3d position;
 };
 
 
@@ -178,10 +179,10 @@ class SynchronousOrbit : public Orbit
 class FixedOrbit : public Orbit
 {
  public:
-    FixedOrbit(const Point3d& pos);
+    FixedOrbit(const Eigen::Vector3d& pos);
     virtual ~FixedOrbit();
 
-    virtual Point3d positionAtTime(double) const;
+    virtual Eigen::Vector3d positionAtTime(double) const;
     //virtual Vec3d velocityAtTime(double) const;
     virtual double getPeriod() const;
     virtual bool isPeriodic() const;
@@ -189,7 +190,7 @@ class FixedOrbit : public Orbit
     virtual void sample(double, double, int, OrbitSampleProc&) const;
 
  private:
-    Point3d position;
+    Eigen::Vector3d position;
 };
 
 

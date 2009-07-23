@@ -1739,10 +1739,10 @@ public:
     vector<Renderer::OrbitSample>* samples;
 
     OrbitSampler(vector<Renderer::OrbitSample>* _samples) : samples(_samples) {};
-    void sample(double t, const Point3d& p)
+    void sample(double t, const Vector3d& p)
     {
         Renderer::OrbitSample samp;
-        samp.pos = p;
+        samp.pos = ptFromEigen(p);
         samp.t = t;
         samples->push_back(samp);
     };
@@ -2042,8 +2042,8 @@ static Point3d renderOrbitSection(const Orbit& orbit,
                 s3 = trajectory[i];
             }
 
-            s1 = Renderer::OrbitSample(lastP, trajectory[i - 1].t);
-            s2 = Renderer::OrbitSample(p,     trajectory[i].t);
+            s1 = Renderer::OrbitSample(toEigen(lastP), trajectory[i - 1].t);
+            s2 = Renderer::OrbitSample(toEigen(p),     trajectory[i].t);
 
             s0.pos = s0.pos * modelview;
             s3.pos = s3.pos * modelview;
@@ -2196,7 +2196,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
             if (!cachedOrbit->trajectory.empty())
             {
                 double lastSampleTime = cachedOrbit->trajectory[0].t + orbit->getPeriod();
-                cachedOrbit->trajectory.push_back(OrbitSample(cachedOrbit->trajectory[0].pos, lastSampleTime));
+                cachedOrbit->trajectory.push_back(OrbitSample(toEigen(cachedOrbit->trajectory[0].pos), lastSampleTime));
             }
         }
 
@@ -2393,7 +2393,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         {
             if ((*trajectory)[i].t > endTime)
             {
-                p = orbit->positionAtTime(endTime) * modelview;
+                p = ptFromEigen(orbit->positionAtTime(endTime)) * modelview;
                 endTimeReached = true;
             }
             else
@@ -8377,8 +8377,8 @@ void Renderer::renderCometTail(const Body& body,
                                float discSizeInPixels)
 {
     Point3f cometPoints[MaxCometTailPoints];
-    Point3d pos0 = body.getOrbit(now)->positionAtTime(now);
-    Point3d pos1 = body.getOrbit(now)->positionAtTime(now - 0.01);
+    Point3d pos0 = ptFromEigen(body.getOrbit(now)->positionAtTime(now));
+    Point3d pos1 = ptFromEigen(body.getOrbit(now)->positionAtTime(now - 0.01));
     Vec3d vd = pos1 - pos0;
     double t = now;
     /*float f = 1.0e15f;    Unused*/
@@ -8708,7 +8708,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
         // pos_v: viewer-relative position of object
 
         // Get the position of the body relative to the sun.
-        Vector3d p = toEigen(phase->orbit()->positionAtTime(now));
+        Vector3d p = phase->orbit()->positionAtTime(now);
         ReferenceFrame* frame = phase->orbitFrame();
         Vector3d pos_s = frameCenter + frame->getOrientation(now).conjugate() * p;
 
@@ -9109,8 +9109,8 @@ void Renderer::buildLabelLists(const Frustum& viewFrustum,
                         if (primary != lastPrimary)
                         {
                             Vector3d p = phase->orbitFrame()->getOrientation(now).conjugate() *
-                                         toEigen(phase->orbit()->positionAtTime(now));
-                            Vector3d v = iter->position.cast<double>() - p;//v(iter->position.x - p.x, iter->position.y - p.y, iter->position.z - p.z);
+                                         phase->orbit()->positionAtTime(now);
+                            Vector3d v = iter->position.cast<double>() - p;
 
                             primarySphere = Sphered(v, primary->getRadius());
                             lastPrimary = primary;

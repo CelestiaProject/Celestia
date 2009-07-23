@@ -17,6 +17,7 @@
 #include <celengine/astro.h>
 #include <celengine/vsop87.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -11047,7 +11048,7 @@ class VSOP87Orbit : public CachingOrbit
         return boundingRadius;
     }
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // t is Julian millenia since J2000.0
         double t = (jd - 2451545.0) / 365250.0;
@@ -11096,9 +11097,9 @@ class VSOP87Orbit : public CachingOrbit
         b -= PI / 2;
         l += PI;
 
-        return Point3d(cos(l) * sin(b) * r,
-                       cos(b) * r,
-                       -sin(l) * sin(b) * r);
+        return Vector3d(cos(l) * sin(b) * r,
+                        cos(b) * r,
+                        -sin(l) * sin(b) * r);
     }
 };
 
@@ -11146,12 +11147,12 @@ class VSOP87OrbitRect : public CachingOrbit
         return boundingRadius;
     }
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // t is Julian millenia since J2000.0
         double t = (jd - 2451545.0) / 365250.0;
 
-        Vec3d v(0.0, 0.0, 0.0);
+        Vector3d v(Vector3d::Zero());
 
         int i;
         double T;
@@ -11160,7 +11161,7 @@ class VSOP87OrbitRect : public CachingOrbit
         T = 1;
         for (i = 0; i < nX; i++)
         {
-            v.x += SumSeries(vsX[i], t) * T;
+            v.x() += SumSeries(vsX[i], t) * T;
             T = t * T;
         }
 
@@ -11168,7 +11169,7 @@ class VSOP87OrbitRect : public CachingOrbit
         T = 1;
         for (i = 0; i < nY; i++)
         {
-            v.y += SumSeries(vsY[i], t) * T;
+            v.y() += SumSeries(vsY[i], t) * T;
             T = t * T;
         }
 
@@ -11176,14 +11177,14 @@ class VSOP87OrbitRect : public CachingOrbit
         T = 1;
         for (i = 0; i < nZ; i++)
         {
-            v.z += SumSeries(vsZ[i], t) * T;
+            v.z() += SumSeries(vsZ[i], t) * T;
             T = t * T;
         }
 
         v *= KM_PER_AU;
 
         // Corrections for internal coordinate system
-        return Point3d(v.x, v.z, -v.y);
+        return Vector3d(v.x(), v.z(), -v.y());
     }
 };
 
