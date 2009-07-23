@@ -14,10 +14,11 @@
 #include <celutil/color.h>
 #include <celutil/reshandle.h>
 #include <celmath/ray.h>
-#include <celmath/aabox.h>
 #include <vector>
 #include <string>
 #include "gl.h"
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 
 class RenderContext;
@@ -196,8 +197,8 @@ class Mesh
     void render(const std::vector<const Material*>& materials,
                 RenderContext&) const;
 
-    AxisAlignedBox getBoundingBox() const;
-    void transform(Vec3f translation, float scale);
+    Eigen::AlignedBox<float, 3> getBoundingBox() const;
+    void transform(const Eigen::Vector3f& translation, float scale);
 
     const void* getVertexData() const { return vertices; }
     uint32 getVertexCount() const { return nVertices; }

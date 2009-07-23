@@ -14,6 +14,7 @@
 #include "vecgl.h"
 #include "vertexlist.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -78,14 +79,14 @@ void VertexList::addVertex(const Vertex& v)
     }
 
     uint32 n = nVertices * vertexSize;
-    vertices[n++].f = v.point.x;
-    vertices[n++].f = v.point.y;
-    vertices[n++].f = v.point.z;
+    vertices[n++].f = v.point.x();
+    vertices[n++].f = v.point.y();
+    vertices[n++].f = v.point.z();
     if ((parts & VertexNormal) != 0)
     {
-        vertices[n++].f = v.normal.x;
-        vertices[n++].f = v.normal.y;
-        vertices[n++].f = v.normal.z;
+        vertices[n++].f = v.normal.x();
+        vertices[n++].f = v.normal.y();
+        vertices[n++].f = v.normal.z();
     }
     if ((parts & VertexColor0) != 0)
     {
@@ -97,22 +98,22 @@ void VertexList::addVertex(const Vertex& v)
     }
     if ((parts & TexCoord0) != 0)
     {
-        vertices[n++].f = v.texCoords[0].x;
-        vertices[n++].f = v.texCoords[0].y;
+        vertices[n++].f = v.texCoords[0].x();
+        vertices[n++].f = v.texCoords[0].y();
     }
     if ((parts & TexCoord1) != 0)
     {
-        vertices[n++].f = v.texCoords[1].x;
-        vertices[n++].f = v.texCoords[1].y;
+        vertices[n++].f = v.texCoords[1].x();
+        vertices[n++].f = v.texCoords[1].y();
     }
 
-    bbox.include(v.point);
+    bbox.extend(v.point);
 
     nVertices++;
 }
 
 
-AxisAlignedBox VertexList::getBoundingBox() const
+Eigen::AlignedBox<float, 3> VertexList::getBoundingBox() const
 {
     return bbox;
 }
@@ -160,23 +161,20 @@ void VertexList::setTexture(ResourceHandle _texture)
 
 
 // Apply a translation and uniform scale to the vertices
-void VertexList::transform(Vec3f translation, float scale)
+void VertexList::transform(const Vector3f& translation, float scale)
 {
     for (uint32 i = 0; i < nVertices; i++)
     {
         uint32 n = i * vertexSize;
-        Vec3f tv = (Vec3f(vertices[n].f, vertices[n + 1].f, vertices[n + 2].f) + translation) * scale;
-        vertices[n    ].f = tv.x;
-        vertices[n + 1].f = tv.y;
-        vertices[n + 2].f = tv.z;
+        Vector3f tv = (Vector3f(vertices[n].f, vertices[n + 1].f, vertices[n + 2].f) + translation) * scale;
+        vertices[n    ].f = tv.x();
+        vertices[n + 1].f = tv.y();
+        vertices[n + 2].f = tv.z();
     }
 
     // Transform the bounding box
-    Point3f mn = bbox.getMinimum();
-    Point3f mx = bbox.getMaximum();
-    Point3f tr(-translation.x, -translation.y, -translation.z);
-    bbox = AxisAlignedBox(Point3f(0, 0, 0) + ((mn - tr) * scale),
-                          Point3f(0, 0, 0) + ((mx - tr) * scale));
+    bbox.translate(translation);
+    bbox = AlignedBox<float, 3>(bbox.min() * scale, bbox.max() * scale);
 }
 
 

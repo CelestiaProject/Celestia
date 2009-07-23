@@ -15,6 +15,7 @@
 #include "glext.h"
 #include "vertexprog.h"
 
+using namespace Eigen;
 using namespace std;
 
 

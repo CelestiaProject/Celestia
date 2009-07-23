@@ -849,7 +849,7 @@ static Body* CreateBody(const string& name,
         string geometry("");
         if (planetData->getString("Mesh", geometry))
         {
-            Vec3f geometryCenter(0.0f, 0.0f, 0.0f);
+            Vector3f geometryCenter(Vector3f::Zero());
             if (planetData->getVector("MeshCenter", geometryCenter))
             {
                 // TODO: Adjust bounding radius if model center isn't

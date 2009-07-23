@@ -9,6 +9,7 @@
 
 #include "3dsmodel.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -104,24 +105,24 @@ void M3DMaterial::setTextureMap(const string& _texmap)
 
 M3DTriangleMesh::M3DTriangleMesh()
 {
-    matrix = Mat4f::identity();
+    matrix = Matrix4f::Identity();
 }
 
 M3DTriangleMesh::~M3DTriangleMesh()
 {
 }
 
-Mat4f M3DTriangleMesh::getMatrix() const
+Matrix4f M3DTriangleMesh::getMatrix() const
 {
     return matrix;
 }
 
-void M3DTriangleMesh::setMatrix(const Mat4f& m)
+void M3DTriangleMesh::setMatrix(const Matrix4f& m)
 {
     matrix = m;
 }
 
-Point3f M3DTriangleMesh::getVertex(uint16 n) const
+Vector3f M3DTriangleMesh::getVertex(uint16 n) const
 {
     return points[n];
 }
@@ -131,12 +132,12 @@ uint16 M3DTriangleMesh::getVertexCount() const
     return (uint16) (points.size());
 }
 
-void M3DTriangleMesh::addVertex(Point3f p)
+void M3DTriangleMesh::addVertex(const Vector3f& p)
 {
-    points.insert(points.end(), p);
+    points.push_back(p);
 }
 
-Point2f M3DTriangleMesh::getTexCoord(uint16 n) const
+Vector2f M3DTriangleMesh::getTexCoord(uint16 n) const
 {
     return texCoords[n];
 }
@@ -146,9 +147,9 @@ uint16 M3DTriangleMesh::getTexCoordCount() const
     return (uint16) (texCoords.size());
 }
 
-void M3DTriangleMesh::addTexCoord(Point2f p)
+void M3DTriangleMesh::addTexCoord(const Vector2f& p)
 {
-    texCoords.insert(texCoords.end(), p);
+    texCoords.push_back(p);
 }
 
 void M3DTriangleMesh::getFace(uint16 n, uint16& v0, uint16& v1, uint16& v2) const

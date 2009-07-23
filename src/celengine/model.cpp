@@ -13,6 +13,7 @@
 #include <functional>
 #include <algorithm>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -196,7 +197,7 @@ Model::render(RenderContext& rc, double /* t */)
  *     v' = (v + translation) * scale
  */
 void
-Model::transform(const Vec3f& translation, float scale)
+Model::transform(const Vector3f& translation, float scale)
 {
     for (vector<Mesh*>::const_iterator iter = meshes.begin(); iter != meshes.end(); iter++)
         (*iter)->transform(translation, scale);
@@ -204,24 +205,18 @@ Model::transform(const Vec3f& translation, float scale)
 
 
 void
-Model::normalize(const Vec3f& centerOffset)
+Model::normalize(const Vector3f& centerOffset)
 {
-    AxisAlignedBox bbox;
+    AlignedBox<float, 3> bbox;
 
     for (vector<Mesh*>::const_iterator iter = meshes.begin(); iter != meshes.end(); iter++)
-        bbox.include((*iter)->getBoundingBox());
+        bbox.extend((*iter)->getBoundingBox());
 
-    Point3f center = bbox.getCenter() + centerOffset;
-    Vec3f extents = bbox.getExtents();
-    float maxExtent = extents.x;
-    if (extents.y > maxExtent)
-        maxExtent = extents.y;
-    if (extents.z > maxExtent)
-        maxExtent = extents.z;
-    
-    // clog << "Extents: " << extents.x << ", " << extents.y << ", " << extents.z << endl;
+    Vector3f center = (bbox.min() + bbox.max()) * 0.5f + centerOffset;
+    Vector3f extents = bbox.max() - bbox.min();
+    float maxExtent = extents.maxCoeff();
 
-    transform(Point3f(0, 0, 0) - center, 2.0f / maxExtent);
+    transform(-center, 2.0f / maxExtent);
 
     normalized = true;
 }
