@@ -177,8 +177,8 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
 
 struct NoiseMeshParameters
 {
-    Vec3f size;
-    Vec3f offset;
+    Vector3f size;
+    Vector3f offset;
     float featureHeight;
     float octaves;
     float slices;
@@ -197,8 +197,8 @@ static float NoiseDisplacementFunc(float u, float v, void* info)
     // assert(info != NULL);
     NoiseMeshParameters* params = (NoiseMeshParameters*) info;
 
-    return fractalsum(Point3f(x, y, z) + params->offset,
-                      params->octaves) * params->featureHeight;
+    Vector3f p = Vector3f(x, y, z) + params->offset;
+    return fractalsum(p, params->octaves) * params->featureHeight;
 }
 
 
@@ -247,8 +247,8 @@ Model* LoadCelestiaMesh(const string& filename)
 
     NoiseMeshParameters params;
 
-    params.size = Vec3f(1, 1, 1);
-    params.offset = Vec3f(10, 10, 10);
+    params.size = Vector3f::Ones();
+    params.offset = Vector3f::Constant(10.0f);
     params.featureHeight = 0.0f;
     params.octaves = 1;
     params.slices = 20;

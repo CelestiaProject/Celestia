@@ -11,8 +11,6 @@
 #ifndef _CELENGINE_UNIVERSE_H_
 #define _CELENGINE_UNIVERSE_H_
 
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
 #include <celengine/univcoord.h>
 #include <celengine/stardb.h>
 #include <celengine/dsodb.h>

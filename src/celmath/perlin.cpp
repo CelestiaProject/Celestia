@@ -3,8 +3,9 @@
 #include <math.h>
 
 #include "mathlib.h"
-#include "vecmath.h"
 #include "perlin.h"
+
+using namespace Eigen;
 
 
 float bias(float a, float b)
@@ -56,15 +57,15 @@ float turbulence(float v[], float freq)
 }
 
 
-float turbulence(const Point2f& p, float freq)
+float turbulence(const Vector2f& p, float freq)
 {
     float t;
     float vec[2];
 
     for (t = 0.0f; freq >= 1.0f; freq *= 0.5f)
     {
-	vec[0] = freq * p.x;
-	vec[1] = freq * p.y;
+    vec[0] = freq * p.x();
+    vec[1] = freq * p.y();
 	t += (float) fabs(noise2(vec)) / freq;
     }
 
@@ -72,16 +73,16 @@ float turbulence(const Point2f& p, float freq)
 }
 
 
-float turbulence(const Point3f& p, float freq)
+float turbulence(const Vector3f& p, float freq)
 {
     float t;
     float vec[3];
 
     for (t = 0.0f; freq >= 1.0f; freq *= 0.5f)
     {
-	vec[0] = freq * p.x;
-	vec[1] = freq * p.y;
-	vec[2] = freq * p.z;
+    vec[0] = freq * p.x();
+    vec[1] = freq * p.y();
+    vec[2] = freq * p.z();
 	t += (float) fabs(noise3(vec)) / freq;
     }
 
@@ -105,15 +106,15 @@ float fractalsum(float v[], float freq)
 }
 
 
-float fractalsum(const Point2f& p, float freq)
+float fractalsum(const Vector2f& p, float freq)
 {
     float t;
     float vec[2];
 
     for (t = 0.0f; freq >= 1.0f; freq *= 0.5f)
     {
-	vec[0] = freq * p.x;
-	vec[1] = freq * p.y;
+    vec[0] = freq * p.x();
+    vec[1] = freq * p.y();
 	t += noise2(vec) / freq;
     }
 
@@ -121,16 +122,16 @@ float fractalsum(const Point2f& p, float freq)
 }
 
 
-float fractalsum(const Point3f& p, float freq)
+float fractalsum(const Vector3f& p, float freq)
 {
     float t;
     float vec[3];
 
     for (t = 0.0f; freq >= 1.0f; freq *= 0.5f)
     {
-	vec[0] = freq * p.x;
-	vec[1] = freq * p.y;
-	vec[2] = freq * p.z;
+    vec[0] = freq * p.x();
+    vec[1] = freq * p.y();
+    vec[2] = freq * p.z();
 	t += noise3(vec) / freq;
     }
 
