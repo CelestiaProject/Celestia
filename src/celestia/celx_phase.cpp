@@ -13,6 +13,7 @@
 #include "celx_internal.h"
 #include "celx_phase.h"
 #include <celengine/timelinephase.h>
+#include <celengine/eigenport.h>
 
 
 // We want to avoid copying TimelinePhase objects, so we can't make them
@@ -185,7 +186,7 @@ static int phase_getorientation(lua_State* l)
         tdb = phase->startTime();
     else if (tdb > phase->endTime())
         tdb = phase->endTime();
-    celx.newRotation(phase->rotationModel()->orientationAtTime(tdb));
+    celx.newRotation(fromEigen(phase->rotationModel()->orientationAtTime(tdb)));
 
     return 1;
 }

@@ -16,7 +16,9 @@
 #include <celengine/rotation.h>
 #include <celengine/astro.h>
 #include <celengine/precession.h>
+#include <celmath/geomutil.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -52,18 +54,18 @@ public:
     bool isPeriodic() const { return true; }
     double getPeriod() const { return period; }
     
-    virtual Quatd computeSpin(double t) const
+    virtual Quaterniond computeSpin(double t) const
     {
         // Time argument of IAU rotation models is actually day since J2000.0 TT, but
         // Celestia uses TDB. The difference should be so minute as to be irrelevant.
         t = t - astro::J2000;
         if (flipped)
-            return Quatd::yrotation( degToRad(180.0 + meridian(t)));
+            return YRotation( degToRad(180.0 + meridian(t)));
         else
-            return Quatd::yrotation(-degToRad(180.0 + meridian(t)));
+            return YRotation(-degToRad(180.0 + meridian(t)));
     }
     
-    virtual Quatd computeEquatorOrientation(double t) const
+    virtual Quaterniond computeEquatorOrientation(double t) const
     {
         double poleRA = 0.0;
         double poleDec = 0.0;
@@ -74,9 +76,9 @@ public:
         double inclination = 90.0 - poleDec;
         
         if (flipped)
-            return Quatd::xrotation(PI) * Quatd::xrotation(degToRad(-inclination)) * Quatd::yrotation(degToRad(-node));
+            return XRotation(PI) * XRotation(degToRad(-inclination)) * YRotation(degToRad(-node));
         else
-            return Quatd::xrotation(degToRad(-inclination)) * Quatd::yrotation(degToRad(-node));
+            return XRotation(degToRad(-inclination)) * YRotation(degToRad(-node));
     }
     
     // Return the RA and declination (in degrees) of the rotation axis
@@ -118,16 +120,16 @@ public:
     {
     }
     
-    Quatd computeSpin(double tjd) const
+    Quaterniond computeSpin(double tjd) const
     {
         // TODO: Use a more accurate model for sidereal time
         double t = tjd - astro::J2000;
         double theta = 2 * PI * (t * 24.0 / 23.9344694 - 259.853 / 360.0);
 
-        return Quatd::yrotation(-theta);
+        return YRotation(-theta);
     }
     
-    Quatd computeEquatorOrientation(double tjd) const
+    Quaterniond computeEquatorOrientation(double tjd) const
     {
         double T = (tjd - astro::J2000) / 36525.0;
         
@@ -154,14 +156,14 @@ public:
 
         // Calculate the rotation from the J2000 ecliptic to the ecliptic
         // of date.
-        Quatd RPi = Quatd::zrotation(PiA);
-        Quatd rpi = Quatd::xrotation(piA);
-        Quatd eclRotation = ~RPi * rpi * RPi;
+        Quaterniond RPi = ZRotation(PiA);
+        Quaterniond rpi = XRotation(piA);
+        Quaterniond eclRotation = RPi.conjugate() * rpi * RPi;
 
-        Quatd q = Quatd::xrotation(obliquity) * Quatd::zrotation(-precession) * ~eclRotation;
+        Quaterniond q = XRotation(obliquity) * ZRotation(-precession) * eclRotation.conjugate();
         
         // convert to Celestia's coordinate system
-        return Quatd::xrotation(PI / 2.0) * q * Quatd::xrotation(-PI / 2.0);
+        return XRotation(PI / 2.0) * q * XRotation(-PI / 2.0);
     }
     
     double getPeriod() const

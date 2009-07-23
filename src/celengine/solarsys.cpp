@@ -390,7 +390,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
         // TODO: Should distinguish between a missing rotation model (where it's
         // appropriate to use a default one) and a bad rotation model (where
         // we should report an error.)
-        rotationModel = new ConstantOrientation(Quatd(1.0));
+        rotationModel = new ConstantOrientation(Quaterniond::Identity());
     }
 
     TimelinePhase* phase = TimelinePhase::CreateTimelinePhase(universe,
