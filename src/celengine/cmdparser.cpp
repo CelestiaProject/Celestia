@@ -469,12 +469,17 @@ Command* CommandParser::parseCommand()
     }
     else if (commandName == "setposition")
     {
-        Vec3d base, offset;
+        // Base position in light years, offset in kilometers
+        Eigen::Vector3d base, offset;
         if (paramList->getVector("base", base))
         {
             paramList->getVector("offset", offset);
+            UniversalCoord basePosition = UniversalCoord::CreateLy(base.cast<float>());
+            cmd = new CommandSetPosition(basePosition.offsetKm(offset));
+#if CELVEC
             cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),
                                                                   Point3f((float) base.x, (float) base.y, (float) base.z)));
+#endif
         }
         else
         {

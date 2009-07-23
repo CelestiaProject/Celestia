@@ -10255,7 +10255,7 @@ void Renderer::renderSkyGrids(const Observer& observer)
     if (renderFlags & ShowGalacticGrid)
     {
         SkyGrid galacticGrid;
-        galacticGrid.setOrientation(toEigen(astro::eclipticToEquatorial() * astro::equatorialToGalactic()).conjugate());
+        galacticGrid.setOrientation((astro::eclipticToEquatorial() * astro::equatorialToGalactic()).conjugate());
         galacticGrid.setLineColor(GalacticGridColor);
         galacticGrid.setLabelColor(GalacticGridLabelColor);
         galacticGrid.setLongitudeUnits(SkyGrid::LongitudeDegrees);
