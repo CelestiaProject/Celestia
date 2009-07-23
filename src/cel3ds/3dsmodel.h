@@ -13,7 +13,7 @@
 #include <vector>
 #include <string>
 #include <celutil/basictypes.h>
-#include <celmath/vecmath.h>
+#include <Eigen/Core>
 
 class M3DColor
 {
@@ -60,19 +60,21 @@ class M3DMaterial
 class M3DTriangleMesh
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     M3DTriangleMesh();
     ~M3DTriangleMesh();
 
-    Mat4f getMatrix() const;
-    void setMatrix(const Mat4f&);
+    Eigen::Matrix4f getMatrix() const;
+    void setMatrix(const Eigen::Matrix4f&);
 
-    Point3f getVertex(uint16) const;
+    Eigen::Vector3f getVertex(uint16) const;
     uint16 getVertexCount() const;
-    void addVertex(Point3f);
+    void addVertex(const Eigen::Vector3f&);
 
-    Point2f getTexCoord(uint16) const;
+    Eigen::Vector2f getTexCoord(uint16) const;
     uint16 getTexCoordCount() const;
-    void addTexCoord(Point2f);
+    void addTexCoord(const Eigen::Vector2f&);
 
     void getFace(uint16, uint16&, uint16&, uint16&) const;
     uint16 getFaceCount() const;
@@ -86,11 +88,11 @@ class M3DTriangleMesh
     void setMaterialName(std::string);
     
  private:
-    std::vector<Point3f> points;
-    std::vector<Point2f> texCoords;
+    std::vector<Eigen::Vector3f> points;
+    std::vector<Eigen::Vector2f> texCoords;
     std::vector<uint16> faces;
     std::vector<uint32> smoothingGroups;
-    Mat4f matrix;
+    Eigen::Matrix4f matrix;
     std::string materialName;
 };
 

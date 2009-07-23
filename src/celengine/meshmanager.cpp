@@ -33,6 +33,7 @@
 #include "texmanager.h"
 #include "meshmanager.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -58,7 +59,7 @@ string GeometryInfo::resolve(const string& baseDir)
     // adding a 'uniquifying' suffix to the filename that encodes the center value.
     // This suffix is stripped before the file is actually loaded.
     char uniquifyingSuffix[128];
-    sprintf(uniquifyingSuffix, "%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x, center.y, center.z, scale, (int) isNormalized);
+    sprintf(uniquifyingSuffix, "%c%f,%f,%f,%f,%d", UniqueSuffixChar, center.x(), center.y(), center.z(), scale, (int) isNormalized);
     
     if (!path.empty())
     {
@@ -293,8 +294,8 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
         parts |= VertexList::TexCoord0;
     VertexList* vl = new VertexList(parts);
 
-    Vec3f* faceNormals = new Vec3f[nFaces];
-    Vec3f* vertexNormals = new Vec3f[nFaces * 3];
+    Vector3f* faceNormals = new Vector3f[nFaces];
+    Vector3f* vertexNormals = new Vector3f[nFaces * 3];
     int* faceCounts = new int[nVertices];
     int** vertexFaces = new int*[nVertices];
 
@@ -314,11 +315,10 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
         faceCounts[v1]++;
         faceCounts[v2]++;
 
-        Point3f p0 = mesh.getVertex(v0);
-        Point3f p1 = mesh.getVertex(v1);
-        Point3f p2 = mesh.getVertex(v2);
-        faceNormals[i] = cross(p1 - p0, p2 - p1);
-        faceNormals[i].normalize();
+        Vector3f p0 = mesh.getVertex(v0);
+        Vector3f p1 = mesh.getVertex(v1);
+        Vector3f p2 = mesh.getVertex(v2);
+        faceNormals[i] = (p1 - p0).cross(p2 - p1).normalized();
     }
 
     if (!smooth && 0)
@@ -356,38 +356,35 @@ static VertexList* ConvertToVertexList(M3DTriangleMesh& mesh,
             // uint32 smoothingGroups = mesh.getSmoothingGroups(i);
 
             int j;
-            Vec3f v = Vec3f(0, 0, 0);
+            Vector3f v = Vector3f::Zero();
             for (j = 1; j <= vertexFaces[v0][0]; j++)
             {
                 int k = vertexFaces[v0][j];
                 // if (k == i || (smoothingGroups & mesh.getSmoothingGroups(k)) != 0)
-                if (faceNormals[i] * faceNormals[k] > 0.5f)
+                if (faceNormals[i].dot(faceNormals[k]) > 0.5f)
                     v += faceNormals[k];
             }
-            v.normalize();
-            vertexNormals[i * 3] = v;
+            vertexNormals[i * 3] = v.normalized();
 
-            v = Vec3f(0, 0, 0);
+            v = Vector3f::Zero();
             for (j = 1; j <= vertexFaces[v1][0]; j++)
             {
                 int k = vertexFaces[v1][j];
                 // if (k == i || (smoothingGroups & mesh.getSmoothingGroups(k)) != 0)
-                if (faceNormals[i] * faceNormals[k] > 0.5f)
+                if (faceNormals[i].dot(faceNormals[k]) > 0.5f)
                     v += faceNormals[k];
             }
-            v.normalize();
-            vertexNormals[i * 3 + 1] = v;
+            vertexNormals[i * 3 + 1] = v.normalized();
 
-            v = Vec3f(0, 0, 0);
+            v = Vector3f::Zero();
             for (j = 1; j <= vertexFaces[v2][0]; j++)
             {
                 int k = vertexFaces[v2][j];
                 // if (k == i || (smoothingGroups & mesh.getSmoothingGroups(k)) != 0)
-                if (faceNormals[i] * faceNormals[k] > 0.5f)
+                if (faceNormals[i].dot(faceNormals[k]) > 0.5f)
                     v += faceNormals[k];
             }
-            v.normalize();
-            vertexNormals[i * 3 + 2] = v;
+            vertexNormals[i * 3 + 2] = v.normalized();
         }
     }
 

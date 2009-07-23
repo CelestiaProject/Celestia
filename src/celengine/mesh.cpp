@@ -559,10 +559,10 @@ Mesh::render(const std::vector<const Material*>& materials,
 }
 
 
-AxisAlignedBox
+AlignedBox<float, 3>
 Mesh::getBoundingBox() const
 {
-    AxisAlignedBox bbox;
+    AlignedBox<float, 3> bbox;
 
     // Return an empty box if there's no position info
     if (vertexDesc.getAttribute(Position).format != Float3)
@@ -579,18 +579,18 @@ Mesh::getBoundingBox() const
         
         for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
         {
-            Point3f center = Point3f(reinterpret_cast<float*>(vdata));
+            Vector3f center = Map<Vector3f>(reinterpret_cast<float*>(vdata));
             float pointSize = (reinterpret_cast<float*>(vdata + pointSizeOffset))[0];
-            Vec3f offsetVec(pointSize, pointSize, pointSize);
+            Vector3f offsetVec = Vector3f::Constant(pointSize);
 
-            AxisAlignedBox pointbox(center - offsetVec, center + offsetVec);
-            bbox.include(pointbox);
+            AlignedBox<float, 3> pointbox(center - offsetVec, center + offsetVec);
+            bbox.extend(pointbox);
         }
     }
     else
     {
         for (uint32 i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
-            bbox.include(Point3f(reinterpret_cast<float*>(vdata)));
+            bbox.extend(Map<Vector3f>(reinterpret_cast<float*>(vdata)));
     }
 
     return bbox;
@@ -598,7 +598,7 @@ Mesh::getBoundingBox() const
 
 
 void
-Mesh::transform(Vec3f translation, float scale)
+Mesh::transform(const Vector3f& translation, float scale)
 {
     if (vertexDesc.getAttribute(Position).format != Float3)
         return;
@@ -609,10 +609,13 @@ Mesh::transform(Vec3f translation, float scale)
     // Scale and translate the vertex positions
     for (i = 0; i < nVertices; i++, vdata += vertexDesc.stride)
     {
-        Vec3f tv = (Vec3f(reinterpret_cast<float*>(vdata)) + translation) * scale;
-        reinterpret_cast<float*>(vdata)[0] = tv.x;
-        reinterpret_cast<float*>(vdata)[1] = tv.y;
-        reinterpret_cast<float*>(vdata)[2] = tv.z;
+        const Vector3f tv = (Map<Vector3f>(reinterpret_cast<float*>(vdata)) + translation) * scale;
+        Map<Vector3f>(reinterpret_cast<float*>(vdata)) = tv;
+#if CELVEC
+        reinterpret_cast<float*>(vdata)[0] = tv.x();
+        reinterpret_cast<float*>(vdata)[1] = tv.y();
+        reinterpret_cast<float*>(vdata)[2] = tv.z();
+#endif
     }
 
     // Point sizes need to be scaled as well

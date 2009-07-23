@@ -9,6 +9,8 @@
 
 #include "parser.h"
 
+using namespace Eigen;
+
 
 /****** Value method implementations *******/
 
@@ -369,6 +371,30 @@ bool AssociativeArray::getVector(const string& key, Vec3d& val) const
     return true;
 }
 
+bool AssociativeArray::getVector(const string& key, Vector3d& val) const
+{
+    Value* v = getValue(key);
+    if (v == NULL || v->getType() != Value::ArrayType)
+        return false;
+
+    Array* arr = v->getArray();
+    if (arr->size() != 3)
+        return false;
+
+    Value* x = (*arr)[0];
+    Value* y = (*arr)[1];
+    Value* z = (*arr)[2];
+
+    if (x->getType() != Value::NumberType ||
+        y->getType() != Value::NumberType ||
+        z->getType() != Value::NumberType)
+        return false;
+
+    val = Vector3d(x->getNumber(), y->getNumber(), z->getNumber());
+
+    return true;
+}
+
 bool AssociativeArray::getVector(const string& key, Vec3f& val) const
 {
     Vec3d vecVal;
@@ -377,6 +403,19 @@ bool AssociativeArray::getVector(const string& key, Vec3f& val) const
         return false;
 
     val = Vec3f((float) vecVal.x, (float) vecVal.y, (float) vecVal.z);
+
+    return true;
+}
+
+
+bool AssociativeArray::getVector(const string& key, Vector3f& val) const
+{
+    Vector3d vecVal;
+
+    if (!getVector(key, vecVal))
+        return false;
+
+    val = vecVal.cast<float>();
 
     return true;
 }

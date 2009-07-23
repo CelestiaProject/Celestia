@@ -15,6 +15,7 @@
 #include <celutil/bytes.h>
 #include <celutil/debug.h>
 
+using namespace Eigen;
 using namespace std;
 
 typedef bool (*ProcessChunkFunc)(ifstream& in,
@@ -272,7 +273,7 @@ M3DColor readFloatColor(ifstream& in/*, int nBytes*/)
 }
 
 
-Mat4f readMeshMatrix(ifstream& in/*, int nBytes*/)
+Matrix4f readMeshMatrix(ifstream& in/*, int nBytes*/)
 {
     float m00 = readFloat(in);
     float m01 = readFloat(in);
@@ -294,10 +295,19 @@ Mat4f readMeshMatrix(ifstream& in/*, int nBytes*/)
     cout << m30 << "   " << m31 << "   " << m32 << '\n';
 #endif
 
+    Matrix4f m;
+    m << m00, m01, m02, 0,
+         m10, m11, m12, 0,
+         m20, m21, m22, 0,
+         m30, m31, m32, 1;
+
+    return m;
+#if CELVEC
     return Mat4f(Vec4f(m00, m01, m02, 0),
                  Vec4f(m10, m11, m12, 0),
                  Vec4f(m20, m21, m22, 0),
                  Vec4f(m30, m31, m32, 1));
+#endif
 }
 
 
@@ -319,7 +329,7 @@ void readPointArray(ifstream& in, M3DTriangleMesh* triMesh)
         float x = readFloat(in);
         float y = readFloat(in);
         float z = readFloat(in);
-        triMesh->addVertex(Point3f(x, y, z));
+        triMesh->addVertex(Vector3f(x, y, z));
     }
 }
 
@@ -332,7 +342,7 @@ void readTextureCoordArray(ifstream& in, M3DTriangleMesh* triMesh)
     {
         float u = readFloat(in);
         float v = readFloat(in);
-        triMesh->addTexCoord(Point2f(u, -v));
+        triMesh->addTexCoord(Vector2f(u, -v));
     }
 }
 

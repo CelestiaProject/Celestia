@@ -894,7 +894,7 @@ bool StarDatabase::createStar(Star* star,
 
         if (hasModel)
         {
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vec3f(0.0f, 0.0f, 0.0f), 1.0f, true));
+            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(modelName, path, Vector3f::Zero(), 1.0f, true));
             details->setGeometry(geometryHandle);
         }
 
