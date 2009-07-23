@@ -55,6 +55,7 @@ MATH_HEADERS = \
     celmath/distance.h \
     celmath/ellipsoid.h \
     celmath/frustum.h \
+    celmath/geomutil.h \
     celmath/intersect.h \
     celmath/mathlib.h \
     celmath/perlin.h \
