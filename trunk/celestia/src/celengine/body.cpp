@@ -484,12 +484,6 @@ UniversalCoord Body::getPosition(double tdb) const
 
     position += frame->getOrientation(tdb).conjugate() * p;
 
-#if 0
-    if (frame->getCenter().star())
-        return astro::universalPosition(position, frame->getCenter().star()->getPosition(tdb));
-    else
-        return astro::universalPosition(position, frame->getCenter().getPosition(tdb));
-#endif
     if (frame->getCenter().star())
         return frame->getCenter().star()->getPosition(tdb).offsetKm(position);
     else
@@ -501,9 +495,6 @@ UniversalCoord Body::getPosition(double tdb) const
  */
 Quaterniond Body::getOrientation(double tdb) const
 {
-    // TODO: This method overloads getOrientation(), but the two do very
-    // different things. The other method should be renamed to
-    // getModelOrientation().
     const TimelinePhase* phase = timeline->findPhase(tdb);
     return toEigen(phase->rotationModel()->orientationAtTime(tdb)) *
                    phase->bodyFrame()->getOrientation(tdb);
@@ -523,13 +514,13 @@ Vector3d Body::getVelocity(double tdb) const
 
 	if (!orbitFrame->isInertial())
 	{
-#if 0
+        Vector3d r = Selection(const_cast<Body*>(this)).getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
+        v += orbitFrame->getAngularVelocity(tdb).cross(r);
+#if CELVEC
         Vec3d r = Selection(const_cast<Body*>(this)).getPosition(tdb) - orbitFrame->getCenter().getPosition(tdb);
 		r = r * astro::microLightYearsToKilometers(1.0);
 		v += cross(orbitFrame->getAngularVelocity(tdb), r);
 #endif
-        Vector3d r = Selection(const_cast<Body*>(this)).getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
-        v += orbitFrame->getAngularVelocity(tdb).cross(r);
     }
 
 	return v;

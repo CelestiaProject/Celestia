@@ -180,10 +180,10 @@ void DeepSkyObject::hsv2rgb( float *r, float *g, float *b, float h, float s, flo
 bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
 {
     // Get position
-    Vec3d position(0.0, 0.0, 0.0);
+    Vector3d position(Vector3d::Zero());
     if (params->getVector("Position", position))
     {
-        setPosition(toEigen(position));
+        setPosition(position);
     }
     else
     {
@@ -193,8 +193,8 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
         params->getNumber("Distance", distance);
         params->getNumber("RA", RA);
         params->getNumber("Dec", dec);
-        Point3d p = astro::equatorialToCelestialCart(RA, dec, distance);
-        setPosition(toEigen(p));
+        Vector3d p = astro::equatorialToCelestialCart(RA, dec, distance);
+        setPosition(p);
     }
 
     // Get orientation
