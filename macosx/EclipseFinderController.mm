@@ -11,6 +11,7 @@
 #import "NSString_ObjCPlusPlus.h"
 #import "CelestiaBody_PrivateAPI.h"
 #import "eclipsefinder.h"
+#import <celmath/geomutil.h>
 
 @interface EclipseFinderController(Private)
 - (void)getEclipses: (id)aObject;
@@ -173,10 +174,10 @@ static CelestiaBody *eclipseBody;
     sim->setFrame(ObserverFrame::PhaseLock, target, ref);
     sim->update(0.0);
 
-    double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
+    double distance = target.radius() * 4.0;
     sim->setSelection(target);
-    sim->gotoLocation(Point3d(distance, 0, 0),
-                      Quatd::yrotation(-0.5*PI)*Quatd::xrotation(-0.5*PI),
+    sim->gotoLocation(UniversalCoord::Zero().offsetKm(Eigen::Vector3d(distance, 0, 0)),
+                      YRotation(-0.5*PI)*XRotation(-0.5*PI),
                       5.0);
 }
 

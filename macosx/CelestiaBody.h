@@ -16,14 +16,18 @@
 -(NSNumber*)radius;
 -(NSNumber*)mass;
 -(NSNumber*)albedo;
--(CelestiaVector*)orientation;
--(void)setOrientation:(CelestiaVector*)q;
+/*
+-(CelestiaVector*)geometryOrientation;
+-(void)setGeometryOrientation:(CelestiaVector*)q;
+ */
 -(void)setName:(NSString*)s;
 -(void)setMass:(NSNumber*)m;
 -(void)setAlbedo:(NSNumber*)a;
+/*
 -(CelestiaVector*)astrocentricPosition:(NSNumber*)n;
 -(CelestiaVector*)equatorialToBodyFixed:(NSNumber*)n;
 -(CelestiaVector*)eclipticToEquatorial:(NSNumber*)n;
 -(CelestiaVector*)eclipticToBodyFixed:(NSNumber*)n;
+ */
 -(NSArray*)alternateSurfaceNames;
 @end

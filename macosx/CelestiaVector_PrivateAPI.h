@@ -9,7 +9,21 @@
 
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 @interface CelestiaVector(PrivateAPI)
++(CelestiaVector*)vectorWithVector3f:(const Eigen::Vector3f&)v;
++(CelestiaVector*)vectorWithVector3d:(const Eigen::Vector3d&)v;
++(CelestiaVector*)vectorWithQuaternionf:(const Eigen::Quaternionf&)v;
++(CelestiaVector*)vectorWithQuaterniond:(const Eigen::Quaterniond&)v;
+-(CelestiaVector*)initWithVector3f:(const Eigen::Vector3f&)v;
+-(CelestiaVector*)initWithVector3d:(const Eigen::Vector3d&)v;
+-(Eigen::Vector3f)vector3f;
+-(Eigen::Vector3d)vector3d;
+-(Eigen::Quaternionf)quaternionf;
+-(Eigen::Quaterniond)quaterniond;
+
 +(CelestiaVector*)vectorWithVec2f:(Vec2f)v;
 +(CelestiaVector*)vectorWithVec3f:(Vec3f)v;
 +(CelestiaVector*)vectorWithVec4f:(Vec4f)v;

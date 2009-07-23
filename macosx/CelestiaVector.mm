@@ -10,6 +10,62 @@
 #import "CelestiaVector_PrivateAPI.h"
 
 @implementation CelestiaVector(PrivateAPI)
+
+/*** Conversions to and from Eigen structures ***/
+
++(CelestiaVector*)vectorWithVector3f:(const Eigen::Vector3f&)v
+{
+    return [CelestiaVector vectorWithx:[NSNumber numberWithFloat:v.x()] y:[NSNumber numberWithFloat:v.y()] z:[NSNumber numberWithFloat:v.z()]];
+}
+
++(CelestiaVector*)vectorWithVector3d:(const Eigen::Vector3d&)v
+{
+    return [CelestiaVector vectorWithx:[NSNumber numberWithDouble:v.x()] y:[NSNumber numberWithDouble:v.y()] z:[NSNumber numberWithDouble:v.z()]];
+}
+
++(CelestiaVector*)vectorWithQuaternionf:(const Eigen::Quaternionf&)v
+{
+    return [CelestiaVector vectorWithx:[NSNumber numberWithFloat:v.x()] y:[NSNumber numberWithFloat:v.y()] z:[NSNumber numberWithFloat:v.z()] w:[NSNumber numberWithFloat:v.w()]];
+}
+
++(CelestiaVector*)vectorWithQuaterniond:(const Eigen::Quaterniond&)v
+{
+    return [CelestiaVector vectorWithx:[NSNumber numberWithDouble:v.x()] y:[NSNumber numberWithDouble:v.y()] z:[NSNumber numberWithDouble:v.z()] w:[NSNumber numberWithDouble:v.w()]];
+}
+
+-(CelestiaVector*)initWithVector3f:(const Eigen::Vector3f&)v
+{
+    return [self initWithx:[NSNumber numberWithFloat:v.x()] y:[NSNumber numberWithFloat:v.y()] z:[NSNumber numberWithFloat:v.z()]];
+}
+
+-(CelestiaVector*)initWithVector3d:(const Eigen::Vector3d&)v
+{
+    return [self initWithx:[NSNumber numberWithDouble:v.x()] y:[NSNumber numberWithDouble:v.y()] z:[NSNumber numberWithDouble:v.z()]];
+}
+
+-(Eigen::Vector3f)vector3f
+{
+    return Eigen::Vector3f([[self x] floatValue],[[self y] floatValue],[[self z] floatValue]);
+}
+
+-(Eigen::Vector3d)vector3d
+{
+    return Eigen::Vector3d([[self x] doubleValue],[[self y] doubleValue],[[self z] doubleValue]);
+}
+
+-(Eigen::Quaternionf)quaternionf
+{
+    return Eigen::Quaternionf([[self w] floatValue],[[self x] floatValue],[[self y] floatValue],[[self z] floatValue]);
+}
+
+-(Eigen::Quaterniond)quaterniond
+{
+    return Eigen::Quaterniond([[self w] doubleValue],[[self x] doubleValue],[[self y] doubleValue],[[self z] doubleValue]);
+}
+
+/*** End Eigen conversions ***/
+
+
 +(CelestiaVector*)vectorWithVec2f:(Vec2f)v
 {
     return [CelestiaVector vectorWithx:[NSNumber numberWithFloat:v.x] y:[NSNumber numberWithFloat:v.y]];
