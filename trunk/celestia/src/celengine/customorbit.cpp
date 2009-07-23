@@ -12,12 +12,13 @@
 #include <fstream>
 #include <iomanip>
 #include <celmath/mathlib.h>
-#include <celmath/quaternion.h>
+#include <celmath/geomutil.h>
 #include "astro.h"
 #include "customorbit.h"
 #include "vsop87.h"
 #include "jpleph.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -385,7 +386,7 @@ class MercuryOrbit : public CachingOrbit
  public:
     virtual ~MercuryOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 0;  //Planet 0
     vector<int> pList;
@@ -429,9 +430,9 @@ class MercuryOrbit : public CachingOrbit
     eclLat -= (PI/2);
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -450,7 +451,7 @@ class VenusOrbit : public CachingOrbit
  public:
     virtual ~VenusOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 1;  //Planet 1
     vector<int> pList;
@@ -502,9 +503,9 @@ class VenusOrbit : public CachingOrbit
     eclLat -= (PI/2);
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -523,7 +524,7 @@ class EarthOrbit : public CachingOrbit
  public:
     virtual ~EarthOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
    	double t, t2;
 	double ls, ms;    // mean longitude and mean anomaly
@@ -569,9 +570,9 @@ class EarthOrbit : public CachingOrbit
         // Correction for internal coordinate system
         eclLong += PI;
 
-        return Point3d(-cos(eclLong) * distance,
-                       0,
-                       sin(eclLong) * distance);
+        return Vector3d(-cos(eclLong) * distance,
+                        0,
+                        sin(eclLong) * distance);
     };
 
     double getPeriod() const
@@ -591,7 +592,7 @@ class LunarOrbit : public CachingOrbit
  public:
     virtual ~LunarOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
 	double jd19, t, t2;
 	double ld, ms, md, de, f, n, hp;
@@ -732,9 +733,9 @@ class LunarOrbit : public CachingOrbit
         dec -= (PI/2);
         RA += PI;
 
-        return Point3d(cos(RA) * sin(dec) * distance,
-                       cos(dec) * distance,
-                       -sin(RA) * sin(dec) * distance);
+        return Vector3d(cos(RA) * sin(dec) * distance,
+                        cos(dec) * distance,
+                        -sin(RA) * sin(dec) * distance);
 #else
         // Skip the conversion and return ecliptical coordinates
         double x = distance * cos(eclLat) * cos(eclLon);
@@ -762,7 +763,7 @@ class MarsOrbit : public CachingOrbit
  public:
     virtual ~MarsOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 2;  //Planet 2
     vector<int> pList;
@@ -825,9 +826,9 @@ class MarsOrbit : public CachingOrbit
     eclLat -= (PI/2);
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -846,7 +847,7 @@ class JupiterOrbit : public CachingOrbit
  public:
     virtual ~JupiterOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 3;  //Planet 3
     vector<int> pList(1, p);
@@ -936,9 +937,9 @@ class JupiterOrbit : public CachingOrbit
     eclLat -= (PI/2);
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -957,7 +958,7 @@ class SaturnOrbit : public CachingOrbit
  public:
     virtual ~SaturnOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 4;  //Planet 4
     vector<int> pList(1, p);
@@ -1074,9 +1075,9 @@ class SaturnOrbit : public CachingOrbit
     eclLat -= (PI/2);
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -1095,7 +1096,7 @@ class UranusOrbit : public CachingOrbit
  public:
     virtual ~UranusOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 5;  //Planet 5
     vector<int> pList(1, p);
@@ -1167,9 +1168,9 @@ class UranusOrbit : public CachingOrbit
     eclLat -= (PI/2);
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -1188,7 +1189,7 @@ class NeptuneOrbit : public CachingOrbit
  public:
     virtual ~NeptuneOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 6;  //Planet 6
     vector<int> pList(1, p);
@@ -1250,9 +1251,9 @@ class NeptuneOrbit : public CachingOrbit
     eclLat -= (PI/2);
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -1271,7 +1272,7 @@ class PlutoOrbit : public CachingOrbit
  public:
     virtual ~PlutoOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     const int p = 7;  //Planet 7
     vector<int> pList(1, p);
@@ -1295,9 +1296,9 @@ class PlutoOrbit : public CachingOrbit
     eclLat -= PI / 2;
     eclLong += PI;
 
-    return Point3d(cos(eclLong) * sin(eclLat) * distance,
-                   cos(eclLat) * distance,
-                   -sin(eclLong) * sin(eclLat) * distance);
+    return Vector3d(cos(eclLong) * sin(eclLat) * distance,
+                    cos(eclLat) * distance,
+                    -sin(eclLong) * sin(eclLat) * distance);
     };
 
     double getPeriod() const
@@ -1316,7 +1317,7 @@ class PlutoOrbit : public CachingOrbit
 // semimajor axis a and eccentricity e.  This helper function assumes
 // a low eccentricity; orbit.cpp has functions appropriate for solving
 // Kepler's equation for larger values of e.
-static Point3d ellipsePosition(double a, double e, double M)
+static Vector3d ellipsePosition(double a, double e, double M)
 {
     // Solve Kepler's equation--for a low eccentricity orbit, just a few
     // iterations is enough.
@@ -1324,9 +1325,9 @@ static Point3d ellipsePosition(double a, double e, double M)
     for (int k = 0; k < 3; k++)
         E = M + e * sin(E);
 
-    return Point3d(a * (cos(E) - e),
-                   0.0,
-                   a * sqrt(1 - square(e)) * -sin(E));
+    return Vector3d(a * (cos(E) - e),
+                    0.0,
+                    a * sqrt(1 - square(e)) * -sin(E));
 }
 
 
@@ -1335,7 +1336,7 @@ class PhobosOrbit : public CachingOrbit
  public:
     virtual ~PhobosOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         double epoch = 2433283.0 - 0.5; // 00:00 1 Jan 1950
         double a     = 9380.0;
@@ -1363,26 +1364,26 @@ class PhobosOrbit : public CachingOrbit
         double w    = degToRad(w0 + T * dw - T * dnode);
         double M    = degToRad(M0 + t * n  - T * dw);
 
-        Point3d p = ellipsePosition(a, e, M);
+        Vector3d p = ellipsePosition(a, e, M);
 
         // Orientation of the orbital plane with respect to the Laplacian plane
-        Mat3d Rorbit     = (Mat3d::yrotation(node) *
-                            Mat3d::xrotation(degToRad(i)) *
-                            Mat3d::yrotation(w));
+        Matrix3d Rorbit     = (YRotation(node) *
+                               XRotation(degToRad(i)) *
+                               YRotation(w)).toRotationMatrix();
 
         // Rotate to the Earth's equatorial plane
         double N = degToRad(refplane_RA);
         double J = degToRad(90 - refplane_Dec);
-        Mat3d RLaplacian = (Mat3d::yrotation( N) *
-                            Mat3d::xrotation( J) *
-                            Mat3d::yrotation(-N));
+        Matrix3d RLaplacian = (YRotation( N) *
+                               XRotation( J) *
+                               YRotation(-N)).toRotationMatrix();
 
         // Rotate to the Martian equatorial plane
         N = degToRad(marspole_RA);
         J = degToRad(90 - marspole_Dec);
-        Mat3d RMars_eq   = (Mat3d::yrotation( N) *
-                            Mat3d::xrotation(-J) *
-                            Mat3d::yrotation(-N));
+        Matrix3d RMars_eq   = (YRotation( N) *
+                               XRotation(-J) *
+                               YRotation(-N)).toRotationMatrix();
 
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
@@ -1404,7 +1405,7 @@ class DeimosOrbit : public CachingOrbit
  public:
     virtual ~DeimosOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         double epoch = 2433283.0 - 0.5;
         double a     = 23460.0;
@@ -1432,26 +1433,26 @@ class DeimosOrbit : public CachingOrbit
         double w    = degToRad(w0 + T * dw - T * dnode);
         double M    = degToRad(M0 + t * n  - T * dw);
 
-        Point3d p = ellipsePosition(a, e, M);
+        Vector3d p = ellipsePosition(a, e, M);
 
         // Orientation of the orbital plane with respect to the Laplacian plane
-        Mat3d Rorbit     = (Mat3d::yrotation(node) *
-                            Mat3d::xrotation(degToRad(i)) *
-                            Mat3d::yrotation(w));
+        Matrix3d Rorbit     = (YRotation(node) *
+                               XRotation(degToRad(i)) *
+                               YRotation(w)).toRotationMatrix();
 
         // Rotate to the Earth's equatorial plane
         double N = degToRad(refplane_RA);
         double J = degToRad(90 - refplane_Dec);
-        Mat3d RLaplacian = (Mat3d::yrotation( N) *
-                            Mat3d::xrotation( J) *
-                            Mat3d::yrotation(-N));
+        Matrix3d RLaplacian = (YRotation( N) *
+                               XRotation( J) *
+                               YRotation(-N)).toRotationMatrix();
 
         // Rotate to the Martian equatorial plane
         N = degToRad(marspole_RA);
         J = degToRad(90 - marspole_Dec);
-        Mat3d RMars_eq   = (Mat3d::yrotation( N) *
-                            Mat3d::xrotation(-J) *
-                            Mat3d::yrotation(-N));
+        Matrix3d RMars_eq   = (YRotation( N) *
+                               XRotation(-J) *
+                               YRotation(-N)).toRotationMatrix();
 
         return RMars_eq * (RLaplacian * (Rorbit * p));
     }
@@ -1546,7 +1547,7 @@ class IoOrbit : public CachingOrbit
  public:
     virtual ~IoOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -1606,9 +1607,9 @@ class IoOrbit : public CachingOrbit
     B -= (PI/2);
     L += PI;
 
-    return Point3d(cos(L) * sin(B) * R,
-                   cos(B) * R,
-                   -sin(L) * sin(B) * R);
+    return Vector3d(cos(L) * sin(B) * R,
+                    cos(B) * R,
+                    -sin(L) * sin(B) * R);
     };
 
     double getPeriod() const
@@ -1627,7 +1628,7 @@ class EuropaOrbit : public CachingOrbit
  public:
     virtual ~EuropaOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     // Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -1698,9 +1699,9 @@ class EuropaOrbit : public CachingOrbit
     B -= (PI/2);
     L += PI;
 
-    return Point3d(cos(L) * sin(B) * R,
-                   cos(B) * R,
-                   -sin(L) * sin(B) * R);
+    return Vector3d(cos(L) * sin(B) * R,
+                    cos(B) * R,
+                    -sin(L) * sin(B) * R);
     };
 
     double getPeriod() const
@@ -1719,7 +1720,7 @@ class GanymedeOrbit : public CachingOrbit
  public:
     virtual ~GanymedeOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -1793,9 +1794,9 @@ class GanymedeOrbit : public CachingOrbit
     B -= (PI/2);
     L += PI;
 
-    return Point3d(cos(L) * sin(B) * R,
-                   cos(B) * R,
-                   -sin(L) * sin(B) * R);
+    return Vector3d(cos(L) * sin(B) * R,
+                    cos(B) * R,
+                    -sin(L) * sin(B) * R);
     };
 
     double getPeriod() const
@@ -1814,7 +1815,7 @@ class CallistoOrbit : public CachingOrbit
  public:
     virtual ~CallistoOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
     //Computation will yield latitude(L), longitude(B) and distance(R) relative to Jupiter
     double t;
@@ -1933,9 +1934,9 @@ class CallistoOrbit : public CachingOrbit
     B -= (PI/2);
     L += PI;
 
-    return Point3d(cos(L) * sin(B) * R,
-                   cos(B) * R,
-                   -sin(L) * sin(B) * R);
+    return Vector3d(cos(L) * sin(B) * R,
+                    cos(B) * R,
+                    -sin(L) * sin(B) * R);
     };
 
     double getPeriod() const
@@ -1992,7 +1993,7 @@ void ComputeSaturnianElements(double t,
 }
 
 
-static Point3d SaturnMoonPosition(double lam, double gam, double Om, double r)
+static Vector3d SaturnMoonPosition(double lam, double gam, double Om, double r)
 {
     double u = lam - Om;
     double w = Om - SatAscendingNode;
@@ -2010,7 +2011,7 @@ static Point3d SaturnMoonPosition(double lam, double gam, double Om, double r)
     double y = r * sin(u) * sin(gam);
     double z = r * (sin(u) * cos(w) * cos(gam) + cos(u) * sin(w));
 
-    return Point3d(x, y, z);
+    return Vector3d(x, y, z);
 }
 
 
@@ -2049,7 +2050,7 @@ class MimasOrbit : public CachingOrbit
  public:
     virtual ~MimasOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2091,7 +2092,7 @@ class EnceladusOrbit : public CachingOrbit
  public:
     virtual ~EnceladusOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2132,7 +2133,7 @@ class TethysOrbit : public CachingOrbit
  public:
     virtual ~TethysOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2169,7 +2170,7 @@ class DioneOrbit : public CachingOrbit
  public:
     virtual ~DioneOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2211,7 +2212,7 @@ class RheaOrbit : public CachingOrbit
  public:
     virtual ~RheaOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2260,7 +2261,7 @@ class TitanOrbit : public CachingOrbit
  public:
     virtual ~TitanOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2328,7 +2329,7 @@ class HyperionOrbit : public CachingOrbit
  public:
     virtual ~HyperionOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2411,7 +2412,7 @@ class IapetusOrbit : public CachingOrbit
  public:
     virtual ~IapetusOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         // Computation will yield latitude(L), longitude(B) and distance(R)
         // relative to Saturn.
@@ -2503,7 +2504,7 @@ class PhoebeOrbit : public CachingOrbit
  public:
     virtual ~PhoebeOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         double t = jd - 2433282.5;
         double T = t / 365.25;
@@ -2581,7 +2582,7 @@ class UranianSatelliteOrbit : public CachingOrbit
         return a * BoundingRadiusSlack;
     }
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         double t = jd - 2444239.5;
         int i;
@@ -2627,10 +2628,10 @@ class UranianSatelliteOrbit : public CachingOrbit
         double x = a * (cos(ecc) - e);
         double z = a * sqrt(1 - square(e)) * -sin(ecc);
 
-        Mat3d R = (Mat3d::yrotation(theta) *
-                   Mat3d::xrotation(gamma) *
-                   Mat3d::yrotation(p - theta));
-        return R * Point3d(x, 0, z);
+        Matrix3d R = (YRotation(theta) *
+                      XRotation(gamma) *
+                      YRotation(p - theta)).toRotationMatrix();
+        return R * Vector3d(x, 0, z);
     }
 };
 
@@ -2733,7 +2734,7 @@ class TritonOrbit : public CachingOrbit
  public:
     virtual ~TritonOrbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         double epoch = 2433282.5;
         double t = jd - epoch;
@@ -2745,7 +2746,7 @@ class TritonOrbit : public CachingOrbit
         double L  = L0 + n * t;
 
         double E = L;   // Triton's orbit is circular, so E = mean anomaly
-        Point3d p(a * cos(E), a * sin(E), 0.0);
+        Vector3d p(a * cos(E), a * sin(E), 0.0);
 
         // Transform to the invariable plane:
         //   gamma is the inclination of the orbital plane on the invariable plane
@@ -2754,7 +2755,7 @@ class TritonOrbit : public CachingOrbit
         //      of the orbit on the invariable plane.
         double gamma = degToRad(158.996);
         double theta = degToRad(151.401 + 0.57806 * t / 365.25);
-        Quatd toInvariable = Quatd::xrotation(-gamma) * Quatd::zrotation(-theta);
+        Quaterniond toInvariable = XRotation(-gamma) * ZRotation(-theta);
 
         // Compute the RA and declination of the pole of the fixed reference plane
         // (epoch is J2000.0)
@@ -2766,15 +2767,15 @@ class TritonOrbit : public CachingOrbit
         // Rotate to the Earth's equatorial plane
         double Nr = degToRad(refplane_RA - 90.0);
         double Jr = degToRad(90.0 - refplane_Dec);
-        Quatd toEarthEq = Quatd::xrotation(Jr) * Quatd::zrotation(Nr);
+        Quaterniond toEarthEq = XRotation(Jr) * ZRotation(Nr);
 
-        Quatd q = toEarthEq * toInvariable;
+        Quaterniond q = toEarthEq * toInvariable;
         //Quatd q = toInvariable * toEarthEq;
 
-        p = q.toMatrix3() * p;
+        p = q.toRotationMatrix() * p;
 
         // Convert to Celestia's coordinate system
-        return Point3d(p.x, p.z, -p.y);
+        return Vector3d(p.x(), p.z(), -p.y());
     }
 
     double getPeriod() const
@@ -2994,10 +2995,10 @@ class HTC20Orbit : public CachingOrbit
 
     virtual ~HTC20Orbit() {};
 
-    Point3d computePosition(double jd) const
+    Vector3d computePosition(double jd) const
     {
         double t = jd - astro::J2000 - (4156.0 / 86400.0);
-        Point3d pos(0.0, 0.0, 0.0);
+        Vector3d pos(0.0, 0.0, 0.0);
 
         for (int i = 0; i < nTerms; i++)
         {
@@ -3008,11 +3009,11 @@ class HTC20Orbit : public CachingOrbit
                           row[4] * (angles.lambda * t + angles.theta));
 
             double u = row[0] == 0.0 ? cos(ang) : sin(ang);
-            pos += Vec3d(amplitudes[i * 6], amplitudes[i * 6 + 1], amplitudes[i * 6 + 2]) * u;
+            pos += Vector3d(amplitudes[i * 6], amplitudes[i * 6 + 1], amplitudes[i * 6 + 2]) * u;
         }
 
         // Convert to Celestia's coordinate system
-        return Point3d(pos.x, pos.z, -pos.y)  * astro::AUtoKilometers(1.0);
+        return Vector3d(pos.x(), pos.z(), -pos.y())  * astro::AUtoKilometers(1.0);
     }
 
     double getPeriod() const
@@ -3078,11 +3079,11 @@ class JPLEphOrbit : public CachingOrbit
         return boundingRadius;
     }
 
-    Point3d computePosition(double tjd) const
+    Vector3d computePosition(double tjd) const
     {
         // Get the position relative to the Earth (for the Moon) or
         // the solar system barycenter.
-        Point3d pos = ephem.getPlanetPosition(target, tjd);
+        Vector3d pos = ephem.getPlanetPosition(target, tjd);
 
         if (center == JPLEph_SSB && target != JPLEph_Moon)
         {
@@ -3094,27 +3095,28 @@ class JPLEphOrbit : public CachingOrbit
         }
         else
         {
-            Point3d centerPos = ephem.getPlanetPosition(center, tjd);
+            Vector3d centerPos = ephem.getPlanetPosition(center, tjd);
             if (target == JPLEph_Moon)
             {
-                pos += (ephem.getPlanetPosition(JPLEph_Earth, tjd) - Point3d(0.0, 0.0, 0.0));
+                pos += ephem.getPlanetPosition(JPLEph_Earth, tjd);
             }
             if (center == JPLEph_Moon)
             {
-                centerPos += (ephem.getPlanetPosition(JPLEph_Earth, tjd) - Point3d(0.0, 0.0, 0.0));
+                centerPos += ephem.getPlanetPosition(JPLEph_Earth, tjd);
             }
 
             // Compute the position of target relative to the center
-            pos = Point3d(pos.x - centerPos.x,
-                          pos.y - centerPos.y,
-                          pos.z - centerPos.z);
+            pos -= centerPos;
         }
 
         // Rotate from the J2000 mean equator to the ecliptic
+#if CELVEC
         pos = pos * Mat3d::xrotation(astro::J2000Obliquity);
+#endif
+        pos = XRotation(-astro::J2000Obliquity) * pos;
 
         // Convert to Celestia's coordinate system
-        return Point3d(pos.x, pos.z, -pos.y);
+        return Vector3d(pos.x(), pos.z(), -pos.y());
     }
 
  private:

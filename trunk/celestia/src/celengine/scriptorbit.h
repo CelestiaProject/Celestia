@@ -27,7 +27,7 @@ class ScriptedOrbit : public CachingOrbit
                     const std::string& funcName,
                     Hash* parameters);
 
-    virtual Point3d computePosition(double tjd) const;
+    virtual Eigen::Vector3d computePosition(double tjd) const;
     //virtual Vec3d computeVelocity(double tjd) const;
     virtual bool isPeriodic() const;
     virtual double getPeriod() const;

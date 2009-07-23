@@ -470,14 +470,14 @@ UniversalCoord Body::getPosition(double tdb) const
     Vector3d position = Vector3d::Zero();
 
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    Vector3d p = toEigen(phase->orbit()->positionAtTime(tdb));
+    Vector3d p = phase->orbit()->positionAtTime(tdb);
     ReferenceFrame* frame = phase->orbitFrame();
 
     while (frame->getCenter().getType() == Selection::Type_Body)
     {
         phase = frame->getCenter().body()->timeline->findPhase(tdb);
         position += frame->getOrientation(tdb).conjugate() * p;
-        p = toEigen(phase->orbit()->positionAtTime(tdb));
+        p = phase->orbit()->positionAtTime(tdb);
         frame = phase->orbitFrame();
     }
 
@@ -517,7 +517,7 @@ Vector3d Body::getVelocity(double tdb) const
 
     ReferenceFrame* orbitFrame = phase->orbitFrame();
 
-    Vector3d v = toEigen(phase->orbit()->velocityAtTime(tdb));
+    Vector3d v = phase->orbit()->velocityAtTime(tdb);
     v = orbitFrame->getOrientation(tdb).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
 
 	if (!orbitFrame->isInertial())
@@ -563,7 +563,7 @@ Vector3d Body::getAngularVelocity(double tdb) const
 Matrix4d Body::getLocalToAstrocentric(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    Vector3d p = phase->orbitFrame()->convertToAstrocentric(toEigen(phase->orbit()->positionAtTime(tdb)), tdb);
+    Vector3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
     return Transform3d(Translation3d(p)).matrix();
 }
 
@@ -574,7 +574,7 @@ Vector3d Body::getAstrocentricPosition(double tdb) const
 {
     // TODO: Switch the iterative method used in getPosition
     const TimelinePhase* phase = timeline->findPhase(tdb);
-    return phase->orbitFrame()->convertToAstrocentric(toEigen(phase->orbit()->positionAtTime(tdb)), tdb);
+    return phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
 }
 
 

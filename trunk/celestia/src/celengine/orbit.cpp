@@ -13,11 +13,13 @@
 #include <cassert>
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
+#include <celmath/geomutil.h>
 #include "astro.h"
 #include "orbit.h"
 #include "body.h"
 #include "eigenport.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -43,9 +45,12 @@ EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
     period(_period),
     epoch(_epoch)
 {
+    orbitPlaneRotation = (ZRotation(_ascendingNode) * XRotation(_inclination) * ZRotation(_argOfPeriapsis)).toRotationMatrix();
+#if CELVEC
     orbitPlaneRotation = (Mat3d::zrotation(_ascendingNode) *
                           Mat3d::xrotation(_inclination) *
                           Mat3d::zrotation(_argOfPeriapsis));
+#endif
 }
 
 
@@ -124,10 +129,10 @@ struct SolveKeplerLaguerreConwayHyp : public unary_function<double, double>
 typedef pair<double, double> Solution;
 
 
-Vec3d Orbit::velocityAtTime(double tdb) const
+Vector3d Orbit::velocityAtTime(double tdb) const
 {
-	Point3d p0 = positionAtTime(tdb);
-	Point3d p1 = positionAtTime(tdb + ORBITAL_VELOCITY_DIFF_DELTA);
+    Vector3d p0 = positionAtTime(tdb);
+    Vector3d p1 = positionAtTime(tdb + ORBITAL_VELOCITY_DIFF_DELTA);
 	return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
 }
 
@@ -182,7 +187,7 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
 
 // Compute the position at the specified eccentric
 // anomaly E.
-Point3d EllipticalOrbit::positionAtE(double E) const
+Vector3d EllipticalOrbit::positionAtE(double E) const
 {
     double x, y;
 
@@ -205,16 +210,16 @@ Point3d EllipticalOrbit::positionAtE(double E) const
         y = 0.0;
     }
 
-    Point3d p = orbitPlaneRotation * Point3d(x, y, 0);
+    Vector3d p = orbitPlaneRotation * Vector3d(x, y, 0);
 
     // Convert to Celestia's internal coordinate system
-    return Point3d(p.x, p.z, -p.y);
+    return Vector3d(p.x(), p.z(), -p.y());
 }
 
 
 // Compute the velocity at the specified eccentric
 // anomaly E.
-Vec3d EllipticalOrbit::velocityAtE(double E) const
+Vector3d EllipticalOrbit::velocityAtE(double E) const
 {
     double x, y;
 
@@ -245,15 +250,15 @@ Vec3d EllipticalOrbit::velocityAtE(double E) const
         y = 0.0;
     }
 
-    Vec3d v = orbitPlaneRotation * Vec3d(x, y, 0);
+    Vector3d v = orbitPlaneRotation * Vector3d(x, y, 0);
 
     // Convert to Celestia's coordinate system
-    return Vec3d(v.x, v.z, -v.y);
+    return Vector3d(v.x(), v.z(), -v.y());
 }
 
 
 // Return the offset from the center
-Point3d EllipticalOrbit::positionAtTime(double t) const
+Vector3d EllipticalOrbit::positionAtTime(double t) const
 {
     t = t - epoch;
     double meanMotion = 2.0 * PI / period;
@@ -264,7 +269,7 @@ Point3d EllipticalOrbit::positionAtTime(double t) const
 }
 
 
-Vec3d EllipticalOrbit::velocityAtTime(double t) const
+Vector3d EllipticalOrbit::velocityAtTime(double t) const
 {
     t = t - epoch;
     double meanMotion = 2.0 * PI / period;
@@ -341,7 +346,7 @@ CachingOrbit::~CachingOrbit()
 }
 
 
-Point3d CachingOrbit::positionAtTime(double jd) const
+Vector3d CachingOrbit::positionAtTime(double jd) const
 {
     if (jd != lastTime)
     {
@@ -360,7 +365,7 @@ Point3d CachingOrbit::positionAtTime(double jd) const
 }
 
 
-Vec3d CachingOrbit::velocityAtTime(double jd) const
+Vector3d CachingOrbit::velocityAtTime(double jd) const
 {
 	if (jd != lastTime)
 	{
@@ -383,16 +388,16 @@ Vec3d CachingOrbit::velocityAtTime(double jd) const
  *  kilometers / Julian day.) The default implementation just
  *  differentiates the position.
  */
-Vec3d CachingOrbit::computeVelocity(double jd) const
+Vector3d CachingOrbit::computeVelocity(double jd) const
 {
 	// Compute the velocity by differentiating.
-	Point3d p0 = positionAtTime(jd);
+    Vector3d p0 = positionAtTime(jd);
 
 	// Call computePosition() instead of positionAtTime() so that we
 	// don't affect the cached value. 
 	// TODO: check the valid ranges of the orbit to make sure that
 	// jd+dt is still in range.
-	Point3d p1 = computePosition(jd + ORBITAL_VELOCITY_DIFF_DELTA);
+    Vector3d p1 = computePosition(jd + ORBITAL_VELOCITY_DIFF_DELTA);
 
 	return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
 }
@@ -407,19 +412,19 @@ void CachingOrbit::sample(double start, double t, int nSamples,
 }
 
 
-static EllipticalOrbit* StateVectorToOrbit(const Point3d& position,
-                                           const Vec3d& v,
+static EllipticalOrbit* StateVectorToOrbit(const Vector3d& position,
+                                           const Vector3d& v,
                                            double mass,
                                            double t)
 {
-    Vec3d R = position - Point3d(0.0, 0.0, 0.0);
-    Vec3d L = R ^ v;
-    double magR = R.length();
-    double magL = L.length();
-    double magV = v.length();
+    Vector3d R = position;
+    Vector3d L = R.cross(v);
+    double magR = R.norm();
+    double magL = L.norm();
+    double magV = v.norm();
     L *= (1.0 / magL);
 
-    Vec3d W = L ^ (R / magR);
+    Vector3d W = L.cross(R / magR);
 
     double G = astro::G * 1e-9; // convert from meters to kilometers
     double GM = G * mass;
@@ -429,7 +434,7 @@ static EllipticalOrbit* StateVectorToOrbit(const Point3d& position,
 
     // Compute the eccentricity
     double p = square(magL) / GM;
-    double q = R * v;
+    double q = R.dot(v);
     double ex = 1.0 - magR / a;
     double ey = q / sqrt(a * GM);
     double e = sqrt(ex * ex + ey * ey);
@@ -439,23 +444,23 @@ static EllipticalOrbit* StateVectorToOrbit(const Point3d& position,
     double M = E - e * sin(E);
 
     // Compute the inclination
-    double cosi = L * Vec3d(0, 1.0, 0);
+    double cosi = L.dot(Vector3d::UnitY());
     double i = 0.0;
     if (cosi < 1.0)
         i = acos(cosi);
 
     // Compute the longitude of ascending node
-    double Om = atan2(L.x, L.z);
+    double Om = atan2(L.x(), L.z());
 
     // Compute the argument of pericenter
-    Vec3d U = R / magR;
-    double s_nu = (v * U) * sqrt(p / GM);
-    double c_nu = (v * W) * sqrt(p / GM) - 1;
+    Vector3d U = R / magR;
+    double s_nu = (v.dot(U)) * sqrt(p / GM);
+    double c_nu = (v.dot(W)) * sqrt(p / GM) - 1;
     s_nu /= e;
     c_nu /= e;
-    Vec3d P = U * c_nu - W * s_nu;
-    Vec3d Q = U * s_nu + W * c_nu;
-    double om = atan2(P.y, Q.y);
+    Vector3d P = U * c_nu - W * s_nu;
+    Vector3d Q = U * s_nu + W * c_nu;
+    double om = atan2(P.y(), Q.y());
 
     // Compute the period
     double T = 2 * PI * sqrt(cube(a) / GM);
@@ -477,10 +482,10 @@ MixedOrbit::MixedOrbit(Orbit* orbit, double t0, double t1, double mass) :
     assert(orbit != NULL);
 
     double dt = 1.0 / 1440.0; // 1 minute
-    Point3d p0 = orbit->positionAtTime(t0);
-    Point3d p1 = orbit->positionAtTime(t1);
-    Vec3d v0 = (orbit->positionAtTime(t0 + dt) - p0) / (86400 * dt);
-    Vec3d v1 = (orbit->positionAtTime(t1 + dt) - p1) / (86400 * dt);
+    Vector3d p0 = orbit->positionAtTime(t0);
+    Vector3d p1 = orbit->positionAtTime(t1);
+    Vector3d v0 = (orbit->positionAtTime(t0 + dt) - p0) / (86400 * dt);
+    Vector3d v1 = (orbit->positionAtTime(t1 + dt) - p1) / (86400 * dt);
     beforeApprox = StateVectorToOrbit(p0, v0, mass, t0);
     afterApprox = StateVectorToOrbit(p1, v1, mass, t1);
 
@@ -502,7 +507,7 @@ MixedOrbit::~MixedOrbit()
 }
 
 
-Point3d MixedOrbit::positionAtTime(double jd) const
+Vector3d MixedOrbit::positionAtTime(double jd) const
 {
     if (jd < begin)
         return beforeApprox->positionAtTime(jd);
@@ -513,7 +518,7 @@ Point3d MixedOrbit::positionAtTime(double jd) const
 }
 
 
-Vec3d MixedOrbit::velocityAtTime(double jd) const
+Vector3d MixedOrbit::velocityAtTime(double jd) const
 {
     if (jd < begin)
         return beforeApprox->velocityAtTime(jd);
@@ -552,7 +557,7 @@ void MixedOrbit::sample(double t0, double t1, int nSamples,
 
 /*** FixedOrbit ***/
 
-FixedOrbit::FixedOrbit(const Point3d& pos) :
+FixedOrbit::FixedOrbit(const Vector3d& pos) :
     position(pos)
 {
 }
@@ -563,7 +568,7 @@ FixedOrbit::~FixedOrbit()
 }
 
 
-Point3d
+Vector3d
 FixedOrbit::positionAtTime(double /*tjd*/) const
 {
     return position;
@@ -587,7 +592,7 @@ FixedOrbit::getPeriod() const
 double
 FixedOrbit::getBoundingRadius() const
 {
-    return position.distanceFromOrigin() * 1.1;
+    return position.norm() * 1.1;
 }
 
 
@@ -604,7 +609,7 @@ FixedOrbit::sample(double, double, int, OrbitSampleProc&) const
 /*** SynchronousOrbit ***/
 // TODO: eliminate this class once body-fixed reference frames are implemented
 SynchronousOrbit::SynchronousOrbit(const Body& _body,
-                                   const Point3d& _position) :
+                                   const Vector3d& _position) :
     body(_body),
     position(_position)
 {
@@ -616,10 +621,9 @@ SynchronousOrbit::~SynchronousOrbit()
 }
 
 
-Point3d SynchronousOrbit::positionAtTime(double jd) const
+Vector3d SynchronousOrbit::positionAtTime(double jd) const
 {
-    Quatd q = fromEigen(body.getEquatorialToBodyFixed(jd));
-    return position * q.toMatrix3();
+    return body.getEquatorialToBodyFixed(jd).conjugate() * position;
 }
 
 
@@ -631,7 +635,7 @@ double SynchronousOrbit::getPeriod() const
 
 double SynchronousOrbit::getBoundingRadius() const
 {
-    return position.distanceFromOrigin();
+    return position.norm();
 }
 
 

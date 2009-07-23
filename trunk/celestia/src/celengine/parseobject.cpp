@@ -267,7 +267,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
         return NULL;
     }
 
-    return new FixedOrbit(Point3d(position.x, position.y, position.z));
+    return new FixedOrbit(Vector3d(position.x, position.y, position.z));
 }
 
 
@@ -755,7 +755,7 @@ CreateOrbit(const Selection& centralObject,
             if (usePlanetUnits)
                 fixedPosition = fixedPosition * astro::AUtoKilometers(1.0);
 
-            return new FixedOrbit(Point3d(0.0, 0.0, 0.0) + fixedPosition);
+            return new FixedOrbit(toEigen(fixedPosition));
         }
         else if (fixedPositionValue->getType() == Value::HashType)
         {
@@ -778,7 +778,7 @@ CreateOrbit(const Selection& centralObject,
         if (centralBody != NULL)
         {
             Vector3d pos = centralBody->planetocentricToCartesian(longlat.x, longlat.y, longlat.z);
-            return new SynchronousOrbit(*centralBody, Point3d(pos.x(), pos.y(), pos.z()));
+            return new SynchronousOrbit(*centralBody, pos);
         }
         else
         {

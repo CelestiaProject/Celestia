@@ -18,6 +18,7 @@
 #include <celutil/basictypes.h>
 #include "jpleph.h"
 
+using namespace Eigen;
 using namespace std;
 
 static const unsigned int DE200RecordSize    =  826;
@@ -90,24 +91,24 @@ double JPLEphemeris::getEndDate() const
 // or the Earth (in the case of the Moon) at a specified TDB Julian date tjd.
 // If tjd is outside the span covered by the ephemeris it is clamped to a
 // valid time.
-Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
+Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
 {
     // Solar system barycenter is the origin
     if (planet == JPLEph_SSB)
     {
-        return Point3d(0.0, 0.0, 0.0);
+        return Vector3d::Zero();
     }
 
     // The position of the Earth must be computed from the positions of the
     // Earth-Moon barycenter and Moon
     if (planet == JPLEph_Earth)
     {
-        Point3d embPos = getPlanetPosition(JPLEph_EarthMoonBary, tjd);
+        Vector3d embPos = getPlanetPosition(JPLEph_EarthMoonBary, tjd);
 
         // Get the geocentric position of the Moon
-        Point3d moonPos = getPlanetPosition(JPLEph_Moon, tjd);
+        Vector3d moonPos = getPlanetPosition(JPLEph_Moon, tjd);
 
-        return embPos - Vec3d(moonPos.x, moonPos.y, moonPos.z) * (1.0 / (earthMoonMassRatio + 1.0));
+        return embPos - moonPos * (1.0 / (earthMoonMassRatio + 1.0));
     }
 
     // Clamp time to [ startDate, endDate ]
@@ -164,7 +165,7 @@ Point3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd) const
         }
     }
 
-    return Point3d(sum[0], sum[1], sum[2]);
+    return Vector3d(sum[0], sum[1], sum[2]);
 }
 
 

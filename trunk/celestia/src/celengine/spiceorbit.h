@@ -42,8 +42,8 @@ class SpiceOrbit : public CachingOrbit
         return boundingRadius;
     }
 
-    Point3d computePosition(double jd) const;
-    Vec3d computeVelocity(double jd) const;
+    Eigen::Vector3d computePosition(double jd) const;
+    Eigen::Vector3d computeVelocity(double jd) const;
 
     virtual void getValidRange(double& begin, double& end) const;
 

@@ -688,7 +688,7 @@ class Renderer
         double t;
         Point3d pos;
         
-        OrbitSample(const Point3d& _pos, double _t) : t(_t), pos(_pos) { }
+        OrbitSample(const Eigen::Vector3d& _pos, double _t) : t(_t), pos(_pos.x(), _pos.y(), _pos.z()) { }
         OrbitSample() { }
     };
 
