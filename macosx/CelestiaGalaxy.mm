@@ -55,6 +55,7 @@
 {
     return [NSString stringWithStdString:[[CelestiaAppCore sharedAppCore] appCore]->getSimulation()->getUniverse()->getDSOCatalog()->getDSOName([self galaxy])];
 }
+/*
 -(CelestiaVector*)orientation
 {
     return [CelestiaVector vectorWithQuatf:[self galaxy]->getOrientation()];
@@ -71,6 +72,7 @@
 {
     [self galaxy]->setPosition([q point3d]);
 }
+ */
 //-(void)setName:(NSString*)s
 //{
 //    [self galaxy]->setName([s stdString]);

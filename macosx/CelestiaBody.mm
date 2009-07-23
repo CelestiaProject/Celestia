@@ -75,14 +75,16 @@
 {
     return [NSNumber numberWithFloat:[self body]->getAlbedo()];
 }
--(CelestiaVector*)orientation
+/*
+-(CelestiaVector*)geometryOrientation
 {
-    return [CelestiaVector vectorWithQuatf:[self body]->getOrientation()];
+    return [CelestiaVector vectorWithQuatf:[self body]->getGeometryOrientation()];
 }
--(void)setOrientation:(CelestiaVector*)q
+-(void)setGeometryOrientation:(CelestiaVector*)q
 {
-    [self body]->setOrientation([q quatf]);
+    [self body]->setGeometryOrientation([q quatf]);
 }
+*/
 -(void)setName:(NSString*)s
 {
     // Body::setName method is now private
@@ -96,6 +98,7 @@
 {
     [self body]->setAlbedo([a floatValue]);
 }
+/*
 -(CelestiaVector*)astrocentricPosition:(NSNumber*)n
 {
     return [CelestiaVector vectorWithPoint3d:[self body]->getAstrocentricPosition([n doubleValue])];
@@ -112,7 +115,7 @@
 {
     return [CelestiaVector vectorWithQuatd:[self body]->getEclipticToBodyFixed([n doubleValue])];
 }
-
+*/
 -(NSArray*)alternateSurfaceNames
 {
     NSMutableArray *result = nil;

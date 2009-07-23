@@ -14,12 +14,14 @@
 }
 
 -(CelestiaUniversalCoord*)position;
+/*
 -(CelestiaVector*)orientation;
 -(void)setOrientation:(CelestiaVector*)q;
 -(CelestiaVector*)velocity;
 -(void)setVelocity:(CelestiaVector*)v;
 -(CelestiaVector*)angularVelocity;
 -(void)setAngularVelocity:(CelestiaVector*)v;
+ */
 -(void)setPosition:(CelestiaUniversalCoord*)p;
 -(void)setPositionWithPoint:(CelestiaVector*)p;
 -(void)update:(NSNumber*)dt timeScale: (NSNumber*)ts;

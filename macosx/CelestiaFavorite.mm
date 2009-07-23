@@ -17,6 +17,8 @@
 #import "CelestiaSimulation.h"
 #import "CelestiaSimulation_PrivateAPI.h"
 
+#include <celengine/eigenport.h>
+
 #ifdef URL_FAVORITES
 #include "url.h"
 #endif
@@ -135,7 +137,7 @@
         name = [[[[CelestiaAppCore sharedAppCore] simulation] julianDate] description];
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
-    fav->orientation = sim->getObserver().getOrientationf();
+    fav->orientation = fromEigen(sim->getObserver().getOrientationf());
     fav->name = [name stdString];
     fav->isFolder = false;
     fav->parentFolder = [parentFolder stdString];
