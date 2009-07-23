@@ -16,7 +16,6 @@
 #include <list>
 #include <celutil/utf8.h>
 #include <celengine/surface.h>
-#include <celengine/atmosphere.h>
 #include <celengine/orbit.h>
 #include <celengine/star.h>
 #include <celengine/location.h>
@@ -29,6 +28,7 @@ class ReferenceFrame;
 class Body;
 class FrameTree;
 class ReferenceMark;
+class Atmosphere;
 
 class PlanetarySystem
 {

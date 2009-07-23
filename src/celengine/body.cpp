@@ -16,6 +16,7 @@
 #include "mesh.h"
 #include "meshmanager.h"
 #include "body.h"
+#include "atmosphere.h"
 #include "frame.h"
 #include "timeline.h"
 #include "timelinephase.h"

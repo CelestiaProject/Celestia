@@ -1,6 +1,7 @@
 // solarsys.cpp
 //
-// Copyright (C) 2001-2006 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // Solar system catalog parser.
 //
@@ -34,6 +35,7 @@
 #include "frametree.h"
 #include "timeline.h"
 #include "timelinephase.h"
+#include "atmosphere.h"
 
 using namespace Eigen;
 using namespace std;
