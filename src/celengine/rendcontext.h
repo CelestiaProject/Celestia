@@ -10,14 +10,16 @@
 #ifndef _CELENGINE_RENDCONTEXT_H_
 #define _CELENGINE_RENDCONTEXT_H_
 
-#include <celmath/quaternion.h>
 #include "mesh.h"
 #include "shadermanager.h"
+#include <Eigen/Geometry>
 
 
 class RenderContext
 {
  public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     RenderContext(const Mesh::Material*);
     RenderContext();
     virtual ~RenderContext() {};
@@ -45,15 +47,15 @@ class RenderContext
     void setPointScale(float);
     float getPointScale() const;
     
-    void setCameraOrientation(const Quatf& q);
-    Quatf getCameraOrientation() const;
+    void setCameraOrientation(const Eigen::Quaternionf& q);
+    Eigen::Quaternionf getCameraOrientation() const;
     
  private:
     const Mesh::Material* material;
     bool locked;
     RenderPass renderPass;
     float pointScale;
-    Quatf cameraOrientation;  // required for drawing billboards
+    Eigen::Quaternionf cameraOrientation;  // required for drawing billboards
 
  protected:
     bool usePointSize;

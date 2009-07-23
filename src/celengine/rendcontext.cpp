@@ -15,6 +15,7 @@
 #include "glext.h"
 #include "vecgl.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -137,13 +138,13 @@ RenderContext::getPointScale() const
 
 
 void
-RenderContext::setCameraOrientation(const Quatf& q)
+RenderContext::setCameraOrientation(const Quaternionf& q)
 {
     cameraOrientation = q;
 }
 
 
-Quatf
+Quaternionf
 RenderContext::getCameraOrientation() const
 {
     return cameraOrientation;
