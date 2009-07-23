@@ -1049,8 +1049,8 @@ bool StarDatabase::createStar(Star* star,
             float raf = ((float) (ra * 24.0 / 360.0));
             float decf = ((float) dec);
             float distancef = ((float) distance);
-            Point3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
-            star->setPosition(toEigen(pos).cast<float>());
+            Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);
+            star->setPosition(pos.cast<float>());
         }
     }
 

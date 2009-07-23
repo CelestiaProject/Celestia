@@ -14,6 +14,7 @@
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <iostream>
 #include <string>
 #include <cmath>
@@ -160,23 +161,15 @@ namespace astro
     float sphereIlluminationFraction(Point3d spherePos,
                                      Point3d viewerPos);
 
-    Point3d heliocentricPosition(const UniversalCoord& universal,
-                                 const Point3f& starPosition);
-    UniversalCoord universalPosition(const Point3d& heliocentric,
-                                     const Point3f& starPosition);
-    UniversalCoord universalPosition(const Point3d& heliocentric,
-                                     const UniversalCoord& starPosition);
-
-    // Compatibility
-    Point3f equatorialToCelestialCart(float ra, float dec, float distance);
-    Point3d equatorialToCelestialCart(double ra, double dec, double distance);
+    Eigen::Vector3f equatorialToCelestialCart(float ra, float dec, float distance);
+    Eigen::Vector3d equatorialToCelestialCart(double ra, double dec, double distance);
 
     Eigen::Vector3f equatorialToEclipticCartesian(float ra, float dec, float distance);
 
-    Quatd eclipticToEquatorial();
-    Vec3d eclipticToEquatorial(const Vec3d& v);
-    Quatd equatorialToGalactic();
-    Vec3d equatorialToGalactic(const Vec3d& v);
+    Eigen::Quaterniond eclipticToEquatorial();
+    Eigen::Vector3d eclipticToEquatorial(const Eigen::Vector3d& v);
+    Eigen::Quaterniond equatorialToGalactic();
+    Eigen::Vector3d equatorialToGalactic(const Eigen::Vector3d& v);
 
     void anomaly(double meanAnomaly, double eccentricity,
                  double& trueAnomaly, double& eccentricAnomaly);
