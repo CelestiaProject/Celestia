@@ -71,10 +71,12 @@ FrameOfReference getFrame() const;
 {
     [self simulation]->update([dt doubleValue]);
 }
+/*
 -(CelestiaSelection*)pickObject:(CelestiaVector*)pickRay tolerance:(NSNumber*)tolerance
 {
     return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->pickObject([pickRay vec3f],[tolerance floatValue])] autorelease];
 }
+ */
 -(CelestiaSelection*)pickObject:(CelestiaVector*)pickRay
 {
     return [self pickObject:pickRay tolerance:[NSNumber numberWithDouble:0.0]];
@@ -87,6 +89,7 @@ FrameOfReference getFrame() const;
     return [[[CelestiaUniverse alloc] initWithUniverse:uni] autorelease];
 }
 
+/*
 -(void)orbit:(CelestiaVector*)q
 {
     [self simulation]->orbit([q quatf]);
@@ -95,6 +98,7 @@ FrameOfReference getFrame() const;
 {
     [self simulation]->rotate([q quatf]);
 }
+ */
 -(void)changeOrbitDistance:(NSNumber*)d
 {
     [self simulation]->changeOrbitDistance([d floatValue]);
@@ -139,6 +143,7 @@ FrameOfReference getFrame() const;
     return [[[CelestiaSelection alloc] initWithSelection:[self simulation]->findObjectFromPath([s stdString], true)] autorelease];
 }
 
+/*
 -(void)gotoSelection:(NSNumber*)gotoTime up:(CelestiaVector*)up coordinateSystem:(NSString*)csysName
 {
     [self simulation]->gotoSelection(
@@ -166,6 +171,7 @@ FrameOfReference getFrame() const;
         [latitude floatValue],
         [up vec3f]);
 }
+*/
 
 -(NSArray*)getSelectionLongLat
 {
@@ -212,7 +218,7 @@ FrameOfReference getFrame() const;
 }
 -(void)setObserverOrientation:(CelestiaVector*)q
 {
-    [self simulation]->setObserverOrientation([q quatf]);
+    [self simulation]->setObserverOrientation([q quaternionf]);
 }
 -(void)setObserverMode:(NSString*)m
 {

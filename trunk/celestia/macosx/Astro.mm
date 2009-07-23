@@ -82,6 +82,8 @@ NSDictionary* coordinateDict;
         [spherePos point3d],
         [viewerPos point3d])];
 }
+
+/*
 +(CelestiaVector*)heliocentricPosition:(CelestiaUniversalCoord*)universal starPosition:(CelestiaVector*)starPosition
 {
     return [CelestiaVector vectorWithPoint3d:astro::heliocentricPosition([universal universalCoord], [starPosition point3f])];
@@ -94,6 +96,8 @@ NSDictionary* coordinateDict;
 {
     return [CelestiaVector vectorWithPoint3d:astro::equatorialToCelestialCart([ra doubleValue], [dec doubleValue], [distance doubleValue])];
 }
+ */
+
 +(NSNumber*)coordinateSystem:(NSString*)coord
 {
     return [coordinateDict objectForKey:coord];

@@ -37,6 +37,7 @@
 {
     return [[[CelestiaUniversalCoord alloc] initWithUniversalCoord:[self observer].getPosition()] autorelease];
 }
+/*
 -(CelestiaVector*)orientation
 {
     return [CelestiaVector vectorWithQuatf:[self observer].getOrientationf()];
@@ -61,6 +62,7 @@
 {
     [self observer].setAngularVelocity([v vec3d]);
 }
+ */
 -(void)setPosition:(CelestiaUniversalCoord*)p
 {
     [self observer].setPosition([p universalCoord]);

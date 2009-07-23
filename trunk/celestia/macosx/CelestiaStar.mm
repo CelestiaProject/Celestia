@@ -59,6 +59,7 @@
 {
     return [NSNumber numberWithFloat:[self star]->getRadius()];
 }
+/*
 -(CelestiaVector*)position
 {
     return [CelestiaVector vectorWithPoint3f:[self star]->getPosition()];
@@ -67,6 +68,7 @@
 {
     [self star]->setPosition([p point3f]);
 }
+ */
 -(NSNumber*)apparentMagnitude:(NSNumber*)m
 {
     return [NSNumber numberWithFloat:[self star]->getApparentMagnitude([m floatValue])];

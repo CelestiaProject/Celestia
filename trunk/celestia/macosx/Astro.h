@@ -15,9 +15,11 @@
 
 @interface Astro : NSObject
 +(NSString*)stringWithCoordinateSystem:(NSNumber*)n;
+/*
 +(CelestiaVector*)equatorialToCelestialCart:(NSNumber*)ra declination:(NSNumber*)dec distance:(NSNumber*)distance;
 +(CelestiaUniversalCoord*)universalPosition:(CelestiaVector*)heliocentric starPosition:(CelestiaVector*)starPosition;
 +(CelestiaVector*)heliocentricPosition:(CelestiaUniversalCoord*)universal starPosition:(CelestiaVector*)starPosition;
+*/
 +(NSNumber*)sphereIlluminationFraction:(CelestiaVector*)spherePos viewerPosition:(CelestiaVector*)viewerPos;
 +(NSNumber*)coordinateSystem:(NSString*)coord;
 +(NSNumber*)julianDate:(NSDate*)date;

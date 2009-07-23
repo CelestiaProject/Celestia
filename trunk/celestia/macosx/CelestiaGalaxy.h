@@ -14,10 +14,12 @@
 -(NSString*)type;
 //-(void)setType:(NSString*)s;
 -(NSString *)name;
+/*
 -(CelestiaVector*)orientation;
 -(void)setOrientation:(CelestiaVector*)q;
 -(CelestiaVector*)position;
 -(void)setPosition:(CelestiaVector*)q;
+ */
 //-(void)setName:(NSString*)s;
 -(NSNumber *)radius;
 -(void)setRadius:(NSNumber*)r;

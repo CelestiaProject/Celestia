@@ -16,8 +16,10 @@
 -(void)setCatalogNumber:(NSNumber*)cat;
 -(void)setCatalogNumber:(NSNumber*)cat atIndex:(NSNumber*)index;
 -(NSNumber *)radius;
+/*
 -(CelestiaVector*)position;
 -(void)setPosition:(CelestiaVector*)p;
+ */
 -(NSNumber*)apparentMagnitude:(NSNumber*)m;
 -(NSNumber*)luminosity;
 -(NSNumber*)temperature;
