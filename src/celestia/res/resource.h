@@ -155,6 +155,7 @@
 #define IDC_SHOWHORIZONGRID           1111
 #define IDC_SHOWGALACTICGRID           1112
 #define IDC_SHOWECLIPTICGRID           1113
+#define IDC_SHOWECLIPTIC           1114
 #define IDC_SLIDER_FEATURE_SIZE         1150
 #define IDC_EDIT_FEATURE_SIZE           1151
 #define IDC_CELESTIALINK                1152

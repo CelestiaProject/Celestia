@@ -438,6 +438,11 @@ void CelestiaCore::activateFavorite(FavoritesEntry& fav)
     sim->setTime(fav.jd);
     sim->setObserverPosition(fav.position);
     sim->setObserverOrientation(fav.orientation);
+    if (fav.fov != NULL)
+    {
+        sim->getActiveObserver()->setFOV(fav.fov);
+        setZoomFromFOV();
+    }
     sim->setSelection(sim->findObjectFromPath(fav.selectionName));
     sim->setFrame(fav.coordSys, sim->getSelection());
 }
@@ -453,6 +458,7 @@ void CelestiaCore::addFavorite(string name, string parentFolder, FavoritesList::
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
     fav->orientation = sim->getObserver().getOrientationf();
+    fav->fov = sim->getObserver().getFOV();
     fav->name = name;
     fav->isFolder = false;
     fav->parentFolder = parentFolder;

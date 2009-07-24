@@ -78,6 +78,10 @@ FavoritesList* ReadFavoritesList(istream& in)
         fav->orientation.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                                       (float) angle);
 
+        // Get fov
+        if (!favParams->getNumber("fov", fav->fov))
+            fav->fov = NULL;
+
         // Get time
         fav->jd = 0.0;
         favParams->getNumber("time", fav->jd);
@@ -133,6 +137,8 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
             out << "\tangle  " << angle << '\n';
             out << setprecision(16);
             out << "\ttime   " << fav->jd << '\n';
+            if (fav->fov != NULL)
+                out << "\tfov   " << fav->fov << '\n';
             out << "\tselection \"" << fav->selectionName << "\"\n";
             out << "\tcoordsys \"";
             switch (fav->coordSys)

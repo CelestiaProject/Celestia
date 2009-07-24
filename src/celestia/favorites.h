@@ -26,6 +26,7 @@ struct FavoritesEntry
     UniversalCoord position;
     Quatf orientation;
     double jd;
+    double fov;
     bool isFolder;
     std::string parentFolder;
 
