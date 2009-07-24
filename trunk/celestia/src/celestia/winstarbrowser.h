@@ -29,7 +29,7 @@ class StarBrowser
     // The star browser data is valid for a particular point
     // in space, and for performance issues is not continuously
     // updated.
-    Point3f pos;
+    Eigen::Vector3f pos;
     UniversalCoord ucPos;
 
     int predicate;

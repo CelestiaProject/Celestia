@@ -1020,9 +1020,7 @@ Star::getPosition(double t) const
     const Orbit* orbit = getOrbit();
     if (!orbit)
     {
-        return UniversalCoord(position.x() * 1.0e6,
-                              position.y() * 1.0e6,
-                              position.z() * 1.0e6);
+        return UniversalCoord::CreateLy(position.cast<double>());
     }
     else
     {
@@ -1030,26 +1028,12 @@ Star::getPosition(double t) const
 
         if (barycenter == NULL)
         {
-            UniversalCoord barycenterPos = UniversalCoord::CreateLy(position);
+            UniversalCoord barycenterPos = UniversalCoord::CreateLy(position.cast<double>());
             return UniversalCoord(barycenterPos).offsetKm(orbit->positionAtTime(t));
-#if CELVEC
-            Vector3d barycenterPos(position.x() * 1.0e6,
-                                  position.y() * 1.0e6,
-                                  position.z() * 1.0e6);
-
-            return UniversalCoord(barycenterPos) +
-                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
-                 astro::kilometersToMicroLightYears(1.0));
-#endif
         }
         else
         {
             return barycenter->getPosition(t).offsetKm(orbit->positionAtTime(t));
-#if 0
-            return barycenter->getPosition(t) +
-                ((orbit->positionAtTime(t) - Point3d(0.0, 0.0, 0.0)) *
-                 astro::kilometersToMicroLightYears(1.0));
-#endif
         }
     }
 }
@@ -1062,11 +1046,7 @@ Star::getOrbitBarycenterPosition(double t) const
 
     if (barycenter == NULL)
     {
-        Point3d barycenterPos(position.x() * 1.0e6,
-                              position.y() * 1.0e6,
-                              position.z() * 1.0e6);
-
-        return UniversalCoord(barycenterPos);
+        return UniversalCoord::CreateLy(position.cast<double>());
     }
     else
     {

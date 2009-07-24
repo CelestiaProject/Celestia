@@ -390,7 +390,7 @@ SunDirectionArrow::getDirection(double tdb) const
 
     if (sun != NULL)
     {
-        return toEigen(Selection(sun).getPosition(tdb) - body.getPosition(tdb));
+        return Selection(sun).getPosition(tdb).offsetFromKm(body.getPosition(tdb));
     }
     else
     {
@@ -435,7 +435,7 @@ BodyToBodyDirectionArrow::BodyToBodyDirectionArrow(const Body& _body, const Sele
 Vector3d
 BodyToBodyDirectionArrow::getDirection(double tdb) const
 {
-    return toEigen(target.getPosition(tdb) - body.getPosition(tdb));
+    return target.getPosition(tdb).offsetFromKm(body.getPosition(tdb));
 }
 
 

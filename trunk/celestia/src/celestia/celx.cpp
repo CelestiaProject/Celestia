@@ -39,6 +39,8 @@
 #include "celx_celestia.h"
 #include "celx_gl.h"
 
+#include <celengine/eigenport.h>
+
 
 // Older gcc versions used <strstream> instead of <sstream>.
 // This has been corrected in GCC 3.2, but name clashing must
@@ -52,6 +54,7 @@
 #include "celx.h"
 #include "celestiacore.h"
 
+using namespace Eigen;
 using namespace std;
 
 const char* CelxLua::ClassNames[] =
@@ -4400,6 +4403,12 @@ bool CelxLua::safeGetBoolean(int index,
 void CelxLua::newVector(const Vec3d& v)
 {
     vector_new(m_lua, v);
+}
+
+
+void CelxLua::newVector(const Vector3d& v)
+{
+    vector_new(m_lua, fromEigen(v));
 }
 
 

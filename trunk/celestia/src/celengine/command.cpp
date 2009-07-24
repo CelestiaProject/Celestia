@@ -128,7 +128,7 @@ CommandGotoLocation::~CommandGotoLocation()
 void CommandGotoLocation::process(ExecutionEnvironment& env)
 {
     Quatd toOrientation = Quatd(rotation.w, rotation.x, rotation.y, rotation.z);
-    UniversalCoord toPosition = translation;
+    UniversalCoord toPosition = UniversalCoord::CreateUly(toEigen(translation));
     env.getSimulation()->gotoLocation(toPosition, toEigen(toOrientation), gotoTime);
 }
 
@@ -412,7 +412,8 @@ CommandMove::CommandMove(double _duration, const Vec3d& _velocity) :
 
 void CommandMove::process(ExecutionEnvironment& env, double, double dt)
 {
-    env.getSimulation()->setObserverPosition(env.getSimulation()->getObserver().getPosition() + (velocity * dt));
+    Eigen::Vector3d velocityKm = toEigen(velocity) * dt * astro::microLightYearsToKilometers(1.0);
+    env.getSimulation()->setObserverPosition(env.getSimulation()->getObserver().getPosition().offsetKm(velocityKm));
 }
 
 

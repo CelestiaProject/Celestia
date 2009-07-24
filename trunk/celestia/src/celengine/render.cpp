@@ -134,14 +134,14 @@ static const float MinOrbitSizeForLabel = 20.0f;
 static const float MinFeatureSizeForLabel = 20.0f;
 
 /* The maximum distance of the observer to the origin of coordinates before
-   asterism lines and labels start to linearly fade out (in uLY) */
-static const float MaxAsterismLabelsConstDist  = 6.0e6f;
-static const float MaxAsterismLinesConstDist   = 6.0e8f;
+   asterism lines and labels start to linearly fade out (in light years) */
+static const float MaxAsterismLabelsConstDist  = 6.0f;
+static const float MaxAsterismLinesConstDist   = 600.0f;
 
 /* The maximum distance of the observer to the origin of coordinates before
-   asterisms labels and lines fade out completely (in uLY) */
-static const float MaxAsterismLabelsDist = 2.0e7f;
-static const float MaxAsterismLinesDist  = 6.52e10f;
+   asterisms labels and lines fade out completely (in light years) */
+static const float MaxAsterismLabelsDist = 20.0f;
+static const float MaxAsterismLinesDist  = 6.52e4f;
 
 // Maximum size of a solar system in light years. Features beyond this distance
 // will not necessarily be rendered correctly. This limit is used for
@@ -3587,7 +3587,7 @@ void Renderer::draw(const Observer& observer,
         /* We'll linearly fade the lines as a function of the observer's
            distance to the origin of coordinates: */
         float opacity = 1.0f;
-        float dist = observerPosLY.norm() * 1e6f;
+        float dist = observerPosLY.norm();
         if (dist > MaxAsterismLinesConstDist)
         {
             opacity = clamp((MaxAsterismLinesConstDist - dist) /
@@ -9175,8 +9175,7 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
         if (star.getOrbit() != NULL)
         {
             // Get orbit origin relative to the observer
-            Vec3d orbitOrigin = star.getOrbitBarycenterPosition(now) - observer.getPosition();
-            orbitOrigin *= astro::microLightYearsToKilometers(1.0);
+            Vec3d orbitOrigin = fromEigen(star.getOrbitBarycenterPosition(now).offsetFromKm(observer.getPosition()));
 
             Vec3f origf((float) orbitOrigin.x, (float) orbitOrigin.y, (float) orbitOrigin.z);
 
@@ -9742,12 +9741,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 }
 
 
-template<class T> static Point3<T> microLYToLY(const Point3<T>& p)
-{
-    return Point3<T>(p.x * (T) 1e-6, p.y * (T) 1e-6, p.z * (T) 1e-6);
-}
-
-
 // Calculate the maximum field of view (from top left corner to bottom right) of
 // a frustum with the specified aspect ratio (width/height) and vertical field of
 // view. We follow the convention used elsewhere and use units of degrees for
@@ -9764,7 +9757,7 @@ void Renderer::renderStars(const StarDatabase& starDB,
                            const Observer& observer)
 {
     StarRenderer starRenderer;
-    Vector3d obsPos = toEigen(microLYToLY((Point3d) observer.getPosition()));
+    Vector3d obsPos = observer.getPosition().toLy();
 
 
     starRenderer.context          = context;
@@ -9878,7 +9871,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                 float faintestMagNight,
                                 const Observer& observer)
 {
-    Vector3d obsPos = toEigen(microLYToLY((Point3d) observer.getPosition()));
+    Vector3d obsPos = observer.getPosition().toLy();
 
     PointStarRenderer starRenderer;
     starRenderer.context           = context;
@@ -10170,7 +10163,7 @@ void Renderer::renderDeepSkyObjects(const Universe&  universe,
 {
     DSORenderer dsoRenderer;
 
-    Vector3d obsPos    = toEigen((Point3d) observer.getPosition()) * 1e-6;
+    Vector3d obsPos    = observer.getPosition().toLy();
 
     DSODatabase* dsoDB  = universe.getDSOCatalog();
 
@@ -10346,7 +10339,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     Vec3f v = Vec3f(0, 1, 0) * m;
 
     // Get the position of the cursor relative to the eye
-    Vec3d position = (sel.getPosition(now) - observer.getPosition()) * astro::microLightYearsToKilometers(1.0);
+    Vec3d position = fromEigen(sel.getPosition(now).offsetFromKm(observer.getPosition()));
     double distance = position.length();
     bool isVisible = viewFrustum.testSphere(Point3d(0, 0, 0) + position, sel.radius()) != Frustum::Outside;
     position *= cursorDistance / distance;
@@ -10414,7 +10407,7 @@ void Renderer::renderSelectionPointer(const Observer& observer,
 void Renderer::labelConstellations(const AsterismList& asterisms,
                                    const Observer& observer)
 {
-    Vector3f observerPos = toEigen((Point3f) observer.getPosition());
+    Vector3f observerPos = observer.getPosition().toLy().cast<float>();
 
     for (AsterismList::const_iterator iter = asterisms.begin();
          iter != asterisms.end(); iter++)
@@ -10438,7 +10431,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
                 // Draw all constellation labels at the same distance
                 avg.normalize();
-                avg = avg * 1.0e10f;
+                avg = avg * 1.0e4f;
 
                 Vector3f rpos = avg - observerPos;
 

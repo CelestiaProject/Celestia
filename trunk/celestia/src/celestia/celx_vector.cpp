@@ -12,6 +12,7 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_vector.h"
+#include <celengine/eigenport.h>
 
 
 int vector_new(lua_State* l, const Vec3d& v)
@@ -199,7 +200,7 @@ static int vector_add(lua_State* l)
         {
             v1 = celx.toVector(1);
             p = celx.toPosition(2);
-            celx.newPosition(*p + *v1);
+            celx.newPosition(p->offsetUly(toEigen(*v1)));
         }
     else
     {

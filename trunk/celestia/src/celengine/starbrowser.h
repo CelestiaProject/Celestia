@@ -16,10 +16,6 @@
 #include "stardb.h"
 #include "simulation.h"
 
-#ifndef MIN
-#define MIN(a,b) ((a<b)?a:b)
-#endif
-
 
 class StarBrowser
 {
@@ -43,7 +39,7 @@ class StarBrowser
     // The star browser data is valid for a particular point
     // in space, and for performance issues is not continuously
     // updated.
-    Point3f pos;
+    Eigen::Vector3f pos;
     UniversalCoord ucPos;
 
  private:
