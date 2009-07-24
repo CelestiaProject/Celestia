@@ -12,8 +12,6 @@
 #define _GALAXY_H_
 
 #include <celengine/deepskyobj.h>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
 
 
 struct Blob
@@ -49,8 +47,8 @@ class Galaxy : public DeepSkyObject
                       double& cosAngleToBoundCenter) const;
     virtual bool load(AssociativeArray*, const std::string&);
     virtual void render(const GLContext& context,
-                        const Vec3f& offset,
-                        const Quatf& viewerOrientation,
+                        const Eigen::Vector3f& offset,
+                        const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize);
     virtual void renderGalaxyPointSprites(const GLContext& context,
