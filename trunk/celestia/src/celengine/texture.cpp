@@ -35,7 +35,6 @@
 #endif /* ! TARGET_OS_MAC */
 #endif /* ! _WIN32 */
 
-#include <celmath/vecmath.h>
 #include <celutil/filetype.h>
 #include <celutil/debug.h>
 #include <celutil/util.h>
@@ -43,6 +42,8 @@
 #include "gl.h"
 #include "glext.h"
 #include "celestia.h"
+
+#include <Eigen/Core>
 
 // OpenGL 1.2 stuff missing from Windows headers . . . probably should be
 // moved into glext.h
@@ -90,6 +91,7 @@ extern "C" {
 #include "texture.h"
 #include "virtualtex.h"
 
+using namespace Eigen;
 using namespace std;
 
 static bool texCapsInitialized = false;
@@ -891,28 +893,28 @@ Texture* CreateProceduralTexture(int width, int height,
 
 // Helper function for CreateProceduralCubeMap; return the normalized
 // vector pointing to (s, t) on the specified face.
-static Vec3f cubeVector(int face, float s, float t)
+static Vector3f cubeVector(int face, float s, float t)
 {
-    Vec3f v;
+    Vector3f v;
     switch (face)
     {
     case 0:
-        v = Vec3f(1.0f, -t, -s);
+        v = Vector3f(1.0f, -t, -s);
         break;
     case 1:
-        v = Vec3f(-1.0f, -t, s);
+        v = Vector3f(-1.0f, -t, s);
         break;
     case 2:
-        v = Vec3f(s, 1.0f, t);
+        v = Vector3f(s, 1.0f, t);
         break;
     case 3:
-        v = Vec3f(s, -1.0f, -t);
+        v = Vector3f(s, -1.0f, -t);
         break;
     case 4:
-        v = Vec3f(s, -t, 1.0f);
+        v = Vector3f(s, -t, 1.0f);
         break;
     case 5:
-        v = Vec3f(-s, -t, -1.0f);
+        v = Vector3f(-s, -t, -1.0f);
         break;
     default:
         // assert(false);
@@ -951,8 +953,8 @@ extern Texture* CreateProceduralCubeMap(int size, int format,
                 {
                     float s = ((float) x + 0.5f) / (float) size * 2 - 1;
                     float t = ((float) y + 0.5f) / (float) size * 2 - 1;
-                    Vec3f v = cubeVector(i, s, t);
-                    func(v.x, v.y, v.z,
+                    Vector3f v = cubeVector(i, s, t);
+                    func(v.x(), v.y(), v.z(),
                          face->getPixelRow(y) + x * face->getComponents());
                 }
             }

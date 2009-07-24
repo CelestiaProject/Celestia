@@ -17,7 +17,6 @@
 #include "astro.h"
 #include "orbit.h"
 #include "body.h"
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;
@@ -46,11 +45,6 @@ EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
     epoch(_epoch)
 {
     orbitPlaneRotation = (ZRotation(_ascendingNode) * XRotation(_inclination) * ZRotation(_argOfPeriapsis)).toRotationMatrix();
-#if CELVEC
-    orbitPlaneRotation = (Mat3d::zrotation(_ascendingNode) *
-                          Mat3d::xrotation(_inclination) *
-                          Mat3d::zrotation(_argOfPeriapsis));
-#endif
 }
 
 

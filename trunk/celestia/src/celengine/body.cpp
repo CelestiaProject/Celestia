@@ -22,7 +22,6 @@
 #include "timelinephase.h"
 #include "frametree.h"
 #include "referencemark.h"
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;
@@ -913,13 +912,13 @@ void Body::computeLocations()
     for (vector<Location*>::const_iterator iter = locations->begin();
          iter != locations->end(); iter++)
     {
-        Vec3f v = (*iter)->getPosition();
-        float alt = v.length() - radius;
+        Vector3f v = (*iter)->getPosition();
+        float alt = v.norm() - radius;
         if (alt != -radius)
             v.normalize();
         v *= (float) boundingRadius;
 
-        Ray3d ray(Point3d(v.x, v.y, v.z), Vec3d(-v.x, -v.y, -v.z));
+        Ray3d ray(v.cast<double>(), -v.cast<double>());
         double t = 0.0;
         if (g->pick(ray, t))
         {
