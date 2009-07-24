@@ -12,7 +12,6 @@
 #include "astro.h"
 #include "selection.h"
 #include "frametree.h"
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;
@@ -74,7 +73,7 @@ UniversalCoord Selection::getPosition(double t) const
                     astro::kilometersToMicroLightYears(1.0);
                 return body->getPosition(t) + planetocentricPos;
 #endif
-                return body->getPosition(t).offsetKm(toEigen(location()->getPlanetocentricPosition(t)));
+                return body->getPosition(t).offsetKm(location()->getPlanetocentricPosition(t));
             }
             else
             {

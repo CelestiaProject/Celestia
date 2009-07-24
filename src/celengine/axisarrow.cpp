@@ -17,10 +17,10 @@
 #include "frame.h"
 #include "body.h"
 #include "timelinephase.h"
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;
+
 
 static const unsigned int MaxArrowSections = 100;
 

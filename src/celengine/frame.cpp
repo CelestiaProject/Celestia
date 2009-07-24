@@ -12,7 +12,6 @@
 
 #include <cassert>
 #include <celengine/frame.h>
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;

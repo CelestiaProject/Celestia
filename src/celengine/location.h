@@ -13,8 +13,7 @@
 #include <string>
 #include <celutil/basictypes.h>
 #include <celutil/color.h>
-#include <celmath/vecmath.h>
-
+#include <Eigen/Core>
 
 class Body;
 
@@ -27,8 +26,8 @@ class Location
     std::string getName(bool i18n = false) const;
     void setName(const std::string&);
 
-    Vec3f getPosition() const;
-    void setPosition(const Vec3f&);
+    Eigen::Vector3f getPosition() const;
+    void setPosition(const Eigen::Vector3f&);
 
     float getSize() const;
     void setSize(float);
@@ -51,8 +50,8 @@ class Location
     void setParentBody(Body*);
     Body* getParentBody() const;
 
-    Point3d getPlanetocentricPosition(double) const;
-    Point3d getHeliocentricPosition(double) const;
+    Eigen::Vector3d getPlanetocentricPosition(double) const;
+    Eigen::Vector3d getHeliocentricPosition(double) const;
 
     static uint32 parseFeatureType(const std::string&);
 
@@ -96,7 +95,7 @@ class Location
     Body* parent;
     std::string name;
     std::string i18nName;
-    Vec3f position;
+    Eigen::Vector3f position;
     float size;
     float importance;
     uint32 featureType;

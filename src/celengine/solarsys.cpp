@@ -165,11 +165,11 @@ static Location* CreateLocation(Hash* locationData,
 {
     Location* location = new Location();
 
-    Vec3d longlat(0.0, 0.0, 0.0);
+    Vector3d longlat(0.0, 0.0, 0.0);
     locationData->getVector("LongLat", longlat);
 
-    Vector3f position = body->planetocentricToCartesian(toEigen(longlat)).cast<float>();
-    location->setPosition(fromEigen(position));
+    Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
+    location->setPosition(position);
 
     double size = 1.0;
     locationData->getNumber("Size", size);
