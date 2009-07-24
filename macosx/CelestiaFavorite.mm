@@ -47,7 +47,7 @@
 }
 -(void)setOrientation:(CelestiaVector*)orientation
 {
-    [self favorite]->orientation = [orientation quatf];
+    [self favorite]->orientation = [orientation quaternionf];
 }
 -(void)setJd:(NSNumber*)jd
 {
@@ -137,7 +137,7 @@
         name = [[[[CelestiaAppCore sharedAppCore] simulation] julianDate] description];
     fav->jd = sim->getTime();
     fav->position = sim->getObserver().getPosition();
-    fav->orientation = fromEigen(sim->getObserver().getOrientationf());
+    fav->orientation = sim->getObserver().getOrientationf();
     fav->name = [name stdString];
     fav->isFolder = false;
     fav->parentFolder = [parentFolder stdString];
@@ -286,7 +286,7 @@
 }
 -(CelestiaVector*)orientation
 {
-    return [CelestiaVector vectorWithQuatf:[self favorite]->orientation];
+    return [CelestiaVector vectorWithQuaternionf:[self favorite]->orientation];
 }
 -(NSNumber*)jd
 {
