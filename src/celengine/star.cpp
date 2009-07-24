@@ -15,7 +15,6 @@
 #include "orbit.h"
 #include "star.h"
 #include "texmanager.h"
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;

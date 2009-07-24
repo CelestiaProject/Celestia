@@ -6967,7 +6967,7 @@ void Renderer::renderLocations(const Body& body,
         if (location.getFeatureType() & locationFilter)
         {
             // Get the position of the location with respect to the planet center
-            Vector3f ppos = toEigen(location.getPosition());
+            Vector3f ppos = location.getPosition();
             
             // Compute the bodycentric position of the location
             Vector3d locPos = ppos.cast<double>();

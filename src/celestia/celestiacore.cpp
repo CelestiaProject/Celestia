@@ -3333,7 +3333,7 @@ static void displayLocationInfo(Overlay& overlay,
     Body* body = location.getParentBody();
     if (body != NULL)
     {
-        Vector3f locPos = toEigen(location.getPosition());
+        Vector3f locPos = location.getPosition();
         Vector3d lonLatAlt = body->cartesianToPlanetocentric(locPos.cast<double>());
         displayPlanetocentricCoords(overlay, *body,
                                     lonLatAlt.x(), lonLatAlt.y(), lonLatAlt.z(), false);
