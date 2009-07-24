@@ -178,18 +178,18 @@ static int observer_lookat(lua_State* l)
     {
         celx.doError("Last argument to observer:lookat must be of type vector");
     }
-    Vec3d nd;
+    Vector3d nd;
     if (from == NULL)
     {
-        nd = (*to) - o->getPosition();
+        nd = to->offsetFromKm(o->getPosition());
     }
     else
     {
-        nd = (*to) - (*from);
+        nd = to->offsetFromKm(*from);
     }
     // need Vec3f instead:
     Vec3f up = Vec3f((float) upd->x, (float) upd->y, (float) upd->z);
-    Vec3f n = Vec3f((float) nd.x, (float) nd.y, (float) nd.z);
+    Vec3f n = fromEigen(nd.cast<float>());
     
     n.normalize();
     Vec3f v = n ^ up;

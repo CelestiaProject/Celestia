@@ -12,6 +12,7 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_position.h"
+#include <celengine/eigenport.h>
 
 
 // ==================== Position ====================
@@ -163,7 +164,7 @@ static int position_vectorto(lua_State* l)
         celx.doError("Argument to position:vectorto must be a position");
     }
 
-    celx.newVector(*uc2 - *uc);
+    celx.newVector(fromEigen(uc2->offsetFromUly(*uc)));
 
     return 1;
 }
@@ -189,7 +190,7 @@ static int position_orientationto(lua_State* l)
         celx.doError("Second argument to position:orientationto must be a vector");
     }
     
-    Vec3d src2target = *target - *src;
+    Vec3d src2target = fromEigen(target->offsetFromKm(*src));
     src2target.normalize();
     Vec3d v = src2target ^ *upd;
     v.normalize();
@@ -223,8 +224,7 @@ static int position_distanceto(lua_State* l)
         celx.doError("Position expected as argument to position:distanceto");
     }
     
-    Vec3d v = *uc2 - *uc;
-    lua_pushnumber(l, astro::microLightYearsToKilometers(v.length()));
+    lua_pushnumber(l, uc2->offsetFromKm(*uc).norm());
     
     return 1;
 }
@@ -251,7 +251,7 @@ static int position_add(lua_State* l)
         {
             p1 = celx.toPosition(1);
             v2 = celx.toVector(2);
-            celx.newPosition(*p1 + *v2);
+            celx.newPosition(p1->offsetUly(toEigen(*v2)));
         }
     else
     {
@@ -274,14 +274,14 @@ static int position_sub(lua_State* l)
     {
         p1 = celx.toPosition(1);
         p2 = celx.toPosition(2);
-        celx.newVector(*p1 - *p2);
+        celx.newVector(p1->offsetFromUly(*p2));
     }
     else
         if (celx.isType(1, Celx_Position) && celx.isType(2, Celx_Vec3))
         {
             p1 = celx.toPosition(1);
             v2 = celx.toVector(2);
-            celx.newPosition(*p1 - *v2);
+            celx.newPosition(p1->offsetUly(toEigen(*v2)));
         }
     else
     {
@@ -305,7 +305,7 @@ static int position_addvector(lua_State* l)
     else
         if (uc != NULL && v3d != NULL)
         {
-            UniversalCoord ucnew = *uc + *v3d;
+            UniversalCoord ucnew = uc->offsetUly(toEigen(*v3d));
             position_new(l, ucnew);
         }
     return 1;

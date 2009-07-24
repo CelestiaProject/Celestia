@@ -18,6 +18,7 @@
 #include "qtselectionpopup.h"
 #include "qtappwin.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -53,7 +54,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
     gotoAction(NULL)
 {
     Simulation* sim = appCore->getSimulation();
-    Vec3d v = sel.getPosition(sim->getTime()) - sim->getObserver().getPosition();
+    Vector3d v = sel.getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
 
     if (sel.body() != NULL)
     {
@@ -97,7 +98,7 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         
         // Add some text items giving additional information about
         // the star.
-        double distance = v.length() * 1e-6;
+        double distance = astro::kilometersToLightYears(v.norm());
         char buff[50];
 
         setlocale(LC_NUMERIC, "");
