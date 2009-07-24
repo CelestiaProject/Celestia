@@ -91,6 +91,8 @@
 
 #define MENUMAXSIZE 100
 
+using namespace Eigen;
+
 
 KdeApp* KdeApp::app=0;
 
@@ -1677,7 +1679,7 @@ void LongLatDialog::slotApply() {
                                 distance,
                                 degToRad(longitude),
                                 degToRad(latitude),
-                                Vec3f(0, 1, 0));
+                                Vector3f::UnitY());
     }
 }
 

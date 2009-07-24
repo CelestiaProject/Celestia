@@ -19,6 +19,9 @@
 #include "dialog-goto.h"
 #include "common.h"
 
+using namespace Eigen;
+
+
 
 /* Declarations: Callbacks */
 static int changeGotoUnits(GtkButton* w, gpointer choice);
@@ -214,13 +217,13 @@ static void GotoObject(gotoObjectData* gotoObjectDlg)
 				                                 distance,
 				                                 degToRad(longitude),
 				                                 degToRad(latitude),
-				                                 Vec3f(0, 1, 0));
+				                                 Vector3f::UnitY());
 			}
 			else
 			{
 				simulation->gotoSelection(5.0,
 				                          distance,
-				                          Vec3f(0, 1, 0),
+				                          Vector3f::UnitY(),
 				                          ObserverFrame::ObserverLocal);
 			}
 		}
