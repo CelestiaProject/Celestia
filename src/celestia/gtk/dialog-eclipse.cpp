@@ -12,12 +12,16 @@
 
 #include <gtk/gtk.h>
 
+#include <celmath/geomutil.h>
 #include <celengine/astro.h>
 #include <celengine/simulation.h>
 #include <celestia/eclipsefinder.h>
 
 #include "dialog-eclipse.h"
 #include "common.h"
+
+using namespace Eigen;
+
 
 
 /* Definitions: Callbacks */
@@ -331,8 +335,9 @@ static gint eclipseGoto(GtkButton*, EclipseData* ed)
 	sim->setFrame(ObserverFrame::PhaseLock, target, ref);
 	sim->update(0.0);
 
-	double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-	sim->gotoLocation(Point3d(distance, 0, 0), Quatd::yrotation(-PI / 2) * Quatd::xrotation(-PI / 2), 5.0);
+	double distance = target.radius() * 4.0;
+	sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
+                                  (YRotation(-PI / 2) * XRotation(-PI / 2)), 2.5);
 
 	return TRUE;
 }

@@ -11,7 +11,10 @@
 #include "eclipsefinderdlg.h"
 #include "celestiacore.h"
 #include "celengine/astro.h"
+#include "celmath/geomutil.h"
 #include "eclipsefinder.h"
+
+using namespace Eigen;
 
 /* 
  *  Constructs a EclipseFinder which is a child of 'parent', with the 
@@ -134,8 +137,9 @@ void EclipseFinderDlg::gotoEclipse(QListViewItem* item, const QPoint& p, int col
         appCore->getSimulation()->setTime((double)d);
         appCore->getSimulation()->update(0.0);
 
-	double distance = astro::kilometersToMicroLightYears(target.radius() * 4.0);
-        appCore->getSimulation()->gotoLocation(Point3d(distance, 0, 0), Quatd::yrotation(-PI / 2) * Quatd::xrotation(-PI / 2), 5.0);
+	double distance = target.radius() * 4.0;
+        appCore->getSimulation()->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance),
+                                  (YRotation(-PI / 2) * XRotation(-PI / 2)), 2.5);
     }
 }
 
