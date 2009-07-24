@@ -214,8 +214,8 @@ VisibleRegion::render(Renderer* /* renderer */,
 
     // In order to avoid precision problems and extremely large values, scale
     // the target position and semiaxes such that the largest semiaxis is 1.0.
-    Vector3d lightDir = toEigen(m_body.getPosition(tdb) - m_target.getPosition(tdb));
-    lightDir = lightDir * (astro::microLightYearsToKilometers(1.0) / maxSemiAxis);
+    Vector3d lightDir = m_body.getPosition(tdb).offsetFromKm(m_target.getPosition(tdb));
+    lightDir = lightDir / maxSemiAxis;
     lightDir = q * lightDir;
 
     // Another measure to prevent precision problems: if the distance to the

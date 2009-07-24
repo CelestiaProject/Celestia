@@ -15,6 +15,8 @@
 
 #include <map>
 #include <string>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class CelestiaCore;
 class TimelinePhase;
@@ -107,7 +109,9 @@ public:
         
     void newFrame(const ObserverFrame& f);
     void newVector(const Vec3d& v);
+    void newVector(const Eigen::Vector3d& v);
     void newRotation(const Quatd& q);
+    void newRotation(const Eigen::Quaterniond& q);
     void newPosition(const UniversalCoord& uc);
     void newObject(const Selection& sel);
     void newPhase(const TimelinePhase& phase);

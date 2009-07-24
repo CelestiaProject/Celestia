@@ -474,7 +474,8 @@ Command* CommandParser::parseCommand()
         if (paramList->getVector("base", base))
         {
             paramList->getVector("offset", offset);
-            UniversalCoord basePosition = UniversalCoord::CreateLy(base.cast<float>());
+            Eigen::Vector3f basef = base.cast<float>();
+            UniversalCoord basePosition = UniversalCoord::CreateLy(basef.cast<double>());
             cmd = new CommandSetPosition(basePosition.offsetKm(offset));
 #if CELVEC
             cmd = new CommandSetPosition(astro::universalPosition(Point3d(offset.x, offset.y, offset.z),

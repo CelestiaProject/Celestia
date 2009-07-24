@@ -1,6 +1,7 @@
 // favorites.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@
 #include <celengine/cmdparser.h>
 #include "favorites.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -62,21 +64,28 @@ FavoritesList* ReadFavoritesList(istream& in)
         // Get parentFolder
         favParams->getString("parentFolder", fav->parentFolder);
 
-        // Get position
-        Vec3d base(0.0, 0.0, 0.0);
-        Vec3d offset(0.0, 0.0, 0.0);
+        // Get position. It is stored as a base in light years with an offset
+        // in microlight years. Bad idea, but we need to stay compatible.
+        Vector3d base(Vector3d::Zero());
+        Vector3d offset(Vector3d::Zero());
         favParams->getVector("base", base);
         favParams->getVector("offset", offset);
+        fav->position = UniversalCoord::CreateLy(base) + UniversalCoord::CreateLy(offset * 1.0e-6);
+#if CELVEC
         base *= 1e6;
         fav->position = UniversalCoord(Point3d(base.x, base.y, base.z)) + offset;
+#endif
 
         // Get orientation
-        Vec3d axis(1.0, 0.0, 0.0);
+        Vector3d axis = Vector3d::UnitX();
         double angle = 0.0;
         favParams->getVector("axis", axis);
         favParams->getNumber("angle", angle);
+        fav->orientation = Quaternionf(AngleAxisf((float) angle, axis.cast<float>()));
+#if CELVEC
         fav->orientation.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                                       (float) angle);
+#endif
 
         // Get time
         fav->jd = 0.0;
@@ -110,13 +119,27 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
     {
         FavoritesEntry* fav = *iter;
 
-        Vec3f axis;
-        float angle = 0;
-        fav->orientation.getAxisAngle(axis, angle);
+        AngleAxisf aa(fav->orientation);
+        Vector3f axis = aa.axis();
+        float angle = aa.angle();
 
+        // Ugly conversion from a universal coordinate to base+offset, with base
+        // in light years and offset in microlight years. This is a bad way to
+        // store position, but we need to maintain compatibility with older version
+        // of Celestia (for now...)
+        Vector3d baseUly((double) fav->position.x, (double) fav->position.y, (double) fav->position.z);
+        Vector3d offset((double) (fav->position.x - (BigFix) baseUly.x()),
+                        (double) (fav->position.y - (BigFix) baseUly.y()),
+                        (double) (fav->position.z - (BigFix) baseUly.z()));
+        Vector3d base = baseUly * 1e-6; // Base is in micro-light years
+
+        // This was the old way of doing things, before the confusing operators
+        // and implicit casts were removed from UniversalCoord.
+#if CELVEC
         Point3d base = (Point3d) fav->position;
         Vec3d offset = fav->position - base;
         base.x *= 1e-6; base.y *= 1e-6; base.z *= 1e-6;
+#endif
 
         out << '"' << fav->name << "\" {\n";
         if(fav->isFolder)
@@ -126,10 +149,10 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
             out << "\tisFolder " << "false\n";
             out << "\tparentFolder \"" << fav->parentFolder << "\"\n";
             out << setprecision(16);
-            out << "\tbase   [ " << base.x << ' ' << base.y << ' ' << base.z << " ]\n";
-            out << "\toffset [ " << offset.x << ' ' << offset.y << ' ' << offset.z << " ]\n";
+            out << "\tbase   [ " << base.x()   << ' ' << base.y()   << ' ' << base.z()   << " ]\n";
+            out << "\toffset [ " << offset.x() << ' ' << offset.y() << ' ' << offset.z() << " ]\n";
             out << setprecision(6);
-            out << "\taxis   [ " << axis.x << ' ' << axis.y << ' ' << axis.z << " ]\n";
+            out << "\taxis   [ " << axis.x() << ' ' << axis.y() << ' ' << axis.z() << " ]\n";
             out << "\tangle  " << angle << '\n';
             out << setprecision(16);
             out << "\ttime   " << fav->jd << '\n';
@@ -160,43 +183,3 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
         out << "}\n\n";
     }
 }
-
-
-#if 0
-FavoritesList* ReadFavoritesList(string filename)
-{
-    ifstream in(filename.c_str());
-
-    if (!in.good())
-        return NULL;
-
-    FavoritesList* favorites = new FavoritesList();
-    Tokenizer tokenizer(&in);
-    CommandParser parser(tokenizer);
-
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
-    {
-        if (tokenizer.getTokenType() != Tokenizer::TokenString)
-        {
-            DPRINTF(0, "Error parsing favorites file.\n");
-            for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
-            delete favorites;
-            return NULL;
-        }
-
-        string name = tokenizer.getStringValue();
-        CommandSequence* cmdSeq = parser.parse();
-        if (cmdSeq == NULL)
-        {
-            DPRINTF(0, "Error parsing favorites entry %s\n", name.c_str());
-            for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
-            delete favorites;
-            return NULL;
-        }
-
-        favorites->insert(favorites->end(), new FavoritesEntry(name, cmdSeq));
-    }
-
-    return favorites;
-}
-#endif

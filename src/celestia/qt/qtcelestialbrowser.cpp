@@ -165,15 +165,12 @@ QVariant StarTableModel::data(const QModelIndex& index, int role) const
             }
         case DistanceColumn:
             {
-                UniversalCoord pos = star->getPosition(now);
-                Vec3d v = pos - observerPos;
-                return QVariant(v.length() * 1.0e-6);
+                double distance = star->getPosition(now).distanceFromLy(observerPos);
+                return QVariant(distance);
             }
         case AppMagColumn:
             {
-                UniversalCoord pos = star->getPosition(now);
-                Vec3d v = pos - observerPos;
-                double distance = v.length() * 1.0e-6;
+                double distance = star->getPosition(now).distanceFromLy(observerPos);
                 return QString("%1").arg((double) star->getApparentMagnitude((float) distance), 0, 'f', 2);
             }
         case AbsMagColumn:

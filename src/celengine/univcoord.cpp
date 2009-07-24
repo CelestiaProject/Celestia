@@ -1,6 +1,7 @@
 // univcoord.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,20 +14,17 @@
 #include "univcoord.h"
 
 
-UniversalCoord::UniversalCoord()
+UniversalCoord operator+(const UniversalCoord& uc0, const UniversalCoord& uc1)
 {
+    return UniversalCoord(uc0.x + uc1.x, uc0.y + uc1.y, uc0.z + uc1.z);
 }
 
-UniversalCoord::UniversalCoord(BigFix _x, BigFix _y, BigFix _z) :
-    x(_x), y(_y), z(_z)
+UniversalCoord UniversalCoord::difference(const UniversalCoord& uc) const
 {
+    return UniversalCoord(x - uc.x, y - uc.y, z - uc.z);
 }
 
-UniversalCoord::UniversalCoord(double _x, double _y, double _z) :
-    x(_x), y(_y), z(_z)
-{
-}
-
+#if DEPRECATED_UNIVCOORD_METHODS
 UniversalCoord::UniversalCoord(const Point3d& p) :
     x(p.x), y(p.y), z(p.z)
 {
@@ -116,13 +114,4 @@ UniversalCoord operator-(const UniversalCoord& uc, const Vec3f& v)
                           uc.y - BigFix((double) v.y),
                           uc.z - BigFix((double) v.z));
 }
-
-UniversalCoord operator+(const UniversalCoord& uc0, const UniversalCoord& uc1)
-{
-    return UniversalCoord(uc0.x + uc1.x, uc0.y + uc1.y, uc0.z + uc1.z);
-}
-
-UniversalCoord UniversalCoord::difference(const UniversalCoord& uc) const
-{
-    return UniversalCoord(x - uc.x, y - uc.y, z - uc.z);
-}
+#endif // DEPRECATED_UNIVCOORD_METHODS

@@ -154,7 +154,7 @@ const Star* StarBrowser::nearestStar()
 {
     Universe* univ = appSim->getUniverse();
     CloserStarPredicate closerPred;
-    closerPred.pos = toEigen(pos);
+    closerPred.pos = pos;
     std::vector<const Star*>* stars = findStars(*(univ->getStarCatalog()), closerPred, 1);
     const Star *star = (*stars)[0];
     delete stars;
@@ -171,7 +171,7 @@ StarBrowser::listStars(unsigned int nStars)
     case BrighterStars:
         {
             BrighterStarPredicate brighterPred;
-            brighterPred.pos = toEigen(pos);
+            brighterPred.pos = pos;
             brighterPred.ucPos = ucPos;
             return findStars(*(univ->getStarCatalog()), brighterPred, nStars);
         }
@@ -190,10 +190,10 @@ StarBrowser::listStars(unsigned int nStars)
             if (solarSystems == NULL)
                 return NULL;
             SolarSystemPredicate solarSysPred;
-            solarSysPred.pos = toEigen(pos);
+            solarSysPred.pos = pos;
             solarSysPred.solarSystems = solarSystems;
             return findStars(*(univ->getStarCatalog()), solarSysPred,
-                             MIN(nStars, solarSystems->size()));
+                             min(nStars, solarSystems->size()));
         }
         break;
 
@@ -201,7 +201,7 @@ StarBrowser::listStars(unsigned int nStars)
     default:
         {
             CloserStarPredicate closerPred;
-            closerPred.pos = toEigen(pos);
+            closerPred.pos = pos;
             return findStars(*(univ->getStarCatalog()), closerPred, nStars);
         }
         break;
@@ -223,7 +223,7 @@ bool StarBrowser::setPredicate(int pred)
 void StarBrowser::refresh()
 {
     ucPos = appSim->getObserver().getPosition();
-    pos = (Point3f) ucPos;
+    pos = ucPos.toLy().cast<float>();
 }
 
 
@@ -238,15 +238,15 @@ StarBrowser::StarBrowser(Simulation* _appSim, int pred) :
     appSim(_appSim)
 {
     ucPos = appSim->getObserver().getPosition();
-    pos = (Point3f) ucPos;
+    pos = ucPos.toLy().cast<float>();
 
     predicate = pred;
 }
 
 
 StarBrowser::StarBrowser() :
-    pos(0.0, 0.0, 0.0),
-    ucPos(0.0, 0.0, 0.0),
+    pos(Vector3f::Zero()),
+    ucPos(UniversalCoord::Zero()),
     appSim(NULL),
     predicate(NearestStars)
 {
