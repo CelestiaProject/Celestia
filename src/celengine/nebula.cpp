@@ -22,6 +22,7 @@
 #include "vecgl.h"
 #include "render.h"
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -89,8 +90,8 @@ bool Nebula::load(AssociativeArray* params, const string& resPath)
 
 
 void Nebula::render(const GLContext& glcontext,
-                    const Vec3f&,
-                    const Quatf&,
+                    const Vector3f&,
+                    const Quaternionf&,
                     float,
                     float pixelSize)
 {

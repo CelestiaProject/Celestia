@@ -198,14 +198,18 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     }
 
     // Get orientation
-    Vec3d axis(1.0, 0.0, 0.0);
+    Vector3d axis(Vector3d::UnitX());
     double angle = 0.0;
     params->getVector("Axis", axis);
     params->getNumber("Angle", angle);
+
+    setOrientation(Quaternionf(AngleAxisf((float) degToRad(angle), axis.cast<float>().normalized())));
+#if CELVEC
     Quatf q(1);
     q.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                    (float) degToRad(angle));
     setOrientation(toEigen(q));
+#endif
 
     double radius = 1.0;
     params->getNumber("Radius", radius);

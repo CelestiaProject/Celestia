@@ -10073,8 +10073,8 @@ void DSORenderer::process(DeepSkyObject* const & dso,
                 glTranslate(relPos);
 
                 dso->render(*context,
-                            fromEigen(relPos),
-                            fromEigen(observer->getOrientationf()),
+                            relPos,
+                            observer->getOrientationf(),
                             (float) brightness,
                             pixelSize);
                 glPopMatrix();
