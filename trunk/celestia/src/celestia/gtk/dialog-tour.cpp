@@ -19,6 +19,9 @@
 #include "dialog-tour.h"
 #include "common.h"
 
+using namespace Eigen;
+
+
 
 /* Declarations: Callbacks */
 static gint TourGuideSelect(GtkWidget* w, TourData* td);
@@ -145,14 +148,14 @@ static gint TourGuideGoto(GtkWidget*, TourData* td)
 			{
 				/* Use the default distance */
 				simulation->gotoSelection(5.0,
-				                          Vec3f(0, 1, 0),
+				                          Vector3f::UnitY(),
 				                          ObserverFrame::ObserverLocal);
 			}
 			else
 			{
 				simulation->gotoSelection(5.0,
 				                          td->selected->distance,
-				                          Vec3f(0, 1, 0),
+				                          Vector3f::UnitY(),
 				                          ObserverFrame::ObserverLocal);
 			}
 		}
