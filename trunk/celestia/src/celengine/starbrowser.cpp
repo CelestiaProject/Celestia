@@ -193,7 +193,7 @@ StarBrowser::listStars(unsigned int nStars)
             solarSysPred.pos = pos;
             solarSysPred.solarSystems = solarSystems;
             return findStars(*(univ->getStarCatalog()), solarSysPred,
-                             min(nStars, solarSystems->size()));
+                             min((size_t) nStars, solarSystems->size()));
         }
         break;
 
