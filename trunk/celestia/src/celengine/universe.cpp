@@ -17,7 +17,6 @@
 #include "astro.h"
 #include "asterism.h"
 #include "boundaries.h"
-#include "3dsmesh.h"
 #include "meshmanager.h"
 #include "render.h"
 #include "universe.h"
