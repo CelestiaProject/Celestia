@@ -20,7 +20,7 @@
 #include <celengine/planetgrid.h>
 #include "celestiacore.h"
 
-
+using namespace Eigen;
 using namespace std;
 
 
@@ -624,11 +624,11 @@ static int object_getinfo(lua_State* l)
         celx.setTable("radius", (lua_Number)body->getRadius());
         
         // TODO: add method to return semiaxes
-        Vec3f semiAxes = fromEigen(body->getSemiAxes());
+        Vector3f semiAxes = body->getSemiAxes();
         // Note: oblateness is an obsolete field, replaced by semiaxes;
         // it's only here for backward compatibility.
-        float polarRadius = semiAxes.y;
-        float eqRadius = max(semiAxes.x, semiAxes.z);
+        float polarRadius = semiAxes.y();
+        float eqRadius = max(semiAxes.x(), semiAxes.z());
         celx.setTable("oblateness", (eqRadius - polarRadius) / eqRadius);
         
         double lifespanStart, lifespanEnd;

@@ -444,8 +444,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
+    prog->ambientColor = Vector3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                                  ri.ambientColor.blue());
     prog->textureOffset = texOffset;
 
     float cloudRadius = radius + atmosphere->cloudHeight;
@@ -511,12 +511,12 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     prog->use();
 
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-    prog->ambientColor = Vec3f(0.0f, 0.0f, 0.0f);
+    prog->ambientColor = Vector3f::Zero();
 
     float atmosphereRadius = radius + -atmosphere->mieScaleHeight * (float) log(AtmosphereExtinctionThreshold);
     float atmScale = atmosphereRadius / radius;
 
-    prog->eyePosition = ls.eyePos_obj / atmScale;//Point3f(ls.eyePos_obj.x / atmScale, ls.eyePos_obj.y / atmScale, ls.eyePos_obj.z / atmScale);
+    prog->eyePosition = ls.eyePos_obj / atmScale;
     prog->setAtmosphereParameters(*atmosphere, radius, atmosphereRadius);
 
 #if 0
@@ -615,8 +615,8 @@ void renderRings_GLSL(RingSystem& rings,
     prog->use();
 
     prog->eyePosition = ls.eyePos_obj;
-    prog->ambientColor = Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                               ri.ambientColor.blue());
+    prog->ambientColor = Vector3f(ri.ambientColor.red(), ri.ambientColor.green(),
+                                  ri.ambientColor.blue());
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
 
     for (unsigned int li = 0; li < ls.nLights; li++)

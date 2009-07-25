@@ -752,13 +752,13 @@ static Body* CreateBody(const string& name,
         radiusSpecified = true;
     }
 
-    Vec3d semiAxes;
+    Vector3d semiAxes = Vector3d::Ones();
     if (planetData->getVector("SemiAxes", semiAxes))
     {
         if (radiusSpecified)
             semiAxes *= radius;
         // Swap y and z to match internal coordinate system
-        body->setSemiAxes(toEigen(semiAxes).cast<float>());
+        body->setSemiAxes(Vector3f((float) semiAxes.x(), (float) semiAxes.z(), (float) semiAxes.y()));
     }
     else
     {
@@ -830,9 +830,9 @@ static Body* CreateBody(const string& name,
     if (planetData->getNumber("Mass", mass))
         body->setMass((float) mass);
 
-    Quatf orientation;
+    Quaternionf orientation = Quaternionf::Identity();
     if (planetData->getRotation("Orientation", orientation))
-        body->setGeometryOrientation(toEigen(orientation));
+        body->setGeometryOrientation(orientation);
 
     Surface surface;
     if (disposition == ModifyObject)
@@ -1291,12 +1291,12 @@ Star* SolarSystem::getStar() const
     return star;
 }
 
-Point3f SolarSystem::getCenter() const
+Vector3f SolarSystem::getCenter() const
 {
     // TODO: This is a very simple method at the moment, but it will get
     // more complex when planets around multistar systems are supported
     // where the planets may orbit the center of mass of two stars.
-    return ptFromEigen(star->getPosition());
+    return star->getPosition();
 }
 
 PlanetarySystem* SolarSystem::getPlanets() const

@@ -24,7 +24,7 @@ class SolarSystem
     SolarSystem(Star*);
 
     Star* getStar() const;
-    Point3f getCenter() const;
+    Eigen::Vector3f getCenter() const;
     PlanetarySystem* getPlanets() const;
     FrameTree* getFrameTree() const;
 
