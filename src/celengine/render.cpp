@@ -64,6 +64,7 @@ std::ofstream hdrlog;
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
+#include <celmath/geomutil.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celutil/timer.h>
@@ -813,11 +814,9 @@ void ShadowMaskTextureFunction::operator()(float u, float, float,
 static void IllumMapEval(float x, float y, float z,
                          unsigned char* pixel)
 {
-    Vec3f v(x, y, z);
-
-    pixel[0] = 128 + (int) (127 * v.x);
-    pixel[1] = 128 + (int) (127 * v.y);
-    pixel[2] = 128 + (int) (127 * v.z);
+    pixel[0] = 128 + (int) (127 * x);
+    pixel[1] = 128 + (int) (127 * y);
+    pixel[2] = 128 + (int) (127 * z);
 }
 
 
@@ -3841,8 +3840,6 @@ void Renderer::draw(const Observer& observer,
                     if (iter->renderableType == RenderListEntry::RenderableBody)
                     {
                         float minSemiAxis = iter->body->getSemiAxes().minCoeff();
-                        //Vec3f semiAxes = iter->body->getSemiAxes();
-                        //float minSemiAxis = min(semiAxes.x, min(semiAxes.y, semiAxes.z));
                         eradius *= minSemiAxis / radius;
                     }
 
@@ -4905,57 +4902,6 @@ void renderAtmosphere(const Atmosphere& atmosphere,
 }
 
 
-#if 0
-static Vec3f ellipsoidTangent(const Vec3f& recipSemiAxes,
-                              const Vec3f& w,
-                              const Vec3f& e,
-                              const Vec3f& e_,
-                              float ee)
-{
-    // We want to find t such that -E(1-t) + Wt is the direction of a ray
-    // tangent to the ellipsoid.  A tangent ray will intersect the ellipsoid
-    // at exactly one point.  Finding the intersection between a ray and an
-    // ellipsoid ultimately requires using the quadratic formula, which has
-    // one solution when the discriminant (b^2 - 4ac) is zero.  The code below
-    // computes the value of t that results in a discriminant of zero.
-    Vec3f w_(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
-    float ww = w_ * w_;
-    float ew = w_ * e_;
-
-    // Before elimination of terms:
-    // float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
-    // float b = -8 * ee * (ee + ew)  - 4 * (-2 * (ee + ew) * (ee - 1.0f));
-    // float c =  4 * ee * ee         - 4 * (ee * (ee - 1.0f));
-
-    // Simplify the below expression and eliminate the ee^2 terms; this
-    // prevents precision errors, as ee tends to be a very large value.
-    //T a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1);
-    //float a =  4 * square(ee + ew) - 4 * (ee + 2 * ew + ww) * (ee - 1.0f);
-    float a =  4 * (square(ew) - ee * ww + ee + 2 * ew + ww);
-    float b = -8 * (ee + ew);
-    float c =  4 * ee;
-
-    float t = 0.0f;
-    float discriminant = b * b - 4 * a * c;
-
-    if (discriminant < 0.0f)
-        t = (-b + (float) sqrt(-discriminant)) / (2 * a); // Bad!
-    else
-        t = (-b + (float) sqrt(discriminant)) / (2 * a);
-
-    // V is the direction vector.  We now need the point of intersection,
-    // which we obtain by solving the quadratic equation for the ray-ellipse
-    // intersection.  Since we already know that the discriminant is zero,
-    // the solution is just -b/2a
-    Vec3f v = -e * (1 - t) + w * t;
-    Vec3f v_(v.x * recipSemiAxes.x, v.y * recipSemiAxes.y, v.z * recipSemiAxes.z);
-    float a1 = v_ * v_;
-    float b1 = 2.0f * v_ * e_;
-    float t1 = -b1 / (2 * a1);
-
-    return e + v * t1;
-}
-#endif
 template <typename T> static Matrix<T, 3, 1>
 ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
                  const Matrix<T, 3, 1>& w,
@@ -6414,7 +6360,7 @@ static void renderRings(RingSystem& rings,
         vproc->parameter(vp::LightDirection0, ri.sunDir_obj);
         vproc->parameter(vp::DiffuseColor0, ri.sunColor * rings.color);
         vproc->parameter(vp::AmbientColor, ri.ambientColor * ri.color);
-        vproc->parameter(vp::Constant0, Vec3f(0, 0.5, 1.0));
+        vproc->parameter(vp::Constant0, Vector3f(0.0f, 0.5f, 1.0f));
     }
 
     // If we have multi-texture support, we'll use the second texture unit
@@ -8275,87 +8221,25 @@ static const int MaxCometTailPoints = 120;
 static const int CometTailSlices = 48;
 struct CometTailVertex
 {
-    Point3f point;
-    Vec3f normal;
-    Point3f paraboloidPoint;
+    Vector3f point;
+    Vector3f normal;
     float brightness;
 };
 
 static CometTailVertex cometTailVertices[CometTailSlices * MaxCometTailPoints];
 
 static void ProcessCometTailVertex(const CometTailVertex& v,
-                                   const Vec3f& viewDir,
+                                   const Vector3f& viewDir,
                                    float fadeDistFromSun)
 {
     // If fadeDistFromSun = x/x0 >= 1.0, comet tail starts fading,
     // i.e. fadeFactor quickly transits from 1 to 0.
 
     float fadeFactor = 0.5f - 0.5f * (float) tanh(fadeDistFromSun - 1.0f / fadeDistFromSun);
-    float shade = abs(viewDir * v.normal * v.brightness * fadeFactor);
+    float shade = abs(viewDir.dot(v.normal) * v.brightness * fadeFactor);
     glColor4f(0.5f, 0.5f, 0.75f, shade);
     glVertex(v.point);
 }
-
-#if 0
-static void ProcessCometTailVertex(const CometTailVertex& v,
-                                   const Point3f& cameraPos)
-{
-    Vec3f viewDir = v.point - cameraPos;
-    viewDir.normalize();
-    float shade = abs(viewDir * v.normal * v.brightness);
-    glColor4f(0.0f, 0.5f, 1.0f, shade);
-    glVertex(v.point);
-}
-#endif
-
-#if 0
-static void ProcessCometTailVertex(const CometTailVertex& v,
-                                   const Point3f& eyePos_obj,
-                                   float b,
-                                   float h)
-{
-    float shade = 0.0f;
-    Vec3f R = v.paraboloidPoint - eyePos_obj;
-    float c0 = b * (square(eyePos_obj.x) + square(eyePos_obj.y)) + eyePos_obj.z;
-    float c1 = 2 * b * (R.x * eyePos_obj.x + R.y * eyePos_obj.y) - R.z;
-    float c2 = b * (square(R.x) + square(R.y));
-
-    float disc = square(c1) - 4 * c0 * c2;
-
-    if (disc < 0.0f)
-    {
-        shade = 0.0f;
-    }
-    else
-    {
-        disc = (float) sqrt(disc);
-        float s = 1.0f / (2 * c2);
-        float t0 = (h - eyePos_obj.z) / R.z;
-        float t1 = (c1 - disc) * s;
-        float t2 = (c1 + disc) * s;
-        /*float u0 = max(t0, 0.0f);     Unused*/
-        float u1, u2;
-
-        if (R.z < 0.0f)
-        {
-            u1 = max(t1, t0);
-            u2 = max(t2, t0);
-        }
-        else
-        {
-            u1 = min(t1, t0);
-            u2 = min(t2, t0);
-        }
-        u1 = max(0.0f, u1);
-        u2 = max(0.0f, u2);
-
-        shade = u2 - u1;
-    }
-
-    glColor4f(0.0f, 0.5f, 1.0f, shade);
-    glVertex(v.point);
-}
-#endif
 
 
 // Compute a rough estimate of the visible length of the dust tail.
@@ -8376,14 +8260,12 @@ void Renderer::renderCometTail(const Body& body,
                                double now,
                                float discSizeInPixels)
 {
-    Point3f cometPoints[MaxCometTailPoints];
-    Point3d pos0 = ptFromEigen(body.getOrbit(now)->positionAtTime(now));
-    Point3d pos1 = ptFromEigen(body.getOrbit(now)->positionAtTime(now - 0.01));
-    Vec3d vd = pos1 - pos0;
+    Vector3f cometPoints[MaxCometTailPoints];
+    Vector3d pos0 = body.getOrbit(now)->positionAtTime(now);
+    Vector3d pos1 = body.getOrbit(now)->positionAtTime(now - 0.01);
+    Vector3d vd = pos1 - pos0;
     double t = now;
-    /*float f = 1.0e15f;    Unused*/
-    /*int nSteps = MaxCometTailPoints;  Unused*/
-    /*float dt = 10000000.0f / (nSteps * (float) vd.length() * 100.0f);     Unused*/
+
     float distanceFromSun, irradiance_max = 0.0f;
     unsigned int li_eff = 0;    // Select the first sun as default to
                                 // shut up compiler warnings
@@ -8413,7 +8295,7 @@ void Renderer::renderCometTail(const Body& body,
     // direction to sun with dominant light irradiance:
     Vector3f sunDir = (pos.cast<double>() - lightSourceList[li_eff].position).cast<float>().normalized();
 
-    float dustTailLength = cometDustTailLength((float) pos0.distanceFromOrigin(), body.getRadius());
+    float dustTailLength = cometDustTailLength((float) pos0.norm(), body.getRadius());
     float dustTailRadius = dustTailLength * 0.1f;
 
     Vector3f origin = -sunDir * (body.getRadius() * 100);
@@ -8423,26 +8305,16 @@ void Renderer::renderCometTail(const Body& body,
     {
         float alpha = (float) i / (float) nTailPoints;
         alpha = alpha * alpha;
-        cometPoints[i] = ptFromEigen(origin + sunDir * (dustTailLength * alpha));
+        cometPoints[i] = origin + sunDir * (dustTailLength * alpha);
     }
 
     // We need three axes to define the coordinate system for rendering the
-    // comet.  The first axis is the velocity.  We choose the second one
-    // based on the orientation of the comet.  And the third is just the cross
-    // product of the first and second axes.
-    Quatd qd = fromEigen(body.getEclipticToEquatorial(t));
-    Quatf q((float) qd.w, (float) qd.x, (float) qd.y, (float) qd.z);
-    Vec3f v = cometPoints[1] - cometPoints[0];
-    v.normalize();
-    Vec3f u0 = Vec3f(0, 1, 0) * q.toMatrix3();
-    Vec3f u1 = Vec3f(1, 0, 0) * q.toMatrix3();
-    Vec3f u;
-    if (abs(u0 * v) < abs(u1 * v))
-        u = v ^ u0;
-    else
-        u = v ^ u1;
-    u.normalize();
-    Vec3f w = u ^ v;
+    // comet.  The first axis is the sun-to-comet direction, and the other
+    // two are chose orthogonal to each other and the primary axis.
+    Vector3f v = (cometPoints[1] - cometPoints[0]).normalized();
+    Quaternionf q = body.getEclipticToEquatorial(t).cast<float>();
+    Vector3f u = OrthogonalUnitVector(v);
+    Vector3f w = u.cross(v);
 
     glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
     glPushMatrix();
@@ -8458,39 +8330,32 @@ void Renderer::renderCometTail(const Body& body,
     for (i = 0; i < nTailPoints; i++)
     {
         float brightness = 1.0f - (float) i / (float) (nTailPoints - 1);
-        Vec3f v0, v1;
+        Vector3f v0, v1;
         float sectionLength;
         if (i != 0 && i != nTailPoints - 1)
         {
             v0 = cometPoints[i] - cometPoints[i - 1];
             v1 = cometPoints[i + 1] - cometPoints[i];
-            sectionLength = v0.length();
+            sectionLength = v0.norm();
             v0.normalize();
             v1.normalize();
-            Vec3f axis = v1 ^ v0;
-            float axisLength = axis.length();
-            if (axisLength > 1e-5f)
-            {
-                axis *= 1.0f / axisLength;
-                q.setAxisAngle(axis, (float) asin(axisLength));
-                Mat3f m = q.toMatrix3();
-
-                u = u * m;
-                v = v * m;
-                w = w * m;
-            }
+            q.setFromTwoVectors(v0, v1);
+            Matrix3f m = q.toRotationMatrix();
+            u = m * u;
+            v = m * v;
+            w = m * w;
         }
         else if (i == 0)
         {
             v0 = cometPoints[i + 1] - cometPoints[i];
-            sectionLength = v0.length();
+            sectionLength = v0.norm();
             v0.normalize();
             v1 = v0;
         }
         else
         {
             v0 = v1 = cometPoints[i] - cometPoints[i - 1];
-            sectionLength = v0.length();
+            sectionLength = v0.norm();
             v0.normalize();
             v1 = v0;
         }
@@ -8517,21 +8382,17 @@ void Renderer::renderCometTail(const Body& body,
             float theta = (float) (2 * PI * (float) j / nTailSlices);
             float s = (float) sin(theta);
             float c = (float) cos(theta);
-            CometTailVertex* vtx = &cometTailVertices[i * nTailSlices + j];
-            vtx->normal = u * (s * w1) + w * (c * w1) + v * w0;
+            CometTailVertex& vtx = cometTailVertices[i * nTailSlices + j];
+            vtx.normal = u * (s * w1) + w * (c * w1) + v * w0;
             s *= radius;
             c *= radius;
 
-            vtx->point = Point3f(cometPoints[i].x + u.x * s + w.x * c,
-                                 cometPoints[i].y + u.y * s + w.y * c,
-                                 cometPoints[i].z + u.z * s + w.z * c);
-            vtx->brightness = brightness;
-            vtx->paraboloidPoint =
-                Point3f(c, s, square((float) i / (float) MaxCometTailPoints));
+            vtx.point = cometPoints[i] + u * s + w * c;
+            vtx.brightness = brightness;
         }
     }
 
-    Vec3f viewDir = fromEigen(pos.normalized());
+    Vector3f viewDir = pos.normalized();
 
     glDisable(GL_CULL_FACE);
     for (i = 0; i < nTailPoints - 1; i++)
