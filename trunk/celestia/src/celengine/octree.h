@@ -18,7 +18,6 @@
 #include <celmath/plane.h>
 #include <celengine/observer.h>
 #include <vector>
-#include "eigenport.h"
 
 // The DynamicOctree and StaticOctree template arguments are:
 // OBJ:  object hanging from the node,

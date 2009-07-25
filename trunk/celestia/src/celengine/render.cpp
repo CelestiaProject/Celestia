@@ -73,6 +73,7 @@ std::ofstream hdrlog;
 #include <cassert>
 #include <sstream>
 #include <iomanip>
+#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;

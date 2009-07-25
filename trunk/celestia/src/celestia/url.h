@@ -21,13 +21,18 @@
 #include <map>
 #include "celestiacore.h"
 #include "celengine/astro.h"
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 class CelestiaCore;
 class CelestiaState;
 
+
 class Url
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     enum UrlType
     {
         Absolute = 0,
@@ -51,7 +56,7 @@ public:
         UseSystemTime     = 2,
         TimeSourceCount   = 3,
     };
-    
+   
     Url();
     
     // parses str
@@ -115,7 +120,7 @@ private:
     // Variables specific to Global Urls
     UniversalCoord coord;
     astro::Date date;
-    Quatf orientation;
+    Eigen::Quaternionf orientation;
     
     // Variables specific to Relative Urls
     double distance, longitude, latitude;
@@ -133,6 +138,8 @@ private:
 class CelestiaState
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     CelestiaState();
     
     bool loadState(std::map<std::string, std::string>& params);
@@ -146,7 +153,7 @@ public:
     string targetBodyName;
     string trackedBodyName;
     UniversalCoord observerPosition;
-    Quatf observerOrientation;
+    Eigen::Quaternionf observerOrientation;
     float fieldOfView;
     
     // Time parameters
