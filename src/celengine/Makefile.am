@@ -5,7 +5,6 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = \
 	$(noinst_DATA) \
-	3dsmesh.cpp \
 	solarsysxml.cpp
 
 INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
