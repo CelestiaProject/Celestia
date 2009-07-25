@@ -28,7 +28,9 @@
 #include "render.h"
 #include "texture.h"
 #include <math.h>
-#include <Eigen/Geometry>
+#include "eigenport.h"
+
+using namespace Eigen;
 using namespace std;
 
 static int cntrTexWidth = 512, cntrTexHeight = 512; 
@@ -318,12 +320,12 @@ bool Globular::load(AssociativeArray* params, const string& resPath)
 
 
 void Globular::render(const GLContext& context,
-                    const Vec3f& offset,
-                    const Quatf& viewerOrientation,
+                    const Vector3f& offset,
+                    const Quaternionf& viewerOrientation,
                     float brightness,
                     float pixelSize)
 {					        
-	renderGlobularPointSprites(context, offset, viewerOrientation, brightness, pixelSize);
+    renderGlobularPointSprites(context, fromEigen(offset), fromEigen(viewerOrientation), brightness, pixelSize);
 }
 
 

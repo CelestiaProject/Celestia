@@ -26,7 +26,6 @@
 #include "vecgl.h"
 #include "render.h"
 #include "texture.h"
-#include "eigenport.h"
 
 using namespace Eigen;
 using namespace std;
@@ -266,8 +265,8 @@ bool Galaxy::load(AssociativeArray* params, const string& resPath)
 
 
 void Galaxy::render(const GLContext& context,
-                    const Vec3f& offset,
-                    const Quatf& viewerOrientation,
+                    const Vector3f& offset,
+                    const Quaternionf& viewerOrientation,
                     float brightness,
                     float pixelSize)
 {
@@ -277,7 +276,7 @@ void Galaxy::render(const GLContext& context,
     }
     else
     {
-        renderGalaxyPointSprites(context, toEigen(offset), toEigen(viewerOrientation), brightness, pixelSize);
+        renderGalaxyPointSprites(context, offset, viewerOrientation, brightness, pixelSize);
     }
 }
 

@@ -14,7 +14,6 @@
 #include <string>
 #include <iostream>
 #include <celutil/basictypes.h>
-#include <celmath/quaternion.h>
 #include <celmath/ray.h>
 #include <celengine/glcontext.h>
 #include <celengine/parser.h>
@@ -87,8 +86,8 @@ class DeepSkyObject
                       double& cosAngleToBoundCenter) const = 0;
     virtual bool load(AssociativeArray*, const std::string& resPath);
     virtual void render(const GLContext& context,
-                        const Vec3f& offset,
-                        const Quatf& viewerOrientation,
+                        const Eigen::Vector3f& offset,
+                        const Eigen::Quaternionf& viewerOrientation,
                         float brightness,
                         float pixelSize) = 0;
 
