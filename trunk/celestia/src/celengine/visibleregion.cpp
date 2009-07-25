@@ -19,6 +19,7 @@
 #include "gl.h"
 #include "vecgl.h"
 #include "render.h"
+#include <celmath/geomutil.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -138,23 +139,6 @@ ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
 }
 
 
-// Get a vector orthogonal to the specified one
-template <typename T> static Matrix<T, 3, 1>
-orthogonalUnitVector(const Matrix<T, 3, 1>& v)
-{
-    Matrix<T, 3, 1> w;
-
-    if (abs(v.x()) < abs(v.y()) && abs(v.x()) < abs(v.z()))
-        w = Matrix<T, 3, 1>::UnitX().cross(v);
-    else if (abs(v.y()) < abs(v.z()))
-        w = Matrix<T, 3, 1>::UnitY().cross(v);
-    else
-        w = Matrix<T, 3, 1>::UnitZ().cross(v);
-
-    return w.normalized();
-}
-
-
 void
 VisibleRegion::render(Renderer* /* renderer */,
                       const Vector3f& /* pos */,
@@ -227,7 +211,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     // Pick two orthogonal axes both normal to the light direction
     Vector3d lightDirNorm = lightDir.normalized();
 
-    Vector3d uAxis = orthogonalUnitVector(lightDirNorm);
+    Vector3d uAxis = OrthogonalUnitVector(lightDirNorm);
     Vector3d vAxis = uAxis.cross(lightDirNorm);
 
     Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwise().inverse();
