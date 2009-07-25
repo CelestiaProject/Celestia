@@ -111,9 +111,9 @@
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparty\Eigen"
-				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX"
+				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG"
 				RuntimeLibrary="2"
-				EnableEnhancedInstructionSet="0"
+				EnableEnhancedInstructionSet="2"
 				FloatingPointModel="0"
 			/>
 			<Tool
@@ -744,10 +744,6 @@
 			<Filter
 				Name="celengine"
 				>
-				<File
-					RelativePath=".\src\celengine\3dsmesh.h"
-					>
-				</File>
 				<File
 					RelativePath=".\src\celengine\asterism.h"
 					>
