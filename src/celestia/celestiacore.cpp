@@ -49,6 +49,7 @@
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
 #include "url.h"
+#include <celengine/eigenport.h>
 
 #ifdef CELX
 #include <celengine/scriptobject.h>
@@ -906,19 +907,18 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         {
             // Rotate the selected object
             Selection sel = sim->getSelection();
-            Quatf q(1);
+            Quaternionf q = Quaternionf::Identity();
             if (sel.getType() == Selection::Type_DeepSky)
-                q = fromEigen(sel.deepsky()->getOrientation());
+                q = sel.deepsky()->getOrientation();
             else if (sel.getType() == Selection::Type_Body)
-                q = fromEigen(sel.body()->getGeometryOrientation());
+                q = sel.body()->getGeometryOrientation();
 
-            q.yrotate(dx / width);
-            q.xrotate(dy / height);
+            q = XRotation(dy / height) * YRotation(dx / width) * q;
 
             if (sel.getType() == Selection::Type_DeepSky)
-                sel.deepsky()->setOrientation(toEigen(q));
+                sel.deepsky()->setOrientation(q);
             else if (sel.getType() == Selection::Type_Body)
-                sel.body()->setGeometryOrientation(toEigen(q));
+                sel.body()->setGeometryOrientation(q);
         }
         else if (editMode && checkMask(modifiers, RightButton | ShiftKey | ControlKey))
         {
@@ -986,7 +986,6 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         }
         else
         {
-            Quatf q(1);
             // For a small field of view, rotate the camera more finely
             float coarseness = 1.5f;
             if ((modifiers & RightButton) == 0)
@@ -999,12 +998,12 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
                 // based on the distance from the reference object.
                 coarseness = ComputeRotationCoarseness(*sim);
             }
-            q.yrotate(dx / width * coarseness);
-            q.xrotate(dy / height * coarseness);
+
+            Quaternionf q = XRotation(dy / height * coarseness) * YRotation(dx / width * coarseness);
             if ((modifiers & RightButton) != 0)
-                sim->orbit(toEigen(q));
+                sim->orbit(q);
             else
-                sim->rotate(toEigen(q).conjugate());
+                sim->rotate(q.conjugate());
         }
 
         mouseMotion += abs(dy) + abs(dx);
@@ -2408,18 +2407,18 @@ void CelestiaCore::tick()
 
     if (!refObject.empty())
     {
-        Quatf q(1.0f);
+        Quaternionf q = Quaternionf::Identity();
         float coarseness = ComputeRotationCoarseness(*sim);
 
         if (shiftKeysPressed[Key_Left])
-            q = q * Quatf::yrotation((float) (dt * -KeyRotationAccel * coarseness));
+            q = q * YRotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Right])
-            q = q * Quatf::yrotation((float) (dt *  KeyRotationAccel * coarseness));
+            q = q * YRotation((float) (dt *  KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Up])
-            q = q * Quatf::xrotation((float) (dt * -KeyRotationAccel * coarseness));
+            q = q * XRotation((float) (dt * -KeyRotationAccel * coarseness));
         if (shiftKeysPressed[Key_Down])
-            q = q * Quatf::xrotation((float) (dt *  KeyRotationAccel * coarseness));
-        sim->orbit(toEigen(q));
+            q = q * XRotation((float) (dt *  KeyRotationAccel * coarseness));
+        sim->orbit(q);
     }
 
     // If there's a script running, tick it
@@ -3070,8 +3069,8 @@ static void displayPlanetocentricCoords(Overlay& overlay,
     else
     {
         // Swap hemispheres if the object is a retrograde rotator
-        Quatd q = fromEigen(body.getEclipticToEquatorial(astro::J2000).conjugate());
-        bool retrograde = (Vec3d(0.0, 1.0, 0.0) * q.toMatrix3()).y < 0.0;
+        Quaterniond q = body.getEclipticToEquatorial(astro::J2000);
+        bool retrograde = (q * Vector3d::UnitY()).y() < 0.0;
 
         if ((latitude < 0.0) ^ retrograde)
             nsHemi = 'S';
@@ -4781,12 +4780,13 @@ void CelestiaCore::goToUrl(const string& urlStr)
 
 void CelestiaCore::addToHistory()
 {
-    Url url(this);
+    Url* url = new Url(this);
     if (!history.empty() && historyCurrent < history.size() - 1)
     {
         // truncating history to current position
         while (historyCurrent != history.size() - 1)
         {
+            delete history.back();
             history.pop_back();
         }
     }
@@ -4798,14 +4798,16 @@ void CelestiaCore::addToHistory()
 
 void CelestiaCore::back()
 {
-    if (historyCurrent == 0) return;
+    if (historyCurrent == 0)
+        return;
+
     if (historyCurrent == history.size() - 1)
     {
         addToHistory();
         historyCurrent = history.size()-1;
     }
     historyCurrent--;
-    history[historyCurrent].goTo();
+    history[historyCurrent]->goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
@@ -4815,29 +4817,29 @@ void CelestiaCore::forward()
     if (history.size() == 0) return;
     if (historyCurrent == history.size()-1) return;
     historyCurrent++;
-    history[historyCurrent].goTo();
+    history[historyCurrent]->goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
-const vector<Url>& CelestiaCore::getHistory() const
+const vector<Url*>& CelestiaCore::getHistory() const
 {
     return history;
 }
 
-vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
+vector<Url*>::size_type CelestiaCore::getHistoryCurrent() const
 {
     return historyCurrent;
 }
 
-void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
+void CelestiaCore::setHistoryCurrent(vector<Url*>::size_type curr)
 {
     if (curr >= history.size()) return;
     if (historyCurrent == history.size()) {
         addToHistory();
     }
     historyCurrent = curr;
-    history[curr].goTo();
+    history[curr]->goTo();
     notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 

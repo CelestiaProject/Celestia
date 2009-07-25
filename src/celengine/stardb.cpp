@@ -859,7 +859,7 @@ bool StarDatabase::createStar(Star* star,
     RotationModel* rm = CreateRotationModel(starData, path, 1.0);
     bool hasRotationModel = (rm != NULL);
 
-    Vec3d semiAxes;
+    Vector3d semiAxes = Vector3d::Ones();
     bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
     bool hasBarycenter = false;
     Eigen::Vector3f barycenterPosition;
@@ -900,7 +900,7 @@ bool StarDatabase::createStar(Star* star,
 
         if (hasSemiAxes)
         {
-            details->setEllipsoidSemiAxes(toEigen(semiAxes).cast<float>());
+            details->setEllipsoidSemiAxes(semiAxes.cast<float>());
         }
 
         if (hasRadius)

@@ -1,7 +1,7 @@
 // eclipsefinder.cpp by Christophe Teyssier <chris@teyssier.org>
 // adapted form wineclipses.cpp by Kendrix <kendrix@wanadoo.fr>
 // 
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
 //
 // Compute Solar Eclipses for our Solar System planets
 //
@@ -19,7 +19,9 @@
 #include "celmath/mathlib.h"
 #include "celmath/ray.h"
 #include "celmath/distance.h"
+#include <celengine/eigenport.h>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -59,16 +61,16 @@ bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
         // less than the distance between the sun and the receiver.  This
         // approximation works everywhere in the solar system, and likely
         // works for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = ptFromEigen(receiver.getAstrocentricPosition(now));
-        Point3d posCaster = ptFromEigen(caster.getAstrocentricPosition(now));
+        Vector3d posReceiver = receiver.getAstrocentricPosition(now);
+        Vector3d posCaster = caster.getAstrocentricPosition(now);
 
         const Star* sun = receiver.getSystem()->getStar();
         assert(sun != NULL);
-        double distToSun = posReceiver.distanceFromOrigin();
+        double distToSun = posReceiver.norm();
         float appSunRadius = (float) (sun->getRadius() / distToSun);
 
-        Vec3d dir = posCaster - posReceiver;
-        double distToCaster = dir.length() - receiver.getRadius();
+        Vector3d dir = posCaster - posReceiver;
+        double distToCaster = dir.norm() - receiver.getRadius();
         float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
 
         // The shadow radius is the radius of the occluder plus some additional
@@ -88,8 +90,7 @@ bool EclipseFinder::testEclipse(const Body& receiver, const Body& caster,
         // If the distance is less than the sum of the caster's and receiver's
         // radii, then we have an eclipse.
         float R = receiver.getRadius() + shadowRadius;
-        double dist = distance(posReceiver,
-                               Ray3d(posCaster, posCaster - Point3d(0, 0, 0)));
+        double dist = distance(posReceiver, Ray3d(posCaster, posCaster));
         if (dist < R)
         {
             // Ignore "eclipses" where the caster and receiver have

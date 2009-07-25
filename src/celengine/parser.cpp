@@ -452,6 +452,39 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
     return true;
 }
 
+
+bool AssociativeArray::getRotation(const string& key, Quaternionf& val) const
+{
+    Value* v = getValue(key);
+    if (v == NULL || v->getType() != Value::ArrayType)
+        return false;
+
+    Array* arr = v->getArray();
+    if (arr->size() != 4)
+        return false;
+
+    Value* w = (*arr)[0];
+    Value* x = (*arr)[1];
+    Value* y = (*arr)[2];
+    Value* z = (*arr)[3];
+
+    if (w->getType() != Value::NumberType ||
+        x->getType() != Value::NumberType ||
+        y->getType() != Value::NumberType ||
+        z->getType() != Value::NumberType)
+        return false;
+
+    Vector3f axis((float) x->getNumber(),
+                  (float) y->getNumber(),
+                  (float) z->getNumber());
+    float angle = degToRad((float) w->getNumber());
+
+    val = Quaternionf(AngleAxisf(angle, axis.normalized()));
+
+    return true;
+}
+
+
 bool AssociativeArray::getColor(const string& key, Color& val) const
 {
     Vec3d vecVal;
