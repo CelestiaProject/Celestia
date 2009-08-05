@@ -94,7 +94,7 @@
                 break;
         }
     }
-    distance = [[Astro kilometersToLightYears:[NSNumber numberWithDouble:distance]] doubleValue];
+
     up = [CelestiaVector vectorWithx:[NSNumber numberWithFloat:0.0] y:[NSNumber numberWithFloat:1.0] z:[NSNumber numberWithFloat:0.0]];
     if ([[latitudeField stringValue] length] && [[longitudeField stringValue] length])
     {
