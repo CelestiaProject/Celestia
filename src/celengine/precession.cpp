@@ -13,7 +13,6 @@
 #include <cmath>
 #include <iostream>
 #include <celmath/mathlib.h>
-#include <celmath/vecmath.h>
 #include "precession.h"
 
 using namespace std;

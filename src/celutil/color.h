@@ -12,6 +12,7 @@
 
 #include <map>
 #include <string>
+#include <Eigen/Core>
 
 
 class Color
@@ -35,6 +36,9 @@ class Color
     inline float blue() const;
     inline float alpha() const;
     inline void get(unsigned char*) const;
+    
+    inline Eigen::Vector3f toVector3() const;
+    inline Eigen::Vector4f toVector4() const;
  
     friend bool operator==(Color, Color);
     friend bool operator!=(Color, Color);
@@ -82,6 +86,24 @@ void Color::get(unsigned char* rgba) const
     rgba[1] = c[Green];
     rgba[2] = c[Blue];
     rgba[3] = c[Alpha];
+}
+
+/** Return the color as a vector, with red, green, and blue in the
+ *  the x, y, and z components of the vector. Each component is a
+ *  floating point value between 0 and 1, inclusive.
+ */
+Eigen::Vector3f Color::toVector3() const
+{
+    return Eigen::Vector3f(red(), green(), blue());
+}
+
+/** Return the color as a vector, with red, green, blue, and alpha in the
+ *  the x, y, z, and w components of the vector. Each component is a
+ *  floating point value between 0 and 1, inclusive.
+ */
+Eigen::Vector4f Color::toVector4() const
+{
+    return Eigen::Vector4f(red(), green(), blue(), alpha());
 }
 
 inline bool operator==(Color a, Color b)

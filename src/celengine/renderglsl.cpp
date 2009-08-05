@@ -242,8 +242,9 @@ void renderSphere_GLSL(const RenderInfo& ri,
         prog->setAtmosphereParameters(*atmosphere, radius, radius);
     }
 
+    Matrix4f planetMat_e = Map<Matrix4f>(&planetMat[0][0]);
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetMat);
+        prog->setEclipseShadowParameters(ls, radius, planetMat_e);
 
     glColor(ri.color);
 
@@ -462,8 +463,9 @@ void renderClouds_GLSL(const RenderInfo& ri,
         prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
     }
 
+    Matrix4f planetMat_e = Map<Matrix4f>(&planetMat[0][0]);
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, cloudRadius, planetMat);
+        prog->setEclipseShadowParameters(ls, cloudRadius, planetMat_e);
 
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != NULL)
