@@ -186,5 +186,16 @@ inline void glLightPosition(GLenum light, const Eigen::Vector3f& pos)
     glLightfv(light, GL_POSITION, Eigen::Vector4f(pos.x(), pos.y(), pos.z(), 1.0f).data());
 }
 
+template<typename DERIVED>
+void glLightColor(GLenum light, GLenum which, const Eigen::MatrixBase<DERIVED>& color)
+{
+    glLightfv(light, which, Eigen::Vector4f(color.x(), color.y(), color.z(), 1.0f).data());
+}
+
+inline void glLightColor(GLenum light, GLenum which, const Eigen::Vector4f& color)
+{
+    glLightfv(light, which, color.data());
+}
+
 #endif // _CELENGINE_VECGL_H_
 

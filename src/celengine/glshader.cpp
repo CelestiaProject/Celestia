@@ -108,23 +108,6 @@ Vec3ShaderParameter::operator=(const Eigen::Vector3f& v)
     return *this;
 }
 
-Vec3ShaderParameter&
-Vec3ShaderParameter::operator=(const Vec3f& v)
-{
-    if (slot != -1)
-        glx::glUniform3fARB(slot, v.x, v.y, v.z);
-    return *this;
-}
-
-Vec3ShaderParameter&
-Vec3ShaderParameter::operator=(const Point3f& p)
-{
-    if (slot != -1)
-        glx::glUniform3fARB(slot, p.x, p.y, p.z);
-    return *this;
-}
-
-
 Vec4ShaderParameter::Vec4ShaderParameter() :
     slot(-1)
 {
@@ -140,14 +123,6 @@ Vec4ShaderParameter::operator=(const Eigen::Vector4f& v)
 {
     if (slot != -1)
         glx::glUniform4fvARB(slot, 1, v.data());
-    return *this;
-}
-
-Vec4ShaderParameter&
-Vec4ShaderParameter::operator=(const Vec4f& v)
-{
-    if (slot != -1)
-        glx::glUniform4fARB(slot, v.x, v.y, v.z, v.w);
     return *this;
 }
 

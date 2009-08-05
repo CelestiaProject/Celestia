@@ -11,7 +11,6 @@
 #define _DISPMAP_H_
 
 #include <string>
-#include <celmath/vecmath.h>
 
 
 typedef float (*DisplacementMapFunc)(float, float, void*);
