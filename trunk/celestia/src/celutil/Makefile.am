@@ -20,6 +20,8 @@ WINSOURCES = \
 	winutil.cpp \
         windirectory.cpp
 
+INCLUDES = -I$(top_srcdir)/thirdparty/Eigen
+
 EXTRA_DIST = $(noinst_DATA)
 
 EXTRA_libcelutil_a_SOURCES= $(WINSOURCES)
