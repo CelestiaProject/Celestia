@@ -12,6 +12,7 @@
 
 #include <string>
 #include <iostream>
+#include <cstdio>
 #include <celtxf/texturefont.h>
 
 
