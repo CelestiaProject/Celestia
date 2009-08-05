@@ -4984,10 +4984,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     Vector3f recipSemiAxes = semiAxes.cwise().inverse();
 
     Vector3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
-#if CELVEC
-    Mat3f A = Mat3f::scaling(recipAtmSemiAxes);
-    Mat3f A1 = Mat3f::scaling(recipSemiAxes);
-#endif
     // ellipDist is not the true distance from the surface unless the
     // planet is spherical.  Computing the true distance requires finding
     // the roots of a sixth degree polynomial, and isn't actually what we
@@ -4995,9 +4991,6 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     // multiplied by a uniform scale factor.  The value that we do compute
     // is the distance to the surface along a line from the eye position to
     // the center of the ellipsoid.
-#if CELVEC
-    float ellipDist = (float) sqrt((eyeVec * A1) * (eyeVec * A1)) - 1.0f;
-#endif
     float ellipDist = (eyeVec.cwise() * recipSemiAxes).norm() - 1.0f;
     bool within = ellipDist < height;
 
@@ -6520,13 +6513,14 @@ renderEclipseShadows(Geometry* geometry,
                      vector<EclipseShadow>& eclipseShadows,
                      RenderInfo& ri,
                      float planetRadius,
-                     Mat4f& planetMat,
+                     Quaternionf& planetOrientation,
                      Frustum& viewFrustum,
                      const GLContext& context)
 {
-    Transform3f planetTransform;
-    planetTransform.matrix() = Map<Matrix4f>(&planetMat[0][0]);
-    // Eclipse shadows on mesh objects aren't working yet.
+    Matrix3f planetTransform = planetOrientation.toRotationMatrix();
+
+    // Eclipse shadows on mesh objects are only supported in
+    // the OpenGL 2.0 path.
     if (geometry != NULL)
         return;
 
@@ -6558,7 +6552,7 @@ renderEclipseShadows(Geometry* geometry,
         // Compute the transformation to use for generating texture
         // coordinates from the object vertices.
         Vector3f origin = planetTransform * shadow.origin;
-        Vector3f dir    = planetTransform.linear() * shadow.direction;
+        Vector3f dir    = planetTransform * shadow.direction;
         float scale = planetRadius / shadow.penumbraRadius;
         Vector3f axis = Vector3f::UnitY().cross(dir);
         float angle = std::acos(Vector3f::UnitY().dot(dir));
@@ -6653,13 +6647,12 @@ renderEclipseShadows_Shaders(Geometry* geometry,
                              vector<EclipseShadow>& eclipseShadows,
                              RenderInfo& ri,
                              float planetRadius,
-                             const Mat4f& planetMat,
+                             const Quaternionf& planetOrientation,
                              Frustum& viewFrustum,
                              const GLContext& context)
 {
-    Transform3f planetTransform;
-    planetTransform.matrix() = Map<Matrix4f>(&planetMat[0][0]);
-
+    Matrix3f planetTransform = planetOrientation.toRotationMatrix();
+    
     // Eclipse shadows on mesh objects are only implemented in the GLSL path
     if (geometry != NULL)
         return;
@@ -6701,7 +6694,7 @@ renderEclipseShadows_Shaders(Geometry* geometry,
         // Compute the transformation to use for generating texture
         // coordinates from the object vertices.
         Vector3f origin = planetTransform * shadow.origin;
-        Vector3f dir    = planetTransform.linear() * shadow.direction;
+        Vector3f dir    = planetTransform * shadow.direction;
         float scale = planetRadius / shadow.penumbraRadius;
         Vector3f axis = Vector3f::UnitY().cross(dir);
         float angle = (float) acos(Vector3f::UnitY().dot(dir));
@@ -6774,7 +6767,7 @@ renderRingShadowsVS(Geometry* /*geometry*/,           //TODO: Remove unused para
                     RenderInfo& ri,
                     float planetRadius,
                     float /*oblateness*/,
-                    Mat4f& /*planetMat*/,
+                    Matrix4f& /*planetMat*/,
                     Frustum& viewFrustum,
                     const GLContext& context)
 {
@@ -7262,8 +7255,9 @@ void Renderer::renderObject(const Vector3f& pos,
     }
     glScale(scaleFactors);
 
-    Mat4f planetMat = fromEigen(obj.orientation.conjugate()).toMatrix4();
     Matrix3f planetRotation = obj.orientation.toRotationMatrix();
+    Matrix4f planetMat = Matrix4f::Identity();
+    planetMat.corner<3, 3>(TopLeft) = planetRotation;
 
     ri.eyeDir_obj = -(planetRotation * pos).normalized();
     ri.eyePos_obj = -(planetRotation * (pos.cwise() / scaleFactors));
@@ -7336,11 +7330,24 @@ void Renderer::renderObject(const Vector3f& pos,
     }
 
     // Compute the inverse model/view matrix
+    // TODO: This code uses the old vector classes, but will be eliminated when the new planet rendering code
+    // is adopted. The new planet renderer doesn't require the inverse transformed view frustum.
+#if 0
+    Transform3f invModelView = cameraOrientation.conjugate() *
+                               Translation3f(-pos) *
+                               obj.orientation *
+                               Scaling3f(1.0f / radius);
+#endif
+    Mat4f planetMat_old(Vec4f(planetMat.col(0).x(), planetMat.col(0).y(), planetMat.col(0).z(), planetMat.col(0).w()),
+                        Vec4f(planetMat.col(1).x(), planetMat.col(1).y(), planetMat.col(1).z(), planetMat.col(1).w()),
+                        Vec4f(planetMat.col(2).x(), planetMat.col(2).y(), planetMat.col(2).z(), planetMat.col(2).w()),
+                        Vec4f(planetMat.col(3).x(), planetMat.col(3).y(), planetMat.col(3).z(), planetMat.col(3).w()));
+                        
     Mat4f invMV = (fromEigen(cameraOrientation).toMatrix4() *
                    Mat4f::translation(Point3f(-pos.x(), -pos.y(), -pos.z())) *
-                   planetMat *
+                   planetMat_old *
                    Mat4f::scaling(1.0f / radius));
-
+    
     // The sphere rendering code uses the view frustum to determine which
     // patches are visible. In order to avoid rendering patches that can't
     // be seen, make the far plane of the frustum as close to the viewer
@@ -7418,7 +7425,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                   obj.radius,
                                   textureResolution,
                                   renderFlags,
-                                  planetMat, viewFrustum, *context);
+                                  obj.orientation, viewFrustum, *context);
                 break;
 
             case GLContext::GLPath_NV30:
@@ -7464,7 +7471,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                         obj.atmosphere,
                                         geometryScale,
                                         renderFlags,
-                                        planetMat,
+                                        obj.orientation,
                                         astro::daysToSecs(now - astro::J2000));
                 }
                 else
@@ -7474,7 +7481,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                               texOverride,
                                               geometryScale,
                                               renderFlags,
-                                              planetMat,
+                                              obj.orientation,
                                               astro::daysToSecs(now - astro::J2000));
                 }
 
@@ -7548,7 +7555,7 @@ void Renderer::renderObject(const Vector3f& pos,
                 renderAtmosphere_GLSL(ri, ls,
                                       atmosphere,
                                       radius * atmScale,
-                                      planetMat,
+                                      obj.orientation,
                                       viewFrustum,
                                       *context);
             }
@@ -7635,7 +7642,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                       radius,
                                       textureResolution,
                                       renderFlags,
-                                      planetMat,
+                                      obj.orientation,
                                       viewFrustum,
                                       *context);
                 }
@@ -7702,7 +7709,7 @@ void Renderer::renderObject(const Vector3f& pos,
             renderEclipseShadows_Shaders(geometry,
                                          *ls.shadows[0],
                                          ri,
-                                         radius, planetMat, viewFrustum,
+                                         radius, obj.orientation, viewFrustum,
                                          *context);
         }
         else
@@ -7710,7 +7717,7 @@ void Renderer::renderObject(const Vector3f& pos,
             renderEclipseShadows(geometry,
                                  *ls.shadows[0],
                                  ri,
-                                 radius, planetMat, viewFrustum,
+                                 radius, obj.orientation, viewFrustum,
                                  *context);
         }
     }
