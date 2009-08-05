@@ -336,16 +336,6 @@ void vp::use(unsigned int prog)
 }
 
 
-void vp::parameter(unsigned int param, const Vec3f& v)
-{
-    glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, v.x, v.y, v.z, 0.0f);
-}
-                            
-void vp::parameter(unsigned int param, const Point3f& p)
-{
-    glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, p.x, p.y, p.z, 0.0f);
-}
-
 void vp::parameter(unsigned int param, const Color& c)
 {
     glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param,
@@ -357,19 +347,6 @@ void vp::parameter(unsigned int param, float x, float y, float z, float w)
     glx::glProgramParameter4fNV(GL_VERTEX_PROGRAM_NV, param, x, y, z, w);
 }
 
-
-
-void arbvp::parameter(unsigned int param, const Vec3f& v)
-{
-    glx::glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param,
-                                    v.x, v.y, v.z, 0.0f);
-}
-                            
-void arbvp::parameter(unsigned int param, const Point3f& p)
-{
-    glx::glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, param,
-                                    p.x, p.y, p.z, 0.0f);
-}
 
 void arbvp::parameter(unsigned int param, const Color& c)
 {
@@ -404,16 +381,6 @@ void VertexProcessor::parameter(vp::Parameter param, const Eigen::Vector3f& v)
 void VertexProcessor::parameter(vp::Parameter param, const Eigen::Vector4f& v)
 {
     parameter(param, v.x(), v.y(), v.z(), v.w());
-}
-
-void VertexProcessor::parameter(vp::Parameter param, const Vec3f& v)
-{
-    parameter(param, v.x, v.y, v.z, 0.0f);
-}
-                            
-void VertexProcessor::parameter(vp::Parameter param, const Point3f& p)
-{
-    parameter(param, p.x, p.y, p.z, 0.0f);
 }
 
 void VertexProcessor::parameter(vp::Parameter param, const Color& c)

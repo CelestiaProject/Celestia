@@ -5361,32 +5361,28 @@ static void setLightParameters_VP(VertexProcessor& vproc,
                                   Color materialDiffuse,
                                   Color materialSpecular)
 {
-    Vec3f diffuseColor(materialDiffuse.red(),
-                       materialDiffuse.green(),
-                       materialDiffuse.blue());
+    Vector3f diffuseColor(materialDiffuse.red(),
+                          materialDiffuse.green(),
+                          materialDiffuse.blue());
 #ifdef HDR_COMPRESS
-    Vec3f specularColor(materialSpecular.red()   * 0.5f,
-                        materialSpecular.green() * 0.5f,
-                        materialSpecular.blue()  * 0.5f);
+    Vector3f specularColor(materialSpecular.red()   * 0.5f,
+                           materialSpecular.green() * 0.5f,
+                           materialSpecular.blue()  * 0.5f);
 #else
-    Vec3f specularColor(materialSpecular.red(),
-                        materialSpecular.green(),
-                        materialSpecular.blue());
+    Vector3f specularColor(materialSpecular.red(),
+                           materialSpecular.green(),
+                           materialSpecular.blue());
 #endif
     for (unsigned int i = 0; i < ls.nLights; i++)
     {
         const DirectionalLight& light = ls.lights[i];
 
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
-        Vec3f diffuse(diffuseColor.x * lightColor.x,
-                      diffuseColor.y * lightColor.y,
-                      diffuseColor.z * lightColor.z);
-        Vec3f specular(specularColor.x * lightColor.x,
-                       specularColor.y * lightColor.y,
-                       specularColor.z * lightColor.z);
-
+        Vector3f lightColor = Vector3f(light.color.red(),
+                                       light.color.green(),
+                                       light.color.blue()) * light.irradiance;
+        Vector3f diffuse = diffuseColor.cwise() * lightColor;
+        Vector3f specular = specularColor.cwise() * lightColor;
+        
         // Just handle two light sources for now
         if (i == 0)
         {
