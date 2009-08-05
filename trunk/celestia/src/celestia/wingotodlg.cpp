@@ -116,7 +116,6 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                     
                     distance += (float) sel.radius();
                 }
-                distance = astro::kilometersToLightYears(distance);
 
                 float longitude, latitude;
                 if (GetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, longitude) &&
