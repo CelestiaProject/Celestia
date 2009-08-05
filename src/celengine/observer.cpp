@@ -1271,6 +1271,13 @@ void Observer::gotoSelectionGC(const Selection& selection,
 }
 
 
+/** Make the observer travel to the specified planetocentric coordinates.
+ *  @param selection the central object
+ *  @param gotoTime travel time in seconds of real time
+ *  @param distance the distance from the center (in kilometers)
+ *  @param longitude longitude in radians
+ *  @param latitude latitude in radians
+ */
 void Observer::gotoSelectionLongLat(const Selection& selection,
                                     double gotoTime,
                                     double distance,
@@ -1336,9 +1343,9 @@ void Observer::getSelectionLongLat(const Selection& selection,
         double y = -bfPos.z();
         double z = bfPos.y();
 
+        distance = bfPos.norm();
         longitude = radToDeg(atan2(y, x));
         latitude = radToDeg(PI/2 - acos(z / distance));
-        distance = bfPos.norm();
     }
 }
 
