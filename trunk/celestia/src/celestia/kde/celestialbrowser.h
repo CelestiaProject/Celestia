@@ -35,7 +35,7 @@ private:
     Simulation *appSim;
     StarBrowser sbrowser;
     Selection browserSel;
-    void addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Point3d* parentBodyPos = NULL);
+    void addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Eigen::Vector3d* parentBodyPos = NULL);
     
     QString getClassification(int c) const;
 

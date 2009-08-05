@@ -300,8 +300,8 @@ void KdeWatcher::notifyChange(CelestiaCore*, int property)
 }
 
 void KdeApp::resyncHistory() {
-    std::vector<Url> history=appCore->getHistory();
-    std::vector<Url>::size_type i=appCore->getHistoryCurrent();
+    std::vector<Url*> history=appCore->getHistory();
+    std::vector<Url*>::size_type i=appCore->getHistoryCurrent();
 
     if (i >= history.size()-1) {
         action("go_forward")->setEnabled(false);
@@ -1524,13 +1524,13 @@ void KdeApp::dropEvent(QDropEvent* event) {
 void KdeApp::slotBackAboutToShow() {
     int i;
     KPopupMenu* menu = backAction->popupMenu();
-    std::vector<Url>::size_type current = appCore->getHistoryCurrent();
+    std::vector<Url*>::size_type current = appCore->getHistoryCurrent();
     int pos;
-    std::vector<Url> history = appCore->getHistory();
+    std::vector<Url*> history = appCore->getHistory();
 
     menu->clear();
     for (i=0, pos = current - 1 ; pos >= 0 && i < 15 ; pos--, i++) {
-        menu->insertItem(QString(history[pos].getName().c_str()), pos);
+        menu->insertItem(QString(history[pos]->getName().c_str()), pos);
     }
 }
 
@@ -1541,13 +1541,13 @@ void KdeApp::slotBackActivated(int i) {
 void KdeApp::slotForwardAboutToShow() {
     int i;
     KPopupMenu* menu = forwardAction->popupMenu();
-    std::vector<Url>::size_type current = appCore->getHistoryCurrent();
-    std::vector<Url>::size_type pos;
-    std::vector<Url> history = appCore->getHistory();
+    std::vector<Url*>::size_type current = appCore->getHistoryCurrent();
+    std::vector<Url*>::size_type pos;
+    std::vector<Url*> history = appCore->getHistory();
 
     menu->clear();
     for (i=0, pos = current + 1 ; pos < history.size() && i < 15 ; pos++, i++) {
-        menu->insertItem(QString(history[pos].getName().c_str()), pos);
+        menu->insertItem(QString(history[pos]->getName().c_str()), pos);
     }
 }
 
@@ -1663,7 +1663,6 @@ void LongLatDialog::slotApply() {
         double altitude = altEdit->text().toDouble();
         if (altitude < 0.020) altitude = .020;
         double distance = altitude + sel.radius();
-        distance = astro::kilometersToLightYears(distance);
 
         double longitude = longEdit->text().toDouble();
         if (longSign->currentItem() == 1) {

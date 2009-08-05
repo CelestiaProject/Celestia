@@ -143,26 +143,26 @@ void CelestialBrowser::slotRefresh()
     delete(stars);
 }
 
-void CelestialBrowser::addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Point3d* parentBodyPos) 
+void CelestialBrowser::addPlanetarySystem(CelListViewItem* parentItem, const PlanetarySystem* system, const Eigen::Vector3d* parentBodyPos) 
 {
     if (parentItem == NULL || system == NULL) return;
     for ( int i = 0; i < system->getSystemSize(); i++ ) 
     {
         const Body* body = system->getBody(i);
         if (body->getClassification() & (Body::Barycenter | Body::Invisible)) continue;
-        Point3d bodyPos = ptFromEigen(body->getAstrocentricPosition(appSim->getTime()));
+        Vector3d bodyPos = (body->getAstrocentricPosition(appSim->getTime()));
         CelListViewItem* item = NULL;
         if (parentBodyPos == NULL) 
         {
-            double bodyDist = bodyPos.distanceFromOrigin();
+            double bodyDist = bodyPos.norm();
             item = new CelListViewItem(parentItem, body->getName(true),
                                        bodyDist / KM_PER_AU, _("au"),
                                        0, 0, getClassification(body->getClassification()));
         } 
         else 
         {
-            Vec3d bodyVec(parentBodyPos->x - bodyPos.x, parentBodyPos->y - bodyPos.y, parentBodyPos->z - bodyPos.z);
-            double bodyDist = bodyVec.length();
+            Vector3d bodyVec(parentBodyPos->x() - bodyPos.x(), parentBodyPos->y() - bodyPos.y(), parentBodyPos->z() - bodyPos.z());
+            double bodyDist = bodyVec.norm();
             item = new CelListViewItem(parentItem, body->getName(true),
                                        bodyDist, "km", 
                                        0, 0, getClassification(body->getClassification()));

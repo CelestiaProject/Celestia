@@ -207,7 +207,6 @@ static void GotoObject(gotoObjectData* gotoObjectDlg)
 
 				distance += (float) sel.radius();
 			}
-			distance = astro::kilometersToLightYears(distance);
 
 			float longitude, latitude;
 			if (GetEntryFloat(gotoObjectDlg->latEntry, latitude) &&

@@ -132,16 +132,16 @@ bool QtEclipseFinder::testEclipse(const Body& receiver, const Body& occulter,
         // less than the distance between the sun and the receiver.  This
         // approximation works everywhere in the solar system, and likely
         // works for any orbitally stable pair of objects orbiting a star.
-        Point3d posReceiver = ptFromEigen(receiver.getAstrocentricPosition(now));
-        Point3d posOcculter = ptFromEigen(occulter.getAstrocentricPosition(now));
+        Vector3d posReceiver = receiver.getAstrocentricPosition(now);
+        Vector3d posOcculter = occulter.getAstrocentricPosition(now);
 
         const Star* sun = receiver.getSystem()->getStar();
         assert(sun != NULL);
-        double distToSun = posReceiver.distanceFromOrigin();
+        double distToSun = posReceiver.norm();
         float appSunRadius = (float) (sun->getRadius() / distToSun);
 
-        Vec3d dir = posOcculter - posReceiver;
-        double distToOcculter = dir.length() - receiver.getRadius();
+        Vector3d dir = posOcculter - posReceiver;
+        double distToOcculter = dir.norm() - receiver.getRadius();
         float appOccluderRadius = (float) (occulter.getRadius() / distToOcculter);
 
         // The shadow radius is the radius of the occluder plus some additional
@@ -162,7 +162,7 @@ bool QtEclipseFinder::testEclipse(const Body& receiver, const Body& occulter,
         // radii, then we have an eclipse.
         float R = receiver.getRadius() + shadowRadius;
         double dist = distance(posReceiver,
-                               Ray3d(posOcculter, posOcculter - Point3d(0, 0, 0)));
+                               Ray3d(posOcculter, posOcculter - Vector3d::Zero()));
         if (dist < R)
         {
             // Ignore "eclipses" where the occulter and receiver have
