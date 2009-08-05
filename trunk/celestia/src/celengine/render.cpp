@@ -5097,20 +5097,13 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     }
 
 
-    Vector3f botColor(atmosphere.lowerColor.red(),
-                      atmosphere.lowerColor.green(),
-                      atmosphere.lowerColor.blue());
-    Vector3f topColor(atmosphere.upperColor.red(),
-                      atmosphere.upperColor.green(),
-                      atmosphere.upperColor.blue());
-    Vector3f sunsetColor(atmosphere.sunsetColor.red(),
-                         atmosphere.sunsetColor.green(),
-                         atmosphere.sunsetColor.blue());
+    Vector3f botColor = atmosphere.lowerColor.toVector3();
+    Vector3f topColor = atmosphere.upperColor.toVector3();
+    Vector3f sunsetColor = atmosphere.sunsetColor.toVector3();
+    
     if (within)
     {
-        Vector3f skyColor(atmosphere.skyColor.red(),
-                          atmosphere.skyColor.green(),
-                          atmosphere.skyColor.blue());
+        Vector3f skyColor = atmosphere.skyColor.toVector3();
         if (ellipDist < 0.0f)
             topColor = skyColor;
         else
@@ -5321,19 +5314,13 @@ static void setupBumpTexenvAmbient(Color ambientColor)
 
 static void setupTexenvAmbient(Color ambientColor)
 {
-    float texenvConst[4];
-    texenvConst[0] = ambientColor.red();
-    texenvConst[1] = ambientColor.green();
-    texenvConst[2] = ambientColor.blue();
-    texenvConst[3] = ambientColor.alpha();
-
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
 
     // The primary color contains the light direction in surface
     // space, and texture0 is a normal map.  The lighting is
     // calculated by computing the dot product.
     glx::glActiveTextureARB(GL_TEXTURE0_ARB);
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, texenvConst);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, ambientColor.toVector4().data());
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
@@ -5361,25 +5348,17 @@ static void setLightParameters_VP(VertexProcessor& vproc,
                                   Color materialDiffuse,
                                   Color materialSpecular)
 {
-    Vector3f diffuseColor(materialDiffuse.red(),
-                          materialDiffuse.green(),
-                          materialDiffuse.blue());
+    Vector3f diffuseColor = materialDiffuse.toVector3();
 #ifdef HDR_COMPRESS
-    Vector3f specularColor(materialSpecular.red()   * 0.5f,
-                           materialSpecular.green() * 0.5f,
-                           materialSpecular.blue()  * 0.5f);
+    Vector3f specularColor = materialSpecular.toVector3() * 0.5f;
 #else
-    Vector3f specularColor(materialSpecular.red(),
-                           materialSpecular.green(),
-                           materialSpecular.blue());
+    Vector3f specularColor = materialSpecular.toVector3();
 #endif
     for (unsigned int i = 0; i < ls.nLights; i++)
     {
         const DirectionalLight& light = ls.lights[i];
 
-        Vector3f lightColor = Vector3f(light.color.red(),
-                                       light.color.green(),
-                                       light.color.blue()) * light.irradiance;
+        Vector3f lightColor = light.color.toVector3() * light.irradiance;
         Vector3f diffuse = diffuseColor.cwise() * lightColor;
         Vector3f specular = specularColor.cwise() * lightColor;
         
@@ -6473,11 +6452,9 @@ static void renderRings(RingSystem& rings,
     if (vpath == GLContext::VPath_Basic)
     {
         glDisable(GL_LIGHTING);
-        Vec3f litColor(rings.color.red(), rings.color.green(), rings.color.blue());
-        litColor = litColor * ringIllumination +
-            Vec3f(ri.ambientColor.red(), ri.ambientColor.green(),
-                  ri.ambientColor.blue());
-        glColor4f(litColor.x, litColor.y, litColor.z, 1.0f);
+        Vector3f litColor = rings.color.toVector3();
+        litColor = litColor * ringIllumination + ri.ambientColor.toVector3();
+        glColor4f(litColor.x(), litColor.y(), litColor.z(), 1.0f);
     }
 
     // This gets tricky . . .  we render the rings in two parts.  One
@@ -7345,9 +7322,7 @@ void Renderer::renderObject(const Vector3f& pos,
         // Addendum: Unsurprisingly, using color values outside [0, 1] produces
         // problems on Savage4 cards.
 
-        Vec3f lightColor = Vec3f(light.color.red(),
-                                 light.color.green(),
-                                 light.color.blue()) * light.irradiance;
+        Vector3f lightColor = light.color.toVector3() * light.irradiance;
         if (useRescaleNormal)
         {
             glLightColor(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);

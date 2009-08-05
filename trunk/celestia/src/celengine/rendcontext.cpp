@@ -682,8 +682,9 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     prog->setLightParameters(lightingState, diffuse, m.specular, m.emissive);
 
+    Matrix4f xform_e = Map<Matrix4f>(&xform[0][0]);
     if (shaderProps.shadowCounts != 0)
-        prog->setEclipseShadowParameters(lightingState, objRadius, xform);
+        prog->setEclipseShadowParameters(lightingState, objRadius, xform_e);
 
     // TODO: handle emissive color
     prog->shininess = m.specularPower;
@@ -865,13 +866,9 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
     }
 
 #ifdef HDR_COMPRESS
-    prog->lights[0].diffuse = Vec3f(m.diffuse.red()   * 0.5f,
-                                    m.diffuse.green() * 0.5f,
-                                    m.diffuse.blue()  * 0.5f);
+    prog->lights[0].diffuse = m.diffuse.toVector3() * 0.5f;
 #else
-    prog->lights[0].diffuse = Vec3f(m.diffuse.red(),
-                                    m.diffuse.green(),
-                                    m.diffuse.blue());
+    prog->lights[0].diffuse = m.diffuse.toVector3();
 #endif
     prog->opacity = m.opacity;
 

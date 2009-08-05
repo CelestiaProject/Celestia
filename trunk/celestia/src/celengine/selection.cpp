@@ -1,6 +1,7 @@
 // selection.cpp
 // 
-// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -57,10 +58,6 @@ UniversalCoord Selection::getPosition(double t) const
             // Celestia 1.6.0.
             Vector3f p = deepsky()->getPosition().cast<float>();
             return UniversalCoord::CreateLy(p.cast<double>());
-#if CELVEC
-            return astro::universalPosition(Point3d(0.0, 0.0, 0.0),
-                                            Point3f((float) p.x, (float) p.y, (float) p.z));
-#endif
         }
         
     case Type_Location:
@@ -68,11 +65,6 @@ UniversalCoord Selection::getPosition(double t) const
             Body* body = location()->getParentBody();
             if (body != NULL)
             {
-#if CELVEC
-                Point3d planetocentricPos = location()->getPlanetocentricPosition(t) *
-                    astro::kilometersToMicroLightYears(1.0);
-                return body->getPosition(t) + planetocentricPos;
-#endif
                 return body->getPosition(t).offsetKm(location()->getPlanetocentricPosition(t));
             }
             else
@@ -105,10 +97,6 @@ Vector3d Selection::getVelocity(double t) const
     case Type_Location:
 		{
 			// For now, just use differentiation for location velocities.
-#if CELVEC
-			Vec3d ulyPerJD = (getPosition(t) - getPosition(t - VELOCITY_DIFF_DELTA)) * (1.0 / VELOCITY_DIFF_DELTA);
-			return ulyPerJD * astro::microLightYearsToKilometers(1.0);
-#endif
             return getPosition(t).offsetFromKm(getPosition(t - VELOCITY_DIFF_DELTA)) / VELOCITY_DIFF_DELTA;
 		}
 

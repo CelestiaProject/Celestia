@@ -124,7 +124,7 @@ class CelestiaGLProgram
                             );
     void setEclipseShadowParameters(const LightingState& ls,
                                     float planetRadius,
-                                    const Mat4f& planetMat);
+                                    const Eigen::Matrix4f& planetMat);
     void setAtmosphereParameters(const Atmosphere& atmosphere,
                                  float atmPlanetRadius,
                                  float objRadius);

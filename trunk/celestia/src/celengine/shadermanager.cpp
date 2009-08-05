@@ -2538,10 +2538,10 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
 void
 CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                                               float planetRadius,
-                                              const Mat4f& planetMat)
+                                              const Eigen::Matrix4f& planetMat)
 {
     Transform3f planetTransform;
-    planetTransform.matrix() = Map<Matrix4f>(&planetMat[0][0]);
+    planetTransform.matrix() = planetMat;
 
     for (unsigned int li = 0;
          li < min(ls.nLights, MaxShaderLights);
