@@ -10,6 +10,7 @@
 #include <celmath/mathlib.h>
 #include <cstring>
 #include <cassert>
+#include <cstdio>
 #include "celestia.h"
 #include "astro.h"
 #include "orbit.h"
