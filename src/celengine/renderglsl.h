@@ -2,7 +2,8 @@
 //
 // Functions for rendering objects using dynamically generated GLSL shaders.
 //
-// Copyright (C) 2006-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,6 +14,8 @@
 #define _CELENGINE_RENDERGLSL_H_
 
 #include <celengine/lightenv.h>
+#include <Eigen/Geometry>
+
 
 void renderSphere_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
@@ -22,7 +25,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
                        float radius,
                        unsigned int textureRes,
                        int renderFlags,
-                       const Mat4f& planetMat,
+                       const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context);
                        
@@ -33,7 +36,7 @@ void renderGeometry_GLSL(Geometry* geometry,
                          const Atmosphere* atmosphere,
                          float geometryScale,
                          int renderFlags,
-                         const Mat4f& planetMat,
+                         const Eigen::Quaternionf& planetOrientation,
                          double tsec);
                       
 void renderClouds_GLSL(const RenderInfo& ri,
@@ -46,7 +49,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        float radius,
                        unsigned int textureRes,
                        int renderFlags,
-                       const Mat4f& planetMat,
+                       const Eigen::Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context);
                        
@@ -54,7 +57,7 @@ void renderAtmosphere_GLSL(const RenderInfo& ri,
                            const LightingState& ls,
                            Atmosphere* atmosphere,
                            float radius,
-                           const Mat4f& planetMat,
+                           const Eigen::Quaternionf& planetOrientation,
                            const Frustum& frustum,
                            const GLContext& context);
                            
@@ -72,7 +75,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                ResourceHandle texOverride,
                                float geometryScale,
                                int renderFlags,
-                               const Mat4f& planetMat,
+                               const Eigen::Quaternionf& planetOrientation,
                                double tsec);
 
                            

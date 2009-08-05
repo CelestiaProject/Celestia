@@ -15,6 +15,7 @@
 #include <celengine/glshader.h>
 #include <celengine/lightenv.h>
 #include <celengine/atmosphere.h>
+#include <Eigen/Geometry>
 
 #define ADVANCED_CLOUD_SHADOWS 0
 
@@ -124,7 +125,7 @@ class CelestiaGLProgram
                             );
     void setEclipseShadowParameters(const LightingState& ls,
                                     float planetRadius,
-                                    const Eigen::Matrix4f& planetMat);
+                                    const Eigen::Quaternionf& planetOrientation);
     void setAtmosphereParameters(const Atmosphere& atmosphere,
                                  float atmPlanetRadius,
                                  float objRadius);
