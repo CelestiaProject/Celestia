@@ -23,7 +23,7 @@ using namespace std;
 
 //#define SHOW_PATCH_VISIBILITY
 //#define SHOW_FRUSTUM
-//#define VERTEX_BUFFER_OBJECTS_ENABLED
+#define VERTEX_BUFFER_OBJECTS_ENABLED
 
 static bool trigArraysInitialized = false;
 static int maxDivisions = 16384;
