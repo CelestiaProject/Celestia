@@ -91,7 +91,7 @@ public:
     bool useVertexBuffers;
     int currentVB;
     unsigned int vertexBuffers[NUM_SPHERE_VERTEX_BUFFERS];
-    unsigned int indexBuffer;
+    GLuint indexBuffer;
 };
 
 #endif // CELENGINE_LODSPHEREMESH_H_
