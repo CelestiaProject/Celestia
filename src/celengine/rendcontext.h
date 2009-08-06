@@ -111,7 +111,9 @@ class VP_Combiner_RenderContext : public RenderContext
 class GLSL_RenderContext : public RenderContext
 {
  public:
-    GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform);
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    
+    GLSL_RenderContext(const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
     virtual ~GLSL_RenderContext();
     
     virtual void makeCurrent(const Mesh::Material&);
@@ -131,7 +133,7 @@ class GLSL_RenderContext : public RenderContext
     const Atmosphere* atmosphere;
     Mesh::BlendMode blendMode;
     float objRadius;
-    Mat4f xform;
+    Eigen::Quaternionf objOrientation;
     
     // extended material properties
     float lunarLambert;

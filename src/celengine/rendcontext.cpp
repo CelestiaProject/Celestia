@@ -517,12 +517,12 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
 
 /***** GLSL render context ******/
 
-GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Mat4f& _xform) :
+GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius, const Quaternionf& orientation) :
     lightingState(ls),
     atmosphere(NULL),
     blendMode(Mesh::InvalidBlend),
     objRadius(_objRadius),
-    xform(_xform),
+    objOrientation(orientation),
     lunarLambert(0.0f)
 {
     initLightingEnvironment();
@@ -682,9 +682,8 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     prog->setLightParameters(lightingState, diffuse, m.specular, m.emissive);
 
-    Matrix4f xform_e = Map<Matrix4f>(&xform[0][0]);
     if (shaderProps.shadowCounts != 0)
-        prog->setEclipseShadowParameters(lightingState, objRadius, xform_e);
+        prog->setEclipseShadowParameters(lightingState, objRadius, objOrientation);
 
     // TODO: handle emissive color
     prog->shininess = m.specularPower;

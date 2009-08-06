@@ -2538,10 +2538,9 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
 void
 CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                                               float planetRadius,
-                                              const Eigen::Matrix4f& planetMat)
+                                              const Eigen::Quaternionf& planetOrientation)
 {
-    Transform3f planetTransform;
-    planetTransform.matrix() = planetMat;
+    Matrix3f planetTransform = planetOrientation.toRotationMatrix();
 
     for (unsigned int li = 0;
          li < min(ls.nLights, MaxShaderLights);
@@ -2566,15 +2565,14 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                 // Compute the transformation to use for generating texture
                 // coordinates from the object vertices.
                 Vector3f origin = planetTransform * shadow.origin;
-                Vector3f dir    = planetTransform.linear() * shadow.direction;
+                Vector3f dir    = planetTransform * shadow.direction;
                 float scale = planetRadius / shadow.penumbraRadius;
-                Vector3f axis = Vector3f::UnitY().cross(dir);
-                float angle = (float) acos(Vector3f::UnitY().dot(dir));
-                axis.normalize();
-
-                Matrix3f mat = AngleAxisf(angle, axis).toRotationMatrix();
-                Vector3f sAxis = mat * Vector3f::UnitX() * (0.5f * scale);
-                Vector3f tAxis = mat * Vector3f::UnitZ() * (0.5f * scale);
+                
+                Quaternionf shadowRotation;
+                shadowRotation.setFromTwoVectors(Vector3f::UnitY(), dir);
+                Matrix3f m = shadowRotation.toRotationMatrix();
+                Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
+                Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
 
                 Vector4f texGenS;
                 Vector4f texGenT;
@@ -2590,7 +2588,7 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
 }
 
 
-// Set the scattering and absoroption shader parameters for atmosphere simulation.
+// Set the scattering and absorption shader parameters for atmosphere simulation.
 // They are from standard units to the normalized system used by the shaders.
 // atmPlanetRadius - the radius in km of the planet with the atmosphere
 // objRadius - the radius in km of the object we're rendering

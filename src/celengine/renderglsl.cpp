@@ -2,7 +2,8 @@
 //
 // Functions for rendering objects using dynamically generated GLSL shaders.
 //
-// Copyright (C) 2006-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -59,7 +60,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
                        float radius,
                        unsigned int textureRes,
                        int renderFlags,
-                       const Mat4f& planetMat,
+                       const Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context)
 {
@@ -242,9 +243,8 @@ void renderSphere_GLSL(const RenderInfo& ri,
         prog->setAtmosphereParameters(*atmosphere, radius, radius);
     }
 
-    Matrix4f planetMat_e = Map<Matrix4f>(&planetMat[0][0]);
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetMat_e);
+        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 
     glColor(ri.color);
 
@@ -271,12 +271,12 @@ void renderGeometry_GLSL(Geometry* geometry,
                          const Atmosphere* atmosphere,
                          float geometryScale,
                          int renderFlags,
-                         const Mat4f& planetMat,
+                         const Quaternionf& planetOrientation,
                          double tsec)
 {
     glDisable(GL_LIGHTING);
 
-    GLSL_RenderContext rc(ls, geometryScale, planetMat);
+    GLSL_RenderContext rc(ls, geometryScale, planetOrientation);
 
     if (renderFlags & Renderer::ShowAtmospheres)
     {
@@ -320,7 +320,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                ResourceHandle texOverride,
                                float geometryScale,
                                int /* renderFlags */,
-                               const Mat4f& /* planetMat */,
+                               const Quaternionf& /* planetOrientation */,
                                double tsec)
 {
     glDisable(GL_LIGHTING);
@@ -362,7 +362,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        float radius,
                        unsigned int textureRes,
                        int renderFlags,
-                       const Mat4f& planetMat,
+                       const Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context)
 {
@@ -463,9 +463,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
         prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
     }
 
-    Matrix4f planetMat_e = Map<Matrix4f>(&planetMat[0][0]);
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, cloudRadius, planetMat_e);
+        prog->setEclipseShadowParameters(ls, cloudRadius, planetOrientation);
 
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != NULL)
@@ -487,7 +486,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
                       const LightingState& ls,
                       Atmosphere* atmosphere,
                       float radius,
-                      const Mat4f& /*planetMat*/,
+                      const Quaternionf& /*planetOrientation*/,
                       const Frustum& frustum,
                       const GLContext& context)
 {
@@ -524,7 +523,7 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
 #if 0
     // Currently eclipse shadows are ignored when rendering atmospheres
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetMat);
+        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 #endif
 
     glPushMatrix();
