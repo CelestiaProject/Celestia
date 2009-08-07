@@ -6309,7 +6309,7 @@ renderEclipseShadows_Shaders(Geometry* geometry,
 static void
 renderRingShadowsVS(Geometry* /*geometry*/,           //TODO: Remove unused parameters??
                     const RingSystem& rings,
-                    const Vec3f& /*sunDir*/,
+                    const Vector3f& /*sunDir*/,
                     RenderInfo& ri,
                     float planetRadius,
                     float /*oblateness*/,
@@ -9717,14 +9717,14 @@ void Renderer::renderSelectionPointer(const Observer& observer,
     if (sel.empty())
         return;
 
-    Mat3f m = fromEigen(observer.getOrientationf()).toMatrix3();
-    Vec3f u = Vec3f(1, 0, 0) * m;
-    Vec3f v = Vec3f(0, 1, 0) * m;
+    Matrix3f cameraMatrix = observer.getOrientationf().conjugate().toRotationMatrix();
+    Vector3f u = cameraMatrix * Vector3f::UnitX();
+    Vector3f v = cameraMatrix * Vector3f::UnitY();
 
     // Get the position of the cursor relative to the eye
-    Vec3d position = fromEigen(sel.getPosition(now).offsetFromKm(observer.getPosition()));
-    double distance = position.length();
-    bool isVisible = viewFrustum.testSphere(Point3d(0, 0, 0) + position, sel.radius()) != Frustum::Outside;
+    Vector3d position = sel.getPosition(now).offsetFromKm(observer.getPosition());
+    double distance = position.norm();
+    bool isVisible = viewFrustum.testSphere(position, sel.radius()) != Frustum::Outside;
     position *= cursorDistance / distance;
 
 #ifdef USE_HDR
@@ -9743,10 +9743,10 @@ void Renderer::renderSelectionPointer(const Observer& observer,
         float w = (float) (h * viewAspectRatio);
         float diag = std::sqrt(h * h + w * w);
 
-        Vec3f posf((float) position.x, (float) position.y, (float) position.z);
+        Vector3f posf = position.cast<float>();
         posf *= (1.0f / cursorDistance);
-        float x = u * posf;
-        float y = v * posf;
+        float x = u.dot(posf);
+        float y = v.dot(posf);
         float angle = std::atan2(y, x);
         float c = std::cos(angle);
         float s = std::sin(angle);
@@ -9761,19 +9761,19 @@ void Renderer::renderSelectionPointer(const Observer& observer,
         x0 *= t;
         y0 *= t;
         glColor(SelectionCursorColor, 0.6f);
-        Vec3f center = Vec3f(0, 0, -1) * m;
+        Vector3f center = -cameraMatrix * Vector3f::UnitZ();
 
         glPushMatrix();
-        glTranslatef((float) center.x, (float) center.y, (float) center.z);
+        glTranslatef(center.x(), center.y(), center.z());
 
-        Vec3f p0(0.0f, 0.0f, 0.0f);
-        Vec3f p1(-20.0f * pixelSize,  6.0f * pixelSize, 0.0f);
-        Vec3f p2(-20.0f * pixelSize, -6.0f * pixelSize, 0.0f);
+        Vector3f p0(Vector3f::Zero());
+        Vector3f p1(-20.0f * pixelSize,  6.0f * pixelSize, 0.0f);
+        Vector3f p2(-20.0f * pixelSize, -6.0f * pixelSize, 0.0f);
 
         glBegin(GL_TRIANGLES);
-        glVertex((p0.x * c - p0.y * s + x0) * u + (p0.x * s + p0.y * c + y0) * v); 
-        glVertex((p1.x * c - p1.y * s + x0) * u + (p1.x * s + p1.y * c + y0) * v); 
-        glVertex((p2.x * c - p2.y * s + x0) * u + (p2.x * s + p2.y * c + y0) * v); 
+        glVertex((p0.x() * c - p0.y() * s + x0) * u + (p0.x() * s + p0.y() * c + y0) * v); 
+        glVertex((p1.x() * c - p1.y() * s + x0) * u + (p1.x() * s + p1.y() * c + y0) * v); 
+        glVertex((p2.x() * c - p2.y() * s + x0) * u + (p2.x() * s + p2.y() * c + y0) * v); 
         glEnd();
 
         glPopMatrix();
@@ -9902,19 +9902,18 @@ static void renderCrosshair(float pixelSize, double tsec)
     float r1 = cursorRadius + cursorWidth;
 
     const unsigned int markCount = 4;
-    Vec3f p0(r0, 0.0f, 0.0f);
-    Vec3f p1(r1, -h, 0.0f);
-    Vec3f p2(r1,  h, 0.0f);
+    Vector3f p0(r0, 0.0f, 0.0f);
+    Vector3f p1(r1, -h, 0.0f);
+    Vector3f p2(r1,  h, 0.0f);
 
     glBegin(GL_TRIANGLES);
     for (unsigned int i = 0; i < markCount; i++)
     {
         float theta = (float) (PI / 4.0) + (float) i / (float) markCount * (float) (2 * PI);
-        float c = std::cos(theta);
-        float s = std::sin(theta);
-        glVertex3f(p0.x * c - p0.y * s, p0.x * s + p0.y * c, 0.0f); 
-        glVertex3f(p1.x * c - p1.y * s, p1.x * s + p1.y * c, 0.0f); 
-        glVertex3f(p2.x * c - p2.y * s, p2.x * s + p2.y * c, 0.0f); 
+        Matrix3f rotation = AngleAxisf(theta, Vector3f::UnitZ()).toRotationMatrix();
+        glVertex(rotation * p0);
+        glVertex(rotation * p1);
+        glVertex(rotation * p2);
     }
     glEnd();
 }
