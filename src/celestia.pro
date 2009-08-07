@@ -377,8 +377,14 @@ GLEW_HEADERS = \
     ../thirdparty/glew/include/GL/glxew.h \
     ../thirdparty/glew/include/GL/wglew.h
 
-THIRDPARTY_SOURCES = $$GLEW_SOURCES
-THIRDPARTY_HEADERS = $$GLEW_HEADERS
+CURVEPLOT_SOURCES = \
+    ../thirdparty/curveplot/src/curveplot.cpp
+
+CURVEPLOT_HEADERS = \
+    ../thirdparty/curveplot/include/curveplot.h
+
+THIRDPARTY_SOURCES = $$GLEW_SOURCES $$CURVEPLOT_SOURCES
+THIRDPARTY_HEADERS = $$GLEW_HEADERS $$CURVEPLOT_HEADERS
 
 DEFINES += GLEW_STATIC
 
@@ -428,6 +434,7 @@ INCLUDEPATH += .
 # Third party libraries
 INCLUDEPATH += ../thirdparty/glew/include
 INCLUDEPATH += ../thirdparty/Eigen
+INCLUDEPATH += ../thirdparty/curveplot/include
 
 win32 {
     INCLUDEPATH += \

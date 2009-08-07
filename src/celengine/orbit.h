@@ -82,7 +82,7 @@ class OrbitSampleProc
  public:
     virtual ~OrbitSampleProc() {};
 
-    virtual void sample(double t, const Eigen::Vector3d& p) = 0;
+    virtual void sample(double t, const Eigen::Vector3d& position, const Eigen::Vector3d& velocity) = 0;
 };
 
 

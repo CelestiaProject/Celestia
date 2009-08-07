@@ -28,6 +28,7 @@
 class RendererWatcher;
 class FrameTree;
 class ReferenceMark;
+class CurvePlot;
 
 struct LightSource
 {
@@ -307,7 +308,7 @@ class Renderer
         float radius;
         Body* body;
         const Star* star;
-        Eigen::Vector3f origin;
+        Eigen::Vector3d origin;
         float opacity;
 
         bool operator<(const OrbitPathListEntry&) const;
@@ -446,8 +447,8 @@ class Renderer
                           const FrameTree* tree,
                           const Observer& observer,
                           double now);
-    void buildOrbitLists(const Point3d& astrocentricObserverPos,
-                         const Quatf& observerOrientation,
+    void buildOrbitLists(const Eigen::Vector3d& astrocentricObserverPos,
+                         const Eigen::Quaterniond& observerOrientation,
                          const Frustum& viewFrustum,
                          const FrameTree* tree,
                          double now);
@@ -576,7 +577,7 @@ class Renderer
 
     void renderOrbit(const OrbitPathListEntry&,
                      double now,
-                     const Quatf& cameraOrientation,
+                     const Eigen::Quaterniond& cameraOrientation,
                      const Frustum& frustum,
                      float nearDist,
                      float farDist);
@@ -683,6 +684,7 @@ class Renderer
 
 
  public:
+#if 0
     struct OrbitSample 
     {
         double t;
@@ -704,9 +706,10 @@ class Renderer
         std::vector<OrbitSection> sections;
         uint32 lastUsed;
     };
+#endif
 
  private:
-    typedef std::map<const Orbit*, CachedOrbit*> OrbitCache;
+    typedef std::map<const Orbit*, CurvePlot*> OrbitCache;
     OrbitCache orbitCache;
     uint32 lastOrbitCacheFlush;
 

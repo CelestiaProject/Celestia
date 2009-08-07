@@ -1,0 +1,6 @@
+Curveplot is a library for high precision plotting of piecewise cubic
+curves in OpenGL. It is distributed under the terms of the GNU Lesser
+Public License.
+
+Curveplot is Copyright (C) 2009 Chris Laurel <claurel@gmail.com>
+

@@ -68,6 +68,7 @@ std::ofstream hdrlog;
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 #include <celutil/timer.h>
+#include <curveplot.h>
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -1736,15 +1737,16 @@ static void disableSmoothLines()
 class OrbitSampler : public OrbitSampleProc
 {
 public:
-    vector<Renderer::OrbitSample>* samples;
+    CurvePlot* m_orbitPath;
 
-    OrbitSampler(vector<Renderer::OrbitSample>* _samples) : samples(_samples) {};
-    void sample(double t, const Vector3d& p)
+    OrbitSampler(CurvePlot* orbitPath) : m_orbitPath(orbitPath) {};
+    void sample(double t, const Vector3d& position, const Vector3d& velocity)
     {
-        Renderer::OrbitSample samp;
-        samp.pos = ptFromEigen(p);
+        CurvePlotSample samp;
+        samp.position = position;
+        samp.velocity = velocity;
         samp.t = t;
-        samples->push_back(samp);
+        m_orbitPath->addSample(samp);
     };
 };
 
@@ -1808,330 +1810,18 @@ void renderOrbitColor(const Body *body, bool selected, float opacity)
 }
 
 
-// Subdivide the orbit into sections and compute a bounding volume for each section. The bounding
-// volumes used are capsules, the set of all points less than some constant distance from a line
-// segment.
-static void computeOrbitSectionBoundingVolumes(Renderer::CachedOrbit& orbit)
-{
-    const unsigned int MinOrbitSections = 6;
-    const unsigned int MinSamplesPerSection = 32;
-
-    // Determine the number of trajectory samples to include in each bounding volume; typically,
-    // the last volume will contain any leftover samples.
-    unsigned int nSections = max((unsigned int) orbit.trajectory.size() / MinSamplesPerSection, MinOrbitSections);
-    unsigned int samplesPerSection = orbit.trajectory.size() / nSections;
-    if (samplesPerSection <= 1)
-    {
-        if (orbit.trajectory.size() == 0)
-            nSections = 0;
-        else
-            nSections = 1;
-    }
-
-    for (unsigned int i = 0; i < nSections; i++)
-    {
-        unsigned int nSamples;
-        if (i != nSections - 1)
-            nSamples = samplesPerSection;
-        else
-            nSamples = orbit.trajectory.size() - (nSections - 1) * samplesPerSection;
-
-        Renderer::OrbitSection section;
-        section.firstSample = samplesPerSection * i;
-        unsigned int lastSample = min((unsigned int) orbit.trajectory.size() - 1, section.firstSample + nSamples + 1);
-
-        // Set the initial axis and origin of the capsule bounding volume; they will be adjusted
-        // to contain all points in the trajectory. The length of the axis may change, but the
-        // direction will remain the same.
-        Vec3d axis = orbit.trajectory[section.firstSample].pos - orbit.trajectory[lastSample].pos;
-        Point3d orig = orbit.trajectory[section.firstSample].pos;
-        double d = 1.0 / (axis * axis);
-        double minT = 0.0;
-        double maxT = 0.0;
-        double maxDistSquared = 0.0;
-
-        for (unsigned int j = section.firstSample; j <= lastSample; j++)
-        {
-            Point3d p = orbit.trajectory[j].pos;
-            double t = ((p - orig) * axis) * d;
-            Vec3d pointToAxis = p - (orig + axis * t);
-            double distSquared = pointToAxis * pointToAxis;
-            if (t < minT)
-                minT = t;
-            if (t > maxT)
-                maxT = t;
-            if (distSquared > maxDistSquared)
-                maxDistSquared = distSquared;
-        }
-
-        section.boundingVolume.origin = orig + axis * minT;
-        section.boundingVolume.axis = axis * (maxT - minT);
-
-        // Make the bounding volume a bit thicker to avoid roundoff problems, and
-        // to account cases when interpolation adds points slightly outside the
-        // volume defined by the sampled points.
-        section.boundingVolume.radius = sqrt(maxDistSquared) * 1.1f;;
-
-        orbit.sections.push_back(section);
-    }
-}
-
-
-static Point3d cubicInterpolate(const Point3d& p0, const Vec3d& v0,
-                                const Point3d& p1, const Vec3d& v1,
-                                double t)
-{
-    return p0 + (((2.0 * (p0 - p1) + v1 + v0) * (t * t * t)) +
-                 ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (t * t)) +
-                 (v0 * t));
-}
-
-
-static int splinesRendered = 0;
 static int orbitsRendered = 0;
 static int orbitsSkipped = 0;
 static int sectionsCulled = 0;
-static Point3d renderOrbitSplineSegment(const Renderer::OrbitSample& p0,
-                                        const Renderer::OrbitSample& p1,
-                                        const Renderer::OrbitSample& p2,
-                                        const Renderer::OrbitSample& p3,
-                                        double nearZ,
-                                        double farZ,
-                                        unsigned int subdivisions,
-                                        int lastOutcode,
-                                        bool drawLastSegment)
-{
-    Vec3d v0 = (p2.pos - p0.pos) * ((p2.t - p1.t) / (p2.t - p0.t));
-    Vec3d v1 = (p3.pos - p1.pos) * ((p2.t - p1.t) / (p3.t - p1.t));
-    double dt = 1.0 / (double) subdivisions;
-    if (drawLastSegment)
-        subdivisions++;
-
-    splinesRendered++;
-
-    Point3d lastP = p1.pos;
-
-    for (unsigned int i = 0; i < subdivisions; i++)
-    {
-        Point3d p = cubicInterpolate(p1.pos, v0, p2.pos, v1, i * dt);
-        int outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
-
-        if ((outcode | lastOutcode) == 0)
-        {
-            glVertex3d(p.x, p.y, p.z);
-        }
-        else if ((outcode & lastOutcode) == 0)
-        {
-            // Need to clip
-            Point3d q0 = lastP;
-            Point3d q1 = p;
-
-            if (lastOutcode != 0)
-            {
-                glBegin(GL_LINE_STRIP);
-                double t;
-                if (lastOutcode == 1)
-                    t = (nearZ - lastP.z) / (p.z - lastP.z);
-                else
-                    t = (farZ - lastP.z) / (p.z - lastP.z);
-                q0 = lastP + t * (p - lastP);
-            }
-
-            if (outcode != 0)
-            {
-                double t;
-                if (outcode == 1)
-                    t = (nearZ - lastP.z) / (p.z - lastP.z);
-                else
-                    t = (farZ - lastP.z) / (p.z - lastP.z);
-                q1 = lastP + t * (p - lastP);
-            }
-
-            glVertex3d(q0.x, q0.y, q0.z);
-            glVertex3d(q1.x, q1.y, q1.z);
-
-            if (outcode != 0)
-            {
-                glEnd();
-            }
-        }
-
-        lastOutcode = outcode;
-        lastP = p;
-    }
-
-    return lastP;
-}
-
-
-static Point3d renderOrbitSection(const Orbit& orbit,
-                                  Renderer::CachedOrbit& cachedOrbit,
-                                  unsigned int sectionNumber,
-                                  const Mat4d& modelview,
-                                  Point3d lastP,
-                                  int lastOutcode,
-                                  double nearZ,
-                                  double farZ,
-                                  uint32 /* renderFlags */)
-{
-    vector<Renderer::OrbitSample>& trajectory(cachedOrbit.trajectory);
-    unsigned int nPoints = cachedOrbit.trajectory.size();
-
-    unsigned int firstPoint = cachedOrbit.sections[sectionNumber].firstSample + 1;
-    unsigned int lastPoint;
-    if (sectionNumber != cachedOrbit.sections.size() - 1)
-        lastPoint = cachedOrbit.sections[sectionNumber + 1].firstSample;
-    else
-        lastPoint = nPoints - 1;
-
-    double sectionRadius = cachedOrbit.sections[sectionNumber].boundingVolume.radius;
-    double minSmoothZ = -sectionRadius * 8;
-    double maxSmoothZ = nearZ + sectionRadius * 8;
-
-    for (unsigned int i = firstPoint; i <= lastPoint; i++)
-    {
-        Point3d p = trajectory[i].pos * modelview;
-        int outcode;
-
-        // This segment of the orbit is very close to the camera and may appear
-        // jagged. We'll add extra segments with cubic spline interpolation.
-        // TODO: This calculation should depend on the field of view as well
-        unsigned int splineSubdivisions = 0;
-        if ((p.z > minSmoothZ || lastP.z > minSmoothZ) &&
-            !(p.z > maxSmoothZ && lastP.z > maxSmoothZ))
-        {
-            double distFromEye = distanceToSegment(Point3d(0.0, 0.0, 0.0), lastP, p - lastP);
-
-            if (distFromEye < sectionRadius)
-                splineSubdivisions = 64;
-            else if (distFromEye < sectionRadius * 8)
-                splineSubdivisions = (unsigned int) (sectionRadius / distFromEye * 64);
-        }
-
-        if (splineSubdivisions > 1)
-        {
-            // Render this part of the orbit as a spline instead of a line segment
-            Renderer::OrbitSample s0, s1, s2, s3;
-            if (i > 1)
-            {
-                s0 = trajectory[i - 2];
-            }
-            else if (orbit.isPeriodic())
-            {
-                // Careful: use second to last sample, since first sample is duplicate of last
-                s0 = trajectory[nPoints - 2];
-                s0.t -= orbit.getPeriod();
-            }
-            else
-            {
-                s0 = trajectory[i - 1];
-            }
-
-            if (i < trajectory.size() - 1)
-            {
-                s3 = trajectory[i + 1];
-            }
-            else if (orbit.isPeriodic())
-            {
-                // Careful: use second sample, since first sample is duplicate of last
-                s3 = trajectory[1];
-                s3.t += orbit.getPeriod();
-            }
-            else
-            {
-                s3 = trajectory[i];
-            }
-
-            s1 = Renderer::OrbitSample(toEigen(lastP), trajectory[i - 1].t);
-            s2 = Renderer::OrbitSample(toEigen(p),     trajectory[i].t);
-
-            s0.pos = s0.pos * modelview;
-            s3.pos = s3.pos * modelview;
-
-            bool drawLastSegment = i == nPoints - 1;
-
-            p = renderOrbitSplineSegment(s0, s1, s2, s3,
-                                         nearZ, farZ,
-                                         splineSubdivisions,
-                                         lastOutcode,
-                                         drawLastSegment);
-            outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
-        }
-        else
-        {
-            // Just draw a line segment
-
-            // Compute the outcode mask for clipping:
-            //   00 = between near and far
-            //   01 = greater than nearZ (nearZ and farZ are always negative)
-            //   10 = less than farZ
-            // Given two outcodes o1 and o2 of line segment endpoints:
-            //   o1 | o2 == 0 means segment lies completely between near and far plans
-            //   o2 & o2 != 0 means segment lies completely outside planes
-            //   else we have to clip the line.
-            outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
-
-            if ((outcode | lastOutcode) == 0)
-            {
-                // Segment is completely between near and far planes
-                glVertex3d(p.x, p.y, p.z);
-            }
-            else if ((outcode & lastOutcode) == 0)
-            {
-                // Need to clip
-                Point3d q0 = lastP;
-                Point3d q1 = p;
-
-                // Clip against the enter plane
-                if (lastOutcode != 0)
-                {
-                    glBegin(GL_LINE_STRIP);
-                    double t;
-                    if (lastOutcode == 1)
-                        t = (nearZ - lastP.z) / (p.z - lastP.z);
-                    else
-                        t = (farZ - lastP.z) / (p.z - lastP.z);
-                    q0 = lastP + t * (p - lastP);
-                }
-
-                // Clip against the exit plane
-                if (outcode != 0)
-                {
-                    double t;
-                    if (outcode == 1)
-                        t = (nearZ - lastP.z) / (p.z - lastP.z);
-                    else
-                        t = (farZ - lastP.z) / (p.z - lastP.z);
-                    q1 = lastP + t * (p - lastP);
-                }
-
-                glVertex3d(q0.x, q0.y, q0.z);
-                glVertex3d(q1.x, q1.y, q1.z);
-
-                if (outcode != 0)
-                {
-                    glEnd();
-                }
-            }
-        }
-
-        lastOutcode = outcode;
-        lastP = p;
-    }
-
-    return lastP;
-}
-
 
 void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                            double t,
-                           const Quatf& cameraOrientationf,
+                           const Quaterniond& cameraOrientation,
                            const Frustum& frustum,
                            float nearDist,
                            float farDist)
 {
     Body* body = orbitPath.body;
-    Quatd cameraOrientation(cameraOrientationf.w, cameraOrientationf.x, cameraOrientationf.y, cameraOrientationf.z);
     double nearZ = -nearDist;  // negate, becase z is into the screen in camera space
     double farZ = -farDist;
 
@@ -2141,12 +1831,12 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     else
         orbit = orbitPath.star->getOrbit();
 
-    CachedOrbit* cachedOrbit = NULL;
+    CurvePlot* cachedOrbit = NULL;
     OrbitCache::iterator cached = orbitCache.find(orbit);
     if (cached != orbitCache.end())
     {
         cachedOrbit = cached->second;
-        cachedOrbit->lastUsed = frameCount;
+        cachedOrbit->setLastUsed(frameCount);
     }
 
     // If it's not in the cache already
@@ -2180,27 +1870,19 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                 nSamples = 0;
             }
         }
+        else
+        {
+            startTime = t - orbit->getPeriod() / 2.0;
+        }
 
-        cachedOrbit = new CachedOrbit();
-        cachedOrbit->lastUsed = frameCount;
+        cachedOrbit = new CurvePlot();
+        cachedOrbit->setLastUsed(frameCount);
 
-        OrbitSampler sampler(&cachedOrbit->trajectory);
+        OrbitSampler sampler(cachedOrbit);
         orbit->sample(startTime,
                       orbit->getPeriod(),
                       nSamples,
                       sampler);
-
-        // Add an extra sample to close a periodic orbit
-        if (orbit->isPeriodic())
-        {
-            if (!cachedOrbit->trajectory.empty())
-            {
-                double lastSampleTime = cachedOrbit->trajectory[0].t + orbit->getPeriod();
-                cachedOrbit->trajectory.push_back(OrbitSample(toEigen(cachedOrbit->trajectory[0].pos), lastSampleTime));
-            }
-        }
-
-        computeOrbitSectionBoundingVolumes(*cachedOrbit);
 
         // If the orbit cache is full, first try and eliminate some old orbits
         if (orbitCache.size() > OrbitCacheCullThreshold)
@@ -2212,7 +1894,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                 {
                     // Tricky code to eliminate a node in the orbit cache without screwing
                     // up the iterator. Should work in all STL implementations.
-                    if (frameCount - iter->second->lastUsed > OrbitCacheRetireAge)
+                    if (frameCount - iter->second->lastUsed() > OrbitCacheRetireAge)
                         orbitCache.erase(iter++);
                     else
                         ++iter;
@@ -2224,31 +1906,60 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         orbitCache[orbit] = cachedOrbit;
     }
 
-    vector<OrbitSample>* trajectory = &cachedOrbit->trajectory;
-
-    // The rest of the function isn't designed for empty trajectories
-    if (trajectory->empty())
+    if (cachedOrbit->empty())
         return;
+
+    // 'Periodic' orbits are generally not strictly periodic because of perturbations
+    // from other bodies. Here we update the trajectory samples to make sure that the
+    // orbit covers a time range centered at the current time and covering a full revolution.
+    if (orbit->isPeriodic())
+    {
+        double startTime = t - orbit->getPeriod() / 2.0;
+        double endTime = t + orbit->getPeriod() / 2.0;
+        double dt = orbit->getPeriod() / detailOptions.orbitPathSamplePoints;
+
+        if (startTime < cachedOrbit->startTime())
+        {
+            cachedOrbit->removeSamplesAfter(endTime + dt);
+
+            double orbitStartTime = cachedOrbit->empty() ? endTime : cachedOrbit->startTime() - dt;
+            do {
+                CurvePlotSample sample;
+                sample.t = orbitStartTime;
+                sample.position = orbit->positionAtTime(orbitStartTime);
+                sample.velocity = orbit->velocityAtTime(orbitStartTime);
+                cachedOrbit->addSample(sample);
+                orbitStartTime -= dt;
+            } while (orbitStartTime > startTime);
+        }
+        else if (endTime > cachedOrbit->endTime())
+        {
+            cachedOrbit->removeSamplesBefore(startTime - dt);
+
+            double orbitEndTime = cachedOrbit->empty() ? startTime : cachedOrbit->endTime() + dt;
+            do {
+                CurvePlotSample sample;
+                sample.t = orbitEndTime;
+                sample.position = orbit->positionAtTime(orbitEndTime);
+                sample.velocity = orbit->velocityAtTime(orbitEndTime);
+                cachedOrbit->addSample(sample);
+                orbitEndTime += dt;
+            } while (orbitEndTime < endTime);
+        }
+    }
 
     // We perform vertex tranformations on the CPU because double precision is necessary to
     // render orbits properly. Start by computing the modelview matrix, to transform orbit
     // vertices into camera space.
-    Mat4d modelview;
+    Transform3d modelview;
     {
-        Quatd orientation(1.0);
-        if (body != NULL)
+        Quaterniond orientation = Quaterniond::Identity();
+        if (body)
         {
-            orientation = fromEigen(body->getOrbitFrame(t)->getOrientation(t));
+            orientation = body->getOrbitFrame(t)->getOrientation(t);
         }
 
-        // Equivalent to:
-        // glRotate(cameraOrientation);
-        // glTranslate(orbitPath.origin);
-        // glRotate(~orientation);
-        modelview =
-            (orientation).toMatrix4() *
-            Mat4d::translation(Point3d(orbitPath.origin.x(), orbitPath.origin.y(), orbitPath.origin.z())) *
-            (~cameraOrientation).toMatrix4();
+        modelview = cameraOrientation * Translation3d(orbitPath.origin) * orientation.conjugate();
     }
 
     glPushMatrix();
@@ -2261,197 +1972,48 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         highlight = highlightObject.star() == orbitPath.star;
     renderOrbitColor(body, highlight, orbitPath.opacity);
 
-    if ((renderFlags & ShowPartialTrajectories) == 0 || orbit->isPeriodic())
+#ifdef STIPPLED_LINES
+    glLineStipple(3, 0x5555);
+    glEnable(GL_LINE_STIPPLE);
+#endif
+
+    double subdivisionThreshold = pixelSize * 40.0;
+
+    Eigen::Vector3d viewFrustumPlaneNormals[4];
+    for (int i = 0; i < 4; i++)
     {
-        // Show the complete trajectory
-        Point3d p;
-        p = (*trajectory)[0].pos * modelview;
-        int outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
+        viewFrustumPlaneNormals[i] = frustum.plane(i).normal().cast<double>();
+    }
 
-        if (outcode == 0)
-        {
-            glBegin(GL_LINE_STRIP);
-            glVertex3d(p.x, p.y, p.z);
-        }
-
-        Point3d lastP = p;
-        int lastOutcode = outcode;
-
-        // The trajectory is subdivided into sections that each contain a number of samples.
-        // Process each section in the trajectory, using its precomputed bounding volume to
-        // quickly check for visibility.
-        for (unsigned int i = 0; i < cachedOrbit->sections.size(); i++)
-        {
-            Capsuled& bv = cachedOrbit->sections[i].boundingVolume;
-            Point3d orig = bv.origin * modelview;
-            Vec3d axis   = bv.axis   * modelview;
-            Capsulef bvf(Point3f((float) orig.x, (float) orig.y, (float) orig.z),
-                         Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
-                         (float) bv.radius);
-
-            // TODO: Create a fast path for the case when the bounding volume lies completely
-            // within the frustum and clipping can be ignored.
-            if (frustum.testCapsule(bvf) != Frustum::Outside)
-            {
-                lastP = renderOrbitSection(*orbit,
-                                           *cachedOrbit, i,
-                                           modelview,
-                                           lastP, lastOutcode,
-                                           nearZ, farZ,
-                                           renderFlags);
-                lastOutcode = (lastP.z > nearZ ? 1 : 0) | (lastP.z < farZ ? 2 : 0);
-            }
-            else
-            {
-                // The section was culled because it lies completely outside the view frustum,
-                // but we still need to do some work to keep the begin/end state of the line
-                // strip current. We just need to process the final point in the section.
-                unsigned int lastSample;
-                if (i < cachedOrbit->sections.size() - 1)
-                    lastSample = cachedOrbit->sections[i + 1].firstSample;
-                else
-                    lastSample = cachedOrbit->trajectory.size() - 1;
-
-                p = (*trajectory)[lastSample].pos * modelview;
-                outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
-
-                if ((outcode | lastOutcode) == 0)
-                {
-                    // Segment is completely between near and far planes
-                    glVertex3d(p.x, p.y, p.z);
-                }
-                else if ((outcode & lastOutcode) == 0)
-                {
-                    // Need to clip
-                    Point3d q0 = lastP;
-                    Point3d q1 = p;
-
-                    // Clip against the enter plane
-                    if (lastOutcode != 0)
-                    {
-                        glBegin(GL_LINE_STRIP);
-                        double t;
-                        if (lastOutcode == 1)
-                            t = (nearZ - lastP.z) / (p.z - lastP.z);
-                        else
-                            t = (farZ - lastP.z) / (p.z - lastP.z);
-                        q0 = lastP + t * (p - lastP);
-                    }
-
-                    // Clip against the exit plane
-                    if (outcode != 0)
-                    {
-                        double t;
-                        if (outcode == 1)
-                            t = (nearZ - lastP.z) / (p.z - lastP.z);
-                        else
-                            t = (farZ - lastP.z) / (p.z - lastP.z);
-                        q1 = lastP + t * (p - lastP);
-                    }
-
-                    glVertex3d(q0.x, q0.y, q0.z);
-                    glVertex3d(q1.x, q1.y, q1.z);
-
-                    if (outcode != 0)
-                    {
-                        glEnd();
-                    }
-                }
-
-                lastP = p;
-                lastOutcode = outcode;
-
-                sectionsCulled++;
-            }
-        }
-
-        if (lastOutcode == 0)
-        {
-            glEnd();
-        }
+    if (orbit->isPeriodic())
+    {
+        cachedOrbit->render(modelview,
+                            nearZ, farZ, viewFrustumPlaneNormals,
+                            subdivisionThreshold,
+                            t - orbit->getPeriod() / 2.0, t + orbit->getPeriod() / 2.0);
     }
     else
     {
-        double endTime = t;
-        bool endTimeReached = false;
-
-        Point3d p;
-        p = (*trajectory)[0].pos * modelview;
-        int outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
-
-        if (outcode == 0)
+        if (renderFlags & ShowPartialTrajectories)
         {
-            glBegin(GL_LINE_STRIP);
-            glVertex3d(p.x, p.y, p.z);
+            // Show the trajectory from the start time until the current simulation time
+            cachedOrbit->render(modelview,
+                                nearZ, farZ, viewFrustumPlaneNormals,
+                                subdivisionThreshold,
+                                cachedOrbit->startTime(), t);
         }
-
-        Point3d lastP = p;
-        int lastOutcode = outcode;
-
-        unsigned int nPoints = trajectory->size();
-        for (unsigned int i = 1; i < nPoints && !endTimeReached; i++)
+        else
         {
-            if ((*trajectory)[i].t > endTime)
-            {
-                p = ptFromEigen(orbit->positionAtTime(endTime)) * modelview;
-                endTimeReached = true;
-            }
-            else
-            {
-                p = (*trajectory)[i].pos * modelview;
-            }
-
-            outcode = (p.z > nearZ ? 1 : 0) | (p.z < farZ ? 2 : 0);
-            if ((outcode | lastOutcode) == 0)
-            {
-                glVertex3d(p.x, p.y, p.z);
-            }
-            else if ((outcode & lastOutcode) == 0)
-            {
-                // Need to clip
-
-                Point3d p0 = lastP;
-                Point3d p1 = p;
-
-                if (lastOutcode != 0)
-                {
-                    glBegin(GL_LINE_STRIP);
-                    double t;
-                    if (lastOutcode == 1)
-                        t = (nearZ - lastP.z) / (p.z - lastP.z);
-                    else
-                        t = (farZ - lastP.z) / (p.z - lastP.z);
-                    p0 = lastP + t * (p - lastP);
-                }
-
-                if (outcode != 0)
-                {
-                    double t;
-                    if (outcode == 1)
-                        t = (nearZ - lastP.z) / (p.z - lastP.z);
-                    else
-                        t = (farZ - lastP.z) / (p.z - lastP.z);
-                    p1 = lastP + t * (p - lastP);
-                }
-
-                glVertex3d(p0.x, p0.y, p0.z);
-                glVertex3d(p1.x, p1.y, p1.z);
-
-                if (outcode != 0)
-                {
-                    glEnd();
-                }
-            }
-
-            lastOutcode = outcode;
-            lastP = p;
-        }
-
-        if (lastOutcode == 0)
-        {
-            glEnd();
+            // Show the entire trajectory
+            cachedOrbit->render(modelview,
+                                nearZ, farZ, viewFrustumPlaneNormals,
+                                subdivisionThreshold);
         }
     }
+
+#ifdef STIPPLED_LINES
+    glDisable(GL_LINE_STIPPLE);
+#endif
 
     glPopMatrix();
 }
@@ -2464,14 +2026,6 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
                                      double t)
 {
     return pos.offsetFromKm(star.getPosition(t));
-#if 0
-    UniversalCoord starPos = star.getPosition(t);
-
-    Vec3d v = pos - starPos;
-    return Point3d(astro::microLightYearsToKilometers(v.x),
-                   astro::microLightYearsToKilometers(v.y),
-                   astro::microLightYearsToKilometers(v.z));
-#endif
 }
 
 
@@ -3268,8 +2822,8 @@ void Renderer::draw(const Observer& observer,
                                      now);
                     if (renderFlags & ShowOrbits)
                     {
-                        buildOrbitLists(ptFromEigen(astrocentricObserverPos),
-                                        fromEigen(observer.getOrientationf()),
+                        buildOrbitLists(astrocentricObserverPos,
+                                        observer.getOrientation(),
                                         xfrustum,
                                         solarSysTree,
                                         now);
@@ -4016,19 +3570,18 @@ void Renderer::draw(const Observer& observer,
         for (i = 0; i < (int) orbitPathList.size(); i++)
         {
             const OrbitPathListEntry& o = orbitPathList[i];
-            float minNearDistance = min(-o.radius * 0.0001f, o.centerZ + o.radius);
+            float minNearDistance = min(-MinNearPlaneDistance, o.centerZ + o.radius);
             if (minNearDistance > zNearest)
                 zNearest = minNearDistance;
         }
         
-
         // Adjust the nearest interval to include the closest marker (if it's
         // closer to the observer than anything else
         if (!depthSortedAnnotations.empty())
         {
             // Factor of 0.999 makes sure ensures that the near plane does not fall
             // exactly at the marker's z coordinate (in which case the marker 
-            // would be susceptible to being clipped.) 
+            // would be susceptible to getting clipped.) 
             if (-depthSortedAnnotations[0].position.z() > zNearest)
                 zNearest = -depthSortedAnnotations[0].position.z() * 0.999f;
         }
@@ -4198,13 +3751,8 @@ void Renderer::draw(const Observer& observer,
                     float farZ = -orbitIter->centerZ + orbitIter->radius;
 
                     // Don't render orbits when they're completely outside this
-                    // depth interval. Also, don't render an orbit in this
-                    // interval if it is vastly larger than the interval
-                    // range; otherwise, the GPU will have precision troubles
-                    // when clipping, producing visual artifacts. The factor
-                    // of 1e5 may need some tuning.
-                    if (nearZ < farPlaneDistance && farZ > nearPlaneDistance &&
-                        orbitIter->radius < 1.0e8f * (farPlaneDistance - nearPlaneDistance))
+                    // depth interval.
+                    if (nearZ < farPlaneDistance && farZ > nearPlaneDistance)
                     {
 #ifdef DEBUG_COALESCE
                         switch (interval % 6)
@@ -4219,7 +3767,7 @@ void Renderer::draw(const Observer& observer,
                         }
 #endif
                         orbitsRendered++;
-                        renderOrbit(*orbitIter, now, fromEigen(m_cameraOrientation), intervalFrustum, nearPlaneDistance, farPlaneDistance);
+                        renderOrbit(*orbitIter, now, m_cameraOrientation.cast<double>(), intervalFrustum, nearPlaneDistance, farPlaneDistance);
 
 #if DEBUG_COALESCE
                         if (highlightObject.body() == orbitIter->body)
@@ -4259,12 +3807,10 @@ void Renderer::draw(const Observer& observer,
 #if 0
         // TODO: Debugging output for new orbit code; remove when development is complete
         clog << "orbits: " << orbitsRendered
-             << ", splines: " << splinesRendered
              << ", skipped: " << orbitsSkipped
              << ", sections culled: " << sectionsCulled
              << ", nIntervals: " << nIntervals << "\n";
 #endif
-        splinesRendered = 0;
         orbitsRendered = 0;
         orbitsSkipped = 0;
         sectionsCulled = 0;
@@ -8745,14 +8291,14 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
 }
 
 
-void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
-                               const Quatf& observerOrientation,
+void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
+                               const Quaterniond& observerOrientation,
                                const Frustum& viewFrustum,
                                const FrameTree* tree,
                                double now)
 {
-    Mat3f viewMat = observerOrientation.toMatrix3();
-    Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+    Matrix3d viewMat = observerOrientation.toRotationMatrix();
+    Vector3d viewMatZ = viewMat.row(2);
 
     unsigned int nChildren = tree != NULL ? tree->childCount() : 0;
     for (unsigned int i = 0; i < nChildren; i++)
@@ -8769,12 +8315,12 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
         // pos_v: viewer-relative position of object
 
         // Get the position of the body relative to the sun.
-        Point3d pos_s = ptFromEigen(body->getAstrocentricPosition(now));
+        Vector3d pos_s = body->getAstrocentricPosition(now);
 
         // We now have the positions of the observer and the planet relative
         // to the sun.  From these, compute the position of the body
         // relative to the observer.
-        Vec3d pos_v = pos_s - astrocentricObserverPos;
+        Vector3d pos_v = pos_s - astrocentricObserverPos;
 
         // Only show orbits for major bodies or selected objects. 
         Body::VisibilityPolicy orbitVis = body->getOrbitVisibility();
@@ -8784,19 +8330,18 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
              orbitVis == Body::AlwaysVisible ||
              (orbitVis == Body::UseClassVisibility && (body->getOrbitClassification() & orbitMask) != 0)))
         {
-            Point3d orbitOrigin(0.0, 0.0, 0.0);
+            Vector3d orbitOrigin = Vector3d::Zero();
             Selection centerObject = phase->orbitFrame()->getCenter();
             if (centerObject.body() != NULL)
             {
-                orbitOrigin = ptFromEigen(centerObject.body()->getAstrocentricPosition(now));
+                orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
             }
 
             // Calculate the origin of the orbit relative to the observer
-            Vec3d relOrigin = orbitOrigin - astrocentricObserverPos;
-            Vec3f origf((float) relOrigin.x, (float) relOrigin.y, (float) relOrigin.z);
+            Vector3d relOrigin = orbitOrigin - astrocentricObserverPos;
 
             // Compute the size of the orbit in pixels
-            double originDistance = pos_v.length();
+            double originDistance = pos_v.norm();
             double boundingRadius = body->getOrbit(now)->getBoundingRadius();
             float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
 
@@ -8806,9 +8351,9 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
                 OrbitPathListEntry path;
                 path.body = body;
                 path.star = NULL;
-                path.centerZ = origf * viewMatZ;
+                path.centerZ = (float) relOrigin.dot(viewMatZ);
                 path.radius = (float) boundingRadius;
-                path.origin = toEigen(origf);
+                path.origin = relOrigin;
                 path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
                 orbitPathList.push_back(path);
             }
@@ -8821,7 +8366,7 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
             //   - The apparent size of the subtree bounding sphere is large enough that
             //     orbit paths will be visible, and
             //   - The subtree bounding sphere isn't outside the view frustum
-            double dist_v = pos_v.length();
+            double dist_v = pos_v.norm();
             float distanceToBoundingSphere = (float) (dist_v - subtree->boundingSphereRadius());
             bool traverseSubtree = false;
             if (distanceToBoundingSphere > 0.0f)
@@ -8839,7 +8384,7 @@ void Renderer::buildOrbitLists(const Point3d& astrocentricObserverPos,
             if (traverseSubtree)
             {
                 // See if the object or any of its children are within the view frustum
-                if (viewFrustum.testSphere(Point3f((float) pos_v.x, (float) pos_v.y, (float) pos_v.z), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
+                if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != Frustum::Outside)
                 {
                     buildOrbitLists(astrocentricObserverPos,
                                     observerOrientation,
@@ -9009,18 +8554,16 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
     if ((renderFlags & ShowOrbits) != 0 &&
         ((orbitMask & Body::Stellar) != 0 || highlightObject.star() == &star))
     {
-        Mat3f viewMat = fromEigen(observer.getOrientationf()).toMatrix3();
-        Vec3f viewMatZ(viewMat[2][0], viewMat[2][1], viewMat[2][2]);
+        Matrix3d viewMat = observer.getOrientation().toRotationMatrix();
+        Vector3d viewMatZ = viewMat.row(2);
 
         if (star.getOrbit() != NULL)
         {
             // Get orbit origin relative to the observer
-            Vec3d orbitOrigin = fromEigen(star.getOrbitBarycenterPosition(now).offsetFromKm(observer.getPosition()));
-
-            Vec3f origf((float) orbitOrigin.x, (float) orbitOrigin.y, (float) orbitOrigin.z);
+            Vector3d orbitOrigin = star.getOrbitBarycenterPosition(now).offsetFromKm(observer.getPosition());
 
             // Compute the size of the orbit in pixels
-            double originDistance = orbitOrigin.length();
+            double originDistance = orbitOrigin.norm();
             double boundingRadius = star.getOrbit()->getBoundingRadius();
             float orbitRadiusInPixels = (float) (boundingRadius / (originDistance * pixelSize));
 
@@ -9030,9 +8573,9 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
                 OrbitPathListEntry path;
                 path.star = &star;
                 path.body = NULL;
-                path.centerZ = origf * viewMatZ;
+                path.centerZ = orbitOrigin.dot(viewMatZ);
                 path.radius = (float) boundingRadius;
-                path.origin = toEigen(origf);
+                path.origin = orbitOrigin;
                 path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);
                 orbitPathList.push_back(path);
             }
@@ -9342,7 +8885,7 @@ void StarRenderer::process(const Star& star, float distance, float appMag)
             // stars.
             float scale = astro::lightYearsToKilometers(1.0f);
             rle.position = relPos * scale;
-            rle.centerZ = rle.position.dot(viewMatZ);//Vec3f(rle.position.x, rle.position.y, rle.position.z) * viewMatZ;
+            rle.centerZ = rle.position.dot(viewMatZ);
             rle.distance = rle.position.norm();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
