@@ -7286,7 +7286,7 @@ void Renderer::renderObject(const Vector3f& pos,
             {
                 renderRingShadowsVS(geometry,
                                     *obj.rings,
-                                    fromEigen(sunDir),
+                                    sunDir,
                                     ri,
                                     radius, 1.0f - obj.semiAxes.y(),
                                     planetMat, viewFrustum,

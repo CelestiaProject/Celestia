@@ -18,9 +18,7 @@
 #include "eclipsefinder.h"
 #include "wineclipses.h"
 #include "res/resource.h"
-#include "celmath/mathlib.h"
-#include "celmath/ray.h"
-#include "celmath/distance.h"
+#include "celmath/geomutil.h"
 #include "celutil/util.h"
 #include "celutil/winutil.h"
 #include <Eigen/Core>
@@ -402,8 +400,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
 
                 double distance = target.radius() * 4.0;
                 sim->gotoLocation(UniversalCoord::Zero().offsetKm(Vector3d::UnitX() * distance), 
-                                  //toEigen(Quatd::yrotation(-PI / 2) * Quatd::xrotation(-PI / 2)),
-                                  Quaterniond(AngleAxisd(-PI / 2, Vector3d::UnitY())) * Quaterniond(AngleAxisd(-PI / 2, Vector3d::UnitX())),
+                                  YRotation(-PI / 2) * XRotation(-PI / 2),
                                   2.5);
             }
             break;
