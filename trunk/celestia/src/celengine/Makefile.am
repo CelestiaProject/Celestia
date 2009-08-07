@@ -7,7 +7,8 @@ EXTRA_DIST = \
 	$(noinst_DATA) \
 	solarsysxml.cpp
 
-INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
+INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include \
+	-I$(top_srcdir)/thirdparty/glew/include
 
 if ENABLE_SPICE
 SPICESOURCES = spiceinterface.cpp spiceorbit.cpp spicerotation.cpp
@@ -99,5 +100,7 @@ libcelengine_a_SOURCES = \
 	virtualtex.cpp \
 	visibleregion.cpp \
         vsop87.cpp\
+	$(top_srcdir)/thirdparty/glew/src/glew.c \
+	$(top_srcdir)/thirdparty/curveplot/src/curveplot.cpp \
 	$(SPICESOURCES)\
 	$(SCRIPT_OBJ_SOURCES)

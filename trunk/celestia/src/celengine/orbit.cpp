@@ -294,7 +294,7 @@ void EllipticalOrbit::sample(double, double t, int nSamples,
     {
         double dE = 1 * PI / (double) nSamples;
         for (int i = 0; i < nSamples; i++)
-            proc.sample(t, positionAtE(dE * i));
+            proc.sample(t, positionAtE(dE * i), velocityAtE(dE * i));
     }
     else
     {
@@ -313,7 +313,7 @@ void EllipticalOrbit::sample(double, double t, int nSamples,
             double M = E - eccentricity * sin(E);            // Mean anomaly from ecc anomaly
             double tsamp = t + (M - M0) * period / (2 * PI); // Time from mean anomaly
             
-            proc.sample(tsamp, positionAtE(E));
+            proc.sample(tsamp, positionAtE(E), velocityAtE(E));
 
             // Compute the curvature
             double k = w * pow(square(sin(E)) + w * w * square(cos(E)), -1.5);
@@ -402,7 +402,7 @@ void CachingOrbit::sample(double start, double t, int nSamples,
 {
     double dt = t / (double) nSamples;
     for (int i = 0; i < nSamples; i++)
-        proc.sample(start + dt * i, positionAtTime(start + dt * i));
+        proc.sample(start + dt * i, positionAtTime(start + dt * i), velocityAtTime(start + dt * i));
 }
 
 
@@ -593,10 +593,6 @@ FixedOrbit::getBoundingRadius() const
 void
 FixedOrbit::sample(double, double, int, OrbitSampleProc&) const
 {
-    /*
-    for (int i = 0; i < nSamples; i++)
-        proc.sample(t, position);
-    */
 }
 
 
