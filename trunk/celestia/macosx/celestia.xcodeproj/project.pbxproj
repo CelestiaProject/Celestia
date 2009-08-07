@@ -27,6 +27,7 @@
 		0C76BFD108537EDB00D31A90 /* qtcapture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C76BFCF08537EDB00D31A90 /* qtcapture.cpp */; };
 		3D8726810EA84D260069EBBA /* extras-standard in Copy Misc */ = {isa = PBXBuildFile; fileRef = 3D8726800EA84D260069EBBA /* extras-standard */; };
 		881336D80DEF5EE0001F3BC5 /* skygrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 881336D60DEF5EE0001F3BC5 /* skygrid.cpp */; };
+		881D522F102BCB0000817991 /* curveplot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 881D522E102BCB0000817991 /* curveplot.cpp */; };
 		8844B87E0D5AA3290059AA3A /* customrotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844B87C0D5AA3290059AA3A /* customrotation.cpp */; };
 		8844BAAE0D6D13FE0059AA3A /* frametree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAA80D6D13FE0059AA3A /* frametree.cpp */; };
 		8844BAB00D6D13FE0059AA3A /* timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844BAAA0D6D13FE0059AA3A /* timeline.cpp */; };
@@ -500,6 +501,8 @@
 		3D8726800EA84D260069EBBA /* extras-standard */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "extras-standard"; path = "../extras-standard"; sourceTree = SOURCE_ROOT; };
 		881336D60DEF5EE0001F3BC5 /* skygrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = skygrid.cpp; path = ../src/celengine/skygrid.cpp; sourceTree = SOURCE_ROOT; };
 		881336D70DEF5EE0001F3BC5 /* skygrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = skygrid.h; path = ../src/celengine/skygrid.h; sourceTree = SOURCE_ROOT; };
+		881D522E102BCB0000817991 /* curveplot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = curveplot.cpp; path = ../thirdparty/curveplot/src/curveplot.cpp; sourceTree = SOURCE_ROOT; };
+		881D5230102BCB2600817991 /* curveplot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curveplot.h; path = ../thirdparty/curveplot/include/curveplot.h; sourceTree = SOURCE_ROOT; };
 		8844B87C0D5AA3290059AA3A /* customrotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = customrotation.cpp; path = ../src/celengine/customrotation.cpp; sourceTree = SOURCE_ROOT; };
 		8844B87D0D5AA3290059AA3A /* customrotation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = customrotation.h; path = ../src/celengine/customrotation.h; sourceTree = SOURCE_ROOT; };
 		8844BAA80D6D13FE0059AA3A /* frametree.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = frametree.cpp; path = ../src/celengine/frametree.cpp; sourceTree = SOURCE_ROOT; };
@@ -1157,6 +1160,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				881D522D102BCABB00817991 /* curveplot */,
 				CE52031E0F4FA1CD007D0DE8 /* Spice */,
 				CE52031F0F4FA1EF007D0DE8 /* Lua */,
 				CE5203200F4FA20A007D0DE8 /* png */,
@@ -1199,6 +1203,15 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		881D522D102BCABB00817991 /* curveplot */ = {
+			isa = PBXGroup;
+			children = (
+				881D5230102BCB2600817991 /* curveplot.h */,
+				881D522E102BCB0000817991 /* curveplot.cpp */,
+			);
+			name = curveplot;
 			sourceTree = "<group>";
 		};
 		CE52031E0F4FA1CD007D0DE8 /* Spice */ = {
@@ -2139,6 +2152,7 @@
 				CE5203030F4F9DD0007D0DE8 /* spiceinterface.cpp in Sources */,
 				CE5203040F4F9DD0007D0DE8 /* spiceorbit.cpp in Sources */,
 				CE5203050F4F9DD0007D0DE8 /* spicerotation.cpp in Sources */,
+				881D522F102BCB0000817991 /* curveplot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2323,6 +2337,8 @@
 				HEADER_SEARCH_PATHS = (
 					../src,
 					../thirdparty/Eigen,
+					../thirdparty/glew/include,
+					../thirdparty/curveplot/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -2378,6 +2394,8 @@
 				HEADER_SEARCH_PATHS = (
 					../src,
 					../thirdparty/Eigen,
+					../thirdparty/glew/include,
+					../thirdparty/curveplot/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -2503,6 +2521,8 @@
 				HEADER_SEARCH_PATHS = (
 					../src,
 					../thirdparty/Eigen,
+					../thirdparty/glew/include,
+					../thirdparty/curveplot/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -2548,6 +2568,8 @@
 				HEADER_SEARCH_PATHS = (
 					../src,
 					../thirdparty/Eigen,
+					../thirdparty/glew/include,
+					../thirdparty/curveplot/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
