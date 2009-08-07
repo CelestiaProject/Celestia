@@ -1529,7 +1529,7 @@ CreateFrameVector(const Universe& universe,
                 return NULL;
         }
 
-        return new FrameVector(FrameVector::createConstantVector(toEigen(vec), f));
+        return new FrameVector(FrameVector::createConstantVector(vec, f));
     }
     else
     {
