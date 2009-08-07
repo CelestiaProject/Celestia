@@ -430,7 +430,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     bool viewChanged;
 
-    Vec3f joystickRotation;
+    Eigen::Vector3f joystickRotation;
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     bool shiftKeysPressed[KeyCount];
