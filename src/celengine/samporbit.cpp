@@ -395,12 +395,44 @@ template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
 template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
                                                    OrbitSampleProc& proc) const
 {
+    for (unsigned int i = 0; i < samples.size(); i++)
+    {
+        Vector3d v;
+        Vector3d p(samples[i].x, samples[i].y, samples[i].z);
+
+        if (samples.size() == 1)
+        {
+            v = Vector3d::Zero();
+        }
+        else if (i == 0)
+        {
+            double dt = samples[i + 1].t - samples[i].t;
+            v = (Vector3d(samples[i + 1].x, samples[i + 1].y, samples[i + 1].z) - p) / dt;
+        }
+        else if (i == samples.size() - 1)
+        {
+            double dt = samples[i].t - samples[i - 1].t;
+            v = (p - Vector3d(samples[i - 1].x, samples[i - 1].y, samples[i - 1].z)) / dt;
+        }
+        else
+        {
+            double dt0 = samples[i + 1].t - samples[i].t;
+            Vector3d v0 = (Vector3d(samples[i + 1].x, samples[i + 1].y, samples[i + 1].z) - p) / dt0;
+            double dt1 = samples[i].t - samples[i - 1].t;
+            Vector3d v1 = (p - Vector3d(samples[i - 1].x, samples[i - 1].y, samples[i - 1].z)) / dt1;
+            v = (v0 + v1) * 0.5;
+        }
+
+        proc.sample(samples[i].t, Vector3d(p.x(), p.z(), -p.y()), Vector3d(v.x(), v.z(), -v.y()));
+    }
+
+#if 0
     double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
     double dt = MinSampleInterval;
     double end = start + t;
     double current = start;
 
-    proc.sample(current, positionAtTime(current));
+    //proc.sample(samples[i].t, Vector3d(p.x(), p.z(), -p.y()), Vector3d(v.x(), v.z(), -v.y()));
 
     while (current < end)
     {
@@ -433,6 +465,7 @@ template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
         }
         current += gooddt;
     }
+#endif
 }
 
 
@@ -677,6 +710,15 @@ template <typename T> Vector3d SampledOrbitXYZV<T>::computeVelocity(double jd) c
 template <typename T> void SampledOrbitXYZV<T>::sample(double start, double t, int,
                                                        OrbitSampleProc& proc) const
 {
+    for (typename vector<SampleXYZV<T> >::const_iterator iter = samples.begin();
+         iter != samples.end(); iter++)
+    {
+        proc.sample(iter->t,
+                    Vector3d(iter->position.x(), iter->position.z(), -iter->position.y()),
+                    Vector3d(iter->velocity.x(), iter->velocity.z(), -iter->velocity.y()));
+    }
+
+#if 0
     double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
     double dt = MinSampleInterval;
     double end = start + t;
@@ -720,6 +762,7 @@ template <typename T> void SampledOrbitXYZV<T>::sample(double start, double t, i
         }
         current += gooddt;
     }
+#endif
 }
 
 
