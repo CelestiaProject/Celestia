@@ -8,7 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#define DEBUG_COALESCE 0
+#define DEBUG_COALESCE               0
+#define DEBUG_SECONDARY_ILLUMINATION 0
 
 //#define DEBUG_HDR
 #ifdef DEBUG_HDR
@@ -3940,7 +3941,7 @@ void Renderer::renderObjectAsPoint_nosprite(const Vector3f& position,
         // object, and on a plane normal to the view direction.
         center = center + direction * (radius / (m * Vector3f::UnitZ()).dot(direction));
 
-        float centerZ = (m * center).z();
+        float centerZ = (m.transpose() * center).z();
         float size = discSize * pixelSize * 1.6f * centerZ / corrFac;
 
         Vector3f v0 = m * Vector3f(-1, -1, 0);
@@ -6100,12 +6101,12 @@ renderEclipseShadows(Geometry* geometry,
         Vector3f origin = planetTransform * shadow.origin;
         Vector3f dir    = planetTransform * shadow.direction;
         float scale = planetRadius / shadow.penumbraRadius;
-        Vector3f axis = Vector3f::UnitY().cross(dir);
-        float angle = std::acos(Vector3f::UnitY().dot(dir));
-        axis.normalize();
-        Matrix3f mat = AngleAxisf(angle, axis).toRotationMatrix();
-        Vector3f sAxis = mat * Vector3f::UnitX() * (0.5f * scale);
-        Vector3f tAxis = mat * Vector3f::UnitZ() * (0.5f * scale);
+        Quaternionf shadowRotation;
+        shadowRotation.setFromTwoVectors(Vector3f::UnitY(), dir);
+        Matrix3f m = shadowRotation.toRotationMatrix();
+
+        Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
+        Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
 
         Vector4f texGenS;
         Vector4f texGenT;
@@ -6242,13 +6243,12 @@ renderEclipseShadows_Shaders(Geometry* geometry,
         Vector3f origin = planetTransform * shadow.origin;
         Vector3f dir    = planetTransform * shadow.direction;
         float scale = planetRadius / shadow.penumbraRadius;
-        Vector3f axis = Vector3f::UnitY().cross(dir);
-        float angle = (float) acos(Vector3f::UnitY().dot(dir));
-        axis.normalize();
+        Quaternionf shadowRotation;
+        shadowRotation.setFromTwoVectors(Vector3f::UnitY(), dir);
+        Matrix3f m = shadowRotation.toRotationMatrix();
 
-        Matrix3f mat = AngleAxisf(angle, axis).toRotationMatrix();
-        Vector3f sAxis = mat * Vector3f::UnitX() * (0.5f * scale);
-        Vector3f tAxis = mat * Vector3f::UnitZ() * (0.5f * scale);
+        Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
+        Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
 
         texGenS[n].start<3>() = sAxis;
         texGenT[n].start<3>() = tAxis;
