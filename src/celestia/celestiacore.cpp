@@ -24,9 +24,6 @@
 #include <cassert>
 #include <ctime>
 #include <celengine/gl.h>
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
-#include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <celutil/directory.h>
@@ -502,16 +499,16 @@ const DestinationList* CelestiaCore::getDestinations()
 // Used in the super-secret edit mode
 void showSelectionInfo(const Selection& sel)
 {
-    Vec3f axis(0.0f, 1.0, 0.0f);
-    float angle = 0.0f;
-
+    Quaternionf orientation;
     if (sel.deepsky() != NULL)
-        fromEigen(sel.deepsky()->getOrientation()).getAxisAngle(axis, angle);
+        orientation = sel.deepsky()->getOrientation();
     else if (sel.body() != NULL)
-        fromEigen(sel.body()->getGeometryOrientation()).getAxisAngle(axis, angle);
+        orientation = sel.body()->getGeometryOrientation();
+
+    AngleAxisf aa(orientation);
 
     cout << sel.getName() << '\n';
-    cout << _("Orientation: ") << '[' << axis.x << ',' << axis.y << ',' << axis.z << "], " << radToDeg(angle) << '\n';
+    cout << _("Orientation: ") << '[' << aa.axis().x() << ',' << aa.axis().y() << ',' << aa.axis().z() << "], " << radToDeg(aa.angle()) << '\n';
 }
 
 
@@ -1055,9 +1052,9 @@ void CelestiaCore::joystickAxis(int axis, float amount)
     amount = sign(amount) * square(amount);
 
     if (axis == Joy_XAxis)
-        joystickRotation.y = amount;
+        joystickRotation.y() = amount;
     else if (axis == Joy_YAxis)
-        joystickRotation.x = -amount;
+        joystickRotation.x() = -amount;
 }
 
 
@@ -1429,10 +1426,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '\007':  // Ctrl+G
         flash(_("Goto surface"));
         addToHistory();
-        //if (sim->getFrame().coordSys == astro::Universal)
-            sim->geosynchronousFollow();
+        sim->geosynchronousFollow();
         sim->gotoSurface(5.0);
-        // sim->gotoSelection(0.0001, Vec3f(0, 1, 0), astro::ObserverLocal);
         break;
 
     case '\006': // Ctrl+F
@@ -2370,11 +2365,11 @@ void CelestiaCore::tick()
 
     //Use Boolean to indicate if sim->setTargetSpeed() is called
     bool bSetTargetSpeed = false;
-    if (joystickRotation != Vec3f(0.0f, 0.0f, 0.0f))
+    if (joystickRotation != Vector3f::Zero())
     {
         bSetTargetSpeed = true;
 
-        av += (dt * KeyRotationAccel) * Vector3d(joystickRotation.x, joystickRotation.y, joystickRotation.z);
+        av += (dt * KeyRotationAccel) * joystickRotation.cast<double>();
         sim->setTargetSpeed(sim->getTargetSpeed());
     }
 
@@ -3105,12 +3100,10 @@ static void displayObserverPlanetocentricCoords(Overlay& overlay,
                                                 const UniversalCoord& observerPos,
                                                 double tdb)
 {
-    // Get the observer position in body-centered ecliptical coordinates
-    Vec3d ecl = observerPos - Selection(&body).getPosition(tdb);
-    ecl *= astro::microLightYearsToKilometers(1.0);
-    Vec3d pc = body.eclipticToPlanetocentric(ecl, tdb);
+    Vector3d ecl = observerPos.offsetFromKm(Selection(&body).getPosition(tdb));
+    Vector3d pc = body.eclipticToPlanetocentric(ecl, tdb);
 
-    displayPlanetocentricCoords(overlay, body, pc.x, pc.y, pc.z, true);
+    displayPlanetocentricCoords(overlay, body, pc.x(), pc.y(), pc.z(), true);
 }
 #endif
 
@@ -3305,17 +3298,6 @@ static void displayPlanetInfo(Overlay& overlay,
                 overlay << _("Temperature: ") << planetTemp << " K\n";
                 overlay << setprecision(3);
             }
-
-#if 0
-            // Code to display apparent magnitude.  Disabled because it's not very
-            // accurate.  Too many simplifications are used when computing the amount
-            // of light reflected from a body.
-            Point3d bodyPos = body.getAstrocentricPosition(t);
-            float appMag = body.getApparentMagnitude(*sun,
-                                                     bodyPos - Point3d(0, 0, 0),
-                                                     viewVec);
-            overlay.oprintf(_("Apparent mag: %.2f\n"), appMag);
-#endif
         }
     }
 }
@@ -3786,8 +3768,8 @@ void CelestiaCore::renderOverlay()
                 // Don't show RA/Dec for the Earth itself
                 if (sel.body() != earth)
                 {
-                    Vec3d vect = sel.getPosition(sim->getTime()) - observerPos;
-                    vect = vect * Mat3d::xrotation(-astro::J2000Obliquity);
+                    Vector3d vect = sel.getPosition(sim->getTime()).offsetFromKm(observerPos);
+                    vect = XRotation(astro::J2000Obliquity) * vect;
                     displayRADec(*overlay, vect);
                 }
 

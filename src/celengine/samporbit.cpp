@@ -425,47 +425,6 @@ template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
 
         proc.sample(samples[i].t, Vector3d(p.x(), p.z(), -p.y()), Vector3d(v.x(), v.z(), -v.y()));
     }
-
-#if 0
-    double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
-    double dt = MinSampleInterval;
-    double end = start + t;
-    double current = start;
-
-    //proc.sample(samples[i].t, Vector3d(p.x(), p.z(), -p.y()), Vector3d(v.x(), v.z(), -v.y()));
-
-    while (current < end)
-    {
-        double dt2 = dt;
-
-        Vector3d goodpt;
-        double gooddt = dt;
-        Vector3d pos0 = positionAtTime(current);
-        goodpt = positionAtTime(current + dt2);
-        while (1)
-        {
-            Vector3d pos1 = positionAtTime(current + dt2);
-            Vector3d pos2 = positionAtTime(current + dt2 * 2.0);
-            Vector3d vec1 = (pos1 - pos0).normalized();
-            Vector3d vec2 = (pos2 - pos0).normalized();
-
-            double dot = vec1.dot(vec2);
-
-            if (dot > cosThresholdAngle && dt2 < MaxSampleInterval)
-            {
-                gooddt = dt2;
-                goodpt = pos1;
-                dt2 *= 2.0;
-            }
-            else
-            {
-                proc.sample(current + gooddt, goodpt);
-                break;
-            }
-        }
-        current += gooddt;
-    }
-#endif
 }
 
 
@@ -602,11 +561,6 @@ template <typename T> Vector3d SampledOrbitXYZV<T>::computePosition(double jd) c
                 Vector3d p0(s0.position.x(), s0.position.y(), s0.position.z());
                 Vector3d p1(s1.position.x(), s1.position.y(), s1.position.z());
                 pos = p0 + t * (p1 - p0);
-#if CELVEC
-                pos = Vec3d(Mathd::lerp(t, (double) s0.position.x, (double) s1.position.x),
-                            Mathd::lerp(t, (double) s0.position.y, (double) s1.position.y),
-                            Mathd::lerp(t, (double) s0.position.z, (double) s1.position.z));
-#endif
             }
             else if (interpolation == TrajectoryInterpolationCubic)
             {
@@ -618,13 +572,6 @@ template <typename T> Vector3d SampledOrbitXYZV<T>::computePosition(double jd) c
                 Vector3d v0(s0.velocity.x(), s0.velocity.y(), s0.velocity.z());
                 Vector3d p1(s1.position.x(), s1.position.y(), s1.position.z());
                 Vector3d v1(s1.velocity.x(), s1.velocity.y(), s1.velocity.z());
-
-#if CELVEC
-                Vec3d p0(s0.position.x, s0.position.y, s0.position.z);
-                Vec3d v0(s0.velocity.x, s0.velocity.y, s0.velocity.z);
-                Vec3d p1(s1.position.x, s1.position.y, s1.position.z);
-                Vec3d v1(s1.velocity.x, s1.velocity.y, s1.velocity.z);
-#endif
                 pos = cubicInterpolate(p0, v0 * h, p1, v1 * h, t);
             }
             else
@@ -717,52 +664,6 @@ template <typename T> void SampledOrbitXYZV<T>::sample(double start, double t, i
                     Vector3d(iter->position.x(), iter->position.z(), -iter->position.y()),
                     Vector3d(iter->velocity.x(), iter->velocity.z(), -iter->velocity.y()));
     }
-
-#if 0
-    double cosThresholdAngle = cos(degToRad(SampleThresholdAngle));
-    double dt = MinSampleInterval;
-    double end = start + t;
-    double current = start;
-
-    proc.sample(current, positionAtTime(current));
-
-    while (current < end)
-    {
-        double dt2 = dt;
-
-        Vector3d goodpt;
-        double gooddt = dt;
-        Vector3d pos0 = positionAtTime(current);
-        goodpt = positionAtTime(current + dt2);
-        while (1)
-        {
-            Vector3d pos1 = positionAtTime(current + dt2);
-            Vector3d pos2 = positionAtTime(current + dt2 * 2.0);
-            Vector3d vec1 = (pos1 - pos0).normalized();
-            Vector3d vec2 = (pos2 - pos0).normalized();
-
-            double dot = vec1.dot(vec2);
-
-            if (dot > 1.0)
-                dot = 1.0;
-            else if (dot < -1.0)
-                dot = -1.0;
-
-            if (dot > cosThresholdAngle && dt2 < MaxSampleInterval)
-            {
-                gooddt = dt2;
-                goodpt = pos1;
-                dt2 *= 2.0;
-            }
-            else
-            {
-                proc.sample(current + gooddt, goodpt);
-                break;
-            }
-        }
-        current += gooddt;
-    }
-#endif
 }
 
 

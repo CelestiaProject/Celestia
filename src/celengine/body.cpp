@@ -514,11 +514,6 @@ Vector3d Body::getVelocity(double tdb) const
 	{
         Vector3d r = Selection(const_cast<Body*>(this)).getPosition(tdb).offsetFromKm(orbitFrame->getCenter().getPosition(tdb));
         v += orbitFrame->getAngularVelocity(tdb).cross(r);
-#if CELVEC
-        Vec3d r = Selection(const_cast<Body*>(this)).getPosition(tdb) - orbitFrame->getCenter().getPosition(tdb);
-		r = r * astro::microLightYearsToKilometers(1.0);
-		v += cross(orbitFrame->getAngularVelocity(tdb), r);
-#endif
     }
 
 	return v;
