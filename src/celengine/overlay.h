@@ -80,6 +80,9 @@ class Overlay : public std::ostream
     bool fontChanged;
     int textBlock;
 
+    float xoffset;
+    float yoffset;
+
     OverlayStreamBuf sbuf;
 };
 

@@ -2489,6 +2489,10 @@ void CelestiaCore::draw()
         glViewport(0, 0, width, height);
     }
 
+    bool toggleAA = glIsEnabled(GL_MULTISAMPLE_ARB);
+    if (toggleAA && (renderer->getRenderFlags() & Renderer::ShowCloudMaps))
+        glDisable(GL_MULTISAMPLE_ARB);
+
     renderOverlay();
 	if (showConsole)
     {
@@ -2500,6 +2504,8 @@ void CelestiaCore::draw()
         console.end();
     }
 
+    if (toggleAA)
+        glEnable(GL_MULTISAMPLE_ARB);
 
     if (movieCapture != NULL && recording)
         movieCapture->captureFrame();

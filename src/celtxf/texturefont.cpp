@@ -52,6 +52,9 @@ TextureFont::~TextureFont()
 }
 
 
+/** Render a single character of the font. The modelview transform is
+ *  automatically updated to advance to the next character.
+ */
 void TextureFont::render(wchar_t ch) const
 {
     const Glyph* glyph = getGlyph(ch);
@@ -73,18 +76,77 @@ void TextureFont::render(wchar_t ch) const
 }
 
 
+/** Render a single character of the font, adding the specified offset
+ *  to the location.
+ */
+void TextureFont::render(wchar_t ch, float xoffset, float yoffset) const
+{
+    const Glyph* glyph = getGlyph(ch);
+    if (glyph == NULL) glyph = getGlyph((wchar_t)'?');
+    if (glyph != NULL)
+    {
+        glBegin(GL_QUADS);
+        glTexCoord2f(glyph->texCoords[0].u, glyph->texCoords[0].v);
+        glVertex2f(glyph->xoff + xoffset, glyph->yoff + yoffset);
+        glTexCoord2f(glyph->texCoords[1].u, glyph->texCoords[1].v);
+        glVertex2f(glyph->xoff + glyph->width + xoffset, glyph->yoff + yoffset);
+        glTexCoord2f(glyph->texCoords[2].u, glyph->texCoords[2].v);
+        glVertex2f(glyph->xoff + glyph->width + xoffset, glyph->yoff + glyph->height + yoffset);
+        glTexCoord2f(glyph->texCoords[3].u, glyph->texCoords[3].v);
+        glVertex2f(glyph->xoff + xoffset, glyph->yoff + glyph->height + yoffset);
+        glEnd();
+    }
+}
+
+
+/** Render a string and automatically update the modelview transform for the
+  * string width.
+  */
 void TextureFont::render(const string& s) const
 {
     int len = s.length();
     bool validChar = true;
     int i = 0;
-	
+
+    float xoffset = 0.0f;
+
 	while (i < len && validChar) {
         wchar_t ch = 0;
         validChar = UTF8Decode(s, i, ch);
         i += UTF8EncodedSize(ch);
         
-        render(ch);
+        render(ch, xoffset, 0.0f);
+
+        const Glyph* glyph = getGlyph(ch);
+        if (glyph == NULL)
+            glyph = getGlyph((wchar_t)'?');
+        xoffset += glyph->advance;
+    }
+
+    glTranslatef(xoffset, 0.0f, 0.0f);
+}
+
+
+/** Render a string with the specified offset. Do *not* automatically update
+ *  the modelview transform.
+ */
+void TextureFont::render(const string& s, float xoffset, float yoffset) const
+{
+    int len = s.length();
+    bool validChar = true;
+    int i = 0;
+
+	while (i < len && validChar) {
+        wchar_t ch = 0;
+        validChar = UTF8Decode(s, i, ch);
+        i += UTF8EncodedSize(ch);
+        
+        render(ch, xoffset, yoffset);
+
+        const Glyph* glyph = getGlyph(ch);
+        if (glyph == NULL)
+            glyph = getGlyph((wchar_t)'?');
+        xoffset += glyph->advance;
     }
 }
 
