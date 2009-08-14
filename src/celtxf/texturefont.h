@@ -22,8 +22,11 @@ class TextureFont
     TextureFont();
     ~TextureFont();
 
-    void render(wchar_t) const;
-    void render(const std::string&) const;
+    void render(wchar_t c) const;
+    void render(const std::string& str) const;
+
+    void render(wchar_t c, float xoffset, float yoffset) const;
+    void render(const std::string& str, float xoffset, float yoffset) const;
 
     int getWidth(const std::string&) const;
     int getWidth(int c) const;
@@ -34,6 +37,14 @@ class TextureFont
     void setMaxAscent(int);
     int getMaxDescent() const;
     void setMaxDescent(int);
+
+    short getAdvance(wchar_t c)
+    {
+        const Glyph* glyph = getGlyph(c);
+        if (glyph == NULL)
+            glyph = getGlyph((wchar_t) '?');
+        return glyph->advance;
+    }
 
     int getTextureName() const;
 
