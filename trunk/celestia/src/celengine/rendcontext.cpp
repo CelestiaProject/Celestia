@@ -165,7 +165,7 @@ RenderContext::drawGroup(const Mesh::PrimitiveGroup& group)
     if (group.prim == Mesh::SpriteList)
     {
         glEnable(GL_POINT_SPRITE_ARB);
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+        glActiveTextureARB(GL_TEXTURE0_ARB);
         glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
         glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
     }
@@ -483,8 +483,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (tangent.format)
     {
     case Mesh::Float3:
-        glx::glEnableVertexAttribArrayARB(TangentAttributeIndex);
-        glx::glVertexAttribPointerARB(TangentAttributeIndex,
+        glEnableVertexAttribArrayARB(TangentAttributeIndex);
+        glVertexAttribPointerARB(TangentAttributeIndex,
                                       GLComponentCounts[(int) tangent.format],
                                       GLComponentTypes[(int) tangent.format],
                                       GL_FALSE,
@@ -492,7 +492,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + tangent.offset);
         break;
     default:
-        glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
+        glDisableVertexAttribArrayARB(TangentAttributeIndex);
         break;
     }
 
@@ -500,8 +500,8 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
     switch (pointsize.format)
     {
     case Mesh::Float1:
-        glx::glEnableVertexAttribArrayARB(PointSizeAttributeIndex);
-        glx::glVertexAttribPointerARB(PointSizeAttributeIndex,
+        glEnableVertexAttribArrayARB(PointSizeAttributeIndex);
+        glVertexAttribPointerARB(PointSizeAttributeIndex,
                                       GLComponentCounts[(int) pointsize.format],
                                       GLComponentTypes[(int) pointsize.format],
                                       GL_FALSE,
@@ -509,7 +509,7 @@ setExtendedVertexArrays(const Mesh::VertexDescription& desc,
                                       vertices + pointsize.offset);
         break;
     default:
-        glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+        glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
         break;
     }
 }
@@ -535,8 +535,8 @@ GLSL_RenderContext::~GLSL_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
-    glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+    glDisableVertexAttribArrayARB(TangentAttributeIndex);
+    glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
 }
 
 
@@ -668,7 +668,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glActiveTextureARB(GL_TEXTURE0_ARB + i);
         glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }
@@ -809,8 +809,8 @@ GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext()
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glx::glDisableVertexAttribArrayARB(TangentAttributeIndex);
-    glx::glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
+    glDisableVertexAttribArrayARB(TangentAttributeIndex);
+    glDisableVertexAttribArrayARB(PointSizeAttributeIndex);
 }
 
 
@@ -859,7 +859,7 @@ GLSLUnlit_RenderContext::makeCurrent(const Mesh::Material& m)
 
     for (unsigned int i = 0; i < nTextures; i++)
     {
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+        glActiveTextureARB(GL_TEXTURE0_ARB + i);
         glEnable(GL_TEXTURE_2D);
         textures[i]->bind();
     }

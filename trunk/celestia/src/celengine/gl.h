@@ -12,9 +12,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _GL_H_
-#define _GL_H_
+#ifndef _CELENGINE_GL_H_
+#define _CELENGINE_GL_H_
 
+#include <GL/glew.h>
+
+#if 0
 #ifdef _WIN32
 
 #ifdef _MSC_VER
@@ -40,6 +43,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif
+#endif
 
-#endif // _GL_H_
+#endif // _CELENGINE_GL_H_
 

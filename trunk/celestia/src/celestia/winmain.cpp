@@ -2004,12 +2004,27 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
         MessageBox(NULL,
                    "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-    return NULL;
+		return NULL;
     }
 
+	bool firstContext = false;
     if (glContext == NULL)
+	{
         glContext = wglCreateContext(deviceContext);
+		firstContext = true;
+	}
     wglMakeCurrent(deviceContext, glContext);
+
+	if (firstContext)
+	{
+		GLenum glewErr = glewInit();
+		if (glewErr != GLEW_OK)
+		{
+			MessageBox(NULL, "Could not set up OpenGL extensions.", "Fatal Error",
+					   MB_OK | MB_ICONERROR);
+			return NULL;
+		}
+	}
 
     if (newMode == 0)
         SetMenu(hwnd, menuBar);

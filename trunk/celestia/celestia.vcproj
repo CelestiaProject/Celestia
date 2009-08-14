@@ -37,7 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\curveplot\include"
+				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include"
 				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX"
 				RuntimeLibrary="3"
 				DebugInformationFormat="3"
@@ -732,6 +732,14 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\vsop87.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="glew"
+				>
+				<File
+					RelativePath=".\thirdparty\glew\src\glew.c"
 					>
 				</File>
 			</Filter>

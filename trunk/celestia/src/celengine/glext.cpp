@@ -10,7 +10,9 @@
 #include <string.h>
 #include "gl.h"
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <windows.h>
+#else
 // Assume that this is a UNIX/X11 system if it's not Windows or Mac OS X.
 #ifndef TARGET_OS_MAC
 #include "GL/glx.h"
@@ -892,6 +894,8 @@ static void InitExt_EXT_framebuffer_object()
 
 void InitExtension(const char* ext)
 {
+	return;
+#if 0
     if (!strcmp(ext, "GL_NV_fragment_program"))
         InitExt_NV_fragment_program();
     else if (!strcmp(ext, "GL_ARB_vertex_program"))
@@ -924,6 +928,7 @@ void InitExtension(const char* ext)
         InitExt_ARB_color_buffer_float();
     else if (!strcmp(ext, "GL_EXT_framebuffer_object"))
         InitExt_EXT_framebuffer_object();
+#endif
 }
 
 

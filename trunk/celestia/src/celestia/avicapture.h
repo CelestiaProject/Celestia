@@ -10,6 +10,7 @@
 #ifndef _AVICAPTURE_H_
 #define _AVICAPTURE_H_
 
+#include <windows.h>
 #include <windowsx.h>
 #include <vfw.h>
 #include "moviecapture.h"

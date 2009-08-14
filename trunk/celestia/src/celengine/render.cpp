@@ -1072,7 +1072,7 @@ bool Renderer::init(GLContext* _context,
         // shadowTex->setMaxMipMapLevel(3);
         Texture::AddressMode shadowTexAddress = Texture::EdgeClamp;
         Texture::MipMapMode shadowTexMip = Texture::NoMipMaps;
-        useClampToBorder = context->extensionSupported("GL_ARB_texture_border_clamp");
+        useClampToBorder = GLEW_ARB_texture_border_clamp;
         if (useClampToBorder)
         {
             shadowTexAddress = Texture::BorderClamp;
@@ -1122,7 +1122,7 @@ bool Renderer::init(GLContext* _context,
                                                           PenumbraFunctionEval,
                                                           Texture::EdgeClamp);
 
-        if (context->extensionSupported("GL_ARB_texture_cube_map"))
+        if (GLEW_ARB_texture_cube_map)
         {
             normalizationTex = CreateProceduralCubeMap(64, GL_RGB, IllumMapEval);
 #if ADVANCED_CLOUD_SHADOWS
@@ -1138,7 +1138,7 @@ bool Renderer::init(GLContext* _context,
     }
 
 #if 0
-    if (context->extensionSupported("GL_ARB_multisample"))
+    if (GLEW_ARB_multisample)
     {
         int nSamples = 0;
         int sampleBuffers = 0;
@@ -1153,7 +1153,7 @@ bool Renderer::init(GLContext* _context,
     }
 #endif
 
-    if (context->extensionSupported("GL_EXT_rescale_normal"))
+    if (GLEW_EXT_rescale_normal)
     {
         // We need this enabled because we use glScale, but only
         // with uniform scale factors.
@@ -1162,13 +1162,13 @@ bool Renderer::init(GLContext* _context,
         glEnable(GL_RESCALE_NORMAL_EXT);
     }
 
-    if (context->extensionSupported("GL_ARB_point_sprite"))
+    if (GLEW_ARB_point_sprite)
     {
         DPRINTF(1, "Renderer: point sprites supported.\n");
         usePointSprite = true;
     }
 
-    if (context->extensionSupported("GL_EXT_separate_specular_color"))
+    if (GLEW_EXT_separate_specular_color)
     {
         glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
     }
@@ -1226,7 +1226,7 @@ bool Renderer::init(GLContext* _context,
     }
 
 #ifdef USE_HDR
-    useBlendSubtract = context->extensionSupported("GL_EXT_blend_subtract");
+    useBlendSubtract = GLEW_EXT_blend_subtract;
     Image        *testImg = new Image(GL_LUMINANCE_ALPHA, 1, 1);
     ImageTexture *testTex = new ImageTexture(*testImg,
                                              Texture::EdgeClamp,
@@ -2305,7 +2305,7 @@ void Renderer::renderToBlurTexture(int blurLevel)
         {
             const GLfloat bias  = -0.5f;
             glBlendFunc(GL_ONE, GL_ONE);
-            glx::glBlendEquationEXT(GL_FUNC_REVERSE_SUBTRACT_EXT);
+            glBlendEquationEXT(GL_FUNC_REVERSE_SUBTRACT_EXT);
             glColor4f(-bias, -bias, -bias, 0.0f);
 
             glDisable(GL_TEXTURE_2D);
@@ -2324,7 +2324,7 @@ void Renderer::renderToBlurTexture(int blurLevel)
 
         // Scale back up hdr part
         {
-            glx::glBlendEquationEXT(GL_FUNC_ADD_EXT);
+            glBlendEquationEXT(GL_FUNC_ADD_EXT);
             glBlendFunc(GL_DST_COLOR, GL_ONE);
 
             glBegin(GL_QUADS);
@@ -3854,12 +3854,14 @@ void Renderer::draw(const Observer& observer,
     }
 #endif
 
-    if (videoSync && glx::glXWaitVideoSyncSGI != NULL)
+#if VIDEO_SYNC
+    if (videoSync && glXWaitVideoSyncSGI != NULL)
     {
         unsigned int count;
-        glx::glXGetVideoSyncSGI(&count);
-        glx::glXWaitVideoSyncSGI(2, (count+1) & 1, &count);
+        glXGetVideoSyncSGI(&count);
+        glXWaitVideoSyncSGI(2, (count+1) & 1, &count);
     }
+#endif
 }
 
 
@@ -4238,7 +4240,7 @@ static void renderBumpMappedMesh(const GLContext& context,
     // isn't as general as transforming the light direction by an
     // orthonormal basis for each mesh vertex, but it works well enough
     // for spheres illuminated by directional light sources.
-    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTextureARB(GL_TEXTURE1_ARB);
 
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
@@ -4255,7 +4257,7 @@ static void renderBumpMappedMesh(const GLContext& context,
     glScalef(-1.0f, 1.0f, 1.0f);
     glRotate(lightOrientation * orientation.conjugate());
     glMatrixMode(GL_MODELVIEW);
-    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
 
     g_lodSphere->render(context,
                         LODSphereMesh::Normals | LODSphereMesh::TexCoords0,
@@ -4263,7 +4265,7 @@ static void renderBumpMappedMesh(const GLContext& context,
                         &bumpTexture);
 
     // Reset the second texture unit
-    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTextureARB(GL_TEXTURE1_ARB);
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -4306,7 +4308,7 @@ static void renderSmoothMesh(const GLContext& context,
     // isn't as general as transforming the light direction by an
     // orthonormal basis for each mesh vertex, but it works well enough
     // for spheres illuminated by directional light sources.
-    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTextureARB(GL_TEXTURE1_ARB);
 
     // Set up GL_NORMAL_MAP_EXT texture coordinate generation.  This
     // mode is part of the cube map extension.
@@ -4322,7 +4324,7 @@ static void renderSmoothMesh(const GLContext& context,
     glMatrixMode(GL_TEXTURE);
     glRotate(lightOrientation * orientation.conjugate());
     glMatrixMode(GL_MODELVIEW);
-    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
 
     textures[0] = &baseTexture;
     g_lodSphere->render(context,
@@ -4331,7 +4333,7 @@ static void renderSmoothMesh(const GLContext& context,
                         textures, 1);
 
     // Reset the second texture unit
-    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTextureARB(GL_TEXTURE1_ARB);
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -4791,7 +4793,7 @@ static void setupBumpTexenv()
 
     // In the final stage, modulate the lighting value by the
     // base texture color.
-    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTextureARB(GL_TEXTURE1_ARB);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_TEXTURE);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
@@ -4799,7 +4801,7 @@ static void setupBumpTexenv()
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
     glEnable(GL_TEXTURE_2D);
 
-    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
 }
 
 
@@ -4818,7 +4820,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
     // The primary color contains the light direction in surface
     // space, and texture0 is a normal map.  The lighting is
     // calculated by computing the dot product.
-    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_DOT3_RGB_ARB);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
@@ -4826,7 +4828,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
 
     // Add in the ambient color
-    glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTextureARB(GL_TEXTURE1_ARB);
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, texenvConst);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
@@ -4838,7 +4840,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
 
     // In the final stage, modulate the lighting value by the
     // base texture color.
-    glx::glActiveTextureARB(GL_TEXTURE2_ARB);
+    glActiveTextureARB(GL_TEXTURE2_ARB);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
     glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PREVIOUS_EXT);
@@ -4847,7 +4849,7 @@ static void setupBumpTexenvAmbient(Color ambientColor)
     glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
     glEnable(GL_TEXTURE_2D);
 
-    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
 }
 #endif
 
@@ -4859,7 +4861,7 @@ static void setupTexenvAmbient(Color ambientColor)
     // The primary color contains the light direction in surface
     // space, and texture0 is a normal map.  The lighting is
     // calculated by computing the dot product.
-    glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, ambientColor.toVector4().data());
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_MODULATE);
@@ -5214,9 +5216,9 @@ static void renderSphere_DOT3_VP(const RenderInfo& ri,
         }
         else
         {
-            glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+            glActiveTextureARB(GL_TEXTURE1_ARB);
             ri.baseTex->bind();
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
             ri.bumpTex->bind();
             setupBumpTexenv();
             g_lodSphere->render(context,
@@ -5774,12 +5776,12 @@ static void renderShadowedGeometryDefault(Geometry* geometry,
 
     if (useShadowMask)
     {
-        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+        glActiveTextureARB(GL_TEXTURE1_ARB);
         glEnable(GL_TEXTURE_GEN_S);
         glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
         glTexGenfv(GL_S, GL_OBJECT_PLANE,
                     Vector4f(lightDir.x(), lightDir.y(), lightDir.z(), 0.5f).data());
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+        glActiveTextureARB(GL_TEXTURE0_ARB);
     }
 
     glColor4f(1, 1, 1, 1);
@@ -5800,9 +5802,9 @@ static void renderShadowedGeometryDefault(Geometry* geometry,
 
     if (useShadowMask)
     {
-        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+        glActiveTextureARB(GL_TEXTURE1_ARB);
         glDisable(GL_TEXTURE_GEN_S);
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+        glActiveTextureARB(GL_TEXTURE0_ARB);
     }
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
@@ -5885,7 +5887,7 @@ static void renderRings(RingSystem& rings,
     // distance to the sun is very large relative to its diameter.
     if (renderShadow)
     {
-        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+        glActiveTextureARB(GL_TEXTURE1_ARB);
         glEnable(GL_TEXTURE_2D);
         shadowTex->bind();
 
@@ -5955,7 +5957,7 @@ static void renderRings(RingSystem& rings,
             glTexGenfv(GL_T, GL_EYE_PLANE, tPlane.data());
         }
 
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+        glActiveTextureARB(GL_TEXTURE0_ARB);
 
         if (fproc != NULL)
         {
@@ -6029,11 +6031,11 @@ static void renderRings(RingSystem& rings,
     // Disable the second texture unit if it was used
     if (renderShadow)
     {
-        glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+        glActiveTextureARB(GL_TEXTURE1_ARB);
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
-        glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+        glActiveTextureARB(GL_TEXTURE0_ARB);
 
         if (fproc != NULL)
             fproc->disable();
@@ -6138,7 +6140,7 @@ renderEclipseShadows(Geometry* geometry,
             glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
 
             // The second texture unit has the shadow 'mask'
-            glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+            glActiveTextureARB(GL_TEXTURE1_ARB);
             glEnable(GL_TEXTURE_2D);
             shadowMaskTexture->bind();
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
@@ -6147,7 +6149,7 @@ renderEclipseShadows(Geometry* geometry,
             glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_EXT, GL_SRC_COLOR);
             glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_EXT, GL_TEXTURE);
             glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_EXT, GL_SRC_COLOR);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
         }
 
         // Since invariance between nVidia's vertex programs and the
@@ -6173,10 +6175,10 @@ renderEclipseShadows(Geometry* geometry,
         if (ri.useTexEnvCombine)
         {
             // Disable second texture unit
-            glx::glActiveTextureARB(GL_TEXTURE1_ARB);
+            glActiveTextureARB(GL_TEXTURE1_ARB);
             glDisable(GL_TEXTURE_2D);
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
 
             float color[4] = { 0, 0, 0, 0 };
             glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color);
@@ -7033,12 +7035,12 @@ void Renderer::renderObject(const Vector3f& pos,
 
                 for (unsigned int i = 1; i < 8;/*context->getMaxTextures();*/ i++)
                 {
-                    glx::glActiveTextureARB(GL_TEXTURE0_ARB + i);
+                    glActiveTextureARB(GL_TEXTURE0_ARB + i);
                     glDisable(GL_TEXTURE_2D);
                 }
-                glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+                glActiveTextureARB(GL_TEXTURE0_ARB);
                 glEnable(GL_TEXTURE_2D);
-                glx::glUseProgramObjectARB(0);
+                glUseProgramObjectARB(0);
             }
             else
             {
@@ -7844,7 +7846,7 @@ void Renderer::renderCometTail(const Body& body,
     glPushMatrix();
     glTranslate(pos);
 
-    // glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    // glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
