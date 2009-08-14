@@ -77,23 +77,20 @@ void GLContext::init(const vector<string>& ignoreExt)
         InitExtension(iter->c_str());
     }
 
-    if (extensionSupported("GL_ARB_multitexture") &&
-        glx::glActiveTextureARB != NULL)
+    if (GLEW_ARB_multitexture && glActiveTextureARB != NULL)
     {
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
                       (GLint*) &maxSimultaneousTextures);
     }
 
-    if (extensionSupported("GL_ARB_vertex_program") &&
-        glx::glGenProgramsARB)
+    if (GLEW_ARB_vertex_program && glGenProgramsARB)
     {
         DPRINTF(1, "Renderer: ARB vertex programs supported.\n");
         if (vpARB == NULL)
             vpARB = vp::initARB();
         vertexProc = vpARB;
     }
-    else if (extensionSupported("GL_NV_vertex_program") &&
-             glx::glGenProgramsNV)
+    else if (GLEW_NV_vertex_program && glGenProgramsNV)
     {
         DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
         if (vpNV == NULL)
@@ -101,8 +98,7 @@ void GLContext::init(const vector<string>& ignoreExt)
         vertexProc = vpNV;
     }
 
-    if (extensionSupported("GL_NV_fragment_program") &&
-        glx::glGenProgramsNV)
+    if (GLEW_NV_fragment_program && glGenProgramsNV)
     {
         DPRINTF(1, "Renderer: nVidia fragment programs supported.\n");
         if (fpNV == NULL)
@@ -156,8 +152,7 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
 
     case GLPath_Multitexture:
         return (maxSimultaneousTextures > 1 &&
-               ( extensionSupported("GL_EXT_texture_env_combine") ||
-                 extensionSupported("GL_ARB_texture_env_combine")) );
+               (GLEW_EXT_texture_env_combine || GLEW_ARB_texture_env_combine));
 
     case GLPath_NvCombiner:
         return false;
@@ -165,48 +160,40 @@ bool GLContext::renderPathSupported(GLRenderPath path) const
         // No longer supported; all recent NVIDIA drivers also support
         // the vertex_program extension, so the combiners-only path
         // isn't necessary.
-        return extensionSupported("GL_NV_register_combiners");
+        return GLEW_NV_register_combiners;
         */
 
     case GLPath_DOT3_ARBVP:
-        return (extensionSupported("GL_ARB_texture_env_dot3") &&
-                extensionSupported("GL_ARB_vertex_program") &&
-                vertexProc != NULL);
+        return GLEW_ARB_texture_env_dot3 &&
+               GLEW_ARB_vertex_program &&
+               vertexProc != NULL;
 
     case GLPath_NvCombiner_NvVP:
         // If ARB_vertex_program is supported, don't report support for
         // this render path.
-        return (extensionSupported("GL_NV_register_combiners") &&
-                extensionSupported("GL_NV_vertex_program") &&
-                !extensionSupported("GL_ARB_vertex_program") &&
-                vertexProc != NULL);
+        return GLEW_NV_register_combiners &&
+               GLEW_NV_vertex_program &&
+               !GLEW_ARB_vertex_program &&
+               vertexProc != NULL;
 
     case GLPath_NvCombiner_ARBVP:
-        return (extensionSupported("GL_NV_register_combiners") &&
-                extensionSupported("GL_ARB_vertex_program") &&
-                vertexProc != NULL);
+        return GLEW_NV_register_combiners &&
+               GLEW_ARB_vertex_program &&
+               vertexProc != NULL;
 
     case GLPath_ARBFP_ARBVP:
         return false;
         /*
-        return (extensionSupported("GL_ARB_vertex_program") &&
-                extensionSupported("GL_ARB_fragment_program") &&
-                vertexProc != NULL);
+        return GLEW_ARB_vertex_program &&
+               GLEW_ARB_fragment_program &&
+               vertexProc != NULL;
         */
 
-    case GLPath_NV30:
-		/* This render path is deprecated; GLSL is now preferred */
-		return false;
-		/*
-        return (extensionSupported("GL_ARB_vertex_program") &&
-                extensionSupported("GL_NV_fragment_program"));
-		*/
-
     case GLPath_GLSL:
-        return (extensionSupported("GL_ARB_shader_objects") &&
-                extensionSupported("GL_ARB_shading_language_100") &&
-                extensionSupported("GL_ARB_vertex_shader") &&
-                extensionSupported("GL_ARB_fragment_shader"));
+        return GLEW_ARB_shader_objects &&
+               GLEW_ARB_shading_language_100 &&
+               GLEW_ARB_vertex_shader &&
+               GLEW_ARB_fragment_shader;
 
     default:
         return false;

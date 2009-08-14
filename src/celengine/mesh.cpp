@@ -226,7 +226,7 @@ Mesh::~Mesh()
 
     if (vbObject != 0)
     {
-        glx::glDeleteBuffersARB(1, &vbObject);
+        glDeleteBuffersARB(1, &vbObject);
     }
 }
 
@@ -516,11 +516,11 @@ Mesh::render(const std::vector<const Material*>& materials,
 
         if (nVertices * vertexDesc.stride > MinVBOSize)
         {
-            glx::glGenBuffersARB(1, &vbObject);
+            glGenBuffersARB(1, &vbObject);
             if (vbObject != 0)
             {
-                glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
-                glx::glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
+                glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                                      nVertices * vertexDesc.stride,
                                      vertices,
                                      GL_STATIC_DRAW_ARB);
@@ -530,7 +530,7 @@ Mesh::render(const std::vector<const Material*>& materials,
 
     if (vbObject != 0)
     {
-        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
         rc.setVertexArrays(vertexDesc, NULL);
     }
     else
@@ -555,7 +555,7 @@ Mesh::render(const std::vector<const Material*>& materials,
     }
 
     if (vbObject != 0)
-        glx::glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 }
 
 
