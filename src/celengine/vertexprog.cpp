@@ -7,13 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "vertexprog.h"
+#include <celutil/util.h>
+#include <GL/glew.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <celutil/util.h>
-#include "gl.h"
-#include "glext.h"
-#include "vertexprog.h"
 
 using namespace Eigen;
 using namespace std;
@@ -298,8 +297,7 @@ VertexProcessor* vp::initARB()
 #endif
 
     // Load vertex programs that are only required with fragment programs
-    if (ExtensionSupported("GL_NV_fragment_program") ||
-        ExtensionSupported("GL_ARB_fragment_program"))
+    if (GLEW_NV_fragment_program || GLEW_ARB_fragment_program)
     {
         if (!LoadARBVertexProgram("shaders/multishadow_arb.vp", multiShadow))
             return NULL;

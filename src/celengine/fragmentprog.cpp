@@ -11,8 +11,7 @@
 #include <fstream>
 #include <string>
 #include <celutil/util.h>
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "fragmentprog.h"
 
 using namespace std;

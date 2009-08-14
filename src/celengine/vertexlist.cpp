@@ -9,8 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "vertexlist.h"
 

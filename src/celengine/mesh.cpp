@@ -10,13 +10,12 @@
 
 #include "mesh.h"
 #include "rendcontext.h"
-#include "gl.h"
-#include "glext.h"
 #include <cassert>
 #include <iostream>
 #include <algorithm>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <GL/glew.h>
 
 using namespace Eigen;
 using namespace std;
@@ -44,7 +43,7 @@ static bool isVBOSupported()
     if (!VBOSupportTested)
     {
         VBOSupportTested = true;
-        VBOSupported = ExtensionSupported("GL_ARB_vertex_buffer_object");
+        VBOSupported = (GLEW_ARB_vertex_buffer_object == GL_TRUE);
     }
 
     return VBOSupported;

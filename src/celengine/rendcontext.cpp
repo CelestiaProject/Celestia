@@ -11,8 +11,7 @@
 #include <vector>
 #include "rendcontext.h"
 #include "texmanager.h"
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 
 using namespace Eigen;

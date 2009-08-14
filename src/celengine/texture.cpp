@@ -39,17 +39,10 @@
 #include <celutil/debug.h>
 #include <celutil/util.h>
 
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "celestia.h"
 
 #include <Eigen/Core>
-
-// OpenGL 1.2 stuff missing from Windows headers . . . probably should be
-// moved into glext.h
-#ifndef GL_TEXTURE_MAX_LEVEL
-#define GL_TEXTURE_MAX_LEVEL 0x813D
-#endif
 
 #ifdef JPEG_SUPPORT
 
@@ -138,20 +131,18 @@ static const TextureCaps& GetTextureCaps()
     if (!texCapsInitialized)
     {
         texCapsInitialized = true;
-        texCaps.compressionSupported = ExtensionSupported("GL_ARB_texture_compression");
-        if (texCaps.compressionSupported)
-            InitExtension("GL_ARB_texture_compression");
+        texCaps.compressionSupported = (GLEW_ARB_texture_compression == GL_TRUE);
 
 #ifdef GL_VERSION_1_2
         texCaps.clampToEdgeSupported = true;
 #else
         texCaps.clampToEdgeSupported = ExtensionSupported("GL_EXT_texture_edge_clamp");
 #endif // GL_VERSION_1_2
-        texCaps.clampToBorderSupported = ExtensionSupported("GL_ARB_texture_border_clamp");
-        texCaps.autoMipMapSupported = ExtensionSupported("GL_SGIS_generate_mipmap");
+        texCaps.clampToBorderSupported = (GLEW_ARB_texture_border_clamp == GL_TRUE);
+        texCaps.autoMipMapSupported = (GLEW_SGIS_generate_mipmap == GL_TRUE);
         texCaps.maxLevelSupported = testMaxLevel();
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
-        texCaps.nonPow2Supported = ExtensionSupported("GL_ARB_texture_non_power_of_two");
+        texCaps.nonPow2Supported = (GLEW_ARB_texture_non_power_of_two == GL_TRUE);
     }
 
     return texCaps;

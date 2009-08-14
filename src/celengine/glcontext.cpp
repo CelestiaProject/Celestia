@@ -9,9 +9,8 @@
 
 #include <algorithm>
 #include <celutil/debug.h>
-#include "gl.h"
-#include "glext.h"
 #include "glcontext.h"
+#include <GL/glew.h>
 
 using namespace std;
 
@@ -70,13 +69,6 @@ void GLContext::init(const vector<string>& ignoreExt)
         }
     }
 
-    // Initialize all extensions used
-    for (vector<string>::const_iterator iter = extensions.begin();
-         iter != extensions.end(); iter++)
-    {
-        InitExtension(iter->c_str());
-    }
-
     if (GLEW_ARB_multitexture && glActiveTextureARB != NULL)
     {
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,
@@ -105,9 +97,6 @@ void GLContext::init(const vector<string>& ignoreExt)
             fpNV = fp::initNV();
         fragmentProc = fpNV;
     }
-
-    // Initialize GLX_SGI_video_sync blindly. At most, it will be null.
-    InitExtension("GLX_SGI_video_sync");
 }
 
 
