@@ -10,7 +10,6 @@
 #include <iostream>
 #include "glshader.h"
 #include "gl.h"
-#include "glext.h"
 
 using namespace std;
 

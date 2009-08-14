@@ -14,8 +14,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 
 class GLShaderLoader;
 

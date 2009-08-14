@@ -27,10 +27,7 @@
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
 #include <celutil/util.h>
-#include "gl.h"
 #include "astro.h"
-#include "glext.h"
-#include "vecgl.h"
 #include "glshader.h"
 #include "shadermanager.h"
 #include "spheremesh.h"
@@ -43,6 +40,8 @@
 #include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
+#include <GL/glew.h>
+#include "vecgl.h"
 
 using namespace Eigen;
 using namespace std;

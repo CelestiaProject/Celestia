@@ -14,6 +14,8 @@
 #ifndef QTGLWIDGET_H
 #define QTGLWIDGET_H
 
+#include <GL/glew.h>
+
 #include <QGLWidget>
 
 #include "celestia/celestiacore.h"

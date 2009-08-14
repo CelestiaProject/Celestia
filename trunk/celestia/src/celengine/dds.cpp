@@ -12,9 +12,8 @@
 #include <algorithm>
 #include <celutil/debug.h>
 #include <celutil/bytes.h>
-#include <celengine/gl.h>
-#include <celengine/glext.h>
 #include <celengine/image.h>
+#include <GL/glew.h>
 
 using namespace std;
 
@@ -188,7 +187,7 @@ Image* LoadDDSImage(const string& filename)
         format == GL_COMPRESSED_RGBA_S3TC_DXT3_EXT ||
         format == GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
     {
-        if (!ExtensionSupported("GL_EXT_texture_compression_s3tc"))
+        if (!GLEW_EXT_texture_compression_s3tc)
             return NULL;
     }
 

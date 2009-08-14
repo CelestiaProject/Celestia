@@ -2489,7 +2489,7 @@ void CelestiaCore::draw()
         glViewport(0, 0, width, height);
     }
 
-    bool toggleAA = glIsEnabled(GL_MULTISAMPLE_ARB);
+    GLboolean toggleAA = glIsEnabled(GL_MULTISAMPLE_ARB);
     if (toggleAA && (renderer->getRenderFlags() & Renderer::ShowCloudMaps))
         glDisable(GL_MULTISAMPLE_ARB);
 

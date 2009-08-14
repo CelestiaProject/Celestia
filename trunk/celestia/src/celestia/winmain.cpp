@@ -37,8 +37,7 @@
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 
-#include "../celengine/gl.h"
-#include "../celengine/glext.h"
+#include <GL/glew.h>
 #include "celestiacore.h"
 #include "imagecapture.h"
 #include "avicapture.h"
