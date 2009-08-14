@@ -124,7 +124,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
         Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
         {
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
             nTextures++;
 
@@ -134,7 +134,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
                             GL_CLAMP_TO_BORDER_ARB);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
 
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
@@ -186,9 +186,9 @@ void renderSphere_GLSL(const RenderInfo& ri,
             {
                 shadprop.texUsage |= ShaderProperties::CloudShadowTexture;
                 textures[nTextures++] = cloudTex;
-                glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+                glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
                 cloudTex->bind();
-                glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+                glActiveTextureARB(GL_TEXTURE0_ARB);
             }
         }
     }
@@ -256,7 +256,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
                         frustum, ri.pixWidth,
                         textures[0], textures[1], textures[2], textures[3]);
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -307,7 +307,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         geometry->render(rc, tsec);
     }
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -347,7 +347,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
         geometry->render(rc, tsec);
     }
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -395,7 +395,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
         Texture* ringsTex = rings->texture.find(textureRes);
         if (ringsTex != NULL)
         {
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
             ringsTex->bind();
             nTextures++;
 
@@ -405,7 +405,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
                             GL_CLAMP_TO_BORDER_ARB);
-            glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
 
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
@@ -476,7 +476,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     prog->textureOffset = 0.0f;
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }
 
 
@@ -545,9 +545,9 @@ renderAtmosphere_GLSL(const RenderInfo& ri,
     glPopMatrix();
 
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 
-    //glx::glActiveTextureARB(GL_TEXTURE0_ARB);
+    //glActiveTextureARB(GL_TEXTURE0_ARB);
     //glEnable(GL_TEXTURE_2D);
 }
 
@@ -694,5 +694,5 @@ void renderRings_GLSL(RingSystem& rings,
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glx::glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
 }

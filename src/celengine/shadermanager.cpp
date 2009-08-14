@@ -2238,13 +2238,13 @@ ShaderManager::buildProgram(const ShaderProperties& props)
             {
                 // Tangents always in attribute 6 (should be a constant
                 // someplace)
-                glx::glBindAttribLocationARB(prog->getID(), 6, "tangent");
+                glBindAttribLocationARB(prog->getID(), 6, "tangent");
             }
 
             if (props.texUsage & ShaderProperties::PointSprite)
             {
                 // Point size is always in attribute 7
-                glx::glBindAttribLocationARB(prog->getID(), 7, "pointSize");
+                glBindAttribLocationARB(prog->getID(), 7, "pointSize");
             }
 
             status = prog->link();
@@ -2414,58 +2414,58 @@ CelestiaGLProgram::initSamplers()
 
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "diffTex");
+        int slot = glGetUniformLocationARB(program->getID(), "diffTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::NormalTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "normTex");
+        int slot = glGetUniformLocationARB(program->getID(), "normTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::SpecularTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "specTex");
+        int slot = glGetUniformLocationARB(program->getID(), "specTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::NightTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "nightTex");
+        int slot = glGetUniformLocationARB(program->getID(), "nightTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::EmissiveTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "emissiveTex");
+        int slot = glGetUniformLocationARB(program->getID(), "emissiveTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "overlayTex");
+        int slot = glGetUniformLocationARB(program->getID(), "overlayTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::RingShadowTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "ringTex");
+        int slot = glGetUniformLocationARB(program->getID(), "ringTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 
     if (props.texUsage & ShaderProperties::CloudShadowTexture)
     {
-        int slot = glx::glGetUniformLocationARB(program->getID(), "cloudShadowTex");
+        int slot = glGetUniformLocationARB(program->getID(), "cloudShadowTex");
         if (slot != -1)
-            glx::glUniform1iARB(slot, nSamplers++);
+            glUniform1iARB(slot, nSamplers++);
     }
 }
 

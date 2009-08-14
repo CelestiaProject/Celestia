@@ -272,7 +272,7 @@ static void LoadMipmapSet(Image& img, GLenum target)
 
         if (img.isCompressed())
         {
-            glx::glCompressedTexImage2DARB(target,
+            glCompressedTexImage2DARB(target,
                                            mip,
                                            internalFormat,
                                            mipWidth, mipHeight,
@@ -302,7 +302,7 @@ static void LoadMiplessTexture(Image& img, GLenum target)
 
     if (img.isCompressed())
     {
-        glx::glCompressedTexImage2DARB(target,
+        glCompressedTexImage2DARB(target,
                                        0,
                                        internalFormat,
                                        img.getWidth(), img.getHeight(),

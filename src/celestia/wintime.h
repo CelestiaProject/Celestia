@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 
 #include "celestiacore.h"
+#include <windows.h>
 
 
 void ShowSetTimeDialog(HINSTANCE appInstance, HWND appWindow, CelestiaCore* appCore);
