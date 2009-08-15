@@ -12,7 +12,7 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_object.h"
-#include <celengine/gl.h>
+#include <GL/glew.h>
 
 
 // ==================== OpenGL ====================

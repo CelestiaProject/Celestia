@@ -15,7 +15,7 @@
 #include <celmath/intersect.h>
 #include "planetgrid.h"
 #include "body.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 #include <Eigen/Core>

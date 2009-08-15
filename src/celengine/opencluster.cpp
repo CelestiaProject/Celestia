@@ -16,7 +16,7 @@
 #include "astro.h"
 #include "opencluster.h"
 #include "meshmanager.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 

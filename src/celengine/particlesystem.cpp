@@ -16,7 +16,7 @@
 #include <fstream>
 #include <limits>
 #include "particlesystem.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "rendcontext.h"
 #include "texmanager.h"

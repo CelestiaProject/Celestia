@@ -13,7 +13,7 @@
 #include <cassert>
 #include <algorithm>
 #include "celutil/utf8.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "console.h"
 

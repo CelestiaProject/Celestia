@@ -16,7 +16,7 @@
 #include "visibleregion.h"
 #include "body.h"
 #include "selection.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 #include <celmath/geomutil.h>

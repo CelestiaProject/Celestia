@@ -64,7 +64,7 @@
 #include <cmath>
 #include <celutil/debug.h>
 #include <celutil/util.h>
-#include "../celengine/gl.h"
+#include <GL/glew.h>
 #include <string>
 #include <cstring>
 #include "theora/theora.h"
