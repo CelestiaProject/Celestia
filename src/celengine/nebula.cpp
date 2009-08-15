@@ -17,8 +17,7 @@
 #include "nebula.h"
 #include "meshmanager.h"
 #include "rendcontext.h"
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 

@@ -56,8 +56,6 @@
 //#include "qtvideocapturedialog.h"
 #include "celestia/scriptmenu.h"
 #include "celestia/url.h"
-#include "celengine/gl.h"
-#include "celengine/glext.h"
 #include "qtbookmark.h"
 
 #ifdef _WIN32
@@ -67,7 +65,6 @@
 using namespace std;
 
 
-const QGLContext* glctx = NULL;
 QString DEFAULT_CONFIG_FILE = "celestia.cfg";
 QString BOOKMARKS_FILE = "bookmarks.xbel";
 
@@ -229,7 +226,15 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
 	}
 
     glWidget = new CelestiaGlWidget(NULL, "Celestia", m_appCore);
-    glctx = glWidget->context();
+    glWidget->makeCurrent();
+
+    GLenum glewErr = glewInit();
+    if (glewErr != GLEW_OK)
+    {
+        QMessageBox::critical(0, "Celestia",
+                              tr("Celestia was unable to initialize OpenGL extensions (error %1). Graphics quality will be reduced.").arg(glewErr));
+    }
+
     m_appCore->setCursorHandler(glWidget);
     m_appCore->setContextMenuCallback(ContextMenu);
     MainWindowInstance = this; // TODO: Fix context menu callback

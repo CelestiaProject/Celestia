@@ -58,8 +58,7 @@ extern "C" {
 #include <celutil/debug.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
-#include "gl.h"
-#include "glext.h"
+#include <GL/glew.h>
 #include "celestia.h"
 
 #include <cassert>

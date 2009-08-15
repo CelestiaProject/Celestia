@@ -116,7 +116,6 @@ ENGINE_SOURCES = \
     celengine/galaxy.cpp \
     celengine/globular.cpp \
     celengine/glcontext.cpp \
-    celengine/glext.cpp \
     celengine/glshader.cpp \
     celengine/image.cpp \
     celengine/jpleph.cpp \
@@ -204,7 +203,6 @@ ENGINE_HEADERS = \
     celengine/globular.h \
     celengine/gl.h \
     celengine/glcontext.h \
-    celengine/glext.h \
     celengine/glshader.h \
     celengine/image.h \
     celengine/jpleph.h \

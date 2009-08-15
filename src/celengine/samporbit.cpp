@@ -392,7 +392,7 @@ template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
 }
 
 
-template <typename T> void SampledOrbit<T>::sample(double start, double t, int,
+template <typename T> void SampledOrbit<T>::sample(double /* start */, double /* t */, int,
                                                    OrbitSampleProc& proc) const
 {
     for (unsigned int i = 0; i < samples.size(); i++)
@@ -654,7 +654,7 @@ template <typename T> Vector3d SampledOrbitXYZV<T>::computeVelocity(double jd) c
 }
 
 
-template <typename T> void SampledOrbitXYZV<T>::sample(double start, double t, int,
+template <typename T> void SampledOrbitXYZV<T>::sample(double /* start */, double /* t */, int,
                                                        OrbitSampleProc& proc) const
 {
     for (typename vector<SampleXYZV<T> >::const_iterator iter = samples.begin();

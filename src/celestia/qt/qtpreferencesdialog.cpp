@@ -436,7 +436,7 @@ void PreferencesDialog::slotTimeHasChanged()
 }
 
 
-void PreferencesDialog::slotFaintestVisible(int m)
+void PreferencesDialog::slotFaintestVisible(int /* m */)
 {
 #if 0
     char buff[20];
@@ -448,7 +448,7 @@ void PreferencesDialog::slotFaintestVisible(int m)
 }
 
 
-void PreferencesDialog::slotMinFeatureSize(int s)
+void PreferencesDialog::slotMinFeatureSize(int /* s */)
 {
 #if 0
     char buff[20];
@@ -460,7 +460,7 @@ void PreferencesDialog::slotMinFeatureSize(int s)
 }
 
 
-void PreferencesDialog::slotAmbientLightLevel(int l)
+void PreferencesDialog::slotAmbientLightLevel(int /* l */)
 {
 #if 0
     char buff[20];
@@ -472,7 +472,7 @@ void PreferencesDialog::slotAmbientLightLevel(int l)
 }
 
 
-void PreferencesDialog::slotRenderPath(int pathIdx) 
+void PreferencesDialog::slotRenderPath(int /* pathIdx */) 
 {
 #if 0
     int path=0, ipathIdx=0;
@@ -489,7 +489,7 @@ void PreferencesDialog::slotRenderPath(int pathIdx)
 }
 
 
-void PreferencesDialog::slotDistanceToScreen(int dts)
+void PreferencesDialog::slotDistanceToScreen(int /* dts */)
 {
 #if 0
     appCore->setDistanceToScreen(dts * 10);

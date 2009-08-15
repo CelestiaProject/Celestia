@@ -41,9 +41,7 @@ std::ofstream hdrlog;
 
 #include "boundaries.h"
 #include "asterism.h"
-#include "gl.h"
 #include "astro.h"
-#include "glext.h"
 #include "vecgl.h"
 #include "glshader.h"
 #include "shadermanager.h"
@@ -70,6 +68,7 @@ std::ofstream hdrlog;
 #include <celutil/util.h>
 #include <celutil/timer.h>
 #include <curveplot.h>
+#include <GL/glew.h>
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -1072,7 +1071,7 @@ bool Renderer::init(GLContext* _context,
         // shadowTex->setMaxMipMapLevel(3);
         Texture::AddressMode shadowTexAddress = Texture::EdgeClamp;
         Texture::MipMapMode shadowTexMip = Texture::NoMipMaps;
-        useClampToBorder = GLEW_ARB_texture_border_clamp;
+        useClampToBorder = (GLEW_ARB_texture_border_clamp == GL_TRUE);
         if (useClampToBorder)
         {
             shadowTexAddress = Texture::BorderClamp;
@@ -8575,7 +8574,7 @@ void Renderer::addStarOrbitToRenderList(const Star& star,
                 OrbitPathListEntry path;
                 path.star = &star;
                 path.body = NULL;
-                path.centerZ = orbitOrigin.dot(viewMatZ);
+                path.centerZ = (float) orbitOrigin.dot(viewMatZ);
                 path.radius = (float) boundingRadius;
                 path.origin = orbitOrigin;
                 path.opacity = sizeFade(orbitRadiusInPixels, minOrbitSize, 2.0f);

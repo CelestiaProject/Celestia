@@ -9,9 +9,7 @@
 
 #include <cmath>
 
-#include "../celengine/gl.h"
-#include "../celengine/glext.h"
-
+#include <GL/glew.h>
 #include <windowsx.h>
 #include <celutil/debug.h>
 #include "avicapture.h"

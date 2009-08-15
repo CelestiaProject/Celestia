@@ -16,8 +16,6 @@
  ***************************************************************************/
 
 #include <cassert>
-#include <celengine/gl.h>
-//#include <celengine/glext.h>
 #include <celengine/celestia.h>
 #include <celengine/starbrowser.h>
 #include <qcursor.h>

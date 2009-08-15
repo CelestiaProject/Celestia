@@ -9,9 +9,8 @@
 // of the License, or (at your option) any later version.
 
 #include "celutil/util.h"
-#include "gl.h"
-#include "glext.h"
 #include "shadermanager.h"
+#include <GL/glew.h>
 #include <cmath>
 #include <iostream>
 #include <fstream>
