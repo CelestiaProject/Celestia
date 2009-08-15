@@ -483,10 +483,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\glext.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\globular.cpp"
 					>
 				</File>
@@ -862,10 +858,6 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\glcontext.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\glext.h"
 					>
 				</File>
 				<File

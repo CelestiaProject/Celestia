@@ -636,7 +636,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
                 s += version;
             s += "\r\r\n";
 
-            if (ExtensionSupported("GL_ARB_shading_language_100"))
+            if (GLEW_ARB_shading_language_100)
             {
                 const char* versionString = (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION_ARB);
                 if (versionString != NULL)
@@ -649,7 +649,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
 
             char buf[1024];
             GLint simTextures = 1;
-            if (ExtensionSupported("GL_ARB_multitexture"))
+            if (GLEW_ARB_multitexture)
                 glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
             sprintf(buf, "%s%d\r\r\n",
                     UTF8ToCurrentCP(_("Max simultaneous textures: ")).c_str(),
@@ -663,7 +663,7 @@ BOOL APIENTRY GLInfoProc(HWND hDlg,
                     maxTextureSize);
             s += buf;
 
-            if (ExtensionSupported("GL_EXT_texture_cube_map"))
+            if (GLEW_EXT_texture_cube_map)
             {
                 GLint maxCubeMapSize = 0;
                 glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE_ARB, &maxCubeMapSize);
