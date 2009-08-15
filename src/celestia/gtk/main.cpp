@@ -27,12 +27,13 @@
 #include <unistd.h>
 #endif /* WIN32 */
 
+#include <GL/glew.h>
 #include <gtk/gtk.h>
 #include <gtk/gtkgl.h>
 
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
-#include <GL/glew.h>
+
 #include <celengine/glext.h>
 #include <celengine/galaxy.h>
 #include <celengine/simulation.h>
@@ -221,6 +222,8 @@ void GtkWatcher::notifyChange(CelestiaCore*, int property)
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
+	GLenum glewErr = glewInit();
+
 	if (!app->core->initRenderer())
 	{
 		cerr << "Failed to initialize renderer.\n";
