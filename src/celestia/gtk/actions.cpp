@@ -14,6 +14,7 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <GL/glew.h>
 #include <cstring>
 #include <fstream>
 #include <gtk/gtk.h>
@@ -23,7 +24,7 @@
 #endif /* GNOME */
 
 #include <celengine/body.h>
-#include <GL/glew.h>
+
 #include <celengine/simulation.h>
 #include <celengine/cmdparser.h>
 #include <celengine/render.h>
@@ -675,7 +676,7 @@ void actionHelpOpenGL(GtkAction*, AppData* app)
 
 	char buf[100];
 	GLint simTextures = 1;
-	if (ExtensionSupported("GL_ARB_multitexture"))
+	if (glewIsExtensionSupported("GL_ARB_multitexture"))
 		glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
 	sprintf(buf, "Max simultaneous textures: %d\n", simTextures);
 	s += buf;
