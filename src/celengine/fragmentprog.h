@@ -12,7 +12,7 @@
 
 #include <celutil/color.h>
 #include <celutil/util.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
 #include <Eigen/Core>
 
 class FragmentProcessor;

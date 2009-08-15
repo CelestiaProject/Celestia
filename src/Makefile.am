@@ -2,7 +2,7 @@ SUBDIRS = celutil celmath cel3ds celtxf celengine celestia
 
 DEFS = -DHIP_DATA_DIR='"$(HIPDIR)"' @DEFS@
 
-INCLUDES = -I$(top_srcdir)/thirdparty/Eigen
+INCLUDES = -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
 
 dosstuff = winbuild.mak
 buildstardb_SOURCES = buildstardb.cpp

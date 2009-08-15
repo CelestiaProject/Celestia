@@ -22,7 +22,7 @@
 #include "galaxy.h"
 #include <celutil/util.h>
 #include <celutil/debug.h>
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "render.h"
 #include "texture.h"

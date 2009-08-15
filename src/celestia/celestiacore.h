@@ -10,7 +10,6 @@
 #ifndef _CELESTIACORE_H_
 #define _CELESTIACORE_H_
 
-// #include "gl.h"
 #include <celutil/timer.h>
 #include <celutil/watcher.h>
 // #include <celutil/watchable.h>
@@ -22,7 +21,7 @@
 #include <celengine/universe.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
 #include "configfile.h"
 #include "favorites.h"
 #include "destination.h"

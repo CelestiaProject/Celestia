@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "marker.h"
-#include "gl.h"
+#include <GL/glew.h>
 
 
 using namespace std;

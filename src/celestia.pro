@@ -201,7 +201,6 @@ ENGINE_HEADERS = \
     celengine/frametree.h \
     celengine/galaxy.h \
     celengine/globular.h \
-    celengine/gl.h \
     celengine/glcontext.h \
     celengine/glshader.h \
     celengine/image.h \

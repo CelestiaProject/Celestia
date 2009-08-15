@@ -19,8 +19,6 @@
 #include <kaccel.h>
 
 #include <unistd.h>
-#include <celengine/gl.h>
-//#include <celengine/glext.h>
 #include <celengine/celestia.h>
 #include <celengine/starbrowser.h>
 #include <kmainwindow.h>

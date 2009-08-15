@@ -23,7 +23,7 @@
 #include <cstring>
 #include <cassert>
 #include <ctime>
-#include <celengine/gl.h>
+#include <GL/glew.h>
 #include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <celutil/directory.h>

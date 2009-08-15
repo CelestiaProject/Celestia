@@ -17,7 +17,7 @@
 #include <cstring>
 #include <time.h>
 #include <unistd.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
 #ifndef MACOSX
 #include <GL/glut.h>
 #else

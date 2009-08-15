@@ -32,7 +32,7 @@
 
 #include <celengine/astro.h>
 #include <celengine/celestia.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
 #include <celengine/glext.h>
 #include <celengine/galaxy.h>
 #include <celengine/simulation.h>

@@ -43,7 +43,6 @@ libcelengine_a_SOURCES = \
 	frametree.cpp \
 	galaxy.cpp \
 	glcontext.cpp \
-	glext.cpp \
 	globular.cpp \
 	glshader.cpp \
 	image.cpp \
