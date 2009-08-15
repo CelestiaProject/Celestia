@@ -693,7 +693,8 @@ static int observer_setspeed(lua_State* l)
     Observer* obs = this_observer(l);
     
     double speed = celx.safeGetNumber(2, AllErrors, "First argument to observer:setspeed must be a number");
-    obs->setTargetSpeed((float)speed);
+    obs->setTargetSpeed((float) astro::microLightYearsToKilometers(speed));
+
     return 0;
 }
 
@@ -704,7 +705,8 @@ static int observer_getspeed(lua_State* l)
     
     Observer* obs = this_observer(l);
     
-    lua_pushnumber(l, (lua_Number)obs->getTargetSpeed());
+    lua_pushnumber(l, (lua_Number) astro::kilometersToMicroLightYears(obs->getTargetSpeed()));
+
     return 1;
 }
 
