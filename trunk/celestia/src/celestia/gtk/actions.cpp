@@ -23,8 +23,7 @@
 #endif /* GNOME */
 
 #include <celengine/body.h>
-#include <celengine/gl.h>
-#include <celengine/glext.h>
+#include <GL/glew.h>
 #include <celengine/simulation.h>
 #include <celengine/cmdparser.h>
 #include <celengine/render.h>

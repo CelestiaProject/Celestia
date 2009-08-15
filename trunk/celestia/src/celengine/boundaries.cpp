@@ -11,7 +11,7 @@
 #include <cassert>
 #include "boundaries.h"
 #include "astro.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 
 using namespace Eigen;

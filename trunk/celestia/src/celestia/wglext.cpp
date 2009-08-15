@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celengine/gl.h"
+#include <GL/glew.h>
 //#define WGL_WGLEXT_PROTOTYPES 1
 #include "wglext.h"
 #include <windows.h>

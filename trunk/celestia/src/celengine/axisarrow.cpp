@@ -10,7 +10,7 @@
 
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include "gl.h"
+#include <GL/glew.h>
 #include "vecgl.h"
 #include "axisarrow.h"
 #include "selection.h"

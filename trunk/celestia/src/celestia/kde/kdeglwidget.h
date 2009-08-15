@@ -18,6 +18,7 @@
 #ifndef KDEGLWIDGET_H
 #define KDEGLWIDGET_H
 
+#include <GL/glew.h>
 #include <qgl.h>
 #include <qevent.h>
 #include <kaction.h>
@@ -27,6 +28,7 @@
 #include <celengine/starbrowser.h>
 #include <string>
 #include <vector>
+
 
 /**
   *@author Christophe Teyssier

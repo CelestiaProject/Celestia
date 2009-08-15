@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 
+#include <GL/glew.h>
 #include <libintl.h>
 #include <fstream>
 #include <sstream>
@@ -87,8 +88,6 @@
 #include "videocapturedlg.h"
 #endif
 
-#include "celengine/glext.h"
-
 #define MENUMAXSIZE 100
 
 using namespace Eigen;
@@ -109,6 +108,7 @@ static uint32 FilterOtherLocations = ~(Location::City |
 
 KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> extrasDirs, bool fullscreen, bool disableSplash) : KMainWindow(0, 0)
 {
+
 #if KDE_VERSION >= 0x030200
     CelSplashScreen *splash = NULL;
     if (!disableSplash) {
@@ -202,6 +202,20 @@ KdeApp::KdeApp(std::string config, std::string dir, std::vector<std::string> ext
         delete splash;
     }
 #endif
+
+
+glWidget->makeCurrent();
+
+
+GLenum glewErr = glewInit();
+   { 
+     if (GLEW_OK != glewErr)
+
+    {
+        KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("Celestia was unable to initialize OpenGL extensions (error %1). Graphics quality will be reduced."));
+    }
+}
+
 
     // We use a timer with a null timeout value
     // to add appCore->tick to Qt's event loop
@@ -970,7 +984,7 @@ QString KdeApp::getOpenGLInfo() {
 
     char buf[100];
     GLint simTextures = 1;
-    if (ExtensionSupported("GL_ARB_multitexture"))
+    if (glewIsExtensionSupported("GL_ARB_multitexture"))
         glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &simTextures);
     sprintf(buf, "%s%d\n", _("Max simultaneous textures: "), simTextures);
     s += buf;

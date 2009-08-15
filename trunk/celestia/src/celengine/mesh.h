@@ -16,7 +16,7 @@
 #include <celmath/ray.h>
 #include <vector>
 #include <string>
-#include "gl.h"
+#include <GL/glew.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

@@ -11,7 +11,7 @@
 #define _VERTEXPROG_H_
 
 #include <celutil/color.h>
-#include <celengine/gl.h>
+#include <GL/glew.h>
 #include <Eigen/Core>
 
 class VertexProcessor;

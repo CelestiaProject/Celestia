@@ -17,7 +17,7 @@
 #include "celutil/directory.h"
 #include "celutil/filetype.h"
 #include "virtualtex.h"
-#include "gl.h"
+#include <GL/glew.h>
 #include "parser.h"
 
 using namespace std;

@@ -9,7 +9,7 @@
 
 #include <cstdio>
 #include <celutil/debug.h>
-#include "../celengine/gl.h"
+#include <GL/glew.h>
 #include <celengine/celestia.h>
 #include "imagecapture.h"
 
