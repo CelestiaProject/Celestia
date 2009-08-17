@@ -92,6 +92,7 @@ void Overlay::endText()
     if (textBlock > 0)
     {
         textBlock--;
+		xoffset = 0.0f;
         glPopMatrix();
     }
 }
