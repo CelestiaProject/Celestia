@@ -222,7 +222,7 @@ void GtkWatcher::notifyChange(CelestiaCore*, int property)
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
-	GLenum glewErr = glewInit();
+	glewInit();
 
 	if (!app->core->initRenderer())
 	{
