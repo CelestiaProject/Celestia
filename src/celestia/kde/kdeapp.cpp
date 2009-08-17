@@ -212,7 +212,7 @@ GLenum glewErr = glewInit();
      if (GLEW_OK != glewErr)
 
     {
-        KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("Celestia was unable to initialize OpenGL extensions (error %1). Graphics quality will be reduced."));
+        KMessageBox::queuedMessageBox(this, KMessageBox::Information, i18n("Celestia was unable to initialize OpenGL extensions. Graphics quality will be reduced. Only Basic render path will be available"));
     }
 }
 
