@@ -98,6 +98,7 @@ struct TextureCaps
     bool maxLevelSupported;
     GLint maxTextureSize;
     bool nonPow2Supported;
+    GLint preferredAnisotropy;
 };
 
 static TextureCaps texCaps;
@@ -143,6 +144,17 @@ static const TextureCaps& GetTextureCaps()
         texCaps.maxLevelSupported = testMaxLevel();
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texCaps.maxTextureSize);
         texCaps.nonPow2Supported = (GLEW_ARB_texture_non_power_of_two == GL_TRUE);
+
+        texCaps.preferredAnisotropy = 1;
+        if (GLEW_EXT_texture_filter_anisotropic)
+        {
+            GLint maxAnisotropy = 1;
+            glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+
+            // Cap the preferred level texture anisotropy to 8; eventually, we should allow
+            // the user to control this.
+            texCaps.preferredAnisotropy = min(8, maxAnisotropy);
+        }
     }
 
     return texCaps;
@@ -444,6 +456,11 @@ ImageTexture::ImageTexture(Image& img,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
+    if (GLEW_EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
+    }
+    
     if (mipMapMode == AutoMipMaps)
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 
@@ -576,6 +593,10 @@ TiledTexture::TiledTexture(Image& img,
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+            if (GLEW_EXT_texture_filter_anisotropic && texCaps.preferredAnisotropy > 1)
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texCaps.preferredAnisotropy);
+            }
 
             // Copy texels from the subtexture area to the pixel buffer.  This
             // is straightforward for normal textures, but an immense headache
