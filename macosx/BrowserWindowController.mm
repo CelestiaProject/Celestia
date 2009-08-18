@@ -7,6 +7,9 @@
 //  Modifications Copyright (c) 2004 Hank Ramsey. All rights reserved.
 //
 
+// Prevent GLEW from being included.
+#define __glew_h__
+
 #import "BrowserWindowController.h"
 #import "BrowserItem.h"
 #import "NSString_ObjCPlusPlus.h"

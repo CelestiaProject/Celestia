@@ -6,6 +6,9 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
+// Prevent GLEW from being included.
+#define __glew_h__
+
 #import "CelestiaSimulation.h"
 #import "CelestiaSimulation_PrivateAPI.h"
 #import "CelestiaUniversalCoord_PrivateAPI.h"

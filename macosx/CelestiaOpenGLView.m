@@ -22,6 +22,7 @@
 #define CEL_MIDDLE_BUTTON 2
 #define CEL_RIGHT_BUTTON 4
 
+extern int glewInit();
 
 @implementation CelestiaOpenGLView
 
@@ -69,6 +70,8 @@
             return nil;
         }
     }
+    
+    glewInit();
 
     return self;
 }
