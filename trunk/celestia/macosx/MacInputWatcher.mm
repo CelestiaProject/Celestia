@@ -6,6 +6,9 @@
 //  Copyright 2007 Da Woon Jung. All rights reserved.
 //
 
+// Prevent GLEW from being included.
+#define __glew_h__
+
 #import "MacInputWatcher.h"
 #import "CelestiaAppCore.h"
 #import "CelestiaController.h"

@@ -6,6 +6,9 @@
 //  Copyright (C) 2001-9, the Celestia Development Team
 //
 
+// Prevent GLEW from being included.
+#define __glew_h__
+
 #import "Astro.h"
 #import "Observer.h"
 #import "CelestiaUniversalCoord_PrivateAPI.h"

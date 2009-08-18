@@ -6,6 +6,9 @@
 //  Copyright (c) 2002 Chris Laurel. All rights reserved.
 //
 
+// Prevent GLEW from being included.
+#define __glew_h__
+
 #import "CelestiaStar.h"
 #import "CelestiaStar_PrivateAPI.h"
 #import "CelestiaVector_PrivateAPI.h"

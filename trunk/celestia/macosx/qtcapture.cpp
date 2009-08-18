@@ -8,12 +8,9 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
-
-#include "../src/celengine/gl.h"
-#include "../src/celengine/glext.h"
-
 #include <celutil/debug.h>
 #include "qtcapture.h"
+#include <GL/glew.h>
 
 using namespace std;
 
