@@ -222,7 +222,20 @@ void GtkWatcher::notifyChange(CelestiaCore*, int property)
  *           that require the glArea to be set up. */
 static void initRealize(GtkWidget* widget, AppData* app)
 {
-	glewInit();
+	GLenum glewErr = glewInit();
+	   { 
+	     if (GLEW_OK != glewErr)
+		{
+		GtkWidget *message;
+			message = gtk_message_dialog_new(GTK_WINDOW(app->mainWindow),
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_MESSAGE_ERROR,
+			GTK_BUTTONS_CLOSE,
+			"Celestia was unable to initialize OpenGL extensions. Graphics quality will be reduced. Only Basic render path will be available.");
+		gtk_dialog_run(GTK_DIALOG(message));
+		gtk_widget_destroy(message);
+		}
+	}
 
 	if (!app->core->initRenderer())
 	{
