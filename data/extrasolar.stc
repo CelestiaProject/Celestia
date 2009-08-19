@@ -384,6 +384,15 @@
 	AppMag 11.29
 }
 
+"WASP-17"
+{
+	RA 239.962083
+	Dec -28.061667
+	Distance 1240 # from spectral class and magnitude
+	SpectralType "F6"
+	AppMag 11.6
+}
+
 # CoRoT survey
 
 "CoRoT-1"
