@@ -35,6 +35,7 @@
 		8844CBC40D80DB020059AA3A /* nutation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC00D80DB020059AA3A /* nutation.cpp */; };
 		8844CBC60D80DB020059AA3A /* precession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CBC20D80DB020059AA3A /* precession.cpp */; };
 		8844CF0B0D931D4E0059AA3A /* planetgrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8844CF080D931D4E0059AA3A /* planetgrid.cpp */; };
+		88638DE6103B6F9100D2E16F /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = 88638DE5103B6F9100D2E16F /* glew.c */; };
 		886544290DAC3CC4007C8027 /* visibleregion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 886544270DAC3CC4007C8027 /* visibleregion.cpp */; };
 		88654A170DB29585007C8027 /* celx_celestia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A040DB29585007C8027 /* celx_celestia.cpp */; };
 		88654A190DB29585007C8027 /* celx_frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88654A060DB29585007C8027 /* celx_frame.cpp */; };
@@ -102,7 +103,6 @@
 		E56430DC07769C9000E2C4A3 /* dispmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F51C6DBF02959A17014901DC /* dispmap.cpp */; };
 		E56430DD07769C9000E2C4A3 /* execution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F51C6DC002959A17014901DC /* execution.cpp */; };
 		E56430DE07769C9000E2C4A3 /* galaxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F51C6DC102959A17014901DC /* galaxy.cpp */; };
-		E56430DF07769C9000E2C4A3 /* glext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F51C6DC202959A17014901DC /* glext.cpp */; };
 		E56430E007769C9000E2C4A3 /* meshmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F51C6DC402959A17014901DC /* meshmanager.cpp */; };
 		E56430E107769C9000E2C4A3 /* multitexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F51C6DC502959A17014901DC /* multitexture.cpp */; };
 		E56430E207769C9000E2C4A3 /* observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F51C6DC602959A17014901DC /* observer.cpp */; };
@@ -518,6 +518,7 @@
 		8844CF080D931D4E0059AA3A /* planetgrid.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = planetgrid.cpp; path = ../src/celengine/planetgrid.cpp; sourceTree = SOURCE_ROOT; };
 		8844CF090D931D4E0059AA3A /* planetgrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = planetgrid.h; path = ../src/celengine/planetgrid.h; sourceTree = SOURCE_ROOT; };
 		8844CF0A0D931D4E0059AA3A /* referencemark.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = referencemark.h; path = ../src/celengine/referencemark.h; sourceTree = SOURCE_ROOT; };
+		88638DE5103B6F9100D2E16F /* glew.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glew.c; path = ../thirdparty/glew/src/glew.c; sourceTree = SOURCE_ROOT; };
 		886544270DAC3CC4007C8027 /* visibleregion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = visibleregion.cpp; path = ../src/celengine/visibleregion.cpp; sourceTree = SOURCE_ROOT; };
 		886544280DAC3CC4007C8027 /* visibleregion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = visibleregion.h; path = ../src/celengine/visibleregion.h; sourceTree = SOURCE_ROOT; };
 		88654A040DB29585007C8027 /* celx_celestia.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = celx_celestia.cpp; path = ../src/celestia/celx_celestia.cpp; sourceTree = SOURCE_ROOT; };
@@ -848,7 +849,6 @@
 		F51C6DBF02959A17014901DC /* dispmap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dispmap.cpp; path = ../src/celengine/dispmap.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6DC002959A17014901DC /* execution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = execution.cpp; path = ../src/celengine/execution.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6DC102959A17014901DC /* galaxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = galaxy.cpp; path = ../src/celengine/galaxy.cpp; sourceTree = SOURCE_ROOT; };
-		F51C6DC202959A17014901DC /* glext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = glext.cpp; path = ../src/celengine/glext.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6DC302959A17014901DC /* lodspheremesh.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = lodspheremesh.cpp; path = ../src/celengine/lodspheremesh.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6DC402959A17014901DC /* meshmanager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = meshmanager.cpp; path = ../src/celengine/meshmanager.cpp; sourceTree = SOURCE_ROOT; };
 		F51C6DC502959A17014901DC /* multitexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = multitexture.cpp; path = ../src/celengine/multitexture.cpp; sourceTree = SOURCE_ROOT; };
@@ -891,8 +891,6 @@
 		F51C6DEC02959A17014901DC /* execenv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = execenv.h; path = ../src/celengine/execenv.h; sourceTree = SOURCE_ROOT; };
 		F51C6DED02959A17014901DC /* execution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = execution.h; path = ../src/celengine/execution.h; sourceTree = SOURCE_ROOT; };
 		F51C6DEE02959A17014901DC /* galaxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = galaxy.h; path = ../src/celengine/galaxy.h; sourceTree = SOURCE_ROOT; };
-		F51C6DEF02959A17014901DC /* gl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gl.h; path = ../src/celengine/gl.h; sourceTree = SOURCE_ROOT; };
-		F51C6DF002959A17014901DC /* glext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = glext.h; path = ../src/celengine/glext.h; sourceTree = SOURCE_ROOT; };
 		F51C6DF102959A17014901DC /* lodspheremesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lodspheremesh.h; path = ../src/celengine/lodspheremesh.h; sourceTree = SOURCE_ROOT; };
 		F51C6DF202959A17014901DC /* mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mesh.h; path = ../src/celengine/mesh.h; sourceTree = SOURCE_ROOT; };
 		F51C6DF302959A17014901DC /* meshmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = meshmanager.h; path = ../src/celengine/meshmanager.h; sourceTree = SOURCE_ROOT; };
@@ -1160,6 +1158,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				88638DE4103B6F5D00D2E16F /* GLEW */,
 				881D522D102BCABB00817991 /* curveplot */,
 				CE52031E0F4FA1CD007D0DE8 /* Spice */,
 				CE52031F0F4FA1EF007D0DE8 /* Lua */,
@@ -1212,6 +1211,14 @@
 				881D522E102BCB0000817991 /* curveplot.cpp */,
 			);
 			name = curveplot;
+			sourceTree = "<group>";
+		};
+		88638DE4103B6F5D00D2E16F /* GLEW */ = {
+			isa = PBXGroup;
+			children = (
+				88638DE5103B6F9100D2E16F /* glew.c */,
+			);
+			name = GLEW;
 			sourceTree = "<group>";
 		};
 		CE52031E0F4FA1CD007D0DE8 /* Spice */ = {
@@ -1596,7 +1603,6 @@
 				F51C6DBF02959A17014901DC /* dispmap.cpp */,
 				F51C6DC002959A17014901DC /* execution.cpp */,
 				F51C6DC102959A17014901DC /* galaxy.cpp */,
-				F51C6DC202959A17014901DC /* glext.cpp */,
 				F51C6DC302959A17014901DC /* lodspheremesh.cpp */,
 				F51C6DC402959A17014901DC /* meshmanager.cpp */,
 				F51C6DC502959A17014901DC /* multitexture.cpp */,
@@ -1646,8 +1652,6 @@
 				F51C6DEC02959A17014901DC /* execenv.h */,
 				F51C6DED02959A17014901DC /* execution.h */,
 				F51C6DEE02959A17014901DC /* galaxy.h */,
-				F51C6DEF02959A17014901DC /* gl.h */,
-				F51C6DF002959A17014901DC /* glext.h */,
 				F51C6DF102959A17014901DC /* lodspheremesh.h */,
 				F51C6DF202959A17014901DC /* mesh.h */,
 				F51C6DF302959A17014901DC /* meshmanager.h */,
@@ -2015,7 +2019,6 @@
 				E56430DC07769C9000E2C4A3 /* dispmap.cpp in Sources */,
 				E56430DD07769C9000E2C4A3 /* execution.cpp in Sources */,
 				E56430DE07769C9000E2C4A3 /* galaxy.cpp in Sources */,
-				E56430DF07769C9000E2C4A3 /* glext.cpp in Sources */,
 				E56430E007769C9000E2C4A3 /* meshmanager.cpp in Sources */,
 				E56430E107769C9000E2C4A3 /* multitexture.cpp in Sources */,
 				E56430E207769C9000E2C4A3 /* observer.cpp in Sources */,
@@ -2153,6 +2156,7 @@
 				CE5203040F4F9DD0007D0DE8 /* spiceorbit.cpp in Sources */,
 				CE5203050F4F9DD0007D0DE8 /* spicerotation.cpp in Sources */,
 				881D522F102BCB0000817991 /* curveplot.cpp in Sources */,
+				88638DE6103B6F9100D2E16F /* glew.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2355,6 +2359,8 @@
 		E50E8708097436A4006687D3 /* Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					PNG_SUPPORT,
@@ -2362,11 +2368,14 @@
 					LUA_USE_MACOSX,
 					"LUA_VER=0x050100",
 					USE_SPICE,
+					EIGEN_NO_DEBUG,
+					GLEW_STATIC,
 				);
+				GCC_VERSION = 4.2;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Universal_Release;
@@ -2413,6 +2422,8 @@
 		E532F41E0933316100D7D5B3 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					PNG_SUPPORT,
@@ -2420,8 +2431,10 @@
 					LUA_USE_MACOSX,
 					"LUA_VER=0x050100",
 					USE_SPICE,
+					GLEW_STATIC,
 				);
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				GCC_VERSION = 4.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Development;
@@ -2586,6 +2599,8 @@
 		E5F9EC6A0D9EA6BE00A83FEF /* HDR_Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					PNG_SUPPORT,
@@ -2595,8 +2610,10 @@
 					USE_SPICE,
 					USE_HDR,
 					HDR_COMPRESS,
+					GLEW_STATIC,
 				);
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				GCC_VERSION = 4.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = HDR_Development;
@@ -2604,6 +2621,8 @@
 		E5F9EC6B0D9EA6BE00A83FEF /* HDR_Universal_Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					PNG_SUPPORT,
@@ -2613,11 +2632,14 @@
 					USE_SPICE,
 					USE_HDR,
 					HDR_COMPRESS,
+					EIGEN_NO_DEBUG,
+					GLEW_STATIC,
 				);
+				GCC_VERSION = 4.2;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = HDR_Universal_Release;
