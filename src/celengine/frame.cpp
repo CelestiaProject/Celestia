@@ -303,6 +303,11 @@ BodyFixedFrame::getOrientation(double tjd) const
         return yrot180 * fixObject.body()->getEclipticToBodyFixed(tjd);
     case Selection::Type_Star:
         return yrot180 * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
+    case Selection::Type_Location:
+        if (fixObject.location()->getParentBody())
+            return yrot180 * fixObject.location()->getParentBody()->getEclipticToBodyFixed(tjd);
+        else
+            return yrot180;
     default:
         return yrot180;
     }
@@ -318,7 +323,12 @@ BodyFixedFrame::getAngularVelocity(double tjd) const
         return fixObject.body()->getAngularVelocity(tjd);
 	case Selection::Type_Star:
         return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
-	default:
+    case Selection::Type_Location:
+        if (fixObject.location()->getParentBody())
+            return fixObject.location()->getParentBody()->getAngularVelocity(tjd);
+        else
+            return Vector3d::Zero();
+    default:
         return Vector3d::Zero();
 	}
 }
