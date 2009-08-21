@@ -6,9 +6,6 @@
 //  Copyright 2006 Chris Laurel. All rights reserved.
 //
 
-// Prevent GLEW from being included.
-#define __glew_h__
-
 #import "CelestiaDSO.h"
 #import "CelestiaAppCore.h"
 #import "CelestiaAppCore_PrivateAPI.h"

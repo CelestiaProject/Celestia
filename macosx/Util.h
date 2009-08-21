@@ -16,6 +16,7 @@
 #include <TargetConditionals.h>
 
 #ifdef __OBJC__
+# include "GL/glew.h"
 # import <Cocoa/Cocoa.h>
 # undef DPRINTF
 #endif
