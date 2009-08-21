@@ -853,10 +853,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\gl.h"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\glcontext.h"
 					>
 				</File>
