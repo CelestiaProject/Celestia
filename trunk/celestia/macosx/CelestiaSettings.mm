@@ -6,9 +6,6 @@
 //  Copyright (C) 2001-9, the Celestia Development Team
 //
 
-// Prevent GLEW from being included.
-#define __glew_h__
-
 #import "CelestiaSettings.h"
 #import "NSString_ObjCPlusPlus.h"
 #import "CelestiaController.h"
