@@ -2222,7 +2222,7 @@ static void BuildScriptsMenu(HMENU menuBar, const string& scriptsDir)
 
         for (unsigned int i = 0; i < ScriptMenuItems->size(); i++)
         {
-            AppendMenu(scriptMenu, MF_STRING, ID_FIRST_SCRIPT + i, (*ScriptMenuItems)[i].title.c_str());
+            AppendMenu(scriptMenu, MF_STRING, ID_FIRST_SCRIPT + i, UTF8ToCurrentCP((*ScriptMenuItems)[i].title).c_str());
         }
     }
 }

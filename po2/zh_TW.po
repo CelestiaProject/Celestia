@@ -1,0 +1,373 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Chris Laurel
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2009-08-10 15:50+0800\n"
+"Last-Translator: A.-L. Chen <alchen@tam.gov.tw>\n"
+"Language-Team: zh_TW, Tryneeds in Taiwan <tryneeds@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/constellations.cpp:1
+msgid "Andromeda"
+msgstr "Andromeda 仙女座"
+
+#: data/constellations.cpp:2
+msgid "Antlia"
+msgstr "Antlia 唧筒座"
+
+#: data/constellations.cpp:3
+msgid "Apus"
+msgstr "Apus 天燕座"
+
+#: data/constellations.cpp:4
+msgid "Aquarius"
+msgstr "Aquarius 寶瓶座"
+
+#: data/constellations.cpp:5
+msgid "Aquila"
+msgstr "Aquila 天鷹座"
+
+#: data/constellations.cpp:6
+msgid "Ara"
+msgstr "Ara 天壇座"
+
+#: data/constellations.cpp:7
+msgid "Aries"
+msgstr "Aries 白羊座"
+
+#: data/constellations.cpp:8
+msgid "Auriga"
+msgstr "Auriga 御夫座"
+
+#: data/constellations.cpp:9
+msgid "Boötes"
+msgstr "Boötes 牧夫座"
+
+#: data/constellations.cpp:10
+msgid "Caelum"
+msgstr "Caelum 雕具座"
+
+#: data/constellations.cpp:11
+msgid "Camelopardalis"
+msgstr "Camelopardalis 鹿豹座"
+
+#: data/constellations.cpp:12
+msgid "Cancer"
+msgstr "Cancer 巨蟹座"
+
+#: data/constellations.cpp:13
+msgid "Canes Venatici"
+msgstr "Canes Venatici 獵犬座"
+
+#: data/constellations.cpp:14
+msgid "Canis Major"
+msgstr "Canis Major 大犬座"
+
+#: data/constellations.cpp:15
+msgid "Canis Minor"
+msgstr "Canis Minor 小犬座"
+
+#: data/constellations.cpp:16
+msgid "Capricornus"
+msgstr "Capricornus 摩羯座"
+
+#: data/constellations.cpp:17
+msgid "Carina"
+msgstr "Carina 船底座"
+
+#: data/constellations.cpp:18
+msgid "Cassiopeia"
+msgstr "Cassiopeia 仙后座"
+
+#: data/constellations.cpp:19
+msgid "Centaurus"
+msgstr "Centaurus 半人馬座"
+
+#: data/constellations.cpp:20
+msgid "Cepheus"
+msgstr "Cepheus 仙王座"
+
+#: data/constellations.cpp:21
+msgid "Cetus"
+msgstr "Cetus 鯨魚座"
+
+#: data/constellations.cpp:22
+msgid "Chamaeleon"
+msgstr "Chamaeleon 蝘蜓座"
+
+#: data/constellations.cpp:23
+msgid "Circinus"
+msgstr "Circinus 圓規座"
+
+#: data/constellations.cpp:24
+msgid "Columba"
+msgstr "Columba 天鴿座"
+
+#: data/constellations.cpp:25
+msgid "Coma Berenices"
+msgstr "Coma Berenices 后髮座"
+
+#: data/constellations.cpp:26
+msgid "Corona Australis"
+msgstr "Corona Australis 南冕座"
+
+#: data/constellations.cpp:27
+msgid "Corona Borealis"
+msgstr "Corona Borealis 北冕座"
+
+#: data/constellations.cpp:28
+msgid "Corvus"
+msgstr "Corvus 烏鴉座"
+
+#: data/constellations.cpp:29
+msgid "Crater"
+msgstr "Crater 隕坑"
+
+#: data/constellations.cpp:30
+msgid "Crux"
+msgstr "Crux 南十字座"
+
+#: data/constellations.cpp:31
+msgid "Cygnus"
+msgstr "Cygnus 天鵝座"
+
+#: data/constellations.cpp:32
+msgid "Delphinus"
+msgstr "Delphinus 海豚座"
+
+#: data/constellations.cpp:33
+msgid "Dorado"
+msgstr "Dorado 劍魚座"
+
+#: data/constellations.cpp:34
+msgid "Draco"
+msgstr "Draco 天龍座"
+
+#: data/constellations.cpp:35
+msgid "Equuleus"
+msgstr "Equuleus 小馬座"
+
+#: data/constellations.cpp:36
+msgid "Eridanus"
+msgstr "Eridanus 波江座"
+
+#: data/constellations.cpp:37
+msgid "Fornax"
+msgstr "Fornax 天爐座"
+
+#: data/constellations.cpp:38
+msgid "Gemini"
+msgstr "Gemini 雙子座"
+
+#: data/constellations.cpp:39
+msgid "Grus"
+msgstr "Grus 天鶴座"
+
+#: data/constellations.cpp:40
+msgid "Hercules"
+msgstr "Hercules 武仙座"
+
+#: data/constellations.cpp:41
+msgid "Horologium"
+msgstr "Horologium 時鐘座"
+
+#: data/constellations.cpp:42
+msgid "Hydra"
+msgstr "Hydra 長蛇座"
+
+#: data/constellations.cpp:43
+msgid "Hydrus"
+msgstr "Hydrus 水蛇座"
+
+#: data/constellations.cpp:44
+msgid "Indus"
+msgstr "Indus 印地安座"
+
+#: data/constellations.cpp:45
+msgid "Lacerta"
+msgstr "Lacerta 蝎虎座"
+
+#: data/constellations.cpp:46
+msgid "Leo"
+msgstr "Leo 獅子座"
+
+#: data/constellations.cpp:47
+msgid "Leo Minor"
+msgstr "Leo Minor 小獅座"
+
+#: data/constellations.cpp:48
+msgid "Lepus"
+msgstr "Lepus 天兔座"
+
+#: data/constellations.cpp:49
+msgid "Libra"
+msgstr "Libra 天秤座"
+
+#: data/constellations.cpp:50
+msgid "Lupus"
+msgstr "Lupus 豺狼座"
+
+#: data/constellations.cpp:51
+msgid "Lynx"
+msgstr "Lynx 天貓座"
+
+#: data/constellations.cpp:52
+msgid "Lyra"
+msgstr "Lyra 天琴座"
+
+#: data/constellations.cpp:53
+msgid "Mensa"
+msgstr "Mensa 山案座"
+
+#: data/constellations.cpp:54
+msgid "Microscopium"
+msgstr "Microscopium 顯微鏡座"
+
+#: data/constellations.cpp:55
+msgid "Monoceros"
+msgstr "Monoceros 麒麟座"
+
+#: data/constellations.cpp:56
+msgid "Musca"
+msgstr "Musca 蒼蠅座"
+
+#: data/constellations.cpp:57
+msgid "Norma"
+msgstr "Norma 矩尺座"
+
+#: data/constellations.cpp:58
+msgid "Octans"
+msgstr "Octans 南極座"
+
+#: data/constellations.cpp:59
+msgid "Ophiuchus"
+msgstr "Ophiuchus 蛇夫座"
+
+#: data/constellations.cpp:60
+msgid "Orion"
+msgstr "Orion 獵戶座"
+
+#: data/constellations.cpp:61
+msgid "Pavo"
+msgstr "Pavo 孔雀座"
+
+#: data/constellations.cpp:62
+msgid "Pegasus"
+msgstr "Pegasus 飛馬座"
+
+#: data/constellations.cpp:63
+msgid "Perseus"
+msgstr "Perseus 英仙座"
+
+#: data/constellations.cpp:64
+msgid "Phoenix"
+msgstr "Phoenix 鳳凰座"
+
+#: data/constellations.cpp:65
+msgid "Pictor"
+msgstr "Pictor 繪架座"
+
+#: data/constellations.cpp:66
+msgid "Pisces"
+msgstr "Pisces 雙魚座"
+
+#: data/constellations.cpp:67
+msgid "Piscis Austrinus"
+msgstr "Piscis Austrinus 南魚座"
+
+#: data/constellations.cpp:68
+msgid "Puppis"
+msgstr "Puppis 船尾座"
+
+#: data/constellations.cpp:69
+msgid "Pyxis"
+msgstr "Pyxis 羅盤座"
+
+#: data/constellations.cpp:70
+msgid "Reticulum"
+msgstr "Reticulum 網罟座"
+
+#: data/constellations.cpp:71
+msgid "Sagitta"
+msgstr "Sagitta 天箭座"
+
+#: data/constellations.cpp:72
+msgid "Sagittarius"
+msgstr "Sagittarius 人馬座"
+
+#: data/constellations.cpp:73
+msgid "Scorpius"
+msgstr "Scorpius 天蝎座"
+
+#: data/constellations.cpp:74
+msgid "Sculptor"
+msgstr "Sculptor 玉夫座"
+
+#: data/constellations.cpp:75
+msgid "Scutum"
+msgstr "Scutum 盾牌座"
+
+#: data/constellations.cpp:76
+msgid "Serpens Caput"
+msgstr "Serpens Caput 巨蛇座(頭)"
+
+#: data/constellations.cpp:77
+msgid "Serpens Cauda"
+msgstr "Serpens Cauda 巨蛇座(尾)"
+
+#: data/constellations.cpp:78
+msgid "Sextans"
+msgstr "Sextans 六分儀座"
+
+#: data/constellations.cpp:79
+msgid "Taurus"
+msgstr "Taurus 金牛座"
+
+#: data/constellations.cpp:80
+msgid "Telescopium"
+msgstr "Telescopium 望遠鏡座"
+
+#: data/constellations.cpp:81
+msgid "Triangulum"
+msgstr "Triangulum 三角座"
+
+#: data/constellations.cpp:82
+msgid "Triangulum Australe"
+msgstr "Triangulum Australe 南三角座"
+
+#: data/constellations.cpp:83
+msgid "Tucana"
+msgstr "Tucana 杜鵑座"
+
+#: data/constellations.cpp:84
+msgid "Ursa Major"
+msgstr "Ursa Major 大熊座"
+
+#: data/constellations.cpp:85
+msgid "Ursa Minor"
+msgstr "Ursa Minor 小熊座"
+
+#: data/constellations.cpp:86
+msgid "Vela"
+msgstr "Vela  船帆座"
+
+#: data/constellations.cpp:87
+msgid "Virgo"
+msgstr "Virgo 室女座"
+
+#: data/constellations.cpp:88
+msgid "Volans"
+msgstr "Volans 飛魚座"
+
+#: data/constellations.cpp:89
+msgid "Vulpecula"
+msgstr "Vulpecula 狐狸座"
+
