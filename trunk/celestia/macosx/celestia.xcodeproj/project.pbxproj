@@ -2371,11 +2371,11 @@
 					EIGEN_NO_DEBUG,
 					GLEW_STATIC,
 				);
-				GCC_VERSION = 4.2;
+				GCC_VERSION = 4.0;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Universal_Release;
@@ -2433,8 +2433,8 @@
 					USE_SPICE,
 					GLEW_STATIC,
 				);
-				GCC_VERSION = 4.2;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				GCC_VERSION = 4.0;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Development;
@@ -2612,8 +2612,8 @@
 					HDR_COMPRESS,
 					GLEW_STATIC,
 				);
-				GCC_VERSION = 4.2;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				GCC_VERSION = 4.0;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = HDR_Development;
@@ -2635,11 +2635,11 @@
 					EIGEN_NO_DEBUG,
 					GLEW_STATIC,
 				);
-				GCC_VERSION = 4.2;
+				GCC_VERSION = 4.0;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
 				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = HDR_Universal_Release;
