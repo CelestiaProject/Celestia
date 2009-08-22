@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Celestia-Korean\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2009-04-25 10:06-0000\n"
+"PO-Revision-Date: 2009-06-16 00:46-0000\n"
 "Last-Translator: Jacob Lee and Seung-Bum Lee <jaeuck@gmail.com and blcktgr73@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -1534,7 +1534,7 @@ msgstr "은하 이름 보기"
 
 #: src/celestia/kde/kdeapp.cpp:651
 msgid "Show Globular Labels"
-msgstr "성운 이름 보기"
+msgstr "구상성단 이름 보기"
 
 #: src/celestia/kde/kdeapp.cpp:654
 msgid "Show Nebula Labels"
@@ -1828,7 +1828,7 @@ msgstr "구름"
 #: src/celestia/kde/kdepreferencesdialog.cpp:106
 #: src/celestia/res/resource_strings.cpp:153
 msgid "Cloud Shadows"
-msgstr "식 그림자"
+msgstr "구름 그림자"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:110
 #: src/celestia/res/resource_strings.cpp:156
@@ -1853,7 +1853,7 @@ msgstr "궤도"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:126
 msgid "Partial Trajectories"
-msgstr "커스텀 궤도"
+msgstr "부분 궤적"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:130
 msgid "Smooth Orbit Lines"
@@ -1961,7 +1961,7 @@ msgstr "높음"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:299
 msgid "Automatic FOV"
-msgstr "자동 시야 조정"
+msgstr "자동 시야각 조정"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:300
 msgid "Screen DPI: "
@@ -2650,7 +2650,7 @@ msgstr "스크립트"
 
 #: src/celestia/res/resource_strings.cpp:4
 msgid "Placeholder"
-msgstr "블랙홀"
+msgstr "묶음자"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
