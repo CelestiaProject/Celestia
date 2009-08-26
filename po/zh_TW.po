@@ -1056,7 +1056,7 @@ msgstr "載入："
 #: src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
-msgstr "語言"
+msgstr "zh_TW"
 
 #: src/celestia/winmain.cpp:3270
 #: src/celestia/res/resource_strings.cpp:218

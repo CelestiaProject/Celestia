@@ -1,0 +1,76 @@
+{
+	Name   "Jupiter 木星"
+	Target "Sol/Jupiter"
+	Description "木星是太陽系第五個行星也是最大的行星. 如同外太陽系的行星, 木星是巨型氣體行星, 並沒有堅固的表面. 木星的大氣亂流中有許多風暴, 其中最大最長久的是大紅斑; 這個地球般大小的風暴至少存在 300 年了."
+}
+
+{
+	Name "Pluto and Charon 冥王星與冥衛一"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "冥王星以平均約 60 億公里的距離繞行太陽.  其衛星冥衛一非常大, 以致於兩者曾經被看成是雙行星."
+}
+
+{
+	Name "Eros 愛神星"
+	Target "Sol/Eros"
+	Description "愛神星 (Eros) 是有著馬鈴薯外型的近地小行星, 長度約 33 公里.  感謝尼爾-舒梅克 (NEAR Shoemaker) 太空船, 傳回許多影像與資訊, 讓我們對 Eros 的認識更勝於其他的小行星.  在 2001 年 2 月 14 日, 尼爾-舒梅克 (NEAR Shoemaker) 太空船降落在 Eros 的表面, 成為第一個降落在小行星的太空船."
+}
+
+{
+	Name "Alpha Centauri 半人馬 α 星"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "在地球上看到的半人馬座α星 (Alpha Centauri) 其實是三星系統, 由半人馬座α星A, B及毗鄰星 (Proxima Centauri) 所組成. 毗鄰星是離我們最近的恆星.  半人馬座α星A與我們的太陽很相似, 只不過體積及年紀略大一些. 而 B 星比較暗也比較紅; 毗鄰星非常的暗, 即使它是離我們太陽最近的恆星, 也無法用肉眼看見."
+}
+
+{
+	Name "Pleiades 昴宿星團/七姊妹星團"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "昴宿星團 (Pleiades)是一群形成不久的亮. 昴宿星團 (七姊妹) 是根據希臘神話七姊妹所命名, 但是透過望遠鏡可以看到星團不只有七顆星."
+}
+
+{
+	Name "Hyades 畢宿星團"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "畢宿星團是根據亞特拉斯及埃特拉的五個女兒所命名, 畢宿星團是最著名的疏散星團之一.  據估計, 畢宿星團的星星的年齡約有 6 億 6 千萬--比離太陽系不遠, 又熱又藍的昴宿星團年紀多 6 倍."
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b 是一顆巨大的行星, 繞著紅矮星 Gliese 876 公轉. 它跟另一個行星有著 2:1 的共振軌道."
+}
+
+{
+	Name "Ida and Dactyl 愛達和載克太"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "在 1993 年, 加利略太空船在前往木星的途中拍到了小行星 243 愛達 (Ida).  這些照片顯示愛達有個很小的衛星, 後來命名為載克太 (Dactyl). 這是第一次發現小行星的衛星, 此後陸續在其他小行星發現衛星."
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "51 Pegasi b 是發現的第一個非本太陽系行星.  這是個巨型氣體行星而且極端靠近它所繞行的恆星--距離不到水星到太陽的距離的五分之一.  這個巨型氣體行星可以非常靠近恆星而存在, 這已經迫使天文學家嚴肅的修正形成太陽系的理論."
+}
+
+{
+	Name "Albireo 天鵝座 β 星/輦道增七"
+	Target "Albireo"
+	Distance 0.6
+	Description "因為橘色與藍白色的對比, 讓這兩個伴星,  Albireo 雙星系統被認為是天空中最美麗的一對伴星之一.  橘色的星是 K 型巨星,  而其伴星是 B 型矮星."
+}
+
+{
+	Name "Comet Borrelly 布洛利彗星"
+	Target "Sol/Borrelly"
+	Description "在 2001 年 9 月 22 日, 布洛利彗星 (Comet Borrelly) 成為第二顆被太空船近距離拍攝的彗星.  儘管深太空一號 (Deep Space 1) 不是設計來觀測彗星, 它還是接近布洛利彗星到距離彗核只有 2200 公里處, 並傳回了高畫質的照片.
+}

@@ -1,0 +1,299 @@
+{
+# ... 指令碼開始
+
+#****************************************************************************
+#                                                                           *
+#                 START.CEL - Celestia 啟動之指令碼               *
+#                             (版本 2.1)                                    *
+#                                                                           *
+#---------------------------------------------------------------------------*
+#                                                                           *
+#  這指令碼在每次開啟 Celestia 時會自動執行.                              *
+#                                                                           *
+#  注意: 請勿移除在本檔案中任何的大括號符號                                 *
+#        . 這些符號用來定義本檔案的程式.                                    *
+#                                                                           *
+#  您可以修改本指令碼以符合您的需求.                                        *
+#  例如移除下方指令碼前方的井字號. 每行指令碼開頭都有簡短的功能敘述.        *
+#  要啟動該指令碼, 只要移除前方的井字號                                     *
+#                                                                           *
+#  如果您要修改指令碼, 請先備份本檔案,                                      *
+#  這樣日後可以參考.                                                        *
+#                                                                           * 
+#                                                                           *
+# 翻譯者說明: 本檔案不易精準的翻譯, 若使用者有疑問, 請參考英文原始檔.       *
+# 網址:                                                                     *
+# http://celestia.svn.sourceforge.net/viewvc/celestia/trunk/celestia/start.cel  *
+#                                                                           *
+#****************************************************************************
+
+  preloadtex { object "Sol/Earth" }
+  preloadtex { object "Sol/Earth/Moon" }
+
+  select {object "Sol"}
+  goto   {time 3.0 distance 30}
+  wait   {duration 3.0}
+
+  select {object "Sol/Earth"}
+  follow {}
+  goto   {time 3.0  distance 6.0}
+  wait   {duration 2.0}
+
+  print  {text "歡迎使用 Celestia!"  row -3  column 1  duration 3}
+  wait   {duration 3.0}
+
+#****************************************************************************
+#  上方的指令碼是整個 start.cel 的指令. 下方是是個別指令的說明     *
+#  我們先前往太陽, 然後前往地球時, 無論您目前的位置是白天或黑夜, 本軟體就顯示光照的那一側.   *
+#                                         *
+#                                                                           *
+#  preloadtex: 告訴 Celestia 要幫物體載入哪個外觀質地.    *
+#          否則 Celestia 將會等到顯示該物體時才載入外觀質地, 這樣會有些許的延遲.       *
+#                                                                           *
+#  select: 告訴 Celestia 將定義何種物體 (如行星, 衛星, 太空船等.)  *
+#          為目前所選的物體. Sol 定義為我們的太陽系   *
+#          , 而斜線符號 "/" 只是個分階層的符號, 而地球是我們將要選的物體   *
+#          如果您想要選擇月球     *
+#          此時指令列看起來像:          *
+#            select {object "Sol/Earth/Moon"}                               *
+#                                                                           *
+#  goto:   告訴 Celestia 前往所選的物體, 如同按下鍵盤上的 G 鍵之功能  *
+#          時間參數定義為需要多少秒才能到達所設定的目標物體    *
+#          距離參數定義為距離目標物體多遠, 單位是該物體的半徑加 1.    *
+#          例如, 有個物體半徑是 10000 公里, 如果顯示有 6 個單位,          *
+#          這代表您目前距離該物體的中心是 50000 公里
+#                                                      *
+#                                                                           *
+#  wait:   既然 goto 指令告訴 Celestia 要花時間進行設定的任務  *
+#          我們需要等候相同的時間讓軟體完成這任務  *
+#        當前往太陽, 指令告訴我們要等 3 秒鐘    *
+#          Duration parameter 數值一般來說跟 goto 指令是相同的    *
+#          然而, 常會有例外 (微笑)         *
+#                                                                           *
+#          當我們前往地球, 就會顯示要等 2 秒鐘     *
+#          下一個指令是列印顯示指令, 這是指顯示在螢幕上的文字, 同時後方有個等候指令  *
+#        這要而外等 3 秒鐘. 這些都跟時間有關     *
+#        goto 指令可以在執行指令時, 顯示相關文字   *
+#          因此, 只要加總所有在 goto 指令的時間    *
+#          就知道總耗時. 如果需要的話, 時間可以延長      *
+#                                                                           *
+#  follow: 告訴 Celestia 追蹤所選定的物體,如同鍵盤上 F 鍵的功能      *
+#          您可以使用同步的指令 {} 取代追蹤 {}       *
+#          這樣可以讓您有個穩定同步的軌域以追蹤物體*
+#                              *
+#   print: 告訴 Celestia 要在螢幕上顯示哪些文字.    *
+#          之後的參數定義了哪些文字將會出現在螢幕上. The row         *
+#          row 參數定義了文字出現在螢幕的位置, 距離視窗底部算起有多少行 *
+#          column 參數定義了文字出現在螢幕的位置, 距離視窗左方算起有多少列   *
+#          時間參數定義了這些文字出現在螢幕的時間長短. 之後的接的是如同上述的等待指令.           *
+#****************************************************************************
+
+
+#****************************************************************************
+#  如果您想要設定您所在的位置 (在地球上)請用下方的 gotolonglat 指令.
+# 詳細說明如下...        *
+#                                                                           *
+#  * 複製整行的指令.                                          *
+#                                                                           *
+#  * 貼到 "goto" 命令之後.                               *
+#                                                                           *
+#  * 移除該行開頭的井號 "#" . 這樣會使該行指令變得可以執行                 *
+#                                                                           *
+#  * 在 goto 指令該行前方加入 "#"     *
+#    這樣會使該行之指令不可執行.     *
+#                                                                           *
+#  * 將經度及緯度設成您的所在位置.    *
+#                                                                           *
+#  * 既然您設定您在地球上特定的位置, 這樣執行軟體時, 未必會是在白天的位置  *
+#    所以若想要避免這設定, 您只要在該指令前加上井號即可      *
+#      select {object "Sol"}                                                *
+#      goto   {time 3.0 distance 30}                                        *
+#      wait   {duration 3.0}                                                *
+#    如果您想要在您所設定的位置設定是白天可以使用後面敘述的時間指令     *
+#****************************************************************************
+
+#  gotolonglat {time 5.0  distance 4.0  longitude 0.0  latitude 0.0}
+
+
+#****************************************************************************
+#  如果您想要設定 Celestia 每次啟動都會在特定的位置與時間, 
+#  請用如下方顯示的時間指令 (time command).  *
+#                                                                           *
+#  警告: 在啟動 Celestia 出現預設的位置與時間, 或者調整時間以看到特殊效果後, 你想要回到正確的時間設定    *
+#           此時您只要按下驚嘆號鍵 "!", 這樣就可以設成現在時刻 *
+#           
+#                                                                           *
+#  詳細說明...                                             *
+#                                                                           *
+#  * 若您可以先決定要設定 UTC 時間格式或是 Julian day (儒略日), 請見下方        *
+#                                                                           *
+#  * 複製您想要變更設定的該行指令.       *
+#                                                                           *
+#  * 貼到 "goto" 指令之上 (檔案之上).                 *
+#                                                                           *
+#  * 移除該行前方的 "#" 符號. 這樣可以使該指令變成可執行                        *
+#                                                                           *
+#  * 設定您想要的日期與時間                *
+#****************************************************************************
+
+# 設定 UTC 格式的日期...
+#  time { utc "2003-08-11T09:29:24.0000" }
+#              YYYY-MM-DDTHH:MM:SS.SSSS
+#  Note the "T" .........^ ... (this is required)
+
+# 設定儒略日...
+#  time { jd JulianDate }
+#    美國海軍時刻對儒略日的轉換計算, 請參考
+#    http://aa.usno.navy.mil/data/docs/JulianDate.html
+
+
+#****************************************************************************
+#  下方列出的指令可以讓您變更數個 Celestia 的設定值,      *
+#  設定之後每次開啟 Celestia 時就會按照設定值運作.  *
+#  您可以變更任何您所需要的設定.                                                *
+#****************************************************************************
+
+# 視野 (移除指令前的井字號/修改參數以符合您所需)...
+# 預設值是 25 度, 螢幕預設解析度是 1024 x 768
+#  set {name "FOV" value 25.0}
+
+
+# 背景光的值 (移除指令前的井字號/修改參數以符合您所需)...
+# 0.0 到 0.5 是不錯的由低到高的值
+#  set {name "AmbientLightLevel" value 0.1}
+
+
+# 設定可見星的亮度...
+# (移除指令前的井字號/修改參數以符合您所需)
+# 可設定範圍: 0.8 to 15.2, 預設值是 6.0
+#
+#  setvisibilitylimit {magnitude 6.0}
+
+
+# Faintest auto-magnitude brightness, at 45 degrees, Default is 8.5...
+# (移除指令前的井字號/修改參數以符合您所需)
+#  setfaintestautomag45deg {magnitude 8.5}
+
+
+# 要顯示/呈現的項目:
+# 請勿呈現下方的項目 (移除指令前的井字號以符合您所需)...
+#  renderflags {clear "atmospheres"}
+#  renderflags {clear "automag"}
+#  renderflags {clear "boundaries"}
+#  renderflags {clear "cloudmaps"}
+#  renderflags {clear "comettails"}
+#  renderflags {clear "constellations"}
+#  renderflags {clear "eclipseshadows"}
+#  renderflags {clear "galaxies"}
+#  renderflags {clear "grid"}
+#  renderflags {clear "markers"}
+#  renderflags {clear "nightmaps"}
+#  renderflags {clear "orbits"}
+#  renderflags {clear "planets"}
+#  renderflags {clear "pointstars"}
+#  renderflags {clear "ringshadows"}
+#  renderflags {clear "stars"}
+#  renderflags {clear "partialtrajectories"}
+
+
+# 要顯示/呈現的項目::
+# 一定會呈現的項目 (移除指令前的井字號以符合您所需)...
+#  renderflags {set "atmospheres"}
+#  renderflags {set "automag"}
+#  renderflags {set "boundaries"}
+#  renderflags {set "cloudmaps"}
+#  renderflags {set "comettails"}
+#  renderflags {set "constellations"}
+#  renderflags {set "eclipseshadows"}
+#  renderflags {set "galaxies"}
+#  renderflags {set "grid"}
+#  renderflags {set "markers"}
+#  renderflags {set "nightmaps"}
+#  renderflags {set "orbits"}
+#  renderflags {set "planets"}
+#  renderflags {set "pointstars"}
+#  renderflags {set "ringshadows"}
+#  renderflags {set "stars"}
+#  renderflags {set "partialtrajectories"}
+
+
+# 文字標籤:
+# 請勿標示下方的項目 (移除指令前的井字號以符合您所需)...
+#  labels {clear "asteroids"}
+#  labels {clear "constellations"}
+#  labels {clear "galaxies"}
+#  labels {clear "moons"}
+#  labels {clear "planets"}
+#  labels {clear "spacecraft"}
+#  labels {clear "stars"}
+
+
+# 文字標籤:
+# 一定會標示的項目 (移除指令前的井字號以符合您所需)...
+#  labels {set "asteroids"}
+#  labels {set "constellations"}
+#  labels {set "galaxies"}
+#  labels {set "moons"}
+#  labels {set "planets"}
+#  labels {set "spacecraft"}
+#  labels {set "stars"}
+
+
+# 標記控制:
+# 去除目前有標記的, 及不顯示標記...
+# (移除指令前的井字號以符合您所需)
+#  unmarkall { }
+
+
+# 最小可呈現的軌道直徑 (單位是像素)...
+# (移除指令前的井字號/修改參數以符合您所需)
+#  set {name "MinOrbitSize"  value 1.0}
+
+
+# Furthest visible star distance, default is 1000000...
+# (移除指令前的井字號/修改參數以符合您所需)
+#  set {name "StarDistanceLimit"  value 1000000}
+
+
+# 時間流速設定 (1x, 100x, 1000x, etc.)...
+# (移除指令前的井字號/修改參數以符合您所需)
+#    Negative value = Reverse Time
+#               0   = Pause Time
+#               1.0 = Real Time (default)
+#            1000.0 = Good moon orbit motion
+#
+#  timerate {rate 1.0}
+
+
+#****************************************************************************
+#  如果您正在使用比較大的佈景, 您可以讓 Celestia 預先載入該佈景到顯示卡的記憶體, 如下方所列     *
+#           *
+#****************************************************************************
+# 例如...
+#  preloadtex {object "earth.*"}
+#  preloadtex {object "earth.png"}
+
+
+#****************************************************************************
+#  軌域是 fun command to play with. 軸的定義依序是 [X Y Z]    *
+#  , 每個軸可以是 0 或 1. rate 速率 = 有多快, 作用時間 duration =   *
+#  秒數. 只要確定您有選擇物體.           *
+#****************************************************************************
+#  orbit {axis [0 1 0]  rate 10.0  duration 7.0}
+
+
+#****************************************************************************
+#  想了解更多 Celestia 的指令請參考:                        *
+#                                                                           *
+#   * 指令論壇 Scripting forum: (http://www.shatters.net/forum/viewforum.php?f=9)    *
+#   * Don G 的 Celestia 網頁: (http://www.donandcarla.com/Celestia/)         *
+#   * Harald 的 Celestia 網頁: (http://www.h-schmidt.net/celestia/)          *
+#                                                                           *
+#  Don G 的網頁包括 CEL 學習手冊. Harald 的網頁包括CELX (Lua) 學習手冊.  *
+#  兩者皆有指令範本及其他好東西.     *
+#                      *
+#****************************************************************************
+
+
+# 指令碼結束...
+}

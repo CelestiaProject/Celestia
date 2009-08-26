@@ -1,0 +1,150 @@
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "開始展示 Celestia . . .\n若要結束請按 ESC." origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "讓我們從最近的家, 地球, 開始. . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "我們在離地球表面約 12,500 公里的上空繞著軌道前進" row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "有雲的地球看起來比較熟悉." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "下一站: 月球." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "當我們繞行月球時, 留意地球與太陽" row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "現在前往太陽." row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "在這距離, 可以見到太陽表面的太陽黑子." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "讓我們拉遠到可以看到整個內太陽系." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "顯示行星的名稱. . ." row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "把時間調快, 這樣可以看到行星繞著太陽旋轉." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "此時一秒代表一個月." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "現在時間已經完全靜止." row -3}
+
+	wait { duration 1.0 }
+	print { text "下一站是土星." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "可看到土星的數個衛星如亮點般明顯" row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "土星的衛星, 土衛一 (Mimas), 最廣為人知的特色是撞擊造成的赫瑟爾 (Herschel) 隕坑." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "是否注意到在這裏看到的太陽是多麼黯淡." row -3 }
+	wait { duration 2 }
+
+	print { text "看看四周的星星." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "住在北半球的人們都可以辨識大熊座的大杓子 (北斗七星)." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "現在看到的是北極星." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "北極星是小熊座的一部分." row -3}
+	wait { duration 2 }
+	print { text "為了方便認識方位, Celestia 可以畫出星座圖 . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . 及星座名稱" row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "獵戶座是天空中最顯眼的星座." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "南半球天空中最熟悉的正是南十字星." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "讓我們顯示星系, 這樣就可以看到銀河" row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "現在前往天蠍座的紅巨星, 心宿二 (Antares)." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "即使現在到心宿二 (Antares) 的距離是\n地球到太陽的 10 倍,這碩大的紅巨星在天空中顯的突出." row -3}
+	wait { duration 4.0 }
+
+	print { text "讓我們後退, 可以看到整個景象. . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "這是銀河 (本星系) 的全貌." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "星際旅遊結束, 讓我們回到可愛的地球吧! . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "展示完畢." row -3}
+	wait { duration 3.0 }
+}
