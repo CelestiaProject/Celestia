@@ -1,0 +1,10 @@
+qttxf is a simple GUI tool for creating bitmap font files for use with
+Celestia and other applications. The font files are saved in the TXF format
+introduced by Mark Kilgard in his GLUT toolkit.
+
+qttxf is Copyright (C) 2009 by Chris Laurel, and is distributed under the
+terms of the GNU General Public License version 2. Please forward comments
+and patches to claurel@gmail.com.
+
+
+
