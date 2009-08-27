@@ -156,7 +156,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     showSmoothLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
     guidesGroupLayout->addWidget(showSmoothLinesCheck);
 
-    QCheckBox* showCelestialSphereCheck = new QCheckBox(tr("Celestial Grid"));
+    QCheckBox* showCelestialSphereCheck = new QCheckBox(tr("Equatorial Grid"));
     connect(showCelestialSphereCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowCelestialSphere(bool)));
     showCelestialSphereCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
     guidesGroupLayout->addWidget(showCelestialSphereCheck);
@@ -628,7 +628,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     //actionColl->action("showSmoothLines")->connect(showSmoothLinesCheck, SIGNAL(clicked()), SLOT(activate()));
     showSmoothLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
 
-    QCheckBox* showCelestialSphereCheck = new QCheckBox(tr("Celestial Grid"), showGroup);
+    QCheckBox* showCelestialSphereCheck = new QCheckBox(tr("Equatorial Grid"), showGroup);
     //actionColl->action("showCelestialSphere")->connect(showCelestialSphereCheck, SIGNAL(clicked()), SLOT(activate()));
     showCelestialSphereCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
 
