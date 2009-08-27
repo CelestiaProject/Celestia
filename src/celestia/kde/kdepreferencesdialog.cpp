@@ -131,7 +131,7 @@ KdePreferencesDialog::KdePreferencesDialog(QWidget* parent, CelestiaCore* core) 
     actionColl->action("showSmoothLines")->connect(showSmoothLinesCheck, SIGNAL(clicked()), SLOT(activate()));
     showSmoothLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
 
-    QCheckBox* showCelestialSphereCheck = new QCheckBox(i18n("Celestial Grid"), showGroup);
+    QCheckBox* showCelestialSphereCheck = new QCheckBox(i18n("Equatorial Grid"), showGroup);
     actionColl->action("showCelestialSphere")->connect(showCelestialSphereCheck, SIGNAL(clicked()), SLOT(activate()));
     showCelestialSphereCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
 

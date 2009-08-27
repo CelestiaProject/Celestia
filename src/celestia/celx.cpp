@@ -118,7 +118,7 @@ void CelxLua::initRenderFlagMap()
     RenderFlagMap["automag"] = Renderer::ShowAutoMag;
     RenderFlagMap["atmospheres"] = Renderer::ShowAtmospheres;
     RenderFlagMap["grid"] = Renderer::ShowCelestialSphere;
-    //RenderFlagMap["equatorialgrid"] = Renderer::ShowCelestialSphere;
+    RenderFlagMap["equatorialgrid"] = Renderer::ShowCelestialSphere;
     RenderFlagMap["galacticgrid"] = Renderer::ShowGalacticGrid;
     RenderFlagMap["eclipticgrid"] = Renderer::ShowEclipticGrid;
     RenderFlagMap["horizontalgrid"] = Renderer::ShowHorizonGrid;
