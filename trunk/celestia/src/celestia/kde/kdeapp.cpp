@@ -614,7 +614,7 @@ void KdeApp::initActions()
     KToggleAction* showSpacecraftOrbits = new KToggleAction(i18n("Show Spacecraft Orbits"), 0, this, SLOT(slotShowSpacecraftOrbits()), actionCollection(), "showSpacecraftOrbits");
     showSpacecraftOrbits->setChecked(oMask & Body::Spacecraft);
 
-    KToggleAction* showCelestialSphere = new KToggleAction(i18n("Show Celestial Grid"), Key_Semicolon, this, SLOT(slotShowCelestialSphere()), actionCollection(), "showCelestialSphere");
+    KToggleAction* showCelestialSphere = new KToggleAction(i18n("Show Equatorial Grid"), Key_Semicolon, this, SLOT(slotShowCelestialSphere()), actionCollection(), "showCelestialSphere");
     showCelestialSphere->setChecked(rFlags & Renderer::ShowCelestialSphere);
 
     KToggleAction* showNightMaps = new KToggleAction(i18n("Show Night Side Lights"), CTRL + Key_L, this, SLOT(slotShowNightMaps()), actionCollection(), "showNightMaps");
