@@ -245,18 +245,27 @@ MainWindow::buildTxf()
 }
 
 
+QString characterRange(unsigned int firstChar, unsigned int lastChar)
+{
+    QString s;
+    for (unsigned int i = firstChar; i <= lastChar; ++i)
+    {
+        s += QChar(i);
+    }
+
+    return s;
+}
+
+
 bool
 MainWindow::buildTxf(const QFont& font, QDataStream& out, int texWidth, int texHeight)
 {
-    QString charset = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    charset += "`~!@#$%^&*()-_=+[]{}\\|;:'\",.<>/?";
+    QString charset;
 
-    // Add Greek letters
-    for (int i = 1; i <= 24; i++)
-    {
-        charset += QChar(0x391 + i);
-        charset += QChar(0x3b1 + i);
-    }
+    charset += characterRange(0x0020, 0x007e); // ASCII
+    charset += characterRange(0x00a0, 0x00ff); // Latin-1 supplement
+    charset += characterRange(0x0100, 0x017f); // Latin Extended-A
+    charset += characterRange(0x0391, 0x03ce); // Greek
 
     QPixmap pixmap(texWidth, texHeight);
     QPainter painter(&pixmap);
