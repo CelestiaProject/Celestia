@@ -3889,6 +3889,7 @@ void CelestiaCore::renderOverlay()
                       (float) (movieHeight + 1), false);
         glTranslatef((float) ((width - movieWidth) / 2),
                      (float) ((height + movieHeight) / 2 + 2), 0.0f);
+        overlay->beginText();
         *overlay << movieWidth << 'x' << movieHeight << _(" at ") <<
             movieCapture->getFrameRate() << _(" fps");
         if (recording)
@@ -3896,6 +3897,7 @@ void CelestiaCore::renderOverlay()
         else
             *overlay << _("  Paused");
 
+        overlay->endText();
         glPopMatrix();
 
         glPushMatrix();
@@ -3906,14 +3908,18 @@ void CelestiaCore::renderOverlay()
             movieCapture->getFrameRate();
         int min = (int) (sec / 60);
         sec -= min * 60.0f;
+        overlay->beginText();
         overlay->oprintf("%3d:%05.2f", min, sec);
+        overlay->endText();
         glPopMatrix();
 
         glPushMatrix();
         glTranslatef((float) ((width - movieWidth) / 2),
                      (float) ((height - movieHeight) / 2 - fontHeight - 2),
                      0.0f);
+        overlay->beginText();
         *overlay << _("F11 Start/Pause    F12 Stop");
+        overlay->endText();
         glPopMatrix();
 
         glPopMatrix();
