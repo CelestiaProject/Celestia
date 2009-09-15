@@ -43,6 +43,11 @@ public:
     {
         return false;
     }
+
+    /*! Load all textures used by the model. */
+    virtual void loadTextures()
+    {
+    }
 };
 
 
@@ -145,6 +150,8 @@ class Model : public Geometry
 
     /*! Optimize the model by eliminating all duplicated materials */
     void uniquifyMaterials();
+
+    void loadTextures();
 
     /*! This comparator will roughly sort the model's meshes by
      *  opacity so that transparent meshes are rendered last.  It's far
