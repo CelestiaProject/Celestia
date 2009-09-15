@@ -9,6 +9,7 @@
 
 #include "model.h"
 #include "rendcontext.h"
+#include "texmanager.h"
 #include <cassert>
 #include <functional>
 #include <algorithm>
@@ -464,4 +465,24 @@ Model::sortMeshes(const MeshComparator& comparator)
 
     // Sort the meshes so that completely opaque ones are first
     sort(meshes.begin(), meshes.end(), MeshComparatorAdapter(comparator));
+}
+
+
+void
+Model::loadTextures()
+{
+    for (vector<const Mesh::Material*>::const_iterator iter = materials.begin();
+         iter != materials.end(); iter++)
+    {
+        const Mesh::Material* m = *iter;
+
+        if (m->maps[Mesh::DiffuseMap] != InvalidResource)
+            GetTextureManager()->find(m->maps[Mesh::DiffuseMap]);
+        if (m->maps[Mesh::NormalMap] != InvalidResource)
+            GetTextureManager()->find(m->maps[Mesh::NormalMap]);
+        if (m->maps[Mesh::SpecularMap] != InvalidResource)
+            GetTextureManager()->find(m->maps[Mesh::SpecularMap]);
+        if (m->maps[Mesh::EmissiveMap] != InvalidResource)
+            GetTextureManager()->find(m->maps[Mesh::EmissiveMap]);
+    }
 }

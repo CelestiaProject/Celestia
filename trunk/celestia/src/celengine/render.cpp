@@ -10361,7 +10361,11 @@ void Renderer::loadTextures(Body* body)
     
     if (body->getGeometry() != InvalidResource)
     {
-        GetGeometryManager()->find(body->getGeometry());
+        Geometry* geometry = GetGeometryManager()->find(body->getGeometry());
+        if (geometry)
+        {
+            geometry->loadTextures();
+        }
     }
 }
 
