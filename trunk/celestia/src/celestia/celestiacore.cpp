@@ -3290,6 +3290,10 @@ static void displayPlanetInfo(Overlay& overlay,
             overlay << '\n';
         }
 
+/*
+ * Equilibrium temperature calculation disabled; it's too simplistic to be very useful,
+ * it's not a fundamental piece of information like distance or size.
+ *
         PlanetarySystem* system = body.getSystem();
         if (system != NULL)
         {
@@ -3305,7 +3309,9 @@ static void displayPlanetInfo(Overlay& overlay,
                 overlay << setprecision(3);
             }
         }
+*/
     }
+
 }
 
 
