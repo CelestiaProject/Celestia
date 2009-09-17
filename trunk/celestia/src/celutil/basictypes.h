@@ -32,7 +32,9 @@ typedef unsigned __int64 uint64;
 typedef          int64_t int64;
 typedef         uint64_t uint64;
 #define INT64_MAX 9223372036854775807LL
+#ifndef UINT64_MAX
 #define UINT64_MAX 0xffffffffffffffffULL
+#endif
 //#define INT64_MAX  std::numeric_limits<int64_t>::max()
 //#define UINT64_MAX std::numeric_limits<uint64_t>::max()
 #endif
