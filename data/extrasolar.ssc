@@ -1,4 +1,4 @@
-# Catalog of 353 known extrasolar planets.
+# Catalog of 354 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -64,10 +64,9 @@
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "venuslike.*"
-	NightTexture "venuslikenight.*"
+	Texture "asteroid.*"
 
-	Mass      11     # M.sin(i) = 11 earths
+	Mass      5     # M.sin(i) = 5 earths
 	Radius     10500
 
 	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-7"
@@ -88,6 +87,37 @@
 }
 
 AltSurface "limit of knowledge" "TYC 4799-1733-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "TYC 4799-1733-1"   # CoRoT-7
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.*"
+
+	Mass      8     # M.sin(i) = 8 earths
+	Radius     13300
+
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-7"
+
+	EllipticalOrbit {
+		Period          0.0101
+		SemiMajorAxis   0.046
+		Eccentricity    0
+		Inclination     90.2
+		AscendingNode   91
+	}
+
+	Obliquity             90 # guess, to match inclination
+	EquatorAscendingNode  91 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 4799-1733-1/c"
 {
 	Texture "extrasolar-lok.*"
 }
