@@ -203,31 +203,6 @@
 
 }
 
-"2004 XR190" "Sol" { 
-
-	Class "asteroid" 
-	Texture "asteroid.jpg" 
-	Radius 750 # "500-1000 km" 
-
-	InfoURL "http://www.cfeps.astrosci.ca/4b7/index.html"	
-
-	EllipticalOrbit { 
-		Epoch        2453800.5       # 2006 Mar 6 00:00UT
-		Period           434.981 
-		SemiMajorAxis     57.409       
-		Eccentricity       0.111       
-		Inclination       46.735      
-		AscendingNode    252.369 
-		ArgOfPericenter  284.115 
-		MeanAnomaly      268.060 
-	} 
-
-	UniformRotation
-	{
-	Period     48.0   # guess
-	}
-}
-
 "50000 Quaoar:Quaoar:2002 LM60" "Sol" {
 
 	Class "asteroid"
@@ -345,6 +320,30 @@
 	}
 }
 
+"2004 XR190" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 320 # "diameter is between 425-850km" 
+
+	InfoURL "http://arxiv.org/abs/astro-ph/0512430"	
+
+	EllipticalOrbit { 
+		Epoch        2453800.5       # 2006 Mar 6 00:00UT
+		Period           434.981 
+		SemiMajorAxis     57.409       
+		Eccentricity       0.111       
+		Inclination       46.735      
+		AscendingNode    252.369 
+		ArgOfPericenter  284.115 
+		MeanAnomaly      268.060 
+	} 
+
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
+}
 
 # Inner Oort cloud
 
