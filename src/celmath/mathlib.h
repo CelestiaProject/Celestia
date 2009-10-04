@@ -11,9 +11,27 @@
 #define _CELMATH_MATHLIB_H_
 
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 
 #define PI 3.14159265358979323846
+
+// TODO: All of the functions in the 'Math' class should be
+// moved to the celmath namespace.
+namespace celmath
+{
+    /** Return the natural logarithm of 2 */
+    template<class T> T Ln2()
+    {
+        return (T) 0.693147180559945;
+    }
+
+    /** Return the log base 2 of the argument. */
+    template<class T> T log2(T x)
+    {
+        return std::log(x) / Ln2<T>();
+    }
+}
+
 
 template<class T> class Math
 {
@@ -137,5 +155,6 @@ template<class T> T Math<T>::clamp(T t)
     else
         return t;
 }
+
 
 #endif // _MATHLIB_H_
