@@ -532,8 +532,11 @@ template<typename Derived> class MatrixBase
     typename ei_traits<Derived>::Scalar minCoeff() const;
     typename ei_traits<Derived>::Scalar maxCoeff() const;
 
-    typename ei_traits<Derived>::Scalar minCoeff(int* row, int* col = 0) const;
-    typename ei_traits<Derived>::Scalar maxCoeff(int* row, int* col = 0) const;
+    typename ei_traits<Derived>::Scalar minCoeff(int* row, int* col) const;
+    typename ei_traits<Derived>::Scalar maxCoeff(int* row, int* col) const;
+
+    typename ei_traits<Derived>::Scalar minCoeff(int* index) const;
+    typename ei_traits<Derived>::Scalar maxCoeff(int* index) const;
 
     template<typename BinaryOp>
     typename ei_result_of<BinaryOp(typename ei_traits<Derived>::Scalar)>::type

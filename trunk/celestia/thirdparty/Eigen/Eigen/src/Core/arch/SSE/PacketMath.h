@@ -315,4 +315,7 @@ struct ei_palign_impl<Offset,__m128d>
 };
 #endif
 
+#define ei_vec4f_swizzle1(v,p,q,r,s) \
+  (_mm_castsi128_ps(_mm_shuffle_epi32( _mm_castps_si128(v), ((s)<<6|(r)<<4|(q)<<2|(p)))))
+
 #endif // EIGEN_PACKET_MATH_SSE_H

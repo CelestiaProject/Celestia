@@ -30,29 +30,47 @@
 
 #define EIGEN_WORLD_VERSION 2
 #define EIGEN_MAJOR_VERSION 0
-#define EIGEN_MINOR_VERSION 3
+#define EIGEN_MINOR_VERSION 6
 
 #define EIGEN_VERSION_AT_LEAST(x,y,z) (EIGEN_WORLD_VERSION>x || (EIGEN_WORLD_VERSION>=x && \
                                       (EIGEN_MAJOR_VERSION>y || (EIGEN_MAJOR_VERSION>=y && \
                                                                  EIGEN_MINOR_VERSION>=z))))
 
-// if the compiler is GNUC, disable 16 byte alignment on exotic archs that probably don't need it, and on which
-// it may be extra trouble to get aligned memory allocation to work (example: on ARM, overloading new[] is a PITA
-// because extra memory must be allocated for bookkeeping).
-// if the compiler is not GNUC, just cross fingers that the architecture isn't too exotic, because we don't want
-// to keep track of all the different preprocessor symbols for all compilers.
-#if !defined(__GNUC__) || defined(__i386__) || defined(__x86_64__) || defined(__ppc__) || defined(__ia64__)
+// 16 byte alignment is only useful for vectorization. Since it affects the ABI, we need to enable 16 byte alignment on all
+// platforms where vectorization might be enabled. In theory we could always enable alignment, but it can be a cause of problems
+// on some platforms, so we just disable it in certain common platform (compiler+architecture combinations) to avoid these problems.
+#if defined(__GNUC__) && !(defined(__i386__) || defined(__x86_64__) || defined(__powerpc__) || defined(__ia64__))
+#define EIGEN_GCC_AND_ARCH_DOESNT_WANT_ALIGNMENT 1
+#else
+#define EIGEN_GCC_AND_ARCH_DOESNT_WANT_ALIGNMENT 0
+#endif
+
+#if defined(__GNUC__) && (__GNUC__ <= 3)
+#define EIGEN_GCC3_OR_OLDER 1
+#else
+#define EIGEN_GCC3_OR_OLDER 0
+#endif
+
+// FIXME vectorization + alignment is completely disabled with sun studio
+#if !EIGEN_GCC_AND_ARCH_DOESNT_WANT_ALIGNMENT && !EIGEN_GCC3_OR_OLDER && !defined(__SUNPRO_CC)
   #define EIGEN_ARCH_WANTS_ALIGNMENT 1
 #else
-  #ifdef EIGEN_VECTORIZE
-    #error Vectorization enabled, but the architecture is not listed among those for which we require 16 byte alignment. If you added vectorization for another architecture, you also need to edit this list.
-  #endif
   #define EIGEN_ARCH_WANTS_ALIGNMENT 0
+#endif
+
+// EIGEN_ALIGN is the true test whether we want to align or not. It takes into account both the user choice to explicitly disable
+// alignment (EIGEN_DONT_ALIGN) and the architecture config (EIGEN_ARCH_WANTS_ALIGNMENT). Henceforth, only EIGEN_ALIGN should be used.
+#if EIGEN_ARCH_WANTS_ALIGNMENT && !defined(EIGEN_DONT_ALIGN)
+  #define EIGEN_ALIGN 1
+#else
+  #define EIGEN_ALIGN 0
+  #ifdef EIGEN_VECTORIZE
+    #error "Vectorization enabled, but our platform checks say that we don't do 16 byte alignment on this platform. If you added vectorization for another architecture, you also need to edit this platform check."
+  #endif
   #ifndef EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
     #define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
   #endif
 #endif
-
 
 #ifdef EIGEN_DEFAULT_TO_ROW_MAJOR
 #define EIGEN_DEFAULT_MATRIX_STORAGE_ORDER_OPTION RowMajor
@@ -165,7 +183,7 @@ using Eigen::ei_cos;
  * If we made alignment depend on whether or not EIGEN_VECTORIZE is defined, it would be impossible to link
  * vectorized and non-vectorized code.
  */
-#if !EIGEN_ARCH_WANTS_ALIGNMENT
+#if !EIGEN_ALIGN
 #define EIGEN_ALIGN_128
 #elif (defined __GNUC__)
 #define EIGEN_ALIGN_128 __attribute__((aligned(16)))
@@ -175,10 +193,15 @@ using Eigen::ei_cos;
 #error Please tell me what is the equivalent of __attribute__((aligned(16))) for your compiler
 #endif
 
-#define EIGEN_RESTRICT __restrict
+#ifdef EIGEN_DONT_USE_RESTRICT_KEYWORD
+  #define EIGEN_RESTRICT
+#endif
+#ifndef EIGEN_RESTRICT
+  #define EIGEN_RESTRICT __restrict
+#endif
 
 #ifndef EIGEN_STACK_ALLOCATION_LIMIT
-#define EIGEN_STACK_ALLOCATION_LIMIT 16000000
+#define EIGEN_STACK_ALLOCATION_LIMIT 1000000
 #endif
 
 #ifndef EIGEN_DEFAULT_IO_FORMAT

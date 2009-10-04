@@ -224,17 +224,45 @@ typedef Quaternion<float> Quaternionf;
   * double precision quaternion type */
 typedef Quaternion<double> Quaterniond;
 
+// Generic Quaternion * Quaternion product
+template<int Arch,typename Scalar> inline Quaternion<Scalar>
+ei_quaternion_product(const Quaternion<Scalar>& a, const Quaternion<Scalar>& b)
+{
+  return Quaternion<Scalar>
+  (
+    a.w() * b.w() - a.x() * b.x() - a.y() * b.y() - a.z() * b.z(),
+    a.w() * b.x() + a.x() * b.w() + a.y() * b.z() - a.z() * b.y(),
+    a.w() * b.y() + a.y() * b.w() + a.z() * b.x() - a.x() * b.z(),
+    a.w() * b.z() + a.z() * b.w() + a.x() * b.y() - a.y() * b.x()
+  );
+}
+
+#ifdef EIGEN_VECTORIZE_SSE
+template<> inline Quaternion<float>
+ei_quaternion_product<EiArch_SSE,float>(const Quaternion<float>& _a, const Quaternion<float>& _b)
+{
+  const __m128 mask = _mm_castsi128_ps(_mm_setr_epi32(0,0,0,0x80000000));
+  Quaternion<float> res;
+  __m128 a = _a.coeffs().packet<Aligned>(0);
+  __m128 b = _b.coeffs().packet<Aligned>(0);
+  __m128 flip1 = _mm_xor_ps(_mm_mul_ps(ei_vec4f_swizzle1(a,1,2,0,2),
+                                       ei_vec4f_swizzle1(b,2,0,1,2)),mask);
+  __m128 flip2 = _mm_xor_ps(_mm_mul_ps(ei_vec4f_swizzle1(a,3,3,3,1),
+                                       ei_vec4f_swizzle1(b,0,1,2,1)),mask);
+  ei_pstore(&res.x(),
+            _mm_add_ps(_mm_sub_ps(_mm_mul_ps(a,ei_vec4f_swizzle1(b,3,3,3,3)),
+                                  _mm_mul_ps(ei_vec4f_swizzle1(a,2,0,1,0),
+                                             ei_vec4f_swizzle1(b,1,2,0,0))),
+                       _mm_add_ps(flip1,flip2)));
+  return res;
+}
+#endif
+
 /** \returns the concatenation of two rotations as a quaternion-quaternion product */
 template <typename Scalar>
 inline Quaternion<Scalar> Quaternion<Scalar>::operator* (const Quaternion& other) const
 {
-  return Quaternion
-  (
-    this->w() * other.w() - this->x() * other.x() - this->y() * other.y() - this->z() * other.z(),
-    this->w() * other.x() + this->x() * other.w() + this->y() * other.z() - this->z() * other.y(),
-    this->w() * other.y() + this->y() * other.w() + this->z() * other.x() - this->x() * other.z(),
-    this->w() * other.z() + this->z() * other.w() + this->x() * other.y() - this->y() * other.x()
-  );
+  return ei_quaternion_product<EiArch>(*this,other);
 }
 
 /** \sa operator*(Quaternion) */
@@ -346,7 +374,6 @@ inline Quaternion<Scalar>& Quaternion<Scalar>::setFromTwoVectors(const MatrixBas
 {
   Vector3 v0 = a.normalized();
   Vector3 v1 = b.normalized();
-  Vector3 axis = v0.cross(v1);
   Scalar c = v0.dot(v1);
 
   // if dot == 1, vectors are the same
@@ -354,7 +381,17 @@ inline Quaternion<Scalar>& Quaternion<Scalar>::setFromTwoVectors(const MatrixBas
   {
     // set to identity
     this->w() = 1; this->vec().setZero();
+    return *this;
   }
+  // if dot == -1, vectors are opposites
+  if (ei_isApprox(c,Scalar(-1)))
+  {
+    this->vec() = v0.unitOrthogonal();
+    this->w() = 0;
+    return *this;
+  }
+
+  Vector3 axis = v0.cross(v1);
   Scalar s = ei_sqrt((Scalar(1)+c)*Scalar(2));
   Scalar invs = Scalar(1)/s;
   this->vec() = axis * invs;
