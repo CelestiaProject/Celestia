@@ -10,9 +10,9 @@
 #ifndef _EXECENV_H_
 #define _EXECENV_H_
 
-#include <string>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
+#include <string>
 
 class CelestiaCore;
 

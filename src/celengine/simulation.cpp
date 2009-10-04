@@ -11,6 +11,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include "render.h"
 #include "simulation.h"
 
 using namespace Eigen;
