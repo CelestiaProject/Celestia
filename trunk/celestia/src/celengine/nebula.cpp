@@ -7,19 +7,18 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-#include <stdio.h>
 #include "celestia.h"
-#include <celmath/mathlib.h>
-#include <celutil/util.h>
-#include <celutil/debug.h>
+#include "vecgl.h"
+#include "render.h"
 #include "astro.h"
 #include "nebula.h"
 #include "meshmanager.h"
 #include "rendcontext.h"
-#include <GL/glew.h>
-#include "vecgl.h"
-#include "render.h"
+#include <celmath/mathlib.h>
+#include <celutil/util.h>
+#include <celutil/debug.h>
+#include <algorithm>
+#include <cstdio>
 
 using namespace Eigen;
 using namespace std;

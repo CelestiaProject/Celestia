@@ -10,8 +10,6 @@
 #ifndef _CELENGINE_SIMULATION_H_
 #define _CELENGINE_SIMULATION_H_
 
-#include <celmath/vecmath.h>
-#include <celmath/quaternion.h>
 #include <celengine/texture.h>
 #include <celengine/mesh.h>
 #include <celengine/universe.h>
@@ -19,12 +17,15 @@
 #include <celengine/galaxy.h>
 #include <celengine/globular.h>
 #include <celengine/texmanager.h>
-#include <celengine/render.h>
 #include <celengine/frame.h>
 #include <celengine/observer.h>
+#include <celmath/vecmath.h>
+#include <celmath/quaternion.h>
 #include <Eigen/Core>
 #include <vector>
 
+
+class Renderer;
 
 class Simulation
 {

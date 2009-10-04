@@ -16,6 +16,7 @@
 #include <celmath/vecmath.h>
 #include <celmath/quaternion.h>
 #include <celutil/color.h>
+#include <GL/glew.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
