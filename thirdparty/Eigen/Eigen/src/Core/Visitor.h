@@ -164,7 +164,7 @@ struct ei_functor_traits<ei_max_coeff_visitor<Scalar> > {
 /** \returns the minimum of all coefficients of *this
   * and puts in *row and *col its location.
   *
-  * \sa MatrixBase::maxCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::minCoeff()
+  * \sa MatrixBase::minCoeff(int*), MatrixBase::maxCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::minCoeff()
   */
 template<typename Derived>
 typename ei_traits<Derived>::Scalar
@@ -174,6 +174,22 @@ MatrixBase<Derived>::minCoeff(int* row, int* col) const
   this->visit(minVisitor);
   *row = minVisitor.row;
   if (col) *col = minVisitor.col;
+  return minVisitor.res;
+}
+
+/** \returns the minimum of all coefficients of *this
+  * and puts in *index its location.
+  *
+  * \sa MatrixBase::minCoeff(int*,int*), MatrixBase::maxCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::minCoeff()
+  */
+template<typename Derived>
+typename ei_traits<Derived>::Scalar
+MatrixBase<Derived>::minCoeff(int* index) const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  ei_min_coeff_visitor<Scalar> minVisitor;
+  this->visit(minVisitor);
+  *index = (RowsAtCompileTime==1) ? minVisitor.col : minVisitor.row;
   return minVisitor.res;
 }
 
@@ -193,5 +209,20 @@ MatrixBase<Derived>::maxCoeff(int* row, int* col) const
   return maxVisitor.res;
 }
 
+/** \returns the maximum of all coefficients of *this
+  * and puts in *index its location.
+  *
+  * \sa MatrixBase::maxCoeff(int*,int*), MatrixBase::minCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::maxCoeff()
+  */
+template<typename Derived>
+typename ei_traits<Derived>::Scalar
+MatrixBase<Derived>::maxCoeff(int* index) const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  ei_max_coeff_visitor<Scalar> maxVisitor;
+  this->visit(maxVisitor);
+  *index = (RowsAtCompileTime==1) ? maxVisitor.col : maxVisitor.row;
+  return maxVisitor.res;
+}
 
 #endif // EIGEN_VISITOR_H

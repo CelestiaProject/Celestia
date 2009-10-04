@@ -73,30 +73,23 @@ inline void* ei_aligned_malloc(size_t size)
     ei_assert(false && "heap allocation is forbidden (EIGEN_NO_MALLOC is defined)");
   #endif
 
-  void *result;
-  #if EIGEN_HAS_POSIX_MEMALIGN && EIGEN_ARCH_WANTS_ALIGNMENT && !EIGEN_MALLOC_ALREADY_ALIGNED
-    #ifdef EIGEN_EXCEPTIONS
-      const int failed =
-    #endif
-    posix_memalign(&result, 16, size);
+  void *result;  
+  #if !EIGEN_ALIGN
+    result = malloc(size);
+  #elif EIGEN_MALLOC_ALREADY_ALIGNED
+    result = malloc(size);
+  #elif EIGEN_HAS_POSIX_MEMALIGN
+    if(posix_memalign(&result, 16, size)) result = 0;
+  #elif EIGEN_HAS_MM_MALLOC
+    result = _mm_malloc(size, 16);
+  #elif (defined _MSC_VER)
+    result = _aligned_malloc(size, 16);
   #else
-    #if !EIGEN_ARCH_WANTS_ALIGNMENT
-      result = malloc(size);
-    #elif EIGEN_MALLOC_ALREADY_ALIGNED
-      result = malloc(size);
-    #elif EIGEN_HAS_MM_MALLOC
-      result = _mm_malloc(size, 16);
-    #elif (defined _MSC_VER)
-      result = _aligned_malloc(size, 16);
-    #else
-      result = ei_handmade_aligned_malloc(size);
-    #endif
-    #ifdef EIGEN_EXCEPTIONS
-      const int failed = (result == 0);
-    #endif
+    result = ei_handmade_aligned_malloc(size);
   #endif
+    
   #ifdef EIGEN_EXCEPTIONS
-    if(failed)
+    if(result == 0)
       throw std::bad_alloc();
   #endif
   return result;
@@ -143,7 +136,7 @@ template<typename T, bool Align> inline T* ei_conditional_aligned_new(size_t siz
   */
 inline void ei_aligned_free(void *ptr)
 {
-  #if !EIGEN_ARCH_WANTS_ALIGNMENT
+  #if !EIGEN_ALIGN
     free(ptr);
   #elif EIGEN_MALLOC_ALREADY_ALIGNED
     free(ptr);
@@ -237,17 +230,40 @@ inline static int ei_alignmentOffset(const Scalar* ptr, int maxOffset)
                                                    ei_aligned_stack_free(PTR,sizeof(TYPE)*SIZE);} while(0)
 
 
-#if EIGEN_ARCH_WANTS_ALIGNMENT
+#if EIGEN_ALIGN
+  #ifdef EIGEN_EXCEPTIONS
+    #define EIGEN_MAKE_ALIGNED_OPERATOR_NEW_NOTHROW(NeedsToAlign) \
+      void* operator new(size_t size, const std::nothrow_t&) throw() { \
+        try { return Eigen::ei_conditional_aligned_malloc<NeedsToAlign>(size); } \
+        catch (...) { return 0; } \
+        return 0; \
+      }
+  #else
+    #define EIGEN_MAKE_ALIGNED_OPERATOR_NEW_NOTHROW(NeedsToAlign) \
+      void* operator new(size_t size, const std::nothrow_t&) throw() { \
+        return Eigen::ei_conditional_aligned_malloc<NeedsToAlign>(size); \
+      }
+  #endif
+  
   #define EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(NeedsToAlign) \
-      void *operator new(size_t size) throw() { \
+      void *operator new(size_t size) { \
         return Eigen::ei_conditional_aligned_malloc<NeedsToAlign>(size); \
       } \
-      void *operator new[](size_t size) throw() { \
+      void *operator new[](size_t size) { \
         return Eigen::ei_conditional_aligned_malloc<NeedsToAlign>(size); \
       } \
-      void operator delete(void * ptr) { Eigen::ei_conditional_aligned_free<NeedsToAlign>(ptr); } \
-      void operator delete[](void * ptr) { Eigen::ei_conditional_aligned_free<NeedsToAlign>(ptr); } \
-      void *operator new(size_t, void *ptr) throw() { return ptr; } \
+      void operator delete(void * ptr) throw() { Eigen::ei_conditional_aligned_free<NeedsToAlign>(ptr); } \
+      void operator delete[](void * ptr) throw() { Eigen::ei_conditional_aligned_free<NeedsToAlign>(ptr); } \
+      /* in-place new and delete. since (at least afaik) there is no actual   */ \
+      /* memory allocated we can safely let the default implementation handle */ \
+      /* this particular case. */ \
+      static void *operator new(size_t size, void *ptr) { return ::operator new(size,ptr); } \
+      void operator delete(void * memory, void *ptr) throw() { return ::operator delete(memory,ptr); } \
+      /* nothrow-new (returns zero instead of std::bad_alloc) */ \
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW_NOTHROW(NeedsToAlign) \
+      void operator delete(void *ptr, const std::nothrow_t&) throw() { \
+        Eigen::ei_conditional_aligned_free<NeedsToAlign>(ptr); \
+      } \
       typedef void ei_operator_new_marker_type;
 #else
   #define EIGEN_MAKE_ALIGNED_OPERATOR_NEW_IF(NeedsToAlign)
