@@ -508,7 +508,7 @@ bool LU<MatrixType>::solve(
   if(!isSurjective())
   {
     // is c is in the image of U ?
-    RealScalar biggest_in_c = c.corner(TopLeft, m_rank, c.cols()).cwise().abs().maxCoeff();
+    RealScalar biggest_in_c = m_rank>0 ? c.corner(TopLeft, m_rank, c.cols()).cwise().abs().maxCoeff() : 0;
     for(int col = 0; col < c.cols(); ++col)
       for(int row = m_rank; row < c.rows(); ++row)
         if(!ei_isMuchSmallerThan(c.coeff(row,col), biggest_in_c, m_precision))

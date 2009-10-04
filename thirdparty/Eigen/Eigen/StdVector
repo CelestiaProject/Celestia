@@ -1,8 +1,12 @@
+#ifdef EIGEN_USE_NEW_STDVECTOR
+#include "NewStdVector"
+#else
+
 #ifndef EIGEN_STDVECTOR_MODULE_H
 #define EIGEN_STDVECTOR_MODULE_H
 
 #if defined(_GLIBCXX_VECTOR) || defined(_VECTOR_)
-#error you must include Eigen/StdVector before std::vector
+#error you must include <Eigen/StdVector> before <vector>. Also note that <Eigen/Sparse> includes <vector>, so it must be included after <Eigen/StdVector> too.
 #endif                                                    
 
 #ifndef EIGEN_GNUC_AT_LEAST
@@ -112,10 +116,8 @@ class vector<T,DummyAlloc,true>
     else if (__new_size < vector_base::size())
       vector_base::erase(vector_base::begin() + __new_size, vector_base::end());
   }
-  #elif defined(_GLIBCXX_VECTOR) && EIGEN_GNUC_AT_LEAST(4,1)
+  #elif defined(_GLIBCXX_VECTOR) && EIGEN_GNUC_AT_LEAST(4,2)
   // workaround GCC std::vector implementation
-  // Note that before gcc-4.1 we already have: std::vector::resize(size_type,const T&),
-  // no no need to workaround !
   void resize(size_type __new_size, const value_type& __x)
   {                                              
     if (__new_size < vector_base::size())               
@@ -123,7 +125,17 @@ class vector<T,DummyAlloc,true>
     else                       
       vector_base::insert(vector_base::end(), __new_size - vector_base::size(), __x); 
   }                                                              
+  #elif defined(_GLIBCXX_VECTOR) && EIGEN_GNUC_AT_LEAST(4,1)
+  void resize(size_type __new_size, const value_type& __x)
+  {
+    if (__new_size < vector_base::size())
+      vector_base::erase(vector_base::begin() + __new_size, vector_base::end());
+    else
+      vector_base::insert(vector_base::end(), __new_size - vector_base::size(), __x);
+  }
   #else
+  // Before gcc-4.1 we already have: std::vector::resize(size_type,const T&),
+  // so no need for a workaround !
   using vector_base::resize;
   #endif  
 };
@@ -131,3 +143,5 @@ class vector<T,DummyAlloc,true>
 }
 
 #endif // EIGEN_STDVECTOR_MODULE_H
+
+#endif // EIGEN_USE_NEW_STDVECTOR

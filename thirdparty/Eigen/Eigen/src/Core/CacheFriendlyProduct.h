@@ -180,7 +180,7 @@ static void ei_cache_friendly_product(
         {
           int offsetblock = l2k * (l2blockRowEnd-l2i) + (l1i-l2i)*(l2blockSizeEnd-l2k) - l2k*MaxBlockRows;
           const Scalar* EIGEN_RESTRICT localB = &block[offsetblock];
-          
+
           for(int l1j=l2j; l1j<l2blockColEnd; l1j+=1)
           {
             const Scalar* EIGEN_RESTRICT rhsColumn;

@@ -38,8 +38,8 @@ namespace Eigen {
 } // namespace Eigen
 
 #define EIGEN_CHOLESKY_MODULE_INSTANTIATE_TYPE(MATRIXTYPE,PREFIX) \
-  PREFIX template class Cholesky<MATRIXTYPE>; \
-  PREFIX template class CholeskyWithoutSquareRoot<MATRIXTYPE>
+  PREFIX template class LLT<MATRIXTYPE>; \
+  PREFIX template class LDLT<MATRIXTYPE>
 
 #define EIGEN_CHOLESKY_MODULE_INSTANTIATE(PREFIX) \
   EIGEN_CHOLESKY_MODULE_INSTANTIATE_TYPE(Matrix2f,PREFIX); \
