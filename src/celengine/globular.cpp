@@ -11,23 +11,23 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestia.h"
+#include "astro.h"
+#include "render.h"
+#include "globular.h"
+#include "vecgl.h"
+#include "texture.h"
+#include <celmath/mathlib.h>
+#include <celmath/perlin.h>
+#include <celmath/intersect.h>
+#include <celutil/util.h>
+#include <celutil/debug.h>
+#include <GL/glew.h>
+#include <cmath>
 #include <fstream>
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
-#include "celestia.h"
-#include <celmath/mathlib.h>
-#include <celmath/perlin.h>
-#include <celmath/intersect.h>
-#include "astro.h"
-#include "globular.h"
-#include <celutil/util.h>
-#include <celutil/debug.h>
-#include <GL/glew.h>
-#include "vecgl.h"
-#include "render.h"
-#include "texture.h"
-#include <math.h>
 #include "eigenport.h"
 
 using namespace Eigen;
