@@ -143,8 +143,6 @@ Alt+Enter.... 전체화면 전환
                - If AutoMag OFF: Increase limiting magnitude (more stars)
                - If AutoMag ON : Increase limiting magnitude at 45 deg FOV
 Ctrl+P ...... Mark selected object (Marker display must be active--Ctrl+K)
-r ........... 텍스처 해상도 감소 (hires => medres => lores)
-R (Shift+R).. 텍스처 해상도 증가 (lores => medres => hires)
 Ctrl+V ...... OpenGl Render Paths--Cycle through the paths supported on
                      your graphics card
 + ........... Planet Texture Type toggle (Artistic / Limit of Knowledge)

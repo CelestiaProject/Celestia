@@ -93,7 +93,6 @@ Ctrl+W : Cambiar a modo alambres
 Ctrl+X : Cambiar a suavizado de líneas
 Ctrl+Y : Cambiar autoMag = adaptación automática de la visibilidad estelar al 
 campo visual
-r R: Reducir o aumentar la resolución de las texturas
 +  : Cambiar entre representación artística y límite del conocimiento en las 
      texturas planetarias
 
