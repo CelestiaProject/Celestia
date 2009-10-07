@@ -90,7 +90,6 @@ Ctrl+W  : Vaxla trådmodellsläge
 Ctrl+X  : Vaxla kantutjämning
 Ctrl+Y  : Vaxla autoMag = automatisk anpassning av mängden synliga stjärnor
           i synfältet
-r R: minska eller öka texturupplösning
 +  : Växla mellan artistiska eller kunskapsbegränsade planettexturer
 
 Multivy:

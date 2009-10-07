@@ -93,7 +93,6 @@ Ctrl+W : Toggle wireframe mode
 Ctrl+X : Toggle antialias lines
 Ctrl+Y : Toggle autoMag = auto adaptation of star visibility to field
          of view   
-r R: Намаля/увеличава резолюцията на текстурите
 +  : Включва между артистични или научни текстури на планетите
 
 Multiview:
