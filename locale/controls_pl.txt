@@ -100,8 +100,6 @@ Ctrl+W		Przełącz tryb obrazu szkieletowego
 Ctrl+X		Przełącz linie antialias
 Ctrl+Y		Przełącz autoMag
 		(auto dostosowanie widoku do pola widzenia)
-Shift+R		Zwiększ rozdzielczość tekstur
-R		Zmniejsz rozdzielczość tekstur
 +		Przełącz między artystycznymi lub ograniczonymi wiedzą
 		teksturami planety
 

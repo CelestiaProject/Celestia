@@ -86,7 +86,6 @@ Ctrl+V	: Alternar entre os caminhos de renderização OpenGL suportados
 Ctrl+W	: Ligar/Desligar modo wireframe
 Ctrl+X	: Ligar/Desligar linhas anti-serrilhadas
 Ctrl+Y	: Ligar/Desligar magnitude automática, ou seja, a adaptação automática da visibilidade estelar ao campo de visão
-r R	: Baixar ou aumentar a resolução das texturas
 +	: Alternar entre as texturas artísticas e as do limite do conhecimento nos planetas
 
 Multivisão:
