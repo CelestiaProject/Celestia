@@ -2418,6 +2418,20 @@ Location "Polelya Macula" "Sol/Saturn/Titan"
 	Type "MA"
 }
 
+Location "Chusuk Planitia" "Sol/Saturn/Titan"
+{
+	LongLat [ -23.5 -5. 0 ]
+	Size 125
+	Type "PL"
+}
+
+Location "HOTEI REGIO" "Sol/Saturn/Titan"
+{
+	LongLat [ -78. -26. 0 ]
+	Size 500
+	Type "RE"
+}
+
 Location "TUI REGIO" "Sol/Saturn/Titan"
 {
 	LongLat [ -130. -20. 0 ]
