@@ -90,7 +90,6 @@ Ctrl+V : Verander ondersteunde OpenGL weergave methoden
 Ctrl+W : Draadmodel modus (de)activeren
 Ctrl+X : Antialias lijnen (de)activeren
 Ctrl+Y : autoMag (de)activeren = auto adaptatie van ster zichtbaarheid aan zichtsveld   
-r R: verlaag of verhoog de texture resolutie
 +  : Verander tussen artistieke en limiet van kennis planeet texturen
 
 MeerdereVensters:

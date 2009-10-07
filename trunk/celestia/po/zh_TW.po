@@ -1747,7 +1747,7 @@ msgstr "Copyright (C) 2001-2008, Celestia 開發團隊"
 msgid ""
 "_: NAME OF TRANSLATORS\\n"
 "Your names"
-msgstr "謝祿適，楊善文，江易原"
+msgstr "江易原，翁佳驥，陳岸立，楊善文，謝隆欽"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid ""
