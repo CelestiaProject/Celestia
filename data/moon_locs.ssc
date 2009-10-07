@@ -15367,3 +15367,30 @@ Location "Wapowski" "Sol/Earth/Moon"
 	Importance 9.08
 	Type "AA"
 }
+
+# Update 2009 Oct 07, Grant Hutchison
+# -----------------------------------
+
+Location "Braude" "Sol/Earth/Moon"
+{
+	LongLat [ 157.8 -81.83 0 ]
+	Size 10.5
+	Importance 8.84
+	Type "AA"
+}
+
+Location "Hinshelwood" "Sol/Earth/Moon"
+{
+	LongLat [ -46.37 89.36 0 ]
+	Size 14.2
+	Importance 9.70
+	Type "AA"
+}
+
+Location "Whipple" "Sol/Earth/Moon"
+{
+	LongLat [ 118.24 89.12 0 ]
+	Size 15.7
+	Importance 9.99
+	Type "AA"
+}

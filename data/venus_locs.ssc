@@ -15107,3 +15107,54 @@ Location "Minona Corona" "Sol/Venus"
 	Importance  48.34
 	Type "CR"
 }
+
+# Update 2009 Oct 07, Grant Hutchison
+# -----------------------------------
+
+Location "Fulgora Dorsa" "Sol/Venus"
+{
+	LongLat [ -342. -78.5 0 ]
+	Size 463
+	Importance 76.36
+	Type "DO"
+}
+
+Location "Heloha Fluctus" "Sol/Venus"
+{
+	LongLat [ -344. -77. 0 ]
+	Size 375
+	Importance 69.90
+	Type "FL"
+}
+
+Location "Sarasvati Mons" "Sol/Venus"
+{
+	LongLat [ -354.5 -75.7 0 ]
+	Size 200
+	Importance 55.34
+	Type "MO"
+}
+
+Location "Akka Tholus" "Sol/Venus"
+{
+	LongLat [ -233. -75.1 0 ]
+	Size 19.4
+	Importance 32.91
+	Type "TH"
+}
+
+Location "Eirene Tholus" "Sol/Venus"
+{
+	LongLat [ -230. -75.5 0 ]
+	Size 58
+	Importance 39.48
+	Type "TH"
+}
+
+Location "Yansa Tholus" "Sol/Venus"
+{
+	LongLat [ -232.2 -76.1 0 ]
+	Size 20
+	Importance 33.04
+	Type "TH"
+}
