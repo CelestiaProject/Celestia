@@ -431,6 +431,15 @@
 	AppMag 13.7
 }
 
+"CoRoT-5"
+{
+	RA 101.279167
+	Dec 0.815278
+	Distance 2500 # from spectral class and magnitude
+	SpectralType "F9V"
+	AppMag 14.0
+}
+
 1017334799 "CoRoT-7"
 {
 	RA 100.95625
