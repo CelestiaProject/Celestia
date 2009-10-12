@@ -866,3 +866,44 @@ Barycenter "PSR 1620-26:PSR B1620-26:PSR J1623-2631"
 	Obliquity             95  # guess, to match inclination
 	EquatorAscendingNode  213 # guess, to match ascending node
 }
+
+
+# Lee et al. "The sdB+M Eclipsing System HW Virginis and its Circumbinary Planets"
+# http://arxiv.org/abs/0811.3807
+Barycenter 62157 "HW Vir"
+{
+	RA 191.084167
+	Dec -8.671389
+	Distance 590
+}
+
+"HW Vir A"
+{
+	OrbitBarycenter "HW Vir"
+	SpectralType "sdB"
+	Radius 121800
+	AbsMag 4.22
+
+	EllipticalOrbit {
+		Period		0.00032  # 2.8 hours
+		SemiMajorAxis	0.000905 # mass ratio 0.485:0.142
+		Inclination	112      #
+		AscendingNode	182      # inclination to plane of sky 81 deg.
+	}
+}
+
+"HW Vir B"
+{
+	OrbitBarycenter "HW Vir"
+	SpectralType "M6.5V"
+	Radius 127400
+	AbsMag 15.59
+
+	EllipticalOrbit {
+		Period		0.00032  # 2.8 hours
+		SemiMajorAxis	0.003093 # mass ratio 0.485:0.142
+		Inclination	112      #
+		AscendingNode	182      # inclination to plane of sky 81 deg.
+		ArgOfPericenter	180	
+	}
+}
