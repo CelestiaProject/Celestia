@@ -10850,6 +10850,9 @@ AltSurface "limit of knowledge" "HD 30177/b"
 	EllipticalOrbit {
 		Period          9.0924
 		SemiMajorAxis   3.73
+		Eccentricity	0.31
+		Inclination	112      #
+		AscendingNode	182      # to match binary inclination
 	}
 
 	RotationPeriod  10 # plausible guess
@@ -10875,6 +10878,9 @@ AltSurface "limit of knowledge" "HIP 62157/c"
 	EllipticalOrbit {
 		Period          15.7892
 		SemiMajorAxis   5.39
+		Eccentricity	0.46
+		Inclination	112      #
+		AscendingNode	182      # to match binary inclination
 	}
 
 	RotationPeriod  10 # plausible guess
