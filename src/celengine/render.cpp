@@ -9819,7 +9819,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
                 Vector3f rpos = avg - observerPos;
 
-                if ((observer.getOrientationf().conjugate() * rpos).z() < 0)
+                if ((observer.getOrientationf() * rpos).z() < 0)
                 {
                     // We'll linearly fade the labels as a function of the
                     // observer's distance to the origin of coordinates:
