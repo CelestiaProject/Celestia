@@ -4238,6 +4238,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('D');
             break;
 
+        case ID_HELP_GUIDE:
+            ShellExecute(hWnd, "open", "help/CelestiaGuide.html", NULL, NULL, SW_NORMAL);
+
+            break;
+
         case ID_HELP_CONTROLS:
             CreateDialogParam(hRes,
                               MAKEINTRESOURCE(IDD_CONTROLSHELP),
