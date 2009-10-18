@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by celestia.rc
 //
-#define VERSION_STRING                  "1.6.0"
+#define VERSION_STRING                  "1.6.1"
 #define IDR_MENU1                       101
 #define IDD_ABOUT                       102
 #define IDI_CELESTIA_ICON               103
@@ -207,6 +207,7 @@
 #define ID_TIME_SHOWLOCAL               40050
 #define ID_NAVIGATION_TRACK             40051
 #define ID_HELP_CONTROLS                40053
+#define ID_HELP_GUIDE                40054
 #define ID_RENDER_VERTEX_SHADERS        40055
 #define ID_NAVIGATION_GOTO_OBJECT       40056
 #define ID_FILE_CAPTUREIMAGE            40057

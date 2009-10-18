@@ -356,6 +356,9 @@ BEGIN
         MENUITEM SEPARATOR
 
 
+        MENUITEM "User &Guide",                   ID_HELP_GUIDE
+
+
         MENUITEM "&Controls",                   ID_HELP_CONTROLS
 
 
