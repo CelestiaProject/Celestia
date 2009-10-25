@@ -1,154 +1,208 @@
 Kontrole myszy i klawiatury w programie Celestia
-================================================
+---------------------------------------------------------------------------
 
-Funkcje myszy:
+------------------------------------------
+    FUNKCJE MYSZY
+------------------------------------------
 
-Lewe przeciągnięcie	Orientacja kamery
-Prawe przeciągnięcie	Orbitowanie nad wybranym obiektem
-Kółko			Zmiana odległości do wybranego obiektu
-Prawe + lewe przeciągnięcie	Zmiana odległości do wybranego obiektu
-Ctrl + lewe przeciągnięcie	Zmiana odległości do wybranego obiektu
-Shift + lewe przeciągnięcie	Zmiana pola widzenia
-Kółko (środkowy przycisk)	Przełączenie o 45 stopni pomiędzy bieżącym
-			i poprzednim polem widzenia
-Lewy przycisk		Wybór obiektu
-Podwójne lewym przyciskiem	Centrowanie wyboru
-Prawy przycisk		Wywołanie menu kontekstowego
+Lewy przycisk (przeciągnięcie) ............................... Orientacja kamery
+					 (Strzałki w górę i dół,i 2/8/4/6
+					 na klawiaturze numerycznej
+					 z włączonym NumLockiem)
+Prawy przycisk (przeciągnięcie) ............................. Orbitowanie nad wybranym obiektem
+					 (Shift+Strzałki)
+Lewy+Prawy przycisk (przeciąg. w lewo/prawo) .... Obróć widok w lewo/prawo
+					 (Lewa/Prawa strzałka)
+Lewy+Prawy przycisk (przeciąg. w górę/dół) ......... Zmiana odległości do wybranego obiektu
+					 (Home/End)
+Kółko (w górę/dół).................................................. Zmiana odległości do wybranego obiektu
+					 (Home/End)
+Ctrl+Lewy przycisk (przeciągnięcie w górę/dół) ..... Zmiana odległości do wybranego obiektu
+					 (Home/End)
+Shift+Lewy przycisk (przeciągnięcie w górę/dół) ... Zmiana pola widzenia (FOV) (. / ,)
+Środkowy przycisk (kółko)...................................... Przełączenie o 45 stopni pomiędzy 
+					 bieżącym a poprzednim polem widzenia
+Lewy przycisk (na obiekcie) ................................... Wybór obiektu
+					 (Klawisz Enter -- poprzez nazwę obiektu)
+Lewy przycisk (nie na obiekcie) ............................. Anulowanie wyboru
+Podwójne kliknięcie lewym przyciskiem (na obiekcie) ... Wybór i centrowanie obiektu
+Prawy przycisk (na obiekcie) .................................. Wywołanie menu kontekstowego
+ 
+ 
+------------------------------------------------
+    FUNKCJE KLAWIATURY
+------------------------------------------------
+ 
+ --- Nawigacja ---
 
-Komendy klawiatury:
+1-9 (klawiatura numeryczna) ...... Wybierz planetę według odległości od słońca
+0 (zero) .................. Wybierz gwiazdę domową w bieżącym układzie słonecznym
+H ........................... Wybierz słońce (główny układ słoneczny)
+C ........................... Centruj ekran na wybranym obiekcie
+G ........................... Przejdź do wybranego obiektu
+F ........................... Śledź wybrany obiekt
+T ........................... Chwyć wybrany obiekt (centruje ekran na wybranym obiekcie)
+Y ........................... Orbituj nad wybranym obiektem z prędkością jego rotacji
+: ............................. Połącz wybrany obiekt z poprzednim
+		 (Wybierz obiekt 1, naciśnij klawisz "F", wybierz obiekt 2 i naciśnij ":")
+" ............................ Goń wybrany obiekt (orientuje się wektorem prędkości)
+Shift+C .................. Centruj na wybranym obiekcie bez zmiany
+          		pozycji obiektu referencyjnego.
+Ctrl+G .................... Wyląduj na powierzchni wybranego obiektu
+Ctrl+F ..................... Przełącz tryb altazymuta na powierzchni obiektu
+		 (użyj wraz ze skrótem Ctrl+G i przechylaj strzałkami w lewo lub w prawo)
+Home .................... Zbliż się do obiektu
+End ....................... Oddal się od obiektu
+* ............................ Spójrz wstecz (odwraca kierunek spojrzenia)
+Backspace ............ Wybierz rodzica obecnego obiektu lub anuluj bieżący wybór
+Esc ........................ Przełącz do wolnego lotu lub anuluj skrypt
 
-Nawigacja:
-H		Wybierz słońce (główne słońce)
-C		Centruj na wybranym obiekcie
-Shift+C		Centruj na wybranym obiekcie bez zmiany
-          		pozycji obiektu referencyjnego.	
-Ctrl+O		Pokaż okno dialogowe "Wybierz obiekt"
-G		Przejdź do wybranego obiektu
-Ctrl+G		Wyląduj na powierzchni wybranego obiektu
-Ctrl+F		Przełącz tryb altazymuta na powierzchni obiektu
-F		Śledź wybrany obiekt
-Y		Orbituj nad wybranym obiektem z prędkością jego rotacji
-:		Połącz wybrany obiekt z poprzednim
-"		Goń wybrany obiekt (orientuje się wektorem prędkości)
-T		Schwyć wybrany obiekt (centruje na wybranym obiekcie)
-HOME		Zbliż się do obiektu
-*		Spójrz wstecz
-END		Oddal się od obiektu
-ESC		Przełącz do wolnego lotu lub anuluj skrypt
 
-Prawa/lewa strzałka	Obróć kamerą
-Górna/dolna strzałka	Zmień pochylenie kamery
-Shift+Strzałki	Orbituj nad obiektem
-1-9		Wybierz planetę według odległości od słońca
-0		Wybierz gwiazdę domową w bieżącym układzie słonecznym
-ENTER		Wybierz gwiazdę lub planetę, wpisując jej nazwę
+ --- Nawigacja za pomocą klawiszy strzałek ---
 
-Czas:
-Spacja		Zatrzymaj czas i skrypty
-Shift+L		2x szybciej
-Shift+K		2x wolniej
-L		10x szybciej
-K		10x wolniej
-J		Odwróć czas
-!		Ustaw czas do bieżącego czasu
-?		Pokaż odległość świetlną pomiędzy obserwatorem i wyborem
--		Odejmij odległość świetlną od bieżącego czasu symulacji
+Górna/dolna strzałka ............ Pochyl widok w dół/górę
+Prawa/lewa strzałka ............. Obróć widok w lewo/prawo
+Shift+prawa/lewa strzałka .... Orbituj nad obiektem w lewo/prawo
+Shift+górna/dolna strzałka .... Orbituj nad obiektem w dół/górę
 
-Nazwy:
-=		Przełącz nazwy gwiazdozbiorów
-B		Przełącz nazwy gwiazd
-E		Przełącz nazwy galaktyk
-M		Przełącz nazwy księżyc
-W		Przełącz nazwy asteroid
-Shift+W		Przełącz nazwy komet
-N		Przełącz nazwy statków kosmicznych
-P		Przełącz nazwy planet
-&		Przełącz nazwy miejsc
 
-V		Zmień szczegółowość tekstu informacji
+ --- Nawigacja za pomocą klawiatury numerycznej (z włączonym NumLockiem) ---
 
-Opcje:
-I		Przełącz tekstury chmur
-U		Przełącz galaktyki
-O		Przełącz orbity planet
-/		Przełącz schematy gwiazdozbiorów
-^		Przełącz mgławice
-%		Przełącz kolory gwiazd
-;		Pokaż siatkę nieba opartej na ziemi
-[       AutoMag OFF: Zmniejsz ograniczenie wielkości (mniej widocznych gwiazd)
-        AutoMag ON:  Zmniejsz ograniczenie wielkości o 45 stopni pola widzenia
-]       AutoMag OFF: Zwiększ ograniczenie wielkości (więcej widocznych gwiazd)
-        AutoMag ON:  Zwiększ ograniczenie wielkości o 45 stopni pola widzenia
-{		Zmniejsz oświetlenie otoczenia
-}		Zwiększ oświetlenie otoczenia
-(		Zmniejsz jasność galaktyki, niezależnie od jasności gwiazd
-)		Zwiększ jasność galaktyki, niezależnie od jasności gwiazd
-,		Zmniejsz pole widzenia
-.		Zwiększ pole widzenia
-Backspace	Anuluj bieżący wybór
-Ctrl+A		Przełącz atmosfery
-Ctrl+B		Przełącz granice gwiazdozbioru 
-Ctrl+E		Przełącz cienie zaćmienia
-Ctrl+K		Przełącz wyświetlanie markerów
-Ctrl+L		Przełącz iluminację na nieoświetlonej części
-Ctrl+P		Zaznacz wybrany obiekt
-Ctrl+S		Przełącz styl gwiazd
-		(niewyraźne dyski, punkty, i skalowane tarcze)
-Ctrl+T		Przełącz ogony komet
-Ctrl+V		Przełącz między wspieranymi metodami OpenGL
-Ctrl+W		Przełącz tryb obrazu szkieletowego
-Ctrl+X		Przełącz linie antialias
-Ctrl+Y		Przełącz autoMag
-		(auto dostosowanie widoku do pola widzenia)
-+		Przełącz między artystycznymi lub ograniczonymi wiedzą
-		teksturami planety
+8 ................ Pochyl widok w dół (dolna strzałka)
+2 ................ Pochyl widok w górę (górna strzałka)
+7 ................ Obróć widok w lewo (lewa strzałka)
+9 ................ Obróć widok w prawo (prawa strzałka)
+5 ................ Zatrzymaj rotację
+4 ................ Odchyl widok w lewo
+6 ................ Odchyl widok w prawo
 
-Multiwidok:
-Ctrl+R		Podziel widok w pionie
-Ctrl+U		Podziel widok poziomo
-TAB		Przełącz aktywny widok
-DEL		Usuń aktywny widok
-Ctrl+D		Usuń wszystkie widoki z wyjątkiem aktywnego
 
-Lot statkiem kosmicznym:
-F1		Zatrzymaj
-F2		Ustaw prędkość na 1 km/s
-F3		Ustaw prędkość na 1000 km/s
-F4		Ustaw prędkość na prędkość światła (1 c)
-F5		Ustaw prędkość na dziesięciokrotną prędkość światła.
-F6		Ustaw prędkość na 1 AU/s
-F7		Ustaw prędkość na 1 ly/s
-A		Przyspiesz
-S		Zatrzymaj
-Z		Zwolnij
-Q		Zmień kierunek lotu (zawróć o 180°)
-X		Ustaw kierunek lotu na środku ekranu
+ --- Poruszanie (Lot statkiem kosmicznym) ---
 
-Klawiatura numeryczna:
-4		Lot w lewo
-6		Lot w prawo
-8		Lot w dół
-2		Lot w górę
-7		Obrót w lewo
-9		Obrót w prawo
-5		Zatrzymaj zmianę kursu
+Z ................ Zmniejsz prędkość
+A ................ Zwiększ prędkość
+Q ................ Zmień kierunek lotu (bez zmiany widoku)
+X ................ Ustaw kierunek lotu na środku ekranu
+S ................ Zatrzymaj
+F1 .............. Zatrzymaj
+F2 .............. Ustaw prędkość na 1 km/s
+F3 .............. Ustaw prędkość na 1.000 km/s
+F4 .............. Ustaw prędkość na prędkość światła (1 c)
+F5 .............. Ustaw prędkość na dziesięciokrotną prędkość światła
+F6 .............. Ustaw prędkość na 1 j.a./s
+F7 .............. Ustaw prędkość na 1 ly/s
 
-Joystick:
-Oś X		Lot w lewo/prawo
-Oś Y		Lot w dół/górę
-Lewy spust	Obrót w lewo
-Prawy spust	Obrót w prawo
-Przycisk 1	Zwolnij
-Przycisk 2	Przyspiesz
 
-Inne:
-D		Uruchom demo
-F8		Włącz joystick
-F10		Zrzut ekranu do pliku
-Shift+F10		Przechwytywanie ekranu (nagrywanie filmu)
-F11		W trybie nagrywania filmu: wstrzymaj / wznów nagrywanie
-F12		W trybie nagrywania filmu: zakończ nagrywanie
-AltGr+~		Pokaż plik dziennika (ładowania, komunikaty błędów)
-`		Pokaż renderowane klatki na sekundę (FPS)
-Ctrl+C		Kopiuj URL miejsca do schowka
-Ctrl+INS		Kopiuj URL miejsca do schowka
+--- Sterowanie czasu ---
+
+Spacja ........ Zatrzymaj/wznów czas i skrypty
+J ................. Odwróć czas
+\ ................. Przełącz do czasu rzeczywistego: cofanie zmienionych czynników czasu
+L ................. Czynnik czasu: 10x szybciej
+K ................. Czynnik czasu: 10x wolniej
+Shift+L ........ Czynnik czasu: 2x szybciej
+Shift+K ........ Czynnik czasu: 2x wolniej
+! .................. Ustaw czas do bieżącego czasu (czas systemowy komputera)
+? ................. Pokaż odległość świetlną pomiędzy obserwatorem i wyborem
+- (łącznik ) ... Odejmij odległość świetlną od bieżącego czasu symulacji
+
+
+ --- Wyświetlanie nazw (włączanie lub wyłączanie) ---
+ 
+E ................. Galaktyki
+Shift+E ........ Gromady kuliste
+B ................. Gwiazdy
+P ................. Planety
+Shift+P ........ Planety karłowate
+M ................ Księżyce
+Shift+M ....... Małe księżyce
+W ............... Asteroidy
+Shift+W ...... Komety
+N ................ Statki kosmiczne
+= ................. Gwiazdozbiory
+& ................. Miejsca
+
+
+ --- Wyświetlanie obiektów (włączanie lub wyłączanie) ---
+
+U ................ Galaktyki
+Shift+U ....... Gromady kuliste
+^ ................. Mgławice
+Ctrl+A .......... Atmosfery
+I .................. Chmury
+Ctrl+L .......... Iluminacja na nieoświetlonej części planety
+Ctrl+T .......... Ogony komet
+Ctrl+E .......... Cienie zaćmienia
+Ctrl+B .......... Granice gwiazdozbiorów
+/ ................. Schematy gwiazdozbiorów
+; .................. Naziemna siatka współrzędnych równikowych
+Ctrl+K .......... Markery
+O ................. Orbity planet (wyświetl WSZYSTKIE wybrane orbity)
+
+
+ --- Opcje renderingu ---
+
+{ .................. Zmniejsz oświetlenie otoczenia
+} .................. Zwiększ oświetlenie otoczenia
+( .................. Zmniejsz jasność galaktyki (niezależnie od jasności gwiazd)
+) .................. Zwiększ jasność galaktyki (niezależnie od jasności gwiazd)
+[ .................. Zmniejsz wielkość:
+	AutoMag OFF: Zmniejsz ograniczenie wielkości (mniej widocznych gwiazd)
+	AutoMag ON:  Zmniejsz ograniczenie wielkości o 45 stopni pola widzenia
+] .................. Zwiększ wielkość:
+	AutoMag OFF: Zwiększ ograniczenie wielkości (więcej widocznych gwiazd)
+	AutoMag ON:  Zwiększ ograniczenie wielkości o 45 stopni pola widzenia
+Ctrl+Y .......... Włącz/wyłącz autoMag
+	     (autoMag = automatyczne dostosowanie widoczności gwiazd do pola widzenia)
+, .................. Zmniejsz pole widzenia (Shift+Lewy przycisk myszy (przeciągnięcie))
+. .................. Zwiększ pole widzenia (Shift+Lewy przycisk myszy (przeciągnięcie))
+Ctrl+X .......... Włącz/wyłącz Antialiasing (np. dla orbit)
+Alt+Enter ..... Przełącz tryb wyświetlania (pełnoekranowy/w oknie)
+Ctrl+P .......... Zaznacz wybrany obiekt (markery muszą być widoczne -- Ctrl+K)
+Ctrl+V .......... Przełącz między wspieranymi metodami OpenGL
++ .................. Przełącz tryb tekstury planety (artystyczny/ograniczony wiedzą)
+% ................. Przełącz kolory dla wyświetlania gwiazd
+Ctrl+S .......... Przełącz wygląd gwiazd (niewyraźne dyski/punkty/skalowane tarcze)
+V ................. Zmień szczegółowość tekstu informacji (krótkie/szczegółowe/brak tekstu)
+Ctrl+W ........ Włącz/wyłącz tryb obrazu szkieletowego
+
+
+ --- Multiwidok ---
+
+Ctrl+U .......... Podziel widok poziomo
+Ctrl+R .......... Podziel widok w pionie
+Tab ............. Przełącz między aktywnmi widokami
+Del .............. Usuń aktywny widok
+Ctrl+D .......... Usuń wszystkie widoki (z wyjątkiem aktywnego)
+
+
+Inne funkcje
+---------------
+F10 ............. Zrzut ekranu do pliku
+Shift+F10 .... Przechwytywanie ekranu (nagrywanie filmu)
+F11 ............. W trybie nagrywania filmu: wstrzymaj/wznów nagrywanie
+F12 ............. W trybie nagrywania filmu: zakończ nagrywanie
+Ctrl+C .......... Kopiuj URL aktualnego miejsca do schowka
+Ctrl+Insert .... Kopiuj URL aktualnego miejsca do schowka
+~ ................. Pokaż plik dziennika (ładowania, komunikaty błędów)
+	      (przewijanie listy klawiszami strzałek)
+` .................. Pokaż renderowane klatki na sekundę (FPS)
+Ctrl+O ......... Pokaż okno dialogowe "Wybierz obiekt"
+@ ............... Przełącz tryb edycji (pomoc w umieszczaniu obiektów)
+D ................ Uruchom demo (/celestia/demo.cel)
+Enter ........... Wybierz gwiazdę lub planetę, wpisując jej nazwę
+	      (użyj klawiszy Tab/Shift+Tab aby podświetlić pozycję, Esc anuluje)
+
+
+--------------------------------------------
+    FUNKCJE JOYSTICKA
+--------------------------------------------
+
+F8 .................. Włącz/wyłącz joystick
+Oś X ............... Lot w lewo/prawo
+Oś Y ............... Lot w dół/górę
+Lewy spust ..... Obrót w lewo
+Prawy spust .... Obrót w prawo
+Przycisk 1 ....... Zwolnij
+Przycisk 2 ....... Przyspiesz
+
