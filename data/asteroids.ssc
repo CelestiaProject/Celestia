@@ -314,7 +314,8 @@
     LunarLambert 0.5      # Approximate a dusty surface
 
     # Align model with Celestia's coordinate system
-    Orientation [ 90 1 0 0 ]
+#   Orientation [ 90 1 0 0 ]
+    Orientation [ 180 0 1 1 ]
 
     Albedo 0.53
 }
