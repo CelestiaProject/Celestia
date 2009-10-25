@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: CELESTIA-Chinese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2009-02-05 07:48-0800\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2009-10-24 18:25+0800\n"
+"Last-Translator: Markerz Li <markerzli@gmail.com>\n"
 "Language-Team: Chinese <zhaozhengxu@yahoo.com,markerzli@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,11 +18,11 @@ msgstr ""
 
 #: src/celengine/astro.cpp:820
 msgid "DST"
-msgstr "DST"
+msgstr "夏令时"
 
 #: src/celengine/astro.cpp:820
 msgid "STD"
-msgstr "STD"
+msgstr "标准时间"
 
 #: src/celengine/dsodb.cpp:386
 msgid "Loaded "
@@ -30,36 +30,36 @@ msgstr "已加载 "
 
 #: src/celengine/dsodb.cpp:386
 msgid " deep space objects"
-msgstr "深度空间物体"
+msgstr "深空间物体"
 
 #: src/celengine/fragmentprog.cpp:93
 msgid "Loading NV fragment program: "
-msgstr "正在加载 NV fragment program:"
+msgstr "正在加载 NV 片段程序:"
 
 #: src/celengine/fragmentprog.cpp:98
 msgid "Error loading NV fragment program: "
-msgstr "加载 NV fragment program 时出现错误:"
+msgstr "加载 NV 片段程序时出现错误:"
 
 #: src/celengine/fragmentprog.cpp:115
 msgid "Error in fragment program "
-msgstr "fragment program 出现错误 "
+msgstr "片段程序出现错误 "
 
 #: src/celengine/fragmentprog.cpp:126
 msgid "Initializing NV fragment programs . . .\n"
-msgstr "正在对 NV fragment program 进行初始化. . .\n"
+msgstr "正在对 NV 片段程序进行初始化. . .\n"
 
 #: src/celengine/fragmentprog.cpp:142
 msgid "All NV fragment programs loaded successfully.\n"
-msgstr "所有 NV fragment program 加载成功。\n"
+msgstr "所有 NV 片段程序 加载成功。\n"
 
 #: src/celengine/fragmentprog.cpp:150
 msgid "Initializing ARB fragment programs . . .\n"
-msgstr "对 ARB fragment program 进行初始化. . .\n"
+msgstr "对 ARB 片段程序进行初始化. . .\n"
 
 #: src/celengine/galaxy.cpp:197
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
-msgstr "星河系(赫伯分类: %s)"
+msgstr "星河系(哈勃分类: %s)"
 
 #: src/celengine/image.cpp:373
 msgid "Loading image from file "
@@ -67,7 +67,7 @@ msgstr "从文件加载图像 "
 
 #: src/celengine/image.cpp:391
 msgid ": unrecognized or unsupported image file type.\n"
-msgstr " 无法识别或不支持的图像数据格式。\n"
+msgstr ": 无法识别或不支持的图像数据格式。\n"
 
 #: src/celengine/image.cpp:654
 msgid "Error opening image file "
@@ -95,11 +95,11 @@ msgstr "   模型统计数据:"
 
 #: src/celengine/meshmanager.cpp:163
 msgid " vertices, "
-msgstr "顶,"
+msgstr " 顶点,"
 
 #: src/celengine/meshmanager.cpp:164
 msgid " primitives, "
-msgstr "基元,"
+msgstr " 原始,"
 
 #: src/celengine/meshmanager.cpp:165
 msgid " materials "
@@ -107,7 +107,7 @@ msgstr " 材料 "
 
 #: src/celengine/meshmanager.cpp:166
 msgid " unique)\n"
-msgstr "独特)\n"
+msgstr " 唯一的)\n"
 
 #: src/celengine/meshmanager.cpp:170
 msgid "Error loading model '"
@@ -131,7 +131,7 @@ msgstr "母天体 '"
 #: src/celengine/solarsys.cpp:1200
 #: src/celengine/solarsys.cpp:1267
 msgid "' of '"
-msgstr "'拥有'"
+msgstr "' 属于 '"
 
 #: src/celengine/solarsys.cpp:1200
 msgid "' not found."
@@ -155,15 +155,15 @@ msgstr "' 找不到。\n"
 
 #: src/celengine/stardb.cpp:579
 msgid "Bad header for cross index\n"
-msgstr "不正确的交叉检索文件头\n"
+msgstr "不正确的跨索引文件头\n"
 
 #: src/celengine/stardb.cpp:592
 msgid "Bad version for cross index\n"
-msgstr "不正确的交叉检索文件文本\n"
+msgstr "不正确的跨索引文件文本\n"
 
 #: src/celengine/stardb.cpp:614
 msgid "Loading cross index failed at record "
-msgstr "加载交叉检索文件失败--出错数据点 "
+msgstr "加载跨索引文件失败--出错数据点 "
 
 #: src/celengine/stardb.cpp:696
 msgid "Bad spectral type in star database, star #"
@@ -183,11 +183,11 @@ msgstr ".stc文件出错（行 "
 
 #: src/celengine/stardb.cpp:806
 msgid "Invalid star: bad spectral type.\n"
-msgstr "无效恒星数据:不正确的恒星光谱特征类。\n"
+msgstr "无效恒星数据:不正确的恒星光谱类型。\n"
 
 #: src/celengine/stardb.cpp:815
 msgid "Invalid star: missing spectral type.\n"
-msgstr "无效恒星数据:缺少恒星光谱特征类。\n"
+msgstr "无效恒星数据:缺少恒星光谱类型。\n"
 
 #: src/celengine/stardb.cpp:961
 msgid "Barycenter "
@@ -211,15 +211,15 @@ msgstr "无效恒星数据:缺少距离。\n"
 
 #: src/celengine/stardb.cpp:1069
 msgid "Invalid star: missing magnitude.\n"
-msgstr "无效恒星数据:缺少光度。\n"
+msgstr "无效恒星数据:缺少星等。\n"
 
 #: src/celengine/stardb.cpp:1086
 msgid "Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n"
-msgstr "无效恒星数据:绝对（不明显）星等为附近恒星来源\n"
+msgstr "无效恒星数据:必须输入靠近远点恒星的绝对星等（非视星等）\n"
 
 #: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
-msgstr "正在创建层叠纹理。宽度="
+msgstr "正在创建平铺纹理。宽度="
 
 #: src/celengine/texture.cpp:1019
 msgid ", max="
@@ -227,28 +227,28 @@ msgstr ",最大="
 
 #: src/celengine/texture.cpp:1024
 msgid "Creating ordinary texture: "
-msgstr "正在创建正常纹理:"
+msgstr "正在创建普通纹理:"
 
 #: src/celengine/vertexprog.cpp:114
 msgid "Loading NV vertex program: "
-msgstr "加载NV vertex program:"
+msgstr "加载 NV 顶点程序:"
 
 #: src/celengine/vertexprog.cpp:119
 msgid "Error loading NV vertex program: "
-msgstr "加载NV vertex program时出现错误:"
+msgstr "加载 NV 顶点程序时出现错误:"
 
 #: src/celengine/vertexprog.cpp:136
 #: src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
-msgstr "vertex program出现错误 "
+msgstr " NV 顶点程序出现错误 "
 
 #: src/celengine/vertexprog.cpp:163
 msgid "Loading ARB vertex program: "
-msgstr "加载ARB vertex program:"
+msgstr "加载 ARB 顶点程序:"
 
 #: src/celengine/vertexprog.cpp:168
 msgid "Error loading ARB vertex program: "
-msgstr "加载ARB vertex program时出现错误:"
+msgstr "加 载ARB 顶点程序时出现错误:"
 
 #: src/celengine/vertexprog.cpp:196
 msgid ", line "
@@ -256,19 +256,19 @@ msgstr "，行"
 
 #: src/celengine/vertexprog.cpp:208
 msgid "Initializing NV vertex programs . . .\n"
-msgstr "对NV vertex program进行初始化 . . .\n"
+msgstr "对 NV 顶点程序进行初始化 . . .\n"
 
 #: src/celengine/vertexprog.cpp:240
 msgid "All NV vertex programs loaded successfully.\n"
-msgstr "所有NV vertex programs加载成功。\n"
+msgstr "所有 NV 顶点程序加载成功。\n"
 
 #: src/celengine/vertexprog.cpp:253
 msgid "Initializing ARB vertex programs . . .\n"
-msgstr "对ARB vertex program进行初始化 . . .\n"
+msgstr "对 ARB 顶点程序进行初始化 . . .\n"
 
 #: src/celengine/vertexprog.cpp:314
 msgid "All ARB vertex programs loaded successfully.\n"
-msgstr "所有ARB vertex program加载成功。\n"
+msgstr "所有 ARB 顶点程序加载成功。\n"
 
 #: src/celestia/celestiacore.cpp:419
 msgid "Error reading favorites file."
@@ -294,7 +294,7 @@ msgstr "打开脚本文件出现未知错误"
 
 #: src/celestia/celestiacore.cpp:619
 msgid "Script coroutine initialization failed"
-msgstr "脚本协程序初始化失败"
+msgstr "脚本子函数初始化失败"
 
 #: src/celestia/celestiacore.cpp:635
 #: src/celestia/celestiacore.cpp:637
@@ -312,7 +312,7 @@ msgstr "光度可视化极限:%.2f"
 
 #: src/celestia/celestiacore.cpp:1409
 msgid "Markers enabled"
-msgstr "标记已启动"
+msgstr "标记已开启"
 
 #: src/celestia/celestiacore.cpp:1412
 msgid "Markers disabled"
@@ -320,15 +320,15 @@ msgstr "标记已关闭"
 
 #: src/celestia/celestiacore.cpp:1422
 msgid "Goto surface"
-msgstr "逼近物体表面"
+msgstr "前往物体表面"
 
 #: src/celestia/celestiacore.cpp:1435
 msgid "Alt-azimuth mode enabled"
-msgstr "地平经仪模式开启"
+msgstr "经纬仪模式开启"
 
 #: src/celestia/celestiacore.cpp:1438
 msgid "Alt-azimuth mode disabled"
-msgstr "地平经仪模式关闭"
+msgstr "经纬仪模式关闭"
 
 #: src/celestia/celestiacore.cpp:1494
 msgid "Star style: fuzzy points"
@@ -364,19 +364,19 @@ msgstr "渲染通道: NVIDIA 组合渲染"
 
 #: src/celestia/celestiacore.cpp:1540
 msgid "Render path: OpenGL vertex program"
-msgstr "渲染通道: OpenGL vertex program"
+msgstr "渲染通道: OpenGL 顶点程序"
 
 #: src/celestia/celestiacore.cpp:1543
 msgid "Render path: NVIDIA vertex program and combiners"
-msgstr "渲染通道: NVIDIA vertex program and combiners"
+msgstr "渲染通道: NVIDIA 顶点程序及组合渲染"
 
 #: src/celestia/celestiacore.cpp:1546
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
-msgstr "渲染通道: OpenGL vertex program/NVIDIA combiners"
+msgstr "渲染通道: OpenGL 顶点程序/NVIDIA 组合渲染"
 
 #: src/celestia/celestiacore.cpp:1549
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
-msgstr "渲染通道: OpenGL 1.5 vertex/fragment program"
+msgstr "渲染通道: OpenGL 1.5 顶点/片段程序"
 
 #: src/celestia/celestiacore.cpp:1552
 msgid "Render path: NVIDIA GeForce FX"
@@ -388,11 +388,11 @@ msgstr "渲染通道: OpenGL 2.0"
 
 #: src/celestia/celestiacore.cpp:1578
 msgid "Auto-magnitude enabled"
-msgstr "开启光度自动调节"
+msgstr "开启星等自动调节"
 
 #: src/celestia/celestiacore.cpp:1583
 msgid "Auto-magnitude disabled"
-msgstr "关闭光度自动调节"
+msgstr "关闭星等自动调节"
 
 #: src/celestia/celestiacore.cpp:1605
 #: src/celestia/res/resource_strings.cpp:86
@@ -406,19 +406,19 @@ msgstr "关闭光度自动调节"
 #: src/celestia/res/resource_strings.cpp:214
 #: src/celestia/res/resource_strings.cpp:220
 msgid "Cancel"
-msgstr "撤销操作指令"
+msgstr "取消"
 
 #: src/celestia/celestiacore.cpp:1641
 msgid "Time and script are paused"
-msgstr "计时和脚本运行暂停"
+msgstr "时间和脚本运行暂停"
 
 #: src/celestia/celestiacore.cpp:1643
 msgid "Time is paused"
-msgstr "计时暂停"
+msgstr "时间暂停"
 
 #: src/celestia/celestiacore.cpp:1647
 msgid "Resume"
-msgstr "恢复计时或脚本运行"
+msgstr "恢复"
 
 #: src/celestia/celestiacore.cpp:1722
 #, c-format
@@ -437,15 +437,15 @@ msgstr "光传播时间:%d时%d分%.1f秒"
 
 #: src/celestia/celestiacore.cpp:1753
 msgid "Light travel delay included"
-msgstr "开启光的传播时间补偿"
+msgstr "开启光的传播时间延迟"
 
 #: src/celestia/celestiacore.cpp:1758
 msgid "Light travel delay switched off"
-msgstr "关闭光的传播时间补偿"
+msgstr "关闭光的传播时间延迟"
 
 #: src/celestia/celestiacore.cpp:1764
 msgid "Light travel delay ignored"
-msgstr "忽略光的传播时间补偿"
+msgstr "忽略光的传播时间延迟"
 
 #: src/celestia/celestiacore.cpp:1809
 msgid "Using normal surface textures."
@@ -453,19 +453,19 @@ msgstr "调用正常表面纹理。"
 
 #: src/celestia/celestiacore.cpp:1814
 msgid "Using limit of knowledge surface textures."
-msgstr "调用表面有限纹理信息"
+msgstr "调用知识界限表面纹理。"
 
 #: src/celestia/celestiacore.cpp:1881
 msgid "Follow"
-msgstr "跟踪物体"
+msgstr "跟随物体"
 
 #: src/celestia/celestiacore.cpp:1906
 msgid "Time: Forward"
-msgstr "时间:正向流逝"
+msgstr "时间:前进"
 
 #: src/celestia/celestiacore.cpp:1908
 msgid "Time: Backward"
-msgstr "时间:反向流逝"
+msgstr "时间:后退"
 
 #: src/celestia/celestiacore.cpp:1921
 #: src/celestia/celestiacore.cpp:1937
@@ -488,13 +488,13 @@ msgstr "追赶物体"
 #: src/celestia/celestiacore.cpp:2080
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
-msgstr "45度视野区内光度自动调节:%.2f"
+msgstr "45度视野区内星等自动调节:%.2f"
 
 #: src/celestia/celestiacore.cpp:2099
 #: src/celestia/celestiacore.cpp:2114
 #, c-format
 msgid "Ambient light level:  %.2f"
-msgstr "氛围光线等级: %.2f"
+msgstr "环境光线等级: %.2f"
 
 #: src/celestia/celestiacore.cpp:2125
 #: src/celestia/celestiacore.cpp:2137
@@ -503,11 +503,11 @@ msgstr "增加星光"
 
 #: src/celestia/celestiacore.cpp:2157
 msgid "Bloom enabled"
-msgstr "开启彗星尾渲染"
+msgstr "开启 Bloom 效果"
 
 #: src/celestia/celestiacore.cpp:2159
 msgid "Bloom disabled"
-msgstr "关闭彗星尾渲染"
+msgstr "关闭 Bloom 效果"
 
 #: src/celestia/celestiacore.cpp:2165
 #: src/celestia/celestiacore.cpp:2173
@@ -557,19 +557,19 @@ msgstr "观测直径:"
 
 #: src/celestia/celestiacore.cpp:2991
 msgid "Apparent magnitude: "
-msgstr "观测光度:"
+msgstr "视星等:"
 
 #: src/celestia/celestiacore.cpp:2995
 msgid "Absolute magnitude: "
-msgstr "绝对光度:"
+msgstr "绝对星等:"
 
 #: src/celestia/celestiacore.cpp:3017
 msgid "RA: "
-msgstr "RA: "
+msgstr "赤经: "
 
 #: src/celestia/celestiacore.cpp:3021
 msgid "Dec: "
-msgstr "12 月: "
+msgstr "赤纬: "
 
 #: src/celestia/celestiacore.cpp:3085
 #: src/celestia/kde/kdeapp.cpp:1612
@@ -592,15 +592,15 @@ msgstr "星系质心\n"
 #: src/celestia/celestiacore.cpp:3145
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "绝对光度(观测光度):%.2f (%.2f)\n"
+msgstr "绝对星等(视星等):%.2f (%.2f)\n"
 
 #: src/celestia/celestiacore.cpp:3151
 msgid "Luminosity: "
-msgstr "亮度:"
+msgstr "光度:"
 
 #: src/celestia/celestiacore.cpp:3151
 msgid "x Sun"
-msgstr "太阳 x"
+msgstr "x 太阳"
 
 #: src/celestia/celestiacore.cpp:3152
 #: src/celestia/kde/selectionpopup.cpp:97
@@ -629,12 +629,12 @@ msgstr "半径:"
 #: src/celestia/celestiacore.cpp:3172
 #: src/celestia/kde/selectionpopup.cpp:106
 msgid "Rsun"
-msgstr "太阳当量半径"
+msgstr "太阳半径"
 
 #: src/celestia/celestiacore.cpp:3182
 #: src/celestia/celestiacore.cpp:3303
 msgid "Rotation period: "
-msgstr "公转周期:"
+msgstr "自转周期:"
 
 #: src/celestia/celestiacore.cpp:3196
 msgid "Planetary companions present\n"
@@ -651,23 +651,23 @@ msgstr "温度:"
 #: src/celestia/celestiacore.cpp:3331
 #, c-format
 msgid "Apparent mag: %.2f\n"
-msgstr "观测光度:%.2f\n"
+msgstr "视星等:%.2f\n"
 
 #: src/celestia/celestiacore.cpp:3488
 msgid "  LT"
-msgstr "包含时光差"
+msgstr " 本地时间"
 
 #: src/celestia/celestiacore.cpp:3497
 msgid "Real time"
-msgstr "实时正计时"
+msgstr "实时"
 
 #: src/celestia/celestiacore.cpp:3499
 msgid "-Real time"
-msgstr "-实时倒计时"
+msgstr "-实时"
 
 #: src/celestia/celestiacore.cpp:3503
 msgid "Time stopped"
-msgstr "停止计时"
+msgstr "时间已停止"
 
 #: src/celestia/celestiacore.cpp:3508
 msgid " faster"
@@ -679,11 +679,11 @@ msgstr "倍减慢时间流逝"
 
 #: src/celestia/celestiacore.cpp:3519
 msgid " (Paused)"
-msgstr "（暂停渲染）"
+msgstr "（已暂停）"
 
 #: src/celestia/celestiacore.cpp:3537
 msgid "FPS: "
-msgstr "显真:"
+msgstr "帧速率:"
 
 #: src/celestia/celestiacore.cpp:3539
 msgid ""
@@ -711,31 +711,31 @@ msgstr " 光年/秒"
 
 #: src/celestia/celestiacore.cpp:3568
 msgid "Travelling "
-msgstr "太空飞行"
+msgstr "太空飞行中"
 
 #: src/celestia/celestiacore.cpp:3581
 msgid "Track "
-msgstr "监视目标:"
+msgstr "追踪"
 
 #: src/celestia/celestiacore.cpp:3595
 msgid "Follow "
-msgstr "跟踪目标:"
+msgstr "跟随"
 
 #: src/celestia/celestiacore.cpp:3600
 msgid "Sync Orbit "
-msgstr "同步跟踪目标:"
+msgstr "同步跟踪"
 
 #: src/celestia/celestiacore.cpp:3605
 msgid "Lock "
-msgstr "锁住目标:"
+msgstr "锁住"
 
 #: src/celestia/celestiacore.cpp:3614
 msgid "Chase "
-msgstr "追赶目标:"
+msgstr "追赶"
 
 #: src/celestia/celestiacore.cpp:3630
 msgid "FOV: "
-msgstr "视锥:"
+msgstr "视野:"
 
 #: src/celestia/celestiacore.cpp:3662
 #: src/celestia/celestiacore.cpp:3665
@@ -748,22 +748,22 @@ msgstr "目标物体名称:"
 
 #: src/celestia/celestiacore.cpp:3902
 msgid " at "
-msgstr "采用"
+msgstr " 于"
 
 #: src/celestia/celestiacore.cpp:3903
 msgid " fps"
-msgstr " FPS"
+msgstr " 帧/秒"
 
 #: src/celestia/celestiacore.cpp:3905
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
-msgstr "录像"
+msgstr "  录像中"
 
 #: src/celestia/celestiacore.cpp:3907
 #: src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
-msgstr "暂停"
+msgstr " 已暂停"
 
 #: src/celestia/celestiacore.cpp:3926
 msgid "F11 Start/Pause    F12 Stop"
@@ -772,7 +772,7 @@ msgstr "F11 开始/暂停    F12 停止"
 #: src/celestia/celestiacore.cpp:3935
 #: src/celestia/celestiacore.cpp:3938
 msgid "Edit Mode"
-msgstr "编辑状态"
+msgstr "编辑模式"
 
 #: src/celestia/celestiacore.cpp:4004
 msgid "Loading solar system catalog: "
@@ -780,7 +780,7 @@ msgstr "加载太阳系目录文件:"
 
 #: src/celestia/celestiacore.cpp:4045
 msgid "Loading "
-msgstr "加载:"
+msgstr "加载中:"
 
 #: src/celestia/celestiacore.cpp:4080
 msgid "License file 'License.txt' is missing!"
@@ -788,7 +788,7 @@ msgstr "找不到使用版权说明文件 'License.txt'!"
 
 #: src/celestia/celestiacore.cpp:4101
 msgid "Error reading configuration file."
-msgstr "读出系统构架文件时出错。"
+msgstr "读取系统设置文件时出错。"
 
 #: src/celestia/celestiacore.cpp:4112
 msgid "Initialization of SPICE library failed."
@@ -796,11 +796,11 @@ msgstr "SPICE 库初始化失败。"
 
 #: src/celestia/celestiacore.cpp:4159
 msgid "Cannot read star database."
-msgstr "不能读出星体数据库。"
+msgstr "无法读出星体数据库。"
 
 #: src/celestia/celestiacore.cpp:4181
 msgid "Error opening deepsky catalog file."
-msgstr "读取恒星目录文件错误"
+msgstr "读取深空间恒星目录文件错误。"
 
 #: src/celestia/celestiacore.cpp:4233
 msgid "Error opening solar system catalog.\n"
@@ -808,11 +808,11 @@ msgstr "打开太阳系目录文件时出错。\n"
 
 #: src/celestia/celestiacore.cpp:4266
 msgid "Error opening asterisms file."
-msgstr "打开星座图定义文件时出错"
+msgstr "打开星群文件时出错。"
 
 #: src/celestia/celestiacore.cpp:4281
 msgid "Error opening constellation boundaries files."
-msgstr "打开星座边界文件时出错"
+msgstr "打开星座边界文件时出错。"
 
 #: src/celestia/celestiacore.cpp:4348
 msgid "render path: "
@@ -824,24 +824,24 @@ msgstr "渲染器初始化失败"
 
 #: src/celestia/celestiacore.cpp:4375
 msgid "Error loading font; text will not be visible.\n"
-msgstr "读取字符文件时出错；文字将无法显示。\n"
+msgstr "读取字体时出错；文字将无法显示。\n"
 
 #: src/celestia/celestiacore.cpp:4432
 msgid "Error reading cross index "
-msgstr "错误读取交叉检索文件"
+msgstr "读取跨索引文件发生错误"
 
 #: src/celestia/celestiacore.cpp:4434
 msgid "Loaded cross index "
-msgstr "加载交叉检索文件"
+msgstr "跨索引文件已加载"
 
 #: src/celestia/celestiacore.cpp:4448
 #: src/celestia/celestiacore.cpp:4470
 msgid "Error opening "
-msgstr "错误读取"
+msgstr "读取发生错误"
 
 #: src/celestia/celestiacore.cpp:4455
 msgid "Error reading star names file\n"
-msgstr "读取恒星命名文件时出错\n"
+msgstr "读取恒星名称文件时出错\n"
 
 #: src/celestia/celestiacore.cpp:4478
 msgid "Error reading stars file\n"
@@ -854,22 +854,22 @@ msgstr "读取恒星目录文件"
 #: src/celestia/oggtheoracapture.cpp:159
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
-msgstr "用于数据捕捉的Ogg文件%s的建立出错\n"
+msgstr "创建捕捉使用的 Ogg 文件 %s 发生错误\n"
 
 #: src/celestia/oggtheoracapture.cpp:253
 #: src/celestia/oggtheoracapture.cpp:273
 msgid "Internal Ogg library error."
-msgstr "系统内部的Ogg库文件出错。"
+msgstr "内部的 Ogg 库文件发生错误。"
 
 #: src/celestia/oggtheoracapture.cpp:308
 #, c-format
 msgid "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"
-msgstr "OggTheoraCapture::start() - Theora 影像:%s %.2f(%d/%d) FPS质量%d %dx%d 偏移补偿(%dx%d)\n"
+msgstr "OggTheoraCapture::start() - Theora 影像:%s %.2f(%d/%d) fps 质量 %d %dx%d 位移(%dx%d)\n"
 
 #: src/celestia/oggtheoracapture.cpp:423
 #, c-format
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-msgstr "OggTheoraCapture::cleanup() - 写入%d显像\n"
+msgstr "OggTheoraCapture::cleanup() - 已写入%d 张影像\n"
 
 #: src/celestia/url.cpp:654
 #: src/celestia/kde/rc.cpp:133
@@ -879,12 +879,12 @@ msgstr "设置"
 #: src/celestia/winmain.cpp:625
 #: src/celestia/kde/kdeapp.cpp:949
 msgid "Vendor: "
-msgstr "开发商:"
+msgstr "制造商:"
 
 #: src/celestia/winmain.cpp:630
 #: src/celestia/kde/kdeapp.cpp:954
 msgid "Renderer: "
-msgstr "渲染(&R)"
+msgstr "渲染器:"
 
 #: src/celestia/winmain.cpp:635
 #: src/celestia/kde/kdeapp.cpp:959
@@ -898,7 +898,7 @@ msgstr "GLSL 版本:"
 #: src/celestia/winmain.cpp:656
 #: src/celestia/kde/kdeapp.cpp:968
 msgid "Max simultaneous textures: "
-msgstr "中分辨率纹理"
+msgstr "最大同时纹理"
 
 #: src/celestia/winmain.cpp:663
 #: src/celestia/kde/kdeapp.cpp:973
@@ -907,12 +907,12 @@ msgstr "最大纹理尺寸:"
 
 #: src/celestia/winmain.cpp:672
 msgid "Max cube map size: "
-msgstr "最大立方体图尺寸:"
+msgstr "最大立方体地图尺寸:"
 
 #: src/celestia/winmain.cpp:680
 #: src/celestia/kde/kdeapp.cpp:979
 msgid "Point size range: "
-msgstr "点大小区域:"
+msgstr "点大小范围:"
 
 #: src/celestia/winmain.cpp:685
 #: src/celestia/kde/kdeapp.cpp:983
@@ -921,14 +921,14 @@ msgstr "支持扩展:"
 
 #: src/celestia/winmain.cpp:1386
 msgid "Windowed Mode"
-msgstr "带窗口的显示"
+msgstr "窗口模式"
 
 #: src/celestia/winmain.cpp:1508
 #: src/celestia/kde/kdepreferencesdialog.cpp:236
 #: src/celestia/kde/selectionpopup.cpp:414
 #: src/celestia/res/resource_strings.cpp:171
 msgid "Asteroids"
-msgstr "陨石"
+msgstr "小行星"
 
 #: src/celestia/winmain.cpp:1510
 #: src/celestia/kde/kdepreferencesdialog.cpp:202
@@ -939,14 +939,14 @@ msgstr "彗星"
 
 #: src/celestia/winmain.cpp:1512
 msgid "Invisibles"
-msgstr "不可见物体"
+msgstr "不可见"
 
 #: src/celestia/winmain.cpp:1514
 #: src/celestia/kde/kdepreferencesdialog.cpp:193
 #: src/celestia/kde/selectionpopup.cpp:418
 #: src/celestia/res/resource_strings.cpp:169
 msgid "Moons"
-msgstr "月亮"
+msgstr "卫星"
 
 #: src/celestia/winmain.cpp:1516
 #: src/celestia/winmain.cpp:1551
@@ -965,7 +965,7 @@ msgstr "行星"
 #: src/celestia/kde/selectionpopup.cpp:422
 #: src/celestia/res/resource_strings.cpp:173
 msgid "Spacecraft"
-msgstr "卫星或航天器"
+msgstr "航天器"
 
 #: src/celestia/winmain.cpp:1608
 #: src/celestia/winmain.cpp:1656
@@ -973,17 +973,17 @@ msgstr "卫星或航天器"
 #: src/celestia/kde/eclipsefinderdlg.cpp:118
 #: src/celestia/kde/selectionpopup.cpp:300
 msgid "&Goto"
-msgstr "驶向选择物体(&G)"
+msgstr "前往(&G)"
 
 #: src/celestia/winmain.cpp:1609
 #: src/celestia/winmain.cpp:1680
 #: src/celestia/kde/selectionpopup.cpp:301
 msgid "&Follow"
-msgstr "尾随选择物体(&F)"
+msgstr "跟随(&F)"
 
 #: src/celestia/winmain.cpp:1610
 msgid "S&ync Orbit"
-msgstr "同步于选择物体(&Y)"
+msgstr "同步追踪(&Y)"
 
 #: src/celestia/winmain.cpp:1611
 #: src/celestia/winmain.cpp:1657
@@ -1005,12 +1005,12 @@ msgstr "显示天体轴线"
 #: src/celestia/winmain.cpp:1615
 #: src/celestia/kde/selectionpopup.cpp:336
 msgid "Show Frame Axes"
-msgstr "显示窗边"
+msgstr "显示系统轴线"
 
 #: src/celestia/winmain.cpp:1616
 #: src/celestia/kde/selectionpopup.cpp:338
 msgid "Show Sun Direction"
-msgstr "显示太阳位置"
+msgstr "显示太阳方向"
 
 #: src/celestia/winmain.cpp:1617
 #: src/celestia/kde/selectionpopup.cpp:340
@@ -1020,7 +1020,7 @@ msgstr "显示速度向量"
 #: src/celestia/winmain.cpp:1618
 #: src/celestia/kde/selectionpopup.cpp:342
 msgid "Show Planetographic Grid"
-msgstr "显示行星经纬网格"
+msgstr "显示行星天体坐标线"
 
 #: src/celestia/winmain.cpp:1619
 #: src/celestia/kde/selectionpopup.cpp:344
@@ -1034,22 +1034,22 @@ msgstr "卫星(&S)"
 #: src/celestia/winmain.cpp:1643
 #: src/celestia/kde/selectionpopup.cpp:366
 msgid "&Alternate Surfaces"
-msgstr "可选表面(&A)"
+msgstr "替代表面(&A)"
 
 #: src/celestia/winmain.cpp:1666
 #: src/celestia/kde/selectionpopup.cpp:477
 msgid "Orbiting Bodies"
-msgstr "轨道物体"
+msgstr "天体轨道"
 
 #: src/celestia/winmain.cpp:1693
 #: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Unmark"
-msgstr "关闭标志(&U)"
+msgstr "取消标记(&U)"
 
 #: src/celestia/winmain.cpp:1695
 #: src/celestia/kde/selectionpopup.cpp:327
 msgid "&Mark"
-msgstr "启动标志(&M)"
+msgstr "标记(&M)"
 
 #: src/celestia/winmain.cpp:3137
 msgid "Loading: "
@@ -1068,11 +1068,11 @@ msgstr "804"
 
 #: src/celestia/winmain.cpp:3809
 msgid "Copied URL"
-msgstr "复制URL地址"
+msgstr "复制 URL 地址"
 
 #: src/celestia/winmain.cpp:3903
 msgid "Loading URL"
-msgstr "调用URL"
+msgstr "调用 URL"
 
 #: src/celestia/winmain.cpp:3915
 msgid "Error opening script"
@@ -1158,11 +1158,11 @@ msgstr "距离 (光年)"
 
 #: src/celestia/winstarbrowser.cpp:75
 msgid "App. mag"
-msgstr "观测亮度"
+msgstr "视星等"
 
 #: src/celestia/winstarbrowser.cpp:77
 msgid "Abs. mag"
-msgstr "绝对亮度"
+msgstr "绝对星等"
 
 #: src/celestia/winstarbrowser.cpp:79
 #: src/celestia/kde/rc.cpp:46
@@ -1177,7 +1177,7 @@ msgstr "国际统一标准时间"
 #: src/celestia/kde/kdepreferencesdialog.cpp:377
 #: src/celestia/kde/kdepreferencesdialog.cpp:398
 msgid "Local Time"
-msgstr "局部时间"
+msgstr "本地时间"
 
 #: src/celestia/wintime.cpp:97
 msgid "Time Zone Name"
@@ -1185,13 +1185,13 @@ msgstr "时区名称"
 
 #: src/celestia/wintime.cpp:98
 msgid "UTC Offset"
-msgstr "UTF 偏差"
+msgstr "与时间标准时的差异"
 
 #: src/celestia/kde/celestialbrowser.cpp:29
 #: src/celestia/kde/kdeapp.cpp:500
 #: src/celestia/kde/rc.cpp:30
 msgid "Celestial Browser"
-msgstr "天体浏览系统"
+msgstr "天体浏览器"
 
 #: src/celestia/kde/celestialbrowser.cpp:185
 #: src/celestia/kde/rc.cpp:76
@@ -1209,7 +1209,7 @@ msgstr "彗星"
 
 #: src/celestia/kde/celestialbrowser.cpp:197
 msgid "Invisible"
-msgstr "不可见物体"
+msgstr "不可见的"
 
 #: src/celestia/kde/celestialbrowser.cpp:200
 msgid "Barycenter"
@@ -1232,23 +1232,23 @@ msgstr "-"
 #: src/celestia/kde/rc.cpp:70
 #: src/celestia/res/resource_strings.cpp:222
 msgid "Eclipse Finder"
-msgstr "预算星月食"
+msgstr "星月蚀查找"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:164
 msgid "&Add Bookmark"
-msgstr "标记书签(&A)"
+msgstr "加入书签(&A)"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:171
 msgid "Add a bookmark for the current document"
-msgstr "对当前文档添加标记书签"
+msgstr "对当前文档添加书签"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:181
 msgid "Add &Relative Bookmark"
-msgstr "添加相对标记书签(&R)"
+msgstr "添加相关书签(&R)"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:188
 msgid "Add a relative bookmark for the current document"
-msgstr "对当前文档添加相对标记书签"
+msgstr "对当前文档添加相关书签"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:196
 msgid "Add &Settings Bookmark"
@@ -1256,33 +1256,33 @@ msgstr "添加设置标记书签(&S)"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:203
 msgid "Add a settings bookmark for the current document"
-msgstr "对当前文档添加设置标记书签"
+msgstr "对当前文档添加设置书签"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:214
 msgid "Edit your bookmark collection in a separate window"
-msgstr "在另外窗口里编辑标记书签文件"
+msgstr "在另一窗口里编辑书签文件"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:220
 msgid "&New Folder..."
-msgstr "新文件夹(&N)..."
+msgstr "新建文件夹(&N)..."
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:227
 msgid "Create a new bookmark folder in this menu"
-msgstr "在当前菜单中建立标记书签文件夹"
+msgstr "在当前菜单中建立书签文件夹"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:307
 #: src/celestia/kde/kcelbookmarkmenu.cpp:354
 #: src/celestia/kde/kcelbookmarkmenu.cpp:401
 msgid "Can't add bookmark with empty URL"
-msgstr "空网域址不能加到标记书签中"
+msgstr "空网址不能添加到书签中"
 
 #: src/celestia/kde/kdeapp.cpp:129
 msgid ""
 "Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \n"
 "Start-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."
 msgstr ""
-"您的Celestia系统安装可能存在问题。启动时找不到提示屏幕图像所在的文件夹\n"
-"启动过程将继续，但Celestia系统可能无法加载某些数据文件并且不能保证正常运行。请检查您的系统安装。"
+"您安装的 Celestia 可能存在问题。启动时找不到启动画面所在的文件夹\n"
+"启动过程将继续，但Celestia系统可能无法加载某些数据文件并且可能不能正常运行。请检查您的安装是否正确。"
 
 #: src/celestia/kde/kdeapp.cpp:407
 msgid "Go to &URL..."
@@ -1290,7 +1290,7 @@ msgstr "转到URL网址(&U)..."
 
 #: src/celestia/kde/kdeapp.cpp:408
 msgid "Go to &Long/Lat..."
-msgstr "驶向经/纬度所示位置(&L)..."
+msgstr "驶向经/纬度(&L)..."
 
 #: src/celestia/kde/kdeapp.cpp:410
 msgid "&Back"
@@ -1302,7 +1302,7 @@ msgstr "前进(&F)"
 
 #: src/celestia/kde/kdeapp.cpp:420
 msgid "Home"
-msgstr "主页"
+msgstr "首页"
 
 #: src/celestia/kde/kdeapp.cpp:427
 msgid "Bookmarks"
@@ -1310,7 +1310,7 @@ msgstr "书签"
 
 #: src/celestia/kde/kdeapp.cpp:439
 msgid "Full Screen"
-msgstr "切换全屏幕显示"
+msgstr "切换全屏"
 
 #: src/celestia/kde/kdeapp.cpp:443
 msgid "Copy URL"
@@ -1346,7 +1346,7 @@ msgstr "暂定时间流逝"
 
 #: src/celestia/kde/kdeapp.cpp:453
 msgid "Reverse Time"
-msgstr "反向时间流逝"
+msgstr "时间倒退"
 
 #: src/celestia/kde/kdeapp.cpp:455
 msgid "Split View Vertically"
@@ -1370,11 +1370,11 @@ msgstr "删除视窗"
 
 #: src/celestia/kde/kdeapp.cpp:460
 msgid "Frames Visible"
-msgstr "显示视窗边框"
+msgstr "显示帧"
 
 #: src/celestia/kde/kdeapp.cpp:473
 msgid "Active Frame Visible"
-msgstr "显示当前视窗边框"
+msgstr "激活帧显示"
 
 #: src/celestia/kde/kdeapp.cpp:485
 msgid "Synchronize Time"
@@ -1382,11 +1382,11 @@ msgstr "时间同步"
 
 #: src/celestia/kde/kdeapp.cpp:497
 msgid "Alt-Azimuth Mode"
-msgstr "地平线视野"
+msgstr "地平线视野模式"
 
 #: src/celestia/kde/kdeapp.cpp:498
 msgid "Go To Surface"
-msgstr "逼近物体表面"
+msgstr "前往物体表面"
 
 #: src/celestia/kde/kdeapp.cpp:545
 msgid "Show Stars"
@@ -1414,7 +1414,7 @@ msgstr "显示星云"
 
 #: src/celestia/kde/kdeapp.cpp:563
 msgid "Show Open Clusters"
-msgstr "显示星族"
+msgstr "显示疏散星团"
 
 #: src/celestia/kde/kdeapp.cpp:566
 msgid "Show Constellations"
@@ -1422,7 +1422,7 @@ msgstr "显示星座"
 
 #: src/celestia/kde/kdeapp.cpp:569
 msgid "Show CloudMaps"
-msgstr "显示云层"
+msgstr "显示云图"
 
 #: src/celestia/kde/kdeapp.cpp:572
 msgid "Show Cloud Shadows"
@@ -1434,7 +1434,7 @@ msgstr "显示轨道"
 
 #: src/celestia/kde/kdeapp.cpp:578
 msgid "Show Asteroid Orbits"
-msgstr "显示陨石轨道"
+msgstr "显示小行星轨道"
 
 #: src/celestia/kde/kdeapp.cpp:581
 msgid "Show Comet Orbits"
@@ -1442,11 +1442,11 @@ msgstr "显示彗星轨道"
 
 #: src/celestia/kde/kdeapp.cpp:584
 msgid "Show Moon Orbits"
-msgstr "显示月球轨道"
+msgstr "显示卫星轨道"
 
 #: src/celestia/kde/kdeapp.cpp:587
 msgid "Show Star Orbits"
-msgstr "显示星星轨道"
+msgstr "显示恒星轨道"
 
 #: src/celestia/kde/kdeapp.cpp:590
 msgid "Show Planet Orbits"
@@ -1454,7 +1454,7 @@ msgstr "显示行星轨道"
 
 #: src/celestia/kde/kdeapp.cpp:593
 msgid "Show Spacecraft Orbits"
-msgstr "显示卫星或航天器轨道"
+msgstr "显示航天器轨道"
 
 #: src/celestia/kde/kdeapp.cpp:596
 msgid "Show Celestial Grid"
@@ -1462,15 +1462,15 @@ msgstr "显示天体坐标线"
 
 #: src/celestia/kde/kdeapp.cpp:599
 msgid "Show Night Side Lights"
-msgstr "显示背光"
+msgstr "显示夜视光"
 
 #: src/celestia/kde/kdeapp.cpp:602
 msgid "Show Markers"
-msgstr "显示标志"
+msgstr "显示标记"
 
 #: src/celestia/kde/kdeapp.cpp:605
 msgid "Show Atmospheres"
-msgstr "显示大气层"
+msgstr "显示大气"
 
 #: src/celestia/kde/kdeapp.cpp:608
 msgid "Show Smooth Orbit Lines"
@@ -1478,11 +1478,11 @@ msgstr "显示光滑轨道线"
 
 #: src/celestia/kde/kdeapp.cpp:611
 msgid "Show Eclipse Shadows"
-msgstr "显示日月食投影"
+msgstr "显示日月蚀投影"
 
 #: src/celestia/kde/kdeapp.cpp:614
 msgid "Cycle Star Mode"
-msgstr "切换恒星显示形状"
+msgstr "切换恒星模式"
 
 #: src/celestia/kde/kdeapp.cpp:616
 msgid "Show Ring Shadows"
@@ -1490,72 +1490,72 @@ msgstr "显示星环投影"
 
 #: src/celestia/kde/kdeapp.cpp:619
 msgid "Show Boundaries"
-msgstr "显示星座边界线"
+msgstr "显示边界"
 
 #: src/celestia/kde/kdeapp.cpp:622
 #: src/celestia/kde/kdepreferencesdialog.cpp:78
 msgid "Auto Magnitudes"
-msgstr "光度自动调节"
+msgstr "星等自动调节"
 
 #: src/celestia/kde/kdeapp.cpp:625
 msgid "Show Comet Tails"
-msgstr "显示彗星尾"
+msgstr "显示彗尾"
 
 #: src/celestia/kde/kdeapp.cpp:628
 msgid "Show Star Labels"
-msgstr "显示恒星标注"
+msgstr "显示恒星标记"
 
 #: src/celestia/kde/kdeapp.cpp:633
 msgid "Show Planet Labels"
-msgstr "显示行星标注"
+msgstr "显示行星标记"
 
 #: src/celestia/kde/kdeapp.cpp:636
 msgid "Show Moon Labels"
-msgstr "显示月球标注"
+msgstr "显示月球标记"
 
 #: src/celestia/kde/kdeapp.cpp:639
 msgid "Show Comet Labels"
-msgstr "显示彗星标注"
+msgstr "显示彗星标记"
 
 #: src/celestia/kde/kdeapp.cpp:642
 msgid "Show Constellation Labels"
-msgstr "显示星座标注"
+msgstr "显示星座标记"
 
 #: src/celestia/kde/kdeapp.cpp:645
 msgid "Constellation Labels in Latin"
-msgstr "拉丁文星座标注"
+msgstr "拉丁文星座标记"
 
 #: src/celestia/kde/kdeapp.cpp:648
 msgid "Show Galaxy Labels"
-msgstr "显示银河系标注"
+msgstr "显示银河系标记"
 
 #: src/celestia/kde/kdeapp.cpp:651
 msgid "Show Globular Labels"
-msgstr "显示球状星团标注"
+msgstr "显示球状星团标记"
 
 #: src/celestia/kde/kdeapp.cpp:654
 msgid "Show Nebula Labels"
-msgstr "显示星云标注"
+msgstr "显示星云标记"
 
 #: src/celestia/kde/kdeapp.cpp:657
 msgid "Show Open Cluster Labels"
-msgstr "显示星族标注"
+msgstr "显示疏散星团标记"
 
 #: src/celestia/kde/kdeapp.cpp:660
 msgid "Show Asteroid Labels"
-msgstr "显示陨石标注"
+msgstr "显示小行星标记"
 
 #: src/celestia/kde/kdeapp.cpp:663
 msgid "Show Spacecraft Labels"
-msgstr "显示卫星或航天器标注"
+msgstr "显示航天器标记"
 
 #: src/celestia/kde/kdeapp.cpp:666
 msgid "Show Location Labels"
-msgstr "显示地理位置标注"
+msgstr "显示地理位置标记"
 
 #: src/celestia/kde/kdeapp.cpp:669
 msgid "Display Local Time"
-msgstr "显示局部时间"
+msgstr "显示本地时间"
 
 #: src/celestia/kde/kdeapp.cpp:674
 msgid "Show City Locations"
@@ -1599,7 +1599,7 @@ msgstr "线框模型显示"
 
 #: src/celestia/kde/kdeapp.cpp:704
 msgid "Center on Orbit"
-msgstr "中心置于轨道"
+msgstr "置中轨道"
 
 #: src/celestia/kde/kdeapp.cpp:708
 #: src/celestia/kde/kdepreferencesdialog.cpp:500
@@ -1644,16 +1644,16 @@ msgstr "NV30"
 #: src/celestia/kde/kdeapp.cpp:724
 #: src/celestia/kde/kdepreferencesdialog.cpp:516
 msgid "OpenGL 2.0"
-msgstr "OpenGL 2.0版本"
+msgstr "OpenGL 2.0"
 
 #: src/celestia/kde/kdeapp.cpp:726
 msgid "Cycle OpenGL Render Path"
-msgstr "切换OpenGL渲染通道"
+msgstr "切换 OpenGL 渲染通道"
 
 #: src/celestia/kde/kdeapp.cpp:728
 #: src/celestia/kde/kdepreferencesdialog.cpp:535
 msgid "Sync framerate to video refresh rate"
-msgstr "与视频刷新率同步"
+msgstr "将帧速率与影像刷新率同步"
 
 #: src/celestia/kde/kdeapp.cpp:733
 msgid "Grab Image"
@@ -1665,15 +1665,15 @@ msgstr "捕捉屏幕影像"
 
 #: src/celestia/kde/kdeapp.cpp:736
 msgid "OpenGL info"
-msgstr "OpenGL系统信息"
+msgstr "OpenGL 信息"
 
 #: src/celestia/kde/kdeapp.cpp:744
 msgid "Show Bookmark Toolbar"
-msgstr "显示标记书签工具栏"
+msgstr "显示书签工具栏"
 
 #: src/celestia/kde/kdeapp.cpp:1000
 msgid "OpenGL Info"
-msgstr "OpenGL系统信息"
+msgstr "OpenGL 信息"
 
 #: src/celestia/kde/kdeapp.cpp:1363
 #: src/celestia/kde/kdepreferencesdialog.cpp:376
@@ -1683,15 +1683,15 @@ msgstr "国际统一标准时间"
 
 #: src/celestia/kde/kdeapp.cpp:1462
 msgid "This version of Celestia was not built with support for movie recording."
-msgstr "本版本Celestia系统不支持影像录制功能。"
+msgstr "此版本 Celestia 系统不支持影像录制功能。"
 
 #: src/celestia/kde/kdeapp.cpp:1488
 msgid "Go to URL"
-msgstr "转到URL网址(&U)..."
+msgstr "转到 URL 网址(&U)..."
 
 #: src/celestia/kde/kdeapp.cpp:1488
 msgid "Enter URL"
-msgstr "输入URL地址"
+msgstr "输入 URL 地址"
 
 #: src/celestia/kde/kdeapp.cpp:1584
 msgid "Object: "
@@ -1727,7 +1727,7 @@ msgstr "高度:"
 
 #: src/celestia/kde/kdeapp.cpp:1682
 msgid "Celestia encountered an error while processing your script"
-msgstr "Celestia系统在处理脚本时出现错误"
+msgstr "Celestia 系统在处理脚本时出现错误"
 
 #: src/celestia/kde/kdemain.cpp:25
 #: src/celestia/kde/kdemain.cpp:43
@@ -1737,7 +1737,7 @@ msgstr "Celestia"
 
 #: src/celestia/kde/kdemain.cpp:31
 msgid "Use alternate configuration file"
-msgstr "使用不同的系统构架文件"
+msgstr "使用不同的设置文件"
 
 #: src/celestia/kde/kdemain.cpp:32
 msgid "Use alternate installation directory"
@@ -1745,35 +1745,35 @@ msgstr "使用不同的安装路径"
 
 #: src/celestia/kde/kdemain.cpp:33
 msgid "Use as additional \"extras\" directory"
-msgstr "作为附加\"extras\"文件目录"
+msgstr "作为附加 \"extras\" 文件目录"
 
 #: src/celestia/kde/kdemain.cpp:34
 msgid "Start fullscreen"
-msgstr "以全屏幕显示启动系统"
+msgstr "以全屏模式启动系统"
 
 #: src/celestia/kde/kdemain.cpp:36
 msgid "Disable splash screen"
-msgstr "关掉启动提示屏幕显示"
+msgstr "关闭启动画面"
 
 #: src/celestia/kde/kdemain.cpp:37
 msgid "Start and go to url"
-msgstr "启动系统并转到UTL地址"
+msgstr "启动时前往 URL 网址"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid ""
 "_: NAME OF TRANSLATORS\\n"
 "Your names"
-msgstr "系统汉化开发者:ZhaoZhengxu"
+msgstr "ZhaoZhengxu,Markerz Li"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid ""
 "_: EMAIL OF TRANSLATORS\\n"
 "Your emails"
-msgstr "zhaozhengxu@yahoo.com"
+msgstr "zhaozhengxu@yahoo.com markerzli@gmail.com"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:58
 msgid "Celestia Preferences"
-msgstr "Celestia系统保留数值"
+msgstr "Celestia 偏好设置"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:64
 msgid "Rendering"
@@ -1789,14 +1789,14 @@ msgstr "显示"
 #: src/celestia/res/resource_strings.cpp:149
 #: src/celestia/res/resource_strings.cpp:166
 msgid "Stars"
-msgstr "恒星"
+msgstr "形体"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:86
 #: src/celestia/kde/kdepreferencesdialog.cpp:217
 #: src/celestia/res/resource_strings.cpp:145
 #: src/celestia/res/resource_strings.cpp:175
 msgid "Galaxies"
-msgstr "银河系"
+msgstr "星系"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:90
 #: src/celestia/kde/kdepreferencesdialog.cpp:222
@@ -1810,12 +1810,12 @@ msgstr "星云"
 #: src/celestia/res/resource_strings.cpp:147
 #: src/celestia/res/resource_strings.cpp:177
 msgid "Open Clusters"
-msgstr "星族"
+msgstr "疏散星团"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:98
 #: src/celestia/res/resource_strings.cpp:151
 msgid "Atmospheres"
-msgstr "大气层"
+msgstr "大气压"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:102
 #: src/celestia/res/resource_strings.cpp:152
@@ -1830,17 +1830,17 @@ msgstr "云层投影"
 #: src/celestia/kde/kdepreferencesdialog.cpp:110
 #: src/celestia/res/resource_strings.cpp:156
 msgid "Night Side Lights"
-msgstr "背光"
+msgstr "夜视光"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:114
 #: src/celestia/res/resource_strings.cpp:155
 msgid "Eclipse Shadows"
-msgstr "日月食投影"
+msgstr "日月蚀投影"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:118
 #: src/celestia/res/resource_strings.cpp:157
 msgid "Comet Tails"
-msgstr "彗星尾"
+msgstr "彗尾"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:122
 #: src/celestia/kde/kdepreferencesdialog.cpp:165
@@ -1850,7 +1850,7 @@ msgstr "轨道"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:126
 msgid "Partial Trajectories"
-msgstr "部分轨迹"
+msgstr "部分轨道"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:130
 msgid "Smooth Orbit Lines"
@@ -1869,7 +1869,7 @@ msgstr "星座"
 #: src/celestia/kde/kdepreferencesdialog.cpp:142
 #: src/celestia/res/resource_strings.cpp:159
 msgid "Markers"
-msgstr "标志"
+msgstr "标记"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:146
 #: src/celestia/res/resource_strings.cpp:154
@@ -1883,21 +1883,21 @@ msgstr "星座边界线"
 #: src/celestia/kde/kdepreferencesdialog.cpp:161
 #: src/celestia/res/resource_strings.cpp:165
 msgid "Orbits / Labels"
-msgstr "轨道 / 标注"
+msgstr "轨道 / 标记"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:167
 #: src/celestia/kde/rc.cpp:12
 #: src/celestia/res/resource_strings.cpp:182
 msgid "Labels"
-msgstr "标注"
+msgstr "标签"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:212
 msgid "Constellations in Latin"
-msgstr "拉丁文星座标注"
+msgstr "拉丁文星座标记"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:245
 msgid "Spacecrafts"
-msgstr "卫星或航天器"
+msgstr "航天器"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:250
 #: src/celestia/kde/kdepreferencesdialog.cpp:312
@@ -1907,15 +1907,15 @@ msgstr "位置"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:259
 msgid "Ambient Light"
-msgstr "光线强度"
+msgstr "环境光线"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:270
 msgid "Limiting Magnitude"
-msgstr "光度可视化极限"
+msgstr "极限星等"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:279
 msgid "Info Text"
-msgstr "文字显示"
+msgstr "文字信息"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:280
 msgid "Level: "
@@ -1924,29 +1924,29 @@ msgstr "等级:"
 #: src/celestia/kde/kdepreferencesdialog.cpp:282
 #: src/celestia/res/resource_strings.cpp:185
 msgid "None"
-msgstr "无文字"
+msgstr "无"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:283
 #: src/celestia/res/resource_strings.cpp:186
 msgid "Terse"
-msgstr "简练式"
+msgstr "简单"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:284
 #: src/celestia/res/resource_strings.cpp:187
 msgid "Verbose"
-msgstr "详尽式"
+msgstr "详细"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:289
 msgid "Textures"
-msgstr "纹理式"
+msgstr "纹理"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:290
 msgid "Resolution: "
-msgstr "分辨率: "
+msgstr "分辨率:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:292
 msgid "Low"
-msgstr "弱"
+msgstr "低"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:293
 msgid "Medium"
@@ -1954,19 +1954,19 @@ msgstr "中"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:294
 msgid "High"
-msgstr "强"
+msgstr "高"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:299
 msgid "Automatic FOV"
-msgstr "自动调节视锥"
+msgstr "自动调节视野"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:300
 msgid "Screen DPI: "
-msgstr "屏幕 DPI:"
+msgstr "屏幕解析率:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:302
 msgid "Viewing Distance (cm): "
-msgstr "观测距离(cm):"
+msgstr "观测距离(厘米):"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:318
 #: src/celestia/res/resource_strings.cpp:193
@@ -1981,7 +1981,7 @@ msgstr "观测站"
 #: src/celestia/kde/kdepreferencesdialog.cpp:326
 #: src/celestia/res/resource_strings.cpp:195
 msgid "Landing Sites"
-msgstr "着陆地点位置"
+msgstr "着陆点"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:330
 #: src/celestia/res/resource_strings.cpp:198
@@ -2010,7 +2010,7 @@ msgstr "其它"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:354
 msgid "Minimum Feature Size"
-msgstr "地面特征最小显示尺寸"
+msgstr "最小特征尺寸"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:368
 msgid "Date/Time"
@@ -2040,12 +2040,12 @@ msgstr "设置"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:393
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
-msgstr "局部时间只能设置在1902和2037年之间\n"
+msgstr "本地时间只能设置在 1902 和 2037 年之间\n"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:438
 #: src/celestia/res/resource_strings.cpp:97
 msgid "Julian Date: "
-msgstr "朱力安历日期: "
+msgstr "儒略日: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:456
 #: src/celestia/kde/rc.cpp:27
@@ -2062,11 +2062,11 @@ msgstr ""
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:484
 msgid "Include Light Travel Time"
-msgstr "考虑光传播时间"
+msgstr "包含光传播时间"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:486
 msgid "Ignore Light Travel Time "
-msgstr "忽略光传播时间"
+msgstr "包含光传播时间"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:493
 msgid "OpenGL"
@@ -2074,51 +2074,51 @@ msgstr "OpenGL"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:548
 msgid "Key Bindings"
-msgstr "键盘设定"
+msgstr "键盘组合"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:788
 msgid "<b>Unextended OpenGL 1.1</b>"
-msgstr "<b>未扩展OpenGL 1.1</b>"
+msgstr "<b>未扩展 OpenGL 1.1</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:791
 msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
-msgstr "<b>Multiple textures和ARB_texenv_combine扩展</b>"
+msgstr "<b>多重纹理和 ARB_texenv_combine 扩展</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:794
 msgid "<b>NVIDIA combiners, no vertex programs</b>"
-msgstr "<b>NVIDIA combiners, 无vertex programs程序</b>"
+msgstr "<b>NVIDIA 组合渲染, 无顶点程序</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:797
 msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
-msgstr "<b>ARB_texenv_DOT3扩展, ARB_vertex_program扩展</b>"
+msgstr "<b>ARB_texenv_DOT3 扩展, ARB 顶点程序扩展</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:800
 msgid "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon graphics card, though NvCombiner ARBVP is a slightly better option for Geforce users"
-msgstr "<b>NVIDIA Combiners, NV_vertex_program扩展</b><br>尽管NvCombiner ARBVP对使用Geforce显卡的用户是稍微优先的选择，本扩展在任何Geforce or ATI Radeon显卡上提供bump mapping, ring shadows和specular highlights"
+msgstr "<b>NVIDIA 组合渲染, NV顶点程序扩展</b><br>对于 Geforce 或 ATI Radeon 显卡提供特效，包括凹凸映射（bump mapping），环状阴影（ring shadows）和反射突显（specular highlights）。即使你是 Geforce 用户，选用 NvCombiner ARBVP 效果会稍好一点。"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:806
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
-msgstr "<b>NVIDIA Combiners, ARB_vertex_program扩展</b>"
+msgstr "<b>NVIDIA 组合渲染, ARB 顶点程序扩展</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:809
 msgid "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide advanced effects on Geforce FX and Radeon 9700 cards"
-msgstr "<b>ARB_fragment_program and ARB_vertex_program扩展</b><br>为GeforceFX和Radeon9700系列显卡提供更高级绘图效果"
+msgstr "<b>ARB 片段程序与 ARB 顶点程序扩展</b><br>为 Geforce FX 和 Radeon 9700系列显卡提供更高级绘图效果"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:813
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
-msgstr "<b>NV_fragment_program和ARB_vertex_program扩展</b>"
+msgstr "<b>NV 片段程序和 ARB 顶点程序扩展</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:816
 msgid "<b>OpenGL 2.0 Shading Language</b>"
-msgstr "<b>OpenGL 2.0 Shading Language编程语言</b>"
+msgstr "<b>OpenGL 2.0 Shading 语言</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:44
 msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr "文件 %1 不存在，使用预置系统构架文件 %2/celestia.cfg"
+msgstr "文件 %1 不存在，使用默认设置文件 %2/celestia.cfg"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:54
 msgid "Directory %1 does not exist, using default %2"
-msgstr "文件路径 %1 不存在，使用预置路径 %2"
+msgstr "文件路径 %1 不存在，使用默认路径 %2"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:66
 msgid "Extras directory %1 does not exist"
@@ -2126,7 +2126,7 @@ msgstr "附加路径 %1 不存在"
 
 #: src/celestia/kde/selectionpopup.cpp:89
 msgid "Abs (app) mag: "
-msgstr "绝对光度(观测光度):"
+msgstr "绝对星等(视星等):"
 
 #: src/celestia/kde/selectionpopup.cpp:101
 msgid "Surface Temp: "
@@ -2134,25 +2134,25 @@ msgstr "表面温度:"
 
 #: src/celestia/kde/selectionpopup.cpp:140
 msgid "Marked objects"
-msgstr "标记物体"
+msgstr "已标记物体"
 
 #: src/celestia/kde/selectionpopup.cpp:298
 msgid "&Select"
-msgstr "选择物体(&S)"
+msgstr "选择(&S)"
 
 #: src/celestia/kde/selectionpopup.cpp:299
 #: src/celestia/res/resource_strings.cpp:110
 #: src/celestia/res/resource_strings.cpp:117
 msgid "&Center"
-msgstr "置选择物体于屏幕中心(&C)"
+msgstr "置中(&C)"
 
 #: src/celestia/kde/selectionpopup.cpp:303
 msgid "S&ynch Orbit"
-msgstr "同步于选择物体(&Y)"
+msgstr "同步跟踪(&Y)"
 
 #: src/celestia/kde/selectionpopup.cpp:306
 msgid "Unmark &All"
-msgstr "关闭所有标志(&A)"
+msgstr "取消所有标记(&A)"
 
 #: src/celestia/kde/selectionpopup.cpp:315
 msgid "Diamond"
@@ -2164,11 +2164,11 @@ msgstr "三角形"
 
 #: src/celestia/kde/selectionpopup.cpp:317
 msgid "Square"
-msgstr "方形"
+msgstr "正方形"
 
 #: src/celestia/kde/selectionpopup.cpp:318
 msgid "Filled Square"
-msgstr "正方形"
+msgstr "填充的正方形"
 
 #: src/celestia/kde/selectionpopup.cpp:319
 msgid "Plus"
@@ -2176,7 +2176,7 @@ msgstr "加号"
 
 #: src/celestia/kde/selectionpopup.cpp:320
 msgid "X"
-msgstr "X形"
+msgstr "X"
 
 #: src/celestia/kde/selectionpopup.cpp:321
 msgid "Left Arrow"
@@ -2196,15 +2196,15 @@ msgstr "下箭头"
 
 #: src/celestia/kde/selectionpopup.cpp:325
 msgid "Circle"
-msgstr "圆环"
+msgstr "圆形"
 
 #: src/celestia/kde/selectionpopup.cpp:326
 msgid "Disk"
-msgstr "磁盘"
+msgstr "填充的圆"
 
 #: src/celestia/kde/selectionpopup.cpp:358
 msgid "Normal"
-msgstr "正常"
+msgstr "普通"
 
 #: src/celestia/kde/selectionpopup.cpp:424
 msgid "Small Bodies"
@@ -2223,11 +2223,11 @@ msgstr "持续时间:%1"
 #: src/celestia/kde/videocapturedlg.cpp:65
 #: src/celestia/kde/videocapturedlg.cpp:278
 msgid "Size: %1 MB"
-msgstr "容量:%1 MB"
+msgstr "大小:%1 MB"
 
 #: src/celestia/kde/videocapturedlg.cpp:95
 msgid "Current size: %1 x %2"
-msgstr "当前尺寸:%1 x %2"
+msgstr "当前大小:%1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:101
 #: src/celestia/kde/videocapturedlg.cpp:133
@@ -2243,16 +2243,16 @@ msgstr "当前高度:%1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:233
 msgid "You must specify a file name."
-msgstr "您必须提供文件名。"
+msgstr "您必须指定文件名。"
 
 #: src/celestia/kde/videocapturedlg.cpp:260
 msgid "Error initializing movie capture."
-msgstr "影像捕捉初始化出错。"
+msgstr "影像捕捉初始化发生错误。"
 
 #: src/celestia/kde/rc.cpp:3
 #: src/celestia/res/resource_strings.cpp:8
 msgid "&Navigation"
-msgstr "浏览(&N)"
+msgstr "导航(&N)"
 
 #: src/celestia/kde/rc.cpp:6
 msgid "Options"
@@ -2264,7 +2264,7 @@ msgstr "物体"
 
 #: src/celestia/kde/rc.cpp:15
 msgid "OpenGL Render Path"
-msgstr "OpenGL渲染通道"
+msgstr "OpenGL 渲染通道"
 
 #: src/celestia/kde/rc.cpp:18
 msgid "Time"
@@ -2284,11 +2284,11 @@ msgstr "距离"
 
 #: src/celestia/kde/rc.cpp:40
 msgid "App. Mag."
-msgstr "观测光度"
+msgstr "视星等"
 
 #: src/celestia/kde/rc.cpp:43
 msgid "Abs. Mag."
-msgstr "绝对光度"
+msgstr "绝对星等"
 
 #: src/celestia/kde/rc.cpp:49
 msgid "With Planets"
@@ -2296,11 +2296,11 @@ msgstr "按拥有行星数目"
 
 #: src/celestia/kde/rc.cpp:52
 msgid "Brightest (Abs.)"
-msgstr "按最大亮度(绝对光度)"
+msgstr "按最大星等(绝对星等)"
 
 #: src/celestia/kde/rc.cpp:55
 msgid "Brightest (App.)"
-msgstr "按最大亮度(观测光度)"
+msgstr "按最大星等(视星等)"
 
 #: src/celestia/kde/rc.cpp:58
 #: src/celestia/res/resource_strings.cpp:114
@@ -2331,7 +2331,7 @@ msgstr "查找参数"
 #: src/celestia/kde/rc.cpp:91
 #: src/celestia/res/resource_strings.cpp:230
 msgid "Solar Eclipses"
-msgstr "日食"
+msgstr "日蚀"
 
 #: src/celestia/kde/rc.cpp:94
 #: src/celestia/res/resource_strings.cpp:228
@@ -2340,7 +2340,7 @@ msgstr "发生于:"
 
 #: src/celestia/kde/rc.cpp:115
 msgid "Moon Eclipses"
-msgstr "月食"
+msgstr "月蚀"
 
 #: src/celestia/kde/rc.cpp:118
 msgid "Search"
@@ -2375,7 +2375,7 @@ msgstr "*.ogg"
 
 #: src/celestia/kde/rc.cpp:142
 msgid "Aspect Ratio:"
-msgstr "方面比:"
+msgstr "长宽比:"
 
 #: src/celestia/kde/rc.cpp:145
 msgid "Current"
@@ -2399,15 +2399,15 @@ msgstr "图像尺寸:"
 
 #: src/celestia/kde/rc.cpp:160
 msgid "Frame Rate:"
-msgstr "FPS:"
+msgstr "帧速率:"
 
 #: src/celestia/kde/rc.cpp:163
 msgid "Video Quality:"
-msgstr "录像质量:"
+msgstr "影像质量:"
 
 #: src/celestia/kde/rc.cpp:166
 msgid "Play Video when capture is done"
-msgstr "录制完毕后播放录像"
+msgstr "录制完毕后播放影像"
 
 #: src/celestia/kde/rc.cpp:169
 msgid "Usage"
@@ -2459,11 +2459,11 @@ msgstr "木卫五"
 
 #: data/data.cpp:10
 msgid "Io"
-msgstr "Io"
+msgstr "木卫一"
 
 #: data/data.cpp:11
 msgid "Europa"
-msgstr "欧罗巴"
+msgstr "木卫二"
 
 #: data/data.cpp:12
 msgid "Ganymede"
@@ -2471,7 +2471,7 @@ msgstr "木卫三"
 
 #: data/data.cpp:13
 msgid "Callisto"
-msgstr "卡利"
+msgstr "木卫四"
 
 #: data/data.cpp:15
 msgid "Prometheus"
@@ -2479,7 +2479,7 @@ msgstr "土卫十六"
 
 #: data/data.cpp:16
 msgid "Pandora"
-msgstr "潘多拉"
+msgstr "土卫十七"
 
 #: data/data.cpp:17
 msgid "Epimetheus"
@@ -2487,7 +2487,7 @@ msgstr "土卫十一"
 
 #: data/data.cpp:18
 msgid "Janus"
-msgstr "杰纳斯"
+msgstr "土卫十"
 
 #: data/data.cpp:19
 msgid "Mimas"
@@ -2503,7 +2503,7 @@ msgstr "土卫三"
 
 #: data/data.cpp:22
 msgid "Dione"
-msgstr "Dione"
+msgstr "土卫四"
 
 #: data/data.cpp:23
 msgid "Rhea"
@@ -2515,7 +2515,7 @@ msgstr "土卫六"
 
 #: data/data.cpp:25
 msgid "Hyperion"
-msgstr "Hyperion"
+msgstr "土卫七"
 
 #: data/data.cpp:26
 msgid "Iapetus"
@@ -2531,7 +2531,7 @@ msgstr "天卫五"
 
 #: data/data.cpp:30
 msgid "Ariel"
-msgstr "Ariel"
+msgstr "天卫一"
 
 #: data/data.cpp:31
 msgid "Umbriel"
@@ -2547,11 +2547,11 @@ msgstr "天卫四"
 
 #: data/data.cpp:35
 msgid "Larissa"
-msgstr "拉里萨"
+msgstr "海卫七"
 
 #: data/data.cpp:36
 msgid "Proteus"
-msgstr "普罗透斯"
+msgstr "海卫八"
 
 #: data/data.cpp:37
 msgid "Triton"
@@ -2571,11 +2571,11 @@ msgstr "冥卫一"
 
 #: data/data.cpp:42
 msgid "NORTH AMERICA"
-msgstr "北非"
+msgstr "北美洲"
 
 #: data/data.cpp:43
 msgid "SOUTH AMERICA"
-msgstr "南美"
+msgstr "南美洲"
 
 #: data/data.cpp:44
 msgid "EURASIA"
@@ -2587,7 +2587,7 @@ msgstr "非洲"
 
 #: data/data.cpp:46
 msgid "AUSTRALIA"
-msgstr "大洋洲"
+msgstr "澳大利亚"
 
 #: data/data.cpp:47
 msgid "ANTARCTICA"
@@ -2631,7 +2631,7 @@ msgstr "大麦哲伦星系"
 
 #: data/data.cpp:57
 msgid "Solar System Barycenter"
-msgstr "太阳系重心"
+msgstr "太阳系质心"
 
 #: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
@@ -2639,7 +2639,7 @@ msgstr "文件(&F)"
 
 #: src/celestia/res/resource_strings.cpp:2
 msgid "&Open Script..."
-msgstr "打开脚本程序文件(&O)..."
+msgstr "打开脚本(&O)..."
 
 #: src/celestia/res/resource_strings.cpp:3
 msgid "Scripts"
@@ -2647,7 +2647,7 @@ msgstr "脚本"
 
 #: src/celestia/res/resource_strings.cpp:4
 msgid "Placeholder"
-msgstr "分隔符"
+msgstr "占位符"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
@@ -2667,7 +2667,7 @@ msgstr "选择太阳系(&S)\tH"
 
 #: src/celestia/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
-msgstr "导向(&G)..."
+msgstr "向导(&G)..."
 
 #: src/celestia/res/resource_strings.cpp:11
 msgid "Select &Object..."
@@ -2679,7 +2679,7 @@ msgstr "驶向物体..."
 
 #: src/celestia/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
-msgstr "置选择物体于屏幕中心(&C)\tC"
+msgstr "置中物体(&C)\tC"
 
 #: src/celestia/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
@@ -2687,27 +2687,27 @@ msgstr "驶向选择物体(&G)\tG"
 
 #: src/celestia/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
-msgstr "尾随选择物体(&F)\tF"
+msgstr "跟随选择物体(&F)\tF"
 
 #: src/celestia/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
-msgstr "同步于选择物体(&Y)\tY"
+msgstr "同步跟踪选择物体(&Y)\tY"
 
 #: src/celestia/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
-msgstr "监视跟踪选择物体(&T)\tT"
+msgstr "追踪选择物体(&T)\tT"
 
 #: src/celestia/res/resource_strings.cpp:18
 msgid "Solar System &Browser..."
-msgstr "浏览太阳系(&B)..."
+msgstr "太阳系浏览器(&B)..."
 
 #: src/celestia/res/resource_strings.cpp:19
 msgid "Star B&rowser..."
-msgstr "检索星球系(&R)..."
+msgstr "星球浏览器(&R)..."
 
 #: src/celestia/res/resource_strings.cpp:20
 msgid "&Eclipse Finder"
-msgstr "预算星月食(&E)"
+msgstr "星月蚀查找(&E)"
 
 #: src/celestia/res/resource_strings.cpp:21
 msgid "&Time"
@@ -2723,7 +2723,7 @@ msgstr "减慢10倍(&S)\tK"
 
 #: src/celestia/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
-msgstr "停滞(&Z)\tSpace"
+msgstr "停止(&Z)\tSpace"
 
 #: src/celestia/res/resource_strings.cpp:25
 msgid "&Real Time\t\\"
@@ -2731,15 +2731,15 @@ msgstr "实时(&R)\t\\"
 
 #: src/celestia/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
-msgstr "倒时(&V)\tJ"
+msgstr "时间倒退(&V)\tJ"
 
 #: src/celestia/res/resource_strings.cpp:27
 msgid "Set &Time..."
-msgstr "设定时间(&T)..."
+msgstr "设置时间(&T)..."
 
 #: src/celestia/res/resource_strings.cpp:28
 msgid "Show Local Time"
-msgstr "显示计算机时钟时间"
+msgstr "显示本地时间"
 
 #: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
@@ -2751,31 +2751,31 @@ msgstr "选择显示模式..."
 
 #: src/celestia/res/resource_strings.cpp:31
 msgid "Toggle Full Screen\tAlt+Enter"
-msgstr "切换全屏幕显示\tAlt+Enter"
+msgstr "切换全屏模式\tAlt+Enter"
 
 #: src/celestia/res/resource_strings.cpp:32
 msgid "View Options..."
-msgstr "可视化设置..."
+msgstr "显示选项..."
 
 #: src/celestia/res/resource_strings.cpp:33
 msgid "Locations..."
-msgstr "地面特征设置..."
+msgstr "位置..."
 
 #: src/celestia/res/resource_strings.cpp:34
 msgid "More Stars Visible\t]"
-msgstr "增加可见星球数目\t]"
+msgstr "显示更多星体\t]"
 
 #: src/celestia/res/resource_strings.cpp:35
 msgid "Fewer Stars Visible\t["
-msgstr "减少可见星球数目\t["
+msgstr "显示更少星体\t["
 
 #: src/celestia/res/resource_strings.cpp:36
 msgid "Auto Magnitude\tCtrl+Y"
-msgstr "光度自动调节\tCtrl+Y"
+msgstr "星等自动调节\tCtrl+Y"
 
 #: src/celestia/res/resource_strings.cpp:37
 msgid "Star St&yle"
-msgstr "星点显示形状(&Y)"
+msgstr "恒星样式(&Y)"
 
 #: src/celestia/res/resource_strings.cpp:38
 msgid "&Fuzzy Points"
@@ -2783,33 +2783,33 @@ msgstr "模糊点(&F)"
 
 #: src/celestia/res/resource_strings.cpp:39
 msgid "&Points"
-msgstr "正常点(&P)"
+msgstr "点(&P)"
 
 #: src/celestia/res/resource_strings.cpp:40
 msgid "Scaled &Discs"
-msgstr "缩放圆点(&D)"
+msgstr "缩放点(&D)"
 
 #: src/celestia/res/resource_strings.cpp:41
 msgid "&Ambient Light"
-msgstr "光线强度(&A)"
+msgstr "环境光线(&A)"
 
 #: src/celestia/res/resource_strings.cpp:42
 msgid "&None"
-msgstr "无光(&N)"
+msgstr "无(&N)"
 
 #: src/celestia/res/resource_strings.cpp:43
 #: src/celestia/res/resource_strings.cpp:46
 msgid "&Low"
-msgstr "弱光(&L)"
+msgstr "低(&L)"
 
 #: src/celestia/res/resource_strings.cpp:44
 #: src/celestia/res/resource_strings.cpp:47
 msgid "&Medium"
-msgstr "正常光(&M)"
+msgstr "中(&M)"
 
 #: src/celestia/res/resource_strings.cpp:45
 msgid "&Texture Resolution"
-msgstr "材质分辨率"
+msgstr "纹理分辨率"
 
 #: src/celestia/res/resource_strings.cpp:48
 msgid "&High"
@@ -2817,7 +2817,7 @@ msgstr "高"
 
 #: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
-msgstr "圆整场景绘图\tCtrl+X"
+msgstr "反锯齿\tCtrl+X"
 
 #: src/celestia/res/resource_strings.cpp:50
 msgid "&View"
@@ -2841,7 +2841,7 @@ msgstr "单视窗(&S)\tCtrl+D"
 
 #: src/celestia/res/resource_strings.cpp:55
 msgid "Show &Frames"
-msgstr "显示窗边(&F)"
+msgstr "屏幕帧显示(&F)"
 
 #: src/celestia/res/resource_strings.cpp:56
 msgid "Synchronize &Time"
@@ -2873,7 +2873,7 @@ msgstr "键盘操作帮助(&C)"
 
 #: src/celestia/res/resource_strings.cpp:63
 msgid "&OpenGL Info"
-msgstr "OpenGL系统配置信息(&O)"
+msgstr "OpenGL 信息(&O)"
 
 #: src/celestia/res/resource_strings.cpp:64
 msgid "&License"
@@ -2881,11 +2881,11 @@ msgstr "使用版权说明(&L)"
 
 #: src/celestia/res/resource_strings.cpp:65
 msgid "&About Celestia"
-msgstr "关于Celestia软件系统(&A)"
+msgstr "关于 Celestia 软件系统(&A)"
 
 #: src/celestia/res/resource_strings.cpp:66
 msgid "About Celestia"
-msgstr "关于Celestia系统"
+msgstr "关于 Celestia 系统"
 
 #: src/celestia/res/resource_strings.cpp:67
 #: src/celestia/res/resource_strings.cpp:85
@@ -2972,7 +2972,7 @@ msgstr "选择物体"
 
 #: src/celestia/res/resource_strings.cpp:87
 msgid "Object Name"
-msgstr "选择物体"
+msgstr "物体名称"
 
 #: src/celestia/res/resource_strings.cpp:88
 msgid "License"
@@ -2980,15 +2980,15 @@ msgstr "使用版权说明"
 
 #: src/celestia/res/resource_strings.cpp:90
 msgid "Celestia Controls"
-msgstr "Celestia常用控制方法"
+msgstr "Celestia 常用控制方法"
 
 #: src/celestia/res/resource_strings.cpp:92
 msgid "OpenGL Driver Info"
-msgstr "OpenGL系统信息"
+msgstr "OpenGL 系统信息"
 
 #: src/celestia/res/resource_strings.cpp:94
 msgid "Set Simulation Time"
-msgstr "设置时间"
+msgstr "设置模拟时间"
 
 #: src/celestia/res/resource_strings.cpp:95
 msgid "Time Zone: "
@@ -2996,15 +2996,15 @@ msgstr "时区:"
 
 #: src/celestia/res/resource_strings.cpp:98
 msgid "Set To Current Time"
-msgstr "使用当前时间"
+msgstr "设置为当前时间"
 
 #: src/celestia/res/resource_strings.cpp:101
 msgid "Add Bookmark"
-msgstr "添加标记书签"
+msgstr "添加书签"
 
 #: src/celestia/res/resource_strings.cpp:105
 msgid "Create in >>"
-msgstr "写入 >>"
+msgstr "建立于 >>"
 
 #: src/celestia/res/resource_strings.cpp:106
 #: src/celestia/res/resource_strings.cpp:215
@@ -3022,7 +3022,7 @@ msgstr "太阳系"
 #: src/celestia/res/resource_strings.cpp:111
 #: src/celestia/res/resource_strings.cpp:118
 msgid "&Go To"
-msgstr "驶向(&G)"
+msgstr "前往(&G)"
 
 #: src/celestia/res/resource_strings.cpp:112
 msgid "Solar System Objects"
@@ -3046,28 +3046,28 @@ msgstr "刷新(&R)"
 
 #: src/celestia/res/resource_strings.cpp:121
 msgid "Star Search Criteria"
-msgstr "星系查找准则"
+msgstr "星系查找规则"
 
 #: src/celestia/res/resource_strings.cpp:122
 msgid "Maximum Stars Displayed in List"
-msgstr "栏目中最多所显示的星系数目"
+msgstr "列表中可显示最多恒星数"
 
 #: src/celestia/res/resource_strings.cpp:123
 msgid "Tour Guide"
-msgstr "导向"
+msgstr "向导"
 
 #: src/celestia/res/resource_strings.cpp:125
 #: src/celestia/res/resource_strings.cpp:131
 msgid "Go To"
-msgstr "驶向"
+msgstr "前往"
 
 #: src/celestia/res/resource_strings.cpp:126
 msgid "Select your destination:"
-msgstr "选择遨游目的地:"
+msgstr "选择目标:"
 
 #: src/celestia/res/resource_strings.cpp:127
 msgid "Go to Object"
-msgstr "驶向目标物体"
+msgstr "前往目标物体"
 
 #: src/celestia/res/resource_strings.cpp:129
 msgid "radii"
@@ -3092,15 +3092,15 @@ msgstr "距离"
 
 #: src/celestia/res/resource_strings.cpp:137
 msgid "Size:"
-msgstr "影像尺寸:"
+msgstr "大小:"
 
 #: src/celestia/res/resource_strings.cpp:138
 msgid "Frame rate:"
-msgstr "FPS显真:"
+msgstr "帧速率:"
 
 #: src/celestia/res/resource_strings.cpp:139
 msgid "Select Display Mode"
-msgstr "屏幕显示设置"
+msgstr "选择显示模式"
 
 #: src/celestia/res/resource_strings.cpp:140
 msgid "Resolution"
@@ -3108,7 +3108,7 @@ msgstr "分辨率"
 
 #: src/celestia/res/resource_strings.cpp:143
 msgid "View Options"
-msgstr "可视化设置"
+msgstr "显示设置"
 
 #: src/celestia/res/resource_strings.cpp:146
 #: src/celestia/res/resource_strings.cpp:176
@@ -3129,11 +3129,11 @@ msgstr "水平分割"
 
 #: src/celestia/res/resource_strings.cpp:163
 msgid "Galactic"
-msgstr "银河系"
+msgstr "银河坐标"
 
 #: src/celestia/res/resource_strings.cpp:164
 msgid "Ecliptic"
-msgstr "黄道"
+msgstr "黄道坐标"
 
 #: src/celestia/res/resource_strings.cpp:170
 msgid "Minor Moons"
@@ -3141,7 +3141,7 @@ msgstr "小卫星"
 
 #: src/celestia/res/resource_strings.cpp:174
 msgid "DSO Labels"
-msgstr "深空间物体名称"
+msgstr "深空间物体标签"
 
 #: src/celestia/res/resource_strings.cpp:180
 msgid "Diagrams"
@@ -3157,7 +3157,7 @@ msgstr "拉丁学名"
 
 #: src/celestia/res/resource_strings.cpp:184
 msgid "Information Text"
-msgstr "文字显示方式"
+msgstr "文字信息"
 
 #: src/celestia/res/resource_strings.cpp:188
 msgid "Filter Stars"
@@ -3189,7 +3189,7 @@ msgstr "其它特征"
 
 #: src/celestia/res/resource_strings.cpp:203
 msgid "Label Features"
-msgstr "特征标签"
+msgstr "标签特征"
 
 #: src/celestia/res/resource_strings.cpp:206
 msgid "Show Features"
@@ -3197,11 +3197,11 @@ msgstr "显示特征"
 
 #: src/celestia/res/resource_strings.cpp:207
 msgid "Minimum Labeled Feature Size"
-msgstr "地面特征最小显示尺寸"
+msgstr "地面标签特征最小尺寸"
 
 #: src/celestia/res/resource_strings.cpp:208
 msgid "Add New Bookmark Folder"
-msgstr "新建游览记录文件夹"
+msgstr "新建书签文件夹"
 
 #: src/celestia/res/resource_strings.cpp:211
 msgid "Folder Name"
@@ -3221,11 +3221,11 @@ msgstr "删除"
 
 #: src/celestia/res/resource_strings.cpp:218
 msgid "Rename Bookmark or Folder"
-msgstr "重新命名记录或文件夹"
+msgstr "重新命名书签或文件夹"
 
 #: src/celestia/res/resource_strings.cpp:221
 msgid "New Name"
-msgstr "新命名"
+msgstr "新名称"
 
 #: src/celestia/res/resource_strings.cpp:223
 msgid "Compute"
@@ -3233,11 +3233,11 @@ msgstr "计算"
 
 #: src/celestia/res/resource_strings.cpp:224
 msgid "Set Date and Go to Planet"
-msgstr "设定日期并驶向行星"
+msgstr "设定日期并前往行星"
 
 #: src/celestia/res/resource_strings.cpp:231
 msgid "Lunar Eclipses"
-msgstr "月食"
+msgstr "月蚀"
 
 #: src/celestia/res/resource_strings.cpp:233
 msgid "Jan"
