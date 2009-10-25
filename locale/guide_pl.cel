@@ -7,7 +7,7 @@
 {
 	Name   "Jowisz"
 	Target "Sol/Jupiter"
-	Description "Jowisz jest największą planetą naszego Układu Słonecznego i piąty od słońca. Podobnie jak inne duże zewnętrzne planety, Jowisz jest gazowym gigantem, bez stałej powierzchni. Wielka czerwona plama jest największą i najdłużej istniejącą burzą w burzliwej atmosferze Jowisza; ta plama wielkości Ziemi szaleje już od co najmniej 300 lat."
+	Description "Jowisz jest największą planetą naszego Układu Słonecznego i piąty od słońca. Podobnie jak inne duże zewnętrzne planety, Jowisz jest gazowym gigantem, bez stałej powierzchni. Wielka czerwona plama jest największą i najdłużej istniejącą burzą w burzliwej atmosferze Jowisza; ta plama (wielkości Ziemi) szaleje już od co najmniej 300 lat."
 }
 
 {
@@ -15,13 +15,13 @@
 	Target "Sol/Pluto"
 	Distance 40000
 	DistanceUnits "km"
-	Description "Pluton orbituje wokół naszego słońca w średniej odległości blisko sześć miliardów kilometrów. Jego księżyc Charon jest tak duży, że oba są często określane jako 'podwójne planety'. Tymczasem jednak, anulowano status planety Plutona.\nPluton ma dwa inne (mniejsze) księżyce: Hydra i Nix."
+	Description "Pluton orbituje wokół naszego słońca w średniej odległości około sześć miliardów kilometrów. Jego księżyc Charon jest tak duży, że oba są często określane jako 'podwójne planety'. Tymczasem jednak, anulowano status planety Plutona.\nPluton ma dwa inne (mniejsze) księżyce: Hydra i Nix."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros jest blisko ziemi asteroidą w kształcie ziemniaka około 33 km długości. Dzięki sondzie NEAR Shoemaker, wiadomo na ten temat więcej o Erosie niż o jakichkolwiek innych asteroidach. W dniu 14 lutego 2001 wylądował na Erosie NEAR i stał się pierwszym statkiem kosmicznym który kiedykolwiek wylądował na asteroidzie."
+	Description "Eros jest asteroidą w pobliżu Ziemi około 33 km długości w kształcie ziemniaka. Dzięki sondzie NEAR Shoemaker, wiadomo więcej o Erosie niż o jakichkolwiek innych asteroidach. W dniu 14 lutego 2001 wylądowała na Erosie sonda NEAR i stała się pierwszym statkiem kosmicznym który kiedykolwiek wylądował na asteroidzie."
 }
 
 {
@@ -29,7 +29,7 @@
 	Target "Milky Way"
 	Distance 270000
 	DistanceUnits "ly"
-	Description "Droga Mleczna to galaktyka, w której znajduje się nasz Układ Słoneczny.\nNasz Układ Słoneczny znajduje się w jednym z ramion spiralnych, które pięknie wygląda z odległości 270000 lat świetlnych. Jeśli odwiedzasz to miejsce, może konieczne być lekkie obrócenie galaktyki przy przytrzymaniu prawego przycisku myszy, aby zobaczyć można ramię spirali."
+	Description "Droga Mleczna to galaktyka, w której znajduje się nasz Układ Słoneczny.\nNasz Układ Słoneczny znajduje się w jednym z ramion spiralnych, które wygląda pięknie z odległości 270000 lat świetlnych. Jeśli odwiedzasz to miejsce, konieczne być może lekkie obrócenie galaktyki przytrzymaniem prawego przyciska myszy, aby zobaczyć ramienia spiralne."
 }
 
 {
@@ -37,7 +37,7 @@
 	Target "Alpha Centauri"
 	Distance 90
 	DistanceUnits "au"
-	Description "Alfa Centauri A i B są razem z Proxima Centauri, najbliższym systemem gwiazd od nas. Alfa Cen A jest bardzo podobna do naszego Słońca, choć nieco starsza i jaśniejsza. Alfa Centauri B jest ciemniejsza i czerwieńsza a Proxima jest tak ciemna, że nie może być dojrzana gołym okiem, nawet jeśli jest to najbliższa gwiazda od Słońca."
+	Description "Alfa Centauri A i B są razem z Proxima Centauri, najbliższym systemem gwiazd oddalonym od nas. Alfa Centauri A jest podobna bardzo do naszego Słońca, choć nieco starsza i jaśniejsza. Alfa Centauri B jest ciemniejsza i czerwieńsza a Proxima jest tak ciemna, że nie może być dojrzana gołym okiem, mimo że jest gwiazdą najbliżej Słońca."
 }
 
 {
@@ -45,7 +45,7 @@
 	Target "Alcyone"
 	Distance 35
 	DistanceUnits "ly"
-	Description "Plejady to grupa młodych jasnych gwiazd. Plejady nazwane są po siedmiu siostrach z mitologii greckiej, nawet teleskopem da się spojrzeć, że istnieje znaczne więcej niż siedem gwiazd w tej gromadzie."
+	Description "Plejady to grupa młodych jasnych gwiazd. Plejady nazwane są po siedmiu siostrach z mitologii greckiej, choć teleskopy wykazały, że istnieje znaczne więcej niż siedem gwiazd w tej gromadzie."
 }
 
 {
@@ -53,13 +53,13 @@
 	Target "63 Tau"
 	Distance 25
 	DistanceUnits "ly"
-	Description "Nazwany po pięciu córek Atlasa i Ajtry, Hiady są jedną z najbardziej widocznych otwartych gromad gwiazd na niebie. Szacuje się, że gwiazdy  Hiady mają około 660 milionów lat - ponad sześć razy więcej niż gorętsze, błękitniejże gwiazdy Plejad, które znajdują się w pobliżu naszego nocnego nieba."
+	Description "Nazwany po pięciu córek Atlasa i Ajtry, Hiady są jedną z najbardziej widocznych otwartych gromad gwiazd na niebie. Szacuje się, że gwiazdy Hiady mają około 660 milionów lat, a więc ponad sześć razy starsze niż gorące, bardziej błękitne gwiazdy Plejad, które znajdują się w pobliżu na naszym niebie."
 }
 
 {
 	Name "Gliese 876 b"
 	Target "Gliese 876/b"
-	Description "Gliese 876 b jest wielką planetą orbitującą czerwoną gwiazdę karłowatą. Orbituje w stosunku 2:1 do innych planet w tym systemie."
+	Description "Gliese 876 b jest wielką planetą orbitującą nad czerwoną gwiazdą karłowatą. Orbituje w stosunku 2:1 do innych planet w tym systemie."
 }
 
 {
@@ -67,24 +67,24 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "Sonda kosmiczna Galileo fotografowała asteroida 243 Ida w roku 1993 w drodze do Jowisza. Te zdjęcia ujawniły, że Ida ma niewielką satelitę, którą nazwano później Daktyl. Odkryto później kilka innych asteroid które także mają satelity."
+	Description "Sonda kosmiczna Galileo sfotografowała asteroida 243 Ida w roku 1993 w drodze do Jowisza. Te zdjęcia ujawniły, że Ida ma niewielką satelitę, którą nazwano później Daktyl. Potem odkryto kilka innych asteroid które także mają satelity."
 }
 
 {
 	Name "51 Pegasi b"
 	Target "51 Peg/b"
-	Description "W roku 1995 51 Pegasi b była pierwszą odkrytą planetą orbitującą nad normalną gwiazdą zamiast słońca. Jest to ogromna planeta gazowa, która orbituje nad swoją gwiazdą domową niezwykle blisko - mniej niż jedna piąta odległości pomiędzy Merkury i Słońca. Że ten olbrzym gazowy, może istnieć tak blisko gwiazdy, zmusiło astronomów do ponownego rozpatrzenia ich teorii powstawania Układu Słonecznego."
+	Description "W roku 1995, 51 Pegasi b była pierwszą odkrytą planetą orbitującą nad normalną gwiazdą zamiast naszego Słońca. Jest to ogromna planeta gazowa, która orbituje niezwykle blisko nad swoją gwiazdą domową - mniej niż jedna piąta odległości pomiędzy Merkurym a naszym Słońcem. Fakt, że gazowy olbrzym może istnieć tak blisko gwiazdy, zmusiło astronomów do poważnego rozważenia teorii na temat powstawania układów słonecznych."
 }
 
 {
 	Name "Albireo"
 	Target "Albireo"
 	Distance 0.6
-	Description "Ze względu na pomarańczowe i niebiesko-białe barwne kolory swoich gwiazd, podwójna gwiazda Albireo uważana jest za jedną z najładniejszych par na niebie. Pomarańczowa gwiazda to olbrzym typu K, a jej towarzysz to karzeł klasy B."
+	Description "Ze względu na pomarańczowe i niebiesko-białe barwy swoich gwiazd, podwójna gwiazda Albireo uważana jest za jedną z najładniejszych par na niebie. Pomarańczowa gwiazda to olbrzym typu K, a jej towarzysz to karzeł klasy B."
 }
 
 {
 	Name "Kometa Borrelly'ego"
 	Target "Sol/Borrelly"
-	Description "22 Września 2001 roku Kometa Borrelly'ego została drugą kometą która kiedykolwiek została fotografowana przez sondę z bliskiej odległości. Pomimo Deep Space 1 nie została stworzona do asysty grawitacyjnej komety, to sonda osiągnęła zbliżeniu o 2200 km do jądra komety i wykonała najwyższej rozdzielczości zdjęcia jądra komety które są dotychczas dostępne."
+	Description "22 Września 2001 roku, Kometa Borrelly'ego była drugą kometą która kiedykolwiek została sfotografowana przez sondę z bliskiej odległości. Pomimo sonda Deep Space 1 nie została stworzona do asysty grawitacyjnej komety, to zbliżyła się wtedy na odległość 2200 km do jądra komety i dostarczyła najwyższej rozdzielczości zdjęcia, które do dziś dostępne są z jądra komety."
 }
