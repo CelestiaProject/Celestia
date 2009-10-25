@@ -2,21 +2,124 @@
 
 Location "MUSES-C REGIO" "Sol/Itokawa"
 {
-    LongLat [ 60 -70 0 ]
-    Size 0.3
-    Type "RE"
+	LongLat [ -60 -70 0 ]
+	Size 0.3
+	Type "RE"
 }
 
 Location "SAGAMIHARA REGIO" "Sol/Itokawa"
 {
-    LongLat [ 15 80 0 ]
-    Size 0.23
-    Type "RE"
+	LongLat [ -15 80 0 ]
+	Size 0.23
+	Type "RE"
 }
 
 Location "UCHINOURA REGIO" "Sol/Itokawa"
 {
-    LongLat [ 90 40 0 ]
-    Size 0.07
-    Type "RE"
+	LongLat [ 90 40 0 ]
+	Size 0.07
+	Type "RE"
+}
+
+# Position from IAU map; coords inconsistent
+Location "Miyabaru" "Sol/Itokawa"
+{
+	LongLat [ 5 10 0 ]
+	Size 0.088
+	Type "AA"
+}
+
+Location "Fuchinobe" "Sol/Itokawa"
+{
+	LongLat [ 269 34 0 ]
+	Size 0.037
+	Type "AA"
+}
+
+Location "Komaba" "Sol/Itokawa"
+{
+	LongLat [ 102 -10 0 ]
+	Size 0.028
+	Type "AA"
+}
+
+Location "Hammaguira" "Sol/Itokawa"
+{
+	LongLat [ 205 -18 0 ]
+	Size 0.028
+	Type "AA"
+}
+
+Location "Laurel" "Sol/Itokawa"
+{
+	LongLat [ 162 1 0 ]
+	Size 0.022
+	Type "AA"
+}
+
+Location "Catalina" "Sol/Itokawa"
+{
+	LongLat [ 14 -17 0 ]
+	Size 0.021
+	Type "AA"
+}
+
+Location "Kamisunagawa" "Sol/Itokawa"
+{
+	LongLat [ 45 -28 0 ]
+	Size 0.013
+	Type "AA"
+}
+
+Location "Kamoi" "Sol/Itokawa"
+{
+	LongLat [ 244 6 0 ]
+	Size 0.01
+	Type "AA"
+}
+
+Location "San Marco" "Sol/Itokawa"
+{
+	LongLat [ 319 -28 0 ]
+	Size 0.01
+	Type "AA"
+}
+
+Location "Gando" "Sol/Itokawa"
+{
+	LongLat [ 205 -76 0 ]
+	Size 0.01
+	Type "AA"
+}
+
+# Position from IAU map; coords inconsistent
+Location "YOSHINOBU REGIO" "Sol/Itokawa"
+{
+	LongLat [ -10 20 0 ]
+	Size 0.163
+	Type "RE"
+}
+
+# Position from IAU map; coords inconsistent
+Location "ARCOONA REGIO" "Sol/Itokawa"
+{
+	LongLat [ -190 -10 0 ]
+	Size 0.161
+	Type "RE"
+}
+
+# Position from IAU map; coords inconsistent
+Location "OHSUMI REGIO" "Sol/Itokawa"
+{
+	LongLat [ 255 -20 0 ]
+	Size 0.140
+	Type "RE"
+}
+
+# Position from IAU map; coords inconsistent
+Location "LINEAR REGIO" "Sol/Itokawa"
+{
+	LongLat [ 130 0 0 ]
+	Size 0.122
+	Type "RE"
 }
