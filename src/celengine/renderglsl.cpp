@@ -21,12 +21,7 @@
 #endif
 #endif /* _WIN32 */
 
-#include <celutil/debug.h>
-#include <celmath/frustum.h>
-#include <celmath/distance.h>
-#include <celmath/intersect.h>
-#include <celutil/utf8.h>
-#include <celutil/util.h>
+#include "render.h"
 #include "astro.h"
 #include "glshader.h"
 #include "shadermanager.h"
@@ -37,11 +32,16 @@
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"
-#include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
-#include <GL/glew.h>
 #include "vecgl.h"
+#include <celutil/debug.h>
+#include <celmath/frustum.h>
+#include <celmath/distance.h>
+#include <celmath/intersect.h>
+#include <celutil/utf8.h>
+#include <celutil/util.h>
+
 
 using namespace Eigen;
 using namespace std;
@@ -53,7 +53,6 @@ const double AtmosphereExtinctionThreshold = 0.05;
 // Render a planet sphere with GLSL shaders
 void renderSphere_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
-                       RingSystem* rings,
                        Atmosphere* atmosphere,
                        float cloudTexOffset,
                        float radius,
@@ -118,6 +117,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
         textures[nTextures++] = ri.overlayTex;
     }
 
+#if 0
     if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
     {
         Texture* ringsTex = rings->texture.find(textureRes);
@@ -138,6 +138,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
     }
+#endif
 
     if (atmosphere != NULL)
     {
@@ -188,6 +189,15 @@ void renderSphere_GLSL(const RenderInfo& ri,
                 glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
                 cloudTex->bind();
                 glActiveTextureARB(GL_TEXTURE0_ARB);
+
+                for (unsigned int lightIndex = 0; lightIndex < ls.nLights; lightIndex++)
+                {
+                    if (ls.lights[lightIndex].castsShadows)
+                    {
+                        shadprop.setCloudShadowForLight(lightIndex, true);
+                    }
+                }
+
             }
         }
     }
@@ -196,16 +206,47 @@ void renderSphere_GLSL(const RenderInfo& ri,
     // Track the total number of shadows; if there are too many, we'll have
     // to fall back to multipass.
     unsigned int totalShadows = 0;
+    
     for (unsigned int li = 0; li < ls.nLights; li++)
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
-            shadprop.setShadowCountForLight(li, nShadows);
+            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderEclipseShadows, ls.shadows[li]->size());
+            shadprop.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }
     }
 
+    if (ls.shadowingRingSystem)
+    {
+        Texture* ringsTex = ls.shadowingRingSystem->texture.find(textureRes);
+        if (ringsTex != NULL)
+        {
+            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            ringsTex->bind();
+            nTextures++;
+            
+            // Tweak the texture--set clamp to border and a border color with
+            // a zero alpha.
+            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
+
+            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
+
+            for (unsigned int lightIndex = 0; lightIndex < ls.nLights; lightIndex++)
+            {
+                if (ls.lights[lightIndex].castsShadows &&
+                    ls.shadowingRingSystem == ls.ringShadows[lightIndex].ringSystem)
+                {
+                    shadprop.setRingShadowForLight(lightIndex, true);
+                }
+            }
+        }
+    }
+    
+    
     // Get a shader for the current rendering configuration
     CelestiaGLProgram* prog = GetShaderManager().getShader(shadprop);
     if (prog == NULL)
@@ -226,9 +267,18 @@ void renderSphere_GLSL(const RenderInfo& ri,
 
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
     {
-        float ringWidth = rings->outerRadius - rings->innerRadius;
-        prog->ringRadius = rings->innerRadius / radius;
+        float ringWidth = ls.shadowingRingSystem->outerRadius - ls.shadowingRingSystem->innerRadius;
+        prog->ringRadius = ls.shadowingRingSystem->innerRadius / radius;
         prog->ringWidth = radius / ringWidth;
+        prog->ringPlane = Hyperplane<float, 3>(ls.ringPlaneNormal, ls.ringCenter / radius).coeffs();
+        prog->ringCenter = ls.ringCenter / radius;
+        for (unsigned int lightIndex = 0; lightIndex < ls.nLights; ++lightIndex)
+        {
+            if (shadprop.hasRingShadowForLight(lightIndex))
+            {
+                prog->ringShadowLOD[lightIndex] = ls.ringShadows[lightIndex].texLod;
+            }
+        }
     }
 
     if (shadprop.texUsage & ShaderProperties::CloudShadowTexture)
@@ -242,7 +292,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
         prog->setAtmosphereParameters(*atmosphere, radius, radius);
     }
 
-    if (shadprop.shadowCounts != 0)
+    if (shadprop.hasEclipseShadows() != 0)
         prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 
     glColor(ri.color);
@@ -357,7 +407,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Texture* cloudTex,
                        Texture* cloudNormalMap,
                        float texOffset,
-                       RingSystem* rings,
                        float radius,
                        unsigned int textureRes,
                        int renderFlags,
@@ -389,6 +438,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= ShaderProperties::CompressedNormalTexture;
     }
 
+#if 0
     if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
     {
         Texture* ringsTex = rings->texture.find(textureRes);
@@ -409,7 +459,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= ShaderProperties::RingShadowTexture;
         }
     }
-
+#endif
+    
     if (atmosphere != NULL)
     {
         if (renderFlags & Renderer::ShowAtmospheres)
@@ -429,8 +480,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, ls.shadows[li]->size());
-            shadprop.setShadowCountForLight(li, nShadows);
+            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderEclipseShadows, ls.shadows[li]->size());
+            shadprop.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }
     }
@@ -455,13 +506,15 @@ void renderClouds_GLSL(const RenderInfo& ri,
         prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius);
     }
 
+#if 0
     if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
     {
         float ringWidth = rings->outerRadius - rings->innerRadius;
         prog->ringRadius = rings->innerRadius / cloudRadius;
         prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
     }
-
+#endif
+    
     if (shadprop.shadowCounts != 0)
         prog->setEclipseShadowParameters(ls, cloudRadius, planetOrientation);
 
@@ -599,7 +652,7 @@ void renderRings_GLSL(RingSystem& rings,
         {
             // Set one shadow (the planet's) per light
             for (unsigned int li = 0; li < ls.nLights; li++)
-                shadprop.setShadowCountForLight(li, 1);
+                shadprop.setEclipseShadowCountForLight(li, 1);
         }
 
         if (ringsTex)

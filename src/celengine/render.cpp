@@ -39,6 +39,7 @@ std::ofstream hdrlog;
 #endif
 #endif /* _WIN32 */
 
+#include "render.h"
 #include "boundaries.h"
 #include "asterism.h"
 #include "astro.h"
@@ -52,7 +53,6 @@ std::ofstream hdrlog;
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"
-#include "render.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
 #include "axisarrow.h"
@@ -6058,7 +6058,7 @@ static void renderRings(RingSystem& rings,
 
 static void
 renderEclipseShadows(Geometry* geometry,
-                     vector<EclipseShadow>& eclipseShadows,
+                     LightingState::EclipseShadowVector& eclipseShadows,
                      RenderInfo& ri,
                      float planetRadius,
                      Quaternionf& planetOrientation,
@@ -6072,7 +6072,7 @@ renderEclipseShadows(Geometry* geometry,
     if (geometry != NULL)
         return;
 
-    for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
+    for (LightingState::EclipseShadowVector::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end(); iter++)
     {
         EclipseShadow shadow = *iter;
@@ -6192,7 +6192,7 @@ renderEclipseShadows(Geometry* geometry,
 
 static void
 renderEclipseShadows_Shaders(Geometry* geometry,
-                             vector<EclipseShadow>& eclipseShadows,
+                             LightingState::EclipseShadowVector& eclipseShadows,
                              RenderInfo& ri,
                              float planetRadius,
                              const Quaternionf& planetOrientation,
@@ -6216,7 +6216,7 @@ renderEclipseShadows_Shaders(Geometry* geometry,
     Vector4f shadowParams[4];
 
     int n = 0;
-    for (vector<EclipseShadow>::iterator iter = eclipseShadows.begin();
+    for (LightingState::EclipseShadowVector::iterator iter = eclipseShadows.begin();
          iter != eclipseShadows.end() && n < 4; iter++, n++)
     {
         EclipseShadow shadow = *iter;
@@ -6700,7 +6700,8 @@ setupObjectLighting(const vector<LightSource>& suns,
         ls.nLights++;
     }
 
-    ls.eyePos_obj = m * -(objPosition_eye.cwise() / objScale);
+    Matrix3f invScale = objScale.cwise().inverse().asDiagonal();
+    ls.eyePos_obj = invScale * m * -objPosition_eye;
     ls.eyeDir_obj = (m * -objPosition_eye).normalized();
 
     // When the camera is very far from the object, some view-dependent
@@ -6732,8 +6733,7 @@ void Renderer::renderObject(const Vector3f& pos,
     RenderInfo ri;
 
     float altitude = distance - obj.radius;
-    float discSizeInPixels = obj.radius /
-        (max(nearPlaneDistance, altitude) * pixelSize);
+    float discSizeInPixels = obj.radius / (max(nearPlaneDistance, altitude) * pixelSize);
 
     ri.sunDir_eye = Vector3f::UnitY();
     ri.sunDir_obj = Vector3f::UnitY();
@@ -6967,7 +6967,7 @@ void Renderer::renderObject(const Vector3f& pos,
             switch (context->getRenderPath())
             {
             case GLContext::GLPath_GLSL:
-                renderSphere_GLSL(ri, ls, obj.rings,
+                renderSphere_GLSL(ri, ls,
                                   const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
                                   obj.radius,
                                   textureResolution,
@@ -7185,7 +7185,6 @@ void Renderer::renderObject(const Vector3f& pos,
                                       cloudTex,
                                       cloudNormalMap,
                                       cloudTexOffset,
-                                      obj.rings,
                                       radius,
                                       textureResolution,
                                       renderFlags,
@@ -7332,10 +7331,14 @@ void Renderer::renderObject(const Vector3f& pos,
 
 bool Renderer::testEclipse(const Body& receiver,
                            const Body& caster,
-                           const DirectionalLight& light,
-                           double now,
-                           vector<EclipseShadow>& shadows)
+                           LightingState& lightingState,
+                           unsigned int lightIndex,
+                           double now)
 {
+    const DirectionalLight& light = lightingState.lights[lightIndex];
+    LightingState::EclipseShadowVector& shadows = *lightingState.shadows[lightIndex];
+    bool isReceiverShadowed = false;
+    
     // Ignore situations where the shadow casting body is much smaller than
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
@@ -7411,16 +7414,65 @@ bool Renderer::testEclipse(const Body& receiver,
             shadow.umbraRadius = caster.getRadius() *
                 (appOccluderRadius - appSunRadius) / appOccluderRadius;
             shadow.maxDepth = std::min(1.0f, square(appOccluderRadius / appSunRadius));
+            shadow.caster = &caster;
 
             // Ignore transits that don't produce a visible shadow.
             if (shadow.maxDepth > 1.0f / 256.0f)
                 shadows.push_back(shadow);
 
-            return true;
+            isReceiverShadowed = true;
+        }
+        
+        // If the caster has a ring system, see if it casts a shadow on the receiver.
+        // Ring shadows are only supported in the OpenGL 2.0 path.
+        if (caster.getRings() && context->getRenderPath() == GLContext::GLPath_GLSL)
+        {
+            bool shadowed = false;
+            
+            // The shadow volume of the rings is an oblique circular cylinder
+            if (dist < caster.getRings()->outerRadius + receiver.getRadius())
+            {
+                // Possible intersection, but it depends on the orientation of the
+                // rings.
+                Quaterniond casterOrientation = caster.getOrientation(now);
+                Vector3d ringPlaneNormal = casterOrientation * Vector3d::UnitY();                
+                Vector3d shadowDirection = lightToCasterDir.normalized();                
+                Vector3d v = ringPlaneNormal.cross(shadowDirection);
+                if (v.squaredNorm() < 1.0e-6)
+                {
+                    // Shadow direction is nearly coincident with ring plane normal, so
+                    // the shadow cross section is close to circular. No additional test
+                    // is required.
+                    shadowed = true;
+                }
+                else
+                {
+                    // minDistance is the cross section of the ring shadows in the plane
+                    // perpendicular to the ring plane and containing the light direction.
+                    Vector3d shadowPlaneNormal = v.normalized().cross(shadowDirection);
+                    Hyperplane<double, 3> shadowPlane(shadowPlaneNormal, posCaster - posReceiver);
+                    double minDistance = receiver.getRadius() + 
+                        caster.getRings()->outerRadius * ringPlaneNormal.dot(shadowDirection);
+                    if (abs(shadowPlane.signedDistance(Vector3d::Zero())) < minDistance)
+                    {
+                        // TODO: Implement this test and only set shadowed to true if it passes
+                    }
+                    shadowed = true;
+                }
+
+                if (shadowed)
+                {
+                    RingShadow& shadow = lightingState.ringShadows[lightIndex];
+                    shadow.origin = dir.cast<float>();
+                    shadow.direction = shadowDirection.cast<float>();
+                    shadow.ringSystem = caster.getRings();
+                    shadow.casterOrientation = casterOrientation.cast<float>();
+                }
+            }                        
         }
     }
 
-    return false;
+    return isReceiverShadowed;
 }
 
 
@@ -7511,6 +7563,18 @@ void Renderer::renderPlanet(Body& body,
         }
 
 
+        // Add ring shadow records for each light
+        if (body.getRings() && ShowRingShadows)
+        {
+            for (unsigned int li = 0; li < lights.nLights; li++)
+            {
+                lights.ringShadows[li].ringSystem = body.getRings();
+                lights.ringShadows[li].casterOrientation = q.cast<float>();
+                lights.ringShadows[li].origin = Vector3f::Zero();
+                lights.ringShadows[li].direction = -lights.lights[li].position.normalized().cast<float>();
+            }
+        }
+        
         // Calculate eclipse circumstances
         if ((renderFlags & ShowEclipseShadows) != 0 &&
             body.getSystem() != NULL)
@@ -7532,9 +7596,7 @@ void Renderer::renderPlanet(Body& body,
                         {
                             for (int i = 0; i < nSatellites; i++)
                             {
-                                testEclipse(body, *satellites->getBody(i),
-                                            lights.lights[li],
-                                            now, *lights.shadows[li]);
+                                testEclipse(body, *satellites->getBody(i), lights, li, now);
                             }
                         }
                     }
@@ -7554,8 +7616,7 @@ void Renderer::renderPlanet(Body& body,
                         Body* planet = system->getPrimaryBody();
                         while (planet != NULL)
                         {
-                            testEclipse(body, *planet, lights.lights[li],
-                                        now, *lights.shadows[li]);
+                            testEclipse(body, *planet, lights, li, now);
                             if (planet->getSystem() != NULL)
                                 planet = planet->getSystem()->getPrimaryBody();
                             else
@@ -7567,12 +7628,99 @@ void Renderer::renderPlanet(Body& body,
                         {
                             if (system->getBody(i) != &body)
                             {
-                                testEclipse(body, *system->getBody(i),
-                                            lights.lights[li],
-                                            now, *lights.shadows[li]);
+                                testEclipse(body, *system->getBody(i), lights, li, now);
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // Sort out the ring shadows; only one ring shadow source is supported right now. This means
+        // that exotic cases with shadows from two ring different ring systems aren't handled.
+        for (unsigned int li = 0; li < lights.nLights; li++)
+        {
+            if (lights.ringShadows[li].ringSystem != NULL)
+            {
+                RingSystem* rings = lights.ringShadows[li].ringSystem;
+
+                // Use the first set of ring shadows found (shadowing the brightest light
+                // source.)
+                if (lights.shadowingRingSystem == NULL)
+                {
+                    lights.shadowingRingSystem = rings;
+                    lights.ringPlaneNormal = (rp.orientation * lights.ringShadows[li].casterOrientation.conjugate()) * Vector3f::UnitY();
+                    lights.ringCenter = rp.orientation * lights.ringShadows[li].origin;
+                }
+
+                // Light sources have a finite size, which causes some blurring of the texture. Simulate
+                // this effect by using a lower LOD (i.e. a smaller mipmap level, indicated somewhat
+                // confusingly by a _higher_ LOD value.
+                float ringWidth = rings->outerRadius - rings->innerRadius;
+                float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
+                float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
+                Texture* ringsTex = rings->texture.find(textureResolution);
+                if (ringsTex)
+                {
+                    // Calculate the approximate distance from the shadowed object to the rings
+                    Hyperplane<float, 3> ringPlane(lights.ringPlaneNormal, lights.ringCenter);
+                    float cosLightAngle = lights.lights[li].direction_obj.dot(ringPlane.normal());
+                    float approxRingDistance = rings->innerRadius;
+                    if (abs(cosLightAngle) < 0.99999f)
+                    {
+                        approxRingDistance = abs(ringPlane.offset() / cosLightAngle);
+                    }
+                    if (lights.ringCenter.norm() < rings->innerRadius)
+                    {
+                        approxRingDistance = max(approxRingDistance, rings->innerRadius - lights.ringCenter.norm());
+                    }
+
+                    // Calculate the LOD based on the size of the smallest
+                    // ring feature relative to the apparent size of the light source.
+                    float ringTextureWidth = ringsTex->getWidth();
+                    float ringFeatureSize = (projectedRingSize / ringTextureWidth) / approxRingDistance;
+                    float relativeFeatureSize = lights.lights[li].apparentSize / ringFeatureSize;
+                    //float areaLightLod = log(max(relativeFeatureSize, 1.0f)) / log(2.0f);
+                    float areaLightLod = celmath::log2(max(relativeFeatureSize, 1.0f));
+
+                    // Compute the LOD that would be automatically used by the GPU.
+                    float texelToPixelRatio = ringTextureWidth / projectedRingSizeInPixels;
+                    float gpuLod = celmath::log2(texelToPixelRatio);
+
+                    //float lod = max(areaLightLod, log(texelToPixelRatio) / log(2.0f));
+                    float lod = max(areaLightLod, gpuLod);
+
+                    // maxLOD is the index of the smallest mipmap (or close to it for non-power-of-two
+                    // textures.) We can't make the lod larger than this.
+                    float maxLod = celmath::log2((float) ringsTex->getWidth());
+                    if (maxLod > 1.0f)
+                    {
+                        // Avoid using the 1x1 mipmap, as it appears to cause 'bleeding' when
+                        // the light source is very close to the ring plane. This is probably
+                        // a numerical precision issue from calculating the intersection of
+                        // between a ray and plane that are nearly parallel.
+                        maxLod -= 1.0f;
+                    }
+                    lod = min(lod, maxLod);
+
+                    // Not all hardware/drivers support GLSL's textureXDLOD instruction, which lets
+                    // us explicitly set the LOD. But, they do all have an optional lodBias parameter
+                    // for the textureXD instruction. The bias is just the difference between the
+                    // area light LOD and the approximate GPU calculated LOD.
+                    float lodBias = max(0.0f, lod - gpuLod);
+
+                    if (GLEW_ARB_shader_texture_lod)
+                    {
+                        lights.ringShadows[li].texLod = lod;
+                    }
+                    else
+                    {
+                        lights.ringShadows[li].texLod = lodBias;
+                    }
+                }
+                else
+                {
+                    lights.ringShadows[li].texLod = 0.0f;
                 }
             }
         }
