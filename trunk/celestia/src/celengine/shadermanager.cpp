@@ -28,6 +28,19 @@ using namespace std;
 
 ShaderManager g_ShaderManager;
 
+enum ShaderVariableType
+{
+    Shader_Float,
+    Shader_Vector2,
+    Shader_Vector3,
+    Shader_Vector4,
+    Shader_Sampler1D,
+    Shader_Sampler2D,
+    Shader_Sampler3D,
+    Shader_SamplerCube,
+    Shader_Sampler1DShadow,
+    Shader_Sampler2DShadow,
+};
 
 static const char* errorVertexShaderSource =
     "void main(void) {\n"
@@ -61,9 +74,7 @@ ShaderProperties::ShaderProperties() :
 bool
 ShaderProperties::usesShadows() const
 {
-    return  (texUsage & RingShadowTexture) != 0 ||
-             (texUsage & CloudShadowTexture) != 0 ||
-             shadowCounts != 0;
+    return shadowCounts != 0;
 }
 
 
@@ -78,21 +89,106 @@ ShaderProperties::usesFragmentLighting() const
 
 
 unsigned int
-ShaderProperties::getShadowCountForLight(unsigned int i) const
+ShaderProperties::getEclipseShadowCountForLight(unsigned int lightIndex) const
 {
-    return (shadowCounts >> i * 2) & 3;
+    return (shadowCounts >> lightIndex * ShadowBitsPerLight) & EclipseShadowMask;
+}
+
+
+bool
+ShaderProperties::hasEclipseShadows() const
+{
+    return (shadowCounts & AnyEclipseShadowMask) != 0;
 }
 
 
 void
-ShaderProperties::setShadowCountForLight(unsigned int light, unsigned int n)
+ShaderProperties::setEclipseShadowCountForLight(unsigned int lightIndex, unsigned int shadowCount)
 {
-    assert(n <= MaxShaderShadows);
-    assert(light < MaxShaderLights);
-    if (n <= MaxShaderShadows && light < MaxShaderLights)
+    assert(shadowCount <= MaxShaderEclipseShadows);
+    assert(lightIndex < MaxShaderLights);
+    if (shadowCount <= MaxShaderEclipseShadows && lightIndex < MaxShaderLights)
     {
-        shadowCounts &= ~(3 << light * 2);
-        shadowCounts |= n << light * 2;
+        shadowCounts &= ~(EclipseShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= shadowCount << lightIndex * ShadowBitsPerLight;
+    }
+}
+
+
+bool
+ShaderProperties::hasRingShadowForLight(unsigned int lightIndex) const
+{
+    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & RingShadowMask) != 0;
+}
+
+
+bool
+ShaderProperties::hasRingShadows() const
+{
+    return (shadowCounts & AnyRingShadowMask) != 0;
+}
+
+
+void
+ShaderProperties::setRingShadowForLight(unsigned int lightIndex, bool enabled)
+{
+    assert(lightIndex < MaxShaderLights);
+    if (lightIndex < MaxShaderLights)
+    {
+        shadowCounts &= ~(RingShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= (enabled ? RingShadowMask : 0) << lightIndex * ShadowBitsPerLight;
+    }
+}
+
+
+bool
+ShaderProperties::hasSelfShadowForLight(unsigned int lightIndex) const
+{
+    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & SelfShadowMask) != 0;
+}
+
+
+bool
+ShaderProperties::hasSelfShadows() const
+{
+    return (shadowCounts & AnySelfShadowMask) != 0;
+}
+
+
+void
+ShaderProperties::setSelfShadowForLight(unsigned int lightIndex, bool enabled)
+{
+    assert(lightIndex < MaxShaderLights);
+    if (lightIndex < MaxShaderLights)
+    {
+        shadowCounts &= ~(SelfShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= (enabled ? SelfShadowMask : 0) << lightIndex * ShadowBitsPerLight;
+    }
+}
+
+
+bool
+ShaderProperties::hasCloudShadowForLight(unsigned int lightIndex) const
+{
+    return ((shadowCounts >> lightIndex * ShadowBitsPerLight) & CloudShadowMask) != 0;
+}
+
+
+bool
+ShaderProperties::hasCloudShadows() const
+{
+    return (shadowCounts & AnyCloudShadowMask) != 0;
+}
+
+
+void
+ShaderProperties::setCloudShadowForLight(unsigned int lightIndex, bool enabled)
+{
+    assert(lightIndex < MaxShaderLights);
+    if (lightIndex < MaxShaderLights)
+    {
+        shadowCounts &= ~(SelfShadowMask << lightIndex * ShadowBitsPerLight);
+        shadowCounts |= (enabled ? CloudShadowMask : 0) << lightIndex * ShadowBitsPerLight;
     }
 }
 
@@ -101,9 +197,15 @@ bool
 ShaderProperties::hasShadowsForLight(unsigned int light) const
 {
     assert(light < MaxShaderLights);
-    return getShadowCountForLight(light) != 0 ||
-            (texUsage & (RingShadowTexture | CloudShadowTexture)) != 0;
+    return getEclipseShadowCountForLight(light) != 0 ||
+           hasRingShadowForLight(light)    ||
+           hasSelfShadowForLight(light)    ||
+           hasCloudShadowForLight(light);
 }
+
+
+
+
 
 
 // Returns true if diffuse, specular, bump, and night textures all use the
@@ -186,7 +288,7 @@ bool operator<(const ShaderProperties& p0, const ShaderProperties& p1)
 
 ShaderManager::ShaderManager()
 {
-#if defined(_DEBUG) || defined(DEBUG)
+#if defined(_DEBUG) || defined(DEBUG) || 1
     // Only write to shader log file if this is a debug build
 
     if (g_shaderLogFile == NULL)
@@ -257,6 +359,44 @@ IndexedParameter(const char* name, unsigned int index)
 }
 #endif
 
+static const string
+ShaderTypeString(ShaderVariableType type)
+{
+    switch (type)
+    {
+    case Shader_Float:
+        return "float";
+    case Shader_Vector2:
+        return "vec2";
+    case Shader_Vector3:
+        return "vec3";
+    case Shader_Vector4:
+        return "vec4";
+    case Shader_Sampler1D:
+        return "sampler1D";
+    case Shader_Sampler2D:
+        return "sampler2D";
+    case Shader_Sampler3D:
+        return "sampler3D";
+    case Shader_SamplerCube:
+        return "samplerCube";
+    case Shader_Sampler1DShadow:
+        return "sampler1DShadow";
+    case Shader_Sampler2DShadow:
+        return "sampler2DShadow";
+    default:
+        return "unknown";
+    }
+};
+
+static string
+IndexedParameter(const char* name, unsigned int index0)
+{
+    char buf[64];
+    sprintf(buf, "%s%d", name, index0);
+    return string(buf);
+}
+
 static string
 IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
 {
@@ -264,6 +404,442 @@ IndexedParameter(const char* name, unsigned int index0, unsigned int index1)
     sprintf(buf, "%s%d_%d", name, index0, index1);
     return string(buf);
 }
+
+
+class Sh_ExpressionContents
+{
+protected:
+    Sh_ExpressionContents() : m_refCount(0) {}
+    virtual ~Sh_ExpressionContents() {};
+
+public:
+    virtual string toString() const = 0;
+    virtual int precedence() const = 0;
+    string toStringPrecedence(int parentPrecedence) const
+    {
+        if (parentPrecedence >= precedence())
+            return string("(") + toString() + ")";
+        else
+            return toString();
+    }
+
+    int addRef() const
+    {
+        return ++m_refCount;
+    }
+
+    int release() const
+    {
+        int n = --m_refCount;
+        if (m_refCount == 0)
+            delete this;
+        return n;
+    }
+
+private:
+    mutable int m_refCount;
+};
+
+
+class Sh_ConstantExpression : public Sh_ExpressionContents
+{
+public:
+    Sh_ConstantExpression(float value) : m_value(value) {}
+    virtual string toString() const
+    {
+        char buf[32];
+        sprintf(buf, "%f", m_value);
+        return string(buf);
+    }
+
+    virtual int precedence() const { return 100; }
+
+private:
+    float m_value;
+};
+
+
+class Sh_Expression
+{
+public:
+    Sh_Expression(const Sh_ExpressionContents* expr) :
+        m_contents(expr)
+    {
+        m_contents->addRef();
+    }
+
+    Sh_Expression(const Sh_Expression& other) :
+        m_contents(other.m_contents)
+    {
+        m_contents->addRef();
+    }
+
+    Sh_Expression& operator=(const Sh_Expression& other)
+    {
+        if (other.m_contents != m_contents)
+        {
+            m_contents->release();
+            m_contents = other.m_contents;
+            m_contents->addRef();
+        }
+
+        return *this;
+    }
+
+    Sh_Expression(float f) :
+        m_contents(new Sh_ConstantExpression(f))
+    {
+        m_contents->addRef();
+    }
+
+    ~Sh_Expression()
+    {
+        m_contents->release();
+    }
+
+    string toString() const
+    {
+        return m_contents->toString();
+    }
+
+    string toStringPrecedence(int parentPrecedence) const
+    {
+        return m_contents->toStringPrecedence(parentPrecedence);
+    }
+
+    int precedence() const
+    {
+        return m_contents->precedence();
+    }
+
+    // [] operator acts like swizzle
+    Sh_Expression operator[](const string& components) const;
+
+private:
+    const Sh_ExpressionContents* m_contents;
+};
+
+
+class Sh_VariableExpression : public Sh_ExpressionContents
+{
+public:
+    Sh_VariableExpression(const string& name) : m_name(name) {}
+    virtual string toString() const
+    {
+        return m_name;
+    }
+
+    virtual int precedence() const { return 100; }
+
+private:
+    const string m_name;
+};
+
+class Sh_SwizzleExpression : public Sh_ExpressionContents
+{
+public:
+    Sh_SwizzleExpression(const Sh_Expression& expr, const string& components) :
+        m_expr(expr),
+        m_components(components)
+    {
+    }
+
+    virtual string toString() const
+    {
+        return m_expr.toStringPrecedence(precedence()) + "." + m_components;
+    }
+
+    int precedence() const { return 99; }
+
+private:
+    const Sh_Expression m_expr;
+    const string m_components;
+};
+
+class Sh_BinaryExpression : public Sh_ExpressionContents
+{
+public:
+    Sh_BinaryExpression(const string& op, int precedence, const Sh_Expression& left, const Sh_Expression& right) :
+        m_op(op),
+        m_precedence(precedence),
+        m_left(left),
+        m_right(right) {};
+
+    virtual string toString() const
+    {
+        return left().toStringPrecedence(precedence()) + op() + right().toStringPrecedence(precedence());
+    }
+
+    const Sh_Expression& left() const { return m_left; }
+    const Sh_Expression& right() const { return m_right; }
+    string op() const { return m_op; }
+    int precedence() const { return m_precedence; }
+
+private:
+    string m_op;
+    int m_precedence;
+    const Sh_Expression m_left;
+    const Sh_Expression m_right;
+};
+
+class Sh_AdditionExpression : public Sh_BinaryExpression
+{
+public:
+    Sh_AdditionExpression(const Sh_Expression& left, const Sh_Expression& right) :
+        Sh_BinaryExpression("+", 1, left, right) {}
+};
+
+class Sh_SubtractionExpression : public Sh_BinaryExpression
+{
+public:
+    Sh_SubtractionExpression(const Sh_Expression& left, const Sh_Expression& right) :
+        Sh_BinaryExpression("-", 1, left, right) {}
+};
+
+class Sh_MultiplicationExpression : public Sh_BinaryExpression
+{
+public:
+    Sh_MultiplicationExpression(const Sh_Expression& left, const Sh_Expression& right) :
+        Sh_BinaryExpression("*", 2, left, right) {}
+};
+
+class Sh_DivisionExpression : public Sh_BinaryExpression
+{
+public:
+    Sh_DivisionExpression(const Sh_Expression& left, const Sh_Expression& right) :
+        Sh_BinaryExpression("/", 2, left, right) {}
+};
+
+Sh_Expression operator+(const Sh_Expression& left, const Sh_Expression& right)
+{
+    return new Sh_AdditionExpression(left, right);
+}
+
+Sh_Expression operator-(const Sh_Expression& left, const Sh_Expression& right)
+{
+    return new Sh_SubtractionExpression(left, right);
+}
+
+Sh_Expression operator*(const Sh_Expression& left, const Sh_Expression& right)
+{
+    return new Sh_MultiplicationExpression(left, right);
+}
+
+Sh_Expression operator/(const Sh_Expression& left, const Sh_Expression& right)
+{
+    return new Sh_DivisionExpression(left, right);
+}
+
+Sh_Expression Sh_Expression::operator[](const string& components) const
+{
+    return new Sh_SwizzleExpression(*this, components);
+}
+
+class Sh_UnaryFunctionExpression : public Sh_ExpressionContents
+{
+public:
+    Sh_UnaryFunctionExpression(const string& name, const Sh_Expression& arg0) :
+        m_name(name), m_arg0(arg0) {}
+
+    virtual string toString() const
+    {
+        return m_name + "(" + m_arg0.toString() + ")";
+    }
+
+    virtual int precedence() const { return 100; }
+
+private:
+    string m_name;
+    const Sh_Expression m_arg0;
+};
+
+class Sh_BinaryFunctionExpression : public Sh_ExpressionContents
+{
+public:
+    Sh_BinaryFunctionExpression(const string& name, const Sh_Expression& arg0, const Sh_Expression& arg1) :
+        m_name(name), m_arg0(arg0), m_arg1(arg1) {}
+
+    virtual string toString() const
+    {
+        return m_name + "(" + m_arg0.toString() + ", " + m_arg1.toString() + ")";
+    }
+
+    virtual int precedence() const { return 100; }
+
+private:
+    string m_name;
+    const Sh_Expression m_arg0;
+    const Sh_Expression m_arg1;
+};
+
+class Sh_TernaryFunctionExpression : public Sh_ExpressionContents
+{
+public:
+    Sh_TernaryFunctionExpression(const string& name, const Sh_Expression& arg0, const Sh_Expression& arg1, const Sh_Expression& arg2) :
+        m_name(name), m_arg0(arg0), m_arg1(arg1), m_arg2(arg2) {}
+
+    virtual string toString() const
+    {
+        return m_name + "(" + m_arg0.toString() + ", " + m_arg1.toString() + ", " + m_arg2.toString() + ")";
+    }
+
+    virtual int precedence() const { return 100; }
+
+private:
+    string m_name;
+    const Sh_Expression m_arg0;
+    const Sh_Expression m_arg1;
+    const Sh_Expression m_arg2;
+};
+
+Sh_Expression vec2(const Sh_Expression& x, const Sh_Expression& y)
+{
+    return new Sh_BinaryFunctionExpression("vec2", x, y);
+};
+
+Sh_Expression vec3(const Sh_Expression& x, const Sh_Expression& y, const Sh_Expression& z)
+{
+    return new Sh_TernaryFunctionExpression("vec3", x, y, z);
+};
+
+Sh_Expression dot(const Sh_Expression& v0, const Sh_Expression& v1)
+{
+    return new Sh_BinaryFunctionExpression("dot", v0, v1);
+};
+
+Sh_Expression cross(const Sh_Expression& v0, const Sh_Expression& v1)
+{
+    return new Sh_BinaryFunctionExpression("cross", v0, v1);
+};
+
+Sh_Expression sqrt(const Sh_Expression& v0)
+{
+    return new Sh_UnaryFunctionExpression("sqrt", v0);
+};
+
+Sh_Expression length(const Sh_Expression& v0)
+{
+    return new Sh_UnaryFunctionExpression("length", v0);
+};
+
+Sh_Expression normalize(const Sh_Expression& v0)
+{
+    return new Sh_UnaryFunctionExpression("normalize", v0);
+};
+
+Sh_Expression step(const Sh_Expression& f, const Sh_Expression& v)
+{
+    return new Sh_BinaryFunctionExpression("step", f, v);
+};
+
+Sh_Expression mix(const Sh_Expression& v0, const Sh_Expression& v1, const Sh_Expression& alpha)
+{
+    return new Sh_TernaryFunctionExpression("mix", v0, v1, alpha);
+};
+
+Sh_Expression texture2D(const Sh_Expression& sampler, const Sh_Expression& texCoord)
+{
+    return new Sh_BinaryFunctionExpression("texture2D", sampler, texCoord);
+};
+
+Sh_Expression texture2DLod(const Sh_Expression& sampler, const Sh_Expression& texCoord, const Sh_Expression& lod)
+{
+    return new Sh_TernaryFunctionExpression("texture2DLod", sampler, texCoord, lod);
+};
+
+Sh_Expression texture2DLodBias(const Sh_Expression& sampler, const Sh_Expression& texCoord, const Sh_Expression& lodBias)
+{
+    // Use the optional third argument to texture2D to specify the LOD bias. Implemented with
+    // a different function name here for clarity when it's used in a shader.
+    return new Sh_TernaryFunctionExpression("texture2D", sampler, texCoord, lodBias);
+};
+
+Sh_Expression sampler2D(const string& name)
+{
+    return new Sh_VariableExpression(name);
+}
+
+Sh_Expression sh_vec3(const string& name)
+{
+    return new Sh_VariableExpression(name);
+}
+
+Sh_Expression sh_vec4(const string& name)
+{
+    return new Sh_VariableExpression(name);
+}
+
+Sh_Expression sh_float(const string& name)
+{
+    return new Sh_VariableExpression(name);
+}
+
+Sh_Expression indexedUniform(const string& name, unsigned int index0)
+{
+    char buf[64];
+    sprintf(buf, "%s%u", name.c_str(), index0);
+    return new Sh_VariableExpression(string(buf));
+}
+
+Sh_Expression ringShadowTexCoord(unsigned int index)
+{
+    char buf[64];
+    sprintf(buf, "ringShadowTexCoord.%c", "xyzw"[index]);
+    return new Sh_VariableExpression(string(buf));
+}
+
+Sh_Expression cloudShadowTexCoord(unsigned int index)
+{
+    char buf[64];
+    sprintf(buf, "cloudShadowTexCoord%d", index);
+    return new Sh_VariableExpression(string(buf));
+}
+
+static string
+DeclareUniform(const std::string& name, ShaderVariableType type)
+{
+    return string("uniform ") + ShaderTypeString(type) + " " + name + ";\n";
+}
+
+static string
+DeclareVarying(const std::string& name, ShaderVariableType type)
+{
+    return string("varying ") + ShaderTypeString(type) + " " + name + ";\n";
+}
+
+static string
+DeclareAttribute(const std::string& name, ShaderVariableType type)
+{
+    return string("attribute ") + ShaderTypeString(type) + " " + name + ";\n";
+}
+
+static string
+DeclareLocal(const std::string& name, ShaderVariableType type)
+{
+    return ShaderTypeString(type) + " " + name + ";\n";
+}
+
+static string
+DeclareLocal(const std::string& name, ShaderVariableType type, const Sh_Expression& expr)
+{
+    return ShaderTypeString(type) + " " + name + " = " + expr.toString() + ";\n";
+}
+
+string assign(const string& variableName, const Sh_Expression& expr)
+{
+    return variableName + " = " + expr.toString() + ";\n";
+}
+
+string addAssign(const string& variableName, const Sh_Expression& expr)
+{
+    return variableName + " += " + expr.toString() + ";\n";
+}
+
+string mulAssign(const string& variableName, const Sh_Expression& expr)
+{
+    return variableName + " *= " + expr.toString() + ";\n";
+}
+
 
 
 static string
@@ -334,8 +910,11 @@ DeclareLights(const ShaderProperties& props)
     {
         stream << "uniform vec3 light" << i << "_direction;\n";
         stream << "uniform vec3 light" << i << "_diffuse;\n";
-        stream << "uniform vec3 light" << i << "_specular;\n";
-        stream << "uniform vec3 light" << i << "_halfVector;\n";
+        if (props.hasSpecular())
+        {
+            stream << "uniform vec3 light" << i << "_specular;\n";
+            stream << "uniform vec3 light" << i << "_halfVector;\n";
+        }
         if (props.texUsage & ShaderProperties::NightTexture)
             stream << "uniform float light" << i << "_brightness;\n";
     }
@@ -591,16 +1170,30 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
         source += "shadow = " + SeparateDiffuse(light) + ";\n";
     }
 
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    if (props.hasRingShadowForLight(light))
     {
-        source += "shadow *= (1.0 - texture2D(ringTex, vec2(" +
-            RingShadowTexCoord(light) + ", 0.0)).a);\n";
+        if (GLEW_ARB_shader_texture_lod)
+        {
+            source += mulAssign("shadow",
+                      (1.0f - texture2DLod(sampler2D("ringTex"), vec2(ringShadowTexCoord(light), 0.0f), indexedUniform("ringShadowLOD", light))["a"]));
+        }
+        else
+        {
+            // Fallback when the texture2Dlod function is unavailable. This would be a good option
+            // for all GPUs except that some (GeForce 8 series, possibly others) have trouble with the
+            // LOD bias. It seems that the LOD bias isn't actually implemented in hardware, and is
+            // instead implemented by emitting shader instructions to compute the texture LOD using
+            // the derivative instructions and adding the bias to this result. Unfortunately, the
+            // derivative is computed from the plane equation of the triangle, which means that there
+            // are discontinuities between triangles.
+            source += mulAssign("shadow",
+                      (1.0f - texture2DLodBias(sampler2D("ringTex"), vec2(ringShadowTexCoord(light), 0.0f), indexedUniform("ringShadowLOD", light))["a"]));
+        }
     }
 
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    if (props.hasCloudShadowForLight(light))
     {
-        source += "shadow *= (1.0 - texture2D(cloudShadowTex, " +
-            CloudShadowTexCoord(light) + ").a * 0.75);\n";
+        source += mulAssign("shadow", 1.0f - texture2D(sampler2D("cloudShadowTex"), cloudShadowTexCoord(light))["a"] * 0.75f);
     }
 
     return source;
@@ -655,7 +1248,7 @@ ShadowsForLightSource(const ShaderProperties& props, unsigned int light)
 {
     string source = BeginLightSourceShadows(props, light);
 
-    for (unsigned int i = 0; i < props.getShadowCountForLight(light); i++)
+    for (unsigned int i = 0; i < props.getEclipseShadowCountForLight(light); i++)
         source += Shadow(light, i);
 
     return source;
@@ -939,7 +1532,12 @@ TextureCoordDeclarations(const ShaderProperties& props)
 string
 PointSizeCalculation()
 {
-    return string("gl_PointSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n");
+    string source;
+    source += "float ptSize = pointScale * pointSize / length(vec3(gl_ModelViewMatrix * gl_Vertex));\n";
+    source += "pointFade = min(1.0, ptSize * ptSize);\n";
+    source += "gl_PointSize = ptSize;\n";
+    
+    return source;
 }
 
 
@@ -971,8 +1569,9 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
 
     if (props.texUsage & ShaderProperties::PointSprite)
     {
-        source += "uniform float pointScale;\n";
-        source += "attribute float pointSize;\n";
+        source += DeclareUniform("pointScale", Shader_Float);
+        source += DeclareAttribute("pointSize", Shader_Float);
+        source += DeclareVarying("pointFade", Shader_Float);
     }
 
     if (props.usesTangentSpaceLighting())
@@ -1041,24 +1640,31 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
 
     // Shadow parameters
-    if (props.shadowCounts != 0)
+    if (props.hasEclipseShadows())
     {
-        source += "varying vec3 position_obj;\n";
+        source += DeclareVarying("position_obj", Shader_Vector3);
     }
 
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    if (props.hasRingShadows())
     {
-        source += "uniform float ringWidth;\n";
-        source += "uniform float ringRadius;\n";
-        source += "varying vec4 ringShadowTexCoord;\n";
+        source += DeclareUniform("ringWidth", Shader_Float);
+        source += DeclareUniform("ringRadius", Shader_Float);
+        source += DeclareUniform("ringPlane", Shader_Vector4);
+        source += DeclareUniform("ringCenter", Shader_Vector3);
+        source += DeclareVarying("ringShadowTexCoord", Shader_Vector4);
     }
 
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    if (props.hasCloudShadows())
     {
         source += "uniform float cloudShadowTexOffset;\n";
         source += "uniform float cloudHeight;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
-            source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
+        {
+            if (props.hasCloudShadowForLight(i))
+            {
+                source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
+            }
+        }
     }
 
     // Begin main() function
@@ -1163,58 +1769,65 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
     }
 
     // Shadow texture coordinates are generated in the shader
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    if (props.hasRingShadows())
     {
         source += "vec3 ringShadowProj;\n";
         for (unsigned int j = 0; j < props.nLights; j++)
         {
-            source += "ringShadowProj = gl_Vertex.xyz + " +
-                LightProperty(j, "direction") +
-                " * max(0.0, gl_Vertex.y / -" +
-                LightProperty(j, "direction") + ".y);\n";
-            source += RingShadowTexCoord(j) +
-                " = (length(ringShadowProj) - ringRadius) * ringWidth;\n";
+            if (props.hasRingShadowForLight(j))
+            {
+                source += "ringShadowProj = gl_Vertex.xyz + " +
+                  LightProperty(j, "direction") +
+                  " * max(0.0, -(dot(gl_Vertex.xyz, ringPlane.xyz) + ringPlane.w) / dot(" +
+                  LightProperty(j, "direction") + ", ringPlane.xyz));\n";
+
+                source += RingShadowTexCoord(j) +
+                  " = (length(ringShadowProj - ringCenter) - ringRadius) * ringWidth;\n";
+            }
         }
     }
 
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    if (props.hasCloudShadows())
     {
         for (unsigned int j = 0; j < props.nLights; j++)
         {
-            source += "{\n";
+            if (props.hasCloudShadowForLight(j))
+            {
+                source += "{\n";
 
-            // A cheap way to calculate cloud shadow texture coordinates that doesn't correctly account
-            // for sun angle.
-            source += "    " + CloudShadowTexCoord(j) + " = vec2(diffTexCoord.x + cloudShadowTexOffset, diffTexCoord.y);\n";
+                // A cheap way to calculate cloud shadow texture coordinates that doesn't correctly account
+                // for sun angle.
+                source += "    " + CloudShadowTexCoord(j) + " = vec2(diffTexCoord.x + cloudShadowTexOffset, diffTexCoord.y);\n";
 
-            // Disabled: there are too many problems with this approach,
-            // though it should theoretically work. The inverse trig
-            // approximations produced by the shader compiler are crude
-            // enough that visual anomalies are apparent. And in the current
-            // GeForce 8800 driver, this shader produces an internal compiler
-            // error. Cloud shadows are trivial if the cloud texture is a cube
-            // map. Also, DX10 capable hardware could efficiently perform
-            // the rect-to-spherical conversion in the pixel shader with an
-            // fp32 texture serving as a lookup table.
+                // Disabled: there are too many problems with this approach,
+                // though it should theoretically work. The inverse trig
+                // approximations produced by the shader compiler are crude
+                // enough that visual anomalies are apparent. And in the current
+                // GeForce 8800 driver, this shader produces an internal compiler
+                // error. Cloud shadows are trivial if the cloud texture is a cube
+                // map. Also, DX10 capable hardware could efficiently perform
+                // the rect-to-spherical conversion in the pixel shader with an
+                // fp32 texture serving as a lookup table.
 #if 0
-            // Compute the intersection of the sun direction and the cloud layer (currently assumed to be a sphere)
-            source += "    float rq = dot(" + LightProperty(j, "direction") + ", gl_Vertex.xyz);\n";
-            source += "    float qq = dot(gl_Vertex.xyz, gl_Vertex.xyz) - cloudHeight * cloudHeight;\n";
-            source += "    float d = sqrt(rq * rq - qq);\n";
-            source += "    vec3 cloudSpherePos = (gl_Vertex.xyz + (-rq + d) * " + LightProperty(j, "direction") + ");\n";
-            //source += "    vec3 cloudSpherePos = gl_Vertex.xyz;\n";
+                // Compute the intersection of the sun direction and the cloud layer (currently assumed to be a sphere)
+                source += "    float rq = dot(" + LightProperty(j, "direction") + ", gl_Vertex.xyz);\n";
+                source += "    float qq = dot(gl_Vertex.xyz, gl_Vertex.xyz) - cloudHeight * cloudHeight;\n";
+                source += "    float d = sqrt(rq * rq - qq);\n";
+                source += "    vec3 cloudSpherePos = (gl_Vertex.xyz + (-rq + d) * " + LightProperty(j, "direction") + ");\n";
+                //source += "    vec3 cloudSpherePos = gl_Vertex.xyz;\n";
 
-            // Find the texture coordinates at this point on the sphere by converting from rectangular to spherical; this is an
-            // expensive calculation to perform per vertex.
-            source += "    float invPi = 1.0 / 3.1415927;\n";
-            source += "    " + CloudShadowTexCoord(j) + ".y = 0.5 - asin(cloudSpherePos.y) * invPi;\n";
-            source += "    float u = fract(atan(cloudSpherePos.x, cloudSpherePos.z) * (invPi * 0.5) + 0.75);\n";
-            source += "    if (diffTexCoord.x < 0.25 && u > 0.5) u -= 1.0;\n";
-            source += "    else if (diffTexCoord.x > 0.75 && u < 0.5) u += 1.0;\n";
-            source += "    " + CloudShadowTexCoord(j) + ".x = u + cloudShadowTexOffset;\n";
+                // Find the texture coordinates at this point on the sphere by converting from rectangular to spherical; this is an
+                // expensive calculation to perform per vertex.
+                source += "    float invPi = 1.0 / 3.1415927;\n";
+                source += "    " + CloudShadowTexCoord(j) + ".y = 0.5 - asin(cloudSpherePos.y) * invPi;\n";
+                source += "    float u = fract(atan(cloudSpherePos.x, cloudSpherePos.z) * (invPi * 0.5) + 0.75);\n";
+                source += "    if (diffTexCoord.x < 0.25 && u > 0.5) u -= 1.0;\n";
+                source += "    else if (diffTexCoord.x > 0.75 && u < 0.5) u += 1.0;\n";
+                source += "    " + CloudShadowTexCoord(j) + ".x = u + cloudShadowTexOffset;\n";
 #endif
 
-            source += "}\n";
+                source += "}\n";
+            }
         }
     }
 
@@ -1229,7 +1842,7 @@ ShaderManager::buildVertexShader(const ShaderProperties& props)
         nTexCoords++;
     }
 
-    if (props.shadowCounts != 0)
+    if (props.hasEclipseShadows() != 0)
     {
         source += "position_obj = gl_Vertex.xyz;\n";
     }
@@ -1384,7 +1997,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "varying vec3 position_obj;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
                 source += "uniform vec4 " +
                     IndexedParameter("shadowTexGenS", i, j) + ";\n";
@@ -1398,19 +2011,31 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         }
     }
 
-    if (props.texUsage & ShaderProperties::RingShadowTexture)
+    if (props.hasRingShadows())
     {
-        source += "uniform sampler2D ringTex;\n";
-        source += "varying vec4 ringShadowTexCoord;\n";
+        source += DeclareUniform("ringTex", Shader_Sampler2D);
+        source += DeclareVarying("ringShadowTexCoord", Shader_Vector4);
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            if (props.hasRingShadowForLight(i))
+            {
+                source += DeclareUniform(IndexedParameter("ringShadowLOD", i), Shader_Float);
+            }
+        }
     }
 
-    if (props.texUsage & ShaderProperties::CloudShadowTexture)
+    if (props.hasCloudShadows())
     {
         source += "uniform sampler2D cloudShadowTex;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
             source += "varying vec2 " + CloudShadowTexCoord(i) + ";\n";
     }
 
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += DeclareVarying("pointFade", Shader_Float);
+    }
+    
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
@@ -1418,7 +2043,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
     {
         // Temporaries required for shadows
         source += "float shadow;\n";
-        if (props.shadowCounts != 0)
+        if (props.hasEclipseShadows())
         {
             source += "vec2 shadowCenter;\n";
             source += "float shadowR;\n";
@@ -1577,6 +2202,13 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
         source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
     }
 
+#if POINT_FADE
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += "color.a *= pointFade;\n";
+    }
+#endif
+
     // Mix in the overlay color with the base color
     if (props.texUsage & ShaderProperties::OverlayTexture)
     {
@@ -1663,6 +2295,7 @@ ShaderManager::buildFragmentShader(const ShaderProperties& props)
 }
 
 
+#if 0
 GLVertexShader*
 ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
 {
@@ -1696,7 +2329,7 @@ ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
     if (props.texUsage & ShaderProperties::DiffuseTexture)
         source += "diffTexCoord = " + TexCoord2D(0) + ";\n";
 
-    if (props.shadowCounts != 0)
+    if (props.hasEclipseShadows() != 0)
     {
         source += "position_obj = gl_Vertex.xyz;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
@@ -1743,15 +2376,14 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
         source += "uniform sampler2D diffTex;\n";
     }
 
-
-    if (props.shadowCounts != 0)
+    if (props.hasEclipseShadows())
     {
         source += "varying vec3 position_obj;\n";
         source += "varying vec4 shadowDepths;\n";
 
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
                 source += "uniform vec4 " +
                     IndexedParameter("shadowTexGenS", i, j) + ";\n";
@@ -1768,7 +2400,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     source += "\nvoid main(void)\n{\n";
     source += "vec4 color;\n";
 
-    if (props.usesShadows())
+    if (props.hasEclipseShadows())
     {
         // Temporaries required for shadows
         source += "float shadow;\n";
@@ -1779,7 +2411,7 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     // Sum the contributions from each light source
     for (unsigned i = 0; i < props.nLights; i++)
     {
-        if (props.usesShadows())
+        if (props.getEclipseShadowCountForLight(i) > 0)
         {
             source += "shadow = 1.0;\n";
             source += Shadow(i, 0);
@@ -1806,6 +2438,175 @@ ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
     if (g_shaderLogFile != NULL)
     {
         *g_shaderLogFile << "Fragment shader source:\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+
+    GLFragmentShader* fs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateFragmentShader(source, &fs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return fs;
+}
+#endif
+
+
+GLVertexShader*
+ShaderManager::buildRingsVertexShader(const ShaderProperties& props)
+{
+    string source = CommonHeader;
+
+    source += DeclareLights(props);
+
+    source += DeclareVarying("position_obj", Shader_Vector3);
+    if (props.hasEclipseShadows())
+    {
+        source += "varying vec4 shadowDepths;\n";
+    }
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+        source += "varying vec2 diffTexCoord;\n";
+
+    source += "\nvoid main(void)\n{\n";
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+        source += "diffTexCoord = " + TexCoord2D(0) + ";\n";
+
+    source += "position_obj = gl_Vertex.xyz;\n";
+    if (props.hasEclipseShadows() != 0)
+    {
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            source += ShadowDepth(i) + " = dot(gl_Vertex.xyz, " +
+                       LightProperty(i, "direction") + ");\n";
+        }
+    }
+
+    source += "gl_Position = ftransform();\n";
+    source += "}\n";
+
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Vertex shader source (rings):\n";
+        DumpShaderSource(*g_shaderLogFile, source);
+        *g_shaderLogFile << '\n';
+    }
+
+    GLVertexShader* vs = NULL;
+    GLShaderStatus status = GLShaderLoader::CreateVertexShader(source, &vs);
+    if (status != ShaderStatus_OK)
+        return NULL;
+    else
+        return vs;
+}
+
+
+GLFragmentShader*
+ShaderManager::buildRingsFragmentShader(const ShaderProperties& props)
+{
+    string source = CommonHeader;
+
+    source += "uniform vec3 ambientColor;\n";
+    for (unsigned int i = 0; i < props.nLights; i++)
+        source += "uniform vec3 " + FragLightProperty(i, "color") + ";\n";
+
+    source += DeclareLights(props);
+
+    source += DeclareUniform("eyePosition", Shader_Vector3);
+    source += DeclareVarying("position_obj", Shader_Vector3);
+
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+    {
+        source += "varying vec2 diffTexCoord;\n";
+        source += "uniform sampler2D diffTex;\n";
+    }
+
+    if (props.hasEclipseShadows())
+    {
+        source += "varying vec4 shadowDepths;\n";
+
+        for (unsigned int i = 0; i < props.nLights; i++)
+        {
+            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
+            {
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenS", i, j) + ";\n";
+                source += "uniform vec4 " +
+                    IndexedParameter("shadowTexGenT", i, j) + ";\n";
+                source += "uniform float " +
+                    IndexedParameter("shadowFalloff", i, j) + ";\n";
+                source += "uniform float " +
+                    IndexedParameter("shadowMaxDepth", i, j) + ";\n";
+            }
+        }
+    }
+
+    source += "\nvoid main(void)\n{\n";
+
+    source += "vec4 diff = vec4(ambientColor, 1.0);\n";
+
+    // Get the normalized direction from the eye to the vertex
+    source += "vec3 eyeDir = normalize(eyePosition - position_obj);\n";
+
+    source += DeclareLocal("color", Shader_Vector4);
+    if (props.texUsage & ShaderProperties::DiffuseTexture)
+        source += "color = texture2D(diffTex, diffTexCoord.st);\n";
+    else
+        source += "color = vec4(1.0, 1.0, 1.0, 1.0);\n";
+    source += DeclareLocal("opticalDepth", Shader_Float, sh_vec4("color")["a"]);
+    if (props.hasEclipseShadows())
+    {
+        // Temporaries required for shadows
+        source += DeclareLocal("shadow",       Shader_Float);
+        source += DeclareLocal("shadowCenter", Shader_Vector2);
+        source += DeclareLocal("shadowR",      Shader_Float);
+    }
+
+    // Sum the contributions from each light source
+    source += DeclareLocal("intensity", Shader_Float);
+    source += DeclareLocal("litSide", Shader_Float);
+
+    for (unsigned i = 0; i < props.nLights; i++)
+    {
+        // litSide is 1 when viewer and light are on the same side of the rings, 0 otherwise
+        source += assign("litSide", 1.0f - step(0.0f, sh_vec3(LightProperty(i, "direction"))["y"] * sh_vec3("eyeDir")["y"]));
+        //source += assign("litSide", 1.0f - step(0.0f, sh_vec3("eyePosition")["y"]));
+
+        source += assign("intensity", (dot(sh_vec3(LightProperty(i, "direction")), sh_vec3("eyeDir")) + 1.0f) * 0.5f);
+        source += assign("intensity", mix(sh_float("intensity"), sh_float("intensity") * (1.0f - sh_float("opticalDepth")), sh_float("litSide")));
+        if (props.getEclipseShadowCountForLight(i) > 0)
+        {
+            source += "shadow = 1.0;\n";
+            source += Shadow(i, 0);
+            source += "shadow = min(1.0, shadow + step(0.0, " + ShadowDepth(i) + "));\n";
+#if 0
+            source += "diff.rgb += (shadow * " + SeparateDiffuse(i) + ") * " +
+                FragLightProperty(i, "color") + ";\n";
+#endif
+            source += "diff.rgb += (shadow * intensity) * " + FragLightProperty(i, "color") + ";\n";
+        }
+        else
+        {
+            source += "diff.rgb += intensity * " + FragLightProperty(i, "color") + ";\n";
+#if 0
+            source += SeparateDiffuse(i) + " = (dot(" +
+                LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
+#endif
+#if 0
+            source += "diff.rgb += " + SeparateDiffuse(i) + " * " +
+                FragLightProperty(i, "color") + ";\n";
+#endif
+        }
+    }
+
+    source += "gl_FragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
+
+    source += "}\n";
+
+    if (g_shaderLogFile != NULL)
+    {
+        *g_shaderLogFile << "Fragment shader source (rings):\n";
         DumpShaderSource(*g_shaderLogFile, source);
         *g_shaderLogFile << '\n';
     }
@@ -1947,6 +2748,7 @@ ShaderManager::buildEmissiveVertexShader(const ShaderProperties& props)
     {
         source += "uniform float pointScale;\n";
         source += "attribute float pointSize;\n";
+        source += "varying float pointFade;\n";
     }
 
     // Begin main() function
@@ -2004,17 +2806,32 @@ ShaderManager::buildEmissiveFragmentShader(const ShaderProperties& props)
         source += "uniform sampler2D diffTex;\n";
     }
 
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += "varying float pointFade;\n";
+    }
+    
     // Begin main()
     source += "\nvoid main(void)\n";
     source += "{\n";
 
+    string colorSource = "gl_Color";
+    if (props.texUsage & ShaderProperties::PointSprite)
+    {
+        source += "    vec4 color = gl_Color;\n";
+#if POINT_FADE
+        source += "    color.a *= pointFade;\n";
+#endif
+        colorSource = "color";
+    }
+    
     if (props.texUsage & ShaderProperties::DiffuseTexture)
     {
-        source += "    gl_FragColor = gl_Color * texture2D(diffTex, gl_TexCoord[0].st);\n";
+        source += "    gl_FragColor = " + colorSource + " * texture2D(diffTex, gl_TexCoord[0].st);\n";
     }
     else
     {
-        source += "    gl_FragColor = gl_Color;\n";
+        source += "    gl_FragColor = " + colorSource + " ;\n";
     }
 
     source += "}\n";
@@ -2151,7 +2968,7 @@ ShaderManager::buildParticleFragmentShader(const ShaderProperties& props)
         source << "varying vec3 position_obj;\n";
         for (unsigned int i = 0; i < props.nLights; i++)
         {
-            for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
             {
                 source << "uniform vec4 " << IndexedParameter("shadowTexGenS", i, j) << ";\n";
                 source << "uniform vec4 " << IndexedParameter("shadowTexGenT", i, j) << ";\n";
@@ -2335,8 +3152,9 @@ CelestiaGLProgram::initParameters()
         fragLightSpecColor[i] = vec3Param(FragLightProperty(i, "specColor"));
         if (props.texUsage & ShaderProperties::NightTexture)
             fragLightBrightness[i] = floatParam(FragLightProperty(i, "brightness"));
-
-        for (unsigned int j = 0; j < props.getShadowCountForLight(i); j++)
+        if (props.hasRingShadowForLight(i))
+            ringShadowLOD[i] = floatParam(IndexedParameter("ringShadowLOD", i));
+        for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
         {
             shadows[i][j].texGenS =
                 vec4Param(IndexedParameter("shadowTexGenS", i, j));
@@ -2369,6 +3187,8 @@ CelestiaGLProgram::initParameters()
     {
         ringWidth            = floatParam("ringWidth");
         ringRadius           = floatParam("ringRadius");
+        ringPlane            = vec4Param("ringPlane");
+        ringCenter           = vec3Param("ringCenter");
     }
 
     textureOffset = floatParam("textureOffset");
@@ -2547,7 +3367,7 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
     {
         if (shadows != NULL)
         {
-            unsigned int nShadows = min((size_t) MaxShaderShadows, ls.shadows[li]->size());
+            unsigned int nShadows = min((size_t) MaxShaderEclipseShadows, ls.shadows[li]->size());
 
             for (unsigned int i = 0; i < nShadows; i++)
             {

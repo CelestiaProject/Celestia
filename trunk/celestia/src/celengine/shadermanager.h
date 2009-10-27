@@ -27,8 +27,20 @@ class ShaderProperties
     bool usesShadows() const;
     bool usesFragmentLighting() const;
     bool usesTangentSpaceLighting() const;
-    unsigned int getShadowCountForLight(unsigned int) const;
-    void setShadowCountForLight(unsigned int, unsigned int);
+
+    unsigned int getEclipseShadowCountForLight(unsigned int lightIndex) const;
+    void setEclipseShadowCountForLight(unsigned int lightIndex, unsigned int shadowCount);
+    bool hasEclipseShadows() const;
+    bool hasRingShadowForLight(unsigned int lightIndex) const;
+    void setRingShadowForLight(unsigned int lightIndex, bool enabled);
+    bool hasRingShadows() const;
+    void setSelfShadowForLight(unsigned int lightIndex, bool enabled);
+    bool hasSelfShadowForLight(unsigned int lightIndex) const;
+    bool hasSelfShadows() const;
+    void setCloudShadowForLight(unsigned int lightIndex, bool enabled);
+    bool hasCloudShadowForLight(unsigned int lightIndex) const;
+    bool hasCloudShadows() const;
+
     bool hasShadowsForLight(unsigned int) const;
     bool hasSharedTextureCoords() const;
     bool hasSpecular() const;
@@ -74,22 +86,45 @@ class ShaderProperties
      VolumetricAbsorptionEffect      = 0x0002,
      VolumetricEmissionEffect        = 0x0004,
  };
- 
+
  public:
     unsigned short nLights;
     unsigned short texUsage;    
     unsigned short lightModel;
 
-    // Two bits per light, up to eight lights + three shadows per light
-    unsigned short shadowCounts;
+    // Eight bits per light, up to four lights
+    // For each light:
+    //   Bits 0-1, eclipse shadow count, from 0-3
+    //   Bit  2,   on if there are ring shadows
+    //   Bit  3,   on for self shadowing
+    //   Bit  4,   on for cloud shadows
+    uint32 shadowCounts;
     
     // Effects that may be applied with any light model
     unsigned short effects;
+    
+ private:
+    enum
+    {
+        ShadowBitsPerLight = 4,
+    };
+    
+    enum
+    {
+        EclipseShadowMask = 0x3,
+        RingShadowMask    = 0x4,
+        SelfShadowMask    = 0x8,
+        CloudShadowMask   = 0x10,
+        AnyEclipseShadowMask = 0x03030303,
+        AnyRingShadowMask    = 0x04040404,
+        AnySelfShadowMask    = 0x08080808,
+        AnyCloudShadowMask   = 0x10101010,
+    }; 
 };
 
 
 static const unsigned int MaxShaderLights = 4;
-static const unsigned int MaxShaderShadows = 3;
+static const unsigned int MaxShaderEclipseShadows = 3;
 struct CelestiaGLProgramLight
 {
     Vec3ShaderParameter direction;
@@ -135,6 +170,7 @@ class CelestiaGLProgram
     Vec3ShaderParameter fragLightColor[MaxShaderLights];
     Vec3ShaderParameter fragLightSpecColor[MaxShaderLights];
     FloatShaderParameter fragLightBrightness[MaxShaderLights];
+    FloatShaderParameter ringShadowLOD[MaxShaderLights];
     Vec3ShaderParameter eyePosition;
     FloatShaderParameter shininess;
     Vec3ShaderParameter ambientColor;
@@ -145,6 +181,8 @@ class CelestiaGLProgram
 
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;
+    Vec4ShaderParameter ringPlane;
+    Vec3ShaderParameter ringCenter;
     
     // Mix of Lambertian and "lunar" (Lommel-Seeliger) photometric models.
     // 0 = pure Lambertian, 1 = L-S
@@ -191,7 +229,7 @@ class CelestiaGLProgram
     // Scale factor for point sprites
     FloatShaderParameter pointScale;
 
-    CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderShadows];
+    CelestiaGLProgramShadow shadows[MaxShaderLights][MaxShaderEclipseShadows];
     
  private:
     void initParameters();

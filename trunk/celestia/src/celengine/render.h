@@ -11,6 +11,8 @@
 #ifndef _CELENGINE_RENDER_H_
 #define _CELENGINE_RENDER_H_
 
+#include <Eigen/Core>
+#include <Eigen/NewStdVector>
 #include <celmath/frustum.h>
 #include <celengine/universe.h>
 #include <celengine/observer.h>
@@ -19,7 +21,6 @@
 #include <celengine/starcolors.h>
 #include <celengine/rendcontext.h>
 #include <celtxf/texturefont.h>
-#include <Eigen/Core>
 #include <vector>
 #include <list>
 #include <string>
@@ -366,7 +367,7 @@ class Renderer
         Eigen::Vector3f semiAxes;
         ResourceHandle geometry;
         Eigen::Quaternionf orientation;
-        std::vector<EclipseShadow>* eclipseShadows;
+        LightingState::EclipseShadowVector* eclipseShadows;
     };
 
  private:
@@ -539,9 +540,9 @@ class Renderer
 
     bool testEclipse(const Body& receiver,
                      const Body& caster,
-                     const DirectionalLight& light,
-                     double now,
-                     vector<EclipseShadow>& shadows);
+                     LightingState& lightingState,
+                     unsigned int lightIndex,
+                     double now);
 
     void labelConstellations(const std::vector<Asterism*>& asterisms,
                              const Observer& observer);
@@ -660,7 +661,7 @@ class Renderer
     std::vector<Annotation> depthSortedAnnotations;
     std::vector<Annotation> objectAnnotations;
     std::vector<OrbitPathListEntry> orbitPathList;
-    std::vector<EclipseShadow> eclipseShadows[MaxLights];
+    LightingState::EclipseShadowVector eclipseShadows[MaxLights];
     std::vector<const Star*> nearStars;
 
     std::vector<LightSource> lightSourceList;

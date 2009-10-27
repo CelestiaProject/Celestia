@@ -8,24 +8,22 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <Eigen/StdVector>
+#include "render.h"
+#include "celestia.h"
+#include "astro.h"
+#include "galaxy.h"
+#include "vecgl.h"
+#include "texture.h"
+#include <celmath/mathlib.h>
+#include <celmath/perlin.h>
+#include <celmath/intersect.h>
+#include <celutil/util.h>
+#include <celutil/debug.h>
 #include <cstring>
 #include <fstream>
 #include <algorithm>
 #include <cstdio>
 #include <cassert>
-#include "celestia.h"
-#include <celmath/mathlib.h>
-#include <celmath/perlin.h>
-#include <celmath/intersect.h>
-#include "astro.h"
-#include "galaxy.h"
-#include <celutil/util.h>
-#include <celutil/debug.h>
-#include <GL/glew.h>
-#include "vecgl.h"
-#include "render.h"
-#include "texture.h"
 
 using namespace Eigen;
 using namespace std;
@@ -52,10 +50,11 @@ bool operator< (const Blob& b1, const Blob& b2)
   return (b1.position.squaredNorm() < b2.position.squaredNorm());
 }
 
+typedef vector<Blob, aligned_allocator<Blob> > BlobVector;
 class GalacticForm
 {
 public:
-    vector<Blob>* blobs;
+    BlobVector* blobs;
     Vector3f scale;
 };
 
@@ -344,7 +343,7 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
 
     int   pow2  = 1;
 
-    vector<Blob>* points = form->blobs;
+    BlobVector* points = form->blobs;
     unsigned int nPoints = (unsigned int) (points->size() * clamp(getDetail()));
     // corrections to avoid excessive brightening if viewed e.g. edge-on
 
@@ -520,7 +519,7 @@ void Galaxy::setLightGain(float lg)
 GalacticForm* buildGalacticForms(const std::string& filename)
 {
 	Blob b;
-	vector<Blob>* galacticPoints = new vector<Blob>;
+    BlobVector* galacticPoints = new BlobVector;
 
 	// Load templates in standard .png format
 	int width, height, rgb, j = 0, kmin = 9;
@@ -674,7 +673,7 @@ void InitializeForms()
     Blob b;
     Point3f p;
 
-    vector<Blob>* irregularPoints = new vector<Blob>;
+    BlobVector* irregularPoints = new BlobVector;
     irregularPoints->reserve(galaxySize);
 
     while (ip < galaxySize)

@@ -15,9 +15,13 @@
 
 #include <celutil/color.h>
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <vector>
 
 static const unsigned int MaxLights = 8;
+
+class Body;
+class RingSystem;
 
 class DirectionalLight
 {
@@ -37,6 +41,10 @@ public:
 class EclipseShadow
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    const Body* caster;
+    Eigen::Quaternionf casterOrientation;
     Eigen::Vector3f origin;
     Eigen::Vector3f direction;
     float penumbraRadius;
@@ -44,18 +52,45 @@ public:
     float maxDepth;
 };
 
+class RingShadow
+{
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    RingSystem* ringSystem;
+    Eigen::Quaternionf casterOrientation;
+    Eigen::Vector3f origin;
+    Eigen::Vector3f direction;
+    float texLod;
+};
+
 class LightingState
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+    typedef std::vector<EclipseShadow, Eigen::aligned_allocator<EclipseShadow> > EclipseShadowVector;
+
     LightingState() :
         nLights(0),
+        shadowingRingSystem(NULL),
         eyeDir_obj(-Eigen::Vector3f::UnitZ()),
         eyePos_obj(-Eigen::Vector3f::UnitZ())
-    { shadows[0] = NULL; };
+    {
+        shadows[0] = NULL;
+        for (unsigned int i = 0; i < MaxLights; ++i)
+        {
+            ringShadows[i].ringSystem = NULL;
+        }
+    };
 
     unsigned int nLights;
     DirectionalLight lights[MaxLights];
-    std::vector<EclipseShadow>* shadows[MaxLights];
+    EclipseShadowVector* shadows[MaxLights];
+    RingShadow ringShadows[MaxLights];
+    RingSystem* shadowingRingSystem; // NULL when there are no ring shadows
+    Eigen::Vector3f ringPlaneNormal;
+    Eigen::Vector3f ringCenter;
 
     Eigen::Vector3f eyeDir_obj;
     Eigen::Vector3f eyePos_obj;

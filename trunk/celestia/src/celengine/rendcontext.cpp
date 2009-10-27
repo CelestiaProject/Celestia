@@ -11,6 +11,7 @@
 #include <vector>
 #include "rendcontext.h"
 #include "texmanager.h"
+#include "body.h"
 #include <GL/glew.h>
 #include "vecgl.h"
 
@@ -554,8 +555,8 @@ GLSL_RenderContext::initLightingEnvironment()
     {
         if (lightingState.shadows[li] && !lightingState.shadows[li]->empty())
         {
-            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderShadows, lightingState.shadows[li]->size());
-            shaderProps.setShadowCountForLight(li, nShadows);
+            unsigned int nShadows = (unsigned int) min((size_t) MaxShaderEclipseShadows, lightingState.shadows[li]->size());
+            shaderProps.setEclipseShadowCountForLight(li, nShadows);
             totalShadows += nShadows;
         }
     }
@@ -646,6 +647,38 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
         }
     }
 
+    if (lightingState.shadowingRingSystem)
+    {
+        Texture* ringsTex = lightingState.shadowingRingSystem->texture.find(medres);
+        if (ringsTex != NULL)
+        {
+            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
+            ringsTex->bind();
+            textures[nTextures++] = ringsTex;
+
+            // Tweak the texture--set clamp to border and a border color with
+            // a zero alpha.
+            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_ARB);
+            glActiveTextureARB(GL_TEXTURE0_ARB);
+
+            shaderProps.texUsage |= ShaderProperties::RingShadowTexture;
+            for (unsigned int lightIndex = 0; lightIndex < lightingState.nLights; lightIndex++)
+            {
+                if (lightingState.lights[lightIndex].castsShadows &&
+                    lightingState.shadowingRingSystem == lightingState.ringShadows[lightIndex].ringSystem)
+                {
+                    shaderProps.setRingShadowForLight(lightIndex, true);
+                }
+                else
+                {
+                    shaderProps.setRingShadowForLight(lightIndex, false);
+                }
+            }
+        }
+    }
+
     if (usePointSize)
         shaderProps.texUsage |= ShaderProperties::PointSprite;
     if (useColors)
@@ -681,7 +714,7 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
 
     prog->setLightParameters(lightingState, diffuse, m.specular, m.emissive);
 
-    if (shaderProps.shadowCounts != 0)
+    if (shaderProps.hasEclipseShadows() != 0)
         prog->setEclipseShadowParameters(lightingState, objRadius, objOrientation);
 
     // TODO: handle emissive color
@@ -708,6 +741,25 @@ GLSL_RenderContext::makeCurrent(const Mesh::Material& m)
     if ((shaderProps.texUsage & ShaderProperties::PointSprite) != 0)
     {
         prog->pointScale = getPointScale();
+    }
+
+    // Ring shadow parameters
+    if ((shaderProps.texUsage & ShaderProperties::RingShadowTexture) != 0)
+    {
+        const RingSystem* rings = lightingState.shadowingRingSystem;
+        float ringWidth = rings->outerRadius - rings->innerRadius;
+        prog->ringRadius = rings->innerRadius / objRadius;
+        prog->ringWidth = objRadius / ringWidth;
+        prog->ringPlane = Hyperplane<float, 3>(lightingState.ringPlaneNormal, lightingState.ringCenter / objRadius).coeffs();
+        prog->ringCenter = lightingState.ringCenter / objRadius;
+
+        for (unsigned int lightIndex = 0; lightIndex < lightingState.nLights; ++lightIndex)
+        {
+            if (shaderProps.hasRingShadowForLight(lightIndex))
+            {
+                prog->ringShadowLOD[lightIndex] = lightingState.ringShadows[lightIndex].texLod;
+            }
+        }
     }
 
     Mesh::BlendMode newBlendMode = Mesh::InvalidBlend;

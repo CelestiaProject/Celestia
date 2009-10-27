@@ -10,10 +10,10 @@
 #ifndef _CELENGINE_GLCONTEXT_H_
 #define _CELENGINE_GLCONTEXT_H_
 
-#include <string>
-#include <vector>
 #include <celengine/vertexprog.h>
 #include <celengine/fragmentprog.h>
+#include <vector>
+#include <string>
 
 class GLContext
 {

@@ -1,6 +1,7 @@
 // samporient.cpp
 //
-// Copyright (C) 2006-2007, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2006-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // The SampledOrientation class models orientation of a body by interpolating
 // a sequence of key frames.
@@ -10,7 +11,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <Eigen/StdVector>
+#include <Eigen/NewStdVector>
+#include <celengine/samporient.h>
+#include <celmath/mathlib.h>
+#include <celmath/geomutil.h>
 #include <cmath>
 #include <cassert>
 #include <string>
@@ -18,9 +22,6 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <celmath/mathlib.h>
-#include <celmath/geomutil.h>
-#include <celengine/samporient.h>
 
 using namespace Eigen;
 using namespace std;
@@ -32,6 +33,8 @@ struct OrientationSample
     Eigen::Quaternionf q;
     double t;
 };
+
+typedef vector<OrientationSample, aligned_allocator<OrientationSample> > OrientationSampleVector;
 
 /*!
  * Sampled orientation files are ASCII text files containing a sequence of
@@ -95,7 +98,7 @@ private:
     Quaternionf getOrientation(double tjd) const;
 
 private:
-    vector<OrientationSample> samples;
+    OrientationSampleVector samples;
     mutable int lastSample;
 
     enum InterpolationType
@@ -181,10 +184,9 @@ SampledOrientation::getOrientation(double tjd) const
         // the search if the covers the requested time.
         if (n < 1 || n >= (int) samples.size() || tjd < samples[n - 1].t || tjd > samples[n].t)
         {
-            vector<OrientationSample>::const_iterator iter = lower_bound(samples.begin(),
-                                                              samples.end(),
-
-                                                              samp);
+            OrientationSampleVector::const_iterator iter = lower_bound(samples.begin(),
+                                                                       samples.end(),
+                                                                       samp);
             if (iter == samples.end())
                 n = samples.size();
             else
