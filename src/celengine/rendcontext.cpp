@@ -14,6 +14,8 @@
 #include "body.h"
 #include <GL/glew.h>
 #include "vecgl.h"
+#include <Eigen/NewStdVector>
+
 
 using namespace Eigen;
 using namespace std;
