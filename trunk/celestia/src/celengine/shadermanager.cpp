@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cassert>
 #include <Eigen/Geometry>
+#include <Eigen/NewStdVector>
 
 using namespace Eigen;
 using namespace std;
