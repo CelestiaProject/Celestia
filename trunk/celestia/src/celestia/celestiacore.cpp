@@ -311,6 +311,7 @@ CelestiaCore::CelestiaCore() :
     messageVOffset(0),
     messageStart(0.0),
     messageDuration(0.0),
+    textColor(Color(1.0f, 1.0f, 1.0f)),
     typedText(""),
     typedTextCompletionIdx(-1),
     textEnterMode(KbNormal),
@@ -3874,7 +3875,7 @@ void CelestiaCore::renderOverlay()
         float alpha = 1.0f;
         if (currentTime > messageStart + messageDuration - 0.5)
             alpha = (float) ((messageStart + messageDuration - currentTime) / 0.5);
-        glColor4f(1.0f, 1.0f, 1.0f, alpha);
+        glColor4f(textColor.red(), textColor.green(), textColor.blue(), alpha);
         glTranslatef((float) x, (float) y, 0.0f);
         overlay->beginText();
         *overlay << _(messageText.c_str());
@@ -4670,6 +4671,18 @@ void CelestiaCore::setHudDetail(int newHudDetail)
     hudDetail = newHudDetail%3;
     notifyWatchers(VerbosityLevelChanged);
 }
+
+
+Color CelestiaCore::getTextColor()
+{
+    return textColor;
+}
+
+void CelestiaCore::setTextColor(Color newTextColor)
+{
+    textColor = newTextColor;
+}
+
 
 astro::Date::Format CelestiaCore::getDateFormat() const
 {

@@ -279,6 +279,8 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
     int getHudDetail();
     void setHudDetail(int);
+    Color getTextColor();
+    void setTextColor(Color);
     astro::Date::Format getDateFormat() const;
     void setDateFormat(astro::Date::Format format);
     int getOverlayElements() const;
@@ -374,6 +376,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     int messageVOffset;
     double messageStart;
     double messageDuration;
+    Color textColor;
     std::string typedText;
     std::vector<std::string> typedTextCompletion;
     int typedTextCompletionIdx;

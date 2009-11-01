@@ -926,6 +926,20 @@ void CommandSetLabelColor::process(ExecutionEnvironment& /* env */)
 }
 
 
+////////////////
+// SetTextColor command
+
+CommandSetTextColor::CommandSetTextColor(Color _color) :
+    color(_color)
+{
+}
+
+void CommandSetTextColor::process(ExecutionEnvironment& env)
+{
+    env.getCelestiaCore()->setTextColor(color);
+}
+
+
 ///////////////
 // Repeat command
 

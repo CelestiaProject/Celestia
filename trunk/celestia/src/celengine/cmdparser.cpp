@@ -769,6 +769,13 @@ Command* CommandParser::parseCommand()
         Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
         cmd = new CommandSetLabelColor(item, color);
     }
+    else if (commandName == "settextcolor")
+    {
+        Vec3d colorv(1.0f, 1.0f, 1.0f);
+        paramList->getVector("color", colorv);
+        Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
+        cmd = new CommandSetTextColor(color);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");
