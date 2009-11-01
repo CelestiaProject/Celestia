@@ -658,6 +658,17 @@ class CommandSetLabelColor : public InstantaneousCommand
 };
 
 
+class CommandSetTextColor : public InstantaneousCommand
+{
+ public:
+    CommandSetTextColor(Color);
+    void process(ExecutionEnvironment&);
+
+ private:
+    Color color;
+};
+
+
 class Execution;
 
 class RepeatCommand : public Command
