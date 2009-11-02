@@ -172,25 +172,17 @@ SpiceRotation::computeSpin(double jd) const
             reset_c();
         }
 
+        // Eigen stores matrices in column-major order...
         double matrixData[9] =
         {
             xform[0][0], xform[0][1], xform[0][2],
             xform[1][0], xform[1][1], xform[1][2],
             xform[2][0], xform[2][1], xform[2][2]
         };
-        Quaterniond q = Quaterniond(Map<Matrix3d>(matrixData));
-#if CELVEC
-#if 1
-        Mat3d m(Vec3d(xform[0][0], xform[0][1], xform[0][2]),
-                Vec3d(xform[1][0], xform[1][1], xform[1][2]),
-                Vec3d(xform[2][0], xform[2][1], xform[2][2]));
-#else
-        Mat3d m(Vec3d(xform[0][0], xform[1][0], xform[2][0]),
-                Vec3d(xform[0][1], xform[1][1], xform[2][1]),
-                Vec3d(xform[0][2], xform[1][2], xform[2][2]));
-#endif
-        Quatd q = Quatd::matrixToQuaternion(m);
-#endif
+
+        // ...but Celestia's rotations are reversed, thus the extra
+        // call to conjugate() 
+        Quaterniond q = Quaterniond(Map<Matrix3d>(matrixData)).conjugate();
 
         // Transform into Celestia's coordinate system
         return Ry180 * Rx90.conjugate() * q.conjugate() * Rx90;
