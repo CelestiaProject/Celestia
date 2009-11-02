@@ -11,8 +11,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "samporient.h"
 #include <Eigen/NewStdVector>
-#include <celengine/samporient.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <cmath>

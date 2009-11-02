@@ -10,21 +10,21 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cassert>
-#include <celutil/debug.h>
 #include "parseobject.h"
-#include "customorbit.h"
-#include "customrotation.h"
-#include "spiceorbit.h"
-#include "spicerotation.h"
-#include "scriptorbit.h"
-#include "scriptrotation.h"
 #include "frame.h"
 #include "trajmanager.h"
 #include "rotationmanager.h"
 #include "universe.h"
 #include "eigenport.h"
+#include <celephem/customorbit.h>
+#include <celephem/customrotation.h>
+#include <celephem/spiceorbit.h>
+#include <celephem/spicerotation.h>
+#include <celephem/scriptorbit.h>
+#include <celephem/scriptrotation.h>
 #include <celmath/geomutil.h>
+#include <celutil/debug.h>
+#include <cassert>
 
 using namespace Eigen;
 using namespace std;

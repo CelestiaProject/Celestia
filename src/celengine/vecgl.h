@@ -90,6 +90,7 @@ inline void glScale(const Vec3f& v)
     glScalef(v.x, v.y, v.z);
 }
 
+#if 0
 inline void glLightDirection(GLenum light, const Vec3f& dir)
 {
     glLightfv(light, GL_POSITION, &(Vec4f(dir.x, dir.y, dir.z, 0.0f).x));
@@ -109,18 +110,18 @@ inline void glLightColor(GLenum light, GLenum which, const Vec4f& color)
 {
     glLightfv(light, which, &color.x);
 }
+#endif
 
 inline void glLightColor(GLenum light, GLenum which, const Color& color)
 {
-    glLightfv(light, which,
-              &(Vec4f(color.red(), color.green(), color.blue(), color.alpha()).x));
+	Eigen::Vector4f v(color.red(), color.green(), color.blue(), color.alpha());
+    glLightfv(light, which, v.data());
 }
 
 inline void glAmbientLightColor(const Color& color)
 {
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT,
-                   &(Vec4f(color.red(), color.green(), color.blue(),
-                           color.alpha()).x));
+	Eigen::Vector4f v(color.red(), color.green(), color.blue(), color.alpha());
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, v.data());
 }
 
 

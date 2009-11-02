@@ -10,19 +10,19 @@
 #ifndef _CELENGINE_BODY_H_
 #define _CELENGINE_BODY_H_
 
+#include <celengine/surface.h>
+#include <celengine/star.h>
+#include <celengine/location.h>
+#include <celengine/timeline.h>
+#include <celephem/rotation.h>
+#include <celephem/orbit.h>
+#include <celutil/utf8.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <string>
 #include <vector>
 #include <map>
 #include <list>
-#include <celutil/utf8.h>
-#include <celengine/surface.h>
-#include <celengine/orbit.h>
-#include <celengine/star.h>
-#include <celengine/location.h>
-#include <celengine/rotation.h>
-#include <celengine/timeline.h>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
 
 class ReferenceFrame;
 class Body;

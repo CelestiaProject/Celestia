@@ -13,7 +13,7 @@
 #define _CELENGINE_SCRIPTROTATION_H_
 
 #include <celengine/parser.h>
-#include <celengine/rotation.h>
+#include "rotation.h"
 
 struct lua_State;
 

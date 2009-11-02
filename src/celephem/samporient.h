@@ -10,8 +10,8 @@
 #ifndef _CELENGINE_SAMPORIENT_H_
 #define _CELENGINE_SAMPORIENT_H_
 
+#include "rotation.h"
 #include <string>
-#include <celengine/rotation.h>
 
 extern RotationModel* LoadSampledOrientation(const std::string& name);
 

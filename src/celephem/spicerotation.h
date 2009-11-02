@@ -13,10 +13,10 @@
 #ifndef _CELENGINE_SPICEROTATION_H_
 #define _CELENGINE_SPICEROTATION_H_
 
+#include "rotation.h"
+#include <celmath/quaternion.h>
 #include <string>
 #include <list>
-#include <celmath/quaternion.h>
-#include <celengine/rotation.h>
 
 class SpiceRotation : public CachingRotationModel
 {

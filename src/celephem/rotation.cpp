@@ -13,6 +13,7 @@
 
 #include "rotation.h"
 #include <celmath/geomutil.h>
+#include <celmath/mathlib.h>
 #include <cmath>
 
 using namespace Eigen;

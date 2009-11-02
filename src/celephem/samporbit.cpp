@@ -1,6 +1,6 @@
 // samporbit.cpp
 //
-// Copyright (C) 2002-2008, Celestia Development Team
+// Copyright (C) 2002-2009, Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // Trajectories based on unevenly spaced cartesian positions.
@@ -10,6 +10,10 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "orbit.h"
+#include "samporbit.h"
+#include <celengine/astro.h>
+#include <celmath/mathlib.h>
 #include <cmath>
 #include <string>
 #include <algorithm>
@@ -17,10 +21,6 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
-#include <celmath/mathlib.h>
-#include <celengine/astro.h>
-#include <celengine/orbit.h>
-#include <celengine/samporbit.h>
 
 using namespace Eigen;
 using namespace std;

@@ -13,7 +13,7 @@
 #define _CELENGINE_SCRIPTORBIT_H_
 
 #include <celengine/parser.h>
-#include <celengine/orbit.h>
+#include "orbit.h"
 
 struct lua_State;
 
