@@ -15,7 +15,7 @@
 #include <cmath>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>
-#include <celengine/vsop87.h>
+#include "vsop87.h"
 
 using namespace Eigen;
 using namespace std;

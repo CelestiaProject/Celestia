@@ -10,10 +10,10 @@
 #ifndef CELENGINE_ROTATIONMANAGER_H_
 #define CELENGINE_ROTATIONMANAGER_H_
 
+#include <celephem/rotation.h>
+#include <celutil/resmanager.h>
 #include <string>
 #include <map>
-#include <celutil/resmanager.h>
-#include <celengine/rotation.h>
 
 
 class RotationModelInfo : public ResourceInfo<RotationModel>

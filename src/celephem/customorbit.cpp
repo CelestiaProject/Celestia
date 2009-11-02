@@ -7,16 +7,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "customorbit.h"
+#include "vsop87.h"
+#include "jpleph.h"
+#include <celengine/astro.h>
+#include <celmath/mathlib.h>
+#include <celmath/geomutil.h>
 #include <cassert>
 #include <vector>
 #include <fstream>
 #include <iomanip>
-#include <celmath/mathlib.h>
-#include <celmath/geomutil.h>
-#include "astro.h"
-#include "customorbit.h"
-#include "vsop87.h"
-#include "jpleph.h"
 
 using namespace Eigen;
 using namespace std;

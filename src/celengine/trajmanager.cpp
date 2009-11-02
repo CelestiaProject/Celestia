@@ -7,15 +7,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestia.h"
+#include "trajmanager.h"
+#include <celephem/samporbit.h>
+#include <celutil/debug.h>
+#include <celutil/filetype.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
-
-#include "celestia.h"
-#include <celutil/debug.h>
-#include <celutil/filetype.h>
-#include "samporbit.h"
-#include "trajmanager.h"
 
 using namespace std;
 

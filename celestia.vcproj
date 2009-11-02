@@ -431,14 +431,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\customorbit.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\customrotation.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\dds.cpp"
 					>
 				</File>
@@ -495,10 +487,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\jpleph.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\location.cpp"
 					>
 				</File>
@@ -535,19 +523,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\nutation.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\observer.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\src\celengine\opencluster.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\orbit.cpp"
 					>
 				</File>
 				<File
@@ -567,10 +547,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\precession.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\regcombine.cpp"
 					>
 				</File>
@@ -587,31 +563,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\rotation.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\rotationmanager.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\samporbit.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\samporient.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\scriptobject.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\scriptorbit.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\scriptrotation.cpp"
 					>
 				</File>
 				<File
@@ -636,18 +588,6 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\spheremesh.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\spiceinterface.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\spiceorbit.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\spicerotation.cpp"
 					>
 				</File>
 				<File
@@ -726,10 +666,6 @@
 					RelativePath=".\src\celengine\visibleregion.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\src\celengine\vsop87.cpp"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="glew"
@@ -744,6 +680,74 @@
 				>
 				<File
 					RelativePath=".\thirdparty\curveplot\src\curveplot.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="celephem"
+				>
+				<File
+					RelativePath=".\src\celephem\customorbit.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\customrotation.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\jpleph.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\nutation.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\orbit.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\precession.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\rotation.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\samporbit.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\samporient.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\scriptobject.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\scriptorbit.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\scriptrotation.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\spiceinterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\spiceorbit.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\spicerotation.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\vsop87.cpp"
 					>
 				</File>
 			</Filter>
@@ -1422,6 +1426,74 @@
 				>
 				<File
 					RelativePath=".\src\celtxf\texturefont.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="celephem"
+				>
+				<File
+					RelativePath=".\src\celephem\customorbit.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\customrotation.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\jpleph.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\nutation.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\orbit.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\precession.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\rotation.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\samporbit.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\samporient.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\scriptobject.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\scriptorbit.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\scriptrotation.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\spiceinterface.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\spiceorbit.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\spicerotation.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celephem\vsop87.h"
 					>
 				</File>
 			</Filter>

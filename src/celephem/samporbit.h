@@ -10,8 +10,8 @@
 #ifndef _CELENGINE_SAMPORBIT_H_
 #define _CELENGINE_SAMPORBIT_H_
 
+#include "orbit.h"
 #include <string>
-#include <celengine/orbit.h>
 
 enum TrajectoryInterpolation
 {

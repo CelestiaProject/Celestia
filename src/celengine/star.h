@@ -17,8 +17,8 @@
 #include <celengine/univcoord.h>
 #include <celengine/celestia.h>
 #include <celengine/stellarclass.h>
-#include <celengine/rotation.h>
 #include <celengine/multitexture.h>
+#include <celephem/rotation.h>
 #include <Eigen/Core>
 #include <vector>
 

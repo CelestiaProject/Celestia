@@ -10,11 +10,11 @@
 #ifndef CELENGINE_TRAJMANAGER_H_
 #define CELENGINE_TRAJMANAGER_H_
 
+#include <celephem/orbit.h>
+#include <celephem/samporbit.h>
 #include <string>
 #include <map>
 #include <celutil/resmanager.h>
-#include <celengine/orbit.h>
-#include <celengine/samporbit.h>
 
 
 class TrajectoryInfo : public ResourceInfo<Orbit>

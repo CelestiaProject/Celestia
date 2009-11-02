@@ -11,7 +11,6 @@
 #ifndef _CELENGINE_ROTATION_H_
 #define _CELENGINE_ROTATION_H_
 
-#include <celengine/astro.h>
 #include <Eigen/Geometry>
 
 

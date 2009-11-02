@@ -13,9 +13,9 @@
 #include <cstdio>
 #include "celestia.h"
 #include "astro.h"
-#include "orbit.h"
 #include "star.h"
 #include "texmanager.h"
+#include "celephem/orbit.h"
 
 using namespace Eigen;
 using namespace std;
