@@ -88,6 +88,39 @@ TXF_HEADERS = \
     celtxf/texturefont.h
 
 
+#### Ephemeris module ####
+
+EPHEM_SOURCES = \
+    celephem/customorbit.cpp \
+    celephem/customrotation.cpp \
+    celephem/jpleph.cpp \
+    celephem/nutation.cpp \
+    celephem/orbit.cpp \
+    celephem/precession.cpp \
+    celephem/rotation.cpp \
+    celephem/samporbit.cpp \
+    celephem/samporient.cpp \
+    celephem/scriptobject.cpp \
+    celephem/scriptorbit.cpp \
+    celephem/scriptrotation.cpp \
+    celephem/vsop87.cpp
+
+EPHEM_HEADERS = \
+    celephem/customorbit.h \
+    celephem/customrotation.h \
+    celephem/jpleph.h \
+    celephem/nutation.h \
+    celephem/orbit.h \
+    celephem/precession.h \
+    celephem/rotation.h \
+    celephem/samporbit.h \
+    celephem/samporient.h \
+    celephem/scriptobject.h \
+    celephem/scriptorbit.h \
+    celephem/scriptrotation.h \
+    celephem/vsop87.h
+
+
 #### Celestia Engine ####
 
 ENGINE_SOURCES = \
@@ -101,8 +134,6 @@ ENGINE_SOURCES = \
     celengine/command.cpp \
     celengine/console.cpp \
     celengine/constellation.cpp \
-    celengine/customorbit.cpp \
-    celengine/customrotation.cpp \
     celengine/dds.cpp \
     celengine/deepskyobj.cpp \
     celengine/dispmap.cpp \
@@ -118,7 +149,6 @@ ENGINE_SOURCES = \
     celengine/glcontext.cpp \
     celengine/glshader.cpp \
     celengine/image.cpp \
-    celengine/jpleph.cpp \
     celengine/location.cpp \
     celengine/lodspheremesh.cpp \
     celengine/marker.cpp \
@@ -128,26 +158,17 @@ ENGINE_SOURCES = \
     celengine/modelfile.cpp \
     celengine/multitexture.cpp \
     celengine/nebula.cpp \
-    celengine/nutation.cpp \
     celengine/observer.cpp \
     celengine/opencluster.cpp \
-    celengine/orbit.cpp \
     celengine/overlay.cpp \
     celengine/parseobject.cpp \
     celengine/parser.cpp \
     celengine/planetgrid.cpp \
-    celengine/precession.cpp \
     celengine/regcombine.cpp \
     celengine/rendcontext.cpp \
     celengine/render.cpp \
     celengine/renderglsl.cpp \
-    celengine/rotation.cpp \
     celengine/rotationmanager.cpp \
-    celengine/samporbit.cpp \
-    celengine/samporient.cpp \
-    celengine/scriptobject.cpp \
-    celengine/scriptorbit.cpp \
-    celengine/scriptrotation.cpp \
     celengine/selection.cpp \
     celengine/shadermanager.cpp \
     celengine/simulation.cpp \
@@ -171,8 +192,7 @@ ENGINE_SOURCES = \
     celengine/vertexlist.cpp \
     celengine/vertexprog.cpp \
     celengine/virtualtex.cpp \
-    celengine/visibleregion.cpp \
-    celengine/vsop87.cpp
+    celengine/visibleregion.cpp
 
 ENGINE_HEADERS = \
     celengine/asterism.h \
@@ -187,8 +207,6 @@ ENGINE_HEADERS = \
     celengine/command.h \
     celengine/console.h \
     celengine/constellation.h \
-    celengine/customorbit.h \
-    celengine/customrotation.h \
     celengine/deepskyobj.h \
     celengine/dispmap.h \
     celengine/dsodb.h \
@@ -204,7 +222,6 @@ ENGINE_HEADERS = \
     celengine/glcontext.h \
     celengine/glshader.h \
     celengine/image.h \
-    celengine/jpleph.h \
     celengine/lightenv.h \
     celengine/location.h \
     celengine/lodspheremesh.h \
@@ -215,29 +232,20 @@ ENGINE_HEADERS = \
     celengine/modelfile.h \
     celengine/multitexture.h \
     celengine/nebula.h \
-    celengine/nutation.h \
     celengine/observer.h \
     celengine/octree.h \
     celengine/opencluster.h \
-    celengine/orbit.h \
     celengine/overlay.h \
     celengine/parseobject.h \
     celengine/parser.h \
     celengine/planetgrid.h \
-    celengine/precession.h \
     celengine/referencemark.h \
     celengine/regcombine.h \
     celengine/rendcontext.h \
     celengine/render.h \
     celengine/renderglsl.h \
     celengine/renderinfo.h \
-    celengine/rotation.h \
     celengine/rotationmanager.h \
-    celengine/samporbit.h \
-    celengine/samporient.h \
-    celengine/scriptobject.h \
-    celengine/scriptorbit.h \
-    celengine/scriptrotation.h \
     celengine/selection.h \
     celengine/shadermanager.h \
     celengine/simulation.h \
@@ -263,18 +271,17 @@ ENGINE_HEADERS = \
     celengine/vertexlist.h \
     celengine/vertexprog.h \
     celengine/virtualtex.h \
-    celengine/visibleregion.h \
-    celengine/vsop87.h
+    celengine/visibleregion.h
 
 SPICE_SOURCES = \
-    celengine/spiceinterface.cpp \
-    celengine/spiceorbit.cpp \
-    celengine/spicerotation.cpp
+    celephem/spiceinterface.cpp \
+    celephem/spiceorbit.cpp \
+    celephem/spicerotation.cpp
 
 SPICE_HEADERS = \
-    celengine/spiceinterface.h \
-    celengine/spiceorbit.h \
-    celengine/spicerotation.h
+    celephem/spiceinterface.h \
+    celephem/spiceorbit.h \
+    celephem/spicerotation.h
 
 #### App sources ####
 
@@ -385,12 +392,18 @@ THIRDPARTY_HEADERS = $$GLEW_HEADERS $$CURVEPLOT_HEADERS
 
 DEFINES += GLEW_STATIC
 
+# SPICE support
+EPHEM_SOURCES += $$SPICE_SOURCES
+EPHEM_HEADERS += $$SPICE_HEADERS
+DEFINES += USE_SPICE
+
 
 SOURCES = \
     $$UTIL_SOURCES \
     $$MATH_SOURCES \
     $$TXF_SOURCES \
     $$TDS_SOURCES \
+    $$EPHEM_SOURCES \
     $$ENGINE_SOURCES \
     $$APP_SOURCES \
     $$QTAPP_SOURCES \
@@ -401,6 +414,7 @@ HEADERS = \
     $$MATH_HEADERS \
     $$TXF_HEADERS \
     $$TDS_HEADERS \
+    $$EPHEM_HEADERS \
     $$ENGINE_HEADERS \
     $$APP_HEADERS \
     $$QTAPP_HEADERS \
@@ -419,11 +433,6 @@ FORMS = \
 UI_HEADERS_DIR = celestia/qt/ui
 UI_SOURCES_DIR = celestia/qt/ui
 
-# SPICE support
-SOURCES += $$SPICE_SOURCES
-HEADERS += $$SPICE_HEADERS
-DEFINES += USE_SPICE
-
 INCLUDEPATH += ..
 INCLUDEPATH += ../..
 INCLUDEPATH += .
@@ -432,6 +441,85 @@ INCLUDEPATH += .
 INCLUDEPATH += ../thirdparty/glew/include
 INCLUDEPATH += ../thirdparty/Eigen
 INCLUDEPATH += ../thirdparty/curveplot/include
+
+release {
+    DEFINES += EIGEN_NO_DEBUG
+}
+
+CATALOG_SOURCE = ../data
+CATALOG_FILES = \
+    $$CATALOG_SOURCE/stars.dat \
+    $$CATALOG_SOURCE/starnames.dat \
+    $$CATALOG_SOURCE/saoxindex.dat \
+    $$CATALOG_SOURCE/hdxindex.dat \
+    $$CATALOG_SOURCE/nearstars.stc \
+    $$CATALOG_SOURCE/extrasolar.stc \
+    $$CATALOG_SOURCE/visualbins.stc \
+    $$CATALOG_SOURCE/spectbins.stc \
+    $$CATALOG_SOURCE/revised.stc \
+    $$CATALOG_SOURCE/galaxies.dsc \
+    $$CATALOG_SOURCE/globulars.dsc \
+    $$CATALOG_SOURCE/solarsys.ssc \
+    $$CATALOG_SOURCE/asteroids.ssc \
+    $$CATALOG_SOURCE/comets.ssc \
+    $$CATALOG_SOURCE/minormoons.ssc \
+    $$CATALOG_SOURCE/numberedmoons.ssc \
+    $$CATALOG_SOURCE/outersys.ssc \
+    $$CATALOG_SOURCE/world-capitals.ssc \
+    $$CATALOG_SOURCE/merc_locs.ssc \
+    $$CATALOG_SOURCE/venus_locs.ssc \
+    $$CATALOG_SOURCE/mars_locs.ssc \
+    $$CATALOG_SOURCE/moon_locs.ssc \
+    $$CATALOG_SOURCE/marsmoons_locs.ssc \
+    $$CATALOG_SOURCE/jupitermoons_locs.ssc \
+    $$CATALOG_SOURCE/saturnmoons_locs.ssc \
+    $$CATALOG_SOURCE/uranusmoons_locs.ssc \
+    $$CATALOG_SOURCE/neptunemoons_locs.ssc \
+    $$CATALOG_SOURCE/extrasolar.ssc \
+    $$CATALOG_SOURCE/asterisms.dat \
+    $$CATALOG_SOURCE/boundaries.dat
+CONFIGURATION_SOURCE = ..
+CONFIGURATION_FILES = \
+    $$CONFIGURATION_SOURCE/celestia.cfg \
+    $$CONFIGURATION_SOURCE/start.cel
+TEXTURE_SOURCE = ../textures/medres
+HIRES_TEXTURE_SOURCE = ../textures/hires
+LORES_TEXTURE_SOURCE = ../textures/lores
+TEXTURE_FILES =
+LORES_TEXTURE_FILES =
+HIRES_TEXTURE_FILES =
+MODEL_SOURCE = ../models
+MODEL_FILES =
+SHADER_SOURCE = ../shaders
+SHADER_FILES =
+FONT_SOURCE = ../fonts
+FONT_FILES =
+
+# ## End package files
+macx {
+    # Scan directories for files for Mac bundle
+    FILES = $$system(ls $$TEXTURE_SOURCE)
+    TEXTURE_FILES = $$join(FILES, " $$TEXTURE_SOURCE/", $$TEXTURE_SOURCE/)
+    FILES = $$system(ls $$LORES_TEXTURE_SOURCE)
+    LORES_TEXTURE_FILES = $$join(FILES, " $$LORES_TEXTURE_SOURCE/", $$LORES_TEXTURE_SOURCE/)
+    FILES = $$system(ls $$HIRES_TEXTURE_SOURCE)
+    HIRES_TEXTURE_FILES = $$join(FILES, " $$HIRES_TEXTURE_SOURCE/", $$HIRES_TEXTURE_SOURCE/)
+    FILES = $$system(ls $$MODEL_SOURCE)
+    MODEL_FILES = $$join(FILES, " $$MODEL_SOURCE/", $$MODEL_SOURCE/)
+    FILES = $$system(ls $$SHADER_SOURCE)
+    SHADER_FILES = $$join(FILES, " $$SHADER_SOURCE/", $$SHADER_SOURCE/)
+    FILES = $$system(ls $$FONT_SOURCE)
+    FONT_FILES = $$join(FILES, " $$FONT_SOURCE/", $$FONT_SOURCE/)
+}
+
+
+DEFINES += EIGEN_NO_DEBUG
+release {
+   DEFINES += \
+      NDEBUG \
+      NO_DEBUG
+}
+
 
 win32 {
     INCLUDEPATH += \
@@ -468,10 +556,17 @@ unix {
 }
 
 macx {
+    message(Copying extras-standard to bundle)
+    RESOURCES_DIR = $$DESTDIR/$${TARGET}.app/Contents/Resources/CelestiaResources
+    system(rm -rf $$RESOURCES_DIR/extras-standard)
+    system(cp -r ../extras-standard $$RESOURCES_DIR)
+    #system(ls $$DESTDIR/$${TARGET}.app/Contents/Resources/CelestiaResources)
+
     ICON = ../macosx/celestia.icns
 
     INCLUDEPATH += ../macosx
 
+    #QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
     QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
     CONFIG += x86 ppc
     PRECOMPILED_HEADER += ../macosx/Util.h
@@ -485,6 +580,34 @@ macx {
     FRAMEWORKS.files = $$FRAMEWORKPATH/liblua.dylib $$FRAMEWORKPATH/libpng.dylib
     FRAMEWORKS.path = Contents/Frameworks
     QMAKE_BUNDLE_DATA += FRAMEWORKS
+
+    CONFIGURATION.path = Contents/Resources/CelestiaResources
+    CONFIGURATION.files = $$CONFIGURATION_FILES
+    CATALOGS.path = Contents/Resources/CelestiaResources/data
+    CATALOGS.files = $$CATALOG_FILES
+    TEXTURES.path = Contents/Resources/CelestiaResources/textures/medres
+    TEXTURES.files = $$TEXTURE_FILES
+    LORES_TEXTURES.path = Contents/Resources/CelestiaResources/textures/lores
+    LORES_TEXTURES.files = $$LORES_TEXTURE_FILES
+    HIRES_TEXTURES.path = Contents/Resources/CelestiaResources/textures/hires
+    HIRES_TEXTURES.files = $$HIRES_TEXTURE_FILES
+    MODELS.path = Contents/Resources/CelestiaResources/models
+    MODELS.files = $$MODEL_FILES
+    FONTS.path = Contents/Resources/CelestiaResources/fonts
+    FONTS.files = $$FONT_FILES
+    SHADERS.path = Contents/Resources/CelestiaResources/shaders
+    SHADERS.files = $$SHADER_FILES
+
+    QMAKE_BUNDLE_DATA += \
+        CONFIGURATION \
+        CATALOGS \
+        TEXTURES \
+        LORES_TEXTURES \
+        HIRES_TEXTURES \
+        MODELS \
+        FONTS \
+        SHADERS \
+        EPHEMERIDES
 
     LIBS += ../macosx/lib/cspice.a
 }
