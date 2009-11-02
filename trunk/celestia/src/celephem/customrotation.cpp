@@ -2,7 +2,7 @@
 //
 // Custom rotation models for Solar System bodies.
 //
-// Copyright (C) 2008, the Celestia Development Team
+// Copyright (C) 2008-2009, the Celestia Development Team
 // Initial version by Chris Laurel, claurel@gmail.com
 //
 // This program is free software; you can redistribute it and/or
@@ -10,13 +10,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "customrotation.h"
+#include "rotation.h"
+#include "precession.h"
+#include <celengine/astro.h>
+#include <celmath/geomutil.h>
 #include <map>
 #include <string>
-#include <celengine/customrotation.h>
-#include <celengine/rotation.h>
-#include <celengine/astro.h>
-#include <celengine/precession.h>
-#include <celmath/geomutil.h>
 
 using namespace Eigen;
 using namespace std;

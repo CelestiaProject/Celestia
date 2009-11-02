@@ -1,22 +1,22 @@
 // orbit.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "orbit.h"
+#include <celengine/body.h>
+#include <celmath/mathlib.h>
+#include <celmath/solve.h>
+#include <celmath/geomutil.h>
 #include <functional>
 #include <algorithm>
 #include <cmath>
 #include <cassert>
-#include <celmath/mathlib.h>
-#include <celmath/solve.h>
-#include <celmath/geomutil.h>
-#include "astro.h"
-#include "orbit.h"
-#include "body.h"
 
 using namespace Eigen;
 using namespace std;
@@ -220,16 +220,15 @@ Vector3d EllipticalOrbit::velocityAtE(double E) const
     if (eccentricity < 1.0)
     {
         double a = pericenterDistance / (1.0 - eccentricity);
+		double b = a * sqrt(1 - square(eccentricity));
         double sinE = sin(E);
         double cosE = cos(E);
         
-        x = -a * sinE;
-        y =  a * sqrt(1 - square(eccentricity)) * cosE;
-        
         double meanMotion = 2.0 * PI / period;
         double edot = meanMotion / (1 - eccentricity * cosE);
-        x *= edot;
-        y *= edot;
+
+        x = -a * sinE * edot;
+        y =  b * cosE * edot;
     }
     else if (eccentricity > 1.0)
     {
@@ -287,14 +286,36 @@ double EllipticalOrbit::getBoundingRadius() const
 }
 
 
-void EllipticalOrbit::sample(double, double t, int nSamples,
+void EllipticalOrbit::sample(double startTime, double duration, int nSamples,
                              OrbitSampleProc& proc) const
 {
-    if (eccentricity >= 1.0)
+#if 0
+	{
+		// Sample uniformly in time
+		for (int i = 0; i < nSamples; i++)
+		{
+			double tsamp = startTime + duration / nSamples;
+			proc.sample(tsamp, positionAtTime(tsamp), velocityAtTime(tsamp));
+		}
+	}
+#endif
+    if (eccentricity >= 1.0 || 1)
     {
-        double dE = 1 * PI / (double) nSamples;
+		// Sample uniformly in eccentric anomaly
+	    double t = startTime - epoch;
+		double meanMotion = 2.0 * PI / period;
+		double M0 = meanAnomalyAtEpoch + t * meanMotion;
+        double E0 = eccentricAnomaly(M0);
+        double dE = 2 * PI / (double) nSamples;
+
         for (int i = 0; i < nSamples; i++)
-            proc.sample(t, positionAtE(dE * i), velocityAtE(dE * i));
+		{
+            // Compute the time tag for this sample
+			double E = E0 + dE * i;
+            double M = E - eccentricity * sin(E);                    // Mean anomaly from ecc anomaly
+			double tsamp = startTime + (M - M0) * period / (2 * PI); // Time from mean anomaly
+            proc.sample(tsamp, positionAtE(E), velocityAtE(E));
+		}
     }
     else
     {
@@ -311,7 +332,7 @@ void EllipticalOrbit::sample(double, double t, int nSamples,
         {
             // Compute the time tag for this sample
             double M = E - eccentricity * sin(E);            // Mean anomaly from ecc anomaly
-            double tsamp = t + (M - M0) * period / (2 * PI); // Time from mean anomaly
+            double tsamp = startTime + (M - M0) * period / (2 * PI); // Time from mean anomaly
             
             proc.sample(tsamp, positionAtE(E), velocityAtE(E));
 

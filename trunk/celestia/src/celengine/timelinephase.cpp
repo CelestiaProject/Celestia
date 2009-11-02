@@ -10,13 +10,13 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cassert>
 #include "celengine/timelinephase.h"
 #include "celengine/frame.h"
-#include "celengine/orbit.h"
-#include "celengine/rotation.h"
 #include "celengine/universe.h"
 #include "celengine/frametree.h"
+#include "celephem/orbit.h"
+#include "celephem/rotation.h"
+#include <cassert>
 
 
 TimelinePhase::TimelinePhase(Body* _body,

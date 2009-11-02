@@ -12,7 +12,7 @@
 #include <iostream>
 #include <cstdio>
 #include "SpiceUsr.h"
-#include "astro.h"
+#include <celengine/astro.h>
 #include "spiceorbit.h"
 #include "spiceinterface.h"
 

@@ -36,7 +36,7 @@
 #include <celengine/execution.h>
 #include <celengine/cmdparser.h>
 #include <celengine/multitexture.h>
-#include <celengine/spiceinterface.h>
+#include <celephem/spiceinterface.h>
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 #include <celengine/visibleregion.h>
@@ -49,7 +49,7 @@
 #include <celengine/eigenport.h>
 
 #ifdef CELX
-#include <celengine/scriptobject.h>
+#include <celephem/scriptobject.h>
 #endif
 
 #ifdef _WIN32

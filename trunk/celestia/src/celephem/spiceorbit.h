@@ -12,9 +12,10 @@
 #ifndef _CELENGINE_SPICEORBIT_H_
 #define _CELENGINE_SPICEORBIT_H_
 
+#include "orbit.h"
 #include <string>
 #include <list>
-#include <celengine/orbit.h>
+
 
 class SpiceOrbit : public CachingOrbit
 {

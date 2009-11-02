@@ -7,13 +7,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "rotationmanager.h"
+#include "celestia.h"
+#include <celephem/samporient.h>
+#include <celutil/debug.h>
 #include <iostream>
 #include <fstream>
-
-#include "celestia.h"
-#include <celutil/debug.h>
-#include "samporient.h"
-#include "rotationmanager.h"
 
 using namespace std;
 
