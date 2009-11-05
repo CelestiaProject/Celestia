@@ -12,7 +12,7 @@
 #ifndef _WINVIEWOPTSDLG_H_
 #define _WINVIEWOPTSDLG_H_
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 class ViewOptionsDialog : public CelestiaWatcher
 {

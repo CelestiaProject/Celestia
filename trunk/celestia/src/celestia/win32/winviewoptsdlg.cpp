@@ -12,7 +12,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "winviewoptsdlg.h"
-#include "..\celengine\render.h"
+#include "celengine\render.h"
 
 #include "res/resource.h"
 
