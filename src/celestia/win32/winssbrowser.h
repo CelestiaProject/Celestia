@@ -12,7 +12,7 @@
 #ifndef _WINSSBROWSER_H_
 #define _WINSSBROWSER_H_
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 
 class SolarSystemBrowser

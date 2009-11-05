@@ -1,30 +1,32 @@
-// wingotodlg.h
+// wintourguide.h
 // 
 // Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
 //
-// Goto object dialog for Windows.
+// Space 'tour guide' dialog for Windows.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _WINGOTODLG_H_
-#define _WINGOTODLG_H_
+#ifndef _WINTOURGUIDE_H_
+#define _WINTOURGUIDE_H_
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 
-class GotoObjectDialog
+class TourGuide
 {
  public:
-    GotoObjectDialog(HINSTANCE, HWND, CelestiaCore*);
+    TourGuide(HINSTANCE, HWND, CelestiaCore*);
 
  public:
     CelestiaCore* appCore;
+    Destination* selectedDest;
     HWND parent;
     HWND hwnd;
 };
 
 
-#endif // _WINGOTODLG_H_
+#endif // _TOURGUIDE_H_
+

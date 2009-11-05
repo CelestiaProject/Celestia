@@ -12,7 +12,7 @@
 #ifndef _WINSTARBROWSER_H_
 #define _WINSTARBROWSER_H_
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 
 class StarBrowser
