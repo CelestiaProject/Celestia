@@ -38,10 +38,10 @@
 #include <celengine/planetgrid.h>
 
 #include <GL/glew.h>
-#include "celestiacore.h"
-#include "imagecapture.h"
-#include "avicapture.h"
-#include "url.h"
+#include "celestia/celestiacore.h"
+#include "celestia/imagecapture.h"
+#include "celestia/avicapture.h"
+#include "celestia/url.h"
 #include "winstarbrowser.h"
 #include "winssbrowser.h"
 #include "wintourguide.h"
@@ -54,7 +54,7 @@
 #include "wintime.h"
 #include "winsplash.h"
 #include "odmenu.h"
-#include "scriptmenu.h"
+#include "celestia/scriptmenu.h"
 
 #include "res/resource.h"
 #include "wglext.h"

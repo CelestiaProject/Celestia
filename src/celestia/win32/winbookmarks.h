@@ -15,8 +15,8 @@
 
 #include <windows.h>
 #include <commctrl.h>
-#include "favorites.h"
-#include "celestiacore.h"
+#include "celestia/favorites.h"
+#include "celestia/celestiacore.h"
 #include "odmenu.h"
 
 void BuildFavoritesMenu(HMENU, CelestiaCore*, HINSTANCE, ODMenu*);

@@ -14,7 +14,7 @@
 
 #include <vector>
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 
 class EclipseFinderDialog

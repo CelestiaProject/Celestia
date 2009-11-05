@@ -14,7 +14,7 @@
 
 #include <windows.h>
 #include <commctrl.h>
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 class LocationsDialog : public CelestiaWatcher
 {

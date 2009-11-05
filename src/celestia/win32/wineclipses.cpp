@@ -15,7 +15,7 @@
 #include <cassert>
 #include <windows.h>
 #include <commctrl.h>
-#include "eclipsefinder.h"
+#include "celestia/eclipsefinder.h"
 #include "wineclipses.h"
 #include "res/resource.h"
 #include "celmath/geomutil.h"

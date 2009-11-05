@@ -271,75 +271,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celestia\ODMenu.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celestia\scriptmenu.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\src\celestia\url.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wglext.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winbookmarks.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\windatepicker.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wineclipses.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wingotodlg.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winhyperlinks.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winlocations.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winmain.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winsplash.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winssbrowser.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winstarbrowser.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wintime.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wintourguide.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celutil\winutil.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winviewoptsdlg.cpp"
 					>
 				</File>
 			</Filter>
@@ -748,6 +684,74 @@
 				</File>
 				<File
 					RelativePath=".\src\celephem\vsop87.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="win32ui"
+				>
+				<File
+					RelativePath=".\src\celestia\win32\ODMenu.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wglext.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winbookmarks.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\windatepicker.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wineclipses.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wingotodlg.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winhyperlinks.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winlocations.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winmain.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winsplash.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winssbrowser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winstarbrowser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wintime.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wintourguide.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celutil\winutil.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winviewoptsdlg.cpp"
 					>
 				</File>
 			</Filter>
@@ -1297,63 +1301,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celestia\ODMenu.h"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celestia\scriptmenu.h"
 					>
 				</File>
 				<File
 					RelativePath=".\src\celestia\url.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wglext.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winbookmarks.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wineclipses.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wingotodlg.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winhyperlinks.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winlocations.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winsplash.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winssbrowser.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winstarbrowser.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wintime.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\wintourguide.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celestia\winviewoptsdlg.h"
 					>
 				</File>
 			</Filter>
@@ -1497,6 +1449,62 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="win32ui"
+				>
+				<File
+					RelativePath=".\src\celestia\win32\ODMenu.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wglext.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winbookmarks.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wineclipses.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wingotodlg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winhyperlinks.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winlocations.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winsplash.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winssbrowser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winstarbrowser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wintime.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\wintourguide.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celestia\win32\winviewo  ptsdlg.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -1504,7 +1512,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\src\celestia\res\celestia.rc"
+				RelativePath=".\src\celestia\win32\res\celestia.rc"
 				>
 			</File>
 		</Filter>
