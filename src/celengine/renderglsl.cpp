@@ -117,29 +117,6 @@ void renderSphere_GLSL(const RenderInfo& ri,
         textures[nTextures++] = ri.overlayTex;
     }
 
-#if 0
-    if (rings != NULL && (renderFlags & Renderer::ShowRingShadows) != 0)
-    {
-        Texture* ringsTex = rings->texture.find(textureRes);
-        if (ringsTex != NULL)
-        {
-            glActiveTextureARB(GL_TEXTURE0_ARB + nTextures);
-            ringsTex->bind();
-            nTextures++;
-
-            // Tweak the texture--set clamp to border and a border color with
-            // a zero alpha.
-            float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                            GL_CLAMP_TO_BORDER_ARB);
-            glActiveTextureARB(GL_TEXTURE0_ARB);
-
-            shadprop.texUsage |= ShaderProperties::RingShadowTexture;
-        }
-    }
-#endif
-
     if (atmosphere != NULL)
     {
         if (renderFlags & Renderer::ShowAtmospheres)
