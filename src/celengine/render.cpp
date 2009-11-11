@@ -6889,12 +6889,11 @@ void Renderer::renderObject(const Vector3f& pos,
                         Vec4f(planetMat.col(1).x(), planetMat.col(1).y(), planetMat.col(1).z(), planetMat.col(1).w()),
                         Vec4f(planetMat.col(2).x(), planetMat.col(2).y(), planetMat.col(2).z(), planetMat.col(2).w()),
                         Vec4f(planetMat.col(3).x(), planetMat.col(3).y(), planetMat.col(3).z(), planetMat.col(3).w()));
-                        
+
     Mat4f invMV = (fromEigen(cameraOrientation).toMatrix4() *
-                   Mat4f::translation(Point3f(-pos.x(), -pos.y(), -pos.z())) *
-                   planetMat_old *
-                   Mat4f::scaling(1.0f / radius));
-    
+                   Mat4f::translation(Point3f(-pos.x() / radius, -pos.y() / radius, -pos.z() / radius)) *
+                   planetMat_old);
+
     // The sphere rendering code uses the view frustum to determine which
     // patches are visible. In order to avoid rendering patches that can't
     // be seen, make the far plane of the frustum as close to the viewer
@@ -6935,10 +6934,13 @@ void Renderer::renderObject(const Vector3f& pos,
     }
 
     // Transform the frustum into object coordinates using the
-    // inverse model/view matrix.
+    // inverse model/view matrix. The frustum is scaled to a
+    // normalized coordinate system where the 1 unit = 1 planet
+    // radius (for an ellipsoidal planet, radius is taken to be
+    // largest semiaxis.)
     Frustum viewFrustum(degToRad(fov),
                         (float) windowWidth / (float) windowHeight,
-                        nearPlaneDistance, frustumFarPlane);
+                        nearPlaneDistance / radius, frustumFarPlane / radius);
     viewFrustum.transform(invMV);
 
     // Get cloud layer parameters
