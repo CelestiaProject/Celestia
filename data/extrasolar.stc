@@ -907,3 +907,43 @@ Barycenter 62157 "HW Vir"
 		ArgOfPericenter	180	
 	}
 }
+
+# O'Donoghue et al. "The DA+dMe eclipsing binary EC13471-1258: its cup runneth over ... just"
+# http://fr.arxiv.org/abs/astro-ph/0307144
+Barycenter "QS Vir"
+{
+	RA 207.466458
+	Dec -13.227083
+	Distance 156
+}
+
+"QS Vir A"
+{
+	OrbitBarycenter "QS Vir"
+	SpectralType "DA"
+	Radius 7650
+	AbsMag 10.71
+
+	EllipticalOrbit {
+		Period		0.000385 # 3.37 hours
+		SemiMajorAxis	0.0020   # mass ratio 0.78:0.43
+		Inclination     110      #
+		AscendingNode   194      # inclination to plane of sky 75.5 deg.
+	}
+}
+
+"QS Vir B"
+{
+	OrbitBarycenter "QS Vir"
+	SpectralType "M3.5V"
+	Radius 292300
+	AbsMag 9.36
+
+	EllipticalOrbit {
+		Period		0.000385 # 3.37 hours
+		SemiMajorAxis	0.0036   # mass ratio 0.78:0.43
+		Inclination     110      #
+		AscendingNode   194      # inclination to plane of sky 75.5 deg.
+		ArgOfPericenter 180
+	}
+}
