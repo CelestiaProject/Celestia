@@ -1,4 +1,4 @@
-SUBDIRS = res
+SUBDIRS = 
 
 bin_PROGRAMS = celestia
 INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
@@ -25,25 +25,6 @@ COMMONSOURCES = \
 	favorites.cpp \
 	imagecapture.cpp \
 	url.cpp
-
-WINSOURCES = \
-	avicapture.cpp \
-	ODMenu.cpp \
-	scriptmenu.cpp \
-	wglext.cpp \
-	winbookmarks.cpp \
-	windatepicker.cpp \
-	wineclipses.cpp \
-	wingotodlg.cpp \
-	winhyperlinks.cpp \
-	winlocations.cpp \
-	winmain.cpp \
-	winsplash.cpp \
-	winssbrowser.cpp \
-	winstarbrowser.cpp \
-	wintime.cpp \
-	wintourguide.cpp \
-	winviewoptsdlg.cpp
 
 if ENABLE_CELX
 CELXSOURCES = \
@@ -72,8 +53,7 @@ celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES) $(THEORASOURCE
 
 EXTRA_DIST = \
 	Celestia.dsp \
-	celestia.mak \
-	$(WINSOURCES)
+	celestia.mak
 
 celestia_LDADD = \
 	$(celestiaKDELIBS) \

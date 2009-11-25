@@ -10,14 +10,6 @@ EXTRA_DIST = \
 INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include \
 	-I$(top_srcdir)/thirdparty/glew/include
 
-if ENABLE_SPICE
-SPICESOURCES = spiceinterface.cpp spiceorbit.cpp spicerotation.cpp
-endif
-
-if ENABLE_CELX
-SCRIPT_OBJ_SOURCES = scriptobject.cpp scriptorbit.cpp scriptrotation.cpp
-endif
-
 libcelengine_a_SOURCES = \
 	asterism.cpp \
 	astro.cpp \
@@ -29,8 +21,6 @@ libcelengine_a_SOURCES = \
 	command.cpp \
 	console.cpp \
 	constellation.cpp \
-	customorbit.cpp \
-	customrotation.cpp \
 	dds.cpp \
 	deepskyobj.cpp \
 	dispmap.cpp \
@@ -46,7 +36,6 @@ libcelengine_a_SOURCES = \
 	globular.cpp \
 	glshader.cpp \
 	image.cpp \
-	jpleph.cpp \
 	location.cpp \
 	lodspheremesh.cpp \
 	marker.cpp \
@@ -56,23 +45,17 @@ libcelengine_a_SOURCES = \
 	modelfile.cpp \
 	multitexture.cpp \
 	nebula.cpp \
-	nutation.cpp \
 	observer.cpp \
 	opencluster.cpp \
-	orbit.cpp \
 	overlay.cpp \
 	parseobject.cpp \
 	parser.cpp \
 	planetgrid.cpp \
-	precession.cpp \
 	regcombine.cpp \
 	rendcontext.cpp \
 	render.cpp \
 	renderglsl.cpp \
-	rotation.cpp \
 	rotationmanager.cpp \
-	samporbit.cpp \
-	samporient.cpp \
 	selection.cpp \
 	shadermanager.cpp \
 	simulation.cpp \
@@ -98,8 +81,5 @@ libcelengine_a_SOURCES = \
 	vertexprog.cpp \
 	virtualtex.cpp \
 	visibleregion.cpp \
-        vsop87.cpp\
 	$(top_srcdir)/thirdparty/glew/src/glew.c \
-	$(top_srcdir)/thirdparty/curveplot/src/curveplot.cpp \
-	$(SPICESOURCES)\
-	$(SCRIPT_OBJ_SOURCES)
+	$(top_srcdir)/thirdparty/curveplot/src/curveplot.cpp
