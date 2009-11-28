@@ -1,4 +1,4 @@
-SUBDIRS = celutil celmath cel3ds celtxf celengine celestia
+SUBDIRS = celutil celmath cel3ds celtxf celengine celephem celestia
 
 DEFS = -DHIP_DATA_DIR='"$(HIPDIR)"' @DEFS@
 
