@@ -15,7 +15,6 @@
 #include "body.h"
 #include "selection.h"
 #include "vecgl.h"
-#include <celmath/geomutil.h>
 #include <celmath/intersect.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -210,7 +209,7 @@ VisibleRegion::render(Renderer* /* renderer */,
     // Pick two orthogonal axes both normal to the light direction
     Vector3d lightDirNorm = lightDir.normalized();
 
-    Vector3d uAxis = OrthogonalUnitVector(lightDirNorm);
+    Vector3d uAxis = lightDirNorm.unitOrthogonal();
     Vector3d vAxis = uAxis.cross(lightDirNorm);
 
     Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwise().inverse();
