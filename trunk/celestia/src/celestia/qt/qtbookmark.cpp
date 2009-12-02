@@ -10,7 +10,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestia/url.h"
 #include "qtbookmark.h"
+#include "xbel.h"
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 #include <QMessageBox>
@@ -18,8 +20,6 @@
 #include <QMimeData>
 #include <QStringList>
 #include <QMenu>
-#include "xbel.h"
-#include "celestia/url.h"
 
 
 BookmarkItem::BookmarkItem(Type type, BookmarkItem* parent) :

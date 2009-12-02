@@ -10,6 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <celestia/celestiacore.h>
 #include "qtcelestialbrowser.h"
 #include "qtcolorswatchwidget.h"
 #include <QAbstractItemModel>
@@ -30,7 +31,6 @@
 #include <vector>
 #include <set>
 #include <algorithm>
-#include <celestia/celestiacore.h>
 
 using namespace Eigen;
 using namespace std;

@@ -10,11 +10,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "celestia/celestiacore.h"
+#include "qttimetoolbar.h"
 #include <QAction>
 #include <QIcon>
 #include <QDateTime>
-#include "celestia/celestiacore.h"
-#include "qttimetoolbar.h"
 
 
 TimeToolBar::TimeToolBar(CelestiaCore* _appCore,

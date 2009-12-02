@@ -10,6 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <celestia/celestiacore.h>
 #include "qtsolarsystembrowser.h"
 #include <QAbstractItemModel>
 #include <QTreeView>
@@ -19,7 +20,6 @@
 #include <QGroupBox>
 #include <QCheckBox>
 #include <QLabel>
-#include <celestia/celestiacore.h>
 #include <vector>
 
 using namespace std;
