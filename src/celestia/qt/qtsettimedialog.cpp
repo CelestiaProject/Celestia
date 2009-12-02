@@ -10,7 +10,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <celestia/celestiacore.h>
 #include "qtsettimedialog.h"
+#include "celengine/astro.h"
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QSpinBox>
@@ -20,8 +22,6 @@
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QGridLayout>
-#include <celestia/celestiacore.h>
-#include "celengine/astro.h"
 
 #ifdef _WIN32
 static const double minLocalTime = 2440587.5; // 1970 Jan 1 00:00:00
