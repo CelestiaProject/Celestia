@@ -60,25 +60,5 @@ LookAt(Eigen::Matrix<T, 3, 1> from, Eigen::Matrix<T, 3, 1> to, Eigen::Matrix<T, 
     return Eigen::Quaternion<T>(m).conjugate();
 }
 
-
-/*! Get a vector orthogonal to the specified one. The input vector
- *  is assumed to be normalized.
- */
-template <typename SCALAR> Eigen::Matrix<SCALAR, 3, 1>
-OrthogonalUnitVector(const Eigen::Matrix<SCALAR, 3, 1>& v)
-{
-    Eigen::Matrix<SCALAR, 3, 1> w;
-
-    if (abs(v.x()) < abs(v.y()) && abs(v.x()) < abs(v.z()))
-        w = Eigen::Matrix<SCALAR, 3, 1>::UnitX().cross(v);
-    else if (abs(v.y()) < abs(v.z()))
-        w = Eigen::Matrix<SCALAR, 3, 1>::UnitY().cross(v);
-    else
-        w = Eigen::Matrix<SCALAR, 3, 1>::UnitZ().cross(v);
-
-    return w.normalized();
-}
-
-
 #endif // _CELMATH_GEOMUTIL_H_
 
