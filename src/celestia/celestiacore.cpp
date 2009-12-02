@@ -13,21 +13,9 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cstdio>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <algorithm>
-#include <cstdlib>
-#include <cctype>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <GL/glew.h>
-#include <celutil/util.h>
-#include <celutil/filetype.h>
-#include <celutil/directory.h>
-#include <celutil/formatnum.h>
+#include "celestiacore.h"
+#include "favorites.h"
+#include "url.h"
 #include <celengine/astro.h>
 #include <celengine/asterism.h>
 #include <celengine/boundaries.h>
@@ -40,13 +28,25 @@
 #include <celengine/axisarrow.h>
 #include <celengine/planetgrid.h>
 #include <celengine/visibleregion.h>
-#include "favorites.h"
-#include "celestiacore.h"
+#include <celengine/eigenport.h>
 #include <celmath/geomutil.h>
+#include <celutil/util.h>
+#include <celutil/filetype.h>
+#include <celutil/directory.h>
+#include <celutil/formatnum.h>
 #include <celutil/debug.h>
 #include <celutil/utf8.h>
-#include "url.h"
-#include <celengine/eigenport.h>
+#include <GL/glew.h>
+#include <cstdio>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <algorithm>
+#include <cstdlib>
+#include <cctype>
+#include <cstring>
+#include <cassert>
+#include <ctime>
 
 #ifdef CELX
 #include <celephem/scriptobject.h>
@@ -826,6 +826,11 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 /// x and y are the pixel coordinates relative to the widget.
 void CelestiaCore::mouseMove(float x, float y)
 {
+#ifdef CELX
+    if (luaHook && luaHook->callLuaHook(this, "mousemove", x, y))
+        return;
+#endif
+
     if (views.size() > 1 && cursorHandler != NULL)
     {
         /*View* v1 = 0;     Unused*/
