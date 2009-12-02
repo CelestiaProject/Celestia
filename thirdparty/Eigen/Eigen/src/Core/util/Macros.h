@@ -30,7 +30,7 @@
 
 #define EIGEN_WORLD_VERSION 2
 #define EIGEN_MAJOR_VERSION 0
-#define EIGEN_MINOR_VERSION 6
+#define EIGEN_MINOR_VERSION 10
 
 #define EIGEN_VERSION_AT_LEAST(x,y,z) (EIGEN_WORLD_VERSION>x || (EIGEN_WORLD_VERSION>=x && \
                                       (EIGEN_MAJOR_VERSION>y || (EIGEN_MAJOR_VERSION>=y && \
@@ -39,7 +39,7 @@
 // 16 byte alignment is only useful for vectorization. Since it affects the ABI, we need to enable 16 byte alignment on all
 // platforms where vectorization might be enabled. In theory we could always enable alignment, but it can be a cause of problems
 // on some platforms, so we just disable it in certain common platform (compiler+architecture combinations) to avoid these problems.
-#if defined(__GNUC__) && !(defined(__i386__) || defined(__x86_64__) || defined(__powerpc__) || defined(__ia64__))
+#if defined(__GNUC__) && !(defined(__i386__) || defined(__x86_64__) || defined(__powerpc__) || defined(__ppc__) || defined(__ia64__))
 #define EIGEN_GCC_AND_ARCH_DOESNT_WANT_ALIGNMENT 1
 #else
 #define EIGEN_GCC_AND_ARCH_DOESNT_WANT_ALIGNMENT 0

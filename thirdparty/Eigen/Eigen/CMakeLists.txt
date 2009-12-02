@@ -1,4 +1,6 @@
-set(Eigen_HEADERS Core LU Cholesky QR Geometry Sparse Array SVD LeastSquares QtAlignedMalloc StdVector)
+set(Eigen_HEADERS Core LU Cholesky QR Geometry
+                  Sparse Array SVD LeastSquares
+                  QtAlignedMalloc StdVector NewStdVector)
 
 if(EIGEN_BUILD_LIB)
     set(Eigen_SRCS
@@ -19,12 +21,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g1 -O2")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g1 -O2")
 endif(CMAKE_COMPILER_IS_GNUCXX)
-
-set(INCLUDE_INSTALL_DIR
-    "${CMAKE_INSTALL_PREFIX}/include/eigen2"
-    CACHE PATH
-    "The directory where we install the header files"
-    FORCE)
 
 install(FILES
   ${Eigen_HEADERS}
