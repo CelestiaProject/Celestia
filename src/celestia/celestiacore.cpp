@@ -830,6 +830,11 @@ void CelestiaCore::mouseWheel(float motion, int modifiers)
 /// x and y are the pixel coordinates relative to the widget.
 void CelestiaCore::mouseMove(float x, float y)
 {
+#ifdef CELX
+    if (luaHook && luaHook->callLuaHook(this, "mousemove", x, y))
+        return;
+#endif
+
     if (views.size() > 1 && cursorHandler != NULL)
     {
         /*View* v1 = 0;     Unused*/
