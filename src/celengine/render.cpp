@@ -7988,7 +7988,7 @@ void Renderer::renderCometTail(const Body& body,
     // two are chose orthogonal to each other and the primary axis.
     Vector3f v = (cometPoints[1] - cometPoints[0]).normalized();
     Quaternionf q = body.getEclipticToEquatorial(t).cast<float>();
-    Vector3f u = OrthogonalUnitVector(v);
+    Vector3f u = v.unitOrthogonal();
     Vector3f w = u.cross(v);
 
     glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
