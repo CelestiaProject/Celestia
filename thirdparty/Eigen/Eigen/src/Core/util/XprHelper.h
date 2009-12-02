@@ -37,6 +37,10 @@
 //classes inheriting ei_no_assignment_operator don't generate a default operator=.
 class ei_no_assignment_operator
 {
+#if EIGEN_GCC3_OR_OLDER
+  protected:
+    void nevermind_this_is_just_to_work_around_a_stupid_gcc3_warning();
+#endif
   private:
     ei_no_assignment_operator& operator=(const ei_no_assignment_operator&);
 };

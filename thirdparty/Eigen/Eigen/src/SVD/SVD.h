@@ -61,6 +61,8 @@ template<typename MatrixType> class SVD
 
   public:
 
+    SVD() {} // a user who relied on compiler-generated default compiler reported problems with MSVC in 2.0.7
+    
     SVD(const MatrixType& matrix)
       : m_matU(matrix.rows(), std::min(matrix.rows(), matrix.cols())),
         m_matV(matrix.cols(),matrix.cols()),
@@ -107,6 +109,8 @@ void SVD<MatrixType>::compute(const MatrixType& matrix)
   const int m = matrix.rows();
   const int n = matrix.cols();
   const int nu = std::min(m,n);
+  ei_assert(m>=n && "In Eigen 2.0, SVD only works for MxN matrices with M>=N. Sorry!");
+  ei_assert(m>1 && "In Eigen 2.0, SVD doesn't work on 1x1 matrices");
 
   m_matU.resize(m, nu);
   m_matU.setZero();
