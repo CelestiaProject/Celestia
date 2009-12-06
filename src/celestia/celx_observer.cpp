@@ -139,6 +139,23 @@ static int observer_rotate(lua_State* l)
     return 0;
 }
 
+static int observer_orbit(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 2, "One argument required for orbit");
+    
+    Observer* o = this_observer(l);
+
+    Quatd* q = celx.toRotation(2);
+    if (q == NULL)
+    {
+        celx.doError("Argument for observer:orbit must be a rotation");
+    }
+    Quatf qf((float) q->w, (float) q->x, (float) q->y, (float) q->z);
+    o->orbit(Selection(), toEigen(qf));
+    return 0;
+}
+
 static int observer_lookat(lua_State* l)
 {
     CelxLua celx(l);
@@ -897,6 +914,7 @@ void CreateObserverMetaTable(lua_State* l)
     celx.registerMethod("getfov", observer_getfov);
     celx.registerMethod("setfov", observer_setfov);
     celx.registerMethod("rotate", observer_rotate);
+    celx.registerMethod("orbit", observer_orbit);
     celx.registerMethod("center", observer_center);
     celx.registerMethod("centerorbit", observer_centerorbit);
     celx.registerMethod("follow", observer_follow);
