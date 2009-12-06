@@ -1973,7 +1973,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     DWORD dwStyle;
     if (newMode != 0)
     {
-        dwStyle = WS_POPUP;
+        dwStyle = WS_POPUPWINDOW | WS_MAXIMIZE;
     }
     else
     {
@@ -2004,21 +2004,22 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
         MessageBox(NULL,
                    "Could not get appropriate pixel format for OpenGL rendering.", "Fatal Error",
                    MB_OK | MB_ICONERROR);
-    return NULL;
+        return NULL;
     }
-
-    if (glContext == NULL)
-        glContext = wglCreateContext(deviceContext);
-    wglMakeCurrent(deviceContext, glContext);
 
     if (newMode == 0)
         SetMenu(hwnd, menuBar);
     else
         hideMenuBar = true;
 
+    if (glContext == NULL)
+	{
+        glContext = wglCreateContext(deviceContext);
+	}
+    wglMakeCurrent(deviceContext, glContext);
+
     return hwnd;
 }
-
 
 void DestroyOpenGLWindow()
 {
