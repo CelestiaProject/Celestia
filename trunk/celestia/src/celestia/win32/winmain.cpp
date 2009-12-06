@@ -1972,7 +1972,7 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
     DWORD dwStyle;
     if (newMode != 0)
     {
-        dwStyle = WS_POPUP;
+        dwStyle = WS_POPUPWINDOW | WS_MAXIMIZE;
     }
     else
     {
@@ -2006,6 +2006,11 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
 		return NULL;
     }
 
+    if (newMode == 0)
+        SetMenu(hwnd, menuBar);
+    else
+        hideMenuBar = true;
+
 	bool firstContext = false;
     if (glContext == NULL)
 	{
@@ -2024,11 +2029,6 @@ HWND CreateOpenGLWindow(int x, int y, int width, int height,
 			return NULL;
 		}
 	}
-
-    if (newMode == 0)
-        SetMenu(hwnd, menuBar);
-    else
-        hideMenuBar = true;
 
     return hwnd;
 }
