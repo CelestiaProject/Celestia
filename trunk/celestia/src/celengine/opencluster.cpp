@@ -41,7 +41,7 @@ void OpenCluster::setType(const std::string& /*typeStr*/)
 
 size_t OpenCluster::getDescription(char* buf, size_t bufLength) const
 {
-    return snprintf(buf, bufLength, _("%s"), getType());
+    return snprintf(buf, bufLength, _("Open cluster"));
 }
 
 const char* OpenCluster::getObjTypeName() const
