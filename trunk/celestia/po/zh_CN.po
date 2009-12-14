@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: CELESTIA-Chinese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2009-10-24 18:25+0800\n"
+"PO-Revision-Date: 2009-10-31 13:53+0800\n"
 "Last-Translator: Markerz Li <markerzli@gmail.com>\n"
 "Language-Team: Chinese <zhaozhengxu@yahoo.com,markerzli@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -474,7 +474,7 @@ msgstr "时间速率"
 
 #: src/celestia/celestiacore.cpp:2010
 msgid "Sync Orbit"
-msgstr "同步跟踪物体"
+msgstr "同步轨道"
 
 #: src/celestia/celestiacore.cpp:2016
 msgid "Lock"
@@ -723,7 +723,7 @@ msgstr "跟随"
 
 #: src/celestia/celestiacore.cpp:3600
 msgid "Sync Orbit "
-msgstr "同步跟踪"
+msgstr "同步轨道"
 
 #: src/celestia/celestiacore.cpp:3605
 msgid "Lock "
@@ -983,7 +983,7 @@ msgstr "跟随(&F)"
 
 #: src/celestia/winmain.cpp:1610
 msgid "S&ync Orbit"
-msgstr "同步追踪(&Y)"
+msgstr "同步轨道(&Y)"
 
 #: src/celestia/winmain.cpp:1611
 #: src/celestia/winmain.cpp:1657
@@ -1039,7 +1039,7 @@ msgstr "替代表面(&A)"
 #: src/celestia/winmain.cpp:1666
 #: src/celestia/kde/selectionpopup.cpp:477
 msgid "Orbiting Bodies"
-msgstr "天体轨道"
+msgstr "绕行天体"
 
 #: src/celestia/winmain.cpp:1693
 #: src/celestia/kde/selectionpopup.cpp:310
@@ -1185,7 +1185,7 @@ msgstr "时区名称"
 
 #: src/celestia/wintime.cpp:98
 msgid "UTC Offset"
-msgstr "与时间标准时的差异"
+msgstr "与世界标准时的差异"
 
 #: src/celestia/kde/celestialbrowser.cpp:29
 #: src/celestia/kde/kdeapp.cpp:500
@@ -2148,7 +2148,7 @@ msgstr "置中(&C)"
 
 #: src/celestia/kde/selectionpopup.cpp:303
 msgid "S&ynch Orbit"
-msgstr "同步跟踪(&Y)"
+msgstr "同步轨道(&Y)"
 
 #: src/celestia/kde/selectionpopup.cpp:306
 msgid "Unmark &All"
@@ -2691,7 +2691,7 @@ msgstr "跟随选择物体(&F)\tF"
 
 #: src/celestia/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
-msgstr "同步跟踪选择物体(&Y)\tY"
+msgstr "同步轨道于所选物体(&Y)\tY"
 
 #: src/celestia/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
@@ -3137,7 +3137,7 @@ msgstr "黄道坐标"
 
 #: src/celestia/res/resource_strings.cpp:170
 msgid "Minor Moons"
-msgstr "小卫星"
+msgstr "子卫星"
 
 #: src/celestia/res/resource_strings.cpp:174
 msgid "DSO Labels"
