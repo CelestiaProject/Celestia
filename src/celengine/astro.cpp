@@ -120,6 +120,49 @@ static const char* MonthAbbrList[12] =
 #endif
 
 
+struct UnitDefinition
+{
+    const char* name;
+    double conversion;
+};
+
+
+static const UnitDefinition lengthUnits[] =
+{
+    { "km", 1.0 },
+    { "m",  0.001 },
+    { "rE", (double) EARTH_RADIUS },
+    { "rJ", (double) JUPITER_RADIUS },
+    { "rS", (double) SOLAR_RADIUS },
+    { "AU", (double) KM_PER_AU },
+    { "ly", (double) KM_PER_LY },
+    { "pc", (double) KM_PER_PARSEC },
+    { "kpc", 1000.0 * ((double) KM_PER_PARSEC) },
+    { "Mpc", 1000000.0 * ((double) KM_PER_PARSEC) },
+};
+
+
+static const UnitDefinition timeUnits[] =
+{
+    { "s", 1.0 / SECONDS_PER_DAY },
+    { "min", 1.0 / MINUTES_PER_DAY },
+    { "h", 1.0 / HOURS_PER_DAY },
+    { "d", 1.0 },
+    { "y", DAYS_PER_YEAR },
+};
+
+
+static const UnitDefinition angleUnits[] =
+{
+    { "mas", 0.001 / SECONDS_PER_DEG },
+    { "arcsec", 1.0 / SECONDS_PER_DEG },
+    { "arcmin", 1.0 / MINUTES_PER_DEG },
+    { "deg", 1.0 },
+    { "hRA", DEG_PER_HRA },
+    { "rad", 180.0 / PI },
+};
+
+
 float astro::lumToAbsMag(float lum)
 {
     return (float) (SOLAR_ABSMAG - log(lum) * LN_MAG);
@@ -214,12 +257,12 @@ double astro::kilometersToAU(double km)
 
 double astro::secondsToJulianDate(double sec)
 {
-    return sec / 86400.0;
+    return sec / SECONDS_PER_DAY;
 }
 
 double astro::julianDateToSeconds(double jd)
 {
-    return jd * 86400.0;
+    return jd * SECONDS_PER_DAY;
 }
 
 void astro::decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
@@ -570,7 +613,7 @@ astro::Date::operator double() const
 
     return (floor(365.25 * y) +
             floor(30.6001 * (m + 1)) + B + 1720996.5 +
-            day + hour / 24.0 + minute / 1440.0 + seconds / 86400.0);
+            day + hour / HOURS_PER_DAY + minute / MINUTES_PER_DAY + seconds / SECONDS_PER_DAY);
 }
 
 
@@ -862,3 +905,82 @@ astro::TAItoJDUTC(double tai)
 }
 
 
+// Get scale of given length unit in kilometers
+bool astro::getLengthScale(string unitName, double& scale)
+{
+    unsigned int nUnits = sizeof(lengthUnits) / sizeof(lengthUnits[0]);
+    bool foundMatch = false;
+    for(unsigned int i = 0; i < nUnits; i++)
+    {
+        if (lengthUnits[i].name == unitName)
+        {
+            foundMatch = true;
+            scale = lengthUnits[i].conversion;
+            break;
+        }
+    }
+    
+    return foundMatch;
+}
+
+
+// Get scale of given time unit in days
+bool astro::getTimeScale(string unitName, double& scale)
+{
+    unsigned int nUnits = sizeof(timeUnits) / sizeof(timeUnits[0]);
+    bool foundMatch = false;
+    for(unsigned int i = 0; i < nUnits; i++)
+    {
+        if (timeUnits[i].name == unitName)
+        {
+            foundMatch = true;
+            scale = timeUnits[i].conversion;
+            break;
+        }
+    }
+    
+    return foundMatch;
+}
+
+
+// Get scale of given angle unit in degrees
+bool astro::getAngleScale(string unitName, double& scale)
+{
+    unsigned int nUnits = sizeof(angleUnits) / sizeof(angleUnits[0]);
+    bool foundMatch = false;
+    for (unsigned int i = 0; i < nUnits; i++)
+    {
+        if (angleUnits[i].name == unitName)
+        {
+            foundMatch = true;
+            scale = angleUnits[i].conversion;
+            break;
+        }
+    }
+    
+    return foundMatch;
+}
+
+
+// Check if unit is a length unit
+bool astro::isLengthUnit(string unitName)
+{
+    double dummy;
+    return getLengthScale(unitName, dummy);
+}
+
+
+// Check if unit is a time unit
+bool astro::isTimeUnit(string unitName)
+{
+    double dummy;
+    return getTimeScale(unitName, dummy);
+}
+
+
+// Check if unit is an angle unit
+bool astro::isAngleUnit(string unitName)
+{
+    double dummy;
+    return getAngleScale(unitName, dummy);
+}

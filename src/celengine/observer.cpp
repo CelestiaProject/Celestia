@@ -1,6 +1,7 @@
 // observer.cpp
 //
-// Copyright (C) 2001-2008, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
