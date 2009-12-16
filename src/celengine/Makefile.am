@@ -4,8 +4,7 @@ dosstuff = celengine.dsp engine.mak
 noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = \
-	$(noinst_DATA) \
-	solarsysxml.cpp
+	$(noinst_DATA)
 
 INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include \
 	-I$(top_srcdir)/thirdparty/glew/include
