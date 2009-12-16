@@ -1,6 +1,7 @@
 // parseobject.cpp
 //
-// Copyright (C) 2004-2008 Chris Laurel <claurel@gmail.com>
+// Copyright (C) 2004-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // Functions for parsing objects common to star, solar system, and
 // deep sky catalogs.
@@ -30,6 +31,49 @@ using namespace Eigen;
 using namespace std;
 
 
+/**
+ * Returns the default units scale for orbits.
+ * 
+ * If the usePlanetUnits flag is set, this returns a distance scale of AU and a
+ * time scale of years. Otherwise the distace scale is kilometers and the time
+ * scale is days.
+ * 
+ * @param[in] usePlanetUnits Controls whether to return planet units or satellite units.
+ * @param[out] distanceScale The default distance scale in kilometers.
+ * @param[out] timeScale The default time scale in days.
+ */
+static void
+GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
+{
+    if(usePlanetUnits)
+    {
+        distanceScale = KM_PER_AU;
+        timeScale = DAYS_PER_YEAR;
+    }
+    else
+    {
+        distanceScale = 1.0;
+        timeScale = 1.0;
+    }
+}
+
+
+/**
+ * Returns the default distance scale for orbits.
+ * 
+ * If the usePlanetUnits flag is set, this returns AU, otherwise it returns
+ * kilometers.
+ * 
+ * @param[in] usePlanetUnits Controls whether to return planet units or satellite units.
+ * @param[out] distanceScale The default distance scale in kilometers.
+ */
+static void
+GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
+{
+    distanceScale = (usePlanetUnits) ? KM_PER_AU : 1.0;
+}
+
+
 bool
 ParseDate(Hash* hash, const string& name, double& jd)
 {
@@ -54,8 +98,8 @@ ParseDate(Hash* hash, const string& name, double& jd)
 
 /*!
  * Create a new Keplerian orbit from an ssc property table:
- *
- * EllipticalOrbit
+ * 
+ * \code EllipticalOrbit
  * {
  *     # One of the following is required to specify orbit size:
  *     SemiMajorAxis <number>
@@ -77,7 +121,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
  *     # One or none of the following:
  *     MeanAnomaly <degrees>     (default: 0.0)
  *     MeanLongitude <degrees>   (default: 0.0)
- * }
+ * } \endcode
  *
  * If usePlanetUnits is true:
  *     Period is in Julian years
@@ -90,41 +134,50 @@ static EllipticalOrbit*
 CreateEllipticalOrbit(Hash* orbitData,
                       bool usePlanetUnits)
 {
+
+    // default units for planets are AU and years, otherwise km and days
+    
+    double distanceScale;
+    double timeScale;
+    GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
+
     // SemiMajorAxis and Period are absolutely required; everything
     // else has a reasonable default.
     double pericenterDistance = 0.0;
     double semiMajorAxis = 0.0;
-    if (!orbitData->getNumber("SemiMajorAxis", semiMajorAxis))
+    if (!orbitData->getLength("SemiMajorAxis", semiMajorAxis, 1.0, distanceScale))
     {
-        if (!orbitData->getNumber("PericenterDistance", pericenterDistance))
+        if (!orbitData->getLength("PericenterDistance", pericenterDistance, 1.0, distanceScale))
         {
             clog << "SemiMajorAxis/PericenterDistance missing!  Skipping planet . . .\n";
             return NULL;
         }
     }
-
+    
     double period = 0.0;
-    if (!orbitData->getNumber("Period", period))
+    if (!orbitData->getTime("Period", period, 1.0, timeScale))
     {
         clog << "Period missing!  Skipping planet . . .\n";
         return NULL;
     }
-
+    
     double eccentricity = 0.0;
     orbitData->getNumber("Eccentricity", eccentricity);
 
     double inclination = 0.0;
-    orbitData->getNumber("Inclination", inclination);
-
+    orbitData->getAngle("Inclination", inclination);
+    
     double ascendingNode = 0.0;
-    orbitData->getNumber("AscendingNode", ascendingNode);
-
+    orbitData->getAngle("AscendingNode", ascendingNode);
+    
     double argOfPericenter = 0.0;
-    if (!orbitData->getNumber("ArgOfPericenter", argOfPericenter))
+    if (!orbitData->getAngle("ArgOfPericenter", argOfPericenter))
     {
         double longOfPericenter = 0.0;
-        if (orbitData->getNumber("LongOfPericenter", longOfPericenter))
+        if (orbitData->getAngle("LongOfPericenter", longOfPericenter))
+        {
             argOfPericenter = longOfPericenter - ascendingNode;
+        }
     }
 
     double epoch = astro::J2000;
@@ -133,18 +186,13 @@ CreateEllipticalOrbit(Hash* orbitData,
     // Accept either the mean anomaly or mean longitude--use mean anomaly
     // if both are specified.
     double anomalyAtEpoch = 0.0;
-    if (!orbitData->getNumber("MeanAnomaly", anomalyAtEpoch))
+    if (!orbitData->getAngle("MeanAnomaly", anomalyAtEpoch))
     {
         double longAtEpoch = 0.0;
-        if (orbitData->getNumber("MeanLongitude", longAtEpoch))
+        if (orbitData->getAngle("MeanLongitude", longAtEpoch))
+        {
             anomalyAtEpoch = longAtEpoch - (argOfPericenter + ascendingNode);
-    }
-
-    if (usePlanetUnits)
-    {
-        semiMajorAxis = astro::AUtoKilometers(semiMajorAxis);
-        pericenterDistance = astro::AUtoKilometers(pericenterDistance);
-        period = period * 365.25;
+        }
     }
 
     // If we read the semi-major axis, use it to compute the pericenter
@@ -166,12 +214,12 @@ CreateEllipticalOrbit(Hash* orbitData,
 /*!
  * Create a new sampled orbit from an ssc property table:
  *
- * SampledTrajectory
+ * \code SampledTrajectory
  * {
  *     Source <string>
  *     Interpolation "Cubic" | "Linear"
  *     DoublePrecision <boolean>
- * }
+ * } \endcode
  *
  * Source is the only required field. Interpolation defaults to cubic, and
  * DoublePrecision defaults to true.
@@ -217,29 +265,34 @@ CreateSampledTrajectory(Hash* trajData, const string& path)
 }
 
 
-// Create a new FixedPosition trajectory. A FixedPosition is a property list
-// with one of the following 3-vector properties:
-//     Rectangular
-//     Planetographic
-//     Planetocentric
-// Planetographic and planetocentric coordinates are given in the order longitude,
-// latitude, altitude. Units of altitude are kilometers. Planetographic and
-// and planetocentric coordinates are only practical when the coordinate system
-// is BodyFixed.
+/** Create a new FixedPosition trajectory.
+ * 
+ * A FixedPosition is a property list with one of the following 3-vector properties:
+ * 
+ * - \c Rectangular
+ * - \c Planetographic
+ * - \c Planetocentric
+ * 
+ * Planetographic and planetocentric coordinates are given in the order longitude,
+ * latitude, altitude. Units of altitude are kilometers. Planetographic and
+ * and planetocentric coordinates are only practical when the coordinate system
+ * is BodyFixed.
+ */
 static Orbit*
 CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlanetUnits)
 {
+    double distanceScale;
+    GetDefaultUnits(usePlanetUnits, distanceScale);
+    
     Vector3d position = Vector3d::Zero();
 
-    Vector3d v = Vector3d::Zero();
-    if (trajData->getVector("Rectangular", v))
-    {       
-        if (usePlanetUnits)
-            v *= astro::AUtoKilometers(1.0);
+    Vector3d v = Vector3d::Zero();    
+    if (trajData->getLengthVector("Rectangular", v, 1.0, distanceScale))
+    {
         // Convert to Celestia's coordinate system
         position = Vector3d(v.x(), v.z(), -v.y());
     }
-    else if (trajData->getVector("Planetographic", v))
+    else if (trajData->getSphericalTuple("Planetographic", v))
     {
         if (centralObject.getType() != Selection::Type_Body)
         {
@@ -251,7 +304,7 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
         // TODO: Change planetocentricToCartesian so that 180 degree offset isn't required
         position = centralObject.body()->planetocentricToCartesian(180.0 + v.x(), v.y(), v.z());
     }
-    else if (trajData->getVector("Planetocentric", v))
+    else if (trajData->getSphericalTuple("Planetocentric", v))
     {
         if (centralObject.getType() != Selection::Type_Body)
         {
@@ -272,7 +325,9 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
 }
 
 
-// Parse a string list--either a single string or an array of strings is permitted.
+/**
+ * Parse a string list--either a single string or an array of strings is permitted.
+ */
 static bool
 ParseStringList(Hash* table,
 				const string& propertyName,
@@ -318,7 +373,7 @@ ParseStringList(Hash* table,
 /*! Create a new SPICE orbit. This is just a Celestia wrapper for a trajectory specified
  *  in a SPICE SPK file.
  *
- *  SpiceOrbit
+ *  \code SpiceOrbit
  *  {
  *      Kernel <string|string array>   # optional
  *      Target <string>
@@ -327,7 +382,7 @@ ParseStringList(Hash* table,
  *      Period <number>                # optional
  *      Beginning <number>             # optional
  *      Ending <number>                # optional
- *  }
+ *  } \endcode
  *
  *  The Kernel property specifies one or more SPK files that must be loaded. Any 
  *  already loaded kernels will also be used if they contain trajectories for
@@ -352,7 +407,11 @@ CreateSpiceOrbit(Hash* orbitData,
     string targetBodyName;
     string originName;
 	list<string> kernelList;
-
+    double distanceScale;
+    double timeScale;
+    
+    GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
+    
 	if (orbitData->getValue("Kernel") != NULL)
 	{
 		// Kernel list is optional; a SPICE orbit may rely on kernels already loaded into
@@ -378,7 +437,7 @@ CreateSpiceOrbit(Hash* orbitData,
 
     // A bounding radius for culling is required for SPICE orbits
     double boundingRadius = 0.0;
-    if (!orbitData->getNumber("BoundingRadius", boundingRadius))
+    if (!orbitData->getLength("BoundingRadius", boundingRadius, 1.0, distanceScale))
     {
         clog << "Bounding Radius missing from SPICE orbit\n";
         return NULL;
@@ -388,13 +447,7 @@ CreateSpiceOrbit(Hash* orbitData,
     // of zero for the period (the default), means that the orbit will
     // be considered aperiodic.
     double period = 0.0;
-    orbitData->getNumber("Period", period);
-
-    if (usePlanetUnits)
-    {
-        boundingRadius = astro::AUtoKilometers(boundingRadius);
-        period = period * 365.25;
-    }
+    orbitData->getTime("Period", period, 1.0, timeScale);
 
 	// Either a complete time interval must be specified with Beginning/Ending, or
 	// else neither field can be present.
@@ -460,7 +513,7 @@ CreateSpiceOrbit(Hash* orbitData,
 
 /*! Create a new rotation model based on a SPICE frame.
  *
- *  SpiceRotation
+ *  \code SpiceRotation
  *  {
  *      Kernel <string|string array>   # optional
  *      Frame <string>
@@ -468,7 +521,7 @@ CreateSpiceOrbit(Hash* orbitData,
  *      Period <number>                # optional (units are hours)
  *      Beginning <number>             # optional
  *      Ending <number>                # optional
- *  }
+ *  } \endcode
  *
  *  The Kernel property specifies one or more SPICE kernel files that must be
  *  loaded in order for the frame to be defined over the required range. Any 
@@ -517,8 +570,7 @@ CreateSpiceRotation(Hash* rotationData,
     // of zero for the period (the default), means that the rotation will
     // be considered aperiodic.
     double period = 0.0;
-    rotationData->getNumber("Period", period);
-    period = period / 24.0;
+    rotationData->getTime("Period", period, 1.0, 1.0 / HOURS_PER_DAY);
 
 	// Either a complete time interval must be specified with Beginning/Ending, or
 	// else neither field can be present.
@@ -746,16 +798,16 @@ CreateOrbit(const Selection& centralObject,
     if (fixedPositionValue != NULL)
     {
         Vector3d fixedPosition = Vector3d::Zero();
-        if (planetData->getVector("FixedPosition", fixedPosition))
+        double distanceScale;
+        GetDefaultUnits(usePlanetUnits, distanceScale);
+
+        if (planetData->getLengthVector("FixedPosition", fixedPosition, 1.0, distanceScale))
         {
             // Convert to Celestia's coordinate system
             fixedPosition = Vector3d(fixedPosition.x(),
                                      fixedPosition.z(),
                                      -fixedPosition.y());
-
-            if (usePlanetUnits)
-                fixedPosition *= astro::AUtoKilometers(1.0);
-
+            
             return new FixedOrbit(fixedPosition);
         }
         else if (fixedPositionValue->getType() == Value::HashType)
@@ -773,7 +825,7 @@ CreateOrbit(const Selection& centralObject,
     // rotation rate of the parent object. A body-fixed reference frame is a
     // much better way to accomplish this.
     Vector3d longlat = Vector3d::Zero();
-    if (planetData->getVector("LongLat", longlat))
+    if (planetData->getSphericalTuple("LongLat", longlat))
     {
         Body* centralBody = centralObject.body();
         if (centralBody != NULL)
@@ -811,13 +863,10 @@ CreateUniformRotationModel(Hash* rotationData,
 {
     // Default to synchronous rotation
     double period = syncRotationPeriod;
-    if (rotationData->getNumber("Period", period))
-    {
-        period = period / 24.0;
-    }
+    rotationData->getTime("Period", period, 1.0, 1.0 / HOURS_PER_DAY);
 
     float offset = 0.0f;
-    if (rotationData->getNumber("MeridianAngle", offset))
+    if (rotationData->getAngle("MeridianAngle", offset))
     {
         offset = degToRad(offset);
     }
@@ -826,13 +875,13 @@ CreateUniformRotationModel(Hash* rotationData,
     ParseDate(rotationData, "Epoch", epoch);
 
     float inclination = 0.0f;
-    if (rotationData->getNumber("Inclination", inclination))
+    if (rotationData->getAngle("Inclination", inclination))
     {
         inclination = degToRad(inclination);
     }
 
     float ascendingNode = 0.0f;
-    if (rotationData->getNumber("AscendingNode", ascendingNode))
+    if (rotationData->getAngle("AscendingNode", ascendingNode))
     {
         ascendingNode = degToRad(ascendingNode);
     }
@@ -860,19 +909,19 @@ static ConstantOrientation*
 CreateFixedRotationModel(Hash* rotationData)
 {
     double offset = 0.0;
-    if (rotationData->getNumber("MeridianAngle", offset))
+    if (rotationData->getAngle("MeridianAngle", offset))
     {
         offset = degToRad(offset);
     }
 
     double inclination = 0.0;
-    if (rotationData->getNumber("Inclination", inclination))
+    if (rotationData->getAngle("Inclination", inclination))
     {
         inclination = degToRad(inclination);
     }
 
     double ascendingNode = 0.0;
-    if (rotationData->getNumber("AscendingNode", ascendingNode))
+    if (rotationData->getAngle("AscendingNode", ascendingNode))
     {
         ascendingNode = degToRad(ascendingNode);
     }
@@ -889,19 +938,19 @@ static ConstantOrientation*
 CreateFixedAttitudeRotationModel(Hash* rotationData)
 {
     double heading = 0.0;
-    if (rotationData->getNumber("Heading", heading))
+    if (rotationData->getAngle("Heading", heading))
     {
         heading = degToRad(heading);
     }
     
     double tilt = 0.0;
-    if (rotationData->getNumber("Tilt", tilt))
+    if (rotationData->getAngle("Tilt", tilt))
     {
         tilt = degToRad(tilt);
     }
     
     double roll = 0.0;
-    if (rotationData->getNumber("Roll", roll))
+    if (rotationData->getAngle("Roll", roll))
     {
         roll = degToRad(roll);
     }
@@ -920,13 +969,10 @@ CreatePrecessingRotationModel(Hash* rotationData,
 {
     // Default to synchronous rotation
     double period = syncRotationPeriod;
-    if (rotationData->getNumber("Period", period))
-    {
-        period = period / 24.0;
-    }
+    rotationData->getTime("Period", period, 1.0, 1.0 / HOURS_PER_DAY);
 
     float offset = 0.0f;
-    if (rotationData->getNumber("MeridianAngle", offset))
+    if (rotationData->getAngle("MeridianAngle", offset))
     {
         offset = degToRad(offset);
     }
@@ -935,13 +981,13 @@ CreatePrecessingRotationModel(Hash* rotationData,
     ParseDate(rotationData, "Epoch", epoch);
 
     float inclination = 0.0f;
-    if (rotationData->getNumber("Inclination", inclination))
+    if (rotationData->getAngle("Inclination", inclination))
     {
         inclination = degToRad(inclination);
     }
 
     float ascendingNode = 0.0f;
-    if (rotationData->getNumber("AscendingNode", ascendingNode))
+    if (rotationData->getAngle("AscendingNode", ascendingNode))
     {
         ascendingNode = degToRad(ascendingNode);
     }
@@ -949,12 +995,7 @@ CreatePrecessingRotationModel(Hash* rotationData,
     // The default value of 0 is handled specially, interpreted to indicate
     // that there's no precession.
     double precessionPeriod = 0.0;
-    if (rotationData->getNumber("PrecessionPeriod", precessionPeriod))
-    {
-        // The precession period is specified in the ssc file in units
-        // of years, but internally Celestia uses days.
-        precessionPeriod = precessionPeriod * 365.25;
-    }
+    rotationData->getTime("PrecessionPeriod", precessionPeriod, 1.0, DAYS_PER_YEAR);
 
     // No period was specified, and the default synchronous
     // rotation period is zero, indicating that the object
@@ -1016,10 +1057,12 @@ CreateScriptedRotation(Hash* rotationData,
 }
 
 
-// Parse rotation information. Unfortunately, Celestia didn't originally have
-// RotationModel objects, so information about the rotation of the object isn't
-// grouped into a single subobject--the ssc fields relevant for rotation just
-// appear in the top level structure.
+/**
+ * Parse rotation information. Unfortunately, Celestia didn't originally have
+ * RotationModel objects, so information about the rotation of the object isn't
+ * grouped into a single subobject--the ssc fields relevant for rotation just
+ * appear in the top level structure.
+ */
 RotationModel*
 CreateRotationModel(Hash* planetData,
                     const string& path,
@@ -1263,8 +1306,10 @@ RotationModel* CreateDefaultRotationModel(double syncRotationPeriod)
 }
 
 
-// Get the center object of a frame definition. Return an empty selection
-// if it's missing or refers to an object that doesn't exist.
+/**
+ * Get the center object of a frame definition. Return an empty selection
+ * if it's missing or refers to an object that doesn't exist.
+ */
 static Selection
 getFrameCenter(const Universe& universe, Hash* frameData, const Selection& defaultCenter)
 {
@@ -1339,9 +1384,11 @@ CreateMeanEquatorFrame(const Universe& universe,
 }
 
 
-// Convert a string to an axis label. Permitted axis labels are
-// x, y, z, -x, -y, and -z. +x, +y, and +z are allowed as synonyms for
-// x, y, z. Case is ignored.
+/**
+ * Convert a string to an axis label. Permitted axis labels are
+ * x, y, z, -x, -y, and -z. +x, +y, and +z are allowed as synonyms for
+ * x, y, z. Case is ignored.
+ */
 static int
 parseAxisLabel(const std::string& label)
 {
@@ -1418,8 +1465,10 @@ getAxis(Hash* vectorData)
 }
 
 
-// Get the target object of a direction vector definition. Return an
-// empty selection if it's missing or refers to an object that doesn't exist.
+/**
+ * Get the target object of a direction vector definition. Return an
+ * empty selection if it's missing or refers to an object that doesn't exist.
+ */
 static Selection
 getVectorTarget(const Universe& universe, Hash* vectorData)
 {
@@ -1441,8 +1490,10 @@ getVectorTarget(const Universe& universe, Hash* vectorData)
 }
 
 
-// Get the observer object of a direction vector definition. Return an
-// empty selection if it's missing or refers to an object that doesn't exist.
+/**
+ * Get the observer object of a direction vector definition. Return an
+ * empty selection if it's missing or refers to an object that doesn't exist.
+ */
 static Selection
 getVectorObserver(const Universe& universe, Hash* vectorData)
 {
@@ -1644,7 +1695,8 @@ CreateJ2000EquatorFrame(const Universe& universe,
 }
 
 
-/* Helper function for CreateTopocentricFrame().
+/**
+ * Helper function for CreateTopocentricFrame().
  * Creates a two-vector frame with the specified center, target, and observer.
  */
 TwoVectorFrame*
@@ -1660,13 +1712,14 @@ CreateTopocentricFrame(const Selection& center,
 }
 
 
-/* Create a new Topocentric frame. The topocentric frame is designed to make it easy
+/**
+ * Create a new Topocentric frame. The topocentric frame is designed to make it easy
  * to place objects on the surface of a planet or moon. The z-axis will point toward
  * the observer's zenith (which here is the direction away from the center of the
  * planet.) The x-axis will point in the local north direction. The equivalent
  * two-vector frame is:
  *
- * TwoVector
+ * \code TwoVector
  * {
  *    Center <center>
  *    Primary   
@@ -1683,7 +1736,7 @@ CreateTopocentricFrame(const Selection& center,
  *          Frame { BodyFixed { Center <target> } }
  *       }
  *    }
- * }
+ * } \endcode
  *
  * Typically, the topocentric frame is used as a BodyFrame to orient an
  * object on the surface of a planet. In this situation, the observer is
@@ -1693,11 +1746,11 @@ CreateTopocentricFrame(const Selection& center,
  * object. Thus, for a Mars rover, using a topocentric frame is as simple
  * as:
  *
- * "Rover" "Sol/Mars"
+ * <pre> "Rover" "Sol/Mars"
  * {
  *     BodyFrame { Topocentric { } }
  *     ...
- * }
+ * } </pre>
  */
 static TwoVectorFrame*
 CreateTopocentricFrame(const Universe& universe,

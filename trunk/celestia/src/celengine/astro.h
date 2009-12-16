@@ -19,14 +19,32 @@
 #include <string>
 #include <cmath>
 
-#define SOLAR_ABSMAG  4.83f
-#define LN_MAG        1.085736
-#define LY_PER_PARSEC 3.26167
-#define KM_PER_LY     9460730472580.8
+#define SOLAR_ABSMAG   4.83f
+#define LN_MAG         1.085736
+#define LY_PER_PARSEC  3.26167
+#define KM_PER_LY      9460730472580.8
 // Old incorrect value; will be required for cel:// URL compatibility
 // #define OLD_KM_PER_LY     9466411842000.000
-#define KM_PER_AU     149597870.7
-#define AU_PER_LY     (KM_PER_LY / KM_PER_AU)
+#define KM_PER_AU      149597870.7
+#define AU_PER_LY      (KM_PER_LY / KM_PER_AU)
+#define KM_PER_PARSEC  (KM_PER_LY * LY_PER_PARSEC)
+
+// Julian year
+#define DAYS_PER_YEAR  365.25
+
+#define SECONDS_PER_DAY 86400.0
+#define MINUTES_PER_DAY 1440.0
+#define HOURS_PER_DAY   24.0
+
+#define MINUTES_PER_DEG 60.0
+#define SECONDS_PER_DEG 3600.0
+#define DEG_PER_HRA     15.0
+
+#define EARTH_RADIUS   6378.14
+#define JUPITER_RADIUS 71492.0
+#define SOLAR_RADIUS   696000.0
+
+using namespace std;
 
 class UniversalCoord;
 
@@ -76,12 +94,12 @@ namespace astro
 
     inline double secsToDays(double s)
     {
-        return s * (1.0 / 86400.0);
+        return s * (1.0 / SECONDS_PER_DAY);
     }
 
     inline double daysToSecs(double d)
     {
-        return d * 86400.0;
+        return d * SECONDS_PER_DAY;
     }
 
     // Convert to and from UTC dates
@@ -153,6 +171,13 @@ namespace astro
 
     double secondsToJulianDate(double);
     double julianDateToSeconds(double);
+    
+    bool isLengthUnit(string unitName);
+    bool isTimeUnit(string unitName);
+    bool isAngleUnit(string unitName);
+    bool getLengthScale(string unitName, double& scale);
+    bool getTimeScale(string unitName, double& scale);
+    bool getAngleScale(string unitName, double& scale);
 
     void decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds);
     double degMinSecToDecimal(int degrees, int minutes, double seconds);

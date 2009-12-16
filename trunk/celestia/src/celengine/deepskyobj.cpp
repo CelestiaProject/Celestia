@@ -1,6 +1,7 @@
 // deepskyobj.cpp
 //
-// Copyright (C) 2003, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2003-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -190,9 +191,10 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
         double distance = 1.0;
         double RA = 0.0;
         double dec = 0.0;
-        params->getNumber("Distance", distance);
-        params->getNumber("RA", RA);
-        params->getNumber("Dec", dec);
+        params->getLength("Distance", distance, KM_PER_LY);
+        params->getAngle("RA", RA, DEG_PER_HRA);
+        params->getAngle("Dec", dec);
+        
         Vector3d p = astro::equatorialToCelestialCart(RA, dec, distance);
         setPosition(p);
     }
@@ -201,7 +203,7 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
     Vector3d axis(Vector3d::UnitX());
     double angle = 0.0;
     params->getVector("Axis", axis);
-    params->getNumber("Angle", angle);
+    params->getAngle("Angle", angle);
 
     setOrientation(Quaternionf(AngleAxisf((float) degToRad(angle), axis.cast<float>().normalized())));
 #if CELVEC
@@ -212,7 +214,8 @@ bool DeepSkyObject::load(AssociativeArray* params, const string& resPath)
 #endif
 
     double radius = 1.0;
-    params->getNumber("Radius", radius);
+    params->getLength("Radius", radius, KM_PER_LY);
+
     setRadius((float) radius);
 
     double absMag = 0.0;

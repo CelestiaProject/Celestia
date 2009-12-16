@@ -302,17 +302,21 @@ bool Globular::load(AssociativeArray* params, const string& resPath)
     if (!ok)
 		return false;
 
-    if(params->getNumber("Detail", detail))
+    if (params->getNumber("Detail", detail))
     	setDetail((float) detail);
 			
 	string customTmpName;
-	if(params->getString("CustomTemplate", customTmpName ))
+	if (params->getString("CustomTemplate", customTmpName ))
 		setCustomTmpName(customTmpName);
-			
-	if(params->getNumber("CoreRadius", r_c))
+    
+    double coreRadius;
+	if (params->getAngle("CoreRadius", coreRadius, 1.0 / MINUTES_PER_DEG))
+    {
+        r_c = coreRadius;
 		setCoreRadius(r_c);
+    }
 			
-	if(params->getNumber("KingConcentration", c))
+	if (params->getNumber("KingConcentration", c))
 		setConcentration(c);
 	
     return true;

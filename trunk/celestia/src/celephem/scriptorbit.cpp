@@ -108,33 +108,7 @@ ScriptedOrbit::initialize(const std::string& moduleName,
     // Construct the table that we'll pass to the orbit generator function
     lua_newtable(luaState);
 
-    // Convert all the parameters in the list to their equivalent Lua
-    // types and insert them into the table. Presently, only number, string,
-    // and boolean values are converted.
-    for (HashIterator iter = parameters->begin(); iter != parameters->end();
-         iter++)
-    {
-        switch (iter->second->getType())
-        {
-        case Value::NumberType:
-            lua_pushstring(luaState, iter->first.c_str());
-            lua_pushnumber(luaState, iter->second->getNumber());
-            lua_settable(luaState, -3);
-            break;
-        case Value::StringType:
-            lua_pushstring(luaState, iter->first.c_str());
-            lua_pushstring(luaState, iter->second->getString().c_str());
-            lua_settable(luaState, -3);
-            break;
-        case Value::BooleanType:
-            lua_pushstring(luaState, iter->first.c_str());
-            lua_pushboolean(luaState, iter->second->getBoolean());
-            lua_settable(luaState, -3);
-            break;
-        default:
-            break;
-        }
-    }
+    SetLuaVariables(luaState, parameters);
 
     // Call the generator function
     if (lua_pcall(luaState, 1, 1, 0) != 0)

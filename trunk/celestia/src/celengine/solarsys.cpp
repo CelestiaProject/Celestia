@@ -166,13 +166,14 @@ static Location* CreateLocation(Hash* locationData,
     Location* location = new Location();
 
     Vector3d longlat(0.0, 0.0, 0.0);
-    locationData->getVector("LongLat", longlat);
+    locationData->getSphericalTuple("LongLat", longlat);
 
     Vector3f position = body->planetocentricToCartesian(longlat).cast<float>();
     location->setPosition(position);
 
     double size = 1.0;
-    locationData->getNumber("Size", size);
+    locationData->getLength("Size", size);
+
     location->setSize((float) size);
 
     double importance = -1.0;
@@ -746,7 +747,7 @@ static Body* CreateBody(const string& name,
 
     double radius = (double) body->getRadius();
     bool radiusSpecified = false;
-    if (planetData->getNumber("Radius", radius))
+    if (planetData->getLength("Radius", radius))
     {
         body->setSemiAxes(Vector3f::Constant((float) radius));
         radiusSpecified = true;
@@ -756,7 +757,17 @@ static Body* CreateBody(const string& name,
     if (planetData->getVector("SemiAxes", semiAxes))
     {
         if (radiusSpecified)
+        {
+            // if the radius has been specified, treat SemiAxes as dimensionless
+            // (i.e. ignore units) and multiply the radius by the SemiAxes
             semiAxes *= radius;
+        }
+        else
+        {
+            double semiAxesScale = 1.0;
+            planetData->getLengthScale("SemiAxes", semiAxesScale);
+            semiAxes *= semiAxesScale;
+        }
         // Swap y and z to match internal coordinate system
         body->setSemiAxes(Vector3f((float) semiAxes.x(), (float) semiAxes.z(), (float) semiAxes.y()));
     }
@@ -768,7 +779,6 @@ static Body* CreateBody(const string& name,
             body->setSemiAxes((float) body->getRadius() * Vector3f(1.0f, 1.0f - (float) oblateness, 1.0f));
         }
     }
-
 
     int classification = body->getClassification();
     string classificationName;
@@ -826,13 +836,16 @@ static Body* CreateBody(const string& name,
     if (planetData->getNumber("Albedo", albedo))
         body->setAlbedo((float) albedo);
 
+    // TODO - add mass units
     double mass = 0.0;
     if (planetData->getNumber("Mass", mass))
         body->setMass((float) mass);
 
     Quaternionf orientation = Quaternionf::Identity();
     if (planetData->getRotation("Orientation", orientation))
+    {
         body->setGeometryOrientation(orientation);
+    }
 
     Surface surface;
     if (disposition == ModifyObject)
@@ -862,7 +875,7 @@ static Body* CreateBody(const string& name,
             planetData->getBoolean("NormalizeMesh", isNormalized);
 
             float geometryScale = 1.0f;
-            planetData->getNumber("MeshScale", geometryScale);
+            planetData->getLength("MeshScale", geometryScale);
 
             ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(geometry, path, geometryCenter, 1.0f, isNormalized));
             body->setGeometry(geometryHandle);
@@ -899,21 +912,21 @@ static Body* CreateBody(const string& name,
                 {
                     atmosphere = new Atmosphere();
                 }
-                atmosData->getNumber("Height", atmosphere->height);
+                atmosData->getLength("Height", atmosphere->height);
                 atmosData->getColor("Lower", atmosphere->lowerColor);
                 atmosData->getColor("Upper", atmosphere->upperColor);
                 atmosData->getColor("Sky", atmosphere->skyColor);
                 atmosData->getColor("Sunset", atmosphere->sunsetColor);
 
                 atmosData->getNumber("Mie", atmosphere->mieCoeff);
-                atmosData->getNumber("MieScaleHeight", atmosphere->mieScaleHeight);
+                atmosData->getLength("MieScaleHeight", atmosphere->mieScaleHeight);
                 atmosData->getNumber("MieAsymmetry", atmosphere->miePhaseAsymmetry);
                 atmosData->getVector("Rayleigh", atmosphere->rayleighCoeff);
                 //atmosData->getNumber("RayleighScaleHeight", atmosphere->rayleighScaleHeight);
                 atmosData->getVector("Absorption", atmosphere->absorptionCoeff);
 
                 // Get the cloud map settings
-                atmosData->getNumber("CloudHeight", atmosphere->cloudHeight);
+                atmosData->getLength("CloudHeight", atmosphere->cloudHeight);
                 if (atmosData->getNumber("CloudSpeed", atmosphere->cloudSpeed))
                     atmosphere->cloudSpeed = degToRad(atmosphere->cloudSpeed);
 
@@ -966,9 +979,9 @@ static Body* CreateBody(const string& name,
                     rings = *body->getRings();
 
                 double inner = 0.0, outer = 0.0;
-                if (ringsData->getNumber("Inner", inner))
+                if (ringsData->getLength("Inner", inner))
                     rings.innerRadius = (float) inner;
-                if (ringsData->getNumber("Outer", outer))
+                if (ringsData->getLength("Outer", outer))
                     rings.outerRadius = (float) outer;
 
                 Color color(1.0f, 1.0f, 1.0f);

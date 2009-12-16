@@ -1,6 +1,7 @@
 // parser.cpp
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -8,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include "parser.h"
+#include "astro.h"
 
 using namespace Eigen;
 
@@ -171,6 +173,10 @@ Hash* Parser::readHash()
             return NULL;
         }
         string name = tokenizer->getNameValue();
+        
+#ifndef USE_POSTFIX_UNITS
+        readUnits(name, hash);
+#endif
 
         Value* value = readValue();
         if (value == NULL)
@@ -178,13 +184,72 @@ Hash* Parser::readHash()
             delete hash;
             return NULL;
         }
-        
+
         hash->addValue(name, *value);
+        
+#ifdef USE_POSTFIX_UNITS
+        readUnits(name, hash);
+#endif
 
         tok = tokenizer->nextToken();
     }
 
     return hash;
+}
+
+
+/**
+ * Reads a units section into the hash.
+ * @param[in] propertyName Name of the current property.
+ * @param[in] hash Hash to add units quantities into.
+ * @return True if a units section was successfully read, false otherwise.
+ */
+bool Parser::readUnits(const string& propertyName, Hash* hash)
+{
+    Tokenizer::TokenType tok = tokenizer->nextToken();
+    if (tok != Tokenizer::TokenBeginUnits)
+    {
+        tokenizer->pushBack();
+        return false;
+    }
+
+    tok = tokenizer->nextToken();
+    while (tok != Tokenizer::TokenEndUnits)
+    {
+        if (tok != Tokenizer::TokenName)
+        {
+            tokenizer->pushBack();
+            return false;
+        }
+       
+        string unit = tokenizer->getNameValue();
+        Value* value = new Value(unit);
+        
+        if (astro::isLengthUnit(unit))
+        {
+            string keyName(propertyName + "%Length");
+            hash->addValue(keyName, *value);
+        }
+        else if (astro::isTimeUnit(unit))
+        {
+            string keyName(propertyName + "%Time");
+            hash->addValue(keyName, *value);
+        }
+        else if (astro::isAngleUnit(unit))
+        {
+            string keyName(propertyName + "%Angle");
+            hash->addValue(keyName, *value);
+        }
+        else
+        {
+            delete value;
+            return false;
+        }
+        
+        tok = tokenizer->nextToken();
+    }
+    
+    return true;
 }
 
 
@@ -421,6 +486,7 @@ bool AssociativeArray::getVector(const string& key, Vector3f& val) const
 }
 
 
+/** @copydoc AssociativeArray::getRotation() */
 bool AssociativeArray::getRotation(const string& key, Quatf& val) const
 {
     Value* v = getValue(key);
@@ -446,14 +512,29 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
                (float) y->getNumber(),
                (float) z->getNumber());
     axis.normalize();
-    float angle = degToRad((float) w->getNumber());
+    
+    double ang = w->getNumber();
+    double angScale = 1.0;
+    getAngleScale(key, angScale);
+    float angle = degToRad((float) (ang * angScale));
+
     val.setAxisAngle(axis, angle);
 
     return true;
 }
 
 
-bool AssociativeArray::getRotation(const string& key, Quaternionf& val) const
+/**
+ * Retrieves a quaternion, scaled to an associated angle unit.
+ * 
+ * The quaternion is specified in the catalog file in axis-angle format as follows:
+ * \verbatim {PropertyName} [ angle axisX axisY axisZ ] \endverbatim
+ * 
+ * @param[in] key Hash key for the rotation.
+ * @param[out] val A quaternion representing the value if present, unaffected if not.
+ * @return True if the key exists in the hash, false otherwise.
+ */
+bool AssociativeArray::getRotation(const string& key, Eigen::Quaternionf& val) const
 {
     Value* v = getValue(key);
     if (v == NULL || v->getType() != Value::ArrayType)
@@ -477,7 +558,11 @@ bool AssociativeArray::getRotation(const string& key, Quaternionf& val) const
     Vector3f axis((float) x->getNumber(),
                   (float) y->getNumber(),
                   (float) z->getNumber());
-    float angle = degToRad((float) w->getNumber());
+
+    double ang = w->getNumber();
+    double angScale = 1.0;
+    getAngleScale(key, angScale);
+    float angle = degToRad((float) (ang * angScale));
 
     val = Quaternionf(AngleAxisf(angle, axis.normalized()));
 
@@ -494,6 +579,311 @@ bool AssociativeArray::getColor(const string& key, Color& val) const
 
     val = Color((float) vecVal.x, (float) vecVal.y, (float) vecVal.z);
 
+    return true;
+}
+
+
+/**
+ * Retrieves a numeric quantity scaled to an associated angle unit.
+ * @param[in] key Hash key for the quantity.
+ * @param[out] val The returned quantity if present, unaffected if not.
+ * @param[in] outputScale Returned value is scaled to this value.
+ * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
+ * @return True if the key exists in the hash, false otherwise.
+ */
+bool
+AssociativeArray::getAngle(const string& key, double& val, double outputScale, double defaultScale) const
+{
+    if (!getNumber(key, val))
+        return false;
+    
+    double angleScale;
+    if(getAngleScale(key, angleScale))
+    {
+        angleScale /= outputScale;
+    }
+    else
+    {
+        angleScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+    }
+    
+    val *= angleScale;
+    
+    return true;
+}
+
+
+/** @copydoc AssociativeArray::getAngle() */ 
+bool
+AssociativeArray::getAngle(const string& key, float& val, double outputScale, double defaultScale) const
+{
+    double dval;
+    
+    if (!getAngle(key, dval, outputScale, defaultScale))
+        return false;
+        
+    val = ((float) dval);
+    
+    return true;
+}
+
+
+/**
+ * Retrieves a numeric quantity scaled to an associated length unit.
+ * @param[in] key Hash key for the quantity.
+ * @param[out] val The returned quantity if present, unaffected if not.
+ * @param[in] outputScale Returned value is scaled to this value.
+ * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
+ * @return True if the key exists in the hash, false otherwise.
+ */
+bool
+AssociativeArray::getLength(const string& key, double& val, double outputScale, double defaultScale) const
+{
+    if(!getNumber(key, val))
+        return false;
+    
+    double lengthScale;
+    if(getLengthScale(key, lengthScale))
+    {
+        lengthScale /= outputScale;
+    }
+    else
+    {
+        lengthScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+    }
+    
+    val *= lengthScale;
+    
+    return true;
+}
+
+
+/** @copydoc AssociativeArray::getLength() */
+bool AssociativeArray::getLength(const string& key, float& val, double outputScale, double defaultScale) const
+{
+    double dval;
+    
+    if (!getLength(key, dval, outputScale, defaultScale))
+        return false;
+    
+    val = ((float) dval);
+    
+    return true;
+}
+
+
+/**
+ * Retrieves a numeric quantity scaled to an associated time unit.
+ * @param[in] key Hash key for the quantity.
+ * @param[out] val The returned quantity if present, unaffected if not.
+ * @param[in] outputScale Returned value is scaled to this value.
+ * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
+ * @return True if the key exists in the hash, false otherwise.
+ */
+bool AssociativeArray::getTime(const string& key, double& val, double outputScale, double defaultScale) const
+{
+    if(!getNumber(key, val))
+        return false;
+    
+    double timeScale;
+    if(getTimeScale(key, timeScale))
+    {
+        timeScale /= outputScale;
+    }
+    else
+    {
+        timeScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+    }
+    
+    val *= timeScale;
+    
+    return true;
+}
+
+
+/** @copydoc AssociativeArray::getTime() */
+bool AssociativeArray::getTime(const string& key, float& val, double outputScale, double defaultScale) const
+{
+    double dval;
+    
+    if(!getLength(key, dval, outputScale, defaultScale))
+        return false;
+    
+    val = ((float) dval);
+    
+    return true;
+}
+
+
+/**
+ * Retrieves a vector quantity scaled to an associated length unit.
+ * @param[in] key Hash key for the quantity.
+ * @param[out] val The returned vector if present, unaffected if not.
+ * @param[in] outputScale Returned value is scaled to this value.
+ * @param[in] defaultScale If no units are specified, use this scale. Defaults to outputScale.
+ * @return True if the key exists in the hash, false otherwise.
+ */
+bool AssociativeArray::getLengthVector(const string& key, Eigen::Vector3d& val, double outputScale, double defaultScale) const
+{
+    if(!getVector(key, val))
+        return false;
+    
+    double lengthScale;
+    if(getLengthScale(key, lengthScale))
+    {
+        lengthScale /= outputScale;
+    }
+    else
+    {
+        lengthScale = (defaultScale == 0.0) ? 1.0 : defaultScale / outputScale;
+    }
+    
+    val *= lengthScale;
+    
+    return true;
+}
+
+
+/** @copydoc AssociativeArray::getLengthVector() */
+bool AssociativeArray::getLengthVector(const string& key, Eigen::Vector3f& val, double outputScale, double defaultScale) const
+{
+    Vector3d vecVal;
+    
+    if(!getLengthVector(key, vecVal, outputScale, defaultScale))
+        return false;
+        
+    val = vecVal.cast<float>();
+    
+    return true;
+}
+
+
+/**
+ * Retrieves a spherical tuple \verbatim [longitude, latitude, altitude] \endverbatim scaled to associated angle and length units.
+ * @param[in] key Hash key for the quantity.
+ * @param[out] val The returned tuple in units of degrees and kilometers if present, unaffected if not.
+ * @return True if the key exists in the hash, false otherwise.
+ */
+bool AssociativeArray::getSphericalTuple(const string& key, Vector3d& val) const
+{
+    if(!getVector(key, val))
+        return false;
+    
+    double angleScale;
+    if(getAngleScale(key, angleScale))
+    {
+        val[0] *= angleScale;
+        val[1] *= angleScale;
+    }
+    
+    double lengthScale = 1.0;
+    getLengthScale(key, lengthScale);
+    val[2] *= lengthScale;
+    
+    return true;
+}
+
+
+/** @copydoc AssociativeArray::getSphericalTuple */
+bool AssociativeArray::getSphericalTuple(const string& key, Vector3f& val) const
+{
+    Vector3d vecVal;
+    
+    if(!getSphericalTuple(key, vecVal))
+        return false;
+    
+    val = vecVal.cast<float>();
+    
+    return true;
+}
+
+
+/**
+ * Retrieves the angle unit associated with a given property.
+ * @param[in] key Hash key for the property.
+ * @param[out] scale The returned angle unit scaled to degrees if present, unaffected if not.
+ * @return True if an angle unit has been specified for the property, false otherwise.
+ */
+bool AssociativeArray::getAngleScale(const string& key, double& scale) const
+{
+    string unitKey(key + "%Angle");
+    string unit;
+    
+    if (!getString(unitKey, unit))
+        return false;
+    
+    return astro::getAngleScale(unit, scale);
+}
+
+
+/** @copydoc AssociativeArray::getAngleScale() */
+bool AssociativeArray::getAngleScale(const string& key, float& scale) const
+{
+    double dscale;
+    if (!getAngleScale(key, dscale))
+        return false;
+    
+    scale = ((float) dscale);
+    return true;
+}
+
+
+/**
+ * Retrieves the length unit associated with a given property.
+ * @param[in] key Hash key for the property.
+ * @param[out] scale The returned length unit scaled to kilometers if present, unaffected if not.
+ * @return True if a length unit has been specified for the property, false otherwise.
+ */
+bool AssociativeArray::getLengthScale(const string& key, double& scale) const
+{
+    string unitKey(key + "%Length");
+    string unit;
+    
+    if (!getString(unitKey, unit))
+        return false;
+    
+    return astro::getLengthScale(unit, scale);
+}
+
+
+/** @copydoc AssociativeArray::getLengthScale() */
+bool AssociativeArray::getLengthScale(const string& key, float& scale) const
+{
+    double dscale;
+    if (!getLengthScale(key, dscale))
+        return false;
+    
+    scale = ((float) dscale);
+    return true;
+}
+
+
+/**
+ * Retrieves the time unit associated with a given property.
+ * @param[in] key Hash key for the property.
+ * @param[out] scale The returned time unit scaled to days if present, unaffected if not.
+ * @return True if a time unit has been specified for the property, false otherwise.
+ */
+bool AssociativeArray::getTimeScale(const string& key, double& scale) const
+{
+    string unitKey(key + "%Time");
+    string unit;
+    
+    if (!getString(unitKey, unit))
+        return false;
+    
+    return astro::getTimeScale(unit, scale);
+}
+
+
+/** @copydoc AssociativeArray::getTimeScale() */
+bool AssociativeArray::getTimeScale(const string& key, float& scale) const
+{
+    double dscale;
+    if (!getTimeScale(key, dscale))
+        return false;
+    
+    scale = ((float) dscale);
     return true;
 }
 
