@@ -860,12 +860,12 @@ bool StarDatabase::createStar(Star* star,
     bool hasRotationModel = (rm != NULL);
 
     Vector3d semiAxes = Vector3d::Ones();
-    bool hasSemiAxes = starData->getVector("SemiAxes", semiAxes);
+    bool hasSemiAxes = starData->getLengthVector("SemiAxes", semiAxes);
     bool hasBarycenter = false;
     Eigen::Vector3f barycenterPosition;
 
     double radius;
-    bool hasRadius = starData->getNumber("Radius", radius);
+    bool hasRadius = starData->getLength("Radius", radius);
     
     string infoURL;
     bool hasInfoURL = starData->getString("InfoURL", infoURL);
@@ -984,6 +984,7 @@ bool StarDatabase::createStar(Star* star,
         double ra = 0.0;
         double dec = 0.0;
         double distance = 0.0;
+        
         if (disposition == ModifyStar)
         {
             Vector3f pos = star->getPosition();
@@ -996,13 +997,17 @@ bool StarDatabase::createStar(Star* star,
             if (distance > 0.0)
             {
                 v.normalize();
-                ra = radToDeg(std::atan2(v.y(), v.x()));
+                ra = radToDeg(std::atan2(v.y(), v.x())) / DEG_PER_HRA;
                 dec = radToDeg(std::asin(v.z()));
             }
         }
         
         bool modifyPosition = false;
-        if (!starData->getNumber("RA", ra))
+        if (starData->getAngle("RA", ra, DEG_PER_HRA, 1.0))
+        {
+            modifyPosition = true;
+        }
+        else
         {
             if (disposition != ModifyStar)
             {
@@ -1010,12 +1015,12 @@ bool StarDatabase::createStar(Star* star,
                 return false;
             }
         }
-        else
+
+        if (starData->getAngle("Dec", dec))
         {
             modifyPosition = true;
         }
-
-        if (!starData->getNumber("Dec", dec))
+        else
         {
             if (disposition != ModifyStar)
             {
@@ -1023,12 +1028,12 @@ bool StarDatabase::createStar(Star* star,
                 return false;
             }
         }
-        else
+
+        if (starData->getLength("Distance", distance, KM_PER_LY))
         {
             modifyPosition = true;
         }
-
-        if (!starData->getNumber("Distance", distance))
+        else
         {
             if (disposition != ModifyStar)
             {
@@ -1036,17 +1041,13 @@ bool StarDatabase::createStar(Star* star,
                 return false;
             }
         }
-        else
-        {
-            modifyPosition = true;
-        }
 
         // Truncate to floats to match behavior of reading from binary file.
         // The conversion to rectangular coordinates is still performed at
         // double precision, however.
         if (modifyPosition)
         {
-            float raf = ((float) (ra * 24.0 / 360.0));
+            float raf = ((float) ra);
             float decf = ((float) dec);
             float distancef = ((float) distance);
             Vector3d pos = astro::equatorialToCelestialCart((double) raf, (double) decf, (double) distancef);

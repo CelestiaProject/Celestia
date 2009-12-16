@@ -1,6 +1,7 @@
 // star.cpp
 //
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,7 +29,9 @@ using namespace std;
 // probably what accounts for the discrepancy in temperature.
 // #define SOLAR_TEMPERATURE    5780.0f
 #define SOLAR_TEMPERATURE    5860.0f
-#define SOLAR_RADIUS         696000
+
+// moved the following to astro.h
+// #define SOLAR_RADIUS         696000
 
 
 struct SpectralTypeInfo

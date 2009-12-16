@@ -1,6 +1,7 @@
 // parser.h
 //
-// Copyright (C) 2001 Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2009, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -46,6 +47,22 @@ class AssociativeArray
     bool getRotation(const std::string&, Quatf&) const;
     bool getRotation(const std::string&, Eigen::Quaternionf&) const;
     bool getColor(const std::string&, Color&) const;
+    bool getAngle(const std::string&, double&, double = 1.0, double = 0.0) const;
+    bool getAngle(const std::string&, float&, double = 1.0, double = 0.0) const;
+    bool getLength(const std::string&, double&, double = 1.0, double = 0.0) const;
+    bool getLength(const std::string&, float&, double = 1.0, double = 0.0) const;
+    bool getTime(const std::string&, double&, double = 1.0, double = 0.0) const;
+    bool getTime(const std::string&, float&, double = 1.0, double = 0.0) const;
+    bool getLengthVector(const std::string&, Eigen::Vector3d&, double = 1.0, double = 0.0) const;
+    bool getLengthVector(const std::string&, Eigen::Vector3f&, double = 1.0, double = 0.0) const;
+    bool getSphericalTuple(const std::string&, Eigen::Vector3d&) const;
+    bool getSphericalTuple(const std::string&, Eigen::Vector3f&) const;
+    bool getAngleScale(const std::string&, double&) const;
+    bool getAngleScale(const std::string&, float&) const;
+    bool getLengthScale(const std::string&, double&) const;
+    bool getLengthScale(const std::string&, float&) const;
+    bool getTimeScale(const std::string&, double&) const;
+    bool getTimeScale(const std::string&, float&) const;
 
     HashIterator begin();
     HashIterator end();
@@ -100,12 +117,14 @@ class Parser
 public:
     Parser(Tokenizer*);
 
-    Array* readArray();
-    Hash* readHash();
     Value* readValue();
 
 private:
     Tokenizer* tokenizer;
+    
+    bool readUnits(const std::string&, Hash*);
+    Array* readArray();
+    Hash* readHash();
 };
 
 #endif // _PARSER_H_

@@ -99,25 +99,29 @@ SetLuaVariables(lua_State* state, Hash* parameters)
     for (HashIterator iter = parameters->begin(); iter != parameters->end();
          iter++)
     {
-        switch (iter->second->getType())
+        size_t percentPos = iter->first.find('%');
+        if (percentPos == string::npos)
         {
-        case Value::NumberType:
-            lua_pushstring(state, iter->first.c_str());
-            lua_pushnumber(state, iter->second->getNumber());
-            lua_settable(state, -3);
-            break;
-        case Value::StringType:
-            lua_pushstring(state, iter->first.c_str());
-            lua_pushstring(state, iter->second->getString().c_str());
-            lua_settable(state, -3);
-            break;
-        case Value::BooleanType:
-            lua_pushstring(state, iter->first.c_str());
-            lua_pushboolean(state, iter->second->getBoolean());
-            lua_settable(state, -3);
-            break;
-        default:
-            break;
+            switch (iter->second->getType())
+            {
+            case Value::NumberType:
+                lua_pushstring(state, iter->first.c_str());
+                lua_pushnumber(state, iter->second->getNumber());
+                lua_settable(state, -3);
+                break;
+            case Value::StringType:
+                lua_pushstring(state, iter->first.c_str());
+                lua_pushstring(state, iter->second->getString().c_str());
+                lua_settable(state, -3);
+                break;
+            case Value::BooleanType:
+                lua_pushstring(state, iter->first.c_str());
+                lua_pushboolean(state, iter->second->getBoolean());
+                lua_settable(state, -3);
+                break;
+            default:
+                break;
+            }
         }
     }
 }
