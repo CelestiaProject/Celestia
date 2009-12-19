@@ -265,7 +265,7 @@ Barycenter "Gliese 866:Luyten 789-6"
 	Distance 11.266
 }
 
-Barycenter ":Gliese 866 A:Luyten 789-6 A"
+Barycenter "Gliese 866 A:Luyten 789-6 A"
 {
 	OrbitBarycenter "Gliese 866"
 
@@ -1424,7 +1424,7 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 	}
 }
 
-"Gliese 570 C::ADS 9446 C"
+"Gliese 570 C:ADS 9446 C"
 {
 	OrbitBarycenter "Gliese 570 B-C"
 	SpectralType "M3V"
@@ -2246,7 +2246,7 @@ Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 	}
 }
 
-"XI Boo B:37 Boo B:Gliese 566 B::ADS 9413 B"
+"XI Boo B:37 Boo B:Gliese 566 B:ADS 9413 B"
 {
 	OrbitBarycenter "XI Boo"
 	SpectralType "K4V"
@@ -2612,7 +2612,7 @@ Barycenter 55203 "Alula Australis:XI UMa:53 UMa:Gliese 423:ADS 8119"
 	Distance 27.294
 }
 
-Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A::ADS 8119 A"
+Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A:ADS 8119 A"
 {
 	OrbitBarycenter "Alula Australis"
 
@@ -2627,7 +2627,7 @@ Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A::ADS 8119 A"
 	}
 }
 
-Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B::ADS 8119 B"
+Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B:ADS 8119 B"
 {
 	OrbitBarycenter "Alula Australis"
 
