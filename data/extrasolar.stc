@@ -393,6 +393,15 @@
 	AppMag 11.6
 }
 
+"WASP-19:GSC 08181-01711"
+{
+	RA 148.416667
+	Dec -45.659167
+	Distance 750 # from spectral class and magnitude
+	SpectralType "G8V"
+	AppMag 12.3
+}
+
 # CoRoT survey
 
 "CoRoT-1"
@@ -570,6 +579,25 @@
 	Distance 184.07
 	SpectralType "K8V"
 	AppMag 10.91
+}
+
+1002141355 "BD+20 1790"
+{
+	RA 110.931667
+	Dec 20.416389
+	Distance 82.80
+	SpectralType "K5V"
+	AppMag 9.93
+}
+
+"Gliese 1214"
+{
+	RA 258.82875
+	Dec 4.963889
+	Distance 42
+	Radius 147000
+	SpectralType "M4.5V"
+	AppMag 14.67
 }
 
 # Definitions for some exoplanet stars in multiple systems
