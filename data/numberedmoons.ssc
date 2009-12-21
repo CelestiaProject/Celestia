@@ -683,7 +683,7 @@
 	Albedo 0.04
 }
 
-"2003 J 17" "Sol/Jupiter"
+"Herse:Jupiter L:2003 J 17" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
