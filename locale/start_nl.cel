@@ -1,26 +1,32 @@
 {
-# ... Beginning of script
+# ... Begin van het script
 
 #****************************************************************************
 #                                                                           *
-#                 START.CEL - Startup script for Celestia                   *
-#                             (version 2.1)                                 *
+#                 START_NL.CEL - Startup script voor Celestia               *
+#                             (versie 2.1)                                  *
+#                                                                           *
+# Vertaald in het Nederlands door: Marco Klunder (december 2009).           *
+# Contact: marco.klunder@hccnet.nl                                          *
 #                                                                           *
 #---------------------------------------------------------------------------*
 #                                                                           *
-#  This script is run automatically, every time you run Celestia.           *
+#  Iedere keer wanneer Celestia wordt gestart, wordt dit script             *
+#  automatisch gestart.                                                     *
 #                                                                           *
-#  NOTE: Do not remove the curly braces located as the first and last       *
-#        characters of this file. They define this file as a CEL script.    *
+#  NOOT: Verwijder nooit de accolades die zich op de eerste en laatste      *
+#        positie van dit bestand bevinden. Ze zorgen er namelijk voor dat   *
+#        dit bestand  door Celestia wordt herkend als een CEL script.       *
 #                                                                           *
-#  You can modify this script in many ways, to suit your specific needs.    *
-#  Simply uncomment one or more of the lines below, as noted. Each line or  *
-#  section of code contains comments describing what it does. To UNcomment  *
-#  a line of code, simply remove the "#" character from the beginning of    *
-#  that line.                                                               *
+#  Je kunt dit script op vele manieren aanpassen aan je eigen behoeftes.    *
+#  Dit kun je doen door simpel het commentaar teken aan het begin van een   *
+#  regel te verwijderen. Iedere regel of code sectie bevat commentaar om te *
+#  omschrijven wat het doet. Om een code regel te ontdoen van commentaar,   *
+#  verwijder je gewoon het "#" karakter aan het begin van die lijn.         *
 #                                                                           *
-#  If you decide to modify this script, please copy it to a safe place      *
-#  BEFORE you begin, so you will have it to refer to at a later date.       *
+#  Als je besluit om dit script aan te passen, kopieer het dan eerst naar   *
+#  een veilige plek, ALVORENS je ermee begint, zodat je er op een later     *
+#  moment altijd op terug kunt vallen.                                      *
 #                                                                           *
 #****************************************************************************
 
@@ -40,160 +46,188 @@
   wait   {duration 3.0}
 
 #****************************************************************************
-#  The lines of code above are the entire start.cel script. Below, is a     *
-#  description of what each command does. We go to Sol first, so that when  *
-#  we go to Earth, it will be displaying it's sunny side, regardless of     *
-#  what your local time might be...                                         *
+#  Bovenstaande code regels zijn het hele start.cel script. Hieronder vind  *
+#  je een beschrijving wat iedere opdracht doet. Eerst gaan we naar de Zon, *
+#  zodat als we daarna naar de Aarde gaan, dan wordt de Aarde vanaf de      *
+#  zonnige kant weergegeven, ongeacht de lokale tijd die op dat moment      *
+#  van toepassing is ...                                                    *
 #                                                                           *
-#  preloadtex: Tells Celestia to load the textures for the named object.    *
-#          Otherwise Celestia would load the texture when the object        *
-#          comes into view, which would be noticeable as a small delay.     *
+#  preloadtex: Geeft Celestia de opdracht om de texture van het benoemde    *
+#          object te laden. Anders zou Celestia de texture pas laden op het *
+#          moment dat het in beeld komt, hetgeen dan merkbaar is als een    *
+#          kleine vertraging.                                               *
 #                                                                           *
-#  select: Tells Celestia what object (planet, moon, spacecraft, etc.) to   *
-#          define as the currently selected object. Sol defines our solar   *
-#          system, the "/" character is merely a hierarchy divider, Earth   *
-#          is the object we want to select. If you wanted to select our     *
-#          Moon, the select command would look like the following:          *
+#  select: Geeft Celestia de opdracht welk object (planeet, maan,           *
+#          ruimtevaartuig, etc.) moet worden gedefinieerd als het momenteel *
+#          geselecteerde object. "Sol" is de definitie voor de Zon als      *
+#          basis van ons Zonnestelsel, het "/" karakter kun je beschouwen   *
+#          als een scheiding in hiërarchie. "Earth" (Aarde) is het object   *
+#          dat we willen selecteren. Als je onze Maan zou willen            *
+#          selecteren, dan zou de select opdracht er als volgt uit zien:    *
 #            select {object "Sol/Earth/Moon"}                               *
 #                                                                           *
-#  goto:   Tells Celestia to travel to the currently selected object, just  *
-#          like pressing the "G" key on the keyboard. The time parameter    *
-#          defines how many seconds it should take to travel there. The     *
-#          distance parameter defines how far away from the object to be    *
-#          positioned, in units of the object's radius, plus 1. For         *
-#          example, if the object's radius is 10000 km, and you specify     *
-#          6.0 for distance, you will be positioned 50000 km from the       *
-#          center of the object.                                            *
+#  goto:   Geeft Celestia de opdracht om naar het momenteel geselecteerde   *
+#          object te reizen, vergelijkbaar met een druk op de [G] toets op  *
+#          het toetsenbord. De 'time' parameter geeft aan hoeveel seconden  *
+#          de reis er naartoe zal duren. De 'distance' parameter geeft aan  *
+#          tot hoever weg van het midden van het object we ons positioneren,*
+#          in eenheden van de straal van het object plus 1. Bijvoorbeeld:   *
+#          Als het object een straal heeft van 10000 km, en je specificeert *
+#          6.0 als 'distance' parameter, dan kom je op een positie terecht  *
+#          die 60000 km is verwijderd van het midden van het object.        *
+#          (= 50000 km verwijderd van het oppervlak van het object).        *
 #                                                                           *
-#  wait:   Since the goto command is telling Celestia to take some time to  *
-#          do something, we need to give Celestia that same amount of time  *
-#          to actually DO it. When going to Sol, the wait command tells     *
-#          Celestia to wait for 3 seconds while the goto takes place (for   *
-#          3 seconds). The duration parameter value is normally the same    *
-#          as the time parameter in the goto command. However, there are    *
-#          always exceptions (grin).                                        *
+#  wait:   Daar de goto opdracht ervoor zorgt dat Celestia tijd nodig heeft *
+#          om iets te doen, moeten we Celestia dezelfde hoeveelheid tijd    *
+#          geven om het ook daadwerkelijk te DOEN. Als we naar de Zon gaan, *
+#          dan zorgt de wait opdracht er voor dat Celestia 3 seconden moet  *
+#          wachten, terwijl de goto wordt uitgevoerd (gedurende 3 seconden).*
+#          De 'duration' parameter waarde is normaal gesproken gelijk aan   *
+#          de 'time' parameter in de goto opdracht. Er zijn echter altijd   *
+#          uitzonderingen :-).                                              *
 #                                                                           *
-#          When we are going to Earth, the wait command after the goto,     *
-#          waits for only 2 seconds. The next command is a print command,   *
-#          which displays some text on the screen and has another wait      *
-#          command after it, that waits for another 3 seconds. It's all     *
-#          just a matter of timing. The goto command allows us to display   *
-#          some text on-screen WHILE it is executing. So, we simply make    *
-#          sure that the total number of wait duration values, listed       *
-#          after a goto, adds up to AT LEAST the time value specified in    *
-#          the goto command. It can be longer, if desired.                  *
+#          Als we vervolgens naar de Aarde gaan, dan wacht de wait opdracht *
+#          na de goto slechts 2 seconden. Daarna volgt er een print         *
+#          opdracht, welke bepaalde tekst op het scherm weergeeft, gevolgd  *
+#          door een andere wait opdracht, die nog eens 3 seconden wacht.    *
+#          Het is allemaal een kwestie van timing. De goto opdracht staat   *
+#          ons toe om GELIJKTIJDIG tekst op het scherm weer te geven,       *
+#          terwijl de goto wordt uitgevoerd. We zorgen er dus gewoon voor   *
+#          dat het totaal aantal wait 'duration' waardes na een goto, bij   *
+#          elkaar opgeteld TEN MINSTE gelijk is aan de 'time' waarde die    *
+#          in de goto opdracht staat gespecificeerd. Indien gewenst, mag    *
+#          het langer duren.                                                *
 #                                                                           *
-#  follow: Tells Celestia to follow the selected object through space,      *
-#          just like pressing the "F" key on the keyboard. You could        *
-#          replace the follow {} command with synchronous {}, which allows  *
-#          you to remain in a stationary, or geosynchronous orbit above     *
-#          the selected object.                                             *
+#  follow: Geeft Celestia de opdracht om het geselecteerde object door      *
+#          de ruimte te achtervolgen, vergelijkbaar met een druk op de      *
+#          [F] toets op het toetsenbord. Je kunt de follow {} opdracht      *
+#          vervangen door  de synchronous {} opdracht, waardoor je in       *
+#          een (geo)stationaire baan boven het geselecteerde object         *
+#          blijft zweven.                                                   *
 #                                                                           *
-#   print: Tells Celestia to display (print) some text on the screen. The   *
-#          text parameter defines the text to be displayed. The row         *
-#          parameter defines how many rows from the bottom of the window to *
-#          start displaying the text at. The column parameter defines how   *
-#          many columns from the left edge of the window to start           *
-#          displaying the text. The duration parameter defines how many     *
-#          seconds the text should be displayed on the screen. Which is     *
-#          then followed by the wait command, as described above.           *
+#   print: Geeft Celestia de opdracht om tekst op het scherm weer te geven. *
+#          De 'text' parameter geeft aan welke tekst er moet worden         *
+#          weergegeven. De 'row' parameter geeft aan hoeveel regels vanaf   *
+#          de onderkant van het window de tekst moet worden weergegeven.    *
+#          De 'column' parameter geeft aan hoeveel kolommen vanaf de        *
+#          linkerkant van het window de tekst moet worden weergegeven. De   *
+#          'duration' parameter geeft aan hoeveel seconden de tekst op het  *
+#          scherm moet worden weergegeven. Deze wordt dan weer gevolgd door *
+#          de wait opdracht, die hierboven al is beschreven.                *
 #****************************************************************************
 
 
 #****************************************************************************
-#  If you want to be positioned above YOUR specific location on Earth, use  *
-#  the gotolonglat command shown below. Step-by-step instructions...        *
+#  Als je boven een specifieke locatie op Aarde wilt worden gepositioneerd, *
+#  gebruik dan de gotolonglat opdracht die hieronder wordt weergegeven.     *
+#  Stap-voor-stap instructies ...                                           *
 #                                                                           *
-#  * Copy the entire line of code.                                          *
+#  * Kopieer de hele code regel.                                            *
 #                                                                           *
-#  * Paste it below the "goto" command above.                               *
+#  * Plak het onder bovenstaande "goto" opdracht.                           *
 #                                                                           *
-#  * Remove the "#" character at the beginning of the line. This UNcomments *
-#    the line of code so it will be executed.                               *
+#  * Verwijder het "#" karakter aan het begin van de regel, waardoor het    *
+#    geen commentaar regel meer is en door Celestia zal worden uitgevoerd.  *
 #                                                                           *
-#  * Add a "#" character to the beginning of the original goto command.     *
-#    This turns the line of code into a comment, so it will NOT be run.     *
+#  * Plaats het "#" karakter aan het begin van de regel met de originele    *
+#    'goto' opdracht. hierdoor wordt het een commentaar regel, waardoor     *
+#    Celestia het niet uit zal voeren.                                      *
 #                                                                           *
-#  * Change the longitude and latitude values to those of your location.    *
+#  * Verander de 'longitude' en 'latitude' waarden in die van jouw locatie. *
 #                                                                           *
-#  * Since you are going to a specific position on the Earth, it might not  *
-#    be daytime there, so you could comment-out the following lines of      *
-#    code by adding a "#" character to the beginning of each line...        *
+#  * Daar je nu naar een specifieke locatie op Aarde gaat, kan het zijn dat *
+#    het daar geen dag, maar nacht is. Het heeft dan ook geen zin om eerst  *
+#    naar de Zon te gaan, dus kun je van de volgende code regels die        *
+#    hierboven staan mogelijk ook commentaar regels maken door het          *
+#    "#" karakter aan het begin van iedere regel te plaatsen ...            *
 #      select {object "Sol"}                                                *
 #      goto   {time 3.0 distance 30}                                        *
 #      wait   {duration 3.0}                                                *
-#    If you WANT to display your location in the daytime, use the time      *
-#    command described next.                                                *
+#    Als je jouw eigen locatie PERSE bij daglicht wilt zien, maak dan       *
+#    gebruik van de "time" opdracht die hieronder wordt beschreven.         *
 #****************************************************************************
 
 #  gotolonglat {time 5.0  distance 4.0  longitude 0.0  latitude 0.0}
 
 
 #****************************************************************************
-#  If you would like Celestia to always start at a specific date/time, use  *
-#  the time command, as shown below.                                        *
+#  Als je wilt dat Celestia altijd op een specifieke datum/tijd opstart,    *
+#  gebruik dan de time opdracht, als hieronder weergegeven.                 *
 #                                                                           *
-#  WARNING: Starting Celestia with a pre-determined date/time requires that *
-#           you physically press the "!" (exclamation mark) key in order to *
-#           RESET the time to "current time", whenever you want to do some  *
-#           exploring -- IF the actual time makes a difference.             *
+#  WAARSCHUWING: Als je Celestia opstart met een vooraf ingestelde          *
+#                datum/tijd, vereist dit dat je telkens op de [!] toets     *
+#                (uitroepteken) op het toetsenbord moet drukken om de       *
+#                datum/tijd te RESETTEN naar de huidige datum/tijd, iedere  *
+#                keer weer, wanneer je op ontdekkingsreis gaat -- indien    *
+#                het uitmaakt als het om de werkelijke tijd gaat.           *
 #                                                                           *
-#  Step-by-step instructions...                                             *
+#  Stap-voor-stap instructies ...                                           *
 #                                                                           *
-#  * Determine if you want to set the date via a calendar UTC date/time     *
-#    string, or a Julian day (see below).                                   *
+#  * Bepaal of je de datum/tijd wilt instellen met behulp van een           *
+#    kalender UTC datum/tijd string, of met een Juliaanse datum/tijd        *
+#    (zie hieronder).                                                       *
 #                                                                           *
-#  * Copy the one line of code with the time command you want to use.       *
+#  * kopieer de code regel met de "time" opdracht die je wilt gebruiken.    *
 #                                                                           *
-#  * Paste it above the "goto" command above (top of file).                 *
+#  * Plak het boven de "goto" opdracht hierboven (begin van de file).       *
 #                                                                           *
-#  * Remove the "#" character at the beginning of the line. This UNcomments *
-#    the line of code so it will be executed.                               *
+#  * Verwijder het "#" karakter aan het begin van de regel, waardoor het    *
+#    geen commentaar regel meer is en door Celestia zal worden uitgevoerd.  *
 #                                                                           *
-#  * Change the date/time value to YOUR required date/time.                 *
+#  * Verander de datum/tijd waarde in de datum/tijd van je eigen keus.      *
 #****************************************************************************
 
-# Set the time via a calendar UTC date/time string...
+# Stel de tijd in met behulp van een kalender UTC datum/tijd string ...
+#
 #  time { utc "2003-08-11T09:29:24.0000" }
-#              YYYY-MM-DDTHH:MM:SS.SSSS
-#  Note the "T" .........^ ... (this is required)
+#
+#              JJJJ-MM-DDTUU:MM:SS.SSSS
+#  Let op de "T" ........^ ... (deze is vereist)
 
-# Set the time via a Julian day value...
-#  time { jd JulianDate }
-#    U.S. Navy Calendar Date/Time to Julian Date/Time converter:
-#    http://aa.usno.navy.mil/data/docs/JulianDate.html
+# Stel de tijd in met behulp van een Juliaanse datum/tijd waarde ...
+#
+#  time { jd JuliaanseDatum }
+#
+# Een Kalender Datum/Tijd naar Juliaanse Datum/Tijd converteerder kun je
+# vinden op de website: (http://aa.usno.navy.mil/data/docs/JulianDate.php)
 
 
 #****************************************************************************
-#  The commands listed below allow you to define several of Celestia's      *
-#  settings, that will be set every time you start Celestia. Modify any of  *
-#  the settings you want to.                                                *
+#  Onderstaande opdrachten maken het mogelijk om diverse Celestia           *
+#  opties in te stellen, die je anders iedere keer moet instellen als je    *
+#  Celestia opstart. Verander iedere willekeurige instelling die je wilt.   *
 #****************************************************************************
 
-# Field of View (UNcomment / modify to meet your needs)...
-# Default is 25 degrees, at a screen resolution of 1024 x 768
+# Zichtbaar veld:
+# Verwijder het "#" karakter en pas de 'FOV' waarde aan je eigen wensen aan ...
+# Standaard ingesteld op 25 graden bij een scherm resolutie van 1024 x 768
+#
 #  set {name "FOV" value 25.0}
 
 
-# Ambient light level (UNcomment / modify to meet your needs)...
-# 0.0 to 0.5 is a good Lo-Hi range
+# Omgevingslicht:
+# Verwijder het "#" karakter en pas de 'AmbientLightLevel' waarde aan je eigen wensen aan ...
+# Van 0.0 tot 0.5 is een goede laag-hoog bandbreedte
+#
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# Faintest visible star magnitude (brightness)...
-# (UNcomment / modify to meet your needs)
-# Celestia UI: 0.8 to 15.2, default is 6.0
+# Helderheid limiet van sterren ...
+# Verwijder het "#" karakter en pas de 'magnitude' waarde aan je eigen wensen aan ...
+# Celestia Gebruikers Interface: 0.8 tot 15.2, standaard is 6.0
 #
 #  setvisibilitylimit {magnitude 6.0}
 
 
-# Faintest auto-magnitude brightness, at 45 degrees, Default is 8.5...
-# (UNcomment / modify to meet your needs)
+# Automatische helderheid limiet van sterren bij 45 graden, standaard is 8.5 ...
+# Verwijder het "#" karakter en pas de 'magnitude' waarde aan je eigen wensen aan ...
+#
 #  setfaintestautomag45deg {magnitude 8.5}
 
 
-# Items to be displayed (rendered):
-# Do NOT render the following objects (UNcomment to suit your needs)...
+# Weergeven van items (renderen):
+# Geef de volgende objecten NIET weer (Verwijder het "#" karakter naar eigen wensen) ...
+#
 #  renderflags {clear "atmospheres"}
 #  renderflags {clear "automag"}
 #  renderflags {clear "boundaries"}
@@ -213,8 +247,9 @@
 #  renderflags {clear "partialtrajectories"}
 
 
-# Items to be displayed (rendered):
-# DO render the following objects (UNcomment to suit your needs)...
+# Weergeven van items (renderen):
+# Geef de volgende objecten WEL weer (Verwijder het "#" karakter naar eigen wensen) ...
+#
 #  renderflags {set "atmospheres"}
 #  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
@@ -234,8 +269,9 @@
 #  renderflags {set "partialtrajectories"}
 
 
-# Text labels:
-# Do NOT label the following objects (UNcomment to suit your needs)...
+# Tekst labels:
+# Voorzie de volgende objecten NIET van een label (Verwijder het "#" karakter naar eigen wensen) ...
+#
 #  labels {clear "asteroids"}
 #  labels {clear "constellations"}
 #  labels {clear "galaxies"}
@@ -245,8 +281,10 @@
 #  labels {clear "stars"}
 
 
-# Text labels:
-# DO label the following objects (UNcomment to suit your needs)...
+
+# Tekst labels:
+# Voorzie de volgende objecten WEL van een label (Verwijder het "#" karakter naar eigen wensen) ...
+#
 #  labels {set "asteroids"}
 #  labels {set "constellations"}
 #  labels {set "galaxies"}
@@ -256,61 +294,76 @@
 #  labels {set "stars"}
 
 
-# Marker control:
-# Unmark any objects that are currently Marked and disable Marker display...
-# (UNcomment to suit your needs)
+# Markeringen:
+# Ontdoe alle objecten van een eventueel aanwezige markering en schakel de weergave van markeringen uit ...
+# (Verwijder het "#" karakter naar eigen wensen) ...
+#
 #  unmarkall { }
 
 
-# Minimum orbit diameter to be rendered (in pixels)...
-# (UNcomment / modify  to suit your needs)
+# Minimale baan diameter om te worden weergegeven (in pixels) ...
+# (Verwijder het "#" karakter naar eigen wensen) ...
+#
 #  set {name "MinOrbitSize"  value 1.0}
 
 
-# Furthest visible star distance, default is 1000000...
-# (UNcomment / modify to suit your needs)
+# De meest verre afstand waarop een ster nog wordt weergegeven, standaard is 1000000...
+# (Verwijder het "#" karakter naar eigen wensen) ...
+#
 #  set {name "StarDistanceLimit"  value 1000000}
 
 
-# Time rate (1x, 100x, 1000x, etc.)...
-# (UNcomment / modify to suit your needs)
-#    Negative value = Reverse Time
-#               0   = Pause Time
-#               1.0 = Real Time (default)
-#            1000.0 = Good moon orbit motion
+# Tijd snelheid (1x, 100x, 1000x, etc.)...
+# (Verwijder het "#" karakter naar eigen wensen) ...
+#
+#    Negatieve waarde = Tijd loopt terug
+#               0   = Tijd gepauzeerd
+#               1.0 = Werkelijk tijdsverloop (standaard)
+#            1000.0 = Bij deze snelheid zie je de Maan goed bewegen.
 #
 #  timerate {rate 1.0}
 
 
 #****************************************************************************
-#  If you are using large textures, you can have Celestia pre-load them     *
-#  into your graphics card memory by listing them below.                    *
+#  Als je grote texturen gebruikt, dan kun je er voor zorgen dat Celestia   *
+#  deze vooraf laadt in het geheugen van jouw grafische kaart, door ze      *
+#  op te nemen in onderstaande lijst.                                       *
 #****************************************************************************
-# Examples...
+# Voorbeelden...
 #  preloadtex {object "earth.*"}
 #  preloadtex {object "earth.png"}
 
 
 #****************************************************************************
-#  orbit is a fun command to play with. The axis is specified in [X Y Z]    *
-#  order, and each axis can be either 0 or 1. rate = how fast, duration =   *
-#  number of seconds. Just make sure you have an object selected.           *
+#  "orbit" is een leuke opdracht om mee te spelen. De as wordt in [X Y Z]   *
+#  volgorde gespecificeerd en iedere as kan de waarde o of 1 hebben.        *
+#  'rate' = hoe snel, 'duration' = aantal seconden. Let er wel op dat er    *
+#  een object moet zijn geselecteerd.                                       *
 #****************************************************************************
 #  orbit {axis [0 1 0]  rate 10.0  duration 7.0}
 
 
 #****************************************************************************
-#  To learn more about scripting in Celestia, visit:                        *
+#  Als je meer wilt weten over scripting in Celestia, bezoek dan:           *
 #                                                                           *
 #   * Scripting forum: (http://www.shatters.net/forum/viewforum.php?f=9)    *
-#   * Don G's Celestia page: (http://www.donandcarla.com/Celestia/)         *
-#   * Harald's Celestia page: (http://www.h-schmidt.net/celestia/)          *
+#   * Celestia Motherlode:                                                  *
+#     (http://www.celestiamotherlode.net/catalog/documentation.html)        *
+#     Vanaf deze site kunnen verschillende handboeken worden gedownload.    *
+#   * Don G's Celestia pagina: (http://www.donandcarla.com/Celestia/)       *
+#   * Harald's Celestia pagina: (http://www.h-schmidt.net/celestia/)        *
+#   * WIKIbooks: (http://en.wikibooks.org/wiki/Celestia/Scripting)          *
 #                                                                           *
-#  Don G's page includes a guide for CEL scripting. Harald's page includes  *
-#  a guide for CELX (Lua) scripting. Both also have example scripts and     *
-#  other goodies.                                                           *
+#  Don G's pagina bevat ook een handleiding voor CEL scripting.             *
+#  Harald's pagina bevat een handleiding voor CELX (Lua) scripting.         *
+#  Beide handleidingen bevatten voorbeeld scripts en andere handigheden.    *
+#                                                                           *
+#  Op de Celestia Motherlode staat ook een document van Marco Klunder,      *
+#  welke in gaat op de migratie mogelijkheden van CEL naar CELX.            *
+#  Het is wel Engelstalig en is getiteld:                                   *
+#   * CELX-Scripting (How to migrate from CEL scripting).                   *
 #****************************************************************************
 
 
-# End of script...
+# Einde van het start script ...
 }

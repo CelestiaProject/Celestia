@@ -165,6 +165,7 @@ Source: "locale\COPYING_fr";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_it";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_ja";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_ko";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\COPYING_nl";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_pl";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_pt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_pt_BR";       DestDir: "{app}/locale"; Flags: ignoreversion
