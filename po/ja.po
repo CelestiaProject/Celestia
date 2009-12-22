@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Celestia-Japanese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2008-11-29 23:29-0500\n"
-"PO-Revision-Date: 2008-12-30 21:18+0900\n"
-"Last-Translator: Sui Ota <aqua@aqsp.net>\n"
+"PO-Revision-Date: 2009-12-22 06:56+0900\n"
+"Last-Translator: Sui <aqua@aqsp.net>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-Country: JAPAN\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Language: Japanese\n"
 
 #: src/celengine/astro.cpp:820
 msgid "DST"
@@ -36,27 +37,27 @@ msgstr " 個の深宇宙天体を読み込みました。"
 
 #: src/celengine/fragmentprog.cpp:93
 msgid "Loading NV fragment program: "
-msgstr "次のNV fragment programを読み込んでいます: "
+msgstr "次のNVフラグメントプログラムを読み込んでいます: "
 
 #: src/celengine/fragmentprog.cpp:98
 msgid "Error loading NV fragment program: "
-msgstr "次のNV fragment programの読み込みでエラーが発生しました: "
+msgstr "次のNVフラグメントプログラムの読み込みでエラーが発生しました: "
 
 #: src/celengine/fragmentprog.cpp:115
 msgid "Error in fragment program "
-msgstr "次のfragment programの読み込みにエラーがあります: "
+msgstr "次のフラグメントプログラムの読み込みにエラーがあります: "
 
 #: src/celengine/fragmentprog.cpp:126
 msgid "Initializing NV fragment programs . . .\n"
-msgstr "NV fragment programを初期化しています…\n"
+msgstr "NVフラグメントプログラムを初期化しています…\n"
 
 #: src/celengine/fragmentprog.cpp:142
 msgid "All NV fragment programs loaded successfully.\n"
-msgstr "すべてのNV fragment programを正常に読み込みました。\n"
+msgstr "すべてのNVフラグメントプログラムを正常に読み込みました。\n"
 
 #: src/celengine/fragmentprog.cpp:150
 msgid "Initializing ARB fragment programs . . .\n"
-msgstr "ARB fragment programを初期化しています…\n"
+msgstr "ARBフラグメントプログラムを初期化しています…\n"
 
 #: src/celengine/galaxy.cpp:197
 #, c-format
@@ -233,24 +234,24 @@ msgstr "通常テクスチャを生成中: "
 
 #: src/celengine/vertexprog.cpp:114
 msgid "Loading NV vertex program: "
-msgstr "次のNV vertex programを読み込んでいます: "
+msgstr "次のNVバーテックスプログラムを読み込んでいます: "
 
 #: src/celengine/vertexprog.cpp:119
 msgid "Error loading NV vertex program: "
-msgstr "次のNV vertex programの読み込みでエラーが発生しました: "
+msgstr "次のNVバーテックスプログラムの読み込みでエラーが発生しました: "
 
 #: src/celengine/vertexprog.cpp:136
 #: src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
-msgstr "次のvertex programにエラーがあります: "
+msgstr "次のバーテックスプログラムにエラーがあります: "
 
 #: src/celengine/vertexprog.cpp:163
 msgid "Loading ARB vertex program: "
-msgstr "次のARB vertex programを読み込んでいます: "
+msgstr "次のARBバーテックスプログラムを読み込んでいます: "
 
 #: src/celengine/vertexprog.cpp:168
 msgid "Error loading ARB vertex program: "
-msgstr "次のARB vertex programの読み込みでエラーが発生しました: "
+msgstr "次のARBバーテックスプログラムの読み込みでエラーが発生しました: "
 
 #: src/celengine/vertexprog.cpp:196
 msgid ", line "
@@ -258,19 +259,19 @@ msgstr ", 行 "
 
 #: src/celengine/vertexprog.cpp:208
 msgid "Initializing NV vertex programs . . .\n"
-msgstr "NV vertex programを初期化しています…\n"
+msgstr "NVバーテックスプログラムを初期化しています…\n"
 
 #: src/celengine/vertexprog.cpp:240
 msgid "All NV vertex programs loaded successfully.\n"
-msgstr "すべてのNV vertex programsを読み込みました。\n"
+msgstr "すべてのNVバーテックスプログラムを読み込みました。\n"
 
 #: src/celengine/vertexprog.cpp:253
 msgid "Initializing ARB vertex programs . . .\n"
-msgstr "ARB vertex programを初期化しています…\n"
+msgstr "ARBバーテックスプログラムを初期化しています…\n"
 
 #: src/celengine/vertexprog.cpp:314
 msgid "All ARB vertex programs loaded successfully.\n"
-msgstr "すべてのARB vertex programを読み込みました。\n"
+msgstr "すべてのARBバーテックスプログラムを読み込みました。\n"
 
 #: src/celestia/celestiacore.cpp:419
 msgid "Error reading favorites file."
@@ -598,11 +599,11 @@ msgstr "絶対等級: %.2f 視等級: %.2f\n"
 
 #: src/celestia/celestiacore.cpp:3151
 msgid "Luminosity: "
-msgstr "光度: 太陽の "
+msgstr "光度: "
 
 #: src/celestia/celestiacore.cpp:3151
 msgid "x Sun"
-msgstr " 倍"
+msgstr " (太陽=1)"
 
 #: src/celestia/celestiacore.cpp:3152
 #: src/celestia/kde/selectionpopup.cpp:97
@@ -626,12 +627,12 @@ msgstr "表面温度: "
 #: src/celestia/celestiacore.cpp:3251
 #: src/celestia/kde/selectionpopup.cpp:105
 msgid "Radius: "
-msgstr "半径: 太陽の"
+msgstr "半径: "
 
 #: src/celestia/celestiacore.cpp:3172
 #: src/celestia/kde/selectionpopup.cpp:106
 msgid "Rsun"
-msgstr " 倍"
+msgstr "(太陽=1)"
 
 #: src/celestia/celestiacore.cpp:3182
 #: src/celestia/celestiacore.cpp:3303
@@ -754,7 +755,7 @@ msgstr " "
 
 #: src/celestia/celestiacore.cpp:3903
 msgid " fps"
-msgstr " FPS"
+msgstr " fps"
 
 #: src/celestia/celestiacore.cpp:3905
 #: src/celestia/kde/videocapturedlg.cpp:283
@@ -1156,7 +1157,7 @@ msgstr "天体名"
 
 #: src/celestia/winstarbrowser.cpp:72
 msgid "Distance (ly)"
-msgstr "距離（光年）"
+msgstr "距離(光年)"
 
 #: src/celestia/winstarbrowser.cpp:75
 msgid "App. mag"
@@ -2116,15 +2117,15 @@ msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:44
 msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr "ファイル%1 が存在しません。デフォルトの設定%2/celestia.cfg を使用します。"
+msgstr "ファイル %1 が存在しません。デフォルトの設定 %2/celestia.cfg を使用します。"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:54
 msgid "Directory %1 does not exist, using default %2"
-msgstr "ディレクトリ%1 が存在しません。デフォルトの%2 を使用します。"
+msgstr "ディレクトリ %1 が存在しません。デフォルトの %2 を使用します。"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:66
 msgid "Extras directory %1 does not exist"
-msgstr "拡張ディレクトリ%1 は存在しません。"
+msgstr "拡張ディレクトリ %1 は存在しません。"
 
 #: src/celestia/kde/selectionpopup.cpp:89
 msgid "Abs (app) mag: "
@@ -2401,11 +2402,11 @@ msgstr "サイズ:"
 
 #: src/celestia/kde/rc.cpp:160
 msgid "Frame Rate:"
-msgstr "FPS:"
+msgstr "フレームレート:"
 
 #: src/celestia/kde/rc.cpp:163
 msgid "Video Quality:"
-msgstr "ムービー品質: "
+msgstr "ムービー画質: "
 
 #: src/celestia/kde/rc.cpp:166
 msgid "Play Video when capture is done"
@@ -2563,7 +2564,6 @@ msgstr "トリトン"
 msgid "Nereid"
 msgstr "ネレイド"
 
-# solarsys.ssc
 #: data/data.cpp:39
 msgid "Pluto-Charon"
 msgstr "冥王星-カロン"
@@ -2650,7 +2650,7 @@ msgstr "スクリプト一覧"
 
 #: src/celestia/res/resource_strings.cpp:4
 msgid "Placeholder"
-msgstr "プレースフォルダ"
+msgstr "プレースホルダ"
 
 #: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
@@ -3099,7 +3099,7 @@ msgstr "サイズ:"
 
 #: src/celestia/res/resource_strings.cpp:138
 msgid "Frame rate:"
-msgstr "FPS:"
+msgstr "フレームレート:"
 
 #: src/celestia/res/resource_strings.cpp:139
 msgid "Select Display Mode"
@@ -3184,7 +3184,7 @@ msgstr "Terrae (陸地)"
 
 #: src/celestia/res/resource_strings.cpp:201
 msgid "Volcanoes"
-msgstr "Volcanoes(火山)"
+msgstr "Volcanoes (火山)"
 
 #: src/celestia/res/resource_strings.cpp:202
 msgid "Other features"
@@ -3200,7 +3200,7 @@ msgstr "表示する地名"
 
 #: src/celestia/res/resource_strings.cpp:207
 msgid "Minimum Labeled Feature Size"
-msgstr "最小表示"
+msgstr "表示限界"
 
 #: src/celestia/res/resource_strings.cpp:208
 msgid "Add New Bookmark Folder"
@@ -3289,31 +3289,4 @@ msgstr "11"
 #: src/celestia/res/resource_strings.cpp:234
 msgid "Dec"
 msgstr "12"
-
-#~ msgid "limit of knowledge"
-#~ msgstr "limit of knowledge"
-#~ msgid " of "
-#~ msgstr " ("
-#~ msgid " must be in same star system\n"
-#~ msgstr " が参照) は同じ恒星系にある必要があります。\n"
-#~ msgid "Bad spectral type in star database, star #\n"
-#~ msgstr "次の恒星のスペクトル型が正しくありません。 #\n"
-#~ msgid " star(s) with duplicate catalog numbers deleted.)\n"
-#~ msgstr "個の恒星が重複として削除されました。)\n"
-#~ msgid "Low res textures"
-#~ msgstr "テクスチャ解像度: 低"
-#~ msgid "Medium res textures"
-#~ msgstr "テクスチャ解像度: 中"
-#~ msgid "High res textures"
-#~ msgstr "テクスチャ解像度: 高"
-#~ msgid "Day length: "
-#~ msgstr "一日の長さ: "
-#~ msgid "Error reading deep sky file\n"
-#~ msgstr "深宇宙天体ファイルの読み込みでエラーが発生しました。\n"
-#~ msgid "Constellation Borders"
-#~ msgstr "星座境界線"
-#~ msgid "Orbit / Label"
-#~ msgstr "軌道 / 名称"
-#~ msgid "Mark Features"
-#~ msgstr "マーカーを表示"
 
