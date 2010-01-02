@@ -975,3 +975,42 @@ Barycenter "QS Vir"
 		ArgOfPericenter 180
 	}
 }
+
+
+Barycenter "DP Leo"
+{
+	RA 169.316667
+	Dec 17.961389
+	Distance 1300
+}
+
+"DP Leo A"
+{
+	OrbitBarycenter "DP Leo"
+	SpectralType "DA"
+	Radius 7930
+	AbsMag 10.7
+
+	EllipticalOrbit {
+		Period		0.0001708 # 1.50 hours
+		SemiMajorAxis	0.00035   # mass ratio 0.6:0.09
+		Inclination     115       #
+		AscendingNode   157       # inclination to plane of sky 79.5 deg.
+	}
+}
+
+"DP Leo B"
+{
+	OrbitBarycenter "DP Leo"
+	SpectralType "M7V" # from mass
+	Radius 125000      # to match spectral class
+	AbsMag 14.3
+
+	EllipticalOrbit {
+		Period		0.0001708 # 1.50 hours
+		SemiMajorAxis	0.00236   # mass ratio 0.6:0.09
+		Inclination     115       #
+		AscendingNode   157       # inclination to plane of sky 79.5 deg.
+		ArgOfPericenter 180
+	}
+}
