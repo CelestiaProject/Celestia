@@ -1,4 +1,4 @@
-# Catalog of 398 known extrasolar planets.
+# Catalog of 399 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -67,7 +67,10 @@
 	Texture "exo-class5.*"
 	NightTexture "exo-class5night.*"
 
-	Mass      366     # M.sin(i) = 366 earths
+	Color  [0.49 0.89 1]
+	Albedo 0.5	
+
+	Mass       370     # M.sin(i) = 1.15 jupiters
 	Radius     91700
 	Oblateness 0.03
 
@@ -4055,7 +4058,7 @@ AltSurface "limit of knowledge" "HD 1461/c"
 	Color  [0.96 0.96 1]
 	Albedo 0.5
 
-	Mass      97     # M.sin(i) = 97 earths
+	Mass       100     # M.sin(i) = 0.305 jupiters
 	Radius     56000
 	Oblateness 0.10
 
@@ -12170,6 +12173,36 @@ AltSurface "limit of knowledge" "HD 72659/b"
 }
 
 AltSurface "limit of knowledge" "HD 24040/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "DP Leo"
+{
+	Texture "exo-class1.*"
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+	Mass       2030     # M.sin(i) = 6.39 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=DP+Leo"
+
+	EllipticalOrbit {
+		Period          23.8001
+		SemiMajorAxis   8.6
+		Inclination	    115      #
+		AscendingNode   157      # to match binary inclination
+	}
+
+	Obliquity             115 # guess, to match inclination
+	EquatorAscendingNode  157 # guess, to match ascending node
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "DP Leo/b"
 {
 	Texture "extrasolar-lok.*"
 }
