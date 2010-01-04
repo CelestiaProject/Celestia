@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Jacob Lee <jaeuck@gmail.com>, 2006.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Celestia-Korean\n"
@@ -374,4 +374,3 @@ msgstr "날치"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "여우"
-

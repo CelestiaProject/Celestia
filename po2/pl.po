@@ -371,4 +371,3 @@ msgstr "Latająca Ryba"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Lis"
-
