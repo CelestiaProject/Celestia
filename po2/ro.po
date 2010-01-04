@@ -370,4 +370,3 @@ msgstr "Peştele Zburător"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Vulpea"
-

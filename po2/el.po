@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR Chris Laurel.
 # Christophe Teyssier <chris@teyssier.org>, 2005.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: en\n"
@@ -371,4 +371,3 @@ msgstr "Ιχθύς Ιπτάμενος"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Αλώπηξ"
-
