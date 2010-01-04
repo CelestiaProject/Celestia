@@ -370,4 +370,3 @@ msgstr "Volans 飛魚座"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Vulpecula 狐狸座"
-
