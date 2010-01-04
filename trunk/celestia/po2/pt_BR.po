@@ -368,4 +368,3 @@ msgstr "Peixe Voador"
 #: data/constellations.cpp:89
 msgid "Vulpecula"
 msgstr "Raposa"
-
