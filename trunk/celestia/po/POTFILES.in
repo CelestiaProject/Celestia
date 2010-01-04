@@ -1,14 +1,13 @@
 # Source
-src/celengine/3dsmesh.cpp
 src/celengine/asterism.cpp
 src/celengine/astro.cpp
+src/celengine/axisarrow.cpp
 src/celengine/body.cpp
 src/celengine/boundaries.cpp
 src/celengine/catalogxref.cpp
 src/celengine/cmdparser.cpp
 src/celengine/command.cpp
 src/celengine/console.cpp
-src/celengine/customorbit.cpp
 src/celengine/dds.cpp
 src/celengine/deepskyobj.cpp
 src/celengine/dispmap.cpp
@@ -18,10 +17,9 @@ src/celengine/fragmentprog.cpp
 src/celengine/frame.cpp
 src/celengine/galaxy.cpp
 src/celengine/glcontext.cpp
-src/celengine/glext.cpp
+src/celengine/globular.cpp
 src/celengine/glshader.cpp
 src/celengine/image.cpp
-src/celengine/jpleph.cpp
 src/celengine/location.cpp
 src/celengine/lodspheremesh.cpp
 src/celengine/marker.cpp
@@ -33,25 +31,29 @@ src/celengine/multitexture.cpp
 src/celengine/nebula.cpp
 src/celengine/observer.cpp
 src/celengine/opencluster.cpp
-src/celengine/orbit.cpp
 src/celengine/overlay.cpp
 src/celengine/parseobject.cpp
 src/celengine/parser.cpp
+src/celengine/particlesystem.cpp
+src/celengine/particlesystemfile.cpp
+src/celengine/planetgrid.cpp
 src/celengine/regcombine.cpp
 src/celengine/rendcontext.cpp
 src/celengine/render.cpp
-src/celengine/samporbit.cpp
+src/celengine/renderglsl.cpp
+src/celengine/rotationmanager.cpp
 src/celengine/selection.cpp
 src/celengine/shadermanager.cpp
 src/celengine/simulation.cpp
+src/celengine/skygrid.cpp
 src/celengine/solarsys.cpp
-src/celengine/solarsysxml.cpp
 src/celengine/spheremesh.cpp
 src/celengine/starbrowser.cpp
 src/celengine/starcolors.cpp
 src/celengine/star.cpp
 src/celengine/stardb.cpp
 src/celengine/starname.cpp
+src/celengine/staroctree.cpp
 src/celengine/stellarclass.cpp
 src/celengine/texmanager.cpp
 src/celengine/texture.cpp
@@ -62,17 +64,18 @@ src/celengine/universe.cpp
 src/celengine/vertexlist.cpp
 src/celengine/vertexprog.cpp
 src/celengine/virtualtex.cpp
-src/celengine/vsop87.cpp
+src/celengine/visibleregion.cpp
 
 src/celestia/celestiacore.cpp
 src/celestia/oggtheoracapture.cpp
 src/celestia/url.cpp
-src/celestia/winmain.cpp
-src/celestia/windatepicker.cpp
-src/celestia/wineclipses.cpp
-src/celestia/winssbrowser.cpp
-src/celestia/winstarbrowser.cpp
-src/celestia/wintime.cpp
+
+src/celestia/win32/winmain.cpp
+src/celestia/win32/windatepicker.cpp
+src/celestia/win32/wineclipses.cpp
+src/celestia/win32/winssbrowser.cpp
+src/celestia/win32/winstarbrowser.cpp
+src/celestia/win32/wintime.cpp
 
 src/celutil/util.cpp
 
