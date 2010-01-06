@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CELESTIA-Chinese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2010-01-04 10:55-0500\n"
+"POT-Creation-Date: 2010-01-06 17:08-0500\n"
 "PO-Revision-Date: 2009-10-31 13:53+0800\n"
 "Last-Translator: Markerz Li <markerzli@gmail.com>\n"
 "Language-Team: Chinese <zhaozhengxu@yahoo.com,markerzli@gmail.com>\n"
@@ -2383,18 +2383,1034 @@ msgid "ARCTIC OCEAN"
 msgstr "北冰洋"
 
 #: data/data.cpp:54
+msgid "Abu Dhabi"
+msgstr ""
+
+#: data/data.cpp:55
+msgid "Abuja"
+msgstr ""
+
+#: data/data.cpp:56
+msgid "Accra"
+msgstr ""
+
+#: data/data.cpp:57
+msgid "Adamstown"
+msgstr ""
+
+#: data/data.cpp:58
+msgid "Addis Ababa"
+msgstr ""
+
+#: data/data.cpp:59
+msgid "Algiers"
+msgstr ""
+
+#: data/data.cpp:60
+msgid "Alofi"
+msgstr ""
+
+#: data/data.cpp:61
+msgid "Amman"
+msgstr ""
+
+#: data/data.cpp:62
+#, fuzzy
+msgid "Amsterdam"
+msgstr "陨石"
+
+#: data/data.cpp:63
+msgid "Andorra la Vella"
+msgstr ""
+
+#: data/data.cpp:64
+msgid "Ankara"
+msgstr ""
+
+#: data/data.cpp:65
+msgid "Antananarivo"
+msgstr ""
+
+#: data/data.cpp:66
+msgid "Apia"
+msgstr ""
+
+#: data/data.cpp:67
+msgid "Ashgabat"
+msgstr ""
+
+#: data/data.cpp:68
+msgid "Asmara"
+msgstr ""
+
+#: data/data.cpp:69
+#, fuzzy
+msgid "Astana"
+msgstr "天卫三"
+
+#: data/data.cpp:70
+msgid "Asuncion"
+msgstr ""
+
+#: data/data.cpp:71
+#, fuzzy
+msgid "Athens"
+msgstr "软件作者"
+
+#: data/data.cpp:72
+msgid "Avarua"
+msgstr ""
+
+#: data/data.cpp:73
+msgid "Baghdad"
+msgstr ""
+
+#: data/data.cpp:74
+#, fuzzy
+msgid "Baku"
+msgstr "天文单位"
+
+#: data/data.cpp:75
+msgid "Bamako"
+msgstr ""
+
+#: data/data.cpp:76
+msgid "Bandar Seri Begawan"
+msgstr ""
+
+#: data/data.cpp:77
+msgid "Bangkok"
+msgstr ""
+
+#: data/data.cpp:78
+msgid "Bangui"
+msgstr ""
+
+#: data/data.cpp:79
+msgid "Banjul"
+msgstr ""
+
+#: data/data.cpp:80
+msgid "Basse-Terre"
+msgstr ""
+
+#: data/data.cpp:81
+#, fuzzy
+msgid "Basseterre"
+msgstr "质心 "
+
+#: data/data.cpp:82
+msgid "Beijing"
+msgstr ""
+
+#: data/data.cpp:83
+msgid "Beirut"
+msgstr ""
+
+#: data/data.cpp:84
+msgid "Belgrade"
+msgstr ""
+
+#: data/data.cpp:85
+msgid "Belmopan"
+msgstr ""
+
+#: data/data.cpp:86
+#, fuzzy
+msgid "Berlin"
+msgstr "版本"
+
+#: data/data.cpp:87
+#, fuzzy
+msgid "Bern"
+msgstr "天卫四"
+
+#: data/data.cpp:88
+msgid "Bishkek"
+msgstr ""
+
+#: data/data.cpp:89
+#, fuzzy
+msgid "Bissau"
+msgstr "海卫七"
+
+#: data/data.cpp:90
+msgid "Bloemfontein"
+msgstr ""
+
+#: data/data.cpp:91
+msgid "Bogota"
+msgstr ""
+
+#: data/data.cpp:92
+#, fuzzy
+msgid "Brasilia"
+msgstr "基本"
+
+#: data/data.cpp:93
+msgid "Bratislava"
+msgstr ""
+
+#: data/data.cpp:94
+msgid "Brazzaville"
+msgstr ""
+
+#: data/data.cpp:95
+#, fuzzy
+msgid "Bridgetown"
+msgstr "按最大亮度"
+
+#: data/data.cpp:96
+msgid "Brussels"
+msgstr ""
+
+#: data/data.cpp:97
+#, fuzzy
+msgid "Bucharest"
+msgstr "星座边界线"
+
+#: data/data.cpp:98
+#, fuzzy
+msgid "Budapest"
+msgstr "星座边界线"
+
+#: data/data.cpp:99
+msgid "Buenos Aires"
+msgstr ""
+
+#: data/data.cpp:100
+msgid "Bujumbura"
+msgstr ""
+
+#: data/data.cpp:101
+#, fuzzy
+msgid "Cairo"
+msgstr "冥卫一"
+
+#: data/data.cpp:102
+#, fuzzy
+msgid "Canberra"
+msgstr "陆地"
+
+#: data/data.cpp:103
+msgid "Cape Town"
+msgstr ""
+
+#: data/data.cpp:104
+msgid "Caracas"
+msgstr ""
+
+#: data/data.cpp:105
+#, fuzzy
+msgid "Castries"
+msgstr "城市"
+
+#: data/data.cpp:106
+#, fuzzy
+msgid "Cayenne"
+msgstr "取消"
+
+#: data/data.cpp:107
+msgid "Charlotte Amalie"
+msgstr ""
+
+#: data/data.cpp:108
+#, fuzzy
+msgid "Chisinau"
+msgstr "Chris Laurel"
+
+#: data/data.cpp:109
+msgid "Colombo"
+msgstr ""
+
+#: data/data.cpp:110
+msgid "Conakry"
+msgstr ""
+
+#: data/data.cpp:111
+msgid "Copenhagen"
+msgstr ""
+
+#: data/data.cpp:112
+msgid "Cotonou"
+msgstr ""
+
+#: data/data.cpp:113
+msgid "Dakar"
+msgstr ""
+
+#: data/data.cpp:114
+msgid "Damascus"
+msgstr ""
+
+#: data/data.cpp:115
+msgid "Dar es Salaam"
+msgstr ""
+
+#: data/data.cpp:116
+msgid "Dhaka"
+msgstr ""
+
+#: data/data.cpp:117
+msgid "Dili"
+msgstr ""
+
+#: data/data.cpp:118
+msgid "Djibouti"
+msgstr ""
+
+#: data/data.cpp:119
+msgid "Doha"
+msgstr ""
+
+#: data/data.cpp:120
+#, fuzzy
+msgid "Douglas"
+msgstr "球状星团"
+
+#: data/data.cpp:121
+msgid "Dublin"
+msgstr ""
+
+#: data/data.cpp:122
+#, fuzzy
+msgid "Dushanbe"
+msgstr "距离"
+
+#: data/data.cpp:123
+msgid "Fongafale"
+msgstr ""
+
+#: data/data.cpp:124
+msgid "Fort-de-France"
+msgstr ""
+
+#: data/data.cpp:125
+msgid "Freetown"
+msgstr ""
+
+#: data/data.cpp:126
+msgid "Gaborone"
+msgstr ""
+
+#: data/data.cpp:127
+#, fuzzy
+msgid "George Town"
+msgstr "前往"
+
+#: data/data.cpp:128
+msgid "Georgetown"
+msgstr ""
+
+#: data/data.cpp:129
+msgid "Gibraltar"
+msgstr ""
+
+#: data/data.cpp:130
+msgid "Grand Turk"
+msgstr ""
+
+#: data/data.cpp:131
+msgid "Guatemala"
+msgstr ""
+
+#: data/data.cpp:132
+msgid "Hagatna"
+msgstr ""
+
+#: data/data.cpp:133
+msgid "The Hague"
+msgstr ""
+
+#: data/data.cpp:134
+msgid "Hamilton"
+msgstr ""
+
+#: data/data.cpp:135
+msgid "Hanoi"
+msgstr ""
+
+#: data/data.cpp:136
+#, fuzzy
+msgid "Harare"
+msgstr "海洋"
+
+#: data/data.cpp:137
+msgid "Havana"
+msgstr ""
+
+#: data/data.cpp:138
+msgid "Helsinki"
+msgstr ""
+
+#: data/data.cpp:139
+msgid "Honiara"
+msgstr ""
+
+#: data/data.cpp:140
+msgid "Islamabad"
+msgstr ""
+
+#: data/data.cpp:141
+msgid "Jakarta"
+msgstr ""
+
+#: data/data.cpp:142
+msgid "Jamestown"
+msgstr ""
+
+#: data/data.cpp:143
+msgid "Jerusalem"
+msgstr ""
+
+#: data/data.cpp:144
+msgid "Kabul"
+msgstr ""
+
+#: data/data.cpp:145
+msgid "Kampala"
+msgstr ""
+
+#: data/data.cpp:146
+msgid "Kathmandu"
+msgstr ""
+
+#: data/data.cpp:147
+msgid "Khartoum"
+msgstr ""
+
+#: data/data.cpp:148
+msgid "Kiev"
+msgstr ""
+
+#: data/data.cpp:149
+msgid "Kigali"
+msgstr ""
+
+#: data/data.cpp:150 data/data.cpp:151
+msgid "Kingston"
+msgstr ""
+
+#: data/data.cpp:152
+msgid "Kingstown"
+msgstr ""
+
+#: data/data.cpp:153
+msgid "Kinshasa"
+msgstr ""
+
+#: data/data.cpp:154
+msgid "Koror"
+msgstr ""
+
+#: data/data.cpp:155
+msgid "Kuala Lumpur"
+msgstr ""
+
+#: data/data.cpp:156
+msgid "Kuwait"
+msgstr ""
+
+#: data/data.cpp:157
+msgid "La'youn"
+msgstr ""
+
+#: data/data.cpp:158
+msgid "La Paz"
+msgstr ""
+
+#: data/data.cpp:159
+msgid "Libreville"
+msgstr ""
+
+#: data/data.cpp:160
+#, fuzzy
+msgid "Lilongwe"
+msgstr "土卫四"
+
+#: data/data.cpp:161
+#, fuzzy
+msgid "Lima"
+msgstr "土卫一"
+
+#: data/data.cpp:162
+msgid "Lisbon"
+msgstr ""
+
+#: data/data.cpp:163
+msgid "Ljubljana"
+msgstr ""
+
+#: data/data.cpp:164
+msgid "Lobamba"
+msgstr ""
+
+#: data/data.cpp:165
+#, fuzzy
+msgid "Lome"
+msgstr "首页"
+
+#: data/data.cpp:166
+#, fuzzy
+msgid "London"
+msgstr "月亮"
+
+#: data/data.cpp:167
+msgid "Longyearbyen"
+msgstr ""
+
+#: data/data.cpp:168
+#, fuzzy
+msgid "Luanda"
+msgstr "土卫十七"
+
+#: data/data.cpp:169
+msgid "Lusaka"
+msgstr ""
+
+#: data/data.cpp:170
+msgid "Luxembourg"
+msgstr ""
+
+#: data/data.cpp:171
+#, fuzzy
+msgid "Madrid"
+msgstr "3 月"
+
+#: data/data.cpp:172
+#, fuzzy
+msgid "Majuro"
+msgstr "3 月"
+
+#: data/data.cpp:173
+msgid "Malabo"
+msgstr ""
+
+#: data/data.cpp:174
+#, fuzzy
+msgid "Male"
+msgstr "海洋"
+
+#: data/data.cpp:175
+msgid "Mamoutzou"
+msgstr ""
+
+#: data/data.cpp:176
+msgid "Managua"
+msgstr ""
+
+#: data/data.cpp:177
+#, fuzzy
+msgid "Manama"
+msgstr "天卫五"
+
+#: data/data.cpp:178
+#, fuzzy
+msgid "Manila"
+msgstr "天卫五"
+
+#: data/data.cpp:179
+msgid "Maputo"
+msgstr ""
+
+#: data/data.cpp:180
+#, fuzzy
+msgid "Maseru"
+msgstr "3 月"
+
+#: data/data.cpp:181
+msgid "Mata-Utu"
+msgstr ""
+
+#: data/data.cpp:182
+msgid "Mbabane"
+msgstr ""
+
+#: data/data.cpp:183
+msgid "Mexico City"
+msgstr ""
+
+#: data/data.cpp:184
+#, fuzzy
+msgid "Minsk"
+msgstr "山脉"
+
+#: data/data.cpp:185
+msgid "Mogadishu"
+msgstr ""
+
+#: data/data.cpp:186
+#, fuzzy
+msgid "Monaco"
+msgstr "月亮"
+
+#: data/data.cpp:187
+msgid "Monrovia"
+msgstr ""
+
+#: data/data.cpp:188
+msgid "Montevideo"
+msgstr ""
+
+#: data/data.cpp:189
+#, fuzzy
+msgid "Moroni"
+msgstr "月亮"
+
+#: data/data.cpp:190
+#, fuzzy
+msgid "Moscow"
+msgstr "月亮"
+
+#: data/data.cpp:191
+msgid "Muscat"
+msgstr ""
+
+#: data/data.cpp:192
+msgid "Nairobi"
+msgstr ""
+
+#: data/data.cpp:193
+#, fuzzy
+msgid "Nassau"
+msgstr "海卫七"
+
+#: data/data.cpp:194
+#, fuzzy
+msgid "N'Djamena"
+msgstr "名称"
+
+#: data/data.cpp:195
+msgid "New Delhi"
+msgstr ""
+
+#: data/data.cpp:196
+#, fuzzy
+msgid "Niamey"
+msgstr "名称"
+
+#: data/data.cpp:197
+msgid "Nicosia"
+msgstr ""
+
+#: data/data.cpp:198
+msgid "Nouakchott"
+msgstr ""
+
+#: data/data.cpp:199
+#, fuzzy
+msgid "Noumea"
+msgstr "普通"
+
+#: data/data.cpp:200
+msgid "Nuku'alofa"
+msgstr ""
+
+#: data/data.cpp:201
+msgid "Nuuk"
+msgstr ""
+
+#: data/data.cpp:202
+msgid "Oranjestad"
+msgstr ""
+
+#: data/data.cpp:203
+msgid "Oslo"
+msgstr ""
+
+#: data/data.cpp:204
+msgid "Ottawa"
+msgstr ""
+
+#: data/data.cpp:205
+msgid "Ouagadougou"
+msgstr ""
+
+#: data/data.cpp:206
+msgid "Pago Pago"
+msgstr ""
+
+#: data/data.cpp:207
+msgid "Palikir"
+msgstr ""
+
+#: data/data.cpp:208
+#, fuzzy
+msgid "Panama"
+msgstr "土卫十七"
+
+#: data/data.cpp:209
+#, fuzzy
+msgid "Papeete"
+msgstr "行星"
+
+#: data/data.cpp:210
+msgid "Paramaribo"
+msgstr ""
+
+#: data/data.cpp:211
+#, fuzzy
+msgid "Paris"
+msgstr "火星"
+
+#: data/data.cpp:212
+msgid "Phnom Penh"
+msgstr ""
+
+#: data/data.cpp:213
+#, fuzzy
+msgid "Plymouth"
+msgstr "冥王星"
+
+#: data/data.cpp:214
+msgid "Port Louis"
+msgstr ""
+
+#: data/data.cpp:215
+msgid "Port Moresby"
+msgstr ""
+
+#: data/data.cpp:216
+msgid "Port-au-Prince"
+msgstr ""
+
+#: data/data.cpp:217
+msgid "Port-of-Spain"
+msgstr ""
+
+#: data/data.cpp:218
+msgid "Porto-Novo"
+msgstr ""
+
+#: data/data.cpp:219
+msgid "Port-Vila"
+msgstr ""
+
+#: data/data.cpp:220
+msgid "Prague"
+msgstr ""
+
+#: data/data.cpp:221
+#, fuzzy
+msgid "Praia"
+msgstr "半径"
+
+#: data/data.cpp:222
+msgid "Pretoria"
+msgstr ""
+
+#: data/data.cpp:223
+msgid "P'yongyang"
+msgstr ""
+
+#: data/data.cpp:224
+#, fuzzy
+msgid "Quito"
+msgstr "冥王星"
+
+#: data/data.cpp:225
+msgid "Rabat"
+msgstr ""
+
+#: data/data.cpp:226
+msgid "Rangoon"
+msgstr ""
+
+#: data/data.cpp:227
+msgid "Reykjavik"
+msgstr ""
+
+#: data/data.cpp:228
+msgid "Riga"
+msgstr ""
+
+#: data/data.cpp:229
+msgid "Riyadh"
+msgstr ""
+
+#: data/data.cpp:230
+msgid "Road Town"
+msgstr ""
+
+#: data/data.cpp:231
+#, fuzzy
+msgid "Rome"
+msgstr "首页"
+
+#: data/data.cpp:232
+#, fuzzy
+msgid "Roseau"
+msgstr "太阳半径"
+
+#: data/data.cpp:233
+msgid "Saint George's"
+msgstr ""
+
+#: data/data.cpp:234
+#, fuzzy
+msgid "Saint Helier"
+msgstr "卫星"
+
+#: data/data.cpp:235
+msgid "Saint John's"
+msgstr ""
+
+#: data/data.cpp:236
+msgid "Saint Peter Port"
+msgstr ""
+
+#: data/data.cpp:237
+msgid "Saint-Denis"
+msgstr ""
+
+#: data/data.cpp:238
+msgid "Saint-Pierre"
+msgstr ""
+
+#: data/data.cpp:239
+msgid "Saipan"
+msgstr ""
+
+#: data/data.cpp:240
+#, fuzzy
+msgid "San Jose"
+msgstr "星系浏览"
+
+#: data/data.cpp:241
+#, fuzzy
+msgid "San Juan"
+msgstr "Da Woon Jung"
+
+#: data/data.cpp:242
+msgid "San Marino"
+msgstr ""
+
+#: data/data.cpp:243
+msgid "San Salvador"
+msgstr ""
+
+#: data/data.cpp:244
+msgid "Sanaa"
+msgstr ""
+
+#: data/data.cpp:245
+msgid "Santiago"
+msgstr ""
+
+#: data/data.cpp:246
+msgid "Santo Domingo"
+msgstr ""
+
+#: data/data.cpp:247
+#, fuzzy
+msgid "Sao Tome"
+msgstr "前往"
+
+#: data/data.cpp:248
+msgid "Sarajevo"
+msgstr ""
+
+#: data/data.cpp:249
+#, fuzzy
+msgid "Seoul"
+msgstr "南"
+
+#: data/data.cpp:250
+msgid "The Settlement"
+msgstr ""
+
+#: data/data.cpp:251
+msgid "Singapore"
+msgstr ""
+
+#: data/data.cpp:252
+msgid "Skopje"
+msgstr ""
+
+#: data/data.cpp:253
+msgid "Sofia"
+msgstr ""
+
+#: data/data.cpp:254
+msgid "Sri Jayewardenepura Kotte"
+msgstr ""
+
+#: data/data.cpp:255
+msgid "Stanley"
+msgstr ""
+
+#: data/data.cpp:256
+msgid "Stockholm"
+msgstr ""
+
+#: data/data.cpp:257
+#, fuzzy
+msgid "Sucre"
+msgstr "正方形"
+
+#: data/data.cpp:258
+#, fuzzy
+msgid "Suva"
+msgstr "正方形"
+
+#: data/data.cpp:259
+#, fuzzy
+msgid "Taipei"
+msgstr "类型"
+
+#: data/data.cpp:260
+#, fuzzy
+msgid "Tallinn"
+msgstr "太空飞行中"
+
+#: data/data.cpp:261
+msgid "Tarawa"
+msgstr ""
+
+#: data/data.cpp:262
+msgid "Tashkent"
+msgstr ""
+
+#: data/data.cpp:263
+msgid "T'bilisi"
+msgstr ""
+
+#: data/data.cpp:264
+msgid "Tegucigalpa"
+msgstr ""
+
+#: data/data.cpp:265
+#, fuzzy
+msgid "Tehran"
+msgstr "陆地"
+
+#: data/data.cpp:266
+msgid "Tel Aviv"
+msgstr ""
+
+#: data/data.cpp:267
+msgid "Thimphu"
+msgstr ""
+
+#: data/data.cpp:268
+#, fuzzy
+msgid "Tirana"
+msgstr "天卫五"
+
+#: data/data.cpp:269
+msgid "Tokyo"
+msgstr ""
+
+#: data/data.cpp:270
+msgid "Torshavn"
+msgstr ""
+
+#: data/data.cpp:271
+#, fuzzy
+msgid "Tripoli"
+msgstr "海卫一"
+
+#: data/data.cpp:272
+msgid "Tunis"
+msgstr ""
+
+#: data/data.cpp:273
+msgid "Ulaanbaatar"
+msgstr ""
+
+#: data/data.cpp:274
+msgid "Vaduz"
+msgstr ""
+
+#: data/data.cpp:275
+msgid "Valletta"
+msgstr ""
+
+#: data/data.cpp:276
+#, fuzzy
+msgid "The Valley"
+msgstr "Valles (峡谷)"
+
+#: data/data.cpp:277
+msgid "Vatican City"
+msgstr ""
+
+#: data/data.cpp:278 data/data.cpp:279
+msgid "Victoria"
+msgstr ""
+
+#: data/data.cpp:280
+msgid "Vienna"
+msgstr ""
+
+#: data/data.cpp:281
+msgid "Vientiane"
+msgstr ""
+
+#: data/data.cpp:282
+#, fuzzy
+msgid "Vilnius"
+msgstr "金星"
+
+#: data/data.cpp:283
+#, fuzzy
+msgid "Warsaw"
+msgstr "海卫七"
+
+#: data/data.cpp:284
+msgid "Washington D.C."
+msgstr ""
+
+#: data/data.cpp:285
+msgid "Wellington"
+msgstr ""
+
+#: data/data.cpp:286
+msgid "West Island"
+msgstr ""
+
+#: data/data.cpp:287
+msgid "Willemstad"
+msgstr ""
+
+#: data/data.cpp:288
+msgid "Windhoek"
+msgstr ""
+
+#: data/data.cpp:289
+msgid "Yamoussoukro"
+msgstr ""
+
+#: data/data.cpp:290
+msgid "Yaounde"
+msgstr ""
+
+#: data/data.cpp:291
+msgid "Yaren District"
+msgstr ""
+
+#: data/data.cpp:292
+msgid "Yerevan"
+msgstr ""
+
+#: data/data.cpp:293
+#, fuzzy
+msgid "Zagreb"
+msgstr "海洋"
+
+#: data/data.cpp:294
 msgid "Milky Way"
 msgstr "银河"
 
-#: data/data.cpp:55
+#: data/data.cpp:295
 msgid "SMC"
 msgstr "小麦哲伦星系"
 
-#: data/data.cpp:56
+#: data/data.cpp:296
 msgid "LMC"
 msgstr "大麦哲伦星系"
 
-#: data/data.cpp:57
+#: data/data.cpp:297
 msgid "Solar System Barycenter"
 msgstr "太阳系质心"
 
@@ -3258,9 +4274,6 @@ msgstr "12 月"
 
 #~ msgid "Error reading deep sky file\n"
 #~ msgstr "读出深层空间物体定义文件时出错\n"
-
-#~ msgid "Version"
-#~ msgstr "版本"
 
 #~ msgid "Constellation Borders"
 #~ msgstr "星座边界线"
