@@ -2,5 +2,5 @@
 
 celestia.pot-update: ../src/celestia/res/resource_strings.cpp
 
-../src/celestia/res/resource_strings.cpp:
-	./extract_resource_strings.pl < ../src/celestia/res/celestia.rc > ../src/celestia/res/resource_strings.cpp
+../src/celestia/win32/res/resource_strings.cpp: ../src/celestia/win32/res/celestia.rc
+	./extract_resource_strings.pl < ../src/celestia/win32/res/celestia.rc > ../src/celestia/win32/res/resource_strings.cpp
