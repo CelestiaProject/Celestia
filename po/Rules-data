@@ -1,5 +1,7 @@
 # Additional Makefile rule to extract object names from data files
 
+Makefile: Rules-data
+
 celestia.pot-update: ../data/data.cpp
 
 ../data/data.cpp: ../data/solarsys.ssc ../data/earth_locs.ssc ../data/world-capitals.ssc ../data/galaxies.dsc ../data/nearstars.stc
@@ -8,3 +10,8 @@ celestia.pot-update: ../data/data.cpp
 	grep \"Sol/Earth\" ../data/world-capitals.ssc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
 	egrep '\"Milky Way\"|\"LMC\"|\"SMC\"' ../data/galaxies.dsc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
 	egrep '\"Solar System Barycenter\"' ../data/nearstars.stc | awk -F\" '{ print "_(\"" $$2 "\");" }' >> ../data/data.cpp
+
+clean: clean-data
+
+clean-data:
+	rm -f ../data/data.cpp
