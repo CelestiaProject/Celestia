@@ -118,4 +118,4 @@ src/celestia/kde/rc.cpp
 
 data/data.cpp
 
-src/celestia/res/resource_strings.cpp
+src/celestia/win32/res/resource_strings.cpp
