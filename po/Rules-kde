@@ -1,7 +1,14 @@
 # Additional Makefile rule to extract strings from KDE's rc and ui files.
 
+Makefile: Rules-kde
+
 celestia.pot-update: ../src/celestia/kde/rc.cpp
 
 ../src/celestia/kde/rc.cpp:
 	extractrc ../src/celestia/kde/*/*.rc > ../src/celestia/kde/rc.cpp
 	extractrc ../src/celestia/kde/*.ui >> ../src/celestia/kde/rc.cpp
+
+clean: clean-kde
+
+clean-kde:
+	rm -f ../src/celestia/kde/rc.cpp
