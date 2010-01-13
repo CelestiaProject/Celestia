@@ -50,7 +50,7 @@ struct ei_traits<Part<MatrixType, Mode> > : ei_traits<MatrixType>
   typedef typename ei_unref<MatrixTypeNested>::type _MatrixTypeNested;
   enum {
     Flags = (_MatrixTypeNested::Flags & (HereditaryBits) & (~(PacketAccessBit | DirectAccessBit | LinearAccessBit))) | Mode,
-    CoeffReadCost = _MatrixTypeNested::CoeffReadCost
+    CoeffReadCost = _MatrixTypeNested::CoeffReadCost + ConditionalJumpCost
   };
 };
 

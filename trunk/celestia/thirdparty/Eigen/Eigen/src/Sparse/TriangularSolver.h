@@ -43,8 +43,11 @@ struct ei_solve_triangular_selector<Lhs,Rhs,LowerTriangular,RowMajor|IsSparse>
         {
           lastVal = it.value();
           lastIndex = it.index();
+          if(lastIndex == i)
+            break;
           tmp -= lastVal * other.coeff(lastIndex,col);
         }
+
         if (Lhs::Flags & UnitDiagBit)
           other.coeffRef(i,col) = tmp;
         else
