@@ -450,22 +450,31 @@ inline Scalar Quaternion<Scalar>::angularDistance(const Quaternion& other) const
 template <typename Scalar>
 Quaternion<Scalar> Quaternion<Scalar>::slerp(Scalar t, const Quaternion& other) const
 {
-  static const Scalar one = Scalar(1) - precision<Scalar>();
+  static const Scalar one = Scalar(1) - machine_epsilon<Scalar>();
   Scalar d = this->dot(other);
   Scalar absD = ei_abs(d);
+
+  Scalar scale0;
+  Scalar scale1;
+
   if (absD>=one)
-    return *this;
+  {
+    scale0 = Scalar(1) - t;
+    scale1 = t;
+  }
+  else
+  {
+    // theta is the angle between the 2 quaternions
+    Scalar theta = std::acos(absD);
+    Scalar sinTheta = ei_sin(theta);
 
-  // theta is the angle between the 2 quaternions
-  Scalar theta = std::acos(absD);
-  Scalar sinTheta = ei_sin(theta);
+    scale0 = ei_sin( ( Scalar(1) - t ) * theta) / sinTheta;
+    scale1 = ei_sin( ( t * theta) ) / sinTheta;
+    if (d<0)
+      scale1 = -scale1;
+  }
 
-  Scalar scale0 = ei_sin( ( Scalar(1) - t ) * theta) / sinTheta;
-  Scalar scale1 = ei_sin( ( t * theta) ) / sinTheta;
-  if (d<0)
-    scale1 = -scale1;
-
-  return Quaternion(scale0 * m_coeffs + scale1 * other.m_coeffs);
+  return Quaternion<Scalar>(scale0 * coeffs() + scale1 * other.coeffs());
 }
 
 // set from a rotation matrix

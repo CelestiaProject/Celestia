@@ -209,18 +209,47 @@ template<typename T, bool Align> inline void ei_conditional_aligned_delete(T *pt
   ei_conditional_aligned_free<Align>(ptr);
 }
 
-/** \internal \returns the number of elements which have to be skipped such that data are 16 bytes aligned */
-template<typename Scalar>
-inline static int ei_alignmentOffset(const Scalar* ptr, int maxOffset)
+/** \internal \returns the index of the first element of the array that is well aligned for vectorization.
+  *
+  * \param array the address of the start of the array
+  * \param size the size of the array
+  *
+  * \note If no element of the array is well aligned, the size of the array is returned. Typically,
+  * for example with SSE, "well aligned" means 16-byte-aligned. If vectorization is disabled or if the
+  * packet size for the given scalar type is 1, then everything is considered well-aligned.
+  *
+  * \note If the scalar type is vectorizable, we rely on the following assumptions: sizeof(Scalar) is a
+  * power of 2, the packet size in bytes is also a power of 2, and is a multiple of sizeof(Scalar). On the
+  * other hand, we do not assume that the array address is a multiple of sizeof(Scalar), as that fails for
+  * example with Scalar=double on certain 32-bit platforms, see bug #79.
+  *
+  * There is also the variant ei_first_aligned(const MatrixBase&, Integer) defined in Coeffs.h.
+  */
+template<typename Scalar, typename Integer>
+inline static Integer ei_alignmentOffset(const Scalar* array, Integer size)
 {
   typedef typename ei_packet_traits<Scalar>::type Packet;
-  const int PacketSize = ei_packet_traits<Scalar>::size;
-  const int PacketAlignedMask = PacketSize-1;
-  const bool Vectorized = PacketSize>1;
-  return Vectorized
-          ? std::min<int>( (PacketSize - (int((size_t(ptr)/sizeof(Scalar))) & PacketAlignedMask))
-                           & PacketAlignedMask, maxOffset)
-          : 0;
+  enum { PacketSize = ei_packet_traits<Scalar>::size,
+         PacketAlignedMask = PacketSize-1
+  };
+  
+  if(PacketSize==1)
+  {
+    // Either there is no vectorization, or a packet consists of exactly 1 scalar so that all elements
+    // of the array have the same aligment.
+    return 0;
+  }
+  else if(size_t(array) & (sizeof(Scalar)-1))
+  {
+    // There is vectorization for this scalar type, but the array is not aligned to the size of a single scalar.
+    // Consequently, no element of the array is well aligned.
+    return size;
+  }
+  else
+  {
+    return std::min<Integer>( (PacketSize - (Integer((size_t(array)/sizeof(Scalar))) & PacketAlignedMask))
+                           & PacketAlignedMask, size);
+  }
 }
 
 /** \internal
