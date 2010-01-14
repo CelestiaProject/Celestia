@@ -1,6 +1,6 @@
 // curveplot.cpp
 //
-// Copyright (C) 2009 Chris Laurel <claurel@gmail.com>.
+// Copyright (C) 2009-2010 Chris Laurel <claurel@gmail.com>.
 //
 // curveplot is a module for rendering curves in OpenGL at high precision. A
 // plot is a series of cubic curves. The curves are transformed
@@ -597,6 +597,8 @@ CurvePlot::addSample(const CurvePlotSample& sample)
 }
 
 
+/** Remove all samples before the specified time.
+  */
 void
 CurvePlot::removeSamplesBefore(double t)
 {
@@ -607,6 +609,8 @@ CurvePlot::removeSamplesBefore(double t)
 }
 
 
+/** Delete all samples after the specified time.
+  */
 void
 CurvePlot::removeSamplesAfter(double t)
 {
@@ -627,6 +631,14 @@ CurvePlot::setDuration(double duration)
 // Trajectory consists of segments, each of which is a cubic
 // polynomial.
 
+/** Draw a piecewise curve with transformation and frustum clipping.
+  *
+  * @param modelview an affine transformation that will be applied to the curve
+  * @param nearZ z coordinate of the near plane
+  * @param farZ z coordinate of the far plane
+  * @param viewFrustumPlaneNormals array of four normals (top, bottom, left, and right frustum planes)
+  * @param subdivisionThreshold
+  */
 void
 CurvePlot::render(const Transform3d& modelview,
                   double nearZ,
@@ -757,6 +769,16 @@ CurvePlot::render(const Transform3d& modelview,
 }
 
 
+/** Draw some range of a piecewise curve with transformation and frustum clipping.
+  *
+  * @param modelview an affine transformation that will be applied to the curve
+  * @param nearZ z coordinate of the near plane
+  * @param farZ z coordinate of the far plane
+  * @param viewFrustumPlaneNormals array of four normals (top, bottom, left, and right frustum planes)
+  * @param subdivisionThreshold
+  * @param startTime the beginning of the time interval
+  * @param endTime the end of the time interval
+  */
 void
 CurvePlot::render(const Transform3d& modelview,
                   double nearZ,
@@ -905,9 +927,21 @@ CurvePlot::render(const Transform3d& modelview,
 }
 
 
-/** Draw a curve with a fade effect. The curve is at full opacity at fadeStartTime
+/** Draw a piecewise cubic curve with transformation and frustum clipping. Only
+  * the part of the curve between startTime and endTime will be drawn. Additionally,
+  * the curve is drawn with a fade effect. The curve is at full opacity at fadeStartTime
   * and completely transparent at fadeEndTime. fadeStartTime may be greater than
   * fadeEndTime--this just means that the fade direction will be reversed.
+  *
+  * @param modelview an affine transformation that will be applied to the curve
+  * @param nearZ z coordinate of the near plane
+  * @param farZ z coordinate of the far plane
+  * @param viewFrustumPlaneNormals array of four normals (top, bottom, left, and right frustum planes)
+  * @param subdivisionThreshold
+  * @param startTime the beginning of the time interval
+  * @param endTime the end of the time interval
+  * @param fadeStartTime points on the curve before this time are drawn with full opacity
+  * @param fadeEndTime points on the curve after this time are not drawn
   */
 void
 CurvePlot::renderFaded(const Eigen::Transform3d& modelview,
