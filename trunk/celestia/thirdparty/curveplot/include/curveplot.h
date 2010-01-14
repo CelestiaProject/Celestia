@@ -1,6 +1,6 @@
 // curveplot.h
 //
-// Copyright (C) 2009 Chris Laurel <claurel@gmail.com>.
+// Copyright (C) 2009-2010 Chris Laurel <claurel@gmail.com>.
 //
 // curveplot is a module for rendering curves in OpenGL at high precision. A
 // plot is a series of cubic curves. The curves are transformed
