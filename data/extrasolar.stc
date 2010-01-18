@@ -449,6 +449,15 @@
 	AppMag 14.0
 }
 
+"CoRoT-6"
+{
+	RA 281.075000
+	Dec 6.663333
+	Distance 3900 # from spectral class and magnitude
+	SpectralType "F5V"
+	AppMag 13.9
+}
+
 1017334799 "CoRoT-7"
 {
 	RA 100.95625
@@ -456,6 +465,53 @@
 	Distance 460
 	SpectralType "K0V"
 	AppMag 11.73
+}
+
+# Kepler survey
+
+"Kepler-4"
+{
+	RA 285.615417
+	Dec 50.135833
+	Distance 1800
+	SpectralType "G0V"
+	AppMag 12.7
+}
+
+# "Kepler-5"
+# {
+#	RA 299.407083
+#	Dec 44.035
+#	Distance
+#	SpectralType
+#	AppMag
+# }
+
+# "Kepler-6"
+# {
+#	RA 296.837083
+#	Dec 48.240000
+#	Distance
+#	SpectralType
+#	AbsMag 4.1
+# }
+
+# "Kepler-7"
+# {
+#	RA 288.581667
+#	Dec 41.089722
+#	Distance
+#	SpectralType
+#	AbsMag 3.3
+# }
+
+"Kepler-8"
+{
+	RA 281.287917
+	Dec 42.451111
+	Distance 4335
+	SpectralType "F5V" # from mass, radius, temperature
+	AppMag 13.9
 }
 
 # HD stars without Hip numbers
