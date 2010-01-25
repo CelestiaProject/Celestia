@@ -796,7 +796,7 @@ CurvePlot::render(const Transform3d& modelview,
 
     // Linear search for the first sample
     unsigned int startSample = 0;
-    while (startSample < m_samples.size() - 1 && startTime < m_samples[startSample].t)
+    while (startSample < m_samples.size() - 1 && startTime > m_samples[startSample].t)
         startSample++;
 
     // Start at the first sample with time <= startTime
@@ -963,7 +963,7 @@ CurvePlot::renderFaded(const Eigen::Transform3d& modelview,
 
     // Linear search for the first sample
     unsigned int startSample = 0;
-    while (startSample < m_samples.size() - 1 && startTime < m_samples[startSample].t)
+    while (startSample < m_samples.size() - 1 && startTime > m_samples[startSample].t)
         startSample++;
 
     // Start at the first sample with time <= startTime
