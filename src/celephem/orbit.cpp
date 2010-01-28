@@ -27,6 +27,152 @@ using namespace std;
 static const double ORBITAL_VELOCITY_DIFF_DELTA = 1.0 / 1440.0;
 
 
+static Vector3d cubicInterpolate(const Vector3d& p0, const Vector3d& v0,
+                                 const Vector3d& p1, const Vector3d& v1,
+                                 double t)
+{
+    return p0 + (((2.0 * (p0 - p1) + v1 + v0) * (t * t * t)) +
+                ((3.0 * (p1 - p0) - 2.0 * v0 - v1) * (t * t)) +
+                (v0 * t));
+}
+
+
+/** Sample the orbit over the time range [ startTime, endTime ] using the
+  * default sampling parameters for the orbit type.
+  *
+  * Subclasses of orbit should override this method as necessary. The default
+  * implementation uses an adaptive sampling scheme with the following defaults:
+  *    tolerance: 1 km
+  *    start step: T / 1e5
+  *    min step: T / 1e7
+  *    max step: T / 100
+  *
+  * Where T is either the mean orbital period for periodic orbits or the valid
+  * time span for aperiodic trajectories.
+  */
+void Orbit::sample(double startTime, double endTime, OrbitSampleProc& proc) const
+{
+    double span = 0.0;
+    if (isPeriodic())
+    {
+        span = getPeriod();
+    }
+    else
+    {
+        double startValidInterval = 0.0;
+        double endValidInterval = 0.0;
+        getValidRange(startValidInterval, endValidInterval);
+        if (startValidInterval == endValidInterval)
+        {
+            span = endValidInterval - startValidInterval;
+        }
+        else
+        {
+            span = endTime - startTime;
+        }
+    }
+
+    AdaptiveSamplingParameters samplingParams;
+    samplingParams.tolerance = 1.0; // kilometers
+    samplingParams.maxStep = span / 100.0;
+    samplingParams.minStep = span / 1.0e7;
+    samplingParams.startStep = span / 1.0e5;
+
+    adaptiveSample(startTime, endTime, proc, samplingParams);
+}
+
+
+/** Adaptively sample the orbit over the range [ startTime, endTime ].
+  */
+void Orbit::adaptiveSample(double startTime, double endTime, OrbitSampleProc& proc, const AdaptiveSamplingParameters& samplingParams) const
+{
+    double startStepSize = samplingParams.startStep;
+    double maxStepSize   = samplingParams.maxStep;
+    double minStepSize   = samplingParams.minStep;
+    double tolerance     = samplingParams.tolerance;
+    double t = startTime;
+    const double stepFactor = 1.25;
+
+    Vector3d lastP = positionAtTime(t);
+    Vector3d lastV = velocityAtTime(t);
+    proc.sample(t, lastP, lastV);
+    int sampCount = 0;
+    int nTests = 0;
+
+    while (t < endTime)
+    {
+        // Make sure that we don't go past the end of the sample interval
+        maxStepSize = min(maxStepSize, endTime - t);
+        double dt = min(maxStepSize, startStepSize * 2.0);
+
+        Vector3d p1 = positionAtTime(t + dt);
+        Vector3d v1 = velocityAtTime(t + dt);
+
+        double tmid = t + dt / 2.0;
+        Vector3d pTest = positionAtTime(tmid);
+        Vector3d pInterp = cubicInterpolate(lastP, lastV * dt,
+                                            p1, v1 * dt,
+                                            0.5);
+        nTests++;
+
+        double positionError = (pInterp - pTest).norm();
+
+        // Error is greater than tolerance; decrease the step until the
+        // error is within the tolerance.
+        if (positionError > tolerance)
+        {
+            while (positionError > tolerance && dt > minStepSize)
+            {
+                dt /= stepFactor;
+
+                p1 = positionAtTime(t + dt);
+                v1 = velocityAtTime(t + dt);
+
+                tmid = t + dt / 2.0;
+                pTest = positionAtTime(tmid);
+                pInterp = cubicInterpolate(lastP, lastV * dt,
+                                           p1, v1 * dt,
+                                           0.5);
+                nTests++;
+
+                positionError = (pInterp - pTest).norm();
+            }
+        }
+        else
+        {
+            // Error is less than the tolerance; increase the step size until the
+            // tolerance is just exceeded.
+            while (positionError < tolerance && dt < maxStepSize)
+            {
+                dt *= stepFactor;
+
+                p1 = positionAtTime(t + dt);
+                v1 = velocityAtTime(t + dt);
+
+                tmid = t + dt / 2.0;
+                pTest = positionAtTime(tmid);
+                pInterp = cubicInterpolate(lastP, lastV * dt,
+                                           p1, v1 * dt,
+                                           0.5);
+                nTests++;
+
+                positionError = (pInterp - pTest).norm();
+            }
+        }
+
+        t = t + dt;
+        lastP = p1;
+        lastV = v1;
+
+        proc.sample(t, lastP, lastV);
+        sampCount++;
+    }
+
+    // Statistics for debugging
+    // clog << "Orbit samples: " << sampCount << ", nTests: " << nTests << endl;
+}
+
+
 EllipticalOrbit::EllipticalOrbit(double _pericenterDistance,
                                  double _eccentricity,
                                  double _inclination,
@@ -286,66 +432,6 @@ double EllipticalOrbit::getBoundingRadius() const
 }
 
 
-void EllipticalOrbit::sample(double startTime, double duration, int nSamples,
-                             OrbitSampleProc& proc) const
-{
-#if 0
-	{
-		// Sample uniformly in time
-		for (int i = 0; i < nSamples; i++)
-		{
-			double tsamp = startTime + duration / nSamples;
-			proc.sample(tsamp, positionAtTime(tsamp), velocityAtTime(tsamp));
-		}
-	}
-#endif
-    if (eccentricity >= 1.0 || 1)
-    {
-		// Sample uniformly in eccentric anomaly
-	    double t = startTime - epoch;
-		double meanMotion = 2.0 * PI / period;
-		double M0 = meanAnomalyAtEpoch + t * meanMotion;
-        double E0 = eccentricAnomaly(M0);
-        double dE = 2 * PI / (double) nSamples;
-
-        for (int i = 0; i < nSamples; i++)
-		{
-            // Compute the time tag for this sample
-			double E = E0 + dE * i;
-            double M = E - eccentricity * sin(E);                    // Mean anomaly from ecc anomaly
-			double tsamp = startTime + (M - M0) * period / (2 * PI); // Time from mean anomaly
-            proc.sample(tsamp, positionAtE(E), velocityAtE(E));
-		}
-    }
-    else
-    {
-        // Adaptive sampling of the orbit; more samples in regions of high curvature.
-        // nSamples is the number of samples that will be used for a perfectly circular
-        // orbit. Elliptical orbits will have regions of higher curvature thar require
-        // additional sample points.
-        double E = 0.0;
-        double dE = 2 * PI / (double) nSamples;
-        double w = (1 - square(eccentricity));
-        double M0 = E - eccentricity * sin(E);
-        
-        while (E < 2 * PI)
-        {
-            // Compute the time tag for this sample
-            double M = E - eccentricity * sin(E);            // Mean anomaly from ecc anomaly
-            double tsamp = startTime + (M - M0) * period / (2 * PI); // Time from mean anomaly
-            
-            proc.sample(tsamp, positionAtE(E), velocityAtE(E));
-
-            // Compute the curvature
-            double k = w * pow(square(sin(E)) + w * w * square(cos(E)), -1.5);
-
-            // Step amount based on curvature--constrain it so that we don't end up
-            // taking too many samples anywhere. Clamping the curvature to 20 effectively
-            // limits the numbers of samples to 3*nSamples
-            E += dE / max(min(k, 20.0), 1.0);
-        }
-    }
-}
 
 
 CachingOrbit::CachingOrbit() :
@@ -415,15 +501,6 @@ Vector3d CachingOrbit::computeVelocity(double jd) const
     Vector3d p1 = computePosition(jd + ORBITAL_VELOCITY_DIFF_DELTA);
 
 	return (p1 - p0) * (1.0 / ORBITAL_VELOCITY_DIFF_DELTA);
-}
-
-
-void CachingOrbit::sample(double start, double t, int nSamples,
-                          OrbitSampleProc& proc) const
-{
-    double dt = t / (double) nSamples;
-    for (int i = 0; i < nSamples; i++)
-        proc.sample(start + dt * i, positionAtTime(start + dt * i), velocityAtTime(start + dt * i));
 }
 
 
@@ -556,17 +633,16 @@ double MixedOrbit::getBoundingRadius() const
 }
 
 
-void MixedOrbit::sample(double t0, double t1, int nSamples,
-                        OrbitSampleProc& proc) const
+void MixedOrbit::sample(double startTime, double endTime, OrbitSampleProc& proc) const
 {
     Orbit* o;
-    if (t0 < begin)
+    if (startTime < begin)
         o = beforeApprox;
-    else if (t0 < end)
+    else if (startTime < end)
         o = primary;
     else
         o = afterApprox;
-    o->sample(t0, t1, nSamples, proc);
+    o->sample(startTime, endTime, proc);
 }
 
 
@@ -612,8 +688,10 @@ FixedOrbit::getBoundingRadius() const
 
 
 void
-FixedOrbit::sample(double, double, int, OrbitSampleProc&) const
+FixedOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc&) const
 {
+    // Don't add any samples. This will prevent a fixed trajectory from
+    // every being drawn when orbit visualization is enabled.
 }
 
 
@@ -650,7 +728,7 @@ double SynchronousOrbit::getBoundingRadius() const
 }
 
 
-void SynchronousOrbit::sample(double, double, int, OrbitSampleProc&) const
+void SynchronousOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc&) const
 {
     // Empty method--we never want to show a synchronous orbit.
 }
