@@ -11084,13 +11084,7 @@ class VSOP87Orbit : public CachingOrbit
             r += SumSeries(vsR[i], t) * T;
             T = t * T;
         }
-#if 0
-        // l and b are in units of 1e+8 radians
-        l *= 1.0e-8;
-        b *= 1.0e-8;
-        // r is in units of 1e-8 AU
-        r *= (KM_PER_AU / 100000000.0);
-#endif
+
         r *= KM_PER_AU;
 
         // Corrections for internal coordinate system
@@ -11101,6 +11095,28 @@ class VSOP87Orbit : public CachingOrbit
                         cos(b) * r,
                         -sin(l) * sin(b) * r);
     }
+
+
+    /** Custom implementation of sample() for VSOP87 orbits. The default
+      * implementation runs too slowly and produces too many samples.
+      */
+    void sample(double startTime, double endTime, OrbitSampleProc& proc) const
+    {
+        double span = getPeriod();
+
+        AdaptiveSamplingParameters samplingParams;
+        samplingParams.tolerance = 1.0; // kilometers
+
+        // startStep, minStep, and maxStep are all set to identical values,
+        // so the adaptive sampling function actuall behaves like uniform
+        // sampling.
+        samplingParams.startStep = span / 150.0;
+        samplingParams.minStep   = samplingParams.startStep;
+        samplingParams.maxStep   = samplingParams.startStep;
+
+        adaptiveSample(startTime, endTime, proc, samplingParams);
+    }
+
 };
 
 

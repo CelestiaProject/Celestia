@@ -10,6 +10,7 @@
 
 #define DEBUG_COALESCE               0
 #define DEBUG_SECONDARY_ILLUMINATION 0
+#define DEBUG_ORBIT_CACHE            0
 
 //#define DEBUG_HDR
 #ifdef DEBUG_HDR
@@ -32,6 +33,8 @@ std::ofstream hdrlog;
 #define EXPOSURE_HALFLIFE   0.4f
 //#define USE_BLOOM_LISTS
 #endif
+
+// #define ENABLE_SELF_SHADOW
 
 #ifndef _WIN32
 #ifndef TARGET_OS_MAC
@@ -237,6 +240,11 @@ Color Renderer::HorizonGridColor        (0.38f,  0.38f,  0.38f);
 Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
 
 Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
+
+
+#if ENABLE_SELF_SHADOW
+static FramebufferObject* shadowFbo = NULL;
+#endif
 
 
 // Some useful unit conversions
@@ -1133,6 +1141,18 @@ bool Renderer::init(GLContext* _context,
         genSceneTexture();
         genBlurTextures();
 #endif
+
+#if ENABLE_SELF_SHADOW
+        if (GLEW_EXT_framebuffer_object)
+        {
+            shadowFbo = new FramebufferObject(1024, 1024, FramebufferObject::DepthAttachment);
+            if (!shadowFbo->isValid())
+            {
+                clog << "Error creating shadow FBO.\n";
+            }
+        }
+#endif
+
         commonDataInitialized = true;
     }
 
@@ -1737,21 +1757,40 @@ static void disableSmoothLines()
 class OrbitSampler : public OrbitSampleProc
 {
 public:
-    CurvePlot* m_orbitPath;
+    vector<CurvePlotSample> samples;
 
-    OrbitSampler(CurvePlot* orbitPath) : m_orbitPath(orbitPath) {};
+    OrbitSampler()
+    {
+    }
+
     void sample(double t, const Vector3d& position, const Vector3d& velocity)
     {
         CurvePlotSample samp;
+        samp.t = t;
         samp.position = position;
         samp.velocity = velocity;
-        samp.t = t;
-        m_orbitPath->addSample(samp);
-    };
+        samples.push_back(samp);
+    }
+
+    void insertForward(CurvePlot* plot)
+    {
+        for (vector<CurvePlotSample>::const_iterator iter = samples.begin(); iter != samples.end(); ++iter)
+        {
+            plot->addSample(*iter);
+        }
+    }
+
+    void insertBackward(CurvePlot* plot)
+    {
+        for (vector<CurvePlotSample>::const_reverse_iterator iter = samples.rbegin(); iter != samples.rend(); ++iter)
+        {
+            plot->addSample(*iter);
+        }
+    }
 };
 
 
-void renderOrbitColor(const Body *body, bool selected, float opacity)
+Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
 {
     Color orbitColor;
 
@@ -1803,9 +1842,9 @@ void renderOrbitColor(const Body *body, bool selected, float opacity)
     }
 
 #ifdef USE_HDR
-    glColor(orbitColor, 1.f - opacity * orbitColor.alpha());
+    return Vector4f(orbitColor.red(), orbitColor.green(), orbitColor.blue(), 1.0f - opacity * orbitColor.alpha());
 #else
-    glColor(orbitColor, opacity * orbitColor.alpha());
+    return Vector4f(orbitColor.red(), orbitColor.green(), orbitColor.blue(), opacity * orbitColor.alpha());
 #endif
 }
 
@@ -1872,17 +1911,17 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         }
         else
         {
-            startTime = t - orbit->getPeriod() / 2.0;
+            startTime = t - orbit->getPeriod();
         }
 
         cachedOrbit = new CurvePlot();
         cachedOrbit->setLastUsed(frameCount);
 
-        OrbitSampler sampler(cachedOrbit);
+        OrbitSampler sampler;
         orbit->sample(startTime,
-                      orbit->getPeriod(),
-                      nSamples,
+                      startTime + orbit->getPeriod(),
                       sampler);
+        sampler.insertForward(cachedOrbit);
 
         // If the orbit cache is full, first try and eliminate some old orbits
         if (orbitCache.size() > OrbitCacheCullThreshold)
@@ -1909,42 +1948,73 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     if (cachedOrbit->empty())
         return;
 
+    //*** Orbit rendering parameters
+
+    // The 'window' is the interval of time for which the orbit will be drawn.
+
+    // End of the orbit window relative to the current simulation time. Units
+    // are orbital periods.
+    const double OrbitWindowEnd     = 0.5;
+
+    // Number of orbit periods shown. The orbit window is:
+    //    [ t + (OrbitWindowEnd - OrbitPeriodsShown) * T, t + OrbitWindowEnd * T ]
+    // where t is the current simulation time and T is the orbital period.
+    const double OrbitPeriodsShown  = 1.0;
+
+    // Fraction of the window over which the orbit fades from opaque to transparent.
+    // Fading is disabled when this value is zero.
+    const double LinearFadeFraction = 0.0;
+
+    // Extra size of the internal sample cache.
+    const double WindowSlack        = 0.2;
+
+    //***
+
     // 'Periodic' orbits are generally not strictly periodic because of perturbations
     // from other bodies. Here we update the trajectory samples to make sure that the
     // orbit covers a time range centered at the current time and covering a full revolution.
     if (orbit->isPeriodic())
     {
-        double startTime = t - orbit->getPeriod() / 2.0;
-        double endTime = t + orbit->getPeriod() / 2.0;
-        double dt = orbit->getPeriod() / detailOptions.orbitPathSamplePoints;
+        double period = orbit->getPeriod();
+        double endTime = t + period * OrbitWindowEnd;
+        double startTime = endTime - period * OrbitPeriodsShown;
 
-        if (startTime < cachedOrbit->startTime())
+        double currentWindowStart = cachedOrbit->startTime();
+        double currentWindowEnd = cachedOrbit->endTime();
+        double newWindowStart = startTime - period * WindowSlack;
+        double newWindowEnd = endTime + period * WindowSlack;
+
+        if (startTime < currentWindowStart)
         {
-            cachedOrbit->removeSamplesAfter(endTime + dt);
+            // Remove samples at the end of the time window
+            cachedOrbit->removeSamplesAfter(newWindowEnd);
 
-            double orbitStartTime = cachedOrbit->empty() ? endTime : cachedOrbit->startTime() - dt;
-            do {
-                CurvePlotSample sample;
-                sample.t = orbitStartTime;
-                sample.position = orbit->positionAtTime(orbitStartTime);
-                sample.velocity = orbit->velocityAtTime(orbitStartTime);
-                cachedOrbit->addSample(sample);
-                orbitStartTime -= dt;
-            } while (orbitStartTime > startTime);
+            // Trim the first sample (because it will be duplicated when we sample the orbit.)
+            cachedOrbit->removeSamplesBefore(cachedOrbit->startTime() * (1.0 + 1.0e-15));
+
+            // Add the new samples
+            OrbitSampler sampler;
+            orbit->sample(newWindowStart, min(currentWindowStart, newWindowEnd), sampler);
+            sampler.insertBackward(cachedOrbit);
+#if DEBUG_ORBIT_CACHE
+            clog << "new sample count: " << cachedOrbit->sampleCount() << endl;
+#endif
         }
-        else if (endTime > cachedOrbit->endTime())
+        else if (endTime > currentWindowEnd)
         {
-            cachedOrbit->removeSamplesBefore(startTime - dt);
+            // Remove samples at the beginning of the time window
+            cachedOrbit->removeSamplesBefore(newWindowStart);
 
-            double orbitEndTime = cachedOrbit->empty() ? startTime : cachedOrbit->endTime() + dt;
-            do {
-                CurvePlotSample sample;
-                sample.t = orbitEndTime;
-                sample.position = orbit->positionAtTime(orbitEndTime);
-                sample.velocity = orbit->velocityAtTime(orbitEndTime);
-                cachedOrbit->addSample(sample);
-                orbitEndTime += dt;
-            } while (orbitEndTime < endTime);
+            // Trim the last sample (because it will be duplicated when we sample the orbit.)
+            cachedOrbit->removeSamplesAfter(cachedOrbit->endTime() * (1.0 - 1.0e-15));
+
+            // Add the new samples
+            OrbitSampler sampler;
+            orbit->sample(max(currentWindowEnd, newWindowStart), newWindowEnd, sampler);
+            sampler.insertForward(cachedOrbit);
+#if DEBUG_ORBIT_CACHE
+            clog << "new sample count: " << cachedOrbit->sampleCount() << endl;
+#endif
         }
     }
 
@@ -1970,7 +2040,8 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         highlight = highlightObject.body() == body;
     else
         highlight = highlightObject.star() == orbitPath.star;
-    renderOrbitColor(body, highlight, orbitPath.opacity);
+    Vector4f orbitColor = renderOrbitColor(body, highlight, orbitPath.opacity);
+    glColor4fv(orbitColor.data());
 
 #ifdef STIPPLED_LINES
     glLineStipple(3, 0x5555);
@@ -1987,10 +2058,28 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
 
     if (orbit->isPeriodic())
     {
-        cachedOrbit->render(modelview,
-                            nearZ, farZ, viewFrustumPlaneNormals,
-                            subdivisionThreshold,
-                            t - orbit->getPeriod() / 2.0, t + orbit->getPeriod() / 2.0);
+        double period = orbit->getPeriod();
+        double windowEnd = t + period * OrbitWindowEnd;
+        double windowStart = windowEnd - period * OrbitPeriodsShown;
+        double windowDuration = windowEnd - windowStart;
+
+        if (LinearFadeFraction == 0.0f)
+        {
+            cachedOrbit->render(modelview,
+                                nearZ, farZ, viewFrustumPlaneNormals,
+                                subdivisionThreshold,
+                                windowStart, windowEnd);
+        }
+        else
+        {
+            cachedOrbit->renderFaded(modelview,
+                                     nearZ, farZ, viewFrustumPlaneNormals,
+                                     subdivisionThreshold,
+                                     windowStart, windowEnd,
+                                     orbitColor,
+                                     windowStart,
+                                     windowEnd - windowDuration * (1.0 - LinearFadeFraction));
+        }
     }
     else
     {
