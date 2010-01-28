@@ -34,14 +34,25 @@ class Orbit
 
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
-    virtual void sample(double start, double t,
-                        int nSamples, OrbitSampleProc& proc) const = 0;
+
+    virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
+
     virtual bool isPeriodic() const { return true; };
 
     // Return the time range over which the orbit is valid; if the orbit
     // is always valid, begin and end should be equal.
     virtual void getValidRange(double& begin, double& end) const
         { begin = 0.0; end = 0.0; };
+
+    struct AdaptiveSamplingParameters
+    {
+        double tolerance;
+        double startStep;
+        double minStep;
+        double maxStep;
+    };
+
+    void adaptiveSample(double startTime, double endTime, OrbitSampleProc& proc, const AdaptiveSamplingParameters& samplingParameters) const;
 };
 
 
@@ -57,7 +68,6 @@ class EllipticalOrbit : public Orbit
     virtual Eigen::Vector3d velocityAtTime(double) const;
     double getPeriod() const;
     double getBoundingRadius() const;
-    virtual void sample(double, double, int, OrbitSampleProc&) const;
 
  private:
     double eccentricAnomaly(double) const;
@@ -108,8 +118,6 @@ class CachingOrbit : public Orbit
     Eigen::Vector3d positionAtTime(double jd) const;
     Eigen::Vector3d velocityAtTime(double jd) const;
 
-    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
-
  private:
     mutable Eigen::Vector3d lastPosition;
     mutable Eigen::Vector3d lastVelocity;
@@ -135,8 +143,7 @@ class MixedOrbit : public Orbit
     virtual Eigen::Vector3d velocityAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
-    virtual void sample(double t0, double t1,
-                        int nSamples, OrbitSampleProc& proc) const;
+    virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
 
  private:
     Orbit* primary;
@@ -165,7 +172,7 @@ class SynchronousOrbit : public Orbit
     virtual Eigen::Vector3d positionAtTime(double jd) const;
     virtual double getPeriod() const;
     virtual double getBoundingRadius() const;
-    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
+    virtual void sample(double, double, OrbitSampleProc& proc) const;
 
  private:
     const Body& body;
@@ -187,7 +194,7 @@ class FixedOrbit : public Orbit
     virtual double getPeriod() const;
     virtual bool isPeriodic() const;
     virtual double getBoundingRadius() const;
-    virtual void sample(double, double, int, OrbitSampleProc&) const;
+    virtual void sample(double, double, OrbitSampleProc&) const;
 
  private:
     Eigen::Vector3d position;

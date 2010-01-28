@@ -21,6 +21,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <iomanip>
 
 using namespace Eigen;
 using namespace std;
@@ -76,7 +77,7 @@ public:
     bool isPeriodic() const;
     void getValidRange(double& begin, double& end) const;
 
-    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
+    virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
 
 private:
     vector<Sample<T> > samples;
@@ -392,7 +393,7 @@ template <typename T> Vector3d SampledOrbit<T>::computeVelocity(double jd) const
 }
 
 
-template <typename T> void SampledOrbit<T>::sample(double /* start */, double /* t */, int,
+template <typename T> void SampledOrbit<T>::sample(double /* startTime */, double /* endTime */,
                                                    OrbitSampleProc& proc) const
 {
     for (unsigned int i = 0; i < samples.size(); i++)
@@ -446,7 +447,7 @@ public:
     bool isPeriodic() const;
     void getValidRange(double& begin, double& end) const;
 
-    virtual void sample(double, double, int, OrbitSampleProc& proc) const;
+    virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
 
 private:
     vector<SampleXYZV<T> > samples;
@@ -492,7 +493,10 @@ template <typename T> void SampledOrbitXYZV<T>::addSample(double t, const Vector
 
 template <typename T> double SampledOrbitXYZV<T>::getPeriod() const
 {
-    return samples[samples.size() - 1].t - samples[0].t;
+    if (samples.empty())
+        return 0.0;
+    else
+        return samples[samples.size() - 1].t - samples[0].t;
 }
 
 
@@ -654,7 +658,7 @@ template <typename T> Vector3d SampledOrbitXYZV<T>::computeVelocity(double jd) c
 }
 
 
-template <typename T> void SampledOrbitXYZV<T>::sample(double /* start */, double /* t */, int,
+template <typename T> void SampledOrbitXYZV<T>::sample(double /* startTime */, double /* endTime */,
                                                        OrbitSampleProc& proc) const
 {
     for (typename vector<SampleXYZV<T> >::const_iterator iter = samples.begin();
