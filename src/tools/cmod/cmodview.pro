@@ -10,13 +10,15 @@ MOC_DIR = build
 HEADERS = \
     mainwindow.h \
     modelviewwidget.h \
-    convert3ds.h
+    convert3ds.h \
+    cmodops.h
 
 SOURCES = \
     mainwindow.cpp \
     cmodview.cpp \
     modelviewwidget.cpp \
-    convert3ds.cpp
+    convert3ds.cpp \
+    cmodops.cpp
 
 
 #### CMOD Mesh library ####
