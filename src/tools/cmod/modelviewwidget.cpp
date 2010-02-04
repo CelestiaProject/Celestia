@@ -16,25 +16,102 @@ using namespace cmod;
 using namespace Eigen;
 
 
+class MaterialLibrary
+{
+public:
+    MaterialLibrary(QGLWidget* glWidget,
+                    const QString& modelDirPath) :
+       m_glWidget(glWidget),
+       m_modelDirPath(modelDirPath)
+    {
+    }
+
+    ~MaterialLibrary()
+    {
+        flush();
+    }
+
+    GLuint loadTexture(const QString& fileName)
+    {
+        QString ext = QFileInfo(fileName).suffix().toLower();
+        if (ext == "dds")
+        {
+            return m_glWidget->bindTexture(fileName);
+        }
+        else
+        {
+            QPixmap texturePixmap(fileName);
+            return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA,
+                                           QGLContext::LinearFilteringBindOption | QGLContext::MipmapBindOption);
+        }
+    }
+
+
+    GLuint getTexture(const QString& resourceName)
+    {
+        if (m_textures.contains(resourceName))
+        {
+            return m_textures[resourceName];
+        }
+        else
+        {
+            if (m_glWidget)
+            {
+                GLuint texId = loadTexture(m_modelDirPath + "/" + resourceName);
+                if (texId == 0)
+                {
+                    // Try textures/medres...
+                    texId = loadTexture(m_modelDirPath + "/../textures/medres/" + resourceName);
+                }
+
+                std::cout << "Load " << resourceName.toAscii().data() << ", texId = " << texId << std::endl;
+                m_textures[resourceName] = texId;
+                return texId;
+            }
+        }
+
+        return 0;
+    }
+
+    void flush()
+    {
+        foreach (GLuint texId, m_textures)
+        {
+            if (texId != 0 && m_glWidget)
+            {
+                m_glWidget->deleteTexture(texId);
+            }
+        }
+    }
+
+private:
+    QGLWidget* m_glWidget;
+    QString m_modelDirPath;
+    QMap<QString, GLuint> m_textures;
+};
+
+
 ModelViewWidget::ModelViewWidget(QWidget *parent) :
    QGLWidget(parent),
    m_model(NULL),
    m_modelBoundingRadius(1.0),
    m_cameraPosition(Vector3d::Zero()),
    m_cameraOrientation(Quaterniond::Identity()),
-   m_renderStyle(NormalStyle)
+   m_renderStyle(NormalStyle),
+   m_materialLibrary(NULL)
 {
 }
 
 
 ModelViewWidget::~ModelViewWidget()
 {
+    delete m_materialLibrary;
     delete m_model;
 }
 
 
 void
-ModelViewWidget::setModel(cmod::Model* model)
+ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
 {
     if (m_model && m_model != model)
     {
@@ -42,6 +119,32 @@ ModelViewWidget::setModel(cmod::Model* model)
     }
     m_model = model;
 
+    if (m_materialLibrary)
+    {
+        delete m_materialLibrary;
+    }
+    m_materialLibrary = new MaterialLibrary(this, modelDirPath);
+
+    // Load materials
+    if (m_model != NULL)
+    {
+        for (unsigned int i = 0; i < m_model->getMaterialCount(); ++i)
+        {
+            const Material* material = m_model->getMaterial(i);
+            if (material->maps[Material::DiffuseMap])
+            {
+                m_materialLibrary->getTexture(QString(material->maps[Material::DiffuseMap]->source().c_str()));
+            }
+        }
+    }
+
+    update();
+}
+
+
+void
+ModelViewWidget::resetCamera()
+{
     AlignedBox<float, 3> bbox;
     if (m_model != NULL)
     {
@@ -54,8 +157,6 @@ ModelViewWidget::setModel(cmod::Model* model)
     m_modelBoundingRadius = bbox.max().norm();
     m_cameraPosition = m_modelBoundingRadius * Vector3d::UnitZ();
     m_cameraOrientation = Quaterniond::Identity();
-
-    update();
 }
 
 
@@ -128,7 +229,7 @@ ModelViewWidget::initializeGL()
 void
 ModelViewWidget::paintGL()
 {
-    glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
@@ -270,8 +371,52 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
 
 
 void
+ModelViewWidget::bindMaterial(const Material* material)
+{
+    Vector4f diffuse(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue(), material->opacity);
+    Vector4f specular(material->specular.red(), material->specular.green(), material->specular.blue(), 1.0f);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse.data());
+    glMaterialfv(GL_FRONT, GL_AMBIENT, diffuse.data());
+    glColor4fv(diffuse.data());
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular.data());
+    glMaterialfv(GL_FRONT, GL_SHININESS, &material->specularPower);
+
+    if (material->opacity < 1.0f)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(GL_FALSE);
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
+    }
+
+    GLuint baseTexId = 0;
+    if (material->maps[Material::DiffuseMap])
+    {
+        baseTexId = m_materialLibrary->getTexture(QString(material->maps[Material::DiffuseMap]->source().c_str()));
+    }
+
+    if (baseTexId != 0)
+    {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, baseTexId);
+    }
+    else
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+}
+
+
+void
 ModelViewWidget::renderModel(Model* model)
 {
+    Material defaultMaterial;
+    defaultMaterial.diffuse = Material::Color(1.0f, 1.0f, 1.0f);
+
     glEnable(GL_CULL_FACE);
     if (m_renderStyle == WireFrameStyle)
     {
@@ -291,19 +436,12 @@ ModelViewWidget::renderModel(Model* model)
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
             const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+            const Material* material = &defaultMaterial;
             if (group->materialIndex < model->getMaterialCount())
             {
-                const Material* material = model->getMaterial(group->materialIndex);
-                Vector4f diffuse(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue(), 1.0f);
-                Vector4f specular(material->specular.red(), material->specular.green(), material->specular.blue(), 1.0f);
-                glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse.data());
-                glMaterialfv(GL_FRONT, GL_AMBIENT, diffuse.data());
-                glColor4fv(diffuse.data());
-                glMaterialfv(GL_FRONT, GL_SPECULAR, specular.data());
-                glMaterialfv(GL_FRONT, GL_SHININESS, &material->specularPower);
-
-                glDisable(GL_TEXTURE_2D);
+                 material = model->getMaterial(group->materialIndex);
             }
+            bindMaterial(material);
 
             GLenum primitiveMode = 0;
             switch (group->prim)

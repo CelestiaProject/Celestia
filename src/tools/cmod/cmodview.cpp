@@ -28,9 +28,26 @@ main(int argc, char *argv[])
     format.setSamples(4);
     QGLFormat::setDefaultFormat(format);
 
+    QStringList arguments = app.arguments();
+    QString fileName;
+    if (arguments.length() > 1)
+    {
+        fileName = arguments.at(1);
+    }
+
     MainWindow window;
     window.resize(QSize(800, 600));
     window.show();
+
+    // If a file name was given on the command line, open it immediately.
+    if (!fileName.isEmpty())
+    {
+        window.openModel(fileName);
+    }
+
+    // Install an event filter so that the main window can take care of file
+    // open events.
+    app.installEventFilter(&window);
 
     return app.exec();
 }

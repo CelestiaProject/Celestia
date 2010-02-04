@@ -17,6 +17,8 @@
 #include <Eigen/Geometry>
 
 
+class MaterialLibrary;
+
 class ModelViewWidget : public QGLWidget
 {
 Q_OBJECT
@@ -24,11 +26,13 @@ public:
     ModelViewWidget(QWidget *parent);
     ~ModelViewWidget();
 
-    void setModel(cmod::Model* model);
+    void setModel(cmod::Model* model, const QString& modelDir);
     cmod::Model* model() const
     {
         return m_model;
     }
+
+    void resetCamera();
 
     enum RenderStyle
     {
@@ -53,6 +57,7 @@ protected:
 
 private:
     void renderModel(cmod::Model* model);
+    void bindMaterial(const cmod::Material* material);
 
 private:
     cmod::Model* m_model;
@@ -61,6 +66,8 @@ private:
     Eigen::Quaterniond m_cameraOrientation;
     QPoint m_lastMousePosition;
     RenderStyle m_renderStyle;
+
+    MaterialLibrary* m_materialLibrary;
 };
 
 #endif // _CMODVIEW_MODEL_VIEW_WIDGET_H_
