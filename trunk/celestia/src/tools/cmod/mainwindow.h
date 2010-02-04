@@ -14,6 +14,8 @@
 #include "modelviewwidget.h"
 #include <QMainWindow>
 #include <QString>
+#include <QLabel>
+
 
 class MainWindow : public QMainWindow
 {
@@ -29,16 +31,27 @@ public:
     }
 
     bool exportSupported(const QString& fileName) const;
+    void showModelStatistics();
+
+protected:
+    bool eventFilter(QObject* obj, QEvent* event);
 
 public slots:
     void openModel();
+    void openModel(const QString& fileName);
     void saveModel();
     void saveModelAs();
     void saveModel(const QString& saveFileName);
+    void revertModel();
     void setRenderStyle(QAction* action);
+
+    void generateNormals();
+    void generateTangents();
+    void uniquifyVertices();
 
 private:
     ModelViewWidget* m_modelView;
+    QLabel* m_statusBarLabel;
     QString m_modelFileName;
     QAction* m_saveAction;
     QAction* m_saveAsAction;
