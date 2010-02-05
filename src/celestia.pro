@@ -440,7 +440,6 @@ RESOURCES = \
 FORMS = \
     celestia/qt/addbookmark.ui \
     celestia/qt/newbookmarkfolder.ui \
-    celestia/qt/orbitdialog.ui \
     celestia/qt/organizebookmarks.ui \
     celestia/qt/preferences.ui
 
