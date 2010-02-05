@@ -26,6 +26,7 @@ using namespace std;
 
 // GLSL on Mac OS X appears to have a bug that precludes us from using structs
 // #define USE_GLSL_STRUCTS
+#define POINT_FADE 0
 
 ShaderManager g_ShaderManager;
 
@@ -3317,6 +3318,15 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                        light.color.green(),
                                        light.color.blue()) * light.irradiance;
         lights[i].direction = light.direction_obj;
+
+        // Include a phase-based normalization factor to prevent planets from appearing
+        // too dim when rendered with non-Lambertian photometric functions.
+        float cosPhaseAngle = light.direction_obj.dot(ls.eyeDir_obj);
+        if (props.lightModel == ShaderProperties::LunarLambertModel)
+        {
+            float photometricNormFactor = std::max(1.0f, 1.0f + cosPhaseAngle * 0.5f);
+            lightColor *= photometricNormFactor;
+        }
 
         if (props.usesShadows() ||
             props.usesFragmentLighting() ||

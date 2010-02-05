@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 #include <celutil/resmanager.h>
-#include <celengine/model.h>
+#include <celengine/geometry.h>
 
 
 class GeometryInfo : public ResourceInfo<Geometry>

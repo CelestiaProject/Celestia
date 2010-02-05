@@ -79,6 +79,21 @@ TDS_HEADERS = \
     cel3ds/3dsread.h
 
 
+#### CMOD Mesh library ####
+
+MODEL_SOURCES = \
+    celmodel/material.cpp \
+    celmodel/mesh.cpp \
+    celmodel/model.cpp \
+    celmodel/modelfile.cpp
+
+MODEL_HEADERS = \
+    celmodel/material.h \
+    celmodel/mesh.h \
+    celmodel/model.h \
+    celmodel/modelfile.h
+
+
 #### Texture font library ####
 
 TXF_SOURCES = \
@@ -152,10 +167,8 @@ ENGINE_SOURCES = \
     celengine/location.cpp \
     celengine/lodspheremesh.cpp \
     celengine/marker.cpp \
-    celengine/mesh.cpp \
     celengine/meshmanager.cpp \
-    celengine/model.cpp \
-    celengine/modelfile.cpp \
+    celengine/modelgeometry.cpp \
     celengine/multitexture.cpp \
     celengine/nebula.cpp \
     celengine/observer.cpp \
@@ -218,6 +231,7 @@ ENGINE_HEADERS = \
     celengine/frame.h \
     celengine/frametree.h \
     celengine/galaxy.h \
+    celengine/geometry.h \
     celengine/globular.h \
     celengine/glcontext.h \
     celengine/glshader.h \
@@ -226,10 +240,8 @@ ENGINE_HEADERS = \
     celengine/location.h \
     celengine/lodspheremesh.h \
     celengine/marker.h \
-    celengine/mesh.h \
     celengine/meshmanager.h \
-    celengine/model.h \
-    celengine/modelfile.h \
+    celengine/modelgeometry.h \
     celengine/multitexture.h \
     celengine/nebula.h \
     celengine/observer.h \
@@ -403,6 +415,7 @@ SOURCES = \
     $$MATH_SOURCES \
     $$TXF_SOURCES \
     $$TDS_SOURCES \
+    $$MODEL_SOURCES \
     $$EPHEM_SOURCES \
     $$ENGINE_SOURCES \
     $$APP_SOURCES \
@@ -414,6 +427,7 @@ HEADERS = \
     $$MATH_HEADERS \
     $$TXF_HEADERS \
     $$TDS_HEADERS \
+    $$MODEL_HEADERS \
     $$EPHEM_HEADERS \
     $$ENGINE_HEADERS \
     $$APP_HEADERS \
@@ -426,6 +440,7 @@ RESOURCES = \
 FORMS = \
     celestia/qt/addbookmark.ui \
     celestia/qt/newbookmarkfolder.ui \
+    celestia/qt/orbitdialog.ui \
     celestia/qt/organizebookmarks.ui \
     celestia/qt/preferences.ui
 
@@ -562,13 +577,16 @@ macx {
     system(cp -r ../extras-standard $$RESOURCES_DIR)
     #system(ls $$DESTDIR/$${TARGET}.app/Contents/Resources/CelestiaResources)
 
+    # Necessary with Qt 4.6
+    QMAKE_LFLAGS += -framework CoreFoundation -framework ApplicationServices
+
     ICON = ../macosx/celestia.icns
 
     INCLUDEPATH += ../macosx
 
-    #QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
-    QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
-    CONFIG += x86 ppc
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+    #QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
+    CONFIG += x86
     PRECOMPILED_HEADER += ../macosx/Util.h
     FRAMEWORKPATH = ../macosx/Frameworks
     LIBS -= -ljpeg

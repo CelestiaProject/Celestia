@@ -11,7 +11,6 @@
 #define _CELENGINE_SIMULATION_H_
 
 #include <celengine/texture.h>
-#include <celengine/mesh.h>
 #include <celengine/universe.h>
 #include <celengine/astro.h>
 #include <celengine/galaxy.h>

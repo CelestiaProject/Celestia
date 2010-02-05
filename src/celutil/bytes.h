@@ -7,8 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#ifndef _BYTES_H_
-#define _BYTES_H_
+#ifndef _CELUTIL_BYTES_H_
+#define _CELUTIL_BYTES_H_
 
 #ifndef _WIN32
 #ifndef TARGET_OS_MAC
@@ -16,7 +16,10 @@
 #endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
-#include <celutil/util.h>
+#ifndef COMPILE_TYPE_ASSERT
+#define COMPILE_TIME_ASSERT(pred) \
+    switch(0){case 0: case pred:;}
+#endif
 
 /* Use the system byteswap.h definitions if we have them */
 #ifdef HAVE_BYTESWAP_H
@@ -94,4 +97,4 @@ inline double bswap_double(double d)
 
 #endif
 
-#endif // _BYTES_H_
+#endif // _CELUTIL_BYTES_H_

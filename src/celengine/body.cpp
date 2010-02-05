@@ -13,7 +13,7 @@
 #include <celmath/mathlib.h>
 #include <celutil/util.h>
 #include <celutil/utf8.h>
-#include "mesh.h"
+#include "geometry.h"
 #include "meshmanager.h"
 #include "body.h"
 #include "atmosphere.h"

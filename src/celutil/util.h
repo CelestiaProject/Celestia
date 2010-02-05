@@ -16,9 +16,10 @@
 #include <iostream>
 #include <functional>
 
-// A little trickery to get something like a compile time assert in C++
+#ifndef COMPILE_TYPE_ASSERT
 #define COMPILE_TIME_ASSERT(pred) \
     switch(0){case 0: case pred:;}
+#endif
 
 // gettext / libintl setup
 #define _(string) gettext (string)
