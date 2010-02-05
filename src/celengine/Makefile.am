@@ -38,10 +38,8 @@ libcelengine_a_SOURCES = \
 	location.cpp \
 	lodspheremesh.cpp \
 	marker.cpp \
-	mesh.cpp \
 	meshmanager.cpp \
-	model.cpp \
-	modelfile.cpp \
+	modelgeometry.cpp \
 	multitexture.cpp \
 	nebula.cpp \
 	observer.cpp \
