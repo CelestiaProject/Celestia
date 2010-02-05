@@ -10,6 +10,9 @@
 		<Platform
 			Name="Win32"
 		/>
+		<Platform
+			Name="x64"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -85,6 +88,77 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include"
+				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC"
+				RuntimeLibrary="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="intl.lib user32.lib gdi32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib libjpeg.lib zlibd.lib libpngd.lib lua5.1.lib cspice.lib"
+				OutputFile="$(ProjectName).exe"
+				AdditionalLibraryDirectories=".\windows\lib\x86"
+				IgnoreDefaultLibraryNames="libcmt.lib"
+				GenerateDebugInformation="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
@@ -134,6 +208,81 @@
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+				EmbedManifest="true"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				OmitFramePointers="true"
+				AdditionalIncludeDirectories=".\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;&quot;.\windows\inc\lua-5.1&quot;;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\curveplot\include;.\thirdparty\glew\include"
+				PreprocessorDefinitions="CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC"
+				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="intl.lib user32.lib gdi32.lib comdlg32.lib comctl32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib winmm.lib vfw32.lib opengl32.lib glu32.lib libjpeg.lib zlib.lib libpng.lib lua5.1.lib cspice.lib"
+				OutputFile="$(ProjectName).exe"
+				AdditionalLibraryDirectories=".\windows\lib\x86"
+				IgnoreDefaultLibraryNames="libcmt.lib"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -435,19 +584,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\mesh.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\meshmanager.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\model.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\modelfile.cpp"
+					RelativePath=".\src\celengine\modelgeometry.cpp"
 					>
 				</File>
 				<File
@@ -755,6 +896,26 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="celmodel"
+				>
+				<File
+					RelativePath=".\src\celmodel\material.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celmodel\mesh.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celmodel\model.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celmodel\modelfile.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -861,6 +1022,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\celengine\geometry.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\celengine\glcontext.h"
 					>
 				</File>
@@ -897,19 +1062,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\mesh.h"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\meshmanager.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\model.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\modelfile.h"
+					RelativePath=".\src\celengine\modelgeometry.h"
 					>
 				</File>
 				<File
@@ -1502,6 +1659,26 @@
 				</File>
 				<File
 					RelativePath=".\src\celestia\win32\winviewo  ptsdlg.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="celmodel"
+				>
+				<File
+					RelativePath=".\src\celmodel\material.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celmodel\mesh.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celmodel\model.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\celmodel\modelfile.h"
 					>
 				</File>
 			</Filter>
