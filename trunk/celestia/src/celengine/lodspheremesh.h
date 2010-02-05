@@ -1,6 +1,7 @@
 // lodspheremesh.h
 // 
-// Copyright (C) 2001, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2001-2010, Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,11 +11,10 @@
 #ifndef CELENGINE_LODSPHEREMESH_H_
 #define CELENGINE_LODSPHEREMESH_H_
 
-#include <celmath/vecmath.h>
-#include <celmath/frustum.h>
-#include <celengine/mesh.h>
 #include <celengine/texture.h>
 #include <celengine/glcontext.h>
+#include <celmath/vecmath.h>
+#include <celmath/frustum.h>
 
 
 #define MAX_SPHERE_MESH_TEXTURES 6

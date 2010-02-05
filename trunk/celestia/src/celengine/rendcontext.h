@@ -1,6 +1,7 @@
 // rendcontext.h
 //
-// Copyright (C) 2004-2006, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-2010, Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -10,8 +11,8 @@
 #ifndef _CELENGINE_RENDCONTEXT_H_
 #define _CELENGINE_RENDCONTEXT_H_
 
-#include "mesh.h"
 #include "shadermanager.h"
+#include <celmodel/mesh.h>
 #include <Eigen/Geometry>
 
 
@@ -20,17 +21,17 @@ class RenderContext
  public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    RenderContext(const Mesh::Material*);
+    RenderContext(const cmod::Material*);
     RenderContext();
     virtual ~RenderContext() {};
 
-    virtual void makeCurrent(const Mesh::Material&) = 0;
-    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
-                                 void* vertexData) = 0;
-    virtual void drawGroup(const Mesh::PrimitiveGroup& group);
+    virtual void makeCurrent(const cmod::Material&) = 0;
+    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                                 const void* vertexData) = 0;
+    virtual void drawGroup(const cmod::Mesh::PrimitiveGroup& group);
 
-    const Mesh::Material* getMaterial() const;
-    void setMaterial(const Mesh::Material*);
+    const cmod::Material* getMaterial() const;
+    void setMaterial(const cmod::Material*);
     void lock() { locked = true; }
     void unlock() { locked = false; }
     bool isLocked() const { return locked; }
@@ -51,7 +52,7 @@ class RenderContext
     Eigen::Quaternionf getCameraOrientation() const;
     
  private:
-    const Mesh::Material* material;
+    const cmod::Material* material;
     bool locked;
     RenderPass renderPass;
     float pointScale;
@@ -68,17 +69,17 @@ class RenderContext
 class FixedFunctionRenderContext : public RenderContext
 {
  public:
-    FixedFunctionRenderContext(const Mesh::Material*);
+    FixedFunctionRenderContext(const cmod::Material*);
     FixedFunctionRenderContext();
     virtual ~FixedFunctionRenderContext();
 
-    virtual void makeCurrent(const Mesh::Material&);
-    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
-                                 void* vertexData);
+    virtual void makeCurrent(const cmod::Material&);
+    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                                 const void* vertexData);
     void setLighting(bool);
 
  private:
-    Mesh::BlendMode blendMode;
+    cmod::Material::BlendMode blendMode;
     bool specularOn;
     bool lightingEnabled;
 };
@@ -88,11 +89,11 @@ class VP_FP_RenderContext : public RenderContext
 {
  public:
     VP_FP_RenderContext();
-    VP_FP_RenderContext(const Mesh::Material*);
+    VP_FP_RenderContext(const cmod::Material*);
 
-    virtual void makeCurrent(const Mesh::Material&);
-    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
-                                 void* vertexData);
+    virtual void makeCurrent(const cmod::Material&);
+    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                                 const void* vertexData);
 };
 
 
@@ -100,11 +101,11 @@ class VP_Combiner_RenderContext : public RenderContext
 {
  public:
     VP_Combiner_RenderContext();
-    VP_Combiner_RenderContext(const Mesh::Material*);
+    VP_Combiner_RenderContext(const cmod::Material*);
 
-    virtual void makeCurrent(const Mesh::Material&);
-    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
-                                 void* vertexData);
+    virtual void makeCurrent(const cmod::Material&);
+    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                                 const void* vertexData);
 };
 
 
@@ -116,9 +117,9 @@ class GLSL_RenderContext : public RenderContext
     GLSL_RenderContext(const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
     virtual ~GLSL_RenderContext();
     
-    virtual void makeCurrent(const Mesh::Material&);
-    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
-                                 void* vertexData);
+    virtual void makeCurrent(const cmod::Material&);
+    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                                 const void* vertexData);
                  
     virtual void setLunarLambert(float);
     virtual void setAtmosphere(const Atmosphere*);
@@ -131,7 +132,7 @@ class GLSL_RenderContext : public RenderContext
  private:
     const LightingState& lightingState;
     const Atmosphere* atmosphere;
-    Mesh::BlendMode blendMode;
+    cmod::Material::BlendMode blendMode;
     float objRadius;
     Eigen::Quaternionf objOrientation;
     
@@ -148,16 +149,16 @@ class GLSLUnlit_RenderContext : public RenderContext
     GLSLUnlit_RenderContext(float _objRadius);
     virtual ~GLSLUnlit_RenderContext();
     
-    virtual void makeCurrent(const Mesh::Material&);
-    virtual void setVertexArrays(const Mesh::VertexDescription& desc,
-                                 void* vertexData);
+    virtual void makeCurrent(const cmod::Material&);
+    virtual void setVertexArrays(const cmod::Mesh::VertexDescription& desc,
+                                 const void* vertexData);
 
  private:
-     void initLightingEnvironment();
-     void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
+    void initLightingEnvironment();
+    void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
      
  private:
-    Mesh::BlendMode blendMode;
+    cmod::Material::BlendMode blendMode;
     float objRadius;
     
     ShaderProperties shaderProps;

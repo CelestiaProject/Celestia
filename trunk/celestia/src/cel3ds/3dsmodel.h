@@ -57,6 +57,14 @@ class M3DMaterial
 };
 
 
+class M3DMeshMaterialGroup
+{
+public:
+    std::string materialName;
+    std::vector<uint16> faces;
+};
+
+
 class M3DTriangleMesh
 {
  public:
@@ -84,16 +92,17 @@ class M3DTriangleMesh
     uint32 getSmoothingGroups(uint16) const;
     uint16 getSmoothingGroupCount() const;
 
-    std::string getMaterialName() const;
-    void setMaterialName(std::string);
+    void addMeshMaterialGroup(M3DMeshMaterialGroup* matGroup);
+    M3DMeshMaterialGroup* getMeshMaterialGroup(uint32) const;
+    uint32 getMeshMaterialGroupCount() const;
     
  private:
     std::vector<Eigen::Vector3f> points;
     std::vector<Eigen::Vector2f> texCoords;
     std::vector<uint16> faces;
     std::vector<uint32> smoothingGroups;
+    std::vector<M3DMeshMaterialGroup*> meshMaterialGroups;
     Eigen::Matrix4f matrix;
-    std::string materialName;
 };
 
 

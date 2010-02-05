@@ -356,18 +356,18 @@ bool processFaceArrayChunk(ifstream& in,
 
     if (chunkType == M3DCHUNK_MESH_MATERIAL_GROUP)
     {
-        // For now, we just assume that there is only one material group
-        // per triangle mesh, and that the material applies to all faces in
-        // the mesh.
-        string materialName = readString(in);
+        M3DMeshMaterialGroup* matGroup = new M3DMeshMaterialGroup();
+
+        matGroup->materialName = readString(in);
         uint16 nFaces = readUshort(in);
 
         for (uint16 i = 0; i < nFaces; i++)
         {
-            readUshort(in);
+            uint16 faceIndex = readUshort(in);
+            matGroup->faces.push_back(faceIndex);
         }
 
-        triMesh->setMaterialName(materialName);
+        triMesh->addMeshMaterialGroup(matGroup);
 
         return true;
     }
@@ -378,7 +378,6 @@ bool processFaceArrayChunk(ifstream& in,
         for (uint16 i = 0; i < nFaces; i++)
         {
             uint32 groups = (uint32) readInt(in);
-            //            cout << setw(8) << hex << setfill('0') << groups << dec << setw(0) << '\n';
             triMesh->addSmoothingGroups(groups);
         }
         return true;

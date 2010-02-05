@@ -190,14 +190,19 @@ uint16 M3DTriangleMesh::getSmoothingGroupCount() const
     return (uint16) (smoothingGroups.size());
 }
 
-string M3DTriangleMesh::getMaterialName() const
+void M3DTriangleMesh::addMeshMaterialGroup(M3DMeshMaterialGroup* matGroup)
 {
-    return materialName;
+    meshMaterialGroups.push_back(matGroup);
 }
 
-void M3DTriangleMesh::setMaterialName(string _materialName)
+M3DMeshMaterialGroup* M3DTriangleMesh::getMeshMaterialGroup(uint32 index) const
 {
-    materialName = _materialName;
+    return meshMaterialGroups[index];
+}
+
+uint32 M3DTriangleMesh::getMeshMaterialGroupCount() const
+{
+    return meshMaterialGroups.size();
 }
 
 

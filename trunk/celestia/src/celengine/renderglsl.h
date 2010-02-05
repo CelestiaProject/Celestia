@@ -76,7 +76,53 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const Eigen::Quaternionf& planetOrientation,
                                double tsec);
 
-                           
+
+class FramebufferObject
+{
+public:
+    enum
+    {
+        ColorAttachment = 0x1,
+        DepthAttachment = 0x2
+    };
+    FramebufferObject(GLuint width, GLuint height, unsigned int attachments);
+    ~FramebufferObject();
+
+    bool isValid() const;
+    GLuint width() const
+    {
+        return m_width;
+    }
+
+    GLuint height() const
+    {
+        return m_height;
+    }
+
+    GLuint colorTexture() const;
+    GLuint depthTexture() const;
+
+    bool bind();
+    bool unbind();
+
+
+
+private:
+    void generateColorTexture();
+    void generateDepthTexture();
+    void generateFbo(unsigned int attachments);
+    void cleanup();
+
+private:
+    GLuint m_width;
+    GLuint m_height;
+    GLuint m_colorTexId;
+    GLuint m_depthTexId;
+    GLuint m_fboId;
+    GLenum m_status;
+};
+
+
 #endif // _CELENGINE_RENDERGLSL_H_
                        
 

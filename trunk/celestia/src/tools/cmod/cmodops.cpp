@@ -859,8 +859,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
 
 Mesh*
-GenerateTangents(Mesh& mesh,
-                 bool weld)
+GenerateTangents(const Mesh& mesh, bool weld)
 {
     uint32 nVertices = mesh.getVertexCount();
 

@@ -9,11 +9,11 @@
 //
 // Perform various adjustments to a cmod file
 
-#include <celengine/modelfile.h>
-#include <celengine/tokenizer.h>
-#include <celengine/texmanager.h>
-#include <cel3ds/3dsread.h>
+#include <celmodel/modelfile.h>
+#include <celutil/basictypes.h>
 #include <celmath/mathlib.h>
+#include <Eigen/Core>
+#include <fstream>
 #include <cstring>
 #include <cassert>
 #include <cmath>
@@ -24,6 +24,8 @@
 #include <NvTriStrip.h>
 #endif
 
+using namespace cmod;
+using namespace Eigen;
 using namespace std;
 
 string inputFilename;
@@ -71,13 +73,22 @@ struct Vertex
 
 struct Face
 {
-    Vec3f normal;
+    Vector3f normal;
     uint32 i[3];    // vertex attribute indices
     uint32 vi[3];   // vertex point indices -- same as above unless welding
 };
 
 
-typedef std::binary_function<const Vertex&, const Vertex&, bool> VertexComparator;
+class VertexComparator : public std::binary_function<Vertex, Vertex, bool>
+{
+public:
+    virtual bool compare(const Vertex& a, const Vertex& b) const = 0;
+
+    bool operator()(const Vertex& a, const Vertex& b) const
+    {
+	return compare(a, b);
+    }
+};
 
 
 class FullComparator : public VertexComparator
@@ -88,7 +99,7 @@ public:
     {
     }
 
-    bool operator()(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const
     {
         const char* s0 = reinterpret_cast<const char*>(a.attributes);
         const char* s1 = reinterpret_cast<const char*>(b.attributes);
@@ -108,34 +119,34 @@ private:
 };
 
 
-class PointComparator : public VertexComparator
+class PointOrderingPredicate : public VertexComparator
 {
 public:
-    PointComparator()
+    PointOrderingPredicate()
     {
     }
 
-    bool operator()(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const
     {
-        const Point3f* p0 = reinterpret_cast<const Point3f*>(a.attributes);
-        const Point3f* p1 = reinterpret_cast<const Point3f*>(b.attributes);
+        const Vector3f* p0 = reinterpret_cast<const Vector3f*>(a.attributes);
+        const Vector3f* p1 = reinterpret_cast<const Vector3f*>(b.attributes);
 
-        if (p0->x < p1->x)
+        if (p0->x() < p1->x())
         {
             return true;
         }
-        else if (p0->x > p1->x)
+        else if (p0->x() > p1->x())
         {
             return false;
         }
         else
         {
-            if (p0->y < p1->y)
+            if (p0->y() < p1->y())
                 return true;
-            else if (p0->y > p1->y)
+            else if (p0->y() > p1->y())
                 return false;
             else
-                return p0->z < p1->z;
+                return p0->z() < p1->z();
         }
     }
 
@@ -144,62 +155,62 @@ private:
 };
 
 
-class PointTexCoordComparator : public VertexComparator
+class PointTexCoordOrderingPredicate : public VertexComparator
 {
 public:
-    PointTexCoordComparator(uint32 _posOffset,
-                            uint32 _texCoordOffset,
-                            bool _wrap) :
+    PointTexCoordOrderingPredicate(uint32 _posOffset,
+				   uint32 _texCoordOffset,
+				   bool _wrap) :
         posOffset(_posOffset),
         texCoordOffset(_texCoordOffset),
         wrap(_wrap)
     {
     }
 
-    bool operator()(const Vertex& a, const Vertex& b) const
+    bool compare(const Vertex& a, const Vertex& b) const
     {
         const char* adata = reinterpret_cast<const char*>(a.attributes);
         const char* bdata = reinterpret_cast<const char*>(b.attributes);
-        const Point3f* p0 = reinterpret_cast<const Point3f*>(adata + posOffset);
-        const Point3f* p1 = reinterpret_cast<const Point3f*>(bdata + posOffset);
-        const Point2f* tc0 = reinterpret_cast<const Point2f*>(adata + posOffset);
-        const Point2f* tc1 = reinterpret_cast<const Point2f*>(bdata + posOffset);
-        if (p0->x < p1->x)
+        const Vector3f* p0 = reinterpret_cast<const Vector3f*>(adata + posOffset);
+        const Vector3f* p1 = reinterpret_cast<const Vector3f*>(bdata + posOffset);
+        const Vector2f* tc0 = reinterpret_cast<const Vector2f*>(adata + texCoordOffset);
+        const Vector2f* tc1 = reinterpret_cast<const Vector2f*>(bdata + texCoordOffset);
+        if (p0->x() < p1->x())
         {
             return true;
         }
-        else if (p0->x > p1->x)
+        else if (p0->x() > p1->x())
         {
             return false;
         }
         else
         {
-            if (p0->y < p1->y)
+            if (p0->y() < p1->y())
             {
                 return true;
             }
-            else if (p0->y > p1->y)
+            else if (p0->y() > p1->y())
             {
                 return false;
             }
             else
             {
-                if (p0->z < p1->z)
+                if (p0->z() < p1->z())
                 {
                     return true;
                 }
-                else if (p0->z > p1->z)
+                else if (p0->z() > p1->z())
                 {
                     return false;
                 }
                 else
                 {
-                    if (tc0->x < tc1->x)
+                    if (tc0->x() < tc1->x())
                         return true;
-                    else if (tc0->x > tc1->x)
+                    else if (tc0->x() > tc1->x())
                         return false;
                     else
-                        return tc0->y < tc1->y;
+                        return tc0->y() < tc1->y();
                 }
             }
         }
@@ -209,6 +220,78 @@ private:
     uint32 posOffset;
     uint32 texCoordOffset;
     bool wrap;
+};
+
+
+bool approxEqual(float x, float y, float prec)
+{
+    return abs(x - y) <= prec * min(abs(x), abs(y));
+}
+
+
+class PointEquivalencePredicate : public VertexComparator
+{
+public:
+    PointEquivalencePredicate(uint32 _posOffset,
+                              float _tolerance) :
+        posOffset(_posOffset),
+        tolerance(_tolerance)
+    {
+    }
+
+    bool compare(const Vertex& a, const Vertex& b) const
+    {
+        const char* adata = reinterpret_cast<const char*>(a.attributes);
+        const char* bdata = reinterpret_cast<const char*>(b.attributes);
+        const Vector3f* p0 = reinterpret_cast<const Vector3f*>(adata + posOffset);
+        const Vector3f* p1 = reinterpret_cast<const Vector3f*>(bdata + posOffset);
+
+        return (approxEqual(p0->x(),  p1->x(), tolerance) &&
+                approxEqual(p0->y(),  p1->y(), tolerance) &&
+                approxEqual(p0->z(),  p1->z(), tolerance));
+    }
+		
+private:
+    uint32 posOffset;
+    float tolerance;
+};
+
+
+class PointTexCoordEquivalencePredicate : public VertexComparator
+{
+public:
+    PointTexCoordEquivalencePredicate(uint32 _posOffset,
+				      uint32 _texCoordOffset,
+				      bool _wrap,
+				      float _tolerance) :
+        posOffset(_posOffset),
+        texCoordOffset(_texCoordOffset),
+        wrap(_wrap),
+	tolerance(_tolerance)
+    {
+    }
+
+    bool compare(const Vertex& a, const Vertex& b) const
+    {
+        const char* adata = reinterpret_cast<const char*>(a.attributes);
+        const char* bdata = reinterpret_cast<const char*>(b.attributes);
+        const Vector3f* p0 = reinterpret_cast<const Vector3f*>(adata + posOffset);
+        const Vector3f* p1 = reinterpret_cast<const Vector3f*>(bdata + posOffset);
+        const Vector2f* tc0 = reinterpret_cast<const Vector2f*>(adata + texCoordOffset);
+        const Vector2f* tc1 = reinterpret_cast<const Vector2f*>(bdata + texCoordOffset);
+
+        return (approxEqual(p0->x(),  p1->x(), tolerance) &&
+                approxEqual(p0->y(),  p1->y(), tolerance) &&
+                approxEqual(p0->z(),  p1->z(), tolerance) &&
+                approxEqual(tc0->x(), tc1->x(), tolerance) &&
+                approxEqual(tc0->y(), tc1->y(), tolerance));
+    }
+		
+private:
+    uint32 posOffset;
+    uint32 texCoordOffset;
+    bool wrap;
+    float tolerance;
 };
 
 
@@ -229,8 +312,8 @@ bool equal(const Vertex& a, const Vertex& b, uint32 vertexSize)
 
 bool equalPoint(const Vertex& a, const Vertex& b)
 {
-    const Point3f* p0 = reinterpret_cast<const Point3f*>(a.attributes);
-    const Point3f* p1 = reinterpret_cast<const Point3f*>(b.attributes);
+    const Vector3f* p0 = reinterpret_cast<const Vector3f*>(a.attributes);
+    const Vector3f* p1 = reinterpret_cast<const Vector3f*>(b.attributes);
 
     return *p0 == *p1;
 }
@@ -358,7 +441,7 @@ bool uniquifyVertices(Mesh& mesh)
         if (i == 0 || !equal(vertices[i - 1], vertices[i], desc.stride))
             uniqueVertexCount++;
     }
-
+    
     // No work left to do if we couldn't eliminate any vertices
     if (uniqueVertexCount == nVertices)
         return true;
@@ -383,7 +466,6 @@ bool uniquifyVertices(Mesh& mesh)
     }
 
     // Replace the vertex data with the compacted data
-    delete mesh.getVertexData();
     mesh.setVertices(uniqueVertexCount, newVertexData);
 
     mesh.remapIndices(vertexMap);
@@ -392,7 +474,7 @@ bool uniquifyVertices(Mesh& mesh)
 }
 
 
-Point3f
+Vector3f
 getVertex(const void* vertexData,
           int positionOffset,
           uint32 stride,
@@ -400,11 +482,11 @@ getVertex(const void* vertexData,
 {
     const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + positionOffset);
     
-    return Point3f(fdata[0], fdata[1], fdata[2]);
+    return Vector3f(fdata[0], fdata[1], fdata[2]);
 }
 
 
-Point2f
+Vector2f
 getTexCoord(const void* vertexData,
             int texCoordOffset,
             uint32 stride,
@@ -412,11 +494,11 @@ getTexCoord(const void* vertexData,
 {
     const float* fdata = reinterpret_cast<const float*>(reinterpret_cast<const char*>(vertexData) + stride * index + texCoordOffset);
     
-    return Point2f(fdata[0], fdata[1]);
+    return Vector2f(fdata[0], fdata[1]);
 }
 
 
-Vec3f
+Vector3f
 averageFaceVectors(const vector<Face>& faces,
                    uint32 thisFace,
                    uint32* vertexFaces,
@@ -425,17 +507,17 @@ averageFaceVectors(const vector<Face>& faces,
 {
     const Face& face = faces[thisFace];
 
-    Vec3f v = Vec3f(0, 0, 0);
+    Vector3f v = Vector3f(0, 0, 0);
     for (uint32 i = 0; i < vertexFaceCount; i++)
     {
         uint32 f = vertexFaces[i];
-        float cosAngle = face.normal * faces[f].normal;
+        float cosAngle = face.normal.dot(faces[f].normal);
         if (f == thisFace || cosAngle > cosSmoothingAngle)
             v += faces[f].normal;
     }
 
-    if (v * v == 0.0f)
-        v = Vec3f(1.0f, 0.0f, 0.0f);
+    if (v.squaredNorm() == 0.0f)
+        v = Vector3f(1.0f, 0.0f, 0.0f);
     else
         v.normalize();
 
@@ -512,11 +594,12 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
 }
 
 
-template <typename T> void
+template<typename T, typename U> void
 joinVertices(vector<Face>& faces,
-             const void* vertexData,
-             const Mesh::VertexDescription& desc,
-             const T& comparator)
+	     const void* vertexData,
+	     const Mesh::VertexDescription& desc,
+	     const T& orderingPredicate,
+	     const U& equivalencePredicate)
 {
     // Don't do anything if we're given no data
     if (faces.size() == 0)
@@ -545,19 +628,20 @@ joinVertices(vector<Face>& faces,
     }
 
     // Sort the vertices so that identical ones will be ordered consecutively
-    sort(vertices.begin(), vertices.end(), comparator);
+    sort(vertices.begin(), vertices.end(), orderingPredicate);
 
     // Build the vertex merge map
     vector<uint32> mergeMap(nVertices);
     uint32 lastUnique = 0;
+    uint32 uniqueCount = 0;
     for (uint32 i = 0; i < nVertices; i++)
     {
-        if (i == 0 ||
-            comparator.operator()(vertices[i - 1], vertices[i]) ||
-            comparator.operator()(vertices[i], vertices[i - 1]))
-        {
+	if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
+	{
             lastUnique = i;
+	    uniqueCount++;
         }
+
         mergeMap[vertices[i].index] = vertices[lastUnique].index;
     }
 
@@ -692,12 +776,14 @@ generateNormals(Mesh& mesh,
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
-        Point3f p0 = getVertex(vertexData, posOffset, desc.stride, face.i[0]);
-        Point3f p1 = getVertex(vertexData, posOffset, desc.stride, face.i[1]);
-        Point3f p2 = getVertex(vertexData, posOffset, desc.stride, face.i[2]);
-        face.normal = cross(p1 - p0, p2 - p1);
-        if (face.normal * face.normal > 0.0f)
+        Vector3f p0 = getVertex(vertexData, posOffset, desc.stride, face.i[0]);
+        Vector3f p1 = getVertex(vertexData, posOffset, desc.stride, face.i[1]);
+        Vector3f p2 = getVertex(vertexData, posOffset, desc.stride, face.i[2]);
+        face.normal = (p1 - p0).cross(p2 - p1);
+        if (face.normal.squaredNorm() > 0.0f)
+        {
             face.normal.normalize();
+        }
     }
 
     // For each vertex, create a list of faces that contain it
@@ -716,7 +802,9 @@ generateNormals(Mesh& mesh,
     // as the attribute indices.
     if (weld)
     {
-        joinVertices(faces, vertexData, desc, PointComparator());
+        joinVertices(faces, vertexData, desc,
+                     PointOrderingPredicate(),
+                     PointEquivalencePredicate(0, 0.0f));
     }
     else
     {
@@ -757,7 +845,7 @@ generateNormals(Mesh& mesh,
     }
 
     // Compute the vertex normals by averaging
-    vector<Vec3f> vertexNormals(nFaces * 3);
+    vector<Vector3f> vertexNormals(nFaces * 3);
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
@@ -835,10 +923,29 @@ generateNormals(Mesh& mesh,
     for (i = 0; i < nFaces * 3; i++)
         indices[i] = i;
 
-    // TODO: This assumes that the mesh uses only one material.  Normal
-    // generation should really be done one primitive group at a time.
-    uint32 materialIndex = mesh.getGroup(0)->materialIndex;
-    newMesh->addGroup(Mesh::TriList, materialIndex, nFaces * 3, indices);
+    uint32 firstIndex = 0;
+    for (uint32 groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
+    {
+        const Mesh::PrimitiveGroup* group = mesh.getGroup(groupIndex);
+        unsigned int faceCount = 0;
+        
+        switch (group->prim)
+        {
+        case Mesh::TriList:
+	    faceCount = group->nIndices / 3;
+            break;
+        case Mesh::TriStrip:
+        case Mesh::TriFan:
+	    faceCount = group->nIndices - 2;
+	    break;
+        default:
+            assert(0);
+            break;
+        }
+
+	newMesh->addGroup(Mesh::TriList, mesh.getGroup(groupIndex)->materialIndex, faceCount * 3, indices + firstIndex);
+	firstIndex += faceCount * 3;
+    }
 
     // Clean up
     delete[] faceCounts;
@@ -941,21 +1048,21 @@ generateTangents(Mesh& mesh,
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
-        Point3f p0 = getVertex(vertexData, posOffset, desc.stride, face.i[0]);
-        Point3f p1 = getVertex(vertexData, posOffset, desc.stride, face.i[1]);
-        Point3f p2 = getVertex(vertexData, posOffset, desc.stride, face.i[2]);
-        Point2f tc0 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[0]);
-        Point2f tc1 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[1]);
-        Point2f tc2 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[2]);
-        float s1 = tc1.x - tc0.x;
-        float s2 = tc2.x - tc0.x;
-        float t1 = tc1.y - tc0.y;
-        float t2 = tc2.y - tc0.y;
+        Vector3f p0 = getVertex(vertexData, posOffset, desc.stride, face.i[0]);
+        Vector3f p1 = getVertex(vertexData, posOffset, desc.stride, face.i[1]);
+        Vector3f p2 = getVertex(vertexData, posOffset, desc.stride, face.i[2]);
+        Vector2f tc0 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[0]);
+        Vector2f tc1 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[1]);
+        Vector2f tc2 = getTexCoord(vertexData, texCoordOffset, desc.stride, face.i[2]);
+        float s1 = tc1.x() - tc0.x();
+        float s2 = tc2.x() - tc0.x();
+        float t1 = tc1.y() - tc0.y();
+        float t2 = tc2.y() - tc0.y();
         float a = s1 * t2 - s2 * t1;
         if (a != 0.0f)
             face.normal = (t2 * (p1 - p0) - t1 * (p2 - p0)) * (1.0f / a);
         else
-            face.normal = Vec3f(0.0f, 0.0f, 0.0f);
+            face.normal = Vector3f(0.0f, 0.0f, 0.0f);
     }
 
     // For each vertex, create a list of faces that contain it
@@ -973,8 +1080,10 @@ generateTangents(Mesh& mesh,
     // points and merge them.  Otherwise, the point indices will be the same
     // as the attribute indices.
     if (weld)
-    {
-        joinVertices(faces, vertexData, desc, PointTexCoordComparator(0, 0, true));
+    { 
+        joinVertices(faces, vertexData, desc,
+		     PointTexCoordOrderingPredicate(posOffset, texCoordOffset, true),
+		     PointTexCoordEquivalencePredicate(posOffset, texCoordOffset, true, 1.0e-5f));
     }
     else
     {
@@ -1015,7 +1124,7 @@ generateTangents(Mesh& mesh,
     }
 
     // Compute the vertex tangents by averaging
-    vector<Vec3f> vertexTangents(nFaces * 3);
+    vector<Vector3f> vertexTangents(nFaces * 3);
     for (f = 0; f < nFaces; f++)
     {
         Face& face = faces[f];
@@ -1091,10 +1200,29 @@ generateTangents(Mesh& mesh,
     for (i = 0; i < nFaces * 3; i++)
         indices[i] = i;
 
-    // TODO: This assumes that the mesh uses only one material.  Tangent
-    // generation should really be done one primitive group at a time.
-    uint32 materialIndex = mesh.getGroup(0)->materialIndex;
-    newMesh->addGroup(Mesh::TriList, materialIndex, nFaces * 3, indices);
+    uint32 firstIndex = 0;
+    for (uint32 groupIndex = 0; mesh.getGroup(groupIndex) != 0; ++groupIndex)
+    {
+        const Mesh::PrimitiveGroup* group = mesh.getGroup(groupIndex);
+        unsigned int faceCount = 0;
+        
+        switch (group->prim)
+        {
+        case Mesh::TriList:
+	    faceCount = group->nIndices / 3;
+            break;
+        case Mesh::TriStrip:
+        case Mesh::TriFan:
+	    faceCount = group->nIndices - 2;
+	    break;
+        default:
+            assert(0);
+            break;
+        }
+
+	newMesh->addGroup(Mesh::TriList, mesh.getGroup(groupIndex)->materialIndex, faceCount * 3, indices + firstIndex);
+	firstIndex += faceCount * 3;
+    }
 
     // Clean up
     delete[] faceCounts;
@@ -1132,8 +1260,7 @@ mergeModelMeshes(const Model& model)
 {
     vector<Mesh*> meshes;
 
-    uint32 i;
-    for (i = 0; model.getMesh(i) != NULL; i++)
+    for (uint32 i = 0; model.getMesh(i) != NULL; i++)
     {
         meshes.push_back(model.getMesh(i));
     }
@@ -1144,7 +1271,7 @@ mergeModelMeshes(const Model& model)
     Model* newModel = new Model();
 
     // Copy materials into the new model
-    for (i = 0; model.getMaterial(i) != NULL; i++)
+    for (uint32 i = 0; model.getMaterial(i) != NULL; i++)
     {
         newModel->addMaterial(model.getMaterial(i));
     }
@@ -1507,8 +1634,14 @@ int main(int argc, char* argv[])
     }
     else
     {
-        ofstream out(outputFilename.c_str(),
-                     outputBinary ? (ios::binary|ios::out) : ios::out);
+        ios_base::openmode openMode = ios::out;
+        if (outputBinary)
+        {
+            openMode |= ios::binary;
+        }
+        ofstream out(outputFilename.c_str(), openMode);
+        //ios::out | (outputBinary ? ios::binary : 0));
+
         if (!out.good())
         {
             cerr << "Error opening output file " << outputFilename << "\n";
