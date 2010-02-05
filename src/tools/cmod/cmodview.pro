@@ -56,4 +56,6 @@ INCLUDEPATH += ../../../thirdparty/glew/include
 
 macx {
     DEFINES += TARGET_OS_MAC
+    QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
+    CONFIG += x86 ppc
 }

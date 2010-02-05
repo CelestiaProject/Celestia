@@ -39,7 +39,7 @@ struct Face
 };
 
 
-extern cmod::Mesh* GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld);
+extern cmod::Mesh* GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance = 0.0f);
 extern cmod::Mesh* GenerateTangents(const cmod::Mesh& mesh, bool weld);
 extern bool UniquifyVertices(cmod::Mesh& mesh);
 extern cmod::Model* MergeModelMeshes(const cmod::Model& model);

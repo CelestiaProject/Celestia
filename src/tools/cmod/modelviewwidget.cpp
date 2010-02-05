@@ -155,7 +155,7 @@ ModelViewWidget::resetCamera()
     }
 
     m_modelBoundingRadius = bbox.max().norm();
-    m_cameraPosition = m_modelBoundingRadius * Vector3d::UnitZ();
+    m_cameraPosition = m_modelBoundingRadius * Vector3d::UnitZ() * 2.0;
     m_cameraOrientation = Quaterniond::Identity();
 }
 
@@ -230,7 +230,8 @@ void
 ModelViewWidget::paintGL()
 {
     glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDepthMask(GL_TRUE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -273,6 +274,12 @@ ModelViewWidget::paintGL()
     if (m_model)
     {
         renderModel(m_model);
+    }
+
+    GLenum errorCode = glGetError();
+    if (errorCode != GL_NO_ERROR)
+    {
+        std::cout << gluErrorString(errorCode) << std::endl;
     }
 }
 
@@ -375,11 +382,13 @@ ModelViewWidget::bindMaterial(const Material* material)
 {
     Vector4f diffuse(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue(), material->opacity);
     Vector4f specular(material->specular.red(), material->specular.green(), material->specular.blue(), 1.0f);
+    Vector4f emissive(material->emissive.red(), material->emissive.green(), material->emissive.blue(), 1.0f);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse.data());
     glMaterialfv(GL_FRONT, GL_AMBIENT, diffuse.data());
     glColor4fv(diffuse.data());
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular.data());
     glMaterialfv(GL_FRONT, GL_SHININESS, &material->specularPower);
+    glMaterialfv(GL_FRONT, GL_EMISSION, emissive.data());
 
     if (material->opacity < 1.0f)
     {
@@ -432,6 +441,14 @@ ModelViewWidget::renderModel(Model* model)
         const Mesh* mesh = model->getMesh(meshIndex);
 
         setVertexArrays(mesh->getVertexDescription(), mesh->getVertexData());
+        if (mesh->getVertexDescription().getAttribute(Mesh::Normal).format == Mesh::Float3)
+        {
+            glEnable(GL_LIGHTING);
+        }
+        else
+        {
+            glDisable(GL_LIGHTING);
+        }
 
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
@@ -444,6 +461,7 @@ ModelViewWidget::renderModel(Model* model)
             bindMaterial(material);
 
             GLenum primitiveMode = 0;
+            bool validMode = true;
             switch (group->prim)
             {
             case Mesh::TriList:
@@ -465,10 +483,11 @@ ModelViewWidget::renderModel(Model* model)
                 primitiveMode = GL_POINTS;
                 break;
             default:
+                validMode = false;
                 break;
             }
 
-            if (primitiveMode != 0)
+            if (validMode)
             {
                 glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
             }

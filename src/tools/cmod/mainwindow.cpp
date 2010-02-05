@@ -67,10 +67,12 @@ MainWindow::MainWindow() :
     QAction* generateNormalsAction = new QAction(tr("Generate &Normals..."), this);
     QAction* generateTangentsAction = new QAction(tr("Generate &Tangents..."), this);
     QAction* uniquifyVerticesAction = new QAction(tr("&Uniquify Vertices"), this);
+    QAction* mergeMeshesAction = new QAction(tr("&Merge Meshes"), this);
 
     operationsMenu->addAction(generateNormalsAction);
     operationsMenu->addAction(generateTangentsAction);
     operationsMenu->addAction(uniquifyVerticesAction);
+    operationsMenu->addAction(mergeMeshesAction);
     menuBar->addMenu(operationsMenu);
 
     setMenuBar(menuBar);
@@ -97,6 +99,7 @@ MainWindow::MainWindow() :
     connect(generateNormalsAction, SIGNAL(triggered()), this, SLOT(generateNormals()));
     connect(generateTangentsAction, SIGNAL(triggered()), this, SLOT(generateTangents()));
     connect(uniquifyVerticesAction, SIGNAL(triggered()), this, SLOT(uniquifyVertices()));
+    connect(mergeMeshesAction, SIGNAL(triggered()), this, SLOT(mergeMeshes()));
 }
 
 
@@ -382,8 +385,12 @@ MainWindow::generateNormals()
     formLayout->addRow(tr("Weld Tolerance"), toleranceEdit);
     layout->addLayout(formLayout);
 
-    smoothAngleEdit->setText("90");
-    toleranceEdit->setText("0.0");
+    QSettings settings;
+    double lastSmoothAngle = settings.value("SmoothAngle", 60.0).toDouble();
+    double lastTolerance = settings.value("WeldTolerance", 0.0).toDouble();
+
+    smoothAngleEdit->setText(QString::number((int) lastSmoothAngle));
+    toleranceEdit->setText(QString::number(lastTolerance));
 
     QDoubleValidator* angleValidator = new QDoubleValidator(smoothAngleEdit);
     smoothAngleEdit->setValidator(angleValidator);
@@ -417,7 +424,7 @@ MainWindow::generateNormals()
             Mesh* mesh = model->getMesh(i);
             Mesh* newMesh = NULL;
 
-            newMesh = GenerateNormals(*mesh, float(smoothAngle * 3.14159265 / 180.0), weldVertices);
+            newMesh = GenerateNormals(*mesh, float(smoothAngle * 3.14159265 / 180.0), weldVertices, weldTolerance);
             if (newMesh == NULL)
             {
                 cerr << "Error generating normals!\n";
@@ -430,6 +437,9 @@ MainWindow::generateNormals()
         }
 
         setModel(modelFileName(), newModel);
+
+        settings.setValue("SmoothAngle", smoothAngle);
+        settings.setValue("WeldTolerance", weldTolerance);
     }
 }
 
@@ -457,7 +467,8 @@ MainWindow::generateTangents()
     if (dialog.exec() == QDialog::Accepted)
     {
 
-    }}
+    }
+}
 
 
 void
@@ -478,3 +489,18 @@ MainWindow::uniquifyVertices()
     showModelStatistics();
     m_modelView->update();
 }
+
+
+void
+MainWindow::mergeMeshes()
+{
+    Model* model = m_modelView->model();
+    if (!model)
+    {
+        return;
+    }
+
+    Model* newModel = MergeModelMeshes(*model);
+    setModel(modelFileName(), newModel);
+}
+
