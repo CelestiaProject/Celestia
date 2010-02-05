@@ -541,8 +541,19 @@ augmentVertexDescription(Mesh::VertexDescription& desc,
 }
 
 
+/** Generate surface normals for a mesh. A new mesh with normals is returned, and
+  * the original mesh is unmodified.
+  *
+  * @param mesh the mesh to generate normals for
+  * @param smoothAngle maximum angle (in radians) between two faces that are
+  *                    treated as belonging to the same smooth surface patch
+  * @param weld true if vertices with identical positions should be treated
+  *             as the same during normal generation (typically should be true)
+  * @param weldTolerance maximum difference between positions that should be
+  *             considered identical during the weld step.
+  */
 cmod::Mesh*
-GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld)
+GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance)
 {
     uint32 nVertices = mesh.getVertexCount();
     float cosSmoothAngle = (float) cos(smoothAngle);
@@ -689,7 +700,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld)
     {
         JoinVertices(faces, vertexData, desc,
                      PointOrderingPredicate(),
-                     PointEquivalencePredicate(0, 0.0f));
+                     PointEquivalencePredicate(0, weldTolerance));
     }
     else
     {
@@ -829,12 +840,6 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld)
             assert(0);
             break;
         }
-
-        const char* vdata = reinterpret_cast<const char*>(newMesh->getVertexData());
-        Mesh::VertexAttribute natt = newMesh->getVertexDescription().getAttribute(Mesh::Normal);
-        unsigned int stride = newMesh->getVertexDescription().stride;
-        const Vector3f* nptr = reinterpret_cast<const Vector3f*>(vdata + stride * firstIndex + natt.offset);
-        cout << "norm: " << nptr->x() << ", " << nptr->y() << ", " << nptr->z() << endl;
 
         newMesh->addGroup(Mesh::TriList, mesh.getGroup(groupIndex)->materialIndex, faceCount * 3, indices + firstIndex);
         firstIndex += faceCount * 3;
@@ -1151,7 +1156,7 @@ addGroupWithOffset(Mesh& mesh,
 
 // Merge all meshes that share the same vertex description
 Model*
-mergeModelMeshes(const Model& model)
+MergeModelMeshes(const Model& model)
 {
     vector<Mesh*> meshes;
 

@@ -48,6 +48,7 @@ public slots:
     void generateNormals();
     void generateTangents();
     void uniquifyVertices();
+    void mergeMeshes();
 
 private:
     ModelViewWidget* m_modelView;
