@@ -27,13 +27,14 @@
 #include "shadermanager.h"
 #include "spheremesh.h"
 #include "lodspheremesh.h"
-#include "model.h"
+#include "geometry.h"
 #include "regcombine.h"
 #include "vertexprog.h"
 #include "texmanager.h"
 #include "meshmanager.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
+#include "modelgeometry.h"
 #include "vecgl.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
@@ -42,7 +43,7 @@
 #include <celutil/utf8.h>
 #include <celutil/util.h>
 
-
+using namespace cmod;
 using namespace Eigen;
 using namespace std;
 
@@ -319,14 +320,17 @@ void renderGeometry_GLSL(Geometry* geometry,
     // override all materials specified in the geometry file.
     if (texOverride != InvalidResource)
     {
-        Mesh::Material m;
-        m.diffuse = ri.color;
-        m.specular = ri.specularColor;
+        Material m;
+        m.diffuse = Material::Color(ri.color.red(), ri.color.green(), ri.color.blue());
+        m.specular = Material::Color(ri.specularColor.red(), ri.specularColor.green(), ri.specularColor.blue());
         m.specularPower = ri.specularPower;
-        m.maps[Mesh::DiffuseMap] = texOverride;
+
+        CelestiaTextureResource textureResource(texOverride);
+        m.maps[Material::DiffuseMap] = &textureResource;
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
+        m.maps[Material::DiffuseMap] = NULL; // prevent Material destructor from deleting the texture resource
     }
     else
     {
@@ -359,14 +363,17 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
     // override all materials specified in the model file.
     if (texOverride != InvalidResource)
     {
-        Mesh::Material m;
-        m.diffuse = ri.color;
-        m.specular = ri.specularColor;
+        Material m;
+        m.diffuse = Material::Color(ri.color.red(), ri.color.green(), ri.color.blue());
+        m.specular = Material::Color(ri.specularColor.red(), ri.specularColor.green(), ri.specularColor.blue());
         m.specularPower = ri.specularPower;
-        m.maps[Mesh::DiffuseMap] = texOverride;
+
+        CelestiaTextureResource textureResource(texOverride);
+        m.maps[Material::DiffuseMap] = &textureResource;
         rc.setMaterial(&m);
         rc.lock();
         geometry->render(rc, tsec);
+        m.maps[Material::DiffuseMap] = NULL; // prevent Material destructor from deleting the texture resource
     }
     else
     {
@@ -725,3 +732,238 @@ void renderRings_GLSL(RingSystem& rings,
 
     glUseProgramObjectARB(0);
 }
+
+
+
+/*! Render a mesh object
+ *  Parameters:
+ *    tsec : animation clock time in seconds
+ */
+void renderGeometryShadow_GLSL(Geometry* geometry,
+                              FramebufferObject* shadowFbo,
+                              const RenderInfo& ri,
+                              const LightingState& ls,
+                              float geometryScale,
+                              const Quaternionf& planetOrientation,
+                              double tsec)
+{
+    glDisable(GL_LIGHTING);
+
+    shadowFbo->bind();
+    glViewport(0, 0, shadowFbo->width(), shadowFbo->height());
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Write only to the depth buffer
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glDepthMask(GL_TRUE);
+
+    // Set up the camera for drawing from the light source direction
+
+    // Render backfaces only in order to reduce self-shadowing artifacts
+    glCullFace(GL_FRONT);
+
+    GLSL_RenderContext rc(ls, geometryScale, planetOrientation);
+
+    rc.setPointScale(ri.pointScale);
+
+    int lightIndex = 0;
+    Vector3f viewDir = -ls.lights[lightIndex].direction_obj;
+    Vector3f upDir = viewDir.unitOrthogonal();
+    Vector3f rightDir = upDir.cross(viewDir);
+
+
+    glUseProgramObjectARB(0);
+
+    geometry->render(rc, tsec);
+
+    shadowFbo->unbind();
+
+    // Re-enable the color buffer
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+}
+
+
+
+
+FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int attachments) :
+    m_width(width),
+    m_height(height),
+    m_colorTexId(0),
+    m_depthTexId(0),
+    m_fboId(0),
+    m_status(GL_FRAMEBUFFER_UNSUPPORTED_EXT)
+{
+    if (attachments != 0)
+    {
+        generateFbo(attachments);
+    }
+}
+
+
+FramebufferObject::~FramebufferObject()
+{
+    cleanup();
+}
+
+
+bool
+FramebufferObject::isValid() const
+{
+    return m_status == GL_FRAMEBUFFER_COMPLETE_EXT;
+}
+
+
+GLuint
+FramebufferObject::colorTexture() const
+{
+    return m_colorTexId;
+}
+
+
+GLuint
+FramebufferObject::depthTexture() const
+{
+    return m_depthTexId;
+}
+
+
+void
+FramebufferObject::generateColorTexture()
+{
+    // Create and bind the texture
+    glGenTextures(1, &m_colorTexId);
+    glBindTexture(GL_TEXTURE_2D, m_colorTexId);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Clamp to edge
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    // Set the texture dimensions
+    // Do we need to set GL_DEPTH_COMPONENT24 here?
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+    // Unbind the texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+void
+FramebufferObject::generateDepthTexture()
+{
+    // Create and bind the texture
+    glGenTextures(1, &m_depthTexId);
+    glBindTexture(GL_TEXTURE_2D, m_depthTexId);
+
+    // Only nearest sampling is appropriate for depth textures
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Clamp to edge
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    // Set the texture dimensions
+    // Do we need to set GL_DEPTH_COMPONENT24 here?
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+
+    // Unbind the texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+void
+FramebufferObject::generateFbo(unsigned int attachments)
+{
+    // Create the FBO
+    glGenFramebuffersEXT(1, &m_fboId);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
+
+    glReadBuffer(GL_NONE);
+
+    if ((attachments & ColorAttachment) != 0)
+    {
+        generateColorTexture();
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexId, 0);
+        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
+        {
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+            cleanup();
+            return;
+        }
+    }
+    else
+    {
+        // Depth-only rendering; no color buffer.
+        glDrawBuffer(GL_NONE);
+    }
+
+    if ((attachments & DepthAttachment) != 0)
+    {
+        generateDepthTexture();
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, m_depthTexId, 0);
+        m_status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        if (m_status != GL_FRAMEBUFFER_COMPLETE_EXT)
+        {
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+            cleanup();
+            return;
+        }
+    }
+    else
+    {
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
+    }
+
+    // Restore default frame buffer
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+}
+
+
+// Delete all GL objects associated with this framebuffer object
+void
+FramebufferObject::cleanup()
+{
+    if (m_fboId != 0)
+    {
+        glDeleteFramebuffersEXT(1, &m_fboId);
+    }
+
+    if (m_colorTexId != 0)
+    {
+        glDeleteTextures(1, &m_colorTexId);
+    }
+
+    if (m_depthTexId != 0)
+    {
+        glDeleteTextures(1, &m_depthTexId);
+    }
+}
+
+
+bool
+FramebufferObject::bind()
+{
+    if (isValid())
+    {
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboId);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+bool
+FramebufferObject::unbind()
+{
+    // Restore default frame buffer
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    return true;
+}
+

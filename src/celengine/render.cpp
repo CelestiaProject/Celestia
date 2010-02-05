@@ -51,7 +51,7 @@ std::ofstream hdrlog;
 #include "shadermanager.h"
 #include "spheremesh.h"
 #include "lodspheremesh.h"
-#include "model.h"
+#include "geometry.h"
 #include "regcombine.h"
 #include "vertexprog.h"
 #include "texmanager.h"
@@ -62,6 +62,7 @@ std::ofstream hdrlog;
 #include "frametree.h"
 #include "timelinephase.h"
 #include "skygrid.h"
+#include "modelgeometry.h"
 #include <celutil/debug.h>
 #include <celmath/frustum.h>
 #include <celmath/distance.h>
@@ -80,6 +81,7 @@ std::ofstream hdrlog;
 #include <iomanip>
 #include "eigenport.h"
 
+using namespace cmod;
 using namespace Eigen;
 using namespace std;
 
@@ -5015,7 +5017,7 @@ static void renderModelDefault(Geometry* geometry,
                                ResourceHandle texOverride)
 {
     FixedFunctionRenderContext rc;
-    Mesh::Material m;
+    Material m;
 
     rc.setLighting(lit);
 
@@ -5033,16 +5035,19 @@ static void renderModelDefault(Geometry* geometry,
 
     if (ri.baseTex != NULL)
     {
-        m.diffuse = ri.color;
-        m.specular = ri.specularColor;
+        m.diffuse = Material::Color(ri.color.red(), ri.color.green(), ri.color.blue());
+        m.specular = Material::Color(ri.specularColor.red(), ri.specularColor.green(), ri.specularColor.blue());
         m.specularPower = ri.specularPower;
-        m.maps[Mesh::DiffuseMap] = texOverride;
+
+        CelestiaTextureResource textureResource(texOverride);
+        m.maps[Material::DiffuseMap] = &textureResource;
+
         rc.setMaterial(&m);
         rc.lock();
     }
 
     geometry->render(rc);
-    if (geometry->usesTextureType(Mesh::EmissiveMap))
+    if (geometry->usesTextureType(Material::EmissiveMap))
     {
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
@@ -5055,6 +5060,7 @@ static void renderModelDefault(Geometry* geometry,
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
+    m.maps[Material::DiffuseMap] = NULL; // prevent Material destructor from deleting the texture resource
 
     // Reset the material
     float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

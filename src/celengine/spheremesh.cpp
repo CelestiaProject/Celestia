@@ -14,6 +14,7 @@
 
 #include "spheremesh.h"
 #include <celmath/mathlib.h>
+#include <celutil/basictypes.h>
 #include <GL/glew.h>
 #include <cmath>
 

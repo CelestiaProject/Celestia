@@ -153,16 +153,36 @@ MainWindow::showModelStatistics()
     Model* model = m_modelView->model();
     if (model)
     {
+        // Count triangles and vertices in the mesh
         unsigned int vertexCount = 0;
+        unsigned int triangleCount = 0;
         for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
         {
-            vertexCount += model->getMesh(meshIndex)->getVertexCount();
+            const Mesh* mesh = model->getMesh(meshIndex);
+            vertexCount += mesh->getVertexCount();
+            for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
+            {
+                const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+                switch (group->prim)
+                {
+                case Mesh::TriList:
+                    triangleCount += group->nIndices / 3;
+                    break;
+                case Mesh::TriFan:
+                case Mesh::TriStrip:
+                    triangleCount += group->nIndices - 2;
+                    break;
+                default:
+                    break;
+                }
+            }
         }
 
-        m_statusBarLabel->setText(tr("Meshes: %1, Materials: %2, Vertices: %3").
+        m_statusBarLabel->setText(tr("Meshes: %1, Materials: %2, Vertices: %3, Triangles: %4").
                                   arg(model->getMeshCount()).
                                   arg(model->getMaterialCount()).
-                                  arg(vertexCount));
+                                  arg(vertexCount).
+                                  arg(triangleCount));
     }
     else
     {
@@ -447,6 +467,12 @@ MainWindow::generateNormals()
 void
 MainWindow::generateTangents()
 {
+    Model* model = m_modelView->model();
+    if (!model)
+    {
+        return;
+    }
+
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Generate Surface Tangents"));
     QVBoxLayout* layout = new QVBoxLayout(&dialog);
@@ -464,9 +490,43 @@ MainWindow::generateTangents()
     connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
     connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
+    QSettings settings;
+    double lastTolerance = settings.value("WeldTolerance", 0.0).toDouble();
+    toleranceEdit->setText(QString::number(lastTolerance));
+
     if (dialog.exec() == QDialog::Accepted)
     {
+        double weldTolerance = toleranceEdit->text().toDouble();
+        bool weldVertices = true;
 
+        Model* newModel = new Model();
+
+        // Copy materials
+        for (unsigned int i = 0; model->getMaterial(i) != NULL; i++)
+        {
+            newModel->addMaterial(cloneMaterial(model->getMaterial(i)));
+        }
+
+        for (unsigned int i = 0; model->getMesh(i) != NULL; i++)
+        {
+            Mesh* mesh = model->getMesh(i);
+            Mesh* newMesh = NULL;
+
+            newMesh = GenerateTangents(*mesh, weldVertices);
+            if (newMesh == NULL)
+            {
+                cerr << "Error generating normals!\n";
+                // TODO: Clone the mesh and add it to the model
+            }
+            else
+            {
+                newModel->addMesh(newMesh);
+            }
+        }
+
+        setModel(modelFileName(), newModel);
+
+        settings.setValue("WeldTolerance", weldTolerance);
     }
 }
 
