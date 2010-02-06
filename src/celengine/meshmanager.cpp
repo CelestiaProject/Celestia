@@ -193,13 +193,14 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
              << model->getPrimitiveCount() << _(" primitives, ")
              << originalMaterialCount << _(" materials ")
              << "(" << model->getMaterialCount() << _(" unique)\n");
+
+        return new ModelGeometry(model);
     }
     else
     {
-        cerr << _("Error loading model '") << filename << "'\n";
+        clog << _("Error loading model '") << filename << "'\n";
+        return NULL;
     }
-
-    return new ModelGeometry(model);
 }
 
 
