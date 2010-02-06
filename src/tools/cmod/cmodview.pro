@@ -59,3 +59,11 @@ macx {
     QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
     CONFIG += x86 ppc
 }
+
+win32-g++ {
+    # Workaround for g++ / Windows bug where requested stack
+    # alignment is ignored. Without this, using fixed-size
+    # vectorizable Eigen structures (like Vector4f) will cause
+    # alignment assertions.
+    QMAKE_CXXFLAGS += -mincoming-stack-boundary=2
+}
