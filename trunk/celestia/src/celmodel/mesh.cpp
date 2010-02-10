@@ -245,6 +245,16 @@ Mesh::getGroup(unsigned int index) const
 }
 
 
+Mesh::PrimitiveGroup*
+Mesh::getGroup(unsigned int index)
+{
+    if (index >= groups.size())
+        return NULL;
+    else
+        return groups[index];
+}
+
+
 unsigned int
 Mesh::addGroup(PrimitiveGroup* group)
 {
@@ -350,7 +360,7 @@ Mesh::aggregateByMaterial()
 
 
 bool
-Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& distance) const
+Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, PickResult* result) const
 {
     double maxDistance = 1.0e30;
     double closest = maxDistance;
@@ -379,6 +389,7 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& dist
             (nIndices >= 3) &&
             !(primType == TriList && nIndices % 3 != 0))
         {
+            unsigned int primitiveIndex = 0;
             index32 index = 0;
             index32 i0 = (*iter)->indices[0];
             index32 i1 = (*iter)->indices[1];
@@ -423,7 +434,15 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& dist
                             double s0 = (m11 * q0 - m01 * q1) * d;
                             double s1 = (m00 * q1 - m10 * q0) * d;
                             if (s0 >= 0.0 && s1 >= 0.0 && s0 + s1 <= 1.0)
+                            {
                                 closest = t;
+                                if (result)
+                                {
+                                    result->group = *iter;
+                                    result->primitiveIndex = primitiveIndex;
+                                    result->distance = closest;
+                                }
+                            }
                         }
                     }
                 }
@@ -461,82 +480,28 @@ Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& dist
                     }
                 }
 
+                primitiveIndex++;
+
             } while (index < nIndices);
         }
     }
 
-    if (closest != maxDistance)
-    {
-        distance = closest;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return closest != maxDistance;
 }
 
 
-#if 0
-void
-Mesh::render(const std::vector<const Material*>& materials,
-             RenderContext& rc) const
+bool
+Mesh::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& distance) const
 {
-    // The first time the mesh is rendered, we will try and place the
-    // vertex data in a vertex buffer object and potentially get a huge
-    // rendering performance boost.  This can consume a great deal of
-    // memory, since we're duplicating the vertex data.  TODO: investigate
-    // the possibility of deleting the original data.  We can always map
-    // read-only later on for things like picking, but this could be a low
-    // performance path.
-    if (!vbInitialized && isVBOSupported())
+    PickResult result;
+    bool hit = pick(rayOrigin, rayDirection, &result);
+    if (hit)
     {
-        vbInitialized = true;
-
-        if (nVertices * vertexDesc.stride > MinVBOSize)
-        {
-            glGenBuffersARB(1, &vbObject);
-            if (vbObject != 0)
-            {
-                glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
-                glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                                     nVertices * vertexDesc.stride,
-                                     vertices,
-                                     GL_STATIC_DRAW_ARB);
-            }
-        }
+        distance = result.distance;
     }
 
-    if (vbObject != 0)
-    {
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbObject);
-        rc.setVertexArrays(vertexDesc, NULL);
-    }
-    else
-    {
-        rc.setVertexArrays(vertexDesc, vertices);
-    }
-
-    unsigned int lastMaterial = ~0u;
-
-    // Iterate over all primitive groups in the mesh
-    for (vector<PrimitiveGroup*>::const_iterator iter = groups.begin();
-         iter != groups.end(); iter++)
-    {
-        // Set up the material
-        const Material* mat = NULL;
-        unsigned int materialIndex = (*iter)->materialIndex;
-        if (materialIndex != lastMaterial && materialIndex < materials.size())
-            mat = materials[materialIndex];
-
-        rc.setMaterial(mat);
-        rc.drawGroup(**iter);
-    }
-
-    if (vbObject != 0)
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    return hit;
 }
-#endif
 
 
 AlignedBox<float, 3>
@@ -591,11 +556,6 @@ Mesh::transform(const Vector3f& translation, float scale)
     {
         const Vector3f tv = (Map<Vector3f>(reinterpret_cast<float*>(vdata)) + translation) * scale;
         Map<Vector3f>(reinterpret_cast<float*>(vdata)) = tv;
-#if CELVEC
-        reinterpret_cast<float*>(vdata)[0] = tv.x();
-        reinterpret_cast<float*>(vdata)[1] = tv.y();
-        reinterpret_cast<float*>(vdata)[2] = tv.z();
-#endif
     }
 
     // Point sizes need to be scaled as well
@@ -725,4 +685,13 @@ Mesh::getVertexAttributeSize(VertexAttributeFormat fmt)
     default:
         return 0;
     }
+}
+
+
+Mesh::PickResult::PickResult() :
+    mesh(NULL),
+    group(NULL),
+    primitiveIndex(0),
+    distance(-1.0)
+{
 }
