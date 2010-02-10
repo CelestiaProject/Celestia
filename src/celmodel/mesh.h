@@ -136,6 +136,17 @@ class Mesh
         unsigned int nIndices;
     };
 
+    class PickResult
+    {
+    public:
+        PickResult();
+
+        Mesh* mesh;
+        PrimitiveGroup* group;
+        unsigned int primitiveIndex;
+        double distance;
+    };
+
     Mesh();
     ~Mesh();
 
@@ -144,6 +155,7 @@ class Mesh
     const VertexDescription& getVertexDescription() const;
 
     const PrimitiveGroup* getGroup(unsigned int index) const;
+    PrimitiveGroup* getGroup(unsigned int index);
     unsigned int addGroup(PrimitiveGroup* group);
     unsigned int addGroup(PrimitiveGroupType prim,
                           unsigned int materialIndex,
@@ -164,6 +176,7 @@ class Mesh
     const std::string& getName() const;
     void setName(const std::string&);
 
+    bool pick(const Eigen::Vector3d& origin, const Eigen::Vector3d& direction, PickResult* result) const;
     bool pick(const Eigen::Vector3d& origin, const Eigen::Vector3d& direction, double& distance) const;
 
     Eigen::AlignedBox<float, 3> getBoundingBox() const;

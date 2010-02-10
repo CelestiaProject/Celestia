@@ -132,30 +132,56 @@ Model::addMesh(Mesh* m)
 
 
 bool
-Model::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& distance) const
+Model::pick(const Eigen::Vector3d& rayOrigin,
+            const Eigen::Vector3d& rayDirection,
+            Mesh::PickResult* result) const
 {
     double maxDistance = 1.0e30;
     double closest = maxDistance;
+    Mesh::PickResult closestResult;
 
     for (vector<Mesh*>::const_iterator iter = meshes.begin();
          iter != meshes.end(); iter++)
     {
-        double d = maxDistance;
-        if ((*iter)->pick(rayOrigin, rayDirection, d) && d < closest)
+        Mesh::PickResult result;
+        if ((*iter)->pick(rayOrigin, rayDirection, &result))
         {
-            closest = d;
+            if (result.distance < closest)
+            {
+                closestResult = result;
+                closestResult.mesh = *iter;
+                closest = result.distance;
+            }
         }
     }
 
     if (closest != maxDistance)
     {
-        distance = closest;
+        if (result)
+        {
+            *result = closestResult;
+        }
         return true;
     }
     else
     {
         return false;
     }
+
+}
+
+
+bool
+Model::pick(const Vector3d& rayOrigin, const Vector3d& rayDirection, double& distance) const
+{
+    Mesh::PickResult result;
+    bool hit = pick(rayOrigin, rayDirection, &result);
+    if (hit)
+    {
+        distance = result.distance;
+    }
+
+    return hit;
 }
 
 
@@ -432,25 +458,3 @@ Model::sortMeshes(const MeshComparator& comparator)
     // Sort the meshes so that completely opaque ones are first
     sort(meshes.begin(), meshes.end(), MeshComparatorAdapter(comparator));
 }
-
-
-#if 0
-void
-Model::loadTextures()
-{
-    for (vector<const Material*>::const_iterator iter = materials.begin();
-         iter != materials.end(); iter++)
-    {
-        const Mesh::Material* m = *iter;
-
-        if (m->maps[Material::DiffuseMap] != InvalidResource)
-            GetTextureManager()->find(m->maps[Material::DiffuseMap]);
-        if (m->maps[Material::NormalMap] != InvalidResource)
-            GetTextureManager()->find(m->maps[Material::NormalMap]);
-        if (m->maps[Material::SpecularMap] != InvalidResource)
-            GetTextureManager()->find(m->maps[Material::SpecularMap]);
-        if (m->maps[Material::EmissiveMap] != InvalidResource)
-            GetTextureManager()->find(m->maps[Material::EmissiveMap]);
-    }
-}
-#endif
