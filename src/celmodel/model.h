@@ -68,14 +68,25 @@ class Model
      */
     unsigned int addMesh(Mesh* mesh);
 
-    /*! Find the closest intersection between the ray (given
+    /** Find the closest intersection between the ray (given
+     *  by origin and direction) and the model. If the ray
+     *  intersects the model, return true and fill in the
+     *  pick result record. If the result record is NULL, it
+     *  ignored, and the function just computes whether or
+     *  not the ray intersected the model.
+     */
+    bool pick(const Eigen::Vector3d& rayOrigin,
+              const Eigen::Vector3d& rayDirection,
+              Mesh::PickResult* result) const;
+
+    /** Find the closest intersection between the ray (given
      *  by origin and direction) and the model. If the ray
      *  intersects the model, return true and set distance;
      *  otherwise return false and leave distance unmodified.
      */
     bool pick(const Eigen::Vector3d& rayOrigin,
               const Eigen::Vector3d& rayDirection,
-              double& distance) const;
+              double& distance) const;    
 
     void transform(const Eigen::Vector3f& translation, float scale);
 
