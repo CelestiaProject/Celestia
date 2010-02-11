@@ -12,6 +12,7 @@
 #define _CMODVIEW_MODEL_VIEW_WIDGET_H_
 
 #include <QGLWidget>
+#include <QSet>
 #include <celmodel/model.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -43,14 +44,23 @@ public:
     };
 
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent* event);
+
+    void select(const Eigen::Vector2f& point);
+    QSet<cmod::Mesh::PrimitiveGroup*> selection()
+    {
+        return m_selection;
+    }
 
     void setRenderStyle(RenderStyle style);
     RenderStyle renderStyle() const
     {
         return m_renderStyle;
     }
+
+    Eigen::Transform3d cameraTransform() const;
 
 protected:
     void initializeGL();
@@ -59,6 +69,7 @@ protected:
 
 private:
     void renderModel(cmod::Model* model);
+    void renderSelection(cmod::Model* model);
     void bindMaterial(const cmod::Material* material);
 
 private:
@@ -67,9 +78,12 @@ private:
     Eigen::Vector3d m_cameraPosition;
     Eigen::Quaterniond m_cameraOrientation;
     QPoint m_lastMousePosition;
+    QPoint m_mouseDownPosition;
     RenderStyle m_renderStyle;
 
     MaterialLibrary* m_materialLibrary;
+
+    QSet<cmod::Mesh::PrimitiveGroup*> m_selection;
 };
 
 #endif // _CMODVIEW_MODEL_VIEW_WIDGET_H_
