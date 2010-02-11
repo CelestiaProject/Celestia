@@ -10,6 +10,7 @@
 
 #include <QtGui>
 #include "mainwindow.h"
+#include "materialwidget.h"
 #include "convert3ds.h"
 #include "cmodops.h"
 #include <cel3ds/3dsread.h>
@@ -68,11 +69,13 @@ MainWindow::MainWindow() :
     QAction* generateTangentsAction = new QAction(tr("Generate &Tangents..."), this);
     QAction* uniquifyVerticesAction = new QAction(tr("&Uniquify Vertices"), this);
     QAction* mergeMeshesAction = new QAction(tr("&Merge Meshes"), this);
+    QAction* editMaterialAction = new QAction(tr("&Edit Material"), this);
 
     operationsMenu->addAction(generateNormalsAction);
     operationsMenu->addAction(generateTangentsAction);
     operationsMenu->addAction(uniquifyVerticesAction);
     operationsMenu->addAction(mergeMeshesAction);
+    operationsMenu->addAction(editMaterialAction);
     menuBar->addMenu(operationsMenu);
 
     setMenuBar(menuBar);
@@ -100,6 +103,7 @@ MainWindow::MainWindow() :
     connect(generateTangentsAction, SIGNAL(triggered()), this, SLOT(generateTangents()));
     connect(uniquifyVerticesAction, SIGNAL(triggered()), this, SLOT(uniquifyVertices()));
     connect(mergeMeshesAction, SIGNAL(triggered()), this, SLOT(mergeMeshes()));
+    connect(editMaterialAction, SIGNAL(triggered()), this, SLOT(editMaterial()));
 }
 
 
@@ -564,3 +568,30 @@ MainWindow::mergeMeshes()
     setModel(modelFileName(), newModel);
 }
 
+
+void
+MainWindow::editMaterial()
+{
+    QDialog dialog(this);
+
+    MaterialWidget* materialWidget = new MaterialWidget(&dialog);
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget(materialWidget);
+
+    if (!m_modelView->selection().isEmpty())
+    {
+        QSetIterator<Mesh::PrimitiveGroup*> iter(m_modelView->selection());
+        Mesh::PrimitiveGroup* selectedGroup = iter.next();
+        const Material* material = m_modelView->model()->getMaterial(selectedGroup->materialIndex);
+        if (material)
+        {
+            materialWidget->setMaterial(*material);
+        }
+    }
+
+    dialog.setLayout(layout);
+    dialog.resize(350, 250);
+
+    dialog.show();
+    dialog.exec();
+}

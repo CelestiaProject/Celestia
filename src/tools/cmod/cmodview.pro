@@ -11,14 +11,16 @@ HEADERS = \
     mainwindow.h \
     modelviewwidget.h \
     convert3ds.h \
-    cmodops.h
+    cmodops.h \
+    materialwidget.h
 
 SOURCES = \
     mainwindow.cpp \
     cmodview.cpp \
     modelviewwidget.cpp \
     convert3ds.cpp \
-    cmodops.cpp
+    cmodops.cpp \
+    materialwidget.cpp
 
 
 #### CMOD Mesh library ####
