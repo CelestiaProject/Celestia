@@ -11,10 +11,13 @@
 #include <GL/glew.h>
 #include "modelviewwidget.h"
 #include <QtOpenGL>
+#include <Eigen/LU>
 
 using namespace cmod;
 using namespace Eigen;
 
+static const float VIEWPORT_FOV = 45.0;
+static const double PI = 3.1415926535897932;
 
 class MaterialLibrary
 {
@@ -36,7 +39,12 @@ public:
         QString ext = QFileInfo(fileName).suffix().toLower();
         if (ext == "dds")
         {
-            return m_glWidget->bindTexture(fileName);
+            GLuint texId = m_glWidget->bindTexture(fileName);
+            // Qt doesn't seem to enable mipmap filtering automatically
+            // TODO: Check whether the texture has mipmaps:
+            //    glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, &maxLevel);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            return texId;
         }
         else
         {
@@ -125,6 +133,8 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
     }
     m_materialLibrary = new MaterialLibrary(this, modelDirPath);
 
+    m_selection.clear();
+
     // Load materials
     if (m_model != NULL)
     {
@@ -154,7 +164,7 @@ ModelViewWidget::resetCamera()
         }
     }
 
-    m_modelBoundingRadius = bbox.max().norm();
+    m_modelBoundingRadius = std::max(bbox.max().norm(), bbox.min().norm());
     m_cameraPosition = m_modelBoundingRadius * Vector3d::UnitZ() * 2.0;
     m_cameraOrientation = Quaterniond::Identity();
 }
@@ -174,6 +184,20 @@ void
 ModelViewWidget::mousePressEvent(QMouseEvent *event)
 {
     m_lastMousePosition = event->pos();
+    m_mouseDownPosition = event->pos();
+}
+
+
+void
+ModelViewWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+    int moveDistance = (event->pos() - m_mouseDownPosition).manhattanLength();
+    if (moveDistance < 3)
+    {
+        float x = (float) event->pos().x() / (float) size().width() * 2.0f - 1.0f;
+        float y = (float) event->pos().y() / (float) size().height() * -2.0f + 1.0f;
+        select(Vector2f(x, y));
+    }
 }
 
 
@@ -212,13 +236,59 @@ ModelViewWidget::wheelEvent(QWheelEvent* event)
     }
 
     // Mouse wheel controls camera dolly
+#if LINEAR_DOLLY
     double adjust = m_modelBoundingRadius * event->delta() / 1000.0;
     double newDistance = m_cameraPosition.norm() + adjust;
     m_cameraPosition = m_cameraPosition.normalized() * newDistance;
+#else
+    double adjust = std::pow(2.0, event->delta() / 1000.0);
+    double newDistance = m_cameraPosition.norm() * adjust;
+    m_cameraPosition = m_cameraPosition.normalized() * newDistance;
+#endif
 
     update();
 }
 
+
+void
+ModelViewWidget::select(const Vector2f& viewportPoint)
+{
+    if (!m_model)
+    {
+        return;
+    }
+
+    float aspectRatio = (float) size().width() / (float) size().height();
+    float fovRad = float(VIEWPORT_FOV * PI / 180.0f);
+    float h = (float) tan(fovRad / 2.0f);
+    Vector3d direction(h * aspectRatio * viewportPoint.x(), h * viewportPoint.y(), -1.0f);
+    direction.normalize();
+    Vector3d origin = Vector3d::Zero();
+    Transform3d camera(cameraTransform().inverse());
+
+    Mesh::PickResult pickResult;
+    bool hit = m_model->pick(camera * origin, camera.linear() * direction, &pickResult);
+    if (hit)
+    {
+        m_selection.clear();
+        m_selection.insert(pickResult.group);
+        update();
+    }
+    else
+    {
+        m_selection.clear();
+        update();
+    }
+}
+
+
+Transform3d
+ModelViewWidget::cameraTransform() const
+{
+    Transform3d t(m_cameraOrientation.conjugate());
+    t.translate(-m_cameraPosition);
+    return t;
+}
 
 void
 ModelViewWidget::initializeGL()
@@ -233,12 +303,14 @@ ModelViewWidget::paintGL()
     glDepthMask(GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    double distanceToOrigin = m_cameraPosition.norm();
+    double nearDistance = std::max(m_modelBoundingRadius * 0.001, distanceToOrigin - m_modelBoundingRadius);
+    double farDistance = m_modelBoundingRadius + distanceToOrigin;
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     double aspectRatio = (double) size().width() / (double) size().height();
-    double nearDistance = m_modelBoundingRadius * 0.05;
-    double farDistance = m_modelBoundingRadius * 20.0;
-    gluPerspective(45.0, aspectRatio, nearDistance, farDistance);
+    gluPerspective(VIEWPORT_FOV, aspectRatio, nearDistance, farDistance);
 
     glEnable(GL_LIGHTING);
 
@@ -263,10 +335,7 @@ ModelViewWidget::paintGL()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    Transform3d cameraRotation(m_cameraOrientation.conjugate());
-    glMultMatrixd(cameraRotation.data());
-    glTranslated(-m_cameraPosition.x(), -m_cameraPosition.y(), -m_cameraPosition.z());
-
+    glMultMatrixd(cameraTransform().data());
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
@@ -274,6 +343,12 @@ ModelViewWidget::paintGL()
     if (m_model)
     {
         renderModel(m_model);
+        if (!m_selection.isEmpty())
+        {
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(-0.0f, -1.0f);
+            renderSelection(m_model);
+        }
     }
 
     GLenum errorCode = glGetError();
@@ -308,6 +383,7 @@ static int GLComponentCounts[Mesh::FormatMax] =
      4,  // Float4,
      4,  // UByte4
 };
+
 
 static void
 setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
@@ -373,6 +449,50 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
     default:
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         break;
+    }
+}
+
+
+// Set just the vertex pointer
+void
+setVertexPointer(const Mesh::VertexDescription& desc, const void* vertexData)
+{
+    const Mesh::VertexAttribute& position  = desc.getAttribute(Mesh::Position);
+
+    // Can't render anything unless we have positions
+    if (position.format != Mesh::Float3)
+        return;
+
+    // Set up the vertex arrays
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, desc.stride,
+                    reinterpret_cast<const char*>(vertexData) + position.offset);
+
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+
+static GLenum
+getGLMode(Mesh::PrimitiveGroupType primitive)
+{
+    switch (primitive)
+    {
+    case Mesh::TriList:
+        return GL_TRIANGLES;
+    case Mesh::TriStrip:
+        return GL_TRIANGLE_STRIP;
+    case Mesh::TriFan:
+        return GL_TRIANGLE_FAN;
+    case Mesh::LineList:
+        return GL_LINES;
+    case Mesh::LineStrip:
+        return GL_LINE_STRIP;
+    case Mesh::PointList:
+        return GL_POINTS;
+    default:
+        return GL_POINTS;
     }
 }
 
@@ -460,37 +580,42 @@ ModelViewWidget::renderModel(Model* model)
             }
             bindMaterial(material);
 
-            GLenum primitiveMode = 0;
-            bool validMode = true;
-            switch (group->prim)
-            {
-            case Mesh::TriList:
-                primitiveMode = GL_TRIANGLES;
-                break;
-            case Mesh::TriStrip:
-                primitiveMode = GL_TRIANGLE_STRIP;
-                break;
-            case Mesh::TriFan:
-                primitiveMode = GL_TRIANGLE_FAN;
-                break;
-            case Mesh::LineList:
-                primitiveMode = GL_LINES;
-                break;
-            case Mesh::LineStrip:
-                primitiveMode = GL_LINE_STRIP;
-                break;
-            case Mesh::PointList:
-                primitiveMode = GL_POINTS;
-                break;
-            default:
-                validMode = false;
-                break;
-            }
+            GLenum primitiveMode = getGLMode(group->prim);
+            glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
+        }
+    }
+}
 
-            if (validMode)
+
+void
+ModelViewWidget::renderSelection(Model* model)
+{
+    glEnable(GL_CULL_FACE);
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE);
+
+    for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
+    {
+        Mesh* mesh = model->getMesh(meshIndex);
+        setVertexPointer(mesh->getVertexDescription(), mesh->getVertexData());
+
+        for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
+        {
+            Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+            if (m_selection.contains(group))
             {
+                GLenum primitiveMode = getGLMode(group->prim);
                 glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
             }
         }
     }
+
+    glPolygonMode(GL_FRONT, GL_FILL);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 }

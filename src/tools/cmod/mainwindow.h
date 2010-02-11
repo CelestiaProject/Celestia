@@ -49,6 +49,7 @@ public slots:
     void generateTangents();
     void uniquifyVertices();
     void mergeMeshes();
+    void editMaterial();
 
 private:
     ModelViewWidget* m_modelView;
