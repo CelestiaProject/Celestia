@@ -74,7 +74,6 @@ libcelengine_a_SOURCES = \
 	trajmanager.cpp \
 	univcoord.cpp \
 	universe.cpp \
-	vertexlist.cpp \
 	vertexprog.cpp \
 	virtualtex.cpp \
 	visibleregion.cpp \
