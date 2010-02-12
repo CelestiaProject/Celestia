@@ -728,10 +728,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\src\celengine\vertexlist.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\src\celengine\vertexprog.cpp"
 					>
 				</File>
@@ -1279,10 +1275,6 @@
 				</File>
 				<File
 					RelativePath=".\src\celengine\vertexbuf.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\celengine\vertexlist.h"
 					>
 				</File>
 				<File

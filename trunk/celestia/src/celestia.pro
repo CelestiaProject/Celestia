@@ -202,7 +202,6 @@ ENGINE_SOURCES = \
     celengine/trajmanager.cpp \
     celengine/univcoord.cpp \
     celengine/universe.cpp \
-    celengine/vertexlist.cpp \
     celengine/vertexprog.cpp \
     celengine/virtualtex.cpp \
     celengine/visibleregion.cpp
@@ -280,7 +279,6 @@ ENGINE_HEADERS = \
     celengine/univcoord.h \
     celengine/universe.h \
     celengine/vecgl.h \
-    celengine/vertexlist.h \
     celengine/vertexprog.h \
     celengine/virtualtex.h \
     celengine/visibleregion.h

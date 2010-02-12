@@ -15,7 +15,7 @@
 #include "particlesystem.h"
 #include "particlesystemfile.h"
 #endif
-#include "vertexlist.h"
+
 #include "parser.h"
 #include "spheremesh.h"
 #include "texmanager.h"
@@ -507,45 +507,7 @@ ConvertTriangleMesh(M3DTriangleMesh& mesh,
 
         newMesh->addGroup(Mesh::TriList, materialIndex, nMatGroupFaces * 3, indices);
     }
-#if 0
-    // Set the material properties
-    {
-        string materialName = mesh.getMaterialName();
-        if (materialName.length() > 0)
-        {
-            int nMaterials = scene.getMaterialCount();
-            for (i = 0; i < nMaterials; i++)
-            {
-                M3DMaterial* material = scene.getMaterial(i);
-                if (materialName == material->getName())
-                {
-                    M3DColor diffuse = material->getDiffuseColor();
-                    vl->setDiffuseColor(Color(diffuse.red, diffuse.green, diffuse.blue, material->getOpacity()));
-                    M3DColor specular = material->getSpecularColor();
-                    vl->setSpecularColor(Color(specular.red, specular.green, specular.blue));
-                    float shininess = material->getShininess();
 
-                    // Map the 3DS file's shininess from percentage (0-100) to
-                    // range that OpenGL uses for the specular exponent. The
-                    // current equation is just a guess at the mapping that
-                    // 3DS actually uses.
-                    shininess = (float) pow(2.0, 1.0 + 0.1 * shininess);
-                    if (shininess > 128.0f)
-                        shininess = 128.0f;
-                    vl->setShininess(shininess);
-
-                    if (material->getTextureMap() != "")
-                    {
-                        ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texturePath, TextureInfo::WrapTexture));
-                        vl->setTexture(tex);
-                    }
-
-                    break;
-                }
-            }
-        }
-    }
-#endif
     // clean up
     if (faceNormals != NULL)
         delete[] faceNormals;
@@ -631,59 +593,4 @@ Convert3DSModel(const M3DScene& scene, const string& texPath)
     }
 
     return model;
-#if 0
-    // Sort the vertex lists to make sure that the transparent ones are
-    // rendered after the opaque ones and material state changes are minimized.
-    sort(vertexLists.begin(), vertexLists.end(), compareVertexLists);
-#endif
 }
-
-#if 0
-static Model*
-Convert3DSModel(const M3DScene& scene, const string& texPath)
-{
-    Model* model = new Model();
-    uint32 materialIndex = 0;
-
-    for (unsigned int i = 0; i < scene.getModelCount(); i++)
-    {
-        M3DModel* model3ds = scene.getModel(i);
-        if (model3ds != NULL)
-        {
-            for (unsigned int j = 0; j < model3ds->getTriMeshCount(); j++)
-            {
-                M3DTriangleMesh* mesh = model3ds->getTriMesh(j);
-                if (mesh != NULL)
-                {
-                    // The vertex list is just an intermediate stage in conversion
-                    // to a Celestia model structure.  Eventually, we should handle
-                    // the conversion in a single step.
-                    VertexList* vlist = ConvertToVertexList(*mesh, scene, texPath);
-                    Mesh* mesh = ConvertVertexListToMesh(vlist, texPath, materialIndex);
-
-                    // Convert the vertex list material
-                    Material* material = new Material();
-                    material->diffuse = toMaterialColor(vlist->getDiffuseColor());
-                    material->specular = toMaterialColor(vlist->getSpecularColor());
-                    material->specularPower = vlist->getShininess();
-                    material->opacity = vlist->getDiffuseColor().alpha();
-                    material->maps[Material::DiffuseMap] = new CelestiaTextureResource(vlist->getTexture());
-                    model->addMaterial(material);
-                    materialIndex++;
-
-                    model->addMesh(mesh);
-
-                    delete vlist;
-                }
-            }
-        }
-    }
-
-    return model;
-#if 0
-    // Sort the vertex lists to make sure that the transparent ones are
-    // rendered after the opaque ones and material state changes are minimized.
-    sort(vertexLists.begin(), vertexLists.end(), compareVertexLists);
-#endif
-}
-#endif
