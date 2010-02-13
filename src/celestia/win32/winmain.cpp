@@ -172,6 +172,7 @@ struct AppPreferences
     int winY;
     int renderFlags;
     int labelMode;
+    int locationFilter;
     int orbitMask;
     float visualMagnitude;
     float ambientLight;
@@ -2485,6 +2486,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "YPos", &prefs.winY, sizeof(prefs.winY));
     GetRegistryValue(key, "RenderFlags", &prefs.renderFlags, sizeof(prefs.renderFlags));
     GetRegistryValue(key, "LabelMode", &prefs.labelMode, sizeof(prefs.labelMode));
+    GetRegistryValue(key, "LocationFilter", &prefs.locationFilter, sizeof(prefs.locationFilter));
     GetRegistryValue(key, "OrbitMask", &prefs.orbitMask, sizeof(prefs.orbitMask));
     GetRegistryValue(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
     GetRegistryValue(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
@@ -2543,6 +2545,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "YPos", prefs.winY);
     SetRegistryInt(key, "RenderFlags", prefs.renderFlags);
     SetRegistryInt(key, "LabelMode", prefs.labelMode);
+    SetRegistryInt(key, "LocationFilter", prefs.locationFilter);
     SetRegistryInt(key, "OrbitMask", prefs.orbitMask);
     SetRegistryBin(key, "VisualMagnitude", &prefs.visualMagnitude, sizeof(prefs.visualMagnitude));
     SetRegistryBin(key, "AmbientLight", &prefs.ambientLight, sizeof(prefs.ambientLight));
@@ -2578,6 +2581,7 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.winHeight = rect.bottom - rect.top;
     prefs.renderFlags = appCore->getRenderer()->getRenderFlags();
     prefs.labelMode = appCore->getRenderer()->getLabelMode();
+    prefs.locationFilter = appCore->getSimulation()->getActiveObserver()->getLocationFilter();
     prefs.orbitMask = appCore->getRenderer()->getOrbitMask();
     prefs.visualMagnitude = appCore->getSimulation()->getFaintestVisible();
     prefs.ambientLight = appCore->getRenderer()->getAmbientLightLevel();
@@ -3236,6 +3240,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.ambientLight = 0.1f;  // Low
     prefs.galaxyLightGain = 0.0f;
     prefs.labelMode = 0;
+    prefs.locationFilter = 0;
     prefs.orbitMask = Body::Planet | Body::Moon;
     prefs.renderFlags = Renderer::DefaultRenderFlags;
 
@@ -3432,6 +3437,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         appCore->getSimulation()->setFaintestVisible(prefs.visualMagnitude);
         appCore->getRenderer()->setRenderFlags(prefs.renderFlags);
         appCore->getRenderer()->setLabelMode(prefs.labelMode);
+        appCore->getSimulation()->getActiveObserver()->setLocationFilter(prefs.locationFilter);
         appCore->getRenderer()->setOrbitMask(prefs.orbitMask);
         appCore->getRenderer()->setAmbientLightLevel(prefs.ambientLight);
         Galaxy::setLightGain(prefs.galaxyLightGain);

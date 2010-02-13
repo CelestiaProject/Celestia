@@ -588,7 +588,11 @@ static int object_getinfo(lua_State* l)
         celx.setTable("temperature", (lua_Number)star->getTemperature());
         celx.setTable("rotationPeriod", (lua_Number)star->getRotationModel()->getPeriod());
         celx.setTable("bolometricMagnitude", (lua_Number)star->getBolometricMagnitude());
-        
+
+        const Orbit* orbit = star->getOrbit();
+        if (orbit != NULL)
+            celx.setTable("orbitPeriod", orbit->getPeriod());
+
         if (star->getOrbitBarycenter() != NULL)
         {
             Selection parent((Star*)(star->getOrbitBarycenter()));
