@@ -248,7 +248,7 @@ Source: "locale\start_pl.cel";       DestDir: "{app}/locale"; Flags: ignoreversi
 Source: "locale\start_pt.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_pt_BR.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_ru.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
-; Source: "locale\start_sk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\start_sk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_sv.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_uk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_zh_CN.cel";       DestDir: "{app}/locale"; Flags: ignoreversion

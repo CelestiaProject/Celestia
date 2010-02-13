@@ -1,12 +1,12 @@
 # translation of uk.po to Ukrainian
-# Yuri Chornoivan <yurchor@ukr.net>, 2008, 2009.
+# Yuri Chornoivan <yurchor@ukr.net>, 2008, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: uk\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-04 15:39+0000\n"
-"PO-Revision-Date: 2010-01-09 11:21+0100\n"
-"Last-Translator: vincent <vince.gian@free.fr>\n"
+"PO-Revision-Date: 2010-01-24 15:54+0200\n"
+"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Poedit-Language: Ukrainian\n"
 "X-Poedit-Country: UKRAINE\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: KBabel 1.11.4\n"
+"X-Generator: Lokalize 1.0\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: src/celengine/astro.cpp:827
@@ -60,12 +60,12 @@ msgstr "Ініціалізація програм фрагментів ABR . . .
 #: src/celengine/galaxy.cpp:197
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
-msgstr "Галактика (Тип за Хабблом: %s)"
+msgstr "Галактика (тип за Хабблом: %s)"
 
 #: src/celengine/globular.cpp:255
 #, c-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
-msgstr ""
+msgstr "Кулясте скупчення (радіус ядра: %4.2f', концентрація за Кінгом: %4.2f)"
 
 #: src/celengine/image.cpp:373
 msgid "Loading image from file "
@@ -73,7 +73,7 @@ msgstr "Завантаження зображення з файла "
 
 #: src/celengine/image.cpp:391
 msgid ": unrecognized or unsupported image file type.\n"
-msgstr ": тип зображення неможливо розпізнати або відобразити.\n"
+msgstr ": не вдалося встановити тип зображення або зображення належить до типу, який не підтримується.\n"
 
 #: src/celengine/image.cpp:654
 msgid "Error opening image file "
@@ -81,11 +81,11 @@ msgstr "Помилка під час відкриття файла зображ�
 
 #: src/celengine/image.cpp:661
 msgid "Error: "
-msgstr "Помилка:"
+msgstr "Помилка: "
 
 #: src/celengine/image.cpp:661
 msgid " is not a PNG file.\n"
-msgstr "не файл PNG.\n"
+msgstr " не є файлом PNG.\n"
 
 #: src/celengine/image.cpp:688
 msgid "Error reading PNG image file "
@@ -117,35 +117,35 @@ msgstr " специфічних)\n"
 
 #: src/celengine/meshmanager.cpp:170
 msgid "Error loading model '"
-msgstr "Помилка під час завантаження моделі \""
+msgstr "Помилка під час завантаження моделі «"
 
 #: src/celengine/nebula.cpp:47
-#, fuzzy, c-format
+#, c-format
 msgid "Nebula"
-msgstr "Туманності"
+msgstr "Туманність"
 
 #: src/celengine/opencluster.cpp:44
-#, fuzzy, c-format
+#, c-format
 msgid "Open cluster"
-msgstr "Розсіяні скупчення"
+msgstr "Розсіяне скупчення"
 
 #: src/celengine/solarsys.cpp:93
 msgid "Error in .ssc file (line "
-msgstr "Помилка у файлі .ssc (рядок"
+msgstr "Помилка у файлі .ssc (рядок "
 
 #: src/celengine/solarsys.cpp:1200
 #: src/celengine/solarsys.cpp:1267
 msgid "parent body '"
-msgstr "головне тіло \""
+msgstr "головне тіло «"
 
 #: src/celengine/solarsys.cpp:1200
 #: src/celengine/solarsys.cpp:1267
 msgid "' of '"
-msgstr "\" з \""
+msgstr "» з «"
 
 #: src/celengine/solarsys.cpp:1200
 msgid "' not found."
-msgstr "\" не знайдено."
+msgstr "» не знайдено."
 
 #: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
@@ -153,23 +153,23 @@ msgstr "попередження про подвійне визначення "
 
 #: src/celengine/solarsys.cpp:1247
 msgid "bad alternate surface"
-msgstr "неправильна альтернативна поверхня"
+msgstr "помилкова альтернативна поверхня"
 
 #: src/celengine/solarsys.cpp:1261
 msgid "bad location"
-msgstr "погане розташування"
+msgstr "помилкове розташування"
 
 #: src/celengine/solarsys.cpp:1267
 msgid "' not found.\n"
-msgstr "\" не знайдено.\n"
+msgstr "» не знайдено.\n"
 
 #: src/celengine/stardb.cpp:579
 msgid "Bad header for cross index\n"
-msgstr "Неправильний заголовок для покажчика\n"
+msgstr "Помилковий заголовок для покажчика\n"
 
 #: src/celengine/stardb.cpp:592
 msgid "Bad version for cross index\n"
-msgstr "Неправильна версія для покажчика\n"
+msgstr "Помилкова версія для покажчика\n"
 
 #: src/celengine/stardb.cpp:614
 msgid "Loading cross index failed at record "
@@ -177,7 +177,7 @@ msgstr "Помилка під час завантаження покажчика
 
 #: src/celengine/stardb.cpp:696
 msgid "Bad spectral type in star database, star #"
-msgstr "Неправильний спектральний тип у базі даних зірок, зірка #"
+msgstr "Неправильний спектральний тип у базі даних зірок, зірка №"
 
 #: src/celengine/stardb.cpp:711
 msgid " stars in binary database\n"
@@ -185,19 +185,19 @@ msgstr " зірок у двійковій базі даних\n"
 
 #: src/celengine/stardb.cpp:735
 msgid "Total star count: "
-msgstr "Загальна кількість зірок:"
+msgstr "Загальна кількість зірок: "
 
 #: src/celengine/stardb.cpp:769
 msgid "Error in .stc file (line "
-msgstr "Помилка у файлі .stc (рядок"
+msgstr "Помилка у файлі .stc (рядок "
 
 #: src/celengine/stardb.cpp:806
 msgid "Invalid star: bad spectral type.\n"
-msgstr "Некоректний запис: неправильний спектральний тип.\n"
+msgstr "Некоректний запис: помилковий спектральний тип.\n"
 
 #: src/celengine/stardb.cpp:815
 msgid "Invalid star: missing spectral type.\n"
-msgstr "Некоректний запис: відсутній спектральний тип.\n"
+msgstr "Некоректний запис: не вказано спектрального типу.\n"
 
 #: src/celengine/stardb.cpp:962
 msgid "Barycenter "
@@ -209,23 +209,23 @@ msgstr " не існує.\n"
 
 #: src/celengine/stardb.cpp:1008
 msgid "Invalid star: missing right ascension\n"
-msgstr "Некоректний запис: відсутнє пряме сходження\n"
+msgstr "Некоректний запис: не вказано пряме сходження\n"
 
 #: src/celengine/stardb.cpp:1021
 msgid "Invalid star: missing declination.\n"
-msgstr "Некоректний запис: відсутнє схилення.\n"
+msgstr "Некоректний запис: не вказано схилення.\n"
 
 #: src/celengine/stardb.cpp:1034
 msgid "Invalid star: missing distance.\n"
-msgstr "Некоректний запис: відсутня відстань.\n"
+msgstr "Некоректний запис: не вказана відстань.\n"
 
 #: src/celengine/stardb.cpp:1070
 msgid "Invalid star: missing magnitude.\n"
-msgstr "Некоректний запис: відсутня зоряна величина.\n"
+msgstr "Некоректний запис: не вказано зоряної величини.\n"
 
 #: src/celengine/stardb.cpp:1087
 msgid "Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n"
-msgstr "Некоректна зірка: слід задати абсолютну (а не видиму) величину для зірки поряд з початком координат\n"
+msgstr "Некоректний запис: слід задати абсолютну (а не видиму) величину для зірки поряд з початком координат\n"
 
 #: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
@@ -250,7 +250,7 @@ msgstr "Помилка під час завантаження вершинної
 #: src/celengine/vertexprog.cpp:136
 #: src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
-msgstr "Помилка у вершинній програмі"
+msgstr "Помилка у вершинній програмі "
 
 #: src/celengine/vertexprog.cpp:163
 msgid "Loading ARB vertex program: "
@@ -270,7 +270,7 @@ msgstr "Ініціалізація вершинних програм NV . . .\n"
 
 #: src/celengine/vertexprog.cpp:240
 msgid "All NV vertex programs loaded successfully.\n"
-msgstr "Всі вершинні програми NVуспішно завантажено.\n"
+msgstr "Всі вершинні програми NV успішно завантажено.\n"
 
 #: src/celengine/vertexprog.cpp:253
 msgid "Initializing ARB vertex programs . . .\n"
@@ -291,25 +291,25 @@ msgstr "Орієнтація: "
 #: src/celestia/celestiacore.cpp:563
 #: src/celestia/celestiacore.cpp:565
 msgid "Error opening script file."
-msgstr "Помилка під час відкриття файла скрипта."
+msgstr "Помилка під час відкриття файла скрипту."
 
 #: src/celestia/celestiacore.cpp:596
 #, c-format
 msgid "Error opening script '%s'"
-msgstr "Помилка під час відкриття скрипта '%s'"
+msgstr "Помилка під час відкриття скрипту «%s»"
 
 #: src/celestia/celestiacore.cpp:614
 msgid "Unknown error opening script"
-msgstr "Невідома помилка під час відкриття скрипта"
+msgstr "Невідома помилка під час відкриття скрипту"
 
 #: src/celestia/celestiacore.cpp:626
 msgid "Script coroutine initialization failed"
-msgstr "Помилка під час ініціалізації співпрограми скрипта"
+msgstr "Помилка під час ініціалізації підпрограми скрипту"
 
 #: src/celestia/celestiacore.cpp:642
 #: src/celestia/celestiacore.cpp:644
 msgid "Invalid filetype"
-msgstr "Некоректний тип файлу"
+msgstr "Некоректний тип файла"
 
 #: src/celestia/celestiacore.cpp:992
 #: src/celestia/celestiacore.cpp:1797
@@ -322,11 +322,11 @@ msgstr "Межа величини: %.2f"
 
 #: src/celestia/celestiacore.cpp:1427
 msgid "Markers enabled"
-msgstr "Маркери дозволені"
+msgstr "Позначки увімкнено"
 
 #: src/celestia/celestiacore.cpp:1430
 msgid "Markers disabled"
-msgstr "Маркери заборонені"
+msgstr "Позначки вимкнено"
 
 #: src/celestia/celestiacore.cpp:1440
 msgid "Goto surface"
@@ -334,11 +334,11 @@ msgstr "Перейти до поверхні"
 
 #: src/celestia/celestiacore.cpp:1453
 msgid "Alt-azimuth mode enabled"
-msgstr "Режим 'висота-азимут' увімкнено"
+msgstr "Режим «висота-азимут» увімкнено"
 
 #: src/celestia/celestiacore.cpp:1456
 msgid "Alt-azimuth mode disabled"
-msgstr "Режим 'висота-азимут' вимкнено"
+msgstr "Режим «висота-азимут» вимкнено"
 
 #: src/celestia/celestiacore.cpp:1512
 msgid "Star style: fuzzy points"
@@ -354,11 +354,11 @@ msgstr "Стиль зірок: масштабовані диски"
 
 #: src/celestia/celestiacore.cpp:1531
 msgid "Comet tails enabled"
-msgstr "Хвости комет дозволені"
+msgstr "Хвости комет увімкнено"
 
 #: src/celestia/celestiacore.cpp:1534
 msgid "Comet tails disabled"
-msgstr "Хвости комет заборонені"
+msgstr "Хвости комет вимкнено"
 
 #: src/celestia/celestiacore.cpp:1549
 msgid "Render path: Basic"
@@ -398,11 +398,11 @@ msgstr "Шлях відтворення: OpenGL 2.0"
 
 #: src/celestia/celestiacore.cpp:1596
 msgid "Auto-magnitude enabled"
-msgstr "Автозбільшення дозволене"
+msgstr "Автозбільшення увімкнено"
 
 #: src/celestia/celestiacore.cpp:1601
 msgid "Auto-magnitude disabled"
-msgstr "Автозбільшення заборонене"
+msgstr "Автозбільшення вимкнено"
 
 #: src/celestia/celestiacore.cpp:1623
 #: src/celestia/res/resource_strings.cpp:88
@@ -416,11 +416,11 @@ msgstr "Автозбільшення заборонене"
 #: src/celestia/res/resource_strings.cpp:217
 #: src/celestia/res/resource_strings.cpp:223
 msgid "Cancel"
-msgstr "Скасовано"
+msgstr "Скасувати"
 
 #: src/celestia/celestiacore.cpp:1659
 msgid "Time and script are paused"
-msgstr "Час та скрипт призупинені"
+msgstr "Час та скрипт призупинено"
 
 #: src/celestia/celestiacore.cpp:1661
 msgid "Time is paused"
@@ -428,12 +428,12 @@ msgstr "Час зупинено"
 
 #: src/celestia/celestiacore.cpp:1665
 msgid "Resume"
-msgstr "Відновлення"
+msgstr "Поновити"
 
 #: src/celestia/celestiacore.cpp:1740
 #, c-format
 msgid "Light travel time:  %.4f yr "
-msgstr "Світлове запізнювання:  %.4f г "
+msgstr "Світлове запізнювання:  %.4f р "
 
 #: src/celestia/celestiacore.cpp:1749
 #, c-format
@@ -447,11 +447,11 @@ msgstr "Світлове запізнювання:  %d год  %d хв  %.1f с�
 
 #: src/celestia/celestiacore.cpp:1771
 msgid "Light travel delay included"
-msgstr "Світлове запізнювання включене"
+msgstr "З врахуванням світлового запізнювання"
 
 #: src/celestia/celestiacore.cpp:1776
 msgid "Light travel delay switched off"
-msgstr "Світлове запізнювання вимкнене"
+msgstr "Без врахування світлового запізнювання"
 
 #: src/celestia/celestiacore.cpp:1782
 msgid "Light travel delay ignored"
@@ -488,7 +488,7 @@ msgstr "Синхронна орбіта"
 
 #: src/celestia/celestiacore.cpp:2034
 msgid "Lock"
-msgstr "Захоплення"
+msgstr "Заблокувати"
 
 #: src/celestia/celestiacore.cpp:2040
 msgid "Chase"
@@ -513,11 +513,11 @@ msgstr "Підсилення світла"
 
 #: src/celestia/celestiacore.cpp:2175
 msgid "Bloom enabled"
-msgstr "Блимання дозволено"
+msgstr "Блимання увімкнено"
 
 #: src/celestia/celestiacore.cpp:2177
 msgid "Bloom disabled"
-msgstr "Блимання заборонено"
+msgstr "Блимання вимкнено"
 
 #: src/celestia/celestiacore.cpp:2183
 #: src/celestia/celestiacore.cpp:2191
@@ -530,24 +530,24 @@ msgstr "Помилка GL: "
 
 #: src/celestia/celestiacore.cpp:2639
 msgid "View too small to be split"
-msgstr "Зображення дуже мале для розділення"
+msgstr "Зображення дуже мале для поділу"
 
 #: src/celestia/celestiacore.cpp:2642
 msgid "Added view"
-msgstr "Доданий вигляд"
+msgstr "Доданий перегляд"
 
 #: src/celestia/celestiacore.cpp:2898
 #: src/celestia/kde/celestialbrowser.cpp:133
 #: src/celestia/kde/selectionpopup.cpp:79
 msgid "ly"
-msgstr "св.р."
+msgstr "св. р."
 
 #: src/celestia/celestiacore.cpp:2902
 #: src/celestia/kde/celestialbrowser.cpp:162
 #: src/celestia/kde/selectionpopup.cpp:81
 #: src/celestia/res/resource_strings.cpp:132
 msgid "au"
-msgstr "а.о."
+msgstr "а. о."
 
 #: src/celestia/celestiacore.cpp:2923
 msgid " days"
@@ -563,7 +563,7 @@ msgstr " хвилин"
 
 #: src/celestia/celestiacore.cpp:2929
 msgid " seconds"
-msgstr ""
+msgstr " секунд"
 
 #: src/celestia/celestiacore.cpp:2994
 msgid "Apparent diameter: "
@@ -589,7 +589,7 @@ msgstr "Схил.:"
 #: src/celestia/kde/kdeapp.cpp:1619
 #: src/celestia/res/resource_strings.cpp:130
 msgid "km"
-msgstr "км."
+msgstr "км"
 
 #: src/celestia/celestiacore.cpp:3132
 #: src/celestia/celestiacore.cpp:3206
@@ -606,11 +606,11 @@ msgstr "Центр тяжіння зоряної системи \n"
 #: src/celestia/celestiacore.cpp:3142
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr " Абс. (вид.) величина: %.2f (%.2f)\n"
+msgstr "Абс. (вид.) величина: %.2f (%.2f)\n"
 
 #: src/celestia/celestiacore.cpp:3148
 msgid "Luminosity: "
-msgstr "Світимість: "
+msgstr "Світність: "
 
 #: src/celestia/celestiacore.cpp:3148
 msgid "x Sun"
@@ -631,7 +631,7 @@ msgstr "Чорна дірка"
 
 #: src/celestia/celestiacore.cpp:3163
 msgid "Surface temp: "
-msgstr "Темп. поверхні:"
+msgstr "Темп. поверхні: "
 
 #: src/celestia/celestiacore.cpp:3166
 #: src/celestia/celestiacore.cpp:3215
@@ -652,7 +652,7 @@ msgstr "Період обертання: "
 
 #: src/celestia/celestiacore.cpp:3193
 msgid "Planetary companions present\n"
-msgstr "Присутня планетарна система\n"
+msgstr "Має планетарну систему\n"
 
 #: src/celestia/celestiacore.cpp:3211
 msgid "Distance from center: "
@@ -661,7 +661,7 @@ msgstr "Відстань від центру:"
 #: src/celestia/celestiacore.cpp:3292
 #, c-format
 msgid "Phase angle: %.1f%s\n"
-msgstr ""
+msgstr "Фазовий кут: %.1f%s\n"
 
 #: src/celestia/celestiacore.cpp:3316
 msgid "Temperature: "
@@ -698,7 +698,7 @@ msgstr " раз повільніше"
 
 #: src/celestia/celestiacore.cpp:3516
 msgid " (Paused)"
-msgstr "(Призупинено)"
+msgstr " (Призупинено)"
 
 #: src/celestia/celestiacore.cpp:3534
 msgid "FPS: "
@@ -722,11 +722,11 @@ msgstr " км/с"
 
 #: src/celestia/celestiacore.cpp:3546
 msgid " AU/s"
-msgstr " а.о./с"
+msgstr " а. о./с"
 
 #: src/celestia/celestiacore.cpp:3548
 msgid " ly/s"
-msgstr " св. років/с"
+msgstr " св. р./с"
 
 #: src/celestia/celestiacore.cpp:3565
 msgid "Travelling "
@@ -734,7 +734,7 @@ msgstr "Подорож "
 
 #: src/celestia/celestiacore.cpp:3578
 msgid "Track "
-msgstr "Трек "
+msgstr "Траєкторія "
 
 #: src/celestia/celestiacore.cpp:3592
 msgid "Follow "
@@ -742,7 +742,7 @@ msgstr "Стеження "
 
 #: src/celestia/celestiacore.cpp:3597
 msgid "Sync Orbit "
-msgstr "Синхронна орбіта"
+msgstr "Синхронна орбіта "
 
 #: src/celestia/celestiacore.cpp:3602
 msgid "Lock "
@@ -763,7 +763,7 @@ msgstr "Сонце"
 
 #: src/celestia/celestiacore.cpp:3834
 msgid "Target name: "
-msgstr "Ім'я цілі: "
+msgstr "Назва цілі: "
 
 #: src/celestia/celestiacore.cpp:3916
 msgid " at "
@@ -776,7 +776,7 @@ msgstr " кд/с"
 #: src/celestia/celestiacore.cpp:3919
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
-msgstr "  Записування"
+msgstr "  Запис"
 
 #: src/celestia/celestiacore.cpp:3921
 #: src/celestia/kde/videocapturedlg.cpp:66
@@ -786,7 +786,7 @@ msgstr "  Призупинено"
 
 #: src/celestia/celestiacore.cpp:3940
 msgid "F11 Start/Pause    F12 Stop"
-msgstr "F11 Запуск/Пауза    F12 Зупинка"
+msgstr "F11 Пуск/Пауза    F12 Зупинка"
 
 #: src/celestia/celestiacore.cpp:3949
 #: src/celestia/celestiacore.cpp:3952
@@ -803,7 +803,7 @@ msgstr "Завантаження"
 
 #: src/celestia/celestiacore.cpp:4094
 msgid "License file 'License.txt' is missing!"
-msgstr "Відсутній файл ліцензії \"License.txt\"!"
+msgstr "Не знайдено файла ліцензії \"License.txt\"!"
 
 #: src/celestia/celestiacore.cpp:4115
 msgid "Error reading configuration file."
@@ -815,7 +815,7 @@ msgstr "Помилка під час ініціалізації бібліоте
 
 #: src/celestia/celestiacore.cpp:4173
 msgid "Cannot read star database."
-msgstr "Неможливо прочитати зоряну базу даних."
+msgstr "Не вдалося прочитати базу даних зірок."
 
 #: src/celestia/celestiacore.cpp:4195
 msgid "Error opening deepsky catalog file."
@@ -835,7 +835,7 @@ msgstr "Помилка під час відкриття файла меж суз
 
 #: src/celestia/celestiacore.cpp:4362
 msgid "render path: "
-msgstr "шлях відтворення: "
+msgstr "спосіб відтворення: "
 
 #: src/celestia/celestiacore.cpp:4373
 msgid "Failed to initialize renderer"
@@ -883,12 +883,12 @@ msgstr "Помилка у внутрішній бібліотеці OGG."
 #: src/celestia/oggtheoracapture.cpp:308
 #, c-format
 msgid "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"
-msgstr "OggTheoraCapture::start() - Theora відео: %s %.2f(%d/%d) к/с якість %d %dx%d відступ (%dx%d)\n"
+msgstr "OggTheoraCapture::start() — Theora-відео: %s %.2f(%d/%d) кд/с якість %d %dx%d відступ (%dx%d)\n"
 
 #: src/celestia/oggtheoracapture.cpp:423
 #, c-format
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-msgstr "OggTheoraCapture::cleanup() - записано %d кадрів\n"
+msgstr "OggTheoraCapture::cleanup() — записано %d кадрів\n"
 
 #: src/celestia/url.cpp:653
 #: src/celestia/kde/rc.cpp:133
@@ -899,7 +899,7 @@ msgstr "Налаштування"
 #: src/celestia/winmain.cpp:625
 #: src/celestia/kde/kdeapp.cpp:954
 msgid "Vendor: "
-msgstr "Постачальник: "
+msgstr "Виробник: "
 
 #: src/celestia/winmain.cpp:630
 #: src/celestia/kde/kdeapp.cpp:959
@@ -1014,9 +1014,8 @@ msgstr "&Інформація"
 
 #: src/celestia/winmain.cpp:1613
 #: src/celestia/kde/selectionpopup.cpp:333
-#, fuzzy
 msgid "&Reference Marks"
-msgstr "&Базисні вектори"
+msgstr "&Базові позначки"
 
 #: src/celestia/winmain.cpp:1614
 #: src/celestia/kde/selectionpopup.cpp:334
@@ -1097,15 +1096,15 @@ msgstr "Завантаження адреси"
 
 #: src/celestia/winmain.cpp:3924
 msgid "Error opening script"
-msgstr "Помилка відкриття скрипта"
+msgstr "Помилка відкриття скрипту"
 
 #: src/celestia/winmain.cpp:3943
 msgid "Error loading script"
-msgstr "Помилка завантаження скрипта"
+msgstr "Помилка завантаження скрипту"
 
 #: src/celestia/winmain.cpp:3948
 msgid "Running script"
-msgstr "Виконання скрипта"
+msgstr "Виконання скрипту"
 
 #: src/celestia/wineclipses.cpp:58
 #: src/celestia/kde/celestialbrowser.cpp:182
@@ -1181,7 +1180,7 @@ msgstr "Плутон"
 #: src/celestia/res/resource_strings.cpp:104
 #, no-c-format
 msgid "Name"
-msgstr "Ім'я"
+msgstr "Назва"
 
 #: src/celestia/winstarbrowser.cpp:72
 msgid "Distance (ly)"
@@ -1303,7 +1302,7 @@ msgstr "&Нова тека..."
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:227
 msgid "Create a new bookmark folder in this menu"
-msgstr "Створіть нову теку закладок у цьому меню"
+msgstr "Створити теку закладок у цьому меню"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:307
 #: src/celestia/kde/kcelbookmarkmenu.cpp:354
@@ -1316,8 +1315,8 @@ msgid ""
 "Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \n"
 "Start-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."
 msgstr ""
-"З встановленою вами Celestia, здається, не все гаразд. Не знайдено теки, де встановлено вікно вітання.\n"
-"Запуск Celestia продовжуватиметься, але у програмі, можливо, будуть відсутні деякі файли даних, отже вона працюватиме неправильно, будь ласка, перевірте чи вірно встановлено Celestia."
+"З встановленою вами Celestia, здається, не все гаразд. Не знайдено теки, де встановлено зображення вікна вітання.\n"
+"Запуск Celestia продовжуватиметься, але у програмі, можливо, будуть відсутні деякі файли даних, отже вона працюватиме неправильно, будь ласка, перевірте чи належно встановлено Celestia."
 
 #: src/celestia/kde/kdeapp.cpp:412
 msgid "Go to &URL..."
@@ -1381,7 +1380,7 @@ msgstr "Призупинити час"
 
 #: src/celestia/kde/kdeapp.cpp:458
 msgid "Reverse Time"
-msgstr "Обернути напрямок часу"
+msgstr "Змінити напрямок часу"
 
 #: src/celestia/kde/kdeapp.cpp:460
 msgid "Split View Vertically"
@@ -1417,7 +1416,7 @@ msgstr "Синхронізувати час"
 
 #: src/celestia/kde/kdeapp.cpp:502
 msgid "Alt-Azimuth Mode"
-msgstr "Режим 'висота-азимут'"
+msgstr "Режим «висота-азимут»"
 
 #: src/celestia/kde/kdeapp.cpp:503
 msgid "Go To Surface"
@@ -1425,7 +1424,7 @@ msgstr "Перейти до поверхні"
 
 #: src/celestia/kde/kdeapp.cpp:550
 msgid "Show Stars"
-msgstr "Показувати зорі"
+msgstr "Показувати зірки"
 
 #: src/celestia/kde/kdeapp.cpp:553
 msgid "Show Planets"
@@ -1492,9 +1491,8 @@ msgid "Show Spacecraft Orbits"
 msgstr "Показувати орбіти космічних кораблів"
 
 #: src/celestia/kde/kdeapp.cpp:601
-#, fuzzy
 msgid "Show Equatorial Grid"
-msgstr "Показувати небесну сітку"
+msgstr "Показувати екваторіальну сітку"
 
 #: src/celestia/kde/kdeapp.cpp:604
 msgid "Show Night Side Lights"
@@ -1731,7 +1729,7 @@ msgstr "Введення URL"
 
 #: src/celestia/kde/kdeapp.cpp:1591
 msgid "Object: "
-msgstr "Об'єкт:"
+msgstr "Об'єкт: "
 
 #: src/celestia/kde/kdeapp.cpp:1596
 msgid "Longitude: "
@@ -1800,16 +1798,16 @@ msgid ""
 "_: NAME OF TRANSLATORS\\n"
 "Your names"
 msgstr ""
-"_: NAME OF TRANSLATORS\\n"
-"Serhij Dubyk (Сергій Дубик)"
+"Serhij Dubyk (Сергій Дубик)\n"
+"Yuri Chornoivan (Юрій Чорноіван)"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid ""
 "_: EMAIL OF TRANSLATORS\\n"
 "Your emails"
 msgstr ""
-"_: EMAIL OF TRANSLATORS\\n"
-"dubyk@library.lviv.ua"
+"dubyk@library.lviv.ua\n"
+"yurchor@ukr.net"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:58
 msgid "Celestia Preferences"
@@ -1897,9 +1895,8 @@ msgid "Smooth Orbit Lines"
 msgstr "Плавні лінії орбіт"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:134
-#, fuzzy
 msgid "Equatorial Grid"
-msgstr "Координатну сітку"
+msgstr "Екваторіальна сітка"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:138
 #: src/celestia/kde/kdepreferencesdialog.cpp:207
@@ -2060,12 +2057,12 @@ msgstr "Дата/Час"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:372
 msgid "Display"
-msgstr "Відображення"
+msgstr "Показ"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:374
 #: src/celestia/kde/kdepreferencesdialog.cpp:395
 msgid "Timezone: "
-msgstr "Часовий пояс:"
+msgstr "Часовий пояс: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
 #: src/celestia/res/resource_strings.cpp:98
@@ -2177,7 +2174,7 @@ msgstr "Темп. поверхні:"
 
 #: src/celestia/kde/selectionpopup.cpp:140
 msgid "Marked objects"
-msgstr "Відмічені об'єкти"
+msgstr "Позначені об'єкти"
 
 #: src/celestia/kde/selectionpopup.cpp:298
 msgid "&Select"
@@ -2388,7 +2385,7 @@ msgstr "Кінець"
 #: src/celestia/res/resource_strings.cpp:232
 #, no-c-format
 msgid "Search parameters"
-msgstr "Пошукові параметри"
+msgstr "Параметри пошуку"
 
 #: src/celestia/kde/rc.cpp:91
 #: src/celestia/res/resource_strings.cpp:233
@@ -2400,7 +2397,7 @@ msgstr "Сонячні затемнення"
 #: src/celestia/res/resource_strings.cpp:231
 #, no-c-format
 msgid "On:"
-msgstr "На:"
+msgstr "Місце:"
 
 #: src/celestia/kde/rc.cpp:115
 #, no-c-format
@@ -2624,7 +2621,7 @@ msgstr "Умбріель"
 
 #: data/data.cpp:32
 msgid "Titania"
-msgstr "Тітанія"
+msgstr "Титанія"
 
 #: data/data.cpp:33
 msgid "Oberon"
@@ -2688,11 +2685,11 @@ msgstr "ПІВДЕННИЙ АТЛАНТИЧНИЙ ОКЕАН"
 
 #: data/data.cpp:50
 msgid "NORTH PACIFIC OCEAN"
-msgstr "ПІВНІЧНИЙ ТИХООКЕАНСЬКИЙ ОКЕАН"
+msgstr "ПІВНІЧНИЙ ТИХИЙ ОКЕАН"
 
 #: data/data.cpp:51
 msgid "SOUTH PACIFIC OCEAN"
-msgstr "ПІВДЕННИЙ ТИХООКЕАНСЬКИЙ ОКЕАН"
+msgstr "ПІВДЕННИЙ ТИХИЙ ОКЕАН"
 
 #: data/data.cpp:52
 msgid "INDIAN OCEAN"
@@ -2703,1194 +2700,956 @@ msgid "ARCTIC OCEAN"
 msgstr "АРКТИЧНИЙ ОКЕАН"
 
 #: data/data.cpp:54
-#, fuzzy
 msgid "Abu Dhabi"
 msgstr "Абу-Дабі"
 
 #: data/data.cpp:55
-#, fuzzy
 msgid "Abuja"
 msgstr "Абуджа"
 
 #: data/data.cpp:56
-#, fuzzy
 msgid "Accra"
 msgstr "Аккра"
 
 #: data/data.cpp:57
-#, fuzzy
 msgid "Adamstown"
 msgstr "Адамстаун"
 
 #: data/data.cpp:58
-#, fuzzy
 msgid "Addis Ababa"
 msgstr "Аддис-Абеба"
 
 #: data/data.cpp:59
-#, fuzzy
 msgid "Algiers"
 msgstr "Алжир"
 
 #: data/data.cpp:60
-#, fuzzy
 msgid "Alofi"
-msgstr "Алофи"
+msgstr "Алофі"
 
 #: data/data.cpp:61
-#, fuzzy
 msgid "Amman"
 msgstr "Амман"
 
 #: data/data.cpp:62
-#, fuzzy
 msgid "Amsterdam"
 msgstr "Амстердам"
 
 #: data/data.cpp:63
-#, fuzzy
 msgid "Andorra la Vella"
 msgstr "Андорра-ла-Велья"
 
 #: data/data.cpp:64
-#, fuzzy
 msgid "Ankara"
 msgstr "Анкара"
 
 #: data/data.cpp:65
-#, fuzzy
 msgid "Antananarivo"
 msgstr "Антананаріву"
 
 #: data/data.cpp:66
-#, fuzzy
 msgid "Apia"
-msgstr "Апиа"
+msgstr "Апья"
 
 #: data/data.cpp:67
-#, fuzzy
 msgid "Ashgabat"
-msgstr "Ашхабад"
+msgstr "Ашгабат"
 
 #: data/data.cpp:68
-#, fuzzy
 msgid "Asmara"
-msgstr "Асмара"
+msgstr "Асмера"
 
 #: data/data.cpp:69
-#, fuzzy
 msgid "Astana"
 msgstr "Астана"
 
 #: data/data.cpp:70
-#, fuzzy
 msgid "Asuncion"
 msgstr "Асунсьйон"
 
 #: data/data.cpp:71
-#, fuzzy
 msgid "Athens"
 msgstr "Афіни"
 
 #: data/data.cpp:72
-#, fuzzy
 msgid "Avarua"
 msgstr "Аваруа"
 
 #: data/data.cpp:73
-#, fuzzy
 msgid "Baghdad"
 msgstr "Багдад"
 
 #: data/data.cpp:74
-#, fuzzy
 msgid "Baku"
 msgstr "Баку"
 
 #: data/data.cpp:75
-#, fuzzy
 msgid "Bamako"
 msgstr "Бамако"
 
 #: data/data.cpp:76
-#, fuzzy
 msgid "Bandar Seri Begawan"
 msgstr "Бандар-Сері-Бегаван"
 
 #: data/data.cpp:77
-#, fuzzy
 msgid "Bangkok"
 msgstr "Бангкок"
 
 #: data/data.cpp:78
-#, fuzzy
 msgid "Bangui"
 msgstr "Бангі"
 
 #: data/data.cpp:79
-#, fuzzy
 msgid "Banjul"
 msgstr "Банджул"
 
 #: data/data.cpp:80
-#, fuzzy
 msgid "Basse-Terre"
 msgstr "Бас-Тер"
 
 #: data/data.cpp:81
-#, fuzzy
 msgid "Basseterre"
 msgstr "Бастер"
 
 #: data/data.cpp:82
-#, fuzzy
 msgid "Beijing"
 msgstr "Пекін"
 
 #: data/data.cpp:83
-#, fuzzy
 msgid "Beirut"
 msgstr "Бейрут"
 
 #: data/data.cpp:84
-#, fuzzy
 msgid "Belgrade"
 msgstr "Белград"
 
 #: data/data.cpp:85
-#, fuzzy
 msgid "Belmopan"
 msgstr "Бельмопан"
 
 #: data/data.cpp:86
-#, fuzzy
 msgid "Berlin"
 msgstr "Берлін"
 
 #: data/data.cpp:87
-#, fuzzy
 msgid "Bern"
 msgstr "Берн"
 
 #: data/data.cpp:88
-#, fuzzy
 msgid "Bishkek"
 msgstr "Бішкек"
 
 #: data/data.cpp:89
-#, fuzzy
 msgid "Bissau"
 msgstr "Бісау"
 
 #: data/data.cpp:90
-#, fuzzy
 msgid "Bloemfontein"
 msgstr "Блумфонтейн"
 
 #: data/data.cpp:91
-#, fuzzy
 msgid "Bogota"
 msgstr "Богота"
 
 #: data/data.cpp:92
-#, fuzzy
 msgid "Brasilia"
-msgstr "Бразилія"
+msgstr "Бразиліа"
 
 #: data/data.cpp:93
-#, fuzzy
 msgid "Bratislava"
 msgstr "Братислава"
 
 #: data/data.cpp:94
-#, fuzzy
 msgid "Brazzaville"
 msgstr "Браззавіль"
 
 #: data/data.cpp:95
-#, fuzzy
 msgid "Bridgetown"
-msgstr "Бріджтаун"
+msgstr "Бриджтаун"
 
 #: data/data.cpp:96
-#, fuzzy
 msgid "Brussels"
 msgstr "Брюссель"
 
 #: data/data.cpp:97
-#, fuzzy
 msgid "Bucharest"
 msgstr "Бухарест"
 
 #: data/data.cpp:98
-#, fuzzy
 msgid "Budapest"
 msgstr "Будапешт"
 
 #: data/data.cpp:99
-#, fuzzy
 msgid "Buenos Aires"
 msgstr "Буенос-Айрес"
 
 #: data/data.cpp:100
-#, fuzzy
 msgid "Bujumbura"
 msgstr "Бужумбура"
 
 #: data/data.cpp:101
-#, fuzzy
 msgid "Cairo"
-msgstr "Аль-Кахіра"
+msgstr "Каїр"
 
 #: data/data.cpp:102
-#, fuzzy
 msgid "Canberra"
 msgstr "Канберра"
 
 #: data/data.cpp:103
-#, fuzzy
 msgid "Cape Town"
 msgstr "Кейптаун"
 
 #: data/data.cpp:104
-#, fuzzy
 msgid "Caracas"
 msgstr "Каракас"
 
 #: data/data.cpp:105
-#, fuzzy
 msgid "Castries"
 msgstr "Кастрі"
 
 #: data/data.cpp:106
-#, fuzzy
 msgid "Cayenne"
-msgstr "Cayenne"
+msgstr "Каєнна"
 
 #: data/data.cpp:107
-#, fuzzy
 msgid "Charlotte Amalie"
 msgstr "Шарлотта-Амалія"
 
 #: data/data.cpp:108
-#, fuzzy
 msgid "Chisinau"
 msgstr "Кишинів"
 
 #: data/data.cpp:109
-#, fuzzy
 msgid "Colombo"
 msgstr "Коломбо"
 
 #: data/data.cpp:110
-#, fuzzy
 msgid "Conakry"
 msgstr "Конакрі"
 
 #: data/data.cpp:111
-#, fuzzy
 msgid "Copenhagen"
 msgstr "Копенгаген"
 
 #: data/data.cpp:112
-#, fuzzy
 msgid "Cotonou"
 msgstr "Котону"
 
 #: data/data.cpp:113
-#, fuzzy
 msgid "Dakar"
 msgstr "Дакар"
 
 #: data/data.cpp:114
-#, fuzzy
 msgid "Damascus"
 msgstr "Дамаск"
 
 #: data/data.cpp:115
-#, fuzzy
 msgid "Dar es Salaam"
 msgstr "Дар-ес-Салам"
 
 #: data/data.cpp:116
-#, fuzzy
 msgid "Dhaka"
 msgstr "Дакка"
 
 #: data/data.cpp:117
-#, fuzzy
 msgid "Dili"
 msgstr "Ділі"
 
 #: data/data.cpp:118
-#, fuzzy
 msgid "Djibouti"
-msgstr "Джібуті"
+msgstr "Джибуті"
 
 #: data/data.cpp:119
-#, fuzzy
 msgid "Doha"
 msgstr "Доха"
 
 #: data/data.cpp:120
-#, fuzzy
 msgid "Douglas"
 msgstr "Дуглас"
 
 #: data/data.cpp:121
-#, fuzzy
 msgid "Dublin"
 msgstr "Дублін"
 
 #: data/data.cpp:122
-#, fuzzy
 msgid "Dushanbe"
 msgstr "Душанбе"
 
 #: data/data.cpp:123
-#, fuzzy
 msgid "Fongafale"
 msgstr "Фонгафале"
 
 #: data/data.cpp:124
-#, fuzzy
 msgid "Fort-de-France"
-msgstr "Форт-де-Франс"
+msgstr "Фор-де-Франс"
 
 #: data/data.cpp:125
-#, fuzzy
 msgid "Freetown"
 msgstr "Фрітаун"
 
 #: data/data.cpp:126
-#, fuzzy
 msgid "Gaborone"
 msgstr "Габороне"
 
 #: data/data.cpp:127
-#, fuzzy
 msgid "George Town"
 msgstr "Джорджтаун"
 
 #: data/data.cpp:128
-#, fuzzy
 msgid "Georgetown"
 msgstr "Джорджтаун"
 
 #: data/data.cpp:129
-#, fuzzy
 msgid "Gibraltar"
 msgstr "Гібралтар"
 
 #: data/data.cpp:130
-#, fuzzy
 msgid "Grand Turk"
 msgstr "Гранд-Терк"
 
 #: data/data.cpp:131
-#, fuzzy
 msgid "Guatemala"
 msgstr "Гватемала"
 
 #: data/data.cpp:132
-#, fuzzy
 msgid "Hagatna"
-msgstr "Hagatna"
+msgstr "Аґанья"
 
 #: data/data.cpp:133
-#, fuzzy
 msgid "The Hague"
 msgstr "Гаага"
 
 #: data/data.cpp:134
-#, fuzzy
 msgid "Hamilton"
 msgstr "Гамільтон"
 
 #: data/data.cpp:135
-#, fuzzy
 msgid "Hanoi"
 msgstr "Ханой"
 
 #: data/data.cpp:136
-#, fuzzy
 msgid "Harare"
 msgstr "Хараре"
 
 #: data/data.cpp:137
-#, fuzzy
 msgid "Havana"
 msgstr "Гавана"
 
 #: data/data.cpp:138
-#, fuzzy
 msgid "Helsinki"
 msgstr "Гельсінкі"
 
 #: data/data.cpp:139
-#, fuzzy
 msgid "Honiara"
 msgstr "Хоніара"
 
 #: data/data.cpp:140
-#, fuzzy
 msgid "Islamabad"
 msgstr "Ісламабад"
 
 #: data/data.cpp:141
-#, fuzzy
 msgid "Jakarta"
 msgstr "Джакарта"
 
 #: data/data.cpp:142
-#, fuzzy
 msgid "Jamestown"
 msgstr "Джеймстаун"
 
 #: data/data.cpp:143
-#, fuzzy
 msgid "Jerusalem"
 msgstr "Єрусалим"
 
 #: data/data.cpp:144
-#, fuzzy
 msgid "Kabul"
 msgstr "Кабул"
 
 #: data/data.cpp:145
-#, fuzzy
 msgid "Kampala"
 msgstr "Кампала"
 
 #: data/data.cpp:146
-#, fuzzy
 msgid "Kathmandu"
 msgstr "Катманду"
 
 #: data/data.cpp:147
-#, fuzzy
 msgid "Khartoum"
 msgstr "Хартум"
 
 #: data/data.cpp:148
-#, fuzzy
 msgid "Kiev"
 msgstr "Київ"
 
 #: data/data.cpp:149
-#, fuzzy
 msgid "Kigali"
 msgstr "Кігалі"
 
 #: data/data.cpp:150
 #: data/data.cpp:151
-#, fuzzy
 msgid "Kingston"
 msgstr "Кінгстон"
 
 #: data/data.cpp:152
-#, fuzzy
 msgid "Kingstown"
 msgstr "Кінгстаун"
 
 #: data/data.cpp:153
-#, fuzzy
 msgid "Kinshasa"
 msgstr "Кіншаса"
 
 #: data/data.cpp:154
-#, fuzzy
 msgid "Koror"
-msgstr "Корорий"
+msgstr "Корор"
 
 #: data/data.cpp:155
-#, fuzzy
 msgid "Kuala Lumpur"
 msgstr "Куала-Лумпур"
 
 #: data/data.cpp:156
-#, fuzzy
 msgid "Kuwait"
 msgstr "Кувейт"
 
 #: data/data.cpp:157
-#, fuzzy
 msgid "La'youn"
 msgstr "Ель-Аюн"
 
 #: data/data.cpp:158
-#, fuzzy
 msgid "La Paz"
 msgstr "Ла-Пас"
 
 #: data/data.cpp:159
-#, fuzzy
 msgid "Libreville"
 msgstr "Лібревіль"
 
 #: data/data.cpp:160
-#, fuzzy
 msgid "Lilongwe"
 msgstr "Лілонгве"
 
 #: data/data.cpp:161
-#, fuzzy
 msgid "Lima"
 msgstr "Ліма"
 
 #: data/data.cpp:162
-#, fuzzy
 msgid "Lisbon"
 msgstr "Лісабон"
 
 #: data/data.cpp:163
-#, fuzzy
 msgid "Ljubljana"
 msgstr "Любляна"
 
 #: data/data.cpp:164
-#, fuzzy
 msgid "Lobamba"
-msgstr "Lobamba"
+msgstr "Лобамба"
 
 #: data/data.cpp:165
-#, fuzzy
 msgid "Lome"
 msgstr "Ломе"
 
 #: data/data.cpp:166
-#, fuzzy
 msgid "London"
 msgstr "Лондон"
 
 #: data/data.cpp:167
-#, fuzzy
 msgid "Longyearbyen"
-msgstr "Лонгіер"
+msgstr "Лонг'єрб'єн"
 
 #: data/data.cpp:168
-#, fuzzy
 msgid "Luanda"
 msgstr "Луанда"
 
 #: data/data.cpp:169
-#, fuzzy
 msgid "Lusaka"
 msgstr "Лусака"
 
 #: data/data.cpp:170
-#, fuzzy
 msgid "Luxembourg"
 msgstr "Люксембург"
 
 #: data/data.cpp:171
-#, fuzzy
 msgid "Madrid"
 msgstr "Мадрид"
 
 #: data/data.cpp:172
-#, fuzzy
 msgid "Majuro"
 msgstr "Маджуро"
 
 #: data/data.cpp:173
-#, fuzzy
 msgid "Malabo"
 msgstr "Малабо"
 
 #: data/data.cpp:174
-#, fuzzy
 msgid "Male"
-msgstr "Чоловік"
+msgstr "Мале"
 
 #: data/data.cpp:175
-#, fuzzy
 msgid "Mamoutzou"
-msgstr "Mamoutzou"
+msgstr "Мамудзу"
 
 #: data/data.cpp:176
-#, fuzzy
 msgid "Managua"
 msgstr "Манагуа"
 
 #: data/data.cpp:177
-#, fuzzy
 msgid "Manama"
 msgstr "Манама"
 
 #: data/data.cpp:178
-#, fuzzy
 msgid "Manila"
 msgstr "Маніла"
 
 #: data/data.cpp:179
-#, fuzzy
 msgid "Maputo"
-msgstr "Мапуту"
+msgstr "Мапуто"
 
 #: data/data.cpp:180
-#, fuzzy
 msgid "Maseru"
 msgstr "Масеру"
 
 #: data/data.cpp:181
-#, fuzzy
 msgid "Mata-Utu"
 msgstr "Мата-Уту"
 
 #: data/data.cpp:182
-#, fuzzy
 msgid "Mbabane"
-msgstr "Мбанане"
+msgstr "Мбабане"
 
 #: data/data.cpp:183
-#, fuzzy
 msgid "Mexico City"
 msgstr "Мехіко"
 
 #: data/data.cpp:184
-#, fuzzy
 msgid "Minsk"
 msgstr "Мінськ"
 
 #: data/data.cpp:185
-#, fuzzy
 msgid "Mogadishu"
 msgstr "Могадішо"
 
 #: data/data.cpp:186
-#, fuzzy
 msgid "Monaco"
 msgstr "Монако"
 
 #: data/data.cpp:187
-#, fuzzy
 msgid "Monrovia"
 msgstr "Монровія"
 
 #: data/data.cpp:188
-#, fuzzy
 msgid "Montevideo"
 msgstr "Монтевідео"
 
 #: data/data.cpp:189
-#, fuzzy
 msgid "Moroni"
 msgstr "Мороні"
 
 #: data/data.cpp:190
-#, fuzzy
 msgid "Moscow"
 msgstr "Москва"
 
 #: data/data.cpp:191
-#, fuzzy
 msgid "Muscat"
 msgstr "Маскат"
 
 #: data/data.cpp:192
-#, fuzzy
 msgid "Nairobi"
 msgstr "Найробі"
 
 #: data/data.cpp:193
-#, fuzzy
 msgid "Nassau"
 msgstr "Нассау"
 
 #: data/data.cpp:194
-#, fuzzy
 msgid "N'Djamena"
-msgstr "Нджамену"
+msgstr "Нджамена"
 
 #: data/data.cpp:195
-#, fuzzy
 msgid "New Delhi"
 msgstr "Нью-Делі"
 
 #: data/data.cpp:196
-#, fuzzy
 msgid "Niamey"
 msgstr "Ніамей"
 
 #: data/data.cpp:197
-#, fuzzy
 msgid "Nicosia"
-msgstr "Нікозія"
+msgstr "Нікосія"
 
 #: data/data.cpp:198
-#, fuzzy
 msgid "Nouakchott"
 msgstr "Нуакшот"
 
 #: data/data.cpp:199
-#, fuzzy
 msgid "Noumea"
 msgstr "Нумеа"
 
 #: data/data.cpp:200
-#, fuzzy
 msgid "Nuku'alofa"
 msgstr "Нукуалофа"
 
 #: data/data.cpp:201
-#, fuzzy
 msgid "Nuuk"
 msgstr "Нуук"
 
 #: data/data.cpp:202
-#, fuzzy
 msgid "Oranjestad"
-msgstr "Оран'єстад"
+msgstr "Ораньєстад"
 
 #: data/data.cpp:203
-#, fuzzy
 msgid "Oslo"
 msgstr "Осло"
 
 #: data/data.cpp:204
-#, fuzzy
 msgid "Ottawa"
 msgstr "Оттава"
 
 #: data/data.cpp:205
-#, fuzzy
 msgid "Ouagadougou"
 msgstr "Уагадугу"
 
 #: data/data.cpp:206
-#, fuzzy
 msgid "Pago Pago"
 msgstr "Паго-Паго"
 
 #: data/data.cpp:207
-#, fuzzy
 msgid "Palikir"
-msgstr "Палкір"
+msgstr "Палікір"
 
 #: data/data.cpp:208
-#, fuzzy
 msgid "Panama"
 msgstr "Панама"
 
 #: data/data.cpp:209
-#, fuzzy
 msgid "Papeete"
 msgstr "Папеете"
 
 #: data/data.cpp:210
-#, fuzzy
 msgid "Paramaribo"
-msgstr "Парамарібо"
+msgstr "Парамарибо"
 
 #: data/data.cpp:211
-#, fuzzy
 msgid "Paris"
 msgstr "Париж"
 
 #: data/data.cpp:212
-#, fuzzy
 msgid "Phnom Penh"
 msgstr "Пномпень"
 
 #: data/data.cpp:213
-#, fuzzy
 msgid "Plymouth"
 msgstr "Плімут"
 
 #: data/data.cpp:214
-#, fuzzy
 msgid "Port Louis"
 msgstr "Порт-Луї"
 
 #: data/data.cpp:215
-#, fuzzy
 msgid "Port Moresby"
 msgstr "Порт-Морсбі"
 
 #: data/data.cpp:216
-#, fuzzy
 msgid "Port-au-Prince"
 msgstr "Порт-о-Пренс"
 
 #: data/data.cpp:217
-#, fuzzy
 msgid "Port-of-Spain"
 msgstr "Порт-оф-Спейн"
 
 #: data/data.cpp:218
-#, fuzzy
 msgid "Porto-Novo"
 msgstr "Порто-Ново"
 
 #: data/data.cpp:219
-#, fuzzy
 msgid "Port-Vila"
 msgstr "Порт-Віла"
 
 #: data/data.cpp:220
-#, fuzzy
 msgid "Prague"
 msgstr "Прага"
 
 #: data/data.cpp:221
-#, fuzzy
 msgid "Praia"
 msgstr "Прая"
 
 #: data/data.cpp:222
-#, fuzzy
 msgid "Pretoria"
 msgstr "Преторія"
 
 #: data/data.cpp:223
-#, fuzzy
 msgid "P'yongyang"
 msgstr "Пхеньян"
 
 #: data/data.cpp:224
-#, fuzzy
 msgid "Quito"
 msgstr "Кіто"
 
 #: data/data.cpp:225
-#, fuzzy
 msgid "Rabat"
 msgstr "Рабат"
 
 #: data/data.cpp:226
-#, fuzzy
 msgid "Rangoon"
-msgstr "Янгон"
+msgstr "Рангун"
 
 #: data/data.cpp:227
-#, fuzzy
 msgid "Reykjavik"
 msgstr "Рейк'явік"
 
 #: data/data.cpp:228
-#, fuzzy
 msgid "Riga"
 msgstr "Рига"
 
 #: data/data.cpp:229
-#, fuzzy
 msgid "Riyadh"
-msgstr "Ер-Ріяд"
+msgstr "Ер-Ріядд"
 
 #: data/data.cpp:230
-#, fuzzy
 msgid "Road Town"
-msgstr "Road Town"
+msgstr "Род-Таун"
 
 #: data/data.cpp:231
-#, fuzzy
 msgid "Rome"
 msgstr "Рим"
 
 #: data/data.cpp:232
-#, fuzzy
 msgid "Roseau"
 msgstr "Розо"
 
 #: data/data.cpp:233
-#, fuzzy
 msgid "Saint George's"
-msgstr "Saint George's"
+msgstr "Сент-Джорджес"
 
 #: data/data.cpp:234
-#, fuzzy
 msgid "Saint Helier"
 msgstr "Сент-Гелієр"
 
 #: data/data.cpp:235
-#, fuzzy
 msgid "Saint John's"
 msgstr "Сент-Джонс"
 
 #: data/data.cpp:236
-#, fuzzy
 msgid "Saint Peter Port"
 msgstr "Сент-Пітер-Порт"
 
 #: data/data.cpp:237
-#, fuzzy
 msgid "Saint-Denis"
 msgstr "Сен-Дені"
 
 #: data/data.cpp:238
-#, fuzzy
 msgid "Saint-Pierre"
 msgstr "Сент-П'єр"
 
 #: data/data.cpp:239
-#, fuzzy
 msgid "Saipan"
 msgstr "Сайпан"
 
 #: data/data.cpp:240
-#, fuzzy
 msgid "San Jose"
-msgstr "Сан - Хосе"
+msgstr "Сан-Хосе"
 
 #: data/data.cpp:241
-#, fuzzy
 msgid "San Juan"
-msgstr "Сан - Хуан"
+msgstr "Сан-Хуан"
 
 #: data/data.cpp:242
-#, fuzzy
 msgid "San Marino"
-msgstr "Сан - Марині"
+msgstr "Сан-Марино"
 
 #: data/data.cpp:243
-#, fuzzy
 msgid "San Salvador"
-msgstr "Сан - Сальвадор"
+msgstr "Сан-Сальвадор"
 
 #: data/data.cpp:244
-#, fuzzy
 msgid "Sanaa"
 msgstr "Сана"
 
 #: data/data.cpp:245
-#, fuzzy
 msgid "Santiago"
 msgstr "Сантьяго"
 
 #: data/data.cpp:246
-#, fuzzy
 msgid "Santo Domingo"
 msgstr "Санто-Домінго"
 
 #: data/data.cpp:247
-#, fuzzy
 msgid "Sao Tome"
 msgstr "Сан-Томе"
 
 #: data/data.cpp:248
-#, fuzzy
 msgid "Sarajevo"
 msgstr "Сараєво"
 
 #: data/data.cpp:249
-#, fuzzy
 msgid "Seoul"
 msgstr "Сеул"
 
 #: data/data.cpp:250
-#, fuzzy
 msgid "The Settlement"
-msgstr "Врегулювання"
+msgstr "Сеттлмент"
 
 #: data/data.cpp:251
-#, fuzzy
 msgid "Singapore"
-msgstr "Сінгапур"
+msgstr "Сингапур"
 
 #: data/data.cpp:252
-#, fuzzy
 msgid "Skopje"
 msgstr "Скоп'є"
 
 #: data/data.cpp:253
-#, fuzzy
 msgid "Sofia"
 msgstr "Софія"
 
 #: data/data.cpp:254
-#, fuzzy
 msgid "Sri Jayewardenepura Kotte"
-msgstr "Шрі Jayewardenepura Котто"
+msgstr "Шрі-Джаяварденепура-Котте"
 
 #: data/data.cpp:255
-#, fuzzy
 msgid "Stanley"
 msgstr "Стенлі"
 
 #: data/data.cpp:256
-#, fuzzy
 msgid "Stockholm"
 msgstr "Стокгольм"
 
 #: data/data.cpp:257
-#, fuzzy
 msgid "Sucre"
 msgstr "Сукре"
 
 #: data/data.cpp:258
-#, fuzzy
 msgid "Suva"
 msgstr "Сува"
 
 #: data/data.cpp:259
-#, fuzzy
 msgid "Taipei"
 msgstr "Тайбей"
 
 #: data/data.cpp:260
-#, fuzzy
 msgid "Tallinn"
 msgstr "Таллінн"
 
 #: data/data.cpp:261
-#, fuzzy
 msgid "Tarawa"
 msgstr "Тарава"
 
 #: data/data.cpp:262
-#, fuzzy
 msgid "Tashkent"
 msgstr "Ташкент"
 
 #: data/data.cpp:263
-#, fuzzy
 msgid "T'bilisi"
 msgstr "Тбілісі"
 
 #: data/data.cpp:264
-#, fuzzy
 msgid "Tegucigalpa"
 msgstr "Тегусігальпа"
 
 #: data/data.cpp:265
-#, fuzzy
 msgid "Tehran"
 msgstr "Тегеран"
 
 #: data/data.cpp:266
-#, fuzzy
 msgid "Tel Aviv"
-msgstr "Тель-Авів"
+msgstr "Тель-Авівв"
 
 #: data/data.cpp:267
-#, fuzzy
 msgid "Thimphu"
 msgstr "Тхімпху"
 
 #: data/data.cpp:268
-#, fuzzy
 msgid "Tirana"
-msgstr "Тірана"
+msgstr "Тирана"
 
 #: data/data.cpp:269
-#, fuzzy
 msgid "Tokyo"
 msgstr "Токіо"
 
 #: data/data.cpp:270
-#, fuzzy
 msgid "Torshavn"
 msgstr "Торсгавн"
 
 #: data/data.cpp:271
-#, fuzzy
 msgid "Tripoli"
 msgstr "Тріполі"
 
 #: data/data.cpp:272
-#, fuzzy
 msgid "Tunis"
 msgstr "Туніс"
 
 #: data/data.cpp:273
-#, fuzzy
 msgid "Ulaanbaatar"
 msgstr "Улан-Батор"
 
 #: data/data.cpp:274
-#, fuzzy
 msgid "Vaduz"
 msgstr "Вадуц"
 
 #: data/data.cpp:275
-#, fuzzy
 msgid "Valletta"
-msgstr "Валлетта"
+msgstr "Валетта"
 
 #: data/data.cpp:276
-#, fuzzy
 msgid "The Valley"
-msgstr "Долина"
+msgstr "Веллі"
 
 #: data/data.cpp:277
-#, fuzzy
 msgid "Vatican City"
-msgstr "Ватикан"
+msgstr "Місто Ватикан"
 
 #: data/data.cpp:278
 #: data/data.cpp:279
-#, fuzzy
 msgid "Victoria"
 msgstr "Вікторія"
 
 #: data/data.cpp:280
-#, fuzzy
 msgid "Vienna"
 msgstr "Відень"
 
 #: data/data.cpp:281
-#, fuzzy
 msgid "Vientiane"
 msgstr "В'єнтьян"
 
 #: data/data.cpp:282
-#, fuzzy
 msgid "Vilnius"
 msgstr "Вільнюс"
 
 #: data/data.cpp:283
-#, fuzzy
 msgid "Warsaw"
 msgstr "Варшава"
 
 #: data/data.cpp:284
-#, fuzzy
 msgid "Washington D.C."
-msgstr "Вашингтон D.C."
+msgstr "Вашингтон, округ Колумбія"
 
 #: data/data.cpp:285
-#, fuzzy
 msgid "Wellington"
 msgstr "Веллінгтон"
 
 #: data/data.cpp:286
-#, fuzzy
 msgid "West Island"
-msgstr "Західного острови"
+msgstr "Західний острів"
 
 #: data/data.cpp:287
-#, fuzzy
 msgid "Willemstad"
-msgstr "Кюрасао"
+msgstr "Віллемстад"
 
 #: data/data.cpp:288
-#, fuzzy
 msgid "Windhoek"
 msgstr "Віндгук"
 
 #: data/data.cpp:289
-#, fuzzy
 msgid "Yamoussoukro"
 msgstr "Ямусукро"
 
 #: data/data.cpp:290
-#, fuzzy
 msgid "Yaounde"
 msgstr "Яунде"
 
 #: data/data.cpp:291
-#, fuzzy
 msgid "Yaren District"
-msgstr "Ярен району"
+msgstr "Округ Ярен"
 
 #: data/data.cpp:292
-#, fuzzy
 msgid "Yerevan"
 msgstr "Єреван"
 
 #: data/data.cpp:293
-#, fuzzy
 msgid "Zagreb"
 msgstr "Загреб"
 
@@ -3936,7 +3695,7 @@ msgstr "Захопити &відео...\tShift+F10"
 
 #: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
-msgstr "Ви&xід"
+msgstr "Ви&йти"
 
 #: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
@@ -4020,7 +3779,7 @@ msgstr "Показувати місцевий час"
 
 #: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
-msgstr "&Вигляд"
+msgstr "&Відтворення"
 
 #: src/celestia/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
@@ -4145,9 +3904,8 @@ msgid "Run &Demo"
 msgstr "Запуск &демонстрації"
 
 #: src/celestia/res/resource_strings.cpp:62
-#, fuzzy
 msgid "User &Guide"
-msgstr "Путівник"
+msgstr "Інструкція &користувача"
 
 #: src/celestia/res/resource_strings.cpp:63
 msgid "&Controls"
@@ -4189,9 +3947,8 @@ msgid "OK"
 msgstr "Гаразд"
 
 #: src/celestia/res/resource_strings.cpp:70
-#, fuzzy
 msgid "Copyright (C) 2001-2009, Celestia Development Team"
-msgstr "Авторське право (C) 2001-2008, Команда з розробки Celestia"
+msgstr "Авторські права на програму належать Команді з розробки Celestia, ©2001–2009."
 
 #: src/celestia/res/resource_strings.cpp:71
 msgid "http://www.shatters.net/celestia"
@@ -4243,7 +4000,7 @@ msgstr "Hank Ramsey"
 
 #: src/celestia/res/resource_strings.cpp:83
 msgid "Bob Ippolito"
-msgstr "Боб Іпполіто"
+msgstr "Bob Ippolito"
 
 #: src/celestia/res/resource_strings.cpp:84
 msgid "Vincent Giangiulio"
@@ -4259,7 +4016,7 @@ msgstr "Виберіть об'єкт"
 
 #: src/celestia/res/resource_strings.cpp:89
 msgid "Object Name"
-msgstr "Ім'я об'єкту"
+msgstr "Назва об'єкта"
 
 #: src/celestia/res/resource_strings.cpp:90
 msgid "License"
@@ -4296,7 +4053,7 @@ msgstr "Створити у >>"
 #: src/celestia/res/resource_strings.cpp:108
 #: src/celestia/res/resource_strings.cpp:218
 msgid "New Folder..."
-msgstr "Нова тека..."
+msgstr "Створити теку..."
 
 #: src/celestia/res/resource_strings.cpp:109
 msgid "Solar System Browser"
@@ -4403,9 +4160,8 @@ msgid "Globulars"
 msgstr "Сферичні скупчення"
 
 #: src/celestia/res/resource_strings.cpp:162
-#, fuzzy
 msgid "Ecliptic Line"
-msgstr "Екліптика"
+msgstr "Лінія екліптики"
 
 #: src/celestia/res/resource_strings.cpp:163
 msgid "Grids"
@@ -4413,11 +4169,11 @@ msgstr "Сітки"
 
 #: src/celestia/res/resource_strings.cpp:164
 msgid "Equatorial"
-msgstr ""
+msgstr "Екваторіальна"
 
 #: src/celestia/res/resource_strings.cpp:165
 msgid "Horizontal"
-msgstr "По горизонталі"
+msgstr "Горизонтальна"
 
 #: src/celestia/res/resource_strings.cpp:166
 msgid "Galactic"
@@ -4497,7 +4253,7 @@ msgstr "Додати нову теку закладок"
 
 #: src/celestia/res/resource_strings.cpp:214
 msgid "Folder Name"
-msgstr "Ім'я теки"
+msgstr "Назва теки"
 
 #: src/celestia/res/resource_strings.cpp:215
 msgid "Organize Bookmarks"
@@ -4517,7 +4273,7 @@ msgstr "Перейменувати закладку або теку"
 
 #: src/celestia/res/resource_strings.cpp:224
 msgid "New Name"
-msgstr "Нове ім'я"
+msgstr "Нова назва"
 
 #: src/celestia/res/resource_strings.cpp:226
 msgid "Compute"

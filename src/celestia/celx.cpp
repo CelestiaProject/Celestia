@@ -3332,6 +3332,17 @@ static int celestia_getscriptpath(lua_State* l)
     return 1;
 }
 
+static int celestia_runscript(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
+    string scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
+
+    CelestiaCore* appCore = this_celestia(l);
+    appCore->runScript(scriptfile);
+    return 0;
+}
+
+
 static int celestia_tostring(lua_State* l)
 {
     lua_pushstring(l, "[Celestia]");
@@ -3480,6 +3491,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "createcelscript", celestia_createcelscript);
     Celx_RegisterMethod(l, "requestsystemaccess", celestia_requestsystemaccess);
     Celx_RegisterMethod(l, "getscriptpath", celestia_getscriptpath);
+    Celx_RegisterMethod(l, "runscript", celestia_runscript);
     Celx_RegisterMethod(l, "registereventhandler", celestia_registereventhandler);
     Celx_RegisterMethod(l, "geteventhandler", celestia_geteventhandler);
     Celx_RegisterMethod(l, "stars", celestia_stars);
