@@ -60,6 +60,7 @@ celestia_LDADD = \
 	$(celestiaGTKLIBS) \
 	../celengine/libcelengine.a \
 	../celephem/libcelephem.a \
+	../celmodel/libcelmodel.a \
 	../celtxf/libceltxf.a \
 	../cel3ds/libcel3ds.a \
 	../celmath/libcelmath.a \
