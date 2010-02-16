@@ -39,10 +39,15 @@ struct Face
 };
 
 
+// Mesh operations
 extern cmod::Mesh* GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weldTolerance = 0.0f);
 extern cmod::Mesh* GenerateTangents(const cmod::Mesh& mesh, bool weld);
 extern bool UniquifyVertices(cmod::Mesh& mesh);
+
+// Model operations
 extern cmod::Model* MergeModelMeshes(const cmod::Model& model);
+extern cmod::Model* GenerateModelNormals(const cmod::Model& model, float smoothAngle, bool weldVertices, float weldTolerance);
+
 
 template<typename T, typename U> void
 JoinVertices(std::vector<Face>& faces,
@@ -86,10 +91,10 @@ JoinVertices(std::vector<Face>& faces,
     uint32 uniqueCount = 0;
     for (uint32 i = 0; i < nVertices; i++)
     {
-	if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
-	{
+        if (i == 0 || !equivalencePredicate(vertices[i - 1], vertices[i]))
+        {
             lastUnique = i;
-	    uniqueCount++;
+            uniqueCount++;
         }
 
         mergeMap[vertices[i].index] = vertices[lastUnique].index;
@@ -99,7 +104,9 @@ JoinVertices(std::vector<Face>& faces,
     for (f = 0; f < faces.size(); f++)
     {
         for (uint32 k= 0; k < 3; k++)
+        {
             faces[f].vi[k] = mergeMap[faces[f].i[k]];
+        }
     }
 }
 

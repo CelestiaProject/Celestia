@@ -312,6 +312,14 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
 }
 
 void
+ModelViewWidget::setBackgroundColor(const QColor& color)
+{
+    m_backgroundColor = color;
+    update();
+}
+
+
+void
 ModelViewWidget::initializeGL()
 {
 }
@@ -320,7 +328,7 @@ ModelViewWidget::initializeGL()
 void
 ModelViewWidget::paintGL()
 {
-    glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
+    glClearColor(m_backgroundColor.redF(), m_backgroundColor.greenF(), m_backgroundColor.blueF(), 0.0f);
     glDepthMask(GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 

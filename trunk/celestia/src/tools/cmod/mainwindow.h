@@ -53,6 +53,8 @@ public slots:
 
     void changeCurrentMaterial(const cmod::Material&);
 
+    void editBackgroundColor();
+
 private:
     ModelViewWidget* m_modelView;
     QLabel* m_statusBarLabel;
