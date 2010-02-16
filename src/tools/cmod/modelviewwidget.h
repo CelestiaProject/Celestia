@@ -62,6 +62,8 @@ public:
 
     Eigen::Transform3d cameraTransform() const;
 
+    void setMaterial(unsigned int index, const cmod::Material& material);
+
 protected:
     void initializeGL();
     void paintGL();

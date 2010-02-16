@@ -51,6 +51,8 @@ public slots:
     void mergeMeshes();
     void editMaterial();
 
+    void changeCurrentMaterial(const cmod::Material&);
+
 private:
     ModelViewWidget* m_modelView;
     QLabel* m_statusBarLabel;
