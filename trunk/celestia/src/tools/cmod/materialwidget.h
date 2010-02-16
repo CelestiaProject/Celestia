@@ -38,9 +38,13 @@ public slots:
     void editSpecularMap();
     void editEmissiveMap();
     void editNormalMap();
+    void setDiffuse(const QColor& color);
+    void setSpecular(const QColor& color);
+    void setEmissive(const QColor& color);
+    void changeMaterialParameters();
 
 signals:
-    void materialChanged();
+    void materialChanged(const cmod::Material&);
 
 private:
     QLabel* m_diffuseColor;
