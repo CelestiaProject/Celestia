@@ -59,9 +59,12 @@ MainWindow::MainWindow() :
     QAction* wireFrameStyleAction = new QAction(tr("&Wireframe"), styleGroup);
     wireFrameStyleAction->setCheckable(true);
     wireFrameStyleAction->setData((int) ModelViewWidget::WireFrameStyle);
+    QAction* backgroundColorAction = new QAction(tr("&Background Color..."), this);
 
     styleMenu->addAction(normalStyleAction);
     styleMenu->addAction(wireFrameStyleAction);
+    styleMenu->addSeparator();
+    styleMenu->addAction(backgroundColorAction);
     menuBar->addMenu(styleMenu);
 
     QMenu* operationsMenu = new QMenu(tr("&Operations"));
@@ -97,6 +100,7 @@ MainWindow::MainWindow() :
 
     // Connect Style menu
     connect(styleGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderStyle(QAction*)));
+    connect(backgroundColorAction, SIGNAL(triggered()), this, SLOT(editBackgroundColor()));
 
     // Connect Operations menu
     connect(generateNormalsAction, SIGNAL(triggered()), this, SLOT(generateNormals()));
@@ -105,6 +109,33 @@ MainWindow::MainWindow() :
     connect(mergeMeshesAction, SIGNAL(triggered()), this, SLOT(mergeMeshes()));
     editMaterialAction->setShortcut(QKeySequence("Ctrl+E"));
     connect(editMaterialAction, SIGNAL(triggered()), this, SLOT(editMaterial()));
+
+    // Apply settings
+    QSettings settings;
+    QColor backgroundColor = settings.value("BackgroundColor", QColor(0, 0, 128)).value<QColor>();
+    m_modelView->setBackgroundColor(backgroundColor);
+}
+
+
+static Material*
+cloneMaterial(const Material* other)
+{
+    Material* material = new Material();
+    material->diffuse  = other->diffuse;
+    material->specular = other->specular;
+    material->emissive = other->emissive;
+    material->specularPower = other->specularPower;
+    material->opacity  = other->opacity;
+    material->blend    = other->blend;
+    for (int i = 0; i < Material::TextureSemanticMax; ++i)
+    {
+        if (other->maps[i])
+        {
+            material->maps[i] = new Material::DefaultTextureResource(other->maps[i]->source());
+        }
+    }
+
+    return material;
 }
 
 
@@ -273,7 +304,29 @@ MainWindow::openModel(const QString& fileName)
 
             delete scene;
 
-            setModel(fileName, model);
+            // Generate normals for the model
+            double smoothAngle = 45.0; // degrees
+            double weldTolerance = 1.0e-6;
+            bool weldVertices = true;
+
+            Model* newModel = GenerateModelNormals(*model, float(smoothAngle * 3.14159265 / 180.0), weldVertices, weldTolerance);
+            delete model;
+
+            if (!newModel)
+            {
+                QMessageBox::warning(this, tr("Mesh Load Error"), tr("Internal error when loading mesh"));
+            }
+            else
+            {
+                // Automatically uniquify vertices
+                for (unsigned int i = 0; newModel->getMesh(i) != NULL; i++)
+                {
+                    Mesh* mesh = newModel->getMesh(i);
+                    UniquifyVertices(*mesh);
+                }
+
+                setModel(fileName, newModel);
+            }
         }
         else if (info.suffix().toLower() == "cmod")
         {
@@ -367,28 +420,6 @@ MainWindow::setRenderStyle(QAction* action)
 }
 
 
-static Material*
-cloneMaterial(const Material* other)
-{
-    Material* material = new Material();
-    material->diffuse  = other->diffuse;
-    material->specular = other->specular;
-    material->emissive = other->emissive;
-    material->specularPower = other->specularPower;
-    material->opacity  = other->opacity;
-    material->blend    = other->blend;
-    for (int i = 0; i < Material::TextureSemanticMax; ++i)
-    {
-        if (other->maps[i])
-        {
-            material->maps[i] = new Material::DefaultTextureResource(other->maps[i]->source());
-        }
-    }
-
-    return material;
-}
-
-
 void
 MainWindow::generateNormals()
 {
@@ -436,32 +467,15 @@ MainWindow::generateNormals()
         double weldTolerance = toleranceEdit->text().toDouble();
         bool weldVertices = true;
 
-        Model* newModel = new Model();
-
-        // Copy materials
-        for (unsigned int i = 0; model->getMaterial(i) != NULL; i++)
+        Model* newModel = GenerateModelNormals(*model, float(smoothAngle * 3.14159265 / 180.0), weldVertices, weldTolerance);
+        if (!newModel)
         {
-            newModel->addMaterial(cloneMaterial(model->getMaterial(i)));
+            QMessageBox::warning(this, tr("Internal Error"), tr("Out of memory error during normal generation"));
         }
-
-        for (unsigned int i = 0; model->getMesh(i) != NULL; i++)
+        else
         {
-            Mesh* mesh = model->getMesh(i);
-            Mesh* newMesh = NULL;
-
-            newMesh = GenerateNormals(*mesh, float(smoothAngle * 3.14159265 / 180.0), weldVertices, weldTolerance);
-            if (newMesh == NULL)
-            {
-                cerr << "Error generating normals!\n";
-                // TODO: Clone the mesh and add it to the model
-            }
-            else
-            {
-                newModel->addMesh(newMesh);
-            }
+            setModel(modelFileName(), newModel);
         }
-
-        setModel(modelFileName(), newModel);
 
         settings.setValue("SmoothAngle", smoothAngle);
         settings.setValue("WeldTolerance", weldTolerance);
@@ -613,5 +627,23 @@ MainWindow::changeCurrentMaterial(const Material& material)
         QSetIterator<Mesh::PrimitiveGroup*> iter(m_modelView->selection());
         Mesh::PrimitiveGroup* selectedGroup = iter.next();
         m_modelView->setMaterial(selectedGroup->materialIndex, material);
+    }
+}
+
+
+void
+MainWindow::editBackgroundColor()
+{
+    QColor originalColor = m_modelView->backgroundColor();
+    QColorDialog dialog(originalColor, this);
+    connect(&dialog, SIGNAL(currentColorChanged(QColor)), m_modelView, SLOT(setBackgroundColor(QColor)));
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        QSettings settings;
+        settings.setValue("BackgroundColor", m_modelView->backgroundColor());
+    }
+    else
+    {
+        m_modelView->setBackgroundColor(originalColor);
     }
 }

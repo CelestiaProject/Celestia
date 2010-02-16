@@ -60,9 +60,17 @@ public:
         return m_renderStyle;
     }
 
+    QColor backgroundColor() const
+    {
+        return m_backgroundColor;
+    }
+
     Eigen::Transform3d cameraTransform() const;
 
     void setMaterial(unsigned int index, const cmod::Material& material);
+
+public slots:
+    void setBackgroundColor(const QColor& color);
 
 protected:
     void initializeGL();
@@ -86,6 +94,8 @@ private:
     MaterialLibrary* m_materialLibrary;
 
     QSet<cmod::Mesh::PrimitiveGroup*> m_selection;
+
+    QColor m_backgroundColor;
 };
 
 #endif // _CMODVIEW_MODEL_VIEW_WIDGET_H_
