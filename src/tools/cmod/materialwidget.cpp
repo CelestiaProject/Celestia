@@ -26,6 +26,32 @@ static Material::Color fromQtColor(const QColor& color)
     return Material::Color(color.redF(), color.greenF(), color.blueF());
 }
 
+// TODO: implement a copy constructor and assignment operator for materials
+static void copyMaterial(Material& dest, const Material& src)
+{
+    dest.diffuse       = src.diffuse;
+    dest.specular      = src.specular;
+    dest.emissive      = src.emissive;
+    dest.opacity       = src.opacity;
+    dest.specularPower = src.specularPower;
+    dest.blend         = src.blend;
+
+    for (unsigned int i = 0; i < Material::TextureSemanticMax; ++i)
+    {
+        if (dest.maps[i])
+        {
+            delete dest.maps[i];
+            dest.maps[i] = NULL;
+        }
+
+        if (src.maps[i])
+        {
+            dest.maps[i] = new Material::DefaultTextureResource(src.maps[i]->source());
+        }
+    }
+}
+
+
 static void setWidgetColor(QLabel* widget, const Material::Color& color)
 {
     widget->setPalette(QPalette(toQtColor(color)));
@@ -106,6 +132,8 @@ MaterialWidget::MaterialWidget(QWidget* parent) :
     connect(changeDiffuse, SIGNAL(clicked()), this, SLOT(editDiffuse()));
     connect(changeSpecular, SIGNAL(clicked()), this, SLOT(editSpecular()));
     connect(changeEmissive, SIGNAL(clicked()), this, SLOT(editEmissive()));
+    connect(m_opacity, SIGNAL(returnPressed()), this, SLOT(changeMaterialParameters()));
+    connect(m_specularPower, SIGNAL(returnPressed()), this, SLOT(changeMaterialParameters()));
 
     setMaterial(Material());
 
@@ -121,7 +149,7 @@ MaterialWidget::~MaterialWidget()
 void
 MaterialWidget::setMaterial(const Material& material)
 {
-    m_material = material;
+    copyMaterial(m_material, material);
 
     setWidgetColor(m_diffuseColor, m_material.diffuse);
     setWidgetColor(m_specularColor, m_material.specular);
@@ -129,37 +157,51 @@ MaterialWidget::setMaterial(const Material& material)
     m_opacity->setText(QString::number(m_material.opacity));
     m_specularPower->setText(QString::number(m_material.specularPower));
 
-    emit materialChanged();
+    if (m_material.maps[Material::DiffuseMap])
+        m_baseTexture->setText(m_material.maps[Material::DiffuseMap]->source().c_str());
+    else
+        m_baseTexture->setText("");
+    if (m_material.maps[Material::SpecularMap])
+        m_specularMap->setText(m_material.maps[Material::SpecularMap]->source().c_str());
+    else
+        m_specularMap->setText("");
+    if (m_material.maps[Material::EmissiveMap])
+        m_emissiveMap->setText(m_material.maps[Material::EmissiveMap]->source().c_str());
+    else
+        m_emissiveMap->setText("");
+    if (m_material.maps[Material::NormalMap])
+        m_normalMap->setText(m_material.maps[Material::NormalMap]->source().c_str());
+    else
+        m_normalMap->setText("");
+
+    emit materialChanged(m_material);
 }
 
 
 void
 MaterialWidget::editDiffuse()
 {
-    QColor color = QColorDialog::getColor(toQtColor(m_material.diffuse), this);
-    m_material.diffuse = fromQtColor(color);
-    setWidgetColor(m_diffuseColor, m_material.diffuse);
-    emit materialChanged();
+    QColorDialog dialog(this);
+    connect(&dialog, SIGNAL(currentColorChanged(QColor)), this,  SLOT(setDiffuse(QColor)));
+    dialog.exec();
 }
 
 
 void
 MaterialWidget::editSpecular()
 {
-    QColor color = QColorDialog::getColor(toQtColor(m_material.specular), this);
-    m_material.specular = fromQtColor(color);
-    setWidgetColor(m_specularColor, m_material.specular);
-    emit materialChanged();
+    QColorDialog dialog(this);
+    connect(&dialog, SIGNAL(currentColorChanged(QColor)), this,  SLOT(setSpecular(QColor)));
+    dialog.exec();
 }
 
 
 void
 MaterialWidget::editEmissive()
 {
-    QColor color = QColorDialog::getColor(toQtColor(m_material.emissive), this);
-    m_material.emissive = fromQtColor(color);
-    setWidgetColor(m_emissiveColor, m_material.emissive);
-    emit materialChanged();
+    QColorDialog dialog(this);
+    connect(&dialog, SIGNAL(currentColorChanged(QColor)), this,  SLOT(setEmissive(QColor)));
+    dialog.exec();
 }
 
 
@@ -184,4 +226,40 @@ MaterialWidget::editEmissiveMap()
 void
 MaterialWidget::editNormalMap()
 {
+}
+
+
+void
+MaterialWidget::setDiffuse(const QColor& color)
+{
+    m_material.diffuse = fromQtColor(color);
+    setWidgetColor(m_diffuseColor, m_material.diffuse);
+    emit materialChanged(m_material);
+}
+
+
+void
+MaterialWidget::setSpecular(const QColor& color)
+{
+    m_material.specular = fromQtColor(color);
+    setWidgetColor(m_specularColor, m_material.specular);
+    emit materialChanged(m_material);
+}
+
+
+void
+MaterialWidget::setEmissive(const QColor& color)
+{
+    m_material.emissive = fromQtColor(color);
+    setWidgetColor(m_emissiveColor, m_material.emissive);
+    emit materialChanged(m_material);
+}
+
+
+void
+MaterialWidget::changeMaterialParameters()
+{
+    m_material.opacity = m_opacity->text().toFloat();
+    m_material.specularPower = m_specularPower->text().toFloat();
+    emit materialChanged(m_material);
 }

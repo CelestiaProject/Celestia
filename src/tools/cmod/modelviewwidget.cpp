@@ -290,6 +290,27 @@ ModelViewWidget::cameraTransform() const
     return t;
 }
 
+
+void
+ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
+{
+    if (!m_model || index >= m_model->getMaterialCount())
+    {
+        return;
+    }
+
+    // Copy material parameters
+    // TODO: eliminate const cast when Model::setMaterial() is implemented
+    Material* modelMaterial = const_cast<Material*>(m_model->getMaterial(index));
+    modelMaterial->diffuse = material.diffuse;
+    modelMaterial->specular = material.specular;
+    modelMaterial->emissive = material.emissive;
+    modelMaterial->opacity = material.opacity;
+    modelMaterial->specularPower = material.specularPower;
+
+    update();
+}
+
 void
 ModelViewWidget::initializeGL()
 {

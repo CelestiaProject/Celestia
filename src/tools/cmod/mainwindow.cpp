@@ -103,6 +103,7 @@ MainWindow::MainWindow() :
     connect(generateTangentsAction, SIGNAL(triggered()), this, SLOT(generateTangents()));
     connect(uniquifyVerticesAction, SIGNAL(triggered()), this, SLOT(uniquifyVertices()));
     connect(mergeMeshesAction, SIGNAL(triggered()), this, SLOT(mergeMeshes()));
+    editMaterialAction->setShortcut(QKeySequence("Ctrl+E"));
     connect(editMaterialAction, SIGNAL(triggered()), this, SLOT(editMaterial()));
 }
 
@@ -578,6 +579,11 @@ MainWindow::editMaterial()
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(materialWidget);
 
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok,
+                                                       Qt::Horizontal, &dialog);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+
     if (!m_modelView->selection().isEmpty())
     {
         QSetIterator<Mesh::PrimitiveGroup*> iter(m_modelView->selection());
@@ -589,9 +595,23 @@ MainWindow::editMaterial()
         }
     }
 
+    connect(materialWidget, SIGNAL(materialChanged(const cmod::Material&)), this, SLOT(changeCurrentMaterial(const cmod::Material&)));
+
     dialog.setLayout(layout);
     dialog.resize(350, 250);
 
     dialog.show();
     dialog.exec();
+}
+
+
+void
+MainWindow::changeCurrentMaterial(const Material& material)
+{
+    if (!m_modelView->selection().isEmpty())
+    {
+        QSetIterator<Mesh::PrimitiveGroup*> iter(m_modelView->selection());
+        Mesh::PrimitiveGroup* selectedGroup = iter.next();
+        m_modelView->setMaterial(selectedGroup->materialIndex, material);
+    }
 }
