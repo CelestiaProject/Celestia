@@ -17,6 +17,38 @@ using namespace Eigen;
 using namespace std;
 
 
+static Material*
+convert3dsMaterial(const M3DMaterial* material3ds)
+{
+    Material* newMaterial = new Material();
+
+    M3DColor diffuse = material3ds->getDiffuseColor();
+    newMaterial->diffuse = Material::Color(diffuse.red, diffuse.green, diffuse.blue);
+    newMaterial->opacity = material3ds->getOpacity();
+
+    M3DColor specular = material3ds->getSpecularColor();
+    newMaterial->specular = Material::Color(specular.red, specular.green, specular.blue);
+
+    float shininess = material3ds->getShininess();
+
+    // Map the 3DS file's shininess from percentage (0-100) to
+    // range that OpenGL uses for the specular exponent. The
+    // current equation is just a guess at the mapping that
+    // 3DS actually uses.
+    newMaterial->specularPower = (float) pow(2.0, 1.0 + 0.1 * shininess);
+    if (newMaterial->specularPower > 128.0f)
+        newMaterial->specularPower = 128.0f;
+
+    if (!material3ds->getTextureMap().empty())
+    {
+        newMaterial->maps[Material::DiffuseMap] = new Material::DefaultTextureResource(material3ds->getTextureMap());
+
+    }
+
+    return newMaterial;
+}
+
+
 void
 Convert3DSMesh(Model& model,
                M3DTriangleMesh& mesh3ds,
@@ -224,59 +256,59 @@ Convert3DSMesh(Model& model,
 
     mesh->setName(meshName);
 
-    for (uint32 groupIndex = 0; groupIndex < mesh3ds.getMeshMaterialGroupCount(); ++groupIndex)
+    if (mesh3ds.getMeshMaterialGroupCount() == 0)
     {
-        M3DMeshMaterialGroup* matGroup = mesh3ds.getMeshMaterialGroup(groupIndex);
-	
-        // Vertex lists are not indexed, so the conversion to an indexed format is
-        // trivial (although much space is wasted storing unnecessary indices.)
-        uint32 nMatGroupFaces = matGroup->faces.size();
-        uint32 nMatGroupVertices = nMatGroupFaces * 3;
-        uint32* indices = new uint32[nMatGroupVertices];
+        // No material groups in the 3DS file. This is allowed. We'll create a single
+        // primitive group with the default material.
+        unsigned int faceCount = mesh3ds.getFaceCount();
+        uint32* indices = new uint32[faceCount * 3];
 
-        for (unsigned int i = 0; i < nMatGroupFaces; i++)
+        for (unsigned int i = 0; i < faceCount; i++)
         {
-            uint16 faceIndex = matGroup->faces[i];
-            indices[i * 3 + 0] = faceIndex * 3 + 0;
-            indices[i * 3 + 1] = faceIndex * 3 + 1;
-            indices[i * 3 + 2] = faceIndex * 3 + 2;
+            indices[i * 3 + 0] = i * 3 + 0;
+            indices[i * 3 + 1] = i * 3 + 1;
+            indices[i * 3 + 2] = i * 3 + 2;
         }
 
-        // Convert the 3DS mesh's material
-        Material* material = new Material();
-
-        string material3dsName = matGroup->materialName;
-        if (material3dsName.length() > 0)
+        mesh->addGroup(Mesh::TriList, ~0, faceCount * 3, indices);
+    }
+    else
+    {
+        // We have at least one material group. Create a cmod primitive group for
+        // each material group in th 3ds mesh.
+        for (uint32 groupIndex = 0; groupIndex < mesh3ds.getMeshMaterialGroupCount(); ++groupIndex)
         {
-            int nMaterials = scene.getMaterialCount();
-            for (int i = 0; i < nMaterials; i++)
+            M3DMeshMaterialGroup* matGroup = mesh3ds.getMeshMaterialGroup(groupIndex);
+
+            // Vertex lists are not indexed, so the conversion to an indexed format is
+            // trivial (although much space is wasted storing unnecessary indices.)
+            uint32 nMatGroupFaces = matGroup->faces.size();
+            uint32 nMatGroupVertices = nMatGroupFaces * 3;
+            uint32* indices = new uint32[nMatGroupVertices];
+
+            for (unsigned int i = 0; i < nMatGroupFaces; i++)
             {
-                M3DMaterial* material3ds = scene.getMaterial(i);
+                uint16 faceIndex = matGroup->faces[i];
+                indices[i * 3 + 0] = faceIndex * 3 + 0;
+                indices[i * 3 + 1] = faceIndex * 3 + 1;
+                indices[i * 3 + 2] = faceIndex * 3 + 2;
+            }
 
-                if (material3dsName == material3ds->getName())
+            // Convert the 3DS mesh's material
+            unsigned int materialIndex = ~0u;
+            string material3dsName = matGroup->materialName;
+            if (!material3dsName.empty())
+            {
+                for (unsigned int i = 0; i < scene.getMaterialCount(); i++)
                 {
-                    M3DColor diffuse = material3ds->getDiffuseColor();
-                    material->diffuse = Material::Color(diffuse.red, diffuse.green, diffuse.blue);
-                    M3DColor specular = material3ds->getSpecularColor();
-                    material->specular = Material::Color(specular.red, specular.green, specular.blue);
-                    // Map the shininess from the 3DS file into the 0-128
-                    // range that OpenGL uses for the specular exponent.
-                    float specPow = (float) pow(2.0, 1.0 + 0.1 * material3ds->getShininess());
-                    if (specPow > 128.0f)
+                    M3DMaterial* material3ds = scene.getMaterial(i);
+                    if (material3dsName == material3ds->getName())
                     {
-                        specPow = 128.0f;
-                    }
-                    material->specularPower = specPow;
-
-                    material->opacity = material3ds->getOpacity();
-                    if (material3ds->getTextureMap() != "")
-                    {
-                        material->maps[Material::DiffuseMap] = new Material::DefaultTextureResource(material3ds->getTextureMap());
+                        materialIndex = i;
                     }
                 }
             }
 
-            uint32 materialIndex = model.addMaterial(material) - 1;
             mesh->addGroup(Mesh::TriList, materialIndex, nMatGroupVertices, indices);
         }
     }
@@ -290,6 +322,14 @@ Convert3DSModel(const M3DScene& scene)
 {
     Model* model = new Model();
 
+    // Convert materials
+    for (unsigned int i = 0; i < scene.getMaterialCount(); i++)
+    {
+        M3DMaterial* material = scene.getMaterial(i);
+        model->addMaterial(convert3dsMaterial(material));
+    }
+
+    // Convert meshes
     for (unsigned int i = 0; i < scene.getModelCount(); i++)
     {
         M3DModel* model3ds = scene.getModel(i);
@@ -308,10 +348,5 @@ Convert3DSModel(const M3DScene& scene)
     }
 
     return model;
-#if 0
-    // Sort the vertex lists to make sure that the transparent ones are
-    // rendered after the opaque ones and material state changes are minimized.
-    sort(vertexLists.begin(), vertexLists.end(), compareVertexLists);
-#endif
 }
 
