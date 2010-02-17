@@ -10,6 +10,7 @@
 // Convert a 3DS file to a Celestia mesh (.cmod) file
 
 #include "convert3ds.h"
+#include "cmodops.h"
 #include <celmodel/modelfile.h>
 #include <cel3ds/3dsread.h>
 #include <cstring>
@@ -52,6 +53,29 @@ int main(int argc, char* argv[])
         cerr << "Error converting 3DS file to Celestia model\n";
         return 1;
     }
+
+    // Generate normals for the model
+    double smoothAngle = 45.0; // degrees
+    double weldTolerance = 1.0e-6;
+    bool weldVertices = true;
+
+    Model* newModel = GenerateModelNormals(*model, float(smoothAngle * 3.14159265 / 180.0), weldVertices, weldTolerance);
+    delete model;
+
+    if (!newModel)
+    {
+        cerr << "Ran out of memory while generating surface normals.\n";
+        return 1;
+    }
+
+    // Automatically uniquify vertices
+    for (unsigned int i = 0; newModel->getMesh(i) != NULL; i++)
+    {
+        Mesh* mesh = newModel->getMesh(i);
+        UniquifyVertices(*mesh);
+    }
+
+    model = newModel;
 
 #if 0
     // Print information about primitive groups

@@ -1236,6 +1236,72 @@ MergeModelMeshes(const Model& model)
 }
 
 
+static Material*
+cloneMaterial(const Material* other)
+{
+    Material* material = new Material();
+    material->diffuse  = other->diffuse;
+    material->specular = other->specular;
+    material->emissive = other->emissive;
+    material->specularPower = other->specularPower;
+    material->opacity  = other->opacity;
+    material->blend    = other->blend;
+    for (int i = 0; i < Material::TextureSemanticMax; ++i)
+    {
+        if (other->maps[i])
+        {
+            material->maps[i] = new Material::DefaultTextureResource(other->maps[i]->source());
+        }
+    }
+
+    return material;
+}
+
+
+/*! Generate normals for an entire model. Return the new model, or null if
+ *  normal generation failed due to an out of memory error.
+ */
+Model*
+GenerateModelNormals(const Model& model, float smoothAngle, bool weldVertices, float weldTolerance)
+{
+    Model* newModel = new Model();
+
+    // Copy materials
+    for (unsigned int i = 0; model.getMaterial(i) != NULL; i++)
+    {
+        newModel->addMaterial(cloneMaterial(model.getMaterial(i)));
+    }
+
+    bool ok = true;
+    for (unsigned int i = 0; model.getMesh(i) != NULL; i++)
+    {
+        Mesh* mesh = model.getMesh(i);
+        Mesh* newMesh = NULL;
+
+        newMesh = GenerateNormals(*mesh, smoothAngle, weldVertices, weldTolerance);
+        if (newMesh == NULL)
+        {
+            ok = false;
+        }
+        else
+        {
+            newModel->addMesh(newMesh);
+        }
+    }
+
+    if (!ok)
+    {
+        // If all of the meshes weren't processed due to an out of memory error,
+        // delete the new model and return NULL rather than a partially processed
+        // model.
+        delete newModel;
+        newModel = NULL;
+    }
+
+    return newModel;
+}
+
+
 #ifdef TRISTRIP
 bool
 convertToStrips(Mesh& mesh)
