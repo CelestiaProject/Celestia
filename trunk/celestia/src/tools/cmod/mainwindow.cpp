@@ -12,6 +12,7 @@
 #include "mainwindow.h"
 #include "materialwidget.h"
 #include "convert3ds.h"
+#include "convertobj.h"
 #include "cmodops.h"
 #include <cel3ds/3dsread.h>
 #include <celmodel/modelfile.h>
@@ -266,7 +267,7 @@ MainWindow::openModel()
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open Model File"),
                                                     openFileDir,
-                                                    tr("Model and mesh files (*.cmod *.3ds)"));
+                                                    tr("Model and mesh files (*.cmod *.3ds *.obj)"));
 
     if (!fileName.isEmpty())
     {
@@ -327,6 +328,27 @@ MainWindow::openModel(const QString& fileName)
 
                 setModel(fileName, newModel);
             }
+        }
+        else if (info.suffix().toLower() == "obj")
+        {
+            Model* model = NULL;
+            ifstream in(fileNameStd.c_str(), ios::in | ios::binary);
+            if (!in.good())
+            {
+                QMessageBox::warning(this, "Load error", tr("Error opening obj file %1").arg(fileName));
+                return;
+            }
+
+            WavefrontLoader loader(in);
+            model = loader.load();
+
+            if (model == NULL)
+            {
+                QMessageBox::warning(this, "Load error", loader.errorMessage().c_str());
+                return;
+            }
+
+            setModel(fileName, model);
         }
         else if (info.suffix().toLower() == "cmod")
         {
