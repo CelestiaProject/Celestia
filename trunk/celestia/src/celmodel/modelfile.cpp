@@ -896,7 +896,7 @@ AsciiModelLoader::loadMaterial()
             Material::TextureResource* tex = NULL;
             if (getTextureLoader())
             {
-                getTextureLoader()->loadTexture(textureName);
+                tex = getTextureLoader()->loadTexture(textureName);
             }
             else
             {
