@@ -11,6 +11,7 @@ HEADERS = \
     mainwindow.h \
     modelviewwidget.h \
     convert3ds.h \
+    convertobj.h \
     cmodops.h \
     materialwidget.h
 
@@ -19,6 +20,7 @@ SOURCES = \
     cmodview.cpp \
     modelviewwidget.cpp \
     convert3ds.cpp \
+    convertobj.cpp \
     cmodops.cpp \
     materialwidget.cpp
 
