@@ -60,10 +60,21 @@ MainWindow::MainWindow() :
     QAction* wireFrameStyleAction = new QAction(tr("&Wireframe"), styleGroup);
     wireFrameStyleAction->setCheckable(true);
     wireFrameStyleAction->setData((int) ModelViewWidget::WireFrameStyle);
+    QActionGroup* renderPathGroup = new QActionGroup(styleMenu);
+    QAction* fixedFunctionAction = new QAction(tr("Fixed Function"), renderPathGroup);
+    fixedFunctionAction->setCheckable(true);
+    fixedFunctionAction->setChecked(true);
+    fixedFunctionAction->setData((int) ModelViewWidget::FixedFunctionPath);
+    QAction* gl2Action = new QAction(tr("OpenGL 2.0"), renderPathGroup);
+    gl2Action->setCheckable(true);
+    gl2Action->setData((int) ModelViewWidget::OpenGL2Path);
     QAction* backgroundColorAction = new QAction(tr("&Background Color..."), this);
 
     styleMenu->addAction(normalStyleAction);
     styleMenu->addAction(wireFrameStyleAction);
+    styleMenu->addSeparator();
+    styleMenu->addAction(fixedFunctionAction);
+    styleMenu->addAction(gl2Action);
     styleMenu->addSeparator();
     styleMenu->addAction(backgroundColorAction);
     menuBar->addMenu(styleMenu);
@@ -101,6 +112,7 @@ MainWindow::MainWindow() :
 
     // Connect Style menu
     connect(styleGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderStyle(QAction*)));
+    connect(renderPathGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderPath(QAction*)));
     connect(backgroundColorAction, SIGNAL(triggered()), this, SLOT(editBackgroundColor()));
 
     // Connect Operations menu
@@ -435,6 +447,22 @@ MainWindow::setRenderStyle(QAction* action)
     case ModelViewWidget::NormalStyle:
     case ModelViewWidget::WireFrameStyle:
         m_modelView->setRenderStyle(renderStyle);
+        break;
+    default:
+        break;
+    }
+}
+
+
+void
+MainWindow::setRenderPath(QAction* action)
+{
+    ModelViewWidget::RenderPath renderPath = (ModelViewWidget::RenderPath) action->data().toInt();
+    switch (renderPath)
+    {
+    case ModelViewWidget::FixedFunctionPath:
+    case ModelViewWidget::OpenGL2Path:
+        m_modelView->setRenderPath(renderPath);
         break;
     default:
         break;
