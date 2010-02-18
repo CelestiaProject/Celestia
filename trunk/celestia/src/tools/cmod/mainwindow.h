@@ -44,6 +44,7 @@ public slots:
     void saveModel(const QString& saveFileName);
     void revertModel();
     void setRenderStyle(QAction* action);
+    void setRenderPath(QAction* action);
 
     void generateNormals();
     void generateTangents();
