@@ -51,8 +51,19 @@ TDS_HEADERS = \
     ../../cel3ds/3dsmodel.h \
     ../../cel3ds/3dsread.h
 
-SOURCES += $$MODEL_SOURCES $$TDS_SOURCES
-HEADERS += $$MODEL_HEADERS $$TDS_HEADERS
+
+#### GL Extension Wrangler ####
+GLEW_SOURCES = \
+    ../../../thirdparty/glew/src/glew.c
+
+GLEW_HEADERS = \
+    ../../../thirdparty/glew/include/GL/glew.h \
+    ../../../thirdparty/glew/include/GL/glxew.h \
+    ../../../thirdparty/glew/include/GL/wglew.h
+
+
+SOURCES += $$MODEL_SOURCES $$TDS_SOURCES $$GLEW_SOURCES
+HEADERS += $$MODEL_HEADERS $$TDS_HEADERS $$GLEW_HEADERS
 
 INCLUDEPATH += ../..
 INCLUDEPATH += ../../../thirdparty/Eigen
@@ -61,7 +72,7 @@ INCLUDEPATH += ../../../thirdparty/glew/include
 macx {
     DEFINES += TARGET_OS_MAC
     QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
-    CONFIG += x86 ppc
+    CONFIG += x86
 }
 
 win32-g++ {
