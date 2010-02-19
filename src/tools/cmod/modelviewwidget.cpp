@@ -212,6 +212,8 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
     }
 
     update();
+
+    emit selectionChanged();
 }
 
 
@@ -365,6 +367,8 @@ ModelViewWidget::select(const Vector2f& viewportPoint)
         m_selection.clear();
         update();
     }
+
+    emit selectionChanged();
 }
 
 
@@ -713,6 +717,16 @@ ModelViewWidget::bindMaterial(const Material* material)
             glActiveTexture(GL_TEXTURE0);
         }
 
+        if (hasEmissiveMap)
+        {
+            GLuint emissiveMapId = m_materialLibrary->getTexture(material->maps[Material::EmissiveMap]->source().c_str());
+            glActiveTexture(GL_TEXTURE3);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, emissiveMapId);
+            shader->setUniformValue("emissiveMap", 3);
+            glActiveTexture(GL_TEXTURE0);
+        }
+
         unsigned int lightIndex = 0;
         Matrix3d lightMatrix = m_lightOrientation.toRotationMatrix();
 
@@ -1049,6 +1063,11 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
             {
                 fout << "    color += specularLight * specularColor;\n";
             }
+        }
+
+        if (hasEmissiveMap)
+        {
+            fout << "    color += texture2D(emissiveMap, texCoord).xyz;\n";
         }
 
         fout << "   gl_FragColor = vec4(color, 1.0);\n";

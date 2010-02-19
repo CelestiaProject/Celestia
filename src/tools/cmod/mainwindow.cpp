@@ -21,8 +21,14 @@ using namespace cmod;
 using namespace std;
 
 
+// Version number for saving/restoring widget layout state. Increment this
+// value whenever new tool widgets are added or removed.
+static const int CMODVIEW_STATE_VERSION = 1;
+
+
 MainWindow::MainWindow() :
     m_modelView(NULL),
+    m_materialWidget(NULL),
     m_statusBarLabel(NULL),
     m_saveAction(NULL),
     m_saveAsAction(NULL)
@@ -84,14 +90,15 @@ MainWindow::MainWindow() :
     QAction* generateTangentsAction = new QAction(tr("Generate &Tangents..."), this);
     QAction* uniquifyVerticesAction = new QAction(tr("&Uniquify Vertices"), this);
     QAction* mergeMeshesAction = new QAction(tr("&Merge Meshes"), this);
-    QAction* editMaterialAction = new QAction(tr("&Edit Material"), this);
 
     operationsMenu->addAction(generateNormalsAction);
     operationsMenu->addAction(generateTangentsAction);
     operationsMenu->addAction(uniquifyVerticesAction);
     operationsMenu->addAction(mergeMeshesAction);
-    operationsMenu->addAction(editMaterialAction);
     menuBar->addMenu(operationsMenu);
+
+    QMenu* toolsMenu = new QMenu(tr("&Tools"));
+    menuBar->addMenu(toolsMenu);
 
     setMenuBar(menuBar);
 
@@ -120,13 +127,46 @@ MainWindow::MainWindow() :
     connect(generateTangentsAction, SIGNAL(triggered()), this, SLOT(generateTangents()));
     connect(uniquifyVerticesAction, SIGNAL(triggered()), this, SLOT(uniquifyVertices()));
     connect(mergeMeshesAction, SIGNAL(triggered()), this, SLOT(mergeMeshes()));
-    editMaterialAction->setShortcut(QKeySequence("Ctrl+E"));
-    connect(editMaterialAction, SIGNAL(triggered()), this, SLOT(editMaterial()));
 
     // Apply settings
     QSettings settings;
     QColor backgroundColor = settings.value("BackgroundColor", QColor(0, 0, 128)).value<QColor>();
     m_modelView->setBackgroundColor(backgroundColor);
+
+    QDockWidget* materialDock = new QDockWidget(tr("Material Editor"), this);
+    materialDock->setObjectName("material-editor");
+    m_materialWidget = new MaterialWidget(materialDock);
+    materialDock->setWidget(m_materialWidget);
+    materialDock->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+    this->addDockWidget(Qt::RightDockWidgetArea, materialDock);
+    m_materialWidget->setEnabled(false);
+
+    connect(m_modelView, SIGNAL(selectionChanged()), this, SLOT(updateSelectionInfo()));
+    connect(m_materialWidget, SIGNAL(materialEdited(const cmod::Material&)), this, SLOT(changeCurrentMaterial(const cmod::Material&)));
+    toolsMenu->addAction(materialDock->toggleViewAction());
+}
+
+
+void MainWindow::readSettings()
+{
+    QSettings settings;
+    restoreGeometry(settings.value("cmodview/geometry").toByteArray());
+    restoreState(settings.value("cmodview/windowState").toByteArray(), CMODVIEW_STATE_VERSION);
+}
+
+
+void MainWindow::saveSettings()
+{
+    QSettings settings;
+    settings.setValue("cmodview/geometry", saveGeometry());
+    settings.setValue("cmodview/windowState", saveState(CMODVIEW_STATE_VERSION));
+}
+
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    saveSettings();
+    event->accept();
 }
 
 
@@ -635,37 +675,23 @@ MainWindow::mergeMeshes()
 
 
 void
-MainWindow::editMaterial()
+MainWindow::updateSelectionInfo()
 {
-    QDialog dialog(this);
-
-    MaterialWidget* materialWidget = new MaterialWidget(&dialog);
-    QVBoxLayout* layout = new QVBoxLayout;
-    layout->addWidget(materialWidget);
-
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok,
-                                                       Qt::Horizontal, &dialog);
-    layout->addWidget(buttonBox);
-    connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-
-    if (!m_modelView->selection().isEmpty())
+    if (m_modelView->selection().isEmpty())
     {
+        m_materialWidget->setEnabled(false);
+    }
+    else
+    {
+        m_materialWidget->setEnabled(true);
         QSetIterator<Mesh::PrimitiveGroup*> iter(m_modelView->selection());
         Mesh::PrimitiveGroup* selectedGroup = iter.next();
         const Material* material = m_modelView->model()->getMaterial(selectedGroup->materialIndex);
         if (material)
         {
-            materialWidget->setMaterial(*material);
+            m_materialWidget->setMaterial(*material);
         }
     }
-
-    connect(materialWidget, SIGNAL(materialChanged(const cmod::Material&)), this, SLOT(changeCurrentMaterial(const cmod::Material&)));
-
-    dialog.setLayout(layout);
-    dialog.resize(350, 250);
-
-    dialog.show();
-    dialog.exec();
 }
 
 
