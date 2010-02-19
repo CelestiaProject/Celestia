@@ -44,7 +44,12 @@ public slots:
     void changeMaterialParameters();
 
 signals:
+    // Emitted when the material changes for any reason
     void materialChanged(const cmod::Material&);
+
+    // Emitted when the material changes because the user
+    // edited a property.
+    void materialEdited(const cmod::Material&);
 
 private:
     QLabel* m_diffuseColor;
