@@ -10,7 +10,7 @@
 #include <GL/glew.h>
 #include "materialwidget.h"
 #include <celmodel/material.h>
-#include <QFormLayout>
+#include <QGridLayout>
 #include <QPushButton>
 #include <QColorDialog>
 
@@ -130,11 +130,13 @@ MaterialWidget::MaterialWidget(QWidget* parent) :
     layout->addWidget(m_normalMap, 8, 1);
     layout->addWidget(changeNormalMap, 8, 2);
 
+    layout->setRowStretch(9, 10);
+
     connect(changeDiffuse, SIGNAL(clicked()), this, SLOT(editDiffuse()));
     connect(changeSpecular, SIGNAL(clicked()), this, SLOT(editSpecular()));
     connect(changeEmissive, SIGNAL(clicked()), this, SLOT(editEmissive()));
-    connect(m_opacity, SIGNAL(returnPressed()), this, SLOT(changeMaterialParameters()));
-    connect(m_specularPower, SIGNAL(returnPressed()), this, SLOT(changeMaterialParameters()));
+    connect(m_opacity, SIGNAL(editingFinished()), this, SLOT(changeMaterialParameters()));
+    connect(m_specularPower, SIGNAL(editingFinished()), this, SLOT(changeMaterialParameters()));
 
     setMaterial(Material());
 
@@ -235,7 +237,7 @@ MaterialWidget::setDiffuse(const QColor& color)
 {
     m_material.diffuse = fromQtColor(color);
     setWidgetColor(m_diffuseColor, m_material.diffuse);
-    emit materialChanged(m_material);
+    emit materialEdited(m_material);
 }
 
 
@@ -244,7 +246,7 @@ MaterialWidget::setSpecular(const QColor& color)
 {
     m_material.specular = fromQtColor(color);
     setWidgetColor(m_specularColor, m_material.specular);
-    emit materialChanged(m_material);
+    emit materialEdited(m_material);
 }
 
 
@@ -253,7 +255,7 @@ MaterialWidget::setEmissive(const QColor& color)
 {
     m_material.emissive = fromQtColor(color);
     setWidgetColor(m_emissiveColor, m_material.emissive);
-    emit materialChanged(m_material);
+    emit materialEdited(m_material);
 }
 
 
@@ -262,5 +264,5 @@ MaterialWidget::changeMaterialParameters()
 {
     m_material.opacity = m_opacity->text().toFloat();
     m_material.specularPower = m_specularPower->text().toFloat();
-    emit materialChanged(m_material);
+    emit materialEdited(m_material);
 }

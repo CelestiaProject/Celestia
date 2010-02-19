@@ -88,6 +88,8 @@ public:
         float intensity;
     };
 
+signals:
+    void selectionChanged();
 
 public slots:
     void setBackgroundColor(const QColor& color);

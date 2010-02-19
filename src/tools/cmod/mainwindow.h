@@ -12,6 +12,7 @@
 #define _CMODVIEW_MAINWINDOW_H_
 
 #include "modelviewwidget.h"
+#include "materialwidget.h"
 #include <QMainWindow>
 #include <QString>
 #include <QLabel>
@@ -33,8 +34,12 @@ public:
     bool exportSupported(const QString& fileName) const;
     void showModelStatistics();
 
+    void readSettings();
+    void saveSettings();
+
 protected:
     bool eventFilter(QObject* obj, QEvent* event);
+    void closeEvent(QCloseEvent* event);
 
 public slots:
     void openModel();
@@ -50,14 +55,14 @@ public slots:
     void generateTangents();
     void uniquifyVertices();
     void mergeMeshes();
-    void editMaterial();
 
     void changeCurrentMaterial(const cmod::Material&);
-
+    void updateSelectionInfo();
     void editBackgroundColor();
 
 private:
     ModelViewWidget* m_modelView;
+    MaterialWidget* m_materialWidget;
     QLabel* m_statusBarLabel;
     QString m_modelFileName;
     QAction* m_saveAction;
