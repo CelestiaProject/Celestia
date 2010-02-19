@@ -19,6 +19,12 @@ using namespace Eigen;
 static const float VIEWPORT_FOV = 45.0;
 static const double PI = 3.1415926535897932;
 
+enum {
+    TangentAttributeIndex = 6,
+    PointSizeAttributeIndex = 7,
+};
+
+
 class MaterialLibrary
 {
 public:
@@ -189,6 +195,18 @@ ModelViewWidget::setModel(cmod::Model* model, const QString& modelDirPath)
             if (material->maps[Material::DiffuseMap])
             {
                 m_materialLibrary->getTexture(QString(material->maps[Material::DiffuseMap]->source().c_str()));
+            }
+            if (material->maps[Material::NormalMap])
+            {
+                m_materialLibrary->getTexture(QString(material->maps[Material::NormalMap]->source().c_str()));
+            }
+            if (material->maps[Material::SpecularMap])
+            {
+                m_materialLibrary->getTexture(QString(material->maps[Material::SpecularMap]->source().c_str()));
+            }
+            if (material->maps[Material::EmissiveMap])
+            {
+                m_materialLibrary->getTexture(QString(material->maps[Material::EmissiveMap]->source().c_str()));
             }
         }
     }
@@ -499,6 +517,7 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
     const Mesh::VertexAttribute& normal    = desc.getAttribute(Mesh::Normal);
     const Mesh::VertexAttribute& color0    = desc.getAttribute(Mesh::Color0);
     const Mesh::VertexAttribute& texCoord0 = desc.getAttribute(Mesh::Texture0);
+    const Mesh::VertexAttribute& tangent   = desc.getAttribute(Mesh::Tangent);
 
     // Can't render anything unless we have positions
     if (position.format != Mesh::Float3)
@@ -557,6 +576,23 @@ setVertexArrays(const Mesh::VertexDescription& desc, const void* vertexData)
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         break;
     }
+
+    switch (tangent.format)
+    {
+    case Mesh::Float3:
+        glEnableVertexAttribArrayARB(TangentAttributeIndex);
+        glVertexAttribPointerARB(TangentAttributeIndex,
+                                      GLComponentCounts[(int) tangent.format],
+                                      GLComponentTypes[(int) tangent.format],
+                                      GL_FALSE,
+                                      desc.stride,
+                                      reinterpret_cast<const char*>(vertexData) + tangent.offset);
+        break;
+    default:
+        glDisableVertexAttribArrayARB(TangentAttributeIndex);
+        break;
+    }
+
 }
 
 
@@ -643,12 +679,38 @@ ModelViewWidget::bindMaterial(const Material* material)
         shader->setUniformValue("opacity", material->opacity);
         shader->setUniformValue("specularPower", material->specularPower);
 
-        if (material->maps[Material::DiffuseMap])
+        // TODO: Disable maps when the necessary vertex data is missing
+        bool hasDiffuseMap = (material->maps[Material::DiffuseMap] != 0);
+        bool hasNormalMap = (material->maps[Material::NormalMap] != 0);
+        bool hasSpecularMap = (material->maps[Material::SpecularMap] != 0);
+        bool hasEmissiveMap = (material->maps[Material::EmissiveMap] != 0);
+
+        if (hasDiffuseMap)
         {
             GLuint diffuseMapId = m_materialLibrary->getTexture(material->maps[Material::DiffuseMap]->source().c_str());
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, diffuseMapId);
             shader->setUniformValue("diffuseMap", 0);
+        }
+
+        if (hasNormalMap)
+        {
+            GLuint normalMapId = m_materialLibrary->getTexture(material->maps[Material::NormalMap]->source().c_str());
+            glActiveTexture(GL_TEXTURE1);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, normalMapId);
+            shader->setUniformValue("normalMap", 1);
+            glActiveTexture(GL_TEXTURE0);
+        }
+
+        if (hasSpecularMap)
+        {
+            GLuint specularMapId = m_materialLibrary->getTexture(material->maps[Material::SpecularMap]->source().c_str());
+            glActiveTexture(GL_TEXTURE2);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, specularMapId);
+            shader->setUniformValue("specularMap", 2);
+            glActiveTexture(GL_TEXTURE0);
         }
 
         unsigned int lightIndex = 0;
@@ -841,7 +903,7 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
     bool hasDiffuseMap = (material->maps[Material::DiffuseMap] != 0);
     bool hasSpecularMap = (material->maps[Material::SpecularMap] != 0);
     bool hasEmissiveMap = (material->maps[Material::EmissiveMap] != 0);
-    bool hasNormalMap = (material->maps[Material::SpecularMap] != 0);
+    bool hasNormalMap = (material->maps[Material::NormalMap] != 0);
     bool hasMaps = (hasDiffuseMap || hasSpecularMap || hasEmissiveMap || hasNormalMap);
     bool hasSpecular = (material->specular.red() != 0.0f ||
                         material->specular.green() != 0.0f ||
@@ -877,6 +939,13 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
             fout << "varying vec2 texCoord;\n";
         }
 
+        if (hasNormalMap)
+        {
+            vout << "attribute vec3 tangentAtt;\n";
+            vout << "varying vec3 tangent;\n";
+            fout << "varying vec3 tangent;\n";
+        }
+
         /*** Vertex shader ***/
         //vout << "attribute vec3 position;\n";
         //vout << "attribute vec3 normal;\n";
@@ -888,7 +957,11 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         vout << "    position = gl_Vertex.xyz;\n";
         if (hasMaps)
         {
-            vout << "   texCoord = gl_MultiTexCoord0.xy;\n";
+            vout << "    texCoord = gl_MultiTexCoord0.xy;\n";
+        }
+        if (hasNormalMap)
+        {
+            vout << "    tangent = tangentAtt;\n";
         }
         vout << "    gl_Position = ftransform();\n";
         //vout << "   gl_Position = modelView * gl_Vertex;\n";
@@ -935,15 +1008,32 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         {
             fout << "    baseColor *= texture2D(diffuseMap, texCoord).rgb;\n";
         }
-        fout << "   vec3 N = normalize(normal);\n";
+
+        if (hasNormalMap)
+        {
+            // The normal map contains normals in 'tangent space.' Transform them
+            // into model space.
+            fout << "    vec3 N0 = normalize(normal);\n";
+            fout << "    vec3 T = normalize(tangent);\n";
+            fout << "    vec3 B = cross(T, N0);\n";
+            fout << "    vec3 n = texture2D(normalMap, texCoord).xyz * 2.0 - 1.0;";
+            fout << "    vec3 N = n.x * T + n.y * B + n.z * N0;\n";
+        }
+        else
+        {
+            fout << "   vec3 N = normalize(normal);\n";
+        }
+
         fout << "   vec3 light = ambientLightColor;\n";
         fout << "   for (int i = 0; i < " << lightSourceCount << "; ++i)\n";
         fout << "   {\n";
-        fout << "       light += lightColor[i] * max(0.0, dot(lightDirection[i], N));\n";
+        fout << "       float d = max(0.0, dot(lightDirection[i], N));\n";
+        fout << "       light += lightColor[i] * d;\n";
         if (hasSpecular)
         {
             fout << "       vec3 H = normalize(lightDirection[i] + V);\n"; // half angle vector
             fout << "       float spec = pow(max(0.0, dot(H, N)), specularPower);\n";
+            fout << "       if (d == 0.0) spec = 0.0;\n";
             fout << "       specularLight += lightColor[i] * spec;\n";
         }
         fout << "   }\n";
@@ -951,14 +1041,22 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         fout << "   vec3 color = light * baseColor;\n";
         if (hasSpecular)
         {
-            fout << "    color += specularLight * specularColor;\n";
+            if (hasSpecularMap)
+            {
+                fout << "    color += specularLight * specularColor * texture2D(specularMap, texCoord).xyz;\n";
+            }
+            else
+            {
+                fout << "    color += specularLight * specularColor;\n";
+            }
         }
+
         fout << "   gl_FragColor = vec4(color, 1.0);\n";
+
         fout << "}\n";
         /*** End fragment shader ***/
     }
 
-    std::cout << "Creating shader...\n";
     QGLShaderProgram* glShader = new QGLShaderProgram(this);
     QGLShader* vertexShader = new QGLShader(QGLShader::Vertex, glShader);
     if (!vertexShader->compileSourceCode(vertexShaderSource))
@@ -982,14 +1080,17 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
 
     glShader->addShader(vertexShader);
     glShader->addShader(fragmentShader);
+    if (hasNormalMap)
+    {
+        glShader->bindAttributeLocation("tangentAtt", TangentAttributeIndex);
+    }
+
     if (!glShader->link())
     {
         std::cerr << glShader->log().toAscii().data() << std::endl;
         delete glShader;
         return NULL;
     }
-
-    std::cout << "Shader created!\n";
 
     return glShader;
 }
