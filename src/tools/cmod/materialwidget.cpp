@@ -19,7 +19,7 @@ using namespace cmod;
 
 static QColor toQtColor(const Material::Color& color)
 {
-    return QColor((int) (color.red()) * 255.99f, (int) (color.green() * 255.99f), (int) (color.blue() * 255.99f));
+    return QColor((int) (color.red() * 255.99f), (int) (color.green() * 255.99f), (int) (color.blue() * 255.99f));
 }
 
 static Material::Color fromQtColor(const QColor& color)
@@ -184,7 +184,7 @@ MaterialWidget::setMaterial(const Material& material)
 void
 MaterialWidget::editDiffuse()
 {
-    QColorDialog dialog(this);
+    QColorDialog dialog(toQtColor(m_material.diffuse), this);
     connect(&dialog, SIGNAL(currentColorChanged(QColor)), this,  SLOT(setDiffuse(QColor)));
     dialog.exec();
 }
@@ -193,7 +193,7 @@ MaterialWidget::editDiffuse()
 void
 MaterialWidget::editSpecular()
 {
-    QColorDialog dialog(this);
+    QColorDialog dialog(toQtColor(m_material.specular), this);
     connect(&dialog, SIGNAL(currentColorChanged(QColor)), this,  SLOT(setSpecular(QColor)));
     dialog.exec();
 }
@@ -202,7 +202,7 @@ MaterialWidget::editSpecular()
 void
 MaterialWidget::editEmissive()
 {
-    QColorDialog dialog(this);
+    QColorDialog dialog(toQtColor(m_material.emissive), this);
     connect(&dialog, SIGNAL(currentColorChanged(QColor)), this,  SLOT(setEmissive(QColor)));
     dialog.exec();
 }

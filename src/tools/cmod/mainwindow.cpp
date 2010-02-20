@@ -400,6 +400,13 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
+            // Automatically uniquify vertices
+            for (unsigned int i = 0; model->getMesh(i) != NULL; i++)
+            {
+                Mesh* mesh = model->getMesh(i);
+                UniquifyVertices(*mesh);
+            }
+
             setModel(fileName, model);
         }
         else if (info.suffix().toLower() == "cmod")

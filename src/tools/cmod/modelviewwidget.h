@@ -88,6 +88,11 @@ public:
         float intensity;
     };
 
+    bool isLightingEnabled() const
+    {
+        return m_lightingEnabled;
+    }
+
 signals:
     void selectionChanged();
 
@@ -95,6 +100,7 @@ public slots:
     void setBackgroundColor(const QColor& color);
     void setRenderPath(RenderPath path);
     void setRenderStyle(RenderStyle style);
+    void setLighting(bool enable);
 
 protected:
     void initializeGL();
@@ -128,6 +134,8 @@ private:
 
     QList<LightSource> m_lightSources;
     Eigen::Quaterniond m_lightOrientation;
+
+    bool m_lightingEnabled;
 };
 
 #endif // _CMODVIEW_MODEL_VIEW_WIDGET_H_

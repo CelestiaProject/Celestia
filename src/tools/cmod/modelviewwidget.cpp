@@ -156,7 +156,8 @@ ModelViewWidget::ModelViewWidget(QWidget *parent) :
    m_renderStyle(NormalStyle),
    m_renderPath(FixedFunctionPath),
    m_materialLibrary(NULL),
-   m_lightOrientation(Quaterniond::Identity())
+   m_lightOrientation(Quaterniond::Identity()),
+   m_lightingEnabled(true)
 {
     setupDefaultLightSources();
 }
@@ -646,6 +647,21 @@ getGLMode(Mesh::PrimitiveGroupType primitive)
 
 static bool gl2Fail = false;
 
+
+void
+ModelViewWidget::setLighting(bool enable)
+{
+    m_lightingEnabled = enable;
+    if (m_lightingEnabled)
+    {
+        glEnable(GL_LIGHTING);
+    }
+    else
+    {
+        glDisable(GL_LIGHTING);
+    }
+}
+
 void
 ModelViewWidget::bindMaterial(const Material* material)
 {
@@ -654,11 +670,13 @@ ModelViewWidget::bindMaterial(const Material* material)
     if (renderPath() == OpenGL2Path && !gl2Fail)
     {
         // Lookup the shader in the shader cache
-        unsigned int shaderKey = computeShaderKey(material, m_lightSources.size());
+        unsigned lightSourceCount = m_lightingEnabled ? m_lightSources.size() : 0;
+
+        unsigned int shaderKey = computeShaderKey(material, lightSourceCount);
         shader = m_shaderCache.value(shaderKey);
         if (!shader)
         {
-            shader = createShader(material, m_lightSources.size());
+            shader = createShader(material, lightSourceCount);
             if (shader)
             {
                 m_shaderCache.insert(shaderKey, shader);
@@ -821,6 +839,15 @@ ModelViewWidget::renderModel(Model* model)
         glPolygonMode(GL_FRONT, GL_FILL);
     }
 
+    // Disable all texture units
+    for (unsigned int i = 0; i < 8; ++i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glDisable(GL_TEXTURE_2D);
+    }
+    glActiveTexture(GL_TEXTURE0);
+
+    // Render all meshes
     for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
     {
         const Mesh* mesh = model->getMesh(meshIndex);
@@ -828,11 +855,11 @@ ModelViewWidget::renderModel(Model* model)
         setVertexArrays(mesh->getVertexDescription(), mesh->getVertexData());
         if (mesh->getVertexDescription().getAttribute(Mesh::Normal).format == Mesh::Float3)
         {
-            glEnable(GL_LIGHTING);
+            setLighting(true);
         }
         else
         {
-            glDisable(GL_LIGHTING);
+            setLighting(false);
         }
 
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
@@ -849,6 +876,8 @@ ModelViewWidget::renderModel(Model* model)
             glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
         }
     }
+
+    bindMaterial(&defaultMaterial);
 }
 
 
@@ -857,12 +886,20 @@ ModelViewWidget::renderSelection(Model* model)
 {
     glEnable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT, GL_LINE);
-    glDisable(GL_LIGHTING);
+    setLighting(false);
     glDisable(GL_TEXTURE_2D);
     glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
+
+    if (renderPath() == OpenGL2Path)
+    {
+        Material selectionMaterial;
+        selectionMaterial.diffuse = Material::Color(0.0f, 1.0f, 0.0f);
+        selectionMaterial.opacity = 0.5f;
+        bindMaterial(&selectionMaterial);
+    }
 
     for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
     {
@@ -934,10 +971,11 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
 
 
         /*** Fragment shader ***/
+        fout << "uniform vec3 diffuseColor;\n";
+        fout << "uniform float opacity;\n";
         fout << "void main(void)\n";
         fout << "{\n";
-        fout << "   vec3 baseColor(0.0, 1.0, 0.0);\n";
-        fout << "   gl_FragColor = vec4(baseColor, 1.0);\n";
+        fout << "   gl_FragColor = vec4(diffuseColor, opacity);\n";
         fout << "}\n";
         /*** End fragment shader ***/
     }
@@ -1070,7 +1108,7 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
             fout << "    color += texture2D(emissiveMap, texCoord).xyz;\n";
         }
 
-        fout << "   gl_FragColor = vec4(color, 1.0);\n";
+        fout << "   gl_FragColor = vec4(color, opacity);\n";
 
         fout << "}\n";
         /*** End fragment shader ***/
