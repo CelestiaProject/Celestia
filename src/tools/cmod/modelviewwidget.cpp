@@ -42,8 +42,14 @@ public:
 
     GLuint loadTexture(const QString& fileName)
     {
-        QString ext = QFileInfo(fileName).suffix().toLower();
-        if (ext == "dds")
+        QFileInfo info(fileName);
+        if (!info.exists())
+        {
+            return 0;
+        }
+
+        QString ext = info.suffix().toLower();
+        if (ext == "dds" || ext == "dxt5nm")
         {
             GLuint texId = m_glWidget->bindTexture(fileName);
             // Qt doesn't seem to enable mipmap filtering automatically
@@ -960,6 +966,12 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
                         material->specular.green() != 0.0f ||
                         material->specular.blue() != 0.0f);
 
+    bool compressedNormalMap = false;
+    if (hasNormalMap)
+    {
+        compressedNormalMap = material->maps[Material::NormalMap]->source().rfind(".dxt5nm") != std::string::npos;
+    }
+
     if (lightSourceCount == 0)
     {
         /*** Vertex shader ***/
@@ -1063,12 +1075,30 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
 
         if (hasNormalMap)
         {
+            // Fetch the normal from the normal map
+            if (compressedNormalMap)
+            {
+                // For compressed normal maps, we compute z from the x and y
+                // components, guaranteeing that we have a unit normal.
+                fout << "vec3 n;\n";
+                fout << "n.xy = texture2D(normalMap, texCoord).ag * 2.0 - 1.0;\n";
+                fout << "n.z = sqrt(1.0 - n.x * n.x - n.y * n.y);\n";
+            }
+            else
+            {
+                // NOTE: the extra normalize is not present in Celestia, but
+                // probably should be. Without it, interpolation will produce
+                // non-unit normals that incorrectly reduce the intensity of
+                // specular highlights. The effects of non-unit normals is not
+                // as noticeable with diffuse lighting.
+                fout << "    vec3 n = normalize(texture2D(normalMap, texCoord).xyz * 2.0 - 1.0);";
+            }
+
             // The normal map contains normals in 'tangent space.' Transform them
             // into model space.
             fout << "    vec3 N0 = normalize(normal);\n";
             fout << "    vec3 T = normalize(tangent);\n";
             fout << "    vec3 B = cross(T, N0);\n";
-            fout << "    vec3 n = texture2D(normalMap, texCoord).xyz * 2.0 - 1.0;";
             fout << "    vec3 N = n.x * T + n.y * B + n.z * N0;\n";
         }
         else
