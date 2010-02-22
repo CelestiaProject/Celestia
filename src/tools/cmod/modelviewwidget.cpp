@@ -420,6 +420,7 @@ void
 ModelViewWidget::initializeGL()
 {
     glewInit();
+    emit contextCreated();
 }
 
 
@@ -1073,6 +1074,7 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
             fout << "    baseColor *= texture2D(diffuseMap, texCoord).rgb;\n";
         }
 
+        // Compute the surface normal N
         if (hasNormalMap)
         {
             // Fetch the normal from the normal map
@@ -1110,13 +1112,30 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         fout << "   for (int i = 0; i < " << lightSourceCount << "; ++i)\n";
         fout << "   {\n";
         fout << "       float d = max(0.0, dot(lightDirection[i], N));\n";
-        fout << "       light += lightColor[i] * d;\n";
+
+        // Self shadowing term required for normal maps and specular materials
+        if (hasNormalMap)
+        {
+            // IMPORTANT: Use the surface normal from the geometry, not the one
+            // retrieved from the normal map.
+            fout << "        float selfShadow = clamp(dot(lightDirection[i], N0) * 8.0, 0.0, 1.0);\n";
+        }
+        else if (hasSpecular)
+        {
+            fout << "        float selfShadow = clamp(d * 8.0, 0.0, 1.0);\n";
+        }
+        else
+        {
+            fout << "        float selfShadow = 1.0;\n";
+        }
+
+        fout << "       light += lightColor[i] * (d * selfShadow);\n";
         if (hasSpecular)
         {
             fout << "       vec3 H = normalize(lightDirection[i] + V);\n"; // half angle vector
             fout << "       float spec = pow(max(0.0, dot(H, N)), specularPower);\n";
             fout << "       if (d == 0.0) spec = 0.0;\n";
-            fout << "       specularLight += lightColor[i] * spec;\n";
+            fout << "       specularLight += lightColor[i] * (spec * selfShadow);\n";
         }
         fout << "   }\n";
 
