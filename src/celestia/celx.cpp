@@ -3337,8 +3337,25 @@ static int celestia_runscript(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
     string scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
 
+    lua_Debug ar;
+    lua_getstack(l, 1, &ar);
+    lua_getinfo(l, "S", &ar);
+    string base_dir = ar.source; // Script file from which we are called
+    if (base_dir[0] == '@') base_dir = base_dir.substr(1);
+#ifdef _WIN32
+    // Replace all backslashes with forward in base dir path
+    size_t pos = base_dir.find('\\');
+    while (pos != string::npos)
+    {
+        base_dir.replace(pos, 1, "/");
+        pos = base_dir.find('\\');
+    }
+#endif
+    // Remove script filename from path
+    base_dir = base_dir.substr(0, base_dir.rfind('/')) + '/';
+
     CelestiaCore* appCore = this_celestia(l);
-    appCore->runScript(scriptfile);
+    appCore->runScript(base_dir + scriptfile);
     return 0;
 }
 
