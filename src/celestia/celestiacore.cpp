@@ -2925,7 +2925,7 @@ static void displayDuration(Overlay& overlay, double days)
     else if (days > 1.0 / (24.0 * 60.0))
         overlay << FormattedNumber(days * 24.0 * 60.0, 3, FormattedNumber::GroupThousands) << _(" minutes");
     else
-        overlay << FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands) << " seconds";
+        overlay << FormattedNumber(days * 24.0 * 60.0 * 60.0, 3, FormattedNumber::GroupThousands) << _(" seconds");
 }
 
 
@@ -3283,7 +3283,7 @@ static void displayPlanetInfo(Overlay& overlay,
 			sunVec.normalize();
 			double cosPhaseAngle = sunVec.dot(viewVec.normalized());
 			double phaseAngle = acos(cosPhaseAngle);
-			overlay.oprintf("Phase angle: %.1f%s\n", radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
+			overlay.oprintf(_("Phase angle: %.1f%s\n"), radToDeg(phaseAngle), UTF8_DEGREE_SIGN);
 		}
 	}
 
