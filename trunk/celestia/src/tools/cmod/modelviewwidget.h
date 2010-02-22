@@ -95,6 +95,7 @@ public:
 
 signals:
     void selectionChanged();
+    void contextCreated();
 
 public slots:
     void setBackgroundColor(const QColor& color);
