@@ -31,7 +31,8 @@ MainWindow::MainWindow() :
     m_materialWidget(NULL),
     m_statusBarLabel(NULL),
     m_saveAction(NULL),
-    m_saveAsAction(NULL)
+    m_saveAsAction(NULL),
+    m_gl2Action(NULL)
 {
     m_modelView = new ModelViewWidget(this);
     m_statusBarLabel = new QLabel(this);
@@ -71,16 +72,16 @@ MainWindow::MainWindow() :
     fixedFunctionAction->setCheckable(true);
     fixedFunctionAction->setChecked(true);
     fixedFunctionAction->setData((int) ModelViewWidget::FixedFunctionPath);
-    QAction* gl2Action = new QAction(tr("OpenGL 2.0"), renderPathGroup);
-    gl2Action->setCheckable(true);
-    gl2Action->setData((int) ModelViewWidget::OpenGL2Path);
+    m_gl2Action = new QAction(tr("OpenGL 2.0"), renderPathGroup);
+    m_gl2Action->setCheckable(true);
+    m_gl2Action->setData((int) ModelViewWidget::OpenGL2Path);
     QAction* backgroundColorAction = new QAction(tr("&Background Color..."), this);
 
     styleMenu->addAction(normalStyleAction);
     styleMenu->addAction(wireFrameStyleAction);
     styleMenu->addSeparator();
     styleMenu->addAction(fixedFunctionAction);
-    styleMenu->addAction(gl2Action);
+    styleMenu->addAction(m_gl2Action);
     styleMenu->addSeparator();
     styleMenu->addAction(backgroundColorAction);
     menuBar->addMenu(styleMenu);
@@ -144,6 +145,8 @@ MainWindow::MainWindow() :
     connect(m_modelView, SIGNAL(selectionChanged()), this, SLOT(updateSelectionInfo()));
     connect(m_materialWidget, SIGNAL(materialEdited(const cmod::Material&)), this, SLOT(changeCurrentMaterial(const cmod::Material&)));
     toolsMenu->addAction(materialDock->toggleViewAction());
+
+    connect(m_modelView, SIGNAL(contextCreated()), this, SLOT(initializeGL()));
 }
 
 
@@ -169,6 +172,20 @@ void MainWindow::closeEvent(QCloseEvent* event)
     event->accept();
 }
 
+
+// Initialization that occurs only after an OpenGL context has been created
+void MainWindow::initializeGL()
+{
+    // Enable the GL2 path by default if OpenGL 2.0 shaders are available
+    if (QGLShaderProgram::hasOpenGLShaderPrograms())
+    {
+        m_gl2Action->setChecked(true);
+    }
+    else
+    {
+        m_gl2Action->setEnabled(false);
+    }
+}
 
 static Material*
 cloneMaterial(const Material* other)
