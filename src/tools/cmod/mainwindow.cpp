@@ -180,6 +180,7 @@ void MainWindow::initializeGL()
     if (QGLShaderProgram::hasOpenGLShaderPrograms())
     {
         m_gl2Action->setChecked(true);
+        m_modelView->setRenderPath(ModelViewWidget::OpenGL2Path);
     }
     else
     {
