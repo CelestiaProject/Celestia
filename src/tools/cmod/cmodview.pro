@@ -82,3 +82,13 @@ win32-g++ {
     # alignment assertions.
     QMAKE_CXXFLAGS += -mincoming-stack-boundary=2
 }
+
+win32 {
+    DEFINES += _CRT_SECURE_NO_WARNINGS
+    DEFINES += _SCL_SECURE_NO_WARNINGS
+    # Disable the min and max macros in windows.h
+    DEFINES += NOMINMAX
+    # Windows requires defining GLEW_STATIC
+    # when building a static library or executable with glew.
+    DEFINES += GLEW_STATIC 
+}
