@@ -102,6 +102,7 @@ public slots:
     void setRenderPath(RenderPath path);
     void setRenderStyle(RenderStyle style);
     void setLighting(bool enable);
+    void setAmbientLight(bool enable);
 
 protected:
     void initializeGL();
@@ -137,6 +138,7 @@ private:
     Eigen::Quaterniond m_lightOrientation;
 
     bool m_lightingEnabled;
+    bool m_ambientLightEnabled;
 };
 
 #endif // _CMODVIEW_MODEL_VIEW_WIDGET_H_
