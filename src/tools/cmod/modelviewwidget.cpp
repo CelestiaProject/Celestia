@@ -163,7 +163,8 @@ ModelViewWidget::ModelViewWidget(QWidget *parent) :
    m_renderPath(FixedFunctionPath),
    m_materialLibrary(NULL),
    m_lightOrientation(Quaterniond::Identity()),
-   m_lightingEnabled(true)
+   m_lightingEnabled(true),
+   m_ambientLightEnabled(true)
 {
     setupDefaultLightSources();
 }
@@ -288,32 +289,48 @@ ModelViewWidget::mouseReleaseEvent(QMouseEvent* event)
 void
 ModelViewWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    int dx = event->x() - m_lastMousePosition.x();
-    int dy = event->y() - m_lastMousePosition.y();
+    // Left drag rotates the camera
+    // Right drag or Alt+Left drag rotates the lights
+    bool rotateCamera = false;
+    bool rotateLights = false;
 
-    if (event->buttons() & Qt::LeftButton)
+    if ((event->buttons() & Qt::LeftButton) != 0)
     {
-        double xrotation = (double) dy / 100.0;
-        double yrotation = (double) dx / 100.0;
-        Quaterniond q = AngleAxis<double>(-xrotation, Vector3d::UnitX()) *
-                        AngleAxis<double>(-yrotation, Vector3d::UnitY());
-
-        if (event->modifiers() & Qt::AltModifier)
+        if ((event->modifiers() & Qt::AltModifier) != 0)
         {
-            // Rotate the lights
-            Quaterniond r = m_lightOrientation * q * m_lightOrientation.conjugate();
-            r.normalize();
-            m_lightOrientation = r * m_lightOrientation;
+            rotateLights = true;
         }
         else
         {
-            // Rotate the camera
-            Quaterniond r = m_cameraOrientation * q * m_cameraOrientation.conjugate();
-            r.normalize();  // guard against accumulating rounding errors
-    
-            m_cameraPosition    = r * m_cameraPosition;
-            m_cameraOrientation = r * m_cameraOrientation;
+            rotateCamera = true;
         }
+    }
+    else if ((event->buttons() & Qt::RightButton) != 0)
+    {
+        rotateLights = true;
+    }
+
+    int dx = event->x() - m_lastMousePosition.x();
+    int dy = event->y() - m_lastMousePosition.y();
+
+    double xrotation = (double) dy / 100.0;
+    double yrotation = (double) dx / 100.0;
+    Quaterniond q = AngleAxis<double>(-xrotation, Vector3d::UnitX()) *
+                    AngleAxis<double>(-yrotation, Vector3d::UnitY());
+
+    if (rotateLights)
+    {
+        Quaterniond r = m_lightOrientation * q * m_lightOrientation.conjugate();
+        r.normalize();
+        m_lightOrientation = r * m_lightOrientation;
+    }
+    else if (rotateCamera)
+    {
+        Quaterniond r = m_cameraOrientation * q * m_cameraOrientation.conjugate();
+        r.normalize();  // guard against accumulating rounding errors
+
+        m_cameraPosition    = r * m_cameraPosition;
+        m_cameraOrientation = r * m_cameraOrientation;
     }
 
     m_lastMousePosition = event->pos();
@@ -405,6 +422,32 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
     modelMaterial->opacity = material.opacity;
     modelMaterial->specularPower = material.specularPower;
 
+    delete modelMaterial->maps[Material::DiffuseMap];
+    modelMaterial->maps[Material::DiffuseMap] = NULL;
+    delete modelMaterial->maps[Material::SpecularMap];
+    modelMaterial->maps[Material::SpecularMap] = NULL;
+    delete modelMaterial->maps[Material::NormalMap];
+    modelMaterial->maps[Material::NormalMap] = NULL;
+    delete modelMaterial->maps[Material::EmissiveMap];
+    modelMaterial->maps[Material::EmissiveMap] = NULL;
+
+    if (material.maps[Material::DiffuseMap])
+    {
+        modelMaterial->maps[Material::DiffuseMap] = new Material::DefaultTextureResource(material.maps[Material::DiffuseMap]->source());
+    }
+    if (material.maps[Material::SpecularMap])
+    {
+        modelMaterial->maps[Material::SpecularMap] = new Material::DefaultTextureResource(material.maps[Material::SpecularMap]->source());
+    }
+    if (material.maps[Material::NormalMap])
+    {
+        modelMaterial->maps[Material::NormalMap] = new Material::DefaultTextureResource(material.maps[Material::NormalMap]->source());
+    }
+    if (material.maps[Material::EmissiveMap])
+    {
+        modelMaterial->maps[Material::EmissiveMap] = new Material::DefaultTextureResource(material.maps[Material::EmissiveMap]->source());
+    }
+
     update();
 }
 
@@ -443,7 +486,12 @@ ModelViewWidget::paintGL()
     glEnable(GL_LIGHTING);
 
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-    Vector4f ambientLight(0.2f, 0.2f, 0.2f, 1.0f);
+    float ambientLightLevel = 0.0f;
+    if (m_ambientLightEnabled)
+    {
+        ambientLightLevel = 0.2f;
+    }
+    Vector4f ambientLight = Vector4f::Constant(ambientLightLevel);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight.data());
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT, GL_SEPARATE_SPECULAR_COLOR_EXT);
 
@@ -669,6 +717,18 @@ ModelViewWidget::setLighting(bool enable)
     }
 }
 
+
+void
+ModelViewWidget::setAmbientLight(bool enable)
+{
+    if (enable != m_ambientLightEnabled)
+    {
+        m_ambientLightEnabled = enable;
+        update();
+    }
+}
+
+
 void
 ModelViewWidget::bindMaterial(const Material* material)
 {
@@ -775,7 +835,12 @@ ModelViewWidget::bindMaterial(const Material* material)
             shader->setUniformValueArray("lightColor", lightColors, m_lightSources.size());
         }
 
-        shader->setUniformValue("ambientLightColor", 0.2f, 0.2f, 0.2f);
+        float ambientLightLevel = 0.0f;
+        if (m_ambientLightEnabled)
+        {
+            ambientLightLevel = 0.2f;
+        }
+        shader->setUniformValue("ambientLightColor", ambientLightLevel, ambientLightLevel, ambientLightLevel);
 
         // Get the eye position in model space
         Vector4f eyePosition = cameraTransform().inverse().cast<float>() * Vector4f::UnitW();
