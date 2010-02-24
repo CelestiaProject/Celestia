@@ -919,33 +919,49 @@ ModelViewWidget::renderModel(Model* model)
     }
     glActiveTexture(GL_TEXTURE0);
 
-    // Render all meshes
-    for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
+    enum {
+        Opaque = 0,
+        Translucent = 1,
+    };
+
+    // Render opaque objects first, translucent objects last
+    for (int pass = 0; pass < 2; ++pass)
     {
-        const Mesh* mesh = model->getMesh(meshIndex);
+        // Render all meshes
+        for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
+        {
+            const Mesh* mesh = model->getMesh(meshIndex);
 
-        setVertexArrays(mesh->getVertexDescription(), mesh->getVertexData());
-        if (mesh->getVertexDescription().getAttribute(Mesh::Normal).format == Mesh::Float3)
-        {
-            setLighting(true);
-        }
-        else
-        {
-            setLighting(false);
-        }
-
-        for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
-        {
-            const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
-            const Material* material = &defaultMaterial;
-            if (group->materialIndex < model->getMaterialCount())
+            setVertexArrays(mesh->getVertexDescription(), mesh->getVertexData());
+            if (mesh->getVertexDescription().getAttribute(Mesh::Normal).format == Mesh::Float3)
             {
-                 material = model->getMaterial(group->materialIndex);
+                setLighting(true);
             }
-            bindMaterial(material);
+            else
+            {
+                setLighting(false);
+            }
 
-            GLenum primitiveMode = getGLMode(group->prim);
-            glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
+            for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
+            {
+                const Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+                const Material* material = &defaultMaterial;
+                if (group->materialIndex < model->getMaterialCount())
+                {
+                     material = model->getMaterial(group->materialIndex);
+                }
+                bool isOpaque = material->opacity == 1.0f;
+
+                // Only draw opaque objects on the first pass, and only draw translucent
+                // ones on the second pass.
+                if ((isOpaque && pass == Opaque) || (!isOpaque && pass == Translucent))
+                {
+                    bindMaterial(material);
+
+                    GLenum primitiveMode = getGLMode(group->prim);
+                    glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
+                }
+            }
         }
     }
 
