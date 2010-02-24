@@ -195,26 +195,6 @@ MaterialWidget::setMaterial(const Material& material)
     else
         m_normalMap->setCurrentIndex(0);
 
-#if 0
-    if (m_material.maps[Material::DiffuseMap])
-        m_baseTexture->setText(m_material.maps[Material::DiffuseMap]->source().c_str());
-    else
-        m_baseTexture->setText("");
-    if (m_material.maps[Material::SpecularMap])
-        m_specularMap->setText(m_material.maps[Material::SpecularMap]->source().c_str());
-    else
-        m_specularMap->setText("");
-    if (m_material.maps[Material::EmissiveMap])
-        m_emissiveMap->setText(m_material.maps[Material::EmissiveMap]->source().c_str());
-    else
-        m_emissiveMap->setText("");
-    if (m_material.maps[Material::NormalMap])
-        m_normalMap->setText(m_material.maps[Material::NormalMap]->source().c_str());
-    else
-        m_normalMap->setText("");
-#endif
-
-
     emit materialChanged(m_material);
 }
 
@@ -365,7 +345,10 @@ MaterialWidget::setTextureSearchPath(const QString& path)
         QSet<QString> textureFileNames = listTextures(searchDir1);
         textureFileNames.unite(listTextures(searchDir2));
 
-        foreach (QString fileName, textureFileNames)
+        QStringList sortedNames = textureFileNames.values();
+        sortedNames.sort();
+
+        foreach (QString fileName, sortedNames)
         {
             m_baseTexture->addItem(fileName, fileName);
             m_specularMap->addItem(fileName, fileName);
