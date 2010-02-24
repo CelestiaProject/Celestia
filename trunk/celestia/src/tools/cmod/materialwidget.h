@@ -14,6 +14,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QLineEdit>
+#include <QComboBox>
 
 
 class MaterialWidget : public QWidget
@@ -29,6 +30,7 @@ public:
     }
 
     void setMaterial(const cmod::Material& material);
+    void setTextureSearchPath(const QString& path);
 
 public slots:
     void editDiffuse();
@@ -57,10 +59,10 @@ private:
     QLabel* m_emissiveColor;
     QLineEdit* m_opacity;
     QLineEdit* m_specularPower;
-    QLabel* m_baseTexture;
-    QLabel* m_specularMap;
-    QLabel* m_emissiveMap;
-    QLabel* m_normalMap;
+    QComboBox* m_baseTexture;
+    QComboBox* m_specularMap;
+    QComboBox* m_emissiveMap;
+    QComboBox* m_normalMap;
 
     cmod::Material m_material;
 };

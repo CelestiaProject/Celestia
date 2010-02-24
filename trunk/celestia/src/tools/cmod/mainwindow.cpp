@@ -76,6 +76,9 @@ MainWindow::MainWindow() :
     m_gl2Action->setCheckable(true);
     m_gl2Action->setData((int) ModelViewWidget::OpenGL2Path);
     QAction* backgroundColorAction = new QAction(tr("&Background Color..."), this);
+    QAction* ambientLightAction = new QAction(tr("&Ambient Light"), this);
+    ambientLightAction->setCheckable(true);
+    ambientLightAction->setChecked(true);
 
     styleMenu->addAction(normalStyleAction);
     styleMenu->addAction(wireFrameStyleAction);
@@ -83,6 +86,7 @@ MainWindow::MainWindow() :
     styleMenu->addAction(fixedFunctionAction);
     styleMenu->addAction(m_gl2Action);
     styleMenu->addSeparator();
+    styleMenu->addAction(ambientLightAction);
     styleMenu->addAction(backgroundColorAction);
     menuBar->addMenu(styleMenu);
 
@@ -122,6 +126,7 @@ MainWindow::MainWindow() :
     connect(styleGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderStyle(QAction*)));
     connect(renderPathGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderPath(QAction*)));
     connect(backgroundColorAction, SIGNAL(triggered()), this, SLOT(editBackgroundColor()));
+    connect(ambientLightAction, SIGNAL(toggled(bool)), m_modelView, SLOT(setAmbientLight(bool)));
 
     // Connect Operations menu
     connect(generateNormalsAction, SIGNAL(triggered()), this, SLOT(generateNormals()));
@@ -248,6 +253,8 @@ MainWindow::setModel(const QString& fileName, Model* model)
     {
         m_modelView->resetCamera();
     }
+
+    m_materialWidget->setTextureSearchPath(modelDir);
 
     setModelFileName(fileName);
     showModelStatistics();
