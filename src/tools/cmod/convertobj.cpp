@@ -147,7 +147,7 @@ WavefrontLoader::load()
             {
                 Material* material = new Material();
                 material->diffuse = Material::Color(1.0f, 1.0f, 1.0f);
-                currentMaterialIndex = m_model->addMaterial(material);
+                currentMaterialIndex = m_model->addMaterial(material) - 1;
                 if (!m_materialGroups.empty())
                 {
                     if (m_materialGroups.back().firstIndex == (int) m_indexData.size())
