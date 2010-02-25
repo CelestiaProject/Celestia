@@ -149,6 +149,15 @@ computeShaderKey(const Material* material, unsigned int lightSourceCount)
         shaderKey |= 0x800;
     }
 
+    // Bit 16 is set if the normal map is compressed
+    if (material->maps[Material::NormalMap])
+    {
+        if (material->maps[Material::NormalMap]->source().rfind(".dxt5nm") != std::string::npos)
+        {
+            shaderKey |= 0x1000;
+        }
+    }
+
     return shaderKey;
 }
 
