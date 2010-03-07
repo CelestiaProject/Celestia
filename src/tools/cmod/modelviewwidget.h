@@ -11,8 +11,8 @@
 #ifndef _CMODVIEW_MODEL_VIEW_WIDGET_H_
 #define _CMODVIEW_MODEL_VIEW_WIDGET_H_
 
+#include "glshader.h"
 #include <QGLWidget>
-#include <QGLShaderProgram>
 #include <QSet>
 #include <QMap>
 #include <celmodel/model.h>
@@ -115,7 +115,7 @@ private:
     void bindMaterial(const cmod::Material* material);
 
     void setupDefaultLightSources();
-    QGLShaderProgram* createShader(const cmod::Material* material, unsigned int lightSourceCount);
+    GLShaderProgram* createShader(const cmod::Material* material, unsigned int lightSourceCount);
 
 private:
     cmod::Model* m_model;
@@ -130,7 +130,7 @@ private:
     MaterialLibrary* m_materialLibrary;
 
     QSet<cmod::Mesh::PrimitiveGroup*> m_selection;
-    QMap<unsigned int, QGLShaderProgram*> m_shaderCache;
+    QMap<unsigned int, GLShaderProgram*> m_shaderCache;
 
     QColor m_backgroundColor;
 
