@@ -548,7 +548,7 @@ ModelViewWidget::paintGL()
     GLenum errorCode = glGetError();
     if (errorCode != GL_NO_ERROR)
     {
-        std::cout << gluErrorString(errorCode) << std::endl;
+        std::cout << "OpenGL error: " << gluErrorString(errorCode) << std::endl;
     }
 }
 
@@ -741,7 +741,7 @@ ModelViewWidget::setAmbientLight(bool enable)
 void
 ModelViewWidget::bindMaterial(const Material* material)
 {
-    QGLShaderProgram* shader = NULL;
+    GLShaderProgram* shader = NULL;
 
     if (renderPath() == OpenGL2Path && !gl2Fail)
     {
@@ -769,11 +769,18 @@ ModelViewWidget::bindMaterial(const Material* material)
         shader->bind();
 
         // Get the transpose, because Qt's matrix classes expect row-major data
-        Matrix4d modelView = cameraTransform().matrix().transpose();
-        shader->setUniformValue("modelView", QMatrix4x4(modelView.data(), 4, 4));
+        //Matrix4d modelView = cameraTransform().matrix().transpose();
+        //shader->setUniformValue("modelView", QMatrix4x4(modelView.data(), 4, 4));
+        shader->setUniformValue("modelView", cameraTransform().matrix().cast<float>());
 
+        /*
         shader->setUniformValue("diffuseColor", QVector3D(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
         shader->setUniformValue("specularColor", QVector3D(material->specular.red(), material->specular.green(), material->specular.blue()));
+        shader->setUniformValue("opacity", material->opacity);
+        shader->setUniformValue("specularPower", material->specularPower);
+        */
+        shader->setUniformValue("diffuseColor", Vector3f(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
+        shader->setUniformValue("specularColor", Vector3f(material->specular.red(), material->specular.green(), material->specular.blue()));
         shader->setUniformValue("opacity", material->opacity);
         shader->setUniformValue("specularPower", material->specularPower);
 
@@ -788,7 +795,7 @@ ModelViewWidget::bindMaterial(const Material* material)
             GLuint diffuseMapId = m_materialLibrary->getTexture(material->maps[Material::DiffuseMap]->source().c_str());
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, diffuseMapId);
-            shader->setUniformValue("diffuseMap", 0);
+            shader->setSampler("diffuseMap", 0);
         }
 
         if (hasNormalMap)
@@ -797,7 +804,7 @@ ModelViewWidget::bindMaterial(const Material* material)
             glActiveTexture(GL_TEXTURE1);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, normalMapId);
-            shader->setUniformValue("normalMap", 1);
+            shader->setSampler("normalMap", 1);
             glActiveTexture(GL_TEXTURE0);
         }
 
@@ -807,7 +814,7 @@ ModelViewWidget::bindMaterial(const Material* material)
             glActiveTexture(GL_TEXTURE2);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, specularMapId);
-            shader->setUniformValue("specularMap", 2);
+            shader->setSampler("specularMap", 2);
             glActiveTexture(GL_TEXTURE0);
         }
 
@@ -817,23 +824,27 @@ ModelViewWidget::bindMaterial(const Material* material)
             glActiveTexture(GL_TEXTURE3);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, emissiveMapId);
-            shader->setUniformValue("emissiveMap", 3);
+            shader->setSampler("emissiveMap", 3);
             glActiveTexture(GL_TEXTURE0);
         }
 
         unsigned int lightIndex = 0;
         Matrix3d lightMatrix = m_lightOrientation.toRotationMatrix();
 
-        QVector3D lightDirections[8];
-        QVector3D lightColors[8];
+        Vector3f lightDirections[8];
+        Vector3f lightColors[8];
 
         foreach (LightSource lightSource, m_lightSources)
         {
             Vector3d direction = lightMatrix * lightSource.direction;
             Vector3f color = lightSource.color * lightSource.intensity;
 
+            /*
             lightDirections[lightIndex] = QVector3D(direction.x(), direction.y(), direction.z());
             lightColors[lightIndex] = QVector3D(color.x(), color.y(), color.z());
+            */
+            lightDirections[lightIndex] = direction.cast<float>();
+            lightColors[lightIndex] = color;
 
             lightIndex++;
         }
@@ -849,15 +860,16 @@ ModelViewWidget::bindMaterial(const Material* material)
         {
             ambientLightLevel = 0.2f;
         }
-        shader->setUniformValue("ambientLightColor", ambientLightLevel, ambientLightLevel, ambientLightLevel);
+        shader->setUniformValue("ambientLightColor", Vector3f::Constant(ambientLightLevel));
 
         // Get the eye position in model space
         Vector4f eyePosition = cameraTransform().inverse().cast<float>() * Vector4f::UnitW();
-        shader->setUniformValue("eyePosition", eyePosition.x(), eyePosition.y(), eyePosition.z());
+        //shader->setUniformValue("eyePosition", eyePosition.x(), eyePosition.y(), eyePosition.z());
+        shader->setUniformValue("eyePosition", eyePosition.start<3>());
     }
     else
     {
-        if (QGLShaderProgram::hasOpenGLShaderPrograms())
+        if (GLShaderProgram::hasOpenGLShaderPrograms())
         {
             glUseProgram(0);
         }
@@ -1039,7 +1051,7 @@ ModelViewWidget::setupDefaultLightSources()
 }
 
 
-QGLShaderProgram*
+GLShaderProgram*
 ModelViewWidget::createShader(const Material* material, unsigned int lightSourceCount)
 {
     QString vertexShaderSource;
@@ -1253,29 +1265,29 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         /*** End fragment shader ***/
     }
 
-    QGLShaderProgram* glShader = new QGLShaderProgram(this);
-    QGLShader* vertexShader = new QGLShader(QGLShader::Vertex, glShader);
-    if (!vertexShader->compileSourceCode(vertexShaderSource))
+    GLShaderProgram* glShader = new GLShaderProgram();
+    GLVertexShader* vertexShader = new GLVertexShader();
+    if (!vertexShader->compile(vertexShaderSource.toAscii().data()))
     {
         std::cerr << "Vertex shader error!\n";
-        std::cerr << vertexShader->log().toAscii().data() << std::endl;
+        std::cerr << vertexShader->log() << std::endl;
         std::cerr << vertexShaderSource.toAscii().data() << std::endl;
         delete glShader;
         return NULL;
     }
 
-    QGLShader* fragmentShader = new QGLShader(QGLShader::Fragment, glShader);
-    if (!fragmentShader->compileSourceCode(fragmentShaderSource))
+    GLFragmentShader* fragmentShader = new GLFragmentShader();
+    if (!fragmentShader->compile(fragmentShaderSource.toAscii().data()))
     {
         std::cerr << "Fragment shader error!\n";
-        std::cerr << fragmentShader->log().toAscii().data() << std::endl;
+        std::cerr << fragmentShader->log() << std::endl;
         std::cerr << fragmentShaderSource.toAscii().data() << std::endl;
         delete glShader;
         return NULL;
     }
 
-    glShader->addShader(vertexShader);
-    glShader->addShader(fragmentShader);
+    glShader->addVertexShader(vertexShader);
+    glShader->addFragmentShader(fragmentShader);
     if (hasNormalMap)
     {
         glShader->bindAttributeLocation("tangentAtt", TangentAttributeIndex);
@@ -1283,7 +1295,7 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
 
     if (!glShader->link())
     {
-        std::cerr << glShader->log().toAscii().data() << std::endl;
+        std::cerr << glShader->log() << std::endl;
         delete glShader;
         return NULL;
     }

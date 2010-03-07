@@ -182,7 +182,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::initializeGL()
 {
     // Enable the GL2 path by default if OpenGL 2.0 shaders are available
-    if (QGLShaderProgram::hasOpenGLShaderPrograms())
+    if (GLShaderProgram::hasOpenGLShaderPrograms())
     {
         m_gl2Action->setChecked(true);
         m_modelView->setRenderPath(ModelViewWidget::OpenGL2Path);
