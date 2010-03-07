@@ -3611,7 +3611,7 @@ void CelestiaCore::renderOverlay()
 
         // Field of view
         float fov = radToDeg(sim->getActiveObserver()->getFOV());
-        overlay->oprintf(_("FOV: "));
+        *overlay << _("FOV: ");
         displayAngle(*overlay, fov);
         overlay->oprintf(" (%.2f%s)\n", (*activeView)->zoom,
                         UTF8_MULTIPLICATION_SIGN);
