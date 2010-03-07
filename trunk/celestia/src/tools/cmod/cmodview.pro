@@ -13,7 +13,8 @@ HEADERS = \
     convert3ds.h \
     convertobj.h \
     cmodops.h \
-    materialwidget.h
+    materialwidget.h \
+    glshader.h
 
 SOURCES = \
     mainwindow.cpp \
@@ -22,7 +23,8 @@ SOURCES = \
     convert3ds.cpp \
     convertobj.cpp \
     cmodops.cpp \
-    materialwidget.cpp
+    materialwidget.cpp \
+    glshader.cpp
 
 
 #### CMOD Mesh library ####
