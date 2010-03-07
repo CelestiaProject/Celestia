@@ -498,6 +498,13 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		3D8726800EA84D260069EBBA /* extras-standard */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "extras-standard"; path = "../extras-standard"; sourceTree = SOURCE_ROOT; };
+		8459EE821127967F0077F40B /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		8459EE85112796C60077F40B /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/BrowserWindow.nib; sourceTree = "<group>"; };
+		8459EE86112796D40077F40B /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/EclipseFinder.nib; sourceTree = "<group>"; };
+		8459EE87112796E10077F40B /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/HelpWindow.nib; sourceTree = "<group>"; };
+		8459EE891127970C0077F40B /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8459EE8A112797190077F40B /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8459EE8B112797390077F40B /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = zh_TW; path = zh_TW.lproj/Credits.rtf; sourceTree = "<group>"; };
 		881336D60DEF5EE0001F3BC5 /* skygrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = skygrid.cpp; path = ../src/celengine/skygrid.cpp; sourceTree = SOURCE_ROOT; };
 		881336D70DEF5EE0001F3BC5 /* skygrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = skygrid.h; path = ../src/celengine/skygrid.h; sourceTree = SOURCE_ROOT; };
 		8844B87C0D5AA3290059AA3A /* customrotation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = customrotation.cpp; path = ../src/celengine/customrotation.cpp; sourceTree = SOURCE_ROOT; };
@@ -1868,6 +1875,7 @@
 				es,
 				ja,
 				zh_CN,
+				zh_TW,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* celestia */;
 			projectDirPath = "";
@@ -2174,6 +2182,7 @@
 				E5E365B2095C12D200B14224 /* es */,
 				E5EAAE650A1A0E9700848446 /* ja */,
 				CEBD084F0F3A8F0500B3A535 /* zh_CN */,
+				8459EE891127970C0077F40B /* zh_TW */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2186,6 +2195,7 @@
 				E5E365B0095C12BD00B14224 /* es */,
 				E5EAAE530A1A0B3000848446 /* ja */,
 				CE70D6BD0F38568E0020C34D /* zh_CN */,
+				8459EE821127967F0077F40B /* zh_TW */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -2198,6 +2208,7 @@
 				E50CCA5D0C065F4300E9C76A /* es */,
 				CEDE1E960F0FC29700C95690 /* ja */,
 				CE70D6BF0F3856970020C34D /* zh_CN */,
+				8459EE86112796D40077F40B /* zh_TW */,
 			);
 			name = EclipseFinder.nib;
 			sourceTree = "<group>";
@@ -2210,6 +2221,7 @@
 				E5E365B1095C12C900B14224 /* es */,
 				E5EAAE540A1A0B3F00848446 /* ja */,
 				CE70D6BE0F3856930020C34D /* zh_CN */,
+				8459EE85112796C60077F40B /* zh_TW */,
 			);
 			name = BrowserWindow.nib;
 			sourceTree = "<group>";
@@ -2222,6 +2234,7 @@
 				E5D7660C0982B1630099DBBD /* fr */,
 				E579D3130A1A1949008F3BC8 /* ja */,
 				CE70D6BC0F3856880020C34D /* zh_CN */,
+				8459EE8B112797390077F40B /* zh_TW */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
@@ -2234,6 +2247,7 @@
 				E5FB63B20A0F80FA00A60759 /* es */,
 				E5EAAE660A1A0E9B00848446 /* ja */,
 				CEBD08500F3A8F0B00B3A535 /* zh_CN */,
+				8459EE8A112797190077F40B /* zh_TW */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -2245,6 +2259,7 @@
 				E5D766150982B19F0099DBBD /* fr */,
 				E5EAAE550A1A0B4600848446 /* ja */,
 				CE70D6C00F38569C0020C34D /* zh_CN */,
+				8459EE87112796E10077F40B /* zh_TW */,
 			);
 			name = HelpWindow.nib;
 			sourceTree = "<group>";

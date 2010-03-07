@@ -245,7 +245,7 @@ class Renderer
         VerticalAlignTop,
     };
         
-    static const int MaxLabelLength = 32;
+    static const int MaxLabelLength = 48;
     struct Annotation
     {
         char labelText[MaxLabelLength];

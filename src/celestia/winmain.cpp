@@ -4246,7 +4246,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_HELP_GUIDE:
-            ShellExecute(hWnd, "open", "help/CelestiaGuide.html", NULL, NULL, SW_NORMAL);
+            ShellExecute(hWnd, "open", "help\\CelestiaGuide.html", NULL, NULL, SW_NORMAL);
 
             break;
 

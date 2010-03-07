@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-04 15:39+0000\n"
-"PO-Revision-Date: 2010-01-30 11:47+0100\n"
+"PO-Revision-Date: 2010-02-25 12:10+0100\n"
 "Last-Translator: vincent <gvince@sfr.fr>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -607,7 +607,7 @@ msgstr "Barycentre du système stellaire\n"
 #: src/celestia/celestiacore.cpp:3142
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "Mag.abs (app) : %.2f (%.2f)\n"
+msgstr "Mag. abs (app) : %.2f (%.2f)\n"
 
 #: src/celestia/celestiacore.cpp:3148
 msgid "Luminosity: "
@@ -1193,7 +1193,7 @@ msgstr "Mag. app."
 
 #: src/celestia/winstarbrowser.cpp:77
 msgid "Abs. mag"
-msgstr "Mag. Abs."
+msgstr "Mag. abs."
 
 #: src/celestia/winstarbrowser.cpp:79
 #: src/celestia/kde/rc.cpp:46
@@ -2163,7 +2163,7 @@ msgstr "Le répertoire \"extras\" %1 n'existe pas"
 
 #: src/celestia/kde/selectionpopup.cpp:89
 msgid "Abs (app) mag: "
-msgstr "Mag.abs (app): "
+msgstr "Mag. abs (app): "
 
 #: src/celestia/kde/selectionpopup.cpp:101
 msgid "Surface Temp: "
@@ -2335,7 +2335,7 @@ msgstr "Mag. app."
 #: src/celestia/kde/rc.cpp:43
 #, no-c-format
 msgid "Abs. Mag."
-msgstr "Mag. Abs."
+msgstr "Mag. abs."
 
 #: src/celestia/kde/rc.cpp:49
 #, no-c-format
