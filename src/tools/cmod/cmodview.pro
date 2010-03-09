@@ -14,7 +14,8 @@ HEADERS = \
     convertobj.h \
     cmodops.h \
     materialwidget.h \
-    glshader.h
+    glshader.h \
+    glframebuffer.h
 
 SOURCES = \
     mainwindow.cpp \
@@ -24,7 +25,8 @@ SOURCES = \
     convertobj.cpp \
     cmodops.cpp \
     materialwidget.cpp \
-    glshader.cpp
+    glshader.cpp \
+    glframebuffer.cpp
 
 
 #### CMOD Mesh library ####
@@ -74,7 +76,7 @@ INCLUDEPATH += ../../../thirdparty/glew/include
 macx {
     DEFINES += TARGET_OS_MAC
     QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
-    CONFIG += x86 ppc
+    CONFIG += x86
 }
 
 win32-g++ {

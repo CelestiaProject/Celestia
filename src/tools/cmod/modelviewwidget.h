@@ -14,13 +14,113 @@
 #include "glshader.h"
 #include <QGLWidget>
 #include <QSet>
-#include <QMap>
+#include <QHash>
 #include <celmodel/model.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
 
 class MaterialLibrary;
+class GLFrameBufferObject;
+
+class LightingEnvironment
+{
+public:
+    LightingEnvironment() : lightCount(0), shadowCount(0) {}
+
+    unsigned int lightCount;
+    unsigned int shadowCount;
+};
+
+class ShaderKey
+{
+public:
+    ShaderKey() : m_info(0u) {}
+
+    enum {
+        LightCountMask       = 0x0000f,
+        SpecularMask         = 0x00010,
+        DiffuseMapMask       = 0x00100,
+        SpecularMapMask      = 0x00200,
+        NormalMapMask        = 0x00400,
+        EmissiveMapMask      = 0x00800,
+        AnyMapMask           = 0x00f00,
+        CompressedNormalMapMask = 0x01000,
+        ShadowCountMask      = 0xf0000,
+    };
+
+    static ShaderKey Create(const cmod::Material* material,
+                            const LightingEnvironment* lighting,
+                            const cmod::Mesh::VertexDescription* vertexDesc);
+
+    unsigned int hash() const
+    {
+        return m_info;
+    }
+
+    bool operator==(const ShaderKey& other) const
+    {
+        return m_info == other.m_info;
+    }
+
+    bool hasSpecular() const
+    {
+        return (m_info & SpecularMask) != 0;
+    }
+
+    bool hasMaps() const
+    {
+        return (m_info & AnyMapMask) != 0;
+    }
+
+    bool hasDiffuseMap() const
+    {
+        return (m_info & DiffuseMapMask) != 0;
+    }
+
+    bool hasSpecularMap() const
+    {
+        return (m_info & SpecularMapMask) != 0;
+    }
+
+    bool hasEmissiveMap() const
+    {
+        return (m_info & EmissiveMapMask) != 0;
+    }
+
+    bool hasNormalMap() const
+    {
+        return (m_info & NormalMapMask) != 0;
+    }
+
+    bool hasCompressedNormalMap() const
+    {
+        return (m_info & CompressedNormalMapMask) != 0;
+    }
+
+    unsigned int lightSourceCount() const
+    {
+        return m_info & LightCountMask;
+    }
+
+    unsigned int shadowCount() const
+    {
+        return (m_info & ShadowCountMask) >> 16;
+    }
+
+private:
+    ShaderKey(unsigned int info) : m_info(info) {}
+
+private:
+    unsigned int m_info;
+};
+
+
+inline uint qHash(const ShaderKey& key)
+{
+    return qHash(key.hash());
+}
+
 
 class ModelViewWidget : public QGLWidget
 {
@@ -103,6 +203,7 @@ public slots:
     void setRenderStyle(RenderStyle style);
     void setLighting(bool enable);
     void setAmbientLight(bool enable);
+    void setShadows(bool enable);
 
 protected:
     void initializeGL();
@@ -112,10 +213,14 @@ protected:
 private:
     void renderModel(cmod::Model* model);
     void renderSelection(cmod::Model* model);
-    void bindMaterial(const cmod::Material* material);
+    void renderDepthOnly(cmod::Model* model);
+    void renderShadow(unsigned int lightIndex);
+    void bindMaterial(const cmod::Material* material,
+                      const LightingEnvironment* lighting,
+                      const cmod::Mesh::VertexDescription* vertexDesc);
 
     void setupDefaultLightSources();
-    GLShaderProgram* createShader(const cmod::Material* material, unsigned int lightSourceCount);
+    GLShaderProgram* createShader(const ShaderKey& shaderKey);
 
 private:
     cmod::Model* m_model;
@@ -130,15 +235,17 @@ private:
     MaterialLibrary* m_materialLibrary;
 
     QSet<cmod::Mesh::PrimitiveGroup*> m_selection;
-    QMap<unsigned int, GLShaderProgram*> m_shaderCache;
+    QHash<ShaderKey, GLShaderProgram*> m_shaderCache;
 
     QColor m_backgroundColor;
 
     QList<LightSource> m_lightSources;
     Eigen::Quaterniond m_lightOrientation;
+    QList<GLFrameBufferObject*> m_shadowBuffers;
 
     bool m_lightingEnabled;
     bool m_ambientLightEnabled;
+    bool m_shadowsEnabled;
 };
 
 #endif // _CMODVIEW_MODEL_VIEW_WIDGET_H_
