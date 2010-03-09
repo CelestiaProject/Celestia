@@ -10,11 +10,14 @@
 
 #include <GL/glew.h>
 #include "modelviewwidget.h"
+#include "glframebuffer.h"
 #include <QtOpenGL>
 #include <Eigen/LU>
+#include <algorithm>
 
 using namespace cmod;
 using namespace Eigen;
+
 
 static const float VIEWPORT_FOV = 45.0;
 static const double PI = 3.1415926535897932;
@@ -111,54 +114,113 @@ private:
 };
 
 
-static unsigned int
-computeShaderKey(const Material* material, unsigned int lightSourceCount)
+ShaderKey
+ShaderKey::Create(const Material* material, const LightingEnvironment* lighting, const Mesh::VertexDescription* vertexDesc)
 {
     // Compute the shader key for a particular material and lighting setup
+    unsigned int info = 0;
+
+    bool hasTangents = false;
+    bool hasTexCoords = false;
+    if (vertexDesc)
+    {
+        hasTangents = vertexDesc->getAttribute(Mesh::Tangent).format == Mesh::Float3;
+        hasTexCoords = vertexDesc->getAttribute(Mesh::Texture0).format == Mesh::Float2;
+    }
 
     // Bits 0-3 are the number of light sources
-    unsigned int shaderKey = 0;
-    shaderKey |= lightSourceCount;
+    info |= lighting->lightCount;
+
+    // Bits 16-19 are the number of shadows (always less than or equal to the
+    // light source count.)
+    info |= lighting->shadowCount << 16;
 
     // Bit 4 is set if specular lighting is enabled
-    if (material->specular.red() != 0.0f ||
+    if (material->specular.red()   != 0.0f ||
         material->specular.green() != 0.0f ||
-        material->specular.blue() != 0.0f)
+        material->specular.blue()  != 0.0f)
     {
-        shaderKey |= 0x10;
+        info |= SpecularMask;
     }
 
     // Bits 8-15 are texture map info
-    if (material->maps[Material::DiffuseMap])
+    if (hasTexCoords)
     {
-        shaderKey |= 0x100;
-    }
-
-    if (material->maps[Material::SpecularMap])
-    {
-        shaderKey |= 0x200;
-    }
-
-    if (material->maps[Material::NormalMap])
-    {
-        shaderKey |= 0x400;
-    }
-
-    if (material->maps[Material::EmissiveMap])
-    {
-        shaderKey |= 0x800;
-    }
-
-    // Bit 16 is set if the normal map is compressed
-    if (material->maps[Material::NormalMap])
-    {
-        if (material->maps[Material::NormalMap]->source().rfind(".dxt5nm") != std::string::npos)
+        if (material->maps[Material::DiffuseMap])
         {
-            shaderKey |= 0x1000;
+            info |= DiffuseMapMask;
+        }
+
+        if (material->maps[Material::SpecularMap])
+        {
+            info |= SpecularMapMask;
+        }
+
+        if (material->maps[Material::NormalMap])
+        {
+            info |= NormalMapMask;
+        }
+
+        if (material->maps[Material::EmissiveMap])
+        {
+            info |= EmissiveMapMask;
+        }
+
+        // Bit 16 is set if the normal map is compressed
+        if (material->maps[Material::NormalMap] && hasTangents)
+        {
+            if (material->maps[Material::NormalMap]->source().rfind(".dxt5nm") != std::string::npos)
+            {
+                info |= CompressedNormalMapMask;
+            }
         }
     }
 
-    return shaderKey;
+    return ShaderKey(info);
+}
+
+
+// Calculate the matrix used to render the model from the
+// perspective of the light.
+static
+Matrix4f directionalLightMatrix(const Vector3f& lightDirection)
+{
+    Vector3f viewDir = lightDirection;
+    Vector3f upDir = viewDir.unitOrthogonal();
+    Vector3f rightDir = upDir.cross(viewDir);
+    Matrix4f m = Matrix4f::Identity();
+    m.row(0).start<3>() = rightDir;
+    m.row(1).start<3>() = upDir;
+    m.row(2).start<3>() = viewDir;
+
+    return m;
+}
+
+
+static
+Matrix4f parallelProjectionMatrix(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+    // Duplicates OpenGL's glOrtho() function
+    Matrix4f m = Matrix4f::Identity();
+    m.diagonal() = Vector4f(2.0f / (right - left),
+                            2.0f / (top - bottom),
+                            -2.0f / (zFar - zNear),
+                            1.0f);
+    m.col(3) = Vector4f(-(right + left) / (right - left),
+                        -(top + bottom) / (top - bottom),
+                        -(zFar + zNear) / (zFar - zNear),
+                        1.0f);
+
+    return m;
+}
+
+
+static
+Matrix4f shadowProjectionMatrix(float objectRadius)
+{
+    return parallelProjectionMatrix(-objectRadius, objectRadius,
+                                    -objectRadius, objectRadius,
+                                    -objectRadius, objectRadius);
 }
 
 
@@ -173,7 +235,8 @@ ModelViewWidget::ModelViewWidget(QWidget *parent) :
    m_materialLibrary(NULL),
    m_lightOrientation(Quaterniond::Identity()),
    m_lightingEnabled(true),
-   m_ambientLightEnabled(true)
+   m_ambientLightEnabled(true),
+   m_shadowsEnabled(false)
 {
     setupDefaultLightSources();
 }
@@ -479,6 +542,26 @@ ModelViewWidget::initializeGL()
 void
 ModelViewWidget::paintGL()
 {
+    // Generate the shadow buffers for each light source
+    if (m_shadowsEnabled && m_shadowBuffers.size() > 0)
+    {
+        Material defaultMaterial;
+        defaultMaterial.diffuse = Material::Color(1.0f, 1.0f, 1.0f);
+        LightingEnvironment lightingOff;
+        bindMaterial(&defaultMaterial, &lightingOff, NULL);
+        glEnable(GL_CULL_FACE);
+
+        for (int lightIndex = 0; lightIndex < m_lightSources.size(); ++lightIndex)
+        {
+            GLFrameBufferObject* shadowBuffer = m_shadowBuffers[lightIndex];
+            if (shadowBuffer && shadowBuffer->isValid())
+            {
+                renderShadow(lightIndex);
+            }
+        }
+        glViewport(0, 0, width(), height());
+    }
+
     glClearColor(m_backgroundColor.redF(), m_backgroundColor.greenF(), m_backgroundColor.blueF(), 0.0f);
     glDepthMask(GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -528,8 +611,7 @@ ModelViewWidget::paintGL()
     }
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glMultMatrixd(cameraTransform().data());
+    glLoadMatrixd(cameraTransform().data());
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
@@ -544,6 +626,43 @@ ModelViewWidget::paintGL()
             renderSelection(m_model);
         }
     }
+
+#if DEBUG_SHADOWS
+    // Debugging for shadows: show the first shadow buffer in the corner of the
+    // viewport.
+    if (m_shadowsEnabled && m_shadowBuffers.size() > 0)
+    {
+        GLFrameBufferObject* shadowBuffer = m_shadowBuffers[0];
+        if (shadowBuffer && shadowBuffer->isValid())
+        {
+            glDisable(GL_DEPTH_TEST);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            gluOrtho2D(0, width(), 0, height());
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glDisable(GL_LIGHTING);
+            glUseProgram(0);
+            glColor4f(1, 1, 1, 1);
+
+            glActiveTexture(GL_TEXTURE0);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthTexture());
+
+            glBegin(GL_QUADS);
+            float side = 300.0f;
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2f(0.0f, 0.0f);
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex2f(side, 0.0f);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex2f(side, side);
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2f(0.0f, side);
+            glEnd();
+        }
+    }
+#endif
 
     GLenum errorCode = glGetError();
     if (errorCode != GL_NO_ERROR)
@@ -683,6 +802,7 @@ setVertexPointer(const Mesh::VertexDescription& desc, const void* vertexData)
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableVertexAttribArrayARB(TangentAttributeIndex);
 }
 
 
@@ -739,20 +859,49 @@ ModelViewWidget::setAmbientLight(bool enable)
 
 
 void
-ModelViewWidget::bindMaterial(const Material* material)
+ModelViewWidget::setShadows(bool enable)
+{
+    if (!GLEW_EXT_framebuffer_object)
+    {
+        return;
+    }
+
+    if (enable != m_shadowsEnabled)
+    {
+        m_shadowsEnabled = enable;
+        if (m_shadowsEnabled && m_shadowBuffers.size() < 2)
+        {
+            GLFrameBufferObject* fb0 = new GLFrameBufferObject(1024, 1024, GLFrameBufferObject::DepthAttachment);
+            GLFrameBufferObject* fb1 = new GLFrameBufferObject(512, 512, GLFrameBufferObject::DepthAttachment);
+            m_shadowBuffers << fb0 << fb1;
+            if (!fb0->isValid() || !fb1->isValid())
+            {
+                std::cerr << "Error creating shadow buffers!\n";
+            }
+        }
+
+        update();
+    }
+}
+
+
+void
+ModelViewWidget::bindMaterial(const Material* material,
+                              const LightingEnvironment* lighting,
+                              const Mesh::VertexDescription* vertexDesc)
 {
     GLShaderProgram* shader = NULL;
 
+    ShaderKey shaderKey;
     if (renderPath() == OpenGL2Path && !gl2Fail)
     {
-        // Lookup the shader in the shader cache
-        unsigned lightSourceCount = m_lightingEnabled ? m_lightSources.size() : 0;
+        shaderKey = ShaderKey::Create(material, lighting, vertexDesc);
 
-        unsigned int shaderKey = computeShaderKey(material, lightSourceCount);
+        // Lookup the shader in the shader cache
         shader = m_shaderCache.value(shaderKey);
         if (!shader)
         {
-            shader = createShader(material, lightSourceCount);
+            shader = createShader(shaderKey);
             if (shader)
             {
                 m_shaderCache.insert(shaderKey, shader);
@@ -768,29 +917,14 @@ ModelViewWidget::bindMaterial(const Material* material)
     {
         shader->bind();
 
-        // Get the transpose, because Qt's matrix classes expect row-major data
-        //Matrix4d modelView = cameraTransform().matrix().transpose();
-        //shader->setUniformValue("modelView", QMatrix4x4(modelView.data(), 4, 4));
         shader->setUniformValue("modelView", cameraTransform().matrix().cast<float>());
 
-        /*
-        shader->setUniformValue("diffuseColor", QVector3D(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
-        shader->setUniformValue("specularColor", QVector3D(material->specular.red(), material->specular.green(), material->specular.blue()));
-        shader->setUniformValue("opacity", material->opacity);
-        shader->setUniformValue("specularPower", material->specularPower);
-        */
         shader->setUniformValue("diffuseColor", Vector3f(material->diffuse.red(), material->diffuse.green(), material->diffuse.blue()));
         shader->setUniformValue("specularColor", Vector3f(material->specular.red(), material->specular.green(), material->specular.blue()));
         shader->setUniformValue("opacity", material->opacity);
         shader->setUniformValue("specularPower", material->specularPower);
 
-        // TODO: Disable maps when the necessary vertex data is missing
-        bool hasDiffuseMap = (material->maps[Material::DiffuseMap] != 0);
-        bool hasNormalMap = (material->maps[Material::NormalMap] != 0);
-        bool hasSpecularMap = (material->maps[Material::SpecularMap] != 0);
-        bool hasEmissiveMap = (material->maps[Material::EmissiveMap] != 0);
-
-        if (hasDiffuseMap)
+        if (shaderKey.hasDiffuseMap())
         {
             GLuint diffuseMapId = m_materialLibrary->getTexture(material->maps[Material::DiffuseMap]->source().c_str());
             glEnable(GL_TEXTURE_2D);
@@ -798,7 +932,7 @@ ModelViewWidget::bindMaterial(const Material* material)
             shader->setSampler("diffuseMap", 0);
         }
 
-        if (hasNormalMap)
+        if (shaderKey.hasNormalMap())
         {
             GLuint normalMapId = m_materialLibrary->getTexture(material->maps[Material::NormalMap]->source().c_str());
             glActiveTexture(GL_TEXTURE1);
@@ -808,7 +942,7 @@ ModelViewWidget::bindMaterial(const Material* material)
             glActiveTexture(GL_TEXTURE0);
         }
 
-        if (hasSpecularMap)
+        if (shaderKey.hasSpecularMap())
         {
             GLuint specularMapId = m_materialLibrary->getTexture(material->maps[Material::SpecularMap]->source().c_str());
             glActiveTexture(GL_TEXTURE2);
@@ -818,7 +952,7 @@ ModelViewWidget::bindMaterial(const Material* material)
             glActiveTexture(GL_TEXTURE0);
         }
 
-        if (hasEmissiveMap)
+        if (shaderKey.hasEmissiveMap())
         {
             GLuint emissiveMapId = m_materialLibrary->getTexture(material->maps[Material::EmissiveMap]->source().c_str());
             glActiveTexture(GL_TEXTURE3);
@@ -839,10 +973,6 @@ ModelViewWidget::bindMaterial(const Material* material)
             Vector3d direction = lightMatrix * lightSource.direction;
             Vector3f color = lightSource.color * lightSource.intensity;
 
-            /*
-            lightDirections[lightIndex] = QVector3D(direction.x(), direction.y(), direction.z());
-            lightColors[lightIndex] = QVector3D(color.x(), color.y(), color.z());
-            */
             lightDirections[lightIndex] = direction.cast<float>();
             lightColors[lightIndex] = color;
 
@@ -864,8 +994,45 @@ ModelViewWidget::bindMaterial(const Material* material)
 
         // Get the eye position in model space
         Vector4f eyePosition = cameraTransform().inverse().cast<float>() * Vector4f::UnitW();
-        //shader->setUniformValue("eyePosition", eyePosition.x(), eyePosition.y(), eyePosition.z());
         shader->setUniformValue("eyePosition", eyePosition.start<3>());
+
+        // Set all shadow related values
+        if (shaderKey.shadowCount() > 0)
+        {
+            const unsigned int MaxShadows = 8;
+
+            // Assign the shadow textures; arrays of samplers are not allowed, so
+            // we need to use this loop to set them.
+            for (unsigned int i = 0; i < shaderKey.shadowCount(); ++i)
+            {
+                char samplerName[64];
+                sprintf(samplerName, "shadowTexture%d", i);
+
+                glActiveTexture(GL_TEXTURE4 + i);
+                glEnable(GL_TEXTURE_2D);
+                glBindTexture(GL_TEXTURE_2D, m_shadowBuffers[i]->depthTexture());
+                shader->setSampler(samplerName, 4 + i);
+                glActiveTexture(GL_TEXTURE0);
+            }
+
+            Matrix4f shadowMatrixes[MaxShadows];
+            Matrix4f bias = Matrix4f::Zero();
+            bias.diagonal() = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
+            bias.col(3) = Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
+
+            for (unsigned int i = 0; i < shaderKey.shadowCount(); ++i)
+            {
+                Matrix4f modelView = directionalLightMatrix(lightDirections[i]);
+                Matrix4f projection = shadowProjectionMatrix(m_modelBoundingRadius);
+                shadowMatrixes[i] = bias * projection * modelView;
+
+                // TESTING ONLY:
+                //shadowMatrixes[i] = bias * (1.0f / m_modelBoundingRadius);
+                //shadowMatrixes[i].col(3).w() = 1.0f;
+            }
+
+            shader->setUniformValueArray("shadowMatrix", shadowMatrixes, shaderKey.shadowCount());
+        }
     }
     else
     {
@@ -945,6 +1112,10 @@ ModelViewWidget::renderModel(Model* model)
         Translucent = 1,
     };
 
+    LightingEnvironment lighting;
+    lighting.lightCount = m_lightingEnabled ? m_lightSources.size() : 0;
+    lighting.shadowCount = m_shadowsEnabled ? std::min(lighting.lightCount, (unsigned int) m_shadowBuffers.size()) : 0;
+
     // Render opaque objects first, translucent objects last
     for (int pass = 0; pass < 2; ++pass)
     {
@@ -977,7 +1148,7 @@ ModelViewWidget::renderModel(Model* model)
                 // ones on the second pass.
                 if ((isOpaque && pass == Opaque) || (!isOpaque && pass == Translucent))
                 {
-                    bindMaterial(material);
+                    bindMaterial(material, &lighting, &mesh->getVertexDescription());
 
                     GLenum primitiveMode = getGLMode(group->prim);
                     glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
@@ -986,7 +1157,7 @@ ModelViewWidget::renderModel(Model* model)
         }
     }
 
-    bindMaterial(&defaultMaterial);
+    bindMaterial(&defaultMaterial, &lighting, NULL);
 }
 
 
@@ -1007,7 +1178,9 @@ ModelViewWidget::renderSelection(Model* model)
         Material selectionMaterial;
         selectionMaterial.diffuse = Material::Color(0.0f, 1.0f, 0.0f);
         selectionMaterial.opacity = 0.5f;
-        bindMaterial(&selectionMaterial);
+
+        LightingEnvironment lightsOff;
+        bindMaterial(&selectionMaterial, &lightsOff, NULL);
     }
 
     for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
@@ -1026,9 +1199,30 @@ ModelViewWidget::renderSelection(Model* model)
         }
     }
 
+    setLighting(true);
     glPolygonMode(GL_FRONT, GL_FILL);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
+}
+
+
+void
+ModelViewWidget::renderDepthOnly(Model* model)
+{
+    glDepthMask(GL_TRUE);
+
+    for (unsigned int meshIndex = 0; meshIndex < model->getMeshCount(); ++meshIndex)
+    {
+        Mesh* mesh = model->getMesh(meshIndex);
+        setVertexPointer(mesh->getVertexDescription(), mesh->getVertexData());
+
+        for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
+        {
+            Mesh::PrimitiveGroup* group = mesh->getGroup(groupIndex);
+            GLenum primitiveMode = getGLMode(group->prim);
+            glDrawElements(primitiveMode, group->nIndices, GL_UNSIGNED_INT, group->indices);
+        }
+    }
 }
 
 
@@ -1047,12 +1241,12 @@ ModelViewWidget::setupDefaultLightSources()
     light2.intensity = 1.0f;
     light2.direction = Vector3d(3.0, -3.0, -1.0).normalized();
 
-    m_lightSources << light1 << light2;
+    m_lightSources << light1;// << light2;
 }
 
 
 GLShaderProgram*
-ModelViewWidget::createShader(const Material* material, unsigned int lightSourceCount)
+ModelViewWidget::createShader(const ShaderKey& shaderKey)
 {
     QString vertexShaderSource;
     QString fragmentShaderSource;
@@ -1060,22 +1254,7 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
     QTextStream vout(&vertexShaderSource, QIODevice::WriteOnly);
     QTextStream fout(&fragmentShaderSource, QIODevice::WriteOnly);
 
-    bool hasDiffuseMap = (material->maps[Material::DiffuseMap] != 0);
-    bool hasSpecularMap = (material->maps[Material::SpecularMap] != 0);
-    bool hasEmissiveMap = (material->maps[Material::EmissiveMap] != 0);
-    bool hasNormalMap = (material->maps[Material::NormalMap] != 0);
-    bool hasMaps = (hasDiffuseMap || hasSpecularMap || hasEmissiveMap || hasNormalMap);
-    bool hasSpecular = (material->specular.red() != 0.0f ||
-                        material->specular.green() != 0.0f ||
-                        material->specular.blue() != 0.0f);
-
-    bool compressedNormalMap = false;
-    if (hasNormalMap)
-    {
-        compressedNormalMap = material->maps[Material::NormalMap]->source().rfind(".dxt5nm") != std::string::npos;
-    }
-
-    if (lightSourceCount == 0)
+    if (shaderKey.lightSourceCount() == 0)
     {
         /*** Vertex shader ***/
         vout << "void main(void)\n";
@@ -1100,13 +1279,13 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         fout << "varying vec3 normal;\n";
         vout << "varying vec3 position;\n";
         fout << "varying vec3 position;\n";
-        if (hasMaps)
+        if (shaderKey.hasMaps())
         {
             vout << "varying vec2 texCoord;\n";
             fout << "varying vec2 texCoord;\n";
         }
 
-        if (hasNormalMap)
+        if (shaderKey.hasNormalMap())
         {
             vout << "attribute vec3 tangentAtt;\n";
             vout << "varying vec3 tangent;\n";
@@ -1118,18 +1297,33 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         //vout << "attribute vec3 normal;\n";
         vout << "uniform mat4 modelView;\n";
 
+        // Shadow matrices and shadow texture coordinates
+        if (shaderKey.shadowCount() > 0)
+        {
+            vout << "uniform mat4 shadowMatrix[" << shaderKey.shadowCount() << "];\n";
+            vout << "varying vec4 shadowCoord[" << shaderKey.shadowCount() << "];\n";
+            fout << "varying vec4 shadowCoord[" << shaderKey.shadowCount() << "];\n";
+        }
+
         vout << "void main(void)\n";
         vout << "{\n";
         vout << "    normal = gl_Normal;\n";
         vout << "    position = gl_Vertex.xyz;\n";
-        if (hasMaps)
+        if (shaderKey.hasMaps())
         {
             vout << "    texCoord = gl_MultiTexCoord0.xy;\n";
         }
-        if (hasNormalMap)
+        if (shaderKey.hasNormalMap())
         {
             vout << "    tangent = tangentAtt;\n";
         }
+
+        // Compute shadow texture coordinates
+        for (unsigned int i = 0; i < shaderKey.shadowCount(); ++i)
+        {
+            vout << "    shadowCoord[" << i << "] = shadowMatrix[" << i << "] * gl_Vertex;\n";
+        }
+
         vout << "    gl_Position = ftransform();\n";
         //vout << "   gl_Position = modelView * gl_Vertex;\n";
         vout << "}";
@@ -1138,49 +1332,55 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
 
         /*** Fragment shader ***/
         fout << "uniform vec3 eyePosition;\n";
-        fout << "uniform vec3 lightDirection[" << lightSourceCount << "];\n";
-        fout << "uniform vec3 lightColor[" << lightSourceCount << "];\n";
+        fout << "uniform vec3 lightDirection[" << shaderKey.lightSourceCount() << "];\n";
+        fout << "uniform vec3 lightColor[" << shaderKey.lightSourceCount() << "];\n";
         fout << "uniform vec3 ambientLightColor;\n";
         fout << "uniform vec3 diffuseColor;\n";
         fout << "uniform vec3 specularColor;\n";
         fout << "uniform float specularPower;\n";
         fout << "uniform float opacity;\n";
-        if (material->maps[Material::DiffuseMap])
+        if (shaderKey.hasDiffuseMap())
         {
             fout << "uniform sampler2D diffuseMap;\n";
         }
-        if (material->maps[Material::SpecularMap])
+        if (shaderKey.hasSpecularMap())
         {
             fout << "uniform sampler2D specularMap;\n";
         }
-        if (material->maps[Material::EmissiveMap])
+        if (shaderKey.hasEmissiveMap())
         {
             fout << "uniform sampler2D emissiveMap;\n";
         }
-        if (material->maps[Material::NormalMap])
+        if (shaderKey.hasNormalMap())
         {
             fout << "uniform sampler2D normalMap;\n";
         }
+
+        for (unsigned int i = 0; i < shaderKey.shadowCount(); ++i)
+        {
+            fout << "uniform sampler2D shadowTexture" << i << ";\n";
+        }
+
         fout << "void main(void)\n";
         fout << "{\n";
         fout << "   vec3 baseColor = diffuseColor;\n";
 
-        if (hasSpecular)
+        if (shaderKey.hasSpecular())
         {
             fout << "   vec3 specularLight = vec3(0.0);\n";
             fout << "   vec3 V = normalize(eyePosition - position);\n"; // view vector
         }
 
-        if (material->maps[Material::DiffuseMap])
+        if (shaderKey.hasDiffuseMap())
         {
             fout << "    baseColor *= texture2D(diffuseMap, texCoord).rgb;\n";
         }
 
         // Compute the surface normal N
-        if (hasNormalMap)
+        if (shaderKey.hasNormalMap())
         {
             // Fetch the normal from the normal map
-            if (compressedNormalMap)
+            if (shaderKey.hasCompressedNormalMap())
             {
                 // For compressed normal maps, we compute z from the x and y
                 // components, guaranteeing that we have a unit normal.
@@ -1211,40 +1411,49 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
         }
 
         fout << "   vec3 light = ambientLightColor;\n";
-        fout << "   for (int i = 0; i < " << lightSourceCount << "; ++i)\n";
-        fout << "   {\n";
-        fout << "       float d = max(0.0, dot(lightDirection[i], N));\n";
+        //fout << "   for (int i = 0; i < " << shaderKey.lightSourceCount() << "; ++i)\n";
+        for (unsigned int lightIndex = 0; lightIndex < shaderKey.lightSourceCount(); ++lightIndex)
+        {
+            fout << "   {\n";
+            fout << "       float d = max(0.0, dot(lightDirection[" << lightIndex << "], N));\n";
 
-        // Self shadowing term required for normal maps and specular materials
-        if (hasNormalMap)
-        {
-            // IMPORTANT: Use the surface normal from the geometry, not the one
-            // retrieved from the normal map.
-            fout << "        float selfShadow = clamp(dot(lightDirection[i], N0) * 8.0, 0.0, 1.0);\n";
-        }
-        else if (hasSpecular)
-        {
-            fout << "        float selfShadow = clamp(d * 8.0, 0.0, 1.0);\n";
-        }
-        else
-        {
-            fout << "        float selfShadow = 1.0;\n";
-        }
+            // Self shadowing term required for normal maps and specular materials
+            if (shaderKey.hasNormalMap())
+            {
+                // IMPORTANT: Use the surface normal from the geometry, not the one
+                // retrieved from the normal map.
+                fout << "        float selfShadow = clamp(dot(lightDirection[" << lightIndex << "], N0) * 8.0, 0.0, 1.0);\n";
+            }
+            else if (shaderKey.hasSpecular())
+            {
+                fout << "        float selfShadow = clamp(d * 8.0, 0.0, 1.0);\n";
+            }
+            else
+            {
+                fout << "        float selfShadow = 1.0;\n";
+            }
 
-        fout << "       light += lightColor[i] * (d * selfShadow);\n";
-        if (hasSpecular)
-        {
-            fout << "       vec3 H = normalize(lightDirection[i] + V);\n"; // half angle vector
-            fout << "       float spec = pow(max(0.0, dot(H, N)), specularPower);\n";
-            fout << "       if (d == 0.0) spec = 0.0;\n";
-            fout << "       specularLight += lightColor[i] * (spec * selfShadow);\n";
+            if (shaderKey.shadowCount() > 0)
+            {
+                fout << "        float lightDistance = texture2D(shadowTexture" << lightIndex << ", shadowCoord[" << lightIndex << "].xy).z;\n";
+                fout << "        if (lightDistance < shadowCoord[" << lightIndex << "].z + 0.0005) selfShadow = 0.0;\n";
+            }
+
+            fout << "       light += lightColor[" << lightIndex << "] * (d * selfShadow);\n";
+            if (shaderKey.hasSpecular())
+            {
+                fout << "       vec3 H = normalize(lightDirection[" << lightIndex << "] + V);\n"; // half angle vector
+                fout << "       float spec = pow(max(0.0, dot(H, N)), specularPower);\n";
+                fout << "       if (d == 0.0) spec = 0.0;\n";
+                fout << "       specularLight += lightColor[" << lightIndex << "] * (spec * selfShadow);\n";
+            }
+            fout << "   }\n";
         }
-        fout << "   }\n";
 
         fout << "   vec3 color = light * baseColor;\n";
-        if (hasSpecular)
+        if (shaderKey.hasSpecular())
         {
-            if (hasSpecularMap)
+            if (shaderKey.hasSpecularMap())
             {
                 fout << "    color += specularLight * specularColor * texture2D(specularMap, texCoord).xyz;\n";
             }
@@ -1254,7 +1463,7 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
             }
         }
 
-        if (hasEmissiveMap)
+        if (shaderKey.hasEmissiveMap())
         {
             fout << "    color += texture2D(emissiveMap, texCoord).xyz;\n";
         }
@@ -1288,7 +1497,7 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
 
     glShader->addVertexShader(vertexShader);
     glShader->addFragmentShader(fragmentShader);
-    if (hasNormalMap)
+    if (shaderKey.hasNormalMap())
     {
         glShader->bindAttributeLocation("tangentAtt", TangentAttributeIndex);
     }
@@ -1302,3 +1511,48 @@ ModelViewWidget::createShader(const Material* material, unsigned int lightSource
 
     return glShader;
 }
+
+
+void
+ModelViewWidget::renderShadow(unsigned int lightIndex)
+{
+    if ((int) lightIndex >= m_lightSources.size() ||
+        (int) lightIndex >= m_shadowBuffers.size() ||
+        !m_shadowBuffers[lightIndex])
+    {
+        return;
+    }
+
+    GLFrameBufferObject* shadowBuffer = m_shadowBuffers[lightIndex];
+    Vector3f lightDirection = (m_lightOrientation * m_lightSources[lightIndex].direction).cast<float>();
+
+    shadowBuffer->bind();
+    glViewport(0, 0, shadowBuffer->width(), shadowBuffer->height());
+
+    // Write only to the depth buffer
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Render backfaces only in order to reduce self-shadowing artifacts
+    glCullFace(GL_FRONT);
+
+    glUseProgram(0);
+    glDisable(GL_LIGHTING);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(shadowProjectionMatrix(m_modelBoundingRadius).data());
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(directionalLightMatrix(lightDirection).data());
+
+    renderDepthOnly(m_model);
+
+    shadowBuffer->unbind();
+
+    // Re-enable the color buffer and culling
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glCullFace(GL_BACK);
+}
+

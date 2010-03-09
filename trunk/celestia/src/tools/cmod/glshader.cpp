@@ -219,12 +219,45 @@ GLShaderProgram::setSampler(const char* name, int value)
 
 
 void
+GLShaderProgram::setSamplerArray(const char* name, const GLint* values, int count)
+{
+    GLint location = glGetUniformLocationARB(m_id, name);
+    if (location >= 0)
+    {
+        glUniform1ivARB(location, count, values);
+    }
+}
+
+
+void
 GLShaderProgram::setUniformValueArray(const char* name, const Eigen::Vector3f* values, int count)
 {
     GLint location = glGetUniformLocationARB(m_id, name);
     if (location >= 0)
     {
         glUniform3fvARB(location, count, values[0].data());
+    }
+}
+
+
+void
+GLShaderProgram::setUniformValueArray(const char* name, const Eigen::Vector4f* values, int count)
+{
+    GLint location = glGetUniformLocationARB(m_id, name);
+    if (location >= 0)
+    {
+        glUniform4fvARB(location, count, values[0].data());
+    }
+}
+
+
+void
+GLShaderProgram::setUniformValueArray(const char* name, const Eigen::Matrix4f* values, int count)
+{
+    GLint location = glGetUniformLocationARB(m_id, name);
+    if (location >= 0)
+    {
+        glUniformMatrix4fvARB(location, count, false, values[0].data());
     }
 }
 

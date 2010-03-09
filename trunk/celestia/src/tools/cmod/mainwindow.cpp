@@ -79,6 +79,8 @@ MainWindow::MainWindow() :
     QAction* ambientLightAction = new QAction(tr("&Ambient Light"), this);
     ambientLightAction->setCheckable(true);
     ambientLightAction->setChecked(true);
+    QAction* shadowsAction = new QAction(tr("&Shadows"), this);
+    shadowsAction->setCheckable(true);
 
     styleMenu->addAction(normalStyleAction);
     styleMenu->addAction(wireFrameStyleAction);
@@ -87,6 +89,7 @@ MainWindow::MainWindow() :
     styleMenu->addAction(m_gl2Action);
     styleMenu->addSeparator();
     styleMenu->addAction(ambientLightAction);
+    styleMenu->addAction(shadowsAction);
     styleMenu->addAction(backgroundColorAction);
     menuBar->addMenu(styleMenu);
 
@@ -127,6 +130,7 @@ MainWindow::MainWindow() :
     connect(renderPathGroup, SIGNAL(triggered(QAction*)), this, SLOT(setRenderPath(QAction*)));
     connect(backgroundColorAction, SIGNAL(triggered()), this, SLOT(editBackgroundColor()));
     connect(ambientLightAction, SIGNAL(toggled(bool)), m_modelView, SLOT(setAmbientLight(bool)));
+    connect(shadowsAction, SIGNAL(toggled(bool)), m_modelView, SLOT(setShadows(bool)));
 
     // Connect Operations menu
     connect(generateNormalsAction, SIGNAL(triggered()), this, SLOT(generateNormals()));
