@@ -139,8 +139,11 @@ public:
 
     void setUniformValue(const char* name, float value);
     void setSampler(const char* name, int value);
+    void setSamplerArray(const char* name, const GLint* values, int count);
     template<typename DERIVED> void setUniformValue(const char* name, const Eigen::MatrixBase<DERIVED>& value);
     void setUniformValueArray(const char* name, const Eigen::Vector3f* values, int count);
+    void setUniformValueArray(const char* name, const Eigen::Vector4f* values, int count);
+    void setUniformValueArray(const char* name, const Eigen::Matrix4f* values, int count);
     void bindAttributeLocation(const char* name, int location);
 
 private:
