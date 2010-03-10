@@ -24,6 +24,10 @@ using namespace Eigen;
 static const float VIEWPORT_FOV = 45.0;
 static const double PI = 3.1415926535897932;
 
+static const int ShadowBufferSize = 1024;
+static const int ShadowSampleKernelWidth = 2;
+
+
 enum {
     TangentAttributeIndex = 6,
     PointSizeAttributeIndex = 7,
@@ -68,7 +72,11 @@ public:
             QPixmap texturePixmap(fileName);
 
             // Mipmaps and linear filtering enabled by default.
+#if QT_VERSION >= 0x040600
+            return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA, QGLContext::MipmapBindOption | QGLContext::LinearFilteringBindOption);
+#else
             return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA);
+#endif
         }
     }
 
@@ -652,6 +660,10 @@ ModelViewWidget::paintGL()
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthTexture());
 
+            // Disable texture compare temporarily--we just want to see the
+            // stored depth values.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+
             glBegin(GL_QUADS);
             float side = 300.0f;
             glTexCoord2f(0.0f, 0.0f);
@@ -663,6 +675,8 @@ ModelViewWidget::paintGL()
             glTexCoord2f(0.0f, 1.0f);
             glVertex2f(0.0f, side);
             glEnd();
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
         }
     }
 #endif
@@ -874,12 +888,12 @@ ModelViewWidget::setShadows(bool enable)
         m_shadowsEnabled = enable;
         if (m_shadowsEnabled && m_shadowBuffers.size() < 2)
         {
-            GLFrameBufferObject* fb0 = new GLFrameBufferObject(1024, 1024, GLFrameBufferObject::DepthAttachment);
-            GLFrameBufferObject* fb1 = new GLFrameBufferObject(512, 512, GLFrameBufferObject::DepthAttachment);
+            GLFrameBufferObject* fb0 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
+            GLFrameBufferObject* fb1 = new GLFrameBufferObject(ShadowBufferSize, ShadowBufferSize, GLFrameBufferObject::DepthAttachment);
             m_shadowBuffers << fb0 << fb1;
             if (!fb0->isValid() || !fb1->isValid())
             {
-                std::cerr << "Error creating shadow buffers!\n";
+                qWarning("Error creating shadow buffers.");
             }
         }
 
@@ -1445,13 +1459,17 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
                 // Depth texture
                 // fout << "        selfShadow = shadow2D(shadowTexture" << lightIndex << ", shadowCoord[" << lightIndex << "].xyz + vec3(0.0, 0.0, 0.0005)).z;\n";
 
-                // Four-sample PCF with depth texture
-                fout << "        float texelSize = 1.0 / 1024.0;\n";
+                // Box filter PCF with depth texture
+                fout << "        float texelSize = " << 1.0f / (float) ShadowBufferSize << ";\n";
                 fout << "        float s = 0.0;\n";
-                fout << "        for (float y = -0.5; y <= 0.5; y += 1.0)";
-                fout << "            for (float x = -0.5; x <= 0.5; x += 1.0)";
+                float boxFilterWidth = (float) ShadowSampleKernelWidth - 1.0f;
+                float firstSample = -boxFilterWidth / 2.0f;
+                float lastSample = firstSample + boxFilterWidth;
+                float sampleWeight = 1.0f / (float) (ShadowSampleKernelWidth * ShadowSampleKernelWidth);
+                fout << "        for (float y = " << firstSample << "; y <= " << lastSample << "; y += 1.0)";
+                fout << "            for (float x = " << firstSample << "; x <= " << lastSample << "; x += 1.0)";
                 fout << "                s += shadow2D(shadowTexture" << lightIndex << ", shadowCoord[" << lightIndex << "].xyz + vec3(x * texelSize, y * texelSize, 0.0005)).z;\n";
-                fout << "        selfShadow *= s * 0.25;\n";
+                fout << "        selfShadow *= s * " << sampleWeight << ";\n";
             }
 
             fout << "       light += lightColor[" << lightIndex << "] * (d * selfShadow);\n";
@@ -1493,8 +1511,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     GLVertexShader* vertexShader = new GLVertexShader();
     if (!vertexShader->compile(vertexShaderSource.toAscii().data()))
     {
-        std::cerr << "Vertex shader error!\n";
-        std::cerr << vertexShader->log() << std::endl;
+        qWarning("Vertex shader error: %s", vertexShader->log().c_str());
         std::cerr << vertexShaderSource.toAscii().data() << std::endl;
         delete glShader;
         return NULL;
@@ -1503,8 +1520,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
     GLFragmentShader* fragmentShader = new GLFragmentShader();
     if (!fragmentShader->compile(fragmentShaderSource.toAscii().data()))
     {
-        std::cerr << "Fragment shader error!\n";
-        std::cerr << fragmentShader->log() << std::endl;
+        qWarning("Fragment shader error: %s", fragmentShader->log().c_str());
         std::cerr << fragmentShaderSource.toAscii().data() << std::endl;
         delete glShader;
         return NULL;
@@ -1519,7 +1535,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
 
     if (!glShader->link())
     {
-        std::cerr << glShader->log() << std::endl;
+        qWarning("Shader link error: %s", glShader->log().c_str());
         delete glShader;
         return NULL;
     }
