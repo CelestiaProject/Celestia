@@ -66,8 +66,9 @@ public:
         else
         {
             QPixmap texturePixmap(fileName);
-            return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA,
-                                           QGLContext::LinearFilteringBindOption | QGLContext::MipmapBindOption);
+
+            // Mipmaps and linear filtering enabled by default.
+            return m_glWidget->bindTexture(texturePixmap, GL_TEXTURE_2D, GL_RGBA);
         }
     }
 
