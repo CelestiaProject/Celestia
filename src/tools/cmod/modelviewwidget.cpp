@@ -19,6 +19,8 @@ using namespace cmod;
 using namespace Eigen;
 
 
+#define DEBUG_SHADOWS 0
+
 static const float VIEWPORT_FOV = 45.0;
 static const double PI = 3.1415926535897932;
 
@@ -1358,7 +1360,7 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
 
         for (unsigned int i = 0; i < shaderKey.shadowCount(); ++i)
         {
-            fout << "uniform sampler2D shadowTexture" << i << ";\n";
+            fout << "uniform sampler2DShadow shadowTexture" << i << ";\n";
         }
 
         fout << "void main(void)\n";
@@ -1435,8 +1437,20 @@ ModelViewWidget::createShader(const ShaderKey& shaderKey)
 
             if (shaderKey.shadowCount() > 0)
             {
-                fout << "        float lightDistance = texture2D(shadowTexture" << lightIndex << ", shadowCoord[" << lightIndex << "].xy).z;\n";
-                fout << "        if (lightDistance < shadowCoord[" << lightIndex << "].z + 0.0005) selfShadow = 0.0;\n";
+                // Normal 2D texture
+                //fout << "        float lightDistance = texture2D(shadowTexture" << lightIndex << ", shadowCoord[" << lightIndex << "].xy).z;\n";
+                //fout << "        if (lightDistance < shadowCoord[" << lightIndex << "].z + 0.0005) selfShadow = 0.0;\n";
+
+                // Depth texture
+                // fout << "        selfShadow = shadow2D(shadowTexture" << lightIndex << ", shadowCoord[" << lightIndex << "].xyz + vec3(0.0, 0.0, 0.0005)).z;\n";
+
+                // Four-sample PCF with depth texture
+                fout << "        float texelSize = 1.0 / 1024.0;\n";
+                fout << "        float s = 0.0;\n";
+                fout << "        for (float y = -0.5; y <= 0.5; y += 1.0)";
+                fout << "            for (float x = -0.5; x <= 0.5; x += 1.0)";
+                fout << "                s += shadow2D(shadowTexture" << lightIndex << ", shadowCoord[" << lightIndex << "].xyz + vec3(x * texelSize, y * texelSize, 0.0005)).z;\n";
+                fout << "        selfShadow *= s * 0.25;\n";
             }
 
             fout << "       light += lightColor[" << lightIndex << "] * (d * selfShadow);\n";
