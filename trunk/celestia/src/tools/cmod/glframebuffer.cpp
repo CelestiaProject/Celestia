@@ -9,7 +9,7 @@
 //
 // C++ wrapper for OpenGL framebuffer objects.
 
-#include <glframebuffer.h>
+#include "glframebuffer.h"
 
 
 GLFrameBufferObject::GLFrameBufferObject(GLuint width, GLuint height, unsigned int attachments) :
