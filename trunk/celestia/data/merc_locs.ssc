@@ -2398,3 +2398,81 @@ Location "To Ngoc Van" "Sol/Mercury"
 	Size 63
 	Type "AA"
 }
+
+Location "Bek" "Sol/Mercury"
+{
+	LongLat [ -50.3 21.1 0 ]
+	Size 30
+	Type "AA"
+}
+
+Location "Dominici" "Sol/Mercury"
+{
+	LongLat [ -36.5 1.4 0 ]
+	Size 20
+	Type "AA"
+}
+
+Location "Geddes" "Sol/Mercury"
+{
+	LongLat [ -29.7 27.3 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Hokusai" "Sol/Mercury"
+{
+	LongLat [ -342.3 58.3 0 ]
+	Size 95
+	Type "AA"
+}
+
+Location "Picasso" "Sol/Mercury"
+{
+	LongLat [ -309.9 3.3 0 ]
+	Size 133
+	Type "AA"
+}
+
+Location "Kipling" "Sol/Mercury"
+{
+	LongLat [ -288. -19.4 0 ]
+	Size 151
+	Type "AA"
+}
+
+Location "Debussy" "Sol/Mercury"
+{
+	LongLat [ -347.5 -33.9 0 ]
+	Size 85
+	Type "AA"
+}
+
+Location "Firdousi" "Sol/Mercury"
+{
+	LongLat [ -294.6 3.5 0 ]
+	Size 96
+	Type "AA"
+}
+
+Location "Copland" "Sol/Mercury"
+{
+	LongLat [ -286.7 37.5 0 ]
+	Size 208
+	Type "AA"
+}
+
+Location "Steichen" "Sol/Mercury"
+{
+	LongLat [ -282.73 -13.14 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Rachmaninoff" "Sol/Mercury"
+{
+	LongLat [ -302.4 27.6 0 ]
+	Size 290
+	Type "AA"
+}
+
