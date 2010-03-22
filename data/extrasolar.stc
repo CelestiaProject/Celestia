@@ -265,6 +265,15 @@
 	AppMag 10.7
 }
 
+1001523086 "HAT-P-14:GSC 03086-00152"
+{
+	RA 260.116250
+	Dec 38.242222
+	Distance 668
+	SpectralType "F"
+	AppMag 9.98
+}
+
 # WASP survey
 
 "WASP-1"
@@ -465,6 +474,15 @@
 	Distance 460
 	SpectralType "K0V"
 	AppMag 11.73
+}
+
+"CoRoT-9"
+{
+	RA 280.786667
+	Dec 6.204167
+	Distance 1500
+	SpectralType "G3V"
+	AppMag 13.7
 }
 
 # Kepler survey
