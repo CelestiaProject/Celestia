@@ -12666,3 +12666,94 @@ Location "Gasa" "Sol/Mars"
 	Importance 21.05
 	Type "AA"
 }
+
+# Update 2010 Mar 21, Grant Hutchison
+# -----------------------------------
+
+Location "Leighton" "Sol/Mars"
+{
+	LongLat [ 57.68 3.03 0 ]
+	Size 69
+	Importance 28.96
+	Type "AA"
+}
+
+Location "Horowitz" "Sol/Mars"
+{
+	LongLat [ 140.64 -31.75 0 ]
+	Size 65.7
+	Importance 28.63
+	Type "AA"
+}
+
+Location "Kamnik" "Sol/Mars"
+{
+	LongLat [ 198.09 -36.91 0 ]
+	Size 10.2
+	Importance 21.74
+	Type "AA"
+}
+
+Location "Kandi" "Sol/Mars"
+{
+	LongLat [ 122. -32.44 0 ]
+	Size 8.5
+	Importance 21.43
+	Type "AA"
+}
+
+Location "Pursat" "Sol/Mars"
+{
+	LongLat [ 130.66 -37.04 0 ]
+	Size 18.3
+	Importance 23.06
+	Type "AA"
+}
+
+Location "Roseau" "Sol/Mars"
+{
+	LongLat [ 150.42 -41.36 0 ]
+	Size 6.3
+	Importance 21.01
+	Type "AA"
+}
+
+Location "Yaren" "Sol/Mars"
+{
+	LongLat [ 222.43 -43.59 0 ]
+	Size 9.6
+	Importance 21.63
+	Type "AA"
+}
+
+Location "Matara" "Sol/Mars"
+{
+	LongLat [ 34.52 -49.3 0 ]
+	Size 49.4
+	Importance 26.96
+	Type "AA"
+}
+
+Location "Kibuye" "Sol/Mars"
+{
+	LongLat [ 181.71 -28.85 0 ]
+	Size 7.4
+	Importance 21.23
+	Type "AA"
+}
+
+Location "Cankuzo" "Sol/Mars"
+{
+	LongLat [ 51.99 -19.2 0 ]
+	Size 51
+	Importance 27.13
+	Type "AA"
+}
+
+Location "Luqa" "Sol/Mars"
+{
+	LongLat [ 131.73 -18.03 0 ]
+	Size 16.5
+	Importance 22.78
+	Type "AA"
+}
