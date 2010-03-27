@@ -1,0 +1,193 @@
+  Ovládanie Celestie myšou, klávesnicou a joystickom
+
+
+------------------------------------------
+    OVLÁDANIE MYŠOU
+------------------------------------------
+ "ĽAVÉ" a "PRAVÉ" znamenajú držanie príslušného tlačidla myši.
+
+ ĽAVÉ+ťahanie ................................. Nasmerovať kameru
+ PRAVÉ+ťahanie ............................... Obiehať zvolený objekt [Shift+šípky]
+ ĽAVÉ+PRAVÉ+ťahanie doľava/doprava ........ Otáčať pohľad doľava/doprava [šípky doprava/doľava]
+ ĽAVÉ+PRAVÉ+ťahanie hore/dolu ....... Zmeniť vzdialenosť k výberu [Home/End]
+ Koliesko ..................................... Zmeniť vzdialenosť k výberu [Home/End]
+ Ctrl+PRAVÉ+ťahanie hore/dolu .......... Zmeniť vzdialenosť k výberu [Home/End]
+ Shift+ĽAVÉ+ťahanie ....................... Zmeniť zorné pole [. / ,]
+ Stredné tlačidlo ......................... Prepnúť zorné pole z 45 stupňov na predchádzajúce nastavenie a späť
+ Klik ľavým tlačidlom (na objekt) .............. Zvoliť objekt [Enter -- podľa názvu objektu]
+ Klik ľavým tlačidlom (mimo objektu) ......... Zrušiť výber
+ Dvojklik ľavým tlačidlom (na objekt) ... Zvoliť a vycentrovať objekt
+ Klik pravým tlačidlom .............................. Zobraziť kontextové menu
+
+
+------------------------------------------------
+    OVLÁDANIE KLÁVESNICOU
+------------------------------------------------
+
+--- Navigácia ---
+
+ 1 - 9 .................................. Zvoliť planétu pri najbližšej hviezde
+ 0 (nula) ............................. Zvoliť materskú hviezdu aktuálnej planéty
+ H ...................................... Zvoliť Slnko (Domovskú sústavu)
+ C ....................................... Vycentrovať na zvolený objekt
+ G ...................................... Prejsť na zvolený objekt
+ F ....................................... Nasledovať zvolený objekt
+ T ....................................... Sledovať zvolený objekt
+ Y ....................................... Synchronizovať obežnú dráhu so zvoleným objektom podľa jeho rotácie
+ : ........................................ Uzamknúť na zvolený objekt
+ " ........................................ Prenasledovať zvolený objekt
+ Shift+C .............................. Vycentrovať/obiehať  --vycentrovať zvolený objekt bez zmeny polohy referenčného objektu
+ Ctrl+G ............................... Prejsť na povrch zvoleného objektu
+ Ctrl+F ................................ Prepnúť Alt-azimuth režim
+ Home ................................ Priblížiť sa k objektu
+ End ................................... Vzdialiť sa od objektu
+ * ........................................ Pozrieť dozadu
+ Backspace ....................... Zvoliť "rodiča" zvoleného objektu, alebo blízko výberu
+ Esc ................................... Zrušiť pohyb alebo skript
+
+
+--- Ovládanie času ---
+
+ Medzera .......................... Pozastaviť/Pokračovať tok času a skriptu (prepínač)
+ J ....................................... Plynutie času dopredu/dozadu (prepínač)
+ \ ....................................... Rýchlosť času: 1x dopredu (normálne), zruší zrýchlenie/spomalenie
+ L ....................................... Zmeniť rýchlosť času: 10x rýchlejšie
+ K ....................................... Zmeniť rýchlosť času: 10x pomalšie
+ Shift+L .............................. Zmeniť rýchlosť času: 2x rýchlejšie
+ Shift+K .............................. Zmeniť rýchlosť času: 2x pomalšie
+ ! ........................................ Nastaviť čas na aktuálny
+ ? ....................................... Zobraziť oneskorenie svetla medzi pozorovateľom a zvoleným objektom
+ - (pomlčka).......................... Odpočítať čas putovania svetla od času v simulácii
+
+
+--- Názvy (prepínanie zobrazovania popisov) ---
+
+ E ...................................... Galaxie
+ Shift+E ............................. Guľové hviezdokopy
+ B ...................................... Hviezdy
+ P ...................................... Planéty
+ Shift+P ............................. Trpasličie Planéty
+ M ...................................... Mesiace
+ Shift+M ............................. Malé mesiace
+ W ..................................... Asteroidy
+ Shift+W ............................ Kométy
+ N ...................................... Kozmické lode
+ = ....................................... Súhvezdia
+ & ....................................... Lokality
+
+
+--- Zobrazenie (prepínanie vykreslenia) --
+
+ U ..................................... Galaxie
+ Shift+U ............................ Guľové hviezdokopy
+ ^ ...................................... Hmloviny
+ Ctrl+A .............................. Atmosféry
+ I ....................................... Oblaky
+ Ctrl+L ............................... Svetlá na nočnej strane
+ Ctrl+T ............................... Chvosty komét
+ Ctrl+E ............................... Tiene zatmení
+ Ctrl+B ............................... Hranice súhvezdí
+ / ....................................... Kresby súhvezdí
+ ; ........................................ Rovníková súradnicová guľa s východiskom v Zemi
+ Ctrl+K ............................... Značky (umiestnené na objektoch)
+ O ...................................... Obežné dráhy (prepne všetky zvolené dráhy)
+
+
+--- Nastavenia vykresľovania ---
+
+ { ....................................... Znížiť rozptýlené svetlo
+ } ....................................... Zvýšiť rozptýlené svetlo
+ ( ....................................... Znížiť zosilnenie svetla galaxií
+ ) ....................................... Zvýšiť zosilnenie svetla galaxií
+ [ ....................................... Znížiť medznú hviezdnu jasnosť :
+                                           - Ak je automatická magnitúda vypnutá: Zníži medznú jasnosť (menej hviezd)
+                                           - Ak je automatická magnitúda zapnutá: Zníži medznú jasnosť pri zor.poli 45 stupňov
+ ] ....................................... Zvýšiť medznú hviezdnu jasnosť :
+                                           - Ak je automatická magnitúda vypnutá: Zvýši medznú jasnosť (viac hviezd)
+                                           - Ak je automatická magnitúda zapnutá: Zvýši medznú jasnosť pri zor.poli 45 stupňov
+ Ctrl+Y ............................... Prepnúť automatickú magnitúdu (automatické prispôsobenie viditeľnosti hviezd podľa zor.poľa)
+ , ....................................... Zúžiť zorné pole [Shift+ťahanie ľavým tlačidlom myši]
+ . ....................................... Rozšíriť zorné pole [Shift+ťahanie ľavým tlačidlom myši]
+ Ctrl+X ............................... Prepnúť vyhladzovanie čiar
+ Alt+Enter .......................... Prepnúť režim zobrazenia (Na celú obrazovku / V okne)
+ Ctrl+P ............................... Označiť zvolený objekt
+ Ctrl+V ............................... Prepínať podporované spôsoby vykresľovania cez OpenGL
+ + ...................................... Prepnúť typ textúr planét (Umelecké / Hranica poznania)
+ % ..................................... Prepnúť farbu hviezd
+ Ctrl+S ............................... Prepínať tvar hviezd (body / neostré body / kotúče v mierke)
+ V ...................................... Prepínať podrobnosť informačných textov (Žiadne / Stručné / Podrobné)
+ Ctrl+W .............................. Prepnúť obrysový režim
+
+
+--- Možnosti pohľadov ---
+
+ Ctrl+U ................................ Rozdeliť pohľad vodorovne
+ Ctrl+R ................................ Rozdeliť pohľad zvislo
+ Tab ................................... Prepínať medzi aktívnymi pohľadmi
+ Del .................................... Zrušiť aktívny pohľad
+ Ctrl+D ................................ Zrušiť všetky pohľady okrem aktívneho (návrat do režimu jediného pohľadu)
+
+
+--- Navigácia smerovými klávesami ---
+
+ Šípka hore/dole ................. Posunúť kameru dole/hore (ako v lietadle)
+ Šípka doľava/doprava ................. Rotovať kameru doľava/doprava (okolo stredu pohľadu)
+ Shift+Šípka doľava/doprava ........ Obiehať objekt: doprava/doľava
+ Shift+Šípka hore/dole ........ Obiehať objekt: dole/hore
+
+ 
+--- Navigácia cez numerickú klávesnicu (s aktívnym NumLockom) ---
+
+ 8 ...................................... Kamera dole [šípka dole]
+ 2 ...................................... Kamera hore [šípka hore]
+ 7 ...................................... Rotovať doľava  [šípka doľava]
+ 9 ...................................... Rotovať doprava [šípka doprava]
+ 5 ...................................... Zastaviť rotáciu
+ 4 ...................................... Zahnúť doľava
+ 6 ...................................... Zahnúť doprava
+
+
+--- Pohyb (Let vesmírom) ---
+
+ Z ...................................... Znížiť rýchlosť
+ A ...................................... Zvýšiť rýchlosť
+ Q ...................................... Otočiť smer
+ X ...................................... Nastaviť smer pohybu do stredu obrazovky
+ F2 .................................... Nastaviť rýchlosť na 1 km/s
+ F3 .................................... Nastaviť rýchlosť na 1,000 km/s
+ F4 .................................... Nastaviť rýchlosť na rýchlosť svetla (1 c)
+ F5 .................................... Nastaviť rýchlosť na 10x rýchlosti svetla (10 c)
+ F6 .................................... Nastaviť rýchlosť na 1 AU/s
+ F7 .................................... Nastaviť rýchlosť na 1 ly/s (svetelný rok/s)
+ F1 .................................... Zastaviť pohyb
+ S ...................................... Zastaviť pohyb
+
+
+--- Iné funkcie ---
+
+ Ctrl+C .............................. Kopírovať URL umiestnenia do schránky (Cel:// URL)
+ Ctrl+Insert ........................ Kopírovať URL umiestnenia do schránky (Cel:// URL)
+ F10 .................................. Zachytiť obrázok do súboru (snímka obrazovky)
+ Shift+F10 ......................... Zaznamenať video do súboru
+ F11 .................................. Počas záznamu videa: Spustiť / Pozastaviť záznam
+ F12 .................................. Počas záznamu videa: Ukončiť záznam
+ ~ ..................................... Prepnúť konzolu ladenia (šípkami hore/dole sa roluje zoznam)
+ ` ...................................... Prepnúť zobrazenie "počtu snímok za sekundu" (FPS), ktoré sú vykresľované
+ Ctrl+O .............................. Zobraziť dialógové okno "Zvoliť objekt"
+ @ .................................... Prepnúť režim editácie (na pomoc pri umiestňovaní objektov)
+ D ..................................... Spustiť ukážkový skript (/celestia/demo.cel)
+ Enter ............................... Prepnúť režim zadávania názvov (použiť Tab / Shift+Tab na zvýraznenie
+                                          položky, Esc na ukončenie)
+
+
+--------------------------------------------
+    OVLÁDANIE JOYSTICKOM
+--------------------------------------------
+ F8 .................................... Prepnúť ovládanie joystickom
+ X os ............................... Kamera doľva/doprava
+ Y os ............................... Kamera hore/dole
+ L spínač ............................ Rotovať doľava
+ R spínač ............................ Rotovať doprava
+ Tlačidlo 1 ........................... Pomalší pohyb
+ Tlačidlo 2 ........................... Rýchlejší pohyb
+
