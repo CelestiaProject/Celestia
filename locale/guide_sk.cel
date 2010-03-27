@@ -1,0 +1,76 @@
+{
+	Name   "Jupiter"
+	Target "Sol/Jupiter"
+	Description "Jupiter je 5. planétou od Slnka a zároveň najväčšou planétou našej slnečnej sústavy.  Tak ako všetky veľké vonkajšie planéty aj Jupiter je obrovskou plynovou guľou bez pevného povrchu.  Veľká červená škvrna je najväčšou najdlšie existujúcou búrkovou štruktúrou v nepokojnej atmosfére Jupitera; táto búrková štruktúra veľkosti Zeme je tu už najmenej 300 rokov."
+}
+
+{
+	Name "Pluto a Cháron"
+	Target "Sol/Pluto"
+	Distance 40000
+	DistanceUnits "km"
+	Description "Pluto obieha okolo Slnka v priemernej vzdialenosti šesť miliárd kilometrov.  Jeho mesiac Cháron je taký veľký voči Plutu, že sú spolu často označované ako dvojplanéta."
+}
+
+{
+	Name "Eros"
+	Target "Sol/Eros"
+	Description "Eros je asi 33 km dlhý asteriod zemiakovitého tvaru.  Vďaka sonde NEAR Shoemaker vieme o Erose viac než o ktoromkoľvek inom asteroide.  14. februára 2001 NEAR zostúpila na Eros a stala sa tak prvým kozmickým prostriedkom vôbec, ktorému sa podarilo pristáť na asteroide."
+}
+
+{
+	Name "Alfa Centauri"
+	Target "Alpha Centauri"
+	Distance 90
+	DistanceUnits "au"
+	Description "Alfa Centauri A a B sú spolu s Proxima Centauri, najbližšími slnečnými sústavami.  Alpha Cen A je veľmi podobná nášmu Slnku, akurát je o niečo staršia a jasnejšia.  B menej jasná a červená a Proxima je tak málo jasná, že nie je viditeľná voľným okom, hoci je to hviezda najbližšia k nášmu Slnku."
+}
+
+{
+	Name "Plejády"
+	Target "Alcyone"
+	Distance 35
+	DistanceUnits "ly"
+	Description "Otvorená hviezdokopa Plejády je skupinou jasných len nedávno zoskupených hviezd.  Plejády sú pomenované po 7 sestrách z gréckej mytológie, avšak ďalekohľady odhalili, že táto otvorená hviezdokopa pozostáva dokázateľne z viac než siedmich hviezd."
+}
+
+{
+	Name "Hyády"
+	Target "63 Tau"
+	Distance 25
+	DistanceUnits "ly"
+	Description "Pomenovaná po piatich sestrách Atlanta a Aitry, Hyády sú jednou z najvýraznejších otvorených hviezdokôp na oblohe.  Odhaduje sa, že hviezdy Hyád majú asi 660 miliónov rokov -- teda sú asi šesťkrát staršie ako horúcejšie a modrejšie hviezdy Plejád, ktoré sa na našej nočnej oblohe objavujú neďaleko nich."
+}
+
+{
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b je obrovská planéta obiehajúca okolo hviezdy jasnosti červeného trpaslíka.  Jej dráha je v rezonancii 2:1 s druhou planétou ich slnečnej sústavy."
+}
+
+{
+	Name "Ida a Daktyl"
+	Target "Sol/Ida"
+	Distance 200
+	DistanceUnits "km"
+	Description "Sonda Galileo odfotografovala asteroid 243 Ida v roku 1993 na svojej ceste k Jupiteru.  Tieto snímky dokazujú, že Ida má malý satelit, ktorý bol neskôr pomenovaný ako Dactyl.  Odvtedy bolo objavených niekoľko ďalších asteroidov, ktoré tiež majú svoje satelity."
+}
+
+{
+	Name "51 Peg b"
+	Target "51 Peg/b"
+	Description "51 Pegasi b bola prvou objavenou planétou, ktorá obieha okolo hviezdy inej ako naše Slnko.  Je to planéta plynný obor a obieha veľmi blízko okolo svojej rodičovskej hviezdy -- menej ako jednu pätinu vzdialenosti medzi Merkúrom a našim Slnkom.  Fakt, že plynný obor môže existovať tak blízko nejakej hviezdy prinútila astronómov vážne prehodnotiť teórie o utváraní slnečnej sústavy."
+}
+
+{
+	Name "Albireo"
+	Target "Albireo"
+	Distance 0.6
+	Description "Vďaka kontrastným farbám svojich hviezd -- oranžovej a modrobielej je dvojhviezda Albireo považovaná za jeden z najkrajších párov na oblohe.  Oranžová hviezda je obor typu K, a jej 'partnerom' je B trpaslík."
+}
+
+{
+	Name "Kométa Borrelly"
+	Target "Sol/Borrelly"
+	Description "22. septembra 2001, sa stala kométa Borrelly druhou kométou, ktorá bola zosnímaná z tak blízkej vzdialenosti od sondy.  Napriek tomu, že Deep Space 1 nebola zostrojená na prelet popri kométe, dostala sa do vzdialenosti 2200 km od jadra kométy Borrelly, aby sa vrátila so snímkami v najvyššom rozlíšení aké máme z jadra kométy."
+}
