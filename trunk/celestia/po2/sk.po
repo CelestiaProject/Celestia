@@ -8,365 +8,365 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Last-Translator: Lubos Balazovic <lubos.balazovic@gmail.com>\n"
+"Language-Team: Slovenský <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Language: sk_SK\n"
 
 #: data/constellations.cpp:1
 msgid "Andromeda"
-msgstr ""
+msgstr "Andromeda"
 
 #: data/constellations.cpp:2
 msgid "Antlia"
-msgstr ""
+msgstr "Výveva"
 
 #: data/constellations.cpp:3
 msgid "Apus"
-msgstr ""
+msgstr "Rajka"
 
 #: data/constellations.cpp:4
 msgid "Aquarius"
-msgstr ""
+msgstr "Vodnár"
 
 #: data/constellations.cpp:5
 msgid "Aquila"
-msgstr ""
+msgstr "Orol"
 
 #: data/constellations.cpp:6
 msgid "Ara"
-msgstr ""
+msgstr "Oltár"
 
 #: data/constellations.cpp:7
 msgid "Aries"
-msgstr ""
+msgstr "Baran"
 
 #: data/constellations.cpp:8
 msgid "Auriga"
-msgstr ""
+msgstr "Povozník"
 
 #: data/constellations.cpp:9
 msgid "Boötes"
-msgstr ""
+msgstr "Pastier"
 
 #: data/constellations.cpp:10
 msgid "Caelum"
-msgstr ""
+msgstr "Rydlo"
 
 #: data/constellations.cpp:11
 msgid "Camelopardalis"
-msgstr ""
+msgstr "Žirafa"
 
 #: data/constellations.cpp:12
 msgid "Cancer"
-msgstr ""
+msgstr "Rak"
 
 #: data/constellations.cpp:13
 msgid "Canes Venatici"
-msgstr ""
+msgstr "Poľovné psy"
 
 #: data/constellations.cpp:14
 msgid "Canis Major"
-msgstr ""
+msgstr "Veľký pes"
 
 #: data/constellations.cpp:15
 msgid "Canis Minor"
-msgstr ""
+msgstr "Malý pes"
 
 #: data/constellations.cpp:16
 msgid "Capricornus"
-msgstr ""
+msgstr "Kozorožec"
 
 #: data/constellations.cpp:17
 msgid "Carina"
-msgstr ""
+msgstr "Kýl"
 
 #: data/constellations.cpp:18
 msgid "Cassiopeia"
-msgstr ""
+msgstr "Kasiopeja"
 
 #: data/constellations.cpp:19
 msgid "Centaurus"
-msgstr ""
+msgstr "Kentaurus"
 
 #: data/constellations.cpp:20
 msgid "Cepheus"
-msgstr ""
+msgstr "Cefeus"
 
 #: data/constellations.cpp:21
 msgid "Cetus"
-msgstr ""
+msgstr "Veľryba"
 
 #: data/constellations.cpp:22
 msgid "Chamaeleon"
-msgstr ""
+msgstr "Chameleón"
 
 #: data/constellations.cpp:23
 msgid "Circinus"
-msgstr ""
+msgstr "Kružidlo"
 
 #: data/constellations.cpp:24
 msgid "Columba"
-msgstr ""
+msgstr "Holubica"
 
 #: data/constellations.cpp:25
 msgid "Coma Berenices"
-msgstr ""
+msgstr "Vlasy Bereniky"
 
 #: data/constellations.cpp:26
 msgid "Corona Australis"
-msgstr ""
+msgstr "Južná koruna"
 
 #: data/constellations.cpp:27
 msgid "Corona Borealis"
-msgstr ""
+msgstr "Severná koruna"
 
 #: data/constellations.cpp:28
 msgid "Corvus"
-msgstr ""
+msgstr "Havran"
 
 #: data/constellations.cpp:29
 msgid "Crater"
-msgstr ""
+msgstr "Pohár"
 
 #: data/constellations.cpp:30
 msgid "Crux"
-msgstr ""
+msgstr "Južný kríž"
 
 #: data/constellations.cpp:31
 msgid "Cygnus"
-msgstr ""
+msgstr "Labuť"
 
 #: data/constellations.cpp:32
 msgid "Delphinus"
-msgstr ""
+msgstr "Delfín"
 
 #: data/constellations.cpp:33
 msgid "Dorado"
-msgstr ""
+msgstr "Mečiar"
 
 #: data/constellations.cpp:34
 msgid "Draco"
-msgstr ""
+msgstr "Drak"
 
 #: data/constellations.cpp:35
 msgid "Equuleus"
-msgstr ""
+msgstr "Koník"
 
 #: data/constellations.cpp:36
 msgid "Eridanus"
-msgstr ""
+msgstr "Eridanus"
 
 #: data/constellations.cpp:37
 msgid "Fornax"
-msgstr ""
+msgstr "Pec"
 
 #: data/constellations.cpp:38
 msgid "Gemini"
-msgstr ""
+msgstr "Blíženci"
 
 #: data/constellations.cpp:39
 msgid "Grus"
-msgstr ""
+msgstr "Žeriav"
 
 #: data/constellations.cpp:40
 msgid "Hercules"
-msgstr ""
+msgstr "Herkules"
 
 #: data/constellations.cpp:41
 msgid "Horologium"
-msgstr ""
+msgstr "Hodiny"
 
 #: data/constellations.cpp:42
 msgid "Hydra"
-msgstr ""
+msgstr "Hydra"
 
 #: data/constellations.cpp:43
 msgid "Hydrus"
-msgstr ""
+msgstr "Vodný had"
 
 #: data/constellations.cpp:44
 msgid "Indus"
-msgstr ""
+msgstr "Indián"
 
 #: data/constellations.cpp:45
 msgid "Lacerta"
-msgstr ""
+msgstr "Jašterica"
 
 #: data/constellations.cpp:46
 msgid "Leo"
-msgstr ""
+msgstr "Lev"
 
 #: data/constellations.cpp:47
 msgid "Leo Minor"
-msgstr ""
+msgstr "Malý lev"
 
 #: data/constellations.cpp:48
 msgid "Lepus"
-msgstr ""
+msgstr "Zajac"
 
 #: data/constellations.cpp:49
 msgid "Libra"
-msgstr ""
+msgstr "Váhy"
 
 #: data/constellations.cpp:50
 msgid "Lupus"
-msgstr ""
+msgstr "Vlk"
 
 #: data/constellations.cpp:51
 msgid "Lynx"
-msgstr ""
+msgstr "Rys"
 
 #: data/constellations.cpp:52
 msgid "Lyra"
-msgstr ""
+msgstr "Lýra"
 
 #: data/constellations.cpp:53
 msgid "Mensa"
-msgstr ""
+msgstr "Stolový vrch"
 
 #: data/constellations.cpp:54
 msgid "Microscopium"
-msgstr ""
+msgstr "Mikroskop"
 
 #: data/constellations.cpp:55
 msgid "Monoceros"
-msgstr ""
+msgstr "Jednorožec"
 
 #: data/constellations.cpp:56
 msgid "Musca"
-msgstr ""
+msgstr "Mucha"
 
 #: data/constellations.cpp:57
 msgid "Norma"
-msgstr ""
+msgstr "Pravítko"
 
 #: data/constellations.cpp:58
 msgid "Octans"
-msgstr ""
+msgstr "Oktant"
 
 #: data/constellations.cpp:59
 msgid "Ophiuchus"
-msgstr ""
+msgstr "Hadonos"
 
 #: data/constellations.cpp:60
 msgid "Orion"
-msgstr ""
+msgstr "Orión"
 
 #: data/constellations.cpp:61
 msgid "Pavo"
-msgstr ""
+msgstr "Páv"
 
 #: data/constellations.cpp:62
 msgid "Pegasus"
-msgstr ""
+msgstr "Pegas"
 
 #: data/constellations.cpp:63
 msgid "Perseus"
-msgstr ""
+msgstr "Perzeus"
 
 #: data/constellations.cpp:64
 msgid "Phoenix"
-msgstr ""
+msgstr "Fénix"
 
 #: data/constellations.cpp:65
 msgid "Pictor"
-msgstr ""
+msgstr "Maliar"
 
 #: data/constellations.cpp:66
 msgid "Pisces"
-msgstr ""
+msgstr "Ryby"
 
 #: data/constellations.cpp:67
 msgid "Piscis Austrinus"
-msgstr ""
+msgstr "Južná ryba"
 
 #: data/constellations.cpp:68
 msgid "Puppis"
-msgstr ""
+msgstr "Korma"
 
 #: data/constellations.cpp:69
 msgid "Pyxis"
-msgstr ""
+msgstr "Kompas"
 
 #: data/constellations.cpp:70
 msgid "Reticulum"
-msgstr ""
+msgstr "Sieť"
 
 #: data/constellations.cpp:71
 msgid "Sagitta"
-msgstr ""
+msgstr "Šíp"
 
 #: data/constellations.cpp:72
 msgid "Sagittarius"
-msgstr ""
+msgstr "Strelec"
 
 #: data/constellations.cpp:73
 msgid "Scorpius"
-msgstr ""
+msgstr "Škorpión"
 
 #: data/constellations.cpp:74
 msgid "Sculptor"
-msgstr ""
+msgstr "Sochár"
 
 #: data/constellations.cpp:75
 msgid "Scutum"
-msgstr ""
+msgstr "Štít"
 
 #: data/constellations.cpp:76
 msgid "Serpens Caput"
-msgstr ""
+msgstr "Hlava hada"
 
 #: data/constellations.cpp:77
 msgid "Serpens Cauda"
-msgstr ""
+msgstr "Chvost hada"
 
 #: data/constellations.cpp:78
 msgid "Sextans"
-msgstr ""
+msgstr "Sextant"
 
 #: data/constellations.cpp:79
 msgid "Taurus"
-msgstr ""
+msgstr "Býk"
 
 #: data/constellations.cpp:80
 msgid "Telescopium"
-msgstr ""
+msgstr "Ďalekohľad"
 
 #: data/constellations.cpp:81
 msgid "Triangulum"
-msgstr ""
+msgstr "Trojuholník"
 
 #: data/constellations.cpp:82
 msgid "Triangulum Australe"
-msgstr ""
+msgstr "Južný trojuholník"
 
 #: data/constellations.cpp:83
 msgid "Tucana"
-msgstr ""
+msgstr "Tukan"
 
 #: data/constellations.cpp:84
 msgid "Ursa Major"
-msgstr ""
+msgstr "Veľká medvedica (Veľký voz)"
 
 #: data/constellations.cpp:85
 msgid "Ursa Minor"
-msgstr ""
+msgstr "Malá medvedica (Malý voz)"
 
 #: data/constellations.cpp:86
 msgid "Vela"
-msgstr ""
+msgstr "Plachty"
 
 #: data/constellations.cpp:87
 msgid "Virgo"
-msgstr ""
+msgstr "Panna"
 
 #: data/constellations.cpp:88
 msgid "Volans"
-msgstr ""
+msgstr "Lietajúca ryba"
 
 #: data/constellations.cpp:89
 msgid "Vulpecula"
-msgstr ""
+msgstr "Líštička"
