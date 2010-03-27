@@ -188,7 +188,7 @@ Source: "locale\controls_pl.txt";       DestDir: "{app}/locale"; Flags: ignoreve
 Source: "locale\controls_pt.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_pt_BR.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_ru.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
-; Source: "locale\controls_sk.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\controls_sk.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_sv.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_uk.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_zh_CN.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -207,7 +207,7 @@ Source: "locale\demo_pl.cel";       DestDir: "{app}/locale"; Flags: ignoreversio
 Source: "locale\demo_pt.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_pt_BR.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_ru.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
-; Source: "locale\demo_sk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\demo_sk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_sv.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_tr.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_uk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -227,7 +227,7 @@ Source: "locale\guide_pl.cel";       DestDir: "{app}/locale"; Flags: ignoreversi
 Source: "locale\guide_pt.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_pt_BR.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_ru.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
-; Source: "locale\guide_sk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\guide_sk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_sv.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_uk.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_zh_CN.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
