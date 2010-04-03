@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Chris Laurel
+# Japanese translations for Celestia.
+# Copyright (C) 2010 Chris Laurel
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Sui Ota <aqua@aqsp.net>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: JAPANESE\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-04 15:39+0000\n"
-"PO-Revision-Date: 2010-03-13 09:23+0900\n"
+"PO-Revision-Date: 2010-03-28 20:09+0900\n"
 "Last-Translator: Sui Ota <aqua@aqsp.net>\n"
 "Language-Team:  <aqua@aqsp.net>\n"
 "MIME-Version: 1.0\n"
@@ -3841,7 +3841,7 @@ msgstr "中(&M)"
 
 #: src/celestia/res/resource_strings.cpp:45
 msgid "&Texture Resolution"
-msgstr "テクスチャ解像度度(&T)"
+msgstr "テクスチャ解像度(&T)"
 
 #: src/celestia/res/resource_strings.cpp:48
 msgid "&High"
@@ -4330,11 +4330,4 @@ msgstr "11"
 #: src/celestia/res/resource_strings.cpp:237
 msgid "Dec"
 msgstr "12"
-
-#~ msgid ""
-#~ "Celestia was unable to initialize OpenGL extensions. Graphics quality "
-#~ "will be reduced. Only Basic render path will be available"
-#~ msgstr ""
-#~ "CelestiaはOpenGL拡張を初期化できませんでした。グラフィックの質が低くなりま"
-#~ "す。Basicレンダリングパスのみとなります。"
 
