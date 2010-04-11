@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: CELESTIA-Chinese\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-04 15:39+0000\n"
-"PO-Revision-Date: 2010-02-27 12:51+0800\n"
+"PO-Revision-Date: 2010-04-04 20:32+0800\n"
 "Last-Translator: Markerz Li <markerzli@gmail.com>\n"
 "Language-Team: Chinese <zhaozhengxu@yahoo.com,markerzli@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -1058,7 +1058,7 @@ msgstr "替代表面(&A)"
 #: src/celestia/winmain.cpp:1666
 #: src/celestia/kde/selectionpopup.cpp:477
 msgid "Orbiting Bodies"
-msgstr "绕行天体"
+msgstr "绕行的天体"
 
 #: src/celestia/winmain.cpp:1693
 #: src/celestia/kde/selectionpopup.cpp:310
@@ -4073,7 +4073,7 @@ msgstr "恒星浏览器"
 
 #: src/celestia/res/resource_strings.cpp:117
 msgid "Brightest"
-msgstr "最亮"
+msgstr "按最大亮度"
 
 #: src/celestia/res/resource_strings.cpp:118
 msgid "With planets"

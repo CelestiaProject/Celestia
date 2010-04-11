@@ -5,13 +5,14 @@
 #
 # Christophe Teyssier <cteyssier@jetmultimedia.fr>, 2003.
 # Christophe Teyssier <chris@teyssier.org>, 2003, 2005, 2006, 2007, 2008.
+# Vincent Giangiulio <gvince@sfr.fr>, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-04 15:39+0000\n"
 "PO-Revision-Date: 2010-02-25 12:10+0100\n"
-"Last-Translator: vincent <gvince@sfr.fr>\n"
+"Last-Translator: Vincent <gvince@sfr.fr>\n"
 "Language-Team: Français <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

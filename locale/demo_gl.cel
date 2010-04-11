@@ -1,0 +1,154 @@
+# Script de demostración de Celestia
+# tradución ó galego: Xabier Cancela
+# contacto: xabiercs@terra.es
+
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Comezo da demo . . .\nPreme ESC para rematar." origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "Comecemos preto da casa . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "Agora estamos orbitando sobre a Terra a uns 12.500 kms de altitude." row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "A Terra resulta moito máis familiar con nubes." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Seguinte parada: a Lúa." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Observe pasa-la Terra e mailo Sol mentres orbitámo-la Lúa." row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Viaxemos cara ó Sol." row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "A esta distancia, podemos ve-las escuras manchas solares na superficie do Sol." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Retrocedamos para poder ver unha vista panorámica do Sistema Solar interior." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Activémo-la visión dos nomes dos planetas . . ." row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "Podemos acelera-lo tempo para ver coma se moven os planetas nas súas órbitas ó redor do Sol." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "Por cada segundo, pasa un mes na simulación." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Agora, detivémo-lo tempo por completo." row -3}
+
+	wait { duration 1.0 }
+	print { text "O noso próximo destino é Saturno." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Moitas das lúas de Saturno son visibles coma puntos brillantes." row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "A característica máis destacable de Mimas, satélite de Saturno, é o inmenso cráter de impacto Herschel." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Observe o feble que se ve o Sol a esta distancia." row -3 }
+	wait { duration 2 }
+
+	print { text "Botemos unha ollada ó redor ás estrelas do firmamento." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Os residentes no Hemisferio Norte seguramente recoñecerán o Gran Cazo ou Setestrelo da constelación Ursa Major." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "Agora estamos directamente centrados sobre Polaris, A Estrela Polar." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Polaris é parte do asterismo coñecido coma o Pequeno Cazo." row -3}
+	wait { duration 2 }
+	print { text "Para axudarnos a orientarnos no firmamento, Celestia pode debuxa-los diagramas das constelacións . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . e tamén os seus nomes" row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Orion é a constelación máis prominente do ceo." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "A Cruz do Sur é unha visión familiar nos ceos do Hemisferio Sur." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Activémo-la representación das galaxias, así poderemos ve-la Vía Láctea" row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Agora viaxaremos ata Antares, unha estrela xigante vermella en Scorpius." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "Aínda cando estamos de Antares a unha distancia a 10 veces maior da\n distancia que existe entre a Terra e o Sol, a xigante vermella enche o ceo." row -3}
+	wait { duration 4.0 }
+
+	print { text "Retrocedamos e vexámo-la imaxe ó completo . . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Agora vexámo-la nosa galaxia ó completo, a Vía Láctea." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Hora de regresar a casa . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Demo completada." row -3}
+	wait { duration 3.0 }
+}
