@@ -1,0 +1,76 @@
+{
+    Name   "Xúpiter"
+    Target "Sol/Jupiter"
+    Description "Xúpiter é o planeta máis grande do noso Sistema Solar, e o quinto en distancia respecto do Sol. Coma resto de planetas exteriores, Xúpiter é un xigante gasoso, sen unha superficie sólida. A Gran Mancha Vermella e a maior e máis antiga das moitas tormentas dentro da turbulenta atmosfera de Xúpiter; esta tormenta ten o tamaño da Terra, e está presente dende hai coma mínimo 300 anos."
+}
+
+{
+    Name "Plutón e Caronte"
+    Target "Sol/Pluto"
+    Distance 40000
+    DistanceUnits "km"
+    Description "Plutón orbita ó redor do noso Sol a unha distancia media de preto de seis mil millóns de quilómetros. A súa lúa Caronte é tan grande que se soe falar destes dous obxectos astronómicos coma un 'planeta dobre'."
+}
+
+{
+    Name "Eros"
+    Target "Sol/Eros"
+    Description "Eros é un asteroide con forma de pataca próximo a Terra duns 33 kms de longo. Grazas á sonda espacial NEAR Shoemaker, coñecemos máis de Eros que de calquera outro asteroide. O14 de Febreiro do 2001, a NEAR descendeu en Eros, converténdose así na primeira naves espacial en aterrar nun asteroide."
+}
+
+{
+    Name "Alpha Centauri"
+    Target "Alpha Centauri"
+    Distance 90
+    DistanceUnits "au"
+    Description "Alpha Centauri A e B son xunto a Proxima Centauri, o sistema estelar máis próximo a nós. Alpha Cen A é moi semellante ó noso Sol, pénsase que un pouco máis vella e tamén un pouco máis brillante. B é máis feble e máis vermella, e Proxima é ten un brillo tan feble que a pesar de se-la estrela máis próxima á Terra, non pode ser vista a simple vista."
+}
+
+{
+    Name "Pléiades"
+    Target "Alcyone"
+    Distance 35
+    DistanceUnits "ly"
+    Description "O cúmulo estelar das Pléiades é un grupo de brillantes estrelas de recente formación. As Pléiades recibiron este nome polas sete irmás da mitoloxía grega, aínda que a través dos telescopios aparecen moitas máis estrelas no cúmulo."
+}
+
+{
+    Name "Híades"
+    Target "63 Tau"
+    Distance 25
+    DistanceUnits "ly"
+    Description "Reciben o nome das cinco fillas de Atlas e Aethra. As Híades (Hyades) son un dos máis destacados cúmulos estelares abertos do firmamento. Estimase que as súas estrelas teñen ó redor duns 660 millóns de anos de idade--preto de seis veces máis vellas cás quentes e azuis Pléiades, as cales están preto das Híades no noso ceo nocturno."
+}
+
+{
+    Name "Gliese 876 b"
+    Target "Gliese 876/b"
+    Description "Gliese 876 b é un planeta xigante que orbita ó redor dunha estrela vermella anana. Está nunha resonancia orbital de 2:1 con outro planeta no mesmo sistema estelar."
+}
+
+{
+    Name "Ida e Dáctilo"
+    Target "Sol/Ida"
+    Distance 200
+    DistanceUnits "km"
+    Description "A sonda Galileo fotografou o asteroide 243 Ida no 1993 camiño de Xúpiter. Esta fotografías revelaron que Ida posuía un pequeno satélite chamado máis tarde Dáctilo.  Dende entón, descubríronse moitos outros asteroides que tamén posuían satélites."
+}
+
+{
+    Name "51 Peg b"
+    Target "51 Peg/b"
+    Description "51 Pegasi b foi o primeiro planeta descuberto orbitando unha estrela 'normal' que non fose o Sol. é un planeta gasoso xigante e orbita extremadamente preto da súa estrela nai--menos dunha quinta parte da distancia que existe entre Mercurio e o noso Sol. Que poida existir un xigante gasoso tan preto dunha estrela forzou ós astrónomos a revisar moi seriamente as teorías de formación dos sistemas estelares."
+}
+
+{
+    Name "Albireo"
+    Target "Albireo"
+    Distance 0.6
+    Description "Debido ó contraste entre o laranxa e o branco-azulado das estrelas que forman este sistema estelar dobre, Albireo é considerado un dos máis fermosos pares do firmamento. A estela laranxa é unha xigante do Tipo K a súa compañeira unha anana B."
+}
+
+{
+    Name "Comet Borrelly"
+    Target "Sol/Borrelly"
+    Description "O 22 de setembro do 2001, o cometa Borrelly converteríase no segundo cometa en ser fotografado de preto por unha sonda espacial. A pesar de que a sonda non fora construída para atoparse co comenta, a Deep Space 1 aproximouse a 2200 quilómetros do núcleo de Borrelly, para enviarnos as imaxes de máis resolución dun núcleo comentario."
+}

@@ -1,0 +1,189 @@
+Controis do Rato, Teclado e Joystick para Celestia
+
+
+------------------------------------------
+    CONTROIS DO RATO
+------------------------------------------
+ Bt. esquerdo e arrastrar .............................................. Orientar cámara
+ Bt. dereito e arrastrar ............................... ............... Orbita-lo obxecto seleccionado [Maiús.+Teclas de Dirección]
+ Bt. esquerdo + Bt. dereito e arrastrar cara a esquerda/dereita ........ Desprazarse pola vista cara a esquerda/dereita [Frechas de Esquerda/Dereita]
+ Bt. esquerdo + Bt. dereito e arrastrar cara a arriba/abaixo ........... Axusta-la distancia á selección [Inicio/Fin]
+ Rodiña ................................................................ Axusta-la distancia á selección [Inicio/Fin]
+ Ctrl+Bt. esquerdo e arrastrar cara arriba/abaixo ...................... Axusta-la distancia á selección [Inicio/Fin]
+ Maiús.+Bt. Esquerdo e arrastrar ....................................... Cambia-lo ancho da Vista (FOV) [. / ,]
+ Bt. Central ........................................................... Intercambia-la vista FOV en 45 graos
+ Click esquerdo (nun obxecto) .......................................... Seleccionar obxecto [Tecla Enter -- por nome do obxecto]
+ Click esquerdo (fora dun obxecto) ..................................... Cancelar selección
+ Dobre Click esquerdo (nun obxecto) .................................... Seleccionar e centra-lo obxecto
+ Click dereito.......................................................... Amosa-lo menú contextual
+
+
+------------------------------------------------
+    CONTROIS DO TECLADO
+------------------------------------------------
+
+--- Navegación ---
+
+ 1 - 9 .................................... Selecciona-lo planeta ó redor da estrela máis próxima
+ 0 (cero) ................................. Selecciona-la estrela nai do actual planeta ou sistema
+ H ........................................ Selecciona-lo Sol (o noso sistema)
+ C ........................................ Centrase no obxecto seleccionado
+ G ........................................ Ir ó obxecto seleccionado
+ F ........................................ Segui-lo obxecto seleccionado
+ T ........................................ Rastrexa-lo obxecto seleccionado
+ Y ........................................ Orbita-lo obxecto seleccionado nunha órbita sincrónica
+ : ........................................ Bloquearse sobre o obxecto seleccionado
+ " ........................................ Persegui-lo obxecto seleccionado
+ Shift+C .................................. Centrar/orbitar --centra-lo obxecto seleccionado sen cambia-la posición do obxecto de referencia                                           
+ Ctrl+G ................................... Ir a superficie do obxecto seleccionado
+ Ctrl+F ................................... Intercambiar modo Alt-acimut
+ Home ..................................... Moverse preto do obxecto
+ End ...................................... Arredarse do obxecto
+ * ........................................ Mirar cara atrás
+ Barra espazadora.......................... Selecciona-lo obxecto nai do obxecto actual ou limpa-la selección
+ Esc ...................................... Cancela-lo movemento ou script
+
+
+--- Control do Tempo ---
+
+ Barra espazadora .......................... Pausar/Resumi-lo descorrer do tempo e dos scripts (intercambiar)
+ J ......................................... O tempo cara adiante/atrás (intercambiar)
+ \ ......................................... Escolle-la velocidade do tempo: 1x cara adiante (velocidade normal), cancela velocidades máis rápidas/lentas
+ L ......................................... Cambia-la velocidade do tempo: 10 veces máis rápido
+ K ......................................... Cambia-la velocidade do tempo: 10 veces máis lento
+ Shift+L ................................... Cambia-la velocidade do tempo: 2 veces máis rápido
+ Shift+K ................................... Cambia-la velocidade do tempo: 2 veces máis lento
+ ! ......................................... Cambia-lo tempo ó actual sistema de data e hora
+ ? ......................................... Amosa-la demora por viaxar a velocidade da luz entre o observador e o obxecto seleccionado
+ - (guión).................................. Subtraer-la simulación actual da demora por viaxar á velocidade da luz
+
+
+--- Etiquetas (conmutador on/off) ---
+
+E ....................................... Galaxias
+Shift+E ................................. Globulares
+B ....................................... Estrelas
+P ....................................... Planetas
+Shift+P ................................. Planetas Ananos
+M ....................................... Lúas
+Shift+M ................................. Lúas Menores
+W ....................................... Asteroides
+Shift+W ................................. Cometas
+N ....................................... Sondas Espaciais
+= ....................................... Constelacións
+& ....................................... Localizacións
+
+
+--- Xerar/Amosar (conmutador on/off) --
+
+ U ....................................... Galaxias
+ Shift+U ................................. Globulares
+ ^ ....................................... Nebulosas
+ Ctrl+A .................................. Atmosferas
+ I ....................................... Nubes
+ Ctrl+L .................................. Mapas das cara nocturna
+ Ctrl+T .................................. Colas dos cometas
+ Ctrl+E .................................. Sombras dos eclipses
+ Ctrl+B .................................. Fronteiras das Constelacións
+ / ....................................... Diagramas das Constelacións
+ ; ....................................... Esfera baseada nas coordenadas ecuatoriais da Terra
+ Ctrl+K .................................. Marcadores (colocados nos obxectos)
+ O ....................................... Órbitas
+
+
+--- Opcións de Xeración ---
+
+ { ....................................... Reduci-la Luz Ambiental
+ } ....................................... Incrementa-la Luz Ambiental
+ ( ....................................... Reduci-la Luz das Galaxias (non a das súas estrelas)
+ ) ....................................... Incrementa-la Luz das Galaxias (non a das súas estrelas)
+ [ ....................................... Reduci-lo Límite de Magnitude :
+                                           - Se a AutoMag está OFF: Reduci-lo límite de magnitude (menos estrelas)
+                                           - Se a AutoMag está ON : Reducir limitando a magnitude ós 45 graos do campo visual
+ ] ....................................... Incrementa-la Magnitude :
+                                           - Se a AutoMag está OFF: Incrementa-lo límite de magnitude (máis estrelas)
+                                           - Se a AutoMag está ON : Incrementa-lo límite de magnitude ós 45 graos do campo visual
+ Ctrl+Y .................................. Cambia-lo Auto Magnitude (adaptación automática da visibilidade estelar ó campo visual
+ , ....................................... Estreita-lo campo visual [Maiús.+Bt. esquerdo e arrastrar]
+ . ....................................... Expandi-lo campo visual [Maiús.+Bt. esquerdo e arrastrar]
+ Ctrl+X .................................. Cambia-lo suavizado de liñas
+ Alt+Enter ............................... Cambia-lo Modo de pantalla (Pantalla completa / Xanela)
+ Ctrl+P .................................. Marca-lo obxecto seleccionado
+ Ctrl+V .................................. Cambiar entre as rutas dos motores de procesación de OpenGL
+ + ....................................... Cambiar entre presentación artística e o límite no coñecemento das texturas planetarias
+ % ....................................... Cambia-las táboas de cores das estrelas
+ Ctrl+S .................................. Cambia-los estilos das estrelas entre puntos, discos difusos e discos a escala
+ V ....................................... Cambia-la información do texto entre ningunha,  estilo seco e estilo amigable
+ Ctrl+W .................................. Cambiar a modo Wireframe
+
+
+--- Opción de Multivista ---
+
+Ctrl+U ................................ Dividi-la vista horizontalmente
+Ctrl+R ................................ Dividi-la vista verticalmente
+Tab ................................... Moverse por tódalas vistas activas
+Del ................................... Borra-la vista activa
+Ctrl+D ................................ Borrar tódalas vistas excepto a que está activa (resetear a Vista Simple)
+
+
+--- Navegación coas frechas de dirección ---
+
+ Frecha Arriba/Abaixo .................... arriba/abaixo
+ Frecha Dereita/Esquerda ................. Desprazarse á dereita/esquerda
+ Frecha Dereita/Esquerda + Maiús.......... Orbita-lo obxecto: dereita/esquerda
+ Frecha Arriba/Abaixo + Maiús. ........... Orbita-lo obxecto: abaixo/arriba
+
+ 
+--- Navegación vía Teclado Numúrico (co NumLock activo) ---
+
+ 8 ...................................... Apuntar cara arriba (Ir) [Frecha abaixo]
+ 2 ...................................... Apuntar cara arriba (Ir) [Frecha arriba]
+ 7 ...................................... Desprazarse cara á esquerda [Frecha esquerda]
+ 9 ...................................... Desprazarse cara á dereita [Frecha dereita]
+ 5 ...................................... Deta-la rotación
+ 4 ...................................... Virar a esquerda
+ 6 ...................................... Virar a dereita
+
+
+--- Voo espacial ---
+
+ Z ...................................... Diminúi-la velocidade
+ A ...................................... Incrementa-la velocidade
+ Q ...................................... Inverte-la dirección
+ X ...................................... Moverse cara ó centro da pantalla
+ F2 ..................................... Po-la velocidade a 1 km/seg
+ F3 ..................................... Po-la velocidade a 1.000 km/seg
+ F4 ..................................... Po-la velocidade á da luz (1 c)
+ F5 ..................................... Po-la velocidade a 10 veces a da luz (10 c)
+ F6 ..................................... Po-la velocidade a 1 UA/seg
+ F7 ..................................... Po-la velocidade a 1 ano luz/seg
+ F1 ..................................... Deterse
+ S ...................................... Deterse
+
+--- Outras funcións ---
+
+ Ctrl+C ................................. Copia-la localización da URL ó portapapeis (Cel:// URL)
+ Ctrl+Insert ............................ Copia-la localización da URL ó portapapeis (Cel:// URL)
+ F10 .................................... Captura-la imaxe ó arquivo (captura de pantalla)
+ Shift+F10 .............................. Captura-lo Vídeo a un arquivo
+ F11 .................................... En estado de Captura de Vídeo: Comezar (/Para-la captura
+ F12 .................................... En estado de Captura de Vídeo: dete-la captura
+ ~ ...................................... Cambia-la consola de depuración (usa-las frechas de Arriba/Abaixo para moverse pola lista)
+ ` ...................................... Cambiar amosar "fotogramas por segundo" (FPS) por comezar a procesar
+ Ctrl+O ................................. Amosar-la caixa de diálogo "Seleccionar Obxecto"
+ @ ...................................... Cambiar Modos de Edición (para asisti-la colocación de obxectos)
+ D ...................................... Inicia-lo script da demo (/celestia/demo.cel)
+ Enter .................................. Cambiar a modo de entrada por Nomes (escoller un obxecto escribindo o seu nome) (usar Tab / Shift+Tab para remarcar un elemento, Esc para saír)
+
+
+--------------------------------------------
+    CONTROIS DO JOYSTICK
+--------------------------------------------
+ F8 .................................... Habilitar Joystick
+ Eixo X ................................ Xirar a Esquerda/Dereita
+ Eixo Y ................................ Apuntar (Ir) a Arriba/Abaixo
+ Gatillo L ............................. Desprazarse a esquerda
+ Gatillo R ............................. Desprazarse a dereita
+ Button 1 .............................. Moverse máis lento
+ Button 2 .............................. Moverse máis rápido
+
