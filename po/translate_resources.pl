@@ -36,7 +36,7 @@ my $resource;
 close RES;
 
 # LangID and code page
-# http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_238z.asp
+# http://msdn.microsoft.com/en-us/library/dd318693
 my %lang = (
 ar => [ '401', 1256 ],
 bg => [ '402', 1251 ],
@@ -45,6 +45,7 @@ el => [ '408', 1253 ],
 en => [ '409', 1252 ],
 es => [ '40a', 1252 ],
 fr => [ '40c', 1252 ],
+gl => [ '456', 1252 ],
 hu => [ '40e', 1250 ],
 it => [ '410', 1252 ],
 ja => [ '411',  932 ],
