@@ -38,7 +38,7 @@ Q_OBJECT
     void slotSetDateTime();
     void slotDateTimeChanged();
     void slotTimeZoneChanged();
-    void slotOk();
+    void accept();
 
  signals:
     void setTimeTriggered(double tdb);

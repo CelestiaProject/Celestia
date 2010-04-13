@@ -53,9 +53,9 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     QWidget* locationsPage = new QWidget();
     QWidget* timePage = new QWidget();
 
-    tabWidget->addTab(renderPage, "Rendering");
-    tabWidget->addTab(locationsPage, "Locations");
-    tabWidget->addTab(timePage, "Time");
+    tabWidget->addTab(renderPage, _("Rendering"));
+    tabWidget->addTab(locationsPage, _("Locations"));
+    tabWidget->addTab(timePage, _("Time"));
 
     // Render page
     int renderFlags = appCore->getRenderer()->getRenderFlags();
@@ -63,31 +63,31 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     renderPage->setLayout(renderPageLayout);
     
     // Objects group
-    QGroupBox* objectsGroup = new QGroupBox(tr("Objects"));
+    QGroupBox* objectsGroup = new QGroupBox(_("Objects"));
     QVBoxLayout* objectsGroupLayout = new QVBoxLayout();
     objectsGroup->setLayout(objectsGroupLayout);
 
-    QCheckBox* showStarsCheck = new QCheckBox(tr("Stars"));
+    QCheckBox* showStarsCheck = new QCheckBox(_("Stars"));
     connect(showStarsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowStars(bool)));
     showStarsCheck->setChecked(renderFlags & Renderer::ShowStars);
     objectsGroupLayout->addWidget(showStarsCheck);
 
-    QCheckBox* showPlanetsCheck = new QCheckBox(tr("Planets"));
+    QCheckBox* showPlanetsCheck = new QCheckBox(_("Planets"));
     connect(showPlanetsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowPlanets(bool)));
     showPlanetsCheck->setChecked(renderFlags & Renderer::ShowPlanets);
     objectsGroupLayout->addWidget(showPlanetsCheck);
 
-    QCheckBox* showGalaxiesCheck = new QCheckBox(tr("Galaxies"));
+    QCheckBox* showGalaxiesCheck = new QCheckBox(_("Galaxies"));
     connect(showGalaxiesCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowGalaxies(bool)));
     showGalaxiesCheck->setChecked(renderFlags & Renderer::ShowGalaxies);
     objectsGroupLayout->addWidget(showGalaxiesCheck);
 
-    QCheckBox* showNebulaeCheck = new QCheckBox(tr("Nebulae"));
+    QCheckBox* showNebulaeCheck = new QCheckBox(_("Nebulae"));
     connect(showNebulaeCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowNebulae(bool)));
     showNebulaeCheck->setChecked(renderFlags & Renderer::ShowNebulae);
     objectsGroupLayout->addWidget(showNebulaeCheck);
 
-    QCheckBox* showOpenClustersCheck = new QCheckBox(tr("Open Clusters"));
+    QCheckBox* showOpenClustersCheck = new QCheckBox(_("Open Clusters"));
     connect(showOpenClustersCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowOpenClusters(bool)));
     showOpenClustersCheck->setChecked(renderFlags & Renderer::ShowOpenClusters);
     objectsGroupLayout->addWidget(showOpenClustersCheck);
@@ -95,41 +95,41 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     objectsGroupLayout->addStretch();
 
     // Features group
-    QGroupBox* featuresGroup = new QGroupBox(tr("Features"));
+    QGroupBox* featuresGroup = new QGroupBox(_("Features"));
     QVBoxLayout* featuresGroupLayout = new QVBoxLayout();
     featuresGroup->setLayout(featuresGroupLayout);
 
-    QCheckBox* showAtmospheresCheck = new QCheckBox(tr("Atmospheres"));
+    QCheckBox* showAtmospheresCheck = new QCheckBox(_("Atmospheres"));
     connect(showAtmospheresCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowAtmospheres(bool)));
     showAtmospheresCheck->setChecked(renderFlags & Renderer::ShowAtmospheres);
     featuresGroupLayout->addWidget(showAtmospheresCheck);
 
-    QCheckBox* showCloudMapsCheck = new QCheckBox(tr("Clouds"));
+    QCheckBox* showCloudMapsCheck = new QCheckBox(_("Clouds"));
     connect(showCloudMapsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowCloudMaps(bool)));
     showCloudMapsCheck->setChecked(renderFlags & Renderer::ShowCloudMaps);
     featuresGroupLayout->addWidget(showCloudMapsCheck);
 
-    QCheckBox* showNightMapsCheck = new QCheckBox(tr("Night Side Lights"));
+    QCheckBox* showNightMapsCheck = new QCheckBox(_("Night Side Lights"));
     connect(showNightMapsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowNightMaps(bool)));
     showNightMapsCheck->setChecked(renderFlags & Renderer::ShowNightMaps);
     featuresGroupLayout->addWidget(showNightMapsCheck);
 
-    QCheckBox* showEclipseShadowsCheck = new QCheckBox(tr("Eclipse Shadows"));
+    QCheckBox* showEclipseShadowsCheck = new QCheckBox(_("Eclipse Shadows"));
     connect(showEclipseShadowsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowEclipseShadows(bool)));
     showEclipseShadowsCheck->setChecked(renderFlags & Renderer::ShowEclipseShadows);
     featuresGroupLayout->addWidget(showEclipseShadowsCheck);
 
-    QCheckBox* showRingShadowsCheck = new QCheckBox(tr("Ring Shadows"));
+    QCheckBox* showRingShadowsCheck = new QCheckBox(_("Ring Shadows"));
     connect(showRingShadowsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowRingShadows(bool)));
     showRingShadowsCheck->setChecked(renderFlags & Renderer::ShowRingShadows);
     featuresGroupLayout->addWidget(showRingShadowsCheck);
 
-    QCheckBox* showCloudShadowsCheck = new QCheckBox(tr("Cloud Shadows"));
+    QCheckBox* showCloudShadowsCheck = new QCheckBox(_("Cloud Shadows"));
     connect(showCloudShadowsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowCloudShadows(bool)));
     showCloudShadowsCheck->setChecked(renderFlags & Renderer::ShowCloudShadows);
     featuresGroupLayout->addWidget(showCloudShadowsCheck);
 
-    QCheckBox* showCometTailsCheck = new QCheckBox(tr("Comet Tails"));
+    QCheckBox* showCometTailsCheck = new QCheckBox(_("Comet Tails"));
     connect(showCometTailsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowCometTails(bool)));
     showCometTailsCheck->setChecked(renderFlags & Renderer::ShowCometTails);
     featuresGroupLayout->addWidget(showCometTailsCheck);
@@ -137,41 +137,41 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     featuresGroupLayout->addStretch();
 
     // Guides group
-    QGroupBox* guidesGroup = new QGroupBox(tr("Guides"));
+    QGroupBox* guidesGroup = new QGroupBox(_("Guides"));
     QVBoxLayout* guidesGroupLayout = new QVBoxLayout();
     guidesGroup->setLayout(guidesGroupLayout);
 
-    QCheckBox* showOrbitsCheck = new QCheckBox(tr("Orbits"));
+    QCheckBox* showOrbitsCheck = new QCheckBox(_("Orbits"));
     connect(showOrbitsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowOrbits(bool)));
     showOrbitsCheck->setChecked(renderFlags & Renderer::ShowOrbits);
     guidesGroupLayout->addWidget(showOrbitsCheck);
 
-    QCheckBox* showPartialTrajectoriesCheck = new QCheckBox(tr("Partial Trajectories"));
+    QCheckBox* showPartialTrajectoriesCheck = new QCheckBox(_("Partial Trajectories"));
     connect(showPartialTrajectoriesCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowPartialTrajectories(bool)));
     showPartialTrajectoriesCheck->setChecked(renderFlags & Renderer::ShowPartialTrajectories);
     guidesGroupLayout->addWidget(showPartialTrajectoriesCheck);
 
-    QCheckBox* showSmoothLinesCheck = new QCheckBox(tr("Smooth Orbit Lines"));
+    QCheckBox* showSmoothLinesCheck = new QCheckBox(_("Smooth Orbit Lines"));
     connect(showSmoothLinesCheck, SIGNAL(clicked(bool)), this, SLOT(slotSmoothLines(bool)));
     showSmoothLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
     guidesGroupLayout->addWidget(showSmoothLinesCheck);
 
-    QCheckBox* showCelestialSphereCheck = new QCheckBox(tr("Equatorial Grid"));
+    QCheckBox* showCelestialSphereCheck = new QCheckBox(_("Equatorial Grid"));
     connect(showCelestialSphereCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowCelestialSphere(bool)));
     showCelestialSphereCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
     guidesGroupLayout->addWidget(showCelestialSphereCheck);
 
-    QCheckBox* showMarkersCheck = new QCheckBox(tr("Markers"));
+    QCheckBox* showMarkersCheck = new QCheckBox(_("Markers"));
     connect(showMarkersCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowMarkers(bool)));
     showMarkersCheck->setChecked(renderFlags & Renderer::ShowMarkers);
     guidesGroupLayout->addWidget(showMarkersCheck);
 
-    QCheckBox* showDiagramsCheck = new QCheckBox(tr("Constellations"));
+    QCheckBox* showDiagramsCheck = new QCheckBox(_("Constellations"));
     connect(showDiagramsCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowDiagrams(bool)));
     showDiagramsCheck->setChecked(renderFlags & Renderer::ShowDiagrams);
     guidesGroupLayout->addWidget(showDiagramsCheck);
 
-    QCheckBox* showBoundariesCheck = new QCheckBox(tr("Constellation Boundaries"));
+    QCheckBox* showBoundariesCheck = new QCheckBox(_("Constellation Boundaries"));
     connect(showBoundariesCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowBoundaries(bool)));
     showBoundariesCheck->setChecked(renderFlags & Renderer::ShowBoundaries);
     guidesGroupLayout->addWidget(showBoundariesCheck);
@@ -185,16 +185,16 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     QGridLayout* timeLayout = new QGridLayout();
     timeLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-    QLabel* dateFormatLabel = new QLabel(tr("Date Format: "));
+    QLabel* dateFormatLabel = new QLabel(_("Date Format: "));
     timeLayout->addWidget(dateFormatLabel, 0, 0);
 
     dateFormatBox = new QComboBox(this);
     dateFormatBox->setEditable(false);
 #ifndef _WIN32
-    dateFormatBox->addItem(tr("Local Format"), 0);
+    dateFormatBox->addItem(_("Local Format"), 0);
 #endif
-    dateFormatBox->addItem(tr("Time Zone Name"), 1);
-    dateFormatBox->addItem(tr("UTC Offset"), 2);
+    dateFormatBox->addItem(_("Time Zone Name"), 1);
+    dateFormatBox->addItem(_("UTC Offset"), 2);
 
     astro::Date::Format dateFormat = appCore->getDateFormat();
 #ifndef _WIN32
@@ -203,7 +203,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     dateFormatBox->setCurrentIndex(dateFormat == 2 ? 1 : 0);
 #endif
     
-    dateFormatBox->setToolTip(tr("Select Date Format"));
+    dateFormatBox->setToolTip(_("Select Date Format"));
     timeLayout->addWidget(dateFormatBox, 0, 1);
     connect(dateFormatBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotDateFormatChanged()));
 
@@ -211,7 +211,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
 #if 0
     // TODO: Make a page dedicated to star brightness control
-    QCheckBox* showAutoMagCheck = new QCheckBox(tr("Auto Magnitudes"));
+    QCheckBox* showAutoMagCheck = new QCheckBox(_("Auto Magnitudes"));
     showAutoMagCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
     objectsGroupLayout->addWidget(showAutoMagCheck);
 #endif
@@ -555,96 +555,96 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     //    KDialogBase (KDialogBase::IconList, "",
     //    KDialogBase::Ok | KDialogBase::Apply | KDialogBase::Cancel, KDialogBase::Ok,parent)
 {
-    setWindowTitle(tr("Celestia Preferences"));
+    setWindowTitle(_("Celestia Preferences"));
     appCore = core;
 
     this->parent = (CelestiaAppWindow*) parent;
 
     // Render page
-    QWidget* renderFrame = addGridPage(2, Qt::Horizontal, tr("Rendering"), tr("Rendering"));
+    QWidget* renderFrame = addGridPage(2, Qt::Horizontal, _("Rendering"), _("Rendering"));
 
     int renderFlags = appCore->getRenderer()->getRenderFlags();
     savedRendererFlags = renderFlags;
 
-    QGroupBox* showGroup = new QGroupBox(1, Qt::Horizontal, tr("Objects"), renderFrame);
+    QGroupBox* showGroup = new QGroupBox(1, Qt::Horizontal, _("Objects"), renderFrame);
 
-    QCheckBox* showStarsCheck = new QCheckBox(tr("Stars"), showGroup);
+    QCheckBox* showStarsCheck = new QCheckBox(_("Stars"), showGroup);
     //actionColl->action("showStars")->connect(showStarsCheck, SIGNAL(clicked()), SLOT(activate()));
     showStarsCheck->setChecked(renderFlags & Renderer::ShowStars);
 
-    QCheckBox* showAutoMagCheck = new QCheckBox(tr("Auto Magnitudes"), showGroup);
+    QCheckBox* showAutoMagCheck = new QCheckBox(_("Auto Magnitudes"), showGroup);
     //actionColl->action("showAutoMag")->connect(showAutoMagCheck, SIGNAL(clicked()), SLOT(activate()));
     showAutoMagCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
 
-    QCheckBox* showPlanetsCheck = new QCheckBox(tr("Planets"), showGroup);
+    QCheckBox* showPlanetsCheck = new QCheckBox(_("Planets"), showGroup);
     //actionColl->action("showPlanets")->connect(showPlanetsCheck, SIGNAL(clicked()), SLOT(activate()));
     showPlanetsCheck->setChecked(renderFlags & Renderer::ShowPlanets);
 
-    QCheckBox* showGalaxiesCheck = new QCheckBox(tr("Galaxies"), showGroup);
+    QCheckBox* showGalaxiesCheck = new QCheckBox(_("Galaxies"), showGroup);
     //actionColl->action("showGalaxies")->connect(showGalaxiesCheck, SIGNAL(clicked()), SLOT(activate()));
     showGalaxiesCheck->setChecked(renderFlags & Renderer::ShowGalaxies);
 
-    QCheckBox* showNebulaeCheck = new QCheckBox(tr("Nebulae"), showGroup);
+    QCheckBox* showNebulaeCheck = new QCheckBox(_("Nebulae"), showGroup);
     //actionColl->action("showNebulae")->connect(showNebulaeCheck, SIGNAL(clicked()), SLOT(activate()));
     showNebulaeCheck->setChecked(renderFlags & Renderer::ShowNebulae);
 
-    QCheckBox* showOpenClustersCheck = new QCheckBox(tr("Open Clusters"), showGroup);
+    QCheckBox* showOpenClustersCheck = new QCheckBox(_("Open Clusters"), showGroup);
     //actionColl->action("showOpenClusters")->connect(showOpenClustersCheck, SIGNAL(clicked()), SLOT(activate()));
     showOpenClustersCheck->setChecked(renderFlags & Renderer::ShowOpenClusters);
 
-    QCheckBox* showAtmospheresCheck = new QCheckBox(tr("Atmospheres"), showGroup);
+    QCheckBox* showAtmospheresCheck = new QCheckBox(_("Atmospheres"), showGroup);
     //actionColl->action("showAtmospheres")->connect(showAtmospheresCheck, SIGNAL(clicked()), SLOT(activate()));
     showAtmospheresCheck->setChecked(renderFlags & Renderer::ShowAtmospheres);
 
-    QCheckBox* showCloudMapsCheck = new QCheckBox(tr("Clouds"), showGroup);
+    QCheckBox* showCloudMapsCheck = new QCheckBox(_("Clouds"), showGroup);
     //actionColl->action("showCloudMaps")->connect(showCloudMapsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCloudMapsCheck->setChecked(renderFlags & Renderer::ShowCloudMaps);
 
-    QCheckBox* showCloudShadowsCheck = new QCheckBox(tr("Cloud Shadows"), showGroup);
+    QCheckBox* showCloudShadowsCheck = new QCheckBox(_("Cloud Shadows"), showGroup);
     //actionColl->action("showCloudShadows")->connect(showCloudShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCloudShadowsCheck->setChecked(renderFlags & Renderer::ShowCloudShadows);
 
-    QCheckBox* showNightMapsCheck = new QCheckBox(tr("Night Side Lights"), showGroup);
+    QCheckBox* showNightMapsCheck = new QCheckBox(_("Night Side Lights"), showGroup);
     //actionColl->action("showNightMaps")->connect(showNightMapsCheck, SIGNAL(clicked()), SLOT(activate()));
     showNightMapsCheck->setChecked(renderFlags & Renderer::ShowNightMaps);
 
-    QCheckBox* showEclipseShadowsCheck = new QCheckBox(tr("Eclipse Shadows"), showGroup);
+    QCheckBox* showEclipseShadowsCheck = new QCheckBox(_("Eclipse Shadows"), showGroup);
     //actionColl->action("showEclipseShadows")->connect(showEclipseShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
     showEclipseShadowsCheck->setChecked(renderFlags & Renderer::ShowEclipseShadows);
 
-    QCheckBox* showCometTailsCheck = new QCheckBox(tr("Comet Tails"), showGroup);
+    QCheckBox* showCometTailsCheck = new QCheckBox(_("Comet Tails"), showGroup);
     //actionColl->action("showCometTails")->connect(showCometTailsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCometTailsCheck->setChecked(renderFlags & Renderer::ShowCometTails);
 
-    QCheckBox* showOrbitsCheck = new QCheckBox(tr("Orbits"), showGroup);
+    QCheckBox* showOrbitsCheck = new QCheckBox(_("Orbits"), showGroup);
     //actionColl->action("showOrbits")->connect(showOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showOrbitsCheck->setChecked(renderFlags & Renderer::ShowOrbits);
 
-    QCheckBox* showPartialTrajectoriesCheck = new QCheckBox(tr("Partial Trajectories"), showGroup);
+    QCheckBox* showPartialTrajectoriesCheck = new QCheckBox(_("Partial Trajectories"), showGroup);
     //actionColl->action("showPartialTrajectories")->connect(showPartialTrajectoriesCheck, SIGNAL(clicked()), SLOT(activate()));
     showPartialTrajectoriesCheck->setChecked(renderFlags & Renderer::ShowPartialTrajectories);
 
-    QCheckBox* showSmoothLinesCheck = new QCheckBox(tr("Smooth Orbit Lines"), showGroup);
+    QCheckBox* showSmoothLinesCheck = new QCheckBox(_("Smooth Orbit Lines"), showGroup);
     //actionColl->action("showSmoothLines")->connect(showSmoothLinesCheck, SIGNAL(clicked()), SLOT(activate()));
     showSmoothLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
 
-    QCheckBox* showCelestialSphereCheck = new QCheckBox(tr("Equatorial Grid"), showGroup);
+    QCheckBox* showCelestialSphereCheck = new QCheckBox(_("Equatorial Grid"), showGroup);
     //actionColl->action("showCelestialSphere")->connect(showCelestialSphereCheck, SIGNAL(clicked()), SLOT(activate()));
     showCelestialSphereCheck->setChecked(renderFlags & Renderer::ShowCelestialSphere);
 
-    QCheckBox* showDiagramsCheck = new QCheckBox(tr("Constellations"), showGroup);
+    QCheckBox* showDiagramsCheck = new QCheckBox(_("Constellations"), showGroup);
     //actionColl->action("showDiagrams")->connect(showDiagramsCheck, SIGNAL(clicked()), SLOT(activate()));
     showDiagramsCheck->setChecked(renderFlags & Renderer::ShowDiagrams);
 
-    QCheckBox* showMarkersCheck = new QCheckBox(tr("Markers"), showGroup);
+    QCheckBox* showMarkersCheck = new QCheckBox(_("Markers"), showGroup);
     //actionColl->action("showMarkers")->connect(showMarkersCheck, SIGNAL(clicked()), SLOT(activate()));
     showMarkersCheck->setChecked(renderFlags & Renderer::ShowMarkers);
 
-    QCheckBox* showRingShadowsCheck = new QCheckBox(tr("Ring Shadows"), showGroup);
+    QCheckBox* showRingShadowsCheck = new QCheckBox(_("Ring Shadows"), showGroup);
     //actionColl->action("showRingShadows")->connect(showRingShadowsCheck, SIGNAL(clicked()), SLOT(activate()));
     showRingShadowsCheck->setChecked(renderFlags & Renderer::ShowRingShadows);
 
-    QCheckBox* showBoundariesCheck = new QCheckBox(tr("Constellation Boundaries"), showGroup);
+    QCheckBox* showBoundariesCheck = new QCheckBox(_("Constellation Boundaries"), showGroup);
     //actionColl->action("showBoundaries")->connect(showBoundariesCheck, SIGNAL(clicked()), SLOT(activate()));
     showBoundariesCheck->setChecked(renderFlags & Renderer::ShowBoundaries);
 
@@ -658,22 +658,22 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     int orbitMask = appCore->getRenderer()->getOrbitMask();
     savedOrbitMask = orbitMask;
 
-    QGroupBox* labelGroup = new QGroupBox(0, Qt::Horizontal, tr("Orbits / Labels"));
+    QGroupBox* labelGroup = new QGroupBox(0, Qt::Horizontal, _("Orbits / Labels"));
     vbox1Layout->addWidget(labelGroup);
     
     QGridLayout* labelGroupLayout = new QGridLayout( labelGroup->layout() );
     labelGroupLayout->setAlignment( Qt::AlignTop );
 
-    QLabel* orbitsLabel = new QLabel(tr("Orbits"), labelGroup);
+    QLabel* orbitsLabel = new QLabel(_("Orbits"), labelGroup);
     labelGroupLayout->addWidget(orbitsLabel, 0, 0);
-    QLabel* labelsLabel = new QLabel(tr("Labels"), labelGroup);
+    QLabel* labelsLabel = new QLabel(_("Labels"), labelGroup);
     labelGroupLayout->addWidget(labelsLabel, 0, 1);
 #if 0
     QCheckBox* showStarOrbitsCheck = new QCheckBox("", labelGroup);
     //actionColl->action("showStarOrbits")->connect(showStarOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showStarOrbitsCheck->setChecked(orbitMask & Body::Stellar);
     labelGroupLayout->addWidget(showStarOrbitsCheck, 1, 0, Qt::AlignHCenter);
-    QCheckBox* showStarLabelsCheck = new QCheckBox(tr("Stars"), labelGroup);
+    QCheckBox* showStarLabelsCheck = new QCheckBox(_("Stars"), labelGroup);
     //actionColl->action("showStarLabels")->connect(showStarLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showStarLabelsCheck->setChecked(labelMode & Renderer::StarLabels);
     labelGroupLayout->addWidget(showStarLabelsCheck, 1, 1);
@@ -683,7 +683,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     //actionColl->action("showPlanetOrbits")->connect(showPlanetOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showPlanetOrbitsCheck->setChecked(orbitMask & Body::Planet);
     labelGroupLayout->addWidget(showPlanetOrbitsCheck, 3, 0, Qt::AlignHCenter);
-    QCheckBox* showPlanetLabelsCheck = new QCheckBox(tr("Planets"), labelGroup);
+    QCheckBox* showPlanetLabelsCheck = new QCheckBox(_("Planets"), labelGroup);
     //actionColl->action("showPlanetLabels")->connect(showPlanetLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showPlanetLabelsCheck->setChecked(labelMode & Renderer::PlanetLabels);
     labelGroupLayout->addWidget(showPlanetLabelsCheck, 3, 1);
@@ -692,7 +692,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     //actionColl->action("showMoonOrbits")->connect(showMoonOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showMoonOrbitsCheck->setChecked(orbitMask & Body::Moon);
     labelGroupLayout->addWidget(showMoonOrbitsCheck, 4, 0, Qt::AlignHCenter);
-    QCheckBox* showMoonLabelsCheck = new QCheckBox(tr("Moons"), labelGroup);
+    QCheckBox* showMoonLabelsCheck = new QCheckBox(_("Moons"), labelGroup);
     //actionColl->action("showMoonLabels")->connect(showMoonLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showMoonLabelsCheck->setChecked(labelMode & Renderer::MoonLabels);
     labelGroupLayout->addWidget(showMoonLabelsCheck, 4, 1);
@@ -701,32 +701,32 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     //actionColl->action("showCometOrbits")->connect(showCometOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCometOrbitsCheck->setChecked(orbitMask & Body::Comet);
     labelGroupLayout->addWidget(showCometOrbitsCheck, 5, 0, Qt::AlignHCenter);
-    QCheckBox* showCometLabelsCheck = new QCheckBox(tr("Comets"), labelGroup);
+    QCheckBox* showCometLabelsCheck = new QCheckBox(_("Comets"), labelGroup);
     //actionColl->action("showCometLabels")->connect(showCometLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCometLabelsCheck->setChecked(labelMode & Renderer::CometLabels);
     labelGroupLayout->addWidget(showCometLabelsCheck, 5, 1);
 
-    QCheckBox* showConstellationLabelsCheck = new QCheckBox(tr("Constellations"), labelGroup);
+    QCheckBox* showConstellationLabelsCheck = new QCheckBox(_("Constellations"), labelGroup);
     //actionColl->action("showConstellationLabels")->connect(showConstellationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showConstellationLabelsCheck->setChecked(labelMode & Renderer::ConstellationLabels);
     labelGroupLayout->addWidget(showConstellationLabelsCheck, 6, 1);
 
-    QCheckBox* showI18nConstellationLabelsCheck = new QCheckBox(tr("Constellations in Latin"), labelGroup);
+    QCheckBox* showI18nConstellationLabelsCheck = new QCheckBox(_("Constellations in Latin"), labelGroup);
     //actionColl->action("showI18nConstellationLabels")->connect(showI18nConstellationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showI18nConstellationLabelsCheck->setChecked(!(labelMode & Renderer::I18nConstellationLabels));
     labelGroupLayout->addWidget(showI18nConstellationLabelsCheck, 7, 1);
 
-    QCheckBox* showGalaxyLabelsCheck = new QCheckBox(tr("Galaxies"), labelGroup);
+    QCheckBox* showGalaxyLabelsCheck = new QCheckBox(_("Galaxies"), labelGroup);
     //actionColl->action("showGalaxyLabels")->connect(showGalaxyLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showGalaxyLabelsCheck->setChecked(labelMode & Renderer::GalaxyLabels);
     labelGroupLayout->addWidget(showGalaxyLabelsCheck, 8, 1);
 
-    QCheckBox* showNebulaLabelsCheck = new QCheckBox(tr("Nebulae"), labelGroup);
+    QCheckBox* showNebulaLabelsCheck = new QCheckBox(_("Nebulae"), labelGroup);
     //actionColl->action("showNebulaLabels")->connect(showNebulaLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showNebulaLabelsCheck->setChecked(labelMode & Renderer::NebulaLabels);
     labelGroupLayout->addWidget(showNebulaLabelsCheck, 9, 1);
 
-    QCheckBox* showOpenClusterLabelsCheck = new QCheckBox(tr("Open Clusters"), labelGroup);
+    QCheckBox* showOpenClusterLabelsCheck = new QCheckBox(_("Open Clusters"), labelGroup);
     //actionColl->action("showOpenClusterLabels")->connect(showOpenClusterLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showOpenClusterLabelsCheck->setChecked(labelMode & Renderer::OpenClusterLabels);
     labelGroupLayout->addWidget(showOpenClusterLabelsCheck, 10, 1);
@@ -735,7 +735,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     //actionColl->action("showAsteroidOrbits")->connect(showAsteroidOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showAsteroidOrbitsCheck->setChecked(orbitMask & Body::Asteroid);
     labelGroupLayout->addWidget(showAsteroidOrbitsCheck, 11, 0, Qt::AlignHCenter);
-    QCheckBox* showAsteroidLabelsCheck = new QCheckBox(tr("Asteroids"), labelGroup);
+    QCheckBox* showAsteroidLabelsCheck = new QCheckBox(_("Asteroids"), labelGroup);
     //actionColl->action("showAsteroidLabels")->connect(showAsteroidLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showAsteroidLabelsCheck->setChecked(labelMode & Renderer::AsteroidLabels);
     labelGroupLayout->addWidget(showAsteroidLabelsCheck, 11, 1);
@@ -744,12 +744,12 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     //actionColl->action("showSpacecraftOrbits")->connect(showSpacecraftOrbitsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftOrbitsCheck->setChecked(orbitMask & Body::Spacecraft);
     labelGroupLayout->addWidget(showSpacecraftOrbitsCheck, 12, 0, Qt::AlignHCenter);
-    QCheckBox* showSpacecraftLabelsCheck = new QCheckBox(tr("Spacecrafts"), labelGroup);
+    QCheckBox* showSpacecraftLabelsCheck = new QCheckBox(_("Spacecrafts"), labelGroup);
     //actionColl->action("showSpacecraftLabels")->connect(showSpacecraftLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showSpacecraftLabelsCheck->setChecked(labelMode & Renderer::SpacecraftLabels);
     labelGroupLayout->addWidget(showSpacecraftLabelsCheck, 12, 1);
 
-    QCheckBox* showLocationLabelsCheck = new QCheckBox(tr("Locations"), labelGroup);
+    QCheckBox* showLocationLabelsCheck = new QCheckBox(_("Locations"), labelGroup);
     //actionColl->action("showLocationLabels")->connect(showLocationLabelsCheck, SIGNAL(clicked()), SLOT(activate()));
     showLocationLabelsCheck->setChecked(labelMode & Renderer::LocationLabels);
     labelGroupLayout->addWidget(showLocationLabelsCheck, 13, 1);
@@ -758,7 +758,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     labelGroupLayout->addItem( spacer, 0, 2 );
 
     savedAmbientLightLevel = int(appCore->getRenderer()->getAmbientLightLevel() * 100);
-    QGroupBox* ambientLightGroup = new QGroupBox(1, Qt::Vertical, tr("Ambient Light"), vbox1);
+    QGroupBox* ambientLightGroup = new QGroupBox(1, Qt::Vertical, _("Ambient Light"), vbox1);
     QSlider* ambientLightSlider = new QSlider(0, 25, 1, savedAmbientLightLevel, Qt::Horizontal, ambientLightGroup);
     connect(ambientLightSlider, SIGNAL(valueChanged(int)), SLOT(slotAmbientLightLevel(int)));
     ambientLabel = new QLabel(ambientLightGroup);
@@ -769,7 +769,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ambientLabel->setText(buff);
 
     savedFaintestVisible = int(appCore->getSimulation()->getFaintestVisible() * 100);
-    QGroupBox* faintestVisibleGroup = new QGroupBox(1, Qt::Vertical, tr("Limiting Magnitude"), vbox1);
+    QGroupBox* faintestVisibleGroup = new QGroupBox(1, Qt::Vertical, _("Limiting Magnitude"), vbox1);
     QSlider* faintestVisibleSlider = new QSlider(1, 1200, 1, savedFaintestVisible, Qt::Horizontal, faintestVisibleGroup);
     connect(faintestVisibleSlider, SIGNAL(valueChanged(int)), SLOT(slotFaintestVisible(int)));
     faintestLabel = new QLabel(faintestVisibleGroup);
@@ -778,20 +778,20 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     sprintf(buff, "%.2f", savedFaintestVisible / 100.);
     faintestLabel->setText(buff);
 
-    QGroupBox* infoTextGroup = new QGroupBox(1, Qt::Vertical, tr("Info Text"), vbox1);
-    new QLabel(tr("Level: "), infoTextGroup);
+    QGroupBox* infoTextGroup = new QGroupBox(1, Qt::Vertical, _("Info Text"), vbox1);
+    new QLabel(_("Level: "), infoTextGroup);
     QComboBox* infoTextCombo = new QComboBox(infoTextGroup);
-    infoTextCombo->insertItem(tr("None"));
-    infoTextCombo->insertItem(tr("Terse"));
-    infoTextCombo->insertItem(tr("Verbose"));
+    infoTextCombo->insertItem(_("None"));
+    infoTextCombo->insertItem(_("Terse"));
+    infoTextCombo->insertItem(_("Verbose"));
     savedHudDetail = appCore->getHudDetail();
     infoTextCombo->setCurrentItem(savedHudDetail);
     ((KdeApp*)parent)->connect(infoTextCombo, SIGNAL(activated(int)), SLOT(slotHudDetail(int)));
 
-    QGroupBox* fovGroup = new QGroupBox(2, Qt::Horizontal, tr("Automatic FOV"), vbox1);
-    new QLabel(tr("Screen DPI: "), fovGroup);
+    QGroupBox* fovGroup = new QGroupBox(2, Qt::Horizontal, _("Automatic FOV"), vbox1);
+    new QLabel(_("Screen DPI: "), fovGroup);
     new QLabel(QString::number(appCore->getScreenDpi(), 10), fovGroup);
-    new QLabel(tr("Viewing Distance (cm): "), fovGroup);
+    new QLabel(_("Viewing Distance (cm): "), fovGroup);
     dtsSpin = new QSpinBox(10, 300, 1, fovGroup);
     savedDistanceToScreen = appCore->getDistanceToScreen();
     dtsSpin->setValue(savedDistanceToScreen / 10);
@@ -801,49 +801,49 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     Observer* obs = appCore->getSimulation()->getActiveObserver();
     savedLocationFilter = obs->getLocationFilter();
 
-    QFrame* locationsFrame = addPage(tr("Locations"), tr("Locations"),
+    QFrame* locationsFrame = addPage(_("Locations"), _("Locations"),
        KGlobal::iconLoader()->loadIcon("package_network", KIcon::NoGroup));
     QVBoxLayout* locationsLayout = new QVBoxLayout( locationsFrame );
     locationsLayout->setAutoAdd(TRUE);
     locationsLayout->setAlignment(Qt::AlignTop);
 
-    QCheckBox* showCityLocationsCheck = new QCheckBox(tr("Cities"), locationsFrame);
+    QCheckBox* showCityLocationsCheck = new QCheckBox(_("Cities"), locationsFrame);
     //actionColl->action("showCityLocations")->connect(showCityLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCityLocationsCheck->setChecked(savedLocationFilter & Location::City);
 
-    QCheckBox* showObservatoryLocationsCheck = new QCheckBox(tr("Observatories"), locationsFrame);
+    QCheckBox* showObservatoryLocationsCheck = new QCheckBox(_("Observatories"), locationsFrame);
     //actionColl->action("showObservatoryLocations")->connect(showObservatoryLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showObservatoryLocationsCheck->setChecked(savedLocationFilter & Location::Observatory);
 
-    QCheckBox* showLandingSiteLocationsCheck = new QCheckBox(tr("Landing Sites"), locationsFrame);
+    QCheckBox* showLandingSiteLocationsCheck = new QCheckBox(_("Landing Sites"), locationsFrame);
     //actionColl->action("showLandingSiteLocations")->connect(showLandingSiteLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showLandingSiteLocationsCheck->setChecked(savedLocationFilter & Location::LandingSite);
 
-    QCheckBox* showCraterLocationsCheck = new QCheckBox(tr("Craters"), locationsFrame);
+    QCheckBox* showCraterLocationsCheck = new QCheckBox(_("Craters"), locationsFrame);
     //actionColl->action("showCraterLocations")->connect(showCraterLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showCraterLocationsCheck->setChecked(savedLocationFilter & Location::Crater);
 
-    QCheckBox* showMonsLocationsCheck = new QCheckBox(tr("Mons"), locationsFrame);
+    QCheckBox* showMonsLocationsCheck = new QCheckBox(_("Mons"), locationsFrame);
     //actionColl->action("showMonsLocations")->connect(showMonsLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showMonsLocationsCheck->setChecked(savedLocationFilter & Location::Mons);
 
-    QCheckBox* showTerraLocationsCheck = new QCheckBox(tr("Terra"), locationsFrame);
+    QCheckBox* showTerraLocationsCheck = new QCheckBox(_("Terra"), locationsFrame);
     //actionColl->action("showTerraLocations")->connect(showTerraLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showTerraLocationsCheck->setChecked(savedLocationFilter & Location::Terra);
 
-    QCheckBox* showVallisLocationsCheck = new QCheckBox(tr("Vallis"), locationsFrame);
+    QCheckBox* showVallisLocationsCheck = new QCheckBox(_("Vallis"), locationsFrame);
     //actionColl->action("showVallisLocations")->connect(showVallisLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showVallisLocationsCheck->setChecked(savedLocationFilter & Location::Vallis);
 
-    QCheckBox* showMareLocationsCheck = new QCheckBox(tr("Mare"), locationsFrame);
+    QCheckBox* showMareLocationsCheck = new QCheckBox(_("Mare"), locationsFrame);
     //actionColl->action("showMareLocations")->connect(showMareLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showMareLocationsCheck->setChecked(savedLocationFilter & Location::Mare);
 
-    QCheckBox* showOtherLocationsCheck = new QCheckBox(tr("Other"), locationsFrame);
+    QCheckBox* showOtherLocationsCheck = new QCheckBox(_("Other"), locationsFrame);
     //actionColl->action("showOtherLocations")->connect(showOtherLocationsCheck, SIGNAL(clicked()), SLOT(activate()));
     showOtherLocationsCheck->setChecked(savedLocationFilter & FilterOtherLocations);
 
-    QGroupBox* minFeatureSizeGroup = new QGroupBox(1, Qt::Vertical, tr("Minimum Feature Size"), locationsFrame);
+    QGroupBox* minFeatureSizeGroup = new QGroupBox(1, Qt::Vertical, _("Minimum Feature Size"), locationsFrame);
     minFeatureSizeGroup->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
     savedMinFeatureSize = (int)appCore->getRenderer()->getMinimumFeatureSize();
     QSlider* minFeatureSizeSlider = new QSlider(1, 1000, 1, savedMinFeatureSize, Qt::Horizontal, minFeatureSizeGroup);
@@ -857,26 +857,26 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     // Time page
     timeHasChanged = false;
-    QVBox* timeFrame = addVBoxPage(tr("Date/Time"), tr("Date/Time"),
+    QVBox* timeFrame = addVBoxPage(_("Date/Time"), _("Date/Time"),
         KGlobal::iconLoader()->loadIcon("clock", KIcon::NoGroup));
 
     savedDisplayLocalTime = appCore->getTimeZoneBias();
-    QGroupBox* displayTimezoneGroup = new QGroupBox(1, Qt::Vertical, tr("Display"), timeFrame);
-    new QLabel(tr("Timezone: "), displayTimezoneGroup);
+    QGroupBox* displayTimezoneGroup = new QGroupBox(1, Qt::Vertical, _("Display"), timeFrame);
+    new QLabel(_("Timezone: "), displayTimezoneGroup);
     displayTimezoneCombo = new QComboBox(displayTimezoneGroup);
-    displayTimezoneCombo->insertItem(tr("UTC"));
-    displayTimezoneCombo->insertItem(tr("Local Time"));
+    displayTimezoneCombo->insertItem(_("UTC"));
+    displayTimezoneCombo->insertItem(_("Local Time"));
     displayTimezoneCombo->setCurrentItem((appCore->getTimeZoneBias()==0)?0:1);
     ((KdeApp*)parent)->connect(displayTimezoneCombo, SIGNAL(activated(int)), SLOT(slotDisplayLocalTime()));
     displayTimezoneGroup->addSpace(0);
 
-    QGroupBox* setTimezoneGroup = new QGroupBox(1, Qt::Horizontal, tr("Set"), timeFrame);
-    new QLabel(tr("Local Time is only supported for dates between 1902 and 2037.\n"), setTimezoneGroup);
+    QGroupBox* setTimezoneGroup = new QGroupBox(1, Qt::Horizontal, _("Set"), timeFrame);
+    new QLabel(_("Local Time is only supported for dates between 1902 and 2037.\n"), setTimezoneGroup);
     QBox *hbox2 = new QBox(setTimezoneGroup);
-    new QLabel(tr("Timezone: "), hbox2);
+    new QLabel(_("Timezone: "), hbox2);
     setTimezoneCombo = new QComboBox(hbox2);
-    setTimezoneCombo->insertItem(tr("UTC"));
-    setTimezoneCombo->insertItem(tr("Local Time"));
+    setTimezoneCombo->insertItem(_("UTC"));
+    setTimezoneCombo->insertItem(_("Local Time"));
 //    setTimezoneCombo->setCurrentItem((appCore->getTimeZoneBias()==0)?0:1);
     KGlobal::config()->setGroup("ConfigureDialog");
     if (KGlobal::config()->hasKey("SetTimeTimeZoneLocal"))
@@ -924,7 +924,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     connect(sSpin, SIGNAL(valueChanged(int)), SLOT(slotTimeHasChanged()));
 
     KPushButton *nowButton = new KPushButton(setTimezoneGroup);
-    nowButton->setText(tr("Now"));
+    nowButton->setText(_("Now"));
     QSizePolicy nowButtonSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     nowButton->setSizePolicy(nowButtonSizePolicy);
     connect(nowButton, SIGNAL(clicked()), SLOT(setNow()));
@@ -945,46 +945,46 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         if (lt_h == 0) snprintf(time, 50, "%d min %02.1f s", lt_m, lt_s);
         else snprintf(time, 50, "%ld h %02d min %02.1f s", lt_h, lt_m, lt_s);
 
-        new QLabel(tr("\nSelection: " + QString(sel_name.c_str())
+        new QLabel(_("\nSelection: " + QString(sel_name.c_str())
         + QString("\nLight Travel Time: %2").arg(time)), ltBox);
 
         KPushButton *ltButton = new KPushButton(ltBox);
         ltButton->setToggleButton(true);
 
         if (!appCore->getLightDelayActive())
-            ltButton->setText(tr("Include Light Travel Time"));
+            ltButton->setText(_("Include Light Travel Time"));
         else
-            ltButton->setText(tr("Ignore Light Travel Time "));
+            ltButton->setText(_("Ignore Light Travel Time "));
 
         ltButton->setSizePolicy(nowButtonSizePolicy);
         connect(ltButton, SIGNAL(clicked()), SLOT(ltSubstract()));
     }
 
     // OpenGL Page
-    QVBox* openGL = addVBoxPage(tr("OpenGL"), tr("OpenGL"),
+    QVBox* openGL = addVBoxPage(_("OpenGL"), _("OpenGL"),
         KGlobal::iconLoader()->loadIcon("misc", KIcon::NoGroup));
 
 
     renderPathCombo = new QComboBox(openGL);
     savedRenderPath = (int)appCore->getRenderer()->getGLContext()->getRenderPath();
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Basic))
-        renderPathCombo->insertItem(tr("Basic"));
+        renderPathCombo->insertItem(_("Basic"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_Multitexture))
-        renderPathCombo->insertItem(tr("Multitexture"));
+        renderPathCombo->insertItem(_("Multitexture"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner))
-        renderPathCombo->insertItem(tr("NvCombiners"));
+        renderPathCombo->insertItem(_("NvCombiners"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_DOT3_ARBVP))
-        renderPathCombo->insertItem(tr("DOT3 ARBVP"));
+        renderPathCombo->insertItem(_("DOT3 ARBVP"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner_NvVP))
-        renderPathCombo->insertItem(tr("NvCombiner NvVP"));
+        renderPathCombo->insertItem(_("NvCombiner NvVP"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NvCombiner_ARBVP))
-        renderPathCombo->insertItem(tr("NvCombiner ARBVP"));
+        renderPathCombo->insertItem(_("NvCombiner ARBVP"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_ARBFP_ARBVP))
-        renderPathCombo->insertItem(tr("ARBFP ARBVP"));
+        renderPathCombo->insertItem(_("ARBFP ARBVP"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_NV30))
-        renderPathCombo->insertItem(tr("NV30"));
+        renderPathCombo->insertItem(_("NV30"));
     if (appCore->getRenderer()->getGLContext()->renderPathSupported(GLContext::GLPath_GLSL))
-        renderPathCombo->insertItem(tr("OpenGL 2.0"));
+        renderPathCombo->insertItem(_("OpenGL 2.0"));
 
     connect(renderPathCombo, SIGNAL(activated(int)), SLOT(slotRenderPath(int)));
 
@@ -1003,7 +1003,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     renderPathLabel->setTextFormat(Qt::RichText);
     setRenderPathLabel();
 
-    QCheckBox* videoSyncCheck = new QCheckBox(tr("Sync framerate to video refresh rate"), openGL);
+    QCheckBox* videoSyncCheck = new QCheckBox(_("Sync framerate to video refresh rate"), openGL);
     //actionColl->action("toggleVideoSync")->connect(videoSyncCheck, SIGNAL(clicked()), SLOT(activate()));
     savedVideoSync = appCore->getRenderer()->getVideoSync();
     videoSyncCheck->setChecked(savedVideoSync);
@@ -1016,7 +1016,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
 
     // Key bindings page
-    QVBox* keyBindings = addVBoxPage(tr("Key Bindings"), tr("Key Bindings"),
+    QVBox* keyBindings = addVBoxPage(_("Key Bindings"), _("Key Bindings"),
         KGlobal::iconLoader()->loadIcon("key_bindings", KIcon::NoGroup));
 
     //keyChooser = new KKeyChooser(((KMainWindow*)parent)->actionCollection(), keyBindings, false);
@@ -1232,35 +1232,35 @@ void PreferencesDialog::slotDistanceToScreen(int dts) {
 void PreferencesDialog::setRenderPathLabel() {
     switch(appCore->getRenderer()->getGLContext()->getRenderPath()) {
     case GLContext::GLPath_Basic:
-        renderPathLabel->setText(tr("<b>Unextended OpenGL 1.1</b>"));
+        renderPathLabel->setText(_("<b>Unextended OpenGL 1.1</b>"));
         break;
     case GLContext::GLPath_Multitexture:
-        renderPathLabel->setText(tr("<b>Multiple textures and the ARB_texenv_combine extension</b>"));
+        renderPathLabel->setText(_("<b>Multiple textures and the ARB_texenv_combine extension</b>"));
         break;
     case GLContext::GLPath_NvCombiner:
-        renderPathLabel->setText(tr("<b>NVIDIA combiners, no vertex programs</b>"));
+        renderPathLabel->setText(_("<b>NVIDIA combiners, no vertex programs</b>"));
         break;
     case GLContext::GLPath_DOT3_ARBVP:
-        renderPathLabel->setText(tr("<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"));
+        renderPathLabel->setText(_("<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"));
         break;
     case GLContext::GLPath_NvCombiner_NvVP:
-        renderPathLabel->setText(tr("<b>NVIDIA Combiners, NV_vertex_program extension</b><br> "
+        renderPathLabel->setText(_("<b>NVIDIA Combiners, NV_vertex_program extension</b><br> "
                                       "provide bump mapping, ring shadows, and specular "
                                       "highlights on any Geforce or ATI Radeon graphics card, though "
                                       "NvCombiner ARBVP is a slightly better option for Geforce users"));
         break;
     case GLContext::GLPath_NvCombiner_ARBVP:
-        renderPathLabel->setText(tr("<b>NVIDIA Combiners, ARB_vertex_program extension</b>"));
+        renderPathLabel->setText(_("<b>NVIDIA Combiners, ARB_vertex_program extension</b>"));
         break;
     case GLContext::GLPath_ARBFP_ARBVP:
-        renderPathLabel->setText(tr("<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>"
+        renderPathLabel->setText(_("<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>"
                                       "provide advanced effects on Geforce FX and Radeon 9700 cards"));
         break;
     case GLContext::GLPath_NV30:
-        renderPathLabel->setText(tr("<b>NV_fragment_program and ARB_vertex_program extensions</b>"));
+        renderPathLabel->setText(_("<b>NV_fragment_program and ARB_vertex_program extensions</b>"));
         break;
     case GLContext::GLPath_GLSL:
-        renderPathLabel->setText(tr("<b>OpenGL 2.0 Shading Language</b>"));
+        renderPathLabel->setText(_("<b>OpenGL 2.0 Shading Language</b>"));
         break;
     }
 }
