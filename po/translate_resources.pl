@@ -20,8 +20,8 @@ use Encode;
 use File::Basename;
 
 my $dir = dirname $0;
-my $resource_file = "$dir/../src/celestia/res/celestia.rc";
-my $output_dir = "$dir/../src/celestia/res/";
+my $resource_file = "$dir/../src/celestia/win32/res/celestia.rc";
+my $output_dir = "$dir/../src/celestia/win32/res/";
 
 opendir(DIR, $dir);
 my @po_files = sort (grep( /\.po$/, readdir(DIR) ));
@@ -88,8 +88,8 @@ foreach my $po (@po_files) {
     open OUT, "> $output_dir/celestia_$lang.rc";
     print OUT $res;
     close OUT;
-    system qq{rc /l $lang{$lang}[0] /d "NDEBUG" /fo $dir\\..\\src\\celestia\\celestia_$lang.res /i "$dir\\..\\src\\celestia\\res" $dir\\..\\src\\celestia\\res\\celestia_$lang.rc};
-    system qq{link /nologo /noentry /dll /machine:I386 /out:$dir\\..\\locale\\res_$lang.dll $dir\\..\\src\\celestia\\celestia_$lang.res};
+    system qq{rc /l $lang{$lang}[0] /d "NDEBUG" /fo $dir\\..\\src\\celestia\\win32\\celestia_$lang.res /i "$dir\\..\\src\\celestia\\win32\\res" $dir\\..\\src\\celestia\\win32\\res\\celestia_$lang.rc};
+    system qq{link /nologo /noentry /dll /machine:I386 /out:$dir\\..\\locale\\res_$lang.dll $dir\\..\\src\\celestia\\win32\\celestia_$lang.res};
     system qq{msgfmt $dir\\$lang.po -o $dir\\..\\locale\\$lang\\LC_MESSAGES\\celestia.mo};
 }
 

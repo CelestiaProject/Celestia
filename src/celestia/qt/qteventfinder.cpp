@@ -433,9 +433,9 @@ QVariant EventTableModel::data(const QModelIndex& index, int role) const
         switch (index.column())
         {
         case ReceiverColumn:
-            return QString(eclipse.receiver->getName().c_str());
+            return QString(eclipse.receiver->getName(true).c_str());
         case OcculterColumn:
-            return QString(eclipse.occulter->getName().c_str());
+            return QString(eclipse.occulter->getName(true).c_str());
         case StartTimeColumn:
             return TDBToQDate(eclipse.startTime).toUTC().toString("dd MMM yyyy hh:mm");
         case DurationColumn:
@@ -463,13 +463,13 @@ QVariant EventTableModel::headerData(int section, Qt::Orientation, int role) con
     switch (section)
     {
     case 0:
-        return tr("Eclipsed body");
+        return _("Eclipsed body");
     case 1:
-        return tr("Occulter");
+        return _("Occulter");
     case 2:
-        return tr("Start time");
+        return _("Start time");
     case 3:
-        return tr("Duration");
+        return _("Duration");
     default:
         return QVariant();
     }
@@ -566,9 +566,9 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
     // Create the eclipse type box
     QWidget* eclipseTypeBox = new QWidget();
     QVBoxLayout* eclipseTypeLayout = new QVBoxLayout();
-    solarOnlyButton = new QRadioButton(tr("Solar eclipses"));
-    lunarOnlyButton = new QRadioButton(tr("Lunar eclipses"));
-    allEclipsesButton = new QRadioButton(tr("All eclipses"));
+    solarOnlyButton = new QRadioButton(_("Solar eclipses"));
+    lunarOnlyButton = new QRadioButton(_("Lunar eclipses"));
+    allEclipsesButton = new QRadioButton(_("All eclipses"));
 
     eclipseTypeLayout->addWidget(solarOnlyButton);
     eclipseTypeLayout->addWidget(lunarOnlyButton);
@@ -576,7 +576,7 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
     eclipseTypeBox->setLayout(eclipseTypeLayout);
 
     // Search the search range box
-    QGroupBox* searchRangeBox = new QGroupBox(tr("Search range"));
+    QGroupBox* searchRangeBox = new QGroupBox(_("Search range"));
     QVBoxLayout* searchRangeLayout = new QVBoxLayout();
     
     startDateEdit = new QDateEdit(searchRangeBox);
@@ -598,15 +598,15 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
     layout->addWidget(subgroup);
 
     planetSelect = new QComboBox();
-    planetSelect->addItem("Earth");
-    planetSelect->addItem("Jupiter");
-    planetSelect->addItem("Saturn");
-    planetSelect->addItem("Uranus");
-    planetSelect->addItem("Neptune");
-    planetSelect->addItem("Pluto");
+    planetSelect->addItem(_("Earth"));
+    planetSelect->addItem(_("Jupiter"));
+    planetSelect->addItem(_("Saturn"));
+    planetSelect->addItem(_("Uranus"));
+    planetSelect->addItem(_("Neptune"));
+    planetSelect->addItem(_("Pluto"));
     layout->addWidget(planetSelect);
 
-    QPushButton* findButton = new QPushButton(tr("Find eclipses"));
+    QPushButton* findButton = new QPushButton(_("Find eclipses"));
     connect(findButton, SIGNAL(clicked()), this, SLOT(slotFindEclipses()));
     layout->addWidget(findButton);
 
@@ -665,12 +665,13 @@ void EventFinder::slotFindEclipses()
         eclipseTypeMask = QtEclipseFinder::SolarEclipse | QtEclipseFinder::LunarEclipse;
 
     QString bodyName = QString("Sol/") + planetSelect->currentText();
-    Selection obj = appCore->getSimulation()->getUniverse()->findPath(bodyName.toUtf8().data());
+    Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName.toUtf8().data(), true);
+
     if (obj.body() == NULL)
     {
         QMessageBox::critical(this,
-                              tr("Event Finder"),
-                              tr("%1 is not a valid object").arg(planetSelect->currentText()));
+                              _("Event Finder"),
+                              QString(_("%1 is not a valid object")).arg(planetSelect->currentText()));
         return;
     }
 
@@ -680,8 +681,8 @@ void EventFinder::slotFindEclipses()
     if (startDate > endDate)
     {
         QMessageBox::critical(this,
-                              tr("Event Finder"),
-                              tr("End date is earlier than start date."));
+                              _("Event Finder"),
+                              _("End date is earlier than start date."));
         return;
     }
 
@@ -695,7 +696,7 @@ void EventFinder::slotFindEclipses()
     searchSpan = endTimeTDB - startTimeTDB;
     lastProgressUpdate = startTimeTDB;
 
-    progress = new QProgressDialog(tr("Finding eclipses..."), "Abort", (int) startTimeTDB, (int) endTimeTDB, this);
+    progress = new QProgressDialog(_("Finding eclipses..."), "Abort", (int) startTimeTDB, (int) endTimeTDB, this);
     progress->setWindowModality(Qt::WindowModal);
     progress->show();
     
@@ -726,23 +727,23 @@ void EventFinder::slotContextMenu(const QPoint& pos)
             contextMenu = new QMenu(this);
         contextMenu->clear();
 
-        QAction* setTimeAction = new QAction("Set time to mid-eclipse", contextMenu);
+        QAction* setTimeAction = new QAction(_("Set time to mid-eclipse"), contextMenu);
         connect(setTimeAction, SIGNAL(triggered()), this, SLOT(slotSetEclipseTime()));
         contextMenu->addAction(setTimeAction);
 
-        QAction* viewNearEclipsedAction = new QAction(QString("Near %1").arg(activeEclipse->receiver->getName().c_str()), contextMenu);
+        QAction* viewNearEclipsedAction = new QAction(QString(_("Near %1")).arg(activeEclipse->receiver->getName(true).c_str()), contextMenu);
         connect(viewNearEclipsedAction, SIGNAL(triggered()), this, SLOT(slotViewNearEclipsed()));
         contextMenu->addAction(viewNearEclipsedAction);
 
-        QAction* viewEclipsedSurfaceAction = new QAction(QString("From surface of %1").arg(activeEclipse->receiver->getName().c_str()), contextMenu);
+        QAction* viewEclipsedSurfaceAction = new QAction(QString(_("From surface of %1")).arg(activeEclipse->receiver->getName(true).c_str()), contextMenu);
         connect(viewEclipsedSurfaceAction, SIGNAL(triggered()), this, SLOT(slotViewEclipsedSurface()));
         contextMenu->addAction(viewEclipsedSurfaceAction);
 
-        QAction* viewOccluderSurfaceAction = new QAction(QString("From surface of %1").arg(activeEclipse->occulter->getName().c_str()), contextMenu);
+        QAction* viewOccluderSurfaceAction = new QAction(QString(_("From surface of %1")).arg(activeEclipse->occulter->getName(true).c_str()), contextMenu);
         connect(viewOccluderSurfaceAction, SIGNAL(triggered()), this, SLOT(slotViewOccluderSurface()));
         contextMenu->addAction(viewOccluderSurfaceAction);
 
-        QAction* viewBehindOccluderAction = new QAction(QString("Behind %1").arg(activeEclipse->occulter->getName().c_str()), contextMenu);
+        QAction* viewBehindOccluderAction = new QAction(QString(_("Behind %1")).arg(activeEclipse->occulter->getName(true).c_str()), contextMenu);
         connect(viewBehindOccluderAction, SIGNAL(triggered()), this, SLOT(slotViewBehindOccluder()));
         contextMenu->addAction(viewBehindOccluderAction);
 

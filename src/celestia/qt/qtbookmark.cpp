@@ -405,9 +405,9 @@ BookmarkTreeModel::headerData(int section, Qt::Orientation /* orientation */, in
         return QVariant();
 
     if (section == 0)
-        return tr("Title");
+        return _("Title");
     else
-        return tr("Description");
+        return _("Description");
 }
 
 
@@ -592,14 +592,14 @@ BookmarkManager::initializeBookmarks()
     m_root->setTitle("root");
     
     BookmarkItem* menuBookmarks = new BookmarkItem(BookmarkItem::Folder, m_root);
-    menuBookmarks->setTitle(tr("Bookmarks Menu"));
-    menuBookmarks->setDescription(tr("Add bookmarks to this folder to see them in the bookmarks menu."));
+    menuBookmarks->setTitle(_("Bookmarks Menu"));
+    menuBookmarks->setDescription(_("Add bookmarks to this folder to see them in the bookmarks menu."));
     menuBookmarks->setFolded(false);
     m_root->append(menuBookmarks);
 
     BookmarkItem* toolbarBookmarks = new BookmarkItem(BookmarkItem::Folder, m_root);
-    toolbarBookmarks->setTitle(tr("Bookmarks Toolbar"));
-    toolbarBookmarks->setDescription(tr("Add bookmarks to this folder to see them in the bookmarks toolbar."));
+    toolbarBookmarks->setTitle(_("Bookmarks Toolbar"));
+    toolbarBookmarks->setDescription(_("Add bookmarks to this folder to see them in the bookmarks toolbar."));
     menuBookmarks->setFolded(false);
     m_root->append(toolbarBookmarks);
 
@@ -613,7 +613,7 @@ BookmarkManager::loadBookmarks(QIODevice* device)
     XbelReader reader(device);
     m_root = reader.read();
     if (m_root == NULL)
-        QMessageBox::warning(NULL, tr("Error reading bookmarks file"), reader.errorString());
+        QMessageBox::warning(NULL, _("Error reading bookmarks file"), reader.errorString());
 
     m_model->m_root = m_root;
 
@@ -727,7 +727,7 @@ BookmarkToolBar::BookmarkToolBar(BookmarkManager* manager, QWidget* parent) :
     QToolBar(parent),
     m_manager(manager)
 {
-    setWindowTitle(tr("Bookmarks"));
+    setWindowTitle(_("Bookmarks"));
     setObjectName("bookmark-toolbar");
     setFloatable(true);
     setMovable(true);
@@ -837,9 +837,9 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
     view->show();
     createInCombo->setView(view);
     
-    timeSourceCombo->addItem(tr("Current simulation time"),       (int) Url::UseUrlTime);
-    timeSourceCombo->addItem(tr("Simulation time at activation"), (int) Url::UseSimulationTime);
-    timeSourceCombo->addItem(tr("System time at activation"),     (int) Url::UseSystemTime);    
+    timeSourceCombo->addItem(_("Current simulation time"),       (int) Url::UseUrlTime);
+    timeSourceCombo->addItem(_("Simulation time at activation"), (int) Url::UseSimulationTime);
+    timeSourceCombo->addItem(_("System time at activation"),     (int) Url::UseSystemTime);    
     timeSourceCombo->setCurrentIndex(m_lastTimeSourceIndex);
 
     // Initialize to first index
@@ -884,7 +884,7 @@ NewBookmarkFolderDialog::NewBookmarkFolderDialog(BookmarkManager* manager) :
     m_manager(manager)
 {
     setupUi(this);
-    nameEdit->setText(tr("New Folder"));
+    nameEdit->setText(_("New Folder"));
 
     BookmarkTreeModel* model = manager->model();
 

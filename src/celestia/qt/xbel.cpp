@@ -60,7 +60,7 @@ XbelReader::read()
             if (name() == "xbel" && (version == "1.0" || version.isEmpty()))
                 readXbel(rootItem);
             else
-                raiseError(QObject::tr("Not an XBEL version 1.0 file."));
+                raiseError(QString(_("Not an XBEL version 1.0 file.")));
         }
     }
 

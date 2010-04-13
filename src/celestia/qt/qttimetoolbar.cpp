@@ -27,36 +27,36 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
     // Text-only buttons
     setToolButtonStyle(Qt::ToolButtonTextOnly);
     QAction* reverseTimeAction = new QAction(QString("< >"), this);
-    reverseTimeAction->setToolTip(tr("Reverse time"));
+    reverseTimeAction->setToolTip(_("Reverse time"));
     QAction* slowTimeAction = new QAction(QString("<<|"), this);
-    slowTimeAction->setToolTip(tr("10x slower"));
+    slowTimeAction->setToolTip(_("10x slower"));
     QAction* halfTimeAction = new QAction(QString("<|"), this);
-    halfTimeAction->setToolTip(tr("2x slower"));
+    halfTimeAction->setToolTip(_("2x slower"));
     QAction* pauseAction = new QAction(QString("||"), this);
-    pauseAction->setToolTip(tr("Pause time"));
+    pauseAction->setToolTip(_("Pause time"));
     QAction* realTimeAction = new QAction(QString(">"), this);
-    realTimeAction->setToolTip(tr("Real time"));
+    realTimeAction->setToolTip(_("Real time"));
     QAction* doubleTimeAction = new QAction(QString(">>"), this);
-    doubleTimeAction->setToolTip(tr("2x faster"));
+    doubleTimeAction->setToolTip(_("2x faster"));
     QAction* fastTimeAction = new QAction(QString(">>>"), this);
-    fastTimeAction->setToolTip(tr("10x faster"));
+    fastTimeAction->setToolTip(_("10x faster"));
 #else
     QAction* reverseTimeAction = new QAction(QIcon(":/icons/time-reverse.png"),
-                                             tr("Reverse time"), this);
+                                             _("Reverse time"), this);
     QAction* slowTimeAction = new QAction(QIcon(":/icons/time-slower.png"),
-                                          tr("10x slower"), this);
+                                          _("10x slower"), this);
     QAction* halfTimeAction = new QAction(QIcon(":/icons/time-half.png"),
-                                          tr("2x slower"), this);
+                                          _("2x slower"), this);
     QAction* pauseAction = new QAction(QIcon(":/icons/time-pause.png"),
-                                       tr("Pause time"), this);
+                                       _("Pause time"), this);
     QAction* realTimeAction = new QAction(QIcon(":/icons/time-realtime.png"),
-                                          tr("Real time"), this);
+                                          _("Real time"), this);
     QAction* doubleTimeAction = new QAction(QIcon(":/icons/time-double.png"),
-                                            tr("2x faster"), this);
+                                            _("2x faster"), this);
     QAction* fastTimeAction = new QAction(QIcon(":/icons/time-faster.png"),
-                                          tr("10x faster"), this);
+                                          _("10x faster"), this);
     QAction* currentTimeAction = new QAction(QIcon(":icons/time-currenttime.png"),
-                                             tr("Set to current time"), this);
+                                             _("Set to current time"), this);
 #endif
     connect(reverseTimeAction, SIGNAL(triggered()), this, SLOT(slotReverseTime()));
     addAction(reverseTimeAction);

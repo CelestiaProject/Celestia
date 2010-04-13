@@ -1,4 +1,4 @@
-# Source
+# Engine sources
 src/celengine/asterism.cpp
 src/celengine/astro.cpp
 src/celengine/axisarrow.cpp
@@ -23,10 +23,7 @@ src/celengine/image.cpp
 src/celengine/location.cpp
 src/celengine/lodspheremesh.cpp
 src/celengine/marker.cpp
-src/celengine/mesh.cpp
 src/celengine/meshmanager.cpp
-src/celengine/model.cpp
-src/celengine/modelfile.cpp
 src/celengine/multitexture.cpp
 src/celengine/nebula.cpp
 src/celengine/observer.cpp
@@ -61,15 +58,24 @@ src/celengine/tokenizer.cpp
 src/celengine/trajmanager.cpp
 src/celengine/univcoord.cpp
 src/celengine/universe.cpp
-src/celengine/vertexlist.cpp
 src/celengine/vertexprog.cpp
 src/celengine/virtualtex.cpp
 src/celengine/visibleregion.cpp
 
+# App sources
 src/celestia/celestiacore.cpp
+src/celestia/celx.cpp
 src/celestia/oggtheoracapture.cpp
 src/celestia/url.cpp
 
+# Util sources
+src/celutil/util.cpp
+
+# Data sources
+data/data.cpp
+
+# Win32 sources
+src/celestia/win32/res/resource_strings.cpp
 src/celestia/win32/winmain.cpp
 src/celestia/win32/windatepicker.cpp
 src/celestia/win32/wineclipses.cpp
@@ -77,45 +83,50 @@ src/celestia/win32/winssbrowser.cpp
 src/celestia/win32/winstarbrowser.cpp
 src/celestia/win32/wintime.cpp
 
-src/celutil/util.cpp
-
-# Config
-#po/celestia.cfg.pot
-
-# Data
-#po/solarsys.pot
-#po/starnames.pot
-#po/deepsky.pot
-#po/asterisms.pot
-
-# Extras
-#po/apollo.pot
-#po/minormoons.pot
-
+# KDE sources
 src/celestia/kde/celestialbrowser.cpp
-src/celestia/kde/celestialbrowser.h
-src/celestia/kde/cellistviewitem.h
 src/celestia/kde/eclipsefinderdlg.cpp
-src/celestia/kde/eclipsefinderdlg.h
 src/celestia/kde/kcelbookmarkmanager.cpp
-src/celestia/kde/kcelbookmarkmanager.h
 src/celestia/kde/kcelbookmarkmenu.cpp
-src/celestia/kde/kcelbookmarkmenu.h
-src/celestia/kde/kcelbookmarkowner.h
 src/celestia/kde/kdeapp.cpp
-src/celestia/kde/kdeapp.h
 src/celestia/kde/kdeglwidget.cpp
-src/celestia/kde/kdeglwidget.h
 src/celestia/kde/kdemain.cpp
 src/celestia/kde/kdepreferencesdialog.cpp
-src/celestia/kde/kdepreferencesdialog.h
 src/celestia/kde/kdeuniquecelestia.cpp
-src/celestia/kde/kdeuniquecelestia.h
 src/celestia/kde/selectionpopup.cpp
-src/celestia/kde/selectionpopup.h
 src/celestia/kde/videocapturedlg.cpp
 src/celestia/kde/rc.cpp
 
-data/data.cpp
+# KDE headers
+src/celestia/kde/celestialbrowser.h
+src/celestia/kde/cellistviewitem.h
+src/celestia/kde/eclipsefinderdlg.h
+src/celestia/kde/kcelbookmarkmanager.h
+src/celestia/kde/kcelbookmarkmenu.h
+src/celestia/kde/kcelbookmarkowner.h
+src/celestia/kde/kdeapp.h
+src/celestia/kde/kdeglwidget.h
+src/celestia/kde/kdepreferencesdialog.h
+src/celestia/kde/kdeuniquecelestia.h
+src/celestia/kde/selectionpopup.h
 
-src/celestia/win32/res/resource_strings.cpp
+# Qt sources
+src/celestia/qt/qtappwin.cpp
+src/celestia/qt/qtbookmark.cpp
+src/celestia/qt/qtcelestiaactions.cpp
+src/celestia/qt/qtcelestialbrowser.cpp
+src/celestia/qt/qtdeepskybrowser.cpp
+src/celestia/qt/qteventfinder.cpp
+src/celestia/qt/qtinfopanel.cpp
+src/celestia/qt/qtpreferencesdialog.cpp
+src/celestia/qt/qtselectionpopup.cpp
+src/celestia/qt/qtsettimedialog.cpp
+src/celestia/qt/qtsolarsystembrowser.cpp
+src/celestia/qt/qttimetoolbar.cpp
+src/celestia/qt/xbel.cpp
+
+# Qt headers generated from reading UI files
+src/celestia/qt/ui/ui_addbookmark.h
+src/celestia/qt/ui/ui_newbookmarkfolder.h
+src/celestia/qt/ui/ui_organizebookmarks.h
+src/celestia/qt/ui/ui_preferences.h
