@@ -22,6 +22,7 @@
 #include <QBitmap>
 #include <vector>
 #include "qtappwin.h"
+#include <qtextcodec.h> 
 
 using namespace std;
 
@@ -58,6 +59,19 @@ int main(int argc, char *argv[])
     // Disabled for now until issues with pixmap alpha channel
     // are resolved
     //splash.show();
+
+    // Gettext integration
+    setlocale(LC_ALL, ""); 
+    setlocale(LC_NUMERIC, "C"); 
+    bindtextdomain("celestia","locale");
+    bind_textdomain_codeset("celestia", "UTF-8"); 
+    bindtextdomain("celestia_constellations","locale");
+    bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
+    textdomain("celestia");
+
+    // By default, QString converts the const char * data into Unicode Latin-1 characters.
+    // We need to change this to UTF-8 for i18n purpose.
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
     CelestiaAppWindow window;
 

@@ -112,37 +112,37 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
                                          double t,
                                          QTextStream& stream)
 {
-    stream << "<h1>" << body->getName().c_str() << "</h1><br>\n";
+    stream << "<h1>" <<QString::fromUtf8(body->getName(true).c_str()) << "</h1><br>\n";
 
     if (!body->getInfoURL().empty())
     {
         const char* infoURL = body->getInfoURL().c_str();
-        stream << tr("Web info: ") << anchor(infoURL, infoURL) << "<br>\n";
+        stream << _("Web info: ") << anchor(infoURL, infoURL) << "<br>\n";
     }
 
     stream << "<br>\n";
 
     bool isArtificial = body->getClassification() == Body::Spacecraft;
 
-    QString units(tr("km"));
+    QString units(_("km"));
     double radius = body->getRadius();
     if (radius < 1.0)
     {
-        units = tr("m");
+        units = _("m");
         radius *= 1000.0;
     }
 
     if (body->isEllipsoid())
-        stream << boldText(tr("Equatorial radius: "));
+        stream << boldText(_("Equatorial radius: "));
     else
-        stream << boldText(tr("Size: "));
+        stream << boldText(_("Size: "));
 
     stream << radius << " " << units << "<br>";
 
 #if 0
     if (body->getOblateness() != 0.0f && body->isEllipsoid())
     {
-        stream << boldText(tr("Oblateness: ")) << body->getOblateness() << "<br>\n";
+        stream << boldText(_("Oblateness: ")) << body->getOblateness() << "<br>\n";
     }
 #endif
 
@@ -170,17 +170,17 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
         {
             rotPeriod *= 24.0;
             dayLength *= 24.0;
-            units = tr("hours");
+            units = _("hours");
         }
         else
         {
-            units = tr("days");
+            units = _("days");
         }
 
-        stream << boldText(tr("Sidereal rotation period: ")) << rotPeriod << " " << units << "<br>\n";
+        stream << boldText(_("Sidereal rotation period: ")) << rotPeriod << " " << units << "<br>\n";
         if (dayLength != 0.0)
         {
-            stream << boldText(tr("Length of day: ")) << dayLength << " " << units << "<br>\n";
+            stream << boldText(_("Length of day: ")) << dayLength << " " << units << "<br>\n";
         }
     }
 
@@ -198,41 +198,41 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 
         if (orbitalPeriod < 365.25 * 2.0)
         {
-            units = tr("days");
+            units = _("days");
         }
         else
         {
-            units = tr("years");
+            units = _("years");
             orbitalPeriod /= 365.25;
         }
 
-        stream << "<br><big><b>" << tr("Orbit information") << "</b></big><br>\n";
-        stream << tr("Osculating elements for") << " " << astro::TDBtoUTC(t).toCStr() << "<br>\n";
+        stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
+        stream << QString(_("Osculating elements for")) << " " << QString::fromUtf8(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
         stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-        stream << boldText(tr("Period: ")) << orbitalPeriod << " " << units << "<br>\n";
+        stream << boldText(_("Period: ")) << orbitalPeriod << " " << units << "<br>\n";
 
         double sma = elements.semimajorAxis;
         if (sma > 2.5e7)
         {
-            units = tr("AU");
+            units = _("AU");
             sma = astro::kilometersToAU(sma);
         }
         else
         {
-            units = tr("km");
+            units = _("km");
         }
 
-        stream << boldText(tr("Semi-major axis: ")) << sma << " " << units << "<br>\n";
-        stream << boldText(tr("Eccentricity: ")) << elements.eccentricity << "<br>\n";
-        stream << boldText(tr("Inclination: ")) << radToDeg(elements.inclination) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(tr("Pericenter distance: ")) << sma * (1 - elements.eccentricity) << " " << units << "<br>\n";
-        stream << boldText(tr("Apocenter distance: ")) << sma * (1 + elements.eccentricity) << " " << units << "<br>\n";
+        stream << boldText(_("Semi-major axis: ")) << sma << " " << units << "<br>\n";
+        stream << boldText(_("Eccentricity: ")) << elements.eccentricity << "<br>\n";
+        stream << boldText(_("Inclination: ")) << radToDeg(elements.inclination) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText(_("Pericenter distance: ")) << sma * (1 - elements.eccentricity) << " " << units << "<br>\n";
+        stream << boldText(_("Apocenter distance: ")) << sma * (1 + elements.eccentricity) << " " << units << "<br>\n";
 
 #if 1
-        stream << boldText(tr("Ascending node: ")) << radToDeg(elements.longAscendingNode) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(tr("Argument of periapsis: ")) << radToDeg(elements.argPericenter) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(tr("Mean anomaly: ")) << radToDeg(elements.meanAnomaly) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(tr("Period (calculated): ")) << elements.period << "d<br>\n";
+        stream << boldText(_("Ascending node: ")) << radToDeg(elements.longAscendingNode) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText(_("Argument of periapsis: ")) << radToDeg(elements.argPericenter) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText(_("Mean anomaly: ")) << radToDeg(elements.meanAnomaly) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText(_("Period (calculated): ")) << elements.period << " " << QString(_("days<br>\n"));
 #endif
     }
 }
@@ -258,8 +258,8 @@ Vector3d rectToSpherical(const Vector3d& v)
 
 void InfoPanel::buildStarPage(const Star* star, const Universe* universe, double tdb, QTextStream& stream)
 {
-    string name = universe->getStarCatalog()->getStarNameList(*star);
-    stream << "<b>" << QString::fromUtf8(name.c_str(), name.length()) << "</b><br>\n";
+    string name = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*star, true));
+    stream << "<h1>" << QString::fromUtf8(name.c_str()) << "</h1><br>\n";
     
     // Compute the star's position relative to the Solar System Barycenter. Note that
     // this will ignore the effect of parallax in the star's position.
@@ -287,8 +287,8 @@ void InfoPanel::buildDSOPage(const DeepSkyObject* dso,
                              const Universe* universe,
                              QTextStream& stream)
 {
-    string name = universe->getDSOCatalog()->getDSOName(dso);
-    stream << "<h1>" << name.c_str() << "</h1><br>\n";
+    string name = universe->getDSOCatalog()->getDSOName(dso, true);
+    stream << "<h1>" << QString::fromUtf8(name.c_str()) << "</h1><br>\n";
     
     Vector3d eqPos = astro::eclipticToEquatorial(celToJ2000Ecliptic(dso->getPosition()));
     Vector3d sph = rectToSpherical(eqPos);

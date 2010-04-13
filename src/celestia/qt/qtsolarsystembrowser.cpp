@@ -504,57 +504,57 @@ static QString objectTypeName(const Selection& sel)
     if (sel.star() != NULL)
     {
         if (!sel.star()->getVisibility())
-            return QObject::tr("Barycenter");
+            return _("Barycenter");
         else
-            return QObject::tr("Star");
+            return _("Star");
     }
     else if (sel.body() != NULL)
     {
         int classification = sel.body()->getClassification();
         if (classification == Body::Planet)
-            return QObject::tr("Planet");
+            return _("Planet");
         else if (classification == Body::DwarfPlanet)
-            return QObject::tr("Dwarf planet");
+            return _("Dwarf planet");
         else if (classification == Body::Moon || classification == Body::MinorMoon)
-            return QObject::tr("Moon");
+            return _("Moon");
         else if (classification == Body::Asteroid)
-            return QObject::tr("Asteroid");
+            return _("Asteroid");
         else if (classification == Body::Comet)
-            return QObject::tr("Comet");
+            return _("Comet");
         else if (classification == Body::Spacecraft)
-            return QObject::tr("Spacecraft");
+            return _("Spacecraft");
         else if (classification == Body::Invisible)
-            return QObject::tr("Reference point");
+            return _("Reference point");
 		else if (classification == Body::Component)
-			return QObject::tr("Component");
+			return _("Component");
 		else if (classification == Body::SurfaceFeature)
-			return QObject::tr("Surface feature");
+			return _("Surface feature");
     }
 
-    return QObject::tr("Unknown");
+    return _("Unknown");
 }
 
 
 static QString classificationName(int classification)
 {
     if (classification == Body::Planet)
-        return QObject::tr("Planets");
+        return _("Planets");
     else if (classification == Body::Moon)
-        return QObject::tr("Moons");
+        return _("Moons");
     else if (classification == Body::Spacecraft)
-        return QObject::tr("Spacecraft");
+        return _("Spacecraft");
     else if (classification == Body::Asteroid)
-        return QObject::tr("Asteroids & comets");
+        return _("Asteroids & comets");
     else if (classification == Body::Invisible)
-        return QObject::tr("Reference points");
+        return _("Reference points");
     else if (classification == Body::MinorMoon)
-        return QObject::tr("Minor moons");
+        return _("Minor moons");
 	else if (classification == Body::Component)
-		return QObject::tr("Components");
+		return _("Components");
 	else if (classification == Body::SurfaceFeature)
-		return QObject::tr("Surface features");
+		return _("Surface features");
     else
-        return QObject::tr("Other objects");
+        return _("Other objects");
 }
 
 
@@ -584,12 +584,12 @@ QVariant SolarSystemTreeModel::data(const QModelIndex& index, int role) const
     case NameColumn:
         if (sel.star() != NULL)
         {
-            string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star()));
+            string starNameString = ReplaceGreekLetterAbbr(universe->getStarCatalog()->getStarName(*sel.star(), true));
             return QString::fromUtf8(starNameString.c_str());
         }
         else if (sel.body() != NULL)
         {
-            return QVariant(sel.body()->getName().c_str());
+            return QVariant(QString::fromUtf8((sel.body()->getName(true).c_str())));
         }
         else
         {
@@ -614,9 +614,9 @@ QVariant SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orient
     switch (section)
     {
     case 0:
-        return tr("Name");
+        return _("Name");
     case 1:
-        return tr("Type");
+        return _("Type");
     default:
         return QVariant();
     }
@@ -671,11 +671,11 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent) 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
 
-    QPushButton* refreshButton = new QPushButton(tr("Refresh"));
+    QPushButton* refreshButton = new QPushButton(_("Refresh"));
     connect(refreshButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     layout->addWidget(refreshButton);
 
-    groupCheckBox = new QCheckBox(tr("Group objects by class"));
+    groupCheckBox = new QCheckBox(_("Group objects by class"));
     connect(groupCheckBox, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     layout->addWidget(groupCheckBox);
 

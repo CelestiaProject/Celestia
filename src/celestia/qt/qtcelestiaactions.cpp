@@ -63,48 +63,48 @@ CelestiaActions::CelestiaActions(QObject* parent,
     appCore(_appCore)
 {
     // Create the render flags actions
-    equatorialGridAction = new QAction(QString("Eq"), this);
-    equatorialGridAction->setToolTip(tr("Equatorial coordinate grid"));
+    equatorialGridAction = new QAction(_("Eq"), this);
+    equatorialGridAction->setToolTip(_("Equatorial coordinate grid"));
     equatorialGridAction->setCheckable(true);
     equatorialGridAction->setData(Renderer::ShowCelestialSphere);
 
-    galacticGridAction = new QAction(QString("Ga"), this);
-    galacticGridAction->setToolTip(tr("Galactic coordinate grid"));
+    galacticGridAction = new QAction(_("Ga"), this);
+    galacticGridAction->setToolTip(_("Galactic coordinate grid"));
     galacticGridAction->setCheckable(true);
     galacticGridAction->setData(Renderer::ShowGalacticGrid);
 
-    eclipticGridAction = new QAction(QString("Ec"), this);
-    eclipticGridAction->setToolTip(tr("Ecliptic coordinate grid"));
+    eclipticGridAction = new QAction(_("Ec"), this);
+    eclipticGridAction->setToolTip(_("Ecliptic coordinate grid"));
     eclipticGridAction->setCheckable(true);
     eclipticGridAction->setData(Renderer::ShowEclipticGrid);
 
-    horizonGridAction = new QAction(QString("Hz"), this);
-    horizonGridAction->setToolTip(tr("Horizontal coordinate grid"));
+    horizonGridAction = new QAction(_("Hz"), this);
+    horizonGridAction->setToolTip(_("Horizontal coordinate grid"));
     horizonGridAction->setCheckable(true);
     horizonGridAction->setData(Renderer::ShowHorizonGrid);
 
-    eclipticAction = new QAction(QString("Ecl"), this);
-    eclipticAction->setToolTip(tr("Ecliptic line"));
+    eclipticAction = new QAction(_("Ecl"), this);
+    eclipticAction->setToolTip(_("Ecliptic line"));
     eclipticAction->setCheckable(true);
     eclipticAction->setData(Renderer::ShowEcliptic);
 
-    markersAction = new QAction(QString("M"), this);
-    markersAction->setToolTip(tr("Markers"));
+    markersAction = new QAction(_("M"), this);
+    markersAction->setToolTip(_("Markers"));
     markersAction->setCheckable(true);
     markersAction->setData(Renderer::ShowMarkers);
 
-    constellationsAction = new QAction(QString("C"), this);
-    constellationsAction->setToolTip(tr("Constellations"));
+    constellationsAction = new QAction(_("C"), this);
+    constellationsAction->setToolTip(_("Constellations"));
     constellationsAction->setCheckable(true);
     constellationsAction->setData(Renderer::ShowDiagrams);
 
-    boundariesAction = new QAction(QString("B"), this);
-    boundariesAction->setToolTip(tr("Constellation boundaries"));
+    boundariesAction = new QAction(_("B"), this);
+    boundariesAction->setToolTip(_("Constellation boundaries"));
     boundariesAction->setCheckable(true);
     boundariesAction->setData(Renderer::ShowBoundaries);
 
-    orbitsAction = new QAction(QString("O"), this);
-    orbitsAction->setToolTip(tr("Orbits"));
+    orbitsAction = new QAction(_("O"), this);
+    orbitsAction->setToolTip(_("Orbits"));
     orbitsAction->setCheckable(true);
     orbitsAction->setData(Renderer::ShowOrbits);
 
@@ -120,14 +120,14 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     // Orbit actions
     QMenu* orbitsMenu = new QMenu();
-    starOrbitsAction       = createCheckableAction(tr("Stars"), orbitsMenu, Body::Stellar);
-    planetOrbitsAction     = createCheckableAction(tr("Planets"), orbitsMenu, Body::Planet);
-    dwarfPlanetOrbitsAction     = createCheckableAction(tr("Dwarf Planets"), orbitsMenu, Body::DwarfPlanet);
-    moonOrbitsAction       = createCheckableAction(tr("Moons"), orbitsMenu, Body::Moon);
-    minorMoonOrbitsAction       = createCheckableAction(tr("Minor Moons"), orbitsMenu, Body::MinorMoon);
-    asteroidOrbitsAction   = createCheckableAction(tr("Asteroids"), orbitsMenu, Body::Asteroid);
-    cometOrbitsAction      = createCheckableAction(tr("Comets"), orbitsMenu, Body::Comet);
-    spacecraftOrbitsAction = createCheckableAction(tr("Spacecraft"), orbitsMenu, Body::Spacecraft);
+    starOrbitsAction       = createCheckableAction(_("Stars"), orbitsMenu, Body::Stellar);
+    planetOrbitsAction     = createCheckableAction(_("Planets"), orbitsMenu, Body::Planet);
+    dwarfPlanetOrbitsAction     = createCheckableAction(_("Dwarf Planets"), orbitsMenu, Body::DwarfPlanet);
+    moonOrbitsAction       = createCheckableAction(_("Moons"), orbitsMenu, Body::Moon);
+    minorMoonOrbitsAction       = createCheckableAction(_("Minor Moons"), orbitsMenu, Body::MinorMoon);
+    asteroidOrbitsAction   = createCheckableAction(_("Asteroids"), orbitsMenu, Body::Asteroid);
+    cometOrbitsAction      = createCheckableAction(_("Comets"), orbitsMenu, Body::Comet);
+    spacecraftOrbitsAction = createCheckableAction(_("Spacecraft"), orbitsMenu, Body::Spacecraft);
     
     connect(starOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
     connect(planetOrbitsAction, SIGNAL(triggered()), this, SLOT(slotToggleOrbit()));
@@ -143,24 +143,24 @@ CelestiaActions::CelestiaActions(QObject* parent,
     orbitsAction->setMenu(orbitsMenu);
 
     // Label actions
-    labelsAction = new QAction(QString("L"), this);
-    labelsAction->setToolTip(tr("Labels"));
+    labelsAction = new QAction(_("L"), this);
+    labelsAction->setToolTip(_("Labels"));
 
     QMenu* labelsMenu = new QMenu();
-    labelStarsAction       = createCheckableAction(tr("Stars"), labelsMenu, Renderer::StarLabels);
-    labelPlanetsAction     = createCheckableAction(tr("Planets"), labelsMenu, Renderer::PlanetLabels);
-    labelDwarfPlanetsAction     = createCheckableAction(tr("Dwarf Planets"), labelsMenu, Renderer::DwarfPlanetLabels);
-    labelMoonsAction       = createCheckableAction(tr("Moons"), labelsMenu, Renderer::MoonLabels);
-    labelMinorMoonsAction       = createCheckableAction(tr("Minor Moons"), labelsMenu, Renderer::MinorMoonLabels);
-    labelAsteroidsAction   = createCheckableAction(tr("Asteroids"), labelsMenu, Renderer::AsteroidLabels);
-    labelCometsAction      = createCheckableAction(tr("Comets"), labelsMenu, Renderer::CometLabels);
-    labelSpacecraftAction  = createCheckableAction(tr("Spacecraft"), labelsMenu, Renderer::SpacecraftLabels);
-    labelGalaxiesAction    = createCheckableAction(tr("Galaxies"), labelsMenu, Renderer::GalaxyLabels);
-    labelGlobularsAction   = createCheckableAction(tr("Globulars"), labelsMenu, Renderer::GlobularLabels);
-    labelOpenClustersAction = createCheckableAction(tr("Open clusters"), labelsMenu, Renderer::OpenClusterLabels);
-    labelNebulaeAction     = createCheckableAction(tr("Nebulae"), labelsMenu, Renderer::NebulaLabels);
-    labelLocationsAction   = createCheckableAction(tr("Locations"), labelsMenu, Renderer::LocationLabels);
-    labelConstellationsAction = createCheckableAction(tr("Constellations"), labelsMenu, Renderer::ConstellationLabels);
+    labelStarsAction       = createCheckableAction(_("Stars"), labelsMenu, Renderer::StarLabels);
+    labelPlanetsAction     = createCheckableAction(_("Planets"), labelsMenu, Renderer::PlanetLabels);
+    labelDwarfPlanetsAction     = createCheckableAction(_("Dwarf Planets"), labelsMenu, Renderer::DwarfPlanetLabels);
+    labelMoonsAction       = createCheckableAction(_("Moons"), labelsMenu, Renderer::MoonLabels);
+    labelMinorMoonsAction       = createCheckableAction(_("Minor Moons"), labelsMenu, Renderer::MinorMoonLabels);
+    labelAsteroidsAction   = createCheckableAction(_("Asteroids"), labelsMenu, Renderer::AsteroidLabels);
+    labelCometsAction      = createCheckableAction(_("Comets"), labelsMenu, Renderer::CometLabels);
+    labelSpacecraftAction  = createCheckableAction(_("Spacecraft"), labelsMenu, Renderer::SpacecraftLabels);
+    labelGalaxiesAction    = createCheckableAction(_("Galaxies"), labelsMenu, Renderer::GalaxyLabels);
+    labelGlobularsAction   = createCheckableAction(_("Globulars"), labelsMenu, Renderer::GlobularLabels);
+    labelOpenClustersAction = createCheckableAction(_("Open clusters"), labelsMenu, Renderer::OpenClusterLabels);
+    labelNebulaeAction     = createCheckableAction(_("Nebulae"), labelsMenu, Renderer::NebulaLabels);
+    labelLocationsAction   = createCheckableAction(_("Locations"), labelsMenu, Renderer::LocationLabels);
+    labelConstellationsAction = createCheckableAction(_("Constellations"), labelsMenu, Renderer::ConstellationLabels);
 
     connect(labelGalaxiesAction, SIGNAL(triggered()),       this, SLOT(slotToggleLabel()));
     connect(labelGlobularsAction, SIGNAL(triggered()),      this, SLOT(slotToggleLabel()));
@@ -179,66 +179,66 @@ CelestiaActions::CelestiaActions(QObject* parent,
 
     labelsAction->setMenu(labelsMenu);
 
-    galaxiesAction     = createCheckableAction(tr("Galaxies"),          Renderer::ShowGalaxies);
+    galaxiesAction     = createCheckableAction(_("Galaxies"),          Renderer::ShowGalaxies);
     //galaxiesAction->setShortcut(QString("U"));
-    globularsAction    = createCheckableAction(tr("Globulars"),         Renderer::ShowGlobulars);
-    openClustersAction = createCheckableAction(tr("Open Clusters"),     Renderer::ShowOpenClusters);
-    nebulaeAction      = createCheckableAction(tr("Nebulae"),           Renderer::ShowNebulae);
+    globularsAction    = createCheckableAction(_("Globulars"),         Renderer::ShowGlobulars);
+    openClustersAction = createCheckableAction(_("Open Clusters"),     Renderer::ShowOpenClusters);
+    nebulaeAction      = createCheckableAction(_("Nebulae"),           Renderer::ShowNebulae);
     nebulaeAction->setShortcut(QString("^"));
     connect(galaxiesAction,        SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(globularsAction,       SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(openClustersAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(nebulaeAction,         SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    cloudsAction          = createCheckableAction(tr("Clouds"),            Renderer::ShowCloudMaps);
+    cloudsAction          = createCheckableAction(_("Clouds"),            Renderer::ShowCloudMaps);
     //cloudsAction->setShortcut(QString("I"));
-    nightSideLightsAction = createCheckableAction(tr("Night Side Lights"), Renderer::ShowNightMaps);
+    nightSideLightsAction = createCheckableAction(_("Night Side Lights"), Renderer::ShowNightMaps);
     nightSideLightsAction->setShortcut(QString("Ctrl+L"));
-    cometTailsAction      = createCheckableAction(tr("Comet Tails"),       Renderer::ShowCometTails);
-    atmospheresAction     = createCheckableAction(tr("Atmospheres"),       Renderer::ShowAtmospheres);
+    cometTailsAction      = createCheckableAction(_("Comet Tails"),       Renderer::ShowCometTails);
+    atmospheresAction     = createCheckableAction(_("Atmospheres"),       Renderer::ShowAtmospheres);
     atmospheresAction->setShortcut(QString("Ctrl+A"));
     connect(cloudsAction,          SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(nightSideLightsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(cometTailsAction,      SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(atmospheresAction,     SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    ringShadowsAction     = createCheckableAction(tr("Ring Shadows"),      Renderer::ShowRingShadows);
-    eclipseShadowsAction  = createCheckableAction(tr("Eclipse Shadows"),   Renderer::ShowEclipseShadows);
+    ringShadowsAction     = createCheckableAction(_("Ring Shadows"),      Renderer::ShowRingShadows);
+    eclipseShadowsAction  = createCheckableAction(_("Eclipse Shadows"),   Renderer::ShowEclipseShadows);
     eclipseShadowsAction->setShortcut(QKeySequence("Ctrl+E"));
-    cloudShadowsAction    = createCheckableAction(tr("Cloud Shadows"),     Renderer::ShowCloudShadows);
+    cloudShadowsAction    = createCheckableAction(_("Cloud Shadows"),     Renderer::ShowCloudShadows);
     connect(ringShadowsAction,    SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(eclipseShadowsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(cloudShadowsAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    lowResAction          = createCheckableAction(tr("Low"),    lores);
-    mediumResAction       = createCheckableAction(tr("Medium"), medres);
-    highResAction         = createCheckableAction(tr("High"),   hires);
+    lowResAction          = createCheckableAction(_("Low"),    lores);
+    mediumResAction       = createCheckableAction(_("Medium"), medres);
+    highResAction         = createCheckableAction(_("High"),   hires);
     connect(lowResAction,    SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(mediumResAction, SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
     connect(highResAction,   SIGNAL(triggered()), this, SLOT(slotSetTextureResolution()));
 
-    autoMagAction        = createCheckableAction(tr("Auto Magnitude"), Renderer::ShowAutoMag);
+    autoMagAction        = createCheckableAction(_("Auto Magnitude"), Renderer::ShowAutoMag);
     autoMagAction->setShortcut(QKeySequence("Ctrl+Y"));
-    autoMagAction->setToolTip(tr("Faintest visible magnitude based on field of view"));
+    autoMagAction->setToolTip(_("Faintest visible magnitude based on field of view"));
     connect(autoMagAction,        SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    increaseLimitingMagAction = new QAction(tr("More Stars Visible"), this);
+    increaseLimitingMagAction = new QAction(_("More Stars Visible"), this);
     increaseLimitingMagAction->setData(0.1);
     increaseLimitingMagAction->setShortcut(QString("]"));
-    decreaseLimitingMagAction = new QAction(tr("Fewer Stars Visible"), this);
+    decreaseLimitingMagAction = new QAction(_("Fewer Stars Visible"), this);
     decreaseLimitingMagAction->setData(-0.1);
     decreaseLimitingMagAction->setShortcut(QString("["));
     connect(increaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
     connect(decreaseLimitingMagAction, SIGNAL(triggered()), this, SLOT(slotAdjustLimitingMagnitude()));
 
-    pointStarAction      = createCheckableAction(tr("Points"),         Renderer::PointStars);
-    fuzzyPointStarAction = createCheckableAction(tr("Fuzzy Points"),   Renderer::FuzzyPointStars);
-    scaledDiscStarAction = createCheckableAction(tr("Scaled Discs"),   Renderer::ScaledDiscStars);
+    pointStarAction      = createCheckableAction(_("Points"),         Renderer::PointStars);
+    fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"),   Renderer::FuzzyPointStars);
+    scaledDiscStarAction = createCheckableAction(_("Scaled Discs"),   Renderer::ScaledDiscStars);
     connect(pointStarAction,      SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
     connect(fuzzyPointStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
     connect(scaledDiscStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
 
-    lightTimeDelayAction = new QAction(tr("Light Time Delay"), this);
+    lightTimeDelayAction = new QAction(_("Light Time Delay"), this);
     lightTimeDelayAction->setCheckable(true);
     lightTimeDelayAction->setToolTip("Subtract one-way light travel time to selected object");
     connect(lightTimeDelayAction, SIGNAL(triggered()), this, SLOT(slotSetLightTimeDelay()));
@@ -411,14 +411,14 @@ void CelestiaActions::slotAdjustLimitingMagnitude()
             renderer->setFaintestAM45deg(newLimitingMag);
             appCore->setFaintestAutoMag();
 
-            notification = tr("Auto magnitude limit at 45 degrees: %L1").arg(newLimitingMag, 0, 'f', 2);
+            notification = QString(_("Auto magnitude limit at 45 degrees: %L1")).arg(newLimitingMag, 0, 'f', 2);
         }
         else
         {
             float newLimitingMag = qBound(1.0f, appCore->getSimulation()->getFaintestVisible() + change * 2, 15.0f);
             appCore->setFaintest(newLimitingMag);
 
-            notification = tr("Magnitude limit: %L1").arg(newLimitingMag, 0, 'f', 2);
+            notification = QString(_("Magnitude limit: %L1")).arg(newLimitingMag, 0, 'f', 2);
         }
 
         appCore->flash(notification.toUtf8().data());

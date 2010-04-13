@@ -23,6 +23,7 @@
 
 // gettext / libintl setup
 #define _(string) gettext (string)
+#define  gettext_noop(string) string
 
 #ifdef _WIN32
 

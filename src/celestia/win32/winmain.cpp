@@ -1610,7 +1610,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, UTF8ToCurrentCP(_("S&ync Orbit")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
             HMENU refVectorMenu = CreatePopupMenu();
-            AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) refVectorMenu, UTF8ToCurrentCP(_("&Reference Vectors")).c_str());
+            AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) refVectorMenu, UTF8ToCurrentCP(_("&Reference Marks")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_BODY_AXES, UTF8ToCurrentCP(_("Show Body Axes")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_FRAME_AXES, UTF8ToCurrentCP(_("Show Frame Axes")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_SUN_DIRECTION, UTF8ToCurrentCP(_("Show Sun Direction")).c_str());
