@@ -411,6 +411,24 @@
 	AppMag 12.3
 }
 
+1003266446 "WASP-22:GSC 06446-00326"
+{
+	RA 52.817917
+	Dec -23.819722
+	Distance 1070 # from temperature and magnitude
+	SpectralType "G0V" # from mass and temperature
+	AppMag 11.99
+}
+
+1008765839 "WASP-26:GSC 05839-00876"
+{
+	RA 4.602917
+	Dec -15.267222
+	Distance 815
+	SpectralType "G0"
+	AppMag 11.30
+}
+
 # CoRoT survey
 
 "CoRoT-1"
@@ -655,14 +673,16 @@
 	AppMag 10.91
 }
 
-1002141355 "BD+20 1790"
-{
-	RA 110.931667
-	Dec 20.416389
-	Distance 82.80
-	SpectralType "K5V"
-	AppMag 9.93
-}
+# Figueira et al, 2010 (http://fr.arxiv.org/abs/1003.3678)
+# suggest the radial velocity is stellar rather than planetary
+#1002141355 "BD+20 1790"
+#{
+#	RA 110.931667
+#	Dec 20.416389
+#	Distance 82.80
+#	SpectralType "K5V"
+#	AppMag 9.93
+#}
 
 "Gliese 1214"
 {
