@@ -339,6 +339,15 @@
 	AppMag 9.51
 }
 
+1005057522 "WASP-8:GSC 07522-00505"
+{
+	RA 359.900417
+	Dec -35.031389
+	Distance 284
+	SpectralType "G6"
+	AppMag 9.9
+}
+
 "WASP-10:GSC 2752-00114"
 {
 	RA 348.992917
@@ -411,6 +420,15 @@
 	AppMag 12.3
 }
 
+"WASP-21:GSC 01715-00679"
+{
+	RA 347.492917
+	Dec 18.396111
+	Distance 750
+	SpectralType "G3V"
+	AppMag 11.6
+}
+
 1003266446 "WASP-22:GSC 06446-00326"
 {
 	RA 52.817917
@@ -418,6 +436,24 @@
 	Distance 1070 # from temperature and magnitude
 	SpectralType "G0V" # from mass and temperature
 	AppMag 11.99
+}
+
+1003290339 "WASP-24:GSC 00339-00329"
+{
+	RA 227.215417
+	Dec 2.343333
+	Distance 1080
+	SpectralType "F9"
+	AppMag 11.3
+}
+
+1008616706 "WASP-25:GSC 06706-00861"
+{
+	RA 195.360000
+	Dec -27.522222
+	Distance 551
+	SpectralType "G4"
+	AppMag 11.87
 }
 
 1008765839 "WASP-26:GSC 05839-00876"
@@ -428,6 +464,25 @@
 	SpectralType "G0"
 	AppMag 11.30
 }
+
+"WASP-28"
+{
+	RA 353.616250
+	Dec -1.580000
+	Distance 1090
+	SpectralType "F9"
+	AppMag 12
+}
+
+1010208015 "WASP-29:GSC 08015-01020"
+{
+	RA 357.879583
+	Dec -39.906667
+	Distance 261
+	SpectralType "K4V"
+	AppMag 11.33
+}
+
 
 # CoRoT survey
 
