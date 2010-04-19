@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: hu\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-04 15:39+0000\n"
-"PO-Revision-Date: 2010-01-09 11:08+0100\n"
-"Last-Translator: vincent <vince.gian@free.fr>\n"
+"PO-Revision-Date: 2010-04-19 10:23+0100\n"
+"Last-Translator: Székely Zoltán <zoltanszekely@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -69,7 +69,7 @@ msgstr "Galaxis (Hubble type: %s)"
 #: src/celengine/globular.cpp:255
 #, c-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
-msgstr ""
+msgstr "Gömbhalmaz (mag sugara: %4.2f', King koncentráció: %4.2f)"
 
 #: src/celengine/image.cpp:373
 msgid "Loading image from file "
@@ -124,12 +124,12 @@ msgid "Error loading model '"
 msgstr "Hiba a modell betöltésekor '"
 
 #: src/celengine/nebula.cpp:47
-#, fuzzy, c-format
+#, c-format
 msgid "Nebula"
-msgstr "Nebulák"
+msgstr "Nebula"
 
 #: src/celengine/opencluster.cpp:44
-#, fuzzy, c-format
+#, c-format
 msgid "Open cluster"
 msgstr "Nyílt galaxishalmazok"
 
@@ -567,7 +567,7 @@ msgstr "perc"
 
 #: src/celestia/celestiacore.cpp:2929
 msgid " seconds"
-msgstr ""
+msgstr "másodpercek"
 
 #: src/celestia/celestiacore.cpp:2994
 msgid "Apparent diameter: "
@@ -665,7 +665,7 @@ msgstr "Távolság a középponttól:  "
 #: src/celestia/celestiacore.cpp:3292
 #, c-format
 msgid "Phase angle: %.1f%s\n"
-msgstr ""
+msgstr "Fázisszög: %.1f%s\n"
 
 #: src/celestia/celestiacore.cpp:3316
 msgid "Temperature: "
@@ -1018,7 +1018,6 @@ msgstr "&Adatok"
 
 #: src/celestia/winmain.cpp:1613
 #: src/celestia/kde/selectionpopup.cpp:333
-#, fuzzy
 msgid "&Reference Marks"
 msgstr "&Referencia vektorok"
 
@@ -1496,7 +1495,6 @@ msgid "Show Spacecraft Orbits"
 msgstr "Űrhajók pályáinak mutatása"
 
 #: src/celestia/kde/kdeapp.cpp:601
-#, fuzzy
 msgid "Show Equatorial Grid"
 msgstr "Égi háló mutatása"
 
@@ -1785,7 +1783,7 @@ msgstr "Alternatív telepítési mappa használata"
 
 #: src/celestia/kde/kdemain.cpp:33
 msgid "Use as additional \"extras\" directory"
-msgstr "kiegészítő \"extras\" könyvtár"
+msgstr "Kiegészítő \"extras\" könyvtár"
 
 #: src/celestia/kde/kdemain.cpp:34
 msgid "Start fullscreen"
@@ -1897,7 +1895,6 @@ msgid "Smooth Orbit Lines"
 msgstr "Sima pályavonalak"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:134
-#, fuzzy
 msgid "Equatorial Grid"
 msgstr "Égi háló"
 
@@ -2703,1196 +2700,958 @@ msgid "ARCTIC OCEAN"
 msgstr "ÉSZAKI ÓCEÁN"
 
 #: data/data.cpp:54
-#, fuzzy
 msgid "Abu Dhabi"
-msgstr "Abu-Dzabi"
+msgstr "Abu-Dabi"
 
 #: data/data.cpp:55
-#, fuzzy
 msgid "Abuja"
 msgstr "Abuja"
 
 #: data/data.cpp:56
-#, fuzzy
 msgid "Accra"
 msgstr "Accra"
 
 #: data/data.cpp:57
-#, fuzzy
 msgid "Adamstown"
 msgstr "Adamstown"
 
 #: data/data.cpp:58
-#, fuzzy
 msgid "Addis Ababa"
 msgstr "Addisz-Abeba"
 
 #: data/data.cpp:59
-#, fuzzy
 msgid "Algiers"
 msgstr "Algír"
 
 #: data/data.cpp:60
-#, fuzzy
 msgid "Alofi"
 msgstr "Alofi"
 
 #: data/data.cpp:61
-#, fuzzy
 msgid "Amman"
-msgstr "Ammán"
+msgstr "Amman"
 
 #: data/data.cpp:62
-#, fuzzy
 msgid "Amsterdam"
 msgstr "Amsterdam"
 
 #: data/data.cpp:63
-#, fuzzy
 msgid "Andorra la Vella"
 msgstr "Andorra la Vella"
 
 #: data/data.cpp:64
-#, fuzzy
 msgid "Ankara"
 msgstr "Ankara"
 
 #: data/data.cpp:65
-#, fuzzy
 msgid "Antananarivo"
 msgstr "Antananarivo"
 
 #: data/data.cpp:66
-#, fuzzy
 msgid "Apia"
 msgstr "Apia"
 
 #: data/data.cpp:67
-#, fuzzy
 msgid "Ashgabat"
-msgstr "Aşgabat"
+msgstr "Asgabat"
 
 #: data/data.cpp:68
-#, fuzzy
 msgid "Asmara"
 msgstr "Aszmara"
 
 #: data/data.cpp:69
-#, fuzzy
 msgid "Astana"
 msgstr "Asztana"
 
 #: data/data.cpp:70
-#, fuzzy
 msgid "Asuncion"
 msgstr "Asunción "
 
 #: data/data.cpp:71
-#, fuzzy
 msgid "Athens"
 msgstr "Athén"
 
 #: data/data.cpp:72
-#, fuzzy
 msgid "Avarua"
 msgstr "Avarua"
 
 #: data/data.cpp:73
-#, fuzzy
 msgid "Baghdad"
-msgstr "Bagdadba"
+msgstr "Bagdad"
 
 #: data/data.cpp:74
-#, fuzzy
 msgid "Baku"
 msgstr "Baku"
 
 #: data/data.cpp:75
-#, fuzzy
 msgid "Bamako"
-msgstr "Bamakói"
+msgstr "Bamakó"
 
 #: data/data.cpp:76
-#, fuzzy
 msgid "Bandar Seri Begawan"
 msgstr "Bender Seri Begawan"
 
 #: data/data.cpp:77
-#, fuzzy
 msgid "Bangkok"
-msgstr "Bangkoki"
+msgstr "Bangkok"
 
 #: data/data.cpp:78
-#, fuzzy
 msgid "Bangui"
 msgstr "Bangui"
 
 #: data/data.cpp:79
-#, fuzzy
 msgid "Banjul"
-msgstr "Banjuli"
+msgstr "Banjul"
 
 #: data/data.cpp:80
-#, fuzzy
 msgid "Basse-Terre"
 msgstr "Basse-Terre"
 
 #: data/data.cpp:81
-#, fuzzy
 msgid "Basseterre"
 msgstr "Basseterre"
 
 #: data/data.cpp:82
-#, fuzzy
 msgid "Beijing"
 msgstr "Peking"
 
 #: data/data.cpp:83
-#, fuzzy
 msgid "Beirut"
-msgstr "Bejrút"
+msgstr "Bejrut"
 
 #: data/data.cpp:84
-#, fuzzy
 msgid "Belgrade"
 msgstr "Belgrád"
 
 #: data/data.cpp:85
-#, fuzzy
 msgid "Belmopan"
 msgstr "Belmopan"
 
 #: data/data.cpp:86
-#, fuzzy
 msgid "Berlin"
-msgstr "Berlini"
+msgstr "Berlin"
 
 #: data/data.cpp:87
-#, fuzzy
 msgid "Bern"
-msgstr "Bernben"
+msgstr "Bern"
 
 #: data/data.cpp:88
-#, fuzzy
 msgid "Bishkek"
 msgstr "Bishkek"
 
 #: data/data.cpp:89
-#, fuzzy
 msgid "Bissau"
-msgstr "Guineai"
+msgstr "Bissau"
 
 #: data/data.cpp:90
-#, fuzzy
 msgid "Bloemfontein"
 msgstr "Bloemfontein"
 
 #: data/data.cpp:91
-#, fuzzy
 msgid "Bogota"
 msgstr "Bogota"
 
 #: data/data.cpp:92
-#, fuzzy
 msgid "Brasilia"
-msgstr "Brasiliában"
+msgstr "Brazília"
 
 #: data/data.cpp:93
-#, fuzzy
 msgid "Bratislava"
-msgstr "Pozsonyi"
+msgstr "Pozsony"
 
 #: data/data.cpp:94
-#, fuzzy
 msgid "Brazzaville"
 msgstr "Brazzaville"
 
 #: data/data.cpp:95
-#, fuzzy
 msgid "Bridgetown"
-msgstr "Bridgetownban"
+msgstr "Bridgetown"
 
 #: data/data.cpp:96
-#, fuzzy
 msgid "Brussels"
 msgstr "Brüsszel"
 
 #: data/data.cpp:97
-#, fuzzy
 msgid "Bucharest"
 msgstr "Bukarest"
 
 #: data/data.cpp:98
-#, fuzzy
 msgid "Budapest"
 msgstr "Budapest"
 
 #: data/data.cpp:99
-#, fuzzy
 msgid "Buenos Aires"
 msgstr "Buenos Aires"
 
 #: data/data.cpp:100
-#, fuzzy
 msgid "Bujumbura"
 msgstr "Bujumburai"
 
 #: data/data.cpp:101
-#, fuzzy
 msgid "Cairo"
-msgstr "Kairói"
+msgstr "Kairó"
 
 #: data/data.cpp:102
-#, fuzzy
 msgid "Canberra"
 msgstr "Canberra"
 
 #: data/data.cpp:103
-#, fuzzy
 msgid "Cape Town"
-msgstr "Cape Town"
+msgstr "Fokváros"
 
 #: data/data.cpp:104
-#, fuzzy
 msgid "Caracas"
-msgstr "Caracasi"
+msgstr "Caracas"
 
 #: data/data.cpp:105
-#, fuzzy
 msgid "Castries"
 msgstr "Castriest"
 
 #: data/data.cpp:106
-#, fuzzy
 msgid "Cayenne"
 msgstr "Cayenne"
 
 #: data/data.cpp:107
-#, fuzzy
 msgid "Charlotte Amalie"
 msgstr "Charlotte Amalie"
 
 #: data/data.cpp:108
-#, fuzzy
 msgid "Chisinau"
-msgstr "Kisinyovi"
+msgstr "Kisinyov"
 
 #: data/data.cpp:109
-#, fuzzy
 msgid "Colombo"
 msgstr "Colombó"
 
 #: data/data.cpp:110
-#, fuzzy
 msgid "Conakry"
 msgstr "Conakry"
 
 #: data/data.cpp:111
-#, fuzzy
 msgid "Copenhagen"
 msgstr "Koppenhága"
 
 #: data/data.cpp:112
-#, fuzzy
 msgid "Cotonou"
 msgstr "Cotonou"
 
 #: data/data.cpp:113
-#, fuzzy
 msgid "Dakar"
-msgstr "Dakari"
+msgstr "Dakar"
 
 #: data/data.cpp:114
-#, fuzzy
 msgid "Damascus"
 msgstr "Damaszkusz"
 
 #: data/data.cpp:115
-#, fuzzy
 msgid "Dar es Salaam"
 msgstr "Dar es Salaam"
 
 #: data/data.cpp:116
-#, fuzzy
 msgid "Dhaka"
 msgstr "Dhaka"
 
 #: data/data.cpp:117
-#, fuzzy
 msgid "Dili"
 msgstr "Dili"
 
 #: data/data.cpp:118
-#, fuzzy
 msgid "Djibouti"
 msgstr "Dzsibuti"
 
 #: data/data.cpp:119
-#, fuzzy
 msgid "Doha"
-msgstr "Dohai"
+msgstr "Doha"
 
 #: data/data.cpp:120
-#, fuzzy
 msgid "Douglas"
 msgstr "Douglas"
 
 #: data/data.cpp:121
-#, fuzzy
 msgid "Dublin"
-msgstr "Dublini"
+msgstr "Dublin"
 
 #: data/data.cpp:122
-#, fuzzy
 msgid "Dushanbe"
 msgstr "Dushanbe"
 
 #: data/data.cpp:123
-#, fuzzy
 msgid "Fongafale"
 msgstr "Fongafale"
 
 #: data/data.cpp:124
-#, fuzzy
 msgid "Fort-de-France"
 msgstr "Fort-de-France"
 
 #: data/data.cpp:125
-#, fuzzy
 msgid "Freetown"
 msgstr "Freetown"
 
 #: data/data.cpp:126
-#, fuzzy
 msgid "Gaborone"
-msgstr "Gaboronei"
+msgstr "Gaborone"
 
 #: data/data.cpp:127
-#, fuzzy
 msgid "George Town"
 msgstr "George Town"
 
 #: data/data.cpp:128
-#, fuzzy
 msgid "Georgetown"
 msgstr "A Georgetown"
 
 #: data/data.cpp:129
-#, fuzzy
 msgid "Gibraltar"
 msgstr "Gibraltár"
 
 #: data/data.cpp:130
-#, fuzzy
 msgid "Grand Turk"
 msgstr "Grand Turk"
 
 #: data/data.cpp:131
-#, fuzzy
 msgid "Guatemala"
 msgstr "Guatemala"
 
 #: data/data.cpp:132
-#, fuzzy
 msgid "Hagatna"
 msgstr "Hagatna"
 
 #: data/data.cpp:133
-#, fuzzy
 msgid "The Hague"
 msgstr "Hága"
 
 #: data/data.cpp:134
-#, fuzzy
 msgid "Hamilton"
 msgstr "Hamilton"
 
 #: data/data.cpp:135
-#, fuzzy
 msgid "Hanoi"
-msgstr "Hanoiban"
+msgstr "Hanoi"
 
 #: data/data.cpp:136
-#, fuzzy
 msgid "Harare"
-msgstr "Hararei"
+msgstr "Harare"
 
 #: data/data.cpp:137
-#, fuzzy
 msgid "Havana"
 msgstr "Havanna"
 
 #: data/data.cpp:138
-#, fuzzy
 msgid "Helsinki"
 msgstr "Helsinki"
 
 #: data/data.cpp:139
-#, fuzzy
 msgid "Honiara"
 msgstr "Honiara"
 
 #: data/data.cpp:140
-#, fuzzy
 msgid "Islamabad"
 msgstr "Iszlamabad"
 
 #: data/data.cpp:141
-#, fuzzy
 msgid "Jakarta"
-msgstr "Jakarta"
+msgstr "Dzsakarta"
 
 #: data/data.cpp:142
-#, fuzzy
 msgid "Jamestown"
-msgstr "Jamestowni"
+msgstr "Jamestown"
 
 #: data/data.cpp:143
-#, fuzzy
 msgid "Jerusalem"
 msgstr "Jeruzsálem"
 
 #: data/data.cpp:144
-#, fuzzy
 msgid "Kabul"
 msgstr "Kabul"
 
 #: data/data.cpp:145
-#, fuzzy
 msgid "Kampala"
 msgstr "Kampala"
 
 #: data/data.cpp:146
-#, fuzzy
 msgid "Kathmandu"
 msgstr "Katmandu"
 
 #: data/data.cpp:147
-#, fuzzy
 msgid "Khartoum"
-msgstr "Kartúmi"
+msgstr "Kartúm"
 
 #: data/data.cpp:148
-#, fuzzy
 msgid "Kiev"
-msgstr "Kiev"
+msgstr "Kijev"
 
 #: data/data.cpp:149
-#, fuzzy
 msgid "Kigali"
 msgstr "Kigali"
 
 #: data/data.cpp:150
 #: data/data.cpp:151
-#, fuzzy
 msgid "Kingston"
 msgstr "Kingston"
 
 #: data/data.cpp:152
-#, fuzzy
 msgid "Kingstown"
-msgstr "Kingstowni"
+msgstr "Kingstown"
 
 #: data/data.cpp:153
-#, fuzzy
 msgid "Kinshasa"
-msgstr "Kinshasai"
+msgstr "Kinshasa"
 
 #: data/data.cpp:154
-#, fuzzy
 msgid "Koror"
 msgstr "Koror"
 
 #: data/data.cpp:155
-#, fuzzy
 msgid "Kuala Lumpur"
 msgstr "Kuala Lumpur"
 
 #: data/data.cpp:156
-#, fuzzy
 msgid "Kuwait"
 msgstr "Kuvait"
 
 #: data/data.cpp:157
-#, fuzzy
 msgid "La'youn"
 msgstr "El Aaiun"
 
 #: data/data.cpp:158
-#, fuzzy
 msgid "La Paz"
 msgstr "La Paz"
 
 #: data/data.cpp:159
-#, fuzzy
 msgid "Libreville"
 msgstr "Libreville"
 
 #: data/data.cpp:160
-#, fuzzy
 msgid "Lilongwe"
 msgstr "Lilongwe"
 
 #: data/data.cpp:161
-#, fuzzy
 msgid "Lima"
-msgstr "Fájlokat"
+msgstr "Lima"
 
 #: data/data.cpp:162
-#, fuzzy
 msgid "Lisbon"
 msgstr "Lisszabon"
 
 #: data/data.cpp:163
-#, fuzzy
 msgid "Ljubljana"
-msgstr "Ljubljanába"
+msgstr "Ljubljana"
 
 #: data/data.cpp:164
-#, fuzzy
 msgid "Lobamba"
 msgstr "Lobamba"
 
 #: data/data.cpp:165
-#, fuzzy
 msgid "Lome"
 msgstr "Lome"
 
 #: data/data.cpp:166
-#, fuzzy
 msgid "London"
-msgstr "Londonba"
+msgstr "London"
 
 #: data/data.cpp:167
-#, fuzzy
 msgid "Longyearbyen"
 msgstr "Longyearbyen"
 
 #: data/data.cpp:168
-#, fuzzy
 msgid "Luanda"
-msgstr "Luandai"
+msgstr "Luanda"
 
 #: data/data.cpp:169
-#, fuzzy
 msgid "Lusaka"
-msgstr "Lusakai"
+msgstr "Lusaka"
 
 #: data/data.cpp:170
-#, fuzzy
 msgid "Luxembourg"
 msgstr "Luxemburg"
 
 #: data/data.cpp:171
-#, fuzzy
 msgid "Madrid"
-msgstr "Madridi"
+msgstr "Madrid"
 
 #: data/data.cpp:172
-#, fuzzy
 msgid "Majuro"
 msgstr "Majuro"
 
 #: data/data.cpp:173
-#, fuzzy
 msgid "Malabo"
 msgstr "Malabo"
 
 #: data/data.cpp:174
-#, fuzzy
 msgid "Male"
-msgstr "Hím"
+msgstr "Male"
 
 #: data/data.cpp:175
-#, fuzzy
 msgid "Mamoutzou"
 msgstr "Mamoutzou"
 
 #: data/data.cpp:176
-#, fuzzy
 msgid "Managua"
 msgstr "Managua"
 
 #: data/data.cpp:177
-#, fuzzy
 msgid "Manama"
 msgstr "Manama"
 
 #: data/data.cpp:178
-#, fuzzy
 msgid "Manila"
-msgstr "Manilába"
+msgstr "Manila"
 
 #: data/data.cpp:179
-#, fuzzy
 msgid "Maputo"
-msgstr "Maputói"
+msgstr "Maputó"
 
 #: data/data.cpp:180
-#, fuzzy
 msgid "Maseru"
 msgstr "Maseru"
 
 #: data/data.cpp:181
-#, fuzzy
 msgid "Mata-Utu"
 msgstr "Mata-Utu"
 
 #: data/data.cpp:182
-#, fuzzy
 msgid "Mbabane"
 msgstr "Mbabane"
 
 #: data/data.cpp:183
-#, fuzzy
 msgid "Mexico City"
 msgstr "Mexikóváros"
 
 #: data/data.cpp:184
-#, fuzzy
 msgid "Minsk"
-msgstr "Minszki"
+msgstr "Minszk"
 
 #: data/data.cpp:185
-#, fuzzy
 msgid "Mogadishu"
-msgstr "Mogadishuba"
+msgstr "Mogadishu"
 
 #: data/data.cpp:186
-#, fuzzy
 msgid "Monaco"
 msgstr "Monaco"
 
 #: data/data.cpp:187
-#, fuzzy
 msgid "Monrovia"
-msgstr "Monrovia,"
+msgstr "Monrovia"
 
 #: data/data.cpp:188
-#, fuzzy
 msgid "Montevideo"
 msgstr "Montevideo"
 
 #: data/data.cpp:189
-#, fuzzy
 msgid "Moroni"
 msgstr "Moróni"
 
 #: data/data.cpp:190
-#, fuzzy
 msgid "Moscow"
 msgstr "Moszkva"
 
 #: data/data.cpp:191
-#, fuzzy
 msgid "Muscat"
 msgstr "Maszkat"
 
 #: data/data.cpp:192
-#, fuzzy
 msgid "Nairobi"
-msgstr "Nairobib"
+msgstr "Nairobi"
 
 #: data/data.cpp:193
-#, fuzzy
 msgid "Nassau"
-msgstr "Nassaui"
+msgstr "Nassau"
 
 #: data/data.cpp:194
-#, fuzzy
 msgid "N'Djamena"
 msgstr "N'Djamena"
 
 #: data/data.cpp:195
-#, fuzzy
 msgid "New Delhi"
 msgstr "Újdelhi"
 
 #: data/data.cpp:196
-#, fuzzy
 msgid "Niamey"
 msgstr "Niamey"
 
 #: data/data.cpp:197
-#, fuzzy
 msgid "Nicosia"
 msgstr "Nicosia"
 
 #: data/data.cpp:198
-#, fuzzy
 msgid "Nouakchott"
 msgstr "Nouakchott"
 
 #: data/data.cpp:199
-#, fuzzy
 msgid "Noumea"
 msgstr "Noumea"
 
 #: data/data.cpp:200
-#, fuzzy
 msgid "Nuku'alofa"
 msgstr "Nuku'alofa"
 
 #: data/data.cpp:201
-#, fuzzy
 msgid "Nuuk"
 msgstr "Nuuk"
 
 #: data/data.cpp:202
-#, fuzzy
 msgid "Oranjestad"
 msgstr "Oranjestad"
 
 #: data/data.cpp:203
-#, fuzzy
 msgid "Oslo"
-msgstr "Osló"
+msgstr "Oslo"
 
 #: data/data.cpp:204
-#, fuzzy
 msgid "Ottawa"
-msgstr "Ottawai"
+msgstr "Ottawa"
 
 #: data/data.cpp:205
-#, fuzzy
 msgid "Ouagadougou"
-msgstr "Ouagadougoui"
+msgstr "Ouagadougou"
 
 #: data/data.cpp:206
-#, fuzzy
 msgid "Pago Pago"
 msgstr "Pago Pago"
 
 #: data/data.cpp:207
-#, fuzzy
 msgid "Palikir"
 msgstr "Palikir"
 
 #: data/data.cpp:208
-#, fuzzy
 msgid "Panama"
 msgstr "Panama"
 
 #: data/data.cpp:209
-#, fuzzy
 msgid "Papeete"
 msgstr "Papeete"
 
 #: data/data.cpp:210
-#, fuzzy
 msgid "Paramaribo"
 msgstr "Paramaribo"
 
 #: data/data.cpp:211
-#, fuzzy
 msgid "Paris"
-msgstr "Párizsi"
+msgstr "Párizs"
 
 #: data/data.cpp:212
-#, fuzzy
 msgid "Phnom Penh"
 msgstr "Phnom Pénh"
 
 #: data/data.cpp:213
-#, fuzzy
 msgid "Plymouth"
 msgstr "Plymouth"
 
 #: data/data.cpp:214
-#, fuzzy
 msgid "Port Louis"
 msgstr "Port Louis"
 
 #: data/data.cpp:215
-#, fuzzy
 msgid "Port Moresby"
 msgstr "Port Moresby"
 
 #: data/data.cpp:216
-#, fuzzy
 msgid "Port-au-Prince"
 msgstr "Port-au-Prince"
 
 #: data/data.cpp:217
-#, fuzzy
 msgid "Port-of-Spain"
 msgstr "Port-of-Spain"
 
 #: data/data.cpp:218
-#, fuzzy
 msgid "Porto-Novo"
 msgstr "Porto-Novo"
 
 #: data/data.cpp:219
-#, fuzzy
 msgid "Port-Vila"
 msgstr "Port-Vila"
 
 #: data/data.cpp:220
-#, fuzzy
 msgid "Prague"
 msgstr "Prága"
 
 #: data/data.cpp:221
-#, fuzzy
 msgid "Praia"
 msgstr "Praia"
 
 #: data/data.cpp:222
-#, fuzzy
 msgid "Pretoria"
 msgstr "Pretoria"
 
 #: data/data.cpp:223
-#, fuzzy
 msgid "P'yongyang"
 msgstr "P'yongyang"
 
 #: data/data.cpp:224
-#, fuzzy
 msgid "Quito"
 msgstr "Quitó"
 
 #: data/data.cpp:225
-#, fuzzy
 msgid "Rabat"
-msgstr "Rabatba"
+msgstr "Rabat"
 
 #: data/data.cpp:226
-#, fuzzy
 msgid "Rangoon"
-msgstr "Rangoonból"
+msgstr "Rangoon"
 
 #: data/data.cpp:227
-#, fuzzy
 msgid "Reykjavik"
 msgstr "Reykjavik"
 
 #: data/data.cpp:228
-#, fuzzy
 msgid "Riga"
-msgstr "Rigai"
+msgstr "Riga"
 
 #: data/data.cpp:229
-#, fuzzy
 msgid "Riyadh"
 msgstr "Riyadh"
 
 #: data/data.cpp:230
-#, fuzzy
 msgid "Road Town"
 msgstr "Road Town"
 
 #: data/data.cpp:231
-#, fuzzy
 msgid "Rome"
-msgstr "Rómába"
+msgstr "Róma"
 
 #: data/data.cpp:232
-#, fuzzy
 msgid "Roseau"
 msgstr "Roseau"
 
 #: data/data.cpp:233
-#, fuzzy
 msgid "Saint George's"
 msgstr "Saint George's"
 
 #: data/data.cpp:234
-#, fuzzy
 msgid "Saint Helier"
 msgstr "Saint Helier"
 
 #: data/data.cpp:235
-#, fuzzy
 msgid "Saint John's"
 msgstr "Saint John's"
 
 #: data/data.cpp:236
-#, fuzzy
 msgid "Saint Peter Port"
-msgstr "Kikötői Saint Peter"
+msgstr "Saint Peter Port"
 
 #: data/data.cpp:237
-#, fuzzy
 msgid "Saint-Denis"
 msgstr "Saint-Denis"
 
 #: data/data.cpp:238
-#, fuzzy
 msgid "Saint-Pierre"
 msgstr "Saint-Pierre"
 
 #: data/data.cpp:239
-#, fuzzy
 msgid "Saipan"
 msgstr "Saipan"
 
 #: data/data.cpp:240
-#, fuzzy
 msgid "San Jose"
 msgstr "San Jose"
 
 #: data/data.cpp:241
-#, fuzzy
 msgid "San Juan"
 msgstr "San Juan"
 
 #: data/data.cpp:242
-#, fuzzy
 msgid "San Marino"
 msgstr "San Marino"
 
 #: data/data.cpp:243
-#, fuzzy
 msgid "San Salvador"
 msgstr "San Salvador"
 
 #: data/data.cpp:244
-#, fuzzy
 msgid "Sanaa"
 msgstr "Szanaa"
 
 #: data/data.cpp:245
-#, fuzzy
 msgid "Santiago"
-msgstr "Bío"
+msgstr "Santiago"
 
 #: data/data.cpp:246
-#, fuzzy
 msgid "Santo Domingo"
 msgstr "Santo Domingo"
 
 #: data/data.cpp:247
-#, fuzzy
 msgid "Sao Tome"
 msgstr "Sao Tome"
 
 #: data/data.cpp:248
-#, fuzzy
 msgid "Sarajevo"
-msgstr "Szarajevói"
+msgstr "Szarajevó"
 
 #: data/data.cpp:249
-#, fuzzy
 msgid "Seoul"
-msgstr "Szöuli"
+msgstr "Szöul"
 
 #: data/data.cpp:250
-#, fuzzy
 msgid "The Settlement"
 msgstr "The Settlement"
 
 #: data/data.cpp:251
-#, fuzzy
 msgid "Singapore"
 msgstr "Szingapúr"
 
 #: data/data.cpp:252
-#, fuzzy
 msgid "Skopje"
-msgstr "Szkopjei"
+msgstr "Szkopje"
 
 #: data/data.cpp:253
-#, fuzzy
 msgid "Sofia"
 msgstr "Szófia"
 
 #: data/data.cpp:254
-#, fuzzy
 msgid "Sri Jayewardenepura Kotte"
 msgstr "Sri Jayewardenepura Kotte"
 
 #: data/data.cpp:255
-#, fuzzy
 msgid "Stanley"
 msgstr "Stanley"
 
 #: data/data.cpp:256
-#, fuzzy
 msgid "Stockholm"
-msgstr "Stockholmi"
+msgstr "Stockholm"
 
 #: data/data.cpp:257
-#, fuzzy
 msgid "Sucre"
 msgstr "Sucre"
 
 #: data/data.cpp:258
-#, fuzzy
 msgid "Suva"
 msgstr "Suva"
 
 #: data/data.cpp:259
-#, fuzzy
 msgid "Taipei"
 msgstr "Tajvan"
 
 #: data/data.cpp:260
-#, fuzzy
 msgid "Tallinn"
-msgstr "Tallinni"
+msgstr "Tallinn"
 
 #: data/data.cpp:261
-#, fuzzy
 msgid "Tarawa"
-msgstr "Tarawa által"
+msgstr "Tarawa"
 
 #: data/data.cpp:262
-#, fuzzy
 msgid "Tashkent"
 msgstr "Taskent"
 
 #: data/data.cpp:263
-#, fuzzy
 msgid "T'bilisi"
 msgstr "Tbiliszi"
 
 #: data/data.cpp:264
-#, fuzzy
 msgid "Tegucigalpa"
 msgstr "Tegucigalpa"
 
 #: data/data.cpp:265
-#, fuzzy
 msgid "Tehran"
-msgstr "Teheránt"
+msgstr "Teherán"
 
 #: data/data.cpp:266
-#, fuzzy
 msgid "Tel Aviv"
-msgstr "Tel Aviv-Jaffa"
+msgstr "Tel Aviv"
 
 #: data/data.cpp:267
-#, fuzzy
 msgid "Thimphu"
 msgstr "Timpu"
 
 #: data/data.cpp:268
-#, fuzzy
 msgid "Tirana"
 msgstr "Tirana"
 
 #: data/data.cpp:269
-#, fuzzy
 msgid "Tokyo"
-msgstr "Tokiói"
+msgstr "Tokió"
 
 #: data/data.cpp:270
-#, fuzzy
 msgid "Torshavn"
 msgstr "Tórshavn"
 
 #: data/data.cpp:271
-#, fuzzy
 msgid "Tripoli"
 msgstr "Tripoli"
 
 #: data/data.cpp:272
-#, fuzzy
 msgid "Tunis"
-msgstr "Tunis"
+msgstr "Tunisz"
 
 #: data/data.cpp:273
-#, fuzzy
 msgid "Ulaanbaatar"
 msgstr "Ulán Bátor"
 
 #: data/data.cpp:274
-#, fuzzy
 msgid "Vaduz"
 msgstr "Vaduz"
 
 #: data/data.cpp:275
-#, fuzzy
 msgid "Valletta"
 msgstr "Valletta"
 
 #: data/data.cpp:276
-#, fuzzy
 msgid "The Valley"
 msgstr "The Valley"
 
 #: data/data.cpp:277
-#, fuzzy
 msgid "Vatican City"
 msgstr "Vatikánváros"
 
 #: data/data.cpp:278
 #: data/data.cpp:279
-#, fuzzy
 msgid "Victoria"
 msgstr "Viktória"
 
 #: data/data.cpp:280
-#, fuzzy
 msgid "Vienna"
 msgstr "Bécs"
 
 #: data/data.cpp:281
-#, fuzzy
 msgid "Vientiane"
 msgstr "Vientián"
 
 #: data/data.cpp:282
-#, fuzzy
 msgid "Vilnius"
-msgstr "Vilniusi"
+msgstr "Vilnius"
 
 #: data/data.cpp:283
-#, fuzzy
 msgid "Warsaw"
 msgstr "Varsó"
 
 #: data/data.cpp:284
-#, fuzzy
 msgid "Washington D.C."
 msgstr "Washington D. C."
 
 #: data/data.cpp:285
-#, fuzzy
 msgid "Wellington"
 msgstr "Wellington"
 
 #: data/data.cpp:286
-#, fuzzy
 msgid "West Island"
 msgstr "West Island"
 
 #: data/data.cpp:287
-#, fuzzy
 msgid "Willemstad"
 msgstr "Willemstad"
 
 #: data/data.cpp:288
-#, fuzzy
 msgid "Windhoek"
 msgstr "Windhoek"
 
 #: data/data.cpp:289
-#, fuzzy
 msgid "Yamoussoukro"
 msgstr "Yamoussoukro"
 
 #: data/data.cpp:290
-#, fuzzy
 msgid "Yaounde"
 msgstr "Yaoundé"
 
 #: data/data.cpp:291
-#, fuzzy
 msgid "Yaren District"
 msgstr "Yaren kerület"
 
 #: data/data.cpp:292
-#, fuzzy
 msgid "Yerevan"
 msgstr "Jereván"
 
 #: data/data.cpp:293
-#, fuzzy
 msgid "Zagreb"
-msgstr "Zágrábi"
+msgstr "Zágráb"
 
 #: data/data.cpp:294
 msgid "Milky Way"
@@ -4145,9 +3904,8 @@ msgid "Run &Demo"
 msgstr "&Demo futtatása"
 
 #: src/celestia/res/resource_strings.cpp:62
-#, fuzzy
 msgid "User &Guide"
-msgstr "Idegenvezetés"
+msgstr "Kezelési útmutató"
 
 #: src/celestia/res/resource_strings.cpp:63
 msgid "&Controls"
@@ -4189,7 +3947,6 @@ msgid "OK"
 msgstr "OK"
 
 #: src/celestia/res/resource_strings.cpp:70
-#, fuzzy
 msgid "Copyright (C) 2001-2009, Celestia Development Team"
 msgstr "Copyright (C) 2001-2008, Celestia Development Team"
 
@@ -4403,9 +4160,8 @@ msgid "Globulars"
 msgstr "Gömbhalmazok"
 
 #: src/celestia/res/resource_strings.cpp:162
-#, fuzzy
 msgid "Ecliptic Line"
-msgstr "Ekliptikus"
+msgstr "Ekliptikus vonal"
 
 #: src/celestia/res/resource_strings.cpp:163
 msgid "Grids"
@@ -4413,7 +4169,7 @@ msgstr "Rácsok"
 
 #: src/celestia/res/resource_strings.cpp:164
 msgid "Equatorial"
-msgstr ""
+msgstr "Egyenlítői"
 
 #: src/celestia/res/resource_strings.cpp:165
 msgid "Horizontal"
