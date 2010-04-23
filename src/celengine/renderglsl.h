@@ -17,11 +17,11 @@
 #include <Eigen/Geometry>
 
 
-void renderSphere_GLSL(const RenderInfo& ri,
+void renderEllipsoid_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
                        Atmosphere* atmosphere,
                        float cloudTexOffset,
-                       float radius,
+                       const Eigen::Vector3f& semiAxes,
                        unsigned int textureRes,
                        int renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
@@ -44,7 +44,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Texture* cloudTex,
                        Texture* cloudNormalMap,
                        float texOffset,
-                       float radius,
+                       const Eigen::Vector3f& semiAxes,
                        unsigned int textureRes,
                        int renderFlags,
                        const Eigen::Quaternionf& planetOrientation,

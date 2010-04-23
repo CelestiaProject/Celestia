@@ -3363,14 +3363,19 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
 }
 
 
-// Set GLSL shader constants for shadows from ellipsoid occluders; shadows from
-// irregular objects are not handled yet.
+/** Set GLSL shader constants for shadows from ellipsoid occluders; shadows from
+ *  irregular objects are not handled yet.
+ *  \param scaleFactors the scale factors of the object being shadowed
+ *  \param orientation orientation of the object being shadowed
+ */
 void
 CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
-                                              float planetRadius,
-                                              const Eigen::Quaternionf& planetOrientation)
+                                              const Vector3f& scaleFactors,
+                                              const Eigen::Quaternionf& orientation)
 {
-    Matrix3f planetTransform = planetOrientation.toRotationMatrix();
+    // Compute the transformation from model to world coordinates
+    Transform3f rotation(orientation.conjugate());
+    Matrix4f modelToWorld = (rotation * Scaling3f(scaleFactors)).matrix();
 
     for (unsigned int li = 0;
          li < min(ls.nLights, MaxShaderLights);
@@ -3380,6 +3385,13 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
         {
             unsigned int nShadows = min((size_t) MaxShaderEclipseShadows, ls.shadows[li]->size());
 
+            // The shadow bias matrix maps from
+            Matrix4f shadowBias;
+            shadowBias << 0.5f, 0.0f, 0.0f, 0.5f,
+                          0.0f, 0.5f, 0.0f, 0.5f,
+                          0.0f, 0.0f, 0.5f, 0.5f,
+                          0.0f, 0.0f, 0.0f, 1.0f;
+
             for (unsigned int i = 0; i < nShadows; i++)
             {
                 EclipseShadow& shadow = ls.shadows[li]->at(i);
@@ -3388,30 +3400,30 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                 // Compute shadow parameters: max depth of at the center of the shadow
                 // (always 1 if an eclipse is total) and the linear falloff
                 // rate from the center to the outer endge of the penumbra.
-                float u = shadow.umbraRadius / shadow.penumbraRadius;
-                shadowParams.falloff = -shadow.maxDepth / std::max(0.001f, 1.0f - std::fabs(u));
+                float umbra = shadow.umbraRadius / shadow.penumbraRadius;
+                shadowParams.falloff = -shadow.maxDepth / std::max(0.001f, 1.0f - std::fabs(umbra));
                 shadowParams.maxDepth = shadow.maxDepth;
 
-                // Compute the transformation to use for generating texture
-                // coordinates from the object vertices.
-                Vector3f origin = planetTransform * shadow.origin;
-                Vector3f dir    = planetTransform * shadow.direction;
-                float scale = planetRadius / shadow.penumbraRadius;
-                
-                Quaternionf shadowRotation;
-                shadowRotation.setFromTwoVectors(Vector3f::UnitY(), dir);
-                Matrix3f m = shadowRotation.toRotationMatrix();
-                Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
-                Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
+                // Compute a transformation that will rotate points in world space to shadow space
+                Vector3f u = shadow.direction.unitOrthogonal();
+                Vector3f v = u.cross(shadow.direction);
+                Matrix4f shadowRotation;
+                shadowRotation << u.transpose(),                0.0f,
+                                  v.transpose(),                0.0f,
+                                  shadow.direction.transpose(), 0.0f,
+                                  0.0f, 0.0f, 0.0f,             1.0f;
 
-                Vector4f texGenS;
-                Vector4f texGenT;
-                texGenS.start<3>() = sAxis;
-                texGenT.start<3>() = tAxis;
-                texGenS[3] = -origin.dot(sAxis) / planetRadius + 0.5f;
-                texGenT[3] = -origin.dot(tAxis) / planetRadius + 0.5f;
-                shadowParams.texGenS = texGenS;
-                shadowParams.texGenT = texGenT;
+                // Compose the world-to-shadow matrix
+                Matrix4f worldToShadow = shadowRotation *
+                                         Transform3f(Scaling3f(1.0f / shadow.penumbraRadius)).matrix() *
+                                         Transform3f(Translation3f(-shadow.origin)).matrix();
+
+                // Finally, multiply all the matrices together to get the mapping from
+                // object space to shadow map space.
+                Matrix4f m = shadowBias * worldToShadow * modelToWorld;
+
+                shadowParams.texGenS = m.row(0);
+                shadowParams.texGenT = m.row(1);
             }
         }
     }
