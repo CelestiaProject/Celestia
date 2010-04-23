@@ -210,6 +210,17 @@ Barycenter "Gliese 65:Luyten 726-8"
 	}
 }
 
+# Discovery of a very cool brown dwarf among the ten nearest stars
+# to the Solar System. Lucas et al. http://arxiv.org/abs/1004.0317
+"UGPSJ 0722-05:UGPSJ 072227.51-054031.2"
+{
+	RA 110.613750
+	Dec -5.675000
+	Distance 9.59
+	SpectralType "T9.5" # actually T10
+	AppMag 35 # for approximate radius in Celestia
+}
+
 92403 # Ross 154
 {
 	RA 282.455833
