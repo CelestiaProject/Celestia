@@ -115,6 +115,7 @@ class GLSL_RenderContext : public RenderContext
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     
     GLSL_RenderContext(const LightingState& ls, float _objRadius, const Eigen::Quaternionf& orientation);
+    GLSL_RenderContext(const LightingState& ls, const Eigen::Vector3f& _objScale, const Eigen::Quaternionf& orientation);
     virtual ~GLSL_RenderContext();
     
     virtual void makeCurrent(const cmod::Material&);
@@ -134,6 +135,7 @@ class GLSL_RenderContext : public RenderContext
     const Atmosphere* atmosphere;
     cmod::Material::BlendMode blendMode;
     float objRadius;
+    Eigen::Vector3f objScale;
     Eigen::Quaternionf objOrientation;
     
     // extended material properties

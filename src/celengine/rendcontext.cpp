@@ -549,6 +549,20 @@ GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, float _objRadius
     atmosphere(NULL),
     blendMode(Material::InvalidBlend),
     objRadius(_objRadius),
+    objScale(Vector3f::Constant(_objRadius)),
+    objOrientation(orientation),
+    lunarLambert(0.0f)
+{
+    initLightingEnvironment();
+}
+
+
+GLSL_RenderContext::GLSL_RenderContext(const LightingState& ls, const Eigen::Vector3f& _objScale, const Quaternionf& orientation) :
+    lightingState(ls),
+    atmosphere(NULL),
+    blendMode(Material::InvalidBlend),
+    objRadius(_objScale.maxCoeff()),
+    objScale(_objScale),
     objOrientation(orientation),
     lunarLambert(0.0f)
 {
@@ -749,7 +763,7 @@ GLSL_RenderContext::makeCurrent(const Material& m)
     prog->setLightParameters(lightingState, diffuse, specular, emissive);
 
     if (shaderProps.hasEclipseShadows() != 0)
-        prog->setEclipseShadowParameters(lightingState, objRadius, objOrientation);
+        prog->setEclipseShadowParameters(lightingState, objScale, objOrientation);
 
     // TODO: handle emissive color
     prog->shininess = m.specularPower;
