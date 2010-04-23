@@ -52,17 +52,19 @@ const double AtmosphereExtinctionThreshold = 0.05;
 
 
 // Render a planet sphere with GLSL shaders
-void renderSphere_GLSL(const RenderInfo& ri,
+void renderEllipsoid_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
                        Atmosphere* atmosphere,
                        float cloudTexOffset,
-                       float radius,
+                       const Vector3f& semiAxes,
                        unsigned int textureRes,
                        int renderFlags,
                        const Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context)
 {
+    float radius = semiAxes.maxCoeff();
+
     Texture* textures[MAX_SPHERE_MESH_TEXTURES] = 
         { NULL, NULL, NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
@@ -271,7 +273,7 @@ void renderSphere_GLSL(const RenderInfo& ri,
     }
 
     if (shadprop.hasEclipseShadows() != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
+        prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
 
     glColor(ri.color);
 
@@ -391,13 +393,15 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Texture* cloudTex,
                        Texture* cloudNormalMap,
                        float texOffset,
-                       float radius,
+                       const Vector3f& semiAxes,
                        unsigned int textureRes,
                        int renderFlags,
                        const Quaternionf& planetOrientation,
                        const Frustum& frustum,
                        const GLContext& context)
 {
+    float radius = semiAxes.maxCoeff();
+
     Texture* textures[MAX_SPHERE_MESH_TEXTURES] = 
         { NULL, NULL, NULL, NULL, NULL, NULL };
     unsigned int nTextures = 0;
@@ -500,7 +504,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 #endif
     
     if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, cloudRadius, planetOrientation);
+        prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
 
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != NULL)

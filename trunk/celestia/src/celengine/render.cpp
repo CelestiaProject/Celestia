@@ -7064,12 +7064,12 @@ void Renderer::renderObject(const Vector3f& pos,
             switch (context->getRenderPath())
             {
             case GLContext::GLPath_GLSL:
-                renderSphere_GLSL(ri, ls,
-                                  const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
-                                  obj.radius,
-                                  textureResolution,
-                                  renderFlags,
-                                  obj.orientation, viewFrustum, *context);
+                renderEllipsoid_GLSL(ri, ls,
+                                     const_cast<Atmosphere*>(obj.atmosphere), cloudTexOffset,
+                                     scaleFactors,
+                                     textureResolution,
+                                     renderFlags,
+                                     obj.orientation, viewFrustum, *context);
                 break;
 
             case GLContext::GLPath_NV30:
@@ -7282,7 +7282,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                       cloudTex,
                                       cloudNormalMap,
                                       cloudTexOffset,
-                                      radius,
+                                      scaleFactors,
                                       textureResolution,
                                       renderFlags,
                                       obj.orientation,
