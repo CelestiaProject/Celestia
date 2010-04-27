@@ -14,6 +14,7 @@
 #include "texmanager.h"
 #include <sstream>
 
+using namespace Eigen;
 using namespace std;
 
 
@@ -95,7 +96,7 @@ ParticleSystemLoader::load()
 VectorGenerator*
 ParticleSystemLoader::parseGenerator(Hash* params)
 {
-    Vec3f constantValue(0.0f, 0.0f, 0.0f);
+    Vector3f constantValue(0.0f, 0.0f, 0.0f);
     if (params->getVector("Constant", constantValue))
     {
         return new ConstantGenerator(constantValue);
@@ -113,8 +114,8 @@ ParticleSystemLoader::parseGenerator(Hash* params)
         
         Hash* boxParams = generatorValue->getHash();
         
-        Vec3f center(0.0f, 0.0f, 0.0f);
-        Vec3f size(0.0f, 0.0f, 0.0f);
+        Vector3f center(0.0f, 0.0f, 0.0f);
+        Vector3f size(0.0f, 0.0f, 0.0f);
         boxParams->getVector("Center", center);
         boxParams->getVector("Size", size);
         
@@ -132,8 +133,8 @@ ParticleSystemLoader::parseGenerator(Hash* params)
         
         Hash* lineParams = generatorValue->getHash();
         
-        Vec3f p0(0.0f, 0.0f, 0.0f);
-        Vec3f p1(0.0f, 0.0f, 0.0f);
+        Vector3f p0(0.0f, 0.0f, 0.0f);
+        Vector3f p1(0.0f, 0.0f, 0.0f);
         lineParams->getVector("Point1", p0);
         lineParams->getVector("Point2", p1);
         
@@ -151,8 +152,8 @@ ParticleSystemLoader::parseGenerator(Hash* params)
         
         Hash* ellipsoidSurfaceParams = generatorValue->getHash();
         
-        Vec3f center(0.0f, 0.0f, 0.0f);
-        Vec3f size(2.0f, 2.0f, 2.0f);
+        Vector3f center(0.0f, 0.0f, 0.0f);
+        Vector3f size(2.0f, 2.0f, 2.0f);
         ellipsoidSurfaceParams->getVector("Center", center);
         ellipsoidSurfaceParams->getVector("Size", size);
         
@@ -239,7 +240,7 @@ ParticleSystemLoader::parseEmitter(Hash* params)
     Value* positionValue = params->getValue("InitialPosition");
     if (positionValue == NULL)
     {
-        initialPositionGenerator = new ConstantGenerator(Vec3f(0.0f, 0.0f, 0.0f));
+        initialPositionGenerator = new ConstantGenerator(Vector3f::Zero());
     }
     else
     {
@@ -262,7 +263,7 @@ ParticleSystemLoader::parseEmitter(Hash* params)
     Value* velocityValue = params->getValue("InitialVelocity");
     if (velocityValue == NULL)
     {
-        initialVelocityGenerator = new ConstantGenerator(Vec3f(0.0f, 0.0f, 0.0f));
+        initialVelocityGenerator = new ConstantGenerator(Vector3f::Zero());
     }
     else
     {
@@ -282,7 +283,7 @@ ParticleSystemLoader::parseEmitter(Hash* params)
         return NULL;
     }
     
-    Vec3f acceleration;
+    Vector3f acceleration;
     params->getVector("Acceleration", acceleration);
     
     double startTime = -numeric_limits<double>::infinity();

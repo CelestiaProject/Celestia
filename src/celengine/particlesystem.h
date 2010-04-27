@@ -10,10 +10,14 @@
 #ifndef _CELENGINE_PARTICLESYSTEM_H_
 #define _CELENGINE_PARTICLESYSTEM_H_
 
+#include "celmodel/model.h"
+#include "celmodel/mesh.h"
+#include "celutil/color.h"
+#include "rendcontext.h"
+#include "geometry.h"
+#include <Eigen/Core>
 #include <string>
 #include <list>
-#include "model.h"
-
 
 class VectorGenerator;
 
@@ -21,7 +25,7 @@ class VectorGenerator;
 
 struct ParticleVertex
 {
-    void set(const Vec3f& _position, const Vec2f& _texCoord, const unsigned char* _color)
+    void set(const Eigen::Vector3f& _position, const Eigen::Vector2f& _texCoord, const unsigned char* _color)
     {
         position = _position;
         texCoord = _texCoord;
@@ -31,8 +35,8 @@ struct ParticleVertex
         color[Color::Alpha] = _color[Color::Alpha];
     }
     
-    Vec3f position;
-    Vec2f texCoord;
+    Eigen::Vector3f position;
+    Eigen::Vector2f texCoord;
     unsigned char color[4];
 };
 
@@ -40,17 +44,19 @@ struct ParticleVertex
 class ParticleEmitter
 {
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     ParticleEmitter();
     ~ParticleEmitter();
     
     void render(double tsec, RenderContext& rc, ParticleVertex* particleBuffer, unsigned int bufferCapacity) const;
     
-    void setAcceleration(const Vec3f& acceleration);
+    void setAcceleration(const Eigen::Vector3f& acceleration);
     void createMaterial();
     
     void setLifespan(double startTime, double endTime);
     void setRotationRateRange(float minRate, float maxRate);
-    void setBlendMode(Mesh::BlendMode blendMode);
+    void setBlendMode(cmod::Material::BlendMode blendMode);
     
 private:
     double m_startTime;
@@ -72,16 +78,16 @@ public:
     VectorGenerator* m_velocityGenerator;
     
 private:
-    Vec3f m_acceleration;
+    Eigen::Vector3f m_acceleration;
     bool m_nonZeroAcceleration;
     
     float m_minRotationRate;
     float m_rotationRateVariance;
     bool m_rotationEnabled;
     
-    Mesh::BlendMode m_blendMode;
+    cmod::Material::BlendMode m_blendMode;
     
-    Mesh::Material m_material;    
+    cmod::Material m_material;
 };
 
 
@@ -100,7 +106,7 @@ class ParticleSystem : public Geometry
  public:
     std::list<ParticleEmitter*> m_emitterList;
 
-    Mesh::VertexDescription* m_vertexDesc;
+    cmod::Mesh::VertexDescription* m_vertexDesc;
     ParticleVertex* m_vertexData;
     unsigned int m_particleCapacity;
     unsigned int m_particleCount;    
@@ -117,7 +123,7 @@ class VectorGenerator
 public:
     VectorGenerator() {};
     virtual ~VectorGenerator() {};
-    virtual Vec3f generate(LCGRandomGenerator& gen) const = 0;
+    virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const = 0;
 };
 
 
@@ -127,12 +133,12 @@ public:
 class ConstantGenerator : public VectorGenerator
 {
 public:
-    ConstantGenerator(const Vec3f& value) : m_value(value) {}
+    ConstantGenerator(const Eigen::Vector3f& value) : m_value(value) {}
     
-    virtual Vec3f generate(LCGRandomGenerator& gen) const;
+    virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
     
 private:
-    Vec3f m_value;
+    Eigen::Vector3f m_value;
 };
 
 
@@ -141,17 +147,17 @@ private:
 class BoxGenerator : public VectorGenerator
 {
 public:
-    BoxGenerator(const Vec3f& center, const Vec3f& axes) :
+    BoxGenerator(const Eigen::Vector3f& center, const Eigen::Vector3f& axes) :
         m_center(center),
         m_semiAxes(axes * 0.5f)
     {
     }
     
-    virtual Vec3f generate(LCGRandomGenerator& gen) const;
+    virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
     
 private:
-    Vec3f m_center;
-    Vec3f m_semiAxes;
+    Eigen::Vector3f m_center;
+    Eigen::Vector3f m_semiAxes;
 };
 
 
@@ -161,17 +167,17 @@ private:
 class LineGenerator : public VectorGenerator
 {
 public:
-    LineGenerator(const Vec3f& p0, const Vec3f& p1) :
+    LineGenerator(const Eigen::Vector3f& p0, const Eigen::Vector3f& p1) :
         m_origin(p0),
         m_direction(p1 - p0)
     {
     }
     
-    virtual Vec3f generate(LCGRandomGenerator& gen) const;
+    virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
     
 private:
-    Vec3f m_origin;
-    Vec3f m_direction;
+    Eigen::Vector3f m_origin;
+    Eigen::Vector3f m_direction;
 };
 
 
@@ -181,17 +187,17 @@ private:
 class EllipsoidSurfaceGenerator : public VectorGenerator
 {
 public:
-    EllipsoidSurfaceGenerator(const Vec3f& center, const Vec3f& semiAxes) :
+    EllipsoidSurfaceGenerator(const Eigen::Vector3f& center, const Eigen::Vector3f& semiAxes) :
         m_center(center),
         m_semiAxes(semiAxes)
     {
     }
     
-    virtual Vec3f generate(LCGRandomGenerator& gen) const;
+    virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
     
 private:
-    Vec3f m_center;
-    Vec3f m_semiAxes;
+    Eigen::Vector3f m_center;
+    Eigen::Vector3f m_semiAxes;
 };
 
 
@@ -209,7 +215,7 @@ public:
     {
     }
     
-    virtual Vec3f generate(LCGRandomGenerator& gen) const;
+    virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
     
 private:
     float m_cosMinAngle;
@@ -230,7 +236,7 @@ public:
     {
     }
 
-    virtual Vec3f generate(LCGRandomGenerator& gen) const;
+    virtual Eigen::Vector3f generate(LCGRandomGenerator& gen) const;
 
 private:
     float m_sigma;
