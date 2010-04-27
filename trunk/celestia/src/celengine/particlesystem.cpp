@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include "modelgeometry.h"
 #include "particlesystem.h"
 #include <GL/glew.h>
 #include "vecgl.h"
@@ -23,6 +24,8 @@
 
 #include <celutil/basictypes.h>
 
+using namespace cmod;
+using namespace Eigen;
 using namespace std;
 
 /* !!! IMPORTANT !!!
@@ -148,30 +151,30 @@ private:
 
 /**** Generator implementations ****/
 
-Vec3f
+Vector3f
 ConstantGenerator::generate(LCGRandomGenerator& /* gen */) const
 {
     return m_value;
 }
 
 
-Vec3f
+Vector3f
 BoxGenerator::generate(LCGRandomGenerator& gen) const
 {
-    return Vec3f(gen.randSfloat() * m_semiAxes.x,
-                 gen.randSfloat() * m_semiAxes.y,
-                 gen.randSfloat() * m_semiAxes.z) + m_center;
+    return Vector3f(gen.randSfloat() * m_semiAxes.x(),
+                    gen.randSfloat() * m_semiAxes.y(),
+                    gen.randSfloat() * m_semiAxes.z()) + m_center;
 }
 
 
-Vec3f
+Vector3f
 LineGenerator::generate(LCGRandomGenerator& gen) const
 {
     return m_origin + m_direction * gen.randFloat();
 }
 
 
-Vec3f 
+Vector3f
 EllipsoidSurfaceGenerator::generate(LCGRandomGenerator& gen) const
 {
     float theta = (float) PI * gen.randSfloat();
@@ -182,11 +185,11 @@ EllipsoidSurfaceGenerator::generate(LCGRandomGenerator& gen) const
     
     float s = std::sin(theta);
     float c = std::cos(theta);
-    return Vec3f(sinPhi * c * m_semiAxes.x, sinPhi * s * m_semiAxes.y, cosPhi * m_semiAxes.z) + m_center;
+    return Vector3f(sinPhi * c * m_semiAxes.x(), sinPhi * s * m_semiAxes.y(), cosPhi * m_semiAxes.z()) + m_center;
 }
 
 
-Vec3f
+Vector3f
 ConeGenerator::generate(LCGRandomGenerator& gen) const
 {
     float theta = (float) PI * gen.randSfloat();
@@ -197,12 +200,12 @@ ConeGenerator::generate(LCGRandomGenerator& gen) const
     
     float s = std::sin(theta);
     float c = std::cos(theta);
-    return Vec3f(sinPhi * c, sinPhi * s, cosPhi) * (m_minLength + gen.randFloat() * m_lengthVariance);
+    return Vector3f(sinPhi * c, sinPhi * s, cosPhi) * (m_minLength + gen.randFloat() * m_lengthVariance);
 }    
 
 
 
-Vec3f
+Vector3f
 GaussianDiscGenerator::generate(LCGRandomGenerator& gen) const
 {
     float r1 = 0.0f;
@@ -222,7 +225,7 @@ GaussianDiscGenerator::generate(LCGRandomGenerator& gen) const
     // random number.
     float r = r1 * std::sqrt(-2.0f * std::log(s) / s) * m_sigma;
     float theta = r2 * 2.0f * (float) PI;
-    return Vec3f(r * std::cos(theta), r * std::sin(theta), 0.0f);
+    return Vector3f(r * std::cos(theta), r * std::sin(theta), 0.0f);
 }
 
 
@@ -244,7 +247,7 @@ ParticleEmitter::ParticleEmitter() :
     m_minRotationRate(0.0f),
     m_rotationRateVariance(0.0f),
     m_rotationEnabled(false),
-    m_blendMode(Mesh::PremultipliedAlphaBlend)
+    m_blendMode(cmod::Material::PremultipliedAlphaBlend)
 {
 }
 
@@ -274,15 +277,15 @@ ParticleEmitter::setRotationRateRange(float minRate, float maxRate)
 
 
 void
-ParticleEmitter::setAcceleration(const Vec3f& acceleration)
+ParticleEmitter::setAcceleration(const Vector3f& acceleration)
 {
     m_acceleration = acceleration;
-    m_nonZeroAcceleration = m_acceleration != Vec3f(0.0f, 0.0f, 0.0f);
+    m_nonZeroAcceleration = m_acceleration != Vector3f::Zero();
 }
 
 
 void
-ParticleEmitter::setBlendMode(Mesh::BlendMode blendMode)
+ParticleEmitter::setBlendMode(cmod::Material::BlendMode blendMode)
 {
     m_blendMode = blendMode;
 }
@@ -317,15 +320,15 @@ ParticleEmitter::render(double tsec,
             return;
     }
     
-    Mat3f modelViewMatrix = rc.getCameraOrientation().toMatrix3();
+    Matrix3f modelViewMatrix = rc.getCameraOrientation().conjugate().toRotationMatrix();
 
     rc.setMaterial(&m_material);
-    
-    Vec3f v0 = Vec3f(-1, -1, 0) * modelViewMatrix;
-    Vec3f v1 = Vec3f( 1, -1, 0) * modelViewMatrix;
-    Vec3f v2 = Vec3f( 1,  1, 0) * modelViewMatrix;
-    Vec3f v3 = Vec3f(-1,  1, 0) * modelViewMatrix;
-    
+
+    Vector3f v0 = modelViewMatrix * Vector3f(-1.0f, -1.0f, 0.0f);
+    Vector3f v1 = modelViewMatrix * Vector3f( 1.0f, -1.0f, 0.0f);
+    Vector3f v2 = modelViewMatrix * Vector3f( 1.0f,  1.0f, 0.0f);
+    Vector3f v3 = modelViewMatrix * Vector3f(-1.0f,  1.0f, 0.0f);
+
     glDisable(GL_LIGHTING);
     
     Texture* texture = NULL;
@@ -394,7 +397,7 @@ ParticleEmitter::render(double tsec,
         // the first particle is drawn. This would entail further restrictions,
         // such as no 'branching' (variable number of calls to LCG::generate()) in
         // particle state calculation.
-        LCGRandomGenerator gen(serial * 0x128ef719 ^ scrambleMask);
+        LCGRandomGenerator gen(uint64(serial) * uint64(0x128ef719) ^ scrambleMask);
 
         // Calculate the color of the particle
         // TODO: switch to using a lookup table for color and opacity
@@ -404,17 +407,17 @@ ParticleEmitter::render(double tsec,
         color[Color::Blue]  = (unsigned char) ((alpha * endColor.z + beta * startColor.z) * 255.99f);
         color[Color::Alpha] = (unsigned char) ((alpha * endColor.w + beta * startColor.w) * 255.99f);
         
-        Vec3f v = m_velocityGenerator->generate(gen);
-        Vec3f center = m_positionGenerator->generate(gen) + v * (float) age;
+        Vector3f v = m_velocityGenerator->generate(gen);
+        Vector3f center = m_positionGenerator->generate(gen) + v * (float) age;
         if (m_nonZeroAcceleration)
             center += m_acceleration * (float) (age * age);
         
         if (!m_rotationEnabled)
         {
-            particleBuffer[particleCount * 4 + 0].set(center + v0 * size, Vec2f(0.0f, 1.0f), color);
-            particleBuffer[particleCount * 4 + 1].set(center + v1 * size, Vec2f(1.0f, 1.0f), color);
-            particleBuffer[particleCount * 4 + 2].set(center + v2 * size, Vec2f(1.0f, 0.0f), color);
-            particleBuffer[particleCount * 4 + 3].set(center + v3 * size, Vec2f(0.0f, 0.0f), color);
+            particleBuffer[particleCount * 4 + 0].set(center + v0 * size, Vector2f(0.0f, 1.0f), color);
+            particleBuffer[particleCount * 4 + 1].set(center + v1 * size, Vector2f(1.0f, 1.0f), color);
+            particleBuffer[particleCount * 4 + 2].set(center + v2 * size, Vector2f(1.0f, 0.0f), color);
+            particleBuffer[particleCount * 4 + 3].set(center + v3 * size, Vector2f(0.0f, 0.0f), color);
         }
         else
         {
@@ -423,10 +426,10 @@ ParticleEmitter::render(double tsec,
             float c = std::cos(rotation);
             float s = std::sin(rotation);
             
-            particleBuffer[particleCount * 4 + 0].set(center + (Vec3f(-c + s, -s - c, 0.0f) * modelViewMatrix) * size, Vec2f(0.0f, 1.0f), color);
-            particleBuffer[particleCount * 4 + 1].set(center + (Vec3f( c + s,  s - c, 0.0f) * modelViewMatrix) * size, Vec2f(1.0f, 1.0f), color);
-            particleBuffer[particleCount * 4 + 2].set(center + (Vec3f( c - s,  s + c, 0.0f) * modelViewMatrix) * size, Vec2f(1.0f, 0.0f), color);
-            particleBuffer[particleCount * 4 + 3].set(center + (Vec3f(-c - s, -s + c, 0.0f) * modelViewMatrix) * size, Vec2f(0.0f, 0.0f), color);
+            particleBuffer[particleCount * 4 + 0].set(center + (modelViewMatrix * Vector3f(-c + s, -s - c, 0.0f)) * size, Vector2f(0.0f, 1.0f), color);
+            particleBuffer[particleCount * 4 + 1].set(center + (modelViewMatrix * Vector3f( c + s,  s - c, 0.0f)) * size, Vector2f(1.0f, 1.0f), color);
+            particleBuffer[particleCount * 4 + 2].set(center + (modelViewMatrix * Vector3f( c - s,  s + c, 0.0f)) * size, Vector2f(1.0f, 0.0f), color);
+            particleBuffer[particleCount * 4 + 3].set(center + (modelViewMatrix * Vector3f(-c - s, -s + c, 0.0f)) * size, Vector2f(0.0f, 0.0f), color);
         }
         
         ++particleCount;
@@ -446,21 +449,21 @@ ParticleEmitter::render(double tsec,
 void
 ParticleEmitter::createMaterial()
 {
-    m_material.diffuse = Color(0.0f, 0.0f, 0.0f);
-    m_material.emissive = Color(1.0f, 1.0f, 1.0f);
+    m_material.diffuse = cmod::Material::Color(0.0f, 0.0f, 0.0f);
+    m_material.emissive = cmod::Material::Color(1.0f, 1.0f, 1.0f);
     m_material.blend = m_blendMode;
     m_material.opacity = 0.99f;
-    m_material.maps[0] = m_texture;    
+    m_material.maps[0] = new CelestiaTextureResource(m_texture);
 }    
 
 
 #define STRUCT_OFFSET(s, memberName) ((uint32) (reinterpret_cast<char*>(&(s).memberName) - reinterpret_cast<char*>(&(s))))
 
 ParticleSystem::ParticleSystem() :
+    m_vertexDesc(NULL),
     m_vertexData(NULL),
     m_particleCapacity(0),
-    m_particleCount(0),
-    m_vertexDesc(NULL)
+    m_particleCount(0)
 {
     m_particleCapacity = 1000;
     m_vertexData = new ParticleVertex[m_particleCapacity * 4];
@@ -469,7 +472,7 @@ ParticleSystem::ParticleSystem() :
     // particle systems.
     ParticleVertex temp;
     Mesh::VertexAttribute attributes[3];
-    attributes[0] = Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, STRUCT_OFFSET(temp, position));
+    attributes[0] = cmod::Mesh::VertexAttribute(Mesh::Position, Mesh::Float3, STRUCT_OFFSET(temp, position));
     attributes[1] = Mesh::VertexAttribute(Mesh::Texture0, Mesh::Float2, STRUCT_OFFSET(temp, texCoord));
     attributes[2] = Mesh::VertexAttribute(Mesh::Color0, Mesh::UByte4, STRUCT_OFFSET(temp, color));
     m_vertexDesc = new Mesh::VertexDescription(sizeof(ParticleVertex), 3, attributes);
