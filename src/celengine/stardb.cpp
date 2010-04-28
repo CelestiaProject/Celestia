@@ -867,17 +867,30 @@ bool StarDatabase::createStar(Star* star,
     double radius;
     bool hasRadius = starData->getLength("Radius", radius);
     
+    double temperature;
+    bool hasTemperature = starData->getNumber("Temperature", temperature);
+    // disallow unphysical temperature values
+    if (temperature <= 0.0)
+    {
+        hasTemperature = false;
+    }
+
+    double bolometricCorrection;
+    bool hasBolometricCorrection = starData->getNumber("BoloCorrection", bolometricCorrection);
+
     string infoURL;
     bool hasInfoURL = starData->getString("InfoURL", infoURL);
 
     Orbit* orbit = CreateOrbit(Selection(), starData, path, true);
 
-    if (hasTexture      ||
-        hasModel        ||
-        orbit != NULL   ||
-        hasSemiAxes     ||
-        hasRadius       ||
-        hasRotationModel ||
+    if (hasTexture              ||
+        hasModel                ||
+        orbit != NULL           ||
+        hasSemiAxes             ||
+        hasRadius               ||
+        hasTemperature          ||
+        hasBolometricCorrection ||
+        hasRotationModel        ||
         hasInfoURL)
     {
         // If the star definition has extended information, clone the
@@ -909,6 +922,31 @@ bool StarDatabase::createStar(Star* star,
             details->addKnowledge(StarDetails::KnowRadius);
         }
         
+        if (hasTemperature)
+        {
+            details->setTemperature((float) temperature);
+
+            if (!hasBolometricCorrection)
+            {
+                // if we change the temperature, recalculate the bolometric
+                // correction using formula from formula for main sequence
+                // stars given in B. Cameron Reed (1998), "The Composite
+                // Observational-Theoretical HR Diagram", Journal of the Royal
+                // Astronomical Society of Canada, Vol 92. p36.
+
+                double logT = log10(temperature) - 4;
+                double bc = -8.499 * pow(logT, 4) + 13.421 * pow(logT, 3)
+                            - 8.131 * logT * logT - 3.901 * logT - 0.438;
+
+                details->setBolometricCorrection((float) bc);
+            }
+        }
+
+        if (hasBolometricCorrection)
+        {
+            details->setBolometricCorrection((float) bolometricCorrection);
+        }
+
         if (hasInfoURL)
         {
             details->setInfoURL(infoURL);
