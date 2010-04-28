@@ -28,7 +28,8 @@ using namespace std;
 // as one times SOLAR_RADIUS . . .  the high metallicity of the Sun is
 // probably what accounts for the discrepancy in temperature.
 // #define SOLAR_TEMPERATURE    5780.0f
-#define SOLAR_TEMPERATURE    5860.0f
+#define SOLAR_TEMPERATURE    5780.0f
+#define SOLAR_BOLOMETRIC_MAG 4.75f
 
 // moved the following to astro.h
 // #define SOLAR_RADIUS         696000
@@ -979,7 +980,7 @@ float Star::getRadius() const
 #else
     // Calculate the luminosity of the star from the bolometric, not the
     // visual magnitude of the star.
-    float solarBMag = SOLAR_ABSMAG + bmag_correctionG[0][2];
+    float solarBMag = SOLAR_BOLOMETRIC_MAG;
     float bmag = getBolometricMagnitude();
     float boloLum = (float) exp((solarBMag - bmag) / LN_MAG);
 
