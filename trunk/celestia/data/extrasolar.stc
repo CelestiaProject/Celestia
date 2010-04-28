@@ -569,32 +569,32 @@
 	AppMag 12.7
 }
 
-# "Kepler-5"
-# {
-#	RA 299.407083
-#	Dec 44.035
-#	Distance
-#	SpectralType
-#	AppMag
-# }
+ "Kepler-5"
+ {
+	RA 299.407083
+	Dec 44.035
+	Distance 2950
+	SpectralType "F" # from temperature and magnitude
+	AbsMag 3.22
+ }
 
-# "Kepler-6"
-# {
-#	RA 296.837083
-#	Dec 48.240000
-#	Distance
-#	SpectralType
-#	AbsMag 4.1
-# }
+ "Kepler-6"
+ {
+	RA 296.837083
+	Dec 48.240000
+	Distance 2020
+	SpectralType "G" # from temperature and magnitude
+	AbsMag 4.33
+ }
 
-# "Kepler-7"
-# {
-#	RA 288.581667
-#	Dec 41.089722
-#	Distance
-#	SpectralType
-#	AbsMag 3.3
-# }
+ "Kepler-7"
+ {
+	RA 288.581667
+	Dec 41.089722
+	Distance 2700
+	SpectralType "F" # from temperature and magnitude
+	AbsMag 3.43
+ }
 
 "Kepler-8"
 {
