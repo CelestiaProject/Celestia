@@ -41,7 +41,9 @@ Barycenter "Solar System Barycenter:SSB"
 
 	SpectralType "G2V"
 	AbsMag 4.83
-
+	Temperature 5780
+	BoloCorrection -0.08
+	
 	UniformRotation
 	{
 	    Period         609.12  # 25.38 days
@@ -212,7 +214,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 
 # Discovery of a very cool brown dwarf among the ten nearest stars
 # to the Solar System. Lucas et al. http://arxiv.org/abs/1004.0317
-"UGPSJ 0722-05:UGPSJ 072227.51-054031.2"
+"UGPS J0722-05:UGPS J072227.51-054031.2"
 {
 	RA 110.613750
 	Dec -5.675000
