@@ -599,8 +599,21 @@ static bool CreateTimeline(Body* body,
     Orbit* newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
     if (newOrbit == NULL && orbit == NULL)
     {
-        clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.\n";
-        return false;
+        if (body->getTimeline() && disposition == ModifyObject)
+        {
+            // The object definition is modifying an existing object with a multiple phase
+            // timeline, but no orbit definition was given. This can happen for completely
+            // sensible reasons, such a Modify definition that just changes visual properties.
+            // Or, the definition may try to change other timeline phase properties such as
+            // the orbit frame, but without providing an orbit. In both cases, we'll just
+            // leave the original timeline alone.
+            return true;
+        }
+        else
+        {
+            clog << "No valid orbit specified for object '" << body->getName() << "'. Skipping.\n";
+            return false;
+        }
     }
 
     // If a new orbit was given, override any old orbit
