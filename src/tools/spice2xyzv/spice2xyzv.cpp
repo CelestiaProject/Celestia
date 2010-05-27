@@ -285,83 +285,6 @@ bool bodyNameToId(const std::string& name, SpiceInt* naifId)
 }
 
 
-bool convertSpkToXyzv(const Configuration& config,
-                      ostream& out)
-{
-    // Load the required SPICE kernels
-    for (vector<string>::const_iterator iter = config.kernelList.begin();
-         iter != config.kernelList.end(); iter++)
-    {
-        string pathname = config.kernelDirectory + "/" + *iter;
-        furnsh_c(pathname.c_str());
-    }
-
-    
-    double startET = 0.0;
-    double endET = 0.0;
-
-    str2et_c(config.startDate.c_str(), &startET);
-    str2et_c(config.endDate.c_str(),   &endET);
-
-    SpiceInt observerID = 0;
-    SpiceInt targetID = 0;
-    if (!bodyNameToId(config.observerName, &observerID))
-    {
-        cerr << "Observer object " << config.observerName << " not found. Aborting.\n";
-        return false;
-    }
-
-    if (!bodyNameToId(config.targetName, &targetID))
-    {
-        cerr << "Target object " << config.targetName << " not found. Aborting.\n";
-        return false;
-    }
-
-    StateVector lastState = getStateVector(targetID, startET, config.frameName, observerID);
-    double et = startET;
-
-    printRecord(out, et, lastState);
-
-    while (et + config.minStepSize < endET)
-    {
-        double dt = config.minStepSize;
-
-        StateVector s0 = getStateVector(targetID, et + dt, config.frameName, observerID);
-        double et0 = et + dt;
-
-        while (dt < config.maxStepSize && et + dt * 2.0 < endET)
-        {
-            dt *= 2.0;
-            StateVector s1 = getStateVector(targetID, et + dt, config.frameName, observerID);
-            double et1 = et + dt;
-
-            Vec3d pInterp = cubicInterpolate(lastState.position,
-                                             lastState.velocity * dt,
-                                             s1.position,
-                                             s1.velocity * dt,
-                                             0.5);
-            
-            double positionError = (pInterp - s0.position).length();
-            if (positionError > config.tolerance || dt > config.maxStepSize)
-                break;
-
-            s0 = s1;
-            et0 = et1;
-        }
-
-        lastState = s0;
-        et = et0;
-
-        printRecord(out, et0, lastState);
-    }
-
-    lastState = getStateVector(targetID, endET, config.frameName, observerID);
-    printRecord(out, endET, lastState);
-
-    return true;
-}
-
-
 // Dump information about the xyzv file in the comment header
 void writeCommentHeader(const Configuration& config,
                         ostream& out)
@@ -408,6 +331,127 @@ void writeCommentHeader(const Configuration& config,
     out << "#   Velocity in km/sec\n";
 
     out << endl;
+}
+
+
+bool convertSpkToXyzv(const Configuration& config,
+                      ostream& out)
+{
+    // Load the required SPICE kernels
+    for (vector<string>::const_iterator iter = config.kernelList.begin();
+         iter != config.kernelList.end(); iter++)
+    {
+        string pathname = config.kernelDirectory + "/" + *iter;
+        furnsh_c(pathname.c_str());
+    }
+
+    double startET = 0.0;
+    double endET = 0.0;
+
+    str2et_c(config.startDate.c_str(), &startET);
+    str2et_c(config.endDate.c_str(),   &endET);
+
+    SpiceInt observerID = 0;
+    SpiceInt targetID = 0;
+    if (!bodyNameToId(config.observerName, &observerID))
+    {
+        cerr << "Observer object " << config.observerName << " not found. Aborting.\n";
+        return false;
+    }
+
+    if (!bodyNameToId(config.targetName, &targetID))
+    {
+        cerr << "Target object " << config.targetName << " not found. Aborting.\n";
+        return false;
+    }
+
+    double startStepSize = config.minStepSize; // samplingParams.startStep;
+    double maxStepSize   = config.maxStepSize; // samplingParams.maxStep;
+    double minStepSize   = config.minStepSize; // samplingParams.minStep;
+    double tolerance     = config.tolerance;   // samplingParams.tolerance;
+    double t = startET;
+    const double stepFactor = 1.25;
+
+    StateVector lastState = getStateVector(targetID, startET, config.frameName, observerID);
+    double et = startET;
+
+    printRecord(out, et, lastState);
+
+    int sampCount = 0;
+    int nTests = 0;
+
+    while (t < endET)
+    {
+        // Make sure that we don't go past the end of the sample interval
+        maxStepSize = min(maxStepSize, endET - t);
+        double dt = min(maxStepSize, startStepSize * 2.0);
+
+        StateVector s1 = getStateVector(targetID, t + dt, config.frameName, observerID);
+
+        double tmid = t + dt / 2.0;
+        Vec3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
+        Vec3d pInterp = cubicInterpolate(lastState.position,
+                                         lastState.velocity * dt,
+                                         s1.position, 
+                                         s1.velocity * dt,
+                                         0.5);
+        nTests++;
+
+        double positionError = (pInterp - pTest).length();
+
+        // Error is greater than tolerance; decrease the step until the
+        // error is within the tolerance.
+        if (positionError > tolerance)
+        {
+            while (positionError > tolerance && dt > minStepSize)
+            {
+                dt /= stepFactor;
+
+                s1 = getStateVector(targetID, t + dt, config.frameName, observerID);
+
+                tmid = t + dt / 2.0;
+                Vec3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
+                pInterp = cubicInterpolate(lastState.position,
+                                           lastState.velocity * dt,
+                                           s1.position,
+                                           s1.velocity * dt,
+                                           0.5);
+                nTests++;
+
+                positionError = (pInterp - pTest).length();
+            }
+        }
+        else
+        {
+            // Error is less than the tolerance; increase the step size until
+            // the tolerance is just exceeded.
+            while (positionError < tolerance && dt < maxStepSize)
+            {
+                dt *= stepFactor;
+                dt = min(maxStepSize, dt);
+
+                s1 = getStateVector(targetID, t + dt, config.frameName, observerID);
+
+                tmid = t + dt / 2.0;
+                Vec3d pTest = getStateVector(targetID, tmid, config.frameName, observerID).position;
+                pInterp = cubicInterpolate(lastState.position,
+                                           lastState.velocity * dt,
+                                           s1.position,
+                                           s1.velocity * dt,
+                                           0.5);
+
+                nTests++;
+
+                positionError = (pInterp - pTest).length();
+            }
+        }
+    
+        t = t + dt;
+        lastState = s1;
+
+        printRecord(out, t, lastState);
+        sampCount++;
+    }
 }
 
 
