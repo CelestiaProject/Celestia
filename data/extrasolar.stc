@@ -274,6 +274,26 @@
 	AppMag 9.98
 }
 
+"HAT-P-15:GSC 02883-01687"
+{
+	RA 66.250000
+	Dec 39.460556
+	Distance 620
+	SpectralType "G5"
+	AppMag 12.16
+	Radius 746000
+}
+
+1017002792 "HAT-P-16:GSC 02792-01700"
+{
+	RA 9.573333
+	Dec 42.463056
+	Distance 766
+	SpectralType "F8"
+	AppMag 10.7
+}
+
+
 # WASP survey
 
 "WASP-1"
@@ -1087,43 +1107,43 @@ Barycenter 62157 "HW Vir"
 
 # O'Donoghue et al. "The DA+dMe eclipsing binary EC13471-1258: its cup runneth over ... just"
 # http://fr.arxiv.org/abs/astro-ph/0307144
-Barycenter "QS Vir"
-{
-	RA 207.466458
-	Dec -13.227083
-	Distance 156
-}
-
-"QS Vir A"
-{
-	OrbitBarycenter "QS Vir"
-	SpectralType "DA"
-	Radius 7650
-	AbsMag 10.71
-
-	EllipticalOrbit {
-		Period		0.000385 # 3.37 hours
-		SemiMajorAxis	0.0020   # mass ratio 0.78:0.43
-		Inclination     110      #
-		AscendingNode   194      # inclination to plane of sky 75.5 deg.
-	}
-}
-
-"QS Vir B"
-{
-	OrbitBarycenter "QS Vir"
-	SpectralType "M3.5V"
-	Radius 292300
-	AbsMag 9.36
-
-	EllipticalOrbit {
-		Period		0.000385 # 3.37 hours
-		SemiMajorAxis	0.0036   # mass ratio 0.78:0.43
-		Inclination     110      #
-		AscendingNode   194      # inclination to plane of sky 75.5 deg.
-		ArgOfPericenter 180
-	}
-}
+#Barycenter "QS Vir"
+#{
+#	RA 207.466458
+#	Dec -13.227083
+#	Distance 156
+#}
+#
+#"QS Vir A"
+#{
+#	OrbitBarycenter "QS Vir"
+#	SpectralType "DA"
+#	Radius 7650
+#	AbsMag 10.71
+#
+#	EllipticalOrbit {
+#		Period		0.000385 # 3.37 hours
+#		SemiMajorAxis	0.0020   # mass ratio 0.78:0.43
+#		Inclination     110      #
+#		AscendingNode   194      # inclination to plane of sky 75.5 deg.
+#	}
+#}
+#
+#"QS Vir B"
+#{
+#	OrbitBarycenter "QS Vir"
+#	SpectralType "M3.5V"
+#	Radius 292300
+#	AbsMag 9.36
+#
+#	EllipticalOrbit {
+#		Period		0.000385 # 3.37 hours
+#		SemiMajorAxis	0.0036   # mass ratio 0.78:0.43
+#		Inclination     110      #
+#		AscendingNode   194      # inclination to plane of sky 75.5 deg.
+#		ArgOfPericenter 180
+#	}
+#}
 
 
 Barycenter "DP Leo"
