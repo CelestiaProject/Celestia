@@ -1158,7 +1158,7 @@
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1.5
+	Radius		1.6
 
 	EllipticalOrbit
 	{
@@ -1181,7 +1181,7 @@
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		2
+	Radius		2.2
 
 	EllipticalOrbit
 	{
@@ -1825,7 +1825,7 @@
 	Class "minormoon"
 	Texture "asteroid.jpg"
 	Mesh    "asteroid.cms"
-	Radius 0.5
+	Radius 1.1
 
 	EllipticalOrbit
 	{
@@ -1842,13 +1842,13 @@
 }
 
 # Hedman et al. "Aegaeon (Saturn LIII), a G-ring object"
-# (http://arxiv.org/abs/0911.0171)
+# Icarus 2010;207: 433-447
 "Aegaeon:Saturn LIII:2008 S 1" "Sol/Saturn"
 {
 	Class "minormoon"
 	Texture	"asteroid.jpg"
 	Mesh    "asteroid.cms"
-	Radius 0.25
+	Radius 0.24
 
 	EllipticalOrbit
 	{
