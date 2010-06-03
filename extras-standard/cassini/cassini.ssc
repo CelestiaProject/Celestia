@@ -28,12 +28,23 @@
         FixedRotation { Inclination 70 AscendingNode -90 }
     }
 
-    # Phase 2: Saturn orbit
+    # Phase 2: Saturn orbit (primary and equinox missions)
     {
-        #Ending    "2010  7 21 12:00:00"
+        Ending    "2010  6 20 12:00:00"
 
         OrbitFrame { EclipticJ2000 { Center "Sol/Saturn" } }
         SampledTrajectory { Source "cassini-orbit.xyzv" }
+        FixedRotation { Inclination 70 AscendingNode -90 }
+    }
+
+    # Phase 3: Solstice mission
+    {
+        # SPICE kernel continues until 21 Sep 2017, but the trajectory
+        # shows Cassini entering Saturn's atmosphere on 15 Sep.
+        Ending    "2017  9 15 17:02:00"
+
+        OrbitFrame { EclipticJ2000 { Center "Sol/Saturn" } }
+        SampledTrajectory { Source "cassini-solstice.xyzv" }
         FixedRotation { Inclination 70 AscendingNode -90 }
     }
 
