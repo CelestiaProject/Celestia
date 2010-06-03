@@ -12,7 +12,7 @@ AppSupportURL=http://www.shatters.net/celestia/
 AppUpdatesURL=http://www.shatters.net/celestia/
 DefaultDirName={pf}\Celestia
 DefaultGroupName=Celestia
-LicenseFile=C:\celestia\celestia\COPYING
+LicenseFile=COPYING
 Compression=lzma/max
 UninstallDisplayIcon={app}\celestia.exe
 WizardImageFile=win32-installer-image.bmp
@@ -603,6 +603,7 @@ Source: "extras-standard\cassini\models\cassini.3ds"; DestDir: "{app}/extras-sta
 Source: "extras-standard\cassini\models\huygens.3ds"; DestDir: "{app}/extras-standard/cassini/models"; Flags: ignoreversion
 Source: "extras-standard\cassini\data\cassini-cruise.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
 Source: "extras-standard\cassini\data\cassini-orbit.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "extras-standard\cassini\data\cassini-solstice.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
 Source: "extras-standard\cassini\data\huygens.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
 
 Source: "extras-standard\galileo\galileo.ssc"; DestDir: "{app}/extras-standard/galileo"; Flags: ignoreversion
@@ -676,4 +677,5 @@ Filename: "{app}\celestia.exe"; Description: "Launch Celestia"; Flags: nowait po
 
 [UninstallDelete]
 Type: files; Name: "{app}\celestia.url"
+
 
