@@ -569,6 +569,15 @@
 	AppMag 11.73
 }
 
+"CoRoT-8"
+{
+	RA 291.588333
+	Dec 1.426389
+	Distance 1240
+	SpectralType "K1V"
+	AppMag 14.8
+}
+
 "CoRoT-9"
 {
 	RA 280.786667
@@ -577,6 +586,52 @@
 	SpectralType "G3V"
 	AppMag 13.7
 }
+
+"CoRoT-10"
+{
+	RA 291.063750
+	Dec 0.746111
+	Distance 1120
+	SpectralType "K1V"
+	AppMag 15.22
+}
+
+"CoRoT-11"
+{
+	RA 280.687083
+	Dec 5.937778
+	Distance 1830
+	SpectralType "F6V"
+	AppMag 12.94
+}
+
+"CoRoT-12"
+{
+	RA 100.765833
+	Dec -1.296389
+	Distance 3750
+	SpectralType "G2V"
+	AppMag 15.52
+}
+
+"CoRoT-13"
+{
+	RA 102.721250
+	Dec -5.086389
+	Distance 4270
+	SpectralType "G0V"
+	AppMag 15.04
+}
+
+"CoRoT-14"
+{
+	RA 103.425000
+	Dec -5.536111
+	Distance 7520 # from spectral class and magnitude
+	SpectralType "F9V"
+	AppMag 16.03
+}
+
 
 # Kepler survey
 
@@ -701,14 +756,14 @@
 	AppMag 12.0
 }
 
-"Cha H\u03b1 8:Cha Ha 8"
-{
-	RA 166.949167
-	Dec -77.668889
-	Distance 520
-	SpectralType "M6.5V"
-	AppMag 20.1
-}
+#"Cha H\u03b1 8:Cha Ha 8"
+#{
+#	RA 166.949167
+#	Dec -77.668889
+#	Distance 520
+#	SpectralType "M6.5V"
+#	AppMag 20.1
+#}
 
 "V391 Peg"
 {
