@@ -78,7 +78,6 @@ static Vector3f RayleighScatteringCoeff(float n, float N)
 }
 
 
-
 class Atmosphere
 {
 public:
@@ -171,7 +170,14 @@ static inline float toMu(float u)
 // Map a unorm to the cosine of the sun angle
 static inline float toMuS(float u)
 {
-    return (-1.0f / 3.0f) * (log(1.0f - u * (1.0f - exp(-3.6f))) + 0.6f);
+    // Original version from Bruneton paper:
+    //return (-1.0f / 3.0f) * (log(1.0f - u * (1.0f - exp(-3.6f))) + 0.6f);
+
+    // Modifier version has a wider range, allowing more negative angles. This
+    // eliminates the faint but persistent illumination that appears even
+    // when the sun is far below the horizon. Even the adjusted function may
+    // still not be adequate when very large scale heights are used.
+    return (-1.0f / 2.0f) * (log(1.0f - u * (1.0f - exp(-2.6f))) + 0.6f);
 }
 
 
@@ -347,6 +353,12 @@ Atmosphere::computeInscatterTable() const
                 unsigned int index = (i * ViewAngleSamples + j) * SunAngleSamples + k;
                 inscatter[index] << rayleigh.cwise() * rayleighCoeff,
                                     mie * mieCoeff;
+                if (i == HeightSamples - 1 && k == 0)
+                {
+                    cout << acos(muS) * 180.0/M_PI << ", "
+                         << acos(mu) * 180.0/M_PI << ", "
+                         << inscatter[index].transpose() << endl;
+                }
 
 #if 0
                 // Emit warnings about NaNs in scatter table
@@ -537,6 +549,7 @@ bool parseCommandLine(int argc, char* argv[])
 
 
 typedef unsigned int uint32;
+typedef unsigned short uint16;
 
 union Uint32
 {
@@ -548,6 +561,210 @@ union Float
 {
     char bytes[4];
     float f;
+};
+
+union FloatInt
+{
+    float f;
+    uint32 u;
+};
+
+
+// Convert a single precision floating point value to half precision
+uint16 floatToHalf(float f)
+{
+    FloatInt fi;
+    fi.f = f;
+
+    uint16 half = 0;
+
+    uint16 signBit = uint16((fi.u & 0x80000000) >> 16);
+
+    if (f > 65504.0f)
+    {
+        // overflow
+        return 0x7c00;
+    }
+    else if (f < -65504.0f)
+    {
+        // overflow
+        return 0xfc00;
+    }
+
+    int exponent = int((fi.u >> 23) & 0xff) - 127 + 15;
+    uint32 significand = fi.u & 0x007fffff;
+
+    if (exponent < -9)
+    {
+        // Value is too small even to represent as a subnormal
+        return signBit;
+    }
+    else if (exponent <= 0)
+    {
+        // Convert to a subnormal
+        return signBit + (significand >> (13 - exponent));
+    }
+    else if (exponent + 127 - 15 == 0xff)
+    {
+        // Special values: infinities and NaNs
+        if (significand == 0)
+        {
+            // Infinity
+            return signBit + 0x7c00;
+        }
+        else
+        {
+            // NaN - preserve bits, but make sure that we don't
+            // make the significand zero, as that would indicate
+            // an infinity, not a NaN
+            uint16 nanBits = uint16(significand >> 13);
+            if (nanBits == 0)
+            {
+                nanBits = 1;
+            }
+            return signBit + 0x7c00 + nanBits;
+        }
+    }
+    else if (exponent > 30)
+    {
+        // Overflow; return infinity
+        return signBit + 0x7c00;
+    }
+    else
+    {
+        // Normal value
+        return signBit + (exponent << 10) +
+               ((significand + 0x00001000) >> 13); // round
+    }
+}
+
+
+struct DDSPixelFormat
+{
+    DDSPixelFormat() :
+        dwSize(0),
+        dwFlags(0),
+        dwFourCC(0),
+        dwRGBBitCount(0),
+        dwRBitMask(0),
+        dwGBitMask(0),
+        dwBBitMask(0),
+        dwABitMask(0)
+    {
+    }
+
+    uint32 dwSize;
+    uint32 dwFlags;
+    uint32 dwFourCC;
+    uint32 dwRGBBitCount;
+    uint32 dwRBitMask;
+    uint32 dwGBitMask;
+    uint32 dwBBitMask;
+    uint32 dwABitMask;
+};
+
+
+// Header for Microsoft DDS file format
+struct DDSHeader
+{
+    DDSHeader() :
+        dwSize(sizeof(DDSHeader)),
+        dwFlags(DDSD_PIXELFORMAT),
+        dwHeight(0),
+        dwWidth(0),
+        dwLinearSize(0),
+        dwDepth(0),
+        dwMipMapCount(0),
+        dwCaps(0),
+        dwCaps2(0),
+        dwCaps3(0),
+        dwCaps4(0),
+        dwReserved2(0)
+    {
+        for (unsigned int i = 0; i < sizeof(dwReserved1) / sizeof(uint32); i++)
+        {
+            dwReserved1[i] = 0;
+        }
+    }
+
+    static const uint32 CAPS_COMPLEX = 0x000008;
+    static const uint32 CAPS_MIPMAP  = 0x400000;
+    static const uint32 CAPS_TEXTURE = 0x001000;
+
+    static const uint32 CAPS2_VOLUME = 0x200000;
+    static const uint32 CAPS2_CUBEMAP = 0x00000200;
+    static const uint32 CAPS2_CUBEMAP_POSITIVEX = 0x00000400;
+    static const uint32 CAPS2_CUBEMAP_NEGATIVEX = 0x00000800;
+    static const uint32 CAPS2_CUBEMAP_POSITIVEY = 0x00001000;
+    static const uint32 CAPS2_CUBEMAP_NEGATIVEY = 0x00002000;
+    static const uint32 CAPS2_CUBEMAP_POSITIVEZ = 0x00004000;
+    static const uint32 CAPS2_CUBEMAP_NEGATIVEZ = 0x00008000;
+
+    static const uint32 DDSD_CAPS      = 0x1;
+    static const uint32 DDSD_HEIGHT    = 0x2;
+    static const uint32 DDSD_WIDTH     = 0x4;
+    static const uint32 DDSD_PITCH     = 0x8;
+    static const uint32 DDSD_PIXELFORMAT = 0x1000;
+    static const uint32 DDSD_MIPMAPCOUNT = 0x20000;
+    static const uint32 DDSD_LINEARSIZE  = 0x80000;
+    static const uint32 DDSD_DEPTH       = 0x800000;
+
+    static const uint32 D3DFMT_A16B16G16R16 =   36;
+    static const uint32 D3DFMT_A16B16G16R16F = 113;
+    static const uint32 D3DFMT_DXT1 = 0x31545844;
+    static const uint32 D3DFMT_DXT3 = 0x33545844;
+    static const uint32 D3DFMT_DXT5 = 0x35545844;
+
+    static const uint32 FOURCC      = 0x04;
+
+    uint32          dwSize;
+    uint32          dwFlags;
+    uint32          dwHeight;
+    uint32          dwWidth;
+    uint32          dwLinearSize;
+    uint32          dwDepth;
+    uint32          dwMipMapCount;
+    uint32          dwReserved1[11];
+    DDSPixelFormat  ddpf;
+    uint32          dwCaps;
+    uint32          dwCaps2;
+    uint32          dwCaps3;
+    uint32          dwCaps4;
+    uint32          dwReserved2;
+
+    void setTexture()
+    {
+        dwCaps |= CAPS_TEXTURE;
+    }
+
+    void setFourCC(uint32 fcc)
+    {
+        dwFlags |= FOURCC;
+        ddpf.dwFourCC = fcc;
+    }
+
+    void setMipMapLevels(uint32 levels)
+    {
+        dwCaps |= (CAPS_COMPLEX | CAPS_MIPMAP);
+        dwFlags |= DDSD_MIPMAPCOUNT;
+        dwMipMapCount = levels;
+    }
+
+    void setDimensions(uint32 width, uint32 height)
+    {
+        dwFlags |= (DDSD_WIDTH | DDSD_HEIGHT);
+        dwWidth = width;
+        dwHeight = height;
+    }
+
+    void setVolumeDimensions(uint32 width, uint32 height, uint32 depth)
+    {
+        dwCaps |= CAPS_COMPLEX;
+        dwFlags |= (DDSD_WIDTH | DDSD_HEIGHT | DDSD_DEPTH);
+        dwWidth = width;
+        dwHeight = height;
+        dwDepth = depth;
+    }
 };
 
 static bool ByteSwapRequired = false;
@@ -593,6 +810,61 @@ static void WriteFloat(ostream& out, float f)
 }
 
 
+void WriteDDSHeader(ostream& out, const DDSHeader& dds)
+{
+    WriteUint32(out, dds.dwSize);
+    WriteUint32(out, dds.dwFlags);
+    WriteUint32(out, dds.dwHeight);
+    WriteUint32(out, dds.dwWidth);
+    WriteUint32(out, dds.dwLinearSize);
+    WriteUint32(out, dds.dwDepth);
+    WriteUint32(out, dds.dwMipMapCount);
+    for (unsigned int i = 0; i < sizeof(dds.dwReserved1) / sizeof(uint32); i++)
+    {
+        WriteUint32(out, dds.dwReserved1[i]);
+    }
+
+    WriteUint32(out, dds.ddpf.dwSize);
+    WriteUint32(out, dds.ddpf.dwFlags);
+    WriteUint32(out, dds.ddpf.dwFourCC);
+    WriteUint32(out, dds.ddpf.dwRGBBitCount);
+    WriteUint32(out, dds.ddpf.dwRBitMask);
+    WriteUint32(out, dds.ddpf.dwGBitMask);
+    WriteUint32(out, dds.ddpf.dwBBitMask);
+    WriteUint32(out, dds.ddpf.dwABitMask);
+
+    WriteUint32(out, dds.dwCaps);
+    WriteUint32(out, dds.dwCaps2);
+    WriteUint32(out, dds.dwCaps3);
+    WriteUint32(out, dds.dwCaps4);
+    WriteUint32(out, dds.dwReserved2);
+}
+
+
+static void WriteScatterTableDDS(ostream& out, Vector4f* inscatterTable)
+{
+    DDSHeader dds;
+    dds.setTexture();
+    dds.setFourCC(DDSHeader::D3DFMT_A16B16G16R16F);
+    dds.setVolumeDimensions(SunAngleSamples, ViewAngleSamples, HeightSamples);
+    //dds.setMipMapLevels();
+}
+
+
+
+#if TEST_FLOAT_TO_HALF
+int main(void)
+{
+    while (cin.good())
+    {
+        float f = 0.0f;
+        cin >> f;
+        cout << hex << floatToHalf(f) << endl;
+    }
+    return 0;
+}
+#endif
+
 int main(int argc, char* argv[])
 {
     bool commandLineOK = parseCommandLine(argc, argv);
@@ -634,6 +906,7 @@ int main(int argc, char* argv[])
     
     ofstream out(OutputFileName.c_str(), ostream::binary);
 
+    
     // Table dimensions
     WriteUint32(out, ViewAngleSamples);
     WriteUint32(out, HeightSamples);
