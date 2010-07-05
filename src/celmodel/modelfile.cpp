@@ -1410,7 +1410,11 @@ AsciiModelWriter::writeGroup(const Mesh::PrimitiveGroup& group)
         return;
     }
 
-    out << ' ' << group.materialIndex << ' ' << group.nIndices << '\n';
+    if (group.materialIndex == ~0u)
+        out << " -1";
+    else
+        out << ' ' << group.materialIndex;
+    out << ' ' << group.nIndices << '\n';
 
     // Print the indices, twelve per line
     for (unsigned int i = 0; i < group.nIndices; i++)
