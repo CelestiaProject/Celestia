@@ -32,14 +32,8 @@ class Model
     Model();
     ~Model();
 
-    /*! Return the material with the specified index, or NULL if
-     *  the index is out of range.
-     */
     const Material* getMaterial(unsigned int index) const;
-
-    /*! Add a new material to the model's material library; the
-     *  return value is the number of materials in the model.
-     */
+    void setMaterial(unsigned int index, const Material* material);
     unsigned int addMaterial(const Material* material);
 
     /*! Return the number of materials in the model
