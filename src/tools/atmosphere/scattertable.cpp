@@ -551,6 +551,12 @@ bool parseCommandLine(int argc, char* argv[])
 typedef unsigned int uint32;
 typedef unsigned short uint16;
 
+union Uint16
+{
+    char bytes[2];
+    uint16 u;
+};
+
 union Uint32
 {
     char bytes[4];
@@ -776,7 +782,23 @@ static bool IsLittleEndian()
 }
 
 
-// Write out a 32-bit unsigned integer in little-endian format
+// Write out a 16-bit unsigned integer in little-endian order
+static void WriteUint16(ostream& out, uint16 u)
+{
+    assert(sizeof(u) == 2);
+
+    Uint16 ub;
+    ub.u = u;
+    if (ByteSwapRequired)
+    {
+        swap(ub.bytes[0], ub.bytes[1]);
+    }
+
+    out.write(ub.bytes, sizeof(ub.bytes));
+}
+
+
+// Write out a 32-bit unsigned integer in little-endian order
 static void WriteUint32(ostream& out, uint32 u)
 {
     assert(sizeof(u) == 4);
@@ -807,6 +829,14 @@ static void WriteFloat(ostream& out, float f)
     }
 
     out.write(ub.bytes, sizeof(ub.bytes));
+}
+
+
+// Convert a single precision floating point value to half precision
+// and write it out.
+static void WriteHalfFloat(ostream& out, float f)
+{
+    WriteUint16(out, floatToHalf(f));
 }
 
 
@@ -841,13 +871,47 @@ void WriteDDSHeader(ostream& out, const DDSHeader& dds)
 }
 
 
-static void WriteScatterTableDDS(ostream& out, Vector4f* inscatterTable)
+static void WriteInscatterTableDDS(ostream& out, Vector4f* inscatterTable)
 {
     DDSHeader dds;
     dds.setTexture();
     dds.setFourCC(DDSHeader::D3DFMT_A16B16G16R16F);
     dds.setVolumeDimensions(SunAngleSamples, ViewAngleSamples, HeightSamples);
     //dds.setMipMapLevels();
+
+    WriteDDSHeader(out, dds);
+
+    unsigned int sampleCount = SunAngleSamples * ViewAngleSamples * HeightSamples;
+    for (unsigned int i = 0; i < sampleCount; ++i)
+    {
+        const Vector4f& v = inscatterTable[i];
+        WriteHalfFloat(out, v.x());
+        WriteHalfFloat(out, v.y());
+        WriteHalfFloat(out, v.z());
+        WriteHalfFloat(out, v.w());
+    }
+}
+
+
+static void WriteTransmittanceTableDDS(ostream& out, Vector3f* transmittanceTable)
+{
+    DDSHeader dds;
+    dds.setTexture();
+    dds.setFourCC(DDSHeader::D3DFMT_A16B16G16R16F);
+    dds.setDimensions(ViewAngleSamples, HeightSamples);
+    //dds.setMipMapLevels();
+
+    WriteDDSHeader(out, dds);
+    
+    unsigned int sampleCount = ViewAngleSamples * HeightSamples;
+    for (unsigned int i = 0; i < sampleCount; ++i)
+    {
+        const Vector3f& v = transmittanceTable[i];
+        WriteHalfFloat(out, v.x());
+        WriteHalfFloat(out, v.y());
+        WriteHalfFloat(out, v.z());
+        WriteHalfFloat(out, 0.0f);
+    }
 }
 
 
@@ -904,12 +968,34 @@ int main(int argc, char* argv[])
 
     ByteSwapRequired = !IsLittleEndian();
     
+#if 0
+    // Write tables in a single file
     ofstream out(OutputFileName.c_str(), ostream::binary);
 
-    
-    // Table dimensions
+    // Header
+    out.write("atmscatr", 8);
+
+    // Version
+    WriteUint32(out, 1u);
+
+    // Scattering parameters
+    WriteFloat(out, atmosphere.rayleighScaleHeight);
+    WriteFloat(out, atmosphere.rayleighCoeff.x());
+    WriteFloat(out, atmosphere.rayleighCoeff.y());
+    WriteFloat(out, atmosphere.rayleighCoeff.z());
+    WriteFloat(out, atmosphere.mieScaleHeight);
+    WriteFloat(out, atmosphere.mieCoeff);
+    WriteFloat(out, atmosphere.mieAsymmetry);
+    WriteFloat(out, atmosphere.absorptionCoeff.x());
+    WriteFloat(out, atmosphere.absorptionCoeff.y());
+    WriteFloat(out, atmosphere.absorptionCoeff.z());
+    WriteFloat(out, atmosphere.planetRadius);
+
+    // Transmittance table dimensions
     WriteUint32(out, ViewAngleSamples);
     WriteUint32(out, HeightSamples);
+
+    // Inscatter table dimensions
     WriteUint32(out, SunAngleSamples);
     WriteUint32(out, ViewAngleSamples);
     WriteUint32(out, HeightSamples);
@@ -936,6 +1022,16 @@ int main(int argc, char* argv[])
     }
 
     out.close();
+#else
+    // Write tables as separate DDS files
+    ofstream transmittanceOut("transmittance.dds", ostream::binary);
+    WriteTransmittanceTableDDS(transmittanceOut, transmittanceTable);
+    transmittanceOut.close();
+
+    ofstream inscatterOut("inscatter.dds", ostream::binary);
+    WriteInscatterTableDDS(inscatterOut, inscatterTable);
+    inscatterOut.close();
+#endif
 
     return 0;
 }
