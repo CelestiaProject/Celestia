@@ -33,11 +33,11 @@ using namespace std;
 
 /**
  * Returns the default units scale for orbits.
- *
+ * 
  * If the usePlanetUnits flag is set, this returns a distance scale of AU and a
  * time scale of years. Otherwise the distace scale is kilometers and the time
  * scale is days.
- *
+ * 
  * @param[in] usePlanetUnits Controls whether to return planet units or satellite units.
  * @param[out] distanceScale The default distance scale in kilometers.
  * @param[out] timeScale The default time scale in days.
@@ -60,10 +60,10 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale, double& timeScale)
 
 /**
  * Returns the default distance scale for orbits.
- *
+ * 
  * If the usePlanetUnits flag is set, this returns AU, otherwise it returns
  * kilometers.
- *
+ * 
  * @param[in] usePlanetUnits Controls whether to return planet units or satellite units.
  * @param[out] distanceScale The default distance scale in kilometers.
  */
@@ -98,7 +98,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
 
 /*!
  * Create a new Keplerian orbit from an ssc property table:
- *
+ * 
  * \code EllipticalOrbit
  * {
  *     # One of the following is required to specify orbit size:
@@ -107,7 +107,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
  *
  *     # Required
  *     Period <number>
- *
+ *     
  *     Eccentricity <number>   (default: 0.0)
  *     Inclination <degrees>   (default: 0.0)
  *     AscendingNode <degrees> (default: 0.0)
@@ -128,7 +128,7 @@ ParseDate(Hash* hash, const string& name, double& jd)
  *     SemiMajorAxis or PericenterDistance is in AU
  * Otherwise:
  *     Period is in Julian days
- *     SemiMajorAxis or PericenterDistance is in kilometers.
+ *     SemiMajorAxis or PericenterDistance is in kilometers.    
  */
 static EllipticalOrbit*
 CreateEllipticalOrbit(Hash* orbitData,
@@ -136,7 +136,7 @@ CreateEllipticalOrbit(Hash* orbitData,
 {
 
     // default units for planets are AU and years, otherwise km and days
-
+    
     double distanceScale;
     double timeScale;
     GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
@@ -153,23 +153,23 @@ CreateEllipticalOrbit(Hash* orbitData,
             return NULL;
         }
     }
-
+    
     double period = 0.0;
     if (!orbitData->getTime("Period", period, 1.0, timeScale))
     {
         clog << "Period missing!  Skipping planet . . .\n";
         return NULL;
     }
-
+    
     double eccentricity = 0.0;
     orbitData->getNumber("Eccentricity", eccentricity);
 
     double inclination = 0.0;
     orbitData->getAngle("Inclination", inclination);
-
+    
     double ascendingNode = 0.0;
     orbitData->getAngle("AscendingNode", ascendingNode);
-
+    
     double argOfPericenter = 0.0;
     if (!orbitData->getAngle("ArgOfPericenter", argOfPericenter))
     {
@@ -266,13 +266,13 @@ CreateSampledTrajectory(Hash* trajData, const string& path)
 
 
 /** Create a new FixedPosition trajectory.
- *
+ * 
  * A FixedPosition is a property list with one of the following 3-vector properties:
- *
+ * 
  * - \c Rectangular
  * - \c Planetographic
  * - \c Planetocentric
- *
+ * 
  * Planetographic and planetocentric coordinates are given in the order longitude,
  * latitude, altitude. Units of altitude are kilometers. Planetographic and
  * and planetocentric coordinates are only practical when the coordinate system
@@ -283,10 +283,10 @@ CreateFixedPosition(Hash* trajData, const Selection& centralObject, bool usePlan
 {
     double distanceScale;
     GetDefaultUnits(usePlanetUnits, distanceScale);
-
+    
     Vector3d position = Vector3d::Zero();
 
-    Vector3d v = Vector3d::Zero();
+    Vector3d v = Vector3d::Zero();    
     if (trajData->getLengthVector("Rectangular", v, 1.0, distanceScale))
     {
         // Convert to Celestia's coordinate system
@@ -384,7 +384,7 @@ ParseStringList(Hash* table,
  *      Ending <number>                # optional
  *  } \endcode
  *
- *  The Kernel property specifies one or more SPK files that must be loaded. Any
+ *  The Kernel property specifies one or more SPK files that must be loaded. Any 
  *  already loaded kernels will also be used if they contain trajectories for
  *  the target or origin.
  *  Target and origin are strings that give NAIF IDs for the target and origin
@@ -409,9 +409,9 @@ CreateSpiceOrbit(Hash* orbitData,
 	list<string> kernelList;
     double distanceScale;
     double timeScale;
-
+    
     GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
-
+    
 	if (orbitData->getValue("Kernel") != NULL)
 	{
 		// Kernel list is optional; a SPICE orbit may rely on kernels already loaded into
@@ -481,7 +481,7 @@ CreateSpiceOrbit(Hash* orbitData,
 			clog << "Invalid ending date specified for SPICE orbit.\n";
 			return NULL;
 		}
-
+	
 		orbit = new SpiceOrbit(targetBodyName,
 							   originName,
 							   period,
@@ -524,7 +524,7 @@ CreateSpiceOrbit(Hash* orbitData,
  *  } \endcode
  *
  *  The Kernel property specifies one or more SPICE kernel files that must be
- *  loaded in order for the frame to be defined over the required range. Any
+ *  loaded in order for the frame to be defined over the required range. Any 
  *  already loaded kernels will be used if they contain information relevant
  *  for defining the frame.
  *  Frame and base name are strings that give SPICE names for the frames. The
@@ -604,7 +604,7 @@ CreateSpiceRotation(Hash* rotationData,
 			clog << "Invalid ending date specified for SPICE rotation.\n";
 			return NULL;
 		}
-
+	
 		rotation = new SpiceRotation(frameName,
 				  			         baseFrameName,
 							         period,
@@ -807,7 +807,7 @@ CreateOrbit(const Selection& centralObject,
             fixedPosition = Vector3d(fixedPosition.x(),
                                      fixedPosition.z(),
                                      -fixedPosition.y());
-
+            
             return new FixedOrbit(fixedPosition);
         }
         else if (fixedPositionValue->getType() == Value::HashType)
@@ -942,19 +942,19 @@ CreateFixedAttitudeRotationModel(Hash* rotationData)
     {
         heading = degToRad(heading);
     }
-
+    
     double tilt = 0.0;
     if (rotationData->getAngle("Tilt", tilt))
     {
         tilt = degToRad(tilt);
     }
-
+    
     double roll = 0.0;
     if (rotationData->getAngle("Roll", roll))
     {
         roll = degToRad(roll);
     }
-
+    
     Quaterniond q = YRotation(-PI - heading) *
                     XRotation(-tilt) *
                     ZRotation(-roll);
@@ -1189,7 +1189,7 @@ CreateRotationModel(Hash* planetData,
             return CreateFixedRotationModel(fixedRotationValue->getHash());
         }
     }
-
+    
     Value* fixedAttitudeValue = planetData->getValue("FixedAttitude");
     if (fixedAttitudeValue != NULL)
     {
@@ -1667,66 +1667,13 @@ CreateTwoVectorFrame(const Universe& universe,
 }
 
 
-/**
- * Creates a sky-plane frame from ssc file data.
- *
- * The x-axis points North, the z-axis points back towards the Sun.
- *
- * @param[in] universe Universe object used for object lookups.
- * @param[in] frameData Hash containing the name-value pairs defining the frame.
- * @param[in] defaultCenter Default center object if not specified in the ssc.
- */
-static TwoVectorFrame*
-CreateSkyPlaneFrame(const Universe& universe,
-                    Hash* frameData,
-                    const Selection& defaultCenter)
-{
-    Selection center = getFrameCenter(universe, frameData, defaultCenter);
-    if (center.empty())
-        return NULL;
-
-    // default target object to the top-level parent, this should usually be
-    // the system barycenter.
-    Selection target = center;
-    while(!target.parent().empty())
-    {
-        target = target.parent();
-    }
-
-    string targetName;
-    if (frameData->getString("Target", targetName))
-    {
-        target = universe.findPath(targetName, NULL, 0);
-        if (target.empty())
-        {
-            clog << "Bad sky-plane frame: target object '" << targetName << "' not found.\n";
-            return NULL;
-        }
-    }
-
-    ReferenceFrame* equatorFrame = new J2000EquatorFrame(target);
-
-    FrameVector* primaryVector = new FrameVector(FrameVector::createAbsolutePositionVector(target));
-    FrameVector* secondaryVector = new FrameVector(FrameVector::createConstantVector(Vector3d::UnitY(), equatorFrame));
-
-    TwoVectorFrame* frame = new TwoVectorFrame(center,
-                                               *primaryVector, -2,
-                                               *secondaryVector, 1);
-
-    delete primaryVector;
-    delete secondaryVector;
-
-    return frame;
-}
-
-
 static J2000EclipticFrame*
 CreateJ2000EclipticFrame(const Universe& universe,
                          Hash* frameData,
                          const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
-
+    
     if (center.empty())
         return NULL;
     else
@@ -1740,7 +1687,7 @@ CreateJ2000EquatorFrame(const Universe& universe,
                         const Selection& defaultCenter)
 {
     Selection center = getFrameCenter(universe, frameData, defaultCenter);
-
+    
     if (center.empty())
         return NULL;
     else
@@ -1760,8 +1707,8 @@ CreateTopocentricFrame(const Selection& center,
     BodyMeanEquatorFrame* eqFrame = new BodyMeanEquatorFrame(target, target);
     FrameVector north = FrameVector::createConstantVector(Vector3d::UnitY(), eqFrame);
     FrameVector up = FrameVector::createRelativePositionVector(observer, target);
-
-    return new TwoVectorFrame(center, up, -2, north, -3);
+    
+    return new TwoVectorFrame(center, up, -2, north, -3);    
 }
 
 
@@ -1775,15 +1722,15 @@ CreateTopocentricFrame(const Selection& center,
  * \code TwoVector
  * {
  *    Center <center>
- *    Primary
+ *    Primary   
  *    {
  *       Axis "z"
  *       RelativePosition { Target <target> Observer <observer> }
  *    }
- *    Secondary
+ *    Secondary   
  *    {
  *       Axis "x"
- *       ConstantVector
+ *       ConstantVector   
  *       {
  *          Vector [ 0 0 1]
  *          Frame { BodyFixed { Center <target> } }
@@ -1830,7 +1777,7 @@ CreateTopocentricFrame(const Universe& universe,
 
        observer = center;
        target = center.parent();
-    }
+    }  
     else
     {
         // When no center is provided, use the default observer as the center. This
@@ -1929,20 +1876,6 @@ CreateComplexFrame(const Universe& universe, Hash* frameData, const Selection& d
         else
         {
             return CreateTwoVectorFrame(universe, value->getHash(), defaultCenter);
-        }
-    }
-
-    value = frameData->getValue("SkyPlane");
-    if (value != NULL)
-    {
-        if (value->getType() != Value::HashType)
-        {
-            clog << "Object has incorrect sky-plane frame syntax.\n";
-            return NULL;
-        }
-        else
-        {
-            return CreateSkyPlaneFrame(universe, value->getHash(), defaultCenter);
         }
     }
 

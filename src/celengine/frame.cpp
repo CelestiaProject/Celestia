@@ -1,5 +1,5 @@
 // frame.cpp
-//
+// 
 // Reference frame base class.
 //
 // Copyright (C) 2003-2009, the Celestia Development Team
@@ -56,11 +56,11 @@ static UniversalCoord rotate(const UniversalCoord& uc, const Quaterniond& q)
 {
     Matrix3d r = q.toRotationMatrix();
     UniversalCoord uc1;
-
+    
     uc1.x = uc.x * BigFix(r(0, 0)) + uc.y * BigFix(r(1, 0)) + uc.z * BigFix(r(2, 0));
     uc1.y = uc.x * BigFix(r(0, 1)) + uc.y * BigFix(r(1, 1)) + uc.z * BigFix(r(2, 1));
     uc1.z = uc.x * BigFix(r(0, 2)) + uc.y * BigFix(r(1, 2)) + uc.z * BigFix(r(2, 2));
-
+    
     return uc1;
 }
 
@@ -151,7 +151,7 @@ ReferenceFrame::convertToAstrocentric(const Vector3d& p, double tjd) const
         // bad if the center object is a galaxy
         // what about locations?
         return Vector3d::Zero();
-    }
+    }    
 }
 
 
@@ -215,7 +215,7 @@ getFrameDepth(const Selection& sel, unsigned int depth, unsigned int maxDepth,
         if (orbitFrameDepth > maxDepth)
             return orbitFrameDepth;
     }
-
+        
     if (body->getBodyFrame(0.0) != NULL && frameType == ReferenceFrame::OrientationFrame)
     {
         bodyFrameDepth = body->getBodyFrame(0.0)->nestingDepth(depth + 1, maxDepth, frameType);
@@ -525,7 +525,7 @@ Vector3d CachingFrame::computeAngularVelocity(double tjd) const
     Quaterniond q0 = getOrientation(tjd);
 
 	// Call computeOrientation() instead of getOrientation() so that we
-	// don't affect the cached value.
+	// don't affect the cached value. 
 	// TODO: check the valid ranges of the frame to make sure that
 	// jd+dt is still in range.
     Quaterniond q1 = computeOrientation(tjd + ANGULAR_VELOCITY_DIFF_DELTA);
@@ -638,7 +638,7 @@ TwoVectorFrame::computeOrientation(double tjd) const
         }
 
         // The axes are the rows of a rotation matrix. The getOrientation
-        // method must return the quaternion representation of the
+        // method must return the quaternion representation of the 
         // orientation, so convert the rotation matrix to a quaternion now.
         Quatd q = Quatd::matrixToQuaternion(Mat3d(v[0], v[1], v[2]));
 #endif
@@ -734,7 +734,7 @@ FrameVector::operator=(const FrameVector& fv)
     frame = fv.frame;
     if (frame != NULL)
         frame->addRef();
-
+    
     return *this;
 }
 
@@ -794,16 +794,6 @@ FrameVector::createConstantVector(const Vector3d& _vec,
 }
 
 
-FrameVector
-FrameVector::createAbsolutePositionVector(const Selection& _target)
-{
-    FrameVector fv(AbsolutePosition);
-    fv.target = _target;
-
-    return fv;
-}
-
-
 Vector3d
 FrameVector::direction(double tjd) const
 {
@@ -828,10 +818,6 @@ FrameVector::direction(double tjd) const
             v = vec;
         else
             v = frame->getOrientation(tjd).conjugate() * vec;
-        break;
-
-    case AbsolutePosition:
-        v = target.getPosition(tjd).toLy();
         break;
 
     default:
@@ -872,9 +858,6 @@ FrameVector::nestingDepth(unsigned int depth,
         else
             return frame->nestingDepth(depth + 1, maxDepth, ReferenceFrame::OrientationFrame);
         break;
-
-    case AbsolutePosition:
-        return getFrameDepth(target, depth, maxDepth, ReferenceFrame::PositionFrame);
 
     default:
         return depth;
