@@ -1,5 +1,5 @@
 // frame.h
-//
+// 
 // Copyright (C) 2003-2009, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
@@ -31,7 +31,7 @@ class ReferenceFrame
 
     int addRef() const;
     int release() const;
-
+    
     UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
@@ -39,7 +39,7 @@ class ReferenceFrame
 
     Eigen::Vector3d convertFromAstrocentric(const Eigen::Vector3d& p, double tjd) const;
     Eigen::Vector3d convertToAstrocentric(const Eigen::Vector3d& p, double tjd) const;
-
+    
     Selection getCenter() const;
 
     virtual Eigen::Quaterniond getOrientation(double tjd) const = 0;
@@ -192,16 +192,14 @@ class FrameVector
         RelativePosition,
         RelativeVelocity,
         ConstantVector,
-        AbsolutePosition,
     };
-
+    
     static FrameVector createRelativePositionVector(const Selection& _observer,
                                                     const Selection& _target);
     static FrameVector createRelativeVelocityVector(const Selection& _observer,
                                                     const Selection& _target);
     static FrameVector createConstantVector(const Eigen::Vector3d& _vec,
                                             const ReferenceFrame* _frame);
-    static FrameVector createAbsolutePositionVector(const Selection& _target);
 
  private:
     /*! Type-only constructor is private. Code outside the class should
@@ -231,7 +229,7 @@ class TwoVectorFrame : public CachingFrame
      *  the primary and secondary vectors:
      *  1 = x, 2 = y, 3 = z, -1 = -x, -2 = -y, -3 = -z
      */
-    TwoVectorFrame(Selection center,
+    TwoVectorFrame(Selection center, 
                    const FrameVector& prim,
                    int primAxis,
                    const FrameVector& sec,
