@@ -292,6 +292,24 @@
 	SpectralType "F8"
 	AppMag 10.7
 }
+ 
+"HAT-P-18:GSC 02594-00646"
+{
+	RA 256.346667
+	Dec 33.012500
+	Distance 541
+	SpectralType "K"
+	AppMag 12.76
+}
+
+"HAT-P-19:GSC 02283-00589"
+{
+	RA 9.516667
+	Dec 34.711667
+	Distance 700
+	SpectralType "K"
+	AppMag 12.9
+}
 
 
 # WASP survey
