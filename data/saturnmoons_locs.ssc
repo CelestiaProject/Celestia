@@ -1105,6 +1105,195 @@ Location "Samarkand Sulci" "Sol/Saturn/Enceladus"
 	Type "SU"
 }
 
+Location "Ajib" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -239.4 61.7 0 ]
+	Size 15.2
+	Type "AA"
+}
+
+Location "Bahman" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -61.36 14.67 0 ]
+	Size 10.3
+	Type "AA"
+}
+
+Location "Harun" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -225.6 36.33 0 ]
+	Size 13.9
+	Type "AA"
+}
+
+Location "Hisham" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -280.7 48.21 0 ]
+	Size 22.1
+	Type "AA"
+}
+
+Location "Ishak" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -225.1 47.5 0 ]
+	Size 14.4
+	Type "AA"
+}
+
+Location "Ja’afar" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -337.6 34.5 0 ]
+	Size 9.9
+	Type "AA"
+}
+
+Location "Kamar" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -32. -41. 0 ]
+	Size 22
+	Type "AA"
+}
+
+Location "Kasim" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -173.11 42.38 0 ]
+	Size 10.7
+	Type "AA"
+}
+
+Location "Ma’aruf" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -333.5 -37.2 0 ]
+	Size 6.8
+	Type "AA"
+}
+
+Location "Masrur" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -294.28 66.38 0 ]
+	Size 13
+	Type "AA"
+}
+
+Location "Morgiana" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -196.1 31.74 0 ]
+	Size 14.3
+	Type "AA"
+}
+
+Location "Mustafa" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -184.9 -30.9 0 ]
+	Size 14.7
+	Type "AA"
+}
+
+Location "Parwez" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -25.6 22.9 0 ]
+	Size 14.6
+	Type "AA"
+}
+
+Location "Perizadah" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -155. -21.2 0 ]
+	Size 10.5
+	Type "AA"
+}
+
+Location "Sabur" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -296.1 -24. 0 ]
+	Size 7.6
+	Type "AA"
+}
+
+Location "Yunan" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -286.03 53.81 0 ]
+	Size 19.7
+	Type "AA"
+}
+
+Location "Zaynab" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -25.16 69.2 0 ]
+	Size 20
+	Type "AA"
+}
+
+Location "Al-Medinah Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -358.6 -50.7 0 ]
+	Size 117.5
+	Type "SU"
+}
+
+Location "Al-Yaman Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -191.8 9.7 0 ]
+	Size 177.9
+	Type "SU"
+}
+
+Location "Andalús Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -79.1 29.1 0 ]
+	Size 162
+	Type "SU"
+}
+
+Location "Bulak Sulcus" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -109.2 16.3 0 ]
+	Size 49.4
+	Type "SU"
+}
+
+Location "Makran Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -135.8 -54.4 0 ]
+	Size 170.5
+	Type "SU"
+}
+
+Location "Misr Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -199.7 18. 0 ]
+	Size 109.8
+	Type "SU"
+}
+
+Location "Shiraz Sulcus" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -39.4 -57.2 0 ]
+	Size 80
+	Type "SU"
+}
+
+Location "Sind Sulci" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -107.3 -16.4 0 ]
+	Size 116
+	Type "SU"
+}
+
+Location "Bishangarh Fossae" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -225.8 -24. 0 ]
+	Size 163
+	Type "FO"
+}
+
+Location "Kaukabán Fossae" "Sol/Saturn/Enceladus"
+{
+	LongLat [ -266. 33. 0 ]
+	Size 83.4
+	Type "FO"
+}
+
 Location "Adrastus" "Sol/Saturn/Dione"
 {
 	LongLat [ -46. -61.7 0 ]
@@ -1905,13 +2094,6 @@ Location "Qat" "Sol/Saturn/Rhea"
     Type "AA"
 }
 
-Location "Selk" "Sol/Saturn/Titan"
-{
-	LongLat [ -199. 7. 0 ]
-	Size 80
-	Type "AA"
-}
-
 Location "Sholmo" "Sol/Saturn/Rhea"
 {
     LongLat [ -346.4 12 0 ]
@@ -2376,6 +2558,13 @@ Location "Nath" "Sol/Saturn/Titan"
 	Type "LG"
 }
 
+Location "Selk" "Sol/Saturn/Titan"
+{
+	LongLat [ -199. 7. 0 ]
+	Size 80
+	Type "AA"
+}
+
 Location "Veles" "Sol/Saturn/Titan"
 {
 	LongLat [ -137.3 2. 0 ]
@@ -2416,6 +2605,20 @@ Location "Polelya Macula" "Sol/Saturn/Titan"
 	LongLat [ -56. 50. 0 ]
 	Size 175
 	Type "MA"
+}
+
+Location "Chusuk Planitia" "Sol/Saturn/Titan"
+{
+	LongLat [ -23.5 -5. 0 ]
+	Size 125
+	Type "PL"
+}
+
+Location "HOTEI REGIO" "Sol/Saturn/Titan"
+{
+	LongLat [ -78. -26. 0 ]
+	Size 500
+	Type "RE"
 }
 
 Location "TUI REGIO" "Sol/Saturn/Titan"
@@ -2486,6 +2689,13 @@ Location "Mayda Insula" "Sol/Saturn/Titan"
 	LongLat [ -312.2 79.1 0 ]
 	Size 168
 	Type "IN"
+}
+
+Location "Sikun Labyrinthus" "Sol/Saturn/Titan"
+{
+	LongLat [ -28.9 -77.9 0 ]
+	Size 175
+	Type "LB"
 }
 
 # (Hyperion coordinates taken from Phil Stooke's

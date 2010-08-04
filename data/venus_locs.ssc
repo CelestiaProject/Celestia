@@ -13394,22 +13394,6 @@ Location "LAUFEY REGIO" "Sol/Venus"
     Type "RE"
 }
 
-Location "METIS REGIO" "Sol/Venus"
-{
-    LongLat [ -251.8 -70.9 0 ]
-    Size 729.00
-    Importance  94.03
-    Type "RE"
-}
-
-Location "MNEMOSYNE REGIO" "Sol/Venus"
-{
-    LongLat [ -277.9 -65.8 0 ]
-    Size 2471.40
-    Importance 186.40
-    Type "RE"
-}
-
 Location "NERINGA REGIO" "Sol/Venus"
 {
     LongLat [ -288 65 0 ]
@@ -15106,4 +15090,90 @@ Location "Minona Corona" "Sol/Venus"
 	Size 130
 	Importance  48.34
 	Type "CR"
+}
+
+# Update 2009 Oct 07, Grant Hutchison
+# -----------------------------------
+
+Location "Fulgora Dorsa" "Sol/Venus"
+{
+	LongLat [ -342. -78.5 0 ]
+	Size 463
+	Importance 76.36
+	Type "DO"
+}
+
+Location "Heloha Fluctus" "Sol/Venus"
+{
+	LongLat [ -344. -77. 0 ]
+	Size 375
+	Importance 69.90
+	Type "FL"
+}
+
+Location "Sarasvati Mons" "Sol/Venus"
+{
+	LongLat [ -354.5 -75.7 0 ]
+	Size 200
+	Importance 55.34
+	Type "MO"
+}
+
+Location "Akka Tholus" "Sol/Venus"
+{
+	LongLat [ -233. -75.1 0 ]
+	Size 19.4
+	Importance 32.91
+	Type "TH"
+}
+
+Location "Eirene Tholus" "Sol/Venus"
+{
+	LongLat [ -230. -75.5 0 ]
+	Size 58
+	Importance 39.48
+	Type "TH"
+}
+
+Location "Yansa Tholus" "Sol/Venus"
+{
+	LongLat [ -232.2 -76.1 0 ]
+	Size 20
+	Importance 33.04
+	Type "TH"
+}
+
+# Update 2010 Mar 21, Grant Hutchison
+# -----------------------------------
+
+Location "Alina" "Sol/Venus"
+{
+	LongLat [ -267.78 -8.3 0 ]
+	Size 3.7
+	Importance 29.04
+	Type "AA"
+}
+
+Location "Amelia" "Sol/Venus"
+{
+	LongLat [ -280.45 -8.57 0 ]
+	Size 3.3
+	Importance 28.92
+	Type "AA"
+}
+
+Location "Azham Corona" "Sol/Venus"
+{
+	LongLat [ -252.7 -66.4 0 ]
+	Size 380
+	Importance 70.28
+	Type "CR"
+}
+
+Location "Metis Mons" "Sol/Venus"
+{
+	LongLat [ -253. -71. 0 ]
+	Size 920
+	Importance 105.62
+	Type "MO"
 }

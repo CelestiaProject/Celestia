@@ -2286,3 +2286,193 @@ Location "Rembrandt" "Sol/Mercury"
 	Size 720
 	Type "AA"
 }
+
+Location "Abedin" "Sol/Mercury"
+{
+	LongLat [ -10.2 61.7 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Benoit" "Sol/Mercury"
+{
+	LongLat [ -256.2 7.6 0 ]
+	Size 43
+	Type "AA"
+}
+
+Location "Berkel" "Sol/Mercury"
+{
+	LongLat [ -333.5 -13.6 0 ]
+	Size 21
+	Type "AA"
+}
+
+Location "Calvino" "Sol/Mercury"
+{
+	LongLat [ -56. -3.9 0 ]
+	Size 68
+	Type "AA"
+}
+
+Location "de Graft" "Sol/Mercury"
+{
+	LongLat [ -358. 22.1 0 ]
+	Size 65
+	Type "AA"
+}
+
+Location "Derain" "Sol/Mercury"
+{
+	LongLat [ -340.3 -8.7 0 ]
+	Size 190
+	Type "AA"
+}
+
+Location "Eastman" "Sol/Mercury"
+{
+	LongLat [ -234.3 9.6 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Gibran" "Sol/Mercury"
+{
+	LongLat [ -110.4 35.5 0 ]
+	Size 102
+	Type "AA"
+}
+
+Location "Hemingway" "Sol/Mercury"
+{
+	LongLat [ -2.9 17.5 0 ]
+	Size 130
+	Type "AA"
+}
+
+Location "Hodgkins" "Sol/Mercury"
+{
+	LongLat [ -341.9 29.2 0 ]
+	Size 20
+	Type "AA"
+}
+
+Location "Izquierdo" "Sol/Mercury"
+{
+	LongLat [ -253.1 -1.6 0 ]
+	Size 170
+	Type "AA"
+}
+
+Location "Kunisada" "Sol/Mercury"
+{
+	LongLat [ -247.6 1.8 0 ]
+	Size 280
+	Type "AA"
+}
+
+Location "Lange" "Sol/Mercury"
+{
+	LongLat [ -260. 6.4 0 ]
+	Size 180
+	Type "AA"
+}
+
+Location "Matabei" "Sol/Mercury"
+{
+	LongLat [ -13.9 -39.7 0 ]
+	Size 24
+	Type "AA"
+}
+
+Location "Munkácsy" "Sol/Mercury"
+{
+	LongLat [ -259.1 21.9 0 ]
+	Size 180
+	Type "AA"
+}
+
+Location "To Ngoc Van" "Sol/Mercury"
+{
+	LongLat [ -110.7 52.3 0 ]
+	Size 63
+	Type "AA"
+}
+
+Location "Bek" "Sol/Mercury"
+{
+	LongLat [ -50.3 21.1 0 ]
+	Size 30
+	Type "AA"
+}
+
+Location "Dominici" "Sol/Mercury"
+{
+	LongLat [ -36.5 1.4 0 ]
+	Size 20
+	Type "AA"
+}
+
+Location "Geddes" "Sol/Mercury"
+{
+	LongLat [ -29.7 27.3 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Hokusai" "Sol/Mercury"
+{
+	LongLat [ -342.3 58.3 0 ]
+	Size 95
+	Type "AA"
+}
+
+Location "Picasso" "Sol/Mercury"
+{
+	LongLat [ -309.9 3.3 0 ]
+	Size 133
+	Type "AA"
+}
+
+Location "Kipling" "Sol/Mercury"
+{
+	LongLat [ -288. -19.4 0 ]
+	Size 151
+	Type "AA"
+}
+
+Location "Debussy" "Sol/Mercury"
+{
+	LongLat [ -347.5 -33.9 0 ]
+	Size 85
+	Type "AA"
+}
+
+Location "Firdousi" "Sol/Mercury"
+{
+	LongLat [ -294.6 3.5 0 ]
+	Size 96
+	Type "AA"
+}
+
+Location "Copland" "Sol/Mercury"
+{
+	LongLat [ -286.7 37.5 0 ]
+	Size 208
+	Type "AA"
+}
+
+Location "Steichen" "Sol/Mercury"
+{
+	LongLat [ -282.73 -13.14 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Rachmaninoff" "Sol/Mercury"
+{
+	LongLat [ -302.4 27.6 0 ]
+	Size 290
+	Type "AA"
+}
+
