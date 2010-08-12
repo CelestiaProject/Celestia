@@ -20,9 +20,9 @@
 #include <QIcon>
 #include <QImage>
 
-#include "ui/ui_addbookmark.h"
-#include "ui/ui_newbookmarkfolder.h"
-#include "ui/ui_organizebookmarks.h"
+#include "ui_addbookmark.h"
+#include "ui_newbookmarkfolder.h"
+#include "ui_organizebookmarks.h"
 
 class QSortFilterProxyModel;
 class QMenu;
