@@ -1,5 +1,5 @@
 # Additional moons of the planets.
-# SVN revision 4403 (2008 Jan 08)
+# SVN revision 4909 (2009 Nov 10)
 
 # This file supplements the solar system moons defined in
 # the Celestia distribution files solarsys.ssc and minormoons.ssc.
@@ -683,7 +683,7 @@
 	Albedo 0.04
 }
 
-"2003 J 17" "Sol/Jupiter"
+"Herse:Jupiter L:2003 J 17" "Sol/Jupiter"
 {
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
@@ -1158,7 +1158,7 @@
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		1.5
+	Radius		1.6
 
 	EllipticalOrbit
 	{
@@ -1181,7 +1181,7 @@
 	Class "minormoon"
 	Texture	 	"asteroid.jpg"
 	Mesh		"asteroid.cms"
-	Radius		2
+	Radius		2.2
 
 	EllipticalOrbit
 	{
@@ -1825,7 +1825,7 @@
 	Class "minormoon"
 	Texture "asteroid.jpg"
 	Mesh    "asteroid.cms"
-	Radius 0.5
+	Radius 1.1
 
 	EllipticalOrbit
 	{
@@ -1836,6 +1836,30 @@
 	AscendingNode   251.702
 	ArgOfPericenter 349.181
 	MeanAnomaly     355.247
+	}
+
+	Albedo 0.06  # Estimate
+}
+
+# Hedman et al. "Aegaeon (Saturn LIII), a G-ring object"
+# Icarus 2010;207: 433-447
+"Aegaeon:Saturn LIII:2008 S 1" "Sol/Saturn"
+{
+	Class "minormoon"
+	Texture	"asteroid.jpg"
+	Mesh    "asteroid.cms"
+	Radius 0.24
+
+	EllipticalOrbit
+	{
+	Epoch		2454467.00075444
+	Period		0.80811114
+	SemiMajorAxis	167493.665
+	Eccentricity	0.00042277
+	Inclination	0.0007
+	AscendingNode	350
+	LongOfPericenter 312.728
+	MeanLongitude	5.641248
 	}
 
 	Albedo 0.06  # Estimate
