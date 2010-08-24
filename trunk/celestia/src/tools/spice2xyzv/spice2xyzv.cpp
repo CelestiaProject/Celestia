@@ -452,6 +452,8 @@ bool convertSpkToXyzv(const Configuration& config,
         printRecord(out, t, lastState);
         sampCount++;
     }
+
+    return true;
 }
 
 
