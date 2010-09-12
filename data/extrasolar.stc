@@ -90,7 +90,7 @@
 	AppMag 11.79
 }
 
-1028113549 "TrES-2 (parent star):GSC 03549-02811"
+1028113549 "TrES-2 (parent star):Kepler-1:GSC 03549-02811"
 {
 	RA 286.80848
 	Dec 49.31641
@@ -211,7 +211,7 @@
 	AppMag 10.5
 }
 
-1014023547 "HAT-P-7:GSC 03547-01402"
+1014023547 "HAT-P-7:Kepler-2:GSC 03547-01402"
 {
 	RA 292.24734
 	Dec 47.969518
@@ -229,7 +229,7 @@
 	AppMag 10.17
 }
 
-"HAT-P-9:GSC 02463-00281"
+1002812463 "HAT-P-9:GSC 02463-00281"
 {
 	RA 110.168333
 	Dec 37.140556
@@ -274,7 +274,7 @@
 	AppMag 9.98
 }
 
-"HAT-P-15:GSC 02883-01687"
+1016872883 "HAT-P-15:GSC 02883-01687"
 {
 	RA 66.250000
 	Dec 39.460556
@@ -293,6 +293,15 @@
 	AppMag 10.7
 }
  
+1004172717 "HAT-P-17:GSC 02717-00417"
+{
+	RA 324.536250
+	Dec 30.488611
+	Distance 290
+	SpectralType "K"
+	AppMag 10.54
+}
+
 "HAT-P-18:GSC 02594-00646"
 {
 	RA 256.346667
@@ -311,13 +320,22 @@
 	AppMag 12.9
 }
 
-"HAT-P-24:GSC 0774-01441"
+1014410774 "HAT-P-24:GSC 00774-01441"
 {
 	RA 108.825000
 	Dec 14.262222
 	Distance 1290
 	SpectralType "F8V"
 	AppMag 11.82
+}
+
+"HAT-P-25:GSC 01788-01237"
+{
+	RA 48.435417
+	Dec 25.197500
+	Distance 968
+	SpectralType "G5"
+	AppMag 13.19
 }
 
 
@@ -713,6 +731,15 @@
 	Dec 42.451111
 	Distance 4335
 	SpectralType "F5V" # from mass, radius, temperature
+	AppMag 13.9
+}
+
+"Kepler-9"
+{
+	RA 285.574167
+	Dec 38.400833
+	Distance 2120
+	SpectralType "G5V" # from mass, radius, temperature
 	AppMag 13.9
 }
 
