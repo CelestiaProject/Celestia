@@ -1,4 +1,4 @@
-# Catalog of 472 known extrasolar planets.
+# Catalog of 474 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -3757,6 +3757,46 @@ AltSurface "limit of knowledge" "Lupus-TR-3/b"
 }
 
 
+"b" "TYC 8015-1020-1"   # WASP-29
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.8 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.79 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       80     # M.sin(i) = 0.244 jupiters
+	Radius     55300
+
+	InfoURL "http://exoplanet.eu/star.php?st=WASP-29"
+
+	EllipticalOrbit {
+		Period          0.0107
+		SemiMajorAxis   0.0457
+		Eccentricity    0.03
+		Inclination     65.8
+		AscendingNode   356.7
+		MeanLongitude   266
+	}
+
+	Obliquity             66 # guess, to match inclination
+	EquatorAscendingNode  357 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 8015-1020-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "TYC 2463-281-1"   # HAT-P-9
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -3793,46 +3833,6 @@ AltSurface "limit of knowledge" "Lupus-TR-3/b"
 }
 
 AltSurface "limit of knowledge" "TYC 2463-281-1/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "TYC 8015-1020-1"   # WASP-29
-
-# Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 87.96 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.74 jupiters.
-
-# Star not present in Celestia's default stars.dat file.
-
-{
-	Texture "exo-class3.*"
-
-	Color  [0.53 0.62 1]
-	Albedo 0.1
-
-	Mass       80     # M.sin(i) = 0.248 jupiters
-	Radius     51800
-
-	InfoURL "http://exoplanet.eu/star.php?st=WASP-29"
-
-	EllipticalOrbit {
-		Period          0.0107
-		SemiMajorAxis   0.0456
-		Eccentricity    0
-		Inclination     65.3
-		AscendingNode   355.9
-		MeanLongitude   285
-	}
-
-	Obliquity             65 # guess, to match inclination
-	EquatorAscendingNode  356 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "TYC 8015-1020-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -5203,9 +5203,8 @@ AltSurface "limit of knowledge" "HD 109749/b"
 
 	EllipticalOrbit {
 		Period          0.0086
-		SemiMajorAxis   0.03
-		Eccentricity    0
-		MeanLongitude   167
+		SemiMajorAxis   0.028453
+		MeanLongitude   209
 	}
 
 	# likely to be in captured synchronous rotation
@@ -5228,9 +5227,8 @@ AltSurface "limit of knowledge" "Gliese 581/e"
 
 	EllipticalOrbit {
 		Period          0.0147
-		SemiMajorAxis   0.041
-		Eccentricity    0
-		MeanLongitude   220
+		SemiMajorAxis   0.040616
+		MeanLongitude   305
 	}
 
 	# likely to be in captured synchronous rotation
@@ -5246,17 +5244,15 @@ AltSurface "limit of knowledge" "Gliese 581/b"
 {
 	Texture "asteroid.*"
 
-	Mass      5     # M.sin(i) = 5 earths
+	Mass      6     # M.sin(i) = 6 earths
 	Radius     11200
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
 	EllipticalOrbit {
 		Period          0.0354
-		SemiMajorAxis   0.07
-		Eccentricity    0.17
-		ArgOfPericenter 210
-		MeanAnomaly     8
+		SemiMajorAxis   0.072993
+		MeanLongitude   161
 	}
 
 	# likely to be in captured synchronous rotation
@@ -5268,27 +5264,74 @@ AltSurface "limit of knowledge" "Gliese 581/c"
 }
 
 
-"d" "Gliese 581"   # HO Lib
+"g" "Gliese 581"   # HO Lib
 {
-	Texture "venuslike.*"
+	Texture "asteroid.*"
 
-	Mass      7     # M.sin(i) = 7 earths
-	Radius     12600
+	Mass      3     # M.sin(i) = 3 earths
+	Radius     9100
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
 	EllipticalOrbit {
-		Period          0.1829
-		SemiMajorAxis   0.22
-		Eccentricity    0.38
-		ArgOfPericenter 287
-		MeanAnomaly     80
+		Period          0.1003
+		SemiMajorAxis   0.14601
+		MeanLongitude   118
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Gliese 581/g"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "Gliese 581"   # HO Lib
+{
+	Texture "asteroid.*"
+
+	Mass      6     # M.sin(i) = 6 earths
+	Radius     11200
+
+	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
+
+	EllipticalOrbit {
+		Period          0.1831
+		SemiMajorAxis   0.21847
+		MeanLongitude   24
 	}
 
 	# likely to be in captured synchronous rotation
 }
 
 AltSurface "limit of knowledge" "Gliese 581/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"f" "Gliese 581"   # HO Lib
+{
+	Texture "venuslike.*"
+
+	Mass      7     # M.sin(i) = 7 earths
+	Radius     11900
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
+
+	EllipticalOrbit {
+		Period          1.1855
+		SemiMajorAxis   0.758
+		MeanLongitude   190
+	}
+
+	RotationPeriod  5 # plausible guess
+}
+
+AltSurface "limit of knowledge" "Gliese 581/f"
 {
 	Texture "extrasolar-lok.*"
 }
