@@ -374,6 +374,14 @@
 	AppMag 13.19
 }
 
+1010270320 "HAT-P-26:GSC 00320-01027"
+{
+	RA 213.156250
+	Dec 4.060000
+	Distance 437
+	SpectralType "K1"
+	AppMag 11.74
+}
 
 # WASP survey
 
@@ -591,6 +599,15 @@
 	Distance 1100
 	SpectralType "G2"
 	AppMag 12.7
+}
+
+1011560950 "WASP-38:GSC 00950-01156"
+{
+	RA 243.960000
+	Dec 10.032500
+	Distance 359
+	SpectralType "F8"
+	AppMag 9.42
 }
 
 
