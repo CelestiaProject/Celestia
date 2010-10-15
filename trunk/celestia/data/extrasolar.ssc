@@ -1,4 +1,4 @@
-# Catalog of 475 known extrasolar planets.
+# Catalog of 477 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -14615,6 +14615,77 @@ AltSurface "limit of knowledge" "HD 30177/b"
 }
 
 
+"d" "NN Ser"
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       730     # M.sin(i) = 2.28 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=NN+Ser+(ab)"
+
+	EllipticalOrbit {
+		Period          7.7481
+		SemiMajorAxis   3.39
+		Eccentricity    0.2
+		Inclination     102       #
+		AscendingNode   240       # to match system inclination
+		ArgOfPericenter 37
+		MeanAnomaly     342
+	}
+
+	Obliquity             102 # guess, to match inclination
+	EquatorAscendingNode  240 # guess, to match ascending node
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "NN Ser/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "NN Ser"
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       2200     # M.sin(i) = 6.91 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=NN+Ser+(ab)"
+
+	EllipticalOrbit {
+		Period          15.4962
+		SemiMajorAxis   5.38
+		Inclination     102       #
+		AscendingNode   240       # to match system inclination
+	}
+
+	Obliquity             102 # guess, to match inclination
+	EquatorAscendingNode  240 # guess, to match ascending node
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "NN Ser/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HIP 70849"
 {
 	Texture "exo-class1.*"
@@ -14857,6 +14928,8 @@ AltSurface "limit of knowledge" "HD 13931/b"
 
 
 "b" "DP Leo"
+# Star not present in Celestia's default stars.dat file.
+
 {
 	Texture "exo-class1.*"
 
