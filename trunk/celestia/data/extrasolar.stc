@@ -1354,3 +1354,55 @@ Barycenter "DP Leo"
 		ArgOfPericenter 180
 	}
 }
+
+# Parsons et al. "Precise mass and radius values for the white dwarf and low mass M 
+# dwarf in the pre-cataclysmic binary NN Serpentis" 
+# http://arxiv.org/abs/0909.4307
+Barycenter "NN Ser"
+{
+	RA 238.233750
+	Dec 12.912500
+	Distance 1670
+}
+
+"NN Ser A:WD 1550+130"
+{
+	OrbitBarycenter "NN Ser"
+	SpectralType "DA"
+	Radius 14700
+	Temperature 57000
+	AbsMag 3.26
+
+	EllipticalOrbit {
+		Period   0.000355920602327173 # 3.12 hours
+		         # (spurious precision to synch with rotation of B)
+		SemiMajorAxis   0.00075   # mass ratio 0.535:0.111
+		Inclination     102       #
+		AscendingNode   240       # inclination to plane of sky 89.6 deg.
+	}
+}
+
+"NN Ser B"
+{
+	OrbitBarycenter "NN Ser"
+	SpectralType "M4V"
+	Radius 107000
+	SemiAxes [1 0.955 0.968]
+	AbsMag 11.9
+
+	EllipticalOrbit {
+		Period   0.000355920602327173 # 3.12 hours
+		         # (spurious precision to synch with rotation of B)
+		SemiMajorAxis   0.0036    # mass ratio 0.535:0.111
+		Inclination     102       #
+		AscendingNode   240       # inclination to plane of sky 89.6 deg.
+		ArgOfPericenter 180
+	}
+
+	UniformRotation
+	{
+	    Period           3.12
+	    Inclination      102
+	    AscendingNode    240
+	}
+}
