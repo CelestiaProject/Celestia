@@ -1,4 +1,4 @@
-# Catalog of 477 known extrasolar planets.
+# Catalog of 476 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -5891,52 +5891,6 @@ AltSurface "limit of knowledge" "HIP 14810/d"
 }
 
 AltSurface "limit of knowledge" "HD 185269/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "Gliese 667 C"
-{
-	Texture "asteroid.*"
-
-	Mass      6     # M.sin(i) = 6 earths
-	Radius     11200
-
-	InfoURL "http://exoplanet.eu/star.php?st=GJ+667C"
-
-	EllipticalOrbit {
-		Period          0.0192
-		SemiMajorAxis   0.095
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "Gliese 667 C/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HIP 56528"   # Gliese 433
-{
-	Texture "asteroid.*"
-
-	Mass      6     # M.sin(i) = 6 earths
-	Radius     11900
-
-	InfoURL "http://exoplanet.eu/star.php?st=GJ+433"
-
-	EllipticalOrbit {
-		Period          0.0192
-		SemiMajorAxis   0.095
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HIP 56528/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -12875,6 +12829,38 @@ AltSurface "limit of knowledge" "HD 10647/b"
 }
 
 AltSurface "limit of knowledge" "HD 148156/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "ADS 11871 B"   # HD 176051 B
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       480     # M.sin(i) = 1.5 jupiters
+	Radius     70000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+176051"
+
+	EllipticalOrbit {
+		Period          2.7817
+		SemiMajorAxis   1.76
+		Eccentricity    0
+		Inclination     39  #
+		AscendingNode   251 # to match system orientation
+	}
+
+	RotationPeriod  10 # plausible guess
+	Obliquity             39  # guess, to match inclination
+	EquatorAscendingNode  251 # guess, to match ascending node
+}
+
+AltSurface "limit of knowledge" "ADS 11871 B/b"
 {
 	Texture "extrasolar-lok.*"
 }
