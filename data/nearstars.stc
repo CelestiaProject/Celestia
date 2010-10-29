@@ -2581,7 +2581,7 @@ Barycenter "Alula Australis A:XI UMa A:53 UMa A:Gliese 423 A:ADS 8119 A"
 	}
 }
 
-Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B::ADS 8119 B"
+Barycenter "Alula Australis B:XI UMa B:53 UMa B:Gliese 423 B:ADS 8119 B"
 {
 	OrbitBarycenter "Alula Australis"
 
