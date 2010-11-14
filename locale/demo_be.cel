@@ -1,0 +1,150 @@
+{
+	timerate { rate 0 }
+	labels { clear "planets|minorplanets|stars|constellations" }
+	renderflags { set "stars|planets"
+                      clear "constellations|orbits|cloudmaps" }
+	print { text "Пачатак дэманстрацыі . . .\nНацісьні ESC каб скончыць." origin "center" duration 2 }
+	wait { duration 2.0 }
+
+	print { text "Пачнем ад нашага дому . . ." row -3 }
+	select { object "Sol/Earth" }
+	cancel {}
+	# goto { time 0 distance 3 upframe "ecliptical" }
+	# gotolonglat { time 0 distance 3 longitude -122 latitude 47 }
+	synchronous {}
+	gotoloc { time 0.0 position [ 0 0 20000 ] }
+	wait { duration 0.1 }
+	center { time 0.1 }
+	wait { duration 1.0 }
+	follow {}
+
+	print { text "Мы на арбіце каля 12,500 км па-над Зямлёй." row -3 duration 5 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	print { text "Зямля выглядае больш знаёмай з аблокамі." row -3}
+	wait { duration 0.1 }
+	renderflags { set "cloudmaps" }
+	orbit { axis [ 0 1 0 ] rate 30 duration 6 }
+
+	print { text "Наступны прыпынак — Месяц." row -3 }
+	select { object "Moon" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	wait { duration 5.5 }
+	print { text "Паглядзі на Зямлю й Сонца, пакуль мы на арбіце Месяца." row -3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 10 }
+	
+	print { text "Паляцім да Сонца." row -3}
+	select { object "Sol" }
+	goto { time 8 distance 12 upframe "equatorial" up [ 0 1 0 ] }
+	wait { duration 8.5 }
+	print { text "З гэтай адлегласьці можна пабачыць цёмныя плямы на паверхні Сонца." row -3}
+	orbit { axis [ 0 1 0 ] rate 20 duration 10 }
+
+	print { text "Зьменшым маштаб, каб агледзець нутраную сонечную сыстэму." row -3}
+	orbit { axis [ 1 0 0 ] rate 45 duration 2 }
+	renderflags { set "orbits" }
+	changedistance { duration 4.0 rate 1.0 }
+	
+	print { text "Пазначым назвы плянэтаў . . ." row -3}
+	labels { set "planets" }
+	wait { duration 1.0 }
+	print { text "Можна паскорыць час, каб пабачыць як плянэты рухаюцца вакол Сонца." row -3}
+	timerate { rate 2592000 }
+	wait { duration 3.0 }
+	print { text "Кожная сэкунда ўдае месяц." row -3}
+	wait { duration 12.0 }
+	timerate { rate 1 }
+	print { text "Цяпер, час быў цалкам спынены." row -3}
+
+	wait { duration 1.0 }
+	print { text "Наступная мэта — Сатурн." row -3}
+	select { object "Saturn" }
+	center { time 2 }
+	wait { duration 2 }
+	goto { time 8 distance 6 up [ 0 1 0 ] upframe "equatorial" }
+	wait { duration 6.5 }
+	renderflags { clear "orbits" }
+	labels { clear "planets" }
+	print { text "Некалькі месяцаў Сатурна бачныя як зыркія кропкі." row -3 duration 3}
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	
+	select { object "Mimas" }
+	goto { time 5 distance 4 upframe "equatorial" }
+	print { text "Найбольш заўважная рыса месяца Сатурна Мімаса — агромністы ўдарны кратэр Гершэля." row -3 duration 9 }
+	orbit { axis [ 0 1 0 ] rate 30 duration 12 }
+	changedistance { duration 6.0 rate 0.5 }
+
+	select { object "Sol" }
+	center { time 2 }
+	print { text "Заўваж, якім цьняным выглядае Сонца на такой адлегласьці." row -3 }
+	wait { duration 2 }
+
+	print { text "Давай агледзім зоркі ў небе." row -3 duration 2 }
+	wait { duration 2 }
+	select { object "Alpha UMa" }
+	center { time 2 }
+	print { text "Жыхары паўночнай паўкулі мусяць пазнаць Вялікі коўш у сузор'і Вялікай мядзьведзіцы." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Polaris" }
+	center { time 2 }
+	wait { duration 2 }
+	print { text "Цяпер мы цэнтраваныя на Палярную, Паўночную зорку." row -3}
+	wait { duration 1 }
+	labels { set "stars" }
+	wait { duration 2 }
+	print { text "Палярная зорка — частка астэрызму, які зазвычай называецца Малой каўшом." row -3}
+	wait { duration 2 }
+	print { text "Каб дапамагчы нам арыентавацца ў небе, Celestia можа нарысываць выявы сузор'яў . . ." row -3}
+	renderflags { set "constellations" }
+	wait { duration 2 }
+	print { text ". . . і іхныя назвы" row -3}
+	labels { set "constellations" }
+	wait { duration 2 }
+
+	select { object "Alnilam" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Арыён — найбольш заўважнае сузор'е неба." row -3 duration 3 }
+	wait { duration 4 }
+
+	select { object "Beta Cru" }
+	center { time 4 }
+	wait { duration 2 }
+	print { text "Паўднёвы крыж — знаёмы знак у небе паўднёвай паўкулі." row -3 duration 4 }
+	wait { duration 4 }
+
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 7 }
+	print { text "Давай задзейнічаем рысаваньне ґаляктык, каб пабачыць Млечны шлях." row -3 duration 4 }
+	renderflags { set "galaxies" }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 14 }
+	rotate { axis [ 0.707 0.707 0 ] rate 20 duration 10 }
+
+	select { object "Antares" }
+	center { time 5 }
+	wait { duration 3 }
+	print { text "Цяпер паляцім да Антарэса, чырвонага ґіґанта ў Скарпіёне." row -3 duration 5 }
+	wait { duration 2 }
+	renderflags { clear "constellations" }
+	labels { clear "constellations|stars" }
+	wait { duration 1 }
+	goto { time 8 distance 200 }
+	wait { duration 8.5 }
+	goto { time 5 distance 10 }
+	wait { duration 5.0 }
+	print { text "І хоць мы ў 10 разоў далей ад Антарэса, чым\nЗямля ад Сонца, масыўны чырвоны ґіґант ўсё яшчэ выглядае аграмадным." row -3}
+	wait { duration 4.0 }
+
+	print { text "Зьменшым маштаб і атрымаем вялікую карцінку . . ." row -3}
+	changedistance { duration 10.0 rate 2.0 }
+
+	select { object "Milky Way" }
+	print { text "Мы аглядаем усю ґаляктыку Млечнага шляху." row -3 duration 6 }
+	orbit { axis [ 1 0 0 ] rate 30 duration 16.0 }
+	print { text "Time to go home . . ." row -3}
+
+	select { object "Sol/Earth" }
+	goto { time 20 distance 10 upframe "equatorial" }
+	wait { duration 20.0 }
+	print { text "Дэманстрацыя скончаная." row -3}
+	wait { duration 3.0 }
+}
