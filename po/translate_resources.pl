@@ -39,6 +39,7 @@ close RES;
 # http://msdn.microsoft.com/en-us/library/dd318693
 my %lang = (
 ar => [ '401', 1256 ],
+be => [ '423', 1251 ],
 bg => [ '402', 1251 ],
 de => [ '407', 1252 ],
 el => [ '408', 1253 ],

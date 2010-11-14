@@ -84,6 +84,7 @@ Source: "lib\msvcr90.dll";   DestDir: "{app}"; Flags: ignoreversion
 
 ; Languages
 Source: "locale\res_ar.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
+Source: "locale\res_be.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_bg.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_de.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\res_el.dll";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -110,6 +111,8 @@ Source: "locale\res_zh_TW.dll";    DestDir: "{app}/locale"; Flags: ignoreversion
 
 Source: "locale\ar\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\ar\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/ar/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\be\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/be/LC_MESSAGES"; Flags: ignoreversion
+Source: "locale\be\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/be/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\bg\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/bg/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\bg\LC_MESSAGES\celestia_constellations.mo";       DestDir: "{app}/locale/bg/LC_MESSAGES"; Flags: ignoreversion
 Source: "locale\de\LC_MESSAGES\celestia.mo";                      DestDir: "{app}/locale/de/LC_MESSAGES"; Flags: ignoreversion
@@ -177,6 +180,7 @@ Source: "locale\COPYING_uk";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_zh_CN";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\COPYING_zh_TW";       DestDir: "{app}/locale"; Flags: ignoreversion
 
+Source: "locale\controls_be.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_bg.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_de.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_es.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -196,6 +200,7 @@ Source: "locale\controls_uk.txt";       DestDir: "{app}/locale"; Flags: ignoreve
 Source: "locale\controls_zh_CN.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\controls_zh_TW.txt";       DestDir: "{app}/locale"; Flags: ignoreversion
 
+Source: "locale\demo_be.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_de.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_es.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_fr.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -217,6 +222,7 @@ Source: "locale\demo_uk.cel";       DestDir: "{app}/locale"; Flags: ignoreversio
 Source: "locale\demo_zh_CN.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\demo_zh_TW.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 
+Source: "locale\guide_be.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_bg.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_de.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_es.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
@@ -237,6 +243,7 @@ Source: "locale\guide_uk.cel";       DestDir: "{app}/locale"; Flags: ignoreversi
 Source: "locale\guide_zh_CN.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\guide_zh_TW.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 
+Source: "locale\start_be.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_bg.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_de.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
 Source: "locale\start_es.cel";       DestDir: "{app}/locale"; Flags: ignoreversion
