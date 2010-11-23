@@ -919,6 +919,15 @@
 	AppMag 10.91
 }
 
+13044
+{
+	RA 30.793722
+	Dec -36.107500
+	Distance 2285
+	SpectralType "F2"
+	AppMag 9.94
+}
+
 # Figueira et al, 2010 (http://fr.arxiv.org/abs/1003.3678)
 # suggest the radial velocity is stellar rather than planetary
 #1002141355 "BD+20 1790"
