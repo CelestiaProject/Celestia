@@ -503,7 +503,7 @@ BEGIN
     LTEXT           VERSION_STRING,IDC_STATIC,90,17,40,9
 
 
-    LTEXT           "Copyright (C) 2001-2009, Celestia Development Team",IDC_STATIC,56,26,247,9
+    LTEXT           "Copyright (C) 2001-2010, Celestia Development Team",IDC_STATIC,56,26,247,9
 
 
     LTEXT           "http://www.shatters.net/celestia",IDC_CELESTIALINK,56,43,150,9
@@ -1969,7 +1969,7 @@ BEGIN
             VALUE "InternalName", "celestia"
 
 
-            VALUE "LegalCopyright", "Copyright  2001-2009, Celestia Development Team"
+            VALUE "LegalCopyright", "Copyright  2001-2010, Celestia Development Team"
 
 
             VALUE "OriginalFilename", "celestia.exe"
