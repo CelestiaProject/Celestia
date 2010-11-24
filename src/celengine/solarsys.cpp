@@ -29,6 +29,7 @@
 #include "parser.h"
 #include "texmanager.h"
 #include "meshmanager.h"
+#include "sensorgeometry.h"
 #include "universe.h"
 #include "multitexture.h"
 #include "parseobject.h"
@@ -893,6 +894,43 @@ static Body* CreateBody(const string& name,
             ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(geometry, path, geometryCenter, 1.0f, isNormalized));
             body->setGeometry(geometryHandle);
             body->setGeometryScale(geometryScale);
+        }
+        else if (planetData->getValue("Sensor"))
+        {
+            Hash* sensorData = planetData->getValue("Sensor")->getHash();
+            if (sensorData)
+            {
+                SensorGeometry* sensor = new SensorGeometry();
+                sensor->setObserver(body);
+
+                string targetName;
+                if (sensorData->getString("Target", targetName))
+                {
+                    Body* target = universe.findPath(targetName).body();
+                    if (target)
+                    {
+                        sensor->setTarget(target);
+                    }
+                    else
+                    {
+                        cerr << "Can't find target for sensor.\n";
+                    }
+                }
+                else
+                {
+                    cerr << "No target specified for sensor.\n";
+                }
+
+                sensor->setRange(30000.0);
+
+                string resName = string("sensor") + targetName + body->getName();
+                GeometryInfo info(resName, path, Vector3f::Zero(), 1.0f, false);
+                info.resource = sensor;
+                info.state = ResourceLoaded;
+                ResourceHandle geometryHandle = GetGeometryManager()->getHandle(info);
+                body->setGeometry(geometryHandle);
+                body->setGeometryScale(1.0f);
+            }
         }
     }
 
