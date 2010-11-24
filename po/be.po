@@ -531,11 +531,11 @@ msgstr "Памылка GL: "
 
 #: src/celestia/celestiacore.cpp:2632
 msgid "View too small to be split"
-msgstr "Від замалы, каб яго модна было падзяліць"
+msgstr "Прагляд замалы, каб яго модна было падзяліць"
 
 #: src/celestia/celestiacore.cpp:2635
 msgid "Added view"
-msgstr "Даданы від"
+msgstr "Даданы прагляд"
 
 #: src/celestia/celestiacore.cpp:2891
 #: src/celestia/kde/celestialbrowser.cpp:130
@@ -649,7 +649,7 @@ msgstr "Пэрыяд авароту: "
 
 #: src/celestia/celestiacore.cpp:3190
 msgid "Planetary companions present\n"
-msgstr "Наяўныя плянэтарныя спадарожнікі\n"
+msgstr "Наяўныя плянэтныя спадарожнікі\n"
 
 #: src/celestia/celestiacore.cpp:3208
 msgid "Distance from center: "
@@ -1349,15 +1349,15 @@ msgstr "Падзяліць па гарызанталі"
 
 #: src/celestia/kde/kdeapp.cpp:478
 msgid "Cycle View"
-msgstr "Зьмяніць актыўны від"
+msgstr "Зьмяніць актыўны прагляд"
 
 #: src/celestia/kde/kdeapp.cpp:479
 msgid "Single View"
-msgstr "Адзін від"
+msgstr "Адзін прагляд"
 
 #: src/celestia/kde/kdeapp.cpp:480
 msgid "Delete View"
-msgstr "Выдаліць від"
+msgstr "Выдаліць прагляд"
 
 #: src/celestia/kde/kdeapp.cpp:481
 msgid "Frames Visible"
@@ -3518,7 +3518,7 @@ msgstr "Вакно/ўвесь экран\tAlt+Enter"
 
 #: src/celestia/win32/res/resource_strings.cpp:32
 msgid "View Options..."
-msgstr "Выборы віду…"
+msgstr "Выборы прагляду…"
 
 #: src/celestia/win32/res/resource_strings.cpp:33
 msgid "Locations..."
@@ -3584,7 +3584,7 @@ msgstr "Згладжваньне\tCtrl+X"
 
 #: src/celestia/win32/res/resource_strings.cpp:50
 msgid "&View"
-msgstr "&Від"
+msgstr "&Прагляд"
 
 #: src/celestia/win32/res/resource_strings.cpp:51
 msgid "Split &Horizontally\tCtrl+R"
@@ -3596,11 +3596,11 @@ msgstr "Падзяліць &вэртыкальна\tCtrl+U"
 
 #: src/celestia/win32/res/resource_strings.cpp:53
 msgid "&Delete Active View\tDEL"
-msgstr "&Выдаліць актыўны від\tDEL"
+msgstr "&Выдаліць актыўны прагляд\tDEL"
 
 #: src/celestia/win32/res/resource_strings.cpp:54
 msgid "&Single View\tCtrl+D"
-msgstr "&Адзін від\tCtrl+D"
+msgstr "&Адзін прагляд\tCtrl+D"
 
 #: src/celestia/win32/res/resource_strings.cpp:55
 msgid "Show &Frames"
@@ -3879,7 +3879,7 @@ msgstr "Разрозьненьне"
 
 #: src/celestia/win32/res/resource_strings.cpp:144
 msgid "View Options"
-msgstr "Выборы віду"
+msgstr "Выборы прагляду"
 
 #: src/celestia/win32/res/resource_strings.cpp:147
 #: src/celestia/win32/res/resource_strings.cpp:177
