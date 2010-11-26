@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cellestia\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2010-01-06 17:52-0500\n"
+"POT-Creation-Date: 2010-01-04 15:39+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Hleb Valoshka <375gnu@gmail.com>\n"
 "Language-Team: belarusian <i18n@mova.org>\n"
@@ -18,109 +18,109 @@ msgstr ""
 "X-Poedit-SearchPath-0: /tmp/celestia-1.6.0+dfsg\n"
 "X-Poedit-SearchPath-1: /tmp/celestia-1.6.0+dfsg/src/celestia\n"
 
-#: src/celengine/astro.cpp:850
+#: src/celengine/astro.cpp:827
 msgid "DST"
 msgstr "DST"
 
-#: src/celengine/astro.cpp:850
+#: src/celengine/astro.cpp:827
 msgid "STD"
 msgstr "STD"
 
-#: src/celengine/dsodb.cpp:390
+#: src/celengine/dsodb.cpp:387
 msgid "Loaded "
 msgstr "Загружаны"
 
-#: src/celengine/dsodb.cpp:390
+#: src/celengine/dsodb.cpp:387
 msgid " deep space objects"
 msgstr " аб'ектаў глыбокага космасу"
 
-#: src/celengine/fragmentprog.cpp:92
+#: src/celengine/fragmentprog.cpp:93
 msgid "Loading NV fragment program: "
 msgstr "Загрузка фраґмэнтавых праґрамаў NV: "
 
-#: src/celengine/fragmentprog.cpp:97
+#: src/celengine/fragmentprog.cpp:98
 msgid "Error loading NV fragment program: "
 msgstr "Памылка падчас загрузкі фраґмэнтавай праґрамы NV: "
 
-#: src/celengine/fragmentprog.cpp:114
+#: src/celengine/fragmentprog.cpp:115
 msgid "Error in fragment program "
 msgstr "Памылка ў праґраме фраґмэнтаў"
 
-#: src/celengine/fragmentprog.cpp:125
+#: src/celengine/fragmentprog.cpp:126
 msgid "Initializing NV fragment programs . . .\n"
 msgstr "Ініцыялізаваньне фраґмэнтавых праґрамаў NV . . .\n"
 
-#: src/celengine/fragmentprog.cpp:141
+#: src/celengine/fragmentprog.cpp:142
 msgid "All NV fragment programs loaded successfully.\n"
 msgstr "Усе фраґмэнтавыя праґрамы NV загружаныя ўдала.\n"
 
-#: src/celengine/fragmentprog.cpp:149
+#: src/celengine/fragmentprog.cpp:150
 msgid "Initializing ARB fragment programs . . .\n"
 msgstr "Ініцыялізаваньне праґрамаў фраґмэнтаў ARB . . .\n"
 
-#: src/celengine/galaxy.cpp:205
+#: src/celengine/galaxy.cpp:197
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
 msgstr "Ґаляктыка (Габлаў тып: %s)"
 
-#: src/celengine/globular.cpp:258
+#: src/celengine/globular.cpp:255
 #, c-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
 msgstr "Шаравае скопішча (радыюс ядра: %4.2f', канцэнтрацыя Кінґа: %4.2f)"
 
-#: src/celengine/image.cpp:372
+#: src/celengine/image.cpp:373
 msgid "Loading image from file "
 msgstr "Загрузка відарыса з файла"
 
-#: src/celengine/image.cpp:390
+#: src/celengine/image.cpp:391
 msgid ": unrecognized or unsupported image file type.\n"
 msgstr ": тып відарысаў не распазнаны або не падтрымліваецца.\n"
 
-#: src/celengine/image.cpp:653
+#: src/celengine/image.cpp:654
 msgid "Error opening image file "
 msgstr "Памылка падчас адкрыцьця файла відарыса "
 
-#: src/celengine/image.cpp:660
+#: src/celengine/image.cpp:661
 msgid "Error: "
 msgstr "Памылка: "
 
-#: src/celengine/image.cpp:660
+#: src/celengine/image.cpp:661
 msgid " is not a PNG file.\n"
 msgstr " не зьяўляецца файлам PNG.\n"
 
-#: src/celengine/image.cpp:687
+#: src/celengine/image.cpp:688
 msgid "Error reading PNG image file "
 msgstr "Памылка падчас чытаньня файла відарыса PNG"
 
-#: src/celengine/meshmanager.cpp:85
+#: src/celengine/meshmanager.cpp:84
 msgid "Loading model: "
 msgstr "Загрузка мадэлі: "
 
-#: src/celengine/meshmanager.cpp:163
+#: src/celengine/meshmanager.cpp:162
 msgid "   Model statistics: "
 msgstr "   Статыстыка мадэлі: "
 
-#: src/celengine/meshmanager.cpp:164
+#: src/celengine/meshmanager.cpp:163
 msgid " vertices, "
 msgstr " вяршыняў, "
 
-#: src/celengine/meshmanager.cpp:165
+#: src/celengine/meshmanager.cpp:164
 msgid " primitives, "
 msgstr " прымітываў, "
 
-#: src/celengine/meshmanager.cpp:166
+#: src/celengine/meshmanager.cpp:165
 msgid " materials "
 msgstr " матар'ялаў"
 
-#: src/celengine/meshmanager.cpp:167
+#: src/celengine/meshmanager.cpp:166
 msgid " unique)\n"
 msgstr " унікальных)\n"
 
-#: src/celengine/meshmanager.cpp:171
+#: src/celengine/meshmanager.cpp:170
 msgid "Error loading model '"
 msgstr "Памылка падчас загрузкі мадэлі «"
 
-#: src/celengine/nebula.cpp:46
+#: src/celengine/nebula.cpp:47
 #, c-format
 msgid "Nebula"
 msgstr "Туманнасьць"
@@ -130,113 +130,113 @@ msgstr "Туманнасьць"
 msgid "Open cluster"
 msgstr "Адкрытае скопішча"
 
-#: src/celengine/solarsys.cpp:96
+#: src/celengine/solarsys.cpp:93
 msgid "Error in .ssc file (line "
 msgstr "Памылка ў фале .ssc (радок "
 
-#: src/celengine/solarsys.cpp:1214
-#: src/celengine/solarsys.cpp:1281
+#: src/celengine/solarsys.cpp:1200
+#: src/celengine/solarsys.cpp:1267
 msgid "parent body '"
 msgstr "бацькоўскае цела «"
 
-#: src/celengine/solarsys.cpp:1214
-#: src/celengine/solarsys.cpp:1281
+#: src/celengine/solarsys.cpp:1200
+#: src/celengine/solarsys.cpp:1267
 msgid "' of '"
 msgstr "» з «"
 
-#: src/celengine/solarsys.cpp:1214
+#: src/celengine/solarsys.cpp:1200
 msgid "' not found."
 msgstr "» не адшуканае."
 
-#: src/celengine/solarsys.cpp:1225
+#: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
 msgstr "заўвага, падвоенае азначэньне "
 
-#: src/celengine/solarsys.cpp:1261
+#: src/celengine/solarsys.cpp:1247
 msgid "bad alternate surface"
 msgstr "кепская дадатковая паверхня"
 
-#: src/celengine/solarsys.cpp:1275
+#: src/celengine/solarsys.cpp:1261
 msgid "bad location"
 msgstr "кепскае месца"
 
-#: src/celengine/solarsys.cpp:1281
+#: src/celengine/solarsys.cpp:1267
 msgid "' not found.\n"
 msgstr "» не адшуканае.\n"
 
-#: src/celengine/stardb.cpp:580
+#: src/celengine/stardb.cpp:579
 msgid "Bad header for cross index\n"
 msgstr "Кепскі загаловак для перакрыжаванай спасылкі\n"
 
-#: src/celengine/stardb.cpp:593
+#: src/celengine/stardb.cpp:592
 msgid "Bad version for cross index\n"
 msgstr "Кепская вэрсія для перакрыжаванай спасылкі\n"
 
-#: src/celengine/stardb.cpp:615
+#: src/celengine/stardb.cpp:614
 msgid "Loading cross index failed at record "
 msgstr "Закрузка перакрыжаваных спасылак пацярпела няўдачу на запісе"
 
-#: src/celengine/stardb.cpp:697
+#: src/celengine/stardb.cpp:696
 msgid "Bad spectral type in star database, star #"
 msgstr "Кепскі спэктральны тып у базе зорак, зорка #"
 
-#: src/celengine/stardb.cpp:712
+#: src/celengine/stardb.cpp:711
 msgid " stars in binary database\n"
 msgstr " зорак у двайковай базе\n"
 
-#: src/celengine/stardb.cpp:736
+#: src/celengine/stardb.cpp:735
 msgid "Total star count: "
 msgstr "Агульная колькасьць зорак: "
 
-#: src/celengine/stardb.cpp:770
+#: src/celengine/stardb.cpp:769
 msgid "Error in .stc file (line "
 msgstr "Памылка ў файле .stc (радок "
 
-#: src/celengine/stardb.cpp:807
+#: src/celengine/stardb.cpp:806
 msgid "Invalid star: bad spectral type.\n"
 msgstr "Недапушчальная зорка: кепскі спэктральны тып.\n"
 
-#: src/celengine/stardb.cpp:816
+#: src/celengine/stardb.cpp:815
 msgid "Invalid star: missing spectral type.\n"
 msgstr "Недапушчальная зорка: спэктральны тып адсутнічае.\n"
 
-#: src/celengine/stardb.cpp:961
+#: src/celengine/stardb.cpp:962
 msgid "Barycenter "
 msgstr "Барыцэнтар"
 
-#: src/celengine/stardb.cpp:961
+#: src/celengine/stardb.cpp:962
 msgid " does not exist.\n"
 msgstr " не існуе.\n"
 
-#: src/celengine/stardb.cpp:1014
+#: src/celengine/stardb.cpp:1008
 msgid "Invalid star: missing right ascension\n"
 msgstr "Недапушчальная зорка: адсутнічае правільнае ўзыходжаньне\n"
 
-#: src/celengine/stardb.cpp:1027
+#: src/celengine/stardb.cpp:1021
 msgid "Invalid star: missing declination.\n"
 msgstr "Недапушчальная зорка: адсутнічае схіленьне.\n"
 
-#: src/celengine/stardb.cpp:1040
+#: src/celengine/stardb.cpp:1034
 msgid "Invalid star: missing distance.\n"
 msgstr "Недапушчальная зорка: адсутнічае адлегласьць.\n"
 
-#: src/celengine/stardb.cpp:1072
+#: src/celengine/stardb.cpp:1070
 msgid "Invalid star: missing magnitude.\n"
 msgstr "Недапушчальная зорка: адсутнічае яркасьць.\n"
 
-#: src/celengine/stardb.cpp:1089
+#: src/celengine/stardb.cpp:1087
 msgid "Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n"
 msgstr "Недапушчальная зорка: абсалтная (ня бачная) велічыня мусіць быць вызначаная для зорак, блізкіх да пачатку\n"
 
-#: src/celengine/texture.cpp:1033
+#: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
 msgstr "Стварэньне мазаічнай тэкстуры. Шырыня="
 
-#: src/celengine/texture.cpp:1033
+#: src/celengine/texture.cpp:1019
 msgid ", max="
 msgstr ", макс="
 
-#: src/celengine/texture.cpp:1038
+#: src/celengine/texture.cpp:1024
 msgid "Creating ordinary texture: "
 msgstr "Стварэньне звычайнае тэкстуры: "
 
@@ -277,417 +277,435 @@ msgstr "Усе вяршыневыя праґрамы NV загружаныя ў�
 msgid "Initializing ARB vertex programs . . .\n"
 msgstr "Ініцыялізаваньне вяршыневых праґрамаў ARB . . .\n"
 
-#: src/celengine/vertexprog.cpp:313
+#: src/celengine/vertexprog.cpp:314
 msgid "All ARB vertex programs loaded successfully.\n"
 msgstr "Усе вяршыневыя праґрамы ARB загружаныя ўдала.\n"
 
-#: src/celestia/celestiacore.cpp:422
+#: src/celestia/celestiacore.cpp:420
 msgid "Error reading favorites file."
 msgstr "Памылка падчас чытаньня файла абранага."
 
-#: src/celestia/celestiacore.cpp:512
+#: src/celestia/celestiacore.cpp:516
 msgid "Orientation: "
 msgstr "Арыентацыя:"
 
-#: src/celestia/celestiacore.cpp:559
-#: src/celestia/celestiacore.cpp:561
+#: src/celestia/celestiacore.cpp:563
+#: src/celestia/celestiacore.cpp:565
 msgid "Error opening script file."
 msgstr "Памылка падчас адкрыцьця файла сцэнара."
 
-#: src/celestia/celestiacore.cpp:592
+#: src/celestia/celestiacore.cpp:596
 #, c-format
 msgid "Error opening script '%s'"
 msgstr "Памылка падчас адкрыцьця сцэнара «%s»"
 
-#: src/celestia/celestiacore.cpp:610
+#: src/celestia/celestiacore.cpp:614
 msgid "Unknown error opening script"
 msgstr "Невядомая памылка падчас адкрыцьця сцэнара"
 
-#: src/celestia/celestiacore.cpp:622
+#: src/celestia/celestiacore.cpp:626
 msgid "Script coroutine initialization failed"
 msgstr "Памылка падчас ініцыялізацыі супраграмы сцэнара"
 
-#: src/celestia/celestiacore.cpp:638
-#: src/celestia/celestiacore.cpp:640
+#: src/celestia/celestiacore.cpp:642
+#: src/celestia/celestiacore.cpp:644
 msgid "Invalid filetype"
 msgstr "Недапушчальны тып файла"
 
-#: src/celestia/celestiacore.cpp:986
-#: src/celestia/celestiacore.cpp:1785
-#: src/celestia/celestiacore.cpp:1803
-#: src/celestia/celestiacore.cpp:2044
-#: src/celestia/celestiacore.cpp:2075
+#: src/celestia/celestiacore.cpp:992
+#: src/celestia/celestiacore.cpp:1797
+#: src/celestia/celestiacore.cpp:1815
+#: src/celestia/celestiacore.cpp:2056
+#: src/celestia/celestiacore.cpp:2087
 #, c-format
 msgid "Magnitude limit: %.2f"
 msgstr "Граніца яркасьці: %.2f"
 
-#: src/celestia/celestiacore.cpp:1420
+#: src/celestia/celestiacore.cpp:1427
 msgid "Markers enabled"
 msgstr "Пазнакі задзейнічаныя"
 
-#: src/celestia/celestiacore.cpp:1423
+#: src/celestia/celestiacore.cpp:1430
 msgid "Markers disabled"
 msgstr "Пазнакі абязьдзейненыя"
 
-#: src/celestia/celestiacore.cpp:1433
+#: src/celestia/celestiacore.cpp:1440
 msgid "Goto surface"
 msgstr "Перайсьці на паверхню"
 
-#: src/celestia/celestiacore.cpp:1444
+#: src/celestia/celestiacore.cpp:1453
 msgid "Alt-azimuth mode enabled"
 msgstr "Рэжым «Вышыня-Азімут» задзейнічаны"
 
-#: src/celestia/celestiacore.cpp:1447
+#: src/celestia/celestiacore.cpp:1456
 msgid "Alt-azimuth mode disabled"
 msgstr "Рэжым «Вышыня-Азімут» абязьдзейнены"
 
-#: src/celestia/celestiacore.cpp:1503
+#: src/celestia/celestiacore.cpp:1512
 msgid "Star style: fuzzy points"
 msgstr "Стыль зорак: размытыя кропкі"
 
-#: src/celestia/celestiacore.cpp:1506
+#: src/celestia/celestiacore.cpp:1515
 msgid "Star style: points"
 msgstr "Стыль зорак: кропкі"
 
-#: src/celestia/celestiacore.cpp:1509
+#: src/celestia/celestiacore.cpp:1518
 msgid "Star style: scaled discs"
 msgstr "Стыль зорак: маштабаваныя дыскі"
 
-#: src/celestia/celestiacore.cpp:1522
+#: src/celestia/celestiacore.cpp:1531
 msgid "Comet tails enabled"
 msgstr "Хвасты камэт задзейнічаныя"
 
-#: src/celestia/celestiacore.cpp:1525
+#: src/celestia/celestiacore.cpp:1534
 msgid "Comet tails disabled"
 msgstr "Хвасты камэт абязьдзейненыя"
 
-#: src/celestia/celestiacore.cpp:1540
+#: src/celestia/celestiacore.cpp:1549
 msgid "Render path: Basic"
 msgstr "Спосаб пабудовы: асноўны"
 
-#: src/celestia/celestiacore.cpp:1543
+#: src/celestia/celestiacore.cpp:1552
 msgid "Render path: Multitexture"
 msgstr "Спосаб пабудовы: мультытэкстурны"
 
-#: src/celestia/celestiacore.cpp:1546
+#: src/celestia/celestiacore.cpp:1555
 msgid "Render path: NVIDIA combiners"
 msgstr "Спосаб пабудовы: суматары NVIDIA"
 
-#: src/celestia/celestiacore.cpp:1549
+#: src/celestia/celestiacore.cpp:1558
 msgid "Render path: OpenGL vertex program"
 msgstr "Спосаб пабудовы: вяршыневыя праґрамы OpenGL"
 
-#: src/celestia/celestiacore.cpp:1552
+#: src/celestia/celestiacore.cpp:1561
 msgid "Render path: NVIDIA vertex program and combiners"
 msgstr "Спосаб пабудовы: суматары й вяршыневыя праґрамы NVIDIA"
 
-#: src/celestia/celestiacore.cpp:1555
+#: src/celestia/celestiacore.cpp:1564
 msgid "Render path: OpenGL vertex program/NVIDIA combiners"
 msgstr "Спосаб пабудовы: вяршыневыя праґрамы OpenGL/суматары NVIDIA"
 
-#: src/celestia/celestiacore.cpp:1558
+#: src/celestia/celestiacore.cpp:1567
 msgid "Render path: OpenGL 1.5 vertex/fragment program"
 msgstr "Спосаб пабудовы: вяршыневыя/фраґмэнтавыя праґрамы OpenGL 1.5"
 
-#: src/celestia/celestiacore.cpp:1561
+#: src/celestia/celestiacore.cpp:1570
 msgid "Render path: NVIDIA GeForce FX"
 msgstr "Спосаб пабудовы: NVIDIA GeForce FX"
 
-#: src/celestia/celestiacore.cpp:1564
+#: src/celestia/celestiacore.cpp:1573
 msgid "Render path: OpenGL 2.0"
 msgstr "Спосаб пабудовы: OpenGL 2.0"
 
-#: src/celestia/celestiacore.cpp:1587
+#: src/celestia/celestiacore.cpp:1596
 msgid "Auto-magnitude enabled"
 msgstr "Аўтаяркасьць задзейнічаная"
 
-#: src/celestia/celestiacore.cpp:1592
+#: src/celestia/celestiacore.cpp:1601
 msgid "Auto-magnitude disabled"
 msgstr "Аўтаяркасьць абязьдзейненая"
 
-#: src/celestia/celestiacore.cpp:1614
-#: src/celestia/win32/res/resource_strings.cpp:87
-#: src/celestia/win32/res/resource_strings.cpp:101
-#: src/celestia/win32/res/resource_strings.cpp:105
-#: src/celestia/win32/res/resource_strings.cpp:133
-#: src/celestia/win32/res/resource_strings.cpp:143
-#: src/celestia/win32/res/resource_strings.cpp:192
-#: src/celestia/win32/res/resource_strings.cpp:206
-#: src/celestia/win32/res/resource_strings.cpp:211
-#: src/celestia/win32/res/resource_strings.cpp:215
-#: src/celestia/win32/res/resource_strings.cpp:221
+#: src/celestia/celestiacore.cpp:1623
+#: src/celestia/res/resource_strings.cpp:88
+#: src/celestia/res/resource_strings.cpp:102
+#: src/celestia/res/resource_strings.cpp:106
+#: src/celestia/res/resource_strings.cpp:134
+#: src/celestia/res/resource_strings.cpp:144
+#: src/celestia/res/resource_strings.cpp:194
+#: src/celestia/res/resource_strings.cpp:208
+#: src/celestia/res/resource_strings.cpp:213
+#: src/celestia/res/resource_strings.cpp:217
+#: src/celestia/res/resource_strings.cpp:223
 msgid "Cancel"
 msgstr "Адмяніць"
 
-#: src/celestia/celestiacore.cpp:1650
+#: src/celestia/celestiacore.cpp:1659
 msgid "Time and script are paused"
 msgstr "Час і сцэнар прыпыненыя"
 
-#: src/celestia/celestiacore.cpp:1652
+#: src/celestia/celestiacore.cpp:1661
 msgid "Time is paused"
 msgstr "Хада часу прыпыненая"
 
-#: src/celestia/celestiacore.cpp:1656
+#: src/celestia/celestiacore.cpp:1665
 msgid "Resume"
 msgstr "Працяг"
 
-#: src/celestia/celestiacore.cpp:1729
+#: src/celestia/celestiacore.cpp:1740
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "Сьвятло даходзіць за:  %.4f с.г. "
 
-#: src/celestia/celestiacore.cpp:1738
+#: src/celestia/celestiacore.cpp:1749
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Сьвятло даходзіць за:  %d хв  %.1f с"
 
-#: src/celestia/celestiacore.cpp:1742
+#: src/celestia/celestiacore.cpp:1752
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Сьвятло даходзіць за:  %d гадз  %d хв  %.1f с"
 
-#: src/celestia/celestiacore.cpp:1759
+#: src/celestia/celestiacore.cpp:1771
 msgid "Light travel delay included"
 msgstr "Час руху сьвятла ўключаецца"
 
-#: src/celestia/celestiacore.cpp:1764
+#: src/celestia/celestiacore.cpp:1776
 msgid "Light travel delay switched off"
 msgstr "Затрымка руху сьвятла ня ўлучаная"
 
-#: src/celestia/celestiacore.cpp:1770
+#: src/celestia/celestiacore.cpp:1782
 msgid "Light travel delay ignored"
 msgstr "Час руху сьвятла іґнаруецца"
 
-#: src/celestia/celestiacore.cpp:1815
+#: src/celestia/celestiacore.cpp:1827
 msgid "Using normal surface textures."
 msgstr "Ужываюцца нармальныя тэкстуры паверхняў."
 
-#: src/celestia/celestiacore.cpp:1820
+#: src/celestia/celestiacore.cpp:1832
 msgid "Using limit of knowledge surface textures."
 msgstr "Ужываюцца тэкстуры паверхняў з абмежаваньнем ведаў."
 
-#: src/celestia/celestiacore.cpp:1887
+#: src/celestia/celestiacore.cpp:1899
 msgid "Follow"
 msgstr "Ісьці ўсьлед"
 
-#: src/celestia/celestiacore.cpp:1912
+#: src/celestia/celestiacore.cpp:1924
 msgid "Time: Forward"
 msgstr "Час: наперад"
 
-#: src/celestia/celestiacore.cpp:1914
+#: src/celestia/celestiacore.cpp:1926
 msgid "Time: Backward"
 msgstr "Час: назад"
 
-#: src/celestia/celestiacore.cpp:1927
-#: src/celestia/celestiacore.cpp:1943
+#: src/celestia/celestiacore.cpp:1939
+#: src/celestia/celestiacore.cpp:1955
 msgid "Time rate"
 msgstr "Хуткасьць часу"
 
-#: src/celestia/celestiacore.cpp:2016
+#: src/celestia/celestiacore.cpp:2028
 msgid "Sync Orbit"
 msgstr "Сынхранізаваць арбіту"
 
-#: src/celestia/celestiacore.cpp:2022
+#: src/celestia/celestiacore.cpp:2034
 msgid "Lock"
 msgstr "Захапіць"
 
-#: src/celestia/celestiacore.cpp:2028
+#: src/celestia/celestiacore.cpp:2040
 msgid "Chase"
 msgstr "Даганяць"
 
-#: src/celestia/celestiacore.cpp:2055
-#: src/celestia/celestiacore.cpp:2086
+#: src/celestia/celestiacore.cpp:2067
+#: src/celestia/celestiacore.cpp:2098
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
 msgstr "Гранічная аўтаяркасьць пры 45°:  %.2f"
 
-#: src/celestia/celestiacore.cpp:2105
-#: src/celestia/celestiacore.cpp:2120
+#: src/celestia/celestiacore.cpp:2117
+#: src/celestia/celestiacore.cpp:2132
 #, c-format
 msgid "Ambient light level:  %.2f"
 msgstr "Узровень расьсеянага сьвятла:  %.2f"
 
-#: src/celestia/celestiacore.cpp:2131
 #: src/celestia/celestiacore.cpp:2143
+#: src/celestia/celestiacore.cpp:2155
 msgid "Light gain"
 msgstr "Узмацненьне сьвятла"
 
-#: src/celestia/celestiacore.cpp:2163
+#: src/celestia/celestiacore.cpp:2175
 msgid "Bloom enabled"
 msgstr "Эфэкт «bloom» задзейнічаны"
 
-#: src/celestia/celestiacore.cpp:2165
+#: src/celestia/celestiacore.cpp:2177
 msgid "Bloom disabled"
 msgstr "Эфэкт «bloom» абязьдзейнены"
 
-#: src/celestia/celestiacore.cpp:2171
-#: src/celestia/celestiacore.cpp:2179
+#: src/celestia/celestiacore.cpp:2183
+#: src/celestia/celestiacore.cpp:2191
 msgid "Exposure"
 msgstr "Насьвятленьне"
 
-#: src/celestia/celestiacore.cpp:2532
+#: src/celestia/celestiacore.cpp:2539
 msgid "GL error: "
 msgstr "Памылка GL: "
 
-#: src/celestia/celestiacore.cpp:2632
+#: src/celestia/celestiacore.cpp:2639
 msgid "View too small to be split"
 msgstr "Прагляд замалы, каб яго модна было падзяліць"
 
-#: src/celestia/celestiacore.cpp:2635
+#: src/celestia/celestiacore.cpp:2642
 msgid "Added view"
 msgstr "Даданы прагляд"
 
-#: src/celestia/celestiacore.cpp:2891
-#: src/celestia/kde/celestialbrowser.cpp:130
+#: src/celestia/celestiacore.cpp:2898
+#: src/celestia/kde/celestialbrowser.cpp:133
 #: src/celestia/kde/selectionpopup.cpp:79
 msgid "ly"
 msgstr "с.г."
 
-#: src/celestia/celestiacore.cpp:2895
-#: src/celestia/kde/celestialbrowser.cpp:159
+#: src/celestia/celestiacore.cpp:2902
+#: src/celestia/kde/celestialbrowser.cpp:162
 #: src/celestia/kde/selectionpopup.cpp:81
-#: src/celestia/win32/res/resource_strings.cpp:131
+#: src/celestia/res/resource_strings.cpp:132
 msgid "au"
 msgstr "аа"
 
-#: src/celestia/celestiacore.cpp:2922
+#: src/celestia/celestiacore.cpp:2923
 msgid " days"
 msgstr " дзён"
 
-#: src/celestia/celestiacore.cpp:2924
+#: src/celestia/celestiacore.cpp:2925
 msgid " hours"
 msgstr " гадзін"
 
-#: src/celestia/celestiacore.cpp:2926
+#: src/celestia/celestiacore.cpp:2927
 msgid " minutes"
 msgstr " хвілін"
 
-#: src/celestia/celestiacore.cpp:2993
+#: src/celestia/celestiacore.cpp:2929
+msgid " seconds"
+msgstr " сэкунд   "
+
+#: src/celestia/celestiacore.cpp:2994
 msgid "Apparent diameter: "
 msgstr "Бачны дыямэтар: "
 
-#: src/celestia/celestiacore.cpp:3008
+#: src/celestia/celestiacore.cpp:3009
 msgid "Apparent magnitude: "
 msgstr "Бачная велічыня: "
 
-#: src/celestia/celestiacore.cpp:3012
+#: src/celestia/celestiacore.cpp:3013
 msgid "Absolute magnitude: "
 msgstr "Абсалютная велічыня: "
 
-#: src/celestia/celestiacore.cpp:3034
+#: src/celestia/celestiacore.cpp:3035
 msgid "RA: "
 msgstr "Пр. узых.: "
 
-#: src/celestia/celestiacore.cpp:3038
+#: src/celestia/celestiacore.cpp:3039
 msgid "Dec: "
 msgstr "Схіл.:"
 
-#: src/celestia/celestiacore.cpp:3102
-#: src/celestia/kde/kdeapp.cpp:1635
-#: src/celestia/win32/res/resource_strings.cpp:129
+#: src/celestia/celestiacore.cpp:3103
+#: src/celestia/kde/kdeapp.cpp:1619
+#: src/celestia/res/resource_strings.cpp:130
 msgid "km"
 msgstr "км"
 
-#: src/celestia/celestiacore.cpp:3129
-#: src/celestia/celestiacore.cpp:3203
-#: src/celestia/celestiacore.cpp:3233
-#: src/celestia/celestiacore.cpp:3328
+#: src/celestia/celestiacore.cpp:3132
+#: src/celestia/celestiacore.cpp:3206
+#: src/celestia/celestiacore.cpp:3238
+#: src/celestia/celestiacore.cpp:3339
 #: src/celestia/kde/selectionpopup.cpp:87
 msgid "Distance: "
 msgstr "Адлегласьць: "
 
-#: src/celestia/celestiacore.cpp:3135
+#: src/celestia/celestiacore.cpp:3138
 msgid "Star system barycenter\n"
 msgstr "Барыцэнтар сонечнай сыстэмы\n"
 
-#: src/celestia/celestiacore.cpp:3139
+#: src/celestia/celestiacore.cpp:3142
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
 msgstr "Абс (бач) вел: %.2f (%.2f)\n"
 
-#: src/celestia/celestiacore.cpp:3145
+#: src/celestia/celestiacore.cpp:3148
 msgid "Luminosity: "
 msgstr "Сьвятлівасьць: "
 
-#: src/celestia/celestiacore.cpp:3145
+#: src/celestia/celestiacore.cpp:3148
 msgid "x Sun"
 msgstr " сонечных"
 
-#: src/celestia/celestiacore.cpp:3146
+#: src/celestia/celestiacore.cpp:3149
 #: src/celestia/kde/selectionpopup.cpp:97
 msgid "Class: "
 msgstr "Кляса: "
 
-#: src/celestia/celestiacore.cpp:3148
+#: src/celestia/celestiacore.cpp:3151
 msgid "Neutron star"
 msgstr "Нэўтронная зорка"
 
-#: src/celestia/celestiacore.cpp:3150
+#: src/celestia/celestiacore.cpp:3153
 msgid "Black hole"
 msgstr "Чорная дзірка"
 
-#: src/celestia/celestiacore.cpp:3160
+#: src/celestia/celestiacore.cpp:3163
 msgid "Surface temp: "
 msgstr "Тэмпэратура паверхні: "
 
-#: src/celestia/celestiacore.cpp:3163
-#: src/celestia/celestiacore.cpp:3212
-#: src/celestia/celestiacore.cpp:3243
+#: src/celestia/celestiacore.cpp:3166
+#: src/celestia/celestiacore.cpp:3215
+#: src/celestia/celestiacore.cpp:3248
 #: src/celestia/kde/selectionpopup.cpp:105
 msgid "Radius: "
 msgstr "Радыюс: "
 
-#: src/celestia/celestiacore.cpp:3166
+#: src/celestia/celestiacore.cpp:3169
 #: src/celestia/kde/selectionpopup.cpp:106
 msgid "Rsun"
 msgstr "сонечных"
 
-#: src/celestia/celestiacore.cpp:3176
-#: src/celestia/celestiacore.cpp:3294
+#: src/celestia/celestiacore.cpp:3179
+#: src/celestia/celestiacore.cpp:3300
 msgid "Rotation period: "
 msgstr "Пэрыяд авароту: "
 
-#: src/celestia/celestiacore.cpp:3190
+#: src/celestia/celestiacore.cpp:3193
 msgid "Planetary companions present\n"
 msgstr "Наяўныя плянэтныя спадарожнікі\n"
 
-#: src/celestia/celestiacore.cpp:3208
+#: src/celestia/celestiacore.cpp:3211
 msgid "Distance from center: "
 msgstr "Адлегласьць ад цэнтру: "
 
-#: src/celestia/celestiacore.cpp:3472
+#: src/celestia/celestiacore.cpp:3292
+#, c-format
+msgid "Phase angle: %.1f%s\n"
+msgstr "Фазавы вугал: %.1f%s\n"
+
+#: src/celestia/celestiacore.cpp:3316
+msgid "Temperature: "
+msgstr "Тэмпэратура:"
+
+#: src/celestia/celestiacore.cpp:3328
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "Бачная веліч.: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3485
 msgid "  LT"
 msgstr "  ПЧРС"
 
-#: src/celestia/celestiacore.cpp:3481
+#: src/celestia/celestiacore.cpp:3494
 msgid "Real time"
 msgstr "Сапраўдны час"
 
-#: src/celestia/celestiacore.cpp:3483
+#: src/celestia/celestiacore.cpp:3496
 msgid "-Real time"
 msgstr "-Сапраўдны час"
 
-#: src/celestia/celestiacore.cpp:3487
+#: src/celestia/celestiacore.cpp:3500
 msgid "Time stopped"
 msgstr "Хада часу спыненая"
 
-#: src/celestia/celestiacore.cpp:3492
+#: src/celestia/celestiacore.cpp:3505
 msgid " faster"
 msgstr " хутчэй"
 
-#: src/celestia/celestiacore.cpp:3497
+#: src/celestia/celestiacore.cpp:3510
 msgid " slower"
 msgstr " павольней"
 
-#: src/celestia/celestiacore.cpp:3503
+#: src/celestia/celestiacore.cpp:3516
 msgid " (Paused)"
 msgstr " (Прыпыненая)"
 
-#: src/celestia/celestiacore.cpp:3521
+#: src/celestia/celestiacore.cpp:3534
 msgid "FPS: "
 msgstr "кадр/сэк: "
 
-#: src/celestia/celestiacore.cpp:3523
+#: src/celestia/celestiacore.cpp:3536
 msgid ""
 "\n"
 "Speed: "
@@ -695,161 +713,161 @@ msgstr ""
 "\n"
 "Хуткасьць:"
 
-#: src/celestia/celestiacore.cpp:3527
+#: src/celestia/celestiacore.cpp:3540
 msgid " m/s"
 msgstr " м/с"
 
-#: src/celestia/celestiacore.cpp:3529
+#: src/celestia/celestiacore.cpp:3542
 msgid " km/s"
 msgstr " км/с"
 
-#: src/celestia/celestiacore.cpp:3533
+#: src/celestia/celestiacore.cpp:3546
 msgid " AU/s"
 msgstr " АА/с"
 
-#: src/celestia/celestiacore.cpp:3535
+#: src/celestia/celestiacore.cpp:3548
 msgid " ly/s"
 msgstr " с.г./с"
 
-#: src/celestia/celestiacore.cpp:3552
+#: src/celestia/celestiacore.cpp:3565
 msgid "Travelling "
 msgstr "Падарожнічаем"
 
-#: src/celestia/celestiacore.cpp:3565
+#: src/celestia/celestiacore.cpp:3578
 msgid "Track "
 msgstr "Трымаць "
 
-#: src/celestia/celestiacore.cpp:3579
+#: src/celestia/celestiacore.cpp:3592
 msgid "Follow "
 msgstr "Ісьці ўсьлед "
 
-#: src/celestia/celestiacore.cpp:3584
+#: src/celestia/celestiacore.cpp:3597
 msgid "Sync Orbit "
 msgstr "Сынхранізаваць арбіту "
 
-#: src/celestia/celestiacore.cpp:3589
+#: src/celestia/celestiacore.cpp:3602
 msgid "Lock "
 msgstr "Захапіць "
 
-#: src/celestia/celestiacore.cpp:3598
+#: src/celestia/celestiacore.cpp:3611
 msgid "Chase "
 msgstr "Даганяць"
 
-#: src/celestia/celestiacore.cpp:3614
+#: src/celestia/celestiacore.cpp:3627
 msgid "FOV: "
 msgstr "ПЗ: "
 
-#: src/celestia/celestiacore.cpp:3644
-#: src/celestia/celestiacore.cpp:3647
+#: src/celestia/celestiacore.cpp:3657
+#: src/celestia/celestiacore.cpp:3660
 msgid "Sun"
 msgstr "Сонца"
 
-#: src/celestia/celestiacore.cpp:3822
+#: src/celestia/celestiacore.cpp:3834
 msgid "Target name: "
 msgstr "Назва мэты: "
 
-#: src/celestia/celestiacore.cpp:3905
+#: src/celestia/celestiacore.cpp:3916
 msgid " at "
 msgstr " пры "
 
-#: src/celestia/celestiacore.cpp:3906
+#: src/celestia/celestiacore.cpp:3917
 msgid " fps"
 msgstr " к/с"
 
-#: src/celestia/celestiacore.cpp:3908
+#: src/celestia/celestiacore.cpp:3919
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
 msgstr "  Запіс"
 
-#: src/celestia/celestiacore.cpp:3910
+#: src/celestia/celestiacore.cpp:3921
 #: src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
 msgstr "  Прыпынена"
 
-#: src/celestia/celestiacore.cpp:3933
+#: src/celestia/celestiacore.cpp:3940
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 Пачаць/Паўза   F12 Спыніць"
 
-#: src/celestia/celestiacore.cpp:3943
-#: src/celestia/celestiacore.cpp:3946
+#: src/celestia/celestiacore.cpp:3949
+#: src/celestia/celestiacore.cpp:3952
 msgid "Edit Mode"
 msgstr "Рэжым праўкі"
 
-#: src/celestia/celestiacore.cpp:4012
+#: src/celestia/celestiacore.cpp:4018
 msgid "Loading solar system catalog: "
 msgstr "Загрузка каталёґу сонечнай сыстэмы: "
 
-#: src/celestia/celestiacore.cpp:4053
+#: src/celestia/celestiacore.cpp:4059
 msgid "Loading "
 msgstr "Загрузка "
 
-#: src/celestia/celestiacore.cpp:4088
+#: src/celestia/celestiacore.cpp:4094
 msgid "License file 'License.txt' is missing!"
 msgstr "Файл ліцэнзіі 'License.txt' адсутнічае!"
 
-#: src/celestia/celestiacore.cpp:4109
+#: src/celestia/celestiacore.cpp:4115
 msgid "Error reading configuration file."
 msgstr "Памылка падчас чытаньня файла настаўленьняў."
 
-#: src/celestia/celestiacore.cpp:4120
+#: src/celestia/celestiacore.cpp:4126
 msgid "Initialization of SPICE library failed."
 msgstr "Не ўдалося ініцыялізаваць бібліятэку SPICE."
 
-#: src/celestia/celestiacore.cpp:4167
+#: src/celestia/celestiacore.cpp:4173
 msgid "Cannot read star database."
 msgstr "Немагчыма прачытаць базу зорак."
 
-#: src/celestia/celestiacore.cpp:4189
+#: src/celestia/celestiacore.cpp:4195
 msgid "Error opening deepsky catalog file."
 msgstr "Памылка падчас адкрыцьця файла каталёґу глыбокага космасу."
 
-#: src/celestia/celestiacore.cpp:4241
+#: src/celestia/celestiacore.cpp:4247
 msgid "Error opening solar system catalog.\n"
 msgstr "Памылка падчас адкрыцьця каталёґу сонечнай сыстэмы.\n"
 
-#: src/celestia/celestiacore.cpp:4274
+#: src/celestia/celestiacore.cpp:4280
 msgid "Error opening asterisms file."
 msgstr "Памылка падчас адкрыцьця файла астэрызму."
 
-#: src/celestia/celestiacore.cpp:4289
+#: src/celestia/celestiacore.cpp:4295
 msgid "Error opening constellation boundaries files."
 msgstr "Памылка падчас адкрыцьця файлаў зь межамі сузор'яў."
 
-#: src/celestia/celestiacore.cpp:4356
+#: src/celestia/celestiacore.cpp:4362
 msgid "render path: "
 msgstr "Спосаб пабудовы: "
 
-#: src/celestia/celestiacore.cpp:4367
+#: src/celestia/celestiacore.cpp:4373
 msgid "Failed to initialize renderer"
 msgstr "Не ўдалося ініцыялізаваць будаўнік"
 
-#: src/celestia/celestiacore.cpp:4383
+#: src/celestia/celestiacore.cpp:4389
 msgid "Error loading font; text will not be visible.\n"
 msgstr "Памылка падчас загрузкі шрыфта; тэкс ня будзе бачны.\n"
 
-#: src/celestia/celestiacore.cpp:4440
+#: src/celestia/celestiacore.cpp:4446
 msgid "Error reading cross index "
 msgstr "Памылка падчас чытаньня перакрыжаваных спасылак"
 
-#: src/celestia/celestiacore.cpp:4442
+#: src/celestia/celestiacore.cpp:4448
 msgid "Loaded cross index "
 msgstr "Загружаны перакрыжаваныя спасылкі"
 
-#: src/celestia/celestiacore.cpp:4456
-#: src/celestia/celestiacore.cpp:4478
+#: src/celestia/celestiacore.cpp:4462
+#: src/celestia/celestiacore.cpp:4484
 msgid "Error opening "
 msgstr "Памылка падчас адкрыцьця "
 
-#: src/celestia/celestiacore.cpp:4463
+#: src/celestia/celestiacore.cpp:4469
 msgid "Error reading star names file\n"
 msgstr "Памылка падчас чытаньня файла з назвамі зорак\n"
 
-#: src/celestia/celestiacore.cpp:4486
+#: src/celestia/celestiacore.cpp:4492
 msgid "Error reading stars file\n"
 msgstr "Памылка падчас чытаньня файла зорак\n"
 
-#: src/celestia/celestiacore.cpp:4513
+#: src/celestia/celestiacore.cpp:4519
 msgid "Error opening star catalog "
 msgstr "Памылка падчас адкрыцьця каталёґу зорак"
 
@@ -873,351 +891,381 @@ msgstr "OggTheoraCapture::start() — Відэа Theora: %s %.2f(%d/%d) кадр
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
 msgstr "OggTheoraCapture::cleanup() — запісана %d кадраў\n"
 
-#: src/celestia/url.cpp:654
+#: src/celestia/url.cpp:653
+#: src/celestia/kde/rc.cpp:133
+#, no-c-format
 msgid "Settings"
 msgstr "Настаўленьні"
 
-#: src/celestia/win32/winmain.cpp:624
-#: src/celestia/kde/kdeapp.cpp:970
+#: src/celestia/winmain.cpp:625
+#: src/celestia/kde/kdeapp.cpp:954
 msgid "Vendor: "
 msgstr "Распаўсюднік: "
 
-#: src/celestia/win32/winmain.cpp:629
-#: src/celestia/kde/kdeapp.cpp:975
+#: src/celestia/winmain.cpp:630
+#: src/celestia/kde/kdeapp.cpp:959
 msgid "Renderer: "
 msgstr "Будаўнік: "
 
-#: src/celestia/win32/winmain.cpp:634
-#: src/celestia/kde/kdeapp.cpp:980
+#: src/celestia/winmain.cpp:635
+#: src/celestia/kde/kdeapp.cpp:964
 msgid "Version: "
 msgstr "Вэрсія: "
 
-#: src/celestia/win32/winmain.cpp:644
+#: src/celestia/winmain.cpp:645
 msgid "GLSL version: "
 msgstr "Вэрсія GLSL: "
 
-#: src/celestia/win32/winmain.cpp:655
-#: src/celestia/kde/kdeapp.cpp:989
+#: src/celestia/winmain.cpp:656
+#: src/celestia/kde/kdeapp.cpp:973
 msgid "Max simultaneous textures: "
 msgstr "Макс. колькасьць тэкстур: "
 
-#: src/celestia/win32/winmain.cpp:662
-#: src/celestia/kde/kdeapp.cpp:994
+#: src/celestia/winmain.cpp:663
+#: src/celestia/kde/kdeapp.cpp:978
 msgid "Max texture size: "
 msgstr "Найб. памер тэкстуры: "
 
-#: src/celestia/win32/winmain.cpp:671
+#: src/celestia/winmain.cpp:672
 msgid "Max cube map size: "
 msgstr "Макс. памер кубічнае мапы: "
 
-#: src/celestia/win32/winmain.cpp:679
-#: src/celestia/kde/kdeapp.cpp:1000
+#: src/celestia/winmain.cpp:680
+#: src/celestia/kde/kdeapp.cpp:984
 msgid "Point size range: "
 msgstr "Дыяпазон памераў пунктаў: "
 
-#: src/celestia/win32/winmain.cpp:684
-#: src/celestia/kde/kdeapp.cpp:1004
+#: src/celestia/winmain.cpp:685
+#: src/celestia/kde/kdeapp.cpp:988
 msgid "Supported Extensions:"
 msgstr "Падтрымліваюцца пашырэньні:"
 
-#: src/celestia/win32/winmain.cpp:1385
+#: src/celestia/winmain.cpp:1386
 msgid "Windowed Mode"
 msgstr "Ваконны рэжым"
 
-#: src/celestia/win32/winmain.cpp:1507
+#: src/celestia/winmain.cpp:1508
 #: src/celestia/kde/kdepreferencesdialog.cpp:236
 #: src/celestia/kde/selectionpopup.cpp:414
-#: src/celestia/win32/res/resource_strings.cpp:172
+#: src/celestia/res/resource_strings.cpp:174
 msgid "Asteroids"
 msgstr "Астэроіды"
 
-#: src/celestia/win32/winmain.cpp:1509
+#: src/celestia/winmain.cpp:1510
 #: src/celestia/kde/kdepreferencesdialog.cpp:202
 #: src/celestia/kde/selectionpopup.cpp:416
-#: src/celestia/win32/res/resource_strings.cpp:173
+#: src/celestia/res/resource_strings.cpp:175
 msgid "Comets"
 msgstr "Камэты"
 
-#: src/celestia/win32/winmain.cpp:1511
+#: src/celestia/winmain.cpp:1512
 msgid "Invisibles"
 msgstr "Нябачныя"
 
-#: src/celestia/win32/winmain.cpp:1513
+#: src/celestia/winmain.cpp:1514
 #: src/celestia/kde/kdepreferencesdialog.cpp:193
 #: src/celestia/kde/selectionpopup.cpp:418
-#: src/celestia/win32/res/resource_strings.cpp:170
+#: src/celestia/res/resource_strings.cpp:172
 msgid "Moons"
 msgstr "Месяцы"
 
-#: src/celestia/win32/winmain.cpp:1515
-#: src/celestia/win32/winmain.cpp:1550
-#: src/celestia/win32/winmain.cpp:1667
+#: src/celestia/winmain.cpp:1516
+#: src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
 #: src/celestia/kde/kdepreferencesdialog.cpp:82
 #: src/celestia/kde/kdepreferencesdialog.cpp:184
 #: src/celestia/kde/selectionpopup.cpp:420
 #: src/celestia/kde/selectionpopup.cpp:498
-#: src/celestia/win32/res/resource_strings.cpp:151
-#: src/celestia/win32/res/resource_strings.cpp:168
+#: src/celestia/res/resource_strings.cpp:152
+#: src/celestia/res/resource_strings.cpp:170
 msgid "Planets"
 msgstr "Плянэты"
 
-#: src/celestia/win32/winmain.cpp:1517
-#: src/celestia/kde/celestialbrowser.cpp:191
+#: src/celestia/winmain.cpp:1518
+#: src/celestia/kde/celestialbrowser.cpp:194
 #: src/celestia/kde/selectionpopup.cpp:422
-#: src/celestia/win32/res/resource_strings.cpp:174
+#: src/celestia/res/resource_strings.cpp:176
 msgid "Spacecraft"
 msgstr "Карабель"
 
-#: src/celestia/win32/winmain.cpp:1607
-#: src/celestia/win32/winmain.cpp:1655
-#: src/celestia/win32/winmain.cpp:1678
-#: src/celestia/kde/eclipsefinderdlg.cpp:121
+#: src/celestia/winmain.cpp:1608
+#: src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+#: src/celestia/kde/eclipsefinderdlg.cpp:118
 #: src/celestia/kde/selectionpopup.cpp:300
 msgid "&Goto"
 msgstr "&Перайсьці"
 
-#: src/celestia/win32/winmain.cpp:1608
-#: src/celestia/win32/winmain.cpp:1679
+#: src/celestia/winmain.cpp:1609
+#: src/celestia/winmain.cpp:1680
 #: src/celestia/kde/selectionpopup.cpp:301
 msgid "&Follow"
 msgstr "&Ісьці ўсьлед"
 
-#: src/celestia/win32/winmain.cpp:1609
+#: src/celestia/winmain.cpp:1610
 msgid "S&ync Orbit"
 msgstr "&Сынхранізаваць арбіту"
 
-#: src/celestia/win32/winmain.cpp:1610
-#: src/celestia/win32/winmain.cpp:1656
-#: src/celestia/win32/winmain.cpp:1680
+#: src/celestia/winmain.cpp:1611
+#: src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
 #: src/celestia/kde/selectionpopup.cpp:304
 msgid "&Info"
 msgstr "&Зьвесткі"
 
-#: src/celestia/win32/winmain.cpp:1612
+#: src/celestia/winmain.cpp:1613
 #: src/celestia/kde/selectionpopup.cpp:333
-msgid "&Reference Vectors"
-msgstr "&Арыенцірныя вэктары"
+msgid "&Reference Marks"
+msgstr "&Арыенцірныя пазнакі"
 
-#: src/celestia/win32/winmain.cpp:1613
+#: src/celestia/winmain.cpp:1614
 #: src/celestia/kde/selectionpopup.cpp:334
 msgid "Show Body Axes"
 msgstr "Паказаць восі цела"
 
-#: src/celestia/win32/winmain.cpp:1614
+#: src/celestia/winmain.cpp:1615
 #: src/celestia/kde/selectionpopup.cpp:336
 msgid "Show Frame Axes"
 msgstr "Паказаць восі сыстэмы каардынат"
 
-#: src/celestia/win32/winmain.cpp:1615
+#: src/celestia/winmain.cpp:1616
 #: src/celestia/kde/selectionpopup.cpp:338
 msgid "Show Sun Direction"
 msgstr "Паказваць напрамак Сонца"
 
-#: src/celestia/win32/winmain.cpp:1616
+#: src/celestia/winmain.cpp:1617
 #: src/celestia/kde/selectionpopup.cpp:340
 msgid "Show Velocity Vector"
 msgstr "Паказваць вэктар хуткасьці"
 
-#: src/celestia/win32/winmain.cpp:1617
+#: src/celestia/winmain.cpp:1618
 #: src/celestia/kde/selectionpopup.cpp:342
 msgid "Show Planetographic Grid"
 msgstr "Паказваць плянэтаґрафічную сетку"
 
-#: src/celestia/win32/winmain.cpp:1618
+#: src/celestia/winmain.cpp:1619
 #: src/celestia/kde/selectionpopup.cpp:344
 msgid "Show Terminator"
 msgstr "Паказаць тэрмінатар"
 
-#: src/celestia/win32/winmain.cpp:1632
+#: src/celestia/winmain.cpp:1633
 msgid "&Satellites"
 msgstr "&Спадарожнікі"
 
-#: src/celestia/win32/winmain.cpp:1642
+#: src/celestia/winmain.cpp:1643
 #: src/celestia/kde/selectionpopup.cpp:366
 msgid "&Alternate Surfaces"
 msgstr "&Дадатковыя паверхні"
 
-#: src/celestia/win32/winmain.cpp:1665
+#: src/celestia/winmain.cpp:1666
 #: src/celestia/kde/selectionpopup.cpp:477
 msgid "Orbiting Bodies"
 msgstr "Арбітальныя целы"
 
-#: src/celestia/win32/winmain.cpp:1692
+#: src/celestia/winmain.cpp:1693
 #: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Unmark"
 msgstr "&Зьняць пазнаку"
 
-#: src/celestia/win32/winmain.cpp:1694
+#: src/celestia/winmain.cpp:1695
 #: src/celestia/kde/selectionpopup.cpp:327
 msgid "&Mark"
 msgstr "&Дадаць пазнаку"
 
-#: src/celestia/win32/winmain.cpp:3154
+#: src/celestia/winmain.cpp:3141
 msgid "Loading: "
 msgstr "Загрузка: "
 
-#: src/celestia/win32/winmain.cpp:3322
+#: src/celestia/winmain.cpp:3314
 #: src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
 msgstr "be"
 
-#: src/celestia/win32/winmain.cpp:3324
-#: src/celestia/win32/res/resource_strings.cpp:233
+#: src/celestia/winmain.cpp:3316
+#: src/celestia/res/resource_strings.cpp:235
 msgid "WinLangID"
 msgstr "423"
 
-#: src/celestia/win32/winmain.cpp:3826
+#: src/celestia/winmain.cpp:3818
 msgid "Copied URL"
 msgstr "Скапіяваны URL"
 
-#: src/celestia/win32/winmain.cpp:3920
+#: src/celestia/winmain.cpp:3912
 msgid "Loading URL"
 msgstr "Загрузка URL"
 
-#: src/celestia/win32/winmain.cpp:3932
+#: src/celestia/winmain.cpp:3924
 msgid "Error opening script"
 msgstr "Памылка падчас адкрыцьця файла"
 
-#: src/celestia/win32/winmain.cpp:3951
+#: src/celestia/winmain.cpp:3943
 msgid "Error loading script"
 msgstr "Памылка падчас загрузкі сцэнара"
 
-#: src/celestia/win32/winmain.cpp:3956
+#: src/celestia/winmain.cpp:3948
 msgid "Running script"
 msgstr "Выконваньне сцэнара"
 
-#: src/celestia/win32/wineclipses.cpp:59
-#: src/celestia/kde/celestialbrowser.cpp:179
+#: src/celestia/wineclipses.cpp:58
+#: src/celestia/kde/celestialbrowser.cpp:182
+#: src/celestia/kde/rc.cpp:73
+#, no-c-format
 msgid "Planet"
 msgstr "Плянэта"
 
-#: src/celestia/win32/wineclipses.cpp:61
+#: src/celestia/wineclipses.cpp:60
 msgid "Satellite"
 msgstr "Спадарожнік"
 
-#: src/celestia/win32/wineclipses.cpp:63
+#: src/celestia/wineclipses.cpp:62
+#: src/celestia/kde/rc.cpp:79
+#, no-c-format
 msgid "Date"
 msgstr "Дата"
 
-#: src/celestia/win32/wineclipses.cpp:65
+#: src/celestia/wineclipses.cpp:64
+#: src/celestia/kde/rc.cpp:82
+#, no-c-format
 msgid "Start"
 msgstr "Пачатак"
 
-#: src/celestia/win32/wineclipses.cpp:67
+#: src/celestia/wineclipses.cpp:66
 msgid "Duration"
 msgstr "Працягласьць"
 
-#: src/celestia/win32/wineclipses.cpp:317
+#: src/celestia/wineclipses.cpp:316
+#: src/celestia/kde/rc.cpp:97
 #: data/data.cpp:3
+#, no-c-format
 msgid "Earth"
 msgstr "Зямля"
 
-#: src/celestia/win32/wineclipses.cpp:318
+#: src/celestia/wineclipses.cpp:317
+#: src/celestia/kde/rc.cpp:100
 #: data/data.cpp:8
+#, no-c-format
 msgid "Jupiter"
 msgstr "Юпітэр"
 
-#: src/celestia/win32/wineclipses.cpp:319
+#: src/celestia/wineclipses.cpp:318
+#: src/celestia/kde/rc.cpp:103
 #: data/data.cpp:14
+#, no-c-format
 msgid "Saturn"
 msgstr "Сатурн"
 
-#: src/celestia/win32/wineclipses.cpp:320
+#: src/celestia/wineclipses.cpp:319
+#: src/celestia/kde/rc.cpp:106
 #: data/data.cpp:28
+#, no-c-format
 msgid "Uranus"
 msgstr "Уран"
 
-#: src/celestia/win32/wineclipses.cpp:321
+#: src/celestia/wineclipses.cpp:320
+#: src/celestia/kde/rc.cpp:109
 #: data/data.cpp:34
+#, no-c-format
 msgid "Neptune"
 msgstr "Нэптун"
 
-#: src/celestia/win32/wineclipses.cpp:322
+#: src/celestia/wineclipses.cpp:321
+#: src/celestia/kde/rc.cpp:112
 #: data/data.cpp:40
+#, no-c-format
 msgid "Pluto"
 msgstr "Плютон"
 
-#: src/celestia/win32/winstarbrowser.cpp:61
-#: src/celestia/win32/res/resource_strings.cpp:103
+#: src/celestia/winstarbrowser.cpp:70
+#: src/celestia/kde/rc.cpp:34
+#: src/celestia/res/resource_strings.cpp:104
+#, no-c-format
 msgid "Name"
 msgstr "Назва"
 
-#: src/celestia/win32/winstarbrowser.cpp:63
+#: src/celestia/winstarbrowser.cpp:72
 msgid "Distance (ly)"
 msgstr "Адлегласьць (с.г.)"
 
-#: src/celestia/win32/winstarbrowser.cpp:66
+#: src/celestia/winstarbrowser.cpp:75
 msgid "App. mag"
 msgstr "Бачн. вел."
 
-#: src/celestia/win32/winstarbrowser.cpp:68
+#: src/celestia/winstarbrowser.cpp:77
 msgid "Abs. mag"
 msgstr "Абс. вел."
 
-#: src/celestia/win32/winstarbrowser.cpp:70
+#: src/celestia/winstarbrowser.cpp:79
+#: src/celestia/kde/rc.cpp:46
+#, no-c-format
 msgid "Type"
 msgstr "Тып"
 
-#: src/celestia/win32/wintime.cpp:95
+#: src/celestia/wintime.cpp:95
 msgid "Universal Time"
 msgstr "Унівэрсальны час"
 
-#: src/celestia/win32/wintime.cpp:96
+#: src/celestia/wintime.cpp:96
 #: src/celestia/kde/kdepreferencesdialog.cpp:377
 #: src/celestia/kde/kdepreferencesdialog.cpp:398
 msgid "Local Time"
 msgstr "Мясцовы час"
 
-#: src/celestia/win32/wintime.cpp:97
+#: src/celestia/wintime.cpp:97
 msgid "Time Zone Name"
 msgstr "Нозва часавага поясу"
 
-#: src/celestia/win32/wintime.cpp:98
+#: src/celestia/wintime.cpp:98
 msgid "UTC Offset"
 msgstr "Зрух ад UTC"
 
-#: src/celestia/kde/celestialbrowser.cpp:31
-#: src/celestia/kde/kdeapp.cpp:521
+#: src/celestia/kde/celestialbrowser.cpp:29
+#: src/celestia/kde/kdeapp.cpp:505
+#: src/celestia/kde/rc.cpp:30
+#, no-c-format
 msgid "Celestial Browser"
 msgstr "Нябесны каталёґ"
 
-#: src/celestia/kde/celestialbrowser.cpp:182
+#: src/celestia/kde/celestialbrowser.cpp:185
+#: src/celestia/kde/rc.cpp:76
 #: data/data.cpp:4
+#, no-c-format
 msgid "Moon"
 msgstr "Месяц"
 
-#: src/celestia/kde/celestialbrowser.cpp:185
+#: src/celestia/kde/celestialbrowser.cpp:188
 msgid "Asteroid"
 msgstr "Астэроід"
 
-#: src/celestia/kde/celestialbrowser.cpp:188
+#: src/celestia/kde/celestialbrowser.cpp:191
 msgid "Comet"
 msgstr "Камэта"
 
-#: src/celestia/kde/celestialbrowser.cpp:194
+#: src/celestia/kde/celestialbrowser.cpp:197
 msgid "Invisible"
 msgstr "Нябачны"
 
-#: src/celestia/kde/celestialbrowser.cpp:197
+#: src/celestia/kde/celestialbrowser.cpp:200
 msgid "Barycenter"
 msgstr "Барыцэнтар"
 
-#: src/celestia/kde/celestialbrowser.cpp:200
+#: src/celestia/kde/celestialbrowser.cpp:203
 msgid "Small Body"
 msgstr "Малое цела"
 
-#: src/celestia/kde/celestialbrowser.cpp:203
+#: src/celestia/kde/celestialbrowser.cpp:206
 msgid "Dwarf Planet"
 msgstr "Карлікавая плянэта"
 
-#: src/celestia/kde/celestialbrowser.cpp:207
+#: src/celestia/kde/celestialbrowser.cpp:210
 msgid "-"
 msgstr "-"
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:24
-#: src/celestia/kde/kdeapp.cpp:522
-#: src/celestia/win32/res/resource_strings.cpp:223
+#: src/celestia/kde/eclipsefinderdlg.cpp:21
+#: src/celestia/kde/kdeapp.cpp:506
+#: src/celestia/kde/rc.cpp:70
+#: src/celestia/res/resource_strings.cpp:225
+#, no-c-format
 msgid "Eclipse Finder"
 msgstr "Пошук зацьменьняў"
 
@@ -1263,7 +1311,7 @@ msgstr "Стварыць новы каталёґ закладак у гэтым 
 msgid "Can't add bookmark with empty URL"
 msgstr "Немагчыма дадаць закладку з пустым URL"
 
-#: src/celestia/kde/kdeapp.cpp:131
+#: src/celestia/kde/kdeapp.cpp:129
 msgid ""
 "Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \n"
 "Start-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."
@@ -1271,458 +1319,454 @@ msgstr ""
 "Здаецца нешта няправільна з тваёй усталёўкай Celestia. Немагчыма адшукаць каталёґ пачатковага экрана. \n"
 "Праца працягнецца, але, найхутчэй, у Celestia адсутнічаюць некаторыя файлы зьвестак, і яна ня прадзе спраўна працаваць, правер сваю ўсталёўку."
 
-#: src/celestia/kde/kdeapp.cpp:215
-msgid "Celestia was unable to initialize OpenGL extensions. Graphics quality will be reduced. Only Basic render path will be available"
-msgstr "Celestia не ўдалося ініцыялізаваць пашыральнікі OpenGL. Якасьць ґрафікі будзе пагоршаная. Толькі асноўны спосаб пабудовы будзе наяўны"
-
-#: src/celestia/kde/kdeapp.cpp:428
+#: src/celestia/kde/kdeapp.cpp:412
 msgid "Go to &URL..."
 msgstr "Перайсьці да &URL…"
 
-#: src/celestia/kde/kdeapp.cpp:429
+#: src/celestia/kde/kdeapp.cpp:413
 msgid "Go to &Long/Lat..."
 msgstr "Перайсьці да &Даўг/Шыр…"
 
-#: src/celestia/kde/kdeapp.cpp:431
+#: src/celestia/kde/kdeapp.cpp:415
 msgid "&Back"
 msgstr "На&зад"
 
-#: src/celestia/kde/kdeapp.cpp:434
+#: src/celestia/kde/kdeapp.cpp:418
 msgid "&Forward"
 msgstr "На&перад"
 
-#: src/celestia/kde/kdeapp.cpp:441
+#: src/celestia/kde/kdeapp.cpp:425
 msgid "Home"
 msgstr "Дахаты"
 
-#: src/celestia/kde/kdeapp.cpp:448
+#: src/celestia/kde/kdeapp.cpp:432
 msgid "Bookmarks"
 msgstr "Закладкі"
 
-#: src/celestia/kde/kdeapp.cpp:460
+#: src/celestia/kde/kdeapp.cpp:444
 msgid "Full Screen"
 msgstr "На ўвесь экран"
 
-#: src/celestia/kde/kdeapp.cpp:464
+#: src/celestia/kde/kdeapp.cpp:448
 msgid "Copy URL"
 msgstr "Капіяваць URL"
 
-#: src/celestia/kde/kdeapp.cpp:467
+#: src/celestia/kde/kdeapp.cpp:451
 msgid "Set Time..."
 msgstr "Задаць час…"
 
-#: src/celestia/kde/kdeapp.cpp:468
+#: src/celestia/kde/kdeapp.cpp:452
 msgid "Set Time to Now"
 msgstr "Вернуцца да цяперашняга часу"
 
-#: src/celestia/kde/kdeapp.cpp:469
+#: src/celestia/kde/kdeapp.cpp:453
 msgid "Accelerate Time"
 msgstr "Паскорыць хаду часу"
 
-#: src/celestia/kde/kdeapp.cpp:470
+#: src/celestia/kde/kdeapp.cpp:454
 msgid "Decelerate Time"
 msgstr "Запаволіць хаду часу"
 
-#: src/celestia/kde/kdeapp.cpp:471
+#: src/celestia/kde/kdeapp.cpp:455
 msgid "Accelerate Time (x2)"
 msgstr "Паскорыць час (×2)"
 
-#: src/celestia/kde/kdeapp.cpp:472
+#: src/celestia/kde/kdeapp.cpp:456
 msgid "Decelerate Time (/2)"
 msgstr "Запаволіць час (/2)"
 
-#: src/celestia/kde/kdeapp.cpp:473
+#: src/celestia/kde/kdeapp.cpp:457
 msgid "Pause Time"
 msgstr "Прыпыніць хаду часу"
 
-#: src/celestia/kde/kdeapp.cpp:474
+#: src/celestia/kde/kdeapp.cpp:458
 msgid "Reverse Time"
 msgstr "Зьмяніць кірунак часу"
 
-#: src/celestia/kde/kdeapp.cpp:476
+#: src/celestia/kde/kdeapp.cpp:460
 msgid "Split View Vertically"
 msgstr "Падзяліць па вэртыкалі"
 
-#: src/celestia/kde/kdeapp.cpp:477
+#: src/celestia/kde/kdeapp.cpp:461
 msgid "Split View Horizontally"
 msgstr "Падзяліць па гарызанталі"
 
-#: src/celestia/kde/kdeapp.cpp:478
+#: src/celestia/kde/kdeapp.cpp:462
 msgid "Cycle View"
 msgstr "Зьмяніць актыўны прагляд"
 
-#: src/celestia/kde/kdeapp.cpp:479
+#: src/celestia/kde/kdeapp.cpp:463
 msgid "Single View"
 msgstr "Адзін прагляд"
 
-#: src/celestia/kde/kdeapp.cpp:480
+#: src/celestia/kde/kdeapp.cpp:464
 msgid "Delete View"
 msgstr "Выдаліць прагляд"
 
-#: src/celestia/kde/kdeapp.cpp:481
+#: src/celestia/kde/kdeapp.cpp:465
 msgid "Frames Visible"
 msgstr "Бачныя межы"
 
-#: src/celestia/kde/kdeapp.cpp:494
+#: src/celestia/kde/kdeapp.cpp:478
 msgid "Active Frame Visible"
 msgstr "Бачныя межы актыўнага "
 
-#: src/celestia/kde/kdeapp.cpp:506
+#: src/celestia/kde/kdeapp.cpp:490
 msgid "Synchronize Time"
 msgstr "Сынхранізаваць час"
 
-#: src/celestia/kde/kdeapp.cpp:518
+#: src/celestia/kde/kdeapp.cpp:502
 msgid "Alt-Azimuth Mode"
 msgstr "Рэжым «Вышыня-Азімут»"
 
-#: src/celestia/kde/kdeapp.cpp:519
+#: src/celestia/kde/kdeapp.cpp:503
 msgid "Go To Surface"
 msgstr "Перайсьці на паверхню"
 
-#: src/celestia/kde/kdeapp.cpp:566
+#: src/celestia/kde/kdeapp.cpp:550
 msgid "Show Stars"
 msgstr "Паказваць зоркі"
 
-#: src/celestia/kde/kdeapp.cpp:569
+#: src/celestia/kde/kdeapp.cpp:553
 msgid "Show Planets"
 msgstr "Паказваць плянэты"
 
-#: src/celestia/kde/kdeapp.cpp:572
+#: src/celestia/kde/kdeapp.cpp:556
 msgid "Show Galaxies"
 msgstr "Паказваць ґаляктыкі"
 
-#: src/celestia/kde/kdeapp.cpp:575
+#: src/celestia/kde/kdeapp.cpp:559
 msgid "Show Globulars"
 msgstr "Паказваць шаравыя скопішчы"
 
-#: src/celestia/kde/kdeapp.cpp:578
+#: src/celestia/kde/kdeapp.cpp:562
 msgid "Show Partial Trajectories"
 msgstr "Паказваць частковыя траекторыі"
 
-#: src/celestia/kde/kdeapp.cpp:581
+#: src/celestia/kde/kdeapp.cpp:565
 msgid "Show Nebulae"
 msgstr "Паказваць туманнасьці"
 
-#: src/celestia/kde/kdeapp.cpp:584
+#: src/celestia/kde/kdeapp.cpp:568
 msgid "Show Open Clusters"
 msgstr "Паказваць адкрытыя скопішчы"
 
-#: src/celestia/kde/kdeapp.cpp:587
+#: src/celestia/kde/kdeapp.cpp:571
 msgid "Show Constellations"
 msgstr "Паказваць сузор'і"
 
-#: src/celestia/kde/kdeapp.cpp:590
+#: src/celestia/kde/kdeapp.cpp:574
 msgid "Show CloudMaps"
 msgstr "Паказваць аблокі"
 
-#: src/celestia/kde/kdeapp.cpp:593
+#: src/celestia/kde/kdeapp.cpp:577
 msgid "Show Cloud Shadows"
 msgstr "Паказваць цені аблокаў"
 
-#: src/celestia/kde/kdeapp.cpp:596
+#: src/celestia/kde/kdeapp.cpp:580
 msgid "Show Orbits"
 msgstr "Паказваць арбіты"
 
-#: src/celestia/kde/kdeapp.cpp:599
+#: src/celestia/kde/kdeapp.cpp:583
 msgid "Show Asteroid Orbits"
 msgstr "Паказваць арбіты астэроідаў"
 
-#: src/celestia/kde/kdeapp.cpp:602
+#: src/celestia/kde/kdeapp.cpp:586
 msgid "Show Comet Orbits"
 msgstr "Паказваць арбіты камэт"
 
-#: src/celestia/kde/kdeapp.cpp:605
+#: src/celestia/kde/kdeapp.cpp:589
 msgid "Show Moon Orbits"
 msgstr "Паказваць арбіты месяцаў"
 
-#: src/celestia/kde/kdeapp.cpp:608
+#: src/celestia/kde/kdeapp.cpp:592
 msgid "Show Star Orbits"
 msgstr "Паказваць арбіты зорак"
 
-#: src/celestia/kde/kdeapp.cpp:611
+#: src/celestia/kde/kdeapp.cpp:595
 msgid "Show Planet Orbits"
 msgstr "Паказваць арбіты плянэт"
 
-#: src/celestia/kde/kdeapp.cpp:614
+#: src/celestia/kde/kdeapp.cpp:598
 msgid "Show Spacecraft Orbits"
 msgstr "Паказваць арбіты караблёў"
 
-#: src/celestia/kde/kdeapp.cpp:617
+#: src/celestia/kde/kdeapp.cpp:601
 msgid "Show Equatorial Grid"
 msgstr "Паказваць экватарыяльную сетку"
 
-#: src/celestia/kde/kdeapp.cpp:620
+#: src/celestia/kde/kdeapp.cpp:604
 msgid "Show Night Side Lights"
 msgstr "Паказваць сьвятло начной часткі"
 
-#: src/celestia/kde/kdeapp.cpp:623
+#: src/celestia/kde/kdeapp.cpp:607
 msgid "Show Markers"
 msgstr "Паказваць пазнакі"
 
-#: src/celestia/kde/kdeapp.cpp:626
+#: src/celestia/kde/kdeapp.cpp:610
 msgid "Show Atmospheres"
 msgstr "Паказваць атмасфэры"
 
-#: src/celestia/kde/kdeapp.cpp:629
+#: src/celestia/kde/kdeapp.cpp:613
 msgid "Show Smooth Orbit Lines"
 msgstr "Паказваць гладкія лініі арбіт"
 
-#: src/celestia/kde/kdeapp.cpp:632
+#: src/celestia/kde/kdeapp.cpp:616
 msgid "Show Eclipse Shadows"
 msgstr "Паказваць цені зацьменьняў"
 
-#: src/celestia/kde/kdeapp.cpp:635
+#: src/celestia/kde/kdeapp.cpp:619
 msgid "Cycle Star Mode"
 msgstr "Зьмяніць стыль зорак"
 
-#: src/celestia/kde/kdeapp.cpp:637
+#: src/celestia/kde/kdeapp.cpp:621
 msgid "Show Ring Shadows"
 msgstr "Паказваць цені ад колцаў"
 
-#: src/celestia/kde/kdeapp.cpp:640
+#: src/celestia/kde/kdeapp.cpp:624
 msgid "Show Boundaries"
 msgstr "Паказваць межы"
 
-#: src/celestia/kde/kdeapp.cpp:643
+#: src/celestia/kde/kdeapp.cpp:627
 #: src/celestia/kde/kdepreferencesdialog.cpp:78
 msgid "Auto Magnitudes"
 msgstr "Аўтаяркасьць"
 
-#: src/celestia/kde/kdeapp.cpp:646
+#: src/celestia/kde/kdeapp.cpp:630
 msgid "Show Comet Tails"
 msgstr "Паказваць хвасты камэт"
 
-#: src/celestia/kde/kdeapp.cpp:649
+#: src/celestia/kde/kdeapp.cpp:633
 msgid "Show Star Labels"
 msgstr "Паказваць назвы зорак"
 
-#: src/celestia/kde/kdeapp.cpp:654
+#: src/celestia/kde/kdeapp.cpp:638
 msgid "Show Planet Labels"
 msgstr "Паказваць назвы плянэт"
 
-#: src/celestia/kde/kdeapp.cpp:657
+#: src/celestia/kde/kdeapp.cpp:641
 msgid "Show Moon Labels"
 msgstr "Паказваць назвы месяцаў"
 
-#: src/celestia/kde/kdeapp.cpp:660
+#: src/celestia/kde/kdeapp.cpp:644
 msgid "Show Comet Labels"
 msgstr "Паказваць назвы камэт"
 
-#: src/celestia/kde/kdeapp.cpp:663
+#: src/celestia/kde/kdeapp.cpp:647
 msgid "Show Constellation Labels"
 msgstr "Паказваць назвы сузор'яў"
 
-#: src/celestia/kde/kdeapp.cpp:666
+#: src/celestia/kde/kdeapp.cpp:650
 msgid "Constellation Labels in Latin"
 msgstr "Назвы сузор'яў лацінай"
 
-#: src/celestia/kde/kdeapp.cpp:669
+#: src/celestia/kde/kdeapp.cpp:653
 msgid "Show Galaxy Labels"
 msgstr "Паказваць назвы ґаляктык"
 
-#: src/celestia/kde/kdeapp.cpp:672
+#: src/celestia/kde/kdeapp.cpp:656
 msgid "Show Globular Labels"
 msgstr "Паказваць назвы шаравых скопішчаў"
 
-#: src/celestia/kde/kdeapp.cpp:675
+#: src/celestia/kde/kdeapp.cpp:659
 msgid "Show Nebula Labels"
 msgstr "Паказваць назвы туманнасьцяў"
 
-#: src/celestia/kde/kdeapp.cpp:678
+#: src/celestia/kde/kdeapp.cpp:662
 msgid "Show Open Cluster Labels"
 msgstr "Паказваць назвы адкрытых скопішчаў"
 
-#: src/celestia/kde/kdeapp.cpp:681
+#: src/celestia/kde/kdeapp.cpp:665
 msgid "Show Asteroid Labels"
 msgstr "Паказваць назвы астэроідаў"
 
-#: src/celestia/kde/kdeapp.cpp:684
+#: src/celestia/kde/kdeapp.cpp:668
 msgid "Show Spacecraft Labels"
 msgstr "Паказваць назвы караблёў"
 
-#: src/celestia/kde/kdeapp.cpp:687
+#: src/celestia/kde/kdeapp.cpp:671
 msgid "Show Location Labels"
 msgstr "Паказваць назвы месцаў"
 
-#: src/celestia/kde/kdeapp.cpp:690
+#: src/celestia/kde/kdeapp.cpp:674
 msgid "Display Local Time"
 msgstr "Паказваць мясцовы час"
 
-#: src/celestia/kde/kdeapp.cpp:695
+#: src/celestia/kde/kdeapp.cpp:679
 msgid "Show City Locations"
 msgstr "Паказваць месцы гарадоў"
 
-#: src/celestia/kde/kdeapp.cpp:698
+#: src/celestia/kde/kdeapp.cpp:682
 msgid "Show Observatory Locations"
 msgstr "Паказваць месцы абсэрваторый"
 
-#: src/celestia/kde/kdeapp.cpp:701
+#: src/celestia/kde/kdeapp.cpp:685
 msgid "Show Landing Sites Locations"
 msgstr "Паказваць месцы пасадкі"
 
-#: src/celestia/kde/kdeapp.cpp:704
+#: src/celestia/kde/kdeapp.cpp:688
 msgid "Show Crater Locations"
 msgstr "Паказваць месцы кратэраў"
 
-#: src/celestia/kde/kdeapp.cpp:707
+#: src/celestia/kde/kdeapp.cpp:691
 msgid "Show Mons Locations"
 msgstr "Паказваць месцы гор"
 
-#: src/celestia/kde/kdeapp.cpp:710
+#: src/celestia/kde/kdeapp.cpp:694
 msgid "Show Terra Locations"
 msgstr "Паказваць месцы кантынэнтаў"
 
-#: src/celestia/kde/kdeapp.cpp:713
+#: src/celestia/kde/kdeapp.cpp:697
 msgid "Show Vallis Locations"
 msgstr "Паказваць месцы далін"
 
-#: src/celestia/kde/kdeapp.cpp:716
+#: src/celestia/kde/kdeapp.cpp:700
 msgid "Show Mare Locations"
 msgstr "Паказваць месцы мораў"
 
-#: src/celestia/kde/kdeapp.cpp:719
+#: src/celestia/kde/kdeapp.cpp:703
 msgid "Show Other Locations"
 msgstr "Паказваць іншыя месцы "
 
-#: src/celestia/kde/kdeapp.cpp:723
+#: src/celestia/kde/kdeapp.cpp:707
 msgid "Wireframe Mode"
 msgstr "Каркасны рэжым"
 
-#: src/celestia/kde/kdeapp.cpp:725
+#: src/celestia/kde/kdeapp.cpp:709
 msgid "Center on Orbit"
 msgstr "Цэнтраваць на арбіце"
 
-#: src/celestia/kde/kdeapp.cpp:729
+#: src/celestia/kde/kdeapp.cpp:713
 #: src/celestia/kde/kdepreferencesdialog.cpp:500
 msgid "Basic"
 msgstr "Асноўны"
 
-#: src/celestia/kde/kdeapp.cpp:731
+#: src/celestia/kde/kdeapp.cpp:715
 #: src/celestia/kde/kdepreferencesdialog.cpp:502
 msgid "Multitexture"
 msgstr "Мультытэкстура"
 
-#: src/celestia/kde/kdeapp.cpp:733
+#: src/celestia/kde/kdeapp.cpp:717
 #: src/celestia/kde/kdepreferencesdialog.cpp:504
 msgid "NvCombiners"
 msgstr "NvCombiners"
 
-#: src/celestia/kde/kdeapp.cpp:735
+#: src/celestia/kde/kdeapp.cpp:719
 #: src/celestia/kde/kdepreferencesdialog.cpp:506
 msgid "DOT3 ARBVP"
 msgstr "DOT3 ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:737
+#: src/celestia/kde/kdeapp.cpp:721
 #: src/celestia/kde/kdepreferencesdialog.cpp:508
 msgid "NvCombiner NvVP"
 msgstr "NvCombiner NvVP"
 
-#: src/celestia/kde/kdeapp.cpp:739
+#: src/celestia/kde/kdeapp.cpp:723
 #: src/celestia/kde/kdepreferencesdialog.cpp:510
 msgid "NvCombiner ARBVP"
 msgstr "NvCombiner ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:741
+#: src/celestia/kde/kdeapp.cpp:725
 #: src/celestia/kde/kdepreferencesdialog.cpp:512
 msgid "ARBFP ARBVP"
 msgstr "ARBFP ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:743
+#: src/celestia/kde/kdeapp.cpp:727
 #: src/celestia/kde/kdepreferencesdialog.cpp:514
 msgid "NV30"
 msgstr "NV30"
 
-#: src/celestia/kde/kdeapp.cpp:745
+#: src/celestia/kde/kdeapp.cpp:729
 #: src/celestia/kde/kdepreferencesdialog.cpp:516
 msgid "OpenGL 2.0"
 msgstr "OpenGL 2.0"
 
-#: src/celestia/kde/kdeapp.cpp:747
+#: src/celestia/kde/kdeapp.cpp:731
 msgid "Cycle OpenGL Render Path"
 msgstr "Зьмяніць па цыклі спосабы пабудовы"
 
-#: src/celestia/kde/kdeapp.cpp:749
+#: src/celestia/kde/kdeapp.cpp:733
 #: src/celestia/kde/kdepreferencesdialog.cpp:535
 msgid "Sync framerate to video refresh rate"
 msgstr "Сынхранізаваць часьціню кадраў з часьцінёй экрана"
 
-#: src/celestia/kde/kdeapp.cpp:754
+#: src/celestia/kde/kdeapp.cpp:738
 msgid "Grab Image"
 msgstr "Захапіць відарыс"
 
-#: src/celestia/kde/kdeapp.cpp:755
+#: src/celestia/kde/kdeapp.cpp:739
 msgid "Capture Video"
 msgstr "Захапіць відэа"
 
-#: src/celestia/kde/kdeapp.cpp:757
+#: src/celestia/kde/kdeapp.cpp:741
 msgid "OpenGL info"
 msgstr "Зьвесткі OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:765
+#: src/celestia/kde/kdeapp.cpp:749
 msgid "Show Bookmark Toolbar"
 msgstr "Паказваць панэль закладак"
 
-#: src/celestia/kde/kdeapp.cpp:1021
+#: src/celestia/kde/kdeapp.cpp:1005
 msgid "OpenGL Info"
 msgstr "Зьвесткі OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:1384
+#: src/celestia/kde/kdeapp.cpp:1368
 #: src/celestia/kde/kdepreferencesdialog.cpp:376
 #: src/celestia/kde/kdepreferencesdialog.cpp:397
 msgid "UTC"
 msgstr "UTC"
 
-#: src/celestia/kde/kdeapp.cpp:1483
+#: src/celestia/kde/kdeapp.cpp:1467
 msgid "This version of Celestia was not built with support for movie recording."
 msgstr "Гэтая вэрсія Celestia была збудаваная без падтрымкі запісу відэа."
 
-#: src/celestia/kde/kdeapp.cpp:1511
+#: src/celestia/kde/kdeapp.cpp:1495
 msgid "Go to URL"
 msgstr "Перайсьці да URL"
 
-#: src/celestia/kde/kdeapp.cpp:1511
+#: src/celestia/kde/kdeapp.cpp:1495
 msgid "Enter URL"
 msgstr "Увядзі URL"
 
-#: src/celestia/kde/kdeapp.cpp:1607
+#: src/celestia/kde/kdeapp.cpp:1591
 msgid "Object: "
 msgstr "Аб'ект:"
 
-#: src/celestia/kde/kdeapp.cpp:1612
+#: src/celestia/kde/kdeapp.cpp:1596
 msgid "Longitude: "
 msgstr "Даўгата: "
 
-#: src/celestia/kde/kdeapp.cpp:1618
+#: src/celestia/kde/kdeapp.cpp:1602
 msgid "East"
 msgstr "Усх"
 
-#: src/celestia/kde/kdeapp.cpp:1619
+#: src/celestia/kde/kdeapp.cpp:1603
 msgid "West"
 msgstr "Зах"
 
-#: src/celestia/kde/kdeapp.cpp:1621
+#: src/celestia/kde/kdeapp.cpp:1605
 msgid "Latitude: "
 msgstr "Шырата: "
 
-#: src/celestia/kde/kdeapp.cpp:1627
+#: src/celestia/kde/kdeapp.cpp:1611
 msgid "North"
 msgstr "Пн"
 
-#: src/celestia/kde/kdeapp.cpp:1628
+#: src/celestia/kde/kdeapp.cpp:1612
 msgid "South"
 msgstr "Пд"
 
-#: src/celestia/kde/kdeapp.cpp:1630
+#: src/celestia/kde/kdeapp.cpp:1614
 msgid "Altitude: "
 msgstr "Вышыня: "
 
-#: src/celestia/kde/kdeapp.cpp:1704
+#: src/celestia/kde/kdeapp.cpp:1689
 msgid "Celestia encountered an error while processing your script"
 msgstr "Celestia нечакана сустрэлася з памылкай падчас апрацоўкі твайго сцэнара"
 
 #: src/celestia/kde/kdemain.cpp:25
 #: src/celestia/kde/kdemain.cpp:43
-#: src/celestia/win32/res/resource_strings.cpp:68
+#: src/celestia/res/resource_strings.cpp:69
 msgid "Celestia"
 msgstr "Celestia"
 
@@ -1771,71 +1815,71 @@ msgid "Rendering"
 msgstr "Будаваньне"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:72
-#: src/celestia/win32/res/resource_strings.cpp:145
+#: src/celestia/res/resource_strings.cpp:146
 msgid "Show"
 msgstr "Паказваць"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:74
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/win32/res/resource_strings.cpp:150
-#: src/celestia/win32/res/resource_strings.cpp:167
+#: src/celestia/res/resource_strings.cpp:151
+#: src/celestia/res/resource_strings.cpp:169
 msgid "Stars"
 msgstr "Зоркі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:86
 #: src/celestia/kde/kdepreferencesdialog.cpp:217
-#: src/celestia/win32/res/resource_strings.cpp:146
-#: src/celestia/win32/res/resource_strings.cpp:176
+#: src/celestia/res/resource_strings.cpp:147
+#: src/celestia/res/resource_strings.cpp:178
 msgid "Galaxies"
 msgstr "Ґаляктыкі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:90
 #: src/celestia/kde/kdepreferencesdialog.cpp:222
-#: src/celestia/win32/res/resource_strings.cpp:149
-#: src/celestia/win32/res/resource_strings.cpp:179
+#: src/celestia/res/resource_strings.cpp:150
+#: src/celestia/res/resource_strings.cpp:181
 msgid "Nebulae"
 msgstr "Туманнасьці"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:94
 #: src/celestia/kde/kdepreferencesdialog.cpp:227
-#: src/celestia/win32/res/resource_strings.cpp:148
-#: src/celestia/win32/res/resource_strings.cpp:178
+#: src/celestia/res/resource_strings.cpp:149
+#: src/celestia/res/resource_strings.cpp:180
 msgid "Open Clusters"
 msgstr "Адкрытыя скопішчы"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:98
-#: src/celestia/win32/res/resource_strings.cpp:152
+#: src/celestia/res/resource_strings.cpp:153
 msgid "Atmospheres"
 msgstr "Атмасфэры"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:102
-#: src/celestia/win32/res/resource_strings.cpp:153
+#: src/celestia/res/resource_strings.cpp:154
 msgid "Clouds"
 msgstr "Воблакі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:106
-#: src/celestia/win32/res/resource_strings.cpp:154
+#: src/celestia/res/resource_strings.cpp:155
 msgid "Cloud Shadows"
 msgstr "Цені аблокаў"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:110
-#: src/celestia/win32/res/resource_strings.cpp:157
+#: src/celestia/res/resource_strings.cpp:158
 msgid "Night Side Lights"
 msgstr "Сьвятло начной часткі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:114
-#: src/celestia/win32/res/resource_strings.cpp:156
+#: src/celestia/res/resource_strings.cpp:157
 msgid "Eclipse Shadows"
 msgstr "Цені зацьменьняў"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:118
-#: src/celestia/win32/res/resource_strings.cpp:158
+#: src/celestia/res/resource_strings.cpp:159
 msgid "Comet Tails"
 msgstr "Хвасты камэт"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:122
 #: src/celestia/kde/kdepreferencesdialog.cpp:165
-#: src/celestia/win32/res/resource_strings.cpp:159
+#: src/celestia/res/resource_strings.cpp:161
 msgid "Orbits"
 msgstr "Арбіты"
 
@@ -1853,17 +1897,17 @@ msgstr "Экватарыяльная сетка"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:138
 #: src/celestia/kde/kdepreferencesdialog.cpp:207
-#: src/celestia/win32/res/resource_strings.cpp:180
+#: src/celestia/res/resource_strings.cpp:182
 msgid "Constellations"
 msgstr "Сузор'і"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:142
-#: src/celestia/win32/res/resource_strings.cpp:160
+#: src/celestia/res/resource_strings.cpp:160
 msgid "Markers"
 msgstr "Пазнакі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:146
-#: src/celestia/win32/res/resource_strings.cpp:155
+#: src/celestia/res/resource_strings.cpp:156
 msgid "Ring Shadows"
 msgstr "Цені ад колцаў"
 
@@ -1872,12 +1916,14 @@ msgid "Constellation Boundaries"
 msgstr "Межы сузор'яў"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:161
-#: src/celestia/win32/res/resource_strings.cpp:166
+#: src/celestia/res/resource_strings.cpp:168
 msgid "Orbits / Labels"
 msgstr "Арбіты / Назвы"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:167
-#: src/celestia/win32/res/resource_strings.cpp:183
+#: src/celestia/kde/rc.cpp:12
+#: src/celestia/res/resource_strings.cpp:185
+#, no-c-format
 msgid "Labels"
 msgstr "Назвы"
 
@@ -1891,7 +1937,7 @@ msgstr "Караблі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:250
 #: src/celestia/kde/kdepreferencesdialog.cpp:312
-#: src/celestia/win32/res/resource_strings.cpp:193
+#: src/celestia/res/resource_strings.cpp:195
 msgid "Locations"
 msgstr "Месцы"
 
@@ -1912,17 +1958,17 @@ msgid "Level: "
 msgstr "Ровень:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:282
-#: src/celestia/win32/res/resource_strings.cpp:186
+#: src/celestia/res/resource_strings.cpp:188
 msgid "None"
 msgstr "Нічога"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:283
-#: src/celestia/win32/res/resource_strings.cpp:187
+#: src/celestia/res/resource_strings.cpp:189
 msgid "Terse"
 msgstr "Сьцісла"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:284
-#: src/celestia/win32/res/resource_strings.cpp:188
+#: src/celestia/res/resource_strings.cpp:190
 msgid "Verbose"
 msgstr "Падрабязна"
 
@@ -1959,22 +2005,22 @@ msgid "Viewing Distance (cm): "
 msgstr "Адлегласьць глядзеньня (см):"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:318
-#: src/celestia/win32/res/resource_strings.cpp:194
+#: src/celestia/res/resource_strings.cpp:196
 msgid "Cities"
 msgstr "Гарады"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:322
-#: src/celestia/win32/res/resource_strings.cpp:195
+#: src/celestia/res/resource_strings.cpp:197
 msgid "Observatories"
 msgstr "Абсэрваторыі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:326
-#: src/celestia/win32/res/resource_strings.cpp:196
+#: src/celestia/res/resource_strings.cpp:198
 msgid "Landing Sites"
 msgstr "Месцы пасадкі"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:330
-#: src/celestia/win32/res/resource_strings.cpp:199
+#: src/celestia/res/resource_strings.cpp:201
 msgid "Craters"
 msgstr "Кратэры"
 
@@ -2016,7 +2062,7 @@ msgid "Timezone: "
 msgstr "Часавы пояс:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
-#: src/celestia/win32/res/resource_strings.cpp:97
+#: src/celestia/res/resource_strings.cpp:98
 msgid "Format: "
 msgstr "Фармат:"
 
@@ -2033,11 +2079,13 @@ msgid "Local Time is only supported for dates between 1902 and 2037.\n"
 msgstr "Мясцовы час падтрымліваецца толькі для дат між 1902 і 2037.\n"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:438
-#: src/celestia/win32/res/resource_strings.cpp:98
+#: src/celestia/res/resource_strings.cpp:99
 msgid "Julian Date: "
 msgstr "Юліянская дата: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:456
+#: src/celestia/kde/rc.cpp:27
+#, no-c-format
 msgid "Now"
 msgstr "Цяпер"
 
@@ -2130,8 +2178,8 @@ msgid "&Select"
 msgstr "&Вылучыць"
 
 #: src/celestia/kde/selectionpopup.cpp:299
-#: src/celestia/win32/res/resource_strings.cpp:111
-#: src/celestia/win32/res/resource_strings.cpp:118
+#: src/celestia/res/resource_strings.cpp:112
+#: src/celestia/res/resource_strings.cpp:119
 msgid "&Center"
 msgstr "&Цэнтраваць"
 
@@ -2200,7 +2248,7 @@ msgid "Small Bodies"
 msgstr "Малыя целы"
 
 #: src/celestia/kde/selectionpopup.cpp:426
-#: src/celestia/win32/res/resource_strings.cpp:169
+#: src/celestia/res/resource_strings.cpp:171
 msgid "Dwarf Planets"
 msgstr "Карлікавыя плянэты"
 
@@ -2237,6 +2285,232 @@ msgstr "Мусіш задаць назву файла."
 #: src/celestia/kde/videocapturedlg.cpp:260
 msgid "Error initializing movie capture."
 msgstr "Памылка падчас ініцыялізаваньня захопу відэа."
+
+#: src/celestia/kde/rc.cpp:3
+#: src/celestia/res/resource_strings.cpp:8
+#, no-c-format
+msgid "&Navigation"
+msgstr "&Навіґацыя"
+
+#: src/celestia/kde/rc.cpp:6
+#, no-c-format
+msgid "Options"
+msgstr "Выборы"
+
+#: src/celestia/kde/rc.cpp:9
+#, no-c-format
+msgid "Objects"
+msgstr "Аб'екты"
+
+#: src/celestia/kde/rc.cpp:15
+#, no-c-format
+msgid "OpenGL Render Path"
+msgstr "Спосаб пабудовы OpenGL"
+
+#: src/celestia/kde/rc.cpp:18
+#, no-c-format
+msgid "Time"
+msgstr "Час"
+
+#: src/celestia/kde/rc.cpp:21
+#, no-c-format
+msgid "MultiView"
+msgstr "Мультывід"
+
+#: src/celestia/kde/rc.cpp:24
+#, no-c-format
+msgid "Main Toolbar"
+msgstr "Галоўная панэль"
+
+#: src/celestia/kde/rc.cpp:37
+#, no-c-format
+msgid "Dist."
+msgstr "Адл."
+
+#: src/celestia/kde/rc.cpp:40
+#, no-c-format
+msgid "App. Mag."
+msgstr "Бачн. вел."
+
+#: src/celestia/kde/rc.cpp:43
+#, no-c-format
+msgid "Abs. Mag."
+msgstr "Абс. вел."
+
+#: src/celestia/kde/rc.cpp:49
+#, no-c-format
+msgid "With Planets"
+msgstr "З плянэтамі"
+
+#: src/celestia/kde/rc.cpp:52
+#, no-c-format
+msgid "Brightest (Abs.)"
+msgstr "Яркасьць (Абс.)"
+
+#: src/celestia/kde/rc.cpp:55
+#, no-c-format
+msgid "Brightest (App.)"
+msgstr "Яркасьць (Бачн.)"
+
+#: src/celestia/kde/rc.cpp:58
+#: src/celestia/res/resource_strings.cpp:116
+#, no-c-format
+msgid "Nearest"
+msgstr "Найбліжэйшыя"
+
+#: src/celestia/kde/rc.cpp:61
+#, no-c-format
+msgid "&Close"
+msgstr "&Закрыць"
+
+#: src/celestia/kde/rc.cpp:64
+#, no-c-format
+msgid "Alt+C"
+msgstr "Alt+C"
+
+#: src/celestia/kde/rc.cpp:67
+#, no-c-format
+msgid "Refresh"
+msgstr "Абнавіць"
+
+#: src/celestia/kde/rc.cpp:85
+#, no-c-format
+msgid "End"
+msgstr "Канец"
+
+#: src/celestia/kde/rc.cpp:88
+#: src/celestia/res/resource_strings.cpp:232
+#, no-c-format
+msgid "Search parameters"
+msgstr "Параметры пошуку"
+
+#: src/celestia/kde/rc.cpp:91
+#: src/celestia/res/resource_strings.cpp:233
+#, no-c-format
+msgid "Solar Eclipses"
+msgstr "Сонечныя зацьменьні"
+
+#: src/celestia/kde/rc.cpp:94
+#: src/celestia/res/resource_strings.cpp:231
+#, no-c-format
+msgid "On:"
+msgstr "На:"
+
+#: src/celestia/kde/rc.cpp:115
+#, no-c-format
+msgid "Moon Eclipses"
+msgstr "Месяцовыя зацьменьні"
+
+#: src/celestia/kde/rc.cpp:118
+#, no-c-format
+msgid "Search"
+msgstr "Шукаць"
+
+#: src/celestia/kde/rc.cpp:121
+#: src/celestia/res/resource_strings.cpp:230
+#, no-c-format
+msgid "To:"
+msgstr "Да:"
+
+#: src/celestia/kde/rc.cpp:124
+#: src/celestia/res/resource_strings.cpp:229
+#, no-c-format
+msgid "From:"
+msgstr "Ад:"
+
+#: src/celestia/kde/rc.cpp:127
+#: src/celestia/res/resource_strings.cpp:228
+#, no-c-format
+msgid "Close"
+msgstr "Закрыць"
+
+#: src/celestia/kde/rc.cpp:130
+#, no-c-format
+msgid "Video Capture"
+msgstr "Захоп відэа"
+
+#: src/celestia/kde/rc.cpp:136
+#, no-c-format
+msgid "Save As:"
+msgstr "Захаваць як:"
+
+#: src/celestia/kde/rc.cpp:139
+#, no-c-format
+msgid "*.ogg"
+msgstr "*.ogg"
+
+#: src/celestia/kde/rc.cpp:142
+#, no-c-format
+msgid "Aspect Ratio:"
+msgstr "Стасунак бакоў:"
+
+#: src/celestia/kde/rc.cpp:145
+#, no-c-format
+msgid "Current"
+msgstr "Бягучы"
+
+#: src/celestia/kde/rc.cpp:148
+#, no-c-format
+msgid "11:9"
+msgstr "11:9"
+
+#: src/celestia/kde/rc.cpp:151
+#, no-c-format
+msgid "4:3"
+msgstr "4:3"
+
+#: src/celestia/kde/rc.cpp:154
+#, no-c-format
+msgid "16:9"
+msgstr "16:9"
+
+#: src/celestia/kde/rc.cpp:157
+#, no-c-format
+msgid "Image Size:"
+msgstr "Памер відарыса:"
+
+#: src/celestia/kde/rc.cpp:160
+#, no-c-format
+msgid "Frame Rate:"
+msgstr "Часьціня кадраў:"
+
+#: src/celestia/kde/rc.cpp:163
+#, no-c-format
+msgid "Video Quality:"
+msgstr "Якасьць відэа:"
+
+#: src/celestia/kde/rc.cpp:166
+#, no-c-format
+msgid "Play Video when capture is done"
+msgstr "Прайграць відэа, калі скончыцца захоп"
+
+#: src/celestia/kde/rc.cpp:169
+#, no-c-format
+msgid "Usage"
+msgstr "Выкарыстаньне"
+
+#: src/celestia/kde/rc.cpp:172
+#, no-c-format
+msgid ""
+"<p>Press <b>F11</b> to start/pause recording<br>\n"
+"Press <b>F12</b> to stop</p>\n"
+"\n"
+"<p>Note that resizing the main window will not be possible until the end of the capture</p>"
+msgstr ""
+"<p>Націсьні <b>F11</b> каб пачаць/прыпыніць запіс<br>\n"
+"Націсьні <b>F12</b> каб спыніць</p>\n"
+"\n"
+"<p>Заўвага: пакуль ня скончыцца захоп нельга зьмяняць памер галоўнага вакна.</p>"
+
+#: src/celestia/kde/rc.cpp:178
+#, no-c-format
+msgid "&OK"
+msgstr "&Добра"
+
+#: src/celestia/kde/rc.cpp:182
+#, no-c-format
+msgid "&Cancel"
+msgstr "&Адмена"
 
 #: data/data.cpp:1
 msgid "Mercury"
@@ -3392,780 +3666,680 @@ msgstr "ВМВ"
 msgid "Solar System Barycenter"
 msgstr "Барыцэнтар сонечнай сыстэмы"
 
-#: src/celestia/win32/res/resource_strings.cpp:1
+#: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "&Файл"
 
-#: src/celestia/win32/res/resource_strings.cpp:2
+#: src/celestia/res/resource_strings.cpp:2
 msgid "&Open Script..."
 msgstr "&Адкрыць сцэнар…"
 
-#: src/celestia/win32/res/resource_strings.cpp:3
+#: src/celestia/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "Сцэнары"
 
-#: src/celestia/win32/res/resource_strings.cpp:4
+#: src/celestia/res/resource_strings.cpp:4
 msgid "Placeholder"
 msgstr "Запаўняльнік"
 
-#: src/celestia/win32/res/resource_strings.cpp:5
+#: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
 msgstr "Захапіць &відарыс…\tF10"
 
-#: src/celestia/win32/res/resource_strings.cpp:6
+#: src/celestia/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
 msgstr "Захапіць &фільм…\tShift+F10"
 
-#: src/celestia/win32/res/resource_strings.cpp:7
+#: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "&Выйсьці"
 
-#: src/celestia/win32/res/resource_strings.cpp:8
-msgid "&Navigation"
-msgstr "&Навіґацыя"
-
-#: src/celestia/win32/res/resource_strings.cpp:9
+#: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
 msgstr "Вылучыць &Сонца\tH"
 
-#: src/celestia/win32/res/resource_strings.cpp:10
+#: src/celestia/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
 msgstr "&Даведнік…"
 
-#: src/celestia/win32/res/resource_strings.cpp:11
+#: src/celestia/res/resource_strings.cpp:11
 msgid "Select &Object..."
 msgstr "Выбраць &аб'ект…"
 
-#: src/celestia/win32/res/resource_strings.cpp:12
+#: src/celestia/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "Перайсьці да аб'екта…"
 
-#: src/celestia/win32/res/resource_strings.cpp:13
+#: src/celestia/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
 msgstr "&Цэтраваць вылучэньне\tC"
 
-#: src/celestia/win32/res/resource_strings.cpp:14
+#: src/celestia/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
 msgstr "&Перайсьці да вылучэньня\tG"
 
-#: src/celestia/win32/res/resource_strings.cpp:15
+#: src/celestia/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
 msgstr "&Ісьці ўсьлед за вылучэньнем\tF"
 
-#: src/celestia/win32/res/resource_strings.cpp:16
+#: src/celestia/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
 msgstr "&Сынхранізаваць арбіту з вылучэньнем\tY"
 
-#: src/celestia/win32/res/resource_strings.cpp:17
+#: src/celestia/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
 msgstr "&Трымаць вылучэньне\tT"
 
-#: src/celestia/win32/res/resource_strings.cpp:18
+#: src/celestia/res/resource_strings.cpp:18
 msgid "Solar System &Browser..."
 msgstr "&Каталёґ сонечнай сыстэмы…"
 
-#: src/celestia/win32/res/resource_strings.cpp:19
+#: src/celestia/res/resource_strings.cpp:19
 msgid "Star B&rowser..."
 msgstr "&Каталёґ зорак…"
 
-#: src/celestia/win32/res/resource_strings.cpp:20
+#: src/celestia/res/resource_strings.cpp:20
 msgid "&Eclipse Finder"
 msgstr "&Пошук зацьменьняў"
 
-#: src/celestia/win32/res/resource_strings.cpp:21
+#: src/celestia/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "&Час"
 
-#: src/celestia/win32/res/resource_strings.cpp:22
+#: src/celestia/res/resource_strings.cpp:22
 msgid "10x &Faster\tL"
 msgstr "10× &Хутчэй\tL"
 
-#: src/celestia/win32/res/resource_strings.cpp:23
+#: src/celestia/res/resource_strings.cpp:23
 msgid "10x &Slower\tK"
 msgstr "10× &Павольней\tK"
 
-#: src/celestia/win32/res/resource_strings.cpp:24
+#: src/celestia/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
 msgstr "&Замарозіць\tSpace"
 
-#: src/celestia/win32/res/resource_strings.cpp:25
+#: src/celestia/res/resource_strings.cpp:25
 msgid "&Real Time\t\\"
 msgstr "&Сапраўдны час\t\\"
 
-#: src/celestia/win32/res/resource_strings.cpp:26
+#: src/celestia/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
 msgstr "Зьмяніць &кірунак часу\tJ"
 
-#: src/celestia/win32/res/resource_strings.cpp:27
+#: src/celestia/res/resource_strings.cpp:27
 msgid "Set &Time..."
 msgstr "Задаць &час…"
 
-#: src/celestia/win32/res/resource_strings.cpp:28
+#: src/celestia/res/resource_strings.cpp:28
 msgid "Show Local Time"
 msgstr "Паказваць мясцовы час"
 
-#: src/celestia/win32/res/resource_strings.cpp:29
+#: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
 msgstr "&Будаўнік"
 
-#: src/celestia/win32/res/resource_strings.cpp:30
+#: src/celestia/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
 msgstr "Выберы рэжым экрану…"
 
-#: src/celestia/win32/res/resource_strings.cpp:31
+#: src/celestia/res/resource_strings.cpp:31
 msgid "Toggle Full Screen\tAlt+Enter"
 msgstr "Вакно/ўвесь экран\tAlt+Enter"
 
-#: src/celestia/win32/res/resource_strings.cpp:32
+#: src/celestia/res/resource_strings.cpp:32
 msgid "View Options..."
 msgstr "Выборы прагляду…"
 
-#: src/celestia/win32/res/resource_strings.cpp:33
+#: src/celestia/res/resource_strings.cpp:33
 msgid "Locations..."
 msgstr "Месцы…"
 
-#: src/celestia/win32/res/resource_strings.cpp:34
+#: src/celestia/res/resource_strings.cpp:34
 msgid "More Stars Visible\t]"
 msgstr "Больш бачных зорак\t]"
 
-#: src/celestia/win32/res/resource_strings.cpp:35
+#: src/celestia/res/resource_strings.cpp:35
 msgid "Fewer Stars Visible\t["
 msgstr "Менш бачных зорак\t["
 
-#: src/celestia/win32/res/resource_strings.cpp:36
+#: src/celestia/res/resource_strings.cpp:36
 msgid "Auto Magnitude\tCtrl+Y"
 msgstr "Аўтаяркасьць\tCtrl+Y"
 
-#: src/celestia/win32/res/resource_strings.cpp:37
+#: src/celestia/res/resource_strings.cpp:37
 msgid "Star St&yle"
 msgstr "&Стыль зорак"
 
-#: src/celestia/win32/res/resource_strings.cpp:38
+#: src/celestia/res/resource_strings.cpp:38
 msgid "&Fuzzy Points"
 msgstr "&Размытыя пункты"
 
-#: src/celestia/win32/res/resource_strings.cpp:39
+#: src/celestia/res/resource_strings.cpp:39
 msgid "&Points"
 msgstr "&Пункты"
 
-#: src/celestia/win32/res/resource_strings.cpp:40
+#: src/celestia/res/resource_strings.cpp:40
 msgid "Scaled &Discs"
 msgstr "Маштабаваныя &дыскі"
 
-#: src/celestia/win32/res/resource_strings.cpp:41
+#: src/celestia/res/resource_strings.cpp:41
 msgid "&Ambient Light"
 msgstr "Расьсеянае &сьвятло"
 
-#: src/celestia/win32/res/resource_strings.cpp:42
+#: src/celestia/res/resource_strings.cpp:42
 msgid "&None"
 msgstr "&Няма"
 
-#: src/celestia/win32/res/resource_strings.cpp:43
-#: src/celestia/win32/res/resource_strings.cpp:46
+#: src/celestia/res/resource_strings.cpp:43
+#: src/celestia/res/resource_strings.cpp:46
 msgid "&Low"
 msgstr "С&лабое"
 
-#: src/celestia/win32/res/resource_strings.cpp:44
-#: src/celestia/win32/res/resource_strings.cpp:47
+#: src/celestia/res/resource_strings.cpp:44
+#: src/celestia/res/resource_strings.cpp:47
 msgid "&Medium"
 msgstr "С&ярэдняе"
 
-#: src/celestia/win32/res/resource_strings.cpp:45
+#: src/celestia/res/resource_strings.cpp:45
 msgid "&Texture Resolution"
 msgstr "Разрозьненьне &тэкстур"
 
-#: src/celestia/win32/res/resource_strings.cpp:48
+#: src/celestia/res/resource_strings.cpp:48
 msgid "&High"
 msgstr "&Высокае"
 
-#: src/celestia/win32/res/resource_strings.cpp:49
+#: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
 msgstr "Згладжваньне\tCtrl+X"
 
-#: src/celestia/win32/res/resource_strings.cpp:50
+#: src/celestia/res/resource_strings.cpp:50
 msgid "&View"
 msgstr "&Прагляд"
 
-#: src/celestia/win32/res/resource_strings.cpp:51
+#: src/celestia/res/resource_strings.cpp:51
 msgid "Split &Horizontally\tCtrl+R"
 msgstr "Падзяліць &гарызантальна\tCtrl+R"
 
-#: src/celestia/win32/res/resource_strings.cpp:52
+#: src/celestia/res/resource_strings.cpp:52
 msgid "Split &Vertically\tCtrl+U"
 msgstr "Падзяліць &вэртыкальна\tCtrl+U"
 
-#: src/celestia/win32/res/resource_strings.cpp:53
+#: src/celestia/res/resource_strings.cpp:53
 msgid "&Delete Active View\tDEL"
 msgstr "&Выдаліць актыўны прагляд\tDEL"
 
-#: src/celestia/win32/res/resource_strings.cpp:54
+#: src/celestia/res/resource_strings.cpp:54
 msgid "&Single View\tCtrl+D"
 msgstr "&Адзін прагляд\tCtrl+D"
 
-#: src/celestia/win32/res/resource_strings.cpp:55
+#: src/celestia/res/resource_strings.cpp:55
 msgid "Show &Frames"
 msgstr "Паказваць &рамкі"
 
-#: src/celestia/win32/res/resource_strings.cpp:56
+#: src/celestia/res/resource_strings.cpp:56
 msgid "Synchronize &Time"
 msgstr "Сынхранізаваць &час"
 
-#: src/celestia/win32/res/resource_strings.cpp:57
+#: src/celestia/res/resource_strings.cpp:57
 msgid "&Bookmarks"
 msgstr "&Закладкі"
 
-#: src/celestia/win32/res/resource_strings.cpp:58
+#: src/celestia/res/resource_strings.cpp:58
 msgid "&Add Bookmarks..."
 msgstr "&Дадаць закладкі…"
 
-#: src/celestia/win32/res/resource_strings.cpp:59
+#: src/celestia/res/resource_strings.cpp:59
 msgid "&Organize Bookmarks..."
 msgstr "&Упарадкаваць закладкі…"
 
-#: src/celestia/win32/res/resource_strings.cpp:60
+#: src/celestia/res/resource_strings.cpp:60
 msgid "&Help"
 msgstr "&Даведка"
 
-#: src/celestia/win32/res/resource_strings.cpp:61
+#: src/celestia/res/resource_strings.cpp:61
 msgid "Run &Demo"
 msgstr "Выканаць &дэманстрацыю"
 
-#: src/celestia/win32/res/resource_strings.cpp:62
+#: src/celestia/res/resource_strings.cpp:62
+msgid "User &Guide"
+msgstr "&Кіраўніцтва карыстальніка"
+
+#: src/celestia/res/resource_strings.cpp:63
 msgid "&Controls"
 msgstr "&Кіраваньне"
 
-#: src/celestia/win32/res/resource_strings.cpp:63
+#: src/celestia/res/resource_strings.cpp:64
 msgid "&OpenGL Info"
 msgstr "Зьвесткі &OpenGL"
 
-#: src/celestia/win32/res/resource_strings.cpp:64
+#: src/celestia/res/resource_strings.cpp:65
 msgid "&License"
 msgstr "&Ліцэнзія"
 
-#: src/celestia/win32/res/resource_strings.cpp:65
+#: src/celestia/res/resource_strings.cpp:66
 msgid "&About Celestia"
 msgstr "&Пра Celestia"
 
-#: src/celestia/win32/res/resource_strings.cpp:66
+#: src/celestia/res/resource_strings.cpp:67
 msgid "About Celestia"
 msgstr "Пра Celestia"
 
-#: src/celestia/win32/res/resource_strings.cpp:67
-#: src/celestia/win32/res/resource_strings.cpp:86
-#: src/celestia/win32/res/resource_strings.cpp:90
-#: src/celestia/win32/res/resource_strings.cpp:92
-#: src/celestia/win32/res/resource_strings.cpp:94
-#: src/celestia/win32/res/resource_strings.cpp:100
-#: src/celestia/win32/res/resource_strings.cpp:104
-#: src/celestia/win32/res/resource_strings.cpp:109
-#: src/celestia/win32/res/resource_strings.cpp:121
-#: src/celestia/win32/res/resource_strings.cpp:125
-#: src/celestia/win32/res/resource_strings.cpp:142
-#: src/celestia/win32/res/resource_strings.cpp:191
-#: src/celestia/win32/res/resource_strings.cpp:205
-#: src/celestia/win32/res/resource_strings.cpp:210
-#: src/celestia/win32/res/resource_strings.cpp:214
-#: src/celestia/win32/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:68
+#: src/celestia/res/resource_strings.cpp:87
+#: src/celestia/res/resource_strings.cpp:91
+#: src/celestia/res/resource_strings.cpp:93
+#: src/celestia/res/resource_strings.cpp:95
+#: src/celestia/res/resource_strings.cpp:101
+#: src/celestia/res/resource_strings.cpp:105
+#: src/celestia/res/resource_strings.cpp:110
+#: src/celestia/res/resource_strings.cpp:122
+#: src/celestia/res/resource_strings.cpp:126
+#: src/celestia/res/resource_strings.cpp:143
+#: src/celestia/res/resource_strings.cpp:193
+#: src/celestia/res/resource_strings.cpp:207
+#: src/celestia/res/resource_strings.cpp:212
+#: src/celestia/res/resource_strings.cpp:216
+#: src/celestia/res/resource_strings.cpp:222
 msgid "OK"
 msgstr "Так"
 
-#: src/celestia/win32/res/resource_strings.cpp:69
+#: src/celestia/res/resource_strings.cpp:70
 msgid "Copyright (C) 2001-2009, Celestia Development Team"
 msgstr "Аўтарскія правы (C) 2001-2009, Каманда распрацоўкі Celestia"
 
-#: src/celestia/win32/res/resource_strings.cpp:70
+#: src/celestia/res/resource_strings.cpp:71
 msgid "http://www.shatters.net/celestia"
 msgstr "http://www.shatters.net/celestia"
 
-#: src/celestia/win32/res/resource_strings.cpp:71
+#: src/celestia/res/resource_strings.cpp:72
 msgid "Celestia is free software and comes with absolutely no warranty."
 msgstr "Celestia зьяўляецца свабоднай праґрамай і пастаўляецца абсалютна без аніякае ґарантыі."
 
-#: src/celestia/win32/res/resource_strings.cpp:72
+#: src/celestia/res/resource_strings.cpp:73
 msgid "Authors"
 msgstr "Стваральнікі"
 
-#: src/celestia/win32/res/resource_strings.cpp:73
+#: src/celestia/res/resource_strings.cpp:74
 msgid "Chris Laurel"
 msgstr "Chris Laurel"
 
-#: src/celestia/win32/res/resource_strings.cpp:74
+#: src/celestia/res/resource_strings.cpp:75
 msgid "Clint Weisbrod"
 msgstr "Clint Weisbrod"
 
-#: src/celestia/win32/res/resource_strings.cpp:75
+#: src/celestia/res/resource_strings.cpp:76
 msgid "Fridger Schrempp"
 msgstr "Fridger Schrempp"
 
-#: src/celestia/win32/res/resource_strings.cpp:76
+#: src/celestia/res/resource_strings.cpp:77
 msgid "Christophe Teyssier"
 msgstr "Christophe Teyssier"
 
-#: src/celestia/win32/res/resource_strings.cpp:77
+#: src/celestia/res/resource_strings.cpp:78
 msgid "Grant Hutchison"
 msgstr "Grant Hutchison"
 
-#: src/celestia/win32/res/resource_strings.cpp:78
+#: src/celestia/res/resource_strings.cpp:79
 msgid "Pat Suwalski"
 msgstr "Pat Suwalski"
 
-#: src/celestia/win32/res/resource_strings.cpp:79
+#: src/celestia/res/resource_strings.cpp:80
 msgid "Toti"
 msgstr "Toti"
 
-#: src/celestia/win32/res/resource_strings.cpp:80
+#: src/celestia/res/resource_strings.cpp:81
 msgid "Da Woon Jung"
 msgstr "Da Woon Jung"
 
-#: src/celestia/win32/res/resource_strings.cpp:81
+#: src/celestia/res/resource_strings.cpp:82
 msgid "Hank Ramsey"
 msgstr "Hank Ramsey"
 
-#: src/celestia/win32/res/resource_strings.cpp:82
+#: src/celestia/res/resource_strings.cpp:83
 msgid "Bob Ippolito"
 msgstr "Bob Ippolito"
 
-#: src/celestia/win32/res/resource_strings.cpp:83
+#: src/celestia/res/resource_strings.cpp:84
 msgid "Vincent Giangiulio"
 msgstr "Vincent Giangiulio"
 
-#: src/celestia/win32/res/resource_strings.cpp:84
+#: src/celestia/res/resource_strings.cpp:85
 msgid "Andrew Tribick"
 msgstr "Andrew Tribick"
 
-#: src/celestia/win32/res/resource_strings.cpp:85
+#: src/celestia/res/resource_strings.cpp:86
 msgid "Select Object"
 msgstr "Вылучыць аб'ект"
 
-#: src/celestia/win32/res/resource_strings.cpp:88
+#: src/celestia/res/resource_strings.cpp:89
 msgid "Object Name"
 msgstr "Назва аб'екта"
 
-#: src/celestia/win32/res/resource_strings.cpp:89
+#: src/celestia/res/resource_strings.cpp:90
 msgid "License"
 msgstr "Ліцэнзія"
 
-#: src/celestia/win32/res/resource_strings.cpp:91
+#: src/celestia/res/resource_strings.cpp:92
 msgid "Celestia Controls"
 msgstr "Кіраваньне Celestia"
 
-#: src/celestia/win32/res/resource_strings.cpp:93
+#: src/celestia/res/resource_strings.cpp:94
 msgid "OpenGL Driver Info"
 msgstr "Зьвесткі драйвэра OpenGL"
 
-#: src/celestia/win32/res/resource_strings.cpp:95
+#: src/celestia/res/resource_strings.cpp:96
 msgid "Set Simulation Time"
 msgstr "Задаць час сымуляцыі"
 
-#: src/celestia/win32/res/resource_strings.cpp:96
+#: src/celestia/res/resource_strings.cpp:97
 msgid "Time Zone: "
 msgstr "Часавы пояс: "
 
-#: src/celestia/win32/res/resource_strings.cpp:99
+#: src/celestia/res/resource_strings.cpp:100
 msgid "Set To Current Time"
 msgstr "Цяперашні час"
 
-#: src/celestia/win32/res/resource_strings.cpp:102
+#: src/celestia/res/resource_strings.cpp:103
 msgid "Add Bookmark"
 msgstr "Дадаць закладку"
 
-#: src/celestia/win32/res/resource_strings.cpp:106
+#: src/celestia/res/resource_strings.cpp:107
 msgid "Create in >>"
 msgstr "Стварыць у >>"
 
-#: src/celestia/win32/res/resource_strings.cpp:107
-#: src/celestia/win32/res/resource_strings.cpp:216
+#: src/celestia/res/resource_strings.cpp:108
+#: src/celestia/res/resource_strings.cpp:218
 msgid "New Folder..."
 msgstr "Новы каталёґ…"
 
-#: src/celestia/win32/res/resource_strings.cpp:108
+#: src/celestia/res/resource_strings.cpp:109
 msgid "Solar System Browser"
 msgstr "Каталёґ сонечнай сыстэмы"
 
-#: src/celestia/win32/res/resource_strings.cpp:110
+#: src/celestia/res/resource_strings.cpp:111
 msgid "Solar System"
 msgstr "Сонечная сыстэма"
 
-#: src/celestia/win32/res/resource_strings.cpp:112
-#: src/celestia/win32/res/resource_strings.cpp:119
+#: src/celestia/res/resource_strings.cpp:113
+#: src/celestia/res/resource_strings.cpp:120
 msgid "&Go To"
 msgstr "&Перайсьці да"
 
-#: src/celestia/win32/res/resource_strings.cpp:113
+#: src/celestia/res/resource_strings.cpp:114
 msgid "Solar System Objects"
 msgstr "Аб'екты сонечнай сыстэмы"
 
-#: src/celestia/win32/res/resource_strings.cpp:114
+#: src/celestia/res/resource_strings.cpp:115
 msgid "Star Browser"
 msgstr "Каталёґ зорак"
 
-#: src/celestia/win32/res/resource_strings.cpp:115
-msgid "Nearest"
-msgstr "Найбліжэйшыя"
-
-#: src/celestia/win32/res/resource_strings.cpp:116
+#: src/celestia/res/resource_strings.cpp:117
 msgid "Brightest"
 msgstr "Найярчэйшыя"
 
-#: src/celestia/win32/res/resource_strings.cpp:117
+#: src/celestia/res/resource_strings.cpp:118
 msgid "With planets"
 msgstr "З плянэтамі"
 
-#: src/celestia/win32/res/resource_strings.cpp:120
+#: src/celestia/res/resource_strings.cpp:121
 msgid "&Refresh"
 msgstr "&Абнавіць"
 
-#: src/celestia/win32/res/resource_strings.cpp:122
+#: src/celestia/res/resource_strings.cpp:123
 msgid "Star Search Criteria"
 msgstr "Крытэр пошуку зорак"
 
-#: src/celestia/win32/res/resource_strings.cpp:123
+#: src/celestia/res/resource_strings.cpp:124
 msgid "Maximum Stars Displayed in List"
 msgstr "Найбольшая колькасьць зорак у сьпісе "
 
-#: src/celestia/win32/res/resource_strings.cpp:124
+#: src/celestia/res/resource_strings.cpp:125
 msgid "Tour Guide"
 msgstr "Даведнік"
 
-#: src/celestia/win32/res/resource_strings.cpp:126
-#: src/celestia/win32/res/resource_strings.cpp:132
+#: src/celestia/res/resource_strings.cpp:127
+#: src/celestia/res/resource_strings.cpp:133
 msgid "Go To"
 msgstr "Перайсьці да"
 
-#: src/celestia/win32/res/resource_strings.cpp:127
+#: src/celestia/res/resource_strings.cpp:128
 msgid "Select your destination:"
 msgstr "Выберы мэту прызначэньня:"
 
-#: src/celestia/win32/res/resource_strings.cpp:128
+#: src/celestia/res/resource_strings.cpp:129
 msgid "Go to Object"
 msgstr "Перайсьці да аб'екта"
 
-#: src/celestia/win32/res/resource_strings.cpp:130
+#: src/celestia/res/resource_strings.cpp:131
 msgid "radii"
 msgstr "радыюсаў"
 
-#: src/celestia/win32/res/resource_strings.cpp:134
+#: src/celestia/res/resource_strings.cpp:135
 msgid "Object"
 msgstr "Аб'ект"
 
-#: src/celestia/win32/res/resource_strings.cpp:135
+#: src/celestia/res/resource_strings.cpp:136
 msgid "Long."
 msgstr "Даўг."
 
-#: src/celestia/win32/res/resource_strings.cpp:136
+#: src/celestia/res/resource_strings.cpp:137
 msgid "Lat."
 msgstr "Шыр."
 
-#: src/celestia/win32/res/resource_strings.cpp:137
-#: src/celestia/win32/res/resource_strings.cpp:190
+#: src/celestia/res/resource_strings.cpp:138
+#: src/celestia/res/resource_strings.cpp:192
 msgid "Distance"
 msgstr "Адлегласьць"
 
-#: src/celestia/win32/res/resource_strings.cpp:138
+#: src/celestia/res/resource_strings.cpp:139
 msgid "Size:"
 msgstr "Памер:"
 
-#: src/celestia/win32/res/resource_strings.cpp:139
+#: src/celestia/res/resource_strings.cpp:140
 msgid "Frame rate:"
 msgstr "Часьціня кадраў:"
 
-#: src/celestia/win32/res/resource_strings.cpp:140
+#: src/celestia/res/resource_strings.cpp:141
 msgid "Select Display Mode"
 msgstr "Выберы рэжым экрану"
 
-#: src/celestia/win32/res/resource_strings.cpp:141
+#: src/celestia/res/resource_strings.cpp:142
 msgid "Resolution"
 msgstr "Разрозьненьне"
 
-#: src/celestia/win32/res/resource_strings.cpp:144
+#: src/celestia/res/resource_strings.cpp:145
 msgid "View Options"
 msgstr "Выборы прагляду"
 
-#: src/celestia/win32/res/resource_strings.cpp:147
-#: src/celestia/win32/res/resource_strings.cpp:177
+#: src/celestia/res/resource_strings.cpp:148
+#: src/celestia/res/resource_strings.cpp:179
 msgid "Globulars"
 msgstr "Шаравыя"
 
-#: src/celestia/win32/res/resource_strings.cpp:161
+#: src/celestia/res/resource_strings.cpp:162
+msgid "Ecliptic Line"
+msgstr "Лінія экліптыкі"
+
+#: src/celestia/res/resource_strings.cpp:163
 msgid "Grids"
 msgstr "Сеткі"
 
-#: src/celestia/win32/res/resource_strings.cpp:162
+#: src/celestia/res/resource_strings.cpp:164
 msgid "Equatorial"
 msgstr "Экватарыяльная"
 
-#: src/celestia/win32/res/resource_strings.cpp:163
+#: src/celestia/res/resource_strings.cpp:165
 msgid "Horizontal"
 msgstr "Гарызантальная"
 
-#: src/celestia/win32/res/resource_strings.cpp:164
+#: src/celestia/res/resource_strings.cpp:166
 msgid "Galactic"
 msgstr "Ґаляктычная"
 
-#: src/celestia/win32/res/resource_strings.cpp:165
+#: src/celestia/res/resource_strings.cpp:167
 msgid "Ecliptic"
 msgstr "Экліптычная"
 
-#: src/celestia/win32/res/resource_strings.cpp:171
+#: src/celestia/res/resource_strings.cpp:173
 msgid "Minor Moons"
 msgstr "Малыя месяцы"
 
-#: src/celestia/win32/res/resource_strings.cpp:175
+#: src/celestia/res/resource_strings.cpp:177
 msgid "DSO Labels"
 msgstr "Назвы АГК"
 
-#: src/celestia/win32/res/resource_strings.cpp:181
+#: src/celestia/res/resource_strings.cpp:183
 msgid "Diagrams"
 msgstr "Дыяґрамы"
 
-#: src/celestia/win32/res/resource_strings.cpp:182
+#: src/celestia/res/resource_strings.cpp:184
 msgid "Boundaries"
 msgstr "Межы"
 
-#: src/celestia/win32/res/resource_strings.cpp:184
+#: src/celestia/res/resource_strings.cpp:186
 msgid "Latin Names"
 msgstr "Лацінскія назвы"
 
-#: src/celestia/win32/res/resource_strings.cpp:185
+#: src/celestia/res/resource_strings.cpp:187
 msgid "Information Text"
 msgstr "Тэкст зьвестак"
 
-#: src/celestia/win32/res/resource_strings.cpp:189
+#: src/celestia/res/resource_strings.cpp:191
 msgid "Filter Stars"
 msgstr "Фільтар зорак"
 
-#: src/celestia/win32/res/resource_strings.cpp:197
+#: src/celestia/res/resource_strings.cpp:199
 msgid "Montes (Mountains)"
 msgstr "Горы"
 
-#: src/celestia/win32/res/resource_strings.cpp:198
+#: src/celestia/res/resource_strings.cpp:200
 msgid "Maria (Seas)"
 msgstr "Моры й акіяны"
 
-#: src/celestia/win32/res/resource_strings.cpp:200
+#: src/celestia/res/resource_strings.cpp:202
 msgid "Valles (Valleys)"
 msgstr "Даліны"
 
-#: src/celestia/win32/res/resource_strings.cpp:201
+#: src/celestia/res/resource_strings.cpp:203
 msgid "Terrae (Land masses)"
 msgstr "Кантынэнты"
 
-#: src/celestia/win32/res/resource_strings.cpp:202
+#: src/celestia/res/resource_strings.cpp:204
 msgid "Volcanoes"
 msgstr "Вульканы"
 
-#: src/celestia/win32/res/resource_strings.cpp:203
+#: src/celestia/res/resource_strings.cpp:205
 msgid "Other features"
 msgstr "Іншыя дэталі"
 
-#: src/celestia/win32/res/resource_strings.cpp:204
+#: src/celestia/res/resource_strings.cpp:206
 msgid "Label Features"
 msgstr "Называць дэталі"
 
-#: src/celestia/win32/res/resource_strings.cpp:207
+#: src/celestia/res/resource_strings.cpp:209
 msgid "Show Features"
 msgstr "Паказваць дэталі"
 
-#: src/celestia/win32/res/resource_strings.cpp:208
+#: src/celestia/res/resource_strings.cpp:210
 msgid "Minimum Labeled Feature Size"
 msgstr "Найменшы памер дэталі"
 
-#: src/celestia/win32/res/resource_strings.cpp:209
+#: src/celestia/res/resource_strings.cpp:211
 msgid "Add New Bookmark Folder"
 msgstr "Дадаць новы каталёґ закладак"
 
-#: src/celestia/win32/res/resource_strings.cpp:212
+#: src/celestia/res/resource_strings.cpp:214
 msgid "Folder Name"
 msgstr "Назва каталёґу"
 
-#: src/celestia/win32/res/resource_strings.cpp:213
+#: src/celestia/res/resource_strings.cpp:215
 msgid "Organize Bookmarks"
 msgstr "Упарадкаваць закладкі"
 
-#: src/celestia/win32/res/resource_strings.cpp:217
+#: src/celestia/res/resource_strings.cpp:219
 msgid "Rename..."
 msgstr "Перайменаваць…"
 
-#: src/celestia/win32/res/resource_strings.cpp:218
+#: src/celestia/res/resource_strings.cpp:220
 msgid "Delete"
 msgstr "Выдаліць"
 
-#: src/celestia/win32/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:221
 msgid "Rename Bookmark or Folder"
 msgstr "Перайменаваць закладку ці каталёґ"
 
-#: src/celestia/win32/res/resource_strings.cpp:222
+#: src/celestia/res/resource_strings.cpp:224
 msgid "New Name"
 msgstr "Новая назва"
 
-#: src/celestia/win32/res/resource_strings.cpp:224
+#: src/celestia/res/resource_strings.cpp:226
 msgid "Compute"
 msgstr "Разьлічыць"
 
-#: src/celestia/win32/res/resource_strings.cpp:225
+#: src/celestia/res/resource_strings.cpp:227
 msgid "Set Date and Go to Planet"
 msgstr "Задаць дату й перайсьці да плянэты"
 
-#: src/celestia/win32/res/resource_strings.cpp:226
-msgid "Close"
-msgstr "Закрыць"
-
-#: src/celestia/win32/res/resource_strings.cpp:227
-msgid "From:"
-msgstr "Ад:"
-
-#: src/celestia/win32/res/resource_strings.cpp:228
-msgid "To:"
-msgstr "Да:"
-
-#: src/celestia/win32/res/resource_strings.cpp:229
-msgid "On:"
-msgstr "На:"
-
-#: src/celestia/win32/res/resource_strings.cpp:230
-msgid "Search parameters"
-msgstr "Параметры пошуку"
-
-#: src/celestia/win32/res/resource_strings.cpp:231
-msgid "Solar Eclipses"
-msgstr "Сонечныя зацьменьні"
-
-#: src/celestia/win32/res/resource_strings.cpp:232
+#: src/celestia/res/resource_strings.cpp:234
 msgid "Lunar Eclipses"
 msgstr "Месяцовыя зацьменьні"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Jan"
 msgstr "Сту"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Feb"
 msgstr "Лют"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Mar"
 msgstr "Сак"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Apr"
 msgstr "Кра"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "May"
 msgstr "Тра"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Jun"
 msgstr "Чэр"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Jul"
 msgstr "Ліп"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Aug"
 msgstr "Жні"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Sep"
 msgstr "Вер"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Oct"
 msgstr "Кас"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Nov"
 msgstr "Ліс"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Dec"
 msgstr "Сьн"
 
+#~ msgid ""
+#~ "Celestia was unable to initialize OpenGL extensions. Graphics quality "
+#~ "will be reduced. Only Basic render path will be available"
+#~ msgstr ""
+#~ "Celestia не ўдалося ініцыялізаваць пашыральнікі OpenGL. Якасьць ґрафікі "
+#~ "будзе пагоршаная. Толькі асноўны спосаб пабудовы будзе наяўны"
 #~ msgid "%s"
 #~ msgstr "%s"
-#~ msgid "Temperature: "
-#~ msgstr "Тэмпэратура:"
-#~ msgid "Apparent mag: %.2f\n"
-#~ msgstr "Бачная веліч.: %.2f\n"
-#~ msgid "Options"
-#~ msgstr "Выборы"
-#~ msgid "Objects"
-#~ msgstr "Аб'екты"
-#~ msgid "OpenGL Render Path"
-#~ msgstr "Спосаб пабудовы OpenGL"
-#~ msgid "Time"
-#~ msgstr "Час"
-#~ msgid "MultiView"
-#~ msgstr "Мультывід"
-#~ msgid "Main Toolbar"
-#~ msgstr "Галоўная панэль"
-#~ msgid "Dist."
-#~ msgstr "Адл."
-#~ msgid "App. Mag."
-#~ msgstr "Бачн. вел."
-#~ msgid "Abs. Mag."
-#~ msgstr "Абс. вел."
-#~ msgid "With Planets"
-#~ msgstr "З плянэтамі"
-#~ msgid "Brightest (Abs.)"
-#~ msgstr "Яркасьць (Абс.)"
-#~ msgid "Brightest (App.)"
-#~ msgstr "Яркасьць (Бачн.)"
-#~ msgid "&Close"
-#~ msgstr "&Закрыць"
-#~ msgid "Alt+C"
-#~ msgstr "Alt+C"
-#~ msgid "Refresh"
-#~ msgstr "Абнавіць"
-#~ msgid "End"
-#~ msgstr "Канец"
-#~ msgid "Moon Eclipses"
-#~ msgstr "Месяцовыя зацьменьні"
-#~ msgid "Search"
-#~ msgstr "Шукаць"
-#~ msgid "Video Capture"
-#~ msgstr "Захоп відэа"
-#~ msgid "Save As:"
-#~ msgstr "Захаваць як:"
-#~ msgid "*.ogg"
-#~ msgstr "*.ogg"
-#~ msgid "Aspect Ratio:"
-#~ msgstr "Стасунак бакоў:"
-#~ msgid "Current"
-#~ msgstr "Бягучы"
-#~ msgid "11:9"
-#~ msgstr "11:9"
-#~ msgid "4:3"
-#~ msgstr "4:3"
-#~ msgid "16:9"
-#~ msgstr "16:9"
-#~ msgid "Image Size:"
-#~ msgstr "Памер відарыса:"
-#~ msgid "Frame Rate:"
-#~ msgstr "Часьціня кадраў:"
-#~ msgid "Video Quality:"
-#~ msgstr "Якасьць відэа:"
-#~ msgid "Play Video when capture is done"
-#~ msgstr "Прайграць відэа, калі скончыцца захоп"
-#~ msgid "Usage"
-#~ msgstr "Выкарыстаньне"
-#~ msgid ""
-#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
-#~ "Press <b>F12</b> to stop</p>\n"
-#~ "\n"
-#~ "<p>Note that resizing the main window will not be possible until the end "
-#~ "of the capture</p>"
-#~ msgstr ""
-#~ "<p>Націсьні <b>F11</b> каб пачаць/прыпыніць запіс<br>\n"
-#~ "Націсьні <b>F12</b> каб спыніць</p>\n"
-#~ "\n"
-#~ "<p>Заўвага: пакуль ня скончыцца захоп нельга зьмяняць памер галоўнага "
-#~ "вакна.</p>"
-#~ msgid "&OK"
-#~ msgstr "&Добра"
-#~ msgid "&Cancel"
-#~ msgstr "&Адмена"
 #~ msgid "Celestial"
 #~ msgstr "Нябесная"
 
