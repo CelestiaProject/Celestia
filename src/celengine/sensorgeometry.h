@@ -60,10 +60,14 @@ class SensorGeometry : public Geometry
         m_range = range;
     }
 
+    void setFOVs(double horizontalFov, double verticalFov);
+
  private:
     Body* m_observer;
     Body* m_target;
     double m_range;
+    double m_horizontalFov;
+    double m_verticalFov;
 };
 
 #endif // !_CELENGINE_SENSOR_GEOMETRY_H_

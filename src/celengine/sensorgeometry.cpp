@@ -13,6 +13,7 @@
 #include "texmanager.h"
 #include "astro.h"
 #include "body.h"
+#include "celmath/mathlib.h"
 #include <Eigen/Core>
 #include <algorithm>
 #include <cassert>
@@ -24,7 +25,9 @@ using namespace std;
 SensorGeometry::SensorGeometry() :
     m_observer(NULL),
     m_target(NULL),
-    m_range(0.0)
+    m_range(0.0),
+    m_horizontalFov(degToRad(5.0)),
+    m_verticalFov(degToRad(5.0))
 {
 }
 
@@ -38,6 +41,14 @@ bool
 SensorGeometry::pick(const Ray3d& /* r */, double& /* distance */) const
 {
     return false;
+}
+
+
+void
+SensorGeometry::setFOVs(double horizontalFov, double verticalFov)
+{
+    m_horizontalFov = horizontalFov;
+    m_verticalFov = verticalFov;
 }
 
 
@@ -61,12 +72,25 @@ SensorGeometry::render(RenderContext& rc, double tsec)
         pos = pos.normalized() * m_range;
     }
 
+    Quaterniond q = m_observer->getOrientation(jd);
+
+    unsigned int sectionCount = 24;
+
     glDisable(GL_LIGHTING);
+    glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
 
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
     glBegin(GL_LINES);
-    glVertex3d(0.0, 0.0, 0.0);
-    glVertex3dv(pos.data());
+    for (unsigned int i = 0; i < sectionCount; ++i)
+    {
+        double t = double(i) / double(sectionCount);
+        double theta = t * PI * 2.0;
+
+        Vector3d v = Vector3d(cos(theta) * m_horizontalFov, sin(theta) * m_verticalFov, 1.0).normalized();
+        glVertex3d(0.0, 0.0, 0.0);
+        glVertex3dv(v.data());
+    }
     glEnd();
 
     glEnable(GL_LIGHTING);

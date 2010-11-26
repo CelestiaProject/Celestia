@@ -921,6 +921,12 @@ static Body* CreateBody(const string& name,
                     cerr << "No target specified for sensor.\n";
                 }
 
+                double horizontalFov = 5.0;
+                double verticalFov = 5.0;
+                sensorData->getNumber("HorizontalFOV", horizontalFov);
+                sensorData->getNumber("VerticalFOV", verticalFov);
+                sensor->setFOVs(degToRad(horizontalFov), degToRad(verticalFov));
+
                 sensor->setRange(30000.0);
 
                 string resName = string("sensor") + targetName + body->getName();
