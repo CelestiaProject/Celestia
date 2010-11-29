@@ -13,7 +13,9 @@
 #include "texmanager.h"
 #include "astro.h"
 #include "body.h"
+#include "vecgl.h"
 #include "celmath/mathlib.h"
+#include "celmath/intersect.h"
 #include <Eigen/Core>
 #include <algorithm>
 #include <cassert>
@@ -52,6 +54,8 @@ SensorGeometry::setFOVs(double horizontalFov, double verticalFov)
 }
 
 
+/** Render the sensor geometry.
+  */
 void
 SensorGeometry::render(RenderContext& rc, double tsec)
 {
@@ -75,23 +79,73 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     Quaterniond q = m_observer->getOrientation(jd);
 
     unsigned int sectionCount = 24;
+    Vector3d profile[sectionCount];
+    Vector3d footprint[sectionCount];
+
+    Quaterniond obsOrientation = m_observer->getOrientation(jd).conjugate();
+    Quaterniond targetOrientation = m_target->getOrientation(jd).conjugate();
+    Vector3d origin = targetOrientation.conjugate() * -pos;
+    Ellipsoidd targetEllipsoid(m_target->getSemiAxes().cast<double>());
 
     glDisable(GL_LIGHTING);
-    glDisable(GL_BLEND);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE);
     glDisable(GL_TEXTURE_2D);
 
-    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-    glBegin(GL_LINES);
+    glPushMatrix();
+
+    // 'Undo' the rotation of the parent body. We are assuming that the observer is
+    // the body to which the sensor geometry is attached.
+    glRotate(obsOrientation.conjugate());
+
+    // Compute the profile of the frustum; the profile is extruded over the range
+    // of the sensor (or to the intersection) when rendering.
     for (unsigned int i = 0; i < sectionCount; ++i)
     {
         double t = double(i) / double(sectionCount);
         double theta = t * PI * 2.0;
 
-        Vector3d v = Vector3d(cos(theta) * m_horizontalFov, sin(theta) * m_verticalFov, 1.0).normalized();
-        glVertex3d(0.0, 0.0, 0.0);
-        glVertex3dv(v.data());
+        profile[i] = obsOrientation * Vector3d(cos(theta) * m_horizontalFov, -sin(theta) * m_verticalFov, 1.0).normalized();
+    }
+
+    // Compute the 'footprint' of the sensor by finding the intersection of all rays with
+    // the target body. The rendering will not be correct unless the sensor frustum
+    for (unsigned int i = 0; i < sectionCount; ++i)
+    {
+        double t = double(i) / double(sectionCount);
+        double theta = t * PI * 2.0;
+
+        Vector3d direction = profile[i];
+        Vector3d testDirection = targetOrientation.conjugate() * direction;
+
+        double distance = 0.0;
+        testIntersection(Ray3d(origin, testDirection), targetEllipsoid, distance);
+
+        footprint[i] = distance * direction;
+    }
+
+    // Draw the frustum
+    glColor4f(0.0, 1.0f, 0.0, 0.3f);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3d(0.0, 0.0, 0.0);
+    for (unsigned int i = 0; i < sectionCount; ++i)
+    {
+        glVertex3dv(footprint[i].data());
+    }
+    glVertex3dv(footprint[0].data());
+    glEnd();
+
+    // Draw the footprint outline
+    glColor4f(0.0, 1.0f, 0.0, 1.0f);
+    glBegin(GL_LINE_LOOP);
+    for (unsigned int i = 0; i < sectionCount; ++i)
+    {
+        glVertex3dv(footprint[i].data());
     }
     glEnd();
+
+    glPopMatrix();
 
     glEnable(GL_LIGHTING);
 }
@@ -107,5 +161,5 @@ SensorGeometry::isOpaque() const
 bool
 SensorGeometry::isNormalized() const
 {
-    return true;
+    return false;
 }
