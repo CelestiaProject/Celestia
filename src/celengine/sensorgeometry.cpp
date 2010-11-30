@@ -29,7 +29,10 @@ SensorGeometry::SensorGeometry() :
     m_target(NULL),
     m_range(0.0),
     m_horizontalFov(degToRad(5.0)),
-    m_verticalFov(degToRad(5.0))
+    m_verticalFov(degToRad(5.0)),
+    m_frustumColor(1.0f, 1.0f, 1.0f),
+    m_frustumOpacity(0.25f),
+    m_gridOpacity(1.0f)
 {
 }
 
@@ -78,7 +81,8 @@ SensorGeometry::render(RenderContext& rc, double tsec)
 
     Quaterniond q = m_observer->getOrientation(jd);
 
-    unsigned int sectionCount = 24;
+    const unsigned int sectionCount = 40;
+    const unsigned int sliceCount = 6;
     Vector3d profile[sectionCount];
     Vector3d footprint[sectionCount];
 
@@ -113,9 +117,6 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     // the target body. The rendering will not be correct unless the sensor frustum
     for (unsigned int i = 0; i < sectionCount; ++i)
     {
-        double t = double(i) / double(sectionCount);
-        double theta = t * PI * 2.0;
-
         Vector3d direction = profile[i];
         Vector3d testDirection = targetOrientation.conjugate() * direction;
 
@@ -126,7 +127,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     }
 
     // Draw the frustum
-    glColor4f(0.0, 1.0f, 0.0, 0.3f);
+    glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_frustumOpacity);
     glBegin(GL_TRIANGLE_FAN);
     glVertex3d(0.0, 0.0, 0.0);
     for (unsigned int i = 0; i < sectionCount; ++i)
@@ -136,11 +137,38 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     glVertex3dv(footprint[0].data());
     glEnd();
 
+    glEnable(GL_LINE_SMOOTH);
+
     // Draw the footprint outline
-    glColor4f(0.0, 1.0f, 0.0, 1.0f);
+    glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_gridOpacity);
+    glLineWidth(2.0f);
     glBegin(GL_LINE_LOOP);
     for (unsigned int i = 0; i < sectionCount; ++i)
     {
+        glVertex3dv(footprint[i].data());
+    }
+    glEnd();
+    glLineWidth(1.0f);
+
+    for (unsigned int slice = 1; slice < sliceCount; ++slice)
+    {
+        double t = double(slice) / double(sliceCount);
+
+        glBegin(GL_LINE_LOOP);
+        for (unsigned int i = 0; i < sectionCount; ++i)
+        {
+            Vector3d v = footprint[i] * t;
+            glVertex3dv(v.data());
+        }
+        glEnd();
+    }
+
+    // NOTE: section count should be evenly divisible by 8
+    unsigned int step = sectionCount / 8;
+    glBegin(GL_LINES);
+    for (unsigned int i = 0; i < sectionCount; i += step)
+    {
+        glVertex3f(0.0f, 0.0f, 0.0f);
         glVertex3dv(footprint[i].data());
     }
     glEnd();

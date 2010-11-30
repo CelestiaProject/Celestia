@@ -927,6 +927,17 @@ static Body* CreateBody(const string& name,
                 sensorData->getNumber("VerticalFOV", verticalFov);
                 sensor->setFOVs(degToRad(horizontalFov), degToRad(verticalFov));
 
+                // Appearance attributes
+                Color frustumColor(1.0f, 1.0f, 1.0f);
+                float frustumOpacity = 0.25f;
+                float gridOpacity = 1.0f;
+                sensorData->getColor("FrustumColor", frustumColor);
+                sensorData->getNumber("FrustumOpacity", frustumOpacity);
+                sensorData->getNumber("GridOpacity", gridOpacity);
+                sensor->setFrustumColor(frustumColor);
+                sensor->setFrustumOpacity(frustumOpacity);
+                sensor->setGridOpacity(gridOpacity);
+
                 sensor->setRange(30000.0);
 
                 string resName = string("sensor") + targetName + body->getName();

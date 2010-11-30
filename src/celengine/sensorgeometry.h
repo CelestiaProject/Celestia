@@ -12,6 +12,7 @@
 #define _CELENGINE_SENSOR_GEOMETRY_H_
 
 #include "geometry.h"
+#include <celutil/color.h>
 #include <celutil/resmanager.h>
 
 class Body;
@@ -60,6 +61,36 @@ class SensorGeometry : public Geometry
         m_range = range;
     }
 
+    Color frustumColor() const
+    {
+        return m_frustumColor;
+    }
+
+    void setFrustumColor(const Color& color)
+    {
+        m_frustumColor = color;
+    }
+
+    float frustumOpacity() const
+    {
+        return m_frustumOpacity;
+    }
+
+    void setFrustumOpacity(float opacity)
+    {
+        m_frustumOpacity = opacity;
+    }
+
+    float gridOpacity() const
+    {
+        return m_gridOpacity;
+    }
+
+    void setGridOpacity(float opacity)
+    {
+        m_gridOpacity = opacity;
+    }
+
     void setFOVs(double horizontalFov, double verticalFov);
 
  private:
@@ -68,6 +99,9 @@ class SensorGeometry : public Geometry
     double m_range;
     double m_horizontalFov;
     double m_verticalFov;
+    Color m_frustumColor;
+    float m_frustumOpacity;
+    float m_gridOpacity;
 };
 
 #endif // !_CELENGINE_SENSOR_GEOMETRY_H_
