@@ -592,6 +592,15 @@
 	AppMag 11.33
 }
 
+1010536087 "WASP-31:GSC 06087-01053"
+{
+	RA 169.439167
+	Dec -19.054722
+	Distance 1300
+	SpectralType "F"
+	AppMag 11.66
+}
+
 "WASP-37:GSC 00326-00658"
 {
 	RA 221.944167
