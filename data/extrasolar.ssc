@@ -1,4 +1,4 @@
-# Catalog of 483 known extrasolar planets.
+# Catalog of 485 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -837,6 +837,121 @@ AltSurface "limit of knowledge" "CoRoT-14/b"
 }
 
 AltSurface "limit of knowledge" "Gliese 1214/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "Kepler-9"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.15 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "venuslike.*"
+	NightTexture "venuslikenight.*"
+
+	Mass      7     # M.sin(i) = 7 earths
+	Radius     10500
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
+
+	EllipticalOrbit {
+		Period          0.0044
+		SemiMajorAxis   0.0273
+		Inclination     85.6
+		AscendingNode   283.4
+		MeanLongitude   316
+	}
+
+	Obliquity             86 # guess, to match inclination
+	EquatorAscendingNode  283 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-9/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "Kepler-9"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.55 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.84 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       80     # M.sin(i) = 0.252 jupiters
+	Radius     58800
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
+
+	EllipticalOrbit {
+		Period          0.0527
+		SemiMajorAxis   0.14
+		Inclination     85.1
+		AscendingNode   283.6
+		MeanLongitude   21
+	}
+
+	Obliquity             85 # guess, to match inclination
+	EquatorAscendingNode  284 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-9/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "Kepler-9"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.12 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.82 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       50     # M.sin(i) = 0.171 jupiters
+	Radius     57400
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
+
+	EllipticalOrbit {
+		Period          0.1065
+		SemiMajorAxis   0.225
+		Inclination     85.5
+		AscendingNode   283.4
+		MeanLongitude   145
+	}
+
+	Obliquity             86 # guess, to match inclination
+	EquatorAscendingNode  283 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-9/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2986,6 +3101,48 @@ AltSurface "limit of knowledge" "WASP-6/b"
 }
 
 AltSurface "limit of knowledge" "HD 330075/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 6087-1053-1"   # WASP-31
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 84.54 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.54 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       150     # M.sin(i) = 0.478 jupiters
+	Radius     107800
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=WASP-31"
+
+	EllipticalOrbit {
+		Period          0.0093
+		SemiMajorAxis   0.04657
+		Eccentricity    0
+		Inclination     110.8
+		AscendingNode   163.2
+		MeanLongitude   69
+	}
+
+	Obliquity             111 # guess, to match inclination
+	EquatorAscendingNode  163 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 6087-1053-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -7150,84 +7307,6 @@ AltSurface "limit of knowledge" "HD 33283/b"
 }
 
 AltSurface "limit of knowledge" "HD 195019/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "Kepler-9"
-
-# Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 88.55 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.84 jupiters.
-
-# Star not present in Celestia's default stars.dat file.
-
-{
-	Texture "exo-class3.*"
-
-	Color  [0.53 0.62 1]
-	Albedo 0.1
-
-	Mass       80     # M.sin(i) = 0.252 jupiters
-	Radius     58800
-
-	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
-
-	EllipticalOrbit {
-		Period          0.0527
-		SemiMajorAxis   0.14
-		Inclination     85.1
-		AscendingNode   283.6
-		MeanLongitude   21
-	}
-
-	Obliquity             85 # guess, to match inclination
-	EquatorAscendingNode  284 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "Kepler-9/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"c" "Kepler-9"
-
-# Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 88.12 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.82 jupiters.
-
-# Star not present in Celestia's default stars.dat file.
-
-{
-	Texture "exo-class3.*"
-
-	Color  [0.53 0.62 1]
-	Albedo 0.1
-
-	Mass       50     # M.sin(i) = 0.171 jupiters
-	Radius     57400
-
-	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
-
-	EllipticalOrbit {
-		Period          0.1065
-		SemiMajorAxis   0.225
-		Inclination     85.5
-		AscendingNode   283.4
-		MeanLongitude   145
-	}
-
-	Obliquity             86 # guess, to match inclination
-	EquatorAscendingNode  283 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "Kepler-9/c"
 {
 	Texture "extrasolar-lok.*"
 }
