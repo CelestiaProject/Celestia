@@ -74,11 +74,6 @@ SensorGeometry::render(RenderContext& rc, double tsec)
 
     Vector3d pos = targetPos.offsetFromKm(obsPos);
 
-    if (pos.norm() > m_range)
-    {
-        pos = pos.normalized() * m_range;
-    }
-
     Quaterniond q = m_observer->getOrientation(jd);
 
     const unsigned int sectionCount = 40;
@@ -86,7 +81,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     Vector3d profile[sectionCount];
     Vector3d footprint[sectionCount];
 
-    Quaterniond obsOrientation = m_observer->getOrientation(jd).conjugate();
+    Quaterniond obsOrientation = m_observer->getOrientation(jd).conjugate() * m_observer->getGeometryOrientation().cast<double>().conjugate();
     Quaterniond targetOrientation = m_target->getOrientation(jd).conjugate();
     Vector3d origin = targetOrientation.conjugate() * -pos;
     Ellipsoidd targetEllipsoid(m_target->getSemiAxes().cast<double>());
@@ -110,6 +105,8 @@ SensorGeometry::render(RenderContext& rc, double tsec)
         double t = double(i) / double(sectionCount);
         double theta = t * PI * 2.0;
 
+        // Note: -sin() is used here to reverse the vertex order so that the _outside_
+        // of the frustum is drawn.
         profile[i] = obsOrientation * Vector3d(cos(theta) * m_horizontalFov, -sin(theta) * m_verticalFov, 1.0).normalized();
     }
 
@@ -120,8 +117,17 @@ SensorGeometry::render(RenderContext& rc, double tsec)
         Vector3d direction = profile[i];
         Vector3d testDirection = targetOrientation.conjugate() * direction;
 
+        // Draw the sensor frustum out to either the range or the point of
+        // intersection with the target body--whichever is closer.
         double distance = 0.0;
-        testIntersection(Ray3d(origin, testDirection), targetEllipsoid, distance);
+        if (testIntersection(Ray3d(origin, testDirection), targetEllipsoid, distance))
+        {
+            distance = std::min(distance, m_range);
+        }
+        else
+        {
+            distance = m_range;
+        }
 
         footprint[i] = distance * direction;
     }

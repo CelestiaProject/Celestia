@@ -921,6 +921,10 @@ static Body* CreateBody(const string& name,
                     cerr << "No target specified for sensor.\n";
                 }
 
+                double range = 1.0;
+                sensorData->getNumber("Range", range);
+                sensor->setRange(range);
+
                 double horizontalFov = 5.0;
                 double verticalFov = 5.0;
                 sensorData->getNumber("HorizontalFOV", horizontalFov);
@@ -937,8 +941,6 @@ static Body* CreateBody(const string& name,
                 sensor->setFrustumColor(frustumColor);
                 sensor->setFrustumOpacity(frustumOpacity);
                 sensor->setGridOpacity(gridOpacity);
-
-                sensor->setRange(30000.0);
 
                 string resName = string("sensor") + targetName + body->getName();
                 GeometryInfo info(resName, path, Vector3f::Zero(), 1.0f, false);
