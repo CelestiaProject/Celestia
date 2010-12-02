@@ -32,7 +32,8 @@ SensorGeometry::SensorGeometry() :
     m_verticalFov(degToRad(5.0)),
     m_frustumColor(1.0f, 1.0f, 1.0f),
     m_frustumOpacity(0.25f),
-    m_gridOpacity(1.0f)
+    m_gridOpacity(1.0f),
+    m_shape(EllipticalShape)
 {
 }
 
@@ -77,7 +78,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     Quaterniond q = m_observer->getOrientation(jd);
 
     const unsigned int sectionCount = 40;
-    const unsigned int sliceCount = 6;
+    const unsigned int sliceCount = 10;
     Vector3d profile[sectionCount];
     Vector3d footprint[sectionCount];
 
@@ -98,16 +99,37 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     // the body to which the sensor geometry is attached.
     glRotate(obsOrientation.conjugate());
 
+    Matrix3d obsRotation = obsOrientation.toRotationMatrix();
+
     // Compute the profile of the frustum; the profile is extruded over the range
     // of the sensor (or to the intersection) when rendering.
-    for (unsigned int i = 0; i < sectionCount; ++i)
+    if (m_shape == EllipticalShape)
     {
-        double t = double(i) / double(sectionCount);
-        double theta = t * PI * 2.0;
+        for (unsigned int i = 0; i < sectionCount; ++i)
+        {
+            double t = double(i) / double(sectionCount);
+            double theta = t * PI * 2.0;
 
-        // Note: -sin() is used here to reverse the vertex order so that the _outside_
-        // of the frustum is drawn.
-        profile[i] = obsOrientation * Vector3d(cos(theta) * m_horizontalFov, -sin(theta) * m_verticalFov, 1.0).normalized();
+            // Note: -sin() is used here to reverse the vertex order so that the _outside_
+            // of the frustum is drawn.
+            profile[i] = obsRotation * Vector3d(cos(theta) * m_horizontalFov, -sin(theta) * m_verticalFov, 1.0).normalized();
+        }
+    }
+    else
+    {
+        for (unsigned int i = 0; i < sectionCount; ++i)
+        {
+            double t = double(i) / double(sectionCount);
+            double theta = t * PI * 2.0;
+
+            double u = double((i + sectionCount / 8) % (sectionCount / 4)) / double(sectionCount / 4);
+            double phi = (u - 0.5) * PI / 2;
+
+            // Note: -sin() is used here to reverse the vertex order so that the _outside_
+            // of the frustum is drawn.
+            double l = 1.0 / cos(phi);
+            profile[i] = obsRotation * Vector3d(cos(theta) * m_horizontalFov * l, -sin(theta) * m_verticalFov * l, 1.0).normalized();
+        }
     }
 
     // Compute the 'footprint' of the sensor by finding the intersection of all rays with
@@ -158,7 +180,11 @@ SensorGeometry::render(RenderContext& rc, double tsec)
 
     for (unsigned int slice = 1; slice < sliceCount; ++slice)
     {
-        double t = double(slice) / double(sliceCount);
+        // Linear arrangement of slices
+        //double t = double(slice) / double(sliceCount);
+
+        // Exponential arrangement looks better
+        double t = pow(2.0, -double(slice));
 
         glBegin(GL_LINE_LOOP);
         for (unsigned int i = 0; i < sectionCount; ++i)
@@ -170,12 +196,25 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     }
 
     // NOTE: section count should be evenly divisible by 8
-    unsigned int step = sectionCount / 8;
     glBegin(GL_LINES);
-    for (unsigned int i = 0; i < sectionCount; i += step)
+    if (m_shape == EllipticalShape)
     {
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3dv(footprint[i].data());
+        unsigned int rayCount = 8;
+        unsigned int step = sectionCount / rayCount;
+        for (unsigned int i = 0; i < sectionCount; i += step)
+        {
+            glVertex3f(0.0f, 0.0f, 0.0f);
+            glVertex3dv(footprint[i].data());
+        }
+    }
+    else
+    {
+        unsigned int step = sectionCount / 4;
+        for (unsigned int i = sectionCount / 8; i < sectionCount; i += step)
+        {
+            glVertex3f(0.0f, 0.0f, 0.0f);
+            glVertex3dv(footprint[i].data());
+        }
     }
     glEnd();
 

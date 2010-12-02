@@ -942,6 +942,13 @@ static Body* CreateBody(const string& name,
                 sensor->setFrustumOpacity(frustumOpacity);
                 sensor->setGridOpacity(gridOpacity);
 
+                string shape = "elliptical";
+                sensorData->getString("Shape", shape);
+                if (compareIgnoringCase(shape, "rectangular") == 0)
+                {
+                    sensor->setShape(SensorGeometry::RectangularShape);
+                }
+
                 string resName = string("sensor") + targetName + body->getName();
                 GeometryInfo info(resName, path, Vector3f::Zero(), 1.0f, false);
                 info.resource = sensor;

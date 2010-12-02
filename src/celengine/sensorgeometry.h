@@ -23,6 +23,12 @@ class SensorGeometry : public Geometry
     SensorGeometry();
     ~SensorGeometry();
 
+    enum SensorShape
+    {
+        EllipticalShape,
+        RectangularShape,
+    };
+
     virtual bool pick(const Ray3d& r, double& distance) const;
 
     //! Render the model in the current OpenGL context
@@ -59,6 +65,16 @@ class SensorGeometry : public Geometry
     void setRange(double range)
     {
         m_range = range;
+    }
+
+    SensorShape shape() const
+    {
+        return m_shape;
+    }
+
+    void setShape(SensorShape shape)
+    {
+        m_shape = shape;
     }
 
     Color frustumColor() const
@@ -102,6 +118,7 @@ class SensorGeometry : public Geometry
     Color m_frustumColor;
     float m_frustumOpacity;
     float m_gridOpacity;
+    SensorShape m_shape;
 };
 
 #endif // !_CELENGINE_SENSOR_GEOMETRY_H_
