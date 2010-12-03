@@ -3741,6 +3741,7 @@ void Renderer::draw(const Observer& observer,
                     closest = renderList[0].nearZ * 0.01f;
                 }
             }
+            closest = min(closest, -MinNearPlaneDistance);
 
             while (prevNear < closest)
             {
@@ -3863,10 +3864,7 @@ void Renderer::draw(const Observer& observer,
 
                 if (rle.discSizeInPixels > 1.0f && rle.farZ < depthPartitions[interval].nearZ && rle.nearZ > depthPartitions[interval].farZ)
                 {
-                    //if (nearPlaneDistance * 1000000 > farPlaneDistance)
-                    {
-                        renderItem(rle, observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
-                    }
+                    renderItem(rle, observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
                 }
             }
 
