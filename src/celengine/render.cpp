@@ -2848,6 +2848,7 @@ void Renderer::draw(const Observer& observer,
     // large enough to have discernible surface detail are also placed in
     // renderList.
     renderList.clear();
+    multidrawRenderList.clear();
     orbitPathList.clear();
     lightSourceList.clear();
     secondaryIlluminators.clear();
@@ -3464,10 +3465,34 @@ void Renderer::draw(const Observer& observer,
                 nearZ = -nearZ * (float) cos(degToRad(fov / 2)) *
                     ((float) windowHeight / maxSpan);
 #endif
+                // Handle multidraw items; these are placed into a separate list. Items in the multidraw
+                // list may be drawn in multiple depth intervals.
+                bool isMultidraw = false;
+                if (iter->renderableType == RenderListEntry::RenderableBody && iter->body->getGeometry() != InvalidResource)
+                {
+                    Geometry* geom = GetGeometryManager()->find(iter->body->getGeometry());
+                    if (geom && geom->isMultidraw())
+                    {
+                        isMultidraw = true;
+                    }
+                }
+
                 if (nearZ > -MinNearPlaneDistance)
-                    iter->nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
+                {
+                    if (isMultidraw)
+                    {
+                        // No contraints on far/near ratio for multidraw items
+                        iter->nearZ = -MinNearPlaneDistance;
+                    }
+                    else
+                    {
+                        iter->nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
+                    }
+                }
                 else
+                {
                     iter->nearZ = nearZ;
+                }
 
                 if (!convex)
                 {
@@ -3509,8 +3534,15 @@ void Renderer::draw(const Observer& observer,
                     }
                 }
 
-                *notCulled = *iter;
-                notCulled++;
+                if (isMultidraw)
+                {
+                    multidrawRenderList.push_back(*iter);
+                }
+                else
+                {
+                    *notCulled = *iter;
+                    notCulled++;
+                }
 #ifdef USE_HDR
                 if (iter->discSizeInPixels > 1.0f &&
                     iter->appMag < starMaxMag)
@@ -3689,8 +3721,10 @@ void Renderer::draw(const Observer& observer,
         if (zNearest == prevNear)
             zNearest = 0.0f;
 
-        // Add one last interval for the span from 0 to the front of the
-        // nearest object
+        // Add intervals for the span from 0 to the front of the
+        // nearest object. Keep the far/near ratios of the intervals
+        // reasonable so that we don't end up with depth buffer precision
+        // problems when rendering multidraw items.
         {
             // TODO: closest object may not be at entry 0, since objects are
             // sorted by far distance.
@@ -3708,13 +3742,19 @@ void Renderer::draw(const Observer& observer,
                 }
             }
 
-            DepthBufferPartition partition;
-            partition.index = nIntervals;
-            partition.nearZ = closest;
-            partition.farZ = prevNear;
-            depthPartitions.push_back(partition);
+            while (prevNear < closest)
+            {
+                float n = std::min(closest, prevNear / 2000.0f);
 
-            nIntervals++;
+                DepthBufferPartition partition;
+                partition.index = nIntervals;
+                partition.nearZ = n;
+                partition.farZ = prevNear;
+                depthPartitions.push_back(partition);
+                nIntervals++;
+
+                prevNear = n;
+            }
         }
 
         // If orbits are enabled, adjust the farthest partition so that it
@@ -3814,6 +3854,20 @@ void Renderer::draw(const Observer& observer,
                     renderItem(renderList[i], observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
 
                 i--;
+            }
+
+            // Render all multidraw items
+            for (unsigned int j = 0; j < multidrawRenderList.size(); ++j)
+            {
+                const RenderListEntry& rle = multidrawRenderList[j];
+
+                if (rle.discSizeInPixels > 1.0f && rle.farZ < depthPartitions[interval].nearZ && rle.nearZ > depthPartitions[interval].farZ)
+                {
+                    //if (nearPlaneDistance * 1000000 > farPlaneDistance)
+                    {
+                        renderItem(rle, observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
+                    }
+                }
             }
 
             // Render orbit paths

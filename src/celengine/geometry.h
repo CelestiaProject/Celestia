@@ -53,6 +53,18 @@ public:
     virtual void loadTextures()
     {
     }
+
+    /*! Return true if the geometry can be drawn multiple times in
+     *  different depth ranges to avoid clipping and precision problems.
+     *  Drawing multiple times is expensive, so this method should only
+     *  return true for geometries that are simple and which need to
+     *  be drawn correctly when the camera is positioned very close
+     *  (relative to the size of the object.)
+     */
+    virtual bool isMultidraw() const
+    {
+        return false;
+    }
 };
 
 #endif // _CELENGINE_GEOMETRY_H_

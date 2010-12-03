@@ -37,6 +37,11 @@ class SensorGeometry : public Geometry
     virtual bool isOpaque() const;
     virtual bool isNormalized() const;
 
+    virtual bool isMultidraw() const
+    {
+        return true;
+    }
+
     Body* observer() const
     {
         return m_observer;
