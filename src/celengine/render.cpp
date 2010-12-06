@@ -3633,6 +3633,14 @@ void Renderer::draw(const Observer& observer,
         // overlapping objects.  If two objects overlap in depth, we must
         // assign them to the same interval.
 
+        // The code here is more complicated than it should be because there are
+        // three separate sources for renderable objects:
+        //   - the main render list (renderList)
+        //   - the list of multidraw items (multidrawRenderList)
+        //   - the list of orbits
+        // It would be good reduce the complexity by merging the orbit list into
+        // the multidraw list, but this would require significant refactoring of
+        // the renderer code.
         depthPartitions.clear();
         int nIntervals = 0;
         float prevNear = -1e12f;  // ~ 1 light year
@@ -3697,7 +3705,24 @@ void Renderer::draw(const Observer& observer,
             if (minNearDistance > zNearest)
                 zNearest = minNearDistance;
         }
-        
+
+        // Scan the list of multidraw items and find the closest one. We'll need
+        // adjust the nearest interval to accommodate it.
+        float zFurthest = 0.0;
+        for (i = 0; i < (int) multidrawRenderList.size(); i++)
+        {
+            const RenderListEntry& rle = multidrawRenderList[i];
+            float minNearDistance = min(-MinNearPlaneDistance, rle.nearZ);
+            if (minNearDistance > zNearest)
+            {
+                clog << "znear: " << minNearDistance << endl;
+            }
+            if (minNearDistance > zNearest)
+                zNearest = minNearDistance;
+            if (rle.farZ < zFurthest)
+                zFurthest = rle.farZ;
+        }
+
         // Adjust the nearest interval to include the closest marker (if it's
         // closer to the observer than anything else
         if (!depthSortedAnnotations.empty())
@@ -3758,7 +3783,7 @@ void Renderer::draw(const Observer& observer,
             }
         }
 
-        // If orbits are enabled, adjust the farthest partition so that it
+        // If orbits are enabled, adjust the farthest interval so that it
         // can contain the orbit.
         if (!orbitPathList.empty())
         {
@@ -3766,6 +3791,13 @@ void Renderer::draw(const Observer& observer,
                                            orbitPathList[orbitPathList.size() - 1].centerZ -
                                            orbitPathList[orbitPathList.size() - 1].radius);
         }
+
+        // Extend the farthest depth interval to include all multidraw items.
+        if (!multidrawRenderList.empty())
+        {
+            depthPartitions[0].farZ = min(depthPartitions[0].farZ, zFurthest);
+        }
+
 
         // We want to avoid overpartitioning the depth buffer. In this stage, we coalesce
         // partitions that have small spans in the depth buffer.
@@ -3861,7 +3893,6 @@ void Renderer::draw(const Observer& observer,
             for (unsigned int j = 0; j < multidrawRenderList.size(); ++j)
             {
                 const RenderListEntry& rle = multidrawRenderList[j];
-
                 if (rle.discSizeInPixels > 1.0f && rle.farZ < depthPartitions[interval].nearZ && rle.nearZ > depthPartitions[interval].farZ)
                 {
                     renderItem(rle, observer, m_cameraOrientation, nearPlaneDistance, farPlaneDistance);
