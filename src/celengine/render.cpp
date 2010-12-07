@@ -3477,28 +3477,31 @@ void Renderer::draw(const Observer& observer,
                     }
                 }
 
-                if (nearZ > -MinNearPlaneDistance)
+                if (isMultidraw)
                 {
-                    if (isMultidraw)
-                    {
-                        // No contraints on far/near ratio for multidraw items
-                        iter->nearZ = -MinNearPlaneDistance;
-                    }
-                    else
-                    {
-                        iter->nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
-                    }
+                    iter->nearZ = min(-MinNearPlaneDistance, nearZ);
                 }
                 else
                 {
-                    iter->nearZ = nearZ;
+                    if (nearZ > -MinNearPlaneDistance)
+                    {
+                        iter->nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
+                    }
+                    else
+                    {
+                        iter->nearZ = nearZ;
+                    }
                 }
 
                 if (!convex)
                 {
                     iter->farZ = center.z() - radius;
-                    if (iter->farZ / iter->nearZ > MaxFarNearRatio * 0.5f)
-                        iter->nearZ = iter->farZ / (MaxFarNearRatio * 0.5f);
+
+                    if (!isMultidraw)
+                    {
+                        if (iter->farZ / iter->nearZ > MaxFarNearRatio * 0.5f)
+                            iter->nearZ = iter->farZ / (MaxFarNearRatio * 0.5f);
+                    }
                 }
                 else
                 {
@@ -3713,10 +3716,7 @@ void Renderer::draw(const Observer& observer,
         {
             const RenderListEntry& rle = multidrawRenderList[i];
             float minNearDistance = min(-MinNearPlaneDistance, rle.nearZ);
-            if (minNearDistance > zNearest)
-            {
-                clog << "znear: " << minNearDistance << endl;
-            }
+
             if (minNearDistance > zNearest)
                 zNearest = minNearDistance;
             if (rle.farZ < zFurthest)
@@ -3772,10 +3772,16 @@ void Renderer::draw(const Observer& observer,
             {
                 float n = std::min(closest, prevNear / 2000.0f);
 
+                // Prevent the creation of extremely small depth intervals
+                if (-n / MinNearPlaneDistance < 1.1f)
+                {
+                    n = -MinNearPlaneDistance;
+                }
+
                 DepthBufferPartition partition;
                 partition.index = nIntervals;
                 partition.nearZ = n;
-                partition.farZ = prevNear;
+                partition.farZ = prevNear;                
                 depthPartitions.push_back(partition);
                 nIntervals++;
 
