@@ -1,0 +1,193 @@
+  Mus-, tastatur- og Joystick-styring for Celestia
+
+
+------------------------------------------
+    MUSEFUNKSJONER
+------------------------------------------
+ Venstre (dra) ................................. Orienter kamera
+ Høyre (dra) .................................... Krets rundt valgte objekt [Shift+Pil-taster]
+ Venstre+høyre dra venstre/høyre .... Rull visning venstre/høyre [Venstre/Høyre piler]
+ Venstre+høyre dra opp/ned .......... Juster avstand til valgte objekt [Home/End]
+ Hjul (dreie) .................................... Juster avstand til valgte objekt [Home/End]
+ Ctrl+venstre dra opp/ned ............. Juster avstand til valgte objekt [Home/End]
+ Shift+venstre dra .......................... Endre synsfelt (FOV) [. / ,]
+ Midt-knapp ................................... Veksle synsfelt mellom 45 grader og forrige innstilling
+ Venstreklikk (på objekt) ................ Velg objekt [Returtast -- med objektnavn]
+ Venstreklikk (ikke på objekt) ........ Opphev valg
+ Venstre dobbelklikk (på objekt) .....Velg og sentrer objekt
+ Høyreklikk .................................... Vis høyreklikkmeny
+
+
+------------------------------------------------
+    TASTATURKOMMANDOER
+------------------------------------------------
+
+--- Navigering ---
+
+ 1 - 9 .................................. Velg planet rundt nærmeste stjerne
+ 0 (zero) ............................. Velg foreldrestjerne til aktuelle planet eller system
+ H ...................................... Velg Sol (Home system)
+ C ....................................... Sentrer på valgte objekt
+ G ...................................... Gå til valgte objekt
+ F ....................................... Følg valgte objekt
+ T ....................................... Spor valgte objekt
+ Y ....................................... Gå i bane til valgte objekt synkron til dets rotasjon
+ : ........................................ Lås på valgte objekt
+ " ........................................ Gå etter valgte objekt
+ Shift+C .............................. Sentrer/bane --sentrer valgte objekt uten å endre
+                                            posisjonen til referanseobjektet
+ Ctrl+G ............................... Gå til overflate av valgte objekt
+ Ctrl+F ................................ Alt-azimuth modus av/på
+ Home ................................ Beveg nærmere objektet
+ End ................................... Beveg lengre bort fra objektet
+ * ........................................ Se tilbake
+ Backspace ....................... Velg overordnet til aktuelle objekt eller opphev valget
+ Esc ................................... Avbryt bevegelse eller skript
+
+
+--- Tidskontroll ---
+
+ Spacebar .......................... Pause/Gjenoppta tidens forløp og skript (veksle)
+ J ....................................... Tid: Tilbake/Fram  (veksle)
+ \ ....................................... Skift til sann tid (opphever raskere/langsommere tidsforløp)
+ L ....................................... Endre tidsforløp: 10x raskere
+ K ....................................... Endre tidsforløp: 10x langsommere
+ Shift+L .............................. Endre tidsforløp: 2x raskere
+ Shift+K .............................. Endre tidsforløp: 2x langsommere
+ ! ........................................ Still inn tid til gjeldende system- dato og tid
+ ? ....................................... Vis lys-reise forsinkelse mellom observerer / valgte objekt
+ - (bindestrek)...................... Trekk fra lys-reise forsinkelse fra gjeldende simuleringstid
+
+
+--- Påskrifter (av/på veksle) ---
+
+E ...................................... Galakser
+Shift+E ............................. Kulehoper
+B ...................................... Stjerner
+P ...................................... Planeter
+Shift+P ............................. Dvergplaneter
+M ...................................... Måner
+Shift+M ............................. Mindre måner
+W ..................................... Asteroider
+Shift+W ............................ Kometer
+N ...................................... Romfartøy
+= ....................................... Stjernebilder
+& ....................................... Steder
+
+
+--- Opptegn/Vis (på/av veksle) --
+
+ U ..................................... Galakser
+ Shift+U ............................ Kulehoper
+ ^ ...................................... Stjernetåker
+ Ctrl+A ............................... Atmosfærer
+ I ....................................... Skyer
+ Ctrl+L ............................... Nattside-kart
+ Ctrl+T ............................... Komethaler
+ Ctrl+E ............................... Formørkelsesskygger
+ Ctrl+B ............................... Stjernebildegrenser
+ / ....................................... Stjernebildediagrammer
+ ; ........................................ Jord-basert ekvatorial koordinatsfære
+ Ctrl+K ............................... Markører (plassert på objekter)
+ O ...................................... Omløpsbaner (veksle ALLE valgte baner)
+
+
+--- Opptegningsalternativer ---
+
+ { ....................................... Reduser omgivende lys
+ } ....................................... Øk omgivende lys
+ ( ....................................... Reduser galakse-lyshet
+ ) ....................................... Øk galakse-lyshet
+ [ ....................................... Reduser Magnitude-grense:
+                                           - Hvis AutoMag AV: Reduser magnitude (færre stjerner)
+                                           - Hvis AutoMag PÅ: Reduser magnitude ved 45 gr. synsfelt
+ ] ....................................... Øk Magnitude :
+                                           - Hvis AutoMag AV: Øk magnitude (flere stjerner)
+                                           - Hvis AutoMag PÅ: Øk magnitude ved 45 gr. synsfelt
+ Ctrl+Y ............................... Auto-Magnitude av/på (automatisk tilpassing av
+                                           stjerne-synlighet til synsfeltet
+ , ....................................... Smalne synsfelt [Shift+Venstre-klikk (dra)]
+ . ....................................... Utvid synsfelt [Shift+Venstre-klikk (dra)]
+ Ctrl+X ............................... Kantutjevning av linjer (f.eks. for omløpsbanen)
+ Alt+Enter .......................... Veksle visningsmodus mellom: Full-skjerm / Vindu
+ Ctrl+P ............................... Marker valgte objekt
+ Ctrl+V ............................... Skift mellom støttede OpenGL-metoder
+ + ...................................... Veksle mellom planet-teksturtyper (Artistisk / Limit of Knowledge)
+ % ...................................... Veksle mellom farger for stjerne-fremstilling
+ Ctrl+S ............................... Endre stjernestil (punkter / uklare skiver / skalerte skiver)
+ V ...................................... Endre omfang til info-tekst (ingen / knapp / utførlig)
+ Ctrl+W .............................. Trådramme-modus av/på
+
+
+--- Multivisningsalternativer ---
+
+Ctrl+U ................................ Del visning horisontalt
+Ctrl+R ................................ Del visning vertikalt
+Tab ................................... Veksle mellom alle aktive visninger
+Del .................................... Slett aktiv visning
+Ctrl+D ................................ Slett alle visninger unntatt den aktive (tilbakestill til enkelt-visning)
+
+
+--- Navigering via piltaster ---
+
+ Opp/ned pil ...................... Visning - helle ned/opp (objekt beveger seg opp/ned)
+ Venstre/høyre pil .............. Rull venstre/høyre
+ Shift+Venstre/høyre pil ..... Krets rundt objekt: høyre/venstre
+ Shift+Opp/ned pil ............. Krets rundt objekt: ned/opp
+
+ 
+--- Navigering via nummer Pad Keys (med NumLock aktiv) ---
+
+ 8 ...................................... Visning - helle ned
+ 2 ...................................... Visning - helle opp
+ 7 ...................................... Rull venstre
+ 9 ...................................... Rull høyre
+ 5 ...................................... Stopp rotering
+ 4 ...................................... Sving venstre
+ 6 ...................................... Sving høyre
+
+
+--- Bevegelse (Romferd) ---
+
+ Z ...................................... Reduser hastighet
+ A ...................................... Øk hastighet
+ Q ...................................... Snu retning
+ X ...................................... Still inn bevegelsesretning mot skjermens senter
+ F2 .................................... Still inn hastighet til 1 km/sekund
+ F3 .................................... Still inn hastighet til 1,000 km/second
+ F4 .................................... Still inn hastighet til lyshastighet (1 c)
+ F5 .................................... Still inn hastighet til 10x lyshastighet (10 c)
+ F6 .................................... Still inn hastighet til 1 AU/sekund
+ F7 .................................... Still inn hastighet til 1 lysår/sekund
+ F1 .................................... Stopp bevegelse
+ S ...................................... Stopp bevegelse
+
+--- Andre funksjoner ---
+
+ Ctrl+C .............................. Kopier lokaliserings URL til utklippstavle (Cel:// URL)
+ Ctrl+Insert ........................ Kopier lokaliserings URL til utklippstavle (Cel:// URL)
+ F10 ................................. Ta bilde til fil (skjermbilde)
+ Shift+F10 ........................ Ta opp film til fil (video)
+ F11 .................................. I film-modus: Start / Pause - opptak 
+ F12 .................................. I film-modus: Stopp - opptak
+ ~ ..................................... Vis feilsøk-konsoll (bruk opp/ned piltaster for å rulle liste)
+ ` ...................................... Vis antall "bilderammer pr. sekund" (FPS) som blir opptegnet
+ Ctrl+O .............................. Vis "Velg objekt" dialog-vindu
+ @ .................................... Redigeringsmodus slå av/på (for å assistere i plasseringen
+                                           av objekter)
+ D ..................................... Kjør demo-skript (/celestia/demo.cel)
+ Enter ............................... Navneoppførings-modus av/på (bruk Tab / Shift+Tab til å markere
+                                          et objekt, Esc for å avslutte)
+
+
+--------------------------------------------
+    JOYSTICK-STYRING
+--------------------------------------------
+ F8 .................................... Joystick slå av/på
+ X axis ............................... Sving venstre/høyre
+ Y axis ............................... Helle opp/ned
+ L trigger ............................ Rull venstre
+ R trigger ........................... Rull høyre
+ Button 1 ........................... Beveg langsommere
+ Button 2 ........................... Beveg raskere
+
