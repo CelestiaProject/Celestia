@@ -101,6 +101,9 @@ SensorGeometry::render(RenderContext& rc, double tsec)
 
     Matrix3d obsRotation = obsOrientation.toRotationMatrix();
 
+    double horizontalSize = tan(m_horizontalFov);
+    double verticalSize = tan(m_verticalFov);
+
     // Compute the profile of the frustum; the profile is extruded over the range
     // of the sensor (or to the intersection) when rendering.
     if (m_shape == EllipticalShape)
@@ -112,7 +115,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
 
             // Note: -sin() is used here to reverse the vertex order so that the _outside_
             // of the frustum is drawn.
-            profile[i] = obsRotation * Vector3d(cos(theta) * m_horizontalFov, -sin(theta) * m_verticalFov, 1.0).normalized();
+            profile[i] = obsRotation * Vector3d(cos(theta) * horizontalSize, -sin(theta) * verticalSize, 1.0).normalized();
         }
     }
     else
@@ -128,7 +131,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
             // Note: -sin() is used here to reverse the vertex order so that the _outside_
             // of the frustum is drawn.
             double l = 1.0 / cos(phi);
-            profile[i] = obsRotation * Vector3d(cos(theta) * m_horizontalFov * l, -sin(theta) * m_verticalFov * l, 1.0).normalized();
+            profile[i] = obsRotation * Vector3d(cos(theta) * horizontalSize * l, -sin(theta) * verticalSize * l, 1.0).normalized();
         }
     }
 
