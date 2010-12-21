@@ -933,12 +933,15 @@ static Body* CreateBody(const string& name,
 
                 // Appearance attributes
                 Color frustumColor(1.0f, 1.0f, 1.0f);
+                Color frustumBaseColor(1.0f, 1.0f, 1.0f);
                 float frustumOpacity = 0.25f;
                 float gridOpacity = 1.0f;
                 sensorData->getColor("FrustumColor", frustumColor);
+                sensorData->getColor("FrustumBaseColor", frustumBaseColor);
                 sensorData->getNumber("FrustumOpacity", frustumOpacity);
                 sensorData->getNumber("GridOpacity", gridOpacity);
                 sensor->setFrustumColor(frustumColor);
+                sensor->setFrustumBaseColor(frustumBaseColor);
                 sensor->setFrustumOpacity(frustumOpacity);
                 sensor->setGridOpacity(gridOpacity);
 

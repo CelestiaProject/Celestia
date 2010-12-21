@@ -31,6 +31,7 @@ SensorGeometry::SensorGeometry() :
     m_horizontalFov(degToRad(5.0)),
     m_verticalFov(degToRad(5.0)),
     m_frustumColor(1.0f, 1.0f, 1.0f),
+    m_frustumBaseColor(1.0f, 1.0f, 1.0f),
     m_frustumOpacity(0.25f),
     m_gridOpacity(1.0f),
     m_shape(EllipticalShape)
@@ -171,7 +172,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     glEnable(GL_LINE_SMOOTH);
 
     // Draw the footprint outline
-    glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_gridOpacity);
+    glColor4f(m_frustumBaseColor.red(), m_frustumBaseColor.green(), m_frustumBaseColor.blue(), m_gridOpacity);
     glLineWidth(2.0f);
     glBegin(GL_LINE_LOOP);
     for (unsigned int i = 0; i < sectionCount; ++i)
@@ -181,6 +182,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     glEnd();
     glLineWidth(1.0f);
 
+    glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_frustumOpacity);
     for (unsigned int slice = 1; slice < sliceCount; ++slice)
     {
         // Linear arrangement of slices

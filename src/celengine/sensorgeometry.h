@@ -92,6 +92,16 @@ class SensorGeometry : public Geometry
         m_frustumColor = color;
     }
 
+    Color frustumBaseColor() const
+    {
+        return m_frustumBaseColor;
+    }
+
+    void setFrustumBaseColor(const Color& color)
+    {
+        m_frustumBaseColor = color;
+    }
+
     float frustumOpacity() const
     {
         return m_frustumOpacity;
@@ -121,6 +131,7 @@ class SensorGeometry : public Geometry
     double m_horizontalFov;
     double m_verticalFov;
     Color m_frustumColor;
+    Color m_frustumBaseColor;
     float m_frustumOpacity;
     float m_gridOpacity;
     SensorShape m_shape;
