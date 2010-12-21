@@ -123,6 +123,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
                                     mesh->getVertexCount() * vertexDesc.stride,
                                     mesh->getVertexData(),
                                     GL_STATIC_DRAW_ARB);
+					glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
                 }
             }
 
