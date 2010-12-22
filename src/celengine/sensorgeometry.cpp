@@ -34,7 +34,9 @@ SensorGeometry::SensorGeometry() :
     m_frustumBaseColor(1.0f, 1.0f, 1.0f),
     m_frustumOpacity(0.25f),
     m_gridOpacity(1.0f),
-    m_shape(EllipticalShape)
+    m_shape(EllipticalShape),
+    m_frustumVisible(true),
+    m_frustumBaseVisible(true)
 {
 }
 
@@ -159,69 +161,78 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     }
 
     // Draw the frustum
-    glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_frustumOpacity);
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex3d(0.0, 0.0, 0.0);
-    for (unsigned int i = 0; i < sectionCount; ++i)
+    if (m_frustumVisible)
     {
-        glVertex3dv(footprint[i].data());
+        glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_frustumOpacity);
+        glBegin(GL_TRIANGLE_FAN);
+        glVertex3d(0.0, 0.0, 0.0);
+        for (unsigned int i = 0; i < sectionCount; ++i)
+        {
+            glVertex3dv(footprint[i].data());
+        }
+        glVertex3dv(footprint[0].data());
+        glEnd();
     }
-    glVertex3dv(footprint[0].data());
-    glEnd();
 
     glEnable(GL_LINE_SMOOTH);
 
     // Draw the footprint outline
-    glColor4f(m_frustumBaseColor.red(), m_frustumBaseColor.green(), m_frustumBaseColor.blue(), m_gridOpacity);
-    glLineWidth(2.0f);
-    glBegin(GL_LINE_LOOP);
-    for (unsigned int i = 0; i < sectionCount; ++i)
+    if (m_frustumBaseVisible)
     {
-        glVertex3dv(footprint[i].data());
-    }
-    glEnd();
-    glLineWidth(1.0f);
-
-    glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_frustumOpacity);
-    for (unsigned int slice = 1; slice < sliceCount; ++slice)
-    {
-        // Linear arrangement of slices
-        //double t = double(slice) / double(sliceCount);
-
-        // Exponential arrangement looks better
-        double t = pow(2.0, -double(slice));
-
+        glColor4f(m_frustumBaseColor.red(), m_frustumBaseColor.green(), m_frustumBaseColor.blue(), m_gridOpacity);
+        glLineWidth(2.0f);
         glBegin(GL_LINE_LOOP);
         for (unsigned int i = 0; i < sectionCount; ++i)
         {
-            Vector3d v = footprint[i] * t;
-            glVertex3dv(v.data());
+            glVertex3dv(footprint[i].data());
+        }
+        glEnd();
+        glLineWidth(1.0f);
+    }
+
+    if (m_frustumVisible)
+    {
+        glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_frustumOpacity);
+        for (unsigned int slice = 1; slice < sliceCount; ++slice)
+        {
+            // Linear arrangement of slices
+            //double t = double(slice) / double(sliceCount);
+
+            // Exponential arrangement looks better
+            double t = pow(2.0, -double(slice));
+
+            glBegin(GL_LINE_LOOP);
+            for (unsigned int i = 0; i < sectionCount; ++i)
+            {
+                Vector3d v = footprint[i] * t;
+                glVertex3dv(v.data());
+            }
+            glEnd();
+        }
+
+        // NOTE: section count should be evenly divisible by 8
+        glBegin(GL_LINES);
+        if (m_shape == EllipticalShape)
+        {
+            unsigned int rayCount = 8;
+            unsigned int step = sectionCount / rayCount;
+            for (unsigned int i = 0; i < sectionCount; i += step)
+            {
+                glVertex3f(0.0f, 0.0f, 0.0f);
+                glVertex3dv(footprint[i].data());
+            }
+        }
+        else
+        {
+            unsigned int step = sectionCount / 4;
+            for (unsigned int i = sectionCount / 8; i < sectionCount; i += step)
+            {
+                glVertex3f(0.0f, 0.0f, 0.0f);
+                glVertex3dv(footprint[i].data());
+            }
         }
         glEnd();
     }
-
-    // NOTE: section count should be evenly divisible by 8
-    glBegin(GL_LINES);
-    if (m_shape == EllipticalShape)
-    {
-        unsigned int rayCount = 8;
-        unsigned int step = sectionCount / rayCount;
-        for (unsigned int i = 0; i < sectionCount; i += step)
-        {
-            glVertex3f(0.0f, 0.0f, 0.0f);
-            glVertex3dv(footprint[i].data());
-        }
-    }
-    else
-    {
-        unsigned int step = sectionCount / 4;
-        for (unsigned int i = sectionCount / 8; i < sectionCount; i += step)
-        {
-            glVertex3f(0.0f, 0.0f, 0.0f);
-            glVertex3dv(footprint[i].data());
-        }
-    }
-    glEnd();
 
     glPopMatrix();
 
@@ -240,4 +251,37 @@ bool
 SensorGeometry::isNormalized() const
 {
     return false;
+}
+
+
+void
+SensorGeometry::setPartVisible(const std::string& partName, bool visible)
+{
+    std::clog << "setPartVisible: " << partName << std::endl;
+    if (partName == "Frustum")
+    {
+        m_frustumVisible = visible;
+    }
+    else if (partName == "FrustumBase")
+    {
+        m_frustumBaseVisible = visible;
+    }
+}
+
+
+bool
+SensorGeometry::isPartVisible(const std::string& partName) const
+{
+    if (partName == "Frustum")
+    {
+        return m_frustumVisible;
+    }
+    else if (partName == "FrustumBase")
+    {
+        return m_frustumBaseVisible;
+    }
+    else
+    {
+        return false;
+    }
 }

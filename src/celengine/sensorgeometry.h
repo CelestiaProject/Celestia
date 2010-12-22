@@ -42,6 +42,9 @@ class SensorGeometry : public Geometry
         return true;
     }
 
+    virtual void setPartVisible(const std::string& partName, bool visible);
+    virtual bool isPartVisible(const std::string& partName) const;
+
     Body* observer() const
     {
         return m_observer;
@@ -124,6 +127,7 @@ class SensorGeometry : public Geometry
 
     void setFOVs(double horizontalFov, double verticalFov);
 
+
  private:
     Body* m_observer;
     Body* m_target;
@@ -135,6 +139,8 @@ class SensorGeometry : public Geometry
     float m_frustumOpacity;
     float m_gridOpacity;
     SensorShape m_shape;
+    bool m_frustumVisible;
+    bool m_frustumBaseVisible;
 };
 
 #endif // !_CELENGINE_SENSOR_GEOMETRY_H_

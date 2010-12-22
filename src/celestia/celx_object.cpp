@@ -18,6 +18,7 @@
 #include <celengine/axisarrow.h>
 #include <celengine/visibleregion.h>
 #include <celengine/planetgrid.h>
+#include <celengine/meshmanager.h>
 #include "celestiacore.h"
 
 using namespace Eigen;
@@ -127,6 +128,56 @@ static int object_setvisible(lua_State* l)
         sel->deepsky()->setVisible(visible);
     }
     
+    return 0;
+}
+
+
+// Check the visibility flag for an object component; returns false if the object doesn't
+// have a component with the specified name
+static int object_partvisible(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 2, "One argument expected to object:setpartvisible()");
+
+    Selection* sel = this_object(l);
+    string partName = celx.safeGetString(2, AllErrors, "Argument of object:setpartvisible() must be a string");
+
+    bool visible = false;
+
+    if (sel->body() != NULL && sel->body()->getGeometry() != InvalidResource)
+    {
+        Geometry* geom = GetGeometryManager()->find(sel->body()->getGeometry());
+        if (geom)
+        {
+            visible = geom->isPartVisible(partName);
+        }
+    }
+
+    lua_pushboolean(l, visible ? 1 : 0);
+    return 1;
+}
+
+
+// Set the visibility flag for an object component; has no effect if the object doesn't
+// have any defined components.
+static int object_setpartvisible(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(3, 3, "Two argument expected to object:setpartvisible()");
+
+    Selection* sel = this_object(l);
+    string partName = celx.safeGetString(2, AllErrors, "Argument 1 of object:setpartvisible() must be a string");
+
+    bool visible = celx.safeGetBoolean(3, AllErrors, "Argument 2 of object:setpartvisible() must be a boolean");
+    if (sel->body() != NULL && sel->body()->getGeometry() != InvalidResource)
+    {
+        Geometry* geom = GetGeometryManager()->find(sel->body()->getGeometry());
+        if (geom)
+        {
+            geom->setPartVisible(partName, visible);
+        }
+    }
+
     return 0;
 }
 
@@ -1306,6 +1357,8 @@ void CreateObjectMetaTable(lua_State* l)
     celx.registerMethod("__tostring", object_tostring);
     celx.registerMethod("visible", object_visible);
     celx.registerMethod("setvisible", object_setvisible);
+    celx.registerMethod("partvisible", object_partvisible);
+    celx.registerMethod("setpartvisible", object_setpartvisible);
     celx.registerMethod("orbitcoloroverridden", object_orbitcoloroverridden);
     celx.registerMethod("setorbitcoloroverridden", object_setorbitcoloroverridden);
     celx.registerMethod("setorbitcolor", object_setorbitcolor);

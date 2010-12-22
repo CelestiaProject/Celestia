@@ -65,6 +65,27 @@ public:
     {
         return false;
     }
+
+    /** Set the visibility flag for the named component of this geometry.
+      * Subclasses of Geometry should customize this method if they have
+      * components with visibility that can be controlled independently.
+      * The default implementation does nothing.
+      */
+    virtual void setPartVisible(const std::string& partName, bool visible)
+    {
+    }
+
+    /** Check the visibility flag for the named component of this geometry.
+      * Subclasses of Geometry should customize this method if they have
+      * components with visibility that can be controlled independently.
+      * The default implementation always returns false. Implementations
+      * of isPartVisible by subclasses should also return false for
+      * non-existent parts.
+      */
+    virtual bool isPartVisible(const std::string& partName) const
+    {
+        return false;
+    }
 };
 
 #endif // _CELENGINE_GEOMETRY_H_
