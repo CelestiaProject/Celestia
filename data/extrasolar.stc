@@ -619,6 +619,15 @@
 	AppMag 9.42
 }
 
+1005877247 "WASP-41:GSC 07247-00587"
+{
+	RA 190.618750
+	Dec -30.640000
+	Distance 590
+	SpectralType "G8V"
+	AppMag 11.6
+}
+
 
 # CoRoT survey
 
@@ -957,6 +966,16 @@
 	SpectralType "M4.5V"
 	AppMag 14.67
 }
+
+"Qatar-1:GSC 04240-00470"
+{
+	RA 303.381667
+	Dec 65.161944
+	Distance 455 # from spectral class and apparent mag
+	SpectralType "K"
+	AppMag 12.84
+}
+
 
 # Definitions for some exoplanet stars in multiple systems
 
