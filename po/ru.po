@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Celestia 1.6.1 (ru)\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-04 15:39+0000\n"
-"PO-Revision-Date: 2010-11-28 21:17+0100\n"
+"PO-Revision-Date: 2010-12-28 13:24+0100\n"
 "Last-Translator: Sergey Leonov <leserg@ua.fm>\n"
 "Language-Team: Russian <leserg@ua.fm>\n"
 "MIME-Version: 1.0\n"
@@ -344,15 +344,15 @@ msgstr "Режим 'Альт-азимут' отключен"
 
 #: src/celestia/celestiacore.cpp:1512
 msgid "Star style: fuzzy points"
-msgstr "Стиль звезд: расплывчатые точки"
+msgstr "Стиль звёзд: расплывчатые точки"
 
 #: src/celestia/celestiacore.cpp:1515
 msgid "Star style: points"
-msgstr "Стиль звезд: точки"
+msgstr "Стиль звёзд: точки"
 
 #: src/celestia/celestiacore.cpp:1518
 msgid "Star style: scaled discs"
-msgstr "Стиль звезд: диски"
+msgstr "Стиль звёзд: диски"
 
 #: src/celestia/celestiacore.cpp:1531
 msgid "Comet tails enabled"
@@ -435,7 +435,7 @@ msgstr "Продолжаю"
 #: src/celestia/celestiacore.cpp:1740
 #, c-format
 msgid "Light travel time:  %.4f yr "
-msgstr "Световое запаздывание:  %.4f г "
+msgstr "Световое запаздывание:  %.4f лет "
 
 #: src/celestia/celestiacore.cpp:1749
 #, c-format
@@ -449,11 +449,11 @@ msgstr "Световое запаздывание:  %d ч  %d мин  %.1f с"
 
 #: src/celestia/celestiacore.cpp:1771
 msgid "Light travel delay included"
-msgstr "Световое запаздывание включено"
+msgstr "Поправка на задержку света включена"
 
 #: src/celestia/celestiacore.cpp:1776
 msgid "Light travel delay switched off"
-msgstr "Световое запаздывание отключено"
+msgstr "Поправка на задержку света отключена"
 
 #: src/celestia/celestiacore.cpp:1782
 msgid "Light travel delay ignored"
@@ -461,7 +461,7 @@ msgstr "Световое запаздывание не учитывается"
 
 #: src/celestia/celestiacore.cpp:1827
 msgid "Using normal surface textures."
-msgstr "Использование обычных текстур поверхности."
+msgstr "Использование обычных текстур."
 
 #: src/celestia/celestiacore.cpp:1832
 msgid "Using limit of knowledge surface textures."
@@ -542,14 +542,14 @@ msgstr "Добавленный вид"
 #: src/celestia/kde/celestialbrowser.cpp:133
 #: src/celestia/kde/selectionpopup.cpp:79
 msgid "ly"
-msgstr "св.л."
+msgstr "св. л."
 
 #: src/celestia/celestiacore.cpp:2902
 #: src/celestia/kde/celestialbrowser.cpp:162
 #: src/celestia/kde/selectionpopup.cpp:81
 #: src/celestia/res/resource_strings.cpp:132
 msgid "au"
-msgstr "а.е."
+msgstr "а. е."
 
 #: src/celestia/celestiacore.cpp:2923
 msgid " days"
@@ -1017,7 +1017,7 @@ msgstr "&Информация"
 #: src/celestia/winmain.cpp:1613
 #: src/celestia/kde/selectionpopup.cpp:333
 msgid "&Reference Marks"
-msgstr "&Вектор"
+msgstr "&Элементы графики"
 
 #: src/celestia/winmain.cpp:1614
 #: src/celestia/kde/selectionpopup.cpp:334
@@ -1426,7 +1426,7 @@ msgstr "Перейти к поверхности"
 
 #: src/celestia/kde/kdeapp.cpp:550
 msgid "Show Stars"
-msgstr "Показывать звезды"
+msgstr "Показывать звёзды"
 
 #: src/celestia/kde/kdeapp.cpp:553
 msgid "Show Planets"
@@ -1482,7 +1482,7 @@ msgstr "Показывать орбиты спутников"
 
 #: src/celestia/kde/kdeapp.cpp:592
 msgid "Show Star Orbits"
-msgstr "Показывать орбиты звезд"
+msgstr "Показывать орбиты звёзд"
 
 #: src/celestia/kde/kdeapp.cpp:595
 msgid "Show Planet Orbits"
@@ -1518,7 +1518,7 @@ msgstr "Показывать тени затмений"
 
 #: src/celestia/kde/kdeapp.cpp:619
 msgid "Cycle Star Mode"
-msgstr "Изменение вида звезд"
+msgstr "Изменение вида звёзд"
 
 #: src/celestia/kde/kdeapp.cpp:621
 msgid "Show Ring Shadows"
@@ -1640,12 +1640,12 @@ msgstr "Центровка орбиты"
 #: src/celestia/kde/kdeapp.cpp:713
 #: src/celestia/kde/kdepreferencesdialog.cpp:500
 msgid "Basic"
-msgstr "Основной"
+msgstr "Простой"
 
 #: src/celestia/kde/kdeapp.cpp:715
 #: src/celestia/kde/kdepreferencesdialog.cpp:502
 msgid "Multitexture"
-msgstr "Мультитекстуры"
+msgstr "Мультитекстурный"
 
 #: src/celestia/kde/kdeapp.cpp:717
 #: src/celestia/kde/kdepreferencesdialog.cpp:504
@@ -1944,7 +1944,7 @@ msgstr "Планетография"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:259
 msgid "Ambient Light"
-msgstr "Рассеянное свечение"
+msgstr "Рассеянный свет"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:270
 msgid "Limiting Magnitude"
@@ -3665,7 +3665,7 @@ msgstr "LMC"
 
 #: data/data.cpp:297
 msgid "Solar System Barycenter"
-msgstr "Барицентр Солнечной системы"
+msgstr "Центр Солнечной системы"
 
 #: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
@@ -3773,7 +3773,7 @@ msgstr "&Установить время..."
 
 #: src/celestia/res/resource_strings.cpp:28
 msgid "Show Local Time"
-msgstr "Показать местное время"
+msgstr "Показывать местное время"
 
 #: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
@@ -3825,7 +3825,7 @@ msgstr "&Диски"
 
 #: src/celestia/res/resource_strings.cpp:41
 msgid "&Ambient Light"
-msgstr "&Рассеянное свечение"
+msgstr "&Рассеянный свет"
 
 #: src/celestia/res/resource_strings.cpp:42
 msgid "&None"
@@ -4034,7 +4034,7 @@ msgstr "Установка времени"
 
 #: src/celestia/res/resource_strings.cpp:97
 msgid "Time Zone: "
-msgstr "Часовой пояс: "
+msgstr "Стандарт: "
 
 #: src/celestia/res/resource_strings.cpp:100
 msgid "Set To Current Time"
