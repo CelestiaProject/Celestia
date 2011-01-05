@@ -814,6 +814,16 @@
 	AppMag 13.9
 }
 
+"KOI-428"
+{
+	RA 296.813750
+	Dec 47.526667
+	Distance 8800
+	SpectralType "F5IV"
+	AppMag 14.76
+}
+
+
 # HD stars without Hip numbers
 
 1000370197 # HD 70573
