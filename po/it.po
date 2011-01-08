@@ -72,7 +72,7 @@ msgstr "Galassia (Tipo Hubble: %s)"
 #: src/celengine/globular.cpp:255
 #, c-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
-msgstr "Ammasso globulare"
+msgstr "Ammasso globulare (raggio del nucleo: %4.2f', distribuzione di King: %4.2f)"
 
 #: src/celengine/image.cpp:373
 msgid "Loading image from file "
