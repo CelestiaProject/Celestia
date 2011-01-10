@@ -3883,7 +3883,7 @@ void CelestiaCore::renderOverlay()
         glColor4f(textColor.red(), textColor.green(), textColor.blue(), alpha);
         glTranslatef((float) x, (float) y, 0.0f);
         overlay->beginText();
-        *overlay << _(messageText.c_str());
+        *overlay << messageText.c_str();
         overlay->endText();
         glPopMatrix();
         overlay->setFont(font);
