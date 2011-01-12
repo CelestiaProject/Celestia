@@ -15,8 +15,7 @@ pkgdata_DATA = \
 	$(wildcard *.xyz) \
 	$(wildcard *.xyzv) \
 	$(wildcard *.dsc) \
-	$(wildcard *.stc) \
-	stars.dat
+	$(wildcard *.stc)
 
 EXTRA_DIST = \
 	$(pkgdata_DATA) \
