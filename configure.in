@@ -4,7 +4,7 @@ dnl Process this file with autoconf to make a configure script
 dnl
 
 AC_PREREQ(2.57)
-AC_INIT([celestia], [1.6.0], [celestia-developers@lists.sf.net])
+AC_INIT([celestia], [1.6.1], [celestia-developers@lists.sf.net])
 AC_CONFIG_SRCDIR(acinclude.m4)
 
 dnl The following section confirms that the user provided necessary option
