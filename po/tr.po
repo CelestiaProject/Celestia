@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2010-01-06 17:52-0500\n"
-"PO-Revision-Date: 2011-01-02 22:48+0200\n"
+"PO-Revision-Date: 2011-01-10 15:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: Turkish <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: src/celengine/astro.cpp:850
 msgid "DST"
-msgstr ""
+msgstr "DST (Yaz saati uy.)"
 
 #: src/celengine/astro.cpp:850
 msgid "STD"
@@ -31,7 +31,7 @@ msgstr "Yüklü"
 
 #: src/celengine/dsodb.cpp:390
 msgid " deep space objects"
-msgstr ""
+msgstr " derin uzay nesneleri"
 
 #: src/celengine/fragmentprog.cpp:92
 msgid "Loading NV fragment program: "
@@ -159,7 +159,7 @@ msgstr "kötü konum"
 
 #: src/celengine/solarsys.cpp:1281
 msgid "' not found.\n"
-msgstr ""
+msgstr "' bulunamadı.\n"
 
 #: src/celengine/stardb.cpp:580
 msgid "Bad header for cross index\n"
@@ -345,7 +345,7 @@ msgstr "Yıldız stili:noktalar"
 
 #: src/celestia/celestiacore.cpp:1509
 msgid "Star style: scaled discs"
-msgstr ""
+msgstr "Yıldız stili: ölçekli diskler"
 
 #: src/celestia/celestiacore.cpp:1522
 msgid "Comet tails enabled"
@@ -428,17 +428,17 @@ msgstr ""
 #: src/celestia/celestiacore.cpp:1729
 #, c-format
 msgid "Light travel time:  %.4f yr "
-msgstr ""
+msgstr "Işık seyahat süresi:  %.4f  yıl"
 
 #: src/celestia/celestiacore.cpp:1738
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
-msgstr ""
+msgstr "Işık seyahat süresi:  %d dak  %.1f sn "
 
 #: src/celestia/celestiacore.cpp:1742
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
-msgstr ""
+msgstr "Işık seyahat süresi:  %d saat  %d dak  %.1f sn"
 
 #: src/celestia/celestiacore.cpp:1759
 msgid "Light travel delay included"
@@ -462,7 +462,7 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:1887
 msgid "Follow"
-msgstr ""
+msgstr "İzle"
 
 #: src/celestia/celestiacore.cpp:1912
 msgid "Time: Forward"
@@ -530,7 +530,7 @@ msgstr ""
 #: src/celestia/kde/celestialbrowser.cpp:130
 #: src/celestia/kde/selectionpopup.cpp:79
 msgid "ly"
-msgstr ""
+msgstr "ly (ışık yılı)"
 
 #: src/celestia/celestiacore.cpp:2895
 #: src/celestia/kde/celestialbrowser.cpp:159
@@ -601,7 +601,7 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3146 src/celestia/kde/selectionpopup.cpp:97
 msgid "Class: "
-msgstr ""
+msgstr "Sınıf:"
 
 #: src/celestia/celestiacore.cpp:3148
 msgid "Neutron star"
@@ -666,7 +666,7 @@ msgstr "(duraklatıldı)"
 
 #: src/celestia/celestiacore.cpp:3521
 msgid "FPS: "
-msgstr ""
+msgstr "FPS:"
 
 #: src/celestia/celestiacore.cpp:3523
 msgid ""
@@ -690,7 +690,7 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3535
 msgid " ly/s"
-msgstr ""
+msgstr "ly/s"
 
 #: src/celestia/celestiacore.cpp:3552
 msgid "Travelling "
@@ -702,7 +702,7 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3579
 msgid "Follow "
-msgstr ""
+msgstr "İzle"
 
 #: src/celestia/celestiacore.cpp:3584
 msgid "Sync Orbit "
@@ -734,7 +734,7 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:3906
 msgid " fps"
-msgstr ""
+msgstr " fps"
 
 #: src/celestia/celestiacore.cpp:3908 src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
@@ -743,11 +743,11 @@ msgstr ""
 #: src/celestia/celestiacore.cpp:3910 src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
-msgstr ""
+msgstr " Duraklatıldı"
 
 #: src/celestia/celestiacore.cpp:3933
 msgid "F11 Start/Pause    F12 Stop"
-msgstr ""
+msgstr "F11 Başlat/Duraklat    F12 Durdur"
 
 #: src/celestia/celestiacore.cpp:3943 src/celestia/celestiacore.cpp:3946
 msgid "Edit Mode"
@@ -783,7 +783,7 @@ msgstr "Derin gökyüzü katalog dosyası açılırken hata."
 
 #: src/celestia/celestiacore.cpp:4241
 msgid "Error opening solar system catalog.\n"
-msgstr ""
+msgstr "Güneş sistemi kataloğu açılırken hata.\n"
 
 #: src/celestia/celestiacore.cpp:4274
 msgid "Error opening asterisms file."
@@ -815,7 +815,7 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:4456 src/celestia/celestiacore.cpp:4478
 msgid "Error opening "
-msgstr ""
+msgstr "Açılırken hata"
 
 #: src/celestia/celestiacore.cpp:4463
 msgid "Error reading star names file\n"
@@ -823,7 +823,7 @@ msgstr ""
 
 #: src/celestia/celestiacore.cpp:4486
 msgid "Error reading stars file\n"
-msgstr ""
+msgstr "Dosyadan yıldızlar okunurken hata\n"
 
 #: src/celestia/celestiacore.cpp:4513
 msgid "Error opening star catalog "
@@ -942,7 +942,7 @@ msgstr ""
 #: src/celestia/kde/eclipsefinderdlg.cpp:121
 #: src/celestia/kde/selectionpopup.cpp:300
 msgid "&Goto"
-msgstr ""
+msgstr "&Git"
 
 #: src/celestia/win32/winmain.cpp:1608 src/celestia/win32/winmain.cpp:1679
 #: src/celestia/kde/selectionpopup.cpp:301
@@ -1154,7 +1154,7 @@ msgstr ""
 
 #: src/celestia/kde/celestialbrowser.cpp:203
 msgid "Dwarf Planet"
-msgstr ""
+msgstr "Cüce Gezegen"
 
 #: src/celestia/kde/celestialbrowser.cpp:207
 msgid "-"
@@ -1231,7 +1231,7 @@ msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:431
 msgid "&Back"
-msgstr "&gERİ"
+msgstr "&Geri"
 
 #: src/celestia/kde/kdeapp.cpp:434
 msgid "&Forward"
@@ -1239,7 +1239,7 @@ msgstr "&İleri"
 
 #: src/celestia/kde/kdeapp.cpp:441
 msgid "Home"
-msgstr ""
+msgstr "Ana sayfa"
 
 #: src/celestia/kde/kdeapp.cpp:448
 msgid "Bookmarks"
@@ -1255,7 +1255,7 @@ msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:467
 msgid "Set Time..."
-msgstr ""
+msgstr "Zaman Ayarları..."
 
 #: src/celestia/kde/kdeapp.cpp:468
 msgid "Set Time to Now"
@@ -1263,23 +1263,23 @@ msgstr ""
 
 #: src/celestia/kde/kdeapp.cpp:469
 msgid "Accelerate Time"
-msgstr ""
+msgstr "Zamanı Hızlandır"
 
 #: src/celestia/kde/kdeapp.cpp:470
 msgid "Decelerate Time"
-msgstr ""
+msgstr "Zamanı Yavaşlat"
 
 #: src/celestia/kde/kdeapp.cpp:471
 msgid "Accelerate Time (x2)"
-msgstr ""
+msgstr "Zamanı Hızlandır (x2)"
 
 #: src/celestia/kde/kdeapp.cpp:472
 msgid "Decelerate Time (/2)"
-msgstr ""
+msgstr "Zamanı Yavaşlat (/2)"
 
 #: src/celestia/kde/kdeapp.cpp:473
 msgid "Pause Time"
-msgstr ""
+msgstr "Zaman Duraklat"
 
 #: src/celestia/kde/kdeapp.cpp:474
 msgid "Reverse Time"
@@ -1561,12 +1561,12 @@ msgstr "DOT3 ARBVP"
 #: src/celestia/kde/kdeapp.cpp:737
 #: src/celestia/kde/kdepreferencesdialog.cpp:508
 msgid "NvCombiner NvVP"
-msgstr ""
+msgstr "NvCombiner NvVP"
 
 #: src/celestia/kde/kdeapp.cpp:739
 #: src/celestia/kde/kdepreferencesdialog.cpp:510
 msgid "NvCombiner ARBVP"
-msgstr ""
+msgstr "NvCombiner ARBVP"
 
 #: src/celestia/kde/kdeapp.cpp:741
 #: src/celestia/kde/kdepreferencesdialog.cpp:512
@@ -1606,7 +1606,7 @@ msgstr "OpenGL Bilgi"
 
 #: src/celestia/kde/kdeapp.cpp:765
 msgid "Show Bookmark Toolbar"
-msgstr ""
+msgstr "Yerimi Araç Çubuğunu Göster"
 
 #: src/celestia/kde/kdeapp.cpp:1021
 msgid "OpenGL Info"
@@ -1616,7 +1616,7 @@ msgstr "OpenGL Bilgi"
 #: src/celestia/kde/kdepreferencesdialog.cpp:376
 #: src/celestia/kde/kdepreferencesdialog.cpp:397
 msgid "UTC"
-msgstr ""
+msgstr "UTC "
 
 #: src/celestia/kde/kdeapp.cpp:1483
 msgid ""
@@ -1633,7 +1633,7 @@ msgstr "URL Girin"
 
 #: src/celestia/kde/kdeapp.cpp:1607
 msgid "Object: "
-msgstr ""
+msgstr "Cisim:"
 
 #: src/celestia/kde/kdeapp.cpp:1612
 msgid "Longitude: "
@@ -1694,7 +1694,7 @@ msgstr ""
 
 #: src/celestia/kde/kdemain.cpp:37
 msgid "Start and go to url"
-msgstr ""
+msgstr "Url'ye git  ve  başlat"
 
 #: src/celestia/kde/kdemain.cpp:71
 msgid "_: NAME OF TRANSLATORS\\nYour names"
@@ -1955,7 +1955,7 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:374
 #: src/celestia/kde/kdepreferencesdialog.cpp:395
 msgid "Timezone: "
-msgstr ""
+msgstr "Saat dilimi:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
 #: src/celestia/win32/res/resource_strings.cpp:97
@@ -1977,7 +1977,7 @@ msgstr ""
 #: src/celestia/kde/kdepreferencesdialog.cpp:438
 #: src/celestia/win32/res/resource_strings.cpp:98
 msgid "Julian Date: "
-msgstr ""
+msgstr "Julian Tarihi:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:456
 msgid "Now"
@@ -2080,7 +2080,7 @@ msgstr "&Seçin"
 #: src/celestia/win32/res/resource_strings.cpp:111
 #: src/celestia/win32/res/resource_strings.cpp:118
 msgid "&Center"
-msgstr ""
+msgstr "&Merkez"
 
 #: src/celestia/kde/selectionpopup.cpp:303
 msgid "S&ynch Orbit"
@@ -2116,23 +2116,23 @@ msgstr "X"
 
 #: src/celestia/kde/selectionpopup.cpp:321
 msgid "Left Arrow"
-msgstr ""
+msgstr "Sol Ok"
 
 #: src/celestia/kde/selectionpopup.cpp:322
 msgid "Right Arrow"
-msgstr ""
+msgstr "Sağ Ok"
 
 #: src/celestia/kde/selectionpopup.cpp:323
 msgid "Up Arrow"
-msgstr ""
+msgstr "Yukarı Ok"
 
 #: src/celestia/kde/selectionpopup.cpp:324
 msgid "Down Arrow"
-msgstr ""
+msgstr "Aşağı Ok"
 
 #: src/celestia/kde/selectionpopup.cpp:325
 msgid "Circle"
-msgstr ""
+msgstr "Daire"
 
 #: src/celestia/kde/selectionpopup.cpp:326
 msgid "Disk"
@@ -2149,7 +2149,7 @@ msgstr ""
 #: src/celestia/kde/selectionpopup.cpp:426
 #: src/celestia/win32/res/resource_strings.cpp:169
 msgid "Dwarf Planets"
-msgstr ""
+msgstr "Cüce gezegenler"
 
 #: src/celestia/kde/videocapturedlg.cpp:64
 #: src/celestia/kde/videocapturedlg.cpp:276
@@ -2163,19 +2163,19 @@ msgstr "Boyut: %1 MB"
 
 #: src/celestia/kde/videocapturedlg.cpp:95
 msgid "Current size: %1 x %2"
-msgstr ""
+msgstr "Geçerli boyut: %1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:101
 #: src/celestia/kde/videocapturedlg.cpp:133
 #: src/celestia/kde/videocapturedlg.cpp:185
 msgid "Current width: %1 x %2"
-msgstr ""
+msgstr "Geçerli genişlik: %1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:106
 #: src/celestia/kde/videocapturedlg.cpp:138
 #: src/celestia/kde/videocapturedlg.cpp:190
 msgid "Current height: %1 x %2"
-msgstr ""
+msgstr "Geçerli yükseklik: %1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:233
 msgid "You must specify a file name."
@@ -2215,7 +2215,7 @@ msgstr ""
 
 #: data/data.cpp:11
 msgid "Europa"
-msgstr ""
+msgstr "Avrupa"
 
 #: data/data.cpp:12
 msgid "Ganymede"
@@ -2331,7 +2331,7 @@ msgstr "GÜNEY AMERİKA"
 
 #: data/data.cpp:44
 msgid "EURASIA"
-msgstr ""
+msgstr "AVRASYA"
 
 #: data/data.cpp:45
 msgid "AFRICA"
@@ -2367,7 +2367,7 @@ msgstr "HİNT OKYANUSU"
 
 #: data/data.cpp:53
 msgid "ARCTIC OCEAN"
-msgstr ""
+msgstr "KUZEY BUZ DENİZİ"
 
 #: data/data.cpp:54
 msgid "Abu Dhabi"
@@ -2375,11 +2375,11 @@ msgstr "Abu Dabi"
 
 #: data/data.cpp:55
 msgid "Abuja"
-msgstr ""
+msgstr "Abuja"
 
 #: data/data.cpp:56
 msgid "Accra"
-msgstr ""
+msgstr "Akra"
 
 #: data/data.cpp:57
 msgid "Adamstown"
@@ -2395,11 +2395,11 @@ msgstr ""
 
 #: data/data.cpp:60
 msgid "Alofi"
-msgstr ""
+msgstr "Alofi"
 
 #: data/data.cpp:61
 msgid "Amman"
-msgstr ""
+msgstr "Amman"
 
 #: data/data.cpp:62
 msgid "Amsterdam"
@@ -2423,11 +2423,11 @@ msgstr ""
 
 #: data/data.cpp:67
 msgid "Ashgabat"
-msgstr ""
+msgstr "Aşkabat"
 
 #: data/data.cpp:68
 msgid "Asmara"
-msgstr ""
+msgstr "Asmara"
 
 #: data/data.cpp:69
 msgid "Astana"
@@ -2435,7 +2435,7 @@ msgstr "Astana"
 
 #: data/data.cpp:70
 msgid "Asuncion"
-msgstr ""
+msgstr "Asuncion"
 
 #: data/data.cpp:71
 msgid "Athens"
@@ -2443,11 +2443,11 @@ msgstr "Atina"
 
 #: data/data.cpp:72
 msgid "Avarua"
-msgstr ""
+msgstr "Avarua"
 
 #: data/data.cpp:73
 msgid "Baghdad"
-msgstr "Bağdad"
+msgstr "Bağdat"
 
 #: data/data.cpp:74
 msgid "Baku"
@@ -2455,31 +2455,31 @@ msgstr "Bakü"
 
 #: data/data.cpp:75
 msgid "Bamako"
-msgstr ""
+msgstr "Bamako"
 
 #: data/data.cpp:76
 msgid "Bandar Seri Begawan"
-msgstr ""
+msgstr "Bandar Seri Begavan"
 
 #: data/data.cpp:77
 msgid "Bangkok"
-msgstr ""
+msgstr "Bangkok"
 
 #: data/data.cpp:78
 msgid "Bangui"
-msgstr ""
+msgstr "Bangui"
 
 #: data/data.cpp:79
 msgid "Banjul"
-msgstr ""
+msgstr "Banjul"
 
 #: data/data.cpp:80
 msgid "Basse-Terre"
-msgstr ""
+msgstr "Basse-Terre"
 
 #: data/data.cpp:81
 msgid "Basseterre"
-msgstr ""
+msgstr "Basseterre"
 
 #: data/data.cpp:82
 msgid "Beijing"
@@ -2495,7 +2495,7 @@ msgstr "Belgrad"
 
 #: data/data.cpp:85
 msgid "Belmopan"
-msgstr ""
+msgstr "Belmopan"
 
 #: data/data.cpp:86
 msgid "Berlin"
@@ -2503,7 +2503,7 @@ msgstr "Berlin"
 
 #: data/data.cpp:87
 msgid "Bern"
-msgstr ""
+msgstr "Bern"
 
 #: data/data.cpp:88
 msgid "Bishkek"
@@ -2511,11 +2511,11 @@ msgstr "Bişkek"
 
 #: data/data.cpp:89
 msgid "Bissau"
-msgstr ""
+msgstr "Bissau"
 
 #: data/data.cpp:90
 msgid "Bloemfontein"
-msgstr ""
+msgstr "Bloemfontein"
 
 #: data/data.cpp:91
 msgid "Bogota"
@@ -2523,23 +2523,23 @@ msgstr "Bogota"
 
 #: data/data.cpp:92
 msgid "Brasilia"
-msgstr ""
+msgstr "Brasilia"
 
 #: data/data.cpp:93
 msgid "Bratislava"
-msgstr ""
+msgstr "Bratislava"
 
 #: data/data.cpp:94
 msgid "Brazzaville"
-msgstr ""
+msgstr "Brazzaville"
 
 #: data/data.cpp:95
 msgid "Bridgetown"
-msgstr ""
+msgstr "Bridgetown"
 
 #: data/data.cpp:96
 msgid "Brussels"
-msgstr ""
+msgstr "Brüksel"
 
 #: data/data.cpp:97
 msgid "Bucharest"
@@ -2551,27 +2551,27 @@ msgstr "Budapeşte"
 
 #: data/data.cpp:99
 msgid "Buenos Aires"
-msgstr ""
+msgstr "Buenos Aires"
 
 #: data/data.cpp:100
 msgid "Bujumbura"
-msgstr ""
+msgstr "Bujumbura"
 
 #: data/data.cpp:101
 msgid "Cairo"
-msgstr ""
+msgstr "Kahire"
 
 #: data/data.cpp:102
 msgid "Canberra"
-msgstr ""
+msgstr "Kanberra"
 
 #: data/data.cpp:103
 msgid "Cape Town"
-msgstr ""
+msgstr "Cape Town"
 
 #: data/data.cpp:104
 msgid "Caracas"
-msgstr ""
+msgstr "Karakas"
 
 #: data/data.cpp:105
 msgid "Castries"
@@ -2599,7 +2599,7 @@ msgstr ""
 
 #: data/data.cpp:111
 msgid "Copenhagen"
-msgstr ""
+msgstr "Kopenhag"
 
 #: data/data.cpp:112
 msgid "Cotonou"
@@ -2719,7 +2719,7 @@ msgstr "İslamabad"
 
 #: data/data.cpp:141
 msgid "Jakarta"
-msgstr ""
+msgstr "Jakarta"
 
 #: data/data.cpp:142
 msgid "Jamestown"
@@ -2887,7 +2887,7 @@ msgstr ""
 
 #: data/data.cpp:184
 msgid "Minsk"
-msgstr ""
+msgstr "Minsk"
 
 #: data/data.cpp:185
 msgid "Mogadishu"
@@ -3155,7 +3155,7 @@ msgstr ""
 
 #: data/data.cpp:251
 msgid "Singapore"
-msgstr ""
+msgstr "Singapur"
 
 #: data/data.cpp:252
 msgid "Skopje"
@@ -3215,7 +3215,7 @@ msgstr "Tahran"
 
 #: data/data.cpp:266
 msgid "Tel Aviv"
-msgstr ""
+msgstr "Tel Aviv"
 
 #: data/data.cpp:267
 msgid "Thimphu"
@@ -3287,7 +3287,7 @@ msgstr ""
 
 #: data/data.cpp:285
 msgid "Wellington"
-msgstr ""
+msgstr "Wellington"
 
 #: data/data.cpp:286
 msgid "West Island"
@@ -3315,7 +3315,7 @@ msgstr ""
 
 #: data/data.cpp:292
 msgid "Yerevan"
-msgstr ""
+msgstr "Erivan"
 
 #: data/data.cpp:293
 msgid "Zagreb"
@@ -3387,11 +3387,11 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
-msgstr ""
+msgstr "&Merkez Seçin\tC"
 
 #: src/celestia/win32/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
-msgstr ""
+msgstr "&Seçime Git\tG"
 
 #: src/celestia/win32/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
@@ -3423,19 +3423,19 @@ msgstr "&Zaman"
 
 #: src/celestia/win32/res/resource_strings.cpp:22
 msgid "10x &Faster\tL"
-msgstr ""
+msgstr "&10x Hızlandır \tL"
 
 #: src/celestia/win32/res/resource_strings.cpp:23
 msgid "10x &Slower\tK"
-msgstr ""
+msgstr "&10x Yavaşlat \tK"
 
 #: src/celestia/win32/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
-msgstr ""
+msgstr "&Dondur \t Uzay"
 
 #: src/celestia/win32/res/resource_strings.cpp:25
 msgid "&Real Time\t\\"
-msgstr ""
+msgstr "&Gerçek Zaman\t\\"
 
 #: src/celestia/win32/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
@@ -3443,7 +3443,7 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:27
 msgid "Set &Time..."
-msgstr ""
+msgstr "&Zaman Ayarları..."
 
 #: src/celestia/win32/res/resource_strings.cpp:28
 msgid "Show Local Time"
@@ -3503,17 +3503,17 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:42
 msgid "&None"
-msgstr ""
+msgstr "&Hiçbiri"
 
 #: src/celestia/win32/res/resource_strings.cpp:43
 #: src/celestia/win32/res/resource_strings.cpp:46
 msgid "&Low"
-msgstr ""
+msgstr "&Düşük"
 
 #: src/celestia/win32/res/resource_strings.cpp:44
 #: src/celestia/win32/res/resource_strings.cpp:47
 msgid "&Medium"
-msgstr ""
+msgstr "&Orta"
 
 #: src/celestia/win32/res/resource_strings.cpp:45
 msgid "&Texture Resolution"
@@ -3549,11 +3549,11 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:55
 msgid "Show &Frames"
-msgstr ""
+msgstr "&Kareleri Göster"
 
 #: src/celestia/win32/res/resource_strings.cpp:56
 msgid "Synchronize &Time"
-msgstr ""
+msgstr "&Zaman Senkronize"
 
 #: src/celestia/win32/res/resource_strings.cpp:57
 msgid "&Bookmarks"
@@ -3565,7 +3565,7 @@ msgstr "&Yerimi ekle..."
 
 #: src/celestia/win32/res/resource_strings.cpp:59
 msgid "&Organize Bookmarks..."
-msgstr ""
+msgstr "&Yer imlerini Organize et..."
 
 #: src/celestia/win32/res/resource_strings.cpp:60
 msgid "&Help"
@@ -3573,7 +3573,7 @@ msgstr "&Yardım"
 
 #: src/celestia/win32/res/resource_strings.cpp:61
 msgid "Run &Demo"
-msgstr ""
+msgstr "&Demo Çalıştır"
 
 #: src/celestia/win32/res/resource_strings.cpp:62
 msgid "&Controls"
@@ -3616,11 +3616,11 @@ msgstr "TAMAM"
 
 #: src/celestia/win32/res/resource_strings.cpp:69
 msgid "Copyright (C) 2001-2009, Celestia Development Team"
-msgstr ""
+msgstr "Telif hakkı (C) 2001-2009, Celestia Geliştirme Ekibi"
 
 #: src/celestia/win32/res/resource_strings.cpp:70
 msgid "http://www.shatters.net/celestia"
-msgstr ""
+msgstr "http://www.shatters.net/celestia"
 
 #: src/celestia/win32/res/resource_strings.cpp:71
 msgid "Celestia is free software and comes with absolutely no warranty."
@@ -3680,11 +3680,11 @@ msgstr "Andrew Tribick"
 
 #: src/celestia/win32/res/resource_strings.cpp:85
 msgid "Select Object"
-msgstr ""
+msgstr "Nesne Seçin"
 
 #: src/celestia/win32/res/resource_strings.cpp:88
 msgid "Object Name"
-msgstr ""
+msgstr "Nesne İsmi"
 
 #: src/celestia/win32/res/resource_strings.cpp:89
 msgid "License"
@@ -3704,7 +3704,7 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:96
 msgid "Time Zone: "
-msgstr ""
+msgstr "Saat Dilimi :"
 
 #: src/celestia/win32/res/resource_strings.cpp:99
 msgid "Set To Current Time"
@@ -3729,7 +3729,7 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:110
 msgid "Solar System"
-msgstr ""
+msgstr "Güneş Sistemi"
 
 #: src/celestia/win32/res/resource_strings.cpp:112
 #: src/celestia/win32/res/resource_strings.cpp:119
@@ -3754,7 +3754,7 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:117
 msgid "With planets"
-msgstr ""
+msgstr "Gezegenler ile"
 
 #: src/celestia/win32/res/resource_strings.cpp:120
 msgid "&Refresh"
@@ -3779,7 +3779,7 @@ msgstr "Git"
 
 #: src/celestia/win32/res/resource_strings.cpp:127
 msgid "Select your destination:"
-msgstr ""
+msgstr "Gideceğiniz yeri seçin:"
 
 #: src/celestia/win32/res/resource_strings.cpp:128
 msgid "Go to Object"
@@ -3901,11 +3901,11 @@ msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:203
 msgid "Other features"
-msgstr ""
+msgstr "Diğer özellikler"
 
 #: src/celestia/win32/res/resource_strings.cpp:204
 msgid "Label Features"
-msgstr ""
+msgstr "Etiket Özellikleri"
 
 #: src/celestia/win32/res/resource_strings.cpp:207
 msgid "Show Features"
