@@ -1,0 +1,283 @@
+# , 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: en\n"
+"Report-Msgid-Bugs-To: chris@teyssier.org\n"
+"POT-Creation-Date: 2006-02-18 16:09+0100\n"
+"PO-Revision-Date: 2011-01-08 22:08+0200\n"
+"Last-Translator: \n"
+"Language-Team: Turkish <kde-i18n-doc@kde.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.1\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Andromeda"
+msgstr "Andromeda"
+
+msgid "Antlia"
+msgstr "Pompa takımyıldızı"
+
+msgid "Apus"
+msgstr "Cennetkuşu takımyıldızı"
+
+msgid "Aquarius"
+msgstr "Kova takımyıldızı"
+
+msgid "Aquila"
+msgstr "Kartal takımyıldızı"
+
+msgid "Ara"
+msgstr "Sunak takımyıldızı"
+
+msgid "Aries"
+msgstr "Koç takımyıldızı"
+
+msgid "Auriga"
+msgstr "Arabacı takımyıldızı"
+
+msgid "Boötes"
+msgstr "Çoban takımyıldızı"
+
+msgid "Caelum"
+msgstr "Çelikkalem takımyıldızı"
+
+msgid "Camelopardalis"
+msgstr "Zürafa takımyıldızı "
+
+msgid "Cancer"
+msgstr "Yengeç takımyıldızı"
+
+msgid "Canes Venatici"
+msgstr "Av köpekleri takımyıldızı "
+
+msgid "Canis Major"
+msgstr "Büyük Köpek takımyıldızı"
+
+msgid "Canis Minor"
+msgstr "Küçük Köpek takımyıldızı"
+
+msgid "Capricornus"
+msgstr "Oğlak takımyıldızı"
+
+msgid "Carina"
+msgstr "Karina takımyıldızı"
+
+msgid "Cassiopeia"
+msgstr "Kraliçe takımyıldızı"
+
+msgid "Centaurus"
+msgstr "Erboğa takımyıldızı"
+
+msgid "Cepheus"
+msgstr "Kral takımyıldızı"
+
+msgid "Cetus"
+msgstr "Balina takımyıldızı"
+
+msgid "Chamaeleon"
+msgstr "Bukalemun takımyıldızı"
+
+msgid "Circinus"
+msgstr "Pergel takımyıldızı"
+
+msgid "Columba"
+msgstr "Güvercin takımyıldızı"
+
+msgid "Coma Berenices"
+msgstr "Berenices'in Saçı takımyıldızı"
+
+msgid "Corona Australis"
+msgstr "Güneytacı takımyıldızı"
+
+msgid "Corona Borealis"
+msgstr "Kuzeytacı takımyıldızı"
+
+msgid "Corvus"
+msgstr "Karga takımyıldızı"
+
+msgid "Crater"
+msgstr "Kupa takımyıldızı"
+
+msgid "Crux"
+msgstr "Güneyhaçı takımyıldızı"
+
+msgid "Cygnus"
+msgstr "Kuğu Takımyıldızı"
+
+msgid "Delphinus"
+msgstr "Yunus takımyıldızı"
+
+msgid "Dorado"
+msgstr "Kılıçbalığı takımyıldızı"
+
+msgid "Draco"
+msgstr "Ejderha takımyıldızı"
+
+msgid "Equuleus"
+msgstr "Tay takımyıldızı"
+
+msgid "Eridanus"
+msgstr "Irmak takımyıldızı"
+
+msgid "Fornax"
+msgstr "Ocak takımyıldızı"
+
+msgid "Gemini"
+msgstr "İkizler takımyıldızı"
+
+msgid "Grus"
+msgstr "Turna takımyıldızı"
+
+msgid "Hercules"
+msgstr "Herkül takımyıldızı"
+
+msgid "Horologium"
+msgstr "Saat takımyıldızı"
+
+msgid "Hydra"
+msgstr "Suyılanı takımyıldızı"
+
+msgid "Hydrus"
+msgstr "Küçüksuyılanı takımyıldızı"
+
+msgid "Indus"
+msgstr "Hintli takımyıldızı"
+
+msgid "Lacerta"
+msgstr "Kertenkele takımyıldızı"
+
+msgid "Leo"
+msgstr "Aslan takımyıldızı"
+
+msgid "Leo Minor"
+msgstr "Küçük Aslan takımyıldızı"
+
+msgid "Lepus"
+msgstr "Tavşan takımyıldızı"
+
+msgid "Libra"
+msgstr "Terazi takımyıldızı"
+
+msgid "Lupus"
+msgstr "Kurt takımyıldızı"
+
+msgid "Lynx"
+msgstr "Vaşak takımyıldızı"
+
+msgid "Lyra"
+msgstr "Çalgı takımyıldızı"
+
+msgid "Mensa"
+msgstr "Masa takımyıldızı"
+
+msgid "Microscopium"
+msgstr "Mikroskop takımyıldızı"
+
+msgid "Monoceros"
+msgstr "Tekboynuz takımyıldızı"
+
+msgid "Musca"
+msgstr "Sinek takımyıldızı"
+
+msgid "Norma"
+msgstr "Cetvel takımyıldızı"
+
+msgid "Octans"
+msgstr "Sekizlik takımyıldızı"
+
+msgid "Ophiuchus"
+msgstr "Yılancı takımyıldızı"
+
+msgid "Orion"
+msgstr "Avcı Takımyıldızı"
+
+msgid "Pavo"
+msgstr "Tavus takımyıldızı"
+
+msgid "Pegasus"
+msgstr "Kanatlıat takımyıldızı"
+
+msgid "Perseus"
+msgstr "Kahraman takımyıldızı"
+
+msgid "Phoenix"
+msgstr "Anka takımyıldızı"
+
+msgid "Pictor"
+msgstr "Ressam takımyıldızı"
+
+msgid "Pisces"
+msgstr "Balık takımyıldızı"
+
+msgid "Piscis Austrinus"
+msgstr "Güneybalığı takımyıldızı"
+
+msgid "Puppis"
+msgstr "Pupa takımyıldızı"
+
+msgid "Pyxis"
+msgstr "Kumpas takımyıldızı"
+
+msgid "Reticulum"
+msgstr "Ağcık takımyıldızı"
+
+msgid "Sagitta"
+msgstr "Okçuk takımyıldızı"
+
+msgid "Sagittarius"
+msgstr "Yay takımyıldızı"
+
+msgid "Scorpius"
+msgstr "Akrep takımyıldızı"
+
+msgid "Sculptor"
+msgstr "Heykeltraş takımyıldızı"
+
+msgid "Scutum"
+msgstr "Kalkan takımyıldızı"
+
+msgid "Serpens Caput"
+msgstr "Yılanın başı takımyıldızı"
+
+msgid "Serpens Cauda"
+msgstr "Yılanın kuyruğu takımyıldızı"
+
+msgid "Sextans"
+msgstr "Altılık takımyıldızı"
+
+msgid "Taurus"
+msgstr "Boğa takımyıldızı"
+
+msgid "Telescopium"
+msgstr "Dürbün takımyıldızı"
+
+msgid "Triangulum"
+msgstr "Üçgen takımyıldızı"
+
+msgid "Triangulum Australe"
+msgstr "Güney Üçgeni takımyıldızı"
+
+msgid "Tucana"
+msgstr "Tukan takımyıldızı"
+
+msgid "Ursa Major"
+msgstr "Büyük Ayı takımyıldızı"
+
+msgid "Ursa Minor"
+msgstr "Küçük Ayı takımyıldızı"
+
+msgid "Vela"
+msgstr "Yelken takımyıldızı"
+
+msgid "Virgo"
+msgstr "Başak takımyıldızı"
+
+msgid "Volans"
+msgstr "Uçanbalık takımyıldızı"
+
+msgid "Vulpecula"
+msgstr "Tilkicik takımyıldızı"
+
