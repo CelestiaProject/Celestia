@@ -777,7 +777,7 @@ static int object_mark(lua_State* l)
         markAlpha = 1.0f;
     
     Color markColorAlpha(0.0f, 1.0f, 0.0f, 0.9f);
-    markColorAlpha = Color::Color(markColor, markAlpha);
+    markColorAlpha = Color(markColor, markAlpha);
     
     const char* markLabel = celx.safeGetString(6, WrongType, "Fifth argument to object:mark must be a string");
     if (markLabel == NULL)

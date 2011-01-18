@@ -78,6 +78,7 @@ EXTRA_DIST = \
 celestia_LDADD = \
 	$(celestiaKDELIBS) \
 	$(celestiaGTKLIBS) \
+	$(LIBDL) \
 	../celengine/libcelengine.a \
 	../celtxf/libceltxf.a \
 	../cel3ds/libcel3ds.a \

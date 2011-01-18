@@ -7,11 +7,11 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "model.h"
-#include "rendcontext.h"
+#include <algorithm>
 #include <cassert>
 #include <functional>
-#include <algorithm>
+#include "model.h"
+#include "rendcontext.h"
 
 using namespace std;
 
