@@ -11,6 +11,8 @@ if ENABLE_CELX
 SCRIPT_OBJ_SOURCES = scriptobject.cpp scriptorbit.cpp scriptrotation.cpp
 endif
 
+libcelephem_a_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS)
+
 libcelephem_a_SOURCES = \
 	customorbit.cpp \
 	customrotation.cpp \

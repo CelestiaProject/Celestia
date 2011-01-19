@@ -8,13 +8,13 @@ DEFS = -DCONFIG_DATA_DIR='"$(PKGDATADIR)"' -DLOCALEDIR='"$(datadir)/locale"' @DE
 if ENABLE_KDE
 SUBDIRS += kde
 celestiaKDELIBS = $(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI) $(LIB_KFILE) \
-                  $(LIBSOCKET) kde/libkdegui.a
+                  $(LIBSOCKET) -lDCOP kde/libkdegui.a
 celestia_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 endif
 
 if ENABLE_GTK
 SUBDIRS += gtk
-celestiaGTKLIBS = gtk/libgtkgui.a
+celestiaGTKLIBS = $(GTK_LIBS) gtk/libgtkgui.a
 endif
 
 COMMONSOURCES = \
@@ -49,6 +49,8 @@ if ENABLE_THEORA
 THEORASOURCES = oggtheoracapture.cpp
 endif
 
+celestia_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS) $(THEORA_CFLAGS)
+
 celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES) $(THEORASOURCES)
 
 EXTRA_DIST = \
@@ -58,6 +60,8 @@ EXTRA_DIST = \
 celestia_LDADD = \
 	$(celestiaKDELIBS) \
 	$(celestiaGTKLIBS) \
+	$(LUA_LIBS) \
+	$(THEORA_LIBS) \
 	../celengine/libcelengine.a \
 	../celephem/libcelephem.a \
 	../celmodel/libcelmodel.a \
@@ -65,7 +69,7 @@ celestia_LDADD = \
 	../cel3ds/libcel3ds.a \
 	../celmath/libcelmath.a \
 	../celutil/libcelutil.a \
-	$(SPICELIB)
+	$(SPICE_LIBS)
 
 noinst_HEADERS = $(wildcard *.h)
 noinst_DATA = ../../celestia
