@@ -9,6 +9,8 @@ EXTRA_DIST = \
 INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include \
 	-I$(top_srcdir)/thirdparty/glew/include
 
+libcelengine_a_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS)
+
 libcelengine_a_SOURCES = \
 	asterism.cpp \
 	astro.cpp \
