@@ -383,6 +383,15 @@
 	AppMag 11.74
 }
 
+"HAT-P-27:GSC 00333-00351"
+{
+	RA 222.875672
+	Dec 5.94700
+	Distance 665
+	SpectralType "G8"
+	AppMag 12.21
+}
+
 # WASP survey
 
 "WASP-1"
@@ -812,6 +821,15 @@
 	Distance 2120
 	SpectralType "G5V" # from mass, radius, temperature
 	AppMag 13.9
+}
+
+"Kepler-10"
+{
+	RA 285.679167
+	Dec 50.241389
+	Distance 564
+	SpectralType "G"
+	AppMag 10.96
 }
 
 "KOI-428"
