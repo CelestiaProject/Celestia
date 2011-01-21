@@ -1,7 +1,7 @@
 noinst_LIBRARIES = libcelephem.a
 noinst_HEADERS = $(wildcard *.h)
 
-INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
+INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen
 
 if ENABLE_SPICE
 SPICESOURCES = spiceinterface.cpp spiceorbit.cpp spicerotation.cpp

@@ -6,7 +6,7 @@ noinst_DATA = $(dosstuff)
 EXTRA_DIST = \
 	$(noinst_DATA)
 
-INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include \
+INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include \
 	-I$(top_srcdir)/thirdparty/glew/include
 
 libcelengine_a_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS)

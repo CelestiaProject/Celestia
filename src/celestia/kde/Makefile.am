@@ -30,7 +30,7 @@ if ENABLE_KDE
 noinst_LIBRARIES = libkdegui.a
 noinst_HEADERS = $(wildcard *.h)
 
-INCLUDES = -I../.. -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include $(QT_INCLUDES) $(KDE_INCLUDES)
+INCLUDES = $(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include $(QT_INCLUDES) $(KDE_INCLUDES)
 
 libkdegui_a_CXXFLAGS = $(LUA_CFLAGS) $(THEORA_CFLAGS)
 
