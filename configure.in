@@ -82,49 +82,29 @@ dnl will leave it out for now.
 dnl AM_GNU_GETTEXT_VERSION([0.15])
 AM_GNU_GETTEXT([external])
 
-dnl Check for compilers.  Set CFLAGS and CXXFLAGS to null if unset, so
-dnl that these macros won't set the to default values that we don't want.
-if (test "x${CFLAGS-notset}" = "xnotset"); then
-    export CFLAGS
-    CFLAGS=""
-fi
-AC_PROG_CC
-
-if (test "x${CXXFLAGS-notset}" = "xnotset"); then
-    export CXXFLAGS
-    CXXFLAGS=""
-fi
-AC_PROG_CXX
-
-
 dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_CXXCPP
 AC_PROG_INSTALL
-AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
-dnl AC_PROG_RANLIB
-
-dnl (Copied from Pidgin's configure.ac)
-dnl FreeBSD doesn't have libdl, dlopen is provided by libc
-AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
 dnl
 dnl Compilation options
 dnl
 
-CELESTIA_CPPFLAGS=""
-CELESTIA_CFLAGS="-O2 -Wall -ffast-math -fexpensive-optimizations"
-CELESTIA_CXXFLAGS="-O2 -Wall -ffast-math -fexpensive-optimizations"
+CFLAGS="$CFLAGS -ffast-math -fexpensive-optimizations"
+CXXFLAGS="$CFLAGS -ffast-math -fexpensive-optimizations"
 
 AC_MSG_CHECKING([whether to include debugging code])
 AC_ARG_ENABLE([debug],
               AC_HELP_STRING([--enable-debug],
-			                 [Produce an executable with debugging symbols]), ,
-			  enable_debug="no")
+                             [Produce an executable with debugging symbols]), ,
+              enable_debug="no")
 if (test "$enable_debug" = "yes"); then
-	CELESTIA_CFLAGS="-g -Wall";
-	CELESTIA_CXXFLAGS="-g -Wall"
+	CFLAGS="$CFLAGS -g -Wall";
+	CXXFLAGS="$CXXFLAGS -g -Wall"
 	AC_DEFINE(DEBUG, 1, [Are we debugging ?])
 fi
 AC_MSG_RESULT($enable_debug)
@@ -135,8 +115,8 @@ AC_ARG_ENABLE([pedantic],
                              [Enable -pedantic when compiling]), ,
               enable_pedantic="no")
 if (test "$enable_pedantic" = "yes"); then
-	CELESTIA_CFLAGS="$CELESTIA_CFLAGS -ansi -pedantic";
-	CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pedantic"
+	CFLAGS="$CFLAGS -ansi -pedantic";
+	CXXFLAGS="$CXXFLAGS -pedantic"
 fi
 AC_MSG_RESULT($enable_pedantic)
 
@@ -146,14 +126,14 @@ AC_ARG_ENABLE([profile],
                              [Produce a profiled executable[default=no]]), ,
               enable_profile="no")
 if (test "$enable_profile" = "yes"); then
-	CELESTIA_CFLAGS="$CELESTIA_CFLAGS -pg";
-	CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -pg"
+	CFLAGS="$CFLAGS -pg";
+	CXXFLAGS="$CXXFLAGS -pg"
 else
 	if (test "$enable_debug" != "yes"); then
 		dnl  must be set here instead of above because -pg and
 		dnl -fomit-frame-pointer are incompatible
-		CELESTIA_CFLAGS="$CELESTIA_CFLAGS -fomit-frame-pointer";
-		CELESTIA_CXXFLAGS="$CELESTIA_CXXFLAGS -fomit-frame-pointer"
+		CFLAGS="$CFLAGS -fomit-frame-pointer";
+		CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 	fi
 fi
 AC_MSG_RESULT($enable_profile)
@@ -166,22 +146,22 @@ dnl
 AC_ARG_WITH([gl-libs],
             AC_HELP_STRING([--with-gl-libs=DIR],
                            [Specify OpenGL library location]),
-            CELESTIALIBS="$CELESTIALIBS -L$withval")
+            LIBS="$LIBS -L$withval")
 
 AC_ARG_WITH([gl-inc],
             AC_HELP_STRING([--with-gl-inc=DIR],
                            [Specify OpenGL header file location]),
-            CELESTIAFLAGS="$CELESTIAFLAGS -I$withval")
+            CXXFLAGS="$CXXFLAGS -I$withval")
 
 AC_ARG_WITH([glut-libs],
             AC_HELP_STRING([--with-glut-libs=DIR],
                            [Specify GLUT library location]),
-            CELESTIALIBS="$CELESTIALIBS -L$withval")
+            LIBS="$LIBS -L$withval")
 
 AC_ARG_WITH([glut-inc],
             AC_HELP_STRING([--with-glut-inc=DIR],
                            [Specify GLUT header file location]),
-            CELESTIAFLAGS="$CELESTIAFLAGS -I$withval")
+            CXXFLAGS="$CXXFLAGS -I$withval")
 
 
 dnl
@@ -190,20 +170,12 @@ dnl
 
 AC_ARG_WITH([cspice-dir],
             AC_HELP_STRING([--with-cspice-dir=DIR], [Specify SPICE directory location]),
-            CELESTIAFLAGS="$CELESTIAFLAGS -I$withval/include -DUSE_SPICE"; 
-            SPICELIB="$withval/lib/cspice.a")
+            SPICE_CFLAGS="-I$withval/include -DUSE_SPICE"; 
+            SPICE_LIBS="$withval/lib/cspice.a")
 
-AC_SUBST(SPICELIB)
-AM_CONDITIONAL(ENABLE_SPICE, test "$SPICELIB" != "")
-
-
-LIBS="$LIBS -lm"
-
-dnl Use Gtk if requested
-GTK_LIBS=""
-GTKGL_LIBS=""
-GTK_CFLAGS=""
-
+AC_SUBST(SPICE_CFLAGS)
+AC_SUBST(SPICE_LIBS)
+AM_CONDITIONAL(ENABLE_SPICE, test "$SPICE_LIBS" != "")
 
 AC_MSG_CHECKING([whether to enable GLUT])
 if (test "$ui_glut" != "no"); then
@@ -236,12 +208,10 @@ fi
 
 AC_CHECK_COMPILERS
 
-AC_PATH_XTRA
-CFLAGS="$CFLAGS $X_CFLAGS"
-CFLAGS="$CFLAGS $CELESTIAFLAGS $CELESTIA_CFLAGS"
-CXXFLAGS="$CXXFLAGS $CELESTIAFLAGS $CELESTIA_CXXFLAGS"
-LIBS="$LIBS $CELESTIALIBS"
-LIBS="$X_PRE_LIBS $LIBS $X_LIBS -lXmu -lXi -lXext -lX11 -lm -lz $X_EXTRA_LIBS"
+dnl (Copied from Pidgin's configure.ac)
+dnl FreeBSD doesn't have libdl, dlopen is provided by libc
+AC_CHECK_FUNC(dlopen, DL_LIBS="", [AC_CHECK_LIB(dl, dlopen, DL_LIBS="-ldl")])
+AC_SUBST(DL_LIBS)
 
 dnl Check for zlib -- libGL requires it.
 AC_CHECK_LIB(z, deflate, ,
@@ -251,9 +221,9 @@ dnl Check for OpenGL headers first.
 AC_CHECK_HEADERS(GL/gl.h, ,
                  [AC_MSG_ERROR([No gl.h found. See INSTALL file for help.])])
 
-LIBS="$LIBS -lGL"
 dnl Check for OpenGL. Taken partly from the plib sources.
-AC_CHECK_LIB(GL, glNewList)
+AC_CHECK_LIB(GL, glNewList, GL_LIBS="-lGL")
+AC_SUBST(GL_LIBS)
 
 if (test "x$ac_cv_lib_GL_glNewList" = "xno"); then
 	dnl Check for MesaGL.
@@ -316,10 +286,6 @@ if (test "$ui_gtk" != "no"); then
 	if (test "x$enable_cairo" = "xyes"); then
 		AC_DEFINE(CAIRO, 1, [Use Cairo for Splash])
 	fi
-	
-	CFLAGS="$CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS"
-	CXXFLAGS="$CXXFLAGS $GTK_CFLAGS $CAIRO_CFLAGS"
-	LIBS="$LIBS $GTK_LIBS $CAIRO_LIBS"
 fi
 
 dnl If all the GTK tests succeeded, safe to enable GTK
@@ -363,9 +329,6 @@ if (test "$check_theora" = "yes"); then
 
 	if (test "x$enable_theora" = "xyes"); then
 		AC_DEFINE(THEORA, 1, [Use OGG Theora for video])
-		CFLAGS="$CFLAGS $THEORA_CFLAGS"
-		CXXFLAGS="$CXXFLAGS $THEORA_CFLAGS"
-		LIBS="$LIBS $THEORA_LIBS"
 	fi
 fi
 AM_CONDITIONAL(ENABLE_THEORA, test "$enable_theora" = "yes")
@@ -436,8 +399,7 @@ if (test "$enable_lua" != "no"); then
 fi
 
 if (test "$enable_lua" = "yes"); then
-	CXXFLAGS="$CXXFLAGS $LUA_CFLAGS $LUALIB_CFLAGS -DLUA_VER=$LUA_VER -DCELX"
-	LIBS="$LIBS $LUA_LIBS $LUALIB_LIBS"
+	LUA_CFLAGS="$LUA_CFLAGS $LUALIB_CFLAGS -DLUA_VER=$LUA_VER -DCELX"
 fi
 
 AM_CONDITIONAL(ENABLE_CELX, test "$enable_lua" != "no")

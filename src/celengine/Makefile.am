@@ -18,6 +18,8 @@ if ENABLE_CELX
 SCRIPT_OBJ_SOURCES = scriptobject.cpp scriptorbit.cpp scriptrotation.cpp
 endif
 
+libcelengine_a_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS)
+
 libcelengine_a_SOURCES = \
 	asterism.cpp \
 	astro.cpp \

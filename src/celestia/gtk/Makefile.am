@@ -25,6 +25,8 @@ else
 EXTRA_SOURCES = settings-file.cpp
 endif
 
+libgtkgui_a_CXXFLAGS = $(GTK_CFLAGS) $(LUA_CFLAGS)
+
 libgtkgui_a_SOURCES = $(GTK_SOURCES) $(EXTRA_SOURCES)
 
 noinst_LIBRARIES = libgtkgui.a
