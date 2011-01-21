@@ -75,7 +75,7 @@ if ENABLE_QT
 noinst_LIBRARIES = libqtgui.a
 noinst_HEADERS = $(QT_HEADERS)
 
-INCLUDES = -I../.. -I.. -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
+INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
 
 BUILT_SOURCES = $(MOC_CPP_FILES) $(QRC_CPP_FILES) $(UI_H_FILES)
 

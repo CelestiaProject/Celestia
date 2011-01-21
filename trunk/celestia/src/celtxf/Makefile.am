@@ -5,9 +5,7 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = $(noinst_DATA)
 
-INCLUDES = -I.. -I$(top_srcdir)/thirdparty/glew/include
+INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/glew/include
 
 libceltxf_a_SOURCES = \
 	texturefont.cpp
-
-
