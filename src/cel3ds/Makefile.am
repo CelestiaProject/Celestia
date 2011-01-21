@@ -5,7 +5,7 @@ noinst_DATA = $(dosstuff)
 
 EXTRA_DIST = $(noinst_DATA)
 
-INCLUDES = -I.. -I$(top_srcdir)/thirdparty/Eigen
+INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen
 
 libcel3ds_a_SOURCES = \
 	3dsmodel.cpp \
