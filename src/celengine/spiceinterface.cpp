@@ -11,6 +11,7 @@
 
 #include "SpiceUsr.h"
 #include "spiceinterface.h"
+#include <cstdio>
 #include <iostream>
 #include <set>
 
