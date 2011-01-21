@@ -17,6 +17,11 @@ SUBDIRS += gtk
 celestiaGTKLIBS = $(GTK_LIBS) gtk/libgtkgui.a
 endif
 
+if ENABLE_QT
+SUBDIRS += qt
+celestiaQTLIBS = $(QT_LIBS) qt/libqtgui.a
+endif
+
 COMMONSOURCES = \
 	celestiacore.cpp \
 	configfile.cpp \
@@ -24,7 +29,8 @@ COMMONSOURCES = \
 	eclipsefinder.cpp\
 	favorites.cpp \
 	imagecapture.cpp \
-	url.cpp
+	url.cpp \
+	scriptmenu.cpp
 
 if ENABLE_CELX
 CELXSOURCES = \
@@ -60,6 +66,7 @@ EXTRA_DIST = \
 celestia_LDADD = \
 	$(celestiaKDELIBS) \
 	$(celestiaGTKLIBS) \
+	$(celestiaQTLIBS) \
 	$(LUA_LIBS) \
 	$(THEORA_LIBS) \
 	../celengine/libcelengine.a \
