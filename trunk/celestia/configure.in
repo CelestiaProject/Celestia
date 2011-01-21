@@ -26,7 +26,7 @@ AC_ARG_WITH([gtk],
 
 AC_ARG_WITH([gnome],
             AC_HELP_STRING([--with-gnome], [Use Gnome for an enhanced GUI]),
-            ui_gnome="yes")
+            ui_gnome="yes"; ui_gtk="yes")
 
 AC_ARG_WITH([kde],
             AC_HELP_STRING([--with-kde], [Use KDE for an enhanced GUI]),
