@@ -152,7 +152,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     guidesGroupLayout->addWidget(showPartialTrajectoriesCheck);
 
     QCheckBox* showSmoothLinesCheck = new QCheckBox(_("Smooth Orbit Lines"));
-    connect(showSmoothLinesCheck, SIGNAL(clicked(bool)), this, SLOT(slotSmoothLines(bool)));
+    connect(showSmoothLinesCheck, SIGNAL(clicked(bool)), this, SLOT(slotShowSmoothLines(bool)));
     showSmoothLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
     guidesGroupLayout->addWidget(showSmoothLinesCheck);
 
