@@ -37,8 +37,8 @@
 #include "celutil/util.h"
 #include "celutil/filetype.h"
 #include "celutil/debug.h"
-#include "imagecapture.h"
-#include "celestiacore.h"
+#include "celestia/imagecapture.h"
+#include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
 #include "celengine/glcontext.h"
 

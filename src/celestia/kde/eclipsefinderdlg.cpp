@@ -9,10 +9,10 @@
 #include <kpopupmenu.h>
 
 #include "eclipsefinderdlg.h"
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 #include "celengine/astro.h"
 #include "celmath/geomutil.h"
-#include "eclipsefinder.h"
+#include "celestia/eclipsefinder.h"
 
 using namespace Eigen;
 

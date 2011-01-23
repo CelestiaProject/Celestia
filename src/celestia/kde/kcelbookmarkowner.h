@@ -19,7 +19,7 @@
 #define __kcelbookmarkowner_h__
 
 #include <kbookmarkmanager.h>
-#include "url.h"
+#include "celestia/url.h"
 
 class KCelBookmarkOwner : virtual public KBookmarkOwner {
 

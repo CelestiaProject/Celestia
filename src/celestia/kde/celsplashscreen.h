@@ -24,7 +24,7 @@
 #include <qcolor.h>
 #include <qfont.h>
 #include <kfilemetainfo.h>
-#include <celestiacore.h>
+#include <celestia/celestiacore.h>
 
 class TextItem {
 public:

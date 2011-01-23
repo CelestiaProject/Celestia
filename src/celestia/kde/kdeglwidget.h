@@ -23,7 +23,7 @@
 #include <qevent.h>
 #include <kaction.h>
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
 #include <celengine/starbrowser.h>
 #include <string>
