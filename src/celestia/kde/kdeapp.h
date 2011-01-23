@@ -35,11 +35,11 @@
 #include <kbookmarkmanager.h>
 #include <kbookmarkbar.h>
 #include "kcelbookmarkowner.h"
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 #include "kdeglwidget.h"
 #include "celengine/render.h"
 #include "celengine/glcontext.h"
-#include "url.h"
+#include "celestia/url.h"
 
 class KdeApp;
 class QResizeEvent;

@@ -17,7 +17,7 @@
 
 #include <kdialogbase.h>
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 class QLabel;
 class QSpinBox;
