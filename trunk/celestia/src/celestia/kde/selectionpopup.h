@@ -19,7 +19,7 @@
 #define SELECTIONPOPUP_H
 
 #include <kpopupmenu.h>
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

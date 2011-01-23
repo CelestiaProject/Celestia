@@ -78,7 +78,7 @@
 #include "kdeapp.h"
 #include "kdepreferencesdialog.h"
 #include "celengine/cmdparser.h"
-#include "url.h"
+#include "celestia/url.h"
 #include "celestialbrowser.h"
 #include "eclipsefinderdlg.h"
 #include "selectionpopup.h"

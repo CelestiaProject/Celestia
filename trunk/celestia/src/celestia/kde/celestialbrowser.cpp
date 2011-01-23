@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "celestiacore.h"
+#include "celestia/celestiacore.h"
 #include "celengine/simulation.h"
 #include "celengine/stardb.h"
 #include "celengine/starbrowser.h"
