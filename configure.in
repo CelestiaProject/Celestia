@@ -102,7 +102,7 @@ dnl Compilation options
 dnl
 
 CFLAGS="$CFLAGS -ffast-math -fexpensive-optimizations"
-CXXFLAGS="$CFLAGS -ffast-math -fexpensive-optimizations"
+CXXFLAGS="$CXXFLAGS -ffast-math -fexpensive-optimizations"
 
 AC_MSG_CHECKING([whether to include debugging code])
 AC_ARG_ENABLE([debug],
