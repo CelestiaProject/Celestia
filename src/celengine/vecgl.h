@@ -89,17 +89,20 @@ inline void glScale(const Vec3f& v)
 
 inline void glLightDirection(GLenum light, const Vec3f& dir)
 {
-    glLightfv(light, GL_POSITION, &(Vec4f(dir.x, dir.y, dir.z, 0.0f).x));
+	Vec4f dir4 = Vec4f(dir.x, dir.y, dir.z, 0.0f);
+    glLightfv(light, GL_POSITION, &(dir4.x));
 }
 
 inline void glLightPosition(GLenum light, const Point3f& pos)
 {
-    glLightfv(light, GL_POSITION, &(Vec4f(pos.x, pos.y, pos.z, 1.0f).x));
+	Vec4f pos4 = Vec4f(pos.x, pos.y, pos.z, 1.0f);
+    glLightfv(light, GL_POSITION, &(pos4.x));
 }
 
 inline void glLightColor(GLenum light, GLenum which, const Vec3f& color)
 {
-    glLightfv(light, which, &(Vec4f(color.x, color.y, color.z, 1.0f).x));
+	Vec4f color4 = Vec4f(color.x, color.y, color.z, 1.0f);
+    glLightfv(light, which, &(color4.x));
 }
 
 inline void glLightColor(GLenum light, GLenum which, const Vec4f& color)
@@ -109,15 +112,14 @@ inline void glLightColor(GLenum light, GLenum which, const Vec4f& color)
 
 inline void glLightColor(GLenum light, GLenum which, const Color& color)
 {
-    glLightfv(light, which,
-              &(Vec4f(color.red(), color.green(), color.blue(), color.alpha()).x));
+	Vec4f color4 = Vec4f(color.red(), color.green(), color.blue(), color.alpha());
+    glLightfv(light, which, &(color4.x));
 }
 
 inline void glAmbientLightColor(const Color& color)
 {
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT,
-                   &(Vec4f(color.red(), color.green(), color.blue(),
-                           color.alpha()).x));
+	Vec4f color4 = Vec4f(color.red(), color.green(), color.blue(), color.alpha());
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, &(color4.x));
 }
 
 #endif // _VECGL_H_
