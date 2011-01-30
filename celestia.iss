@@ -596,6 +596,9 @@ Source: "fonts\sansbold12.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold14.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold20.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 
+Source: "fonts\sans12_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans12_bg.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold20_bg.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans12_ja.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
@@ -623,6 +626,7 @@ Source: "extras-standard\cassini\models\cassini.3ds"; DestDir: "{app}/extras-sta
 Source: "extras-standard\cassini\models\huygens.3ds"; DestDir: "{app}/extras-standard/cassini/models"; Flags: ignoreversion
 Source: "extras-standard\cassini\data\cassini-cruise.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
 Source: "extras-standard\cassini\data\cassini-orbit.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
+Source: "extras-standard\cassini\data\cassini-solstice.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
 Source: "extras-standard\cassini\data\huygens.xyzv"; DestDir: "{app}/extras-standard/cassini/data"; Flags: ignoreversion
 
 Source: "extras-standard\galileo\galileo.ssc"; DestDir: "{app}/extras-standard/galileo"; Flags: ignoreversion
