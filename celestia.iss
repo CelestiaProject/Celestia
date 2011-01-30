@@ -12,7 +12,7 @@ AppSupportURL=http://www.shatters.net/celestia/
 AppUpdatesURL=http://www.shatters.net/celestia/
 DefaultDirName={pf}\Celestia
 DefaultGroupName=Celestia
-LicenseFile=C:\celestia\celestia\COPYING
+LicenseFile=COPYING
 Compression=lzma/max
 UninstallDisplayIcon={app}\celestia.exe
 WizardImageFile=win32-installer-image.bmp
@@ -59,6 +59,8 @@ Name: "{app}\extras-standard\iss\textures\medres"
 Name: "{app}\extras-standard\mir"
 Name: "{app}\extras-standard\mir\models"
 Name: "{app}\locale"
+Name: "{app}\help"
+Name: "{app}\help\CelestiaGuide" 
 
 [Files]
 Source: "celestia.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -653,6 +655,15 @@ Source: "src\tools\xindex\buildxindices.pl";  DestDir: "{app}/tools/xindex"; Fla
 Source: "src\tools\xindex\readme.txt";        DestDir: "{app}/tools/xindex"; Flags: ignoreversion
 Source: "src\tools\stardb\buildstardb.pl";    DestDir: "{app}/tools/stardb"; Flags: ignoreversion
 
+; Help
+Source: "help\CelestiaGuide.html";                DestDir: "{app}/help";                Flags: ignoreversion
+Source: "help\CelestiaGuide\animatedcollapse.js"; DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\cellogo.gif";         DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\celstyles.css";       DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\empty.gif";           DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\guide.gif";           DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\jquery.js";           DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+
 [InstallDelete]
 Type: files; Name: "{app}\extras\minormoons.ssc";
 Type: files; Name: "{app}\extras\numberedmoons.ssc";
@@ -694,4 +705,3 @@ Filename: "{app}\celestia.exe"; Description: "Launch Celestia"; Flags: nowait po
 
 [UninstallDelete]
 Type: files; Name: "{app}\celestia.url"
-
