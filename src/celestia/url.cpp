@@ -885,7 +885,7 @@ string Url::encodeString(const string& str)
 
     for (string::const_iterator iter = str.begin(); iter != str.end(); iter++)
     {
-        int ch = *iter;
+        int ch = (unsigned char) *iter;
         bool encode = false;
         if (ch <= 32 || ch >= 128)
         {
@@ -912,7 +912,7 @@ string Url::encodeString(const string& str)
 
         if (encode)
         {
-            enc << '%' << setw(2) << hex << (unsigned int) ch;
+            enc << '%' << setw(2) << hex << ch;
         }
         else
         {
