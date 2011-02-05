@@ -13,15 +13,15 @@ AppUpdatesURL=http://www.shatters.net/celestia/
 DefaultDirName={pf}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=COPYING
-Compression=lzma/max
+Compression=lzma2/Ultra
+InternalCompressLevel=Ultra
+SolidCompression=true
 UninstallDisplayIcon={app}\celestia.exe
 WizardImageFile=win32-installer-image.bmp
-
 ; Tell Explorer to refresh its file associations information at the
 ; end of the installation, and Uninstall will do the same at the end
 ; of uninstallation.
-ChangesAssociations=yes
-
+ChangesAssociations=true
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
