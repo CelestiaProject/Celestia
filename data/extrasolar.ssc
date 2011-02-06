@@ -1,4 +1,4 @@
-# Catalog of 498 known extrasolar planets.
+# Catalog of 503 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1604,32 +1604,6 @@ AltSurface "limit of knowledge" "TYC 339-329-1/b"
 }
 
 
-"b" "HD 149382"
-{
-	Texture "browndwarf.*"
-	Emissive true
-	Color [1 0.5 0.5]
-
-	Mass       4930     # M.sin(i) = 15.5 jupiters
-	Radius     84000
-
-	InfoURL "http://exoplanet.eu/star.php?st=HD+149382"
-
-	EllipticalOrbit {
-		Period          0.0065
-		SemiMajorAxis   0.0256
-		Eccentricity    0
-	}
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 149382/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
 "TrES-2" "TYC 3549-2811-1"   # Kepler-1 / TrES-2 (parent star)
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -2541,11 +2515,11 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 }
 
 
-"b" "HAT-P-27"
+"b" "HAT-P-27"   # WASP-40
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 84.7 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.04 jupiters.
+# duration, inclination is fixed at 84.98 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.06 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2557,7 +2531,7 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 	Albedo 0.05
 
 	Mass       210     # M.sin(i) = 0.66 jupiters
-	Radius     72800
+	Radius     74200
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-27"
 
@@ -2565,10 +2539,10 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 		Period          0.0083
 		SemiMajorAxis   0.0403
 		Eccentricity    0.078
-		Inclination     108.9
-		AscendingNode   220.1
+		Inclination     108.8
+		AscendingNode   220.3
 		ArgOfPericenter 174
-		MeanAnomaly     48
+		MeanAnomaly     46
 	}
 
 	Obliquity             109 # guess, to match inclination
@@ -3847,8 +3821,8 @@ AltSurface "limit of knowledge" "TYC 2340-1714-1/b"
 "b" "WASP-17"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 87.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.74 jupiters.
+# duration, inclination is fixed at 86.83 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.99 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3858,24 +3832,24 @@ AltSurface "limit of knowledge" "TYC 2340-1714-1/b"
 	Color  [0.96 0.96 1]
 	Albedo 0.5
 
-	Mass       160     # M.sin(i) = 0.49 jupiters
-	Radius     121800
+	Mass       150     # M.sin(i) = 0.486 jupiters
+	Radius     139300
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-17"
 
 	EllipticalOrbit {
 		Period          0.0102
-		SemiMajorAxis   3.735442
-		Eccentricity    0.129
-		Inclination     101.2
-		AscendingNode   239.8
-		ArgOfPericenter 12
+		SemiMajorAxis   3.735438
+		Eccentricity    0.028
+		Inclination     101.1
+		AscendingNode   238.8
+		ArgOfPericenter 359
 		MeanAnomaly     31
 	}
 
 	Obliquity             101 # guess, to match inclination
-	EquatorAscendingNode  240 # guess, to match ascending node
+	EquatorAscendingNode  239 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -6949,71 +6923,226 @@ AltSurface "limit of knowledge" "HD 125595/b"
 }
 
 
-"b" "HD 130322"
+"b" "Kepler-11"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.5 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.18 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
 {
-	Texture "exo-class3.*"
+	Texture "asteroid.*"
 
-	Color  [0.53 0.62 1]
-	Albedo 0.1
+	Mass      4     # M.sin(i) = 4 earths
+	Radius     12600
 
-	Mass       320     # M.sin(i) = 1.02 jupiters
-	Radius     98000
-
-	InfoURL "http://exoplanet.eu/star.php?st=HD+130322"
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
 	EllipticalOrbit {
-		Period          0.0293
-		SemiMajorAxis   0.088
-		Eccentricity    0.044
-		ArgOfPericenter 153
-		MeanAnomaly     11
+		Period          0.0282
+		SemiMajorAxis   0.091
+		Eccentricity    0
+		Inclination     80.9
+		AscendingNode   294.5
+		MeanLongitude   315
 	}
+
+	Obliquity             81 # guess, to match inclination
+	EquatorAscendingNode  294 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "HD 130322/b"
+AltSurface "limit of knowledge" "Kepler-11/b"
 {
 	Texture "extrasolar-lok.*"
 }
 
 
-"b" "TYC 2883-1687-1"   # HAT-P-15
+"c" "Kepler-11"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 89.1 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.07 jupiters.
+# duration, inclination is fixed at 89 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.28 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "exo-class4.*"
+	Texture "venuslike.*"
 
-	Color  [0 0.36 1]
-	Albedo 0.05
+	Mass      14     # M.sin(i) = 14 earths
+	Radius     19600
 
-	Mass       620     # M.sin(i) = 1.946 jupiters
-	Radius     74900
-
-	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-15"
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
 	EllipticalOrbit {
-		Period          0.0297
-		SemiMajorAxis   0.0964
-		Eccentricity    0.19
-		Inclination     81.1
-		AscendingNode   67.2
-		ArgOfPericenter 10
-		MeanAnomaly     84
+		Period          0.0357
+		SemiMajorAxis   0.106
+		Eccentricity    0
+		Inclination     80.4
+		AscendingNode   294.7
+		MeanLongitude   137
 	}
 
-	Obliquity             81 # guess, to match inclination
-	EquatorAscendingNode  67 # guess, to match ascending node
+	Obliquity             80 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "TYC 2883-1687-1/b"
+AltSurface "limit of knowledge" "Kepler-11/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "Kepler-11"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.3 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.31 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.*"
+
+	Mass      6     # M.sin(i) = 6 earths
+	Radius     21700
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
+
+	EllipticalOrbit {
+		Period          0.0621
+		SemiMajorAxis   0.159
+		Eccentricity    0
+		Inclination     80.2
+		AscendingNode   294.8
+		MeanLongitude   343
+	}
+
+	Obliquity             80 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-11/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"e" "Kepler-11"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.8 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.4 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "venuslike.*"
+
+	Mass      8     # M.sin(i) = 8 earths
+	Radius     28000
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
+
+	EllipticalOrbit {
+		Period          0.0876
+		SemiMajorAxis   0.194
+		Eccentricity    0
+		Inclination     80.6
+		AscendingNode   294.6
+		MeanLongitude   304
+	}
+
+	Obliquity             81 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-11/e"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"f" "Kepler-11"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.4 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.23 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.*"
+
+	Mass      2     # M.sin(i) = 2 earths
+	Radius     16100
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
+
+	EllipticalOrbit {
+		Period          0.1278
+		SemiMajorAxis   0.25
+		Eccentricity    0
+		Inclination     80.1
+		AscendingNode   294.9
+		MeanLongitude   65
+	}
+
+	Obliquity             80 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-11/f"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"g" "Kepler-11"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.8 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.33 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       290     # M.sin(i) = 0.9 jupiters
+	Radius     23100
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
+
+	EllipticalOrbit {
+		Period          0.3241
+		SemiMajorAxis   0.462
+		Eccentricity    0
+		Inclination     79.7
+		AscendingNode   295.1
+		MeanLongitude   80
+	}
+
+	Obliquity             80 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "Kepler-11/g"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -7092,6 +7221,76 @@ AltSurface "limit of knowledge" "TYC 2717-417-1/b"
 }
 
 AltSurface "limit of knowledge" "TYC 2717-417-1/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 130322"
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       320     # M.sin(i) = 1.02 jupiters
+	Radius     98000
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+130322"
+
+	EllipticalOrbit {
+		Period          0.0293
+		SemiMajorAxis   0.088
+		Eccentricity    0.044
+		ArgOfPericenter 153
+		MeanAnomaly     11
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 130322/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 2883-1687-1"   # HAT-P-15
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.1 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.07 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       620     # M.sin(i) = 1.946 jupiters
+	Radius     74900
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-15"
+
+	EllipticalOrbit {
+		Period          0.0297
+		SemiMajorAxis   0.0964
+		Eccentricity    0.19
+		Inclination     81.1
+		AscendingNode   67.2
+		ArgOfPericenter 10
+		MeanAnomaly     84
+	}
+
+	Obliquity             81 # guess, to match inclination
+	EquatorAscendingNode  67 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 2883-1687-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
