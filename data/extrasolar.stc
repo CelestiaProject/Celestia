@@ -383,7 +383,7 @@
 	AppMag 11.74
 }
 
-"HAT-P-27:GSC 00333-00351"
+"HAT-P-27:WASP-40:GSC 00333-00351"
 {
 	RA 222.875672
 	Dec 5.94700
@@ -830,6 +830,15 @@
 	Distance 564
 	SpectralType "G"
 	AppMag 10.96
+}
+
+"Kepler-11:GSC 03144-00002"
+{
+	RA 297.115000
+	Dec 41.909167
+	Distance 2000 # from app mag and spectral class
+	SpectralType "G"
+	AppMag 13.7
 }
 
 "KOI-428"
