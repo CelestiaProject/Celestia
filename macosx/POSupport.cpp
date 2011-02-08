@@ -24,6 +24,7 @@
 #include "POSupport.h"
 #include <string>
 #include <map>
+#include <iostream>
 
 #define LOCALIZED_STR_BUFSIZE   1024
 
@@ -59,7 +60,10 @@ const char *localizedUTF8StringWithDomain(const char *domain, const char *key)
         std::string localizedStr(localizedBuf);
         localizedDict[keyStr] = localizedStr;
         CFRelease(localizedRef);
-        CFRelease(keyRef);
+        if (keyRef)
+        {
+            CFRelease(keyRef);
+        }
         CFRelease(domainRef);
         strIter = localizedDict.find(keyStr);
     }
