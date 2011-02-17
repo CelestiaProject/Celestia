@@ -374,6 +374,23 @@
 	AppMag 13.19
 }
 
+1010270320 "HAT-P-26:GSC 00320-01027"
+{
+	RA 213.156250
+	Dec 4.060000
+	Distance 437
+	SpectralType "K1"
+	AppMag 11.74
+}
+
+"HAT-P-27:WASP-40:GSC 00333-00351"
+{
+	RA 222.875672
+	Dec 5.94700
+	Distance 665
+	SpectralType "G8"
+	AppMag 12.21
+}
 
 # WASP survey
 
@@ -584,6 +601,15 @@
 	AppMag 11.33
 }
 
+1010536087 "WASP-31:GSC 06087-01053"
+{
+	RA 169.439167
+	Dec -19.054722
+	Distance 1300
+	SpectralType "F"
+	AppMag 11.66
+}
+
 "WASP-37:GSC 00326-00658"
 {
 	RA 221.944167
@@ -591,6 +617,24 @@
 	Distance 1100
 	SpectralType "G2"
 	AppMag 12.7
+}
+
+1011560950 "WASP-38:GSC 00950-01156"
+{
+	RA 243.960000
+	Dec 10.032500
+	Distance 359
+	SpectralType "F8"
+	AppMag 9.42
+}
+
+1005877247 "WASP-41:GSC 07247-00587"
+{
+	RA 190.618750
+	Dec -30.640000
+	Distance 590
+	SpectralType "G8V"
+	AppMag 11.6
 }
 
 
@@ -779,6 +823,34 @@
 	AppMag 13.9
 }
 
+"Kepler-10"
+{
+	RA 285.679167
+	Dec 50.241389
+	Distance 564
+	SpectralType "G"
+	AppMag 10.96
+}
+
+"Kepler-11:GSC 03144-00002"
+{
+	RA 297.115000
+	Dec 41.909167
+	Distance 2000 # from app mag and spectral class
+	SpectralType "G"
+	AppMag 13.7
+}
+
+"KOI-428"
+{
+	RA 296.813750
+	Dec 47.526667
+	Distance 8800
+	SpectralType "F5IV"
+	AppMag 14.76
+}
+
+
 # HD stars without Hip numbers
 
 1000370197 # HD 70573
@@ -902,6 +974,15 @@
 	AppMag 10.91
 }
 
+13044
+{
+	RA 30.793722
+	Dec -36.107500
+	Distance 2285
+	SpectralType "F2"
+	AppMag 9.94
+}
+
 # Figueira et al, 2010 (http://fr.arxiv.org/abs/1003.3678)
 # suggest the radial velocity is stellar rather than planetary
 #1002141355 "BD+20 1790"
@@ -922,6 +1003,16 @@
 	SpectralType "M4.5V"
 	AppMag 14.67
 }
+
+"Qatar-1:GSC 04240-00470"
+{
+	RA 303.381667
+	Dec 65.161944
+	Distance 455 # from spectral class and apparent mag
+	SpectralType "K"
+	AppMag 12.84
+}
+
 
 # Definitions for some exoplanet stars in multiple systems
 
@@ -1335,5 +1426,57 @@ Barycenter "DP Leo"
 		Inclination     115       #
 		AscendingNode   157       # inclination to plane of sky 79.5 deg.
 		ArgOfPericenter 180
+	}
+}
+
+# Parsons et al. "Precise mass and radius values for the white dwarf and low mass M 
+# dwarf in the pre-cataclysmic binary NN Serpentis" 
+# http://arxiv.org/abs/0909.4307
+Barycenter "NN Ser"
+{
+	RA 238.233750
+	Dec 12.912500
+	Distance 1670
+}
+
+"NN Ser A:WD 1550+130"
+{
+	OrbitBarycenter "NN Ser"
+	SpectralType "DA"
+	Radius 14700
+	Temperature 57000
+	AbsMag 3.26
+
+	EllipticalOrbit {
+		Period   0.000355920602327173 # 3.12 hours
+		         # (spurious precision to synch with rotation of B)
+		SemiMajorAxis   0.00075   # mass ratio 0.535:0.111
+		Inclination     102       #
+		AscendingNode   240       # inclination to plane of sky 89.6 deg.
+	}
+}
+
+"NN Ser B"
+{
+	OrbitBarycenter "NN Ser"
+	SpectralType "M4V"
+	Radius 107000
+	SemiAxes [1 0.955 0.968]
+	AbsMag 11.9
+
+	EllipticalOrbit {
+		Period   0.000355920602327173 # 3.12 hours
+		         # (spurious precision to synch with rotation of B)
+		SemiMajorAxis   0.0036    # mass ratio 0.535:0.111
+		Inclination     102       #
+		AscendingNode   240       # inclination to plane of sky 89.6 deg.
+		ArgOfPericenter 180
+	}
+
+	UniformRotation
+	{
+	    Period           3.12
+	    Inclination      102
+	    AscendingNode    240
 	}
 }
