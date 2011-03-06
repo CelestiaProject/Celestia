@@ -631,7 +631,8 @@ Source: "extras-standard\cassini\data\huygens.xyzv"; DestDir: "{app}/extras-stan
 
 Source: "extras-standard\galileo\galileo.ssc"; DestDir: "{app}/extras-standard/galileo"; Flags: ignoreversion
 Source: "extras-standard\galileo\models\galileo.3ds"; DestDir: "{app}/extras-standard/galileo/models"; Flags: ignoreversion
-Source: "extras-standard\galileo\data\galileo.xyz"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
+Source: "extras-standard\galileo\data\galileo-cruise.xyzv"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
+Source: "extras-standard\galileo\data\galileo-orbit.xyzv"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
 
 Source: "extras-standard\hubble\hubble.ssc"; DestDir: "{app}/extras-standard/hubble"; Flags: ignoreversion
 Source: "extras-standard\hubble\models\hubble.cmod"; DestDir: "{app}/extras-standard/hubble/models"; Flags: ignoreversion

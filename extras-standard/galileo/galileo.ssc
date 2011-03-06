@@ -4,42 +4,80 @@
     Radius   0.01
 
     Mesh "galileo.3ds"
-    NormalizeMesh false
-    MeshScale 0.000001  # Mesh units are apparently mm
-
-    InfoURL "http://galileo.jpl.nasa.gov"
-
-    Beginning "1989 10 19 02:47"   # Launch
-    Ending    "2003  9 21 10:44"   # Crash into Jupiter
-
-    SampledOrbit "galileo.xyz"
-
-    # Use a two vector frame to keep the spacecraft's High Gain Antenna
-    # pointed toward the Earth. The secondary axis is chosen (arbitrarily) as
-    # ecliptic north.
-    BodyFrame {
-        TwoVector {
-            Primary {
-                Axis "-z"
-                RelativePosition {
-                    Observer "Sol/Galileo"
-                    Target "Sol/Earth"
-                }
-            }
-            Secondary {
-                Axis "x"
-                ConstantVector {
-                    Vector [ 0 0 1 ]
-                    Frame { EclipticJ2000 { } }
-                }
-            }
-        }
-    }
-    FixedRotation { }
-
     # Orient the model so that the High Gain Antenna points in -z
     # and the sensor boom points in +y
     Orientation     [ -90 1 0 0 ]
+    NormalizeMesh false
+    #MeshScale 0.000001  # Mesh units are apparently mm
+    MeshScale 0.02
+
+    InfoURL "http://galileo.jpl.nasa.gov"
+
+    Timeline [
+
+    # Phase 1: Launch and cruise
+    {
+        Beginning "1989 10 19 02:47"   # Launch
+        Ending    "1995 12  1 00:00"   # A few days before orbit insertion burn
+
+        SampledTrajectory { Source "galileo-cruise.xyzv" }
+
+        # Use a two vector frame to keep the spacecraft's High Gain Antenna
+        # pointed toward the Earth. The secondary axis is chosen
+        # (arbitrarily) as ecliptic north
+        BodyFrame {
+            TwoVector {
+                Primary {
+                    Axis "-z"
+                    RelativePosition {
+                        Observer "Sol/Galileo"
+                        Target "Sol/Earth"
+                    }
+                }
+                Secondary {
+                    Axis "x"
+                    ConstantVector {
+                        Vector [ 0 0 1 ]
+                        Frame { EclipticJ2000 { } }
+                    }
+                }
+            }
+        }
+        FixedRotation { }
+    }
+
+    # Phase 2: Jupiter orbit
+    {
+        Ending    "2003  9 21 18:58"   # Crash into Jupiter
+
+        OrbitFrame { EclipticJ2000 { Center "Sol/Jupiter" } }
+        SampledTrajectory { Source "galileo-orbit.xyzv" }
+
+        # Use a two vector frame to keep the spacecraft's High Gain Antenna
+        # pointed toward the Earth. The secondary axis is chosen
+        # (arbitrarily) as ecliptic north
+        BodyFrame {
+            TwoVector {
+                Primary {
+                    Axis "-z"
+                    RelativePosition {
+                        Observer "Sol/Galileo"
+                        Target "Sol/Earth"
+                    }
+                }
+                Secondary {
+                    Axis "x"
+                    ConstantVector {
+                        Vector [ 0 0 1 ]
+                        Frame { EclipticJ2000 { } }
+                    }
+                }
+            }
+        }
+        FixedRotation { }
+    }
+
+    ] # End timeline
 
     Albedo         0.50
 }

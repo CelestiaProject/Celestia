@@ -584,7 +584,7 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 	AppMag 9.86
 }
 
-"Teegarden's Star:SO0253+1652:SO025300.5+165258"
+"Teegarden's Star:2MASS J02530084+1652532:2MASS 0253+1652:SO J025300.5+165258:SO 0253+1652"
 {
 	RA 43.253613
 	Dec 16.881389
@@ -598,16 +598,16 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 # the Sun? A Methane Rich Brown Dwarf Around the Nearby M8.5 Star
 # SCR 1845"
 # (http://xxx.uni-augsburg.de/PS_cache/astro-ph/pdf/0601/0601441.pdf)
-Barycenter "SCR 1845-6357"
+Barycenter "SCR J1845-6357:SCR 1845-6357:2MASS J18450541-6357475:2MASS 1845-6357"
 {
 	RA 281.260833
 	Dec -63.964444
 	Distance 12.571
 }
 
-"SCR 1845-6357 A"
+"SCR J1845-6357 A:SCR 1845-6357 A:2MASS J18450541-6357475 A:2MASS 1845-6357 A"
 {
-	OrbitBarycenter "SCR 1845-6357"
+	OrbitBarycenter "SCR J1845-6357"
 	SpectralType "M8.5V"
 	AppMag 17.39
 
@@ -618,9 +618,9 @@ Barycenter "SCR 1845-6357"
 	}
 }
 
-"SCR 1845-6357 B"
+"SCR J1845-6357 B:SCR 1845-6357 B:2MASS J18450541-6357475 B:2MASS 1845-6357 B"
 {
-	OrbitBarycenter "SCR 1845-6357"
+	OrbitBarycenter "SCR J1845-6357"
 	SpectralType "T6V"
 	AbsMag 33.5 # for approximate radius in Celestia
 
@@ -689,7 +689,7 @@ Barycenter 110893 "Gliese 860:ADS 15972:Kruger 60"
 	}
 }
 
-"DENIS 1048-3956:RECONS 2"
+"DENIS 1048-3956:RECONS 2:2MASS J10481463-3956062:2MASS 1048-3956"
 {
 	Texture "browndwarf.*"
 	RA 162.061250
@@ -738,6 +738,16 @@ Barycenter 30920 "Gliese 234:Ross 614"
 		ArgOfPericenter 310.67
 		MeanAnomaly       0.00
 	}
+}
+# The discovery of a very cool, very nearby brown dwarf 
+# in the Galactic plane. Lucas et al. http://arxiv.org/abs/1004.0317v2
+"UGPS 0722-05:UGPS J0722-05:UGPS J072227.51-054031.2"
+{
+	RA 110.613750
+	Dec -5.675000
+	Distance 13.4
+	SpectralType "T9.5" # actually T10
+	AppMag 36 # for approximate radius in Celestia
 }
 
 80824 # Wolf 1061
@@ -1001,7 +1011,7 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	AppMag 18.50
 }
 
-"DENIS 0255-4700"
+"DENIS 0255-4700:2MASS J02550357-4700509:2MASS 0255-4700"
 {
 	RA 43.765417
 	Dec -47.014444
@@ -1181,6 +1191,26 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	AppMag 12.22
 }
 
+# Leggett S.K. et al. (2009) "The phyical properties of four
+# 600K T dwarfs." ApJ, 695, 1517.
+# (http://arxiv.org/abs/0901.4093)
+# unresolved binary; separation and orbit unknown
+"2MASS J09393548-2448279 A:2MASS 0939-2448 A"
+{
+	RA 144.897823
+	Dec -24.80775
+	Distance 17.4
+	SpectralType "T8V"
+	AbsMag 38 # estimate for radius in Celestia
+}
+"2MASS J09393548-2448279 B:2MASS 0939-2448 B"
+{
+	RA 144.897843
+	Dec -24.80775
+	Distance 17.4
+	SpectralType "T8V"
+	AbsMag 38 # estimate for radius in Celestia
+}
 57544 # Gliese 445
 {
 	RA 176.922500
@@ -1242,7 +1272,7 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 	AppMag 10.02
 }
 
-"2MASS 1835+3259"
+"2MASS J18353790+3259545:2MASS 1835+3259"
 {
 	RA 278.907917
 	Dec 32.998333
@@ -1260,13 +1290,13 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 	AppMag 7.95
 }
 
-"2MASS 0415-0935"
+"2MASS J04151954-0935066:2MASS 0415-0935"
 {
 	RA 63.83125
 	Dec -9.585
 	Distance 18.709
 	SpectralType "T8.5V"
-	AbsMag 38  # estimate
+	AbsMag 38  # for approximate radius in Celestia
 }
 
 96100 # Sig Dra
@@ -1699,13 +1729,13 @@ Barycenter 34603 "Gliese 268:Ross 986"
 	AppMag 11.31
 }
 
-"2MASS 0937+2931"
+"2MASS J09373487+2931409:2MASS 0937+2931"
 {
 	RA 144.391667
 	Dec 29.516667
 	Distance 20.030
 	SpectralType "T6.0V"
-	AbsMag 33  # estimate
+	AbsMag 33  # for approximate radius in Celestia
 }
 
 Barycenter "Gliese 338:ADS 7251:Struve 1321"
@@ -1931,6 +1961,17 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 	AppMag 17.05
 }
 
+# Artigau E. et al. (2006) Discovery of the brightest T dwarf in the 
+# northern hemisphere." ApJ, 651, L57.
+# (http://arxiv.org/abs/astro-ph/0609419)
+"2MASS J01365662+0933473:2MASS 0136+0933:SIMP J013656.5+093347"
+{
+	RA 24.235833
+	Dec 9.563056
+	Distance 20.9
+	SpectralType "T2.5V"
+	AbsMag 27  # for approximate radius in Celestia
+}
 "GJ 3959:Giclas 180-60"
 {
 	RA 247.826667
@@ -2425,6 +2466,17 @@ Barycenter "Gliese 105 A"
 	AppMag 13.49
 }
 
+# Dahn, C.C. et al. (2002) "Astrometry and photometry
+# for cool dwarfs and brown dwarfs." AJ, 124, 1170
+# (http://www.iop.org/EJ/abstract/-link=10023955/1538-3881/124/2/1170)
+"2MASS J15074769-1627386:2MASS 1507-1627"
+{
+	RA 226.948709
+	Dec -16.460722
+	Distance 23.912
+	SpectralType "L5V"
+	AbsMag 21 # for approximate radius in Celestia
+}
 "GJ 4274:Luyten 788-34"
 {
 	RA 335.777500
