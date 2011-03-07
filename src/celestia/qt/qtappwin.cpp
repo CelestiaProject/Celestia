@@ -157,6 +157,17 @@ CelestiaAppWindow::~CelestiaAppWindow()
 void CelestiaAppWindow::init(const QString& qConfigFileName,
                              const QStringList& qExtrasDirectories)
 {
+	QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
+	if (celestia_data_dir.isEmpty()) {
+		QString celestia_data_dir = CONFIG_DATA_DIR;
+		QDir::setCurrent(celestia_data_dir);
+	} else {
+		QMessageBox::critical(0, "Celestia",
+			_("Celestia is unable to run because the data directroy was not "
+			  "found, probably due to improper installation."));
+			exit(1);
+	}
+
     // Get the config file name
     string configFileName;
     if (qConfigFileName.isEmpty())
