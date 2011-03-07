@@ -1,4 +1,4 @@
-SUBDIRS = models
+SUBDIRS = data models
 
 pkgdatadir = @datadir@/@PACKAGE@/extras-standard/galileo
 
