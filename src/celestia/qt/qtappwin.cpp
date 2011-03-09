@@ -62,6 +62,10 @@
 #include "celestia/avicapture.h"
 #endif
 
+#ifndef CONFIG_DATA_DIR
+#define CONFIG_DATA_DIR "./"
+#endif
+
 using namespace std;
 
 
