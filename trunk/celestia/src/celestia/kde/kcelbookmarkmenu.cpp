@@ -307,7 +307,7 @@ void KCelBookmarkMenu::slotAddRelativeBookmark()
     KMessageBox::error( 0L, i18n("Can't add bookmark with empty URL"));
     return;
   }
-  QString title = QString(Url.getName().c_str());
+  QString title = QString::fromUtf8(Url::decodeString(Url.getName()).c_str());
   if (title.isEmpty())
     title = url;
 
@@ -354,7 +354,7 @@ void KCelBookmarkMenu::slotAddSettingsBookmark()
     KMessageBox::error( 0L, i18n("Can't add bookmark with empty URL"));
     return;
   }
-  QString title = QString(Url.getName().c_str());
+  QString title = QString::fromUtf8(Url::decodeString(Url.getName()).c_str());
   if (title.isEmpty())
     title = url;
 
@@ -401,7 +401,7 @@ void KCelBookmarkMenu::slotAddBookmark()
     KMessageBox::error( 0L, i18n("Can't add bookmark with empty URL"));
     return;
   }
-  QString title = QString(Url.getName().c_str());
+  QString title = QString::fromUtf8(Url::decodeString(Url.getName()).c_str());
   if (title.isEmpty())
     title = url;
 
