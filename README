@@ -248,12 +248,13 @@ Authors
 
 Contributors
 ------------
-  Deon Ramsey ........... original GTK1 interface
+  Deon Ramsey ........... Original GTK1 interface
   Christopher ANDRE ..... Eclipse Finder
   Colin Walters ......... Endianness fixes
   Peter Chapman ......... Orbit path rendering changes
   James Holmes ..........
   Harald Schmidt ........ Lua scripting enhancements, bug fixes
+  Nils Larsson .......... Various enhancements and bug fixes
 
 Documentation
 -------------
