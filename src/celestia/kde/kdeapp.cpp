@@ -221,7 +221,7 @@ void KdeApp::setStartURL(KURL url) {
 void KdeApp::goToURL(const KURL& url) {
     if (url.protocol() == "cel")  {
         appCore->addToHistory();
-        appCore->goToUrl(url.prettyURL().latin1());
+        appCore->goToUrl(url.url().latin1());
     }
     if (url.protocol() == "file") {
         appCore->addToHistory();
@@ -232,7 +232,7 @@ void KdeApp::goToURL(const KURL& url) {
 void KdeApp::openBookmarkURL(const QString& _url) {
     KURL url(_url);
     appCore->addToHistory();
-    appCore->goToUrl(url.prettyURL().latin1());
+    appCore->goToUrl(url.url().latin1());
 }
 
 Url KdeApp::currentUrl(Url::UrlType type) const
@@ -1492,11 +1492,11 @@ void KdeApp::slotCopyUrl() {
 
 void KdeApp::slotGoTo() {
     bool ok;
-    QString url = KInputDialog::getText(i18n("Go to URL"), i18n("Enter URL"), "", &ok, this);
-
+    QString _url = KInputDialog::getText(i18n("Go to URL"), i18n("Enter URL"), "", &ok, this);
     if (ok) {
+        KURL url(_url);        
         appCore->addToHistory();
-        appCore->goToUrl(url.latin1());
+        appCore->goToUrl(url.url().latin1());
     }
 }
 
