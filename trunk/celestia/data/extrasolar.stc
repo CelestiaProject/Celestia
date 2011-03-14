@@ -392,6 +392,23 @@
 	AppMag 12.21
 }
 
+"HAT-P-28:GSC 02284-00503"
+{
+	RA 13.000833
+	Dec 34.728333
+	Distance 1288
+	SpectralType "G3"
+	AppMag 13.03
+}
+1015393293 "HAT-P-29:GSC 03293-01539"
+{
+	RA 33.131250
+	Dec 51.778889
+	Distance 1050
+	SpectralType "F8"
+	AppMag 11.9
+}
+
 # WASP survey
 
 "WASP-1"
@@ -626,6 +643,15 @@
 	Distance 359
 	SpectralType "F8"
 	AppMag 9.42
+}
+
+"WASP-39"
+{
+	RA 217.326667
+	Dec -3.444444
+	Distance 750
+	SpectralType "G8"
+	AppMag 12.11
 }
 
 1005877247 "WASP-41:GSC 07247-00587"
@@ -994,7 +1020,7 @@
 #	AppMag 9.93
 #}
 
-"Gliese 1214"
+"GJ 1214"
 {
 	RA 258.82875
 	Dec 4.963889
@@ -1013,6 +1039,14 @@
 	AppMag 12.84
 }
 
+"GJ 3634"
+{
+	RA 164.646250
+	Dec -31.144167
+	Distance 64.5
+	SpectralType "M2.5V"
+	AppMag 11.95
+}
 
 # Definitions for some exoplanet stars in multiple systems
 
@@ -1478,5 +1512,44 @@ Barycenter "NN Ser"
 	    Period           3.12
 	    Inclination      102
 	    AscendingNode    240
+	}
+}
+
+Barycenter "HU Aqr"
+{
+	RA 316.992917
+	Dec -5.294167
+	Distance 590
+}
+
+"HU Aqr A"
+{
+	OrbitBarycenter "HU Aqr"
+	SpectralType "DA"
+	Radius 6960
+	Temperature 12500
+	AbsMag 11.5
+
+	EllipticalOrbit {
+		Period   0.000237      # 2.08 hours
+		SemiMajorAxis   0.0006 # mass ratio 0.88:0.2
+		Inclination     74     #
+		AscendingNode   309    # inclination to plane of sky 85 deg.
+	}
+}
+
+"HU Aqr B"
+{
+	OrbitBarycenter "HU Aqr"
+	SpectralType "M4.5V"
+	Radius 153000
+	AbsMag 10.5
+
+	EllipticalOrbit {
+		Period   0.000237      # 2.08 hours
+		SemiMajorAxis   0.0026 # mass ratio 0.88:0.2
+		Inclination     74     #
+		AscendingNode   309    # inclination to plane of sky 85 deg.
+		ArgOfPericenter 180
 	}
 }
