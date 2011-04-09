@@ -5103,7 +5103,8 @@ static void setLightParameters_VP(VertexProcessor& vproc,
 static void renderModelDefault(Geometry* geometry,
                                const RenderInfo& ri,
                                bool lit,
-                               ResourceHandle texOverride)
+                               ResourceHandle texOverride,
+                               double tsec)
 {
     FixedFunctionRenderContext rc;
     Material m;
@@ -5135,7 +5136,7 @@ static void renderModelDefault(Geometry* geometry,
         rc.lock();
     }
 
-    geometry->render(rc);
+    geometry->render(rc, tsec);
     if (geometry->usesTextureType(Material::EmissiveMap))
     {
         glDisable(GL_LIGHTING);
@@ -5145,7 +5146,7 @@ static void renderModelDefault(Geometry* geometry,
         rc.setRenderPass(RenderContext::EmissivePass);
         rc.setMaterial(NULL);
 
-        geometry->render(rc);
+        geometry->render(rc, tsec);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
@@ -7229,7 +7230,7 @@ void Renderer::renderObject(const Vector3f& pos,
             }
             else
             {
-                renderModelDefault(geometry, ri, lit, texOverride);
+                renderModelDefault(geometry, ri, lit, texOverride, astro::daysToSecs(now - astro::J2000));
             }
         }
     }
