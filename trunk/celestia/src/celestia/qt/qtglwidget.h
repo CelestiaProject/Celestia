@@ -60,6 +60,8 @@ private:
     Simulation* appSim;
     int lastX;
     int lastY;
+    bool cursorVisible;
+    QPoint saveCursorPos;
     CelestiaCore::CursorShape currentCursor;
 
     //KActionCollection* actionColl;
