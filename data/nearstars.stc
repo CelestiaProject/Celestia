@@ -58,11 +58,11 @@ Barycenter "Solar System Barycenter:SSB"
 	RA 217.429167
 	Dec -62.679444
 	Distance 4.242
-	SpectralType "M5.5V"
-	AppMag 11.09
+	SpectralType "M5.0V"
+	AppMag 11.05
 }
 
-Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
+Barycenter "Rigil Kentaurus:Toliman:ALF Cen:Gliese 559"
 {
 	RA  219.899437 # mass ratio 1.12:0.93
 	Dec -60.835401 #
@@ -107,9 +107,9 @@ Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
 {
 	RA 269.452083
 	Dec 4.693333
-	Distance 5.963
-	SpectralType "M4.0V"
-	AppMag 9.53
+	Distance 5.979
+	SpectralType "M3.5V"
+	AppMag 9.57
 }
 
 "CN Leo:Gliese 406:Wolf 359"
@@ -117,15 +117,15 @@ Barycenter "Rigel Kentaurus:Toliman:ALF Cen:Gliese 559"
 	RA 164.121783
 	Dec 7.014722
 	Distance 7.782
-	SpectralType "M6.0V"
-	AppMag 13.44
+	SpectralType "M5.5V"
+	AppMag 13.53
 }
 
 54035 # Lalande 21185
 {
 	RA 165.834167
 	Dec 35.970000
-	Distance 8.290
+	Distance 8.294
 	SpectralType "M2.0V"
 	AppMag 7.47
 }
@@ -182,7 +182,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	OrbitBarycenter "Gliese 65"
 	SpectralType "M5.5V"
-	AppMag 12.54
+	AppMag 12.61
 
 	EllipticalOrbit {
 		Period          26.52
@@ -199,7 +199,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	OrbitBarycenter "Gliese 65"
 	SpectralType "M6.0V"
-	AppMag 12.99
+	AppMag 13.06
 
 	EllipticalOrbit {
 		Period          26.52
@@ -216,16 +216,16 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	RA 282.455833
 	Dec -23.836111
-	Distance 9.681
+	Distance 9.672
 	SpectralType "M3.5V"
-	AppMag 10.43
+	AppMag 10.44
 }
 
 "HH And:Gliese 905:Ross 248"
 {
 	RA 355.479875
 	Dec 44.177222
-	Distance 10.322
+	Distance 10.310
 	SpectralType "M5.5V"
 	AppMag 12.29
 }
@@ -234,7 +234,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	RA 53.232500
 	Dec -9.458333
-	Distance 10.522
+	Distance 10.480
 	SpectralType "K2V"
 	AppMag 3.73
 }
@@ -243,8 +243,8 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	RA 346.466667
 	Dec -35.853056
-	Distance 10.742
-	SpectralType "M1.5V"
+	Distance 10.691
+	SpectralType "M1.0V"
 	AppMag 7.34
 }
 
@@ -252,9 +252,9 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	RA 176.935000
 	Dec 0.804444
-	Distance 10.919
+	Distance 10.940
 	SpectralType "M4.0V"
-	AppMag 11.13
+	AppMag 11.16
 }
 
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
@@ -286,7 +286,7 @@ Barycenter "Gliese 866 A:Luyten 789-6 A"
 {
 	OrbitBarycenter "Gliese 866 A"
 	SpectralType "M5.0V"
-	AppMag 13.33
+	AppMag 13.03
 
 	EllipticalOrbit {
 		Period          0.010	# 3.8dys
@@ -300,7 +300,7 @@ Barycenter "Gliese 866 A:Luyten 789-6 A"
 {
 	OrbitBarycenter "Gliese 866 A"
 	SpectralType "M6V" # from apparent magnitude
-	AppMag 14.03
+	AppMag 15.07
 
 	EllipticalOrbit {
 		Period          0.010	# 3.8dys
@@ -328,59 +328,18 @@ Barycenter "Gliese 866 A:Luyten 789-6 A"
 	}
 }
 
-Barycenter 37279 "Procyon:Elgomaisa:ALF CMi:10 CMi:Gliese 280:ADS 6251"
-{
-	RA 114.82724
-	Dec 5.2275076
-	Distance 11.402
-}
-
-"Procyon A:Elgomaisa A:ALF CMi A:10 CMi A:Gliese 280 A:ADS 6251 A"
-{
-	OrbitBarycenter "Procyon"
-	SpectralType "F5IV"
-	AppMag 0.38
-
-	EllipticalOrbit {
-		Period          40.82
-		SemiMajorAxis   4.13   # mass ratio 1.57:0.6
-		Eccentricity    0.407
-		Inclination	42.9
-		AscendingNode   27.8
-		ArgOfPericenter 88.4
-		MeanAnomaly     282.5
-	}
-}
-
-"Procyon B:Elgomaisa B:ALF CMi B:10 CMi B:Gliese 280 B:ADS 6251 B"
-{
-	OrbitBarycenter "Procyon"
-	SpectralType "DA"
-	AppMag 10.70
-
-	EllipticalOrbit {
-		Period          40.82
-		SemiMajorAxis   10.80  # mass ratio 1.57:0.6
-		Eccentricity    0.407
-		Inclination	42.9
-		AscendingNode   27.8
-		ArgOfPericenter 268.4
-		MeanAnomaly     282.5
-	}
-}
-
 Barycenter "61 Cyg:Gliese 820:ADS 14636"
 {
 	RA 316.714507   # mass ratio 0.7:0.63
 	Dec 38.738139   #
-	Distance 11.403
+	Distance 11.401
 }
 
 104214 "61 Cyg A:V1803 Cyg:Gliese 820 A:ADS 14636 A"
 {
 	OrbitBarycenter "61 Cyg"
 	SpectralType "K5V"
-	AppMag 5.21
+	AppMag 5.20
 
 	EllipticalOrbit {
 		Period          659
@@ -410,11 +369,52 @@ Barycenter "61 Cyg:Gliese 820:ADS 14636"
 	}
 }
 
+Barycenter 37279 "Procyon:Elgomaisa:ALF CMi:10 CMi:Gliese 280:ADS 6251"
+{
+	RA 114.82724
+	Dec 5.2275076
+	Distance 11.438
+}
+
+"Procyon A:Elgomaisa A:ALF CMi A:10 CMi A:Gliese 280 A:ADS 6251 A"
+{
+	OrbitBarycenter "Procyon"
+	SpectralType "F5IV"
+	AppMag 0.37
+
+	EllipticalOrbit {
+		Period          40.82
+		SemiMajorAxis   4.13   # mass ratio 1.57:0.6
+		Eccentricity    0.407
+		Inclination	42.9
+		AscendingNode   27.8
+		ArgOfPericenter 88.4
+		MeanAnomaly     282.5
+	}
+}
+
+"Procyon B:Elgomaisa B:ALF CMi B:10 CMi B:Gliese 280 B:ADS 6251 B"
+{
+	OrbitBarycenter "Procyon"
+	SpectralType "DA"
+	AppMag 10.70
+
+	EllipticalOrbit {
+		Period          40.82
+		SemiMajorAxis   10.80  # mass ratio 1.57:0.6
+		Eccentricity    0.407
+		Inclination	42.9
+		AscendingNode   27.8
+		ArgOfPericenter 268.4
+		MeanAnomaly     282.5
+	}
+}
+
 Barycenter "Gliese 725:ADS 11632:Struve 2398"
 {
 	RA 280.701371   # mass ratio 0.35:0.26
 	Dec 59.624455   #
-	Distance 11.525
+	Distance 11.492
 }
 
 91768 "Gliese 725 A:ADS 11632 A:Struve 2398 A"
@@ -455,7 +455,7 @@ Barycenter 1475 "Gliese 15:ADS 246:Groombridge 34"
 {
 	RA 4.595417
 	Dec 44.023056
-	Distance 11.624
+	Distance 11.654
 }
 
 "GX And:Gliese 15 A:ADS 246 A:Groombridge 34 A"
@@ -494,16 +494,16 @@ Barycenter "EPS Ind:Gliese 845" # orbit of A & B components unknown
 {
 	RA 330.841091   # mass ratio 0.77:(0.04+0.03)
 	Dec -56.780045
-	Distance 11.824
+	Distance 11.815
 }
 
 108870 "EPS Ind A:Gliese 845 A"
 {
 	RA 330.82266
 	Dec -56.779804
-	Distance 11.824
-	SpectralType "K5V"
-	AppMag 4.69
+	Distance 11.815
+	SpectralType "K4V"
+	AppMag 4.68
 }
 
 # McCaughrean, M.J. et al.(2004) "Eps Indi Ba,Bb: The nearest binary
@@ -513,7 +513,7 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 {
 	RA 331.043833
 	Dec -56.782694
-	Distance 11.824
+	Distance 11.815
 }
 
 "EPS Ind Ba:CI Ind A:Gliese 845 Ba"
@@ -546,16 +546,16 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 	RA 127.456125
 	Dec 26.775611
 	Distance 11.826
-	SpectralType "M6.5V"
-	AppMag 14.78
+	SpectralType "M6.0V"
+	AppMag 14.90
 }
 
 8102 # Tau Cet
 {
 	RA 26.017083
 	Dec -15.937500
-	Distance 11.887
-	SpectralType "G8V"
+	Distance 11.905
+	SpectralType "G8.5V"
 	AppMag 3.49
 }
 
@@ -564,37 +564,27 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 	RA 53.998750
 	Dec -44.512500
 	Distance 11.991
-	SpectralType "M5.5V"
-	AppMag 13.03
+	SpectralType "M5.0V"
+	AppMag 13.09
 }
 
 5643 # Luyten 725-032
 {
 	RA 18.127500
 	Dec -16.999167
-	Distance 12.132
-	SpectralType "M4.5V"
-	AppMag 12.02
+	Distance 12.121
+	SpectralType "M4.0V"
+	AppMag 12.10
 }
 
 36208 # Luyten's Star
 {
 	RA 111.852083
 	Dec 5.225833
-	Distance 12.366
+	Distance 12.251
 	SpectralType "M3.5V"
-	AppMag 9.86
+	AppMag 9.85
 }
-
-"Teegarden's Star:2MASS J02530084+1652532:2MASS 0253+1652:SO J025300.5+165258:SO 0253+1652"
-{
-	RA 43.253613
-	Dec 16.881389
-	Distance 12.514
-	SpectralType "M7.0V"
-	AppMag 15.40
-}
-
 
 # Biller B.A. et al.(2006) "Discovery of the Closest Brown Dwarf to
 # the Sun? A Methane Rich Brown Dwarf Around the Nearby M8.5 Star
@@ -604,14 +594,14 @@ Barycenter "SCR J1845-6357:SCR 1845-6357:2MASS J18450541-6357475:2MASS 1845-6357
 {
 	RA 281.260833
 	Dec -63.964444
-	Distance 12.571
+	Distance 12.569
 }
 
 "SCR J1845-6357 A:SCR 1845-6357 A:2MASS J18450541-6357475 A:2MASS 1845-6357 A"
 {
 	OrbitBarycenter "SCR J1845-6357"
 	SpectralType "M8.5V"
-	AppMag 17.39
+	AppMag 17.40
 
 	EllipticalOrbit {
 		Period 		23.5 # estimate
@@ -632,22 +622,41 @@ Barycenter "SCR J1845-6357:SCR 1845-6357:2MASS J18450541-6357475:2MASS 1845-6357
 	}
 }
 
+"Teegarden's Star:2MASS J02530084+1652532:2MASS 0253+1652:SO J025300.5+165258:SO 0253+1652"
+{
+	RA 43.253613
+	Dec 16.881389
+	Distance 12.573
+	SpectralType "M6.5V"
+	AppMag 15.14
+}
+
 24186 # Kapteyn's Star
 {
 	RA 77.919167
 	Dec -45.018333
-	Distance 12.777
-	SpectralType "M1.5VI"
-	AppMag 8.84
+	Distance 12.757
+	SpectralType "M2.0VI"
+	AppMag 8.85
 }
 
 105090 # Lacaille 8760
 {
 	RA 319.313750
 	Dec -38.867500
-	Distance 12.870
-	SpectralType "M0.0V"
+	Distance 12.869
+	SpectralType "K9.0V"
 	AppMag 6.67
+}
+
+"DENIS 1048-3956:RECONS 2:2MASS J10481463-3956062:2MASS 1048-3956"
+{
+	Texture "browndwarf.*"
+	RA 162.061250
+	Dec -39.935000
+	Distance 13.124
+	SpectralType "M8.5V"
+	AppMag 17.39
 }
 
 Barycenter 110893 "Gliese 860:ADS 15972:Kruger 60"
@@ -691,28 +700,18 @@ Barycenter 110893 "Gliese 860:ADS 15972:Kruger 60"
 	}
 }
 
-"DENIS 1048-3956:RECONS 2:2MASS J10481463-3956062:2MASS 1048-3956"
-{
-	Texture "browndwarf.*"
-	RA 162.061250
-	Dec -39.935000
-	Distance 13.167
-	SpectralType "M8.5V"
-	AppMag 17.29
-}
-
 Barycenter 30920 "Gliese 234:Ross 614"
 {
 	RA  97.347500
 	Dec -2.813889
-	Distance 13.349
+	Distance 13.343
 }
 
 "V577 Mon:Gliese 234 A:Ross 614 A"
 {
 	OrbitBarycenter "Ross 614"
 	SpectralType "M4.5V"
-	AppMag 11.15
+	AppMag 11.18
 
 	EllipticalOrbit {
 		Period            16.5
@@ -729,7 +728,7 @@ Barycenter 30920 "Gliese 234:Ross 614"
 {
 	OrbitBarycenter "Ross 614"
 	SpectralType "M7V"
-	AppMag 14.23
+	AppMag 14.26
 
 	EllipticalOrbit {
 		Period            16.5
@@ -748,7 +747,7 @@ Barycenter 30920 "Gliese 234:Ross 614"
 {
 	RA 110.613750
 	Dec -5.675000
-	Distance 13.4
+	Distance 13.367
 	SpectralType "T9.5" # actually T10
 	AppMag 36 # for approximate radius in Celestia
 }
@@ -757,18 +756,18 @@ Barycenter 30920 "Gliese 234:Ross 614"
 {
 	RA 247.575417
 	Dec -12.662500
-	Distance 13.820
-	SpectralType "M3.0V"
-	AppMag 10.07
+	Distance 13.916
+	SpectralType "M3.5V"
+	AppMag 10.10
 }
 
 3829 # van Maanen's Star
 {
 	RA 12.291250
 	Dec 5.388611
-	Distance 14.066
+	Distance 14.017
 	SpectralType "DZ7"
-	AppMag 12.38
+	AppMag 12.40
 }
 
 439 # Cordoba 32416
@@ -776,9 +775,9 @@ Barycenter 30920 "Gliese 234:Ross 614"
 {
 	RA 1.351667
 	Dec -37.357500
-	Distance 14.231
-	SpectralType "M3.0V"
-	AppMag 8.55
+	Distance 14.161
+	SpectralType "M1.5V"
+	AppMag 8.54
 }
 
 Barycenter "Gliese 473:Wolf 424"
@@ -791,8 +790,8 @@ Barycenter "Gliese 473:Wolf 424"
 "Gliese 473 A:Wolf 424 A"
 {
 	OrbitBarycenter "Wolf 424"
-	SpectralType "M5.5V"
-	AppMag 13.18
+	SpectralType "M5.0V"
+	AppMag 13.25
 
 	EllipticalOrbit {
 		Period          15.9
@@ -808,8 +807,8 @@ Barycenter "Gliese 473:Wolf 424"
 "FL Vir:Gliese 473 B:Wolf 424 B"
 {
 	OrbitBarycenter "Wolf 424"
-	SpectralType "M5.5V"
-	AppMag 13.17
+	SpectralType "M5.0V"
+	AppMag 13.24
 
 	EllipticalOrbit {
 		Period          15.9
@@ -827,15 +826,15 @@ Barycenter "Gliese 473:Wolf 424"
 	RA 30.055000
 	Dec 13.052222
 	Distance 14.509
-	SpectralType "M4.5V"
-	AppMag 12.27
+	SpectralType "M4.0V"
+	AppMag 12.31
 }
 
 86162 # Gliese 687
 {
 	RA 264.107917
 	Dec 68.339167
-	Distance 14.793
+	Distance 14.794
 	SpectralType "M3.0V"
 	AppMag 9.17
 }
@@ -846,16 +845,7 @@ Barycenter "Gliese 473:Wolf 424"
 	Dec -11.337222
 	Distance 14.805
 	SpectralType "M6.5V"
-	AppMag 15.60
-}
-
-85523 # Gliese 674
-{
-	RA 262.166250
-	Dec -46.895278
-	Distance 14.809
-	SpectralType "M3.0V"
-	AppMag 9.38
+	AppMag 15.73
 }
 
 Barycenter "GJ 1245" # orbit of A & B components unknown
@@ -916,13 +906,31 @@ Barycenter "GJ 1245 A"
 	AppMag 14.01
 }
 
+85523 # Gliese 674
+{
+	RA 262.166250
+	Dec -46.895278
+	Distance 14.818
+	SpectralType "M2.5V"
+	AppMag 9.37
+}
+
 57367 # Luyten 145-141
 {
 	RA 176.428750
 	Dec -64.841389
-	Distance 15.060
+	Distance 15.092
 	SpectralType "DQ6"
 	AppMag 11.50
+}
+
+113020 # Ross 780
+{
+	RA 343.319583
+	Dec -14.263611
+	Distance 15.208
+	SpectralType "M3.5V"
+	AppMag 10.18
 }
 
 "GJ 1002"
@@ -930,24 +938,15 @@ Barycenter "GJ 1245 A"
 	RA 1.682500
 	Dec -7.539444
 	Distance 15.313
-	SpectralType "M5.5V"
-	AppMag 13.76
-}
-
-113020 # Ross 780
-{
-	RA 343.319583
-	Dec -14.263611
-	Distance 15.342
-	SpectralType "M3.5V"
-	AppMag 10.17
+	SpectralType "M5.0V"
+	AppMag 13.77
 }
 
 "GJ 3618:Luyten 143-23"
 {
 	RA 161.132500
 	Dec -61.193889
-	Distance 15.610
+	Distance 15.554
 	SpectralType "M5.5V"
 	AppMag 13.92
 }
@@ -956,14 +955,14 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 {
 	RA 166.370443   # mass ratio 0.48:0.10
 	Dec 43.525816   #
-	Distance 15.832
+	Distance 15.859
 }
 
 "Gliese 412 A:Lalande 21258 A"
 {
 	RA 166.369167
 	Dec 43.526667
-	Distance 15.832
+	Distance 15.859
 	SpectralType "M1.0V"
 	AppMag 8.77
 }
@@ -972,16 +971,16 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 {
 	RA 166.376667
 	Dec 43.521667
-	Distance 15.832
+	Distance 15.859
 	SpectralType "M5.5V"
-	AppMag 14.48
+	AppMag 14.44
 }
 
 49908 # Groombridge 1618
 {
 	RA 152.842083
 	Dec 49.454167
-	Distance 15.848
+	Distance 15.869
 	SpectralType "K7.0V"
 	AppMag 6.59
 }
@@ -991,16 +990,16 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	RA 154.901667
 	Dec 19.869444
 	Distance 15.942
-	SpectralType "M3.0V"
-	AppMag 9.32
+	SpectralType "M2.5V"
+	AppMag 9.29
 }
 
 106440 # Luyten 354-89
 {
 	RA 323.391667
 	Dec -49.008889
-	Distance 16.085
-	SpectralType "M3.0V"
+	Distance 16.144
+	SpectralType "M1.5V"
 	AppMag 8.66
 }
 
@@ -1011,7 +1010,7 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	Dec -35.428056
 	Distance 16.195
 	SpectralType "M9.0V"
-	AppMag 18.50
+	AppMag 18.69
 }
 
 "DENIS 0255-4700:2MASS J02550357-4700509:2MASS 0255-4700"
@@ -1023,28 +1022,19 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	AppMag 22.92
 }
 
-86214 # Gliese 682
-{
-	RA 264.265417
-	Dec -44.319167
-	Distance 16.337
-	SpectralType "M4.5V"
-	AppMag 10.95
-}
-
 Barycenter 19849 "Keid:OMI2 Eri:40 Eri:Gliese 166:ADS 3093" # Orbits of A & (BC) unknown
 {
 	RA 63.828351    # mass ratio 0.89:(0.5+0.20)
 	Dec -7.655829   #
-	Distance 16.390
+	Distance 16.255
 }
 
 "Keid A:OMI2 Eri A:40 Eri A:Gliese 166 A:ADS 3093 A"
 {
 	RA 63.817917
 	Dec -7.652778
-	Distance 16.390
-	SpectralType "K1V"
+	Distance 16.255
+	SpectralType "K0.5V"
 	AppMag 4.43
 }
 
@@ -1052,7 +1042,7 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 {
 	RA 63.841667
 	Dec -7.659722
-	Distance 16.390
+	Distance 16.255
 }
 
 "Keid B:OMI2 Eri B:40 Eri B:Gliese 166 B:ADS 3093 B"
@@ -1075,8 +1065,8 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 "Keid C:OMI2 Eri C:40 Eri C:DY Eri:Gliese 166 C:ADS 3093 C"
 {
 	OrbitBarycenter "Keid B-C"
-	SpectralType "M4.5V"
-	AppMag 11.19
+	SpectralType "M4.0V"
+	AppMag 11.24
 
 	EllipticalOrbit {
 		Period          252.1
@@ -1093,9 +1083,18 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 {
 	RA 341.702083
 	Dec 44.330833
-	Distance 16.470
+	Distance 16.455
 	SpectralType "M3.5V"
-	AppMag 10.06
+	AppMag 10.22
+}
+
+86214 # Gliese 682
+{
+	RA 264.265417
+	Dec -44.319167
+	Distance 16.465
+	SpectralType "M4.0V"
+	AppMag 10.95
 }
 
 Barycenter 88601 "70 Oph:Gliese 702:ADS 11046:Struve 2272"
@@ -1109,7 +1108,7 @@ Barycenter 88601 "70 Oph:Gliese 702:ADS 11046:Struve 2272"
 {
 	OrbitBarycenter "70 Oph"
 	SpectralType "K0V"
-	AppMag 4.20
+	AppMag 4.21
 
 	EllipticalOrbit {
 		Period           88.34
@@ -1126,7 +1125,7 @@ Barycenter 88601 "70 Oph:Gliese 702:ADS 11046:Struve 2272"
 {
 	OrbitBarycenter "70 Oph"
 	SpectralType "K5V"
-	AppMag 6.05
+	AppMag 6.01
 
 	EllipticalOrbit {
 		Period           88.34
@@ -1143,7 +1142,7 @@ Barycenter 88601 "70 Oph:Gliese 702:ADS 11046:Struve 2272"
 {
 	RA 297.695833
 	Dec 8.868333
-	Distance 16.729
+	Distance 16.692
 	SpectralType "A7IV"
 	AppMag 0.77
 
@@ -1180,7 +1179,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 {
 	RA 90.015000
 	Dec 2.705556
-	Distance 17.083
+	Distance 17.097
 	SpectralType "M3.5V"
 	AppMag 11.31
 }
@@ -1190,7 +1189,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	RA 75.487500
 	Dec -6.946389
 	Distance 17.357
-	SpectralType "M3.5V"
+	SpectralType "M4.0V"
 	AppMag 12.22
 }
 
@@ -1202,7 +1201,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 {
 	RA 144.897823
 	Dec -24.80775
-	Distance 17.4
+	Distance 17.414
 	SpectralType "T8V"
 	AbsMag 38 # estimate for radius in Celestia
 }
@@ -1211,7 +1210,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 {
 	RA 144.897843
 	Dec -24.80775
-	Distance 17.4
+	Distance 17.414
 	SpectralType "T8V"
 	AbsMag 38 # estimate for radius in Celestia
 }
@@ -1220,7 +1219,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 {
 	RA 176.922500
 	Dec 78.691111
-	Distance 17.551
+	Distance 17.418
 	SpectralType "M3.5V"
 	AppMag 10.79
 }
@@ -1229,32 +1228,23 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 {
 	RA 206.432500
 	Dec 14.891389
-	Distance 17.706
-	SpectralType "M1.5V"
+	Distance 17.657
+	SpectralType "M1.0V"
 	AppMag 8.46
-}
-
-103039 # LP 816-60
-{
-	RA 313.137500
-	Dec -16.974722
-	Distance 17.906
-	SpectralType "M"
-	AppMag 11.41
 }
 
 Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 {
 	RA 67.796397    # mass ratio 0.224:0.50
 	Dec 58.977167   # 
-	Distance 18.057
+	Distance 18.068
 }
 
 "Gliese 169.1 A:Stein 2051 A"
 {
 	RA 67.799375
 	Dec 58.977167
-	Distance 18.057
+	Distance 18.068
 	SpectralType "M4V"
 	AppMag 11.04
 }
@@ -1263,16 +1253,16 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 {
 	RA 67.795063
 	Dec 58.977167
-	Distance 18.057
+	Distance 18.068
 	SpectralType "DC5"
-	AppMag 12.44
+	AppMag 12.43
 }
 
 33226 # Wolf 294
 {
 	RA 103.704167
 	Dec 33.268056
-	Distance 18.163
+	Distance 18.313
 	SpectralType "M3.0V"
 	AppMag 10.02
 }
@@ -1290,9 +1280,18 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 {
 	RA 82.864167
 	Dec -3.677222
-	Distance 18.620
-	SpectralType "M1.5V"
+	Distance 18.533
+	SpectralType "M1.0V"
 	AppMag 7.95
+}
+
+103039 # LP 816-60
+{
+	RA 313.137500
+	Dec -16.974722
+	Distance 18.635
+	SpectralType "M3.5V"
+	AppMag 11.50
 }
 
 "2MASS J04151954-0935066:2MASS 0415-0935"
@@ -1300,7 +1299,7 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 	RA 63.83125
 	Dec -9.585
 	Distance 18.709
-	SpectralType "T8.5V"
+	SpectralType "T8.0V"
 	AbsMag 38  # for approximate radius in Celestia
 }
 
@@ -1308,91 +1307,91 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 {
 	RA 293.090000
 	Dec 69.661111
-	Distance 18.789
-	SpectralType "K0V"
-	AppMag 4.68
+	Distance 18.768
+	SpectralType "G9V"
+	AppMag 4.67
 }
 
 Barycenter 29295 "Gliese 229:Luyten 668-21:LPM 230" # orbit of A & B unknown
 {
 	RA 92.644265    # mass ratio 0.556:0.05
 	Dec -21.864482  #
-	Distance 18.835
+	Distance 18.770
 }
 
 "Gliese 229 A:Luyten 668-21 A:LPM 230 A"
 {
 	RA 92.644231
 	Dec -21.864643
-	Distance 18.835
-	SpectralType "M1.0V"
-	AppMag 8.12
+	Distance 18.770
+	SpectralType "M1.5V"
+	AppMag 8.14
 }
 
 "Gliese 229 B:Luyten 668-21 B:LPM 230 B"
 {
 	RA 92.644643
 	Dec -21.862692
-	Distance 18.835
-	SpectralType "T6.5V"
+	Distance 18.770
+	SpectralType "T6.0V"
 	AbsMag 33 # very approx
-}
-
-86990 # Luyten 205-128
-{
-	RA 266.642500
-	Dec -57.319167
-	Distance 18.997
-	SpectralType "M4.0V"
-	AppMag 10.75
-}
-
-Barycenter 94761 "Gliese 752:Ross 652:Wolf 1055" # orbit of A & B unknown
-{
-	RA 289.232026   # mass ratio 0.494:0.073
-	Dec 5.166493    #
-	Distance 19.073
-}
-
-"V1428 Aql:Gliese 752 A:Ross 652 A:Wolf 1055 A"
-{
-	RA 289.230417
-	Dec 5.1688889
-	Distance 19.073
-	SpectralType "M3.5V"
-	AppMag 9.11
-}
-
-"Van Biesbroek's Star:V1298 Aql:Gliese 752 B:Ross 652 B:Wolf 1055 B:VB 10"
-{
-	RA 289.242917
-	Dec 5.150278
-	Distance 19.073
-	SpectralType "M8.0V"
-	AppMag 17.50
 }
 
 26857 # Ross 47
 {
 	RA 85.538750
 	Dec 12.489444
-	Distance 19.144
+	Distance 19.018
 	SpectralType "M4.0V"
-	AppMag 11.51
+	AppMag 11.57
+}
+
+86990 # Luyten 205-128
+{
+	RA 266.642500
+	Dec -57.319167
+	Distance 19.063
+	SpectralType "M3.0V"
+	AppMag 10.76
+}
+
+Barycenter 94761 "Gliese 752:Ross 652:Wolf 1055" # orbit of A & B unknown
+{
+	RA 289.232026   # mass ratio 0.494:0.073
+	Dec 5.166493    #
+	Distance 19.078
+}
+
+"V1428 Aql:Gliese 752 A:Ross 652 A:Wolf 1055 A"
+{
+	RA 289.230417
+	Dec 5.1688889
+	Distance 19.078
+	SpectralType "M2.5V"
+	AppMag 9.10
+}
+
+"Van Biesbroek's Star:V1298 Aql:Gliese 752 B:Ross 652 B:Wolf 1055 B:VB 10"
+{
+	RA 289.242917
+	Dec 5.150278
+	Distance 19.078
+	SpectralType "M8.0V"
+	AppMag 17.45
 }
 
 Barycenter "Gliese 570:ADS 9446"
 {
 	RA  224.363404  # mass ratio 0.76:(0.49+0.34)
 	Dec -21.413381  #
-	Distance 19.203
+	Distance 19.116
 }
 
 73184 "KX Lib:Gliese 570 A:ADS 9446 A"	# fully specified orientation
 {
 	OrbitBarycenter "Gliese 570"
-	SpectralType "K5V"
-	AppMag 5.75
+	SpectralType "K4V"
+	AppMag 5.64
 
 	EllipticalOrbit {
 		Period         2130
@@ -1423,8 +1422,8 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 "Gliese 570 B:ADS 9446 B"
 {
 	OrbitBarycenter "Gliese 570 B-C"
-	SpectralType "M1V"
-	AppMag 8.28
+	SpectralType "M1.5V"
+	AppMag 8.30
 
 	EllipticalOrbit {
 		Period            0.847
@@ -1441,7 +1440,7 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 {
 	OrbitBarycenter "Gliese 570 B-C"
 	SpectralType "M3V"
-	AppMag 10.05
+	AppMag 9.96
 
 	EllipticalOrbit {
 		Period            0.847
@@ -1458,8 +1457,8 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 {
 	RA 224.312500
 	Dec -21.363889
-	Distance 19.203
-	SpectralType "T8V"
+	Distance 19.116
+	SpectralType "T7V"
 	AbsMag 38 # very approx
 }
 
@@ -1467,67 +1466,17 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 {
 	RA 290.200833
 	Dec -45.558889
-	Distance 19.296
-	SpectralType "M4.5V"
+	Distance 19.280
+	SpectralType "M4.0V"
 	AppMag 12.23
-}
-
-117473 # Gliese 908
-{
-	RA 357.302083
-	Dec 2.401111
-	Distance 19.356
-	SpectralType "M1.0V"
-	AppMag 8.99
-}
-
-Barycenter 3821 "Achird:ETA Cas:24 Cas:Gliese 34:ADS 671"
-{
-	RA 12.27625
-	Dec 57.815278
-	Distance 19.371
-}
-
-"Achird A:ETA Cas A:24 Cas A:Gliese 34 A:ADS 671 A"
-{
-	OrbitBarycenter "Achird"
-	SpectralType "G3V"
-	AppMag 3.45
-
-	EllipticalOrbit {
-		Period          480
-		SemiMajorAxis   24.99  # mass ratio 1.11:0.60
-		Eccentricity    0.497
-		Inclination	152.19
-		AscendingNode   6.96
-		ArgOfPericenter 179.63
-		MeanAnomaly     82.80
-	}
-}
-
-"Achird B:ETA Cas B:24 Cas B:Gliese 34 B:ADS 671 B"
-{
-	OrbitBarycenter "Achird"
-	SpectralType "K7.0V"
-	AppMag 7.51
-
-	EllipticalOrbit {
-		Period          480
-		SemiMajorAxis   46.24  # mass ratio 1.11:0.60
-		Eccentricity    0.497
-		Inclination	152.19
-		AscendingNode   6.96
-		ArgOfPericenter 359.63
-		MeanAnomaly     82.80
-	}
 }
 
 76074 # Gliese 588
 {
 	RA 233.053750
 	Dec -41.275556
-	Distance 19.373
-	SpectralType "M3.0V"
+	Distance 19.355
+	SpectralType "M2.5V"
 	AppMag 9.31
 }
 
@@ -1535,14 +1484,14 @@ Barycenter 1242 "GJ 1005:Luyten 722-22"
 {
 	RA 3.867083
 	Dec -16.133889
-	Distance 19.408
+	Distance 19.374
 }
 
 "GJ 1005 A:Luyten 722-22 A"
 {
 	OrbitBarycenter "Luyten 722-22"
-	SpectralType "M4.0V"
-	AppMag 11.58
+	SpectralType "M3.5V"
+	AppMag 11.60
 
 	EllipticalOrbit {
 		Period          4.566
@@ -1559,7 +1508,7 @@ Barycenter 1242 "GJ 1005:Luyten 722-22"
 {
 	OrbitBarycenter "Luyten 722-22"
 	SpectralType "M7V"
-	AppMag 14.33
+	AppMag 14.02
 
 	EllipticalOrbit {
 		Period          4.566
@@ -1572,33 +1521,65 @@ Barycenter 1242 "GJ 1005:Luyten 722-22"
 	}
 }
 
-37766 # Ross 882 
+Barycenter 3821 "Achird:ETA Cas:24 Cas:Gliese 34:ADS 671"
 {
-	RA 116.167500
-	Dec 3.552500
-	Distance 19.468
-	SpectralType "M4.0V"
-	AppMag 11.19
+	RA 12.27625
+	Dec 57.815278
+	Distance 19.388
+}
+
+"Achird A:ETA Cas A:24 Cas A:Gliese 34 A:ADS 671 A"
+{
+	OrbitBarycenter "Achird"
+	SpectralType "G3V"
+	AppMag 3.46
+
+	EllipticalOrbit {
+		Period          480
+		SemiMajorAxis   24.99  # mass ratio 1.11:0.60
+		Eccentricity    0.497
+		Inclination	152.19
+		AscendingNode   6.96
+		ArgOfPericenter 179.63
+		MeanAnomaly     82.80
+	}
+}
+
+"Achird B:ETA Cas B:24 Cas B:Gliese 34 B:ADS 671 B"
+{
+	OrbitBarycenter "Achird"
+	SpectralType "K7.0V"
+	AppMag 7.21
+
+	EllipticalOrbit {
+		Period          480
+		SemiMajorAxis   46.24  # mass ratio 1.11:0.60
+		Eccentricity    0.497
+		Inclination	152.19
+		AscendingNode   6.96
+		ArgOfPericenter 359.63
+		MeanAnomaly     82.80
+	}
 }
 
 Barycenter "36 Oph:Gliese 663:ADS 10417" # orbit of (AB) & C unknown
 {
 	RA 258.901180   # mass ratio (0.85+0.85):0.7
 	Dec -26.586250  #
-	Distance 19.471
+	Distance 19.401
 }
 
 Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
 {
 	RA 258.837500
 	Dec -26.602778
-	Distance 19.471
+	Distance 19.401
 }
 
 "36 Oph A:Gliese 663 A:ADS 10417 A"
 {
 	OrbitBarycenter "36 Oph A-B"
-	SpectralType "K1V"
+	SpectralType "K1.5V"
 	AppMag 5.07
 
 	EllipticalOrbit {
@@ -1633,32 +1614,50 @@ Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
 {
 	RA 259.055833
 	Dec -26.546111
-	Distance 19.471
+	Distance 19.401
 	SpectralType "K5V"
-	AppMag 6.33
+	AppMag 6.32
+}
+
+117473 # Gliese 908
+{
+	RA 357.302083
+	Dec 2.401111
+	Distance 19.412
+	SpectralType "M1.0V"
+	AppMag 8.98
+}
+
+37766 # Ross 882 
+{
+	RA 116.167500
+	Dec 3.552500
+	Distance 19.509
+	SpectralType "M4.0V"
+	AppMag 11.19
 }
 
 Barycenter 99461 "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A & B unknown
 {
 	RA 302.798770   # mass ratio 0.82:0.20
 	Dec -36.097603  #
-	Distance 19.728
+	Distance 19.618
 }
 
 "Gliese 783 A:CD-36 13940 A:J Herschel 5173 A:HJ 5173 A"
 {
 	RA 302.79837
 	Dec -36.097385
-	Distance 19.728
-	SpectralType "K3V"
-	AppMag 5.32
+	Distance 19.618
+	SpectralType "K2.5V"
+	AppMag 5.31
 }
 
 "Gliese 783 B:CD-36 13940 B:J Herschel 5173 B:HJ 5173 B"
 {
 	RA 302.8004
 	Dec -36.09849
-	Distance 19.728
+	Distance 19.618
 	SpectralType "M4.0V"
 	AppMag 11.50
 }
@@ -1667,8 +1666,8 @@ Barycenter 99461 "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A &
 {
 	RA 49.981667
 	Dec -43.069722
-	Distance 19.766
-	SpectralType "G5V"
+	Distance 19.711
+	SpectralType "G8V"
 	AppMag 4.26
 }
 
@@ -1678,16 +1677,57 @@ Barycenter 99461 "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A &
 	Dec 70.874722
 	Distance 19.804
 	SpectralType "DXP9"
-	AppMag 14.12
+	AppMag 14.22
+}
+
+Barycenter "Gliese 338:ADS 7251:Struve 1321"
+{
+	RA 138.598959
+	Dec 52.775278
+	Distance 19.921
+}
+
+45343 "Gliese 338 A:ADS 7251 A:Struve 1321 A"
+{
+	OrbitBarycenter "Struve 1321"
+	SpectralType "M0V"
+	AppMag 7.64
+
+	EllipticalOrbit {
+		Period          975
+		SemiMajorAxis   51.58  # mass ratio 06:0.6
+		Eccentricity    0.28
+		Inclination	113
+		AscendingNode   13
+		ArgOfPericenter 276
+		MeanAnomaly     264
+	}
+}
+
+120005 "Gliese 338 B:ADS 7251 B:Struve 1321 B"
+{
+	OrbitBarycenter "Struve 1321"
+	SpectralType "K7V"
+	AppMag 7.70
+
+	EllipticalOrbit {
+		Period          975
+		SemiMajorAxis   51.58  # mass ratio 06:0.6
+		Eccentricity    0.28
+		Inclination	113
+		AscendingNode   13
+		ArgOfPericenter 96
+		MeanAnomaly     264
+	}
 }
 
 99240 # Del Pav
 {
 	RA 302.181667
 	Dec -66.181944
-	Distance 19.915
+	Distance 19.923
 	SpectralType "G8IV"
-	AppMag 3.56
+	AppMag 3.55
 }
 
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
@@ -1697,13 +1737,13 @@ Barycenter 34603 "Gliese 268:Ross 986"
 {
 	RA 107.5075
 	Dec 38.529444
-	Distance 20.019
+	Distance 19.960
 }
 
 "QY Aur:Gliese 268 A:Ross 986 A"
 {
 	OrbitBarycenter "Ross 986"
-	SpectralType "M5V"
+	SpectralType "M4.5V"
 	AppMag 12.05
 
 	EllipticalOrbit {
@@ -1725,88 +1765,38 @@ Barycenter 34603 "Gliese 268:Ross 986"
 	}
 }
 
-71253 # Gliese 555
-{
-	RA 218.570000
-	Dec -12.519444
-	Distance 20.027
-	SpectralType "M3.5V"
-	AppMag 11.31
-}
-
 "2MASS J09373487+2931409:2MASS 0937+2931"
 {
 	RA 144.391667
 	Dec 29.516667
-	Distance 20.030
+	Distance 19.973
 	SpectralType "T6.0V"
 	AbsMag 33  # for approximate radius in Celestia
-}
-
-Barycenter "Gliese 338:ADS 7251:Struve 1321"
-{
-	RA 138.598959
-	Dec 52.775278
-	Distance 20.117
-}
-
-45343 "Gliese 338 A:ADS 7251 A:Struve 1321 A"
-{
-	OrbitBarycenter "Struve 1321"
-	SpectralType "K7V"
-	AppMag 7.62
-
-	EllipticalOrbit {
-		Period          975
-		SemiMajorAxis   51.58  # mass ratio 06:0.6
-		Eccentricity    0.28
-		Inclination	113
-		AscendingNode   13
-		ArgOfPericenter 276
-		MeanAnomaly     264
-	}
-}
-
-120005 "Gliese 338 B:ADS 7251 B:Struve 1321 B"
-{
-	OrbitBarycenter "Struve 1321"
-	SpectralType "K7V"
-	AppMag 7.71
-
-	EllipticalOrbit {
-		Period          975
-		SemiMajorAxis   51.58  # mass ratio 06:0.6
-		Eccentricity    0.28
-		Inclination	113
-		AscendingNode   13
-		ArgOfPericenter 96
-		MeanAnomaly     264
-	}
 }
 
 99701 # Gliese 784
 {
 	RA 303.472500
 	Dec -45.163889
-	Distance 20.236
+	Distance 20.215
 	SpectralType "M0.0V"
-	AppMag 7.96
+	AppMag 7.95
 }
 
-74995 # Wolf 562
+71253 # Gliese 555
 {
-	RA 229.861667
-	Dec -7.722222
-	Distance 20.476
-	SpectralType "M2.5V"
-	AppMag 10.56
+	RA 218.570000
+	Dec -12.519444
+	Distance 20.286
+	SpectralType "M4.0V"
+	AppMag 11.32
 }
 
 Barycenter 116132 "Gliese 896"
 {
 	RA 352.967500
 	Dec 19.937222
-	Distance 20.680
+	Distance 20.401
 }
 
 Barycenter "Gliese 896 A"
@@ -1843,7 +1833,7 @@ Barycenter "Gliese 896 B"
 {
 	OrbitBarycenter "Gliese 896 A"
 	SpectralType "M3.5V"
-	AppMag 10.26
+	AppMag 10.27
 
 	EllipticalOrbit {
 		Period          3.5	# "of the order of a few years"
@@ -1873,7 +1863,7 @@ Barycenter "Gliese 896 B"
 {
 	OrbitBarycenter "Gliese 896 B"
 	SpectralType "M4.5V"
-	AppMag 12.40
+	AppMag 12.21
 
 	EllipticalOrbit {
 		Period          4.1	# "of the order of a few years"
@@ -1898,13 +1888,22 @@ Barycenter "Gliese 896 B"
 	}
 }
 
+74995 # Wolf 562
+{
+	RA 229.861667
+	Dec -7.722222
+	Distance 20.669
+	SpectralType "M3.0V"
+	AppMag 10.57
+}
+
 "LHS 2090:LP 368-128"
 {
 	RA 135.098333
 	Dec 21.834722
 	Distance 20.792
 	SpectralType "M6.0V"
-	AppMag 16.1
+	AppMag 16.10
 }
 
 "LHS 337:Luyten 471-42:GJ 3737"
@@ -1913,7 +1912,7 @@ Barycenter "Gliese 896 B"
 	Dec -38.381667
 	Distance 20.804
 	SpectralType "M4.0V"
-	AppMag 12.74
+	AppMag 12.75
 }
 
 Barycenter 84140 "Gliese 661:BD+45 2505"
@@ -1957,15 +1956,6 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 	}
 }
 
-"GJ 3877:LP 914-54"
-{
-	RA 224.160417
-	Dec -28.164167
-	Distance 20.868
-	SpectralType "M7.0V"
-	AppMag 17.05
-}
-
 # Artigau E. et al. (2006) Discovery of the brightest T dwarf in the 
 # northern hemisphere." ApJ, 651, L57.
 # (http://arxiv.org/abs/astro-ph/0609419)
@@ -1973,9 +1963,18 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 {
 	RA 24.235833
 	Dec 9.563056
-	Distance 20.9
+	Distance 20.874
 	SpectralType "T2.5V"
 	AbsMag 27  # for approximate radius in Celestia
+}
+
+"Gliese 223.2:LP 658-2"
+{
+	RA 88.790417
+	Dec -4.171389
+	Distance 20.901
+	SpectralType "DZ9"
+	AppMag 14.47
 }
 
 "GJ 3959:Giclas 180-60"
@@ -1983,17 +1982,8 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 	RA 247.826667
 	Dec 40.865000
 	Distance 20.908
-	SpectralType "M"
-	AppMag 14.79
-}
-
-"Gliese 223.2:LP 658-2"
-{
-	RA 88.790417
-	Dec -4.171389
-	Distance 21.043
-	SpectralType "DZ9"
-	AppMag 14.45
+	SpectralType "M5.0V"
+	AppMag 14.76
 }
 
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
@@ -2006,14 +1996,14 @@ Barycenter "Gliese 644:Wolf 630" # orbit of (AB) & C unknown
 {
 	RA 253.872083 # mass ratio (0.41+0.34+0.30):0.08
 	Dec -8.340536 #
-	Distance 21.047
+	Distance 21.048
 }
 
 Barycenter 82817 "Gliese 644 A-B:Wolf 630 A-B"
 {
 	RA 253.870000
 	Dec -8.336389
-	Distance 21.047
+	Distance 21.048
 }
 
 "V1054 Oph:Gliese 644 A:Wolf 630 A"
@@ -2052,7 +2042,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 {
 	OrbitBarycenter "Wolf 630 B"
 	SpectralType "M3V"
-	AppMag 10.54
+	AppMag 10.37
 
 	EllipticalOrbit {
 		Period          0.008119 # 2.965522 dy
@@ -2067,7 +2057,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 {
 	OrbitBarycenter "Wolf 630 B"
 	SpectralType "M4V"
-	AppMag 10.63
+	AppMag 10.87
 
 	EllipticalOrbit {
 		Period          0.008119 # 2.965522 dy
@@ -2083,27 +2073,27 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 {
 	RA 253.899167
 	Dec -8.394444
-	Distance 21.047
+	Distance 21.048
 	SpectralType "M7V"
-	AppMag 16.80
+	AppMag 16.78
 }
 
 82809 "Gliese 643:Wolf 629"
 {
 	RA 253.855000
 	Dec -8.322500
-	Distance 21.047
+	Distance 21.048
 	SpectralType "M3.5V"
-	AppMag 11.74
+	AppMag 11.80
 }
 
-114622 # Gliese 892
+80459 # Gliese 625
 {
-	RA 348.320833
-	Dec 57.168333
-	Distance 21.261
-	SpectralType "K3V"
-	AppMag 5.56
+	RA 246.352500
+	Dec 54.304167
+	Distance 21.298
+	SpectralType "M1.5V"
+	AppMag 10.10
 }
 
 "GJ 1128:LHS 271:Luyten 100-115"
@@ -2111,8 +2101,8 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	RA 145.693333
 	Dec -68.885000
 	Distance 21.311
-	SpectralType "M4.5V"
-	AppMag 12.78
+	SpectralType "M4.0V"
+	AppMag 12.74
 }
 
 "GL Vir:GJ 1156:Luyten 1190-34"
@@ -2120,24 +2110,33 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	RA 184.751250
 	Dec 11.125278
 	Distance 21.332
-	SpectralType "M5.0V"
+	SpectralType "M4.5V"
 	AppMag 13.80
 }
 
-80459 # Gliese 625
+114622 # Gliese 892
 {
-	RA 246.352500
-	Dec 54.304167
-	Distance 21.488
-	SpectralType "M1.5V"
-	AppMag 10.10
+	RA 348.320833
+	Dec 57.168333
+	Distance 21.340
+	SpectralType "K3V"
+	AppMag 5.57
+}
+
+"GJ 3877:LP 914-54"
+{
+	RA 224.160417
+	Dec -28.164167
+	Distance 21.389
+	SpectralType "M7.0V"
+	AppMag 17.05
 }
 
 53767 # Ross 104
 {
 	RA 165.017917
 	Dec 22.833056
-	Distance 21.721
+	Distance 21.843
 	SpectralType "M2.5V"
 	AppMag 10.02
 }
@@ -2149,14 +2148,14 @@ Barycenter 106106 "Gliese 829:Ross 775"
 {
 	RA 322.400816
 	Dec 17.642376
-	Distance 22.001
+	Distance 21.889
 }
 
 "Gliese 829 A:Ross 775 A"
 {
 	OrbitBarycenter "Ross 775"
-	SpectralType "M3.5V"
-	AppMag 11.06
+	SpectralType "M3.0V"
+	AppMag 11.05
 
 	EllipticalOrbit {
 		Period          0.146	# 53.2dys
@@ -2169,7 +2168,7 @@ Barycenter 106106 "Gliese 829:Ross 775"
 {
 	OrbitBarycenter "Ross 775"
 	SpectralType "M3.5V"
-	AppMag 11.06
+	AppMag 11.05
 
 	EllipticalOrbit {
 		Period          0.146	# 53.2dys
@@ -2200,8 +2199,8 @@ Barycenter "GJ 3522 A:Giclas 41-14 A"
 "GJ 3522 Aa:Giclas 41-14 Aa"
 {
 	OrbitBarycenter "Giclas 41-14 A"
-	SpectralType "M5.5V" # from estimated mass
-	AppMag 11.9
+	SpectralType "M3.5V"
+	AppMag 11.94
 
 	EllipticalOrbit {
 		Period          0.021	# 7.6dys
@@ -2213,7 +2212,7 @@ Barycenter "GJ 3522 A:Giclas 41-14 A"
 {
 	OrbitBarycenter "Giclas 41-14 A"
 	SpectralType "M6V" # from estimated mass
-	AppMag 12.1
+	AppMag 12.14
 
 	EllipticalOrbit {
 		Period          0.021	# 7.6dys
@@ -2226,7 +2225,7 @@ Barycenter "GJ 3522 A:Giclas 41-14 A"
 {
 	OrbitBarycenter "Giclas 41-14"
 	SpectralType "M6V" # from mass
-	AppMag 12.3
+	AppMag 12.28
 
 	EllipticalOrbit {
 		Period          11.8	# estimate
@@ -2245,8 +2244,8 @@ Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 "XI Boo A:37 Boo A:Gliese 566 A:ADS 9413 A"
 {
 	OrbitBarycenter "XI Boo"
-	SpectralType "G8V"
-	AppMag 4.70
+	SpectralType "G7V"
+	AppMag 4.67
 
 	EllipticalOrbit {
 		Period          151.6
@@ -2263,7 +2262,7 @@ Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 {
 	OrbitBarycenter "XI Boo"
 	SpectralType "K4V"
-	AppMag 6.97
+	AppMag 6.94
 
 	EllipticalOrbit {
 		Period          151.6
@@ -2280,9 +2279,18 @@ Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 {
 	RA 162.718892
 	Dec 6.810118
-	Distance 22.187
+	Distance 22.165
 	SpectralType "M4.0V"
-	AppMag 11.67
+	AppMag 11.65
+}
+
+113296 # Ross 671
+{
+	RA 344.147643
+	Dec 16.554122
+	Distance 22.284
+	SpectralType "M1.5V"
+	AppMag 8.65
 }
 
 "Gliese 299:Ross 619"
@@ -2351,21 +2359,12 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 	AppMag 10.26
 }
 
-113296 # Ross 671
-{
-	RA 344.147643
-	Dec 16.554122
-	Distance 22.372
-	SpectralType "M1.5V"
-	AppMag 8.66
-}
-
 14101 "GJ 3192:LP 771-95 A:Luyten 730-18:RECONS 4"
 {
 	RA 45.46411209
 	Dec -16.593372777
-	Distance 22.544
-	SpectralType "M3V"
+	Distance 22.680
+	SpectralType "M2.5V"
 	AppMag 11.22
 }
 
@@ -2373,18 +2372,18 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 {
 	RA 45.46547306
 	Dec -16.59479288
-	Distance 22.544
-	SpectralType "M3V"
-	AppMag 11.77
+	Distance 22.680
+	SpectralType "M3.5V"
+	AppMag 11.79
 }
 
 "LP 771-95 C"
 {
 	RA 45.46432292
 	Dec -16.59359277
-	Distance 22.544
+	Distance 22.680
 	SpectralType "M5V"
-	AppMag 12.63
+	AppMag 12.65
 }
 
 # =============================================================
@@ -2773,3 +2772,16 @@ Barycenter 86963 "GJ 2130 B" #true separation of Bab not known
 	SpectralType "M6.5V" # from apparent magnitude
 	AppMag 12.75
 }
+
+#===========================================================
+# Star with erroneously large parallax in Hipparcos
+
+85605
+{
+	RA 262.401250
+	Dec 24.653055
+	Distance 180 # from spectral class and ap. mag.
+	SpectralType "K5"
+	AppMag 11.15
+}
+
