@@ -878,7 +878,7 @@
 27949:XI Aur:30 Aur
 27965:57 Ori
 27971:31 Cam
-27989:Betelgeuse:Beteigeuze:ALF Ori:58 Ori
+27989:Betelgeuse:Betelgeuze:ALF Ori:58 Ori
 28010:XI Col
 28098:SIG Col
 28103:ETA Lep:16 Lep
@@ -1076,7 +1076,7 @@
 34834:I Pup
 34861:49 Gem
 34899:L1 Pup
-34909:51 Gem:Bq Gem
+34909:51 Gem:BQ Gem
 34922:L2 Pup
 34981:27 CMa
 35025:52 Gem
@@ -1505,7 +1505,7 @@
 50564:40 Leo
 50583:Algieba:GAM1 Leo:GAM2 Leo:41 Leo
 50676:J Vel
-50684:23 Sex:Rs sex
+50684:23 Sex:RS Sex
 50755:42 Leo
 50799:r Vel
 50801:Tania Australis:MU UMa:34 UMa
@@ -1979,7 +1979,7 @@
 69732:LAM Boo:19 Boo
 69879:A Boo
 69896:ETA Aps
-69929:Cs Vir
+69929:CS Vir
 69974:LAM Vir:100 Vir
 69989:18 Boo
 69996:IOT Lup
@@ -2012,8 +2012,8 @@
 71352:ETA Cen
 71536:RHO Lup
 71618:33 Boo
-71681:Rigel Kentaurus B:Toliman B:ALF2 Cen:ALF Cen B:Gliese 559 B
-71683:Rigel Kentaurus A:Toliman A:ALF1 Cen:ALF Cen A:Gliese 559 A
+71681:Rigil Kentaurus B:Toliman B:ALF2 Cen:ALF Cen B:Gliese 559 B
+71683:Rigil Kentaurus A:Toliman A:ALF1 Cen:ALF Cen A:Gliese 559 A
 71762:PI1 Boo:PI2 Boo:29 Boo
 71795:ZET Boo:30 Boo
 71832:31 Boo
@@ -2054,7 +2054,7 @@
 73133:XI2 Lib:15 Lib
 73165:16 Lib
 73184:Gliese 570
-73199:Rr UMi
+73199:RR UMi
 73249:17 Lib
 73273:BET Lup
 73284:59 Hya
@@ -2498,7 +2498,7 @@
 88469:9 Sgr
 88567:GAM1 Sgr
 88601:70 Oph:Gliese 702:Struve 2272
-88635:Alnasl:Alnasi:GAM Sgr:GAM2 Sgr:10 Sgr
+88635:Alnasl:GAM Sgr:GAM2 Sgr:10 Sgr
 88657:98 Her
 88714:TET Ara
 88745:b Her:99 Her
@@ -2866,7 +2866,7 @@
 101160:1 Del
 101214:44 Cyg
 101243:OME2 Cyg:46 Cyg
-101260:73 Dra:Af Dra
+101260:73 Dra:AF Dra
 101421:Al Dhanab al Dulfim:EPS Del:2 Del
 101474:47 Cyg
 101477:NU Mic
