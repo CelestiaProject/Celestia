@@ -2070,12 +2070,17 @@ AltSurface "limit of knowledge" "TYC 2634-1087-1/b"
 
 
 "e" "HD 75732"   # Rho1 Cnc A
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 90 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.15 jupiters.
+
 {
 	Texture "venuslike.*"
 	NightTexture "venuslikenight.*"
 
-	Mass      8     # M.sin(i) = 8 earths
-	Radius     12600
+	Mass      9     # M.sin(i) = 9 earths
+	Radius     10500
 
 	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
@@ -2083,9 +2088,14 @@ AltSurface "limit of knowledge" "TYC 2634-1087-1/b"
 		Period          0.0077
 		SemiMajorAxis   0.038
 		Eccentricity    0.07
-		ArgOfPericenter 107
-		MeanAnomaly     181
+		Inclination     105.8
+		AscendingNode   130.7
+		ArgOfPericenter 350
+		MeanAnomaly     77
 	}
+
+	Obliquity             106 # guess, to match inclination
+	EquatorAscendingNode  131 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -2112,9 +2122,14 @@ AltSurface "limit of knowledge" "HD 75732/e"
 		Period          0.0401
 		SemiMajorAxis   0.115
 		Eccentricity    0.0159
-		ArgOfPericenter 22
-		MeanAnomaly     89
+		Inclination     106.7
+		AscendingNode   125.6
+		ArgOfPericenter 263
+		MeanAnomaly     90
 	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  126 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -2141,9 +2156,14 @@ AltSurface "limit of knowledge" "HD 75732/b"
 		Period          0.1214
 		SemiMajorAxis   0.24
 		Eccentricity    0.053
-		ArgOfPericenter 275
+		Inclination     106.7
+		AscendingNode   125.6
+		ArgOfPericenter 157
 		MeanAnomaly     29
 	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  126 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -2171,9 +2191,14 @@ AltSurface "limit of knowledge" "HD 75732/c"
 		Period          0.7138
 		SemiMajorAxis   0.785
 		Eccentricity    0.0002
-		ArgOfPericenter 63
+		Inclination     106.7
+		AscendingNode   125.6
+		ArgOfPericenter 304
 		MeanAnomaly     222
 	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  126 # guess, to match ascending node
 
 	RotationPeriod  17 # plausible guess
 }
@@ -2201,9 +2226,14 @@ AltSurface "limit of knowledge" "HD 75732/f"
 		Period          14.2861
 		SemiMajorAxis   5.77
 		Eccentricity    0.025
-		ArgOfPericenter 39
+		Inclination     106.7
+		AscendingNode   125.6
+		ArgOfPericenter 281
 		MeanAnomaly     294
 	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  126 # guess, to match ascending node
 
 	RotationPeriod  10 # plausible guess
 }
