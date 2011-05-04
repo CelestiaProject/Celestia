@@ -80,7 +80,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
 
     Quaterniond q = m_observer->getOrientation(jd);
 
-    const unsigned int sectionCount = 40;
+    const unsigned int sectionCount = 40;  // Must be a multiple of 4
     const unsigned int sliceCount = 10;
     Vector3d profile[sectionCount];
     Vector3d footprint[sectionCount];
@@ -95,6 +95,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_CULL_FACE);
 
     glPushMatrix();
 
@@ -138,6 +139,10 @@ SensorGeometry::render(RenderContext& rc, double tsec)
         }
     }
 
+    // Set to true if alternate sides of the frustum should be drawn with different
+    // opacities.
+    bool alternateShading = m_shape == RectangularShape;
+
     // Compute the 'footprint' of the sensor by finding the intersection of all rays with
     // the target body. The rendering will not be correct unless the sensor frustum
     for (unsigned int i = 0; i < sectionCount; ++i)
@@ -160,18 +165,40 @@ SensorGeometry::render(RenderContext& rc, double tsec)
         footprint[i] = distance * direction;
     }
 
+    if (alternateShading)
+    {
+        glShadeModel(GL_FLAT);
+    }
+
     // Draw the frustum
     if (m_frustumVisible)
     {
+        unsigned int sectionsPerRectSide = sectionCount / 4;
+
         glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), m_frustumOpacity);
         glBegin(GL_TRIANGLE_FAN);
         glVertex3d(0.0, 0.0, 0.0);
-        for (unsigned int i = 0; i < sectionCount; ++i)
+        for (unsigned int i = 0; i <= sectionCount; ++i)
         {
-            glVertex3dv(footprint[i].data());
+            if (alternateShading)
+            {
+                // Use different opacities for adjacent faces of rectangular frusta; this
+                // makes the geometry easier to understand visually.
+                float alpha = m_frustumOpacity;
+                if (((i + sectionsPerRectSide / 2 - 1) / sectionsPerRectSide) % 2 == 1)
+                {
+                    alpha *= 0.5f;
+                }
+                glColor4f(m_frustumColor.red(), m_frustumColor.green(), m_frustumColor.blue(), alpha);
+            }
+            glVertex3dv(footprint[i % sectionCount].data());
         }
-        glVertex3dv(footprint[0].data());
         glEnd();
+    }
+
+    if (alternateShading)
+    {
+        glShadeModel(GL_SMOOTH);
     }
 
     glEnable(GL_LINE_SMOOTH);
@@ -236,6 +263,7 @@ SensorGeometry::render(RenderContext& rc, double tsec)
 
     glPopMatrix();
 
+    glEnable(GL_CULL_FACE);
     glEnable(GL_LIGHTING);
 }
 
