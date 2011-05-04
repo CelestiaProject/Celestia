@@ -55,6 +55,181 @@
 # plane), but their pericenters and anomalies are correctly rendered. For transiting planets
 # the true inclination is known, but the orientation of the orbit in the plane of the sky is not.
 
+"e" "HD 75732"   # Rho1 Cnc A
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 83.4 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.19 jupiters.
+
+{
+	Texture "venuslike.*"
+	NightTexture "venuslikenight.*"
+
+	Mass      9     # M.sin(i) = 9 earths
+	Radius     13300
+
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
+
+	EllipticalOrbit {
+		Period          0.002
+		SemiMajorAxis   0.01564
+		Eccentricity    0.057
+		Inclination     106.9
+		AscendingNode   123.9
+		ArgOfPericenter 269
+		MeanAnomaly     107
+	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  124 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 75732/e"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 75732"   # Rho1 Cnc A
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       260     # M.sin(i) = 0.824 jupiters
+	Radius     84000
+
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
+
+	EllipticalOrbit {
+		Period          0.0401
+		SemiMajorAxis   0.115
+		Eccentricity    0.0159
+		Inclination     107
+		AscendingNode   123.5
+		ArgOfPericenter 263
+		MeanAnomaly     90
+	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  124 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 75732/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 75732"   # Rho1 Cnc A
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       50     # M.sin(i) = 0.169 jupiters
+	Radius     56000
+
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
+
+	EllipticalOrbit {
+		Period          0.1214
+		SemiMajorAxis   0.24
+		Eccentricity    0.053
+		Inclination     107
+		AscendingNode   123.5
+		ArgOfPericenter 156
+		MeanAnomaly     29
+	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  124 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 75732/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"f" "HD 75732"   # Rho1 Cnc A
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       50     # M.sin(i) = 0.144 jupiters
+	Radius     56000
+	Oblateness 0.07
+
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
+
+	EllipticalOrbit {
+		Period          0.7138
+		SemiMajorAxis   0.785
+		Eccentricity    0.0002
+		Inclination     107
+		AscendingNode   123.5
+		ArgOfPericenter 304
+		MeanAnomaly     222
+	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  124 # guess, to match ascending node
+
+	RotationPeriod  17 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 75732/f"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "HD 75732"   # Rho1 Cnc A
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       1220     # M.sin(i) = 3.835 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
+
+	EllipticalOrbit {
+		Period          14.2861
+		SemiMajorAxis   5.77
+		Eccentricity    0.025
+		Inclination     107
+		AscendingNode   123.5
+		ArgOfPericenter 280
+		MeanAnomaly     294
+	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  124 # guess, to match ascending node
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 75732/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "WASP-19"
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -2064,181 +2239,6 @@ AltSurface "limit of knowledge" "TYC 2792-1700-1/b"
 }
 
 AltSurface "limit of knowledge" "TYC 2634-1087-1/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"e" "HD 75732"   # Rho1 Cnc A
-
-# Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 90 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.15 jupiters.
-
-{
-	Texture "venuslike.*"
-	NightTexture "venuslikenight.*"
-
-	Mass      9     # M.sin(i) = 9 earths
-	Radius     10500
-
-	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
-
-	EllipticalOrbit {
-		Period          0.0077
-		SemiMajorAxis   0.038
-		Eccentricity    0.07
-		Inclination     105.8
-		AscendingNode   130.7
-		ArgOfPericenter 350
-		MeanAnomaly     77
-	}
-
-	Obliquity             106 # guess, to match inclination
-	EquatorAscendingNode  131 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 75732/e"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"b" "HD 75732"   # Rho1 Cnc A
-{
-	Texture "exo-class3.*"
-
-	Color  [0.53 0.62 1]
-	Albedo 0.1
-
-	Mass       260     # M.sin(i) = 0.824 jupiters
-	Radius     84000
-
-	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
-
-	EllipticalOrbit {
-		Period          0.0401
-		SemiMajorAxis   0.115
-		Eccentricity    0.0159
-		Inclination     106.7
-		AscendingNode   125.6
-		ArgOfPericenter 263
-		MeanAnomaly     90
-	}
-
-	Obliquity             107 # guess, to match inclination
-	EquatorAscendingNode  126 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 75732/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"c" "HD 75732"   # Rho1 Cnc A
-{
-	Texture "exo-class2.*"
-
-	Color  [0.98 0.97 1]
-	Albedo 0.75
-
-	Mass       50     # M.sin(i) = 0.169 jupiters
-	Radius     56000
-
-	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
-
-	EllipticalOrbit {
-		Period          0.1214
-		SemiMajorAxis   0.24
-		Eccentricity    0.053
-		Inclination     106.7
-		AscendingNode   125.6
-		ArgOfPericenter 157
-		MeanAnomaly     29
-	}
-
-	Obliquity             107 # guess, to match inclination
-	EquatorAscendingNode  126 # guess, to match ascending node
-
-	# likely to be in captured synchronous rotation
-}
-
-AltSurface "limit of knowledge" "HD 75732/c"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"f" "HD 75732"   # Rho1 Cnc A
-{
-	Texture "exo-class2.*"
-
-	Color  [0.98 0.97 1]
-	Albedo 0.75
-
-	Mass       50     # M.sin(i) = 0.144 jupiters
-	Radius     56000
-	Oblateness 0.07
-
-	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
-
-	EllipticalOrbit {
-		Period          0.7138
-		SemiMajorAxis   0.785
-		Eccentricity    0.0002
-		Inclination     106.7
-		AscendingNode   125.6
-		ArgOfPericenter 304
-		MeanAnomaly     222
-	}
-
-	Obliquity             107 # guess, to match inclination
-	EquatorAscendingNode  126 # guess, to match ascending node
-
-	RotationPeriod  17 # plausible guess
-}
-
-AltSurface "limit of knowledge" "HD 75732/f"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
-"d" "HD 75732"   # Rho1 Cnc A
-{
-	Texture "exo-class1.*"
-
-	Color  [0.96 0.96 1]
-	Albedo 0.5
-
-	Mass       1220     # M.sin(i) = 3.835 jupiters
-	Radius     70000
-	Oblateness 0.02
-
-	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
-
-	EllipticalOrbit {
-		Period          14.2861
-		SemiMajorAxis   5.77
-		Eccentricity    0.025
-		Inclination     106.7
-		AscendingNode   125.6
-		ArgOfPericenter 281
-		MeanAnomaly     294
-	}
-
-	Obliquity             107 # guess, to match inclination
-	EquatorAscendingNode  126 # guess, to match ascending node
-
-	RotationPeriod  10 # plausible guess
-}
-
-AltSurface "limit of knowledge" "HD 75732/d"
 {
 	Texture "extrasolar-lok.*"
 }
