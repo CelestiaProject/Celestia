@@ -2775,7 +2775,7 @@ Barycenter 86963 "GJ 2130 B" #true separation of Bab not known
 
 #===========================================================
 # Star with erroneously large parallax in Hipparcos
-
+# (http://simbad.u-strasbg.fr/simbad/sim-id?Ident=hip+85605&NbIdent=1&Radius=2&Radius.unit=arcmin&submit=submit+id)
 85605
 {
 	RA 262.401250
