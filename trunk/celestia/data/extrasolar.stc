@@ -700,6 +700,33 @@
 	AppMag 12.4
 }
 
+"WASP-44:GSC 05264-00740"
+{
+	RA 3.903333
+	Dec -11.938056
+	Distance 960 # from spectral class and magnitude
+	SpectralType "G8V"
+	AppMag 12.9
+}
+
+1005836996 "WASP-45:GSC 06996-00583"
+{
+	RA 5.237500
+	Dec -35.998333
+	Distance 530 # from spectral class and magnitude
+	SpectralType "K2V"
+	AppMag 12.0
+}
+
+"WASP-46:GSC 08797-00758"
+{
+	RA 318.737083
+	Dec -55.871778
+	Distance 1200 # from spectral class and magnitude
+	SpectralType "G6V"
+	AppMag 12.9
+}
+
 1007393925 "WASP-48:GSC 03925-00739"
 {
 	RA 291.162500
@@ -838,6 +865,52 @@
 	AppMag 16.03
 }
 
+"CoRoT-17"
+{
+	RA 278.699167
+	Dec -6.612222
+	Distance 3000
+	SpectralType "G2V"
+	AppMag 15.46
+}
+
+"CoRoT-18"
+{
+	RA 98.1725
+	Dec -0.031667
+	Distance 2800
+	SpectralType "G9"
+	AppMag 14.99
+}
+
+"CoRoT-19"
+{
+	RA 97.0337500
+	Dec -0.170556
+	Distance 2600
+	SpectralType "F9V"
+	Radius 1148000
+	AppMag 14.78
+}
+
+"CoRoT-20"
+{
+	RA 97.720417
+	Dec 0.226944
+	Distance 4010
+	SpectralType "G2V"
+	Radius 640000
+	AppMag 14.66
+}
+
+"CoRoT-23"
+{
+	RA 279.782500
+	Dec 4.357778
+	Distance 4200 # from spectral class and magnitude
+	SpectralType "G0V"
+	AppMag 15.63
+}
 
 # Kepler survey
 
@@ -911,6 +984,24 @@
 	Distance 2000 # from app mag and spectral class
 	SpectralType "G"
 	AppMag 13.7
+}
+
+"Kepler-14"
+{
+	RA 287.708750
+	Dec 47.333056
+	Distance 3200
+	SpectralType "F"
+	AppMag 12.12
+}
+
+"KOI-423"
+{
+	RA 296.960417
+	Dec 46.034167
+	Distance 3900
+	SpectralType "F7IV"
+	AppMag 14.3
 }
 
 "KOI-428"
