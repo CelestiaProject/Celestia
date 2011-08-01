@@ -915,6 +915,18 @@ Barycenter "GJ 1245 A"
 	AppMag 9.37
 }
 
+# Two very nearby (d ~ 5 pc) ultracool brown dwarfs detected by
+# their large proper motions from WISE, 2MASS, and SDSS data.
+# Scholz et al. http://arxiv.org/abs/1105.4059v2
+"WISE J0254+0223"
+{
+	RA 43.539583
+	Dec 2.399722
+	Distance 15
+	SpectralType "T9.0"
+	AbsMag 38 # estimate for radius in Celestia
+}
+
 57367 # Luyten 145-141
 {
 	RA 176.428750
@@ -1231,6 +1243,18 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	Distance 17.657
 	SpectralType "M1.0V"
 	AppMag 8.46
+}
+
+# Two very nearby (d ~ 5 pc) ultracool brown dwarfs detected by
+# their large proper motions from WISE, 2MASS, and SDSS data.
+# Scholz et al. http://arxiv.org/abs/1105.4059v2
+"WISE J1741+2553"
+{
+	RA 265.351250
+	Dec 25.888889
+	Distance 18
+	SpectralType "T9.0"
+	AbsMag 38 # estimate for radius in Celestia
 }
 
 Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
