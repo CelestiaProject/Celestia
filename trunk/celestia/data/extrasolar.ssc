@@ -1,4 +1,4 @@
-# Catalog of 529 known extrasolar planets.
+# Catalog of 564 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1099,6 +1099,86 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 }
 
 
+"TrES-5" "TrES-5 (parent star)"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 84.529 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.21 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       570     # M.sin(i) = 1.778 jupiters
+	Radius     84700
+
+	InfoURL "http://exoplanet.eu/star.php?st=TrES-5"
+
+	EllipticalOrbit {
+		Period          0.0041
+		SemiMajorAxis   0.02446
+		Inclination     82.1
+		AscendingNode   301.9
+		MeanLongitude   182
+	}
+
+	Obliquity             82 # guess, to match inclination
+	EquatorAscendingNode  302 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TrES-5 (parent star)/TrES-5"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "Kepler-17"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 87.2 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.31 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       780     # M.sin(i) = 2.45 jupiters
+	Radius     91700
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-17"
+
+	EllipticalOrbit {
+		Period          0.0041
+		SemiMajorAxis   0.02591
+		Inclination     81.7
+		AscendingNode   295.4
+		MeanLongitude   353
+	}
+
+	Obliquity             82 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-17/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "CoRoT-1"
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -1529,6 +1609,87 @@ AltSurface "limit of knowledge" "TYC 2636-195-1/c"
 }
 
 
+"b" "KOI-196"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.3 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.84 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       160     # M.sin(i) = 0.49 jupiters
+	Radius     58800
+
+	InfoURL "http://exoplanet.eu/star.php?st=KOI-196"
+
+	EllipticalOrbit {
+		Period          0.0051
+		SemiMajorAxis   0.029
+		Eccentricity    0
+		Inclination     82.1
+		AscendingNode   292.1
+		MeanLongitude   192
+	}
+
+	Obliquity             82 # guess, to match inclination
+	EquatorAscendingNode  292 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "KOI-196/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "CoRoT-18"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 86.5 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.31 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       1100     # M.sin(i) = 3.47 jupiters
+	Radius     91700
+
+	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-18"
+
+	EllipticalOrbit {
+		Period          0.0052
+		SemiMajorAxis   0.0295
+		Inclination     91.9
+		AscendingNode   94.3
+		MeanLongitude   183
+	}
+
+	Obliquity             92 # guess, to match inclination
+	EquatorAscendingNode  94 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "CoRoT-18/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "d" "Gliese 876"   # IL Aqr
 {
 	Texture "venuslike.*"
@@ -1636,41 +1797,43 @@ AltSurface "limit of knowledge" "Gliese 876/e"
 }
 
 
-"b" "CoRoT-18"
+"b" "WASP-50"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 86.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.31 jupiters.
+# duration, inclination is fixed at 84.74 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.15 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
 {
-	Texture "exo-class4.*"
-	NightTexture "exo-class4night.*"
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
 
-	Color  [0 0.36 1]
-	Albedo 0.05
+	Color  [0.49 0.89 1]
+	Albedo 0.5
 
-	Mass       1100     # M.sin(i) = 3.47 jupiters
-	Radius     91700
+	Mass       470     # M.sin(i) = 1.468 jupiters
+	Radius     80500
 
-	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-18"
+	InfoURL "http://exoplanet.eu/star.php?st=WASP-50"
 
 	EllipticalOrbit {
-		Period          0.0052
-		SemiMajorAxis   0.0295
-		Inclination     91.8
-		AscendingNode   94.1
-		MeanLongitude   183
+		Period          0.0054
+		SemiMajorAxis   0.02945
+		Eccentricity    0.009
+		Inclination     70.9
+		AscendingNode   41.2
+		ArgOfPericenter 108
+		MeanAnomaly     216
 	}
 
-	Obliquity             92 # guess, to match inclination
-	EquatorAscendingNode  94 # guess, to match ascending node
+	Obliquity             71 # guess, to match inclination
+	EquatorAscendingNode  41 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "CoRoT-18/b"
+AltSurface "limit of knowledge" "WASP-50/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2563,7 +2726,7 @@ AltSurface "limit of knowledge" "HAT-P-20/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.61 jupiters.
+# From transit dimming, radius is estimated at 0.72 jupiters.
 
 {
 	Texture "exo-class5.*"
@@ -2573,7 +2736,7 @@ AltSurface "limit of knowledge" "HAT-P-20/b"
 	Albedo 0.5
 
 	Mass       110     # M.sin(i) = 0.356 jupiters
-	Radius     42700
+	Radius     50400
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+149026"
 
@@ -2583,8 +2746,7 @@ AltSurface "limit of knowledge" "HAT-P-20/b"
 		Eccentricity    0
 		Inclination     102.8
 		AscendingNode   246.9
-		ArgOfPericenter 150
-		MeanAnomaly     186
+		MeanLongitude   336
 	}
 
 	Obliquity             103 # guess, to match inclination
@@ -4240,7 +4402,7 @@ AltSurface "limit of knowledge" "WASP-37/b"
 "b" "CoRoT-23"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 88.27 degrees, so mass can be determined.
+# duration, inclination is fixed at 85.7 degrees, so mass can be determined.
 # From transit dimming, radius is estimated at 1.05 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
@@ -4259,16 +4421,16 @@ AltSurface "limit of knowledge" "WASP-37/b"
 
 	EllipticalOrbit {
 		Period          0.0099
-		SemiMajorAxis   0.04769
+		SemiMajorAxis   0.0477
 		Eccentricity    0.16
-		Inclination     86.9
-		AscendingNode   277.4
+		Inclination     88.1
+		AscendingNode   275.2
 		ArgOfPericenter 169
-		MeanAnomaly     286
+		MeanAnomaly     181
 	}
 
-	Obliquity             87 # guess, to match inclination
-	EquatorAscendingNode  277 # guess, to match ascending node
+	Obliquity             88 # guess, to match inclination
+	EquatorAscendingNode  275 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -8628,6 +8790,84 @@ AltSurface "limit of knowledge" "HD 195019/b"
 }
 
 
+"b" "HD 20794"   # 82 Eri
+{
+	Texture "asteroid.*"
+
+	Mass      3     # M.sin(i) = 3 earths
+	Radius     9100
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+20794"
+
+	EllipticalOrbit {
+		Period          0.0501
+		SemiMajorAxis   0.1207
+		Eccentricity    0
+		ArgOfPericenter 117
+		MeanAnomaly     66
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 20794/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 20794"   # 82 Eri
+{
+	Texture "asteroid.*"
+
+	Mass      2     # M.sin(i) = 2 earths
+	Radius     8400
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+20794"
+
+	EllipticalOrbit {
+		Period          0.1098
+		SemiMajorAxis   0.2036
+		Eccentricity    0
+		ArgOfPericenter 117
+		MeanAnomaly     247
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 20794/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "HD 20794"   # 82 Eri
+{
+	Texture "asteroid.*"
+
+	Mass      5     # M.sin(i) = 5 earths
+	Radius     10500
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+20794"
+
+	EllipticalOrbit {
+		Period          0.2473
+		SemiMajorAxis   0.3499
+		Eccentricity    0
+		ArgOfPericenter 117
+		MeanAnomaly     67
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 20794/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 102117"
 {
 	Texture "exo-class3.*"
@@ -9363,6 +9603,32 @@ AltSurface "limit of knowledge" "HD 168443/b"
 }
 
 
+"b" "HD 85512"
+{
+	Texture "asteroid.*"
+
+	Mass      3     # M.sin(i) = 3 earths
+	Radius     9800
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+85512"
+
+	EllipticalOrbit {
+		Period          0.16
+		SemiMajorAxis   0.26
+		Eccentricity    0.11
+		ArgOfPericenter 80
+		MeanAnomaly     278
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 85512/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 3651"   # 54 Psc
 {
 	Texture "exo-class2.*"
@@ -9487,23 +9753,52 @@ AltSurface "limit of knowledge" "HIP 94075/b"
 {
 	Texture "venuslike.*"
 
-	Mass      22     # M.sin(i) = 22 earths
-	Radius     17500
+	Mass      17     # M.sin(i) = 17 earths
+	Radius     16100
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+785"
 
 	EllipticalOrbit {
-		Period          0.2037
-		SemiMajorAxis   0.319
-		Eccentricity    0.3
-		ArgOfPericenter 45
-		MeanAnomaly     125
+		Period          0.2046
+		SemiMajorAxis   0.32
+		Eccentricity    0.13
+		ArgOfPericenter 203
+		MeanAnomaly     247
 	}
 
 	RotationPeriod  17 # plausible guess
 }
 
 AltSurface "limit of knowledge" "HD 192310/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 192310"   # Gliese 785 / Candidate 7
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass      24     # M.sin(i) = 24 earths
+	Radius     18200
+
+	InfoURL "http://exoplanet.eu/star.php?st=Gl+785"
+
+	EllipticalOrbit {
+		Period          1.4396
+		SemiMajorAxis   1.18
+		Eccentricity    0.32
+		ArgOfPericenter 140
+		MeanAnomaly     53
+	}
+
+	RotationPeriod  17 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 192310/c"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -10289,6 +10584,36 @@ AltSurface "limit of knowledge" "HD 154672/b"
 }
 
 AltSurface "limit of knowledge" "HD 145457/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 5891"
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       2420     # M.sin(i) = 7.6 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+5891"
+
+	EllipticalOrbit {
+		Period          0.4849
+		SemiMajorAxis   0.76
+		Eccentricity    0.066
+		ArgOfPericenter 112
+		MeanAnomaly     19
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 5891/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -11390,6 +11715,64 @@ AltSurface "limit of knowledge" "HD 92788/b"
 }
 
 
+"b" "HD 107383"   # 11 Com
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       6170     # M.sin(i) = 19.4 jupiters
+	Radius     70000
+
+	InfoURL "http://exoplanet.eu/star.php?st=11+Com"
+
+	EllipticalOrbit {
+		Period          0.8926
+		SemiMajorAxis   1.29
+		Eccentricity    0.231
+		ArgOfPericenter 2
+		MeanAnomaly     304
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 107383/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 33142"
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       410     # M.sin(i) = 1.3 jupiters
+	Radius     70000
+	Oblateness 0.05
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+33142"
+
+	EllipticalOrbit {
+		Period          0.8942
+		SemiMajorAxis   1.06
+		Eccentricity    0.2
+		ArgOfPericenter 302
+		MeanAnomaly     155
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 33142/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 43197"
 {
 	Texture "exo-class2.*"
@@ -11415,6 +11798,36 @@ AltSurface "limit of knowledge" "HD 92788/b"
 }
 
 AltSurface "limit of knowledge" "HD 43197/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 137388"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       70     # M.sin(i) = 0.223 jupiters
+	Radius     56000
+	Oblateness 0.05
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+137388"
+
+	EllipticalOrbit {
+		Period          0.9035
+		SemiMajorAxis   0.89
+		Eccentricity    0.36
+		ArgOfPericenter 75
+		MeanAnomaly     323
+	}
+
+	RotationPeriod  17 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 137388/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -11749,6 +12162,36 @@ AltSurface "limit of knowledge" "TYC 3304-0101-1/b"
 }
 
 
+"b" "HD 96063"
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       290     # M.sin(i) = 0.9 jupiters
+	Radius     84000
+	Oblateness 0.10
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+96063"
+
+	EllipticalOrbit {
+		Period          0.9886
+		SemiMajorAxis   0.99
+		Eccentricity    0.2
+		ArgOfPericenter 348
+		MeanAnomaly     256
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 96063/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 38283"
 {
 	Texture "exo-class2.*"
@@ -12019,6 +12462,36 @@ AltSurface "limit of knowledge" "HD 142415/b"
 }
 
 
+"b" "HD 28678"
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       540     # M.sin(i) = 1.7 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+28678"
+
+	EllipticalOrbit {
+		Period          1.0598
+		SemiMajorAxis   1.24
+		Eccentricity    0.168
+		ArgOfPericenter 288
+		MeanAnomaly     266
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 28678/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 33564"
 {
 	Texture "exo-class2.*"
@@ -12104,6 +12577,34 @@ AltSurface "limit of knowledge" "HD 108874/b"
 }
 
 AltSurface "limit of knowledge" "HD 108874/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 180314"
+{
+	Texture "browndwarf.*"
+	Emissive true
+	Color [1 0.5 0.5]
+
+	Mass       6990     # M.sin(i) = 22 jupiters
+	Radius     70000
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+180314"
+
+	EllipticalOrbit {
+		Period          1.0843
+		SemiMajorAxis   1.4
+		Eccentricity    0.257
+		ArgOfPericenter 329
+		MeanAnomaly     323
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 180314/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -12317,6 +12818,36 @@ AltSurface "limit of knowledge" "HD 47536/c"
 }
 
 
+"b" "HD 1502"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       990     # M.sin(i) = 3.1 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+1502"
+
+	EllipticalOrbit {
+		Period          1.1822
+		SemiMajorAxis   1.31
+		Eccentricity    0.101
+		ArgOfPericenter 319
+		MeanAnomaly     170
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 1502/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 4203"
 {
 	Texture "exo-class2.*"
@@ -12342,6 +12873,36 @@ AltSurface "limit of knowledge" "HD 47536/c"
 }
 
 AltSurface "limit of knowledge" "HD 4203/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 98219"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       570     # M.sin(i) = 1.8 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+98219"
+
+	EllipticalOrbit {
+		Period          1.1962
+		SemiMajorAxis   1.23
+		Eccentricity    0.2
+		ArgOfPericenter 318
+		MeanAnomaly     278
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 98219/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -12402,6 +12963,36 @@ AltSurface "limit of knowledge" "HD 99109/b"
 }
 
 AltSurface "limit of knowledge" "HD 210277/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 108863"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       830     # M.sin(i) = 2.6 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+108863"
+
+	EllipticalOrbit {
+		Period          1.214
+		SemiMajorAxis   1.4
+		Eccentricity    0.05
+		ArgOfPericenter 85
+		MeanAnomaly     16
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 108863/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -13063,6 +13654,36 @@ AltSurface "limit of knowledge" "HD 136726/b"
 }
 
 
+"b" "HD 158038"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       570     # M.sin(i) = 1.8 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+158038"
+
+	EllipticalOrbit {
+		Period          1.4264
+		SemiMajorAxis   1.52
+		Eccentricity    0.291
+		ArgOfPericenter 322
+		MeanAnomaly     153
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 158038/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 4113"
 {
 	Texture "exo-class2.*"
@@ -13595,6 +14216,36 @@ AltSurface "limit of knowledge" "HD 200964/c"
 }
 
 
+"b" "HD 7199"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       90     # M.sin(i) = 0.29 jupiters
+	Radius     56000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+7199"
+
+	EllipticalOrbit {
+		Period          1.6838
+		SemiMajorAxis   1.36
+		Eccentricity    0.19
+		ArgOfPericenter 212
+		MeanAnomaly     120
+	}
+
+	RotationPeriod  17 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 7199/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 23079"
 {
 	Texture "exo-class2.*"
@@ -13685,6 +14336,36 @@ AltSurface "limit of knowledge" "HD 183263/c"
 }
 
 
+"b" "HD 141937"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       3080     # M.sin(i) = 9.7 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+141937"
+
+	EllipticalOrbit {
+		Period          1.7884
+		SemiMajorAxis   1.52
+		Eccentricity    0.41
+		ArgOfPericenter 158
+		MeanAnomaly     193
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 141937/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HIP 2247"   # BD-17 63
 {
 	Texture "exo-class1.*"
@@ -13745,6 +14426,36 @@ AltSurface "limit of knowledge" "HD 181342/b"
 }
 
 
+"b" "HD 116029"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       670     # M.sin(i) = 2.1 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+116029"
+
+	EllipticalOrbit {
+		Period          1.8349
+		SemiMajorAxis   1.73
+		Eccentricity    0.2
+		ArgOfPericenter 278
+		MeanAnomaly     186
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 116029/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 5319"
 {
 	Texture "exo-class2.*"
@@ -13770,6 +14481,36 @@ AltSurface "limit of knowledge" "HD 181342/b"
 }
 
 AltSurface "limit of knowledge" "HD 5319/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 152581"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       480     # M.sin(i) = 1.5 jupiters
+	Radius     70000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+152581"
+
+	EllipticalOrbit {
+		Period          1.8864
+		SemiMajorAxis   1.48
+		Eccentricity    0.2
+		ArgOfPericenter 301
+		MeanAnomaly     188
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 152581/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -13837,36 +14578,6 @@ AltSurface "limit of knowledge" "Gliese 317/c"
 }
 
 
-"b" "HD 141937"
-{
-	Texture "exo-class2.*"
-
-	Color  [0.98 0.97 1]
-	Albedo 0.75
-
-	Mass       3080     # M.sin(i) = 9.7 jupiters
-	Radius     70000
-	Oblateness 0.01
-
-	InfoURL "http://exoplanet.eu/star.php?st=HD+141937"
-
-	EllipticalOrbit {
-		Period          1.7884
-		SemiMajorAxis   1.52
-		Eccentricity    0.41
-		ArgOfPericenter 158
-		MeanAnomaly     193
-	}
-
-	RotationPeriod  10 # plausible guess
-}
-
-AltSurface "limit of knowledge" "HD 141937/b"
-{
-	Texture "extrasolar-lok.*"
-}
-
-
 "b" "HD 38801"
 {
 	Texture "exo-class2.*"
@@ -13891,6 +14602,66 @@ AltSurface "limit of knowledge" "HD 141937/b"
 }
 
 AltSurface "limit of knowledge" "HD 38801/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 48265"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       370     # M.sin(i) = 1.16 jupiters
+	Radius     70000
+	Oblateness 0.05
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+48265"
+
+	EllipticalOrbit {
+		Period          1.9165
+		SemiMajorAxis   1.51
+		Eccentricity    0.18
+		ArgOfPericenter 150
+		MeanAnomaly     287
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 48265/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 82886"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       410     # M.sin(i) = 1.3 jupiters
+	Radius     70000
+	Oblateness 0.05
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+82886"
+
+	EllipticalOrbit {
+		Period          1.9302
+		SemiMajorAxis   1.65
+		Eccentricity    0.2
+		ArgOfPericenter 212
+		MeanAnomaly     294
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 82886/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -13958,31 +14729,31 @@ AltSurface "limit of knowledge" "TYC 5409-2156-1/b"
 }
 
 
-"b" "HD 48265"
+"b" "HD 18742"
 {
 	Texture "exo-class2.*"
 
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       370     # M.sin(i) = 1.16 jupiters
+	Mass       860     # M.sin(i) = 2.7 jupiters
 	Radius     70000
-	Oblateness 0.05
+	Oblateness 0.02
 
-	InfoURL "http://exoplanet.eu/star.php?st=HD+48265"
+	InfoURL "http://exoplanet.eu/star.php?st=HD+18742"
 
 	EllipticalOrbit {
-		Period          1.9165
-		SemiMajorAxis   1.51
-		Eccentricity    0.18
-		ArgOfPericenter 150
-		MeanAnomaly     287
+		Period          2.1136
+		SemiMajorAxis   1.92
+		Eccentricity    0.2
+		ArgOfPericenter 227
+		MeanAnomaly     96
 	}
 
 	RotationPeriod  10 # plausible guess
 }
 
-AltSurface "limit of knowledge" "HD 48265/b"
+AltSurface "limit of knowledge" "HD 18742/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -14013,6 +14784,36 @@ AltSurface "limit of knowledge" "HD 48265/b"
 }
 
 AltSurface "limit of knowledge" "HD 5388/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 102329"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       1880     # M.sin(i) = 5.9 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+102329"
+
+	EllipticalOrbit {
+		Period          2.1303
+		SemiMajorAxis   2.01
+		Eccentricity    0.211
+		ArgOfPericenter 88
+		MeanAnomaly     157
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 102329/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -14196,6 +14997,66 @@ AltSurface "limit of knowledge" "TYC 0197-0037-1/b"
 }
 
 
+"b" "HD 99706"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       450     # M.sin(i) = 1.4 jupiters
+	Radius     70000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+99706"
+
+	EllipticalOrbit {
+		Period          2.3765
+		SemiMajorAxis   2.14
+		Eccentricity    0.365
+		ArgOfPericenter 242
+		MeanAnomaly     276
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 99706/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 131496"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       700     # M.sin(i) = 2.2 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+131496"
+
+	EllipticalOrbit {
+		Period          2.4175
+		SemiMajorAxis   2.09
+		Eccentricity    0.163
+		ArgOfPericenter 326
+		MeanAnomaly     327
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 131496/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 45350"
 {
 	Texture "exo-class2.*"
@@ -14281,6 +15142,36 @@ AltSurface "limit of knowledge" "HD 45410/b"
 }
 
 AltSurface "limit of knowledge" "HD 222404/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 30856"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       570     # M.sin(i) = 1.8 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+30856"
+
+	EllipticalOrbit {
+		Period          2.4969
+		SemiMajorAxis   2
+		Eccentricity    0.2
+		ArgOfPericenter 337
+		MeanAnomaly     334
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 30856/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -15369,6 +16260,66 @@ AltSurface "limit of knowledge" "HD 73267/b"
 }
 
 
+"b" "HD 7449"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       350     # M.sin(i) = 1.11 jupiters
+	Radius     70000
+	Oblateness 0.05
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+7449"
+
+	EllipticalOrbit {
+		Period          3.4908
+		SemiMajorAxis   2.3
+		Eccentricity    0.82
+		ArgOfPericenter 84
+		MeanAnomaly     20
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 7449/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 7449"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       640     # M.sin(i) = 2 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+7449"
+
+	EllipticalOrbit {
+		Period          11.0773
+		SemiMajorAxis   4.96
+		Eccentricity    0.53
+		ArgOfPericenter 116
+		MeanAnomaly     334
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 7449/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 11506"
 {
 	Texture "exo-class2.*"
@@ -15454,6 +16405,36 @@ AltSurface "limit of knowledge" "HD 175167/b"
 }
 
 AltSurface "limit of knowledge" "HD 50554/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 142245"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       600     # M.sin(i) = 1.9 jupiters
+	Radius     70000
+	Oblateness 0.03
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+142245"
+
+	EllipticalOrbit {
+		Period          3.5565
+		SemiMajorAxis   2.77
+		Eccentricity    0.2
+		ArgOfPericenter 196
+		MeanAnomaly     189
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 142245/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -15697,6 +16678,36 @@ AltSurface "limit of knowledge" "HD 86226/b"
 }
 
 
+"b" "HD 132563 B"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       470     # M.sin(i) = 1.49 jupiters
+	Radius     70000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+132563B"
+
+	EllipticalOrbit {
+		Period          4.2272
+		SemiMajorAxis   2.62
+		Eccentricity    0.22
+		ArgOfPericenter 88
+		MeanAnomaly     116
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 132563 B/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 23596"
 {
 	Texture "exo-class2.*"
@@ -15840,6 +16851,36 @@ AltSurface "limit of knowledge" "HD 8673/b"
 }
 
 AltSurface "limit of knowledge" "GD 66/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 204941"
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       90     # M.sin(i) = 0.266 jupiters
+	Radius     56000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+204941"
+
+	EllipticalOrbit {
+		Period          4.7447
+		SemiMajorAxis   2.56
+		Eccentricity    0.37
+		ArgOfPericenter 277
+		MeanAnomaly     151
+	}
+
+	RotationPeriod  17 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 204941/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -16610,6 +17651,36 @@ AltSurface "limit of knowledge" "NN Ser/d"
 }
 
 AltSurface "limit of knowledge" "NN Ser/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 106270"
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       3500     # M.sin(i) = 11 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HD+106270"
+
+	EllipticalOrbit {
+		Period          7.9124
+		SemiMajorAxis   4.3
+		Eccentricity    0.402
+		ArgOfPericenter 292
+		MeanAnomaly     311
+	}
+
+	RotationPeriod  10 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 106270/b"
 {
 	Texture "extrasolar-lok.*"
 }
