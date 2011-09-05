@@ -117,6 +117,15 @@
 	AbsMag 3.36
 }
 
+"TrES-5 (parent star):GSC 03949-00967"
+{
+	RA 305.222083
+	Dec 59.448889
+	Distance 1170
+	SpectralType "K0V" # from inferred mass and temp
+	AppMag 13.72
+}
+
 # XO survey
 
 1016572041 "XO-1:GSC 02041-01657"
@@ -736,6 +745,14 @@
 	AppMag 11.06
 }
 
+"WASP-50"
+{
+	RA 43.687917
+	Dec -10.898056
+	Distance 750
+	SpectralType "G9"
+	AppMag 11.6
+}
 
 # CoRoT survey
 
@@ -995,6 +1012,24 @@
 	AppMag 12.12
 }
 
+"Kepler-17"
+{
+	RA 298.395417
+	Dec 47.815000
+	Distance 1880
+	SpectralType "G7V"  # from temperature and mass
+	AppMag 14
+}
+
+"KOI-196"
+{
+	RA 285.634222
+	Dec 45.981667
+	Distance 2380
+	SpectralType "G2V"
+	AppMag 14.5
+}
+
 "KOI-423"
 {
 	RA 296.960417
@@ -1050,6 +1085,15 @@
 	Distance 466
 	SpectralType "K2III"
 	AppMag 8.33
+}
+
+"HD 132563 B"
+{
+	RA 224.5880667
+	Dec 44.04329722
+	Distance 313.32
+	SpectralType "G1V" # from mass and temperature
+	AppMag 9.47
 }
 
 # Other non-Hip stars
