@@ -152,6 +152,7 @@ void MainWindow::findSizes(const QFont &font)
 void
 MainWindow::updateFont(const QFont& font)
 {
+    qDebug() << font.family() << " match: " << font.exactMatch();
     m_currentFont.setFamily(font.family());
     buildTxf();
 }
@@ -315,7 +316,7 @@ MainWindow::buildTxf(const QFont& font, QDataStream& out, int texWidth, int texH
     int ySpacing = 3;
 
     painter.setFont(devFont);
-    foreach(BasicGlyphInfo info, glyphInfoList)
+    foreach (BasicGlyphInfo info, glyphInfoList)
     {
         QRect bounds = fm.boundingRect(info.ch);
         if (x + bounds.width() >= texWidth)
@@ -348,7 +349,7 @@ MainWindow::buildTxf(const QFont& font, QDataStream& out, int texWidth, int texH
         out << (qint8) bounds.left() << (qint8) (-bounds.bottom());
         out << (qint8) fm.width(info.ch);
         out << (quint8) 0;   /* unused */
-        out << (quint16) (x - 1) << (quint16) (texWidth - y - 2);
+        out << (quint16) (x - 1) << (quint16) (texHeight - y - 2);
 
         x += bounds.width() + xSpacing;
     }

@@ -28,12 +28,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
 
-    void findStyles(const QFont& font);
-    void findSizes(const QFont& font);
     bool buildTxf();
     bool buildTxf(const QFont& font, QDataStream& out, int texWidth, int texHeight);
 
 public slots:
+    void findStyles(const QFont& font);
+    void findSizes(const QFont& font);
     void updateFont(const QFont& font);
     void updateSize(const QString& sizeString);
     void updateStyle(const QString& styleName);
