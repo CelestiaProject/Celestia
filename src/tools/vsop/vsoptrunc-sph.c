@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     char buf[512];
     int degree = 0;
     int lbr = 0;
-    char* planet = "earth";
+    const char* planet = "earth";
     int term = 0;
     int truncSeries = 0;
     double a0 = 1.0;
