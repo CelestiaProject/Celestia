@@ -681,7 +681,7 @@
 	AppMag 9.42
 }
 
-"WASP-39"
+"WASP-39:GSC 04980-00761"
 {
 	RA 217.326667
 	Dec -3.444444
@@ -931,7 +931,7 @@
 
 # Kepler survey
 
-"Kepler-4"
+"Kepler-4:GSC 03549-02067"
 {
 	RA 285.615417
 	Dec 50.135833
@@ -940,7 +940,7 @@
 	AppMag 12.7
 }
 
- "Kepler-5"
+ "Kepler-5:KOI-18"
  {
 	RA 299.407083
 	Dec 44.035
@@ -976,7 +976,7 @@
 	AppMag 13.9
 }
 
-"Kepler-9"
+"Kepler-9:KOI-377"
 {
 	RA 285.574167
 	Dec 38.400833
@@ -985,7 +985,7 @@
 	AppMag 13.9
 }
 
-"Kepler-10"
+"Kepler-10:KOI-72:GSC 03549-00354"
 {
 	RA 285.679167
 	Dec 50.241389
@@ -994,7 +994,7 @@
 	AppMag 10.96
 }
 
-"Kepler-11:GSC 03144-00002"
+"Kepler-11:KOI-157:GSC 03144-00002"
 {
 	RA 297.115000
 	Dec 41.909167
@@ -1003,7 +1003,16 @@
 	AppMag 13.7
 }
 
-"Kepler-14"
+"Kepler-12:KOI-20:GSC 03549-00844"
+{
+	RA 286.243333
+	Dec 50.040278
+	Distance 2700 # from app mag and spectral class
+	SpectralType "G0"
+	AppMag 13.4
+}
+
+1004133546 "Kepler-14:GSC 03546-00413"
 {
 	RA 287.708750
 	Dec 47.333056
@@ -1019,6 +1028,15 @@
 	Distance 1880
 	SpectralType "G7V"  # from temperature and mass
 	AppMag 14
+}
+
+1015493134 "Kepler-19:GSC 03134-01549"
+{
+	RA 290.420833
+	Dec 37.851667
+	Distance 720 # from mass, radius and magnitude
+	SpectralType "G5V" # from mass and radius
+	AppMag 12
 }
 
 "KOI-196"
@@ -1048,6 +1066,14 @@
 	AppMag 14.76
 }
 
+"KOI-730"
+{
+	RA 15.079167
+	Dec 47.216667
+	Distance 3900 # from mass, radius and magnitude
+	SpectralType "G0V" # from mass and radius
+	AppMag 15
+}
 
 # HD stars without Hip numbers
 
