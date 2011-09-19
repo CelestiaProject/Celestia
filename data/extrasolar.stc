@@ -1021,6 +1021,51 @@
 	AppMag 12.12
 }
 
+Barycenter "Kepler-16"
+{
+	RA 289.075833
+	Dec 51.757500
+	Distance 280
+}
+
+# Doyle et al. 2011. "Kepler-16: A transiting circumbinary 
+# planet" (http://arxiv.org/abs/1109.3432)
+"Kepler-16 A"
+{
+	OrbitBarycenter "Kepler-16"
+	SpectralType "K"
+	Radius 451500
+	AbsMag 7.4
+
+	EllipticalOrbit {
+		Period		0.1124688 # 41.079220 days
+		SemiMajorAxis	0.05085   # mass ratio 0.6897:0.20255
+		Eccentricity    0.15944
+		Inclination     82.2034   #
+		AscendingNode   287.6972  # inclination to plane of sky 90.3401 deg.
+		ArgOfPericenter 67.4901
+		MeanAnomaly	0.7144
+	}
+}
+
+"Kepler-16 B"
+{
+	OrbitBarycenter "Kepler-16"
+	SpectralType "M"
+	Radius 157500
+	AbsMag 12.3
+
+	EllipticalOrbit {
+		Period		0.1124688 # 41.079220 days
+		SemiMajorAxis	0.17315   # mass ratio 0.6897:0.20255
+		Eccentricity    0.15944
+		Inclination     82.2034   #
+		AscendingNode   287.6972  # inclination to plane of sky 90.3401 deg.
+		ArgOfPericenter 247.4901
+		MeanAnomaly	0.7144
+	}
+}
+
 "Kepler-17"
 {
 	RA 298.395417
