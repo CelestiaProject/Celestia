@@ -663,6 +663,15 @@
 	AppMag 10.95
 }
 
+"WASP-36"
+{
+	RA 131.580417
+	Dec -8.026944
+	Distance 1470
+	SpectralType "G2V"
+	AppMag 12.7
+}
+
 "WASP-37:GSC 00326-00658"
 {
 	RA 221.944167
@@ -1075,6 +1084,15 @@ Barycenter "Kepler-16"
 	AppMag 14
 }
 
+"Kepler-18"
+{
+	RA 298.079583
+	Dec 44.746389
+	Distance 2300 # from spectral class and magnitude
+	SpectralType "G"  # from temperature and mass
+	AppMag 14
+}
+
 1015493134 "Kepler-19:GSC 03134-01549"
 {
 	RA 290.420833
@@ -1084,6 +1102,15 @@ Barycenter "Kepler-16"
 	AppMag 12
 }
 
+"KOI-135:KIC 9818381"
+{
+	RA 285.240833
+	Dec 46.668333
+	Distance 6360
+	SpectralType "G0V"
+	AppMag 14
+}
+
 "KOI-196"
 {
 	RA 285.634222
@@ -1091,6 +1118,15 @@ Barycenter "Kepler-16"
 	Distance 2380
 	SpectralType "G2V"
 	AppMag 14.5
+}
+
+"KOI-204:KIC 9305831"
+{
+	RA 300.102500
+	Dec 45.762222
+	Distance 7330
+	SpectralType "G2IV"
+	AppMag 15
 }
 
 "KOI-423"
@@ -1118,6 +1154,24 @@ Barycenter "Kepler-16"
 	Distance 3900 # from mass, radius and magnitude
 	SpectralType "G0V" # from mass and radius
 	AppMag 15
+}
+
+"KIC 10905746"
+{
+	RA 283.628333
+	Dec 48.391111
+	Distance 190 # from mass, radius and magnitude
+	SpectralType "M0V"
+	AppMag 13
+}
+
+"KIC 6185331"
+{
+	RA 284.273750
+	Dec 41.535000
+	Distance 5600 # from mass, radius and magnitude
+	SpectralType "G" # from temperature and mass
+	AppMag 15.64
 }
 
 # HD stars without Hip numbers
@@ -1261,6 +1315,15 @@ Barycenter "Kepler-16"
 	AppMag 9.94
 }
 
+114840
+{
+	RA 348.925833
+	Dec +58.043333
+	Distance 4900
+	SpectralType "K2III"
+	AppMag 8.19
+}
+
 # Figueira et al, 2010 (http://fr.arxiv.org/abs/1003.3678)
 # suggest the radial velocity is stellar rather than planetary
 #1002141355 "BD+20 1790"
@@ -1291,6 +1354,15 @@ Barycenter "Kepler-16"
 	AppMag 12.84
 }
 
+"Qatar-2:GSC 04974-00112"
+{
+	RA 207.655833
+	Dec -6.803889
+	Distance 484 # from spectral class and apparent mag
+	SpectralType "K"
+	AppMag 13.3
+}
+
 "GJ 3634"
 {
 	RA 164.646250
@@ -1298,6 +1370,15 @@ Barycenter "Kepler-16"
 	Distance 64.5
 	SpectralType "M2.5V"
 	AppMag 11.95
+}
+
+1003233304 "BD+48 738:GSC 03304-00323"
+{
+	RA 40.710417
+	Dec 49.586944
+	Distance 1460 # from spectral class and magnitude
+	SpectralType "K0III"
+	AppMag 9.14
 }
 
 # Definitions for some exoplanet stars in multiple systems
@@ -1767,6 +1848,8 @@ Barycenter "NN Ser"
 	}
 }
 
+# Reported HU Aqr planets are dynamically unstable
+# Result is likely to be an artefact
 Barycenter "HU Aqr"
 {
 	RA 316.992917
