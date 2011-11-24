@@ -49,7 +49,7 @@ template<typename MatrixType> class SVD
     enum {
       PacketSize = ei_packet_traits<Scalar>::size,
       AlignmentMask = int(PacketSize)-1,
-      MinSize = EIGEN_ENUM_MIN(MatrixType::RowsAtCompileTime, MatrixType::ColsAtCompileTime)
+      MinSize = EIGEN_SIZE_MIN(MatrixType::RowsAtCompileTime, MatrixType::ColsAtCompileTime)
     };
 
     typedef Matrix<Scalar, MatrixType::RowsAtCompileTime, 1> ColVector;

@@ -98,7 +98,7 @@ template<typename _Scalar> class AmbiVector
       int allocSize = m_allocatedElements * sizeof(ListEl);
       allocSize = allocSize/sizeof(Scalar) + (allocSize%sizeof(Scalar)>0?1:0);
       Scalar* newBuffer = new Scalar[allocSize];
-      memcpy(newBuffer,  m_buffer,  copyElements * sizeof(ListEl));
+	  std::memcpy(newBuffer,  m_buffer,  copyElements * sizeof(ListEl));
       delete[] m_buffer;
       m_buffer = newBuffer;
     }

@@ -35,7 +35,7 @@ template<typename Lhs, typename Rhs,
                      ? UpperTriangular
                      : -1,
   int StorageOrder = ei_is_part<Lhs>::value ? -1  // this is to solve ambiguous specializations
-                   : int(Lhs::Flags) & (RowMajorBit|SparseBit)
+                   : int(Lhs::Flags) & int(RowMajorBit|SparseBit)
   >
 struct ei_solve_triangular_selector;
 

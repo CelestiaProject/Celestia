@@ -94,10 +94,16 @@ class ei_compute_matrix_flags
 {
     enum {
       row_major_bit = Options&RowMajor ? RowMajorBit : 0,
-      inner_max_size = row_major_bit ? MaxCols : MaxRows,
+      inner_max_size = int(MaxRows==1) ? int(MaxCols)
+                     : int(MaxCols==1) ? int(MaxRows)
+                     : int(row_major_bit) ? int(MaxCols) : int(MaxRows),
       is_big = inner_max_size == Dynamic,
-      is_packet_size_multiple = (Cols*Rows) % ei_packet_traits<Scalar>::size == 0,
-      aligned_bit = ((Options&AutoAlign) && (is_big || is_packet_size_multiple)) ? AlignedBit : 0,
+      storage_has_fixed_size = MaxRows != Dynamic && MaxCols != Dynamic,
+      storage_has_aligned_fixed_size = storage_has_fixed_size
+                     && ( (MaxCols*MaxRows) % ei_packet_traits<Scalar>::size == 0 ),
+      aligned_bit = (    (Options&AutoAlign)
+                      && (is_big || storage_has_aligned_fixed_size)
+                    ) ? AlignedBit : 0,
       packet_access_bit = ei_packet_traits<Scalar>::size > 1 && aligned_bit ? PacketAccessBit : 0
     };
 
@@ -114,7 +120,7 @@ template<int _Rows, int _Cols> struct ei_size_at_compile_time
  * in order to avoid a useless copy
  */
 
-template<typename T, int Sparseness = ei_traits<T>::Flags&SparseBit> class ei_eval;
+template<typename T, int Sparseness = ei_traits<T>::Flags&SparseBit> struct ei_eval;
 
 template<typename T> struct ei_eval<T,IsDense>
 {
@@ -156,6 +162,19 @@ template<typename T> struct ei_plain_matrix_type_column_major
                 ei_traits<T>::RowsAtCompileTime,
                 ei_traits<T>::ColsAtCompileTime,
                 AutoAlign | ColMajor,
+                ei_traits<T>::MaxRowsAtCompileTime,
+                ei_traits<T>::MaxColsAtCompileTime
+          > type;
+};
+
+/* ei_plain_matrix_type_row_major : same as ei_plain_matrix_type but guaranteed to be row-major
+ */
+template<typename T> struct ei_plain_matrix_type_row_major
+{
+  typedef Matrix<typename ei_traits<T>::Scalar,
+                ei_traits<T>::RowsAtCompileTime,
+                ei_traits<T>::ColsAtCompileTime,
+                AutoAlign | RowMajor,
                 ei_traits<T>::MaxRowsAtCompileTime,
                 ei_traits<T>::MaxColsAtCompileTime
           > type;

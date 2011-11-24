@@ -212,7 +212,7 @@ class DynamicSparseMatrix
         // remove all coefficients with innerCoord>=innerSize
         // TODO
         std::cerr << "not implemented yet\n";
-        exit(2);
+        std::exit(2);
       }
       if (m_data.size() != outerSize)
       {

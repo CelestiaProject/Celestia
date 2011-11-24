@@ -114,13 +114,13 @@ template<> EIGEN_STRONG_INLINE void ei_pstoreu<float>(float*  to, const __m128& 
 template<> EIGEN_STRONG_INLINE void ei_pstoreu<double>(double* to, const __m128d& from) { _mm_storeu_pd(to, from); }
 template<> EIGEN_STRONG_INLINE void ei_pstoreu<int>(int*    to, const __m128i& from) { _mm_storeu_si128(reinterpret_cast<__m128i*>(to), from); }
 
-#if defined(_MSC_VER) && (_MSC_VER <= 1500) && defined(_WIN64)
+#if defined(_MSC_VER) && (_MSC_VER <= 1500) && defined(_WIN64) && !defined(__INTEL_COMPILER)
 // The temporary variable fixes an internal compilation error.
 // Direct of the struct members fixed bug #62.
 template<> EIGEN_STRONG_INLINE float  ei_pfirst<__m128>(const __m128& a) { return a.m128_f32[0]; }
 template<> EIGEN_STRONG_INLINE double ei_pfirst<__m128d>(const __m128d& a) { return a.m128d_f64[0]; }
 template<> EIGEN_STRONG_INLINE int    ei_pfirst<__m128i>(const __m128i& a) { int x = _mm_cvtsi128_si32(a); return x; }
-#elif defined(_MSC_VER) && (_MSC_VER <= 1500)
+#elif defined(_MSC_VER) && (_MSC_VER <= 1500) && !defined(__INTEL_COMPILER)
 // The temporary variable fixes an internal compilation error.
 template<> EIGEN_STRONG_INLINE float  ei_pfirst<__m128>(const __m128& a) { float x = _mm_cvtss_f32(a); return x; }
 template<> EIGEN_STRONG_INLINE double ei_pfirst<__m128d>(const __m128d& a) { double x = _mm_cvtsd_f64(a); return x; }

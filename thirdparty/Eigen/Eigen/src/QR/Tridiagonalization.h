@@ -293,7 +293,7 @@ void Tridiagonalization<MatrixType>::_compute(MatrixType& matA, CoeffVectorType&
       {
         int starti = i+1;
         int alignedEnd = starti;
-        if (PacketSize>1)
+        if (PacketSize>1 && (int(MatrixType::Flags)&RowMajor) == 0)
         {
           int alignedStart = (starti) + ei_alignmentOffset(&matA.coeffRef(starti,j1), n-starti);
           alignedEnd = alignedStart + ((n-alignedStart)/PacketSize)*PacketSize;
@@ -391,7 +391,7 @@ void Tridiagonalization<MatrixType>::_decomposeInPlace3x3(MatrixType& mat, Diago
 {
   diag[0] = ei_real(mat(0,0));
   RealScalar v1norm2 = ei_abs2(mat(0,2));
-  if (ei_isMuchSmallerThan(v1norm2, RealScalar(1)))
+  if (v1norm2==RealScalar(0))
   {
     diag[1] = ei_real(mat(1,1));
     diag[2] = ei_real(mat(2,2));

@@ -37,7 +37,7 @@ class CompressedStorage
       : m_values(0), m_indices(0), m_size(0), m_allocatedSize(0)
     {}
 
-    CompressedStorage(size_t size)
+    CompressedStorage(std::size_t size)
       : m_values(0), m_indices(0), m_size(0), m_allocatedSize(0)
     {
       resize(size);
@@ -52,8 +52,8 @@ class CompressedStorage
     CompressedStorage& operator=(const CompressedStorage& other)
     {
       resize(other.size());
-      memcpy(m_values, other.m_values, m_size * sizeof(Scalar));
-      memcpy(m_indices, other.m_indices, m_size * sizeof(int));
+	  std::memcpy(m_values, other.m_values, m_size * sizeof(Scalar));
+	  std::memcpy(m_indices, other.m_indices, m_size * sizeof(int));
       return *this;
     }
 
@@ -71,9 +71,9 @@ class CompressedStorage
       delete[] m_indices;
     }
 
-    void reserve(size_t size)
+    void reserve(std::size_t size)
     {
-      size_t newAllocatedSize = m_size + size;
+      std::size_t newAllocatedSize = m_size + size;
       if (newAllocatedSize > m_allocatedSize)
         reallocate(newAllocatedSize);
     }
@@ -84,10 +84,10 @@ class CompressedStorage
         reallocate(m_size);
     }
 
-    void resize(size_t size, float reserveSizeFactor = 0)
+    void resize(std::size_t size, float reserveSizeFactor = 0)
     {
       if (m_allocatedSize<size)
-        reallocate(size + size_t(reserveSizeFactor*size));
+        reallocate(size + std::size_t(reserveSizeFactor*size));
       m_size = size;
     }
 
@@ -99,17 +99,17 @@ class CompressedStorage
       m_indices[id] = i;
     }
 
-    inline size_t size() const { return m_size; }
-    inline size_t allocatedSize() const { return m_allocatedSize; }
+    inline std::size_t size() const { return m_size; }
+    inline std::size_t allocatedSize() const { return m_allocatedSize; }
     inline void clear() { m_size = 0; }
 
-    inline Scalar& value(size_t i) { return m_values[i]; }
-    inline const Scalar& value(size_t i) const { return m_values[i]; }
+    inline Scalar& value(std::size_t i) { return m_values[i]; }
+    inline const Scalar& value(std::size_t i) const { return m_values[i]; }
 
-    inline int& index(size_t i) { return m_indices[i]; }
-    inline const int& index(size_t i) const { return m_indices[i]; }
+    inline int& index(std::size_t i) { return m_indices[i]; }
+    inline const int& index(std::size_t i) const { return m_indices[i]; }
 
-    static CompressedStorage Map(int* indices, Scalar* values, size_t size)
+    static CompressedStorage Map(int* indices, Scalar* values, std::size_t size)
     {
       CompressedStorage res;
       res.m_indices = indices;
@@ -125,11 +125,11 @@ class CompressedStorage
     }
     
     /** \returns the largest \c k in [start,end) such that for all \c j in [start,k) index[\c j]\<\a key */
-    inline int searchLowerIndex(size_t start, size_t end, int key) const
+    inline int searchLowerIndex(std::size_t start, std::size_t end, int key) const
     {
       while(end>start)
       {
-        size_t mid = (end+start)>>1;
+        std::size_t mid = (end+start)>>1;
         if (m_indices[mid]<key)
           start = mid+1;
         else
@@ -148,12 +148,12 @@ class CompressedStorage
         return m_values[m_size-1];
       // ^^  optimization: let's first check if it is the last coefficient
       // (very common in high level algorithms)
-      const size_t id = searchLowerIndex(0,m_size-1,key);
+      const std::size_t id = searchLowerIndex(0,m_size-1,key);
       return ((id<m_size) && (m_indices[id]==key)) ? m_values[id] : defaultValue;
     }
     
     /** Like at(), but the search is performed in the range [start,end) */
-    inline Scalar atInRange(size_t start, size_t end, int key, Scalar defaultValue = Scalar(0)) const
+    inline Scalar atInRange(std::size_t start, std::size_t end, int key, Scalar defaultValue = Scalar(0)) const
     {
       if (start==end)
         return Scalar(0);
@@ -161,7 +161,7 @@ class CompressedStorage
         return m_values[end-1];
       // ^^  optimization: let's first check if it is the last coefficient
       // (very common in high level algorithms)
-      const size_t id = searchLowerIndex(start,end-1,key);
+      const std::size_t id = searchLowerIndex(start,end-1,key);
       return ((id<end) && (m_indices[id]==key)) ? m_values[id] : defaultValue;
     }
     
@@ -170,11 +170,11 @@ class CompressedStorage
       * such that the keys are sorted. */
     inline Scalar& atWithInsertion(int key, Scalar defaultValue = Scalar(0))
     {
-      size_t id = searchLowerIndex(0,m_size,key);
+      std::size_t id = searchLowerIndex(0,m_size,key);
       if (id>=m_size || m_indices[id]!=key)
       {
         resize(m_size+1,1);
-        for (size_t j=m_size-1; j>id; --j)
+        for (std::size_t j=m_size-1; j>id; --j)
         {
           m_indices[j] = m_indices[j-1];
           m_values[j] = m_values[j-1];
@@ -187,9 +187,9 @@ class CompressedStorage
     
     void prune(Scalar reference, RealScalar epsilon = precision<RealScalar>())
     {
-      size_t k = 0;
-      size_t n = size();
-      for (size_t i=0; i<n; ++i)
+      std::size_t k = 0;
+      std::size_t n = size();
+      for (std::size_t i=0; i<n; ++i)
       {
         if (!ei_isMuchSmallerThan(value(i), reference, epsilon))
         {
@@ -203,14 +203,14 @@ class CompressedStorage
 
   protected:
 
-    inline void reallocate(size_t size)
+    inline void reallocate(std::size_t size)
     {
       Scalar* newValues  = new Scalar[size];
       int* newIndices = new int[size];
-      size_t copySize = std::min(size, m_size);
+      std::size_t copySize = std::min(size, m_size);
       // copy
-      memcpy(newValues,  m_values,  copySize * sizeof(Scalar));
-      memcpy(newIndices, m_indices, copySize * sizeof(int));
+	  std::memcpy(newValues,  m_values,  copySize * sizeof(Scalar));
+	  std::memcpy(newIndices, m_indices, copySize * sizeof(int));
       // delete old stuff
       delete[] m_values;
       delete[] m_indices;
@@ -222,8 +222,8 @@ class CompressedStorage
   protected:
     Scalar* m_values;
     int* m_indices;
-    size_t m_size;
-    size_t m_allocatedSize;
+    std::size_t m_size;
+    std::size_t m_allocatedSize;
 
 };
 

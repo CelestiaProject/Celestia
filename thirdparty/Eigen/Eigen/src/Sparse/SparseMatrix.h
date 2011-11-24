@@ -122,7 +122,7 @@ class SparseMatrix
     {
       m_data.clear();
       //if (m_outerSize)
-      memset(m_outerIndex, 0, (m_outerSize+1)*sizeof(int));
+	  std::memset(m_outerIndex, 0, (m_outerSize+1)*sizeof(int));
 //       for (int i=0; i<m_outerSize; ++i)
 //         m_outerIndex[i] = 0;
 //       if (m_outerSize)
@@ -164,7 +164,7 @@ class SparseMatrix
       {
         ei_assert(m_data.index(m_data.size()-1)<inner && "wrong sorted insertion");
       }
-      assert(size_t(m_outerIndex[outer+1]) == m_data.size());
+      assert(std::size_t(m_outerIndex[outer+1]) == m_data.size());
       int id = m_outerIndex[outer+1];
       ++m_outerIndex[outer+1];
 
@@ -190,10 +190,10 @@ class SparseMatrix
         }
         m_outerIndex[outer+1] = m_outerIndex[outer];
       }
-      assert(size_t(m_outerIndex[outer+1]) == m_data.size() && "invalid outer index");
-      size_t startId = m_outerIndex[outer];
-      // FIXME let's make sure sizeof(long int) == sizeof(size_t)
-      size_t id = m_outerIndex[outer+1];
+      assert(std::size_t(m_outerIndex[outer+1]) == m_data.size() && "invalid outer index");
+      std::size_t startId = m_outerIndex[outer];
+      // FIXME let's make sure sizeof(long int) == sizeof(std::size_t)
+      std::size_t id = m_outerIndex[outer+1];
       ++m_outerIndex[outer+1];
 
       float reallocRatio = 1;
@@ -273,7 +273,7 @@ class SparseMatrix
         m_outerIndex = new int [outerSize+1];
         m_outerSize = outerSize;
       }
-      memset(m_outerIndex, 0, (m_outerSize+1)*sizeof(int));
+	  std::memset(m_outerIndex, 0, (m_outerSize+1)*sizeof(int));
     }
     void resizeNonZeros(int size)
     {
@@ -324,7 +324,7 @@ class SparseMatrix
       else
       {
         resize(other.rows(), other.cols());
-        memcpy(m_outerIndex, other.m_outerIndex, (m_outerSize+1)*sizeof(int));
+		std::memcpy(m_outerIndex, other.m_outerIndex, (m_outerSize+1)*sizeof(int));
         m_data = other.m_data;
       }
       return *this;
