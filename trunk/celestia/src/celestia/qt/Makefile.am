@@ -80,7 +80,7 @@ INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/
 
 BUILT_SOURCES = $(MOC_CPP_FILES) $(QRC_CPP_FILES) $(UI_H_FILES)
 
-libqtgui_a_CXXFLAGS = $(LUA_CFLAGS) $(QT_CFLAGS) $(THEORA_CFLAGS)
+libqtgui_a_CXXFLAGS = $(LUA_CFLAGS) $(QT_CFLAGS) $(THEORA_CFLAGS) -Wl,--no-as-needed
 
 libqtgui_a_SOURCES = \
 	$(MOC_CPP_FILES) \

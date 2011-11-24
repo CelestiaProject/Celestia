@@ -14,6 +14,7 @@
 #define _CELENGINE_FRAMETREE_H_
 
 #include <vector>
+#include <cstddef>
 
 class Star;
 class Body;
