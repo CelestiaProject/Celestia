@@ -54,10 +54,10 @@ bool ei_compute_inverse_in_size2_case_with_check(const XprType& matrix, MatrixTy
   return true;
 }
 
-template<typename MatrixType>
-void ei_compute_inverse_in_size3_case(const MatrixType& matrix, MatrixType* result)
+template<typename Derived, typename OtherDerived>
+void ei_compute_inverse_in_size3_case(const Derived& matrix, OtherDerived* result)
 {
-  typedef typename MatrixType::Scalar Scalar;
+  typedef typename Derived::Scalar Scalar;
   const Scalar det_minor00 = matrix.minor(0,0).determinant();
   const Scalar det_minor10 = matrix.minor(1,0).determinant();
   const Scalar det_minor20 = matrix.minor(2,0).determinant();
@@ -75,10 +75,10 @@ void ei_compute_inverse_in_size3_case(const MatrixType& matrix, MatrixType* resu
   result->coeffRef(2, 2) = matrix.minor(2,2).determinant() * invdet;
 }
 
-template<typename MatrixType, typename Scalar = typename MatrixType::Scalar>
+template<typename Derived, typename OtherDerived, typename Scalar = typename Derived::Scalar>
 struct ei_compute_inverse_in_size4_case
 {
-  static void run(const MatrixType& matrix, MatrixType& result)
+  static void run(const Derived& matrix, OtherDerived& result)
   {
     result.coeffRef(0,0) = matrix.minor(0,0).determinant();
     result.coeffRef(1,0) = -matrix.minor(0,1).determinant();
@@ -109,10 +109,10 @@ struct ei_compute_inverse_in_size4_case
 // here that if Intel makes this document publically available, with source code
 // and detailed explanations, it's because they want their CPUs to be fed with
 // good code, and therefore they presumably don't mind us using it in Eigen.
-template<typename MatrixType>
-struct ei_compute_inverse_in_size4_case<MatrixType, float>
+template<typename Derived, typename OtherDerived>
+struct ei_compute_inverse_in_size4_case<Derived, OtherDerived, float>
 {
-  static void run(const MatrixType& matrix, MatrixType& result)
+  static void run(const Derived& matrix, OtherDerived& result)
   {
     // Variables (Streaming SIMD Extensions registers) which will contain cofactors and, later, the
     // lines of the inverted matrix.
@@ -229,50 +229,50 @@ struct ei_compute_inverse_in_size4_case<MatrixType, float>
 *** Part 2 : selector and MatrixBase methods ***
 ***********************************************/
 
-template<typename MatrixType, int Size = MatrixType::RowsAtCompileTime>
+template<typename Derived, typename OtherDerived, int Size = Derived::RowsAtCompileTime>
 struct ei_compute_inverse
 {
-  static inline void run(const MatrixType& matrix, MatrixType* result)
+  static inline void run(const Derived& matrix, OtherDerived* result)
   {
-    LU<MatrixType> lu(matrix);
+    LU<Derived> lu(matrix);
     lu.computeInverse(result);
   }
 };
 
-template<typename MatrixType>
-struct ei_compute_inverse<MatrixType, 1>
+template<typename Derived, typename OtherDerived>
+struct ei_compute_inverse<Derived, OtherDerived, 1>
 {
-  static inline void run(const MatrixType& matrix, MatrixType* result)
+  static inline void run(const Derived& matrix, OtherDerived* result)
   {
-    typedef typename MatrixType::Scalar Scalar;
+    typedef typename Derived::Scalar Scalar;
     result->coeffRef(0,0) = Scalar(1) / matrix.coeff(0,0);
   }
 };
 
-template<typename MatrixType>
-struct ei_compute_inverse<MatrixType, 2>
+template<typename Derived, typename OtherDerived>
+struct ei_compute_inverse<Derived, OtherDerived, 2>
 {
-  static inline void run(const MatrixType& matrix, MatrixType* result)
+  static inline void run(const Derived& matrix, OtherDerived* result)
   {
     ei_compute_inverse_in_size2_case(matrix, result);
   }
 };
 
-template<typename MatrixType>
-struct ei_compute_inverse<MatrixType, 3>
+template<typename Derived, typename OtherDerived>
+struct ei_compute_inverse<Derived, OtherDerived, 3>
 {
-  static inline void run(const MatrixType& matrix, MatrixType* result)
+  static inline void run(const Derived& matrix, OtherDerived* result)
   {
     ei_compute_inverse_in_size3_case(matrix, result);
   }
 };
 
-template<typename MatrixType>
-struct ei_compute_inverse<MatrixType, 4>
+template<typename Derived, typename OtherDerived>
+struct ei_compute_inverse<Derived, OtherDerived, 4>
 {
-  static inline void run(const MatrixType& matrix, MatrixType* result)
+  static inline void run(const Derived& matrix, OtherDerived* result)
   {
-    ei_compute_inverse_in_size4_case<MatrixType>::run(matrix, *result);
+    ei_compute_inverse_in_size4_case<Derived, OtherDerived>::run(matrix, *result);
   }
 };
 
@@ -290,11 +290,12 @@ struct ei_compute_inverse<MatrixType, 4>
   * \sa inverse()
   */
 template<typename Derived>
-inline void MatrixBase<Derived>::computeInverse(PlainMatrixType *result) const
+template<typename OtherDerived>
+inline void MatrixBase<Derived>::computeInverse(MatrixBase<OtherDerived> *result) const
 {
   ei_assert(rows() == cols());
   EIGEN_STATIC_ASSERT(NumTraits<Scalar>::HasFloatingPoint,NUMERIC_TYPE_MUST_BE_FLOATING_POINT)
-  ei_compute_inverse<PlainMatrixType>::run(eval(), result);
+  ei_compute_inverse<PlainMatrixType, OtherDerived>::run(eval(), static_cast<OtherDerived*>(result));
 }
 
 /** \lu_module

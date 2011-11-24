@@ -139,7 +139,7 @@ inline bool MatrixBase<Derived>::any() const
 template<typename Derived>
 inline int MatrixBase<Derived>::count() const
 {
-  return this->cast<bool>().cast<int>().sum();
+  return this->cast<bool>().template cast<int>().sum();
 }
 
 #endif // EIGEN_ALLANDANY_H

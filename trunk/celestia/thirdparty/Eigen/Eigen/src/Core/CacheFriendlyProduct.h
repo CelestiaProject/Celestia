@@ -33,7 +33,7 @@ struct ei_L2_block_traits {
 #ifndef EIGEN_EXTERN_INSTANTIATIONS
 
 template<typename Scalar>
-static void ei_cache_friendly_product(
+void ei_cache_friendly_product(
   int _rows, int _cols, int depth,
   bool _lhsRowMajor, const Scalar* _lhs, int _lhsStride,
   bool _rhsRowMajor, const Scalar* _rhs, int _rhsStride,
@@ -84,7 +84,7 @@ static void ei_cache_friendly_product(
     MaxL2BlockSize = ei_L2_block_traits<EIGEN_TUNE_FOR_CPU_CACHE_SIZE,Scalar>::width
   };
 
-  const bool resIsAligned = (PacketSize==1) || (((resStride%PacketSize) == 0) && (size_t(res)%16==0));
+  const bool resIsAligned = (PacketSize==1) || (((resStride%PacketSize) == 0) && (std::size_t(res)%16==0));
 
   const int remainingSize = depth % PacketSize;
   const int size = depth - remainingSize; // third dimension of the product clamped to packet boundaries
@@ -92,7 +92,7 @@ static void ei_cache_friendly_product(
   const int l2BlockCols = MaxL2BlockSize > cols ? cols : MaxL2BlockSize;
   const int l2BlockSize = MaxL2BlockSize > size ? size : MaxL2BlockSize;
   const int l2BlockSizeAligned = (1 + std::max(l2BlockSize,l2BlockCols)/PacketSize)*PacketSize;
-  const bool needRhsCopy = (PacketSize>1) && ((rhsStride%PacketSize!=0) || (size_t(rhs)%16!=0));
+  const bool needRhsCopy = (PacketSize>1) && ((rhsStride%PacketSize!=0) || (std::size_t(rhs)%16!=0));
   Scalar* EIGEN_RESTRICT block = 0;
   const int allocBlockSize = l2BlockRows*size;
   block = ei_aligned_stack_new(Scalar, allocBlockSize);
@@ -172,7 +172,7 @@ static void ei_cache_friendly_product(
           for(int l1j=l2j; l1j<l2blockColEnd; l1j+=1)
           {
             ei_internal_assert(l2BlockSizeAligned*(l1j-l2j)+(l2blockSizeEnd-l2k) < l2BlockSizeAligned*l2BlockSizeAligned);
-            memcpy(rhsCopy+l2BlockSizeAligned*(l1j-l2j),&(rhs[l1j*rhsStride+l2k]),(l2blockSizeEnd-l2k)*sizeof(Scalar));
+            std::memcpy(rhsCopy+l2BlockSizeAligned*(l1j-l2j),&(rhs[l1j*rhsStride+l2k]),(l2blockSizeEnd-l2k)*sizeof(Scalar));
           }
 
         // for each bw x 1 result's block
@@ -352,7 +352,7 @@ static void ei_cache_friendly_product(
  * TODO: since rhs gets evaluated only once, no need to evaluate it
  */
 template<typename Scalar, typename RhsType>
-static EIGEN_DONT_INLINE void ei_cache_friendly_product_colmajor_times_vector(
+EIGEN_DONT_INLINE void ei_cache_friendly_product_colmajor_times_vector(
   int size,
   const Scalar* lhs, int lhsStride,
   const RhsType& rhs,
@@ -397,7 +397,7 @@ static EIGEN_DONT_INLINE void ei_cache_friendly_product_colmajor_times_vector(
   int skipColumns = 0;
   if (PacketSize>1)
   {
-    ei_internal_assert(size_t(lhs+lhsAlignmentOffset)%sizeof(Packet)==0 || size<PacketSize);
+    ei_internal_assert(std::size_t(lhs+lhsAlignmentOffset)%sizeof(Packet)==0 || size<PacketSize);
 
     while (skipColumns<PacketSize &&
            alignedStart != ((lhsAlignmentOffset + alignmentStep*skipColumns)%PacketSize))
@@ -414,7 +414,7 @@ static EIGEN_DONT_INLINE void ei_cache_friendly_product_colmajor_times_vector(
       // note that the skiped columns are processed later.
     }
 
-    ei_internal_assert((alignmentPattern==NoneAligned) || (size_t(lhs+alignedStart+lhsStride*skipColumns)%sizeof(Packet))==0);
+    ei_internal_assert((alignmentPattern==NoneAligned) || (std::size_t(lhs+alignedStart+lhsStride*skipColumns)%sizeof(Packet))==0);
   }
 
   int offset1 = (FirstAligned && alignmentStep==1?3:1);
@@ -516,7 +516,7 @@ static EIGEN_DONT_INLINE void ei_cache_friendly_product_colmajor_times_vector(
           res[j] += ei_pfirst(ptmp0) * lhs0[j];
 
         // process aligned result's coeffs
-        if ((size_t(lhs0+alignedStart)%sizeof(Packet))==0)
+        if ((std::size_t(lhs0+alignedStart)%sizeof(Packet))==0)
           for (int j = alignedStart;j<alignedSize;j+=PacketSize)
             ei_pstore(&res[j], ei_pmadd(ptmp0,ei_pload(&lhs0[j]),ei_pload(&res[j])));
         else
@@ -542,7 +542,7 @@ static EIGEN_DONT_INLINE void ei_cache_friendly_product_colmajor_times_vector(
 
 // TODO add peeling to mask unaligned load/stores
 template<typename Scalar, typename ResType>
-static EIGEN_DONT_INLINE void ei_cache_friendly_product_rowmajor_times_vector(
+EIGEN_DONT_INLINE void ei_cache_friendly_product_rowmajor_times_vector(
   const Scalar* lhs, int lhsStride,
   const Scalar* rhs, int rhsSize,
   ResType& res)
@@ -586,7 +586,7 @@ static EIGEN_DONT_INLINE void ei_cache_friendly_product_rowmajor_times_vector(
   int skipRows = 0;
   if (PacketSize>1)
   {
-    ei_internal_assert(size_t(lhs+lhsAlignmentOffset)%sizeof(Packet)==0  || size<PacketSize);
+    ei_internal_assert(std::size_t(lhs+lhsAlignmentOffset)%sizeof(Packet)==0  || size<PacketSize);
 
     while (skipRows<PacketSize &&
            alignedStart != ((lhsAlignmentOffset + alignmentStep*skipRows)%PacketSize))
@@ -603,7 +603,7 @@ static EIGEN_DONT_INLINE void ei_cache_friendly_product_rowmajor_times_vector(
       // note that the skiped columns are processed later.
     }
     ei_internal_assert((alignmentPattern==NoneAligned) || PacketSize==1
-      || (size_t(lhs+alignedStart+lhsStride*skipRows)%sizeof(Packet))==0);
+      || (std::size_t(lhs+alignedStart+lhsStride*skipRows)%sizeof(Packet))==0);
   }
 
   int offset1 = (FirstAligned && alignmentStep==1?3:1);
@@ -722,7 +722,7 @@ static EIGEN_DONT_INLINE void ei_cache_friendly_product_rowmajor_times_vector(
       if (alignedSize>alignedStart)
       {
         // process aligned rhs coeffs
-        if ((size_t(lhs0+alignedStart)%sizeof(Packet))==0)
+        if ((std::size_t(lhs0+alignedStart)%sizeof(Packet))==0)
           for (int j = alignedStart;j<alignedSize;j+=PacketSize)
             ptmp0 = ei_pmadd(ei_pload(&rhs[j]), ei_pload(&lhs0[j]), ptmp0);
         else

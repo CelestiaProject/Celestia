@@ -15,7 +15,9 @@
   #endif
 #endif
 
-#ifdef __GNUC__
+// FIXME: this check should not be against __QNXNTO__, which is also defined
+// while compiling with GCC for QNX target. Better solution is welcome!
+#if defined(__GNUC__) && !defined(__QNXNTO__)
   #define EIGEN_GNUC_AT_LEAST(x,y) ((__GNUC__>=x && __GNUC_MINOR__>=y) || __GNUC__>x)
 #else
   #define EIGEN_GNUC_AT_LEAST(x,y) 0
@@ -26,7 +28,7 @@
   #define EIGEN_SSE2_BUT_NOT_OLD_GCC
 #endif
 
-#ifndef EIGEN_DONT_VECTORIZE
+#if !defined(EIGEN_DONT_VECTORIZE) && !defined(EIGEN_DONT_ALIGN)
   #if defined (EIGEN_SSE2_BUT_NOT_OLD_GCC) || defined(EIGEN_SSE2_ON_MSVC_2008_OR_LATER)
     #define EIGEN_VECTORIZE
     #define EIGEN_VECTORIZE_SSE
@@ -50,6 +52,7 @@
   #endif
 #endif
 
+#include <cstddef>
 #include <cstdlib>
 #include <cmath>
 #include <complex>
@@ -76,6 +79,10 @@
 #endif
 
 namespace Eigen {
+
+// we use size_t frequently and we'll never remember to prepend it with std:: everytime just to
+// ensure QNX/QCC support
+using std::size_t;
 
 /** \defgroup Core_Module Core module
   * This is the main module of Eigen providing dense matrix and vector support

@@ -94,7 +94,7 @@ template<typename _Real> struct NumTraits<std::complex<_Real> >
   enum {
     IsComplex = 1,
     HasFloatingPoint = NumTraits<Real>::HasFloatingPoint,
-    ReadCost = 2,
+    ReadCost = 2 * NumTraits<_Real>::ReadCost,
     AddCost = 2 * NumTraits<Real>::AddCost,
     MulCost = 4 * NumTraits<Real>::MulCost + 2 * NumTraits<Real>::AddCost
   };
