@@ -32,7 +32,7 @@ namespace Eigen
 {
 
 #define EIGEN_INSTANTIATE_PRODUCT(TYPE) \
-template static void ei_cache_friendly_product<TYPE>( \
+template void ei_cache_friendly_product<TYPE>( \
   int _rows, int _cols, int depth, \
   bool _lhsRowMajor, const TYPE* _lhs, int _lhsStride, \
   bool _rhsRowMajor, const TYPE* _rhs, int _rhsStride, \

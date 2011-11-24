@@ -35,16 +35,6 @@ template<typename T> inline T ei_random_amplitude()
   else return static_cast<T>(10);
 }
 
-template<typename T> inline T ei_hypot(T x, T y)
-{
-  T _x = ei_abs(x);
-  T _y = ei_abs(y);
-  T p = std::max(_x, _y);
-  T q = std::min(_x, _y);
-  T qp = q/p;
-  return p * ei_sqrt(T(1) + qp*qp);
-}
-
 /**************
 ***   int   ***
 **************/
@@ -54,7 +44,7 @@ template<> inline int machine_epsilon<int>() { return 0; }
 inline int ei_real(int x)  { return x; }
 inline int ei_imag(int)    { return 0; }
 inline int ei_conj(int x)  { return x; }
-inline int ei_abs(int x)   { return abs(x); }
+inline int ei_abs(int x)   { return std::abs(x); }
 inline int ei_abs2(int x)  { return x*x; }
 inline int ei_sqrt(int)  { ei_assert(false); return 0; }
 inline int ei_exp(int)  { ei_assert(false); return 0; }
@@ -67,7 +57,7 @@ inline int ei_pow(int x, int y) { return int(std::pow(double(x), y)); }
 template<> inline int ei_random(int a, int b)
 {
   // We can't just do rand()%n as only the high-order bits are really random
-  return a + static_cast<int>((b-a+1) * (rand() / (RAND_MAX + 1.0)));
+  return a + static_cast<int>((b-a+1) * (std::rand() / (RAND_MAX + 1.0)));
 }
 template<> inline int ei_random()
 {
@@ -290,6 +280,16 @@ inline bool ei_isApprox(long double a, long double b, long double prec = precisi
 inline bool ei_isApproxOrLessThan(long double a, long double b, long double prec = precision<long double>())
 {
   return a <= b || ei_isApprox(a, b, prec);
+}
+
+template<typename T> inline T ei_hypot(T x, T y)
+{
+  T _x = ei_abs(x);
+  T _y = ei_abs(y);
+  T p = std::max(_x, _y);
+  T q = std::min(_x, _y);
+  T qp = q/p;
+  return p * ei_sqrt(T(1) + qp*qp);
 }
 
 #endif // EIGEN_MATHFUNCTIONS_H

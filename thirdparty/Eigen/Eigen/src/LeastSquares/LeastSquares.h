@@ -54,10 +54,13 @@
   * constants \f$a,b,c\f$ so that the plane of equation \f$y=ax+bz+c\f$ fits
   * best the five above points. To do that, call this function as follows:
   * @code
+    // create a vector of pointers to the points
+    std::vector<Vector3d> points_ptrs(5);
+    for(int k=0; k<5; ++k) points_ptrs[k] = &points[k];
     Vector3d coeffs; // will store the coefficients a, b, c
     linearRegression(
       5,
-      &points,
+      &(points_ptrs[0]),
       &coeffs,
       1 // the coord to express as a function of
         // the other ones. 0 means x, 1 means y, 2 means z.

@@ -592,7 +592,8 @@ template<typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int
 template<typename OtherDerived>
 inline void Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>::swap(const MatrixBase<OtherDerived>& other)
 {
-  ei_matrix_swap_impl<Matrix, OtherDerived>::run(*this, *const_cast<MatrixBase<OtherDerived>*>(&other));
+  // the Eigen:: here is to work around a stupid ICC 11.1 bug.
+  Eigen::ei_matrix_swap_impl<Matrix, OtherDerived>::run(*this, *const_cast<MatrixBase<OtherDerived>*>(&other));
 }
 
 

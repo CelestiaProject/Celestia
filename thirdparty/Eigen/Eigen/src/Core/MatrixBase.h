@@ -583,7 +583,8 @@ template<typename Derived> class MatrixBase
 
     const LU<PlainMatrixType> lu() const;
     const PlainMatrixType inverse() const;
-    void computeInverse(PlainMatrixType *result) const;
+    template<typename ResultType>
+    void computeInverse(MatrixBase<ResultType> *result) const;
     Scalar determinant() const;
 
 /////////// Cholesky module ///////////

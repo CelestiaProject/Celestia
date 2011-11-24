@@ -96,8 +96,7 @@ void LDLT<MatrixType>::compute(const MatrixType& a)
   assert(a.rows()==a.cols());
   const int size = a.rows();
   m_matrix.resize(size, size);
-  m_isPositiveDefinite = true;
-  const RealScalar eps = ei_sqrt(precision<Scalar>());
+  m_isPositiveDefinite = true; // always true. This decomposition is not rank-revealing anyway.
 
   if (size<=1)
   {
@@ -121,12 +120,6 @@ void LDLT<MatrixType>::compute(const MatrixType& a)
     RealScalar tmp = ei_real(a.coeff(j,j) - (m_matrix.row(j).start(j) * m_matrix.col(j).start(j).conjugate()).coeff(0,0));
     m_matrix.coeffRef(j,j) = tmp;
 
-    if (tmp < eps)
-    {
-      m_isPositiveDefinite = false;
-      return;
-    }
-
     int endSize = size-j-1;
     if (endSize>0)
     {
@@ -136,7 +129,8 @@ void LDLT<MatrixType>::compute(const MatrixType& a)
       m_matrix.row(j).end(endSize) = a.row(j).end(endSize).conjugate()
                                    - _temporary.end(endSize).transpose();
 
-      m_matrix.col(j).end(endSize) = m_matrix.row(j).end(endSize) / tmp;
+      if(tmp != RealScalar(0))
+        m_matrix.col(j).end(endSize) = m_matrix.row(j).end(endSize) / tmp;
     }
   }
 }
@@ -192,7 +186,7 @@ template<typename Derived>
 inline const LDLT<typename MatrixBase<Derived>::PlainMatrixType>
 MatrixBase<Derived>::ldlt() const
 {
-  return derived();
+  return LDLT<PlainMatrixType>(derived());
 }
 
 #endif // EIGEN_LDLT_H

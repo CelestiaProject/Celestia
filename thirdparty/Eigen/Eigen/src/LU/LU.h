@@ -63,12 +63,12 @@ template<typename MatrixType> class LU
 
     typedef typename MatrixType::Scalar Scalar;
     typedef typename NumTraits<typename MatrixType::Scalar>::Real RealScalar;
-    typedef Matrix<int, 1, MatrixType::ColsAtCompileTime> IntRowVectorType;
-    typedef Matrix<int, MatrixType::RowsAtCompileTime, 1> IntColVectorType;
-    typedef Matrix<Scalar, 1, MatrixType::ColsAtCompileTime> RowVectorType;
-    typedef Matrix<Scalar, MatrixType::RowsAtCompileTime, 1> ColVectorType;
+    typedef Matrix<int, 1, MatrixType::ColsAtCompileTime, MatrixType::Options, 1, MatrixType::MaxColsAtCompileTime> IntRowVectorType;
+    typedef Matrix<int, MatrixType::RowsAtCompileTime, 1, MatrixType::Options, MatrixType::MaxRowsAtCompileTime, 1> IntColVectorType;
+    typedef Matrix<Scalar, 1, MatrixType::ColsAtCompileTime, MatrixType::Options, 1, MatrixType::MaxColsAtCompileTime> RowVectorType;
+    typedef Matrix<Scalar, MatrixType::RowsAtCompileTime, 1, MatrixType::Options, MatrixType::MaxRowsAtCompileTime, 1> ColVectorType;
 
-    enum { MaxSmallDimAtCompileTime = EIGEN_ENUM_MIN(
+    enum { MaxSmallDimAtCompileTime = EIGEN_SIZE_MIN(
              MatrixType::MaxColsAtCompileTime,
              MatrixType::MaxRowsAtCompileTime)
     };
@@ -297,7 +297,8 @@ template<typename MatrixType> class LU
       *
       * \sa MatrixBase::computeInverse(), inverse()
       */
-    inline void computeInverse(MatrixType *result) const
+    template<typename ResultType>
+    inline void computeInverse(ResultType *result) const
     {
       solve(MatrixType::Identity(m_lu.rows(), m_lu.cols()), result);
     }
@@ -508,15 +509,16 @@ bool LU<MatrixType>::solve(
   if(!isSurjective())
   {
     // is c is in the image of U ?
-    RealScalar biggest_in_c = m_rank>0 ? c.corner(TopLeft, m_rank, c.cols()).cwise().abs().maxCoeff() : 0;
+    RealScalar biggest_in_c = m_rank>0 ? c.corner(TopLeft, m_rank, c.cols()).cwise().abs().maxCoeff() : RealScalar(0);
     for(int col = 0; col < c.cols(); ++col)
       for(int row = m_rank; row < c.rows(); ++row)
         if(!ei_isMuchSmallerThan(c.coeff(row,col), biggest_in_c, m_precision))
           return false;
   }
-  m_lu.corner(TopLeft, m_rank, m_rank)
-      .template marked<UpperTriangular>()
-      .solveTriangularInPlace(c.corner(TopLeft, m_rank, c.cols()));
+  if(m_rank>0)
+    m_lu.corner(TopLeft, m_rank, m_rank)
+        .template marked<UpperTriangular>()
+        .solveTriangularInPlace(c.corner(TopLeft, m_rank, c.cols()));
 
   // Step 4
   result->resize(m_lu.cols(), b.cols());

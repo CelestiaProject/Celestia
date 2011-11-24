@@ -99,7 +99,7 @@ template<typename Derived> class MapBase
     inline const Scalar coeff(int index) const
     {
       ei_assert(Derived::IsVectorAtCompileTime || (ei_traits<Derived>::Flags & LinearAccessBit));
-      if ( ((RowsAtCompileTime == 1) == IsRowMajor) )
+      if ( ((RowsAtCompileTime == 1) == IsRowMajor) || !int(Derived::IsVectorAtCompileTime) )
         return m_data[index];
       else
         return m_data[index*stride()];
@@ -108,7 +108,7 @@ template<typename Derived> class MapBase
     inline Scalar& coeffRef(int index)
     {
       ei_assert(Derived::IsVectorAtCompileTime || (ei_traits<Derived>::Flags & LinearAccessBit));
-      if ( ((RowsAtCompileTime == 1) == IsRowMajor) )
+      if ( ((RowsAtCompileTime == 1) == IsRowMajor)  || !int(Derived::IsVectorAtCompileTime) )
         return const_cast<Scalar*>(m_data)[index];
       else
         return const_cast<Scalar*>(m_data)[index*stride()];
