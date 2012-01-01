@@ -938,6 +938,15 @@
 	AppMag 15.63
 }
 
+"CoRoT-24"
+{
+	RA 101.922500
+	Dec -3.719444
+	Distance 1960
+	SpectralType "K1V"
+	AbsMag 6.1 # from spectral class
+}
+
 # Kepler survey
 
 "Kepler-4:GSC 03549-02067"
@@ -1102,6 +1111,34 @@ Barycenter "Kepler-16"
 	AppMag 12
 }
 
+"Kepler-20:KOI-70:KIC 6850504:GSC 03129-01902"
+{
+	RA 287.697917
+	Dec 42.338611
+	Distance 945
+	SpectralType "G8"
+	AppMag 12.5
+}
+
+"Kepler-22:KIC 10593626:GSC 03546-02301"
+{
+	RA 289.217500
+	Dec 47.884444
+	Distance 620
+	SpectralType "G5V"
+	AbsMag 5.1 # from spectral class
+}
+
+"KOI-55:KIC 5807616"
+{
+	RA 296.356250
+	Dec 41.092778
+	Distance 3850
+	SpectralType "sdB"
+	Temperature 27730
+	AppMag 14.87
+}
+
 "KOI-135:KIC 9818381"
 {
 	RA 285.240833
@@ -1127,6 +1164,15 @@ Barycenter "Kepler-16"
 	Distance 7330
 	SpectralType "G2IV"
 	AppMag 15
+}
+
+"KOI-254"
+{
+	RA 292.872917
+	Dec 41.064167
+	Distance 1086
+	SpectralType "M0V" # from temperature
+	AppMag 16.88
 }
 
 "KOI-423"
@@ -1848,8 +1894,6 @@ Barycenter "NN Ser"
 	}
 }
 
-# Reported HU Aqr planets are dynamically unstable
-# Result is likely to be an artefact
 Barycenter "HU Aqr"
 {
 	RA 316.992917
@@ -1885,6 +1929,45 @@ Barycenter "HU Aqr"
 		SemiMajorAxis   0.0026 # mass ratio 0.88:0.2
 		Inclination     74     #
 		AscendingNode   309    # inclination to plane of sky 85 deg.
+		ArgOfPericenter 180
+	}
+}
+
+
+Barycenter "NY Vir"
+{
+	RA 204.700417
+	Dec -2.030278
+	Distance 2270 # from spectral class and magnitude
+}
+
+"NY Vir A"
+{
+	OrbitBarycenter "NY Vir"
+	SpectralType "sdB"
+	Radius 139000 # representative
+	Temperature 33000
+	AppMag 13.30
+
+	EllipticalOrbit {
+		Period   0.0002765     # 2.424 hours
+		SemiMajorAxis   0.0008 # mass ratio 0.46:0.14
+		Inclination     111    #
+		AscendingNode   207    # eclipsing
+	}
+}
+
+"NY Vir B"
+{
+	OrbitBarycenter "NY Vir"
+	SpectralType "M6V" # from temperature and mass
+	AbsMag 13.5
+
+	EllipticalOrbit {
+		Period   0.0002765     # 2.424 hours
+		SemiMajorAxis   0.0028 # mass ratio 0.46:0.14
+		Inclination     111    #
+		AscendingNode   207    # eclipsing
 		ArgOfPericenter 180
 	}
 }
