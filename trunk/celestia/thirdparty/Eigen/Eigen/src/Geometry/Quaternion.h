@@ -470,9 +470,9 @@ Quaternion<Scalar> Quaternion<Scalar>::slerp(Scalar t, const Quaternion& other) 
 
     scale0 = ei_sin( ( Scalar(1) - t ) * theta) / sinTheta;
     scale1 = ei_sin( ( t * theta) ) / sinTheta;
-    if (d<0)
-      scale1 = -scale1;
   }
+  if (d<0)
+    scale1 = -scale1;
 
   return Quaternion<Scalar>(scale0 * coeffs() + scale1 * other.coeffs());
 }
