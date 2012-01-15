@@ -1,4 +1,4 @@
-# Catalog of 647 known extrasolar planets.
+# Catalog of 666 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -62,7 +62,7 @@
 	Texture "asteroid.*"
 
 	Mass      4     # M.sin(i) = 4 earths
-	Radius     4900
+	Radius     4800
 
 	InfoURL "http://exoplanet.eu/star.php?st=KOI-55"
 
@@ -91,8 +91,8 @@ AltSurface "limit of knowledge" "KOI-55/b"
 {
 	Texture "asteroid.*"
 
-	Mass      1     # M.sin(i) = 1 earths
-	Radius     5600
+	Mass      0.7     # M.sin(i) = 0.7 earths
+	Radius     5500
 	Oblateness 0.02
 
 	InfoURL "http://exoplanet.eu/star.php?st=KOI-55"
@@ -116,18 +116,127 @@ AltSurface "limit of knowledge" "KOI-55/c"
 }
 
 
+"c" "KOI-961"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 90 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.065 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.*"
+
+	Mass      0.3     # M.sin(i) = 0.3 earths
+	Radius     4600
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=KOI-961"
+
+	EllipticalOrbit {
+		Period          0.0012
+		SemiMajorAxis   0.006
+		Inclination     81.3
+		AscendingNode   290.5
+		MeanLongitude   140
+	}
+
+	Obliquity             81 # guess, to match inclination
+	EquatorAscendingNode  291 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "KOI-961/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "KOI-961"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 90 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.07 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.*"
+
+	Mass      0.6     # M.sin(i) = 0.6 earths
+	Radius     4900
+
+	InfoURL "http://exoplanet.eu/star.php?st=KOI-961"
+
+	EllipticalOrbit {
+		Period          0.0033
+		SemiMajorAxis   0.0116
+		Inclination     81.3
+		AscendingNode   290.5
+		MeanLongitude   20
+	}
+
+	Obliquity             81 # guess, to match inclination
+	EquatorAscendingNode  291 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "KOI-961/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "KOI-961"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 90 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.051 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "asteroid.*"
+
+	Mass      0.2     # M.sin(i) = 0.2 earths
+	Radius     3600
+
+	InfoURL "http://exoplanet.eu/star.php?st=KOI-961"
+
+	EllipticalOrbit {
+		Period          0.0051
+		SemiMajorAxis   0.0154
+		Inclination     81.3
+		AscendingNode   290.5
+		MeanLongitude   349
+	}
+
+	Obliquity             81 # guess, to match inclination
+	EquatorAscendingNode  291 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "KOI-961/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "e" "HD 75732"   # Rho1 Cnc A
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 83.4 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.19 jupiters.
+# duration, inclination is fixed at 81 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.194 jupiters.
 
 {
 	Texture "venuslike.*"
 	NightTexture "venuslikenight.*"
 
 	Mass      9     # M.sin(i) = 9 earths
-	Radius     13300
+	Radius     13600
 
 	InfoURL "http://exoplanet.eu/star.php?st=55+Cnc"
 
@@ -135,14 +244,14 @@ AltSurface "limit of knowledge" "KOI-55/c"
 		Period          0.002
 		SemiMajorAxis   0.0156
 		Eccentricity    0.057
-		Inclination     106.9
-		AscendingNode   123.9
-		ArgOfPericenter 269
-		MeanAnomaly     107
+		Inclination     107.3
+		AscendingNode   121.4
+		ArgOfPericenter 268
+		MeanAnomaly     132
 	}
 
 	Obliquity             107 # guess, to match inclination
-	EquatorAscendingNode  124 # guess, to match ascending node
+	EquatorAscendingNode  121 # guess, to match ascending node
 
 	# likely to be in captured synchronous rotation
 }
@@ -295,7 +404,7 @@ AltSurface "limit of knowledge" "HD 75732/d"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 79.4 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.39 jupiters.
+# From transit dimming, radius is estimated at 1.386 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -307,7 +416,7 @@ AltSurface "limit of knowledge" "HD 75732/d"
 	Albedo 0.5
 
 	Mass       370     # M.sin(i) = 1.168 jupiters
-	Radius     97300
+	Radius     97000
 	Oblateness 0.04
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-19"
@@ -380,7 +489,7 @@ AltSurface "limit of knowledge" "WASP-43/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.4 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.13 jupiters.
+# From transit dimming, radius is estimated at 0.127 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -388,7 +497,7 @@ AltSurface "limit of knowledge" "WASP-43/b"
 	Texture "asteroid.*"
 
 	Mass      5     # M.sin(i) = 5 earths
-	Radius     9100
+	Radius     8900
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-10"
 
@@ -417,7 +526,7 @@ AltSurface "limit of knowledge" "Kepler-10/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.65 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.2 jupiters.
+# From transit dimming, radius is estimated at 0.199 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -425,7 +534,7 @@ AltSurface "limit of knowledge" "Kepler-10/b"
 	Texture "venuslike.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     14000
+	Radius     13900
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-10"
 
@@ -494,7 +603,7 @@ AltSurface "limit of knowledge" "TYC 4799-1733-1/b"
 	Texture "asteroid.*"
 
 	Mass      8     # M.sin(i) = 8 earths
-	Radius     13300
+	Radius     12900
 
 	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-7"
 
@@ -526,7 +635,7 @@ AltSurface "limit of knowledge" "TYC 4799-1733-1/c"
 	Texture "asteroid.*"
 
 	Mass      17     # M.sin(i) = 17 earths
-	Radius     16100
+	Radius     16200
 
 	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-7"
 
@@ -555,7 +664,7 @@ AltSurface "limit of knowledge" "TYC 4799-1733-1/d"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.17 jupiters.
+# From transit dimming, radius is estimated at 1.165 jupiters.
 
 {
 	Texture "exo-class5.*"
@@ -565,7 +674,7 @@ AltSurface "limit of knowledge" "TYC 4799-1733-1/d"
 	Albedo 0.5
 
 	Mass       3320     # M.sin(i) = 10.43 jupiters
-	Radius     81900
+	Radius     81600
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-18"
 
@@ -595,7 +704,7 @@ AltSurface "limit of knowledge" "HD 10069/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.74 jupiters.
+# From transit dimming, radius is estimated at 1.736 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -607,7 +716,7 @@ AltSurface "limit of knowledge" "HD 10069/b"
 	Albedo 0.5
 
 	Mass       450     # M.sin(i) = 1.404 jupiters
-	Radius     121800
+	Radius     121500
 	Oblateness 0.03
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-12"
@@ -637,8 +746,8 @@ AltSurface "limit of knowledge" "WASP-12/b"
 {
 	Texture "asteroid.*"
 
-	Mass      1     # M.sin(i) = 1 earths
-	Radius     7000
+	Mass      1.4     # M.sin(i) = 1.4 earths
+	Radius     7100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+10180"
 
@@ -665,7 +774,7 @@ AltSurface "limit of knowledge" "HD 10180/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      13     # M.sin(i) = 13 earths
-	Radius     14700
+	Radius     15000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+10180"
 
@@ -691,7 +800,7 @@ AltSurface "limit of knowledge" "HD 10180/c"
 	Texture "venuslike.*"
 
 	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Radius     14500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+10180"
 
@@ -776,7 +885,7 @@ AltSurface "limit of knowledge" "HD 10180/f"
 	Texture "venuslike.*"
 
 	Mass      21     # M.sin(i) = 21 earths
-	Radius     17500
+	Radius     17700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+10180"
 
@@ -873,7 +982,7 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.1 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.37 jupiters.
+# From transit dimming, radius is estimated at 1.368 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -885,7 +994,7 @@ AltSurface "limit of knowledge" "OGLE-TR-56/b"
 	Albedo 0.5
 
 	Mass       660     # M.sin(i) = 2.09 jupiters
-	Radius     95900
+	Radius     95800
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-23"
@@ -916,7 +1025,7 @@ AltSurface "limit of knowledge" "TYC 1632-1396-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.67 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.44 jupiters.
+# From transit dimming, radius is estimated at 1.438 jupiters.
 
 {
 	Texture "exo-class5.*"
@@ -926,7 +1035,7 @@ AltSurface "limit of knowledge" "TYC 1632-1396-1/b"
 	Albedo 0.5
 
 	Mass       1300     # M.sin(i) = 4.1 jupiters
-	Radius     100800
+	Radius     100700
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-33"
 
@@ -955,7 +1064,7 @@ AltSurface "limit of knowledge" "HD 15082/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 82.15 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.3 jupiters.
+# From transit dimming, radius is estimated at 1.295 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -967,7 +1076,7 @@ AltSurface "limit of knowledge" "HD 15082/b"
 	Albedo 0.05
 
 	Mass       610     # M.sin(i) = 1.92 jupiters
-	Radius     91000
+	Radius     90600
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=TrES-3"
@@ -993,11 +1102,54 @@ AltSurface "limit of knowledge" "TrES-3 (parent star)/TrES-3"
 }
 
 
+"b" "HAT-P-36"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 86 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.264 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       580     # M.sin(i) = 1.832 jupiters
+	Radius     88500
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-36"
+
+	EllipticalOrbit {
+		Period          0.0036
+		SemiMajorAxis   0.0238
+		Eccentricity    0.063
+		Inclination     116.2
+		AscendingNode   185.2
+		ArgOfPericenter 232
+		MeanAnomaly     96
+	}
+
+	Obliquity             116 # guess, to match inclination
+	EquatorAscendingNode  185 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HAT-P-36/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "Qatar-2"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.14 jupiters.
+# From transit dimming, radius is estimated at 1.144 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1009,7 +1161,7 @@ AltSurface "limit of knowledge" "TrES-3 (parent star)/TrES-3"
 	Albedo 0.05
 
 	Mass       790     # M.sin(i) = 2.487 jupiters
-	Radius     79800
+	Radius     80100
 
 	InfoURL "http://exoplanet.eu/star.php?st=Qatar-2"
 
@@ -1038,7 +1190,7 @@ AltSurface "limit of knowledge" "Qatar-2/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.36 jupiters.
+# From transit dimming, radius is estimated at 1.363 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1050,7 +1202,7 @@ AltSurface "limit of knowledge" "Qatar-2/b"
 	Albedo 0.5
 
 	Mass       360     # M.sin(i) = 1.1215 jupiters
-	Radius     95200
+	Radius     95400
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-4"
@@ -1080,7 +1232,7 @@ AltSurface "limit of knowledge" "WASP-4/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 83.47 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.16 jupiters.
+# From transit dimming, radius is estimated at 1.164 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1092,7 +1244,7 @@ AltSurface "limit of knowledge" "WASP-4/b"
 	Albedo 0.05
 
 	Mass       350     # M.sin(i) = 1.09 jupiters
-	Radius     81200
+	Radius     81500
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=Qatar-1"
@@ -1205,7 +1357,7 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.529 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.21 jupiters.
+# From transit dimming, radius is estimated at 1.209 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1217,7 +1369,7 @@ AltSurface "limit of knowledge" "OGLE-TR-113/b"
 	Albedo 0.05
 
 	Mass       570     # M.sin(i) = 1.778 jupiters
-	Radius     84700
+	Radius     84600
 
 	InfoURL "http://exoplanet.eu/star.php?st=TrES-5"
 
@@ -1245,7 +1397,7 @@ AltSurface "limit of knowledge" "TrES-5 (parent star)/TrES-5"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.2 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.31 jupiters.
+# From transit dimming, radius is estimated at 1.312 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1257,7 +1409,7 @@ AltSurface "limit of knowledge" "TrES-5 (parent star)/TrES-5"
 	Albedo 0.5
 
 	Mass       780     # M.sin(i) = 2.45 jupiters
-	Radius     91700
+	Radius     91800
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-17"
 
@@ -1327,7 +1479,7 @@ AltSurface "limit of knowledge" "CoRoT-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 83.65 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.27 jupiters.
+# From transit dimming, radius is estimated at 1.269 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1339,7 +1491,7 @@ AltSurface "limit of knowledge" "CoRoT-1/b"
 	Albedo 0.5
 
 	Mass       720     # M.sin(i) = 2.279 jupiters
-	Radius     88900
+	Radius     88800
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-36"
 
@@ -1409,7 +1561,7 @@ AltSurface "limit of knowledge" "CoRoT-14/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.25 jupiters.
+# From transit dimming, radius is estimated at 0.245 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1417,7 +1569,7 @@ AltSurface "limit of knowledge" "CoRoT-14/b"
 	Texture "venuslike.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     17500
+	Radius     17100
 
 	InfoURL "http://exoplanet.eu/star.php?st=GJ+1214"
 
@@ -1445,7 +1597,7 @@ AltSurface "limit of knowledge" "GJ 1214/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.15 jupiters.
+# From transit dimming, radius is estimated at 0.147 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1454,7 +1606,7 @@ AltSurface "limit of knowledge" "GJ 1214/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      7     # M.sin(i) = 7 earths
-	Radius     10500
+	Radius     10300
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
 
@@ -1482,7 +1634,7 @@ AltSurface "limit of knowledge" "Kepler-9/d"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.55 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.84 jupiters.
+# From transit dimming, radius is estimated at 0.842 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1493,7 +1645,7 @@ AltSurface "limit of knowledge" "Kepler-9/d"
 	Albedo 0.1
 
 	Mass       80     # M.sin(i) = 0.252 jupiters
-	Radius     58800
+	Radius     58900
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
 
@@ -1521,7 +1673,7 @@ AltSurface "limit of knowledge" "Kepler-9/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.12 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.82 jupiters.
+# From transit dimming, radius is estimated at 0.823 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1532,7 +1684,7 @@ AltSurface "limit of knowledge" "Kepler-9/b"
 	Albedo 0.1
 
 	Mass       50     # M.sin(i) = 0.171 jupiters
-	Radius     57400
+	Radius     57600
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-9"
 
@@ -1560,7 +1712,7 @@ AltSurface "limit of knowledge" "Kepler-9/c"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.17 jupiters.
+# From transit dimming, radius is estimated at 1.171 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1572,7 +1724,7 @@ AltSurface "limit of knowledge" "Kepler-9/c"
 	Albedo 0.05
 
 	Mass       520     # M.sin(i) = 1.637 jupiters
-	Radius     81900
+	Radius     82000
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-5"
 
@@ -1639,11 +1791,50 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 }
 
 
+"b" "SWEEPS-11"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at >84 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.13 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       3080     # M.sin(i) = 9.7 jupiters
+	Radius     79100
+
+	InfoURL "http://exoplanet.eu/star.php?st=SWEEPS-11"
+
+	EllipticalOrbit {
+		Period          0.0049
+		SemiMajorAxis   0.03
+		Inclination     89.7
+		AscendingNode   265.8
+	}
+
+	Obliquity             90 # guess, to match inclination
+	EquatorAscendingNode  266 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "SWEEPS-11/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "CoRoT-2"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.84 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.47 jupiters.
+# From transit dimming, radius is estimated at 1.465 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1655,7 +1846,7 @@ AltSurface "limit of knowledge" "OGLE-TR-132/b"
 	Albedo 0.05
 
 	Mass       1050     # M.sin(i) = 3.31 jupiters
-	Radius     102900
+	Radius     102600
 
 	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-2"
 
@@ -1684,7 +1875,7 @@ AltSurface "limit of knowledge" "CoRoT-2/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.06 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.45 jupiters.
+# From transit dimming, radius is estimated at 1.454 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1696,7 +1887,7 @@ AltSurface "limit of knowledge" "CoRoT-2/b"
 	Albedo 0.5
 
 	Mass       660     # M.sin(i) = 2.06 jupiters
-	Radius     101500
+	Radius     101800
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-3"
 
@@ -1729,7 +1920,7 @@ AltSurface "limit of knowledge" "TYC 2636-195-1/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     16100
+	Radius     16000
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-3"
 
@@ -1756,7 +1947,7 @@ AltSurface "limit of knowledge" "TYC 2636-195-1/c"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.84 jupiters.
+# From transit dimming, radius is estimated at 0.841 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1768,7 +1959,7 @@ AltSurface "limit of knowledge" "TYC 2636-195-1/c"
 	Albedo 0.05
 
 	Mass       160     # M.sin(i) = 0.49 jupiters
-	Radius     58800
+	Radius     58900
 
 	InfoURL "http://exoplanet.eu/star.php?st=KOI-196"
 
@@ -1838,7 +2029,7 @@ AltSurface "limit of knowledge" "CoRoT-18/b"
 	Texture "venuslike.*"
 
 	Mass      7     # M.sin(i) = 7 earths
-	Radius     11900
+	Radius     12000
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gliese+876"
 
@@ -1920,7 +2111,7 @@ AltSurface "limit of knowledge" "Gliese 876/b"
 	Texture "venuslike.*"
 
 	Mass      15     # M.sin(i) = 15 earths
-	Radius     15400
+	Radius     15600
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gliese+876"
 
@@ -1940,11 +2131,11 @@ AltSurface "limit of knowledge" "Gliese 876/e"
 }
 
 
-"b" "WASP-50"
+"b" "TYC 5290-462-1"   # WASP-50
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.74 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.15 jupiters.
+# From transit dimming, radius is estimated at 1.153 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -1956,7 +2147,7 @@ AltSurface "limit of knowledge" "Gliese 876/e"
 	Albedo 0.5
 
 	Mass       470     # M.sin(i) = 1.468 jupiters
-	Radius     80500
+	Radius     80700
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-50"
 
@@ -1976,7 +2167,7 @@ AltSurface "limit of knowledge" "Gliese 876/e"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "WASP-50/b"
+AltSurface "limit of knowledge" "TYC 5290-462-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2054,11 +2245,54 @@ AltSurface "limit of knowledge" "TYC 3925-739-1/b"
 }
 
 
+"b" "TYC 3281-800-1"   # HAT-P-32
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.7 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 2.037 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       300     # M.sin(i) = 0.941 jupiters
+	Radius     142600
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-32"
+
+	EllipticalOrbit {
+		Period          0.0059
+		SemiMajorAxis   0.0344
+		Eccentricity    0.163
+		Inclination     70.8
+		AscendingNode   32.1
+		ArgOfPericenter 176
+		MeanAnomaly     212
+	}
+
+	Obliquity             71 # guess, to match inclination
+	EquatorAscendingNode  32 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 3281-800-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "WASP-2"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.73 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.08 jupiters.
+# From transit dimming, radius is estimated at 1.079 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2070,7 +2304,7 @@ AltSurface "limit of knowledge" "TYC 3925-739-1/b"
 	Albedo 0.05
 
 	Mass       270     # M.sin(i) = 0.847 jupiters
-	Radius     75600
+	Radius     75500
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-2"
 
@@ -2099,7 +2333,7 @@ AltSurface "limit of knowledge" "WASP-2/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.1 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.42 jupiters.
+# From transit dimming, radius is estimated at 1.421 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2111,7 +2345,7 @@ AltSurface "limit of knowledge" "WASP-2/b"
 	Albedo 0.5
 
 	Mass       570     # M.sin(i) = 1.8 jupiters
-	Radius     99400
+	Radius     99500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-7"
 
@@ -2140,7 +2374,7 @@ AltSurface "limit of knowledge" "TYC 3547-1402-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.51 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.14 jupiters.
+# From transit dimming, radius is estimated at 1.138 jupiters.
 
 {
 	Texture "exo-class4.*"
@@ -2150,7 +2384,7 @@ AltSurface "limit of knowledge" "TYC 3547-1402-1/b"
 	Albedo 0.05
 
 	Mass       360     # M.sin(i) = 1.138 jupiters
-	Radius     79800
+	Radius     79700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+189733"
 
@@ -2175,11 +2409,11 @@ AltSurface "limit of knowledge" "HD 189733/b"
 }
 
 
-"b" "WASP-14"
+"b" "TYC 1482-882-1"   # WASP-14
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.79 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.28 jupiters.
+# From transit dimming, radius is estimated at 1.281 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2191,7 +2425,7 @@ AltSurface "limit of knowledge" "HD 189733/b"
 	Albedo 0.5
 
 	Mass       2330     # M.sin(i) = 7.341 jupiters
-	Radius     89600
+	Radius     89700
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-14"
 
@@ -2211,7 +2445,7 @@ AltSurface "limit of knowledge" "HD 189733/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "WASP-14/b"
+AltSurface "limit of knowledge" "TYC 1482-882-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2252,7 +2486,7 @@ AltSurface "limit of knowledge" "HD 212301/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.71 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.1 jupiters.
+# From transit dimming, radius is estimated at 1.104 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2264,7 +2498,7 @@ AltSurface "limit of knowledge" "HD 212301/b"
 	Albedo 0.5
 
 	Mass       330     # M.sin(i) = 1.032 jupiters
-	Radius     77000
+	Radius     77300
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-24"
 
@@ -2374,7 +2608,7 @@ AltSurface "limit of knowledge" "KOI-254/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 83.62 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.27 jupiters.
+# From transit dimming, radius is estimated at 1.272 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2386,7 +2620,7 @@ AltSurface "limit of knowledge" "KOI-254/b"
 	Albedo 0.05
 
 	Mass       380     # M.sin(i) = 1.199 jupiters
-	Radius     88900
+	Radius     89000
 
 	InfoURL "http://exoplanet.eu/star.php?st=TrES-2"
 
@@ -2415,7 +2649,7 @@ AltSurface "limit of knowledge" "TYC 3549-2811-1/TrES-2"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 79.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.61 jupiters.
+# From transit dimming, radius is estimated at 1.614 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2427,7 +2661,7 @@ AltSurface "limit of knowledge" "TYC 3549-2811-1/TrES-2"
 	Albedo 0.5
 
 	Mass       1380     # M.sin(i) = 4.34 jupiters
-	Radius     112700
+	Radius     113000
 
 	InfoURL "http://exoplanet.eu/star.php?st=OGLE2-TR-L9"
 
@@ -2451,11 +2685,11 @@ AltSurface "limit of knowledge" "OGLE2-TR-L9/b"
 }
 
 
-"b" "WASP-1"
+"b" "TYC 2265-107-1"   # WASP-1
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.65 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.48 jupiters.
+# From transit dimming, radius is estimated at 1.484 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2467,7 +2701,7 @@ AltSurface "limit of knowledge" "OGLE2-TR-L9/b"
 	Albedo 0.5
 
 	Mass       270     # M.sin(i) = 0.86 jupiters
-	Radius     103600
+	Radius     103900
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-1"
@@ -2487,7 +2721,7 @@ AltSurface "limit of knowledge" "OGLE2-TR-L9/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "WASP-1/b"
+AltSurface "limit of knowledge" "TYC 2265-107-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2527,7 +2761,7 @@ AltSurface "limit of knowledge" "HD 73256/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.7 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.97 jupiters.
+# From transit dimming, radius is estimated at 0.973 jupiters.
 
 {
 	Texture "exo-class4.*"
@@ -2537,7 +2771,7 @@ AltSurface "limit of knowledge" "HD 73256/b"
 	Albedo 0.05
 
 	Mass       200     # M.sin(i) = 0.62 jupiters
-	Radius     67900
+	Radius     68100
 
 	InfoURL "http://exoplanet.eu/star.php?st=XO-2"
 
@@ -2566,13 +2800,13 @@ AltSurface "limit of knowledge" "TYC 3413-0005-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.37 jupiters.
+# From transit dimming, radius is estimated at 0.365 jupiters.
 
 {
 	Texture "venuslike.*"
 
 	Mass      23     # M.sin(i) = 23 earths
-	Radius     25900
+	Radius     25500
 
 	InfoURL "http://exoplanet.eu/star.php?st=GJ+436"
 
@@ -2605,7 +2839,7 @@ AltSurface "limit of knowledge" "HIP 57087/b"
 	Texture "venuslike.*"
 
 	Mass      7     # M.sin(i) = 7 earths
-	Radius     11900
+	Radius     12200
 
 	InfoURL "http://exoplanet.eu/star.php?st=GJ+3634"
 
@@ -2626,11 +2860,53 @@ AltSurface "limit of knowledge" "GJ 3634/b"
 }
 
 
-"b" "TYC 5839-0876-1"   # WASP-26
+"b" "TYC 2-1155-1"   # WASP-32
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.3 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.18 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       1140     # M.sin(i) = 3.6 jupiters
+	Radius     82600
+
+	InfoURL "http://exoplanet.eu/star.php?st=WASP-32"
+
+	EllipticalOrbit {
+		Period          0.0074
+		SemiMajorAxis   0.0394
+		Eccentricity    0.018
+		Inclination     66.7
+		AscendingNode   359.2
+		ArgOfPericenter 252
+		MeanAnomaly     211
+	}
+
+	Obliquity             67 # guess, to match inclination
+	EquatorAscendingNode  359 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 2-1155-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 5839-876-1"   # WASP-26
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 82.91 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.28 jupiters.
+# From transit dimming, radius is estimated at 1.281 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2642,7 +2918,7 @@ AltSurface "limit of knowledge" "GJ 3634/b"
 	Albedo 0.05
 
 	Mass       330     # M.sin(i) = 1.028 jupiters
-	Radius     89600
+	Radius     89700
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-26"
 
@@ -2661,7 +2937,7 @@ AltSurface "limit of knowledge" "GJ 3634/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "TYC 5839-0876-1/b"
+AltSurface "limit of knowledge" "TYC 5839-876-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2671,7 +2947,7 @@ AltSurface "limit of knowledge" "TYC 5839-0876-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.6 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.29 jupiters.
+# From transit dimming, radius is estimated at 1.289 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2683,7 +2959,7 @@ AltSurface "limit of knowledge" "TYC 5839-0876-1/b"
 	Albedo 0.5
 
 	Mass       1330     # M.sin(i) = 4.193 jupiters
-	Radius     90300
+	Radius     90200
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-16"
 
@@ -2713,14 +2989,14 @@ AltSurface "limit of knowledge" "TYC 2792-1700-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 82.58 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.15 jupiters.
+# From transit dimming, radius is estimated at 0.146 jupiters.
 
 {
 	Texture "venuslike.*"
 	NightTexture "venuslikenight.*"
 
 	Mass      10     # M.sin(i) = 10 earths
-	Radius     10500
+	Radius     10200
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-21"
 
@@ -2781,6 +3057,48 @@ AltSurface "limit of knowledge" "HD 179070/b"
 }
 
 AltSurface "limit of knowledge" "TYC 2634-1087-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HAT-P-37"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 86.9 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.178 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       370     # M.sin(i) = 1.169 jupiters
+	Radius     82500
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-37"
+
+	EllipticalOrbit {
+		Period          0.0077
+		SemiMajorAxis   0.0379
+		Eccentricity    0.058
+		Inclination     87.3
+		AscendingNode   282.3
+		ArgOfPericenter 328
+		MeanAnomaly     270
+	}
+
+	Obliquity             87 # guess, to match inclination
+	EquatorAscendingNode  282 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HAT-P-37/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -2904,7 +3222,7 @@ AltSurface "limit of knowledge" "CoRoT-12/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.87 jupiters.
+# From transit dimming, radius is estimated at 0.867 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2915,7 +3233,7 @@ AltSurface "limit of knowledge" "CoRoT-12/b"
 	Albedo 0.05
 
 	Mass       2300     # M.sin(i) = 7.246 jupiters
-	Radius     60900
+	Radius     60700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-20"
 
@@ -2945,7 +3263,7 @@ AltSurface "limit of knowledge" "HAT-P-20/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.72 jupiters.
+# From transit dimming, radius is estimated at 0.718 jupiters.
 
 {
 	Texture "exo-class5.*"
@@ -2955,7 +3273,7 @@ AltSurface "limit of knowledge" "HAT-P-20/b"
 	Albedo 0.5
 
 	Mass       110     # M.sin(i) = 0.356 jupiters
-	Radius     50400
+	Radius     50300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+149026"
 
@@ -2984,7 +3302,7 @@ AltSurface "limit of knowledge" "HD 149026/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.07 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.83 jupiters.
+# From transit dimming, radius is estimated at 0.827 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2996,7 +3314,7 @@ AltSurface "limit of knowledge" "HD 149026/b"
 	Albedo 0.05
 
 	Mass       190     # M.sin(i) = 0.591 jupiters
-	Radius     58100
+	Radius     57900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-3"
 
@@ -3070,7 +3388,7 @@ AltSurface "limit of knowledge" "TYC 3416-0543-1/b"
 	Texture "asteroid.*"
 
 	Mass      5     # M.sin(i) = 5 earths
-	Radius     11200
+	Radius     11000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-13"
 
@@ -3133,7 +3451,7 @@ AltSurface "limit of knowledge" "TYC 3416-0543-1/c"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.39 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.96 jupiters.
+# From transit dimming, radius is estimated at 0.962 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3145,7 +3463,7 @@ AltSurface "limit of knowledge" "TYC 3416-0543-1/c"
 	Albedo 0.05
 
 	Mass       280     # M.sin(i) = 0.884 jupiters
-	Radius     67200
+	Radius     67300
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-23"
 
@@ -3316,7 +3634,7 @@ AltSurface "limit of knowledge" "KOI-135/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.4 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.1 jupiters.
+# From transit dimming, radius is estimated at 1.099 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3328,7 +3646,7 @@ AltSurface "limit of knowledge" "KOI-135/b"
 	Albedo 0.05
 
 	Mass       240     # M.sin(i) = 0.761 jupiters
-	Radius     77000
+	Radius     76900
 
 	InfoURL "http://exoplanet.eu/star.php?st=TrES-1"
 
@@ -3357,7 +3675,7 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.98 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.06 jupiters.
+# From transit dimming, radius is estimated at 1.055 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3369,7 +3687,7 @@ AltSurface "limit of knowledge" "TYC 2652-1324-1/TrES-1"
 	Albedo 0.05
 
 	Mass       210     # M.sin(i) = 0.66 jupiters
-	Radius     74200
+	Radius     73800
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-27"
 
@@ -3696,7 +4014,7 @@ AltSurface "limit of knowledge" "OGLE-TR-10/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.22 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.01 jupiters.
+# From transit dimming, radius is estimated at 1.008 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3708,7 +4026,7 @@ AltSurface "limit of knowledge" "OGLE-TR-10/b"
 	Albedo 0.05
 
 	Mass       270     # M.sin(i) = 0.855 jupiters
-	Radius     70700
+	Radius     70600
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-16"
 
@@ -3774,7 +4092,7 @@ AltSurface "limit of knowledge" "TYC 6996-583-1/b"
 }
 
 
-"b" "WASP-35"
+"b" "TYC 4762-714-1"   # WASP-35
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.96 degrees, so mass can be determined.
@@ -3809,7 +4127,7 @@ AltSurface "limit of knowledge" "TYC 6996-583-1/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "WASP-35/b"
+AltSurface "limit of knowledge" "TYC 4762-714-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -3819,7 +4137,7 @@ AltSurface "limit of knowledge" "WASP-35/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.2 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.22 jupiters.
+# From transit dimming, radius is estimated at 1.217 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3830,7 +4148,7 @@ AltSurface "limit of knowledge" "WASP-35/b"
 	# M.sin(i) is so close to 13, true mass is likely to exceed brown dwarf limit
 
 	Mass       3750     # M.sin(i) = 11.79 jupiters
-	Radius     85400
+	Radius     85200
 
 	InfoURL "http://exoplanet.eu/star.php?st=XO-3"
 
@@ -3902,7 +4220,7 @@ AltSurface "limit of knowledge" "TYC 3441-925-1 /b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.0 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.96 jupiters.
+# From transit dimming, radius is estimated at 0.959 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3913,7 +4231,7 @@ AltSurface "limit of knowledge" "TYC 3441-925-1 /b"
 	Albedo 0.05
 
 	Mass       70     # M.sin(i) = 0.211 jupiters
-	Radius     67200
+	Radius     67100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-12"
 
@@ -3942,7 +4260,7 @@ AltSurface "limit of knowledge" "HAT-P-12/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.76 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.36 jupiters.
+# From transit dimming, radius is estimated at 0.357 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3954,7 +4272,7 @@ AltSurface "limit of knowledge" "HAT-P-12/b"
 	Albedo 0.05
 
 	Mass       20     # M.sin(i) = 0.077 jupiters
-	Radius     25200
+	Radius     25000
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-4"
 
@@ -3983,7 +4301,7 @@ AltSurface "limit of knowledge" "Kepler-4/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.32 jupiters.
+# From transit dimming, radius is estimated at 1.323 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -3995,7 +4313,7 @@ AltSurface "limit of knowledge" "Kepler-4/b"
 	Albedo 0.05
 
 	Mass       210     # M.sin(i) = 0.669 jupiters
-	Radius     92400
+	Radius     92600
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-6"
 
@@ -4064,7 +4382,7 @@ AltSurface "limit of knowledge" "KOI-204/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.21 jupiters.
+# From transit dimming, radius is estimated at 1.212 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4076,7 +4394,7 @@ AltSurface "limit of knowledge" "KOI-204/b"
 	Albedo 0.05
 
 	Mass       200     # M.sin(i) = 0.626 jupiters
-	Radius     84700
+	Radius     84800
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-28"
 
@@ -4108,7 +4426,7 @@ AltSurface "limit of knowledge" "HAT-P-28/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      11     # M.sin(i) = 11 earths
-	Radius     14000
+	Radius     14300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+134060"
 
@@ -4189,7 +4507,7 @@ AltSurface "limit of knowledge" "HD 120136/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.6 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.24 jupiters.
+# From transit dimming, radius is estimated at 1.242 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4201,7 +4519,7 @@ AltSurface "limit of knowledge" "HD 120136/b"
 	Albedo 0.05
 
 	Mass       220     # M.sin(i) = 0.685 jupiters
-	Radius     86800
+	Radius     86900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-24"
 
@@ -4231,7 +4549,7 @@ AltSurface "limit of knowledge" "TYC 0774-1441-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.47 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.22 jupiters.
+# From transit dimming, radius is estimated at 1.224 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4243,7 +4561,7 @@ AltSurface "limit of knowledge" "TYC 0774-1441-1/b"
 	Albedo 0.05
 
 	Mass       160     # M.sin(i) = 0.503 jupiters
-	Radius     85400
+	Radius     85700
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-6"
 
@@ -4303,7 +4621,7 @@ AltSurface "limit of knowledge" "HD 330075/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.54 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.54 jupiters.
+# From transit dimming, radius is estimated at 1.537 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4315,7 +4633,7 @@ AltSurface "limit of knowledge" "HD 330075/b"
 	Albedo 0.5
 
 	Mass       150     # M.sin(i) = 0.478 jupiters
-	Radius     107800
+	Radius     107600
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-31"
@@ -4443,6 +4761,49 @@ AltSurface "limit of knowledge" "HD 2638/b"
 }
 
 
+"b" "TYC 2461-988-1"   # HAT-P-33
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 86.7 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.827 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       240     # M.sin(i) = 0.763 jupiters
+	Radius     127900
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-33"
+
+	EllipticalOrbit {
+		Period          0.0095
+		SemiMajorAxis   0.0503
+		Eccentricity    0.148
+		Inclination     99.7
+		AscendingNode   108.2
+		ArgOfPericenter 198
+		MeanAnomaly     244
+	}
+
+	Obliquity             100 # guess, to match inclination
+	EquatorAscendingNode  108 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 2461-988-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "TYC 5503-946-1"   # BD-10 3166
 # Star not present in Celestia's default stars.dat file.
 
@@ -4479,7 +4840,7 @@ AltSurface "limit of knowledge" "TYC 5503-946-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.92 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.18 jupiters.
+# From transit dimming, radius is estimated at 0.179 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4488,7 +4849,7 @@ AltSurface "limit of knowledge" "TYC 5503-946-1/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      7     # M.sin(i) = 7 earths
-	Radius     12600
+	Radius     12500
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-18"
 
@@ -4619,7 +4980,7 @@ AltSurface "limit of knowledge" "HD 75289/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.07 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.42 jupiters.
+# From transit dimming, radius is estimated at 1.419 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4631,7 +4992,7 @@ AltSurface "limit of knowledge" "HD 75289/b"
 	Albedo 0.5
 
 	Mass       190     # M.sin(i) = 0.603 jupiters
-	Radius     99400
+	Radius     99300
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-8"
 
@@ -4700,7 +5061,7 @@ AltSurface "limit of knowledge" "HD 209458/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.43 jupiters.
+# From transit dimming, radius is estimated at 1.431 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4712,7 +5073,7 @@ AltSurface "limit of knowledge" "HD 209458/b"
 	Albedo 0.5
 
 	Mass       670     # M.sin(i) = 2.114 jupiters
-	Radius     100100
+	Radius     100200
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-5"
 
@@ -4741,7 +5102,7 @@ AltSurface "limit of knowledge" "Kepler-5/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.26 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.16 jupiters.
+# From transit dimming, radius is estimated at 1.158 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4753,7 +5114,7 @@ AltSurface "limit of knowledge" "Kepler-5/b"
 	Albedo 0.05
 
 	Mass       190     # M.sin(i) = 0.588 jupiters
-	Radius     81200
+	Radius     81100
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-22"
 
@@ -4782,7 +5143,7 @@ AltSurface "limit of knowledge" "TYC 6446-0326-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 82.81 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.71 jupiters.
+# From transit dimming, radius is estimated at 1.706 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4794,7 +5155,7 @@ AltSurface "limit of knowledge" "TYC 6446-0326-1/b"
 	Albedo 0.5
 
 	Mass       290     # M.sin(i) = 0.917 jupiters
-	Radius     119700
+	Radius     119400
 
 	InfoURL "http://exoplanet.eu/star.php?st=TrES-4"
 
@@ -4823,7 +5184,7 @@ AltSurface "limit of knowledge" "TYC 2620-0648-1/TrES-4"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.78 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.14 jupiters.
+# From transit dimming, radius is estimated at 1.136 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4835,7 +5196,7 @@ AltSurface "limit of knowledge" "TYC 2620-0648-1/TrES-4"
 	Albedo 0.05
 
 	Mass       540     # M.sin(i) = 1.696 jupiters
-	Radius     79800
+	Radius     79500
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-37"
 
@@ -4897,6 +5258,48 @@ AltSurface "limit of knowledge" "WASP-37/b"
 }
 
 AltSurface "limit of knowledge" "CoRoT-23/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HAT-P-35"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 87.3 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.332 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       340     # M.sin(i) = 1.054 jupiters
+	Radius     93200
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-35"
+
+	EllipticalOrbit {
+		Period          0.01
+		SemiMajorAxis   0.0498
+		Eccentricity    0.025
+		Inclination     101.9
+		AscendingNode   118.4
+		ArgOfPericenter 322
+		MeanAnomaly     19
+	}
+
+	Obliquity             102 # guess, to match inclination
+	EquatorAscendingNode  118 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HAT-P-35/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -4986,7 +5389,7 @@ AltSurface "limit of knowledge" "Kepler-20/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.5 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.08 jupiters.
+# From transit dimming, radius is estimated at 0.078 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -4994,7 +5397,7 @@ AltSurface "limit of knowledge" "Kepler-20/b"
 	Texture "asteroid.*"
 
 	Mass      3     # M.sin(i) = 3 earths
-	Radius     5600
+	Radius     5500
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-20"
 
@@ -5176,7 +5579,7 @@ AltSurface "limit of knowledge" "OGLE-TR-211/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.5 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.05 jupiters.
+# From transit dimming, radius is estimated at 1.045 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5187,7 +5590,7 @@ AltSurface "limit of knowledge" "OGLE-TR-211/b"
 	Albedo 0.05
 
 	Mass       150     # M.sin(i) = 0.46 jupiters
-	Radius     73500
+	Radius     73100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-10"
 
@@ -5212,11 +5615,11 @@ AltSurface "limit of knowledge" "TYC 2340-1714-1/b"
 }
 
 
-"b" "WASP-17"
+"b" "TYC 6787-1927-1"   # WASP-17
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.83 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.99 jupiters.
+# From transit dimming, radius is estimated at 1.991 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5227,7 +5630,7 @@ AltSurface "limit of knowledge" "TYC 2340-1714-1/b"
 	Albedo 0.5
 
 	Mass       150     # M.sin(i) = 0.486 jupiters
-	Radius     139300
+	Radius     139400
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-17"
@@ -5248,7 +5651,7 @@ AltSurface "limit of knowledge" "TYC 2340-1714-1/b"
 	# likely to be in captured synchronous rotation
 }
 
-AltSurface "limit of knowledge" "WASP-17/b"
+AltSurface "limit of knowledge" "TYC 6787-1927-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -5258,7 +5661,7 @@ AltSurface "limit of knowledge" "WASP-17/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.5 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.43 jupiters.
+# From transit dimming, radius is estimated at 1.428 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5270,7 +5673,7 @@ AltSurface "limit of knowledge" "WASP-17/b"
 	Albedo 0.05
 
 	Mass       170     # M.sin(i) = 0.542 jupiters
-	Radius     100100
+	Radius     100000
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-15"
 
@@ -5382,7 +5785,7 @@ AltSurface "limit of knowledge" "CoRoT-17/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      21     # M.sin(i) = 21 earths
-	Radius     17500
+	Radius     17600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+219828"
 
@@ -5531,7 +5934,7 @@ AltSurface "limit of knowledge" "Lupus-TR-3/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.79 jupiters.
+# From transit dimming, radius is estimated at 0.792 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5542,7 +5945,7 @@ AltSurface "limit of knowledge" "Lupus-TR-3/b"
 	Albedo 0.1
 
 	Mass       80     # M.sin(i) = 0.244 jupiters
-	Radius     55300
+	Radius     55400
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-29"
 
@@ -5613,7 +6016,7 @@ AltSurface "limit of knowledge" "TYC 2463-281-1/b"
 	Texture "venuslike.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     11900
+	Radius     11800
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+215497"
 
@@ -5668,7 +6071,7 @@ AltSurface "limit of knowledge" "HD 215497/c"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.31 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.18 jupiters.
+# From transit dimming, radius is estimated at 1.184 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5680,7 +6083,7 @@ AltSurface "limit of knowledge" "HD 215497/c"
 	Albedo 0.05
 
 	Mass       290     # M.sin(i) = 0.9 jupiters
-	Radius     82600
+	Radius     82900
 
 	InfoURL "http://exoplanet.eu/star.php?st=XO-1"
 
@@ -5822,7 +6225,7 @@ AltSurface "limit of knowledge" "WASP-39/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.2 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.13 jupiters.
+# From transit dimming, radius is estimated at 1.132 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5834,7 +6237,7 @@ AltSurface "limit of knowledge" "WASP-39/b"
 	Albedo 0.05
 
 	Mass       90     # M.sin(i) = 0.292 jupiters
-	Radius     79100
+	Radius     79200
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-19"
 
@@ -5864,7 +6267,7 @@ AltSurface "limit of knowledge" "HAT-P-19/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.1 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.08 jupiters.
+# From transit dimming, radius is estimated at 1.077 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5876,7 +6279,7 @@ AltSurface "limit of knowledge" "HAT-P-19/b"
 	Albedo 0.05
 
 	Mass       170     # M.sin(i) = 0.54 jupiters
-	Radius     75600
+	Radius     75400
 
 	InfoURL "http://exoplanet.eu/star.php?st=OGLE-TR-111"
 
@@ -5905,7 +6308,7 @@ AltSurface "limit of knowledge" "OGLE-TR-111/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.02 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.89 jupiters.
+# From transit dimming, radius is estimated at 0.885 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5917,7 +6320,7 @@ AltSurface "limit of knowledge" "OGLE-TR-111/b"
 	Albedo 0.05
 
 	Mass       420     # M.sin(i) = 1.308 jupiters
-	Radius     62300
+	Radius     62000
 
 	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-13"
 
@@ -5946,7 +6349,7 @@ AltSurface "limit of knowledge" "CoRoT-13/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.83 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.39 jupiters.
+# From transit dimming, radius is estimated at 1.388 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -5958,7 +6361,7 @@ AltSurface "limit of knowledge" "CoRoT-13/b"
 	Albedo 0.05
 
 	Mass       150     # M.sin(i) = 0.467 jupiters
-	Radius     97300
+	Radius     97200
 
 	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-5"
 
@@ -6020,7 +6423,7 @@ AltSurface "limit of knowledge" "HD 149143/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      23     # M.sin(i) = 23 earths
-	Radius     18200
+	Radius     18100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+47186"
 
@@ -6105,7 +6508,7 @@ AltSurface "limit of knowledge" "HD 102195/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 87.2 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.02 jupiters.
+# From transit dimming, radius is estimated at 1.024 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -6117,7 +6520,7 @@ AltSurface "limit of knowledge" "HD 102195/b"
 	Albedo 0.05
 
 	Mass       1290     # M.sin(i) = 4.063 jupiters
-	Radius     71400
+	Radius     71700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-21"
 
@@ -6188,7 +6591,7 @@ AltSurface "limit of knowledge" "TYC 3793-1994-1/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      18     # M.sin(i) = 18 earths
-	Radius     16800
+	Radius     16900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+125612"
 
@@ -6275,6 +6678,8 @@ AltSurface "limit of knowledge" "HD 125612/d"
 # duration, inclination is fixed at 86.8 degrees, so mass can be determined.
 # From transit dimming, radius is estimated at 1.03 jupiters.
 
+# Star not present in Celestia's default stars.dat file.
+
 {
 	Texture "exo-class4.*"
 	NightTexture "exo-class4night.*"
@@ -6308,12 +6713,51 @@ AltSurface "limit of knowledge" "XO-5/b"
 }
 
 
+"b" "SWEEPS-4"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at >87 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.81 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       1110     # M.sin(i) = 3.5 jupiters
+	Radius     56700
+
+	InfoURL "http://exoplanet.eu/star.php?st=SWEEPS-04"
+
+	EllipticalOrbit {
+		Period          0.0115
+		SemiMajorAxis   0.055
+		Inclination     90
+		AscendingNode   268.8
+	}
+
+	Obliquity             90 # guess, to match inclination
+	EquatorAscendingNode  269 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "SWEEPS-4/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 115617"   # 61 Vir
 {
 	Texture "asteroid.*"
 
 	Mass      5     # M.sin(i) = 5 earths
-	Radius     11200
+	Radius     11000
 
 	InfoURL "http://exoplanet.eu/star.php?st=61+Vir"
 
@@ -6365,7 +6809,7 @@ AltSurface "limit of knowledge" "HD 115617/c"
 	Texture "venuslike.*"
 
 	Mass      23     # M.sin(i) = 23 earths
-	Radius     18200
+	Radius     18100
 
 	InfoURL "http://exoplanet.eu/star.php?st=61+Vir"
 
@@ -6420,7 +6864,7 @@ AltSurface "limit of knowledge" "HD 217014/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.6 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.57 jupiters.
+# From transit dimming, radius is estimated at 0.565 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -6428,7 +6872,7 @@ AltSurface "limit of knowledge" "HD 217014/b"
 	Texture "venuslike.*"
 
 	Mass      19     # M.sin(i) = 19 earths
-	Radius     39900
+	Radius     39500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-26"
 
@@ -6498,7 +6942,7 @@ AltSurface "limit of knowledge" "CoRoT-3/b"
 	Texture "asteroid.*"
 
 	Mass      4     # M.sin(i) = 4 earths
-	Radius     10500
+	Radius     10300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+40307"
 
@@ -6523,7 +6967,7 @@ AltSurface "limit of knowledge" "HD 40307/b"
 	Texture "venuslike.*"
 
 	Mass      7     # M.sin(i) = 7 earths
-	Radius     11900
+	Radius     12100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+40307"
 
@@ -6548,7 +6992,7 @@ AltSurface "limit of knowledge" "HD 40307/c"
 	Texture "venuslike.*"
 
 	Mass      9     # M.sin(i) = 9 earths
-	Radius     13300
+	Radius     13400
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+40307"
 
@@ -6563,6 +7007,48 @@ AltSurface "limit of knowledge" "HD 40307/c"
 }
 
 AltSurface "limit of knowledge" "HD 40307/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 6636-540-1"   # WASP-34
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.2 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.22 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       190     # M.sin(i) = 0.59 jupiters
+	Radius     85400
+
+	InfoURL "http://exoplanet.eu/star.php?st=WASP-34"
+
+	EllipticalOrbit {
+		Period          0.0118
+		SemiMajorAxis   0.0524
+		Eccentricity    0.038
+		Inclination     110.2
+		AscendingNode   159.7
+		ArgOfPericenter 18
+		MeanAnomaly     155
+	}
+
+	Obliquity             110 # guess, to match inclination
+	EquatorAscendingNode  160 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 6636-540-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -6613,7 +7099,7 @@ AltSurface "limit of knowledge" "WASP-21/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 85.64 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.37 jupiters.
+# From transit dimming, radius is estimated at 1.365 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -6625,7 +7111,7 @@ AltSurface "limit of knowledge" "WASP-21/b"
 	Albedo 0.05
 
 	Mass       150     # M.sin(i) = 0.485 jupiters
-	Radius     95900
+	Radius     95500
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-13"
 
@@ -6771,7 +7257,7 @@ AltSurface "limit of knowledge" "HD 9826/e"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.76 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.7 jupiters.
+# From transit dimming, radius is estimated at 1.695 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -6783,7 +7269,7 @@ AltSurface "limit of knowledge" "HD 9826/e"
 	Albedo 0.05
 
 	Mass       140     # M.sin(i) = 0.431 jupiters
-	Radius     119000
+	Radius     118700
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-12"
@@ -6814,7 +7300,7 @@ AltSurface "limit of knowledge" "Kepler-12/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.28 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.22 jupiters.
+# From transit dimming, radius is estimated at 1.217 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -6826,7 +7312,7 @@ AltSurface "limit of knowledge" "Kepler-12/b"
 	Albedo 0.05
 
 	Mass       170     # M.sin(i) = 0.524 jupiters
-	Radius     85400
+	Radius     85200
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT--P-1"
 
@@ -6899,7 +7385,7 @@ AltSurface "limit of knowledge" "TYC 3086-0152-1/b"
 	Texture "asteroid.*"
 
 	Mass      4     # M.sin(i) = 4 earths
-	Radius     10500
+	Radius     10300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+156668"
 
@@ -6924,7 +7410,7 @@ AltSurface "limit of knowledge" "HD 156668/b"
 	Texture "venuslike.*"
 
 	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Radius     14500
 
 	InfoURL "http://exoplanet.eu/star.php?st=GJ+674"
 
@@ -6949,7 +7435,7 @@ AltSurface "limit of knowledge" "Gliese 674/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 86.5 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.48 jupiters.
+# From transit dimming, radius is estimated at 1.478 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -6961,7 +7447,7 @@ AltSurface "limit of knowledge" "Gliese 674/b"
 	Albedo 0.05
 
 	Mass       140     # M.sin(i) = 0.433 jupiters
-	Radius     103600
+	Radius     103500
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-7"
 
@@ -6990,7 +7476,7 @@ AltSurface "limit of knowledge" "Kepler-7/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.5 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.45 jupiters.
+# From transit dimming, radius is estimated at 0.452 jupiters.
 
 {
 	Texture "exo-class3.*"
@@ -6999,7 +7485,7 @@ AltSurface "limit of knowledge" "Kepler-7/b"
 	Albedo 0.1
 
 	Mass       30     # M.sin(i) = 0.081 jupiters
-	Radius     31500
+	Radius     31600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-11"
 
@@ -7020,6 +7506,46 @@ AltSurface "limit of knowledge" "Kepler-7/b"
 }
 
 AltSurface "limit of knowledge" "HIP 97657/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "Kepler-15"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 87.44 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.96 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       210     # M.sin(i) = 0.66 jupiters
+	Radius     67200
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-15"
+
+	EllipticalOrbit {
+		Period          0.0135
+		SemiMajorAxis   0.05714
+		Inclination     82.3
+		AscendingNode   293.4
+		MeanLongitude   235
+	}
+
+	Obliquity             82 # guess, to match inclination
+	EquatorAscendingNode  293 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "Kepler-15/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -7062,6 +7588,8 @@ AltSurface "limit of knowledge" "HD 49674/b"
 # duration, inclination is fixed at 87.03 degrees, so mass can be determined.
 # From transit dimming, radius is estimated at 1.33 jupiters.
 
+# Star not present in Celestia's default stars.dat file.
+
 {
 	Texture "exo-class4.*"
 	NightTexture "exo-class4night.*"
@@ -7090,6 +7618,48 @@ AltSurface "limit of knowledge" "HD 49674/b"
 }
 
 AltSurface "limit of knowledge" "TYC 7963-1570-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 2099-908-1"   # HAT-P-31
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 87.1 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.07 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       690     # M.sin(i) = 2.171 jupiters
+	Radius     74900
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-31"
+
+	EllipticalOrbit {
+		Period          0.0137
+		SemiMajorAxis   0.055
+		Eccentricity    0.245
+		Inclination     91.6
+		AscendingNode   269.5
+		ArgOfPericenter 54
+		MeanAnomaly     153
+	}
+
+	Obliquity             92 # guess, to match inclination
+	EquatorAscendingNode  270 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 2099-908-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -7206,7 +7776,7 @@ AltSurface "limit of knowledge" "HD 109749/b"
 	Texture "asteroid.*"
 
 	Mass      2     # M.sin(i) = 2 earths
-	Radius     7700
+	Radius     8000
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
@@ -7232,7 +7802,7 @@ AltSurface "limit of knowledge" "Gliese 581/e"
 	Texture "venuslike.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     16100
+	Radius     16000
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
@@ -7284,7 +7854,7 @@ AltSurface "limit of knowledge" "Gliese 581/c"
 	Texture "asteroid.*"
 
 	Mass      3     # M.sin(i) = 3 earths
-	Radius     9100
+	Radius     9400
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
@@ -7307,7 +7877,7 @@ AltSurface "limit of knowledge" "Gliese 581/g"
 	Texture "asteroid.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     11900
+	Radius     11600
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
 
@@ -7333,7 +7903,7 @@ AltSurface "limit of knowledge" "Gliese 581/d"
 	Texture "venuslike.*"
 
 	Mass      7     # M.sin(i) = 7 earths
-	Radius     12600
+	Radius     12400
 	Oblateness 0.04
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+581"
@@ -7357,7 +7927,7 @@ AltSurface "limit of knowledge" "Gliese 581/f"
 	Texture "venuslike.*"
 
 	Mass      9     # M.sin(i) = 9 earths
-	Radius     13300
+	Radius     13400
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+7924"
 
@@ -7378,11 +7948,53 @@ AltSurface "limit of knowledge" "HD 7924/b"
 }
 
 
+"b" "HAT-P-34"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 87.1 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.107 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       1060     # M.sin(i) = 3.328 jupiters
+	Radius     77500
+
+	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-34"
+
+	EllipticalOrbit {
+		Period          0.0149
+		SemiMajorAxis   0.0677
+		Eccentricity    0.441
+		Inclination     79.2
+		AscendingNode   298.6
+		ArgOfPericenter 149
+		MeanAnomaly     76
+	}
+
+	Obliquity             79 # guess, to match inclination
+	EquatorAscendingNode  299 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HAT-P-34/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HAT-P-18"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.0 jupiters.
+# From transit dimming, radius is estimated at 0.995 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -7393,7 +8005,7 @@ AltSurface "limit of knowledge" "HD 7924/b"
 	Albedo 0.1
 
 	Mass       60     # M.sin(i) = 0.197 jupiters
-	Radius     70000
+	Radius     69600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-18"
 
@@ -7424,7 +8036,7 @@ AltSurface "limit of knowledge" "HAT-P-18/b"
 	Texture "venuslike.*"
 
 	Mass      14     # M.sin(i) = 14 earths
-	Radius     15400
+	Radius     15500
 
 	InfoURL "http://exoplanet.eu/star.php?st=BD-082823"
 
@@ -7515,7 +8127,7 @@ AltSurface "limit of knowledge" "HD 147506/b"
 	Texture "asteroid.*"
 
 	Mass      4     # M.sin(i) = 4 earths
-	Radius     9800
+	Radius     9900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+39194"
 
@@ -7539,7 +8151,7 @@ AltSurface "limit of knowledge" "HD 39194/b"
 	Texture "asteroid.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     11900
+	Radius     11600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+39194"
 
@@ -7563,7 +8175,7 @@ AltSurface "limit of knowledge" "HD 39194/c"
 	Texture "asteroid.*"
 
 	Mass      5     # M.sin(i) = 5 earths
-	Radius     11200
+	Radius     11000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+39194"
 
@@ -7593,7 +8205,7 @@ AltSurface "limit of knowledge" "HD 39194/d"
 	Albedo 0.05
 
 	Mass       250     # M.sin(i) = 0.778 jupiters
-	Radius     77700
+	Radius     77500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-29"
 
@@ -7625,7 +8237,7 @@ AltSurface "limit of knowledge" "TYC 3293-1539-1/b"
 	NightTexture "venuslikenight.*"
 
 	Mass      8     # M.sin(i) = 8 earths
-	Radius     12600
+	Radius     12500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+1461"
 
@@ -7651,7 +8263,7 @@ AltSurface "limit of knowledge" "HD 1461/b"
 	Texture "asteroid.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     11200
+	Radius     11600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+1461"
 
@@ -7675,7 +8287,7 @@ AltSurface "limit of knowledge" "HD 1461/c"
 	Texture "venuslike.*"
 
 	Mass      23     # M.sin(i) = 23 earths
-	Radius     18200
+	Radius     18100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+1461"
 
@@ -7732,7 +8344,7 @@ AltSurface "limit of knowledge" "HD 1461/d"
 	NightTexture "venuslikenight.*"
 
 	Mass      13     # M.sin(i) = 13 earths
-	Radius     14700
+	Radius     14900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+45184"
 
@@ -8035,7 +8647,7 @@ AltSurface "limit of knowledge" "HD 185269/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 90 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.14 jupiters.
+# From transit dimming, radius is estimated at 1.136 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -8047,7 +8659,7 @@ AltSurface "limit of knowledge" "HD 185269/b"
 	Albedo 0.5
 
 	Mass       2670     # M.sin(i) = 8.4 jupiters
-	Radius     79800
+	Radius     79500
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-14"
 
@@ -8075,7 +8687,7 @@ AltSurface "limit of knowledge" "TYC 3546-413-1/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.69 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.08 jupiters.
+# From transit dimming, radius is estimated at 1.079 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -8087,7 +8699,7 @@ AltSurface "limit of knowledge" "TYC 3546-413-1/b"
 	Albedo 0.05
 
 	Mass       860     # M.sin(i) = 2.712 jupiters
-	Radius     75600
+	Radius     75500
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-38"
 
@@ -8219,7 +8831,7 @@ AltSurface "limit of knowledge" "HD 217107/c"
 	Texture "asteroid.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     11900
+	Radius     11600
 
 	InfoURL "http://exoplanet.eu/star.php?st=GJ+667C"
 
@@ -8243,7 +8855,7 @@ AltSurface "limit of knowledge" "Gliese 667 C/b"
 	Texture "asteroid.*"
 
 	Mass      4     # M.sin(i) = 4 earths
-	Radius     9800
+	Radius     9900
 
 	InfoURL "http://exoplanet.eu/star.php?st=GJ+667C"
 
@@ -8267,7 +8879,7 @@ AltSurface "limit of knowledge" "Gliese 667 C/c"
 	Texture "asteroid.*"
 
 	Mass      3     # M.sin(i) = 3 earths
-	Radius     9100
+	Radius     9000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+215152"
 
@@ -8291,7 +8903,7 @@ AltSurface "limit of knowledge" "HD 215152/b"
 	Texture "asteroid.*"
 
 	Mass      3     # M.sin(i) = 3 earths
-	Radius     9100
+	Radius     9300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+215152"
 
@@ -8315,7 +8927,7 @@ AltSurface "limit of knowledge" "HD 215152/c"
 	Texture "venuslike.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     11900
+	Radius     11800
 
 	InfoURL "http://exoplanet.eu/star.php?st=GJ+433"
 
@@ -8364,7 +8976,7 @@ AltSurface "limit of knowledge" "HD 96700/b"
 	Texture "venuslike.*"
 
 	Mass      13     # M.sin(i) = 13 earths
-	Radius     14700
+	Radius     14900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+96700"
 
@@ -8388,7 +9000,7 @@ AltSurface "limit of knowledge" "HD 96700/c"
 	Texture "venuslike.*"
 
 	Mass      11     # M.sin(i) = 11 earths
-	Radius     14700
+	Radius     14300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HIP+57274"
 
@@ -8471,7 +9083,7 @@ AltSurface "limit of knowledge" "HIP 57274/d"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.55 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.04 jupiters.
+# From transit dimming, radius is estimated at 1.038 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -8482,7 +9094,7 @@ AltSurface "limit of knowledge" "HIP 57274/d"
 	Albedo 0.05
 
 	Mass       710     # M.sin(i) = 2.244 jupiters
-	Radius     72800
+	Radius     72700
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-8"
 
@@ -8541,7 +9153,7 @@ AltSurface "limit of knowledge" "HD 162020/b"
 	Texture "venuslike.*"
 
 	Mass      10     # M.sin(i) = 10 earths
-	Radius     14000
+	Radius     13900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+69830"
 
@@ -8567,7 +9179,7 @@ AltSurface "limit of knowledge" "HD 69830/b"
 	Texture "venuslike.*"
 
 	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Radius     14600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+69830"
 
@@ -8619,7 +9231,7 @@ AltSurface "limit of knowledge" "HD 69830/d"
 	Texture "venuslike.*"
 
 	Mass      8     # M.sin(i) = 8 earths
-	Radius     13300
+	Radius     12900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+285968"
 
@@ -8644,7 +9256,7 @@ AltSurface "limit of knowledge" "HD 285968/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.07 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.17 jupiters.
+# From transit dimming, radius is estimated at 1.166 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -8656,7 +9268,7 @@ AltSurface "limit of knowledge" "HD 285968/b"
 	Albedo 0.05
 
 	Mass       940     # M.sin(i) = 2.96 jupiters
-	Radius     81900
+	Radius     81600
 
 	InfoURL "http://exoplanet.eu/star.php?st=CoRoT-6"
 
@@ -8766,7 +9378,7 @@ AltSurface "limit of knowledge" "CoRoT-4/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.94 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.2 jupiters.
+# From transit dimming, radius is estimated at 0.198 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -8774,7 +9386,7 @@ AltSurface "limit of knowledge" "CoRoT-4/b"
 	Texture "venuslike.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     14000
+	Radius     13900
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-19"
 
@@ -8803,7 +9415,7 @@ AltSurface "limit of knowledge" "TYC 3134-1549-1/b"
 	Texture "venuslike.*"
 
 	Mass      8     # M.sin(i) = 8 earths
-	Radius     12600
+	Radius     12500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+181433"
 
@@ -8888,13 +9500,13 @@ AltSurface "limit of knowledge" "HD 181433/d"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 90 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.26 jupiters.
+# From transit dimming, radius is estimated at 0.262 jupiters.
 
 {
 	Texture "venuslike.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     18200
+	Radius     18300
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-19"
 
@@ -9041,7 +9653,7 @@ AltSurface "limit of knowledge" "HD 160691/e"
 	Texture "venuslike.*"
 
 	Mass      13     # M.sin(i) = 13 earths
-	Radius     15400
+	Radius     15100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+125595"
 
@@ -9064,7 +9676,7 @@ AltSurface "limit of knowledge" "HD 125595/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.42 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.24 jupiters.
+# From transit dimming, radius is estimated at 0.237 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9072,7 +9684,7 @@ AltSurface "limit of knowledge" "HD 125595/b"
 	Texture "asteroid.*"
 
 	Mass      3     # M.sin(i) = 3 earths
-	Radius     16800
+	Radius     16600
 
 	InfoURL "http://exoplanet.eu/star.php?st=KIC+10905746"
 
@@ -9101,7 +9713,7 @@ AltSurface "limit of knowledge" "KIC 10905746/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.5 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.18 jupiters.
+# From transit dimming, radius is estimated at 0.176 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9109,7 +9721,7 @@ AltSurface "limit of knowledge" "KIC 10905746/b"
 	Texture "asteroid.*"
 
 	Mass      4     # M.sin(i) = 4 earths
-	Radius     12600
+	Radius     12300
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
@@ -9138,7 +9750,7 @@ AltSurface "limit of knowledge" "Kepler-11/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.28 jupiters.
+# From transit dimming, radius is estimated at 0.282 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9146,7 +9758,7 @@ AltSurface "limit of knowledge" "Kepler-11/b"
 	Texture "venuslike.*"
 
 	Mass      14     # M.sin(i) = 14 earths
-	Radius     19600
+	Radius     19700
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
@@ -9175,7 +9787,7 @@ AltSurface "limit of knowledge" "Kepler-11/c"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.3 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.31 jupiters.
+# From transit dimming, radius is estimated at 0.307 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9183,7 +9795,7 @@ AltSurface "limit of knowledge" "Kepler-11/c"
 	Texture "asteroid.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     21700
+	Radius     21500
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
@@ -9212,7 +9824,7 @@ AltSurface "limit of knowledge" "Kepler-11/d"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 88.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.4 jupiters.
+# From transit dimming, radius is estimated at 0.404 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9220,7 +9832,7 @@ AltSurface "limit of knowledge" "Kepler-11/d"
 	Texture "venuslike.*"
 
 	Mass      8     # M.sin(i) = 8 earths
-	Radius     28000
+	Radius     28300
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
@@ -9249,7 +9861,7 @@ AltSurface "limit of knowledge" "Kepler-11/e"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.4 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.23 jupiters.
+# From transit dimming, radius is estimated at 0.234 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9257,7 +9869,7 @@ AltSurface "limit of knowledge" "Kepler-11/e"
 	Texture "asteroid.*"
 
 	Mass      2     # M.sin(i) = 2 earths
-	Radius     16100
+	Radius     16400
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
@@ -9286,7 +9898,7 @@ AltSurface "limit of knowledge" "Kepler-11/f"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.8 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.33 jupiters.
+# From transit dimming, radius is estimated at 0.327 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9297,7 +9909,7 @@ AltSurface "limit of knowledge" "Kepler-11/f"
 	Albedo 0.75
 
 	Mass       290     # M.sin(i) = 0.9 jupiters
-	Radius     23100
+	Radius     22900
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-11"
 
@@ -9433,7 +10045,7 @@ AltSurface "limit of knowledge" "HD 130322/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 89.1 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.07 jupiters.
+# From transit dimming, radius is estimated at 1.072 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -9444,7 +10056,7 @@ AltSurface "limit of knowledge" "HD 130322/b"
 	Albedo 0.05
 
 	Mass       620     # M.sin(i) = 1.946 jupiters
-	Radius     74900
+	Radius     75000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HAT-P-15"
 
@@ -9505,7 +10117,7 @@ AltSurface "limit of knowledge" "HD 108147/b"
 	Texture "asteroid.*"
 
 	Mass      5     # M.sin(i) = 5 earths
-	Radius     11200
+	Radius     11100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+136352"
 
@@ -9529,7 +10141,7 @@ AltSurface "limit of knowledge" "HD 136352/b"
 	Texture "venuslike.*"
 
 	Mass      11     # M.sin(i) = 11 earths
-	Radius     14000
+	Radius     14300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+136352"
 
@@ -9553,7 +10165,7 @@ AltSurface "limit of knowledge" "HD 136352/c"
 	Texture "venuslike.*"
 
 	Mass      10     # M.sin(i) = 10 earths
-	Radius     13300
+	Radius     13500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+136352"
 
@@ -9577,7 +10189,7 @@ AltSurface "limit of knowledge" "HD 136352/d"
 	Texture "venuslike.*"
 
 	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Radius     14600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+20003"
 
@@ -9601,7 +10213,7 @@ AltSurface "limit of knowledge" "HD 20003/b"
 	Texture "venuslike.*"
 
 	Mass      13     # M.sin(i) = 13 earths
-	Radius     15400
+	Radius     15100
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+20003"
 
@@ -9625,7 +10237,7 @@ AltSurface "limit of knowledge" "HD 20003/c"
 	Texture "venuslike.*"
 
 	Mass      9     # M.sin(i) = 9 earths
-	Radius     13300
+	Radius     13400
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+134606"
 
@@ -9649,7 +10261,7 @@ AltSurface "limit of knowledge" "HD 134606/b"
 	Texture "venuslike.*"
 
 	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Radius     14600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+134606"
 
@@ -9701,7 +10313,7 @@ AltSurface "limit of knowledge" "HD 134606/d"
 	Texture "venuslike.*"
 
 	Mass      8     # M.sin(i) = 8 earths
-	Radius     12600
+	Radius     12900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+93385"
 
@@ -9725,7 +10337,7 @@ AltSurface "limit of knowledge" "HD 93385/b"
 	Texture "venuslike.*"
 
 	Mass      10     # M.sin(i) = 10 earths
-	Radius     14000
+	Radius     13800
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+93385"
 
@@ -9790,7 +10402,7 @@ AltSurface "limit of knowledge" "CoRoT-10/b"
 	Texture "venuslike.*"
 
 	Mass      13     # M.sin(i) = 13 earths
-	Radius     14700
+	Radius     15000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+51608"
 
@@ -9814,7 +10426,7 @@ AltSurface "limit of knowledge" "HD 51608/b"
 	Texture "venuslike.*"
 
 	Mass      18     # M.sin(i) = 18 earths
-	Radius     16800
+	Radius     16700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+51608"
 
@@ -9838,7 +10450,7 @@ AltSurface "limit of knowledge" "HD 51608/c"
 	Texture "venuslike.*"
 
 	Mass      10     # M.sin(i) = 10 earths
-	Radius     14000
+	Radius     13900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+13808"
 
@@ -9862,7 +10474,7 @@ AltSurface "limit of knowledge" "HD 13808/b"
 	Texture "venuslike.*"
 
 	Mass      11     # M.sin(i) = 11 earths
-	Radius     14700
+	Radius     14300
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+13808"
 
@@ -9886,7 +10498,7 @@ AltSurface "limit of knowledge" "HD 13808/c"
 	Texture "venuslike.*"
 
 	Mass      10     # M.sin(i) = 10 earths
-	Radius     14000
+	Radius     13800
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+189567"
 
@@ -10028,7 +10640,7 @@ AltSurface "limit of knowledge" "HD 179079/b"
 	Texture "venuslike.*"
 
 	Mass      15     # M.sin(i) = 15 earths
-	Radius     15400
+	Radius     15700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+4308"
 
@@ -10115,7 +10727,7 @@ AltSurface "limit of knowledge" "HIP 13044/b"
 	Texture "venuslike.*"
 
 	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Radius     14400
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+31527"
 
@@ -10139,7 +10751,7 @@ AltSurface "limit of knowledge" "HD 31527/b"
 	Texture "venuslike.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     16100
+	Radius     16000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+31527"
 
@@ -10163,7 +10775,7 @@ AltSurface "limit of knowledge" "HD 31527/c"
 	Texture "venuslike.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     16100
+	Radius     16200
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+31527"
 
@@ -10246,7 +10858,7 @@ AltSurface "limit of knowledge" "HD 99492/c"
 	Texture "venuslike.*"
 
 	Mass      18     # M.sin(i) = 18 earths
-	Radius     16800
+	Radius     16700
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+777A"
 
@@ -10302,7 +10914,7 @@ AltSurface "limit of knowledge" "HD 190360/b"
 	Texture "venuslike.*"
 
 	Mass      22     # M.sin(i) = 22 earths
-	Radius     18200
+	Radius     17900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+16417"
 
@@ -10416,7 +11028,7 @@ AltSurface "limit of knowledge" "HD 195019/b"
 	Texture "asteroid.*"
 
 	Mass      3     # M.sin(i) = 3 earths
-	Radius     9100
+	Radius     8900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+20794"
 
@@ -10442,7 +11054,7 @@ AltSurface "limit of knowledge" "HD 20794/b"
 	Texture "asteroid.*"
 
 	Mass      2     # M.sin(i) = 2 earths
-	Radius     8400
+	Radius     8500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+20794"
 
@@ -10468,7 +11080,7 @@ AltSurface "limit of knowledge" "HD 20794/c"
 	Texture "asteroid.*"
 
 	Mass      5     # M.sin(i) = 5 earths
-	Radius     10500
+	Radius     10700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+20794"
 
@@ -10494,7 +11106,7 @@ AltSurface "limit of knowledge" "HD 20794/d"
 	Texture "asteroid.*"
 
 	Mass      6     # M.sin(i) = 6 earths
-	Radius     11900
+	Radius     11700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+154088"
 
@@ -10585,7 +11197,7 @@ AltSurface "limit of knowledge" "KOI-423/b"
 	Albedo 0.1
 
 	Mass       1010     # M.sin(i) = 3.191 jupiters
-	Radius     77000
+	Radius     76600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+17156"
 
@@ -10645,7 +11257,7 @@ AltSurface "limit of knowledge" "HD 6434/b"
 	Texture "venuslike.*"
 
 	Mass      10     # M.sin(i) = 10 earths
-	Radius     14000
+	Radius     13900
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+21693"
 
@@ -10780,7 +11392,7 @@ AltSurface "limit of knowledge" "HD 224693/b"
 	Texture "venuslike.*"
 
 	Mass      12     # M.sin(i) = 12 earths
-	Radius     14700
+	Radius     14600
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+20781"
 
@@ -10804,7 +11416,7 @@ AltSurface "limit of knowledge" "HD 20781/b"
 	Texture "venuslike.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     16100
+	Radius     16000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+20781"
 
@@ -10887,7 +11499,7 @@ AltSurface "limit of knowledge" "HD 9446/c"
 	Texture "venuslike.*"
 
 	Mass      17     # M.sin(i) = 17 earths
-	Radius     16800
+	Radius     16400
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+204313"
 
@@ -11242,7 +11854,7 @@ AltSurface "limit of knowledge" "KIC 6185331/b"
 	Texture "venuslike.*"
 
 	Mass      17     # M.sin(i) = 17 earths
-	Radius     16800
+	Radius     16500
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+90156"
 
@@ -11469,7 +12081,7 @@ AltSurface "limit of knowledge" "HD 168443/c"
 	Texture "asteroid.*"
 
 	Mass      3     # M.sin(i) = 3 earths
-	Radius     9800
+	Radius     9700
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+85512"
 
@@ -11615,7 +12227,7 @@ AltSurface "limit of knowledge" "HIP 94075/b"
 	Texture "venuslike.*"
 
 	Mass      17     # M.sin(i) = 17 earths
-	Radius     16100
+	Radius     16400
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+785"
 
@@ -11644,7 +12256,7 @@ AltSurface "limit of knowledge" "HD 192310/b"
 	Albedo 0.75
 
 	Mass      24     # M.sin(i) = 24 earths
-	Radius     18200
+	Radius     18300
 
 	InfoURL "http://exoplanet.eu/star.php?st=Gl+785"
 
@@ -11946,7 +12558,7 @@ AltSurface "limit of knowledge" "HD 177830/b"
 	Albedo 0.75
 
 	Mass       1250     # M.sin(i) = 3.94 jupiters
-	Radius     64400
+	Radius     64500
 	Oblateness 0.01
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+80606"
@@ -12098,7 +12710,7 @@ AltSurface "limit of knowledge" "HD 52265/b"
 	Texture "venuslike.*"
 
 	Mass      16     # M.sin(i) = 16 earths
-	Radius     16100
+	Radius     16000
 
 	InfoURL "http://exoplanet.eu/star.php?st=HD+102365"
 
@@ -12264,6 +12876,47 @@ AltSurface "limit of knowledge" "HD 208487/c"
 }
 
 AltSurface "limit of knowledge" "HD 156279/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "Kepler-35"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 90.4238 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.728 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class2.*"
+
+	Color  [0.98 0.97 1]
+	Albedo 0.75
+
+	Mass       40     # M.sin(i) = 0.127 jupiters
+	Radius     51000
+	Oblateness 0.06
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-35(AB)"
+
+	EllipticalOrbit {
+		Period          0.3599
+		SemiMajorAxis   0.60347
+		Eccentricity    0.042
+		Inclination     80.1
+		AscendingNode   292.9
+		MeanLongitude   150
+	}
+
+	Obliquity             80 # guess, to match inclination
+	EquatorAscendingNode  293 # guess, to match ascending node
+
+	RotationPeriod  18 # tidal slowing significant
+}
+
+AltSurface "limit of knowledge" "Kepler-35/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -13224,7 +13877,7 @@ AltSurface "limit of knowledge" "HD 8574/b"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 90.0322 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.75 jupiters.
+# From transit dimming, radius is estimated at 0.754 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -13235,7 +13888,7 @@ AltSurface "limit of knowledge" "HD 8574/b"
 	Albedo 0.75
 
 	Mass       110     # M.sin(i) = 0.333 jupiters
-	Radius     52500
+	Radius     52800
 	Oblateness 0.08
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-16+(AB)"
@@ -13679,11 +14332,11 @@ AltSurface "limit of knowledge" "HD 164509/b"
 }
 
 
-"b" "Kepler-22"   # KIC 10593626
+"b" "Kepler-34"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 89.764 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 0.21 jupiters.
+# duration, inclination is fixed at 90.355 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.764 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -13693,7 +14346,45 @@ AltSurface "limit of knowledge" "HD 164509/b"
 	Color  [0.98 0.97 1]
 	Albedo 0.75
 
-	Mass       30     # M.sin(i) = 0.1 jupiters
+	Mass       70     # M.sin(i) = 0.22 jupiters
+	Radius     53500
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/star.php?st=Kepler-34(AB)"
+
+	EllipticalOrbit {
+		Period          0.7908
+		SemiMajorAxis   1.0896
+		Eccentricity    0.182
+		Inclination     79.5
+		AscendingNode   294.7
+		MeanLongitude   208
+	}
+
+	Obliquity             79 # guess, to match inclination
+	EquatorAscendingNode  295 # guess, to match ascending node
+
+	RotationPeriod  17 # plausible guess
+}
+
+AltSurface "limit of knowledge" "Kepler-34/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "Kepler-22"   # KIC 10593626
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 89.764 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.21 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "venuslike.*"
+
+	Mass      16     # M.sin(i) = 16 earths
 	Radius     14700
 
 	InfoURL "http://exoplanet.eu/star.php?st=Kepler-22"
@@ -19448,6 +20139,74 @@ AltSurface "limit of knowledge" "HIP 109388/b"
 }
 
 
+"d" "UZ For"
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       2450     # M.sin(i) = 7.7 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=UZ+For(ab)"
+
+	EllipticalOrbit {
+		Period          5.2019
+		SemiMajorAxis   2.8
+		Eccentricity    0.05
+		Inclination     69      #
+		AscendingNode   49      # to match binary orientation 	
+	}
+
+	RotationPeriod  10 # plausible guess
+	Obliquity             69    # guess, to match inclination
+	EquatorAscendingNode  49    # guess, to match ascending node
+}
+
+AltSurface "limit of knowledge" "UZ For/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "UZ For"
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class1.*"
+
+	Color  [0.96 0.96 1]
+	Albedo 0.5
+
+	Mass       2000     # M.sin(i) = 6.3 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/star.php?st=UZ+For(ab)"
+
+	EllipticalOrbit {
+		Period          15.8795
+		SemiMajorAxis   5.9
+		Eccentricity    0.04
+		Inclination     69      #
+		AscendingNode   49      # to match binary orientation 	
+	}
+
+	RotationPeriod  10 # plausible guess
+	Obliquity             69    # guess, to match inclination
+	EquatorAscendingNode  49    # guess, to match ascending node
+}
+
+AltSurface "limit of knowledge" "UZ For/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 142022"   # HD 142022 A
 {
 	Texture "exo-class1.*"
@@ -20510,7 +21269,7 @@ AltSurface "limit of knowledge" "HD 216956/b"
 	Texture "asteroid.*"
 
 	Mass      0.02     # M.sin(i) = 0.02 earths
-	Radius     2100
+	Radius     1800
 
 	InfoURL "http://exoplanet.eu/star.php?st=PSR+1257%2B12"
 
@@ -20543,7 +21302,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/A"
 	Texture "asteroid.*"
 
 	Mass      4.3     # M.sin(i) = 4.3 earths
-	Radius     10500
+	Radius     10400
 
 	InfoURL "http://exoplanet.eu/star.php?st=PSR+1257%2B12"
 
@@ -20576,7 +21335,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/B"
 	Texture "asteroid.*"
 
 	Mass      3.9     # M.sin(i) = 3.9 earths
-	Radius     9800
+	Radius     10000
 
 	InfoURL "http://exoplanet.eu/star.php?st=PSR+1257%2B12"
 
@@ -20609,7 +21368,7 @@ AltSurface "limit of knowledge" "PSR 1257+12/C"
 	Texture "asteroid.*"
 
 	Mass      0.0004     # M.sin(i) = 0.0004 earths
-	Radius     700
+	Radius     500
 	Oblateness 0.05
 
 	InfoURL "http://live.psu.edu/story/10180"
