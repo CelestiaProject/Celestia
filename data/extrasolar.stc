@@ -1219,6 +1219,96 @@ Barycenter "Kepler-16:KIC 12644769:GSC 03554-01147"
 	AbsMag 5.1 # from spectral class
 }
 
+"Kepler-23:KOI-168:KIC 11512246:GSC 03564-01806"
+{
+	RA 294.218750
+	Dec 49.479167
+	Distance 3200 # from temperature, mag. and radius
+	SpectralType "G" # from temperature
+	AppMag 14
+}
+
+"Kepler-24:KOI-1102:KIC 3231341"
+{
+	RA 290.413333
+	Dec 38.343889
+	Distance 4400 # from temperature, mag. and radius
+	SpectralType "G" # from temperature
+	AppMag 15.5
+}
+
+1012643124 "Kepler-25:KOI-244:KIC 4349452:GSC 03124-01264"
+{
+	RA 286.638333
+	Dec 39.487778
+	Distance 900 # from temperature, mag. and radius
+	SpectralType "F" # from temperature
+	AppMag 11
+}
+
+"Kepler-26:KOI-250:KIC 9757613"
+{
+	RA 284.940833
+	Dec 46.566667
+	Distance 1400 # from temperature, mag. and radius
+	SpectralType "K" # from temperature
+	AppMag 16
+}
+
+"Kepler-28:KOI-870:KIC 6949607"
+{
+	RA 292.137083
+	Dec 42.429444
+	Distance 1600 # from temperature, mag. and radius
+	SpectralType "K4V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-29:KOI-738:KIC 10358759"
+{
+	RA 298.348333
+	Dec 47.491111
+	Distance 4040 # from temperature, mag. and radius
+	SpectralType "G5V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-30:KOI-806:KIC 3832474"
+{
+	RA 285.283750
+	Dec 38.947222
+	Distance 4000 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-31:KOI-935:KIC 9347899"
+{
+	RA 294.022917
+	Dec 45.853056
+	Distance 6200 # from temperature, mag. and radius
+	SpectralType "F6V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-32:KOI-952:KIC 9787239"
+{
+	RA 297.842500
+	Dec 46.574167
+	Distance 710 # from temperature, mag. and radius
+	SpectralType "M0V" # from temperature, mass and radius
+	AppMag 16
+}
+
+"Kepler-33:KOI-507:KIC 9458613:GSC 03542-01616"
+{
+	RA 289.077500
+	Dec 46.005278
+	Distance 3760 # from temperature, mag. and radius
+	SpectralType "G" # from temperature
+	AppMag 14
+}
+
 Barycenter "Kepler-34"
 {
 	RA 296.435833
@@ -2202,6 +2292,45 @@ Barycenter "UZ For"
 		SemiMajorAxis   0.003   # mass ratio 0.7:0.14
 		Inclination     69      #
 		AscendingNode   49      # inclination to plane of sky 80 degrees
+		ArgOfPericenter 180
+	}
+}
+
+Barycenter "RR Cae:GJ 2034"
+{
+	RA 65.273333
+	Dec -48.651944
+	Distance 39
+}
+
+"RR Cae A:GJ 2034 A"
+{
+	OrbitBarycenter "RR Cae"
+	SpectralType "DAZ8"
+	Temperature 7540
+	Radius 10440
+	AbsMag 14.8
+
+	EllipticalOrbit {
+		Period   0.000831471    # 0.303695 days
+		SemiMajorAxis   0.0022  # mass ratio 0.440:0.182
+		Inclination     66.4    #
+		AscendingNode   58.3    # inclination to plane of sky 87.9 degrees
+	}
+}
+
+"RR Cae B:GJ 2034 B"
+{
+	OrbitBarycenter "RR Cae"
+	SpectralType "M4V"
+	# Radius 250000
+	AppMag 14.4
+
+	EllipticalOrbit {
+		Period   0.000831471    # 0.303695 days
+		SemiMajorAxis   0.0053  # mass ratio 0.440:0.182
+		Inclination     66.4    #
+		AscendingNode   58.3    # inclination to plane of sky 87.9 degrees
 		ArgOfPericenter 180
 	}
 }
