@@ -39,6 +39,7 @@ Body::Body(PlanetarySystem* _system, const string& _name) :
     mass(0.0f),
     albedo(0.5f),
     geometryOrientation(Quaternionf::Identity()),
+    cullingRadius(0.0f),
     geometry(InvalidResource),
     geometryScale(1.0f),
     surface(Color(1.0f, 1.0f, 1.0f)),
