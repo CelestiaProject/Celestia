@@ -952,7 +952,7 @@ static Body* CreateBody(const string& name,
                     sensor->setShape(SensorGeometry::RectangularShape);
                 }
 
-                string resName = string("sensor") + targetName + body->getName();
+                string resName = string("sensor") + targetName + Selection(body).getName();
                 GeometryInfo info(resName, path, Vector3f::Zero(), 1.0f, false);
                 info.resource = sensor;
                 info.state = ResourceLoaded;
