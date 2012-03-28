@@ -1,7 +1,5 @@
 noinst_LIBRARIES = libcelutil.a
 noinst_HEADERS = $(wildcard *.h)
-dosstuff = util.mak celutil.dsp
-noinst_DATA = $(dosstuff)
 
 libcelutil_a_SOURCES = \
 	bigfix.cpp \
@@ -21,7 +19,5 @@ WINSOURCES = \
         windirectory.cpp
 
 INCLUDES = -I$(top_srcdir)/thirdparty/Eigen
-
-EXTRA_DIST = $(noinst_DATA)
 
 EXTRA_libcelutil_a_SOURCES= $(WINSOURCES)

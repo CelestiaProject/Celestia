@@ -4,10 +4,8 @@ DEFS = -DHIP_DATA_DIR='"$(HIPDIR)"' @DEFS@
 
 INCLUDES = -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/glew/include
 
-dosstuff = winbuild.mak
 buildstardb_SOURCES = buildstardb.cpp
-noinst_DATA = $(dosstuff)
-EXTRA_DIST = $(noinst_DATA) packdb.cpp packnames.cpp readstars.cpp
+EXTRA_DIST = packdb.cpp packnames.cpp readstars.cpp
 
 noinst_PROGRAMS = buildstardb
 

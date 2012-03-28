@@ -3,11 +3,9 @@ ACLOCAL_AMFLAGS = -I macros
 pkgdatadir = @datadir@/@PACKAGE@
 
 dosstuff = \
-	celestia.mak \
 	celestia.iss \
 	celestia.sln \
-	celestia.vcproj \
-	$(wildcard *.bat)
+	celestia.vcproj
 
 noinst_DATA = \
 	coding-standards.html \

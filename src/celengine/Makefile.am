@@ -1,10 +1,5 @@
 noinst_LIBRARIES = libcelengine.a
 noinst_HEADERS = $(wildcard *.h)
-dosstuff = celengine.dsp engine.mak
-noinst_DATA = $(dosstuff)
-
-EXTRA_DIST = \
-	$(noinst_DATA)
 
 INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/thirdparty/Eigen -I$(top_srcdir)/thirdparty/curveplot/include \
 	-I$(top_srcdir)/thirdparty/glew/include
