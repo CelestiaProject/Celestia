@@ -59,10 +59,6 @@ celestia_CXXFLAGS = $(LUA_CFLAGS) $(SPICE_CFLAGS) $(THEORA_CFLAGS) -Wl,--no-as-n
 
 celestia_SOURCES = $(COMMONSOURCES) $(CELXSOURCES) $(GLUTSOURCES) $(THEORASOURCES)
 
-EXTRA_DIST = \
-	Celestia.dsp \
-	celestia.mak
-
 celestia_LDADD = \
 	$(celestiaKDELIBS) \
 	$(celestiaGTKLIBS) \
