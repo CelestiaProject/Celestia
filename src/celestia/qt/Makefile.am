@@ -99,4 +99,4 @@ ui_%.cpp: ui_%.h
 	$(MOC) $< -o $@
 
 qrc_%.cpp: %.qrc
-	$(RCC) $< -o $@
+	$(RCC) $< -name $* -o $@
