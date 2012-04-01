@@ -162,8 +162,11 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
                              const QStringList& qExtrasDirectories)
 {
 	QString celestia_data_dir = QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"));
+	
 	if (celestia_data_dir.isEmpty()) {
 		QString celestia_data_dir = CONFIG_DATA_DIR;
+		QDir::setCurrent(celestia_data_dir);
+	} else if (QDir(celestia_data_dir).isReadable()) {
 		QDir::setCurrent(celestia_data_dir);
 	} else {
 		QMessageBox::critical(0, "Celestia",
