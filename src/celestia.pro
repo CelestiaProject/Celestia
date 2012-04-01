@@ -576,7 +576,7 @@ unix {
 
     PKGCONFIG += $$LUAPC
     INCLUDEPATH += /usr/local/cspice/include
-    LIBS += -lGLU -ljpeg /usr/local/cspice/lib/cspice.a
+    LIBS += -ljpeg /usr/local/cspice/lib/cspice.a
 }
 
 macx {
