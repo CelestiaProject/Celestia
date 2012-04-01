@@ -1,10 +1,15 @@
 TEMPLATE = app
-TARGET = celestia-qt4
-DESTDIR = ..\
+TARGET = celestia
+VERSION = 1.7.0
+DESTDIR = ..
+OBJECTS_DIR = obj
 
 QT += opengl
 QT += xml
 
+unix {
+    !exists(../config.h):system(touch ../config.h)
+}
 
 #### Utility library ####
 
@@ -563,8 +568,15 @@ win32 {
 }
 
 unix {
+    CONFIG += link_pkgconfig
+
+    LUALIST = lua5.1 lua
+    for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
+    isEmpty (LUAPC) {error("No shared Lua library found!")}
+
+    PKGCONFIG += $$LUAPC
     INCLUDEPATH += /usr/local/cspice/include
-    LIBS += -ljpeg -llua  /usr/local/cspice/lib/cspice.a
+    LIBS += -lGLU -ljpeg /usr/local/cspice/lib/cspice.a
 }
 
 macx {
@@ -630,3 +642,69 @@ macx {
 DEFINES += CELX LUA_VER=0x050100
 
 # QMAKE_CXXFLAGS += -ffast-math
+
+
+unix { 
+    #VARIABLES
+    
+    isEmpty(PREFIX) { PREFIX = /usr/local}
+        
+    BINDIR = $$PREFIX/bin
+    DATADIR =$$PREFIX/share
+    WORKDIR =$$DATADIR/$${TARGET}
+
+    DEFINES += CONFIG_DATA_DIR=\\\"$${WORKDIR}\\\"
+
+    #MAKE INSTALL
+
+    target.path =$$BINDIR
+    
+    data.path   = $$WORKDIR/data
+    data.files  = $$CATALOG_SOURCE/*
+    flares.path     = $$WORKDIR/textures
+    flares.files   += ../textures/*.jpg ../textures/*.png
+    textures.path   = $$WORKDIR/textures/medres
+    textures.files += $$TEXTURE_SOURCE/*.jpg $$TEXTURE_SOURCE/*.png
+    lores_textures.path  =  $$WORKDIR/textures/lores
+    lores_textures.files += $$LORES_TEXTURE_SOURCE/*.jpg \
+                            $$LORES_TEXTURE_SOURCE/*.png
+    hires_textures.path  =  $$WORKDIR/textures/hires
+    hires_textures.files =  $$HIRES_TEXTURE_SOURCE/*.jpg
+    models.path    = $$WORKDIR/models
+    models.files  += $$MODEL_SOURCE/*.cmod $$MODEL_SOURCE/*.png
+    shaders.path   = $$WORKDIR/shaders
+    shaders.files += $$SHADER_SOURCE/*.vp $$SHADER_SOURCE/*.fp
+    fonts.path     = $$WORKDIR/fonts 
+    fonts.files    = $$FONT_SOURCE/*.txf
+    scripts.path   = $$WORKDIR/scripts
+    scripts.files  = ../scripts/*.celx
+    configuration.path = $$WORKDIR 
+    configuration.files += $$CONFIGURATION_FILES \
+                           $$CONFIGURATION_SOURCE/guide.cel \
+                           $$CONFIGURATION_SOURCE/demo.cel \
+                           $$CONFIGURATION_SOURCE/controls.txt \
+                           $$CONFIGURATION_SOURCE/COPYING \
+                           $$CONFIGURATION_SOURCE/README \
+                           $$CONFIGURATION_SOURCE/ChangeLog \
+                           $$CONFIGURATION_SOURCE/AUTHORS
+    
+    locale.path = $$WORKDIR/locale
+    locale.files = ../locale/*
+    
+    extras.path = $$WORKDIR/extras
+    extras.files = ../extras/*
+    extras-standard.path = $$WORKDIR/extras-standard
+    extras-standard.files = ../extras-standard/*
+    
+    system(sh ../src/celestia/qt/data/$${TARGET}.desktop.sh $${PREFIX} >../src/celestia/qt/data/$${TARGET}.desktop)
+
+    desktop.path = /usr/share/applications
+    desktop.files += ../src/celestia/qt/data/$${TARGET}.desktop
+
+    icon128.path = /usr/share/icons/hicolor/128x128/apps
+    icon128.files += ../src/celestia/qt/data/celestia.png
+    
+    INSTALLS += target data textures lores_textures hires_textures \
+    flares models shaders fonts scripts locale extras extras-standard \
+    configuration desktop icon128
+}
