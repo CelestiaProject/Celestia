@@ -988,7 +988,7 @@ void CelestiaAppWindow::slotShowAbout()
 {
     static const char* aboutText =
     gettext_noop("<html>"
-    "<p><b>Celestia 1.6.0 (Qt4 experimental version)</b></p>"
+    "<p><b>Celestia 1.7.0 (Qt4 experimental version)</b></p>"
     "<p>Copyright (C) 2001-2009 by the Celestia Development Team. Celestia "
     "is free software. You can redistribute it and/or modify it under the "
     "terms of the GNU General Public License version 2.</p>"
