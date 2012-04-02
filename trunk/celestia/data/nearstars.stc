@@ -27,6 +27,15 @@
 # Barycenter positions are based on mass estimates from Söderhjelm or RECONS:
 # the figures used are added as comments below.
 
+# Celestia's estimate of star radius is poor for cool stars. Many
+# radii are corrected by the measured data in charm2.stc. To avoid
+# the appearance of unphysically small red dwarf stars in this file,
+# approximate radii for spectral type have been added for nearby 
+# red dwarfs not covered by Charm2. Data are taken from Table 1 in 
+# Kaltenegger and Traub (2009) Transits of Earth-like planets. 
+# ApJ 698:519-27.
+# (iopscience.iop.org/0004-637X/698/1/519/pdf/0004-637X_698_1_519.pdf)
+
 Barycenter "Solar System Barycenter:SSB"
 {
 	RA 0
@@ -118,6 +127,7 @@ Barycenter "Rigil Kentaurus:Toliman:ALF Cen:Gliese 559"
 	Dec 7.014722
 	Distance 7.782
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 13.53
 }
 
@@ -182,6 +192,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	OrbitBarycenter "Gliese 65"
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 12.61
 
 	EllipticalOrbit {
@@ -199,6 +210,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 {
 	OrbitBarycenter "Gliese 65"
 	SpectralType "M6.0V"
+	Radius 105000 # approx. for class
 	AppMag 13.06
 
 	EllipticalOrbit {
@@ -212,12 +224,28 @@ Barycenter "Gliese 65:Luyten 726-8"
 	}
 }
 
+# Kirpatrick et al. (2011) The First Hundred Brown Dwarfs 
+# Discovered by the Wide-field Infrared Survey Explorer (WISE)
+# http://arxiv.org/abs/1108.4677
+"WISE 1541-2250:WISE J1541-2250:WISEPA J154151.66-225025.2"
+{
+	Texture "exo-class4night.*"
+	RA 235.465417
+	Dec -22.840278
+	Distance 9.3
+	SpectralType "T9.5" # actually Y0
+	Temperature 350
+	Radius 70000
+	AbsMag 50 # extremely low
+}
+
 92403 # Ross 154
 {
 	RA 282.455833
 	Dec -23.836111
 	Distance 9.672
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 10.44
 }
 
@@ -227,6 +255,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 	Dec 44.177222
 	Distance 10.310
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 12.29
 }
 
@@ -254,6 +283,7 @@ Barycenter "Gliese 65:Luyten 726-8"
 	Dec 0.804444
 	Distance 10.940
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.16
 }
 
@@ -286,6 +316,7 @@ Barycenter "Gliese 866 A:Luyten 789-6 A"
 {
 	OrbitBarycenter "Gliese 866 A"
 	SpectralType "M5.0V"
+	Radius 140000 # approx. for class
 	AppMag 13.03
 
 	EllipticalOrbit {
@@ -300,6 +331,7 @@ Barycenter "Gliese 866 A:Luyten 789-6 A"
 {
 	OrbitBarycenter "Gliese 866 A"
 	SpectralType "M6V" # from apparent magnitude
+	Radius 105000 # approx. for estimated class
 	AppMag 15.07
 
 	EllipticalOrbit {
@@ -315,6 +347,7 @@ Barycenter "Gliese 866 A:Luyten 789-6 A"
 {
 	OrbitBarycenter "Gliese 866"
 	SpectralType "M5V" # from apparent magnitude
+	Radius 140000 # approx. for estimated class
 	AppMag 13.27
 
 	EllipticalOrbit {
@@ -421,6 +454,7 @@ Barycenter "Gliese 725:ADS 11632:Struve 2398"
 {
 	OrbitBarycenter "Gliese 725"
 	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
 	AppMag 8.90
 
 	EllipticalOrbit {
@@ -438,6 +472,7 @@ Barycenter "Gliese 725:ADS 11632:Struve 2398"
 {
 	OrbitBarycenter "Gliese 725"
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 9.69
 
 	EllipticalOrbit {
@@ -478,6 +513,7 @@ Barycenter 1475 "Gliese 15:ADS 246:Groombridge 34"
 {
 	OrbitBarycenter "Groombridge 34"
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.06
 
 	EllipticalOrbit {
@@ -520,7 +556,8 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 {
 	OrbitBarycenter "EPS Ind B"
 	SpectralType "T1V"
-	AbsMag 25.8 # for approximate radius in Celestia
+	Temperature 1280
+	AbsMag 34.9 # for correct radius in Celestia
 
 	EllipticalOrbit {
 		Period 		15.5 # approximate orbit
@@ -532,7 +569,8 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 {
 	OrbitBarycenter "EPS Ind B"
 	SpectralType "T6V"
-	AbsMag 33.5 # for approximate radius in Celestia
+	Temperature 850
+	AbsMag 51.4 # for correct radius in Celestia
 
 	EllipticalOrbit {
 		Period 		15.5 # approximate orbit
@@ -547,6 +585,7 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 	Dec 26.775611
 	Distance 11.826
 	SpectralType "M6.0V"
+	Radius 105000 # approx. for class
 	AppMag 14.90
 }
 
@@ -565,6 +604,7 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 	Dec -44.512500
 	Distance 11.991
 	SpectralType "M5.0V"
+	Radius 140000 # approx. for class
 	AppMag 13.09
 }
 
@@ -574,6 +614,7 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 	Dec -16.999167
 	Distance 12.121
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 12.10
 }
 
@@ -583,6 +624,7 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 	Dec 5.225833
 	Distance 12.251
 	SpectralType "M3.5V"
+	Radius 225000 # approx for class
 	AppMag 9.85
 }
 
@@ -590,17 +632,18 @@ Barycenter "EPS Ind B:CI Ind:Gliese 845 B"
 # the Sun? A Methane Rich Brown Dwarf Around the Nearby M8.5 Star
 # SCR 1845"
 # (http://xxx.uni-augsburg.de/PS_cache/astro-ph/pdf/0601/0601441.pdf)
-Barycenter "SCR J1845-6357:SCR 1845-6357:2MASS J18450541-6357475:2MASS 1845-6357"
+Barycenter "SCR 1845-6357:SCR J1845-6357:2MASS 1845-6357:2MASS J18450541-6357475"
 {
 	RA 281.260833
 	Dec -63.964444
 	Distance 12.569
 }
 
-"SCR J1845-6357 A:SCR 1845-6357 A:2MASS J18450541-6357475 A:2MASS 1845-6357 A"
+"SCR 1845-6357 A:SCR J1845-6357 A:2MASS 1845-6357 A:2MASS J18450541-6357475 A"
 {
-	OrbitBarycenter "SCR J1845-6357"
+	OrbitBarycenter "SCR 1845-6357"
 	SpectralType "M8.5V"
+	Radius 66000 # approx. for class
 	AppMag 17.40
 
 	EllipticalOrbit {
@@ -610,11 +653,13 @@ Barycenter "SCR J1845-6357:SCR 1845-6357:2MASS J18450541-6357475:2MASS 1845-6357
 	}
 }
 
-"SCR J1845-6357 B:SCR 1845-6357 B:2MASS J18450541-6357475 B:2MASS 1845-6357 B"
+"SCR 1845-6357 B:SCR J1845-6357 B:2MASS 1845-6357 B:2MASS J18450541-6357475 B"
 {
-	OrbitBarycenter "SCR J1845-6357"
+	OrbitBarycenter "SCR 1845-6357"
 	SpectralType "T6V"
-	AbsMag 33.5 # for approximate radius in Celestia
+	Temperature 950
+	Radius 62500
+	AbsMag 50 # faintest visible in Celestia
 
 	EllipticalOrbit {
 		Period 		23.5 # estimate
@@ -622,12 +667,13 @@ Barycenter "SCR J1845-6357:SCR 1845-6357:2MASS J18450541-6357475:2MASS 1845-6357
 	}
 }
 
-"Teegarden's Star:2MASS J02530084+1652532:2MASS 0253+1652:SO J025300.5+165258:SO 0253+1652"
+"Teegarden's Star:2MASS 0253+1652:2MASS J02530084+1652532:SO 0253+1652:SO J025300.5+165258"
 {
 	RA 43.253613
 	Dec 16.881389
 	Distance 12.573
 	SpectralType "M6.5V"
+	Radius 94000 # approx. for class
 	AppMag 15.14
 }
 
@@ -649,13 +695,14 @@ Barycenter "SCR J1845-6357:SCR 1845-6357:2MASS J18450541-6357475:2MASS 1845-6357
 	AppMag 6.67
 }
 
-"DENIS 1048-3956:RECONS 2:2MASS J10481463-3956062:2MASS 1048-3956"
+"DENIS 1048-3956:DENIS-P J104814.9-395604:RECONS 2:2MASS 1048-3956:2MASS J10481463-3956062"
 {
 	Texture "browndwarf.*"
 	RA 162.061250
 	Dec -39.935000
 	Distance 13.124
 	SpectralType "M8.5V"
+	Radius 66000 # approx. for class
 	AppMag 17.39
 }
 
@@ -670,6 +717,7 @@ Barycenter 110893 "Gliese 860:ADS 15972:Kruger 60"
 {
 	OrbitBarycenter "Kruger 60"
 	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
 	AppMag 9.79
 
 	EllipticalOrbit {
@@ -687,6 +735,7 @@ Barycenter 110893 "Gliese 860:ADS 15972:Kruger 60"
 {
 	OrbitBarycenter "Kruger 60"
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.41
 
 	EllipticalOrbit {
@@ -711,6 +760,7 @@ Barycenter 30920 "Gliese 234:Ross 614"
 {
 	OrbitBarycenter "Ross 614"
 	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
 	AppMag 11.18
 
 	EllipticalOrbit {
@@ -728,6 +778,7 @@ Barycenter 30920 "Gliese 234:Ross 614"
 {
 	OrbitBarycenter "Ross 614"
 	SpectralType "M7V"
+	Radius 83500 # approx. for class
 	AppMag 14.26
 
 	EllipticalOrbit {
@@ -745,11 +796,14 @@ Barycenter 30920 "Gliese 234:Ross 614"
 # in the Galactic plane. Lucas et al. http://arxiv.org/abs/1004.0317v2
 "UGPS 0722-05:UGPS J0722-05:UGPS J072227.51-054031.2"
 {
+	Texture "exo-class4night.*"
 	RA 110.613750
 	Dec -5.675000
 	Distance 13.367
-	SpectralType "T9.5" # actually T10
-	AppMag 36 # for approximate radius in Celestia
+	SpectralType "T9"
+	Temperature 540
+	Radius 70000 # approx.
+	AbsMag 50 # extremely low
 }
 
 80824 # Wolf 1061
@@ -758,6 +812,7 @@ Barycenter 30920 "Gliese 234:Ross 614"
 	Dec -12.662500
 	Distance 13.916
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 10.10
 }
 
@@ -777,6 +832,7 @@ Barycenter 30920 "Gliese 234:Ross 614"
 	Dec -37.357500
 	Distance 14.161
 	SpectralType "M1.5V"
+	Radius 324000 # approx. for class
 	AppMag 8.54
 }
 
@@ -791,6 +847,7 @@ Barycenter "Gliese 473:Wolf 424"
 {
 	OrbitBarycenter "Wolf 424"
 	SpectralType "M5.0V"
+	Radius 140000 # approx. for class
 	AppMag 13.25
 
 	EllipticalOrbit {
@@ -808,6 +865,7 @@ Barycenter "Gliese 473:Wolf 424"
 {
 	OrbitBarycenter "Wolf 424"
 	SpectralType "M5.0V"
+	Radius 140000 # approx. for class
 	AppMag 13.24
 
 	EllipticalOrbit {
@@ -827,6 +885,7 @@ Barycenter "Gliese 473:Wolf 424"
 	Dec 13.052222
 	Distance 14.509
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 12.31
 }
 
@@ -836,6 +895,7 @@ Barycenter "Gliese 473:Wolf 424"
 	Dec 68.339167
 	Distance 14.794
 	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
 	AppMag 9.17
 }
 
@@ -845,6 +905,7 @@ Barycenter "Gliese 473:Wolf 424"
 	Dec -11.337222
 	Distance 14.805
 	SpectralType "M6.5V"
+	Radius 94000 # approx. for class
 	AppMag 15.73
 }
 
@@ -867,6 +928,7 @@ Barycenter "GJ 1245 A"
 {
 	OrbitBarycenter "GJ 1245 A"
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 13.46
 
 	EllipticalOrbit {
@@ -884,6 +946,7 @@ Barycenter "GJ 1245 A"
 {
 	OrbitBarycenter "GJ 1245 A"
 	SpectralType "M7.5V" # from low luminosity
+	Radius 80000 # approx. for estimated class
 	AppMag 16.75
 
 	EllipticalOrbit {
@@ -903,6 +966,7 @@ Barycenter "GJ 1245 A"
 	Dec 44.415556
 	Distance 14.812
 	SpectralType "M6.0V"
+	Radius 105000 # approx. for class
 	AppMag 14.01
 }
 
@@ -912,19 +976,8 @@ Barycenter "GJ 1245 A"
 	Dec -46.895278
 	Distance 14.818
 	SpectralType "M2.5V"
+	Radius 290000 # approx. for class
 	AppMag 9.37
-}
-
-# Two very nearby (d ~ 5 pc) ultracool brown dwarfs detected by
-# their large proper motions from WISE, 2MASS, and SDSS data.
-# Scholz et al. http://arxiv.org/abs/1105.4059v2
-"WISE J0254+0223"
-{
-	RA 43.539583
-	Dec 2.399722
-	Distance 15
-	SpectralType "T9.0"
-	AbsMag 38 # estimate for radius in Celestia
 }
 
 57367 # Luyten 145-141
@@ -942,6 +995,7 @@ Barycenter "GJ 1245 A"
 	Dec -14.263611
 	Distance 15.208
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 10.18
 }
 
@@ -951,6 +1005,7 @@ Barycenter "GJ 1245 A"
 	Dec -7.539444
 	Distance 15.313
 	SpectralType "M5.0V"
+	Radius 140000 # approx. for class
 	AppMag 13.77
 }
 
@@ -960,6 +1015,7 @@ Barycenter "GJ 1245 A"
 	Dec -61.193889
 	Distance 15.554
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 13.92
 }
 
@@ -976,6 +1032,7 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	Dec 43.526667
 	Distance 15.859
 	SpectralType "M1.0V"
+	Radius 341000 # approx. for class
 	AppMag 8.77
 }
 
@@ -985,6 +1042,7 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	Dec 43.521667
 	Distance 15.859
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 14.44
 }
 
@@ -997,7 +1055,7 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	AppMag 6.59
 }
 
-"AD Leo:Gliese 388"
+1001741423 "AD Leo:Gliese 388"
 {
 	RA 154.901667
 	Dec 19.869444
@@ -1006,12 +1064,37 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	AppMag 9.29
 }
 
+# Kirkpatrick et al. (2011) The First Hundred Brown Dwarfs 
+# Discovered by the Wide-field Infrared Survey Explorer (WISE)
+# http://arxiv.org/abs/1108.4677
+"WISE 1506+7027:WISE J1506+7027:WISEPC J150649.97+702736.0"
+{
+	RA 226.708333
+	Dec 70.460000
+	Distance 16
+	SpectralType "T6.0"
+	AbsMag 33.5 # for approximate radius in Celestia
+}
+
+# Artigau et al. DENIS J081730.0-615520: An overlooked mid-T 
+# dwarf in the solar neighborhood
+# http://arxiv.org/abs/1006.3577
+"DENIS 0817-6155:DENIS-P J081730.0-615520:2MASS 0817-6155:2MASS J08173001-6155158"
+{
+	RA 124.375000
+	Dec -61.921111
+	Distance 16.07
+	SpectralType "T6.0"
+	AbsMag 33.5 # for approximate radius in Celestia
+}
+
 106440 # Luyten 354-89
 {
 	RA 323.391667
 	Dec -49.008889
 	Distance 16.144
 	SpectralType "M1.5V"
+	Radius 324000 # approx. for class
 	AppMag 8.66
 }
 
@@ -1022,15 +1105,17 @@ Barycenter 54211 "Gliese 412:Lalande 21258" # orbits of A & B unknown
 	Dec -35.428056
 	Distance 16.195
 	SpectralType "M9.0V"
+	Radius 56000 # approx. for class
 	AppMag 18.69
 }
 
-"DENIS 0255-4700:2MASS J02550357-4700509:2MASS 0255-4700"
+"DENIS 0255-4700:DENIS-P J025503.5-470050:2MASS 0255-4700:2MASS J02550357-4700509"
 {
 	RA 43.765417
 	Dec -47.014444
 	Distance 16.197
 	SpectralType "L7.5V"
+	Radius 70000 # approx.
 	AppMag 22.92
 }
 
@@ -1050,7 +1135,7 @@ Barycenter 19849 "Keid:OMI2 Eri:40 Eri:Gliese 166:ADS 3093" # Orbits of A & (BC)
 	AppMag 4.43
 }
 
-Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
+Barycenter "Keid BC:OMI2 Eri BC:40 Eri BC:Gliese 166 BC"
 {
 	RA 63.841667
 	Dec -7.659722
@@ -1059,7 +1144,7 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 
 "Keid B:OMI2 Eri B:40 Eri B:Gliese 166 B:ADS 3093 B"
 {
-	OrbitBarycenter "Keid B-C"
+	OrbitBarycenter "Keid BC"
 	SpectralType "DA4"
 	AppMag 9.52
 
@@ -1076,8 +1161,9 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 
 "Keid C:OMI2 Eri C:40 Eri C:DY Eri:Gliese 166 C:ADS 3093 C"
 {
-	OrbitBarycenter "Keid B-C"
+	OrbitBarycenter "Keid BC"
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.24
 
 	EllipticalOrbit {
@@ -1097,6 +1183,7 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 	Dec 44.330833
 	Distance 16.455
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 10.22
 }
 
@@ -1106,6 +1193,7 @@ Barycenter "Keid B-C:OMI2 Eri B-C:40 Eri B-C:Gliese 166 B-C"
 	Dec -44.319167
 	Distance 16.465
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 10.95
 }
 
@@ -1175,6 +1263,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	Dec 19.761944
 	Distance 17.059
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 14.06
 }
 
@@ -1184,15 +1273,17 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	Dec 19.763611
 	Distance 17.059
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 14.92
 }
 
-"GJ 3379:Giclas 99-49"
+1006050134 "GJ 3379:Giclas 99-49"
 {
 	RA 90.015000
 	Dec 2.705556
 	Distance 17.097
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.31
 }
 
@@ -1202,6 +1293,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	Dec -6.946389
 	Distance 17.357
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 12.22
 }
 
@@ -1209,22 +1301,28 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 # 600K T dwarfs." ApJ, 695, 1517.
 # (http://arxiv.org/abs/0901.4093)
 # unresolved binary; separation and orbit unknown
-"2MASS J09393548-2448279 A:2MASS 0939-2448 A"
+"2MASS 0939-2448 A:2MASS J09393548-2448279 A"
 {
+	Texture "exo-class4night.*"
 	RA 144.897823
 	Dec -24.80775
 	Distance 17.414
 	SpectralType "T8V"
-	AbsMag 38 # estimate for radius in Celestia
+	Temperature 600
+	Radius 60000 # approx.
+	AbsMag 50 # extremely low
 }
 
-"2MASS J09393548-2448279 B:2MASS 0939-2448 B"
+"2MASS 0939-2448 B:2MASS J09393548-2448279 B"
 {
+	Texture "exo-class4night.*"
 	RA 144.897843
 	Dec -24.80775
 	Distance 17.414
 	SpectralType "T8V"
-	AbsMag 38 # estimate for radius in Celestia
+	Temperature 600
+	Radius 60000 # approx.
+	AbsMag 50 # extremely low
 }
 
 57544 # Gliese 445
@@ -1233,6 +1331,7 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	Dec 78.691111
 	Distance 17.418
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 10.79
 }
 
@@ -1242,19 +1341,23 @@ Barycenter "GJ 1116"  # orbit of A & B unknown
 	Dec 14.891389
 	Distance 17.657
 	SpectralType "M1.0V"
+	Radius 341000 # approx. for class
 	AppMag 8.46
 }
 
-# Two very nearby (d ~ 5 pc) ultracool brown dwarfs detected by
-# their large proper motions from WISE, 2MASS, and SDSS data.
-# Scholz et al. http://arxiv.org/abs/1105.4059v2
-"WISE J1741+2553"
+# Kirpatrick et al. (2011) The First Hundred Brown Dwarfs 
+# Discovered by the Wide-field Infrared Survey Explorer (WISE)
+# http://arxiv.org/abs/1108.4677
+"WISE 1741+2553:WISE J1741+2553:WISEPA J174124.26+255319.5"
 {
+	Texture "exo-class4night.*"
 	RA 265.351250
 	Dec 25.888889
-	Distance 18
+	Distance 17.9
 	SpectralType "T9.0"
-	AbsMag 38 # estimate for radius in Celestia
+	Temperature 500 # approx.
+	Radius 60000 # approx.
+	AbsMag 50 # extremely low
 }
 
 Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
@@ -1270,10 +1373,11 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 	Dec 58.977167
 	Distance 18.068
 	SpectralType "M4V"
+	Radius 180000 # approx. for class
 	AppMag 11.04
 }
 
-"Gliese 169.1 B:Stein 2051 B"
+1020623744 "Gliese 169.1 B:Stein 2051 B"
 {
 	RA 67.795063
 	Dec 58.977167
@@ -1288,15 +1392,17 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 	Dec 33.268056
 	Distance 18.313
 	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
 	AppMag 10.02
 }
 
-"2MASS J18353790+3259545:2MASS 1835+3259"
+"2MASS 1835+3259:2MASS J18353790+3259545"
 {
 	RA 278.907917
 	Dec 32.998333
 	Distance 18.480
 	SpectralType "M8.5V"
+	Radius 66000 # approx. for class
 	AppMag 18.27
 }
 
@@ -1315,16 +1421,20 @@ Barycenter 21088 "Gliese 169.1:Stein 2051" # orbit of A & B unknown
 	Dec -16.974722
 	Distance 18.635
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.50
 }
 
-"2MASS J04151954-0935066:2MASS 0415-0935"
+"2MASS 0415-0935:2MASS J04151954-0935066"
 {
+	Texture "exo-class4night.*"
 	RA 63.83125
 	Dec -9.585
 	Distance 18.709
 	SpectralType "T8.0V"
-	AbsMag 38  # for approximate radius in Celestia
+	Temperature 760
+	Radius 60000 # approx.
+	AbsMag 50 # extremely low
 }
 
 96100 # Sig Dra
@@ -1349,6 +1459,7 @@ Barycenter 29295 "Gliese 229:Luyten 668-21:LPM 230" # orbit of A & B unknown
 	Dec -21.864643
 	Distance 18.770
 	SpectralType "M1.5V"
+	Radius 324000 # approx. for class
 	AppMag 8.14
 }
 
@@ -1358,7 +1469,7 @@ Barycenter 29295 "Gliese 229:Luyten 668-21:LPM 230" # orbit of A & B unknown
 	Dec -21.862692
 	Distance 18.770
 	SpectralType "T6.0V"
-	AbsMag 33 # very approx
+	AbsMag 33.5 # for approximate radius in Celestia
 }
 
 26857 # Ross 47
@@ -1367,6 +1478,7 @@ Barycenter 29295 "Gliese 229:Luyten 668-21:LPM 230" # orbit of A & B unknown
 	Dec 12.489444
 	Distance 19.018
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.57
 }
 
@@ -1376,6 +1488,7 @@ Barycenter 29295 "Gliese 229:Luyten 668-21:LPM 230" # orbit of A & B unknown
 	Dec -57.319167
 	Distance 19.063
 	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
 	AppMag 10.76
 }
 
@@ -1392,6 +1505,7 @@ Barycenter 94761 "Gliese 752:Ross 652:Wolf 1055" # orbit of A & B unknown
 	Dec 5.1688889
 	Distance 19.078
 	SpectralType "M2.5V"
+	Radius 290000 # approx. for class
 	AppMag 9.10
 }
 
@@ -1401,6 +1515,7 @@ Barycenter 94761 "Gliese 752:Ross 652:Wolf 1055" # orbit of A & B unknown
 	Dec 5.150278
 	Distance 19.078
 	SpectralType "M8.0V"
+	Radius 77000 # approx. for class
 	AppMag 17.45
 }
 
@@ -1428,7 +1543,7 @@ Barycenter "Gliese 570:ADS 9446"
 	}
 }
 
-Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
+Barycenter 73182 "Gliese 570 BC"         # fully specified orientation
 {
 	OrbitBarycenter "Gliese 570"
 
@@ -1445,8 +1560,9 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 
 "Gliese 570 B:ADS 9446 B"
 {
-	OrbitBarycenter "Gliese 570 B-C"
+	OrbitBarycenter "Gliese 570 BC"
 	SpectralType "M1.5V"
+	Radius 324000 # approx. for class
 	AppMag 8.30
 
 	EllipticalOrbit {
@@ -1462,8 +1578,9 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 
 "Gliese 570 C:ADS 9446 C"
 {
-	OrbitBarycenter "Gliese 570 B-C"
+	OrbitBarycenter "Gliese 570 BC"
 	SpectralType "M3V"
+	Radius 270000 # approx. for class
 	AppMag 9.96
 
 	EllipticalOrbit {
@@ -1479,11 +1596,14 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 
 "Gliese 570 D:ADS 9446 D"
 {
+	Texture "exo-class4night.*"
 	RA 224.312500
 	Dec -21.363889
 	Distance 19.116
-	SpectralType "T7V"
-	AbsMag 38 # very approx
+	SpectralType "T7.5V"
+	Temperature 750
+	Radius 60000 # approx.
+	AbsMag 50 # extremely low
 }
 
 "Gliese 754:Luyten 347-14"
@@ -1492,6 +1612,7 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 	Dec -45.558889
 	Distance 19.280
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 12.23
 }
 
@@ -1501,6 +1622,7 @@ Barycenter 73182 "Gliese 570 B-C"         # fully specified orientation
 	Dec -41.275556
 	Distance 19.355
 	SpectralType "M2.5V"
+	Radius 290000 # approx. for class
 	AppMag 9.31
 }
 
@@ -1515,6 +1637,7 @@ Barycenter 1242 "GJ 1005:Luyten 722-22"
 {
 	OrbitBarycenter "Luyten 722-22"
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.60
 
 	EllipticalOrbit {
@@ -1532,6 +1655,7 @@ Barycenter 1242 "GJ 1005:Luyten 722-22"
 {
 	OrbitBarycenter "Luyten 722-22"
 	SpectralType "M7V"
+	Radius 84000 # approx. for class
 	AppMag 14.02
 
 	EllipticalOrbit {
@@ -1593,7 +1717,7 @@ Barycenter "36 Oph:Gliese 663:ADS 10417" # orbit of (AB) & C unknown
 	Distance 19.401
 }
 
-Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
+Barycenter 84405 "36 Oph AB:Gliese 663 AB"
 {
 	RA 258.837500
 	Dec -26.602778
@@ -1602,7 +1726,7 @@ Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
 
 "36 Oph A:Gliese 663 A:ADS 10417 A"
 {
-	OrbitBarycenter "36 Oph A-B"
+	OrbitBarycenter "36 Oph AB"
 	SpectralType "K1.5V"
 	AppMag 5.07
 
@@ -1619,7 +1743,7 @@ Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
 
 "36 Oph B:Gliese 663 B:ADS 10417 B"
 {
-	OrbitBarycenter "36 Oph A-B"
+	OrbitBarycenter "36 Oph AB"
 	SpectralType "K1V"
 	AppMag 5.08
 
@@ -1649,6 +1773,7 @@ Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
 	Dec 2.401111
 	Distance 19.412
 	SpectralType "M1.0V"
+	Radius 341000 # approx. for class
 	AppMag 8.98
 }
 
@@ -1658,6 +1783,7 @@ Barycenter 84405 "36 Oph A-B:Gliese 663 A-B"
 	Dec 3.552500
 	Distance 19.509
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.19
 }
 
@@ -1683,6 +1809,7 @@ Barycenter 99461 "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A &
 	Dec -36.09849
 	Distance 19.618
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.50
 }
 
@@ -1693,6 +1820,21 @@ Barycenter 99461 "Gliese 783:CD-36 13940:J Herschel 5173:HJ 5173" # orbit of A &
 	Distance 19.711
 	SpectralType "G8V"
 	AppMag 4.26
+}
+
+# Kirpatrick et al. (2011) The First Hundred Brown Dwarfs 
+# Discovered by the Wide-field Infrared Survey Explorer (WISE)
+# http://arxiv.org/abs/1108.4677
+"WISE 0254+0223:WISE J0254+0223:WISEPA J025409.45+022359.1"
+{
+	Texture "exo-class4night.*"
+	RA 43.539583
+	Dec 2.399722
+	Distance 19.8
+	SpectralType "T8.0"
+	Temperature 500
+	Radius 60000 # approx.
+	AbsMag 50 # extremely low
 }
 
 "GJ 1221:LP 44-113"
@@ -1715,6 +1857,7 @@ Barycenter "Gliese 338:ADS 7251:Struve 1321"
 {
 	OrbitBarycenter "Struve 1321"
 	SpectralType "M0V"
+	Radius 432000 # approx. for class
 	AppMag 7.64
 
 	EllipticalOrbit {
@@ -1768,6 +1911,7 @@ Barycenter 34603 "Gliese 268:Ross 986"
 {
 	OrbitBarycenter "Ross 986"
 	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
 	AppMag 12.05
 
 	EllipticalOrbit {
@@ -1781,6 +1925,7 @@ Barycenter 34603 "Gliese 268:Ross 986"
 {
 	OrbitBarycenter "Ross 986"
 	SpectralType "M6V"
+	Radius 105000 # approx. for class
 	AppMag 12.45
 
 	EllipticalOrbit {
@@ -1789,13 +1934,13 @@ Barycenter 34603 "Gliese 268:Ross 986"
 	}
 }
 
-"2MASS J09373487+2931409:2MASS 0937+2931"
+"2MASS 0937+2931:2MASS J09373487+2931409"
 {
 	RA 144.391667
 	Dec 29.516667
 	Distance 19.973
 	SpectralType "T6.0V"
-	AbsMag 33  # for approximate radius in Celestia
+	AbsMag 33.5  # for approximate radius in Celestia
 }
 
 99701 # Gliese 784
@@ -1804,6 +1949,7 @@ Barycenter 34603 "Gliese 268:Ross 986"
 	Dec -45.163889
 	Distance 20.215
 	SpectralType "M0.0V"
+	Radius 432000 # approx. for class
 	AppMag 7.95
 }
 
@@ -1813,6 +1959,7 @@ Barycenter 34603 "Gliese 268:Ross 986"
 	Dec -12.519444
 	Distance 20.286
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.32
 }
 
@@ -1857,6 +2004,7 @@ Barycenter "Gliese 896 B"
 {
 	OrbitBarycenter "Gliese 896 A"
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 10.27
 
 	EllipticalOrbit {
@@ -1873,6 +2021,7 @@ Barycenter "Gliese 896 B"
 {
 	OrbitBarycenter "Gliese 896 A"
 	SpectralType "M7V"              # from apparent magnitude
+	Radius 84000 # approx. for estimated class
 	AppMag 13.26
 
 	EllipticalOrbit {
@@ -1887,6 +2036,7 @@ Barycenter "Gliese 896 B"
 {
 	OrbitBarycenter "Gliese 896 B"
 	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
 	AppMag 12.21
 
 	EllipticalOrbit {
@@ -1902,6 +2052,7 @@ Barycenter "Gliese 896 B"
 {
 	OrbitBarycenter "Gliese 896 B"
 	SpectralType "M9V"              # from apparent magnitude
+	Radius 56000 # approx. for class
 	AppMag 15.40
 
 	EllipticalOrbit {
@@ -1918,6 +2069,7 @@ Barycenter "Gliese 896 B"
 	Dec -7.722222
 	Distance 20.669
 	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
 	AppMag 10.57
 }
 
@@ -1927,6 +2079,7 @@ Barycenter "Gliese 896 B"
 	Dec 21.834722
 	Distance 20.792
 	SpectralType "M6.0V"
+	Radius 105000 # approx. for class
 	AppMag 16.10
 }
 
@@ -1936,6 +2089,7 @@ Barycenter "Gliese 896 B"
 	Dec -38.381667
 	Distance 20.804
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 12.75
 }
 
@@ -1950,6 +2104,7 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 {
 	OrbitBarycenter "Gliese 661"
 	SpectralType "M3V"
+	Radius 270000 # approx. for class
 	AppMag 9.93
 
 	EllipticalOrbit {
@@ -1967,6 +2122,7 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 {
 	OrbitBarycenter "Gliese 661"
 	SpectralType "M4V"
+	Radius 180000 # approx. for class
 	AppMag 10.35
 
 	EllipticalOrbit {
@@ -1983,16 +2139,16 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 # Artigau E. et al. (2006) Discovery of the brightest T dwarf in the 
 # northern hemisphere." ApJ, 651, L57.
 # (http://arxiv.org/abs/astro-ph/0609419)
-"2MASS J01365662+0933473:2MASS 0136+0933:SIMP J013656.5+093347"
+"2MASS 0136+0933:2MASS J01365662+0933473:SIMP J013656.5+093347"
 {
 	RA 24.235833
 	Dec 9.563056
 	Distance 20.874
 	SpectralType "T2.5V"
-	AbsMag 27  # for approximate radius in Celestia
+	AbsMag 27.5  # for approximate radius in Celestia
 }
 
-"Gliese 223.2:LP 658-2"
+"Gliese 223.2:LP 658-2:HL 4"
 {
 	RA 88.790417
 	Dec -4.171389
@@ -2007,6 +2163,7 @@ Barycenter 84140 "Gliese 661:BD+45 2505"
 	Dec 40.865000
 	Distance 20.908
 	SpectralType "M5.0V"
+	Radius 140000 # approx. for class
 	AppMag 14.76
 }
 
@@ -2023,7 +2180,7 @@ Barycenter "Gliese 644:Wolf 630" # orbit of (AB) & C unknown
 	Distance 21.048
 }
 
-Barycenter 82817 "Gliese 644 A-B:Wolf 630 A-B"
+Barycenter 82817 "Gliese 644 AB:Wolf 630 AB"
 {
 	RA 253.870000
 	Dec -8.336389
@@ -2032,8 +2189,9 @@ Barycenter 82817 "Gliese 644 A-B:Wolf 630 A-B"
 
 "V1054 Oph:Gliese 644 A:Wolf 630 A"
 {
-	OrbitBarycenter "Wolf 630 A-B"
+	OrbitBarycenter "Wolf 630 AB"
 	SpectralType "M2.5V"
+	Radius 290000 # approx. for class
 	AppMag 9.72
 
 	EllipticalOrbit {                # fully specified orientation
@@ -2049,7 +2207,7 @@ Barycenter 82817 "Gliese 644 A-B:Wolf 630 A-B"
 
 Barycenter "Gliese 644 B:Wolf 630 B"
 {
-	OrbitBarycenter "Wolf 630 A-B"
+	OrbitBarycenter "Wolf 630 AB"
 
 	EllipticalOrbit {                # fully specified orientation
 		Period          1.71727
@@ -2066,6 +2224,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 {
 	OrbitBarycenter "Wolf 630 B"
 	SpectralType "M3V"
+	Radius 270000 # approx. for class
 	AppMag 10.37
 
 	EllipticalOrbit {
@@ -2081,6 +2240,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 {
 	OrbitBarycenter "Wolf 630 B"
 	SpectralType "M4V"
+	Radius 180000 # approx. for class
 	AppMag 10.87
 
 	EllipticalOrbit {
@@ -2099,6 +2259,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	Dec -8.394444
 	Distance 21.048
 	SpectralType "M7V"
+	Radius 84000 # approx. for class
 	AppMag 16.78
 }
 
@@ -2108,6 +2269,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	Dec -8.322500
 	Distance 21.048
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.80
 }
 
@@ -2117,6 +2279,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	Dec 54.304167
 	Distance 21.298
 	SpectralType "M1.5V"
+	Radius 324000 # approx. for class
 	AppMag 10.10
 }
 
@@ -2126,6 +2289,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	Dec -68.885000
 	Distance 21.311
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 12.74
 }
 
@@ -2135,6 +2299,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	Dec 11.125278
 	Distance 21.332
 	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
 	AppMag 13.80
 }
 
@@ -2153,6 +2318,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	Dec -28.164167
 	Distance 21.389
 	SpectralType "M7.0V"
+	Radius 84000 # approx. for class
 	AppMag 17.05
 }
 
@@ -2162,6 +2328,7 @@ Barycenter "Gliese 644 B:Wolf 630 B"
 	Dec 22.833056
 	Distance 21.843
 	SpectralType "M2.5V"
+	Radius 290000 # approx. for class
 	AppMag 10.02
 }
 
@@ -2179,6 +2346,7 @@ Barycenter 106106 "Gliese 829:Ross 775"
 {
 	OrbitBarycenter "Ross 775"
 	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
 	AppMag 11.05
 
 	EllipticalOrbit {
@@ -2192,12 +2360,28 @@ Barycenter 106106 "Gliese 829:Ross 775"
 {
 	OrbitBarycenter "Ross 775"
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.05
 
 	EllipticalOrbit {
 		Period          0.146	# 53.2dys
 		SemiMajorAxis   0.11	# estimated from mass ratio 0.26:0.26
 	}
+}
+
+# Kirkpatrick et al. (2011) The First Hundred Brown Dwarfs 
+# Discovered by the Wide-field Infrared Survey Explorer (WISE)
+# http://arxiv.org/abs/1108.4677
+"WISE 1217+1626:WISE J1217+1626:WISEPC J121756.91+162640.2"
+{
+	Texture "exo-class4night.*"
+	RA 184.487083
+	Dec 16.444444
+	Distance 21.9
+	SpectralType "T9.0V"
+	Temperature 600
+	Radius 60000 # approx.
+	AbsMag 50 # extremely low
 }
 
 # Delfosse, X. et al. (1999) "New Neighbours I: 13 new
@@ -2224,6 +2408,7 @@ Barycenter "GJ 3522 A:Giclas 41-14 A"
 {
 	OrbitBarycenter "Giclas 41-14 A"
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.94
 
 	EllipticalOrbit {
@@ -2236,6 +2421,7 @@ Barycenter "GJ 3522 A:Giclas 41-14 A"
 {
 	OrbitBarycenter "Giclas 41-14 A"
 	SpectralType "M6V" # from estimated mass
+	Radius 105000 # approx. for estimated class
 	AppMag 12.14
 
 	EllipticalOrbit {
@@ -2249,6 +2435,7 @@ Barycenter "GJ 3522 A:Giclas 41-14 A"
 {
 	OrbitBarycenter "Giclas 41-14"
 	SpectralType "M6V" # from mass
+	Radius 105000 # approx. for estimated class
 	AppMag 12.28
 
 	EllipticalOrbit {
@@ -2305,6 +2492,7 @@ Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 	Dec 6.810118
 	Distance 22.165
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 11.65
 }
 
@@ -2314,6 +2502,7 @@ Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 	Dec 16.554122
 	Distance 22.284
 	SpectralType "M1.5V"
+	Radius 324000 # approx. for class
 	AppMag 8.65
 }
 
@@ -2323,6 +2512,7 @@ Barycenter 72659 "XI Boo:37 Boo:Gliese 566:ADS 9413"
 	Dec 8.774444
 	Distance 22.294
 	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
 	AppMag 12.82
 }
 
@@ -2333,7 +2523,7 @@ Barycenter "Gliese 667:CD-34 11626" # orbit of (AB) & C unknown
 	Distance 22.296
 }
 
-Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
+Barycenter 84709 "Gliese 667 AB:CD-34 11626 AB"
 {
 	RA  259.734835
 	Dec -34.989574
@@ -2342,7 +2532,7 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 
 "Gliese 667 A:CD-34 11626 A"
 {
-	OrbitBarycenter "Gliese 667 A-B"
+	OrbitBarycenter "Gliese 667 AB"
 	SpectralType "K4V"
 	AppMag 5.90
 
@@ -2359,7 +2549,7 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 
 "Gliese 667 B:CD-34 11626 B"
 {
-	OrbitBarycenter "Gliese 667 A-B"
+	OrbitBarycenter "Gliese 667 AB"
 	SpectralType "K5V"
 	AppMag 5.90
 
@@ -2380,6 +2570,7 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 	Dec -34.994167
 	Distance 22.296
 	SpectralType "M1.5V"
+	Radius 324000 # approx. for class
 	AppMag 10.26
 }
 
@@ -2389,6 +2580,7 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 	Dec -16.593372777
 	Distance 22.680
 	SpectralType "M2.5V"
+	Radius 290000 # approx. for class
 	AppMag 11.22
 }
 
@@ -2398,6 +2590,7 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 	Dec -16.59479288
 	Distance 22.680
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.79
 }
 
@@ -2407,12 +2600,84 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 	Dec -16.59359277
 	Distance 22.680
 	SpectralType "M5V"
+	Radius 140000 # approx. for class
 	AppMag 12.65
 }
 
 # =============================================================
 # Additional stars between end of RECONS Top 100 and 25 ly: 
 # Non-Hipparcos and Hip stars with additional definitions
+
+# Jao et al. (2005) The Solar Neighborhood XIII: Parallax Results 
+# from the CTIOPI 0.9-m Program -- Stars with mu >= 1"/year 
+# (MOTION Sample)
+# http://arxiv.org/abs/astro-ph/0502167
+"GJ 1068:Luyten 230-188"
+{
+	RA 62.617083
+	Dec -53.602222
+	Distance 22.742
+	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
+	AppMag 13.62
+}
+
+# Bergfors et al. (2010) Lucky Imaging survey for southern M 
+# dwarf binaries
+# http://arxiv.org/abs/1006.2377
+Barycenter "LP 993-115 A:Luyten 369-44:2MASS J02451431-4344102" # orbit of Aa&Ab unknown, mass ratio ~1:1
+{
+	RA 41.309583
+	Dec -43.736111
+	Distance 22.8
+}
+
+"LP 993-115 Aa:Luyten 369-44 A:2MASS J02451431-4344102 A"
+{
+	RA 41.309583
+	Dec -43.7361467 # separation 1.8AU
+	Distance 22.8
+	SpectralType "M4.0V"
+	Radius 180000 # approx. for class
+	AppMag 12.67
+}
+
+"LP 993-115 Ab:Luyten 369-44 B:2MASS J02451431-4344102 B"
+{
+	RA 41.309583
+	Dec -43.7360753 # separation 1.8AU
+	Distance 22.8
+	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
+	AppMag 12.7 # estimate
+}
+
+Barycenter "LP 993-115" # orbit of AB unknown, mass ratio ~2:1
+{
+	RA 41.304583
+	Dec -43.738148
+	Distance 22.8
+}
+
+"LP 993-115 B:2MASS J02451070-4344319"
+{
+	RA 41.294583
+	Dec -43.742222
+	Distance 22.8
+	SpectralType "M5V"
+	Radius 140000 # approx. for class
+	AppMag 12.2
+}
+
+Modify 103096 # Gliese 809
+{
+	Radius 305000 # approx. for class
+}
+
+Modify 51317 # Gliese 393
+{
+	Radius 305000 # approx. for class
+}
 
 "Gliese 293:Luyten 97-12"
 {
@@ -2421,6 +2686,19 @@ Barycenter 84709 "Gliese 667 A-B:CD-34 11626 A-B"
 	Distance 23.099
 	SpectralType "DQ9"
 	AppMag 14.08
+}
+
+# Shkolnik, Liu & Reid (2009) Identifying the Young Low-mass 
+# Stars within 25 pc. I. Spectroscopic Observations.
+# http://arxiv.org/abs/0904.3323
+"Giclas 227-22:LP 71-82"
+{
+	RA 270.569167
+	Dec 4.262500
+	Distance 23.2
+	SpectralType "M6.1V"
+	Radius 105000 # approx. for class
+	AppMag 13.51
 }
 
 Barycenter 12114 "Gliese 105" # orbit of A & B unknown
@@ -2444,11 +2722,13 @@ Barycenter "Gliese 105 A"
 	AppMag 5.81
 
 	EllipticalOrbit {
-		Period          60
-		SemiMajorAxis   1.3     # mass ratio 0.81:0.08
-		Eccentricity    0.75
-		Inclination	82	# "nearly face-on orbit"
-		AscendingNode   310	#
+		Period          61
+		SemiMajorAxis   1.3    # mass ratio 0.81:0.08
+		Eccentricity    0.67
+		Inclination	61
+		AscendingNode   356
+		ArgOfPericenter 354
+		MeanAnomaly     354
 	}
 }
 
@@ -2456,15 +2736,17 @@ Barycenter "Gliese 105 A"
 {
 	OrbitBarycenter "Gliese 105 A"
 	SpectralType "M7.5V"
+	Radius 80000 # approx. for class
 	AppMag 16.90
 
 	EllipticalOrbit {
-		Period          60
-		SemiMajorAxis   13.7    # mass ratio 0.81:0.08
-		Eccentricity    0.75
-		Inclination	82	# "nearly face-on orbit"
-		AscendingNode   310	#
-		ArgOfPericenter 180
+		Period          61
+		SemiMajorAxis   13.6   # mass ratio 0.81:0.08
+		Eccentricity    0.67
+		Inclination	61
+		AscendingNode   356
+		ArgOfPericenter 174
+		MeanAnomaly     354
 	}
 }
 
@@ -2474,6 +2756,7 @@ Barycenter "Gliese 105 A"
 	Dec 6.868333
 	Distance 23.420
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.66
 }
 
@@ -2483,22 +2766,82 @@ Barycenter "Gliese 105 A"
 	Dec -2.390278
 	Distance 23.584
 	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
 	AppMag 14.67
 }
 
-"GJ 4083:LP 71-165"
+1016993109 "GJ 4063:LP 229-17"
+{
+	RA 278.652500
+	Dec 40.123889
+	Distance 23.635
+	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
+	AppMag 11.75
+}
+
+"GJ 4053:LP 71-165"
 {
 	RA 274.740417
 	Dec 66.192222
 	Distance 23.721
 	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
 	AppMag 13.49
+}
+
+# Henry et al. (2006) The solar neighborhood XVII parallax 
+# results from the CTIOPI 0.9 m program: 20 new members of the 
+# RECONS 10 parsec sample. AJ, 132, 2360-71.
+# http://iopscience.iop.org/1538-3881/132/6/2360/pdf/1538-3881_132_6_2360.pdf
+Barycenter 5496 "Gliese 54:Luyten 87-59"
+{
+	RA 17.595417
+	Dec -67.445000
+	Distance 23.874
+}
+
+# Goldin & Makarov (2007) Astrometric orbits for Hipparcos 
+# stochastic binaries. AJ Supplement Series, 173, 137-42.
+# http://iopscience.iop.org/0067-0049/173/1/137/fulltext/71924.text.html
+"Gliese 54 A:Luyten 87-59 A"
+{
+	OrbitBarycenter "Gliese 54"
+	SpectralType "M2.0V"
+	Radius 305000 # approx. for class
+	AppMag 10.17	# sum 9.82, diff 1.04
+		
+	EllipticalOrbit {		
+		Period		1.169
+		SemiMajorAxis	0.40 # mass ratio 0.83
+		Eccentricity  	0.41
+		Inclination  	94
+		AscendingNode  	92
+  		ArgOfPericenter 	123
+	}
+}
+
+"Gliese 54 B:Luyten 87-59 B"
+{
+	OrbitBarycenter "Gliese 54"
+	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
+	AppMag 11.21		# sum 9.82, diff 1.04
+		
+	EllipticalOrbit {		
+		Period		1.169
+		SemiMajorAxis	0.48 # mass ratio 0.83
+		Eccentricity  	0.41
+		Inclination  	94
+		AscendingNode  	92
+  		ArgOfPericenter 	303
+	}
 }
 
 # Dahn, C.C. et al. (2002) "Astrometry and photometry
 # for cool dwarfs and brown dwarfs." AJ, 124, 1170
 # (http://www.iop.org/EJ/abstract/-link=10023955/1538-3881/124/2/1170)
-"2MASS J15074769-1627386:2MASS 1507-1627"
+"2MASS 1507-1627:2MASS J15074769-1627386"
 {
 	RA 226.948709
 	Dec -16.460722
@@ -2513,6 +2856,7 @@ Barycenter "Gliese 105 A"
 	Dec -17.606944
 	Distance 24.268
 	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
 	AppMag 13.26
 }
 
@@ -2530,6 +2874,7 @@ Barycenter 83945 "GJ 3991:Giclas 203-47"
 {
 	OrbitBarycenter "Giclas 203-47"
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.80
 
 	EllipticalOrbit {
@@ -2554,12 +2899,32 @@ Barycenter 83945 "GJ 3991:Giclas 203-47"
 	}
 }
 
+# Henry et al. (2006) The solar neighborhood XVII parallax 
+# results from the CTIOPI 0.9 m program: 20 new members of the 
+# RECONS 10 parsec sample. AJ, 132, 2360-71.
+# http://iopscience.iop.org/1538-3881/132/6/2360/pdf/1538-3881_132_6_2360.pdf
+"GJ 4248:LHS 3746:Luyten 499-46" {
+	RA 330.622500
+	Dec -37.080833
+	Distance 24.288
+	SpectralType "M3.0V"
+	Radius 270000 # approx. for class
+	AppMag 11.80
+}
+
+Modify 12781 # Gliese 109
+{
+	Radius 225000 # approx. for class
+}
+
+
 "GJ 1224"
 {
 	RA 271.887083
 	Dec -15.964167
 	Distance 24.598
 	SpectralType "M4.5V"
+	Radius 160000 # approx. for class
 	AppMag 13.61
 }
 
@@ -2613,7 +2978,13 @@ Barycenter 5336 "MU Cas:30 Cas:Gliese 53"
 	Dec 59.598333
 	Distance 24.691
 	SpectralType "M3.5V"
+	Radius 225000 # approx. for class
 	AppMag 11.71
+}
+
+Modify 65859 # Ross 490
+{
+	Radius 341000 # approx. for class
 }
 
 Modify 91262 # Vega 
@@ -2628,6 +2999,21 @@ Modify 91262 # Vega 
 	}
 }
 
+# Kirpatrick et al. (2011) The First Hundred Brown Dwarfs 
+# Discovered by the Wide-field Infrared Survey Explorer (WISE)
+# http://arxiv.org/abs/1108.4677
+"WISE 2056+1459:WISE J2046+1459:WISEPC J205628.90+145953.3"
+{
+	Texture "exo-class4night.*"
+	RA 314.120417
+	Dec 14.998056
+	Distance 25.1
+	SpectralType "T9.5" # actually Y0
+	Temperature 350
+	Radius 70000
+	AbsMag 50 # extremely low
+}
+
 Modify 113368 # Fomalhaut 
 {
 	UniformRotation
@@ -2636,6 +3022,143 @@ Modify 113368 # Fomalhaut 
 	    AscendingNode  176.6   # Bouquin et al. (2009) A&A 498, L41-44
 # (http://www.aanda.org/index.php?option=article&access=doi&doi=10.1051/0004-6361/200911854)
  	}
+}
+
+# Seifahrt, A et al. Improved orbital solution and masses for the 
+# very low-mass multiple system LHS 1070. A&A 2008; 484: 429-34
+# http://arxiv.org/pdf/0803.0628v2.pdf
+Barycenter "GJ 2005:LHS 1070"
+{
+	RA 6.184167
+	Dec -27.140000
+	Distance 25.186
+}
+
+"GJ 2005 A:LHS 1070 A"
+{
+	OrbitBarycenter "GJ 2005"
+	SpectralType "M5.5V"
+	Radius 122000 # approx. for class
+	AppMag 15.61
+
+	EllipticalOrbit {
+		Period           82
+		SemiMajorAxis    7.0	# mass ratio 0.157:0.115	
+		Eccentricity     0.01
+		Inclination      44
+		AscendingNode    342
+		ArgOfPericenter  45
+		MeanAnomaly      10 # approx.
+	}
+}
+
+Barycenter "GJ 2005 BC:LHS 1070 BC"
+{
+	OrbitBarycenter "GJ 2005"
+
+	EllipticalOrbit {
+		Period           82
+		SemiMajorAxis    5.2	# mass ratio 0.157:0.115
+		Eccentricity     0.01
+		Inclination      44
+		AscendingNode    342
+		ArgOfPericenter  225
+		MeanAnomaly      10 # approx.
+	}
+}
+
+"GJ 2005 B:LHS 1070 B"
+{
+	OrbitBarycenter "GJ 2005 BC"
+	SpectralType "M8.5V"
+	Radius 66000 # approx. for class
+	AppMag 18.07
+
+	EllipticalOrbit {
+		Period           17.015031	# period 6214.74 dy
+		SemiMajorAxis    1.78		# mass ratio ~1:1
+		Eccentricity     0.034
+		Inclination      43.34
+		AscendingNode    341.84
+		ArgOfPericenter  138.79
+		MeanAnomaly      187.55
+	}
+}
+
+"GJ 2005 C:LHS 1070 C"
+{
+	OrbitBarycenter "GJ 2005 BC"
+	SpectralType "M9.2V"
+	Radius 56000 # approx. for class
+	AppMag 18.89
+
+	EllipticalOrbit {
+		Period           17.015031	# period 6214.74 dy
+		SemiMajorAxis    1.79		# mass ratio ~1:1
+		Eccentricity     0.034
+		Inclination      43.34
+		AscendingNode    341.84
+		ArgOfPericenter  318.79
+		MeanAnomaly      187.55
+	}
+}
+
+"Gliese 102:Luyten 1305-10"
+{
+	RA 38.405000
+	Dec 24.927500
+	Distance 25.284
+	SpectralType "M4V"
+	Radius 180000 # approx. for class
+	AppMag 12.96
+}
+
+Modify 88574 # Luyten 991-14
+{
+	Radius 305000 # approx. for class
+}
+
+"GJ 1093:LHS 223"
+{
+	RA 104.869583
+	Dec 19.349444
+	Distance 25.323
+	SpectralType "M5.0V"
+	Radius 140000 # approx. for class
+	AppMag 14.83
+}
+
+Modify 61874 # Gliese 480.1
+{
+	Radius 180000 # approx. for class
+}
+
+# Deacon NR, Hambly NC, Cooke JA. Southern Infrared Proper Motion 
+# Survey I: Discovery of New High Proper Motion Stars From First 
+# Full Hemisphere Scan. 2004.
+# http://arxiv.org/abs/astro-ph/0412127
+# RECONS revised original distance outwards from 11.8ly
+# (http://en.allexperts.com/q/Astronomy-1360/2008/1/SIPS-1259-4336.htm)
+"SIPS 1259-4336:SIPS J1259-4336:2MASS 1259-4336:2MASS J12590470-4336243"
+{
+	RA 194.770000
+	Dec -43.606667
+	Distance 25.40
+	SpectralType "M8.5V"
+	Radius 66000 # approx. for class
+	AbsMag 17.5 # approx.
+}
+
+# Castro & Gizis (2011) Discovery of a Late L Dwarf: 
+# WISEP J060738.65+242953.4
+# http://arxiv.org/abs/1110.4351
+"WISE 0607+2429:WISE 0607+2429:WISEP J060738.65+242953.4"
+{
+	RA 91.910833
+	Dec 24.498056
+	Distance 25.5
+	SpectralType "L8.0V"
+	AbsMag 23 # approx. for radius in Celestia
 }
 
 #========================================================================
