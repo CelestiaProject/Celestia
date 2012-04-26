@@ -3110,7 +3110,7 @@ class JPLEphOrbit : public CachingOrbit
         }
 
         // Rotate from the J2000 mean equator to the ecliptic
-#if CELVEC
+#ifdef CELVEC
         pos = pos * Mat3d::xrotation(astro::J2000Obliquity);
 #endif
         pos = XRotation(-astro::J2000Obliquity) * pos;

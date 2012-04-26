@@ -233,7 +233,7 @@ astro::Nutation_IAU2000B(double T)
 }
 
 
-#if TEST
+#ifdef TEST
 
 using namespace astro;
 

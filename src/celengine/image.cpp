@@ -553,7 +553,7 @@ Image* LoadJPEGImage(const string& filename, int)
 
     return img;
 
-#elif TARGET_OS_MAC
+#elif defined(TARGET_OS_MAC)
 
     Image* img = NULL;
     CGBuffer* cgJpegImage;

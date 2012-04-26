@@ -71,7 +71,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         favParams->getVector("base", base);
         favParams->getVector("offset", offset);
         fav->position = UniversalCoord::CreateLy(base) + UniversalCoord::CreateLy(offset * 1.0e-6);
-#if CELVEC
+#ifdef CELVEC
         base *= 1e6;
         fav->position = UniversalCoord(Point3d(base.x, base.y, base.z)) + offset;
 #endif
@@ -82,7 +82,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         favParams->getVector("axis", axis);
         favParams->getNumber("angle", angle);
         fav->orientation = Quaternionf(AngleAxisf((float) angle, axis.cast<float>()));
-#if CELVEC
+#ifdef CELVEC
         fav->orientation.setAxisAngle(Vec3f((float) axis.x, (float) axis.y, (float) axis.z),
                                       (float) angle);
 #endif
@@ -135,7 +135,7 @@ void WriteFavoritesList(FavoritesList& favorites, ostream& out)
 
         // This was the old way of doing things, before the confusing operators
         // and implicit casts were removed from UniversalCoord.
-#if CELVEC
+#ifdef CELVEC
         Point3d base = (Point3d) fav->position;
         Vec3d offset = fav->position - base;
         base.x *= 1e-6; base.y *= 1e-6; base.z *= 1e-6;
