@@ -176,7 +176,7 @@ ScriptedRotation::spin(double tjd) const
                                                   lua_tonumber(luaState, -3),
                                                   lua_tonumber(luaState, -2),
                                                   lua_tonumber(luaState, -1));
-#if CELVEC
+#ifdef CELVEC
                     lastOrientation.w = lua_tonumber(luaState, -4);
                     lastOrientation.x = lua_tonumber(luaState, -3);
                     lastOrientation.y = lua_tonumber(luaState, -2);

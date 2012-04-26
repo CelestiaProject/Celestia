@@ -43,6 +43,7 @@
 FrameTree::FrameTree(Star* star) :
     starParent(star),
     bodyParent(NULL),
+    m_changed(true),
     defaultFrame(NULL)
 {
     // Default frame for a star is J2000 ecliptical, centered
@@ -57,6 +58,7 @@ FrameTree::FrameTree(Star* star) :
 FrameTree::FrameTree(Body* body) :
     starParent(NULL),
     bodyParent(body),
+    m_changed(true),
     defaultFrame(NULL)
 {
     // Default frame for a solar system body is the mean equatorial frame of the body.

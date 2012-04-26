@@ -194,7 +194,7 @@ ScriptedOrbit::computePosition(double tjd) const
             if (lua_pcall(luaState, 2, 3, 0) == 0)
             {
                 pos = Vector3d(lua_tonumber(luaState, -3), lua_tonumber(luaState, -2), lua_tonumber(luaState, -1));
-#if CELVEC
+#ifdef CELVEC
                 pos.x = lua_tonumber(luaState, -3);
                 pos.y = lua_tonumber(luaState, -2);
                 pos.z = lua_tonumber(luaState, -1);

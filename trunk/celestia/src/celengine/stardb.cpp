@@ -739,7 +739,7 @@ void StarDatabase::finish()
     buildIndexes();
 
     // Delete the temporary indices used only during loading
-    delete binFileCatalogNumberIndex;
+    delete[] binFileCatalogNumberIndex;
     stcFileCatalogNumberIndex.clear();
     
     // Resolve all barycenters; this can't be done before star sorting. There's
@@ -867,7 +867,7 @@ bool StarDatabase::createStar(Star* star,
     double radius;
     bool hasRadius = starData->getLength("Radius", radius);
     
-    double temperature;
+    double temperature = 0.0;
     bool hasTemperature = starData->getNumber("Temperature", temperature);
     // disallow unphysical temperature values
     if (temperature <= 0.0)
@@ -1404,7 +1404,7 @@ void StarDatabase::buildOctree()
     DPRINTF(1, "%d stars total\n", (int) (firstStar - sortedStars));
     DPRINTF(1, "Octree has %d nodes and %d stars.\n",
             1 + octreeRoot->countChildren(), octreeRoot->countObjects());
-#if PROFILE_OCTREE
+#ifdef PROFILE_OCTREE
     vector<OctreeLevelStatistics> stats;
     octreeRoot->computeStatistics(stats);
     for (vector<OctreeLevelStatistics>::const_iterator iter = stats.begin(); iter != stats.end(); ++iter)

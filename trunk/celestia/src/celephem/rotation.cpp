@@ -49,7 +49,7 @@ RotationModel::angularVelocityAtTime(double tdb) const
         return Vector3d::Zero();
 
     return dq.vec().normalized() * (2.0 * acos(dq.w()) / dt);
-#if CELVEC
+#ifdef CELVEC
     Vector3d v(dq.x, dq.y, dq.z);
 	v.normalize();
 	return v * (2.0 * acos(dq.w) / dt);
@@ -153,7 +153,7 @@ CachingRotationModel::computeAngularVelocity(double tjd) const
         return Vector3d::Zero();
     
     return dq.vec().normalized() * (2.0 * acos(dq.w()) / dt);
-#if CELVEC
+#ifdef CELVEC
 	Vec3d v(dq.x, dq.y, dq.z);
 	v.normalize();
     return v * (2.0 * acos(dq.w) / dt);
