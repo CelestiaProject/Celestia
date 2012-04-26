@@ -43,10 +43,11 @@ ReferenceFrame::release() const
 {
     --refCount;
     assert(refCount >= 0);
+    int refCountCopy = refCount;
     if (refCount <= 0)
         delete this;
 
-    return refCount;
+    return refCountCopy;
 }
 
 
@@ -175,7 +176,7 @@ ReferenceFrame::getAngularVelocity(double tjd) const
         return Vector3d::Zero();
     else
         return dq.vec().normalized() * 	(2.0 * acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
-#if CELVEC
+#ifdef CELVEC
     Vector3d v(dq.x, dq.y, dq.z);
 	v.normalize();
 	return v * (2.0 * acos(dq.w) / ANGULAR_VELOCITY_DIFF_DELTA);
@@ -619,7 +620,7 @@ TwoVectorFrame::computeOrientation(double tjd) const
             rhAxis = 1;
         bool rhOrder = rhAxis == abs(secondaryAxis);
 
-#if CELVEC
+#ifdef CELVEC
         // Set the rotation matrix axes
         Vector3d v[3];
         v[abs(primaryAxis) - 1] = v0;

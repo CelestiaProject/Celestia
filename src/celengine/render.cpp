@@ -244,7 +244,7 @@ Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
 Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
 
 
-#if ENABLE_SELF_SHADOW
+#ifdef ENABLE_SELF_SHADOW
 static FramebufferObject* shadowFbo = NULL;
 #endif
 
@@ -1144,7 +1144,7 @@ bool Renderer::init(GLContext* _context,
         genBlurTextures();
 #endif
 
-#if ENABLE_SELF_SHADOW
+#ifdef ENABLE_SELF_SHADOW
         if (GLEW_EXT_framebuffer_object)
         {
             shadowFbo = new FramebufferObject(1024, 1024, FramebufferObject::DepthAttachment);
@@ -1539,18 +1539,14 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              float size)
 {
     double winX, winY, winZ;
-    int view[4] = { 0, 0, 0, 0 };
-    view[0] = -windowWidth / 2;
-    view[1] = -windowHeight / 2;
-    view[2] = windowWidth;
-    view[3] = windowHeight;
+    GLint view[4] = { 0, 0, windowWidth, windowHeight };
     float depth = (float) (pos.x() * modelMatrix[2] +
                            pos.y() * modelMatrix[6] +
                            pos.z() * modelMatrix[10]);
     if (gluProject(pos.x(), pos.y(), pos.z(),
                    modelMatrix,
                    projMatrix,
-                   (const GLint*) view,
+                   view,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Annotation a;
@@ -1603,18 +1599,14 @@ void Renderer::addSortedAnnotation(const MarkerRepresentation* markerRep,
                                    float size)
 {
     double winX, winY, winZ;
-    int view[4] = { 0, 0, 0, 0 };
-    view[0] = -windowWidth / 2;
-    view[1] = -windowHeight / 2;
-    view[2] = windowWidth;
-    view[3] = windowHeight;
+    GLint view[4] = { 0, 0, windowWidth, windowHeight };
     float depth = (float) (pos.x() * modelMatrix[2] +
                            pos.y() * modelMatrix[6] +
                            pos.z() * modelMatrix[10]);
     if (gluProject(pos.x(), pos.y(), pos.z(),
                    modelMatrix,
                    projMatrix,
-                   (const GLint*) view,
+                   view,
                    &winX, &winY, &winZ) != GL_FALSE)
     {
         Annotation a;
@@ -1701,18 +1693,14 @@ void Renderer::addObjectAnnotation(const MarkerRepresentation* markerRep,
     if (objectAnnotationSetOpen)
     {
         double winX, winY, winZ;
-        int view[4] = { 0, 0, 0, 0 };
-        view[0] = -windowWidth / 2;
-        view[1] = -windowHeight / 2;
-        view[2] = windowWidth;
-        view[3] = windowHeight;
+        GLint view[4] = { 0, 0, windowWidth, windowHeight };
         float depth = (float) (pos.x() * modelMatrix[2] +
                                pos.y() * modelMatrix[6] +
                                pos.z() * modelMatrix[10]);
         if (gluProject(pos.x(), pos.y(), pos.z(),
                        modelMatrix,
                        projMatrix,
-                       (const GLint*) view,
+                       view,
                        &winX, &winY, &winZ) != GL_FALSE)
         {
 
@@ -3944,7 +3932,7 @@ void Renderer::draw(const Observer& observer,
     }
 #endif
 
-#if VIDEO_SYNC
+#ifdef VIDEO_SYNC
     if (videoSync && glXWaitVideoSyncSGI != NULL)
     {
         unsigned int count;
@@ -9364,6 +9352,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
             rle.appMag = appMag;
+            rle.isOpaque = true;
             renderList->insert(renderList->end(), rle);
         }
     }
@@ -10189,8 +10178,6 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations, FontStyl
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(GLfloat((int) (windowWidth / 2)),
-                 GLfloat((int) (windowHeight / 2)), 0);
 
     for (int i = 0; i < (int) annotations.size(); i++)
     {
@@ -10328,8 +10315,6 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(GLfloat((int) (windowWidth / 2)),
-                 GLfloat((int) (windowHeight / 2)), 0);
 
     // Precompute values that will be used to generate the normalized device z value;
     // we're effectively just handling the projection instead of OpenGL. We use an orthographic
@@ -10419,8 +10404,6 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(GLfloat((int) (windowWidth / 2)),
-                 GLfloat((int) (windowHeight / 2)), 0);
 
     // Precompute values that will be used to generate the normalized device z value;
     // we're effectively just handling the projection instead of OpenGL. We use an orthographic

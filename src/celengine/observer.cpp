@@ -276,7 +276,7 @@ lookAt(Matrix<T, 3, 1> from, Matrix<T, 3, 1> to, Matrix<T, 3, 1> up)
     return Quaternion<T>(m).conjugate();
 }
 
-#if CELVEC
+#ifdef CELVEC
 template<class T> static Quat<T> 
 lookAt(Point3<T> from, Point3<T> to, Vector3<T> up)
 {
@@ -322,7 +322,7 @@ void Observer::update(double dt, double timeScale)
             t = (float) clamp((realTime - journey.startTime) / journey.duration);
 
         Vector3d jv = journey.to.offsetFromKm(journey.from);
-#if CELVEC
+#ifdef CELVEC
         Vector3d jv = journey.to - journey.from;
 #endif
         UniversalCoord p;
@@ -360,7 +360,7 @@ void Observer::update(double dt, double timeScale)
                         p = journey.from.offsetKm(v * x);
                     else
                         p = journey.to.offsetKm(-v * x);
-#if CELVEC
+#ifdef CELVEC
                     if (t < 0.5)
                         p = journey.from + v * astro::kilometersToMicroLightYears(x);
                     else
@@ -404,7 +404,7 @@ void Observer::update(double dt, double timeScale)
                         v = slerp(x, v1, v0);
 
                     p = frame->convertFromUniversal(origin.offsetKm(v), simTime);
-#if CELVEC
+#ifdef CELVEC
                     x = astro::kilometersToMicroLightYears(x / jv.length());
                     Vector3d v;
 
@@ -463,7 +463,7 @@ void Observer::update(double dt, double timeScale)
             }
 
             q = journey.initialOrientation.slerp(v, journey.finalOrientation);
-#if CELVEC
+#ifdef CELVEC
             // Be careful to choose the shortest path when interpolating
             if ((journey.initialOrientation.coeffs() - journey.finalOrientation.coeffs()).norm() <
                 (journey.initialOrientation.coeffs() + journey.finalOrientation.coeffs()).norm())
@@ -524,7 +524,7 @@ void Observer::update(double dt, double timeScale)
         Quaterniond dr = Quaterniond(0.0, halfAV.x(), halfAV.y(), halfAV.z()) * orientation;
         orientation = Quaterniond(orientation.coeffs() + dt * dr.coeffs());
         orientation.normalize();
-#if CELVEC
+#ifdef CELVEC
         Quaterniond dr = 0.5 * (AV * orientation);
         orientation += dt * dr;
         orientation.normalize();
@@ -584,7 +584,7 @@ void Observer::setLocationFilter(uint32 _locationFilter)
 void Observer::reverseOrientation()
 {
     setOrientation(getOrientation() * Quaterniond(AngleAxisd(PI, Vector3d::UnitY())));
-#if CELVEC
+#ifdef CELVEC
     Quatd q = getOrientation();
     q.yrotate(PI);
     setOrientation(q);
