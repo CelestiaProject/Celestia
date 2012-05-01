@@ -36,11 +36,14 @@ extern "C" {
 #define png_jmpbuf(png_ptr) png_ptr->jmpbuf
 #endif
 
-// Define various expansion transformations for old versions of libpng
 #if PNG_LIBPNG_VER < 10004
+// Define various expansion transformations for old versions of libpng
 #define png_set_palette_to_rgb(p)  png_set_expand(p)
 #define png_set_gray_1_2_4_to_8(p) png_set_expand(p)
 #define png_set_tRNS_to_alpha(p)   png_set_expand(p)
+#elif PNG_LIBPNG_VER >= 10500
+// libpng-1.5 include does not pull in zlib.h
+#include "zlib.h"
 #endif
 
 using namespace std;
