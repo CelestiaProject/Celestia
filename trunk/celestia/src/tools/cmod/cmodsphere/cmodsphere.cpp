@@ -6,7 +6,7 @@
 #include <io.h>
 #include <fcntl.h>
 
-#include "../../celmath/vecmath.h"
+#include <celmath/vecmath.h>
 
 using namespace std;
 
