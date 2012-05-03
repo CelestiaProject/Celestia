@@ -11,7 +11,10 @@
 #include <GL/glew.h>
 #include "modelviewwidget.h"
 #include "glframebuffer.h"
-#include <QtOpenGL>
+#include <QFileInfo>
+#include <QGLWidget>
+#include <QMouseEvent>
+#include <QTextStream>
 #include <Eigen/LU>
 #include <algorithm>
 
