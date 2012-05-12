@@ -826,6 +826,15 @@
 	AppMag 12.9
 }
 
+"WASP-47"
+{
+	RA 331.202917
+	Dec -12.018889
+	Distance 650
+	SpectralType "G9V"
+	AppMag 11.9
+}
+
 1007393925 "WASP-48:GSC 03925-00739"
 {
 	RA 291.162500
@@ -842,6 +851,60 @@
 	Distance 750
 	SpectralType "G9"
 	AppMag 11.6
+}
+
+1001136125 "WASP-55"
+{
+	RA 203.757917
+	Dec -17.503611
+	Distance 1080
+	SpectralType "G2V" # from temperature, radius and mass
+	AppMag 11.8
+}
+
+1019726469 "WASP-61"
+{
+	RA 75.299583
+	Dec -26.054167
+	Distance 1560
+	SpectralType "F7"
+	AppMag 12.5
+}
+
+1008748900 "WASP-62:GSC 08900-00874"
+{
+	RA 87.140000
+	Dec -63.988333
+	Distance 520
+	SpectralType "F7"
+	AppMag 10.3
+}
+
+1005567612 "WASP-63:GSC 07612-00556"
+{
+	RA 94.336250
+	Dec -38.323333
+	Distance 1080
+	SpectralType "G8"
+	AppMag 11.2
+}
+
+1018047193 "WASP-66"
+{
+	RA 158.225000
+	Dec -34.989722
+	Distance 1240
+	SpectralType "F4"
+	AppMag 11.6
+}
+
+1013886307 "WASP-67"
+{
+	RA 295.743750
+	Dec -19.949444
+	Distance 730
+	SpectralType "K0V"
+	AppMag 12.5
 }
 
 # CoRoT survey
@@ -1385,6 +1448,15 @@ Barycenter "Kepler-35"
 	}
 }
 
+1000643542 "KOI-13:KIC 9941662:GSC 03542-00064"
+{
+	RA 286.971250
+	Dec 46.868333
+	Distance 2040 # from spectral class, magnitude and radius
+	SpectralType "A0"
+	AppMag 9.95
+}
+
 "KOI-55:KIC 5807616"
 {
 	RA 296.356250
@@ -1456,6 +1528,15 @@ Barycenter "Kepler-35"
 	Distance 3900 # from mass, radius and magnitude
 	SpectralType "G0V" # from mass and radius
 	AppMag 15
+}
+
+"KOI-872"
+{
+	RA 289.268750
+	Dec 42.604167
+	Distance 2790
+	SpectralType "G" # from mass and radius
+	AppMag 15.3
 }
 
 "KOI-961:KIC 8561063"
