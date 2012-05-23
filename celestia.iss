@@ -5,23 +5,24 @@
 
 [Setup]
 AppName=Celestia
-AppVerName=Celestia 1.6.0
+AppVerName=Celestia 1.7.0
 AppPublisher=Shatters Software
 AppPublisherURL=http://www.shatters.net/celestia/
 AppSupportURL=http://www.shatters.net/celestia/
 AppUpdatesURL=http://www.shatters.net/celestia/
-DefaultDirName={pf}\Celestia
+DefaultDirName={code:DefDirRoot}\Celestia
 DefaultGroupName=Celestia
 LicenseFile=COPYING
-Compression=lzma/max
+Compression=lzma2/Ultra
+InternalCompressLevel=Ultra
+SolidCompression=true
 UninstallDisplayIcon={app}\celestia.exe
 WizardImageFile=win32-installer-image.bmp
-
+PrivilegesRequired=none
 ; Tell Explorer to refresh its file associations information at the
 ; end of the installation, and Uninstall will do the same at the end
 ; of uninstallation.
-ChangesAssociations=yes
-
+ChangesAssociations=true
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
@@ -59,6 +60,8 @@ Name: "{app}\extras-standard\iss\textures\medres"
 Name: "{app}\extras-standard\mir"
 Name: "{app}\extras-standard\mir\models"
 Name: "{app}\locale"
+Name: "{app}\help"
+Name: "{app}\help\CelestiaGuide" 
 
 [Files]
 Source: "celestia.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -594,6 +597,9 @@ Source: "fonts\sansbold12.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold14.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold20.txf";  DestDir: "{app}/fonts"; Flags: ignoreversion
 
+Source: "fonts\sans12_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sans14_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
+Source: "fonts\sansbold20_be.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans12_bg.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sansbold20_bg.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
 Source: "fonts\sans12_ja.txf";      DestDir: "{app}/fonts"; Flags: ignoreversion
@@ -626,7 +632,8 @@ Source: "extras-standard\cassini\data\huygens.xyzv"; DestDir: "{app}/extras-stan
 
 Source: "extras-standard\galileo\galileo.ssc"; DestDir: "{app}/extras-standard/galileo"; Flags: ignoreversion
 Source: "extras-standard\galileo\models\galileo.3ds"; DestDir: "{app}/extras-standard/galileo/models"; Flags: ignoreversion
-Source: "extras-standard\galileo\data\galileo.xyz"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
+Source: "extras-standard\galileo\data\galileo-cruise.xyzv"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
+Source: "extras-standard\galileo\data\galileo-orbit.xyzv"; DestDir: "{app}/extras-standard/galileo/data"; Flags: ignoreversion
 
 Source: "extras-standard\hubble\hubble.ssc"; DestDir: "{app}/extras-standard/hubble"; Flags: ignoreversion
 Source: "extras-standard\hubble\models\hubble.cmod"; DestDir: "{app}/extras-standard/hubble/models"; Flags: ignoreversion
@@ -654,6 +661,15 @@ Source: "src\tools\xindex\buildxindices.pl";  DestDir: "{app}/tools/xindex"; Fla
 Source: "src\tools\xindex\readme.txt";        DestDir: "{app}/tools/xindex"; Flags: ignoreversion
 Source: "src\tools\stardb\buildstardb.pl";    DestDir: "{app}/tools/stardb"; Flags: ignoreversion
 
+; Help
+Source: "help\CelestiaGuide.html";                DestDir: "{app}/help";                Flags: ignoreversion
+Source: "help\CelestiaGuide\animatedcollapse.js"; DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\cellogo.gif";         DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\celstyles.css";       DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\empty.gif";           DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\guide.gif";           DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+Source: "help\CelestiaGuide\jquery.js";           DestDir: "{app}/help/CelestiaGuide";  Flags: ignoreversion
+
 [InstallDelete]
 Type: files; Name: "{app}\extras\minormoons.ssc";
 Type: files; Name: "{app}\extras\numberedmoons.ssc";
@@ -672,23 +688,43 @@ Name: "{userdesktop}\Celestia";      Filename: "{app}\celestia.exe"; WorkingDir:
 ; to be deleted during an uninstall.
 Root: HKCU; Subkey: "Software\Shatters.net"; Flags: uninsdeletekey
 
-Root: HKCR; Subkey: "cel"; Flags: uninsdeletekeyifempty
-Root: HKCR; Subkey: "cel"; ValueType: string; ValueData: "URL:cel Protocol"; Tasks: urlassoc; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "cel"; ValueName: "URL Protocol"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue
+; If installing as admin, write associations to HKCR
 
-Root: HKCR; Subkey: "cel\Shell"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKCR; Subkey: "cel\Shell\open"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: """{app}\celestia.exe"" --once --dir ""{app}"" -u ""%1"""; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCR; Subkey: "cel"; Flags: uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: "cel"; ValueType: string; ValueData: "URL:cel Protocol"; Tasks: urlassoc; Flags: uninsdeletevalue; Check: not IsRegularUser
+Root: HKCR; Subkey: "cel"; ValueName: "URL Protocol"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue; Check: not IsRegularUser
 
-Root: HKCR; Subkey: ".cel";  ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKCR; Subkey: ".clx";  ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKCR; Subkey: ".celx"; ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCR; Subkey: "cel\Shell"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: "cel\Shell\open"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: "cel\Shell\open\Command"; ValueType: string; ValueData: """{app}\celestia.exe"" --once --dir ""{app}"" -u ""%1"""; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
 
-Root: HKCR; Subkey: "celestia_script"; ValueName: "URL Protocol"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKCR; Subkey: "celestia_script\Shell"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKCR; Subkey: "celestia_script\Shell\open"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKCR; Subkey: "celestia_script\Shell\open\Command"; ValueType: string; ValueData: """{app}\celestia.exe"" --once --dir ""{app}"" -u ""%1"""; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCR; Subkey: ".cel";  ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: ".clx";  ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: ".celx"; ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
 
+Root: HKCR; Subkey: "celestia_script"; ValueName: "URL Protocol"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: "celestia_script\Shell"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: "celestia_script\Shell\open"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+Root: HKCR; Subkey: "celestia_script\Shell\open\Command"; ValueType: string; ValueData: """{app}\celestia.exe"" --once --dir ""{app}"" -u ""%1"""; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: not IsRegularUser
+
+; If installing as regular user, write to HKCU
+
+Root: HKCU; Subkey: "Software\Classes\cel"; Flags: uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\cel"; ValueType: string; ValueData: "URL:cel Protocol"; Tasks: urlassoc; Flags: uninsdeletevalue; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\cel"; ValueName: "URL Protocol"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue; Check: IsRegularUser
+
+Root: HKCU; Subkey: "Software\Classes\cel\Shell"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\cel\Shell\open"; ValueType: string; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\cel\Shell\open\Command"; ValueType: string; ValueData: """{app}\celestia.exe"" --once --dir ""{app}"" -u ""%1"""; Tasks: urlassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+
+Root: HKCU; Subkey: "Software\Classes\.cel";  ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\.clx";  ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\.celx"; ValueType: string; ValueData: "celestia_script"; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+
+Root: HKCU; Subkey: "Software\Classes\celestia_script"; ValueName: "URL Protocol"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\celestia_script\Shell"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\celestia_script\Shell\open"; ValueType: string; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
+Root: HKCU; Subkey: "Software\Classes\celestia_script\Shell\open\Command"; ValueType: string; ValueData: """{app}\celestia.exe"" --once --dir ""{app}"" -u ""%1"""; Tasks: fileassoc; Flags: uninsdeletevalue uninsdeletekeyifempty; Check: IsRegularUser
 
 [Run]
 Filename: "{app}\celestia.exe"; Description: "Launch Celestia"; Flags: nowait postinstall skipifsilent
@@ -696,4 +732,16 @@ Filename: "{app}\celestia.exe"; Description: "Launch Celestia"; Flags: nowait po
 [UninstallDelete]
 Type: files; Name: "{app}\celestia.url"
 
+[code]
+function IsRegularUser(): Boolean;
+begin
+  Result := not (IsAdminLoggedOn or IsPowerUserLoggedOn);
+end;
 
+function DefDirRoot(Param: String): String;
+begin
+  if IsRegularUser then
+    Result := ExpandConstant('{localappdata}')
+  else
+    Result := ExpandConstant('{pf}')
+end;
