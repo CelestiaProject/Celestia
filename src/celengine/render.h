@@ -163,12 +163,13 @@ class Renderer
         ShowPartialTrajectories = 0x20000,
         ShowNebulae         =  0x40000,
         ShowOpenClusters    =  0x80000,
-		ShowGlobulars       =  0x100000,			        
-		ShowCloudShadows    =  0x200000,
+        ShowGlobulars       =  0x100000,
+        ShowCloudShadows    =  0x200000,
         ShowGalacticGrid    =  0x400000,
         ShowEclipticGrid    =  0x800000,
         ShowHorizonGrid     = 0x1000000,
         ShowEcliptic        = 0x2000000,
+        ShowTintedIllumination = 0x4000000,
     };
 
     enum StarStyle 
