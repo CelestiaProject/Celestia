@@ -1584,3 +1584,80 @@ Cleanup:
   information application to 1.6.0
 * Purged out of date controls documentation
 * Reorganized spacecraft add-ons in standard package
+
+1.6.1
+Bug fixes
+* Removed extraneous colons from nearstars.stc
+* Fixed truncation of long label strings in East Asian locales
+* Increased size of Goto Object dialog to prevent translated strings from being
+  truncated
+* Fixed i18n bug with scripting message
+* Removed duplicate install of stars.dat.
+* Fix code taking address of a temporary result.
+* Fixed compile warnings in 1.6.1 caused by redefinition of UINT64_MAX
+* Corrected encoding of cel URLs with non-ASCII characters
+* Added check to prevent a crash when string decoding fails
+* Added Nils Larsson's patch for libpng-1.4
+
+Data file updates:
+* Updated extrasolar planets data files.
+* Updated solar system locations files.
+* Updated numberedmoons.ssc file.
+* Updated Galileo add-on.
+* Updated starnames.dat file.
+
+Platform-specific changes:
+* Linux: Add missing files from extras-standard to Makefiles.
+* Linux: fix for Unicode URLs in KDE bookmarks menu.
+* Windows: Fixed i18n bug [2753461]
+* Windows: Save FoV value in bookmarks
+* Windows: Added ecliptic line setting to View Options dialog box
+* Windows: Fixed i18n bug in Windows Script menu
+* Windows: Added link to new HTML help files to Help menu
+* Windows: Fixed invisible context menu in fullscreen mode (ATI cards)
+* Windows: Fixed menu bar overlapping top of 3D view (ATI cards)
+* Windows: Save and restore locations to/from registry
+* Windows: Fixed startup crash when using fullwidth utf-8 characters
+* Windows: Increased Inno Setup compression settings
+* Windows: Allow installer to be run without administrator privileges.
+
+Internationalization:
+* Additional string translations
+  - Globular clusters
+  - "Nebula" and "Open cluster"
+  - World capitals
+* Removed r and R commands from localized help files
+* Updated translations
+* Additional languages
+  - Added Chinese Traditional translation
+  - Added Slovak translation
+  - Added Galician translation by Xabier Cancela
+  - Added Belarusian translation from <375gnu@gmail.com>
+  - Added Norwegian translation from FreewareTips
+  - Added Turkish translation
+* Fonts
+  - Lighter weight Japanese fonts
+  - Updated simplified Chinese fonts
+  - Added Belarusian fonts
+
+Features
+* Changed the name of 'Celestial' grid to 'Equatorial'
+* Added Runar and Christian's HTML help files
+* Added Solstice Mission extension for Cassini in 1.6.1 branch.
+
+Scripting
+* Celx scripting functions:
+  - Added seturl / geturl commands
+  - Added synchronizetime / istimesynchronized commands
+  - Added settextcolor / gettextcolor commands
+  - Added observer:orbit method
+  - Added celestia:runscript method
+  - Made orbitPeriod field available for stars via object:getinfo
+* Cel scripting:
+  - Added boolean occludable parameter to mark command
+  - Added settextcolor command
+* Added mousemove Lua hook
+
+Code optimization and reorganization
+* Fixes for gcc-4.5, and include -ldl for systems that need it.
+* More granular setting of CFLAGS.
