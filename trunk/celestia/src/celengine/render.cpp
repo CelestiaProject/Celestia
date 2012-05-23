@@ -2123,7 +2123,8 @@ static void
 setupLightSources(const vector<const Star*>& nearStars,
                   const UniversalCoord& observerPos,
                   double t,
-                  vector<LightSource>& lightSources)
+                  vector<LightSource>& lightSources,
+                  int renderFlags)
 {
     lightSources.clear();
 
@@ -2138,26 +2139,33 @@ setupLightSources(const vector<const Star*>& nearStars,
             ls.luminosity = (*iter)->getLuminosity();
             ls.radius = (*iter)->getRadius();
 
-            // If the star is sufficiently cool, change the light color
-            // from white.  Though our sun appears yellow, we still make
-            // it and all hotter stars emit white light, as this is the
-            // 'natural' light to which our eyes are accustomed.  We also
-            // assign a slight bluish tint to light from O and B type stars,
-            // though these will almost never have planets for their light
-            // to shine upon.
-            float temp = (*iter)->getTemperature();
-            if (temp > 30000.0f)
-                ls.color = Color(0.8f, 0.8f, 1.0f);
-            else if (temp > 10000.0f)
-                ls.color = Color(0.9f, 0.9f, 1.0f);
-            else if (temp > 5400.0f)
-                ls.color = Color(1.0f, 1.0f, 1.0f);
-            else if (temp > 3900.0f)
-                ls.color = Color(1.0f, 0.9f, 0.8f);
-            else if (temp > 2000.0f)
-                ls.color = Color(1.0f, 0.7f, 0.7f);
+            if (renderFlags & Renderer::ShowTintedIllumination)
+            {
+                // If the star is sufficiently cool, change the light color
+                // from white.  Though our sun appears yellow, we still make
+                // it and all hotter stars emit white light, as this is the
+                // 'natural' light to which our eyes are accustomed.  We also
+                // assign a slight bluish tint to light from O and B type stars,
+                // though these will almost never have planets for their light
+                // to shine upon.
+                float temp = (*iter)->getTemperature();
+                if (temp > 30000.0f)
+                    ls.color = Color(0.8f, 0.8f, 1.0f);
+                else if (temp > 10000.0f)
+                    ls.color = Color(0.9f, 0.9f, 1.0f);
+                else if (temp > 5400.0f)
+                    ls.color = Color(1.0f, 1.0f, 1.0f);
+                else if (temp > 3900.0f)
+                    ls.color = Color(1.0f, 0.9f, 0.8f);
+                else if (temp > 2000.0f)
+                    ls.color = Color(1.0f, 0.7f, 0.7f);
+                else
+                    ls.color = Color(1.0f, 0.4f, 0.4f);
+            }
             else
-                ls.color = Color(1.0f, 0.4f, 0.4f);
+            {
+                ls.color = Color(1.0f, 1.0f, 1.0f);
+            }
 
             lightSources.push_back(ls);
         }
@@ -2867,7 +2875,7 @@ void Renderer::draw(const Observer& observer,
         universe.getNearStars(observer.getPosition(), 1.0f, nearStars);
 
         // Set up direct light sources (i.e. just stars at the moment)
-        setupLightSources(nearStars, observer.getPosition(), now, lightSourceList);
+        setupLightSources(nearStars, observer.getPosition(), now, lightSourceList, renderFlags);
 
         // Traverse the frame trees of each nearby solar system and
         // build the list of objects to be rendered.
@@ -9209,8 +9217,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 #else
         Color starColor = colorTemp->lookupColor(star.getTemperature());
 #endif
-        float renderDistance = distance;
-        /*float s = renderDistance * size;      Unused*/
         float discSizeInPixels = 0.0f;
         float orbitSizeInPixels = 0.0f;
 
@@ -9243,7 +9249,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             appMag = astro::absToAppMag(star.getAbsoluteMagnitude(), distance);
 
             float f        = RenderDistance / distance;
-            renderDistance = RenderDistance;
             starPos        = obsPos.cast<float>() + relPos * f;
 
             float radius = star.getRadius();
