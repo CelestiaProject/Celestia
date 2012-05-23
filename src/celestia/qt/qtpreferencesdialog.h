@@ -12,18 +12,10 @@
 // of the License, or (at your option) any later version.
 
 #include <QDialog>
-
+#include "ui_preferences.h"
 #include <celutil/basictypes.h>
 
 class CelestiaCore;
-
-class QLabel;
-class QSpinBox;
-class QComboBox;
-class QCheckBox;
-class KKeyChooser;
-
-class CelestiaAppWindow;
 
 class PreferencesDialog : public QDialog
 {
@@ -33,83 +25,95 @@ public:
     PreferencesDialog(QWidget* parent, CelestiaCore* core);
     ~PreferencesDialog();
 
-public slots:
-    void slotOk();
-    void slotApply();
-    void slotCancel();
-    void setNow();
-    void ltSubstract();
-    void slotTimeHasChanged();
-    void slotAmbientLightLevel(int l);
-    void slotFaintestVisible(int m);
-    void slotRenderPath(int);
-    void slotDistanceToScreen(int);
-    void slotMinFeatureSize(int);
+private slots:
+    void on_starsCheck_stateChanged(int state);
+    void on_planetsCheck_stateChanged(int state);
+    void on_galaxiesCheck_stateChanged(int state);
+    void on_nebulaeCheck_stateChanged(int state);
+    void on_openClustersCheck_stateChanged(int state);
+    void on_globularClustersCheck_stateChanged(int state);
 
-    // Objects
-    void slotShowStars(bool);
-    void slotShowPlanets(bool);
-    void slotShowGalaxies(bool);
-    void slotShowNebulae(bool);
-    void slotShowOpenClusters(bool);
+    void on_atmospheresCheck_stateChanged(int state);
+    void on_cloudsCheck_stateChanged(int state);
+    void on_cloudShadowsCheck_stateChanged(int state);
+    void on_eclipseShadowsCheck_stateChanged(int state);
+    void on_ringShadowsCheck_stateChanged(int state);
+    void on_nightsideLightsCheck_stateChanged(int state);
+    void on_cometTailsCheck_stateChanged(int state);
+    void on_limitOfKnowledgeCheck_stateChanged(int state);
 
-    // Features
-    void slotShowAtmospheres(bool);
-    void slotShowCloudMaps(bool);
-    void slotShowNightMaps(bool);
-    void slotShowEclipseShadows(bool);
-    void slotShowRingShadows(bool);
-    void slotShowCloudShadows(bool);
-    void slotShowCometTails(bool);
+    void on_orbitsCheck_stateChanged(int state);
+    void on_starOrbitsCheck_stateChanged(int state);
+    void on_planetOrbitsCheck_stateChanged(int state);
+    void on_dwarfPlanetOrbitsCheck_stateChanged(int state);
+    void on_moonOrbitsCheck_stateChanged(int state);
+    void on_minorMoonOrbitsCheck_stateChanged(int state);
+    void on_asteroidOrbitsCheck_stateChanged(int state);
+    void on_cometOrbitsCheck_stateChanged(int state);
+    void on_spacecraftOrbitsCheck_stateChanged(int state);
+    void on_partialTrajectoriesCheck_stateChanged(int state);
 
-    // Guides
-    void slotShowOrbits(bool);
-    void slotShowPartialTrajectories(bool);
-    void slotShowSmoothLines(bool);
-    void slotShowCelestialSphere(bool);
-    void slotShowMarkers(bool);
-    void slotShowDiagrams(bool);
-    void slotShowBoundaries(bool);
+    void on_equatorialGridCheck_stateChanged(int state);
+    void on_eclipticGridCheck_stateChanged(int state);
+    void on_galacticGridCheck_stateChanged(int state);
+    void on_horizontalGridCheck_stateChanged(int state);
 
-    // Date Format
-    void slotDateFormatChanged();
+    void on_diagramsCheck_stateChanged(int state);
+    void on_boundariesCheck_stateChanged(int state);
+    void on_latinNamesCheck_stateChanged(int state);
+
+    void on_markersCheck_stateChanged(int state);
+    void on_eclipticLineCheck_stateChanged(int state);
+
+    void on_starLabelsCheck_stateChanged(int state);
+    void on_planetLabelsCheck_stateChanged(int state);
+    void on_dwarfPlanetLabelsCheck_stateChanged(int state);
+    void on_moonLabelsCheck_stateChanged(int state);
+    void on_minorMoonLabelsCheck_stateChanged(int state);
+    void on_asteroidLabelsCheck_stateChanged(int state);
+    void on_cometLabelsCheck_stateChanged(int state);
+    void on_spacecraftLabelsCheck_stateChanged(int state);
+    void on_galaxyLabelsCheck_stateChanged(int state);
+    void on_nebulaLabelsCheck_stateChanged(int state);
+    void on_openClusterLabelsCheck_stateChanged(int state);
+    void on_globularClusterLabelsCheck_stateChanged(int state);
+    void on_constellationLabelsCheck_stateChanged(int state);
+
+    void on_locationsCheck_stateChanged(int state);
+    void on_citiesCheck_stateChanged(int state);
+    void on_observatoriesCheck_stateChanged(int state);
+    void on_landingSitesCheck_stateChanged(int state);
+    void on_montesCheck_stateChanged(int state);
+    void on_mariaCheck_stateChanged(int state);
+    void on_cratersCheck_stateChanged(int state);
+    void on_vallesCheck_stateChanged(int state);
+    void on_terraeCheck_stateChanged(int state);
+    void on_volcanoesCheck_stateChanged(int state);
+    void on_otherLocationsCheck_stateChanged(int state);
+    void on_featureSizeSlider_valueChanged(int value);
+    void on_featureSizeEdit_textEdited(const QString& text);
+
+    void on_renderPathBox_currentIndexChanged(int index);
+    void on_antialiasLinesCheck_stateChanged(int state);
+    void on_tintedIlluminationCheck_stateChanged(int state);
+
+    void on_lowResolutionButton_clicked();
+    void on_mediumResolutionButton_clicked();
+    void on_highResolutionButton_clicked();
+
+    void on_ambientLightSlider_valueChanged(int value);
+
+    void on_pointStarsButton_clicked();
+    void on_scaledDiscsButton_clicked();
+    void on_fuzzyPointStarsButton_clicked();
+    void on_autoMagnitudeCheck_stateChanged(int state);
+
+    void on_starColorBox_currentIndexChanged(int index);
+
+    void on_dateFormatBox_currentIndexChanged(int index);
 
 protected:
     CelestiaCore* appCore;
-    CelestiaAppWindow* parent;
-
-    QComboBox* dateFormatBox;
-
-    int savedRendererFlags;
-    int savedLabelMode;
-    int savedOrbitMask;
-    int savedAmbientLightLevel;
-    int savedFaintestVisible;
-    int savedHudDetail;
-    int savedDisplayLocalTime;
-    int savedRenderPath;
-    int savedDistanceToScreen;
-    uint32 savedLocationFilter;
-    int savedMinFeatureSize;
-    bool savedVideoSync;
-
-    bool timeHasChanged;
-
-    QComboBox* displayTimezoneCombo;
-    QComboBox* setTimezoneCombo;
-    QSpinBox *YSpin, *MSpin, *DSpin;
-
-    QSpinBox *hSpin, *mSpin, *sSpin;
-
-    QSpinBox *dtsSpin;
-
-    QComboBox *renderPathCombo;
-    QLabel* renderPathLabel;
-    QLabel* ambientLabel, *faintestLabel, *minFeatureSizeLabel;
-    
-    void setTime(double d);
-    double getTime() const;
-
-    void setRenderPathLabel();
+    Ui_preferencesDialog ui;
 };        
 
