@@ -58,8 +58,14 @@
 #include "celestia/url.h"
 #include "qtbookmark.h"
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #include "celestia/avicapture.h"
+
+// TODO: Add Mac support
+#elif !defined(TARGET_OS_MAC)
+#ifdef THEORA
+#include "celestia/oggtheoracapture.h"
+#endif
 #endif
 
 #ifndef CONFIG_DATA_DIR
@@ -406,7 +412,7 @@ void CelestiaAppWindow::init(const QString& qConfigFileName,
  */
 void CelestiaAppWindow::initAppDataDirectory()
 {
-#ifdef _WIN32
+#if defined(_WIN32)
     // On Windows, the Celestia data directory is %APPDATA%\Celestia
     // First, get the value of the APPDATA environment variable
     QStringList envVars = QProcess::systemEnvironment();
@@ -421,14 +427,11 @@ void CelestiaAppWindow::initAppDataDirectory()
             break;
         }
     }
-#else
-    // UNIX or Mac OS X
-#ifdef TARGET_OS_MAC
+#elif defined(TARGET_OS_MAC)
     QString appDataPath = QDir::home().filePath("Library/Application Support");
 #else
+    // UNIX
     QString appDataPath = QDir::home().filePath(".config");
-#endif
-    
 #endif
 
     if (appDataPath != "")
@@ -495,7 +498,6 @@ void CelestiaAppWindow::readSettings()
     if (settings.value("Fullscreen", false).toBool())
         showFullScreen();
     
-    QPoint winpos = settings.value("Pos", DEFAULT_MAIN_WINDOW_SIZE).toPoint();
     settings.endGroup();
 
     // Render settings read in qtglwidget
@@ -644,6 +646,8 @@ void CelestiaAppWindow::slotGrabImage()
 
 void CelestiaAppWindow::slotCaptureVideo()
 {
+// TODO: Add Mac support
+#if defined(_WIN32) || (defined(THEORA) && !defined(TARGET_OS_MAC))
     QString dir;
     QSettings settings;
     settings.beginGroup("Preferences");
@@ -656,7 +660,6 @@ void CelestiaAppWindow::slotCaptureVideo()
         dir = QDir::current().path();
     }
 
-#ifdef _WIN32
     int videoSizes[8][2] =
                        {
                          { 160, 120 },
@@ -671,10 +674,17 @@ void CelestiaAppWindow::slotCaptureVideo()
 
     float videoFrameRates[5] = { 15.0f, 24.0f, 25.0f, 29.97f, 30.0f };
 
+#ifdef _WIN32
     QString saveAsName = QFileDialog::getSaveFileName(this,
                                                       _("Capture Video"),
                                                       dir,
                                                       _("Video (*.avi)"));
+#else
+    QString saveAsName = QFileDialog::getSaveFileName(this,
+                                                      _("Capture Video"),
+                                                      dir,
+                                                      _("Video (*.ogv)"));
+#endif
     if (!saveAsName.isEmpty())
     {
         QDialog videoInfoDialog(this);
@@ -708,12 +718,17 @@ void CelestiaAppWindow::slotCaptureVideo()
         if (videoInfoDialog.exec() == QDialog::Accepted)
         {
             QSize videoSize = resolutionCombo->itemData(resolutionCombo->currentIndex()).toSize();
-            double frameRate = frameRateCombo->itemData(frameRateCombo->currentIndex()).toDouble();
+            float frameRate = frameRateCombo->itemData(frameRateCombo->currentIndex()).toFloat();
 
+#ifdef _WIN32
             MovieCapture* movieCapture = new AVICapture();
+#else
+            MovieCapture* movieCapture = new OggTheoraCapture();
+            movieCapture->setAspectRatio(1, 1);
+#endif
             bool ok = movieCapture->start(saveAsName.toAscii().data(),
                                           videoSize.width(), videoSize.height(),
-                                          (float) frameRate);
+                                          frameRate);
             if (ok)
                 m_appCore->initMovieCapture(movieCapture);
             else
@@ -722,9 +737,9 @@ void CelestiaAppWindow::slotCaptureVideo()
 
         settings.setValue("CaptureVideoDir", QFileInfo(saveAsName).absolutePath());
     }
-#endif // _WIN32
 
     settings.endGroup();
+#endif
 }
 
 
@@ -1094,12 +1109,14 @@ void CelestiaAppWindow::createMenus()
 
     QAction* captureVideoAction = new QAction(QIcon(":data/capture-video.png"),
                                               _("Capture &video"), this);
-    //captureVideoAction->setShortcut(_("F11"));
+    // TODO: Add Mac support for video capture
+#if defined(TARGET_OS_MAC) || (!defined(_WIN32) && !defined(THEORA))
+    captureVideoAction->setEnabled(false);
+#endif
     connect(captureVideoAction, SIGNAL(triggered()), this, SLOT(slotCaptureVideo()));
     fileMenu->addAction(captureVideoAction);
 
     QAction* copyImageAction = new QAction(_("&Copy image"), this);
-    //copyImageAction->setShortcut(QString(_("Ctrl+Shift+C", "File|Copy Image")));
     copyImageAction->setShortcut(QString(_("Ctrl+Shift+C")));
     connect(copyImageAction, SIGNAL(triggered()), this, SLOT(slotCopyImage()));
     fileMenu->addAction(copyImageAction);

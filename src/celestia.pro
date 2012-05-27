@@ -568,13 +568,17 @@ win32 {
 }
 
 unix {
+    SOURCES += celestia/oggtheoracapture.cpp
+    HEADERS += celestia/oggtheoracapture.h
+    DEFINES += THEORA
+
     CONFIG += link_pkgconfig
 
     LUALIST = lua5.1 lua
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
-    PKGCONFIG += $$LUAPC
+    PKGCONFIG += glu $$LUAPC libpng theora
     INCLUDEPATH += /usr/local/cspice/include
     LIBS += -ljpeg /usr/local/cspice/lib/cspice.a
 }
@@ -645,9 +649,10 @@ DEFINES += CELX LUA_VER=0x050100
 
 
 unix { 
+
     #VARIABLES
     
-    isEmpty(PREFIX) { PREFIX = /usr/local}
+    isEmpty(PREFIX) { PREFIX = /usr/local }
         
     BINDIR = $$PREFIX/bin
     DATADIR =$$PREFIX/share
