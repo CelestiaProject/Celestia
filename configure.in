@@ -318,6 +318,9 @@ if (test "$ui_qt" != "no"); then
 	AC_SUBST(UIC)
 	AC_SUBST(MOC)
 	AC_SUBST(RCC)
+
+        check_theora="yes"
+
 fi
 AM_CONDITIONAL(ENABLE_QT, test "$ui_qt" = "yes")
 
