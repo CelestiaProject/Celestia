@@ -454,7 +454,7 @@
 	AppMag 11.89
 }
 
-"HAT-P-34"
+1012611622 "HAT-P-34:GSC 01622-01261"
 {
 	RA 303.195417
 	Dec 18.105000
@@ -463,7 +463,7 @@
 	AppMag 10.16
 }
 
-"HAT-P-35"
+1010790203 "HAT-P-35:GSC 00203-01079"
 {
 	RA 123.250833
 	Dec 4.786944
@@ -472,7 +472,7 @@
 	AppMag 12.46
 }
 
-"HAT-P-36"
+1022213020 "HAT-P-36:GSC 03020-0222"
 {
 	RA 188.266250
 	Dec 44.915278
@@ -481,13 +481,40 @@
 	AppMag 12.26
 }
 
-"HAT-P-37"
+"HAT-P-37:GSC 03553-00723:KIC 12396036"
 {
 	RA 284.295833
 	Dec 51.269167
 	Distance 1340
 	SpectralType "G" # from mass and temperature
 	AppMag 13.23
+}
+
+"HAT-P-39:GSC 01364-01424"
+{
+	RA 113.758333
+	Dec 17.830000
+	Distance 2090
+	SpectralType "F" # from mass and temperature
+	AppMag 12.42
+}
+
+"HAT-P-40:GSC 03607-01028"
+{
+	RA 335.512500
+	Dec 45.457500
+	Distance 1630
+	SpectralType "F" # from mass and temperature
+	AppMag 11.70
+}
+
+"HAT-P-41:GSC 00488-02442"
+{
+	RA 297.322500
+	Dec 4.672500
+	Distance 1010
+	SpectralType "F" # from mass and temperature
+	AppMag 11.09
 }
 
 # WASP survey
@@ -905,6 +932,24 @@
 	Distance 730
 	SpectralType "K0V"
 	AppMag 12.5
+}
+
+1002715889 "WASP-78"
+{
+	RA 63.756250
+	Dec -22.116389
+	Distance 1800
+	SpectralType "F8"
+	AppMag 12
+}
+
+1008347038 "WASP-79:GSC 07038-00834"
+{
+	RA 66.370833
+	Dec -30.600556
+	Distance 780
+	SpectralType "F3"
+	AppMag 10.1
 }
 
 # CoRoT survey
@@ -1448,6 +1493,211 @@ Barycenter "Kepler-35"
 	}
 }
 
+1024643551 "Kepler-36:KOI-277:KIC 11401755"
+{
+	RA 291.250000
+	Dec 49.231889
+	Distance 1300 # from temperature, mag. and radius
+	SpectralType "G" # from temperature and mass
+	AppMag 11.94
+}
+
+Barycenter "Kepler-38:KOI-1740:KIC 6762829"
+{
+	RA 286.830417
+	Dec 42.279167
+	Distance 3500 # from assumed class and app. mag.
+}
+
+"Kepler-38 A:KOI-1740 B:KIC 6762829 B"
+{
+	OrbitBarycenter "Kepler-38"
+	SpectralType "G" # from mass and temperature
+	AbsMag 3.8       # for observed radius
+
+	EllipticalOrbit {
+		Period		0.051458635 # 18.7952667 days
+		SemiMajorAxis	0.0305      # mass ratio 0.949:0.249
+		Eccentricity    0.103
+		Inclination     83.919      #
+		AscendingNode   285.260     # inclination to plane of sky 89.412 deg.
+	}
+}
+
+"Kepler-38 B:KOI-1740 B:KIC 6762829 B"
+{
+	OrbitBarycenter "Kepler-38"
+	SpectralType "M" # from mass and radius
+	AbsMag 12.3      # for mid-class M dwarf
+	Radius 190000    # observed
+
+	EllipticalOrbit {
+		Period		0.051458635 # 18.7952667 days
+		SemiMajorAxis	0.1164      # mass ratio 0.949:0.249
+		Eccentricity    0.103
+		Inclination     83.919      #
+		AscendingNode   285.260     # inclination to plane of sky 89.412 deg.
+		ArgOfPericenter 180
+	}
+}
+
+Barycenter "Kepler-47"
+{
+	RA 295.297917
+	Dec 46.920556
+	Distance 4900
+}
+
+"Kepler-47 A"
+{
+	OrbitBarycenter "Kepler-47"
+	SpectralType "G" # from mass, radius and temperature
+	Radius 670000    # observed
+	AbsMag 5.0
+
+	EllipticalOrbit {
+		Period		0.020392544 # 7.44837695 days
+		SemiMajorAxis	0.0215      # mass ratio 1.043:0.362
+		Eccentricity    0.0234
+		Inclination     80.83       #
+		AscendingNode   293.20      # inclination to plane of sky 89.34 deg.
+	}
+}
+
+"Kepler-47 B"
+{
+	OrbitBarycenter "Kepler-47"
+	SpectralType "M" # from mass, radius and temperature
+	Radius 244000    # observed
+	AbsMag 9.45
+
+	EllipticalOrbit {
+		Period		0.020392544 # 7.44837695 days
+		SemiMajorAxis	0.0621      # mass ratio 1.043:0.362
+		Eccentricity    0.0234
+		Inclination     80.83       #
+		AscendingNode   293.20      # inclination to plane of sky 89.34 deg.
+		ArgOfPericenter 180
+	}
+}
+
+"Kepler-48:KOI-148:KIC 5735762"
+{
+	RA 299.139167
+	Dec 40.948889
+	Distance 1500 # from temperature, mag. and radius
+	SpectralType "G" # from temperature and mass
+	AppMag 13.5
+}
+
+"Kepler-49:KOI-248:KIC 5364071"
+{
+	RA 292.294583
+	Dec 40.591667
+	Distance 570 # from temperature, mag. and radius
+	SpectralType "M0V" # from temperature, radius and mass
+	AppMag 15.5
+}
+
+1017743550 "Kepler-50:KOI-262:KIC 11807274"
+{
+	RA 288.100833
+	Dec 50.033611
+	Distance 1000 # from temperature, mag. and radius
+	SpectralType "F" # from temperature, radius and mass
+	AppMag 10.5
+}
+
+"Kepler-51:KOI-620:KIC 11773022"
+{
+	RA 296.479167
+	Dec 49.937778
+	Distance 3000 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, radius and mass
+	AppMag 15
+}
+
+"Kepler-52:KOI-775:KIC 11754553"
+{
+	RA 286.737917
+	Dec 49.975833
+	Distance 750 # from temperature, mag. and radius
+	SpectralType "K7V" # from temperature, radius and mass
+	AppMag 15.5
+}
+
+"Kepler-53:KOI-829:KIC 5358241"
+{
+	RA 290.461667
+	Dec 40.562500
+	Distance 4500 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, radius and mass
+	AppMag 16
+}
+
+"Kepler-54:KOI-886:KIC 7455287"
+{
+	RA 294.773750
+	Dec 43.056389
+	Distance 780 # from temperature, mag. and radius
+	SpectralType "M0V" # from temperature, radius and mass
+	AppMag 16.3
+}
+
+"Kepler-55:KOI-904:KIC 8150320"
+{
+	RA 285.168333
+	Dec 44.026389
+	Distance 1550 # from temperature, mag. and radius
+	SpectralType "K" # from temperature, radius and mass
+	AppMag 16.3
+}
+
+"Kepler-56:KOI-1241:KIC 6448890"
+{
+	RA 293.758333
+	Dec 41.871944
+	Distance 1900 # from temperature, mag. and radius
+	SpectralType "K" # from temperature
+	AppMag 13
+}
+
+"Kepler-57:KOI-1270:KIC 8564587"
+{
+	RA 293.641250
+	Dec 44.656944
+	Distance 2400 # from temperature, mag. and radius
+	SpectralType "K0V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-58:KOI-1336:KIC 4077526"
+{
+	RA 296.358750
+	Dec 39.115278
+	Distance 3900 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, mass and radius
+	AppMag 15.3
+}
+
+"Kepler-59:KOI-1529:KIC 9821454"
+{
+	RA 287.039583
+	Dec 46.640000
+	Distance 3050 # from temperature, mag. and radius
+	SpectralType "G0V" # from temperature, mass and radius
+	AppMag 14.8
+}
+
+"Kepler-60:KOI-2086"
+{
+	RA 288.962500
+	Dec 42.265000
+	Distance 4600 # from temperature, mag. and radius
+	SpectralType "G0V" # from temperature, mass and radius
+	AppMag 14.5
+}
+
 1000643542 "KOI-13:KIC 9941662:GSC 03542-00064"
 {
 	RA 286.971250
@@ -1467,6 +1717,15 @@ Barycenter "Kepler-35"
 	AppMag 14.87
 }
 
+"KOI-94:KIC 6462863"
+{
+	RA 297.332917
+	Dec 41.891111
+	Distance 2100 # from app. mag., radius & assumed class
+	SpectralType "F" # from temperature and mass
+	AppMag 12.4
+}
+
 "KOI-135:KIC 9818381"
 {
 	RA 285.240833
@@ -1474,6 +1733,15 @@ Barycenter "Kepler-35"
 	Distance 6360
 	SpectralType "G0V"
 	AppMag 14
+}
+
+"KOI-152:KIC 8394721"
+{
+	RA 300.517083
+	Dec 44.381389
+	Distance 3700 # from spectral class and app. mag.
+	SpectralType "F"
+	AppMag 13.99
 }
 
 "KOI-196"
@@ -1485,6 +1753,24 @@ Barycenter "Kepler-35"
 	AppMag 14.5
 }
 
+"KOI-200:KIC 6046540"
+{
+	RA 293.092500
+	Dec 41.355556
+	Distance 1700 # from estimated class and magnitude
+	SpectralType "G" # from mass and temp
+	AppMag 14.23
+}
+
+"KOI-202:KIC 7877496:GSC 03132-00543"
+{
+	RA 286.110417
+	Dec 43.680833
+	Distance 2100 # from estimated class and magnitude
+	SpectralType "G0V" # from mass, radius and temp
+	AppMag 13.73
+}
+
 "KOI-204:KIC 9305831"
 {
 	RA 300.102500
@@ -1492,6 +1778,15 @@ Barycenter "Kepler-35"
 	Distance 7330
 	SpectralType "G2IV"
 	AppMag 15
+}
+
+"KOI-206:KIC 5728139"
+{
+	RA 297.593750
+	Dec 40.977222
+	Distance 2800 # from estimated class and magnitude
+	SpectralType "G" # from mass and temp
+	AppMag 14.35
 }
 
 "KOI-254"
@@ -1521,10 +1816,19 @@ Barycenter "Kepler-35"
 	AppMag 14.76
 }
 
+"KOI-680:KIC 7529266"
+{
+	RA 292.287500
+	Dec 43.197222
+	Distance 2300 # from estimated class and magnitude
+	SpectralType "G" # from mass and temperature
+	AppMag 13.91
+}
+
 "KOI-730:KIC 10227020"
 {
-	RA 15.079167
-	Dec 47.216667
+	RA 298.318333
+	Dec 47.279444
 	Distance 3900 # from mass, radius and magnitude
 	SpectralType "G0V" # from mass and radius
 	AppMag 15
@@ -1568,6 +1872,16 @@ Barycenter "Kepler-35"
 	AppMag 15.64
 }
 
+"KIC 12557548"
+{
+	RA 290.966250
+	Dec 51.504722
+	Distance 470
+	SpectralType "K4V"
+	AppMag 16
+	Radius 450000
+}
+
 # SWEEPS survey
 
 "SWEEPS-4"
@@ -1587,6 +1901,19 @@ Barycenter "Kepler-35"
 	SpectralType "G" # from mass
 	AppMag 19.83
 }
+
+# HATS survey
+
+"HATS-1:GSC 06652-00186"
+{
+	RA 175.525417
+	Dec -23.354722
+	Distance 990
+	SpectralType "G" # from mass, radius and temp.
+	AppMag 12.05
+}
+
+
 
 # HD stars without Hip numbers
 
@@ -1635,6 +1962,15 @@ Barycenter "Kepler-35"
 	AppMag 9.47
 }
 
+1006294006 "HD 219415"
+{
+	RA 348.724167
+	Dec 56.730278
+	Distance 350 # from spectral class and app mag
+	SpectralType "K0III"
+	AppMag 8.94
+}
+
 # Other non-Hip stars
 
 1009465503 "BD-10 3166"
@@ -1662,6 +1998,15 @@ Barycenter "Kepler-35"
 	Distance 650
 	SpectralType "K2"
 	AppMag 9.75
+}
+
+1006031211 "BD+20 274:01211-00603"
+{
+	RA 25.920417
+	Dec 21.005278
+	Distance 1900 # from spectral class, radius and app. mag.
+	SpectralType "K5III"
+	AppMag 9.36
 }
 
 "Gliese 317"
@@ -1708,6 +2053,24 @@ Barycenter "Kepler-35"
 	Distance 166
 	SpectralType "DA"
 	AppMag 15.6
+}
+
+1003211398 "Pr0201:BD+20 2184:GSC 01398-00321"
+{
+	RA 130.432500
+	Dec 20.226944
+	Distance 550 # Praesepe cluster
+	SpectralType "F7"
+	AppMag 10.33
+}
+
+"Pr0211:2MASS J08421149+1916373"
+{
+	RA 130.547917
+	Dec 19.276944
+	Distance 550 # Praesepe cluster
+	SpectralType "G9"
+	AppMag 12.15
 }
 
 53911 "TW Hya" # redefined because of absent spectral
@@ -1794,6 +2157,16 @@ Barycenter "Kepler-35"
 	SpectralType "K0III"
 	AppMag 9.14
 }
+
+"GJ 3470"
+{
+	RA 119.774583
+	Dec 15.391667
+	Distance 82.2
+	SpectralType "M1.5V"
+	AppMag 12.33
+}
+
 
 # Definitions for some exoplanet stars in multiple systems
 
@@ -2042,6 +2415,17 @@ Barycenter "Gliese 777"
 	AbsMag 27         # for approximate radius in Celestia
 
 	RotationPeriod 0.000001727  # 0.006218 sec
+}
+
+"PSR 1719-14:PSR J1719-1438"
+{
+	RA 259.792083
+	Dec -14.633611
+	Distance 3900
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+
+	RotationPeriod 0.0000016 # 0.0057 sec
 }
 
 Barycenter "PSR 1620-26:PSR B1620-26:PSR J1623-2631"
