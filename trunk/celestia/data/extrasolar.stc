@@ -880,6 +880,15 @@
 	AppMag 11.6
 }
 
+1006784967 "WASP-54:GSC 04967-00678:BD+00 3088"
+{
+	RA 205.454167
+	Dec -0.128056
+	Distance 650
+	SpectralType "F9"
+	AppMag 10.42
+}
+
 1001136125 "WASP-55"
 {
 	RA 203.757917
@@ -887,6 +896,24 @@
 	Distance 1080
 	SpectralType "G2V" # from temperature, radius and mass
 	AppMag 11.8
+}
+
+1015611986 "WASP-56"
+{
+	RA 183.366250
+	Dec 23.055556
+	Distance 830
+	SpectralType "G6"
+	AppMag 11.48
+}
+
+"WASP-57"
+{
+	RA 223.820000
+	Dec -2.057778
+	Distance 1480
+	SpectralType "G6"
+	AppMag 13.04
 }
 
 1019726469 "WASP-61"
@@ -1913,7 +1940,16 @@ Barycenter "Kepler-47"
 	AppMag 12.05
 }
 
+# WTS survey
 
+"WTS-1"
+{
+	RA 293.993333
+	Dec 36.290278
+	Distance 10400
+	SpectralType "F" # from mass, radius and temp.
+	AppMag 16.13
+}
 
 # HD stars without Hip numbers
 
@@ -2800,3 +2836,53 @@ Barycenter "RR Cae:GJ 2034"
 	}
 }
 
+Barycenter "NSVS 14256825:NSVS 1425"
+{
+	RA 305.00208
+	Dec 4.632222
+	Distance 2400 # for apparent magnitude
+}
+
+"NSVS 14256825 A:NSVS 1425 A"
+{
+	OrbitBarycenter "NSVS 14256825"
+	SpectralType "sdOB"
+	Temperature 42000
+	Radius 131000
+	AppMag 13.2
+
+	EllipticalOrbit {
+		Period   0.00030218754277891854893908281998631 # 0.110374 days at spurious precision to synch with rotations
+		SemiMajorAxis   0.0008  # mass ratio 0.419:0.109
+		Inclination     80.0    #
+		AscendingNode   295.8   # inclination to plane of sky 82.5 degrees
+	}
+	UniformRotation	{
+	    Period           2.648976 # 0.110374 days
+	    Inclination      80.0     #
+	    AscendingNode    295.8    # plane of orbit
+	}
+}
+
+"NSVS 14256825 B:NSVS 1425 B"
+{
+	OrbitBarycenter "NSVS 14256825"
+	SpectralType "M"
+	Radius 113000
+	SemiAxes [1 0.93 0.95]
+	Temperature 2550
+	AppMag 26.4 # for radius
+
+	EllipticalOrbit {
+		Period   0.00030218754277891854893908281998631 # 0.110374 days at spurious precision to synch with rotations
+		SemiMajorAxis   0.0029  # mass ratio 0.419:0.109
+		Inclination     80.0    #
+		AscendingNode   295.8   # inclination to plane of sky 82.5 degrees
+		ArgOfPericenter 180
+	}
+	UniformRotation	{
+	    Period           2.648976 # 0.110374 days
+	    Inclination      80.0     #
+	    AscendingNode    295.8    # plane of orbit
+	}
+}
