@@ -1,4 +1,4 @@
-# Catalog of 797 known extrasolar planets.
+# Catalog of 803 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -1948,6 +1948,7 @@ AltSurface "limit of knowledge" "CoRoT-14/b"
 	EllipticalOrbit {
 		Period          0.0043
 		SemiMajorAxis   0.01411
+		Eccentricity    0.27
 		Inclination     95.3
 		AscendingNode   258.1
 		MeanLongitude   130
@@ -3823,6 +3824,47 @@ AltSurface "limit of knowledge" "CoRoT-12/b"
 }
 
 
+"b" "WASP-57"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 0.916 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       210     # M.sin(i) = 0.672 jupiters
+	Radius     64100
+
+	InfoURL "http://exoplanet.eu/catalog/wasp-57_b/"
+
+	EllipticalOrbit {
+		Period          0.0078
+		SemiMajorAxis   0.0386
+		Eccentricity    0
+		Inclination     107.2
+		AscendingNode   224.3
+		MeanLongitude   156
+	}
+
+	Obliquity             107 # guess, to match inclination
+	EquatorAscendingNode  224 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "WASP-57/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HAT-P-20"
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -5336,6 +5378,46 @@ AltSurface "limit of knowledge" "TYC 0774-1441-1/b"
 }
 
 
+"b" "WTS-1"
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 85.5 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.49 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       1280     # M.sin(i) = 4.01 jupiters
+	Radius     104300
+
+	InfoURL "http://exoplanet.eu/catalog/wts-1_b/"
+
+	EllipticalOrbit {
+		Period          0.0092
+		SemiMajorAxis   0.047
+		Inclination     84.5
+		AscendingNode   289.8
+		MeanLongitude   337
+	}
+
+	Obliquity             85 # guess, to match inclination
+	EquatorAscendingNode  290 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "WTS-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "WASP-6"
 
 # Detected via transit as well as radial velocity methods; from transit
@@ -6328,6 +6410,48 @@ AltSurface "limit of knowledge" "HAT-P-35/b"
 }
 
 AltSurface "limit of knowledge" "HAT-P-25/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 4967-678-1"   # WASP-54
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 84.97 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.828 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       390     # M.sin(i) = 1.213 jupiters
+	Radius     128000
+
+	InfoURL "http://exoplanet.eu/catalog/wasp-54_b/"
+
+	EllipticalOrbit {
+		Period          0.0101
+		SemiMajorAxis   0.04987
+		Eccentricity    0.067
+		Inclination     111.9
+		AscendingNode   202.1
+		ArgOfPericenter 160
+		MeanAnomaly     98
+	}
+
+	Obliquity             112 # guess, to match inclination
+	EquatorAscendingNode  202 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 4967-678-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -8878,6 +9002,47 @@ AltSurface "limit of knowledge" "TYC 6125-113-1/b"
 }
 
 AltSurface "limit of knowledge" "TYC 6307-1388-1/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 1986-1561-1"   # WASP-56
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 88.5 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.092 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class4.*"
+	NightTexture "exo-class4night.*"
+
+	Color  [0 0.36 1]
+	Albedo 0.05
+
+	Mass       180     # M.sin(i) = 0.571 jupiters
+	Radius     76400
+
+	InfoURL "http://exoplanet.eu/catalog/wasp-56_b/"
+
+	EllipticalOrbit {
+		Period          0.0126
+		SemiMajorAxis   0.05458
+		Eccentricity    0
+		Inclination     114
+		AscendingNode   182.2
+		MeanLongitude   263
+	}
+
+	Obliquity             114 # guess, to match inclination
+	EquatorAscendingNode  182 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 1986-1561-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -15796,7 +15961,7 @@ AltSurface "limit of knowledge" "Kepler-47/b"
 "c" "Kepler-47"
 
 # Detected via transit as well as radial velocity methods; from transit
-# duration, inclination is fixed at 89.59 degrees, so mass can be determined.
+# duration, inclination is fixed at 89.826 degrees, so mass can be determined.
 # From transit dimming, radius is estimated at 0.41 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
@@ -15816,11 +15981,11 @@ AltSurface "limit of knowledge" "Kepler-47/b"
 	EllipticalOrbit {
 		Period          0.83
 		SemiMajorAxis   0.989
-		Inclination     80.6
-		AscendingNode   293.3
+		Inclination     80.4
+		AscendingNode   293.4
 	}
 
-	Obliquity             81 # guess, to match inclination
+	Obliquity             80 # guess, to match inclination
 	EquatorAscendingNode  293 # guess, to match ascending node
 
 	RotationPeriod  10 # plausible guess
@@ -18670,7 +18835,6 @@ AltSurface "limit of knowledge" "Kepler-34/b"
 	EllipticalOrbit {
 		Period          0.7936
 		SemiMajorAxis   0.849
-		Eccentricity    0.21
 		Inclination     82.7
 		AscendingNode   287.6
 		MeanLongitude   231
@@ -21912,8 +22076,8 @@ AltSurface "limit of knowledge" "Gliese 317/c"
 	Albedo 0.1
 
 	Mass       950     # M.sin(i) = 3 jupiters
-	Radius     84000
-	Oblateness 0.03
+	Radius     70000
+	Oblateness 0.02
 
 	InfoURL "http://exoplanet.eu/catalog/75_cet_b/"
 
@@ -23819,6 +23983,77 @@ AltSurface "limit of knowledge" "HD 7449/c"
 }
 
 
+"b" "NSVS 14256825"
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       890     # M.sin(i) = 2.8 jupiters
+	Radius     70000
+	Oblateness 0.02
+
+	InfoURL "http://exoplanet.eu/catalog/nsvs_1425%28ab%29__b/"
+
+	EllipticalOrbit {
+		Period          3.4935
+		SemiMajorAxis   1.9
+		ArgOfPericenter 50
+		MeanAnomaly     320
+		Inclination	80  #
+		AscendingNode	296 # to match system orientation
+	}
+
+	RotationPeriod  10 # plausible guess
+	Obliquity	80       #
+	EquatorAscendingNode 296 # to match system orientation
+}
+
+AltSurface "limit of knowledge" "NSVS 14256825/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "NSVS 14256825"
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class3.*"
+
+	Color  [0.53 0.62 1]
+	Albedo 0.1
+
+	Mass       2540     # M.sin(i) = 8 jupiters
+	Radius     70000
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/catalog/nsvs_1425_(ab)c/"
+
+	EllipticalOrbit {
+		Period          6.8611
+		SemiMajorAxis   2.9
+		Eccentricity    0.52
+		ArgOfPericenter 136
+		MeanAnomaly     348
+		Inclination	80  #
+		AscendingNode	296 # to match system orientation
+	}
+
+	RotationPeriod  10 # plausible guess
+	Obliquity	80       #
+	EquatorAscendingNode 296 # to match system orientation
+}
+
+AltSurface "limit of knowledge" "NSVS 14256825/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
 "b" "HD 11506"
 {
 	Texture "exo-class2.*"
@@ -25499,8 +25734,7 @@ AltSurface "limit of knowledge" "HD 154345/b"
 }
 
 
-"b" "HD 106515"
-
+"b" "HD 106515"   # HD 106515 A
 {
 	Texture "exo-class1.*"
 
