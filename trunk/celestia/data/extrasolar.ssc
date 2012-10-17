@@ -1,4 +1,4 @@
-# Catalog of 803 known extrasolar planets.
+# Catalog of 804 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -5131,6 +5131,34 @@ AltSurface "limit of knowledge" "Kepler-4/b"
 }
 
 AltSurface "limit of knowledge" "Kepler-6/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 128621"   # Alf Cen B
+{
+	Texture "asteroid.*"
+
+	Mass      1     # M.sin(i) = 1 earths
+	Radius     6700
+
+	InfoURL "http://exoplanet.eu/catalog/alf_cen_b_b/"
+
+	EllipticalOrbit {
+		Period          0.0089
+		SemiMajorAxis   0.04
+		Inclination      82 #
+		AscendingNode    67 # to match system inclination
+	}
+
+	Obliquity             82 # guess, to match inclination
+	EquatorAscendingNode  67 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 128621/b"
 {
 	Texture "extrasolar-lok.*"
 }
