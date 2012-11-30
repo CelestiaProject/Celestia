@@ -880,6 +880,15 @@
 	AppMag 11.6
 }
 
+"WASP-52"
+{
+	RA 348.495000
+	Dec 8.761389
+	Distance 460
+	SpectralType "K2V"
+	AppMag 12.0
+}
+
 1006784967 "WASP-54:GSC 04967-00678:BD+00 3088"
 {
 	RA 205.454167
@@ -914,6 +923,33 @@
 	Distance 1480
 	SpectralType "G6"
 	AppMag 13.04
+}
+
+"WASP-58"
+{
+	RA 274.700833
+	Dec 45.171944
+	Distance 980
+	SpectralType "G2V"
+	AppMag 11.66
+}
+
+"WASP-59"
+{
+	RA 349.622917
+	Dec 24.889167
+	Distance 410
+	SpectralType "K5V"
+	AppMag 13.00
+}
+
+"WASP-60"
+{
+	RA 356.666667
+	Dec 31.155833
+	Distance 1300
+	SpectralType "G1V"
+	AppMag 12.18
 }
 
 1019726469 "WASP-61"
@@ -959,6 +995,24 @@
 	Distance 730
 	SpectralType "K0V"
 	AppMag 12.5
+}
+
+1001160030 "WASP-71"
+{
+	RA 29.263333
+	Dec 0.758889
+	Distance 650
+	SpectralType "F8"
+	AppMag 10.56
+}
+
+"WASP-77 A:BD-07 436 A"
+{
+	RA 37.155000
+	Dec -7.060556
+	Distance 390 # from class, radius and app. mag.
+	SpectralType "G8V"
+	AppMag 10.3
 }
 
 1002715889 "WASP-78"
