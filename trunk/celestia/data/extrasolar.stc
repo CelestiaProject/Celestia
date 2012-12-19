@@ -2163,6 +2163,15 @@ Barycenter "Kepler-47"
 	AppMag 12.15
 }
 
+1006832996 "KELT-3:BD+41 2024:GSC 02996-00683"
+{
+	RA 148.643333
+	Dec 40.388056
+	Distance 580
+	SpectralType "F7V"
+	AppMag 9.8
+}
+
 53911 "TW Hya" # redefined because of absent spectral
                # class in stars.dat
 {
