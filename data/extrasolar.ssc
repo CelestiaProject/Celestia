@@ -1,4 +1,4 @@
-# Catalog of 819 known extrasolar planets.
+# Catalog of 825 known extrasolar planets.
 #
 # Data compiled from Butler et al., Catalog of Nearby Exoplanets at: 
 #     http://arxiv.org/abs/astro-ph/0607493
@@ -2666,7 +2666,7 @@ AltSurface "limit of knowledge" "Gliese 876/e"
 
 # Detected via transit as well as radial velocity methods; from transit
 # duration, inclination is fixed at 84.74 degrees, so mass can be determined.
-# From transit dimming, radius is estimated at 1.153 jupiters.
+# From transit dimming, radius is estimated at 1.138 jupiters.
 
 # Star not present in Celestia's default stars.dat file.
 
@@ -2677,14 +2677,14 @@ AltSurface "limit of knowledge" "Gliese 876/e"
 	Color  [0.49 0.89 1]
 	Albedo 0.5
 
-	Mass       470     # M.sin(i) = 1.468 jupiters
-	Radius     80700
+	Mass       460     # M.sin(i) = 1.437 jupiters
+	Radius     79700
 
 	InfoURL "http://exoplanet.eu/star.php?st=WASP-50"
 
 	EllipticalOrbit {
 		Period          0.0054
-		SemiMajorAxis   0.02945
+		SemiMajorAxis   0.02913
 		Eccentricity    0.009
 		Inclination     70.9
 		AscendingNode   41.2
@@ -3542,6 +3542,48 @@ AltSurface "limit of knowledge" "GJ 3634/b"
 }
 
 AltSurface "limit of knowledge" "HAT-P-41/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "TYC 2996-683-1"   # KELT-3
+
+# Detected via transit as well as radial velocity methods; from transit
+# duration, inclination is fixed at 84.32 degrees, so mass can be determined.
+# From transit dimming, radius is estimated at 1.333 jupiters.
+
+# Star not present in Celestia's default stars.dat file.
+
+{
+	Texture "exo-class5.*"
+	NightTexture "exo-class5night.*"
+
+	Color  [0.49 0.89 1]
+	Albedo 0.5
+
+	Mass       450     # M.sin(i) = 1.418 jupiters
+	Radius     93300
+
+	InfoURL "http://exoplanet.eu/catalog/kelt-3_b/"
+
+	EllipticalOrbit {
+		Period          0.0074
+		SemiMajorAxis   0.04117
+		Eccentricity    0.22
+		Inclination     112.4
+		AscendingNode   141
+		ArgOfPericenter 334
+		MeanAnomaly     139
+	}
+
+	Obliquity             112 # guess, to match inclination
+	EquatorAscendingNode  141 # guess, to match ascending node
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "TYC 2996-683-1/b"
 {
 	Texture "extrasolar-lok.*"
 }
@@ -14403,6 +14445,138 @@ AltSurface "limit of knowledge" "TYC 3551-2464-1/b"
 }
 
 AltSurface "limit of knowledge" "TYC 3551-2464-1/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"b" "HD 10700"   # Tau Cet
+{
+	Texture "asteroid.*"
+
+	Mass      2     # M.sin(i) = 2 earths
+	Radius     8100
+
+	InfoURL "http://exoplanet.eu/catalog/tau_cet_b/"
+
+	EllipticalOrbit {
+		Period          0.0382
+		SemiMajorAxis   0.105
+		Eccentricity    0.16
+		ArgOfPericenter 194
+		MeanAnomaly     121
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 10700/b"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"c" "HD 10700"   # Tau Cet
+{
+	Texture "asteroid.*"
+
+	Mass      3     # M.sin(i) = 3 earths
+	Radius     9300
+
+	InfoURL "http://exoplanet.eu/catalog/tau_cet_c/"
+
+	EllipticalOrbit {
+		Period          0.0968
+		SemiMajorAxis   0.195
+		Eccentricity    0.03
+		ArgOfPericenter 280
+		MeanAnomaly     39
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 10700/c"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"d" "HD 10700"   # Tau Cet
+{
+	Texture "asteroid.*"
+
+	Mass      3     # M.sin(i) = 3 earths
+	Radius     9700
+
+	InfoURL "http://exoplanet.eu/catalog/tau_cet_d/"
+
+	EllipticalOrbit {
+		Period          0.2577
+		SemiMajorAxis   0.374
+		Eccentricity    0.08
+		ArgOfPericenter 337
+		MeanAnomaly     141
+	}
+
+	# likely to be in captured synchronous rotation
+}
+
+AltSurface "limit of knowledge" "HD 10700/d"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"e" "HD 10700"   # Tau Cet
+{
+	Texture "asteroid.*"
+
+	Mass      4     # M.sin(i) = 4 earths
+	Radius     10500
+	Oblateness 0.01
+
+	InfoURL "http://exoplanet.eu/catalog/tau_cet_e/"
+
+	EllipticalOrbit {
+		Period          0.4603
+		SemiMajorAxis   0.552
+		Eccentricity    0.05
+		ArgOfPericenter 63
+		MeanAnomaly     348
+	}
+
+	RotationPeriod  11 # tidal slowing significant
+}
+
+AltSurface "limit of knowledge" "HD 10700/e"
+{
+	Texture "extrasolar-lok.*"
+}
+
+
+"f" "HD 10700"   # Tau Cet
+{
+	Texture "venuslike.*"
+
+	Mass      7     # M.sin(i) = 7 earths
+	Radius     12000
+	Oblateness 0.04
+
+	InfoURL "http://exoplanet.eu/catalog/tau_cet_f/"
+
+	EllipticalOrbit {
+		Period          1.7577
+		SemiMajorAxis   1.35
+		Eccentricity    0.03
+		ArgOfPericenter 331
+		MeanAnomaly     52
+	}
+
+	RotationPeriod  5 # plausible guess
+}
+
+AltSurface "limit of knowledge" "HD 10700/f"
 {
 	Texture "extrasolar-lok.*"
 }
