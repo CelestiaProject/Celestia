@@ -73,10 +73,15 @@ Barycenter "Solar System Barycenter:SSB"
 
 Barycenter "Rigil Kentaurus:Toliman:ALF Cen:Gliese 559"
 {
-	RA  219.899437 # mass ratio 1.12:0.93
-	Dec -60.835401 #
+	RA  219.900833
+	Dec -60.835556
 	Distance 4.365
 }
+
+# Pourbaix et al. (2002) Constraining the difference in 
+# convective blueshift between the components of alpha Centauri 
+# with precise radial velocities
+# http://www.aanda.org/index.php?option=com_article&access=bibcode&Itemid=129&bibcode=2002A%2526A...386..280PFUL
 
 71683 # ALF Cen A
 {
@@ -84,14 +89,14 @@ Barycenter "Rigil Kentaurus:Toliman:ALF Cen:Gliese 559"
 	SpectralType "G2V"
 	AppMag 0.01
  
-	EllipticalOrbit {			   
-		Period           79.85
-		SemiMajorAxis    10.68 # mass ratio 1.12:0.93
-		Eccentricity      0.52
-		Inclination      82.22
-		AscendingNode    67.30
-		ArgOfPericenter   4.02
-		MeanAnomaly     200.13
+	EllipticalOrbit {		# fully specified orientation
+		Period           79.91
+		SemiMajorAxis    10.77 # mass ratio 1.105:0.934
+		Eccentricity      0.5179
+		Inclination      82.45
+		AscendingNode   231.72
+		ArgOfPericenter 279.60
+		MeanAnomaly     200.16
 	}			 
 }
 
@@ -101,14 +106,14 @@ Barycenter "Rigil Kentaurus:Toliman:ALF Cen:Gliese 559"
 	SpectralType "K0V"
 	AppMag 1.34
 
-	EllipticalOrbit {			   
-		Period           79.85
-		SemiMajorAxis    12.87 # mass ratio 1.12:0.93
-		Eccentricity      0.52
-		Inclination      82.22
-		AscendingNode    67.30
-		ArgOfPericenter 184.02
-		MeanAnomaly     200.13
+	EllipticalOrbit {		# fully specified orientation   
+		Period           79.91
+		SemiMajorAxis    12.75 # mass ratio 1.105:0.934
+		Eccentricity      0.5179
+		Inclination      82.45
+		AscendingNode   231.72
+		ArgOfPericenter  99.60
+		MeanAnomaly     200.16
 	}			 
 }
 
