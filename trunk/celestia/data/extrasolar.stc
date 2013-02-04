@@ -1033,6 +1033,15 @@
 	AppMag 10.1
 }
 
+"WASP-80"
+{
+	RA 303.167500
+	Dec -2.145556
+	Distance 200
+	SpectralType "K7V"
+	AppMag 11.88
+}
+
 # CoRoT survey
 
 "CoRoT-1:GSC 04804-02268"
@@ -1935,15 +1944,6 @@ Barycenter "Kepler-47"
 	AppMag 16.12
 }
 
-"KIC 10905746"
-{
-	RA 283.628333
-	Dec 48.391111
-	Distance 190 # from mass, radius and magnitude
-	SpectralType "M0V"
-	AppMag 13
-}
-
 "KIC 6185331"
 {
 	RA 284.273750
@@ -1951,6 +1951,24 @@ Barycenter "Kepler-47"
 	Distance 5600 # from mass, radius and magnitude
 	SpectralType "G" # from temperature and mass
 	AppMag 15.64
+}
+
+"KIC 8852719"
+{
+	RA 302.352500
+	Dec 45.070000
+	Distance 12000 # from radius and inferred magnitude
+	SpectralType "K0V" # from temperature and radius
+	AppMag 18.76
+}
+
+"KIC 10905746"
+{
+	RA 283.628333
+	Dec 48.391111
+	Distance 190 # from mass, radius and magnitude
+	SpectralType "M0V"
+	AppMag 13
 }
 
 "KIC 12557548"
