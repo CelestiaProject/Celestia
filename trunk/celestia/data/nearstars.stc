@@ -126,6 +126,26 @@ Barycenter "Rigil Kentaurus:Toliman:ALF Cen:Gliese 559"
 	AppMag 9.57
 }
 
+# KL Luhman. Discovery of a Binary Brown Dwarf at 2 Parsecs from 
+# the Sun. ApJ letters in press. http://arxiv.org/abs/1303.2401
+"WISE 1049-5319 A:WISE J104915.57-531906.1 A"
+{
+	RA 162.315000
+	Dec -53.318333
+	Distance 6.58
+	SpectralType "L8"
+	AbsMag 23 # for approximate radius in Celestia 
+}
+
+"WISE 1049-5319 B:WISE J104915.57-531906.1 B"
+{
+	RA 162.315700 # separation 1.5"
+	Dec -53.318333
+	Distance 6.58
+	SpectralType "L9" # "L/T junction"
+	AbsMag 24 # for approximate radius in Celestia 
+}
+
 "CN Leo:Gliese 406:Wolf 359"
 {
 	RA 164.121783
