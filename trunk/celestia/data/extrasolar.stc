@@ -1170,6 +1170,15 @@
 	AppMag 16.03
 }
 
+"CoRoT-16"
+{
+	RA 278.524583
+	Dec -6.002500
+	Distance 5400
+	SpectralType "G5V"
+	AppMag 15.64
+}
+
 "CoRoT-17"
 {
 	RA 278.699167
@@ -1786,6 +1795,15 @@ Barycenter "Kepler-47"
 	Distance 4600 # from temperature, mag. and radius
 	SpectralType "G0V" # from temperature, mass and radius
 	AppMag 14.5
+}
+
+"Kepler-62:KOI-701:KIC 9002278"
+{
+	RA 283.212917
+	Dec 45.350000
+	Distance 790 # from spectrum, app mag and radius
+	SpectralType "K2V"
+	AppMag 13.8
 }
 
 1000643542 "KOI-13:KIC 9941662:GSC 03542-00064"
