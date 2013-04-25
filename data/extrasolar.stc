@@ -90,7 +90,7 @@
 	AppMag 11.79
 }
 
-1028113549 "TrES-2 (parent star):Kepler-1:KIC 11446443:GSC 03549-02811"
+1028113549 "TrES-2 (parent star):Kepler-1:KOI-1:KIC 11446443:GSC 03549-02811"
 {
 	RA 286.80848
 	Dec 49.31641
@@ -220,7 +220,7 @@
 	AppMag 10.5
 }
 
-1014023547 "HAT-P-7:Kepler-2:KIC 10666592:GSC 03547-01402"
+1014023547 "HAT-P-7:Kepler-2:KOI-2:KIC 10666592:GSC 03547-01402"
 {
 	RA 292.24734
 	Dec 47.969518
@@ -1237,7 +1237,7 @@
 
 # Kepler survey
 
-"Kepler-4:KIC 11853905:GSC 03549-02067"
+"Kepler-4:KOI-7:KIC 11853905:GSC 03549-02067"
 {
 	RA 285.615417
 	Dec 50.135833
@@ -1255,7 +1255,7 @@
 	AbsMag 3.22
  }
 
- "Kepler-6:KIC 10874614"
+ "Kepler-6:KOI-17:KIC 10874614"
  {
 	RA 296.837083
 	Dec 48.240000
@@ -1264,7 +1264,7 @@
 	AbsMag 4.33
  }
 
- "Kepler-7:KIC 5780885"
+ "Kepler-7:KOI-97:KIC 5780885"
  {
 	RA 288.581667
 	Dec 41.089722
@@ -1273,7 +1273,7 @@
 	AbsMag 3.43
  }
 
-"Kepler-8:KIC 6922244"
+"Kepler-8:KOI-10:KIC 6922244"
 {
 	RA 281.287917
 	Dec 42.451111
@@ -1318,7 +1318,7 @@
 	AppMag 13.4
 }
 
-1004133546 "Kepler-14:KIC 10264660:GSC 03546-00413"
+1004133546 "Kepler-14:KOI-98:KIC 10264660:GSC 03546-00413"
 {
 	RA 287.708750
 	Dec 47.333056
@@ -1336,7 +1336,7 @@
 	AppMag 13.8
 }
 
-Barycenter "Kepler-16:KIC 12644769:GSC 03554-01147"
+Barycenter "Kepler-16:KOI-1611:KIC 12644769:GSC 03554-01147"
 {
 	RA 289.075833
 	Dec 51.757500
@@ -1390,7 +1390,7 @@ Barycenter "Kepler-16:KIC 12644769:GSC 03554-01147"
 	AppMag 14
 }
 
-"Kepler-18:KIC 8644288:GSC 03149-02089"
+"Kepler-18:KOI-137:KIC 8644288:GSC 03149-02089"
 {
 	RA 298.079583
 	Dec 44.746389
@@ -1417,7 +1417,7 @@ Barycenter "Kepler-16:KIC 12644769:GSC 03554-01147"
 	AppMag 12.5
 }
 
-"Kepler-22:KIC 10593626:GSC 03546-02301"
+"Kepler-22:KOI-87:KIC 10593626:GSC 03546-02301"
 {
 	RA 289.217500
 	Dec 47.884444
@@ -1516,7 +1516,7 @@ Barycenter "Kepler-16:KIC 12644769:GSC 03554-01147"
 	AppMag 14
 }
 
-Barycenter "Kepler-34"
+Barycenter "Kepler-34:KOI-2459:KIC 8572936"
 {
 	RA 296.435833
 	Dec 44.641667
@@ -1554,7 +1554,7 @@ Barycenter "Kepler-34"
 	}
 }
 
-Barycenter "Kepler-35"
+Barycenter "Kepler-35:KOI-2937:KIC 9837578"
 {
 	RA 294.497083
 	Dec 46.689722
@@ -1608,7 +1608,7 @@ Barycenter "Kepler-38:KOI-1740:KIC 6762829"
 	Distance 3500 # from assumed class and app. mag.
 }
 
-"Kepler-38 A:KOI-1740 B:KIC 6762829 B"
+"Kepler-38 A"
 {
 	OrbitBarycenter "Kepler-38"
 	SpectralType "G" # from mass and temperature
@@ -1623,7 +1623,7 @@ Barycenter "Kepler-38:KOI-1740:KIC 6762829"
 	}
 }
 
-"Kepler-38 B:KOI-1740 B:KIC 6762829 B"
+"Kepler-38 B"
 {
 	OrbitBarycenter "Kepler-38"
 	SpectralType "M" # from mass and radius
@@ -1640,7 +1640,18 @@ Barycenter "Kepler-38:KOI-1740:KIC 6762829"
 	}
 }
 
-Barycenter "Kepler-47"
+"Kepler-42:KOI-961:KIC 8561063"
+{
+	RA 292.219167
+	Dec 44.619444
+	Distance 126.2
+	SpectralType "M7V" # from mass and radius
+	Temperature 3070
+	Radius 120000
+	AppMag 16.12
+}
+
+Barycenter "Kepler-47:KOI-3154:KIC 10020423"
 {
 	RA 295.297917
 	Dec 46.920556
@@ -1788,7 +1799,7 @@ Barycenter "Kepler-47"
 	AppMag 14.8
 }
 
-"Kepler-60:KOI-2086"
+"Kepler-60:KOI-2086:KIC 6768394"
 {
 	RA 288.962500
 	Dec 42.265000
@@ -1804,6 +1815,15 @@ Barycenter "Kepler-47"
 	Distance 790 # from spectrum, app mag and radius
 	SpectralType "K2V"
 	AppMag 13.8
+}
+
+"Kepler-69:KOI-172:KIC 8692861"
+{
+	RA 293.260833
+	Dec +44.868889
+	Distance 1700 # from spectrum, app mag and radius
+	SpectralType "G4V"
+	AppMag 13.7
 }
 
 1000643542 "KOI-13:KIC 9941662:GSC 03542-00064"
@@ -1834,7 +1854,7 @@ Barycenter "Kepler-47"
 	AppMag 12.4
 }
 
-"KOI-135:KIC 9818381"
+"KOI-135:KIC 9818381:GSC 03541-00075"
 {
 	RA 285.240833
 	Dec 46.668333
@@ -1852,7 +1872,7 @@ Barycenter "Kepler-47"
 	AppMag 13.99
 }
 
-"KOI-196"
+"KOI-196:KIC 9410930"
 {
 	RA 285.634222
 	Dec 45.981667
@@ -1897,7 +1917,7 @@ Barycenter "Kepler-47"
 	AppMag 14.35
 }
 
-"KOI-254"
+"KOI-254:KIC 5794240"
 {
 	RA 292.872917
 	Dec 41.064167
@@ -1942,7 +1962,7 @@ Barycenter "Kepler-47"
 	AppMag 15
 }
 
-"KOI-872"
+"KOI-872:KIC 7109675"
 {
 	RA 289.268750
 	Dec 42.604167
@@ -1951,15 +1971,53 @@ Barycenter "Kepler-47"
 	AppMag 15.3
 }
 
-"KOI-961:KIC 8561063"
+"KOI-889:KIC 757450"
 {
-	RA 292.219167
-	Dec 44.619444
-	Distance 126.2
-	SpectralType "M7V" # from mass and radius
-	Temperature 3070
-	Radius 120000
-	AppMag 16.12
+	RA 291.137500
+	Dec 36.577500
+	Distance 3700
+	SpectralType "G8V"
+	AppMag 15.0
+}
+
+Barycenter "KIC 4862625 A"
+{
+	RA 298.215000
+	Dec 39.955000
+	Distance 3900 # from mass, radius and magnitude
+}
+
+"KIC 4862625 Aa"
+{
+	OrbitBarycenter "KIC 4862625 A"
+	SpectralType "F" 
+	Radius 1200000   # observed
+	AppMag 14.0
+
+	EllipticalOrbit {
+		Period		0.054757691 # 20.0002468 days
+		SemiMajorAxis	0.0346      # mass ratio 1.528:0.378
+		Eccentricity    0.2179
+		Inclination     81.28       #
+		AscendingNode   295.02      # inclination to plane of sky 87.58 deg.
+	}
+}
+
+"KIC 4862625 Ab"
+{
+	OrbitBarycenter "KIC 4862625 A"
+	SpectralType "M"
+	Radius 280000    # observed
+	AbsMag 10.4      # typical
+
+	EllipticalOrbit {
+		Period		0.054757691 # 20.0002468 days
+		SemiMajorAxis	0.1398      # mass ratio 1.528:0.378
+		Eccentricity    0.2179
+		Inclination     81.28       #
+		AscendingNode   295.02      # inclination to plane of sky 87.58 deg.
+		ArgOfPericenter 180
+	}
 }
 
 "KIC 6185331"
