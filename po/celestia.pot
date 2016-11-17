@@ -3616,7 +3616,7 @@ msgid "Copyright (C) 2001-2009, Celestia Development Team"
 msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:70
-msgid "http://www.shatters.net/celestia"
+msgid "http://celestiaproject.net/"
 msgstr ""
 
 #: src/celestia/win32/res/resource_strings.cpp:71

@@ -3674,8 +3674,8 @@ msgid "Copyright (C) 2001-2009, Celestia Development Team"
 msgstr "Аўтарскія правы (C) 2001-2009, Каманда распрацоўкі Celestia"
 
 #: src/celestia/win32/res/resource_strings.cpp:70
-msgid "http://www.shatters.net/celestia"
-msgstr "http://www.shatters.net/celestia"
+msgid "http://celestiaproject.net/"
+msgstr "http://celestiaproject.net/"
 
 #: src/celestia/win32/res/resource_strings.cpp:71
 msgid "Celestia is free software and comes with absolutely no warranty."

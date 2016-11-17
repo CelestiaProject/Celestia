@@ -3643,6 +3643,26 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         odAppMenu.SetItemImage(appInstance, ID_HELP_RUNDEMO, IDB_SCRIPT);
         odAppMenu.SetItemImage(appInstance, ID_HELP_CONTROLS, IDB_CONFIG);
         odAppMenu.SetItemImage(appInstance, ID_HELP_ABOUT, IDB_ABOUT);
+        odAppMenu.SetItemImage(appInstance, ID_BOOKMARKS_ADDBOOKMARK, IDB_BOOKMARK_ADD);
+        odAppMenu.SetItemImage(appInstance, ID_BOOKMARKS_ORGANIZE, IDB_BOOKMARK_ORGANIZE);
+        odAppMenu.SetItemImage(appInstance, ID_TIME_REALTIME, IDB_TIME_ADD);
+        odAppMenu.SetItemImage(appInstance, ID_TIME_REVERSE, IDB_TIME_REMOVE);
+        odAppMenu.SetItemImage(appInstance, ID_TIME_FASTER, IDB_TIME_FORWARD);
+        odAppMenu.SetItemImage(appInstance, ID_TIME_SLOWER, IDB_TIME_BACKWARD);
+        odAppMenu.SetItemImage(appInstance, ID_RENDER_DISPLAYMODE, IDB_DISPLAY_MODE);
+        odAppMenu.SetItemImage(appInstance, ID_RENDER_FULLSCREEN, IDB_DISPLAY_FULL_MODE);
+        odAppMenu.SetItemImage(appInstance, ID_VIEW_HSPLIT, IDB_DISPLAY_VIEW_HSPLIT);
+        odAppMenu.SetItemImage(appInstance, ID_VIEW_VSPLIT, IDB_DISPLAY_VIEW_VSPLIT);
+        odAppMenu.SetItemImage(appInstance, ID_VIEW_DELETE_ACTIVE, IDB_DISPLAY_VIEW_DELETE_ACTIVE);
+        odAppMenu.SetItemImage(appInstance, ID_VIEW_SINGLE, IDB_DISPLAY_VIEW_SINGLE);
+        odAppMenu.SetItemImage(appInstance, ID_HELP_GUIDE, IDB_DISPLAY_HELP_GUIDE);
+        odAppMenu.SetItemImage(appInstance, ID_HELP_GLINFO, IDB_DISPLAY_HELP_GLINFO);
+        odAppMenu.SetItemImage(appInstance, ID_HELP_LICENSE, IDB_DISPLAY_VIEW_HELP_LICENSE);
+        odAppMenu.SetItemImage(appInstance, ID_NAVIGATION_HOME, IDB_NAV_HOME);
+        odAppMenu.SetItemImage(appInstance, ID_NAVIGATION_TOURGUIDE, IDB_NAV_TOURGUIDE);
+        odAppMenu.SetItemImage(appInstance, ID_NAVIGATION_SSBROWSER, IDB_NAV_SSBROWSER);
+        odAppMenu.SetItemImage(appInstance, ID_NAVIGATION_STARBROWSER, IDB_NAV_STARBROWSER);
+        odAppMenu.SetItemImage(appInstance, ID_NAVIGATION_ECLIPSEFINDER, IDB_NAV_ECLIPSEFINDER);
 
         DragAcceptFiles(hWnd, TRUE);
         break;

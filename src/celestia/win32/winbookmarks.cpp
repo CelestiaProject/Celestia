@@ -38,7 +38,7 @@ HTREEITEM PopulateBookmarksTree(HWND hTree, CelestiaCore* appCore, HINSTANCE app
     HTREEITEM hParent=NULL, hParentItem;
 
     //Create a masked image list large enough to hold the icons. 
-    himlIcons = ImageList_Create(16, 16, ILC_MASK, 3, 0);
+    himlIcons = ImageList_Create(16, 16, ILC_COLOR32, 3, 0);
  
     // Load the icon resources, and add the icons to the image list.
     hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER)); 
@@ -145,7 +145,7 @@ HTREEITEM PopulateBookmarkFolders(HWND hTree, CelestiaCore* appCore, HINSTANCE a
     HICON hIcon;
 
     //Create a masked image list large enough to hold the icons. 
-    himlIcons = ImageList_Create(16, 16, ILC_MASK, 3, 0);
+    himlIcons = ImageList_Create(16, 16, ILC_COLOR32, 3, 0);
  
     // Load the icon resources, and add the icons to the image list.
     hIcon = LoadIcon(appInstance, MAKEINTRESOURCE(IDI_CLOSEDFOLDER)); 
