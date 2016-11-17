@@ -918,6 +918,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\src\celestia\win32\res\resource.h"
+				>
+			</File>
 			<Filter
 				Name="celengine"
 				>
@@ -1681,10 +1685,174 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\src\celestia\win32\res\about.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\application-bookmark.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\book.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\bookmark-add.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\camcorder2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\camera2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\Celestia.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\src\celestia\win32\res\celestia.rc"
 				>
 			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\clock2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\Clsdfolder.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\config.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\crosshair-opaque.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\crosshair.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\eclipse_found.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\exit.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\folderclosed2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\folderopened2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\full_screen2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\globe.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\license.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\Location.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\location2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\Openfolder.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\report_GL.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\Rootfolder.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\script2.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\select_sol.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\slide.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\slide_active.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\slide_all.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\sol_browser.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\star_browser.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\stop.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\sunglasses.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\time-add.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\time-backward.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\time-forward.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\time-remove.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\tour_guide.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\window_separate_horizontal.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\celestia\win32\res\window_separate_vertical.bmp"
+				>
+			</File>
 		</Filter>
+		<File
+			RelativePath=".\src\celestia\win32\res\celestia.exe.manifest"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

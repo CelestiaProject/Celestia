@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by celestia.rc
 //
-#define VERSION_STRING                  "1.6.0"
+#define VERSION_STRING                  "1.7.0"
 #define IDR_MENU1                       101
 #define IDD_ABOUT                       102
 #define IDI_CELESTIA_ICON               103
@@ -46,13 +46,33 @@
 #define IDB_CAMCORDER                   538
 #define IDB_SCRIPT                      539
 #define IDB_CLOCK                       540
+#define IDB_BOOKMARK_ADD                541
+#define IDB_BOOKMARK_ORGANIZE           542
+#define IDB_TIME_ADD                    543
+#define IDB_TIME_REMOVE                 544
+#define IDB_TIME_FORWARD                545
+#define IDB_TIME_BACKWARD               546
+#define IDB_DISPLAY_MODE                547
+#define IDB_DISPLAY_FULL_MODE           548
+#define IDB_DISPLAY_VIEW_HSPLIT         549
+#define IDB_DISPLAY_VIEW_VSPLIT         550
+#define IDB_DISPLAY_VIEW_DELETE_ACTIVE  551
+#define IDB_DISPLAY_VIEW_SINGLE         552
+#define IDB_DISPLAY_HELP_GUIDE          553
+#define IDB_DISPLAY_HELP_GLINFO         554
+#define IDB_DISPLAY_VIEW_HELP_LICENSE   555
+#define IDB_NAV_HOME                    556
+#define IDB_NAV_TOURGUIDE               557
+#define IDB_NAV_SSBROWSER               558
+#define IDB_NAV_STARBROWSER             559
+#define IDB_NAV_ECLIPSEFINDER           560
 #define IDC_FINDOBJECT_EDIT             1001
 #define IDC_LICENSE_TEXT                1004
 #define IDC_GLINFO_TEXT                 1005
 #define IDC_CALENDAR                    1006
 #define IDC_TIMEPICKER                  1007
 #define IDC_DATEPICKER                  1008
-#define IDC_JDPICKER                  1009
+#define IDC_JDPICKER                    1009
 #define IDC_BOOKMARK_EDIT               1010
 #define IDC_SSBROWSER_TREE              1011
 #define IDC_BUTTON_CENTER               1012
@@ -119,7 +139,7 @@
 #define IDC_LABELNEBULAE                1074
 #define IDC_LABELOPENCLUSTERS           1075
 #define IDC_LABELCONSTELLATIONSLATIN    1076
-#define IDC_SHOWOPENCLUSTERS                 1077
+#define IDC_SHOWOPENCLUSTERS            1077
 #define IDCOMPUTE                       1078
 #define IDC_DATEFROM                    1079
 #define IDC_ECLIPSEFROM                 1079
@@ -135,12 +155,12 @@
 #define IDC_ECLIPSETYPE                 1089
 #define IDC_ECLIPSETARGET               1090
 #define IDC_SHOWCLOUDSHADOWS            1091
-#define IDC_LABELDWARFPLANETS                1092
-#define IDC_LABELMINORMOONS                  1093
-#define IDC_DWARFPLANETORBITS                1094
-#define IDC_MINORMOONORBITS                  1095
-#define IDC_LABELGLOBULARS           1096
-#define IDC_SHOWGLOBULARS                 1097
+#define IDC_LABELDWARFPLANETS           1092
+#define IDC_LABELMINORMOONS             1093
+#define IDC_DWARFPLANETORBITS           1094
+#define IDC_MINORMOONORBITS             1095
+#define IDC_LABELGLOBULARS              1096
+#define IDC_SHOWGLOBULARS               1097
 #define IDC_SHOW_CITIES                 1100
 #define IDC_SHOW_OBSERVATORIES          1101
 #define IDC_SHOW_LANDING_SITES          1102
@@ -149,17 +169,19 @@
 #define IDC_SHOW_CRATERS                1105
 #define IDC_SHOW_VALLES                 1106
 #define IDC_SHOW_TERRAE                 1107
-#define IDC_SHOW_VOLCANOES                 1108
+#define IDC_SHOW_VOLCANOES              1108
 #define IDC_SHOW_OTHERS                 1109
 #define IDC_LABELFEATURES               1110
-#define IDC_SHOWHORIZONGRID           1111
-#define IDC_SHOWGALACTICGRID           1112
-#define IDC_SHOWECLIPTICGRID           1113
+#define IDC_SHOWHORIZONGRID             1111
+#define IDC_SHOWGALACTICGRID            1112
+#define IDC_SHOWECLIPTICGRID            1113
+#define IDC_SHOWECLIPTIC                1114
 #define IDC_SLIDER_FEATURE_SIZE         1150
 #define IDC_EDIT_FEATURE_SIZE           1151
 #define IDC_CELESTIALINK                1152
 #define IDC_COMBOBOX_TIMEZONE           1153
-#define IDC_COMBOBOX_DATE_FORMAT           1154
+#define IDC_CELESTIALINK2               1153
+#define IDC_COMBOBOX_DATE_FORMAT        1154
 #define IDC_SOLARECLIPSE                1155
 #define IDC_LUNARECLIPSE                1156
 #define ID_SELECTSOL                    40001
@@ -171,9 +193,9 @@
 #define ID_QUIT                         40008
 #define ID_FILE_EXIT                    40009
 #define ID_HELP_ABOUT                   40010
-#define ID_RENDER_TEXTURERES_LOW     40011
-#define ID_RENDER_TEXTURERES_MEDIUM      40012
-#define ID_RENDER_TEXTURERES_HIGH   40013
+#define ID_RENDER_TEXTURERES_LOW        40011
+#define ID_RENDER_TEXTURERES_MEDIUM     40012
+#define ID_RENDER_TEXTURERES_HIGH       40013
 #define ID_RENDER_AMBIENTLIGHT_NONE     40014
 #define ID_RENDER_AMBIENTLIGHT_LOW      40015
 #define ID_RENDER_AMBIENTLIGHT_MEDIUM   40016
@@ -206,6 +228,7 @@
 #define ID_TIME_SHOWLOCAL               40050
 #define ID_NAVIGATION_TRACK             40051
 #define ID_HELP_CONTROLS                40053
+#define ID_HELP_GUIDE                   40054
 #define ID_RENDER_VERTEX_SHADERS        40055
 #define ID_NAVIGATION_GOTO_OBJECT       40056
 #define ID_FILE_CAPTUREIMAGE            40057
@@ -243,8 +266,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        142
-#define _APS_NEXT_COMMAND_VALUE         40083
-#define _APS_NEXT_CONTROL_VALUE         1155
+#define _APS_NEXT_COMMAND_VALUE         40089
+#define _APS_NEXT_CONTROL_VALUE         1157
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
