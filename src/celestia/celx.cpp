@@ -2950,6 +2950,72 @@ static int celestia_setstarstyle(lua_State* l)
     return 0;
 }
 
+// -----------------------------------------------------------------------------
+// Star Color
+
+static int celestia_getstarcolor(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getstarcolor");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
+    }
+    else
+    {
+        const ColorTemperatureTable* starColor = renderer->getStarColorTable();
+		
+            if (starColor == GetStarColorTable(ColorTable_Enhanced))
+            {
+                lua_pushstring(l, "false");
+            }
+            else if (starColor == GetStarColorTable(ColorTable_Blackbody_D65))
+            {
+                lua_pushstring(l, "true");
+            }
+            else
+            {
+                lua_pushstring(l, "invalid starcolor");
+            }
+     }
+    return 1;
+}
+
+static int celestia_setstarcolor(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarcolor");
+    CelestiaCore* appCore = this_celestia(l);
+
+    string starColor = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarcolor must be a string");
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == NULL)
+    {
+        Celx_DoError(l, "Internal Error: renderer is NULL!");
+    }
+    else
+    {
+        if (starColor == "true")
+        {
+            renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+        }
+        else if (starColor == "false")
+        {
+            renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+        }
+        else
+        {
+            Celx_DoError(l, "Invalid starcolor");
+        }
+        appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
+
+    }
+    return 0;
+}
+
+// -----------------------------------------------------------------------------
+
 static int celestia_gettextureresolution(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:gettextureresolution");
@@ -3490,6 +3556,11 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
     Celx_RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
     Celx_RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
+	
+	// New CELX command for Star Color
+    Celx_RegisterMethod(l, "getstarcolor", celestia_getstarcolor);
+    Celx_RegisterMethod(l, "setstarcolor", celestia_setstarcolor);
+	
     Celx_RegisterMethod(l, "gettextureresolution", celestia_gettextureresolution);
     Celx_RegisterMethod(l, "settextureresolution", celestia_settextureresolution);
     Celx_RegisterMethod(l, "tojulianday", celestia_tojulianday);
