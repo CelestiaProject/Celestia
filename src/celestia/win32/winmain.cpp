@@ -532,6 +532,7 @@ BOOL APIENTRY AboutProc(HWND hDlg,
     {
     case WM_INITDIALOG:
         MakeHyperlinkFromStaticCtrl(hDlg, IDC_CELESTIALINK);
+        MakeHyperlinkFromStaticCtrl(hDlg, IDC_CELESTIALINK2);
         return(TRUE);
 
     case WM_COMMAND:
@@ -544,6 +545,19 @@ BOOL APIENTRY AboutProc(HWND hDlg,
         {
             char urlBuf[256];
             HWND hCtrl = GetDlgItem(hDlg, IDC_CELESTIALINK);
+            if (hCtrl)
+            {
+                if (GetWindowText(hCtrl, urlBuf, sizeof(urlBuf)) > 0)
+                {
+                    ShellExecute(hDlg, "open", urlBuf, NULL, NULL, SW_SHOWNORMAL);
+                    return TRUE;
+                }
+            }
+        }
+        else if (LOWORD(wParam) == IDC_CELESTIALINK2)
+        {
+            char urlBuf[256];
+            HWND hCtrl = GetDlgItem(hDlg, IDC_CELESTIALINK2);
             if (hCtrl)
             {
                 if (GetWindowText(hCtrl, urlBuf, sizeof(urlBuf)) > 0)
@@ -2282,6 +2296,10 @@ static void syncMenusWithRendererState()
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
                   style == Renderer::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
 
+	const ColorTemperatureTable* color = appCore->getRenderer()->getStarColorTable();
+	CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color == GetStarColorTable(ColorTable_Enhanced) ? MF_CHECKED : MF_UNCHECKED);
+	CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTable_Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);		  
+
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
                   textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_MEDIUM,
@@ -3244,7 +3262,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.orbitMask = Body::Planet | Body::Moon;
     prefs.renderFlags = Renderer::DefaultRenderFlags;
 
-    prefs.visualMagnitude = 6.0f;   //Default specified in Simulation::Simulation()
+    prefs.visualMagnitude = 8.0f;   //Default specified in Simulation::Simulation() 6.0
     prefs.showLocalTime = 0;
     prefs.dateFormat = 0;
     prefs.hudDetail = 1;
@@ -4155,6 +4173,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             syncMenusWithRendererState();
             break;
 
+        case ID_STARCOLOR_DISABLED:
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+            syncMenusWithRendererState();
+            break;
+
+        case ID_STARCOLOR_ENABLED:
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+            syncMenusWithRendererState();
+            break;
+
         case ID_RENDER_TEXTURERES_LOW:
             appCore->getRenderer()->setResolution(0);
             syncMenusWithRendererState();
@@ -4271,6 +4299,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_HELP_RUNDEMO:
             appCore->charEntered('D');
+            break;
+
+        case ID_HELP_GUIDE:
+            ShellExecute(hWnd, "open", "help\\CelestiaGuide.html", NULL, NULL, SW_NORMAL);
             break;
 
         case ID_HELP_CONTROLS:

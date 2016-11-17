@@ -31,6 +31,7 @@
 #include <celengine/eigenport.h>
 #include <celmath/geomutil.h>
 #include <celutil/util.h>
+#include <celutil/winutil.h>
 #include <celutil/filetype.h>
 #include <celutil/directory.h>
 #include <celutil/formatnum.h>
@@ -81,7 +82,7 @@ static float MouseRotationSensitivity = degToRad(1.0f);
 
 static const int ConsolePageRows = 10;
 static Console console(200, 120);
-
+static HMENU menuBar;
 
 static void warning(string s)
 {
@@ -1682,15 +1683,19 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '%':
         {
-            const ColorTemperatureTable* current =
-                renderer->getStarColorTable();
+            const ColorTemperatureTable* current = renderer->getStarColorTable();
+			
             if (current == GetStarColorTable(ColorTable_Enhanced))
             {
                 renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+				flash(_("Star color: enhanced"));
+				notifyWatchers(RenderFlagsChanged);
             }
             else if (current == GetStarColorTable(ColorTable_Blackbody_D65))
             {
                 renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+				flash(_("Star color: normal"));
+				notifyWatchers(RenderFlagsChanged);
             }
             else
             {
