@@ -102,6 +102,11 @@ BEGIN
             MENUITEM "&Points",                     ID_RENDER_STARSTYLE_POINTS
             MENUITEM "Scaled &Discs",               ID_RENDER_STARSTYLE_DISCS
         END
+        POPUP "Star &Color"
+        BEGIN
+            MENUITEM "&Disabled",                   ID_STARCOLOR_DISABLED, CHECKED
+            MENUITEM "&Enabled",                    ID_STARCOLOR_ENABLED
+        END
         MENUITEM SEPARATOR
         POPUP "&Ambient Light"
         BEGIN
