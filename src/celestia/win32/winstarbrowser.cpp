@@ -62,11 +62,13 @@ bool InitStarBrowserColumns(HWND listView)
     columns[0].cx = 100;
     columns[1].pszText = _("Distance (ly)");
     columns[1].fmt = LVCFMT_RIGHT;
-    columns[1].cx = 75;
+    columns[1].cx = 115;
     columns[2].pszText = _("App. mag");
     columns[2].fmt = LVCFMT_RIGHT;
+    columns[2].cx = 65;
     columns[3].pszText = _("Abs. mag");
     columns[3].fmt = LVCFMT_RIGHT;
+    columns[3].cx = 65;
     columns[4].pszText = _("Type");
 
     bind_textdomain_codeset("celestia", "UTF8");

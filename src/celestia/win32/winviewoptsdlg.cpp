@@ -74,6 +74,9 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
         case IDC_SHOWECLIPTICGRID:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowEclipticGrid);
             break;
+        case IDC_SHOWECLIPTIC:
+            renderer->setRenderFlags(renderFlags ^ Renderer::ShowEcliptic);
+            break;
         case IDC_SHOWCLOUDS:
             renderer->setRenderFlags(renderFlags ^ Renderer::ShowCloudMaps);
             break;
@@ -306,6 +309,8 @@ void ViewOptionsDialog::SetControls(HWND hDlg)
         (renderFlags & Renderer::ShowGalacticGrid)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWECLIPTICGRID, BM_SETCHECK,
         (renderFlags & Renderer::ShowEclipticGrid)? BST_CHECKED:BST_UNCHECKED, 0);
+    SendDlgItemMessage(hDlg, IDC_SHOWECLIPTIC, BM_SETCHECK,
+        (renderFlags & Renderer::ShowEcliptic)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCLOUDS, BM_SETCHECK,
         (renderFlags & Renderer::ShowCloudMaps)? BST_CHECKED:BST_UNCHECKED, 0);
     SendDlgItemMessage(hDlg, IDC_SHOWCLOUDSHADOWS, BM_SETCHECK,

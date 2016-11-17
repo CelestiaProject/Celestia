@@ -57,7 +57,7 @@ bool InitEclipseFinderColumns(HWND listView)
 
     bind_textdomain_codeset("celestia", CurrentCP());
     columns[0].pszText = _("Planet");
-    columns[0].cx = 50;
+    columns[0].cx = 65;
     columns[1].pszText = _("Satellite");
     columns[1].cx = 65;
     columns[2].pszText = _("Date");
@@ -65,7 +65,7 @@ bool InitEclipseFinderColumns(HWND listView)
     columns[3].pszText = _("Start");
     columns[3].cx = 55;
     columns[4].pszText = _("Duration");
-    columns[4].cx = 55;
+    columns[4].cx = 135;
     bind_textdomain_codeset("celestia", "UTF8");
 
     for (i = 0; i < nColumns; i++)
