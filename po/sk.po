@@ -2,13 +2,13 @@
 # Copyright (C) YEAR Chris Laurel
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Celestia-SK\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
-"POT-Creation-Date: 2010-01-06 17:52-0500\n"
-"PO-Revision-Date: 2009-12-07 22:50+0100\n"
+"POT-Creation-Date: 2010-01-04 15:39+0000\n"
+"PO-Revision-Date: 2010-04-13 22:31+0100\n"
 "Last-Translator: aceman <acelists@atlas.sk>\n"
 "Language-Team: Slovak <acelists@atlas.sk>\n"
 "MIME-Version: 1.0\n"
@@ -17,664 +17,699 @@ msgstr ""
 "X-Poedit-Language: Slovak\n"
 "X-Poedit-Country: SLOVAKIA\n"
 
-#: src/celengine/astro.cpp:850
+#: src/celengine/astro.cpp:827
 msgid "DST"
-msgstr ""
+msgstr "Letný čas"
 
-#: src/celengine/astro.cpp:850
+# Čas, ktorý sa používa mimo letného času. U nás je to stredoeurópsky čas
+#: src/celengine/astro.cpp:827
 msgid "STD"
-msgstr ""
+msgstr "Štandardný čas"
 
-#: src/celengine/dsodb.cpp:390
+#: src/celengine/dsodb.cpp:387
 msgid "Loaded "
-msgstr ""
+msgstr "Načítané "
 
-#: src/celengine/dsodb.cpp:390
+# Objekty tmavej nočnej oblohy - hmloviny, galaxie, hviezdokopy...
+#: src/celengine/dsodb.cpp:387
 msgid " deep space objects"
-msgstr ""
+msgstr " telesá hlbokého vesmíru"
 
-#: src/celengine/fragmentprog.cpp:92
+#: src/celengine/fragmentprog.cpp:93
 msgid "Loading NV fragment program: "
-msgstr ""
+msgstr "Načítava sa NV fragment program: "
 
-#: src/celengine/fragmentprog.cpp:97
+#: src/celengine/fragmentprog.cpp:98
 msgid "Error loading NV fragment program: "
-msgstr ""
+msgstr "Chyba pri načítaní NV fragment programu: "
 
-#: src/celengine/fragmentprog.cpp:114
+#: src/celengine/fragmentprog.cpp:115
 msgid "Error in fragment program "
-msgstr ""
+msgstr "Chyba vo fragment programe"
 
-#: src/celengine/fragmentprog.cpp:125
+#: src/celengine/fragmentprog.cpp:126
 msgid "Initializing NV fragment programs . . .\n"
-msgstr ""
+msgstr "Inicializujú sa NV fragment programy . . .\n"
 
-#: src/celengine/fragmentprog.cpp:141
+#: src/celengine/fragmentprog.cpp:142
 msgid "All NV fragment programs loaded successfully.\n"
-msgstr ""
+msgstr "Všetky NV fragment programy načítané úspešne. \n"
 
-#: src/celengine/fragmentprog.cpp:149
+#: src/celengine/fragmentprog.cpp:150
 msgid "Initializing ARB fragment programs . . .\n"
-msgstr ""
+msgstr "Inicializujú sa ARB fragment programy . . .\n"
 
-#: src/celengine/galaxy.cpp:205
+#: src/celengine/galaxy.cpp:197
 #, c-format
 msgid "Galaxy (Hubble type: %s)"
 msgstr "Galaxia (Hubblov typ: %s)"
 
-#: src/celengine/globular.cpp:258
+#: src/celengine/globular.cpp:255
 #, c-format
 msgid "Globular (core radius: %4.2f', King concentration: %4.2f)"
-msgstr ""
+msgstr "Guľová hviezdokopa (polomer jadra: %4.2f', Kingova koncentrácia: %4.2f)"
 
-#: src/celengine/image.cpp:372
+#: src/celengine/image.cpp:373
 msgid "Loading image from file "
-msgstr ""
+msgstr "Načítava sa obrázok zo súboru "
 
-#: src/celengine/image.cpp:390
+#: src/celengine/image.cpp:391
 msgid ": unrecognized or unsupported image file type.\n"
-msgstr ""
+msgstr ": neznámy alebo nepodporovaný formát obrázku.\n"
 
-#: src/celengine/image.cpp:653
+#: src/celengine/image.cpp:654
 msgid "Error opening image file "
-msgstr ""
+msgstr "Chyba pri otváraní obrázku "
 
-#: src/celengine/image.cpp:660
+#: src/celengine/image.cpp:661
 msgid "Error: "
 msgstr "Chyba: "
 
-#: src/celengine/image.cpp:660
+#: src/celengine/image.cpp:661
 msgid " is not a PNG file.\n"
-msgstr ""
+msgstr " nie je súbor typu PNG.\n"
 
-#: src/celengine/image.cpp:687
+#: src/celengine/image.cpp:688
 msgid "Error reading PNG image file "
-msgstr ""
+msgstr "Chyba pri čítaní súboru typu PNG "
 
-#: src/celengine/meshmanager.cpp:85
+#: src/celengine/meshmanager.cpp:84
 msgid "Loading model: "
-msgstr "Načítavam model: "
+msgstr "Načítava sa model: "
+
+#: src/celengine/meshmanager.cpp:162
+msgid "   Model statistics: "
+msgstr "   Štatistiky modelu: "
 
 #: src/celengine/meshmanager.cpp:163
-msgid "   Model statistics: "
-msgstr "   Štatistika modelu: "
+msgid " vertices, "
+msgstr " uzly, "
 
 #: src/celengine/meshmanager.cpp:164
-msgid " vertices, "
-msgstr ""
+msgid " primitives, "
+msgstr " primitívy, "
 
 #: src/celengine/meshmanager.cpp:165
-msgid " primitives, "
-msgstr ""
-
-#: src/celengine/meshmanager.cpp:166
 msgid " materials "
 msgstr " materiály "
 
-#: src/celengine/meshmanager.cpp:167
+#: src/celengine/meshmanager.cpp:166
 msgid " unique)\n"
-msgstr ""
+msgstr " jedinečný)\n"
 
-#: src/celengine/meshmanager.cpp:171
+#: src/celengine/meshmanager.cpp:170
 msgid "Error loading model '"
 msgstr "Chyba pri čítaní modelu '"
 
-#: src/celengine/nebula.cpp:46
-#, fuzzy, c-format
+#: src/celengine/nebula.cpp:47
+#, c-format
 msgid "Nebula"
-msgstr "Hmloviny"
+msgstr "Hmlovina"
 
 #: src/celengine/opencluster.cpp:44
-#, fuzzy, c-format
+#, c-format
 msgid "Open cluster"
-msgstr "Otvorené hviezdokopy"
+msgstr "Otvorená hviezdokopa"
 
-#: src/celengine/solarsys.cpp:96
+#: src/celengine/solarsys.cpp:93
 msgid "Error in .ssc file (line "
-msgstr ""
+msgstr "Chyba v .ssc súbore (riadok "
 
-#: src/celengine/solarsys.cpp:1214 src/celengine/solarsys.cpp:1281
+#: src/celengine/solarsys.cpp:1200
+#: src/celengine/solarsys.cpp:1267
 msgid "parent body '"
 msgstr "materské teleso '"
 
-#: src/celengine/solarsys.cpp:1214 src/celengine/solarsys.cpp:1281
+#: src/celengine/solarsys.cpp:1200
+#: src/celengine/solarsys.cpp:1267
 msgid "' of '"
-msgstr ""
+msgstr "' z '"
 
-#: src/celengine/solarsys.cpp:1214
+#: src/celengine/solarsys.cpp:1200
 msgid "' not found."
 msgstr "' sa nenašlo."
 
-#: src/celengine/solarsys.cpp:1225
-#, fuzzy
+#: src/celengine/solarsys.cpp:1211
 msgid "warning duplicate definition of "
-msgstr "Našla sa duplicitná definícia strany '$side|'."
+msgstr "upozornenie viacnásobná definícia "
+
+#: src/celengine/solarsys.cpp:1247
+msgid "bad alternate surface"
+msgstr "zlý alternatívny povrch"
 
 #: src/celengine/solarsys.cpp:1261
-msgid "bad alternate surface"
-msgstr ""
-
-#: src/celengine/solarsys.cpp:1275
 msgid "bad location"
 msgstr "zlé umiestnenie"
 
-#: src/celengine/solarsys.cpp:1281
+#: src/celengine/solarsys.cpp:1267
 msgid "' not found.\n"
 msgstr "' sa nenašiel\n"
 
-#: src/celengine/stardb.cpp:580
+#: src/celengine/stardb.cpp:579
 msgid "Bad header for cross index\n"
-msgstr ""
+msgstr "Zlá hlavička v krížovom indexe\n"
 
-#: src/celengine/stardb.cpp:593
+#: src/celengine/stardb.cpp:592
 msgid "Bad version for cross index\n"
-msgstr ""
+msgstr "Zlá verzia pre krížový index\n"
 
-#: src/celengine/stardb.cpp:615
+#: src/celengine/stardb.cpp:614
 msgid "Loading cross index failed at record "
-msgstr ""
+msgstr "Načítanie krížového indexu sa nepodarilo pri zázname "
 
-#: src/celengine/stardb.cpp:697
+#: src/celengine/stardb.cpp:696
 msgid "Bad spectral type in star database, star #"
-msgstr ""
+msgstr "Zlý spektrálny typ v hviezdnom katalógu, hviezda #"
 
-#: src/celengine/stardb.cpp:712
+#: src/celengine/stardb.cpp:711
 msgid " stars in binary database\n"
-msgstr ""
+msgstr " hviezdy v katalógu dvojhviezd\n"
 
-#: src/celengine/stardb.cpp:736
+#: src/celengine/stardb.cpp:735
 msgid "Total star count: "
-msgstr ""
+msgstr "Celkový počet hviezd: "
 
-#: src/celengine/stardb.cpp:770
+#: src/celengine/stardb.cpp:769
 msgid "Error in .stc file (line "
-msgstr ""
+msgstr "Chyba v .stc súbore (riadok "
 
-#: src/celengine/stardb.cpp:807
+#: src/celengine/stardb.cpp:806
 msgid "Invalid star: bad spectral type.\n"
-msgstr ""
+msgstr "Neplatná hviezda: zlý spektrálny typ.\n"
 
-#: src/celengine/stardb.cpp:816
+#: src/celengine/stardb.cpp:815
 msgid "Invalid star: missing spectral type.\n"
-msgstr ""
+msgstr "Neplatná hviezda: chýba spektrálny typ.\n"
 
-#: src/celengine/stardb.cpp:961
+#: src/celengine/stardb.cpp:962
 msgid "Barycenter "
-msgstr "Barycentrum "
+msgstr "Barycentrum (ťažisko)"
 
-#: src/celengine/stardb.cpp:961
+#: src/celengine/stardb.cpp:962
 msgid " does not exist.\n"
 msgstr " neexistuje.\n"
 
-#: src/celengine/stardb.cpp:1014
+#: src/celengine/stardb.cpp:1008
 msgid "Invalid star: missing right ascension\n"
-msgstr ""
+msgstr "Neplatná hviezda: chýba rektascenzia\n"
 
-#: src/celengine/stardb.cpp:1027
+#: src/celengine/stardb.cpp:1021
 msgid "Invalid star: missing declination.\n"
-msgstr ""
+msgstr "Neplatná hviezda: chýba deklinácia.\n"
 
-#: src/celengine/stardb.cpp:1040
+#: src/celengine/stardb.cpp:1034
 msgid "Invalid star: missing distance.\n"
-msgstr ""
+msgstr "Neplatná hviezda: chýba vzdialenosť.\n"
 
-#: src/celengine/stardb.cpp:1072
+#: src/celengine/stardb.cpp:1070
 msgid "Invalid star: missing magnitude.\n"
-msgstr ""
+msgstr "Neplatná hviezda: chýba jasnosť.\n"
 
-#: src/celengine/stardb.cpp:1089
-msgid ""
-"Invalid star: absolute (not apparent) magnitude must be specified for star "
-"near origin\n"
-msgstr ""
+#: src/celengine/stardb.cpp:1087
+msgid "Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n"
+msgstr "Neplatná hviezda: je potrebné špecifikovať absolútnu (nie zdanlivú) jasnosť hviezdy krátko po jej vzniku\n"
 
-#: src/celengine/texture.cpp:1033
+#: src/celengine/texture.cpp:1019
 msgid "Creating tiled texture. Width="
-msgstr ""
+msgstr "Vytvára sa dlaždicová textúra. Šírka="
 
-#: src/celengine/texture.cpp:1033
-#, fuzzy
+#: src/celengine/texture.cpp:1019
 msgid ", max="
-msgstr "+1 max. životov"
+msgstr ", max="
 
-#: src/celengine/texture.cpp:1038
+#: src/celengine/texture.cpp:1024
 msgid "Creating ordinary texture: "
-msgstr ""
+msgstr "Vytvára sa jednoduchá textúra: "
 
 #: src/celengine/vertexprog.cpp:114
 msgid "Loading NV vertex program: "
-msgstr ""
+msgstr "Načítava sa NV vertex program: "
 
 #: src/celengine/vertexprog.cpp:119
 msgid "Error loading NV vertex program: "
-msgstr ""
+msgstr "Chyba pri načítaní NV vertex programu: "
 
-#: src/celengine/vertexprog.cpp:136 src/celengine/vertexprog.cpp:195
+#: src/celengine/vertexprog.cpp:136
+#: src/celengine/vertexprog.cpp:195
 msgid "Error in vertex program "
-msgstr ""
+msgstr "Chyba vo vertex programe "
 
 #: src/celengine/vertexprog.cpp:163
 msgid "Loading ARB vertex program: "
-msgstr ""
+msgstr "Načítava sa ARB vertex program: "
 
 #: src/celengine/vertexprog.cpp:168
 msgid "Error loading ARB vertex program: "
-msgstr ""
+msgstr "Chyba pri načítaní ARB vertex programu: "
 
 #: src/celengine/vertexprog.cpp:196
 msgid ", line "
-msgstr ""
+msgstr ", riadok "
 
 #: src/celengine/vertexprog.cpp:208
 msgid "Initializing NV vertex programs . . .\n"
-msgstr ""
+msgstr "Inicializujú sa NV vertex programy . . .\n"
 
 #: src/celengine/vertexprog.cpp:240
 msgid "All NV vertex programs loaded successfully.\n"
-msgstr ""
+msgstr "Všetky NV vertex programy načítané úspešne.\n"
 
 #: src/celengine/vertexprog.cpp:253
 msgid "Initializing ARB vertex programs . . .\n"
-msgstr ""
+msgstr "Inicializujú sa ARB vertex programy . . .\n"
 
-#: src/celengine/vertexprog.cpp:313
+#: src/celengine/vertexprog.cpp:314
 msgid "All ARB vertex programs loaded successfully.\n"
-msgstr ""
+msgstr "Všetky ARB vertex programy načítané úspešne.\n"
 
-#: src/celestia/celestiacore.cpp:422
-#, fuzzy
+#: src/celestia/celestiacore.cpp:420
 msgid "Error reading favorites file."
-msgstr "Chyba pri čítaní súboru hry"
+msgstr "Chyba pri čítaní súboru s obľúbenými položkami."
 
-#: src/celestia/celestiacore.cpp:512
+#: src/celestia/celestiacore.cpp:516
 msgid "Orientation: "
-msgstr ""
+msgstr "Orientácia: "
 
-#: src/celestia/celestiacore.cpp:559 src/celestia/celestiacore.cpp:561
+#: src/celestia/celestiacore.cpp:563
+#: src/celestia/celestiacore.cpp:565
 msgid "Error opening script file."
-msgstr ""
+msgstr "Chyba pri otváraní skriptového súboru."
 
-#: src/celestia/celestiacore.cpp:592
+#: src/celestia/celestiacore.cpp:596
 #, c-format
 msgid "Error opening script '%s'"
-msgstr ""
+msgstr "Chyba pri otváraní skriptu '%s'"
 
-#: src/celestia/celestiacore.cpp:610
+#: src/celestia/celestiacore.cpp:614
 msgid "Unknown error opening script"
-msgstr ""
+msgstr "Neznáma chyba pri otváraní skriptu"
 
-#: src/celestia/celestiacore.cpp:622
+#: src/celestia/celestiacore.cpp:626
 msgid "Script coroutine initialization failed"
-msgstr ""
+msgstr "Chyba pri inicializácii skriptu podprogramu"
 
-#: src/celestia/celestiacore.cpp:638 src/celestia/celestiacore.cpp:640
+#: src/celestia/celestiacore.cpp:642
+#: src/celestia/celestiacore.cpp:644
 msgid "Invalid filetype"
 msgstr "Neplatný typ súboru"
 
-#: src/celestia/celestiacore.cpp:986 src/celestia/celestiacore.cpp:1785
-#: src/celestia/celestiacore.cpp:1803 src/celestia/celestiacore.cpp:2044
-#: src/celestia/celestiacore.cpp:2075
+#: src/celestia/celestiacore.cpp:992
+#: src/celestia/celestiacore.cpp:1797
+#: src/celestia/celestiacore.cpp:1815
+#: src/celestia/celestiacore.cpp:2056
+#: src/celestia/celestiacore.cpp:2087
 #, c-format
 msgid "Magnitude limit: %.2f"
-msgstr ""
+msgstr "Medzná hviezdna veľkosť-jasnosť: %.2f"
 
-#: src/celestia/celestiacore.cpp:1420
+#: src/celestia/celestiacore.cpp:1427
 msgid "Markers enabled"
 msgstr "Značky zapnuté"
 
-#: src/celestia/celestiacore.cpp:1423
+#: src/celestia/celestiacore.cpp:1430
 msgid "Markers disabled"
 msgstr "Značky vypnuté"
 
-#: src/celestia/celestiacore.cpp:1433
+#: src/celestia/celestiacore.cpp:1440
 msgid "Goto surface"
 msgstr "Prejsť na povrch"
 
-#: src/celestia/celestiacore.cpp:1444
+#: src/celestia/celestiacore.cpp:1453
 msgid "Alt-azimuth mode enabled"
-msgstr ""
+msgstr "Alt-Azimut režim zapnutý"
 
-#: src/celestia/celestiacore.cpp:1447
+#: src/celestia/celestiacore.cpp:1456
 msgid "Alt-azimuth mode disabled"
-msgstr ""
+msgstr "Alt-Azimut režim vypnutý"
 
-#: src/celestia/celestiacore.cpp:1503
+#: src/celestia/celestiacore.cpp:1512
 msgid "Star style: fuzzy points"
-msgstr ""
+msgstr "Tvar hviezd: neostré body"
 
-#: src/celestia/celestiacore.cpp:1506
+#: src/celestia/celestiacore.cpp:1515
 msgid "Star style: points"
-msgstr ""
+msgstr "Tvar hviezd: body"
 
-#: src/celestia/celestiacore.cpp:1509
+#: src/celestia/celestiacore.cpp:1518
 msgid "Star style: scaled discs"
-msgstr ""
+msgstr "Zobrazenie hviezd: kotúče v mierke"
 
-#: src/celestia/celestiacore.cpp:1522
+#: src/celestia/celestiacore.cpp:1531
 msgid "Comet tails enabled"
-msgstr ""
+msgstr "Chvosty komét zapnuté"
 
-#: src/celestia/celestiacore.cpp:1525
+#: src/celestia/celestiacore.cpp:1534
 msgid "Comet tails disabled"
-msgstr ""
-
-#: src/celestia/celestiacore.cpp:1540
-msgid "Render path: Basic"
-msgstr ""
-
-#: src/celestia/celestiacore.cpp:1543
-msgid "Render path: Multitexture"
-msgstr ""
-
-#: src/celestia/celestiacore.cpp:1546
-msgid "Render path: NVIDIA combiners"
-msgstr ""
+msgstr "Chvosty komét vypnuté"
 
 #: src/celestia/celestiacore.cpp:1549
-msgid "Render path: OpenGL vertex program"
-msgstr ""
+msgid "Render path: Basic"
+msgstr "Spôsob vykresľovania: Základný"
 
 #: src/celestia/celestiacore.cpp:1552
-msgid "Render path: NVIDIA vertex program and combiners"
-msgstr ""
+msgid "Render path: Multitexture"
+msgstr "Spôsob vykresľovania: Multitextúrový"
 
 #: src/celestia/celestiacore.cpp:1555
-msgid "Render path: OpenGL vertex program/NVIDIA combiners"
-msgstr ""
+msgid "Render path: NVIDIA combiners"
+msgstr "Spôsob vykresľovania: NVIDIA combiners"
 
 #: src/celestia/celestiacore.cpp:1558
-msgid "Render path: OpenGL 1.5 vertex/fragment program"
-msgstr ""
+msgid "Render path: OpenGL vertex program"
+msgstr "Spôsob vykresľovania: OpenGL vertex program"
 
 #: src/celestia/celestiacore.cpp:1561
-msgid "Render path: NVIDIA GeForce FX"
-msgstr ""
+msgid "Render path: NVIDIA vertex program and combiners"
+msgstr "Spôsob vykresľovania: NVIDIA vertex program and combiners"
 
 #: src/celestia/celestiacore.cpp:1564
+msgid "Render path: OpenGL vertex program/NVIDIA combiners"
+msgstr "Spôsob vykresľovania: OpenGL vertex program/NVIDIA combiners"
+
+#: src/celestia/celestiacore.cpp:1567
+msgid "Render path: OpenGL 1.5 vertex/fragment program"
+msgstr "Spôsob vykresľovania: OpenGL 1.5 vertex/fragment program"
+
+#: src/celestia/celestiacore.cpp:1570
+msgid "Render path: NVIDIA GeForce FX"
+msgstr "Spôsob vykresľovania: NVIDIA GeForce FX"
+
+#: src/celestia/celestiacore.cpp:1573
 msgid "Render path: OpenGL 2.0"
-msgstr ""
+msgstr "Spôsob vykresľovania: OpenGL 2.0"
 
-#: src/celestia/celestiacore.cpp:1587
+#: src/celestia/celestiacore.cpp:1596
 msgid "Auto-magnitude enabled"
-msgstr ""
+msgstr "Automatická hviezdna jasnosť zapnutá"
 
-#: src/celestia/celestiacore.cpp:1592
+#: src/celestia/celestiacore.cpp:1601
 msgid "Auto-magnitude disabled"
-msgstr ""
+msgstr "Automatická hviezdna jasnosť vypnutá"
 
-#: src/celestia/celestiacore.cpp:1614
-#: src/celestia/win32/res/resource_strings.cpp:87
-#: src/celestia/win32/res/resource_strings.cpp:101
-#: src/celestia/win32/res/resource_strings.cpp:105
-#: src/celestia/win32/res/resource_strings.cpp:133
-#: src/celestia/win32/res/resource_strings.cpp:143
-#: src/celestia/win32/res/resource_strings.cpp:192
-#: src/celestia/win32/res/resource_strings.cpp:206
-#: src/celestia/win32/res/resource_strings.cpp:211
-#: src/celestia/win32/res/resource_strings.cpp:215
-#: src/celestia/win32/res/resource_strings.cpp:221
+#: src/celestia/celestiacore.cpp:1623
+#: src/celestia/res/resource_strings.cpp:88
+#: src/celestia/res/resource_strings.cpp:102
+#: src/celestia/res/resource_strings.cpp:106
+#: src/celestia/res/resource_strings.cpp:134
+#: src/celestia/res/resource_strings.cpp:144
+#: src/celestia/res/resource_strings.cpp:194
+#: src/celestia/res/resource_strings.cpp:208
+#: src/celestia/res/resource_strings.cpp:213
+#: src/celestia/res/resource_strings.cpp:217
+#: src/celestia/res/resource_strings.cpp:223
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: src/celestia/celestiacore.cpp:1650
+#: src/celestia/celestiacore.cpp:1659
 msgid "Time and script are paused"
 msgstr "Čas a skript sú pozastavené"
 
-#: src/celestia/celestiacore.cpp:1652
+#: src/celestia/celestiacore.cpp:1661
 msgid "Time is paused"
 msgstr "Čas je pozastavený"
 
-#: src/celestia/celestiacore.cpp:1656
+#: src/celestia/celestiacore.cpp:1665
 msgid "Resume"
 msgstr "Pokračovať"
 
-#: src/celestia/celestiacore.cpp:1729
+#: src/celestia/celestiacore.cpp:1740
 #, c-format
 msgid "Light travel time:  %.4f yr "
 msgstr "Čas putovania svetla: %.4f rokov "
 
-#: src/celestia/celestiacore.cpp:1738
+#: src/celestia/celestiacore.cpp:1749
 #, c-format
 msgid "Light travel time:  %d min  %.1f s"
 msgstr "Čas putovania svetla:  %d min.  %.1f s"
 
-#: src/celestia/celestiacore.cpp:1742
+#: src/celestia/celestiacore.cpp:1752
 #, c-format
 msgid "Light travel time:  %d h  %d min  %.1f s"
 msgstr "Čas putovania svetla:  %d hod.  %d min.  %.1f s"
 
-#: src/celestia/celestiacore.cpp:1759
+# ??? lepší názov?
+#: src/celestia/celestiacore.cpp:1771
 msgid "Light travel delay included"
-msgstr ""
+msgstr "Počíta sa so spomalením cesty svetla"
 
-#: src/celestia/celestiacore.cpp:1764
+#: src/celestia/celestiacore.cpp:1776
 msgid "Light travel delay switched off"
-msgstr ""
+msgstr "Spomalenie cesty svetla vypnuté"
 
-#: src/celestia/celestiacore.cpp:1770
+#: src/celestia/celestiacore.cpp:1782
 msgid "Light travel delay ignored"
-msgstr ""
+msgstr "Nepočíta sa so spomalením cesty svetla"
 
-#: src/celestia/celestiacore.cpp:1815
+#: src/celestia/celestiacore.cpp:1827
 msgid "Using normal surface textures."
-msgstr "Používam normálne povrchové textúry."
+msgstr "Používajú sa normálne povrchové textúry."
 
-#: src/celestia/celestiacore.cpp:1820
+#: src/celestia/celestiacore.cpp:1832
 msgid "Using limit of knowledge surface textures."
-msgstr "Používam textúry podľa dostupných vedomostí."
+msgstr "Používajú sa textúry podľa dostupných vedomostí."
 
-#: src/celestia/celestiacore.cpp:1887
+#: src/celestia/celestiacore.cpp:1899
 msgid "Follow"
-msgstr "Nasleduj"
+msgstr "Nasledovať"
 
-#: src/celestia/celestiacore.cpp:1912
+#: src/celestia/celestiacore.cpp:1924
 msgid "Time: Forward"
 msgstr "Čas: Dopredu"
 
-#: src/celestia/celestiacore.cpp:1914
+#: src/celestia/celestiacore.cpp:1926
 msgid "Time: Backward"
 msgstr "Čas: Dozadu"
 
-#: src/celestia/celestiacore.cpp:1927 src/celestia/celestiacore.cpp:1943
+# časomiera, chod času
+#: src/celestia/celestiacore.cpp:1939
+#: src/celestia/celestiacore.cpp:1955
 msgid "Time rate"
 msgstr "Rýchlosť času"
 
-#: src/celestia/celestiacore.cpp:2016
-msgid "Sync Orbit"
-msgstr "Synchrónny orbit"
-
-#: src/celestia/celestiacore.cpp:2022
-msgid "Lock"
-msgstr ""
-
 #: src/celestia/celestiacore.cpp:2028
-msgid "Chase"
-msgstr "Prenasleduj"
+msgid "Sync Orbit"
+msgstr "Synchronizovať obežnú dráhu"
 
-#: src/celestia/celestiacore.cpp:2055 src/celestia/celestiacore.cpp:2086
+#: src/celestia/celestiacore.cpp:2034
+msgid "Lock"
+msgstr "Zamknúť"
+
+#: src/celestia/celestiacore.cpp:2040
+msgid "Chase"
+msgstr "Prenasledovať"
+
+#: src/celestia/celestiacore.cpp:2067
+#: src/celestia/celestiacore.cpp:2098
 #, c-format
 msgid "Auto magnitude limit at 45 degrees:  %.2f"
-msgstr ""
+msgstr "Medzná hviezdna veľkosť pri 45 stupňoch:  %.2f"
 
-#: src/celestia/celestiacore.cpp:2105 src/celestia/celestiacore.cpp:2120
+#: src/celestia/celestiacore.cpp:2117
+#: src/celestia/celestiacore.cpp:2132
 #, c-format
 msgid "Ambient light level:  %.2f"
-msgstr "Úroveň okolitého svetla:  %.2f"
+msgstr "Úroveň rozptýleného svetla:  %.2f"
 
-#: src/celestia/celestiacore.cpp:2131 src/celestia/celestiacore.cpp:2143
-#, fuzzy
+#: src/celestia/celestiacore.cpp:2143
+#: src/celestia/celestiacore.cpp:2155
 msgid "Light gain"
-msgstr "Mág svetla"
+msgstr "Zosilnenie svetla"
 
-#: src/celestia/celestiacore.cpp:2163
+#: src/celestia/celestiacore.cpp:2175
 msgid "Bloom enabled"
-msgstr ""
+msgstr "Presvetlenie zapnuté"
 
-#: src/celestia/celestiacore.cpp:2165
+#: src/celestia/celestiacore.cpp:2177
 msgid "Bloom disabled"
-msgstr ""
+msgstr "Presvetlenie vypnuté"
 
-#: src/celestia/celestiacore.cpp:2171 src/celestia/celestiacore.cpp:2179
+#: src/celestia/celestiacore.cpp:2183
+#: src/celestia/celestiacore.cpp:2191
 msgid "Exposure"
-msgstr ""
+msgstr "Expozícia"
 
-#: src/celestia/celestiacore.cpp:2532
-#, fuzzy
+#: src/celestia/celestiacore.cpp:2539
 msgid "GL error: "
-msgstr "DETAILY CHYBY:"
+msgstr "Chyba GL: "
 
-#: src/celestia/celestiacore.cpp:2632
+#: src/celestia/celestiacore.cpp:2639
 msgid "View too small to be split"
-msgstr ""
+msgstr "Pohľad je príliš malý na rozdelenie"
 
-#: src/celestia/celestiacore.cpp:2635
+#: src/celestia/celestiacore.cpp:2642
 msgid "Added view"
 msgstr "Pohľad pridaný"
 
-#: src/celestia/celestiacore.cpp:2891
-#: src/celestia/kde/celestialbrowser.cpp:130
+#: src/celestia/celestiacore.cpp:2898
+#: src/celestia/kde/celestialbrowser.cpp:133
 #: src/celestia/kde/selectionpopup.cpp:79
 msgid "ly"
 msgstr "ly"
 
-#: src/celestia/celestiacore.cpp:2895
-#: src/celestia/kde/celestialbrowser.cpp:159
+#: src/celestia/celestiacore.cpp:2902
+#: src/celestia/kde/celestialbrowser.cpp:162
 #: src/celestia/kde/selectionpopup.cpp:81
-#: src/celestia/win32/res/resource_strings.cpp:131
+#: src/celestia/res/resource_strings.cpp:132
 msgid "au"
 msgstr "AU"
 
-#: src/celestia/celestiacore.cpp:2922
+#: src/celestia/celestiacore.cpp:2923
 msgid " days"
 msgstr " dní"
 
-#: src/celestia/celestiacore.cpp:2924
+#: src/celestia/celestiacore.cpp:2925
 msgid " hours"
 msgstr " hodín"
 
-#: src/celestia/celestiacore.cpp:2926
+#: src/celestia/celestiacore.cpp:2927
 msgid " minutes"
 msgstr " minút"
 
-#: src/celestia/celestiacore.cpp:2993
+#: src/celestia/celestiacore.cpp:2929
+msgid " seconds"
+msgstr " sekúnd"
+
+#: src/celestia/celestiacore.cpp:2994
 msgid "Apparent diameter: "
 msgstr "Zdanlivý priemer: "
 
-#: src/celestia/celestiacore.cpp:3008
+#: src/celestia/celestiacore.cpp:3009
 msgid "Apparent magnitude: "
-msgstr "Zdanlivá hviezdna veľkosť: "
+msgstr "Zdanlivá hviezdna jasnosť: "
 
-#: src/celestia/celestiacore.cpp:3012
+#: src/celestia/celestiacore.cpp:3013
 msgid "Absolute magnitude: "
-msgstr "Absolútna hviezdna veľkosť: "
+msgstr "Absolútna hviezdna jasnosť: "
 
-#: src/celestia/celestiacore.cpp:3034
+#: src/celestia/celestiacore.cpp:3035
 msgid "RA: "
-msgstr "RA: "
+msgstr "RA=rektascenzia: "
 
-#: src/celestia/celestiacore.cpp:3038
+#: src/celestia/celestiacore.cpp:3039
 msgid "Dec: "
-msgstr "Dek: "
+msgstr "Dec=deklinácia: "
 
-#: src/celestia/celestiacore.cpp:3102 src/celestia/kde/kdeapp.cpp:1635
-#: src/celestia/win32/res/resource_strings.cpp:129
+#: src/celestia/celestiacore.cpp:3103
+#: src/celestia/kde/kdeapp.cpp:1619
+#: src/celestia/res/resource_strings.cpp:130
 msgid "km"
 msgstr "km"
 
-#: src/celestia/celestiacore.cpp:3129 src/celestia/celestiacore.cpp:3203
-#: src/celestia/celestiacore.cpp:3233 src/celestia/celestiacore.cpp:3328
+#: src/celestia/celestiacore.cpp:3132
+#: src/celestia/celestiacore.cpp:3206
+#: src/celestia/celestiacore.cpp:3238
+#: src/celestia/celestiacore.cpp:3339
 #: src/celestia/kde/selectionpopup.cpp:87
 msgid "Distance: "
 msgstr "Vzdialenosť: "
 
-#: src/celestia/celestiacore.cpp:3135
+#: src/celestia/celestiacore.cpp:3138
 msgid "Star system barycenter\n"
-msgstr "Barycentrum hviezdneho systému\n"
+msgstr "Barycentrum (ťažisko) hviezdneho systému\n"
 
-#: src/celestia/celestiacore.cpp:3139
+#: src/celestia/celestiacore.cpp:3142
 #, c-format
 msgid "Abs (app) mag: %.2f (%.2f)\n"
-msgstr "Abs. (zdan.) veľ.: %.2f (%.2f)\n"
+msgstr "Abs. (zdan.) jasnosť: %.2f (%.2f)\n"
 
-#: src/celestia/celestiacore.cpp:3145
+#: src/celestia/celestiacore.cpp:3148
 msgid "Luminosity: "
 msgstr "Svietivosť: "
 
-#: src/celestia/celestiacore.cpp:3145
+#: src/celestia/celestiacore.cpp:3148
 msgid "x Sun"
 msgstr "x Slnko"
 
-#: src/celestia/celestiacore.cpp:3146 src/celestia/kde/selectionpopup.cpp:97
+#: src/celestia/celestiacore.cpp:3149
+#: src/celestia/kde/selectionpopup.cpp:97
 msgid "Class: "
 msgstr "Trieda: "
 
-#: src/celestia/celestiacore.cpp:3148
+#: src/celestia/celestiacore.cpp:3151
 msgid "Neutron star"
 msgstr "Neutrónová hviezda"
 
-#: src/celestia/celestiacore.cpp:3150
+#: src/celestia/celestiacore.cpp:3153
 msgid "Black hole"
 msgstr "Čierna diera"
 
-#: src/celestia/celestiacore.cpp:3160
+#: src/celestia/celestiacore.cpp:3163
 msgid "Surface temp: "
 msgstr "Povrchová teplota: "
 
-#: src/celestia/celestiacore.cpp:3163 src/celestia/celestiacore.cpp:3212
-#: src/celestia/celestiacore.cpp:3243 src/celestia/kde/selectionpopup.cpp:105
+#: src/celestia/celestiacore.cpp:3166
+#: src/celestia/celestiacore.cpp:3215
+#: src/celestia/celestiacore.cpp:3248
+#: src/celestia/kde/selectionpopup.cpp:105
 msgid "Radius: "
 msgstr "Polomer: "
 
-#: src/celestia/celestiacore.cpp:3166 src/celestia/kde/selectionpopup.cpp:106
+#: src/celestia/celestiacore.cpp:3169
+#: src/celestia/kde/selectionpopup.cpp:106
 msgid "Rsun"
-msgstr "Rslnka"
+msgstr "Polomerov Slnka"
 
-#: src/celestia/celestiacore.cpp:3176 src/celestia/celestiacore.cpp:3294
+#: src/celestia/celestiacore.cpp:3179
+#: src/celestia/celestiacore.cpp:3300
 msgid "Rotation period: "
-msgstr "Perióda rotácie: "
+msgstr "Doba rotácie: "
 
-#: src/celestia/celestiacore.cpp:3190
+#: src/celestia/celestiacore.cpp:3193
 msgid "Planetary companions present\n"
 msgstr "Existujú planetárni súputníci\n"
 
-#: src/celestia/celestiacore.cpp:3208
+#: src/celestia/celestiacore.cpp:3211
 msgid "Distance from center: "
 msgstr "Vzdialenosť od stredu: "
 
-#: src/celestia/celestiacore.cpp:3472
-#, fuzzy
+#: src/celestia/celestiacore.cpp:3292
+#, c-format
+msgid "Phase angle: %.1f%s\n"
+msgstr "Fázový uhol: %.1f%s\n"
+
+#: src/celestia/celestiacore.cpp:3316
+msgid "Temperature: "
+msgstr "Teplota: "
+
+#: src/celestia/celestiacore.cpp:3328
+#, c-format
+msgid "Apparent mag: %.2f\n"
+msgstr "Zdanlivá jasnosť: %.2f\n"
+
+#: src/celestia/celestiacore.cpp:3485
 msgid "  LT"
-msgstr "Poručík Illan"
+msgstr "  Miestny čas"
 
-#: src/celestia/celestiacore.cpp:3481
+#: src/celestia/celestiacore.cpp:3494
 msgid "Real time"
-msgstr "Reálny čas"
+msgstr "Skutočný čas"
 
-#: src/celestia/celestiacore.cpp:3483
+#: src/celestia/celestiacore.cpp:3496
 msgid "-Real time"
-msgstr "-Reálny čas"
+msgstr "-Skutočný čas"
 
-#: src/celestia/celestiacore.cpp:3487
+#: src/celestia/celestiacore.cpp:3500
 msgid "Time stopped"
 msgstr "Čas zastavený"
 
-#: src/celestia/celestiacore.cpp:3492
+#: src/celestia/celestiacore.cpp:3505
 msgid " faster"
 msgstr " rýchlejšie"
 
-#: src/celestia/celestiacore.cpp:3497
+#: src/celestia/celestiacore.cpp:3510
 msgid " slower"
 msgstr " pomalšie"
 
-#: src/celestia/celestiacore.cpp:3503
+#: src/celestia/celestiacore.cpp:3516
 msgid " (Paused)"
 msgstr " (Pozastavený)"
 
-#: src/celestia/celestiacore.cpp:3521
+# počet snímok za sekundu
+#: src/celestia/celestiacore.cpp:3534
 msgid "FPS: "
 msgstr "FPS: "
 
-#: src/celestia/celestiacore.cpp:3523
+#: src/celestia/celestiacore.cpp:3536
 msgid ""
 "\n"
 "Speed: "
@@ -682,525 +717,591 @@ msgstr ""
 "\n"
 "Rýchlosť: "
 
-#: src/celestia/celestiacore.cpp:3527
+#: src/celestia/celestiacore.cpp:3540
 msgid " m/s"
 msgstr " m/s"
 
-#: src/celestia/celestiacore.cpp:3529
+#: src/celestia/celestiacore.cpp:3542
 msgid " km/s"
 msgstr " km/s"
 
-#: src/celestia/celestiacore.cpp:3533
+#: src/celestia/celestiacore.cpp:3546
 msgid " AU/s"
 msgstr " AU/s"
 
-#: src/celestia/celestiacore.cpp:3535
+#: src/celestia/celestiacore.cpp:3548
 msgid " ly/s"
 msgstr " ly/s"
 
-#: src/celestia/celestiacore.cpp:3552
-msgid "Travelling "
-msgstr ""
-
 #: src/celestia/celestiacore.cpp:3565
+msgid "Travelling "
+msgstr "Cestovanie "
+
+#: src/celestia/celestiacore.cpp:3578
 msgid "Track "
-msgstr "Sleduj "
+msgstr "Sleduje sa "
 
-#: src/celestia/celestiacore.cpp:3579
+#: src/celestia/celestiacore.cpp:3592
 msgid "Follow "
-msgstr "Nasleduj "
+msgstr "Nasleduje sa "
 
-#: src/celestia/celestiacore.cpp:3584
+#: src/celestia/celestiacore.cpp:3597
 msgid "Sync Orbit "
-msgstr "Synchrónny orbit "
+msgstr "Synchr. obeh nad "
 
-#: src/celestia/celestiacore.cpp:3589
+#: src/celestia/celestiacore.cpp:3602
 msgid "Lock "
-msgstr ""
+msgstr "Uzamknuté na "
 
-#: src/celestia/celestiacore.cpp:3598
+#: src/celestia/celestiacore.cpp:3611
 msgid "Chase "
-msgstr "Prenasleduj "
+msgstr "Prenasleduje sa "
 
-#: src/celestia/celestiacore.cpp:3614
+#: src/celestia/celestiacore.cpp:3627
 msgid "FOV: "
-msgstr "Zor.uhol: "
+msgstr "Zor.pole:"
 
-#: src/celestia/celestiacore.cpp:3644 src/celestia/celestiacore.cpp:3647
+#: src/celestia/celestiacore.cpp:3657
+#: src/celestia/celestiacore.cpp:3660
 msgid "Sun"
 msgstr "Slnko"
 
-#: src/celestia/celestiacore.cpp:3822
+#: src/celestia/celestiacore.cpp:3834
 msgid "Target name: "
 msgstr "Názov cieľa: "
 
-#: src/celestia/celestiacore.cpp:3905
-#, fuzzy
+#: src/celestia/celestiacore.cpp:3916
 msgid " at "
-msgstr "Konečne!"
+msgstr " pri "
 
-#: src/celestia/celestiacore.cpp:3906
-#, fuzzy
+#: src/celestia/celestiacore.cpp:3917
 msgid " fps"
-msgstr "B<--fps>"
+msgstr " fps"
 
-#: src/celestia/celestiacore.cpp:3908 src/celestia/kde/videocapturedlg.cpp:283
+#: src/celestia/celestiacore.cpp:3919
+#: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Recording"
-msgstr ""
+msgstr "  Nahrávanie"
 
-#: src/celestia/celestiacore.cpp:3910 src/celestia/kde/videocapturedlg.cpp:66
+#: src/celestia/celestiacore.cpp:3921
+#: src/celestia/kde/videocapturedlg.cpp:66
 #: src/celestia/kde/videocapturedlg.cpp:283
 msgid "  Paused"
 msgstr " Pozastavené"
 
-#: src/celestia/celestiacore.cpp:3933
+#: src/celestia/celestiacore.cpp:3940
 msgid "F11 Start/Pause    F12 Stop"
-msgstr ""
+msgstr "F11 Spustiť/Pozastaviť    F12 Ukončiť"
 
-#: src/celestia/celestiacore.cpp:3943 src/celestia/celestiacore.cpp:3946
+#: src/celestia/celestiacore.cpp:3949
+#: src/celestia/celestiacore.cpp:3952
 msgid "Edit Mode"
 msgstr "Režim zmien"
 
-#: src/celestia/celestiacore.cpp:4012
+#: src/celestia/celestiacore.cpp:4018
 msgid "Loading solar system catalog: "
-msgstr ""
+msgstr "Načítava sa katalóg slnečnej sústavy: "
 
-#: src/celestia/celestiacore.cpp:4053
+#: src/celestia/celestiacore.cpp:4059
 msgid "Loading "
-msgstr "Načítavam "
+msgstr "Načítava sa "
 
-#: src/celestia/celestiacore.cpp:4088
+#: src/celestia/celestiacore.cpp:4094
 msgid "License file 'License.txt' is missing!"
-msgstr ""
+msgstr "Chýba licenčný súbor 'License.txt'!"
 
-#: src/celestia/celestiacore.cpp:4109
+#: src/celestia/celestiacore.cpp:4115
 msgid "Error reading configuration file."
 msgstr "Chyba pri čítaní konfiguračného súboru."
 
-#: src/celestia/celestiacore.cpp:4120
+#: src/celestia/celestiacore.cpp:4126
 msgid "Initialization of SPICE library failed."
-msgstr ""
+msgstr "Inicializácia knižnice SPICE sa nepodarila."
 
-#: src/celestia/celestiacore.cpp:4167
+#: src/celestia/celestiacore.cpp:4173
 msgid "Cannot read star database."
-msgstr ""
+msgstr "Nedá sa čítať databáza hviezd."
 
-#: src/celestia/celestiacore.cpp:4189
+#: src/celestia/celestiacore.cpp:4195
 msgid "Error opening deepsky catalog file."
-msgstr ""
+msgstr "Chyba pri otváraní katalógu deepsky objektov."
 
-#: src/celestia/celestiacore.cpp:4241
+#: src/celestia/celestiacore.cpp:4247
 msgid "Error opening solar system catalog.\n"
-msgstr ""
+msgstr "Chyba pri otváraní katalógu Slnečnej sústavy.\n"
 
-#: src/celestia/celestiacore.cpp:4274
+#: src/celestia/celestiacore.cpp:4280
 msgid "Error opening asterisms file."
-msgstr ""
+msgstr "Chyba pri otváraní súboru asterizmov."
 
-#: src/celestia/celestiacore.cpp:4289
+#: src/celestia/celestiacore.cpp:4295
 msgid "Error opening constellation boundaries files."
-msgstr ""
+msgstr "Chyba pri otváraní súboru hraníc súhvezdí."
 
-#: src/celestia/celestiacore.cpp:4356
-#, fuzzy
+#: src/celestia/celestiacore.cpp:4362
 msgid "render path: "
-msgstr "B<-c\\ >I<path>B<,\\ --config>I<\\ cesta>"
+msgstr "spôsob vykresľovania: "
 
-#: src/celestia/celestiacore.cpp:4367
+#: src/celestia/celestiacore.cpp:4373
 msgid "Failed to initialize renderer"
-msgstr ""
+msgstr "Inicializácia vykresľovania neúspešná"
 
-#: src/celestia/celestiacore.cpp:4383
+#: src/celestia/celestiacore.cpp:4389
 msgid "Error loading font; text will not be visible.\n"
-msgstr ""
+msgstr "Chyba pri načítaní fontu; text nebude viditeľný.\n"
 
-#: src/celestia/celestiacore.cpp:4440
+#: src/celestia/celestiacore.cpp:4446
 msgid "Error reading cross index "
-msgstr ""
+msgstr "Chyba pri načítaní krížového indexu "
 
-#: src/celestia/celestiacore.cpp:4442
+#: src/celestia/celestiacore.cpp:4448
 msgid "Loaded cross index "
-msgstr ""
+msgstr "Krížový index načítaný "
 
-#: src/celestia/celestiacore.cpp:4456 src/celestia/celestiacore.cpp:4478
+#: src/celestia/celestiacore.cpp:4462
+#: src/celestia/celestiacore.cpp:4484
 msgid "Error opening "
 msgstr "Chyba pri otváraní "
 
-#: src/celestia/celestiacore.cpp:4463
+#: src/celestia/celestiacore.cpp:4469
 msgid "Error reading star names file\n"
-msgstr ""
+msgstr "Chyba pri načítaní súboru s názvami hviezd\n"
 
-#: src/celestia/celestiacore.cpp:4486
+#: src/celestia/celestiacore.cpp:4492
 msgid "Error reading stars file\n"
 msgstr "Chyba pri čítaní súboru hviezd\n"
 
-#: src/celestia/celestiacore.cpp:4513
+#: src/celestia/celestiacore.cpp:4519
 msgid "Error opening star catalog "
-msgstr ""
+msgstr "Chyba pri otváraní hviezdneho katalógu "
 
 #: src/celestia/oggtheoracapture.cpp:159
 #, c-format
 msgid "Error in creating ogg file %s for capture.\n"
-msgstr ""
+msgstr "Chyba pri vytváraní ogg súboru %s na záznam videa.\n"
 
-#: src/celestia/oggtheoracapture.cpp:253 src/celestia/oggtheoracapture.cpp:273
+#: src/celestia/oggtheoracapture.cpp:253
+#: src/celestia/oggtheoracapture.cpp:273
 msgid "Internal Ogg library error."
-msgstr ""
+msgstr "Chyba internej knižnice Ogg."
 
 #: src/celestia/oggtheoracapture.cpp:308
 #, c-format
-msgid ""
-"OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%"
-"d offset (%dx%d)\n"
-msgstr ""
+msgid "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) fps quality %d %dx%d offset (%dx%d)\n"
+msgstr "OggTheoraCapture::start() - Theora video: %s %.2f(%d/%d) snímok za sekundu, kvalita %d %dx%d posun (%dx%d)\n"
 
 #: src/celestia/oggtheoracapture.cpp:423
 #, c-format
 msgid "OggTheoraCapture::cleanup() - wrote %d frames\n"
-msgstr ""
+msgstr "OggTheoraCapture::cleanup() - %d snímok zapísaných\n"
 
-#: src/celestia/url.cpp:654
+#: src/celestia/url.cpp:653
+#: src/celestia/kde/rc.cpp:133
+#, no-c-format
 msgid "Settings"
 msgstr "Nastavenia"
 
-#: src/celestia/win32/winmain.cpp:624 src/celestia/kde/kdeapp.cpp:970
+#: src/celestia/winmain.cpp:625
+#: src/celestia/kde/kdeapp.cpp:954
 msgid "Vendor: "
-msgstr "Výrobca"
+msgstr "Dodávateľ: "
 
-#: src/celestia/win32/winmain.cpp:629 src/celestia/kde/kdeapp.cpp:975
+#: src/celestia/winmain.cpp:630
+#: src/celestia/kde/kdeapp.cpp:959
 msgid "Renderer: "
-msgstr ""
+msgstr "Vykresľovací systém: "
 
-#: src/celestia/win32/winmain.cpp:634 src/celestia/kde/kdeapp.cpp:980
+#: src/celestia/winmain.cpp:635
+#: src/celestia/kde/kdeapp.cpp:964
 msgid "Version: "
 msgstr "Verzia: "
 
-#: src/celestia/win32/winmain.cpp:644
+#: src/celestia/winmain.cpp:645
 msgid "GLSL version: "
 msgstr "Verzia GLSL: "
 
-#: src/celestia/win32/winmain.cpp:655 src/celestia/kde/kdeapp.cpp:989
+#: src/celestia/winmain.cpp:656
+#: src/celestia/kde/kdeapp.cpp:973
 msgid "Max simultaneous textures: "
-msgstr ""
+msgstr "Max. počet simultánnych textúr: "
 
-#: src/celestia/win32/winmain.cpp:662 src/celestia/kde/kdeapp.cpp:994
+#: src/celestia/winmain.cpp:663
+#: src/celestia/kde/kdeapp.cpp:978
 msgid "Max texture size: "
 msgstr "Max. veľkosť textúry: "
 
-#: src/celestia/win32/winmain.cpp:671
+#: src/celestia/winmain.cpp:672
 msgid "Max cube map size: "
-msgstr ""
+msgstr "Maximálna veľkosť priestorovej mapy: "
 
-#: src/celestia/win32/winmain.cpp:679 src/celestia/kde/kdeapp.cpp:1000
+#: src/celestia/winmain.cpp:680
+#: src/celestia/kde/kdeapp.cpp:984
 msgid "Point size range: "
-msgstr ""
+msgstr "Rozsah veľkostí bodov: "
 
-#: src/celestia/win32/winmain.cpp:684 src/celestia/kde/kdeapp.cpp:1004
+#: src/celestia/winmain.cpp:685
+#: src/celestia/kde/kdeapp.cpp:988
 msgid "Supported Extensions:"
-msgstr ""
+msgstr "Podporované rozšírenia:"
 
-#: src/celestia/win32/winmain.cpp:1385
+#: src/celestia/winmain.cpp:1386
 msgid "Windowed Mode"
 msgstr "Režim v okne"
 
-#: src/celestia/win32/winmain.cpp:1507
+#: src/celestia/winmain.cpp:1508
 #: src/celestia/kde/kdepreferencesdialog.cpp:236
 #: src/celestia/kde/selectionpopup.cpp:414
-#: src/celestia/win32/res/resource_strings.cpp:172
+#: src/celestia/res/resource_strings.cpp:174
 msgid "Asteroids"
 msgstr "Asteroidy"
 
-#: src/celestia/win32/winmain.cpp:1509
+#: src/celestia/winmain.cpp:1510
 #: src/celestia/kde/kdepreferencesdialog.cpp:202
 #: src/celestia/kde/selectionpopup.cpp:416
-#: src/celestia/win32/res/resource_strings.cpp:173
+#: src/celestia/res/resource_strings.cpp:175
 msgid "Comets"
 msgstr "Kométy"
 
-#: src/celestia/win32/winmain.cpp:1511
+#: src/celestia/winmain.cpp:1512
 msgid "Invisibles"
 msgstr "Neviditeľné objekty"
 
-#: src/celestia/win32/winmain.cpp:1513
+#: src/celestia/winmain.cpp:1514
 #: src/celestia/kde/kdepreferencesdialog.cpp:193
 #: src/celestia/kde/selectionpopup.cpp:418
-#: src/celestia/win32/res/resource_strings.cpp:170
+#: src/celestia/res/resource_strings.cpp:172
 msgid "Moons"
 msgstr "Mesiace"
 
-#: src/celestia/win32/winmain.cpp:1515 src/celestia/win32/winmain.cpp:1550
-#: src/celestia/win32/winmain.cpp:1667
+#: src/celestia/winmain.cpp:1516
+#: src/celestia/winmain.cpp:1551
+#: src/celestia/winmain.cpp:1668
 #: src/celestia/kde/kdepreferencesdialog.cpp:82
 #: src/celestia/kde/kdepreferencesdialog.cpp:184
 #: src/celestia/kde/selectionpopup.cpp:420
 #: src/celestia/kde/selectionpopup.cpp:498
-#: src/celestia/win32/res/resource_strings.cpp:151
-#: src/celestia/win32/res/resource_strings.cpp:168
+#: src/celestia/res/resource_strings.cpp:152
+#: src/celestia/res/resource_strings.cpp:170
 msgid "Planets"
 msgstr "Planéty"
 
-#: src/celestia/win32/winmain.cpp:1517
-#: src/celestia/kde/celestialbrowser.cpp:191
+#: src/celestia/winmain.cpp:1518
+#: src/celestia/kde/celestialbrowser.cpp:194
 #: src/celestia/kde/selectionpopup.cpp:422
-#: src/celestia/win32/res/resource_strings.cpp:174
+#: src/celestia/res/resource_strings.cpp:176
 msgid "Spacecraft"
 msgstr "Kozmická loď"
 
-#: src/celestia/win32/winmain.cpp:1607 src/celestia/win32/winmain.cpp:1655
-#: src/celestia/win32/winmain.cpp:1678
-#: src/celestia/kde/eclipsefinderdlg.cpp:121
+#: src/celestia/winmain.cpp:1608
+#: src/celestia/winmain.cpp:1656
+#: src/celestia/winmain.cpp:1679
+#: src/celestia/kde/eclipsefinderdlg.cpp:118
 #: src/celestia/kde/selectionpopup.cpp:300
 msgid "&Goto"
-msgstr "Prejsť"
+msgstr "&Prejsť na"
 
-#: src/celestia/win32/winmain.cpp:1608 src/celestia/win32/winmain.cpp:1679
+#: src/celestia/winmain.cpp:1609
+#: src/celestia/winmain.cpp:1680
 #: src/celestia/kde/selectionpopup.cpp:301
 msgid "&Follow"
-msgstr "Nasleduj"
+msgstr "&Nasledovať"
 
-#: src/celestia/win32/winmain.cpp:1609
+#: src/celestia/winmain.cpp:1610
 msgid "S&ync Orbit"
-msgstr "S&ynchrónny orbit"
+msgstr "S&ynchronizovať obežnú dráhu"
 
-#: src/celestia/win32/winmain.cpp:1610 src/celestia/win32/winmain.cpp:1656
-#: src/celestia/win32/winmain.cpp:1680 src/celestia/kde/selectionpopup.cpp:304
+#: src/celestia/winmain.cpp:1611
+#: src/celestia/winmain.cpp:1657
+#: src/celestia/winmain.cpp:1681
+#: src/celestia/kde/selectionpopup.cpp:304
 msgid "&Info"
 msgstr "&Informácie"
 
-#: src/celestia/win32/winmain.cpp:1612 src/celestia/kde/selectionpopup.cpp:333
-msgid "&Reference Vectors"
-msgstr "&Referenčné vektory"
+#: src/celestia/winmain.cpp:1613
+#: src/celestia/kde/selectionpopup.cpp:333
+msgid "&Reference Marks"
+msgstr "&Referenčné značky"
 
-#: src/celestia/win32/winmain.cpp:1613 src/celestia/kde/selectionpopup.cpp:334
+#: src/celestia/winmain.cpp:1614
+#: src/celestia/kde/selectionpopup.cpp:334
 msgid "Show Body Axes"
-msgstr ""
+msgstr "Zobraziť osi telesa"
 
-#: src/celestia/win32/winmain.cpp:1614 src/celestia/kde/selectionpopup.cpp:336
+#: src/celestia/winmain.cpp:1615
+#: src/celestia/kde/selectionpopup.cpp:336
 msgid "Show Frame Axes"
-msgstr ""
+msgstr "Zobraziť osi pohľadu"
 
-#: src/celestia/win32/winmain.cpp:1615 src/celestia/kde/selectionpopup.cpp:338
+# k lokálnemu slnku (hviezde) telesa
+#: src/celestia/winmain.cpp:1616
+#: src/celestia/kde/selectionpopup.cpp:338
 msgid "Show Sun Direction"
-msgstr ""
+msgstr "Zobraziť smer k slnku"
 
-#: src/celestia/win32/winmain.cpp:1616 src/celestia/kde/selectionpopup.cpp:340
+#: src/celestia/winmain.cpp:1617
+#: src/celestia/kde/selectionpopup.cpp:340
 msgid "Show Velocity Vector"
-msgstr ""
+msgstr "Zobraziť vektor rýchlosti"
 
-#: src/celestia/win32/winmain.cpp:1617 src/celestia/kde/selectionpopup.cpp:342
+#: src/celestia/winmain.cpp:1618
+#: src/celestia/kde/selectionpopup.cpp:342
 msgid "Show Planetographic Grid"
-msgstr "Zobraziť planetárnu súradnicová sieť"
+msgstr "Zobraziť planetografickú súradnicovú sieť"
 
-#: src/celestia/win32/winmain.cpp:1618 src/celestia/kde/selectionpopup.cpp:344
+#: src/celestia/winmain.cpp:1619
+#: src/celestia/kde/selectionpopup.cpp:344
 msgid "Show Terminator"
 msgstr "Zobraziť terminátor"
 
-#: src/celestia/win32/winmain.cpp:1632
+#: src/celestia/winmain.cpp:1633
 msgid "&Satellites"
 msgstr "&Satelity"
 
-#: src/celestia/win32/winmain.cpp:1642 src/celestia/kde/selectionpopup.cpp:366
+#: src/celestia/winmain.cpp:1643
+#: src/celestia/kde/selectionpopup.cpp:366
 msgid "&Alternate Surfaces"
 msgstr "&Alternatívne povrchy"
 
-#: src/celestia/win32/winmain.cpp:1665 src/celestia/kde/selectionpopup.cpp:477
+#: src/celestia/winmain.cpp:1666
+#: src/celestia/kde/selectionpopup.cpp:477
 msgid "Orbiting Bodies"
 msgstr "Obiehajúce telesá"
 
-#: src/celestia/win32/winmain.cpp:1692 src/celestia/kde/selectionpopup.cpp:310
+#: src/celestia/winmain.cpp:1693
+#: src/celestia/kde/selectionpopup.cpp:310
 msgid "&Unmark"
-msgstr "Odznačiť"
+msgstr "&Zrušiť označenie"
 
-#: src/celestia/win32/winmain.cpp:1694 src/celestia/kde/selectionpopup.cpp:327
+#: src/celestia/winmain.cpp:1695
+#: src/celestia/kde/selectionpopup.cpp:327
 msgid "&Mark"
-msgstr "Označiť"
+msgstr "&Označiť"
 
-#: src/celestia/win32/winmain.cpp:3154
+#: src/celestia/winmain.cpp:3141
 msgid "Loading: "
-msgstr "Načítavam: "
+msgstr "Načítava sa: "
 
-#: src/celestia/win32/winmain.cpp:3322 src/celutil/util.cpp:72
+#: src/celestia/winmain.cpp:3314
+#: src/celutil/util.cpp:72
 #: src/celutil/util.cpp:76
 msgid "LANGUAGE"
 msgstr "sk"
 
-#: src/celestia/win32/winmain.cpp:3324
-#: src/celestia/win32/res/resource_strings.cpp:233
+#: src/celestia/winmain.cpp:3316
+#: src/celestia/res/resource_strings.cpp:235
 msgid "WinLangID"
-msgstr ""
+msgstr "41b"
 
-#: src/celestia/win32/winmain.cpp:3826
+#: src/celestia/winmain.cpp:3818
 msgid "Copied URL"
 msgstr "URL skopírované"
 
-#: src/celestia/win32/winmain.cpp:3920
+#: src/celestia/winmain.cpp:3912
 msgid "Loading URL"
-msgstr "Načítavam URL"
+msgstr "Načítava sa URL"
 
-#: src/celestia/win32/winmain.cpp:3932
+#: src/celestia/winmain.cpp:3924
 msgid "Error opening script"
-msgstr ""
+msgstr "Chyba pri otváraní skriptu"
 
-#: src/celestia/win32/winmain.cpp:3951
+#: src/celestia/winmain.cpp:3943
 msgid "Error loading script"
 msgstr "Chyba pri čítaní skriptu"
 
-#: src/celestia/win32/winmain.cpp:3956
+#: src/celestia/winmain.cpp:3948
 msgid "Running script"
-msgstr ""
+msgstr "Spúšťa sa skript"
 
-#: src/celestia/win32/wineclipses.cpp:59
-#: src/celestia/kde/celestialbrowser.cpp:179
+#: src/celestia/wineclipses.cpp:58
+#: src/celestia/kde/celestialbrowser.cpp:182
+#: src/celestia/kde/rc.cpp:73
+#, no-c-format
 msgid "Planet"
 msgstr "Planéta"
 
-#: src/celestia/win32/wineclipses.cpp:61
+#: src/celestia/wineclipses.cpp:60
 msgid "Satellite"
 msgstr "Satelit"
 
-#: src/celestia/win32/wineclipses.cpp:63
+#: src/celestia/wineclipses.cpp:62
+#: src/celestia/kde/rc.cpp:79
+#, no-c-format
 msgid "Date"
 msgstr "Dátum"
 
-#: src/celestia/win32/wineclipses.cpp:65
+#: src/celestia/wineclipses.cpp:64
+#: src/celestia/kde/rc.cpp:82
+#, no-c-format
 msgid "Start"
 msgstr "Začiatok"
 
-#: src/celestia/win32/wineclipses.cpp:67
+#: src/celestia/wineclipses.cpp:66
 msgid "Duration"
 msgstr "Trvanie"
 
-#: src/celestia/win32/wineclipses.cpp:317 data/data.cpp:3
+#: src/celestia/wineclipses.cpp:316
+#: src/celestia/kde/rc.cpp:97
+#: data/data.cpp:3
+#, no-c-format
 msgid "Earth"
 msgstr "Zem"
 
-#: src/celestia/win32/wineclipses.cpp:318 data/data.cpp:8
+#: src/celestia/wineclipses.cpp:317
+#: src/celestia/kde/rc.cpp:100
+#: data/data.cpp:8
+#, no-c-format
 msgid "Jupiter"
 msgstr "Jupiter"
 
-#: src/celestia/win32/wineclipses.cpp:319 data/data.cpp:14
+#: src/celestia/wineclipses.cpp:318
+#: src/celestia/kde/rc.cpp:103
+#: data/data.cpp:14
+#, no-c-format
 msgid "Saturn"
 msgstr "Saturn"
 
-#: src/celestia/win32/wineclipses.cpp:320 data/data.cpp:28
+#: src/celestia/wineclipses.cpp:319
+#: src/celestia/kde/rc.cpp:106
+#: data/data.cpp:28
+#, no-c-format
 msgid "Uranus"
 msgstr "Urán"
 
-#: src/celestia/win32/wineclipses.cpp:321 data/data.cpp:34
+#: src/celestia/wineclipses.cpp:320
+#: src/celestia/kde/rc.cpp:109
+#: data/data.cpp:34
+#, no-c-format
 msgid "Neptune"
 msgstr "Neptún"
 
-#: src/celestia/win32/wineclipses.cpp:322 data/data.cpp:40
+#: src/celestia/wineclipses.cpp:321
+#: src/celestia/kde/rc.cpp:112
+#: data/data.cpp:40
+#, no-c-format
 msgid "Pluto"
 msgstr "Pluto"
 
-#: src/celestia/win32/winstarbrowser.cpp:61
-#: src/celestia/win32/res/resource_strings.cpp:103
+#: src/celestia/winstarbrowser.cpp:70
+#: src/celestia/kde/rc.cpp:34
+#: src/celestia/res/resource_strings.cpp:104
+#, no-c-format
 msgid "Name"
-msgstr "Meno"
+msgstr "Názov"
 
-#: src/celestia/win32/winstarbrowser.cpp:63
+#: src/celestia/winstarbrowser.cpp:72
 msgid "Distance (ly)"
-msgstr "Vzdialenosť (ly)"
+msgstr "Vzdialenosť (ly-svet.roky)"
 
-#: src/celestia/win32/winstarbrowser.cpp:66
+#: src/celestia/winstarbrowser.cpp:75
 msgid "App. mag"
-msgstr "Zdan. veľ."
+msgstr "Zdan. jasnosť"
 
-#: src/celestia/win32/winstarbrowser.cpp:68
+#: src/celestia/winstarbrowser.cpp:77
 msgid "Abs. mag"
-msgstr "Abs. veľ."
+msgstr "Abs. jasnosť"
 
-#: src/celestia/win32/winstarbrowser.cpp:70
+#: src/celestia/winstarbrowser.cpp:79
+#: src/celestia/kde/rc.cpp:46
+#, no-c-format
 msgid "Type"
 msgstr "Typ"
 
-#: src/celestia/win32/wintime.cpp:95
+#: src/celestia/wintime.cpp:95
 msgid "Universal Time"
-msgstr "Univerzálny čas"
+msgstr "Svetový čas"
 
-#: src/celestia/win32/wintime.cpp:96
+#: src/celestia/wintime.cpp:96
 #: src/celestia/kde/kdepreferencesdialog.cpp:377
 #: src/celestia/kde/kdepreferencesdialog.cpp:398
 msgid "Local Time"
-msgstr "Lokálny čas"
+msgstr "Miestny čas"
 
-#: src/celestia/win32/wintime.cpp:97
+#: src/celestia/wintime.cpp:97
 msgid "Time Zone Name"
-msgstr ""
+msgstr "Názov časového pásma"
 
-#: src/celestia/win32/wintime.cpp:98
+#: src/celestia/wintime.cpp:98
 msgid "UTC Offset"
-msgstr ""
+msgstr "Posun voči svetovému času"
 
-#: src/celestia/kde/celestialbrowser.cpp:31 src/celestia/kde/kdeapp.cpp:521
+# KDE GUI menu, lepsie je to s '...' aj ked v originali nie su
+#: src/celestia/kde/celestialbrowser.cpp:29
+#: src/celestia/kde/kdeapp.cpp:505
+#: src/celestia/kde/rc.cpp:30
+#, no-c-format
 msgid "Celestial Browser"
-msgstr "Hviezdny katalóg"
+msgstr "Hviezdny katalóg..."
 
-#: src/celestia/kde/celestialbrowser.cpp:182 data/data.cpp:4
+#: src/celestia/kde/celestialbrowser.cpp:185
+#: src/celestia/kde/rc.cpp:76
+#: data/data.cpp:4
+#, no-c-format
 msgid "Moon"
 msgstr "Mesiac"
 
-#: src/celestia/kde/celestialbrowser.cpp:185
+#: src/celestia/kde/celestialbrowser.cpp:188
 msgid "Asteroid"
 msgstr "Asteroid"
 
-#: src/celestia/kde/celestialbrowser.cpp:188
+#: src/celestia/kde/celestialbrowser.cpp:191
 msgid "Comet"
 msgstr "Kométa"
 
-#: src/celestia/kde/celestialbrowser.cpp:194
-msgid "Invisible"
-msgstr "Neviditeľný"
-
 #: src/celestia/kde/celestialbrowser.cpp:197
-msgid "Barycenter"
-msgstr "Barycentrum "
+msgid "Invisible"
+msgstr "Neviditeľný objekt"
 
 #: src/celestia/kde/celestialbrowser.cpp:200
+msgid "Barycenter"
+msgstr "Barycentrum (ťažisko)"
+
+#: src/celestia/kde/celestialbrowser.cpp:203
 msgid "Small Body"
 msgstr "Malé teleso"
 
-#: src/celestia/kde/celestialbrowser.cpp:203
+#: src/celestia/kde/celestialbrowser.cpp:206
 msgid "Dwarf Planet"
 msgstr "Trpasličia planéta"
 
-#: src/celestia/kde/celestialbrowser.cpp:207
+#: src/celestia/kde/celestialbrowser.cpp:210
 msgid "-"
-msgstr ""
+msgstr "-"
 
-#: src/celestia/kde/eclipsefinderdlg.cpp:24 src/celestia/kde/kdeapp.cpp:522
-#: src/celestia/win32/res/resource_strings.cpp:223
+#: src/celestia/kde/eclipsefinderdlg.cpp:21
+#: src/celestia/kde/kdeapp.cpp:506
+#: src/celestia/kde/rc.cpp:70
+#: src/celestia/res/resource_strings.cpp:225
+#, no-c-format
 msgid "Eclipse Finder"
-msgstr "Vyhľadať zatmenia"
+msgstr "Vyhľadávač zatmení..."
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:164
 msgid "&Add Bookmark"
-msgstr "Pridať záložku"
+msgstr "&Pridať záložku"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:171
 msgid "Add a bookmark for the current document"
-msgstr ""
+msgstr "Pridať záložku pre aktuálny dokument"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:181
 msgid "Add &Relative Bookmark"
-msgstr ""
+msgstr "Pridať &relatívnu záložku"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:188
 msgid "Add a relative bookmark for the current document"
-msgstr ""
+msgstr "Pridať relatívnu záložku pre aktuálny dokument"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:196
 msgid "Add &Settings Bookmark"
-msgstr ""
+msgstr "Pridať záložku nastavení"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:203
 msgid "Add a settings bookmark for the current document"
-msgstr ""
+msgstr "Pridať záložku nastavení pre aktuálny dokument"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:214
 msgid "Edit your bookmark collection in a separate window"
-msgstr ""
+msgstr "Upraviť súhrn záložiek v samostatnom okne"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:220
 msgid "&New Folder..."
@@ -1208,491 +1309,487 @@ msgstr "&Nový priečinok..."
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:227
 msgid "Create a new bookmark folder in this menu"
-msgstr ""
+msgstr "Vytvoriť nový priečinok záložiek v tomto menu"
 
 #: src/celestia/kde/kcelbookmarkmenu.cpp:307
 #: src/celestia/kde/kcelbookmarkmenu.cpp:354
 #: src/celestia/kde/kcelbookmarkmenu.cpp:401
 msgid "Can't add bookmark with empty URL"
-msgstr ""
+msgstr "Nedá sa pridať záložka s prázdnou URL"
 
-#: src/celestia/kde/kdeapp.cpp:131
+#: src/celestia/kde/kdeapp.cpp:129
 msgid ""
-"Something seems to be wrong with your installation of Celestia. The splash "
-"screen directory couldn't be found. \n"
-"Start-up will continue, but Celestia will probably be missing some data "
-"files and may not work correctly, please check your installation."
+"Something seems to be wrong with your installation of Celestia. The splash screen directory couldn't be found. \n"
+"Start-up will continue, but Celestia will probably be missing some data files and may not work correctly, please check your installation."
 msgstr ""
+"Pri inštalácii Celestie zrejme došlo k chybe. Nedá sa nájsť priečinok úvodného loga.\n"
+"Spustenie bude pokračovať, ale pravdepodobne budú chýbať niektoré súbory a Celestia nebude môcť pracovať správne.\n"
+"Prosím, skontrolujte svoju inštaláciu."
 
-#: src/celestia/kde/kdeapp.cpp:215
-msgid ""
-"Celestia was unable to initialize OpenGL extensions. Graphics quality will "
-"be reduced. Only Basic render path will be available"
-msgstr ""
-
-#: src/celestia/kde/kdeapp.cpp:428
+#: src/celestia/kde/kdeapp.cpp:412
 msgid "Go to &URL..."
 msgstr "Prejsť na &URL..."
 
-#: src/celestia/kde/kdeapp.cpp:429
+#: src/celestia/kde/kdeapp.cpp:413
 msgid "Go to &Long/Lat..."
-msgstr "Prejsť na Dĺžku/Šírku..."
+msgstr "Prejsť na zem.dĺžku/šírku..."
 
-#: src/celestia/kde/kdeapp.cpp:431
+#: src/celestia/kde/kdeapp.cpp:415
 msgid "&Back"
-msgstr "Naspäť"
+msgstr "&Späť"
 
-#: src/celestia/kde/kdeapp.cpp:434
+#: src/celestia/kde/kdeapp.cpp:418
 msgid "&Forward"
-msgstr "Ďalej"
+msgstr "&Dopredu"
 
-#: src/celestia/kde/kdeapp.cpp:441
+#: src/celestia/kde/kdeapp.cpp:425
 msgid "Home"
 msgstr "Domov"
 
-#: src/celestia/kde/kdeapp.cpp:448
+#: src/celestia/kde/kdeapp.cpp:432
 msgid "Bookmarks"
 msgstr "Záložky"
 
-#: src/celestia/kde/kdeapp.cpp:460
+#: src/celestia/kde/kdeapp.cpp:444
 msgid "Full Screen"
 msgstr "Celá obrazovka"
 
-#: src/celestia/kde/kdeapp.cpp:464
+#: src/celestia/kde/kdeapp.cpp:448
 msgid "Copy URL"
 msgstr "Kopírovať URL"
 
-#: src/celestia/kde/kdeapp.cpp:467
+#: src/celestia/kde/kdeapp.cpp:451
 msgid "Set Time..."
 msgstr "Nastaviť čas..."
 
-#: src/celestia/kde/kdeapp.cpp:468
+#: src/celestia/kde/kdeapp.cpp:452
 msgid "Set Time to Now"
-msgstr ""
+msgstr "Nastaviť čas na aktuálny"
 
-#: src/celestia/kde/kdeapp.cpp:469
+#: src/celestia/kde/kdeapp.cpp:453
 msgid "Accelerate Time"
 msgstr "Zrýchliť čas"
 
-#: src/celestia/kde/kdeapp.cpp:470
+#: src/celestia/kde/kdeapp.cpp:454
 msgid "Decelerate Time"
 msgstr "Spomaliť čas"
 
-#: src/celestia/kde/kdeapp.cpp:471
+#: src/celestia/kde/kdeapp.cpp:455
 msgid "Accelerate Time (x2)"
 msgstr "Zrýchliť čas (x2)"
 
-#: src/celestia/kde/kdeapp.cpp:472
+#: src/celestia/kde/kdeapp.cpp:456
 msgid "Decelerate Time (/2)"
 msgstr "Spomaliť čas (/2)"
 
-#: src/celestia/kde/kdeapp.cpp:473
+#: src/celestia/kde/kdeapp.cpp:457
 msgid "Pause Time"
 msgstr "Pozastaviť čas"
 
-#: src/celestia/kde/kdeapp.cpp:474
+#: src/celestia/kde/kdeapp.cpp:458
 msgid "Reverse Time"
-msgstr "Obrátiť čas"
+msgstr "Spätný chod času"
 
-#: src/celestia/kde/kdeapp.cpp:476
+#: src/celestia/kde/kdeapp.cpp:460
 msgid "Split View Vertically"
-msgstr ""
+msgstr "Rozdeliť pohľad zvislo"
 
-#: src/celestia/kde/kdeapp.cpp:477
+#: src/celestia/kde/kdeapp.cpp:461
 msgid "Split View Horizontally"
-msgstr ""
+msgstr "Rozdeliť pohľad vodorovne"
 
-#: src/celestia/kde/kdeapp.cpp:478
+# KDE GUI
+#: src/celestia/kde/kdeapp.cpp:462
 msgid "Cycle View"
-msgstr "pohľad"
+msgstr "Prepnúť na ďalší pohľad"
 
-#: src/celestia/kde/kdeapp.cpp:479
+#: src/celestia/kde/kdeapp.cpp:463
 msgid "Single View"
 msgstr "Jediný pohľad"
 
-#: src/celestia/kde/kdeapp.cpp:480
+#: src/celestia/kde/kdeapp.cpp:464
 msgid "Delete View"
-msgstr "Vymazať pohľad"
+msgstr "Zrušiť pohľad"
 
-#: src/celestia/kde/kdeapp.cpp:481
+#: src/celestia/kde/kdeapp.cpp:465
 msgid "Frames Visible"
-msgstr ""
+msgstr "Ohraničenia pohľadov zobrazené"
 
-#: src/celestia/kde/kdeapp.cpp:494
+#: src/celestia/kde/kdeapp.cpp:478
 msgid "Active Frame Visible"
-msgstr ""
+msgstr "Aktívny pohľad zvýraznený"
 
-#: src/celestia/kde/kdeapp.cpp:506
+#: src/celestia/kde/kdeapp.cpp:490
 msgid "Synchronize Time"
 msgstr "Synchronizovať čas"
 
-#: src/celestia/kde/kdeapp.cpp:518
+#: src/celestia/kde/kdeapp.cpp:502
 msgid "Alt-Azimuth Mode"
-msgstr ""
+msgstr "Alt-Azimut režim"
 
-#: src/celestia/kde/kdeapp.cpp:519
+#: src/celestia/kde/kdeapp.cpp:503
 msgid "Go To Surface"
 msgstr "Prejsť na povrch"
 
-#: src/celestia/kde/kdeapp.cpp:566
+#: src/celestia/kde/kdeapp.cpp:550
 msgid "Show Stars"
-msgstr "Zobraziť Hviezdy"
+msgstr "Zobraziť hviezdy"
 
-#: src/celestia/kde/kdeapp.cpp:569
+#: src/celestia/kde/kdeapp.cpp:553
 msgid "Show Planets"
-msgstr "Zobraziť Planéty"
+msgstr "Zobraziť planéty"
 
-#: src/celestia/kde/kdeapp.cpp:572
+#: src/celestia/kde/kdeapp.cpp:556
 msgid "Show Galaxies"
 msgstr "Zobraziť galaxie"
 
-#: src/celestia/kde/kdeapp.cpp:575
+#: src/celestia/kde/kdeapp.cpp:559
 msgid "Show Globulars"
 msgstr "Zobraziť guľové hviezdokopy"
 
-#: src/celestia/kde/kdeapp.cpp:578
+#: src/celestia/kde/kdeapp.cpp:562
 msgid "Show Partial Trajectories"
 msgstr "Zobraziť čiastočné dráhy"
 
-#: src/celestia/kde/kdeapp.cpp:581
+#: src/celestia/kde/kdeapp.cpp:565
 msgid "Show Nebulae"
 msgstr "Zobraziť hmloviny"
 
-#: src/celestia/kde/kdeapp.cpp:584
+#: src/celestia/kde/kdeapp.cpp:568
 msgid "Show Open Clusters"
 msgstr "Zobraziť otvorené hviezdokopy"
 
-#: src/celestia/kde/kdeapp.cpp:587
+#: src/celestia/kde/kdeapp.cpp:571
 msgid "Show Constellations"
 msgstr "Zobraziť súhvezdia"
 
-#: src/celestia/kde/kdeapp.cpp:590
+#: src/celestia/kde/kdeapp.cpp:574
 msgid "Show CloudMaps"
 msgstr "Zobraziť oblaky"
 
-#: src/celestia/kde/kdeapp.cpp:593
+#: src/celestia/kde/kdeapp.cpp:577
 msgid "Show Cloud Shadows"
 msgstr "Zobraziť tiene oblakov"
 
-#: src/celestia/kde/kdeapp.cpp:596
+#: src/celestia/kde/kdeapp.cpp:580
 msgid "Show Orbits"
 msgstr "Zobraziť dráhy"
 
-#: src/celestia/kde/kdeapp.cpp:599
+#: src/celestia/kde/kdeapp.cpp:583
 msgid "Show Asteroid Orbits"
 msgstr "Zobraziť dráhy asteroidov"
 
-#: src/celestia/kde/kdeapp.cpp:602
+#: src/celestia/kde/kdeapp.cpp:586
 msgid "Show Comet Orbits"
 msgstr "Zobraziť dráhy komét"
 
-#: src/celestia/kde/kdeapp.cpp:605
+#: src/celestia/kde/kdeapp.cpp:589
 msgid "Show Moon Orbits"
 msgstr "Zobraziť dráhy mesiacov"
 
-#: src/celestia/kde/kdeapp.cpp:608
+#: src/celestia/kde/kdeapp.cpp:592
 msgid "Show Star Orbits"
 msgstr "Zobraziť dráhy hviezd"
 
-#: src/celestia/kde/kdeapp.cpp:611
+#: src/celestia/kde/kdeapp.cpp:595
 msgid "Show Planet Orbits"
 msgstr "Zobraziť dráhy planét"
 
-#: src/celestia/kde/kdeapp.cpp:614
+#: src/celestia/kde/kdeapp.cpp:598
 msgid "Show Spacecraft Orbits"
 msgstr "Zobraziť dráhy kozmických lodí"
 
-#: src/celestia/kde/kdeapp.cpp:617
-#, fuzzy
+#: src/celestia/kde/kdeapp.cpp:601
 msgid "Show Equatorial Grid"
-msgstr "Zobraziť hviezdnu súradnicovú sieť"
+msgstr "Zobraziť rovníkovú súradnicová sieť"
 
-#: src/celestia/kde/kdeapp.cpp:620
+#: src/celestia/kde/kdeapp.cpp:604
 msgid "Show Night Side Lights"
 msgstr "Zobraziť svetlá na nočnej strane"
 
-#: src/celestia/kde/kdeapp.cpp:623
+#: src/celestia/kde/kdeapp.cpp:607
 msgid "Show Markers"
 msgstr "Zobraziť značky"
 
-#: src/celestia/kde/kdeapp.cpp:626
+#: src/celestia/kde/kdeapp.cpp:610
 msgid "Show Atmospheres"
 msgstr "Zobraziť atmosféry"
 
-#: src/celestia/kde/kdeapp.cpp:629
+#: src/celestia/kde/kdeapp.cpp:613
 msgid "Show Smooth Orbit Lines"
-msgstr "Zobraziť hladké dráhy"
+msgstr "Zobraziť vyhladené čiary dráh"
 
-#: src/celestia/kde/kdeapp.cpp:632
+#: src/celestia/kde/kdeapp.cpp:616
 msgid "Show Eclipse Shadows"
 msgstr "Zobraziť tiene zatmení"
 
-#: src/celestia/kde/kdeapp.cpp:635
+#: src/celestia/kde/kdeapp.cpp:619
 msgid "Cycle Star Mode"
-msgstr ""
+msgstr "Prepínať režim hviezd"
 
-#: src/celestia/kde/kdeapp.cpp:637
+#: src/celestia/kde/kdeapp.cpp:621
 msgid "Show Ring Shadows"
 msgstr "Zobraziť tiene prstencov"
 
-#: src/celestia/kde/kdeapp.cpp:640
+#: src/celestia/kde/kdeapp.cpp:624
 msgid "Show Boundaries"
 msgstr "Zobraziť hranice súhvezdí"
 
-#: src/celestia/kde/kdeapp.cpp:643
+#: src/celestia/kde/kdeapp.cpp:627
 #: src/celestia/kde/kdepreferencesdialog.cpp:78
 msgid "Auto Magnitudes"
-msgstr "Automatické hviezdne veľkosti"
+msgstr "Automatické hviezdne jasnosti"
 
-#: src/celestia/kde/kdeapp.cpp:646
+#: src/celestia/kde/kdeapp.cpp:630
 msgid "Show Comet Tails"
 msgstr "Zobraziť chvosty komét"
 
-#: src/celestia/kde/kdeapp.cpp:649
+#: src/celestia/kde/kdeapp.cpp:633
 msgid "Show Star Labels"
 msgstr "Zobraziť názvy hviezd"
 
-#: src/celestia/kde/kdeapp.cpp:654
+#: src/celestia/kde/kdeapp.cpp:638
 msgid "Show Planet Labels"
 msgstr "Zobraziť názvy planét"
 
-#: src/celestia/kde/kdeapp.cpp:657
+#: src/celestia/kde/kdeapp.cpp:641
 msgid "Show Moon Labels"
 msgstr "Zobraziť názvy mesiacov"
 
-#: src/celestia/kde/kdeapp.cpp:660
+#: src/celestia/kde/kdeapp.cpp:644
 msgid "Show Comet Labels"
 msgstr "Zobraziť názvy komét"
 
-#: src/celestia/kde/kdeapp.cpp:663
+#: src/celestia/kde/kdeapp.cpp:647
 msgid "Show Constellation Labels"
 msgstr "Zobraziť názvy súhvezdí"
 
-#: src/celestia/kde/kdeapp.cpp:666
+#: src/celestia/kde/kdeapp.cpp:650
 msgid "Constellation Labels in Latin"
 msgstr "Názvy súhvezdí po latinsky"
 
-#: src/celestia/kde/kdeapp.cpp:669
+#: src/celestia/kde/kdeapp.cpp:653
 msgid "Show Galaxy Labels"
 msgstr "Zobraziť názvy galaxií"
 
-#: src/celestia/kde/kdeapp.cpp:672
+#: src/celestia/kde/kdeapp.cpp:656
 msgid "Show Globular Labels"
 msgstr "Zobraziť názvy guľových hviezdokôp"
 
-#: src/celestia/kde/kdeapp.cpp:675
+#: src/celestia/kde/kdeapp.cpp:659
 msgid "Show Nebula Labels"
 msgstr "Zobraziť názvy hmlovín"
 
-#: src/celestia/kde/kdeapp.cpp:678
+#: src/celestia/kde/kdeapp.cpp:662
 msgid "Show Open Cluster Labels"
 msgstr "Zobraziť názvy otvorených hviezdokôp"
 
-#: src/celestia/kde/kdeapp.cpp:681
+#: src/celestia/kde/kdeapp.cpp:665
 msgid "Show Asteroid Labels"
 msgstr "Zobraziť názvy asteroidov"
 
-#: src/celestia/kde/kdeapp.cpp:684
+#: src/celestia/kde/kdeapp.cpp:668
 msgid "Show Spacecraft Labels"
 msgstr "Zobraziť názvy kozmických lodí"
 
-#: src/celestia/kde/kdeapp.cpp:687
+#: src/celestia/kde/kdeapp.cpp:671
 msgid "Show Location Labels"
 msgstr "Zobraziť názvy lokalít"
 
-#: src/celestia/kde/kdeapp.cpp:690
+#: src/celestia/kde/kdeapp.cpp:674
 msgid "Display Local Time"
-msgstr "Zobraziť lokálny čas"
+msgstr "Zobraziť miestny čas"
 
-#: src/celestia/kde/kdeapp.cpp:695
+#: src/celestia/kde/kdeapp.cpp:679
 msgid "Show City Locations"
-msgstr "Zobraziť lokality miest"
+msgstr "Zobraziť polohy miest"
 
-#: src/celestia/kde/kdeapp.cpp:698
+#: src/celestia/kde/kdeapp.cpp:682
 msgid "Show Observatory Locations"
-msgstr "Zobraziť lokality observatórií"
+msgstr "Zobraziť polohy observatórií"
 
-#: src/celestia/kde/kdeapp.cpp:701
+#: src/celestia/kde/kdeapp.cpp:685
 msgid "Show Landing Sites Locations"
-msgstr "Zobraziť lokality miest pristátí"
+msgstr "Zobraziť polohy miest pristátia"
 
-#: src/celestia/kde/kdeapp.cpp:704
+#: src/celestia/kde/kdeapp.cpp:688
 msgid "Show Crater Locations"
-msgstr "Zobraziť lokality kráterov"
+msgstr "Zobraziť polohy kráterov"
 
-#: src/celestia/kde/kdeapp.cpp:707
+#: src/celestia/kde/kdeapp.cpp:691
 msgid "Show Mons Locations"
-msgstr "Zobraziť lokality hôr"
+msgstr "Zobraziť polohy hôr"
 
-#: src/celestia/kde/kdeapp.cpp:710
+#: src/celestia/kde/kdeapp.cpp:694
 msgid "Show Terra Locations"
-msgstr "Zobraziť lokality kontinentov"
+msgstr "Zobraziť polohy pevnín"
 
-#: src/celestia/kde/kdeapp.cpp:713
+#: src/celestia/kde/kdeapp.cpp:697
 msgid "Show Vallis Locations"
-msgstr "Zobraziť lokality údolí"
+msgstr "Zobraziť polohy údolí"
 
-#: src/celestia/kde/kdeapp.cpp:716
+#: src/celestia/kde/kdeapp.cpp:700
 msgid "Show Mare Locations"
-msgstr "Zobraziť lokality morí"
+msgstr "Zobraziť polohy morí"
 
-#: src/celestia/kde/kdeapp.cpp:719
+#: src/celestia/kde/kdeapp.cpp:703
 msgid "Show Other Locations"
 msgstr "Zobraziť iné lokality"
 
-#: src/celestia/kde/kdeapp.cpp:723
+# drôtovaná mriežka
+#: src/celestia/kde/kdeapp.cpp:707
 msgid "Wireframe Mode"
-msgstr "Režim drôteného modelu"
+msgstr "Obrysový režim"
 
-#: src/celestia/kde/kdeapp.cpp:725
+#: src/celestia/kde/kdeapp.cpp:709
 msgid "Center on Orbit"
-msgstr ""
+msgstr "Vycentrovať na obežnú dráhu"
 
-#: src/celestia/kde/kdeapp.cpp:729
+#: src/celestia/kde/kdeapp.cpp:713
 #: src/celestia/kde/kdepreferencesdialog.cpp:500
 msgid "Basic"
 msgstr "Jednoduchý"
 
-#: src/celestia/kde/kdeapp.cpp:731
+#: src/celestia/kde/kdeapp.cpp:715
 #: src/celestia/kde/kdepreferencesdialog.cpp:502
 msgid "Multitexture"
 msgstr "Viactextúrový"
 
-#: src/celestia/kde/kdeapp.cpp:733
+#: src/celestia/kde/kdeapp.cpp:717
 #: src/celestia/kde/kdepreferencesdialog.cpp:504
 msgid "NvCombiners"
 msgstr "NvCombiners"
 
-#: src/celestia/kde/kdeapp.cpp:735
+#: src/celestia/kde/kdeapp.cpp:719
 #: src/celestia/kde/kdepreferencesdialog.cpp:506
 msgid "DOT3 ARBVP"
 msgstr "DOT3 ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:737
+#: src/celestia/kde/kdeapp.cpp:721
 #: src/celestia/kde/kdepreferencesdialog.cpp:508
 msgid "NvCombiner NvVP"
 msgstr "NvCombiner NvVP"
 
-#: src/celestia/kde/kdeapp.cpp:739
+#: src/celestia/kde/kdeapp.cpp:723
 #: src/celestia/kde/kdepreferencesdialog.cpp:510
 msgid "NvCombiner ARBVP"
 msgstr "NvCombiner ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:741
+#: src/celestia/kde/kdeapp.cpp:725
 #: src/celestia/kde/kdepreferencesdialog.cpp:512
 msgid "ARBFP ARBVP"
 msgstr "ARBFP ARBVP"
 
-#: src/celestia/kde/kdeapp.cpp:743
+#: src/celestia/kde/kdeapp.cpp:727
 #: src/celestia/kde/kdepreferencesdialog.cpp:514
 msgid "NV30"
 msgstr "NV30"
 
-#: src/celestia/kde/kdeapp.cpp:745
+#: src/celestia/kde/kdeapp.cpp:729
 #: src/celestia/kde/kdepreferencesdialog.cpp:516
 msgid "OpenGL 2.0"
 msgstr "OpenGL 2.0"
 
-#: src/celestia/kde/kdeapp.cpp:747
+#: src/celestia/kde/kdeapp.cpp:731
 msgid "Cycle OpenGL Render Path"
-msgstr ""
+msgstr "Prepínať spôsoby vykresľovania OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:749
+#: src/celestia/kde/kdeapp.cpp:733
 #: src/celestia/kde/kdepreferencesdialog.cpp:535
 msgid "Sync framerate to video refresh rate"
-msgstr ""
+msgstr "Synchronizovať frekvenciu snímok s frekvenciou obrazovky"
 
-#: src/celestia/kde/kdeapp.cpp:754
+#: src/celestia/kde/kdeapp.cpp:738
 msgid "Grab Image"
 msgstr "Snímok obrazovky"
 
-#: src/celestia/kde/kdeapp.cpp:755
+#: src/celestia/kde/kdeapp.cpp:739
 msgid "Capture Video"
 msgstr "Nahrať video"
 
-#: src/celestia/kde/kdeapp.cpp:757
+#: src/celestia/kde/kdeapp.cpp:741
 msgid "OpenGL info"
 msgstr "Informácie o OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:765
+#: src/celestia/kde/kdeapp.cpp:749
 msgid "Show Bookmark Toolbar"
-msgstr ""
+msgstr "Zobraziť panel záložiek"
 
-#: src/celestia/kde/kdeapp.cpp:1021
+#: src/celestia/kde/kdeapp.cpp:1005
 msgid "OpenGL Info"
 msgstr "Informácie o OpenGL"
 
-#: src/celestia/kde/kdeapp.cpp:1384
+#: src/celestia/kde/kdeapp.cpp:1368
 #: src/celestia/kde/kdepreferencesdialog.cpp:376
 #: src/celestia/kde/kdepreferencesdialog.cpp:397
 msgid "UTC"
-msgstr ""
+msgstr "UTC (svetový čas)"
 
-#: src/celestia/kde/kdeapp.cpp:1483
-msgid ""
-"This version of Celestia was not built with support for movie recording."
-msgstr ""
+#: src/celestia/kde/kdeapp.cpp:1467
+msgid "This version of Celestia was not built with support for movie recording."
+msgstr "Táto verzia Celestie nebola zostavená s podporou nahrávania videa."
 
-#: src/celestia/kde/kdeapp.cpp:1511
+#: src/celestia/kde/kdeapp.cpp:1495
 msgid "Go to URL"
 msgstr "Prejsť na URL"
 
-#: src/celestia/kde/kdeapp.cpp:1511
+#: src/celestia/kde/kdeapp.cpp:1495
 msgid "Enter URL"
-msgstr "Zadaj URL"
+msgstr "Zadať URL:"
 
-#: src/celestia/kde/kdeapp.cpp:1607
+#: src/celestia/kde/kdeapp.cpp:1591
 msgid "Object: "
 msgstr "Objekt: "
 
-#: src/celestia/kde/kdeapp.cpp:1612
+#: src/celestia/kde/kdeapp.cpp:1596
 msgid "Longitude: "
 msgstr "Zemepisná dĺžka: "
 
-#: src/celestia/kde/kdeapp.cpp:1618
+#: src/celestia/kde/kdeapp.cpp:1602
 msgid "East"
 msgstr "Východ"
 
-#: src/celestia/kde/kdeapp.cpp:1619
+#: src/celestia/kde/kdeapp.cpp:1603
 msgid "West"
 msgstr "Západ"
 
-#: src/celestia/kde/kdeapp.cpp:1621
+#: src/celestia/kde/kdeapp.cpp:1605
 msgid "Latitude: "
 msgstr "Zemepisná šírka: "
 
-#: src/celestia/kde/kdeapp.cpp:1627
+#: src/celestia/kde/kdeapp.cpp:1611
 msgid "North"
 msgstr "Sever"
 
-#: src/celestia/kde/kdeapp.cpp:1628
+#: src/celestia/kde/kdeapp.cpp:1612
 msgid "South"
 msgstr "Juh"
 
-#: src/celestia/kde/kdeapp.cpp:1630
+#: src/celestia/kde/kdeapp.cpp:1614
 msgid "Altitude: "
-msgstr "Výška: "
+msgstr "Nadmorská výška: "
 
-#: src/celestia/kde/kdeapp.cpp:1704
+#: src/celestia/kde/kdeapp.cpp:1689
 msgid "Celestia encountered an error while processing your script"
-msgstr ""
+msgstr "Počas spracovania Vášho skriptu došlo k chybe"
 
-#: src/celestia/kde/kdemain.cpp:25 src/celestia/kde/kdemain.cpp:43
-#: src/celestia/win32/res/resource_strings.cpp:68
+#: src/celestia/kde/kdemain.cpp:25
+#: src/celestia/kde/kdemain.cpp:43
+#: src/celestia/res/resource_strings.cpp:69
 msgid "Celestia"
 msgstr "Celestia"
 
 #: src/celestia/kde/kdemain.cpp:31
 msgid "Use alternate configuration file"
-msgstr ""
+msgstr "Použiť alternatívny konfiguračný súbor"
 
 #: src/celestia/kde/kdemain.cpp:32
 msgid "Use alternate installation directory"
-msgstr ""
+msgstr "Použiť alternatívny inštalačný priečinok"
 
 #: src/celestia/kde/kdemain.cpp:33
 msgid "Use as additional \"extras\" directory"
-msgstr ""
+msgstr "Použiť ako prídavný priečinok \"extras\""
 
 #: src/celestia/kde/kdemain.cpp:34
 msgid "Start fullscreen"
@@ -1700,19 +1797,23 @@ msgstr "Spustiť na celú obrazovku"
 
 #: src/celestia/kde/kdemain.cpp:36
 msgid "Disable splash screen"
-msgstr ""
+msgstr "Vypnúť úvodnú obrazovku"
 
 #: src/celestia/kde/kdemain.cpp:37
 msgid "Start and go to url"
-msgstr ""
+msgstr "Spustiť a prejsť na URL"
 
 #: src/celestia/kde/kdemain.cpp:71
-msgid "_: NAME OF TRANSLATORS\\nYour names"
-msgstr ""
+msgid ""
+"_: NAME OF TRANSLATORS\\n"
+"Your names"
+msgstr "Aceman, Ľuboš Balážovič"
 
 #: src/celestia/kde/kdemain.cpp:71
-msgid "_: EMAIL OF TRANSLATORS\\nYour emails"
-msgstr ""
+msgid ""
+"_: EMAIL OF TRANSLATORS\\n"
+"Your emails"
+msgstr "acelists@atlas.sk, lubos.balazovic@gmail.com"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:58
 msgid "Celestia Preferences"
@@ -1723,100 +1824,99 @@ msgid "Rendering"
 msgstr "Vykresľovanie"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:72
-#: src/celestia/win32/res/resource_strings.cpp:145
+#: src/celestia/res/resource_strings.cpp:146
 msgid "Show"
 msgstr "Zobraziť"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:74
 #: src/celestia/kde/kdepreferencesdialog.cpp:174
-#: src/celestia/win32/res/resource_strings.cpp:150
-#: src/celestia/win32/res/resource_strings.cpp:167
+#: src/celestia/res/resource_strings.cpp:151
+#: src/celestia/res/resource_strings.cpp:169
 msgid "Stars"
 msgstr "Hviezdy"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:86
 #: src/celestia/kde/kdepreferencesdialog.cpp:217
-#: src/celestia/win32/res/resource_strings.cpp:146
-#: src/celestia/win32/res/resource_strings.cpp:176
+#: src/celestia/res/resource_strings.cpp:147
+#: src/celestia/res/resource_strings.cpp:178
 msgid "Galaxies"
 msgstr "Galaxie"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:90
 #: src/celestia/kde/kdepreferencesdialog.cpp:222
-#: src/celestia/win32/res/resource_strings.cpp:149
-#: src/celestia/win32/res/resource_strings.cpp:179
+#: src/celestia/res/resource_strings.cpp:150
+#: src/celestia/res/resource_strings.cpp:181
 msgid "Nebulae"
 msgstr "Hmloviny"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:94
 #: src/celestia/kde/kdepreferencesdialog.cpp:227
-#: src/celestia/win32/res/resource_strings.cpp:148
-#: src/celestia/win32/res/resource_strings.cpp:178
+#: src/celestia/res/resource_strings.cpp:149
+#: src/celestia/res/resource_strings.cpp:180
 msgid "Open Clusters"
 msgstr "Otvorené hviezdokopy"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:98
-#: src/celestia/win32/res/resource_strings.cpp:152
+#: src/celestia/res/resource_strings.cpp:153
 msgid "Atmospheres"
 msgstr "Atmosféry"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:102
-#: src/celestia/win32/res/resource_strings.cpp:153
+#: src/celestia/res/resource_strings.cpp:154
 msgid "Clouds"
 msgstr "Oblaky"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:106
-#: src/celestia/win32/res/resource_strings.cpp:154
+#: src/celestia/res/resource_strings.cpp:155
 msgid "Cloud Shadows"
 msgstr "Tiene oblakov"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:110
-#: src/celestia/win32/res/resource_strings.cpp:157
+#: src/celestia/res/resource_strings.cpp:158
 msgid "Night Side Lights"
 msgstr "Svetlá na nočnej strane"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:114
-#: src/celestia/win32/res/resource_strings.cpp:156
+#: src/celestia/res/resource_strings.cpp:157
 msgid "Eclipse Shadows"
 msgstr "Tiene zatmení"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:118
-#: src/celestia/win32/res/resource_strings.cpp:158
+#: src/celestia/res/resource_strings.cpp:159
 msgid "Comet Tails"
 msgstr "Chvosty komét"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:122
 #: src/celestia/kde/kdepreferencesdialog.cpp:165
-#: src/celestia/win32/res/resource_strings.cpp:159
+#: src/celestia/res/resource_strings.cpp:161
 msgid "Orbits"
 msgstr "Obežné dráhy"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:126
 msgid "Partial Trajectories"
-msgstr "Čiastočné dráhy"
+msgstr "Čiastočné trajektórie"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:130
 msgid "Smooth Orbit Lines"
-msgstr "Vyhladiť obežné dráhy"
+msgstr "Vyhladené čiary dráh"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:134
-#, fuzzy
 msgid "Equatorial Grid"
-msgstr "Hviezdna súradnicová sieť"
+msgstr "Rovníková súradnicová sieť"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:138
 #: src/celestia/kde/kdepreferencesdialog.cpp:207
-#: src/celestia/win32/res/resource_strings.cpp:180
+#: src/celestia/res/resource_strings.cpp:182
 msgid "Constellations"
 msgstr "Súhvezdia"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:142
-#: src/celestia/win32/res/resource_strings.cpp:160
+#: src/celestia/res/resource_strings.cpp:160
 msgid "Markers"
 msgstr "Značky"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:146
-#: src/celestia/win32/res/resource_strings.cpp:155
+#: src/celestia/res/resource_strings.cpp:156
 msgid "Ring Shadows"
 msgstr "Tiene prstencov"
 
@@ -1825,18 +1925,20 @@ msgid "Constellation Boundaries"
 msgstr "Hranice súhvezdí"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:161
-#: src/celestia/win32/res/resource_strings.cpp:166
+#: src/celestia/res/resource_strings.cpp:168
 msgid "Orbits / Labels"
 msgstr "Dráhy / Názvy"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:167
-#: src/celestia/win32/res/resource_strings.cpp:183
+#: src/celestia/kde/rc.cpp:12
+#: src/celestia/res/resource_strings.cpp:185
+#, no-c-format
 msgid "Labels"
 msgstr "Názvy"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:212
 msgid "Constellations in Latin"
-msgstr "Latinské názvy súhvezdí"
+msgstr "Súhvezdia v latinčine"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:245
 msgid "Spacecrafts"
@@ -1844,17 +1946,17 @@ msgstr "Kozmické lode"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:250
 #: src/celestia/kde/kdepreferencesdialog.cpp:312
-#: src/celestia/win32/res/resource_strings.cpp:193
+#: src/celestia/res/resource_strings.cpp:195
 msgid "Locations"
 msgstr "Lokality"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:259
 msgid "Ambient Light"
-msgstr "Okolité svetlo"
+msgstr "Rozptýlené svetlo"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:270
 msgid "Limiting Magnitude"
-msgstr "Hraničná hviezdna veľkosť"
+msgstr "Medzná hviezdna veľkosť/jasnosť"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:279
 msgid "Info Text"
@@ -1865,17 +1967,17 @@ msgid "Level: "
 msgstr "Úroveň: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:282
-#: src/celestia/win32/res/resource_strings.cpp:186
+#: src/celestia/res/resource_strings.cpp:188
 msgid "None"
 msgstr "Žiadny"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:283
-#: src/celestia/win32/res/resource_strings.cpp:187
+#: src/celestia/res/resource_strings.cpp:189
 msgid "Terse"
-msgstr "Stručné"
+msgstr "Stručný"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:284
-#: src/celestia/win32/res/resource_strings.cpp:188
+#: src/celestia/res/resource_strings.cpp:190
 msgid "Verbose"
 msgstr "Podrobný"
 
@@ -1901,7 +2003,7 @@ msgstr "Vysoké"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:299
 msgid "Automatic FOV"
-msgstr "Automatický zorný uhol"
+msgstr "Automatické zorné pole"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:300
 msgid "Screen DPI: "
@@ -1912,40 +2014,40 @@ msgid "Viewing Distance (cm): "
 msgstr "Pozorovacia vzdialenosť (cm)"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:318
-#: src/celestia/win32/res/resource_strings.cpp:194
+#: src/celestia/res/resource_strings.cpp:196
 msgid "Cities"
 msgstr "Mestá"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:322
-#: src/celestia/win32/res/resource_strings.cpp:195
+#: src/celestia/res/resource_strings.cpp:197
 msgid "Observatories"
 msgstr "Observatóriá"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:326
-#: src/celestia/win32/res/resource_strings.cpp:196
+#: src/celestia/res/resource_strings.cpp:198
 msgid "Landing Sites"
 msgstr "Miesta pristátí"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:330
-#: src/celestia/win32/res/resource_strings.cpp:199
+#: src/celestia/res/resource_strings.cpp:201
 msgid "Craters"
 msgstr "Krátery"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:334
 msgid "Mons"
-msgstr "Mons (Hora)"
+msgstr "Mons (Hory)"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:338
 msgid "Terra"
-msgstr "Terra (Kontinent)"
+msgstr "Terra (Pevniny)"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:342
 msgid "Vallis"
-msgstr "Vallis (Údolie)"
+msgstr "Vallis (Údolia)"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:346
 msgid "Mare"
-msgstr "Mare (More)"
+msgstr "Mare (Moria)"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:350
 msgid "Other"
@@ -1969,28 +2071,30 @@ msgid "Timezone: "
 msgstr "Časové pásmo: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:383
-#: src/celestia/win32/res/resource_strings.cpp:97
+#: src/celestia/res/resource_strings.cpp:98
 msgid "Format: "
 msgstr "Formát:"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:385
 msgid "Local Format"
-msgstr "Lokálny formát"
+msgstr "Miestny formát"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:392
 msgid "Set"
-msgstr "Nastavenie"
+msgstr "Nastaviť"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:393
 msgid "Local Time is only supported for dates between 1902 and 2037.\n"
-msgstr ""
+msgstr "Lokálny čas je podporovaný len pre dátumy medzi rokmi 1902 a 2037.\n"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:438
-#: src/celestia/win32/res/resource_strings.cpp:98
+#: src/celestia/res/resource_strings.cpp:99
 msgid "Julian Date: "
 msgstr "Juliánsky dátum: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:456
+#: src/celestia/kde/rc.cpp:27
+#, no-c-format
 msgid "Now"
 msgstr "Teraz"
 
@@ -2003,14 +2107,12 @@ msgstr ""
 "Výber: "
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:484
-#, fuzzy
 msgid "Include Light Travel Time"
-msgstr "Čas putovania svetla: %.4f rokov "
+msgstr "Zahrnúť čas putovania svetla"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:486
-#, fuzzy
 msgid "Ignore Light Travel Time "
-msgstr "Čas putovania svetla: %.4f rokov "
+msgstr "Ignorovať čas putovania svetla"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:493
 msgid "OpenGL"
@@ -2022,62 +2124,55 @@ msgstr "Klávesové skratky"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:788
 msgid "<b>Unextended OpenGL 1.1</b>"
-msgstr "<b>Nerozšírený OpenGL 1.1</b>"
+msgstr "<b>OpenGL 1.1 bez rozšírení</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:791
 msgid "<b>Multiple textures and the ARB_texenv_combine extension</b>"
-msgstr ""
+msgstr "<b>Viaceré textúry a rozšírenie ARB_texenv_combine</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:794
 msgid "<b>NVIDIA combiners, no vertex programs</b>"
-msgstr ""
+msgstr "<b>NVIDIA combiners, žiadne vertex programy</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:797
 msgid "<b>ARB_texenv_DOT3 extension, ARB_vertex_program extension</b>"
-msgstr ""
+msgstr "<b>Rozšírenie ARB_texenv_DOT3, rozšírenie ARB_vertex_program</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:800
-msgid ""
-"<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump "
-"mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon "
-"graphics card, though NvCombiner ARBVP is a slightly better option for "
-"Geforce users"
-msgstr ""
+msgid "<b>NVIDIA Combiners, NV_vertex_program extension</b><br> provide bump mapping, ring shadows, and specular highlights on any Geforce or ATI Radeon graphics card, though NvCombiner ARBVP is a slightly better option for Geforce users"
+msgstr "<b>NVIDIA Combiners a rozšírenie NV_vertex_program </b><br> zabezpečujú bump mapping, tiene prstencov a zrkadlové odrazy na ľubovoľnej grafickej karte Geforce alebo ATI Radeon, kým NvCombiner ARBVP je lepšou voľbou pre používateľov kariet Geforce"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:806
 msgid "<b>NVIDIA Combiners, ARB_vertex_program extension</b>"
-msgstr ""
+msgstr "<b>NVIDIA Combiners, rozšírenie ARB_vertex_program</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:809
-msgid ""
-"<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide "
-"advanced effects on Geforce FX and Radeon 9700 cards"
-msgstr ""
+msgid "<b>ARB_fragment_program and ARB_vertex_program extensions</b><br>provide advanced effects on Geforce FX and Radeon 9700 cards"
+msgstr "<b>Rozšírenia ARB_fragment_program a ARB_vertex_program</b><br>zabezpečujú pokročilé efekty na kartách Geforce FX a Radeon 9700"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:813
 msgid "<b>NV_fragment_program and ARB_vertex_program extensions</b>"
-msgstr ""
+msgstr "<b>Rozšírenia NV_fragment_program a ARB_vertex_program</b>"
 
 #: src/celestia/kde/kdepreferencesdialog.cpp:816
 msgid "<b>OpenGL 2.0 Shading Language</b>"
-msgstr ""
+msgstr "<b>OpenGL 2.0 Shading Language</b>"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:44
-msgid ""
-"File %1 does not exist, using default configuration file %2/celestia.cfg"
-msgstr ""
+msgid "File %1 does not exist, using default configuration file %2/celestia.cfg"
+msgstr "Súbor %1 neexistuje, použije sa predvolený konfiguračný súbor %2/celestia.cfg"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:54
 msgid "Directory %1 does not exist, using default %2"
-msgstr ""
+msgstr "Priečinok %1 neexistuje, použije sa predvolený %2"
 
 #: src/celestia/kde/kdeuniquecelestia.cpp:66
 msgid "Extras directory %1 does not exist"
-msgstr ""
+msgstr "Priečinok s doplnkami %1 neexistuje"
 
 #: src/celestia/kde/selectionpopup.cpp:89
 msgid "Abs (app) mag: "
-msgstr "Abs. (zdan.) veľ.: "
+msgstr "Abs. (zdan.) jasnosť: "
 
 #: src/celestia/kde/selectionpopup.cpp:101
 msgid "Surface Temp: "
@@ -2092,18 +2187,18 @@ msgid "&Select"
 msgstr "Vybrať"
 
 #: src/celestia/kde/selectionpopup.cpp:299
-#: src/celestia/win32/res/resource_strings.cpp:111
-#: src/celestia/win32/res/resource_strings.cpp:118
+#: src/celestia/res/resource_strings.cpp:112
+#: src/celestia/res/resource_strings.cpp:119
 msgid "&Center"
-msgstr "Vycentrovať"
+msgstr "&Centrovať"
 
 #: src/celestia/kde/selectionpopup.cpp:303
 msgid "S&ynch Orbit"
-msgstr "Synchrónny orbit"
+msgstr "S&ynchronizovať obežnú dráhu"
 
 #: src/celestia/kde/selectionpopup.cpp:306
 msgid "Unmark &All"
-msgstr "Odznačiť všetko"
+msgstr "Odznačiť &všetko"
 
 #: src/celestia/kde/selectionpopup.cpp:315
 msgid "Diamond"
@@ -2119,7 +2214,7 @@ msgstr "Štvorec"
 
 #: src/celestia/kde/selectionpopup.cpp:318
 msgid "Filled Square"
-msgstr "Plný štvorec"
+msgstr "Vyplnený štvorec"
 
 #: src/celestia/kde/selectionpopup.cpp:319
 msgid "Plus"
@@ -2143,7 +2238,7 @@ msgstr "Šípka hore"
 
 #: src/celestia/kde/selectionpopup.cpp:324
 msgid "Down Arrow"
-msgstr "Šípka dolu"
+msgstr "Šípka dole"
 
 #: src/celestia/kde/selectionpopup.cpp:325
 msgid "Circle"
@@ -2151,7 +2246,7 @@ msgstr "Kruh"
 
 #: src/celestia/kde/selectionpopup.cpp:326
 msgid "Disk"
-msgstr "Disk"
+msgstr "Kotúč/disk"
 
 #: src/celestia/kde/selectionpopup.cpp:358
 msgid "Normal"
@@ -2162,7 +2257,7 @@ msgid "Small Bodies"
 msgstr "Malé telesá"
 
 #: src/celestia/kde/selectionpopup.cpp:426
-#: src/celestia/win32/res/resource_strings.cpp:169
+#: src/celestia/res/resource_strings.cpp:171
 msgid "Dwarf Planets"
 msgstr "Trpasličie planéty"
 
@@ -2176,9 +2271,10 @@ msgstr "Trvanie: %1"
 msgid "Size: %1 MB"
 msgstr "Veľkosť: %1 MB"
 
+# 'veľkosť' sa už nezmestí kvôli rozmerom zoznamu
 #: src/celestia/kde/videocapturedlg.cpp:95
 msgid "Current size: %1 x %2"
-msgstr "Súčasná veľkosť: %1 x %2"
+msgstr "Súčasná: %1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:101
 #: src/celestia/kde/videocapturedlg.cpp:133
@@ -2194,11 +2290,237 @@ msgstr "Súčasná výška: %1 x %2"
 
 #: src/celestia/kde/videocapturedlg.cpp:233
 msgid "You must specify a file name."
-msgstr ""
+msgstr "Musíte zadať názov súboru."
 
 #: src/celestia/kde/videocapturedlg.cpp:260
 msgid "Error initializing movie capture."
+msgstr "Chyba pri inicializácii nahrávania videa."
+
+#: src/celestia/kde/rc.cpp:3
+#: src/celestia/res/resource_strings.cpp:8
+#, no-c-format
+msgid "&Navigation"
+msgstr "&Navigácia"
+
+#: src/celestia/kde/rc.cpp:6
+#, no-c-format
+msgid "Options"
+msgstr "Možnosti"
+
+#: src/celestia/kde/rc.cpp:9
+#, no-c-format
+msgid "Objects"
+msgstr "Objekty"
+
+#: src/celestia/kde/rc.cpp:15
+#, no-c-format
+msgid "OpenGL Render Path"
+msgstr "Vykresľovanie OpenGL"
+
+#: src/celestia/kde/rc.cpp:18
+#, no-c-format
+msgid "Time"
+msgstr "Čas"
+
+#: src/celestia/kde/rc.cpp:21
+#, no-c-format
+msgid "MultiView"
+msgstr "Pohľady"
+
+#: src/celestia/kde/rc.cpp:24
+#, no-c-format
+msgid "Main Toolbar"
+msgstr "Hlavný panel nástrojov"
+
+#: src/celestia/kde/rc.cpp:37
+#, no-c-format
+msgid "Dist."
+msgstr "Vzdial."
+
+#: src/celestia/kde/rc.cpp:40
+#, no-c-format
+msgid "App. Mag."
+msgstr "Zdan. jas."
+
+#: src/celestia/kde/rc.cpp:43
+#, no-c-format
+msgid "Abs. Mag."
+msgstr "Abs. jas."
+
+#: src/celestia/kde/rc.cpp:49
+#, no-c-format
+msgid "With Planets"
+msgstr "S planétami"
+
+#: src/celestia/kde/rc.cpp:52
+#, no-c-format
+msgid "Brightest (Abs.)"
+msgstr "Najjasnejšie (Abs.)"
+
+#: src/celestia/kde/rc.cpp:55
+#, no-c-format
+msgid "Brightest (App.)"
+msgstr "Najjasnejšie (Zdan.)"
+
+#: src/celestia/kde/rc.cpp:58
+#: src/celestia/res/resource_strings.cpp:116
+#, no-c-format
+msgid "Nearest"
+msgstr "Najbližšie"
+
+#: src/celestia/kde/rc.cpp:61
+#, no-c-format
+msgid "&Close"
+msgstr "&Zavrieť"
+
+#: src/celestia/kde/rc.cpp:64
+#, no-c-format
+msgid "Alt+C"
+msgstr "Alt+C"
+
+#: src/celestia/kde/rc.cpp:67
+#, no-c-format
+msgid "Refresh"
+msgstr "Obnoviť"
+
+#: src/celestia/kde/rc.cpp:85
+#, no-c-format
+msgid "End"
+msgstr "Koniec"
+
+#: src/celestia/kde/rc.cpp:88
+#: src/celestia/res/resource_strings.cpp:232
+#, no-c-format
+msgid "Search parameters"
+msgstr "Parametre vyhľadávania"
+
+#: src/celestia/kde/rc.cpp:91
+#: src/celestia/res/resource_strings.cpp:233
+#, no-c-format
+msgid "Solar Eclipses"
+msgstr "Zatmenia Slnka"
+
+#: src/celestia/kde/rc.cpp:94
+#: src/celestia/res/resource_strings.cpp:231
+#, no-c-format
+msgid "On:"
+msgstr "Na:"
+
+#: src/celestia/kde/rc.cpp:115
+#, no-c-format
+msgid "Moon Eclipses"
+msgstr "Zatmenia mesiacov"
+
+#: src/celestia/kde/rc.cpp:118
+#, no-c-format
+msgid "Search"
+msgstr "Hľadať"
+
+#: src/celestia/kde/rc.cpp:121
+#: src/celestia/res/resource_strings.cpp:230
+#, no-c-format
+msgid "To:"
+msgstr "Do:"
+
+#: src/celestia/kde/rc.cpp:124
+#: src/celestia/res/resource_strings.cpp:229
+#, no-c-format
+msgid "From:"
+msgstr "Od:"
+
+#: src/celestia/kde/rc.cpp:127
+#: src/celestia/res/resource_strings.cpp:228
+#, no-c-format
+msgid "Close"
+msgstr "Zavrieť"
+
+#: src/celestia/kde/rc.cpp:130
+#, no-c-format
+msgid "Video Capture"
+msgstr "Nahrať video"
+
+#: src/celestia/kde/rc.cpp:136
+#, no-c-format
+msgid "Save As:"
+msgstr "Uložiť ako:"
+
+#: src/celestia/kde/rc.cpp:139
+#, no-c-format
+msgid "*.ogg"
+msgstr "*.ogg"
+
+#: src/celestia/kde/rc.cpp:142
+#, no-c-format
+msgid "Aspect Ratio:"
+msgstr "Pomer strán:"
+
+#: src/celestia/kde/rc.cpp:145
+#, no-c-format
+msgid "Current"
+msgstr "Súčasný"
+
+#: src/celestia/kde/rc.cpp:148
+#, no-c-format
+msgid "11:9"
+msgstr "11:9"
+
+#: src/celestia/kde/rc.cpp:151
+#, no-c-format
+msgid "4:3"
+msgstr "4:3"
+
+#: src/celestia/kde/rc.cpp:154
+#, no-c-format
+msgid "16:9"
+msgstr "16:9"
+
+#: src/celestia/kde/rc.cpp:157
+#, no-c-format
+msgid "Image Size:"
+msgstr "Veľkosť obrázku: "
+
+#: src/celestia/kde/rc.cpp:160
+#, no-c-format
+msgid "Frame Rate:"
+msgstr "Snímok za sekundu:"
+
+#: src/celestia/kde/rc.cpp:163
+#, no-c-format
+msgid "Video Quality:"
+msgstr "Kvalita videa:"
+
+#: src/celestia/kde/rc.cpp:166
+#, no-c-format
+msgid "Play Video when capture is done"
+msgstr "Prehrať video po skončení nahrávania"
+
+#: src/celestia/kde/rc.cpp:169
+#, no-c-format
+msgid "Usage"
+msgstr "Použitie"
+
+#: src/celestia/kde/rc.cpp:172
+#, no-c-format
+msgid ""
+"<p>Press <b>F11</b> to start/pause recording<br>\n"
+"Press <b>F12</b> to stop</p>\n"
+"\n"
+"<p>Note that resizing the main window will not be possible until the end of the capture</p>"
 msgstr ""
+"<p>Stlačte <b>F11</b> pre začatie/pozastavenie nahrávania.<br>\n"
+"Stlač <b>F12</b> pre jeho ukončenie.</p>\n"
+"\n"
+"<p>Zmeny veľkosti hlavného okna nie sú počas nahrávania možné.</p>"
+
+#: src/celestia/kde/rc.cpp:178
+#, no-c-format
+msgid "&OK"
+msgstr "&OK"
+
+#: src/celestia/kde/rc.cpp:182
+#, no-c-format
+msgid "&Cancel"
+msgstr "&Zrušiť"
 
 #: data/data.cpp:1
 msgid "Mercury"
@@ -2234,7 +2556,7 @@ msgstr "Europa"
 
 #: data/data.cpp:12
 msgid "Ganymede"
-msgstr "Ganymede"
+msgstr "Ganymedes"
 
 #: data/data.cpp:13
 msgid "Callisto"
@@ -2266,7 +2588,7 @@ msgstr "Enceladus"
 
 #: data/data.cpp:21
 msgid "Tethys"
-msgstr "Tethys"
+msgstr "Tetys"
 
 #: data/data.cpp:22
 msgid "Dione"
@@ -2326,7 +2648,7 @@ msgstr "Triton"
 
 #: data/data.cpp:38
 msgid "Nereid"
-msgstr "Nereid"
+msgstr "Nereida"
 
 #: data/data.cpp:39
 msgid "Pluto-Charon"
@@ -2354,7 +2676,7 @@ msgstr "AFRIKA"
 
 #: data/data.cpp:46
 msgid "AUSTRALIA"
-msgstr "AUSTRALIA"
+msgstr "AUSTRÁLIA"
 
 #: data/data.cpp:47
 msgid "ANTARCTICA"
@@ -2386,1018 +2708,957 @@ msgstr "SEVERNÝ ĽADOVÝ OCEÁN"
 
 #: data/data.cpp:54
 msgid "Abu Dhabi"
-msgstr ""
+msgstr "Abú Dabí"
 
 #: data/data.cpp:55
 msgid "Abuja"
-msgstr ""
+msgstr "Abuja"
 
 #: data/data.cpp:56
 msgid "Accra"
-msgstr ""
+msgstr "Accra"
 
 #: data/data.cpp:57
 msgid "Adamstown"
-msgstr ""
+msgstr "Adamstown"
 
 #: data/data.cpp:58
 msgid "Addis Ababa"
-msgstr ""
+msgstr "Addis Abeba"
 
 #: data/data.cpp:59
 msgid "Algiers"
-msgstr ""
+msgstr "Alžír"
 
 #: data/data.cpp:60
 msgid "Alofi"
-msgstr ""
+msgstr "Alofi"
 
 #: data/data.cpp:61
 msgid "Amman"
-msgstr ""
+msgstr "Amman"
 
 #: data/data.cpp:62
-#, fuzzy
 msgid "Amsterdam"
-msgstr "Asteroid"
+msgstr "Amsterdam"
 
 #: data/data.cpp:63
 msgid "Andorra la Vella"
-msgstr ""
+msgstr "Andorra la Vella"
 
 #: data/data.cpp:64
 msgid "Ankara"
-msgstr ""
+msgstr "Ankara"
 
 #: data/data.cpp:65
 msgid "Antananarivo"
-msgstr ""
+msgstr "Antananarivo"
 
 #: data/data.cpp:66
 msgid "Apia"
-msgstr ""
+msgstr "Apia"
 
 #: data/data.cpp:67
 msgid "Ashgabat"
-msgstr ""
+msgstr "Ashgabat"
 
 #: data/data.cpp:68
 msgid "Asmara"
-msgstr ""
+msgstr "Asmara"
 
 #: data/data.cpp:69
-#, fuzzy
 msgid "Astana"
-msgstr "Titania"
+msgstr "Astana"
 
 #: data/data.cpp:70
 msgid "Asuncion"
-msgstr ""
+msgstr "Asuncion"
 
 #: data/data.cpp:71
-#, fuzzy
 msgid "Athens"
-msgstr "Autori"
+msgstr "Atény"
 
 #: data/data.cpp:72
 msgid "Avarua"
-msgstr ""
+msgstr "Avarua"
 
 #: data/data.cpp:73
 msgid "Baghdad"
-msgstr ""
+msgstr "Bagdad"
 
 #: data/data.cpp:74
-#, fuzzy
 msgid "Baku"
-msgstr "AU"
+msgstr "Baku"
 
 #: data/data.cpp:75
 msgid "Bamako"
-msgstr ""
+msgstr "Bamako"
 
 #: data/data.cpp:76
 msgid "Bandar Seri Begawan"
-msgstr ""
+msgstr "Bandar Seri Begawan"
 
 #: data/data.cpp:77
 msgid "Bangkok"
-msgstr ""
+msgstr "Bangkok"
 
 #: data/data.cpp:78
 msgid "Bangui"
-msgstr ""
+msgstr "Bangui"
 
 #: data/data.cpp:79
 msgid "Banjul"
-msgstr ""
+msgstr "Banjul"
 
 #: data/data.cpp:80
 msgid "Basse-Terre"
-msgstr ""
+msgstr "Basse-Terre"
 
 #: data/data.cpp:81
-#, fuzzy
 msgid "Basseterre"
-msgstr "Barycentrum "
+msgstr "Basseterre"
 
 #: data/data.cpp:82
 msgid "Beijing"
-msgstr ""
+msgstr "Peking"
 
 #: data/data.cpp:83
 msgid "Beirut"
-msgstr ""
+msgstr "Bejrut"
 
 #: data/data.cpp:84
 msgid "Belgrade"
-msgstr ""
+msgstr "Belehrad"
 
 #: data/data.cpp:85
 msgid "Belmopan"
-msgstr ""
+msgstr "Belmopan"
 
 #: data/data.cpp:86
 msgid "Berlin"
-msgstr ""
+msgstr "Berlín"
 
 #: data/data.cpp:87
-#, fuzzy
 msgid "Bern"
-msgstr "Oberon"
+msgstr "Bern"
 
 #: data/data.cpp:88
 msgid "Bishkek"
-msgstr ""
+msgstr "Bishkek"
 
 #: data/data.cpp:89
-#, fuzzy
 msgid "Bissau"
-msgstr "Larissa"
+msgstr "Bissau"
 
 #: data/data.cpp:90
 msgid "Bloemfontein"
-msgstr ""
+msgstr "Bloemfontein"
 
 #: data/data.cpp:91
 msgid "Bogota"
-msgstr ""
+msgstr "Bogota"
 
 #: data/data.cpp:92
-#, fuzzy
 msgid "Brasilia"
-msgstr "Jednoduchý"
+msgstr "Brasilia"
 
 #: data/data.cpp:93
 msgid "Bratislava"
-msgstr ""
+msgstr "Bratislava"
 
 #: data/data.cpp:94
 msgid "Brazzaville"
-msgstr ""
+msgstr "Brazzaville"
 
 #: data/data.cpp:95
-#, fuzzy
 msgid "Bridgetown"
-msgstr "Najjasnejší"
+msgstr "Bridgetown"
 
 #: data/data.cpp:96
 msgid "Brussels"
-msgstr ""
+msgstr "Brusel"
 
 #: data/data.cpp:97
-#, fuzzy
 msgid "Bucharest"
-msgstr "Hranice súhvezdí"
+msgstr "Bukurešť"
 
 #: data/data.cpp:98
-#, fuzzy
 msgid "Budapest"
-msgstr "Hranice súhvezdí"
+msgstr "Budapešť"
 
 #: data/data.cpp:99
 msgid "Buenos Aires"
-msgstr ""
+msgstr "Buenos Aires"
 
 #: data/data.cpp:100
 msgid "Bujumbura"
-msgstr ""
+msgstr "Bujumbura"
 
 #: data/data.cpp:101
-#, fuzzy
 msgid "Cairo"
-msgstr "Cháron"
+msgstr "Káhira"
 
 #: data/data.cpp:102
-#, fuzzy
 msgid "Canberra"
-msgstr "Terra (Kontinent)"
+msgstr "Canberra"
 
 #: data/data.cpp:103
 msgid "Cape Town"
-msgstr ""
+msgstr "Kapské Mesto"
 
 #: data/data.cpp:104
 msgid "Caracas"
-msgstr ""
+msgstr "Caracas"
 
 #: data/data.cpp:105
-#, fuzzy
 msgid "Castries"
-msgstr "Mestá"
+msgstr "Castries"
 
 #: data/data.cpp:106
-#, fuzzy
 msgid "Cayenne"
-msgstr "Zrušiť"
+msgstr "Cayenne"
 
 #: data/data.cpp:107
 msgid "Charlotte Amalie"
-msgstr ""
+msgstr "Charlotte Amalie"
 
 #: data/data.cpp:108
-#, fuzzy
 msgid "Chisinau"
-msgstr "Chris Laurel"
+msgstr "Kišinev"
 
 #: data/data.cpp:109
 msgid "Colombo"
-msgstr ""
+msgstr "Colombo"
 
 #: data/data.cpp:110
 msgid "Conakry"
-msgstr ""
+msgstr "Konakry"
 
 #: data/data.cpp:111
 msgid "Copenhagen"
-msgstr ""
+msgstr "Kodaň"
 
 #: data/data.cpp:112
 msgid "Cotonou"
-msgstr ""
+msgstr "Cotonou"
 
 #: data/data.cpp:113
 msgid "Dakar"
-msgstr ""
+msgstr "Dakar"
 
 #: data/data.cpp:114
 msgid "Damascus"
-msgstr ""
+msgstr "Damask"
 
 #: data/data.cpp:115
 msgid "Dar es Salaam"
-msgstr ""
+msgstr "Dar es Salaam"
 
 #: data/data.cpp:116
 msgid "Dhaka"
-msgstr ""
+msgstr "Dhaka"
 
 #: data/data.cpp:117
 msgid "Dili"
-msgstr ""
+msgstr "Dili"
 
 #: data/data.cpp:118
 msgid "Djibouti"
-msgstr ""
+msgstr "Džibuti"
 
 #: data/data.cpp:119
 msgid "Doha"
-msgstr ""
+msgstr "Doha"
 
 #: data/data.cpp:120
-#, fuzzy
 msgid "Douglas"
-msgstr "Guľové hviezdokopy"
+msgstr "Douglas"
 
 #: data/data.cpp:121
 msgid "Dublin"
-msgstr ""
+msgstr "Dublin"
 
 #: data/data.cpp:122
-#, fuzzy
 msgid "Dushanbe"
-msgstr "Vzdialenosť"
+msgstr "Dušanbe"
 
 #: data/data.cpp:123
 msgid "Fongafale"
-msgstr ""
+msgstr "Fongafale"
 
 #: data/data.cpp:124
 msgid "Fort-de-France"
-msgstr ""
+msgstr "Fort-de-France"
 
 #: data/data.cpp:125
 msgid "Freetown"
-msgstr ""
+msgstr "Freetown"
 
 #: data/data.cpp:126
 msgid "Gaborone"
-msgstr ""
+msgstr "Gaborone"
 
 #: data/data.cpp:127
-#, fuzzy
 msgid "George Town"
-msgstr "Prejsť"
+msgstr "George Town"
 
 #: data/data.cpp:128
 msgid "Georgetown"
-msgstr ""
+msgstr "Georgetown"
 
 #: data/data.cpp:129
 msgid "Gibraltar"
-msgstr ""
+msgstr "Gibraltár"
 
 #: data/data.cpp:130
 msgid "Grand Turk"
-msgstr ""
+msgstr "Grand Turk"
 
 #: data/data.cpp:131
 msgid "Guatemala"
-msgstr ""
+msgstr "Guatemala"
 
 #: data/data.cpp:132
 msgid "Hagatna"
-msgstr ""
+msgstr "Hagatna"
 
 #: data/data.cpp:133
 msgid "The Hague"
-msgstr ""
+msgstr "Haag"
 
 #: data/data.cpp:134
 msgid "Hamilton"
-msgstr ""
+msgstr "Hamilton"
 
 #: data/data.cpp:135
 msgid "Hanoi"
-msgstr ""
+msgstr "Hanoj"
 
 #: data/data.cpp:136
-#, fuzzy
 msgid "Harare"
-msgstr "Mare (More)"
+msgstr "Harare"
 
 #: data/data.cpp:137
 msgid "Havana"
-msgstr ""
+msgstr "Havana"
 
 #: data/data.cpp:138
 msgid "Helsinki"
-msgstr ""
+msgstr "Helsinki"
 
 #: data/data.cpp:139
 msgid "Honiara"
-msgstr ""
+msgstr "Honiara"
 
 #: data/data.cpp:140
 msgid "Islamabad"
-msgstr ""
+msgstr "Islamabad"
 
 #: data/data.cpp:141
 msgid "Jakarta"
-msgstr ""
+msgstr "Džakarta"
 
 #: data/data.cpp:142
 msgid "Jamestown"
-msgstr ""
+msgstr "Jamestown"
 
 #: data/data.cpp:143
 msgid "Jerusalem"
-msgstr ""
+msgstr "Jeruzalem"
 
 #: data/data.cpp:144
 msgid "Kabul"
-msgstr ""
+msgstr "Kábul"
 
 #: data/data.cpp:145
 msgid "Kampala"
-msgstr ""
+msgstr "Kampala"
 
 #: data/data.cpp:146
 msgid "Kathmandu"
-msgstr ""
+msgstr "Katmandu"
 
 #: data/data.cpp:147
 msgid "Khartoum"
-msgstr ""
+msgstr "Kartum"
 
 #: data/data.cpp:148
 msgid "Kiev"
-msgstr ""
+msgstr "Kijev"
 
 #: data/data.cpp:149
 msgid "Kigali"
-msgstr ""
+msgstr "Kigali"
 
-#: data/data.cpp:150 data/data.cpp:151
+#: data/data.cpp:150
+#: data/data.cpp:151
 msgid "Kingston"
-msgstr ""
+msgstr "Kingston"
 
 #: data/data.cpp:152
 msgid "Kingstown"
-msgstr ""
+msgstr "Kingstown"
 
 #: data/data.cpp:153
 msgid "Kinshasa"
-msgstr ""
+msgstr "Kinshasa"
 
 #: data/data.cpp:154
 msgid "Koror"
-msgstr ""
+msgstr "Koror"
 
 #: data/data.cpp:155
 msgid "Kuala Lumpur"
-msgstr ""
+msgstr "Kuala Lumpur"
 
 #: data/data.cpp:156
 msgid "Kuwait"
-msgstr ""
+msgstr "Kuvajt"
 
 #: data/data.cpp:157
 msgid "La'youn"
-msgstr ""
+msgstr "La'youn"
 
 #: data/data.cpp:158
 msgid "La Paz"
-msgstr ""
+msgstr "La Paz"
 
 #: data/data.cpp:159
 msgid "Libreville"
-msgstr ""
+msgstr "Libreville"
 
 #: data/data.cpp:160
-#, fuzzy
 msgid "Lilongwe"
-msgstr "Dione"
+msgstr "Lilongwe"
 
 #: data/data.cpp:161
-#, fuzzy
 msgid "Lima"
-msgstr "Mimas"
+msgstr "Lima"
 
 #: data/data.cpp:162
 msgid "Lisbon"
-msgstr ""
+msgstr "Lisabon"
 
 #: data/data.cpp:163
 msgid "Ljubljana"
-msgstr ""
+msgstr "Ljubljana"
 
 #: data/data.cpp:164
 msgid "Lobamba"
-msgstr ""
+msgstr "Lobamba"
 
 #: data/data.cpp:165
-#, fuzzy
 msgid "Lome"
-msgstr "Domov"
+msgstr "Lome"
 
 #: data/data.cpp:166
-#, fuzzy
 msgid "London"
-msgstr "Mesiac"
+msgstr "Londýn"
 
 #: data/data.cpp:167
 msgid "Longyearbyen"
-msgstr ""
+msgstr "Longyearbyen"
 
 #: data/data.cpp:168
-#, fuzzy
 msgid "Luanda"
-msgstr "Pandora"
+msgstr "Luanda"
 
 #: data/data.cpp:169
 msgid "Lusaka"
-msgstr ""
+msgstr "Lusaka"
 
 #: data/data.cpp:170
 msgid "Luxembourg"
-msgstr ""
+msgstr "Luxemburg"
 
 #: data/data.cpp:171
-#, fuzzy
 msgid "Madrid"
-msgstr "Mar"
+msgstr "Madrid"
 
 #: data/data.cpp:172
-#, fuzzy
 msgid "Majuro"
-msgstr "Mar"
+msgstr "Majuro"
 
 #: data/data.cpp:173
 msgid "Malabo"
-msgstr ""
+msgstr "Malabo"
 
 #: data/data.cpp:174
-#, fuzzy
 msgid "Male"
-msgstr "Mare (More)"
+msgstr "Male"
 
 #: data/data.cpp:175
 msgid "Mamoutzou"
-msgstr ""
+msgstr "Mamoutzou"
 
 #: data/data.cpp:176
 msgid "Managua"
-msgstr ""
+msgstr "Managua"
 
 #: data/data.cpp:177
-#, fuzzy
 msgid "Manama"
-msgstr "Miranda"
+msgstr "Manama"
 
 #: data/data.cpp:178
-#, fuzzy
 msgid "Manila"
-msgstr "Miranda"
+msgstr "Manila"
 
 #: data/data.cpp:179
 msgid "Maputo"
-msgstr ""
+msgstr "Maputo"
 
 #: data/data.cpp:180
-#, fuzzy
 msgid "Maseru"
-msgstr "Mar"
+msgstr "Maseru"
 
 #: data/data.cpp:181
 msgid "Mata-Utu"
-msgstr ""
+msgstr "Mata-Utu"
 
 #: data/data.cpp:182
 msgid "Mbabane"
-msgstr ""
+msgstr "Mbabane"
 
 #: data/data.cpp:183
 msgid "Mexico City"
-msgstr ""
+msgstr "Mexico City"
 
 #: data/data.cpp:184
-#, fuzzy
 msgid "Minsk"
-msgstr "Mons (Hora)"
+msgstr "Minsk"
 
 #: data/data.cpp:185
 msgid "Mogadishu"
-msgstr ""
+msgstr "Mogadišo"
 
 #: data/data.cpp:186
-#, fuzzy
 msgid "Monaco"
-msgstr "Mesiac"
+msgstr "Monako"
 
 #: data/data.cpp:187
 msgid "Monrovia"
-msgstr ""
+msgstr "Monrovia"
 
 #: data/data.cpp:188
 msgid "Montevideo"
-msgstr ""
+msgstr "Montevideo"
 
 #: data/data.cpp:189
-#, fuzzy
 msgid "Moroni"
-msgstr "Mesiac"
+msgstr "Moroni"
 
 #: data/data.cpp:190
-#, fuzzy
 msgid "Moscow"
-msgstr "Mesiac"
+msgstr "Moskva"
 
 #: data/data.cpp:191
 msgid "Muscat"
-msgstr ""
+msgstr "Muškat"
 
 #: data/data.cpp:192
 msgid "Nairobi"
-msgstr ""
+msgstr "Nairobi"
 
 #: data/data.cpp:193
-#, fuzzy
 msgid "Nassau"
-msgstr "Larissa"
+msgstr "Nassau"
 
 #: data/data.cpp:194
-#, fuzzy
 msgid "N'Djamena"
-msgstr "Meno"
+msgstr "N'Djamena"
 
 #: data/data.cpp:195
 msgid "New Delhi"
-msgstr ""
+msgstr "New Delhi"
 
 #: data/data.cpp:196
-#, fuzzy
 msgid "Niamey"
-msgstr "Meno"
+msgstr "Niamey"
 
 #: data/data.cpp:197
 msgid "Nicosia"
-msgstr ""
+msgstr "Nicosia"
 
 #: data/data.cpp:198
 msgid "Nouakchott"
-msgstr ""
+msgstr "Nouakchott"
 
 #: data/data.cpp:199
-#, fuzzy
 msgid "Noumea"
-msgstr "Normálne"
+msgstr "Nouméa"
 
 #: data/data.cpp:200
 msgid "Nuku'alofa"
-msgstr ""
+msgstr "Nuku'alofa"
 
 #: data/data.cpp:201
 msgid "Nuuk"
-msgstr ""
+msgstr "Nuuk"
 
 #: data/data.cpp:202
 msgid "Oranjestad"
-msgstr ""
+msgstr "Oranjestad"
 
 #: data/data.cpp:203
 msgid "Oslo"
-msgstr ""
+msgstr "Oslo"
 
 #: data/data.cpp:204
 msgid "Ottawa"
-msgstr ""
+msgstr "Ottawa"
 
 #: data/data.cpp:205
 msgid "Ouagadougou"
-msgstr ""
+msgstr "Ouagadougou"
 
 #: data/data.cpp:206
 msgid "Pago Pago"
-msgstr ""
+msgstr "Pago Pago"
 
 #: data/data.cpp:207
 msgid "Palikir"
-msgstr ""
+msgstr "Palikir"
 
 #: data/data.cpp:208
-#, fuzzy
 msgid "Panama"
-msgstr "Pandora"
+msgstr "Panama"
 
 #: data/data.cpp:209
-#, fuzzy
 msgid "Papeete"
-msgstr "Planéta"
+msgstr "Papeete"
 
 #: data/data.cpp:210
 msgid "Paramaribo"
-msgstr ""
+msgstr "Paramaribo"
 
 #: data/data.cpp:211
-#, fuzzy
 msgid "Paris"
-msgstr "Mars"
+msgstr "Paríž"
 
 #: data/data.cpp:212
 msgid "Phnom Penh"
-msgstr ""
+msgstr "Phnom Pénh"
 
 #: data/data.cpp:213
-#, fuzzy
 msgid "Plymouth"
-msgstr "Pluto"
+msgstr "Plymouth"
 
 #: data/data.cpp:214
 msgid "Port Louis"
-msgstr ""
+msgstr "Port Louis"
 
 #: data/data.cpp:215
 msgid "Port Moresby"
-msgstr ""
+msgstr "Port Moresby"
 
 #: data/data.cpp:216
 msgid "Port-au-Prince"
-msgstr ""
+msgstr "Port-au-Prince"
 
 #: data/data.cpp:217
 msgid "Port-of-Spain"
-msgstr ""
+msgstr "Port-of-Spain"
 
 #: data/data.cpp:218
 msgid "Porto-Novo"
-msgstr ""
+msgstr "Porto-Novo"
 
 #: data/data.cpp:219
 msgid "Port-Vila"
-msgstr ""
+msgstr "Port-Vila"
 
 #: data/data.cpp:220
 msgid "Prague"
-msgstr ""
+msgstr "Praha"
 
 #: data/data.cpp:221
-#, fuzzy
 msgid "Praia"
-msgstr "polomerov"
+msgstr "Praia"
 
 #: data/data.cpp:222
 msgid "Pretoria"
-msgstr ""
+msgstr "Pretoria"
 
 #: data/data.cpp:223
 msgid "P'yongyang"
-msgstr ""
+msgstr "P'yongyang"
 
 #: data/data.cpp:224
-#, fuzzy
 msgid "Quito"
-msgstr "Pluto"
+msgstr "Quito"
 
 #: data/data.cpp:225
 msgid "Rabat"
-msgstr ""
+msgstr "Rabat"
 
 #: data/data.cpp:226
 msgid "Rangoon"
-msgstr ""
+msgstr "Rangún"
 
 #: data/data.cpp:227
 msgid "Reykjavik"
-msgstr ""
+msgstr "Reykjavik"
 
 #: data/data.cpp:228
 msgid "Riga"
-msgstr ""
+msgstr "Riga"
 
 #: data/data.cpp:229
 msgid "Riyadh"
-msgstr ""
+msgstr "Rijad"
 
 #: data/data.cpp:230
 msgid "Road Town"
-msgstr ""
+msgstr "Road Town"
 
 #: data/data.cpp:231
-#, fuzzy
 msgid "Rome"
-msgstr "Domov"
+msgstr "Rím"
 
 #: data/data.cpp:232
-#, fuzzy
 msgid "Roseau"
-msgstr "Rslnka"
+msgstr "Roseau"
 
 #: data/data.cpp:233
 msgid "Saint George's"
-msgstr ""
+msgstr "Saint George's"
 
 #: data/data.cpp:234
-#, fuzzy
 msgid "Saint Helier"
-msgstr "Satelit"
+msgstr "Saint Helier"
 
 #: data/data.cpp:235
 msgid "Saint John's"
-msgstr ""
+msgstr "Saint John's"
 
 #: data/data.cpp:236
 msgid "Saint Peter Port"
-msgstr ""
+msgstr "Saint Peter Port"
 
 #: data/data.cpp:237
 msgid "Saint-Denis"
-msgstr ""
+msgstr "Saint-Denis"
 
 #: data/data.cpp:238
 msgid "Saint-Pierre"
-msgstr ""
+msgstr "Saint-Pierre"
 
 #: data/data.cpp:239
 msgid "Saipan"
-msgstr ""
+msgstr "Saipan"
 
 #: data/data.cpp:240
-#, fuzzy
 msgid "San Jose"
-msgstr "Hviezdny katalóg"
+msgstr "San Jose"
 
 #: data/data.cpp:241
-#, fuzzy
 msgid "San Juan"
-msgstr "Da Woon Jung"
+msgstr "San Juan"
 
 #: data/data.cpp:242
 msgid "San Marino"
-msgstr ""
+msgstr "San Maríno"
 
 #: data/data.cpp:243
 msgid "San Salvador"
-msgstr ""
+msgstr "San Salvador"
 
 #: data/data.cpp:244
 msgid "Sanaa"
-msgstr ""
+msgstr "Sanaa"
 
 #: data/data.cpp:245
 msgid "Santiago"
-msgstr ""
+msgstr "Santiago"
 
 #: data/data.cpp:246
 msgid "Santo Domingo"
-msgstr ""
+msgstr "Santo Domingo"
 
 #: data/data.cpp:247
-#, fuzzy
 msgid "Sao Tome"
-msgstr "Prejsť"
+msgstr "Sao Tome"
 
 #: data/data.cpp:248
 msgid "Sarajevo"
-msgstr ""
+msgstr "Sarajevo"
 
 #: data/data.cpp:249
-#, fuzzy
 msgid "Seoul"
-msgstr "Juh"
+msgstr "Soul"
 
 #: data/data.cpp:250
 msgid "The Settlement"
-msgstr ""
+msgstr "The Settlement"
 
 #: data/data.cpp:251
 msgid "Singapore"
-msgstr ""
+msgstr "Singapur"
 
 #: data/data.cpp:252
 msgid "Skopje"
-msgstr ""
+msgstr "Skopje"
 
 #: data/data.cpp:253
 msgid "Sofia"
-msgstr ""
+msgstr "Sofia"
 
 #: data/data.cpp:254
 msgid "Sri Jayewardenepura Kotte"
-msgstr ""
+msgstr "Srí Jayewardenepura Kotte"
 
 #: data/data.cpp:255
 msgid "Stanley"
-msgstr ""
+msgstr "Stanley"
 
 #: data/data.cpp:256
 msgid "Stockholm"
-msgstr ""
+msgstr "Stockholm"
 
 #: data/data.cpp:257
-#, fuzzy
 msgid "Sucre"
-msgstr "Štvorec"
+msgstr "Sucre"
 
 #: data/data.cpp:258
-#, fuzzy
 msgid "Suva"
-msgstr "Štvorec"
+msgstr "Suva"
 
 #: data/data.cpp:259
-#, fuzzy
 msgid "Taipei"
-msgstr "Typ"
+msgstr "Tchaj-pej"
 
 #: data/data.cpp:260
-#, fuzzy
 msgid "Tallinn"
-msgstr "Vallis (Údolie)"
+msgstr "Tallinn"
 
 #: data/data.cpp:261
 msgid "Tarawa"
-msgstr ""
+msgstr "Tarawa"
 
 #: data/data.cpp:262
 msgid "Tashkent"
-msgstr ""
+msgstr "Taškent"
 
 #: data/data.cpp:263
 msgid "T'bilisi"
-msgstr ""
+msgstr "T'bilisi"
 
 #: data/data.cpp:264
 msgid "Tegucigalpa"
-msgstr ""
+msgstr "Tegucigalpa"
 
 #: data/data.cpp:265
-#, fuzzy
 msgid "Tehran"
-msgstr "Terra (Kontinent)"
+msgstr "Teherán"
 
 #: data/data.cpp:266
 msgid "Tel Aviv"
-msgstr ""
+msgstr "Tel Aviv"
 
 #: data/data.cpp:267
 msgid "Thimphu"
-msgstr ""
+msgstr "Thimphu"
 
 #: data/data.cpp:268
-#, fuzzy
 msgid "Tirana"
-msgstr "Miranda"
+msgstr "Tirana"
 
 #: data/data.cpp:269
 msgid "Tokyo"
-msgstr ""
+msgstr "Tokyo"
 
 #: data/data.cpp:270
 msgid "Torshavn"
-msgstr ""
+msgstr "Torshavn"
 
 #: data/data.cpp:271
-#, fuzzy
 msgid "Tripoli"
-msgstr "Triton"
+msgstr "Tripolis"
 
 #: data/data.cpp:272
 msgid "Tunis"
-msgstr ""
+msgstr "Tunis"
 
 #: data/data.cpp:273
 msgid "Ulaanbaatar"
-msgstr ""
+msgstr "Ulanbátar"
 
 #: data/data.cpp:274
 msgid "Vaduz"
-msgstr ""
+msgstr "Vaduz"
 
 #: data/data.cpp:275
 msgid "Valletta"
-msgstr ""
+msgstr "Valletta"
 
 #: data/data.cpp:276
-#, fuzzy
 msgid "The Valley"
-msgstr "Valles (Údolia)"
+msgstr "The Valley"
 
 #: data/data.cpp:277
 msgid "Vatican City"
-msgstr ""
+msgstr "Vatikán"
 
-#: data/data.cpp:278 data/data.cpp:279
+#: data/data.cpp:278
+#: data/data.cpp:279
 msgid "Victoria"
-msgstr ""
+msgstr "Victoria"
 
 #: data/data.cpp:280
 msgid "Vienna"
-msgstr ""
+msgstr "Viedeň"
 
 #: data/data.cpp:281
 msgid "Vientiane"
-msgstr ""
+msgstr "Vientiane"
 
 #: data/data.cpp:282
-#, fuzzy
 msgid "Vilnius"
-msgstr "Venuša"
+msgstr "Vilnius"
 
 #: data/data.cpp:283
-#, fuzzy
 msgid "Warsaw"
-msgstr "Larissa"
+msgstr "Varšava"
 
 #: data/data.cpp:284
 msgid "Washington D.C."
-msgstr ""
+msgstr "Washington D.C."
 
 #: data/data.cpp:285
 msgid "Wellington"
-msgstr ""
+msgstr "Wellington"
 
 #: data/data.cpp:286
 msgid "West Island"
-msgstr ""
+msgstr "West Island"
 
 #: data/data.cpp:287
 msgid "Willemstad"
-msgstr ""
+msgstr "Willemstad"
 
 #: data/data.cpp:288
 msgid "Windhoek"
-msgstr ""
+msgstr "Windhoek"
 
 #: data/data.cpp:289
 msgid "Yamoussoukro"
-msgstr ""
+msgstr "Yamoussoukro"
 
 #: data/data.cpp:290
 msgid "Yaounde"
-msgstr ""
+msgstr "Yaounde"
 
 #: data/data.cpp:291
 msgid "Yaren District"
-msgstr ""
+msgstr "Yaren District"
 
 #: data/data.cpp:292
 msgid "Yerevan"
-msgstr ""
+msgstr "Jerevan"
 
 #: data/data.cpp:293
-#, fuzzy
 msgid "Zagreb"
-msgstr "Mare (More)"
+msgstr "Záhreb"
 
 #: data/data.cpp:294
 msgid "Milky Way"
@@ -3415,810 +3676,675 @@ msgstr "VMM"
 msgid "Solar System Barycenter"
 msgstr "Barycentrum Slnečnej sústavy"
 
-#: src/celestia/win32/res/resource_strings.cpp:1
+#: src/celestia/res/resource_strings.cpp:1
 msgid "&File"
 msgstr "Súbor"
 
-#: src/celestia/win32/res/resource_strings.cpp:2
+#: src/celestia/res/resource_strings.cpp:2
 msgid "&Open Script..."
-msgstr "Otvoriť skript..."
+msgstr "&Otvoriť skript..."
 
-#: src/celestia/win32/res/resource_strings.cpp:3
+#: src/celestia/res/resource_strings.cpp:3
 msgid "Scripts"
 msgstr "Skripty"
 
-#: src/celestia/win32/res/resource_strings.cpp:4
+# "Placeholder" is displayed in the File > Scripts Menu when no script
+# is available in the "scripts/" folder. You don't really have to translate it.
+# E.g., we decided to keep it untranslated in the French version.
+#: src/celestia/res/resource_strings.cpp:4
 msgid "Placeholder"
-msgstr ""
+msgstr "Placeholder"
 
-#: src/celestia/win32/res/resource_strings.cpp:5
+#: src/celestia/res/resource_strings.cpp:5
 msgid "Capture &Image...\tF10"
 msgstr "Snímok obrazovky...\tF10"
 
-#: src/celestia/win32/res/resource_strings.cpp:6
+#: src/celestia/res/resource_strings.cpp:6
 msgid "Capture &Movie...\tShift+F10"
 msgstr "Nahrať video...\tShift+F10"
 
-#: src/celestia/win32/res/resource_strings.cpp:7
+#: src/celestia/res/resource_strings.cpp:7
 msgid "E&xit"
 msgstr "Ukončiť"
 
-#: src/celestia/win32/res/resource_strings.cpp:8
-msgid "&Navigation"
-msgstr "&Navigácia"
-
-#: src/celestia/win32/res/resource_strings.cpp:9
+#: src/celestia/res/resource_strings.cpp:9
 msgid "Select &Sol\tH"
 msgstr "Vybrať &Slnko\tH"
 
-#: src/celestia/win32/res/resource_strings.cpp:10
+#: src/celestia/res/resource_strings.cpp:10
 msgid "Tour G&uide..."
 msgstr "Sprievodca..."
 
-#: src/celestia/win32/res/resource_strings.cpp:11
+#: src/celestia/res/resource_strings.cpp:11
 msgid "Select &Object..."
 msgstr "Vybrať &objekt..."
 
-#: src/celestia/win32/res/resource_strings.cpp:12
+#: src/celestia/res/resource_strings.cpp:12
 msgid "Goto Object..."
 msgstr "Prejsť k objektu..."
 
-#: src/celestia/win32/res/resource_strings.cpp:13
+#: src/celestia/res/resource_strings.cpp:13
 msgid "&Center Selection\tC"
-msgstr ""
+msgstr "&Vycentrovať na výber\tC"
 
-#: src/celestia/win32/res/resource_strings.cpp:14
+#: src/celestia/res/resource_strings.cpp:14
 msgid "&Go to Selection\tG"
-msgstr ""
+msgstr "&Prejsť k výberu\tG"
 
-#: src/celestia/win32/res/resource_strings.cpp:15
+#: src/celestia/res/resource_strings.cpp:15
 msgid "&Follow Selection\tF"
-msgstr ""
+msgstr "&Nasledovať výber\tF"
 
-#: src/celestia/win32/res/resource_strings.cpp:16
+#: src/celestia/res/resource_strings.cpp:16
 msgid "S&ync Orbit Selection\tY"
-msgstr ""
+msgstr "S&ynchronizovať obežnú dráhu s výberom\tY"
 
-#: src/celestia/win32/res/resource_strings.cpp:17
+#: src/celestia/res/resource_strings.cpp:17
 msgid "&Track Selection\tT"
-msgstr ""
+msgstr "&Sledovať výber\tT"
 
-#: src/celestia/win32/res/resource_strings.cpp:18
+#: src/celestia/res/resource_strings.cpp:18
 msgid "Solar System &Browser..."
-msgstr "Katalóg Slnečnej sústavy"
+msgstr "Katalóg Slnečnej sústavy..."
 
-#: src/celestia/win32/res/resource_strings.cpp:19
+#: src/celestia/res/resource_strings.cpp:19
 msgid "Star B&rowser..."
-msgstr "Hviezdny katalóg"
+msgstr "Hviezdny katalóg..."
 
-#: src/celestia/win32/res/resource_strings.cpp:20
+#: src/celestia/res/resource_strings.cpp:20
 msgid "&Eclipse Finder"
-msgstr "Vyhľadať zatmenia"
+msgstr "Vyhľadávač zatmení"
 
-#: src/celestia/win32/res/resource_strings.cpp:21
+#: src/celestia/res/resource_strings.cpp:21
 msgid "&Time"
 msgstr "Čas"
 
-#: src/celestia/win32/res/resource_strings.cpp:22
+#: src/celestia/res/resource_strings.cpp:22
 msgid "10x &Faster\tL"
 msgstr "10x Rýchlejšie\tL"
 
-#: src/celestia/win32/res/resource_strings.cpp:23
+#: src/celestia/res/resource_strings.cpp:23
 msgid "10x &Slower\tK"
-msgstr "10x &Pomalšie\tK"
+msgstr "10x Pomalšie\tK"
 
-#: src/celestia/win32/res/resource_strings.cpp:24
+#: src/celestia/res/resource_strings.cpp:24
 msgid "Free&ze\tSpace"
 msgstr "Pozastaviť\tMedzera"
 
-#: src/celestia/win32/res/resource_strings.cpp:25
+#: src/celestia/res/resource_strings.cpp:25
 msgid "&Real Time\t\\"
-msgstr "&Reálny čas\t\\"
+msgstr "&Skutočný čas\t\\"
 
-#: src/celestia/win32/res/resource_strings.cpp:26
+#: src/celestia/res/resource_strings.cpp:26
 msgid "Re&verse Time\tJ"
 msgstr "Otočiť čas\tJ"
 
-#: src/celestia/win32/res/resource_strings.cpp:27
+#: src/celestia/res/resource_strings.cpp:27
 msgid "Set &Time..."
 msgstr "Nastaviť čas..."
 
-#: src/celestia/win32/res/resource_strings.cpp:28
+#: src/celestia/res/resource_strings.cpp:28
 msgid "Show Local Time"
-msgstr "Zobraziť lokálny čas"
+msgstr "Zobraziť miestny čas"
 
-#: src/celestia/win32/res/resource_strings.cpp:29
+#: src/celestia/res/resource_strings.cpp:29
 msgid "&Render"
-msgstr ""
+msgstr "Vykresliť"
 
-#: src/celestia/win32/res/resource_strings.cpp:30
+#: src/celestia/res/resource_strings.cpp:30
 msgid "Select Display Mode..."
-msgstr ""
+msgstr "Zvoliť režim zobrazenia..."
 
-#: src/celestia/win32/res/resource_strings.cpp:31
+#: src/celestia/res/resource_strings.cpp:31
 msgid "Toggle Full Screen\tAlt+Enter"
-msgstr ""
+msgstr "Prepnúť režim celej obrazovky\tAlt+Enter"
 
-#: src/celestia/win32/res/resource_strings.cpp:32
+#: src/celestia/res/resource_strings.cpp:32
 msgid "View Options..."
-msgstr "Nastavenia zobrazenia..."
+msgstr "Možnosti zobrazenia..."
 
-#: src/celestia/win32/res/resource_strings.cpp:33
+# miesta
+#: src/celestia/res/resource_strings.cpp:33
 msgid "Locations..."
 msgstr "Lokality..."
 
-#: src/celestia/win32/res/resource_strings.cpp:34
+#: src/celestia/res/resource_strings.cpp:34
 msgid "More Stars Visible\t]"
-msgstr ""
+msgstr "Zobraziť viac hviezd\t]"
 
-#: src/celestia/win32/res/resource_strings.cpp:35
+#: src/celestia/res/resource_strings.cpp:35
 msgid "Fewer Stars Visible\t["
-msgstr ""
+msgstr "Zobraziť menej hviezd\t["
 
-#: src/celestia/win32/res/resource_strings.cpp:36
+#: src/celestia/res/resource_strings.cpp:36
 msgid "Auto Magnitude\tCtrl+Y"
-msgstr ""
+msgstr "Automatická hviezdna jasnosť\tCtrl+Y"
 
-#: src/celestia/win32/res/resource_strings.cpp:37
+#: src/celestia/res/resource_strings.cpp:37
 msgid "Star St&yle"
-msgstr ""
+msgstr "Tvar &hviezd"
 
-#: src/celestia/win32/res/resource_strings.cpp:38
+#: src/celestia/res/resource_strings.cpp:38
 msgid "&Fuzzy Points"
-msgstr ""
+msgstr "N&eostré body"
 
-#: src/celestia/win32/res/resource_strings.cpp:39
+#: src/celestia/res/resource_strings.cpp:39
 msgid "&Points"
-msgstr ""
+msgstr "&Body"
 
-#: src/celestia/win32/res/resource_strings.cpp:40
+#: src/celestia/res/resource_strings.cpp:40
 msgid "Scaled &Discs"
-msgstr ""
+msgstr "&Kotúče v mierke"
 
-#: src/celestia/win32/res/resource_strings.cpp:41
+#: src/celestia/res/resource_strings.cpp:41
 msgid "&Ambient Light"
-msgstr "Okolité svetlo"
+msgstr "&Rozptýlené svetlo"
 
-#: src/celestia/win32/res/resource_strings.cpp:42
+#: src/celestia/res/resource_strings.cpp:42
 msgid "&None"
-msgstr "Žiadne"
+msgstr "&Žiadne"
 
-#: src/celestia/win32/res/resource_strings.cpp:43
-#: src/celestia/win32/res/resource_strings.cpp:46
+#: src/celestia/res/resource_strings.cpp:43
+#: src/celestia/res/resource_strings.cpp:46
 msgid "&Low"
-msgstr "Nízke"
+msgstr "&Nízke"
 
-#: src/celestia/win32/res/resource_strings.cpp:44
-#: src/celestia/win32/res/resource_strings.cpp:47
+#: src/celestia/res/resource_strings.cpp:44
+#: src/celestia/res/resource_strings.cpp:47
 msgid "&Medium"
-msgstr "Stredné"
+msgstr "&Stredné"
 
-#: src/celestia/win32/res/resource_strings.cpp:45
+#: src/celestia/res/resource_strings.cpp:45
 msgid "&Texture Resolution"
 msgstr "Rozlíšenie &textúr"
 
-#: src/celestia/win32/res/resource_strings.cpp:48
+#: src/celestia/res/resource_strings.cpp:48
 msgid "&High"
-msgstr "Vysoké"
+msgstr "&Vysoké"
 
-#: src/celestia/win32/res/resource_strings.cpp:49
+#: src/celestia/res/resource_strings.cpp:49
 msgid "Antialiasing\tCtrl+X"
-msgstr ""
+msgstr "Vyhladzovanie\tCtrl+X"
 
-#: src/celestia/win32/res/resource_strings.cpp:50
+#: src/celestia/res/resource_strings.cpp:50
 msgid "&View"
 msgstr "Pohľad"
 
-#: src/celestia/win32/res/resource_strings.cpp:51
+#: src/celestia/res/resource_strings.cpp:51
 msgid "Split &Horizontally\tCtrl+R"
-msgstr ""
+msgstr "Rozdeliť vodorovne\tCtrl+R"
 
-#: src/celestia/win32/res/resource_strings.cpp:52
+#: src/celestia/res/resource_strings.cpp:52
 msgid "Split &Vertically\tCtrl+U"
-msgstr ""
+msgstr "Rozdeliť zvislo\tCtrl+U"
 
-#: src/celestia/win32/res/resource_strings.cpp:53
+#: src/celestia/res/resource_strings.cpp:53
 msgid "&Delete Active View\tDEL"
-msgstr "Vymazať aktívny pohľa&d\tDEL"
+msgstr "Zmazať aktívny pohľa&d\tDEL"
 
-#: src/celestia/win32/res/resource_strings.cpp:54
+#: src/celestia/res/resource_strings.cpp:54
 msgid "&Single View\tCtrl+D"
 msgstr "Jediný pohľad\tCtrl+D"
 
-#: src/celestia/win32/res/resource_strings.cpp:55
-#, fuzzy
+#: src/celestia/res/resource_strings.cpp:55
 msgid "Show &Frames"
-msgstr "Ukáž mriežku"
+msgstr "Zobraziť ohraničenia pohľadov"
 
-#: src/celestia/win32/res/resource_strings.cpp:56
+#: src/celestia/res/resource_strings.cpp:56
 msgid "Synchronize &Time"
 msgstr "Synchronizovať čas"
 
-#: src/celestia/win32/res/resource_strings.cpp:57
+#: src/celestia/res/resource_strings.cpp:57
 msgid "&Bookmarks"
 msgstr "Záložky"
 
-#: src/celestia/win32/res/resource_strings.cpp:58
+#: src/celestia/res/resource_strings.cpp:58
 msgid "&Add Bookmarks..."
 msgstr "Prid&ať záložku"
 
-#: src/celestia/win32/res/resource_strings.cpp:59
+#: src/celestia/res/resource_strings.cpp:59
 msgid "&Organize Bookmarks..."
 msgstr "&Organizovať záložky"
 
-#: src/celestia/win32/res/resource_strings.cpp:60
+#: src/celestia/res/resource_strings.cpp:60
 msgid "&Help"
 msgstr "Pomoc"
 
-#: src/celestia/win32/res/resource_strings.cpp:61
+#: src/celestia/res/resource_strings.cpp:61
 msgid "Run &Demo"
 msgstr "Spustiť &Demo"
 
-#: src/celestia/win32/res/resource_strings.cpp:62
+#: src/celestia/res/resource_strings.cpp:62
+msgid "User &Guide"
+msgstr "Sprievodca"
+
+#: src/celestia/res/resource_strings.cpp:63
 msgid "&Controls"
 msgstr "&Ovládanie"
 
-#: src/celestia/win32/res/resource_strings.cpp:63
+#: src/celestia/res/resource_strings.cpp:64
 msgid "&OpenGL Info"
-msgstr "Open&GL Info"
+msgstr "Informácie o Open&GL"
 
-#: src/celestia/win32/res/resource_strings.cpp:64
+#: src/celestia/res/resource_strings.cpp:65
 msgid "&License"
 msgstr "&Licencia"
 
-#: src/celestia/win32/res/resource_strings.cpp:65
+#: src/celestia/res/resource_strings.cpp:66
 msgid "&About Celestia"
 msgstr "&O Celestii"
 
-#: src/celestia/win32/res/resource_strings.cpp:66
+#: src/celestia/res/resource_strings.cpp:67
 msgid "About Celestia"
 msgstr "O Celestii"
 
-#: src/celestia/win32/res/resource_strings.cpp:67
-#: src/celestia/win32/res/resource_strings.cpp:86
-#: src/celestia/win32/res/resource_strings.cpp:90
-#: src/celestia/win32/res/resource_strings.cpp:92
-#: src/celestia/win32/res/resource_strings.cpp:94
-#: src/celestia/win32/res/resource_strings.cpp:100
-#: src/celestia/win32/res/resource_strings.cpp:104
-#: src/celestia/win32/res/resource_strings.cpp:109
-#: src/celestia/win32/res/resource_strings.cpp:121
-#: src/celestia/win32/res/resource_strings.cpp:125
-#: src/celestia/win32/res/resource_strings.cpp:142
-#: src/celestia/win32/res/resource_strings.cpp:191
-#: src/celestia/win32/res/resource_strings.cpp:205
-#: src/celestia/win32/res/resource_strings.cpp:210
-#: src/celestia/win32/res/resource_strings.cpp:214
-#: src/celestia/win32/res/resource_strings.cpp:220
+#: src/celestia/res/resource_strings.cpp:68
+#: src/celestia/res/resource_strings.cpp:87
+#: src/celestia/res/resource_strings.cpp:91
+#: src/celestia/res/resource_strings.cpp:93
+#: src/celestia/res/resource_strings.cpp:95
+#: src/celestia/res/resource_strings.cpp:101
+#: src/celestia/res/resource_strings.cpp:105
+#: src/celestia/res/resource_strings.cpp:110
+#: src/celestia/res/resource_strings.cpp:122
+#: src/celestia/res/resource_strings.cpp:126
+#: src/celestia/res/resource_strings.cpp:143
+#: src/celestia/res/resource_strings.cpp:193
+#: src/celestia/res/resource_strings.cpp:207
+#: src/celestia/res/resource_strings.cpp:212
+#: src/celestia/res/resource_strings.cpp:216
+#: src/celestia/res/resource_strings.cpp:222
 msgid "OK"
 msgstr "OK"
 
-#: src/celestia/win32/res/resource_strings.cpp:69
-#, fuzzy
+#: src/celestia/res/resource_strings.cpp:70
 msgid "Copyright (C) 2001-2009, Celestia Development Team"
 msgstr "Copyright (C) 2001-2009, Vývojový tím Celestie"
 
-#: src/celestia/win32/res/resource_strings.cpp:70
-msgid "http://celestiaproject.net/"
-msgstr "http://celestiaproject.net/"
+#: src/celestia/res/resource_strings.cpp:71
+msgid "http://www.shatters.net/celestia"
+msgstr "http://www.shatters.net/celestia"
 
-#: src/celestia/win32/res/resource_strings.cpp:71
+#: src/celestia/res/resource_strings.cpp:72
 msgid "Celestia is free software and comes with absolutely no warranty."
-msgstr "Celestia je slobodný softvér bez záruky."
+msgstr "Celestia je voľne šíriteľný softvér a je úplne bez záruky."
 
-#: src/celestia/win32/res/resource_strings.cpp:72
+#: src/celestia/res/resource_strings.cpp:73
 msgid "Authors"
 msgstr "Autori"
 
-#: src/celestia/win32/res/resource_strings.cpp:73
+#: src/celestia/res/resource_strings.cpp:74
 msgid "Chris Laurel"
 msgstr "Chris Laurel"
 
-#: src/celestia/win32/res/resource_strings.cpp:74
+#: src/celestia/res/resource_strings.cpp:75
 msgid "Clint Weisbrod"
 msgstr "Clint Weisbrod"
 
-#: src/celestia/win32/res/resource_strings.cpp:75
+#: src/celestia/res/resource_strings.cpp:76
 msgid "Fridger Schrempp"
 msgstr "Fridger Schrempp"
 
-#: src/celestia/win32/res/resource_strings.cpp:76
+#: src/celestia/res/resource_strings.cpp:77
 msgid "Christophe Teyssier"
 msgstr "Christophe Teyssier"
 
-#: src/celestia/win32/res/resource_strings.cpp:77
+#: src/celestia/res/resource_strings.cpp:78
 msgid "Grant Hutchison"
 msgstr "Grant Hutchison"
 
-#: src/celestia/win32/res/resource_strings.cpp:78
+#: src/celestia/res/resource_strings.cpp:79
 msgid "Pat Suwalski"
 msgstr "Pat Suwalski"
 
-#: src/celestia/win32/res/resource_strings.cpp:79
+#: src/celestia/res/resource_strings.cpp:80
 msgid "Toti"
 msgstr "Toti"
 
-#: src/celestia/win32/res/resource_strings.cpp:80
+#: src/celestia/res/resource_strings.cpp:81
 msgid "Da Woon Jung"
 msgstr "Da Woon Jung"
 
-#: src/celestia/win32/res/resource_strings.cpp:81
+#: src/celestia/res/resource_strings.cpp:82
 msgid "Hank Ramsey"
 msgstr "Hank Ramsey"
 
-#: src/celestia/win32/res/resource_strings.cpp:82
+#: src/celestia/res/resource_strings.cpp:83
 msgid "Bob Ippolito"
 msgstr "Bob Ippolito"
 
-#: src/celestia/win32/res/resource_strings.cpp:83
+#: src/celestia/res/resource_strings.cpp:84
 msgid "Vincent Giangiulio"
 msgstr "Vincent Giangiulio"
 
-#: src/celestia/win32/res/resource_strings.cpp:84
+#: src/celestia/res/resource_strings.cpp:85
 msgid "Andrew Tribick"
 msgstr "Andrew Tribick"
 
-#: src/celestia/win32/res/resource_strings.cpp:85
+#: src/celestia/res/resource_strings.cpp:86
 msgid "Select Object"
-msgstr "Vyber objekt"
+msgstr "Vybrať objekt"
 
-#: src/celestia/win32/res/resource_strings.cpp:88
+#: src/celestia/res/resource_strings.cpp:89
 msgid "Object Name"
 msgstr "Názov objektu"
 
-#: src/celestia/win32/res/resource_strings.cpp:89
+#: src/celestia/res/resource_strings.cpp:90
 msgid "License"
 msgstr "Licencia"
 
-#: src/celestia/win32/res/resource_strings.cpp:91
+#: src/celestia/res/resource_strings.cpp:92
 msgid "Celestia Controls"
 msgstr "Ovládanie Celestie"
 
-#: src/celestia/win32/res/resource_strings.cpp:93
+#: src/celestia/res/resource_strings.cpp:94
 msgid "OpenGL Driver Info"
-msgstr ""
+msgstr "Informácie o ovládači OpenGL"
 
-#: src/celestia/win32/res/resource_strings.cpp:95
+#: src/celestia/res/resource_strings.cpp:96
 msgid "Set Simulation Time"
-msgstr ""
+msgstr "Nastaviť čas simulácie"
 
-#: src/celestia/win32/res/resource_strings.cpp:96
+#: src/celestia/res/resource_strings.cpp:97
 msgid "Time Zone: "
 msgstr "Časové pásmo: "
 
-#: src/celestia/win32/res/resource_strings.cpp:99
+#: src/celestia/res/resource_strings.cpp:100
 msgid "Set To Current Time"
-msgstr ""
+msgstr "Nastaviť na aktuálny čas"
 
-#: src/celestia/win32/res/resource_strings.cpp:102
+#: src/celestia/res/resource_strings.cpp:103
 msgid "Add Bookmark"
 msgstr "Pridať záložku"
 
-#: src/celestia/win32/res/resource_strings.cpp:106
+#: src/celestia/res/resource_strings.cpp:107
 msgid "Create in >>"
 msgstr "Vytvoriť v >>"
 
-#: src/celestia/win32/res/resource_strings.cpp:107
-#: src/celestia/win32/res/resource_strings.cpp:216
+#: src/celestia/res/resource_strings.cpp:108
+#: src/celestia/res/resource_strings.cpp:218
 msgid "New Folder..."
 msgstr "Nový priečinok..."
 
-#: src/celestia/win32/res/resource_strings.cpp:108
+#: src/celestia/res/resource_strings.cpp:109
 msgid "Solar System Browser"
 msgstr "Katalóg Slnečnej sústavy"
 
-#: src/celestia/win32/res/resource_strings.cpp:110
+#: src/celestia/res/resource_strings.cpp:111
 msgid "Solar System"
 msgstr "Slnečná sústava"
 
-#: src/celestia/win32/res/resource_strings.cpp:112
-#: src/celestia/win32/res/resource_strings.cpp:119
+#: src/celestia/res/resource_strings.cpp:113
+#: src/celestia/res/resource_strings.cpp:120
 msgid "&Go To"
 msgstr "Prejsť"
 
-#: src/celestia/win32/res/resource_strings.cpp:113
+#: src/celestia/res/resource_strings.cpp:114
 msgid "Solar System Objects"
 msgstr "Objekty Slnečnej sústavy"
 
-#: src/celestia/win32/res/resource_strings.cpp:114
+#: src/celestia/res/resource_strings.cpp:115
 msgid "Star Browser"
 msgstr "Hviezdny katalóg"
 
-#: src/celestia/win32/res/resource_strings.cpp:115
-msgid "Nearest"
-msgstr "Najbližší"
-
-#: src/celestia/win32/res/resource_strings.cpp:116
+#: src/celestia/res/resource_strings.cpp:117
 msgid "Brightest"
-msgstr "Najjasnejší"
+msgstr "Najjasnejšie"
 
-#: src/celestia/win32/res/resource_strings.cpp:117
+#: src/celestia/res/resource_strings.cpp:118
 msgid "With planets"
 msgstr "S planétami"
 
-#: src/celestia/win32/res/resource_strings.cpp:120
+#: src/celestia/res/resource_strings.cpp:121
 msgid "&Refresh"
-msgstr "Prekresliť"
+msgstr "&Obnoviť"
 
-#: src/celestia/win32/res/resource_strings.cpp:122
+#: src/celestia/res/resource_strings.cpp:123
 msgid "Star Search Criteria"
-msgstr ""
+msgstr "Kritériá vyhľadávania hviezd"
 
-#: src/celestia/win32/res/resource_strings.cpp:123
+#: src/celestia/res/resource_strings.cpp:124
 msgid "Maximum Stars Displayed in List"
-msgstr ""
+msgstr "Maximum hviezd v zozname"
 
-#: src/celestia/win32/res/resource_strings.cpp:124
+#: src/celestia/res/resource_strings.cpp:125
 msgid "Tour Guide"
 msgstr "Sprievodca"
 
-#: src/celestia/win32/res/resource_strings.cpp:126
-#: src/celestia/win32/res/resource_strings.cpp:132
+#: src/celestia/res/resource_strings.cpp:127
+#: src/celestia/res/resource_strings.cpp:133
 msgid "Go To"
 msgstr "Prejsť"
 
-#: src/celestia/win32/res/resource_strings.cpp:127
+#: src/celestia/res/resource_strings.cpp:128
 msgid "Select your destination:"
 msgstr "Vybrať cieľ:"
 
-#: src/celestia/win32/res/resource_strings.cpp:128
+#: src/celestia/res/resource_strings.cpp:129
 msgid "Go to Object"
 msgstr "Prejsť k objektu"
 
-#: src/celestia/win32/res/resource_strings.cpp:130
+#: src/celestia/res/resource_strings.cpp:131
 msgid "radii"
 msgstr "polomerov"
 
-#: src/celestia/win32/res/resource_strings.cpp:134
+#: src/celestia/res/resource_strings.cpp:135
 msgid "Object"
 msgstr "Objekt"
 
-#: src/celestia/win32/res/resource_strings.cpp:135
+#: src/celestia/res/resource_strings.cpp:136
 msgid "Long."
-msgstr "Dĺžka"
+msgstr "Zem. dĺžka"
 
-#: src/celestia/win32/res/resource_strings.cpp:136
+#: src/celestia/res/resource_strings.cpp:137
 msgid "Lat."
-msgstr "Šírka"
+msgstr "Zem. šírka"
 
-#: src/celestia/win32/res/resource_strings.cpp:137
-#: src/celestia/win32/res/resource_strings.cpp:190
+#: src/celestia/res/resource_strings.cpp:138
+#: src/celestia/res/resource_strings.cpp:192
 msgid "Distance"
 msgstr "Vzdialenosť"
 
-#: src/celestia/win32/res/resource_strings.cpp:138
+#: src/celestia/res/resource_strings.cpp:139
 msgid "Size:"
 msgstr "Veľkosť:"
 
-#: src/celestia/win32/res/resource_strings.cpp:139
+#: src/celestia/res/resource_strings.cpp:140
 msgid "Frame rate:"
 msgstr "Snímok za sekundu:"
 
-#: src/celestia/win32/res/resource_strings.cpp:140
+#: src/celestia/res/resource_strings.cpp:141
 msgid "Select Display Mode"
-msgstr ""
+msgstr "Zvoliť režim zobrazenia"
 
-#: src/celestia/win32/res/resource_strings.cpp:141
+#: src/celestia/res/resource_strings.cpp:142
 msgid "Resolution"
 msgstr "Rozlíšenie"
 
-#: src/celestia/win32/res/resource_strings.cpp:144
+#: src/celestia/res/resource_strings.cpp:145
 msgid "View Options"
-msgstr "Nastavenia zobrazovania"
+msgstr "Možnosti zobrazenia"
 
-#: src/celestia/win32/res/resource_strings.cpp:147
-#: src/celestia/win32/res/resource_strings.cpp:177
+#: src/celestia/res/resource_strings.cpp:148
+#: src/celestia/res/resource_strings.cpp:179
 msgid "Globulars"
 msgstr "Guľové hviezdokopy"
 
-#: src/celestia/win32/res/resource_strings.cpp:161
+#: src/celestia/res/resource_strings.cpp:162
+msgid "Ecliptic Line"
+msgstr "Čiara ekliptiky"
+
+#: src/celestia/res/resource_strings.cpp:163
 msgid "Grids"
 msgstr "Súradnicové siete"
 
-#: src/celestia/win32/res/resource_strings.cpp:162
-#, fuzzy
+#: src/celestia/res/resource_strings.cpp:164
 msgid "Equatorial"
-msgstr "Hviezdna súradnicová sieť"
+msgstr "Rovníková"
 
-#: src/celestia/win32/res/resource_strings.cpp:163
+#: src/celestia/res/resource_strings.cpp:165
 msgid "Horizontal"
-msgstr ""
+msgstr "Horizontálna"
 
-#: src/celestia/win32/res/resource_strings.cpp:164
+#: src/celestia/res/resource_strings.cpp:166
 msgid "Galactic"
-msgstr ""
+msgstr "Galaktická"
 
-#: src/celestia/win32/res/resource_strings.cpp:165
+#: src/celestia/res/resource_strings.cpp:167
 msgid "Ecliptic"
-msgstr ""
+msgstr "Ekliptická"
 
-#: src/celestia/win32/res/resource_strings.cpp:171
+#: src/celestia/res/resource_strings.cpp:173
 msgid "Minor Moons"
 msgstr "Malé mesiace"
 
-#: src/celestia/win32/res/resource_strings.cpp:175
-#, fuzzy
+#: src/celestia/res/resource_strings.cpp:177
 msgid "DSO Labels"
-msgstr "Vymaž značky"
+msgstr "Názvy DSO"
 
-#: src/celestia/win32/res/resource_strings.cpp:181
+#: src/celestia/res/resource_strings.cpp:183
 msgid "Diagrams"
 msgstr "Diagramy"
 
-#: src/celestia/win32/res/resource_strings.cpp:182
+#: src/celestia/res/resource_strings.cpp:184
 msgid "Boundaries"
 msgstr "Hranice súhvezdí"
 
-#: src/celestia/win32/res/resource_strings.cpp:184
+#: src/celestia/res/resource_strings.cpp:186
 msgid "Latin Names"
 msgstr "Latinské názvy"
 
-#: src/celestia/win32/res/resource_strings.cpp:185
+#: src/celestia/res/resource_strings.cpp:187
 msgid "Information Text"
 msgstr "Informačný text"
 
-#: src/celestia/win32/res/resource_strings.cpp:189
+#: src/celestia/res/resource_strings.cpp:191
 msgid "Filter Stars"
 msgstr "Filtrovať hviezdy"
 
-#: src/celestia/win32/res/resource_strings.cpp:197
+#: src/celestia/res/resource_strings.cpp:199
 msgid "Montes (Mountains)"
 msgstr "Montes (Hory)"
 
-#: src/celestia/win32/res/resource_strings.cpp:198
+#: src/celestia/res/resource_strings.cpp:200
 msgid "Maria (Seas)"
 msgstr "Maria (Moria)"
 
-#: src/celestia/win32/res/resource_strings.cpp:200
+#: src/celestia/res/resource_strings.cpp:202
 msgid "Valles (Valleys)"
 msgstr "Valles (Údolia)"
 
-#: src/celestia/win32/res/resource_strings.cpp:201
+#: src/celestia/res/resource_strings.cpp:203
 msgid "Terrae (Land masses)"
-msgstr "Terrae (Kontinenty)"
+msgstr "Terrae (Pevniny)"
 
-#: src/celestia/win32/res/resource_strings.cpp:202
+#: src/celestia/res/resource_strings.cpp:204
 msgid "Volcanoes"
 msgstr "Sopky"
 
-#: src/celestia/win32/res/resource_strings.cpp:203
+#: src/celestia/res/resource_strings.cpp:205
 msgid "Other features"
 msgstr "Iné útvary"
 
-#: src/celestia/win32/res/resource_strings.cpp:204
+#: src/celestia/res/resource_strings.cpp:206
 msgid "Label Features"
 msgstr "Pomenovať útvary"
 
-#: src/celestia/win32/res/resource_strings.cpp:207
+#: src/celestia/res/resource_strings.cpp:209
 msgid "Show Features"
 msgstr "Zobraziť útvary"
 
-#: src/celestia/win32/res/resource_strings.cpp:208
+#: src/celestia/res/resource_strings.cpp:210
 msgid "Minimum Labeled Feature Size"
 msgstr "Minimálna veľkosť útvaru s názvom"
 
-#: src/celestia/win32/res/resource_strings.cpp:209
+#: src/celestia/res/resource_strings.cpp:211
 msgid "Add New Bookmark Folder"
-msgstr ""
+msgstr "Pridať nový priečinok záložiek"
 
-#: src/celestia/win32/res/resource_strings.cpp:212
+#: src/celestia/res/resource_strings.cpp:214
 msgid "Folder Name"
 msgstr "Názov priečinka"
 
-#: src/celestia/win32/res/resource_strings.cpp:213
+#: src/celestia/res/resource_strings.cpp:215
 msgid "Organize Bookmarks"
-msgstr ""
+msgstr "Organizovať záložky"
 
-#: src/celestia/win32/res/resource_strings.cpp:217
+#: src/celestia/res/resource_strings.cpp:219
 msgid "Rename..."
 msgstr "Premenovať..."
 
-#: src/celestia/win32/res/resource_strings.cpp:218
+#: src/celestia/res/resource_strings.cpp:220
 msgid "Delete"
 msgstr "Vymazať"
 
-#: src/celestia/win32/res/resource_strings.cpp:219
+#: src/celestia/res/resource_strings.cpp:221
 msgid "Rename Bookmark or Folder"
-msgstr ""
+msgstr "Premenovať záložku alebo priečinok"
 
-#: src/celestia/win32/res/resource_strings.cpp:222
+#: src/celestia/res/resource_strings.cpp:224
 msgid "New Name"
-msgstr "Nové meno"
+msgstr "Nový názov"
 
-#: src/celestia/win32/res/resource_strings.cpp:224
+#: src/celestia/res/resource_strings.cpp:226
 msgid "Compute"
-msgstr ""
+msgstr "Vypočítať"
 
-#: src/celestia/win32/res/resource_strings.cpp:225
+#: src/celestia/res/resource_strings.cpp:227
 msgid "Set Date and Go to Planet"
-msgstr ""
+msgstr "Nastaviť dátum a prejsť k planéte"
 
-#: src/celestia/win32/res/resource_strings.cpp:226
-msgid "Close"
-msgstr "Zavrieť"
-
-#: src/celestia/win32/res/resource_strings.cpp:227
-msgid "From:"
-msgstr "Od:"
-
-#: src/celestia/win32/res/resource_strings.cpp:228
-msgid "To:"
-msgstr "Do:"
-
-#: src/celestia/win32/res/resource_strings.cpp:229
-msgid "On:"
-msgstr "Na:"
-
-#: src/celestia/win32/res/resource_strings.cpp:230
-msgid "Search parameters"
-msgstr "Parametre vyhľadávania"
-
-#: src/celestia/win32/res/resource_strings.cpp:231
-msgid "Solar Eclipses"
-msgstr "Zatmenia Slnka"
-
-#: src/celestia/win32/res/resource_strings.cpp:232
+#: src/celestia/res/resource_strings.cpp:234
 msgid "Lunar Eclipses"
 msgstr "Zatmenia Mesiaca"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Jan"
 msgstr "Jan"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Feb"
 msgstr "Feb"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Mar"
 msgstr "Mar"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Apr"
 msgstr "Apr"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "May"
 msgstr "Máj"
 
-#: src/celestia/win32/res/resource_strings.cpp:234
+#: src/celestia/res/resource_strings.cpp:236
 msgid "Jun"
 msgstr "Jún"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Jul"
 msgstr "Júl"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Aug"
 msgstr "Aug"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Sep"
 msgstr "Sep"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Oct"
 msgstr "Okt"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Nov"
 msgstr "Nov"
 
-#: src/celestia/win32/res/resource_strings.cpp:235
+#: src/celestia/res/resource_strings.cpp:237
 msgid "Dec"
 msgstr "Dec"
 
 #~ msgid "Celestial"
 #~ msgstr "Hviezdny"
-
-#~ msgid "Temperature: "
-#~ msgstr "Teplota: "
-
-#~ msgid "Apparent mag: %.2f\n"
-#~ msgstr "Zdanlivá veľ.: %.2f\n"
-
-#~ msgid "Options"
-#~ msgstr "Možnosti"
-
-#~ msgid "Objects"
-#~ msgstr "Objekty"
-
-#~ msgid "Time"
-#~ msgstr "Čas"
-
-#~ msgid "Main Toolbar"
-#~ msgstr "Hlavný panel nástrojov"
-
-#~ msgid "Dist."
-#~ msgstr "Vzdial."
-
-#~ msgid "App. Mag."
-#~ msgstr "Zdan. veľ."
-
-#~ msgid "Abs. Mag."
-#~ msgstr "Abs. veľ."
-
-#~ msgid "With Planets"
-#~ msgstr "S planétami"
-
-#~ msgid "Brightest (Abs.)"
-#~ msgstr "Najjasnejšia (Abs.)"
-
-#~ msgid "Brightest (App.)"
-#~ msgstr "Najjasnejšia (Zdan.)"
-
-#~ msgid "&Close"
-#~ msgstr "&Zavrieť"
-
-#~ msgid "Alt+C"
-#~ msgstr "Alt+C"
-
-#~ msgid "Refresh"
-#~ msgstr "Prekresliť"
-
-#~ msgid "End"
-#~ msgstr "Koniec"
-
-#~ msgid "Moon Eclipses"
-#~ msgstr "Zatmenia mesiacov"
-
-#~ msgid "Search"
-#~ msgstr "Hľadaj"
-
-#~ msgid "Video Capture"
-#~ msgstr "Nahrať video"
-
-#~ msgid "Save As:"
-#~ msgstr "Uložiť ako:"
-
-#~ msgid "*.ogg"
-#~ msgstr "*.ogg"
-
-#~ msgid "Aspect Ratio:"
-#~ msgstr "Pomer strán:"
-
-#~ msgid "Current"
-#~ msgstr "Súčasné"
-
-#~ msgid "11:9"
-#~ msgstr "11:9"
-
-#~ msgid "4:3"
-#~ msgstr "4:3"
-
-#~ msgid "16:9"
-#~ msgstr "16:9"
-
-#~ msgid "Image Size:"
-#~ msgstr "Veľkosť obrazu: "
-
-#~ msgid "Frame Rate:"
-#~ msgstr "Snímok za sekundu:"
-
-#~ msgid "Video Quality:"
-#~ msgstr "Kvalita videa:"
-
-#~ msgid "Play Video when capture is done"
-#~ msgstr "Prehrať video po nahratí"
-
-#~ msgid "Usage"
-#~ msgstr "Použitie"
-
-#~ msgid ""
-#~ "<p>Press <b>F11</b> to start/pause recording<br>\n"
-#~ "Press <b>F12</b> to stop</p>\n"
-#~ "\n"
-#~ "<p>Note that resizing the main window will not be possible until the end "
-#~ "of the capture</p>"
-#~ msgstr ""
-#~ "<p>Stlač <b>F11</b> pre začatie/pozastavenie nahrávania<br>\n"
-#~ "Stlač <b>F12</b> pre ukončenie</p>\n"
-#~ "\n"
-#~ "<p>Zmeny veľkosti hlavného okna nie sú počas nahrávania možné</p>"
-
-#~ msgid "&OK"
-#~ msgstr "&OK"
-
-#~ msgid "&Cancel"
-#~ msgstr "&Zrušiť"

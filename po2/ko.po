@@ -1,14 +1,15 @@
 # translation of celestia-kde.po to Korean
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
-# Jacob Lee <jaeuck@gmail.com>, 2006.
-# 
+# Jacob Lee <jaeuck@gmail.com>, created in 2006/03/23 (v1.3.2).
+# Jacob Lee <jaeuck@gmail.com>, modified in 2010/01/26 (v1.6.1).
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Celestia-Korean\n"
 "Report-Msgid-Bugs-To: chris@teyssier.org\n"
 "POT-Creation-Date: 2006-02-18 16:09+0100\n"
-"PO-Revision-Date: 2009-01-07 10:57+0900\n"
+"PO-Revision-Date: 2010-01-26 19:20+0900\n"
 "Last-Translator: Jacob Lee <jaeuck@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -53,11 +54,11 @@ msgstr "마차부"
 
 #: data/constellations.cpp:9
 msgid "Boötes"
-msgstr "목자"
+msgstr "목동"
 
 #: data/constellations.cpp:10
 msgid "Caelum"
-msgstr "조각도"
+msgstr "조각칼"
 
 #: data/constellations.cpp:11
 msgid "Camelopardalis"
@@ -97,7 +98,7 @@ msgstr "센타우루스"
 
 #: data/constellations.cpp:20
 msgid "Cepheus"
-msgstr "케페우스"
+msgstr "세페우스"
 
 #: data/constellations.cpp:21
 msgid "Cetus"
@@ -165,7 +166,7 @@ msgstr "에리다누스"
 
 #: data/constellations.cpp:37
 msgid "Fornax"
-msgstr "화학로"
+msgstr "화로"
 
 #: data/constellations.cpp:38
 msgid "Gemini"
@@ -177,7 +178,7 @@ msgstr "두루미"
 
 #: data/constellations.cpp:40
 msgid "Hercules"
-msgstr "헤라클레스"
+msgstr "헤르쿨레스"
 
 #: data/constellations.cpp:41
 msgid "Horologium"
@@ -193,7 +194,7 @@ msgstr "물뱀"
 
 #: data/constellations.cpp:44
 msgid "Indus"
-msgstr "인도인"
+msgstr "인디언"
 
 #: data/constellations.cpp:45
 msgid "Lacerta"
@@ -221,7 +222,7 @@ msgstr "이리"
 
 #: data/constellations.cpp:51
 msgid "Lynx"
-msgstr "삵괭이"
+msgstr "살쾡이"
 
 #: data/constellations.cpp:52
 msgid "Lyra"
@@ -273,11 +274,11 @@ msgstr "페르세우스"
 
 #: data/constellations.cpp:64
 msgid "Phoenix"
-msgstr "봉황새"
+msgstr "봉황"
 
 #: data/constellations.cpp:65
 msgid "Pictor"
-msgstr "이젤"
+msgstr "화가"
 
 #: data/constellations.cpp:66
 msgid "Pisces"
@@ -313,7 +314,7 @@ msgstr "전갈"
 
 #: data/constellations.cpp:74
 msgid "Sculptor"
-msgstr "조각실"
+msgstr "조각가"
 
 #: data/constellations.cpp:75
 msgid "Scutum"
@@ -345,7 +346,7 @@ msgstr "삼각형"
 
 #: data/constellations.cpp:82
 msgid "Triangulum Australe"
-msgstr "남쪽삼각형자리"
+msgstr "남쪽삼각형"
 
 #: data/constellations.cpp:83
 msgid "Tucana"
@@ -373,4 +374,4 @@ msgstr "날치"
 
 #: data/constellations.cpp:89
 msgid "Vulpecula"
-msgstr "여우"
+msgstr "작은여우"
