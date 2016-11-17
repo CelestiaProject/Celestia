@@ -71,6 +71,7 @@ _("About Celestia");
 _("OK");
 _("Celestia");
 _("Copyright (C) 2001-2016, Celestia Development Team");
+_("http://celestiaproject.net/");
 _("Celestia is free software and comes with absolutely no warranty.");
 _("Authors");
 _("Clint Weisbrod");

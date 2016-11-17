@@ -41,10 +41,12 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                 return EndDialog(hDlg, 0);
             SetWindowLong(hDlg, DWL_USER, lParam);
 
-            guide->selectedDest = NULL;
+//          guide->selectedDest = NULL;
 
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_TOURGUIDE);
             const DestinationList* destinations = guide->appCore->getDestinations();
+			Destination* dest = (*destinations)[0];
+			guide->selectedDest = dest;
             if (hwnd != NULL && destinations != NULL)
             {
                 for (DestinationList::const_iterator iter = destinations->begin();

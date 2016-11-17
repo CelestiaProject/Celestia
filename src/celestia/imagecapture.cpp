@@ -90,7 +90,7 @@ bool CaptureGLBufferToJPEG(const string& filename,
 
     jpeg_set_defaults(&cinfo);
 
-    // jpeg_set_quality(&cinfo, quality, TRUE);
+    jpeg_set_quality(&cinfo, 90, TRUE);
 
     jpeg_start_compress(&cinfo, TRUE);
 

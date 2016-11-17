@@ -10,11 +10,14 @@
 // of the License, or (at your option) any later version.
 
 #include "winsplash.h"
+#include <celutil/util.h>
+#include <celutil/winutil.h>
 #include <string>
 #include <winuser.h>
 #include <commctrl.h>
 #include "res/resource.h"
 #include <iostream>
+
 
 using namespace std;
 
@@ -137,8 +140,9 @@ SplashWindow::paint(HDC hDC)
         
     HFONT hFont = reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
     SelectObject(hDC, hFont);
-    
-    string text = string("Version " VERSION_STRING "\n") + message;
+ //   string s;
+ //   s += UTF8ToCurrentCP(_("Version: "));    
+    string text = UTF8ToCurrentCP(_("Version: ")) + string(VERSION_STRING "\n") + message;
     DrawText(hDC, text.c_str(), text.length(), &r, DT_LEFT | DT_VCENTER);
 }
 
