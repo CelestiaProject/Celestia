@@ -9,5 +9,28 @@
 <file alias="time-realtime.png">data/time-realtime.png</file>
 <file alias="time-reverse.png">data/time-reverse.png</file>
 <file alias="time-slower.png">data/time-slower.png</file>
+<file alias="about.png">data/about.png</file>
+<file alias="application-bookmark.png">data/application-bookmark.png</file>
+<file alias="book.png">data/book.png</file>
+<file alias="bookmark-add.png">data/bookmark-add.png</file>
+<file alias="capture-video.png">data/capture-video.png</file>
+<file alias="exit.png">data/exit.png</file>
+<file alias="grab-image.png">data/grab-image.png</file>
+<file alias="preferences.png">data/preferences.png</file>
+<file alias="report_GL.png">data/report_GL.png</file>
+<file alias="script2.png">data/script2.png</file>
+<file alias="select_sol.png">data/select_sol.png</file>
+<file alias="set-time.png">data/set-time.png</file>
+<file alias="full_screen.png">data/full_screen.png</file>
+<file alias="split-delete.png">data/split-delete.png</file>
+<file alias="split-horiz.png">data/split-horiz.png</file>
+<file alias="split-single.png">data/split-single.png</file>
+<file alias="split-vert.png">data/split-vert.png</file>
+<file alias="center-obj.png">data/center-obj.png</file>
+<file alias="go-jump.png">data/go-jump.png</file>
+<file alias="clip_copy.png">data/clip_copy.png</file>
+<file alias="clip_paste.png">data/clip_paste.png</file>
+<file alias="picture_copy.png">data/picture_copy.png</file>
+<file alias="split-cycle.png">data/split-cycle.png</file>
 </qresource>
 </RCC>
