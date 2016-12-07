@@ -15,6 +15,7 @@
 #endif
 #include <time.h>
 
+#include <QIcon>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -136,7 +137,8 @@ private:
 };    
 
 
-CelestiaAppWindow::CelestiaAppWindow() :
+CelestiaAppWindow::CelestiaAppWindow( QWidget* parent ) :
+    QMainWindow( parent ),
     glWidget(NULL),
     celestialBrowser(NULL),
     m_appCore(NULL),
@@ -998,6 +1000,16 @@ void CelestiaAppWindow::slotBookmarkTriggered(const QString& url)
     QDesktopServices::openUrl(QUrl(url));
 }
 
+void CelestiaAppWindow::slotManual()
+{
+    QString MANUAL_FILE = "CelestiaGuide.html";
+    QDesktopServices::openUrl(QUrl(QUrl::fromLocalFile(QDir::toNativeSeparators(QApplication::applicationDirPath()) + QDir::toNativeSeparators(QDir::separator()) + "help" + QDir::toNativeSeparators(QDir::separator()) + MANUAL_FILE)));
+//	QMessageBox::information(
+//         QApplication::activeWindow(),
+//         QApplication::applicationName(),
+//         QDir::toNativeSeparators(QApplication::applicationDirPath()) + QDir::toNativeSeparators(QDir::separator()) + "help" + QDir::toNativeSeparators(QDir::separator()) + MANUAL_FILE
+//        );
+}
 
 void CelestiaAppWindow::slotShowAbout()
 {
@@ -1101,13 +1113,13 @@ void CelestiaAppWindow::createMenus()
     /****** File menu ******/
     fileMenu = menuBar()->addMenu(_("&File"));
 
-    QAction* grabImageAction = new QAction(QIcon(":data/grab-image.png"),
+    QAction* grabImageAction = new QAction(QIcon(":/icons/grab-image.png"),
                                            _("&Grab image"), this);
     grabImageAction->setShortcut(QString(_("F10")));
     connect(grabImageAction, SIGNAL(triggered()), this, SLOT(slotGrabImage()));
     fileMenu->addAction(grabImageAction);
 
-    QAction* captureVideoAction = new QAction(QIcon(":data/capture-video.png"),
+    QAction* captureVideoAction = new QAction(QIcon(":/icons/capture-video.png"),
                                               _("Capture &video"), this);
     // TODO: Add Mac support for video capture
 #if defined(TARGET_OS_MAC) || (!defined(_WIN32) && !defined(THEORA))
@@ -1116,24 +1128,24 @@ void CelestiaAppWindow::createMenus()
     connect(captureVideoAction, SIGNAL(triggered()), this, SLOT(slotCaptureVideo()));
     fileMenu->addAction(captureVideoAction);
 
-    QAction* copyImageAction = new QAction(_("&Copy image"), this);
+    QAction* copyImageAction = new QAction(QIcon(":/icons/picture_copy.png"), _("&Copy image"), this);
     copyImageAction->setShortcut(QString(_("Ctrl+Shift+C")));
     connect(copyImageAction, SIGNAL(triggered()), this, SLOT(slotCopyImage()));
     fileMenu->addAction(copyImageAction);
 
-    QAction* copyURLAction = new QAction(_("Copy &URL"), this);
+    QAction* copyURLAction = new QAction(QIcon(":/icons/clip_copy.png"), _("Copy &URL"), this);
     copyURLAction->setShortcut(QKeySequence::Copy);
     connect(copyURLAction, SIGNAL(triggered()), this, SLOT(slotCopyURL()));
     fileMenu->addAction(copyURLAction);
 
-    QAction* pasteURLAction = new QAction(_("&Paste URL"), this);
+    QAction* pasteURLAction = new QAction(QIcon(":/icons/clip_paste.png"), _("&Paste URL"), this);
     //pasteURLAction->setShortcut(QKeySequence::Paste);  // conflicts with cycle render path command
     connect(pasteURLAction, SIGNAL(triggered()), this, SLOT(slotPasteURL()));
     fileMenu->addAction(pasteURLAction);
 
     fileMenu->addSeparator();
 
-    QAction* openScriptAction = new QAction(_("&Open Script..."), this);
+    QAction* openScriptAction = new QAction(QIcon(":/icons/script2.png"), _("&Open Script..."), this);
     connect(openScriptAction, SIGNAL(triggered()), this, SLOT(slotOpenScriptDialog()));
     fileMenu->addAction(openScriptAction);
 
@@ -1143,12 +1155,12 @@ void CelestiaAppWindow::createMenus()
 
     fileMenu->addSeparator();
 
-    QAction* prefAct = new QAction(QIcon(":data/preferences.png"),
+    QAction* prefAct = new QAction(QIcon(":/icons/preferences.png"),
                                    _("&Preferences..."), this);
     connect(prefAct, SIGNAL(triggered()), this, SLOT(slotPreferences()));
     fileMenu->addAction(prefAct);
 
-    QAction* quitAct = new QAction(QIcon(":data/exit.png"), _("E&xit"), this);
+    QAction* quitAct = new QAction(QIcon(":/icons/exit.png"), _("E&xit"), this);
     quitAct->setShortcut(QString(_("Ctrl+Q")));
     connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
     fileMenu->addAction(quitAct);
@@ -1158,15 +1170,15 @@ void CelestiaAppWindow::createMenus()
     /****** Navigation menu ******/
     navMenu = menuBar()->addMenu(_("&Navigation"));
 
-    QAction* sunAct = new QAction(_("Select Sun"), this);
+    QAction* sunAct = new QAction(QIcon(":/icons/select_sol.png"), _("Select Sun"), this);
     connect(sunAct, SIGNAL(triggered()), this, SLOT(selectSun()));
     navMenu->addAction(sunAct);
 
-    QAction* centerAct = new QAction(_("Center Selection"), this);
+    QAction* centerAct = new QAction(QIcon(":/icons/center-obj.png"), _("Center Selection"), this);
     connect(centerAct, SIGNAL(triggered()), this, SLOT(centerSelection()));
     navMenu->addAction(centerAct);
 
-    QAction* gotoAct = new QAction(_("Goto Selection"), this);
+    QAction* gotoAct = new QAction(QIcon(":/icons/go-jump.png"), _("Goto Selection"), this);
     connect(gotoAct, SIGNAL(triggered()), this, SLOT(gotoSelection()));
     navMenu->addAction(gotoAct);
 
@@ -1174,7 +1186,7 @@ void CelestiaAppWindow::createMenus()
     /****** Time menu ******/
     timeMenu = menuBar()->addMenu(_("&Time"));
 
-    QAction* setTimeAct = new QAction(_("Set &time"), this);
+    QAction* setTimeAct = new QAction(QIcon(":/icons/set-time.png"), _("Set &time"), this);
     connect(setTimeAct, SIGNAL(triggered()), this, SLOT(slotShowTimeDialog()));
     timeMenu->addAction(setTimeAct);
 
@@ -1227,31 +1239,31 @@ void CelestiaAppWindow::createMenus()
     /****** MultiView menu ******/
     QMenu* multiviewMenu = menuBar()->addMenu(_("&MultiView"));
 
-    QAction* splitViewVertAction = new QAction(QIcon(":data/split-vert.png"),
+    QAction* splitViewVertAction = new QAction(QIcon(":/icons/split-vert.png"),
                                                _("Split view vertically"), this);
     splitViewVertAction->setShortcut(QString(_("Ctrl+R")));
     connect(splitViewVertAction, SIGNAL(triggered()), this, SLOT(slotSplitViewVertically()));
     multiviewMenu->addAction(splitViewVertAction);
 
-    QAction* splitViewHorizAction = new QAction(QIcon(":data/split-horiz.png"),
+    QAction* splitViewHorizAction = new QAction(QIcon(":/icons/split-horiz.png"),
                                                 _("Split view horizontally"), this);
     splitViewHorizAction->setShortcut(QString(_("Ctrl+U")));
     connect(splitViewHorizAction, SIGNAL(triggered()), this, SLOT(slotSplitViewHorizontally()));
     multiviewMenu->addAction(splitViewHorizAction);
 
-    QAction* cycleViewAction = new QAction(QIcon(":data/split-cycle.png"),
+    QAction* cycleViewAction = new QAction(QIcon(":/icons/split-cycle.png"),
                                            _("Cycle views"), this);
     cycleViewAction->setShortcut(QString(_("Tab")));
     connect(cycleViewAction, SIGNAL(triggered()), this, SLOT(slotCycleView()));
     multiviewMenu->addAction(cycleViewAction);
 
-    QAction* singleViewAction = new QAction(QIcon(":data/split-single.png"),
+    QAction* singleViewAction = new QAction(QIcon(":/icons/split-single.png"),
                                             _("Single view"), this);
     singleViewAction->setShortcut(QString(_("Ctrl+D")));
     connect(singleViewAction, SIGNAL(triggered()), this, SLOT(slotSingleView()));
     multiviewMenu->addAction(singleViewAction);
 
-    QAction* deleteViewAction = new QAction(QIcon(":data/split-delete.png"),
+    QAction* deleteViewAction = new QAction(QIcon(":/icons/split-delete.png"),
                                             _("Delete view"), this);
     deleteViewAction->setShortcut(QString(_("Delete")));
     connect(deleteViewAction, SIGNAL(triggered()), this, SLOT(slotDeleteView()));
@@ -1341,14 +1353,18 @@ void CelestiaAppWindow::createMenus()
 	/****** Help Menu ******/
     helpMenu = menuBar()->addMenu(_("&Help"));
 
-    QAction* aboutAct = new QAction(_("About Celestia"), this);
-    connect(aboutAct, SIGNAL(triggered()), this, SLOT(slotShowAbout()));
-    helpMenu->addAction(aboutAct);
+	QAction* helpManualAct = new QAction(QIcon(":/icons/book.png"), _("Manual Celestia"), this);
+    connect(helpManualAct, SIGNAL(triggered()), this, SLOT(slotManual()));
+    helpMenu->addAction(helpManualAct);
     helpMenu->addSeparator();
-
-    QAction* glInfoAct = new QAction(_("OpenGL Info"), this);
+	
+    QAction* glInfoAct = new QAction(QIcon(":/icons/report_GL.png"), _("OpenGL Info"), this);
     connect(glInfoAct, SIGNAL(triggered()), this, SLOT(slotShowGLInfo()));
     helpMenu->addAction(glInfoAct);
+	
+    QAction* aboutAct = new QAction(QIcon(":/icons/about.png"), _("About Celestia"), this);
+    connect(aboutAct, SIGNAL(triggered()), this, SLOT(slotShowAbout()));
+    helpMenu->addAction(aboutAct);
 
     settings.endGroup();
 }
@@ -1362,11 +1378,11 @@ void CelestiaAppWindow::populateBookmarkMenu()
 {
     bookmarkMenu->clear();
     
-    QAction* addBookmarkAction = new QAction(_("Add Bookmark..."), bookmarkMenu);
+    QAction* addBookmarkAction = new QAction(QIcon(":/icons/bookmark-add.png"), _("Add Bookmark..."), bookmarkMenu);
     bookmarkMenu->addAction(addBookmarkAction);
     connect(addBookmarkAction, SIGNAL(triggered()), this, SLOT(slotAddBookmark()));
     
-    QAction* organizeBookmarksAction = new QAction(_("Organize Bookmarks..."), bookmarkMenu);
+    QAction* organizeBookmarksAction = new QAction(QIcon(":/icons/application-bookmark.png"), _("Organize Bookmarks..."), bookmarkMenu);
     bookmarkMenu->addAction(organizeBookmarksAction);
     connect(organizeBookmarksAction, SIGNAL(triggered()), this, SLOT(slotOrganizeBookmarks()));
    

@@ -155,13 +155,13 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         addAction(syncOrbitAction);
     }
 
-    QAction* infoAction = new QAction("Info", this);
+    QAction* infoAction = new QAction(_("Info"), this);
     connect(infoAction, SIGNAL(triggered()), this, SLOT(slotInfo()));
     addAction(infoAction);
 
 	if (sel.body() != NULL)
 	{
-		QAction* setVisibilityAction = new QAction("Visible", this);
+		QAction* setVisibilityAction = new QAction(_("Visible"), this);
 		setVisibilityAction->setCheckable(true);
 		setVisibilityAction->setChecked(sel.body()->isVisible());
 		connect(setVisibilityAction, SIGNAL(toggled(bool)), this, SLOT(slotToggleVisibility(bool)));

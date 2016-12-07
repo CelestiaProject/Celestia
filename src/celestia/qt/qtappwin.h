@@ -37,7 +37,7 @@ class CelestiaAppWindow : public QMainWindow
  Q_OBJECT
 
  public:
-    CelestiaAppWindow();
+    CelestiaAppWindow( QWidget* parent = 0 );
     ~CelestiaAppWindow();
 
     void init(const QString& configFileName,
@@ -55,6 +55,7 @@ class CelestiaAppWindow : public QMainWindow
  public slots:
     void celestia_tick();
     void slotShowSelectionContextMenu(const QPoint& pos, Selection& sel);
+	void slotManual();
 
  private slots:
     void slotGrabImage();
