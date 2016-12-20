@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QtGui>
 #include <QApplication>
 #include <QSplashScreen>
 #include <QDesktopServices>
@@ -42,6 +43,22 @@ static bool skipSplashScreen = false;
 
 static bool ParseCommandLine();
 
+void loadModules(QSplashScreen* psplash)
+{
+    QTime time;
+    time.start();
+
+    for (int i = 0; i < 100; ) {
+        if (time.elapsed() > 40) {
+            time.start();
+            ++i;
+        }
+        psplash->showMessage(_("Loading data files: ") + QString::number(i) + "%" + "\n\n",
+								Qt::AlignHCenter | Qt::AlignBottom,
+								QColor(230,220,220));
+    }
+}
+/////////////////////////////////////////
 
 int main(int argc, char *argv[])
 {  
@@ -60,7 +77,7 @@ int main(int argc, char *argv[])
 
     // Disabled for now until issues with pixmap alpha channel
     // are resolved
-    //splash.show();
+    splash.show(); // Enable command
 
     // Gettext integration
     setlocale(LC_ALL, ""); 
@@ -77,15 +94,18 @@ int main(int argc, char *argv[])
 
     CelestiaAppWindow window;
 
+	loadModules(&splash);
+	
     // Connect the splash screen to the main window so that it
     // can receive progress notifications as Celestia files required
     // for startup are loaded.
-    QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
-                     &splash, SLOT(showMessage(const QString&, int, const QColor&)));
+	// Disable command
+    //QObject::connect(&window, SIGNAL(progressUpdate(const QString&, int, const QColor&)),
+    //                 &splash, SLOT(showMessage(const QString&, int, const QColor&)));
 
     window.init(configFileName, extrasDirectories);
     window.show();
-
+	
     splash.finish(&window);
 
     // Set the main window to be the cel url handler
