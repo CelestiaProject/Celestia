@@ -55,7 +55,7 @@ void loadModules(QSplashScreen* psplash)
         }
         psplash->showMessage(_("Loading data files: ") + QString::number(i) + "%" + "\n\n",
 								Qt::AlignHCenter | Qt::AlignBottom,
-								QColor(230,220,220));
+								Qt::white);
     }
 }
 /////////////////////////////////////////
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(icons);
 
     QCoreApplication::setOrganizationName("Celestia Development Team");
-    QCoreApplication::setApplicationName("Celestia");
+    QCoreApplication::setApplicationName("Celestia QT");
 
     ParseCommandLine();
 
