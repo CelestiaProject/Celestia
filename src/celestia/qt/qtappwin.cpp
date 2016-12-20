@@ -80,7 +80,7 @@ QString DEFAULT_CONFIG_FILE = "celestia.cfg";
 QString BOOKMARKS_FILE = "bookmarks.xbel";
 
 const QSize DEFAULT_MAIN_WINDOW_SIZE(800, 600);
-const QPoint DEFAULT_MAIN_WINDOW_POSITION(200, 200);
+const QPoint DEFAULT_MAIN_WINDOW_POSITION(20, 20);
 
 // Used when saving and restoring main window state; increment whenever
 // new dockables or toolbars are added.
@@ -1000,6 +1000,7 @@ void CelestiaAppWindow::slotBookmarkTriggered(const QString& url)
     QDesktopServices::openUrl(QUrl(url));
 }
 
+
 void CelestiaAppWindow::slotManual()
 {
     QString MANUAL_FILE = "CelestiaGuide.html";
@@ -1011,22 +1012,21 @@ void CelestiaAppWindow::slotManual()
 //        );
 }
 
+
 void CelestiaAppWindow::slotShowAbout()
 {
     static const char* aboutText =
     gettext_noop("<html>"
     "<p><b>Celestia 1.7.0 (Qt4 experimental version)</b></p>"
-    "<p>Copyright (C) 2001-2009 by the Celestia Development Team. Celestia "
+    "<p>Copyright (C) 2001-2016 by the Celestia Development Team. Celestia "
     "is free software. You can redistribute it and/or modify it under the "
     "terms of the GNU General Public License version 2.</p>"
     "<b>Celestia on the web</b>"
     "<br>"
-    "Main site: <a href=\"http://www.shatters.net/celestia/\">"
-    "http://www.shatters.net/celestia/</a><br>"
-    "Forum: <a href=\"http://www.shatters.net/forum/\">"
-    "http://www.shatters.net/forum/</a><br>"
-    "SourceForge project: <a href=\"http://www.sourceforge.net/projects/celestia\">"
-    "http://www.sourceforge.net/projects/celestia</a><br>"
+    "Main site: <a href=\"http://celestiaproject.net/celestia/\">"
+    "http://celestiaproject.net/celestia/</a><br>"
+    "Forum: <a href=\"http://celestiaproject.net/forum/\">"
+    "http://celestiaproject.net/forum/</a><br>"
     "</html>");
 
 	QMessageBox::about(this, "Celestia", _(aboutText));

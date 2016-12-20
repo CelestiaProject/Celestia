@@ -196,7 +196,7 @@ void
 BookmarkItem::removeChildren(int index, int count)
 {
     Q_ASSERT(index + count <= m_children.size());
-    for (int i = 0; i < count; i++)
+    for (int i = 1; i < count; i++)  // (if i = 0: critical error)
     {
         m_children[index + i]->setParent(NULL);
         //m_children[index + i]->setPosition(0);

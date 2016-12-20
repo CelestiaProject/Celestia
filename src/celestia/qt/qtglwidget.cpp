@@ -48,23 +48,28 @@ using namespace Qt;
 
 
 const int DEFAULT_RENDER_FLAGS =
-    Renderer::ShowStars          |
-    Renderer::ShowPlanets        |
-    Renderer::ShowGalaxies       |
-    Renderer::ShowNebulae        |
-    Renderer::ShowOpenClusters   |
-    Renderer::ShowCloudMaps      |
-    Renderer::ShowAtmospheres    |
-    Renderer::ShowRingShadows    |
-    Renderer::ShowEclipseShadows | 
-    Renderer::ShowCometTails     |
-    Renderer::ShowAutoMag;
+		  Renderer::ShowStars              |
+		  Renderer::ShowPlanets            |
+		  Renderer::ShowGalaxies           |
+		  Renderer::ShowGlobulars          |
+		  Renderer::ShowCloudMaps          |
+		  Renderer::ShowAtmospheres        |
+		  Renderer::ShowEclipseShadows     |
+		  Renderer::ShowRingShadows        |
+		  Renderer::ShowCometTails         |
+		  Renderer::ShowNebulae            |
+		  Renderer::ShowOpenClusters       |
+		  Renderer::ShowAutoMag            |
+		  Renderer::ShowNightMaps          |
+		  Renderer::ShowCloudShadows       |
+		  Renderer::ShowTintedIllumination |
+		  Renderer::ShowSmoothLines;
 
 const int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
 
-const int DEFAULT_LABEL_MODE = 0;
+const int DEFAULT_LABEL_MODE = 2176;
 
-const float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.0f;
+const float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 
 const Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 
