@@ -3884,11 +3884,11 @@ msgid "OK"
 msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:70
-msgid "Copyright (C) 2001-2009, Celestia Development Team"
+msgid "Copyright (C) 2001-2017, Celestia Development Team"
 msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:71
-msgid "http://www.shatters.net/celestia"
+msgid "https://celestiaproject.net/"
 msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:72
@@ -4270,4 +4270,609 @@ msgstr ""
 
 #: src/celestia/res/resource_strings.cpp:237
 msgid "Dec"
+msgstr ""
+
+msgid ""
+"Celestia was unable to initialize OpenGL extensions (error %1). Graphics "
+"quality will be reduced."
+msgstr ""
+
+msgid "Deep Sky Objects"
+msgstr ""
+
+msgid "Info Browser"
+msgstr ""
+
+msgid "Guides"
+msgstr ""
+
+msgid "Full screen"
+msgstr ""
+
+msgid "No Bookmarks File"
+msgstr ""
+
+msgid "Bookmarks file %1 does not exist."
+msgstr ""
+
+msgid "Error opening bookmarks file"
+msgstr ""
+
+msgid "Error Saving Bookmarks"
+msgstr ""
+
+msgid "Save Image"
+msgstr ""
+
+msgid "Images (*.png *.jpg)"
+msgstr ""
+
+msgid "Video (*.avi)"
+msgstr ""
+
+msgid "Video (*.ogv)"
+msgstr ""
+
+msgid "Resolution:"
+msgstr ""
+
+msgid "Captured screen shot to clipboard"
+msgstr ""
+
+msgid "Pasting URL"
+msgstr ""
+
+msgid "Open Script"
+msgstr ""
+
+msgid "Celestia Scripts (*.celx *.cel)"
+msgstr ""
+
+msgid "New bookmark"
+msgstr ""
+
+msgid "<b>OpenGL version: </b>"
+msgstr ""
+
+msgid "<b>Renderer: </b>"
+msgstr ""
+
+msgid "<b>GLSL Version: </b>"
+msgstr ""
+
+msgid "<b>Maximum texture size: </b>"
+msgstr ""
+
+msgid "<b>Extensions:</b><br>\n"
+msgstr ""
+
+msgid "&Grab image"
+msgstr ""
+
+msgid "Capture &video"
+msgstr ""
+
+msgid "&Copy image"
+msgstr ""
+
+msgid "Copy &URL"
+msgstr ""
+
+msgid "&Paste URL"
+msgstr ""
+
+msgid "&Preferences..."
+msgstr ""
+
+msgid "Select Sun"
+msgstr ""
+
+msgid "Center Selection"
+msgstr ""
+
+msgid "Goto Selection"
+msgstr ""
+
+msgid "Set &time"
+msgstr ""
+
+msgid "&Display"
+msgstr ""
+
+msgid "Dee&p Sky Objects"
+msgstr ""
+
+msgid "&Shadows"
+msgstr ""
+
+msgid "Texture &Resolution"
+msgstr ""
+
+msgid "&MultiView"
+msgstr ""
+
+msgid "Split view vertically"
+msgstr ""
+
+msgid "Split view horizontally"
+msgstr ""
+
+msgid "Cycle views"
+msgstr ""
+
+msgid "Single view"
+msgstr ""
+
+msgid "Delete view"
+msgstr ""
+
+msgid "Frames visible"
+msgstr ""
+
+msgid "Active frame visible"
+msgstr ""
+
+msgid "Synchronize time"
+msgstr ""
+
+msgid "Add Bookmark..."
+msgstr ""
+
+msgid "Organize Bookmarks..."
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Bookmarks Menu"
+msgstr ""
+
+msgid "Add bookmarks to this folder to see them in the bookmarks menu."
+msgstr ""
+
+msgid "Bookmarks Toolbar"
+msgstr ""
+
+msgid "Add bookmarks to this folder to see them in the bookmarks toolbar."
+msgstr ""
+
+msgid "Error reading bookmarks file"
+msgstr ""
+
+msgid "Current simulation time"
+msgstr ""
+
+msgid "Simulation time at activation"
+msgstr ""
+
+msgid "System time at activation"
+msgstr ""
+
+msgid "New Folder"
+msgstr ""
+
+msgid "Equatorial coordinate grid"
+msgstr ""
+
+msgid "Galactic coordinate grid"
+msgstr ""
+
+msgid "Ecliptic coordinate grid"
+msgstr ""
+
+msgid "Horizontal coordinate grid"
+msgstr ""
+
+msgid "Ecliptic line"
+msgstr ""
+
+msgid "Constellation boundaries"
+msgstr ""
+
+msgid "Open clusters"
+msgstr ""
+
+msgid "Auto Magnitude"
+msgstr ""
+
+msgid "Faintest visible magnitude based on field of view"
+msgstr ""
+
+msgid "More Stars Visible"
+msgstr ""
+
+msgid "Fewer Stars Visible"
+msgstr ""
+
+msgid "Points"
+msgstr ""
+
+msgid "Fuzzy Points"
+msgstr ""
+
+msgid "Scaled Discs"
+msgstr ""
+
+msgid "Light Time Delay"
+msgstr ""
+
+msgid "Auto magnitude limit at 45 degrees: %L1"
+msgstr ""
+
+msgid "Magnitude limit: %L1"
+msgstr ""
+
+msgid "Closest Stars"
+msgstr ""
+
+msgid "Brightest Stars"
+msgstr ""
+
+msgid "Multiple Stars"
+msgstr ""
+
+msgid "Spectral Type"
+msgstr ""
+
+msgid "Mark Selected"
+msgstr ""
+
+msgid "Mark stars selected in list view"
+msgstr ""
+
+msgid "Clear Markers"
+msgstr ""
+
+msgid "Remove all existing markers"
+msgstr ""
+
+msgid "Select marker symbol"
+msgstr ""
+
+msgid "Select marker size"
+msgstr ""
+
+msgid "Click to select marker color"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Mark DSOs selected in list view"
+msgstr ""
+
+msgid "%1 objects found"
+msgstr ""
+
+msgid "Eclipsed body"
+msgstr ""
+
+msgid "Occulter"
+msgstr ""
+
+msgid "Start time"
+msgstr ""
+
+msgid "Solar eclipses"
+msgstr ""
+
+msgid "Lunar eclipses"
+msgstr ""
+
+msgid "All eclipses"
+msgstr ""
+
+msgid "Search range"
+msgstr ""
+
+msgid "Find eclipses"
+msgstr ""
+
+msgid "Event Finder"
+msgstr ""
+
+msgid "%1 is not a valid object"
+msgstr ""
+
+msgid "End date is earlier than start date."
+msgstr ""
+
+msgid "Finding eclipses..."
+msgstr ""
+
+msgid "Set time to mid-eclipse"
+msgstr ""
+
+msgid "Near %1"
+msgstr ""
+
+msgid "From surface of %1"
+msgstr ""
+
+msgid "Behind %1"
+msgstr ""
+
+msgid "Web info: "
+msgstr ""
+
+msgid "m"
+msgstr ""
+
+msgid "Equatorial radius: "
+msgstr ""
+
+msgid "Size: "
+msgstr ""
+
+msgid "Oblateness: "
+msgstr ""
+
+msgid "hours"
+msgstr ""
+
+msgid "days"
+msgstr ""
+
+msgid "Sidereal rotation period: "
+msgstr ""
+
+msgid "Length of day: "
+msgstr ""
+
+msgid "years"
+msgstr ""
+
+msgid "Orbit information"
+msgstr ""
+
+msgid "Osculating elements for"
+msgstr ""
+
+msgid "Period: "
+msgstr ""
+
+msgid "AU"
+msgstr ""
+
+msgid "Semi-major axis: "
+msgstr ""
+
+msgid "Eccentricity: "
+msgstr ""
+
+msgid "Inclination: "
+msgstr ""
+
+msgid "Pericenter distance: "
+msgstr ""
+
+msgid "Apocenter distance: "
+msgstr ""
+
+msgid "Ascending node: "
+msgstr ""
+
+msgid "Argument of periapsis: "
+msgstr ""
+
+msgid "Mean anomaly: "
+msgstr ""
+
+msgid "Period (calculated): "
+msgstr ""
+
+msgid "days<br>\n"
+msgstr ""
+
+msgid "NVIDIA combiners"
+msgstr ""
+
+msgid "OpenGL vertex program"
+msgstr ""
+
+msgid "NVIDIA vertex program and combiners"
+msgstr ""
+
+msgid "OpenGL vertex program/NVIDIA combiners"
+msgstr ""
+
+msgid "OpenGL 1.5 vertex/fragment program"
+msgstr ""
+
+msgid "NVIDIA GeForce FX"
+msgstr ""
+
+msgid "Blackbody D65"
+msgstr ""
+
+msgid "Classic colors"
+msgstr ""
+
+msgid "Local format"
+msgstr ""
+
+msgid "Time zone name"
+msgstr ""
+
+msgid "UTC offset"
+msgstr ""
+
+msgid "Show &Body Axes"
+msgstr ""
+
+msgid "Show &Frame Axes"
+msgstr ""
+
+msgid "Show &Sun Direction"
+msgstr ""
+
+msgid "Show &Velocity Vector"
+msgstr ""
+
+msgid "Show S&pin Vector"
+msgstr ""
+
+msgid "Show &Direction to %1"
+msgstr ""
+
+msgid "Show Planetographic &Grid"
+msgstr ""
+
+msgid "Show &Terminator"
+msgstr ""
+
+msgid "Other objects"
+msgstr ""
+
+msgid "Select Time Zone"
+msgstr ""
+
+msgid "Date: "
+msgstr ""
+
+msgid "Set Year"
+msgstr ""
+
+msgid "Set Month"
+msgstr ""
+
+msgid "Set Day"
+msgstr ""
+
+msgid "Time: "
+msgstr ""
+
+msgid "Set Hours"
+msgstr ""
+
+msgid "Set Minutes"
+msgstr ""
+
+msgid "Set Seconds"
+msgstr ""
+
+msgid "Set Julian Date"
+msgstr ""
+
+msgid "Set time"
+msgstr ""
+
+msgid "Star"
+msgstr ""
+
+msgid "Dwarf planet"
+msgstr ""
+
+msgid "Reference point"
+msgstr ""
+
+msgid "Component"
+msgstr ""
+
+msgid "Surface feature"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Asteroids & comets"
+msgstr ""
+
+msgid "Reference points"
+msgstr ""
+
+msgid "Minor moons"
+msgstr ""
+
+msgid "Components"
+msgstr ""
+
+msgid "Surface features"
+msgstr ""
+
+msgid "Group objects by class"
+msgstr ""
+
+msgid "Reverse time"
+msgstr ""
+
+msgid "10x slower"
+msgstr ""
+
+msgid "2x slower"
+msgstr ""
+
+msgid "Pause time"
+msgstr ""
+
+msgid "2x faster"
+msgstr ""
+
+msgid "10x faster"
+msgstr ""
+
+msgid "Set to current time"
+msgstr ""
+
+msgid "Visible"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+msgid "Bookmark Location"
+msgstr ""
+
+msgid "Bookmark name:"
+msgstr ""
+
+msgid "Create in:"
+msgstr ""
+
+msgid "Time source:"
+msgstr ""
+
+msgid "Coordinate grids"
+msgstr ""
+
+msgid "Manual Celestia"
+msgstr ""
+
+msgid "Loading data files: "
+msgstr ""
+
+msgid "Anti-aliasing enabled"
+msgstr ""
+
+msgid "Anti-aliasing disabled"
+msgstr ""
+
+msgid ""
+"<html><p><b>Celestia 1.7.0 (Qt4 experimental version)</b></p><p>Copyright "
+"(C) 2001-2017 by the Celestia Development Team. Celestia is free software. "
+"You can redistribute it and/or modify it under the terms of the GNU General "
+"Public License version 2.</p><b>Celestia on the web</b><br>Main site: <a "
+"href=\"https://celestiaproject.net/\">https://celestiaproject.net/"
+"</a><br>Forum: <a href=\"https://celestiaproject.net/forum/\">https://"
+"celestiaproject.net/forum/</a><br>GitHub project: <a href=\"https://"
+"github.com/Alexell/Celestia\">https://github.com/Alexell/Celestia/"
+"</a><br></html>"
+msgstr ""
+
+msgid "Low res textures"
+msgstr ""
+
+msgid "Medium res textures"
+msgstr ""
+
+msgid "High res textures"
+msgstr ""
+
+msgid "Please wait..."
 msgstr ""
