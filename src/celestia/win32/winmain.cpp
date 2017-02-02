@@ -2269,7 +2269,7 @@ static void syncMenusWithRendererState()
     setMenuItemCheck(ID_VIEW_SYNC_TIME,
                      appCore->getSimulation()->getSyncTime());
 
-    if(abs(0.0 - (double)ambientLight) < 1.0e-3)
+	if(abs(0.0 - (double)ambientLight) < 1.0e-3)
     {
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_NONE,   MF_CHECKED);
         CheckMenuItem(menuBar, ID_RENDER_AMBIENTLIGHT_LOW,    MF_UNCHECKED);
@@ -2298,7 +2298,7 @@ static void syncMenusWithRendererState()
 
 	const ColorTemperatureTable* color = appCore->getRenderer()->getStarColorTable();
 	CheckMenuItem(menuBar, ID_STARCOLOR_DISABLED, color == GetStarColorTable(ColorTable_Enhanced) ? MF_CHECKED : MF_UNCHECKED);
-	CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTable_Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);		  
+	CheckMenuItem(menuBar, ID_STARCOLOR_ENABLED,  color == GetStarColorTable(ColorTable_Blackbody_D65) ? MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
                   textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
@@ -2574,7 +2574,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
     SetRegistryInt(key, "StarStyle", prefs.starStyle);
-	  SetRegistryInt(key, "RenderPath", prefs.renderPath);
+    SetRegistryInt(key, "RenderPath", prefs.renderPath);
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
 
@@ -3265,7 +3265,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.visualMagnitude = 8.0f;   //Default specified in Simulation::Simulation() 6.0
     prefs.showLocalTime = 0;
     prefs.dateFormat = 0;
-    prefs.hudDetail = 1;
+    prefs.hudDetail = 2; // def 1
     prefs.fullScreenMode = -1;
     prefs.lastVersion = 0x00000000;
     prefs.textureResolution = 1;
@@ -3862,8 +3862,362 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
         case VK_ESCAPE:
             appCore->charEntered('\033');
             break;
+
+		//Support for Cyrillic keyboard
+        case VK_B:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+				// If enabled text enter mode (key Enter pressed) then
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				// exit from this case
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x02');// [Ctrl+B]
+			else
+				appCore->charEntered('B');
+			break;
+
+        case VK_H:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else
+				appCore->charEntered('H');
+			break;
+
+        case VK_D:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x04');// [Ctrl+D]
+			else
+				appCore->charEntered('D');
+			break;
+			
+        case VK_C:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				{
+				CopyStateURLToClipboard();
+				appCore->flash(_("Copied URL"));
+				}
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('C');
+			else
+				appCore->charEntered('c');
+            break;
+
+        case VK_G:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x07');// [Ctrl+G]
+			else
+				appCore->charEntered('G');
+			break;
+
+        case VK_F:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x06');// [Ctrl+F]
+			else
+				appCore->charEntered('F');
+			break;
+
+        case VK_T:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x14');// [Ctrl+T]
+			else
+				appCore->charEntered('T');
+			break;
+
+        case VK_Y:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x19');// [Ctrl+Y]
+			else
+				appCore->charEntered('Y');
+			break;
+
+        case VK_J:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else
+				appCore->charEntered('J');
+			break;
+
+        case VK_L:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//	            appCore->charEntered('0x0C');// [Ctrl+L]
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('L');
+			else
+				appCore->charEntered('l');
+			break;
+
+        case VK_K:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//	            appCore->charEntered('0x0B');// [Ctrl+K]
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('K');
+			else
+				appCore->charEntered('k');
+			break;
+
+        case VK_E:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//	            appCore->charEntered('0x05');// [Ctrl+E]
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('E');
+			else
+				appCore->charEntered('e');
+			break;
+
+        case VK_P:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x10');// [Ctrl+P]
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('P');
+			else
+				appCore->charEntered('p');
+			break;
+
+        case VK_R:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//	            appCore->charEntered('0x12');// [Ctrl+R]
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)  // else if
+				appCore->charEntered('R');
+			else
+				appCore->charEntered('r');
+			break;
+
+        case VK_M:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('M');
+			else
+				appCore->charEntered('m');
+			break;
+
+        case VK_W:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//	            appCore->charEntered('0x17');// [Ctrl+W]
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('W');
+			else
+				appCore->charEntered('w');
+			break;
+
+        case VK_N:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else
+				appCore->charEntered('N');
+			break;
+
+        case VK_V:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x16');// [Ctrl+V]
+			else
+				appCore->charEntered('V');
+			break;
+
+        case VK_U:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x15');// [Ctrl+U]
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+				appCore->charEntered('U');
+			else
+				appCore->charEntered('u');
+			break;
+
+        case VK_I:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else
+				appCore->charEntered('I');
+			break;
+
+        case VK_O:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x0F');// [Ctrl+O]
+			else
+				appCore->charEntered('O');
+			break;
+
+        case VK_Q:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else
+				appCore->charEntered('Q');
+			break;
+
+        case VK_S:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x13');// [Ctrl+S]
+			else
+				appCore->charEntered('S');
+			break;
+
+        case VK_X:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
+				break;
+//				appCore->charEntered('0x18');// [Ctrl+X]
+			else
+				appCore->charEntered('X');
+			break;
+
+        case VK_OEM_PERIOD:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else
+				appCore->charEntered('.');
+			break;
+
+        case VK_OEM_COMMA:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else
+				appCore->charEntered(',');
+			break;
+
+        case VK_OEM_1:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+                appCore->charEntered(':');
+			else
+				appCore->charEntered(';');
+			break;
+
+        case VK_OEM_3:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+                appCore->charEntered('~');
+			else
+				appCore->charEntered('`');
+			break;
+
+        case VK_OEM_4:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+                appCore->charEntered('{');
+			else
+				appCore->charEntered('[');
+			break;
+
+        case VK_OEM_6:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+                appCore->charEntered('}');
+			else
+				appCore->charEntered(']');
+			break;
+
+        case VK_OEM_7:
+			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+				break;
+			else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+                appCore->charEntered('"');
+			else
+				appCore->charEntered('/');
+			break;
+
+//        case VK_2:
+//			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+//			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+//				break;
+//          else if ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT)) & 0x8000)
+//              appCore->charEntered('@');
+//			break;
+
+//        case VK_OEM_7:
+//			if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) == 0x419)
+//			if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+//				break;
+//			else
+//        	MessageBoxA(hWnd, "RU", 0, 0);
+//			appCore->charEntered('/');
+//			break;
+// ----------------------------------------------------------------------
+
         case VK_INSERT:
-        case 'C':
+        //case 'C':
             if ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL)) & 0x8000)
             {
                 CopyStateURLToClipboard();
@@ -3917,7 +4271,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             /*cerr << "Char input: (ANSI) " << (int)(unsigned char)charCode << " - UTF8 -> ";
             for(int i=0; utf8CharCode[i] != '\0'; i++) cerr << (int)(unsigned char)(utf8CharCode[i]) << " ";
             cerr << "[" << utf8CharCode << "]" << endl;*/
-
+			
             Renderer::StarStyle oldStarStyle = r->getStarStyle();
             appCore->charEntered(utf8CharCode, modifiers);
             if (r->getRenderFlags() != oldRenderFlags ||
@@ -3926,6 +4280,22 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 syncMenusWithRendererState();
             }
+			
+			// Leserg --- Sync texture Res with menu
+			if (r->getResolution());
+			{
+			syncMenusWithRendererState();
+			//syncMenusWithRendererState();  // ???
+            //MessageBox(NULL, "TEST", "Information", MB_OK);
+			}
+			// ----------------------------------------------
+			
+			// Leserg --- Sync Star Color with menu			
+			if (r->getStarColorTable());
+			syncMenusWithRendererState();
+			//syncMenusWithRendererState();  // ???
+			//MessageBox(NULL, "TEST", "Information", MB_OK);
+			// ----------------------------------------------
         }
         break;
 
@@ -4303,6 +4673,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
 
         case ID_HELP_GUIDE:
             ShellExecute(hWnd, "open", "help\\CelestiaGuide.html", NULL, NULL, SW_NORMAL);
+
             break;
 
         case ID_HELP_CONTROLS:

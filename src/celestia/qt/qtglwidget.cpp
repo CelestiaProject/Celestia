@@ -60,16 +60,16 @@ const int DEFAULT_RENDER_FLAGS =
 		  Renderer::ShowNebulae            |
 		  Renderer::ShowOpenClusters       |
 		  Renderer::ShowAutoMag            |
-		  Renderer::ShowNightMaps          | 
-		  Renderer::ShowCloudShadows       |  
-		  Renderer::ShowTintedIllumination | 
-		  Renderer::ShowSmoothLines;          
+		  Renderer::ShowNightMaps          |
+		  Renderer::ShowCloudShadows       |
+		  Renderer::ShowTintedIllumination |
+		  Renderer::ShowSmoothLines;        
 
 const int DEFAULT_ORBIT_MASK = Body::Planet | Body::Moon | Body::Stellar;
 
-const int DEFAULT_LABEL_MODE = 2176;  
+const int DEFAULT_LABEL_MODE = 2176;
 
-const float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f; 
+const float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 
 const Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 
@@ -470,11 +470,13 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
     case Key_Backtab:
         appCore->charEntered(CelestiaCore::Key_BackTab);
         break;
-// Support for Russian Keyboard
+	// Support for Cyrillic keyboard
 	case VK_B:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
+        //if (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete)
+        //appCore->charEntered(e->text().toUtf8().data(), modifiers);
         if (e->modifiers().testFlag(Qt::ControlModifier))
         appCore->charEntered(e->text().toUtf8().data(), modifiers);   // [Ctrl+B]
         else
@@ -482,14 +484,14 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
 	case VK_H:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         appCore->charEntered('H');
         break;
 
 	case VK_D:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -499,7 +501,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_C:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -511,7 +513,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_G:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -521,7 +523,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
 	case VK_F:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -531,7 +533,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
 	case VK_T:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -541,7 +543,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
 	case VK_Y:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -551,14 +553,14 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
 	case VK_J:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         appCore->charEntered('J');
         break;
 
     case VK_L:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -570,7 +572,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_K:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -582,7 +584,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_E:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -594,7 +596,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_P:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -606,7 +608,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_R:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -618,7 +620,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_M:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ShiftModifier))
@@ -628,7 +630,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_W:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -640,14 +642,14 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_N:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         appCore->charEntered('N');
         break;
 
     case VK_V:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -657,7 +659,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_U:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -669,14 +671,14 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_I:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         appCore->charEntered('I');
         break;
 
     case VK_O:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -686,14 +688,14 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_Q:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         appCore->charEntered('Q');
         break;
 
     case VK_S:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -703,7 +705,7 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case VK_X:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         if (e->modifiers().testFlag(Qt::ControlModifier))
@@ -713,20 +715,23 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case 1102:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         appCore->charEntered('.');
         break;
 
     case 1073:
-        if (LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049)  
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
         appCore->charEntered(e->text().toUtf8().data(), modifiers);
         else
         appCore->charEntered(',');
         break;
 
     case 1078:
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
+        appCore->charEntered(e->text().toUtf8().data(), modifiers);
+        else
         if (e->modifiers().testFlag(Qt::ShiftModifier))
         appCore->charEntered(':');
         else
@@ -734,13 +739,19 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case 1105:
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
+        appCore->charEntered(e->text().toUtf8().data(), modifiers);
+        else
         if (e->modifiers().testFlag(Qt::ShiftModifier))
         appCore->charEntered('~');
         else
         appCore->charEntered('`');
         break;
 
-    case 1093: 
+    case 1093:
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
+        appCore->charEntered(e->text().toUtf8().data(), modifiers);
+        else
         if (e->modifiers().testFlag(Qt::ShiftModifier))
         appCore->charEntered('{');
         else
@@ -748,6 +759,9 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case 1098:
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
+        appCore->charEntered(e->text().toUtf8().data(), modifiers);
+        else
         if (e->modifiers().testFlag(Qt::ShiftModifier))
         appCore->charEntered('}');
         else
@@ -755,6 +769,9 @@ void CelestiaGlWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     case 1101:
+        if ((LOWORD(GetKeyboardLayout(GetCurrentThreadId())) != 1049) || (appCore->getTextEnterMode() & CelestiaCore::KbAutoComplete))  
+        appCore->charEntered(e->text().toUtf8().data(), modifiers);
+        else
         if (e->modifiers().testFlag(Qt::ShiftModifier))
         appCore->charEntered('"');
         else
