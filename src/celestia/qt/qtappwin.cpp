@@ -1027,6 +1027,8 @@ void CelestiaAppWindow::slotShowAbout()
     "http://celestiaproject.net/celestia/</a><br>"
     "Forum: <a href=\"http://celestiaproject.net/forum/\">"
     "http://celestiaproject.net/forum/</a><br>"
+    "GitHub project: <a href=\"https://github.com/Alexell/Celestia\">"
+    "https://github.com/Alexell/Celestia</a><br>"
     "</html>");
 
 	QMessageBox::about(this, "Celestia", _(aboutText));

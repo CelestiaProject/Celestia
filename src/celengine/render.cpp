@@ -590,9 +590,9 @@ Renderer::Renderer() :
     cosViewConeAngle(computeCosViewConeAngle(fov, 1, 1)),
     screenDpi(96),
     corrFac(1.12f),
-    faintestAutoMag45deg(7.0f),
+    faintestAutoMag45deg(8.0f), //def. 7.0f
     renderMode(GL_FILL),
-    labelMode(NoLabels),
+    labelMode(LocationLabels), //def. NoLabels
     renderFlags(ShowStars | ShowPlanets),
     orbitMask(Body::Planet | Body::Moon | Body::Stellar),
     ambientLightLevel(0.1f),
@@ -638,7 +638,7 @@ Renderer::Renderer() :
     skyVertices = new SkyVertex[MaxSkySlices * (MaxSkyRings + 1)];
     skyIndices = new uint32[(MaxSkySlices + 1) * 2 * MaxSkyRings];
     skyContour = new SkyContourPoint[MaxSkySlices + 1];
-    colorTemp = GetStarColorTable(ColorTable_Enhanced);
+    colorTemp = GetStarColorTable(ColorTable_Blackbody_D65);
 #ifdef DEBUG_HDR_FILE
     HDR_LOG.open("hdr.log", ios_base::app);
 #endif
