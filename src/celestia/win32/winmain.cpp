@@ -3265,7 +3265,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.visualMagnitude = 8.0f;   //Default specified in Simulation::Simulation() 6.0
     prefs.showLocalTime = 0;
     prefs.dateFormat = 0;
-    prefs.hudDetail = 1;
+    prefs.hudDetail = 2; // def 1
     prefs.fullScreenMode = -1;
     prefs.lastVersion = 0x00000000;
     prefs.textureResolution = 1;
@@ -3926,6 +3926,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             {
                 syncMenusWithRendererState();
             }
+            if (r->getResolution())
+                syncMenusWithRendererState();
+            if (r->getStarColorTable())
+                syncMenusWithRendererState();
         }
         break;
 
