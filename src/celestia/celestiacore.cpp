@@ -31,7 +31,6 @@
 #include <celengine/eigenport.h>
 #include <celmath/geomutil.h>
 #include <celutil/util.h>
-#include <celutil/winutil.h>
 #include <celutil/filetype.h>
 #include <celutil/directory.h>
 #include <celutil/formatnum.h>
@@ -82,7 +81,6 @@ static float MouseRotationSensitivity = degToRad(1.0f);
 
 static const int ConsolePageRows = 10;
 static Console console(200, 120);
-static HMENU menuBar;
 
 static void warning(string s)
 {
@@ -316,7 +314,7 @@ CelestiaCore::CelestiaCore() :
     typedText(""),
     typedTextCompletionIdx(-1),
     textEnterMode(KbNormal),
-    hudDetail(1),
+    hudDetail(2), // (def 1)
     dateFormat(astro::Date::Locale),
     dateStrWidth(0),
     overlayElements(ShowTime | ShowVelocity | ShowSelection | ShowFrame),
@@ -1578,6 +1576,15 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\030':  // Ctrl+X
         renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowSmoothLines);
+        if (renderer->getRenderFlags() & Renderer::ShowSmoothLines)
+        {
+            flash(_("Anti-aliasing enabled"));
+            setFaintestAutoMag();
+        }
+        else
+        {
+            flash(_("Anti-aliasing disabled"));
+        }
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1688,13 +1695,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (current == GetStarColorTable(ColorTable_Enhanced))
             {
                 renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
-				flash(_("Star color: enhanced"));
+				flash(_("Star color: Blackbody D65"));
 				notifyWatchers(RenderFlagsChanged);
             }
             else if (current == GetStarColorTable(ColorTable_Blackbody_D65))
             {
                 renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
-				flash(_("Star color: normal"));
+				flash(_("Star color: Enhanced"));
 				notifyWatchers(RenderFlagsChanged);
             }
             else
@@ -1975,6 +1982,26 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         else
             renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::DwarfPlanetLabels);
         notifyWatchers(LabelFlagsChanged);
+        break;
+
+    case 'R':
+        if (c == 'r') // Skip rangechecking as setResolution does it already
+            renderer->setResolution(renderer->getResolution() - 1);
+        else
+            renderer->setResolution(renderer->getResolution() + 1);
+        switch (renderer->getResolution())
+        {
+        case 0:
+            flash(_("Low res textures"));
+            break;
+        case 1:
+            flash(_("Medium res textures"));
+            break;
+        case 2:
+            flash(_("High res textures"));
+            break;
+        }
+		notifyWatchers(RenderFlagsChanged); //how to synchronize with menu?
         break;
 
     case 'Q':
