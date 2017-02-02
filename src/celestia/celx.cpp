@@ -2969,11 +2969,11 @@ static int celestia_getstarcolor(lua_State* l)
 		
             if (starColor == GetStarColorTable(ColorTable_Enhanced))
             {
-                lua_pushstring(l, "false");
+                lua_pushstring(l, "enhanced");
             }
             else if (starColor == GetStarColorTable(ColorTable_Blackbody_D65))
             {
-                lua_pushstring(l, "true");
+                lua_pushstring(l, "blackbody_d65");
             }
             else
             {
@@ -2996,11 +2996,11 @@ static int celestia_setstarcolor(lua_State* l)
     }
     else
     {
-        if (starColor == "true")
+        if (starColor == "blackbody_d65")
         {
             renderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
         }
-        else if (starColor == "false")
+        else if (starColor == "enhanced")
         {
             renderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
         }
