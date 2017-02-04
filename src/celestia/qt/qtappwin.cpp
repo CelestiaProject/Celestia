@@ -538,6 +538,7 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("TextureResolution", renderer->getResolution());
 
     Simulation* simulation = m_appCore->getSimulation();
+//	settings.setValue("VisualMagnitude", simulation->getFaintestVisible());
     settings.beginGroup("Preferences");
     settings.setValue("SyncTime", simulation->getSyncTime());
     settings.setValue("FramesVisible", m_appCore->getFramesVisible());
@@ -1018,17 +1019,17 @@ void CelestiaAppWindow::slotShowAbout()
     static const char* aboutText =
     gettext_noop("<html>"
     "<p><b>Celestia 1.7.0 (Qt4 experimental version)</b></p>"
-    "<p>Copyright (C) 2001-2016 by the Celestia Development Team. Celestia "
+    "<p>Copyright (C) 2001-2017 by the Celestia Development Team. Celestia "
     "is free software. You can redistribute it and/or modify it under the "
     "terms of the GNU General Public License version 2.</p>"
     "<b>Celestia on the web</b>"
     "<br>"
-    "Main site: <a href=\"http://celestiaproject.net/celestia/\">"
-    "http://celestiaproject.net/celestia/</a><br>"
-    "Forum: <a href=\"http://celestiaproject.net/forum/\">"
-    "http://celestiaproject.net/forum/</a><br>"
-    "GitHub project: <a href=\"https://github.com/Alexell/Celestia\">"
-    "https://github.com/Alexell/Celestia</a><br>"
+    "Main site: <a href=\"https://celestiaproject.net/celestia/\">"
+    "https://celestiaproject.net/celestia/</a><br>"
+    "Forum: <a href=\"https://celestiaproject.net/forum/\">"
+    "https://celestiaproject.net/forum/</a><br>"
+    "GitHub project: <a href=\"https://github.com/CelestiaProject/Celestia\">"
+    "https://github.com/CelestiaProject/Celestia</a><br>"
     "</html>");
 
 	QMessageBox::about(this, "Celestia", _(aboutText));
@@ -1127,6 +1128,7 @@ void CelestiaAppWindow::createMenus()
 #if defined(TARGET_OS_MAC) || (!defined(_WIN32) && !defined(THEORA))
     captureVideoAction->setEnabled(false);
 #endif
+    captureVideoAction->setShortcut(QString(_("Shift+F10")));
     connect(captureVideoAction, SIGNAL(triggered()), this, SLOT(slotCaptureVideo()));
     fileMenu->addAction(captureVideoAction);
 

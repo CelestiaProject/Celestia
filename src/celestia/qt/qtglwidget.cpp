@@ -382,9 +382,9 @@ bool CelestiaGlWidget::handleSpecialKey(QKeyEvent* e, bool down)
         k = CelestiaCore::Key_PageUp;
         break;
 /*    case Key_F10:
-        if (down)
-            menuCaptureImage();
-        break;     */
+        if (e->modifiers()& ShiftModifier)
+            k = CelestiaCore::Key_F10;
+        break;*/     
     case Key_0:
         if (e->modifiers() & Qt::KeypadModifier)
             k = CelestiaCore::Key_NumPad0;
