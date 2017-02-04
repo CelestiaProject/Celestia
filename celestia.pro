@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = celestia
+TARGET = Celestia_QT
 VERSION = 1.7.0
 DESTDIR = .
 OBJECTS_DIR = obj
