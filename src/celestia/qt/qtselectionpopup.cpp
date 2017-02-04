@@ -414,6 +414,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
 
 void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
 {
+	setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
     QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
     if (planetsMenu != NULL)
         addMenu(planetsMenu);

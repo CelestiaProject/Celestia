@@ -1,1 +1,44 @@
+#include "windows.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,7,0,0
+ PRODUCTVERSION 3,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x21L
+#else
+ FILEFLAGS 0x20L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041904e3"
+        BEGIN
+            VALUE "Comments", ""
+            VALUE "CompanyName", "Celestia Development Team"
+            VALUE "FileDescription", "Celestia QT - A real-time 3D space simulation"
+            VALUE "FileVersion", "1.7.0.0"
+            VALUE "InternalName", "Celestia QT"
+            VALUE "LegalCopyright", "Copyright  2001-2017, Celestia Development Team"
+            VALUE "OriginalFilename", "Celestia QT.exe"
+            VALUE "PrivateBuild", ""
+            VALUE "ProductName", "Celestia QT"
+            VALUE "ProductVersion", "1.7.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+/////////////////////////////////////////////////////////////////////////////
+
 IDI_ICON1 ICON DISCARDABLE "Celestia.ico"
