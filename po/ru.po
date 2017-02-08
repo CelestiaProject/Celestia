@@ -4543,6 +4543,9 @@ msgstr "Самые яркие звёзды"
 msgid "Multiple Stars"
 msgstr "Кратные звёзды"
 
+msgid "Barycenters"
+msgstr "Барицентры"
+
 msgid "Spectral Type"
 msgstr "Тип спектра"
 
