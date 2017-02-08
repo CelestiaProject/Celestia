@@ -37,6 +37,8 @@ Q_OBJECT
     ~CelestialBrowser();
 
  public slots:
+    void slotUncheckMultipleFilterBox();
+    void slotUncheckBarycentersFilterBox();
     void slotRefreshTable();
     void slotContextMenu(const QPoint& pos);
     void slotMarkSelected();
@@ -58,6 +60,7 @@ Q_OBJECT
 
     QCheckBox* withPlanetsFilterBox;
     QCheckBox* multipleFilterBox;
+    QCheckBox* barycentersFilterBox;
     QLineEdit* spectralTypeFilterBox;
 
     QComboBox* markerSymbolBox;

@@ -44,6 +44,7 @@ public:
 
     bool planetsFilterEnabled;
     bool multipleFilterEnabled;
+    bool barycentersFilterEnabled;
     bool omitBarycenters;
     bool spectralTypeFilterEnabled;
     QRegExp spectralTypeFilter;
@@ -295,6 +296,7 @@ bool StarPredicate::operator()(const Star* star0, const Star* star1) const
 StarFilterPredicate::StarFilterPredicate() :
     planetsFilterEnabled(false),
     multipleFilterEnabled(false),
+    barycentersFilterEnabled(false),
     omitBarycenters(true),
     spectralTypeFilterEnabled(false),
     solarSystems(NULL)
@@ -323,6 +325,12 @@ bool StarFilterPredicate::operator()(const Star* star) const
     if (multipleFilterEnabled)
     {
         if (!star->getOrbitBarycenter() || star->getCatalogNumber() == 0)
+            return true;
+    }
+
+    if (barycentersFilterEnabled)
+    {
+        if (star->getVisibility())
             return true;
     }
 
@@ -520,8 +528,13 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     filterGroupLayout->addWidget(withPlanetsFilterBox, 0, 0);
 
     multipleFilterBox = new QCheckBox(_("Multiple Stars"));
-    connect(multipleFilterBox, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
+    connect(multipleFilterBox, SIGNAL(clicked()), this, SLOT(slotUncheckBarycentersFilterBox()));
+
+    barycentersFilterBox = new QCheckBox(_("Barycenters"));
+    connect(barycentersFilterBox, SIGNAL(clicked()), this, SLOT(slotUncheckMultipleFilterBox()));
+
     filterGroupLayout->addWidget(multipleFilterBox, 1, 0);
+    filterGroupLayout->addWidget(barycentersFilterBox, 1, 1);
 
     filterGroupLayout->addWidget(new QLabel(_("Spectral Type")), 0, 1);
     spectralTypeFilterBox = new QLineEdit();
@@ -603,6 +616,17 @@ CelestialBrowser::~CelestialBrowser()
 
 
 /******* Slots ********/
+void CelestialBrowser::slotUncheckMultipleFilterBox()
+{
+    multipleFilterBox->setChecked(false);
+    slotRefreshTable();
+}
+
+void CelestialBrowser::slotUncheckBarycentersFilterBox()
+{
+    barycentersFilterBox->setChecked(false);
+    slotRefreshTable();
+}
 
 void CelestialBrowser::slotRefreshTable()
 {
@@ -619,7 +643,8 @@ void CelestialBrowser::slotRefreshTable()
     StarFilterPredicate filterPred;
     filterPred.planetsFilterEnabled = withPlanetsFilterBox->checkState() == Qt::Checked;
     filterPred.multipleFilterEnabled = multipleFilterBox->checkState() == Qt::Checked;
-    filterPred.omitBarycenters = true;
+    filterPred.barycentersFilterEnabled = barycentersFilterBox->checkState() == Qt::Checked;
+    filterPred.omitBarycenters = barycentersFilterBox->checkState() == Qt::Unchecked;
     filterPred.solarSystems = appCore->getSimulation()->getUniverse()->getSolarSystemCatalog();
 
     QRegExp re(spectralTypeFilterBox->text(),

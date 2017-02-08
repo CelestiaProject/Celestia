@@ -4514,6 +4514,9 @@ msgstr ""
 msgid "Multiple Stars"
 msgstr ""
 
+msgid "Barycenters"
+msgstr ""
+
 msgid "Spectral Type"
 msgstr ""
 
