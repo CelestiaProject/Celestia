@@ -3228,7 +3228,7 @@ void Renderer::draw(const Observer& observer,
         /* We'll linearly fade the lines as a function of the observer's
            distance to the origin of coordinates: */
         float opacity = 1.0f;
-        float dist = observerPosLY.norm();
+        float dist = observerPosLY.norm() * 1.6e4f;
         if (dist > MaxAsterismLinesConstDist)
         {
             opacity = clamp((MaxAsterismLinesConstDist - dist) /
@@ -3274,7 +3274,7 @@ void Renderer::draw(const Observer& observer,
         /* We'll linearly fade the boundaries as a function of the
            observer's distance to the origin of coordinates: */
         float opacity = 1.0f;
-        float dist = observerPosLY.norm() * 1e6f;
+        float dist = observerPosLY.norm() * 1.6e4f;
         if (dist > MaxAsterismLabelsConstDist)
         {
             opacity = clamp((MaxAsterismLabelsConstDist - dist) /
