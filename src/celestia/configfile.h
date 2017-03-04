@@ -42,6 +42,9 @@ public:
     float rotateAcceleration;
     float mouseRotationSensitivity;
     bool  reverseMouseWheel;
+    double orbitWindowEnd;
+    double orbitPeriodsShown;
+    double linearFadeFraction;
     std::string scriptScreenshotDirectory;
     std::string scriptSystemAccessPolicy;
 #ifdef CELX

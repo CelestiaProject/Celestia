@@ -124,6 +124,13 @@ CelestiaConfig* ReadCelestiaConfig(string filename, CelestiaConfig *config)
     config->scriptSystemAccessPolicy = "ask";
     configParams->getString("ScriptSystemAccessPolicy", config->scriptSystemAccessPolicy);
 
+    config->orbitWindowEnd = 0.5f;
+    configParams->getNumber("OrbitWindowEnd", config->orbitWindowEnd);
+    config->orbitPeriodsShown = 1.0f;
+    configParams->getNumber("OrbitPeriodsShown", config->orbitPeriodsShown);
+    config->linearFadeFraction = 0.0f;
+    configParams->getNumber("LinearFadeFraction", config->linearFadeFraction);
+
     config->ringSystemSections = getUint(configParams, "RingSystemSections", 100);
     config->orbitPathSamplePoints = getUint(configParams, "OrbitPathSamplePoints", 100);
     config->shadowTextureSize = getUint(configParams, "ShadowTextureSize", 256);

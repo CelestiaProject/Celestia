@@ -4392,6 +4392,9 @@ bool CelestiaCore::initRenderer()
     detailOptions.orbitPathSamplePoints = config->orbitPathSamplePoints;
     detailOptions.shadowTextureSize = config->shadowTextureSize;
     detailOptions.eclipseTextureSize = config->eclipseTextureSize;
+    detailOptions.orbitWindowEnd = config->orbitWindowEnd;
+    detailOptions.orbitPeriodsShown = config->orbitPeriodsShown;
+    detailOptions.linearFadeFraction = config->linearFadeFraction;
 
     // Prepare the scene for rendering.
     if (!renderer->init(context, (int) width, (int) height, detailOptions))
