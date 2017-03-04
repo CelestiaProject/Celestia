@@ -700,7 +700,10 @@ Renderer::DetailOptions::DetailOptions() :
     ringSystemSections(100),
     orbitPathSamplePoints(100),
     shadowTextureSize(256),
-    eclipseTextureSize(128)
+    eclipseTextureSize(128),
+    orbitWindowEnd(0.5),
+    orbitPeriodsShown(1.0),
+    linearFadeFraction(0.0)
 {
 }
 
@@ -1943,17 +1946,19 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     // The 'window' is the interval of time for which the orbit will be drawn.
 
     // End of the orbit window relative to the current simulation time. Units
-    // are orbital periods.
-    const double OrbitWindowEnd     = 0.5;
+    // are orbital periods. The default value is 0.5.
+    const double OrbitWindowEnd     = detailOptions.orbitWindowEnd;
 
     // Number of orbit periods shown. The orbit window is:
     //    [ t + (OrbitWindowEnd - OrbitPeriodsShown) * T, t + OrbitWindowEnd * T ]
     // where t is the current simulation time and T is the orbital period.
-    const double OrbitPeriodsShown  = 1.0;
+    // The default value is 1.0.
+    const double OrbitPeriodsShown  = detailOptions.orbitPeriodsShown;
 
     // Fraction of the window over which the orbit fades from opaque to transparent.
     // Fading is disabled when this value is zero.
-    const double LinearFadeFraction = 0.0;
+    // The default value is 0.0.
+    const double LinearFadeFraction = detailOptions.linearFadeFraction;
 
     // Extra size of the internal sample cache.
     const double WindowSlack        = 0.2;

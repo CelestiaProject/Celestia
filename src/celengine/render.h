@@ -100,6 +100,9 @@ class Renderer
         unsigned int orbitPathSamplePoints;
         unsigned int shadowTextureSize;
         unsigned int eclipseTextureSize;
+        double orbitWindowEnd;
+        double orbitPeriodsShown;
+        double linearFadeFraction;
     };
 
     bool init(GLContext*, int, int, DetailOptions&);
