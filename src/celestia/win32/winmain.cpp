@@ -181,6 +181,7 @@ struct AppPreferences
     int dateFormat;
     int hudDetail;
     int fullScreenMode;
+    int starsColor;
     uint32 lastVersion;
     string altSurfaceName;
     uint32 textureResolution;
@@ -2513,7 +2514,7 @@ static bool LoadPreferencesFromRegistry(LPTSTR regkey, AppPreferences& prefs)
     GetRegistryValue(key, "DateFormat", &prefs.dateFormat, sizeof(prefs.dateFormat));
     GetRegistryValue(key, "HudDetail", &prefs.hudDetail, sizeof(prefs.hudDetail));
     GetRegistryValue(key, "FullScreenMode", &prefs.fullScreenMode, sizeof(prefs.fullScreenMode));
-
+    GetRegistryValue(key, "StarsColor", &prefs.starsColor, sizeof(prefs.starsColor));
     prefs.starStyle = Renderer::FuzzyPointStars;
     GetRegistryValue(key, "StarStyle", &prefs.starStyle, sizeof(prefs.starStyle));
 	prefs.renderPath = GLContext::GLPath_Basic;
@@ -2574,6 +2575,7 @@ static bool SavePreferencesToRegistry(LPTSTR regkey, AppPreferences& prefs)
     SetRegistryInt(key, "FullScreenMode", prefs.fullScreenMode);
     SetRegistryInt(key, "LastVersion", prefs.lastVersion);
     SetRegistryInt(key, "StarStyle", prefs.starStyle);
+    SetRegistryInt(key, "StarsColor", prefs.starsColor);
     SetRegistryInt(key, "RenderPath", prefs.renderPath);
     SetRegistry(key, "AltSurface", prefs.altSurfaceName);
     SetRegistryInt(key, "TextureResolution", prefs.textureResolution);
@@ -2611,7 +2613,12 @@ static bool GetCurrentPreferences(AppPreferences& prefs)
     prefs.lastVersion = 0x01040100;
     prefs.altSurfaceName = appCore->getSimulation()->getActiveObserver()->getDisplayedSurface();
     prefs.starStyle = appCore->getRenderer()->getStarStyle();
-	prefs.renderPath = appCore->getRenderer()->getGLContext()->getRenderPath();
+    const ColorTemperatureTable* current = appCore->getRenderer()->getStarColorTable();
+    if (current == GetStarColorTable(ColorTable_Enhanced))
+        prefs.starsColor = ColorTable_Enhanced;
+    if (current == GetStarColorTable(ColorTable_Blackbody_D65))
+        prefs.starsColor = ColorTable_Blackbody_D65;
+    prefs.renderPath = appCore->getRenderer()->getGLContext()->getRenderPath();
     prefs.textureResolution = appCore->getRenderer()->getResolution();
 
     return true;
@@ -3267,6 +3274,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
     prefs.dateFormat = 0;
     prefs.hudDetail = 2; // def 1
     prefs.fullScreenMode = -1;
+    prefs.starsColor = ColorTable_Blackbody_D65;
     prefs.lastVersion = 0x00000000;
     prefs.textureResolution = 1;
     LoadPreferencesFromRegistry(CelestiaRegKey, prefs);
@@ -3461,6 +3469,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         Galaxy::setLightGain(prefs.galaxyLightGain);
         appCore->getRenderer()->setStarStyle(prefs.starStyle);
         appCore->setHudDetail(prefs.hudDetail);
+
+        if (prefs.starsColor == 0)
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+        if (prefs.starsColor == 1)
+            appCore->getRenderer()->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+
         if (prefs.showLocalTime == 1)
             ShowLocalTime(appCore);
         else
