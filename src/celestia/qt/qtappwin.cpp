@@ -536,10 +536,19 @@ void CelestiaAppWindow::writeSettings()
     settings.setValue("StarStyle", renderer->getStarStyle());
     settings.setValue("RenderPath", (int) renderer->getGLContext()->getRenderPath());
     settings.setValue("TextureResolution", renderer->getResolution());
+    ColorTableType colorsst;
+    const ColorTemperatureTable* current = renderer->getStarColorTable();
+
+    if (current == GetStarColorTable(ColorTable_Blackbody_D65))
+        colorsst = ColorTable_Blackbody_D65;
+    else // if (current == GetStarColorTable(ColorTable_Enhanced))
+        colorsst = ColorTable_Enhanced;
+    settings.setValue("StarsColor", colorsst);
 
     Simulation* simulation = m_appCore->getSimulation();
-//	settings.setValue("VisualMagnitude", simulation->getFaintestVisible());
+
     settings.beginGroup("Preferences");
+    settings.setValue("VisualMagnitude", simulation->getFaintestVisible());
     settings.setValue("SyncTime", simulation->getSyncTime());
     settings.setValue("FramesVisible", m_appCore->getFramesVisible());
     settings.setValue("ActiveFrameVisible", m_appCore->getActiveFrameVisible());

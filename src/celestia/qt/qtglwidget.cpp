@@ -71,6 +71,10 @@ const int DEFAULT_LABEL_MODE = 2176;
 
 const float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
 
+const int DEFAULT_STARS_COLOR = ColorTable_Blackbody_D65;
+
+const float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
+
 const Renderer::StarStyle DEFAULT_STAR_STYLE = Renderer::FuzzyPointStars;
 
 const unsigned int DEFAULT_TEXTURE_RESOLUTION = medres;
@@ -159,6 +163,13 @@ void CelestiaGlWidget::initializeGL()
     appRenderer->setAmbientLightLevel((float) settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble());
     appRenderer->setStarStyle((Renderer::StarStyle) settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt());
     appRenderer->setResolution(settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toUInt());
+
+    if (settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt() == 0)
+    appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Enhanced));
+    else
+    appRenderer->setStarColorTable(GetStarColorTable(ColorTable_Blackbody_D65));
+
+    appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 
     // Read the saved render path
     GLContext::GLRenderPath bestPath = getBestAvailableRenderPath(*appRenderer->getGLContext());
