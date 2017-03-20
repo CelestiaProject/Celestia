@@ -1,0 +1,2 @@
+This folder for placing audio files that will be used by the play / celestia:play command in the CEL / CELX scripts.
+If necessary, you can create subfolders to organize and classify audio files for various needs.
