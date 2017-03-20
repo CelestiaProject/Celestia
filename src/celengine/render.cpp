@@ -700,7 +700,7 @@ Renderer::DetailOptions::DetailOptions() :
     ringSystemSections(100),
     orbitPathSamplePoints(100),
     shadowTextureSize(256),
-    eclipseTextureSize(128)
+    eclipseTextureSize(128),
     orbitWindowEnd(0.5),
     orbitPeriodsShown(1.0),
     linearFadeFraction(0.0)

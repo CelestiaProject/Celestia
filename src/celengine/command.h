@@ -687,5 +687,22 @@ class RepeatCommand : public Command
 };
 
 
+//Audio support by Victor, modified by Vincent & Alexell
+class CommandPlay : public InstantaneousCommand
+{
+ public:
+    CommandPlay(int, const std::string&, float, float, int, int);
+    void process(ExecutionEnvironment&);
+
+ private:
+    int channel;
+    std::string filename;
+    float volume;
+    float pan;
+    int loop;
+    int nopause;
+};
+
+
 
 #endif // _COMMAND_H_

@@ -776,6 +776,27 @@ Command* CommandParser::parseCommand()
         Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
         cmd = new CommandSetTextColor(color);
     }
+	//Audio support by Victor, modified by Vincent & Alexell
+    else if(commandName == "play")
+    {
+        int channel, loop, nopause;
+        float volume, pan;
+        string filename;
+        if(!paramList->getNumber("channel", channel))
+            channel = 0;
+        if(!paramList->getString("filename", filename))
+            filename = "\a";
+        if(!paramList->getNumber("volume", volume))
+            volume = -1;
+        if(!paramList->getNumber("pan", pan))
+            pan = 0;
+        if(!paramList->getNumber("loop", loop))
+            loop = -1;
+        if(!paramList->getNumber("nopause", nopause))
+            nopause = 0;
+
+        cmd = new CommandPlay(channel, filename, volume, pan, loop, nopause);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");

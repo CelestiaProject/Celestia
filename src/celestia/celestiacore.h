@@ -81,6 +81,11 @@
 #ifdef CELX
 #include "celx.h"
 #endif
+
+#include "fmod.hpp"
+#include "fmod_errors.h"
+#define MAX_CHANNELS    8
+
 class Url;
 
 // class CelestiaWatcher;
@@ -524,6 +529,23 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     friend TextureFont* getFont(CelestiaCore*);
     friend TextureFont* getTitleFont(CelestiaCore*);
 #endif
+
+	//Audio support by Victor, modified by Vincent & Alexell
+    FMOD::System       *sysaudio;
+    FMOD::Sound        *soundSources[MAX_CHANNELS];
+    FMOD::Channel      *channels[MAX_CHANNELS];
+    FMOD_RESULT         result;
+    unsigned int        version;
+
+    void stopSounds();
+	//Added by Vincent:
+    void pauseSounds();
+    //void resumeSounds();
+    bool pause[7];
+
+ public:
+    void playSoundFile(int, float, float, int, const std::string&, int);
+
 };
 
 #endif // _CELESTIACORE_H_

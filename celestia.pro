@@ -547,6 +547,7 @@ release {
 
 win32 {
     INCLUDEPATH += \
+        windows/inc/fmod \
         windows/inc/libintl \
         windows/inc/libz \
         windows/inc/libpng \
@@ -554,6 +555,7 @@ win32 {
         windows/inc/lua-5.1 \
         windows/inc/spice
     LIBS += -Lwindows/lib/x86 \
+        -lfmod_vc \
         -lzlib \
         -llibpng \
         -llibjpeg \
