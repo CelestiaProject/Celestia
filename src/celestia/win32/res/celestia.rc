@@ -98,8 +98,8 @@ BEGIN
         MENUITEM "Auto Magnitude\tCtrl+Y",      ID_RENDER_AUTOMAG
         POPUP "Star St&yle"
         BEGIN
-            MENUITEM "&Fuzzy Points",               ID_RENDER_STARSTYLE_FUZZY, CHECKED
             MENUITEM "&Points",                     ID_RENDER_STARSTYLE_POINTS
+			MENUITEM "&Fuzzy Points",               ID_RENDER_STARSTYLE_FUZZY, CHECKED
             MENUITEM "Scaled &Discs",               ID_RENDER_STARSTYLE_DISCS
         END
         POPUP "Star &Color"
