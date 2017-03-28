@@ -776,6 +776,40 @@ Command* CommandParser::parseCommand()
         Color color((float) colorv.x, (float) colorv.y, (float) colorv.z);
         cmd = new CommandSetTextColor(color);
     }
+    else if (commandName == "overlay")
+    {
+        double duration;
+        float xoffset;
+        float yoffset;
+        float alpha;
+        string filename;
+        int fitscreen;
+        
+        if(!paramList->getNumber("duration", duration))
+            duration = 3;
+        if(!paramList->getNumber("xoffset", xoffset))
+            xoffset = 0.0;
+        if(!paramList->getNumber("yoffset", yoffset))
+            yoffset = 0.0;
+        if(!paramList->getNumber("alpha", alpha))
+            alpha = 1;
+        if(!paramList->getString("filename", filename))
+            filename = "";
+        if(!paramList->getNumber("fitscreen", fitscreen))
+           fitscreen = 0;
+
+        cmd = new CommandScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
+    }
+
+    else if (commandName == "verbosity")
+    {
+        int level;
+        
+        if(!paramList->getNumber("level", level))
+            level = 2;
+
+        cmd = new CommandVerbosity(level);
+    }
     else
     {
         error("Unknown command name '" + commandName + "'");

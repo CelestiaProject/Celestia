@@ -687,5 +687,31 @@ class RepeatCommand : public Command
 };
 
 
+class CommandScriptImage : public InstantaneousCommand
+{
+ public:
+    CommandScriptImage(double duration, float xoffset, float yoffset,
+                                            float alpha, const std::string&, int fitscreen);
+    void process(ExecutionEnvironment&);
+
+ private:
+    double duration;
+    float xoffset;
+    float yoffset;
+    float alpha;
+    std::string filename;
+    int fitscreen;
+};
+
+class CommandVerbosity : public InstantaneousCommand
+{
+ public:
+    CommandVerbosity(int level);
+    void process(ExecutionEnvironment&);
+
+ private:
+    int level;
+};
+
 
 #endif // _COMMAND_H_
