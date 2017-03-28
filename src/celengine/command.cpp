@@ -1016,6 +1016,35 @@ void CommandPlay::process(ExecutionEnvironment& env)
 {
     env.getCelestiaCore()->playSoundFile(channel, volume, pan, loop, filename, nopause);
 }
+// SCRIPT IMAGE START: Author Vincent
+// ScriptImage command
+CommandScriptImage::CommandScriptImage(double _duration, float _xoffset,
+                         float _yoffset, float _alpha, const std::string& _filename, int _fitscreen) :
+    duration(_duration),
+    xoffset(_xoffset),
+    yoffset(_yoffset),
+    alpha(_alpha),
+    filename(_filename),
+    fitscreen(_fitscreen)
+{
+}
+
+void CommandScriptImage::process(ExecutionEnvironment& env)
+{
+    env.getCelestiaCore()->setScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
+}
+
+// Verbosity command
+CommandVerbosity::CommandVerbosity(int _level) : 
+    level(_level)
+{
+}
+
+void CommandVerbosity::process(ExecutionEnvironment& env)
+{
+    env.getCelestiaCore()->setHudDetail(level);
+}
+// SCRIPT IMAGE END
 
 
 //====================================================

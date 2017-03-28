@@ -3516,6 +3516,38 @@ static int celestia_play(lua_State* l)
     return 0;
 }
 
+//SCRIPT IMAGE START: Author Vincent
+static int celestia_overlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 7, "One to Six arguments expected to function celestia:overlay");
+
+    CelestiaCore* appCore = this_celestia(l);
+    double duration = Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:overlay must be a number (duration)", 3.0);
+    float xoffset = Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:overlay must be a number (xoffset)", 0.0);
+    float yoffset = Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:overlay must be a number (yoffset)", 0.0);
+    float alpha = Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:overlay must be a number (alpha)", 1.0);
+    const char* filename = Celx_SafeGetString(l, 6, AllErrors, "Fifth argument to celestia:overlay must be a string (filename)");
+    int fitscreen = Celx_SafeGetNumber(l, 7, WrongType, "Sixth argument to celestia:overlay must be a number (fitscreen)", 0);
+
+        appCore->setScriptImage(duration, xoffset, yoffset, alpha, filename, fitscreen);
+
+    return 0;
+}
+
+static int celestia_verbosity(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:verbosity");
+
+    CelestiaCore* appCore = this_celestia(l);
+    int level = Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:verbosity must be a number (level)", 2.0);
+
+        appCore->setHudDetail(level);
+
+    return 0;
+}
+//SCRIPT IMAGE END
+
+
 static void CreateCelestiaMetaTable(lua_State* l)
 {
     Celx_CreateClassMetatable(l, Celx_Celestia);
@@ -3613,6 +3645,9 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "seturl", celestia_seturl);
     Celx_RegisterMethod(l, "geturl", celestia_geturl);
     Celx_RegisterMethod(l, "play", celestia_play);
+    Celx_RegisterMethod(l, "overlay", celestia_overlay);
+    Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
+
 
     lua_pop(l, 1);
 }

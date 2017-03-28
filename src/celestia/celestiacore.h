@@ -434,6 +434,15 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     double messageStart;
     double messageDuration;
     Color textColor;
+
+    double imageStart;
+    double imageDuration;
+    float imageXoffset;
+    float imageYoffset;
+    float imageAlpha;
+    int imageFitscreen;
+    std::string scriptImageFilename;
+
     std::string typedText;
     std::vector<std::string> typedTextCompletion;
     int typedTextCompletionIdx;
@@ -501,6 +510,7 @@ class CelestiaCore // : public Watchable<CelestiaCore>
     ContextMenuFunc contextMenuCallback;
 
     Texture* logoTexture;
+    Texture* scriptImage;
 
     Alerter* alerter;
     std::vector<CelestiaWatcher*> watchers;
@@ -545,6 +555,9 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 
  public:
     void playSoundFile(int, float, float, int, const std::string&, int);
+
+ public:
+    void setScriptImage(double, float, float, float, const std::string&, int);
 
 };
 
