@@ -1,0 +1,45 @@
+--  ---------------------------------------------------------------------------------------
+--   celestia:verbosity ( int )
+-- 
+--   level - Determines the mode of displaying information about the selected object.
+--           The mode must be specified by an integer value (int) from 0 to 3:
+--              0 - Information display is disabled;
+--              1 - Short information display;
+--              2 - Detailed information display;
+--              3 - Very detailed information display.
+--  ---------------------------------------------------------------------------------------
+
+
+actual_renderflags = celestia:getrenderflags()
+sel0 = celestia:getselection()
+obs = celestia:getobserver()
+actual_obspos = obs:getposition()
+sel = celestia:find ("Sol/Mars")
+celestia:select(sel)
+obs:follow (sel)
+obs:gotolonglat (sel, 0, 0, 2e4, 5)
+wait (5)
+
+
+celestia:verbosity (0)
+wait (4)
+
+celestia:verbosity (1)
+wait (4)
+
+celestia:verbosity (2)
+wait (4)
+
+celestia:verbosity (3)
+wait (4)
+
+celestia:setrenderflags(actual_renderflags)
+obs:setposition(actual_obspos)
+celestia:select(sel0)
+obs:center(sel0, 3.0)
+wait(3.0)
+obs:follow(sel0)
+celestia:verbosity (2)
+
+celestia:print ( "End of script (default information display mode is set)...", 5.0, -1, -1, 3, 5 )
+wait (5)

@@ -1,0 +1,172 @@
+-- ---------------------------------------------------------------------------------------
+-- This file demonstrates the 'celestia:overlay' command
+-- The command allows you to display an image in the format BMP, JPG, PNG, which must be
+-- Pre-located in the "images" folder or its sub-folders of the Celestia main directory.
+-- Supports image scaling, transparency and positioning.
+-- Script author: Vincent (June 2006, contact: vince.gian@free.fr)
+-- Modified by: Sergey Leonov aka Leserg <leserg@ua.fm>
+--
+--  This command accepts 6 arguments:
+--
+--  celestia:overlay ( float [duration], float [xoffset], float [yoffset], float [alpha], str [filename], int [fitscreen] )
+--
+--  duration  - Determines the duration of the image display.
+--              If not specified, the default time is 3 seconds.
+--
+--  xoffset   - Determines the placement of the image horizontally
+--              relative to the center of the working area of the Celestia window.
+--              If not specified,  the default value is 0.0.
+--              Valid values are in the range from -1 to 1 relative to the center of the Celestia window:
+--	             > if xoffset = -1 -> The image is placed in the center of the left edge
+--                 Celestia window => You will only see the right half of the image;
+--	             > if xoffset = 1 -> The image is placed in the center of the right edge
+--                 Celestia window => You will only see the left half of the image;
+--
+--  yoffset   - Determines the placement of the image vertically
+--              relative to the center of the working area of the Celestia window.
+--              If not specified,  the default value is 0.0.
+--              Valid values are in the range from -1 to 1 relative to the center of the Celestia window:
+--	             > if yoffset = -1 -> The image is placed in the center of the bottom edge
+--                 of Celestia window => You will only see the upper half of the image;
+--	             > if yoffset = 1 -> The image is placed in the center of the upper edge
+--                 of Celestia window => You will only see the bottom half of the image;
+-- 	             > if xoffset = 0.0 and yoffset = 0.0 -> The image is centered.
+--
+--  alpha     - Determines the transparency of the image on the screen.
+--              If not specified,  the default value is 1.0
+--              Valid values are in the range from 0.0 to 1.0
+--               > if alpha = 0.0 -> The image is completely transparent (ie invisible);
+--               > if alpha = 1.0 -> The image is opaque (i.e., fully visible).
+--
+--  filename  - Specifies the name of the image file to display.
+--              The search for files is relative to the "images" subfolder,
+--              which should be located in the Celestia main directory.
+--              Thus, all the images for display using the script command must be in the
+--              "images" folder or its subfolders.
+--
+--  fitscreen - Determines the image zoom mode:
+--               > if fitscreen = 0 -> The image will be shown in the original size;
+--               > if fitscreen = 1 -> The image will be scaled by the Celestia window.
+--              If not specified,  the default value is 0.
+--  --------------------------------------------------------------------------------------
+
+celestia:print ( "Welcome!\n\nYou start a script with examples of displaying the image on the screen.", 5.0, -1, -1, 3, 5 )
+wait (5)
+
+-- ======< Example 1 >======
+-- In the center of the Celestia window, display the image file "image.jpg". Time 6 seconds.
+-- Set the transparency level to 0.7. The parameter 'fitscreen' is used with default value,
+-- so do not specify it.
+celestia:overlay ( 6, 0, 0, 0.7, "image.jpg" )
+wait(1)
+celestia:print ( "The image is placed in the center of the window.", 4.0, -1, -1, 3, 5 )
+wait(4)
+wait(2)
+
+-- ======< Example 2 >======
+-- We will deduce on the center an image file "image.jpg" and we will deploy it on all window Celestia.
+-- Set the transparency level to 0.5. Time 6 seconds.
+celestia:overlay ( 6, 0, 0, 0.5, "image.jpg", 1 )
+wait(1)
+
+celestia:print ( "The image is maximized on the whole window.", 4.0, -1, -1, 3, 5 )
+wait(4)
+wait(2)
+
+-- ======< Example 3 >======
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- Now we will display the image sequentially at the corners of the Celestia window.
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-- The original width of the image in pixels
+image_width = 512
+-- The original height of the image in pixels
+image_height = 256
+-- Determine the width and height for the working area of the Celestia window
+screen_width, screen_height = celestia:getscreendimension()
+
+xoffset_left = (image_width/screen_width) - 1
+-- (xoffset_right = - xoffset_left).
+xoffset_right = 1 - (image_width/screen_width)
+yoffset_bottom = (image_height/screen_height) - 1
+-- (yoffset_top = - yoffset_bottom).
+yoffset_top = 1 - (image_height/screen_height)
+
+celestia:print ( "Now the image will be shown at the corners of the window.", 5.0, -1, -1, 3, 5 )
+wait(6)
+
+celestia:overlay (3, xoffset_left, yoffset_bottom, 0.5, "image.jpg")
+wait(3)
+
+celestia:overlay (3, xoffset_left, yoffset_top, 0.5, "image.jpg")
+wait(3)
+
+celestia:overlay (3, xoffset_right, yoffset_top, 0.5, "image.jpg")
+wait(3)
+
+celestia:overlay (3, xoffset_right, yoffset_bottom, 0.5, "image.jpg")
+wait(3)
+wait(1)
+
+
+-- ======< Example 4 >======
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--   Now the image will move around the screen with the 'ping-pong' effect.
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+x_pos = 0
+y_pos = 0
+x_mod = 0.05
+y_mod = 0.05
+script_running = true
+
+celestia:print ( "Now the image will move around the screen.", 5.0, -1, -1, 3, 5 )
+wait(5)
+wait(1)
+
+-- Define the keystroke processing function
+function celestia_keyboard_callback(str)
+		script_running = false
+end
+-- Enable event handling by keystrokes
+celestia:requestkeyboard(true)
+
+-- Run the execution of the loop, which will work until you press any key on the keyboard.
+while script_running do
+	image_width = 512
+	image_height = 256
+	screen_width, screen_height = celestia:getscreendimension()
+	xoffset_left = (image_width/screen_width) - 1
+	xoffset_right = - xoffset_left
+	yoffset_bottom = (image_height/screen_height) - 1
+	yoffset_top = - yoffset_bottom
+
+	if x_pos <  xoffset_left then
+		x_pos = xoffset_left
+		x_mod = 0.02
+	end
+
+	if x_pos >  xoffset_right then
+		x_pos = xoffset_right
+		x_mod = -0.02
+	end
+
+	if y_pos <  yoffset_bottom then
+		y_pos = yoffset_bottom
+		y_mod = 0.02
+	end
+
+	if y_pos >  yoffset_top then
+		y_pos = yoffset_top
+		y_mod = -0.02
+	end
+
+-- Display the image on the screen, according to the calculated coordinates.
+	celestia:overlay (0.01, x_pos, y_pos, 0.5, "image.jpg")
+-- Calculate the new coordinates of the image.
+	x_pos = x_pos + x_mod
+	y_pos = y_pos + y_mod
+
+	celestia:print("Press any key to end the script ...", 0.5, -1, -1, 2, 4)
+	wait (0.01)
+end
