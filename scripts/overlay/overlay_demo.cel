@@ -1,0 +1,108 @@
+#  ---------------------------------------------------------------------------------------
+#  This file demonstrates the 'overlay' command
+#  The command allows you to display an image in the format BMP, JPG, PNG, which must be
+#  Pre-located in the "images" folder or its sub-folders of the Celestia main directory.
+#  Supports image scaling, transparency and positioning.
+#  Script author: Vincent (June 2006, contact: vince.gian@free.fr)
+#  Modified by: Sergey Leonov aka Leserg <leserg@ua.fm> (June 2014)
+#
+#  This command accepts 6 arguments:
+#
+#  overlay ( duration [float] xoffset [float] yoffset [float] alpha [float] filename [str] fitscreen [int] )
+#
+#  duration  - Determines the duration of the image display.
+#              If not specified, the default time is 3 seconds.
+#
+#  xoffset   - Determines the placement of the image horizontally
+#              relative to the center of the working area of the Celestia window.
+#              If not specified,  the default value is 0.0.
+#              Valid values are in the range from -1 to 1 relative to the center of the Celestia window:
+#	             > if xoffset = -1 -> The image is placed in the center of the left edge
+#                 of Celestia window => You will only see the right half of the image;
+#	             > if xoffset = 1 -> The image is placed in the center of the right edge
+#                 of Celestia window => You will only see the left half of the image;
+#
+#  yoffset   - Determines the placement of the image vertically
+#              relative to the center of the working area of the Celestia window.
+#              If not specified,  the default value is 0.0.
+#              Valid values are in the range from -1 to 1 relative to the center of the Celestia window:
+#	             > if yoffset = -1 -> The image is placed in the center of the bottom edge
+#                 of Celestia window => You will only see the upper half of the image;
+#	             > if yoffset = 1 -> The image is placed in the center of the upper edge
+#                 of Celestia window => You will only see the bottom half of the image;
+# 	             > if xoffset = 0.0 and yoffset = 0.0 -> The image is centered.
+#
+#  alpha     - Determines the transparency of the image on the screen.
+#              If not specified,  the default value is 1.0
+#              Valid values are in the range from 0.0 to 1.0
+#               > if alpha = 0.0 -> The image is completely transparent (ie invisible);
+#               > if alpha = 1.0 -> The image is opaque (i.e., fully visible).
+#
+#  filename  - Specifies the name of the image file to display.
+#              The search for files is relative to the "images" subfolder,
+#              which should be located in the Celestia main directory.
+#              Thus, all the images for display using the script command must be in the
+#              "images" folder or its subfolders.
+#
+#  fitscreen - Determines the image zoom mode:
+#               > if fitscreen = 0 -> The image will be shown in the original size;
+#               > if fitscreen = 1 -> The image will be scaled by the Celestia window.
+#              If not specified,  the default value is 0.
+#  --------------------------------------------------------------------------------------
+
+{
+print { origin "bottomleft" row -5 column 3 duration 5 text "Welcome!\n\nYou start a script with examples of displaying the image on the screen." }
+wait { duration 5 }
+
+# ======< Example 1 >======
+# In the center of the Celestia window, display the image file "image.jpg". Time 6 seconds.
+# For the rest of the parameters we use default values, so we do not specify them.
+overlay { duration 6 filename "image.jpg" }
+wait { duration 1 }
+print { origin "bottomleft" row -3 column 3 duration 4 text "The image is placed in the center of the window." }
+wait { duration 4 }
+wait { duration 2 }
+
+# ======< Example 2 >======
+# In the center of the Celestia window, display the image file "image.jpg". Time 6 seconds.
+# Set the transparency to 0.5.
+overlay { duration 6 alpha 0.5 filename "image.jpg" }
+wait { duration 1 }
+
+print { origin "bottomleft" row -3 column 3 duration 4 text "The image is placed in the center of the window, the transparency is 0.5." }
+wait { duration 4 }
+wait { duration 2 }
+
+# ======< Example 3 >======
+# In the center of the image "image.jpg" and deploy it to the entire Celestia window.
+# Set the transparency level to 0.5. Time 6 seconds.
+overlay { duration 6 alpha 0.5 filename "image.jpg" fitscreen 1 }
+wait { duration 1 }
+
+print { origin "bottomleft" row -3 column 3 duration 4 text "The image is maximized on the whole window." }
+wait { duration 4 }
+wait { duration 2 }
+
+# ======< Example 4 >======
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Now we will display the image sequentially at the corners of the Celestia window.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+print { origin "bottomleft" row -3 column 3 duration 4 text "Now the image will be shown at the corners of the window." }
+wait { duration 6 }
+
+overlay { xoffset -0.5 yoffset 0.5 alpha 0.5 filename "image.jpg" }
+wait { duration 3 }
+
+overlay { xoffset -0.5 yoffset -0.5 alpha 0.5 filename "image.jpg" }
+wait { duration 3 }
+
+overlay { xoffset 0.5 yoffset -0.5 alpha 0.5 filename "image.jpg" }
+wait { duration 3 }
+
+overlay { xoffset 0.5 yoffset 0.5 alpha 0.5 filename "image.jpg"}
+wait { duration 3 }
+
+print { origin "bottomleft" row -5 column 2 duration 5 text "End of script..." }
+wait { duration 5 }
+}

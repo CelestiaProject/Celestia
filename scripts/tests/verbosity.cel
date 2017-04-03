@@ -1,0 +1,34 @@
+#  ---------------------------------------------------------------------------------------
+#   verbosity ( level [int] )
+# 
+#   level - Determines the mode of displaying information about the selected object.
+#           The mode must be specified by an integer value (int) from 0 to 3:
+#              0 - Information display is disabled;
+#              1 - Short information display;
+#              2 - Detailed information display;
+#              3 - Very detailed information display.
+#  ---------------------------------------------------------------------------------------
+
+{
+select { object "Sol/Mars" }
+follow {}
+gotolonglat { time 5 longitude 0 latitude 0 distance 5.5 }
+wait { duration 5 }
+wait { duration 2 }
+verbosity { level 0 }
+wait { duration 6 }
+
+
+verbosity { level 1 }
+wait { duration 4 }
+
+verbosity { level 2 }
+wait { duration 4 }
+
+verbosity { level 3 }
+wait { duration 4 }
+
+verbosity { level 2 }
+print { origin "bottomleft" row -5 column 2 duration 5 text "End of script (default information display mode is set)..." }
+wait { duration 5 }
+}
