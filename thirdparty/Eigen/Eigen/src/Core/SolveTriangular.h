@@ -1,297 +1,232 @@
 // This file is part of Eigen, a lightweight C++ template library
-// for linear algebra. Eigen itself is part of the KDE project.
+// for linear algebra.
 //
-// Copyright (C) 2008 Gael Guennebaud <g.gael@free.fr>
+// Copyright (C) 2008-2009 Gael Guennebaud <gael.guennebaud@inria.fr>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_SOLVETRIANGULAR_H
 #define EIGEN_SOLVETRIANGULAR_H
 
-template<typename XprType> struct ei_is_part { enum {value=false}; };
-template<typename XprType, unsigned int Mode> struct ei_is_part<Part<XprType,Mode> > { enum {value=true}; };
+namespace Eigen { 
+
+namespace internal {
+
+// Forward declarations:
+// The following two routines are implemented in the products/TriangularSolver*.h files
+template<typename LhsScalar, typename RhsScalar, typename Index, int Side, int Mode, bool Conjugate, int StorageOrder>
+struct triangular_solve_vector;
+
+template <typename Scalar, typename Index, int Side, int Mode, bool Conjugate, int TriStorageOrder, int OtherStorageOrder>
+struct triangular_solve_matrix;
+
+// small helper struct extracting some traits on the underlying solver operation
+template<typename Lhs, typename Rhs, int Side>
+class trsolve_traits
+{
+  private:
+    enum {
+      RhsIsVectorAtCompileTime = (Side==OnTheLeft ? Rhs::ColsAtCompileTime : Rhs::RowsAtCompileTime)==1
+    };
+  public:
+    enum {
+      Unrolling   = (RhsIsVectorAtCompileTime && Rhs::SizeAtCompileTime != Dynamic && Rhs::SizeAtCompileTime <= 8)
+                  ? CompleteUnrolling : NoUnrolling,
+      RhsVectors  = RhsIsVectorAtCompileTime ? 1 : Dynamic
+    };
+};
 
 template<typename Lhs, typename Rhs,
-  int TriangularPart = (int(Lhs::Flags) & LowerTriangularBit)
-                     ? LowerTriangular
-                     : (int(Lhs::Flags) & UpperTriangularBit)
-                     ? UpperTriangular
-                     : -1,
-  int StorageOrder = ei_is_part<Lhs>::value ? -1  // this is to solve ambiguous specializations
-                   : int(Lhs::Flags) & int(RowMajorBit|SparseBit)
+  int Side, // can be OnTheLeft/OnTheRight
+  int Mode, // can be Upper/Lower | UnitDiag
+  int Unrolling = trsolve_traits<Lhs,Rhs,Side>::Unrolling,
+  int RhsVectors = trsolve_traits<Lhs,Rhs,Side>::RhsVectors
   >
-struct ei_solve_triangular_selector;
+struct triangular_solver_selector;
 
-// transform a Part xpr to a Flagged xpr
-template<typename Lhs, unsigned int LhsMode, typename Rhs, int UpLo, int StorageOrder>
-struct ei_solve_triangular_selector<Part<Lhs,LhsMode>,Rhs,UpLo,StorageOrder>
+template<typename Lhs, typename Rhs, int Side, int Mode>
+struct triangular_solver_selector<Lhs,Rhs,Side,Mode,NoUnrolling,1>
 {
-  static void run(const Part<Lhs,LhsMode>& lhs, Rhs& other)
+  typedef typename Lhs::Scalar LhsScalar;
+  typedef typename Rhs::Scalar RhsScalar;
+  typedef blas_traits<Lhs> LhsProductTraits;
+  typedef typename LhsProductTraits::ExtractType ActualLhsType;
+  typedef Map<Matrix<RhsScalar,Dynamic,1>, Aligned> MappedRhs;
+  static void run(const Lhs& lhs, Rhs& rhs)
   {
-    ei_solve_triangular_selector<Flagged<Lhs,LhsMode,0>,Rhs>::run(lhs._expression(), other);
+    ActualLhsType actualLhs = LhsProductTraits::extract(lhs);
+
+    // FIXME find a way to allow an inner stride if packet_traits<Scalar>::size==1
+
+    bool useRhsDirectly = Rhs::InnerStrideAtCompileTime==1 || rhs.innerStride()==1;
+
+    ei_declare_aligned_stack_constructed_variable(RhsScalar,actualRhs,rhs.size(),
+                                                  (useRhsDirectly ? rhs.data() : 0));
+                                                  
+    if(!useRhsDirectly)
+      MappedRhs(actualRhs,rhs.size()) = rhs;
+
+    triangular_solve_vector<LhsScalar, RhsScalar, Index, Side, Mode, LhsProductTraits::NeedToConjugate,
+                            (int(Lhs::Flags) & RowMajorBit) ? RowMajor : ColMajor>
+      ::run(actualLhs.cols(), actualLhs.data(), actualLhs.outerStride(), actualRhs);
+
+    if(!useRhsDirectly)
+      rhs = MappedRhs(actualRhs, rhs.size());
   }
 };
 
-// forward substitution, row-major
-template<typename Lhs, typename Rhs, int UpLo>
-struct ei_solve_triangular_selector<Lhs,Rhs,UpLo,RowMajor|IsDense>
+// the rhs is a matrix
+template<typename Lhs, typename Rhs, int Side, int Mode>
+struct triangular_solver_selector<Lhs,Rhs,Side,Mode,NoUnrolling,Dynamic>
 {
   typedef typename Rhs::Scalar Scalar;
-  static void run(const Lhs& lhs, Rhs& other)
+  typedef blas_traits<Lhs> LhsProductTraits;
+  typedef typename LhsProductTraits::DirectLinearAccessType ActualLhsType;
+
+  static void run(const Lhs& lhs, Rhs& rhs)
   {
-    const bool IsLowerTriangular = (UpLo==LowerTriangular);
-    const int size = lhs.cols();
-    /* We perform the inverse product per block of 4 rows such that we perfectly match
-     * our optimized matrix * vector product. blockyStart represents the number of rows
-     * we have process first using the non-block version.
-     */
-    int blockyStart = (std::max(size-5,0)/4)*4;
-    if (IsLowerTriangular)
-      blockyStart = size - blockyStart;
-    else
-      blockyStart -= 1;
-    for(int c=0 ; c<other.cols() ; ++c)
-    {
-      // process first rows using the non block version
-      if(!(Lhs::Flags & UnitDiagBit))
-      {
-        if (IsLowerTriangular)
-          other.coeffRef(0,c) = other.coeff(0,c)/lhs.coeff(0, 0);
-        else
-          other.coeffRef(size-1,c) = other.coeff(size-1, c)/lhs.coeff(size-1, size-1);
-      }
-      for(int i=(IsLowerTriangular ? 1 : size-2); IsLowerTriangular ? i<blockyStart : i>blockyStart; i += (IsLowerTriangular ? 1 : -1) )
-      {
-        Scalar tmp = other.coeff(i,c)
-          - (IsLowerTriangular ? ((lhs.row(i).start(i)) * other.col(c).start(i)).coeff(0,0)
-                     : ((lhs.row(i).end(size-i-1)) * other.col(c).end(size-i-1)).coeff(0,0));
-        if (Lhs::Flags & UnitDiagBit)
-          other.coeffRef(i,c) = tmp;
-        else
-          other.coeffRef(i,c) = tmp/lhs.coeff(i,i);
-      }
+    typename internal::add_const_on_value_type<ActualLhsType>::type actualLhs = LhsProductTraits::extract(lhs);
 
-      // now let's process the remaining rows 4 at once
-      for(int i=blockyStart; IsLowerTriangular ? i<size : i>0; )
-      {
-        int startBlock = i;
-        int endBlock = startBlock + (IsLowerTriangular ? 4 : -4);
+    const Index size = lhs.rows();
+    const Index othersize = Side==OnTheLeft? rhs.cols() : rhs.rows();
 
-        /* Process the i cols times 4 rows block, and keep the result in a temporary vector */
-        // FIXME use fixed size block but take care to small fixed size matrices...
-        Matrix<Scalar,Dynamic,1> btmp(4);
-        if (IsLowerTriangular)
-          btmp = lhs.block(startBlock,0,4,i) * other.col(c).start(i);
-        else
-          btmp = lhs.block(i-3,i+1,4,size-1-i) * other.col(c).end(size-1-i);
+    typedef internal::gemm_blocking_space<(Rhs::Flags&RowMajorBit) ? RowMajor : ColMajor,Scalar,Scalar,
+              Rhs::MaxRowsAtCompileTime, Rhs::MaxColsAtCompileTime, Lhs::MaxRowsAtCompileTime,4> BlockingType;
 
-        /* Let's process the 4x4 sub-matrix as usual.
-         * btmp stores the diagonal coefficients used to update the remaining part of the result.
-         */
-        {
-          Scalar tmp = other.coeff(startBlock,c)-btmp.coeff(IsLowerTriangular?0:3);
-          if (Lhs::Flags & UnitDiagBit)
-            other.coeffRef(i,c) = tmp;
-          else
-            other.coeffRef(i,c) = tmp/lhs.coeff(i,i);
-        }
+    BlockingType blocking(rhs.rows(), rhs.cols(), size, 1, false);
 
-        i += IsLowerTriangular ? 1 : -1;
-        for (;IsLowerTriangular ? i<endBlock : i>endBlock; i += IsLowerTriangular ? 1 : -1)
-        {
-          int remainingSize = IsLowerTriangular ? i-startBlock : startBlock-i;
-          Scalar tmp = other.coeff(i,c)
-            - btmp.coeff(IsLowerTriangular ? remainingSize : 3-remainingSize)
-            - (   lhs.row(i).segment(IsLowerTriangular ? startBlock : i+1, remainingSize)
-              * other.col(c).segment(IsLowerTriangular ? startBlock : i+1, remainingSize)).coeff(0,0);
-
-          if (Lhs::Flags & UnitDiagBit)
-            other.coeffRef(i,c) = tmp;
-          else
-            other.coeffRef(i,c) = tmp/lhs.coeff(i,i);
-        }
-      }
-    }
+    triangular_solve_matrix<Scalar,Index,Side,Mode,LhsProductTraits::NeedToConjugate,(int(Lhs::Flags) & RowMajorBit) ? RowMajor : ColMajor,
+                               (Rhs::Flags&RowMajorBit) ? RowMajor : ColMajor>
+      ::run(size, othersize, &actualLhs.coeffRef(0,0), actualLhs.outerStride(), &rhs.coeffRef(0,0), rhs.outerStride(), blocking);
   }
 };
 
-// Implements the following configurations:
-//  - inv(LowerTriangular,         ColMajor) * Column vector
-//  - inv(LowerTriangular,UnitDiag,ColMajor) * Column vector
-//  - inv(UpperTriangular,         ColMajor) * Column vector
-//  - inv(UpperTriangular,UnitDiag,ColMajor) * Column vector
-template<typename Lhs, typename Rhs, int UpLo>
-struct ei_solve_triangular_selector<Lhs,Rhs,UpLo,ColMajor|IsDense>
-{
-  typedef typename Rhs::Scalar Scalar;
-  typedef typename ei_packet_traits<Scalar>::type Packet;
-  enum { PacketSize =  ei_packet_traits<Scalar>::size };
+/***************************************************************************
+* meta-unrolling implementation
+***************************************************************************/
 
-  static void run(const Lhs& lhs, Rhs& other)
+template<typename Lhs, typename Rhs, int Mode, int LoopIndex, int Size,
+         bool Stop = LoopIndex==Size>
+struct triangular_solver_unroller;
+
+template<typename Lhs, typename Rhs, int Mode, int LoopIndex, int Size>
+struct triangular_solver_unroller<Lhs,Rhs,Mode,LoopIndex,Size,false> {
+  enum {
+    IsLower = ((Mode&Lower)==Lower),
+    DiagIndex  = IsLower ? LoopIndex : Size - LoopIndex - 1,
+    StartIndex = IsLower ? 0         : DiagIndex+1
+  };
+  static void run(const Lhs& lhs, Rhs& rhs)
   {
-    static const bool IsLowerTriangular = (UpLo==LowerTriangular);
-    const int size = lhs.cols();
-    for(int c=0 ; c<other.cols() ; ++c)
-    {
-      /* let's perform the inverse product per block of 4 columns such that we perfectly match
-       * our optimized matrix * vector product. blockyEnd represents the number of rows
-       * we can process using the block version.
-       */
-      int blockyEnd = (std::max(size-5,0)/4)*4;
-      if (!IsLowerTriangular)
-        blockyEnd = size-1 - blockyEnd;
-      for(int i=IsLowerTriangular ? 0 : size-1; IsLowerTriangular ? i<blockyEnd : i>blockyEnd;)
-      {
-        /* Let's process the 4x4 sub-matrix as usual.
-         * btmp stores the diagonal coefficients used to update the remaining part of the result.
-         */
-        int startBlock = i;
-        int endBlock = startBlock + (IsLowerTriangular ? 4 : -4);
-        Matrix<Scalar,4,1> btmp;
-        for (;IsLowerTriangular ? i<endBlock : i>endBlock;
-             i += IsLowerTriangular ? 1 : -1)
-        {
-          if(!(Lhs::Flags & UnitDiagBit))
-            other.coeffRef(i,c) /= lhs.coeff(i,i);
-          int remainingSize = IsLowerTriangular ? endBlock-i-1 : i-endBlock-1;
-          if (remainingSize>0)
-            other.col(c).segment((IsLowerTriangular ? i : endBlock) + 1, remainingSize) -=
-                other.coeffRef(i,c)
-              * Block<Lhs,Dynamic,1>(lhs, (IsLowerTriangular ? i : endBlock) + 1, i, remainingSize, 1);
-          btmp.coeffRef(IsLowerTriangular ? i-startBlock : remainingSize) = -other.coeffRef(i,c);
-        }
+    if (LoopIndex>0)
+      rhs.coeffRef(DiagIndex) -= lhs.row(DiagIndex).template segment<LoopIndex>(StartIndex).transpose()
+                                .cwiseProduct(rhs.template segment<LoopIndex>(StartIndex)).sum();
 
-        /* Now we can efficiently update the remaining part of the result as a matrix * vector product.
-         * NOTE in order to reduce both compilation time and binary size, let's directly call
-         * the fast product implementation. It is equivalent to the following code:
-         *   other.col(c).end(size-endBlock) += (lhs.block(endBlock, startBlock, size-endBlock, endBlock-startBlock)
-         *                                       * other.col(c).block(startBlock,endBlock-startBlock)).lazy();
-         */
-        // FIXME this is cool but what about conjugate/adjoint expressions ? do we want to evaluate them ?
-        // this is a more general problem though.
-        ei_cache_friendly_product_colmajor_times_vector(
-          IsLowerTriangular ? size-endBlock : endBlock+1,
-          &(lhs.const_cast_derived().coeffRef(IsLowerTriangular ? endBlock : 0, IsLowerTriangular ? startBlock : endBlock+1)),
-          lhs.stride(),
-          btmp, &(other.coeffRef(IsLowerTriangular ? endBlock : 0, c)));
-// 				if (IsLowerTriangular)
-//           other.col(c).end(size-endBlock) += (lhs.block(endBlock, startBlock, size-endBlock, endBlock-startBlock)
-//                                           * other.col(c).block(startBlock,endBlock-startBlock)).lazy();
-// 				else
-//           other.col(c).end(size-endBlock) += (lhs.block(endBlock, startBlock, size-endBlock, endBlock-startBlock)
-//                                           * other.col(c).block(startBlock,endBlock-startBlock)).lazy();
-      }
+    if(!(Mode & UnitDiag))
+      rhs.coeffRef(DiagIndex) /= lhs.coeff(DiagIndex,DiagIndex);
 
-      /* Now we have to process the remaining part as usual */
-      int i;
-      for(i=blockyEnd; IsLowerTriangular ? i<size-1 : i>0; i += (IsLowerTriangular ? 1 : -1) )
-      {
-        if(!(Lhs::Flags & UnitDiagBit))
-          other.coeffRef(i,c) /= lhs.coeff(i,i);
-
-        /* NOTE we cannot use lhs.col(i).end(size-i-1) because Part::coeffRef gets called by .col() to
-         * get the address of the start of the row
-         */
-        if(IsLowerTriangular)
-          other.col(c).end(size-i-1) -= other.coeffRef(i,c) * Block<Lhs,Dynamic,1>(lhs, i+1,i, size-i-1,1);
-        else
-          other.col(c).start(i) -= other.coeffRef(i,c) * Block<Lhs,Dynamic,1>(lhs, 0,i, i, 1);
-      }
-      if(!(Lhs::Flags & UnitDiagBit))
-        other.coeffRef(i,c) /= lhs.coeff(i,i);
-    }
+    triangular_solver_unroller<Lhs,Rhs,Mode,LoopIndex+1,Size>::run(lhs,rhs);
   }
 };
 
-/** "in-place" version of MatrixBase::solveTriangular() where the result is written in \a other
-  *
-  * \nonstableyet
-  *
-  * The parameter is only marked 'const' to make the C++ compiler accept a temporary expression here.
-  * This function will const_cast it, so constness isn't honored here.
-  *
-  * See MatrixBase:solveTriangular() for the details.
-  */
-template<typename Derived>
-template<typename OtherDerived>
-void MatrixBase<Derived>::solveTriangularInPlace(const MatrixBase<OtherDerived>& _other) const
+template<typename Lhs, typename Rhs, int Mode, int LoopIndex, int Size>
+struct triangular_solver_unroller<Lhs,Rhs,Mode,LoopIndex,Size,true> {
+  static void run(const Lhs&, Rhs&) {}
+};
+
+template<typename Lhs, typename Rhs, int Mode>
+struct triangular_solver_selector<Lhs,Rhs,OnTheLeft,Mode,CompleteUnrolling,1> {
+  static void run(const Lhs& lhs, Rhs& rhs)
+  { triangular_solver_unroller<Lhs,Rhs,Mode,0,Rhs::SizeAtCompileTime>::run(lhs,rhs); }
+};
+
+template<typename Lhs, typename Rhs, int Mode>
+struct triangular_solver_selector<Lhs,Rhs,OnTheRight,Mode,CompleteUnrolling,1> {
+  static void run(const Lhs& lhs, Rhs& rhs)
+  {
+    Transpose<const Lhs> trLhs(lhs);
+    Transpose<Rhs> trRhs(rhs);
+    
+    triangular_solver_unroller<Transpose<const Lhs>,Transpose<Rhs>,
+                              ((Mode&Upper)==Upper ? Lower : Upper) | (Mode&UnitDiag),
+                              0,Rhs::SizeAtCompileTime>::run(trLhs,trRhs);
+  }
+};
+
+} // end namespace internal
+
+/***************************************************************************
+* TriangularView methods
+***************************************************************************/
+
+#ifndef EIGEN_PARSED_BY_DOXYGEN
+template<typename MatrixType, unsigned int Mode>
+template<int Side, typename OtherDerived>
+void TriangularViewImpl<MatrixType,Mode,Dense>::solveInPlace(const MatrixBase<OtherDerived>& _other) const
 {
-  MatrixBase<OtherDerived>& other = _other.const_cast_derived();
-  ei_assert(derived().cols() == derived().rows());
-  ei_assert(derived().cols() == other.rows());
-  ei_assert(!(Flags & ZeroDiagBit));
-  ei_assert(Flags & (UpperTriangularBit|LowerTriangularBit));
+  OtherDerived& other = _other.const_cast_derived();
+  eigen_assert( derived().cols() == derived().rows() && ((Side==OnTheLeft && derived().cols() == other.rows()) || (Side==OnTheRight && derived().cols() == other.cols())) );
+  eigen_assert((!(Mode & ZeroDiag)) && bool(Mode & (Upper|Lower)));
 
-  enum { copy = ei_traits<OtherDerived>::Flags & RowMajorBit };
+  enum { copy = (internal::traits<OtherDerived>::Flags & RowMajorBit)  && OtherDerived::IsVectorAtCompileTime && OtherDerived::SizeAtCompileTime!=1};
+  typedef typename internal::conditional<copy,
+    typename internal::plain_matrix_type_column_major<OtherDerived>::type, OtherDerived&>::type OtherCopy;
+  OtherCopy otherCopy(other);
 
-  typedef typename ei_meta_if<copy,
-    typename ei_plain_matrix_type_column_major<OtherDerived>::type, OtherDerived&>::ret OtherCopy;
-  OtherCopy otherCopy(other.derived());
-
-  ei_solve_triangular_selector<Derived, typename ei_unref<OtherCopy>::type>::run(derived(), otherCopy);
+  internal::triangular_solver_selector<MatrixType, typename internal::remove_reference<OtherCopy>::type,
+    Side, Mode>::run(derived().nestedExpression(), otherCopy);
 
   if (copy)
     other = otherCopy;
 }
 
-/** \returns the product of the inverse of \c *this with \a other, \a *this being triangular.
-  *
-  * \nonstableyet
-  *
-  * This function computes the inverse-matrix matrix product inverse(\c *this) * \a other.
-  * The matrix \c *this must be triangular and invertible (i.e., all the coefficients of the
-  * diagonal must be non zero). It works as a forward (resp. backward) substitution if \c *this
-  * is an upper (resp. lower) triangular matrix.
-  *
-  * It is required that \c *this be marked as either an upper or a lower triangular matrix, which
-  * can be done by marked(), and that is automatically the case with expressions such as those returned
-  * by extract().
-  *
-  * \addexample SolveTriangular \label How to solve a triangular system (aka. how to multiply the inverse of a triangular matrix by another one)
-  *
-  * Example: \include MatrixBase_marked.cpp
-  * Output: \verbinclude MatrixBase_marked.out
-  *
-  * This function is essentially a wrapper to the faster solveTriangularInPlace() function creating
-  * a temporary copy of \a other, calling solveTriangularInPlace() on the copy and returning it.
-  * Therefore, if \a other is not needed anymore, it is quite faster to call solveTriangularInPlace()
-  * instead of solveTriangular().
-  *
-  * For users coming from BLAS, this function (and more specifically solveTriangularInPlace()) offer
-  * all the operations supported by the \c *TRSV and \c *TRSM BLAS routines.
-  *
-  * \b Tips: to perform a \em "right-inverse-multiply" you can simply transpose the operation, e.g.:
-  * \code
-  * M * T^1  <=>  T.transpose().solveTriangularInPlace(M.transpose());
-  * \endcode
-  *
-  * \sa solveTriangularInPlace(), marked(), extract()
-  */
-template<typename Derived>
-template<typename OtherDerived>
-typename ei_plain_matrix_type_column_major<OtherDerived>::type
-MatrixBase<Derived>::solveTriangular(const MatrixBase<OtherDerived>& other) const
+template<typename Derived, unsigned int Mode>
+template<int Side, typename Other>
+const internal::triangular_solve_retval<Side,TriangularView<Derived,Mode>,Other>
+TriangularViewImpl<Derived,Mode,Dense>::solve(const MatrixBase<Other>& other) const
 {
-  typename ei_plain_matrix_type_column_major<OtherDerived>::type res(other);
-  solveTriangularInPlace(res);
-  return res;
+  return internal::triangular_solve_retval<Side,TriangularViewType,Other>(derived(), other.derived());
 }
+#endif
+
+namespace internal {
+
+
+template<int Side, typename TriangularType, typename Rhs>
+struct traits<triangular_solve_retval<Side, TriangularType, Rhs> >
+{
+  typedef typename internal::plain_matrix_type_column_major<Rhs>::type ReturnType;
+};
+
+template<int Side, typename TriangularType, typename Rhs> struct triangular_solve_retval
+ : public ReturnByValue<triangular_solve_retval<Side, TriangularType, Rhs> >
+{
+  typedef typename remove_all<typename Rhs::Nested>::type RhsNestedCleaned;
+  typedef ReturnByValue<triangular_solve_retval> Base;
+
+  triangular_solve_retval(const TriangularType& tri, const Rhs& rhs)
+    : m_triangularMatrix(tri), m_rhs(rhs)
+  {}
+
+  inline Index rows() const { return m_rhs.rows(); }
+  inline Index cols() const { return m_rhs.cols(); }
+
+  template<typename Dest> inline void evalTo(Dest& dst) const
+  {
+    if(!is_same_dense(dst,m_rhs))
+      dst = m_rhs;
+    m_triangularMatrix.template solveInPlace<Side>(dst);
+  }
+
+  protected:
+    const TriangularType& m_triangularMatrix;
+    typename Rhs::Nested m_rhs;
+};
+
+} // namespace internal
+
+} // end namespace Eigen
 
 #endif // EIGEN_SOLVETRIANGULAR_H

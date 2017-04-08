@@ -1,40 +1,40 @@
 // This file is part of Eigen, a lightweight C++ template library
-// for linear algebra. Eigen itself is part of the KDE project.
+// for linear algebra.
 //
 // Copyright (C) 2006-2008 Benoit Jacob <jacob.benoit.1@gmail.com>
-// Copyright (C) 2008 Gael Guennebaud <g.gael@free.fr>
+// Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_IO_H
 #define EIGEN_IO_H
 
-enum { Raw, AlignCols };
+namespace Eigen { 
+
+enum { DontAlignCols = 1 };
+enum { StreamPrecision = -1,
+       FullPrecision = -2 };
+
+namespace internal {
+template<typename Derived>
+std::ostream & print_matrix(std::ostream & s, const Derived& _m, const IOFormat& fmt);
+}
 
 /** \class IOFormat
+  * \ingroup Core_Module
   *
   * \brief Stores a set of parameters controlling the way matrices are printed
   *
   * List of available parameters:
-  *  - \b precision number of digits for floating point values
-  *  - \b flags can be either Raw (default) or AlignCols which aligns all the columns
+  *  - \b precision number of digits for floating point values, or one of the special constants \c StreamPrecision and \c FullPrecision.
+  *                 The default is the special value \c StreamPrecision which means to use the
+  *                 stream's own precision setting, as set for instance using \c cout.precision(3). The other special value
+  *                 \c FullPrecision means that the number of digits will be computed to match the full precision of each floating-point
+  *                 type.
+  *  - \b flags an OR-ed combination of flags, the default value is 0, the only currently available flag is \c DontAlignCols which
+  *             allows to disable the alignment of columns, resulting in faster code.
   *  - \b coeffSeparator string printed between two coefficients of the same row
   *  - \b rowSeparator string printed between two rows
   *  - \b rowPrefix string printed at the beginning of each row
@@ -45,19 +45,22 @@ enum { Raw, AlignCols };
   * Example: \include IOFormat.cpp
   * Output: \verbinclude IOFormat.out
   *
-  * \sa MatrixBase::format(), class WithFormat
+  * \sa DenseBase::format(), class WithFormat
   */
 struct IOFormat
 {
-  /** Default contructor, see class IOFormat for the meaning of the parameters */
-  IOFormat(int _precision=4, int _flags=Raw,
+  /** Default constructor, see class IOFormat for the meaning of the parameters */
+  IOFormat(int _precision = StreamPrecision, int _flags = 0,
     const std::string& _coeffSeparator = " ",
     const std::string& _rowSeparator = "\n", const std::string& _rowPrefix="", const std::string& _rowSuffix="",
     const std::string& _matPrefix="", const std::string& _matSuffix="")
   : matPrefix(_matPrefix), matSuffix(_matSuffix), rowPrefix(_rowPrefix), rowSuffix(_rowSuffix), rowSeparator(_rowSeparator),
-    coeffSeparator(_coeffSeparator), precision(_precision), flags(_flags)
+    rowSpacer(""), coeffSeparator(_coeffSeparator), precision(_precision), flags(_flags)
   {
-    rowSpacer = "";
+    // TODO check if rowPrefix, rowSuffix or rowSeparator contains a newline
+    // don't add rowSpacer if columns are not to be aligned
+    if((flags & DontAlignCols))
+      return;
     int i = int(matSuffix.length())-1;
     while (i>=0 && matSuffix[i]!='\n')
     {
@@ -73,18 +76,19 @@ struct IOFormat
 };
 
 /** \class WithFormat
+  * \ingroup Core_Module
   *
   * \brief Pseudo expression providing matrix output with given format
   *
-  * \param ExpressionType the type of the object on which IO stream operations are performed
+  * \tparam ExpressionType the type of the object on which IO stream operations are performed
   *
   * This class represents an expression with stream operators controlled by a given IOFormat.
-  * It is the return type of MatrixBase::format()
+  * It is the return type of DenseBase::format()
   * and most of the time this is the only way it is used.
   *
   * See class IOFormat for some examples.
   *
-  * \sa MatrixBase::format(), class IOFormat
+  * \sa DenseBase::format(), class IOFormat
   */
 template<typename ExpressionType>
 class WithFormat
@@ -97,58 +101,90 @@ class WithFormat
 
     friend std::ostream & operator << (std::ostream & s, const WithFormat& wf)
     {
-      return ei_print_matrix(s, wf.m_matrix.eval(), wf.m_format);
+      return internal::print_matrix(s, wf.m_matrix.eval(), wf.m_format);
     }
 
   protected:
-    const typename ExpressionType::Nested m_matrix;
+    typename ExpressionType::Nested m_matrix;
     IOFormat m_format;
 };
 
-/** \returns a WithFormat proxy object allowing to print a matrix the with given
-  * format \a fmt.
-  *
-  * See class IOFormat for some examples.
-  *
-  * \sa class IOFormat, class WithFormat
-  */
-template<typename Derived>
-inline const WithFormat<Derived>
-MatrixBase<Derived>::format(const IOFormat& fmt) const
+namespace internal {
+
+// NOTE: This helper is kept for backward compatibility with previous code specializing
+//       this internal::significant_decimals_impl structure. In the future we should directly
+//       call digits10() which has been introduced in July 2016 in 3.3.
+template<typename Scalar>
+struct significant_decimals_impl
 {
-  return WithFormat<Derived>(derived(), fmt);
-}
+  static inline int run()
+  {
+    return NumTraits<Scalar>::digits10();
+  }
+};
 
 /** \internal
   * print the matrix \a _m to the output stream \a s using the output format \a fmt */
 template<typename Derived>
-std::ostream & ei_print_matrix(std::ostream & s, const Derived& _m, const IOFormat& fmt)
+std::ostream & print_matrix(std::ostream & s, const Derived& _m, const IOFormat& fmt)
 {
-  const typename Derived::Nested m = _m;
+  if(_m.size() == 0)
+  {
+    s << fmt.matPrefix << fmt.matSuffix;
+    return s;
+  }
+  
+  typename Derived::Nested m = _m;
+  typedef typename Derived::Scalar Scalar;
 
-  int width = 0;
-  if (fmt.flags & AlignCols)
+  Index width = 0;
+
+  std::streamsize explicit_precision;
+  if(fmt.precision == StreamPrecision)
+  {
+    explicit_precision = 0;
+  }
+  else if(fmt.precision == FullPrecision)
+  {
+    if (NumTraits<Scalar>::IsInteger)
+    {
+      explicit_precision = 0;
+    }
+    else
+    {
+      explicit_precision = significant_decimals_impl<Scalar>::run();
+    }
+  }
+  else
+  {
+    explicit_precision = fmt.precision;
+  }
+
+  std::streamsize old_precision = 0;
+  if(explicit_precision) old_precision = s.precision(explicit_precision);
+
+  bool align_cols = !(fmt.flags & DontAlignCols);
+  if(align_cols)
   {
     // compute the largest width
-    for(int j = 1; j < m.cols(); ++j)
-      for(int i = 0; i < m.rows(); ++i)
+    for(Index j = 0; j < m.cols(); ++j)
+      for(Index i = 0; i < m.rows(); ++i)
       {
         std::stringstream sstr;
-        sstr.precision(fmt.precision);
+        sstr.copyfmt(s);
         sstr << m.coeff(i,j);
-        width = std::max<int>(width, int(sstr.str().length()));
+        width = std::max<Index>(width, Index(sstr.str().length()));
       }
   }
-  s.precision(fmt.precision);
   s << fmt.matPrefix;
-  for(int i = 0; i < m.rows(); ++i)
+  for(Index i = 0; i < m.rows(); ++i)
   {
     if (i)
       s << fmt.rowSpacer;
     s << fmt.rowPrefix;
     if(width) s.width(width);
     s << m.coeff(i, 0);
-    for(int j = 1; j < m.cols(); ++j)
+    for(Index j = 1; j < m.cols(); ++j)
     {
       s << fmt.coeffSeparator;
       if (width) s.width(width);
@@ -159,26 +195,31 @@ std::ostream & ei_print_matrix(std::ostream & s, const Derived& _m, const IOForm
       s << fmt.rowSeparator;
   }
   s << fmt.matSuffix;
+  if(explicit_precision) s.precision(old_precision);
   return s;
 }
 
-/** \relates MatrixBase
+} // end namespace internal
+
+/** \relates DenseBase
   *
   * Outputs the matrix, to the given stream.
   *
-  * If you wish to print the matrix with a format different than the default, use MatrixBase::format().
+  * If you wish to print the matrix with a format different than the default, use DenseBase::format().
   *
   * It is also possible to change the default format by defining EIGEN_DEFAULT_IO_FORMAT before including Eigen headers.
   * If not defined, this will automatically be defined to Eigen::IOFormat(), that is the Eigen::IOFormat with default parameters.
   *
-  * \sa MatrixBase::format()
+  * \sa DenseBase::format()
   */
 template<typename Derived>
 std::ostream & operator <<
 (std::ostream & s,
- const MatrixBase<Derived> & m)
+ const DenseBase<Derived> & m)
 {
-  return ei_print_matrix(s, m.eval(), EIGEN_DEFAULT_IO_FORMAT);
+  return internal::print_matrix(s, m.eval(), EIGEN_DEFAULT_IO_FORMAT);
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_IO_H
