@@ -44,7 +44,7 @@
    Fortran data types to native C data types.  For example, Fortran
    INTEGER variables are mapped to variables of type integer, where
    integer is a C typedef.  In the standard f2c.h header, the typedef
-   integer tranlates to the C type long.  
+   integer translates to the C type long.  
    
    Because the standard version of f2c.h does not work on all platforms,
    this header file contains two platform-dependent versions of it,
@@ -79,14 +79,6 @@
       # endif  
    
 
--Literature_References
-
-   None.
-
--Author_and_Institution
-
-   N.J. Bachman       (JPL)
-   
 -Restrictions
 
   1) This header file must be updated whenever the f2c processor
@@ -105,9 +97,58 @@
         SGI-IRIX-NO2
         SUN-SOLARIS  
    
+-Literature_References
+
+   None.
+
+-Author_and_Institution
+
+   N.J. Bachman       (JPL)
+   B.V. Semenov       (JPL)
+   E.D. Wright        (JPL)
+   
 -Version
 
-   -CSPICE Version 1.2.0, 27-JAN-2003 (NJB)
+   -CSPICE Version 4.2.0, 09-APR-2014 (EDW) (BVS)
+
+      Added include for SpiceZrnm.h to eliminate symbol conflict
+      encountered from Icy and JNISpice under OS X 10.7.
+      
+      Minor text format correction to eliminate error signal from
+      OS X cpp. The edit removes leading whitespace from the
+      final "#endif".
+
+      Updated for:
+       
+         PC-CYGWIN-64BIT-GCC_C
+          
+      environment. Added the corresponding tag:
+       
+         CSPICE_PC_CYGWIN_64BIT_GCC
+
+      tag to the #ifdefs set.
+        
+   -CSPICE Version 4.1.0, 14-MAY-2010 (EDW)(BVS)
+
+       Updated for:
+       
+          MAC-OSX-64BIT-INTEL_C
+          SUN-SOLARIS-64BIT-NATIVE_C
+          SUN-SOLARIS-INTEL-64BIT-CC_C
+          
+       environments. Added the corresponding tags:
+       
+          CSPICE_MAC_OSX_INTEL_64BIT_GCC
+          CSPICE_SUN_SOLARIS_64BIT_NATIVE
+          CSPICE_SUN_SOLARIS_INTEL_64BIT_CC
+
+       tag to the #ifdefs set.
+        
+   -CSPICE Version 4.0.0, 21-FEB-2006 (NJB)
+
+       Updated to support the PC Linux 64 bit mode/gcc platform.
+
+   -CSPICE Version 3.0.0, 27-JAN-2003 (NJB)
 
        Updated to support the Sun Solaris 64 bit mode/gcc platform.
 
@@ -132,12 +173,21 @@
 */
 
 
-   /*
-   Optionally include name-mangling macros for f2c external symbols.
-   */
-   #ifdef MIX_C_AND_FORTRAN
-      #include "f2cMang.h"
-   #endif
+/*
+Include those rename assignments for routines whose symbols will
+collide with other libraries.
+*/
+#ifndef   HAVE_SPICERENAME_H
+#include "SpiceZrnm.h"
+#endif
+
+
+/*
+Optionally include name-mangling macros for f2c external symbols.
+*/
+#ifdef MIX_C_AND_FORTRAN
+#include "f2cMang.h"
+#endif
 
 
    /*
@@ -146,15 +196,20 @@
    #include "SpiceZpl.h"
 
 
- 
-# if (    defined(CSPICE_ALPHA_DIGITAL_UNIX    )    \
-       || defined(CSPICE_SUN_SOLARIS_64BIT_GCC )  )
-
-
+#if (    defined(CSPICE_ALPHA_DIGITAL_UNIX         ) \
+      || defined(CSPICE_SUN_SOLARIS_64BIT_GCC      ) \
+      || defined(CSPICE_SUN_SOLARIS_64BIT_NATIVE   ) \
+      || defined(CSPICE_MAC_OSX_INTEL_64BIT_GCC    ) \
+      || defined(CSPICE_SUN_SOLARIS_INTEL_64BIT_CC ) \
+      || defined(CSPICE_PC_CYGWIN_64BIT_GCC        ) \
+      || defined(CSPICE_PC_LINUX_64BIT_GCC         )   )
+   
 
    /*
-   The following code is intended to be used on the Alpha/Digital Unix
-   platform, where a long is the size of a double and an int is half the 
+   MODIFICATION
+   
+   The following code is intended to be used on the platforms where
+   a long is the size of a double and an int is half the 
    size of a double.
    
    Note that the comment line below indicating that the header is
@@ -167,10 +222,6 @@
 
 
 /* f2c.h  --  Standard Fortran to C header file */
-
-/**  barf  [ba:rf]  2.  "He suggested using FORTRAN, and everybody barfed."
-
-   - From The Shogakukan DICTIONARY OF NEW ENGLISH (Second edition) */
 
 #ifndef F2C_INCLUDE
 #define F2C_INCLUDE
@@ -392,10 +443,8 @@ typedef doublereal E_f; /* real function with -R not specified */
 
 
    /*
-   This marks the end of the Alpha/Digital Unix version of f2c.h.
+   This marks the end of the MODIFICATION section version of f2c.h.
    */
-
-
 
 #else
 
@@ -408,12 +457,8 @@ typedef doublereal E_f; /* real function with -R not specified */
    */
 
 
-
 /* f2c.h  --  Standard Fortran to C header file */
 
-/**  barf  [ba:rf]  2.  "He suggested using FORTRAN, and everybody barfed."
-
-   - From The Shogakukan DICTIONARY OF NEW ENGLISH (Second edition) */
 
 #ifndef F2C_INCLUDE
 #define F2C_INCLUDE
@@ -634,5 +679,5 @@ typedef doublereal E_f; /* real function with -R not specified */
 #endif
 
 
-   #endif
+#endif
 

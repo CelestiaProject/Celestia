@@ -9,6 +9,14 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|Win32">
+      <Configuration>Release64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|x64">
+      <Configuration>Release64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -27,11 +35,19 @@
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
@@ -45,10 +61,16 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
@@ -66,8 +88,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <GenerateManifest>false</GenerateManifest>
@@ -75,17 +103,23 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;.\windows\inc\lua-5.1;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>intl.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libjpeg.lib;zlibd.lib;libpngd.lib;lua5.1.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(ProjectName).exe</OutputFile>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)$(Configuration)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -100,20 +134,21 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;.\windows\inc\lua-5.1;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>intl.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libjpeg.lib;zlibd.lib;libpngd.lib;lua5.1.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;winmm.lib;vfw32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice64.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>.\windows\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
+      <ManifestFile>$(SolutionDir)\src\celestia\win32\res\celestia.exe.manifest</ManifestFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,8 +156,30 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;.\windows\lua51\include;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\curveplot\include;.\thirdparty\glew\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)$(Configuration)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+      <ManifestFile>$(SolutionDir)\src\celestia\win32\res\celestia.exe.manifest</ManifestFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
@@ -133,7 +190,8 @@
       <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention />
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <ManifestFile>$(SolutionDir)\src\celestia\win32\res\celestia.exe.manifest</ManifestFile>
     </Link>
@@ -146,20 +204,47 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;.\windows\inc\lua-5.1;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\curveplot\include;.\thirdparty\glew\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;winmm.lib;vfw32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice64.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>.\windows\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX64</TargetMachine>
+      <ManifestFile>$(SolutionDir)\src\celestia\win32\res\celestia.exe.manifest</ManifestFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libjpeg;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\lua;.\windows\inc\spice;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LIBINTL_STATIC;CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;EIGEN_NO_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>intl.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libjpeg.lib;zlib.lib;libpng.lib;lua5.1.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;winmm.lib;vfw32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;glu32.lib;libintl.lib;libiconv.lib;libjpeg.lib;zlib.lib;libpng.lib;lua51.lib;cspice64.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>.\windows\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention />
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
+      <ManifestFile>$(SolutionDir)\src\celestia\win32\res\celestia.exe.manifest</ManifestFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -266,6 +351,7 @@
     <ClCompile Include="src\celestia\imagecapture.cpp" />
     <ClCompile Include="src\celestia\scriptmenu.cpp" />
     <ClCompile Include="src\celestia\url.cpp" />
+    <ClCompile Include="src\celestia\win32\iob_func_shim.cpp" />
     <ClCompile Include="src\celestia\win32\ODMenu.cpp" />
     <ClCompile Include="src\celestia\win32\wglext.cpp" />
     <ClCompile Include="src\celestia\win32\winbookmarks.cpp" />
@@ -301,36 +387,6 @@
     <ClCompile Include="src\celutil\winutil.cpp" />
     <ClCompile Include="thirdparty\curveplot\src\curveplot.cpp" />
     <ClCompile Include="thirdparty\glew\src\glew.c" />
-    <ClCompile Include="windows\lua51\src\lapi.c" />
-    <ClCompile Include="windows\lua51\src\lauxlib.c" />
-    <ClCompile Include="windows\lua51\src\lbaselib.c" />
-    <ClCompile Include="windows\lua51\src\lcode.c" />
-    <ClCompile Include="windows\lua51\src\ldblib.c" />
-    <ClCompile Include="windows\lua51\src\ldebug.c" />
-    <ClCompile Include="windows\lua51\src\ldo.c" />
-    <ClCompile Include="windows\lua51\src\ldump.c" />
-    <ClCompile Include="windows\lua51\src\lfunc.c" />
-    <ClCompile Include="windows\lua51\src\lgc.c" />
-    <ClCompile Include="windows\lua51\src\linit.c" />
-    <ClCompile Include="windows\lua51\src\liolib.c" />
-    <ClCompile Include="windows\lua51\src\llex.c" />
-    <ClCompile Include="windows\lua51\src\lmathlib.c" />
-    <ClCompile Include="windows\lua51\src\lmem.c" />
-    <ClCompile Include="windows\lua51\src\loadlib.c" />
-    <ClCompile Include="windows\lua51\src\lobject.c" />
-    <ClCompile Include="windows\lua51\src\lopcodes.c" />
-    <ClCompile Include="windows\lua51\src\loslib.c" />
-    <ClCompile Include="windows\lua51\src\lparser.c" />
-    <ClCompile Include="windows\lua51\src\lstate.c" />
-    <ClCompile Include="windows\lua51\src\lstring.c" />
-    <ClCompile Include="windows\lua51\src\lstrlib.c" />
-    <ClCompile Include="windows\lua51\src\ltable.c" />
-    <ClCompile Include="windows\lua51\src\ltablib.c" />
-    <ClCompile Include="windows\lua51\src\ltm.c" />
-    <ClCompile Include="windows\lua51\src\lundump.c" />
-    <ClCompile Include="windows\lua51\src\lvm.c" />
-    <ClCompile Include="windows\lua51\src\lzio.c" />
-    <ClCompile Include="windows\lua51\src\print.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cel3ds\3dschunk.h" />
@@ -563,7 +619,9 @@
     <None Include="src\celestia\win32\res\crosshair.cur" />
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="src\celestia\win32\res\celestia.exe.manifest" />
+    <Manifest Include="src\celestia\win32\res\celestia.exe.manifest">
+      <SubType>Designer</SubType>
+    </Manifest>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

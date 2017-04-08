@@ -73,9 +73,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="lua51">
-      <UniqueIdentifier>{6e1958e1-b3ce-47fc-b882-18c7b555d20a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\celmath\frustum.cpp">
@@ -492,95 +489,8 @@
     <ClCompile Include="src\celmodel\modelfile.cpp">
       <Filter>Source Files\celmodel</Filter>
     </ClCompile>
-    <ClCompile Include="windows\lua51\src\lbaselib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lcode.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\ldblib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\ldebug.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\ldo.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\ldump.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lfunc.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lgc.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\linit.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\liolib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\llex.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lmathlib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lmem.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\loadlib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lobject.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lopcodes.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\loslib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lparser.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lstate.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lstring.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lstrlib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\ltable.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\ltablib.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\ltm.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lundump.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lvm.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lzio.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\print.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lapi.c">
-      <Filter>lua51</Filter>
-    </ClCompile>
-    <ClCompile Include="windows\lua51\src\lauxlib.c">
-      <Filter>lua51</Filter>
+    <ClCompile Include="src\celestia\win32\iob_func_shim.cpp">
+      <Filter>Source Files\win32ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
