@@ -19,7 +19,6 @@
 #include <cstdio>
 #include <cassert>
 #include <Eigen/Geometry>
-#include <Eigen/NewStdVector>
 
 using namespace Eigen;
 using namespace std;
@@ -3332,20 +3331,20 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
             props.usesFragmentLighting() ||
             props.lightModel == ShaderProperties::RingIllumModel)
         {
-            fragLightColor[i] = lightColor.cwise() * diffuseColor;
+            fragLightColor[i] = lightColor.cwiseProduct(diffuseColor);
             if (props.hasSpecular())
             {
-                fragLightSpecColor[i] = lightColor.cwise() * specularColor;
+                fragLightSpecColor[i] = lightColor.cwiseProduct(specularColor);
             }
             fragLightBrightness[i] = lightColor.maxCoeff();
         }
         else
         {
-            lights[i].diffuse = lightColor.cwise() * diffuseColor;
+            lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
         }
 
         lights[i].brightness = lightColor.maxCoeff();
-        lights[i].specular = lightColor.cwise() * specularColor;
+        lights[i].specular = lightColor.cwiseProduct(specularColor);
 
         Vector3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
         if (halfAngle_obj.norm() != 0.0f)
@@ -3354,7 +3353,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
     }
 
     eyePosition = ls.eyePos_obj;
-    ambientColor = ls.ambientColor.cwise() * diffuseColor + 
+    ambientColor = ls.ambientColor.cwiseProduct(diffuseColor) +
         Vector3f(materialEmissive.red(), materialEmissive.green(), materialEmissive.blue());
     opacity = materialDiffuse.alpha();
 #ifdef USE_HDR
@@ -3374,8 +3373,8 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                                               const Eigen::Quaternionf& orientation)
 {
     // Compute the transformation from model to world coordinates
-    Transform3f rotation(orientation.conjugate());
-    Matrix4f modelToWorld = (rotation * Scaling3f(scaleFactors)).matrix();
+    Affine3f rotation(orientation.conjugate());
+    Matrix4f modelToWorld = (rotation *  Scaling(scaleFactors)).matrix();
 
     for (unsigned int li = 0;
          li < min(ls.nLights, MaxShaderLights);
@@ -3415,8 +3414,8 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
 
                 // Compose the world-to-shadow matrix
                 Matrix4f worldToShadow = shadowRotation *
-                                         Transform3f(Scaling3f(1.0f / shadow.penumbraRadius)).matrix() *
-                                         Transform3f(Translation3f(-shadow.origin)).matrix();
+                                         Affine3f(Scaling(1.0f / shadow.penumbraRadius)).matrix() *
+					                     Affine3f(Translation3f(-shadow.origin)).matrix();
 
                 // Finally, multiply all the matrices together to get the mapping from
                 // object space to shadow map space.
@@ -3467,8 +3466,8 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
 
     // Precompute sum and inverse sum of scattering coefficients to save work
     // in the vertex shader.
-    Vector3f tScatterCoeffSum = tRayleighCoeff.cwise() + tMieCoeff;
+    Vector3f tScatterCoeffSum = tRayleighCoeff.array() + tMieCoeff;
     scatterCoeffSum = tScatterCoeffSum;
-    invScatterCoeffSum = tScatterCoeffSum.cwise().inverse();
+	invScatterCoeffSum = tScatterCoeffSum.cwiseInverse();
     extinctionCoeff = tScatterCoeffSum + tAbsorptionCoeff;
 }

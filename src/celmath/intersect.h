@@ -16,7 +16,6 @@
 #include "sphere.h"
 #include "ellipsoid.h"
 #include <Eigen/Core>
-#include <Eigen/Array>
 
 
 template<class T> bool testIntersection(const Ray3<T>& ray,
@@ -75,9 +74,10 @@ template<class T> bool testIntersection(const Ray3<T>& ray,
                                         T& distance)
 {
     Eigen::Matrix<T, 3, 1> diff = ray.origin - e.center;
-    Eigen::Matrix<T, 3, 1> s = e.axes.cwise().inverse().cwise().square();
-    Eigen::Matrix<T, 3, 1> sdir = ray.direction.cwise() * s;
-    Eigen::Matrix<T, 3, 1> sdiff = diff.cwise() * s;
+	Eigen::Matrix<T, 3, 1> s = e.axes.cwiseInverse().array().square();
+	Eigen::Matrix<T, 3, 1> sdir = ray.direction.cwiseProduct(s);
+	Eigen::Matrix<T, 3, 1> sdiff = diff.cwiseProduct(s);
+
     T a = ray.direction.dot(sdir);
     T b = ray.direction.dot(sdiff);
     T c = diff.dot(sdiff) - (T) 1.0;

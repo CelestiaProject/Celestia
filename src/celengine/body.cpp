@@ -550,7 +550,7 @@ Matrix4d Body::getLocalToAstrocentric(double tdb) const
 {
     const TimelinePhase* phase = timeline->findPhase(tdb);
     Vector3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
-    return Transform3d(Translation3d(p)).matrix();
+    return Eigen::Transform<double, 3, Affine>(Translation3d(p)).matrix();
 }
 
 
@@ -609,7 +609,7 @@ Quaterniond Body::getEquatorialToBodyFixed(double tdb) const
 Matrix4d Body::getBodyFixedToAstrocentric(double tdb) const
 {
     //return getEquatorialToBodyFixed(tdb).toMatrix4() * getLocalToAstrocentric(tdb);
-    Matrix4d m = Transform3d(getEquatorialToBodyFixed(tdb)).matrix();
+	Matrix4d m = Eigen::Transform<double, 3, Affine>(getEquatorialToBodyFixed(tdb)).matrix();
     return m * getLocalToAstrocentric(tdb);
 }
 

@@ -13,7 +13,6 @@
 #ifdef _MSC_VER
 
 #define BROKEN_FRIEND_TEMPLATES
-#define snprintf _snprintf
 
 #if _MSC_VER >= 1000
 // Make VC shut up about long variable names from templates

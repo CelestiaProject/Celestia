@@ -46,7 +46,7 @@ bool starOrbitStraddlesNodesPredicate(const Vector3f& cellCenterPos, const Star&
 
     Vector3f starPos    = star.getPosition();
 
-    return (starPos - cellCenterPos).cwise().abs().minCoeff() < orbitalRadius;
+    return (starPos - cellCenterPos).cwiseAbs().minCoeff() < orbitalRadius;
 }
 
 
@@ -98,7 +98,7 @@ void StarOctree::processVisibleObjects(StarHandler&    processor,
     for (unsigned int i = 0; i < 5; ++i)
     {
         const Hyperplane<float, 3>& plane = frustumPlanes[i];
-        float r = scale * plane.normal().cwise().abs().sum();
+        float r = scale * plane.normal().cwiseAbs().sum();
         if (plane.signedDistance(cellCenterPos) < -r)
             return;
     }

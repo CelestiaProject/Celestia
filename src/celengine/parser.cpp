@@ -28,7 +28,7 @@ Value::Value(string s)
     data.s = new string(s);
 }
 
-Value::Value(Array* a)
+Value::Value(ValueArray* a)
 {
     type = ArrayType;
     data.a = a;
@@ -95,7 +95,7 @@ string Value::getString() const
     return *data.s;
 }
 
-Array* Value::getArray() const
+ValueArray* Value::getArray() const
 {
     // ASSERT(type == ArrayType);
     return data.a;
@@ -122,7 +122,7 @@ Parser::Parser(Tokenizer* _tokenizer) :
 }
 
 
-Array* Parser::readArray()
+ValueArray* Parser::readArray()
 {
     Tokenizer::TokenType tok = tokenizer->nextToken();
     if (tok != Tokenizer::TokenBeginArray)
@@ -131,7 +131,7 @@ Array* Parser::readArray()
         return NULL;
     }
 
-    Array* array = new Array();
+	ValueArray* array = new ValueArray();
 
     Value* v = readValue();
     while (v != NULL)
@@ -278,7 +278,7 @@ Value* Parser::readValue()
     case Tokenizer::TokenBeginArray:
         tokenizer->pushBack();
         {
-            Array* array = readArray();
+			ValueArray* array = readArray();
             if (array == NULL)
                 return NULL;
             else
@@ -418,7 +418,7 @@ bool AssociativeArray::getVector(const string& key, Vec3d& val) const
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-    Array* arr = v->getArray();
+	ValueArray* arr = v->getArray();
     if (arr->size() != 3)
         return false;
 
@@ -442,7 +442,7 @@ bool AssociativeArray::getVector(const string& key, Vector3d& val) const
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-    Array* arr = v->getArray();
+	ValueArray* arr = v->getArray();
     if (arr->size() != 3)
         return false;
 
@@ -493,7 +493,7 @@ bool AssociativeArray::getRotation(const string& key, Quatf& val) const
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-    Array* arr = v->getArray();
+	ValueArray* arr = v->getArray();
     if (arr->size() != 4)
         return false;
 
@@ -540,7 +540,7 @@ bool AssociativeArray::getRotation(const string& key, Eigen::Quaternionf& val) c
     if (v == NULL || v->getType() != Value::ArrayType)
         return false;
 
-    Array* arr = v->getArray();
+	ValueArray* arr = v->getArray();
     if (arr->size() != 4)
         return false;
 

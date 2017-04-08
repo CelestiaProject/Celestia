@@ -412,7 +412,7 @@ TimelinePhase* CreateTimelinePhase(Body* body,
 
 Timeline* CreateTimelineFromArray(Body* body,
                                   Universe& universe,
-                                  Array* timelineArray,
+                                  ValueArray* timelineArray,
                                   const string& path,
                                   ReferenceFrame* defaultOrbitFrame,
                                   ReferenceFrame* defaultBodyFrame)
@@ -420,7 +420,7 @@ Timeline* CreateTimelineFromArray(Body* body,
     Timeline* timeline = new Timeline();
     double previousEnding = -numeric_limits<double>::infinity();
 
-    for (Array::const_iterator iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
+    for (ValueArray::const_iterator iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
     {
         Hash* phaseData = (*iter)->getHash();
         if (phaseData == NULL)
