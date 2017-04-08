@@ -93,10 +93,10 @@ public:
     {
         return (center.z() - radius > m_nearZ ||
                 center.z() + radius < m_farZ  ||
-                center.dot(m_planeNormals[0].start<3>()) < -radius ||
-                center.dot(m_planeNormals[1].start<3>()) < -radius ||
-                center.dot(m_planeNormals[2].start<3>()) < -radius ||
-                center.dot(m_planeNormals[3].start<3>()) < -radius);
+                center.dot(m_planeNormals[0].head(3)) < -radius ||
+                center.dot(m_planeNormals[1].head(3)) < -radius ||
+                center.dot(m_planeNormals[2].head(3)) < -radius ||
+                center.dot(m_planeNormals[3].head(3)) < -radius);
     }
 
     inline bool cullSphere(const Vector4d& center,
@@ -579,7 +579,7 @@ CurvePlot::addSample(const CurvePlotSample& sample)
                                                       zeroExtend(sample.position),
                                                       zeroExtend(lastSample.velocity * dt),
                                                       zeroExtend(sample.velocity * dt));
-            Vector4d extents = coeff.cwise().abs() * Vector4d(0.0, 1.0, 1.0, 1.0);
+            Vector4d extents = coeff.cwiseAbs() * Vector4d(0.0, 1.0, 1.0, 1.0);
             m_samples[m_samples.size() - 1].boundingRadius = extents.norm();
         }
         else
@@ -590,7 +590,7 @@ CurvePlot::addSample(const CurvePlotSample& sample)
                                                       zeroExtend(nextSample.position),
                                                       zeroExtend(sample.velocity * dt),
                                                       zeroExtend(nextSample.velocity * dt));
-            Vector4d extents = coeff.cwise().abs() * Vector4d(0.0, 1.0, 1.0, 1.0);
+            Vector4d extents = coeff.cwiseAbs() * Vector4d(0.0, 1.0, 1.0, 1.0);
             m_samples[1].boundingRadius = extents.norm();
         }
     }
@@ -640,7 +640,7 @@ CurvePlot::setDuration(double duration)
   * @param subdivisionThreshold
   */
 void
-CurvePlot::render(const Transform3d& modelview,
+CurvePlot::render(const Affine3d& modelview,
                   double nearZ,
                   double farZ,
                   const Vector3d viewFrustumPlaneNormals[],
@@ -780,7 +780,7 @@ CurvePlot::render(const Transform3d& modelview,
   * @param endTime the end of the time interval
   */
 void
-CurvePlot::render(const Transform3d& modelview,
+CurvePlot::render(const Affine3d& modelview,
                   double nearZ,
                   double farZ,
                   const Vector3d viewFrustumPlaneNormals[],
@@ -944,7 +944,7 @@ CurvePlot::render(const Transform3d& modelview,
   * @param fadeEndTime points on the curve after this time are not drawn
   */
 void
-CurvePlot::renderFaded(const Eigen::Transform3d& modelview,
+CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
                        double nearZ,
                        double farZ,
                        const Eigen::Vector3d viewFrustumPlaneNormals[],

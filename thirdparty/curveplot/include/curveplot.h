@@ -67,19 +67,19 @@ class CurvePlot
             return m_samples.back().t;
     }
 
-    void render(const Eigen::Transform3d& modelview,
+    void render(const Eigen::Affine3d& modelview,
                 double nearZ,
                 double farZ,
                 const Eigen::Vector3d viewFrustumPlaneNormals[],
                 double subdivisionThreshold) const;
-    void render(const Eigen::Transform3d& modelview,
+    void render(const Eigen::Affine3d& modelview,
                 double nearZ,
                 double farZ,
                 const Eigen::Vector3d viewFrustumPlaneNormals[],
                 double subdivisionThreshold,
                 double startTime,
                 double endTime) const;
-    void renderFaded(const Eigen::Transform3d& modelview,
+    void renderFaded(const Eigen::Affine3d& modelview,
                      double nearZ,
                      double farZ,
                      const Eigen::Vector3d viewFrustumPlaneNormals[],

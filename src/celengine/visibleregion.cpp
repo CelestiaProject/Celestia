@@ -99,7 +99,7 @@ ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
     // ellipsoid ultimately requires using the quadratic formula, which has
     // one solution when the discriminant (b^2 - 4ac) is zero.  The code below
     // computes the value of t that results in a discriminant of zero.
-    Matrix<T, 3, 1> w_ = w.cwise() * recipSemiAxes;//(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
+    Matrix<T, 3, 1> w_ = w.cwiseProduct(recipSemiAxes);//(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
     T ww = w_.dot(w_);
     T ew = w_.dot(e_);
 
@@ -128,7 +128,7 @@ ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
     // intersection.  Since we already know that the discriminant is zero,
     // the solution is just -b/2a
     Matrix<T, 3, 1> v = -e * (1 - t) + w * t;
-    Matrix<T, 3, 1> v_ = v.cwise() * recipSemiAxes;
+    Matrix<T, 3, 1> v_ = v.cwiseProduct(recipSemiAxes);
     T a1 = v_.dot(v_);
     T b1 = (T) 2 * v_.dot(e_);
     T t1 = -b1 / (2 * a1);
@@ -212,9 +212,9 @@ VisibleRegion::render(Renderer* /* renderer */,
     Vector3d uAxis = lightDirNorm.unitOrthogonal();
     Vector3d vAxis = uAxis.cross(lightDirNorm);
 
-    Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwise().inverse();
+    Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwiseInverse();
     Vector3d e = -lightDir;
-    Vector3d e_ = e.cwise() * recipSemiAxes;
+    Vector3d e_ = e.cwiseProduct(recipSemiAxes);
     double ee = e_.squaredNorm();
 
     glColor4f(m_color.red(), m_color.green(), m_color.blue(), opacity);

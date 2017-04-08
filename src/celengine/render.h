@@ -12,7 +12,6 @@
 #define _CELENGINE_RENDER_H_
 
 #include <Eigen/Core>
-#include <Eigen/NewStdVector>
 #include <celmath/frustum.h>
 #include <celengine/universe.h>
 #include <celengine/observer.h>

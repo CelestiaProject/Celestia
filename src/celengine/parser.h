@@ -72,6 +72,7 @@ class AssociativeArray
 };
 
 typedef vector<Value*> Array;
+typedef vector<Value*> ValueArray;
 typedef AssociativeArray Hash;
 
 class Value
@@ -87,7 +88,7 @@ public:
 
     Value(double);
     Value(string);
-    Value(Array*);
+    Value(ValueArray*);
     Value(Hash*);
     Value(bool);
     ~Value();
@@ -96,7 +97,7 @@ public:
 
     double getNumber() const;
     string getString() const;
-    Array* getArray() const;
+	ValueArray* getArray() const;
     Hash* getHash() const;
     bool getBoolean() const;
 
@@ -106,7 +107,7 @@ private:
     union {
         string* s;
         double d;
-        Array* a;
+		ValueArray* a;
         Hash* h;
     } data;
 };
@@ -123,7 +124,7 @@ private:
     Tokenizer* tokenizer;
     
     bool readUnits(const std::string&, Hash*);
-    Array* readArray();
+	ValueArray* readArray();
     Hash* readHash();
 };
 
