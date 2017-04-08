@@ -1,68 +1,88 @@
 // This file is part of Eigen, a lightweight C++ template library
-// for linear algebra. Eigen itself is part of the KDE project.
+// for linear algebra.
 //
-// Copyright (C) 2008 Gael Guennebaud <g.gael@free.fr>
+// Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_VISITOR_H
 #define EIGEN_VISITOR_H
 
+namespace Eigen { 
+
+namespace internal {
+
 template<typename Visitor, typename Derived, int UnrollCount>
-struct ei_visitor_impl
+struct visitor_impl
 {
   enum {
     col = (UnrollCount-1) / Derived::RowsAtCompileTime,
     row = (UnrollCount-1) % Derived::RowsAtCompileTime
   };
 
-  inline static void run(const Derived &mat, Visitor& visitor)
+  EIGEN_DEVICE_FUNC
+  static inline void run(const Derived &mat, Visitor& visitor)
   {
-    ei_visitor_impl<Visitor, Derived, UnrollCount-1>::run(mat, visitor);
+    visitor_impl<Visitor, Derived, UnrollCount-1>::run(mat, visitor);
     visitor(mat.coeff(row, col), row, col);
   }
 };
 
 template<typename Visitor, typename Derived>
-struct ei_visitor_impl<Visitor, Derived, 1>
+struct visitor_impl<Visitor, Derived, 1>
 {
-  inline static void run(const Derived &mat, Visitor& visitor)
+  EIGEN_DEVICE_FUNC
+  static inline void run(const Derived &mat, Visitor& visitor)
   {
     return visitor.init(mat.coeff(0, 0), 0, 0);
   }
 };
 
 template<typename Visitor, typename Derived>
-struct ei_visitor_impl<Visitor, Derived, Dynamic>
+struct visitor_impl<Visitor, Derived, Dynamic>
 {
-  inline static void run(const Derived& mat, Visitor& visitor)
+  EIGEN_DEVICE_FUNC
+  static inline void run(const Derived& mat, Visitor& visitor)
   {
     visitor.init(mat.coeff(0,0), 0, 0);
-    for(int i = 1; i < mat.rows(); ++i)
+    for(Index i = 1; i < mat.rows(); ++i)
       visitor(mat.coeff(i, 0), i, 0);
-    for(int j = 1; j < mat.cols(); ++j)
-      for(int i = 0; i < mat.rows(); ++i)
+    for(Index j = 1; j < mat.cols(); ++j)
+      for(Index i = 0; i < mat.rows(); ++i)
         visitor(mat.coeff(i, j), i, j);
   }
 };
 
+// evaluator adaptor
+template<typename XprType>
+class visitor_evaluator
+{
+public:
+  EIGEN_DEVICE_FUNC
+  explicit visitor_evaluator(const XprType &xpr) : m_evaluator(xpr), m_xpr(xpr) {}
+  
+  typedef typename XprType::Scalar Scalar;
+  typedef typename XprType::CoeffReturnType CoeffReturnType;
+  
+  enum {
+    RowsAtCompileTime = XprType::RowsAtCompileTime,
+    CoeffReadCost = internal::evaluator<XprType>::CoeffReadCost
+  };
+  
+  EIGEN_DEVICE_FUNC Index rows() const { return m_xpr.rows(); }
+  EIGEN_DEVICE_FUNC Index cols() const { return m_xpr.cols(); }
+  EIGEN_DEVICE_FUNC Index size() const { return m_xpr.size(); }
+
+  EIGEN_DEVICE_FUNC CoeffReturnType coeff(Index row, Index col) const
+  { return m_evaluator.coeff(row, col); }
+  
+protected:
+  internal::evaluator<XprType> m_evaluator;
+  const XprType &m_xpr;
+};
+} // end namespace internal
 
 /** Applies the visitor \a visitor to the whole coefficients of the matrix or vector.
   *
@@ -70,38 +90,45 @@ struct ei_visitor_impl<Visitor, Derived, Dynamic>
   * \code
   * struct MyVisitor {
   *   // called for the first coefficient
-  *   void init(const Scalar& value, int i, int j);
+  *   void init(const Scalar& value, Index i, Index j);
   *   // called for all other coefficients
-  *   void operator() (const Scalar& value, int i, int j);
+  *   void operator() (const Scalar& value, Index i, Index j);
   * };
   * \endcode
   *
   * \note compared to one or two \em for \em loops, visitors offer automatic
   * unrolling for small fixed size matrix.
   *
-  * \sa minCoeff(int*,int*), maxCoeff(int*,int*), MatrixBase::redux()
+  * \sa minCoeff(Index*,Index*), maxCoeff(Index*,Index*), DenseBase::redux()
   */
 template<typename Derived>
 template<typename Visitor>
-void MatrixBase<Derived>::visit(Visitor& visitor) const
+EIGEN_DEVICE_FUNC
+void DenseBase<Derived>::visit(Visitor& visitor) const
 {
-  const bool unroll = SizeAtCompileTime * CoeffReadCost
-                    + (SizeAtCompileTime-1) * ei_functor_traits<Visitor>::Cost
-                    <= EIGEN_UNROLLING_LIMIT;
-  return ei_visitor_impl<Visitor, Derived,
-      unroll ? int(SizeAtCompileTime) : Dynamic
-    >::run(derived(), visitor);
+  typedef typename internal::visitor_evaluator<Derived> ThisEvaluator;
+  ThisEvaluator thisEval(derived());
+  
+  enum {
+    unroll =  SizeAtCompileTime != Dynamic
+           && SizeAtCompileTime * ThisEvaluator::CoeffReadCost + (SizeAtCompileTime-1) * internal::functor_traits<Visitor>::Cost <= EIGEN_UNROLLING_LIMIT
+  };
+  return internal::visitor_impl<Visitor, ThisEvaluator, unroll ? int(SizeAtCompileTime) : Dynamic>::run(thisEval, visitor);
 }
+
+namespace internal {
 
 /** \internal
   * \brief Base class to implement min and max visitors
   */
-template <typename Scalar>
-struct ei_coeff_visitor
+template <typename Derived>
+struct coeff_visitor
 {
-  int row, col;
+  typedef typename Derived::Scalar Scalar;
+  Index row, col;
   Scalar res;
-  inline void init(const Scalar& value, int i, int j)
+  EIGEN_DEVICE_FUNC
+  inline void init(const Scalar& value, Index i, Index j)
   {
     res = value;
     row = i;
@@ -112,12 +139,14 @@ struct ei_coeff_visitor
 /** \internal
   * \brief Visitor computing the min coefficient with its value and coordinates
   *
-  * \sa MatrixBase::minCoeff(int*, int*)
+  * \sa DenseBase::minCoeff(Index*, Index*)
   */
-template <typename Scalar>
-struct ei_min_coeff_visitor : ei_coeff_visitor<Scalar>
+template <typename Derived>
+struct min_coeff_visitor : coeff_visitor<Derived>
 {
-  void operator() (const Scalar& value, int i, int j)
+  typedef typename Derived::Scalar Scalar;
+  EIGEN_DEVICE_FUNC
+  void operator() (const Scalar& value, Index i, Index j)
   {
     if(value < this->res)
     {
@@ -129,7 +158,7 @@ struct ei_min_coeff_visitor : ei_coeff_visitor<Scalar>
 };
 
 template<typename Scalar>
-struct ei_functor_traits<ei_min_coeff_visitor<Scalar> > {
+struct functor_traits<min_coeff_visitor<Scalar> > {
   enum {
     Cost = NumTraits<Scalar>::AddCost
   };
@@ -138,12 +167,14 @@ struct ei_functor_traits<ei_min_coeff_visitor<Scalar> > {
 /** \internal
   * \brief Visitor computing the max coefficient with its value and coordinates
   *
-  * \sa MatrixBase::maxCoeff(int*, int*)
+  * \sa DenseBase::maxCoeff(Index*, Index*)
   */
-template <typename Scalar>
-struct ei_max_coeff_visitor : ei_coeff_visitor<Scalar>
+template <typename Derived>
+struct max_coeff_visitor : coeff_visitor<Derived>
 {
-  void operator() (const Scalar& value, int i, int j)
+  typedef typename Derived::Scalar Scalar; 
+  EIGEN_DEVICE_FUNC
+  void operator() (const Scalar& value, Index i, Index j)
   {
     if(value > this->res)
     {
@@ -155,74 +186,88 @@ struct ei_max_coeff_visitor : ei_coeff_visitor<Scalar>
 };
 
 template<typename Scalar>
-struct ei_functor_traits<ei_max_coeff_visitor<Scalar> > {
+struct functor_traits<max_coeff_visitor<Scalar> > {
   enum {
     Cost = NumTraits<Scalar>::AddCost
   };
 };
 
-/** \returns the minimum of all coefficients of *this
-  * and puts in *row and *col its location.
+} // end namespace internal
+
+/** \fn DenseBase<Derived>::minCoeff(IndexType* rowId, IndexType* colId) const
+  * \returns the minimum of all coefficients of *this and puts in *row and *col its location.
+  * \warning the result is undefined if \c *this contains NaN.
   *
-  * \sa MatrixBase::minCoeff(int*), MatrixBase::maxCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::minCoeff()
+  * \sa DenseBase::minCoeff(Index*), DenseBase::maxCoeff(Index*,Index*), DenseBase::visit(), DenseBase::minCoeff()
   */
 template<typename Derived>
-typename ei_traits<Derived>::Scalar
-MatrixBase<Derived>::minCoeff(int* row, int* col) const
+template<typename IndexType>
+EIGEN_DEVICE_FUNC
+typename internal::traits<Derived>::Scalar
+DenseBase<Derived>::minCoeff(IndexType* rowId, IndexType* colId) const
 {
-  ei_min_coeff_visitor<Scalar> minVisitor;
+  internal::min_coeff_visitor<Derived> minVisitor;
   this->visit(minVisitor);
-  *row = minVisitor.row;
-  if (col) *col = minVisitor.col;
+  *rowId = minVisitor.row;
+  if (colId) *colId = minVisitor.col;
   return minVisitor.res;
 }
 
-/** \returns the minimum of all coefficients of *this
-  * and puts in *index its location.
+/** \returns the minimum of all coefficients of *this and puts in *index its location.
+  * \warning the result is undefined if \c *this contains NaN. 
   *
-  * \sa MatrixBase::minCoeff(int*,int*), MatrixBase::maxCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::minCoeff()
+  * \sa DenseBase::minCoeff(IndexType*,IndexType*), DenseBase::maxCoeff(IndexType*,IndexType*), DenseBase::visit(), DenseBase::minCoeff()
   */
 template<typename Derived>
-typename ei_traits<Derived>::Scalar
-MatrixBase<Derived>::minCoeff(int* index) const
+template<typename IndexType>
+EIGEN_DEVICE_FUNC
+typename internal::traits<Derived>::Scalar
+DenseBase<Derived>::minCoeff(IndexType* index) const
 {
   EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
-  ei_min_coeff_visitor<Scalar> minVisitor;
+  internal::min_coeff_visitor<Derived> minVisitor;
   this->visit(minVisitor);
-  *index = (RowsAtCompileTime==1) ? minVisitor.col : minVisitor.row;
+  *index = IndexType((RowsAtCompileTime==1) ? minVisitor.col : minVisitor.row);
   return minVisitor.res;
 }
 
-/** \returns the maximum of all coefficients of *this
-  * and puts in *row and *col its location.
+/** \fn DenseBase<Derived>::maxCoeff(IndexType* rowId, IndexType* colId) const
+  * \returns the maximum of all coefficients of *this and puts in *row and *col its location.
+  * \warning the result is undefined if \c *this contains NaN. 
   *
-  * \sa MatrixBase::minCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::maxCoeff()
+  * \sa DenseBase::minCoeff(IndexType*,IndexType*), DenseBase::visit(), DenseBase::maxCoeff()
   */
 template<typename Derived>
-typename ei_traits<Derived>::Scalar
-MatrixBase<Derived>::maxCoeff(int* row, int* col) const
+template<typename IndexType>
+EIGEN_DEVICE_FUNC
+typename internal::traits<Derived>::Scalar
+DenseBase<Derived>::maxCoeff(IndexType* rowPtr, IndexType* colPtr) const
 {
-  ei_max_coeff_visitor<Scalar> maxVisitor;
+  internal::max_coeff_visitor<Derived> maxVisitor;
   this->visit(maxVisitor);
-  *row = maxVisitor.row;
-  if (col) *col = maxVisitor.col;
+  *rowPtr = maxVisitor.row;
+  if (colPtr) *colPtr = maxVisitor.col;
   return maxVisitor.res;
 }
 
-/** \returns the maximum of all coefficients of *this
-  * and puts in *index its location.
+/** \returns the maximum of all coefficients of *this and puts in *index its location.
+  * \warning the result is undefined if \c *this contains NaN.
   *
-  * \sa MatrixBase::maxCoeff(int*,int*), MatrixBase::minCoeff(int*,int*), MatrixBase::visitor(), MatrixBase::maxCoeff()
+  * \sa DenseBase::maxCoeff(IndexType*,IndexType*), DenseBase::minCoeff(IndexType*,IndexType*), DenseBase::visitor(), DenseBase::maxCoeff()
   */
 template<typename Derived>
-typename ei_traits<Derived>::Scalar
-MatrixBase<Derived>::maxCoeff(int* index) const
+template<typename IndexType>
+EIGEN_DEVICE_FUNC
+typename internal::traits<Derived>::Scalar
+DenseBase<Derived>::maxCoeff(IndexType* index) const
 {
   EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
-  ei_max_coeff_visitor<Scalar> maxVisitor;
+  internal::max_coeff_visitor<Derived> maxVisitor;
   this->visit(maxVisitor);
   *index = (RowsAtCompileTime==1) ? maxVisitor.col : maxVisitor.row;
   return maxVisitor.res;
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_VISITOR_H

@@ -1,117 +1,110 @@
 // This file is part of Eigen, a lightweight C++ template library
-// for linear algebra. Eigen itself is part of the KDE project.
+// for linear algebra.
 //
-// Copyright (C) 2008 Gael Guennebaud <g.gael@free.fr>
+// Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 // Copyright (C) 2006-2008 Benoit Jacob <jacob.benoit.1@gmail.com>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_NESTBYVALUE_H
 #define EIGEN_NESTBYVALUE_H
 
+namespace Eigen {
+
+namespace internal {
+template<typename ExpressionType>
+struct traits<NestByValue<ExpressionType> > : public traits<ExpressionType>
+{};
+}
+
 /** \class NestByValue
+  * \ingroup Core_Module
   *
   * \brief Expression which must be nested by value
   *
-  * \param ExpressionType the type of the object of which we are requiring nesting-by-value
+  * \tparam ExpressionType the type of the object of which we are requiring nesting-by-value
   *
   * This class is the return type of MatrixBase::nestByValue()
   * and most of the time this is the only way it is used.
   *
   * \sa MatrixBase::nestByValue()
   */
-template<typename ExpressionType>
-struct ei_traits<NestByValue<ExpressionType> > : public ei_traits<ExpressionType>
-{};
-
 template<typename ExpressionType> class NestByValue
-  : public MatrixBase<NestByValue<ExpressionType> >
+  : public internal::dense_xpr_base< NestByValue<ExpressionType> >::type
 {
   public:
 
-    EIGEN_GENERIC_PUBLIC_INTERFACE(NestByValue)
+    typedef typename internal::dense_xpr_base<NestByValue>::type Base;
+    EIGEN_DENSE_PUBLIC_INTERFACE(NestByValue)
 
-    inline NestByValue(const ExpressionType& matrix) : m_expression(matrix) {}
+    EIGEN_DEVICE_FUNC explicit inline NestByValue(const ExpressionType& matrix) : m_expression(matrix) {}
 
-    inline int rows() const { return m_expression.rows(); }
-    inline int cols() const { return m_expression.cols(); }
-    inline int stride() const { return m_expression.stride(); }
+    EIGEN_DEVICE_FUNC inline Index rows() const { return m_expression.rows(); }
+    EIGEN_DEVICE_FUNC inline Index cols() const { return m_expression.cols(); }
+    EIGEN_DEVICE_FUNC inline Index outerStride() const { return m_expression.outerStride(); }
+    EIGEN_DEVICE_FUNC inline Index innerStride() const { return m_expression.innerStride(); }
 
-    inline const Scalar coeff(int row, int col) const
+    EIGEN_DEVICE_FUNC inline const CoeffReturnType coeff(Index row, Index col) const
     {
       return m_expression.coeff(row, col);
     }
 
-    inline Scalar& coeffRef(int row, int col)
+    EIGEN_DEVICE_FUNC inline Scalar& coeffRef(Index row, Index col)
     {
       return m_expression.const_cast_derived().coeffRef(row, col);
     }
 
-    inline const Scalar coeff(int index) const
+    EIGEN_DEVICE_FUNC inline const CoeffReturnType coeff(Index index) const
     {
       return m_expression.coeff(index);
     }
 
-    inline Scalar& coeffRef(int index)
+    EIGEN_DEVICE_FUNC inline Scalar& coeffRef(Index index)
     {
       return m_expression.const_cast_derived().coeffRef(index);
     }
 
     template<int LoadMode>
-    inline const PacketScalar packet(int row, int col) const
+    inline const PacketScalar packet(Index row, Index col) const
     {
       return m_expression.template packet<LoadMode>(row, col);
     }
 
     template<int LoadMode>
-    inline void writePacket(int row, int col, const PacketScalar& x)
+    inline void writePacket(Index row, Index col, const PacketScalar& x)
     {
       m_expression.const_cast_derived().template writePacket<LoadMode>(row, col, x);
     }
 
     template<int LoadMode>
-    inline const PacketScalar packet(int index) const
+    inline const PacketScalar packet(Index index) const
     {
       return m_expression.template packet<LoadMode>(index);
     }
 
     template<int LoadMode>
-    inline void writePacket(int index, const PacketScalar& x)
+    inline void writePacket(Index index, const PacketScalar& x)
     {
       m_expression.const_cast_derived().template writePacket<LoadMode>(index, x);
     }
 
+    EIGEN_DEVICE_FUNC operator const ExpressionType&() const { return m_expression; }
+
   protected:
     const ExpressionType m_expression;
-
-  private:
-    NestByValue& operator=(const NestByValue&);
 };
 
 /** \returns an expression of the temporary version of *this.
   */
 template<typename Derived>
 inline const NestByValue<Derived>
-MatrixBase<Derived>::nestByValue() const
+DenseBase<Derived>::nestByValue() const
 {
   return NestByValue<Derived>(derived());
 }
+
+} // end namespace Eigen
 
 #endif // EIGEN_NESTBYVALUE_H

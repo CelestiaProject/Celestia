@@ -1,229 +1,103 @@
 // This file is part of Eigen, a lightweight C++ template library
-// for linear algebra. Eigen itself is part of the KDE project.
+// for linear algebra.
 //
-// Copyright (C) 2008 Gael Guennebaud <g.gael@free.fr>
+// Copyright (C) 2008-2014 Gael Guennebaud <gael.guennebaud@inria.fr>
 // Copyright (C) 2006-2008 Benoit Jacob <jacob.benoit.1@gmail.com>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_CWISE_UNARY_OP_H
 #define EIGEN_CWISE_UNARY_OP_H
 
+namespace Eigen { 
+
+namespace internal {
+template<typename UnaryOp, typename XprType>
+struct traits<CwiseUnaryOp<UnaryOp, XprType> >
+ : traits<XprType>
+{
+  typedef typename result_of<
+                     UnaryOp(const typename XprType::Scalar&)
+                   >::type Scalar;
+  typedef typename XprType::Nested XprTypeNested;
+  typedef typename remove_reference<XprTypeNested>::type _XprTypeNested;
+  enum {
+    Flags = _XprTypeNested::Flags & RowMajorBit 
+  };
+};
+}
+
+template<typename UnaryOp, typename XprType, typename StorageKind>
+class CwiseUnaryOpImpl;
+
 /** \class CwiseUnaryOp
+  * \ingroup Core_Module
   *
-  * \brief Generic expression of a coefficient-wise unary operator of a matrix or a vector
+  * \brief Generic expression where a coefficient-wise unary operator is applied to an expression
   *
-  * \param UnaryOp template functor implementing the operator
-  * \param MatrixType the type of the matrix we are applying the unary operator
+  * \tparam UnaryOp template functor implementing the operator
+  * \tparam XprType the type of the expression to which we are applying the unary operator
   *
-  * This class represents an expression of a generic unary operator of a matrix or a vector.
-  * It is the return type of the unary operator-, of a matrix or a vector, and most
-  * of the time this is the only way it is used.
+  * This class represents an expression where a unary operator is applied to an expression.
+  * It is the return type of all operations taking exactly 1 input expression, regardless of the
+  * presence of other inputs such as scalars. For example, the operator* in the expression 3*matrix
+  * is considered unary, because only the right-hand side is an expression, and its
+  * return type is a specialization of CwiseUnaryOp.
+  *
+  * Most of the time, this is the only way that it is used, so you typically don't have to name
+  * CwiseUnaryOp types explicitly.
   *
   * \sa MatrixBase::unaryExpr(const CustomUnaryOp &) const, class CwiseBinaryOp, class CwiseNullaryOp
   */
-template<typename UnaryOp, typename MatrixType>
-struct ei_traits<CwiseUnaryOp<UnaryOp, MatrixType> >
- : ei_traits<MatrixType>
-{
-  typedef typename ei_result_of<
-                     UnaryOp(typename MatrixType::Scalar)
-                   >::type Scalar;
-  typedef typename MatrixType::Nested MatrixTypeNested;
-  typedef typename ei_unref<MatrixTypeNested>::type _MatrixTypeNested;
-  enum {
-    Flags = (_MatrixTypeNested::Flags & (
-      HereditaryBits | LinearAccessBit | AlignedBit
-      | (ei_functor_traits<UnaryOp>::PacketAccess ? PacketAccessBit : 0))),
-    CoeffReadCost = _MatrixTypeNested::CoeffReadCost + ei_functor_traits<UnaryOp>::Cost
-  };
-};
-
-template<typename UnaryOp, typename MatrixType>
-class CwiseUnaryOp : ei_no_assignment_operator,
-  public MatrixBase<CwiseUnaryOp<UnaryOp, MatrixType> >
+template<typename UnaryOp, typename XprType>
+class CwiseUnaryOp : public CwiseUnaryOpImpl<UnaryOp, XprType, typename internal::traits<XprType>::StorageKind>, internal::no_assignment_operator
 {
   public:
 
+    typedef typename CwiseUnaryOpImpl<UnaryOp, XprType,typename internal::traits<XprType>::StorageKind>::Base Base;
     EIGEN_GENERIC_PUBLIC_INTERFACE(CwiseUnaryOp)
+    typedef typename internal::ref_selector<XprType>::type XprTypeNested;
+    typedef typename internal::remove_all<XprType>::type NestedExpression;
 
-    inline CwiseUnaryOp(const MatrixType& mat, const UnaryOp& func = UnaryOp())
-      : m_matrix(mat), m_functor(func) {}
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    explicit CwiseUnaryOp(const XprType& xpr, const UnaryOp& func = UnaryOp())
+      : m_xpr(xpr), m_functor(func) {}
 
-    EIGEN_STRONG_INLINE int rows() const { return m_matrix.rows(); }
-    EIGEN_STRONG_INLINE int cols() const { return m_matrix.cols(); }
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    Index rows() const { return m_xpr.rows(); }
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    Index cols() const { return m_xpr.cols(); }
 
-    EIGEN_STRONG_INLINE const Scalar coeff(int row, int col) const
-    {
-      return m_functor(m_matrix.coeff(row, col));
-    }
+    /** \returns the functor representing the unary operation */
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    const UnaryOp& functor() const { return m_functor; }
 
-    template<int LoadMode>
-    EIGEN_STRONG_INLINE PacketScalar packet(int row, int col) const
-    {
-      return m_functor.packetOp(m_matrix.template packet<LoadMode>(row, col));
-    }
+    /** \returns the nested expression */
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    const typename internal::remove_all<XprTypeNested>::type&
+    nestedExpression() const { return m_xpr; }
 
-    EIGEN_STRONG_INLINE const Scalar coeff(int index) const
-    {
-      return m_functor(m_matrix.coeff(index));
-    }
-
-    template<int LoadMode>
-    EIGEN_STRONG_INLINE PacketScalar packet(int index) const
-    {
-      return m_functor.packetOp(m_matrix.template packet<LoadMode>(index));
-    }
+    /** \returns the nested expression */
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    typename internal::remove_all<XprTypeNested>::type&
+    nestedExpression() { return m_xpr; }
 
   protected:
-    const typename MatrixType::Nested m_matrix;
+    XprTypeNested m_xpr;
     const UnaryOp m_functor;
 };
 
-/** \returns an expression of a custom coefficient-wise unary operator \a func of *this
-  *
-  * The template parameter \a CustomUnaryOp is the type of the functor
-  * of the custom unary operator.
-  *
-  * \addexample CustomCwiseUnaryFunctors \label How to use custom coeff wise unary functors
-  *
-  * Example:
-  * \include class_CwiseUnaryOp.cpp
-  * Output: \verbinclude class_CwiseUnaryOp.out
-  *
-  * \sa class CwiseUnaryOp, class CwiseBinarOp, MatrixBase::operator-, Cwise::abs
-  */
-template<typename Derived>
-template<typename CustomUnaryOp>
-EIGEN_STRONG_INLINE const CwiseUnaryOp<CustomUnaryOp, Derived>
-MatrixBase<Derived>::unaryExpr(const CustomUnaryOp& func) const
+// Generic API dispatcher
+template<typename UnaryOp, typename XprType, typename StorageKind>
+class CwiseUnaryOpImpl
+  : public internal::generic_xpr_base<CwiseUnaryOp<UnaryOp, XprType> >::type
 {
-  return CwiseUnaryOp<CustomUnaryOp, Derived>(derived(), func);
-}
+public:
+  typedef typename internal::generic_xpr_base<CwiseUnaryOp<UnaryOp, XprType> >::type Base;
+};
 
-/** \returns an expression of the opposite of \c *this
-  */
-template<typename Derived>
-EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_opposite_op<typename ei_traits<Derived>::Scalar>,Derived>
-MatrixBase<Derived>::operator-() const
-{
-  return derived();
-}
-
-/** \returns an expression of the coefficient-wise absolute value of \c *this
-  *
-  * Example: \include Cwise_abs.cpp
-  * Output: \verbinclude Cwise_abs.out
-  *
-  * \sa abs2()
-  */
-template<typename ExpressionType>
-EIGEN_STRONG_INLINE const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_abs_op)
-Cwise<ExpressionType>::abs() const
-{
-  return _expression();
-}
-
-/** \returns an expression of the coefficient-wise squared absolute value of \c *this
-  *
-  * Example: \include Cwise_abs2.cpp
-  * Output: \verbinclude Cwise_abs2.out
-  *
-  * \sa abs(), square()
-  */
-template<typename ExpressionType>
-EIGEN_STRONG_INLINE const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_abs2_op)
-Cwise<ExpressionType>::abs2() const
-{
-  return _expression();
-}
-
-/** \returns an expression of the complex conjugate of \c *this.
-  *
-  * \sa adjoint() */
-template<typename Derived>
-EIGEN_STRONG_INLINE typename MatrixBase<Derived>::ConjugateReturnType
-MatrixBase<Derived>::conjugate() const
-{
-  return ConjugateReturnType(derived());
-}
-
-/** \returns an expression of the real part of \c *this.
-  *
-  * \sa imag() */
-template<typename Derived>
-EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::RealReturnType
-MatrixBase<Derived>::real() const { return derived(); }
-
-/** \returns an expression of the imaginary part of \c *this.
-  *
-  * \sa real() */
-template<typename Derived>
-EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::ImagReturnType
-MatrixBase<Derived>::imag() const { return derived(); }
-
-/** \returns an expression of *this with the \a Scalar type casted to
-  * \a NewScalar.
-  *
-  * The template parameter \a NewScalar is the type we are casting the scalars to.
-  *
-  * \sa class CwiseUnaryOp
-  */
-template<typename Derived>
-template<typename NewType>
-EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_cast_op<typename ei_traits<Derived>::Scalar, NewType>, Derived>
-MatrixBase<Derived>::cast() const
-{
-  return derived();
-}
-
-/** \relates MatrixBase */
-template<typename Derived>
-EIGEN_STRONG_INLINE const typename MatrixBase<Derived>::ScalarMultipleReturnType
-MatrixBase<Derived>::operator*(const Scalar& scalar) const
-{
-  return CwiseUnaryOp<ei_scalar_multiple_op<Scalar>, Derived>
-    (derived(), ei_scalar_multiple_op<Scalar>(scalar));
-}
-
-/** \relates MatrixBase */
-template<typename Derived>
-EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_quotient1_op<typename ei_traits<Derived>::Scalar>, Derived>
-MatrixBase<Derived>::operator/(const Scalar& scalar) const
-{
-  return CwiseUnaryOp<ei_scalar_quotient1_op<Scalar>, Derived>
-    (derived(), ei_scalar_quotient1_op<Scalar>(scalar));
-}
-
-template<typename Derived>
-EIGEN_STRONG_INLINE Derived&
-MatrixBase<Derived>::operator*=(const Scalar& other)
-{
-  return *this = *this * other;
-}
-
-template<typename Derived>
-EIGEN_STRONG_INLINE Derived&
-MatrixBase<Derived>::operator/=(const Scalar& other)
-{
-  return *this = *this / other;
-}
+} // end namespace Eigen
 
 #endif // EIGEN_CWISE_UNARY_OP_H

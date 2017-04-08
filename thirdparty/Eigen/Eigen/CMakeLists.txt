@@ -1,31 +1,19 @@
-set(Eigen_HEADERS Core LU Cholesky QR Geometry
-                  Sparse Array SVD LeastSquares
-                  QtAlignedMalloc StdVector NewStdVector
-                  Eigen Dense)
+include(RegexUtils)
+test_escape_string_as_regex()
 
-if(EIGEN_BUILD_LIB)
-    set(Eigen_SRCS
-      src/Core/CoreInstantiations.cpp
-      src/Cholesky/CholeskyInstantiations.cpp
-      src/QR/QrInstantiations.cpp
-    )
+file(GLOB Eigen_directory_files "*")
 
-    add_library(Eigen2 SHARED ${Eigen_SRCS})
+escape_string_as_regex(ESCAPED_CMAKE_CURRENT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
-    install(TARGETS Eigen2
-            RUNTIME DESTINATION bin
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib)
-endif(EIGEN_BUILD_LIB)
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g1 -O2")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g1 -O2")
-endif(CMAKE_COMPILER_IS_GNUCXX)
+foreach(f ${Eigen_directory_files})
+  if(NOT f MATCHES "\\.txt" AND NOT f MATCHES "${ESCAPED_CMAKE_CURRENT_SOURCE_DIR}/[.].+" AND NOT f MATCHES "${ESCAPED_CMAKE_CURRENT_SOURCE_DIR}/src")
+    list(APPEND Eigen_directory_files_to_install ${f})
+  endif()
+endforeach(f ${Eigen_directory_files})
 
 install(FILES
-  ${Eigen_HEADERS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/Eigen
+  ${Eigen_directory_files_to_install}
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Eigen COMPONENT Devel
   )
 
-add_subdirectory(src)
+install(DIRECTORY src DESTINATION ${INCLUDE_INSTALL_DIR}/Eigen COMPONENT Devel FILES_MATCHING PATTERN "*.h")
