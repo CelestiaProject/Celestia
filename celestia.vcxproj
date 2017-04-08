@@ -77,14 +77,14 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;.\windows\inc\lua-5.1;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\glew\include;.\thirdparty\curveplot\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\src;.\windows\inc;.\windows\inc\libintl;.\windows\inc\libpng;.\windows\inc\libz;.\windows\inc\spice;.\windows\lua51\include;.\windows\inc\libjpeg;.\thirdparty\Eigen;.\thirdparty\curveplot\include;.\thirdparty\glew\include;.\windows\inc\fmod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CELX;LUA_VER=0x050100;USE_SPICE;WINVER=0x0400;_WIN32_WINNT=0x0400;_CRT_SECURE_NO_DEPRECATE;NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>intl.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libjpeg.lib;zlibd.lib;libpngd.lib;lua5.1.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(ProjectName).exe</OutputFile>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;intl.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;winmm.lib;vfw32.lib;opengl32.lib;glu32.lib;libjpeg.lib;zlibd.lib;libpngd.lib;lua5.1.lib;cspice.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)$(Configuration)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>.\windows\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -264,6 +264,7 @@
     <ClCompile Include="src\celestia\imagecapture.cpp" />
     <ClCompile Include="src\celestia\scriptmenu.cpp" />
     <ClCompile Include="src\celestia\url.cpp" />
+    <ClCompile Include="src\celestia\win32\iob_func_shim.cpp" />
     <ClCompile Include="src\celestia\win32\ODMenu.cpp" />
     <ClCompile Include="src\celestia\win32\wglext.cpp" />
     <ClCompile Include="src\celestia\win32\winbookmarks.cpp" />

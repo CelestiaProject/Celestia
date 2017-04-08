@@ -582,6 +582,9 @@
     <ClCompile Include="windows\lua51\src\lauxlib.c">
       <Filter>lua51</Filter>
     </ClCompile>
+    <ClCompile Include="src\celestia\win32\iob_func_shim.cpp">
+      <Filter>Source Files\win32ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\celestia\win32\res\resource.h">
