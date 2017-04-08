@@ -257,7 +257,7 @@ bool InitStarBrowserItems(HWND listView, StarBrowser* browser)
             solarSysPred.pos = browser->pos;
             solarSysPred.solarSystems = solarSystems;
             stars = FindStars(*stardb, solarSysPred,
-                              min((unsigned int) browser->nStars, solarSystems->size()));
+                              min((unsigned int) browser->nStars, (unsigned int) solarSystems->size()));
         }
         break;
 
@@ -398,10 +398,10 @@ void RefreshItems(HWND hDlg, StarBrowser* browser)
 
 BOOL APIENTRY StarBrowserProc(HWND hDlg,
                               UINT message,
-                              UINT wParam,
-                              LONG lParam)
+                              WPARAM wParam,
+                              LPARAM lParam)
 {
-    StarBrowser* browser = reinterpret_cast<StarBrowser*>(GetWindowLong(hDlg, DWL_USER));
+    StarBrowser* browser = reinterpret_cast<StarBrowser*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -410,7 +410,7 @@ BOOL APIENTRY StarBrowserProc(HWND hDlg,
             StarBrowser* browser = reinterpret_cast<StarBrowser*>(lParam);
             if (browser == NULL)
                 return EndDialog(hDlg, 0);
-            SetWindowLong(hDlg, DWL_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
             HWND hwnd = GetDlgItem(hDlg, IDC_STARBROWSER_LIST);
             InitStarBrowserColumns(hwnd);
@@ -613,12 +613,12 @@ StarBrowser::StarBrowser(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_STARBROWSER),
                              parent,
-                             StarBrowserProc,
-                             reinterpret_cast<LONG>(this));
+                             (DLGPROC)StarBrowserProc,
+                             reinterpret_cast<LONG_PTR>(this));
 }
 
 
 StarBrowser::~StarBrowser()
 {
-    SetWindowLong(hwnd, DWL_USER, 0);
+    SetWindowLongPtr(hwnd, DWLP_USER, 0);
 }

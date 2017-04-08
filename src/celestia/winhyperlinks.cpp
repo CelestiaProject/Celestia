@@ -76,7 +76,7 @@ LRESULT CALLBACK _HyperlinkParentProc(HWND hWnd, UINT message, WPARAM wParam, LP
         }
     case WM_DESTROY:
         {
-            SetWindowLong(hWnd, GWL_WNDPROC, (LONG)origProc);
+            SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)origProc);
             RemoveProp(hWnd, hyperLinkOriginalProc);
             break;
         }
@@ -131,7 +131,7 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         }
     case WM_DESTROY:
         {
-            SetWindowLong(hWnd, GWL_WNDPROC, (LONG)origProc);
+            SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)origProc);
             RemoveProp(hWnd, hyperLinkOriginalProc);
 
             HFONT hOrigFont = (HFONT)GetProp(hWnd, hyperLinkOriginalFont);
@@ -162,11 +162,11 @@ BOOL MakeHyperlinkFromStaticCtrl(HWND hDlg, UINT ctrlID)
         HWND hParent = GetParent(hCtrl);
         if (hParent)
         {
-            WNDPROC origProc = (WNDPROC)GetWindowLong(hParent, GWL_WNDPROC);
+            WNDPROC origProc = (WNDPROC)GetWindowLongPtr(hParent, GWLP_WNDPROC);
             if (origProc != _HyperlinkParentProc)
             {
                 SetProp(hParent, hyperLinkOriginalProc, (HANDLE)origProc);
-                SetWindowLong(hParent, GWL_WNDPROC, (LONG)(WNDPROC)_HyperlinkParentProc);
+                SetWindowLong(hParent, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkParentProc);
             }
         }
 
@@ -175,9 +175,9 @@ BOOL MakeHyperlinkFromStaticCtrl(HWND hDlg, UINT ctrlID)
         SetWindowLong(hCtrl, GWL_STYLE, dwStyle | SS_NOTIFY);
 
         // Subclass the existing control.
-        WNDPROC origProc = (WNDPROC)GetWindowLong(hCtrl, GWL_WNDPROC);
+        WNDPROC origProc = (WNDPROC)GetWindowLongPtr(hCtrl, GWLP_WNDPROC);
         SetProp(hCtrl, hyperLinkOriginalProc, (HANDLE)origProc);
-        SetWindowLong(hCtrl, GWL_WNDPROC, (LONG)(WNDPROC)_HyperlinkProc);
+        SetWindowLong(hCtrl, GWLP_WNDPROC, (LONG_PTR)(WNDPROC)_HyperlinkProc);
 
         // Create an updated font by adding an underline.
         HFONT hOrigFont = (HFONT) SendMessage(hCtrl, WM_GETFONT, 0, 0);
