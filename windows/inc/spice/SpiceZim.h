@@ -4,10 +4,10 @@
 
 -Abstract
 
-   Define interface macros to be called in place of CSPICE 
+   Define interface macros to be called in place of CSPICE
    user-interface-level functions.  These macros are generally used
    to compensate for compiler deficiencies.
-   
+
 -Disclaimer
 
    THIS SOFTWARE AND ANY RELATED MATERIALS WERE CREATED BY THE
@@ -43,28 +43,27 @@
 
 -Particulars
 
-   This header file defines interface macros to be called in place of 
+   This header file defines interface macros to be called in place of
    CSPICE user-interface-level functions.  Currently, the sole purpose
-   of these macros is to implement automatic type casting under some 
+   of these macros is to implement automatic type casting under some
    environments that generate compile-time warnings without the casts.
    The typical case that causes a problem is a function argument list
    containing an input formal argument of type
-   
+
       const double [3][3]
-      
+
    Under some compilers, a non-const actual argument supplied in a call
-   to such a function will generate a spurious warning due to the 
+   to such a function will generate a spurious warning due to the
    "mismatched" type.  These macros generate type casts that will
    make such compilers happy.
-   
+
    Examples of compilers that generate warnings of this type are
-   
-      gcc version 2.2.2, hosted on NeXT workstations running 
+
+      gcc version 2.2.2, hosted on NeXT workstations running
       NeXTStep 3.3
-      
+
       Sun C compiler, version 4.2, running under Solaris.
-            
-      
+
 -Author_and_Institution
 
    N.J. Bachman       (JPL)
@@ -72,37 +71,73 @@
 
 -Version
 
-   -CSPICE Version 9.0.0, 31-OCT-2005 (NJB) 
+   -CSPICE Version 12.0.0, 03-DEC-2013 (NJB) (EDW) (SCK)
 
-       Added macros for 
+       Added include for SpiceZrnm.h to eliminate symbol conflict
+       encountered from Icy and JNISpice under OS X 10.7.
+
+       Added macros for
+
+          eqncpv_c
+          fovray_c
+          spkcpo_c
+          spkcpt_c
+          spkcvo_c
+          spkcvt_c
+          spkpnv_c
+          spkw20_c
+
+   -CSPICE Version 11.0.0, 09-MAR-2009 (NJB) (EDW)
+
+       Added macros for
+
+          dvsep_c
+          gfevnt_c
+          gffove_c
+          gfrfov_c
+          gfsntc_c
+          surfpv_c
+
+
+   -CSPICE Version 10.0.0, 19-FEB-2008 (NJB) (EDW)
+
+       Added macros for
+
+          ilumin_c
+          spkaps_c
+          spkltc_c
+
+   -CSPICE Version 9.0.0, 31-OCT-2005 (NJB)
+
+       Added macros for
 
           qdq2av_c
           qxq_c
 
-   -CSPICE Version 8.0.0, 23-FEB-2004 (NJB) 
+   -CSPICE Version 8.0.0, 23-FEB-2004 (NJB)
 
-       Added macro for 
+       Added macro for
 
           dafrs_c
 
 
-   -CSPICE Version 7.0.0, 23-FEB-2004 (EDW) 
+   -CSPICE Version 7.0.0, 23-FEB-2004 (EDW)
 
-       Added macro for 
+       Added macro for
 
           srfxpt_c
 
    -CSPICE Version 6.0.1, 25-FEB-2003 (EDW) (NJB)
 
-       Remove duplicate macro definitions for ekaced_c and 
+       Remove duplicate macro definitions for ekaced_c and
        ekacei_c. Visual Studio errored out when compiling
-       code that included SpiceZim.h.  
+       code that included SpiceZim.h.
 
-       Added macro for 
+       Added macro for
 
           dasac_c
 
-   -CSPICE Version 6.0.0, 17-AUG-2002 (NJB) 
+   -CSPICE Version 6.0.0, 17-AUG-2002 (NJB)
 
        Added macros for
 
@@ -130,11 +165,11 @@
           reordi_c
           reordl_c
           spkw18_c
-            
-   -CSPICE Version 5.0.0, 28-AUG-2001 (NJB) 
+
+   -CSPICE Version 5.0.0, 28-AUG-2001 (NJB)
 
        Added macros for
-            
+
           conics_c
           illum_c
           invort_c
@@ -143,20 +178,20 @@
           q2m_c
           spkuds_c
           xposeg_c
-          
-   -CSPICE Version 4.0.0, 22-MAR-2000 (NJB) 
+
+   -CSPICE Version 4.0.0, 22-MAR-2000 (NJB)
 
        Added macros for
-       
+
           spkw12_c
           spkw13_c
-       
+
    -CSPICE Version 3.0.0, 27-AUG-1999 (NJB) (EDW)
 
        Fixed cut & paste error in macro nvp2pl_c.
-       
+
        Added macros for
-       
+
           axisar_c
           cgv2el_c
           dafps_c
@@ -205,11 +240,11 @@
           vzerog_c
           xf2eul_c
           xf2rav_c
-       
-   -CSPICE Version 2.0.0, 07-MAR-1999 (NJB)  
+
+   -CSPICE Version 2.0.0, 07-MAR-1999 (NJB)
 
        Added macros for
-       
+
           inrypl_c
           nvc2pl_c
           nvp2pl_c
@@ -235,9 +270,23 @@ Include Files:
 */
 
 
+/*
+Include the type definitions prior to defining the interface macros.
+The macros reference the types.
+*/
 #ifndef  HAVE_SPICEDEFS_H
 #include "SpiceZdf.h"
 #endif
+
+
+/*
+Include those rename assignments for routines whose symbols will
+collide with other libraries.
+*/
+#ifndef   HAVE_SPICERENAME_H
+#include "SpiceZrnm.h" 
+#endif
+
 
 #ifndef HAVE_SPICEIFMACROS_H
 #define HAVE_SPICEIFMACROS_H
@@ -246,7 +295,7 @@ Include Files:
 /*
 Macros used to abbreviate type casts:
 */
-   
+
    #define  CONST_BOOL         ( ConstSpiceBoolean   *      )
    #define  CONST_ELLIPSE      ( ConstSpiceEllipse   *      )
    #define  CONST_IVEC         ( ConstSpiceInt       *      )
@@ -267,7 +316,7 @@ Macros that substitute for function calls:
    #define  axisar_c( axis, angle, r )                                 \
                                                                        \
         (   axisar_c( CONST_VEC(axis), (angle), (r) )   )
- 
+
 
    #define  bschoc_c( value, ndim, lenvals, array, order )             \
                                                                        \
@@ -347,11 +396,11 @@ Macros that substitute for function calls:
                                                                        \
         (   cgv2el_c( CONST_VEC(center), CONST_VEC(vec1),              \
                       CONST_VEC(vec2),   (ellipse)        )   )
-                      
+
 
    #define  conics_c( elts, et, state )                                \
                                                                        \
-        (   conics_c( CONST_VEC(elts), (et), (state) )  )           
+        (   conics_c( CONST_VEC(elts), (et), (state) )  )
 
 
    #define  dafps_c( nd, ni, dc, ic, sum )                             \
@@ -374,7 +423,7 @@ Macros that substitute for function calls:
                                                                        \
         (   dasac_c ( (handle), (n), (buflen), CONST_VOID(buffer) )   )
 
-                      
+
    #define  det_c( m1 )                                                \
                                                                        \
         (   det_c ( CONST_MAT(m1) )   )
@@ -382,18 +431,23 @@ Macros that substitute for function calls:
 
    #define  diags2_c( symmat, diag, rotate )                           \
                                                                        \
-        (   diags2_c ( CONST_MAT2(symmat), (diag), (rotate) )   )       
-                
-                                                
+        (   diags2_c ( CONST_MAT2(symmat), (diag), (rotate) )   )
+
+
 
    #define  dvdot_c( s1, s2 )                                         \
                                                                       \
            ( dvdot_c ( CONST_VEC(s1), CONST_VEC(s2) )   )
-   
-   
+
+
    #define  dvhat_c( v1, v2 )                                         \
                                                                       \
            ( dvhat_c ( CONST_VEC(v1), (v2) )   )
+
+
+   #define  dvsep_c( s1, s2 )                                         \
+                                                                      \
+           ( dvsep_c ( CONST_VEC(s1), CONST_VEC(s2) )   )
 
 
    #define  edlimb_c( a, b, c, viewpt, limb )                          \
@@ -406,21 +460,21 @@ Macros that substitute for function calls:
                                                                        \
         (   ekacec_c( (handle), (segno), (recno), CONST_STR(column),   \
                       (nvals),  (vallen), CONST_VOID(cvals),           \
-                      (isnull)                                      )  ) 
+                      (isnull)                                      )  )
 
 
    #define  ekaced_c( handle, segno,  recno, column, nvals,            \
                       dvals,  isnull                               )   \
                                                                        \
         (   ekaced_c( (handle), (segno), (recno), CONST_STR(column),   \
-                      (nvals),  CONST_VEC(dvals), (isnull)          )  ) 
+                      (nvals),  CONST_VEC(dvals), (isnull)          )  )
 
 
    #define  ekacei_c( handle, segno,  recno, column, nvals,            \
                       ivals,  isnull                               )   \
                                                                        \
         (   ekacei_c( (handle), (segno), (recno), CONST_STR(column),   \
-                      (nvals),  CONST_IVEC(ivals), (isnull)         )  ) 
+                      (nvals),  CONST_IVEC(ivals), (isnull)         )  )
 
 
    #define  ekaclc_c( handle, segno,  column, vallen, cvals, entszs,   \
@@ -429,7 +483,7 @@ Macros that substitute for function calls:
         (   ekaclc_c( (handle), (segno),  (column),  (vallen),         \
                       CONST_VOID(cvals),  CONST_IVEC(entszs),          \
                       CONST_BOOL(nlflgs), CONST_IVEC(rcptrs),          \
-                      (wkindx)                                      )  ) 
+                      (wkindx)                                      )  )
 
 
    #define  ekacld_c( handle, segno,  column, dvals, entszs, nlflgs,   \
@@ -438,7 +492,7 @@ Macros that substitute for function calls:
         (   ekacld_c( (handle),           (segno),           (column), \
                       CONST_VEC(dvals),   CONST_IVEC(entszs),          \
                       CONST_BOOL(nlflgs), CONST_IVEC(rcptrs),          \
-                      (wkindx)                                      )  ) 
+                      (wkindx)                                      )  )
 
 
    #define  ekacli_c( handle, segno,  column, ivals, entszs, nlflgs,   \
@@ -447,7 +501,7 @@ Macros that substitute for function calls:
         (   ekacli_c( (handle),           (segno),           (column), \
                       CONST_IVEC(ivals),  CONST_IVEC(entszs),          \
                       CONST_BOOL(nlflgs), CONST_IVEC(rcptrs),          \
-                      (wkindx)                                      )  ) 
+                      (wkindx)                                      )  )
 
 
    #define  ekbseg_c( handle, tabnam, ncols, cnmlen, cnames, declen,   \
@@ -455,7 +509,7 @@ Macros that substitute for function calls:
                                                                        \
         (   ekbseg_c( (handle), (tabnam), (ncols), (cnmlen),           \
                       CONST_VOID(cnames), (declen),                    \
-                      CONST_VOID(decls),  (segno)             )  )    
+                      CONST_VOID(decls),  (segno)             )  )
 
 
    #define  ekifld_c( handle, tabnam, ncols, nrows, cnmlen, cnames,    \
@@ -463,7 +517,7 @@ Macros that substitute for function calls:
                                                                        \
         (   ekifld_c( (handle), (tabnam), (ncols), (nrows), (cnmlen),  \
                       CONST_VOID(cnames), (declen),                    \
-                      CONST_VOID(decls),  (segno), (rcptrs)         )  )    
+                      CONST_VOID(decls),  (segno), (rcptrs)         )  )
 
 
    #define  ekucec_c( handle, segno,  recno, column, nvals, vallen,    \
@@ -471,26 +525,32 @@ Macros that substitute for function calls:
                                                                        \
         (   ekucec_c( (handle), (segno), (recno), CONST_STR(column),   \
                       (nvals),  (vallen), CONST_VOID(cvals),           \
-                      (isnull)                                      )  ) 
+                      (isnull)                                      )  )
 
    #define  ekuced_c( handle, segno,  recno, column, nvals,            \
                       dvals,  isnull                               )   \
                                                                        \
         (   ekuced_c( (handle), (segno), (recno),   CONST_STR(column), \
-                      (nvals),  CONST_VOID(dvals), (isnull)         )  ) 
+                      (nvals),  CONST_VOID(dvals), (isnull)         )  )
 
 
    #define  ekucei_c( handle, segno,  recno, column, nvals,            \
                       ivals,  isnull                               )   \
                                                                        \
         (   ekucei_c( (handle), (segno), (recno),   CONST_STR(column), \
-                      (nvals),  CONST_VOID(ivals), (isnull)         )  ) 
+                      (nvals),  CONST_VOID(ivals), (isnull)         )  )
 
 
    #define  el2cgv_c( ellipse, center, smajor, sminor )                \
                                                                        \
         (   el2cgv_c( CONST_ELLIPSE(ellipse), (center),                \
                       (smajor),               (sminor)  )   )
+
+
+   #define  eqncpv_c( et, epoch, eqel, rapol, decpol, state )          \
+                                                                       \
+        (   eqncpv_c ( (et), (epoch), CONST_VEC(eqel), (rapol),        \
+                      (decpol), (state) )  )
 
 
    #define  esrchc_c( value, ndim, lenvals, array )                    \
@@ -503,12 +563,66 @@ Macros that substitute for function calls:
                                                                        \
         (   eul2xf_c ( CONST_VEC(eulang), (axisa), (axisb), (axisc),   \
                        (xform)                                     )  )
-   
-   
+
+   #define  fovray_c( inst,   raydir, rframe, abcorr, observer,        \
+                      et,     visible       )                          \
+                                                                       \
+        (   fovray_c( (inst),    CONST_VEC(raydir), (rframe),          \
+                      (abcorr), (observer), (et), (visible)   )   )
+
    #define  getelm_c( frstyr, lineln, lines, epoch, elems )            \
                                                                        \
         (   getelm_c ( (frstyr), (lineln), CONST_VOID(lines),          \
-                       (epoch),  (elems)                      )   )   
+                       (epoch),  (elems)                      )   )
+
+
+   #define  gfevnt_c( udstep, udrefn, gquant, qnpars, lenvals,         \
+                      qpnams, qcpars, qdpars, qipars, qlpars,          \
+                      op,     refval, tol,    adjust, rpt,             \
+                      udrepi, udrepu, udrepf, nintvls,                 \
+                      bail,   udbail, cnfine, result         )         \
+                                                                       \
+         ( gfevnt_c( (udstep),           (udrefn),  (gquant),          \
+                     (qnpars),           (lenvals), CONST_VOID(qpnams),\
+                     CONST_VOID(qcpars), (qdpars),  (qipars),          \
+                     (qlpars),           (op),      (refval),          \
+                     (tol),              (adjust),  (rpt),             \
+                     (udrepi),           (udrepu),  (udrepf),          \
+                     (nintvls),          (bail),                       \
+                     (udbail),           (cnfine),  (result)     )   )
+
+
+   #define  gffove_c( inst,   tshape, raydir, target, tframe,          \
+                      abcorr, obsrvr, tol,    udstep, udrefn,          \
+                      rpt,    udrepi, udrepu, udrepf, bail,            \
+                      udbail, cnfine, result                 )         \
+                                                                       \
+        (   gffove_c( (inst),   (tshape), CONST_VEC(raydir),           \
+                      (target), (tframe), (abcorr),                    \
+                      (obsrvr), (tol),    (udstep),                    \
+                      (udrefn), (rpt),    (udrepi),                    \
+                      (udrepu), (udrepf), (bail),                      \
+                      (udbail), (cnfine), (result) )   )
+
+
+   #define  gfrfov_c( inst,   raydir, rframe, abcorr, obsrvr,          \
+                      step,   cnfine, result                 )         \
+                                                                       \
+        (   gfrfov_c( (inst),    CONST_VEC(raydir), (rframe),          \
+                      (abcorr), (obsrvr),           (step),            \
+                      (cnfine), (result)                      )   )
+
+
+   #define  gfsntc_c( target, fixref, method, abcorr,  obsrvr,         \
+                      dref,   dvec,   crdsys, coord,   relate,         \
+                      refval, adjust, step,   nintvls, cnfine,         \
+                      result                                    )      \
+                                                                       \
+        (   gfsntc_c( (target),        (fixref),  (method),            \
+                      (abcorr),        (obsrvr),  (dref),              \
+                      CONST_VEC(dvec), (crdsys),  (coord),             \
+                      (relate),        (refval),  (adjust),            \
+                      (step),          (nintvls), (cnfine), (result) )  )
 
 
    #define  illum_c( target, et,    abcorr, obsrvr,                    \
@@ -517,7 +631,16 @@ Macros that substitute for function calls:
         (   illum_c ( (target),          (et),    (abcorr), (obsrvr),  \
                       CONST_VEC(spoint), (phase), (solar),  (emissn) )  )
 
-   
+
+   #define  ilumin_c( method, target, et,     fixref,                  \
+                      abcorr, obsrvr, spoint, trgepc,                  \
+                      srfvec, phase, solar,   emissn   )               \
+                                                                       \
+       (   ilumin_c ( (method), (target), (et),    (fixref),           \
+                      (abcorr), (obsrvr), CONST_VEC(spoint), (trgepc), \
+                      (srfvec), (phase),  (solar), (emissn)          )  )
+
+
    #define  inedpl_c( a, b, c, plane, ellipse, found )                 \
                                                                        \
         (   inedpl_c ( (a),                (b),         (c),           \
@@ -528,7 +651,7 @@ Macros that substitute for function calls:
                                                                        \
         (   inrypl_c ( CONST_VEC(vertex),   CONST_VEC(dir),            \
                        CONST_PLANE(plane),  (nxpts),        (xpt) )   )
-   
+
 
    #define  invert_c( m1, m2 )                                         \
                                                                        \
@@ -563,8 +686,8 @@ Macros that substitute for function calls:
    #define  isrot_c( m, ntol, dtol )                                   \
                                                                        \
         (   isrot_c ( CONST_MAT(m), (ntol), (dtol) )   )
-        
-        
+
+
    #define  lmpool_c( cvals, lenvals, n )                              \
                                                                        \
         (   lmpool_c( CONST_VOID(cvals), (lenvals), (n) )  )
@@ -606,22 +729,22 @@ Macros that substitute for function calls:
                         angle3, angle2, angle1 )                       \
                                                                        \
         (   m2eul_c ( CONST_MAT(r), (axis3),  (axis2),  (axis1),       \
-                                    (angle3), (angle2), (angle1) )   ) 
-                                                                       
+                                    (angle3), (angle2), (angle1) )   )
+
    #define  m2q_c( r, q )                                              \
                                                                        \
         (   m2q_c ( CONST_MAT(r), (q) )   )
-        
-        
+
+
    #define  mequ_c( m1, m2 )                                           \
                                                                        \
            ( mequ_c  ( CONST_MAT(m1), m2 ) )
-   
+
 
    #define  mequg_c( m1, nr, nc, mout )                                \
                                                                        \
         (   mequg_c  ( CONST_MAT(m1), (nr), (nc), mout )   )
-   
+
 
    #define  mtxm_c( m1, m2, mout )                                     \
                                                                        \
@@ -694,8 +817,8 @@ Macros that substitute for function calls:
                                                                        \
         (   nplnpt_c ( CONST_VEC(linpt), CONST_VEC(lindir),            \
                        CONST_VEC(point), (pnear), (dist )   )   )
-        
-        
+
+
    #define  nvc2pl_c( normal, constant, plane )                        \
                                                                        \
         (   nvc2pl_c ( CONST_VEC(normal), (constant), (plane) )  )
@@ -785,13 +908,13 @@ Macros that substitute for function calls:
    #define  rav2xf_c( rot, av, xform )                                 \
                                                                        \
         (   rav2xf_c ( CONST_MAT(rot), CONST_VEC(av), (xform) )   )
-   
-   
+
+
    #define  raxisa_c( matrix, axis, angle )                            \
                                                                        \
-        (   raxisa_c ( CONST_MAT(matrix), (axis), (angle) )   );            
+        (   raxisa_c ( CONST_MAT(matrix), (axis), (angle) )   );
 
-                                
+
    #define  reccyl_c( rectan, r, lon, z )                              \
                                                                        \
         (   reccyl_c ( CONST_VEC(rectan), (r), (lon), (z)  )   )
@@ -851,9 +974,9 @@ Macros that substitute for function calls:
    #define  spk14a_c( handle, ncsets, coeffs, epochs )                 \
                                                                        \
         (   spk14a_c ( (handle),           (ncsets),                   \
-                       CONST_VEC(coeffs),  CONST_VEC(epochs) )  ) 
-   
-   
+                       CONST_VEC(coeffs),  CONST_VEC(epochs) )  )
+
+
    #define  spkapo_c( targ, et, ref, sobs, abcorr, ptarg, lt )         \
                                                                        \
         (   spkapo_c ( (targ),   (et),    (ref), CONST_VEC(sobs),      \
@@ -865,6 +988,61 @@ Macros that substitute for function calls:
         (   spkapp_c ( (targ),   (et),    (ref), CONST_VEC(sobs),      \
                        (abcorr), (starg), (lt)                   )  )
 
+
+   #define  spkaps_c( targ,   et,    ref, abcorr, sobs,                \
+                      accobs, starg, lt,  dlt           )              \
+                                                                       \
+        (   spkaps_c ( (targ),   (et),  (ref),  (abcorr),              \
+                       CONST_VEC(sobs), CONST_VEC(accobs),             \
+                       (starg),  (lt),  (dlt)              )   )
+
+
+   #define  spkcpo_c( target,   et,       outref,   refloc,            \
+                      abcorr,   obspos,   obsctr,                      \
+                      obsref,   state,    lt               )           \
+                                                                       \
+        (   spkcpo_c( (target), (et),    (outref), (refloc),           \
+                      (abcorr), CONST_VEC(obspos), (obsctr),           \
+                      (obsref), (state),  (lt)              )  )
+
+
+   #define  spkcpt_c( trgpos,   trgctr,   trgref,                      \
+                      et,       outref,   refloc,   abcorr,            \
+                      obsrvr,   state,    lt               )           \
+                                                                       \
+        (   spkcpt_c( CONST_VEC(trgpos), (trgctr), (trgref),           \
+                      (et),    (outref), (refloc), (abcorr),           \
+                      (obsrvr),          (state),  (lt)      )  )
+
+
+   #define  spkcvo_c( target,   et,       outref,   refloc,            \
+                      abcorr,   obssta,   obsepc,   obsctr,            \
+                      obsref,   state,    lt               )           \
+                                                                       \
+        (   spkcvo_c( (target),  (et),    (outref), (refloc),          \
+                      (abcorr),  CONST_VEC(obssta), (obsepc),          \
+                      (obsctr),  (obsref), (state), (lt)     )  )
+
+
+   #define  spkcvt_c( trgsta,   trgepc,   trgctr,   trgref,            \
+                      et,       outref,   refloc,   abcorr,            \
+                      obsrvr,   state,    lt               )           \
+                                                                       \
+        (   spkcvt_c( CONST_VEC(trgsta),  (trgepc), (trgctr),          \
+                      (trgref), (et),     (outref), (refloc),          \
+                      (abcorr), (obsrvr), (state),  (lt)     )  )
+
+
+   #define  spkltc_c( targ, et, ref, abcorr, sobs, starg, lt, dlt )    \
+                                                                       \
+        (   spkltc_c ( (targ),   (et),  (ref),    (abcorr),            \
+                       CONST_VEC(sobs), (starg),  (lt),     (dlt) )  )
+
+
+   #define  spkpvn_c( handle, descr, et, ref, state, center )          \
+                                                                       \
+        (   spkpvn_c ( (handle), CONST_VEC(descr), (et),               \
+                       (ref),    (state),          (center) )  )
 
    #define  spkuds_c( descr, body, center, frame, type,                \
                       first, last, begin,  end         )               \
@@ -972,6 +1150,17 @@ Macros that substitute for function calls:
                        CONST_VOID(packts), CONST_VEC(epochs)        )  )
 
 
+   #define  spkw20_c( handle, body,   center, frame,  first,  last,    \
+                      segid,  intlen, n,      polydg, cdata,  dscale,  \
+                      tscale, initjd, initfr                         ) \
+                                                                       \
+        (   spkw20_c ( (handle), (body),   (center),         (frame),  \
+                       (first),  (last),   (segid),          (intlen), \
+                       (n),      (polydg), CONST_VEC(cdata), (dscale), \
+                       (tscale), (initjd), (initfr)                  ) )
+
+
+
    #define  srfxpt_c( method, target, et,    abcorr, obsrvr, dref,     \
                       dvec,   spoint, dist,  trgepc, obspos, found )   \
                                                                        \
@@ -1005,6 +1194,13 @@ Macros that substitute for function calls:
         (   surfpt_c ( CONST_VEC(positn), CONST_VEC(u),                \
                        (a),               (b),               (c),      \
                        (point),           (found)                 )   )
+
+
+   #define  surfpv_c( stvrtx, stdir, a, b, c, stx, found )             \
+                                                                       \
+        (   surfpv_c ( CONST_VEC(stvrtx), CONST_VEC(stdir),            \
+                       (a),               (b),               (c),      \
+                       (stx),             (found)                 )   )
 
 
    #define  swpool_c( agent, nnames, lenvals, names )                  \
@@ -1047,7 +1243,7 @@ Macros that substitute for function calls:
    #define  vaddg_c( v1, v2, ndim,vout )                               \
                                                                        \
         (  vaddg_c ( CONST_VEC(v1), CONST_VEC(v2), (ndim), (vout) ) )
-   
+
 
    #define  vcrss_c( v1, v2, vout )                                    \
                                                                        \
@@ -1116,8 +1312,8 @@ Macros that substitute for function calls:
    #define  vminug_c( v1, ndim, vout )                                 \
                                                                        \
        (   vminug_c ( CONST_VEC(v1), (ndim), (vout) )   )
-           
-           
+
+
    #define  vminus_c( v1, vout )                                       \
                                                                        \
         (   vminus_c ( CONST_VEC(v1), (vout) )   )
@@ -1157,8 +1353,8 @@ Macros that substitute for function calls:
    #define  vrel_c( v1, v2 )                                           \
                                                                        \
            ( vrel_c ( CONST_VEC(v1), CONST_VEC(v2) )   )
-   
-    
+
+
    #define  vrelg_c( v1, v2, ndim )                                    \
                                                                        \
            ( vrelg_c ( CONST_VEC(v1), CONST_VEC(v2), (ndim) )   )
@@ -1187,8 +1383,8 @@ Macros that substitute for function calls:
    #define  vsepg_c( v1, v2, ndim)                                     \
                                                                        \
            ( vsepg_c ( CONST_VEC(v1), CONST_VEC(v2), ndim )  )
-   
-   
+
+
    #define  vsub_c( v1, v2, vout )                                     \
                                                                        \
         (   vsub_c ( CONST_VEC(v1), CONST_VEC(v2), (vout) )   )
@@ -1202,8 +1398,8 @@ Macros that substitute for function calls:
    #define  vtmv_c( v1, mat, v2 )                                      \
                                                                        \
         ( vtmv_c ( CONST_VEC(v1), CONST_MAT(mat), CONST_VEC(v2) ) )
-   
-   
+
+
    #define  vtmvg_c( v1, mat, v2, nrow, ncol )                         \
                                                                        \
         ( vtmvg_c ( CONST_VOID(v1), CONST_VOID(mat), CONST_VOID(v2),   \
@@ -1228,12 +1424,12 @@ Macros that substitute for function calls:
    #define  xf2eul_c( xform, axisa, axisb, axisc, eulang, unique )     \
                                                                        \
         (   xf2eul_c( CONST_MAT6(xform), (axisa), (axisb), (axisc),    \
-                      (eulang),          (unique)                  )  )  
+                      (eulang),          (unique)                  )  )
 
 
    #define  xf2rav_c( xform, rot, av )                                 \
                                                                        \
-        (   xf2rav_c( CONST_MAT6(xform), (rot), (av) )   )  
+        (   xf2rav_c( CONST_MAT6(xform), (rot), (av) )   )
 
 
    #define  xpose6_c( m1, mout )                                       \
@@ -1252,4 +1448,3 @@ Macros that substitute for function calls:
 
 
 #endif
-

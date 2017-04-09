@@ -87,10 +87,15 @@
       the standard f2c external symbols.
 
    3) The features implemented by this header have been tested only
-      under the Sun Solaris GCC and Sun Solaris native ANSI C
-      environments.
+      under the Sun Solaris GCC, Sun Solaris native ANSI C, and
+      PC/Linux/gcc environments.
 
 -Version
+
+   -CSPICE Version 2.0.1, 07-MAR-2009 (NJB)
+
+       Restrictions header section was updated to note successful
+       testing on the PC/Linux/gcc platform.
 
    -CSPICE Version 2.0.0, 19-DEC-2001 (NJB)
 

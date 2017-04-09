@@ -82,11 +82,10 @@
    About CSPICE function prototypes
    ================================ 
    
-    Because CSPICE function prototypes enable substantial
-    compile-time error checking, we recommend that user
-    applications always reference them.  Including the header
-    file SpiceUsr.h in any module that calls CSPICE will
-    automatically make the prototypes available.
+   Because CSPICE function prototypes enable substantial compile-time
+   error checking, we recommend that user applications always reference
+   them.  Including the header file SpiceUsr.h in any module that calls
+   CSPICE will automatically make the prototypes available.
       
       
    About CSPICE C style
@@ -112,6 +111,7 @@
 -Author_and_Institution
 
    N.J. Bachman       (JPL)
+   S.C. Krening       (JPL)
    E.D. Wright        (JPL)
    
 -Restrictions
@@ -122,6 +122,20 @@
    application code.
    
 -Version
+
+   -CSPICE Version 5.0.0, 11-MAY-2012 (NJB) (SCK) 
+
+      Updated to include header files
+
+        SpiceErr.h
+        SpiceFrm.h
+        SpiceOccult.h
+
+   -CSPICE Version 4.0.0, 30-SEP-2008 (NJB) 
+
+      Updated to include header file
+
+        SpiceGF.h
 
    -CSPICE Version 3.0.0, 19-AUG-2002 (NJB) 
 
@@ -166,10 +180,20 @@
    #include "SpiceZdf.h"   
          
    /*
+   Include the CSPICE error handling interface definitions.
+   */
+   #include "SpiceErr.h"
+
+   /*
    Include the CSPICE EK interface definitions.
    */
    #include "SpiceEK.h"
-      
+     
+   /*
+   Include the CSPICE frame subsystem API definitions.
+   */
+   #include "SpiceFrm.h"
+
    /*
    Include the CSPICE Cell interface definitions.
    */
@@ -184,6 +208,16 @@
    Include the CSPICE SPK interface definitions.
    */
    #include "SpiceSPK.h"
+
+   /*
+   Include the CSPICE GF interface definitions.
+   */
+   #include "SpiceGF.h"
+
+   /*
+   Include the CSPICE occultation definitions.
+   */
+   #include "SpiceOccult.h"
    
    /*
    Include CSPICE prototypes.

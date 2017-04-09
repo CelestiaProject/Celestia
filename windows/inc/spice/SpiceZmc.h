@@ -88,6 +88,11 @@
 
 -Version
  
+   -CSPICE Version 4.3.0, 18-SEP-2013   (NJB)
+
+      Bug fix: missing comma was added to argument list
+      in body of macro CELLTYPECHK3_VAL.
+
    -CSPICE Version 4.2.0, 16-FEB-2005   (NJB)
 
       Bug fix:  in the macro C2F_MAP_CELL, error checking has been
@@ -645,7 +650,7 @@ use CHKOSTR_VAL, which is defined below.
                         retval                                 );    \
        CELLTYPECHK_VAL( errHandling, modname, dtype, cellPtr2,       \
                         retval                                 );    \
-       CELLTYPECHK_VAL( errHandling, modname, dtype, cellPtr3        \
+       CELLTYPECHK_VAL( errHandling, modname, dtype, cellPtr3,       \
                         retval                                 );
 
 

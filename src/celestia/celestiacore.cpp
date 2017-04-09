@@ -4988,6 +4988,10 @@ void CelestiaCore::forward()
 void CelestiaCore::playSoundFile(int channel, float volume, float pan,
                                  int loop, const string& filename, int nopause)
 {
+#ifdef _WIN64
+	//TODO: fix. (seems to crash in 64-bit)
+	return;
+#endif
     if (channel < 0 || channel >= MAX_CHANNELS)
     {
         if (alerter != NULL)
@@ -5083,6 +5087,10 @@ void CelestiaCore::playSoundFile(int channel, float volume, float pan,
 
 void CelestiaCore::stopSounds()
 {
+#ifdef _WIN64
+    //TODO: fix. (seems to crash in 64-bit)
+    return;
+#endif
     int i;
     bool isplaying = true;
     for (i = 0; i < MAX_CHANNELS; i++)
@@ -5102,6 +5110,10 @@ void CelestiaCore::stopSounds()
 
 void CelestiaCore::pauseSounds()
 {
+#ifdef _WIN64
+	//TODO: fix. (seems to crash in 64-bit)
+	return;
+#endif
     int i;
     bool paused;
     for (i = 0; i < MAX_CHANNELS; i++)
