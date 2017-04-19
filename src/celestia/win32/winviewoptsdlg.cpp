@@ -24,10 +24,10 @@ static const float MaxDistanceLimit = 1.0e6f;
 
 static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
                                      UINT message,
-                                     UINT wParam,
-                                     LONG lParam)
+                                     WPARAM wParam,
+                                     LPARAM lParam)
 {
-    ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(GetWindowLong(hDlg, DWL_USER));
+    ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -36,7 +36,7 @@ static BOOL APIENTRY ViewOptionsProc(HWND hDlg,
             ViewOptionsDialog* Dlg = reinterpret_cast<ViewOptionsDialog*>(lParam);
             if (Dlg == NULL)
                 return EndDialog(hDlg, 0);
-            SetWindowLong(hDlg, DWL_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
             //Read labelMode, renderFlags and hud detail
             Dlg->initialRenderFlags = Dlg->appCore->getRenderer()->getRenderFlags();
@@ -280,8 +280,8 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_VIEWOPTIONS),
                              parent,
-                             ViewOptionsProc,
-                             reinterpret_cast<LONG>(this));
+                             (DLGPROC)ViewOptionsProc,
+                             reinterpret_cast<LONG_PTR>(this));
 }
 
 

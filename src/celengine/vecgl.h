@@ -155,14 +155,14 @@ inline void glTranslate(const Eigen::Vector3d& offset)
 inline void glRotate(const Eigen::Quaternionf& q)
 {
     Eigen::Matrix4f m = Eigen::Matrix4f::Identity();
-    m.corner<3, 3>(Eigen::TopLeft) = q.toRotationMatrix();
+	m.topLeftCorner(3, 3) = q.toRotationMatrix();
     glMultMatrixf(m.data());
 }
 
 inline void glRotate(const Eigen::Quaterniond& q)
 {
     Eigen::Matrix4d m = Eigen::Matrix4d::Identity();
-    m.corner<3, 3>(Eigen::TopLeft) = q.toRotationMatrix();
+	m.topLeftCorner(3, 3) = q.toRotationMatrix();
     glMultMatrixd(m.data());
 }
 

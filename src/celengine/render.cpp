@@ -2016,7 +2016,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     // We perform vertex tranformations on the CPU because double precision is necessary to
     // render orbits properly. Start by computing the modelview matrix, to transform orbit
     // vertices into camera space.
-    Transform3d modelview;
+    Affine3d modelview;
     {
         Quaterniond orientation = Quaterniond::Identity();
         if (body)
@@ -3080,7 +3080,7 @@ void Renderer::draw(const Observer& observer,
                 float radius = iter->body->getRadius();
                 Vector3f semiAxes = iter->body->getSemiAxes() / radius;
 
-                Vector3f recipSemiAxes = semiAxes.cwise().inverse();
+				Vector3f recipSemiAxes = semiAxes.cwiseInverse();
                 Vector3f eyeVec = iter->position / radius;
 
                 // Compute the orientation of the planet before axial rotation
@@ -3092,7 +3092,7 @@ void Renderer::draw(const Observer& observer,
                 // the planet is spherical.  The quantity that we do compute
                 // is the distance to the surface along a line from the eye
                 // position to the center of the ellipsoid.
-                float ellipDist = (eyeVec.cwise() * recipSemiAxes).norm() - 1.0f;
+                float ellipDist = (eyeVec.cwiseProduct(recipSemiAxes)).norm() - 1.0f;
                 if (ellipDist < atmosphere->height / radius &&
                     atmosphere->height > 0.0f)
                 {
@@ -4555,7 +4555,7 @@ ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
     // ellipsoid ultimately requires using the quadratic formula, which has
     // one solution when the discriminant (b^2 - 4ac) is zero.  The code below
     // computes the value of t that results in a discriminant of zero.
-    Matrix<T, 3, 1> w_ = w.cwise() * recipSemiAxes;//(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
+    Matrix<T, 3, 1> w_ = w.cwiseProduct(recipSemiAxes);//(w.x * recipSemiAxes.x, w.y * recipSemiAxes.y, w.z * recipSemiAxes.z);
     T ww = w_.dot(w_);
     T ew = w_.dot(e_);
 
@@ -4584,7 +4584,7 @@ ellipsoidTangent(const Matrix<T, 3, 1>& recipSemiAxes,
     // intersection.  Since we already know that the discriminant is zero,
     // the solution is just -b/2a
     Matrix<T, 3, 1> v = -e * (1 - t) + w * t;
-    Matrix<T, 3, 1> v_ = v.cwise() * recipSemiAxes;
+    Matrix<T, 3, 1> v_ = v.cwiseProduct(recipSemiAxes);
     T a1 = v_.dot(v_);
     T b1 = (T) 2 * v_.dot(e_);
     T t1 = -b1 / (2 * a1);
@@ -4621,7 +4621,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     double centerDist = eyeVec.norm();
 
     float height = atmosphere.height / radius;
-    Vector3f recipSemiAxes = semiAxes.cwise().inverse();
+	Vector3f recipSemiAxes = semiAxes.cwiseInverse();
 
     Vector3f recipAtmSemiAxes = recipSemiAxes / (1.0f + height);
     // ellipDist is not the true distance from the surface unless the
@@ -4631,7 +4631,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     // multiplied by a uniform scale factor.  The value that we do compute
     // is the distance to the surface along a line from the eye position to
     // the center of the ellipsoid.
-    float ellipDist = (eyeVec.cwise() * recipSemiAxes).norm() - 1.0f;
+    float ellipDist = (eyeVec.cwiseProduct(recipSemiAxes)).norm() - 1.0f;
     bool within = ellipDist < height;
 
     // Adjust the tesselation of the sky dome/ring based on distance from the
@@ -4658,7 +4658,7 @@ void Renderer::renderEllipsoidAtmosphere(const Atmosphere& atmosphere,
     }
 
     Vector3f e = -eyeVec;
-    Vector3f e_ = e.cwise() * recipSemiAxes;//(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
+    Vector3f e_ = e.cwiseProduct(recipSemiAxes);//(e.x * recipSemiAxes.x, e.y * recipSemiAxes.y, e.z * recipSemiAxes.z);
     float ee = e_.dot(e_);
 
     // Compute the cosine of the altitude of the sun.  This is used to compute
@@ -4992,8 +4992,8 @@ static void setLightParameters_VP(VertexProcessor& vproc,
         const DirectionalLight& light = ls.lights[i];
 
         Vector3f lightColor = light.color.toVector3() * light.irradiance;
-        Vector3f diffuse = diffuseColor.cwise() * lightColor;
-        Vector3f specular = specularColor.cwise() * lightColor;
+        Vector3f diffuse = diffuseColor.cwiseProduct(lightColor);
+        Vector3f specular = specularColor.cwiseProduct(lightColor);
         
         // Just handle two light sources for now
         if (i == 0)
@@ -6032,9 +6032,9 @@ static void renderRings(RingSystem& rings,
 
         Vector4f sPlane;
         Vector4f tPlane;
-        sPlane.start<3>() = sAxis;
+        sPlane.head(3) = sAxis;
         sPlane[3] = 0.5f;
-        tPlane.start<3>() = tAxis;
+        tPlane.head(3) = tAxis;
         tPlane[3] = 0.5f;
 
         if (vproc != NULL)
@@ -6207,8 +6207,8 @@ renderEclipseShadows(Geometry* geometry,
 
         Vector4f texGenS;
         Vector4f texGenT;
-        texGenS.start<3>() = sAxis;
-        texGenT.start<3>() = tAxis;
+        texGenS.head(3) = sAxis;
+        texGenT.head(3) = tAxis;
         texGenS[3] = -origin.dot(sAxis) / planetRadius + 0.5f;
         texGenT[3] = -origin.dot(tAxis) / planetRadius + 0.5f;
 
@@ -6347,8 +6347,8 @@ renderEclipseShadows_Shaders(Geometry* geometry,
         Vector3f sAxis = m * Vector3f::UnitX() * (0.5f * scale);
         Vector3f tAxis = m * Vector3f::UnitZ() * (0.5f * scale);
 
-        texGenS[n].start<3>() = sAxis;
-        texGenT[n].start<3>() = tAxis;
+        texGenS[n].head(3) = sAxis;
+        texGenT[n].head(3) = tAxis;
         texGenS[n][3] = -origin.dot(sAxis) / planetRadius + 0.5f;
         texGenT[n][3] = -origin.dot(tAxis) / planetRadius + 0.5f;
     }
@@ -6796,7 +6796,7 @@ setupObjectLighting(const vector<LightSource>& suns,
         ls.nLights++;
     }
 
-    Matrix3f invScale = objScale.cwise().inverse().asDiagonal();
+    Matrix3f invScale = objScale.cwiseInverse().asDiagonal();
     ls.eyePos_obj = invScale * m * -objPosition_eye;
     ls.eyeDir_obj = (m * -objPosition_eye).normalized();
 
@@ -6900,10 +6900,10 @@ void Renderer::renderObject(const Vector3f& pos,
 
     Matrix3f planetRotation = obj.orientation.toRotationMatrix();
     Matrix4f planetMat = Matrix4f::Identity();
-    planetMat.corner<3, 3>(TopLeft) = planetRotation;
+    planetMat.topLeftCorner(3, 3) = planetRotation;
 
     ri.eyeDir_obj = -(planetRotation * pos).normalized();
-    ri.eyePos_obj = -(planetRotation * (pos.cwise() / scaleFactors));
+    ri.eyePos_obj = -(planetRotation * (pos.cwiseQuotient(scaleFactors)));
 
     ri.orientation = cameraOrientation * obj.orientation.conjugate();
 

@@ -42,6 +42,7 @@
    Prototypes in this file:
 
       alloc_count
+      zzalloc_count
       alloc_SpiceMemory
       alloc_SpiceString_C_array
       alloc_SpiceString_C_Copy_array
@@ -53,6 +54,15 @@
       free_SpiceMemory
 
 -Version
+
+   CSPICE 1.0.3 02-MAY-2008 (EDW)
+
+      Added alloc_count prototype.
+
+   CSPICE 1.0.2 10-MAY-2007 (EDW)
+
+      Minor edits to clarify 'size' in alloc_SpiceMemory as 
+      size_t.
 
    CSPICE 1.0.1 23-JUN-2005 (EDW)
 
@@ -68,8 +78,10 @@
 #ifndef ZZALLOC_H
 #define ZZALLOC_H
 
-   /* Allocation call prototypes: */
-   int           alloc_count                    ( SpiceChar* op );
+   /*
+   Allocation call prototypes: 
+   */
+   int           alloc_count                    ();
 
    SpiceChar  ** alloc_SpiceString_C_array      ( int string_length, 
                                                   int string_count   );
@@ -91,7 +103,7 @@
    void          free_SpiceString_C_array       ( int dim, 
                                                   SpiceChar ** array );
 
-   void        * alloc_SpiceMemory              ( unsigned size );
+   void        * alloc_SpiceMemory              ( size_t size );
 
    void          free_SpiceMemory               ( void * ptr );
 
@@ -101,11 +113,11 @@
    Note, the need to use this macro exists only in those routines 
    allocating/deallocating memory.
    */
-#define ALLOC_CHECK  if ( alloc_count( "=" ) != 0 )                        \
+#define ALLOC_CHECK  if (  alloc_count() != 0 )                            \
                 {                                                          \
                 setmsg_c ( "Malloc/Free count not zero at end of routine." \
                            " Malloc count = #.");                          \
-                errint_c ( "#", alloc_count ( "=" )    );                  \
+                errint_c ( "#", alloc_count()            );                \
                 sigerr_c ( "SPICE(MALLOCCOUNT)"        );                  \
                 }
 

@@ -1,73 +1,47 @@
+// This file is part of Eigen, a lightweight C++ template library
+// for linear algebra.
+//
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 #ifndef EIGEN_QR_MODULE_H
 #define EIGEN_QR_MODULE_H
 
 #include "Core"
 
-#include "src/Core/util/DisableMSVCWarnings.h"
+#include "src/Core/util/DisableStupidWarnings.h"
 
 #include "Cholesky"
-
-// Note that EIGEN_HIDE_HEAVY_CODE has to be defined per module
-#if (defined EIGEN_EXTERN_INSTANTIATIONS) && (EIGEN_EXTERN_INSTANTIATIONS>=2)
-  #ifndef EIGEN_HIDE_HEAVY_CODE
-  #define EIGEN_HIDE_HEAVY_CODE
-  #endif
-#elif defined EIGEN_HIDE_HEAVY_CODE
-  #undef EIGEN_HIDE_HEAVY_CODE
-#endif
-
-namespace Eigen {
+#include "Jacobi"
+#include "Householder"
 
 /** \defgroup QR_Module QR module
   *
-  * \nonstableyet
   *
-  * This module mainly provides QR decomposition and an eigen value solver.
+  *
+  * This module provides various QR decompositions
   * This module also provides some MatrixBase methods, including:
-  *  - MatrixBase::qr(),
-  *  - MatrixBase::eigenvalues(),
-  *  - MatrixBase::operatorNorm()
+  *  - MatrixBase::householderQr()
+  *  - MatrixBase::colPivHouseholderQr()
+  *  - MatrixBase::fullPivHouseholderQr()
   *
   * \code
   * #include <Eigen/QR>
   * \endcode
   */
 
-#include "src/QR/QR.h"
-#include "src/QR/Tridiagonalization.h"
-#include "src/QR/EigenSolver.h"
-#include "src/QR/SelfAdjointEigenSolver.h"
-#include "src/QR/HessenbergDecomposition.h"
+#include "src/QR/HouseholderQR.h"
+#include "src/QR/FullPivHouseholderQR.h"
+#include "src/QR/ColPivHouseholderQR.h"
+#include "src/QR/CompleteOrthogonalDecomposition.h"
+#ifdef EIGEN_USE_LAPACKE
+#include "src/misc/lapacke.h"
+#include "src/QR/HouseholderQR_LAPACKE.h"
+#include "src/QR/ColPivHouseholderQR_LAPACKE.h"
+#endif
 
-// declare all classes for a given matrix type
-#define EIGEN_QR_MODULE_INSTANTIATE_TYPE(MATRIXTYPE,PREFIX) \
-  PREFIX template class QR<MATRIXTYPE>; \
-  PREFIX template class Tridiagonalization<MATRIXTYPE>; \
-  PREFIX template class HessenbergDecomposition<MATRIXTYPE>; \
-  PREFIX template class SelfAdjointEigenSolver<MATRIXTYPE>
-
-// removed because it does not support complex yet
-//  PREFIX template class EigenSolver<MATRIXTYPE>
-
-// declare all class for all types
-#define EIGEN_QR_MODULE_INSTANTIATE(PREFIX) \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(Matrix2f,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(Matrix2d,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(Matrix3f,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(Matrix3d,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(Matrix4f,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(Matrix4d,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(MatrixXf,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(MatrixXd,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(MatrixXcf,PREFIX); \
-  EIGEN_QR_MODULE_INSTANTIATE_TYPE(MatrixXcd,PREFIX)
-
-#ifdef EIGEN_EXTERN_INSTANTIATIONS
-  EIGEN_QR_MODULE_INSTANTIATE(extern);
-#endif // EIGEN_EXTERN_INSTANTIATIONS
-
-} // namespace Eigen
-
-#include "src/Core/util/EnableMSVCWarnings.h"
+#include "src/Core/util/ReenableStupidWarnings.h"
 
 #endif // EIGEN_QR_MODULE_H
+/* vim: set filetype=cpp et sw=2 ts=2 ai: */

@@ -62,7 +62,13 @@
 
 -Version
 
-   CSPICE 1.0.0 17-OCT-2005 (EDW)
+   -CSPICE 1.1.0 14-JAN-2013 (EDW)
+
+      Added parameter:
+      
+         SCALAR_OP
+
+   -CSPICE 1.0.0 17-OCT-2005 (EDW)
 
       Initial release.
 
@@ -74,7 +80,7 @@
    const char * zzerror( long cnt );
    void         zzerrorinit();
 
+   #define      SCALAR_OP         -1
+
 #endif
-
-
 

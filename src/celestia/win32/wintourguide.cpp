@@ -27,10 +27,10 @@ using namespace std;
 
 BOOL APIENTRY TourGuideProc(HWND hDlg,
                             UINT message,
-                            UINT wParam,
-                            LONG lParam)
+                            WPARAM wParam,
+                            LPARAM lParam)
 {
-    TourGuide* tourGuide = reinterpret_cast<TourGuide*>(GetWindowLong(hDlg, DWL_USER));
+    TourGuide* tourGuide = reinterpret_cast<TourGuide*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -39,7 +39,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
             TourGuide* guide = reinterpret_cast<TourGuide*>(lParam);
             if (guide == NULL)
                 return EndDialog(hDlg, 0);
-            SetWindowLong(hDlg, DWL_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
 //          guide->selectedDest = NULL;
 
@@ -151,6 +151,6 @@ TourGuide::TourGuide(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_TOURGUIDE),
                              parent,
-                             TourGuideProc,
-                             reinterpret_cast<LONG>(this));
+                             (DLGPROC)TourGuideProc,
+                             reinterpret_cast<LONG_PTR>(this));
 }

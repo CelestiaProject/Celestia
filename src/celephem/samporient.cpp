@@ -12,7 +12,6 @@
 // of the License, or (at your option) any later version.
 
 #include "samporient.h"
-#include <Eigen/NewStdVector>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <cmath>

@@ -1,49 +1,40 @@
+// This file is part of Eigen, a lightweight C++ template library
+// for linear algebra.
+//
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 #ifndef EIGEN_QTMALLOC_MODULE_H
 #define EIGEN_QTMALLOC_MODULE_H
 
-#if (!EIGEN_MALLOC_ALREADY_ALIGNED)
-
-#ifdef QVECTOR_H
-#error You must include <Eigen/QtAlignedMalloc> before <QtCore/QVector>.
-#endif                                           
-
-#ifdef Q_DECL_IMPORT
-  #define Q_DECL_IMPORT_ORIG Q_DECL_IMPORT
-  #undef Q_DECL_IMPORT
-  #define Q_DECL_IMPORT
-#else
-  #define Q_DECL_IMPORT
-#endif
-
 #include "Core"
 
-#include <QtCore/QVector>
+#if (!EIGEN_MALLOC_ALREADY_ALIGNED)
 
-inline void *qMalloc(size_t size)
+#include "src/Core/util/DisableStupidWarnings.h"
+
+void *qMalloc(std::size_t size)
 {
-  return Eigen::ei_aligned_malloc(size);
+  return Eigen::internal::aligned_malloc(size);
 }
 
-inline void qFree(void *ptr)
+void qFree(void *ptr)
 {
-  Eigen::ei_aligned_free(ptr);
+  Eigen::internal::aligned_free(ptr);
 }
 
-inline void *qRealloc(void *ptr, size_t size)
+void *qRealloc(void *ptr, std::size_t size)
 {
-  void* newPtr = Eigen::ei_aligned_malloc(size);
+  void* newPtr = Eigen::internal::aligned_malloc(size);
   memcpy(newPtr, ptr, size);
-  Eigen::ei_aligned_free(ptr);
+  Eigen::internal::aligned_free(ptr);
   return newPtr;
 }
 
-#endif
+#include "src/Core/util/ReenableStupidWarnings.h"
 
-#ifdef Q_DECL_IMPORT_ORIG
-  #define Q_DECL_IMPORT Q_DECL_IMPORT_ORIG
-  #undef Q_DECL_IMPORT_ORIG
-#else
-  #undef Q_DECL_IMPORT
 #endif
 
 #endif // EIGEN_QTMALLOC_MODULE_H
+/* vim: set filetype=cpp et sw=2 ts=2 ai: */

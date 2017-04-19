@@ -323,10 +323,10 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     Vector4f v1(Vector4f::Zero());
     Vector4f v2(Vector4f::Zero());
     Vector4f v3(Vector4f::Zero());
-    v0.start<3>() = viewMat * Vector3f(-1, -1, 0) * size;
-    v1.start<3>() = viewMat * Vector3f( 1, -1, 0) * size;
-    v2.start<3>() = viewMat * Vector3f( 1,  1, 0) * size;
-    v3.start<3>() = viewMat * Vector3f(-1,  1, 0) * size;
+    v0.head(3) = viewMat * Vector3f(-1, -1, 0) * size;
+    v1.head(3) = viewMat * Vector3f( 1, -1, 0) * size;
+    v2.head(3) = viewMat * Vector3f( 1,  1, 0) * size;
+    v3.head(3) = viewMat * Vector3f(-1,  1, 0) * size;
 
     //Mat4f m = (getOrientation().toMatrix4() *
     //           Mat4f::scaling(form->scale) *
@@ -338,7 +338,7 @@ void Galaxy::renderGalaxyPointSprites(const GLContext&,
     Matrix3f mLinear = orientation.toRotationMatrix() * mScale;
 
     Matrix4f m = Matrix4f::Identity();
-    m.corner<3,3>(TopLeft) = mLinear;
+    m.topLeftCorner(3,3) = mLinear;
     m.block<3,1>(0, 3) = offset;
 
     int   pow2  = 1;
@@ -582,7 +582,7 @@ GalacticForm* buildGalacticForms(const std::string& filename)
 				}
 
 				b.position    = Vector4f(x, y, z, 1.0f);
-				unsigned int rr =  (unsigned int) (b.position.start<3>().norm() * 511);
+				unsigned int rr =  (unsigned int) (b.position.head(3).norm() * 511);
 				b.colorIndex  = rr < 256? rr: 255;
 				galacticPoints->push_back(b);
 				j++;

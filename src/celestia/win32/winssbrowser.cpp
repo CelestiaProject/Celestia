@@ -93,10 +93,10 @@ void AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int lev
 
 BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
                                      UINT message,
-                                     UINT wParam,
-                                     LONG lParam)
+                                     WPARAM wParam,
+                                     LPARAM lParam)
 {
-    SolarSystemBrowser* browser = reinterpret_cast<SolarSystemBrowser*>(GetWindowLong(hDlg, DWL_USER));
+    SolarSystemBrowser* browser = reinterpret_cast<SolarSystemBrowser*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -105,7 +105,7 @@ BOOL APIENTRY SolarSystemBrowserProc(HWND hDlg,
             SolarSystemBrowser* browser = reinterpret_cast<SolarSystemBrowser*>(lParam);
             if (browser == NULL)
                 return EndDialog(hDlg, 0);
-            SetWindowLong(hDlg, DWL_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
             HWND hwnd = GetDlgItem(hDlg, IDC_SSBROWSER_TREE);
             const SolarSystem* solarSys = browser->appCore->getSimulation()->getNearestSolarSystem();
@@ -190,12 +190,12 @@ SolarSystemBrowser::SolarSystemBrowser(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_SSBROWSER),
                              parent,
-                             SolarSystemBrowserProc,
-                             reinterpret_cast<LONG>(this));
+                             (DLGPROC)SolarSystemBrowserProc,
+                             reinterpret_cast<LONG_PTR>(this));
 }
 
 
 SolarSystemBrowser::~SolarSystemBrowser()
 {
-    SetWindowLong(hwnd, DWL_USER, 0);
+    SetWindowLongPtr(hwnd, DWLP_USER, 0);
 }

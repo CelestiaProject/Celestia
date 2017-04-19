@@ -526,8 +526,8 @@ bool LoadItemTextFromFile(HWND hWnd,
 
 BOOL APIENTRY AboutProc(HWND hDlg,
                         UINT message,
-                        UINT wParam,
-                        LONG lParam)
+                        WPARAM wParam,
+                        LPARAM lParam)
 {
     switch (message)
     {
@@ -577,8 +577,8 @@ BOOL APIENTRY AboutProc(HWND hDlg,
 
 BOOL APIENTRY ControlsHelpProc(HWND hDlg,
                               UINT message,
-                              UINT wParam,
-                              LONG lParam)
+                              WPARAM wParam,
+                              LPARAM lParam)
 {
     switch (message)
     {
@@ -601,8 +601,8 @@ BOOL APIENTRY ControlsHelpProc(HWND hDlg,
 
 BOOL APIENTRY LicenseProc(HWND hDlg,
                           UINT message,
-                          UINT wParam,
-                          LONG lParam)
+                          WPARAM wParam,
+                          LPARAM lParam)
 {
     switch (message)
     {
@@ -625,8 +625,8 @@ BOOL APIENTRY LicenseProc(HWND hDlg,
 
 BOOL APIENTRY GLInfoProc(HWND hDlg,
                          UINT message,
-                         UINT wParam,
-                         LONG lParam)
+                         WPARAM wParam,
+                         LPARAM lParam)
 {
     switch (message)
     {
@@ -793,8 +793,8 @@ UINT CALLBACK ChooseMovieParamsProc(HWND hDlg, UINT message,
 
 BOOL APIENTRY FindObjectProc(HWND hDlg,
                              UINT message,
-                             UINT wParam,
-                             LONG lParam)
+                             WPARAM wParam,
+                             LPARAM lParam)
 {
     switch (message)
     {
@@ -832,8 +832,8 @@ BOOL APIENTRY FindObjectProc(HWND hDlg,
 
 BOOL APIENTRY AddBookmarkFolderProc(HWND hDlg,
                                     UINT message,
-                                    UINT wParam,
-                                    LONG lParam)
+                                    WPARAM wParam,
+                                    LPARAM lParam)
 {
     switch (message)
     {
@@ -923,8 +923,8 @@ BOOL APIENTRY AddBookmarkFolderProc(HWND hDlg,
 
 BOOL APIENTRY AddBookmarkProc(HWND hDlg,
                               UINT message,
-                              UINT wParam,
-                              LONG lParam)
+                              WPARAM wParam,
+                              LPARAM lParam)
 {
     switch (message)
     {
@@ -1091,7 +1091,7 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
             if(hBookmarkTree = GetDlgItem(hDlg, IDC_BOOKMARK_FOLDERTREE))
             {
                 DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER),
-                          hDlg, AddBookmarkFolderProc);
+                          hDlg, (DLGPROC)AddBookmarkFolderProc);
             }
         }
         break;
@@ -1103,8 +1103,8 @@ BOOL APIENTRY AddBookmarkProc(HWND hDlg,
 
 BOOL APIENTRY RenameBookmarkProc(HWND hDlg,
                                  UINT message,
-                                 UINT wParam,
-                                 LONG lParam)
+                                 WPARAM wParam,
+                                 LPARAM lParam)
 {
     switch (message)
     {
@@ -1187,8 +1187,8 @@ BOOL APIENTRY RenameBookmarkProc(HWND hDlg,
 
 BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
                                     UINT message,
-                                    UINT wParam,
-                                    LONG lParam)
+                                    WPARAM wParam,
+                                    LPARAM lParam)
 {
     static UINT_PTR dragDropTimer;
     switch (message)
@@ -1244,7 +1244,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
         {
             if (hBookmarkTree = GetDlgItem(hDlg, IDC_ORGANIZE_BOOKMARK_TREE))
             {
-                DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER), hDlg, AddBookmarkFolderProc);
+                DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK_FOLDER), hDlg, (DLGPROC)AddBookmarkFolderProc);
             }
         }
         else if (LOWORD(wParam) == IDC_ORGANIZE_BOOKMARKS_RENAME)
@@ -1263,7 +1263,7 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
                     {
                         DialogBox(hRes,
                                   MAKEINTRESOURCE(IDD_RENAME_BOOKMARK),
-                                  hDlg, RenameBookmarkProc);
+                                  hDlg, (DLGPROC)RenameBookmarkProc);
                     }
                 }
             }
@@ -1385,8 +1385,8 @@ BOOL APIENTRY OrganizeBookmarksProc(HWND hDlg,
 int selectedScreenMode = 0;
 BOOL APIENTRY SelectDisplayModeProc(HWND hDlg,
                                     UINT message,
-                                    UINT wParam,
-                                    LONG lParam)
+                                    WPARAM wParam,
+                                    LPARAM lParam)
 {
     switch (message)
     {
@@ -1573,7 +1573,7 @@ static HMENU CreatePlanetarySystemMenu(string parentName, const PlanetarySystem*
                     for(it=obj->begin(); it != obj->end(); it++)
                         AppendMenu(hSubMenu, MF_STRING, MENU_CHOOSE_PLANET + it->first, it->second.c_str());
 
-                    AppendMenu(menu, MF_POPUP | MF_STRING, (DWORD)hSubMenu, menuName->c_str());
+                    AppendMenu(menu, MF_POPUP | MF_STRING, (UINT_PTR)hSubMenu, menuName->c_str());
                 }
                 else
                 {
@@ -1625,7 +1625,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             AppendMenu(hMenu, MF_STRING, ID_NAVIGATION_SYNCORBIT, UTF8ToCurrentCP(_("S&ync Orbit")).c_str());
             AppendMenu(hMenu, MF_STRING, ID_INFO, UTF8ToCurrentCP(_("&Info")).c_str());
             HMENU refVectorMenu = CreatePopupMenu();
-            AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) refVectorMenu, UTF8ToCurrentCP(_("&Reference Marks")).c_str());
+            AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) refVectorMenu, UTF8ToCurrentCP(_("&Reference Marks")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_BODY_AXES, UTF8ToCurrentCP(_("Show Body Axes")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_FRAME_AXES, UTF8ToCurrentCP(_("Show Frame Axes")).c_str());
             AppendMenu(refVectorMenu, MF_STRING, ID_RENDER_SUN_DIRECTION, UTF8ToCurrentCP(_("Show Sun Direction")).c_str());
@@ -1644,7 +1644,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
             if (satellites != NULL && satellites->getSystemSize() != 0)
             {
                 HMENU satMenu = CreatePlanetarySystemMenu(name, satellites);
-                AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) satMenu,
+                AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) satMenu,
                            UTF8ToCurrentCP(_("&Satellites")).c_str());
             }
 
@@ -1654,7 +1654,7 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
                 if (altSurfaces->size() != NULL)
                 {
                     HMENU surfMenu = CreateAlternateSurfaceMenu(*altSurfaces);
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) surfMenu,
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) surfMenu,
                                UTF8ToCurrentCP(_("&Alternate Surfaces")).c_str());
                 }
                 delete altSurfaces;
@@ -1678,9 +1678,9 @@ VOID APIENTRY handlePopupMenu(HWND hwnd,
                 SolarSystem* solarSys = iter->second;
                 HMENU planetsMenu = CreatePlanetarySystemMenu(name, solarSys->getPlanets());
                 if (name == "Sol")
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, UTF8ToCurrentCP(_("Orbiting Bodies")).c_str());
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) planetsMenu, UTF8ToCurrentCP(_("Orbiting Bodies")).c_str());
                 else
-                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (DWORD) planetsMenu, UTF8ToCurrentCP(_("Planets")).c_str());
+                    AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR) planetsMenu, UTF8ToCurrentCP(_("Planets")).c_str());
             }
         }
         break;
@@ -2777,7 +2777,7 @@ static void HandleCaptureMovie(HWND hWnd)
 
     Ofn.hInstance = appInstance;
     Ofn.lpTemplateName = MAKEINTRESOURCE(IDD_MOVIE_PARAMS_CHOOSER);
-    Ofn.lpfnHook = ChooseMovieParamsProc;
+    Ofn.lpfnHook = (LPOFNHOOKPROC)ChooseMovieParamsProc;
 
     // Display the Save dialog box.
     if (GetSaveFileName(&Ofn))
@@ -4413,7 +4413,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             appCore->charEntered('H');
             break;
         case ID_NAVIGATION_SELECT:
-            DialogBox(hRes, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, FindObjectProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_FINDOBJECT), hWnd, (DLGPROC)FindObjectProc);
             break;
         case ID_NAVIGATION_GOTO_OBJECT:
             if (gotoObjectDlg == NULL)
@@ -4489,7 +4489,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             CreateDialogParam(hRes,
                               MAKEINTRESOURCE(IDD_DISPLAYMODE),
                               hWnd,
-                              SelectDisplayModeProc,
+                              (DLGPROC)SelectDisplayModeProc,
                               NULL);
             break;
 
@@ -4674,11 +4674,11 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             break;
 
         case ID_BOOKMARKS_ADDBOOKMARK:
-            DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK), hWnd, AddBookmarkProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_ADDBOOKMARK), hWnd, (DLGPROC)AddBookmarkProc);
             break;
 
         case ID_BOOKMARKS_ORGANIZE:
-            DialogBox(hRes, MAKEINTRESOURCE(IDD_ORGANIZE_BOOKMARKS), hWnd, OrganizeBookmarksProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_ORGANIZE_BOOKMARKS), hWnd, (DLGPROC)OrganizeBookmarksProc);
             break;
 
         case ID_HELP_RUNDEMO:
@@ -4694,20 +4694,20 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd,
             CreateDialogParam(hRes,
                               MAKEINTRESOURCE(IDD_CONTROLSHELP),
                               hWnd,
-                              ControlsHelpProc,
+                              (DLGPROC)ControlsHelpProc,
                               NULL);
             break;
 
         case ID_HELP_ABOUT:
-            DialogBox(hRes, MAKEINTRESOURCE(IDD_ABOUT), hWnd, AboutProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_ABOUT), hWnd, (DLGPROC)AboutProc);
             break;
 
         case ID_HELP_GLINFO:
-            DialogBox(hRes, MAKEINTRESOURCE(IDD_GLINFO), hWnd, GLInfoProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_GLINFO), hWnd, (DLGPROC)GLInfoProc);
             break;
 
         case ID_HELP_LICENSE:
-            DialogBox(hRes, MAKEINTRESOURCE(IDD_LICENSE), hWnd, LicenseProc);
+            DialogBox(hRes, MAKEINTRESOURCE(IDD_LICENSE), hWnd, (DLGPROC)LicenseProc);
             break;
 
         case ID_INFO:

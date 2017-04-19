@@ -1,42 +1,31 @@
 // This file is part of Eigen, a lightweight C++ template library
-// for linear algebra. Eigen itself is part of the KDE project.
+// for linear algebra.
 //
-// Copyright (C) 2006-2008 Benoit Jacob <jacob.benoit.1@gmail.com>
-// Copyright (C) 2008 Gael Guennebaud <g.gael@free.fr>
+// Copyright (C) 2006-2009 Benoit Jacob <jacob.benoit.1@gmail.com>
+// Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_MATRIXBASE_H
 #define EIGEN_MATRIXBASE_H
 
+namespace Eigen {
+
 /** \class MatrixBase
+  * \ingroup Core_Module
   *
-  * \brief Base class for all matrices, vectors, and expressions
+  * \brief Base class for all dense matrices, vectors, and expressions
   *
-  * This class is the base that is inherited by all matrix, vector, and expression
-  * types. Most of the Eigen API is contained in this class. Other important classes for
-  * the Eigen API are Matrix, Cwise, and PartialRedux.
+  * This class is the base that is inherited by all matrix, vector, and related expression
+  * types. Most of the Eigen API is contained in this class, and its base classes. Other important
+  * classes for the Eigen API are Matrix, and VectorwiseOp.
   *
-  * Note that some methods are defined in the \ref Array module.
+  * Note that some methods are defined in other modules such as the \ref LU_Module LU module
+  * for all functions related to matrix inversions.
   *
-  * \param Derived is the derived type, e.g. a matrix type, or an expression, etc.
+  * \tparam Derived is the derived type, e.g. a matrix type, or an expression, etc.
   *
   * When writing a function taking Eigen objects as argument, if you want your function
   * to take as argument any matrix, vector, or expression, just let it take a
@@ -51,595 +40,491 @@
     }
   * \endcode
   *
+  * This class can be extended with the help of the plugin mechanism described on the page
+  * \ref TopicCustomizing_Plugins by defining the preprocessor symbol \c EIGEN_MATRIXBASE_PLUGIN.
+  *
+  * \sa \blank \ref TopicClassHierarchy
   */
 template<typename Derived> class MatrixBase
+  : public DenseBase<Derived>
 {
   public:
-
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-    class InnerIterator;
-
-    typedef typename ei_traits<Derived>::Scalar Scalar;
-    typedef typename ei_packet_traits<Scalar>::type PacketScalar;
-#endif // not EIGEN_PARSED_BY_DOXYGEN
-
-    enum {
-
-      RowsAtCompileTime = ei_traits<Derived>::RowsAtCompileTime,
-        /**< The number of rows at compile-time. This is just a copy of the value provided
-          * by the \a Derived type. If a value is not known at compile-time,
-          * it is set to the \a Dynamic constant.
-          * \sa MatrixBase::rows(), MatrixBase::cols(), ColsAtCompileTime, SizeAtCompileTime */
-
-      ColsAtCompileTime = ei_traits<Derived>::ColsAtCompileTime,
-        /**< The number of columns at compile-time. This is just a copy of the value provided
-          * by the \a Derived type. If a value is not known at compile-time,
-          * it is set to the \a Dynamic constant.
-          * \sa MatrixBase::rows(), MatrixBase::cols(), RowsAtCompileTime, SizeAtCompileTime */
-
-
-      SizeAtCompileTime = (ei_size_at_compile_time<ei_traits<Derived>::RowsAtCompileTime,
-                                                   ei_traits<Derived>::ColsAtCompileTime>::ret),
-        /**< This is equal to the number of coefficients, i.e. the number of
-          * rows times the number of columns, or to \a Dynamic if this is not
-          * known at compile-time. \sa RowsAtCompileTime, ColsAtCompileTime */
-
-      MaxRowsAtCompileTime = ei_traits<Derived>::MaxRowsAtCompileTime,
-        /**< This value is equal to the maximum possible number of rows that this expression
-          * might have. If this expression might have an arbitrarily high number of rows,
-          * this value is set to \a Dynamic.
-          *
-          * This value is useful to know when evaluating an expression, in order to determine
-          * whether it is possible to avoid doing a dynamic memory allocation.
-          *
-          * \sa RowsAtCompileTime, MaxColsAtCompileTime, MaxSizeAtCompileTime
-          */
-
-      MaxColsAtCompileTime = ei_traits<Derived>::MaxColsAtCompileTime,
-        /**< This value is equal to the maximum possible number of columns that this expression
-          * might have. If this expression might have an arbitrarily high number of columns,
-          * this value is set to \a Dynamic.
-          *
-          * This value is useful to know when evaluating an expression, in order to determine
-          * whether it is possible to avoid doing a dynamic memory allocation.
-          *
-          * \sa ColsAtCompileTime, MaxRowsAtCompileTime, MaxSizeAtCompileTime
-          */
-
-      MaxSizeAtCompileTime = (ei_size_at_compile_time<ei_traits<Derived>::MaxRowsAtCompileTime,
-                                                      ei_traits<Derived>::MaxColsAtCompileTime>::ret),
-        /**< This value is equal to the maximum possible number of coefficients that this expression
-          * might have. If this expression might have an arbitrarily high number of coefficients,
-          * this value is set to \a Dynamic.
-          *
-          * This value is useful to know when evaluating an expression, in order to determine
-          * whether it is possible to avoid doing a dynamic memory allocation.
-          *
-          * \sa SizeAtCompileTime, MaxRowsAtCompileTime, MaxColsAtCompileTime
-          */
-
-      IsVectorAtCompileTime = ei_traits<Derived>::RowsAtCompileTime == 1
-                           || ei_traits<Derived>::ColsAtCompileTime == 1,
-        /**< This is set to true if either the number of rows or the number of
-          * columns is known at compile-time to be equal to 1. Indeed, in that case,
-          * we are dealing with a column-vector (if there is only one column) or with
-          * a row-vector (if there is only one row). */
-
-      Flags = ei_traits<Derived>::Flags,
-        /**< This stores expression \ref flags flags which may or may not be inherited by new expressions
-          * constructed from this one. See the \ref flags "list of flags".
-          */
-
-      CoeffReadCost = ei_traits<Derived>::CoeffReadCost
-        /**< This is a rough measure of how expensive it is to read one coefficient from
-          * this expression.
-          */
-    };
-
-#ifndef EIGEN_PARSED_BY_DOXYGEN
-    /** This is the "real scalar" type; if the \a Scalar type is already real numbers
-      * (e.g. int, float or double) then \a RealScalar is just the same as \a Scalar. If
-      * \a Scalar is \a std::complex<T> then RealScalar is \a T.
-      *
-      * \sa class NumTraits
-      */
+    typedef MatrixBase StorageBaseType;
+    typedef typename internal::traits<Derived>::StorageKind StorageKind;
+    typedef typename internal::traits<Derived>::StorageIndex StorageIndex;
+    typedef typename internal::traits<Derived>::Scalar Scalar;
+    typedef typename internal::packet_traits<Scalar>::type PacketScalar;
     typedef typename NumTraits<Scalar>::Real RealScalar;
 
-    /** type of the equivalent square matrix */
-    typedef Matrix<Scalar,EIGEN_ENUM_MAX(RowsAtCompileTime,ColsAtCompileTime),
-                          EIGEN_ENUM_MAX(RowsAtCompileTime,ColsAtCompileTime)> SquareMatrixType;
+    typedef DenseBase<Derived> Base;
+    using Base::RowsAtCompileTime;
+    using Base::ColsAtCompileTime;
+    using Base::SizeAtCompileTime;
+    using Base::MaxRowsAtCompileTime;
+    using Base::MaxColsAtCompileTime;
+    using Base::MaxSizeAtCompileTime;
+    using Base::IsVectorAtCompileTime;
+    using Base::Flags;
+
+    using Base::derived;
+    using Base::const_cast_derived;
+    using Base::rows;
+    using Base::cols;
+    using Base::size;
+    using Base::coeff;
+    using Base::coeffRef;
+    using Base::lazyAssign;
+    using Base::eval;
+    using Base::operator+=;
+    using Base::operator-=;
+    using Base::operator*=;
+    using Base::operator/=;
+
+    typedef typename Base::CoeffReturnType CoeffReturnType;
+    typedef typename Base::ConstTransposeReturnType ConstTransposeReturnType;
+    typedef typename Base::RowXpr RowXpr;
+    typedef typename Base::ColXpr ColXpr;
 #endif // not EIGEN_PARSED_BY_DOXYGEN
 
-    /** \returns the number of rows. \sa cols(), RowsAtCompileTime */
-    inline int rows() const { return derived().rows(); }
-    /** \returns the number of columns. \sa rows(), ColsAtCompileTime*/
-    inline int cols() const { return derived().cols(); }
-    /** \returns the number of coefficients, which is \a rows()*cols().
-      * \sa rows(), cols(), SizeAtCompileTime. */
-    inline int size() const { return rows() * cols(); }
-    /** \returns the number of nonzero coefficients which is in practice the number
-      * of stored coefficients. */
-    inline int nonZeros() const { return size(); }
-    /** \returns true if either the number of rows or the number of columns is equal to 1.
-      * In other words, this function returns
-      * \code rows()==1 || cols()==1 \endcode
-      * \sa rows(), cols(), IsVectorAtCompileTime. */
-    inline bool isVector() const { return rows()==1 || cols()==1; }
-    /** \returns the size of the storage major dimension,
-      * i.e., the number of columns for a columns major matrix, and the number of rows otherwise */
-    int outerSize() const { return (int(Flags)&RowMajorBit) ? this->rows() : this->cols(); }
-    /** \returns the size of the inner dimension according to the storage order,
-      * i.e., the number of rows for a columns major matrix, and the number of cols otherwise */
-    int innerSize() const { return (int(Flags)&RowMajorBit) ? this->cols() : this->rows(); }
+
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
-    /** \internal the plain matrix type corresponding to this expression. Note that is not necessarily
-      * exactly the return type of eval(): in the case of plain matrices, the return type of eval() is a const
-      * reference to a matrix, not a matrix! It guaranteed however, that the return type of eval() is either
-      * PlainMatrixType or const PlainMatrixType&.
-      */
-    typedef typename ei_plain_matrix_type<Derived>::type PlainMatrixType;
-    /** \internal the column-major plain matrix type corresponding to this expression. Note that is not necessarily
-      * exactly the return type of eval(): in the case of plain matrices, the return type of eval() is a const
-      * reference to a matrix, not a matrix!
-      * The only difference from PlainMatrixType is that PlainMatrixType_ColMajor is guaranteed to be column-major.
-      */
-    typedef typename ei_plain_matrix_type<Derived>::type PlainMatrixType_ColMajor;
-
-    /** \internal Represents a matrix with all coefficients equal to one another*/
-    typedef CwiseNullaryOp<ei_scalar_constant_op<Scalar>,Derived> ConstantReturnType;
-    /** \internal Represents a scalar multiple of a matrix */
-    typedef CwiseUnaryOp<ei_scalar_multiple_op<Scalar>, Derived> ScalarMultipleReturnType;
-    /** \internal Represents a quotient of a matrix by a scalar*/
-    typedef CwiseUnaryOp<ei_scalar_quotient1_op<Scalar>, Derived> ScalarQuotient1ReturnType;
-    /** \internal the return type of MatrixBase::conjugate() */
-    typedef typename ei_meta_if<NumTraits<Scalar>::IsComplex,
-                        const CwiseUnaryOp<ei_scalar_conjugate_op<Scalar>, Derived>,
-                        const Derived&
-                     >::ret ConjugateReturnType;
-    /** \internal the return type of MatrixBase::real() */
-    typedef CwiseUnaryOp<ei_scalar_real_op<Scalar>, Derived> RealReturnType;
-    /** \internal the return type of MatrixBase::imag() */
-    typedef CwiseUnaryOp<ei_scalar_imag_op<Scalar>, Derived> ImagReturnType;
-    /** \internal the return type of MatrixBase::adjoint() */
-    typedef Eigen::Transpose<NestByValue<typename ei_cleantype<ConjugateReturnType>::type> >
-            AdjointReturnType;
-    /** \internal the return type of MatrixBase::eigenvalues() */
-    typedef Matrix<typename NumTraits<typename ei_traits<Derived>::Scalar>::Real, ei_traits<Derived>::ColsAtCompileTime, 1> EigenvaluesReturnType;
-    /** \internal expression tyepe of a column */
-    typedef Block<Derived, ei_traits<Derived>::RowsAtCompileTime, 1> ColXpr;
-    /** \internal expression tyepe of a column */
-    typedef Block<Derived, 1, ei_traits<Derived>::ColsAtCompileTime> RowXpr;
-    /** \internal the return type of identity */
-    typedef CwiseNullaryOp<ei_scalar_identity_op<Scalar>,Derived> IdentityReturnType;
-    /** \internal the return type of unit vectors */
-    typedef Block<CwiseNullaryOp<ei_scalar_identity_op<Scalar>, SquareMatrixType>,
-                  ei_traits<Derived>::RowsAtCompileTime,
-                  ei_traits<Derived>::ColsAtCompileTime> BasisReturnType;
+    /** type of the equivalent square matrix */
+    typedef Matrix<Scalar,EIGEN_SIZE_MAX(RowsAtCompileTime,ColsAtCompileTime),
+                          EIGEN_SIZE_MAX(RowsAtCompileTime,ColsAtCompileTime)> SquareMatrixType;
 #endif // not EIGEN_PARSED_BY_DOXYGEN
 
+    /** \returns the size of the main diagonal, which is min(rows(),cols()).
+      * \sa rows(), cols(), SizeAtCompileTime. */
+    EIGEN_DEVICE_FUNC
+    inline Index diagonalSize() const { return (numext::mini)(rows(),cols()); }
 
-    /** Copies \a other into *this. \returns a reference to *this. */
-    template<typename OtherDerived>
-    Derived& operator=(const MatrixBase<OtherDerived>& other);
+    typedef typename Base::PlainObject PlainObject;
+
+#ifndef EIGEN_PARSED_BY_DOXYGEN
+    /** \internal Represents a matrix with all coefficients equal to one another*/
+    typedef CwiseNullaryOp<internal::scalar_constant_op<Scalar>,PlainObject> ConstantReturnType;
+    /** \internal the return type of MatrixBase::adjoint() */
+    typedef typename internal::conditional<NumTraits<Scalar>::IsComplex,
+                        CwiseUnaryOp<internal::scalar_conjugate_op<Scalar>, ConstTransposeReturnType>,
+                        ConstTransposeReturnType
+                     >::type AdjointReturnType;
+    /** \internal Return type of eigenvalues() */
+    typedef Matrix<std::complex<RealScalar>, internal::traits<Derived>::ColsAtCompileTime, 1, ColMajor> EigenvaluesReturnType;
+    /** \internal the return type of identity */
+    typedef CwiseNullaryOp<internal::scalar_identity_op<Scalar>,PlainObject> IdentityReturnType;
+    /** \internal the return type of unit vectors */
+    typedef Block<const CwiseNullaryOp<internal::scalar_identity_op<Scalar>, SquareMatrixType>,
+                  internal::traits<Derived>::RowsAtCompileTime,
+                  internal::traits<Derived>::ColsAtCompileTime> BasisReturnType;
+#endif // not EIGEN_PARSED_BY_DOXYGEN
+
+#define EIGEN_CURRENT_STORAGE_BASE_CLASS Eigen::MatrixBase
+#define EIGEN_DOC_UNARY_ADDONS(X,Y)
+#   include "../plugins/CommonCwiseUnaryOps.h"
+#   include "../plugins/CommonCwiseBinaryOps.h"
+#   include "../plugins/MatrixCwiseUnaryOps.h"
+#   include "../plugins/MatrixCwiseBinaryOps.h"
+#   ifdef EIGEN_MATRIXBASE_PLUGIN
+#     include EIGEN_MATRIXBASE_PLUGIN
+#   endif
+#undef EIGEN_CURRENT_STORAGE_BASE_CLASS
+#undef EIGEN_DOC_UNARY_ADDONS
 
     /** Special case of the template operator=, in order to prevent the compiler
       * from generating a default operator= (issue hit with g++ 4.1)
       */
-    inline Derived& operator=(const MatrixBase& other)
-    {
-      return this->operator=<Derived>(other);
-    }
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    Derived& operator=(const MatrixBase& other);
 
-#ifndef EIGEN_PARSED_BY_DOXYGEN
-    /** Copies \a other into *this without evaluating other. \returns a reference to *this. */
-    template<typename OtherDerived>
-    Derived& lazyAssign(const MatrixBase<OtherDerived>& other);
+    // We cannot inherit here via Base::operator= since it is causing
+    // trouble with MSVC.
 
-    /** Overloaded for cache friendly product evaluation */
-    template<typename Lhs, typename Rhs>
-    Derived& lazyAssign(const Product<Lhs,Rhs,CacheFriendlyProduct>& product);
+    template <typename OtherDerived>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    Derived& operator=(const DenseBase<OtherDerived>& other);
 
-    /** Overloaded for cache friendly product evaluation */
-    template<typename OtherDerived>
-    Derived& lazyAssign(const Flagged<OtherDerived, 0, EvalBeforeNestingBit | EvalBeforeAssigningBit>& other)
-    { return lazyAssign(other._expression()); }
-#endif // not EIGEN_PARSED_BY_DOXYGEN
-
-    CommaInitializer<Derived> operator<< (const Scalar& s);
+    template <typename OtherDerived>
+    EIGEN_DEVICE_FUNC
+    Derived& operator=(const EigenBase<OtherDerived>& other);
 
     template<typename OtherDerived>
-    CommaInitializer<Derived> operator<< (const MatrixBase<OtherDerived>& other);
-
-    const Scalar coeff(int row, int col) const;
-    const Scalar operator()(int row, int col) const;
-
-    Scalar& coeffRef(int row, int col);
-    Scalar& operator()(int row, int col);
-
-    const Scalar coeff(int index) const;
-    const Scalar operator[](int index) const;
-    const Scalar operator()(int index) const;
-
-    Scalar& coeffRef(int index);
-    Scalar& operator[](int index);
-    Scalar& operator()(int index);
-
-#ifndef EIGEN_PARSED_BY_DOXYGEN
-    template<typename OtherDerived>
-    void copyCoeff(int row, int col, const MatrixBase<OtherDerived>& other);
-    template<typename OtherDerived>
-    void copyCoeff(int index, const MatrixBase<OtherDerived>& other);
-    template<typename OtherDerived, int StoreMode, int LoadMode>
-    void copyPacket(int row, int col, const MatrixBase<OtherDerived>& other);
-    template<typename OtherDerived, int StoreMode, int LoadMode>
-    void copyPacket(int index, const MatrixBase<OtherDerived>& other);
-#endif // not EIGEN_PARSED_BY_DOXYGEN
-
-    template<int LoadMode>
-    PacketScalar packet(int row, int col) const;
-    template<int StoreMode>
-    void writePacket(int row, int col, const PacketScalar& x);
-
-    template<int LoadMode>
-    PacketScalar packet(int index) const;
-    template<int StoreMode>
-    void writePacket(int index, const PacketScalar& x);
-
-    const Scalar x() const;
-    const Scalar y() const;
-    const Scalar z() const;
-    const Scalar w() const;
-    Scalar& x();
-    Scalar& y();
-    Scalar& z();
-    Scalar& w();
-
-
-    const CwiseUnaryOp<ei_scalar_opposite_op<typename ei_traits<Derived>::Scalar>,Derived> operator-() const;
+    EIGEN_DEVICE_FUNC
+    Derived& operator=(const ReturnByValue<OtherDerived>& other);
 
     template<typename OtherDerived>
-    const CwiseBinaryOp<ei_scalar_sum_op<typename ei_traits<Derived>::Scalar>, Derived, OtherDerived>
-    operator+(const MatrixBase<OtherDerived> &other) const;
-
-    template<typename OtherDerived>
-    const CwiseBinaryOp<ei_scalar_difference_op<typename ei_traits<Derived>::Scalar>, Derived, OtherDerived>
-    operator-(const MatrixBase<OtherDerived> &other) const;
-
-    template<typename OtherDerived>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     Derived& operator+=(const MatrixBase<OtherDerived>& other);
     template<typename OtherDerived>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     Derived& operator-=(const MatrixBase<OtherDerived>& other);
 
-    template<typename Lhs,typename Rhs>
-    Derived& operator+=(const Flagged<Product<Lhs,Rhs,CacheFriendlyProduct>, 0, EvalBeforeNestingBit | EvalBeforeAssigningBit>& other);
-
-    Derived& operator*=(const Scalar& other);
-    Derived& operator/=(const Scalar& other);
-
-    const ScalarMultipleReturnType operator*(const Scalar& scalar) const;
-    const CwiseUnaryOp<ei_scalar_quotient1_op<typename ei_traits<Derived>::Scalar>, Derived>
-    operator/(const Scalar& scalar) const;
-
-    inline friend const CwiseUnaryOp<ei_scalar_multiple_op<typename ei_traits<Derived>::Scalar>, Derived>
-    operator*(const Scalar& scalar, const MatrixBase& matrix)
-    { return matrix*scalar; }
-
+#ifdef __CUDACC__
+    template<typename OtherDerived>
+    EIGEN_DEVICE_FUNC
+    const Product<Derived,OtherDerived,LazyProduct>
+    operator*(const MatrixBase<OtherDerived> &other) const
+    { return this->lazyProduct(other); }
+#else
 
     template<typename OtherDerived>
-    const typename ProductReturnType<Derived,OtherDerived>::Type
+    const Product<Derived,OtherDerived>
     operator*(const MatrixBase<OtherDerived> &other) const;
 
-    template<typename OtherDerived>
-    Derived& operator*=(const MatrixBase<OtherDerived>& other);
+#endif
 
     template<typename OtherDerived>
-    typename ei_plain_matrix_type_column_major<OtherDerived>::type
-		solveTriangular(const MatrixBase<OtherDerived>& other) const;
+    EIGEN_DEVICE_FUNC
+    const Product<Derived,OtherDerived,LazyProduct>
+    lazyProduct(const MatrixBase<OtherDerived> &other) const;
 
     template<typename OtherDerived>
-    void solveTriangularInPlace(const MatrixBase<OtherDerived>& other) const;
-
+    Derived& operator*=(const EigenBase<OtherDerived>& other);
 
     template<typename OtherDerived>
-    Scalar dot(const MatrixBase<OtherDerived>& other) const;
-    RealScalar squaredNorm() const;
-    RealScalar norm()  const;
-    const PlainMatrixType normalized() const;
-    void normalize();
+    void applyOnTheLeft(const EigenBase<OtherDerived>& other);
 
-    Eigen::Transpose<Derived> transpose();
-    const Eigen::Transpose<Derived> transpose() const;
-    void transposeInPlace();
-    const AdjointReturnType adjoint() const;
+    template<typename OtherDerived>
+    void applyOnTheRight(const EigenBase<OtherDerived>& other);
 
+    template<typename DiagonalDerived>
+    EIGEN_DEVICE_FUNC
+    const Product<Derived, DiagonalDerived, LazyProduct>
+    operator*(const DiagonalBase<DiagonalDerived> &diagonal) const;
 
-    RowXpr row(int i);
-    const RowXpr row(int i) const;
+    template<typename OtherDerived>
+    EIGEN_DEVICE_FUNC
+    typename ScalarBinaryOpTraits<typename internal::traits<Derived>::Scalar,typename internal::traits<OtherDerived>::Scalar>::ReturnType
+    dot(const MatrixBase<OtherDerived>& other) const;
 
-    ColXpr col(int i);
-    const ColXpr col(int i) const;
+    EIGEN_DEVICE_FUNC RealScalar squaredNorm() const;
+    EIGEN_DEVICE_FUNC RealScalar norm() const;
+    RealScalar stableNorm() const;
+    RealScalar blueNorm() const;
+    RealScalar hypotNorm() const;
+    EIGEN_DEVICE_FUNC const PlainObject normalized() const;
+    EIGEN_DEVICE_FUNC const PlainObject stableNormalized() const;
+    EIGEN_DEVICE_FUNC void normalize();
+    EIGEN_DEVICE_FUNC void stableNormalize();
 
-    Minor<Derived> minor(int row, int col);
-    const Minor<Derived> minor(int row, int col) const;
+    EIGEN_DEVICE_FUNC const AdjointReturnType adjoint() const;
+    EIGEN_DEVICE_FUNC void adjointInPlace();
 
-    typename BlockReturnType<Derived>::Type block(int startRow, int startCol, int blockRows, int blockCols);
-    const typename BlockReturnType<Derived>::Type
-    block(int startRow, int startCol, int blockRows, int blockCols) const;
+    typedef Diagonal<Derived> DiagonalReturnType;
+    EIGEN_DEVICE_FUNC
+    DiagonalReturnType diagonal();
 
-    typename BlockReturnType<Derived>::SubVectorType segment(int start, int size);
-    const typename BlockReturnType<Derived>::SubVectorType segment(int start, int size) const;
+    typedef typename internal::add_const<Diagonal<const Derived> >::type ConstDiagonalReturnType;
+    EIGEN_DEVICE_FUNC
+    ConstDiagonalReturnType diagonal() const;
 
-    typename BlockReturnType<Derived,Dynamic>::SubVectorType start(int size);
-    const typename BlockReturnType<Derived,Dynamic>::SubVectorType start(int size) const;
+    template<int Index> struct DiagonalIndexReturnType { typedef Diagonal<Derived,Index> Type; };
+    template<int Index> struct ConstDiagonalIndexReturnType { typedef const Diagonal<const Derived,Index> Type; };
 
-    typename BlockReturnType<Derived,Dynamic>::SubVectorType end(int size);
-    const typename BlockReturnType<Derived,Dynamic>::SubVectorType end(int size) const;
+    template<int Index>
+    EIGEN_DEVICE_FUNC
+    typename DiagonalIndexReturnType<Index>::Type diagonal();
 
-    typename BlockReturnType<Derived>::Type corner(CornerType type, int cRows, int cCols);
-    const typename BlockReturnType<Derived>::Type corner(CornerType type, int cRows, int cCols) const;
+    template<int Index>
+    EIGEN_DEVICE_FUNC
+    typename ConstDiagonalIndexReturnType<Index>::Type diagonal() const;
 
-    template<int BlockRows, int BlockCols>
-    typename BlockReturnType<Derived, BlockRows, BlockCols>::Type block(int startRow, int startCol);
-    template<int BlockRows, int BlockCols>
-    const typename BlockReturnType<Derived, BlockRows, BlockCols>::Type block(int startRow, int startCol) const;
+    typedef Diagonal<Derived,DynamicIndex> DiagonalDynamicIndexReturnType;
+    typedef typename internal::add_const<Diagonal<const Derived,DynamicIndex> >::type ConstDiagonalDynamicIndexReturnType;
 
-    template<int CRows, int CCols>
-    typename BlockReturnType<Derived, CRows, CCols>::Type corner(CornerType type);
-    template<int CRows, int CCols>
-    const typename BlockReturnType<Derived, CRows, CCols>::Type corner(CornerType type) const;
+    EIGEN_DEVICE_FUNC
+    DiagonalDynamicIndexReturnType diagonal(Index index);
+    EIGEN_DEVICE_FUNC
+    ConstDiagonalDynamicIndexReturnType diagonal(Index index) const;
 
-    template<int Size> typename BlockReturnType<Derived,Size>::SubVectorType start(void);
-    template<int Size> const typename BlockReturnType<Derived,Size>::SubVectorType start() const;
+    template<unsigned int Mode> struct TriangularViewReturnType { typedef TriangularView<Derived, Mode> Type; };
+    template<unsigned int Mode> struct ConstTriangularViewReturnType { typedef const TriangularView<const Derived, Mode> Type; };
 
-    template<int Size> typename BlockReturnType<Derived,Size>::SubVectorType end();
-    template<int Size> const typename BlockReturnType<Derived,Size>::SubVectorType end() const;
+    template<unsigned int Mode>
+    EIGEN_DEVICE_FUNC
+    typename TriangularViewReturnType<Mode>::Type triangularView();
+    template<unsigned int Mode>
+    EIGEN_DEVICE_FUNC
+    typename ConstTriangularViewReturnType<Mode>::Type triangularView() const;
 
-    template<int Size> typename BlockReturnType<Derived,Size>::SubVectorType segment(int start);
-    template<int Size> const typename BlockReturnType<Derived,Size>::SubVectorType segment(int start) const;
+    template<unsigned int UpLo> struct SelfAdjointViewReturnType { typedef SelfAdjointView<Derived, UpLo> Type; };
+    template<unsigned int UpLo> struct ConstSelfAdjointViewReturnType { typedef const SelfAdjointView<const Derived, UpLo> Type; };
 
-    DiagonalCoeffs<Derived> diagonal();
-    const DiagonalCoeffs<Derived> diagonal() const;
+    template<unsigned int UpLo>
+    EIGEN_DEVICE_FUNC
+    typename SelfAdjointViewReturnType<UpLo>::Type selfadjointView();
+    template<unsigned int UpLo>
+    EIGEN_DEVICE_FUNC
+    typename ConstSelfAdjointViewReturnType<UpLo>::Type selfadjointView() const;
 
-    template<unsigned int Mode> Part<Derived, Mode> part();
-    template<unsigned int Mode> const Part<Derived, Mode> part() const;
+    const SparseView<Derived> sparseView(const Scalar& m_reference = Scalar(0),
+                                         const typename NumTraits<Scalar>::Real& m_epsilon = NumTraits<Scalar>::dummy_precision()) const;
+    EIGEN_DEVICE_FUNC static const IdentityReturnType Identity();
+    EIGEN_DEVICE_FUNC static const IdentityReturnType Identity(Index rows, Index cols);
+    EIGEN_DEVICE_FUNC static const BasisReturnType Unit(Index size, Index i);
+    EIGEN_DEVICE_FUNC static const BasisReturnType Unit(Index i);
+    EIGEN_DEVICE_FUNC static const BasisReturnType UnitX();
+    EIGEN_DEVICE_FUNC static const BasisReturnType UnitY();
+    EIGEN_DEVICE_FUNC static const BasisReturnType UnitZ();
+    EIGEN_DEVICE_FUNC static const BasisReturnType UnitW();
 
+    EIGEN_DEVICE_FUNC
+    const DiagonalWrapper<const Derived> asDiagonal() const;
+    const PermutationWrapper<const Derived> asPermutation() const;
 
-    static const ConstantReturnType
-    Constant(int rows, int cols, const Scalar& value);
-    static const ConstantReturnType
-    Constant(int size, const Scalar& value);
-    static const ConstantReturnType
-    Constant(const Scalar& value);
-
-    template<typename CustomNullaryOp>
-    static const CwiseNullaryOp<CustomNullaryOp, Derived>
-    NullaryExpr(int rows, int cols, const CustomNullaryOp& func);
-    template<typename CustomNullaryOp>
-    static const CwiseNullaryOp<CustomNullaryOp, Derived>
-    NullaryExpr(int size, const CustomNullaryOp& func);
-    template<typename CustomNullaryOp>
-    static const CwiseNullaryOp<CustomNullaryOp, Derived>
-    NullaryExpr(const CustomNullaryOp& func);
-
-    static const ConstantReturnType Zero(int rows, int cols);
-    static const ConstantReturnType Zero(int size);
-    static const ConstantReturnType Zero();
-    static const ConstantReturnType Ones(int rows, int cols);
-    static const ConstantReturnType Ones(int size);
-    static const ConstantReturnType Ones();
-    static const IdentityReturnType Identity();
-    static const IdentityReturnType Identity(int rows, int cols);
-    static const BasisReturnType Unit(int size, int i);
-    static const BasisReturnType Unit(int i);
-    static const BasisReturnType UnitX();
-    static const BasisReturnType UnitY();
-    static const BasisReturnType UnitZ();
-    static const BasisReturnType UnitW();
-
-    const DiagonalMatrix<Derived> asDiagonal() const;
-
-    void fill(const Scalar& value);
-    Derived& setConstant(const Scalar& value);
-    Derived& setZero();
-    Derived& setOnes();
-    Derived& setRandom();
+    EIGEN_DEVICE_FUNC
     Derived& setIdentity();
+    EIGEN_DEVICE_FUNC
+    Derived& setIdentity(Index rows, Index cols);
 
+    bool isIdentity(const RealScalar& prec = NumTraits<Scalar>::dummy_precision()) const;
+    bool isDiagonal(const RealScalar& prec = NumTraits<Scalar>::dummy_precision()) const;
 
-    template<typename OtherDerived>
-    bool isApprox(const MatrixBase<OtherDerived>& other,
-                  RealScalar prec = precision<Scalar>()) const;
-    bool isMuchSmallerThan(const RealScalar& other,
-                           RealScalar prec = precision<Scalar>()) const;
-    template<typename OtherDerived>
-    bool isMuchSmallerThan(const MatrixBase<OtherDerived>& other,
-                           RealScalar prec = precision<Scalar>()) const;
-
-    bool isApproxToConstant(const Scalar& value, RealScalar prec = precision<Scalar>()) const;
-    bool isConstant(const Scalar& value, RealScalar prec = precision<Scalar>()) const;
-    bool isZero(RealScalar prec = precision<Scalar>()) const;
-    bool isOnes(RealScalar prec = precision<Scalar>()) const;
-    bool isIdentity(RealScalar prec = precision<Scalar>()) const;
-    bool isDiagonal(RealScalar prec = precision<Scalar>()) const;
-
-    bool isUpperTriangular(RealScalar prec = precision<Scalar>()) const;
-    bool isLowerTriangular(RealScalar prec = precision<Scalar>()) const;
+    bool isUpperTriangular(const RealScalar& prec = NumTraits<Scalar>::dummy_precision()) const;
+    bool isLowerTriangular(const RealScalar& prec = NumTraits<Scalar>::dummy_precision()) const;
 
     template<typename OtherDerived>
     bool isOrthogonal(const MatrixBase<OtherDerived>& other,
-                      RealScalar prec = precision<Scalar>()) const;
-    bool isUnitary(RealScalar prec = precision<Scalar>()) const;
+                      const RealScalar& prec = NumTraits<Scalar>::dummy_precision()) const;
+    bool isUnitary(const RealScalar& prec = NumTraits<Scalar>::dummy_precision()) const;
 
+    /** \returns true if each coefficients of \c *this and \a other are all exactly equal.
+      * \warning When using floating point scalar values you probably should rather use a
+      *          fuzzy comparison such as isApprox()
+      * \sa isApprox(), operator!= */
     template<typename OtherDerived>
     inline bool operator==(const MatrixBase<OtherDerived>& other) const
-    { return (cwise() == other).all(); }
+    { return cwiseEqual(other).all(); }
 
+    /** \returns true if at least one pair of coefficients of \c *this and \a other are not exactly equal to each other.
+      * \warning When using floating point scalar values you probably should rather use a
+      *          fuzzy comparison such as isApprox()
+      * \sa isApprox(), operator== */
     template<typename OtherDerived>
     inline bool operator!=(const MatrixBase<OtherDerived>& other) const
-    { return (cwise() != other).any(); }
+    { return cwiseNotEqual(other).any(); }
 
+    NoAlias<Derived,Eigen::MatrixBase > noalias();
 
-    template<typename NewType>
-    const CwiseUnaryOp<ei_scalar_cast_op<typename ei_traits<Derived>::Scalar, NewType>, Derived> cast() const;
+    // TODO forceAlignedAccess is temporarily disabled
+    // Need to find a nicer workaround.
+    inline const Derived& forceAlignedAccess() const { return derived(); }
+    inline Derived& forceAlignedAccess() { return derived(); }
+    template<bool Enable> inline const Derived& forceAlignedAccessIf() const { return derived(); }
+    template<bool Enable> inline Derived& forceAlignedAccessIf() { return derived(); }
 
-    /** \returns the matrix or vector obtained by evaluating this expression.
-      *
-      * Notice that in the case of a plain matrix or vector (not an expression) this function just returns
-      * a const reference, in order to avoid a useless copy.
-      */
-    EIGEN_STRONG_INLINE const typename ei_eval<Derived>::type eval() const
-    { return typename ei_eval<Derived>::type(derived()); }
+    EIGEN_DEVICE_FUNC Scalar trace() const;
 
-    template<typename OtherDerived>
-    void swap(const MatrixBase<OtherDerived>& other);
+    template<int p> EIGEN_DEVICE_FUNC RealScalar lpNorm() const;
 
-    template<unsigned int Added>
-    const Flagged<Derived, Added, 0> marked() const;
-    const Flagged<Derived, 0, EvalBeforeNestingBit | EvalBeforeAssigningBit> lazy() const;
+    EIGEN_DEVICE_FUNC MatrixBase<Derived>& matrix() { return *this; }
+    EIGEN_DEVICE_FUNC const MatrixBase<Derived>& matrix() const { return *this; }
 
-    /** \returns number of elements to skip to pass from one row (resp. column) to another
-      * for a row-major (resp. column-major) matrix.
-      * Combined with coeffRef() and the \ref flags flags, it allows a direct access to the data
-      * of the underlying matrix.
-      */
-    inline int stride(void) const { return derived().stride(); }
-
-    inline const NestByValue<Derived> nestByValue() const;
-
-
-    ConjugateReturnType conjugate() const;
-    const RealReturnType real() const;
-    const ImagReturnType imag() const;
-
-    template<typename CustomUnaryOp>
-    const CwiseUnaryOp<CustomUnaryOp, Derived> unaryExpr(const CustomUnaryOp& func = CustomUnaryOp()) const;
-
-    template<typename CustomBinaryOp, typename OtherDerived>
-    const CwiseBinaryOp<CustomBinaryOp, Derived, OtherDerived>
-    binaryExpr(const MatrixBase<OtherDerived> &other, const CustomBinaryOp& func = CustomBinaryOp()) const;
-
-
-    Scalar sum() const;
-    Scalar trace() const;
-
-    typename ei_traits<Derived>::Scalar minCoeff() const;
-    typename ei_traits<Derived>::Scalar maxCoeff() const;
-
-    typename ei_traits<Derived>::Scalar minCoeff(int* row, int* col) const;
-    typename ei_traits<Derived>::Scalar maxCoeff(int* row, int* col) const;
-
-    typename ei_traits<Derived>::Scalar minCoeff(int* index) const;
-    typename ei_traits<Derived>::Scalar maxCoeff(int* index) const;
-
-    template<typename BinaryOp>
-    typename ei_result_of<BinaryOp(typename ei_traits<Derived>::Scalar)>::type
-    redux(const BinaryOp& func) const;
-
-    template<typename Visitor>
-    void visit(Visitor& func) const;
-
-#ifndef EIGEN_PARSED_BY_DOXYGEN
-    inline const Derived& derived() const { return *static_cast<const Derived*>(this); }
-    inline Derived& derived() { return *static_cast<Derived*>(this); }
-    inline Derived& const_cast_derived() const
-    { return *static_cast<Derived*>(const_cast<MatrixBase*>(this)); }
-#endif // not EIGEN_PARSED_BY_DOXYGEN
-
-    const Cwise<Derived> cwise() const;
-    Cwise<Derived> cwise();
-
-    inline const WithFormat<Derived> format(const IOFormat& fmt) const;
-
-/////////// Array module ///////////
-
-    bool all(void) const;
-    bool any(void) const;
-    int count() const;
-
-    const PartialRedux<Derived,Horizontal> rowwise() const;
-    const PartialRedux<Derived,Vertical> colwise() const;
-
-    static const CwiseNullaryOp<ei_scalar_random_op<Scalar>,Derived> Random(int rows, int cols);
-    static const CwiseNullaryOp<ei_scalar_random_op<Scalar>,Derived> Random(int size);
-    static const CwiseNullaryOp<ei_scalar_random_op<Scalar>,Derived> Random();
-
-    template<typename ThenDerived,typename ElseDerived>
-    const Select<Derived,ThenDerived,ElseDerived>
-    select(const MatrixBase<ThenDerived>& thenMatrix,
-           const MatrixBase<ElseDerived>& elseMatrix) const;
-
-    template<typename ThenDerived>
-    inline const Select<Derived,ThenDerived, NestByValue<typename ThenDerived::ConstantReturnType> >
-    select(const MatrixBase<ThenDerived>& thenMatrix, typename ThenDerived::Scalar elseScalar) const;
-
-    template<typename ElseDerived>
-    inline const Select<Derived, NestByValue<typename ElseDerived::ConstantReturnType>, ElseDerived >
-    select(typename ElseDerived::Scalar thenScalar, const MatrixBase<ElseDerived>& elseMatrix) const;
-
-    template<int p> RealScalar lpNorm() const;
+    /** \returns an \link Eigen::ArrayBase Array \endlink expression of this matrix
+      * \sa ArrayBase::matrix() */
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE ArrayWrapper<Derived> array() { return ArrayWrapper<Derived>(derived()); }
+    /** \returns a const \link Eigen::ArrayBase Array \endlink expression of this matrix
+      * \sa ArrayBase::matrix() */
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const ArrayWrapper<const Derived> array() const { return ArrayWrapper<const Derived>(derived()); }
 
 /////////// LU module ///////////
 
-    const LU<PlainMatrixType> lu() const;
-    const PlainMatrixType inverse() const;
+    inline const FullPivLU<PlainObject> fullPivLu() const;
+    inline const PartialPivLU<PlainObject> partialPivLu() const;
+
+    inline const PartialPivLU<PlainObject> lu() const;
+
+    inline const Inverse<Derived> inverse() const;
+
     template<typename ResultType>
-    void computeInverse(MatrixBase<ResultType> *result) const;
+    inline void computeInverseAndDetWithCheck(
+      ResultType& inverse,
+      typename ResultType::Scalar& determinant,
+      bool& invertible,
+      const RealScalar& absDeterminantThreshold = NumTraits<Scalar>::dummy_precision()
+    ) const;
+    template<typename ResultType>
+    inline void computeInverseWithCheck(
+      ResultType& inverse,
+      bool& invertible,
+      const RealScalar& absDeterminantThreshold = NumTraits<Scalar>::dummy_precision()
+    ) const;
     Scalar determinant() const;
 
 /////////// Cholesky module ///////////
 
-    const LLT<PlainMatrixType>  llt() const;
-    const LDLT<PlainMatrixType> ldlt() const;
+    inline const LLT<PlainObject>  llt() const;
+    inline const LDLT<PlainObject> ldlt() const;
 
 /////////// QR module ///////////
 
-    const QR<PlainMatrixType> qr() const;
+    inline const HouseholderQR<PlainObject> householderQr() const;
+    inline const ColPivHouseholderQR<PlainObject> colPivHouseholderQr() const;
+    inline const FullPivHouseholderQR<PlainObject> fullPivHouseholderQr() const;
+    inline const CompleteOrthogonalDecomposition<PlainObject> completeOrthogonalDecomposition() const;
 
-    EigenvaluesReturnType eigenvalues() const;
-    RealScalar operatorNorm() const;
+/////////// Eigenvalues module ///////////
+
+    inline EigenvaluesReturnType eigenvalues() const;
+    inline RealScalar operatorNorm() const;
 
 /////////// SVD module ///////////
 
-    SVD<PlainMatrixType> svd() const;
+    inline JacobiSVD<PlainObject> jacobiSvd(unsigned int computationOptions = 0) const;
+    inline BDCSVD<PlainObject>    bdcSvd(unsigned int computationOptions = 0) const;
 
 /////////// Geometry module ///////////
 
+    #ifndef EIGEN_PARSED_BY_DOXYGEN
+    /// \internal helper struct to form the return type of the cross product
+    template<typename OtherDerived> struct cross_product_return_type {
+      typedef typename ScalarBinaryOpTraits<typename internal::traits<Derived>::Scalar,typename internal::traits<OtherDerived>::Scalar>::ReturnType Scalar;
+      typedef Matrix<Scalar,MatrixBase::RowsAtCompileTime,MatrixBase::ColsAtCompileTime> type;
+    };
+    #endif // EIGEN_PARSED_BY_DOXYGEN
     template<typename OtherDerived>
-    PlainMatrixType cross(const MatrixBase<OtherDerived>& other) const;
-    PlainMatrixType unitOrthogonal(void) const;
-    Matrix<Scalar,3,1> eulerAngles(int a0, int a1, int a2) const;
-
-/////////// Sparse module ///////////
-
-    // dense = spasre * dense
-    template<typename Derived1, typename Derived2>
-    Derived& lazyAssign(const SparseProduct<Derived1,Derived2,SparseTimeDenseProduct>& product);
-    // dense = dense * spasre
-    template<typename Derived1, typename Derived2>
-    Derived& lazyAssign(const SparseProduct<Derived1,Derived2,DenseTimeSparseProduct>& product);
-
-    #ifdef EIGEN_MATRIXBASE_PLUGIN
-    #include EIGEN_MATRIXBASE_PLUGIN
-    #endif
-
-  protected:
-    /** Default constructor. Do nothing. */
-    MatrixBase()
-    {
-      /* Just checks for self-consistency of the flags.
-       * Only do it when debugging Eigen, as this borders on paranoiac and could slow compilation down
-       */
-#ifdef EIGEN_INTERNAL_DEBUGGING
-      EIGEN_STATIC_ASSERT(ei_are_flags_consistent<Flags>::ret,
-                          INVALID_MATRIXBASE_TEMPLATE_PARAMETERS)
+    EIGEN_DEVICE_FUNC
+#ifndef EIGEN_PARSED_BY_DOXYGEN
+    inline typename cross_product_return_type<OtherDerived>::type
+#else
+    inline PlainObject
 #endif
+    cross(const MatrixBase<OtherDerived>& other) const;
+
+    template<typename OtherDerived>
+    EIGEN_DEVICE_FUNC
+    inline PlainObject cross3(const MatrixBase<OtherDerived>& other) const;
+
+    EIGEN_DEVICE_FUNC
+    inline PlainObject unitOrthogonal(void) const;
+
+    EIGEN_DEVICE_FUNC
+    inline Matrix<Scalar,3,1> eulerAngles(Index a0, Index a1, Index a2) const;
+
+    // put this as separate enum value to work around possible GCC 4.3 bug (?)
+    enum { HomogeneousReturnTypeDirection = ColsAtCompileTime==1&&RowsAtCompileTime==1 ? ((internal::traits<Derived>::Flags&RowMajorBit)==RowMajorBit ? Horizontal : Vertical)
+                                          : ColsAtCompileTime==1 ? Vertical : Horizontal };
+    typedef Homogeneous<Derived, HomogeneousReturnTypeDirection> HomogeneousReturnType;
+    EIGEN_DEVICE_FUNC
+    inline HomogeneousReturnType homogeneous() const;
+
+    enum {
+      SizeMinusOne = SizeAtCompileTime==Dynamic ? Dynamic : SizeAtCompileTime-1
+    };
+    typedef Block<const Derived,
+                  internal::traits<Derived>::ColsAtCompileTime==1 ? SizeMinusOne : 1,
+                  internal::traits<Derived>::ColsAtCompileTime==1 ? 1 : SizeMinusOne> ConstStartMinusOne;
+    typedef EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(ConstStartMinusOne,Scalar,quotient) HNormalizedReturnType;
+    EIGEN_DEVICE_FUNC
+    inline const HNormalizedReturnType hnormalized() const;
+
+////////// Householder module ///////////
+
+    void makeHouseholderInPlace(Scalar& tau, RealScalar& beta);
+    template<typename EssentialPart>
+    void makeHouseholder(EssentialPart& essential,
+                         Scalar& tau, RealScalar& beta) const;
+    template<typename EssentialPart>
+    void applyHouseholderOnTheLeft(const EssentialPart& essential,
+                                   const Scalar& tau,
+                                   Scalar* workspace);
+    template<typename EssentialPart>
+    void applyHouseholderOnTheRight(const EssentialPart& essential,
+                                    const Scalar& tau,
+                                    Scalar* workspace);
+
+///////// Jacobi module /////////
+
+    template<typename OtherScalar>
+    void applyOnTheLeft(Index p, Index q, const JacobiRotation<OtherScalar>& j);
+    template<typename OtherScalar>
+    void applyOnTheRight(Index p, Index q, const JacobiRotation<OtherScalar>& j);
+
+///////// SparseCore module /////////
+
+    template<typename OtherDerived>
+    EIGEN_STRONG_INLINE const typename SparseMatrixBase<OtherDerived>::template CwiseProductDenseReturnType<Derived>::Type
+    cwiseProduct(const SparseMatrixBase<OtherDerived> &other) const
+    {
+      return other.cwiseProduct(derived());
     }
 
+///////// MatrixFunctions module /////////
+
+    typedef typename internal::stem_function<Scalar>::type StemFunction;
+    const MatrixExponentialReturnValue<Derived> exp() const;
+    const MatrixFunctionReturnValue<Derived> matrixFunction(StemFunction f) const;
+    const MatrixFunctionReturnValue<Derived> cosh() const;
+    const MatrixFunctionReturnValue<Derived> sinh() const;
+    const MatrixFunctionReturnValue<Derived> cos() const;
+    const MatrixFunctionReturnValue<Derived> sin() const;
+    const MatrixSquareRootReturnValue<Derived> sqrt() const;
+    const MatrixLogarithmReturnValue<Derived> log() const;
+    const MatrixPowerReturnValue<Derived> pow(const RealScalar& p) const;
+    const MatrixComplexPowerReturnValue<Derived> pow(const std::complex<RealScalar>& p) const;
+
+  protected:
+    EIGEN_DEVICE_FUNC MatrixBase() : Base() {}
+
   private:
-    explicit MatrixBase(int);
-    MatrixBase(int,int);
-    template<typename OtherDerived> explicit MatrixBase(const MatrixBase<OtherDerived>&);
+    EIGEN_DEVICE_FUNC explicit MatrixBase(int);
+    EIGEN_DEVICE_FUNC MatrixBase(int,int);
+    template<typename OtherDerived> EIGEN_DEVICE_FUNC explicit MatrixBase(const MatrixBase<OtherDerived>&);
+  protected:
+    // mixing arrays and matrices is not legal
+    template<typename OtherDerived> Derived& operator+=(const ArrayBase<OtherDerived>& )
+    {EIGEN_STATIC_ASSERT(std::ptrdiff_t(sizeof(typename OtherDerived::Scalar))==-1,YOU_CANNOT_MIX_ARRAYS_AND_MATRICES); return *this;}
+    // mixing arrays and matrices is not legal
+    template<typename OtherDerived> Derived& operator-=(const ArrayBase<OtherDerived>& )
+    {EIGEN_STATIC_ASSERT(std::ptrdiff_t(sizeof(typename OtherDerived::Scalar))==-1,YOU_CANNOT_MIX_ARRAYS_AND_MATRICES); return *this;}
 };
+
+
+/***************************************************************************
+* Implementation of matrix base methods
+***************************************************************************/
+
+/** replaces \c *this by \c *this * \a other.
+  *
+  * \returns a reference to \c *this
+  *
+  * Example: \include MatrixBase_applyOnTheRight.cpp
+  * Output: \verbinclude MatrixBase_applyOnTheRight.out
+  */
+template<typename Derived>
+template<typename OtherDerived>
+inline Derived&
+MatrixBase<Derived>::operator*=(const EigenBase<OtherDerived> &other)
+{
+  other.derived().applyThisOnTheRight(derived());
+  return derived();
+}
+
+/** replaces \c *this by \c *this * \a other. It is equivalent to MatrixBase::operator*=().
+  *
+  * Example: \include MatrixBase_applyOnTheRight.cpp
+  * Output: \verbinclude MatrixBase_applyOnTheRight.out
+  */
+template<typename Derived>
+template<typename OtherDerived>
+inline void MatrixBase<Derived>::applyOnTheRight(const EigenBase<OtherDerived> &other)
+{
+  other.derived().applyThisOnTheRight(derived());
+}
+
+/** replaces \c *this by \a other * \c *this.
+  *
+  * Example: \include MatrixBase_applyOnTheLeft.cpp
+  * Output: \verbinclude MatrixBase_applyOnTheLeft.out
+  */
+template<typename Derived>
+template<typename OtherDerived>
+inline void MatrixBase<Derived>::applyOnTheLeft(const EigenBase<OtherDerived> &other)
+{
+  other.derived().applyThisOnTheLeft(derived());
+}
+
+} // end namespace Eigen
 
 #endif // EIGEN_MATRIXBASE_H

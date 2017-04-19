@@ -345,8 +345,8 @@ ParseStringList(Hash* table,
 	}
 	else if (v->getType() == Value::ArrayType)
 	{
-		Array* array = v->getArray();
-		Array::const_iterator iter;
+		ValueArray* array = v->getArray();
+		ValueArray::const_iterator iter;
 
 		// Verify that all array entries are strings
 		for (iter = array->begin(); iter != array->end(); iter++)

@@ -11,7 +11,6 @@
 // of the License, or (at your option) any later version.
 
 #include <celengine/dsooctree.h>
-#include <Eigen/Array>
 
 using namespace Eigen;
 
@@ -33,7 +32,7 @@ bool dsoStraddlesNodesPredicate(const Vector3d& cellCenterPos, DeepSkyObject* co
     //checks if this dso's radius straddles child nodes
     float dsoRadius    = _dso->getBoundingSphereRadius();
 
-    return (_dso->getPosition() - cellCenterPos).cwise().abs().minCoeff() < dsoRadius;
+    return (_dso->getPosition() - cellCenterPos).cwiseAbs().minCoeff() < dsoRadius;
 #ifdef CELVEC
     return abs(dsoPos.x - cellCenterPos.x) < dsoRadius    ||
            abs(dsoPos.y - cellCenterPos.y) < dsoRadius    ||
@@ -87,7 +86,7 @@ void DSOOctree::processVisibleObjects(DSOHandler&    processor,
     {
         const Hyperplane<double, 3>& plane = frustumPlanes[i];
 
-        double r = scale * plane.normal().cwise().abs().sum();
+        double r = scale * plane.normal().cwiseAbs().sum();
         if (plane.signedDistance(cellCenterPos) < -r)
             return;
 
