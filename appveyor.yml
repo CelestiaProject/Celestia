@@ -1,0 +1,50 @@
+version: 1.7.0-dev-{build}
+pull_requests:
+  do_not_increment_build_number: true
+max_jobs: 1
+image: Visual Studio 2017
+configuration: Release
+platform:
+- x86
+- x64
+clone_folder: c:\projects\celestia
+only_commits:
+  files:
+    - scr/
+    - thirdparty/
+    - windows/
+    - appveyor.yml
+    - celestia.pro
+    - celestia.sln
+    - celestia.vcxproj
+build:
+  project: celestia.vcxproj
+  verbosity: minimal
+after_build:
+- cmd: >-
+    cd c:\
+
+    IF NOT EXIST projects\celestia\bin\x86 (2>nul md projects\celestia\bin\x86)
+
+    IF NOT EXIST projects\celestia\bin\x64 (2>nul md projects\celestia\bin\x64)
+
+    IF EXIST %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\Win32\celestia.exe (2>nul move %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\Win32\celestia.exe c:\projects\celestia\bin\x86\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe)
+
+    IF EXIST %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\x64\celestia.exe (2>nul move %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\x64\celestia.exe c:\projects\celestia\bin\x64\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe)
+test: off
+artifacts:
+- path: bin\$(platform)\*.exe
+  name: Executable
+deploy:
+- provider: FTP
+  host: 188.120.250.231
+  protocol: ftp
+  username: appveyor
+  password:
+    secure: IITNCOuLor/IEDyjHLpUcQ==
+  artifact: Executable
+after_deploy:
+- cmd: >-
+    cd c:\
+
+    2>nul del c:\projects\celestia\bin\%PLATFORM%\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe
