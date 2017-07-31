@@ -65,6 +65,7 @@ extern "C" {
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 
 using namespace std;
 
