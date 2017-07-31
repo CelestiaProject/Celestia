@@ -337,8 +337,9 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
     // Clear out the results of the previous populate() call
     if (dsos.size() != 0)
     {
+        beginResetModel();
         dsos.clear();
-        reset();
+        endResetModel();
     }
 
     if (filteredDSOs.empty())

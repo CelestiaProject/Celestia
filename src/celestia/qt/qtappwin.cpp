@@ -738,7 +738,7 @@ void CelestiaAppWindow::slotCaptureVideo()
             MovieCapture* movieCapture = new OggTheoraCapture();
             movieCapture->setAspectRatio(1, 1);
 #endif
-            bool ok = movieCapture->start(saveAsName.toAscii().data(),
+            bool ok = movieCapture->start(saveAsName.toLatin1().data(),
                                           videoSize.width(), videoSize.height(),
                                           frameRate);
             if (ok)
