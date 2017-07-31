@@ -18,8 +18,9 @@
 #include <cassert>
 #include <celengine/celestia.h>
 #include <celengine/starbrowser.h>
-#include <qcursor.h>
-#include <qpaintdevice.h>
+
+#include <QCursor>
+#include <QPaintDevice>
 #include <QMouseEvent>
 #include <QSettings>
 

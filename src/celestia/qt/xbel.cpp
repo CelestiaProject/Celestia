@@ -25,7 +25,7 @@ XbelReader::XbelReader(QIODevice* device) :
 // Read an PNG image from a base64 encoded string.
 static QIcon CreateBookmarkIcon(const QString& iconBase64Data)
 {
-    QByteArray iconData = QByteArray::fromBase64(iconBase64Data.toAscii());
+    QByteArray iconData = QByteArray::fromBase64(iconBase64Data.toLatin1());
     QPixmap iconPixmap;
     iconPixmap.loadFromData(iconData, "PNG");
     return QIcon(iconPixmap);
