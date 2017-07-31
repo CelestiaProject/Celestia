@@ -29,7 +29,9 @@ typedef unsigned __int64 uint64;
 #include <limits>
 typedef          int64_t int64;
 typedef         uint64_t uint64;
+#ifndef INT64_MAX
 #define INT64_MAX 9223372036854775807LL
+#endif
 #ifndef UINT64_MAX
 #define UINT64_MAX 0xffffffffffffffffULL
 #endif
