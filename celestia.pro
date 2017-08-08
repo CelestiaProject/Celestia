@@ -551,14 +551,14 @@ win32 {
         windows/inc/libz \
         windows/inc/libpng \
         windows/inc/libjpeg \
-        windows/inc/lua-5.1 \
+        windows/inc/lua \
         windows/inc/spice
     LIBS += -Lwindows/lib/x86 \
         -lzlib \
         -llibpng \
         -llibjpeg \
         -lintl \
-        -llua5.1 \
+        -llua51 \
         -lcspice \
         -lvfw32
 
@@ -581,7 +581,7 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua5.1 lua
+    LUALIST = lua51 lua
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
