@@ -10,6 +10,8 @@
 // Load JPL's DE200, DE405, and DE406 ephemerides and compute planet
 // positions.
 
+#include <algorithm>
+
 #include <fstream>
 #include <iomanip>
 #include <cstdio>

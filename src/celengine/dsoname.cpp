@@ -10,6 +10,8 @@
 //
 //
 
+#include <algorithm>
+
 #include <celengine/dsoname.h>
 
 using namespace std;

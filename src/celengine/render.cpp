@@ -8,6 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #define DEBUG_COALESCE               0
 #define DEBUG_SECONDARY_ILLUMINATION 0
 #define DEBUG_ORBIT_CACHE            0

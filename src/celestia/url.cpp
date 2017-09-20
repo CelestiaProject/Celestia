@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <algorithm>
+
 #include <string>
 #include <cstring>
 #include <cstdio>

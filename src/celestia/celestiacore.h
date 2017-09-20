@@ -86,6 +86,9 @@
 #include "fmod_errors.h"
 #define MAX_CHANNELS    8
 
+//#define NOMINMAX
+#include <algorithm>
+
 class Url;
 
 // class CelestiaWatcher;

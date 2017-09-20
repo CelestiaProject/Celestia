@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #include "spicerotation.h"
 #include "spiceinterface.h"
 #include <celengine/astro.h>

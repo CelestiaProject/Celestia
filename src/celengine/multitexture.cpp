@@ -7,6 +7,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #include "multitexture.h"
 #include "texmanager.h"
 #include <celutil/debug.h>

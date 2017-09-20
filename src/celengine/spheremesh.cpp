@@ -12,6 +12,8 @@
 // It's sole function now is to handle the now-deprecated .cms mesh files;
 // it will eventually be removed from Celestia.
 
+#include <algorithm>
+
 #include "spheremesh.h"
 #include <celmath/mathlib.h>
 #include <celutil/basictypes.h>

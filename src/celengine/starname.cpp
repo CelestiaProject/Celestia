@@ -10,6 +10,8 @@
 //
 //
 
+#include <algorithm>
+
 #include <celengine/constellation.h>
 #include <celengine/starname.h>
 

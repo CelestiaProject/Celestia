@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <iomanip>
-
+#include <algorithm>
 #include "3dschunk.h"
 #include "3dsmodel.h"
 #include "3dsread.h"
