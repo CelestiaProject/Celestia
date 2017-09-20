@@ -1,13 +1,16 @@
 version: 1.7.0-dev-{build}
 pull_requests:
   do_not_increment_build_number: true
+branches:
+  only:
+  - VS2017-x86-x64
 max_jobs: 1
 image: Visual Studio 2017
 configuration: Release
 platform:
 - x86
 - x64
-clone_folder: c:\projects\celestia
+clone_folder: c:\projects\celestia-vs2017
 only_commits:
   files:
     - scr/
@@ -24,13 +27,13 @@ after_build:
 - cmd: >-
     cd c:\
 
-    IF NOT EXIST projects\celestia\bin\x86 (2>nul md projects\celestia\bin\x86)
+    IF NOT EXIST projects\celestia-vs2017\bin\x86 (2>nul md projects\celestia-vs2017\bin\x86)
 
-    IF NOT EXIST projects\celestia\bin\x64 (2>nul md projects\celestia\bin\x64)
+    IF NOT EXIST projects\celestia-vs2017\bin\x64 (2>nul md projects\celestia-vs2017\bin\x64)
 
-    IF EXIST %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\Win32\celestia.exe (2>nul move %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\Win32\celestia.exe c:\projects\celestia\bin\x86\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe)
+    IF EXIST %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\Win32\celestia.exe (2>nul move %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\Win32\celestia.exe c:\projects\celestia-vs2017\bin\x86\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe)
 
-    IF EXIST %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\x64\celestia.exe (2>nul move %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\x64\celestia.exe c:\projects\celestia\bin\x64\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe)
+    IF EXIST %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\x64\celestia.exe (2>nul move %APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%\x64\celestia.exe c:\projects\celestia-vs2017\bin\x64\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe)
 test: off
 artifacts:
 - path: bin\$(platform)\*.exe
@@ -39,12 +42,12 @@ deploy:
 - provider: FTP
   host: 188.120.250.231
   protocol: ftp
-  username: appveyor
+  username: appveyor-vs2017
   password:
-    secure: IITNCOuLor/IEDyjHLpUcQ==
+    secure: tuUaNJanMStH5x29zT0XwA==
   artifact: Executable
 after_deploy:
 - cmd: >-
     cd c:\
 
-    2>nul del c:\projects\celestia\bin\%PLATFORM%\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe
+    2>nul del c:\projects\celestia-vs2017\bin\%PLATFORM%\celestia-1.7.0-dev-%APPVEYOR_BUILD_NUMBER%.exe
