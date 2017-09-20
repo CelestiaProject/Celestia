@@ -15,6 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
+// Glew included before qtGui due to changes in QT5 that try to restrict you for compatibility.
+#include <GL/glew.h>
+// Works with VS2010 & QT5.4.2 via QT creator.
+// Do not remove if using QT5 or later.
+
+#include <algorithm>
+
 #include <QtGui>
 #include <QApplication>
 #include <QSplashScreen>
@@ -90,7 +97,8 @@ int main(int argc, char *argv[])
 
     // By default, QString converts the const char * data into Unicode Latin-1 characters.
     // We need to change this to UTF-8 for i18n purpose.
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    // 17-08-25 commented out setCodecForCStrings, it is a deprecated command as per QT5.
+    //QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
     CelestiaAppWindow window;
 

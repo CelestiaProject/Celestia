@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #ifdef TARGET_OS_MAC
 #include <Carbon/Carbon.h>
 #endif
@@ -738,7 +740,10 @@ void CelestiaAppWindow::slotCaptureVideo()
             MovieCapture* movieCapture = new OggTheoraCapture();
             movieCapture->setAspectRatio(1, 1);
 #endif
-            bool ok = movieCapture->start(saveAsName.toAscii().data(),
+            // 17-08-24 toAscii replaced by toLatin1() as per QT5
+            //QByteArray iconData = QByteArray::fromBase64(iconBase64Data.toAscii());
+            //bool ok = movieCapture->start(saveAsName.toAscii().data(),
+            bool ok = movieCapture->start(saveAsName.toLatin1().data(),
                                           videoSize.width(), videoSize.height(),
                                           frameRate);
             if (ok)

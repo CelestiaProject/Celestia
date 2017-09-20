@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <algorithm>
+
 #include <cassert>
 #include <celengine/celestia.h>
 #include <celengine/starbrowser.h>

@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #include <celestia/celestiacore.h>
 #include "qtcelestialbrowser.h"
 #include "qtcolorswatchwidget.h"
@@ -413,7 +415,11 @@ void StarTableModel::populate(const UniversalCoord& _observerPos,
     if (stars.size() != 0)
     {
         stars.clear();
-        reset();
+        // 17-08-25 Removed reset, replaced with beginresetmodel endresetmodel as per QT5
+        //reset();
+        beginResetModel();
+        endResetModel();
+        // 17-08-25 end replacement
     }
 
     if (filteredStars.empty())

@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #include "celestia/celestiacore.h"
 #include "qteventfinder.h"
 #include "celmath/distance.h"
@@ -516,7 +518,11 @@ void EventTableModel::sort(int column, Qt::SortOrder order)
 void EventTableModel::setEclipses(const vector<EclipseRecord>& _eclipses)
 {
     eclipses = _eclipses;
-    reset();
+    // 17-08-25 Removed reset, replaced with beginresetmodel endresetmodel as per QT5
+    //reset();
+    beginResetModel();
+    endResetModel();
+    // 17-08-25 end replacement
 }
 
 

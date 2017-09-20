@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #include <celestia/celestiacore.h>
 #include "qtsolarsystembrowser.h"
 #include <QAbstractItemModel>
@@ -141,8 +143,12 @@ void SolarSystemTreeModel::buildModel(Star* star, bool _groupByClass)
         rootItem->children = new TreeItem*[1];
         rootItem->children[0] = createTreeItem(Selection(star), rootItem, 0);
     }
+    // 17-08-25 Removed reset, replaced with beginresetmodel endresetmodel as per QT5
+    //reset();
+    beginResetModel();
+    endResetModel();
+    // 17-08-25 end replacement
 
-    reset();
 }
 
 

@@ -554,7 +554,10 @@ win32 {
         windows/inc/libjpeg \
         windows/inc/lua-5.1 \
         windows/inc/spice
-    LIBS += -Lwindows/lib/x86 \
+# Changed LIBS here as per QT5 as it needs absolute path instead of relative now.
+# _PRO_FILE_PWD_ is project base directory.
+#    LIBS += -Lwindows/lib/x86 \
+    LIBS += -L"$$_PRO_FILE_PWD_/windows/lib/x86" \
         -lfmod_vc \
         -lzlib \
         -llibpng \

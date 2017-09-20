@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #include "celutil/util.h"
 #include "xbel.h"
 #include "qtbookmark.h"
@@ -25,7 +27,9 @@ XbelReader::XbelReader(QIODevice* device) :
 // Read an PNG image from a base64 encoded string.
 static QIcon CreateBookmarkIcon(const QString& iconBase64Data)
 {
-    QByteArray iconData = QByteArray::fromBase64(iconBase64Data.toAscii());
+    // 17-08-24 toAscii replaced by toLatin1() as per QT5
+    //QByteArray iconData = QByteArray::fromBase64(iconBase64Data.toAscii());
+    QByteArray iconData = QByteArray::fromBase64(iconBase64Data.toLatin1());
     QPixmap iconPixmap;
     iconPixmap.loadFromData(iconData, "PNG");
     return QIcon(iconPixmap);

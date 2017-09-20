@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
+
 #include <celestia/celestiacore.h>
 #include "qtdeepskybrowser.h"
 #include "qtcolorswatchwidget.h"
@@ -338,7 +340,11 @@ void DSOTableModel::populate(const UniversalCoord& _observerPos,
     if (dsos.size() != 0)
     {
         dsos.clear();
-        reset();
+        // 17-08-25 Removed reset, replaced with beginresetmodel endresetmodel as per QT5
+        //reset();
+        beginResetModel();
+        endResetModel();
+        // 17-08-25 end replacement
     }
 
     if (filteredDSOs.empty())
