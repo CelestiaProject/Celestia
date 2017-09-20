@@ -27,6 +27,8 @@
 // License and a copy of the GNU General Public License along with
 // CurvePlot. If not, see <http://www.gnu.org/licenses/>.
 
+#include <algorithm>
+
 #define DEBUG_ADAPTIVE_SPLINE 0
 #if DEBUG_ADAPTIVE_SPLINE
 #define USE_VERTEX_BUFFER 0

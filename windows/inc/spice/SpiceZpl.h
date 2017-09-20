@@ -58,6 +58,34 @@
  
 -Version
  
+   -CSPICE Version 2.1.0, 10-MAR-2014 (BVS)
+ 
+      Updated for the:
+ 
+         PC-CYGWIN-64BIT-GCC_C
+ 
+      environment.
+ 
+   -CSPICE Version 2.2.0, 14-MAY-2010 (EDW)(BVS)
+ 
+      Updated for the:
+ 
+         MAC-OSX-64BIT-INTEL_C
+         PC-64BIT-MS_C
+         SUN-SOLARIS-64BIT-NATIVE_C
+         SUN-SOLARIS-INTEL-64BIT-CC_C
+         SUN-SOLARIS-INTEL-CC_C
+ 
+      environments.
+ 
+   -CSPICE Version 2.1.0, 15-NOV-2006 (BVS)
+ 
+      Updated for MAC-OSX-INTEL_C environment.
+ 
+   -CSPICE Version 2.0.0, 21-FEB-2006 (NJB)
+ 
+      Updated for PC-LINUX-64BIT-GCC_C environment.
+ 
    -CSPICE Version 1.3.0, 06-MAR-2005 (NJB)
  
       Updated for SUN-SOLARIS-64BIT-GCC_C environment.
@@ -74,12 +102,12 @@
  
 -Index_Entries
  
-   platform ID macros for CSPICE
+   platform ID defines for CSPICE
  
 */
  
  
-#ifndef  HAVE_PLATFORM_MACROS_H
+#ifndef HAVE_PLATFORM_MACROS_H
 #define HAVE_PLATFORM_MACROS_H
  
  

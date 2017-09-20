@@ -90,6 +90,7 @@
 -Author_and_Institution
 
    N.J. Bachman       (JPL)
+   B.V. Semenov       (JPL)
    E.D. Wright        (JPL)
    
 -Restrictions
@@ -98,7 +99,39 @@
       
 -Version
 
-   -CSPICE Version 1.2.0, 27-JAN-2003 (NJB)
+   -CSPICE Version 6.2.0, 10-MAR-2014 (BVS)
+
+       Updated for:
+       
+          PC-CYGWIN-64BIT-GCC_C
+          
+       environment. Added the corresponding tag:
+       
+          CSPICE_PC_CYGWIN_64BIT_GCC
+
+       tag to the #ifdefs set.
+        
+   -CSPICE Version 6.1.0, 14-MAY-2010 (EDW)(BVS)
+
+       Updated for:
+       
+          MAC-OSX-64BIT-INTEL_C
+          SUN-SOLARIS-64BIT-NATIVE_C
+          SUN-SOLARIS-INTEL-64BIT-CC_C
+          
+       environments. Added the corresponding tags:
+       
+          CSPICE_MAC_OSX_INTEL_64BIT_GCC
+          CSPICE_SUN_SOLARIS_64BIT_NATIVE
+          CSPICE_SUN_SOLARIS_INTEL_64BIT_CC
+
+       tag to the #ifdefs set.
+        
+   -CSPICE Version 6.0.0, 21-FEB-2006 (NJB)
+
+       Updated to support the PC Linux 64 bit mode/gcc platform.
+
+   -CSPICE Version 5.0.0, 27-JAN-2003 (NJB)
 
        Updated to support the Sun Solaris 64 bit mode/gcc platform.
 
@@ -143,8 +176,13 @@
    
 
  
-   #if (    defined(CSPICE_ALPHA_DIGITAL_UNIX    )    \
-         || defined(CSPICE_SUN_SOLARIS_64BIT_GCC )  )
+   #if (    defined(CSPICE_ALPHA_DIGITAL_UNIX    )      \
+         || defined(CSPICE_SUN_SOLARIS_64BIT_NATIVE)    \
+         || defined(CSPICE_SUN_SOLARIS_64BIT_GCC )      \
+         || defined(CSPICE_MAC_OSX_INTEL_64BIT_GCC )    \
+         || defined(CSPICE_SUN_SOLARIS_INTEL_64BIT_CC ) \
+         || defined(CSPICE_PC_CYGWIN_64BIT_GCC )        \
+         || defined(CSPICE_PC_LINUX_64BIT_GCC    )  )
    
       typedef int         SpiceInt;
    #else
@@ -157,8 +195,13 @@
    typedef const float    ConstSpiceFloat;
 
 
-   #if (    defined(CSPICE_ALPHA_DIGITAL_UNIX    )    \
-         || defined(CSPICE_SUN_SOLARIS_64BIT_GCC )  )
+   #if (    defined(CSPICE_ALPHA_DIGITAL_UNIX    )      \
+         || defined(CSPICE_SUN_SOLARIS_64BIT_NATIVE)    \
+         || defined(CSPICE_SUN_SOLARIS_64BIT_GCC )      \
+         || defined(CSPICE_MAC_OSX_INTEL_64BIT_GCC )    \
+         || defined(CSPICE_SUN_SOLARIS_INTEL_64BIT_CC ) \
+         || defined(CSPICE_PC_CYGWIN_64BIT_GCC )        \
+         || defined(CSPICE_PC_LINUX_64BIT_GCC    )  )
    
       typedef const int   ConstSpiceInt;
    #else

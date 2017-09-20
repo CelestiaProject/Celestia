@@ -88,6 +88,16 @@
 
 -Version
  
+   -CSPICE Version 5.0.0, 07-FEB-2017   (NJB)
+
+      Updated MaxAbs and MinAbs macros to cast their input arguments
+      to type double.
+
+   -CSPICE Version 4.3.0, 18-SEP-2013   (NJB)
+
+      Bug fix: missing comma was added to argument list
+      in body of macro CELLTYPECHK3_VAL.
+
    -CSPICE Version 4.2.0, 16-FEB-2005   (NJB)
 
       Bug fix:  in the macro C2F_MAP_CELL, error checking has been
@@ -218,11 +228,15 @@ Return a value which is the maximum/minimum of the absolute values of
 two values.
 */
 
-#define MaxAbs(a,b)   ( fabs(a) >= fabs(b) ? fabs(a) : fabs(b) )
-#define MinAbs(a,b)   ( fabs(a) <  fabs(b) ? fabs(a) : fabs(b) )
+#define MaxAbs(a,b)                                                     \
+                                                                        \
+           ( fabs((double)(a)) >= fabs((double)(b)) ?                   \
+                                  fabs((double)(a)) : fabs((double)(b)) )
 
-
-
+#define MinAbs(a,b)                                                     \
+                                                                        \
+           ( fabs((double)(a)) <  fabs((double)(b)) ?                   \
+                                  fabs((double)(a)) : fabs((double)(b)) )
 
 
 /*
@@ -645,7 +659,7 @@ use CHKOSTR_VAL, which is defined below.
                         retval                                 );    \
        CELLTYPECHK_VAL( errHandling, modname, dtype, cellPtr2,       \
                         retval                                 );    \
-       CELLTYPECHK_VAL( errHandling, modname, dtype, cellPtr3        \
+       CELLTYPECHK_VAL( errHandling, modname, dtype, cellPtr3,       \
                         retval                                 );
 
 
