@@ -231,7 +231,8 @@ SplashWindow::createWindow()
 
     int x = (nScrWidth  - winWidth) / 2;
     int y = (nScrHeight - winHeight) / 2;
-    hwnd = ::CreateWindowEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, className, 
+    //hwnd = ::CreateWindowEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, className, 
+    hwnd = ::CreateWindowEx(WS_EX_TOOLWINDOW, className, 
                             TEXT("Banner"), WS_POPUP, x, y, 
                             winWidth, winHeight, NULL, NULL, NULL, this);
 
@@ -243,7 +244,7 @@ SplashWindow::createWindow()
         // style to layered.
         if (useLayeredWindow)
         {
-            SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+            SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
         }
         
         ShowWindow(hwnd, SW_SHOW);

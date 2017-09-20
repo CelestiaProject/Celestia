@@ -298,7 +298,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
                                 UINT wParam,
                                 LONG lParam)
 {
-    EclipseFinderDialog* eclipseFinderDlg = reinterpret_cast<EclipseFinderDialog*>(GetWindowLong(hDlg, DWL_USER));
+    EclipseFinderDialog* eclipseFinderDlg = reinterpret_cast<EclipseFinderDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -307,7 +307,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             EclipseFinderDialog* efd = reinterpret_cast<EclipseFinderDialog*>(lParam);
             if (efd == NULL)
                 return EndDialog(hDlg, 0);
-            SetWindowLong(hDlg, DWL_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
             HWND hwnd = GetDlgItem(hDlg, IDC_ECLIPSES_LIST);
             InitEclipseFinderColumns(hwnd);
             SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
@@ -331,7 +331,7 @@ BOOL APIENTRY EclipseFinderProc(HWND hDlg,
             // Subclass the ListView to intercept WM_LBUTTONUP messages
             HWND hCtrl;
             if (hCtrl = GetDlgItem(hDlg, IDC_ECLIPSES_LIST))
-                oldListViewProc = (WNDPROC) SetWindowLong(hCtrl, GWL_WNDPROC, (DWORD) EclipseListViewProc);
+                oldListViewProc = (WNDPROC) SetWindowLongPtr(hCtrl, GWLP_WNDPROC, (LPARAM) EclipseListViewProc);
         }
         return(TRUE);
 
@@ -520,6 +520,6 @@ EclipseFinderDialog::EclipseFinderDialog(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_ECLIPSEFINDER),
                              parent,
-                             EclipseFinderProc,
-                             reinterpret_cast<LONG>(this));
+                             (DLGPROC)EclipseFinderProc,
+                             reinterpret_cast<LPARAM>(this));
 }

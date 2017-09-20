@@ -282,7 +282,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
         Hash* objParams    = objParamsValue->getHash();
         assert(objParams != NULL);
-
+		int CIC = compareIgnoringCase(objType, "Galaxy");
         DeepSkyObject* obj = NULL;
         if (compareIgnoringCase(objType, "Galaxy") == 0)
             obj = new Galaxy();

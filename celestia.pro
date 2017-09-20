@@ -9,6 +9,25 @@ RCC_DIR = rcc
 QT += opengl
 QT += xml
 
+win32 {
+TARGET_CUSTOM_EXT = .exe
+DEPLOY_COMMAND = $$(QTDIR)/bin/windeployqt.exe
+
+CONFIG( debug, debug|release ) {
+    # debug
+    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/debug/$${TARGET}$${TARGET_CUSTOM_EXT}))
+} else {
+    # release
+    DEPLOY_TARGET = $$shell_quote($$shell_path($${OUT_PWD}/release/$${TARGET}$${TARGET_CUSTOM_EXT}))
+}
+
+message ("QTDIR:" $$(QTDIR))
+message($${DEPLOY_COMMAND} $${DEPLOY_TARGET})
+
+
+###
+}
+
 unix {
     !exists(config.h):system(touch config.h)
     QMAKE_DISTCLEAN += config.h
@@ -552,20 +571,58 @@ win32 {
         windows/inc/libz \
         windows/inc/libpng \
         windows/inc/libjpeg \
-        windows/inc/lua-5.1 \
+        windows/inc/Lua515 \
         windows/inc/spice
+
+    # Added these for Qt5.6 which has problems.
+    LIBS += opengl32.lib
+    LIBS += glu32.lib
+    LIBS += user32.lib
+
+    #CONFIG += staticlib
+    #CONFIG += /MT
+    #QMAKE_CXXFLAGS += /MT
+
+    win32-msvc*
+        {
+        CPU3264 = $$QMAKE_TARGET.arch
+        message("CPU:" $$CPU3264)
+        MSVC_VER = $$(VisualStudioVersion)
+        message("MSVC:$$MSVC_VER")
+        greaterThan($$MSVC_VER, 12.0):{
+
+            LIBS += legacy_stdio_definitions.lib
+            message("msvc > 2013")
+            }
+        }
 # Changed LIBS here as per QT5 as it needs absolute path instead of relative now.
 # _PRO_FILE_PWD_ is project base directory.
 #    LIBS += -Lwindows/lib/x86 \
+    equals(CPU3264, "x86"):{
+
     LIBS += -L"$$_PRO_FILE_PWD_/windows/lib/x86" \
-        -lfmod_vc \
+#        -lfmod_vc \
         -lzlib \
         -llibpng \
         -llibjpeg \
         -lintl \
-        -llua5.1 \
+        -lLua515 \
         -lcspice \
         -lvfw32
+        }
+    equals(CPU3264, "x86_64"):{
+
+    LIBS += -L"$$_PRO_FILE_PWD_/windows/lib/x64" \
+#        -lfmod_vc \
+        -lzlib \
+        -llibpng \
+        -llibjpeg \
+        -lintl \
+        -lLua515 \
+        -lcspice \
+        -lvfw32
+        }
+
 
     SOURCES += src/celestia/avicapture.cpp
     HEADERS += src/celestia/avicapture.h
@@ -576,7 +633,11 @@ win32 {
     # Disable the regrettable min and max macros in windows.h
     DEFINES += NOMINMAX
 
-    LIBS += /nodefaultlib:libcmt.lib
+
+    QMAKE_LFLAGS += /nodefaultlib:libcmt.lib
+    # Moved to linker flags where it belongs.
+    #//    LIBS += /nodefaultlib:libcmt.lib
+    #QMAKE_LFLAGS += /MT
 }
 
 unix {
@@ -586,7 +647,7 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    LUALIST = lua5.1 lua
+    LUALIST = Lua515 lua
     for(libpc, LUALIST):system(pkg-config --exists $${libpc}):LUAPC = $${libpc}
     isEmpty (LUAPC) {error("No shared Lua library found!")}
 
@@ -655,9 +716,23 @@ macx {
     LIBS += macosx/lib/cspice.a
 }
 
-DEFINES += CELX LUA_VER=0x050100
+DEFINES += CELX LUA_VER=0x051500
 
 # QMAKE_CXXFLAGS += -ffast-math
+   #QMAKE_CXXFLAGS += /MT
+
+#    QMAKE_CFLAGS_RELEASE += /MT
+#    QMAKE_CXXFLAGS_RELEASE += /MT
+#    QMAKE_CFLAGS_DEBUG += /MTd
+#    QMAKE_CXXFLAGS_DEBUG += /MTd
+
+
+
+
+
+
+
+
 
 unix {
 

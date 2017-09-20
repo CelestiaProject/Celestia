@@ -44,10 +44,10 @@ static bool SetDialogFloat(HWND hDlg, int id, char* format, float f)
 
 static BOOL APIENTRY GotoObjectProc(HWND hDlg,
                                     UINT message,
-                                    UINT wParam,
-                                    LONG lParam)
+                                    WPARAM wParam,
+                                    LPARAM lParam)
 {
-    GotoObjectDialog* gotoDlg = reinterpret_cast<GotoObjectDialog*>(GetWindowLong(hDlg, DWL_USER));
+    GotoObjectDialog* gotoDlg = reinterpret_cast<GotoObjectDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -56,7 +56,7 @@ static BOOL APIENTRY GotoObjectProc(HWND hDlg,
             GotoObjectDialog* gotoDlg = reinterpret_cast<GotoObjectDialog*>(lParam);
             if (gotoDlg == NULL)
                 return EndDialog(hDlg, 0);
-            SetWindowLong(hDlg, DWL_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
             CheckRadioButton(hDlg,
                              IDC_RADIO_KM, IDC_RADIO_RADII,
                              IDC_RADIO_KM);
@@ -174,6 +174,6 @@ GotoObjectDialog::GotoObjectDialog(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_GOTO_OBJECT),
                              parent,
-                             GotoObjectProc,
-                             reinterpret_cast<LONG>(this));
+                             (DLGPROC)GotoObjectProc,
+                             reinterpret_cast<LPARAM>(this));
 }

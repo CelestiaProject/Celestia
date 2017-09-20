@@ -24,8 +24,10 @@ typedef unsigned char  uint8;
 // MS Visual C++ does not include stdint.h
 typedef __int64          int64;
 typedef unsigned __int64 uint64;
+#if _MSC_VER < 1900 //This means pre VS2015, after which it is included.
 #define INT64_MAX  LLONG_MAX
 #define UINT64_MAX ULLONG_MAX
+#endif
 #else
 #include <stdint.h>
 #include <limits>

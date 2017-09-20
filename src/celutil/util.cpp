@@ -18,10 +18,14 @@ using namespace std;
 
 int compareIgnoringCase(const string& s1, const string& s2)
 {
-    string::const_iterator i1 = s1.begin();
-    string::const_iterator i2 = s2.begin();
+  
+	string s_1 = s1;
+	string s_2 = s2;
 
-    while (i1 != s1.end() && i2 != s2.end())
+    string::const_iterator i1 = s_1.begin();
+    string::const_iterator i2 = s_2.begin();
+
+    while (i1 != s_1.end() && i2 != s_2.end())
     {
         if (toupper(*i1) != toupper(*i2))
             return (toupper(*i1) < toupper(*i2)) ? -1 : 1;
@@ -29,16 +33,19 @@ int compareIgnoringCase(const string& s1, const string& s2)
         ++i2;
     }
 
-    return s2.size() - s1.size();
+    return s_2.size() - s_1.size();
 }
 
 
 int compareIgnoringCase(const string& s1, const string& s2, int n)
 {
-    string::const_iterator i1 = s1.begin();
-    string::const_iterator i2 = s2.begin();
+	string s_1 = s1;
+	string s_2 = s2;
 
-    while (i1 != s1.end() && i2 != s2.end() && n > 0)
+    string::const_iterator i1 = s_1.begin();
+    string::const_iterator i2 = s_2.begin();
+
+    while (i1 != s_1.end() && i2 != s_2.end() && n > 0)
     {
         if (toupper(*i1) != toupper(*i2))
             return (toupper(*i1) < toupper(*i2)) ? -1 : 1;
@@ -48,7 +55,7 @@ int compareIgnoringCase(const string& s1, const string& s2, int n)
     }
 
     if (n > 0)
-        return s2.size() - s1.size();
+        return s_2.size() - s_1.size();
     else
         return 0;
 }

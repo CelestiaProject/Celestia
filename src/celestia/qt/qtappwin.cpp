@@ -1351,9 +1351,9 @@ void CelestiaAppWindow::createMenus()
     m_appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
     CFRelease(tz);
 #else
-    m_appCore->setTimeZoneBias(-timezone + 3600 * daylight);
+    m_appCore->setTimeZoneBias(-_timezone + 3600 * _daylight);
 #endif
-    m_appCore->setTimeZoneName(tzname[daylight?0:1]);
+    m_appCore->setTimeZoneName(_tzname[_daylight?0:1]);
 
     // If LocalTime is set to false, set the time zone bias to zero.
     if (settings.contains("LocalTime"))

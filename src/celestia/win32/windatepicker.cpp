@@ -612,10 +612,10 @@ DatePicker::getSystemTime(SYSTEMTIME* sysTime)
 static LRESULT
 DatePickerNCCreate(HWND hwnd, CREATESTRUCT& cs)
 {
-    DWORD exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+    DWORD exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
     
     exStyle |= WS_EX_CLIENTEDGE;
-    SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
 
     return DefWindowProc(hwnd, WM_NCCREATE, 0, reinterpret_cast<LPARAM>(&cs));
 }

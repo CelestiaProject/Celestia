@@ -12,10 +12,10 @@
 #include "winhyperlinks.h"
 #include "res/resource.h"
 
-static LPTSTR hyperLinkFromStatic = "_Hyperlink_From_Static_";
-static LPTSTR hyperLinkOriginalProc = "_Hyperlink_Original_Proc_";
-static LPTSTR hyperLinkOriginalFont = "_Hyperlink_Original_Font_";
-static LPTSTR hyperLinkUnderlineFont = "_Hyperlink_Underline_Font_";
+static LPCTSTR hyperLinkFromStatic = "_Hyperlink_From_Static_";
+static LPCTSTR hyperLinkOriginalProc = "_Hyperlink_Original_Proc_";
+static LPCTSTR hyperLinkOriginalFont = "_Hyperlink_Original_Font_";
+static LPCTSTR hyperLinkUnderlineFont = "_Hyperlink_Underline_Font_";
 
 bool GetTextRect(HWND hWnd, RECT* rectText)
 {
@@ -76,7 +76,7 @@ LRESULT CALLBACK _HyperlinkParentProc(HWND hWnd, UINT message, WPARAM wParam, LP
         }
     case WM_DESTROY:
         {
-            SetWindowLong(hWnd, GWL_WNDPROC, (LONG)origProc);
+            SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)origProc);
             RemoveProp(hWnd, hyperLinkOriginalProc);
             break;
         }
@@ -131,7 +131,7 @@ LRESULT CALLBACK _HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         }
     case WM_DESTROY:
         {
-            SetWindowLong(hWnd, GWL_WNDPROC, (LONG)origProc);
+            SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)origProc);
             RemoveProp(hWnd, hyperLinkOriginalProc);
 
             HFONT hOrigFont = (HFONT)GetProp(hWnd, hyperLinkOriginalFont);
@@ -162,22 +162,22 @@ BOOL MakeHyperlinkFromStaticCtrl(HWND hDlg, UINT ctrlID)
         HWND hParent = GetParent(hCtrl);
         if (hParent)
         {
-            WNDPROC origProc = (WNDPROC)GetWindowLong(hParent, GWL_WNDPROC);
+            WNDPROC origProc = (WNDPROC)GetWindowLongPtr(hParent, GWLP_WNDPROC);
             if (origProc != _HyperlinkParentProc)
             {
                 SetProp(hParent, hyperLinkOriginalProc, (HANDLE)origProc);
-                SetWindowLong(hParent, GWL_WNDPROC, (LONG)(WNDPROC)_HyperlinkParentProc);
+                SetWindowLongPtr(hParent, GWLP_WNDPROC, (LONG)(WNDPROC)_HyperlinkParentProc);
             }
         }
 
         // Make sure the control will send notifications.
-        DWORD dwStyle = GetWindowLong(hCtrl, GWL_STYLE);
-        SetWindowLong(hCtrl, GWL_STYLE, dwStyle | SS_NOTIFY);
+        DWORD dwStyle = GetWindowLongPtr(hCtrl, GWL_STYLE);
+        SetWindowLongPtr(hCtrl, GWL_STYLE, dwStyle | SS_NOTIFY);
 
         // Subclass the existing control.
-        WNDPROC origProc = (WNDPROC)GetWindowLong(hCtrl, GWL_WNDPROC);
+        WNDPROC origProc = (WNDPROC)GetWindowLongPtr(hCtrl, GWLP_WNDPROC);
         SetProp(hCtrl, hyperLinkOriginalProc, (HANDLE)origProc);
-        SetWindowLong(hCtrl, GWL_WNDPROC, (LONG)(WNDPROC)_HyperlinkProc);
+        SetWindowLongPtr(hCtrl, GWLP_WNDPROC, (LONG)(WNDPROC)_HyperlinkProc);
 
         // Create an updated font by adding an underline.
         HFONT hOrigFont = (HFONT) SendMessage(hCtrl, WM_GETFONT, 0, 0);

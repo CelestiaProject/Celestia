@@ -33,10 +33,10 @@ static const uint32 FilterOther = ~(Location::City |
 
 static BOOL APIENTRY LocationsProc(HWND hDlg,
                                    UINT message,
-                                   UINT wParam,
-                                   LONG lParam)
+                                   WPARAM wParam,
+                                   LPARAM lParam)
 {
-    LocationsDialog* dlg = reinterpret_cast<LocationsDialog*>(GetWindowLong(hDlg, DWL_USER));
+    LocationsDialog* dlg = reinterpret_cast<LocationsDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -45,7 +45,7 @@ static BOOL APIENTRY LocationsProc(HWND hDlg,
             dlg = reinterpret_cast<LocationsDialog*>(lParam);
             if (dlg == NULL)
                 return EndDialog(hDlg, 0);
-            SetWindowLong(hDlg, DWL_USER, lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
             // Store original settings in case user cancels the dialog
             // dlg->initialLocationFlags = dlg->appCore->getSimulation()->getActiveObserver();
@@ -169,8 +169,8 @@ LocationsDialog::LocationsDialog(HINSTANCE appInstance,
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_LOCATIONS),
                              parent,
-                             LocationsProc,
-                             reinterpret_cast<LONG>(this));
+                             (DLGPROC)LocationsProc,
+                             reinterpret_cast<LPARAM>(this));
 }
 
 

@@ -86,7 +86,7 @@ SetTimeDialog::init(HWND _hDlg)
 {
     hDlg = _hDlg;
     
-    SetWindowLong(hDlg, DWL_USER, reinterpret_cast<LPARAM>(this));
+    SetWindowLongPtr(hDlg, DWLP_USER, reinterpret_cast<LPARAM>(this));
     getLocalTimeZoneInfo();
 
     tdb = appCore->getSimulation()->getTime();
@@ -294,10 +294,10 @@ SetTimeDialog::notify(int id, const NMHDR& hdr)
 static BOOL APIENTRY 
 SetTimeProc(HWND hDlg,
             UINT message,
-            UINT wParam,
-            LONG lParam)
+            WPARAM wParam,
+            LPARAM lParam)
 {
-    SetTimeDialog* timeDialog = reinterpret_cast<SetTimeDialog*>(GetWindowLong(hDlg, DWL_USER));
+    SetTimeDialog* timeDialog = reinterpret_cast<SetTimeDialog*>(GetWindowLongPtr(hDlg, DWLP_USER));
 
     switch (message)
     {
@@ -329,7 +329,7 @@ ShowSetTimeDialog(HINSTANCE appInstance,
 {
     SetTimeDialog* timeDialog = new SetTimeDialog(appCore);
     
-    DialogBoxParam(appInstance, MAKEINTRESOURCE(IDD_SETTIME), appWindow, SetTimeProc, reinterpret_cast<LPARAM>(timeDialog));
+    DialogBoxParam(appInstance, MAKEINTRESOURCE(IDD_SETTIME), appWindow, (DLGPROC)SetTimeProc, reinterpret_cast<LPARAM>(timeDialog));
     
     delete timeDialog;
 }
