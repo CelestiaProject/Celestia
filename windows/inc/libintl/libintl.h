@@ -13,17 +13,23 @@
 
    You should have received a copy of the GNU Library General Public
    License along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
 #ifndef _LIBINTL_H
 #define _LIBINTL_H	1
 
+#define LIBINTL_STATIC
+
+#ifdef LIBINTL_STATIC
+#define LIBINTL_DLL_EXPORTED
+#else /* LIBINTL_STATIC */
 #ifdef BUILDING_LIBINTL
 #define LIBINTL_DLL_EXPORTED __declspec(dllexport)
 #else
 #define LIBINTL_DLL_EXPORTED __declspec(dllimport)
 #endif
+#endif /* LIBINTL_STATIC */ 
 
 #include <locale.h>
 
