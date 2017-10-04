@@ -82,8 +82,8 @@
 #include "celx.h"
 #endif
 
-#include "fmod.hpp"
-#include "fmod_errors.h"
+//#include "fmod.hpp"
+//#include "fmod_errors.h"
 #define MAX_CHANNELS    8
 
 //#define NOMINMAX
@@ -544,10 +544,10 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #endif
 
 	//Audio support by Victor, modified by Vincent & Alexell
-    FMOD::System       *sysaudio;
-    FMOD::Sound        *soundSources[MAX_CHANNELS];
-    FMOD::Channel      *channels[MAX_CHANNELS];
-    FMOD_RESULT         result;
+//    FMOD::System       *sysaudio;
+//    FMOD::Sound        *soundSources[MAX_CHANNELS];
+//    FMOD::Channel      *channels[MAX_CHANNELS];
+//    FMOD_RESULT         result;
     unsigned int        version;
 
     void stopSounds();
