@@ -1,1 +1,1 @@
-SUBDIRS = locations solar-system spacecrafts
+SUBDIRS = locations solar-system spacecraft
