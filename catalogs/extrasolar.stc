@@ -1,0 +1,3045 @@
+# Stars which are not included in the Hipparcos catalog, but are
+# orbited by extrasolar planets. (The planets are defined in the file
+# "extrasolar.ssc".)
+#
+# Additionally, some companion stars and orbits for named binary stars
+# with extrasolar planets.
+
+# OGLE survey
+
+"OGLE-TR-10:V5125 Sgr"
+{
+	RA 267.867708
+	Dec -29.876361
+	Distance 4900
+	SpectralType "G2V" # from Simbad: mass and luminosity seem too high, however
+	AppMag 14.93
+}
+
+"OGLE-TR-56:V5157 Sgr"
+{
+	RA 269.148070
+	Dec -29.539412
+	Distance 8900      # to give known apparent magnitude
+	SpectralType "G0V" # from estimated mass and radius
+	AbsMag 4.4         # from spectral class
+}
+
+"OGLE-TR-111"
+{
+	RA 163.324625
+	Dec -60.405639
+	Distance 3300        # estimate from mass and app. mag.
+	SpectralType "G8V"   # estimated from mass
+	AppMag 15.55
+}
+
+"OGLE-TR-113"
+{
+	RA 163.101667
+	Dec -61.446667
+	Distance 1400      # from radius, temperature and app mag
+	SpectralType "K3V" # from estimated mass and temperature
+	AbsMag 6.5         # from spectral class
+}
+
+"OGLE-TR-132"
+{
+	RA 162.640417
+	Dec -61.957222
+	Distance 8800      # from radius, temperature and app mag
+	SpectralType "F5V" # from estimated mass and temperature
+	AbsMag 3.6         # from spectral class
+}
+
+"OGLE-TR-182"
+{
+	RA 167.32833
+	Dec -61.09528
+	Distance 10000     # from apparent magnitude and estimated spectral class
+	SpectralType "G0V" # from mass, radius and temperature
+	AppMag 16.84
+}
+
+"OGLE-TR-211"
+{
+	RA 160.0625
+	Dec -62.45555
+	Distance 5200      # from estimated apparent magnitude and spectral class
+	SpectralType "F8V" 
+	AppMag 15          # estimated from I magnitude and spectral class
+}
+
+"OGLE2-TR-L9"
+{
+	RA 166.98042
+	Dec -61.14611
+	Distance 2900
+	SpectralType "F3V" 
+	AbsMag 3.6		# estimated from spectral class
+}
+
+# TrES survey
+
+1013242652 "TrES-1 (parent star):GSC 02652-01324"
+{
+	RA 286.04083
+	Dec 36.6325
+	Distance 490      # From spectral class and visual magnitude
+	SpectralType "K0V"
+	AppMag 11.79
+}
+
+1028113549 "TrES-2 (parent star):Kepler-1:KOI-1:KIC 11446443:GSC 03549-02811"
+{
+	RA 286.80848
+	Dec 49.31641
+	Distance 750
+	SpectralType "G0V"
+	AppMag 11.41
+}
+
+"TrES-3 (parent star):GSC 03089-00929"
+{
+	RA 268.02917
+	Dec 37.54611
+	Distance 940       # from inferred spectrum
+	SpectralType "G5V" # from inferred mass and temp
+	AppMag 12.4
+}
+
+1006482620 "TrES-4 (parent star):GSC 02620-00648"
+{
+	RA 268.304375
+	Dec 37.211833
+	Distance 1430
+	SpectralType "G0IV" # from inferred mass, radius and temp
+	AbsMag 3.36
+}
+
+"TrES-5 (parent star):GSC 03949-00967"
+{
+	RA 305.222083
+	Dec 59.448889
+	Distance 1170
+	SpectralType "K0V" # from inferred mass and temp
+	AppMag 13.72
+}
+
+# XO survey
+
+1016572041 "XO-1:GSC 02041-01657"
+{
+	RA 240.549167
+	Dec 28.169722
+	Distance 650
+	SpectralType "G1V"
+	AppMag 11.3
+}
+
+1000053413 "XO-2:GSC 03413-00005"
+{
+	RA 117.0292
+	Dec 50.2258
+	Distance 486
+	SpectralType "K0V"
+	AppMag 11.18
+}
+
+1010643727 "XO-3:GSC 03727-01064"
+{
+	RA  65.46958
+	Dec 57.81694
+	Distance 850
+	SpectralType "F5V"
+	AppMag 9.8
+}
+
+1019943793 "XO-4:GSC 03793-01994"
+{
+	RA  110.388333
+	Dec 58.268055
+	Distance 955
+	SpectralType "F5V"
+	AppMag 10.7
+}
+
+"XO-5:GSC 02959-00729"
+{
+	RA  116.71625
+	Dec 39.094444
+	Distance 880
+	SpectralType "G8V"
+	AppMag 12.13
+}
+
+# HAT-Net survey
+
+"HAT-P-1:SAO 72884"
+{
+	RA 344.445104
+	Dec 38.674953
+	Distance 453
+	SpectralType "G0V"
+	AppMag 10.4
+}
+
+1008193466 "HAT-P-3:GSC 03466-00819"
+{
+	RA 206.094167
+	Dec 48.028611
+	Distance 460
+	SpectralType "K0V" # from temp and luminosity
+	AbsMag 5.86
+}
+
+1015992569 "HAT-P-4:GSC 02569-01599"
+{
+	RA 229.99125
+	Dec 36.229722
+	Distance 1010
+	SpectralType "F9V" # from temperature and radius
+	AppMag 11.2
+}
+
+1010872634 "HAT-P-5:GSC 02634-01087"
+{
+	RA 274.40542
+	Dec 36.621389
+	Distance 1110
+	SpectralType "G1V" # from temperature and radius
+	AppMag 12
+}
+
+1009923239 "HAT-P-6:GSC 03239-00992"
+{
+	RA 354.77417
+	Dec 42.466111
+	Distance 650
+	SpectralType "F4V" # from temperature and radius
+	AppMag 10.5
+}
+
+1014023547 "HAT-P-7:Kepler-2:KOI-2:KIC 10666592:GSC 03547-01402"
+{
+	RA 292.24734
+	Dec 47.969518
+	Distance 1040
+	SpectralType "F6V"
+	AppMag 10.5
+}
+
+1011522757 "HAT-P-8:GSC 02757-01152"
+{
+	RA 343.041250
+	Dec 5.447222
+	Distance 750
+	SpectralType "F8V" # from mass, radius, temperature, luminosity
+	AppMag 10.17
+}
+
+1002812463 "HAT-P-9:GSC 02463-00281"
+{
+	RA 110.168333
+	Dec 37.140556
+	Distance 1560
+	SpectralType "F5V" # from mass, radius, temperature, luminosity
+	AppMag 12.3
+}
+
+1017142340 "HAT-P-10:WASP-11:GSC 02340-01714"
+{
+	RA 47.368958
+	Dec 30.673611
+	Distance 408
+	SpectralType "K3V"
+	AppMag 11.89
+}
+
+"HAT-P-12:GSC 03033-00706"
+{
+	RA 209.389583
+	Dec 43.493611
+	Distance 464.5
+	SpectralType "K4V" # from mass, radius and temperature
+	AppMag 12.84
+}
+
+1005433416 "HAT-P-13:GSC 03416-00543"
+{
+	RA 129.882500
+	Dec 47.351944
+	Distance 698
+	SpectralType "G4"
+	AppMag 10.7
+}
+
+1001523086 "HAT-P-14:GSC 03086-00152"
+{
+	RA 260.116250
+	Dec 38.242222
+	Distance 668
+	SpectralType "F"
+	AppMag 9.98
+}
+
+1016872883 "HAT-P-15:GSC 02883-01687"
+{
+	RA 66.250000
+	Dec 39.460556
+	Distance 620
+	SpectralType "G5"
+	AppMag 12.16
+	Radius 746000
+}
+
+1017002792 "HAT-P-16:GSC 02792-01700"
+{
+	RA 9.573333
+	Dec 42.463056
+	Distance 766
+	SpectralType "F8"
+	AppMag 10.7
+}
+ 
+1004172717 "HAT-P-17:GSC 02717-00417"
+{
+	RA 324.536250
+	Dec 30.488611
+	Distance 290
+	SpectralType "K"
+	AppMag 10.54
+}
+
+"HAT-P-18:GSC 02594-00646"
+{
+	RA 256.346667
+	Dec 33.012500
+	Distance 541
+	SpectralType "K"
+	AppMag 12.76
+}
+
+"HAT-P-19:GSC 02283-00589"
+{
+	RA 9.516667
+	Dec 34.711667
+	Distance 700
+	SpectralType "K"
+	AppMag 12.9
+}
+
+"HAT-P-20:GSC 01910-00239"
+{
+	RA 111.916250
+	Dec 24.336389
+	Distance 230
+	SpectralType "K3V"
+	AppMag 11.339
+}
+
+1012293013 "HAT-P-21:GSC 03013-01229"
+{
+	RA 171.275000
+	Dec 41.028056
+	Distance 828
+	SpectralType "G3V"
+	AppMag 11.685
+}
+
+1009253441 "HAT-P-22:HD 233731:GSC 03441-00925"
+{
+	RA 155.681667
+	Dec 50.128333
+	Distance 267
+	SpectralType "G5V"
+	AppMag 9.732
+}
+
+1013961632 "HAT-P-23:GSC 01632-01396"
+{
+	RA 306.123750
+	Dec 16.762222
+	Distance 1280
+	SpectralType "G0V"
+	AppMag 12.432
+}
+
+1014410774 "HAT-P-24:GSC 00774-01441"
+{
+	RA 108.825000
+	Dec 14.262222
+	Distance 1290
+	SpectralType "F8V"
+	AppMag 11.82
+}
+
+"HAT-P-25:GSC 01788-01237"
+{
+	RA 48.435417
+	Dec 25.197500
+	Distance 968
+	SpectralType "G5"
+	AppMag 13.19
+}
+
+1010270320 "HAT-P-26:GSC 00320-01027"
+{
+	RA 213.156250
+	Dec 4.060000
+	Distance 437
+	SpectralType "K1"
+	AppMag 11.74
+}
+
+"HAT-P-27:WASP-40:GSC 00333-00351"
+{
+	RA 222.875672
+	Dec 5.94700
+	Distance 665
+	SpectralType "G8"
+	AppMag 12.21
+}
+
+"HAT-P-28:GSC 02284-00503"
+{
+	RA 13.000833
+	Dec 34.728333
+	Distance 1288
+	SpectralType "G3"
+	AppMag 13.03
+}
+1015393293 "HAT-P-29:GSC 03293-01539"
+{
+	RA 33.131250
+	Dec 51.778889
+	Distance 1050
+	SpectralType "F8"
+	AppMag 11.9
+}
+
+1007220208 "HAT-P-30:WASP-51:GSC 00208-00722"
+{
+	RA 123.950000
+	Dec 5.836667
+	Distance 629
+	SpectralType "F"
+	AppMag 10.35
+}
+
+1009082099 "HAT-P-31:GSC 02099-00908"
+{
+	RA 271.537917
+	Dec 26.426667
+	Distance 1154
+	SpectralType "G0" # from temperature
+	AppMag 11.66
+}
+
+1008003281 "HAT-P-32:GSC 03281-00800"
+{
+	RA 31.042917
+	Dec 46.687778
+	Distance 1043
+	SpectralType "G0" # from temperature
+	AppMag 11.29
+}
+
+1009882461 "HAT-P-33:GSC 02461-00988"
+{
+	RA 113.184167
+	Dec 33.835000
+	Distance 1366
+	SpectralType "F5" # from temperature
+	AppMag 11.89
+}
+
+1012611622 "HAT-P-34:GSC 01622-01261"
+{
+	RA 303.195417
+	Dec 18.105000
+	Distance 838
+	SpectralType "F" # from mass and temperature
+	AppMag 10.16
+}
+
+1010790203 "HAT-P-35:GSC 00203-01079"
+{
+	RA 123.250833
+	Dec 4.786944
+	Distance 1744
+	SpectralType "F" # from mass and temperature
+	AppMag 12.46
+}
+
+1022213020 "HAT-P-36:GSC 03020-0222"
+{
+	RA 188.266250
+	Dec 44.915278
+	Distance 1033
+	SpectralType "G" # from mass and temperature
+	AppMag 12.26
+}
+
+"HAT-P-37:GSC 03553-00723:KIC 12396036"
+{
+	RA 284.295833
+	Dec 51.269167
+	Distance 1340
+	SpectralType "G" # from mass and temperature
+	AppMag 13.23
+}
+
+"HAT-P-39:GSC 01364-01424"
+{
+	RA 113.758333
+	Dec 17.830000
+	Distance 2090
+	SpectralType "F" # from mass and temperature
+	AppMag 12.42
+}
+
+"HAT-P-40:GSC 03607-01028"
+{
+	RA 335.512500
+	Dec 45.457500
+	Distance 1630
+	SpectralType "F" # from mass and temperature
+	AppMag 11.70
+}
+
+"HAT-P-41:GSC 00488-02442"
+{
+	RA 297.322500
+	Dec 4.672500
+	Distance 1010
+	SpectralType "F" # from mass and temperature
+	AppMag 11.09
+}
+
+# WASP survey
+
+1001072265 "WASP-1:GSC 02265-00107"
+{
+	RA 5.167083
+	Dec 31.990000
+	Distance 1200
+	SpectralType "F7V"
+	AppMag 11.79
+}
+
+"WASP-2:GSC 00522-01199"
+{
+	RA 307.725417
+	Dec 6.429444
+	Distance 470
+	SpectralType "K1V"
+	AppMag 11.98
+}
+
+1001952636 "WASP-3:GSC 02636-00195"
+{
+	RA 278.63167
+	Dec 35.66167
+	Distance 727
+	SpectralType "F7V"
+	AppMag 10.64
+}
+
+"WASP-4"
+{
+	RA 353.56292
+	Dec -42.06139
+	Distance 980
+	SpectralType "G7V"
+	AppMag 12.6
+}
+
+"WASP-5:GSC 08018-00199"
+{
+	RA 359.348917
+	Dec -41.277083
+	Distance 980
+	SpectralType "G4V"
+	AppMag 12.3
+}
+
+"WASP-6"
+{
+	RA 348.157208
+	Dec -22.673917
+	Distance 620 # from spectral class and app mag
+	SpectralType "G8V"
+	AppMag 11.9
+}
+
+1015707963 "WASP-7:GSC 07963-01570"
+{
+	RA 311.042500
+	Dec -39.225278
+	Distance 456
+	SpectralType "F5V"
+	AppMag 9.51
+}
+
+1005057522 "WASP-8:GSC 07522-00505"
+{
+	RA 359.900417
+	Dec -35.031389
+	Distance 284
+	SpectralType "G6"
+	AppMag 9.9
+}
+
+"WASP-10:GSC 02752-00114"
+{
+	RA 348.992917
+	Dec 31.462778
+	Distance 290
+	SpectralType "K5"
+	AppMag 12.7
+}
+
+"WASP-12"
+{
+	RA 97.637667
+	Dec 29.672222
+	Distance 870
+	SpectralType "G0"
+	AppMag 11.69
+}
+
+"WASP-13"
+{
+	RA 140.102917
+	Dec 33.882222
+	Distance 505
+	SpectralType "G1V"
+	AppMag 10.42
+}
+
+1008821482 "WASP-14:GSC 01482-00882:SAO 83398"
+{
+	RA 218.276250
+	Dec 21.894722
+	Distance 520
+	SpectralType "F5V"
+	AppMag 9.75
+}
+
+1011627283 "WASP-15"
+{
+	RA 208.927917
+	Dec -32.159722
+	Distance 1004
+	SpectralType "F5"
+	AppMag 11.0
+}
+
+1002296147 "WASP-16:GSC 06147-00229"
+{
+	RA 214.830084
+	Dec -20.275514
+	Distance 650 # from spectral class and magnitude
+	SpectralType "G3V"
+	AppMag 11.29
+}
+
+1019276787 "WASP-17:GSC 06787-01927"
+{
+	RA 239.962083
+	Dec -28.061667
+	Distance 1240 # from spectral class and magnitude
+	SpectralType "F6"
+	AppMag 11.6
+}
+
+"WASP-19:GSC 08181-01711"
+{
+	RA 148.416667
+	Dec -45.659167
+	Distance 750 # from spectral class and magnitude
+	SpectralType "G8V"
+	AppMag 12.3
+}
+
+"WASP-21:GSC 01715-00679"
+{
+	RA 347.492917
+	Dec 18.396111
+	Distance 750
+	SpectralType "G3V"
+	AppMag 11.6
+}
+
+1003266446 "WASP-22:GSC 06446-00326"
+{
+	RA 52.817917
+	Dec -23.819722
+	Distance 1070 # from temperature and magnitude
+	SpectralType "G0V" # from mass and temperature
+	AppMag 11.99
+}
+
+"WASP-23:GSC 07635-01376"
+{
+	RA 101.127500
+	Dec -42.761389
+	Distance 640 # From spectral class and app mag
+	SpectralType "K1V"
+	AppMag 12.7
+}
+
+1003290339 "WASP-24:GSC 00339-00329"
+{
+	RA 227.215417
+	Dec 2.343333
+	Distance 1080
+	SpectralType "F9"
+	AppMag 11.3
+}
+
+1008616706 "WASP-25:GSC 06706-00861"
+{
+	RA 195.360000
+	Dec -27.522222
+	Distance 551
+	SpectralType "G4"
+	AppMag 11.87
+}
+
+1008765839 "WASP-26:GSC 05839-00876"
+{
+	RA 4.602917
+	Dec -15.267222
+	Distance 815
+	SpectralType "G0"
+	AppMag 11.30
+}
+
+"WASP-28"
+{
+	RA 353.616250
+	Dec -1.580000
+	Distance 1090
+	SpectralType "F9"
+	AppMag 12
+}
+
+1010208015 "WASP-29:GSC 08015-01020"
+{
+	RA 357.879583
+	Dec -39.906667
+	Distance 261
+	SpectralType "K4V"
+	AppMag 11.33
+}
+
+1010536087 "WASP-31:GSC 06087-01053"
+{
+	RA 169.439167
+	Dec -19.054722
+	Distance 1300
+	SpectralType "F"
+	AppMag 11.66
+}
+
+1011550002 "WASP-32:GSC 00002-01155"
+{
+	RA 3.961667
+	Dec 1.200278
+	Distance 760 # from spectral class and magnitude
+	SpectralType "G0" # from temperature and mass
+	AppMag 11.3
+}
+
+1005406636 "WASP-34:GSC 06636-00540"
+{
+	RA 165.39958
+	Dec -23.860556
+	Distance 390
+	SpectralType "G5"
+	AppMag 10.4
+}
+
+1007144762 "WASP-35:GSC 04762-00714"
+{
+	RA 76.081667
+	Dec -6.229722
+	Distance 640 # from temperature radius and magnitude
+	SpectralType "G0V" # from mass, radius and temperature
+	AppMag 10.95
+}
+
+"WASP-36:GSC 05442-00759"
+{
+	RA 131.580417
+	Dec -8.026944
+	Distance 1470
+	SpectralType "G2V"
+	AppMag 12.7
+}
+
+"WASP-37:GSC 00326-00658"
+{
+	RA 221.944167
+	Dec 1.065000
+	Distance 1100
+	SpectralType "G2"
+	AppMag 12.7
+}
+
+1011560950 "WASP-38:GSC 00950-01156"
+{
+	RA 243.960000
+	Dec 10.032500
+	Distance 359
+	SpectralType "F8"
+	AppMag 9.42
+}
+
+"WASP-39:GSC 04980-00761"
+{
+	RA 217.326667
+	Dec -3.444444
+	Distance 750
+	SpectralType "G8"
+	AppMag 12.11
+}
+
+1005877247 "WASP-41:GSC 07247-00587"
+{
+	RA 190.618750
+	Dec -30.640000
+	Distance 590
+	SpectralType "G8V"
+	AppMag 11.6
+}
+
+
+"WASP-43:GSC 05490-00141"
+{
+	RA 154.908333
+	Dec -9.806389
+	Distance 320 # from spectral class and magnitude
+	SpectralType "K7V"
+	AppMag 12.4
+}
+
+"WASP-44:GSC 05264-00740"
+{
+	RA 3.903333
+	Dec -11.938056
+	Distance 960 # from spectral class and magnitude
+	SpectralType "G8V"
+	AppMag 12.9
+}
+
+1005836996 "WASP-45:GSC 06996-00583"
+{
+	RA 5.237500
+	Dec -35.998333
+	Distance 530 # from spectral class and magnitude
+	SpectralType "K2V"
+	AppMag 12.0
+}
+
+"WASP-46:GSC 08797-00758"
+{
+	RA 318.737083
+	Dec -55.871778
+	Distance 1200 # from spectral class and magnitude
+	SpectralType "G6V"
+	AppMag 12.9
+}
+
+"WASP-47"
+{
+	RA 331.202917
+	Dec -12.018889
+	Distance 650
+	SpectralType "G9V"
+	AppMag 11.9
+}
+
+1007393925 "WASP-48:GSC 03925-00739"
+{
+	RA 291.162500
+	Dec 55.4730556
+	Distance 650 # from temperature, radius and magnitude
+	SpectralType "G0V" # from temperature, mass and radius
+	AppMag 11.06
+}
+
+1004625290 "WASP-50:GSC 05290-00462"
+{
+	RA 43.687917
+	Dec -10.898056
+	Distance 750
+	SpectralType "G9"
+	AppMag 11.6
+}
+
+"WASP-52"
+{
+	RA 348.495000
+	Dec 8.761389
+	Distance 460
+	SpectralType "K2V"
+	AppMag 12.0
+}
+
+1006784967 "WASP-54:GSC 04967-00678:BD+00 3088"
+{
+	RA 205.454167
+	Dec -0.128056
+	Distance 650
+	SpectralType "F9"
+	AppMag 10.42
+}
+
+1001136125 "WASP-55"
+{
+	RA 203.757917
+	Dec -17.503611
+	Distance 1080
+	SpectralType "G2V" # from temperature, radius and mass
+	AppMag 11.8
+}
+
+1015611986 "WASP-56"
+{
+	RA 183.366250
+	Dec 23.055556
+	Distance 830
+	SpectralType "G6"
+	AppMag 11.48
+}
+
+"WASP-57"
+{
+	RA 223.820000
+	Dec -2.057778
+	Distance 1480
+	SpectralType "G6"
+	AppMag 13.04
+}
+
+"WASP-58"
+{
+	RA 274.700833
+	Dec 45.171944
+	Distance 980
+	SpectralType "G2V"
+	AppMag 11.66
+}
+
+"WASP-59"
+{
+	RA 349.622917
+	Dec 24.889167
+	Distance 410
+	SpectralType "K5V"
+	AppMag 13.00
+}
+
+"WASP-60"
+{
+	RA 356.666667
+	Dec 31.155833
+	Distance 1300
+	SpectralType "G1V"
+	AppMag 12.18
+}
+
+1019726469 "WASP-61"
+{
+	RA 75.299583
+	Dec -26.054167
+	Distance 1560
+	SpectralType "F7"
+	AppMag 12.5
+}
+
+1008748900 "WASP-62:GSC 08900-00874"
+{
+	RA 87.140000
+	Dec -63.988333
+	Distance 520
+	SpectralType "F7"
+	AppMag 10.3
+}
+
+1005567612 "WASP-63:GSC 07612-00556"
+{
+	RA 94.336250
+	Dec -38.323333
+	Distance 1080
+	SpectralType "G8"
+	AppMag 11.2
+}
+
+1018047193 "WASP-66"
+{
+	RA 158.225000
+	Dec -34.989722
+	Distance 1240
+	SpectralType "F4"
+	AppMag 11.6
+}
+
+1013886307 "WASP-67"
+{
+	RA 295.743750
+	Dec -19.949444
+	Distance 730
+	SpectralType "K0V"
+	AppMag 12.5
+}
+
+1001160030 "WASP-71"
+{
+	RA 29.263333
+	Dec 0.758889
+	Distance 650
+	SpectralType "F8"
+	AppMag 10.56
+}
+
+"WASP-77 A:BD-07 436 A"
+{
+	RA 37.155000
+	Dec -7.060556
+	Distance 390 # from class, radius and app. mag.
+	SpectralType "G8V"
+	AppMag 10.3
+}
+
+1002715889 "WASP-78"
+{
+	RA 63.756250
+	Dec -22.116389
+	Distance 1800
+	SpectralType "F8"
+	AppMag 12
+}
+
+1008347038 "WASP-79:GSC 07038-00834"
+{
+	RA 66.370833
+	Dec -30.600556
+	Distance 780
+	SpectralType "F3"
+	AppMag 10.1
+}
+
+"WASP-80"
+{
+	RA 303.167500
+	Dec -2.145556
+	Distance 200
+	SpectralType "K7V"
+	AppMag 11.88
+}
+
+# CoRoT survey
+
+"CoRoT-1:GSC 04804-02268"
+{
+	RA 102.079875
+	Dec -3.102161
+	Distance 2250 # from spectral class and magnitude
+	SpectralType "G0V"
+	AppMag 13.6
+}
+
+"CoRoT-2:GSC 00465-01282"
+{
+	RA 291.777083
+	Dec 1.38375
+	Distance 885 # from spectral class and magnitude
+	SpectralType "G7V"
+	AppMag 12.57
+}
+
+"CoRoT-3:GSC 00465-01645"
+{
+	RA 292.054167
+	Dec 0.121944
+	Distance 2220
+	SpectralType "G0V"
+	AppMag 13.3
+}
+
+"CoRoT-4:GSC 04800-02187"
+{
+	RA 102.194583
+	Dec -0.672778
+	Distance 5160 # from spectral class and magnitude
+	SpectralType "F0V"
+	AppMag 13.7
+}
+
+"CoRoT-5"
+{
+	RA 101.279167
+	Dec 0.815278
+	Distance 2500 # from spectral class and magnitude
+	SpectralType "F9V"
+	AppMag 14.0
+}
+
+"CoRoT-6"
+{
+	RA 281.075000
+	Dec 6.663333
+	Distance 3900 # from spectral class and magnitude
+	SpectralType "F5V"
+	AppMag 13.9
+}
+
+1017334799 "CoRoT-7:GSC 04799-01733"
+{
+	RA 100.95625
+	Dec -1.063056
+	Distance 460
+	SpectralType "K0V"
+	AppMag 11.73
+}
+
+"CoRoT-8"
+{
+	RA 291.588333
+	Dec 1.426389
+	Distance 1240
+	SpectralType "K1V"
+	AppMag 14.8
+}
+
+"CoRoT-9"
+{
+	RA 280.786667
+	Dec 6.204167
+	Distance 1500
+	SpectralType "G3V"
+	AppMag 13.7
+}
+
+"CoRoT-10"
+{
+	RA 291.063750
+	Dec 0.746111
+	Distance 1120
+	SpectralType "K1V"
+	AppMag 15.22
+}
+
+"CoRoT-11:GSC 00459-01080"
+{
+	RA 280.687083
+	Dec 5.937778
+	Distance 1830
+	SpectralType "F6V"
+	AppMag 12.94
+}
+
+"CoRoT-12"
+{
+	RA 100.765833
+	Dec -1.296389
+	Distance 3750
+	SpectralType "G2V"
+	AppMag 15.52
+}
+
+"CoRoT-13"
+{
+	RA 102.721250
+	Dec -5.086389
+	Distance 4270
+	SpectralType "G0V"
+	AppMag 15.04
+}
+
+"CoRoT-14"
+{
+	RA 103.425000
+	Dec -5.536111
+	Distance 7520 # from spectral class and magnitude
+	SpectralType "F9V"
+	AppMag 16.03
+}
+
+"CoRoT-16"
+{
+	RA 278.524583
+	Dec -6.002500
+	Distance 5400
+	SpectralType "G5V"
+	AppMag 15.64
+}
+
+"CoRoT-17"
+{
+	RA 278.699167
+	Dec -6.612222
+	Distance 3000
+	SpectralType "G2V"
+	AppMag 15.46
+}
+
+"CoRoT-18"
+{
+	RA 98.1725
+	Dec -0.031667
+	Distance 2800
+	SpectralType "G9"
+	AppMag 14.99
+}
+
+"CoRoT-19"
+{
+	RA 97.0337500
+	Dec -0.170556
+	Distance 2600
+	SpectralType "F9V"
+	Radius 1148000
+	AppMag 14.78
+}
+
+"CoRoT-20"
+{
+	RA 97.720417
+	Dec 0.226944
+	Distance 4010
+	SpectralType "G2V"
+	Radius 640000
+	AppMag 14.66
+}
+
+"CoRoT-23"
+{
+	RA 279.782500
+	Dec 4.357778
+	Distance 4200 # from spectral class and magnitude
+	SpectralType "G0V"
+	AppMag 15.63
+}
+
+"CoRoT-24"
+{
+	RA 101.922500
+	Dec -3.719444
+	Distance 1960
+	SpectralType "K1V"
+	AbsMag 6.1 # from spectral class
+}
+
+# Kepler survey
+
+"Kepler-4:KOI-7:KIC 11853905:GSC 03549-02067"
+{
+	RA 285.615417
+	Dec 50.135833
+	Distance 1800
+	SpectralType "G0V"
+	AppMag 12.7
+}
+
+ "Kepler-5:KOI-18:KIC 8191672"
+ {
+	RA 299.407083
+	Dec 44.035
+	Distance 2950
+	SpectralType "F" # from temperature and magnitude
+	AbsMag 3.22
+ }
+
+ "Kepler-6:KOI-17:KIC 10874614"
+ {
+	RA 296.837083
+	Dec 48.240000
+	Distance 2020
+	SpectralType "G" # from temperature and magnitude
+	AbsMag 4.33
+ }
+
+ "Kepler-7:KOI-97:KIC 5780885"
+ {
+	RA 288.581667
+	Dec 41.089722
+	Distance 2700
+	SpectralType "F" # from temperature and magnitude
+	AbsMag 3.43
+ }
+
+"Kepler-8:KOI-10:KIC 6922244"
+{
+	RA 281.287917
+	Dec 42.451111
+	Distance 4335
+	SpectralType "F5V" # from mass, radius, temperature
+	AppMag 13.9
+}
+
+"Kepler-9:KOI-377:KIC 3323887"
+{
+	RA 285.574167
+	Dec 38.400833
+	Distance 2120
+	SpectralType "G5V" # from mass, radius, temperature
+	AppMag 13.9
+}
+
+"Kepler-10:KOI-72:KIC 11904151:GSC 03549-00354"
+{
+	RA 285.679167
+	Dec 50.241389
+	Distance 564
+	SpectralType "G"
+	AppMag 10.96
+}
+
+"Kepler-11:KOI-157:KIC 6541920:GSC 03144-00002"
+{
+	RA 297.115000
+	Dec 41.909167
+	Distance 2000 # from app mag and spectral class
+	SpectralType "G"
+	AppMag 13.7
+}
+
+"Kepler-12:KOI-20:KIC 11804465:GSC 03549-00844"
+{
+	RA 286.243333
+	Dec 50.040278
+	Distance 2700 # from app mag and spectral class
+	SpectralType "G0"
+	AppMag 13.4
+}
+
+1004133546 "Kepler-14:KOI-98:KIC 10264660:GSC 03546-00413"
+{
+	RA 287.708750
+	Dec 47.333056
+	Distance 3200
+	SpectralType "F"
+	AppMag 12.12
+}
+
+"Kepler-15:KOI-128:KIC 11359879"
+{
+	RA 296.200417
+	Dec 49.140000
+	Distance 1900 # from spectral class and magnitude
+	SpectralType "G" # from temperature, mass & radius
+	AppMag 13.8
+}
+
+Barycenter "Kepler-16:KOI-1611:KIC 12644769:GSC 03554-01147"
+{
+	RA 289.075833
+	Dec 51.757500
+	Distance 280
+}
+
+# Doyle et al. 2011. "Kepler-16: A transiting circumbinary 
+# planet" (http://arxiv.org/abs/1109.3432)
+"Kepler-16 A"
+{
+	OrbitBarycenter "Kepler-16"
+	SpectralType "K"
+	Radius 451500
+	AbsMag 7.4
+
+	EllipticalOrbit {
+		Period		0.1124688 # 41.079220 days
+		SemiMajorAxis	0.05085   # mass ratio 0.6897:0.20255
+		Eccentricity    0.15944
+		Inclination     82.2034   #
+		AscendingNode   287.6972  # inclination to plane of sky 90.3401 deg.
+		ArgOfPericenter 67.4901
+		MeanAnomaly	0.7144
+	}
+}
+
+"Kepler-16 B"
+{
+	OrbitBarycenter "Kepler-16"
+	SpectralType "M"
+	Radius 157500
+	AbsMag 12.3
+
+	EllipticalOrbit {
+		Period		0.1124688 # 41.079220 days
+		SemiMajorAxis	0.17315   # mass ratio 0.6897:0.20255
+		Eccentricity    0.15944
+		Inclination     82.2034   #
+		AscendingNode   287.6972  # inclination to plane of sky 90.3401 deg.
+		ArgOfPericenter 247.4901
+		MeanAnomaly	0.7144
+	}
+}
+
+"Kepler-17:KOI-203:KIC 10619192"
+{
+	RA 298.395417
+	Dec 47.815000
+	Distance 1880
+	SpectralType "G7V"  # from temperature and mass
+	AppMag 14
+}
+
+"Kepler-18:KOI-137:KIC 8644288:GSC 03149-02089"
+{
+	RA 298.079583
+	Dec 44.746389
+	Distance 2300 # from spectral class and magnitude
+	SpectralType "G"  # from temperature and mass
+	AppMag 14
+}
+
+1015493134 "Kepler-19:KOI-84:KIC 2571238:GSC 03134-01549"
+{
+	RA 290.420833
+	Dec 37.851667
+	Distance 720 # from mass, radius and magnitude
+	SpectralType "G5V" # from mass and radius
+	AppMag 12
+}
+
+"Kepler-20:KOI-70:KIC 6850504:GSC 03129-01902"
+{
+	RA 287.697917
+	Dec 42.338611
+	Distance 945
+	SpectralType "G8"
+	AppMag 12.5
+}
+
+"Kepler-22:KOI-87:KIC 10593626:GSC 03546-02301"
+{
+	RA 289.217500
+	Dec 47.884444
+	Distance 620
+	SpectralType "G5V"
+	AbsMag 5.1 # from spectral class
+}
+
+"Kepler-23:KOI-168:KIC 11512246:GSC 03564-01806"
+{
+	RA 294.218750
+	Dec 49.479167
+	Distance 3200 # from temperature, mag. and radius
+	SpectralType "G" # from temperature
+	AppMag 14
+}
+
+"Kepler-24:KOI-1102:KIC 3231341"
+{
+	RA 290.413333
+	Dec 38.343889
+	Distance 4400 # from temperature, mag. and radius
+	SpectralType "G" # from temperature
+	AppMag 15.5
+}
+
+1012643124 "Kepler-25:KOI-244:KIC 4349452:GSC 03124-01264"
+{
+	RA 286.638333
+	Dec 39.487778
+	Distance 900 # from temperature, mag. and radius
+	SpectralType "F" # from temperature
+	AppMag 11
+}
+
+"Kepler-26:KOI-250:KIC 9757613"
+{
+	RA 284.940833
+	Dec 46.566667
+	Distance 1400 # from temperature, mag. and radius
+	SpectralType "K" # from temperature
+	AppMag 16
+}
+
+"Kepler-28:KOI-870:KIC 6949607"
+{
+	RA 292.137083
+	Dec 42.429444
+	Distance 1600 # from temperature, mag. and radius
+	SpectralType "K4V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-29:KOI-738:KIC 10358759"
+{
+	RA 298.348333
+	Dec 47.491111
+	Distance 4040 # from temperature, mag. and radius
+	SpectralType "G5V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-30:KOI-806:KIC 3832474"
+{
+	RA 285.283750
+	Dec 38.947222
+	Distance 4000 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-31:KOI-935:KIC 9347899"
+{
+	RA 294.022917
+	Dec 45.853056
+	Distance 6200 # from temperature, mag. and radius
+	SpectralType "F6V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-32:KOI-952:KIC 9787239"
+{
+	RA 297.842500
+	Dec 46.574167
+	Distance 710 # from temperature, mag. and radius
+	SpectralType "M0V" # from temperature, mass and radius
+	AppMag 16
+}
+
+"Kepler-33:KOI-507:KIC 9458613:GSC 03542-01616"
+{
+	RA 289.077500
+	Dec 46.005278
+	Distance 3760 # from temperature, mag. and radius
+	SpectralType "G" # from temperature
+	AppMag 14
+}
+
+Barycenter "Kepler-34:KOI-2459:KIC 8572936"
+{
+	RA 296.435833
+	Dec 44.641667
+	Distance 4887
+}
+
+"Kepler-34 A"
+{
+	OrbitBarycenter "Kepler-34"
+	SpectralType "G"
+	AbsMag 4.6 # for observed radius
+
+	EllipticalOrbit {
+		Period		0.076100781 # 27.7958103 days
+		SemiMajorAxis	0.11291   # mass ratio 1.0479:1.0208
+		Eccentricity    0.52087
+		Inclination     79.9290   #
+		AscendingNode   294.4616  # inclination to plane of sky 89.8584 deg.
+	}
+}
+
+"Kepler-34 B"
+{
+	OrbitBarycenter "Kepler-34"
+	SpectralType "G"
+	AbsMag 4.8 # for observed radius
+
+	EllipticalOrbit {
+		Period		0.076100781 # 27.7958103 days
+		SemiMajorAxis	0.11591   # mass ratio 1.0479:1.0208
+		Eccentricity    0.52087
+		Inclination     79.9290   #
+		AscendingNode   294.4616  # inclination to plane of sky 89.8584 deg.
+		ArgOfPericenter 180
+	}
+}
+
+Barycenter "Kepler-35:KOI-2937:KIC 9837578"
+{
+	RA 294.497083
+	Dec 46.689722
+	Distance 5363
+}
+
+"Kepler-35 A"
+{
+	OrbitBarycenter "Kepler-35"
+	SpectralType "G"
+	AbsMag 4.9 # for observed radius
+
+	EllipticalOrbit {
+		Period		0.056765683 # 20.733666 days
+		SemiMajorAxis	0.08402   # mass ratio 0.8877:0.8094
+		Eccentricity    0.1421
+		Inclination     80.1129   #
+		AscendingNode   292.8477  # inclination to plane of sky 90.4238 deg.
+	}
+}
+
+"Kepler-35 B"
+{
+	OrbitBarycenter "Kepler-35"
+	SpectralType "G"
+	AbsMag 5.5 # for observed radius
+
+	EllipticalOrbit {
+		Period		0.056765683 # 20.733666 days
+		SemiMajorAxis	0.09215    # mass ratio 0.8877:0.8094
+		Eccentricity    0.1421
+		Inclination     80.1129   #
+		AscendingNode   292.8477  # inclination to plane of sky 90.4238 deg.
+		ArgOfPericenter 180
+	}
+}
+
+1024643551 "Kepler-36:KOI-277:KIC 11401755"
+{
+	RA 291.250000
+	Dec 49.231889
+	Distance 1300 # from temperature, mag. and radius
+	SpectralType "G" # from temperature and mass
+	AppMag 11.94
+}
+
+Barycenter "Kepler-38:KOI-1740:KIC 6762829"
+{
+	RA 286.830417
+	Dec 42.279167
+	Distance 3500 # from assumed class and app. mag.
+}
+
+"Kepler-38 A"
+{
+	OrbitBarycenter "Kepler-38"
+	SpectralType "G" # from mass and temperature
+	AbsMag 3.8       # for observed radius
+
+	EllipticalOrbit {
+		Period		0.051458635 # 18.7952667 days
+		SemiMajorAxis	0.0305      # mass ratio 0.949:0.249
+		Eccentricity    0.103
+		Inclination     83.919      #
+		AscendingNode   285.260     # inclination to plane of sky 89.412 deg.
+	}
+}
+
+"Kepler-38 B"
+{
+	OrbitBarycenter "Kepler-38"
+	SpectralType "M" # from mass and radius
+	AbsMag 12.3      # for mid-class M dwarf
+	Radius 190000    # observed
+
+	EllipticalOrbit {
+		Period		0.051458635 # 18.7952667 days
+		SemiMajorAxis	0.1164      # mass ratio 0.949:0.249
+		Eccentricity    0.103
+		Inclination     83.919      #
+		AscendingNode   285.260     # inclination to plane of sky 89.412 deg.
+		ArgOfPericenter 180
+	}
+}
+
+"Kepler-42:KOI-961:KIC 8561063"
+{
+	RA 292.219167
+	Dec 44.619444
+	Distance 126.2
+	SpectralType "M7V" # from mass and radius
+	Temperature 3070
+	Radius 120000
+	AppMag 16.12
+}
+
+Barycenter "Kepler-47:KOI-3154:KIC 10020423"
+{
+	RA 295.297917
+	Dec 46.920556
+	Distance 4900
+}
+
+"Kepler-47 A"
+{
+	OrbitBarycenter "Kepler-47"
+	SpectralType "G" # from mass, radius and temperature
+	Radius 670000    # observed
+	AbsMag 5.0
+
+	EllipticalOrbit {
+		Period		0.020392544 # 7.44837695 days
+		SemiMajorAxis	0.0215      # mass ratio 1.043:0.362
+		Eccentricity    0.0234
+		Inclination     80.83       #
+		AscendingNode   293.20      # inclination to plane of sky 89.34 deg.
+	}
+}
+
+"Kepler-47 B"
+{
+	OrbitBarycenter "Kepler-47"
+	SpectralType "M" # from mass, radius and temperature
+	Radius 244000    # observed
+	AbsMag 9.45
+
+	EllipticalOrbit {
+		Period		0.020392544 # 7.44837695 days
+		SemiMajorAxis	0.0621      # mass ratio 1.043:0.362
+		Eccentricity    0.0234
+		Inclination     80.83       #
+		AscendingNode   293.20      # inclination to plane of sky 89.34 deg.
+		ArgOfPericenter 180
+	}
+}
+
+"Kepler-48:KOI-148:KIC 5735762"
+{
+	RA 299.139167
+	Dec 40.948889
+	Distance 1500 # from temperature, mag. and radius
+	SpectralType "G" # from temperature and mass
+	AppMag 13.5
+}
+
+"Kepler-49:KOI-248:KIC 5364071"
+{
+	RA 292.294583
+	Dec 40.591667
+	Distance 570 # from temperature, mag. and radius
+	SpectralType "M0V" # from temperature, radius and mass
+	AppMag 15.5
+}
+
+1017743550 "Kepler-50:KOI-262:KIC 11807274"
+{
+	RA 288.100833
+	Dec 50.033611
+	Distance 1000 # from temperature, mag. and radius
+	SpectralType "F" # from temperature, radius and mass
+	AppMag 10.5
+}
+
+"Kepler-51:KOI-620:KIC 11773022"
+{
+	RA 296.479167
+	Dec 49.937778
+	Distance 3000 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, radius and mass
+	AppMag 15
+}
+
+"Kepler-52:KOI-775:KIC 11754553"
+{
+	RA 286.737917
+	Dec 49.975833
+	Distance 750 # from temperature, mag. and radius
+	SpectralType "K7V" # from temperature, radius and mass
+	AppMag 15.5
+}
+
+"Kepler-53:KOI-829:KIC 5358241"
+{
+	RA 290.461667
+	Dec 40.562500
+	Distance 4500 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, radius and mass
+	AppMag 16
+}
+
+"Kepler-54:KOI-886:KIC 7455287"
+{
+	RA 294.773750
+	Dec 43.056389
+	Distance 780 # from temperature, mag. and radius
+	SpectralType "M0V" # from temperature, radius and mass
+	AppMag 16.3
+}
+
+"Kepler-55:KOI-904:KIC 8150320"
+{
+	RA 285.168333
+	Dec 44.026389
+	Distance 1550 # from temperature, mag. and radius
+	SpectralType "K" # from temperature, radius and mass
+	AppMag 16.3
+}
+
+"Kepler-56:KOI-1241:KIC 6448890"
+{
+	RA 293.758333
+	Dec 41.871944
+	Distance 1900 # from temperature, mag. and radius
+	SpectralType "K" # from temperature
+	AppMag 13
+}
+
+"Kepler-57:KOI-1270:KIC 8564587"
+{
+	RA 293.641250
+	Dec 44.656944
+	Distance 2400 # from temperature, mag. and radius
+	SpectralType "K0V" # from temperature, mass and radius
+	AppMag 15.5
+}
+
+"Kepler-58:KOI-1336:KIC 4077526"
+{
+	RA 296.358750
+	Dec 39.115278
+	Distance 3900 # from temperature, mag. and radius
+	SpectralType "G" # from temperature, mass and radius
+	AppMag 15.3
+}
+
+"Kepler-59:KOI-1529:KIC 9821454"
+{
+	RA 287.039583
+	Dec 46.640000
+	Distance 3050 # from temperature, mag. and radius
+	SpectralType "G0V" # from temperature, mass and radius
+	AppMag 14.8
+}
+
+"Kepler-60:KOI-2086:KIC 6768394"
+{
+	RA 288.962500
+	Dec 42.265000
+	Distance 4600 # from temperature, mag. and radius
+	SpectralType "G0V" # from temperature, mass and radius
+	AppMag 14.5
+}
+
+"Kepler-62:KOI-701:KIC 9002278"
+{
+	RA 283.212917
+	Dec 45.350000
+	Distance 790 # from spectrum, app mag and radius
+	SpectralType "K2V"
+	AppMag 13.8
+}
+
+"Kepler-69:KOI-172:KIC 8692861"
+{
+	RA 293.260833
+	Dec +44.868889
+	Distance 1700 # from spectrum, app mag and radius
+	SpectralType "G4V"
+	AppMag 13.7
+}
+
+1000643542 "KOI-13:KIC 9941662:GSC 03542-00064"
+{
+	RA 286.971250
+	Dec 46.868333
+	Distance 2040 # from spectral class, magnitude and radius
+	SpectralType "A0"
+	AppMag 9.95
+}
+
+"KOI-55:KIC 5807616"
+{
+	RA 296.356250
+	Dec 41.092778
+	Distance 3850
+	SpectralType "sdB"
+	Temperature 27730
+	AppMag 14.87
+}
+
+"KOI-94:KIC 6462863"
+{
+	RA 297.332917
+	Dec 41.891111
+	Distance 2100 # from app. mag., radius & assumed class
+	SpectralType "F" # from temperature and mass
+	AppMag 12.4
+}
+
+"KOI-135:KIC 9818381:GSC 03541-00075"
+{
+	RA 285.240833
+	Dec 46.668333
+	Distance 6360
+	SpectralType "G0V"
+	AppMag 14
+}
+
+"KOI-152:KIC 8394721"
+{
+	RA 300.517083
+	Dec 44.381389
+	Distance 3700 # from spectral class and app. mag.
+	SpectralType "F"
+	AppMag 13.99
+}
+
+"KOI-196:KIC 9410930"
+{
+	RA 285.634222
+	Dec 45.981667
+	Distance 2380
+	SpectralType "G2V"
+	AppMag 14.5
+}
+
+"KOI-200:KIC 6046540"
+{
+	RA 293.092500
+	Dec 41.355556
+	Distance 1700 # from estimated class and magnitude
+	SpectralType "G" # from mass and temp
+	AppMag 14.23
+}
+
+"KOI-202:KIC 7877496:GSC 03132-00543"
+{
+	RA 286.110417
+	Dec 43.680833
+	Distance 2100 # from estimated class and magnitude
+	SpectralType "G0V" # from mass, radius and temp
+	AppMag 13.73
+}
+
+"KOI-204:KIC 9305831"
+{
+	RA 300.102500
+	Dec 45.762222
+	Distance 7330
+	SpectralType "G2IV"
+	AppMag 15
+}
+
+"KOI-206:KIC 5728139"
+{
+	RA 297.593750
+	Dec 40.977222
+	Distance 2800 # from estimated class and magnitude
+	SpectralType "G" # from mass and temp
+	AppMag 14.35
+}
+
+"KOI-254:KIC 5794240"
+{
+	RA 292.872917
+	Dec 41.064167
+	Distance 1086
+	SpectralType "M0V" # from temperature
+	AppMag 16.88
+}
+
+"KOI-423:KIC 9478990"
+{
+	RA 296.960417
+	Dec 46.034167
+	Distance 3900
+	SpectralType "F7IV"
+	AppMag 14.3
+}
+
+"KOI-428:KIC 10418224"
+{
+	RA 296.813750
+	Dec 47.526667
+	Distance 8800
+	SpectralType "F5IV"
+	AppMag 14.76
+}
+
+"KOI-680:KIC 7529266"
+{
+	RA 292.287500
+	Dec 43.197222
+	Distance 2300 # from estimated class and magnitude
+	SpectralType "G" # from mass and temperature
+	AppMag 13.91
+}
+
+"KOI-730:KIC 10227020"
+{
+	RA 298.318333
+	Dec 47.279444
+	Distance 3900 # from mass, radius and magnitude
+	SpectralType "G0V" # from mass and radius
+	AppMag 15
+}
+
+"KOI-872:KIC 7109675"
+{
+	RA 289.268750
+	Dec 42.604167
+	Distance 2790
+	SpectralType "G" # from mass and radius
+	AppMag 15.3
+}
+
+"KOI-889:KIC 757450"
+{
+	RA 291.137500
+	Dec 36.577500
+	Distance 3700
+	SpectralType "G8V"
+	AppMag 15.0
+}
+
+Barycenter "KIC 4862625 A"
+{
+	RA 298.215000
+	Dec 39.955000
+	Distance 3900 # from mass, radius and magnitude
+}
+
+"KIC 4862625 Aa"
+{
+	OrbitBarycenter "KIC 4862625 A"
+	SpectralType "F" 
+	Radius 1200000   # observed
+	AppMag 14.0
+
+	EllipticalOrbit {
+		Period		0.054757691 # 20.0002468 days
+		SemiMajorAxis	0.0346      # mass ratio 1.528:0.378
+		Eccentricity    0.2179
+		Inclination     81.28       #
+		AscendingNode   295.02      # inclination to plane of sky 87.58 deg.
+	}
+}
+
+"KIC 4862625 Ab"
+{
+	OrbitBarycenter "KIC 4862625 A"
+	SpectralType "M"
+	Radius 280000    # observed
+	AbsMag 10.4      # typical
+
+	EllipticalOrbit {
+		Period		0.054757691 # 20.0002468 days
+		SemiMajorAxis	0.1398      # mass ratio 1.528:0.378
+		Eccentricity    0.2179
+		Inclination     81.28       #
+		AscendingNode   295.02      # inclination to plane of sky 87.58 deg.
+		ArgOfPericenter 180
+	}
+}
+
+"KIC 6185331"
+{
+	RA 284.273750
+	Dec 41.535000
+	Distance 5600 # from mass, radius and magnitude
+	SpectralType "G" # from temperature and mass
+	AppMag 15.64
+}
+
+"KIC 8852719"
+{
+	RA 302.352500
+	Dec 45.070000
+	Distance 12000 # from radius and inferred magnitude
+	SpectralType "K0V" # from temperature and radius
+	AppMag 18.76
+}
+
+"KIC 10905746"
+{
+	RA 283.628333
+	Dec 48.391111
+	Distance 190 # from mass, radius and magnitude
+	SpectralType "M0V"
+	AppMag 13
+}
+
+"KIC 12557548"
+{
+	RA 290.966250
+	Dec 51.504722
+	Distance 470
+	SpectralType "K4V"
+	AppMag 16
+	Radius 450000
+}
+
+# SWEEPS survey
+
+"SWEEPS-4"
+{
+	RA 269.724583
+	Dec -29.189167
+	Distance 27700
+	SpectralType "F" # from mass
+	AppMag 18.8
+}
+
+"SWEEPS-11"
+{
+	RA 269.761250
+	Dec -29.198194
+	Distance 27700
+	SpectralType "G" # from mass
+	AppMag 19.83
+}
+
+# HATS survey
+
+"HATS-1:GSC 06652-00186"
+{
+	RA 175.525417
+	Dec -23.354722
+	Distance 990
+	SpectralType "G" # from mass, radius and temp.
+	AppMag 12.05
+}
+
+# WTS survey
+
+"WTS-1"
+{
+	RA 293.993333
+	Dec 36.290278
+	Distance 10400
+	SpectralType "F" # from mass, radius and temp.
+	AppMag 16.13
+}
+
+# HD stars without Hip numbers
+
+1000370197 # HD 70573
+{
+	RA 125.7083
+	Dec 1.8594
+	Distance 149
+	SpectralType "G1V"
+	AppMag 8.70
+}
+
+1001013304 # HD 17092
+{
+	RA 41.5917
+	Dec 49.6531
+	Distance 355
+	SpectralType "K0III"
+	AppMag 7.73
+}
+
+1014500458 # HD 171028
+{
+	RA 206.094167
+	Dec 6.94583
+	Distance 290
+	SpectralType "G0"
+	AppMag 8.31
+}
+
+1009804006 # HD 240210
+{
+	RA 347.621667
+	Dec 57.029444
+	Distance 466
+	SpectralType "K2III"
+	AppMag 8.33
+}
+
+"HD 132563 B"
+{
+	RA 224.5880667
+	Dec 44.04329722
+	Distance 313.32
+	SpectralType "G1V" # from mass and temperature
+	AppMag 9.47
+}
+
+1006294006 "HD 219415"
+{
+	RA 348.724167
+	Dec 56.730278
+	Distance 350 # from spectral class and app mag
+	SpectralType "K0III"
+	AppMag 8.94
+}
+
+# Other non-Hip stars
+
+1009465503 "BD-10 3166"
+{
+	RA 164.61993
+	Dec -10.77038
+	Distance 378.39
+	SpectralType "G4V"
+	AppMag 10.0
+}
+
+1021565409 "NGC 2423 3:GSC 05409-02156"
+{
+	RA 114.2875
+	Dec -13.90667
+	Distance 2500
+	SpectralType "GIV"
+	AppMag 9.45
+}
+
+1007901422 "BD+20 2457:GSC 01422-00790"
+{
+	RA 154.187083
+	Dec 19.891389
+	Distance 650
+	SpectralType "K2"
+	AppMag 9.75
+}
+
+1006031211 "BD+20 274:01211-00603"
+{
+	RA 25.920417
+	Dec 21.005278
+	Distance 1900 # from spectral class, radius and app. mag.
+	SpectralType "K5III"
+	AppMag 9.36
+}
+
+"Gliese 317"
+{
+	RA 130.24583
+	Dec -23.45639
+	Distance 29.9
+	SpectralType "M3.5V"
+	AppMag 12.0
+}
+
+#"Cha H\u03b1 8:Cha Ha 8"
+#{
+#	RA 166.949167
+#	Dec -77.668889
+#	Distance 520
+#	SpectralType "M6.5V"
+#	AppMag 20.1
+#}
+
+"V391 Peg"
+{
+	RA 331.05083
+	Dec 26.41889
+	Distance 4600
+	SpectralType "B0" # from effective temperature, gives correct radius
+	AppMag 14.57
+}
+
+
+"Lupus-TR-3"
+{
+	RA 232.579167
+	Dec -42.979444
+	Distance 5900      # estimate from spectral class and app. mag.
+	SpectralType "K1V"
+	AppMag 17.4
+}
+
+"GD 66:V361 Aur:WD 0517+307"
+{
+	RA 80.159583
+	Dec 30.806667
+	Distance 166
+	SpectralType "DA"
+	AppMag 15.6
+}
+
+1003211398 "Pr0201:BD+20 2184:GSC 01398-00321"
+{
+	RA 130.432500
+	Dec 20.226944
+	Distance 550 # Praesepe cluster
+	SpectralType "F7"
+	AppMag 10.33
+}
+
+"Pr0211:2MASS J08421149+1916373"
+{
+	RA 130.547917
+	Dec 19.276944
+	Distance 550 # Praesepe cluster
+	SpectralType "G9"
+	AppMag 12.15
+}
+
+1006832996 "KELT-3:BD+41 2024:GSC 02996-00683"
+{
+	RA 148.643333
+	Dec 40.388056
+	Distance 580
+	SpectralType "F7V"
+	AppMag 9.8
+}
+
+53911 "TW Hya" # redefined because of absent spectral
+               # class in stars.dat
+{
+	RA 165.46625
+	Dec -34.70472
+	Distance 184.07
+	SpectralType "K8V"
+	AppMag 10.91
+}
+
+13044
+{
+	RA 30.793722
+	Dec -36.107500
+	Distance 2285
+	SpectralType "F2"
+	AppMag 9.94
+}
+
+114840
+{
+	RA 348.925833
+	Dec +58.043333
+	Distance 4900
+	SpectralType "K2III"
+	AppMag 8.19
+}
+
+# Figueira et al, 2010 (http://fr.arxiv.org/abs/1003.3678)
+# suggest the radial velocity is stellar rather than planetary
+#1002141355 "BD+20 1790"
+#{
+#	RA 110.931667
+#	Dec 20.416389
+#	Distance 82.80
+#	SpectralType "K5V"
+#	AppMag 9.93
+#}
+
+"GJ 1214"
+{
+	RA 258.82875
+	Dec 4.963889
+	Distance 42
+	Radius 147000
+	SpectralType "M4.5V"
+	AppMag 14.67
+}
+
+"Qatar-1:GSC 04240-00470"
+{
+	RA 303.381667
+	Dec 65.161944
+	Distance 455 # from spectral class and apparent mag
+	SpectralType "K"
+	AppMag 12.84
+}
+
+"Qatar-2:GSC 04974-00112"
+{
+	RA 207.655833
+	Dec -6.803889
+	Distance 484 # from spectral class and apparent mag
+	SpectralType "K"
+	AppMag 13.3
+}
+
+"GJ 3634"
+{
+	RA 164.646250
+	Dec -31.144167
+	Distance 64.5
+	SpectralType "M2.5V"
+	AppMag 11.95
+}
+
+1003233304 "BD+48 738:GSC 03304-00323"
+{
+	RA 40.710417
+	Dec 49.586944
+	Distance 1460 # from spectral class and magnitude
+	SpectralType "K0III"
+	AppMag 9.14
+}
+
+"GJ 3470"
+{
+	RA 119.774583
+	Dec 15.391667
+	Distance 82.2
+	SpectralType "M1.5V"
+	AppMag 12.33
+}
+
+
+# Definitions for some exoplanet stars in multiple systems
+
+Barycenter "TAU Boo:4 Boo"
+{
+	RA 206.815676
+	Dec 17.456869
+	Distance 50.868
+}
+
+67275 "TAU Boo A:4 Boo A"
+{
+	OrbitBarycenter "TAU Boo"
+	SpectralType "F7V"
+	AppMag 4.50
+
+	EllipticalOrbit {
+		Period          2000
+		SemiMajorAxis   45.4   # est. mass ratio 1.3:0.33
+		Eccentricity    0.91
+		Inclination	102.8
+		AscendingNode   160.2
+		ArgOfPericenter 33.2
+		MeanAnomaly     356.9
+	}
+}
+
+"TAU Boo B:4 Boo B"
+{
+	OrbitBarycenter "TAU Boo"
+	SpectralType "M2V"
+	AppMag 11.1
+
+	EllipticalOrbit {
+		Period          2000
+		SemiMajorAxis   179.0   # est. mass ratio 1.3:0.33
+		Eccentricity    0.91
+		Inclination	102.8
+		AscendingNode   160.2
+		ArgOfPericenter 213.2
+		MeanAnomaly     356.9
+	}
+}
+
+Barycenter "UPS And:50 And"
+{
+	RA 24.198715     # mass ratio 1.2:0.2
+	Dec 41.404487    #
+	Distance 43.928
+}
+
+7513 "UPS And A:50 And A"
+{
+	RA 24.199904
+	Dec 41.406384
+	Distance 43.928
+	SpectralType "F8V"
+	AppMag 4.10
+}
+
+"UPS And B:50 And B:2MASS J0136504+412332"
+{
+	RA 24.19158317
+	Dec 41.39310511
+	Distance 43.928
+	SpectralType "M4.5V"
+	AbsMag 11.8   # from spectral class
+}
+
+10138 "Gliese 86 A"
+{
+	RA 32.600005
+	Dec -50.825314
+	Distance 35.596
+	SpectralType "K0V"
+	AppMag 6.12
+}
+
+# Originally classified as a brown dwarf
+# Present data from Mugrauer & Neuhauser
+# http://de.arxiv.org/abs/astro-ph/0506311
+"Gliese 86 B"
+{
+	RA 32.600829       # from measured separation 
+	Dec -50.825444     # position angle
+	Distance 35.596
+	SpectralType "DC9" # "cool white dwarf, 5000±500K"
+	AbsMag 14.5        # typical for class
+}
+
+Barycenter "83 Leo"
+{
+	RA 171.692540
+	Dec 3.009373
+	Distance 57.637
+}
+
+55846 "83 Leo A"
+{
+	OrbitBarycenter "83 Leo"
+	SpectralType "K0IV"
+	AppMag 6.49
+
+	EllipticalOrbit {
+		Period          32000
+		SemiMajorAxis   348.4   # est. mass ratio 0.79:0.74
+		Eccentricity    0.46
+		Inclination	60.1
+		AscendingNode   307.3
+		ArgOfPericenter 229.0
+		MeanAnomaly     324.0
+	}
+}
+
+55848 "83 Leo B"
+{
+	OrbitBarycenter "83 Leo"
+	SpectralType "K2V"
+	AppMag 7.58
+
+	EllipticalOrbit {
+		Period          32000
+		SemiMajorAxis   371.9   # est. mass ratio 0.79:0.74
+		Eccentricity    0.46
+		Inclination	60.1
+		AscendingNode   307.3
+		ArgOfPericenter 49.0
+		MeanAnomaly     324.0
+	}
+}
+
+Barycenter "94 Cet"
+{
+	RA 48.193016
+	Dec -1.195933
+	Distance 72.984
+}
+
+14954 "94 Cet A"
+{
+	OrbitBarycenter "94 Cet"
+	SpectralType "F8V"
+	AppMag 5.06
+
+	EllipticalOrbit {
+		Period          1420
+		SemiMajorAxis   50.2   # est. mass ratio 1.15:0.57
+		Eccentricity    0.26
+		Inclination	43.7
+		AscendingNode   149.1
+		ArgOfPericenter 53.4
+		MeanAnomaly     4.6
+	}
+}
+
+"94 Cet B"
+{
+	OrbitBarycenter "94 Cet"
+	SpectralType "M"          # guess from est. mass and AppMag
+	AppMag 11.5
+
+	EllipticalOrbit {
+		Period          1420
+		SemiMajorAxis   101.3   # est. mass ratio 1.15:0.57
+		Eccentricity    0.26
+		Inclination	43.7
+		AscendingNode   149.1
+		ArgOfPericenter 233.4
+		MeanAnomaly     4.6
+	}
+}
+
+Barycenter "16 Cyg"
+{
+	RA 295.460800
+	Dec 50.521685
+	Distance 70.522
+}
+
+96895 # 16 Cyg A
+{
+	OrbitBarycenter "16 Cyg"
+	SpectralType "G2V"
+	AppMag 5.99
+
+	EllipticalOrbit {
+		Period          18212.2        
+		SemiMajorAxis   440.94   # est. mass ratio 1:1
+		Eccentricity    0.862
+		Inclination     53.57
+                AscendingNode   354.87
+                ArgOfPericenter 7.15
+                MeanAnomaly     38.67
+	}
+}
+
+96901 # 16 Cyg B
+{
+	OrbitBarycenter "16 Cyg"
+	SpectralType "G5V"
+	AppMag 6.25
+
+	EllipticalOrbit {
+		Period          18212.2        
+		SemiMajorAxis   440.94   # est. mass ratio 1:1
+		Eccentricity    0.862
+		Inclination     53.57
+                AscendingNode   354.87
+                ArgOfPericenter 187.15
+                MeanAnomaly     38.67
+	}
+}
+
+Barycenter "Gliese 777"
+# approximate barycentre based on mass ratio 0.9:0.2
+{
+	RA 300.896216
+	Dec 29.872105
+	Distance 51.838
+}
+
+98767 "Gliese 777 A"
+{
+	RA 300.90394
+	Dec 29.866333
+	Distance 51.838
+	SpectralType "G6IV"
+	AppMag 5.73
+}
+
+"Gliese 777 B"
+{
+	RA 300.861458
+	Dec 29.898079
+	Distance 51.838
+	SpectralType "M4.5V"
+	AppMag 14.40
+}
+
+"PSR 1257+12:PSR B1257+12:PSR J1300+1240"
+{
+	RA 195.0125
+	Dec 12.6825
+	Distance 1000
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+
+	RotationPeriod 0.000001727  # 0.006218 sec
+}
+
+"PSR 1719-14:PSR J1719-1438"
+{
+	RA 259.792083
+	Dec -14.633611
+	Distance 3900
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+
+	RotationPeriod 0.0000016 # 0.0057 sec
+}
+
+Barycenter "PSR 1620-26:PSR B1620-26:PSR J1623-2631"
+{
+	RA 245.90917
+	Dec -26.53167
+	Distance 12000
+}
+	
+"PSR 1620-26 A:PSR B1620-26 A:PSR J1623-2631 A"
+{
+	OrbitBarycenter "PSR 1620-26"
+	SpectralType "Q"
+	AbsMag 27         # for approximate radius in Celestia
+
+	EllipticalOrbit {
+		Period          0.5241 # 191.443 days
+		SemiMajorAxis   0.13   # est. mass ratio 1.35:0.3
+		Eccentricity    0.0253
+		Inclination     95     # approx. 55 degree tilt
+		AscendingNode   213    # to plane of sky
+	}
+
+	Obliquity             95  # guess, to match inclination
+	EquatorAscendingNode  213 # guess, to match ascending node
+
+	RotationPeriod 0.000003076  # 0.011076 sec
+}
+
+"WD J1623-266:PSR 1620-26 B:PSR B1620-26 B:PSR J1623-2631 B"
+{
+	OrbitBarycenter "PSR 1620-26"
+	SpectralType "D"  # white dwarf
+	AbsMag 15         # approximate
+
+	EllipticalOrbit {
+		Period          0.5241 # 191.443 days
+		SemiMajorAxis   0.65   # est. mass ratio 1.35:0.3
+		Eccentricity    0.0253
+		Inclination     95     # approx. 55 degree tilt
+		AscendingNode   213    # to plane of sky
+		ArgOfPericenter 180
+	}
+
+	Obliquity             95  # guess, to match inclination
+	EquatorAscendingNode  213 # guess, to match ascending node
+}
+
+
+# Lee et al. "The sdB+M Eclipsing System HW Virginis and its Circumbinary Planets"
+# http://arxiv.org/abs/0811.3807
+Barycenter 62157 "HW Vir"
+{
+	RA 191.084167
+	Dec -8.671389
+	Distance 590
+}
+
+"HW Vir A"
+{
+	OrbitBarycenter "HW Vir"
+	SpectralType "sdB"
+	Radius 121800
+	AbsMag 4.22
+
+	EllipticalOrbit {
+		Period		0.00032  # 2.8 hours
+		SemiMajorAxis	0.000905 # mass ratio 0.485:0.142
+		Inclination	112      #
+		AscendingNode	182      # inclination to plane of sky 81 deg.
+	}
+}
+
+"HW Vir B"
+{
+	OrbitBarycenter "HW Vir"
+	SpectralType "M6.5V"
+	Radius 127400
+	AbsMag 15.59
+
+	EllipticalOrbit {
+		Period		0.00032  # 2.8 hours
+		SemiMajorAxis	0.003093 # mass ratio 0.485:0.142
+		Inclination	112      #
+		AscendingNode	182      # inclination to plane of sky 81 deg.
+		ArgOfPericenter	180	
+	}
+}
+
+# O'Donoghue et al. "The DA+dMe eclipsing binary EC13471-1258: its cup runneth over ... just"
+# http://fr.arxiv.org/abs/astro-ph/0307144
+#Barycenter "QS Vir"
+#{
+#	RA 207.466458
+#	Dec -13.227083
+#	Distance 156
+#}
+#
+#"QS Vir A"
+#{
+#	OrbitBarycenter "QS Vir"
+#	SpectralType "DA"
+#	Radius 7650
+#	AbsMag 10.71
+#
+#	EllipticalOrbit {
+#		Period		0.000385 # 3.37 hours
+#		SemiMajorAxis	0.0020   # mass ratio 0.78:0.43
+#		Inclination     110      #
+#		AscendingNode   194      # inclination to plane of sky 75.5 deg.
+#	}
+#}
+#
+#"QS Vir B"
+#{
+#	OrbitBarycenter "QS Vir"
+#	SpectralType "M3.5V"
+#	Radius 292300
+#	AbsMag 9.36
+#
+#	EllipticalOrbit {
+#		Period		0.000385 # 3.37 hours
+#		SemiMajorAxis	0.0036   # mass ratio 0.78:0.43
+#		Inclination     110      #
+#		AscendingNode   194      # inclination to plane of sky 75.5 deg.
+#		ArgOfPericenter 180
+#	}
+#}
+
+
+Barycenter "DP Leo"
+{
+	RA 169.316667
+	Dec 17.961389
+	Distance 1300
+}
+
+"DP Leo A"
+{
+	OrbitBarycenter "DP Leo"
+	SpectralType "DA"
+	Radius 7930
+	AbsMag 10.7
+
+	EllipticalOrbit {
+		Period		0.0001708 # 1.50 hours
+		SemiMajorAxis	0.00035   # mass ratio 0.6:0.09
+		Inclination     115       #
+		AscendingNode   157       # inclination to plane of sky 79.5 deg.
+	}
+}
+
+"DP Leo B"
+{
+	OrbitBarycenter "DP Leo"
+	SpectralType "M7V" # from mass
+	Radius 125000      # to match spectral class
+	AbsMag 14.3
+
+	EllipticalOrbit {
+		Period		0.0001708 # 1.50 hours
+		SemiMajorAxis	0.00236   # mass ratio 0.6:0.09
+		Inclination     115       #
+		AscendingNode   157       # inclination to plane of sky 79.5 deg.
+		ArgOfPericenter 180
+	}
+}
+
+# Parsons et al. "Precise mass and radius values for the white dwarf and low mass M 
+# dwarf in the pre-cataclysmic binary NN Serpentis" 
+# http://arxiv.org/abs/0909.4307
+Barycenter "NN Ser"
+{
+	RA 238.233750
+	Dec 12.912500
+	Distance 1670
+}
+
+"NN Ser A:WD 1550+130"
+{
+	OrbitBarycenter "NN Ser"
+	SpectralType "DA"
+	Radius 14700
+	Temperature 57000
+	AbsMag 3.26
+
+	EllipticalOrbit {
+		Period   0.000355920602327173 # 3.12 hours
+		         # (spurious precision to synch with rotation of B)
+		SemiMajorAxis   0.00075   # mass ratio 0.535:0.111
+		Inclination     102       #
+		AscendingNode   240       # inclination to plane of sky 89.6 deg.
+	}
+}
+
+"NN Ser B"
+{
+	OrbitBarycenter "NN Ser"
+	SpectralType "M4V"
+	Radius 107000
+	SemiAxes [1 0.955 0.968]
+	AbsMag 11.9
+
+	EllipticalOrbit {
+		Period   0.000355920602327173 # 3.12 hours
+		         # (spurious precision to synch with rotation of B)
+		SemiMajorAxis   0.0036    # mass ratio 0.535:0.111
+		Inclination     102       #
+		AscendingNode   240       # inclination to plane of sky 89.6 deg.
+		ArgOfPericenter 180
+	}
+
+	UniformRotation
+	{
+	    Period           3.12
+	    Inclination      102
+	    AscendingNode    240
+	}
+}
+
+Barycenter "HU Aqr"
+{
+	RA 316.992917
+	Dec -5.294167
+	Distance 590
+}
+
+"HU Aqr A"
+{
+	OrbitBarycenter "HU Aqr"
+	SpectralType "DA"
+	Radius 6960
+	Temperature 12500
+	AbsMag 11.5
+
+	EllipticalOrbit {
+		Period   0.000237      # 2.08 hours
+		SemiMajorAxis   0.0006 # mass ratio 0.88:0.2
+		Inclination     74     #
+		AscendingNode   309    # inclination to plane of sky 85 deg.
+	}
+}
+
+"HU Aqr B"
+{
+	OrbitBarycenter "HU Aqr"
+	SpectralType "M4.5V"
+	Radius 153000
+	AbsMag 10.5
+
+	EllipticalOrbit {
+		Period   0.000237      # 2.08 hours
+		SemiMajorAxis   0.0026 # mass ratio 0.88:0.2
+		Inclination     74     #
+		AscendingNode   309    # inclination to plane of sky 85 deg.
+		ArgOfPericenter 180
+	}
+}
+
+
+Barycenter "NY Vir"
+{
+	RA 204.700417
+	Dec -2.030278
+	Distance 2270 # from spectral class and magnitude
+}
+
+"NY Vir A"
+{
+	OrbitBarycenter "NY Vir"
+	SpectralType "sdB"
+	Radius 139000 # representative
+	Temperature 33000
+	AppMag 13.30
+
+	EllipticalOrbit {
+		Period   0.0002765     # 2.424 hours
+		SemiMajorAxis   0.0008 # mass ratio 0.46:0.14
+		Inclination     111    #
+		AscendingNode   207    # eclipsing
+	}
+}
+
+"NY Vir B"
+{
+	OrbitBarycenter "NY Vir"
+	SpectralType "M6V" # from temperature and mass
+	AbsMag 13.5
+
+	EllipticalOrbit {
+		Period   0.0002765     # 2.424 hours
+		SemiMajorAxis   0.0028 # mass ratio 0.46:0.14
+		Inclination     111    #
+		AscendingNode   207    # eclipsing
+		ArgOfPericenter 180
+	}
+}
+
+Barycenter "UZ For"
+{
+	RA 53.869167
+	Dec -25.739444
+	Distance 800 # for combined app. mag. of 18.2
+}
+
+"UZ For A"
+{
+	OrbitBarycenter "UZ For"
+	SpectralType "D" # AM Herculis type system
+	Radius 7000      # typical
+	AbsMag 12        # typical
+
+	EllipticalOrbit {
+		Period   0.00024        # 2.1 hours
+		SemiMajorAxis   0.0006  # mass ratio 0.7:0.14
+		Inclination     69      #
+		AscendingNode   49      # inclination to plane of sky 80 degrees
+	}
+}
+
+"UZ For B"
+{
+	OrbitBarycenter "UZ For"
+	SpectralType "M4.5V"
+	AbsMag 11.8 # for class
+
+	EllipticalOrbit {
+		Period   0.00024        # 2.1 hours
+		SemiMajorAxis   0.003   # mass ratio 0.7:0.14
+		Inclination     69      #
+		AscendingNode   49      # inclination to plane of sky 80 degrees
+		ArgOfPericenter 180
+	}
+}
+
+Barycenter "RR Cae:GJ 2034"
+{
+	RA 65.273333
+	Dec -48.651944
+	Distance 39
+}
+
+"RR Cae A:GJ 2034 A"
+{
+	OrbitBarycenter "RR Cae"
+	SpectralType "DAZ8"
+	Temperature 7540
+	Radius 10440
+	AbsMag 14.8
+
+	EllipticalOrbit {
+		Period   0.000831471    # 0.303695 days
+		SemiMajorAxis   0.0022  # mass ratio 0.440:0.182
+		Inclination     66.4    #
+		AscendingNode   58.3    # inclination to plane of sky 87.9 degrees
+	}
+}
+
+"RR Cae B:GJ 2034 B"
+{
+	OrbitBarycenter "RR Cae"
+	SpectralType "M4V"
+	# Radius 250000
+	AppMag 14.4
+
+	EllipticalOrbit {
+		Period   0.000831471    # 0.303695 days
+		SemiMajorAxis   0.0053  # mass ratio 0.440:0.182
+		Inclination     66.4    #
+		AscendingNode   58.3    # inclination to plane of sky 87.9 degrees
+		ArgOfPericenter 180
+	}
+}
+
+Barycenter "NSVS 14256825:NSVS 1425"
+{
+	RA 305.00208
+	Dec 4.632222
+	Distance 2400 # for apparent magnitude
+}
+
+"NSVS 14256825 A:NSVS 1425 A"
+{
+	OrbitBarycenter "NSVS 14256825"
+	SpectralType "sdOB"
+	Temperature 42000
+	Radius 131000
+	AppMag 13.2
+
+	EllipticalOrbit {
+		Period   0.00030218754277891854893908281998631 # 0.110374 days at spurious precision to synch with rotations
+		SemiMajorAxis   0.0008  # mass ratio 0.419:0.109
+		Inclination     80.0    #
+		AscendingNode   295.8   # inclination to plane of sky 82.5 degrees
+	}
+	UniformRotation	{
+	    Period           2.648976 # 0.110374 days
+	    Inclination      80.0     #
+	    AscendingNode    295.8    # plane of orbit
+	}
+}
+
+"NSVS 14256825 B:NSVS 1425 B"
+{
+	OrbitBarycenter "NSVS 14256825"
+	SpectralType "M"
+	Radius 113000
+	SemiAxes [1 0.93 0.95]
+	Temperature 2550
+	AppMag 26.4 # for radius
+
+	EllipticalOrbit {
+		Period   0.00030218754277891854893908281998631 # 0.110374 days at spurious precision to synch with rotations
+		SemiMajorAxis   0.0029  # mass ratio 0.419:0.109
+		Inclination     80.0    #
+		AscendingNode   295.8   # inclination to plane of sky 82.5 degrees
+		ArgOfPericenter 180
+	}
+	UniformRotation	{
+	    Period           2.648976 # 0.110374 days
+	    Inclination      80.0     #
+	    AscendingNode    295.8    # plane of orbit
+	}
+}

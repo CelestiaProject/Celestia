@@ -1,0 +1,2478 @@
+Location "Abu Nuwas" "Sol/Mercury"
+{
+	LongLat [ -20.4 17.4 0 ]
+	Size 116
+	Type "AA"
+}
+
+Location "Africanus Horton" "Sol/Mercury"
+{
+	LongLat [ -41.2 -51.5 0 ]
+	Size 135
+	Type "AA"
+}
+
+Location "Ahmad Baba" "Sol/Mercury"
+{
+	LongLat [ -126.8 58.5 0 ]
+	Size 127
+	Type "AA"
+}
+
+Location "Al-Akhtal" "Sol/Mercury"
+{
+	LongLat [ -97 59.2 0 ]
+	Size 102
+	Type "AA"
+}
+
+Location "Alencar" "Sol/Mercury"
+{
+	LongLat [ -103.5 -63.5 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Al-Hamadhani" "Sol/Mercury"
+{
+	LongLat [ -89.7 38.8 0 ]
+	Size 186
+	Type "AA"
+}
+
+Location "Al-Jāhiz" "Sol/Mercury"
+{
+	LongLat [ -21.5 1.2 0 ]
+	Size 91
+	Type "AA"
+}
+
+Location "Amru Al-Qays" "Sol/Mercury"
+{
+	LongLat [ -175.6 12.3 0 ]
+	Size 50
+	Type "AA"
+}
+
+Location "Andal" "Sol/Mercury"
+{
+	LongLat [ -37.7 -47.7 0 ]
+	Size 108
+	Type "AA"
+}
+
+Location "Aristoxenus" "Sol/Mercury"
+{
+	LongLat [ -11.4 82 0 ]
+	Size 69
+	Type "AA"
+}
+
+Location "Aśvaghosa" "Sol/Mercury"
+{
+	LongLat [ -21 10.4 0 ]
+	Size 90
+	Type "AA"
+}
+
+Location "Bach" "Sol/Mercury"
+{
+	LongLat [ -103.4 -68.5 0 ]
+	Size 214
+	Type "AA"
+}
+
+Location "Balagtas" "Sol/Mercury"
+{
+	LongLat [ -13.7 -22.6 0 ]
+	Size 98
+	Type "AA"
+}
+
+Location "Balzac" "Sol/Mercury"
+{
+	LongLat [ -144.1 10.3 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Barma" "Sol/Mercury"
+{
+	LongLat [ -162.8 -41.3 0 ]
+	Size 128
+	Type "AA"
+}
+
+Location "Bartók" "Sol/Mercury"
+{
+	LongLat [ -134.6 -29.6 0 ]
+	Size 112
+	Type "AA"
+}
+
+Location "Bashō" "Sol/Mercury"
+{
+	LongLat [ -169.7 -32.7 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Beethoven" "Sol/Mercury"
+{
+	LongLat [ -123.6 -20.8 0 ]
+	Size 643
+	Type "AA"
+}
+
+Location "Belinskij" "Sol/Mercury"
+{
+	LongLat [ -103.4 -76 0 ]
+	Size 70
+	Type "AA"
+}
+
+Location "Bello" "Sol/Mercury"
+{
+	LongLat [ -120 -18.9 0 ]
+	Size 129
+	Type "AA"
+}
+
+Location "Bernini" "Sol/Mercury"
+{
+	LongLat [ -136.5 -79.2 0 ]
+	Size 146
+	Type "AA"
+}
+
+Location "Bjornson" "Sol/Mercury"
+{
+	LongLat [ -109.2 73.1 0 ]
+	Size 88
+	Type "AA"
+}
+
+Location "Boccaccio" "Sol/Mercury"
+{
+	LongLat [ -29.8 -80.7 0 ]
+	Size 142
+	Type "AA"
+}
+
+Location "Boethius" "Sol/Mercury"
+{
+	LongLat [ -73.3 -0.9 0 ]
+	Size 129
+	Type "AA"
+}
+
+Location "Botticelli" "Sol/Mercury"
+{
+	LongLat [ -109.6 63.7 0 ]
+	Size 143
+	Type "AA"
+}
+
+Location "Brahms" "Sol/Mercury"
+{
+	LongLat [ -176.2 58.5 0 ]
+	Size 96
+	Type "AA"
+}
+
+Location "Bramante" "Sol/Mercury"
+{
+	LongLat [ -61.8 -47.5 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Brontë" "Sol/Mercury"
+{
+	LongLat [ -125.9 38.7 0 ]
+	Size 60
+	Type "AA"
+}
+
+Location "Bruegel" "Sol/Mercury"
+{
+	LongLat [ -107.5 49.8 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Brunelleschi" "Sol/Mercury"
+{
+	LongLat [ -22.2 -9.1 0 ]
+	Size 134
+	Type "AA"
+}
+
+Location "Burns" "Sol/Mercury"
+{
+	LongLat [ -115.7 54.4 0 ]
+	Size 45
+	Type "AA"
+}
+
+Location "Byron" "Sol/Mercury"
+{
+	LongLat [ -32.7 -8.5 0 ]
+	Size 105
+	Type "AA"
+}
+
+Location "Callicrates" "Sol/Mercury"
+{
+	LongLat [ -32.6 -66.3 0 ]
+	Size 70
+	Type "AA"
+}
+
+Location "Camões" "Sol/Mercury"
+{
+	LongLat [ -69.6 -70.6 0 ]
+	Size 70
+	Type "AA"
+}
+
+Location "Carducci" "Sol/Mercury"
+{
+	LongLat [ -89.9 -36.6 0 ]
+	Size 117
+	Type "AA"
+}
+
+Location "Cervantes" "Sol/Mercury"
+{
+	LongLat [ -122 -74.6 0 ]
+	Size 181
+	Type "AA"
+}
+
+Location "Cézanne" "Sol/Mercury"
+{
+	LongLat [ -123.4 -8.5 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Chaikovskij" "Sol/Mercury"
+{
+	LongLat [ -50.4 7.4 0 ]
+	Size 165
+	Type "AA"
+}
+
+Location "Chao Meng-Fu" "Sol/Mercury"
+{
+	LongLat [ -134.2 -87.3 0 ]
+	Size 167
+	Type "AA"
+}
+
+Location "Chekhov" "Sol/Mercury"
+{
+	LongLat [ -61.5 -36.2 0 ]
+	Size 199
+	Type "AA"
+}
+
+Location "Chiang K'ui" "Sol/Mercury"
+{
+	LongLat [ -102.7 13.8 0 ]
+	Size 35
+	Type "AA"
+}
+
+Location "Chŏng Ch'ŏl" "Sol/Mercury"
+{
+	LongLat [ -116.2 46.4 0 ]
+	Size 162
+	Type "AA"
+}
+
+Location "Chopin" "Sol/Mercury"
+{
+	LongLat [ -123.1 -65.1 0 ]
+	Size 129
+	Type "AA"
+}
+
+Location "Chu Ta" "Sol/Mercury"
+{
+	LongLat [ -105.1 2.2 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Coleridge" "Sol/Mercury"
+{
+	LongLat [ -66.7 -55.9 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Copley" "Sol/Mercury"
+{
+	LongLat [ -85.2 -38.4 0 ]
+	Size 30
+	Type "AA"
+}
+
+Location "Couperin" "Sol/Mercury"
+{
+	LongLat [ -151.4 29.8 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Darío" "Sol/Mercury"
+{
+	LongLat [ -10 -26.5 0 ]
+	Size 151
+	Type "AA"
+}
+
+Location "Degas" "Sol/Mercury"
+{
+	LongLat [ -126.4 37.4 0 ]
+	Size 60
+	Type "AA"
+}
+
+Location "Delacroix" "Sol/Mercury"
+{
+	LongLat [ -129 -44.7 0 ]
+	Size 146
+	Type "AA"
+}
+
+Location "Derzhavin" "Sol/Mercury"
+{
+	LongLat [ -35.3 44.9 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Despréz" "Sol/Mercury"
+{
+	LongLat [ -90.7 80.8 0 ]
+	Size 50
+	Type "AA"
+}
+
+Location "Dickens" "Sol/Mercury"
+{
+	LongLat [ -153.3 -72.9 0 ]
+	Size 78
+	Type "AA"
+}
+
+Location "Donne" "Sol/Mercury"
+{
+	LongLat [ -13.8 2.8 0 ]
+	Size 88
+	Type "AA"
+}
+
+Location "Dostoevskij" "Sol/Mercury"
+{
+	LongLat [ -176.4 -45.1 0 ]
+	Size 411
+	Type "AA"
+}
+
+Location "Dowland" "Sol/Mercury"
+{
+	LongLat [ -179.5 -53.5 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Dürer" "Sol/Mercury"
+{
+	LongLat [ -119 21.9 0 ]
+	Size 180
+	Type "AA"
+}
+
+Location "Dvorák" "Sol/Mercury"
+{
+	LongLat [ -11.9 -9.6 0 ]
+	Size 82
+	Type "AA"
+}
+
+Location "Echegaray" "Sol/Mercury"
+{
+	LongLat [ -19.2 42.7 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Eitoku" "Sol/Mercury"
+{
+	LongLat [ -156.9 -22.1 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Equiano" "Sol/Mercury"
+{
+	LongLat [ -30.7 -40.2 0 ]
+	Size 99
+	Type "AA"
+}
+
+Location "Fet" "Sol/Mercury"
+{
+	LongLat [ -179.9 -4.9 0 ]
+	Size 24
+	Type "AA"
+}
+
+Location "Flaubert" "Sol/Mercury"
+{
+	LongLat [ -72.2 -13.7 0 ]
+	Size 95
+	Type "AA"
+}
+
+Location "Futabatei" "Sol/Mercury"
+{
+	LongLat [ -83 -16.2 0 ]
+	Size 66
+	Type "AA"
+}
+
+Location "Gainsborough" "Sol/Mercury"
+{
+	LongLat [ -183.3 -36.1 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Gauguin" "Sol/Mercury"
+{
+	LongLat [ -96.3 66.3 0 ]
+	Size 72
+	Type "AA"
+}
+
+Location "Ghiberti" "Sol/Mercury"
+{
+	LongLat [ -80.2 -48.4 0 ]
+	Size 123
+	Type "AA"
+}
+
+Location "Giotto" "Sol/Mercury"
+{
+	LongLat [ -55.8 12 0 ]
+	Size 150
+	Type "AA"
+}
+
+Location "Gluck" "Sol/Mercury"
+{
+	LongLat [ -18.1 37.3 0 ]
+	Size 105
+	Type "AA"
+}
+
+Location "Goethe" "Sol/Mercury"
+{
+	LongLat [ -44.5 78.5 0 ]
+	Size 383
+	Type "AA"
+}
+
+Location "Gogol" "Sol/Mercury"
+{
+	LongLat [ -146.4 -28.1 0 ]
+	Size 87
+	Type "AA"
+}
+
+Location "Goya" "Sol/Mercury"
+{
+	LongLat [ -152 -7.2 0 ]
+	Size 135
+	Type "AA"
+}
+
+Location "Grieg" "Sol/Mercury"
+{
+	LongLat [ -14 51.1 0 ]
+	Size 65
+	Type "AA"
+}
+
+Location "Guido d'Arezzo" "Sol/Mercury"
+{
+	LongLat [ -18.3 -38.7 0 ]
+	Size 66
+	Type "AA"
+}
+
+Location "Hals" "Sol/Mercury"
+{
+	LongLat [ -115 -54.8 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Han Kan" "Sol/Mercury"
+{
+	LongLat [ -143.8 -71.6 0 ]
+	Size 50
+	Type "AA"
+}
+
+Location "Handel" "Sol/Mercury"
+{
+	LongLat [ -33.8 3.4 0 ]
+	Size 166
+	Type "AA"
+}
+
+Location "Harunobu" "Sol/Mercury"
+{
+	LongLat [ -140.7 15 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Hauptmann" "Sol/Mercury"
+{
+	LongLat [ -179.9 -23.7 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Hawthorne" "Sol/Mercury"
+{
+	LongLat [ -115.1 -51.3 0 ]
+	Size 107
+	Type "AA"
+}
+
+Location "Haydn" "Sol/Mercury"
+{
+	LongLat [ -71.6 -27.3 0 ]
+	Size 270
+	Type "AA"
+}
+
+Location "Heine" "Sol/Mercury"
+{
+	LongLat [ -124.1 32.6 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Hesiod" "Sol/Mercury"
+{
+	LongLat [ -35 -58.5 0 ]
+	Size 107
+	Type "AA"
+}
+
+Location "Hiroshige" "Sol/Mercury"
+{
+	LongLat [ -26.7 -13.4 0 ]
+	Size 138
+	Type "AA"
+}
+
+Location "Hitomaro" "Sol/Mercury"
+{
+	LongLat [ -15.8 -16.2 0 ]
+	Size 107
+	Type "AA"
+}
+
+Location "Holbein" "Sol/Mercury"
+{
+	LongLat [ -28.9 35.6 0 ]
+	Size 113
+	Type "AA"
+}
+
+Location "Holberg" "Sol/Mercury"
+{
+	LongLat [ -61.1 -67 0 ]
+	Size 61
+	Type "AA"
+}
+
+Location "Homer" "Sol/Mercury"
+{
+	LongLat [ -36.2 -1.2 0 ]
+	Size 314
+	Type "AA"
+}
+
+Location "Horace" "Sol/Mercury"
+{
+	LongLat [ -52 -68.9 0 ]
+	Size 58
+	Type "AA"
+}
+
+Location "Hugo" "Sol/Mercury"
+{
+	LongLat [ -47 38.9 0 ]
+	Size 198
+	Type "AA"
+}
+
+Location "Hun Kal" "Sol/Mercury"
+{
+	LongLat [ -20 -0.5 0 ]
+	Size 1.5
+	Type "AA"
+}
+
+Location "Ibsen" "Sol/Mercury"
+{
+	LongLat [ -35.6 -24.1 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Ictinus" "Sol/Mercury"
+{
+	LongLat [ -165.2 -79.1 0 ]
+	Size 119
+	Type "AA"
+}
+
+Location "Imhotep" "Sol/Mercury"
+{
+	LongLat [ -37.3 -18.1 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Ives" "Sol/Mercury"
+{
+	LongLat [ -111.4 -32.9 0 ]
+	Size 20
+	Type "AA"
+}
+
+Location "Janáček" "Sol/Mercury"
+{
+	LongLat [ -153.8 56 0 ]
+	Size 47
+	Type "AA"
+}
+
+Location "Jókai" "Sol/Mercury"
+{
+	LongLat [ -135.3 72.4 0 ]
+	Size 106
+	Type "AA"
+}
+
+Location "Judah Ha-Levi" "Sol/Mercury"
+{
+	LongLat [ -107.7 10.9 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Kālidāsā" "Sol/Mercury"
+{
+	LongLat [ -179.2 -18.1 0 ]
+	Size 107
+	Type "AA"
+}
+
+Location "Keats" "Sol/Mercury"
+{
+	LongLat [ -154.5 -69.9 0 ]
+	Size 115
+	Type "AA"
+}
+
+Location "Kenkō" "Sol/Mercury"
+{
+	LongLat [ -16.1 -21.5 0 ]
+	Size 99
+	Type "AA"
+}
+
+Location "Khansa" "Sol/Mercury"
+{
+	LongLat [ -51.9 -59.7 0 ]
+	Size 111
+	Type "AA"
+}
+
+Location "Kōshō" "Sol/Mercury"
+{
+	LongLat [ -138.2 60.1 0 ]
+	Size 65
+	Type "AA"
+}
+
+Location "Kuan Han-Ch'ing" "Sol/Mercury"
+{
+	LongLat [ -52.4 29.4 0 ]
+	Size 151
+	Type "AA"
+}
+
+Location "Kuiper" "Sol/Mercury"
+{
+	LongLat [ -31.1 -11.3 0 ]
+	Size 62
+	Type "AA"
+}
+
+Location "Kurosawa" "Sol/Mercury"
+{
+	LongLat [ -21.8 -53.4 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Leopardi" "Sol/Mercury"
+{
+	LongLat [ -180.1 -73 0 ]
+	Size 72
+	Type "AA"
+}
+
+Location "Lermontov" "Sol/Mercury"
+{
+	LongLat [ -48.1 15.2 0 ]
+	Size 152
+	Type "AA"
+}
+
+Location "Lessing" "Sol/Mercury"
+{
+	LongLat [ -89.7 -28.7 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Li Ch'ing-Chao" "Sol/Mercury"
+{
+	LongLat [ -73.1 -77.1 0 ]
+	Size 61
+	Type "AA"
+}
+
+Location "Li Po" "Sol/Mercury"
+{
+	LongLat [ -35 16.9 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Liang K'ai" "Sol/Mercury"
+{
+	LongLat [ -182.8 -40.3 0 ]
+	Size 140
+	Type "AA"
+}
+
+Location "Liszt" "Sol/Mercury"
+{
+	LongLat [ -168.1 -16.1 0 ]
+	Size 85
+	Type "AA"
+}
+
+Location "Lu Hsun" "Sol/Mercury"
+{
+	LongLat [ -23.4 0 0 ]
+	Size 98
+	Type "AA"
+}
+
+Location "Lysippus" "Sol/Mercury"
+{
+	LongLat [ -132.5 0.8 0 ]
+	Size 140
+	Type "AA"
+}
+
+Location "Ma Chih-Yuan" "Sol/Mercury"
+{
+	LongLat [ -78 -60.4 0 ]
+	Size 179
+	Type "AA"
+}
+
+Location "Machaut" "Sol/Mercury"
+{
+	LongLat [ -82.1 -1.9 0 ]
+	Size 106
+	Type "AA"
+}
+
+Location "Mahler" "Sol/Mercury"
+{
+	LongLat [ -18.7 -20 0 ]
+	Size 103
+	Type "AA"
+}
+
+Location "Mansart" "Sol/Mercury"
+{
+	LongLat [ -118.7 73.2 0 ]
+	Size 95
+	Type "AA"
+}
+
+Location "Mansur" "Sol/Mercury"
+{
+	LongLat [ -162.6 47.8 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "March" "Sol/Mercury"
+{
+	LongLat [ -175.5 31.1 0 ]
+	Size 70
+	Type "AA"
+}
+
+Location "Mark Twain" "Sol/Mercury"
+{
+	LongLat [ -137.9 -11.2 0 ]
+	Size 149
+	Type "AA"
+}
+
+Location "Martí" "Sol/Mercury"
+{
+	LongLat [ -164.6 -75.6 0 ]
+	Size 68
+	Type "AA"
+}
+
+Location "Martial" "Sol/Mercury"
+{
+	LongLat [ -177.1 69.1 0 ]
+	Size 51
+	Type "AA"
+}
+
+Location "Matisse" "Sol/Mercury"
+{
+	LongLat [ -89.8 -24 0 ]
+	Size 186
+	Type "AA"
+}
+
+Location "Melville" "Sol/Mercury"
+{
+	LongLat [ -10.1 21.5 0 ]
+	Size 154
+	Type "AA"
+}
+
+Location "Mena" "Sol/Mercury"
+{
+	LongLat [ -124.4 -0.2 0 ]
+	Size 52
+	Type "AA"
+}
+
+Location "Mendes Pinto" "Sol/Mercury"
+{
+	LongLat [ -17.8 -61.3 0 ]
+	Size 214
+	Type "AA"
+}
+
+Location "Michelangelo" "Sol/Mercury"
+{
+	LongLat [ -109.1 -45 0 ]
+	Size 216
+	Type "AA"
+}
+
+Location "Mickiewicz" "Sol/Mercury"
+{
+	LongLat [ -103.1 23.6 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Milton" "Sol/Mercury"
+{
+	LongLat [ -174.8 -26.2 0 ]
+	Size 186
+	Type "AA"
+}
+
+Location "Mistral" "Sol/Mercury"
+{
+	LongLat [ -54 4.5 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Mofolo" "Sol/Mercury"
+{
+	LongLat [ -28.2 -37.7 0 ]
+	Size 114
+	Type "AA"
+}
+
+Location "Molière" "Sol/Mercury"
+{
+	LongLat [ -16.9 15.6 0 ]
+	Size 132
+	Type "AA"
+}
+
+Location "Monet" "Sol/Mercury"
+{
+	LongLat [ -10.3 44.4 0 ]
+	Size 303
+	Type "AA"
+}
+
+Location "Monteverdi" "Sol/Mercury"
+{
+	LongLat [ -77.3 63.8 0 ]
+	Size 138
+	Type "AA"
+}
+
+Location "Mozart" "Sol/Mercury"
+{
+	LongLat [ -190.5 8 0 ]
+	Size 270
+	Type "AA"
+}
+
+Location "Murasaki" "Sol/Mercury"
+{
+	LongLat [ -30.2 -12.6 0 ]
+	Size 130
+	Type "AA"
+}
+
+Location "Mussorgskij" "Sol/Mercury"
+{
+	LongLat [ -96.5 32.8 0 ]
+	Size 125
+	Type "AA"
+}
+
+Location "Myron" "Sol/Mercury"
+{
+	LongLat [ -79.3 70.9 0 ]
+	Size 31
+	Type "AA"
+}
+
+Location "Nampeyo" "Sol/Mercury"
+{
+	LongLat [ -50.1 -40.6 0 ]
+	Size 52
+	Type "AA"
+}
+
+Location "Nervo" "Sol/Mercury"
+{
+	LongLat [ -179 43 0 ]
+	Size 63
+	Type "AA"
+}
+
+Location "Neumann" "Sol/Mercury"
+{
+	LongLat [ -34.5 -37.3 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Nizāmī" "Sol/Mercury"
+{
+	LongLat [ -165 71.5 0 ]
+	Size 76
+	Type "AA"
+}
+
+Location "Ōkyo" "Sol/Mercury"
+{
+	LongLat [ -75.8 -69.1 0 ]
+	Size 65
+	Type "AA"
+}
+
+Location "Ovid" "Sol/Mercury"
+{
+	LongLat [ -22.5 -69.5 0 ]
+	Size 44
+	Type "AA"
+}
+
+Location "Petrarch" "Sol/Mercury"
+{
+	LongLat [ -26.2 -30.6 0 ]
+	Size 171
+	Type "AA"
+}
+
+Location "Phidias" "Sol/Mercury"
+{
+	LongLat [ -149.3 8.7 0 ]
+	Size 160
+	Type "AA"
+}
+
+Location "Philoxenus" "Sol/Mercury"
+{
+	LongLat [ -111.5 -8.7 0 ]
+	Size 90
+	Type "AA"
+}
+
+Location "Pigalle" "Sol/Mercury"
+{
+	LongLat [ -9.5 -38.5 0 ]
+	Size 154
+	Type "AA"
+}
+
+Location "Po Chü-I" "Sol/Mercury"
+{
+	LongLat [ -165.1 -7.2 0 ]
+	Size 68
+	Type "AA"
+}
+
+Location "Po Ya" "Sol/Mercury"
+{
+	LongLat [ -20.2 -46.2 0 ]
+	Size 103
+	Type "AA"
+}
+
+Location "Polygnotus" "Sol/Mercury"
+{
+	LongLat [ -68.4 -0.3 0 ]
+	Size 133
+	Type "AA"
+}
+
+Location "Praxiteles" "Sol/Mercury"
+{
+	LongLat [ -59.2 27.3 0 ]
+	Size 182
+	Type "AA"
+}
+
+Location "Proust" "Sol/Mercury"
+{
+	LongLat [ -46.7 19.7 0 ]
+	Size 157
+	Type "AA"
+}
+
+Location "Puccini" "Sol/Mercury"
+{
+	LongLat [ -46.8 -65.3 0 ]
+	Size 70
+	Type "AA"
+}
+
+Location "Purcell" "Sol/Mercury"
+{
+	LongLat [ -146.8 81.3 0 ]
+	Size 91
+	Type "AA"
+}
+
+Location "Pushkin" "Sol/Mercury"
+{
+	LongLat [ -22.4 -66.3 0 ]
+	Size 231
+	Type "AA"
+}
+
+Location "Rabelais" "Sol/Mercury"
+{
+	LongLat [ -62.4 -61 0 ]
+	Size 141
+	Type "AA"
+}
+
+Location "Rajnis" "Sol/Mercury"
+{
+	LongLat [ -95.8 4.5 0 ]
+	Size 82
+	Type "AA"
+}
+
+Location "Rameau" "Sol/Mercury"
+{
+	LongLat [ -37.5 -54.9 0 ]
+	Size 51
+	Type "AA"
+}
+
+Location "Raphael" "Sol/Mercury"
+{
+	LongLat [ -75.9 -19.9 0 ]
+	Size 343
+	Type "AA"
+}
+
+Location "Ravel" "Sol/Mercury"
+{
+	LongLat [ -38 -12 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Renoir" "Sol/Mercury"
+{
+	LongLat [ -51.5 -18.6 0 ]
+	Size 246
+	Type "AA"
+}
+
+Location "Repin" "Sol/Mercury"
+{
+	LongLat [ -63 -19.2 0 ]
+	Size 107
+	Type "AA"
+}
+
+Location "Riemenschneider" "Sol/Mercury"
+{
+	LongLat [ -99.6 -52.8 0 ]
+	Size 145
+	Type "AA"
+}
+
+Location "Rilke" "Sol/Mercury"
+{
+	LongLat [ -12.3 -45.2 0 ]
+	Size 86
+	Type "AA"
+}
+
+Location "Rimbaud" "Sol/Mercury"
+{
+	LongLat [ -148 -62 0 ]
+	Size 85
+	Type "AA"
+}
+
+Location "Rodin" "Sol/Mercury"
+{
+	LongLat [ -18.2 21.1 0 ]
+	Size 229
+	Type "AA"
+}
+
+Location "Rubens" "Sol/Mercury"
+{
+	LongLat [ -74.1 59.8 0 ]
+	Size 175
+	Type "AA"
+}
+
+Location "Rublev" "Sol/Mercury"
+{
+	LongLat [ -156.8 -15.1 0 ]
+	Size 132
+	Type "AA"
+}
+
+Location "Rūdaki" "Sol/Mercury"
+{
+	LongLat [ -51.1 -4 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Rude" "Sol/Mercury"
+{
+	LongLat [ -79.6 -32.8 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Rūmī" "Sol/Mercury"
+{
+	LongLat [ -104.7 -24.1 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Sadī" "Sol/Mercury"
+{
+	LongLat [ -56 -78.6 0 ]
+	Size 68
+	Type "AA"
+}
+
+Location "Saikaku" "Sol/Mercury"
+{
+	LongLat [ -176.3 72.9 0 ]
+	Size 88
+	Type "AA"
+}
+
+Location "Sarmiento" "Sol/Mercury"
+{
+	LongLat [ -187.7 -29.8 0 ]
+	Size 145
+	Type "AA"
+}
+
+Location "Sayat-Nova" "Sol/Mercury"
+{
+	LongLat [ -122.1 -28.4 0 ]
+	Size 158
+	Type "AA"
+}
+
+Location "Scarlatti" "Sol/Mercury"
+{
+	LongLat [ -100 40.5 0 ]
+	Size 129
+	Type "AA"
+}
+
+Location "Schoenberg" "Sol/Mercury"
+{
+	LongLat [ -135.7 -16 0 ]
+	Size 29
+	Type "AA"
+}
+
+Location "Schubert" "Sol/Mercury"
+{
+	LongLat [ -54.3 -43.4 0 ]
+	Size 185
+	Type "AA"
+}
+
+Location "Scopas" "Sol/Mercury"
+{
+	LongLat [ -172.9 -81.1 0 ]
+	Size 105
+	Type "AA"
+}
+
+Location "Sei" "Sol/Mercury"
+{
+	LongLat [ -89.1 -64.3 0 ]
+	Size 113
+	Type "AA"
+}
+
+Location "Shakespeare" "Sol/Mercury"
+{
+	LongLat [ -150.9 49.7 0 ]
+	Size 370
+	Type "AA"
+}
+
+Location "Shelley" "Sol/Mercury"
+{
+	LongLat [ -127.8 -47.8 0 ]
+	Size 164
+	Type "AA"
+}
+
+Location "Shevchenko" "Sol/Mercury"
+{
+	LongLat [ -46.5 -53.8 0 ]
+	Size 137
+	Type "AA"
+}
+
+Location "Sholem Aleichem" "Sol/Mercury"
+{
+	LongLat [ -87.7 50.4 0 ]
+	Size 200
+	Type "AA"
+}
+
+Location "Sibelius" "Sol/Mercury"
+{
+	LongLat [ -144.7 -49.6 0 ]
+	Size 90
+	Type "AA"
+}
+
+Location "Simonides" "Sol/Mercury"
+{
+	LongLat [ -45 -29.1 0 ]
+	Size 95
+	Type "AA"
+}
+
+Location "Sinan" "Sol/Mercury"
+{
+	LongLat [ -29.8 15.5 0 ]
+	Size 147
+	Type "AA"
+}
+
+Location "Smetana" "Sol/Mercury"
+{
+	LongLat [ -70.2 -48.5 0 ]
+	Size 190
+	Type "AA"
+}
+
+Location "Snorri" "Sol/Mercury"
+{
+	LongLat [ -82.9 -9 0 ]
+	Size 19
+	Type "AA"
+}
+
+Location "Sophocles" "Sol/Mercury"
+{
+	LongLat [ -145.7 -7 0 ]
+	Size 150
+	Type "AA"
+}
+
+Location "Sor Juana" "Sol/Mercury"
+{
+	LongLat [ -23.9 49 0 ]
+	Size 93
+	Type "AA"
+}
+
+Location "Sōseki" "Sol/Mercury"
+{
+	LongLat [ -37.7 38.9 0 ]
+	Size 90
+	Type "AA"
+}
+
+Location "Sōtatsu" "Sol/Mercury"
+{
+	LongLat [ -18.1 -49.1 0 ]
+	Size 165
+	Type "AA"
+}
+
+Location "Spitteler" "Sol/Mercury"
+{
+	LongLat [ -61.8 -68.6 0 ]
+	Size 68
+	Type "AA"
+}
+
+Location "Stravinsky" "Sol/Mercury"
+{
+	LongLat [ -73.5 50.5 0 ]
+	Size 190
+	Type "AA"
+}
+
+Location "Strindberg" "Sol/Mercury"
+{
+	LongLat [ -135.3 53.7 0 ]
+	Size 190
+	Type "AA"
+}
+
+Location "Sullivan" "Sol/Mercury"
+{
+	LongLat [ -86.3 -16.9 0 ]
+	Size 145
+	Type "AA"
+}
+
+Location "Sūr Dās" "Sol/Mercury"
+{
+	LongLat [ -93.3 -47.1 0 ]
+	Size 132
+	Type "AA"
+}
+
+Location "Surikov" "Sol/Mercury"
+{
+	LongLat [ -124.6 -37.1 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Takanobu" "Sol/Mercury"
+{
+	LongLat [ -108.2 30.8 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Takayoshi" "Sol/Mercury"
+{
+	LongLat [ -163.1 -37.5 0 ]
+	Size 139
+	Type "AA"
+}
+
+Location "Tansen" "Sol/Mercury"
+{
+	LongLat [ -70.9 3.9 0 ]
+	Size 34
+	Type "AA"
+}
+
+Location "Thākur" "Sol/Mercury"
+{
+	LongLat [ -63.5 -3 0 ]
+	Size 118
+	Type "AA"
+}
+
+Location "Theophanes" "Sol/Mercury"
+{
+	LongLat [ -142.4 -4.9 0 ]
+	Size 45
+	Type "AA"
+}
+
+Location "Thoreau" "Sol/Mercury"
+{
+	LongLat [ -132.3 5.9 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Tintoretto" "Sol/Mercury"
+{
+	LongLat [ -22.9 -48.1 0 ]
+	Size 92
+	Type "AA"
+}
+
+Location "Titian" "Sol/Mercury"
+{
+	LongLat [ -42.1 -3.6 0 ]
+	Size 121
+	Type "AA"
+}
+
+Location "Tolstoj" "Sol/Mercury"
+{
+	LongLat [ -163.5 -16.3 0 ]
+	Size 390
+	Type "AA"
+}
+
+Location "Ts'ai Wen-Chi" "Sol/Mercury"
+{
+	LongLat [ -22.2 22.8 0 ]
+	Size 119
+	Type "AA"
+}
+
+Location "Ts'ao Chan" "Sol/Mercury"
+{
+	LongLat [ -142 -13.4 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Tsurayuki" "Sol/Mercury"
+{
+	LongLat [ -21.3 -63 0 ]
+	Size 87
+	Type "AA"
+}
+
+Location "Tung Yüan" "Sol/Mercury"
+{
+	LongLat [ -55 73.6 0 ]
+	Size 64
+	Type "AA"
+}
+
+Location "Turgenev" "Sol/Mercury"
+{
+	LongLat [ -135 65.7 0 ]
+	Size 116
+	Type "AA"
+}
+
+Location "Tyagaraja" "Sol/Mercury"
+{
+	LongLat [ -148.4 3.7 0 ]
+	Size 105
+	Type "AA"
+}
+
+Location "Unkei" "Sol/Mercury"
+{
+	LongLat [ -62.7 -31.9 0 ]
+	Size 123
+	Type "AA"
+}
+
+Location "Ustad Isa" "Sol/Mercury"
+{
+	LongLat [ -165.3 -32.1 0 ]
+	Size 136
+	Type "AA"
+}
+
+Location "Vālmiki" "Sol/Mercury"
+{
+	LongLat [ -141 -23.5 0 ]
+	Size 221
+	Type "AA"
+}
+
+Location "Van Dijck" "Sol/Mercury"
+{
+	LongLat [ -163.8 76.7 0 ]
+	Size 105
+	Type "AA"
+}
+
+Location "Van Eyck" "Sol/Mercury"
+{
+	LongLat [ -158.8 43.2 0 ]
+	Size 282
+	Type "AA"
+}
+
+Location "van Gogh" "Sol/Mercury"
+{
+	LongLat [ -134.9 -76.5 0 ]
+	Size 104
+	Type "AA"
+}
+
+Location "Velázquez" "Sol/Mercury"
+{
+	LongLat [ -53.7 37.5 0 ]
+	Size 129
+	Type "AA"
+}
+
+Location "Verdi" "Sol/Mercury"
+{
+	LongLat [ -168.6 64.7 0 ]
+	Size 163
+	Type "AA"
+}
+
+Location "Vincente" "Sol/Mercury"
+{
+	LongLat [ -142.4 -56.8 0 ]
+	Size 98
+	Type "AA"
+}
+
+Location "Vivaldi" "Sol/Mercury"
+{
+	LongLat [ -85 13.7 0 ]
+	Size 213
+	Type "AA"
+}
+
+Location "Vlaminck" "Sol/Mercury"
+{
+	LongLat [ -12.7 28 0 ]
+	Size 97
+	Type "AA"
+}
+
+Location "Vyāsa" "Sol/Mercury"
+{
+	LongLat [ -81.1 48.3 0 ]
+	Size 290
+	Type "AA"
+}
+
+Location "Wagner" "Sol/Mercury"
+{
+	LongLat [ -114 -67.4 0 ]
+	Size 140
+	Type "AA"
+}
+
+Location "Wang Meng" "Sol/Mercury"
+{
+	LongLat [ -103.8 8.8 0 ]
+	Size 165
+	Type "AA"
+}
+
+Location "Wergeland" "Sol/Mercury"
+{
+	LongLat [ -56.5 -38 0 ]
+	Size 42
+	Type "AA"
+}
+
+Location "Whitman" "Sol/Mercury"
+{
+	LongLat [ -110.4 41.4 0 ]
+	Size 70
+	Type "AA"
+}
+
+Location "Wren" "Sol/Mercury"
+{
+	LongLat [ -35.2 24.3 0 ]
+	Size 221
+	Type "AA"
+}
+
+Location "Yeats" "Sol/Mercury"
+{
+	LongLat [ -34.6 9.2 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Yun Son-Do" "Sol/Mercury"
+{
+	LongLat [ -109.4 -72.5 0 ]
+	Size 68
+	Type "AA"
+}
+
+Location "Zeami" "Sol/Mercury"
+{
+	LongLat [ -147.2 -3.1 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Zola" "Sol/Mercury"
+{
+	LongLat [ -177.3 50.1 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "APOLLONIA" "Sol/Mercury"
+{
+	LongLat [ -315 45 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "AURORA" "Sol/Mercury"
+{
+	LongLat [ -90 45 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "AUSTRALIA" "Sol/Mercury"
+{
+	LongLat [ 0 -72.5 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "BOREA" "Sol/Mercury"
+{
+	LongLat [ 0 75 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "CADUCEATA" "Sol/Mercury"
+{
+	LongLat [ -135 45 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "CYLLENE" "Sol/Mercury"
+{
+	LongLat [ -270 -41 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "HELIOCAMINUS" "Sol/Mercury"
+{
+	LongLat [ -170 40 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "HESPERIS" "Sol/Mercury"
+{
+	LongLat [ -355 -45 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "LIGURIA" "Sol/Mercury"
+{
+	LongLat [ -225 45 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "PENTAS" "Sol/Mercury"
+{
+	LongLat [ -310 5 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "PHAETHONTIAS" "Sol/Mercury"
+{
+	LongLat [ -167 0 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "PIERIA" "Sol/Mercury"
+{
+	LongLat [ -270 0 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "PLEIAS GALLIA" "Sol/Mercury"
+{
+	LongLat [ -130 25 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SINUS ARGIPHONTAE" "Sol/Mercury"
+{
+	LongLat [ -335 -10 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO ADMETEI" "Sol/Mercury"
+{
+	LongLat [ -90 55 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO ALARUM" "Sol/Mercury"
+{
+	LongLat [ -290 -15 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO APHRODITES" "Sol/Mercury"
+{
+	LongLat [ -290 25 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO ATLANTIS" "Sol/Mercury"
+{
+	LongLat [ -210 -35 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO CRIOPHORI" "Sol/Mercury"
+{
+	LongLat [ -230 0 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO HELII" "Sol/Mercury"
+{
+	LongLat [ -180 -10 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO HERMAE TRISMEGISTI" "Sol/Mercury"
+{
+	LongLat [ -45 -45 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO HORARUM" "Sol/Mercury"
+{
+	LongLat [ -115 25 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO IOVIS" "Sol/Mercury"
+{
+	LongLat [ 0 0 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO LYCAONIS" "Sol/Mercury"
+{
+	LongLat [ -107 0 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO MAIAE" "Sol/Mercury"
+{
+	LongLat [ -155 -15 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO MARTIS" "Sol/Mercury"
+{
+	LongLat [ -100 -35 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO NEPTUNI" "Sol/Mercury"
+{
+	LongLat [ -150 30 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO PERSEPHONES" "Sol/Mercury"
+{
+	LongLat [ -225 -41 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO PHOENICIS" "Sol/Mercury"
+{
+	LongLat [ -225 25 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "SOLITUDO PROMETHEI" "Sol/Mercury"
+{
+	LongLat [ -142.5 -45 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "TRICRENA" "Sol/Mercury"
+{
+	LongLat [ -36 0 0 ]
+	Size 0
+	Type "AL"
+}
+
+Location "Antoniadi Dorsum" "Sol/Mercury"
+{
+	LongLat [ -30.5 25.1 0 ]
+	Size 300
+	Type "DO"
+}
+
+Location "Schiaparelli Dorsum" "Sol/Mercury"
+{
+	LongLat [ -164.1 23 0 ]
+	Size 400
+	Type "DO"
+}
+
+Location "Caloris Montes" "Sol/Mercury"
+{
+	LongLat [ -187.2 39.4 0 ]
+	Size 1300
+	Type "MO"
+}
+
+Location "Borealis Planitia" "Sol/Mercury"
+{
+	LongLat [ -79.5 73.4 0 ]
+	Size 700
+	Type "PL"
+}
+
+Location "Budh Planitia" "Sol/Mercury"
+{
+	LongLat [ -150.9 22 0 ]
+	Size 500
+	Type "PL"
+}
+
+Location "Caloris Planitia" "Sol/Mercury"
+{
+	LongLat [ -189.8 30.5 0 ]
+	Size 1300
+	Type "PL"
+}
+
+Location "Odin Planitia" "Sol/Mercury"
+{
+	LongLat [ -171.6 23.3 0 ]
+	Size 700
+	Type "PL"
+}
+
+Location "Sobkou Planitia" "Sol/Mercury"
+{
+	LongLat [ -129.9 39.9 0 ]
+	Size 600
+	Type "PL"
+}
+
+Location "Suisei Planitia" "Sol/Mercury"
+{
+	LongLat [ -150.8 59.2 0 ]
+	Size 500
+	Type "PL"
+}
+
+Location "Tir Planitia" "Sol/Mercury"
+{
+	LongLat [ -176.1 0.8 0 ]
+	Size 1000
+	Type "PL"
+}
+
+Location "Adventure Rupes" "Sol/Mercury"
+{
+	LongLat [ -65.5 -65.1 0 ]
+	Size 300
+	Type "RU"
+}
+
+Location "Astrolabe Rupes" "Sol/Mercury"
+{
+	LongLat [ -70.7 -42.6 0 ]
+	Size 300
+	Type "RU"
+}
+
+Location "Discovery Rupes" "Sol/Mercury"
+{
+	LongLat [ -38.3 -56.3 0 ]
+	Size 600
+	Type "RU"
+}
+
+Location "Endeavour Rupes" "Sol/Mercury"
+{
+	LongLat [ -31.3 37.5 0 ]
+	Size 300
+	Type "RU"
+}
+
+Location "Fram Rupes" "Sol/Mercury"
+{
+	LongLat [ -93.3 -56.9 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Gjöa Rupes" "Sol/Mercury"
+{
+	LongLat [ -159.3 -66.7 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Heemskerck Rupes" "Sol/Mercury"
+{
+	LongLat [ -125.3 25.9 0 ]
+	Size 300
+	Type "RU"
+}
+
+Location "Hero Rupes" "Sol/Mercury"
+{
+	LongLat [ -171.4 -58.4 0 ]
+	Size 300
+	Type "RU"
+}
+
+Location "Mirni Rupes" "Sol/Mercury"
+{
+	LongLat [ -39.9 -37.3 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Pourquoi-Pas Rupes" "Sol/Mercury"
+{
+	LongLat [ -156 -58.1 0 ]
+	Size 400
+	Type "RU"
+}
+
+Location "Resolution Rupes" "Sol/Mercury"
+{
+	LongLat [ -51.7 -63.8 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Santa María Rupes" "Sol/Mercury"
+{
+	LongLat [ -19.7 5.5 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Victoria Rupes" "Sol/Mercury"
+{
+	LongLat [ -31.1 50.9 0 ]
+	Size 300
+	Type "RU"
+}
+
+Location "Vostok Rupes" "Sol/Mercury"
+{
+	LongLat [ -19.5 -37.7 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Zarya Rupes" "Sol/Mercury"
+{
+	LongLat [ -20.5 -42.8 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Zeehaen Rupes" "Sol/Mercury"
+{
+	LongLat [ -157 51 0 ]
+	Size 200
+	Type "RU"
+}
+
+Location "Arecibo Vallis" "Sol/Mercury"
+{
+	LongLat [ -28.4 -27.5 0 ]
+	Size 150
+	Type "VA"
+}
+
+Location "Goldstone Vallis" "Sol/Mercury"
+{
+	LongLat [ -31.7 -15.8 0 ]
+	Size 200
+	Type "VA"
+}
+
+Location "Haystack Vallis" "Sol/Mercury"
+{
+	LongLat [ -46.2 4.7 0 ]
+	Size 300
+	Type "VA"
+}
+
+Location "Simeiz Vallis" "Sol/Mercury"
+{
+	LongLat [ -64.3 -13.2 0 ]
+	Size 150
+	Type "VA"
+}
+
+Location "Raditladi" "Sol/Mercury"
+{
+	LongLat [ -240.93 27.28 0 ]
+	Size 257
+	Type "AA"
+}
+
+Location "Eminescu" "Sol/Mercury"
+{
+	LongLat [ -245.87 10.79 0 ]
+	Size 125
+	Type "AA"
+}
+
+Location "Sveinsdóttir" "Sol/Mercury"
+{
+	LongLat [ -259.96 -2.58 0 ]
+	Size 220
+	Type "AA"
+}
+
+Location "Beagle Rupes" "Sol/Mercury"
+{
+	LongLat [ -258.89 -1.9 0 ]
+	Size 630
+	Type "RU"
+}
+
+Location "Neruda" "Sol/Mercury"
+{
+	LongLat [ -234.55 -52.47 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Xiao Zhao" "Sol/Mercury"
+{
+	LongLat [ -236.21 10.64 0 ]
+	Size 23
+	Type "AA"
+}
+
+Location "Cunningham" "Sol/Mercury"
+{
+	LongLat [ -203.07 30.48 0 ]
+	Size 37
+	Type "AA"
+}
+
+Location "Atget" "Sol/Mercury"
+{
+	LongLat [ -193.93 25.65 0 ]
+	Size 100
+	Type "AA"
+}
+
+Location "Sander" "Sol/Mercury"
+{
+	LongLat [ -205.6 42.59 0 ]
+	Size 50
+	Type "AA"
+}
+
+Location "Pantheon Fossae" "Sol/Mercury"
+{
+	LongLat [ -197.0 30.5 0 ]
+	Size 300
+	Type "FO"
+}
+
+Location "Apollodorus" "Sol/Mercury"
+{
+	LongLat [ -197.01 30.58 0 ]
+	Size 41
+	Type "AA"
+}
+
+Location "Kertész" "Sol/Mercury"
+{
+	LongLat [ -214.06 27.44 0 ]
+	Size 33
+	Type "AA"
+}
+
+Location "Amaral" "Sol/Mercury"
+{
+	LongLat [ -242.3 -26.4 0 ]
+	Size 106
+	Type "AA"
+}
+
+Location "Dali" "Sol/Mercury"
+{
+	LongLat [ -240.6 45.3 0 ]
+	Size 175
+	Type "AA"
+}
+
+Location "Enwonwu" "Sol/Mercury"
+{
+	LongLat [ -238.4 -9.9 0 ]
+	Size 38
+	Type "AA"
+}
+
+Location "Glinka" "Sol/Mercury"
+{
+	LongLat [ -111.7 14.8 0 ]
+	Size 86
+	Type "AA"
+}
+
+Location "Hovnatanian" "Sol/Mercury"
+{
+	LongLat [ -187.5 -7.6 0 ]
+	Size 34
+	Type "AA"
+}
+
+Location "Beckett" "Sol/Mercury"
+{
+	LongLat [ -248.8 -40.1 0 ]
+	Size 57
+	Type "AA"
+}
+
+Location "Moody" "Sol/Mercury"
+{
+	LongLat [ -215.4 -13.1 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Munch" "Sol/Mercury"
+{
+	LongLat [ -207.3 40.6 0 ]
+	Size 54
+	Type "AA"
+}
+
+Location "Navoi" "Sol/Mercury"
+{
+	LongLat [ -200.0 59.0 0 ]
+	Size 66
+	Type "AA"
+}
+
+Location "Nawahi" "Sol/Mercury"
+{
+	LongLat [ -214.9 36.1 0 ]
+	Size 34
+	Type "AA"
+}
+
+Location "Oskison" "Sol/Mercury"
+{
+	LongLat [ -215.3 60.6 0 ]
+	Size 120
+	Type "AA"
+}
+
+Location "Poe" "Sol/Mercury"
+{
+	LongLat [ -201.2 44.0 0 ]
+	Size 75
+	Type "AA"
+}
+
+Location "Qi Baishi" "Sol/Mercury"
+{
+	LongLat [ -196.0 -4.2 0 ]
+	Size 15
+	Type "AA"
+}
+
+Location "Raden Saleh" "Sol/Mercury"
+{
+	LongLat [ -201.3 2.2 0 ]
+	Size 25
+	Type "AA"
+}
+
+Location "Sher-Gil" "Sol/Mercury"
+{
+	LongLat [ -225.5 -45.1 0 ]
+	Size 73
+	Type "AA"
+}
+
+Location "Rembrandt" "Sol/Mercury"
+{
+	LongLat [ -271.8 -33.2 0 ]
+	Size 720
+	Type "AA"
+}
+
+Location "Abedin" "Sol/Mercury"
+{
+	LongLat [ -10.2 61.7 0 ]
+	Size 110
+	Type "AA"
+}
+
+Location "Benoit" "Sol/Mercury"
+{
+	LongLat [ -256.2 7.6 0 ]
+	Size 43
+	Type "AA"
+}
+
+Location "Berkel" "Sol/Mercury"
+{
+	LongLat [ -333.5 -13.6 0 ]
+	Size 21
+	Type "AA"
+}
+
+Location "Calvino" "Sol/Mercury"
+{
+	LongLat [ -56. -3.9 0 ]
+	Size 68
+	Type "AA"
+}
+
+Location "de Graft" "Sol/Mercury"
+{
+	LongLat [ -358. 22.1 0 ]
+	Size 65
+	Type "AA"
+}
+
+Location "Derain" "Sol/Mercury"
+{
+	LongLat [ -340.3 -8.7 0 ]
+	Size 190
+	Type "AA"
+}
+
+Location "Eastman" "Sol/Mercury"
+{
+	LongLat [ -234.3 9.6 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Gibran" "Sol/Mercury"
+{
+	LongLat [ -110.4 35.5 0 ]
+	Size 102
+	Type "AA"
+}
+
+Location "Hemingway" "Sol/Mercury"
+{
+	LongLat [ -2.9 17.5 0 ]
+	Size 130
+	Type "AA"
+}
+
+Location "Hodgkins" "Sol/Mercury"
+{
+	LongLat [ -341.9 29.2 0 ]
+	Size 20
+	Type "AA"
+}
+
+Location "Izquierdo" "Sol/Mercury"
+{
+	LongLat [ -253.1 -1.6 0 ]
+	Size 170
+	Type "AA"
+}
+
+Location "Kunisada" "Sol/Mercury"
+{
+	LongLat [ -247.6 1.8 0 ]
+	Size 280
+	Type "AA"
+}
+
+Location "Lange" "Sol/Mercury"
+{
+	LongLat [ -260. 6.4 0 ]
+	Size 180
+	Type "AA"
+}
+
+Location "Matabei" "Sol/Mercury"
+{
+	LongLat [ -13.9 -39.7 0 ]
+	Size 24
+	Type "AA"
+}
+
+Location "Munkácsy" "Sol/Mercury"
+{
+	LongLat [ -259.1 21.9 0 ]
+	Size 180
+	Type "AA"
+}
+
+Location "To Ngoc Van" "Sol/Mercury"
+{
+	LongLat [ -110.7 52.3 0 ]
+	Size 63
+	Type "AA"
+}
+
+Location "Bek" "Sol/Mercury"
+{
+	LongLat [ -50.3 21.1 0 ]
+	Size 30
+	Type "AA"
+}
+
+Location "Dominici" "Sol/Mercury"
+{
+	LongLat [ -36.5 1.4 0 ]
+	Size 20
+	Type "AA"
+}
+
+Location "Geddes" "Sol/Mercury"
+{
+	LongLat [ -29.7 27.3 0 ]
+	Size 80
+	Type "AA"
+}
+
+Location "Hokusai" "Sol/Mercury"
+{
+	LongLat [ -342.3 58.3 0 ]
+	Size 95
+	Type "AA"
+}
+
+Location "Picasso" "Sol/Mercury"
+{
+	LongLat [ -309.9 3.3 0 ]
+	Size 133
+	Type "AA"
+}
+
+Location "Kipling" "Sol/Mercury"
+{
+	LongLat [ -288. -19.4 0 ]
+	Size 151
+	Type "AA"
+}
+
+Location "Debussy" "Sol/Mercury"
+{
+	LongLat [ -347.5 -33.9 0 ]
+	Size 85
+	Type "AA"
+}
+
+Location "Firdousi" "Sol/Mercury"
+{
+	LongLat [ -294.6 3.5 0 ]
+	Size 96
+	Type "AA"
+}
+
+Location "Copland" "Sol/Mercury"
+{
+	LongLat [ -286.7 37.5 0 ]
+	Size 208
+	Type "AA"
+}
+
+Location "Steichen" "Sol/Mercury"
+{
+	LongLat [ -282.73 -13.14 0 ]
+	Size 159
+	Type "AA"
+}
+
+Location "Rachmaninoff" "Sol/Mercury"
+{
+	LongLat [ -302.4 27.6 0 ]
+	Size 290
+	Type "AA"
+}
+

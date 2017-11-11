@@ -1,0 +1,377 @@
+# The largest Edgeworth-Kuiper belt objects
+
+"136199 Eris:Eris:2003 UB313" "Sol" {
+ 
+# Higher albedo and lower radius than first reported. 
+# Data from HST results by Brown et al. ApJ 2006:
+# http://www.gps.caltech.edu/~mbrown/papers/ps/xsize.pdf
+
+	Class "dwarfplanet" 
+	Texture "asteroid.jpg" 
+	Radius  1200
+	# no evidence of reddening
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/planetlila/index.html"
+
+	EllipticalOrbit {
+		Epoch        2453600.5    # 2005 Aug 18 00:00UT
+		Period           557.148 
+		SemiMajorAxis     67.709       
+		Eccentricity       0.4416 
+		Inclination       44.177      
+		AscendingNode     35.875 
+		ArgOfPericenter  151.311      
+		MeanAnomaly      197.538 
+   	} 
+
+	Albedo 0.86
+
+	UniformRotation
+	{
+	Period     25.92   # Estimate from Icarus 2008. 198: 2; 459-64
+	
+	Inclination	79.8   # spin axis assumed to match
+	AscendingNode	144    # orbit of Dysnomia
+	}
+}
+
+"Dysnomia:136199 Eris I:Eris I:2005 (2003 UB313) 1" "Sol/Eris" {
+
+	Class "moon" 
+	Mesh	"asteroid.cms"
+	Texture "asteroid.jpg" 
+	Radius  100             # ~0.2% of Eris brightness
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/planetlila/moon/"
+	# Orbit from Brown ME, Schaller EL: Science 2007; 316: 1585
+
+	OrbitFrame {
+		EquatorJ2000 { Center "Sol/Eris" }
+	}	
+
+	EllipticalOrbit
+	{
+	Epoch		2453979.0    # 2006 Aug 31 12:00UT
+	Period		15.772
+	SemiMajorAxis	37430
+	Inclination	61.3
+	AscendingNode	139
+	MeanAnomaly	328.6
+	}
+}
+
+"13672 Makemake:Makemake:2005 FY9" "Sol" { 
+
+	Class "dwarfplanet" 
+	Texture "asteroid.jpg" 
+	Radius  850              # estimate
+
+	EllipticalOrbit {
+		Epoch        2453600.5    # 2005 Aug 18 00:00UT
+		Period           308.329 
+		SemiMajorAxis     45.640       
+		Eccentricity       0.1519 
+		Inclination       28.998      
+		AscendingNode     79.416 
+		ArgOfPericenter  245.848      
+		MeanAnomaly      213.919 
+   	} 
+
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
+}
+
+"136108 Haumea:Haumea:2003 EL61" "Sol" { 
+
+	Class "dwarfplanet" 
+	Texture "asteroid.jpg" 
+#	Dimensions below taken from Rabinowitz et al. Photometric observations
+#	constraining the size, shape and albedo of 2003 EL62, a rapidly rotating,
+#	Pluto-sized object in the Kuiper Belt.
+#	http://arxiv.org/ftp/astro-ph/papers/0509/0509401.pdf
+
+	SemiAxes [ 980 760 500 ] # estimate
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
+
+	EllipticalOrbit {
+		Epoch        2453600.5    # 2005 Aug 18 00:00UT
+		Period           285.312 
+		SemiMajorAxis     43.339       
+		Eccentricity       0.1888 
+		Inclination       28.195      
+		AscendingNode    121.895 
+		ArgOfPericenter  239.512      
+		MeanAnomaly      198.075 
+   	} 
+
+	UniformRotation
+	{
+	Period     3.9152
+
+	Inclination	255   # spin axis assumed to match
+	AscendingNode	25    # satellite orbits
+	}
+}
+
+"Hi'iaka:136108 Haumea I:Haumea I:2005 (2003 EL61) 1" "Sol/2003 EL61" { 
+
+	Class "moon" 
+	Mesh	"asteroid.cms"
+	Texture "asteroid.jpg" 
+	Radius  150             # ~1% of system mass
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
+#	Orbit from Brown ME et al: http://www.gps.caltech.edu/%7Embrown/papers/ps/EL61.pdf
+
+	BodyFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
+	OrbitFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
+
+	EllipticalOrbit {
+		Period            49.12 
+		SemiMajorAxis  49500       
+		Eccentricity       0.050
+		Inclination      234.8      
+		AscendingNode     26.1 
+		ArgOfPericenter  278.6      
+		MeanAnomaly       16.71 
+   	} 
+
+	Obliquity		235  # to match orbit
+	EquatorAscendingNode	25   #
+}
+
+"Namaka:136108 Haumea II:Haumea II:2005 (2003 EL61) 2" "Sol/2003 EL61" { 
+
+	Class "moon" 
+	Mesh	"asteroid.cms"
+	Texture "asteroid.jpg" 
+	Radius  90             # ~0.2% of system mass
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/2003EL61/"
+
+	BodyFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
+	OrbitFrame {
+		EclipticJ2000 { Center "Sol/2003 EL61" }
+	}
+
+	EllipticalOrbit {
+		Period            34.1 
+		SemiMajorAxis  39300       
+		Inclination      275  # ~40 degrees to 2005 (2003 EL61) 1
+		AscendingNode     25  #
+   	} 
+
+	Obliquity		275  # to match orbit
+	EquatorAscendingNode	25   #
+}
+
+"90482 Orcus:Orcus:2004 DW" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Color   [ 0.65 0.45 0.35 ]
+	BlendTexture true
+	Radius  800 
+
+	InfoURL "http://www.gps.caltech.edu/~chad/2004dw/" 
+
+	EllipticalOrbit {
+		Period           245.976 
+      		SemiMajorAxis     39.258 
+		Eccentricity       0.2258 
+		Inclination       20.539 
+		AscendingNode    268.457 
+		ArgOfPericenter   73.731 
+		MeanAnomaly      150.066 
+   	} 
+
+	Albedo 0.09
+
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
+
+}
+
+"50000 Quaoar:Quaoar:2002 LM60" "Sol" {
+
+	Class "asteroid"
+	Texture "asteroid.jpg"
+	Color   [ 0.60 0.45 0.35 ] # only slight red
+	BlendTexture true
+	Radius 625
+	Oblateness 0.12 # minimum axis ratio of 1.133
+	
+	InfoURL "http://www.gps.caltech.edu/~chad/quaoar/"
+
+
+	EllipticalOrbit	{
+		Period          283.234
+		SemiMajorAxis    43.128
+		Eccentricity      0.0395
+		Inclination       8.005
+		AscendingNode   189.081
+		ArgOfPericenter 163.885
+	        MeanAnomaly     258.858
+	}
+
+	Albedo 0.12
+
+	UniformRotation
+	{
+	Period     17.6788 # for a double-peaked light curve
+	}
+}
+
+"28978 Ixion:Ixion:(2001 KX76" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Color   [ 0.65 0.45 0.35 ] # "reddish"
+	BlendTexture true
+	Radius 600 
+
+	InfoURL "http://www.noao.edu/outreach/press/pr01/pr0110.html"	
+
+	EllipticalOrbit { 
+		Epoch        2452400.5       # 2002 May 6 00:00UT
+		Period           246.50564 
+		SemiMajorAxis     39.3138672 
+		Eccentricity       0.2447032 
+		Inclination       19.68326 
+		AscendingNode     71.0155 
+		ArgOfPericenter  300.9234 
+		MeanAnomaly      259.585 
+	} 
+
+	Albedo 0.04 
+
+	UniformRotation
+	{
+	Period 30.0 
+	}
+}
+
+"20000 Varuna:Varuna:2000 WR106" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Color   [ 0.65 0.45 0.35 ] # "reddish"
+	BlendTexture true
+	Radius 450 
+	Oblateness 0.333 # axis ratio 1.5:1
+
+	InfoURL "http://www.aas.org/publications/baas/v34n3/dps2002/9.htm"
+
+	EllipticalOrbit { 
+		Epoch        2452400.5      # 2002 May 6 00:00UT 
+		Period           284.83446 
+		SemiMajorAxis     43.290196 
+		Eccentricity       0.053794 
+		Inclination       17.12557 
+		AscendingNode     97.2843 
+		ArgOfPericenter  275.5744 
+		MeanAnomaly       82.67171 
+	} 
+
+	Albedo 0.07 
+
+	UniformRotation
+	{
+	Period 6.3442 # for a double-peaked light curve 
+	}
+} 
+
+"55565 2002 AW197:2002 AW197" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Color   [ 0.65 0.45 0.35 ]
+	BlendTexture true
+	Radius  450 
+
+	InfoURL "http://www.aas.org/publications/baas/v34n3/dps2002/301.htm"
+
+	EllipticalOrbit {
+		Period           323.976 
+      		SemiMajorAxis     47.171 
+		Eccentricity       0.1257 
+		Inclination       24.370 
+		AscendingNode    297.463 
+		ArgOfPericenter  296.073 
+		MeanAnomaly      272.766 
+   	} 
+
+	Albedo 0.10
+
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
+}
+
+"2004 XR190" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Radius 320 # "diameter is between 425-850km" 
+
+	InfoURL "http://arxiv.org/abs/astro-ph/0512430"	
+
+	EllipticalOrbit { 
+		Epoch        2453800.5       # 2006 Mar 6 00:00UT
+		Period           434.981 
+		SemiMajorAxis     57.409       
+		Eccentricity       0.111       
+		Inclination       46.735      
+		AscendingNode    252.369 
+		ArgOfPericenter  284.115 
+		MeanAnomaly      268.060 
+	} 
+
+	UniformRotation
+	{
+	Period     48.0   # guess
+	}
+}
+
+# Inner Oort cloud
+
+"90377 Sedna:Sedna:2003 VB12" "Sol" { 
+
+	Class "asteroid" 
+	Texture "asteroid.jpg" 
+	Color   [ 0.75 0.45 0.35 ] # almost as red as Mars
+	BlendTexture true
+	Radius 850 
+
+	InfoURL "http://www.gps.caltech.edu/~mbrown/sedna/"
+
+	EllipticalOrbit {
+		Epoch        2453200.5     # 2004 Jul 14 00:00UT 
+		Period         12258.809 
+		SemiMajorAxis    531.658  
+		Eccentricity       0.8574  
+		Inclination       11.930 
+		AscendingNode    144.493 
+		ArgOfPericenter  311.827 
+		MeanAnomaly      357.881 
+	} 
+
+	Albedo 0.05 
+
+	UniformRotation
+	{
+	Period 10 # (much shorter than previously thought)
+	}
+} 

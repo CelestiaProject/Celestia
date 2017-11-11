@@ -1,0 +1,447 @@
+Location "Colombo Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 17530 ]
+    Size 100
+    Type "XX"
+}
+
+Location "C Ring" "Sol/Saturn"
+{
+    LongLat [ 0 0 23000 ]
+    Size 17500
+    Type "XX"
+}
+
+Location "Maxwell Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 27230 ]
+    Size 270
+    Type "XX"
+}
+
+Location "Bond Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 28440 ]
+    Size 30
+    Type "XX"
+}
+
+Location "Dawes Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 29940 ]
+    Size 20
+    Type "XX"
+}
+
+Location "B Ring" "Sol/Saturn"
+{
+    LongLat [ 0 0 44500 ]
+    Size 25500
+    Type "XX"
+}
+
+Location "Huygens Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 57410 ]
+    Size 440
+    Type "XX"
+}
+
+Location "Herschel Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 57966 ]
+    Size 102
+    Type "XX"
+}
+
+Location "Russell Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 58345 ]
+    Size 33
+    Type "XX"
+}
+
+Location "Jeffreys Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 58682 ]
+    Size 38
+    Type "XX"
+}
+
+Location "Kuiper Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 59136 ]
+    Size 3
+    Type "XX"
+}
+
+Location "Laplace Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 59699 ]
+    Size 238
+    Type "XX"
+}
+
+Location "Bessel Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 59973 ]
+    Size 10
+    Type "XX"
+}
+
+Location "Barnard Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 60044 ]
+    Size 13
+    Type "XX"
+}
+
+Location "Cassini Division" "Sol/Saturn"
+{
+    LongLat [ 0 0 59580 ]
+    Size 4700
+    Type "XX"
+}
+
+Location "A Ring" "Sol/Saturn"
+{
+    LongLat [ 0 0 69200 ]
+    Size 14600
+    Type "XX"
+}
+
+Location "Encke Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 73300 ]
+    Size 325
+    Type "XX"
+}
+
+Location "Keeler Gap" "Sol/Saturn"
+{
+    LongLat [ 0 0 76260 ]
+    Size 35
+    Type "XX"
+}
+
+Location "Roche Division" "Sol/Saturn"
+{
+    LongLat [ 0 0 78220 ]
+    Size 2600
+    Type "XX"
+}
+
+Location "F Ring" "Sol/Saturn"
+{
+    LongLat [ 0 0 79950 ]
+    Size 500
+    Type "XX"
+}
+
+Location "Colombo Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 17530 ]
+    Size 100
+    Type "XX"
+}
+
+Location "C Ring" "Sol/Saturn"
+{
+    LongLat [ 180 0 23000 ]
+    Size 17500
+    Type "XX"
+}
+
+Location "Maxwell Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 27230 ]
+    Size 270
+    Type "XX"
+}
+
+Location "Bond Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 28440 ]
+    Size 30
+    Type "XX"
+}
+
+Location "Dawes Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 29940 ]
+    Size 20
+    Type "XX"
+}
+
+Location "B Ring" "Sol/Saturn"
+{
+    LongLat [ 180 0 44500 ]
+    Size 25500
+    Type "XX"
+}
+
+Location "Huygens Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 57410 ]
+    Size 440
+    Type "XX"
+}
+
+Location "Herschel Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 57966 ]
+    Size 102
+    Type "XX"
+}
+
+Location "Russell Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 58345 ]
+    Size 33
+    Type "XX"
+}
+
+Location "Jeffreys Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 58682 ]
+    Size 38
+    Type "XX"
+}
+
+Location "Kuiper Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 59136 ]
+    Size 3
+    Type "XX"
+}
+
+Location "Laplace Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 59699 ]
+    Size 238
+    Type "XX"
+}
+
+Location "Bessel Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 59973 ]
+    Size 10
+    Type "XX"
+}
+
+Location "Barnard Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 60044 ]
+    Size 13
+    Type "XX"
+}
+
+Location "Cassini Division" "Sol/Saturn"
+{
+    LongLat [ 180 0 59580 ]
+    Size 4700
+    Type "XX"
+}
+
+Location "A Ring" "Sol/Saturn"
+{
+    LongLat [ 180 0 69200 ]
+    Size 14600
+    Type "XX"
+}
+
+Location "Encke Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 73300 ]
+    Size 325
+    Type "XX"
+}
+
+Location "Keeler Gap" "Sol/Saturn"
+{
+    LongLat [ 180 0 76260 ]
+    Size 35
+    Type "XX"
+}
+
+Location "Roche Division" "Sol/Saturn"
+{
+    LongLat [ 180 0 78220 ]
+    Size 2600
+    Type "XX"
+}
+
+Location "F Ring" "Sol/Saturn"
+{
+    LongLat [ 180 0 79950 ]
+    Size 500
+    Type "XX"
+}
+
+Location "Ring 6" "Sol/Uranus"
+{
+    LongLat [ 0 0 16278 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Ring 5" "Sol/Uranus"
+{
+    LongLat [ 0 0 16675 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Ring 4" "Sol/Uranus"
+{
+    LongLat [ 0 0 17012 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Alpha Ring" "Sol/Uranus"
+{
+    LongLat [ 0 0 19159 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Beta Ring" "Sol/Uranus"
+{
+    LongLat [ 0 0 20102 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Eta Ring" "Sol/Uranus"
+{
+    LongLat [ 0 0 21617 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Gamma Ring" "Sol/Uranus"
+{
+    LongLat [ 0 0 22068 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Delta Ring" "Sol/Uranus"
+{
+    LongLat [ 0 0 22741 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Lambda Ring" "Sol/Uranus"
+{
+    LongLat [ 0 0 24465 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Epsilon Ring" "Sol/Uranus"
+{
+    LongLat [ 0 0 25590 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Ring 6" "Sol/Uranus"
+{
+    LongLat [ 180 0 16278 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Ring 5" "Sol/Uranus"
+{
+    LongLat [ 180 0 16675 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Ring 4" "Sol/Uranus"
+{
+    LongLat [ 180 0 17012 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Alpha Ring" "Sol/Uranus"
+{
+    LongLat [ 180 0 19159 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Beta Ring" "Sol/Uranus"
+{
+    LongLat [ 180 0 20102 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Eta Ring" "Sol/Uranus"
+{
+    LongLat [ 180 0 21617 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Gamma Ring" "Sol/Uranus"
+{
+    LongLat [ 180 0 22068 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Delta Ring" "Sol/Uranus"
+{
+    LongLat [ 180 0 22741 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Lambda Ring" "Sol/Uranus"
+{
+    LongLat [ 180 0 24465 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Epsilon Ring" "Sol/Uranus"
+{
+    LongLat [ 180 0 25590 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Le Verrier Ring" "Sol/Neptune"
+{
+    LongLat [ 0 0 28430 ]
+    Importance 3000
+    Type "XX"
+}
+
+Location "Adams Ring" "Sol/Neptune"
+{
+    LongLat [ 0 0 38166 ]
+    Importance 2000
+    Type "XX"
+}
+
+Location "Le Verrier Ring" "Sol/Neptune"
+{
+    LongLat [ 180 0 28430 ]
+    Importance 3000
+    Type "XX"
+}
+
+Location "Adams Ring" "Sol/Neptune"
+{
+    LongLat [ 180 0 38166 ]
+    Importance 2000
+    Type "XX"
+}

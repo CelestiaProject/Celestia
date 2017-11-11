@@ -1,0 +1,117 @@
+# Comets
+"Halley:1P Halley" "Sol" 
+{ 
+	Class "comet" 
+	Mesh "halley.cmod"
+	Texture "asteroid.jpg" 
+	Radius 7.6 # maximum semi-axis
+	MeshCenter [ -0.338 1.303 0.230 ]
+
+	EllipticalOrbit 
+	{ 
+	Epoch        2449400.5      #1994 Feb 17 00:00UT
+	Period            75.31589 
+	SemiMajorAxis     17.834144 
+	Eccentricity       0.967143 
+	Inclination      162.262690 
+	AscendingNode     58.420081 
+	ArgOfPericenter  111.332485 
+	MeanAnomaly       38.384264 
+	} 
+
+	# chaotic rotation, imperfectly defined: 
+	# this version from "The New Solar System", 4th Edition; Eds.
+	# JK Beatty, CC Petersen, A Chaikin 
+	PrecessingRotation
+	{
+	Period             170          # 7.1 day axial rotation period 
+	Inclination         66    
+	PrecessionPeriod     0.010      # 3.7 day precession period 
+	}
+
+	Albedo 0.04 
+} 
+
+"Borrelly:19P Borrelly" "Sol" 
+{ 
+	Class "comet" 
+	Mesh "borrelly.cms" 
+	Texture "asteroid.jpg" 
+	Radius 2.2 
+
+	InfoURL "http://www.solarviews.com/eng/borrelly.htm"
+
+	EllipticalOrbit 
+	{ 
+	Epoch        2452174.5      # 2001 Sep 22 00:00UT
+	Period             6.86302 
+	SemiMajorAxis      3.611363 
+	Eccentricity       0.623908 
+	Inclination       30.324612 
+	AscendingNode     75.424869 
+	ArgOfPericenter  353.375385 
+	MeanAnomaly      358.956091 
+	} 
+
+	UniformRotation
+	{
+	Period         25 
+	Inclination    90 
+	AscendingNode 315 
+	}
+
+	Albedo 0.04 
+} 
+
+"Ikeya-Zhang:153P Ikeya-Zhang" "Sol" 
+{ 
+	Class "comet" 
+	Texture "asteroid.jpg" 
+	Mesh "roughsphere.cms" 
+
+	EllipticalOrbit 
+	{ 
+	Epoch        2452352.47847  # 2002 Mar 18 23:29UT
+	Period           367.181906 
+	SemiMajorAxis     51.276792 
+	Eccentricity       0.990111 
+	Inclination       28.1206 
+	AscendingNode     93.3718 
+	ArgOfPericenter   34.6666 
+	MeanAnomaly        0 
+	} 
+
+	# These are all made up (copied from Halley)
+	Radius           7.5 
+
+	UniformRotation
+	{
+	Period 170 
+	}
+
+	Albedo 0.04 
+} 
+
+"Hale-Bopp:C1995 O1 Hale-Bopp" "Sol"
+{
+	Class "comet"
+	Mesh "asteroid.cms"
+	Texture "asteroid.jpg"
+	Radius 13
+
+	EllipticalOrbit
+	{
+	Period          2523.4
+	PericenterDistance 0.914142
+	Eccentricity      0.995068
+	Inclination      89.4300
+	AscendingNode   282.4707
+	ArgOfPericenter 130.5887
+        MeanAnomaly       -0.007
+	Epoch       2450520.5
+	}
+
+	# Estimate of rotation period from here: http://www.usafa.af.mil/dfp/research/astro/papers/icqpaper.htm
+	RotationPeriod  11.47
+	Albedo            0.1
+}
