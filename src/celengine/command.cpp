@@ -1000,22 +1000,22 @@ double RepeatCommand::getDuration()
 }
 
 
-//Audio support by Victor, modified by Vincent, Leserg & Alexell
-CommandPlay::CommandPlay(int _channel, const std::string& _filename,
-                         float _volume, float _pan, int _loop, int _nopause) :
-    channel(_channel),
-    filename(_filename),
-    volume(_volume),
-    pan(_pan),
-    loop(_loop),
-    nopause(_nopause) 
-{
-}
+////Audio support by Victor, modified by Vincent, Leserg & Alexell
+//CommandPlay::CommandPlay(int _channel, const std::string& _filename,
+//                         float _volume, float _pan, int _loop, int _nopause) :
+//    channel(_channel),
+//    filename(_filename),
+//    volume(_volume),
+//    pan(_pan),
+//    loop(_loop),
+//    nopause(_nopause) 
+//{
+//}
  
-void CommandPlay::process(ExecutionEnvironment& env)
-{
-    env.getCelestiaCore()->playSoundFile(channel, volume, pan, loop, filename, nopause);
-}
+//void CommandPlay::process(ExecutionEnvironment& env)
+//{
+//    env.getCelestiaCore()->playSoundFile(channel, volume, pan, loop, filename, nopause);
+//}
 // SCRIPT IMAGE START: Author Vincent
 // ScriptImage command
 CommandScriptImage::CommandScriptImage(double _duration, float _xoffset,

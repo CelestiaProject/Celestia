@@ -795,7 +795,7 @@ Command* CommandParser::parseCommand()
         if(!paramList->getNumber("nopause", nopause))
             nopause = 0;
 
-        cmd = new CommandPlay(channel, filename, volume, pan, loop, nopause);
+//        cmd = new CommandPlay(channel, filename, volume, pan, loop, nopause);
     }
 //SCRIPT IMAGE START: Author Vincent
     else if (commandName == "overlay")

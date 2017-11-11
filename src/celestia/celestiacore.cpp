@@ -185,15 +185,15 @@ View::View(View::Type _type,
 }
 
 //For FMOD
-void ERRCHECK(FMOD_RESULT result)
-{
-    if (result != FMOD_OK)
-    {
-        char errMsg[1024];
-        sprintf(errMsg, "FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
-        return;
-    }
-}
+//void ERRCHECK(FMOD_RESULT result)
+//{
+//    if (result != FMOD_OK)
+//    {
+//        char errMsg[1024];
+//        sprintf(errMsg, "FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+//        return;
+//    }
+//}
 
 void View::mapWindowToView(float wx, float wy, float& vx, float& vy) const
 {
@@ -404,21 +404,21 @@ CelestiaCore::CelestiaCore() :
     console.setWindowHeight(ConsolePageRows);
 
 //Audio support by Victor, modified by Vincent & Alexell
-result = FMOD::System_Create(&sysaudio);
-ERRCHECK(result);
-
-result = sysaudio->getVersion(&version);
-ERRCHECK(result);
-
-if (version < FMOD_VERSION)
-{
-    char errMsg[1024];
-    sprintf(errMsg, "Error! You are using an old version of FMOD %08x.\nThis program requires %08x\n", version, FMOD_VERSION);
-    return;
-}
-
-result = sysaudio->init(MAX_CHANNELS, FMOD_INIT_NORMAL, 0);
-ERRCHECK(result);
+//result = FMOD::System_Create(&sysaudio);
+//ERRCHECK(result);
+//
+//result = sysaudio->getVersion(&version);
+//ERRCHECK(result);
+//
+//if (version < FMOD_VERSION)
+//{
+//    char errMsg[1024];
+//    sprintf(errMsg, "Error! You are using an old version of FMOD %08x.\nThis program requires %08x\n", version, FMOD_VERSION);
+//    return;
+//}
+//
+//result = sysaudio->init(MAX_CHANNELS, FMOD_INIT_NORMAL, 0);
+//ERRCHECK(result);
 }
 
 CelestiaCore::~CelestiaCore()
@@ -438,10 +438,10 @@ CelestiaCore::~CelestiaCore()
 
     delete execEnv;
 
-    result = sysaudio->close();
-    ERRCHECK(result);
-    result = sysaudio->release();
-    ERRCHECK(result);
+//    result = sysaudio->close();
+//    ERRCHECK(result);
+//    result = sysaudio->release();
+//    ERRCHECK(result);
 }
 
 void CelestiaCore::readFavoritesFile()
@@ -568,7 +568,7 @@ void CelestiaCore::cancelScript()
     }
 #endif
 
-    stopSounds();
+//    stopSounds();
 }
 
 
@@ -1666,7 +1666,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         if (sim->getPauseState() == true)
         {
 
-            pauseSounds();
+            //pauseSounds();
 
             if (scriptState == ScriptPaused)
                 scriptState = ScriptRunning;
@@ -1686,7 +1686,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 #endif
             {
 
-                pauseSounds();
+//                pauseSounds();
 
                 if (scriptState == ScriptRunning)
                     scriptState = ScriptPaused;
@@ -2525,7 +2525,7 @@ void CelestiaCore::tick()
 #endif // CELX
 
     sim->update(dt);
-    sysaudio->update();
+//    sysaudio->update();
 }
 
 
@@ -4984,145 +4984,145 @@ void CelestiaCore::forward()
 }
 
 
-//Audio support by Victor, modified by Vincent & Alexell
-void CelestiaCore::playSoundFile(int channel, float volume, float pan,
-                                 int loop, const string& filename, int nopause)
-{
-#ifdef _WIN64
-	//TODO: fix. (seems to crash in 64-bit)
-	return;
-#endif
-    if (channel < 0 || channel >= MAX_CHANNELS)
-    {
-        if (alerter != NULL)
-            alerter->fatalError(_("Invalid channel value"));
-        else
-            flash(_("Invalid channel value"));
-        return;
-    }
+////Audio support by Victor, modified by Vincent & Alexell
+//void CelestiaCore::playSoundFile(int channel, float volume, float pan,
+//                                 int loop, const string& filename, int nopause)
+//{
+//#ifdef _WIN64
+//	//TODO: fix. (seems to crash in 64-bit)
+//	return;
+//#endif
+//    if (channel < 0 || channel >= MAX_CHANNELS)
+//    {
+//        if (alerter != NULL)
+//            alerter->fatalError(_("Invalid channel value"));
+//        else
+//            flash(_("Invalid channel value"));
+//        return;
+//    }
+//
+//    // check if channel was already initialized
+//    if (soundSources[channel])
+//    {
+//        // if yes, check what the user wants
+//        if (filename == "\a")
+//        {
+//            if (volume != -1)
+//                // don't stop playing, user wants to change only
+//                // the Volume, Pan or the looping
+//                channels[channel]->setVolume(volume);
+//            if (pan != 0 || pan == 0)
+//                channels[channel]->setPan(pan);
+//            if (loop != -1)
+//                soundSources[channel]->setLoopCount(loop);
+//            // update audio systems for new values
+//            sysaudio->update();
+//            return;
+//        }
+//        else
+//        {
+//            // stop playing
+//            bool  playing = false;
+//            channels[channel]->isPlaying(&playing);
+//            if (playing)
+//            {
+//                channels[channel]->stop();
+//                if (soundSources[channel])
+//                {
+//                    soundSources[channel]->release();
+//                    soundSources[channel] = NULL;
+//                }
+//            }
+//        }
+//    }
+//
+//    if (!filename.length())
+//        return;
+//
+//    string fullname;
+//
+//    // check if filename have a ':' character
+//    if (filename[1] != ':')
+//        // don't have a ':'... look in the subfolder "sounds"
+//        fullname = "sounds/" + filename;
+//    else
+//        // start with a '/'... leave it alone since it's a full path name
+//        fullname = filename;
+//
+//    // create sound stream source
+//	result = sysaudio->createStream(fullname.c_str(), FMOD_LOOP_NORMAL, 0, &soundSources[channel]);
+//    // if sound stream not created (file not open, corrupted...)
+//    if (result != FMOD_OK)
+//    {
+//        if (alerter != NULL)
+//            alerter->fatalError(("Failed to open " + fullname));
+//        else
+//            flash(("Failed to open " + fullname));
+//        return;
+//    }
+//
+//    // set mode play (Loop) for sound stream what the user wants
+//    if (loop != -1)
+//        soundSources[channel]->setLoopCount(loop);
+//
+//    // play sound stream
+//	sysaudio->playSound(soundSources[channel], NULL, false, &channels[channel]);
+//
+//    // set Volume what the user wants
+//    if (volume != -1)
+//        channels[channel]->setVolume(volume);
+//    // set Pan what user wants
+//    if (pan != 0 || pan == 0)
+//        channels[channel]->setPan(pan);
+//    // update audio system
+//    sysaudio->update();
+//
+//	// Added by Vincent:
+//    if (nopause == 1)
+//        pause[channel] = false;
+//    else
+//        pause[channel] = true;
+//}
 
-    // check if channel was already initialized
-    if (soundSources[channel])
-    {
-        // if yes, check what the user wants
-        if (filename == "\a")
-        {
-            if (volume != -1)
-                // don't stop playing, user wants to change only
-                // the Volume, Pan or the looping
-                channels[channel]->setVolume(volume);
-            if (pan != 0 || pan == 0)
-                channels[channel]->setPan(pan);
-            if (loop != -1)
-                soundSources[channel]->setLoopCount(loop);
-            // update audio systems for new values
-            sysaudio->update();
-            return;
-        }
-        else
-        {
-            // stop playing
-            bool  playing = false;
-            channels[channel]->isPlaying(&playing);
-            if (playing)
-            {
-                channels[channel]->stop();
-                if (soundSources[channel])
-                {
-                    soundSources[channel]->release();
-                    soundSources[channel] = NULL;
-                }
-            }
-        }
-    }
 
-    if (!filename.length())
-        return;
+//void CelestiaCore::stopSounds()
+//{
+//#ifdef _WIN64
+//    //TODO: fix. (seems to crash in 64-bit)
+//    return;
+//#endif
+//    int i;
+//    bool isplaying = true;
+//    for (i = 0; i < MAX_CHANNELS; i++)
+//    {
+//        channels[i]->isPlaying(&isplaying);
+//        if (isplaying)
+//        {
+//            channels[i]->stop();
+//            if (soundSources[i])
+//            {
+//                soundSources[i]->release();
+//                soundSources[i] = NULL;
+//            }
+//        }
+//    }
+//}
 
-    string fullname;
-
-    // check if filename have a ':' character
-    if (filename[1] != ':')
-        // don't have a ':'... look in the subfolder "sounds"
-        fullname = "sounds/" + filename;
-    else
-        // start with a '/'... leave it alone since it's a full path name
-        fullname = filename;
-
-    // create sound stream source
-	result = sysaudio->createStream(fullname.c_str(), FMOD_LOOP_NORMAL, 0, &soundSources[channel]);
-    // if sound stream not created (file not open, corrupted...)
-    if (result != FMOD_OK)
-    {
-        if (alerter != NULL)
-            alerter->fatalError(("Failed to open " + fullname));
-        else
-            flash(("Failed to open " + fullname));
-        return;
-    }
-
-    // set mode play (Loop) for sound stream what the user wants
-    if (loop != -1)
-        soundSources[channel]->setLoopCount(loop);
-
-    // play sound stream
-	sysaudio->playSound(soundSources[channel], NULL, false, &channels[channel]);
-
-    // set Volume what the user wants
-    if (volume != -1)
-        channels[channel]->setVolume(volume);
-    // set Pan what user wants
-    if (pan != 0 || pan == 0)
-        channels[channel]->setPan(pan);
-    // update audio system
-    sysaudio->update();
-
-	// Added by Vincent:
-    if (nopause == 1)
-        pause[channel] = false;
-    else
-        pause[channel] = true;
-}
-
-
-void CelestiaCore::stopSounds()
-{
-#ifdef _WIN64
-    //TODO: fix. (seems to crash in 64-bit)
-    return;
-#endif
-    int i;
-    bool isplaying = true;
-    for (i = 0; i < MAX_CHANNELS; i++)
-    {
-        channels[i]->isPlaying(&isplaying);
-        if (isplaying)
-        {
-            channels[i]->stop();
-            if (soundSources[i])
-            {
-                soundSources[i]->release();
-                soundSources[i] = NULL;
-            }
-        }
-    }
-}
-
-void CelestiaCore::pauseSounds()
-{
-#ifdef _WIN64
-	//TODO: fix. (seems to crash in 64-bit)
-	return;
-#endif
-    int i;
-    bool paused;
-    for (i = 0; i < MAX_CHANNELS; i++)
-        if (soundSources[i] && pause[i] == true)
-        {
-            channels[i]->getPaused(&paused);
-            channels[i]->setPaused(!paused);
-        }
-}
+//void CelestiaCore::pauseSounds()
+//{
+//#ifdef _WIN64
+//	//TODO: fix. (seems to crash in 64-bit)
+//	return;
+//#endif
+//    int i;
+//    bool paused;
+//    for (i = 0; i < MAX_CHANNELS; i++)
+//        if (soundSources[i] && pause[i] == true)
+//        {
+//            channels[i]->getPaused(&paused);
+//            channels[i]->setPaused(!paused);
+//        }
+//}
 
 const vector<Url*>& CelestiaCore::getHistory() const
 {

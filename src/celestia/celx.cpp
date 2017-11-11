@@ -3495,26 +3495,26 @@ static int celestia_geturl(lua_State* l)
 }
 
 
-//Audio support by Victor, modified by Vincent & Alexell
-static int celestia_play(lua_State* l)
-{
-    Celx_CheckArgs(l, 3, 7, "Two to Five arguments expected to function celestia:play");
-
-    CelestiaCore* appCore = this_celestia(l);
-    int channel = (int)Celx_SafeGetNumber(l, 2, AllErrors, "First argument to celestia:play must be a number (channel)");
-    float volume = (float)Celx_SafeGetNumber(l, 3, AllErrors, "Second argument to celestia:play must be a number (volume)");
-    float pan = (float)Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:play must be a number (pan)");
-    int loop = (int)Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:play must be a number (loop)", -1.0);
-    const char* filename = Celx_SafeGetString(l, 6, WrongType, "Fifth argument to celestia:play must be a string (filename)");
-    int nopause = (int)Celx_SafeGetNumber(l, 7, WrongType, "Six argument to celestia:play must be 0 or 1 (nopause)");
-
-    if(!filename)
-        appCore->playSoundFile(channel,volume,pan,loop, "\a", nopause);
-    else
-        appCore->playSoundFile(channel,volume,pan,loop,filename, nopause);
-
-    return 0;
-}
+////Audio support by Victor, modified by Vincent & Alexell
+//static int celestia_play(lua_State* l)
+//{
+//    Celx_CheckArgs(l, 3, 7, "Two to Five arguments expected to function celestia:play");
+//
+//    CelestiaCore* appCore = this_celestia(l);
+//    int channel = (int)Celx_SafeGetNumber(l, 2, AllErrors, "First argument to celestia:play must be a number (channel)");
+//    float volume = (float)Celx_SafeGetNumber(l, 3, AllErrors, "Second argument to celestia:play must be a number (volume)");
+//    float pan = (float)Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:play must be a number (pan)");
+//    int loop = (int)Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:play must be a number (loop)", -1.0);
+//    const char* filename = Celx_SafeGetString(l, 6, WrongType, "Fifth argument to celestia:play must be a string (filename)");
+//    int nopause = (int)Celx_SafeGetNumber(l, 7, WrongType, "Six argument to celestia:play must be 0 or 1 (nopause)");
+//
+//    if(!filename)
+//        appCore->playSoundFile(channel,volume,pan,loop, "\a", nopause);
+//    else
+//        appCore->playSoundFile(channel,volume,pan,loop,filename, nopause);
+//
+//    return 0;
+//}
 
 //SCRIPT IMAGE START: Author Vincent
 static int celestia_overlay(lua_State* l)
@@ -3644,7 +3644,7 @@ static void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setwindowbordersvisible", celestia_setwindowbordersvisible);
     Celx_RegisterMethod(l, "seturl", celestia_seturl);
     Celx_RegisterMethod(l, "geturl", celestia_geturl);
-    Celx_RegisterMethod(l, "play", celestia_play);
+//    Celx_RegisterMethod(l, "play", celestia_play);
     Celx_RegisterMethod(l, "overlay", celestia_overlay);
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 

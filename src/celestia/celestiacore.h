@@ -82,8 +82,8 @@
 #include "celx.h"
 #endif
 
-#include "fmod.hpp"
-#include "fmod_errors.h"
+//#include "fmod.hpp"
+//#include "fmod_errors.h"
 #define MAX_CHANNELS    8
 
 class Url;
@@ -541,20 +541,20 @@ class CelestiaCore // : public Watchable<CelestiaCore>
 #endif
 
 	//Audio support by Victor, modified by Vincent & Alexell
-    FMOD::System       *sysaudio;
-    FMOD::Sound        *soundSources[MAX_CHANNELS];
-    FMOD::Channel      *channels[MAX_CHANNELS];
-    FMOD_RESULT         result;
-    unsigned int        version;
-
-    void stopSounds();
-	//Added by Vincent:
-    void pauseSounds();
-    //void resumeSounds();
-    bool pause[7];
-
- public:
-    void playSoundFile(int, float, float, int, const std::string&, int);
+//    FMOD::System       *sysaudio;
+//    FMOD::Sound        *soundSources[MAX_CHANNELS];
+//    FMOD::Channel      *channels[MAX_CHANNELS];
+//    FMOD_RESULT         result;
+//    unsigned int        version;
+//
+//    void stopSounds();
+//	//Added by Vincent:
+//    void pauseSounds();
+//    //void resumeSounds();
+//    bool pause[7];
+//
+// public:
+//    void playSoundFile(int, float, float, int, const std::string&, int);
 
  public:
     void setScriptImage(double, float, float, float, const std::string&, int);
