@@ -72,7 +72,9 @@
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
 #endif
-
+#define timezone 1
+#define daylight 8
+#define tzname "tzname"
 using namespace std;
 
 
@@ -1346,10 +1348,9 @@ void CelestiaAppWindow::createMenus()
     m_appCore->setTimeZoneBias(-CFTimeZoneGetSecondsFromGMT(tz, CFAbsoluteTimeGetCurrent())+3600*daylight);
     CFRelease(tz);
 #else
-  //TEMP  m_appCore->setTimeZoneBias(-timezone + 3600 * daylight);
-    m_appCore->setTimeZoneBias(1 + 3600 * 1);
+      m_appCore->setTimeZoneBias(-timezone + 3600 * daylight);
 #endif
-  //TEMP  m_appCore->setTimeZoneName(tzname[ daylight?0:1]);
+    //TEMP  m_appCore->setTimeZoneName(tzname[ daylight?0:1]);
     m_appCore->setTimeZoneName("temp");
     // If LocalTime is set to false, set the time zone bias to zero.
     if (settings.contains("LocalTime"))
