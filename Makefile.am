@@ -5,7 +5,7 @@ pkgdatadir = @datadir@/@PACKAGE@
 dosstuff = \
 	celestia.iss \
 	celestia.sln \
-	celestia.vcproj
+	celestia.vcxproj
 
 noinst_DATA = \
 	coding-standards.html \
