@@ -12,6 +12,8 @@
 #include "glcontext.h"
 #include <GL/glew.h>
 
+#include<QDebug>
+
 using namespace std;
 
 
@@ -77,14 +79,14 @@ void GLContext::init(const vector<string>& ignoreExt)
 
     if (GLEW_ARB_vertex_program && glGenProgramsARB)
     {
-        DPRINTF(1, "Renderer: ARB vertex programs supported.\n");
+       qDebug()<<QString().sprintf( "Renderer: ARB vertex programs supported.\n");
         if (vpARB == NULL)
             vpARB = vp::initARB();
         vertexProc = vpARB;
     }
     else if (GLEW_NV_vertex_program && glGenProgramsNV)
     {
-        DPRINTF(1, "Renderer: nVidia vertex programs supported.\n");
+       qDebug()<<QString().sprintf( "Renderer: nVidia vertex programs supported.\n");
         if (vpNV == NULL)
             vpNV = vp::initNV();
         vertexProc = vpNV;
@@ -92,7 +94,7 @@ void GLContext::init(const vector<string>& ignoreExt)
 
     if (GLEW_NV_fragment_program && glGenProgramsNV)
     {
-        DPRINTF(1, "Renderer: nVidia fragment programs supported.\n");
+        qDebug()<<QString().sprintf( "Renderer: nVidia fragment programs supported.\n");
         if (fpNV == NULL)
             fpNV = fp::initNV();
         fragmentProc = fpNV;

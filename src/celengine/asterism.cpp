@@ -20,6 +20,7 @@
 #include "asterism.h"
 #include "parser.h"
 
+#include<QDebug>
 using namespace std;
 
 
@@ -121,7 +122,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            DPRINTF(0, "Error parsing asterism file.\n");
+            qDebug()<<QString().sprintf( "Error parsing asterism file.\n");
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete asterisms;
             return NULL;
@@ -133,7 +134,7 @@ AsterismList* ReadAsterismList(istream& in, const StarDatabase& stardb)
         Value* chainsValue = parser.readValue();
         if (chainsValue == NULL || chainsValue->getType() != Value::ArrayType)
         {
-            DPRINTF(0, "Error parsing asterism %s\n", name.c_str());
+            qDebug()<<QString().sprintf( "Error parsing asterism %s\n", name.c_str());
             for_each(asterisms->begin(), asterisms->end(), deleteFunc<Asterism*>());
             delete asterisms;
             delete chainsValue;

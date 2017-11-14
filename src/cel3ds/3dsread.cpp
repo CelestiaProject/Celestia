@@ -15,6 +15,8 @@
 #include <celutil/bytes.h>
 #include <celutil/debug.h>
 
+#include<QDebug>
+
 using namespace Eigen;
 using namespace std;
 
@@ -670,18 +672,18 @@ M3DScene* Read3DSFile(ifstream& in)
     unsigned short chunkType = readUshort(in);
     if (chunkType != M3DCHUNK_MAGIC)
     {
-        DPRINTF(0, "Read3DSFile: Wrong magic number in header\n");
+        qDebug()<<QString().sprintf( "Read3DSFile: Wrong magic number in header\n");
         return NULL;
     }
 
     int32 chunkSize = readInt(in);
     if (in.bad())
     {
-        DPRINTF(0, "Read3DSFile: Error reading 3DS file.\n");
+        qDebug()<<QString().sprintf( "Read3DSFile: Error reading 3DS file.\n");
         return NULL;
     }
 
-    DPRINTF(1, "3DS file, %d bytes\n", chunkSize);
+   qDebug()<<QString().sprintf( "3DS file, %d bytes\n", chunkSize);
 
     M3DScene* scene = new M3DScene();
     int contentSize = chunkSize - 6;
@@ -697,7 +699,7 @@ M3DScene* Read3DSFile(const string& filename)
     ifstream in(filename.c_str(), ios::in | ios::binary);
     if (!in.good())
     {
-        DPRINTF(0, "Read3DSFile: Error opening %s\n", filename.c_str());
+        qDebug()<<QString().sprintf( "Read3DSFile: Error opening %s\n", filename.c_str());
         return NULL;
     }
     else

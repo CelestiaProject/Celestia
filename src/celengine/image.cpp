@@ -564,7 +564,7 @@ Image* LoadJPEGImage(const string& filename, int)
     if (cgJpegImage == NULL) {
         char tempcwd[2048];
         getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error opening JPEG image file %s/%s\n", tempcwd, filename.c_str());
+        qDebug()<<QString().sprintf( "CGBuffer :: Error opening JPEG image file %s/%s\n", tempcwd, filename.c_str());
         delete cgJpegImage;
         return NULL;
     }
@@ -572,7 +572,7 @@ Image* LoadJPEGImage(const string& filename, int)
     if (!cgJpegImage->LoadJPEG()) {
         char tempcwd[2048];
         getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error loading JPEG image file %s/%s\n", tempcwd, filename.c_str());
+        qDebug()<<QString().sprintf( "CGBuffer :: Error loading JPEG image file %s/%s\n", tempcwd, filename.c_str());
         delete cgJpegImage;
         return NULL;
     }
@@ -583,7 +583,7 @@ Image* LoadJPEGImage(const string& filename, int)
     img_h = (size_t) cgJpegImage->image_size.height;
     img_d = (size_t) ((cgJpegImage->image_depth == 8) ? 1 : 4);
 
-    // DPRINTF(0,"cgJpegImage :: %d x %d x %d [%d] bpp\n", img_w, img_h, (size_t)cgJpegImage->image_depth, img_d);
+    // qDebug()<<QString().sprintf("cgJpegImage :: %d x %d x %d [%d] bpp\n", img_w, img_h, (size_t)cgJpegImage->image_depth, img_d);
 
 #ifdef MACOSX_ALPHA_JPEGS
     int format = (img_d == 1) ? GL_LUMINANCE : GL_RGBA;
@@ -592,7 +592,7 @@ Image* LoadJPEGImage(const string& filename, int)
 #endif
     img = new Image(format, img_w, img_h);
     if (img == NULL || img->getPixels() == NULL) {
-        DPRINTF(0, "Could not create image\n");
+        qDebug()<<QString().sprintf( "Could not create image\n");
         delete cgJpegImage;
         return NULL;
     }

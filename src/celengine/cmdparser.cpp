@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <cstdio>
 
+#include<QDebug>
+
 // Older gcc versions used <strstream> instead of <sstream>.
 // This has been corrected in GCC 3.2, but name clashing must
 // be avoided
@@ -960,7 +962,7 @@ int parseConstellations(CommandConstellations* cmd, string s, int act)
         }
         else
         {
-            DPRINTF(0, "Command Parser: error parsing render flags\n");
+            qDebug()<<QString().sprintf( "Command Parser: error parsing render flags\n");
             return 0;
         }
     }
@@ -999,7 +1001,7 @@ int parseConstellationColor(CommandConstellationColor* cmd, string s, Vec3d *col
         }
         else
         {
-            DPRINTF(0, "Command Parser: error parsing render flags\n");
+            qDebug()<<QString().sprintf( "Command Parser: error parsing render flags\n");
             return 0;
         }
     }

@@ -24,6 +24,8 @@
 #include <GL/glew.h>
 #include "texturefont.h"
 
+#include<QDebug>
+
 using namespace std;
 
 
@@ -243,7 +245,7 @@ bool TextureFont::buildTexture()
     glGenTextures(1, (GLuint*) &texName);
     if (texName == 0)
     {
-        DPRINTF(0, "Failed to allocate texture object for font.\n");
+       qDebug()<<QString().sprintf( "Failed to allocate texture object for font.\n");
         return false;
     }
 
@@ -280,7 +282,7 @@ void TextureFont::rebuildGlyphLookupTable()
     if (glyphLookup != NULL)
         delete[] glyphLookup;
 
-    DPRINTF(1, "texturefont: allocating glyph lookup table with %d entries.\n",
+   qDebug()<<QString().sprintf( "texturefont: allocating glyph lookup table with %d entries.\n",
             maxID + 1);
     glyphLookup = new const Glyph*[maxID + 1];
     for (int i = 0; i <= maxID; i++)
@@ -344,7 +346,7 @@ TextureFont* TextureFont::load(istream& in)
     in.read(header, sizeof header);
     if (!in.good() || strncmp(header, "\377txf", 4) != 0)
     {
-        DPRINTF(0, "Stream is not a texture font!.\n");
+       qDebug()<<QString().sprintf( "Stream is not a texture font!.\n");
         return NULL;
     }
 
@@ -352,7 +354,7 @@ TextureFont* TextureFont::load(istream& in)
     in.read(reinterpret_cast<char*>(&endiannessTest), sizeof endiannessTest);
     if (!in.good())
     {
-        DPRINTF(0, "Error reading endianness bytes in txf header.\n");
+       qDebug()<<QString().sprintf( "Error reading endianness bytes in txf header.\n");
         return NULL;
     }
 
@@ -363,7 +365,7 @@ TextureFont* TextureFont::load(istream& in)
         byteSwap = false;
     else
     {
-        DPRINTF(0, "Stream is not a texture font!.\n");
+       qDebug()<<QString().sprintf( "Stream is not a texture font!.\n");
         return NULL;
     }
 
@@ -376,11 +378,11 @@ TextureFont* TextureFont::load(istream& in)
 
     if (!in)
     {
-        DPRINTF(0, "Texture font stream is incomplete");
+       qDebug()<<QString().sprintf( "Texture font stream is incomplete");
         return NULL;
     }
 
-    DPRINTF(1, "Font contains %d glyphs.\n", nGlyphs);
+   qDebug()<<QString().sprintf( "Font contains %d glyphs.\n", nGlyphs);
 
     TextureFont* font = new TextureFont();
     assert(font != NULL);
@@ -407,7 +409,7 @@ TextureFont* TextureFont::load(istream& in)
         
         if (!in)
         {
-            DPRINTF(0, "Error reading glyph %ud from texture font stream.\n", i);
+           qDebug()<<QString().sprintf( "Error reading glyph %ud from texture font stream.\n", i);
             delete font;
             return NULL;
         }
@@ -433,17 +435,17 @@ TextureFont* TextureFont::load(istream& in)
         unsigned char* fontImage = new unsigned char[texWidth * texHeight];
         if (fontImage == NULL)
         {
-            DPRINTF(0, "Not enough memory for font bitmap.\n");
+           qDebug()<<QString().sprintf( "Not enough memory for font bitmap.\n");
             delete font;
             return NULL;
         }
 
-        DPRINTF(1, "Reading %d x %d 8-bit font image.\n", texWidth, texHeight);
+       qDebug()<<QString().sprintf( "Reading %d x %d 8-bit font image.\n", texWidth, texHeight);
 
         in.read(reinterpret_cast<char*>(fontImage), texWidth * texHeight);
         if (in.gcount() != (signed)(texWidth * texHeight))
         {
-            DPRINTF(0, "Missing bitmap data in font stream.\n");
+           qDebug()<<QString().sprintf( "Missing bitmap data in font stream.\n");
             delete font;
             delete[] fontImage;
             return NULL;
@@ -458,7 +460,7 @@ TextureFont* TextureFont::load(istream& in)
         unsigned char* fontImage = new unsigned char[texWidth * texHeight];
         if (fontImage == NULL || fontBits == NULL)
         {
-            DPRINTF(0, "Not enough memory for font bitmap.\n");
+           qDebug()<<QString().sprintf( "Not enough memory for font bitmap.\n");
             delete font;
             if (fontBits != NULL)
                 delete[] fontBits;
@@ -467,12 +469,12 @@ TextureFont* TextureFont::load(istream& in)
             return NULL;
         }
 
-        DPRINTF(1, "Reading %d x %d 1-bit font image.\n", texWidth, texHeight);
+       qDebug()<<QString().sprintf( "Reading %d x %d 1-bit font image.\n", texWidth, texHeight);
 
         in.read(reinterpret_cast<char*>(fontBits), rowBytes * texHeight);
         if (in.gcount() != (signed)(rowBytes * texHeight))
         {
-            DPRINTF(0, "Missing bitmap data in font stream.\n");
+           qDebug()<<QString().sprintf( "Missing bitmap data in font stream.\n");
             delete font;
             return NULL;
         }
@@ -504,7 +506,7 @@ TextureFont* LoadTextureFont(const string& filename)
     ifstream in(localeFilename.c_str(), ios::in | ios::binary);
     if (!in.good())
     {
-        DPRINTF(0, "Could not open font file %s\n", filename.c_str());
+       qDebug()<<QString().sprintf( "Could not open font file %s\n", filename.c_str());
         return NULL;
     }
 
