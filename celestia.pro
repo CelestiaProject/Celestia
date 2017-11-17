@@ -563,7 +563,7 @@ win32 {
         -lcspice64 \
         -lvfw32\
         -llibintl
-
+    LIBS +=opengl32.lib -lglu32
 
     SOURCES += src/celestia/avicapture.cpp
     HEADERS += src/celestia/avicapture.h
