@@ -28,7 +28,7 @@
 
 using namespace std;
 
-
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 static const char *description = "Celestia";
 
 // Command line options

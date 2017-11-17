@@ -553,14 +553,28 @@ win32 {
         windows/inc/libjpeg \
         windows/inc/lua \
         windows/inc/spice
-    LIBS += -Lwindows/lib/x86 \
+   !contains(QMAKE_TARGET.arch, x86_64) {
+    LIBS += -L$$PWD/windows/lib/x86 \
+        -lzlib \
+        -llibpng \
+        -llibjpeg \
+        -llua51 \
+        -lcspice \
+        -lvfw32\
+        -llibintl
+}
+else{
+    LIBS += -L$$PWD/windows/lib/x64 \
         -lzlib \
         -llibpng \
         -llibjpeg \
         -lintl \
         -llua51 \
-        -lcspice \
-        -lvfw32
+        -lcspice64 \
+        -lvfw32\
+        -llibintl
+}
+    LIBS +=opengl32.lib -lglu32 -lUser32
 
     SOURCES += src/celestia/avicapture.cpp
     HEADERS += src/celestia/avicapture.h
@@ -571,7 +585,6 @@ win32 {
     # Disable the regrettable min and max macros in windows.h
     DEFINES += NOMINMAX
 
-    LIBS += /nodefaultlib:libcmt.lib
 }
 
 unix {
