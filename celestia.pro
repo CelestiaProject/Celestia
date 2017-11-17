@@ -554,15 +554,16 @@ win32 {
         windows/inc/libjpeg \
         windows/inc/lua \
         windows/inc/spice
-    LIBS += -Lwindows/lib/x86 \
-        -lfmod_vc \
+    LIBS += -L$$PWD/windows/lib/x64 \
+        -lfmod64_vc \
         -lzlib \
         -llibpng \
         -llibjpeg \
-        -lintl \
         -llua51 \
-        -lcspice \
-        -lvfw32
+        -lcspice64 \
+        -lvfw32\
+        -llibintl
+
 
     SOURCES += src/celestia/avicapture.cpp
     HEADERS += src/celestia/avicapture.h
@@ -573,7 +574,7 @@ win32 {
     # Disable the regrettable min and max macros in windows.h
     DEFINES += NOMINMAX
 
-    LIBS += /nodefaultlib:libcmt.lib
+    #LIBS += /nodefaultlib:libcmt.lib
 }
 
 unix {
