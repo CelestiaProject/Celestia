@@ -157,23 +157,23 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.featureSizeEdit->setText(QString::number(minimumFeatureSize));
 
     if (glContext->renderPathSupported(GLContext::GLPath_Basic))
-        ui.renderPathBox->addItem(_("Basic"), GLContext::GLPath_Basic);
+        ui.renderPathBox->addItem("Basic", GLContext::GLPath_Basic);
     if (glContext->renderPathSupported(GLContext::GLPath_Multitexture))
-        ui.renderPathBox->addItem(_("Multitexture"), GLContext::GLPath_Multitexture);
+        ui.renderPathBox->addItem("Multitexture", GLContext::GLPath_Multitexture);
     if (glContext->renderPathSupported(GLContext::GLPath_NvCombiner))
-        ui.renderPathBox->addItem(_("NVIDIA combiners"), GLContext::GLPath_NvCombiner);
+        ui.renderPathBox->addItem("NVIDIA combiners", GLContext::GLPath_NvCombiner);
     if (glContext->renderPathSupported(GLContext::GLPath_DOT3_ARBVP))
-        ui.renderPathBox->addItem(_("OpenGL vertex program"), GLContext::GLPath_DOT3_ARBVP);
+        ui.renderPathBox->addItem("OpenGL vertex program", GLContext::GLPath_DOT3_ARBVP);
     if (glContext->renderPathSupported(GLContext::GLPath_NvCombiner_NvVP))
-        ui.renderPathBox->addItem(_("NVIDIA vertex program and combiners"), GLContext::GLPath_NvCombiner_NvVP);
+        ui.renderPathBox->addItem("NVIDIA vertex program and combiners", GLContext::GLPath_NvCombiner_NvVP);
     if (glContext->renderPathSupported(GLContext::GLPath_NvCombiner_ARBVP))
-        ui.renderPathBox->addItem(_("OpenGL vertex program/NVIDIA combiners"), GLContext::GLPath_NvCombiner_ARBVP);
+        ui.renderPathBox->addItem("OpenGL vertex program/NVIDIA combiners", GLContext::GLPath_NvCombiner_ARBVP);
     if (glContext->renderPathSupported(GLContext::GLPath_ARBFP_ARBVP))
-        ui.renderPathBox->addItem(_("OpenGL 1.5 vertex/fragment program"), GLContext::GLPath_ARBFP_ARBVP);
+        ui.renderPathBox->addItem("OpenGL 1.5 vertex/fragment program", GLContext::GLPath_ARBFP_ARBVP);
     if (glContext->renderPathSupported(GLContext::GLPath_NV30))
-        ui.renderPathBox->addItem(_("NVIDIA GeForce FX"), GLContext::GLPath_NV30);
+        ui.renderPathBox->addItem("NVIDIA GeForce FX", GLContext::GLPath_NV30);
     if (glContext->renderPathSupported(GLContext::GLPath_GLSL))
-        ui.renderPathBox->addItem(_("OpenGL 2.0"), GLContext::GLPath_GLSL);
+        ui.renderPathBox->addItem("OpenGL 2.0", GLContext::GLPath_GLSL);
 
     SetComboBoxValue(ui.renderPathBox, renderPath);
 
@@ -213,17 +213,17 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
             ui.scaledDiscsButton->setChecked(true);
     }
 
-    ui.starColorBox->addItem(_("Blackbody D65"), ColorTable_Blackbody_D65);
-    ui.starColorBox->addItem(_("Classic colors"), ColorTable_Enhanced);
+    ui.starColorBox->addItem("Blackbody D65", ColorTable_Blackbody_D65);
+    ui.starColorBox->addItem("Classic colors", ColorTable_Enhanced);
     SetComboBoxValue(ui.starColorBox, colors);
 
     ui.autoMagnitudeCheck->setChecked(renderFlags & Renderer::ShowAutoMag);
 
 #ifndef _WIN32
-    ui.dateFormatBox->addItem(_("Local format"), astro::Date::Locale);
+    ui.dateFormatBox->addItem("Local format", astro::Date::Locale);
 #endif
-    ui.dateFormatBox->addItem(_("Time zone name"), astro::Date::TZName);
-    ui.dateFormatBox->addItem(_("UTC offset"), astro::Date::UTCOffset);
+    ui.dateFormatBox->addItem("Time zone name", astro::Date::TZName);
+    ui.dateFormatBox->addItem("UTC offset", astro::Date::UTCOffset);
 
     astro::Date::Format dateFormat = appCore->getDateFormat();
     SetComboBoxValue(ui.dateFormatBox, dateFormat);

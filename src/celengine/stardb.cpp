@@ -391,8 +391,8 @@ string StarDatabase::getStarName(const Star& star, bool i18n) const
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            if (i18n && iter->second != _(iter->second.c_str()))
-                return _(iter->second.c_str());
+            if (i18n && iter->second != iter->second.c_str())
+                return iter->second.c_str();
             else
                 return iter->second;
         }
@@ -424,8 +424,8 @@ void StarDatabase::getStarName(const Star& star, char* nameBuffer, unsigned int 
         StarNameDatabase::NumberIndex::const_iterator iter = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            if (i18n && iter->second != _(iter->second.c_str()))
-                strncpy(nameBuffer, _(iter->second.c_str()), bufferSize);
+            if (i18n && iter->second != iter->second.c_str())
+                strncpy(nameBuffer, iter->second.c_str(), bufferSize);
             else
                 strncpy(nameBuffer, iter->second.c_str(), bufferSize);
 
@@ -579,7 +579,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         in.read(header, headerLength);
         if (strncmp(header, CROSSINDEX_FILE_HEADER, headerLength))
         {
-            cerr << _("Bad header for cross index\n");
+            cerr << "Bad header for cross index\n";
             return false;
         }
         delete[] header;
@@ -592,7 +592,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         LE_TO_CPU_INT16(version, version);
         if (version != 0x0100)
         {
-            cerr << _("Bad version for cross index\n");
+            cerr << "Bad version for cross index\n";
             return false;
         }
     }
@@ -614,7 +614,7 @@ bool StarDatabase::loadCrossIndex(const Catalog catalog, istream& in)
         LE_TO_CPU_INT32(ent.celCatalogNumber, ent.celCatalogNumber);
         if (in.fail())
         {
-            cerr << _("Loading cross index failed at record ") << record << '\n';
+            cerr << "Loading cross index failed at record " << record << '\n';
             delete xindex;
             return false;
         }
@@ -696,7 +696,7 @@ bool StarDatabase::loadBinary(istream& in)
 
         if (details == NULL)
         {
-            cerr << _("Bad spectral type in star database, star #") << nStars << "\n";
+            cerr << "Bad spectral type in star database, star #" << nStars << "\n";
             return false;
         }
 
@@ -711,7 +711,7 @@ bool StarDatabase::loadBinary(istream& in)
         return false;
 
     qDebug()<<QString().sprintf( "StarDatabase::read: nStars = %d\n", nStarsInFile);
-    clog << nStars << _(" stars in binary database\n");
+    clog << nStars << " stars in binary database\n";
     
     // Create the temporary list of stars sorted by catalog number; this
     // will be used to lookup stars during file loading. After loading is
@@ -735,7 +735,7 @@ bool StarDatabase::loadBinary(istream& in)
 
 void StarDatabase::finish()
 {
-    clog << _("Total star count: ") << nStars << endl;
+    clog << "Total star count: " << nStars << endl;
     
     buildOctree();
     buildIndexes();
@@ -769,7 +769,7 @@ void StarDatabase::finish()
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
-    cerr << _("Error in .stc file (line ") << tok.getLineNumber() << "): ";
+    cerr << "Error in .stc file (line " << tok.getLineNumber() << "): ";
 }
 
 static void stcError(const Tokenizer& tok,
@@ -806,7 +806,7 @@ bool StarDatabase::createStar(Star* star,
             details = StarDetails::GetStarDetails(sc);
             if (details == NULL)
             {
-                cerr << _("Invalid star: bad spectral type.\n");
+                cerr << "Invalid star: bad spectral type.\n";
                 return false;
             }
         }
@@ -815,7 +815,7 @@ bool StarDatabase::createStar(Star* star,
             // Spectral type is required for new stars
             if (disposition != ModifyStar)
             {
-                cerr << _("Invalid star: missing spectral type.\n");
+                cerr << "Invalid star: missing spectral type.\n";
                 return false;
             }
         }
@@ -998,7 +998,7 @@ bool StarDatabase::createStar(Star* star,
 
                 if (!hasBarycenter)
                 {
-                    cerr << _("Barycenter ") << barycenterName << _(" does not exist.\n");
+                    cerr << "Barycenter " << barycenterName << " does not exist.\n";
                     return false;
                 }
             }
@@ -1051,7 +1051,7 @@ bool StarDatabase::createStar(Star* star,
         {
             if (disposition != ModifyStar)
             {
-                cerr << _("Invalid star: missing right ascension\n");
+                cerr << "Invalid star: missing right ascension\n";
                 return false;
             }
         }
@@ -1064,7 +1064,7 @@ bool StarDatabase::createStar(Star* star,
         {
             if (disposition != ModifyStar)
             {
-                cerr << _("Invalid star: missing declination.\n");
+                cerr << "Invalid star: missing declination.\n";
                 return false;
             }
         }
@@ -1077,7 +1077,7 @@ bool StarDatabase::createStar(Star* star,
         {
             if (disposition != ModifyStar)
             {
-                cerr << _("Invalid star: missing distance.\n");
+                cerr << "Invalid star: missing distance.\n";
                 return false;
             }
         }
@@ -1109,7 +1109,7 @@ bool StarDatabase::createStar(Star* star,
             {
                 if (disposition != ModifyStar)
                 {
-                    clog << _("Invalid star: missing magnitude.\n");
+                    clog << "Invalid star: missing magnitude.\n";
                     return false;
                 }
                 else
@@ -1126,7 +1126,7 @@ bool StarDatabase::createStar(Star* star,
                 // origin.
                 if (distance < 1e-5f)
                 {
-                    clog << _("Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n");
+                    clog << "Invalid star: absolute (not apparent) magnitude must be specified for star near origin\n";
                     return false;
                 }
                 magnitude = astro::appToAbsMag((float) magnitude, distance);
@@ -1364,8 +1364,8 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
                     }
                     string starName = objName.substr(startPos, length);
                     namesDB->add(catalogNumber, starName);
-                    if (starName != _(starName.c_str()))
-                        namesDB->add(catalogNumber, _(starName.c_str()));
+                    if (starName != starName.c_str())
+                        namesDB->add(catalogNumber, starName.c_str());
                     startPos = next;
                 }
             }

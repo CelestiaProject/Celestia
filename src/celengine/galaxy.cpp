@@ -202,7 +202,7 @@ void Galaxy::setType(const string& typeStr)
 
 size_t Galaxy::getDescription(char* buf, size_t bufLength) const
 {
-    return snprintf(buf, bufLength, _("Galaxy (Hubble type: %s)"), getType());
+    return snprintf(buf, bufLength, "Galaxy (Hubble type: %s)", getType());
 }
 
 

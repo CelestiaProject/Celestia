@@ -69,11 +69,11 @@ string LocaleFilename(const string & filename)
 
     if ((pos = filename.rfind('.')) != string::npos)
     {
-        localeFilename = filename.substr(0, pos) + '_' + _("LANGUAGE") + filename.substr(pos);
+        localeFilename = filename.substr(0, pos) + '_' + "LANGUAGE" + filename.substr(pos);
     }
     else
     {
-        localeFilename = filename + '_' + _("LANGUAGE");
+        localeFilename = filename + '_' + "LANGUAGE";
     }
 
     if (stat(localeFilename.c_str(), &filestat) != 0)
