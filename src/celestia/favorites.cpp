@@ -12,7 +12,7 @@
 #include <iostream>
 #include <iomanip>
 #include <celutil/debug.h>
-#include <celutil/util.h>
+
 #include <celengine/cmdparser.h>
 #include "favorites.h"
 

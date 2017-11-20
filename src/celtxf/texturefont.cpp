@@ -112,11 +112,11 @@ void TextureFont::render(const string& s) const
 
     float xoffset = 0.0f;
 
-	while (i < len && validChar) {
+    while (i < len && validChar) {
         wchar_t ch = 0;
         validChar = UTF8Decode(s, i, ch);
         i += UTF8EncodedSize(ch);
-        
+
         render(ch, xoffset, 0.0f);
 
         const Glyph* glyph = getGlyph(ch);
@@ -138,11 +138,11 @@ void TextureFont::render(const string& s, float xoffset, float yoffset) const
     bool validChar = true;
     int i = 0;
 
-	while (i < len && validChar) {
+    while (i < len && validChar) {
         wchar_t ch = 0;
         validChar = UTF8Decode(s, i, ch);
         i += UTF8EncodedSize(ch);
-        
+
         render(ch, xoffset, yoffset);
 
         const Glyph* glyph = getGlyph(ch);
@@ -158,7 +158,7 @@ int TextureFont::getWidth(const string& s) const
     int width = 0;
     int len = s.length();
     bool validChar = true;
-	int i = 0;
+    int i = 0;
 
     while (i < len && validChar)
     {
@@ -406,7 +406,7 @@ TextureFont* TextureFont::load(istream& in)
         readInt8(in);
         glyph.x = readInt16(in, byteSwap);
         glyph.y = readInt16(in, byteSwap);
-        
+
         if (!in)
         {
            qDebug()<<QString().sprintf( "Error reading glyph %ud from texture font stream.\n", i);

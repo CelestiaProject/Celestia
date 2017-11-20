@@ -69,7 +69,7 @@ std::ofstream hdrlog;
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
 #include <celutil/utf8.h>
-#include <celutil/util.h>
+
 #include <celutil/timer.h>
 #include <curveplot.h>
 #include <GL/glew.h>

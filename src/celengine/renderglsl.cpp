@@ -41,7 +41,7 @@
 #include <celmath/distance.h>
 #include <celmath/intersect.h>
 #include <celutil/utf8.h>
-#include <celutil/util.h>
+
 
 using namespace cmod;
 using namespace Eigen;

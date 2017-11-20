@@ -63,7 +63,7 @@
 #include <cstdio>
 #include <cmath>
 #include <celutil/debug.h>
-#include <celutil/util.h>
+
 #include <GL/glew.h>
 #include <string>
 #include <cstring>

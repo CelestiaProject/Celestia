@@ -8,7 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "vertexprog.h"
-#include <celutil/util.h>
+
 #include <GL/glew.h>
 #include <iostream>
 #include <fstream>
@@ -111,12 +111,12 @@ static string* ReadTextFromFile(const string& filename)
 
 static bool LoadNvVertexProgram(const string& filename, unsigned int& id)
 {
-    cout << _("Loading NV vertex program: ") << filename << '\n';
+    cout << "Loading NV vertex program: " << filename << '\n';
 
     string* source = ReadTextFromFile(filename);
     if (source == NULL)
     {
-        cout << _("Error loading NV vertex program: ") << filename << '\n';
+        cout << "Error loading NV vertex program: " << filename << '\n';
         return false;
     }
 
@@ -133,7 +133,7 @@ static bool LoadNvVertexProgram(const string& filename, unsigned int& id)
     {
         GLint errPos = 0;
         glGetIntegerv(GL_PROGRAM_ERROR_POSITION_NV, &errPos);
-        cout << _("Error in vertex program ") << filename <<
+        cout << "Error in vertex program " << filename <<
             " @ " << errPos << '\n';
         return false;
     }
@@ -160,12 +160,12 @@ static int findLineNumber(const string& s, int index)
 
 static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
 {
-    cout << _("Loading ARB vertex program: ") << filename << '\n';
+    cout << "Loading ARB vertex program: " << filename << '\n';
 
     string* source = ReadTextFromFile(filename);
     if (source == NULL)
     {
-        cout << _("Error loading ARB vertex program: ") << filename << '\n';
+        cout << "Error loading ARB vertex program: " << filename << '\n';
         return false;
     }
 
@@ -192,8 +192,8 @@ static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
         if (errMsg == NULL)
             errMsg = "Unknown error";
         
-        cout << _("Error in vertex program ") << filename <<
-            _(", line ") << findLineNumber(*source, errPos) << ": " << errMsg << '\n';
+        cout << "Error in vertex program " << filename <<
+            ", line " << findLineNumber(*source, errPos) << ": " << errMsg << '\n';
     }
 
     delete source;
@@ -205,7 +205,7 @@ static bool LoadARBVertexProgram(const string& filename, unsigned int& id)
 // ARB path is preferred; NV vertex program path will eventually go away
 VertexProcessor* vp::initNV()
 {
-    cout << _("Initializing NV vertex programs . . .\n");
+    cout << "Initializing NV vertex programs . . .\n";
     if (!LoadNvVertexProgram("shaders/diffuse.vp", diffuse))
         return NULL;
     if (!LoadNvVertexProgram("shaders/specular.vp", specular))
@@ -237,7 +237,7 @@ VertexProcessor* vp::initNV()
     specular_2light = specular;
 
     everything = 0;
-    cout << _("All NV vertex programs loaded successfully.\n");
+    cout << "All NV vertex programs loaded successfully.\n";
 
     glTrackMatrixNV(GL_VERTEX_PROGRAM_NV,
                          0, GL_MODELVIEW_PROJECTION_NV, GL_IDENTITY_NV);
@@ -250,7 +250,7 @@ VertexProcessor* vp::initNV()
 
 VertexProcessor* vp::initARB()
 {
-    cout << _("Initializing ARB vertex programs . . .\n");
+    cout << "Initializing ARB vertex programs . . .\n";
     if (!LoadARBVertexProgram("shaders/diffuse_arb.vp", diffuse))
         return NULL;
     if (!LoadARBVertexProgram("shaders/specular_arb.vp", specular))
@@ -310,7 +310,7 @@ VertexProcessor* vp::initARB()
     if (!LoadARBVertexProgram("shaders/ell_galaxy_arb.vp", ellipticalGalaxy))
         return NULL;
 
-    cout << _("All ARB vertex programs loaded successfully.\n");
+    cout << "All ARB vertex programs loaded successfully.\n";
 
     return new VertexProcessorARB();
 }

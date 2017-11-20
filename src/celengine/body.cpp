@@ -11,7 +11,7 @@
 #include <cassert>
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
+//
 #include <celutil/utf8.h>
 #include "geometry.h"
 #include "meshmanager.h"
@@ -155,7 +155,7 @@ bool Body::hasLocalizedName() const
 void Body::setName(const string& name)
 {
     names[0] = name;
-    string localizedName = _(name.c_str());
+    string localizedName = name.c_str();
     if (name == localizedName)
     {
         // No localized name; set the localized name index to zero to
