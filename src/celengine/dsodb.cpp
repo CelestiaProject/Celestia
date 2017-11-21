@@ -143,8 +143,8 @@ string DSODatabase::getDSOName(const DeepSkyObject* const & dso, bool i18n) cons
         DSONameDatabase::NumberIndex::const_iterator iter   = namesDB->getFirstNameIter(catalogNumber);
         if (iter != namesDB->getFinalNameIter() && iter->first == catalogNumber)
         {
-            if (i18n && iter->second != _(iter->second.c_str()))
-                return _(iter->second.c_str());
+            if (i18n && iter->second != iter->second.c_str())
+                return iter->second.c_str();
             else
                 return iter->second;
         }
@@ -352,8 +352,8 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
                     }
                     string DSOName = objName.substr(startPos, length);
                     namesDB->add(objCatalogNumber, DSOName);
-                    if (DSOName != _(DSOName.c_str()))
-                        namesDB->add(objCatalogNumber, _(DSOName.c_str()));
+                    if (DSOName != DSOName.c_str())
+                        namesDB->add(objCatalogNumber, DSOName.c_str());
                     startPos   = next;
                 }
             }
@@ -389,7 +389,7 @@ void DSODatabase::finish()
             DSOs[i]->setAbsoluteMagnitude((float)avgAbsMag);
     }
     */
-    clog << _("Loaded ") << nDSOs << _(" deep space objects") << '\n';
+    clog << "Loaded " << nDSOs << " deep space objects" << '\n';
 }
 
 
