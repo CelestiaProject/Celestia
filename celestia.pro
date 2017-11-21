@@ -574,7 +574,6 @@ win32 {
     # Disable the regrettable min and max macros in windows.h
     DEFINES += NOMINMAX
 
-    #LIBS += /nodefaultlib:libcmt.lib
 }
 
 unix {
