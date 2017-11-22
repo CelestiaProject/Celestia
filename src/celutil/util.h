@@ -29,7 +29,7 @@
 
 #ifdef _WIN32
 
-#include "libintl.h"
+//#include "libintl.h"
 
 #elif defined(TARGET_OS_MAC)
 

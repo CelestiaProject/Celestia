@@ -56,7 +56,7 @@ extern "C" {
 #endif // TARGET_OS_MAC
 
 #include <celutil/debug.h>
-#include <celutil/util.h>
+
 #include <celutil/filetype.h>
 #include <GL/glew.h>
 #include "celestia.h"
@@ -370,7 +370,7 @@ Image* LoadImageFromFile(const string& filename)
     ContentType type = DetermineFileType(filename);
     Image* img = NULL;
 
-    clog << _("Loading image from file ") << filename << '\n';
+    clog << "Loading image from file " << filename << '\n';
 
     switch (type)
     {
@@ -388,7 +388,7 @@ Image* LoadImageFromFile(const string& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        clog << filename << _(": unrecognized or unsupported image file type.\n");
+        clog << filename << ": unrecognized or unsupported image file type.\n";
         break;
     }
 
@@ -564,7 +564,7 @@ Image* LoadJPEGImage(const string& filename, int)
     if (cgJpegImage == NULL) {
         char tempcwd[2048];
         getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error opening JPEG image file %s/%s\n", tempcwd, filename.c_str());
+        qDebug()<<QString().sprintf( "CGBuffer :: Error opening JPEG image file %s/%s\n", tempcwd, filename.c_str());
         delete cgJpegImage;
         return NULL;
     }
@@ -572,7 +572,7 @@ Image* LoadJPEGImage(const string& filename, int)
     if (!cgJpegImage->LoadJPEG()) {
         char tempcwd[2048];
         getcwd(tempcwd, sizeof(tempcwd));
-        DPRINTF(0, "CGBuffer :: Error loading JPEG image file %s/%s\n", tempcwd, filename.c_str());
+        qDebug()<<QString().sprintf( "CGBuffer :: Error loading JPEG image file %s/%s\n", tempcwd, filename.c_str());
         delete cgJpegImage;
         return NULL;
     }
@@ -583,7 +583,7 @@ Image* LoadJPEGImage(const string& filename, int)
     img_h = (size_t) cgJpegImage->image_size.height;
     img_d = (size_t) ((cgJpegImage->image_depth == 8) ? 1 : 4);
 
-    // DPRINTF(0,"cgJpegImage :: %d x %d x %d [%d] bpp\n", img_w, img_h, (size_t)cgJpegImage->image_depth, img_d);
+    // qDebug()<<QString().sprintf("cgJpegImage :: %d x %d x %d [%d] bpp\n", img_w, img_h, (size_t)cgJpegImage->image_depth, img_d);
 
 #ifdef MACOSX_ALPHA_JPEGS
     int format = (img_d == 1) ? GL_LUMINANCE : GL_RGBA;
@@ -592,7 +592,7 @@ Image* LoadJPEGImage(const string& filename, int)
 #endif
     img = new Image(format, img_w, img_h);
     if (img == NULL || img->getPixels() == NULL) {
-        DPRINTF(0, "Could not create image\n");
+        qDebug()<<QString().sprintf( "Could not create image\n");
         delete cgJpegImage;
         return NULL;
     }
@@ -651,14 +651,14 @@ Image* LoadPNGImage(const string& filename)
     fp = fopen(filename.c_str(), "rb");
     if (fp == NULL)
     {
-        clog << _("Error opening image file ") << filename << '\n';
+        clog << "Error opening image file " << filename << '\n';
         return NULL;
     }
 
     fread(header, 1, sizeof(header), fp);
     if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        clog << _("Error: ") << filename << _(" is not a PNG file.\n");
+        clog << "Error: " << filename << " is not a PNG file.\n";
         fclose(fp);
         return NULL;
     }
@@ -685,7 +685,7 @@ Image* LoadPNGImage(const string& filename)
         if (img != NULL)
             delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        clog << _("Error reading PNG image file ") << filename << '\n';
+        clog << "Error reading PNG image file " << filename << '\n';
         return NULL;
     }
 

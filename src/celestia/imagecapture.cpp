@@ -13,6 +13,8 @@
 #include <celengine/celestia.h>
 #include "imagecapture.h"
 
+#include<QDebug>
+
 extern "C" {
 #ifdef _WIN32
 #include "jpeglib.h"
@@ -68,7 +70,7 @@ bool CaptureGLBufferToJPEG(const string& filename,
     out = fopen(filename.c_str(), "wb");
     if (out == NULL)
     {
-        DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());
+        qDebug()<<QString().sprintf( "Can't open screen capture file '%s'\n", filename.c_str());
         delete[] pixels;
         return false;
     }
@@ -136,7 +138,7 @@ bool CaptureGLBufferToPNG(const string& filename,
     out = fopen(filename.c_str(), "wb");
     if (out == NULL)
     {
-        DPRINTF(0, "Can't open screen capture file '%s'\n", filename.c_str());
+        qDebug()<<QString().sprintf( "Can't open screen capture file '%s'\n", filename.c_str());
         delete[] pixels;
         return false;
     }
@@ -153,7 +155,7 @@ bool CaptureGLBufferToPNG(const string& filename,
 
     if (png_ptr == NULL)
     {
-        DPRINTF(0, "Screen capture: error allocating png_ptr\n");
+        qDebug()<<QString().sprintf( "Screen capture: error allocating png_ptr\n");
         fclose(out);
         delete[] pixels;
         delete[] row_pointers;
@@ -163,7 +165,7 @@ bool CaptureGLBufferToPNG(const string& filename,
     info_ptr = png_create_info_struct(png_ptr);
     if (info_ptr == NULL)
     {
-        DPRINTF(0, "Screen capture: error allocating info_ptr\n");
+        qDebug()<<QString().sprintf( "Screen capture: error allocating info_ptr\n");
         fclose(out);
         delete[] pixels;
         delete[] row_pointers;
@@ -173,7 +175,7 @@ bool CaptureGLBufferToPNG(const string& filename,
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        DPRINTF(0, "Error writing PNG file '%s'\n", filename.c_str());
+        qDebug()<<QString().sprintf( "Error writing PNG file '%s'\n", filename.c_str());
         fclose(out);
         delete[] pixels;
         delete[] row_pointers;

@@ -17,7 +17,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
-#include <celutil/util.h>
+
 #include <celutil/debug.h>
 #include <cstring>
 #include <fstream>
@@ -202,7 +202,7 @@ void Galaxy::setType(const string& typeStr)
 
 size_t Galaxy::getDescription(char* buf, size_t bufLength) const
 {
-    return snprintf(buf, bufLength, _("Galaxy (Hubble type: %s)"), getType());
+    return snprintf(buf, bufLength, "Galaxy (Hubble type: %s)", getType());
 }
 
 

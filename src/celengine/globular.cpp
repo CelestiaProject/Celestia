@@ -20,7 +20,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/perlin.h>
 #include <celmath/intersect.h>
-#include <celutil/util.h>
+
 #include <celutil/debug.h>
 #include <GL/glew.h>
 #include <cmath>
@@ -255,7 +255,7 @@ void Globular::setConcentration(const float conc)
 
 size_t Globular::getDescription(char* buf, size_t bufLength) const
 {
-	return snprintf(buf, bufLength, _("Globular (core radius: %4.2f', King concentration: %4.2f)"), r_c, c);
+    return snprintf(buf, bufLength, "Globular (core radius: %4.2f', King concentration: %4.2f)", r_c, c);
 }
 
 

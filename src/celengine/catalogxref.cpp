@@ -9,7 +9,7 @@
 
 #include <cctype>
 #include <algorithm>
-#include <celutil/util.h>
+//
 #include "catalogxref.h"
 #include "stardb.h"
 

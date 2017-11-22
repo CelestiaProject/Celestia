@@ -22,7 +22,7 @@
 
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
+
 #include <cstdio>
 #include <limits>
 #include "astro.h"
@@ -93,7 +93,7 @@ enum BodyType
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
-    cerr << _("Error in .ssc file (line ") << tok.getLineNumber() << "): ";
+    cerr << "Error in .ssc file (line " << tok.getLineNumber() << "): ";
 }
 
 static void sscError(const Tokenizer& tok,
@@ -1224,7 +1224,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.") << endl;
+                cerr << "parent body '" << parentName << "' of '" << primaryName << "' not found." << endl;
             }
 
             if (parentSystem != NULL)
@@ -1235,7 +1235,7 @@ bool LoadSolarSystemObjects(istream& in,
                     if (disposition == AddObject)
                     {
                         errorMessagePrelude(tokenizer);
-                        cerr << _("warning duplicate definition of ") <<
+                        cerr << "warning duplicate definition of " <<
                             parentName << " " <<  primaryName << '\n';
                     }
                     else if (disposition == ReplaceObject)
@@ -1271,7 +1271,7 @@ bool LoadSolarSystemObjects(istream& in,
             if (surface != NULL && parent.body() != NULL)
                 parent.body()->addAlternateSurface(primaryName, surface);
             else
-                sscError(tokenizer, _("bad alternate surface"));
+                sscError(tokenizer, "bad alternate surface");
         }
         else if (itemType == "Location")
         {
@@ -1285,13 +1285,13 @@ bool LoadSolarSystemObjects(istream& in,
                 }
                 else
                 {
-                    sscError(tokenizer, _("bad location"));
+                    sscError(tokenizer, "bad location");
                 }
             }
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.\n");
+                cerr << "parent body '" << parentName << "' of '" << primaryName << "' not found.\n";
             }
         }
         delete objectDataValue;

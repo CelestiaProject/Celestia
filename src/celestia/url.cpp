@@ -22,7 +22,7 @@
 #include <sstream>
 #include <iomanip>
 #include "celestiacore.h"
-#include "celutil/util.h"
+//#include "celutil/util.h"
 #include "celengine/astro.h"
 #include "url.h"
 
@@ -637,21 +637,21 @@ void Url::evalName()
     char las = 'N';
     switch(type) {
     case Absolute:
-        name = _(modeStr.c_str());
-        if (body1 != "") name += " " + std::string(_(getBodyShortName(body1).c_str()));
-        if (body2 != "") name += " " + std::string(_(getBodyShortName(body2).c_str()));
-        if (trackedStr != "") name += " -> " + std::string(_(getBodyShortName(trackedStr).c_str()));
-        if (selectedStr != "") name += " [" + std::string(_(getBodyShortName(selectedStr).c_str())) + "]";
+        name = modeStr.c_str();
+        if (body1 != "") name += " " + std::string(getBodyShortName(body1).c_str());
+        if (body2 != "") name += " " + std::string(getBodyShortName(body2).c_str());
+        if (trackedStr != "") name += " -> " + std::string(getBodyShortName(trackedStr).c_str());
+        if (selectedStr != "") name += " [" + std::string(getBodyShortName(selectedStr).c_str()) + "]";
         break;
     case Relative:
-        if (selectedStr != "") name = std::string(_(getBodyShortName(selectedStr).c_str())) + " ";
+        if (selectedStr != "") name = std::string(getBodyShortName(selectedStr).c_str()) + " ";
         if (lo < 0) { lo = -lo; los = 'W'; }
         if (la < 0) { la = -la; las = 'S'; }
         sprintf(buff, "(%.1lf%c, %.1lf%c)", lo, los, la, las);
         name += buff;
         break;
     case Settings:
-        name = _("Settings");
+        name = "Settings";
         break;
     }
 }

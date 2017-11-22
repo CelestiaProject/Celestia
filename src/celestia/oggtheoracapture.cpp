@@ -63,7 +63,7 @@
 #include <cstdio>
 #include <cmath>
 #include <celutil/debug.h>
-#include <celutil/util.h>
+
 #include <GL/glew.h>
 #include <string>
 #include <cstring>
@@ -156,7 +156,7 @@ bool OggTheoraCapture::start(const std::string& filename,
     outfile = fopen(filename.c_str(), "wb");
     if (!outfile)
     {
-        DPRINTF(0, _("Error in creating ogg file %s for capture.\n"), filename.c_str());
+        qDebug()<<QString().sprintf( _("Error in creating ogg file %s for capture.\n"), filename.c_str());
         return false;
     }
     /* Set up Ogg output stream */

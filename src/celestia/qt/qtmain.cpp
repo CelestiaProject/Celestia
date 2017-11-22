@@ -28,7 +28,7 @@
 
 using namespace std;
 
-
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 static const char *description = "Celestia";
 
 // Command line options
@@ -54,7 +54,7 @@ void loadModules(QSplashScreen* psplash)
             time.start();
             ++i;
         }
-        psplash->showMessage(_("Loading data files: ") + QString::number(i) + "%" + "\n\n",
+        psplash->showMessage("Loading data files: " + QString::number(i) + "%" + "\n\n",
 								Qt::AlignHCenter | Qt::AlignBottom,
 								Qt::white);
     }
@@ -83,11 +83,11 @@ int main(int argc, char *argv[])
     // Gettext integration
     setlocale(LC_ALL, ""); 
     setlocale(LC_NUMERIC, "C"); 
-    bindtextdomain("celestia","locale");
-    bind_textdomain_codeset("celestia", "UTF-8"); 
-    bindtextdomain("celestia_constellations","locale");
-    bind_textdomain_codeset("celestia_constellations", "UTF-8"); 
-    textdomain("celestia");
+//    bindtextdomain("celestia","locale");
+//    bind_textdomain_codeset("celestia", "UTF-8");
+//    bindtextdomain("celestia_constellations","locale");
+//    bind_textdomain_codeset("celestia_constellations", "UTF-8");
+//    textdomain("celestia");
 
     // By default, QString converts the const char * data into Unicode Latin-1 characters.
     // We need to change this to UTF-8 for i18n purpose.
@@ -195,10 +195,8 @@ bool ParseCommandLine()
         }
         else
         {
-            char* buf = new char[args.at(i).length() + 256];
-            sprintf(buf, "Invalid command line option '%s'", args.at(i).toUtf8().data());
-            CommandLineError(buf);
-            delete[] buf;
+            QString  buf ="Invalid command line option " + args.at(i);
+            CommandLineError(buf.toUtf8().data());
             return false;
         }
 

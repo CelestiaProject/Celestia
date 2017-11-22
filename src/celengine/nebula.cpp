@@ -15,7 +15,7 @@
 #include "meshmanager.h"
 #include "rendcontext.h"
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
+
 #include <celutil/debug.h>
 #include <algorithm>
 #include <cstdio>
@@ -43,7 +43,7 @@ void Nebula::setType(const string& /*typeStr*/)
 
 size_t Nebula::getDescription(char* buf, size_t bufLength) const
 {
-    return snprintf(buf, bufLength, _("Nebula"));
+    return snprintf(buf, bufLength, "Nebula");
 }
 
 

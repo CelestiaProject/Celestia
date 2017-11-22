@@ -29,13 +29,13 @@
 #include <celmath/perlin.h>
 #include <celutil/debug.h>
 #include <celutil/filetype.h>
-#include <celutil/util.h>
+
 
 #include <iostream>
 #include <fstream>
 #include <cassert>
 
-
+#include<QDebug>
 
 using namespace cmod;
 using namespace Eigen;
@@ -108,7 +108,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     string::size_type uniquifyingSuffixStart = resolvedFilename.rfind(UniqueSuffixChar);
     string filename(resolvedFilename, 0, uniquifyingSuffixStart);
     
-    clog << _("Loading model: ") << filename << '\n';
+    clog << "Loading model: " << filename << '\n';
     Model* model = NULL;
     ContentType fileType = DetermineFileType(filename);
 
@@ -188,17 +188,17 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
         model->determineOpacity();
 
         // Display some statics for the model
-        clog << _("   Model statistics: ")
-             << model->getVertexCount() << _(" vertices, ")
-             << model->getPrimitiveCount() << _(" primitives, ")
-             << originalMaterialCount << _(" materials ")
-             << "(" << model->getMaterialCount() << _(" unique)\n");
+        clog << "   Model statistics: "
+             << model->getVertexCount() << " vertices, "
+             << model->getPrimitiveCount() << " primitives, "
+             << originalMaterialCount << " materials "
+             << "(" << model->getMaterialCount() << " unique)\n";
 
         return new ModelGeometry(model);
     }
     else
     {
-        clog << _("Error loading model '") << filename << "'\n";
+        clog << "Error loading model '" << filename << "'\n";
         return NULL;
     }
 }
@@ -237,7 +237,7 @@ Model* LoadCelestiaMesh(const string& filename)
     ifstream meshFile(filename.c_str(), ios::in);
     if (!meshFile.good())
     {
-        DPRINTF(0, "Error opening mesh file: %s\n", filename.c_str());
+        qDebug()<<QString().sprintf( "Error opening mesh file: %s\n", filename.c_str());
         return NULL;
     }
 
@@ -246,13 +246,13 @@ Model* LoadCelestiaMesh(const string& filename)
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
-        DPRINTF(0, "Mesh file %s is invalid.\n", filename.c_str());
+        qDebug()<<QString().sprintf( "Mesh file %s is invalid.\n", filename.c_str());
         return NULL;
     }
 
     if (tokenizer.getStringValue() != "SphereDisplacementMesh")
     {
-        DPRINTF(0, "%s: Unrecognized mesh type %s.\n",
+        qDebug()<<QString().sprintf( "%s: Unrecognized mesh type %s.\n",
                 filename.c_str(),
                 tokenizer.getStringValue().c_str());
         return NULL;
@@ -261,13 +261,13 @@ Model* LoadCelestiaMesh(const string& filename)
     Value* meshDefValue = parser.readValue();
     if (meshDefValue == NULL)
     {
-        DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
+        qDebug()<<QString().sprintf( "%s: Bad mesh file.\n", filename.c_str());
         return NULL;
     }
 
     if (meshDefValue->getType() != Value::HashType)
     {
-        DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
+        qDebug()<<QString().sprintf( "%s: Bad mesh file.\n", filename.c_str());
         delete meshDefValue;
         return NULL;
     }

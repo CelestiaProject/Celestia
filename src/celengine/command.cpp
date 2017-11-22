@@ -15,7 +15,7 @@
 #include <celestia/celestiacore.h>
 #include <celestia/imagecapture.h>
 #include <celestia/celx_internal.h>
-#include <celutil/util.h>
+//
 #include <iostream>
 #include "eigenport.h"
 

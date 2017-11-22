@@ -69,7 +69,7 @@ std::ofstream hdrlog;
 #include <celmath/intersect.h>
 #include <celmath/geomutil.h>
 #include <celutil/utf8.h>
-#include <celutil/util.h>
+
 #include <celutil/timer.h>
 #include <curveplot.h>
 #include <GL/glew.h>
@@ -80,6 +80,8 @@ std::ofstream hdrlog;
 #include <sstream>
 #include <iomanip>
 #include "eigenport.h"
+
+#include<QDebug>
 
 using namespace cmod;
 using namespace Eigen;
@@ -1181,14 +1183,14 @@ bool Renderer::init(GLContext* _context,
     {
         // We need this enabled because we use glScale, but only
         // with uniform scale factors.
-        DPRINTF(1, "Renderer: EXT_rescale_normal supported.\n");
+       qDebug()<<QString().sprintf( "Renderer: EXT_rescale_normal supported.\n");
         useRescaleNormal = true;
         glEnable(GL_RESCALE_NORMAL_EXT);
     }
 
     if (GLEW_ARB_point_sprite)
     {
-        DPRINTF(1, "Renderer: point sprites supported.\n");
+       qDebug()<<QString().sprintf( "Renderer: point sprites supported.\n");
         usePointSprite = true;
     }
 

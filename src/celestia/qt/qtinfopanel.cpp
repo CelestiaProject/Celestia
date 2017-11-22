@@ -117,32 +117,32 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
     if (!body->getInfoURL().empty())
     {
         const char* infoURL = body->getInfoURL().c_str();
-        stream << _("Web info: ") << anchor(infoURL, infoURL) << "<br>\n";
+        stream << "Web info: " << anchor(infoURL, infoURL) << "<br>\n";
     }
 
     stream << "<br>\n";
 
     bool isArtificial = body->getClassification() == Body::Spacecraft;
 
-    QString units(_("km"));
+    QString units("km");
     double radius = body->getRadius();
     if (radius < 1.0)
     {
-        units = _("m");
+        units = "m";
         radius *= 1000.0;
     }
 
     if (body->isEllipsoid())
-        stream << boldText(_("Equatorial radius: "));
+        stream << boldText("Equatorial radius: ");
     else
-        stream << boldText(_("Size: "));
+        stream << boldText("Size: ");
 
     stream << radius << " " << units << "<br>";
 
 #if 0
     if (body->getOblateness() != 0.0f && body->isEllipsoid())
     {
-        stream << boldText(_("Oblateness: ")) << body->getOblateness() << "<br>\n";
+        stream << boldText("Oblateness: ") << body->getOblateness() << "<br>\n";
     }
 #endif
 
@@ -170,17 +170,17 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
         {
             rotPeriod *= 24.0;
             dayLength *= 24.0;
-            units = _("hours");
+            units = "hours";
         }
         else
         {
-            units = _("days");
+            units = "days";
         }
 
-        stream << boldText(_("Sidereal rotation period: ")) << rotPeriod << " " << units << "<br>\n";
+        stream << boldText("Sidereal rotation period: ") << rotPeriod << " " << units << "<br>\n";
         if (dayLength != 0.0)
         {
-            stream << boldText(_("Length of day: ")) << dayLength << " " << units << "<br>\n";
+            stream << boldText("Length of day: ") << dayLength << " " << units << "<br>\n";
         }
     }
 
@@ -198,41 +198,41 @@ void InfoPanel::buildSolarSystemBodyPage(const Body* body,
 
         if (orbitalPeriod < 365.25 * 2.0)
         {
-            units = _("days");
+            units = "days";
         }
         else
         {
-            units = _("years");
+            units = "years";
             orbitalPeriod /= 365.25;
         }
 
-        stream << "<br><big><b>" << QString(_("Orbit information")) << "</b></big><br>\n";
-        stream << QString(_("Osculating elements for")) << " " << QString::fromUtf8(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
+        stream << "<br><big><b>" << QString("Orbit information") << "</b></big><br>\n";
+        stream << QString("Osculating elements for") << " " << QString::fromUtf8(astro::TDBtoUTC(t).toCStr()) << "<br>\n";
         stream << "<i>[ Orbit reference plane info goes here ]</i><br>\n";
-        stream << boldText(_("Period: ")) << orbitalPeriod << " " << units << "<br>\n";
+        stream << boldText("Period: ") << orbitalPeriod << " " << units << "<br>\n";
 
         double sma = elements.semimajorAxis;
         if (sma > 2.5e7)
         {
-            units = _("AU");
+            units = "AU";
             sma = astro::kilometersToAU(sma);
         }
         else
         {
-            units = _("km");
+            units = "km";
         }
 
-        stream << boldText(_("Semi-major axis: ")) << sma << " " << units << "<br>\n";
-        stream << boldText(_("Eccentricity: ")) << elements.eccentricity << "<br>\n";
-        stream << boldText(_("Inclination: ")) << radToDeg(elements.inclination) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Pericenter distance: ")) << sma * (1 - elements.eccentricity) << " " << units << "<br>\n";
-        stream << boldText(_("Apocenter distance: ")) << sma * (1 + elements.eccentricity) << " " << units << "<br>\n";
+        stream << boldText("Semi-major axis: ") << sma << " " << units << "<br>\n";
+        stream << boldText("Eccentricity: ") << elements.eccentricity << "<br>\n";
+        stream << boldText("Inclination: ") << radToDeg(elements.inclination) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText("Pericenter distance: ") << sma * (1 - elements.eccentricity) << " " << units << "<br>\n";
+        stream << boldText("Apocenter distance: ") << sma * (1 + elements.eccentricity) << " " << units << "<br>\n";
 
 #if 1
-        stream << boldText(_("Ascending node: ")) << radToDeg(elements.longAscendingNode) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Argument of periapsis: ")) << radToDeg(elements.argPericenter) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Mean anomaly: ")) << radToDeg(elements.meanAnomaly) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
-        stream << boldText(_("Period (calculated): ")) << elements.period << " " << QString(_("days<br>\n"));
+        stream << boldText("Ascending node: ") << radToDeg(elements.longAscendingNode) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText("Argument of periapsis: ") << radToDeg(elements.argPericenter) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText("Mean anomaly: ") << radToDeg(elements.meanAnomaly) << QString::fromUtf8(UTF8_DEGREE_SIGN) << "<br>\n";
+        stream << boldText("Period (calculated): ") << elements.period << " " << QString("days<br>\n");
 #endif
     }
 }

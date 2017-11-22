@@ -14,7 +14,7 @@
 #include "meshmanager.h"
 #include "vecgl.h"
 #include <celmath/mathlib.h>
-#include <celutil/util.h>
+
 #include <celutil/debug.h>
 #include <algorithm>
 #include <cstdio>
@@ -41,7 +41,7 @@ void OpenCluster::setType(const std::string& /*typeStr*/)
 
 size_t OpenCluster::getDescription(char* buf, size_t bufLength) const
 {
-    return snprintf(buf, bufLength, _("Open cluster"));
+    return snprintf(buf, bufLength, "Open cluster");
 }
 
 const char* OpenCluster::getObjTypeName() const
