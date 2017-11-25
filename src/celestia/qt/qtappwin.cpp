@@ -1350,8 +1350,8 @@ void CelestiaAppWindow::createMenus()
 #else
       m_appCore->setTimeZoneBias(-timezone + 3600 * daylight);
 #endif
-    //TEMP  m_appCore->setTimeZoneName(tzname[ daylight?0:1]);
     m_appCore->setTimeZoneName("temp");
+	
     // If LocalTime is set to false, set the time zone bias to zero.
     if (settings.contains("LocalTime"))
     {
