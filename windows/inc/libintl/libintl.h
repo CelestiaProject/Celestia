@@ -18,7 +18,7 @@
 
 #ifndef _LIBINTL_H
 #define _LIBINTL_H	1
-
+#define LIBINTL_STATIC
 #ifdef LIBINTL_STATIC
 #define LIBINTL_DLL_EXPORTED
 #else /* LIBINTL_STATIC */
