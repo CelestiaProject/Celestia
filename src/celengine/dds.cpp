@@ -15,8 +15,6 @@
 #include <celengine/image.h>
 #include <GL/glew.h>
 
-#include<QDebug>
-
 using namespace std;
 
 
@@ -90,7 +88,7 @@ Image* LoadDDSImage(const string& filename)
     ifstream in(filename.c_str(), ios::in | ios::binary);
     if (!in.good())
     {
-        qDebug()<<QString().sprintf( "Error opening DDS texture file %s.\n", filename.c_str());
+        DPRINTF(0, "Error opening DDS texture file %s.\n", filename.c_str());
         return NULL;
     }
 
@@ -99,7 +97,7 @@ Image* LoadDDSImage(const string& filename)
     if (header[0] != 'D' || header[1] != 'D' ||
         header[2] != 'S' || header[3] != ' ')
     {
-        qDebug()<<QString().sprintf( "DDS texture file %s has bad header.\n", filename.c_str());
+        DPRINTF(0, "DDS texture file %s has bad header.\n", filename.c_str());
         return NULL;
     }
 
@@ -178,7 +176,7 @@ Image* LoadDDSImage(const string& filename)
 
     if (format == -1)
     {
-        qDebug()<<QString().sprintf( "Unsupported format for DDS texture file %s.\n",
+        DPRINTF(0, "Unsupported format for DDS texture file %s.\n",
                 filename.c_str());
         return NULL;
     }
@@ -206,7 +204,7 @@ Image* LoadDDSImage(const string& filename)
     in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize());
     if (!in.eof() && !in.good())
     {
-        qDebug()<<QString().sprintf( "Failed reading data from DDS texture file %s.\n",
+        DPRINTF(0, "Failed reading data from DDS texture file %s.\n",
                 filename.c_str());
         delete img;
         return NULL;

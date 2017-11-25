@@ -35,7 +35,7 @@
 #include <fstream>
 #include <cassert>
 
-#include<QDebug>
+
 
 using namespace cmod;
 using namespace Eigen;
@@ -237,7 +237,7 @@ Model* LoadCelestiaMesh(const string& filename)
     ifstream meshFile(filename.c_str(), ios::in);
     if (!meshFile.good())
     {
-        qDebug()<<QString().sprintf( "Error opening mesh file: %s\n", filename.c_str());
+        DPRINTF(0, "Error opening mesh file: %s\n", filename.c_str());
         return NULL;
     }
 
@@ -246,13 +246,13 @@ Model* LoadCelestiaMesh(const string& filename)
 
     if (tokenizer.nextToken() != Tokenizer::TokenName)
     {
-        qDebug()<<QString().sprintf( "Mesh file %s is invalid.\n", filename.c_str());
+        DPRINTF(0, "Mesh file %s is invalid.\n", filename.c_str());
         return NULL;
     }
 
     if (tokenizer.getStringValue() != "SphereDisplacementMesh")
     {
-        qDebug()<<QString().sprintf( "%s: Unrecognized mesh type %s.\n",
+        DPRINTF(0, "%s: Unrecognized mesh type %s.\n",
                 filename.c_str(),
                 tokenizer.getStringValue().c_str());
         return NULL;
@@ -261,13 +261,13 @@ Model* LoadCelestiaMesh(const string& filename)
     Value* meshDefValue = parser.readValue();
     if (meshDefValue == NULL)
     {
-        qDebug()<<QString().sprintf( "%s: Bad mesh file.\n", filename.c_str());
+        DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
         return NULL;
     }
 
     if (meshDefValue->getType() != Value::HashType)
     {
-        qDebug()<<QString().sprintf( "%s: Bad mesh file.\n", filename.c_str());
+        DPRINTF(0, "%s: Bad mesh file.\n", filename.c_str());
         delete meshDefValue;
         return NULL;
     }

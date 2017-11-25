@@ -20,7 +20,6 @@
 #include <GL/glew.h>
 #include "parser.h"
 
-#include<QDebug>
 using namespace std;
 
 static const int MaxResolutionLevels = 13;
@@ -338,7 +337,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     string imageDirectory;
     if (!texParams->getString("ImageDirectory", imageDirectory))
     {
-        qDebug()<<QString().sprintf( "ImageDirectory missing in virtual texture.\n");
+        DPRINTF(0, "ImageDirectory missing in virtual texture.\n");
         return NULL;
     }
 
@@ -346,14 +345,14 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
     if (!texParams->getNumber("BaseSplit", baseSplit) ||
         baseSplit < 0.0 || baseSplit != floor(baseSplit))
     {
-        qDebug()<<QString().sprintf( "BaseSplit in virtual texture missing or has bad value\n");
+        DPRINTF(0, "BaseSplit in virtual texture missing or has bad value\n");
         return NULL;
     }
 
     double tileSize = 0.0;
     if (!texParams->getNumber("TileSize", tileSize))
     {
-        qDebug()<<QString().sprintf( "TileSize is missing from virtual texture\n");
+        DPRINTF(0, "TileSize is missing from virtual texture\n");
         return NULL;
     }
 
@@ -361,7 +360,7 @@ static VirtualTexture* CreateVirtualTexture(Hash* texParams,
         tileSize < 64.0 ||
         !isPow2((int) tileSize))
     {
-        qDebug()<<QString().sprintf( "Virtual texture tile size must be a power of two >= 64\n");
+        DPRINTF(0, "Virtual texture tile size must be a power of two >= 64\n");
         return NULL;
     }
 
@@ -401,7 +400,7 @@ static VirtualTexture* LoadVirtualTexture(istream& in, const string& path)
     Value* texParamsValue = parser.readValue();
     if (texParamsValue == NULL || texParamsValue->getType() != Value::HashType)
     {
-        qDebug()<<QString().sprintf( "Error parsing virtual texture\n");
+        DPRINTF(0, "Error parsing virtual texture\n");
         delete texParamsValue;
         return NULL;
     }
@@ -421,7 +420,7 @@ VirtualTexture* LoadVirtualTexture(const string& filename)
 
     if (!in.good())
     {
-        //qDebug()<<QString().sprintf( "Error opening virtual texture file: %s\n", filename.c_str());
+        //DPRINTF(0, "Error opening virtual texture file: %s\n", filename.c_str());
         return NULL;
     }
 

@@ -14,8 +14,6 @@
 #include <iostream>
 #include <fstream>
 
-#include<QDebug>
-
 using namespace std;
 
 
@@ -46,7 +44,7 @@ string RotationModelInfo::resolve(const string& baseDir)
 
 RotationModel* RotationModelInfo::load(const string& filename)
 {
-   qDebug()<<QString().sprintf( "Loading rotation model: %s\n", filename.c_str());
+    DPRINTF(1, "Loading rotation model: %s\n", filename.c_str());
 
     return LoadSampledOrientation(filename);
 }

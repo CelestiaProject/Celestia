@@ -16,8 +16,6 @@
 #include <fstream>
 #include <cassert>
 
-#include<QDebug>
-
 using namespace std;
 
 
@@ -60,7 +58,7 @@ Orbit* TrajectoryInfo::load(const string& filename)
     string strippedFilename(filename, 0, uniquifyingSuffixStart);
     ContentType filetype = DetermineFileType(strippedFilename);
 
-   qDebug()<<QString().sprintf( "Loading trajectory: %s\n", strippedFilename.c_str());
+    DPRINTF(1, "Loading trajectory: %s\n", strippedFilename.c_str());
 
     Orbit* sampTrajectory = NULL;
 

@@ -39,7 +39,7 @@ class PlanetarySystem
 
     Star* getStar() const { return star; };
     Body* getPrimaryBody() const { return primary; };
-    int getSystemSize() const { return (int)satellites.size(); };
+    int getSystemSize() const { return satellites.size(); };
     Body* getBody(int i) const { return satellites[i]; };
     
     void addAlias(Body* body, const std::string& alias);

@@ -37,8 +37,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include<QDebug>
-
 using namespace Eigen;
 using namespace std;
 
@@ -248,7 +246,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
         if (tokenizer.getTokenType() != Tokenizer::TokenName)
         {
-            qDebug()<<QString().sprintf( "Error parsing deep sky catalog file.\n");
+            DPRINTF(0, "Error parsing deep sky catalog file.\n");
             return false;
         }
         objType = tokenizer.getNameValue();
@@ -269,7 +267,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
 
         if (tokenizer.nextToken() != Tokenizer::TokenString)
         {
-            qDebug()<<QString().sprintf( "Error parsing deep sky catalog file: bad name.\n");
+            DPRINTF(0, "Error parsing deep sky catalog file: bad name.\n");
             return false;
         }
         objName = tokenizer.getStringValue();
@@ -278,7 +276,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         if (objParamsValue == NULL ||
             objParamsValue->getType() != Value::HashType)
         {
-            qDebug()<<QString().sprintf( "Error parsing deep sky catalog entry %s\n", objName.c_str());
+            DPRINTF(0, "Error parsing deep sky catalog entry %s\n", objName.c_str());
             return false;
         }
 
@@ -315,7 +313,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
                 DeepSkyObject** newDSOs   = new DeepSkyObject*[capacity];
                 if (newDSOs == NULL)
                 {
-                    qDebug()<<QString().sprintf( "Out of memory!");
+                    DPRINTF(0, "Out of memory!");
                     return false;
                 }
 
@@ -360,7 +358,7 @@ bool DSODatabase::load(istream& in, const string& resourcePath)
         }
         else
         {
-            qDebug()<<QString().sprintf( "Bad Deep Sky Object definition--will continue parsing file.\n");
+            DPRINTF(1, "Bad Deep Sky Object definition--will continue parsing file.\n");
             delete objParamsValue;
             return false;
         }
@@ -395,7 +393,7 @@ void DSODatabase::finish()
 
 void DSODatabase::buildOctree()
 {
-    qDebug()<<QString().sprintf( "Sorting DSOs into octree . . .\n");
+    DPRINTF(1, "Sorting DSOs into octree . . .\n");
     float absMag             = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
 
     // TODO: investigate using a different center--it's possible that more
@@ -407,7 +405,7 @@ void DSODatabase::buildOctree()
         root->insertObject(DSOs[i], DSO_OCTREE_ROOT_SIZE);
     }
 
-    qDebug()<<QString().sprintf( "Spatially sorting DSOs for improved locality of reference . . .\n");
+    DPRINTF(1, "Spatially sorting DSOs for improved locality of reference . . .\n");
     DeepSkyObject** sortedDSOs    = new DeepSkyObject*[nDSOs];
     DeepSkyObject** firstDSO      = sortedDSOs;
 
@@ -415,8 +413,8 @@ void DSODatabase::buildOctree()
     // are storing pointers to objects and not the objects themselves:
     root->rebuildAndSort(octreeRoot, firstDSO);
 
-    qDebug()<<QString().sprintf( "%d DSOs total\n", (int) (firstDSO - sortedDSOs));
-    qDebug()<<QString().sprintf( "Octree has %d nodes and %d DSOs.\n",
+    DPRINTF(1, "%d DSOs total\n", (int) (firstDSO - sortedDSOs));
+    DPRINTF(1, "Octree has %d nodes and %d DSOs.\n",
             1 + octreeRoot->countChildren(), octreeRoot->countObjects());
     //cout<<"DSOs:  "<< octreeRoot->countObjects()<<"   Nodes:"
     //    <<octreeRoot->countChildren() <<endl;
@@ -452,7 +450,7 @@ void DSODatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == NULL);
 
-    qDebug()<<QString().sprintf( "Building catalog number indexes . . .\n");
+    DPRINTF(1, "Building catalog number indexes . . .\n");
 
     catalogNumberIndex = new DeepSkyObject*[nDSOs];
     for (int i = 0; i < nDSOs; ++i)

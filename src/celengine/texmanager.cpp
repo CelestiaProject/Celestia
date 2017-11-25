@@ -14,8 +14,6 @@
 #include "multitexture.h"
 #include "texmanager.h"
 
-#include<QDebug>
-
 using namespace std;
 
 
@@ -133,14 +131,14 @@ Texture* TextureInfo::load(const string& name)
 
     if (bumpHeight == 0.0f)
     {
-        qDebug()<<QString().sprintf( "Loading texture: %s\n", name.c_str());
+        DPRINTF(0, "Loading texture: %s\n", name.c_str());
         // cout << "Loading texture: " << name << '\n';
 
         return LoadTextureFromFile(name, addressMode, mipMode);
     }
     else
     {
-        qDebug()<<QString().sprintf( "Loading bump map: %s\n", name.c_str());
+        DPRINTF(0, "Loading bump map: %s\n", name.c_str());
         // cout << "Loading texture: " << name << '\n';
 
         return LoadHeightMapFromFile(name, bumpHeight, addressMode);

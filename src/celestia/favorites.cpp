@@ -16,8 +16,6 @@
 #include <celengine/cmdparser.h>
 #include "favorites.h"
 
-#include<QDebug>
-
 using namespace Eigen;
 using namespace std;
 
@@ -32,7 +30,7 @@ FavoritesList* ReadFavoritesList(istream& in)
     {
         if (tokenizer.getTokenType() != Tokenizer::TokenString)
         {
-            qDebug()<<QString().sprintf( "Error parsing favorites file.\n");
+            DPRINTF(0, "Error parsing favorites file.\n");
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
             return NULL;
@@ -44,7 +42,7 @@ FavoritesList* ReadFavoritesList(istream& in)
         Value* favParamsValue = parser.readValue();
         if (favParamsValue == NULL || favParamsValue->getType() != Value::HashType)
         {
-            qDebug()<<QString().sprintf( "Error parsing favorites entry %s\n", fav->name.c_str());
+            DPRINTF(0, "Error parsing favorites entry %s\n", fav->name.c_str());
             for_each(favorites->begin(), favorites->end(), deleteFunc<FavoritesEntry*>());
             delete favorites;
             if (favParamsValue != NULL)

@@ -27,8 +27,6 @@
 #include "meshmanager.h"
 #include <celutil/debug.h>
 
-#include<QDebug>
-
 using namespace Eigen;
 using namespace std;
 
@@ -710,7 +708,7 @@ bool StarDatabase::loadBinary(istream& in)
     if (in.bad())
         return false;
 
-    qDebug()<<QString().sprintf( "StarDatabase::read: nStars = %d\n", nStarsInFile);
+    DPRINTF(0, "StarDatabase::read: nStars = %d\n", nStarsInFile);
     clog << nStars << _(" stars in binary database\n");
     
     // Create the temporary list of stars sorted by catalog number; this
@@ -1311,7 +1309,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         
         if (starDataValue->getType() != Value::HashType)
         {
-            qDebug()<<QString().sprintf( "Bad star definition.\n");
+            DPRINTF(0, "Bad star definition.\n");
             delete starDataValue;
             return false;
         }
@@ -1374,7 +1372,7 @@ bool StarDatabase::load(istream& in, const string& resourcePath)
         {
             if (isNewStar)
                 delete star;
-           qDebug()<<QString().sprintf( "Bad star definition--will continue parsing file.\n");
+            DPRINTF(1, "Bad star definition--will continue parsing file.\n");
         }
     }
 
@@ -1387,7 +1385,7 @@ void StarDatabase::buildOctree()
     // This should only be called once for the database
     // ASSERT(octreeRoot == NULL);
 
-   qDebug()<<QString().sprintf( "Sorting stars into octree . . .\n");
+    DPRINTF(1, "Sorting stars into octree . . .\n");
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
                                       STAR_OCTREE_ROOT_SIZE * (float) sqrt(3.0));
     DynamicStarOctree* root = new DynamicStarOctree(Vector3f(1000.0f, 1000.0f, 1000.0f),
@@ -1397,14 +1395,14 @@ void StarDatabase::buildOctree()
         root->insertObject(unsortedStars[i], STAR_OCTREE_ROOT_SIZE);
     }
     
-   qDebug()<<QString().sprintf( "Spatially sorting stars for improved locality of reference . . .\n");
+    DPRINTF(1, "Spatially sorting stars for improved locality of reference . . .\n");
     Star* sortedStars    = new Star[nStars];
     Star* firstStar      = sortedStars;
     root->rebuildAndSort(octreeRoot, firstStar);
 
     // ASSERT((int) (firstStar - sortedStars) == nStars);
-   qDebug()<<QString().sprintf( "%d stars total\n", (int) (firstStar - sortedStars));
-   qDebug()<<QString().sprintf( "Octree has %d nodes and %d stars.\n",
+    DPRINTF(1, "%d stars total\n", (int) (firstStar - sortedStars));
+    DPRINTF(1, "Octree has %d nodes and %d stars.\n",
             1 + octreeRoot->countChildren(), octreeRoot->countObjects());
 #ifdef PROFILE_OCTREE
     vector<OctreeLevelStatistics> stats;
@@ -1433,7 +1431,7 @@ void StarDatabase::buildIndexes()
     // This should only be called once for the database
     // assert(catalogNumberIndexes[0] == NULL);
 
-   qDebug()<<QString().sprintf( "Building catalog number indexes . . .\n");
+    DPRINTF(1, "Building catalog number indexes . . .\n");
 
     catalogNumberIndex = new Star*[nStars];
     for (int i = 0; i < nStars; ++i)

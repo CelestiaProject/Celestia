@@ -48,8 +48,6 @@
 #include <cassert>
 #include <ctime>
 
-#include<QDebug>
-
 #ifdef CELX
 #include <celephem/scriptobject.h>
 #endif
@@ -4203,8 +4201,8 @@ public:
                 bool success = objDB->load(catalogFile, getPath());
                 if (!success)
                 {
-                    //qDebug()<<QString().sprintf( _("Error reading star file: %s\n"), fullname.c_str());
-                    qDebug()<<QString().sprintf( "Error reading %s catalog file: %s\n", typeDesc.c_str(), fullname.c_str());
+                    //DPRINTF(0, _("Error reading star file: %s\n"), fullname.c_str());
+                    DPRINTF(0, "Error reading %s catalog file: %s\n", typeDesc.c_str(), fullname.c_str());
                 }
             }
         }

@@ -81,8 +81,6 @@ std::ofstream hdrlog;
 #include <iomanip>
 #include "eigenport.h"
 
-#include<QDebug>
-
 using namespace cmod;
 using namespace Eigen;
 using namespace std;
@@ -1183,14 +1181,14 @@ bool Renderer::init(GLContext* _context,
     {
         // We need this enabled because we use glScale, but only
         // with uniform scale factors.
-       qDebug()<<QString().sprintf( "Renderer: EXT_rescale_normal supported.\n");
+        DPRINTF(1, "Renderer: EXT_rescale_normal supported.\n");
         useRescaleNormal = true;
         glEnable(GL_RESCALE_NORMAL_EXT);
     }
 
     if (GLEW_ARB_point_sprite)
     {
-       qDebug()<<QString().sprintf( "Renderer: point sprites supported.\n");
+        DPRINTF(1, "Renderer: point sprites supported.\n");
         usePointSprite = true;
     }
 
