@@ -11,7 +11,7 @@
 #define _CELENGINE_FRAGMENTPROG_H_
 
 #include <celutil/color.h>
-//
+#include <celutil/util.h>
 #include <GL/glew.h>
 #include <Eigen/Core>
 

@@ -18,7 +18,7 @@
 #include "celestia.h"
 #include "astro.h"
 #include "univcoord.h"
-//
+#include <celutil/util.h>
 #include <celmath/geomutil.h>
 
 using namespace Eigen;
@@ -574,7 +574,7 @@ const char* astro::Date::toCStr(Format format) const
     case Locale:
     case TZName:
         snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %s", 
-                 year, (MonthAbbrList[month-1]), day,
+                 year, _(MonthAbbrList[month-1]), day, 
                  hour, minute, (int)seconds, tzname.c_str());
         break;
     case UTCOffset:
@@ -583,7 +583,7 @@ const char* astro::Date::toCStr(Format format) const
             int h_offset = sign * utc_offset / 3600;
             int m_offset = (sign * utc_offset - h_offset * 3600) / 60;
             snprintf(date, sizeof(date), "%04d %s %02d %02d:%02d:%02d %c%02d%02d", 
-                    year, (MonthAbbrList[month-1]), day,
+                    year, _(MonthAbbrList[month-1]), day, 
                     hour, minute, (int)seconds, (sign==1?'+':'-'), h_offset, m_offset);
         }
         break;
@@ -848,7 +848,7 @@ astro::TDBtoLocal(double tdb)
                 d.utc_offset = (hourdiff + d.hour - utcDate.hour) * 3600 
                              + (d.minute - utcDate.minute) * 60;
             }
-            d.tzname = localt->tm_isdst ? ("DST"): ("STD");
+            d.tzname = localt->tm_isdst ? _("DST"): _("STD");
         #endif
             return d;
         }

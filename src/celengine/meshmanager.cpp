@@ -29,7 +29,7 @@
 #include <celmath/perlin.h>
 #include <celutil/debug.h>
 #include <celutil/filetype.h>
-
+#include <celutil/util.h>
 
 #include <iostream>
 #include <fstream>
@@ -108,7 +108,7 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
     string::size_type uniquifyingSuffixStart = resolvedFilename.rfind(UniqueSuffixChar);
     string filename(resolvedFilename, 0, uniquifyingSuffixStart);
     
-    clog << "Loading model: " << filename << '\n';
+    clog << _("Loading model: ") << filename << '\n';
     Model* model = NULL;
     ContentType fileType = DetermineFileType(filename);
 
@@ -188,17 +188,17 @@ Geometry* GeometryInfo::load(const string& resolvedFilename)
         model->determineOpacity();
 
         // Display some statics for the model
-        clog << "   Model statistics: "
-             << model->getVertexCount() << " vertices, "
-             << model->getPrimitiveCount() << " primitives, "
-             << originalMaterialCount << " materials "
-             << "(" << model->getMaterialCount() << " unique)\n";
+        clog << _("   Model statistics: ")
+             << model->getVertexCount() << _(" vertices, ")
+             << model->getPrimitiveCount() << _(" primitives, ")
+             << originalMaterialCount << _(" materials ")
+             << "(" << model->getMaterialCount() << _(" unique)\n");
 
         return new ModelGeometry(model);
     }
     else
     {
-        clog << "Error loading model '" << filename << "'\n";
+        clog << _("Error loading model '") << filename << "'\n";
         return NULL;
     }
 }

@@ -15,7 +15,7 @@
 #endif /* TARGET_OS_MAC */
 #endif /* _WIN32 */
 
-//
+#include <celutil/util.h>
 #include <celutil/debug.h>
 #include "asterism.h"
 #include "parser.h"

@@ -10,7 +10,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-
+#include "celutil/util.h"
 #include "xbel.h"
 #include "qtbookmark.h"
 #include <QBuffer>
@@ -61,7 +61,7 @@ XbelReader::read()
             if (name() == "xbel" && (version == "1.0" || version.isEmpty()))
                 readXbel(rootItem);
             else
-                raiseError(QString("Not an XBEL version 1.0 file."));
+                raiseError(QString(_("Not an XBEL version 1.0 file.")));
         }
     }
 

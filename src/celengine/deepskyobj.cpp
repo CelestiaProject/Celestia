@@ -18,7 +18,7 @@
 #include "globular.h"
 #include "nebula.h"
 #include "opencluster.h"
-//
+#include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/intersect.h>
 #include "eigenport.h"

@@ -15,7 +15,7 @@
 #include "meshmanager.h"
 #include "rendcontext.h"
 #include <celmath/mathlib.h>
-
+#include <celutil/util.h>
 #include <celutil/debug.h>
 #include <algorithm>
 #include <cstdio>

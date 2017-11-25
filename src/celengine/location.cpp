@@ -10,7 +10,7 @@
 #include <map>
 #include <celengine/location.h>
 #include <celengine/body.h>
-
+#include <celutil/util.h>
 
 using namespace Eigen;
 using namespace std;
@@ -93,7 +93,7 @@ string Location::getName(bool i18n) const
 void Location::setName(const string& _name)
 {
     name = _name;
-    i18nName = _name.c_str();
+    i18nName = _(_name.c_str()); 
     if (name == i18nName) i18nName = "";
 }
 

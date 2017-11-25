@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <celmath/mathlib.h>
 #include <celmath/plane.h>
-//
+#include <celutil/util.h>
 #include <celutil/bytes.h>
 #include <celutil/utf8.h>
 #include <celengine/dsodb.h>

@@ -56,7 +56,7 @@ extern "C" {
 #endif // TARGET_OS_MAC
 
 #include <celutil/debug.h>
-
+#include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <GL/glew.h>
 #include "celestia.h"
@@ -370,7 +370,7 @@ Image* LoadImageFromFile(const string& filename)
     ContentType type = DetermineFileType(filename);
     Image* img = NULL;
 
-    clog << "Loading image from file " << filename << '\n';
+    clog << _("Loading image from file ") << filename << '\n';
 
     switch (type)
     {
@@ -388,7 +388,7 @@ Image* LoadImageFromFile(const string& filename)
         img = LoadDDSImage(filename);
         break;
     default:
-        clog << filename << ": unrecognized or unsupported image file type.\n";
+        clog << filename << _(": unrecognized or unsupported image file type.\n");
         break;
     }
 
@@ -651,14 +651,14 @@ Image* LoadPNGImage(const string& filename)
     fp = fopen(filename.c_str(), "rb");
     if (fp == NULL)
     {
-        clog << "Error opening image file " << filename << '\n';
+        clog << _("Error opening image file ") << filename << '\n';
         return NULL;
     }
 
     fread(header, 1, sizeof(header), fp);
     if (png_sig_cmp((unsigned char*) header, 0, sizeof(header)))
     {
-        clog << "Error: " << filename << " is not a PNG file.\n";
+        clog << _("Error: ") << filename << _(" is not a PNG file.\n");
         fclose(fp);
         return NULL;
     }
@@ -685,7 +685,7 @@ Image* LoadPNGImage(const string& filename)
         if (img != NULL)
             delete img;
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        clog << "Error reading PNG image file " << filename << '\n';
+        clog << _("Error reading PNG image file ") << filename << '\n';
         return NULL;
     }
 

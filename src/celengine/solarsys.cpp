@@ -22,7 +22,7 @@
 
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
-
+#include <celutil/util.h>
 #include <cstdio>
 #include <limits>
 #include "astro.h"

@@ -14,7 +14,7 @@
 #include "astro.h"
 #include "cmdparser.h"
 #include "glcontext.h"
-//
+#include <celutil/util.h>
 #include <celutil/debug.h>
 #include <celmath/mathlib.h>
 #include <celengine/astro.h>

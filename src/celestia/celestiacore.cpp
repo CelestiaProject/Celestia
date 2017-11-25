@@ -30,7 +30,7 @@
 #include <celengine/visibleregion.h>
 #include <celengine/eigenport.h>
 #include <celmath/geomutil.h>
-//
+#include <celutil/util.h>
 #include <celutil/filetype.h>
 #include <celutil/directory.h>
 #include <celutil/formatnum.h>
