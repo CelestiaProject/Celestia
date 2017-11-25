@@ -554,6 +554,11 @@ win32 {
         windows/inc/libjpeg \
         windows/inc/lua \
         windows/inc/spice
+	
+	#CONFIG += staticlib
+	#CONFIG += /MT
+	#QMAKE_CXXFLAGS += /MT
+	
    !contains(QMAKE_TARGET.arch, x86_64) {
     LIBS += -L$$PWD/windows/lib/x86 \
         -lfmod_vc \
@@ -576,8 +581,8 @@ else{
         -lvfw32\
         -llibintl
 }
-    LIBS +=opengl32.lib -lglu32 -lUser32
-
+	LIBS +=opengl32.lib -lglu32 -luser32
+		
     SOURCES += src/celestia/avicapture.cpp
     HEADERS += src/celestia/avicapture.h
 
