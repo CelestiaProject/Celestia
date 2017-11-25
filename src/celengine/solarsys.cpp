@@ -93,7 +93,7 @@ enum BodyType
 
 static void errorMessagePrelude(const Tokenizer& tok)
 {
-    cerr << "Error in .ssc file (line " << tok.getLineNumber() << "): ";
+    cerr << _("Error in .ssc file (line ") << tok.getLineNumber() << "): ";
 }
 
 static void sscError(const Tokenizer& tok,
@@ -1224,7 +1224,7 @@ bool LoadSolarSystemObjects(istream& in,
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << "parent body '" << parentName << "' of '" << primaryName << "' not found." << endl;
+                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.") << endl;
             }
 
             if (parentSystem != NULL)
@@ -1235,7 +1235,7 @@ bool LoadSolarSystemObjects(istream& in,
                     if (disposition == AddObject)
                     {
                         errorMessagePrelude(tokenizer);
-                        cerr << "warning duplicate definition of " <<
+                        cerr << _("warning duplicate definition of ") <<
                             parentName << " " <<  primaryName << '\n';
                     }
                     else if (disposition == ReplaceObject)
@@ -1271,7 +1271,7 @@ bool LoadSolarSystemObjects(istream& in,
             if (surface != NULL && parent.body() != NULL)
                 parent.body()->addAlternateSurface(primaryName, surface);
             else
-                sscError(tokenizer, "bad alternate surface");
+                sscError(tokenizer, _("bad alternate surface"));
         }
         else if (itemType == "Location")
         {
@@ -1285,13 +1285,13 @@ bool LoadSolarSystemObjects(istream& in,
                 }
                 else
                 {
-                    sscError(tokenizer, "bad location");
+                    sscError(tokenizer, _("bad location"));
                 }
             }
             else
             {
                 errorMessagePrelude(tokenizer);
-                cerr << "parent body '" << parentName << "' of '" << primaryName << "' not found.\n";
+                cerr << _("parent body '") << parentName << _("' of '") << primaryName << _("' not found.\n");
             }
         }
         delete objectDataValue;

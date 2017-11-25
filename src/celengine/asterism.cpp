@@ -29,7 +29,7 @@ Asterism::Asterism(string _name) :
     active(true),
     useOverrideColor(false)
 {
-    i18nName =  _name.c_str();
+    i18nName = dgettext("celestia_constellations", _name.c_str());
 }
 
 Asterism::~Asterism()
