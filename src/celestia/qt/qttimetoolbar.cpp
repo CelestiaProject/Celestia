@@ -26,37 +26,37 @@ TimeToolBar::TimeToolBar(CelestiaCore* _appCore,
 #if 0
     // Text-only buttons
     setToolButtonStyle(Qt::ToolButtonTextOnly);
-    QAction* reverseTimeAction = new QAction(QString("< >", this);
-    reverseTimeAction->setToolTip("Reverse time");
-    QAction* slowTimeAction = new QAction(QString("<<|", this);
-    slowTimeAction->setToolTip("10x slower");
-    QAction* halfTimeAction = new QAction(QString("<|", this);
-    halfTimeAction->setToolTip("2x slower");
-    QAction* pauseAction = new QAction(QString("||", this);
-    pauseAction->setToolTip("Pause time");
-    QAction* realTimeAction = new QAction(QString(">", this);
-    realTimeAction->setToolTip("Real time");
-    QAction* doubleTimeAction = new QAction(QString(">>", this);
-    doubleTimeAction->setToolTip("2x faster");
-    QAction* fastTimeAction = new QAction(QString(">>>", this);
-    fastTimeAction->setToolTip("10x faster");
+    QAction* reverseTimeAction = new QAction(QString("< >"), this);
+    reverseTimeAction->setToolTip(_("Reverse time"));
+    QAction* slowTimeAction = new QAction(QString("<<|"), this);
+    slowTimeAction->setToolTip(_("10x slower"));
+    QAction* halfTimeAction = new QAction(QString("<|"), this);
+    halfTimeAction->setToolTip(_("2x slower"));
+    QAction* pauseAction = new QAction(QString("||"), this);
+    pauseAction->setToolTip(_("Pause time"));
+    QAction* realTimeAction = new QAction(QString(">"), this);
+    realTimeAction->setToolTip(_("Real time"));
+    QAction* doubleTimeAction = new QAction(QString(">>"), this);
+    doubleTimeAction->setToolTip(_("2x faster"));
+    QAction* fastTimeAction = new QAction(QString(">>>"), this);
+    fastTimeAction->setToolTip(_("10x faster"));
 #else
-    QAction* reverseTimeAction = new QAction(QIcon(":/icons/time-reverse."),
-                                             "Reverse time", this);
-    QAction* slowTimeAction = new QAction(QIcon(":/icons/time-slower."),
-                                          "10x slower", this);
-    QAction* halfTimeAction = new QAction(QIcon(":/icons/time-half."),
-                                          "2x slower", this);
-    QAction* pauseAction = new QAction(QIcon(":/icons/time-pause."),
-                                       "Pause time", this);
-    QAction* realTimeAction = new QAction(QIcon(":/icons/time-realtime."),
-                                          "Real time", this);
-    QAction* doubleTimeAction = new QAction(QIcon(":/icons/time-double."),
-                                            "2x faster", this);
-    QAction* fastTimeAction = new QAction(QIcon(":/icons/time-faster."),
-                                          "10x faster", this);
-    QAction* currentTimeAction = new QAction(QIcon(":icons/time-currenttime."),
-                                             "Set to current time", this);
+    QAction* reverseTimeAction = new QAction(QIcon(":/icons/time-reverse.png"),
+                                             _("Reverse time"), this);
+    QAction* slowTimeAction = new QAction(QIcon(":/icons/time-slower.png"),
+                                          _("10x slower"), this);
+    QAction* halfTimeAction = new QAction(QIcon(":/icons/time-half.png"),
+                                          _("2x slower"), this);
+    QAction* pauseAction = new QAction(QIcon(":/icons/time-pause.png"),
+                                       _("Pause time"), this);
+    QAction* realTimeAction = new QAction(QIcon(":/icons/time-realtime.png"),
+                                          _("Real time"), this);
+    QAction* doubleTimeAction = new QAction(QIcon(":/icons/time-double.png"),
+                                            _("2x faster"), this);
+    QAction* fastTimeAction = new QAction(QIcon(":/icons/time-faster.png"),
+                                          _("10x faster"), this);
+    QAction* currentTimeAction = new QAction(QIcon(":icons/time-currenttime.png"),
+                                             _("Set to current time"), this);
 #endif
     connect(reverseTimeAction, SIGNAL(triggered()), this, SLOT(slotReverseTime()));
     addAction(reverseTimeAction);

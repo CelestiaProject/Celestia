@@ -216,15 +216,15 @@ QVariant StarTableModel::headerData(int section, Qt::Orientation /* orientation 
     switch (section)
     {
     case 0:
-        return "Name";
+        return _("Name");
     case 1:
-        return "Distance (ly)";
+        return _("Distance (ly)");
     case 2:
-        return "App. mag";
+        return _("App. mag");
     case 3:
-        return "Abs. mag";
+        return _("Abs. mag");
     case 4:
-        return "Type";
+        return _("Type");
     default:
         return QVariant();
     }
@@ -507,11 +507,11 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     QGridLayout* starGroupLayout = new QGridLayout();
 
     // Buttons to select filtering criterion for stars
-    closestButton = new QRadioButton("Closest Stars");
+    closestButton = new QRadioButton(_("Closest Stars"));
     connect(closestButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
     starGroupLayout->addWidget(closestButton, 0, 0);
 
-    brightestButton = new QRadioButton("Brightest Stars");
+    brightestButton = new QRadioButton(_("Brightest Stars"));
     connect(brightestButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
     starGroupLayout->addWidget(brightestButton, 0, 1);
 
@@ -521,23 +521,23 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     closestButton->setChecked(true);
 
     // Additional filtering controls
-    QGroupBox* filterGroup = new QGroupBox("Filter");
+    QGroupBox* filterGroup = new QGroupBox(_("Filter"));
     QGridLayout* filterGroupLayout = new QGridLayout();
     
-    withPlanetsFilterBox = new QCheckBox("With Planets");
+    withPlanetsFilterBox = new QCheckBox(_("With Planets"));
     connect(withPlanetsFilterBox, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
     filterGroupLayout->addWidget(withPlanetsFilterBox, 0, 0);
 
-    multipleFilterBox = new QCheckBox("Multiple Stars");
+    multipleFilterBox = new QCheckBox(_("Multiple Stars"));
     connect(multipleFilterBox, SIGNAL(clicked()), this, SLOT(slotUncheckBarycentersFilterBox()));
 
-    barycentersFilterBox = new QCheckBox("Barycenters");
+    barycentersFilterBox = new QCheckBox(_("Barycenters"));
     connect(barycentersFilterBox, SIGNAL(clicked()), this, SLOT(slotUncheckMultipleFilterBox()));
 
     filterGroupLayout->addWidget(multipleFilterBox, 1, 0);
     filterGroupLayout->addWidget(barycentersFilterBox, 1, 1);
 
-    filterGroupLayout->addWidget(new QLabel("Spectral Type"), 0, 1);
+    filterGroupLayout->addWidget(new QLabel(_("Spectral Type")), 0, 1);
     spectralTypeFilterBox = new QLineEdit();
     connect(spectralTypeFilterBox, SIGNAL(editingFinished()), this, SLOT(slotRefreshTable()));
     filterGroupLayout->addWidget(spectralTypeFilterBox, 0, 2);
@@ -546,39 +546,39 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     layout->addWidget(filterGroup);
     // End filtering controls
 
-    QPushButton* refreshButton = new QPushButton("Refresh");
+    QPushButton* refreshButton = new QPushButton(_("Refresh"));
     connect(refreshButton, SIGNAL(clicked()), this, SLOT(slotRefreshTable()));
     layout->addWidget(refreshButton);
 
     // Controls for marking selected objects
-    QGroupBox* markGroup = new QGroupBox("Markers");
+    QGroupBox* markGroup = new QGroupBox(_("Markers"));
     QGridLayout* markGroupLayout = new QGridLayout();
 
-    QPushButton* markSelectedButton = new QPushButton("Mark Selected");
+    QPushButton* markSelectedButton = new QPushButton(_("Mark Selected"));
     connect(markSelectedButton, SIGNAL(clicked()), this, SLOT(slotMarkSelected()));
-    markSelectedButton->setToolTip("Mark stars selected in list view");
+    markSelectedButton->setToolTip(_("Mark stars selected in list view"));
     markGroupLayout->addWidget(markSelectedButton, 0, 0, 1, 2);
 
-    QPushButton* clearMarkersButton = new QPushButton("Clear Markers");
+    QPushButton* clearMarkersButton = new QPushButton(_("Clear Markers"));
     connect(clearMarkersButton, SIGNAL(clicked()), this, SLOT(slotClearMarkers()));
-    clearMarkersButton->setToolTip("Remove all existing markers");
+    clearMarkersButton->setToolTip(_("Remove all existing markers"));
     markGroupLayout->addWidget(clearMarkersButton, 0, 2, 1, 2);
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
-    markerSymbolBox->addItem("None");
-    markerSymbolBox->addItem("Diamond", (int) MarkerRepresentation::Diamond);
-    markerSymbolBox->addItem("Triangle", (int) MarkerRepresentation::Triangle);
-    markerSymbolBox->addItem("Square", (int) MarkerRepresentation::Square);
-    markerSymbolBox->addItem("Plus", (int) MarkerRepresentation::Plus);
-    markerSymbolBox->addItem("X", (int) MarkerRepresentation::X);
-    markerSymbolBox->addItem("Circle", (int) MarkerRepresentation::Circle);
-    markerSymbolBox->addItem("Left Arrow", (int) MarkerRepresentation::LeftArrow);
-    markerSymbolBox->addItem("Right Arrow", (int) MarkerRepresentation::RightArrow);
-    markerSymbolBox->addItem("Up Arrow", (int) MarkerRepresentation::UpArrow);
-    markerSymbolBox->addItem("Down Arrow", (int) MarkerRepresentation::DownArrow);
+    markerSymbolBox->addItem(_("None"));
+    markerSymbolBox->addItem(_("Diamond"), (int) MarkerRepresentation::Diamond);
+    markerSymbolBox->addItem(_("Triangle"), (int) MarkerRepresentation::Triangle);
+    markerSymbolBox->addItem(_("Square"), (int) MarkerRepresentation::Square);
+    markerSymbolBox->addItem(_("Plus"), (int) MarkerRepresentation::Plus);
+    markerSymbolBox->addItem(_("X"), (int) MarkerRepresentation::X);
+    markerSymbolBox->addItem(_("Circle"), (int) MarkerRepresentation::Circle);
+    markerSymbolBox->addItem(_("Left Arrow"), (int) MarkerRepresentation::LeftArrow);
+    markerSymbolBox->addItem(_("Right Arrow"), (int) MarkerRepresentation::RightArrow);
+    markerSymbolBox->addItem(_("Up Arrow"), (int) MarkerRepresentation::UpArrow);
+    markerSymbolBox->addItem(_("Down Arrow"), (int) MarkerRepresentation::DownArrow);
     markerSymbolBox->setCurrentIndex(1);
-    markerSymbolBox->setToolTip("Select marker symbol");
+    markerSymbolBox->setToolTip(_("Select marker symbol"));
     markGroupLayout->addWidget(markerSymbolBox, 1, 0);
 
     markerSizeBox = new QComboBox();
@@ -591,14 +591,14 @@ CelestialBrowser::CelestialBrowser(CelestiaCore* _appCore, QWidget* parent) :
     markerSizeBox->addItem("100", 100.0);
     markerSizeBox->addItem("200", 200.0);
     markerSizeBox->setCurrentIndex(3);
-    markerSizeBox->setToolTip("Select marker size");
+    markerSizeBox->setToolTip(_("Select marker size"));
     markGroupLayout->addWidget(markerSizeBox, 1, 1);
 
     colorSwatch = new ColorSwatchWidget(QColor("cyan"));
-    colorSwatch->setToolTip("Click to select marker color");
+    colorSwatch->setToolTip(_("Click to select marker color"));
     markGroupLayout->addWidget(colorSwatch, 1, 2);
     
-    labelMarkerBox = new QCheckBox("Label");
+    labelMarkerBox = new QCheckBox(_("Label"));
     markGroupLayout->addWidget(labelMarkerBox, 1, 3);
 
     markGroup->setLayout(markGroupLayout);
@@ -667,7 +667,7 @@ void CelestialBrowser::slotRefreshTable()
     treeView->resizeColumnToContents(StarTableModel::AppMagColumn);
     treeView->resizeColumnToContents(StarTableModel::AbsMagColumn);
 
-    searchResultLabel->setText(QString("%1 objects found").arg(starModel->rowCount(QModelIndex())));
+    searchResultLabel->setText(QString(_("%1 objects found")).arg(starModel->rowCount(QModelIndex())));
 }
 
 

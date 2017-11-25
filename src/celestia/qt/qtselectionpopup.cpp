@@ -104,24 +104,24 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         setlocale(LC_NUMERIC, "");
 
         if (abs(distance) >= astro::AUtoLightYears(1000.0f))
-            sprintf(buff, "%.3f %s", distance, "ly");
+            sprintf(buff, "%.3f %s", distance, ("ly"));
         else if (abs(distance) >= astro::kilometersToLightYears(10000000.0))
-            sprintf(buff, "%.3f %s", astro::lightYearsToAU(distance), "au");
+            sprintf(buff, "%.3f %s", astro::lightYearsToAU(distance), ("au"));
         else if (abs(distance) > astro::kilometersToLightYears(1.0f))
             sprintf(buff, "%.3f km", astro::lightYearsToKilometers(distance));
         else
             sprintf(buff, "%.3f m", astro::lightYearsToKilometers(distance) * 1000.0f);
 
-        addAction(italicTextItem("Distance: " + QString::fromUtf8(buff)));
+        addAction(italicTextItem(_("Distance: ") + QString::fromUtf8(buff)));
 
         sprintf(buff, "%.2f (%.2f)",
                 sel.star()->getAbsoluteMagnitude(),
                 astro::absToAppMag(sel.star()->getAbsoluteMagnitude(),
                                    (float) distance));
-        addAction(italicTextItem("Abs (app) mag: " + QString::fromUtf8(buff)));
+        addAction(italicTextItem(_("Abs (app) mag: ") + QString::fromUtf8(buff)));
 
         sprintf(buff, "%s", sel.star()->getSpectralType());
-        addAction(italicTextItem("Class: " + QString::fromUtf8(buff)));
+        addAction(italicTextItem(_("Class: ") + QString::fromUtf8(buff)));
 
         setlocale(LC_NUMERIC, "C");
     }
@@ -132,36 +132,36 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 
     addSeparator();
 
-    QAction* selectAction = new QAction("&Select", this);
+    QAction* selectAction = new QAction(_("&Select"), this);
     connect(selectAction, SIGNAL(triggered()), this, SLOT(slotSelect()));
     addAction(selectAction);
 
-    centerAction = new QAction("&Center", this);
+    centerAction = new QAction(_("&Center"), this);
     connect(centerAction, SIGNAL(triggered()), this, SLOT(slotCenterSelection()));
     addAction(centerAction);
 
-    gotoAction = new QAction("&Goto", this);
+    gotoAction = new QAction(_("&Goto"), this);
     connect(gotoAction, SIGNAL(triggered()), this, SLOT(slotGotoSelection()));
     addAction(gotoAction);
 
-    QAction* followAction = new QAction("&Follow", this);
+    QAction* followAction = new QAction(_("&Follow"), this);
     connect(followAction, SIGNAL(triggered()), this, SLOT(slotFollowSelection()));
     addAction(followAction);
 
     if (sel.star() == NULL && sel.deepsky() == NULL)
     {
-        QAction* syncOrbitAction = new QAction("S&ynch Orbit", this);
+        QAction* syncOrbitAction = new QAction(_("S&ynch Orbit"), this);
         connect(syncOrbitAction, SIGNAL(triggered()), this, SLOT(slotSyncOrbitSelection()));
         addAction(syncOrbitAction);
     }
 
-    QAction* infoAction = new QAction("Info", this);
+    QAction* infoAction = new QAction(_("Info"), this);
     connect(infoAction, SIGNAL(triggered()), this, SLOT(slotInfo()));
     addAction(infoAction);
 
 	if (sel.body() != NULL)
 	{
-        QAction* setVisibilityAction = new QAction("Visible", this);
+		QAction* setVisibilityAction = new QAction(_("Visible"), this);
 		setVisibilityAction->setCheckable(true);
 		setVisibilityAction->setChecked(sel.body()->isVisible());
 		connect(setVisibilityAction, SIGNAL(toggled(bool)), this, SLOT(slotToggleVisibility(bool)));
@@ -247,10 +247,10 @@ QMenu* SelectionPopup::createMarkMenu()
         gettext_noop("Disk"),
     };
         
-    QMenu* markMenu = new QMenu("&Mark");
+    QMenu* markMenu = new QMenu(_("&Mark"));
     for (int i = 0; i < (int) (sizeof(MARKER_NAMES) / sizeof(MARKER_NAMES[0])); i++)
     {
-        QAction* act = new QAction(MARKER_NAMES[i], markMenu);
+        QAction* act = new QAction(_(MARKER_NAMES[i]), markMenu);
         act->setData((int) MARKER_SYMBOLS[i]);
         connect(act, SIGNAL(triggered()), this, SLOT(slotMark()));
         markMenu->addAction(act);
@@ -265,33 +265,33 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
     assert(selection.body() != NULL);
 
     Body* body = selection.body();
-    QMenu* refVecMenu = new QMenu("&Reference Marks");
+    QMenu* refVecMenu = new QMenu(_("&Reference Marks"));
 
-    QAction* bodyAxesAction = new QAction("Show &Body Axes", refVecMenu);
+    QAction* bodyAxesAction = new QAction(_("Show &Body Axes"), refVecMenu);
     bodyAxesAction->setCheckable(true);
     bodyAxesAction->setChecked(appCore->referenceMarkEnabled("body axes", selection));
     connect(bodyAxesAction, SIGNAL(triggered()), this, SLOT(slotToggleBodyAxes()));
     refVecMenu->addAction(bodyAxesAction);
 
-    QAction* frameAxesAction = new QAction("Show &Frame Axes", refVecMenu);
+    QAction* frameAxesAction = new QAction(_("Show &Frame Axes"), refVecMenu);
     frameAxesAction->setCheckable(true);
     frameAxesAction->setChecked(appCore->referenceMarkEnabled("frame axes", selection));
     connect(frameAxesAction, SIGNAL(triggered()), this, SLOT(slotToggleFrameAxes()));
     refVecMenu->addAction(frameAxesAction);
 
-    QAction* sunDirectionAction = new QAction("Show &Sun Direction", refVecMenu);
+    QAction* sunDirectionAction = new QAction(_("Show &Sun Direction"), refVecMenu);
     sunDirectionAction->setCheckable(true);
     sunDirectionAction->setChecked(appCore->referenceMarkEnabled("sun direction", selection));
     connect(sunDirectionAction, SIGNAL(triggered()), this, SLOT(slotToggleSunDirection()));
     refVecMenu->addAction(sunDirectionAction);
 
-    QAction* velocityVectorAction = new QAction("Show &Velocity Vector", refVecMenu);
+    QAction* velocityVectorAction = new QAction(_("Show &Velocity Vector"), refVecMenu);
     velocityVectorAction->setCheckable(true);
     velocityVectorAction->setChecked(appCore->referenceMarkEnabled("velocity vector", selection));
     connect(velocityVectorAction, SIGNAL(triggered()), this, SLOT(slotToggleVelocityVector()));
     refVecMenu->addAction(velocityVectorAction);
 
-    QAction* spinVectorAction = new QAction("Show S&pin Vector", refVecMenu);
+    QAction* spinVectorAction = new QAction(_("Show S&pin Vector"), refVecMenu);
     spinVectorAction->setCheckable(true);
     spinVectorAction->setChecked(appCore->referenceMarkEnabled("spin vector", selection));
     connect(spinVectorAction, SIGNAL(triggered()), this, SLOT(slotToggleSpinVector()));
@@ -303,20 +303,20 @@ QMenu* SelectionPopup::createReferenceVectorMenu()
         // Only show the frame center menu item if the selection orbits another
         // a non-stellar object. If it orbits a star, this is generally identical
         // to the sun direction entry.
-        QAction* frameCenterAction = new QAction(QString("Show &Direction to %1").arg(QString::fromUtf8(center.body()->getName(true).c_str())), refVecMenu);
+        QAction* frameCenterAction = new QAction(QString(_("Show &Direction to %1")).arg(QString::fromUtf8(center.body()->getName(true).c_str())), refVecMenu);
         frameCenterAction->setCheckable(true);
         frameCenterAction->setChecked(appCore->referenceMarkEnabled("frame center direction", selection));
         connect(frameCenterAction, SIGNAL(triggered()), this, SLOT(slotToggleFrameCenterDirection()));
         refVecMenu->addAction(frameCenterAction);
     }
 
-    QAction* gridAction = new QAction("Show Planetographic &Grid", refVecMenu);
+    QAction* gridAction = new QAction(_("Show Planetographic &Grid"), refVecMenu);
     gridAction->setCheckable(true);
     gridAction->setChecked(appCore->referenceMarkEnabled("planetographic grid", selection));
     connect(gridAction, SIGNAL(triggered()), this, SLOT(slotTogglePlanetographicGrid()));
     refVecMenu->addAction(gridAction);
 
-    QAction* terminatorAction = new QAction("Show &Terminator", refVecMenu);
+    QAction* terminatorAction = new QAction(_("Show &Terminator"), refVecMenu);
     terminatorAction->setCheckable(true);
     terminatorAction->setChecked(appCore->referenceMarkEnabled("terminator", selection));
     connect(terminatorAction, SIGNAL(triggered()), this, SLOT(slotToggleTerminator()));
@@ -334,8 +334,8 @@ QMenu* SelectionPopup::createAlternateSurfacesMenu()
     {
         if (!altSurfaces->empty())
         {
-            surfacesMenu = new QMenu("&Alternate Surfaces", this);
-            QAction* normalAct = new QAction("Normal", surfacesMenu);
+            surfacesMenu = new QMenu(_("&Alternate Surfaces"), this);
+            QAction* normalAct = new QAction(_("Normal"), surfacesMenu);
             normalAct->setData(QString(""));
             surfacesMenu->addAction(normalAct);
             connect(normalAct, SIGNAL(triggered()), this, SLOT(slotSelectAlternateSurface()));
@@ -379,22 +379,22 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
                     switch (classification)
                     {
                     case Body::Planet:
-                        title = "Planets";
+                        title = _("Planets");
                         break;
                     case Body::Moon:
-                        title = "Moons";
+                        title = _("Moons");
                         break;
                     case Body::Asteroid:
-                        title = "Asteroids";
+                        title = _("Asteroids");
                         break;
                     case Body::Comet:
-                        title = "Comets";
+                        title = _("Comets");
                         break;
                     case Body::Spacecraft:
-                        title = "Spacecraft";
+                        title = _("Spacecraft");
                         break;
                     default:
-                        title = "Other objects";
+                        title = _("Other objects");
                         break;
                     }
                     menu = new QMenu(title, this);
@@ -414,7 +414,7 @@ QMenu* SelectionPopup::createObjectMenu(PlanetarySystem* sys,
 
 void SelectionPopup::addObjectMenus(PlanetarySystem* sys)
 {
-    setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
+	setStyleSheet("QMenu { menu-scrollable: 1; }"); //popupmenu with scrollbar
     QMenu* planetsMenu = createObjectMenu(sys, Body::Planet);
     if (planetsMenu != NULL)
         addMenu(planetsMenu);

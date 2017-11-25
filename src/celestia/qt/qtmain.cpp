@@ -54,7 +54,7 @@ void loadModules(QSplashScreen* psplash)
             time.start();
             ++i;
         }
-        psplash->showMessage("Loading data files: " + QString::number(i) + "%" + "\n\n",
+        psplash->showMessage(_("Loading data files: ") + QString::number(i) + "%" + "\n\n",
 								Qt::AlignHCenter | Qt::AlignBottom,
 								Qt::white);
     }

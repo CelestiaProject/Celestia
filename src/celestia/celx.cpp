@@ -1102,21 +1102,21 @@ bool LuaState::tick(double dt)
 
         if (getTime() > timeout)
         {
-            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
                               "and execute external programs. Allowing this can be\n"
                               "dangerous.\n"
                               "Do you trust the script and want to allow this?\n\n"
-                              "y = yes, ESC = cancel script, any other key = no",
+                              "y = yes, ESC = cancel script, any other key = no"),
                               0, 0,
                               -15, 5, 5);
             appCore->setTextEnterMode(appCore->getTextEnterMode() | CelestiaCore::KbPassToScript);
         }
         else
         {
-            appCore->showText("WARNING:\n\nThis script requests permission to read/write files\n"
+            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
                               "and execute external programs. Allowing this can be\n"
                               "dangerous.\n"
-                              "Do you trust the script and want to allow this?",
+                              "Do you trust the script and want to allow this?"),
                               0, 0,
                               -15, 5, 5);
             appCore->setTextEnterMode(appCore->getTextEnterMode() & ~CelestiaCore::KbPassToScript);

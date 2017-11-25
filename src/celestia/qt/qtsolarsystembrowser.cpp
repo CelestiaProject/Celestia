@@ -505,57 +505,57 @@ static QString objectTypeName(const Selection& sel)
     if (sel.star() != NULL)
     {
         if (!sel.star()->getVisibility())
-            return "Barycenter";
+            return _("Barycenter");
         else
-            return "Star";
+            return _("Star");
     }
     else if (sel.body() != NULL)
     {
         int classification = sel.body()->getClassification();
         if (classification == Body::Planet)
-            return "Planet";
+            return _("Planet");
         else if (classification == Body::DwarfPlanet)
-            return "Dwarf planet";
+            return _("Dwarf planet");
         else if (classification == Body::Moon || classification == Body::MinorMoon)
-            return "Moon";
+            return _("Moon");
         else if (classification == Body::Asteroid)
-            return "Asteroid";
+            return _("Asteroid");
         else if (classification == Body::Comet)
-            return "Comet";
+            return _("Comet");
         else if (classification == Body::Spacecraft)
-            return "Spacecraft";
+            return _("Spacecraft");
         else if (classification == Body::Invisible)
-            return "Reference point";
+            return _("Reference point");
 		else if (classification == Body::Component)
-            return "Component";
+			return _("Component");
 		else if (classification == Body::SurfaceFeature)
-            return "Surface feature";
+			return _("Surface feature");
     }
 
-    return "Unknown";
+    return _("Unknown");
 }
 
 
 static QString classificationName(int classification)
 {
     if (classification == Body::Planet)
-        return "Planets";
+        return _("Planets");
     else if (classification == Body::Moon)
-        return "Moons";
+        return _("Moons");
     else if (classification == Body::Spacecraft)
-        return "Spacecraft";
+        return _("Spacecraft");
     else if (classification == Body::Asteroid)
-        return "Asteroids & comets";
+        return _("Asteroids & comets");
     else if (classification == Body::Invisible)
-        return "Reference points";
+        return _("Reference points");
     else if (classification == Body::MinorMoon)
-        return "Minor moons";
+        return _("Minor moons");
 	else if (classification == Body::Component)
-        return "Components";
+		return _("Components");
 	else if (classification == Body::SurfaceFeature)
-        return "Surface features";
+		return _("Surface features");
     else
-        return "Other objects";
+        return _("Other objects");
 }
 
 
@@ -615,9 +615,9 @@ QVariant SolarSystemTreeModel::headerData(int section, Qt::Orientation /* orient
     switch (section)
     {
     case 0:
-        return "Name";
+        return _("Name");
     case 1:
-        return "Type";
+        return _("Type");
     default:
         return QVariant();
     }
@@ -672,11 +672,11 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent) 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(treeView);
 
-    QPushButton* refreshButton = new QPushButton("Refresh");
+    QPushButton* refreshButton = new QPushButton(_("Refresh"));
     connect(refreshButton, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     layout->addWidget(refreshButton);
 
-    groupCheckBox = new QCheckBox("Group objects by class");
+    groupCheckBox = new QCheckBox(_("Group objects by class"));
     connect(groupCheckBox, SIGNAL(clicked()), this, SLOT(slotRefreshTree()));
     layout->addWidget(groupCheckBox);
 
